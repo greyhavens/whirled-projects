@@ -219,8 +219,8 @@ public class KeyJam extends Sprite
         // Figure out the score to report to whirled...
         // From the time it took the user, subtract half a second and
         // bound into the 0 - 2sec range
-        var normalizedTime :Number = Math.min(2000, Math.max(0, time - 500));
-        var timeScore :Number = (2000 - normalizedTime) / 2000;
+        var normalizedTime :Number = Math.min(MAX_EXPECTED_TIME, Math.max(0, time - MIN_EXPECTED_TIME));
+        var timeScore :Number = (MAX_EXPECTED_TIME - normalizedTime) / MAX_EXPECTED_TIME;
         var accScore :Number = result / (_booches + 1);
         var score :Number = timeScore * accScore;
         _gameCtrl.reportPerformance(score);
@@ -267,6 +267,9 @@ public class KeyJam extends Sprite
     protected static const MODE_CLEAR :int = 1;
     protected static const MODE_NEXT :int = 2;
     protected static const MODE_HIT :int = 3;
+
+    protected static const MAX_EXPECTED_TIME :int = 6000;
+    protected static const MIN_EXPECTED_TIME :int = 500;
 
     [Embed(source="resources.swf#boombox")]
     protected static const BOOMBOX :Class;
