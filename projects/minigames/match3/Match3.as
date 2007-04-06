@@ -74,6 +74,16 @@ public class Match3 extends Sprite
         addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
         addEventListener(MouseEvent.CLICK, handleMouseClick);
         addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+
+        this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+    }
+
+    /**
+     * Take care of freeing resources, etc.
+     */
+    protected function handleUnload (event :Event) :void
+    {
+        removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
     protected function handleEnterFrame (event :Event) :void
