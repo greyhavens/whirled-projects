@@ -19,21 +19,25 @@ import com.whirled.MiniGameControl;
 public class Match3 extends Sprite
 {
     /** The number needed to match. */
-    public static const MATCH :int = 3;
+    public static var MATCH :int = 3;
 
     /** The dimensions of the game. */
     public static const WIDTH :int = 450;
     public static const HEIGHT :int = 100;
 
     /** The size of blocks. */
-    public static const BLOCK_WIDTH :int = 25;
-    public static const BLOCK_HEIGHT :int = 20;
+    public static var BLOCK_WIDTH :int = 25;
+    public static var BLOCK_HEIGHT :int = 20;
 
     /** The number of columns and rows that we get from the above two sizes. */
-    public static const COLS :int = (WIDTH / BLOCK_WIDTH);
-    public static const ROWS :int = (HEIGHT / BLOCK_HEIGHT);
+    public static var COLS :int = int(WIDTH / BLOCK_WIDTH);
+    public static var ROWS :int = int(HEIGHT / BLOCK_HEIGHT);
 
     public static const ALL_FALL_LEFT :Boolean = false;
+
+    public static var GRAVITY :Number = .00098;
+
+    public static var COLORS_TO_USE :int = 6;
 
     /** Block colors. */
     public static const COLORS :Array = [
@@ -42,13 +46,15 @@ public class Match3 extends Sprite
         0x00FFF2, // cyan
         0x04FF00, // green
         0xFF0400, // red
+        0x002BFF, // blue
         0xFFA600, // orange
-        0x002BFF  // blue
+        0xFFFFFF  // white
     ];
 
     public function Match3 ()
     {
-        _ctrl = new MiniGameControl(this);
+        COLS = int(WIDTH / BLOCK_WIDTH);
+        ROWS = int(HEIGHT / BLOCK_HEIGHT);
 
         // create a background sprite that will also receive mouse events
         // even when no Block is in that place
@@ -94,23 +100,29 @@ public class Match3 extends Sprite
 
         addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
         addEventListener(MouseEvent.CLICK, handleMouseClick);
-        addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+        addEventListener(Event.ADDED_TO_STAGE, init);
+        addEventListener(Event.REMOVED_FROM_STAGE, shutdown);
+    }
 
-        this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+    protected function init (... ignored) :void
+    {
+        _ctrl = new MiniGameControl(this);
+
+        addEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
     /**
      * Take care of freeing resources, etc.
      */
-    protected function handleUnload (event :Event) :void
+    protected function shutdown (... ignored) :void
     {
         removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
     protected function handleEnterFrame (event :Event) :void
     {
-        //trace("-----------");
         var stamp :Number = getTimer();
+        //trace("-----------: " + stamp);
         var yy :int;
         var xx :int;
         var dir :int;
@@ -124,7 +136,7 @@ public class Match3 extends Sprite
             xx = (dir == 1) ? 0 : COLS - 1;
 
             if ((null == _blocks.get(xx, yy)) && (null == _blocks.get(xx - dir, yy))) {
-                //trace("Adding block at " + (xx - dir) + ", " + yy);
+                trace("Adding block at " + (xx - dir) + ", " + yy);
                 block = new Block(pickBlockColor(yy), xx - dir, yy, _blocks);
                 _board.addChild(block);
             }
@@ -279,7 +291,7 @@ public class Match3 extends Sprite
     {
         var pick :int;
         do {
-            pick = Math.floor(Math.random() * COLORS.length);
+            pick = Math.floor(Math.random() * COLORS_TO_USE);
         } while (pick == _lastInserted[yy]);
         _lastInserted[yy] = pick;
         return uint(COLORS[pick]);
@@ -511,7 +523,7 @@ class Block extends Sprite
 
         if (_movement == FALL) {
             // calculate a new X
-            var newX :Number = _orig + (GRAVITY * _dir * elapsed * elapsed);
+            var newX :Number = _orig + (Match3.GRAVITY * _dir * elapsed * elapsed);
 
             // check to see if there's a hard limit to where we'll fall
             var other :Block = _map.get(lx + _dir, ly);
@@ -623,8 +635,6 @@ class Block extends Sprite
 
     /** The stamp at which we started moving. */
     protected var _moveStamp :Number;
-
-    protected static const GRAVITY :Number = .00098;
 
     protected static const SWAP_VELOCITY :Number = Match3.BLOCK_HEIGHT / 200;
 

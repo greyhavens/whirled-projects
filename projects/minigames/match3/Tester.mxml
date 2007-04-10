@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    styleName="plain" initialize="wireItUp()"
+    verticalScrollPolicy="off" horizontalScrollPolicy="off" width="100%" height="100%">
+  <mx:Grid>
+    <mx:GridRow>
+      <mx:GridItem><mx:Label text="Match"/></mx:GridItem>
+      <mx:GridItem><mx:HSlider id="matchSlider" minimum="2" maximum="5" value="3"
+                       snapInterval="1" tickInterval="1"/></mx:GridItem>
+      <mx:GridItem><mx:Label text="{matchSlider.value}"/></mx:GridItem>
+    </mx:GridRow>
+    <mx:GridRow>
+      <mx:GridItem><mx:Label text="Block width"/></mx:GridItem>
+      <mx:GridItem><mx:HSlider id="blockWidthSlider" minimum="1" maximum="150" value="25"
+                       snapInterval="1" tickInterval="1"/></mx:GridItem>
+      <mx:GridItem><mx:Label text="{blockWidthSlider.value}"/></mx:GridItem>
+    </mx:GridRow>
+    <mx:GridRow>
+      <mx:GridItem><mx:Label text="Block height"/></mx:GridItem>
+      <mx:GridItem><mx:HSlider id="blockHeightSlider" minimum="1" maximum="33" value="20"
+                       snapInterval="1" tickInterval="1"/></mx:GridItem>
+      <mx:GridItem><mx:Label text="{blockHeightSlider.value}"/></mx:GridItem>
+    </mx:GridRow>
+    <mx:GridRow>
+      <mx:GridItem><mx:Label text="Number of Colors"/></mx:GridItem>
+      <mx:GridItem><mx:HSlider id="numColorsSlider" minimum="2" maximum="8" value="6"
+                       snapInterval="1" tickInterval="1"/></mx:GridItem>
+      <mx:GridItem><mx:Label text="{numColorsSlider.value}"/></mx:GridItem>
+    </mx:GridRow>
+    <mx:GridRow>
+      <mx:GridItem><mx:Label text="Gravity"/></mx:GridItem>
+      <mx:GridItem><mx:HSlider id="gravitySlider" minimum=".0000000000001" maximum=".01" value=".0001"/></mx:GridItem>
+      <mx:GridItem><mx:Label text="{gravitySlider.value}"/></mx:GridItem>
+    </mx:GridRow>
+    <mx:GridRow>
+      <mx:GridItem colSpan="3"><mx:Canvas id="rawMother" width="450" height="100"/></mx:GridItem>
+    </mx:GridRow>
+    <mx:Script>
+      <![CDATA[
+        import mx.binding.utils.BindingUtils;
+
+        /**
+         * Generate a new game according to the various sliders and woodgies, replacing any
+         * previous game.
+         */
+        public function generateNewGame (... ignored) :void
+        {
+            trace("Generating new game...");
+            while (rawMother.rawChildren.numChildren > 0) {
+                rawMother.rawChildren.removeChildAt(0);
+            }
+            Match3.MATCH = int(matchSlider.value);
+            Match3.BLOCK_WIDTH = int(blockWidthSlider.value);
+            Match3.BLOCK_HEIGHT = int(blockHeightSlider.value);
+            Match3.COLORS_TO_USE = int(numColorsSlider.value);
+            Match3.GRAVITY = int(gravitySlider.value);
+
+            rawMother.rawChildren.addChild(new Match3());
+        }
+
+        public function wireItUp () :void
+        {
+            // and wire everything, tight!
+            BindingUtils.bindSetter(generateNewGame, matchSlider, "value");
+            BindingUtils.bindSetter(generateNewGame, blockWidthSlider, "value");
+            BindingUtils.bindSetter(generateNewGame, blockHeightSlider, "value");
+            BindingUtils.bindSetter(generateNewGame, numColorsSlider, "value");
+            BindingUtils.bindSetter(generateNewGame, gravitySlider, "value");
+        }
+      ]]>
+    </mx:Script>
+  </mx:Grid>
+</mx:Application>
