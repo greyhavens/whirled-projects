@@ -68,6 +68,6 @@ public class Data
     private var secondHand__image :Class;
 
 //    [Embed(source="Clock.swf", mimeType="application/octet-stream")]
-//    private var tits__bytes :Class;
+//    private var face__bytes :Class;
 }
 }
