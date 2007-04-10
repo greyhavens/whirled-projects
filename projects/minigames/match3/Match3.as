@@ -10,11 +10,15 @@ import flash.events.MouseEvent;
 import flash.geom.Matrix;
 import flash.geom.Point;
 
+import flash.utils.Dictionary;
 import flash.utils.getTimer; // function import
 
 [SWF(width="450", height="100")]
 public class Match3 extends Sprite
 {
+    /** The number needed to match. */
+    public static const MATCH :int = 3;
+
     /** The dimensions of the game. */
     public static const WIDTH :int = 450;
     public static const HEIGHT :int = 100;
@@ -132,7 +136,7 @@ public class Match3 extends Sprite
         var allBlocks :Array = _blocks.getAll();
         // ok, then update each block
         for each (block in allBlocks) {
-            if (block.isSwapping()) {
+            if (block.isSwapping() || block.isBooming()) {
                 block.update(stamp);
             }
         }
@@ -141,6 +145,56 @@ public class Match3 extends Sprite
             if (block.isFalling()) {
                 block.update(stamp);
             }
+        }
+
+        // now go find non-moving blocks and initiate any destructions
+        var blowups :Dictionary = new Dictionary();
+        for (yy = 0; yy < ROWS; yy++) {
+            for (xx = 0; xx < COLS; xx++) {
+                block = _blocks.get(xx, yy);
+                trace("Looked at (" + xx + ", " + yy + ") and found " +
+                    ((block == null) ? "null" : (block.isStopped() ? "stopped" : "moving")));
+                if (block == null || !block.isStopped()) {
+                    continue;
+                }
+                // otherwise, it's a candidate...
+                var horzBlocks :Array = [];
+                for (var x2 :int = xx + 1; x2 < COLS; x2++) {
+                    other = _blocks.get(x2, yy);
+                    if (other == null || !other.isStopped() || (block.color != other.color)) {
+                        break;
+                    }
+                    trace("+ Found buddy at (" + x2 + ", " + yy + ")");
+                    // otherwise, it's good!
+                    horzBlocks.push(other);
+                }
+                var vertBlocks :Array = [];
+                for (var y2 :int = yy + 1; y2 < ROWS; y2++) {
+                    other = _blocks.get(xx, y2);
+                    if (other == null || !other.isStopped() || (block.color != other.color)) {
+                        break;
+                    }
+                    trace("+ Found buddy at (" + xx + ", " + y2 + ")");
+                    // it's good!
+                    vertBlocks.push(other);
+                }
+                if (horzBlocks.length >= (MATCH - 1)) {
+                    for each (other in horzBlocks) {
+                        blowups[other] = true;
+                    }
+                    blowups[block] = true;
+                }
+                if (vertBlocks.length >= (MATCH - 1)) {
+                    for each (other in vertBlocks) {
+                        blowups[other] = true;
+                    }
+                    blowups[block] = true;
+                }
+            }
+        }
+        // now, go through and start blowing up the blow-up blocks!
+        for (var bb :* in blowups) {
+            (bb as Block).setDestroying(stamp);
         }
 
         // TEMP: look for lost blocks
@@ -220,6 +274,8 @@ public class Match3 extends Sprite
 
 import flash.display.Sprite;
 
+import flash.filters.ColorMatrixFilter;
+
 import flash.utils.getTimer; // function import
 
 import com.threerings.util.HashMap;
@@ -292,9 +348,40 @@ class BlockMap
         }
     }
 
+    public function setDestroying (block :Block) :void
+    {
+        remove(block);
+        _destroying.push(block);
+    }
+
+    public function finishDestroy (block :Block) :void
+    {
+        var dex :int = _destroying.indexOf(block);
+        if (dex != -1) {
+            _destroying.splice(dex, 1);
+
+        } else {
+            throw new Error("Could not find destroying block " + 
+                "(" + block.lx + ", " + block.ly + ")");
+        }
+    }
+
     public function getAll () :Array
     {
-        return _map.values();
+        var arr :Array = _map.values();
+        var len :int = arr.length;
+        for each (var thing :* in _destroying) {
+            arr.push(thing);
+        }
+        /*
+        var len :int = _destroying.length;
+        arr.push.apply(_destroying);
+        if (len > 1 && (_destroying.length != len)) {
+            trace("GAWFUCK");
+        }
+        */
+        //trace("Added " + (arr.length - len) + " destroy items");
+        return arr;
     }
 
     protected function keyFor (lx :int, ly :int) :int
@@ -305,6 +392,8 @@ class BlockMap
     }
 
     protected var _map :HashMap = new HashMap();
+
+    protected var _destroying :Array = [];
 }
 
 class Block extends Sprite
@@ -363,6 +452,11 @@ class Block extends Sprite
         return (_movement == SWAP);
     }
 
+    public function isBooming () :Boolean
+    {
+        return (_movement == BOOM);
+    }
+
     /**
      */
     public function setFalling (direction :Number, stamp :Number) :void
@@ -376,6 +470,13 @@ class Block extends Sprite
         x = lx * Match3.BLOCK_WIDTH;
 
         startMove(SWAP, direction, stamp);
+    }
+
+    public function setDestroying (stamp :Number) :void
+    {
+        _map.setDestroying(this);
+
+        startMove(BOOM, 0, stamp);
     }
 
     public function update (stamp :Number) :void
@@ -427,7 +528,7 @@ class Block extends Sprite
 
         } else if (_movement == SWAP) {
             var newY :Number = _orig + (_dir * SWAP_VELOCITY * elapsed);
-            trace("Swap newY: " + newY);
+            //trace("Swap newY: " + newY);
             var ylimit :Number = _orig + (_dir * Match3.BLOCK_HEIGHT);
             if ((_dir == 1) ? (newY >= ylimit) : (newY <= ylimit)) {
                 newY = ylimit;
@@ -446,6 +547,24 @@ class Block extends Sprite
                 } else {
                     _map.move(lx, oldly, this);
                 }
+            }
+
+        } else if (_movement == BOOM) {
+            var perc :Number = elapsed / BOOM_DURATION;
+
+            if (perc >= 1) {
+                parent.removeChild(this);
+                _map.finishDestroy(this);
+
+            } else {
+                //trace("Getting called here...");
+                perc = 1 - perc;
+                this.filters = [
+                    new ColorMatrixFilter([ perc, 0, 0, 0, 0,
+                                            0, perc, 0, 0, 0,
+                                            0, 0, perc, 0, 0,
+                                            0, 0, 0, 1, 0 ])
+                ];
             }
         }
     }
@@ -471,6 +590,7 @@ class Block extends Sprite
     protected static const NONE :int = 0;
     protected static const FALL :int = 1;
     protected static const SWAP :int = 2;
+    protected static const BOOM :int = 3;
 
     protected var _movement :int = NONE;
 
@@ -482,7 +602,9 @@ class Block extends Sprite
     /** The stamp at which we started moving. */
     protected var _moveStamp :Number;
 
-    protected static const GRAVITY :Number = .0000098;
+    protected static const GRAVITY :Number = .00098;
 
     protected static const SWAP_VELOCITY :Number = Match3.BLOCK_HEIGHT / 200;
+
+    protected static const BOOM_DURATION :Number = 200;
 }
