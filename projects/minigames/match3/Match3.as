@@ -136,7 +136,7 @@ public class Match3 extends Sprite
             xx = (dir == 1) ? 0 : COLS - 1;
 
             if ((null == _blocks.get(xx, yy)) && (null == _blocks.get(xx - dir, yy))) {
-                trace("Adding block at " + (xx - dir) + ", " + yy);
+                //trace("Adding block at " + (xx - dir) + ", " + yy);
                 block = new Block(pickBlockColor(yy), xx - dir, yy, _blocks);
                 _board.addChild(block);
             }
