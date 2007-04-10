@@ -13,6 +13,8 @@ import flash.geom.Point;
 import flash.utils.Dictionary;
 import flash.utils.getTimer; // function import
 
+import com.whirled.MiniGameControl;
+
 [SWF(width="450", height="100")]
 public class Match3 extends Sprite
 {
@@ -46,6 +48,8 @@ public class Match3 extends Sprite
 
     public function Match3 ()
     {
+        _ctrl = new MiniGameControl(this);
+
         // create a background sprite that will also receive mouse events
         // even when no Block is in that place
         var bkg :Sprite = new Sprite();
@@ -162,6 +166,7 @@ public class Match3 extends Sprite
 
         // now go find non-moving blocks and initiate any destructions
         var blowups :Dictionary = new Dictionary();
+        var blowSequences :int = 0;
         for (yy = 0; yy < ROWS; yy++) {
             for (xx = 0; xx < COLS; xx++) {
                 block = _blocks.get(xx, yy);
@@ -192,18 +197,31 @@ public class Match3 extends Sprite
                         blowups[other] = true;
                     }
                     blowups[block] = true;
+                    blowSequences++;
                 }
                 if (vertBlocks.length >= (MATCH - 1)) {
                     for each (other in vertBlocks) {
                         blowups[other] = true;
                     }
                     blowups[block] = true;
+                    blowSequences++;
                 }
             }
         }
         // now, go through and start blowing up the blow-up blocks!
+        var blowCount :int = 0;
         for (var bb :* in blowups) {
             (bb as Block).setDestroying(stamp);
+            blowCount++;
+        }
+        if (blowCount > 0) {
+            var score :Number = (blowCount - 2) / (_clicks + 2);
+            // no clicks, 3 breaks: .5
+            // 1 click, 3 breaks: .3
+            // 1 click, 5 breaks: 1
+            // good enough for now...
+            _ctrl.reportPerformance(score);
+            _clicks = 0;
         }
 
 //        // TEMP: look for lost blocks
@@ -254,6 +272,7 @@ public class Match3 extends Sprite
         }
 
         event.updateAfterEvent();
+        _clicks++;
     }
 
     protected function pickBlockColor (yy :int) :uint
@@ -266,6 +285,8 @@ public class Match3 extends Sprite
         return uint(COLORS[pick]);
     }
 
+    protected var _ctrl :MiniGameControl;
+
     /** The cursor. */
     protected var _cursor :Cursor;
 
@@ -275,6 +296,9 @@ public class Match3 extends Sprite
 
     /** Tracks the last-inserted color on each row. */
     protected var _lastInserted :Array = [];
+
+    /** The number of clicks since the last block scoring. */
+    protected var _clicks :int = 0;
 }
 }
 
