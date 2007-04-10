@@ -31,6 +31,19 @@ public class Match3 extends Sprite
     public static const COLS :int = (WIDTH / BLOCK_WIDTH);
     public static const ROWS :int = (HEIGHT / BLOCK_HEIGHT);
 
+    public static const ALL_FALL_LEFT :Boolean = false;
+
+    /** Block colors. */
+    public static const COLORS :Array = [
+        0xFF00EE, // pink
+        0xFFFB00, // yellow
+        0x00FFF2, // cyan
+        0x04FF00, // green
+        0xFF0400, // red
+        0xFFA600, // orange
+        0x002BFF  // blue
+    ];
+
     public function Match3 ()
     {
         // create a background sprite that will also receive mouse events
@@ -58,7 +71,7 @@ public class Match3 extends Sprite
         // set up the board: create off-screen black blocks that will act
         // as "stoppers" for falling blocks.
         for (var yy :int = 0; yy < ROWS; yy++) {
-            var xx :int = (yy % 2 == 0) ? -1 : COLS;
+            var xx :int = ALL_FALL_LEFT || (yy % 2 == 0) ? -1 : COLS;
             var block :Block = new Block(0x000000, xx, yy, _blocks);
             // Note: no need to add it to the display, it's just needed
             // logically.
@@ -103,7 +116,7 @@ public class Match3 extends Sprite
         // first, ensure that there are blocks sitting in the off-screen
         // fall-in positions
         for (yy = 0; yy < ROWS; yy++) {
-            dir = (yy % 2 == 0) ? -1 : 1;
+            dir = ALL_FALL_LEFT || (yy % 2 == 0) ? -1 : 1;
             xx = (dir == 1) ? 0 : COLS - 1;
 
             if ((null == _blocks.get(xx, yy)) && (null == _blocks.get(xx - dir, yy))) {
@@ -117,7 +130,7 @@ public class Match3 extends Sprite
         // block in the fall direction
         for (yy = 0; yy < ROWS; yy++) {
             // figure out the direction of falling on this row
-            dir = (yy % 2 == 0) ? -1 : 1;
+            dir = ALL_FALL_LEFT || (yy % 2 == 0) ? -1 : 1;
 
             // preload the first 'other' block
             block = _blocks.get((dir == 1) ? COLS : -1, yy);
@@ -262,16 +275,6 @@ public class Match3 extends Sprite
 
     /** Tracks the last-inserted color on each row. */
     protected var _lastInserted :Array = [];
-
-    /** Block colors. */
-    protected static const COLORS :Array = [
-        0xFF00EE, // pink
-        0xFFFB00, // yellow
-        0x00FFF2, // cyan
-        0x04FF00, // green
-        0xFF0400, // red
-        0x002BFF  // blue
-    ];
 }
 }
 
