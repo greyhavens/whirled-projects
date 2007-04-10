@@ -92,7 +92,7 @@ public class Match3 extends Sprite
 
     protected function handleEnterFrame (event :Event) :void
     {
-        trace("-----------");
+        //trace("-----------");
         var stamp :Number = getTimer();
         var yy :int;
         var xx :int;
@@ -108,7 +108,7 @@ public class Match3 extends Sprite
 
             if ((null == _blocks.get(xx, yy)) && (null == _blocks.get(xx - dir, yy))) {
                 //trace("Adding block at " + (xx - dir) + ", " + yy);
-                block = new Block(pickBlockColor(), xx - dir, yy, _blocks);
+                block = new Block(pickBlockColor(yy), xx - dir, yy, _blocks);
                 _board.addChild(block);
             }
         }
@@ -152,8 +152,6 @@ public class Match3 extends Sprite
         for (yy = 0; yy < ROWS; yy++) {
             for (xx = 0; xx < COLS; xx++) {
                 block = _blocks.get(xx, yy);
-                trace("Looked at (" + xx + ", " + yy + ") and found " +
-                    ((block == null) ? "null" : (block.isStopped() ? "stopped" : "moving")));
                 if (block == null || !block.isStopped()) {
                     continue;
                 }
@@ -164,7 +162,6 @@ public class Match3 extends Sprite
                     if (other == null || !other.isStopped() || (block.color != other.color)) {
                         break;
                     }
-                    trace("+ Found buddy at (" + x2 + ", " + yy + ")");
                     // otherwise, it's good!
                     horzBlocks.push(other);
                 }
@@ -174,7 +171,6 @@ public class Match3 extends Sprite
                     if (other == null || !other.isStopped() || (block.color != other.color)) {
                         break;
                     }
-                    trace("+ Found buddy at (" + xx + ", " + y2 + ")");
                     // it's good!
                     vertBlocks.push(other);
                 }
@@ -197,14 +193,14 @@ public class Match3 extends Sprite
             (bb as Block).setDestroying(stamp);
         }
 
-        // TEMP: look for lost blocks
-        allBlocks = _blocks.getAll();
-        for (var ii :int = _board.numChildren - 1; ii >= 0; ii--) {
-            block = (_board.getChildAt(ii) as Block);
-            if (allBlocks.indexOf(block) == -1) {
-                trace("Oh lordy! We have an orphan: " + block);
-            }
-        }
+//        // TEMP: look for lost blocks
+//        allBlocks = _blocks.getAll();
+//        for (var ii :int = _board.numChildren - 1; ii >= 0; ii--) {
+//            block = (_board.getChildAt(ii) as Block);
+//            if (allBlocks.indexOf(block) == -1) {
+//                trace("Oh lordy! We have an orphan: " + block);
+//            }
+//        }
     }
 
     protected function handleMouseMove (event :MouseEvent) :void
@@ -241,16 +237,19 @@ public class Match3 extends Sprite
 
             } else if (!block.isSwapping()) {
                 block.setSwapping((yy == 0) ? 1 : -1, stamp);
-                trace("Started swap: " + block);
             }
         }
 
         event.updateAfterEvent();
     }
 
-    protected function pickBlockColor () :uint
+    protected function pickBlockColor (yy :int) :uint
     {
-        var pick :int = Math.floor(Math.random() * COLORS.length);
+        var pick :int;
+        do {
+            pick = Math.floor(Math.random() * COLORS.length);
+        } while (pick == _lastInserted[yy]);
+        _lastInserted[yy] = pick;
         return uint(COLORS[pick]);
     }
 
@@ -261,12 +260,16 @@ public class Match3 extends Sprite
 
     protected var _blocks :BlockMap = new BlockMap();
 
+    /** Tracks the last-inserted color on each row. */
+    protected var _lastInserted :Array = [];
+
     /** Block colors. */
     protected static const COLORS :Array = [
         0xFF00EE, // pink
         0xFFFB00, // yellow
         0x00FFF2, // cyan
         0x04FF00, // green
+        0xFF0400, // red
         0x002BFF  // blue
     ];
 }
@@ -373,14 +376,6 @@ class BlockMap
         for each (var thing :* in _destroying) {
             arr.push(thing);
         }
-        /*
-        var len :int = _destroying.length;
-        arr.push.apply(_destroying);
-        if (len > 1 && (_destroying.length != len)) {
-            trace("GAWFUCK");
-        }
-        */
-        //trace("Added " + (arr.length - len) + " destroy items");
         return arr;
     }
 
