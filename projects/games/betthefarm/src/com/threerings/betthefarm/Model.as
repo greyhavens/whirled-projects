@@ -35,7 +35,6 @@ public class Model
         // listen for property changed and message events
         _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
         _control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
-
     }
 
     public function setView (view :View) :void
@@ -81,6 +80,8 @@ public class Model
             }
             arr.push(question);
         }
+
+        _playerCount = _control.seating.getPlayerIds().length;
     }
 
     public function gameDidEnd () :void
@@ -143,46 +144,48 @@ public class Model
      */
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
-        if (_control.amInControl()) {
-            var value :Object = event.value;
-            if (event.name == Model.MSG_BUZZ) {
-                if (_buzzer == -1) {
-                    _buzzer = value.player;
-                    _control.sendMessage(Model.MSG_BUZZ_CONTROL, value);
-                }
+        if (!_control.amInControl()) {
+            return;
+        }
+        var value :Object = event.value;
+        if (event.name == Model.MSG_BUZZ) {
+            if (_buzzer == -1) {
+                _buzzer = value.player;
+                _control.sendMessage(Model.MSG_BUZZ_CONTROL, value);
+            }
+            
+        } else if (event.name == Model.MSG_QUESTION_DONE) {
+            setTimeout(nextQuestion, 1000);
 
-            } else if (event.name == Model.MSG_QUESTION_DONE) {
-                setTimeout(nextQuestion, 1000);
-
-            } else if (event.name == Model.MSG_ANSWER_MULTI) {
-                if (_responses.get(value.player)) {
-                    throw new Error("Multiple answers from player: " + value.player);
-                }
-                if (value.correct) {
-                    if (_buzzer != -1) {
-                        // ignore late-coming correct answers
-                        _control.localChat("ignoring late-coming correct answer");
-                        return;
-                    }
-                    _buzzer = value.player;
-                }
-                _responses.put(value.player, true);
-                _control.sendMessage(Model.MSG_ANSWERED, value);
-                if (_responses.size() >= 4) {
-                    _control.sendMessage(Model.MSG_QUESTION_DONE, { });
-                }
-
-            } else if (event.name == Model.MSG_ANSWER_FREE) {
-                if (_buzzer != value.player) {
-                    _control.localChat("ignoring answer from non-buzzed player");
+        } else if (event.name == Model.MSG_ANSWER_MULTI) {
+            if (_responses.get(value.player)) {
+                throw new Error("Multiple answers from player: " + value.player);
+            }
+            if (value.correct) {
+                if (_buzzer != -1) {
+                    // ignore late-coming correct answers
+                    _control.localChat("ignoring late-coming correct answer");
                     return;
                 }
-                if (_responses[value.player]) {
-                    throw new Error("Multiple answers from player: " + value.player);
-                }
-                _responses[value.player] = true;
-                _control.sendMessage(Model.MSG_ANSWERED, value);
+                _buzzer = value.player;
             }
+            _responses.put(value.player, true);
+            _control.sendMessage(Model.MSG_ANSWERED, value);
+            _control.localChat("response size: " + _responses.size() + "/" + _playerCount);
+            if (_responses.size() >= _playerCount) {
+                _control.sendMessage(Model.MSG_QUESTION_DONE, { });
+            }
+            
+        } else if (event.name == Model.MSG_ANSWER_FREE) {
+            if (_buzzer != value.player) {
+                _control.localChat("ignoring answer from non-buzzed player");
+                return;
+            }
+            if (_responses[value.player]) {
+                throw new Error("Multiple answers from player: " + value.player);
+            }
+            _responses[value.player] = true;
+            _control.sendMessage(Model.MSG_ANSWERED, value);
         }
     }
 
@@ -190,9 +193,10 @@ public class Model
     {
         if (_control.amInControl()) {
             _buzzer = -1;
+            _responses = new HashMap();
             var nextIx :int = _control.get(Model.QUESTION_IX) + 1;
             if (nextIx >= getQuestionArray().length) {
-                _control.endRound(1);
+                _control.endRound(3);
                 return;
             }
             _control.set(Model.QUESTION_IX, nextIx);
@@ -210,6 +214,8 @@ public class Model
         }
         return result;
     }
+
+    protected var _playerCount :int;
 
     protected var _multiQuestions :Array;
     protected var _multiCategories :Object;

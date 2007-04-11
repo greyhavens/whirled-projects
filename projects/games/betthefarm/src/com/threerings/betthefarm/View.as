@@ -105,6 +105,10 @@ public class View extends Sprite
 
     public function roundDidEnd () :void
     {
+        _questionArea.visible = false;
+        _answerArea.visible = true;
+        _answerText.text = "ROUND OVER"; // TODO
+        _winnerText.text = "";
     }
 
     /**
@@ -378,6 +382,10 @@ public class View extends Sprite
 
     protected function multiAnswerClick (event :MouseEvent) :void
     {
+        if (_answered) {
+            // ignore multiple clicks
+            return;
+        }
         var field :TextField = event.target as TextField;
         _answered = true;
         var correct :Boolean =
@@ -428,7 +436,7 @@ public class View extends Sprite
         _roundText.text = "";
         _endTime = 0;
         if (_control.amInControl()) {
-            _control.sendMessage(Model.MSG_QUESTION_DONE, { });
+            _control.endRound(3);
         }
     }
 
