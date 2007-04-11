@@ -60,18 +60,20 @@ public class View extends Sprite
         var background :DisplayObject = new Content.BACKGROUND();
         addChild(background);
 
-        _playing = _control.seating.getMyPosition() != -1;
+        if (_control.isConnected()) {
+            _playing = _control.seating.getMyPosition() != -1;
 
-        addQuestionArea();
-        if (_playing) {
-            addAnswerArea();
-        }
-        addRoundArea();
+            addQuestionArea();
+            if (_playing) {
+                addAnswerArea();
+            }
+            addRoundArea();
 //        addDebugFrames();
 
-        _endTime = 0;
+            _endTime = 0;
 
-        _control.localChat("View created [playing=" + _playing + "]");
+            _control.localChat("View created [playing=" + _playing + "]");
+        }
     }
 
     public function gameDidStart () :void

@@ -158,7 +158,7 @@ public class Model
             setTimeout(nextQuestion, 1000);
 
         } else if (event.name == Model.MSG_ANSWER_MULTI) {
-            if (_responses.get(value.player)) {
+            if (_responses.containsKey(value.player)) {
                 throw new Error("Multiple answers from player: " + value.player);
             }
             if (value.correct) {
@@ -181,10 +181,10 @@ public class Model
                 _control.localChat("ignoring answer from non-buzzed player");
                 return;
             }
-            if (_responses[value.player]) {
+            if (_responses.containsKey(value.player)) {
                 throw new Error("Multiple answers from player: " + value.player);
             }
-            _responses[value.player] = true;
+            _responses.put(value.player, true);
             _control.sendMessage(Model.MSG_ANSWERED, value);
         }
     }
