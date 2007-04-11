@@ -1,0 +1,18 @@
+<!-- build configuration -->
+<project name="betthefarm" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"   value="BetTheFarm"/>
+  <property name="app.source-dir" value="src"/>
+  <property name="app.package-dir" value="com/threerings/betthefarm"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+  <!-- compiles and then jams the SWF into the document tree with the right filename -->
+  <property name="media_hash" value="4e98ac3f4640d8a6db2643aaaa4909044b7edd9a"/>
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/${media_hash}.swf"/>
+  </target>
+
+</project>
