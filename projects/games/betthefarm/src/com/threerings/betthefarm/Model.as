@@ -6,8 +6,12 @@ package com.threerings.betthefarm {
 import flash.utils.setTimeout;
 
 import com.whirled.WhirledGameControl;
+
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.PropertyChangedEvent;
+
+import com.threerings.util.Map;
+import com.threerings.util.HashMap;
 
 public class Model
 {
@@ -22,6 +26,7 @@ public class Model
     public static const MSG_ANSWERED :String = "answered";
     public static const MSG_BUZZ :String = "buzz";
     public static const MSG_BUZZ_CONTROL :String = "buzzControl";
+    public static const MSG_QUESTION_DONE :String = "questionDone";
 
     public function Model (control :WhirledGameControl)
     {
@@ -86,6 +91,7 @@ public class Model
     {
         if (_control.amInControl()) {
             _control.set(Model.QUESTION_IX, 0);
+            _responses = new HashMap();
             _buzzer = -1;
         }
     }
@@ -145,12 +151,13 @@ public class Model
                     _control.sendMessage(Model.MSG_BUZZ_CONTROL, value);
                 }
 
-            } else if (event.name == Model.MSG_ANSWERED) {
-                if (value.correct) {
-                    setTimeout(nextQuestion, 1000);
-                }
+            } else if (event.name == Model.MSG_QUESTION_DONE) {
+                setTimeout(nextQuestion, 1000);
 
             } else if (event.name == Model.MSG_ANSWER_MULTI) {
+                if (_responses.get(value.player)) {
+                    throw new Error("Multiple answers from player: " + value.player);
+                }
                 if (value.correct) {
                     if (_buzzer != -1) {
                         // ignore late-coming correct answers
@@ -159,13 +166,21 @@ public class Model
                     }
                     _buzzer = value.player;
                 }
+                _responses.put(value.player, true);
                 _control.sendMessage(Model.MSG_ANSWERED, value);
+                if (_responses.size() >= 4) {
+                    _control.sendMessage(Model.MSG_QUESTION_DONE, { });
+                }
 
             } else if (event.name == Model.MSG_ANSWER_FREE) {
                 if (_buzzer != value.player) {
                     _control.localChat("ignoring answer from non-buzzed player");
                     return;
                 }
+                if (_responses[value.player]) {
+                    throw new Error("Multiple answers from player: " + value.player);
+                }
+                _responses[value.player] = true;
                 _control.sendMessage(Model.MSG_ANSWERED, value);
             }
         }
@@ -200,6 +215,8 @@ public class Model
     protected var _multiCategories :Object;
     protected var _freeQuestions :Array;
     protected var _freeCategories :Object;
+
+    protected var _responses :Map;
 
     protected var _control :WhirledGameControl;
     protected var _view :View;

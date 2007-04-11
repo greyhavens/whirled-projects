@@ -158,33 +158,39 @@ public class View extends Sprite
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         var value :Object = event.value;
-        // TODO: When we have a question timer, introduce MSG_QUESTION_ENDED or somesuch.
-        if (event.name == Model.MSG_ANSWERED) {
-            _headshots[event.value.player].filters = [
-                new GlowFilter(value.correct ? 0x00FF00 : 0xFF0000, 1, 10, 10)
-            ];
-            if (value.correct) {
-                _questionArea.visible = false;
-                _answerArea.visible = true;
-                if (event.value.player == _control.getMyId()) {
-                    _answerText.text = "CORRECT!";
-                } else if (_answered) {
-                    _answerText.text = "INCORRECT!";
-                } else {
-                    // show anything if we didn't answer?
-                }
 
+        if (event.name == Model.MSG_QUESTION_DONE) {
+            _questionArea.visible = false;
+            _answerArea.visible = true;
+            if (value.winner == _control.getMyId()) {
+                _answerText.text = "CORRECT!";
+            } else if (_answered) {
+                _answerText.text = "INCORRECT!";
+            } else {
+                // show anything if we didn't answer?
+            }
+
+            if (value.winner > 0) {
                 _winnerText.text =
                     "The correct answer was given by " +
                     _control.getOccupantName(value.player) + ":\n\n" +
                     "\"" + _model.getCurrentQuestion().getCorrectAnswer() + "\"";
+            } else {
+                _winnerText.text =
+                    "The correct answer was:\n\n" +
+                    "\"" + _model.getCurrentQuestion().getCorrectAnswer() + "\"";
             }
 
+        } else if (event.name == Model.MSG_ANSWERED) {
+            _headshots[value.player].filters = [
+                new GlowFilter(value.correct ? 0x00FF00 : 0xFF0000, 1, 10, 10)
+            ];
+
         } else if (event.name == Model.MSG_BUZZ_CONTROL) {
-            _headshots[event.value.player].filters = [
+            _headshots[value.player].filters = [
                 new GlowFilter(0xFF00FF, 1, 10, 10)
             ];
-            if (event.value.player == _control.getMyId()) {
+            if (value.player == _control.getMyId()) {
                 // our buzz won!
                 _freeArea.visible = true;
                 stage.focus = _freeField;
@@ -422,7 +428,7 @@ public class View extends Sprite
         _roundText.text = "";
         _endTime = 0;
         if (_control.amInControl()) {
-            _control.endRound(1);
+            _control.sendMessage(Model.MSG_QUESTION_DONE, { });
         }
     }
 
