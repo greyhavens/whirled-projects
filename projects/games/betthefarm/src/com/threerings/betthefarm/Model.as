@@ -15,11 +15,11 @@ import com.threerings.util.HashMap;
 
 public class Model
 {
-    public static const QUESTION_IX :String = "qix";
-
     public static const ROUND_LIGHTNING :int = 1;
     public static const ROUND_BUZZ :int = 2;
     public static const ROUND_WAGER :int = 3;
+
+    public static const QUESTION_IX :String = "qIx";
 
     public static const MSG_ANSWER_MULTI :String = "answerMulti";
     public static const MSG_ANSWER_FREE :String = "answerFree";
@@ -44,27 +44,31 @@ public class Model
 
     public function gameDidStart () :void
     {
-        _control.localChat("Setting up questions...");
+        var question :Question;
+        var item :XML;
+        var set :Map;
 
-        _multiQuestions = new Array();
+       _control.localChat("Setting up questions...");
+
+        _multiQuestions = new HashMap();
         _multiCategories = new Object();
         var list :XMLList = MultipleChoice.QUESTIONS.MultipleChoice;
-        for each (var item :XML in list) {
-            var question :Question = new MultipleChoice(
+        for each (item in list) {
+            question = new MultipleChoice(
                 item.Category,
                 Question.EASY,
                 item.Question,
                 item.Correct,
                 toArray(item.Incorrect));
-            _multiQuestions.push(question);
-            var arr :Array = _multiCategories[question.category.toLowerCase()];
-            if (!arr) {
-                arr = _multiCategories[question.category.toLowerCase()] = new Array();
+            _multiQuestions.put(question, true);
+            set = _multiCategories[question.category.toLowerCase()];
+            if (!set) {
+                set = _multiCategories[question.category.toLowerCase()] = new HashMap();
             }
-            arr.push(question);
+            set.put(question, true);
         }
 
-        _freeQuestions = new Array();
+        _freeQuestions = new HashMap();
         _freeCategories = new Object();
         list = FreeResponse.QUESTIONS.FreeResponse;
         for each (item in list) {
@@ -73,12 +77,12 @@ public class Model
                 Question.EASY,
                 item.Question,
                 toArray(item.Correct));
-            _freeQuestions.push(question);
-            arr = _freeCategories[question.category.toLowerCase()];
-            if (!arr) {
-                arr = _freeCategories[question.category.toLowerCase()] = new Array();
+            _freeQuestions.put(question, true);
+            set = _freeCategories[question.category.toLowerCase()];
+            if (!set) {
+                set = _freeCategories[question.category.toLowerCase()] = new HashMap();
             }
-            arr.push(question);
+            set.put(question, true);
         }
 
         _playerCount = _control.seating.getPlayerIds().length;
@@ -91,9 +95,7 @@ public class Model
     public function roundDidStart () :void
     {
         if (_control.amInControl()) {
-            _control.set(Model.QUESTION_IX, 0);
-            _responses = new HashMap();
-            _buzzer = -1;
+            nextQuestion();
         }
     }
 
@@ -109,7 +111,7 @@ public class Model
         return Content.ROUND_TYPES[_control.getRound()-1];
     }
 
-    public function getQuestionArray () :Array
+    public function getQuestionSet () :HashMap
     {
         if (getCurrentRoundType() == ROUND_LIGHTNING || getCurrentRoundType() == ROUND_WAGER) {
             return _multiQuestions;
@@ -128,7 +130,8 @@ public class Model
 
     public function getCurrentQuestion () :Question
     {
-        return getQuestionArray()[_control.get(Model.QUESTION_IX) as int];
+        var keys :Array = getQuestionSet().keys();
+        return keys[_control.get(Model.QUESTION_IX) as int];
     }
 
     /**
@@ -155,6 +158,7 @@ public class Model
             }
             
         } else if (event.name == Model.MSG_QUESTION_DONE) {
+            getQuestionSet().remove(getCurrentQuestion());
             setTimeout(nextQuestion, 1000);
 
         } else if (event.name == Model.MSG_ANSWER_MULTI) {
@@ -194,12 +198,12 @@ public class Model
         if (_control.amInControl()) {
             _buzzer = -1;
             _responses = new HashMap();
-            var nextIx :int = _control.get(Model.QUESTION_IX) + 1;
-            if (nextIx >= getQuestionArray().length) {
+            var keys :Array = getQuestionSet().keys();
+            if (keys.length == 0) {
                 _control.endRound(3);
                 return;
             }
-            _control.set(Model.QUESTION_IX, nextIx);
+            _control.set(Model.QUESTION_IX, Math.random() * keys.length);
         }
     }
 
@@ -217,9 +221,9 @@ public class Model
 
     protected var _playerCount :int;
 
-    protected var _multiQuestions :Array;
+    protected var _multiQuestions :HashMap;
     protected var _multiCategories :Object;
-    protected var _freeQuestions :Array;
+    protected var _freeQuestions :HashMap;
     protected var _freeCategories :Object;
 
     protected var _responses :Map;
