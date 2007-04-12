@@ -12,7 +12,6 @@ import com.threerings.ezgame.PropertyChangedEvent;
 
 import com.threerings.util.Map;
 import com.threerings.util.HashMap;
-import com.threerings.util.Random;
 
 public class Model
 {
@@ -28,6 +27,7 @@ public class Model
     public static const MSG_BUZZ :String = "buzz";
     public static const MSG_BUZZ_CONTROL :String = "buzzControl";
     public static const MSG_QUESTION_DONE :String = "questionDone";
+    public static const MSG_CHOOSE_CATEGORY :String = "chooseCategory";
 
     public function Model (control :WhirledGameControl)
     {
@@ -157,10 +157,17 @@ public class Model
                 _buzzer = value.player;
                 _control.sendMessage(Model.MSG_BUZZ_CONTROL, value);
             }
-            
+
         } else if (event.name == Model.MSG_QUESTION_DONE) {
             getQuestionSet().remove(getCurrentQuestion());
-            setTimeout(nextQuestion, 1000);
+            if (getCurrentRoundType() == ROUND_LIGHTNING) {
+                // in lightning round we automatically move forward
+                setTimeout(nextQuestion, 1000);
+            }
+
+        } else if (event.name == Model.MSG_CHOOSE_CATEGORY) {
+            _control.localChat("Choosing category: " + value);
+            nextQuestion(value as String);
 
         } else if (event.name == Model.MSG_ANSWER_MULTI) {
             if (_responses.containsKey(value.player)) {
@@ -195,17 +202,25 @@ public class Model
         }
     }
 
-    protected function nextQuestion () :void
+    protected function nextQuestion (category :String = null) :void
     {
         if (_control.amInControl()) {
             _buzzer = -1;
             _responses = new HashMap();
-            var keys :Array = getQuestionSet().keys();
+            var keys :Array;
+            if (category == null) {
+                keys = getQuestionSet().keys();
+            } else {
+                keys = _multiCategories[category];
+                if (!keys) {
+                    throw new Error("unknown category: " + category);
+                }
+            }
             if (keys.length == 0) {
                 _control.endRound(3);
                 return;
             }
-            _control.set(Model.QUESTION_IX, _random.nextInt(keys.length));
+            _control.set(Model.QUESTION_IX, BetTheFarm.random.nextInt(keys.length));
         }
     }
 
@@ -234,7 +249,5 @@ public class Model
     protected var _view :View;
 
     protected var _buzzer :int;
-
-    protected var _random :Random = new Random();
 }
 }

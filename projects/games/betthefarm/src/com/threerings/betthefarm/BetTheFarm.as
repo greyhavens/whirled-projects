@@ -9,13 +9,16 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
-import com.threerings.ezgame.StateChangedEvent;
-
 import com.whirled.WhirledGameControl;
+
+import com.threerings.ezgame.StateChangedEvent;
+import com.threerings.util.Random;
 
 [SWF(width="900", height="500")]
 public class BetTheFarm extends Sprite
 {
+    public static var random :Random = new Random();
+
     /**
      * Creates and initializes our game.
      */

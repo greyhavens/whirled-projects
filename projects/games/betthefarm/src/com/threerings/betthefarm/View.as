@@ -37,6 +37,7 @@ import flash.ui.Keyboard;
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
 import flash.utils.setInterval;
+import flash.utils.setTimeout;
 
 import com.whirled.WhirledGameControl;
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -187,6 +188,10 @@ public class View extends Sprite
                     "\"" + _model.getCurrentQuestion().getCorrectAnswer() + "\"";
             }
 
+            if (_model.getCurrentRoundType() == Model.ROUND_BUZZ) {
+                setTimeout(chooseCategory, 1000);
+            }
+
         } else if (event.name == Model.MSG_ANSWERED) {
             _headshots[value.player].filters = [
                 new GlowFilter(value.correct ? 0x00FF00 : 0xFF0000, 1, 10, 10)
@@ -305,6 +310,14 @@ public class View extends Sprite
         }
 
         addChild(_questionArea);
+    }
+
+    protected function chooseCategory () :void
+    {
+        var categories :Array = _model.getMultiCategories();
+        var category :String = categories[BetTheFarm.random.nextInt(categories.length)];
+        _control.sendMessage(
+            Model.MSG_CHOOSE_CATEGORY, { player: _control.getMyId(), category: category });
     }
 
     protected function addAnswerArea () :void
