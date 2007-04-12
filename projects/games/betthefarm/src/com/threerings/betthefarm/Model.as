@@ -12,6 +12,7 @@ import com.threerings.ezgame.PropertyChangedEvent;
 
 import com.threerings.util.Map;
 import com.threerings.util.HashMap;
+import com.threerings.util.Random;
 
 public class Model
 {
@@ -35,15 +36,7 @@ public class Model
         // listen for property changed and message events
         _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
         _control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
-    }
 
-    public function setView (view :View) :void
-    {
-        _view = view;
-    }
-
-    public function gameDidStart () :void
-    {
         var question :Question;
         var item :XML;
         var set :Map;
@@ -84,7 +77,15 @@ public class Model
             }
             set.put(question, true);
         }
+    }
 
+    public function setView (view :View) :void
+    {
+        _view = view;
+    }
+
+    public function gameDidStart () :void
+    {
         _playerCount = _control.seating.getPlayerIds().length;
     }
 
@@ -181,6 +182,7 @@ public class Model
             }
             
         } else if (event.name == Model.MSG_ANSWER_FREE) {
+            _control.localChat("foo: " + value);
             if (_buzzer != value.player) {
                 _control.localChat("ignoring answer from non-buzzed player");
                 return;
@@ -203,7 +205,7 @@ public class Model
                 _control.endRound(3);
                 return;
             }
-            _control.set(Model.QUESTION_IX, Math.random() * keys.length);
+            _control.set(Model.QUESTION_IX, _random.nextInt(keys.length));
         }
     }
 
@@ -232,5 +234,7 @@ public class Model
     protected var _view :View;
 
     protected var _buzzer :int;
+
+    protected var _random :Random = new Random();
 }
 }
