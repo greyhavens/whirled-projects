@@ -129,9 +129,9 @@ public class View extends Sprite
     {
         debug("Property change: " + event);
         if (event.name == Model.QUESTION_IX) {
-            var question :Question = _model.getCurrentQuestion();
+            _question = _model.getCurrentQuestion();
             var ii :int;
-            debug("Showing question: " + question.question);
+            debug("Showing question: " + _question.question);
 
             // reset everything
             _freeArea.visible = false;
@@ -148,14 +148,14 @@ public class View extends Sprite
 
             _answerArea.visible = false;
             _questionArea.visible = true;
-            _questionText.text = question.question;
+            _questionText.text = _question.question;
 
-            if (question is MultipleChoice) {
-                var answers :Array = (question as MultipleChoice).incorrect.slice();
+            if (_question is MultipleChoice) {
+                var answers :Array = (_question as MultipleChoice).incorrect.slice();
                 var ix : int = int((1 + answers.length) * Math.random());
-                answers.splice(ix, 0, (question as MultipleChoice).correct);
+                answers.splice(ix, 0, (_question as MultipleChoice).correct);
                 if (answers.length > 4) {
-                    throw new Error("Too many answers: " + question.question);
+                    throw new Error("Too many answers: " + _question.question);
                 }
                 for (ii = 0; ii < answers.length; ii ++) {
                     _multiAnswer[ii].text = answers[ii];
@@ -189,11 +189,11 @@ public class View extends Sprite
                 _winnerText.text =
                     "The correct answer was given by " +
                     _control.getOccupantName(value.player) + ":\n\n" +
-                    "\"" + _model.getCurrentQuestion().getCorrectAnswer() + "\"";
+                    "\"" + _question.getCorrectAnswer() + "\"";
             } else {
                 _winnerText.text =
                     "The correct answer was:\n\n" +
-                    "\"" + _model.getCurrentQuestion().getCorrectAnswer() + "\"";
+                    "\"" + _question.getCorrectAnswer() + "\"";
             }
 
             if (_model.getCurrentRoundType() == Model.ROUND_BUZZ) {
@@ -242,7 +242,7 @@ public class View extends Sprite
         _questionArea.visible = false;
 
         var format :TextFormat = new TextFormat();
-        format.size = 16;
+        format.size = 14;
         format.font = Content.FONT_NAME;
         format.color = Content.FONT_COLOR;
 
@@ -418,8 +418,7 @@ public class View extends Sprite
         var field :TextField = event.target as TextField;
         _answered = true;
         var correct :Boolean =
-            (field.text.toLowerCase() ==
-             (_model.getCurrentQuestion() as MultipleChoice).correct.toLowerCase());
+            (field.text.toLowerCase() == _question.getCorrectAnswer().toLowerCase());
         _control.sendMessage(
             Model.MSG_ANSWER_MULTI, { player: _control.getMyId(), correct: correct });
     }
@@ -476,6 +475,8 @@ public class View extends Sprite
     protected var _answered :Boolean;
 
     protected var _endTime :int;
+
+    protected var _question :Question;
 
     protected var _headshots :Dictionary;
 
