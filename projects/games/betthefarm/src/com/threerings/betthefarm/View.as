@@ -40,6 +40,7 @@ import flash.utils.setInterval;
 import flash.utils.setTimeout;
 
 import com.whirled.WhirledGameControl;
+
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 
@@ -48,6 +49,13 @@ import com.threerings.ezgame.MessageReceivedEvent;
  */
 public class View extends Sprite
 {
+    public function debug (str :String) :void
+    {
+        if (BetTheFarm.DEBUG) {
+            _control.localChat(str);
+        }
+    }
+
     public function View (control :WhirledGameControl, model :Model)
     {
         _control = control;
@@ -73,30 +81,30 @@ public class View extends Sprite
 
             _endTime = 0;
 
-            _control.localChat("View created [playing=" + _playing + "]");
+            debug("View created [playing=" + _playing + "]");
         }
     }
 
     public function gameDidStart () :void
     {
         var players :Array = _control.seating.getPlayerIds();
-        _control.localChat("Players: " + players);
+        debug("Players: " + players);
         _headshots = new Dictionary();
         for (var ii :int = 0; ii < players.length; ii ++) {
             requestHeadshot(players[ii], ii);
         }
         setInterval(updateTimer, 100);
-        _control.localChat("Game started.");
+        debug("Game started.");
     }
 
     public function gameDidEnd () :void
     {
-        _control.localChat("Game ended!");
+        debug("Game ended!");
     }
 
     public function roundDidStart () :void
     {
-        _control.localChat("Beginning round: " + _control.getRound());
+        debug("Beginning round: " + _control.getRound());
         _roundText.text = Content.ROUND_NAMES[_control.getRound()-1];
         var duration :int = Content.ROUND_DURATIONS[_control.getRound()-1];
         if (duration > 0) {
@@ -119,11 +127,11 @@ public class View extends Sprite
      */
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-        _control.localChat("Property change: " + event);
+        debug("Property change: " + event);
         if (event.name == Model.QUESTION_IX) {
             var question :Question = _model.getCurrentQuestion();
             var ii :int;
-            _control.localChat("Showing question: " + question.question);
+            debug("Showing question: " + question.question);
 
             // reset everything
             _freeArea.visible = false;
@@ -217,7 +225,7 @@ public class View extends Sprite
             headshot.x = (Content.HEADSHOT_LOCS[ii] as Point).x - headshot.width/2;
             headshot.y = (Content.HEADSHOT_LOCS[ii] as Point).y - headshot.height/2;
             addChild(headshot);
-            _control.localChat("Setting headshot for OID " + oid);
+            debug("Setting headshot for OID " + oid);
             _headshots[oid] = headshot;
             headshot.filters = [
                 new GlowFilter(0xFFFFFF, 1, 10, 10)
@@ -273,10 +281,16 @@ public class View extends Sprite
                 0, 0, Content.BUZZBUTTON_RECT.width, Content.BUZZBUTTON_RECT.height);
             _buzzButton.addEventListener(MouseEvent.CLICK, buzzClick);
 
+            format = new TextFormat();
+            format.size = 24;
+            format.font = Content.FONT_NAME;
+            format.color = Content.FONT_COLOR;
+
             var buzzText :TextField = new TextField();
             buzzText.autoSize = TextFieldAutoSize.CENTER;
             buzzText.wordWrap = false;
             buzzText.text = "BUZZ!";
+            buzzText.y = (_buzzButton.height - buzzText.height)/2;
             _buzzButton.addChild(buzzText);
 
             _questionArea.addChild(_buzzButton);

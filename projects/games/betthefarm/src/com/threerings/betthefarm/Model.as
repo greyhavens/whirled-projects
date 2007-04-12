@@ -29,6 +29,13 @@ public class Model
     public static const MSG_QUESTION_DONE :String = "questionDone";
     public static const MSG_CHOOSE_CATEGORY :String = "chooseCategory";
 
+    public function debug (str :String) :void
+    {
+        if (BetTheFarm.DEBUG) {
+            _control.localChat(str);
+        }
+    }
+
     public function Model (control :WhirledGameControl)
     {
         _control = control;
@@ -41,7 +48,7 @@ public class Model
         var item :XML;
         var set :Map;
 
-       _control.localChat("Setting up questions...");
+       debug("Setting up questions...");
 
         _multiQuestions = new HashMap();
         _multiCategories = new Object();
@@ -166,7 +173,7 @@ public class Model
             }
 
         } else if (event.name == Model.MSG_CHOOSE_CATEGORY) {
-            _control.localChat("Choosing category: " + value);
+            debug("Choosing category: " + value);
             nextQuestion(value as String);
 
         } else if (event.name == Model.MSG_ANSWER_MULTI) {
@@ -176,22 +183,22 @@ public class Model
             if (value.correct) {
                 if (_buzzer != -1) {
                     // ignore late-coming correct answers
-                    _control.localChat("ignoring late-coming correct answer");
+                    debug("ignoring late-coming correct answer");
                     return;
                 }
                 _buzzer = value.player;
             }
             _responses.put(value.player, true);
             _control.sendMessage(Model.MSG_ANSWERED, value);
-            _control.localChat("response size: " + _responses.size() + "/" + _playerCount);
+            debug("response size: " + _responses.size() + "/" + _playerCount);
             if (_responses.size() >= _playerCount) {
                 _control.sendMessage(Model.MSG_QUESTION_DONE, { });
             }
             
         } else if (event.name == Model.MSG_ANSWER_FREE) {
-            _control.localChat("foo: " + value);
+            debug("foo: " + value);
             if (_buzzer != value.player) {
-                _control.localChat("ignoring answer from non-buzzed player");
+                debug("ignoring answer from non-buzzed player");
                 return;
             }
             if (_responses.containsKey(value.player)) {
@@ -199,6 +206,9 @@ public class Model
             }
             _responses.put(value.player, true);
             _control.sendMessage(Model.MSG_ANSWERED, value);
+            if (_responses.size() >= _playerCount) {
+                _control.sendMessage(Model.MSG_QUESTION_DONE, { });
+            }
         }
     }
 
