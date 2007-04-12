@@ -6,7 +6,7 @@
 //    question. When the right answer comes in, display it along with who got it
 //    right, and possibly the 'info' field.
 //  - Implement the 'category choice' widget.
-//  - Implement the entire fucking wager round!
+//  - Implement the entire wager round!
 
 package com.threerings.betthefarm {
 
