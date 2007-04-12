@@ -3,7 +3,10 @@
 
 package com.threerings.betthefarm {
 
+import com.threerings.util.Hashable;
+
 public class Question
+    implements Hashable
 {
     public static const EASY :int = 1;
     public static const MEDIUM :int = 2;
@@ -19,6 +22,19 @@ public class Question
         this.category = category;
         this.difficulty = difficulty;
         this.question = question;
+    }
+
+    public function hashCode () :int
+    {
+        // this can be pretty simple for now
+        return question.length +
+            43 * (question.charCodeAt(question.length/4) +
+                  43 * question.charCodeAt(question.length/2));
+    }
+
+    public function equals (other :Object) :Boolean
+    {
+        return question == other.question;
     }
 
     public function getCorrectAnswer () :String
