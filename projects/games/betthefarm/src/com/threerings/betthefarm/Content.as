@@ -25,10 +25,10 @@ public class Content
         "Wager Round"
     ];
 
-    /** The duration of the rounds, where applicable; measured in seconds. */
+    /** The duration of the rounds, where applicable; measured in seconds or questions. */
     public static const ROUND_DURATIONS :Array = [
         10,
-        30,
+        5,
         -1,
     ];
 

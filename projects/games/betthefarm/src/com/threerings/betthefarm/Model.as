@@ -103,6 +103,16 @@ public class Model
     public function roundDidStart () :void
     {
         if (_control.amInControl()) {
+            if (getCurrentRoundType() == Model.ROUND_LIGHTNING) {
+                var duration :int = Content.ROUND_DURATIONS[_control.getRound()-1];
+                _roundTimeout = setTimeout(doEndRound, duration * 1000);
+                _questionCount = 0;
+            } else if (getCurrentRoundType() == Model.ROUND_BUZZ) {
+                _roundTimeout = 0;
+                _questionCount = Content.ROUND_DURATIONS[_control.getRound()-1];
+            } else {
+                _roundTimeout = _questionCount = 0;
+            }
             nextQuestion();
         }
     }
@@ -121,6 +131,9 @@ public class Model
     {
         if (_questionTimeout != 0) {
             clearTimeout(_questionTimeout);
+        }
+        if (_roundTimeout != 0) {
+            clearTimeout(_roundTimeout);
         }
     }
 
@@ -180,9 +193,14 @@ public class Model
             if (getCurrentRoundType() == ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
                 _questionTimeout = setTimeout(nextQuestion, 1000);
-                debug("Timeout: " + _questionTimeout);
+            } else if (getCurrentRoundType() == ROUND_BUZZ) {
+                // in the buzz round we only do N questions
+                _questionCount -= 1;
+                if (_questionCount <= 0) {
+                    doEndRound();
+                }
+                debug("Question count: " + _questionCount);
             }
-
         } else if (event.name == Model.MSG_CHOOSE_CATEGORY) {
             debug("Choosing category: " + value);
             nextQuestion(value as String);
@@ -206,7 +224,7 @@ public class Model
                 _control.sendMessage(
                     Model.MSG_QUESTION_DONE, value.correct ? { winner: value.player } : { });
             }
-            
+
         } else if (event.name == Model.MSG_ANSWER_FREE) {
             if (_buzzer != value.player) {
                 debug("ignoring answer from non-buzzed player");
@@ -222,6 +240,12 @@ public class Model
                     Model.MSG_QUESTION_DONE, value.correct ? { winner: value.player } : { });
             }
         }
+    }
+
+    protected function doEndRound () :void
+    {
+        _roundTimeout = 0;
+        _control.endRound(3);
     }
 
     protected function nextQuestion (category :String = null) :void
@@ -240,7 +264,7 @@ public class Model
                 }
             }
             if (keys.length == 0) {
-                _control.endRound(3);
+                doEndRound();
                 return;
             }
             _control.set(Model.QUESTION_IX, BetTheFarm.random.nextInt(keys.length));
@@ -265,6 +289,9 @@ public class Model
     protected var _multiCategories :Object;
     protected var _freeQuestions :HashMap;
     protected var _freeCategories :Object;
+
+    protected var _questionCount :uint;
+    protected var _roundTimeout :uint = 0;
 
     protected var _responses :Map;
 

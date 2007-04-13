@@ -108,16 +108,14 @@ public class View extends Sprite
     {
         debug("Beginning round: " + _control.getRound());
         _roundText.text = Content.ROUND_NAMES[_control.getRound()-1];
-        var duration :int = Content.ROUND_DURATIONS[_control.getRound()-1];
-        if (duration > 0) {
-            _endTime = getTimer()/1000 + duration;
-        } else {
-            _endTime = 0;
+        if (_model.getCurrentRoundType() == Model.ROUND_LIGHTNING) {
+            _endTime = getTimer()/1000 + Content.ROUND_DURATIONS[_control.getRound()-1];
         }
     }
 
     public function roundDidEnd () :void
     {
+        _endTime = 0;
         _questionArea.visible = false;
         _question = null;
         _answerArea.visible = true;
@@ -285,8 +283,8 @@ public class View extends Sprite
             _buzzButton.x = Content.BUZZBUTTON_RECT.x;
             _buzzButton.y = Content.BUZZBUTTON_RECT.y;
             _buzzButton.graphics.beginFill(0xcc2020);
-            _buzzButton.graphics.drawRect(
-                0, 0, Content.BUZZBUTTON_RECT.width, Content.BUZZBUTTON_RECT.height);
+            _buzzButton.graphics.drawRoundRect(
+                0, 0, Content.BUZZBUTTON_RECT.width, Content.BUZZBUTTON_RECT.height, 8);
             _buzzButton.addEventListener(MouseEvent.CLICK, buzzClick);
 
             format = new TextFormat();
@@ -465,17 +463,8 @@ public class View extends Sprite
         if (_endTime == 0) {
             return;
         }
-        var timer :int = getTimer()/1000;
-        if (timer < _endTime) {
-            _roundText.text = Content.ROUND_NAMES[_control.getRound()-1] + 
-                " (" + (_endTime - timer) + ")";
-            return;
-        }
-        _roundText.text = "";
-        _endTime = 0;
-        if (_control.amInControl()) {
-            _control.endRound(3);
-        }
+        _roundText.text = Content.ROUND_NAMES[_control.getRound()-1] + 
+            " (" + Math.max(0, _endTime - uint(getTimer()/1000)) + ")";
     }
 
     protected var _control :WhirledGameControl;
@@ -486,7 +475,7 @@ public class View extends Sprite
 
     protected var _answered :Boolean;
 
-    protected var _endTime :int;
+    protected var _endTime :uint;
 
     protected var _question :Question;
 
