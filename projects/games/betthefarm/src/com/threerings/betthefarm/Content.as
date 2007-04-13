@@ -70,7 +70,7 @@ public class Content
         new Point(851, 316),
     ];
 
-    [Embed(source="Background.jpg")]
+    [Embed(source="../../../../rsrc/Background.jpg")]
     public static const BACKGROUND :Class;
 
 }
