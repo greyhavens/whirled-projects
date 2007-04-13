@@ -2,6 +2,8 @@ package {
 
 import flash.events.Event;
 
+import flash.geom.Point;
+
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 
@@ -32,17 +34,16 @@ public class Board
         var sub :Submarine;
         for (ii = 0; ii < playerIds.length; ii++) {
             var playerId :int = (playerIds[ii] as int);
-            var xx :int = getStartingX(ii);
-            var yy :int = getStartingY(ii);
+            var p :Point = getStartingPosition(ii);
 
             sub = new Submarine(
-                ii, _gameCtrl.getOccupantName(playerId), xx, yy, this);
+                ii, _gameCtrl.getOccupantName(playerId), p.x, p.y, this);
             _gameCtrl.getUserCookie(playerId, sub.gotPlayerCookie);
             _seaDisplay.addChild(sub);
             _subs[ii] = sub;
 
             // mark this sub's starting location as traversable
-            setTraversable(xx, yy);
+            setTraversable(p.x, p.y);
         }
 
         // if we're a player, put our submarine last, so that it
@@ -367,70 +368,35 @@ public class Board
     /**
      * Return the starting x coordinate for the specified player.
      */
-    protected function getStartingX (playerIndex :int) :int
+    protected function getStartingPosition (playerIndex :int) :Point
     {
         switch (playerIndex) {
         default:
             trace("Cannot yet handle " + (playerIndex + 1) + " player games!");
             // fall through to 0
         case 0:
-            return 0;
+            return new Point(0, 0);
 
         case 1:
-            return (_width - 1);
+            return new Point(_width - 1, _height - 1);
 
         case 2:
-            return 0;
+            return new Point(0, _height - 1);
 
         case 3:
-            return (_width - 1);
+            return new Point(_width - 1, 0);
 
         case 4:
-            return 0;
+            return new Point(0, _height / 2);
 
         case 5:
-            return (_width - 1);
+            return new Point(_width - 1, _height / 2);
 
         case 6:
-            return (_width / 2);
+            return new Point(_width / 2, 0);
 
         case 7:
-            return (_width / 2);
-        }
-    }
-
-    /**
-     * Return the starting y coordinate for the specified player.
-     */
-    protected function getStartingY (playerIndex :int) :int
-    {
-        switch (playerIndex) {
-        default:
-            // don't bother logging again
-            // fall through to 0
-        case 0:
-            return 0;
-
-        case 1:
-            return (_height - 1);
-
-        case 2:
-            return (_height - 1);
-
-        case 3:
-            return 0;
-
-        case 4:
-            return (_height / 2);
-
-        case 5:
-            return (_height / 2);
-
-        case 6:
-            return 0;
-
-        case 7:
-            return (_height - 1);
+            return new Point(_width / 2, _height - 1);
         }
     }
 

@@ -46,16 +46,16 @@ public class Submarine extends BaseSprite
         _nameLabel.x = (SeaDisplay.TILE_SIZE - _nameLabel.textWidth) / 2;
         addChild(_nameLabel);
 
-        _statsLabel = new TextField();
-        _statsLabel.autoSize = TextFieldAutoSize.CENTER;
-        _statsLabel.selectable = false;
-        _statsLabel.text = "0 0";
-        _statsLabel.textColor = uint(0x000000);
-        _statsLabel.backgroundColor = uint(0xCCFFCC);
-        _statsLabel.background = true;
-        _statsLabel.y = _nameLabel.y - (_statsLabel.textHeight + NAME_PADDING);
-        _statsLabel.x = (SeaDisplay.TILE_SIZE - _statsLabel.textWidth) / 2;
-        addChild(_statsLabel);
+//        _statsLabel = new TextField();
+//        _statsLabel.autoSize = TextFieldAutoSize.CENTER;
+//        _statsLabel.selectable = false;
+//        _statsLabel.text = "0 0";
+//        _statsLabel.textColor = uint(0x000000);
+//        _statsLabel.backgroundColor = uint(0xCCFFCC);
+//        _statsLabel.background = true;
+//        _statsLabel.y = _nameLabel.y - (_statsLabel.textHeight + NAME_PADDING);
+//        _statsLabel.x = (SeaDisplay.TILE_SIZE - _statsLabel.textWidth) / 2;
+//        addChild(_statsLabel);
 
         updateVisual();
         updateLocation();
@@ -260,7 +260,9 @@ public class Submarine extends BaseSprite
         }
         _avatar.gotoAndStop(orientToFrame());
 
-        _statsLabel.text = "" + _totalKills + " " + _totalDeaths;
+        if (_statsLabel != null) {
+            _statsLabel.text = "" + _totalKills + " " + _totalDeaths;
+        }
     }
 
     protected function orientToFrame () :int

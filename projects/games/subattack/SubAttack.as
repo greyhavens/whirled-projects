@@ -15,6 +15,8 @@ import flash.ui.Keyboard;
 
 import flash.utils.getTimer; // function import
 
+import com.threerings.flash.KeyRepeatBlocker;
+
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
@@ -62,7 +64,7 @@ public class SubAttack extends Sprite
         _myIndex = _gameCtrl.seating.getMyPosition();
 
         if (_myIndex != -1) {
-            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+            new KeyRepeatBlocker(_gameCtrl).addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
 
             addEventListener(Event.ENTER_FRAME, enterFrame);
         }
