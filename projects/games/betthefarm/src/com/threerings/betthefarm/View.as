@@ -37,6 +37,7 @@ import flash.ui.Keyboard;
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
 import flash.utils.setInterval;
+import flash.utils.clearInterval;
 import flash.utils.setTimeout;
 
 import com.whirled.WhirledGameControl;
@@ -94,7 +95,7 @@ public class View extends Sprite
         for (var ii :int = 0; ii < players.length; ii ++) {
             requestHeadshot(players[ii], ii);
         }
-        setInterval(updateTimer, 100);
+        _updateTimer = setInterval(updateTimer, 100);
         debug("Game started.");
     }
 
@@ -122,6 +123,11 @@ public class View extends Sprite
         _answerArea.visible = true;
         _answerText.text = "ROUND OVER"; // TODO
         _winnerText.text = "";
+    }
+
+    public function shutdown () :void
+    {
+        clearInterval(_updateTimer);
     }
 
     /**
@@ -476,6 +482,8 @@ public class View extends Sprite
     protected var _model :Model;
 
     protected var _playing :Boolean;
+    protected var _updateTimer :uint;
+
     protected var _answered :Boolean;
 
     protected var _endTime :int;

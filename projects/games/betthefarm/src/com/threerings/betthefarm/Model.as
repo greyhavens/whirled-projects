@@ -117,6 +117,13 @@ public class Model
         }
     }
 
+    public function shutdown () :void
+    {
+        if (_questionTimeout != 0) {
+            clearTimeout(_questionTimeout);
+        }
+    }
+
     public function getCurrentRoundType () :int
     {
         return Content.ROUND_TYPES[_control.getRound()-1];

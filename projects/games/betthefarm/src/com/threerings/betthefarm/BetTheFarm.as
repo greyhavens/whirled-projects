@@ -17,7 +17,7 @@ import com.threerings.util.Random;
 [SWF(width="900", height="500")]
 public class BetTheFarm extends Sprite
 {
-    public static const DEBUG :Boolean = true;
+    public static const DEBUG :Boolean = false;
 
     public static var random :Random = new Random();
 
@@ -68,7 +68,8 @@ public class BetTheFarm extends Sprite
 
     protected function handleUnload (event :Event) :void
     {
-        // TODO: clean up things that need cleaning up
+        _model.shutdown();
+        _view.shutdown();
     }
 
     protected var _control :WhirledGameControl;
