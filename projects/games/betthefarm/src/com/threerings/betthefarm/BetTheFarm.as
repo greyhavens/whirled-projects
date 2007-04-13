@@ -17,7 +17,7 @@ import com.threerings.util.Random;
 [SWF(width="900", height="500")]
 public class BetTheFarm extends Sprite
 {
-    public static const DEBUG :Boolean = false;
+    public static const DEBUG :Boolean = true;
 
     public static var random :Random = new Random();
 

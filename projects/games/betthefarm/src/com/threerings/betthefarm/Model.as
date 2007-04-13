@@ -198,7 +198,6 @@ public class Model
             }
             
         } else if (event.name == Model.MSG_ANSWER_FREE) {
-            debug("foo: " + value);
             if (_buzzer != value.player) {
                 debug("ignoring answer from non-buzzed player");
                 return;

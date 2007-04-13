@@ -435,12 +435,14 @@ public class View extends Sprite
             return;
         }
         _answered = true;
-        _freeField.text = "";
 
         var answer :String = _freeField.text.toLowerCase();
+        _freeField.text = "";
+
         var answers :Array = (_model.getCurrentQuestion() as FreeResponse).correct;
         var correct :Boolean = false;
         for (var ii :int = 0; ii < answers.length; ii ++) {
+            debug("Comparing '" + answer + "' to '" + answers[ii].toLowerCase() + "'");
             if (answers[ii].toLowerCase() == answer) {
                 _control.sendMessage(
                     Model.MSG_ANSWER_FREE, { player: _control.getMyId(), correct: true });
