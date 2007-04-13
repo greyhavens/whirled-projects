@@ -51,7 +51,7 @@ public class FreeResponse extends Question
    </FreeResponse>
    <FreeResponse>
     <Category>Movies</Category>
-    <Question>What was the name of the female truck driver who gave Pee-wee a ride in &quot;&quot;Pee-wee's Big Adventure&quot; (1985)?</Question>
+    <Question>What was the name of the female truck driver who gave Pee-wee a ride in &quot;Pee-wee's Big Adventure&quot; (1985)?</Question>
     <Correct>Large Marge</Correct>
     <Correct>Marge</Correct>
     <Info>Pee-wee was hitchhiking across the country in pursuit of his stolen bike, and Large Marge stopped to give him a ride.</Info>
@@ -84,7 +84,7 @@ public class FreeResponse extends Question
    </FreeResponse>
    <FreeResponse>
     <Category>Movies</Category>
-    <Question>What was the title of the innovative new book written by the psychiatrist played by Richard Dreyfuss in &quot;&quot;What About Bob?&quot; (1991)?</Question>
+    <Question>What was the title of the innovative new book written by the psychiatrist played by Richard Dreyfuss in &quot;What About Bob?&quot; (1991)?</Question>
     <Correct>Baby Steps</Correct>
     <Info>Unfortunately for Dreyfuss' character Leo, Bob (Bill Murray) wasn't satisfied with the book and followed Leo and his family to their New Hampshire vacation destination.</Info>
    </FreeResponse>

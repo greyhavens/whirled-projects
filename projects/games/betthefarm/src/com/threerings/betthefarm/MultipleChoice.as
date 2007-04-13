@@ -143,7 +143,7 @@ public class MultipleChoice extends Question
    </MultipleChoice>
    <MultipleChoice>
     <Category>Movies</Category>
-    <Question>What game did Veronica and the Heathers play at Veronica's house in &quot;&quot;Heathers&quot; (1989)?</Question>
+    <Question>What game did Veronica and the Heathers play at Veronica's house in &quot;Heathers&quot; (1989)?</Question>
     <Correct>Croquet</Correct>
     <Incorrect>Badminton</Incorrect>
     <Incorrect>Basketball</Incorrect>
@@ -161,7 +161,7 @@ public class MultipleChoice extends Question
    </MultipleChoice>
    <MultipleChoice>
     <Category>Movies</Category>
-    <Question>What dance was Chunk known for in &quot;&quot;The Goonies&quot; (1985)?</Question>
+    <Question>What dance was Chunk known for in &quot;The Goonies&quot; (1985)?</Question>
     <Correct>The Truffle Shuffle</Correct>
     <Incorrect>The Schmaltz Waltz</Incorrect>
     <Incorrect>The Shopping Cart</Incorrect>
@@ -170,7 +170,7 @@ public class MultipleChoice extends Question
    </MultipleChoice>
    <MultipleChoice>
     <Category>Movies</Category>
-    <Question>What was the name of the female truck driver who gave Pee-wee a ride in &quot;&quot;Pee-wee's Big Adventure&quot; (1985)?</Question>
+    <Question>What was the name of the female truck driver who gave Pee-wee a ride in &quot;Pee-wee's Big Adventure&quot; (1985)?</Question>
     <Correct>Large Marge</Correct>
     <Incorrect>Dolores</Incorrect>
     <Incorrect>Rules Jules</Incorrect>
@@ -188,7 +188,7 @@ public class MultipleChoice extends Question
    </MultipleChoice>
    <MultipleChoice>
     <Category>Entertainment</Category>
-    <Question>The musical &quot;&quot;Cats&quot; is based on a book of poetry about cats. Which American born author wrote these poems?</Question>
+    <Question>The musical &quot;Cats&quot; is based on a book of poetry about cats. Which American born author wrote these poems?</Question>
     <Correct>T.S.Eliot</Correct>
     <Incorrect>Carl Sandburg</Incorrect>
     <Incorrect>Walt Whitman</Incorrect>
@@ -269,7 +269,7 @@ public class MultipleChoice extends Question
    </MultipleChoice>
    <MultipleChoice>
     <Category>Movies</Category>
-    <Question>What was the title of the innovative new book written by the psychiatrist played by Richard Dreyfuss in &quot;&quot;What About Bob?&quot; (1991)?</Question>
+    <Question>What was the title of the innovative new book written by the psychiatrist played by Richard Dreyfuss in &quot;What About Bob?&quot; (1991)?</Question>
     <Correct>Baby Steps</Correct>
     <Incorrect>Walk this Way</Incorrect>
     <Incorrect>Facing Your Fears</Incorrect>
@@ -332,7 +332,7 @@ public class MultipleChoice extends Question
    </MultipleChoice>
    <MultipleChoice>
     <Category>Movies</Category>
-    <Question>At what kind of function or ceremony did the parents in &quot;&quot;The Addams Family&quot; (1991) meet?</Question>
+    <Question>At what kind of function or ceremony did the parents in &quot;The Addams Family&quot; (1991) meet?</Question>
     <Correct>Funeral</Correct>
     <Incorrect>Baptism</Incorrect>
     <Incorrect>High School Prom</Incorrect>
@@ -350,7 +350,7 @@ public class MultipleChoice extends Question
    </MultipleChoice>
    <MultipleChoice>
     <Category>Movies</Category>
-    <Question>Which cleaning device was Mary Sanderson (Kathy Najimy) forced to use instead of a broom in &quot;&quot;Hocus Pocus&quot; (1993)?</Question>
+    <Question>Which cleaning device was Mary Sanderson (Kathy Najimy) forced to use instead of a broom in &quot;Hocus Pocus&quot; (1993)?</Question>
     <Correct>vacuum cleaner</Correct>
     <Incorrect>mop</Incorrect>
     <Incorrect>dust buster</Incorrect>
@@ -359,7 +359,7 @@ public class MultipleChoice extends Question
    </MultipleChoice>
    <MultipleChoice>
     <Category>Movies</Category>
-    <Question>Marisa Tomei's character in &quot;&quot;My Cousin Vinny&quot; (1992) was an out-of-work what?</Question>
+    <Question>Marisa Tomei's character in &quot;My Cousin Vinny&quot; (1992) was an out-of-work what?</Question>
     <Correct>Hairdresser</Correct>
     <Incorrect>Lawyer</Incorrect>
     <Incorrect>Teacher</Incorrect>
@@ -422,7 +422,7 @@ public class MultipleChoice extends Question
    </MultipleChoice>
    <MultipleChoice>
     <Category>General</Category>
-    <Question>What gem did Hindus refer to as the &quot;&quot;The Lord of the Gems&quot;?</Question>
+    <Question>What gem did Hindus refer to as the &quot;The Lord of the Gems&quot;?</Question>
     <Correct>Ruby</Correct>
     <Incorrect>Moonstone</Incorrect>
     <Incorrect>Emerald</Incorrect>
@@ -431,7 +431,7 @@ public class MultipleChoice extends Question
    </MultipleChoice>
    <MultipleChoice>
     <Category>Sports</Category>
-    <Question>What is the only &quot;&quot;Grand Slam&quot; tennis tournament played south of the equator?</Question>
+    <Question>What is the only &quot;Grand Slam&quot; tennis tournament played south of the equator?</Question>
     <Correct>The Australian Open</Correct>
     <Incorrect>New Zealand Open</Incorrect>
     <Incorrect>South American Cup</Incorrect>
@@ -553,7 +553,7 @@ public class MultipleChoice extends Question
     <Incorrect>Betty Grable</Incorrect>
     <Incorrect>Jayne Mansfield</Incorrect>
     <Incorrect>Sophia Loren</Incorrect>
-    <Info>The photo used was one taken in 1949 and used on a calendar. There was no date on the cover of the first issue of &quot;&quot;Playboy&quot; as Hugh Hefner wasn't sure there would be a second issue!</Info>
+    <Info>The photo used was one taken in 1949 and used on a calendar. There was no date on the cover of the first issue of &quot;Playboy&quot; as Hugh Hefner wasn't sure there would be a second issue!</Info>
    </MultipleChoice>
    <MultipleChoice>
     <Category>Entertainment</Category>
@@ -634,7 +634,7 @@ public class MultipleChoice extends Question
     <Incorrect>Happy Days</Incorrect>
     <Incorrect>Laverne and Shirley</Incorrect>
     <Incorrect>The Jeffersons</Incorrect>
-    <Info>The multiple Emmy winning show &quot;&quot;All in the Family&quot; was first seen in January 1971. The opening theme song was &quot;Those Were the Days&quot;.</Info>
+    <Info>The multiple Emmy winning show &quot;All in the Family&quot; was first seen in January 1971. The opening theme song was &quot;Those Were the Days&quot;.</Info>
    </MultipleChoice>
  </Questions>;
 }
