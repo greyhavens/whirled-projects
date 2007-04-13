@@ -52,6 +52,7 @@ public class View extends Sprite
     public function debug (str :String) :void
     {
         if (BetTheFarm.DEBUG) {
+            trace(str);
             _control.localChat(str);
         }
     }
@@ -188,7 +189,7 @@ public class View extends Sprite
             if (value.winner > 0) {
                 _winnerText.text =
                     "The correct answer was given by " +
-                    _control.getOccupantName(value.player) + ":\n\n" +
+                    _control.getOccupantName(value.winner) + ":\n\n" +
                     "\"" + _question.getCorrectAnswer() + "\"";
             } else {
                 _winnerText.text =
@@ -342,20 +343,20 @@ public class View extends Sprite
         _answerArea.visible = false;
 
         var format :TextFormat = new TextFormat();
-        format.size = 36;
+        format.size = 24;
         format.font = Content.FONT_NAME;
         format.color = Content.FONT_COLOR;
 
         _answerText = new TextField();
         _answerText.width = Content.ANSWER_RECT.width;
         _answerText.height = Content.ANSWER_RECT.height;
-        _answerText.autoSize = TextFieldAutoSize.CENTER;
-        _answerText.wordWrap = false;
+        _answerText.autoSize = TextFieldAutoSize.NONE;
+        _answerText.wordWrap = true;
         _answerText.defaultTextFormat = format;
         _answerArea.addChild(_answerText);
 
         format = new TextFormat();
-        format.size = 18;
+        format.size = 16;
         format.font = Content.FONT_NAME;
         format.color = Content.FONT_COLOR;
 
@@ -363,8 +364,8 @@ public class View extends Sprite
         _winnerText.y = _answerText.y + 60;
         _winnerText.width = Content.ANSWER_RECT.width;
         _winnerText.height = Content.ANSWER_RECT.height;
-        _winnerText.autoSize = TextFieldAutoSize.CENTER;
-        _winnerText.wordWrap = false;
+        _winnerText.autoSize = TextFieldAutoSize.NONE;
+        _winnerText.wordWrap = true;
         _winnerText.defaultTextFormat = format;
         _answerArea.addChild(_winnerText);
 

@@ -317,7 +317,7 @@ public class MultipleChoice extends Question
     <Question>What 1993 black and white Steven Spielberg drama told the story of a German who attempted to save a number of Jews from the Holocaust?</Question>
     <Correct>Schindler's List</Correct>
     <Incorrect>Shoah</Incorrect>
-    <Incorrect>1941.0</Incorrect>
+    <Incorrect>1941</Incorrect>
     <Incorrect>Life Is Beautiful</Incorrect>
     <Info>Oskar Schindler (Liam Neeson) was a real Catholic German factory worker who intially profited from the war, but gradually spent everything trying to save his employees.</Info>
    </MultipleChoice>
@@ -603,10 +603,10 @@ public class MultipleChoice extends Question
    <MultipleChoice>
     <Category>Sports</Category>
     <Question>William Taft was President in the year the first Indianapolis 500 took place. What year was this?</Question>
-    <Correct>1911.0</Correct>
-    <Incorrect>1906.0</Incorrect>
-    <Incorrect>1914.0</Incorrect>
-    <Incorrect>1921.0</Incorrect>
+    <Correct>1911</Correct>
+    <Incorrect>1906</Incorrect>
+    <Incorrect>1914</Incorrect>
+    <Incorrect>1921</Incorrect>
     <Info>The first Indianapolis 500 was won by Ray Harroun, who completed it in six hours, forty-two minutes and eight seconds. His average speed was 74.602 mph.</Info>
    </MultipleChoice>
    <MultipleChoice>

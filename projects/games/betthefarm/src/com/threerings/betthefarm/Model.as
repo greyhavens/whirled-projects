@@ -32,6 +32,7 @@ public class Model
     public function debug (str :String) :void
     {
         if (BetTheFarm.DEBUG) {
+            trace(str);
             _control.localChat(str);
         }
     }
@@ -192,7 +193,8 @@ public class Model
             _control.sendMessage(Model.MSG_ANSWERED, value);
             debug("response size: " + _responses.size() + "/" + _playerCount);
             if (_responses.size() >= _playerCount) {
-                _control.sendMessage(Model.MSG_QUESTION_DONE, { });
+                _control.sendMessage(
+                    Model.MSG_QUESTION_DONE, value.correct ? { winner: value.player } : { });
             }
             
         } else if (event.name == Model.MSG_ANSWER_FREE) {
@@ -207,7 +209,8 @@ public class Model
             _responses.put(value.player, true);
             _control.sendMessage(Model.MSG_ANSWERED, value);
             if (_responses.size() >= _playerCount) {
-                _control.sendMessage(Model.MSG_QUESTION_DONE, { });
+                _control.sendMessage(
+                    Model.MSG_QUESTION_DONE, value.correct ? { winner: value.player } : { });
             }
         }
     }
