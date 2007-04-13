@@ -4,6 +4,7 @@
 package com.threerings.betthefarm {
 
 import flash.utils.setTimeout;
+import flash.utils.clearTimeout;
 
 import com.whirled.WhirledGameControl;
 
@@ -48,8 +49,6 @@ public class Model
         var question :Question;
         var item :XML;
         var set :Map;
-
-       debug("Setting up questions...");
 
         _multiQuestions = new HashMap();
         _multiCategories = new Object();
@@ -110,6 +109,9 @@ public class Model
 
     public function roundDidEnd () :void
     {
+        if (_questionTimeout != 0) {
+            clearTimeout(_questionTimeout);
+        }
         if (_control.getRound() >= Content.ROUND_NAMES.length) {
             _control.endGame( [ ] );
         }
@@ -170,7 +172,8 @@ public class Model
             getQuestionSet().remove(getCurrentQuestion());
             if (getCurrentRoundType() == ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
-                setTimeout(nextQuestion, 1000);
+                _questionTimeout = setTimeout(nextQuestion, 1000);
+                debug("Timeout: " + _questionTimeout);
             }
 
         } else if (event.name == Model.MSG_CHOOSE_CATEGORY) {
@@ -217,6 +220,7 @@ public class Model
     protected function nextQuestion (category :String = null) :void
     {
         if (_control.amInControl()) {
+            _questionTimeout = 0;
             _buzzer = -1;
             _responses = new HashMap();
             var keys :Array;
@@ -256,6 +260,8 @@ public class Model
     protected var _freeCategories :Object;
 
     protected var _responses :Map;
+
+    protected var _questionTimeout :uint;
 
     protected var _control :WhirledGameControl;
     protected var _view :View;

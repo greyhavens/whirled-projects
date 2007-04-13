@@ -118,6 +118,7 @@ public class View extends Sprite
     public function roundDidEnd () :void
     {
         _questionArea.visible = false;
+        _question = null;
         _answerArea.visible = true;
         _answerText.text = "ROUND OVER"; // TODO
         _winnerText.text = "";
@@ -431,7 +432,7 @@ public class View extends Sprite
 
     protected function freeInput (event :KeyboardEvent) :void
     {
-        if (event.keyCode != Keyboard.ENTER) {
+        if (event.keyCode != Keyboard.ENTER || _question == null) {
             return;
         }
         _answered = true;
@@ -439,7 +440,7 @@ public class View extends Sprite
         var answer :String = _freeField.text.toLowerCase();
         _freeField.text = "";
 
-        var answers :Array = (_model.getCurrentQuestion() as FreeResponse).correct;
+        var answers :Array = (_question as FreeResponse).correct;
         var correct :Boolean = false;
         for (var ii :int = 0; ii < answers.length; ii ++) {
             debug("Comparing '" + answer + "' to '" + answers[ii].toLowerCase() + "'");
