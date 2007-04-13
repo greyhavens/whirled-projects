@@ -73,6 +73,14 @@ public class Content
     [Embed(source="../../../../rsrc/Background.jpg")]
     public static const BACKGROUND :Class;
 
+    [Embed(source="../../../../rsrc/Bet The Farm Round.mp3")]
+    public static const SND_ROUND :Class;
+
+    [Embed(source="../../../../rsrc/You Loose.mp3")]
+    public static const SND_LOSE :Class;
+
+    [Embed(source="../../../../rsrc/You Did Great.mp3")]
+    public static const SND_WIN :Class;
 }
 
 }

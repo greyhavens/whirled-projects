@@ -26,6 +26,8 @@ import flash.filters.GlowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import flash.media.Sound;
+
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFieldType;
@@ -111,6 +113,7 @@ public class View extends Sprite
         if (_model.getCurrentRoundType() == Model.ROUND_LIGHTNING) {
             _endTime = getTimer()/1000 + Content.ROUND_DURATIONS[_control.getRound()-1];
         }
+        _sndRound.play();
     }
 
     public function roundDidEnd () :void
@@ -185,8 +188,10 @@ public class View extends Sprite
             _answerArea.visible = true;
             if (value.winner == _control.getMyId()) {
                 _answerText.text = "CORRECT!";
+                _sndWin.play();
             } else if (_answered) {
                 _answerText.text = "INCORRECT!";
+                _sndLose.play();
             } else {
                 // show anything if we didn't answer?
             }
@@ -496,5 +501,9 @@ public class View extends Sprite
     protected var _freeField :TextField;
 
     protected var _multiAnswer :Array;
+
+    protected var _sndRound :Sound = (new Content.SND_ROUND() as Sound);
+    protected var _sndWin :Sound = (new Content.SND_WIN() as Sound);
+    protected var _sndLose :Sound = (new Content.SND_LOSE() as Sound);
 }
 }
