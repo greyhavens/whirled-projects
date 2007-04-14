@@ -97,10 +97,10 @@ public class View extends Sprite
     {
         var players :Array = _control.seating.getPlayerIds();
         debug("Players: " + players);
-        _plaques = new Dictionary();
+//        _plaques = new Dictionary();
         _headshots = new Dictionary();
         for (var ii :int = 0; ii < players.length; ii ++) {
-            addPlaque(players[ii], ii);
+//            addPlaque(players[ii], ii);
             requestHeadshot(players[ii], ii);
         }
         _updateTimer = setInterval(updateTimer, 100);
@@ -237,19 +237,20 @@ public class View extends Sprite
     protected function addPlaque (oid :int, ii :int) :void
     {
         var format :TextFormat = new TextFormat();
-        format.size = 48;
+        format.size = 64;
         format.font = Content.FONT_NAME;
         format.color = Content.FONT_COLOR;
-
-        var plaque :Sprite = new Sprite();
-        plaque.width = 320;
-        plaque.height = 200;
+        format.align = TextFormatAlign.CENTER;
 
         var plaqueText :TextField = new TextField();
         plaqueText.autoSize = TextFieldAutoSize.CENTER;
         plaqueText.defaultTextFormat = format;
-        plaqueText.text = _control.getOccupantName(oid);
+        plaqueText.text = _control.getOccupantName(oid) + "\n317";
         plaqueText.x = (320 - plaqueText.width) / 2;
+
+        var plaque :Sprite = new Sprite();
+        plaque.width = 320;
+        plaque.height = 200;
         plaque.addChild(plaqueText);
 
         var pixels :BitmapData = new BitmapData(320, 200, true, 0x000000);
