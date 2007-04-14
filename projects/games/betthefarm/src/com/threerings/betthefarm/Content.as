@@ -70,6 +70,14 @@ public class Content
         new Point(851, 316),
     ];
 
+    /** The location of the four plaques of the four players. */
+    public static const PLAQUE_LOCS :Array = [
+        new Point(542, 384),
+        new Point(645, 406),
+        new Point(748, 418),
+        new Point(851, 430),
+    ];
+
     [Embed(source="../../../../rsrc/Background.jpg")]
     public static const BACKGROUND :Class;
 

@@ -10,6 +10,8 @@
 
 package com.threerings.betthefarm {
 
+import flash.display.Bitmap;
+import flash.display.BitmapData;
 import flash.display.Sprite;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
@@ -24,12 +26,14 @@ import flash.events.MouseEvent;
 import flash.filters.GlowFilter;
 
 import flash.geom.Point;
+import flash.geom.Matrix;
 import flash.geom.Rectangle;
 
 import flash.media.Sound;
 
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
+import flash.text.AntiAliasType;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
@@ -93,8 +97,10 @@ public class View extends Sprite
     {
         var players :Array = _control.seating.getPlayerIds();
         debug("Players: " + players);
+        _plaques = new Dictionary();
         _headshots = new Dictionary();
         for (var ii :int = 0; ii < players.length; ii ++) {
+            addPlaque(players[ii], ii);
             requestHeadshot(players[ii], ii);
         }
         _updateTimer = setInterval(updateTimer, 100);
@@ -226,6 +232,41 @@ public class View extends Sprite
                 stage.focus = _freeField;
             }
         }
+    }
+
+    protected function addPlaque (oid :int, ii :int) :void
+    {
+        var format :TextFormat = new TextFormat();
+        format.size = 48;
+        format.font = Content.FONT_NAME;
+        format.color = Content.FONT_COLOR;
+
+        var plaque :Sprite = new Sprite();
+        plaque.width = 320;
+        plaque.height = 200;
+
+        var plaqueText :TextField = new TextField();
+        plaqueText.autoSize = TextFieldAutoSize.CENTER;
+        plaqueText.defaultTextFormat = format;
+        plaqueText.text = _control.getOccupantName(oid);
+        plaqueText.x = (320 - plaqueText.width) / 2;
+        plaque.addChild(plaqueText);
+
+        var pixels :BitmapData = new BitmapData(320, 200, true, 0x000000);
+        pixels.draw(plaque, null, null, null, null, true);
+
+        var matrix :Matrix = new Matrix();
+        var scale :Number = 0.21;
+        matrix.tx = (Content.PLAQUE_LOCS[ii] as Point).x - 160*scale;
+        matrix.ty = (Content.PLAQUE_LOCS[ii] as Point).y - 100*scale;
+        matrix.a = matrix.d = scale;
+        matrix.b = 0.035;
+
+        var bitmap :Bitmap = new Bitmap(pixels);
+        bitmap.transform.matrix = matrix;
+        addChild(bitmap);
+
+        _plaques[oid] = bitmap;
     }
 
     protected function requestHeadshot (oid :int, ii :int) :void
@@ -485,6 +526,7 @@ public class View extends Sprite
     protected var _question :Question;
 
     protected var _headshots :Dictionary;
+    protected var _plaques :Dictionary;
 
     protected var _questionArea :Sprite;
     protected var _questionText :TextField;
