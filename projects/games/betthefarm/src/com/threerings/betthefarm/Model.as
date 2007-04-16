@@ -21,6 +21,7 @@ public class Model
     public static const ROUND_WAGER :int = 3;
 
     public static const QUESTION_IX :String = "qIx";
+    public static const SCORES :String = "scores";
 
     public static const MSG_ANSWER_MULTI :String = "answerMulti";
     public static const MSG_ANSWER_FREE :String = "answerFree";
@@ -94,6 +95,7 @@ public class Model
     public function gameDidStart () :void
     {
         _playerCount = _control.seating.getPlayerIds().length;
+        _control.set(Model.SCORES, new Array(_playerCount));
     }
 
     public function gameDidEnd () :void
@@ -180,24 +182,31 @@ public class Model
      */
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
+        var value :Object = event.value;
+
+        // first, events relevant to everyone
+        if (event.name == Model.MSG_ANSWERED) {
+            _view.questionAnswered(value.player, value.correct);
+
+        } else if (event.name == Model.MSG_BUZZ_CONTROL) {
+            _view.gainedBuzzControl(value.player);
+
+        } else if (event.name == Model.MSG_QUESTION_DONE) {
+            _view.questionDone(value.winner);
+        }
+
         if (!_control.amInControl()) {
             return;
         }
-        var value :Object = event.value;
 
+        // then, faux-server control
         if (event.name == Model.MSG_BUZZ) {
             if (_buzzer == -1) {
                 _buzzer = value.player;
                 _control.sendMessage(Model.MSG_BUZZ_CONTROL, value);
             }
 
-        } else if (event.name == Model.MSG_BUZZ_CONTROL) {
-            _view.gainedBuzzControl(value.player);
-
         } else if (event.name == Model.MSG_QUESTION_DONE) {
-            // TODO: Make sure the "current question" is in fact what was answered
-            // TODO: We have to remove the question from its category set too
-            _view.questionDone(value.winner);
 //            getQuestions().remove(getCurrentQuestion());
             if (getCurrentRoundType() == ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
@@ -218,6 +227,7 @@ public class Model
                     nextQuestion(category);
                 }                
             }
+
         } else if (event.name == Model.MSG_CHOOSE_CATEGORY) {
             debug("Choosing category: " + value);
             nextQuestion(value as String);
@@ -257,8 +267,6 @@ public class Model
                 _control.sendMessage(
                     Model.MSG_QUESTION_DONE, value.correct ? { winner: value.player } : { });
             }
-        } else if (event.name == Model.MSG_ANSWERED) {
-            _view.questionAnswered(value.player, value.correct);
         }
     }
 

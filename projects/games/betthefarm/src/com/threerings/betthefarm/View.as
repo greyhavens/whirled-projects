@@ -89,10 +89,10 @@ public class View extends Sprite
     {
         var players :Array = _control.seating.getPlayerIds();
         debug("Players: " + players);
-//        _plaques = new Dictionary();
+        _plaqueTexts = new Dictionary();
         _headshots = new Dictionary();
         for (var ii :int = 0; ii < players.length; ii ++) {
-//            addPlaque(players[ii], ii);
+            addPlaque(players[ii], ii);
             requestHeadshot(players[ii], ii);
         }
         _updateTimer = setInterval(updateTimer, 100);
@@ -210,16 +210,16 @@ public class View extends Sprite
         format.color = Content.FONT_COLOR;
         format.align = TextFormatAlign.CENTER;
 
-        var plaqueText :TextField = new TextField();
-        plaqueText.autoSize = TextFieldAutoSize.CENTER;
-        plaqueText.defaultTextFormat = format;
-        plaqueText.text = _control.getOccupantName(oid) + "\n317";
-        plaqueText.x = (320 - plaqueText.width) / 2;
+        _plaqueTexts[oid] = new TextField();
+        _plaqueTexts[oid].autoSize = TextFieldAutoSize.CENTER;
+        _plaqueTexts[oid].defaultTextFormat = format;
+        _plaqueTexts[oid].text = _control.getOccupantName(oid);
+        _plaqueTexts[oid].x = (320 - _plaqueTexts[oid].width) / 2;
 
         var plaque :Sprite = new Sprite();
         plaque.width = 320;
         plaque.height = 200;
-        plaque.addChild(plaqueText);
+        plaque.addChild(_plaqueTexts[oid]);
 
         var pixels :BitmapData = new BitmapData(320, 200, true, 0x000000);
         pixels.draw(plaque, null, null, null, null, true);
@@ -234,8 +234,6 @@ public class View extends Sprite
         var bitmap :Bitmap = new Bitmap(pixels);
         bitmap.transform.matrix = matrix;
         addChild(bitmap);
-
-        _plaques[oid] = bitmap;
     }
 
     protected function requestHeadshot (oid :int, ii :int) :void
@@ -479,7 +477,7 @@ public class View extends Sprite
 
     protected function freeInput (event :KeyboardEvent) :void
     {
-        if (event.keyCode != Keyboard.ENTER || _question == null) {
+        if (_answered || event.keyCode != Keyboard.ENTER || _question == null) {
             return;
         }
         _answered = true;
@@ -523,7 +521,7 @@ public class View extends Sprite
     protected var _question :Question;
 
     protected var _headshots :Dictionary;
-    protected var _plaques :Dictionary;
+    protected var _plaqueTexts :Dictionary;
 
     protected var _doorArea :Sprite;
 
