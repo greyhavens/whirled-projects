@@ -60,12 +60,12 @@ public class Model
                 item.Question,
                 item.Correct,
                 toArray(item.Incorrect));
-            _multiQuestions.put(question, true);
             set = _multiCategories[question.category.toLowerCase()];
             if (!set) {
                 set = _multiCategories[question.category.toLowerCase()] = new HashMap();
             }
-            set.put(question, true);
+            set.put(_multiQuestions.size(), true);
+            _multiQuestions.put(question, true);
         }
 
         _freeQuestions = new HashMap();
@@ -77,12 +77,12 @@ public class Model
                 Question.EASY,
                 item.Question,
                 toArray(item.Correct));
-            _freeQuestions.put(question, true);
             set = _freeCategories[question.category.toLowerCase()];
             if (!set) {
                 set = _freeCategories[question.category.toLowerCase()] = new HashMap();
             }
-            set.put(question, true);
+            set.put(_freeQuestions.size(), true);
+            _freeQuestions.put(question, true);
         }
     }
 
@@ -170,6 +170,9 @@ public class Model
      */
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
+        if (event.name == Model.QUESTION_IX) {
+            _view.newQuestion(getCurrentQuestion());
+        }
     }
 
 
@@ -182,15 +185,21 @@ public class Model
             return;
         }
         var value :Object = event.value;
+
         if (event.name == Model.MSG_BUZZ) {
             if (_buzzer == -1) {
                 _buzzer = value.player;
                 _control.sendMessage(Model.MSG_BUZZ_CONTROL, value);
             }
 
+        } else if (event.name == Model.MSG_BUZZ_CONTROL) {
+            _view.gainedBuzzControl(value.player);
+
         } else if (event.name == Model.MSG_QUESTION_DONE) {
             // TODO: Make sure the "current question" is in fact what was answered
-            getQuestionSet().remove(getCurrentQuestion());
+            // TODO: We have to remove the question from its category set too
+            _view.questionDone(value.winner);
+//            getQuestionSet().remove(getCurrentQuestion());
             if (getCurrentRoundType() == ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
                 _questionTimeout = setTimeout(nextQuestion, 1000);
@@ -198,14 +207,16 @@ public class Model
                 // in the buzz round we only do N questions
                 _questionCount -= 1;
                 if (_questionCount <= 0) {
-                    doEndRound();
-                }
-                // if there was a winner, that winner will display the category choice UI
-                // otherwise we, as controllers, have to randomly select it here
-                if (!value.winner) {
+                    _questionTimeout = setTimeout(doEndRound, 1000);
+                } else if (!value.winner) {
+                    // TODO: need a pause here
+                    // if there was a winner, that winner will display the category choice UI
+                    // otherwise we, as controllers, have to randomly select it here
                     var categories :Array = getMultiCategories();
-                    var category :String = categories[BetTheFarm.random.nextInt(categories.length)];
-                    _control.sendMessage(Model.MSG_CHOOSE_CATEGORY, category);
+                    var ix :int = BetTheFarm.random.nextInt(categories.length);
+                    var category :String = categories[ix];
+                    debug("categories[" + ix + "] = " + category);
+                    nextQuestion(category);
                 }                
             }
         } else if (event.name == Model.MSG_CHOOSE_CATEGORY) {
@@ -225,8 +236,8 @@ public class Model
                 _buzzer = value.player;
             }
             _responses.put(value.player, true);
+
             _control.sendMessage(Model.MSG_ANSWERED, value);
-            debug("response size: " + _responses.size() + "/" + _playerCount);
             if (_responses.size() >= _playerCount) {
                 _control.sendMessage(
                     Model.MSG_QUESTION_DONE, value.correct ? { winner: value.player } : { });
@@ -241,11 +252,14 @@ public class Model
                 throw new Error("Multiple answers from player: " + value.player);
             }
             _responses.put(value.player, true);
+
             _control.sendMessage(Model.MSG_ANSWERED, value);
             if (_responses.size() >= _playerCount) {
                 _control.sendMessage(
                     Model.MSG_QUESTION_DONE, value.correct ? { winner: value.player } : { });
             }
+        } else if (event.name == Model.MSG_ANSWERED) {
+            _view.questionAnswered(value.player, value.correct);
         }
     }
 
@@ -261,21 +275,24 @@ public class Model
             _questionTimeout = 0;
             _buzzer = -1;
             _responses = new HashMap();
-            var keys :Array;
+
             if (category == null) {
-                keys = getQuestionSet().keys();
+                var set :HashMap = getQuestionSet();
+                if (set.size() == 0) {
+                    doEndRound();
+                    return;
+                }
+                _control.set(Model.QUESTION_IX, BetTheFarm.random.nextInt(getQuestionSet().size()));
             } else {
                 var catset :HashMap = _multiCategories[category];
                 if (!catset) {
                     throw new Error("unknown category: " + category);
                 }
-                keys = catset.keys();
+                var keys :Array = catset.keys();
+                var ix :int = BetTheFarm.random.nextInt(keys.length);
+                debug("keys[" + ix + "] = " + keys[ix]);
+                _control.set(Model.QUESTION_IX, keys[ix]);
             }
-            if (keys.length == 0) {
-                doEndRound();
-                return;
-            }
-            _control.set(Model.QUESTION_IX, BetTheFarm.random.nextInt(keys.length));
         }
     }
 

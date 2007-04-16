@@ -48,9 +48,6 @@ import flash.utils.setTimeout;
 
 import com.whirled.WhirledGameControl;
 
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.MessageReceivedEvent;
-
 import com.threerings.flash.SimpleTextButton;
 
 /**
@@ -71,10 +68,6 @@ public class View extends Sprite
         _control = control;
         _model = model;
         _model.setView(this);
-
-        // listen for property changed and message events
-        _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
-        _control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
 
         var background :DisplayObject = new Content.BACKGROUND();
         addChild(background);
@@ -135,90 +128,77 @@ public class View extends Sprite
         clearInterval(_updateTimer);
     }
 
-    /**
-     * Called when our distributed game state changes.
-     */
-    protected function propertyChanged (event :PropertyChangedEvent) :void
+    public function newQuestion (question :Question) :void
     {
-        debug("Property change: " + event);
-        if (event.name == Model.QUESTION_IX) {
-            _question = _model.getCurrentQuestion();
-            var ii :int;
-            debug("Showing question: " + _question.question);
+        _question = question;
 
-            for each (var shot :Sprite in _headshots) {
-                shot.filters = [
-                    new GlowFilter(0xFFFFFF, 1, 10, 10)
+        for each (var shot :Sprite in _headshots) {
+            shot.filters = [
+                new GlowFilter(0xFFFFFF, 1, 10, 10)
                 ];
-             }
-            _answered = false;
+        }
+        _answered = false;
 
-            doorClear();
+        doorClear();
 
-            if (_question is MultipleChoice) {
-                var answers :Array = (_question as MultipleChoice).incorrect.slice();
-                var ix : int = int((1 + answers.length) * Math.random());
-                answers.splice(ix, 0, (_question as MultipleChoice).correct);
-                if (answers.length > 4) {
-                    throw new Error("Too many answers: " + _question.question);
-                }
-                doorQuestion(_question.question, answers);
-            } else {
-                doorQuestion(_question.question);
+        if (_question is MultipleChoice) {
+            var answers :Array = (_question as MultipleChoice).incorrect.slice();
+            var ix : int = int((1 + answers.length) * Math.random());
+            answers.splice(ix, 0, (_question as MultipleChoice).correct);
+            if (answers.length > 4) {
+                throw new Error("Too many answers: " + _question.question);
             }
+            doorQuestion(_question.question, answers);
+        } else {
+            doorQuestion(_question.question);
         }
     }
 
-    /**
-     * Called when a message comes in.
-     */
-    protected function messageReceived (event :MessageReceivedEvent) :void
+    public function questionDone (winner :int) :void
     {
-        var value :Object = event.value;
+        doorClear();
 
-        if (event.name == Model.MSG_QUESTION_DONE) {
-            doorClear();
-
-            if (value.winner == _control.getMyId()) {
-                doorHeader("Correct!");
-                _sndWin.play();
-                if (_model.getCurrentRoundType() == Model.ROUND_BUZZ) {
-                    setTimeout(chooseCategory, 1000);
-                }
-
-            } else if (_answered) {
-                doorHeader("Incorrect!");
-                _sndLose.play();
-
-            } else {
-                // show anything if we didn't answer?
+        if (winner == _control.getMyId()) {
+            doorHeader("Correct!");
+            _sndWin.play();
+            if (_model.getCurrentRoundType() == Model.ROUND_BUZZ) {
+                setTimeout(chooseCategory, 1000);
             }
 
-            if (value.winner > 0) {
-                doorBody(
-                    "The correct answer was given by " +
-                    _control.getOccupantName(value.winner) + ":\n\n" +
-                    "\"" + _question.getCorrectAnswer() + "\"");
-            } else {
-                doorBody(
-                    "The correct answer was:\n\n" +
-                    "\"" + _question.getCorrectAnswer() + "\"");
-            }
+        } else if (_answered) {
+            doorHeader("Incorrect!");
+            _sndLose.play();
 
-        } else if (event.name == Model.MSG_ANSWERED) {
-            _headshots[value.player].filters = [
-                new GlowFilter(value.correct ? 0x00FF00 : 0xFF0000, 1, 10, 10)
-            ];
+        } else {
+            // show anything if we didn't answer?
+        }
 
-        } else if (event.name == Model.MSG_BUZZ_CONTROL) {
-            _headshots[value.player].filters = [
-                new GlowFilter(0xFF00FF, 1, 10, 10)
-            ];
-            if (value.player == _control.getMyId()) {
-                // our buzz won!
-                _freeArea.visible = true;
-                stage.focus = _freeField;
-            }
+        if (winner) {
+            doorBody("The correct answer was given by " +
+                     _control.getOccupantName(winner) + ":\n\n" +
+                     "\"" + _question.getCorrectAnswer() + "\"");
+        } else {
+                doorBody("The correct answer was:\n\n" +
+                         "\"" + _question.getCorrectAnswer() + "\"");
+        }
+    }
+
+    public function questionAnswered (player :int, correct :Boolean) :void
+    {
+        _headshots[player].filters = [
+            new GlowFilter(correct ? 0x00FF00 : 0xFF0000, 1, 10, 10)
+        ];
+    }
+
+    public function gainedBuzzControl (player :int) :void
+    {
+        _headshots[player].filters = [
+            new GlowFilter(0xFF00FF, 1, 10, 10)
+        ];
+        if (player == _control.getMyId()) {
+            // our buzz won!
+            _freeArea.visible = true;
+            stage.focus = _freeField;
         }
     }
 
@@ -424,7 +404,7 @@ public class View extends Sprite
         format.color = Content.FONT_COLOR;
 
         var field :TextField = new TextField();
-        field.y = Content.ANSWER_RECT.y + 60;
+//        field.y = Content.ANSWER_RECT.y + 60;
         field.width = Content.ANSWER_RECT.width;
         field.height = Content.ANSWER_RECT.height;
         field.autoSize = TextFieldAutoSize.NONE;
@@ -456,8 +436,7 @@ public class View extends Sprite
     {
         var button :SimpleTextButton = new SimpleTextButton(category);
         button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            _control.sendMessage(
-                Model.MSG_CHOOSE_CATEGORY, { player: _control.getMyId(), category: category });
+            _control.sendMessage(Model.MSG_CHOOSE_CATEGORY, category);
         });
         return button;
     }
