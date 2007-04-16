@@ -48,9 +48,9 @@ public class Model
 
         var question :Question;
         var item :XML;
-        var set :Map;
+        var arr :Array;
 
-        _multiQuestions = new HashMap();
+        _multiQuestions = new Array();
         _multiCategories = new Object();
         var list :XMLList = MultipleChoice.QUESTIONS.MultipleChoice;
         for each (item in list) {
@@ -60,15 +60,15 @@ public class Model
                 item.Question,
                 item.Correct,
                 toArray(item.Incorrect));
-            set = _multiCategories[question.category.toLowerCase()];
-            if (!set) {
-                set = _multiCategories[question.category.toLowerCase()] = new HashMap();
+            arr = _multiCategories[question.category.toLowerCase()];
+            if (!arr) {
+                arr = _multiCategories[question.category.toLowerCase()] = new Array();
             }
-            set.put(_multiQuestions.size(), true);
-            _multiQuestions.put(question, true);
+            arr.push(_multiQuestions.length);
+            _multiQuestions.push(question);
         }
 
-        _freeQuestions = new HashMap();
+        _freeQuestions = new Array();
         _freeCategories = new Object();
         list = FreeResponse.QUESTIONS.FreeResponse;
         for each (item in list) {
@@ -77,12 +77,12 @@ public class Model
                 Question.EASY,
                 item.Question,
                 toArray(item.Correct));
-            set = _freeCategories[question.category.toLowerCase()];
-            if (!set) {
-                set = _freeCategories[question.category.toLowerCase()] = new HashMap();
+            arr = _freeCategories[question.category.toLowerCase()];
+            if (!arr) {
+                arr = _freeCategories[question.category.toLowerCase()] = new Array();
             }
-            set.put(_freeQuestions.size(), true);
-            _freeQuestions.put(question, true);
+            arr.push(_freeQuestions.length);
+            _freeQuestions.push(question);
         }
     }
 
@@ -142,7 +142,7 @@ public class Model
         return Content.ROUND_TYPES[_control.getRound()-1];
     }
 
-    public function getQuestionSet () :HashMap
+    public function getQuestions () :Array
     {
         if (getCurrentRoundType() == ROUND_LIGHTNING || getCurrentRoundType() == ROUND_WAGER) {
             return _multiQuestions;
@@ -150,20 +150,16 @@ public class Model
         return _freeQuestions;
     }
 
-    public function getMultiCategories () :Array
+    public function getCategories () :Array
     {
-        var result :Array = new Array();
-        for (var category :String in _multiCategories) {
-            result.push(category);
+        var questions :Array = getQuestions();
+        var map :HashMap = new HashMap();
+        for (var ii :int = 0; ii < questions.length; ii ++) {
+            map.put(questions[ii].category, true);
         }
-        return result;
+        return map.keys();
     }
 
-    public function getCurrentQuestion () :Question
-    {
-        var keys :Array = getQuestionSet().keys();
-        return keys[_control.get(Model.QUESTION_IX) as int];
-    }
 
     /**
      * Called when our distributed game state changes.
@@ -171,7 +167,10 @@ public class Model
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
         if (event.name == Model.QUESTION_IX) {
-            _view.newQuestion(getCurrentQuestion());
+            debug("index: " + (event.newValue as int));
+            debug("question set length: " + getQuestions().length);
+            debug("question: " + getQuestions()[event.newValue as int]);
+            _view.newQuestion(getQuestions()[event.newValue as int]);
         }
     }
 
@@ -199,7 +198,7 @@ public class Model
             // TODO: Make sure the "current question" is in fact what was answered
             // TODO: We have to remove the question from its category set too
             _view.questionDone(value.winner);
-//            getQuestionSet().remove(getCurrentQuestion());
+//            getQuestions().remove(getCurrentQuestion());
             if (getCurrentRoundType() == ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
                 _questionTimeout = setTimeout(nextQuestion, 1000);
@@ -212,7 +211,7 @@ public class Model
                     // TODO: need a pause here
                     // if there was a winner, that winner will display the category choice UI
                     // otherwise we, as controllers, have to randomly select it here
-                    var categories :Array = getMultiCategories();
+                    var categories :Array = getCategories();
                     var ix :int = BetTheFarm.random.nextInt(categories.length);
                     var category :String = categories[ix];
                     debug("categories[" + ix + "] = " + category);
@@ -277,18 +276,17 @@ public class Model
             _responses = new HashMap();
 
             if (category == null) {
-                var set :HashMap = getQuestionSet();
-                if (set.size() == 0) {
+                var arr :Array = getQuestions();
+                if (arr.length == 0) {
                     doEndRound();
                     return;
                 }
-                _control.set(Model.QUESTION_IX, BetTheFarm.random.nextInt(getQuestionSet().size()));
+                _control.set(Model.QUESTION_IX, BetTheFarm.random.nextInt(arr.length));
             } else {
-                var catset :HashMap = _multiCategories[category];
-                if (!catset) {
+                var keys :Array = _freeCategories[category.toLowerCase()];
+                if (!keys) {
                     throw new Error("unknown category: " + category);
                 }
-                var keys :Array = catset.keys();
                 var ix :int = BetTheFarm.random.nextInt(keys.length);
                 debug("keys[" + ix + "] = " + keys[ix]);
                 _control.set(Model.QUESTION_IX, keys[ix]);
@@ -310,9 +308,9 @@ public class Model
 
     protected var _playerCount :int;
 
-    protected var _multiQuestions :HashMap;
+    protected var _multiQuestions :Array;
     protected var _multiCategories :Object;
-    protected var _freeQuestions :HashMap;
+    protected var _freeQuestions :Array;
     protected var _freeCategories :Object;
 
     protected var _questionCount :uint;
