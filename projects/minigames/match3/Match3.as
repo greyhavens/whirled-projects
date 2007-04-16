@@ -5,6 +5,7 @@ import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
 import flash.geom.Matrix;
@@ -82,7 +83,7 @@ public class Match3 extends Sprite
         // as "stoppers" for falling blocks.
         for (var yy :int = 0; yy < ROWS; yy++) {
             var xx :int = ALL_FALL_LEFT || (yy % 2 == 0) ? -1 : COLS;
-            var block :Block = new Block(0x000000, xx, yy, _blocks);
+            var block :Block = new Block(0x000000, 1, xx, yy, _blocks);
             // Note: no need to add it to the display, it's just needed
             // logically.
         }
@@ -137,7 +138,7 @@ public class Match3 extends Sprite
 
             if ((null == _blocks.get(xx, yy)) && (null == _blocks.get(xx - dir, yy))) {
                 //trace("Adding block at " + (xx - dir) + ", " + yy);
-                block = new Block(pickBlockColor(yy), xx - dir, yy, _blocks);
+                block = new Block(pickBlockColor(yy), dir, xx - dir, yy, _blocks);
                 _board.addChild(block);
             }
         }
@@ -276,7 +277,7 @@ public class Match3 extends Sprite
             var block :Block = (yy == 0) ? b1 : b2;
             if (block == null) {
                 // add a placeholder swap block
-                block = new Block(Block.SWAPPER, lx, ly + yy, _blocks);
+                block = new Block(Block.SWAPPER, 1, lx, ly + yy, _blocks);
 
             } else if (!block.isSwapping()) {
                 block.setSwapping((yy == 0) ? 1 : -1, stamp);
@@ -314,6 +315,7 @@ public class Match3 extends Sprite
 }
 }
 
+import flash.display.Graphics;
 import flash.display.Sprite;
 
 import flash.filters.ColorMatrixFilter;
@@ -321,6 +323,8 @@ import flash.filters.ColorMatrixFilter;
 import flash.utils.getTimer; // function import
 
 import com.threerings.util.HashMap;
+
+import com.threerings.flash.ColorUtil;
 
 class Cursor extends Sprite
 {
@@ -446,9 +450,10 @@ class Block extends Sprite
     /**
      * Create a block of the specified color.
      */
-    public function Block (color :uint, lx :int, ly :int, map :BlockMap)
+    public function Block (color :uint, drawDir :int, lx :int, ly :int, map :BlockMap)
     {
         this.color = color;
+        _drawDir = drawDir;
         this.lx = lx;
         this.ly = ly;
         _map = map;
@@ -459,16 +464,7 @@ class Block extends Sprite
         // try adding ourselves to the map
         map.add(this);
 
-        if (color != SWAPPER) {
-            with (graphics) {
-                beginFill(color);
-                drawRect(0, 0, Match3.BLOCK_WIDTH, Match3.BLOCK_HEIGHT);
-                endFill();
-
-                lineStyle(1, 0);
-                drawRect(0, 0, Match3.BLOCK_WIDTH, Match3.BLOCK_HEIGHT);
-            }
-        }
+        updateVisual();
     }
 
     public function isStopped () :Boolean
@@ -581,6 +577,9 @@ class Block extends Sprite
                 } else {
                     _map.move(lx, oldly, this);
                 }
+
+                _drawDir = -_drawDir;
+                updateVisual();
             }
 
         } else if (_movement == BOOM) {
@@ -618,6 +617,34 @@ class Block extends Sprite
                                    : (ly * Match3.BLOCK_HEIGHT);
     }
 
+    protected function updateVisual () :void
+    {
+        var g :Graphics = this.graphics;
+        g.clear();
+
+        if (color != SWAPPER) {
+            g.beginFill(color);
+            g.lineStyle(1, 0);
+            g.drawRect(0, 0, Match3.BLOCK_WIDTH, Match3.BLOCK_HEIGHT);
+            g.endFill();
+
+            // draw a directional chevron
+            g.lineStyle(2, ColorUtil.blend(color, 0, .75));
+            var x1 :Number = Match3.BLOCK_WIDTH - CHEVRON_X_PAD;
+            var x2 :Number;
+            if (_drawDir == 1) {
+                x2 = x1;
+                x1 = CHEVRON_X_PAD;
+            } else {
+                x2 = CHEVRON_X_PAD;
+            }
+
+            g.moveTo(x1, CHEVRON_Y_PAD);
+            g.lineTo(x2, Match3.BLOCK_HEIGHT / 2);
+            g.lineTo(x1, Match3.BLOCK_HEIGHT - CHEVRON_Y_PAD);
+        }
+    }
+
     protected var _map :BlockMap;
 
     /** Movement types. */
@@ -633,10 +660,15 @@ class Block extends Sprite
 
     protected var _dir :Number;
 
+    protected var _drawDir :int;
+
     /** The stamp at which we started moving. */
     protected var _moveStamp :Number;
 
     protected static const SWAP_VELOCITY :Number = Match3.BLOCK_HEIGHT / 200;
 
     protected static const BOOM_DURATION :Number = 200;
+
+    protected static const CHEVRON_X_PAD :int = 6;
+    protected static const CHEVRON_Y_PAD :int = 3;
 }
