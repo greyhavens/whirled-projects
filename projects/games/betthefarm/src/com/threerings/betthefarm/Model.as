@@ -189,6 +189,7 @@ public class Model
             }
 
         } else if (event.name == Model.MSG_QUESTION_DONE) {
+            // TODO: Make sure the "current question" is in fact what was answered
             getQuestionSet().remove(getCurrentQuestion());
             if (getCurrentRoundType() == ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
@@ -199,7 +200,13 @@ public class Model
                 if (_questionCount <= 0) {
                     doEndRound();
                 }
-                debug("Question count: " + _questionCount);
+                // if there was a winner, that winner will display the category choice UI
+                // otherwise we, as controllers, have to randomly select it here
+                if (!value.winner) {
+                    var categories :Array = getMultiCategories();
+                    var category :String = categories[BetTheFarm.random.nextInt(categories.length)];
+                    _control.sendMessage(Model.MSG_CHOOSE_CATEGORY, category);
+                }                
             }
         } else if (event.name == Model.MSG_CHOOSE_CATEGORY) {
             debug("Choosing category: " + value);
@@ -258,10 +265,11 @@ public class Model
             if (category == null) {
                 keys = getQuestionSet().keys();
             } else {
-                keys = _multiCategories[category];
-                if (!keys) {
+                var catset :HashMap = _multiCategories[category];
+                if (!catset) {
                     throw new Error("unknown category: " + category);
                 }
+                keys = catset.keys();
             }
             if (keys.length == 0) {
                 doEndRound();
