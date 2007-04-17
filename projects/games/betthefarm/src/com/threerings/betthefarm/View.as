@@ -178,8 +178,8 @@ public class View extends Sprite
                      _control.getOccupantName(winner) + ":\n\n" +
                      "\"" + _question.getCorrectAnswer() + "\"");
         } else {
-                doorBody("The correct answer was:\n\n" +
-                         "\"" + _question.getCorrectAnswer() + "\"");
+            doorBody("The correct answer was:\n\n" +
+                     "\"" + _question.getCorrectAnswer() + "\"");
         }
     }
 
@@ -483,7 +483,7 @@ public class View extends Sprite
         _answered = true;
 
         var answer :String = _freeField.text.toLowerCase();
-        _freeField.text = "";
+        _freeArea.visible = false;
 
         var answers :Array = (_question as FreeResponse).correct;
         var correct :Boolean = false;

@@ -200,7 +200,10 @@ public class Model
         }
 
         // then, faux-server control
-        if (event.name == Model.MSG_BUZZ) {
+        if (event.name == Model.MSG_ANSWERED) {
+            _buzzer = -1;
+
+        } else if (event.name == Model.MSG_BUZZ) {
             if (_buzzer == -1) {
                 _buzzer = value.player;
                 _control.sendMessage(Model.MSG_BUZZ_CONTROL, value);
