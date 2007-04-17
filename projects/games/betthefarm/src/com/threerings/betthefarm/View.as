@@ -415,7 +415,7 @@ public class View extends Sprite
 
     protected function chooseCategory () :void
     {
-        var categories :Array = _model.getCategories();
+        var categories :Array = _model.getQuestions().getCategories();
 
         doorClear();
 

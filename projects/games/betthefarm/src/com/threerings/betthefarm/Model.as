@@ -47,43 +47,27 @@ public class Model
         _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
         _control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
 
-        var question :Question;
         var item :XML;
-        var arr :Array;
 
-        _multiQuestions = new Array();
-        _multiCategories = new Object();
+        _multiQuestions = new QuestionSet();
         var list :XMLList = MultipleChoice.QUESTIONS.MultipleChoice;
         for each (item in list) {
-            question = new MultipleChoice(
+            _multiQuestions.addQuestion(new MultipleChoice(
                 item.Category,
                 Question.EASY,
                 item.Question,
                 item.Correct,
-                toArray(item.Incorrect));
-            arr = _multiCategories[question.category.toLowerCase()];
-            if (!arr) {
-                arr = _multiCategories[question.category.toLowerCase()] = new Array();
-            }
-            arr.push(_multiQuestions.length);
-            _multiQuestions.push(question);
+                toArray(item.Incorrect)));
         }
 
-        _freeQuestions = new Array();
-        _freeCategories = new Object();
+        _freeQuestions = new QuestionSet();
         list = FreeResponse.QUESTIONS.FreeResponse;
         for each (item in list) {
-            question = new FreeResponse(
+            _freeQuestions.addQuestion(new FreeResponse(
                 item.Category,
                 Question.EASY,
                 item.Question,
-                toArray(item.Correct));
-            arr = _freeCategories[question.category.toLowerCase()];
-            if (!arr) {
-                arr = _freeCategories[question.category.toLowerCase()] = new Array();
-            }
-            arr.push(_freeQuestions.length);
-            _freeQuestions.push(question);
+                toArray(item.Correct)));
         }
     }
 
@@ -139,12 +123,20 @@ public class Model
         }
     }
 
+    public function betweenRounds () :Boolean
+    {
+        return _control.getRound() < 0;
+    }
+
     public function getCurrentRoundType () :int
     {
+        if (betweenRounds()) {
+            throw new Error("round type requested between rounds");
+        }
         return Content.ROUND_TYPES[_control.getRound()-1];
     }
 
-    public function getQuestions () :Array
+    public function getQuestions () :QuestionSet
     {
         if (getCurrentRoundType() == ROUND_LIGHTNING || getCurrentRoundType() == ROUND_WAGER) {
             return _multiQuestions;
@@ -152,30 +144,17 @@ public class Model
         return _freeQuestions;
     }
 
-    public function getCategories () :Array
-    {
-        var questions :Array = getQuestions();
-        var map :HashMap = new HashMap();
-        for (var ii :int = 0; ii < questions.length; ii ++) {
-            map.put(questions[ii].category, true);
-        }
-        return map.keys();
-    }
-
-
     /**
      * Called when our distributed game state changes.
      */
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
         if (event.name == Model.QUESTION_IX) {
-            debug("index: " + (event.newValue as int));
-            debug("question set length: " + getQuestions().length);
-            debug("question: " + getQuestions()[event.newValue as int]);
-            _view.newQuestion(getQuestions()[event.newValue as int]);
+            if (!betweenRounds()) {
+                _view.newQuestion(getQuestions().getQuestion(event.newValue as int));
+            }
         }
     }
-
 
     /**
      * Called when a message comes in.
@@ -183,6 +162,11 @@ public class Model
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         var value :Object = event.value;
+
+        // if we're between rounds, we ignore absolutely all messages
+        if (betweenRounds()) {
+            return;
+        }
 
         // first, events relevant to everyone
         if (event.name == Model.MSG_ANSWERED) {
@@ -210,7 +194,8 @@ public class Model
             }
 
         } else if (event.name == Model.MSG_QUESTION_DONE) {
-//            getQuestions().remove(getCurrentQuestion());
+            getQuestions().removeQuestion(_control.get(Model.QUESTION_IX) as int);
+
             if (getCurrentRoundType() == ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
                 _questionTimeout = setTimeout(nextQuestion, 1000);
@@ -223,7 +208,7 @@ public class Model
                     // TODO: need a pause here
                     // if there was a winner, that winner will display the category choice UI
                     // otherwise we, as controllers, have to randomly select it here
-                    var categories :Array = getCategories();
+                    var categories :Array = getQuestions().getCategories();
                     var ix :int = BetTheFarm.random.nextInt(categories.length);
                     var category :String = categories[ix];
                     debug("categories[" + ix + "] = " + category);
@@ -236,9 +221,6 @@ public class Model
             nextQuestion(value as String);
 
         } else if (event.name == Model.MSG_ANSWER_MULTI) {
-            if (_responses.containsKey(value.player)) {
-                throw new Error("Multiple answers from player: " + value.player);
-            }
             if (value.correct) {
                 if (_buzzer != -1) {
                     // ignore late-coming correct answers
@@ -247,29 +229,28 @@ public class Model
                 }
                 _buzzer = value.player;
             }
-            _responses.put(value.player, true);
-
-            _control.sendMessage(Model.MSG_ANSWERED, value);
-            if (_responses.size() >= _playerCount) {
-                _control.sendMessage(
-                    Model.MSG_QUESTION_DONE, value.correct ? { winner: value.player } : { });
-            }
+            questionAnswered(value.player, value.correct);
 
         } else if (event.name == Model.MSG_ANSWER_FREE) {
             if (_buzzer != value.player) {
                 debug("ignoring answer from non-buzzed player");
                 return;
             }
-            if (_responses.containsKey(value.player)) {
-                throw new Error("Multiple answers from player: " + value.player);
-            }
-            _responses.put(value.player, true);
+            questionAnswered(value.player, value.correct);
+        }
+    }
 
-            _control.sendMessage(Model.MSG_ANSWERED, value);
-            if (_responses.size() >= _playerCount) {
-                _control.sendMessage(
-                    Model.MSG_QUESTION_DONE, value.correct ? { winner: value.player } : { });
-            }
+    protected function questionAnswered (player :int, correct :Boolean) :void
+    {
+        if (_responses.containsKey(player)) {
+            throw new Error("Multiple answers from player: " + player);
+        }
+        _responses.put(player, true);
+
+        if (correct || _responses.size() >= _playerCount) {
+            _control.sendMessage(Model.MSG_QUESTION_DONE, correct ? { winner: player } : { });
+        } else {
+            _control.sendMessage(Model.MSG_ANSWERED, { player: player, correct: correct });
         }
     }
 
@@ -287,14 +268,14 @@ public class Model
             _responses = new HashMap();
 
             if (category == null) {
-                var arr :Array = getQuestions();
-                if (arr.length == 0) {
+                var n :int = getQuestions().getQuestionCount();
+                if (n == 0) {
                     doEndRound();
                     return;
                 }
-                _control.set(Model.QUESTION_IX, BetTheFarm.random.nextInt(arr.length));
+                _control.set(Model.QUESTION_IX, BetTheFarm.random.nextInt(n));
             } else {
-                var keys :Array = _freeCategories[category.toLowerCase()];
+                var keys :Array = _freeQuestions.getCategoryIxSet(category);
                 if (!keys) {
                     throw new Error("unknown category: " + category);
                 }
@@ -319,10 +300,8 @@ public class Model
 
     protected var _playerCount :int;
 
-    protected var _multiQuestions :Array;
-    protected var _multiCategories :Object;
-    protected var _freeQuestions :Array;
-    protected var _freeCategories :Object;
+    protected var _multiQuestions :QuestionSet;
+    protected var _freeQuestions :QuestionSet;
 
     protected var _questionCount :uint;
     protected var _roundTimeout :uint = 0;
