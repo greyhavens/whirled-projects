@@ -4,6 +4,7 @@
 package com.threerings.betthefarm {
 
 import com.threerings.util.Hashable;
+import com.threerings.util.StringUtil;
 
 public class Question
     implements Hashable
@@ -26,10 +27,7 @@ public class Question
 
     public function hashCode () :int
     {
-        // this can be pretty simple for now
-        return question.length +
-            43 * (question.charCodeAt(question.length/4) +
-                  43 * question.charCodeAt(question.length/2));
+        return StringUtil.hashCode(question);
     }
 
     public function equals (other :Object) :Boolean

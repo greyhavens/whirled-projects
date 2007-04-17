@@ -38,7 +38,7 @@ public class QuestionSet
 
     public function getCategoryIxSet (category :String) :Array
     {
-        return _categories[category];
+        return _categories[category.toLowerCase()];
     }
 
     public function getCategories () :Array
