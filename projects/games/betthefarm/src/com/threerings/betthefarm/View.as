@@ -402,7 +402,7 @@ public class View extends Sprite
         format.color = Content.FONT_COLOR;
 
         var field :TextField = new TextField();
-//        field.y = Content.ANSWER_RECT.y + 60;
+        field.y = 60;
         field.width = Content.ANSWER_RECT.width;
         field.height = Content.ANSWER_RECT.height;
         field.autoSize = TextFieldAutoSize.NONE;
@@ -410,7 +410,6 @@ public class View extends Sprite
         field.defaultTextFormat = format;
         field.text = body;
         _doorArea.addChild(field);
-        debug("Added door body: " + body);
     }
 
     protected function chooseCategory () :void
