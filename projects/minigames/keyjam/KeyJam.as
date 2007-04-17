@@ -184,10 +184,21 @@ public class KeyJam extends Sprite
      */
     protected function finishLevel () :void
     {
-        var result :Number = _timingBar.checkNeedle();
+        var results :Array = _timingBar.checkNeedle();
+        var result :Number = results[0];
+        var wraps :int  = results[1];
         var time :Number = getTimer() - _seqStartStamp;
-        trace("Result: " + result + ", time: " + time + ", booches: " + _booches);
+        trace("Result: " + result + ", time: " + time + ", wraps: " + wraps +
+            ", booches: " + _booches);
         // TODO: come up with some sort of rating based on these completely uninteresting metrics
+
+        var score :Number;
+        if (wraps < SCORE_SCALING.length) {
+            score = result * SCORE_SCALING[wraps];
+
+        } else {
+            score = 0;
+        }
 
         // some crappy feedback..
         var feedback :String;
@@ -216,13 +227,14 @@ public class KeyJam extends Sprite
             feedback = "piss-poor";
         }
 
-        // Figure out the score to report to whirled...
-        // From the time it took the user, subtract half a second and
-        // bound into the 0 - 2sec range
-        var normalizedTime :Number = Math.min(MAX_EXPECTED_TIME, Math.max(0, time - MIN_EXPECTED_TIME));
-        var timeScore :Number = (MAX_EXPECTED_TIME - normalizedTime) / MAX_EXPECTED_TIME;
-        var accScore :Number = result / (_booches + 1);
-        var score :Number = timeScore * accScore;
+//        // Figure out the score to report to whirled...
+//        // From the time it took the user, subtract half a second and
+//        // bound into the 0 - 2sec range
+//        var normalizedTime :Number = Math.min(MAX_EXPECTED_TIME, Math.max(0, time - MIN_EXPECTED_TIME));
+//        var timeScore :Number = (MAX_EXPECTED_TIME - normalizedTime) / MAX_EXPECTED_TIME;
+//        var accScore :Number = result / (_booches + 1);
+//        var score :Number = timeScore * accScore;
+
         _gameCtrl.reportPerformance(score);
 
         // issue feedback, fade out the timer
@@ -270,6 +282,9 @@ public class KeyJam extends Sprite
 
     protected static const MAX_EXPECTED_TIME :int = 6000;
     protected static const MIN_EXPECTED_TIME :int = 500;
+
+    protected static const SCORE_SCALING :Array = [
+        1, .9, .8, .7, .55, .40, .25, .10 ];
 
     [Embed(source="resources.swf#boombox")]
     protected static const BOOMBOX :Class;
