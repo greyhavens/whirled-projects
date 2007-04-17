@@ -12,6 +12,7 @@ public class QuestionSet
     public function QuestionSet ()
     {
         _questions = new Array();
+        _indices = new Array();
         _categories = new Object();
     }
 
@@ -23,6 +24,7 @@ public class QuestionSet
             arr = _categories[category] = new Array();
         }
         arr.push(_questions.length);
+        _indices.push(_questions.length);
         _questions.push(question);
     }
 
@@ -33,7 +35,12 @@ public class QuestionSet
 
     public function getQuestionCount () :int
     {
-        return _questions.length;
+        return _indices.length;
+    }
+
+    public function getQuestionIxSet () :Array
+    {
+        return _indices;
     }
 
     public function getCategoryIxSet (category :String) :Array
@@ -44,8 +51,8 @@ public class QuestionSet
     public function getCategories () :Array
     {
         var map :HashMap = new HashMap();
-        for (var ii :int = 0; ii < _questions.length; ii ++) {
-            map.put(_questions[ii].category, true);
+        for (var ii :int = 0; ii < _indices.length; ii ++) {
+            map.put(_questions[_indices[ii]].category, true);
         }
         return map.keys();
     }
@@ -56,16 +63,18 @@ public class QuestionSet
         if (!question) {
             throw new Error("Unknown question [ix=" + ix + "]");
         }
+        if (!ArrayUtil.removeFirst(_indices, ix)) {
+            throw new Error("Can't find question [ix=" + ix + "]");
+        }
         var category :String = question.category.toLowerCase();
         if (!ArrayUtil.removeFirst(_categories[category], ix)) {
             throw new Error(
                 "Can't find index in category [ix=" + ix + ", category=" + category + "]");
         }
-
-        _questions.splice(ix, 1);
     }
 
     protected var _questions :Array;
+    protected var _indices :Array;
     protected var _categories :Object;
 }
 }

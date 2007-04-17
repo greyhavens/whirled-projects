@@ -267,22 +267,13 @@ public class Model
             _buzzer = -1;
             _responses = new HashMap();
 
-            if (category == null) {
-                var n :int = getQuestions().getQuestionCount();
-                if (n == 0) {
-                    doEndRound();
-                    return;
-                }
-                _control.set(Model.QUESTION_IX, BetTheFarm.random.nextInt(n));
-            } else {
-                var keys :Array = _freeQuestions.getCategoryIxSet(category);
-                if (!keys) {
-                    throw new Error("unknown category: " + category);
-                }
-                var ix :int = BetTheFarm.random.nextInt(keys.length);
-                debug("keys[" + ix + "] = " + keys[ix]);
-                _control.set(Model.QUESTION_IX, keys[ix]);
+            var keys :Array = (category != null) ?
+                getQuestions().getCategoryIxSet(category) : getQuestions().getQuestionIxSet();
+            if (keys.length == 0) {
+                doEndRound();
+                return;
             }
+            _control.set(Model.QUESTION_IX, keys[BetTheFarm.random.nextInt(keys.length)]);
         }
     }
 
