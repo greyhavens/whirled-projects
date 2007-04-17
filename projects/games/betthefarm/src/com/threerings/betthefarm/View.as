@@ -12,11 +12,12 @@ package com.threerings.betthefarm {
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
-import flash.display.Sprite;
-import flash.display.Loader;
-import flash.display.LoaderInfo;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
+import flash.display.Loader;
+import flash.display.LoaderInfo;
+import flash.display.SimpleButton;
+import flash.display.Sprite;
 
 import flash.events.Event;
 import flash.events.IOErrorEvent;
@@ -141,6 +142,9 @@ public class View extends Sprite
 
         doorClear();
 
+        addTextField(question.question, _doorArea, 0, 0, Content.QUESTION_RECT.width,
+                     Content.QUESTION_RECT.height, true, 14);
+
         if (_question is MultipleChoice) {
             var answers :Array = (_question as MultipleChoice).incorrect.slice();
             var ix : int = int((1 + answers.length) * Math.random());
@@ -148,9 +152,48 @@ public class View extends Sprite
             if (answers.length > 4) {
                 throw new Error("Too many answers: " + _question.question);
             }
-            doorQuestion(_question.question, answers);
+            for (var ii :int = 0; ii < 4; ii ++) {
+                var button :SimpleTextButton = new SimpleTextButton(answers[ii]);
+                button.x = Content.ANSWER_RECTS[ii].left;
+                button.y = Content.ANSWER_RECTS[ii].top;
+                button.width = Content.ANSWER_RECTS[ii].width;
+                button.height = Content.ANSWER_RECTS[ii].height;
+                addMultiAnswerClickHandler(button, ii == ix);
+                button.enabled = _playing;
+
+                _doorArea.addChild(button);
+            }
+
         } else {
-            doorQuestion(_question.question);
+            if (_playing) {
+                var buzzButton :SimpleTextButton =
+                    new SimpleTextButton("Buzz!", true, 0xFFFFFF, 0xCC2020);
+                buzzButton.x = Content.BUZZBUTTON_RECT.x;
+                buzzButton.y = Content.BUZZBUTTON_RECT.y;
+                buzzButton.addEventListener(MouseEvent.CLICK, buzzClick);
+                _doorArea.addChild(buzzButton);
+
+                _freeArea = new Sprite();
+                _freeArea.x = Content.FREE_RESPONSE_RECT.left;
+                _freeArea.y = Content.FREE_RESPONSE_RECT.top;
+                _freeArea.graphics.drawRect(
+                    0, 0, Content.FREE_RESPONSE_RECT.width, Content.FREE_RESPONSE_RECT.height);
+                _freeArea.width = Content.FREE_RESPONSE_RECT.width;
+                _freeArea.height = Content.FREE_RESPONSE_RECT.height;
+                _freeArea.visible = false;
+
+                var field :TextField = addTextField("Enter your answer here:", _freeArea, 10, 0);
+
+                _freeField = addTextField("", _freeArea, 10, field.height + 5,
+                                          Content.FREE_RESPONSE_RECT.width - 20, 40);
+                _freeField.border = true;
+                _freeField.borderColor = 0x000000;
+                _freeField.type = TextFieldType.INPUT;
+                _freeField.addEventListener(KeyboardEvent.KEY_DOWN, freeInput);
+
+                _doorArea.addChild(_freeArea);
+            }
+
         }
     }
 
@@ -255,22 +298,8 @@ public class View extends Sprite
 
     protected function roundSetup () :void
     {
-        _roundText = new TextField();
-        _roundText.x = Content.ROUND_RECT.left;
-        _roundText.y = Content.ROUND_RECT.top;
-        _roundText.width = Content.ROUND_RECT.width ;
-        _roundText.height = Content.ROUND_RECT.height;
-        _roundText.autoSize = TextFieldAutoSize.NONE;
-        _roundText.wordWrap = false;
-
-        var format :TextFormat = new TextFormat();
-        format.size = 20;
-        format.align = TextFormatAlign.CENTER;
-        format.font = Content.FONT_NAME;
-        format.color = Content.FONT_COLOR;
-        _roundText.defaultTextFormat = format;
-
-        addChild(_roundText);
+        _roundText = addTextField(
+            "", this, Content.ROUND_RECT.left, Content.ROUND_RECT.top, 0, 0, false, 20);
     }
 
     protected function doorSetup () :void
@@ -288,128 +317,16 @@ public class View extends Sprite
         }
     }
 
-    protected function doorQuestion (question :String, answers :Array = null) :void
-    {
-        var format :TextFormat = new TextFormat();
-        format.size = 14;
-        format.font = Content.FONT_NAME;
-        format.color = Content.FONT_COLOR;
-
-        var questionText :TextField = new TextField();
-        questionText.width = Content.QUESTION_RECT.width ;
-        questionText.height = Content.QUESTION_RECT.height;
-        questionText.autoSize = TextFieldAutoSize.NONE;
-        questionText.wordWrap = true;
-        questionText.defaultTextFormat = format;
-        questionText.text = question;
-
-        _doorArea.addChild(questionText);
-
-        if (answers != null) {
-            for (var ii :int = 0; ii < 4; ii ++) {
-                var button :TextField = new TextField();
-                button.x = Content.ANSWER_RECTS[ii].left;
-                button.y = Content.ANSWER_RECTS[ii].top;
-                button.width = Content.ANSWER_RECTS[ii].width;
-                button.height = Content.ANSWER_RECTS[ii].height;
-                button.autoSize = TextFieldAutoSize.NONE;
-                button.wordWrap = true;
-                button.defaultTextFormat = format;
-                button.text = answers[ii];
-                if (_playing) {
-                    button.addEventListener(MouseEvent.CLICK, multiAnswerClick);
-                }
-
-                _doorArea.addChild(button);
-            }
-        } else {
-            if (_playing) {
-                var buzzButton :Sprite = new Sprite();
-                buzzButton.x = Content.BUZZBUTTON_RECT.x;
-                buzzButton.y = Content.BUZZBUTTON_RECT.y;
-                buzzButton.graphics.beginFill(0xcc2020);
-                buzzButton.graphics.drawRoundRect(
-                    0, 0, Content.BUZZBUTTON_RECT.width, Content.BUZZBUTTON_RECT.height, 8);
-                buzzButton.addEventListener(MouseEvent.CLICK, buzzClick);
-
-                format = new TextFormat();
-                format.size = 24;
-                format.font = Content.FONT_NAME;
-                format.color = Content.FONT_COLOR;
-
-                var buzzText :TextField = new TextField();
-                buzzText.autoSize = TextFieldAutoSize.CENTER;
-                buzzText.wordWrap = false;
-                buzzText.text = "BUZZ!";
-                buzzText.y = (buzzButton.height - buzzText.height)/2;
-                buzzButton.addChild(buzzText);
-
-                _doorArea.addChild(buzzButton);
-
-                _freeArea = new Sprite();
-                _freeArea.x = Content.FREE_RESPONSE_RECT.left;
-                _freeArea.y = Content.FREE_RESPONSE_RECT.top;
-                _freeArea.graphics.drawRect(
-                    0, 0, Content.FREE_RESPONSE_RECT.width, Content.FREE_RESPONSE_RECT.height);
-                _freeArea.width = Content.FREE_RESPONSE_RECT.width;
-                _freeArea.height = Content.FREE_RESPONSE_RECT.height;
-                _freeArea.visible = false;
-
-                var freeText :TextField = new TextField();
-                freeText.autoSize = TextFieldAutoSize.CENTER;
-                freeText.wordWrap = false;
-                freeText.text = "Enter your answer here:";
-                _freeArea.addChild(freeText);
-
-                _freeField = new TextField();
-                _freeField.x = 10;
-                _freeField.y = freeText.height + 5;
-                _freeField.width = Content.FREE_RESPONSE_RECT.width - 20;
-                _freeField.height = 40;
-                _freeField.border = true;
-                _freeField.borderColor = 0x000000;
-                _freeField.type = TextFieldType.INPUT;
-                _freeField.addEventListener(KeyboardEvent.KEY_DOWN, freeInput);
-                _freeArea.addChild(_freeField);
-
-                _doorArea.addChild(_freeArea);
-            }
-        }
-    }
-
     protected function doorHeader (header :String) :void
     {
-        var format :TextFormat = new TextFormat();
-        format.size = 24;
-        format.font = Content.FONT_NAME;
-        format.color = Content.FONT_COLOR;
-
-        var field :TextField = new TextField();
-        field.width = Content.ANSWER_RECT.width;
-        field.height = Content.ANSWER_RECT.height;
-        field.autoSize = TextFieldAutoSize.NONE;
-        field.wordWrap = true;
-        field.defaultTextFormat = format;
-        field.text = header;
-        _doorArea.addChild(field);
+        addTextField(header, _doorArea, 0, 0, Content.ANSWER_RECT.width,
+                     Content.ANSWER_RECT.height, true, 24);
     }
 
     protected function doorBody (body :String) :void
     {
-        var format :TextFormat = new TextFormat();
-        format.size = 16;
-        format.font = Content.FONT_NAME;
-        format.color = Content.FONT_COLOR;
-
-        var field :TextField = new TextField();
-        field.y = 60;
-        field.width = Content.ANSWER_RECT.width;
-        field.height = Content.ANSWER_RECT.height;
-        field.autoSize = TextFieldAutoSize.NONE;
-        field.wordWrap = true;
-        field.defaultTextFormat = format;
-        field.text = body;
-        _doorArea.addChild(field);
+        addTextField(body, _doorArea, 0, 60, Content.ANSWER_RECT.width,
+                     Content.ANSWER_RECT.height, true, 16);
     }
 
     protected function chooseCategory () :void
@@ -455,18 +372,16 @@ public class View extends Sprite
         (to != null ? to : this).addChild(bit);
     }
 
-    protected function multiAnswerClick (event :MouseEvent) :void
+    protected function addMultiAnswerClickHandler (button :SimpleButton, correct :Boolean) :void
     {
-        if (_answered) {
-            // ignore multiple clicks
-            return;
-        }
-        var field :TextField = event.target as TextField;
-        _answered = true;
-        var correct :Boolean =
-            (field.text.toLowerCase() == _question.getCorrectAnswer().toLowerCase());
-        _control.sendMessage(
-            Model.MSG_ANSWER_MULTI, { player: _control.getMyId(), correct: correct });
+        button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            if (_answered) {
+                return;
+            }
+            _answered = true;
+            _control.sendMessage(
+                Model.MSG_ANSWER_MULTI, { player: _control.getMyId(), correct: correct });
+        });
     }
 
     protected function buzzClick (event :MouseEvent) :void
@@ -505,6 +420,35 @@ public class View extends Sprite
         }
         _roundText.text = Content.ROUND_NAMES[_control.getRound()-1] + 
             " (" + Math.max(0, _endTime - uint(getTimer()/1000)) + ")";
+    }
+
+    protected function addTextField(
+        txt :String, parent :DisplayObjectContainer, x :Number, y :Number, width :Number = 0,
+        height :Number = 0, wordWrap :Boolean = true, fontSize :int = 16) :TextField
+    {
+        var field :TextField = new TextField();
+        field.x = x;
+        field.y = y;
+        if (width > 0 && height > 0) {
+            field.width = width;
+            field.height = height;
+            field.autoSize = TextFieldAutoSize.NONE;
+        } else {
+            field.autoSize = TextFieldAutoSize.CENTER;
+        }
+        field.wordWrap = wordWrap;
+
+        var format :TextFormat = new TextFormat();
+        format.size = fontSize;
+        format.font = Content.FONT_NAME;
+        format.color = Content.FONT_COLOR;
+        field.defaultTextFormat = format;
+
+        field.text = txt;
+        if (parent != null) {
+            parent.addChild(field);
+        }
+        return field;
     }
 
     protected var _control :WhirledGameControl;
