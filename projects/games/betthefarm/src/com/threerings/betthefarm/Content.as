@@ -48,10 +48,10 @@ public class Content
     public static const ROUND_RECT :Rectangle = new Rectangle(170, 145, 245, 40);
 
     /** The location and dimensions of the buzz button. */
-    public static const BUZZBUTTON_RECT :Rectangle = new Rectangle(70, 120, 115, 40);
+    public static const BUZZBUTTON_RECT :Rectangle = new Rectangle(70, 110, 115, 40);
 
     /** The location and dimensions of the text entry field for free response questions. */
-    public static const FREE_RESPONSE_RECT :Rectangle = new Rectangle(70, 170, 115, 20);
+    public static const FREE_RESPONSE_RECT :Rectangle = new Rectangle(30, 170, 185, 80);
 
     /** The relative location of each answer field for multiple choice answers. */
     public static const ANSWER_RECTS :Array = [

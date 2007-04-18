@@ -157,7 +157,7 @@ public class View extends Sprite
                 button.x = Content.ANSWER_RECTS[ii].left;
                 button.y = Content.ANSWER_RECTS[ii].top;
                 button.width = Content.ANSWER_RECTS[ii].width;
-                button.height = Content.ANSWER_RECTS[ii].height;
+		//                button.height = Content.ANSWER_RECTS[ii].height;
                 addMultiAnswerClickHandler(button, ii == ix);
                 button.enabled = _playing;
 
@@ -170,6 +170,7 @@ public class View extends Sprite
                     new SimpleTextButton("Buzz!", true, 0xFFFFFF, 0xCC2020);
                 buzzButton.x = Content.BUZZBUTTON_RECT.x;
                 buzzButton.y = Content.BUZZBUTTON_RECT.y;
+		buzzButton.scaleX = buzzButton.scaleY = 2;
                 buzzButton.addEventListener(MouseEvent.CLICK, buzzClick);
                 _doorArea.addChild(buzzButton);
 
@@ -182,10 +183,12 @@ public class View extends Sprite
                 _freeArea.height = Content.FREE_RESPONSE_RECT.height;
                 _freeArea.visible = false;
 
-                var field :TextField = addTextField("Enter your answer here:", _freeArea, 10, 0);
+                var field :TextField = addTextField(
+		     "Enter your answer here:", _freeArea, 10, 0,
+		     Content.FREE_RESPONSE_RECT.width - 20, 40);
 
-                _freeField = addTextField("", _freeArea, 10, field.height + 5,
-                                          Content.FREE_RESPONSE_RECT.width - 20, 40);
+                _freeField = addTextField(
+		     "", _freeArea, 10, 50, Content.FREE_RESPONSE_RECT.width - 20, 40);
                 _freeField.border = true;
                 _freeField.borderColor = 0x000000;
                 _freeField.type = TextFieldType.INPUT;
@@ -299,7 +302,8 @@ public class View extends Sprite
     protected function roundSetup () :void
     {
         _roundText = addTextField(
-            "", this, Content.ROUND_RECT.left, Content.ROUND_RECT.top, 0, 0, false, 20);
+	      "", this, Content.ROUND_RECT.left, Content.ROUND_RECT.top,
+	      Content.ROUND_RECT.width, Content.ROUND_RECT.height, false, 20);
     }
 
     protected function doorSetup () :void
