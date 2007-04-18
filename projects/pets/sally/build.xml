@@ -1,0 +1,17 @@
+<!-- build configuration -->
+<project name="sally" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"  value="Sally"/>
+  <property name="app.source-dir" value="src"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+  <!-- copies our compiled media into our local media directory for testing -->
+  <property name="hash" value="b48f10fc4165d968f51eb69f12e402015e717564"/>
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/${hash}.swf"/>
+  </target>
+
+</project>
