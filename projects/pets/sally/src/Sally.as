@@ -13,7 +13,7 @@ import com.threerings.util.EmbeddedSwfLoader;
 import com.whirled.PetControl;
 
 /**
- * An extremely simple pet that moves randomly around the room.
+ * Sally is a friendly little girl kept as a pet by monsters.
  */
 [SWF(width="350", height="254")]
 public class Sally extends Sprite

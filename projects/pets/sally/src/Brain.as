@@ -5,6 +5,7 @@ package {
 
 import flash.events.TimerEvent;
 
+import com.threerings.util.HashMap;
 import com.threerings.util.Random;
 
 import com.whirled.ControlEvent;
@@ -15,6 +16,9 @@ import com.whirled.PetControl;
  */
 public class Brain
 {
+    /** Use this to log things. */
+    public static var log :Log = Log.getLog(Brain);
+
     /**
      * Creates a brain that will use the supplied control to interact with the Whirled and will
      * control the supplied body.
@@ -27,8 +31,30 @@ public class Brain
         _ctrl.addEventListener(TimerEvent.TIMER, tick);
         _ctrl.setTickInterval(3000);
 
+        // determine which states are available to us by virtue of the body having an idle
+        // animation for them (and ideally a transition to and from content)
+        for each (var state :State in State.enumerateStates()) {
+            if (_body.supportsState(state.name)) {
+                _states.put(state.name, state);
+            }
+        }
+
         // start in the 'content' state
-        _body.switchToState("content");
+        switchToState(State.CONTENT);
+    }
+
+    /**
+     * Switches our pet to the specified state.
+     */
+    public function switchToState (state :State) :void
+    {
+        if (!_states.containsKey(state.name)) {
+            log.warning("Requested to switch to unsupported state " + state + ".");
+            state = State.CONTENT; // fall back to contented
+        }
+
+        _state = state;
+        _body.switchToState(_state.name);
     }
 
     /**
@@ -43,37 +69,46 @@ public class Brain
     {
         // don't make any state changes while we're moving or transitioning between states
         if (_ctrl.isMoving() || _body.inTransition()) {
-            trace("Not thinking [moving=" + _ctrl.isMoving() +
-                  ", trans=" + _body.inTransition() + "].");
+            log.info("Not thinking [moving=" + _ctrl.isMoving() +
+                     ", trans=" + _body.inTransition() + "].");
             return;
         }
 
         // 10% chance of changing state
-        if (_rando.nextInt(100) > 70) {
-            _body.switchToState(STATES[_rando.nextInt(STATES.length)]);
+        if (_rando.nextInt(100) > 90) {
+            switchToState(selectNewState());
             return;
         }
 
         // 25% chance of walking somewhere
-        if (/*canWalk(_state) &&*/ _rando.nextInt(100) > 75) {
+        if (_state.canWalk && _rando.nextInt(100) > 75) {
             var oxpos :Number = _ctrl.getLocation()[0];
             var nxpos :Number = Math.random();
             _ctrl.setLocation(nxpos, 0, Math.random(), (nxpos < oxpos) ? 270 : 90);
             return;
         }
+    }
 
-        // 50% chance of picking a new idle animation
-        if (_rando.nextInt(100) > 50) {
-            _body.updateIdle();
-            return;
+    protected function selectNewState () :State
+    {
+        var avail :Array = new Array();
+        for each (var state :State in _state.transitions) {
+            if (_states.containsKey(state.name)) {
+                avail.push(state);
+            }
         }
+        if (avail.length == 0) {
+            log.warning("Zoiks! Cannot transition out of " + _state + "!");
+            return State.CONTENT;
+        }
+        return (avail[_rando.nextInt(avail.length)] as State);
     }
 
     protected var _ctrl :PetControl;
     protected var _body :Body;
     protected var _rando :Random = new Random();
 
-    protected static const STATES :Array = [
-        "content", "excited", "sleepy", "sleeping", "curious", "sad", "hungry" ];
+    protected var _state :State;
+    protected var _states :HashMap = new HashMap();
 }
 }

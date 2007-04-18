@@ -18,6 +18,9 @@ import com.whirled.PetControl;
  */
 public class Body
 {
+    /** Use this to log things. */
+    public static var log :Log = Log.getLog(Body);
+
     /**
      * Creates a body that will manipulate the supplied MovieClip to animate the pet. It will use
      * the supplied control to adjust the pet's attachment to the floor (hotspot). The caller
@@ -38,30 +41,46 @@ public class Body
         for each (var scene :Scene in _media.scenes) {
             // we handle three types of scenes
             if (scene.name.match("^[a-z]+_[a-z]+$")) { // state_action
-                _scenes.put(scene.name, scene);
+                _scenes.put(scene.name, new SceneList(scene.name, scene));
 
             } else if (scene.name.match("^[a-z]+_to_[a-z]+$")) { // state_to_state
-                _scenes.put(scene.name, scene);
+                _scenes.put(scene.name, new SceneList(scene.name, scene));
 
             } else if (scene.name.match("^[a-z]+_[a-z]+_[0-9]+$")) { // state_to_action_N
                 var idx :int = scene.name.lastIndexOf("_");
                 var key :String = scene.name.substring(0, idx);
-                var list :Object = _scenes.get(key);
-                if (list is Array) {
-                    (list as Array).push(scene);
+                var list :SceneList = (_scenes.get(key) as SceneList);
+                if (list == null) {
+                    _scenes.put(key, new SceneList(key, scene));
                 } else {
-                    var nlist :Array = new Array();
-                    if (list is Scene) {
-                        nlist.push(list);
-                    } // otherwise it's null
-                    nlist.push(scene);
-                    _scenes.put(key, nlist);
+                    list.addScene(scene);
                 }
 
             } else {
-                trace("Unknown scene type: " + scene.name + ". Skipping.");
+                log.warning("Unknown scene type: " + scene.name + ". Skipping.");
             }
         }
+    }
+
+    /**
+     * Returns true if this body supports the specified state (has animations for it).
+     */
+    public function supportsState (state :String) :Boolean
+    {
+        // if we have an idle animation for a state, we support it
+        if (!_scenes.containsKey(state + "_idle")) {
+            return false;
+        }
+        // warn if we lack state_to_content or content_to_state
+        if (State.getState(state).transitions.indexOf(State.CONTENT) != -1 &&
+            !_scenes.containsKey(state + "_to_content")) {
+            log.warning("Warning: missing " + state + "_to_content animation.");
+        }
+        if (State.CONTENT.transitions.indexOf(State.getState(state)) != -1 &&
+            !_scenes.containsKey("content_to_" + state)) {
+            log.warning("Missing content_to_" + state + " animation.");
+        }
+        return true;
     }
 
     /**
@@ -69,23 +88,16 @@ public class Body
      */
     public function switchToState (state :String) :void
     {
-        // TEMP: hackery
-        if (state == "sleeping" && _state != "sleepy") {
-            switchToState("sleepy");
-        }
-        // END TEMP
+        log.info("Changing state from " + _state + " to " + state + ".");
 
-        trace("Changing state from " + _state + " to " + state + ".");
         // queue our transition animation (direct if we have one, through 'content' if we don't)
-        var direct :Scene = (_scenes.get(_state + "_to_" + state) as Scene);
+        var direct :SceneList = (_scenes.get(_state + "_to_" + state) as SceneList);
         if (direct != null) {
-            trace("Transitioning using " + direct.name);
             queueScene(direct);
         } else {
             // TODO: if we lack one or both of these, should we do anything special?
-            trace("Transitioning through content?");
-            queueScene(_scenes.get(_state + "_to_content"));
-            queueScene(_scenes.get("content_to_" + state));
+            queueScene(_scenes.get(_state + "_to_content") as SceneList);
+            queueScene(_scenes.get("content_to_" + state) as SceneList);
         }
         // update our state
         _state = state;
@@ -120,19 +132,17 @@ public class Body
 
     protected function onEnterFrame (event :Event) :void
     {
-        if (_media == null || _curScene == null) {
+        if (_media == null || _playing == null) {
             return;
         }
 
-        var scene :Scene = _media.currentScene;
-        if (scene.name != _curScene.name) {
+        if (_media.currentScene.name != _playing.current.name) {
             if (_sceneQueue.length > 0) {
-                _curScene = (_sceneQueue.shift() as Scene);
-                trace("Switching to " + _curScene.name);
+                _playing = (_sceneQueue.shift() as SceneList);
             } else {
-                trace("Looping " + _curScene.name);
+                _playing.updateScene();
             }
-            _media.gotoAndPlay(1, _curScene.name);
+            _media.gotoAndPlay(1, _playing.current.name);
         }
     }
 
@@ -156,21 +166,22 @@ public class Body
      * Queues a scene up to be played as soon as the other scenes in the queue have completed.
      * Handles queueing of null scenes by ignoring the request to simplify other code.
      */
-    protected function queueScene (scene :Scene, force :Boolean = false) :void
+    protected function queueScene (scene :SceneList, force :Boolean = false) :void
     {
         if (scene == null) {
             return;
 
-        } else if (_curScene == null || force) {
+        } else if (_playing == null || force) {
             _sceneQueue.length = 0;
-            _curScene = scene;
-            _media.gotoAndPlay(1, _curScene.name);
+            _playing = scene;
+            _playing.updateScene();
+            _media.gotoAndPlay(1, _playing.current.name);
 //             for (var ii :int = 0; ii < _media.numChildren; ii++) {
 //                 trace("Child " + ii + ": " + _media.getChildAt(ii));
 //             }
 
         } else {
-            trace("Queueing " + scene.name + " (f: " + scene.numFrames + ").");
+            log.info("Queueing " + scene.name + ".");
             _sceneQueue.push(scene);
         }
     }
@@ -180,23 +191,16 @@ public class Body
      * alternatives or falling back to a generic version of the action if a specific one is not
      * available for our current state.
      */
-    protected function findScene (action :String, fallback :Boolean = true) :Scene
+    protected function findScene (action :String, fallback :Boolean = true) :SceneList
     {
-        var value :Object = _scenes.get(_state + "_" + action);
-        if (value == null && fallback) {
-            value = _scenes.get("content_" + action);
+        var scene :SceneList = (_scenes.get(_state + "_" + action) as SceneList);
+        if (scene == null && fallback) {
+            scene = (_scenes.get("content_" + action) as SceneList);
         }
-        if (value is Array) {
-            return (value[_rando.nextInt((value as Array).length)] as Scene);
-
-        } else if (value is Scene) {
-            return (value as Scene);
-
-        } else {
-            // uh oh...
-            trace("Unable to find scene [state=" + _state + ", action=" + action + "].");
-            return null;
+        if (scene == null) {
+            log.warning("Unable to find scene [state=" + _state + ", action=" + action + "].");
         }
+        return scene;
     }
 
     protected var _ctrl :PetControl;
@@ -206,7 +210,41 @@ public class Body
     protected var _rando :Random = new Random();
 
     protected var _state :String;
-    protected var _curScene :Scene;
+    protected var _playing :SceneList;
     protected var _sceneQueue :Array = new Array();
 }
+}
+
+import flash.display.Scene;
+
+import com.threerings.util.Random;
+
+class SceneList
+{
+    public var name :String;
+
+    public function get current () :Scene
+    {
+        return (_scenes[_curidx] as Scene);
+    }
+
+    public function SceneList (name :String, scene :Scene)
+    {
+        this.name = name;
+        addScene(scene);
+    }
+
+    public function addScene (scene :Scene) :void
+    {
+        _scenes.push(scene);
+    }
+
+    public function updateScene () :void
+    {
+        _curidx = _rando.nextInt(_scenes.length);
+    }
+
+    protected var _curidx :int;
+    protected var _scenes :Array = new Array();
+    protected var _rando :Random = new Random();
 }
