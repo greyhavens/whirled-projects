@@ -177,11 +177,11 @@ public class View extends Sprite
                 _freeArea.visible = false;
 
                 var field :TextField = addTextField(
-		     "Enter your answer here:", _freeArea, 10, 0,
-		     Content.FREE_RESPONSE_RECT.width - 20, 40);
+                     "Enter your answer here:", _freeArea, 10, 0,
+                     Content.FREE_RESPONSE_RECT.width - 20, 40);
 
                 _freeField = addTextField(
-		     "", _freeArea, 10, 40, Content.FREE_RESPONSE_RECT.width - 20, 40);
+                     "", _freeArea, 10, 40, Content.FREE_RESPONSE_RECT.width - 20, 40);
                 _freeField.border = true;
                 _freeField.borderColor = 0x000000;
                 _freeField.type = TextFieldType.INPUT;
@@ -243,36 +243,12 @@ public class View extends Sprite
 
     protected function addPlaque (oid :int, ii :int) :void
     {
-        var format :TextFormat = new TextFormat();
-        format.size = 64;
-        format.font = Content.FONT_NAME;
-        format.color = Content.FONT_COLOR;
-        format.align = TextFormatAlign.CENTER;
-
-        _plaqueTexts[oid] = new TextField();
-        _plaqueTexts[oid].autoSize = TextFieldAutoSize.CENTER;
-        _plaqueTexts[oid].defaultTextFormat = format;
-        _plaqueTexts[oid].text = _control.getOccupantName(oid);
-        _plaqueTexts[oid].x = (320 - _plaqueTexts[oid].width) / 2;
-
-        var plaque :Sprite = new Sprite();
-        plaque.width = 320;
-        plaque.height = 200;
-        plaque.addChild(_plaqueTexts[oid]);
-
-        var pixels :BitmapData = new BitmapData(320, 200, true, 0x000000);
-        pixels.draw(plaque, null, null, null, null, true);
-
-        var matrix :Matrix = new Matrix();
-        var scale :Number = 0.21;
-        matrix.tx = (Content.PLAQUE_LOCS[ii] as Point).x - 160*scale;
-        matrix.ty = (Content.PLAQUE_LOCS[ii] as Point).y - 100*scale;
-        matrix.a = matrix.d = scale;
-        matrix.b = 0.035;
-
-        var bitmap :Bitmap = new Bitmap(pixels);
-        bitmap.transform.matrix = matrix;
-        addChild(bitmap);
+        _plaqueTexts[oid] = addTextField(
+            "Butternugget\n47323", this,
+//            _control.getOccupantName(oid) + " d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d", this,
+            (Content.PLAQUE_LOCS[ii] as Point).x - 35,
+            (Content.PLAQUE_LOCS[ii] as Point).y - 15,
+            70, 50, false, 12);
     }
 
     protected function requestHeadshot (oid :int, ii :int) :void
@@ -295,8 +271,8 @@ public class View extends Sprite
     protected function roundSetup () :void
     {
         _roundText = addTextField(
-	      "", this, Content.ROUND_RECT.left, Content.ROUND_RECT.top,
-	      Content.ROUND_RECT.width, Content.ROUND_RECT.height, false, 20);
+              "", this, Content.ROUND_RECT.left, Content.ROUND_RECT.top,
+              Content.ROUND_RECT.width, Content.ROUND_RECT.height, false, 20);
     }
 
     protected function doorSetup () :void
@@ -409,11 +385,10 @@ public class View extends Sprite
 
     protected function updateTimer () :void
     {
-        if (_endTime == 0) {
-            return;
+        if (_endTime > 0) {
+            _roundText.text = Content.ROUND_NAMES[_control.getRound()-1] + 
+                " (" + Math.max(0, _endTime - uint(getTimer()/1000)) + ")";
         }
-        _roundText.text = Content.ROUND_NAMES[_control.getRound()-1] + 
-            " (" + Math.max(0, _endTime - uint(getTimer()/1000)) + ")";
     }
 
     protected function addTextField(
