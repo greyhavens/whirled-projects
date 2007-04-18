@@ -51,7 +51,7 @@ public class Content
     public static const BUZZBUTTON_RECT :Rectangle = new Rectangle(70, 110, 115, 40);
 
     /** The location and dimensions of the text entry field for free response questions. */
-    public static const FREE_RESPONSE_RECT :Rectangle = new Rectangle(30, 170, 185, 80);
+    public static const FREE_RESPONSE_RECT :Rectangle = new Rectangle(10, 170, 235, 80);
 
     /** The relative location of each answer field for multiple choice answers. */
     public static const ANSWER_RECTS :Array = [

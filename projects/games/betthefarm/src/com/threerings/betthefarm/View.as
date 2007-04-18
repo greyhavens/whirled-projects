@@ -163,7 +163,8 @@ public class View extends Sprite
         } else {
             if (_playing) {
                 var buzzButton :SimpleButton = addTextButton(
-                    "Buzz!", _doorArea, Content.BUZZBUTTON_RECT.x, Content.BUZZBUTTON_RECT.y);
+                    "Buzz!", _doorArea, Content.BUZZBUTTON_RECT.x, Content.BUZZBUTTON_RECT.y,
+                    0, 0, false, 32, 0xDDDDDD, 0xEE4444, 0xFFFFFF);
                 buzzButton.addEventListener(MouseEvent.CLICK, buzzClick);
 
                 _freeArea = new Sprite();
@@ -180,7 +181,7 @@ public class View extends Sprite
 		     Content.FREE_RESPONSE_RECT.width - 20, 40);
 
                 _freeField = addTextField(
-		     "", _freeArea, 10, 50, Content.FREE_RESPONSE_RECT.width - 20, 40);
+		     "", _freeArea, 10, 40, Content.FREE_RESPONSE_RECT.width - 20, 40);
                 _freeField.border = true;
                 _freeField.borderColor = 0x000000;
                 _freeField.type = TextFieldType.INPUT;
@@ -450,16 +451,17 @@ public class View extends Sprite
         foreground :uint = 0x003366, background :uint = 0x6699CC,
         highlight :uint = 0x0066Ff, padding :Number = 5) :SimpleButton
     {
+        var static :Boolean = width > 0 && height > 0;
         var button :SimpleButton = new SimpleButton();
         button.upState = makeButtonFace(
             makeButtonLabel(txt, width, height, wordWrap, fontSize, foreground),
-            foreground, background, padding);
+            foreground, background, padding, static);
         button.overState = makeButtonFace(
             makeButtonLabel(txt, width, height, wordWrap, fontSize, highlight),
-            highlight, background, padding);
+            highlight, background, padding, static);
         button.downState = makeButtonFace(
             makeButtonLabel(txt, width, height, wordWrap, fontSize, background),
-            background, highlight, padding);
+            background, highlight, padding, static);
         button.hitTestState = button.upState;
         parent.addChild(button);
         button.x = x;
@@ -494,12 +496,13 @@ public class View extends Sprite
     }
 
     protected function makeButtonFace (
-        label :TextField, foreground :uint, background :uint, padding :int) :Sprite
+        label :TextField, foreground :uint, background :uint,
+        padding :int, static :Boolean) :Sprite
     {
         var face :Sprite = new Sprite();
 
-        var w :Number = label.textWidth + 2 * padding;
-        var h :Number = label.textHeight + 2 * padding;
+        var w :Number = label.width + (!static ? 2*padding : 0);
+        var h :Number = label.height + (!static ? 2*padding : 0);
 
         // create our button background (and outline)
         var button :Shape = new Shape();
