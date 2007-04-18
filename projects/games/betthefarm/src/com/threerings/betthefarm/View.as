@@ -17,6 +17,7 @@ import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.SimpleButton;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -48,8 +49,6 @@ import flash.utils.clearInterval;
 import flash.utils.setTimeout;
 
 import com.whirled.WhirledGameControl;
-
-import com.threerings.flash.SimpleTextButton;
 
 /**
  * Manages the whole game view and user input.
@@ -153,26 +152,19 @@ public class View extends Sprite
                 throw new Error("Too many answers: " + _question.question);
             }
             for (var ii :int = 0; ii < 4; ii ++) {
-                var button :SimpleTextButton = new SimpleTextButton(answers[ii]);
-                button.x = Content.ANSWER_RECTS[ii].left;
-                button.y = Content.ANSWER_RECTS[ii].top;
-                button.width = Content.ANSWER_RECTS[ii].width;
-		//                button.height = Content.ANSWER_RECTS[ii].height;
+                var button :SimpleButton = addTextButton(
+                    answers[ii], _doorArea, Content.ANSWER_RECTS[ii].left,
+                    Content.ANSWER_RECTS[ii].top, Content.ANSWER_RECTS[ii].width,
+                    Content.ANSWER_RECTS[ii].height);
                 addMultiAnswerClickHandler(button, ii == ix);
                 button.enabled = _playing;
-
-                _doorArea.addChild(button);
             }
 
         } else {
             if (_playing) {
-                var buzzButton :SimpleTextButton =
-                    new SimpleTextButton("Buzz!", true, 0xFFFFFF, 0xCC2020);
-                buzzButton.x = Content.BUZZBUTTON_RECT.x;
-                buzzButton.y = Content.BUZZBUTTON_RECT.y;
-		buzzButton.scaleX = buzzButton.scaleY = 2;
+                var buzzButton :SimpleButton = addTextButton(
+                    "Buzz!", _doorArea, Content.BUZZBUTTON_RECT.x, Content.BUZZBUTTON_RECT.y);
                 buzzButton.addEventListener(MouseEvent.CLICK, buzzClick);
-                _doorArea.addChild(buzzButton);
 
                 _freeArea = new Sprite();
                 _freeArea.x = Content.FREE_RESPONSE_RECT.left;
@@ -342,21 +334,11 @@ public class View extends Sprite
         var y :uint = 20;
         var x :uint = Content.QUESTION_RECT.width/2;
         for (var ii :int = 0; ii < categories.length; ii ++) {
-            var button :SimpleTextButton = makeCategoryButton(categories[ii]);
-            button.y = y;
-            button.x = x - button.width/2;
-            _doorArea.addChild(button);
+            var button :SimpleButton = addTextButton(categories[ii], _doorArea, x, y);
+            addCategoryClickHandler(button, categories[ii]);
+            button.x -= button.width/2;
             y += button.height + 5;
         }
-    }
-
-    protected function makeCategoryButton (category :String) :SimpleTextButton
-    {
-        var button :SimpleTextButton = new SimpleTextButton(category);
-        button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            _control.sendMessage(Model.MSG_CHOOSE_CATEGORY, category);
-        });
-        return button;
     }
 
     protected function addDebugFrames () :void
@@ -374,6 +356,13 @@ public class View extends Sprite
         bit.graphics.lineStyle(2, 0xFF0000);
         bit.graphics.drawRect(rect.x, rect.y, rect.width, rect.height);
         (to != null ? to : this).addChild(bit);
+    }
+
+    protected function addCategoryClickHandler (button :SimpleButton, category :String) :void
+    {
+        button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            _control.sendMessage(Model.MSG_CHOOSE_CATEGORY, category);
+        });
     }
 
     protected function addMultiAnswerClickHandler (button :SimpleButton, correct :Boolean) :void
@@ -453,6 +442,80 @@ public class View extends Sprite
             parent.addChild(field);
         }
         return field;
+    }
+
+    protected function addTextButton(
+        txt :String, parent :DisplayObjectContainer, x :Number, y :Number, width :Number = 0,
+        height :Number = 0, wordWrap :Boolean = true, fontSize :int = 16,
+        foreground :uint = 0x003366, background :uint = 0x6699CC,
+        highlight :uint = 0x0066Ff, padding :Number = 5) :SimpleButton
+    {
+        var button :SimpleButton = new SimpleButton();
+        button.upState = makeButtonFace(
+            makeButtonLabel(txt, width, height, wordWrap, fontSize, foreground),
+            foreground, background, padding);
+        button.overState = makeButtonFace(
+            makeButtonLabel(txt, width, height, wordWrap, fontSize, highlight),
+            highlight, background, padding);
+        button.downState = makeButtonFace(
+            makeButtonLabel(txt, width, height, wordWrap, fontSize, background),
+            background, highlight, padding);
+        button.hitTestState = button.upState;
+        parent.addChild(button);
+        button.x = x;
+        button.y = y;
+
+        return button;
+    }
+
+    protected function makeButtonLabel (
+        txt :String, width :Number, height :Number, wordWrap :Boolean, fontSize :int,
+        foreground :uint) :TextField
+    {
+        var field :TextField = new TextField();
+        field.x = x;
+        field.y = y;
+        if (width > 0 && height > 0) {
+            field.width = width;
+            field.height = height;
+            field.autoSize = TextFieldAutoSize.NONE;
+        } else {
+            field.autoSize = TextFieldAutoSize.CENTER;
+        }
+        field.wordWrap = wordWrap;
+
+        var format :TextFormat = new TextFormat();
+        format.size = fontSize;
+        format.color = foreground;
+        field.defaultTextFormat = format;
+
+        field.text = txt;
+        return field;
+    }
+
+    protected function makeButtonFace (
+        label :TextField, foreground :uint, background :uint, padding :int) :Sprite
+    {
+        var face :Sprite = new Sprite();
+
+        var w :Number = label.textWidth + 2 * padding;
+        var h :Number = label.textHeight + 2 * padding;
+
+        // create our button background (and outline)
+        var button :Shape = new Shape();
+        button.graphics.beginFill(background);
+        button.graphics.drawRoundRect(0, 0, w, h, padding, padding);
+        button.graphics.endFill();
+        button.graphics.lineStyle(1, foreground);
+        button.graphics.drawRoundRect(0, 0, w, h, padding, padding);
+
+        face.addChild(button);
+
+        label.x = padding;
+        label.y = padding;
+        face.addChild(label);
+
+        return face;
     }
 
     protected var _control :WhirledGameControl;
