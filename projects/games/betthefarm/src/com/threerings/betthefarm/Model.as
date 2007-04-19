@@ -109,9 +109,6 @@ public class Model
         if (_questionTimeout != 0) {
             clearTimeout(_questionTimeout);
         }
-        if (_control.getRound() >= Content.ROUND_NAMES.length) {
-            _control.endGame( [ ] );
-        }
     }
 
     public function shutdown () :void
@@ -218,15 +215,16 @@ public class Model
                 // in the buzz round we only do N questions
                 if (_questionIx == getCurrentDuration()) {
                     _questionTimeout = setTimeout(doEndRound, 1000);
+
                 } else if (!value.winner) {
-                    // TODO: need a pause here
                     // if there was a winner, that winner will display the category choice UI
                     // otherwise we, as controllers, have to randomly select it here
-                    var categories :Array = getQuestions().getCategories();
-                    var ix :int = BetTheFarm.random.nextInt(categories.length);
-                    var category :String = categories[ix];
-                    nextQuestion(category);
+                    _questionTimeout = setTimeout(chooseRandomCategory, 1000);
                 }                
+
+            } else {
+                // if this is a wager round, immediately end it
+                _questionTimeout = setTimeout(doEndRound, 1000);
             }
 
         } else if (event.name == Model.MSG_CHOOSE_CATEGORY) {
@@ -250,6 +248,14 @@ public class Model
             }
             questionAnswered(value.player, value.correct);
         }
+    }
+
+    protected function chooseRandomCategory () :void
+    {
+        var categories :Array = getQuestions().getCategories();
+        var ix :int = BetTheFarm.random.nextInt(categories.length);
+        var category :String = categories[ix];
+        nextQuestion(category);
     }
 
     protected function questionAnswered (player :int, correct :Boolean) :void
@@ -281,7 +287,11 @@ public class Model
     protected function doEndRound () :void
     {
         _roundTimeout = 0;
-        _control.endRound(3);
+        if (_control.getRound() == Content.ROUND_NAMES.length) {
+            _control.endGame( [ ] );
+        } else {
+            _control.endRound(3);
+        }
     }
 
     protected function nextQuestion (category :String = null) :void
