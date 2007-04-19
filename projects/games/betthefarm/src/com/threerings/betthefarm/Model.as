@@ -159,8 +159,6 @@ public class Model
             }
 
         } else if (event.name == Model.SCORES && event.index != -1) {
-            debug("event.index: " + event.index);
-            debug("oid: " + _control.seating.getPlayerIds()[event.index]);
             _view.flowUpdated(_control.seating.getPlayerIds()[event.index], event.newValue as int);
         }
     }
@@ -185,7 +183,6 @@ public class Model
             _view.gainedBuzzControl(value.player);
 
         } else if (event.name == Model.MSG_QUESTION_DONE) {
-            debug("DONE: winner=" + value.winner);
             if (value.winner == _control.getMyId()) {
                 ix = _control.seating.getPlayerPosition(value.winner);
                 if (ix == -1) {
@@ -230,13 +227,11 @@ public class Model
                     var categories :Array = getQuestions().getCategories();
                     var ix :int = BetTheFarm.random.nextInt(categories.length);
                     var category :String = categories[ix];
-                    debug("categories[" + ix + "] = " + category);
                     nextQuestion(category);
                 }                
             }
 
         } else if (event.name == Model.MSG_CHOOSE_CATEGORY) {
-            debug("Choosing category: " + value);
             nextQuestion(value as String);
 
         } else if (event.name == Model.MSG_ANSWER_MULTI) {

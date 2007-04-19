@@ -243,7 +243,6 @@ public class View extends Sprite
 
     public function flowUpdated (oid :int, flow :int) :void
     {
-        debug("Am here, updating [" + oid + "] to [" + flow + "]");
         (_plaqueTexts[oid] as TextField).text = _control.getOccupantName(oid) + "\n" + flow;
     }
 
@@ -264,7 +263,6 @@ public class View extends Sprite
             headshot.x = (Content.HEADSHOT_LOCS[ii] as Point).x - headshot.width/2;
             headshot.y = (Content.HEADSHOT_LOCS[ii] as Point).y - headshot.height/2;
             addChild(headshot);
-            debug("Setting headshot for OID " + oid);
             _headshots[oid] = headshot;
             headshot.filters = [
                 new GlowFilter(0xFFFFFF, 1, 10, 10)
@@ -377,7 +375,6 @@ public class View extends Sprite
         var answers :Array = (_question as FreeResponse).correct;
         var correct :Boolean = false;
         for (var ii :int = 0; ii < answers.length; ii ++) {
-            debug("Comparing '" + answer + "' to '" + answers[ii].toLowerCase() + "'");
             if (answers[ii].toLowerCase() == answer) {
                 _control.sendMessage(
                     Model.MSG_ANSWER_FREE, { player: _control.getMyId(), correct: true });
