@@ -107,10 +107,12 @@ public class View extends Sprite
     public function roundDidStart () :void
     {
         debug("Beginning round: " + _control.getRound());
-        _roundText.text = Content.ROUND_NAMES[_control.getRound()-1];
+        updateRound();
+//        _roundText.text = Content.ROUND_NAMES[_control.getRound()-1];
         if (_model.getCurrentRoundType() == Model.ROUND_LIGHTNING) {
             _endTime = getTimer()/1000 + Content.ROUND_DURATIONS[_control.getRound()-1];
         }
+
         _sndRound.play();
     }
 
@@ -128,7 +130,7 @@ public class View extends Sprite
         clearInterval(_updateTimer);
     }
 
-    public function newQuestion (question :Question) :void
+    public function newQuestion (question :Question, questionIx :int) :void
     {
         _question = question;
 
@@ -138,6 +140,8 @@ public class View extends Sprite
                 ];
         }
         _answered = false;
+
+        updateRound(questionIx);
 
         doorClear();
 
@@ -388,9 +392,19 @@ public class View extends Sprite
     protected function updateTimer () :void
     {
         if (_endTime > 0) {
-            _roundText.text = Content.ROUND_NAMES[_control.getRound()-1] + 
-                " (" + Math.max(0, _endTime - uint(getTimer()/1000)) + ")";
+            updateRound();
          }
+    }
+
+    protected function updateRound (questionIx :int = 0) :void
+    {
+        var txt :String = Content.ROUND_NAMES[_control.getRound()-1];
+        if (_model.getCurrentRoundType() == Model.ROUND_LIGHTNING) {
+            txt += " (" + Math.max(0, _endTime - uint(getTimer()/1000)) + ")";
+        } else if (_model.getCurrentRoundType() == Model.ROUND_BUZZ) {
+            txt += " (" + (questionIx+1) + "/" + _model.getCurrentDuration() + ")";
+        }
+        _roundText.text = txt;
     }
 
     protected function addTextField(

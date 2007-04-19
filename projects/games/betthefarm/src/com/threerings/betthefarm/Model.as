@@ -92,16 +92,13 @@ public class Model
 
     public function roundDidStart () :void
     {
+        _questionIx = 0;
         if (_control.amInControl()) {
             if (getCurrentRoundType() == Model.ROUND_LIGHTNING) {
                 var duration :int = Content.ROUND_DURATIONS[_control.getRound()-1];
                 _roundTimeout = setTimeout(doEndRound, duration * 1000);
-                _questionCount = 0;
-            } else if (getCurrentRoundType() == Model.ROUND_BUZZ) {
-                _roundTimeout = 0;
-                _questionCount = Content.ROUND_DURATIONS[_control.getRound()-1];
             } else {
-                _roundTimeout = _questionCount = 0;
+                _roundTimeout = 0;
             }
             nextQuestion();
         }
@@ -140,6 +137,14 @@ public class Model
         return Content.ROUND_TYPES[_control.getRound()-1];
     }
 
+    public function getCurrentDuration () :int
+    {
+        if (betweenRounds()) {
+            throw new Error("round duration requested between rounds");
+        }
+        return Content.ROUND_DURATIONS[_control.getRound()-1];
+    }
+
     public function getQuestions () :QuestionSet
     {
         if (getCurrentRoundType() == ROUND_LIGHTNING || getCurrentRoundType() == ROUND_WAGER) {
@@ -155,7 +160,7 @@ public class Model
     {
         if (event.name == Model.QUESTION_IX) {
             if (!betweenRounds()) {
-                _view.newQuestion(getQuestions().getQuestion(event.newValue as int));
+                _view.newQuestion(getQuestions().getQuestion(event.newValue as int), _questionIx);
             }
 
         } else if (event.name == Model.SCORES && event.index != -1) {
@@ -210,6 +215,7 @@ public class Model
 
         } else if (event.name == Model.MSG_QUESTION_DONE) {
             getQuestions().removeQuestion(_control.get(Model.QUESTION_IX) as int);
+            _questionIx += 1;
 
             if (getCurrentRoundType() == ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
@@ -217,8 +223,7 @@ public class Model
 
             } else if (getCurrentRoundType() == ROUND_BUZZ) {
                 // in the buzz round we only do N questions
-                _questionCount -= 1;
-                if (_questionCount <= 0) {
+                if (_questionIx == getCurrentDuration()) {
                     _questionTimeout = setTimeout(doEndRound, 1000);
                 } else if (!value.winner) {
                     // TODO: need a pause here
@@ -308,7 +313,7 @@ public class Model
     protected var _multiQuestions :QuestionSet;
     protected var _freeQuestions :QuestionSet;
 
-    protected var _questionCount :uint;
+    protected var _questionIx :uint;
     protected var _roundTimeout :uint = 0;
 
     protected var _responses :Map;
