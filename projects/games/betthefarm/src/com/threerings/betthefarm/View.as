@@ -241,14 +241,19 @@ public class View extends Sprite
         }
     }
 
+    public function flowUpdated (oid :int, flow :int) :void
+    {
+        debug("Am here, updating [" + oid + "] to [" + flow + "]");
+        (_plaqueTexts[oid] as TextField).text = _control.getOccupantName(oid) + "\n" + flow;
+    }
+
     protected function addPlaque (oid :int, ii :int) :void
     {
         _plaqueTexts[oid] = addTextField(
-            "Butternugget\n47323", this,
-//            _control.getOccupantName(oid) + " d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d", this,
-            (Content.PLAQUE_LOCS[ii] as Point).x - 35,
+            _control.getOccupantName(oid), this,
+            (Content.PLAQUE_LOCS[ii] as Point).x - 40,
             (Content.PLAQUE_LOCS[ii] as Point).y - 15,
-            70, 50, false, 12);
+            75, 50, false, 10);
     }
 
     protected function requestHeadshot (oid :int, ii :int) :void
@@ -388,7 +393,7 @@ public class View extends Sprite
         if (_endTime > 0) {
             _roundText.text = Content.ROUND_NAMES[_control.getRound()-1] + 
                 " (" + Math.max(0, _endTime - uint(getTimer()/1000)) + ")";
-        }
+         }
     }
 
     protected function addTextField(
@@ -411,6 +416,7 @@ public class View extends Sprite
         format.size = fontSize;
         format.font = Content.FONT_NAME;
         format.color = Content.FONT_COLOR;
+        format.align = TextFormatAlign.CENTER;
         field.defaultTextFormat = format;
 
         field.text = txt;

@@ -78,7 +78,11 @@ public class Model
 
     public function gameDidStart () :void
     {
-        _playerCount = _control.seating.getPlayerIds().length;
+        var ids :Array = _control.seating.getPlayerIds();
+        _playerCount = ids.count;
+        for (var ii :int = 0; ii < _playerCount; ii ++) {
+            _view.flowUpdated(ids[ii], 0);
+        }
         _control.set(Model.SCORES, new Array(_playerCount));
     }
 
@@ -153,6 +157,11 @@ public class Model
             if (!betweenRounds()) {
                 _view.newQuestion(getQuestions().getQuestion(event.newValue as int));
             }
+
+        } else if (event.name == Model.SCORES && event.index != -1) {
+            debug("event.index: " + event.index);
+            debug("oid: " + _control.seating.getPlayerIds()[event.index]);
+            _view.flowUpdated(_control.seating.getPlayerIds()[event.index], event.newValue as int);
         }
     }
 
@@ -176,6 +185,15 @@ public class Model
             _view.gainedBuzzControl(value.player);
 
         } else if (event.name == Model.MSG_QUESTION_DONE) {
+            debug("DONE: winner=" + value.winner);
+            if (value.winner == _control.getMyId()) {
+                ix = _control.seating.getPlayerPosition(value.winner);
+                if (ix == -1) {
+                    throw new Error("non-seated winner");
+                }
+                _control.set(Model.SCORES, _control.get(Model.SCORES, ix) + 100, ix);
+            }
+
             _view.questionDone(value.winner);
         }
 
@@ -199,6 +217,7 @@ public class Model
             if (getCurrentRoundType() == ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
                 _questionTimeout = setTimeout(nextQuestion, 1000);
+
             } else if (getCurrentRoundType() == ROUND_BUZZ) {
                 // in the buzz round we only do N questions
                 _questionCount -= 1;
