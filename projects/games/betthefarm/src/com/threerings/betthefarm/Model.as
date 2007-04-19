@@ -188,13 +188,7 @@ public class Model
             _view.gainedBuzzControl(value.player);
 
         } else if (event.name == Model.MSG_QUESTION_DONE) {
-            if (value.winner == _control.getMyId()) {
-                ix = _control.seating.getPlayerPosition(value.winner);
-                if (ix == -1) {
-                    throw new Error("non-seated winner");
-                }
-                _control.set(Model.SCORES, _control.get(Model.SCORES, ix) + 100, ix);
-            }
+            _questionIx += 1;
 
             _view.questionDone(value.winner);
         }
@@ -215,7 +209,6 @@ public class Model
 
         } else if (event.name == Model.MSG_QUESTION_DONE) {
             getQuestions().removeQuestion(_control.get(Model.QUESTION_IX) as int);
-            _questionIx += 1;
 
             if (getCurrentRoundType() == ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
@@ -265,6 +258,18 @@ public class Model
             throw new Error("Multiple answers from player: " + player);
         }
         _responses.put(player, true);
+
+        var ix :int = _control.seating.getPlayerPosition(player);
+        if (ix == -1) {
+            throw new Error("non-seated answer");
+        }
+        var score :int = _control.get(Model.SCORES, ix) as int;
+        if (correct) {
+            score += 100;
+        } else {
+            score = Math.max(score - 50, 0);
+        }
+        _control.set(Model.SCORES, score, ix);
 
         if (correct || _responses.size() >= _playerCount) {
             _control.sendMessage(Model.MSG_QUESTION_DONE, correct ? { winner: player } : { });
