@@ -3,6 +3,7 @@
 
 package {
 
+import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Scene;
 import flash.events.Event;
@@ -143,6 +144,17 @@ public class Body
                 _playing.updateScene();
             }
             _media.gotoAndPlay(1, _playing.current.name);
+            _center = null;
+        }
+
+        if (_center == null) {
+            _center = _media.getChildByName("center");
+            if (_center == null) {
+                _center = _media.getChildByName("ground");
+            }
+            if (_center != null) {
+                _ctrl.setHotSpot(_center.x, _center.y, 160);
+            }
         }
     }
 
@@ -172,13 +184,11 @@ public class Body
             return;
 
         } else if (_playing == null || force) {
+            log.info("Switching immediately to " + scene.name + ".");
             _sceneQueue.length = 0;
             _playing = scene;
             _playing.updateScene();
             _media.gotoAndPlay(1, _playing.current.name);
-//             for (var ii :int = 0; ii < _media.numChildren; ii++) {
-//                 trace("Child " + ii + ": " + _media.getChildAt(ii));
-//             }
 
         } else {
             log.info("Queueing " + scene.name + ".");
@@ -205,6 +215,7 @@ public class Body
 
     protected var _ctrl :PetControl;
     protected var _media :MovieClip;
+    protected var _center :DisplayObject;
 
     protected var _scenes :HashMap = new HashMap();
     protected var _rando :Random = new Random();

@@ -67,9 +67,9 @@ public class State
     /** Called from a static initializer to set up our transitions. */
     protected static function registerTransitions () :void
     {
-        CONTENT.transitions = [ PLAYFUL, EXCITED, CURIOUS, HUNGRY, LONELY, SLEEPY ];
+        CONTENT.transitions = [ PLAYFUL, EXCITED, CURIOUS, HUNGRY, LONELY ];
         PLAYFUL.transitions = [ CONTENT, SLEEPY, EXCITED ];
-        SLEEPY.transitions = [ CONTENT, SLEEPING ];
+        SLEEPY.transitions = [ SLEEPING ];
         SLEEPING.transitions = [ CONTENT ];
         LONELY.transitions = [ CONTENT, SLEEPY ];
         HUNGRY.transitions = [ CONTENT, LONELY, CURIOUS ];
