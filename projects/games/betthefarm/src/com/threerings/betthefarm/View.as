@@ -74,6 +74,7 @@ public class View extends Sprite
 
         if (_control.isConnected()) {
             _playing = _control.seating.getMyPosition() != -1;
+            _myId = _control.getMyId();
 
             doorSetup();
             roundSetup();
@@ -133,6 +134,7 @@ public class View extends Sprite
     public function newQuestion (question :Question, questionIx :int) :void
     {
         _question = question;
+        _myWager = 0;
 
         for each (var shot :Sprite in _headshots) {
             shot.filters = [
@@ -143,9 +145,64 @@ public class View extends Sprite
 
         updateRound(questionIx);
 
-        doorClear();
+        if (_model.getCurrentRoundType() == Model.ROUND_WAGER) {
+            var score :int = _control.get(Model.SCORES, _control.seating.getMyPosition()) as int;
+            if (score == 0) {
+                // TODO: We have to add a PASS answer.
+                _control.sendMessage(Model.MSG_ANSWER_MULTI, { player: _myId, correct: false });
 
-        addTextField(question.question, _doorArea, 0, 0, Content.QUESTION_RECT.width,
+            } else {
+                showWagerUI(score);
+            }
+
+        } else {
+            showAnswerUI();
+        }
+    }
+
+    protected function showWagerUI (score :int) :void
+    {
+        doorClear();
+        addTextField(_question.question, _doorArea, 0, 0, Content.QUESTION_RECT.width,
+                     Content.QUESTION_RECT.height, true, 14);
+
+        var ii :int = 0;
+        if (score > 800) {
+            addWagerButton(ii ++, score/8, false);
+        }
+        if (score > 400) {
+            addWagerButton(ii ++, score/4, false);
+        }
+        if (score > 200) {
+            addWagerButton(ii ++, score/2, false);
+        }
+        addWagerButton(ii ++, score, true);
+    }
+
+    protected function addWagerButton (pos :int, score :int, farm :Boolean) :void
+    {
+        score -= score % 100;
+
+        var button :SimpleButton = addTextButton(
+            farm ? "The Farm!" : String(score), _doorArea,
+            Content.ANSWER_RECTS[pos].left, Content.ANSWER_RECTS[pos].top,
+            Content.ANSWER_RECTS[pos].width, Content.ANSWER_RECTS[pos].height);
+        addWagerClickHandler(button, score, farm);
+    }
+
+    protected function addWagerClickHandler(
+        button :SimpleButton, score :int, farm :Boolean) :void
+    {
+        button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            _myWager = farm ? score : -score;
+            showAnswerUI();
+        });
+    }
+
+    protected function showAnswerUI () :void
+    {
+        doorClear();
+        addTextField(_question.question, _doorArea, 0, 0, Content.QUESTION_RECT.width,
                      Content.QUESTION_RECT.height, true, 14);
 
         if (_question is MultipleChoice) {
@@ -201,7 +258,7 @@ public class View extends Sprite
     {
         doorClear();
 
-        if (winner == _control.getMyId()) {
+        if (winner == _myId) {
             doorHeader("Correct!");
             _sndWin.play();
             if (_model.getCurrentRoundType() == Model.ROUND_BUZZ) {
@@ -238,7 +295,7 @@ public class View extends Sprite
         _headshots[player].filters = [
             new GlowFilter(0xFF00FF, 1, 10, 10)
         ];
-        if (player == _control.getMyId()) {
+        if (player == _myId) {
             // our buzz won!
             _freeArea.visible = true;
             stage.focus = _freeField;
@@ -357,13 +414,13 @@ public class View extends Sprite
             }
             _answered = true;
             _control.sendMessage(
-                Model.MSG_ANSWER_MULTI, { player: _control.getMyId(), correct: correct });
+                Model.MSG_ANSWER_MULTI, { player: _myId, correct: correct, wager: _myWager });
         });
     }
 
     protected function buzzClick (event :MouseEvent) :void
     {
-        _control.sendMessage(Model.MSG_BUZZ, { player: _control.getMyId() });
+        _control.sendMessage(Model.MSG_BUZZ, { player: _myId });
     }
 
     protected function freeInput (event :KeyboardEvent) :void
@@ -380,13 +437,11 @@ public class View extends Sprite
         var correct :Boolean = false;
         for (var ii :int = 0; ii < answers.length; ii ++) {
             if (answers[ii].toLowerCase() == answer) {
-                _control.sendMessage(
-                    Model.MSG_ANSWER_FREE, { player: _control.getMyId(), correct: true });
+                _control.sendMessage(Model.MSG_ANSWER_FREE, { player: _myId, correct: true });
                 return;
             }
         }
-        _control.sendMessage(
-            Model.MSG_ANSWER_FREE, { player: _control.getMyId(), correct: false });
+        _control.sendMessage(Model.MSG_ANSWER_FREE, { player: _myId, correct: false });
     }
 
     protected function updateTimer () :void
@@ -513,10 +568,14 @@ public class View extends Sprite
         return face;
     }
 
+    protected var _myId :int;
+
     protected var _control :WhirledGameControl;
+
     protected var _model :Model;
 
     protected var _playing :Boolean;
+
     protected var _updateTimer :uint;
 
     protected var _answered :Boolean;
@@ -525,18 +584,24 @@ public class View extends Sprite
 
     protected var _question :Question;
 
+    protected var _myWager :int;
+
     protected var _headshots :Dictionary;
+
     protected var _plaqueTexts :Dictionary;
 
     protected var _doorArea :Sprite;
 
     protected var _freeArea :Sprite;
+
     protected var _freeField :TextField;
 
     protected var _roundText :TextField;
 
     protected var _sndRound :Sound = (new Content.SND_ROUND() as Sound);
+
     protected var _sndWin :Sound = (new Content.SND_WIN() as Sound);
+
     protected var _sndLose :Sound = (new Content.SND_LOSE() as Sound);
 }
 }

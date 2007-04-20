@@ -39,5 +39,21 @@ public class Question
     {
         throw new Error("Override Me");
     }
+
+    public function getDifficultyFactor () :int
+    {
+        switch(difficulty) {
+        case EASY:
+        default:
+            return 1;
+        case MEDIUM:
+            return 2;
+        case HARD:
+            return 4;
+        case IMPOSSIBLE:
+            return 8;
+        }
+    }
+
 }
 }

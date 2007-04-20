@@ -239,14 +239,14 @@ public class Model
                 }
                 _buzzer = value.player;
             }
-            questionAnswered(value.player, value.correct);
+            questionAnswered(value.player, value.correct, value.wager);
 
         } else if (event.name == Model.MSG_ANSWER_FREE) {
             if (_buzzer != value.player) {
                 debug("ignoring answer from non-buzzed player");
                 return;
             }
-            questionAnswered(value.player, value.correct);
+            questionAnswered(value.player, value.correct, value.wager);
         }
     }
 
@@ -258,8 +258,10 @@ public class Model
         nextQuestion(category);
     }
 
-    protected function questionAnswered (player :int, correct :Boolean) :void
+    protected function questionAnswered (player :int, correct :Boolean, wager :int) :void
     {
+        var question :Question = getQuestions()[_control.get(Model.QUESTION_IX) as int];
+
         if (_responses.containsKey(player)) {
             throw new Error("Multiple answers from player: " + player);
         }
@@ -269,11 +271,34 @@ public class Model
         if (ix == -1) {
             throw new Error("non-seated answer");
         }
-        var score :int = _control.get(Model.SCORES, ix) as int;
+
+        var score :int = _control.get(Model.SCORES, ix) as int;            
         if (correct) {
-            score += 100;
+            if (getCurrentRoundType() == ROUND_WAGER) {
+                if (wager < 0) {
+                    // player bet the farm; wins 1x, 2x, 4x or 8x their wager
+                    score += -wager * question.getDifficultyFactor();
+                } else if (wager > 0) {
+                    // player bet conservatively, just wins bet
+                    score += wager;
+                }
+            } else {
+                // non-wager question, fixed 100 point win
+                score += 100;
+            }
         } else {
-            score = Math.max(score - 50, 0);
+            if (getCurrentRoundType() == ROUND_WAGER) {
+                if (wager < 0) {
+                    // player bet the farm and lost, alas
+                    score = 0;
+                } else if (wager > 0) {
+                    // player bet conservatively, just loses bet
+                    score -= wager;
+                }
+            } else {
+                // non-wager question, fixed 50 point loss
+                score -= 50;
+            }
         }
         _control.set(Model.SCORES, score, ix);
 
