@@ -41,6 +41,7 @@ public class Bell extends Sprite
 
     // An instance of the bell image to use
     protected var _bellImg :Bitmap = new _bellImgClass();
+
     // An instance of the bell chime to use
     protected var _bellSnd :Sound = new _bellSndClass();
 
