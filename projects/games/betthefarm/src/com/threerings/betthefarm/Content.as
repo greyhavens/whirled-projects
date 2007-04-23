@@ -27,7 +27,7 @@ public class Content
 
     /** The duration of the rounds, where applicable; measured in seconds or questions. */
     public static const ROUND_DURATIONS :Array = [
-        10,
+        120,
         5,
         -1,
     ];

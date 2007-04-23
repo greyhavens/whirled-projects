@@ -184,7 +184,7 @@ public class View extends Sprite
         score -= score % 100;
 
         var button :SimpleButton = addTextButton(
-            farm ? "The Farm!" : String(score), _doorArea,
+            "Bet: " + (farm ? "The Farm!" : String(score)), _doorArea,
             Content.ANSWER_RECTS[pos].left, Content.ANSWER_RECTS[pos].top,
             Content.ANSWER_RECTS[pos].width, Content.ANSWER_RECTS[pos].height);
         addWagerClickHandler(button, score, farm);
@@ -455,11 +455,18 @@ public class View extends Sprite
     {
         var txt :String = Content.ROUND_NAMES[_control.getRound()-1];
         if (_model.getCurrentRoundType() == Model.ROUND_LIGHTNING) {
-            txt += " (" + Math.max(0, _endTime - uint(getTimer()/1000)) + ")";
+            txt += " (" + toTime(Math.max(0, _endTime - uint(getTimer()/1000))) + ")";
         } else if (_model.getCurrentRoundType() == Model.ROUND_BUZZ) {
             txt += " (" + (questionIx+1) + "/" + _model.getCurrentDuration() + ")";
         }
         _roundText.text = txt;
+    }
+
+    protected function toTime (seconds :int) :String
+    {
+        var secs :int = int(seconds % 60);
+
+        return int(seconds / 60) + (secs < 10 ? ":0" : ":") + secs;
     }
 
     protected function addTextField(

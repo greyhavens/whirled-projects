@@ -260,7 +260,8 @@ public class Model
 
     protected function questionAnswered (player :int, correct :Boolean, wager :int) :void
     {
-        var question :Question = getQuestions()[_control.get(Model.QUESTION_IX) as int];
+        var question :Question =
+            getQuestions().getQuestion(_control.get(Model.QUESTION_IX) as int);
 
         if (_responses.containsKey(player)) {
             throw new Error("Multiple answers from player: " + player);
