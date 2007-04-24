@@ -99,6 +99,7 @@ public class Server
 
         } else if (event.name == Model.MSG_QUESTION_DONE) {
             _model.getQuestions().removeQuestion(_control.get(Model.QUESTION_IX) as int);
+            _questionIx += 1;
 
             if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
@@ -172,7 +173,7 @@ public class Server
             if (_model.getRoundType() == Model.ROUND_WAGER) {
                 if (wager < 0) {
                     // player bet the farm; wins 1x, 2x, 4x or 8x their wager
-                    mod = -wager * question.getDifficultyFactor();
+                    mod = score * question.getDifficultyFactor();
                 } else if (wager > 0) {
                     // player bet conservatively, just wins bet
                     mod = wager;
