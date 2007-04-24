@@ -16,9 +16,10 @@ import com.threerings.util.HashMap;
 
 public class Model
 {
-    public static const ROUND_LIGHTNING :int = 1;
-    public static const ROUND_BUZZ :int = 2;
-    public static const ROUND_WAGER :int = 3;
+    public static const ROUND_INTRO :int = 1;
+    public static const ROUND_LIGHTNING :int = 2;
+    public static const ROUND_BUZZ :int = 3;
+    public static const ROUND_WAGER :int = 4;
 
     public static const QUESTION_IX :String = "qIx";
     public static const SCORES :String = "scores";
@@ -94,13 +95,12 @@ public class Model
     {
         _questionIx = 0;
         if (_control.amInControl()) {
-            if (getCurrentRoundType() == Model.ROUND_LIGHTNING) {
-                var duration :int = Content.ROUND_DURATIONS[_control.getRound()-1];
-                _roundTimeout = setTimeout(doEndRound, duration * 1000);
-            } else {
-                _roundTimeout = 0;
+            _roundTimeout =
+                (getRoundType() == Model.ROUND_LIGHTNING || getRoundType() == Model.ROUND_INTRO) ?
+                setTimeout(doEndRound, getDuration() * 1000) : 0;
+            if (getRoundType() != Model.ROUND_INTRO) {
+                _questionTimeout = setTimeout(nextQuestion, 4000);
             }
-            nextQuestion();
         }
     }
 
@@ -126,7 +126,7 @@ public class Model
         return _control.getRound() < 0;
     }
 
-    public function getCurrentRoundType () :int
+    public function getRoundType () :int
     {
         if (betweenRounds()) {
             throw new Error("round type requested between rounds");
@@ -134,7 +134,7 @@ public class Model
         return Content.ROUND_TYPES[_control.getRound()-1];
     }
 
-    public function getCurrentDuration () :int
+    public function getDuration () :int
     {
         if (betweenRounds()) {
             throw new Error("round duration requested between rounds");
@@ -144,7 +144,7 @@ public class Model
 
     public function getQuestions () :QuestionSet
     {
-        if (getCurrentRoundType() == ROUND_LIGHTNING || getCurrentRoundType() == ROUND_WAGER) {
+        if (getRoundType() == ROUND_LIGHTNING || getRoundType() == ROUND_WAGER) {
             return _multiQuestions;
         }
         return _freeQuestions;
@@ -207,13 +207,13 @@ public class Model
         } else if (event.name == Model.MSG_QUESTION_DONE) {
             getQuestions().removeQuestion(_control.get(Model.QUESTION_IX) as int);
 
-            if (getCurrentRoundType() == ROUND_LIGHTNING) {
+            if (getRoundType() == ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
                 _questionTimeout = setTimeout(nextQuestion, 1000);
 
-            } else if (getCurrentRoundType() == ROUND_BUZZ) {
+            } else if (getRoundType() == ROUND_BUZZ) {
                 // in the buzz round we only do N questions
-                if (_questionIx == getCurrentDuration()) {
+                if (_questionIx == getDuration()) {
                     _questionTimeout = setTimeout(doEndRound, 1000);
 
                 } else if (!value.winner) {
@@ -275,7 +275,7 @@ public class Model
 
         var score :int = _control.get(Model.SCORES, ix) as int;            
         if (correct) {
-            if (getCurrentRoundType() == ROUND_WAGER) {
+            if (getRoundType() == ROUND_WAGER) {
                 if (wager < 0) {
                     // player bet the farm; wins 1x, 2x, 4x or 8x their wager
                     score += -wager * question.getDifficultyFactor();
@@ -287,8 +287,9 @@ public class Model
                 // non-wager question, fixed 100 point win
                 score += 100;
             }
+
         } else {
-            if (getCurrentRoundType() == ROUND_WAGER) {
+            if (getRoundType() == ROUND_WAGER) {
                 if (wager < 0) {
                     // player bet the farm and lost, alas
                     score = 0;

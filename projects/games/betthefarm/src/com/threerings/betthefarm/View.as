@@ -32,6 +32,7 @@ import flash.geom.Matrix;
 import flash.geom.Rectangle;
 
 import flash.media.Sound;
+import flash.media.SoundChannel;
 
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -109,19 +110,26 @@ public class View extends Sprite
     {
         debug("Beginning round: " + _control.getRound());
         updateRound();
-//        _roundText.text = Content.ROUND_NAMES[_control.getRound()-1];
-        if (_model.getCurrentRoundType() == Model.ROUND_LIGHTNING) {
-            _endTime = getTimer()/1000 + Content.ROUND_DURATIONS[_control.getRound()-1];
-        }
 
-        _sndRound.play();
+        if (_model.getRoundType() == Model.ROUND_INTRO) {
+            showIntro();
+            doPlay(_sndGameIntro, true);
+
+        } else {
+            if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
+                _endTime = getTimer()/1000 + Content.ROUND_DURATIONS[_control.getRound()-1];
+            }
+            doPlay(_sndRoundIntro, false);
+        }
     }
 
     public function roundDidEnd () :void
     {
         _endTime = 0;
         doorClear();
-        doorHeader("Round Over!");
+        if (_control.getRound() != -Model.ROUND_INTRO) {
+            doorHeader("Round Over!");
+        }
 
         _question = null;
     }
@@ -145,7 +153,7 @@ public class View extends Sprite
 
         updateRound(questionIx);
 
-        if (_model.getCurrentRoundType() == Model.ROUND_WAGER) {
+        if (_model.getRoundType() == Model.ROUND_WAGER) {
             var score :int = _control.get(Model.SCORES, _control.seating.getMyPosition()) as int;
             if (score == 0) {
                 // TODO: We have to add a PASS answer.
@@ -158,6 +166,21 @@ public class View extends Sprite
         } else {
             showAnswerUI();
         }
+    }
+
+    protected function showIntro () :void
+    {
+        doorClear();
+
+        // skip the INTRO round
+        var cnt :int = Content.ROUND_NAMES.length - 1;
+        var intro :String =
+            "This game has " + (cnt > 10 ? cnt : Content.NUMBERS[cnt]) + " rounds:\n\n\n";
+        for (var ii :int = 0; ii < cnt; ii ++) {
+            intro += Content.ROUND_NAMES[ii] + "\n\n";
+        }
+        addTextField(intro, _doorArea, 0, 0, Content.QUESTION_RECT.width,
+                     Content.QUESTION_RECT.height, false, 18);
     }
 
     protected function showWagerUI (score :int) :void
@@ -260,14 +283,14 @@ public class View extends Sprite
 
         if (winner == _myId) {
             doorHeader("Correct!");
-            _sndWin.play();
-            if (_model.getCurrentRoundType() == Model.ROUND_BUZZ) {
+            _sndCorrect.play();
+            if (_model.getRoundType() == Model.ROUND_BUZZ) {
                 setTimeout(chooseCategory, 1000);
             }
 
         } else if (_answered) {
             doorHeader("Incorrect!");
-            _sndLose.play();
+            _sndIncorrect.play();
 
         } else {
             // show anything if we didn't answer?
@@ -454,12 +477,21 @@ public class View extends Sprite
     protected function updateRound (questionIx :int = 0) :void
     {
         var txt :String = Content.ROUND_NAMES[_control.getRound()-1];
-        if (_model.getCurrentRoundType() == Model.ROUND_LIGHTNING) {
+        if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
             txt += " (" + toTime(Math.max(0, _endTime - uint(getTimer()/1000))) + ")";
-        } else if (_model.getCurrentRoundType() == Model.ROUND_BUZZ) {
-            txt += " (" + (questionIx+1) + "/" + _model.getCurrentDuration() + ")";
+        } else if (_model.getRoundType() == Model.ROUND_BUZZ) {
+            txt += " (" + (questionIx+1) + "/" + _model.getDuration() + ")";
         }
         _roundText.text = txt;
+    }
+
+    protected function doPlay (snd :Sound, loop :Boolean) :void
+    {
+        if (_sndChannel != null) {
+            // TODO: Start a fade-out here instead of just brutally stopping.
+            _sndChannel.stop();
+        }
+        _sndChannel = snd.play(0, loop ? 1000 : 0);
     }
 
     protected function toTime (seconds :int) :String
@@ -587,6 +619,8 @@ public class View extends Sprite
 
     protected var _answered :Boolean;
 
+    protected var _sndChannel :SoundChannel = null;
+
     protected var _endTime :uint;
 
     protected var _question :Question;
@@ -605,10 +639,12 @@ public class View extends Sprite
 
     protected var _roundText :TextField;
 
-    protected var _sndRound :Sound = (new Content.SND_ROUND() as Sound);
+    protected var _sndGameIntro :Sound = (new Content.SND_GAME_INTRO() as Sound);
 
-    protected var _sndWin :Sound = (new Content.SND_WIN() as Sound);
+    protected var _sndRoundIntro :Sound = (new Content.SND_ROUND_INTRO() as Sound);
 
-    protected var _sndLose :Sound = (new Content.SND_LOSE() as Sound);
+    protected var _sndCorrect :Sound = (new Content.SND_Q_CORRECT() as Sound);
+
+    protected var _sndIncorrect :Sound = (new Content.SND_Q_INCORRECT() as Sound);
 }
 }

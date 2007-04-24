@@ -11,8 +11,29 @@ import flash.geom.Point;
  */
 public class Content
 {
+
+    [Embed(source="../../../../rsrc/Background.jpg")]
+    public static const BACKGROUND :Class;
+
+    [Embed(source="../../../../rsrc/You Did Great.mp3")]
+    public static const SND_Q_CORRECT :Class;
+
+    [Embed(source="../../../../rsrc/You Lose.mp3")]
+    public static const SND_Q_INCORRECT :Class;
+
+    [Embed(source="../../../../rsrc/Happy Country Loop.mp3")]
+    public static const SND_GAME_INTRO :Class;
+
+    [Embed(source="../../../../rsrc/Bet The Farm Round.mp3")]
+    public static const SND_ROUND_INTRO :Class;
+
+    public static const NUMBERS :Array = [
+        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"
+    ];
+
     /** The types of the rounds. */
     public static const ROUND_TYPES :Array = [
+        Model.ROUND_INTRO,
         Model.ROUND_LIGHTNING,
         Model.ROUND_BUZZ,
         Model.ROUND_WAGER,
@@ -20,6 +41,7 @@ public class Content
 
     /** The names of the rounds. */
     public static const ROUND_NAMES :Array = [
+        "Welcome to the farm",
         "Lightning Round",
         "Buzz Round",
         "Wager Round"
@@ -27,10 +49,14 @@ public class Content
 
     /** The duration of the rounds, where applicable; measured in seconds or questions. */
     public static const ROUND_DURATIONS :Array = [
+        10,
         120,
         5,
         -1,
     ];
+
+    /** The duration of the round introductions, in seconds. */
+    public static const INTRO_DURATION :int = 4;
 
     /** The basic text font. */
     public static const FONT_NAME :String = "Verdana";
@@ -77,18 +103,6 @@ public class Content
         new Point(748, 418),
         new Point(851, 430),
     ];
-
-    [Embed(source="../../../../rsrc/Background.jpg")]
-    public static const BACKGROUND :Class;
-
-    [Embed(source="../../../../rsrc/Bet The Farm Round.mp3")]
-    public static const SND_ROUND :Class;
-
-    [Embed(source="../../../../rsrc/You Loose.mp3")]
-    public static const SND_LOSE :Class;
-
-    [Embed(source="../../../../rsrc/You Did Great.mp3")]
-    public static const SND_WIN :Class;
 }
 
 }
