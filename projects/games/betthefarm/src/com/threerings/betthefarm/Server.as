@@ -47,12 +47,8 @@ public class Server
 
     public function roundDidStart () :void
     {
-        if (_model.getRoundType() == Model.ROUND_INTRO) {
-            _roundTimeout = setTimeout(doEndRound, _model.getDuration() * 1000);
-
-        } else {
-            _roundTimeout = setTimeout(actuallyBeginRound, 4000);
-        }
+        _roundTimeout = setTimeout(
+            actuallyBeginRound, Content.ROUND_INTRO_DURATIONS[_control.getRound()-1] * 1000);
     }
 
     public function roundDidEnd () :void
@@ -217,7 +213,7 @@ public class Server
             _control.endGame( [ ] );
 
         } else if (_model.getRoundType() == Model.ROUND_INTRO) {
-            _control.endRound(0.01);
+            _control.endRound(1);
 
         } else {
             _control.endRound(3);
@@ -226,6 +222,10 @@ public class Server
 
     protected function actuallyBeginRound () :void
     {
+        if (_model.getRoundType() == Model.ROUND_INTRO) {
+            doEndRound();
+            return;
+        }
         if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
             _roundTimeout = setTimeout(doEndRound, _model.getDuration() * 1000);
         }

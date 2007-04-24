@@ -49,10 +49,18 @@ public class Content
 
     /** The duration of the rounds, where applicable; measured in seconds or questions. */
     public static const ROUND_DURATIONS :Array = [
-        4,
+        -1,
         10,
         3,
         -1,
+    ];
+
+    /** The duration of the rounds, where applicable; measured in seconds or questions. */
+    public static const ROUND_INTRO_DURATIONS :Array = [
+        4,
+        4,
+        4,
+        4,
     ];
 
     /** The duration of the round introductions, in seconds. */

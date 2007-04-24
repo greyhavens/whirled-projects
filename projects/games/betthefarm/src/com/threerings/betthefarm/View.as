@@ -109,6 +109,7 @@ public class View extends Sprite
     public function roundDidStart () :void
     {
         debug("Beginning round: " + _control.getRound());
+        doorClear();
         updateRound();
 
         if (_model.getRoundType() == Model.ROUND_INTRO) {
@@ -118,11 +119,6 @@ public class View extends Sprite
         } else {
             doPlay(_sndRoundIntro, false);
         }
-    }
-
-    public function beginCountdown () :void
-    {
-        _endTime = getTimer()/1000 + Content.ROUND_DURATIONS[_control.getRound()-1];
     }
 
     public function roundDidEnd () :void
@@ -148,6 +144,10 @@ public class View extends Sprite
 
     public function newQuestion (question :Question, questionIx :int) :void
     {
+        if (questionIx == 0 && _model.getRoundType() == Model.ROUND_LIGHTNING) {
+            _endTime = getTimer()/1000 + Content.ROUND_DURATIONS[_control.getRound()-1];
+        }
+
         _question = question;
         _myWager = 0;
 
@@ -177,8 +177,6 @@ public class View extends Sprite
 
     protected function showIntro () :void
     {
-        doorClear();
-
         // skip the INTRO round
         var cnt :int = Content.ROUND_NAMES.length - 1;
         var intro :String =
