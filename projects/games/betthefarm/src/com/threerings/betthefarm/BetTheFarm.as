@@ -38,7 +38,9 @@ public class BetTheFarm extends Sprite
 
         // create our server, our model and our view, and initialize them
         _model = new Model(_control);
-        _server = new Server(_control, _model);
+        if (_control.amInControl()) {
+            _server = new Server(_control, _model);
+        }
         _view = new View(_control, _model);
         addChild(_view);
     }
