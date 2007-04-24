@@ -28,7 +28,7 @@ public class Content
     public static const SND_ROUND_INTRO :Class;
 
     public static const NUMBERS :Array = [
-        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"
+        "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"
     ];
 
     /** The types of the rounds. */
@@ -49,9 +49,9 @@ public class Content
 
     /** The duration of the rounds, where applicable; measured in seconds or questions. */
     public static const ROUND_DURATIONS :Array = [
+        4,
         10,
-        120,
-        5,
+        3,
         -1,
     ];
 

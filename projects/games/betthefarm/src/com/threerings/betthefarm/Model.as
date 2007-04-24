@@ -93,14 +93,13 @@ public class Model
 
     public function roundDidStart () :void
     {
-        _questionIx = 0;
-        if (_control.amInControl()) {
-            _roundTimeout =
-                (getRoundType() == Model.ROUND_LIGHTNING || getRoundType() == Model.ROUND_INTRO) ?
-                setTimeout(doEndRound, getDuration() * 1000) : 0;
-            if (getRoundType() != Model.ROUND_INTRO) {
-                _questionTimeout = setTimeout(nextQuestion, 4000);
+        if (getRoundType() == Model.ROUND_INTRO) {
+            if (_control.amInControl()) {
+                _roundTimeout = setTimeout(doEndRound, getDuration() * 1000);
             }
+
+        } else {
+            _roundTimeout = setTimeout(actuallyBeginRound, 4000);
         }
     }
 
@@ -274,35 +273,36 @@ public class Model
         }
 
         var score :int = _control.get(Model.SCORES, ix) as int;            
+        var mod :int;
         if (correct) {
             if (getRoundType() == ROUND_WAGER) {
                 if (wager < 0) {
                     // player bet the farm; wins 1x, 2x, 4x or 8x their wager
-                    score += -wager * question.getDifficultyFactor();
+                    mod = -wager * question.getDifficultyFactor();
                 } else if (wager > 0) {
                     // player bet conservatively, just wins bet
-                    score += wager;
+                    mod = wager;
                 }
             } else {
                 // non-wager question, fixed 100 point win
-                score += 100;
+                mod = 100;
             }
 
         } else {
             if (getRoundType() == ROUND_WAGER) {
                 if (wager < 0) {
                     // player bet the farm and lost, alas
-                    score = 0;
+                    mod = -score;
                 } else if (wager > 0) {
                     // player bet conservatively, just loses bet
-                    score -= wager;
+                    mod = -wager;
                 }
             } else {
                 // non-wager question, fixed 50 point loss
-                score -= 50;
+                mod = -50;
             }
         }
-        _control.set(Model.SCORES, score, ix);
+        _control.set(Model.SCORES, Math.max(score + mod, 0), ix);
 
         if (correct || _responses.size() >= _playerCount) {
             _control.sendMessage(Model.MSG_QUESTION_DONE, correct ? { winner: player } : { });
@@ -316,8 +316,27 @@ public class Model
         _roundTimeout = 0;
         if (_control.getRound() == Content.ROUND_NAMES.length) {
             _control.endGame( [ ] );
+
+        } else if (getRoundType() == Model.ROUND_INTRO) {
+            _control.endRound(0.01);
+
         } else {
             _control.endRound(3);
+        }
+    }
+
+    protected function actuallyBeginRound () :void
+    {
+        if (getRoundType() == Model.ROUND_LIGHTNING) {
+            _view.beginCountdown();
+        }
+
+        if (_control.amInControl()) {
+            if (getRoundType() == Model.ROUND_LIGHTNING) {
+                _roundTimeout = setTimeout(doEndRound, getDuration() * 1000);
+            }
+            _questionIx = 0;
+            nextQuestion();
         }
     }
 

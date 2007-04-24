@@ -116,18 +116,20 @@ public class View extends Sprite
             doPlay(_sndGameIntro, true);
 
         } else {
-            if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
-                _endTime = getTimer()/1000 + Content.ROUND_DURATIONS[_control.getRound()-1];
-            }
             doPlay(_sndRoundIntro, false);
         }
+    }
+
+    public function beginCountdown () :void
+    {
+        _endTime = getTimer()/1000 + Content.ROUND_DURATIONS[_control.getRound()-1];
     }
 
     public function roundDidEnd () :void
     {
         _endTime = 0;
-        doorClear();
         if (_control.getRound() != -Model.ROUND_INTRO) {
+            doorClear();
             doorHeader("Round Over!");
         }
 
@@ -136,7 +138,12 @@ public class View extends Sprite
 
     public function shutdown () :void
     {
-        clearInterval(_updateTimer);
+        if (_updateTimer != 0) {
+            clearInterval(_updateTimer);
+        }
+        if (_sndChannel != null) {
+            _sndChannel.stop();
+        }
     }
 
     public function newQuestion (question :Question, questionIx :int) :void
@@ -477,7 +484,7 @@ public class View extends Sprite
     protected function updateRound (questionIx :int = 0) :void
     {
         var txt :String = Content.ROUND_NAMES[_control.getRound()-1];
-        if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
+        if (_model.getRoundType() == Model.ROUND_LIGHTNING && _endTime > 0) {
             txt += " (" + toTime(Math.max(0, _endTime - uint(getTimer()/1000))) + ")";
         } else if (_model.getRoundType() == Model.ROUND_BUZZ) {
             txt += " (" + (questionIx+1) + "/" + _model.getDuration() + ")";
