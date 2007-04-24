@@ -11,8 +11,13 @@ import flash.events.MouseEvent;
 import flash.geom.Matrix;
 import flash.geom.Point;
 
+import flash.text.TextFormat;
+
 import flash.utils.Dictionary;
 import flash.utils.getTimer; // function import
+
+import com.threerings.flash.FloatingTextAnimation;
+import com.threerings.flash.SiningTextAnimation;
 
 import com.whirled.MiniGameControl;
 
@@ -38,7 +43,7 @@ public class Match3 extends Sprite
 
     public static var GRAVITY :Number = .00098;
 
-    public static var COLORS_TO_USE :int = 6;
+    public static var COLORS_TO_USE :int = 5;
 
     /** Block colors. */
     public static const COLORS :Array = [
@@ -73,6 +78,9 @@ public class Match3 extends Sprite
         // the _board sprite contains pieces, so that all pieces are under the cursor
         addChild(_board);
 
+        // the effects layer will contain score animations and the like
+        addChild(_effects);
+
         // create the cursor
         _cursor = new Cursor();
         _cursor.x = 0;
@@ -98,6 +106,12 @@ public class Match3 extends Sprite
         }
         this.mask = masker;
         addChild(masker);
+
+        // create the prompter label thingy
+        _prompter = new SiningTextAnimation("Keep it moving!",
+            new TextFormat("Arial", 36, 0x000000));
+        _prompter.x = WIDTH/2;
+        _prompter.y = HEIGHT/2;
 
         addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
         addEventListener(MouseEvent.CLICK, handleMouseClick);
@@ -167,12 +181,14 @@ public class Match3 extends Sprite
         // ok, then update each block
         for each (block in allBlocks) {
             if (block.isSwapping() || block.isBooming()) {
+                _lastMovementStamp = stamp;
                 block.update(stamp);
             }
         }
 
         for each (block in allBlocks) {
             if (block.isFalling()) {
+                _lastMovementStamp = stamp;
                 block.update(stamp);
             }
         }
@@ -223,11 +239,24 @@ public class Match3 extends Sprite
         }
         // now, go through and start blowing up the blow-up blocks!
         var blowCount :int = 0;
+        xx = 0;
+        yy = 0;
         for (var bb :* in blowups) {
-            (bb as Block).setDestroying(stamp);
+            block = (bb as Block);
+            xx += block.x;
+            yy += block.y;
+            block.setDestroying(stamp);
             blowCount++;
         }
         if (blowCount > 0) {
+            if (blowCount > 3) {
+                var fta :FloatingTextAnimation =
+                    FloatingTextAnimation.create(getScoreText(blowCount));
+                fta.x = (xx / blowCount) + BLOCK_WIDTH/2;
+                fta.y = (yy / blowCount) + BLOCK_HEIGHT/2;
+                _effects.addChild(fta);
+            }
+
             var score :Number = (blowCount - 2) / (_clicks + 2);
             // no clicks, 3 breaks: .5
             // 1 click, 3 breaks: .3
@@ -235,6 +264,16 @@ public class Match3 extends Sprite
             // good enough for now...
             _ctrl.reportPerformance(score);
             _clicks = 0;
+        }
+
+        var timeSinceLastMove :Number = stamp - _lastMovementStamp;
+        if ((timeSinceLastMove > NO_MOVE_PROMPT_TIME) == (_prompter.parent == null)) {
+            if (_prompter.parent != null) {
+                _effects.removeChild(_prompter);
+
+            } else {
+                _effects.addChild(_prompter);
+            }
         }
 
 //        // TEMP: look for lost blocks
@@ -298,6 +337,16 @@ public class Match3 extends Sprite
         return uint(COLORS[pick]);
     }
 
+    protected function getScoreText (destroyed :int) :String
+    {
+        switch (destroyed) {
+        case 4: return "Great!";
+        case 5: return "Awesome!";
+        case 6: return "Too sweet!";
+        default: return "Stupendous!"
+        }
+    }
+
     protected var _ctrl :MiniGameControl;
 
     /** The cursor. */
@@ -305,13 +354,21 @@ public class Match3 extends Sprite
 
     protected var _board :Sprite = new Sprite();
 
+    protected var _effects :Sprite = new Sprite();
+
     protected var _blocks :BlockMap = new BlockMap();
+
+    protected var _prompter :SiningTextAnimation;
+
+    protected var _lastMovementStamp :Number = 0;
 
     /** Tracks the last-inserted color on each row. */
     protected var _lastInserted :Array = [];
 
     /** The number of clicks since the last block scoring. */
     protected var _clicks :int = 0;
+
+    protected static const NO_MOVE_PROMPT_TIME :int = 2000;
 }
 }
 
