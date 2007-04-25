@@ -99,7 +99,6 @@ public class Server
 
         } else if (event.name == Model.MSG_QUESTION_DONE) {
             _model.getQuestions().removeQuestion(_control.get(Model.QUESTION_IX) as int);
-            _questionIx += 1;
 
             if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
@@ -107,7 +106,7 @@ public class Server
 
             } else if (_model.getRoundType() == Model.ROUND_BUZZ) {
                 // in the buzz round we only do N questions
-                if (_questionIx == _model.getDuration()) {
+                if (_model.getQuestionCount() == _model.getDuration()) {
                     _questionTimeout = setTimeout(doEndRound, 1000);
 
                 } else if (!value.winner) {
@@ -236,7 +235,6 @@ public class Server
         if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
             _roundTimeout = setTimeout(doEndRound, _model.getDuration() * 1000);
         }
-        _questionIx = 0;
         nextQuestion();
     }
 
@@ -263,8 +261,6 @@ public class Server
     protected var _model :Model;
 
     protected var _playerCount :int;
-
-    protected var _questionIx :uint;
 
     protected var _roundTimeout :uint = 0;
 

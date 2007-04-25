@@ -138,6 +138,11 @@ public class Model
         return _freeQuestions;
     }
 
+    public function getQuestionCount () :int
+    {
+        return _questionCount;
+    }
+
     /**
      * Called when our distributed game state changes.
      */
