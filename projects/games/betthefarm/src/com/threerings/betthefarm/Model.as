@@ -22,6 +22,7 @@ public class Model
     public static const ROUND_WAGER :int = 4;
 
     public static const QUESTION_IX :String = "qIx";
+    public static const RESPONSES :String = "responses";
     public static const SCORES :String = "scores";
 
     public static const MSG_ANSWER_MULTI :String = "answerMulti";
@@ -122,6 +123,11 @@ public class Model
             throw new Error("round duration requested between rounds");
         }
         return Content.ROUND_DURATIONS[_control.getRound()-1];
+    }
+
+    public function getQuestion () :Question
+    {
+        return getQuestions().getQuestion(_control.get(QUESTION_IX) as int);
     }
 
     public function getQuestions () :QuestionSet

@@ -30,11 +30,12 @@ public class BetTheFarm extends Sprite
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         // create and wire ourselves into our multiplayer game control
-        _control = new WhirledGameControl(this);
+        _control = new FarmControl(this);
         _control.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _control.addEventListener(StateChangedEvent.ROUND_STARTED, roundDidStart);
         _control.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);
         _control.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+        _control.addEventListener(StateChangedEvent.CONTROL_CHANGED, controlChanged);
 
         // create our server, our model and our view, and initialize them
         _model = new Model(_control);
@@ -45,10 +46,17 @@ public class BetTheFarm extends Sprite
         addChild(_view);
     }
 
+    protected function controlChanged (event :StateChangedEvent) :void
+    {
+        if (_control.amInControl()) {
+            _server = new Server(_control, _model);
+        }
+    }
+
     protected function gameDidStart (event :StateChangedEvent) :void
     {
         _model.gameDidStart();
-        if (_control.amInControl()) {
+        if (_server != null) {
             _server.gameDidStart();
         }
         _view.gameDidStart();
@@ -57,7 +65,7 @@ public class BetTheFarm extends Sprite
     protected function roundDidStart (event :StateChangedEvent) :void
     {
         _model.roundDidStart();
-        if (_control.amInControl()) {
+        if (_server != null) {
             _server.roundDidStart();
         }
         _view.roundDidStart();
@@ -66,7 +74,7 @@ public class BetTheFarm extends Sprite
     protected function roundDidEnd (event :StateChangedEvent) :void
     {
         _model.roundDidEnd();
-        if (_control.amInControl()) {
+        if (_server != null) {
             _server.roundDidEnd();
         }
         _view.roundDidEnd();
@@ -75,7 +83,7 @@ public class BetTheFarm extends Sprite
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
         _model.gameDidEnd();
-        if (_control.amInControl()) {
+        if (_server != null) {
             _server.gameDidEnd();
         }
         _view.gameDidEnd();
@@ -84,7 +92,7 @@ public class BetTheFarm extends Sprite
     protected function handleUnload (event :Event) :void
     {
         _model.shutdown();
-        if (_control.amInControl()) {
+        if (_server != null) {
             _server.shutdown();
         }
         _view.shutdown();

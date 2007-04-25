@@ -154,20 +154,20 @@ public class Server
 
     protected function questionAnswered (player :int, correct :Boolean, wager :int) :void
     {
-        var question :Question =
-            _model.getQuestions().getQuestion(_control.get(Model.QUESTION_IX) as int);
+        var question :Question = _model.getQuestion();
 
-        if (_responses.containsKey(player)) {
-            throw new Error("Multiple answers from player: " + player);
-        }
-        _responses.put(player, true);
-
-        var ix :int = _control.seating.getPlayerPosition(player);
-        if (ix == -1) {
+        var pIx :int = _control.seating.getPlayerPosition(player);
+        if (pIx == -1) {
             throw new Error("non-seated answer");
         }
 
-        var score :int = _control.get(Model.SCORES, ix) as int;            
+        if (_control.get(Model.RESPONSES, pIx)) {
+            throw new Error("Multiple answers from player: " + player);
+        }
+        debug("Setting " + pIx + " true");
+        _control.setImmediate(Model.RESPONSES, true, pIx);
+
+        var score :int = _control.get(Model.SCORES, pIx) as int;            
         var mod :int;
         if (correct) {
             if (_model.getRoundType() == Model.ROUND_WAGER) {
@@ -197,9 +197,15 @@ public class Server
                 mod = -50;
             }
         }
-        _control.set(Model.SCORES, Math.max(score + mod, 0), ix);
+        _control.set(Model.SCORES, Math.max(score + mod, 0), pIx);
 
-        if (correct || _responses.size() >= _playerCount) {
+        var done :Boolean = true;
+        for (var ii :int = 0; ii < _playerCount; ii ++) {
+            debug("Anding #" + ii + ": " + _control.get(Model.RESPONSES, ii));
+            done &&= _control.get(Model.RESPONSES, ii);
+        }
+        debug("Result: " + done);
+        if (correct || done) {
             _control.sendMessage(Model.MSG_QUESTION_DONE, correct ? { winner: player } : { });
 
         } else {
@@ -238,7 +244,8 @@ public class Server
     {
         _questionTimeout = 0;
         _buzzer = -1;
-        _responses = new HashMap();
+
+        _control.setImmediate(Model.RESPONSES, [ ]);
 
         var keys :Array = (category != null) ?
             _model.getQuestions().getCategoryIxSet(category) :
@@ -262,8 +269,6 @@ public class Server
     protected var _roundTimeout :uint = 0;
 
     protected var _questionTimeout :uint;
-
-    protected var _responses :Map;
 
     protected var _buzzer :int;
 }
