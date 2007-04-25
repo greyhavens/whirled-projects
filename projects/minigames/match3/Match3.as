@@ -123,6 +123,7 @@ public class Match3 extends Sprite
     {
         _ctrl = new MiniGameControl(this);
 
+        _lastIdleStamp = getTimer();
         addEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
@@ -257,12 +258,17 @@ public class Match3 extends Sprite
                 _effects.addChild(fta);
             }
 
-            var score :Number = (blowCount - 2) / (_clicks + 2);
+            _lastMovementStamp = stamp;
+
+            var score :Number = (blowCount - 2) / (10 * (_clicks + 2));
             // no clicks, 3 breaks: .5
             // 1 click, 3 breaks: .3
             // 1 click, 5 breaks: 1
             // good enough for now...
-            _ctrl.reportPerformance(score);
+
+            // style points are accumulated for keeping it going...
+            var style :Number = Math.min(1, (stamp - _lastIdleStamp) / 10000);
+            _ctrl.reportPerformance(score, style);
             _clicks = 0;
         }
 
@@ -273,7 +279,14 @@ public class Match3 extends Sprite
 
             } else {
                 _effects.addChild(_prompter);
+                // when we have to do this, we submit a score event of 0
+                _ctrl.reportPerformance(0);
             }
+        }
+
+        // if nothing is moving this tick, track it as our last idle stamp
+        if (stamp != _lastMovementStamp) {
+            _lastIdleStamp = stamp;
         }
 
 //        // TEMP: look for lost blocks
@@ -361,6 +374,9 @@ public class Match3 extends Sprite
     protected var _prompter :SiningTextAnimation;
 
     protected var _lastMovementStamp :Number = 0;
+
+    /** The timestamp at which the board was last idle. */
+    protected var _lastIdleStamp :Number;
 
     /** Tracks the last-inserted color on each row. */
     protected var _lastInserted :Array = [];
