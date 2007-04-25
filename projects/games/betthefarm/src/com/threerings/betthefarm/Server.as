@@ -89,12 +89,11 @@ public class Server
         }
 
         if (event.name == Model.MSG_ANSWERED) {
-            _buzzer = -1;
+            _control.setImmediate(Model.BUZZER, -1);
 
         } else if (event.name == Model.MSG_BUZZ) {
-            if (_buzzer == -1) {
-                _buzzer = value.player;
-                _control.sendMessage(Model.MSG_BUZZ_CONTROL, value);
+            if (_control.get(Model.BUZZER) == -1) {
+                _control.setImmediate(Model.BUZZER, value.player);
             }
 
         } else if (event.name == Model.MSG_QUESTION_DONE) {
@@ -125,17 +124,18 @@ public class Server
 
         } else if (event.name == Model.MSG_ANSWER_MULTI) {
             if (value.correct) {
-                if (_buzzer != -1) {
+                if (_control.get(Model.BUZZER) != -1) {
                     // ignore late-coming correct answers
                     debug("ignoring late-coming correct answer");
                     return;
                 }
-                _buzzer = value.player;
+                // TODO: We can stop using BUZZER here when the server is a state machine.
+                _control.setImmediate(Model.BUZZER, value.player);
             }
             questionAnswered(value.player, value.correct, value.wager);
 
         } else if (event.name == Model.MSG_ANSWER_FREE) {
-            if (_buzzer != value.player) {
+            if (_control.get(Model.BUZZER) != value.player) {
                 debug("ignoring answer from non-buzzed player");
                 return;
             }
@@ -241,8 +241,8 @@ public class Server
     protected function nextQuestion (category :String = null) :void
     {
         _questionTimeout = 0;
-        _buzzer = -1;
 
+        _control.setImmediate(Model.BUZZER, -1);
         _control.setImmediate(Model.RESPONSES, [ ]);
 
         var keys :Array = (category != null) ?
@@ -265,7 +265,5 @@ public class Server
     protected var _roundTimeout :uint = 0;
 
     protected var _questionTimeout :uint;
-
-    protected var _buzzer :int;
 }
 }

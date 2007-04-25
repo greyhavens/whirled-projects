@@ -22,6 +22,7 @@ public class Model
     public static const ROUND_WAGER :int = 4;
 
     public static const QUESTION_IX :String = "qIx";
+    public static const BUZZER :String = "buzzer";
     public static const RESPONSES :String = "responses";
     public static const SCORES :String = "scores";
 
@@ -29,7 +30,6 @@ public class Model
     public static const MSG_ANSWER_FREE :String = "answerFree";
     public static const MSG_ANSWERED :String = "answered";
     public static const MSG_BUZZ :String = "buzz";
-    public static const MSG_BUZZ_CONTROL :String = "buzzControl";
     public static const MSG_QUESTION_DONE :String = "questionDone";
     public static const MSG_CHOOSE_CATEGORY :String = "chooseCategory";
 
@@ -154,6 +154,9 @@ public class Model
                                   _questionCount);
             }
 
+        } else if (event.name == Model.BUZZER) {
+            _view.gainedBuzzControl(event.newValue as int);
+
         } else if (event.name == Model.SCORES && event.index != -1) {
             _view.flowUpdated(_control.seating.getPlayerIds()[event.index], event.newValue as int);
         }
@@ -173,9 +176,6 @@ public class Model
 
         if (event.name == Model.MSG_ANSWERED) {
             _view.questionAnswered(value.player, value.correct);
-
-        } else if (event.name == Model.MSG_BUZZ_CONTROL) {
-            _view.gainedBuzzControl(value.player);
 
         } else if (event.name == Model.MSG_QUESTION_DONE) {
             _questionCount += 1;
