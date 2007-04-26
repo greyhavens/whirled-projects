@@ -41,6 +41,7 @@ public class BetTheFarm extends Sprite
         _model = new Model(_control);
         if (_control.amInControl()) {
             _server = new Server(_control, _model);
+            _control.startTicker(Model.MSG_TICK, 1000);
         }
         _view = new View(_control, _model);
         addChild(_view);

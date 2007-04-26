@@ -3,9 +3,6 @@
 
 package com.threerings.betthefarm {
 
-import flash.utils.setTimeout;
-import flash.utils.clearTimeout;
-
 import com.whirled.WhirledGameControl;
 
 import com.threerings.ezgame.MessageReceivedEvent;
@@ -16,6 +13,11 @@ import com.threerings.util.HashMap;
 
 public class Server
 {
+    public static const ACT_BEGIN_ROUND :String = "beginRound";
+    public static const ACT_END_ROUND :String = "endRound";
+    public static const ACT_NEXT_QUESTION :String = "nextQuestion";
+    public static const ACT_PICK_CATEGORY :String = "pickCategory";
+
     public function debug (str :String) :void
     {
         if (BetTheFarm.DEBUG) {
@@ -47,27 +49,16 @@ public class Server
 
     public function roundDidStart () :void
     {
-        _roundTimeout = setTimeout(
-            actuallyBeginRound, Content.ROUND_INTRO_DURATIONS[_control.getRound()-1] * 1000);
+        setTimeout(ACT_BEGIN_ROUND, 4);
     }
 
     public function roundDidEnd () :void
     {
-        if (_questionTimeout != 0) {
-            clearTimeout(_questionTimeout);
-        }
     }
 
     public function shutdown () :void
     {
-        if (_questionTimeout != 0) {
-            clearTimeout(_questionTimeout);
-        }
-        if (_roundTimeout != 0) {
-            clearTimeout(_roundTimeout);
-        }
     }
-
 
     /**
      * Called when our distributed game state changes.
@@ -81,48 +72,94 @@ public class Server
      */
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
-        var value :Object = event.value;
-
+        if (event.name == Model.MSG_TICK) {
+            var rndEnd :int = _control.get(Model.ROUND_TIMEOUT) as int;
+            if (rndEnd > 0 && rndEnd <= _model.getLastTick()) {
+                doEndRound();
+                return;
+            }
+            var timeout :Object = _control.get(Model.TIMEOUT);
+            if (timeout && timeout.tick < _model.getLastTick()) {
+                _control.setImmediate(Model.TIMEOUT, null);
+                handleTimeout(timeout.action);
+            }
+            return;
+        }
         // if we're between rounds, we ignore absolutely all messages
         if (_control.getRound() < 0) {
             return;
         }
+        handleMessage(event.name, event.value);
+    }
 
-        if (event.name == Model.MSG_ANSWERED) {
+
+
+    protected function handleTimeout(action :String) :void
+    {
+        if (action == ACT_BEGIN_ROUND) {
+            if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
+                _control.setImmediate(
+                    Model.ROUND_TIMEOUT, _model.getLastTick() + _model.getDuration());
+            } else {
+                _control.setImmediate(Model.ROUND_TIMEOUT, -1);
+                if (_model.getRoundType() == Model.ROUND_INTRO) {
+                    doEndRound();
+                    return;
+                }
+            }
+            nextQuestion();
+
+        } else if (action == ACT_END_ROUND) {
+            doEndRound();
+
+        } else if (action == ACT_NEXT_QUESTION) {
+            nextQuestion();
+
+        } else if (action == ACT_PICK_CATEGORY) {
+            var categories :Array = _model.getQuestions().getCategories();
+            var ix :int = BetTheFarm.random.nextInt(categories.length);
+            var category :String = categories[ix];
+            nextQuestion(category);
+        }
+    }
+
+    protected function handleMessage(msg :String, value :Object) :void
+    {
+        if (msg == Model.MSG_ANSWERED) {
             _control.setImmediate(Model.BUZZER, -1);
 
-        } else if (event.name == Model.MSG_BUZZ) {
+        } else if (msg == Model.MSG_BUZZ) {
             if (_control.get(Model.BUZZER) == -1) {
                 _control.setImmediate(Model.BUZZER, value.player);
             }
 
-        } else if (event.name == Model.MSG_QUESTION_DONE) {
+        } else if (msg == Model.MSG_QUESTION_DONE) {
             _model.getQuestions().removeQuestion(_control.get(Model.QUESTION_IX) as int);
 
             if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
-                _questionTimeout = setTimeout(nextQuestion, 1000);
+                setTimeout(ACT_NEXT_QUESTION, 1);
 
             } else if (_model.getRoundType() == Model.ROUND_BUZZ) {
                 // in the buzz round we only do N questions
                 if (_model.getQuestionCount() == _model.getDuration()) {
-                    _questionTimeout = setTimeout(doEndRound, 1000);
+                    setTimeout(ACT_END_ROUND, 1);
 
                 } else if (!value.winner) {
                     // if there was a winner, that winner will display the category choice UI
                     // otherwise we, as controllers, have to randomly select it here
-                    _questionTimeout = setTimeout(chooseRandomCategory, 1000);
-                }                
+                    setTimeout(ACT_PICK_CATEGORY, 1);
+                }
 
             } else {
                 // if this is a wager round, immediately end it
-                _questionTimeout = setTimeout(doEndRound, 1000);
+                setTimeout(ACT_END_ROUND, 1);
             }
 
-        } else if (event.name == Model.MSG_CHOOSE_CATEGORY) {
+        } else if (msg == Model.MSG_CHOOSE_CATEGORY) {
             nextQuestion(value as String);
 
-        } else if (event.name == Model.MSG_ANSWER_MULTI) {
+        } else if (msg == Model.MSG_ANSWER_MULTI) {
             if (value.correct) {
                 if (_control.get(Model.BUZZER) != -1) {
                     // ignore late-coming correct answers
@@ -134,7 +171,7 @@ public class Server
             }
             questionAnswered(value.player, value.correct, value.wager);
 
-        } else if (event.name == Model.MSG_ANSWER_FREE) {
+        } else if (msg == Model.MSG_ANSWER_FREE) {
             if (_control.get(Model.BUZZER) != value.player) {
                 debug("ignoring answer from non-buzzed player");
                 return;
@@ -143,12 +180,25 @@ public class Server
         }
     }
 
-    protected function chooseRandomCategory () :void
+    protected function setTimeout (action :String, delay :int) :void
     {
-        var categories :Array = _model.getQuestions().getCategories();
-        var ix :int = BetTheFarm.random.nextInt(categories.length);
-        var category :String = categories[ix];
-        nextQuestion(category);
+        _control.setImmediate(
+            Model.TIMEOUT, { action: action, tick: _model.getLastTick() + delay });
+    }
+
+    protected function doEndRound () :void
+    {
+        if (_control.getRound() == Content.ROUND_NAMES.length) {
+            _control.endGame([ ]);
+            return;
+        }
+
+        if (_model.getRoundType() == Model.ROUND_INTRO) {
+            _control.endRound(1);
+            return;
+        }
+
+        _control.endRound(3);
     }
 
     protected function questionAnswered (player :int, correct :Boolean, wager :int) :void
@@ -212,36 +262,8 @@ public class Server
         }
     }
 
-    protected function doEndRound () :void
-    {
-        _roundTimeout = 0;
-        if (_control.getRound() == Content.ROUND_NAMES.length) {
-            _control.endGame( [ ] );
-
-        } else if (_model.getRoundType() == Model.ROUND_INTRO) {
-            _control.endRound(1);
-
-        } else {
-            _control.endRound(3);
-        }
-    }
-
-    protected function actuallyBeginRound () :void
-    {
-        if (_model.getRoundType() == Model.ROUND_INTRO) {
-            doEndRound();
-            return;
-        }
-        if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
-            _roundTimeout = setTimeout(doEndRound, _model.getDuration() * 1000);
-        }
-        nextQuestion();
-    }
-
     protected function nextQuestion (category :String = null) :void
     {
-        _questionTimeout = 0;
-
         _control.setImmediate(Model.BUZZER, -1);
         _control.setImmediate(Model.RESPONSES, [ ]);
 
@@ -261,9 +283,5 @@ public class Server
     protected var _model :Model;
 
     protected var _playerCount :int;
-
-    protected var _roundTimeout :uint = 0;
-
-    protected var _questionTimeout :uint;
 }
 }

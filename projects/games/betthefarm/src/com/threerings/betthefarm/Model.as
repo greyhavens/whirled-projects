@@ -25,7 +25,10 @@ public class Model
     public static const BUZZER :String = "buzzer";
     public static const RESPONSES :String = "responses";
     public static const SCORES :String = "scores";
+    public static const TIMEOUT :String = "timeout";
+    public static const ROUND_TIMEOUT :String = "roundTimeout";
 
+    public static const MSG_TICK :String = "tick";
     public static const MSG_ANSWER_MULTI :String = "answerMulti";
     public static const MSG_ANSWER_FREE :String = "answerFree";
     public static const MSG_ANSWERED :String = "answered";
@@ -71,6 +74,7 @@ public class Model
                 item.Question,
                 toArray(item.Correct)));
         }
+        _lastTick = 0;
     }
 
     public function setView (view :View) :void
@@ -107,6 +111,11 @@ public class Model
     public function betweenRounds () :Boolean
     {
         return _control.getRound() < 0;
+    }
+
+    public function getLastTick() :int
+    {
+        return _lastTick;
     }
 
     public function getRoundType () :int
@@ -148,16 +157,16 @@ public class Model
      */
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (event.name == Model.QUESTION_IX) {
+        if (event.name == QUESTION_IX) {
             if (!betweenRounds()) {
                 _view.newQuestion(getQuestions().getQuestion(event.newValue as int),
                                   _questionCount);
             }
 
-        } else if (event.name == Model.BUZZER) {
+        } else if (event.name == BUZZER && event.newValue > 0) {
             _view.gainedBuzzControl(event.newValue as int);
 
-        } else if (event.name == Model.SCORES && event.index != -1) {
+        } else if (event.name == SCORES && event.index != -1) {
             _view.flowUpdated(_control.seating.getPlayerIds()[event.index], event.newValue as int);
         }
     }
@@ -169,15 +178,19 @@ public class Model
     {
         var value :Object = event.value;
 
+        if (event.name == MSG_TICK) {
+            _lastTick = event.value as int;
+        }
+
         // if we're between rounds, we ignore absolutely all messages
         if (betweenRounds()) {
             return;
         }
 
-        if (event.name == Model.MSG_ANSWERED) {
+        if (event.name == MSG_ANSWERED) {
             _view.questionAnswered(value.player, value.correct);
 
-        } else if (event.name == Model.MSG_QUESTION_DONE) {
+        } else if (event.name == MSG_QUESTION_DONE) {
             _questionCount += 1;
             _view.questionDone(value.winner);
         }
@@ -196,6 +209,8 @@ public class Model
     }
 
     protected var _playerCount :int;
+
+    protected var _lastTick :int;
 
     protected var _multiQuestions :QuestionSet;
     protected var _freeQuestions :QuestionSet;
