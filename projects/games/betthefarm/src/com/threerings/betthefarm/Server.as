@@ -214,7 +214,6 @@ public class Server
         if (_control.get(Model.RESPONSES, pIx)) {
             throw new Error("Multiple answers from player: " + player);
         }
-        debug("Setting " + pIx + " true");
         _control.setImmediate(Model.RESPONSES, true, pIx);
 
         var score :int = _control.get(Model.SCORES, pIx) as int;            
@@ -251,10 +250,8 @@ public class Server
 
         var done :Boolean = true;
         for (var ii :int = 0; ii < _playerCount; ii ++) {
-            debug("Anding #" + ii + ": " + _control.get(Model.RESPONSES, ii));
             done &&= _control.get(Model.RESPONSES, ii);
         }
-        debug("Result: " + done);
         if (correct || done) {
             _control.sendMessage(Model.MSG_QUESTION_DONE, correct ? { winner: player } : { });
 
