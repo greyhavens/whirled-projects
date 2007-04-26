@@ -75,6 +75,8 @@ public class Server
         if (event.name == Model.MSG_TICK) {
             var rndEnd :int = _control.get(Model.ROUND_TIMEOUT) as int;
             if (rndEnd > 0 && rndEnd <= _model.getLastTick()) {
+                _control.setImmediate(Model.ROUND_TIMEOUT, -1);
+                _control.setImmediate(Model.TIMEOUT, null);
                 doEndRound();
                 return;
             }
@@ -166,7 +168,6 @@ public class Server
                     debug("ignoring late-coming correct answer");
                     return;
                 }
-                // TODO: We can stop using BUZZER here when the server is a state machine.
                 _control.setImmediate(Model.BUZZER, value.player);
             }
             questionAnswered(value.player, value.correct, value.wager);
