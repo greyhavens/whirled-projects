@@ -16,6 +16,8 @@ public class Server
     public static const ACT_BEGIN_ROUND :String = "beginRound";
     public static const ACT_END_ROUND :String = "endRound";
     public static const ACT_NEXT_QUESTION :String = "nextQuestion";
+    public static const ACT_END_QUESTION :String = "endQuestion";
+    public static const ACT_FAIL_QUESTION :String = "failQuestion";
     public static const ACT_PICK_CATEGORY :String = "pickCategory";
 
     public function debug (str :String) :void
@@ -102,6 +104,7 @@ public class Server
             if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
                 _control.setImmediate(
                     Model.ROUND_TIMEOUT, _model.getLastTick() + _model.getDuration());
+
             } else {
                 _control.setImmediate(Model.ROUND_TIMEOUT, -1);
                 if (_model.getRoundType() == Model.ROUND_INTRO) {
@@ -117,11 +120,20 @@ public class Server
         } else if (action == ACT_NEXT_QUESTION) {
             nextQuestion();
 
+        } else if (action == ACT_FAIL_QUESTION) {
+            questionAnswered(_control.get(Model.BUZZER) as int, false, 0);
+
+        } else if (action == ACT_END_QUESTION) {
+            _control.sendMessage(Model.MSG_QUESTION_DONE, { });
+
         } else if (action == ACT_PICK_CATEGORY) {
             var categories :Array = _model.getQuestions().getCategories();
             var ix :int = BetTheFarm.random.nextInt(categories.length);
             var category :String = categories[ix];
             nextQuestion(category);
+
+        } else {
+            throw new Error("Unknown timeout action: " + action);
         }
     }
 
@@ -133,6 +145,7 @@ public class Server
         } else if (msg == Model.MSG_BUZZ) {
             if (_control.get(Model.BUZZER) == -1) {
                 _control.setImmediate(Model.BUZZER, value.player);
+                setTimeout(ACT_FAIL_QUESTION, 10);
             }
 
         } else if (msg == Model.MSG_QUESTION_DONE) {
@@ -147,9 +160,12 @@ public class Server
                 if (_model.getQuestionCount() == _model.getDuration()) {
                     setTimeout(ACT_END_ROUND, 1);
 
-                } else if (!value.winner) {
-                    // if there was a winner, that winner will display the category choice UI
-                    // otherwise we, as controllers, have to randomly select it here
+                } else if (value.winner) {
+                    // let the winner choose next category, just set up a timeout
+                    setTimeout(ACT_PICK_CATEGORY, 4);
+
+                } else {
+                    // if there was no winner, we always pick the category
                     setTimeout(ACT_PICK_CATEGORY, 1);
                 }
 
@@ -208,7 +224,7 @@ public class Server
 
         var pIx :int = _control.seating.getPlayerPosition(player);
         if (pIx == -1) {
-            throw new Error("non-seated answer");
+            throw new Error("non-seated answer from: " + player);
         }
 
         if (_control.get(Model.RESPONSES, pIx)) {
@@ -273,6 +289,8 @@ public class Server
             return;
         }
         _control.set(Model.QUESTION_IX, keys[BetTheFarm.random.nextInt(keys.length)]);
+        // we always begin a timeout here, though it may be extended in buzz rounds
+        setTimeout(ACT_END_QUESTION, 10);
     }
 
 
