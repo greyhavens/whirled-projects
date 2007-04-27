@@ -27,6 +27,9 @@ public class Content
     [Embed(source="../../../../rsrc/Bet The Farm Round.mp3")]
     public static const SND_ROUND_INTRO :Class;
 
+    [Embed(source="../../../../rsrc/FranklinGothicMedium.TTF", fontName="font")]
+    public static const FONT :Class;
+
     public static const NUMBERS :Array = [
         "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"
     ];
@@ -112,5 +115,4 @@ public class Content
         new Point(851, 430),
     ];
 }
-
 }
