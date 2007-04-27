@@ -12,12 +12,14 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 
 import flash.text.TextFormat;
+import flash.text.TextFieldAutoSize;
 
 import flash.utils.Dictionary;
 import flash.utils.getTimer; // function import
 
 import com.threerings.flash.FloatingTextAnimation;
 import com.threerings.flash.SiningTextAnimation;
+import com.threerings.flash.TextFieldUtil;
 
 import com.whirled.MiniGameControl;
 
@@ -109,7 +111,8 @@ public class Match3 extends Sprite
 
         // create the prompter label thingy
         _prompter = new SiningTextAnimation("Keep it moving!",
-            new TextFormat("Arial", 36, 0x000000));
+            { outlineColor: 0xFFFFFF,
+              format: TextFieldUtil.createFormat({ font: "Arial", size: 36, color: 0x000000 })});
         _prompter.x = WIDTH/2;
         _prompter.y = HEIGHT/2;
 
@@ -251,8 +254,8 @@ public class Match3 extends Sprite
         }
         if (blowCount > 0) {
             if (blowCount > 3) {
-                var fta :FloatingTextAnimation =
-                    FloatingTextAnimation.create(getScoreText(blowCount));
+                var fta :FloatingTextAnimation = new FloatingTextAnimation(getScoreText(blowCount),
+                    _scoreAnimProps);
                 fta.x = (xx / blowCount) + BLOCK_WIDTH/2;
                 fta.y = (yy / blowCount) + BLOCK_HEIGHT/2;
                 _effects.addChild(fta);
@@ -374,6 +377,11 @@ public class Match3 extends Sprite
     protected var _prompter :SiningTextAnimation;
 
     protected var _lastMovementStamp :Number = 0;
+
+    protected var _scoreAnimProps :Object = {
+        outlineColor: 0x000000,
+        format: TextFieldUtil.createFormat({ bold: true, font: "System", color: 0xFFFFFF})
+    };
 
     /** The timestamp at which the board was last idle. */
     protected var _lastIdleStamp :Number;
