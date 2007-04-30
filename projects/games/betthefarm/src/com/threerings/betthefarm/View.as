@@ -50,6 +50,7 @@ import flash.utils.clearInterval;
 import flash.utils.setTimeout;
 
 import com.whirled.WhirledGameControl;
+import com.threerings.ezgame.UserChatEvent;
 
 /**
  * Manages the whole game view and user input.
@@ -83,8 +84,23 @@ public class View extends Sprite
 
             _endTime = 0;
 
+            _control.addEventListener(UserChatEvent.TYPE, userChat);
+
             debug("View created [playing=" + _playing + "]");
         }
+    }
+
+    protected function userChat (event :UserChatEvent) :void
+    {
+        var bubble :ChatBubble = _bubbles[event.speaker];
+        if (bubble) {
+            // TODO: these need to scroll up & away, not just get replaced...
+            removeChild(bubble);
+        }
+        bubble = _bubbles[event.speaker] = new ChatBubble(event.message as String);
+        bubble.x = _headshots[event.speaker].x;
+        bubble.y = _headshots[event.speaker].x - 50;
+        addChild(bubble);
     }
 
     public function gameDidStart () :void
@@ -93,6 +109,7 @@ public class View extends Sprite
         debug("Players: " + players);
         _plaqueTexts = new Dictionary();
         _headshots = new Dictionary();
+        _bubbles = new Dictionary();
         for (var ii :int = 0; ii < players.length; ii ++) {
             addPlaque(players[ii], ii);
             requestHeadshot(players[ii], ii);
@@ -635,6 +652,8 @@ public class View extends Sprite
     protected var _headshots :Dictionary;
 
     protected var _plaqueTexts :Dictionary;
+
+    protected var _bubbles :Dictionary;
 
     protected var _doorArea :Sprite;
 
