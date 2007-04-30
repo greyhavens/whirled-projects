@@ -15,6 +15,33 @@ public class Content
     [Embed(source="../../../../rsrc/Background.jpg")]
     public static const BACKGROUND :Class;
 
+    [Embed(source="../../../../rsrc/AnswerBubble1.png")]
+    public static const ANSWER_BUBBLE_1 :Class;
+
+    [Embed(source="../../../../rsrc/AnswerBubble2.png")]
+    public static const ANSWER_BUBBLE_2 :Class;
+
+    [Embed(source="../../../../rsrc/AnswerBubble3.png")]
+    public static const ANSWER_BUBBLE_3 :Class;
+
+    [Embed(source="../../../../rsrc/AnswerBubble4.png")]
+    public static const ANSWER_BUBBLE_4 :Class;
+
+    [Embed(source="../../../../rsrc/BuzzButton.png")]
+    public static const BUZZ_BUTTON :Class;
+
+    [Embed(source="../../../../rsrc/PlayerBuzz.png")]
+    public static const PLAQUE_BUZZED :Class;
+
+    [Embed(source="../../../../rsrc/PlayerCorrect.png")]
+    public static const PLAQUE_CORRECT :Class;
+
+    [Embed(source="../../../../rsrc/PlayerIncorrect.png")]
+    public static const PLAQUE_INCORRECT :Class;
+
+    [Embed(source="../../../../rsrc/PlayerNormal.png")]
+    public static const PLAQUE_NORMAL :Class;
+
     [Embed(source="../../../../rsrc/You Did Great.mp3")]
     public static const SND_Q_CORRECT :Class;
 
