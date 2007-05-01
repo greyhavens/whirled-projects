@@ -12,6 +12,7 @@ package com.threerings.betthefarm {
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
+import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
@@ -36,7 +37,6 @@ import flash.media.SoundChannel;
 
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
-import flash.text.AntiAliasType;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
@@ -72,7 +72,7 @@ public class View extends Sprite
         _model.setView(this);
 
         var background :DisplayObject = new Content.BACKGROUND();
-        addChild(background);
+//        addChild(background);
 
         if (_control.isConnected()) {
             _playing = _control.seating.getMyPosition() != -1;
@@ -528,6 +528,7 @@ public class View extends Sprite
         height :Number = 0, wordWrap :Boolean = true, fontSize :int = 16) :TextField
     {
         var field :TextField = new TextField();
+        field.embedFonts = true;
         field.x = x;
         field.y = y;
         if (width > 0 && height > 0) {
@@ -540,8 +541,8 @@ public class View extends Sprite
         field.wordWrap = wordWrap;
 
         var format :TextFormat = new TextFormat();
-        format.size = fontSize;
-        format.font = Content.FONT_NAME;
+        format.size = fontSize * 1.0;
+        format.font = "font";
         format.color = Content.FONT_COLOR;
         format.align = TextFormatAlign.CENTER;
         field.defaultTextFormat = format;

@@ -54,7 +54,8 @@ public class Content
     [Embed(source="../../../../rsrc/Bet The Farm Round.mp3")]
     public static const SND_ROUND_INTRO :Class;
 
-    [Embed(source="../../../../rsrc/steelfish.ttf", fontName="font")]
+    [Embed(source="../../../../rsrc/verdana.ttf", mimeType="application/x-font-truetype",
+           fontName="font")]
     public static const FONT :Class;
 
     public static const NUMBERS :Array = [
