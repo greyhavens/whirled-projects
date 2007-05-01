@@ -1,6 +1,8 @@
 package
 {
 
+import flash.utils.getTimer;
+    
 public class NoteGenerator extends AudioNode
 {
     protected var _f :Number;
@@ -29,7 +31,7 @@ public class NoteGenerator extends AudioNode
         _score = score;
         _player = playerIndex;
         
-        _globalStartTime = (new Date()).time / 1000.0;
+        _globalStartTime = getTimer() / 1000.0;
 
         score.applyEnvelope(playerIndex, this);
         setOvertones();

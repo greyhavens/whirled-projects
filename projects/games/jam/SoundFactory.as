@@ -1,5 +1,6 @@
 package 
 {
+    import flash.utils.getTimer;
     import flash.utils.ByteArray;
     import flash.utils.Endian;
     import flash.events.EventDispatcher;
@@ -44,7 +45,7 @@ package
         public function fillAudioBuffer (source :AudioNode) :void
         {
             // pull out the wave form
-            source.generateSamples((new Date()).time / 1000.0, _intermediateBuffer);
+            source.generateSamples(getTimer() / 1000.0, _intermediateBuffer);
             _audioBuffer.fill(_intermediateBuffer);
 
             // fill in the swf and reload
