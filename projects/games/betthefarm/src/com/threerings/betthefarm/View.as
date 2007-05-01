@@ -72,7 +72,7 @@ public class View extends Sprite
         _model.setView(this);
 
         var background :DisplayObject = new Content.BACKGROUND();
-//        addChild(background);
+        addChild(background);
 
         if (_control.isConnected()) {
             _playing = _control.seating.getMyPosition() != -1;
@@ -541,7 +541,7 @@ public class View extends Sprite
         field.wordWrap = wordWrap;
 
         var format :TextFormat = new TextFormat();
-        format.size = fontSize * 1.0;
+        format.size = fontSize;
         format.font = "font";
         format.color = Content.FONT_COLOR;
         format.align = TextFormatAlign.CENTER;
