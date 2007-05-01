@@ -3,15 +3,18 @@ package
 
 public class NoteGenerator extends AudioNode
 {
-    protected var _f :Number;                
+    protected var _f :Number;
+    protected var _score :Score;
+    protected var _player :int;
     protected var _globalStartTime :Number;  
 
     // ADSR envelope, as a collection of points, where x is the time since the start
     // of the note in seconds, and y is the gain in [0, 1].
     protected var envelope :Array = new Array();
 
-    protected var notes :Array = [60, 64, 69];
-    protected var noteLength :Number = 0.5; // seconds
+    // Relative volumes of the harmonic overtones. 
+    protected var overtones :Array = new Array();
+    
     protected var noteIndex :int = -1;
     protected var envelopeIndex :int = 0;
 
@@ -19,19 +22,17 @@ public class NoteGenerator extends AudioNode
     protected var tNote :Number = 0; // in seconds since beginning of this note
 
 
-    public function NoteGenerator (format :SoundFormat, delay :Number, notes :Array)
+    public function NoteGenerator (format :SoundFormat, score :Score, playerIndex :int)
     {
         super(format);
         _f = noteToFrequency(60); // initial note: middle C
-        
-        noteLength = delay;
-        if (notes != null) {
-            this.notes = notes;
-        }
+        _score = score;
+        _player = playerIndex;
         
         _globalStartTime = (new Date()).time / 1000.0;
 
-        setEnvelope(0.0, 0.0, 0.4, 0.2, 0.9, 0.4);
+        score.applyEnvelope(playerIndex, this);
+        setOvertones();
     }
 
     /**
@@ -58,6 +59,24 @@ public class NoteGenerator extends AudioNode
         envelope[5] = new Env(last.t + 1000, 0); // very very big number :)            
     }
 
+    /**
+     * Sets the relative values of harmonic overtones. Only the first three are supported.
+     * @param vf relative volume of the fundamental tone (should be 1)
+     * @param v2f relative volume of the first overtone (at frequency 2 * f)
+     * @param v3f relative volume of the second overtone (at frequency 3 * f)
+     * @param v4f relative volume of the third overtone (at frequency 4 * f)
+     */
+    public function setOvertones (
+        vf :Number = 1, v2f :Number = 0, v3f :Number = 0, v4f :Number = 0) :void
+    {
+        overtones = new Array(5);
+        overtones[0] = 0;   // dummy value, do not use
+        overtones[1] = vf;  
+        overtones[2] = v2f;
+        overtones[3] = v3f;
+        overtones[4] = v4f;
+    }
+     
     // documentation inherited from AudioNode
     override public function generateSamples (startTime :Number, buffer :Array) :void
     {
@@ -88,15 +107,18 @@ public class NoteGenerator extends AudioNode
             if (t >= nextNoteStart) {
 
                 // pick the next note, update timestamps
-                noteIndex = (noteIndex + 1) % notes.length;
-                _f = noteToFrequency(notes[noteIndex]);
-                nextNoteStart += noteLength;
-                tNote = 0;
+                noteIndex = (noteIndex + 1) % Score.BEATS;
+                var note :Number = _score.getBeat(_player, noteIndex);
+                if (note != Score.BEAT_NONE) {
+                    _f = noteToFrequency(note);
+                    tNote = 0;
 
-                // reset the envelope
-                tSegment = 0;
-                envelopeIndex = 0;
-                updateEnvelopeParameters();
+                    // reset the envelope
+                    tSegment = 0;
+                    envelopeIndex = 0;
+                    updateEnvelopeParameters();
+                }
+                nextNoteStart += Score.DT_PER_BEAT;
             }
 
             // if we need to switch to a new envelope segment, update parameters
@@ -106,7 +128,11 @@ public class NoteGenerator extends AudioNode
             }
 
             // generate the sound wave at appropriate frequency
-            buffer[i] = Math.sin(x * _f) * v;
+            var y :Number = 0;
+            for (var o :int = 1; o < overtones.length; ++o) {
+                y += Math.sin(x * _f * o) * overtones[o];
+            }
+            buffer[i] = y * v;
 
             // update our various parameters
             x += dx;
