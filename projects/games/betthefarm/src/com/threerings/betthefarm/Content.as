@@ -54,9 +54,9 @@ public class Content
     [Embed(source="../../../../rsrc/Bet The Farm Round.mp3")]
     public static const SND_ROUND_INTRO :Class;
 
-    [Embed(source="../../../../rsrc/verdana.ttf",
-           fontWeight="normal", fontName="font")]
-    public static const FONT :Class;
+//    [Embed(source="../../../../rsrc/verdana.ttf",
+//           fontWeight="normal", fontName="font")]
+//    public static const FONT :Class;
 
     public static const NUMBERS :Array = [
         "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"
@@ -104,10 +104,10 @@ public class Content
     public static const FONT_COLOR :uint = uint(0x000000);
 
     /** The location and dimensions of the question field. */
-    public static const QUESTION_RECT :Rectangle = new Rectangle(175, 225, 255, 250);
+    public static const DOOR_RECT :Rectangle = new Rectangle(150, 225, 270, 250);
 
     /** The location and dimensions of the answer field. */
-    public static const ANSWER_RECT :Rectangle = new Rectangle(175, 225, 255, 250);
+    public static const ANSWER_RECT :Rectangle = new Rectangle(160, 225, 285, 250);
 
     /** The location and dimensions of the round name field. */
     public static const ROUND_RECT :Rectangle = new Rectangle(170, 145, 245, 40);
@@ -119,11 +119,8 @@ public class Content
     public static const FREE_RESPONSE_RECT :Rectangle = new Rectangle(10, 170, 235, 80);
 
     /** The relative location of each answer field for multiple choice answers. */
-    public static const ANSWER_RECTS :Array = [
-        new Rectangle(5, 120, 120, 60),
-        new Rectangle(130, 120, 120, 60),
-        new Rectangle(5, 185, 120, 60),
-        new Rectangle(130, 185, 120, 60)
+    public static const ANSWER_BUBBLES :Array = [
+        new Point(5, 120), new Point(130, 120), new Point(5, 185), new Point(130, 185)
     ];
 
 

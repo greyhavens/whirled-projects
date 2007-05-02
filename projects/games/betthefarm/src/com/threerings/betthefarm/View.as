@@ -201,37 +201,37 @@ public class View extends Sprite
         for (var ii :int = 0; ii < cnt; ii ++) {
             intro += Content.ROUND_NAMES[ii] + "\n\n";
         }
-        addTextField(intro, _doorArea, 0, 0, Content.QUESTION_RECT.width,
-                     Content.QUESTION_RECT.height, false, 18);
+        addTextField(intro, _doorArea, 0, 0, Content.DOOR_RECT.width,
+                     Content.DOOR_RECT.height, false, 18);
     }
 
     protected function showWagerUI (score :int) :void
     {
         doorClear();
-        addTextField(_question.question, _doorArea, 0, 0, Content.QUESTION_RECT.width,
-                     Content.QUESTION_RECT.height, true, 14);
+        addTextField(_question.question, _doorArea, 0, 0, Content.DOOR_RECT.width,
+                     Content.DOOR_RECT.height, true, 14);
 
         var ii :int = 0;
         if (score > 800) {
-            addWagerButton(ii ++, score/8, false);
+            addWagerButton(ii ++, new Content.ANSWER_BUBBLE_1(), score/8, false);
         }
         if (score > 400) {
-            addWagerButton(ii ++, score/4, false);
+            addWagerButton(ii ++, new Content.ANSWER_BUBBLE_2(), score/4, false);
         }
         if (score > 200) {
-            addWagerButton(ii ++, score/2, false);
+            addWagerButton(ii ++, new Content.ANSWER_BUBBLE_3(), score/2, false);
         }
-        addWagerButton(ii ++, score, true);
+        addWagerButton(ii ++,  new Content.ANSWER_BUBBLE_4(), score, true);
     }
 
-    protected function addWagerButton (pos :int, score :int, farm :Boolean) :void
+    protected function addWagerButton (
+        pos :int, img :DisplayObject, score :int, farm :Boolean) :void
     {
         score -= score % 100;
 
-        var button :SimpleButton = addTextButton(
+        var button :SimpleButton = addImageTextButton(
             "Bet: " + (farm ? "The Farm!" : String(score)), _doorArea,
-            Content.ANSWER_RECTS[pos].left, Content.ANSWER_RECTS[pos].top,
-            Content.ANSWER_RECTS[pos].width, Content.ANSWER_RECTS[pos].height);
+            Content.ANSWER_BUBBLES[pos].x, Content.ANSWER_BUBBLES[pos].y, img);
         addWagerClickHandler(button, score, farm);
     }
 
@@ -247,8 +247,8 @@ public class View extends Sprite
     protected function showAnswerUI () :void
     {
         doorClear();
-        addTextField(_question.question, _doorArea, 0, 0, Content.QUESTION_RECT.width,
-                     Content.QUESTION_RECT.height, true, 14);
+        addTextField(_question.question, _doorArea, 0, 0, Content.DOOR_RECT.width,
+                     Content.DOOR_RECT.height, true, 14);
 
         if (_question is MultipleChoice) {
             var answers :Array = (_question as MultipleChoice).incorrect.slice();
@@ -257,20 +257,25 @@ public class View extends Sprite
             if (answers.length > 4) {
                 throw new Error("Too many answers: " + _question.question);
             }
+            var imgArr :Array = [
+                new Content.ANSWER_BUBBLE_1(),
+                new Content.ANSWER_BUBBLE_2(),
+                new Content.ANSWER_BUBBLE_3(),
+                new Content.ANSWER_BUBBLE_4()
+            ];
             for (var ii :int = 0; ii < 4; ii ++) {
-                var button :SimpleButton = addTextButton(
-                    answers[ii], _doorArea, Content.ANSWER_RECTS[ii].left,
-                    Content.ANSWER_RECTS[ii].top, Content.ANSWER_RECTS[ii].width,
-                    Content.ANSWER_RECTS[ii].height);
+                var button :SimpleButton = addImageTextButton(
+                    answers[ii], _doorArea, Content.ANSWER_BUBBLES[ii].x,
+                    Content.ANSWER_BUBBLES[ii].y, imgArr[ii]);
                 addMultiAnswerClickHandler(button, ii == ix);
                 button.enabled = _playing;
             }
 
         } else {
             if (_playing) {
-                var buzzButton :SimpleButton = addTextButton(
-                    "Buzz!", _doorArea, Content.BUZZBUTTON_RECT.x, Content.BUZZBUTTON_RECT.y,
-                    0, 0, false, 32, 0xDDDDDD, 0xEE4444, 0xFFFFFF);
+                var buzzButton :SimpleButton = addImageButton(
+                    new Content.BUZZ_BUTTON(), _doorArea,
+                    Content.BUZZBUTTON_RECT.x, Content.BUZZBUTTON_RECT.y);
                 buzzButton.addEventListener(MouseEvent.CLICK, buzzClick);
 
                 _freeArea = new Sprite();
@@ -387,8 +392,8 @@ public class View extends Sprite
     protected function doorSetup () :void
     {
         _doorArea = new Sprite();
-        _doorArea.x = Content.QUESTION_RECT.left;
-        _doorArea.y = Content.QUESTION_RECT.top;
+        _doorArea.x = Content.DOOR_RECT.left;
+        _doorArea.y = Content.DOOR_RECT.top;
         addChild(_doorArea);
     }
 
@@ -418,7 +423,7 @@ public class View extends Sprite
         doorClear();
 
         var y :uint = 20;
-        var x :uint = Content.QUESTION_RECT.width/2;
+        var x :uint = Content.DOOR_RECT.width/2;
         for (var ii :int = 0; ii < categories.length; ii ++) {
             var button :SimpleButton = addTextButton(categories[ii], _doorArea, x, y);
             addCategoryClickHandler(button, categories[ii]);
@@ -429,7 +434,7 @@ public class View extends Sprite
 
     protected function addDebugFrames () :void
     {
-        addFrame(Content.QUESTION_RECT);
+        addFrame(Content.DOOR_RECT);
         addFrame(Content.ROUND_RECT);
         for (var ii :int = 0; ii < 4; ii ++) {
 //            addFrame(Content.ANSWER_RECTS[ii], _questionArea);
@@ -528,7 +533,6 @@ public class View extends Sprite
         height :Number = 0, wordWrap :Boolean = true, fontSize :int = 16) :TextField
     {
         var field :TextField = new TextField();
-        field.embedFonts = true;
         field.x = x;
         field.y = y;
         if (width > 0 && height > 0) {
@@ -539,10 +543,11 @@ public class View extends Sprite
             field.autoSize = TextFieldAutoSize.CENTER;
         }
         field.wordWrap = wordWrap;
+        field.embedFonts = false;
 
         var format :TextFormat = new TextFormat();
         format.size = fontSize;
-        format.font = "font";
+        format.font = Content.FONT_NAME;
         format.color = Content.FONT_COLOR;
         format.align = TextFormatAlign.CENTER;
         field.defaultTextFormat = format;
@@ -552,6 +557,37 @@ public class View extends Sprite
             parent.addChild(field);
         }
         return field;
+    }
+
+    protected function addImageButton(
+        img :DisplayObject, parent :DisplayObjectContainer, x :Number, y :Number) :SimpleButton
+    {
+        var button :SimpleButton = new SimpleButton();
+        button.upState = button.overState = button.downState = img;
+        button.hitTestState = button.upState;
+        parent.addChild(button);
+        button.x = x;
+        button.y = y;
+
+        return button;
+    }
+
+    protected function addImageTextButton(
+        txt :String, parent :DisplayObjectContainer, x :Number, y :Number, img :DisplayObject,
+        wordWrap :Boolean = true, fontSize :int = 16, foreground :uint = 0x003366) :SimpleButton
+    {
+        var button :SimpleButton = new SimpleButton();
+        var sprite :Sprite = new Sprite();
+        sprite.addChild(img);
+        sprite.addChild(makeButtonLabel(
+            txt, img.width, img.height, wordWrap, fontSize, foreground));
+        button.upState = button.overState = button.downState = sprite;
+        button.hitTestState = button.upState;
+        parent.addChild(button);
+        button.x = x;
+        button.y = y;
+
+        return button;
     }
 
     protected function addTextButton(

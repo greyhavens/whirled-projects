@@ -30,7 +30,7 @@ public class BetTheFarm extends Sprite
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         // create and wire ourselves into our multiplayer game control
-        _control = new WhirledControl(this);
+        _control = new WhirledGameControl(this);
         _control.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _control.addEventListener(StateChangedEvent.ROUND_STARTED, roundDidStart);
         _control.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);
