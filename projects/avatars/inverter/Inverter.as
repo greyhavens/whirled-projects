@@ -132,7 +132,9 @@ public class Inverter extends Sprite
             _ourState = newState;
 
             // and change our location automatically
-            _setLoc(_loc[0], (_ourState == NORMAL) ? 0 : 1, _loc[2], 0);
+            if (_setLoc != null) {
+                _setLoc(_loc[0], (_ourState == NORMAL) ? 0 : 1, _loc[2], 0);
+            }
         }
     }
 
