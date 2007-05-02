@@ -25,7 +25,10 @@ public class GridRacer extends Sprite
                 // there's a 1:10 chance we don't draw jack
                 if (Math.random() >= .1) {
                     g.beginFill(pickColor());
-                    g.drawCircle(xx, yy, RADIUS + (Math.random() * 2))
+                    g.drawCircle(
+                        xx + (Math.random() * SPACING) - SPACING/2,
+                        yy + (Math.random() * SPACING) - SPACING/2,
+                        RADIUS + (Math.random() * 2))
                     g.endFill();
                 }
             }
