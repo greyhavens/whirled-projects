@@ -20,13 +20,16 @@ public class GridRacer extends Sprite
 
         _background = new Sprite();
         var g :Graphics = _background.graphics;
-        g.beginFill(0xFFFFFF);
         for (yy = MIN_BOUND; yy <= MAX_BOUND; yy += SPACING) {
             for (xx = MIN_BOUND; xx <= MAX_BOUND; xx += SPACING) {
-                g.drawCircle(xx, yy, RADIUS)
+                // there's a 1:10 chance we don't draw jack
+                if (Math.random() >= .1) {
+                    g.beginFill(pickColor());
+                    g.drawCircle(xx, yy, RADIUS + (Math.random() * 2))
+                    g.endFill();
+                }
             }
         }
-        g.endFill();
 
         _background.x = 175;
         _background.y = 50;
@@ -54,6 +57,11 @@ public class GridRacer extends Sprite
         _timer.addEventListener(TimerEvent.TIMER, updateVelocity);
         _timer.start();
         //addEventListener(Event.ENTER_FRAME, updateVelocity);
+    }
+
+    protected function pickColor () :uint
+    {
+        return uint(COLORS[int(Math.random() * COLORS.length)]);
     }
 
     public function setDeltas (dx :int, dy :int) :void
@@ -106,13 +114,22 @@ public class GridRacer extends Sprite
 
     protected var _timer :Timer;
 
-    protected static const MAX_VELOCITY :int = 21;
+    protected static const MAX_VELOCITY :int = 16;
 
     // these all affect the background.
     protected static const MIN_BOUND :int = -2000;
     protected static const MAX_BOUND :int = 2000;
     protected static const SPACING :int = 40;
     protected static const RADIUS :int = 2;
+
+    protected static const COLORS :Array = [
+        0xCCFFCC,
+        0xFFCCCC,
+        0xCCCCFF,
+        0x99FFFF,
+        0xFF99FF,
+        0xFFFF99
+    ];
 }
 }
 
