@@ -94,6 +94,9 @@ public class Inverter extends Sprite
         this.root.loaderInfo.sharedEvents.dispatchEvent((evt as Event).clone());
 
         var hostProps :Object = evt.hostProps;
+        if (hostProps == null) {
+            return;
+        }
         replaceProp(hostProps, "getState_v1", function (orig :Function) :Function {
             // set up our current shite
             setState(orig());
