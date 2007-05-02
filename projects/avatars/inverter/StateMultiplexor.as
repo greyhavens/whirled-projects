@@ -2,7 +2,7 @@ package {
 
 public class StateMultiplexor 
 {
-    public static const SEPARATOR :String = " _. ";
+    public static const SEPARATOR :String = " | ";
 
     /**
      * Create multiplexed states.

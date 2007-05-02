@@ -34,8 +34,8 @@ public class Inverter extends Sprite
 
         _loader.contentLoaderInfo.sharedEvents.addEventListener("controlConnect", controlPassThru);
 
-        _loader.addEventListener(ProgressEvent.PROGRESS, checkAlignment);
-        _loader.addEventListener(Event.COMPLETE, checkAlignment);
+        _loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, checkAlignment);
+        _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, checkAlignment);
         _loader.load(new URLRequest(URL),
             //new LoaderContext(true, ApplicationDomain.currentDomain, SecurityDomain.currentDomain));
             new LoaderContext(false, new ApplicationDomain(null), null));
@@ -62,15 +62,15 @@ public class Inverter extends Sprite
         _loader.x = (WIDTH - w) / 2;
         _loader.y = normal ? 0 : h;
         _loader.scaleY = normal ? 1 : -1;
-        _setPreferredY(normal ? 0 : 10000);
-        _setHotSpot(w / 2, normal ? h : 0, normal ? NaN : -h);
+        if (_setPreferredY != null) {
+            _setPreferredY(normal ? 0 : 10000);
+            _setHotSpot(WIDTH / 2, normal ? h : 0, normal ? NaN : -h);
+        }
     }
-
 
     protected function controlPassThru (evt :Object) :void
     {
         var userProps :Object = evt.userProps;
-
         replaceProp(userProps, "getStates_v1", function (orig :Function) :Function {
             return function () :Array {
                 return StateMultiplexor.createStates(orig(), STATES);
@@ -83,12 +83,17 @@ public class Inverter extends Sprite
                 checkAlignment();
             }
         });
+        replaceProp(userProps, "appearanceChanged_v1", function (orig :Function) :Function {
+            return function (loc :Array, orient :Number, moving :Boolean) :void {
+                _loc = loc;
+                orig(loc, orient, moving);
+            }
+        });
 
         // dispatch it upwards
         this.root.loaderInfo.sharedEvents.dispatchEvent((evt as Event).clone());
 
         var hostProps :Object = evt.hostProps;
-
         replaceProp(hostProps, "getState_v1", function (orig :Function) :Function {
             // set up our current shite
             setState(orig());
@@ -100,6 +105,10 @@ public class Inverter extends Sprite
 
         _setPreferredY = hostProps["setPreferredY_v1"];
         _setHotSpot = hostProps["setHotSpot_v1"];
+        _setLoc = hostProps["setLocation_v1"];
+
+        _loc = hostProps["initProps"]["location"];
+        checkAlignment();
     }
 
     protected function replaceProp (props :Object, propName :String, replacer :Function) :void
@@ -107,27 +116,35 @@ public class Inverter extends Sprite
         // so fucking loosy-goosy
         if (props != null && propName in props) {
             props[propName] = replacer(props[propName]);
-            trace("+++ replaced " + propName);
         }
     }
 
     protected function setState (fullState :String) :void
     {
+        var newState :int;
         if (fullState == null) {
-            _ourState = NORMAL;
+            newState = NORMAL;
 
         } else {
-            _ourState = Math.max(0, STATES.indexOf(StateMultiplexor.getState(fullState, 1)));
+            newState = Math.max(0, STATES.indexOf(StateMultiplexor.getState(fullState, 1)));
         }
-        trace("fullState '" + fullState + "', ourState=" + _ourState);
+        if (newState != _ourState) {
+            _ourState = newState;
+
+            // and change our location automatically
+            _setLoc(_loc[0], (_ourState == NORMAL) ? 0 : 1, _loc[2], 0);
+        }
     }
 
     protected var _loader :Loader;
 
     protected var _ourState :int = NORMAL;
 
+    protected var _loc :Array;
+
     protected var _setPreferredY :Function;
     protected var _setHotSpot :Function;
+    protected var _setLoc :Function;
 
     protected static const NORMAL :int = 0;
     protected static const INVERTED :int = 1;
