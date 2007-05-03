@@ -1,12 +1,5 @@
 //
 // $Id$
-//
-// TODO:
-//  - Display a CORRECT / INCORRECT heading on the barn door for either kind of
-//    question. When the right answer comes in, display it along with who got it
-//    right, and possibly the 'info' field.
-//  - Implement the 'category choice' widget.
-//  - Implement the entire wager round!
 
 package com.threerings.betthefarm {
 
@@ -31,6 +24,7 @@ import flash.filters.GlowFilter;
 import flash.geom.Point;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
+import flash.geom.ColorTransform;
 
 import flash.media.Sound;
 import flash.media.SoundChannel;
@@ -107,7 +101,7 @@ public class View extends Sprite
     {
         var players :Array = _control.seating.getPlayerIds();
         debug("Players: " + players);
-        _plaqueTexts = new Dictionary();
+        _plaques = new Dictionary();
         _headshots = new Dictionary();
         _bubbles = new Dictionary();
         for (var ii :int = 0; ii < players.length; ii ++) {
@@ -168,10 +162,9 @@ public class View extends Sprite
         _question = question;
         _myWager = 0;
 
-        for each (var shot :Sprite in _headshots) {
-            shot.filters = [
-                new GlowFilter(0xFFFFFF, 1, 10, 10)
-                ];
+        var players :Array = _control.seating.getPlayerIds();
+        for (var ii :int = 0; ii < players.length; ii ++) {
+            _plaques[players[ii]].setState(Plaque.STATE_NORMAL);
         }
         _answered = false;
 
@@ -274,8 +267,7 @@ public class View extends Sprite
         } else {
             if (_playing) {
                 var buzzButton :SimpleButton = addImageButton(
-                    new Content.BUZZ_BUTTON(), _doorArea,
-                    Content.BUZZBUTTON_RECT.x, Content.BUZZBUTTON_RECT.y);
+                    Content.BUZZ_BUTTON, _doorArea, Content.BUZZ_LOC.x, Content.BUZZ_LOC.y);
                 buzzButton.addEventListener(MouseEvent.CLICK, buzzClick);
 
                 _freeArea = new Sprite();
@@ -354,16 +346,15 @@ public class View extends Sprite
 
     public function flowUpdated (oid :int, flow :int) :void
     {
-        (_plaqueTexts[oid] as TextField).text = _control.getOccupantName(oid) + "\n" + flow;
+        _plaques[oid].setText(_control.getOccupantName(oid) + "\n" + flow);
     }
 
     protected function addPlaque (oid :int, ii :int) :void
     {
-        _plaqueTexts[oid] = addTextField(
-            _control.getOccupantName(oid), this,
-            (Content.PLAQUE_LOCS[ii] as Point).x - 40,
-            (Content.PLAQUE_LOCS[ii] as Point).y - 15,
-            75, 50, false, 10);
+        var plaque :Plaque = _plaques[oid] = new Plaque();
+        plaque.x = (Content.PLAQUE_LOCS[ii] as Point).x - plaque.width/2;
+        plaque.y = (Content.PLAQUE_LOCS[ii] as Point).y - plaque.height/2;
+        addChild(plaque);
     }
 
     protected function requestHeadshot (oid :int, ii :int) :void
@@ -560,10 +551,21 @@ public class View extends Sprite
     }
 
     protected function addImageButton(
-        img :DisplayObject, parent :DisplayObjectContainer, x :Number, y :Number) :SimpleButton
+        imgClass :Class, parent :DisplayObjectContainer, x :Number, y :Number) :SimpleButton
     {
         var button :SimpleButton = new SimpleButton();
-        button.upState = button.overState = button.downState = img;
+
+        // the upstate is just the image
+        button.upState = new imgClass();
+
+        // the downstate is the image shifted 3 pixels south
+        button.downState = new imgClass();
+        button.downState.transform.matrix = new Matrix(1, 0, 0, 1, 0, 3);
+
+        // the hoverstate is the image brightened by 20%
+        button.overState = new imgClass();
+        button.overState.transform.colorTransform = new ColorTransform(1.2, 1.2, 1.2);
+
         button.hitTestState = button.upState;
         parent.addChild(button);
         button.x = x;
@@ -688,7 +690,7 @@ public class View extends Sprite
 
     protected var _headshots :Dictionary;
 
-    protected var _plaqueTexts :Dictionary;
+    protected var _plaques :Dictionary;
 
     protected var _bubbles :Dictionary;
 

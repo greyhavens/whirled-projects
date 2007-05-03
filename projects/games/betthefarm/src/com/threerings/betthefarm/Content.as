@@ -15,31 +15,31 @@ public class Content
     [Embed(source="../../../../rsrc/Background.jpg")]
     public static const BACKGROUND :Class;
 
-    [Embed(source="../../../../rsrc/AnswerBubble1.png")]
+    [Embed(source="../../../../rsrc/AnswerBubbles/AnswerBubble1.png")]
     public static const ANSWER_BUBBLE_1 :Class;
 
-    [Embed(source="../../../../rsrc/AnswerBubble2.png")]
+    [Embed(source="../../../../rsrc/AnswerBubbles/AnswerBubble2.png")]
     public static const ANSWER_BUBBLE_2 :Class;
 
-    [Embed(source="../../../../rsrc/AnswerBubble3.png")]
+    [Embed(source="../../../../rsrc/AnswerBubbles/AnswerBubble3.png")]
     public static const ANSWER_BUBBLE_3 :Class;
 
-    [Embed(source="../../../../rsrc/AnswerBubble4.png")]
+    [Embed(source="../../../../rsrc/AnswerBubbles/AnswerBubble4.png")]
     public static const ANSWER_BUBBLE_4 :Class;
 
     [Embed(source="../../../../rsrc/BuzzButton.png")]
     public static const BUZZ_BUTTON :Class;
 
-    [Embed(source="../../../../rsrc/PlayerBuzz.png")]
-    public static const PLAQUE_BUZZED :Class;
+    [Embed(source="../../../../rsrc/PlayerColors/PlayerBuzz.png")]
+    public static const PLAQUE_TYPING :Class;
 
-    [Embed(source="../../../../rsrc/PlayerCorrect.png")]
+    [Embed(source="../../../../rsrc/PlayerColors/PlayerCorrect.png")]
     public static const PLAQUE_CORRECT :Class;
 
-    [Embed(source="../../../../rsrc/PlayerIncorrect.png")]
+    [Embed(source="../../../../rsrc/PlayerColors/PlayerIncorrect.png")]
     public static const PLAQUE_INCORRECT :Class;
 
-    [Embed(source="../../../../rsrc/PlayerNormal.png")]
+    [Embed(source="../../../../rsrc/PlayerColors/PlayerNormal.png")]
     public static const PLAQUE_NORMAL :Class;
 
     [Embed(source="../../../../rsrc/You Did Great.mp3")]
@@ -113,7 +113,7 @@ public class Content
     public static const ROUND_RECT :Rectangle = new Rectangle(170, 145, 245, 40);
 
     /** The location and dimensions of the buzz button. */
-    public static const BUZZBUTTON_RECT :Rectangle = new Rectangle(70, 110, 115, 40);
+    public static const BUZZ_LOC :Point = new Point(75, 90);
 
     /** The location and dimensions of the text entry field for free response questions. */
     public static const FREE_RESPONSE_RECT :Rectangle = new Rectangle(10, 170, 235, 80);
