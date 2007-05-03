@@ -38,14 +38,18 @@ public class GridRacer extends Sprite
         _background.y = 50;
         addChild(_background);
 
-        for (yy = 0; yy < 3; yy++) {
-            for (xx = 0; xx < 3; xx++) {
-                var dt :DirTwiddler = new DirTwiddler(this, xx - 1, yy - 1);
-                dt.x = 350 + xx * 33;
-                dt.y = yy * 33;
-                addChild(dt);
-            }
-        }
+//        for (yy = 0; yy < 3; yy++) {
+//            for (xx = 0; xx < 3; xx++) {
+//                var dt :DirTwiddler = new DirTwiddler(this, xx - 1, yy - 1);
+//                dt.x = 350 + xx * 33;
+//                dt.y = yy * 33;
+//                addChild(dt);
+//            }
+//        }
+        var accel :AccelControl = new AccelControl(this);
+        accel.x = 400;
+        accel.y = 50;
+        addChild(accel);
 
         _ship = new Sprite();
         g = _ship.graphics;
@@ -67,7 +71,7 @@ public class GridRacer extends Sprite
         return uint(COLORS[int(Math.random() * COLORS.length)]);
     }
 
-    public function setDeltas (dx :int, dy :int) :void
+    public function setDeltas (dx :Number, dy :Number) :void
     {
         _dx = dx;
         _dy = dy;
@@ -108,8 +112,8 @@ public class GridRacer extends Sprite
 
     protected var _velocity :Point = new Point(0, 0);
 
-    protected var _dx :int = 0;
-    protected var _dy :int = 0;
+    protected var _dx :Number = 0;
+    protected var _dy :Number = 0;
 
     protected var _background :Sprite;
 
@@ -136,7 +140,10 @@ public class GridRacer extends Sprite
 }
 }
 
+import flash.display.Graphics;
 import flash.display.Sprite;
+
+import flash.geom.Point;
 
 import flash.events.MouseEvent;
 
@@ -170,4 +177,51 @@ class DirTwiddler extends Sprite
 
     protected var _dx :int;
     protected var _dy :int;
+}
+
+class AccelControl extends Sprite
+{
+    public function AccelControl (dad :GridRacer)
+    {
+        _dad = dad;
+
+        var circle :Sprite = new Sprite();
+        circle.alpha = .5;
+        var g :Graphics = circle.graphics;
+        g.lineStyle(2, 0xCCCCCC);
+        g.beginFill(0x330000);
+        g.drawCircle(0, 0, 50);
+        g.endFill();
+        addChild(circle);
+
+        addEventListener(MouseEvent.MOUSE_MOVE, update);
+        addEventListener(MouseEvent.MOUSE_OUT, update);
+        update();
+    }
+
+    protected function update (evt :MouseEvent = null) :void
+    {
+        var p :Point;
+        if (evt == null || evt.type != MouseEvent.MOUSE_MOVE) {
+            p = new Point(); // 0, 0
+
+        } else {
+            p = new Point(evt.localX, evt.localY);
+
+            // bound it in, if necessary
+            if (Point.distance(p, new Point()) > 50) {
+                p.normalize(50);
+            }
+        }
+
+        var g :Graphics = graphics;
+        g.clear();
+        g.lineStyle(3, 0xFFFFFF);
+        g.moveTo(0, 0);
+        g.lineTo(p.x, p.y);
+
+        _dad.setDeltas(p.x / 50, p.y / 50);
+    }
+
+    protected var _dad :GridRacer;
 }
