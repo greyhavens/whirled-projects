@@ -11,7 +11,7 @@ import java.awt.Font;
 public interface FlipCodes
 {
     /** The Flip message bundle. */
-    public static final String FLIP_MESSAGE_BUNDLE = "roister.board.flip";
+    public static final String FLIP_MESSAGE_BUNDLE = "flip";
 
     /** Name of the message a player sends the server to drop a ball. */
     public static final String DROP = "drop";

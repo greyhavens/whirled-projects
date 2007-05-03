@@ -97,7 +97,7 @@ public class FlipManager extends GameManager
         ToyBoxGameConfig config = (ToyBoxGameConfig)_config;
         _holes = (Boolean)config.params.get("holes");
         _speedy = (Boolean)config.params.get("speedy");
-        _wagerPerDrop = (Boolean)config.params.get("wagerPerDrop");
+//         _wagerPerDrop = (Boolean)config.params.get("wagerPerDrop");
     }
 
     // documentation inherited
@@ -112,11 +112,12 @@ public class FlipManager extends GameManager
         ToyBoxGameConfig config = (ToyBoxGameConfig)_config;
         _flipObj.startTransaction();
         try {
-            _flipObj.setTopSlots((Integer)config.params.get("topSlots"));
+            _flipObj.setTopSlots(
+                Integer.parseInt((String)config.params.get("topSlots")));
             _flipObj.setPointStructure(
                 Integer.parseInt((String)config.params.get("pointStructure")));
-            _flipObj.setMoveTimeout((Integer)config.params.get("timePerTurn"));
-
+            _flipObj.setMoveTimeout(
+                Integer.parseInt((String)config.params.get("timePerTurn")));
         } finally {
             _flipObj.commitTransaction();
         }
@@ -345,10 +346,13 @@ public class FlipManager extends GameManager
         protected DropContext _ctx;
     };
 
+    /** Whether we're in "wager per drop" mode (disabled). */
     protected boolean _wagerPerDrop;
 
+    /** Whether or not to place holes on the board. */
     protected boolean _holes;
 
+    /** Whether or not we're configured to play in turbo mode. */
     protected boolean _speedy;
 
     /** The game object. */
