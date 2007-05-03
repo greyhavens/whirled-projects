@@ -1,0 +1,10 @@
+<!-- build configuration -->
+<project name="flip" default="compile" basedir=".">
+
+  <!-- things you may want to change -->
+  <property name="app.name" value="flip"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/java-project-include.xml"/>
+
+</project>
