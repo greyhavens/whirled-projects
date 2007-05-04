@@ -1,5 +1,6 @@
 package {
 
+import flash.display.BlendMode;
 import flash.display.Loader;
 import flash.display.Sprite;
 
@@ -18,7 +19,8 @@ import com.whirled.AvatarControl;
 public class Hal extends Sprite
 {
     public static const URL :String =
-        "http://media.whirled.com/c95c59abc8da0ac99628fbc4c68799b93c129716.swf";
+        "http://media.whirled.com/8ae8c90ab458b138b64f831383a826b505d60a79.swf";
+        //"http://media.whirled.com/c95c59abc8da0ac99628fbc4c68799b93c129716.swf";
 
     public static const WIDTH :int = 600;
     public static const HEIGHT :int = 450;
@@ -64,7 +66,8 @@ public class Hal extends Sprite
             loader.load(new URLRequest(URL));
 
             // make them all have an alpha level
-            loader.alpha = (COPIES - ii) / (COPIES + 1);
+            loader.alpha = (COPIES - ii) / COPIES;
+            loader.blendMode = BlendMode.LAYER;
 
             if (ii != 0) {
                 loader.filters = [ new ColorMatrixFilter(COLOR_MATRICIES[ii - 1]) ];
