@@ -54,6 +54,29 @@ public class Content
     [Embed(source="../../../../rsrc/Bet The Farm Round.mp3")]
     public static const SND_ROUND_INTRO :Class;
 
+    [Embed(source="../../../../rsrc/WelcomeFrontPage/WelcomeToTheFarm.png")]
+    public static const IMG_WELCOME :Class;
+
+    [Embed(source="../../../../rsrc/Rounds/LightningRound.png")]
+    public static const IMG_ROUND_LIGHTNING :Class;
+
+    [Embed(source="../../../../rsrc/Rounds/BuzzRound.png")]
+    public static const IMG_ROUND_BUZZ :Class;
+
+    [Embed(source="../../../../rsrc/Rounds/WagerRound.png")]
+    public static const IMG_ROUND_WAGER :Class;
+
+    // TIMER
+
+    [Embed(source="../../../../rsrc/Timers/RoundTimer.png")]
+    public static const IMG_TIMER_FACE :Class;
+
+    [Embed(source="../../../../rsrc/Timers/HandNeedle.png")]
+    public static const IMG_TIMER_HAND :Class;
+
+    public static const TIMER_LOC :Point = new Point(400, 165);
+
+
 //    [Embed(source="../../../../rsrc/verdana.ttf",
 //           fontWeight="normal", fontName="font")]
 //    public static const FONT :Class;
@@ -72,10 +95,10 @@ public class Content
 
     /** The names of the rounds. */
     public static const ROUND_NAMES :Array = [
-        "Welcome to the farm",
-        "Lightning Round",
-        "Buzz Round",
-        "Wager Round"
+        IMG_WELCOME,
+        IMG_ROUND_BUZZ,
+        IMG_ROUND_LIGHTNING,
+        IMG_ROUND_WAGER,
     ];
 
     /** The duration of the rounds, where applicable; measured in seconds or questions. */

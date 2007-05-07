@@ -39,7 +39,6 @@ import flash.ui.Keyboard;
 
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
-import flash.utils.setInterval;
 import flash.utils.clearInterval;
 import flash.utils.setTimeout;
 
@@ -76,8 +75,6 @@ public class View extends Sprite
             roundSetup();
 //        addDebugFrames();
 
-            _endTime = 0;
-
             _control.addEventListener(UserChatEvent.TYPE, userChat);
 
             debug("View created [playing=" + _playing + "]");
@@ -108,7 +105,6 @@ public class View extends Sprite
             addPlaque(players[ii], ii);
             requestHeadshot(players[ii], ii);
         }
-        _updateTimer = setInterval(updateTimer, 100);
         debug("Game started.");
     }
 
@@ -134,7 +130,10 @@ public class View extends Sprite
 
     public function roundDidEnd () :void
     {
-        _endTime = 0;
+        if (_clockFace != null) {
+            removeChild(_clockFace);
+            _clockFace = null;
+        }
         if (_control.getRound() != -Model.ROUND_INTRO) {
             doorClear();
             doorHeader("Round Over!");
@@ -145,9 +144,6 @@ public class View extends Sprite
 
     public function shutdown () :void
     {
-        if (_updateTimer != 0) {
-            clearInterval(_updateTimer);
-        }
         if (_sndChannel != null) {
             _sndChannel.stop();
         }
@@ -156,7 +152,7 @@ public class View extends Sprite
     public function newQuestion (question :Question, questionIx :int) :void
     {
         if (questionIx == 0 && _model.getRoundType() == Model.ROUND_LIGHTNING) {
-            _endTime = getTimer()/1000 + Content.ROUND_DURATIONS[_control.getRound()-1];
+            startTimer(Content.ROUND_DURATIONS[_control.getRound()-1]);
         }
 
         _question = question;
@@ -206,25 +202,33 @@ public class View extends Sprite
 
         var ii :int = 0;
         if (score > 800) {
-            addWagerButton(ii ++, new Content.ANSWER_BUBBLE_1(), score/8, false);
+            addWagerButton(ii ++, new Content.ANSWER_BUBBLE_1, score/8, false);
         }
         if (score > 400) {
-            addWagerButton(ii ++, new Content.ANSWER_BUBBLE_2(), score/4, false);
+            addWagerButton(ii ++, new Content.ANSWER_BUBBLE_2, score/4, false);
         }
         if (score > 200) {
-            addWagerButton(ii ++, new Content.ANSWER_BUBBLE_3(), score/2, false);
+            addWagerButton(ii ++, new Content.ANSWER_BUBBLE_3, score/2, false);
         }
-        addWagerButton(ii ++,  new Content.ANSWER_BUBBLE_4(), score, true);
+        addWagerButton(ii ++,  new Content.ANSWER_BUBBLE_4, score, true);
+    }
+
+    protected function startTimer (duration :uint) :void
+    {
+        _clockFace = new ClockFace(duration);
+        _clockFace.x = Content.TIMER_LOC.x;
+        _clockFace.y = Content.TIMER_LOC.y;
+        addChild(_clockFace);
     }
 
     protected function addWagerButton (
-        pos :int, img :DisplayObject, score :int, farm :Boolean) :void
+        pos :int, imgClass :Class, score :int, farm :Boolean) :void
     {
         score -= score % 100;
 
         var button :SimpleButton = addImageTextButton(
             "Bet: " + (farm ? "The Farm!" : String(score)), _doorArea,
-            Content.ANSWER_BUBBLES[pos].x, Content.ANSWER_BUBBLES[pos].y, img);
+            Content.ANSWER_BUBBLES[pos].x, Content.ANSWER_BUBBLES[pos].y, imgClass);
         addWagerClickHandler(button, score, farm);
     }
 
@@ -251,10 +255,10 @@ public class View extends Sprite
                 throw new Error("Too many answers: " + _question.question);
             }
             var imgArr :Array = [
-                new Content.ANSWER_BUBBLE_1(),
-                new Content.ANSWER_BUBBLE_2(),
-                new Content.ANSWER_BUBBLE_3(),
-                new Content.ANSWER_BUBBLE_4()
+                Content.ANSWER_BUBBLE_1,
+                Content.ANSWER_BUBBLE_2,
+                Content.ANSWER_BUBBLE_3,
+                Content.ANSWER_BUBBLE_4
             ];
             for (var ii :int = 0; ii < 4; ii ++) {
                 var button :SimpleButton = addImageTextButton(
@@ -327,16 +331,12 @@ public class View extends Sprite
 
     public function questionAnswered (player :int, correct :Boolean) :void
     {
-        _headshots[player].filters = [
-            new GlowFilter(correct ? 0x00FF00 : 0xFF0000, 1, 10, 10)
-        ];
+        _plaques[player].setState(correct ? Plaque.STATE_CORRECT : Plaque.STATE_INCORRECT);
     }
 
     public function gainedBuzzControl (player :int) :void
     {
-        _headshots[player].filters = [
-            new GlowFilter(0xFF00FF, 1, 10, 10)
-        ];
+        _plaques[player].setState(Plaque.STATE_TYPING);
         if (player == _myId) {
             // our buzz won!
             _freeArea.visible = true;
@@ -352,8 +352,8 @@ public class View extends Sprite
     protected function addPlaque (oid :int, ii :int) :void
     {
         var plaque :Plaque = _plaques[oid] = new Plaque();
-        plaque.x = (Content.PLAQUE_LOCS[ii] as Point).x - plaque.width/2;
-        plaque.y = (Content.PLAQUE_LOCS[ii] as Point).y - plaque.height/2;
+        plaque.x = (Content.PLAQUE_LOCS[ii] as Point).x;
+        plaque.y = (Content.PLAQUE_LOCS[ii] as Point).y;
         addChild(plaque);
     }
 
@@ -485,19 +485,10 @@ public class View extends Sprite
         _control.sendMessage(Model.MSG_ANSWER_FREE, { player: _myId, correct: false });
     }
 
-    protected function updateTimer () :void
-    {
-        if (_endTime > 0) {
-            updateRound();
-         }
-    }
-
     protected function updateRound (questionIx :int = 0) :void
     {
         var txt :String = Content.ROUND_NAMES[_control.getRound()-1];
-        if (_model.getRoundType() == Model.ROUND_LIGHTNING && _endTime > 0) {
-            txt += " (" + toTime(Math.max(0, _endTime - uint(getTimer()/1000))) + ")";
-        } else if (_model.getRoundType() == Model.ROUND_BUZZ) {
+        if (_model.getRoundType() == Model.ROUND_BUZZ) {
             txt += " (" + (questionIx+1) + "/" + _model.getDuration() + ")";
         }
         _roundText.text = txt;
@@ -575,15 +566,36 @@ public class View extends Sprite
     }
 
     protected function addImageTextButton(
-        txt :String, parent :DisplayObjectContainer, x :Number, y :Number, img :DisplayObject,
+        txt :String, parent :DisplayObjectContainer, x :Number, y :Number, imgClass :Class,
         wordWrap :Boolean = true, fontSize :int = 16, foreground :uint = 0x003366) :SimpleButton
     {
         var button :SimpleButton = new SimpleButton();
-        var sprite :Sprite = new Sprite();
+        var sprite :Sprite;
+        var img :DisplayObject;
+
+        sprite = new Sprite();
+        img = new imgClass();
         sprite.addChild(img);
         sprite.addChild(makeButtonLabel(
             txt, img.width, img.height, wordWrap, fontSize, foreground));
-        button.upState = button.overState = button.downState = sprite;
+        button.upState = sprite;
+
+        sprite = new Sprite();
+        img = new imgClass();
+        sprite.addChild(img);
+        sprite.addChild(makeButtonLabel(
+            txt, img.width, img.height, wordWrap, fontSize, foreground));
+        sprite.transform.colorTransform = new ColorTransform(1.2, 1.2, 1.2);
+        button.overState = sprite;
+
+        sprite = new Sprite();
+        img = new imgClass();
+        sprite.addChild(img);
+        sprite.addChild(makeButtonLabel(
+            txt, img.width, img.height, wordWrap, fontSize, foreground));
+        sprite.transform.matrix = new Matrix(1, 0, 0, 1, 0, 3);
+        button.downState = sprite;
+
         button.hitTestState = button.upState;
         parent.addChild(button);
         button.x = x;
@@ -676,13 +688,11 @@ public class View extends Sprite
 
     protected var _playing :Boolean;
 
-    protected var _updateTimer :uint;
-
     protected var _answered :Boolean;
 
-    protected var _sndChannel :SoundChannel = null;
+    protected var _sndChannel :SoundChannel;
 
-    protected var _endTime :uint;
+    protected var _clockFace :ClockFace;
 
     protected var _question :Question;
 
