@@ -34,20 +34,12 @@ public class GridRacer extends Sprite
             }
         }
 
-        _background.x = 175;
+        _background.x = 225;
         _background.y = 50;
         addChild(_background);
 
-//        for (yy = 0; yy < 3; yy++) {
-//            for (xx = 0; xx < 3; xx++) {
-//                var dt :DirTwiddler = new DirTwiddler(this, xx - 1, yy - 1);
-//                dt.x = 350 + xx * 33;
-//                dt.y = yy * 33;
-//                addChild(dt);
-//            }
-//        }
         var accel :AccelControl = new AccelControl(this);
-        accel.x = 400;
+        accel.x = 225; //400;
         accel.y = 50;
         addChild(accel);
 
@@ -56,7 +48,7 @@ public class GridRacer extends Sprite
         g.beginFill(0x0033CC);
         g.drawCircle(0, 0, 4);
         g.endFill();
-        _ship.x = 175;
+        _ship.x = 225;
         _ship.y = 50;
         addChild(_ship);
 
@@ -77,11 +69,31 @@ public class GridRacer extends Sprite
         _dy = dy;
     }
 
+    public function setDampen (dampen :Boolean) :void
+    {
+        _dampen = dampen;
+    }
+
     protected function updateVelocity (... ignored) :void
     {
         // don't let the velocity get too out of hand
-        _velocity.x = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, _velocity.x + _dx));
-        _velocity.y = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, _velocity.y + _dy));
+        if (_dampen) {
+            var adj :Number;
+            adj = _velocity.x * .05;
+            if (Math.abs(adj) > 1) {
+                adj = (adj > 1) ? 1 : -1;
+            }
+            _velocity.x -= adj;
+
+            adj = _velocity.y * .05;
+            if (Math.abs(adj) > 1) {
+                adj = (adj > 1) ? 1 : -1;
+            }
+            _velocity.y -= adj;
+        } else {
+            _velocity.x = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, _velocity.x + _dx));
+            _velocity.y = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, _velocity.y + _dy));
+        }
 
         _loc.x += _velocity.x;
         _loc.y += _velocity.y;
@@ -103,7 +115,7 @@ public class GridRacer extends Sprite
             }
         }
 
-        _background.x = 175 - _loc.x
+        _background.x = 225 - _loc.x
         _background.y = 50 - _loc.y
     }
 
@@ -121,7 +133,9 @@ public class GridRacer extends Sprite
 
     protected var _timer :Timer;
 
-    protected static const MAX_VELOCITY :int = 16;
+    protected var _dampen :Boolean;
+
+    protected static const MAX_VELOCITY :int = 40;
 
     // these all affect the background.
     protected static const MIN_BOUND :int = -2000;
@@ -147,38 +161,6 @@ import flash.geom.Point;
 
 import flash.events.MouseEvent;
 
-class DirTwiddler extends Sprite
-{
-    public function DirTwiddler (dad :GridRacer, dx :int, dy :int)
-    {
-        _dad = dad;
-        _dx = dx;
-        _dy = dy;
-
-        addEventListener(MouseEvent.MOUSE_OVER, update);
-        addEventListener(MouseEvent.MOUSE_OUT, update);
-        update();
-    }
-
-    protected function update (evt :MouseEvent = null) :void
-    {
-        var over :Boolean = (evt != null) && (evt.type == MouseEvent.MOUSE_OVER);
-        graphics.clear();
-        graphics.beginFill(over ? 0xFF0000 : 0x330000);
-        graphics.drawRect(0, 0, 33, 33);
-        graphics.endFill();
-
-        if (over) {
-            _dad.setDeltas(_dx, _dy);
-        }
-    }
-
-    protected var _dad :GridRacer;
-
-    protected var _dx :int;
-    protected var _dy :int;
-}
-
 class AccelControl extends Sprite
 {
     public function AccelControl (dad :GridRacer)
@@ -188,9 +170,9 @@ class AccelControl extends Sprite
         var circle :Sprite = new Sprite();
         circle.alpha = .5;
         var g :Graphics = circle.graphics;
-        g.lineStyle(2, 0xCCCCCC);
-        g.beginFill(0x330000);
-        g.drawCircle(0, 0, 50);
+        //g.lineStyle(2, 0xCCCCCC);
+        g.beginFill(0xFFFFFF, 0);
+        g.drawCircle(0, 0, 500);
         g.endFill();
         addChild(circle);
 
@@ -203,9 +185,11 @@ class AccelControl extends Sprite
     {
         var p :Point;
         if (evt == null || evt.type != MouseEvent.MOUSE_MOVE) {
+            _dad.setDampen(true);
             p = new Point(); // 0, 0
 
         } else {
+            _dad.setDampen(false);
             p = new Point(evt.localX, evt.localY);
 
             // bound it in, if necessary
