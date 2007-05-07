@@ -14,7 +14,7 @@ import flash.system.LoaderContext;
 public class Data
 {
     public var content :Object = {
-        faceCenter: [ 104, 159 ],
+        faceCenter: [ 111, 157 ],
         hourPoint: [ 5, 39 ],
         minutePoint: [ 5, 49 ]
 
