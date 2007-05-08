@@ -25,6 +25,8 @@ public class Hal extends Sprite
     public static const WIDTH :int = 600;
     public static const HEIGHT :int = 450;
 
+    public static const SCALE :Number = .8;
+
     public function Hal ()
     {
         _ctrl = new AvatarControl(this);
@@ -52,6 +54,8 @@ public class Hal extends Sprite
     {
         for (var ii :int = from; ii < to; ii++) {
             var loader :Loader = new Loader();
+            loader.scaleX = SCALE;
+            loader.scaleY = SCALE;
             _hals.push(loader);
 
             loader.contentLoaderInfo.sharedEvents.addEventListener(
@@ -84,8 +88,8 @@ public class Hal extends Sprite
         var w :Number;
         var h :Number;
         try {
-            w = _hals[0].contentLoaderInfo.width;
-            h = _hals[0].contentLoaderInfo.height;
+            w = _hals[0].contentLoaderInfo.width * SCALE;
+            h = _hals[0].contentLoaderInfo.height * SCALE;
 
         } catch (err :Error) {
             return;
@@ -112,8 +116,8 @@ public class Hal extends Sprite
                 scale -= Math.abs(_scaler.value);
 
             } else {
-                loader.scaleX = scale;
-                loader.scaleY = scale;
+                loader.scaleX = SCALE * scale;
+                loader.scaleY = SCALE * scale;
                 scale = scale * scale;
 
                 var matrix :Array = (COLOR_MATRICIES[ii - 1] as Array).concat();
