@@ -69,7 +69,6 @@ public class Server
      */
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-        trace("Property change: " + event);
     }
 
     /**
@@ -86,10 +85,6 @@ public class Server
                 return;
             }
             var timeout :Object = _control.get(Model.TIMEOUT);
-            trace("Timeout: " + timeout);
-            if (timeout is ByteArray) {
-                trace("ByteArray length: " + (timeout as ByteArray).length);
-            }
             if (timeout && timeout.tick < _model.getLastTick()) {
                 _control.setImmediate(Model.TIMEOUT, null);
                 handleTimeout(timeout.action);
