@@ -68,6 +68,16 @@ public class SubAttack extends Sprite
 
             addEventListener(Event.ENTER_FRAME, enterFrame);
         }
+
+        this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+    }
+
+    /**
+     * Clean up the game when unloaded.
+     */
+    protected function handleUnload (evt :Event) :void
+    {
+        removeEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
     /**
@@ -75,26 +85,24 @@ public class SubAttack extends Sprite
      */
     protected function keyEvent (event :KeyboardEvent) :void
     {
-        var action :int = getActionForKey(event.keyCode);
-        switch (action) {
-        case Action.NONE:
-            break;
+        var actions :Array = getActionForKey(event);
+        if (actions == null) {
+            return;
 
-        default:
-            if (_queued != null) {
-                _queued.push(action);
+        } else if (_queued != null) {
+            for each (var val :* in actions) {
+                _queued.push(val);
+            }
+
+        } else {
+            var now :int = getTimer();
+            if ((now - _lastSent) < SEND_THROTTLE) {
+                _queued = actions;
 
             } else {
-                var now :int = getTimer();
-                if ((now - _lastSent) < SEND_THROTTLE) {
-                    _queued = [ action ];
-
-                } else {
-                    _gameCtrl.sendMessage("sub" + _myIndex, [ action ]);
-                    _lastSent = now;
-                }
+                _gameCtrl.sendMessage("sub" + _myIndex, actions);
+                _lastSent = now;
             }
-            break;
         }
     }
 
@@ -113,29 +121,35 @@ public class SubAttack extends Sprite
     /**
      * Get the action that corresponds to the specified key.
      */
-    protected function getActionForKey (keyCode :int) :int
+    protected function getActionForKey (event :KeyboardEvent) :Array
     {
-        switch (keyCode) {
+        switch (event.keyCode) {
         case Keyboard.DOWN:
-            return Action.DOWN;
+            return [ Action.DOWN ];
 
         case Keyboard.UP:
-            return Action.UP;
+            return [ Action.UP ];
 
         case Keyboard.RIGHT:
-            return Action.RIGHT;
+            return [ Action.RIGHT ];
 
         case Keyboard.LEFT:
-            return Action.LEFT;
+            return [ Action.LEFT ];
 
         case Keyboard.SPACE:
-            return Action.SHOOT;
+            return [ Action.SHOOT ];
 
         case Keyboard.ENTER:
-            return Action.RESPAWN
+            return [ Action.RESPAWN ];
+
+        case Keyboard.CONTROL:
+            return [ Action.BUILD, Action.BUILD, Action.BUILD ];
 
         default:
-            return Action.NONE;
+            if (event.charCode == 90 || event.charCode == 122) { // 'Z' and 'z'
+                return [ Action.BUILD, Action.BUILD, Action.BUILD ];
+            }
+            return null;
         }
     }
 

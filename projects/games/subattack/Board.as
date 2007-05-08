@@ -11,6 +11,10 @@ import com.whirled.WhirledGameControl;
 
 public class Board
 {
+    /** Traversability constants. */
+    public static const BLANK :int = 0;
+    public static const BLOCKED :int = 1;
+
     public function Board (gameCtrl :WhirledGameControl, seaDisplay :SeaDisplay)
     {
         _gameCtrl = gameCtrl;
@@ -27,7 +31,7 @@ public class Board
 
         var ii :int;
         for (ii = _width * _height - 1; ii >= 0; ii--) {
-            _traversable[ii] = SHOTS_TO_DESTROY;
+            _traversable[ii] = BLOCKED;
         }
 
         // create a submarine for each player
@@ -43,7 +47,7 @@ public class Board
             _subs[ii] = sub;
 
             // mark this sub's starting location as traversable
-            setTraversable(p.x, p.y);
+            setBlank(p.x, p.y);
         }
 
         // if we're a player, put our submarine last, so that it
@@ -69,12 +73,47 @@ public class Board
     }
 
     /**
-     * Is the specified tile traversable?
+     * Is the specified tile completely traversable?
      */
-    public function isTraversable (xx :int, yy :int) :Boolean
+    public function isBlank (xx :int, yy :int) :Boolean
     {
         return (xx >= 0) && (xx < _width) && (yy >= 0) && (yy < _height) &&
-            (0 == int(_traversable[coordsToIdx(xx, yy)]));
+            (BLANK == int(_traversable[coordsToIdx(xx, yy)]));
+    }
+
+    /**
+     * Is the specified tile traversable by the specified player index or their torpedos?
+     */
+    public function isTraversable (playerIdx :int, xx :int, yy :int) :Boolean
+    {
+        if (xx < 0 || xx >= _width || yy < 0 || yy >= _height) {
+            return false;
+        }
+
+        var val :int = int(_traversable[coordsToIdx(xx, yy)]);
+        if (val == BLOCKED) {
+            return false;
+
+        } else if (val == BLANK) {
+            return true;
+
+        } else {
+            return (playerIdx == int(val / -100));
+        }
+    }
+
+    /**
+     * Called to build a barrier at the specified location.
+     */
+    public function buildBarrier (playerIdx :int, xx :int, yy :int) :void
+    {
+        var dex :int = coordsToIdx(xx, yy);
+        var val :int = int(_traversable[dex]);
+        if (val == BLANK) {
+            val = -1 * (playerIdx * 100 + 2);
+            _traversable[dex] = val;
+            _seaDisplay.updateTraversable(xx, yy, val, isBlank(xx, yy - 1), isBlank(xx, yy + 1));
+        }
     }
 
     /**
@@ -168,6 +207,7 @@ public class Board
         // find all the subs affected
         var killer :Submarine = torpedo.getOwner();
         var killCount :int = 0;
+        var killerIdx :int = killer.getPlayerIndex();
         var xx :int = torpedo.getX();
         var yy :int = torpedo.getY();
         for each (var sub :Submarine in _subs) {
@@ -179,7 +219,7 @@ public class Board
                 _gameCtrl.localChat(killer.getPlayerName() + " has shot " +
                     sub.getPlayerName());
 
-                if (killer.getPlayerIndex() == _gameCtrl.seating.getMyPosition()) {
+                if (killerIdx == _gameCtrl.seating.getMyPosition()) {
                     var flowAvailable :Number = _gameCtrl.getAvailableFlow();
                     trace("Available flow at time of kill: " + flowAvailable);
                     var awarded :int = int(flowAvailable * .75);
@@ -192,7 +232,7 @@ public class Board
         // if it exploded in bounds, make that area traversable
         if (xx >= 0 && xx < _width && yy >= 0 && yy < _height) {
             // mark the board area as traversable there
-            incTraversable(xx, yy);
+            noteTorpedoExploded(xx, yy, killerIdx);
             _seaDisplay.addChild(new Explode(xx, yy, this));
         }
 
@@ -204,24 +244,60 @@ public class Board
         return (yy * _width) + xx;
     }
 
-    protected function setTraversable (xx :int, yy :int) :void
+    protected function setBlank (xx :int, yy :int) :void
     {
-        _traversable[coordsToIdx(xx, yy)] = 0;
-        _seaDisplay.markTraversable(xx, yy, 0, isTraversable(xx, yy - 1),
-            isTraversable(xx, yy + 1));
+        _traversable[coordsToIdx(xx, yy)] = BLANK;
+        _seaDisplay.updateTraversable(xx, yy, BLANK, isBlank(xx, yy - 1), isBlank(xx, yy + 1));
     }
 
-    protected function incTraversable (xx :int, yy :int) :void
+    /**
+     * Note that a torpedo exploded and make any required modifications to the board.
+     */
+    protected function noteTorpedoExploded (xx :int, yy :int, playerIndex :int) :void
     {
         var idx :int = coordsToIdx(xx, yy);
         var val :int = int(_traversable[idx]);
-        if (val > 0) {
+        if (val == BLANK) {
+            // that's strange, but ok
+            return; // nothing to do
+
+        } else if (val > BLANK) {
             val--;
-            _traversable[idx] = val;
-            _seaDisplay.markTraversable(xx, yy, val, isTraversable(xx, yy - 1),
-                isTraversable(xx, yy + 1));
+
+        } else {
+            var pidx :int = int(val / -100);
+            if (playerIndex == pidx) {
+                // the torpedo exploded on one of the player's own defense squares
+                return;
+            }
+
+            var level :int = -val % 100;
+            level--;
+            if (level == 0) {
+                val = BLANK;
+            } else {
+                val = -(pidx * 100 + level)
+            }
         }
+
+        // record the new traversability
+        _traversable[idx] = val;
+
+        // update the display
+        _seaDisplay.updateTraversable(xx, yy, val, isBlank(xx, yy - 1), isBlank(xx, yy + 1));
     }
+
+//    protected function incTraversable (xx :int, yy :int) :void
+//    {
+//        var idx :int = coordsToIdx(xx, yy);
+//        var val :int = int(_traversable[idx]);
+//        if (val > 0) {
+//            val--;
+//            _traversable[idx] = val;
+//            _seaDisplay.updateTraversable(xx, yy, val, isTraversable(xx, yy - 1),
+//                isTraversable(xx, yy + 1));
+//        }
+//    }
 
     /**
      * Handles game did start, and that's it.
@@ -430,6 +506,7 @@ public class Board
 
     protected static const DIMENSIONS :Array = [
         [  0,  0 ], // 0 player game
+        [ 10, 10 ], // 1 player game
         [ 10, 10 ], // 1 player game
         [ 50, 25 ], // 2 player game
         [ 60, 30 ], // 3 player game

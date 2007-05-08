@@ -9,6 +9,8 @@ import flash.events.Event;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
+import com.threerings.flash.ColorUtil;
+
 public class SeaDisplay extends Sprite
 {
     /** The size of a tile. */
@@ -110,21 +112,33 @@ public class SeaDisplay extends Sprite
     /**
      * Display the specified tile as now being traversable.
      */
-    public function markTraversable (
-        xx :int, yy :int, level :int,
-        aboveIsTrav :Boolean, belowIsTrav :Boolean) :void
+    public function updateTraversable (
+        xx :int, yy :int, value :int,
+        aboveIsBlank :Boolean, belowIsBlank :Boolean) :void
     {
-        if (level == 1) {
+        if (value == Board.BLOCKED) {
             pickBitmap(_ups);
 
-        } else if (!aboveIsTrav) {
+        } else if (value < Board.BLANK) {
+            var playerIdx :int = int(value / -100);
+            var level :int = -value % 100;
+            var scheme :Array = (Submarine.SCHEMES[playerIdx] as Array);
+            var color :uint = (uint(scheme[0] * 255) << 16) | (uint(scheme[1] * 255) << 8) |
+                uint(scheme[2] * 255);
+            if (level == 1) {
+                // if damaged, draw darker
+                color = ColorUtil.blend(color, 0, .8);
+            }
+            graphics.beginFill(color);
+
+        } else if (!aboveIsBlank) {
             graphics.beginBitmapFill(_downWall);
         } else {
             pickBitmap(_downs);
         }
         graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
-        if (level == 0 && belowIsTrav) {
+        if (value == 0 && belowIsBlank) {
             pickBitmap(_downs);
             graphics.drawRect(xx * TILE_SIZE, (yy + 1) * TILE_SIZE,
                 TILE_SIZE, TILE_SIZE);

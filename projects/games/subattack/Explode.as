@@ -10,7 +10,7 @@ public class Explode extends BaseSprite
 {
     public function Explode (xx :int, yy :int, board :Board)
     {
-        super(board);
+        super(-1, board);
         _x = xx;
         _y = yy;
         updateLocation();

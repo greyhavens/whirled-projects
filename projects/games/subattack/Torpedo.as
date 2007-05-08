@@ -6,7 +6,7 @@ public class Torpedo extends BaseSprite
 {
     public function Torpedo (owner :Submarine, board :Board)
     {
-        super(board);
+        super(owner.getPlayerIndex(), board);
         _sub = owner;
 
         _orient = owner.getOrient();
@@ -14,7 +14,12 @@ public class Torpedo extends BaseSprite
         _y = owner.getY();
 
         updateLocation();
-        updateVisual();
+        var missile :MovieClip = MovieClip(new MISSILE());
+        missile.gotoAndStop(orientToFrame());
+        missile.x = SeaDisplay.TILE_SIZE / 2;
+        missile.y = SeaDisplay.TILE_SIZE;
+        addChild(missile);
+        missile.transform.colorTransform = owner.getColorTransform();
 
         _board.torpedoAdded(this);
 
@@ -68,15 +73,6 @@ public class Torpedo extends BaseSprite
         _y = advancedY();
         explode();
         return false;
-    }
-
-    protected function updateVisual () :void
-    {
-        var missile :MovieClip = MovieClip(new MISSILE());
-        missile.gotoAndStop(orientToFrame());
-        missile.x = SeaDisplay.TILE_SIZE / 2;
-        missile.y = SeaDisplay.TILE_SIZE;
-        addChild(missile);
     }
 
     protected function orientToFrame () :int

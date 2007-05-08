@@ -7,9 +7,15 @@ import flash.display.Sprite;
  */
 public class BaseSprite extends Sprite
 {
-    public function BaseSprite (board :Board)
+    public function BaseSprite (playerIdx :int ,board :Board)
     {
+        _playerIdx = playerIdx;
         _board = board;
+    }
+
+    public function getPlayerIndex () :int
+    {
+        return _playerIdx;
     }
 
     public function getX () :int
@@ -44,7 +50,7 @@ public class BaseSprite extends Sprite
     {
         var newX :int = advancedX();
         var newY :int = advancedY();
-        if (!_board.isTraversable(newX, newY)) {
+        if (!_board.isTraversable(_playerIdx, newX, newY)) {
             return false;
 
         } else {
@@ -91,6 +97,9 @@ public class BaseSprite extends Sprite
         x = _x * SeaDisplay.TILE_SIZE;
         y = _y * SeaDisplay.TILE_SIZE;
     }
+
+    /** The player index. */
+    protected var _playerIdx :int;
 
     /** The board. */
     protected var _board :Board;

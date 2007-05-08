@@ -11,19 +11,33 @@ import flash.geom.ColorTransform;
 
 public class Submarine extends BaseSprite
 {
+    /** Color schemes for each player. */
+    public static const SCHEMES :Array = [
+        [ 1, .5, 0],
+        [ .5, 0, 1],
+        [ 0, 1, .5],
+        [ 1, 0, 1],
+        [ 0, 1, 1],
+        [ 1, 1, 0],
+        [ 1, .5, 1],
+        [ .5, 1, 1]
+    ];
+
     public function Submarine (
         playerIdx :int, playerName :String, startx :int, starty :int,
         board :Board)
     {
-        super(board);
+        super(playerIdx, board);
 
-        _playerIdx = playerIdx;
         _playerName = playerName;
         _x = startx;
         _y = starty;
         _orient = (_x == 0) ? Action.RIGHT : Action.LEFT;
 
         var scheme :Array = (SCHEMES[playerIdx] as Array);
+        _colorTransform = new ColorTransform(
+            Number(scheme[0]), Number(scheme[1]), Number(scheme[2]));
+
         _avatar = MovieClip(new AVATAR());
         _shootSound = Sound(new SHOOT_SOUND());
 
@@ -31,9 +45,7 @@ public class Submarine extends BaseSprite
 //        var colorChild :MovieClip =
 //            (_avatar.getChildByName("color") as MovieClip);
 //        colorChild.transform.colorTransform =
-        _avatar.transform.colorTransform =
-            new ColorTransform(
-                Number(scheme[0]), Number(scheme[1]), Number(scheme[2]));
+        _avatar.transform.colorTransform = _colorTransform;
         addChild(_avatar);
 
         _nameLabel = new TextField();
@@ -61,14 +73,14 @@ public class Submarine extends BaseSprite
         updateLocation();
     }
 
+    public function getColorTransform () :ColorTransform
+    {
+        return _colorTransform;
+    }
+
     public function getPlayerName () :String
     {
         return _playerName;
-    }
-
-    public function getPlayerIndex () :int
-    {
-        return _playerIdx;
     }
 
     public function getScore () :int
@@ -135,6 +147,23 @@ public class Submarine extends BaseSprite
                 return OK;
             }
             return DROP;
+        }
+
+        if (action == Action.BUILD) {
+            trace("Got build action");
+            if (_moved || _shot) {
+                trace("Had moved or shot: CANT");
+                return CANT;
+            }
+            if (++_buildingStep == 3) {
+                _board.buildBarrier(_playerIdx, _x, _y);
+                _buildingStep = 0;
+            }
+            _moved = true;
+            return OK;
+
+        } else {
+            _buildingStep = 0;
         }
 
         // if we've already shot, we can do no more
@@ -288,14 +317,17 @@ public class Submarine extends BaseSprite
 
     protected var _dead :Boolean;
 
-    /** The player index that this submarine corresponds to. */
-    protected var _playerIdx :int;
-
     /** The name of the player controlling this sub. */
     protected var _playerName :String;
 
+    /** The color transform to use for this submarine. */
+    protected var _colorTransform :ColorTransform;
+
     /** Have we moved this tick yet? */
     protected var _moved :Boolean;
+
+    /** How many steps have we done to do a 'build'. */
+    protected var _buildingStep :int = 0;
 
     /** Have we shot this tick? */
     protected var _shot :Boolean;
@@ -323,18 +355,6 @@ public class Submarine extends BaseSprite
 
     protected var _nameLabel :TextField;
     protected var _statsLabel :TextField;
-
-    /** Color schemes for each player. */
-    protected static const SCHEMES :Array = [
-        [ 1, .5, 0],
-        [ .5, 0, 1],
-        [ 0, 1, .5],
-        [ 1, 0, 1],
-        [ 0, 1, 1],
-        [ 1, 1, 0],
-        [ 1, .5, 1],
-        [ .5, 1, 1]
-    ];
 
     /** The maximum number of torpedos that may be in-flight at once. */
     protected static const MAX_TORPEDOS :int = 2;
