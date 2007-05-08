@@ -72,7 +72,6 @@ public class View extends Sprite
             _myId = _control.getMyId();
 
             doorSetup();
-            roundSetup();
 //        addDebugFrames();
 
             _control.addEventListener(UserChatEvent.TYPE, userChat);
@@ -183,15 +182,14 @@ public class View extends Sprite
 
     protected function showIntro () :void
     {
-        // skip the INTRO round
         var cnt :int = Content.ROUND_NAMES.length - 1;
-        var intro :String =
-            "This game has " + (cnt > 10 ? cnt : Content.NUMBERS[cnt]) + " rounds:\n\n\n";
-        for (var ii :int = 0; ii < cnt; ii ++) {
-            intro += Content.ROUND_NAMES[ii] + "\n\n";
+        addTextField(
+            "This game has " + (cnt > 10 ? cnt : Content.NUMBERS[cnt]) + " rounds:",
+            _doorArea, 0, 0, Content.DOOR_RECT.width, Content.DOOR_RECT.height, false, 18);
+
+        for (var ii :int = 1; ii <= cnt; ii ++) {
+            addImage(Content.ROUND_NAMES[ii], _doorArea, Content.DOOR_RECT.width/2, 60*ii);
         }
-        addTextField(intro, _doorArea, 0, 0, Content.DOOR_RECT.width,
-                     Content.DOOR_RECT.height, false, 18);
     }
 
     protected function showWagerUI (score :int) :void
@@ -373,13 +371,6 @@ public class View extends Sprite
         _control.getHeadShot(oid, callback);
     }
 
-    protected function roundSetup () :void
-    {
-        _roundText = addTextField(
-              "", this, Content.ROUND_RECT.left, Content.ROUND_RECT.top,
-              Content.ROUND_RECT.width, Content.ROUND_RECT.height, false, 20);
-    }
-
     protected function doorSetup () :void
     {
         _doorArea = new Sprite();
@@ -487,11 +478,20 @@ public class View extends Sprite
 
     protected function updateRound (questionIx :int = 0) :void
     {
-        var txt :String = Content.ROUND_NAMES[_control.getRound()-1];
-        if (_model.getRoundType() == Model.ROUND_BUZZ) {
-            txt += " (" + (questionIx+1) + "/" + _model.getDuration() + ")";
+        if (_roundImage != null) {
+            removeChild(_roundImage);
         }
-        _roundText.text = txt;
+        _roundImage = addImage(
+            Content.ROUND_NAMES[_control.getRound()-1], this,
+            (Content.ROUND_RECT.left + Content.ROUND_RECT.right)/2,
+            (Content.ROUND_RECT.top + Content.ROUND_RECT.bottom)/2);
+
+        if (_model.getRoundType() == Model.ROUND_BUZZ) {
+            var txt :String = " (" + (questionIx+1) + "/" + _model.getDuration() + ")";
+//            _roundText = addTextField(
+//              "", this, Content.ROUND_RECT.left, Content.ROUND_RECT.top,
+//              Content.ROUND_RECT.width, Content.ROUND_RECT.height, false, 20);
+        }
     }
 
     protected function doPlay (snd :Sound, loop :Boolean) :void
@@ -541,7 +541,18 @@ public class View extends Sprite
         return field;
     }
 
-    protected function addImageButton(
+    protected function addImage (
+        imgClass :Class, parent :DisplayObjectContainer, x :Number, y :Number) :DisplayObject
+    {
+        var img :DisplayObject = new imgClass();
+        img.x = x - img.width/2;
+        img.y = y - img.height/2;
+        parent.addChild(img);
+        return img;
+    }
+
+
+    protected function addImageButton (
         imgClass :Class, parent :DisplayObjectContainer, x :Number, y :Number) :SimpleButton
     {
         var button :SimpleButton = new SimpleButton();
@@ -710,7 +721,7 @@ public class View extends Sprite
 
     protected var _freeField :TextField;
 
-    protected var _roundText :TextField;
+    protected var _roundImage :DisplayObject;
 
     protected var _sndGameIntro :Sound = (new Content.SND_GAME_INTRO() as Sound);
 

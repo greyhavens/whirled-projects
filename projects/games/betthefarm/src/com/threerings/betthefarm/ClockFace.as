@@ -34,7 +34,7 @@ public class ClockFace extends Sprite
     {
         var now :uint = getTimer() / 1000;
         if (now < _endTime) {
-            _hand.rotation = uint(360 * (now - _startTime) / _endTime);
+            _hand.rotation = (360 * (now - _startTime)) / _endTime;
         }
     }
 

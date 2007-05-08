@@ -3,6 +3,8 @@
 
 package com.threerings.betthefarm {
 
+import flash.utils.ByteArray;
+
 import com.whirled.WhirledGameControl;
 
 import com.threerings.ezgame.MessageReceivedEvent;
@@ -67,6 +69,7 @@ public class Server
      */
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
+        trace("Property change: " + event);
     }
 
     /**
@@ -83,13 +86,17 @@ public class Server
                 return;
             }
             var timeout :Object = _control.get(Model.TIMEOUT);
+            trace("Timeout: " + timeout);
+            if (timeout is ByteArray) {
+                trace("ByteArray length: " + (timeout as ByteArray).length);
+            }
             if (timeout && timeout.tick < _model.getLastTick()) {
                 _control.setImmediate(Model.TIMEOUT, null);
                 handleTimeout(timeout.action);
             }
             return;
         }
-        // if we're between rounds, we ignore absolutely all messages
+        // if we're between rounds, we ignore all other messages */
         if (_control.getRound() < 0) {
             return;
         }
