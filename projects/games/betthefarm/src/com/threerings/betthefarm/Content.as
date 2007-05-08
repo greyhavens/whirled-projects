@@ -71,8 +71,8 @@ public class Content
     [Embed(source="../../../../rsrc/Timers/RoundTimer.png")]
     public static const IMG_TIMER_FACE :Class;
 
-    [Embed(source="../../../../rsrc/Timers/HandNeedle.png")]
-    public static const IMG_TIMER_HAND :Class;
+    [Embed(source="../../../../rsrc/Timers/HandNeedle.swf")]
+    public static const SWF_TIMER_HAND :Class;
 
     public static const TIMER_LOC :Point = new Point(400, 165);
 

@@ -26,7 +26,7 @@ public class ClockFace extends Sprite
 
         addChild(new Content.IMG_TIMER_FACE());
 
-        _hand = new Content.IMG_TIMER_HAND();
+        _hand = new Content.SWF_TIMER_HAND();
         addChild(_hand);
     }
 
@@ -34,7 +34,7 @@ public class ClockFace extends Sprite
     {
         var now :uint = getTimer();
         if (now < _endTime) {
-            _hand.rotation = (360 * (now - _startTime)) / (_endTime - _startTime);
+            _hand.rotation = 180 + (360 * (now - _startTime)) / (_endTime - _startTime);
         }
     }
 
