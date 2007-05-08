@@ -19,8 +19,8 @@ public class ClockFace extends Sprite
     {
         super();
 
-        _startTime = getTimer()/1000;
-        _endTime = _startTime + duration;
+        _startTime = getTimer();
+        _endTime = _startTime + duration * 1000;
 
         setInterval(updateClock, 100);
 
@@ -32,9 +32,9 @@ public class ClockFace extends Sprite
 
     protected function updateClock () :void
     {
-        var now :uint = getTimer() / 1000;
+        var now :uint = getTimer();
         if (now < _endTime) {
-            _hand.rotation = (360 * (now - _startTime)) / _endTime;
+            _hand.rotation = (360 * (now - _startTime)) / (_endTime - _startTime);
         }
     }
 
