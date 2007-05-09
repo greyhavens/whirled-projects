@@ -94,9 +94,6 @@ public class View extends Sprite
         _bubbles = new Dictionary();
         for (var ii :int = 0; ii < players.length; ii ++) {
             addPlaque(players[ii], ii);
-            addPlaque(players[ii], ii+1);
-            addPlaque(players[ii], ii+2);
-            addPlaque(players[ii], ii+3);
             requestHeadshot(players[ii], ii);
         }
         trace("Game started.");
