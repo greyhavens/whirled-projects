@@ -94,6 +94,9 @@ public class View extends Sprite
         _bubbles = new Dictionary();
         for (var ii :int = 0; ii < players.length; ii ++) {
             addPlaque(players[ii], ii);
+            addPlaque(players[ii], ii+1);
+            addPlaque(players[ii], ii+2);
+            addPlaque(players[ii], ii+3);
             requestHeadshot(players[ii], ii);
         }
         trace("Game started.");
@@ -342,8 +345,8 @@ public class View extends Sprite
     protected function addPlaque (oid :int, ii :int) :void
     {
         var plaque :Plaque = _plaques[oid] = new Plaque();
-        plaque.x = (Content.PLAQUE_LOCS[ii] as Point).x;
-        plaque.y = (Content.PLAQUE_LOCS[ii] as Point).y;
+        plaque.x = (Content.PLAQUE_LOCS[ii] as Point).x - plaque.width/2;
+        plaque.y = (Content.PLAQUE_LOCS[ii] as Point).y - plaque.height/2;
         addChild(plaque);
     }
 

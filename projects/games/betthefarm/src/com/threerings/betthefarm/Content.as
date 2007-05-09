@@ -12,7 +12,7 @@ import flash.geom.Point;
 public class Content
 {
 
-    [Embed(source="../../../../rsrc/Background.jpg")]
+    [Embed(source="../../../../rsrc/farmbackground.png")]
     public static const BACKGROUND :Class;
 
     [Embed(source="../../../../rsrc/AnswerBubbles/AnswerBubble1.png")]
