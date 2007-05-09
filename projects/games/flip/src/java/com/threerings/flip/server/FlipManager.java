@@ -380,7 +380,9 @@ public class FlipManager extends GameManager
 
     protected Interval _turnStarter = new Interval(CrowdServer.omgr) {
         public void expired () {
-            maybeStartNextTurn();
+            if (_flipObj.isInPlay()) {
+                maybeStartNextTurn();
+            }
         }
     };
 }
