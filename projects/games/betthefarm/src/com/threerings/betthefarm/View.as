@@ -64,7 +64,7 @@ public class View extends Sprite
             _myId = _control.getMyId();
 
             doorSetup();
-//        addDebugFrames();
+            addDebugFrames();
 
             _control.addEventListener(UserChatEvent.TYPE, userChat);
 
@@ -219,9 +219,10 @@ public class View extends Sprite
     {
         score -= score % 100;
 
-        var button :SimpleButton = addImageTextButton(
-            "Bet: " + (farm ? "The Farm!" : String(score)), _doorArea,
-            Content.ANSWER_BUBBLES[pos].x, Content.ANSWER_BUBBLES[pos].y, imgClass);
+        var button :Button = new ImageTextButton(
+            "Bet: " + (farm ? "The Farm!" : String(score)), imgClass,
+            16, 0x003366, Content.ANSWER_BUBBLE_PADDING);
+        button.add(_doorArea, Content.ANSWER_BUBBLES[pos].x, Content.ANSWER_BUBBLES[pos].y);
         addWagerClickHandler(button, score, farm);
     }
 
@@ -254,9 +255,9 @@ public class View extends Sprite
                 Content.ANSWER_BUBBLE_4
             ];
             for (var ii :int = 0; ii < 4; ii ++) {
-                var button :SimpleButton = addImageTextButton(
-                    answers[ii], _doorArea, Content.ANSWER_BUBBLES[ii].x,
-                    Content.ANSWER_BUBBLES[ii].y, imgArr[ii]);
+                var button :Button = new ImageTextButton(
+                    answers[ii], imgArr[ii], 16, 0x003366, Content.ANSWER_BUBBLE_PADDING);
+                button.add(_doorArea, Content.ANSWER_BUBBLES[ii].x, Content.ANSWER_BUBBLES[ii].y);
                 addMultiAnswerClickHandler(button, ii == ix);
                 button.enabled = _playing;
             }
@@ -339,12 +340,12 @@ public class View extends Sprite
 
     public function flowUpdated (oid :int, flow :int) :void
     {
-        _plaques[oid].setText(_control.getOccupantName(oid) + "\n" + flow);
+        _plaques[oid].setFlow(flow);
     }
 
     protected function addPlaque (oid :int, ii :int) :void
     {
-        var plaque :Plaque = _plaques[oid] = new Plaque();
+        var plaque :Plaque = _plaques[oid] = new Plaque( _control.getOccupantName(oid));
         plaque.x = (Content.PLAQUE_LOCS[ii] as Point).x - plaque.width/2;
         plaque.y = (Content.PLAQUE_LOCS[ii] as Point).y - plaque.height/2;
         addChild(plaque);
@@ -402,7 +403,8 @@ public class View extends Sprite
         var y :uint = 20;
         var x :uint = Content.DOOR_RECT.width/2;
         for (var ii :int = 0; ii < categories.length; ii ++) {
-            var button :SimpleButton = addTextButton(categories[ii], _doorArea, x, y);
+            var button :Button = new TextButton(categories[ii]);
+            button.add(_doorArea, x, y);
             addCategoryClickHandler(button, categories[ii]);
             button.x -= button.width/2;
             y += button.height + 5;
@@ -569,121 +571,6 @@ public class View extends Sprite
         button.y = y;
 
         return button;
-    }
-
-    protected function addImageTextButton(
-        txt :String, parent :DisplayObjectContainer, x :Number, y :Number, imgClass :Class,
-        wordWrap :Boolean = true, fontSize :int = 16, foreground :uint = 0x003366) :SimpleButton
-    {
-        var button :SimpleButton = new SimpleButton();
-        var sprite :Sprite;
-        var img :DisplayObject;
-
-        sprite = new Sprite();
-        img = new imgClass();
-        sprite.addChild(img);
-        sprite.addChild(makeButtonLabel(
-            txt, img.width, img.height, wordWrap, fontSize, foreground));
-        button.upState = sprite;
-
-        sprite = new Sprite();
-        img = new imgClass();
-        sprite.addChild(img);
-        sprite.addChild(makeButtonLabel(
-            txt, img.width, img.height, wordWrap, fontSize, foreground));
-        sprite.transform.colorTransform = new ColorTransform(1.2, 1.2, 1.2);
-        button.overState = sprite;
-
-        sprite = new Sprite();
-        img = new imgClass();
-        sprite.addChild(img);
-        sprite.addChild(makeButtonLabel(
-            txt, img.width, img.height, wordWrap, fontSize, foreground));
-        sprite.transform.matrix = new Matrix(1, 0, 0, 1, 0, 3);
-        button.downState = sprite;
-
-        button.hitTestState = button.upState;
-        parent.addChild(button);
-        button.x = x;
-        button.y = y;
-
-        return button;
-    }
-
-    protected function addTextButton(
-        txt :String, parent :DisplayObjectContainer, x :Number, y :Number, width :Number = 0,
-        height :Number = 0, wordWrap :Boolean = true, fontSize :int = 16,
-        foreground :uint = 0x003366, background :uint = 0x6699CC,
-        highlight :uint = 0x0066Ff, padding :Number = 5) :SimpleButton
-    {
-        var static :Boolean = width > 0 && height > 0;
-        var button :SimpleButton = new SimpleButton();
-        button.upState = makeButtonFace(
-            makeButtonLabel(txt, width, height, wordWrap, fontSize, foreground),
-            foreground, background, padding, static);
-        button.overState = makeButtonFace(
-            makeButtonLabel(txt, width, height, wordWrap, fontSize, highlight),
-            highlight, background, padding, static);
-        button.downState = makeButtonFace(
-            makeButtonLabel(txt, width, height, wordWrap, fontSize, background),
-            background, highlight, padding, static);
-        button.hitTestState = button.upState;
-        parent.addChild(button);
-        button.x = x;
-        button.y = y;
-
-        return button;
-    }
-
-    protected function makeButtonLabel (
-        txt :String, width :Number, height :Number, wordWrap :Boolean, fontSize :int,
-        foreground :uint) :TextField
-    {
-        var field :TextField = new TextField();
-        field.x = x;
-        field.y = y;
-        if (width > 0 && height > 0) {
-            field.width = width;
-            field.height = height;
-            field.autoSize = TextFieldAutoSize.NONE;
-        } else {
-            field.autoSize = TextFieldAutoSize.CENTER;
-        }
-        field.wordWrap = wordWrap;
-
-        var format :TextFormat = new TextFormat();
-        format.size = fontSize;
-        format.color = foreground;
-        field.defaultTextFormat = format;
-
-        field.text = txt;
-        return field;
-    }
-
-    protected function makeButtonFace (
-        label :TextField, foreground :uint, background :uint,
-        padding :int, static :Boolean) :Sprite
-    {
-        var face :Sprite = new Sprite();
-
-        var w :Number = label.width + (!static ? 2*padding : 0);
-        var h :Number = label.height + (!static ? 2*padding : 0);
-
-        // create our button background (and outline)
-        var button :Shape = new Shape();
-        button.graphics.beginFill(background);
-        button.graphics.drawRoundRect(0, 0, w, h, padding, padding);
-        button.graphics.endFill();
-        button.graphics.lineStyle(1, foreground);
-        button.graphics.drawRoundRect(0, 0, w, h, padding, padding);
-
-        face.addChild(button);
-
-        label.x = padding;
-        label.y = padding;
-        face.addChild(label);
-
-        return face;
     }
 
     protected var _myId :int;

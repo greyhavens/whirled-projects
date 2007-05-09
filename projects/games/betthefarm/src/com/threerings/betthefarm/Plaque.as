@@ -18,7 +18,7 @@ public class Plaque extends Sprite {
     public static const STATE_CORRECT :uint = 3;
     public static const STATE_INCORRECT :uint = 4;
 
-    public function Plaque (state :uint = STATE_NORMAL)
+    public function Plaque (name :String, state :uint = STATE_NORMAL)
     {
         super();
 
@@ -35,15 +35,15 @@ public class Plaque extends Sprite {
         format.color = Content.FONT_COLOR;
         format.align = TextFormatAlign.CENTER;
         _textField.defaultTextFormat = format;
-
         addChild(_textField);
-        setText("PLAQUE");
 
+        _name = name;
+        _textField.text = _name;
     }
 
-    public function setText (text :String) :void
+    public function setFlow (flow :int) :void
     {
-        _textField.text = text;
+        _textField.text = _name + "\n" + flow;
     }
 
     public function setState (state :uint) :void
@@ -74,6 +74,7 @@ public class Plaque extends Sprite {
     }
 
     protected var _state :uint;
+    protected var _name :String;
     protected var _textField :TextField;
     protected var _background :DisplayObject;
 }

@@ -74,7 +74,7 @@ public class Content
     [Embed(source="../../../../rsrc/Timers/HandNeedle.swf")]
     public static const SWF_TIMER_HAND :Class;
 
-    public static const TIMER_LOC :Point = new Point(400, 165);
+    public static const TIMER_LOC :Point = new Point(440, 155);
 
 
 //    [Embed(source="../../../../rsrc/verdana.ttf",
@@ -104,7 +104,7 @@ public class Content
     /** The duration of the rounds, where applicable; measured in seconds or questions. */
     public static const ROUND_DURATIONS :Array = [
         -1,
-        10,
+        1000,
         3,
         -1,
     ];
@@ -127,13 +127,13 @@ public class Content
     public static const FONT_COLOR :uint = uint(0x000000);
 
     /** The location and dimensions of the question field. */
-    public static const DOOR_RECT :Rectangle = new Rectangle(150, 225, 270, 250);
+    public static const DOOR_RECT :Rectangle = new Rectangle(155, 210, 285, 270);
 
     /** The location and dimensions of the answer field. */
     public static const ANSWER_RECT :Rectangle = new Rectangle(160, 225, 285, 250);
 
     /** The location and dimensions of the round name field. */
-    public static const ROUND_RECT :Rectangle = new Rectangle(170, 145, 200, 40);
+    public static const ROUND_RECT :Rectangle = new Rectangle(130, 135, 325, 45);
 
     /** The location and dimensions of the buzz button. */
     public static const BUZZ_LOC :Point = new Point(75, 90);
@@ -143,9 +143,14 @@ public class Content
 
     /** The relative location of each answer field for multiple choice answers. */
     public static const ANSWER_BUBBLES :Array = [
-        new Point(5, 120), new Point(130, 120), new Point(5, 185), new Point(130, 185)
+        new Point(-5, 120), // lots of left padding built into these images
+        new Point(135, 120),
+        new Point(-5, 190),
+        new Point(135, 190)
     ];
 
+    /** The padding to use inside an answer bubble: [left, right, top, bottom ] */
+    public static const ANSWER_BUBBLE_PADDING :Array = [ 15, 10, 5, 5 ];
 
     /** The location of the four headshots of the four players. */
     public static const HEADSHOT_LOCS :Array = [
@@ -157,10 +162,10 @@ public class Content
 
     /** The location of the four plaques of the four players. */
     public static const PLAQUE_LOCS :Array = [
-        new Point(542, 384),
-        new Point(645, 406),
-        new Point(748, 418),
-        new Point(851, 430),
+        new Point(540, 391),
+        new Point(643, 407),
+        new Point(747, 420),
+        new Point(850, 430),
     ];
 }
 }
