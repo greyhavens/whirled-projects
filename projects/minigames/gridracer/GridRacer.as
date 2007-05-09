@@ -12,17 +12,19 @@ import flash.utils.Timer;
 
 import com.threerings.util.Line;
 
-[SWF(width="450", height="100", backgroundColor="0x000000")]
+[SWF(width="450", height="450", backgroundColor="0x000000")]
 public class GridRacer extends Sprite
 {
     public static const WIDTH :int = 450;
-    public static const HEIGHT :int = 100;
+    public static const HEIGHT :int = 450;
 
     public static const CENTER_X :int = WIDTH / 2;
     public static const CENTER_Y :int = HEIGHT / 2;
 
     /** The number of milliseconds between updates to a ship's position and velocity. */
     public static const UPDATE_DELAY :int = 100;
+
+    public static const WALL_ELASTICITY :Number = .9;
 
     public function GridRacer ()
     {
@@ -40,11 +42,36 @@ public class GridRacer extends Sprite
         _lines.push(new Line(lrp, llp));
         _lines.push(new Line(llp, ulp));
 
-        // pick some random lines
-        for (var ii :int = 0; ii < 40; ii++) {
-            _lines.push(new Line(new Point(pickDimension(), pickDimension()), 
-                new Point(pickDimension(), pickDimension())));
+        // create a "spiral maze"
+        var lastP :Point = null;
+        var lastP2 :Point = null;
+        var angle :Number = 0;
+        var dist :Number = 10;
+        var angleInc :Number = Math.PI/5;
+        while (true) {
+            angle += angleInc + Math.random() * angleInc;
+            dist += 10 + (Math.random() * 10);
+
+            var nextP :Point = new Point(Math.cos(angle) * dist, Math.sin(angle) * dist);
+            if (nextP.x > MAX_BOUND || nextP.x < MIN_BOUND || nextP.y > MAX_BOUND ||
+                    nextP.y < MIN_BOUND) {
+                break;
+            }
+            var nextP2 :Point = new Point(Math.cos(angle + Math.PI) * dist, Math.sin(angle + Math.PI) * dist);
+            if (lastP != null) {
+                _lines.push(new Line(lastP, nextP));
+                _lines.push(new Line(lastP2, nextP2));
+            }
+            lastP = nextP;
+            lastP2 = nextP2;
+            angleInc *= .99;
         }
+
+//        // pick some random lines
+//        for (var ii :int = 0; ii < 40; ii++) {
+//            _lines.push(new Line(new Point(pickDimension(), pickDimension()), 
+//                new Point(pickDimension(), pickDimension())));
+//        }
 
         // then, paint all the lines
         _background = new Sprite();
@@ -78,6 +105,11 @@ public class GridRacer extends Sprite
         _timer = new Timer(UPDATE_DELAY);
         _timer.addEventListener(TimerEvent.TIMER, updateVelocity);
         _timer.start();
+
+        _debug = new Sprite();
+        _debug.x = CENTER_X;
+        _debug.y = CENTER_Y;
+        addChild(_debug);
     }
 
     // TODO: remove
@@ -128,20 +160,12 @@ public class GridRacer extends Sprite
         // now find the first bounce
         var movement :Line = new Line(_loc, new Point(_loc.x + _velocity.x, _loc.y + _velocity.y));
         var bounceInfo :Array;
+        var lastLine :Line = null;
         do {
-            bounceInfo = findBouncePoint(movement);
+            bounceInfo = findBouncePoint(movement, lastLine);
             if (bounceInfo != null) {
-                var l :Line = bounceInfo[0] as Line;
-                var p :Point = bounceInfo[1] as Point;
-
-                // TODO: bounce off the line, update velocity, etc
-                bounceInfo = null;
-                trace("Bounce!");
-
-//                _background.graphics.beginFill(0xFF0000);
-//                _background.graphics.drawCircle(p.x, p.y, 5);
-//                _background.graphics.endFill();
-
+                lastLine = bounceInfo[0] as Line;
+                movement = adjustMovement(movement, lastLine, bounceInfo[1] as Point);
             }
         } while (bounceInfo != null);
 
@@ -152,22 +176,51 @@ public class GridRacer extends Sprite
         // and since we're always in the middle, we actually just reposition the background
         _background.x = CENTER_X - _loc.x
         _background.y = CENTER_Y - _loc.y
+
+        var g :Graphics = _debug.graphics;
+        g.clear();
+        g.lineStyle(1, 0x0000FF);
+        g.moveTo(0, 0);
+        g.lineTo(_velocity.x, _velocity.y);
+    }
+
+    protected function adjustMovement (movement :Line, bouncer :Line, p :Point) :Line
+    {
+        var moveAngle :Number = Math.atan2(
+            movement.stop.y - movement.start.y, movement.stop.x - movement.start.x);
+        var bounceAngle :Number = Math.atan2(
+            bouncer.stop.y - bouncer.start.y, bouncer.stop.x - bouncer.start.x);
+        var newMoveAngle :Number = (bounceAngle * 2) - moveAngle;
+
+        var distanceLeft :Number = Point.distance(p, movement.stop) * WALL_ELASTICITY;
+
+        var newStop :Point = new Point(p.x + Math.cos(newMoveAngle) * distanceLeft,
+            p.y + Math.sin(newMoveAngle) * distanceLeft);
+
+        // update velocity
+        var velLength :Number = _velocity.length * WALL_ELASTICITY;
+        _velocity = new Point(Math.cos(newMoveAngle) * velLength,
+            Math.sin(newMoveAngle) * velLength);
+
+        return new Line(p, newStop);
     }
 
     /**
      * Return [ Line, Point ] of the bounce, or null if none.
      */
-    protected function findBouncePoint (movement :Line) :Array
+    protected function findBouncePoint (movement :Line, lastLine :Line) :Array
     {
         var retval :Array = null;
         var shortest :Number = Number.MAX_VALUE;
         for each (var line :Line in _lines) {
-            var p :Point = line.getIntersectionPoint(movement);
-            if (p != null) {
-                var dist :Number = Point.distance(movement.start, p);
-                if (dist < shortest) {
-                    shortest = dist;
-                    retval = [ line, p ];
+            if (line != lastLine) {
+                var p :Point = line.getIntersectionPoint(movement);
+                if (p != null) {
+                    var dist :Number = Point.distance(movement.start, p);
+                    if (dist < shortest) {
+                        shortest = dist;
+                        retval = [ line, p ];
+                    }
                 }
             }
         }
@@ -187,6 +240,8 @@ public class GridRacer extends Sprite
     protected var _lines :Array = [];
 
     protected var _ship :Sprite;
+
+    protected var _debug :Sprite;
 
     protected var _timer :Timer;
 
