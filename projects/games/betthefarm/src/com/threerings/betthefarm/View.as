@@ -50,14 +50,6 @@ import com.threerings.ezgame.UserChatEvent;
  */
 public class View extends Sprite
 {
-    public function debug (str :String) :void
-    {
-        if (BetTheFarm.DEBUG) {
-            trace(str);
-            _control.localChat(str);
-        }
-    }
-
     public function View (control :WhirledGameControl, model :Model)
     {
         _control = control;
@@ -76,7 +68,7 @@ public class View extends Sprite
 
             _control.addEventListener(UserChatEvent.TYPE, userChat);
 
-            debug("View created [playing=" + _playing + "]");
+            trace("View created [playing=" + _playing + "]");
         }
     }
 
@@ -96,7 +88,7 @@ public class View extends Sprite
     public function gameDidStart () :void
     {
         var players :Array = _control.seating.getPlayerIds();
-        debug("Players: " + players);
+        trace("Players: " + players);
         _plaques = new Dictionary();
         _headshots = new Dictionary();
         _bubbles = new Dictionary();
@@ -104,17 +96,17 @@ public class View extends Sprite
             addPlaque(players[ii], ii);
             requestHeadshot(players[ii], ii);
         }
-        debug("Game started.");
+        trace("Game started.");
     }
 
     public function gameDidEnd () :void
     {
-        debug("Game ended!");
+        trace("Game ended!");
     }
 
     public function roundDidStart () :void
     {
-        debug("Beginning round: " + _control.getRound());
+        trace("Beginning round: " + _control.getRound());
         doorClear();
         updateRound();
 
@@ -200,15 +192,15 @@ public class View extends Sprite
 
         var ii :int = 0;
         if (score > 800) {
-            addWagerButton(ii ++, new Content.ANSWER_BUBBLE_1, score/8, false);
+            addWagerButton(ii ++, Content.ANSWER_BUBBLE_1, score/8, false);
         }
         if (score > 400) {
-            addWagerButton(ii ++, new Content.ANSWER_BUBBLE_2, score/4, false);
+            addWagerButton(ii ++, Content.ANSWER_BUBBLE_2, score/4, false);
         }
         if (score > 200) {
-            addWagerButton(ii ++, new Content.ANSWER_BUBBLE_3, score/2, false);
+            addWagerButton(ii ++, Content.ANSWER_BUBBLE_3, score/2, false);
         }
-        addWagerButton(ii ++,  new Content.ANSWER_BUBBLE_4, score, true);
+        addWagerButton(ii ++, Content.ANSWER_BUBBLE_4, score, true);
     }
 
     protected function startTimer (duration :uint) :void

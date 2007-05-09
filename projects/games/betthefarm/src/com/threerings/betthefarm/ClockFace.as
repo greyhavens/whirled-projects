@@ -24,9 +24,13 @@ public class ClockFace extends Sprite
 
         setInterval(updateClock, 100);
 
-        addChild(new Content.IMG_TIMER_FACE());
+        var face :DisplayObject = new Content.IMG_TIMER_FACE();
+        face.x = -face.width/2;
+        face.y = -face.height/2;
+        addChild(face);
 
         _hand = new Content.SWF_TIMER_HAND();
+        _hand.rotation = 180;
         addChild(_hand);
     }
 

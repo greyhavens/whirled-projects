@@ -36,14 +36,6 @@ public class Model
     public static const MSG_QUESTION_DONE :String = "questionDone";
     public static const MSG_CHOOSE_CATEGORY :String = "chooseCategory";
 
-    public function debug (str :String) :void
-    {
-        if (BetTheFarm.DEBUG) {
-            trace(str);
-            _control.localChat(str);
-        }
-    }
-
     public function Model (control :WhirledGameControl)
     {
         _control = control;

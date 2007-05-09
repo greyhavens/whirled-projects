@@ -22,14 +22,6 @@ public class Server
     public static const ACT_FAIL_QUESTION :String = "failQuestion";
     public static const ACT_PICK_CATEGORY :String = "pickCategory";
 
-    public function debug (str :String) :void
-    {
-        if (BetTheFarm.DEBUG) {
-            trace(str);
-            _control.localChat(str);
-        }
-    }
-
     public function Server (control :WhirledGameControl, model :Model)
     {
         _control = control;
@@ -183,7 +175,7 @@ public class Server
             if (value.correct) {
                 if (_control.get(Model.BUZZER) != -1) {
                     // ignore late-coming correct answers
-                    debug("ignoring late-coming correct answer");
+                    trace("ignoring late-coming correct answer");
                     return;
                 }
                 _control.setImmediate(Model.BUZZER, value.player);
@@ -192,7 +184,7 @@ public class Server
 
         } else if (msg == Model.MSG_ANSWER_FREE) {
             if (_control.get(Model.BUZZER) != value.player) {
-                debug("ignoring answer from non-buzzed player");
+                trace("ignoring answer from non-buzzed player");
                 return;
             }
             questionAnswered(value.player, value.correct, value.wager);
