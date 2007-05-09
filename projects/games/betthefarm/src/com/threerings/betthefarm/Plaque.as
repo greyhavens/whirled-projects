@@ -8,6 +8,9 @@ import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
+import flash.text.TextFormatAlign;
 
 public class Plaque extends Sprite {
     public static const STATE_NORMAL :uint = 1;
@@ -19,11 +22,23 @@ public class Plaque extends Sprite {
     {
         super();
 
+        setState(state);
+
         _textField = new TextField();
+        _textField.autoSize = TextFieldAutoSize.NONE;
+        _textField.width = _background.width;
+        _textField.height = _background.height;
+
+        var format :TextFormat = new TextFormat();
+        format.size = 12;
+        format.font = Content.FONT_NAME;
+        format.color = Content.FONT_COLOR;
+        format.align = TextFormatAlign.CENTER;
+        _textField.defaultTextFormat = format;
+
         addChild(_textField);
         setText("PLAQUE");
 
-        setState(state);
     }
 
     public function setText (text :String) :void
