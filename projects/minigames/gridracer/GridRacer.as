@@ -10,37 +10,60 @@ import flash.geom.Point;
 
 import flash.utils.Timer;
 
+import com.threerings.util.Line;
+
 [SWF(width="450", height="100", backgroundColor="0x000000")]
 public class GridRacer extends Sprite
 {
+    public static const WIDTH :int = 450;
+    public static const HEIGHT :int = 100;
+
+    public static const CENTER_X :int = WIDTH / 2;
+    public static const CENTER_Y :int = HEIGHT / 2;
+
+    /** The number of milliseconds between updates to a ship's position and velocity. */
+    public static const UPDATE_DELAY :int = 100;
+
     public function GridRacer ()
     {
         var xx :int;
         var yy :int;
+        var line :Line;
 
-        _background = new Sprite();
-        var g :Graphics = _background.graphics;
-        for (yy = MIN_BOUND; yy <= MAX_BOUND; yy += SPACING) {
-            for (xx = MIN_BOUND; xx <= MAX_BOUND; xx += SPACING) {
-                // there's a 1:10 chance we don't draw jack
-                if (Math.random() >= .1) {
-                    g.beginFill(pickColor());
-                    g.drawCircle(
-                        xx + (Math.random() * SPACING) - SPACING/2,
-                        yy + (Math.random() * SPACING) - SPACING/2,
-                        RADIUS + (Math.random() * 2))
-                    g.endFill();
-                }
-            }
+        // make some lines bounding the space
+        var ulp :Point = new Point(MIN_BOUND, MIN_BOUND);
+        var urp :Point = new Point(MAX_BOUND, MIN_BOUND);
+        var lrp :Point = new Point(MAX_BOUND, MAX_BOUND);
+        var llp :Point = new Point(MIN_BOUND, MAX_BOUND);
+        _lines.push(new Line(ulp, urp));
+        _lines.push(new Line(urp, lrp));
+        _lines.push(new Line(lrp, llp));
+        _lines.push(new Line(llp, ulp));
+
+        // pick some random lines
+        for (var ii :int = 0; ii < 40; ii++) {
+            _lines.push(new Line(new Point(pickDimension(), pickDimension()), 
+                new Point(pickDimension(), pickDimension())));
         }
 
-        _background.x = 225;
-        _background.y = 50;
+        // then, paint all the lines
+        _background = new Sprite();
+        var g :Graphics = _background.graphics;
+        for each (line in _lines) {
+            g.lineStyle(1, pickColor());
+            g.moveTo(line.start.x, line.start.y);
+            g.lineTo(line.stop.x, line.stop.y);
+        }
+        // turn off line painting (I wish there was endLine())
+        g.lineStyle(0, 0, 0);
+
+        _background.x = CENTER_X;
+        _background.y = CENTER_Y;
         addChild(_background);
 
         var accel :AccelControl = new AccelControl(this);
-        accel.x = 225; //400;
-        accel.y = 50;
+        accel.x = CENTER_X;
+        accel.y = CENTER_Y;
         addChild(accel);
 
         _ship = new Sprite();
@@ -48,16 +71,22 @@ public class GridRacer extends Sprite
         g.beginFill(0x0033CC);
         g.drawCircle(0, 0, 4);
         g.endFill();
-        _ship.x = 225;
-        _ship.y = 50;
+        _ship.x = CENTER_X;
+        _ship.y = CENTER_Y;
         addChild(_ship);
 
-        _timer = new Timer(100);
+        _timer = new Timer(UPDATE_DELAY);
         _timer.addEventListener(TimerEvent.TIMER, updateVelocity);
         _timer.start();
-        //addEventListener(Event.ENTER_FRAME, updateVelocity);
     }
 
+    // TODO: remove
+    protected function pickDimension () :Number
+    {
+        return MIN_BOUND + (MAX_BOUND - MIN_BOUND) * Math.random();
+    }
+
+    // TODO: remove
     protected function pickColor () :uint
     {
         return uint(COLORS[int(Math.random() * COLORS.length)]);
@@ -90,33 +119,59 @@ public class GridRacer extends Sprite
                 adj = (adj > 1) ? 1 : -1;
             }
             _velocity.y -= adj;
+
         } else {
             _velocity.x = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, _velocity.x + _dx));
             _velocity.y = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, _velocity.y + _dy));
         }
 
-        _loc.x += _velocity.x;
-        _loc.y += _velocity.y;
-        // bounce off the edges of the world
-        if (_loc.x < MIN_BOUND || _loc.x > MAX_BOUND) {
-            _velocity.x *= -1;
-            if (_loc.x < MIN_BOUND) {
-                _loc.x = (2 * MIN_BOUND) - _loc.x;
-            } else {
-                _loc.x = (2 * MAX_BOUND) - _loc.x;
-            }
-        }
-        if (_loc.y < MIN_BOUND || _loc.y > MAX_BOUND) {
-            _velocity.y *= -1;
-            if (_loc.y < MIN_BOUND) {
-                _loc.y = (2 * MIN_BOUND) - _loc.y;
-            } else {
-                _loc.y = (2 * MAX_BOUND) - _loc.y;
-            }
-        }
+        // now find the first bounce
+        var movement :Line = new Line(_loc, new Point(_loc.x + _velocity.x, _loc.y + _velocity.y));
+        var bounceInfo :Array;
+        do {
+            bounceInfo = findBouncePoint(movement);
+            if (bounceInfo != null) {
+                var l :Line = bounceInfo[0] as Line;
+                var p :Point = bounceInfo[1] as Point;
 
-        _background.x = 225 - _loc.x
-        _background.y = 50 - _loc.y
+                // TODO: bounce off the line, update velocity, etc
+                bounceInfo = null;
+                trace("Bounce!");
+
+//                _background.graphics.beginFill(0xFF0000);
+//                _background.graphics.drawCircle(p.x, p.y, 5);
+//                _background.graphics.endFill();
+
+            }
+        } while (bounceInfo != null);
+
+        // update our location with the final location after bounces
+        _loc.x = movement.stop.x;
+        _loc.y = movement.stop.y;
+
+        // and since we're always in the middle, we actually just reposition the background
+        _background.x = CENTER_X - _loc.x
+        _background.y = CENTER_Y - _loc.y
+    }
+
+    /**
+     * Return [ Line, Point ] of the bounce, or null if none.
+     */
+    protected function findBouncePoint (movement :Line) :Array
+    {
+        var retval :Array = null;
+        var shortest :Number = Number.MAX_VALUE;
+        for each (var line :Line in _lines) {
+            var p :Point = line.getIntersectionPoint(movement);
+            if (p != null) {
+                var dist :Number = Point.distance(movement.start, p);
+                if (dist < shortest) {
+                    shortest = dist;
+                    retval = [ line, p ];
+                }
+            }
+        }
+        return retval;
     }
 
     /** Our location. */
@@ -128,6 +183,8 @@ public class GridRacer extends Sprite
     protected var _dy :Number = 0;
 
     protected var _background :Sprite;
+
+    protected var _lines :Array = [];
 
     protected var _ship :Sprite;
 
@@ -167,14 +224,14 @@ class AccelControl extends Sprite
     {
         _dad = dad;
 
-        var circle :Sprite = new Sprite();
-        circle.alpha = .5;
-        var g :Graphics = circle.graphics;
-        //g.lineStyle(2, 0xCCCCCC);
+        // create a sprite child that will capture mouse events for us, so that
+        // we get them even in g.clear()'d regions within us.
+        var mouseGrabs :Sprite = new Sprite();
+        var g :Graphics = mouseGrabs.graphics;
         g.beginFill(0xFFFFFF, 0);
-        g.drawCircle(0, 0, 500);
+        g.drawRect(-GridRacer.WIDTH/2, -GridRacer.HEIGHT/2, GridRacer.WIDTH, GridRacer.HEIGHT);
         g.endFill();
-        addChild(circle);
+        addChild(mouseGrabs);
 
         addEventListener(MouseEvent.MOUSE_MOVE, update);
         addEventListener(MouseEvent.MOUSE_OUT, update);
