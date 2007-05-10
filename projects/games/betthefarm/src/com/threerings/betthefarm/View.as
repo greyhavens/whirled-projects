@@ -125,7 +125,7 @@ public class View extends Sprite
         }
         if (_control.getRound() != -Model.ROUND_INTRO) {
             doorClear();
-            doorHeader("Round Over!");
+            doorHeader(Content.IMG_ROUND_OVER);
         }
 
         _question = null;
@@ -325,14 +325,14 @@ public class View extends Sprite
         doorClear();
 
         if (winner == _myId) {
-            doorHeader("Correct!");
+            doorHeader(Content.IMG_CORRECT);
             _sndCorrect.play();
             if (_model.getRoundType() == Model.ROUND_BUZZ) {
                 setTimeout(chooseCategory, 1000);
             }
 
         } else if (_answered) {
-            doorHeader("Incorrect!");
+            doorHeader(Content.IMG_INCORRECT);
             _sndIncorrect.play();
 
         } else {
@@ -412,10 +412,9 @@ public class View extends Sprite
         }
     }
 
-    protected function doorHeader (header :String) :void
+    protected function doorHeader (header :Class) :void
     {
-        addTextField(header, _doorArea, 0, 0, Content.ANSWER_RECT.width,
-                     Content.ANSWER_RECT.height, true, 24);
+        addImage(header, _doorArea, Content.DOOR_RECT.width/2, 20);
     }
 
     protected function doorBody (body :String) :void

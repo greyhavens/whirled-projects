@@ -85,10 +85,17 @@ public class Content
 
     public static const RECT_PROGRESS_BAR :Rectangle = new Rectangle(30, 115, 220, 10);
 
+    // HEADERS
 
-//    [Embed(source="../../../../rsrc/verdana.ttf",
-//           fontWeight="normal", fontName="font")]
-//    public static const FONT :Class;
+    [Embed(source="../../../../rsrc/Incorrect!/Correct!.png")]
+    public static const IMG_CORRECT :Class;
+
+    [Embed(source="../../../../rsrc/Incorrect!/Incorrect!.png")]
+    public static const IMG_INCORRECT :Class;
+
+    [Embed(source="../../../../rsrc/Incorrect!/RoundOver.png")]
+    public static const IMG_ROUND_OVER :Class;
+
 
     public static const NUMBERS :Array = [
         "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"
