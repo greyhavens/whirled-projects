@@ -1,75 +1,30 @@
 package {
 
-import flash.display.DisplayObject;
-import flash.display.Loader;
-import flash.display.Sprite;
-
-import flash.events.Event;
-
-import flash.utils.ByteArray;
-
-import flash.system.ApplicationDomain;
-import flash.system.LoaderContext;
-
 public class Data
 {
-    public var content :Object = {
-        size: [ 300, 300 ],
-        facePosition: [ 50, 50 ],
-        faceCenter: [ 100, 100 ],
-        hourPoint: [ 40, 130 ],
-        minutePoint: [ 40, 130 ],
-        secondPoint: [ 40, 130 ],
-        smoothSeconds: true
-
-        // to figure out:
-        // swf: one instance
-        // images: one instance? (or class?)
-        // audio: one instance? (or class?)
-    };
-
-    public function Data ()
-    {
-        content["face"] = face__image;
-        content["hourHand"] = hourHand__image;
-        content["minuteHand"] = minuteHand__image;
-        content["secondHand"] = secondHand__image;
-   //     loadAsset("used_for_swfs");
-    }
-
-    protected function loadAsset (name :String) :void
-    {
-        getAsset(name, function (o :Object) :void {
-            content[name] = o;
-        });
-    }
-
-    protected function getAsset (name :String, callback :Function) :void
-    {
-        var clazz :Class = (this[name + "__bytes"] as Class);
-        var bytes :ByteArray = (new clazz() as ByteArray);
-
-        var l :Loader = new Loader();
-        l.loadBytes(bytes);
-        l.contentLoaderInfo.addEventListener(Event.COMPLETE,
-            function (evt :Event) :void {
-                callback(l.content);
-            });
-    }
+    public static const data :XML = <remixable-data>
+            <data name="faceCenter" type="Point" value="100, 100"/>
+            <data name="hourPoint" type="Point" value="40, 130"/>
+            <data name="minutePoint" type="Point" value="40, 130"/>
+            <data name="secondPoint" type="Point" value="40, 130"/>
+            <data name="facePosition" type="Point" value="50, 50"/>
+            <data name="decorationPoint" type="Point"/> <!-- no value -->
+            <data name="smoothSeconds" type="Boolean" value="true"/>
+        </remixable-data>;
 
     [Embed(source="face.png")]
-    private var face__image :Class;
+    public static const face :Class;
 
     [Embed(source="hour.png")]
-    private var hourHand__image :Class;
+    public static const hourHand :Class;
 
     [Embed(source="minute.png")]
-    private var minuteHand__image :Class;
+    public static const minuteHand :Class;
 
     [Embed(source="second.png")]
-    private var secondHand__image :Class;
+    public static const secondHand :Class;
 
-//    [Embed(source="Clock.swf", mimeType="application/octet-stream")]
-//    private var face__bytes :Class;
+    [Embed(source="1x1blank.png")]
+    public static const decoration :Class;
 }
 }

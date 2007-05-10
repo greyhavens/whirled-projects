@@ -6,15 +6,18 @@ package {
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
+import flash.geom.Point;
+
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 
-[SWF(width="193", height="400")]
+//import com.whirled.RemixUtil;
+
+//[SWF(width="300", height="300")] // data1
+//[SWF(width="200", height="200")] // data2
+[SWF(width="193", height="400")] // brittney
 public class Clock extends Sprite
 {
-    /** The content pack. TODO. */
-    public var content :Object = new Data().content;
-
     public function Clock ()
     {
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
@@ -46,59 +49,57 @@ public class Clock extends Sprite
      */
     protected function configureContent () :void
     {
-        var centerX :int = 0;
-        var centerY :int = 0;
+        var center :Point;
 
         // configure the clock's face
         var face :DisplayObject = getDisplayResource("face");
         if (face != null) {
             addChild(face);
 
-            var faceCenter :Array = (content.faceCenter as Array);
+            var faceCenter :Point = RemixUtil.getPoint("faceCenter", Data.data);
             if (faceCenter != null) {
-                centerX = int(faceCenter[0]);
-                centerY = int(faceCenter[1]);
+                center = faceCenter;
 
             } else {
-                centerX = face.width / 2;
-                centerY = face.height / 2;
+                center = new Point(face.width/2, face.height/2);
             }
 
         } else {
             trace("No clock face provided");
+            center = new Point();
         }
 
-        if ("size" in content && content.size is Array) {
-            var size :Array = (content.size as Array);
+        // TODO: remove, size is something to be applied to the overall swf
+        var size :Point = RemixUtil.getPoint("size", Data.data);
+        if (size != null) {
+            //var size :Array = (content.size as Array);
             //width = int(size[0]);
             //height = int(size[1]);
         }
 
-        if ("facePosition" in content && content.facePosition is Array) {
-            var facePos :Array = (content.facePosition as Array);
-            var x :int = int(facePos[0]);
-            var y :int = int(facePos[1]);
-            face.x = x;
-            face.y = y;
-            centerX += x;
-            centerY += y;
+        var facePos :Point = RemixUtil.getPoint("facePosition", Data.data);
+        trace("facePos: " + facePos);
+        if (facePos != null) {
+            face.x = facePos.x;
+            face.y = facePos.y;
+            center = center.add(facePos);
         }
 
-        _hourHand = configureHand("hour", centerX, centerY);
-        _minuteHand = configureHand("minute", centerX, centerY);
-        _secondHand = configureHand("second", centerX, centerY);
-        _smoothSeconds = Boolean(content.smoothSeconds);
+        _hourHand = configureHand("hour", center);
+        _minuteHand = configureHand("minute", center);
+        _secondHand = configureHand("second", center);
+        _smoothSeconds = RemixUtil.getBoolean("smoothSeconds", Data.data);
 
         var decor :DisplayObject = getDisplayResource("decoration");
         if (decor != null) {
-            if ("decorationPoint" in content && content.decorationPoint is Array) {
-                var decorPos :Array = (content.decorationPoint as Array);
-                decor.x = int(decorPos[0]);
-                decor.y = int(decorPos[1]);
+            var decorPos :Point = RemixUtil.getPoint("decorationPoint", Data.data);
+            if (decorPos != null) {
+                decor.x = decorPos.x;
+                decor.y = decorPos.y;
 
             } else {
-                decor.x = centerX;
-                decor.y = centerY;
+                decor.x = center.x;
+                decor.y = center.y;
             }
             addChild(decor);
         }
@@ -143,8 +144,8 @@ public class Clock extends Sprite
      */
     protected function getDisplayResource (name :String) :DisplayObject
     {
-        if (name in content) {
-            var prop :Object = content[name];
+        if (name in Data) {
+            var prop :Object = Data[name];
             if (prop is DisplayObject) {
                 return (prop as DisplayObject);
 
@@ -160,20 +161,22 @@ public class Clock extends Sprite
      * Find and configure the specified hand's display object.
      */
     protected function configureHand (
-        name :String, x :int, y :int, optional :Boolean = false) :DisplayObject
+        name :String, center :Point, optional :Boolean = false) :DisplayObject
     {
         var hand :DisplayObject = getDisplayResource(name + "Hand");
         if (hand != null) {
-            var point :Array = (content[name + "Point"] as Array);
+            var point :Point = RemixUtil.getPoint(name + "Point", Data.data);
             if (point != null) {
                 // create a wrapper for the hand so that we can apply the offset
                 var wrap :Sprite = new Sprite();
-                hand.x = -int(point[0]);
-                hand.y = -int(point[1]);
+                hand.x = -point.x;
+                hand.y = -point.y;
                 wrap.addChild(hand);
 
-                wrap.x = x;
-                wrap.y = y;
+                wrap.x = center.x;
+                wrap.y = center.y;
+
+                trace("Added wrapped hand '" + name + "', at " + (-point.x) + ", " + (-point.y));
                 addChild(wrap);
                 // our caller doesn't need to know that it's getting
                 // the wrapper
