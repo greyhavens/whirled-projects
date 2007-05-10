@@ -11,12 +11,13 @@ import flash.filters.ColorMatrixFilter;
 
 import flash.net.URLRequest;
 
+import com.threerings.flash.FrameSprite;
 import com.threerings.flash.Siner;
 
 import com.whirled.AvatarControl;
 
 [SWF(width="600", height="450")]
-public class Hal extends Sprite
+public class Hal extends FrameSprite
 {
     public static const URL :String =
         "http://media.whirled.com/8ae8c90ab458b138b64f831383a826b505d60a79.swf";
@@ -32,22 +33,14 @@ public class Hal extends Sprite
         _ctrl = new AvatarControl(this);
 
         load(0, 1);
-
-        addEventListener(Event.ADDED_TO_STAGE, handleAdded);
-        addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
     }
 
-    protected function handleAdded (... ignored) :void
+    override protected function handleAdded (... ignored) :void
     {
         _dx.randomize();
         _dy.randomize();
         _scaler.randomize();
-        addEventListener(Event.ENTER_FRAME, checkAlignment);
-    }
-
-    protected function handleRemoved (... ignored) :void
-    {
-        removeEventListener(Event.ENTER_FRAME, checkAlignment);
+        super.handleAdded();
     }
 
     protected function load (from :int, to :int) :void
@@ -63,8 +56,8 @@ public class Hal extends Sprite
 
             // the first one gets a lot of special treatment
             if (ii == 0) {
-                loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, checkAlignment);
-                loader.contentLoaderInfo.addEventListener(Event.COMPLETE, checkAlignment);
+                loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, handleFrame);
+                loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleFrame);
             }
 
             loader.load(new URLRequest(URL));
@@ -80,10 +73,10 @@ public class Hal extends Sprite
             addChildAt(loader, 0);
         }
 
-        checkAlignment();
+        handleFrame();
     }
 
-    protected function checkAlignment (... ignored) :void
+    override protected function handleFrame (... ignored) :void
     {
         var w :Number;
         var h :Number;
