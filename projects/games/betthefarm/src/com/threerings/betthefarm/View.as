@@ -391,6 +391,10 @@ public class View extends Sprite
 
     protected function doorClear () :void
     {
+        if (_progressBar) {
+            _progressBar.shutdown();
+            _progressBar = null;
+        }
         while (_doorArea.numChildren > 0) {
             _doorArea.removeChildAt(0);
         }
