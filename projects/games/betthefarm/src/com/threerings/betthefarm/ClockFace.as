@@ -6,9 +6,9 @@ package com.threerings.betthefarm {
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
-import flash.utils.getTimer;
-import flash.utils.setInterval;
+import flash.events.Event;
 
+import flash.utils.getTimer;
 
 /**
  * Displays a little hand moving across a clock face.
@@ -22,7 +22,7 @@ public class ClockFace extends Sprite
         _startTime = getTimer();
         _endTime = _startTime + duration * 1000;
 
-        setInterval(updateClock, 100);
+        addEventListener(Event.ENTER_FRAME, updateClock);
 
         var face :DisplayObject = new Content.IMG_TIMER_FACE();
         face.x = -face.width/2;
@@ -34,10 +34,15 @@ public class ClockFace extends Sprite
         addChild(_hand);
     }
 
-    protected function updateClock () :void
+    public function shutdown () :void
+    {
+        removeEventListener(Event.ENTER_FRAME, updateClock);
+    }
+
+    protected function updateClock (event :Event) :void
     {
         var now :uint = getTimer();
-        if (now < _endTime) {
+        if (now <= _endTime) {
             _hand.rotation = 180 + (360 * (now - _startTime)) / (_endTime - _startTime);
         }
     }
