@@ -10,7 +10,7 @@ import flash.geom.Point;
 
 import flash.utils.Timer;
 
-import com.threerings.util.Line;
+import com.threerings.util.LineSegment;
 
 [SWF(width="450", height="450", backgroundColor="0x000000")]
 public class GridRacer extends Sprite
@@ -24,23 +24,23 @@ public class GridRacer extends Sprite
     /** The number of milliseconds between updates to a ship's position and velocity. */
     public static const UPDATE_DELAY :int = 100;
 
-    public static const WALL_ELASTICITY :Number = .9;
+    public static const WALL_ELASTICITY :Number = .5;
 
     public function GridRacer ()
     {
         var xx :int;
         var yy :int;
-        var line :Line;
+        var line :LineSegment;
 
         // make some lines bounding the space
         var ulp :Point = new Point(MIN_BOUND, MIN_BOUND);
         var urp :Point = new Point(MAX_BOUND, MIN_BOUND);
         var lrp :Point = new Point(MAX_BOUND, MAX_BOUND);
         var llp :Point = new Point(MIN_BOUND, MAX_BOUND);
-        _lines.push(new Line(ulp, urp));
-        _lines.push(new Line(urp, lrp));
-        _lines.push(new Line(lrp, llp));
-        _lines.push(new Line(llp, ulp));
+        _lines.push(new LineSegment(ulp, urp));
+        _lines.push(new LineSegment(urp, lrp));
+        _lines.push(new LineSegment(lrp, llp));
+        _lines.push(new LineSegment(llp, ulp));
 
         // create a "spiral maze"
         var lastP :Point = null;
@@ -59,8 +59,8 @@ public class GridRacer extends Sprite
             }
             var nextP2 :Point = new Point(Math.cos(angle + Math.PI) * dist, Math.sin(angle + Math.PI) * dist);
             if (lastP != null) {
-                _lines.push(new Line(lastP, nextP));
-                _lines.push(new Line(lastP2, nextP2));
+                _lines.push(new LineSegment(lastP, nextP));
+                _lines.push(new LineSegment(lastP2, nextP2));
             }
             lastP = nextP;
             lastP2 = nextP2;
@@ -69,7 +69,7 @@ public class GridRacer extends Sprite
 
 //        // pick some random lines
 //        for (var ii :int = 0; ii < 40; ii++) {
-//            _lines.push(new Line(new Point(pickDimension(), pickDimension()), 
+//            _lines.push(new LineSegment(new Point(pickDimension(), pickDimension()), 
 //                new Point(pickDimension(), pickDimension())));
 //        }
 
@@ -158,13 +158,14 @@ public class GridRacer extends Sprite
         }
 
         // now find the first bounce
-        var movement :Line = new Line(_loc, new Point(_loc.x + _velocity.x, _loc.y + _velocity.y));
+        var movement :LineSegment = new LineSegment(_loc,
+            new Point(_loc.x + _velocity.x, _loc.y + _velocity.y));
         var bounceInfo :Array;
-        var lastLine :Line = null;
+        var lastLine :LineSegment = null;
         do {
             bounceInfo = findBouncePoint(movement, lastLine);
             if (bounceInfo != null) {
-                lastLine = bounceInfo[0] as Line;
+                lastLine = bounceInfo[0] as LineSegment;
                 movement = adjustMovement(movement, lastLine, bounceInfo[1] as Point);
             }
         } while (bounceInfo != null);
@@ -184,7 +185,8 @@ public class GridRacer extends Sprite
         g.lineTo(_velocity.x, _velocity.y);
     }
 
-    protected function adjustMovement (movement :Line, bouncer :Line, p :Point) :Line
+    protected function adjustMovement (
+        movement :LineSegment, bouncer :LineSegment, p :Point) :LineSegment
     {
         var moveAngle :Number = Math.atan2(
             movement.stop.y - movement.start.y, movement.stop.x - movement.start.x);
@@ -202,17 +204,17 @@ public class GridRacer extends Sprite
         _velocity = new Point(Math.cos(newMoveAngle) * velLength,
             Math.sin(newMoveAngle) * velLength);
 
-        return new Line(p, newStop);
+        return new LineSegment(p, newStop);
     }
 
     /**
-     * Return [ Line, Point ] of the bounce, or null if none.
+     * Return [ LineSegment, Point ] of the bounce, or null if none.
      */
-    protected function findBouncePoint (movement :Line, lastLine :Line) :Array
+    protected function findBouncePoint (movement :LineSegment, lastLine :LineSegment) :Array
     {
         var retval :Array = null;
         var shortest :Number = Number.MAX_VALUE;
-        for each (var line :Line in _lines) {
+        for each (var line :LineSegment in _lines) {
             if (line != lastLine) {
                 var p :Point = line.getIntersectionPoint(movement);
                 if (p != null) {
