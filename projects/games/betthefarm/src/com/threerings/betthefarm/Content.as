@@ -77,6 +77,15 @@ public class Content
     public static const TIMER_LOC :Point = new Point(440, 155);
 
 
+    [Embed(source="../../../../rsrc/Timers/ProgressBarOrange.png")]
+    public static const IMG_PROGRESS_BAR_BACKGROUND :Class;
+
+    [Embed(source="../../../../rsrc/Timers/ProgressBarGreen.png")]
+    public static const IMG_PROGRESS_BAR_FOREGROUND :Class;
+
+    public static const RECT_PROGRESS_BAR :Rectangle = new Rectangle(30, 115, 220, 10);
+
+
 //    [Embed(source="../../../../rsrc/verdana.ttf",
 //           fontWeight="normal", fontName="font")]
 //    public static const FONT :Class;
@@ -143,10 +152,10 @@ public class Content
 
     /** The relative location of each answer field for multiple choice answers. */
     public static const ANSWER_BUBBLES :Array = [
-        new Point(-5, 120), // lots of left padding built into these images
-        new Point(135, 120),
-        new Point(-5, 190),
-        new Point(135, 190)
+        new Point(-5, 125), // lots of left padding built into these images
+        new Point(135, 125),
+        new Point(-5, 195),
+        new Point(135, 195)
     ];
 
     /** The padding to use inside an answer bubble: [left, right, top, bottom ] */

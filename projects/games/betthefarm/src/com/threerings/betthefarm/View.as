@@ -38,8 +38,6 @@ import flash.text.TextFormatAlign;
 import flash.ui.Keyboard;
 
 import flash.utils.Dictionary;
-import flash.utils.getTimer;
-import flash.utils.clearInterval;
 import flash.utils.setTimeout;
 
 import com.whirled.WhirledGameControl;
@@ -135,8 +133,14 @@ public class View extends Sprite
 
     public function shutdown () :void
     {
-        if (_sndChannel != null) {
+        if (_sndChannel) {
             _sndChannel.stop();
+        }
+        if (_clockFace) {
+            _clockFace.shutdown();
+        }
+        if (_progressBar) {
+            _progressBar.shutdown();
         }
     }
 
@@ -170,6 +174,19 @@ public class View extends Sprite
         } else {
             showAnswerUI();
         }
+    }
+
+    public function startProgressBar (action :String, delay :uint) :void
+    {
+        if (_progressBar) {
+            _doorArea.removeChild(_progressBar);
+        }
+        _progressBar = new ProgressBar(delay);
+        _progressBar.width = Content.RECT_PROGRESS_BAR.width;
+        _progressBar.height = Content.RECT_PROGRESS_BAR.height;
+        _progressBar.x = Content.RECT_PROGRESS_BAR.left;
+        _progressBar.y = Content.RECT_PROGRESS_BAR.top;
+        _doorArea.addChild(_progressBar);
     }
 
     protected function showIntro () :void
@@ -583,6 +600,8 @@ public class View extends Sprite
     protected var _sndChannel :SoundChannel;
 
     protected var _clockFace :ClockFace;
+
+    protected var _progressBar :ProgressBar;
 
     protected var _question :Question;
 

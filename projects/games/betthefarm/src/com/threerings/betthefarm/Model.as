@@ -149,17 +149,24 @@ public class Model
      */
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (event.name == QUESTION_IX) {
+        var value :Object= event.newValue;
+        if (event.name == TIMEOUT) {
+            if (value) {
+                _view.startProgressBar(
+                    value.action as String, Math.max(1, value.tick - _lastTick));
+            }
+
+        } else if (event.name == QUESTION_IX) {
             if (!betweenRounds()) {
-                _view.newQuestion(getQuestions().getQuestion(event.newValue as int),
+                _view.newQuestion(getQuestions().getQuestion(value as int),
                                   _questionCount);
             }
 
-        } else if (event.name == BUZZER && event.newValue > 0 && getRoundType() == ROUND_BUZZ) {
-            _view.gainedBuzzControl(event.newValue as int);
+        } else if (event.name == BUZZER && value > 0 && getRoundType() == ROUND_BUZZ) {
+            _view.gainedBuzzControl(value as int);
 
         } else if (event.name == SCORES && event.index != -1) {
-            _view.flowUpdated(_control.seating.getPlayerIds()[event.index], event.newValue as int);
+            _view.flowUpdated(_control.seating.getPlayerIds()[event.index], value as int);
         }
     }
 

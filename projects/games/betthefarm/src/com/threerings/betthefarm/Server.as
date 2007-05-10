@@ -91,7 +91,6 @@ public class Server
     }
 
 
-
     protected function handleTimeout(action :String) :void
     {
         if (action == ACT_BEGIN_ROUND) {
