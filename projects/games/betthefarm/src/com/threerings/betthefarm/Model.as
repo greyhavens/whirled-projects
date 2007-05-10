@@ -28,6 +28,13 @@ public class Model
     public static const TIMEOUT :String = "timeout";
     public static const ROUND_TIMEOUT :String = "roundTimeout";
 
+    public static const ACT_BEGIN_ROUND :String = "beginRound";
+    public static const ACT_END_ROUND :String = "endRound";
+    public static const ACT_NEXT_QUESTION :String = "nextQuestion";
+    public static const ACT_END_QUESTION :String = "endQuestion";
+    public static const ACT_FAIL_QUESTION :String = "failQuestion";
+    public static const ACT_PICK_CATEGORY :String = "pickCategory";
+
     public static const MSG_TICK :String = "tick";
     public static const MSG_ANSWER_MULTI :String = "answerMulti";
     public static const MSG_ANSWER_FREE :String = "answerFree";
@@ -152,8 +159,7 @@ public class Model
         var value :Object= event.newValue;
         if (event.name == TIMEOUT) {
             if (value) {
-                _view.startProgressBar(
-                    value.action as String, Math.max(1, value.tick - _lastTick));
+                _view.newTimeout(value.action as String, Math.max(1, value.tick - _lastTick));
             }
 
         } else if (event.name == QUESTION_IX) {

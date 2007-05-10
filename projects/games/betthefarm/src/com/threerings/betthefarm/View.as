@@ -176,8 +176,20 @@ public class View extends Sprite
         }
     }
 
-    public function startProgressBar (action :String, delay :uint) :void
+    public function newTimeout (action :String, delay :uint) :void
     {
+        var y :Number;
+
+        if (action == Model.ACT_END_QUESTION) {
+            y = 115;
+
+        } else if (action == Model.ACT_FAIL_QUESTION || action == Model.ACT_PICK_CATEGORY) {
+            y = 260;
+
+        } else {
+            return;
+        }
+
         if (_progressBar) {
             _doorArea.removeChild(_progressBar);
         }
@@ -185,7 +197,7 @@ public class View extends Sprite
         _progressBar.width = Content.RECT_PROGRESS_BAR.width;
         _progressBar.height = Content.RECT_PROGRESS_BAR.height;
         _progressBar.x = Content.RECT_PROGRESS_BAR.left;
-        _progressBar.y = Content.RECT_PROGRESS_BAR.top;
+        _progressBar.y = y;
         _doorArea.addChild(_progressBar);
     }
 

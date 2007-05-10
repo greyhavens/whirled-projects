@@ -113,7 +113,7 @@ public class Content
     /** The duration of the rounds, where applicable; measured in seconds or questions. */
     public static const ROUND_DURATIONS :Array = [
         -1,
-        1000,
+        10,
         3,
         -1,
     ];
@@ -145,10 +145,10 @@ public class Content
     public static const ROUND_RECT :Rectangle = new Rectangle(130, 135, 325, 45);
 
     /** The location and dimensions of the buzz button. */
-    public static const BUZZ_LOC :Point = new Point(75, 90);
+    public static const BUZZ_LOC :Point = new Point(75, 120);
 
     /** The location and dimensions of the text entry field for free response questions. */
-    public static const FREE_RESPONSE_RECT :Rectangle = new Rectangle(10, 170, 235, 80);
+    public static const FREE_RESPONSE_RECT :Rectangle = new Rectangle(10, 170, 260, 40);
 
     /** The relative location of each answer field for multiple choice answers. */
     public static const ANSWER_BUBBLES :Array = [

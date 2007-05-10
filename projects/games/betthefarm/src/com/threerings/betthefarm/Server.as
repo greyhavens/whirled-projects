@@ -15,13 +15,6 @@ import com.threerings.util.HashMap;
 
 public class Server
 {
-    public static const ACT_BEGIN_ROUND :String = "beginRound";
-    public static const ACT_END_ROUND :String = "endRound";
-    public static const ACT_NEXT_QUESTION :String = "nextQuestion";
-    public static const ACT_END_QUESTION :String = "endQuestion";
-    public static const ACT_FAIL_QUESTION :String = "failQuestion";
-    public static const ACT_PICK_CATEGORY :String = "pickCategory";
-
     public function Server (control :WhirledGameControl, model :Model)
     {
         _control = control;
@@ -45,7 +38,7 @@ public class Server
 
     public function roundDidStart () :void
     {
-        setTimeout(ACT_BEGIN_ROUND, 4);
+        setTimeout(Model.ACT_BEGIN_ROUND, 4);
     }
 
     public function roundDidEnd () :void
@@ -93,7 +86,7 @@ public class Server
 
     protected function handleTimeout(action :String) :void
     {
-        if (action == ACT_BEGIN_ROUND) {
+        if (action == Model.ACT_BEGIN_ROUND) {
             if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
                 _control.setImmediate(
                     Model.ROUND_TIMEOUT, _model.getLastTick() + _model.getDuration());
@@ -107,19 +100,19 @@ public class Server
             }
             nextQuestion();
 
-        } else if (action == ACT_END_ROUND) {
+        } else if (action == Model.ACT_END_ROUND) {
             doEndRound();
 
-        } else if (action == ACT_NEXT_QUESTION) {
+        } else if (action == Model.ACT_NEXT_QUESTION) {
             nextQuestion();
 
-        } else if (action == ACT_FAIL_QUESTION) {
+        } else if (action == Model.ACT_FAIL_QUESTION) {
             questionAnswered(_control.get(Model.BUZZER) as int, false, 0);
 
-        } else if (action == ACT_END_QUESTION) {
+        } else if (action == Model.ACT_END_QUESTION) {
             _control.sendMessage(Model.MSG_QUESTION_DONE, { });
 
-        } else if (action == ACT_PICK_CATEGORY) {
+        } else if (action == Model.ACT_PICK_CATEGORY) {
             var categories :Array = _model.getQuestions().getCategories();
             var ix :int = BetTheFarm.random.nextInt(categories.length);
             var category :String = categories[ix];
@@ -138,7 +131,7 @@ public class Server
         } else if (msg == Model.MSG_BUZZ) {
             if (_control.get(Model.BUZZER) == -1) {
                 _control.setImmediate(Model.BUZZER, value.player);
-                setTimeout(ACT_FAIL_QUESTION, 10);
+                setTimeout(Model.ACT_FAIL_QUESTION, 10);
             }
 
         } else if (msg == Model.MSG_QUESTION_DONE) {
@@ -146,25 +139,25 @@ public class Server
 
             if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
                 // in lightning round we automatically move forward
-                setTimeout(ACT_NEXT_QUESTION, 1);
+                setTimeout(Model.ACT_NEXT_QUESTION, 1);
 
             } else if (_model.getRoundType() == Model.ROUND_BUZZ) {
                 // in the buzz round we only do N questions
                 if (_model.getQuestionCount() == _model.getDuration()) {
-                    setTimeout(ACT_END_ROUND, 1);
+                    setTimeout(Model.ACT_END_ROUND, 1);
 
                 } else if (value.winner) {
                     // let the winner choose next category, just set up a timeout
-                    setTimeout(ACT_PICK_CATEGORY, 4);
+                    setTimeout(Model.ACT_PICK_CATEGORY, 4);
 
                 } else {
                     // if there was no winner, we always pick the category
-                    setTimeout(ACT_PICK_CATEGORY, 1);
+                    setTimeout(Model.ACT_PICK_CATEGORY, 1);
                 }
 
             } else {
                 // if this is a wager round, immediately end it
-                setTimeout(ACT_END_ROUND, 1);
+                setTimeout(Model.ACT_END_ROUND, 1);
             }
 
         } else if (msg == Model.MSG_CHOOSE_CATEGORY) {
@@ -283,9 +276,8 @@ public class Server
         }
         _control.set(Model.QUESTION_IX, keys[BetTheFarm.random.nextInt(keys.length)]);
         // we always begin a timeout here, though it may be extended in buzz rounds
-        setTimeout(ACT_END_QUESTION, 10);
+        setTimeout(Model.ACT_END_QUESTION, 10);
     }
-
 
     protected var _control :WhirledGameControl;
 
