@@ -1,0 +1,10 @@
+<!-- build configuration -->
+<project name="scorch" default="compile" basedir=".">
+
+  <!-- things you may want to change -->
+  <property name="app.name" value="scorch"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/java-project-include.xml"/>
+
+</project>
