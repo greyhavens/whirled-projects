@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Enumerates all files in the default content pack because we cannot iterate
+# over classloader resources at runtime.
+
+find rsrc/packs/default -type f | grep -v .svn | sed 's:^rsrc/packs/default/::g' \
+    > dist/classes/rsrc/packs/default/contents.txt

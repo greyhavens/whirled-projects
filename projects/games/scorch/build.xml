@@ -7,4 +7,9 @@
   <!-- include the standard build script -->
   <import file="../../../etc/java-project-include.xml"/>
 
+  <!-- handles project specific build preparations -->
+  <target name="project-prepare">
+    <exec executable="bin/make_default_pack_list"/>
+  </target>
+
 </project>
