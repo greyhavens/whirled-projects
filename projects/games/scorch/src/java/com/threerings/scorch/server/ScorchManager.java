@@ -5,7 +5,7 @@ package com.threerings.scorch.server;
 
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.parlor.game.server.GameManager;
-import com.threerings.toybox.data.ToyBoxGameConfig;
+import com.threerings.ezgame.data.EZGameConfig;
 
 import com.threerings.scorch.data.ScorchObject;
 
@@ -20,7 +20,7 @@ public class ScorchManager extends GameManager
         super.didInit();
 
         // get a casted reference to our game configuration
-        _gameconf = (ToyBoxGameConfig)_config;
+        _gameconf = (EZGameConfig)_config;
 
         // this is called when our manager is created but before any
         // game-specific actions take place; we don't yet have our game object
@@ -82,5 +82,5 @@ public class ScorchManager extends GameManager
     protected ScorchObject _gameobj;
 
     /** Our game configuration. */
-    protected ToyBoxGameConfig _gameconf;
+    protected EZGameConfig _gameconf;
 }

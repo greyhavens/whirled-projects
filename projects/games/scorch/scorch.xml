@@ -4,8 +4,8 @@
   <ident>scorch</ident>
 
   <!-- the controller and manager used for the game -->
-  <controller>com.threerings.scorch.ScorchController</controller>
-  <manager>com.threerings.scorch.ScorchManager</manager>
+  <controller>com.threerings.scorch.client.ScorchController</controller>
+  <manager>com.threerings.scorch.server.ScorchManager</manager>
 
   <!-- defines how the game is matchmade and configured -->
   <match type="table">
