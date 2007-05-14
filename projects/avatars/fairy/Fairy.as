@@ -1,12 +1,27 @@
 package {
 
 import flash.display.BlendMode;
+import flash.display.Loader;
 import flash.display.Graphics;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.events.IOErrorEvent;
+import flash.events.MouseEvent;
+import flash.events.TimerEvent;
+
+import flash.geom.Point;
+
+import flash.net.URLLoader;
+import flash.net.URLRequest;
 
 import flash.filters.GlowFilter;
+
+import flash.text.TextField;
+
+import flash.utils.ByteArray;
+import flash.utils.Timer;
+import flash.utils.getTimer;
 
 import com.threerings.flash.Siner;
 
@@ -16,6 +31,15 @@ import com.whirled.ControlEvent;
 [SWF(width="600", height="450")]
 public class Fairy extends Sprite
 {
+    public static const DEFAULT_STATE :String = "Default";
+    public static const MOTION_STATE :String = "Mouse Motion";
+
+    // TODO
+    // "Skywriting"
+    // Show a text field, allow text entry
+    // snapshot entered text into a TextField, print it to a ByteArray, and then
+    // have the fairy trace out the tunred-on pixels and leave sparkles.
+    // 
     public function Fairy ()
     {
         _ctrl = new AvatarControl(this);
@@ -25,41 +49,10 @@ public class Fairy extends Sprite
         _fairy = new Sprite();
         var g :Graphics = _fairy.graphics;
         g.beginFill(0xFFFFFF);
-        g.drawCircle(0, 0, 3);
+        g.drawCircle(0, 0, 5);
         g.endFill();
         _fairy.filters = [ new GlowFilter(0xFFFECC)];
         _platform.addChild(_fairy);
-//
-//        var other :Sprite = new Sprite();
-//        g = other.graphics;
-//        g.beginFill(0xFFFFFF);
-//        g.drawRect(0, 0, 20, 20);
-//        g.endFill();
-//        g.beginFill(0x000000);
-//        g.drawRect(20, 0, 20, 20);
-//        g.endFill();
-//        g.beginFill(0xFF0000);
-//        g.drawRect(40, 0, 20, 10);
-//        g.endFill();
-//        g.beginFill(0x00FF00);
-//        g.drawRect(40, 10, 20, 10);
-//        g.endFill();
-//        g.beginFill(0x0000FF);
-//        g.drawRect(60, 0, 20, 20);
-//        g.endFill();
-//        other.y = 20;
-//        //_platform.addChild(other);
-//
-//        other = new Sprite();
-//        g = other.graphics;
-//        g.beginFill(0x77FFFFFF);
-//        g.drawCircle(0, 0, 20);
-//        g.endFill();
-//        g.beginFill(0xFFFFFF);
-//        g.drawCircle(0, 0, 10);
-//        g.endFill();
-//        other.blendMode = BlendMode.INVERT;
-//        _platform.addChildAt(other, 0);
 
         // first things first
         _platform.y = 40;
@@ -70,38 +63,101 @@ public class Fairy extends Sprite
         addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
 
         if (_ctrl.isConnected()) {
-            _ctrl.registerStates(BlendMode.NORMAL, BlendMode.ADD, BlendMode.ALPHA, BlendMode.DARKEN,
-                BlendMode.DIFFERENCE, BlendMode.ERASE, BlendMode.HARDLIGHT, BlendMode.INVERT,
-                BlendMode.LAYER, BlendMode.LIGHTEN, BlendMode.MULTIPLY, BlendMode.OVERLAY,
-                BlendMode.SCREEN, BlendMode.SUBTRACT);
-
+            _ctrl.addEventListener(ControlEvent.GOT_CONTROL, handleGotControl);
             _ctrl.addEventListener(ControlEvent.STATE_CHANGED, handleStateChanged);
-            handleStateChanged();
+            _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessageReceived);
+
+            if (_ctrl.hasControl()) {
+                handleGotControl();
+
+            } else {
+                _ctrl.requestControl();
+            }
+
+            _ctrl.registerStates(DEFAULT_STATE, MOTION_STATE);
         }
     }
 
     protected function handleAdded (... ignored) :void
     {
-        addEventListener(Event.ENTER_FRAME, handleFrame, false, int.MAX_VALUE);
-        _x.reset();
-        _y.reset();
-        _height.reset();
+        // check our state
+        handleStateChanged();
     }
 
     protected function handleRemoved (... ignored) :void
     {
-        removeEventListener(Event.ENTER_FRAME, handleFrame);
+        shutdownMotionTimer();
+    }
+
+    protected function handleGotControl (... ignored) :void
+    {
+        handleStateChanged();
+    }
+
+    protected function handleMessageReceived (event :ControlEvent) :void
+    {
+        switch (event.name) {
+        case MOTION_STATE:
+            var p :Point = event.value as Point;
+            _fairy.x = p.x;
+            _fairy.y = p.y;
+            break;
+        }
     }
 
     protected function handleStateChanged (... ignored) :void
     {
-        this.blendMode = _ctrl.getState();
+        var state :String = _ctrl.getState();
+
+        switch (state) {
+        default:
+            removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMotion);
+            shutdownMotionTimer();
+            // send one last update?
+            handleMotionTimer();
+            break;
+
+        case MOTION_STATE:
+            trace("Switching to motion...");
+            if (_ctrl.hasControl()) {
+                trace("HAS got control!");
+                addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMotion);
+                if (_motionTimer == null) {
+                    _motionTimer = new Timer(100);
+                    _motionTimer.addEventListener(TimerEvent.TIMER, handleMotionTimer);
+                    _motionTimer.start();
+                }
+            }
+            break;
+        }
     }
 
-    protected function handleFrame (... ignored) :void
+    protected function shutdownMotionTimer () :void
     {
-        _platform.setPosition(300 + _x.value, 40 + _y.value, _height.value);
+        if (_motionTimer != null) {
+            _motionTimer.stop();
+            _motionTimer = null;
+        }
     }
+
+    protected function handleMouseMotion (event :MouseEvent) :void
+    {
+        trace("Got motion point..");
+        _motionPoint = new Point(event.localX, event.localY);
+    }
+
+    protected function handleMotionTimer (... ignored) :void
+    {
+        if (_motionPoint != null) {
+            _ctrl.sendMessage(MOTION_STATE, _motionPoint);
+            _motionPoint = null;
+        }
+    }
+
+//    protected function handleFrame (... ignored) :void
+//    {
+//        _platform.setPosition(300 + _x.value, 40 + _y.value, _height.value);
+//    }
 
     protected var _fairy :Sprite;
 
@@ -109,10 +165,9 @@ public class Fairy extends Sprite
 
     protected var _ctrl :AvatarControl;
 
-    protected var _x :Siner = new Siner(30, 1);
-    protected var _y :Siner = new Siner(30, 1.05);
+    protected var _motionPoint :Point;
 
-    protected var _height :Siner = new Siner(200, 5);
+    protected var _motionTimer :Timer;
 }
 }
 
