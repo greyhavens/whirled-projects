@@ -18,13 +18,14 @@ import flash.utils.Dictionary;
 import flash.utils.getTimer; // function import
 
 import com.threerings.flash.FloatingTextAnimation;
+import com.threerings.flash.FrameSprite;
 import com.threerings.flash.SiningTextAnimation;
 import com.threerings.flash.TextFieldUtil;
 
 import com.whirled.MiniGameControl;
 
 [SWF(width="450", height="100")]
-public class Match3 extends Sprite
+public class Match3 extends FrameSprite
 {
     /** The number needed to match. */
     public static var MATCH :int = 3;
@@ -118,27 +119,16 @@ public class Match3 extends Sprite
 
         addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
         addEventListener(MouseEvent.CLICK, handleMouseClick);
-        addEventListener(Event.ADDED_TO_STAGE, init);
-        addEventListener(Event.REMOVED_FROM_STAGE, shutdown);
     }
 
-    protected function init (... ignored) :void
+    override protected function handleAdded (... ignored) :void
     {
         _ctrl = new MiniGameControl(this);
-
         _lastIdleStamp = getTimer();
-        addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+        super.handleAdded();
     }
 
-    /**
-     * Take care of freeing resources, etc.
-     */
-    protected function shutdown (... ignored) :void
-    {
-        removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
-    }
-
-    protected function handleEnterFrame (event :Event) :void
+    override protected function handleFrame (... ignored) :void
     {
         var stamp :Number = getTimer();
         //trace("-----------: " + stamp);

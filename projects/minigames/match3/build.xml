@@ -2,8 +2,8 @@
 <project name="Match3" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name" value="Tester"/>
-  <property name="app.source-suffix" value="mxml"/>
+  <property name="app.name" value="Match3"/>
+<!--  <property name="app.source-suffix" value="mxml"/>-->
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
