@@ -33,6 +33,7 @@ public class Model
     public static const ACT_NEXT_QUESTION :String = "nextQuestion";
     public static const ACT_END_QUESTION :String = "endQuestion";
     public static const ACT_FAIL_QUESTION :String = "failQuestion";
+    public static const ACT_AFTER_QUESTION :String = "afterQuestion";
     public static const ACT_PICK_CATEGORY :String = "pickCategory";
 
     public static const MSG_TICK :String = "tick";
@@ -159,7 +160,8 @@ public class Model
         var value :Object= event.newValue;
         if (event.name == TIMEOUT) {
             if (value) {
-                _view.newTimeout(value.action as String, Math.max(1, value.tick - _lastTick));
+                _view.newTimeout(
+                    value.action as String, Math.max(1, value.tick - _lastTick), value);
             }
 
         } else if (event.name == QUESTION_IX) {

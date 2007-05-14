@@ -37,7 +37,7 @@ public class BetTheFarm extends Sprite
 
         // create our server, our model and our view, and initialize them
         _model = new Model(_control);
-        if (_control.amInControl()) {
+        if (_control.isConnected() && _control.amInControl()) {
             _server = new Server(_control, _model);
             _control.startTicker(Model.MSG_TICK, 1000);
         }
@@ -49,6 +49,8 @@ public class BetTheFarm extends Sprite
     {
         if (_control.amInControl()) {
             _server = new Server(_control, _model);
+        } else {
+            _server = null;
         }
     }
 

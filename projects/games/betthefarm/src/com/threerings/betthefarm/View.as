@@ -62,7 +62,7 @@ public class View extends Sprite
             _myId = _control.getMyId();
 
             doorSetup();
-            addDebugFrames();
+//            addDebugFrames();
 
             _control.addEventListener(UserChatEvent.TYPE, userChat);
 
@@ -176,29 +176,35 @@ public class View extends Sprite
         }
     }
 
-    public function newTimeout (action :String, delay :uint) :void
+    public function newTimeout (action :String, delay :uint, data :Object) :void
     {
-        var y :Number;
+        var y :Number = -1;
 
+        // question timeouts are shown to all players
         if (action == Model.ACT_END_QUESTION) {
             y = 115;
 
-        } else if (action == Model.ACT_FAIL_QUESTION || action == Model.ACT_PICK_CATEGORY) {
-            y = 260;
+        } else if (data.control == _myId) {
+            // timeouts for when the player is typing an answer or picking the next category
+            if (action == Model.ACT_FAIL_QUESTION) {
+                y = 260;
 
-        } else {
-            return;
+            } else if (action == Model.ACT_PICK_CATEGORY) {
+                chooseCategory();
+                y = 260;
+            }
         }
-
-        if (_progressBar) {
-            _doorArea.removeChild(_progressBar);
+        if (y > 0) {
+            if (_progressBar) {
+                _doorArea.removeChild(_progressBar);
+            }
+            _progressBar = new ProgressBar(delay);
+            _progressBar.width = Content.RECT_PROGRESS_BAR.width;
+            _progressBar.height = Content.RECT_PROGRESS_BAR.height;
+            _progressBar.x = Content.RECT_PROGRESS_BAR.left;
+            _progressBar.y = y;
+            _doorArea.addChild(_progressBar);
         }
-        _progressBar = new ProgressBar(delay);
-        _progressBar.width = Content.RECT_PROGRESS_BAR.width;
-        _progressBar.height = Content.RECT_PROGRESS_BAR.height;
-        _progressBar.x = Content.RECT_PROGRESS_BAR.left;
-        _progressBar.y = y;
-        _doorArea.addChild(_progressBar);
     }
 
     protected function showIntro () :void
@@ -290,9 +296,9 @@ public class View extends Sprite
 
         } else {
             if (_playing) {
-                var buzzButton :SimpleButton = addImageButton(
+                _buzzButton = addImageButton(
                     Content.BUZZ_BUTTON, _doorArea, Content.BUZZ_LOC.x, Content.BUZZ_LOC.y);
-                buzzButton.addEventListener(MouseEvent.CLICK, buzzClick);
+                _buzzButton.addEventListener(MouseEvent.CLICK, buzzClick);
 
                 _freeArea = new Sprite();
                 _freeArea.x = Content.FREE_RESPONSE_RECT.left;
@@ -327,9 +333,6 @@ public class View extends Sprite
         if (winner == _myId) {
             doorHeader(Content.IMG_CORRECT);
             _sndCorrect.play();
-            if (_model.getRoundType() == Model.ROUND_BUZZ) {
-                setTimeout(chooseCategory, 1000);
-            }
 
         } else if (_answered) {
             doorHeader(Content.IMG_INCORRECT);
@@ -490,6 +493,7 @@ public class View extends Sprite
 
         var answer :String = _freeField.text.toLowerCase();
         _freeArea.visible = false;
+        _buzzButton.enabled = false;
 
         var answers :Array = (_question as FreeResponse).correct;
         var correct :Boolean = false;
@@ -617,6 +621,8 @@ public class View extends Sprite
     protected var _clockFace :ClockFace;
 
     protected var _progressBar :ProgressBar;
+
+    protected var _buzzButton :SimpleButton;
 
     protected var _question :Question;
 

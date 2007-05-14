@@ -28,9 +28,10 @@ public class Plaque extends Sprite {
         _textField.autoSize = TextFieldAutoSize.NONE;
         _textField.width = _background.width;
         _textField.height = _background.height;
+        _textField.y = 5;
 
         var format :TextFormat = new TextFormat();
-        format.size = 12;
+        format.size = 14;
         format.font = Content.FONT_NAME;
         format.color = Content.FONT_COLOR;
         format.align = TextFormatAlign.CENTER;

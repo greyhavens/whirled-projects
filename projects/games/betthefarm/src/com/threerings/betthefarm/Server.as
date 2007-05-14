@@ -72,7 +72,7 @@ public class Server
             var timeout :Object = _control.get(Model.TIMEOUT);
             if (timeout && timeout.tick < _model.getLastTick()) {
                 _control.setImmediate(Model.TIMEOUT, null);
-                handleTimeout(timeout.action);
+                handleTimeout(timeout.action, timeout);
             }
             return;
         }
@@ -84,7 +84,7 @@ public class Server
     }
 
 
-    protected function handleTimeout(action :String) :void
+    protected function handleTimeout(action :String, data :Object) :void
     {
         if (action == Model.ACT_BEGIN_ROUND) {
             if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
@@ -109,14 +109,35 @@ public class Server
         } else if (action == Model.ACT_FAIL_QUESTION) {
             questionAnswered(_control.get(Model.BUZZER) as int, false, 0);
 
+        } else if (action == Model.ACT_AFTER_QUESTION) {
+            if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
+                // in lightning round we automatically move forward
+                nextQuestion();
+
+            } else if (_model.getRoundType() == Model.ROUND_BUZZ) {
+                // in the buzz round we only do N questions
+                if (_model.getQuestionCount() == _model.getDuration()) {
+                    doEndRound();
+
+                } else if (data.winner) {
+                    // let the winner choose next category, just set up a timeout
+                    setTimeout(Model.ACT_PICK_CATEGORY, 4, { control: data.winner });
+
+                } else {
+                    // if there was no winner, we always pick the category
+                    doPickCategory();
+                }
+
+            } else {
+                // if this is a wager round, immediately end it
+                doEndRound();
+            }
+
         } else if (action == Model.ACT_END_QUESTION) {
-            _control.sendMessage(Model.MSG_QUESTION_DONE, { });
+            questionDone();
 
         } else if (action == Model.ACT_PICK_CATEGORY) {
-            var categories :Array = _model.getQuestions().getCategories();
-            var ix :int = BetTheFarm.random.nextInt(categories.length);
-            var category :String = categories[ix];
-            nextQuestion(category);
+            doPickCategory();
 
         } else {
             throw new Error("Unknown timeout action: " + action);
@@ -131,33 +152,7 @@ public class Server
         } else if (msg == Model.MSG_BUZZ) {
             if (_control.get(Model.BUZZER) == -1) {
                 _control.setImmediate(Model.BUZZER, value.player);
-                setTimeout(Model.ACT_FAIL_QUESTION, 10);
-            }
-
-        } else if (msg == Model.MSG_QUESTION_DONE) {
-            _model.getQuestions().removeQuestion(_control.get(Model.QUESTION_IX) as int);
-
-            if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
-                // in lightning round we automatically move forward
-                setTimeout(Model.ACT_NEXT_QUESTION, 1);
-
-            } else if (_model.getRoundType() == Model.ROUND_BUZZ) {
-                // in the buzz round we only do N questions
-                if (_model.getQuestionCount() == _model.getDuration()) {
-                    setTimeout(Model.ACT_END_ROUND, 1);
-
-                } else if (value.winner) {
-                    // let the winner choose next category, just set up a timeout
-                    setTimeout(Model.ACT_PICK_CATEGORY, 4);
-
-                } else {
-                    // if there was no winner, we always pick the category
-                    setTimeout(Model.ACT_PICK_CATEGORY, 1);
-                }
-
-            } else {
-                // if this is a wager round, immediately end it
-                setTimeout(Model.ACT_END_ROUND, 1);
+                setTimeout(Model.ACT_FAIL_QUESTION, 10, { control: value.player });
             }
 
         } else if (msg == Model.MSG_CHOOSE_CATEGORY) {
@@ -183,10 +178,14 @@ public class Server
         }
     }
 
-    protected function setTimeout (action :String, delay :int) :void
+    protected function setTimeout (action :String, delay :int, data :Object = null) :void
     {
-        _control.setImmediate(
-            Model.TIMEOUT, { action: action, tick: _model.getLastTick() + delay });
+        if (!data) {
+            data = new Object();
+        }
+        data["action"] = action;
+        data["tick"] = _model.getLastTick() + delay;
+        _control.setImmediate(Model.TIMEOUT, data);
     }
 
     protected function doEndRound () :void
@@ -202,6 +201,14 @@ public class Server
         }
 
         _control.endRound(3);
+    }
+
+    protected function doPickCategory () :void
+    {
+        var categories :Array = _model.getQuestions().getCategories();
+        var ix :int = BetTheFarm.random.nextInt(categories.length);
+        var category :String = categories[ix];
+        nextQuestion(category);
     }
 
     protected function questionAnswered (player :int, correct :Boolean, wager :int) :void
@@ -255,11 +262,18 @@ public class Server
             done &&= _control.get(Model.RESPONSES, ii);
         }
         if (correct || done) {
-            _control.sendMessage(Model.MSG_QUESTION_DONE, correct ? { winner: player } : { });
+            questionDone(correct ? player : -1);
 
         } else {
             _control.sendMessage(Model.MSG_ANSWERED, { player: player, correct: correct });
         }
+    }
+
+    protected function questionDone (winner :int = -1) :void
+    {
+        _control.sendMessage(Model.MSG_QUESTION_DONE, winner >= 0 ? { winner: winner } : { });
+        _model.getQuestions().removeQuestion(_control.get(Model.QUESTION_IX) as int);
+        setTimeout(Model.ACT_AFTER_QUESTION, 2, { winner: winner });
     }
 
     protected function nextQuestion (category :String = null) :void
