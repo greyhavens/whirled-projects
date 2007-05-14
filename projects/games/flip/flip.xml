@@ -8,8 +8,8 @@
   <match type="table"><min_seats>2</min_seats><max_seats>2</max_seats></match>
 
   <params>
-    <choice ident="pointStructure" name="Point structure" choices="0,1" start="0"/>-->
-    <choice ident="timePerTurn" name="Time per turn" choices="30,60,120" start="30"/>-->
+    <choice ident="pointStructure" name="Point structure" choices="0,1" start="0"/>
+    <choice ident="timePerTurn" name="Time per turn" choices="30,60,120" start="30"/>
     <choice ident="topSlots" name="Drop slots" choices="6,8,10" start="8"/>
     <toggle ident="holes" name="Holes" start="false"/>
     <toggle ident="speedy" name="Turbo" start="false"/>
