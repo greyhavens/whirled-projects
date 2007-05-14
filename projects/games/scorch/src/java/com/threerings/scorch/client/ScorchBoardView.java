@@ -4,10 +4,10 @@
 package com.threerings.scorch.client;
 
 import java.awt.Graphics;
-import javax.swing.JComponent;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
+import com.threerings.media.MediaPanel;
 
 import com.whirled.util.WhirledContext;
 
@@ -16,7 +16,7 @@ import com.threerings.scorch.data.ScorchObject;
 /**
  * Displays the main game interface (the board).
  */
-public class ScorchBoardView extends JComponent
+public class ScorchBoardView extends MediaPanel
     implements PlaceView
 {
     /**
@@ -24,6 +24,7 @@ public class ScorchBoardView extends JComponent
      */
     public ScorchBoardView (WhirledContext ctx)
     {
+        super(ctx.getFrameManager());
         _ctx = ctx;
     }
 

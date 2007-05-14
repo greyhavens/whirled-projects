@@ -12,12 +12,18 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import java.util.logging.Level;
+
 import com.samskivert.swing.GroupLayout;
 
 import com.threerings.crowd.client.PlacePanel;
 import com.threerings.util.MessageBundle;
 
 import com.whirled.util.WhirledContext;
+
+import com.threerings.scorch.util.ContentPack;
+
+import static com.threerings.scorch.Log.log;
 
 /**
  * Contains the primary client interface for the game.
@@ -31,6 +37,14 @@ public class ScorchPanel extends PlacePanel
     {
         super(ctrl);
         _ctx = ctx;
+
+        // TODO: do this somewhere else? provide feedback?
+        try {
+            ContentPack.init();
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to initialize content packs.", e);
+            // TODO: display error
+        }
 
         // this is used to look up localized strings
         MessageBundle msgs = _ctx.getMessageManager().getBundle("scorch");
@@ -51,7 +65,8 @@ public class ScorchPanel extends PlacePanel
         vlabel.setForeground(Color.black);
         sidePanel.add(vlabel, GroupLayout.FIXED);
 
-        // a score display or other useful status indicators can go here
+        // TEMP: display our prop list
+        sidePanel.add(new PropList(ctx));
 
 //         // add a chat box
 //         sidePanel.add(new ChatPanel(ctx));

@@ -3,7 +3,9 @@
 
 package com.threerings.scorch.util;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 
 import com.samskivert.util.StringUtil;
@@ -27,12 +29,12 @@ public class FactionConfig
     /**
      * Creates and initializes a faction from the supplied configuration file.
      */
-    public FactionConfig (String ident, Properties config)
+    public FactionConfig (String ident, Properties config, HashMap<String,BufferedImage> images)
     {
         this.ident = ident;
         name = config.getProperty(ident + ".name", "Unknown");
         for (String unit : StringUtil.parseStringArray(config.getProperty(ident + ".units", ""))) {
-            units.add(new UnitConfig(unit, config));
+            units.add(new UnitConfig(unit, config, images));
         }
     }
 }
