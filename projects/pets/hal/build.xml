@@ -1,0 +1,15 @@
+<!-- build configuration -->
+<project name="hal" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"  value="Hal"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+  <!-- testing only -->
+  <target name="dist" depends="compile">
+    <copy file="Hal.swf" tofile="/export/msoy/pages/media/10184a2a0b2bc9b39d10ee7d33ae91159e018f26.swf"/>
+  </target>
+
+</project>
