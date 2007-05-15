@@ -127,12 +127,16 @@ public class SuperStealer extends Sprite
             return;
         }
 
-        // dispatch with all haste
-        _ctrl.setState(null); // reset state
-        _ctrl.setMoveSpeed(500); // reset to standard move speed
-        _ctrl.sendMessage(NOTIFY_URL_MSG, _input.text);
+        var txt :String = _input.text;
         removeChild(_input);
         _input = null;
+
+        if (txt != "") {
+            // dispatch with all haste
+            _ctrl.setState(null); // reset state
+            _ctrl.setMoveSpeed(500); // reset to standard move speed
+            _ctrl.sendMessage(NOTIFY_URL_MSG, txt);
+        }
     }
 
     protected function loadProgress (... ignored) :void
@@ -261,7 +265,7 @@ public class SuperStealer extends Sprite
     protected var _hotSpotSet :Boolean = false;
 
     protected static const REQUIRED_CONTENT_PROPS :Array = [
-        "messageReceived_v1", "getActions_v1", "getStates_v1"
+        "messageReceived_v1", "getActions_v1"
     ];
 }
 }
