@@ -11,10 +11,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import java.util.ArrayList;
+
 import com.threerings.media.sprite.Sprite;
 
 import com.whirled.util.WhirledContext;
 
+import com.threerings.scorch.data.ScorchBoard;
 import com.threerings.scorch.util.PropConfig;
 
 import static com.threerings.scorch.Log.log;
@@ -32,27 +35,65 @@ public class EditorBoardView extends ScorchBoardView
         addMouseMotionListener(this);
     }
 
-    public void init (PropList props)
+    public void init (EditorControlPanel ctrl)
     {
-        _props = props;
+        _ctrl = ctrl;
+    }
+
+    public void setBoard (ScorchBoard board)
+    {
+        clearSprites();
+        for (int ii = 0, ll = board.getPropCount(); ii < ll; ii++) {
+            addProp(board.getPropConfig(ii), board.getPropX(ii), board.getPropY(ii));
+        }
+    }
+
+    public ScorchBoard exportBoard ()
+    {
+        ScorchBoard board = new ScorchBoard();
+        ArrayList<PropConfig> props = new ArrayList<PropConfig>();
+        ArrayList<Point> locs = new ArrayList<Point>();
+        for (Sprite sprite : getSpriteManager().getSprites()) {
+            if (!(sprite instanceof PropSprite)) {
+                continue;
+            }
+            props.add(((PropSprite)sprite).getPropConfig());
+            locs.add(new Point(sprite.getX(), sprite.getY()));
+        }
+        board.setProps(_ctrl.getPackId(), props, locs);
+        return board;
     }
 
     // from interface MouseListener
     public void mousePressed (MouseEvent e)
     {
+        PropSprite prop = null;
+        Sprite hit = getSpriteManager().getHighestHitSprite(e.getX(), e.getY());
+        if (hit instanceof PropSprite) {
+            prop = (PropSprite)hit;
+        }
+
         switch (e.getButton()) {
         case MouseEvent.BUTTON1:
             if (e.isControlDown()) {
-                pushProp(e.getX(), e.getY(), e.isShiftDown() ? true : false);
-            } else if (e.isShiftDown()) {
-                addProp(e.getX(), e.getY());
+                if (prop != null) {
+                    prop.setRenderOrder(e.isShiftDown() ? getLowestRenderOrder(prop)-1 :
+                                        getHighestRenderOrder(prop)+1);
+                }
+
+            } else if (prop != null && !e.isShiftDown()) {
+                _grabbed = prop;
+                _grabOffset = new Point(prop.getX() - e.getX(), prop.getY() - e.getY());
+
             } else {
-                grabProp(e.getX(), e.getY());
+                addProp(_ctrl.getSelectedProp(), e.getX(), e.getY());
             }
             break;
 
         case MouseEvent.BUTTON3:
-            deleteProp(e.getX(), e.getY());
+            if (prop != null) {
+                removeSprite(prop);
+            }
             break;
         }
     }
@@ -103,9 +144,8 @@ public class EditorBoardView extends ScorchBoardView
         gfx.fill(dirtyRect);
     }
 
-    protected void addProp (int x, int y)
+    protected void addProp (PropConfig config, int x, int y)
     {
-        PropConfig config = _props.getSelectedProp();
         if (config != null) {
             PropSprite sprite = new PropSprite(config);
             sprite.setRenderOrder(getHighestRenderOrder(null)+1);
@@ -114,36 +154,10 @@ public class EditorBoardView extends ScorchBoardView
         }
     }
 
-    protected void grabProp (int x, int y)
-    {
-        Sprite hit = getSpriteManager().getHighestHitSprite(x, y);
-        if (hit instanceof PropSprite) {
-            _grabbed = (PropSprite)hit;
-            _grabOffset = new Point(hit.getX() - x, hit.getY() - y);
-        }
-    }
-
     protected void releaseProp ()
     {
         _grabbed = null;
         _grabOffset = null;
-    }
-
-    protected void pushProp (int x, int y, boolean pull)
-    {
-        Sprite hit = getSpriteManager().getHighestHitSprite(x, y);
-        if (!(hit instanceof PropSprite)) {
-            return;
-        }
-        hit.setRenderOrder(pull ? getHighestRenderOrder(hit)+1 : getLowestRenderOrder(hit)-1);
-    }
-
-    protected void deleteProp (int x, int y)
-    {
-        Sprite hit = getSpriteManager().getHighestHitSprite(x, y);
-        if (hit != null) {
-            removeSprite(hit);
-        }
     }
 
     protected int getHighestRenderOrder (Sprite skip)
@@ -170,8 +184,7 @@ public class EditorBoardView extends ScorchBoardView
         return lowest;
     }
 
-    protected PropList _props;
-
+    protected EditorControlPanel _ctrl;
     protected PropSprite _grabbed;
     protected Point _grabOffset;
 }

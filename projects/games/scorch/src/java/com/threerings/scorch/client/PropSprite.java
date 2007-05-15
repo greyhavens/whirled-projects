@@ -26,6 +26,14 @@ public class PropSprite extends Sprite
         _oyoff = _bounds.height;
     }
 
+    /**
+     * Returns the configuration for this prop sprite.
+     */
+    public PropConfig getPropConfig ()
+    {
+        return _config;
+    }
+
     @Override // from Sprite
     public void paint (Graphics2D gfx)
     {

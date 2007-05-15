@@ -54,7 +54,8 @@ public class ScorchPanel extends PlacePanel
         setLayout(new BorderLayout(5, 5));
 
         // create and add our board view
-        add(_bview = new EditorBoardView(ctx), BorderLayout.CENTER);
+        EditorBoardView bview = new EditorBoardView(ctx);
+        add(bview, BorderLayout.CENTER);
 
         // create a side panel to hold our chat and other extra interfaces
         JPanel sidePanel = GroupLayout.makeVStretchBox(5);
@@ -65,10 +66,8 @@ public class ScorchPanel extends PlacePanel
         vlabel.setForeground(Color.black);
         sidePanel.add(vlabel, GroupLayout.FIXED);
 
-        // TEMP: display our prop list
-        PropList props = new PropList(ctx);
-        _bview.init(props);
-        sidePanel.add(props);
+        // TEMP: display our editor control panel
+        sidePanel.add(new EditorControlPanel(ctx, bview));
 
 //         // add a chat box
 //         sidePanel.add(new ChatPanel(ctx));
@@ -84,7 +83,4 @@ public class ScorchPanel extends PlacePanel
 
     /** Provides access to various client services. */
     protected WhirledContext _ctx;
-
-    /** The board view. */
-    protected EditorBoardView _bview;
 }

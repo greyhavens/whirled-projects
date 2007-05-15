@@ -10,6 +10,18 @@
   <!-- handles project specific build preparations -->
   <target name="project-prepare">
     <exec executable="bin/make_default_pack_list"/>
+    <antcall target="update-ids"><param name="pack" value="default"/></antcall>
   </target>
 
+  <!-- updates prop image to id mappings for a specific content pack -->
+  <target name="update-ids">
+    <taskdef name="upids" classpathref="classpath" classname="com.whirled.tools.AssignIdTask"/>
+    <upids propfile="rsrc/packs/${pack}/ids.properties">
+      <fileset dir="rsrc/packs/${pack}/props">
+        <include name="**/*.png"/>
+        <exclude name="**/*_mask.png"/>
+        <exclude name="**/*_facade.png"/>
+      </fileset>
+    </upids>
+  </target>
 </project>

@@ -18,6 +18,11 @@ public class PropConfig
     /** The filename tag for facade images. */
     public static final String FACADE_TAG = "_facade";
 
+    /** An integer identifier for this prop, unique to its content pack and safe for use in
+     * encoding boards (meaning it does not change when props are added to or deleted from the pack
+     * during development). Note: these values are negative for the default content pack. */
+    public short propId;
+
     /** A string identifier for this prop. */
     public String ident;
 

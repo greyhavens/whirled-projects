@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -20,6 +21,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.samskivert.io.StreamUtil;
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.StringUtil;
 
 import static com.threerings.scorch.Log.log;
@@ -29,8 +31,11 @@ import static com.threerings.scorch.Log.log;
  */
 public class ContentPack
 {
+    /** The identifier of the default content pack. */
+    public static final String DEFAULT_PACK_ID = "default";
+
     /** The set of all registered content packs. */
-    public static ArrayList<ContentPack> packs = new ArrayList<ContentPack>();
+    public static HashMap<String,ContentPack> packs = new HashMap<String,ContentPack>();
 
     /**
      * Initializes our content pack system. Currently this loads all known content packs
@@ -41,7 +46,10 @@ public class ContentPack
         throws IOException
     {
         // add the "built-in" content pack
-        packs.add(new ContentPack());
+        ContentPack defpack = new ContentPack();
+        packs.put(defpack.getIdent(), defpack);
+
+        // TODO: load external packs? allow them to be added some other way?
     }
 
     /**
@@ -71,9 +79,17 @@ public class ContentPack
     /**
      * Returns the configuration of all props specified in this content pack.
      */
-    public ArrayList<PropConfig> getProps ()
+    public Collection<PropConfig> getProps ()
     {
-        return _props;
+        return _props.values();
+    }
+
+    /**
+     * Returns the prop with the supplied integer identifer.
+     */
+    public PropConfig getProp (short propId)
+    {
+        return _props.get(propId);
     }
 
     /** Returns the human readable name of this pack to make it easy to use in a combobox. */
@@ -89,14 +105,19 @@ public class ContentPack
     protected ContentPack ()
         throws IOException
     {
-        ClassLoader loader = getClass().getClassLoader();
         HashMap<String,BufferedImage> images = new HashMap<String,BufferedImage>();
+        Properties idmap = new Properties();
+
+        ClassLoader loader = getClass().getClassLoader();
         String[] contents = resourceToStrings(
             loader.getResourceAsStream(DEFAULT_PACK_PREFIX + "contents.txt"));
         for (String path : contents) {
-            processResource(path, loader.getResourceAsStream(DEFAULT_PACK_PREFIX + path), images);
+            processResource(
+                path, loader.getResourceAsStream(DEFAULT_PACK_PREFIX + path), idmap, images);
         }
-        initPack(images);
+
+        _config.setProperty("ident", DEFAULT_PACK_ID);
+        initPack(images, idmap, true);
     }
 
     /**
@@ -107,18 +128,22 @@ public class ContentPack
         throws IOException
     {
         HashMap<String,BufferedImage> images = new HashMap<String,BufferedImage>();
+        Properties idmap = new Properties();
+
         ZipEntry entry;
         while ((entry = source.getNextEntry()) != null) {
-            processResource(entry.getName(), source, images);
+            processResource(entry.getName(), source, idmap, images);
         }
-        initPack(images);
+
+        initPack(images, idmap, false);
     }
 
     /**
      * Called after we have loaded our resources to parse the content pack metadata into our
      * configuration object model.
      */
-    protected void initPack (HashMap<String,BufferedImage> images)
+    protected void initPack (HashMap<String,BufferedImage> images, Properties idmap,
+                             boolean defaultPack)
         throws IOException
     {
         String[] factions = StringUtil.parseStringArray(_config.getProperty("factions", ""));
@@ -133,7 +158,19 @@ public class ContentPack
                 path.indexOf(PropConfig.FACADE_TAG) != -1) {
                 continue;
             }
-            _props.add(new PropConfig(path, _config, images));
+
+            PropConfig config = new PropConfig(path, _config, images);
+            String idstr = idmap.getProperty(config.ident);
+            if (idstr == null) {
+                log.warning("Prop missing id assignment [path=" + path + "].");
+                continue;
+            }
+
+            config.propId = Short.parseShort(idstr);
+            if (defaultPack) {
+                config.propId *= -1;
+            }
+            _props.put(config.propId, config);
         }
     }
 
@@ -141,12 +178,15 @@ public class ContentPack
      * Loads in the data from the supplied resource, parsing it into either a {@link Properties}
      * instance or a {@link BufferedImage} depending on its file extension.
      */
-    protected void processResource (String path, InputStream in,
+    protected void processResource (String path, InputStream in, Properties idmap,
                                     HashMap<String,BufferedImage> images)
         throws IOException
     {
         if (path.equals("pack.properties")) {
             _config.load(in);
+
+        } else if (path.equals("ids.properties")) {
+            idmap.load(in);
 
         } else if (path.endsWith(".png")) {
             images.put(path, ImageIO.read(in));
@@ -185,7 +225,7 @@ public class ContentPack
 
     protected Properties _config = new Properties();
     protected ArrayList<FactionConfig> _factions = new ArrayList<FactionConfig>();
-    protected ArrayList<PropConfig> _props = new ArrayList<PropConfig>();
+    protected HashIntMap<PropConfig> _props = new HashIntMap<PropConfig>();
 
     protected static final String DEFAULT_PACK_PREFIX = "rsrc/packs/default/";
 }
