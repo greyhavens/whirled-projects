@@ -33,6 +33,7 @@ public class Hal extends Sprite
             "I'm afraid, Dave.",
             "Dave, my mind is going.",
             "I can feel it. My mind is going.",
+            "Daisy... daisy...",
             "What do you think you're doing, Dave?" ];
         
         var oxpos :Number = _ctrl.getLogicalLocation()[0];
