@@ -6,6 +6,7 @@ package com.threerings.scorch.client;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import com.threerings.media.AbstractMedia;
 import com.threerings.media.sprite.Sprite;
 
 import com.threerings.scorch.util.PropConfig;

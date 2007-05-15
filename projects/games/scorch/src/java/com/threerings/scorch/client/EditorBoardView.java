@@ -42,7 +42,9 @@ public class EditorBoardView extends ScorchBoardView
     {
         switch (e.getButton()) {
         case MouseEvent.BUTTON1:
-            if (e.isShiftDown()) {
+            if (e.isControlDown()) {
+                pushProp(e.getX(), e.getY(), e.isShiftDown() ? true : false);
+            } else if (e.isShiftDown()) {
                 addProp(e.getX(), e.getY());
             } else {
                 grabProp(e.getX(), e.getY());
@@ -106,6 +108,7 @@ public class EditorBoardView extends ScorchBoardView
         PropConfig config = _props.getSelectedProp();
         if (config != null) {
             PropSprite sprite = new PropSprite(config);
+            sprite.setRenderOrder(getHighestRenderOrder(null)+1);
             sprite.setLocation(x, y);
             addSprite(sprite);
         }
@@ -126,12 +129,45 @@ public class EditorBoardView extends ScorchBoardView
         _grabOffset = null;
     }
 
+    protected void pushProp (int x, int y, boolean pull)
+    {
+        Sprite hit = getSpriteManager().getHighestHitSprite(x, y);
+        if (!(hit instanceof PropSprite)) {
+            return;
+        }
+        hit.setRenderOrder(pull ? getHighestRenderOrder(hit)+1 : getLowestRenderOrder(hit)-1);
+    }
+
     protected void deleteProp (int x, int y)
     {
         Sprite hit = getSpriteManager().getHighestHitSprite(x, y);
         if (hit != null) {
             removeSprite(hit);
         }
+    }
+
+    protected int getHighestRenderOrder (Sprite skip)
+    {
+        int highest = 0;
+        for (Sprite sprite : getSpriteManager().getSprites()) {
+            if (sprite == skip) {
+                continue;
+            }
+            highest = Math.max(sprite.getRenderOrder(), highest);
+        }
+        return highest;
+    }
+
+    protected int getLowestRenderOrder (Sprite skip)
+    {
+        int lowest = 0;
+        for (Sprite sprite : getSpriteManager().getSprites()) {
+            if (sprite == skip) {
+                continue;
+            }
+            lowest = Math.min(sprite.getRenderOrder(), lowest);
+        }
+        return lowest;
     }
 
     protected PropList _props;
