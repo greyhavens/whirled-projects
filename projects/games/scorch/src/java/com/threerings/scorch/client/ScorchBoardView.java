@@ -39,15 +39,6 @@ public class ScorchBoardView extends MediaPanel
     {
     }
 
-    @Override // from JComponent
-    public void paintComponent (Graphics g)
-    {
-        super.paintComponent(g);
-
-        // here we would render things, like our board and perhaps some pieces or whatever is
-        // appropriate for this game
-    }
-
     /** Provides access to client services. */
     protected WhirledContext _ctx;
 

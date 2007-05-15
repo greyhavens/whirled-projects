@@ -51,22 +51,24 @@ public class ScorchPanel extends PlacePanel
 
         // give ourselves a wee bit of a border
 	setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(5, 5));
 
         // create and add our board view
-        add(_bview = new ScorchBoardView(ctx), BorderLayout.CENTER);
+        add(_bview = new EditorBoardView(ctx), BorderLayout.CENTER);
 
         // create a side panel to hold our chat and other extra interfaces
         JPanel sidePanel = GroupLayout.makeVStretchBox(5);
 
         // add a big fat label
         JLabel vlabel = new JLabel(msgs.get("m.title"));
-        vlabel.setFont(new Font("Helvetica", Font.BOLD, 24));
+        vlabel.setFont(new Font("Helvetica", Font.BOLD, 16));
         vlabel.setForeground(Color.black);
         sidePanel.add(vlabel, GroupLayout.FIXED);
 
         // TEMP: display our prop list
-        sidePanel.add(new PropList(ctx));
+        PropList props = new PropList(ctx);
+        _bview.init(props);
+        sidePanel.add(props);
 
 //         // add a chat box
 //         sidePanel.add(new ChatPanel(ctx));
@@ -84,5 +86,5 @@ public class ScorchPanel extends PlacePanel
     protected WhirledContext _ctx;
 
     /** The board view. */
-    protected ScorchBoardView _bview;
+    protected EditorBoardView _bview;
 }

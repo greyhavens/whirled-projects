@@ -44,6 +44,11 @@ public class PropList extends JPanel
         }
     }
 
+    public PropConfig getSelectedProp ()
+    {
+        return (PropConfig)_props.getSelectedValue();
+    }
+
     protected void selectContentPack (ContentPack pack)
     {
         final ArrayList<PropConfig> props = pack.getProps();
