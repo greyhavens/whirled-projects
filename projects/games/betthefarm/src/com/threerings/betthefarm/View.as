@@ -481,7 +481,10 @@ public class View extends Sprite
 
     protected function buzzClick (event :MouseEvent) :void
     {
-        _control.sendMessage(Model.MSG_BUZZ, { player: _myId });
+        // you wouldn't think this test would be necessary...
+        if (_buzzClick.enabled) {
+            _control.sendMessage(Model.MSG_BUZZ, { player: _myId });
+        }
     }
 
     protected function freeInput (event :KeyboardEvent) :void
