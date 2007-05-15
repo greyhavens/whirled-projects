@@ -3,6 +3,8 @@ package {
 import flash.display.Sprite;
 import flash.display.Loader;
 
+import flash.events.IOErrorEvent;
+import flash.events.KeyboardEvent;
 import flash.events.TextEvent;
 
 import flash.text.TextField;
@@ -14,6 +16,8 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.system.SecurityDomain;
 
+import flash.ui.Keyboard;
+
 
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
@@ -21,52 +25,74 @@ import com.whirled.ControlEvent;
 [SWF(width="600", height="450")]
 public class SuperStealer extends Sprite
 {
+    public static const NEW_URL_ACTION :String = "Enter new URL";
+
+    public static const QUERY_URL_MSG :String = "qURL";
+
+    public static const NOTIFY_URL_MSG :String = "URL";
+
     public function SuperStealer ()
     {
         _ctrl = new AvatarControl(this);
         _ctrl.addEventListener(ControlEvent.STATE_CHANGED, handleStateChanged);
+        _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, handleActionTriggered);
+        _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessageReceived);
 
-        // Now that we're listening for state events, see if we are being controlled (by trying to set our state) by the same person
-        // viewing us (our instanceId)
-        var state :String = _ctrl.getState();
-        if (state == null) { 
-            _ctrl.setState("_" + String(_ctrl.getInstanceId()));
-        } else {
-            handleStateChanged();
+        _ctrl.registerActions(NEW_URL_ACTION);
+
+        // whenever we start up, we broadcast an "Oy! What's my URL?" message
+        _ctrl.sendMessage(QUERY_URL_MSG);
+    }
+
+    protected function handleMessageReceived (event :ControlEvent) :void
+    {
+        switch (event.name) {
+        case QUERY_URL_MSG:
+            if (_ctrl.hasControl()) {
+                if (_url != null) {
+                    _ctrl.sendMessage(NOTIFY_URL_MSG, _url);
+
+                } else {
+                    showInputField();
+                }
+            }
+            break;
+
+        case NOTIFY_URL_MSG:
+            loadUrl(event.value as String);
+            break;
         }
     }
 
-
-    protected function addInputField () :void
+    protected function handleActionTriggered (event :ControlEvent) :void
     {
-        if (_input == null) {
-            _input = new TextField();
-            _input.background = true;
-            _input.width = 100;
-            _input.height = 20;
-            _input.type = TextFieldType.INPUT;
-            _input.addEventListener(TextEvent.TEXT_INPUT, handleTextInput);
+        switch (event.name) {
+        case NEW_URL_ACTION:
+            if (_ctrl.hasControl()) {
+                showInputField();
+            }
+            break;
         }
-        addChild(_input);
     }
 
     protected function handleStateChanged (... ignored) :void
     {
-        var state :String = _ctrl.getState();
-        var mode :String = state.charAt(0);
-        state = state.substring(1);
-        switch (mode) {
-        case "_":
-            if (state == String(_ctrl.getInstanceId())) {
-                _inControl = true; // Yeah!! Launch our deeevious plan...
-                addInputField();
-            }
-            break;
+        // nada, currently
+    }
 
-        case "#":
-            loadUrl(state);
-            break;
+    protected function showInputField () :void
+    {
+        if (_input == null) {
+            _input = new TextField();
+            _input.background = true;
+            _input.width = 600;
+            _input.height = 20;
+            _input.type = TextFieldType.INPUT;
+            _input.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown)
+            addChild(_input);
         }
+
+        this.stage.focus = _input;
     }
 
     protected function loadUrl (url :String) :void
@@ -81,6 +107,7 @@ public class SuperStealer extends Sprite
         }
 
         _loader = new Loader();
+        _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadError);
         _loader.load(new URLRequest(url),
             new LoaderContext(false, new ApplicationDomain(null), null));
         addChildAt(_loader, 0);
@@ -95,9 +122,21 @@ public class SuperStealer extends Sprite
         }
     }
 
-    protected function handleTextInput (... ignored) :void
+    protected function handleKeyDown (event :KeyboardEvent) :void
     {
-        _ctrl.setState("#" + _input.text);
+        if (event.keyCode != Keyboard.ENTER) {
+            return;
+        }
+
+        // dispatch with all haste
+        _ctrl.sendMessage(NOTIFY_URL_MSG, _input.text);
+        removeChild(_input);
+        _input = null;
+    }
+
+    protected function loadError (event :IOErrorEvent) :void
+    {
+        trace("Got load error: " + event);
     }
 
     protected var _ctrl :AvatarControl;
