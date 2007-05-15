@@ -49,7 +49,7 @@ public class EditorBoardView extends ScorchBoardView
             }
             break;
 
-        case MouseEvent.BUTTON2:
+        case MouseEvent.BUTTON3:
             deleteProp(e.getX(), e.getY());
             break;
         }
