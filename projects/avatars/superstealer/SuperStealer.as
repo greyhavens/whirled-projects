@@ -3,8 +3,10 @@ package {
 import flash.display.Sprite;
 import flash.display.Loader;
 
+import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.KeyboardEvent;
+import flash.events.ProgressEvent;
 import flash.events.TextEvent;
 
 import flash.text.TextField;
@@ -34,7 +36,6 @@ public class SuperStealer extends Sprite
     public function SuperStealer ()
     {
         _ctrl = new AvatarControl(this);
-        _ctrl.addEventListener(ControlEvent.STATE_CHANGED, handleStateChanged);
         _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, handleActionTriggered);
         _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessageReceived);
 
@@ -75,11 +76,6 @@ public class SuperStealer extends Sprite
         }
     }
 
-    protected function handleStateChanged (... ignored) :void
-    {
-        // nada, currently
-    }
-
     protected function showInputField () :void
     {
         if (_input == null) {
@@ -97,29 +93,32 @@ public class SuperStealer extends Sprite
 
     protected function loadUrl (url :String) :void
     {
+        // avoid pointless dickery
         if (_url == url) {
             return;
         }
 
+        // clean up any old loader
         if (_loader != null) {
+            try {
+                _loader.close();
+            } catch (err :Error) {
+                // ignore
+            }
             _loader.unload();
             removeChild(_loader);
         }
+        _hotSpotSet = false;
 
+        // start loading the new one
         _loader = new Loader();
+        _loader.contentLoaderInfo.sharedEvents.addEventListener("controlConnect", handleConnect);
+        _loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, loadProgress);
+        _loader.contentLoaderInfo.addEventListener(Event.INIT, loadProgress);
         _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadError);
         _loader.load(new URLRequest(url),
             new LoaderContext(false, new ApplicationDomain(null), null));
         addChildAt(_loader, 0);
-
-
-        if (_inControl) {
-            var stateName :String = "#" + _url;
-            if (-1 == _urls.indexOf(stateName)) {
-                _urls.push(url);
-                _ctrl.registerStates.apply(_ctrl, _urls);
-            }
-        }
     }
 
     protected function handleKeyDown (event :KeyboardEvent) :void
@@ -129,14 +128,113 @@ public class SuperStealer extends Sprite
         }
 
         // dispatch with all haste
+        _ctrl.setState(null); // reset state
         _ctrl.sendMessage(NOTIFY_URL_MSG, _input.text);
         removeChild(_input);
         _input = null;
     }
 
+    protected function loadProgress (... ignored) :void
+    {
+        // if the content has set the hotspot already, we don't
+        if (_hotSpotSet) {
+            return;
+        }
+
+        // check size, set the hotspot once it's known
+        try {
+            var w :Number = _loader.contentLoaderInfo.width;
+            var h :Number = _loader.contentLoaderInfo.height;
+            _ctrl.setHotSpot(w/2, h);
+
+        } catch (err :Error) {
+            // oh well!
+        }
+    }
+
     protected function loadError (event :IOErrorEvent) :void
     {
         trace("Got load error: " + event);
+    }
+
+    protected function handleConnect (cheese :Object) :void
+    {
+        // replace all the content's functions with interceptors
+        var propName :String;
+        var newProps :Object = {};
+        for (propName in cheese.userProps) {
+            newProps[propName] = createContentReplacement(propName, cheese.userProps[propName]);
+        }
+        cheese.userProps = newProps;
+
+        // dispatch it upwards
+        this.root.loaderInfo.sharedEvents.dispatchEvent((cheese as Event).clone());
+
+        if (cheese.hostProps != null) {
+            newProps = {};
+            for (propName in cheese.hostProps) {
+                var fn :Function = (cheese.hostProps[propName] as Function);
+                if (fn != null) {
+                    newProps[propName] = createWhirledReplacement(propName, fn);
+                } else {
+                    newProps[propName] = cheese.hostProps[propName];
+                }
+            }
+
+            cheese.hostProps = newProps;
+        }
+    }
+
+    protected function createContentReplacement (name :String, orig :Function) :Function
+    {
+        switch (name) {
+        default:
+            return orig;
+
+        case "messageReceived_v1":
+            return function (... args) :* {
+                var msgName :String = args[0] as String;
+                var arg :Object = args[1];
+                var isAction :Boolean = args[2];
+                if (isAction && (msgName == NEW_URL_ACTION)) {
+                    handleActionTriggered(new ControlEvent("", msgName, arg));
+
+                } else if (!isAction &&
+                        ((msgName == QUERY_URL_MSG) || (msgName == NOTIFY_URL_MSG))) {
+                    handleMessageReceived(new ControlEvent("", msgName, arg));
+
+                } else {
+                    return orig.apply(null, args);
+                }
+            };
+
+        case "getActions_v1":
+            return function (... args) :* {
+                var actions :Array = orig.apply(null, args) as Array;
+                if (actions == null) {
+                    actions = [];
+                } else {
+                    // make a copy
+                    actions = actions.concat();
+                }
+                actions.unshift(NEW_URL_ACTION);
+                return actions;
+            };
+        }
+    }
+
+    protected function createWhirledReplacement (name :String, orig :Function) :Function
+    {
+        switch (name) {
+        default:
+            return orig;
+
+        case "setHotSpot_v1":
+            return function (... args) :* {
+                _hotSpotSet = true;
+                return orig.apply(null, args);
+            };
+        }
     }
 
     protected var _ctrl :AvatarControl;
@@ -149,6 +247,6 @@ public class SuperStealer extends Sprite
 
     protected var _url :String;
 
-    protected var _urls :Array = [];
+    protected var _hotSpotSet :Boolean = false;
 }
 }
