@@ -129,6 +129,7 @@ public class SuperStealer extends Sprite
 
         // dispatch with all haste
         _ctrl.setState(null); // reset state
+        _ctrl.setMoveSpeed(500); // reset to standard move speed
         _ctrl.sendMessage(NOTIFY_URL_MSG, _input.text);
         removeChild(_input);
         _input = null;
@@ -159,9 +160,19 @@ public class SuperStealer extends Sprite
 
     protected function handleConnect (cheese :Object) :void
     {
-        // replace all the content's functions with interceptors
         var propName :String;
         var newProps :Object = {};
+
+        // we have a few properties that NEED implementing, so if they're not there,
+        // force them in
+        var dummyFn :Function = function (... args) :void {};
+        for each (propName in REQUIRED_CONTENT_PROPS) {
+            if (!(propName in cheese.userProps)) {
+                // force in a placeholder
+                cheese.userProps[propName] = dummyFn;
+            }
+        }
+        // replace all the content's functions with interceptors
         for (propName in cheese.userProps) {
             newProps[propName] = createContentReplacement(propName, cheese.userProps[propName]);
         }
@@ -248,5 +259,9 @@ public class SuperStealer extends Sprite
     protected var _url :String;
 
     protected var _hotSpotSet :Boolean = false;
+
+    protected static const REQUIRED_CONTENT_PROPS :Array = [
+        "messageReceived_v1", "getActions_v1", "getStates_v1"
+    ];
 }
 }
