@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -64,7 +63,7 @@ public class ContentPack
     /**
      * Returns all factions specified in this content pack.
      */
-    public Collection<FactionConfig> getFactions ()
+    public ArrayList<FactionConfig> getFactions ()
     {
         return _factions;
     }
@@ -72,7 +71,7 @@ public class ContentPack
     /**
      * Returns the configuration of all props specified in this content pack.
      */
-    public Collection<PropConfig> getProps ()
+    public ArrayList<PropConfig> getProps ()
     {
         return _props;
     }

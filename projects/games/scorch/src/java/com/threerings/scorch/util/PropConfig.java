@@ -42,7 +42,12 @@ public class PropConfig
         image = images.get(path);
         mask = images.get(tagPath(path, MASK_TAG));
         facade = images.get(tagPath(path, FACADE_TAG));
-        System.err.println("Parsed " + ident + " " + image + " " + mask + " " + facade);
+    }
+
+    @Override // from Object
+    public String toString ()
+    {
+        return ident;
     }
 
     protected static String tagPath (String path, String tag)
