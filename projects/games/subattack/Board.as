@@ -63,13 +63,14 @@ public class Board
 
         _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
         if (gameCtrl.isInPlay()) {
+            // TODO: this should never happen
             gameDidStart(null);
         } else {
             _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED,
                 gameDidStart);
-            _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED,
-                gameDidEnd);
         }
+        _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED,
+            gameDidEnd);
     }
 
     /**
@@ -316,6 +317,22 @@ public class Board
         if (mydex >= 0) {
             _gameCtrl.setUserCookie(Submarine(_subs[mydex]).getNewCookie());
         }
+
+        var text :String = "<P align=\"center\"><font size=\"+2\">Game Over</font><br><br>" +
+            "<font size=\"+1\">Final scores:</font><br>";
+
+        var subs :Array = _subs.concat();
+        subs.sort(function (s1 :Submarine, s2 :Submarine) :int {
+            return s2.getScore() - s1.getScore();
+        });
+
+        for each (var sub :Submarine in subs) {
+            text += sub.getPlayerName() + ": " + sub.getKills() + " kills and " +
+                sub.getDeaths() + " deaths.<br>";
+        }
+        text += "</P>";
+
+        _seaDisplay.setStatus(text);
     }
 
     /**
@@ -372,10 +389,17 @@ public class Board
         // then we check torpedo-on-torpedo action, and pass-through
         checkTorpedos();
 
+        if (_gameCtrl.seating.getMyPosition() == 0 && !_endedGame) {
+            checkGameOver();
+        }
+    }
+
+    protected function checkGameOver () :void
+    {
         // find the highest scoring players
         var winners :Array;
         var hiScore :int = int.MIN_VALUE;
-        for each (sub in _subs) {
+        for each (var sub :Submarine in _subs) {
             var score :int = sub.getScore();
             if (score > hiScore) {
                 hiScore = score;
@@ -389,6 +413,7 @@ public class Board
         // maybe end the game and declare them winners
         if (hiScore >= 5 || _totalDeaths >= _maxDeaths) {
             _gameCtrl.endGame(winners);
+            _endedGame = true;
         }
     }
 
@@ -503,6 +528,10 @@ public class Board
 
     /** An array tracking the traversability of each tile. */
     protected var _traversable :Array = [];
+
+    /** Have we already ended the game? (Stop trying to do it again while a few
+     * last ticks trickle in.) */
+    protected var _endedGame :Boolean = false;
 
     protected static const DIMENSIONS :Array = [
         [  0,  0 ], // 0 player game

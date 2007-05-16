@@ -88,6 +88,16 @@ public class Submarine extends BaseSprite
         return _kills - _deaths;
     }
 
+    public function getKills () :int
+    {
+        return _kills;
+    }
+
+    public function getDeaths () :int
+    {
+        return _deaths;
+    }
+
     /**
      * Is this sub dead?
      */
