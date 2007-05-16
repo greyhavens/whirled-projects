@@ -159,26 +159,20 @@ public class Submarine extends BaseSprite
             return DROP;
         }
 
+        if (_movedOrShot) {
+            return CANT;
+        }
+
         if (action == Action.BUILD) {
-            trace("Got build action");
-            if (_moved || _shot) {
-                trace("Had moved or shot: CANT");
-                return CANT;
-            }
             if (++_buildingStep == 3) {
                 _board.buildBarrier(_playerIdx, _x, _y);
                 _buildingStep = 0;
             }
-            _moved = true;
+            _movedOrShot = true;
             return OK;
 
         } else {
             _buildingStep = 0;
-        }
-
-        // if we've already shot, we can do no more
-        if (_shot) {
-            return (action == Action.SHOOT) ? DROP : CANT;
         }
 
         if (action == Action.SHOOT) {
@@ -188,15 +182,10 @@ public class Submarine extends BaseSprite
 
             } else {
                 _torpedos.push(new Torpedo(this, _board));
-                _shot = true;
+                _movedOrShot = true;
                 _shootSound.play();
                 return OK;
             }
-        }
-
-        // otherwise, it's a move request, it'll have to happen next tick
-        if (_moved) {
-            return CANT;
         }
 
         // we can always re-orient
@@ -209,7 +198,7 @@ public class Submarine extends BaseSprite
         }
 
         // we did it!
-        _moved = true;
+        _movedOrShot = true;
         return OK;
     }
 
@@ -219,8 +208,7 @@ public class Submarine extends BaseSprite
     public function tick () :void
     {
         // reset our move counter
-        _moved = false;
-        _shot = false;
+        _movedOrShot = false;
 
         while (_queuedActions.length > 0) {
             var action :int = int(_queuedActions[0]);
@@ -333,14 +321,11 @@ public class Submarine extends BaseSprite
     /** The color transform to use for this submarine. */
     protected var _colorTransform :ColorTransform;
 
-    /** Have we moved this tick yet? */
-    protected var _moved :Boolean;
+    /** Have we moved or shot this tick yet? */
+    protected var _movedOrShot :Boolean;
 
     /** How many steps have we done to do a 'build'. */
     protected var _buildingStep :int = 0;
-
-    /** Have we shot this tick? */
-    protected var _shot :Boolean;
 
     /** Our currently in-flight torpedos. */
     protected var _torpedos :Array = [];
