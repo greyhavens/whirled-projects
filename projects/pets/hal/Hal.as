@@ -22,6 +22,7 @@ public class Hal extends Sprite
         _ctrl = new PetControl(this);
         _ctrl.addEventListener(TimerEvent.TIMER, tick);
         _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, appearanceChanged);
+        _ctrl.addEventListener(ControlEvent.RECEIVED_CHAT, gotChat);
         _ctrl.setTickInterval(5000);
     }
 
@@ -45,8 +46,16 @@ public class Hal extends Sprite
         _ctrl.sendChatMessage(quote);
     }
 
+    protected function gotChat (msg :ControlEvent) :void
+    {
+        if (msg.value.toLocaleLowerCase().search("\\bhal\\b") != -1) {
+            _ctrl.sendChatMessage("What are you doing, " + msg.name + "?");
+        }
+    }
+        
     protected function appearanceChanged (event :ControlEvent) :void
     {
+        /*
         var orient :Number = _ctrl.getOrientation();
         if (orient < 180) {
             _image.x = _image.width;
@@ -56,6 +65,7 @@ public class Hal extends Sprite
             _image.x = 0;
             _image.scaleX = 1;
         }
+        */
     }
 
     protected var _ctrl :PetControl;
