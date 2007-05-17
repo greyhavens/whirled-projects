@@ -11,7 +11,7 @@ import flash.geom.Point;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 
-//import com.whirled.RemixUtil;
+import com.whirled.DataPack;
 
 //[SWF(width="300", height="300")] // data1
 //[SWF(width="200", height="200")] // data2
@@ -22,7 +22,21 @@ public class Clock extends Sprite
     {
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        configureContent();
+        _dataPack = new DataPack(
+            "http://tasman.sea.earth.threerings.net:8080/ClockPack.dpk");
+        _dataPack.addEventListener(Event.COMPLETE, handleDataPackLoaded);
+    }
+
+    protected function handleDataPackLoaded (... ignored) :void
+    {
+        _dataPack.getDisplayObjects(
+            ["face", "hourHand", "minuteHand", "secondHand", "decoration"],
+            gotDisplayObjects);
+    }
+
+    protected function gotDisplayObjects (disps :Object) :void
+    {
+        configureContent(disps);
         updateDisplayedTime();
 
         addEventListener(Event.ENTER_FRAME, handleEnterFrame)
@@ -34,6 +48,11 @@ public class Clock extends Sprite
     protected function handleUnload (event :Event) :void
     {
         removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
+
+        if (_dataPack) {
+            _dataPack.close();
+            _dataPack = null;
+        }
     }
 
     /**
@@ -47,16 +66,16 @@ public class Clock extends Sprite
     /**
      * Configure the clock face and hands.
      */
-    protected function configureContent () :void
+    protected function configureContent (disps :Object) :void
     {
         var center :Point;
 
         // configure the clock's face
-        var face :DisplayObject = getDisplayResource("face");
+        var face :DisplayObject = disps["face"] as DisplayObject;
         if (face != null) {
             addChild(face);
 
-            var faceCenter :Point = RemixUtil.getPoint("faceCenter", Data.data);
+            var faceCenter :Point = _dataPack.getPoint("faceCenter");
             if (faceCenter != null) {
                 center = faceCenter;
 
@@ -70,14 +89,14 @@ public class Clock extends Sprite
         }
 
         // TODO: remove, size is something to be applied to the overall swf
-        var size :Point = RemixUtil.getPoint("size", Data.data);
+        var size :Point = _dataPack.getPoint("size");
         if (size != null) {
             //var size :Array = (content.size as Array);
             //width = int(size[0]);
             //height = int(size[1]);
         }
 
-        var facePos :Point = RemixUtil.getPoint("facePosition", Data.data);
+        var facePos :Point = _dataPack.getPoint("facePosition");
         trace("facePos: " + facePos);
         if (facePos != null) {
             face.x = facePos.x;
@@ -85,14 +104,14 @@ public class Clock extends Sprite
             center = center.add(facePos);
         }
 
-        _hourHand = configureHand("hour", center);
-        _minuteHand = configureHand("minute", center);
-        _secondHand = configureHand("second", center);
-        _smoothSeconds = RemixUtil.getBoolean("smoothSeconds", Data.data);
+        _hourHand = configureHand(disps, "hour", center);
+        _minuteHand = configureHand(disps, "minute", center);
+        _secondHand = configureHand(disps, "second", center);
+        _smoothSeconds = _dataPack.getBoolean("smoothSeconds");
 
-        var decor :DisplayObject = getDisplayResource("decoration");
+        var decor :DisplayObject = disps["decoration"] as DisplayObject;
         if (decor != null) {
-            var decorPos :Point = RemixUtil.getPoint("decorationPoint", Data.data);
+            var decorPos :Point = _dataPack.getPoint("decorationPoint");
             if (decorPos != null) {
                 decor.x = decorPos.x;
                 decor.y = decorPos.y;
@@ -103,6 +122,9 @@ public class Clock extends Sprite
             }
             addChild(decor);
         }
+
+        // and now we're done with the datapack
+        _dataPack = null;
     }
 
     /**
@@ -138,34 +160,35 @@ public class Clock extends Sprite
         hand.rotation = (current * 360) / total;
     }
 
-    /**
-     * Get an instance of DisplayObject specified by the class with the
-     * specified name in the content pack.
-     */
-    protected function getDisplayResource (name :String) :DisplayObject
-    {
-        if (name in Data) {
-            var prop :Object = Data[name];
-            if (prop is DisplayObject) {
-                return (prop as DisplayObject);
-
-            } else if (prop is Class) {
-                var c :Class = (prop as Class);
-                return (new c() as DisplayObject);
-            }
-        }
-        return null;
-    }
+//    /**
+//     * Get an instance of DisplayObject specified by the class with the
+//     * specified name in the content pack.
+//     */
+//    protected function getDisplayResource (name :String) :DisplayObject
+//    {
+//        if (name in Data) {
+//            var prop :Object = Data[name];
+//            if (prop is DisplayObject) {
+//                return (prop as DisplayObject);
+//
+//            } else if (prop is Class) {
+//                var c :Class = (prop as Class);
+//                return (new c() as DisplayObject);
+//            }
+//        }
+//        return null;
+//    }
 
     /**
      * Find and configure the specified hand's display object.
      */
     protected function configureHand (
-        name :String, center :Point, optional :Boolean = false) :DisplayObject
+        disps :Object, name :String, center :Point, optional :Boolean = false)
+        :DisplayObject
     {
-        var hand :DisplayObject = getDisplayResource(name + "Hand");
+        var hand :DisplayObject = disps[name + "Hand"] as DisplayObject;
         if (hand != null) {
-            var point :Point = RemixUtil.getPoint(name + "Point", Data.data);
+            var point :Point = _dataPack.getPoint(name + "Point");
             if (point != null) {
                 // create a wrapper for the hand so that we can apply the offset
                 var wrap :Sprite = new Sprite();
@@ -191,6 +214,8 @@ public class Clock extends Sprite
         }
         return null;
     }
+
+    protected var _dataPack :DataPack;
 
     /** The hours hand. */
     protected var _hourHand :DisplayObject;
