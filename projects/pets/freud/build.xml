@@ -1,0 +1,15 @@
+<!-- build configuration -->
+<project name="freud" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"  value="Freud"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+  <!-- testing only -->
+  <target name="dist" depends="compile">
+    <copy file="Freud.swf" tofile="/export/msoy/pages/media/f189658b395b88d192645f5a35282f6123fb0009.swf"/>
+  </target>
+
+</project>
