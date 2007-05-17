@@ -20,10 +20,6 @@ public class PropSprite extends Sprite
     {
         super(config.image.getWidth(), config.image.getHeight());
         _config = config;
-
-        // place our hotspot at bottom center
-        _oxoff = _bounds.width/2;
-        _oyoff = _bounds.height;
     }
 
     /**

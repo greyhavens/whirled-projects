@@ -42,6 +42,8 @@ public class ScorchBoard
     {
         DataInputStream din = new DataInputStream(
             new ByteArrayInputStream(StringUtil.unhexlate(encoded)));
+        _width = din.readInt();
+        _height = din.readInt();
         _packId = din.readUTF();
         _propIds = new short[din.readShort()];
         _propXs = new short[_propIds.length];
@@ -51,6 +53,31 @@ public class ScorchBoard
             _propXs[ii] = din.readShort();
             _propYs[ii] = din.readShort();
         }
+    }
+
+    /**
+     * Returns the width in pixels of this board.
+     */
+    public int getWidth ()
+    {
+        return _width;
+    }
+
+    /**
+     * Returns the height in pixels of this board.
+     */
+    public int getHeight ()
+    {
+        return _height;
+    }
+
+    /**
+     * Configures the board's dimensions.
+     */
+    public void setDimensions (int width, int height)
+    {
+        _width = width;
+        _height = height;
     }
 
     /**
@@ -119,6 +146,8 @@ public class ScorchBoard
         try {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             DataOutputStream dout = new DataOutputStream(bout);
+            dout.writeInt(_width);
+            dout.writeInt(_height);
             dout.writeUTF(_packId);
             dout.writeShort((short)_propIds.length);
             for (int ii = 0; ii < _propIds.length; ii++) {
@@ -134,8 +163,7 @@ public class ScorchBoard
         }
     }
 
+    protected int _width, _height;
     protected String _packId;
-    protected short[] _propIds;
-    protected short[] _propXs;
-    protected short[] _propYs;
+    protected short[] _propIds, _propXs, _propYs;
 }

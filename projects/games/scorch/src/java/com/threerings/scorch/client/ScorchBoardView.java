@@ -4,10 +4,14 @@
 package com.threerings.scorch.client;
 
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import com.threerings.media.MediaPanel;
+import com.threerings.media.sprite.Sprite;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
-import com.threerings.media.MediaPanel;
 
 import com.whirled.util.WhirledContext;
 
@@ -17,7 +21,7 @@ import com.threerings.scorch.data.ScorchObject;
  * Displays the main game interface (the board).
  */
 public class ScorchBoardView extends MediaPanel
-    implements PlaceView
+    implements PlaceView, KeyListener
 {
     /**
      * Constructs a view which will initialize itself and prepare to display the game board.
@@ -28,20 +32,100 @@ public class ScorchBoardView extends MediaPanel
         _ctx = ctx;
     }
 
+    public void setActiveUnit (UnitSprite sprite)
+    {
+        _active = sprite;
+    }
+
     // from interface PlaceView
     public void willEnterPlace (PlaceObject plobj)
     {
         _gameobj = (ScorchObject)plobj;
+        _ctx.getKeyDispatcher().addGlobalKeyListener(this);
     }
 
     // from interface PlaceView
     public void didLeavePlace (PlaceObject plobj)
     {
+        _ctx.getKeyDispatcher().removeGlobalKeyListener(this);
+    }
+
+    // from interface KeyListener
+    public void keyTyped (KeyEvent e)
+    {
+        // not used
+    }
+
+    // from interface KeyListener
+    public void keyPressed (KeyEvent e)
+    {
+        if (_active == null) {
+            return;
+        }
+
+        switch (e.getKeyCode()) {
+        case KeyEvent.VK_LEFT:
+            _active.setVelocity(-25, 0);
+            break;
+        case KeyEvent.VK_RIGHT:
+            _active.setVelocity(25, 0);
+            break;
+        }
+    }
+
+    // from interface KeyListener
+    public void keyReleased (KeyEvent e)
+    {
+        if (_active == null) {
+            return;
+        }
+
+        switch (e.getKeyCode()) {
+        case KeyEvent.VK_LEFT:
+        case KeyEvent.VK_RIGHT:
+            _active.setVelocity(0, 0);
+            break;
+        }
+    }
+
+    @Override // from MediaPanel
+    public void addSprite (Sprite sprite)
+    {
+        super.addSprite(sprite);
+
+        if (sprite instanceof PhysicsEngine.Entity) {
+            _engine.addEntity((PhysicsEngine.Entity)sprite);
+        }
+    }
+
+    @Override // from MediaPanel
+    public void removeSprite (Sprite sprite)
+    {
+        super.removeSprite(sprite);
+
+        if (sprite instanceof PhysicsEngine.Entity) {
+            _engine.removeEntity((PhysicsEngine.Entity)sprite);
+        }
+    }
+
+    @Override // from MediaPanel
+    protected void willTick (long tickStamp)
+    {
+        super.willTick(tickStamp);
+
+        // tick our physics engine
+        _engine.tick(tickStamp);
     }
 
     /** Provides access to client services. */
     protected WhirledContext _ctx;
 
+    /** Handles our (primitive) physics. */
+    protected PhysicsEngine _engine = new PhysicsEngine();
+
     /** A reference to our game object. */
     protected ScorchObject _gameobj;
+
+    /** The currently active unit sprite. */
+    protected UnitSprite _active;
 }

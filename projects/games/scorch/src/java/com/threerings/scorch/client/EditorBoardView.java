@@ -46,11 +46,13 @@ public class EditorBoardView extends ScorchBoardView
         for (int ii = 0, ll = board.getPropCount(); ii < ll; ii++) {
             addProp(board.getPropConfig(ii), board.getPropX(ii), board.getPropY(ii));
         }
+        _engine.setBoard(board);
     }
 
     public ScorchBoard exportBoard ()
     {
         ScorchBoard board = new ScorchBoard();
+        board.setDimensions(getWidth(), getHeight()); // TODO
         ArrayList<PropConfig> props = new ArrayList<PropConfig>();
         ArrayList<Point> locs = new ArrayList<Point>();
         for (Sprite sprite : getSpriteManager().getSprites()) {
@@ -94,6 +96,18 @@ public class EditorBoardView extends ScorchBoardView
             if (prop != null) {
                 removeSprite(prop);
             }
+            break;
+
+        case MouseEvent.BUTTON2: // TEMP: for testing
+            // update the engine's idea of the board
+            _engine.setBoard(exportBoard());
+
+            // drop a unit into the mix
+            UnitSprite sprite = new UnitSprite();
+            sprite.setLocation(300, 300);
+            addSprite(sprite);
+            sprite.setAcceleration(0, 250);
+            setActiveUnit(sprite);
             break;
         }
     }
@@ -149,7 +163,7 @@ public class EditorBoardView extends ScorchBoardView
         if (config != null) {
             PropSprite sprite = new PropSprite(config);
             sprite.setRenderOrder(getHighestRenderOrder(null)+1);
-            sprite.setLocation(x, y);
+            sprite.setLocation(x - sprite.getWidth()/2, y - sprite.getHeight()/2);
             addSprite(sprite);
         }
     }
