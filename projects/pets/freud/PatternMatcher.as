@@ -8,23 +8,27 @@ public class PatternMatcher
     
     /** Pattern definitions. */
     public static const PATTERNS :Array = [
-        [ "hello", [ "hi there!", "hello there" ] ],
-        [ "freud", "hello, $name" ],
+        [ "GREETING", [ "hi there!", "hello there", "how are you?",
+                        "hi, ~name", "hello, ~name" ] ],
+        [ "freud", "hello, ~name" ],
+        [ "test", "~areyou testing me?" ],
         [ "repeat (WORDS)", "here you go: $1" ],
 
         // Statements about people
-        [ "(he|she) WORDS NICEADJ", [ "is $1 special to you?",
-                                      "what else is $1 like?",
-                                      "$1 means a lot to you?",
-                                      "what does it mean to you when $1 is in your life?" ] ],
-        [ "(he|she) WORDS BADADJ",  [ "is $1 someone you dislike?",
+        [ "(PRONOUN) COPULA NICEADJ", [ "is $1 special to you?",
+                                        "what else is $1 like?",
+                                        "~maybe $1 means a lot to you?",
+                                        "~please ~talkabout that" ] ],
+        [ "(PRONOUN) COPULA BADADJ",  [ "is $1 someone you dislike?",
                                       "does $1 ever do anything you appreciate?",
                                       "what does $1 mean to you?",
                                       "would you prefer if $1 were not around you?" ] ],
-        [ "(he|she) is WORDS", [ "what else $2 $1 like?",
-                                 "is there something about $1 you really like?",
-                                 "is $1 someone you look up to?",
-                                 "does it annoy you?" ] ],
+        [ "(PRONOUN) WORDS BADADJ", [ "tell me ~something about what $1 is like",
+                                      "~areyou ~afraidof that?" ] ],
+        [ "(PRONOUN) (COPULA)", [ "what else $2 $1 like?",
+                                  "is there something about $1 you really like?",
+                                  "$2 $1 someone you'd look up to?",
+                                  "does it annoy you?" ] ],
 
         // Statements about unknown topic
         [ "i (NICEVERB) (WORDS)", [ "you feel strongly about $2",
@@ -35,9 +39,28 @@ public class PatternMatcher
                                     "does it make you feel energized to talk about it?",
                                     "do you like $2 even one bit?" ] ],
 
-        // Catch-alls
+        // Statements about self
+        [ "i (DESIREVERB) (WORDS)", [ "~whysay you $1 that?", "are you unhappy because you $1 $2?",
+                                      "why do you $1 $2?", "are you ~sure you $1 $2?" ] ],
+        [ "i am not", [ "~whysay you are not?",
+                        "~talkabout why you think you are not",
+                        "~please ~talkabout that",
+                        "~continue" ] ],
         [ "i am", [ "how often?", "do you wish you weren't?", "how do you feel about that?",
                     "are you really?", "you are?" ] ],
+
+        // Justifications
+        [ "why", [ "~maybe that ~isrelated to why you came to me",
+                   "~areyou ~afraidof that possibility?", "~please ~talkabout that" ] ],
+        [ "because", [ "are you ~sure", "maybe this ~isrelated to how you're feeling",
+                       "is that the reason?" ] ],
+        
+        // Catch-alls
+        [ "yes", [ "~whysay that is so?", "i don't think so", "is it ~randomadj?",
+                   "~maybe this ~isrelated your problems" ] ],
+        [ "no", [ "~areyou ~sure?", "do you find it at all ~randomadj?", "~maybe you're wrong" ] ],
+        [ "(FAMILY)", "~please ~talkabout your $1" ],
+        [ "", "~please ~talkabout your ~interests" ],
         
         ];
 
@@ -45,8 +68,8 @@ public class PatternMatcher
     public static const SHORTCUTS :Array = [
         [ "PRONOUN_POSSESSIVE", "(?:my|your|his|her|its|our|their)" ],
         [ "PRONOUN_ACCUSATIVE", "(?:me|you|him|her|it|us|them)" ],
-        [ "PRONOUN", "(?:I|you|he|she|it|we|they)" ],
-        [ "COPULA", "is|are" ],
+        [ "PRONOUN", "\\b(?:I|you|he|she|it|we|they)\\b" ],
+        [ "COPULA", "\\b(?:is|are)\\b" ],
         [ "WORDS", "(?:\\w+\\s*)+" ],
         [ "WORD", "\\w+" ],
         [ "NICEADJ", "(?:nice|sweet|lovely|pretty|cool|awesome|cheer)" ],
@@ -54,6 +77,10 @@ public class PatternMatcher
         [ "NICEVERB", "(?:like|enjoy|love|hug|lub|heart)s?" ],
         [ "BADVERB", "(?:dislike|hate|despise|loathe)s?" ],
         [ "NICESTUFF", ".*(?:NICEADJ|love|neat)" ],
+        [ "GREETING", "(?:\\bhi\\b|hello|howdy|greetings)" ],
+        [ "DESIREVERB", "(?:want|wish|desire|like|hope|dream|need)s?" ],
+        [ "MOODADJ", "(?:frustrated|depressed|annoyed|upset|excited|worried|lonely|angry|mad)" ],
+        [ "FAMILY", "(?:wife|husband|partner|kid|children|child|parent|brother|sister)s?" ],
         ];
 
 
@@ -65,8 +92,14 @@ public class PatternMatcher
         [ "'m", " am" ],
         [ "'re", " are" ],
         [ "'s", " is" ],
+        [ "'ve", " have" ],
+        [ "'d", " would" ],
+        [ "n't", " not" ],
+        [ "won't", "will not" ],
+        [ "can't", "can not" ], // yeah, not grammatical, but easy to parse
         // remove filler words
-        [ "//b(?:so|really|frankly|actually)//b", "" ],
+        [ "//b(?:so|really|frankly|actually|please|eh|oh|maybe|perhaps|well)//b", "" ],
+        [ "//b(?:yes|no),", "" ],
         // remove punctuation
         [ "[!?.,;:'\"\\-=_+]", "" ],
         [ "  ", " " ],
@@ -86,24 +119,52 @@ public class PatternMatcher
         [ "___", "" ],
         ];
 
-    /** Agreement post-processing. */
+    /** Unwrap special production variables */
+    public static const CONSTANTS :Array = [
+        [ "~areyou", [ "are you", "have you been", "have you been",
+                       "do you think you are", "are you perhaps" ] ],
+        [ "~sure",   [ "sure", "positive", "certain", "absolutely sure" ] ],
+        [ "~relation", [ "your relationship with", "something you remember about",
+                         "your feelings toward", "some experiences you've had with",
+                         "how you feel about" ] ],
+        [ "~continue", [ "continue", "proceed", "go on", "keep going" ] ],
+        [ "~afraidof", [ "afraid of", "scared of", "frightened by" ] ],
+        [ "~isrelated", [ "has something to do with", "is related to", "could be the reason for",
+                          "is caused by", "is because of" ] ],
+        [ "~arerelated", [ "have something to do with", "are related to",
+                           "could be the reasons for", "are caused by", "are because of" ] ],
+        [ "~maybe", [ "maybe", "perhaps", "possibly" ] ],
+        [ "~whysay", [ "why do you say", "what makes you believe", "are you sure",
+                       "do you really think", "what makes you think" ] ],
+        [ "~isee", [ "i see...", "yes,", "i understand.", "oh." ] ],
+        [ "~randomadj", [ "vivid", "stimulating", "exciting", "boring", "interesting",
+                          "recent", "random", "usual", "shocking", "embarrassing" ] ],
+        [ "~something", [ "something", "more", "how do you feel" ] ],
+        [ "~please", [ "", "", "", "please,", "please", "perhaps you could", "could you please",
+                       "why don't you", "could you", "i would appreciate it if you would" ] ],
+        [ "~talkabout", [ "tell me about", "say more about", "describe", "tell me more about" ] ],
+        [ "~interests", [ "plans", "dreams", "goals", "friends",
+                          "problems", "inhibitions", "mother", "parents" ] ],
+        ];
+    
+    /** Person/number agreement post-processing. */
     public static const POSTPROCESSING :Array = [
-        [ "\\b(i|you) does\\b", "$1 do" ],
-        [ "\\bdoes (i|you)\\b", "do $1" ],
+        [ "\\b(i|you|we|they) does\\b", "$1 do" ],
+        [ "\\bdoes (i|you|we|they)\\b", "do $1" ],
         [ "\\b(he|she|it) do\\b", "$1 does" ],
         [ "\\bdo (he|she|it)\\b", "does $1" ],
         
-        [ "\\b(i|you) has\\b", "$1 have" ],
-        [ "\\bhas (i|you)\\b", "have $1" ],
+        [ "\\b(i|you|we|they) has\\b", "$1 have" ],
+        [ "\\bhas (i|you|we|they)\\b", "have $1" ],
         [ "\\b(he|she|it) have\\b", "$1 has" ],
         [ "\\bhas (he|she|it)\\b", "has $1" ],
 
         [ "\\b(he|she|it) (am|are)\\b", "$1 is" ],
-        [ "\\b(am|are) (he|she|it)\\b", "is $2" ],
-        [ "\\byou (am|is)\\b", "you are" ],
-        [ "\\b(am|is) you\\b", "are you" ],
-        [ "\\bi (are|is)\\b", "i am" ],
-        [ "\\b(are|is) i\\b", "am i" ],
+        [ "\\b(?:am|are) (he|she|it)\\b", "is $1" ],
+        [ "\\b(we|you|they) (am|is)\\b", "$1 are" ],
+        [ "\\b(?:am|is) (we|you|they)\\b", "are $1" ],
+        [ "\\b(i|me) (are|is)\\b", "i am" ],
+        [ "\\b(are|is) (me|i)\\b", "am i" ],
         ];
 
     public function PatternMatcher ()
@@ -125,6 +186,7 @@ public class PatternMatcher
     {
         var response :String;
         var t :String = replace(text.toLocaleLowerCase(), PREPROCESSING);
+        trace("PROCESSED INPUT: " + t);
         
         _regexps.some(function (pair :Array, i :int, a :Array) :Boolean {
                 return (response = processPattern(pair[0], pair[1], t, speaker)) != null;
@@ -141,6 +203,8 @@ public class PatternMatcher
         if (result == null) {
             return null;
         }
+
+        trace("MATCHED REGEXP: " + re);
 
         // the line matched! pick a replacement
         if (response is Array) {
@@ -166,7 +230,7 @@ public class PatternMatcher
                                     [ "$3", replace(bindings[3], POV) ],
                                     [ "$4", replace(bindings[4], POV) ],
                                     [ "$5", replace(bindings[5], POV) ],
-                                    [ "$name", speaker ] ];
+                                    [ "~name", speaker ] ];
 
         //response = replace(response.toLowerCase(), replacements);
         
@@ -177,9 +241,9 @@ public class PatternMatcher
 //                trace("RESPONSE: " + response);
             }
         
-        
-        // revert the point of view
-        response = replace(response.toLowerCase(), POSTPROCESSING);
+        response = replace(response.toLowerCase(), CONSTANTS);
+        trace("RESPONSE: " + response);
+        response = replace(response, POSTPROCESSING);
         trace("FINAL RESPONSE: " + response);
         
         return response;
@@ -191,7 +255,15 @@ public class PatternMatcher
         if (input == null) return null;
         
         pairs.forEach(function (def :Array, i :int, a :Array) :void {
-                input = input.replace(new RegExp(def[0], "gi"), def[1]);
+                var pattern :RegExp = new RegExp(def[0], "gi");
+                var replacement :String = def[1] as String;
+                // if the replacement is an array, pick a random element
+                if (def[1] is Array) {
+                    var i :int = int(Math.floor(Math.random() * (def[1] as Array).length));
+                    replacement = (def[1] as Array)[i] as String;
+                }
+
+                 input = input.replace(pattern, replacement);
 //                trace("REPLACE: " + input);
             });
 
