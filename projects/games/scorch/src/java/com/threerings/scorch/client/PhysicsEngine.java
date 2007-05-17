@@ -127,8 +127,6 @@ public class PhysicsEngine
                 // TODO: set OP_OVER?
                 gfx.drawImage(prop.image, px, py, null);
             }
-            System.err.println("Stamped " + prop.image.getWidth() + "x" + prop.image.getHeight() +
-                               "+" + px + "+" + py);
         }
         gfx.dispose();
     }
