@@ -88,16 +88,7 @@ public class Clock extends Sprite
             center = new Point();
         }
 
-        // TODO: remove, size is something to be applied to the overall swf
-        var size :Point = _dataPack.getPoint("size");
-        if (size != null) {
-            //var size :Array = (content.size as Array);
-            //width = int(size[0]);
-            //height = int(size[1]);
-        }
-
         var facePos :Point = _dataPack.getPoint("facePosition");
-        trace("facePos: " + facePos);
         if (facePos != null) {
             face.x = facePos.x;
             face.y = facePos.y;
@@ -160,25 +151,6 @@ public class Clock extends Sprite
         hand.rotation = (current * 360) / total;
     }
 
-//    /**
-//     * Get an instance of DisplayObject specified by the class with the
-//     * specified name in the content pack.
-//     */
-//    protected function getDisplayResource (name :String) :DisplayObject
-//    {
-//        if (name in Data) {
-//            var prop :Object = Data[name];
-//            if (prop is DisplayObject) {
-//                return (prop as DisplayObject);
-//
-//            } else if (prop is Class) {
-//                var c :Class = (prop as Class);
-//                return (new c() as DisplayObject);
-//            }
-//        }
-//        return null;
-//    }
-
     /**
      * Find and configure the specified hand's display object.
      */
@@ -199,7 +171,6 @@ public class Clock extends Sprite
                 wrap.x = center.x;
                 wrap.y = center.y;
 
-                trace("Added wrapped hand '" + name + "', at " + (-point.x) + ", " + (-point.y));
                 addChild(wrap);
                 // our caller doesn't need to know that it's getting
                 // the wrapper
