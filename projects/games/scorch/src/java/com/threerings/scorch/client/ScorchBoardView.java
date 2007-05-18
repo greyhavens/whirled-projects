@@ -3,7 +3,10 @@
 
 package com.threerings.scorch.client;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -65,10 +68,15 @@ public class ScorchBoardView extends MediaPanel
 
         switch (e.getKeyCode()) {
         case KeyEvent.VK_LEFT:
-            _active.setVelocity(-25, 0);
+            _active.setVelocity(-100, 0);
+            _active.setContactAcceleration(-300);
             break;
         case KeyEvent.VK_RIGHT:
-            _active.setVelocity(25, 0);
+            _active.setVelocity(100, 0);
+            _active.setContactAcceleration(300);
+            break;
+        case KeyEvent.VK_SPACE:
+            _active.addAcceleration(0, -600);
             break;
         }
     }
@@ -83,7 +91,10 @@ public class ScorchBoardView extends MediaPanel
         switch (e.getKeyCode()) {
         case KeyEvent.VK_LEFT:
         case KeyEvent.VK_RIGHT:
-            _active.setVelocity(0, 0);
+            _active.setContactAcceleration(0);
+            break;
+        case KeyEvent.VK_SPACE:
+            _active.addAcceleration(0, 600);
             break;
         }
     }
@@ -109,12 +120,27 @@ public class ScorchBoardView extends MediaPanel
     }
 
     @Override // from MediaPanel
+    public void clearSprites ()
+    {
+        super.clearSprites();
+        _engine.clearEntities();
+    }
+
+    @Override // from MediaPanel
     protected void willTick (long tickStamp)
     {
         super.willTick(tickStamp);
 
         // tick our physics engine
         _engine.tick(tickStamp);
+    }
+
+    @Override // from MediaPanel
+    protected void paintBehind (Graphics2D gfx, Rectangle dirtyRect)
+    {
+        super.paintBehind(gfx, dirtyRect);
+        gfx.setColor(Color.white);
+        gfx.fill(dirtyRect);
     }
 
     /** Provides access to client services. */

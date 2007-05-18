@@ -4,6 +4,7 @@
 package com.threerings.scorch.util;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import javax.imageio.ImageIO;
 
 import java.io.BufferedReader;
@@ -189,7 +190,12 @@ public class ContentPack
             idmap.load(in);
 
         } else if (path.endsWith(".png")) {
-            images.put(path, ImageIO.read(in));
+            BufferedImage image = ImageIO.read(in);
+            if (!(image.getColorModel() instanceof IndexColorModel)) {
+                log.warning("Non-8-bit colormapped image skipped [path=" + path + "].");
+            } else {
+                images.put(path, image);
+            }
 
         } else {
             log.info("Skipping unknown resource '" + path + "'.");

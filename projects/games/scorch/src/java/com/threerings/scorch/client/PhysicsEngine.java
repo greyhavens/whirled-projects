@@ -3,11 +3,17 @@
 
 package com.threerings.scorch.client;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
+
+import com.samskivert.util.StringUtil;
+
+import net.phys2d.math.Vector2f;
 
 import com.threerings.scorch.data.ScorchBoard;
 import com.threerings.scorch.util.PropConfig;
@@ -37,74 +43,96 @@ public class PhysicsEngine
         /** Provides the entity with access to its physical state. Changes to the state will be
          * reflected on the next tick of the physics engine. */
         public void setEntityData (EntityData data);
+
+        /** Displays debugging information about this entity. */
+        public void setDebug (float ax, float ay, float vx, float vy);
     }
 
     /** Tracks physical state for a particular entity. */
-    public static class EntityData
+    public class EntityData
     {
         public Entity entity;
 
-        public float curx, cury;
-        public float velx, vely;
-        public float accx, accy;
+        public Vector2f pos = new Vector2f();
+        public Vector2f vel = new Vector2f();
+        public Vector2f acc = new Vector2f();
+
+        public float conaccx;
 
         public EntityData (Entity entity) {
             this.entity = entity;
             entity.setEntityData(this);
-            curx = entity.getX();
-            cury = entity.getY();
+            pos.x = entity.getX();
+            pos.y = entity.getY();
         }
 
-        public void tick (PhysicsEngine engine, float dt) {
-            // nothing doing if we're not moving'
-            if (velx == 0 && vely == 0 && accx == 0 && accy == 0) {
-                return;
+        public void tick (float dt) {
+            int pixx = Math.round(pos.x), pixy = Math.round(pos.y);
+
+            // compute our total acceleration
+            _racc.set(acc);
+            _racc.add(_gravacc);
+
+            // if we're in contact with the ground, apply contact velocity
+            boolean contact = haveTerrain(pixx, pixy+1);
+            if (contact) {
+                _racc.x += conaccx;
             }
 
-            float newx = curx + velx * dt, newy = cury + vely * dt;
-            velx += accx * dt;
-            vely += accy * dt;
+            // update our velocity
+            vel.addScaled(_racc, dt);
 
-            // step through the locations we will traverse from our starting position to our
-            // new position and see if we collide with anything along the way
-            int pixx = Math.round(curx), pixy = Math.round(cury);
-            int steps = (int)Math.ceil(Math.max(Math.abs(newx - curx), Math.abs(newy - cury)));
-            float dx = (newx - curx)/steps, dy = (newy - cury)/steps;
-            System.err.println("Moving from " + cury + " to " + newy + " in " + steps + " steps.");
+            // if we're in contact with the ground, apply friction
+            if (contact) {
+                if (vel.x > 0) {
+                    vel.x = Math.max(vel.x - _fricaccx * dt, 0);
+                } else {
+                    vel.x = Math.min(vel.x + _fricaccx * dt, 0);
+                }
+            }
+
+            // display debugging information
+            entity.setDebug(_racc.x, _racc.y, vel.x, vel.y);
+
+            // compute our potential new position
+            _npos.set(pos);
+            _npos.addScaled(vel, dt);
+
+            // determine how many pixels we would travel in both directions and adjust our
+            // timeslice such that we step one pixel at a time
+            int steps = (int)Math.ceil(
+                Math.max(Math.abs(_npos.x - pos.x), Math.abs(_npos.y - pos.y)));
+            float stepdt = dt/steps;
+
+            // log.info("Moving from " + pos + " to " + _npos + " in " + steps + " steps.");
+            _npos.set(pos);
             for (int ii = 0; ii < steps; ii++) {
-                pixx = Math.round(curx + dx);
-                pixy = Math.round(cury + dy);
+                _npos.addScaled(vel, stepdt);
+                int oldx = pixx, oldy = pixy;
+                pixx = Math.round(_npos.x);
+                pixy = Math.round(_npos.y);
 
-                // if we didn't hit anything, keep going
-                if (!engine.collides(this, pixx, pixy)) {
-                    curx += dx;
-                    cury += dy;
+                // if we didn't hit anything, keep going (we do this check so that we can only
+                // compute collisions once when we're flying through the air)
+                if (!haveTerrain(pixx, pixy)) {
+                    pos.set(_npos);
                     continue;
                 }
 
-                System.err.println("Collided at " + pixx + " " + pixy + ".");
+                // compute the normal to the line approximation at the collision point
+                slope(pixx, pixy, oldx, oldy, _snorm);
 
-                // if our velocity is small, just stop at our previous position
-                if (steps < 4) {
-                    pixx = Math.round(curx);
-                    pixy = Math.round(cury);
-                    accx = accy = 0;
-                    velx = vely = 0;
-
-                } else {
-                    // if we're moving fast, stop at our current position and bounce back the other
-                    // direction a bit, but set our acceleration such that we'll return in this
-                    // direction more slowly and settle into the right spot
-                    accx = velx;
-                    accy = vely;
-                    velx *= -0.25;
-                    vely *= -0.25;
-                }
-                break; // TODO: tell entity about collision
+                // reflect the velocity vector around said line approximation:
+                // Vr = V - 2(V dot N)N
+                vel.addScaled(_snorm, -2 * vel.dot(_snorm));
             }
 
-            entity.setLocation(pixx, pixy);
+            entity.setLocation(Math.round(pos.x), Math.round(pos.y));
         }
+
+        protected Vector2f _racc = new Vector2f();
+        protected Vector2f _npos = new Vector2f();
+        protected Vector2f _snorm = new Vector2f();
     }
 
     /**
@@ -114,19 +142,14 @@ public class PhysicsEngine
     {
         // create a 1-bit-per-pixel bitmap
         _terrain = new BufferedImage(
-            board.getWidth(), board.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
+            _width = board.getWidth(), _height = board.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
 
         // paint our props onto the terrain
         Graphics2D gfx = _terrain.createGraphics();
         for (int ii = 0, ll = board.getPropCount(); ii < ll; ii++) {
             PropConfig prop = board.getPropConfig(ii);
             int px = board.getPropX(ii), py = board.getPropY(ii);
-            if (prop.mask != null) {
-                gfx.drawImage(prop.mask, px, py, null);
-            } else {
-                // TODO: set OP_OVER?
-                gfx.drawImage(prop.image, px, py, null);
-            }
+            gfx.drawImage(prop.mask, px, py, null);
         }
         gfx.dispose();
     }
@@ -157,6 +180,14 @@ public class PhysicsEngine
     }
 
     /**
+     * Clears out all entities.
+     */
+    public void clearEntities ()
+    {
+        Arrays.fill(_entities, null);
+    }
+
+    /**
      * Called once per frame to update the state of all physical entities.
      */
     public void tick (long tickStamp)
@@ -170,7 +201,7 @@ public class PhysicsEngine
             EntityData entity = _entities[ii];
             if (entity != null) {
                 try {
-                    entity.tick(this, dt);
+                    entity.tick(dt);
                 } catch (Exception e) {
                     log.log(Level.WARNING, "Entity choked in tick '" + entity.entity + "'.", e);
                 }
@@ -206,15 +237,52 @@ public class PhysicsEngine
         return curlength;
     }
 
-    protected boolean collides (EntityData edata, int curx, int cury)
+    // TODO: once we're ready to benchmark, try making this final
+    protected boolean haveTerrain (int x, int y)
     {
-        if (curx < 0 || curx >= _terrain.getWidth() ||
-            cury < 0 || cury >= _terrain.getHeight()) {
-            return false;
+        if (x < 0 || x >= _width || y < 0 || y >= _height) {
+            return true;
         }
-        int color = _terrain.getRGB(curx, cury) & 0xFFFFFF;
-        // System.err.println("Collides at +" + curx + "+" + cury + ": " + color);
-        return color != 0;
+        return (_terrain.getRGB(x, y) & 0xFFFFFF) != 0;
+    }
+
+    /**
+     * Computes the slope at the supplied collision x and y position using the supplied previous x
+     * and y position to properly effect the search.
+     */
+    protected void slope (int cx, int cy, int px, int py, Vector2f norm)
+    {
+        // depending on which direction our previous point is relative to our collision point, we
+        // start at the specified coordinates in the context "ring" around our collision point; you
+        // really need a diagram to understand this, alas
+        int sidx = PREV_TO_SLOPE[py-cy+1][px-cx+1];
+
+        // now search clockwise for the "left" slope intersection
+        int leftx = 0, lefty = 0;
+        for (int ii = 1; ii <= SLOPE_SEARCH; ii++) {
+            int lidx = (sidx + ii) % SLOPE_CONTEXT_X.length;
+            leftx = cx + SLOPE_CONTEXT_X[lidx];
+            lefty = cy + SLOPE_CONTEXT_Y[lidx];
+            if (haveTerrain(leftx, lefty)) {
+                break;
+            }
+        }
+        // if we found no terrain, we'll use the last searched point
+
+        // now search counter clockwise for the "right" slope intersection
+        int rightx = 0, righty = 0;
+        for (int ii = 1; ii < SLOPE_SEARCH; ii++) {
+            int lidx = (sidx + SLOPE_CONTEXT_X.length - ii) % SLOPE_CONTEXT_X.length;
+            rightx = cx + SLOPE_CONTEXT_X[lidx];
+            righty = cy + SLOPE_CONTEXT_Y[lidx];
+            if (haveTerrain(rightx, righty)) {
+                break;
+            }
+        }
+        // if we found no terrain, we'll use the last searched point
+
+        norm.set(-(righty-lefty), (rightx-leftx));
+        norm.normalize();
     }
 
     /** Tracks physical state for our managed entities. */
@@ -229,6 +297,30 @@ public class PhysicsEngine
     /** The time at which we were last ticked. */
     protected long _lastTickStamp;
 
+    /** Acceleration from gravity. */
+    protected Vector2f _gravacc = new Vector2f(0, 500);
+
+    /** Velocity attenuation from friction (TODO: get this from the material?). */
+    protected float _fricaccx = 250;
+
+    /** The dimensions of the board. */
+    protected int _width, _height;
+
     /** Contains our terrain bitmap. */
     protected BufferedImage _terrain;
+
+    /** PREV_TO_SLOPE[py-cy+1)][px-cx+1] = starting index in slope context. */
+    protected static final int[][] PREV_TO_SLOPE = {
+        { 0, 2, 4 }, { 14, -1, 6 }, { 12, 10, 8 } };
+
+    /** Defines the coordinates around which we search for slope intersection points. */
+    protected static final int[] SLOPE_CONTEXT_X = {
+        -2, -1,  0,  1,  2,  2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2 };
+
+    /** Defines the coordinates around which we search for slope intersection points. */
+    protected static final int[] SLOPE_CONTEXT_Y = {
+        -2, -2, -2, -2, -2, -1, 0, 1, 2, 2, 2,  2,  2,  1,  0, -1 };
+
+    /** The number of slots around the context to search for our slope intersection. */
+    protected static final int SLOPE_SEARCH = 6;
 }

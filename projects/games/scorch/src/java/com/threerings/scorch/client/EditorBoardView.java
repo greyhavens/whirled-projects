@@ -98,15 +98,11 @@ public class EditorBoardView extends ScorchBoardView
             }
             break;
 
-        case MouseEvent.BUTTON2: // TEMP: for testing
-            // update the engine's idea of the board
-            _engine.setBoard(exportBoard());
-
-            // drop a unit into the mix
+        case MouseEvent.BUTTON2:
+            // TEMP: for testing, drop a unit into the mix
             UnitSprite sprite = new UnitSprite();
             sprite.setLocation(300, 300);
             addSprite(sprite);
-            sprite.setAcceleration(0, 250);
             setActiveUnit(sprite);
             break;
         }
@@ -149,15 +145,6 @@ public class EditorBoardView extends ScorchBoardView
     {
     }
 
-    @Override // from MediaPanel
-    protected void paintBehind (Graphics2D gfx, Rectangle dirtyRect)
-    {
-        super.paintBehind(gfx, dirtyRect);
-
-        gfx.setColor(Color.white);
-        gfx.fill(dirtyRect);
-    }
-
     protected void addProp (PropConfig config, int x, int y)
     {
         if (config != null) {
@@ -165,6 +152,9 @@ public class EditorBoardView extends ScorchBoardView
             sprite.setRenderOrder(getHighestRenderOrder(null)+1);
             sprite.setLocation(x - sprite.getWidth()/2, y - sprite.getHeight()/2);
             addSprite(sprite);
+
+            // update the engine's idea of the board
+            _engine.setBoard(exportBoard());
         }
     }
 
