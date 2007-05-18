@@ -1,0 +1,14 @@
+<datapack>
+<data name="faceCenter" type="Point" value="100, 100"/>
+<data name="hourPoint" type="Point" value="40, 130"/>
+<data name="minutePoint" type="Point" value="40, 130"/>
+<data name="secondPoint" type="Point" value="40, 130"/>
+<data name="facePosition" type="Point" value="50, 50"/>
+<data name="decorationPoint" type="Point"/> <!-- no value -->
+<data name="smoothSeconds" type="Boolean" value="true"/>
+<file name="face" type="DisplayObject" value="face.png"/>
+<file name="hourHand" type="DisplayObject" value="hourHand.png"/>
+<file name="minuteHand" type="DisplayObject" value="minuteHand.png"/>
+<file name="secondHand" type="DisplayObject" value="secondHand.png"/>
+<file name="decoration" type="DisplayObject"/> <!-- no value -->
+</datapack>
