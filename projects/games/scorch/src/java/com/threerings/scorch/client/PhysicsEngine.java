@@ -57,39 +57,103 @@ public class PhysicsEngine
         public Vector2f vel = new Vector2f();
         public Vector2f acc = new Vector2f();
 
+        public boolean inContact;
+
         public float conaccx;
 
-        public EntityData (Entity entity) {
+        public EntityData (Entity entity)
+        {
             this.entity = entity;
             entity.setEntityData(this);
             pos.x = entity.getX();
             pos.y = entity.getY();
         }
 
-        public void tick (float dt) {
-            int pixx = Math.round(pos.x), pixy = Math.round(pos.y);
+        public void tick (float dt)
+        {
+            if (inContact && Math.abs(vel.x) < MAX_CONTACT_X_VEL && vel.y == 0) {
+                contactDynamics(dt);
+            } else {
+                inContact = false;
+                freeDynamics(dt);
+            }
+            entity.setLocation(Math.round(pos.x), Math.round(pos.y));
+        }
 
+        protected void contactDynamics (float dt)
+        {
+            // apply contact acceleration
+            vel.x += conaccx * dt;
+
+            // we're in contact with the ground, so apply friction
+            if (vel.x > 0) {
+                vel.x = Math.max(vel.x - _fricaccx * dt, 0);
+            } else {
+                vel.x = Math.min(vel.x + _fricaccx * dt, 0);
+            }
+
+            // now step through and follow the terrain (or stop) at each pixel position
+            int pixx = Math.round(pos.x), pixy = Math.round(pos.y);
+            int pixels = (int)Math.ceil(Math.abs(vel.x * dt));
+            float stepdt = dt/pixels, nposx = pos.x;
+            for (int ii = 0; ii < pixels; ii++) {
+                nposx += vel.x * stepdt;
+                int oldx = pixx, oldy = pixy;
+                pixx = Math.round(nposx);
+
+                // if we have terrain at our next pixel, see if we should climb or stop
+                if (haveTerrain(pixx, pixy)) {
+                    int freey = 0;
+                    for (int uu = 0; uu < MAX_CLIMB_PIXELS; uu++) {
+                        freey = pixy - uu - 1;
+                        if (!haveTerrain(pixx, freey)) {
+                            break;
+                        }
+                    }
+
+                    // TODO: variable climbing capability
+                    if (pixy - freey >= 7) {
+                        log.info("Wall! " + pixx + " " + pixy + " (up: " + freey + ").");
+                        vel.x = 0;
+                        break;
+                    }
+
+                    pos.y += (freey - pixy);
+                    pixy = freey;
+
+                } else {
+                    // search downward for solid ground
+                    int groundy = _height;
+                    for (int uu = 0; uu < MAX_CLIMB_PIXELS; uu++) {
+                        groundy = pixy + uu + 1;
+                        if (haveTerrain(pixx, groundy)) {
+                            break;
+                        }
+                    }
+
+                    // TODO: variable climbing to falling threshold
+                    if (groundy - pixy >= 7) {
+                        inContact = false;
+                        pos.x = nposx;
+                        break;
+                    }
+
+                    pos.y += (groundy - pixy - 1);
+                    pixy = groundy - 1;
+                }
+
+                pos.x = nposx;
+            }
+        }
+
+        protected void freeDynamics (float dt)
+        {
             // compute our total acceleration
             _racc.set(acc);
             _racc.add(_gravacc);
 
-            // if we're in contact with the ground, apply contact velocity
-            boolean contact = haveTerrain(pixx, pixy+1);
-            if (contact) {
-                _racc.x += conaccx;
-            }
-
             // update our velocity
             vel.addScaled(_racc, dt);
-
-            // if we're in contact with the ground, apply friction
-            if (contact) {
-                if (vel.x > 0) {
-                    vel.x = Math.max(vel.x - _fricaccx * dt, 0);
-                } else {
-                    vel.x = Math.min(vel.x + _fricaccx * dt, 0);
-                }
-            }
 
             // display debugging information
             entity.setDebug(_racc.x, _racc.y, vel.x, vel.y);
@@ -99,12 +163,13 @@ public class PhysicsEngine
             _npos.addScaled(vel, dt);
 
             // determine how many pixels we would travel in both directions and adjust our
-            // timeslice such that we step one pixel at a time
+            // timeslice such that we step no more than one pixel at a time
             int steps = (int)Math.ceil(
                 Math.max(Math.abs(_npos.x - pos.x), Math.abs(_npos.y - pos.y)));
             float stepdt = dt/steps;
 
             // log.info("Moving from " + pos + " to " + _npos + " in " + steps + " steps.");
+             int pixx = Math.round(pos.x), pixy = Math.round(pos.y);
             _npos.set(pos);
             for (int ii = 0; ii < steps; ii++) {
                 _npos.addScaled(vel, stepdt);
@@ -122,12 +187,33 @@ public class PhysicsEngine
                 // compute the normal to the line approximation at the collision point
                 slope(pixx, pixy, oldx, oldy, _snorm);
 
+                // if our velocity is small enough and there is ground beneath us, make contact
+                boolean contact = haveTerrain(oldx, oldy+1);
+                if (contact && vel.length() < 100) {
+                    inContact = true;
+                    vel.set(0, 0);
+                    log.info("Contacting at " + _npos + " " + vel + " " + _snorm + ".");
+                    break;
+                }
+
+                log.info("Collision at " + _npos + " " + vel + " " + _snorm + ".");
+
                 // reflect the velocity vector around said line approximation:
                 // Vr = V - 2(V dot N)N
                 vel.addScaled(_snorm, -2 * vel.dot(_snorm));
-            }
 
-            entity.setLocation(Math.round(pos.x), Math.round(pos.y));
+                // if we're in contact with the ground, apply friction
+                if (contact) {
+                    if (vel.x > 0) {
+                        vel.x = Math.max(vel.x - _fricaccx * stepdt, 0);
+                    } else {
+                        vel.x = Math.min(vel.x + _fricaccx * stepdt, 0);
+                    }
+                }
+
+                // then scale the whole dang thing down for energy lost to "other sources"
+                vel.scale(0.75f);
+            }
         }
 
         protected Vector2f _racc = new Vector2f();
@@ -309,6 +395,9 @@ public class PhysicsEngine
     /** Contains our terrain bitmap. */
     protected BufferedImage _terrain;
 
+    /** If we exceed this horizontal velocity we switch to free dynamics. */
+    protected static final float MAX_CONTACT_X_VEL = 200f;
+
     /** PREV_TO_SLOPE[py-cy+1)][px-cx+1] = starting index in slope context. */
     protected static final int[][] PREV_TO_SLOPE = {
         { 0, 2, 4 }, { 14, -1, 6 }, { 12, 10, 8 } };
@@ -323,4 +412,7 @@ public class PhysicsEngine
 
     /** The number of slots around the context to search for our slope intersection. */
     protected static final int SLOPE_SEARCH = 6;
+
+    /** Higher than the highest any unit could ever climb in a single step. */
+    protected static final int MAX_CLIMB_PIXELS = 10;
 }

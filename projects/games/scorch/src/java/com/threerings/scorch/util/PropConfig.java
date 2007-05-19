@@ -52,18 +52,19 @@ public class PropConfig
         facade = images.get(tagPath(path, FACADE_TAG));
 
         // if there's no mask image, create one by replacing the color map of the main image with
-        // one where all colors are white (the transparent color will still not render)
-        if (mask == null) {
-            // we reject non-index color model images at image loading time
-            IndexColorModel model = (IndexColorModel)image.getColorModel();
-            byte[] alphas = new byte[model.getMapSize()];
-            byte[] whites = new byte[model.getMapSize()];
-            Arrays.fill(whites, (byte)0xFF);
-            model.getAlphas(alphas);
-            IndexColorModel mmodel = new IndexColorModel(
-                model.getPixelSize(), model.getMapSize(), whites, whites, whites, alphas);
-            mask = new BufferedImage(mmodel, image.getRaster(), false, null);
-        }
+        // one where all colors are white (the transparent color will still not render); if there
+        // is a mask image, fiddle with its color palette to make sure non-transparent is white
+        BufferedImage masksrc = (mask == null) ? image : mask;
+
+        // we reject non-index color model images at image loading time
+        IndexColorModel model = (IndexColorModel)masksrc.getColorModel();
+        byte[] alphas = new byte[model.getMapSize()];
+        byte[] whites = new byte[model.getMapSize()];
+        Arrays.fill(whites, (byte)0xFF);
+        model.getAlphas(alphas);
+        IndexColorModel mmodel = new IndexColorModel(
+            model.getPixelSize(), model.getMapSize(), whites, whites, whites, alphas);
+        mask = new BufferedImage(mmodel, masksrc.getRaster(), false, null);
     }
 
     @Override // from Object

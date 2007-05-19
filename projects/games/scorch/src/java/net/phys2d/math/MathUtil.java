@@ -212,14 +212,14 @@ public final strictfp class MathUtil {
 	 * 
 	 * @param x startingpoint of the line
 	 * @param y endpoint of the line
-	 * @return a (normalised) normal
+	 * @return a (normalized) normal
 	 */
 	public static Vector2f getNormal(ROVector2f x, ROVector2f y) {
 		Vector2f normal = new Vector2f(y);
 		normal.sub(x);
 		
 		normal = new Vector2f(normal.y, -normal.x);
-		normal.normalise();
+		normal.normalize();
 		
 		return normal;
 	}

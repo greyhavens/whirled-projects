@@ -18,6 +18,7 @@ import com.threerings.media.sprite.Sprite;
 import com.whirled.util.WhirledContext;
 
 import com.threerings.scorch.data.ScorchBoard;
+import com.threerings.scorch.util.ContentPack;
 import com.threerings.scorch.util.PropConfig;
 
 import static com.threerings.scorch.Log.log;
@@ -100,7 +101,9 @@ public class EditorBoardView extends ScorchBoardView
 
         case MouseEvent.BUTTON2:
             // TEMP: for testing, drop a unit into the mix
-            UnitSprite sprite = new UnitSprite();
+            UnitSprite sprite = new UnitSprite(
+                ContentPack.packs.get(ContentPack.DEFAULT_PACK_ID).
+                getFactions().get(0).units.get(0));
             sprite.setLocation(300, 300);
             addSprite(sprite);
             setActiveUnit(sprite);

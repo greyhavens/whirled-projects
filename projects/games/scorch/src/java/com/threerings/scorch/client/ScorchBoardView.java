@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -68,15 +69,13 @@ public class ScorchBoardView extends MediaPanel
 
         switch (e.getKeyCode()) {
         case KeyEvent.VK_LEFT:
-            _active.setVelocity(-100, 0);
-            _active.setContactAcceleration(-300);
+            _active.move(e.getWhen(), true);
             break;
         case KeyEvent.VK_RIGHT:
-            _active.setVelocity(100, 0);
-            _active.setContactAcceleration(300);
+            _active.move(e.getWhen(), false);
             break;
         case KeyEvent.VK_SPACE:
-            _active.addAcceleration(0, -600);
+            _active.jump();
             break;
         }
     }
@@ -91,10 +90,7 @@ public class ScorchBoardView extends MediaPanel
         switch (e.getKeyCode()) {
         case KeyEvent.VK_LEFT:
         case KeyEvent.VK_RIGHT:
-            _active.setContactAcceleration(0);
-            break;
-        case KeyEvent.VK_SPACE:
-            _active.addAcceleration(0, 600);
+            _active.stop();
             break;
         }
     }
