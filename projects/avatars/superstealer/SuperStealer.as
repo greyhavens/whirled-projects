@@ -38,11 +38,27 @@ public class SuperStealer extends Sprite
         _ctrl = new AvatarControl(this);
         _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, handleActionTriggered);
         _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessageReceived);
+        _ctrl.addEventListener(ControlEvent.GOT_CONTROL, showInputField);
 
         _ctrl.registerActions(NEW_URL_ACTION);
 
         // whenever we start up, we broadcast an "Oy! What's my URL?" message
         _ctrl.sendMessage(QUERY_URL_MSG);
+
+        // is this necessary?
+        if (!_ctrl.hasControl()) {
+            _ctrl.requestControl();
+        }
+
+        // see when we're added to the stage
+        addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
+    }
+
+    protected function handleAddedToStage (... ignored) :void
+    {
+        if (_url == null && _ctrl.hasControl()) {
+            showInputField();
+        }
     }
 
     protected function handleMessageReceived (event :ControlEvent) :void
@@ -76,8 +92,12 @@ public class SuperStealer extends Sprite
         }
     }
 
-    protected function showInputField () :void
+    protected function showInputField (... ignored) :void
     {
+        if (!this.stage) {
+            return;
+        }
+
         if (_input == null) {
             _input = new TextField();
             _input.background = true;
@@ -111,6 +131,7 @@ public class SuperStealer extends Sprite
         _hotSpotSet = false;
 
         // start loading the new one
+        _url = url;
         _loader = new Loader();
         _loader.contentLoaderInfo.sharedEvents.addEventListener("controlConnect", handleConnect);
         _loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, loadProgress);
