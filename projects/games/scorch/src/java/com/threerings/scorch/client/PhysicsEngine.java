@@ -71,13 +71,13 @@ public class PhysicsEngine
 
         public void tick (float dt)
         {
-            if (inContact && Math.abs(vel.x) < MAX_CONTACT_X_VEL && vel.y == 0) {
+            if (inContact && vel.y == 0) {
                 contactDynamics(dt);
             } else {
                 inContact = false;
                 freeDynamics(dt);
             }
-            entity.setLocation(Math.round(pos.x), Math.round(pos.y));
+            entity.setLocation((int)pos.x, (int)pos.y);
         }
 
         protected void contactDynamics (float dt)
@@ -86,6 +86,7 @@ public class PhysicsEngine
             float velx;
             if (convelx != 0) {
                 velx = convelx;
+                vel.x = 0;
 
             } else {
                 // we're in contact with the ground, so apply friction
@@ -98,13 +99,13 @@ public class PhysicsEngine
             }
 
             // now step through and follow the terrain (or stop) at each pixel position
-            int pixx = Math.round(pos.x), pixy = Math.round(pos.y);
+            int pixx = (int)pos.x, pixy = (int)pos.y;
             int pixels = (int)Math.ceil(Math.abs(velx * dt));
             float stepdt = dt/pixels, nposx = pos.x;
             for (int ii = 0; ii < pixels; ii++) {
                 nposx += velx * stepdt;
                 int oldx = pixx, oldy = pixy;
-                pixx = Math.round(nposx);
+                pixx = (int)nposx;
 
                 // if we have terrain at our next pixel, see if we should climb or stop
                 if (haveTerrain(pixx, pixy)) {
@@ -119,7 +120,7 @@ public class PhysicsEngine
                     // TODO: variable climbing capability
                     if (pixy - freey >= 7) {
                         log.info("Wall! " + pixx + " " + pixy + " (up: " + freey + ").");
-                        vel.x = 0;
+                        vel.x = 0; // TODO: bounce?
                         break;
                     }
 
@@ -138,6 +139,7 @@ public class PhysicsEngine
 
                     // TODO: variable climbing to falling threshold
                     if (groundy - pixy >= 7) {
+                        log.info("Falling +" + pixx + "+" + pixy + " (down: " + groundy + ").");
                         inContact = false;
                         pos.x = nposx;
                         break;
@@ -174,17 +176,17 @@ public class PhysicsEngine
             float stepdt = dt/steps;
 
             // log.info("Moving from " + pos + " to " + _npos + " in " + steps + " steps.");
-             int pixx = Math.round(pos.x), pixy = Math.round(pos.y);
+             int pixx = (int)pos.x, pixy = (int)pos.y;
             _npos.set(pos);
             for (int ii = 0; ii < steps; ii++) {
                 _npos.addScaled(vel, stepdt);
                 int oldx = pixx, oldy = pixy;
-                pixx = Math.round(_npos.x);
-                pixy = Math.round(_npos.y);
+                pixx = (int)_npos.x;
+                pixy = (int)_npos.y;
 
-                // if we didn't hit anything, keep going (we do this check so that we can only
-                // compute collisions once when we're flying through the air)
-                if (!haveTerrain(pixx, pixy)) {
+                // if we didn't move a fill pixel from our previous location, or if we didn't hit
+                // anything, keep going
+                if ((pixx == oldx && pixy == oldy) || !haveTerrain(pixx, pixy)) {
                     pos.set(_npos);
                     continue;
                 }
@@ -197,13 +199,14 @@ public class PhysicsEngine
                 boolean contact = haveTerrain(oldx, oldy+1);
                 if (contact && vel.y > 0 && Math.abs(vel.y) < MIN_FREE_Y_VEL) {
                     inContact = true;
-                    System.err.println(
-                        "Contacting at p" + _npos + " v" + vel + " n" + _snorm + ".");
+                    System.err.println("Contacting at p" + _npos + " (+" + pixx + "+" + pixy +
+                                       ") v" + vel + " n" + _snorm + ".");
                     vel.y = 0;
                     break;
                 }
 
-                System.err.println("Collision at p" + _npos + " v" + vel + " n" + _snorm + ".");
+                System.err.println("Collision at p" + _npos + " (+" + pixx + "+" + pixy + ") " +
+                                   "v" + vel + " n" + _snorm + ".");
 
                 // reflect the velocity vector around said line approximation:
                 // Vr = V - 2(V dot N)N
