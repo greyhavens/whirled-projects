@@ -12,10 +12,17 @@ import flash.display.Sprite;
 
 public class Letter extends Sprite
 {
-    public function Letter (type :int)
+    public function Letter (content :Content, type :int)
     {
+        _content = content;
         _type = type;
-        setPlayable(false);
+
+        _invader = content.createInvader(type);
+        _invader.x = Content.TILE_SIZE/2;
+        _invader.y = Content.TILE_SIZE/2;
+        _invader.width = Content.TILE_SIZE;
+        _invader.height = Content.TILE_SIZE;
+        addChild(_invader);
 
         _label = new TextField();
         _label.autoSize = TextFieldAutoSize.CENTER;
@@ -24,27 +31,22 @@ public class Letter extends Sprite
         _label.x = 0;
         _label.width = Content.TILE_SIZE;
         addChild(_label);
+
+        setPlayable(false);
     }
 
     public function setText (text :String) :void
     {
-        _label.text = text;
-        _label.y = (Content.TILE_SIZE - _label.height)/2 - FONT_ADJUST_HACK;
+        _label.text = text.toUpperCase();
+        _label.y = (Content.TILE_SIZE - _label.height)/2 + FONT_ADJUST_HACK;
     }
 
     public function setPlayable (playable :Boolean) :void
     {
-        if (_square != null) {
-            removeChild(_square);
+        _invader.transform.colorTransform = _content.invaderColors[_type];
+        if (!playable) {
+            _invader.transform.colorTransform.alphaOffset = -128;
         }
-
-        _square = new Shape();
-        _square.graphics.beginFill(playable ? Content.PLAYABLE_COLOR : Content.TILE_COLOR);
-        _square.graphics.drawRect(0, 0, Content.TILE_SIZE, Content.TILE_SIZE);
-        _square.graphics.endFill();
-        _square.graphics.lineStyle(2, Content.TILE_OUTLINE_COLORS[_type]);
-        _square.graphics.drawRect(1, 1, Content.TILE_SIZE-2, Content.TILE_SIZE-2);
-        addChildAt(_square, 0);
     }
 
     public function setHighlighted (highlighted :Boolean) :void
@@ -56,7 +58,8 @@ public class Letter extends Sprite
     {
         var format : TextFormat = new TextFormat();
         format.font = Content.FONT_NAME;
-        format.color = Content.FONT_COLOR;
+        format.bold = true;
+        format.color = Content.LETTER_FONT_COLOR;
         format.size = Content.TILE_FONT_SIZE;
         return format;
     }
@@ -65,16 +68,18 @@ public class Letter extends Sprite
     {
         var format : TextFormat = new TextFormat();
         format.font = Content.FONT_NAME;
+        format.bold = true;
         format.color = Content.HIGH_FONT_COLOR;
         format.size = Content.TILE_FONT_SIZE;
         return format;
     }
 
+    protected var _content :Content;
     protected var _type :int;
-    protected var _square :Shape;
+    protected var _invader :Sprite;
     protected var _label :TextField;
 
-    protected static const FONT_ADJUST_HACK :int = 1;
+    protected static const FONT_ADJUST_HACK :int = 2;
 }
 
 }

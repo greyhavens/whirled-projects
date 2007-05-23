@@ -23,21 +23,22 @@ public class GameView extends Sprite
 {
     public var marquee :Marquee;
 
-    public function GameView (control :WhirledGameControl, model :Model)
+    public function GameView (control :WhirledGameControl, model :Model, content :Content)
     {
         _control = control;
         _model = model;
         _model.setView(this);
+        _content = content;
 
         // create the text field via which we'll accept player input
         _input = new TextField();
-        _input.defaultTextFormat = Content.makeInputFormat();
+        _input.defaultTextFormat = _content.makeInputFormat();
         _input.border = true;
         _input.type = TextFieldType.INPUT;
-        _input.x = Content.INPUT_RECT.x;
-        _input.y = Content.INPUT_RECT.y;
-        _input.width = Content.INPUT_RECT.width;
-        _input.height = Content.INPUT_RECT.height;
+        _input.x = _content.inputRect.x;
+        _input.y = _content.inputRect.y;
+        _input.width = _content.inputRect.width;
+        _input.height = _content.inputRect.height;
 
         // listen for property changed and message events
         _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
@@ -46,13 +47,13 @@ public class GameView extends Sprite
 
     public function init (boardSize :int, playerCount :int) :void
     {
-        _board = new Board(boardSize, _control, _model);
+        _board = new Board(boardSize, _control, _model, _content);
         _board.x = Content.BOARD_BORDER;
         _board.y = Content.BOARD_BORDER;
         addChild(_board);
 
         // create a marquee that we'll use to display feedback
-        marquee = new Marquee(Content.makeMarqueeFormat(),
+        marquee = new Marquee(_content.makeMarqueeFormat(),
                               Content.BOARD_BORDER + _board.getPixelSize()/2,
                               Content.BOARD_BORDER + _board.getPixelSize());
         addChild(marquee);
@@ -62,7 +63,7 @@ public class GameView extends Sprite
         for (var pidx :int = 0; pidx < playerCount; pidx++) {
             // the board is rotated so that our position is always at the bottom
             var posidx :int = POS_MAP[mypidx][pidx];
-            var shooter :Shooter = new Shooter(posidx, pidx);
+            var shooter :Shooter = new Shooter(_content, posidx, pidx);
             shooter.x = SHOOTER_X[posidx] * psize;
             shooter.y = SHOOTER_Y[posidx] * psize;
             addChild(shooter);
@@ -76,7 +77,7 @@ public class GameView extends Sprite
             }
 
             var help :TextField = new TextField();
-            help.defaultTextFormat = Content.makeInputFormat();
+            help.defaultTextFormat = _content.makeInputFormat();
             help.x = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
             help.y = 50;
             help.autoSize = TextFieldAutoSize.LEFT;
@@ -172,6 +173,7 @@ public class GameView extends Sprite
 
     protected var _control :WhirledGameControl;
     protected var _model :Model;
+    protected var _content :Content;
 
     protected var _input :TextField;
 

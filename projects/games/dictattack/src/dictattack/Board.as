@@ -15,11 +15,12 @@ import com.whirled.WhirledGameControl;
  */
 public class Board extends Sprite
 {
-    public function Board (size :int, control :WhirledGameControl, model :Model)
+    public function Board (size :int, control :WhirledGameControl, model :Model, content :Content)
     {
         _size = size;
         _control = control;
         _model = model;
+        _content = content;
 
         // listen for property changed events
         _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
@@ -54,7 +55,7 @@ public class Board extends Sprite
 
         for (var yy :int = 0; yy < _size; yy++) {
             for (var xx : int = 0; xx < _size; xx++) {
-                var ll :Letter = new Letter(_model.getType(xx, yy));
+                var ll :Letter = new Letter(_content, _model.getType(xx, yy));
                 ll.setText("?");
                 ll.x = (Content.TILE_SIZE + GAP) * xx;
                 ll.y = (Content.TILE_SIZE + GAP) * yy;
@@ -114,6 +115,7 @@ public class Board extends Sprite
     protected var _size :int;
     protected var _control :WhirledGameControl;
     protected var _model :Model;
+    protected var _content :Content;
     protected var _letters :Array = new Array();
 
     /** The gap between tiles on the board. */

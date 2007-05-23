@@ -8,8 +8,10 @@ import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.utils.ByteArray;
 
 import com.threerings.ezgame.StateChangedEvent;
+import com.threerings.util.EmbeddedSwfLoader;
 
 import com.whirled.WhirledGameControl;
 
@@ -31,13 +33,22 @@ public class DictionaryAttack extends Sprite
         _control.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);
         _control.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
 
+        // load up our content pack
+        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
+        loader.addEventListener(Event.COMPLETE, finishInit);
+        _content = new Content(loader);
+        loader.load(ByteArray(new CONTENT()));
+    }
+
+    protected function finishInit (event :Event) :void
+    {
         // TODO: get this info from the game config
         var size :int = Content.BOARD_SIZE;
         var pcount :int = _control.isConnected() ? _control.seating.getPlayerIds().length : 4;
 
         // create our model and our view, and initialize them
         _model = new Model(size, _control);
-        _view = new GameView(_control, _model);
+        _view = new GameView(_control, _model, _content);
         _view.init(size, pcount);
         addChild(_view);
     }
@@ -94,6 +105,10 @@ public class DictionaryAttack extends Sprite
     protected var _control :WhirledGameControl;
     protected var _model :Model;
     protected var _view :GameView;
+    protected var _content :Content;
+
+    [Embed(source="../../rsrc/invaders.swf", mimeType="application/octet-stream")]
+    protected var CONTENT :Class;
 }
 
 }

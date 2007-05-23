@@ -12,7 +12,7 @@ import flash.display.Sprite
 
 public class Shooter extends Sprite
 {
-    public function Shooter (posidx :int, pidx :int)
+    public function Shooter (content :Content, posidx :int, pidx :int)
     {
         _pidx = pidx;
         _posidx = posidx;
@@ -21,15 +21,10 @@ public class Shooter extends Sprite
         _rotor.rotation = posidx * 90;
         addChild(_rotor);
 
-        var shooter :Shape = new Shape();
-        shooter.graphics.beginFill(Content.SHOOTER_COLOR[pidx]);
-        shooter.graphics.moveTo(0, -Content.SHOOTER_SIZE/2);
-        shooter.graphics.lineTo(0, Content.SHOOTER_SIZE/2);
-        shooter.graphics.lineTo(Content.SHOOTER_SIZE/2, 0);
-        shooter.graphics.lineTo(0, -Content.SHOOTER_SIZE/2);
-        shooter.graphics.endFill();
-        _rotor.addChild(shooter);
-
+        var ship :Sprite = content.createShip();
+        ship.rotation = 90;
+        _rotor.addChild(ship);
+        
         _name = new TextField();
         _name.text = "";
         _name.selectable = false;

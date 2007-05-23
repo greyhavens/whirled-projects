@@ -9,4 +9,10 @@
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
 
+  <!-- TEMP: copy into place for testing -->
+  <property file="build.properties"/>
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/${media_hash}.swf"/>
+  </target>
+
 </project>
