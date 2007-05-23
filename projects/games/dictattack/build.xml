@@ -3,6 +3,7 @@
 
   <!-- define some basic project parameters -->
   <property name="app.name" value="DictionaryAttack"/>
+  <property name="app.source-dir" value="src"/>
   <property name="app.package-dir" value="dictattack"/>
 
   <!-- include the standard build script -->
