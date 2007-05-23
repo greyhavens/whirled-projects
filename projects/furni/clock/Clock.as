@@ -11,6 +11,8 @@ import flash.geom.Point;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 
+import flash.media.Sound;
+
 import com.whirled.DataPack;
 
 //[SWF(width="300", height="300")] // data1
@@ -32,6 +34,7 @@ public class Clock extends Sprite
         _dataPack.getDisplayObjects(
             ["face", "hourHand", "minuteHand", "secondHand", "decoration"],
             gotDisplayObjects);
+        _dataPack.getSounds(["tickSound"], gotSounds);
     }
 
     protected function gotDisplayObjects (disps :Object) :void
@@ -40,6 +43,11 @@ public class Clock extends Sprite
         updateDisplayedTime();
 
         addEventListener(Event.ENTER_FRAME, handleEnterFrame)
+    }
+
+    protected function gotSounds (sounds :Object) :void
+    {
+        _tickSound = sounds["tickSound"] as Sound;
     }
 
     /**
@@ -136,8 +144,15 @@ public class Clock extends Sprite
             if (_smoothSeconds) {
                 updateHand(_secondHand,
                     (d.seconds * 1000) + d.milliseconds, 60000);
+
             } else {
                 updateHand(_secondHand, d.seconds, 60);
+                if (_tickSound != null) {
+                    if (d.seconds != _lastSeconds) {
+                        _tickSound.play();
+                    }
+                    _lastSeconds = d.seconds;
+                }
             }
         }
     }
@@ -199,5 +214,9 @@ public class Clock extends Sprite
 
     /** Whether we're smoothing the second hand, or ticking it. */
     protected var _smoothSeconds :Boolean;
+
+    protected var _lastSeconds :Number = -1;
+
+    protected var _tickSound :Sound;
 }
 }
