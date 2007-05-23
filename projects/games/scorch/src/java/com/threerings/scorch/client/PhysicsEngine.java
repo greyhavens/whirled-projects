@@ -59,7 +59,7 @@ public class PhysicsEngine
 
         public boolean inContact;
 
-        public float conaccx;
+        public float convelx;
 
         public EntityData (Entity entity)
         {
@@ -82,22 +82,27 @@ public class PhysicsEngine
 
         protected void contactDynamics (float dt)
         {
-            // apply contact acceleration
-            vel.x += conaccx * dt;
+            // if we have contact velocity, use that
+            float velx;
+            if (convelx != 0) {
+                velx = convelx;
 
-            // we're in contact with the ground, so apply friction
-            if (vel.x > 0) {
-                vel.x = Math.max(vel.x - _fricaccx * dt, 0);
             } else {
-                vel.x = Math.min(vel.x + _fricaccx * dt, 0);
+                // we're in contact with the ground, so apply friction
+                if (vel.x > 0) {
+                    vel.x = Math.max(vel.x - _fricaccx * dt, 0);
+                } else {
+                    vel.x = Math.min(vel.x + _fricaccx * dt, 0);
+                }
+                velx = vel.x;
             }
 
             // now step through and follow the terrain (or stop) at each pixel position
             int pixx = Math.round(pos.x), pixy = Math.round(pos.y);
-            int pixels = (int)Math.ceil(Math.abs(vel.x * dt));
+            int pixels = (int)Math.ceil(Math.abs(velx * dt));
             float stepdt = dt/pixels, nposx = pos.x;
             for (int ii = 0; ii < pixels; ii++) {
-                nposx += vel.x * stepdt;
+                nposx += velx * stepdt;
                 int oldx = pixx, oldy = pixy;
                 pixx = Math.round(nposx);
 
@@ -187,16 +192,18 @@ public class PhysicsEngine
                 // compute the normal to the line approximation at the collision point
                 slope(pixx, pixy, oldx, oldy, _snorm);
 
-                // if our velocity is small enough and there is ground beneath us, make contact
+                // if our velocity is small enough and we're going down (not up) and there is
+                // ground beneath us, make contact
                 boolean contact = haveTerrain(oldx, oldy+1);
-                if (contact && vel.length() < 100) {
+                if (contact && vel.y > 0 && Math.abs(vel.y) < MIN_FREE_Y_VEL) {
                     inContact = true;
-                    vel.set(0, 0);
-                    log.info("Contacting at " + _npos + " " + vel + " " + _snorm + ".");
+                    System.err.println(
+                        "Contacting at p" + _npos + " v" + vel + " n" + _snorm + ".");
+                    vel.y = 0;
                     break;
                 }
 
-                log.info("Collision at " + _npos + " " + vel + " " + _snorm + ".");
+                System.err.println("Collision at p" + _npos + " v" + vel + " n" + _snorm + ".");
 
                 // reflect the velocity vector around said line approximation:
                 // Vr = V - 2(V dot N)N
@@ -415,4 +422,8 @@ public class PhysicsEngine
 
     /** Higher than the highest any unit could ever climb in a single step. */
     protected static final int MAX_CLIMB_PIXELS = 10;
+
+    /** If the magnitude of our y velocity drops below this value, we switch from free to contact
+     * dynamics. */
+    protected static final float MIN_FREE_Y_VEL = 200;
 }

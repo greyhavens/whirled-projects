@@ -231,7 +231,7 @@ public strictfp class Vector2f implements ROVector2f {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return (x < 0 ? "" : "+") + x + (y < 0 ? "" : "+") + y;
+        return String.format("%s%2.2f%s%2.2f", (x < 0 ? "" : "+"), x, (y < 0 ? "" : "+"), y);
     }
 
     /**

@@ -30,21 +30,21 @@ public class UnitSprite extends Sprite
 
     public void jump ()
     {
-        _data.vel.y = -500;
+        _data.vel.y = -300;
     }
 
     public void move (long when, boolean left)
     {
-        if (when - _lastMoveRequest > LINUX_MOVE_FILTER) {
-            _data.vel.x += (left ? -50 : 50);
-        }
-        _lastMoveRequest = when;
-        _data.conaccx = (left ? -250 : 250);
+//         if (when - _lastMoveRequest > LINUX_MOVE_FILTER) {
+//             _data.vel.x += (left ? -50 : 50);
+//         }
+//         _lastMoveRequest = when;
+        _data.convelx = (left ? -50 : 50);
     }
 
     public void stop ()
     {
-        _data.conaccx = 0;
+        _data.convelx = 0;
     }
 
     // from interface PhysicsEngine.Entity
@@ -86,7 +86,7 @@ public class UnitSprite extends Sprite
     protected PhysicsEngine.EntityData _data;
 //     protected String[] _debug = { "", "" };
 
-    protected long _lastMoveRequest;
+//     protected long _lastMoveRequest;
 
     /** Annoying bullshit to cope with undisablable Linux key repeat. */
     protected static final long LINUX_MOVE_FILTER = 250L;
