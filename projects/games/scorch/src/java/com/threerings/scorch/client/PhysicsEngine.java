@@ -222,7 +222,7 @@ public class PhysicsEngine
                 }
 
                 // then scale the whole dang thing down for energy lost to "other sources"
-                vel.scale(0.75f);
+                vel.scale(0.5f);
             }
         }
 
