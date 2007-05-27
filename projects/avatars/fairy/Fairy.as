@@ -186,7 +186,7 @@ public class Fairy extends Sprite
             var extent :Number = Math.abs(_center.value);
             _fairy.x = _swirlX.value * extent;
             _fairy.y = _swirlY.value * extent;
-            _platform.addChild(new Sparkle(_fairy.x, _fairy.y));
+            _platform.addChildAt(new Sparkle(_fairy.x, _fairy.y), 0);
         }
     }
 
