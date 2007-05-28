@@ -15,8 +15,6 @@ import flash.geom.Rectangle;
 
 import com.threerings.util.EmbeddedSwfLoader;
 
-[Embed(source="../../rsrc/name_font.ttf", fontName="Name", mimeType="application/x-font-truetype")]
-
 /**
  * Defines skinnable content. TODO: use the right format whenever Ray finally finalizes content
  * packs.
@@ -114,5 +112,13 @@ public class Content
     }
 
     protected var _pack :EmbeddedSwfLoader;
+
+    [Embed(source="../../rsrc/letter_font.ttf", fontName="Letter",
+           mimeType="application/x-font-truetype")]
+    protected var LETTER_FONT :Class;
+
+    [Embed(source="../../rsrc/name_font.ttf", fontName="Name",
+           mimeType="application/x-font-truetype")]
+    protected var NAME_FONT :Class;
 }
 }

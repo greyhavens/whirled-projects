@@ -30,6 +30,7 @@ public class Letter extends Sprite
         _label.defaultTextFormat = makePlainFormat();
         _label.x = 0;
         _label.width = Content.TILE_SIZE;
+        _label.embedFonts = true;
         addChild(_label);
 
         setPlayable(false);
@@ -57,7 +58,7 @@ public class Letter extends Sprite
     protected static function makePlainFormat () : TextFormat
     {
         var format : TextFormat = new TextFormat();
-        format.font = Content.FONT_NAME;
+        format.font = "Letter";
         format.bold = true;
         format.color = Content.LETTER_FONT_COLOR;
         format.size = Content.TILE_FONT_SIZE;
@@ -67,7 +68,7 @@ public class Letter extends Sprite
     protected static function makeHighlightFormat () : TextFormat
     {
         var format : TextFormat = new TextFormat();
-        format.font = Content.FONT_NAME;
+        format.font = "Letter";
         format.bold = true;
         format.color = Content.HIGH_FONT_COLOR;
         format.size = Content.TILE_FONT_SIZE;
