@@ -16,30 +16,26 @@ public class Shooter extends Sprite
     {
         _pidx = pidx;
         _posidx = posidx;
-
-        _rotor = new Sprite();
-        _rotor.rotation = posidx * 90;
-        addChild(_rotor);
+        rotation = (posidx+1)%4 * 90;
 
         var ship :Sprite = content.createShip();
-        ship.rotation = 90;
-        ship.x = ship.width/2;
-        _rotor.addChild(ship);
+        ship.y = -Content.SHOOTER_SIZE/2;
+        addChild(ship);
 
         _name = new TextField();
         _name.text = "";
         _name.selectable = false;
-        _name.defaultTextFormat = makeTextFormat(Content.FONT_COLOR, false);
+        _name.defaultTextFormat = makeTextFormat(Content.FONT_COLOR);
         _name.embedFonts = true;
-        _name.autoSize = (posidx == 0) ? TextFieldAutoSize.LEFT : TextFieldAutoSize.RIGHT;
-        _name.rotation = 90;
-        _rotor.addChild(_name);
+        _name.autoSize = TextFieldAutoSize.LEFT;
+        addChild(_name);
 
         _score = new TextField();
         _score.autoSize = TextFieldAutoSize.CENTER;
         _score.selectable = false;
-        _score.defaultTextFormat = makeTextFormat(uint(0xFFFFFF), true);
+        _score.defaultTextFormat = makeTextFormat(Content.FONT_COLOR);
         _score.embedFonts = true;
+        _score.autoSize = TextFieldAutoSize.RIGHT;
         addChild(_score);
         setScore(0);
     }
@@ -50,48 +46,46 @@ public class Shooter extends Sprite
             name = name.substring(0, 10) + "...";
         }
         _name.text = name;
-        _name.x = _name.getLineMetrics(0).ascent + 2;
-        _name.y = Content.SHOOTER_SIZE/2;
+        _name.x = Content.SHOOTER_SIZE/2 + 2;
+        _name.y = -Content.SHOOTER_SIZE/2 - _name.getLineMetrics(0).ascent/2 + FONT_Y_HACK;
     }
 
     public function setPoints (points :int, maxPoints :int) :void
     {
         if (_points != null) {
-            _rotor.removeChild(_points);
+            removeChild(_points);
         }
 
         _points = new Shape();
-        _points.x = 0;
-        _points.y = -Content.SHOOTER_SIZE/2 - POINTS_HEIGHT - 5;
+        _points.x = -Content.SHOOTER_SIZE/2 - POINTS_WIDTH - 5;
+        _points.y = -Content.SHOOTER_SIZE/2 - POINTS_HEIGHT/2;
         _points.graphics.beginFill(Content.SHOOTER_COLOR[_pidx]);
-        var filled :int = Math.min(POINTS_HEIGHT, points * POINTS_HEIGHT / maxPoints);
-        _points.graphics.drawRect(0, POINTS_HEIGHT-filled, POINTS_WIDTH, filled);
+        var filled :int = Math.min(POINTS_WIDTH, points * POINTS_WIDTH / maxPoints);
+        _points.graphics.drawRect(POINTS_WIDTH-filled, 0, filled, POINTS_HEIGHT);
         _points.graphics.endFill();
         _points.graphics.lineStyle(1, uint(0xFFFFFF));
         _points.graphics.drawRect(0, 0, POINTS_WIDTH, POINTS_HEIGHT);
-        _rotor.addChild(_points);
+        addChild(_points);
     }
 
     public function setScore (score :int) :void
     {
         _score.text = ("" + score);
-        _score.x = SCORE_X[_posidx] * _score.width;
-        _score.y = SCORE_Y[_posidx] * _score.height;
+        _score.x = -Content.SHOOTER_SIZE/2 - 5 - POINTS_WIDTH - _score.width - 2;
+        _score.y = -Content.SHOOTER_SIZE/2 - _score.getLineMetrics(0).ascent/2 + FONT_Y_HACK;
     }
 
-    protected static function makeTextFormat (color :uint, bold :Boolean) : TextFormat
+    protected static function makeTextFormat (color :uint) : TextFormat
     {
         var format : TextFormat = new TextFormat();
         format.font = "Name";
         format.color = color;
         format.size = 16;
-        format.bold = bold;
         return format;
     }
 
     protected var _pidx :int;
     protected var _posidx :int;
-    protected var _rotor :Sprite;
     protected var _points :Shape;
     protected var _name :TextField;
     protected var _score :TextField;
@@ -99,8 +93,10 @@ public class Shooter extends Sprite
     protected static const SCORE_X :Array = [ 0, -0.5, -1, -0.5 ];
     protected static const SCORE_Y :Array = [ -0.5, 0, -0.5, -1 ];
 
-    protected static const POINTS_WIDTH :int = 15;
-    protected static const POINTS_HEIGHT :int = 50;
+    protected static const POINTS_WIDTH :int = 50;
+    protected static const POINTS_HEIGHT :int = 15;
+
+    protected static const FONT_Y_HACK :int = -3;
 }
 
 }

@@ -27,7 +27,6 @@ public class GameView extends Sprite
     {
         _control = control;
         _model = model;
-        _model.setView(this);
         _content = content;
 
         // position ourselves a smidgen away from the edge
@@ -72,6 +71,10 @@ public class GameView extends Sprite
             var shooter :Shooter = new Shooter(_content, posidx, pidx);
             shooter.x = SHOOTER_X[posidx] * psize;
             shooter.y = SHOOTER_Y[posidx] * psize;
+            // if this is ours (the one on the bottom), lower it a smidgen further
+            if (posidx == 3) {
+                shooter.y += 10;
+            }
             addChild(shooter);
             _shooters[pidx] = shooter;
         }
@@ -178,7 +181,16 @@ public class GameView extends Sprite
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == Model.WORD_PLAY) {
-            // TODO: report to text field somewhere
+            var data :Array = (event.value as Array);
+            var scorer :String = _control.seating.getPlayerNames()[int(data[0])];
+            var word :String = (data[1] as String);
+            var points :int = int(data[2]);
+            var mult :int = int(data[3]);
+            if (mult > 1) {
+                marquee.display(scorer + ": " + word + " x" + mult + " for " + points, 1000);
+            } else {
+                marquee.display(scorer + ": " + word + " for " + points, 1000);
+            }
             _model.updatePlayable(_board);
         }
     }

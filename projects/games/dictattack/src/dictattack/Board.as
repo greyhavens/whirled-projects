@@ -13,7 +13,7 @@ import com.threerings.ezgame.PropertyChangedEvent;
 import com.whirled.WhirledGameControl;
 
 /**
- * Displays the letters on the board and the player's shooters around the edges.
+ * Displays the letters on the board.
  */
 public class Board extends Sprite
 {

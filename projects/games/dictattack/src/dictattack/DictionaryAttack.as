@@ -76,7 +76,8 @@ public class DictionaryAttack extends Sprite
     protected function roundDidEnd (event :StateChangedEvent) :void
     {
         _view.roundDidEnd();
-        _model.roundDidEnd();
+        var scorer :String = _model.roundDidEnd();
+        _view.marquee.display("Round over. Point to " + scorer + ".", 2000);
     }
 
     protected function gameDidEnd (event :StateChangedEvent) :void

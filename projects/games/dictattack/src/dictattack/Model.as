@@ -29,11 +29,6 @@ public class Model
         _control = control;
     }
 
-    public function setView (view :GameView) :void
-    {
-        _view = view;
-    }
-
     /**
      * Returns the minimum world length.
      */
@@ -91,9 +86,9 @@ public class Model
     }
 
     /**
-     * Called when a round ends.
+     * Called when a round ends. Returns the names of the players that scored points.
      */
-    public function roundDidEnd () :void
+    public function roundDidEnd () :String
     {
         var scorer :String = "";
         var points :Array = (_control.get(POINTS) as Array);
@@ -105,7 +100,7 @@ public class Model
                 scorer += _control.seating.getPlayerNames()[ii];
             }
         }
-        _view.marquee.display("Round over. Point to " + scorer + ".", 2000);
+        return scorer;
     }
 
     /**
@@ -154,17 +149,12 @@ public class Model
                 _control.set(BOARD_DATA, null, getPosition(xx, yy));
             }
             wpoints *= mult;
-            if (mult > 1) {
-                _view.marquee.display(word + " x" + mult + " earned " + wpoints + " points.", 1000);
-            } else {
-                _view.marquee.display(word + " earned " + wpoints + " points.", 1000);
-            }
 
             // broadcast our our played word as a message
-            _control.sendMessage(WORD_PLAY, used);
+            var myidx :int = _control.seating.getMyPosition();
+            _control.sendMessage(WORD_PLAY, [ myidx, word, wpoints, mult ]);
 
             // update our points
-            var myidx :int = _control.seating.getMyPosition();
             var points :Array = (_control.get(POINTS) as Array);
             var newpoints :int = points[myidx] + wpoints;
             if (wpoints > 0) {
@@ -273,7 +263,6 @@ public class Model
 
     protected var _size :int;
     protected var _control :WhirledGameControl;
-    protected var _view :GameView;
 
     protected static const INTER_ROUND_DELAY :int = 5;
 
