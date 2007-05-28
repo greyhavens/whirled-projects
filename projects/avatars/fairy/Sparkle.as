@@ -15,6 +15,8 @@ public class Sparkle extends FrameSprite
 {
     public function Sparkle (x :Number, y :Number, color :uint = 0xFFFFFF)
     {
+        super(false);
+
         this.x = x;
         this.y = _y = y;
 
