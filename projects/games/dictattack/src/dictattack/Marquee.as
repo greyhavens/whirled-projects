@@ -12,7 +12,7 @@ import flash.text.TextFormat;
 
 /**
  * Displays a centered text message for a specified period of time. Messages are queued for display
- * if other messages are still displaying.
+ * if other messages are still displaying. Marquees must use an embedded font.
  */
 public class Marquee extends TextField
 {
@@ -21,6 +21,7 @@ public class Marquee extends TextField
         autoSize = TextFieldAutoSize.CENTER;
         selectable = false;
         defaultTextFormat = textFormat;
+        embedFonts = true;
         _cx = cx;
         y = cy;
     }

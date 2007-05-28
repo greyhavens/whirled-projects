@@ -30,6 +30,10 @@ public class GameView extends Sprite
         _model.setView(this);
         _content = content;
 
+        // position ourselves a smidgen away from the edge
+        x = 5;
+        y = 5;
+
         // create the text field via which we'll accept player input
         _input = new TextField();
         _input.defaultTextFormat = _content.makeInputFormat();

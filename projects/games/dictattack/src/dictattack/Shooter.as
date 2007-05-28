@@ -23,19 +23,23 @@ public class Shooter extends Sprite
 
         var ship :Sprite = content.createShip();
         ship.rotation = 90;
+        ship.x = ship.width/2;
         _rotor.addChild(ship);
-        
+
         _name = new TextField();
         _name.text = "";
         _name.selectable = false;
         _name.defaultTextFormat = makeTextFormat(Content.FONT_COLOR, false);
+        _name.embedFonts = true;
         _name.autoSize = (posidx == 0) ? TextFieldAutoSize.LEFT : TextFieldAutoSize.RIGHT;
-        addChild(_name);
+        _name.rotation = 90;
+        _rotor.addChild(_name);
 
         _score = new TextField();
         _score.autoSize = TextFieldAutoSize.CENTER;
         _score.selectable = false;
         _score.defaultTextFormat = makeTextFormat(uint(0xFFFFFF), true);
+        _score.embedFonts = true;
         addChild(_score);
         setScore(0);
     }
@@ -46,17 +50,8 @@ public class Shooter extends Sprite
             name = name.substring(0, 10) + "...";
         }
         _name.text = name;
-        if (_posidx == 1 || _posidx == 2) {
-            _name.x = NAME_X[_posidx] * Content.SHOOTER_SIZE - _name.width;
-        } else {
-            _name.x = NAME_X[_posidx] * Content.SHOOTER_SIZE;
-        }
-        if (_posidx < 2) {
-            _name.y = NAME_Y[_posidx] * Content.SHOOTER_SIZE;
-        } else  {
-            _name.y = NAME_Y[_posidx] * Content.SHOOTER_SIZE - Content.FONT_SIZE -
-                _name.getLineMetrics(0).ascent;
-        }
+        _name.x = _name.getLineMetrics(0).ascent + 2;
+        _name.y = Content.SHOOTER_SIZE/2 + 5;
     }
 
     public function setPoints (points :int, maxPoints :int) :void
@@ -87,9 +82,9 @@ public class Shooter extends Sprite
     protected static function makeTextFormat (color :uint, bold :Boolean) : TextFormat
     {
         var format : TextFormat = new TextFormat();
-        format.font = Content.FONT_NAME;
+        format.font = "Name";
         format.color = color;
-        format.size = Content.FONT_SIZE;
+        format.size = 16;
         format.bold = bold;
         return format;
     }
@@ -103,9 +98,6 @@ public class Shooter extends Sprite
 
     protected static const SCORE_X :Array = [ 0, -0.5, -1, -0.5 ];
     protected static const SCORE_Y :Array = [ -0.5, 0, -0.5, -1 ];
-
-    protected static const NAME_X :Array = [ 0, -0.5, 0, 0.5 ];
-    protected static const NAME_Y :Array = [ 0.5, 0, -0.5, 0 ];
 
     protected static const POINTS_WIDTH :int = 15;
     protected static const POINTS_HEIGHT :int = 50;

@@ -15,6 +15,8 @@ import flash.geom.Rectangle;
 
 import com.threerings.util.EmbeddedSwfLoader;
 
+[Embed(source="../../rsrc/name_font.ttf", fontName="Name", mimeType="application/x-font-truetype")]
+
 /**
  * Defines skinnable content. TODO: use the right format whenever Ray finally finalizes content
  * packs.
@@ -56,7 +58,7 @@ public class Content
         [ uint(0x000000), uint(0x0066FF), uint(0xFF0033) ];
 
     /** The pixels size of the shooter. */
-    public static const SHOOTER_SIZE :int = 50;
+    public static const SHOOTER_SIZE :int = 25;
 
     /** The color of the shooters. */
     public static const SHOOTER_COLOR :Array =
@@ -86,7 +88,7 @@ public class Content
 
     public function makeInputFormat () :TextFormat
     {
-        var format : TextFormat = new TextFormat();
+        var format :TextFormat = new TextFormat();
         format.font = FONT_NAME;
         format.color = FONT_COLOR;
         format.size = FONT_SIZE;
@@ -95,8 +97,8 @@ public class Content
 
     public function makeMarqueeFormat () :TextFormat
     {
-        var format : TextFormat = new TextFormat();
-        format.font = FONT_NAME;
+        var format :TextFormat = new TextFormat();
+        format.font = "Name";
         format.bold = true;
         format.color = uint(0x000000);
         format.size = 18;
@@ -113,5 +115,4 @@ public class Content
 
     protected var _pack :EmbeddedSwfLoader;
 }
-
 }
