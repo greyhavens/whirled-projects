@@ -66,8 +66,8 @@ public class Model
         var half :int = int(_size/2), quarter :int = int(_size/4);
         if (xx == half && yy == half) {
             return TYPE_TRIPLE;
-        } else if ((xx == quarter || xx == (half + quarter)) &&
-                   (yy == quarter || yy == (half + quarter))) {
+        } else if ((xx == quarter || xx == (_size-quarter-1)) &&
+                   (yy == quarter || yy == (_size-quarter-1))) {
             return TYPE_DOUBLE;
         } else {
             return TYPE_NORMAL;
@@ -194,7 +194,7 @@ public class Model
             for (var yy :int = _size-1; yy >= 0; yy--) {
                 var l :String = getLetter(xx, yy);
                 if (l != null) {
-                    board.getLetter(yy * _size + xx).setPlayable(true);
+                    board.getLetter(yy * _size + xx).setPlayable(true, _size-1-yy);
                     break;
                 }
             }
@@ -203,28 +203,35 @@ public class Model
 
     public function getPosition (xx :int, yy :int) :int
     {
-        var pos :int;
-        // map the coordinates based on our player index
         switch (_control.seating.getMyPosition()) {
-        case 0: pos = yy * _size + xx; break;
-        case 1: pos = (_size-1 - yy) * _size + (_size-1 - xx); break;
-        case 2: pos = xx * _size + (_size-1 - yy); break; 
-        case 3: pos = (_size-1 - xx) * _size + yy; break; 
+        default:
+        case 0: return yy * _size + xx;
+        case 1: return (_size-1 - yy) * _size + (_size-1 - xx);
+        case 2: return xx * _size + (_size-1 - yy); 
+        case 3: return (_size-1 - xx) * _size + yy; 
         }
-        return pos;
     }
 
-    public function getReversePosition (xx :int, yy :int) :int
+    public function getReverseX (pos :int) :int
     {
-        var pos :int;
-        // map the coordinates based on our player index
         switch (_control.seating.getMyPosition()) {
-        case 0: pos = yy * _size + xx; break;
-        case 1: pos = (_size-1 - yy) * _size + (_size-1 - xx); break;
-        case 2: pos = (_size-1 - xx) * _size + yy; break; 
-        case 3: pos = xx * _size + (_size-1 - yy); break; 
+        default:
+        case 0: return pos % _size;
+        case 1: return _size-1 - pos % _size;
+        case 2: return int(pos / _size);
+        case 3: return _size-1 - int(pos / _size);
         }
-        return pos;
+    }
+
+    public function getReverseY (pos :int) :int
+    {
+        switch (_control.seating.getMyPosition()) {
+        default:
+        case 0: return int(pos / _size);
+        case 1: return _size-1 - int(pos / _size);
+        case 2: return _size-1 - pos % _size;
+        case 3: return pos % _size;
+        }
     }
 
     public function getLetter (xx :int, yy :int) :String

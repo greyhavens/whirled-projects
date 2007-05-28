@@ -51,7 +51,7 @@ public class Shooter extends Sprite
         }
         _name.text = name;
         _name.x = _name.getLineMetrics(0).ascent + 2;
-        _name.y = Content.SHOOTER_SIZE/2 + 5;
+        _name.y = Content.SHOOTER_SIZE/2;
     }
 
     public function setPoints (points :int, maxPoints :int) :void
@@ -67,7 +67,7 @@ public class Shooter extends Sprite
         var filled :int = Math.min(POINTS_HEIGHT, points * POINTS_HEIGHT / maxPoints);
         _points.graphics.drawRect(0, POINTS_HEIGHT-filled, POINTS_WIDTH, filled);
         _points.graphics.endFill();
-        _points.graphics.lineStyle(1, uint(0x000000));
+        _points.graphics.lineStyle(1, uint(0xFFFFFF));
         _points.graphics.drawRect(0, 0, POINTS_WIDTH, POINTS_HEIGHT);
         _rotor.addChild(_points);
     }

@@ -3,9 +3,10 @@
 
 package dictattack {
 
+import flash.events.Event;
 import flash.text.TextField;
-import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
 
 import flash.display.Shape;
 import flash.display.Sprite;
@@ -16,23 +17,8 @@ public class Letter extends Sprite
     {
         _content = content;
         _type = type;
-
-        _invader = content.createInvader(type);
-        _invader.x = Content.TILE_SIZE/2;
-        _invader.y = Content.TILE_SIZE/2;
-        _invader.width = Content.TILE_SIZE;
-        _invader.height = Content.TILE_SIZE;
-        addChild(_invader);
-
-        _label = new TextField();
-        _label.autoSize = TextFieldAutoSize.CENTER;
-        _label.selectable = false;
-        _label.defaultTextFormat = makePlainFormat();
-        _label.x = 0;
-        _label.width = Content.TILE_SIZE;
-        _label.embedFonts = true;
-        addChild(_label);
-
+        addChild(_invader = makeInvader());
+        addChild(_label = makeLabel());
         setPlayable(false);
     }
 
@@ -42,17 +28,73 @@ public class Letter extends Sprite
         _label.y = (Content.TILE_SIZE - _label.height)/2 + FONT_ADJUST_HACK;
     }
 
-    public function setPlayable (playable :Boolean) :void
+    public function setPlayable (playable :Boolean, dghost :int = -1) :void
     {
-        _invader.transform.colorTransform = _content.invaderColors[_type];
-        if (!playable) {
-            _invader.transform.colorTransform.alphaOffset = -128;
+        _invader.transform.colorTransform =
+            playable ? _content.invaderColors[_type] : _content.dimInvaderColors[_type];
+
+        if (dghost > 0 && _ghost == null) {
+            _targety = (Content.TILE_SIZE + Board.GAP) * dghost;
+            _ghost = new Sprite();
+
+            var invader :Sprite = makeInvader();
+            invader.transform.colorTransform = _content.ghostInvaderColors[_type];
+            _ghost.addChild(invader);
+
+            var label :TextField = makeLabel();
+            label.text = _label.text;
+            label.y = (Content.TILE_SIZE - label.height)/2 + FONT_ADJUST_HACK;
+            _ghost.addChild(label);
+
+            addEventListener(Event.ENTER_FRAME, onEnterFrame);
+            addChild(_ghost);
         }
     }
 
     public function setHighlighted (highlighted :Boolean) :void
     {
         _label.setTextFormat(highlighted ? makeHighlightFormat() : makePlainFormat());
+    }
+
+    public function clearGhost () :void
+    {
+        if (_ghost != null) {
+            removeChild(_ghost);
+            removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+            _ghost = null;
+        }
+    }
+
+    protected function makeInvader () :Sprite
+    {
+        var invader :Sprite = _content.createInvader(_type);
+        invader.x = Content.TILE_SIZE/2;
+        invader.y = Content.TILE_SIZE/2;
+        invader.width = Content.TILE_SIZE;
+        invader.height = Content.TILE_SIZE;
+        return invader;
+    }
+
+    protected function makeLabel () :TextField
+    {
+        var label :TextField = new TextField();
+        label.autoSize = TextFieldAutoSize.CENTER;
+        label.selectable = false;
+        label.defaultTextFormat = makePlainFormat();
+        label.x = 0;
+        label.width = Content.TILE_SIZE;
+        label.embedFonts = true;
+        return label;
+    }
+
+    protected function onEnterFrame (event :Event) :void
+    {
+        if (_ghost.y != _targety) {
+            _ghost.y++; // TODO: decouple from the framerate
+        }
+        if (_ghost.y == _targety) {
+            removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+        }
     }
 
     protected static function makePlainFormat () : TextFormat
@@ -79,6 +121,9 @@ public class Letter extends Sprite
     protected var _type :int;
     protected var _invader :Sprite;
     protected var _label :TextField;
+
+    protected var _ghost :Sprite;
+    protected var _targety :int = -1;
 
     protected static const FONT_ADJUST_HACK :int = 2;
 }

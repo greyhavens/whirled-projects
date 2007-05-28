@@ -15,7 +15,7 @@ import com.threerings.util.EmbeddedSwfLoader;
 
 import com.whirled.WhirledGameControl;
 
-[SWF(width="453", height="553")]
+[SWF(width="1000", height="550")]
 public class DictionaryAttack extends Sprite
 {
     /**
@@ -38,6 +38,11 @@ public class DictionaryAttack extends Sprite
         loader.addEventListener(Event.COMPLETE, finishInit);
         _content = new Content(loader);
         loader.load(ByteArray(new CONTENT()));
+
+        // make our background totally black
+        opaqueBackground = 0x000000;
+        // TODO: add a method to the control to tell us how big our viewable area is
+        graphics.drawRect(0, 0, 1024, 600);
     }
 
     protected function finishInit (event :Event) :void

@@ -37,7 +37,7 @@ public class Content
     public static const FONT_SIZE :int = 12;
 
     /** The foreground color of the letters. */
-    public static const FONT_COLOR :uint = uint(0x336600);
+    public static const FONT_COLOR :uint = uint(0xFFFFFF);
 
     /** The foreground color of the letters. */
     public static const LETTER_FONT_COLOR :uint = uint(0xFFFFFF);
@@ -65,8 +65,14 @@ public class Content
     /** The location and dimensions of the input field. */
     public var inputRect :Rectangle = new Rectangle(100, 470, 250, 20);
 
-    public var invaderColors :Array =
-        [ makeTransform(0x99CC66), makeTransform(0x0066FF), makeTransform(0xFF0033) ];
+    public var invaderColors :Array = [
+        makeXform(0x99CC66), makeXform(0x0066FF), makeXform(0xFF0033) ];
+
+    public var dimInvaderColors :Array = [
+        makeXform(0x99CC66, -64), makeXform(0x0066FF, -64), makeXform(0xFF0033, -64) ];
+
+    public var ghostInvaderColors :Array = [
+        makeXform(0x99CC66, -192), makeXform(0x0066FF, -192), makeXform(0xFF0033, -192) ];
 
     public function Content (pack :EmbeddedSwfLoader)
     {
@@ -84,11 +90,16 @@ public class Content
         return MovieClip(new (_pack.getClass("ship_color"))());
     }
 
-    public function makeInputFormat () :TextFormat
+    public function createExplosion () :Explosion
+    {
+        return new Explosion(MovieClip(new (_pack.getClass("explosion"))()));
+    }
+
+    public function makeInputFormat (color :uint) :TextFormat
     {
         var format :TextFormat = new TextFormat();
         format.font = FONT_NAME;
-        format.color = FONT_COLOR;
+        format.color = color;
         format.size = FONT_SIZE;
         return format;
     }
@@ -98,17 +109,17 @@ public class Content
         var format :TextFormat = new TextFormat();
         format.font = "Name";
         format.bold = true;
-        format.color = uint(0x000000);
-        format.size = 18;
+        format.color = FONT_COLOR;
+        format.size = 16;
         return format;
     }
 
-    protected function makeTransform (rgb :int) :ColorTransform
+    protected function makeXform (rgb :int, alphaOffset :Number = 0) :ColorTransform
     {
         var red :int = (rgb >> 16) & 0xFF;
         var green :int = (rgb >> 8) & 0xFF;
         var blue :int = (rgb >> 0) & 0xFF;
-        return new ColorTransform(red/0xFF, green/0xFF, blue/0xFF);
+        return new ColorTransform(red/0xFF, green/0xFF, blue/0xFF, 1, 0, 0, 0, alphaOffset);
     }
 
     protected var _pack :EmbeddedSwfLoader;
@@ -121,4 +132,5 @@ public class Content
            mimeType="application/x-font-truetype")]
     protected var NAME_FONT :Class;
 }
+
 }

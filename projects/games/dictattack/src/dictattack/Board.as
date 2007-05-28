@@ -4,8 +4,10 @@
 package dictattack {
 
 import flash.display.Graphics;
+import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.events.Event;
 
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.whirled.WhirledGameControl;
@@ -15,6 +17,9 @@ import com.whirled.WhirledGameControl;
  */
 public class Board extends Sprite
 {
+    /** The gap between tiles on the board. */
+    public static const GAP :int = 2;
+
     public function Board (size :int, control :WhirledGameControl, model :Model, content :Content)
     {
         _size = size;
@@ -65,6 +70,15 @@ public class Board extends Sprite
         }
     }
 
+    public function roundDidEnd () :void
+    {
+        for (var ii :int = 0; ii < _letters.length; ii++) {
+            if (_letters[ii] != null) {
+                _letters[ii].clearGhost();
+            }
+        }
+    }
+
     public function resetLetters (used :Array) :void
     {
         Util.invokeLater(LETTER_RESET_DELAY, function () :void {
@@ -77,12 +91,24 @@ public class Board extends Sprite
         });
     }
 
-    public function clearLetter (lidx :int) :void
+    public function destroyLetter (xx :int, yy :int) :void
     {
-        if (_letters[lidx] != null) {
-            removeChild(_letters[lidx]);
-            _letters[lidx] = null;
+        if (clearLetter(yy * _size + xx)) {
+            var boom :Explosion = _content.createExplosion();
+            boom.x = (Content.TILE_SIZE + GAP) * xx;
+            boom.y = (Content.TILE_SIZE + GAP) * yy;
+            addChild(boom);
         }
+    }
+
+    public function clearLetter (lidx :int) :Boolean
+    {
+        if (_letters[lidx] == null) {
+            return false;
+        }
+        removeChild(_letters[lidx]);
+        _letters[lidx] = null;
+        return true;
     }
 
     /**
@@ -104,10 +130,6 @@ public class Board extends Sprite
                         }
                     }
                 }
-            } else {
-                // otherwise a single letter was cleared
-                clearLetter(_model.getReversePosition(int(event.index % _size),
-                                                      int(event.index / _size)));
             }
         }
     }
@@ -117,9 +139,6 @@ public class Board extends Sprite
     protected var _model :Model;
     protected var _content :Content;
     protected var _letters :Array = new Array();
-
-    /** The gap between tiles on the board. */
-    protected static const GAP :int = 2;
 
     protected static const LETTER_RESET_DELAY :int = 1000;
 }

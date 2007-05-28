@@ -36,7 +36,9 @@ public class GameView extends Sprite
 
         // create the text field via which we'll accept player input
         _input = new TextField();
-        _input.defaultTextFormat = _content.makeInputFormat();
+        _input.background = true;
+        _input.backgroundColor = uint(0xFFFFFF);
+        _input.defaultTextFormat = _content.makeInputFormat(uint(0x000000));
         _input.border = true;
         _input.type = TextFieldType.INPUT;
         _input.x = _content.inputRect.x;
@@ -81,7 +83,7 @@ public class GameView extends Sprite
             }
 
             var help :TextField = new TextField();
-            help.defaultTextFormat = _content.makeInputFormat();
+            help.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF));
             help.x = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
             help.y = 50;
             help.autoSize = TextFieldAutoSize.LEFT;
@@ -114,6 +116,7 @@ public class GameView extends Sprite
 
     public function roundDidEnd () :void
     {
+        _board.roundDidEnd();
         removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
         _input.stage.focus = null;
         removeChild(_input);
@@ -123,6 +126,15 @@ public class GameView extends Sprite
     public function gameDidEnd (flow :int) :void
     {
         marquee.display(flow > 0 ? "Game over! You earned " + flow + " flow!" : "Game over!", 3000);
+    }
+
+    public function letterCleared (lidx :int) :void
+    {
+        // map the global position into to our local coordinates
+        var xx :int = _model.getReverseX(lidx);
+        var yy :int = _model.getReverseY(lidx);
+        // TODO: move the ship into position, shoot the letter, then destroy it
+        _board.destroyLetter(xx, yy);
     }
 
     /**
@@ -149,9 +161,14 @@ public class GameView extends Sprite
                 _shooters[event.index].setScore(int(event.newValue));
             }
 
-        } else if (event.name == Model.BOARD_DATA && event.index == -1) {
-            // we got our board, update the playable letters display
-            _model.updatePlayable(_board);
+        } else if (event.name == Model.BOARD_DATA) {
+            if (event.index == -1) {
+                // we got our board, update the playable letters display
+                _model.updatePlayable(_board);
+            } else {
+                // otherwise a single letter was cleared
+                letterCleared(event.index);
+            }
         }
     }
 
