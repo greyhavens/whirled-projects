@@ -62,9 +62,14 @@ public class Board extends Sprite
             for (var xx : int = 0; xx < _size; xx++) {
                 var ll :Letter = new Letter(_content, _model.getType(xx, yy));
                 ll.setText("?");
-                ll.x = (Content.TILE_SIZE + GAP) * xx;
-                ll.y = (Content.TILE_SIZE + GAP) * yy;
+                var sx :int = (Content.TILE_SIZE + GAP) * xx;
+                var sy :int = (Content.TILE_SIZE + GAP) * (yy-_size-5);
+                var dy :int = (Content.TILE_SIZE + GAP) * yy;
+                ll.x = sx;
+                ll.y = sy;
                 addChild(ll);
+                var delay :int = (_size-yy-1) * (_size*20) + ((yy%2 == 0) ? xx : (_size-xx-1)) * 20;
+                DelayedPath.delay(LinePath.move(ll, sx, sy, sx, dy, 1000), delay).start();
                 _letters[yy * _size + xx] = ll;
             }
         }
@@ -72,11 +77,20 @@ public class Board extends Sprite
 
     public function roundDidEnd () :void
     {
-//         for (var ii :int = 0; ii < _letters.length; ii++) {
-//             if (_letters[ii] != null) {
-//                 _letters[ii].clearGhost();
-//             }
-//         }
+        for (var yy :int = 0; yy < _size; yy++) {
+            for (var xx : int = 0; xx < _size; xx++) {
+                var ll :Letter = _letters[yy * _size + xx];
+                if (ll == null) {
+                    continue;
+                }
+                ll.clearGhost();
+                var sx :int = (Content.TILE_SIZE + GAP) * xx;
+                var sy :int = (Content.TILE_SIZE + GAP) * yy;
+                var dx :int = (Content.TILE_SIZE + GAP) * (xx-_size-5);
+                var delay :int = (_size-yy-1) * (_size*20) + xx * 20;
+                DelayedPath.delay(LinePath.move(ll, sx, sy, dx, sy, 1000), delay).start();
+            }
+        }
     }
 
     public function resetLetters (used :Array) :void

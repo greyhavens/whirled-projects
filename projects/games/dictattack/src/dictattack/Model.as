@@ -276,7 +276,7 @@ public class Model
     protected var _size :int;
     protected var _control :WhirledGameControl;
 
-    protected static const INTER_ROUND_DELAY :int = 5;
+    protected static const INTER_ROUND_DELAY :int = 10;
 
     protected static const TYPE_NORMAL :int = 0;
     protected static const TYPE_DOUBLE :int = 1;

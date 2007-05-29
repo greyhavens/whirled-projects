@@ -3,26 +3,31 @@
 
 package dictattack {
 
-import flash.display.Sprite;
+import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.utils.getTimer;
 
 /**
- * Moves a sprite along a particular path in a specified amount of time.
+ * Moves a display object along a particular path in a specified amount of time.
  */
 public /* abstract */ class Path
 {
     /**
-     * Configures this path with an optional function to be called when it completes (or is
-     * aborted). The function should have the following signature:
+     * Starts this path. The path will be ticked once immediately and subsequently ticked every
+     * frame.
      *
-     * function onComplete (path :Path) :void
+     * @param onComplete an optional function to be called when it completes (or is aborted). The
+     * function should have the following signature: function onComplete (path :Path) :void
+     * @param startOffset an optional number of milliseconds by which to adjust the time at which
+     * the path believes that it was started.
      */
-    public function start (onComplete :Function = null) :void
+    public function start (onComplete :Function = null, startOffset :int = 0) :void
     {
         _onComplete = onComplete;
-        _startStamp = getTimer();
+        var now :int = getTimer();
+        _startStamp = now + startOffset;
         _target.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+        tick(now);
     }
 
     /**
@@ -38,7 +43,7 @@ public /* abstract */ class Path
     /**
      * Returns the target of this path.
      */
-    public function get target () :Sprite
+    public function get target () :DisplayObject
     {
         return _target;
     }
@@ -53,20 +58,11 @@ public /* abstract */ class Path
     }
 
     /**
-     * Derived classes must call this method to wire this path up to the target sprite.
+     * Derived classes must call this method to wire this path up to its target.
      */
-    protected function init (target :Sprite) :void
+    protected function init (target :DisplayObject) :void
     {
         _target = target;
-    }
-
-    /**
-     * Derived classes can override this function to perform any action that should be completed
-     * immediately during the call to {@link #start}. {@link #_startStamp} will have been filled in
-     * with our starting timestamp and on the next frame {@link #tick} will be called.
-     */
-    protected function pathDidStart () :void
-    {
     }
 
     /**
@@ -94,7 +90,7 @@ public /* abstract */ class Path
         }
     }
 
-    protected var _target :Sprite;
+    protected var _target :DisplayObject;
     protected var _onComplete :Function;
     protected var _startStamp :int = -1;
     protected var _wasAborted :Boolean;

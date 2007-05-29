@@ -78,14 +78,14 @@ public class Content
     public var ghostInvaderColors :Array = [
         makeXform(0x00CC00, -128), makeXform(0x0066FF, -128), makeXform(0xFF0033, -128) ];
 
-    public static function getShootSound () :Sound
-    {
-        return SHOOT_SOUND;
-    }
-
     public function Content (pack :EmbeddedSwfLoader)
     {
         _pack = pack;
+    }
+
+    public function getShootSound () :Sound
+    {
+        return SHOOT_SOUND;
     }
 
     public function createInvader (type :int) :MovieClip
@@ -102,6 +102,16 @@ public class Content
     public function createExplosion () :Explosion
     {
         return new Explosion(MovieClip(new (_pack.getClass("explosion"))()));
+    }
+
+    public function createWordScoreDisplay () :MovieClip
+    {
+        return MovieClip(new (_pack.getClass("ProgressBar"))());
+    }
+
+    public function createRoundScoreIcon () :MovieClip
+    {
+        return MovieClip(new (_pack.getClass("ProgressIcon"))());
     }
 
     public function makeInputFormat (color :uint, bold :Boolean = false) :TextFormat

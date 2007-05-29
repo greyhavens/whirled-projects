@@ -3,34 +3,37 @@
 
 package dictattack {
 
-import flash.display.Sprite;
+import flash.display.DisplayObject;
 
 /**
- * Moves a sprite along a straight line path in a specified amount of time.
+ * Moves a display object along a straight line path in a specified amount of time.
  */
 public class LinePath extends Path
 {
     /**
-     * Moves the specified sprite from the specified starting coordinates to the specified ending
-     * coordinates in the specified number of milliseconds.
+     * Moves the specified display object from the specified starting coordinates to the specified
+     * ending coordinates in the specified number of milliseconds.
      */
-    public static function move (target :Sprite, startx :int, starty :int,
+    public static function move (target :DisplayObject, startx :int, starty :int,
                                  destx :int, desty :int, duration :int) :Path
     {
         return new LinePath(target, startx, starty, destx, desty, duration);
     }
 
     /**
-     * Moves the specified sprite from its current location to the specified ending coordinates in
-     * the specified number of milliseconds.
+     * Moves the specified display object from its current location to the specified ending
+     * coordinates in the specified number of milliseconds. <em>NOTE:</em> beware the fact that
+     * Flash does not immediately apply a display object's location update, so setting x and y and
+     * then calling moveTo() will not work. Use {@link #move} instead.
      */
-    public static function moveTo (target :Sprite, destx :int, desty :int, duration :int) :Path
+    public static function moveTo (target :DisplayObject, destx :int, desty :int,
+                                   duration :int) :Path
     {
         return move(target, target.x, target.y, destx, desty, duration);
     }
 
-    protected function LinePath (target :Sprite, startx :int, starty :int,
-                                 destx :int, desty :int, duration :int)
+    public function LinePath (target :DisplayObject, startx :int, starty :int,
+                              destx :int, desty :int, duration :int)
     {
         _startx = startx;
         _starty = starty;
@@ -40,15 +43,6 @@ public class LinePath extends Path
         init(target);
     }
 
-    override protected function pathDidStart () :void
-    {
-        super.pathDidStart();
-
-        // position the sprite at the start of its path
-        _target.x = _startx;
-        _target.y = _starty;
-    }
-
     override protected function tick (curStamp :int) :Boolean
     {
         var complete :Number = (curStamp - _startStamp) / _duration;
@@ -56,11 +50,17 @@ public class LinePath extends Path
             _target.x = _destx;
             _target.y = _desty;
             return true;
-        }
 
-        _target.x = int((_destx - _startx) * complete) + _startx;
-        _target.y = int((_desty - _starty) * complete) + _starty;
-        return false;
+        } else if (complete < 0) { // cope with a funny startOffset
+            _target.x = _startx;
+            _target.y = _starty;
+            return false;
+
+        } else {
+            _target.x = int((_destx - _startx) * complete) + _startx;
+            _target.y = int((_desty - _starty) * complete) + _starty;
+            return false;
+        }
     }
 
     protected var _startx :int, _starty :int;

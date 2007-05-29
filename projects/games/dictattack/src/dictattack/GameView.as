@@ -75,7 +75,7 @@ public class GameView extends Sprite
         for (var pidx :int = 0; pidx < playerCount; pidx++) {
             // the board is rotated so that our position is always at the bottom
             var posidx :int = POS_MAP[mypidx][pidx];
-            var shooter :Shooter = new Shooter(_content, posidx, pidx);
+            var shooter :Shooter = new Shooter(this, _content, posidx, pidx);
             shooter.x = SHOOTER_X[posidx] * psize;
             shooter.y = SHOOTER_Y[posidx] * psize;
             // if this is ours (the one on the bottom), lower it a smidgen further
@@ -135,7 +135,12 @@ public class GameView extends Sprite
 
     public function roundDidEnd () :void
     {
-        _board.roundDidEnd();
+        if (_shotsInProgress > 0) {
+            _roundEndPending = true;
+        } else {
+            _board.roundDidEnd();
+        }
+
         removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
         _input.stage.focus = null;
         removeChild(_input);
@@ -146,6 +151,17 @@ public class GameView extends Sprite
     public function gameDidEnd (flow :int) :void
     {
         marquee.display(flow > 0 ? "Game over! You earned " + flow + " flow!" : "Game over!", 3000);
+    }
+
+    /**
+     * Called when a shooter finishes its shot.
+     */
+    public function shotTaken (shooter :Shooter) :void
+    {
+        if (--_shotsInProgress == 0 && _roundEndPending) {
+            _board.roundDidEnd();
+            _roundEndPending = false;
+        }
     }
 
     /**
@@ -204,6 +220,7 @@ public class GameView extends Sprite
                 var xx :int = _model.getReverseX(int(wpos[ii]));
                 var yy :int = _model.getReverseY(int(wpos[ii]));
                 // when the shooting is finished the column will be marked as playable
+                _shotsInProgress++;
                 _shooters[scidx].shootLetter(_board, xx, yy);
             }
         }
@@ -227,6 +244,9 @@ public class GameView extends Sprite
 
     protected var _board :Board;
     protected var _shooters :Array = new Array();
+
+    protected var _roundEndPending :Boolean;
+    protected var _shotsInProgress :int;
 
     protected static const POS_MAP :Array = [
         [ 3, 1, 0, 2 ], [ 1, 3, 2, 0 ], [ 2, 0, 3, 1 ], [ 0, 2, 1, 3 ] ];

@@ -4,41 +4,43 @@
 package dictattack {
 
 import flash.events.Event;
+import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
+import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite
 
 public class Shooter extends Sprite
 {
-    public function Shooter (content :Content, posidx :int, pidx :int)
+    public function Shooter (view :GameView, content :Content, posidx :int, pidx :int)
     {
+        _content = content;
+        _view = view;
         _pidx = pidx;
         _posidx = posidx;
         rotation = (posidx+1)%4 * 90;
 
-        _name = new TextField();
+        addChild(_name = new TextField());
         _name.text = "";
         _name.selectable = false;
         _name.defaultTextFormat = content.makeNameFormat();
         _name.embedFonts = true;
-        _name.autoSize = TextFieldAutoSize.LEFT;
-        addChild(_name);
-
-        _score = new TextField();
-        _score.autoSize = TextFieldAutoSize.CENTER;
-        _score.selectable = false;
-        _score.defaultTextFormat = content.makeNameFormat();
-        _score.embedFonts = true;
-        _score.autoSize = TextFieldAutoSize.RIGHT;
-        addChild(_score);
-        setScore(0);
+        _name.autoSize = TextFieldAutoSize.RIGHT;
 
         _ship = content.createShip();
-        _ship.y = -Content.SHOOTER_SIZE/2;
+        _ship.y = -3*Content.SHOOTER_SIZE/2;
         addChild(_ship);
+
+        addChild(_points = content.createWordScoreDisplay());
+        _points.gotoAndStop(0);
+        _points.y = -Content.SHOOTER_SIZE/2;
+
+        addChild(_score = new Sprite());
+        _score.x = _points.width/2 + 5;
+        _score.y = -Content.SHOOTER_SIZE/2;
 
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
     }
@@ -46,33 +48,26 @@ public class Shooter extends Sprite
     public function setName (name :String) :void
     {
         _name.text = name;
-        _name.x = Content.SHOOTER_SIZE/2 + 2;
+        _name.x = -_points.width/2 - _name.width - 2;
         _name.y = -Content.SHOOTER_SIZE/2 - _name.getLineMetrics(0).ascent/2 + FONT_Y_HACK;
     }
 
     public function setPoints (points :int, maxPoints :int) :void
     {
-        if (_points != null) {
-            removeChild(_points);
-        }
-
-        _points = new Shape();
-        _points.x = -Content.SHOOTER_SIZE/2 - POINTS_WIDTH - 5;
-        _points.y = -Content.SHOOTER_SIZE/2 - POINTS_HEIGHT/2;
-        _points.graphics.beginFill(Content.SHOOTER_COLOR[_pidx]);
-        var filled :int = Math.min(POINTS_WIDTH, points * POINTS_WIDTH / maxPoints);
-        _points.graphics.drawRect(POINTS_WIDTH-filled, 0, filled, POINTS_HEIGHT);
-        _points.graphics.endFill();
-        _points.graphics.lineStyle(1, uint(0xFFFFFF));
-        _points.graphics.drawRect(0, 0, POINTS_WIDTH, POINTS_HEIGHT);
-        addChild(_points);
+        var frame :int = int(_points.totalFrames * points / maxPoints);
+        _points.gotoAndStop(frame);
     }
 
     public function setScore (score :int) :void
     {
-        _score.text = ("" + score);
-        _score.x = -Content.SHOOTER_SIZE/2 - 5 - POINTS_WIDTH - _score.width - 2;
-        _score.y = -Content.SHOOTER_SIZE/2 - _score.getLineMetrics(0).ascent/2 + FONT_Y_HACK;
+        while (_score.numChildren > 0) { // no removeAllChildren()? WTF?
+            _score.removeChildAt(0);
+        }
+        for (var ii :int = 0; ii < score; ii++) {
+            var icon :MovieClip = _content.createRoundScoreIcon();
+            icon.x = ii * (icon.width + 2) + icon.width/2;
+            _score.addChild(icon);
+        }
     }
 
     public function shootLetter (board :Board, xx :int, yy :int) :void
@@ -116,10 +111,11 @@ public class Shooter extends Sprite
 
     protected function readyToShoot () :void
     {
-        Content.getShootSound().play();
+        _content.getShootSound().play();
 
         // TODO: fire a missile at the letter, blow it up when the missile hits
         _board.destroyLetter(_tgtx, _tgty);
+        _view.shotTaken(this);
 
         if (_targets.length > 0) {
             shootNextTarget();
@@ -148,24 +144,20 @@ public class Shooter extends Sprite
         }
     }
 
+    protected var _content :Content;
+    protected var _view :GameView;
     protected var _pidx :int;
     protected var _posidx :int;
     protected var _ship :Sprite;
-    protected var _points :Shape;
+    protected var _points :MovieClip;
     protected var _name :TextField;
-    protected var _score :TextField;
+    protected var _score :Sprite;
 
     protected var _board :Board;
     protected var _targets :Array = new Array();
     protected var _tgtx :int = -1;
     protected var _tgty :int = -1;
     protected var _shipx :int = 0;
-
-    protected static const SCORE_X :Array = [ 0, -0.5, -1, -0.5 ];
-    protected static const SCORE_Y :Array = [ -0.5, 0, -0.5, -1 ];
-
-    protected static const POINTS_WIDTH :int = 50;
-    protected static const POINTS_HEIGHT :int = 15;
 
     protected static const FONT_Y_HACK :int = -3;
 }
