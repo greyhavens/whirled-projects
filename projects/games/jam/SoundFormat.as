@@ -60,7 +60,7 @@ package
          */
         public function SoundFormat()
         {
-            initialize (SAMPLERATE_44100, SAMPLESIZE_16BIT, CHANNELTYPE_MONO, 20);
+            initialize (SAMPLERATE_44100, SAMPLESIZE_16BIT, CHANNELTYPE_MONO, 10);
         }
 
         /**

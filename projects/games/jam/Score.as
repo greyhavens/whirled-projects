@@ -7,7 +7,7 @@ package {
 public class Score
 {
     /** Beats per minute. */
-    public static const BPM :int = 120;
+    public static const BPM :int = 150;
 
     /** Time delta between beats (in seconds). */
     public static const DT_PER_BEAT :Number = 60.0 / BPM;

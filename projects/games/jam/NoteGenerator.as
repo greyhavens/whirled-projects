@@ -1,14 +1,11 @@
 package
 {
 
-import flash.utils.getTimer;
-    
 public class NoteGenerator extends AudioNode
 {
     protected var _f :Number;
     protected var _score :Score;
     protected var _player :int;
-    protected var _globalStartTime :Number;  
 
     // ADSR envelope, as a collection of points, where x is the time since the start
     // of the note in seconds, and y is the gain in [0, 1].
@@ -31,8 +28,6 @@ public class NoteGenerator extends AudioNode
         _score = score;
         _player = playerIndex;
         
-        _globalStartTime = getTimer() / 1000.0;
-
         score.applyEnvelope(playerIndex, this);
         setOvertones();
     }
@@ -82,7 +77,7 @@ public class NoteGenerator extends AudioNode
     // documentation inherited from AudioNode
     override public function generateSamples (startTime :Number, buffer :Array) :void
     {
-        var t :Number = startTime - _globalStartTime; // global time (used for sine wave)
+        var t :Number = startTime;                    // global time (used for sine wave)
         var dt :Number = 1 / _soundFormat.sampleRate; // time change per sample
 
         var x :Number = 2 * Math.PI * t;              // global phase, resuling in 1Hz wave

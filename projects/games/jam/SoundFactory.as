@@ -1,6 +1,5 @@
 package 
 {
-    import flash.utils.getTimer;
     import flash.utils.ByteArray;
     import flash.utils.Endian;
     import flash.events.EventDispatcher;
@@ -21,16 +20,19 @@ package
          */
         public function SoundFactory (soundFormat :SoundFormat)
         {
-            _soundFormat=soundFormat;
+            _soundFormat = soundFormat;
             _intermediateBuffer = new Array(soundFormat.bufferSize);
             _audioBuffer = new AudioBuffer(_soundFormat);
+            _startTime = 0; 
 
             _loader = new Loader();
             _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, swfCreated, false, 0, true);
 
             // from spender:
             // this took ages to find... remember, 8bit audio is unsigned, so zero point is 128.
-            var defVal :int = (_soundFormat.sampleSize == SoundFormat.CHANNELTYPE_MONO) ? 128 : 0;  
+            var defVal :int =
+                (_soundFormat.sampleSize == SoundFormat.CHANNELTYPE_MONO) ? 128 : 0;
+            
             var silentSoundSize:int = _soundFormat.bufferSize - 2038; 
             _silenceSwf = makeSwf(silentSoundSize, defVal);
             _audioSwf = makeSwf(soundFormat.bufferSize, defVal);
@@ -45,8 +47,9 @@ package
         public function fillAudioBuffer (source :AudioNode) :void
         {
             // pull out the wave form
-            source.generateSamples(getTimer() / 1000.0, _intermediateBuffer);
+            source.generateSamples(_startTime, _intermediateBuffer);
             _audioBuffer.fill(_intermediateBuffer);
+            _startTime += _soundFormat.bufferSize / _soundFormat.sampleRate;
 
             // fill in the swf and reload
             _audioSwf.position = _swfDataPosition;
@@ -120,6 +123,7 @@ package
         private var _intermediateBuffer :Array;
         private var _audioBuffer :AudioBuffer;
         private var _soundFormat :SoundFormat;
+        private var _startTime :Number;
         
         private var _loader :Loader;
         private var _swfDataPosition :Number;
