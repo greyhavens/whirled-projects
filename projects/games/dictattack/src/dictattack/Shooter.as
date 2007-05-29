@@ -22,7 +22,7 @@ public class Shooter extends Sprite
         _name = new TextField();
         _name.text = "";
         _name.selectable = false;
-        _name.defaultTextFormat = makeTextFormat(Content.FONT_COLOR);
+        _name.defaultTextFormat = content.makeNameFormat();
         _name.embedFonts = true;
         _name.autoSize = TextFieldAutoSize.LEFT;
         addChild(_name);
@@ -30,7 +30,7 @@ public class Shooter extends Sprite
         _score = new TextField();
         _score.autoSize = TextFieldAutoSize.CENTER;
         _score.selectable = false;
-        _score.defaultTextFormat = makeTextFormat(Content.FONT_COLOR);
+        _score.defaultTextFormat = content.makeNameFormat();
         _score.embedFonts = true;
         _score.autoSize = TextFieldAutoSize.RIGHT;
         addChild(_score);
@@ -146,15 +146,6 @@ public class Shooter extends Sprite
         } else if (_tgtx != -1) {
             readyToShoot();
         }
-    }
-
-    protected static function makeTextFormat (color :uint) : TextFormat
-    {
-        var format : TextFormat = new TextFormat();
-        format.font = "Name";
-        format.color = color;
-        format.size = 16;
-        return format;
     }
 
     protected var _pidx :int;

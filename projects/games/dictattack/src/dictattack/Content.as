@@ -41,7 +41,7 @@ public class Content
     public static const FONT_COLOR :uint = uint(0xFFFFFF);
 
     /** The foreground color of the letters. */
-    public static const LETTER_FONT_COLOR :uint = uint(0xFFFFFF);
+    public static const LETTER_FONT_COLOR :uint = uint(0x000000);
 
     /** The highlighted color of the letters. */
     public static const HIGH_FONT_COLOR :uint = uint(0xFF0000);
@@ -64,14 +64,17 @@ public class Content
         [ uint(0x6699CC), uint(0x336600), uint(0x996699), uint(0xCC6666) ];
 
     /** The location and dimensions of the input field. */
-    public var inputRect :Rectangle = new Rectangle(100, 470, 250, 20);
+    public var inputRect :Rectangle = new Rectangle(170, 470, 150, 20);
 
+    /** The colors of the invaders that comprise a player's active letter set. */
     public var invaderColors :Array = [
         makeXform(0x00CC00), makeXform(0x0066FF), makeXform(0xFF0033) ];
 
+    /** The colors of the invaders on the rest of the board. */
     public var dimInvaderColors :Array = [
         makeXform(0x00CC00, -64), makeXform(0x0066FF, -64), makeXform(0xFF0033, -64) ];
 
+    /** The colors of "ghost" invaders whose normal version have been relocated to the bottom. */
     public var ghostInvaderColors :Array = [
         makeXform(0x00CC00, -128), makeXform(0x0066FF, -128), makeXform(0xFF0033, -128) ];
 
@@ -101,12 +104,13 @@ public class Content
         return new Explosion(MovieClip(new (_pack.getClass("explosion"))()));
     }
 
-    public function makeInputFormat (color :uint) :TextFormat
+    public function makeInputFormat (color :uint, bold :Boolean = false) :TextFormat
     {
         var format :TextFormat = new TextFormat();
         format.font = FONT_NAME;
         format.color = color;
         format.size = FONT_SIZE;
+        format.bold = bold;
         return format;
     }
 
@@ -115,6 +119,15 @@ public class Content
         var format :TextFormat = new TextFormat();
         format.font = "Name";
         format.bold = true;
+        format.color = FONT_COLOR;
+        format.size = 16;
+        return format;
+    }
+
+    public function makeNameFormat () : TextFormat
+    {
+        var format : TextFormat = new TextFormat();
+        format.font = "Name";
         format.color = FONT_COLOR;
         format.size = 16;
         return format;
@@ -138,6 +151,7 @@ public class Content
            mimeType="application/x-font-truetype")]
     protected static var NAME_FONT :Class;
 
+    // TODO: self and other shooting sounds
     [Embed(source="../../rsrc/shoot.mp3")]
     protected static var SHOOT_CLASS :Class;
     protected static const SHOOT_SOUND :Sound = Sound(new SHOOT_CLASS());

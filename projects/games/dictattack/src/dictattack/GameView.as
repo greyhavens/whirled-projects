@@ -33,12 +33,19 @@ public class GameView extends Sprite
         x = 5;
         y = 5;
 
+        // add text that says "Type here:"
+        _tip = new TextField();
+        _tip.selectable = false;
+        // _tip.embedFonts = true;
+        _tip.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF), true);
+        _tip.autoSize = TextFieldAutoSize.RIGHT;
+        _tip.y = _content.inputRect.y;
+
         // create the text field via which we'll accept player input
         _input = new TextField();
         _input.background = true;
         _input.backgroundColor = uint(0xFFFFFF);
-        _input.defaultTextFormat = _content.makeInputFormat(uint(0x000000));
-        _input.border = true;
+        _input.defaultTextFormat = _content.makeInputFormat(uint(0x000000), true);
         _input.type = TextFieldType.INPUT;
         _input.x = _content.inputRect.x;
         _input.y = _content.inputRect.y;
@@ -107,9 +114,15 @@ public class GameView extends Sprite
     {
         _board.roundDidStart();
         _control.setChatEnabled(false);
+
+        addChild(_tip);
+        _tip.text = "Enter words:";
+        _tip.x = _content.inputRect.x - _tip.width - 5;
+
         _input.selectable = false;
         addChild(_input);
         _input.text = "Type words here!";
+
         marquee.display("Round " + _control.getRound() + "...", 1000);
         Util.invokeLater(1000, function () :void {
             addEventListener(KeyboardEvent.KEY_UP, keyReleased);
@@ -126,6 +139,7 @@ public class GameView extends Sprite
         removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
         _input.stage.focus = null;
         removeChild(_input);
+        removeChild(_tip);
         _control.setChatEnabled(true);
     }
 
@@ -208,6 +222,7 @@ public class GameView extends Sprite
     protected var _model :Model;
     protected var _content :Content;
 
+    protected var _tip :TextField;
     protected var _input :TextField;
 
     protected var _board :Board;
