@@ -99,6 +99,7 @@ public class Board extends Sprite
             boom.y = (Content.TILE_SIZE + GAP) * yy;
             addChild(boom);
         }
+        _model.updateColumnPlayable(this, xx);
     }
 
     public function clearLetter (lidx :int) :Boolean

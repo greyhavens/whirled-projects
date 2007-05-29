@@ -56,10 +56,21 @@ public class DictionaryAttack extends Sprite
         _view = new GameView(_control, _model, _content);
         _view.init(size, pcount);
         addChild(_view);
+
+        // if the game was already started but we weren't ready yet, start now (TODO: allow us to
+        // delay our playerReady() until we're actually ready...)
+        if (_control.isInPlay()) {
+            gameDidStart(null);
+        }
     }
 
     protected function gameDidStart (event :StateChangedEvent) :void
     {
+        if (_view == null) {
+            return; // we'll get recalled when the view is ready
+        }
+        _view.gameDidStart();
+
         // zero out the scores
         var pcount :int = _control.seating.getPlayerIds().length;
         if (_control.amInControl()) {

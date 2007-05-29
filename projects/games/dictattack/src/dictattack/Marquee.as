@@ -49,7 +49,7 @@ public class Marquee extends TextField
     {
         text = "";
         if (_tqueue.length > 0) {
-            display(_tqueue.pop() as String, _dqueue.pop() as int);
+            display(_tqueue.shift() as String, _dqueue.shift() as int);
         }
     }
 

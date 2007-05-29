@@ -15,6 +15,10 @@ public class Explosion extends Sprite
     public function Explosion (movie :MovieClip)
     {
         addChild(_movie = movie);
+        _movie.x = Content.TILE_SIZE/2;
+        _movie.y = Content.TILE_SIZE/2;
+        _movie.scaleX = 0.25;
+        _movie.scaleY = 0.25;
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
     }
 

@@ -140,19 +140,22 @@ public class Model
             // watchers coming into a game half way through will see valid state), while we're at
             // it, compute our points
             var wpoints :int = used.length - getMinWordLength() + 1;
+            var wpos :Array = new Array();
             var ii :int, mult :int = 1;
             for (ii = 0; ii < used.length; ii++) {
                 // map our local coordinates back to a global position coordinates
                 var xx :int = int(used[ii] % _size);
                 var yy :int = int(used[ii] / _size);
                 mult = Math.max(TYPE_MULTIPLIER[getType(xx, yy)], mult);
-                _control.set(BOARD_DATA, null, getPosition(xx, yy));
+                var pos :int = getPosition(xx, yy);
+                _control.set(BOARD_DATA, null, pos);
+                wpos.push(pos);
             }
             wpoints *= mult;
 
             // broadcast our our played word as a message
             var myidx :int = _control.seating.getMyPosition();
-            _control.sendMessage(WORD_PLAY, [ myidx, word, wpoints, mult ]);
+            _control.sendMessage(WORD_PLAY, [ myidx, word, wpoints, mult, wpos ]);
 
             // update our points
             var points :Array = (_control.get(POINTS) as Array);
@@ -180,13 +183,18 @@ public class Model
     public function updatePlayable (board :Board) :void
     {
         for (var xx :int = 0; xx < _size; xx++) {
-            // scan from the bottom upwards looking for the first letter
-            for (var yy :int = _size-1; yy >= 0; yy--) {
-                var l :String = getLetter(xx, yy);
-                if (l != null) {
-                    board.getLetter(yy * _size + xx).setPlayable(true, _size-1-yy);
-                    break;
-                }
+            updateColumnPlayable(board, xx);
+        }
+    }
+
+    public function updateColumnPlayable (board :Board, xx :int) :void
+    {
+        // scan from the bottom upwards looking for the first letter
+        for (var yy :int = _size-1; yy >= 0; yy--) {
+            var l :String = getLetter(xx, yy);
+            if (l != null) {
+                board.getLetter(yy * _size + xx).setPlayable(true, _size-1-yy);
+                break;
             }
         }
     }

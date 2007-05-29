@@ -80,11 +80,6 @@ public class GameView extends Sprite
         }
 
         if (_control.isConnected()) {
-            var names :Array = _control.seating.getPlayerNames();
-            for (var ii :int = 0; ii < playerCount; ii++) {
-                _shooters[ii].setName(names[ii]);
-            }
-
             var help :TextField = new TextField();
             help.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF));
             help.x = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
@@ -97,6 +92,14 @@ public class GameView extends Sprite
                     "POINTS", _model.getWinningPoints()).replace(
                         "ROUNDS", _model.getWinningScore());
             addChild(help);
+        }
+    }
+
+    public function gameDidStart () :void
+    {
+        var names :Array = _control.seating.getPlayerNames();
+        for (var ii :int = 0; ii < names.length; ii++) {
+            _shooters[ii].setName(names[ii]);
         }
     }
 
@@ -131,15 +134,6 @@ public class GameView extends Sprite
         marquee.display(flow > 0 ? "Game over! You earned " + flow + " flow!" : "Game over!", 3000);
     }
 
-    public function letterCleared (lidx :int) :void
-    {
-        // map the global position into to our local coordinates
-        var xx :int = _model.getReverseX(lidx);
-        var yy :int = _model.getReverseY(lidx);
-        // TODO: move the ship into position, shoot the letter, then destroy it
-        _board.destroyLetter(xx, yy);
-    }
-
     /**
      * Called when our distributed game state changes.
      */
@@ -168,9 +162,6 @@ public class GameView extends Sprite
             if (event.index == -1) {
                 // we got our board, update the playable letters display
                 _model.updatePlayable(_board);
-            } else {
-                // otherwise a single letter was cleared
-                letterCleared(event.index);
             }
         }
     }
@@ -182,7 +173,8 @@ public class GameView extends Sprite
     {
         if (event.name == Model.WORD_PLAY) {
             var data :Array = (event.value as Array);
-            var scorer :String = _control.seating.getPlayerNames()[int(data[0])];
+            var scidx :int = int(data[0]);
+            var scorer :String = _control.seating.getPlayerNames()[scidx];
             var word :String = (data[1] as String);
             var points :int = int(data[2]);
             var mult :int = int(data[3]);
@@ -191,7 +183,15 @@ public class GameView extends Sprite
             } else {
                 marquee.display(scorer + ": " + word + " for " + points, 1000);
             }
-            _model.updatePlayable(_board);
+
+            var wpos :Array = (data[4] as Array);
+            for (var ii :int = 0; ii < wpos.length; ii++) {
+                // map the global position into to our local coordinates
+                var xx :int = _model.getReverseX(int(wpos[ii]));
+                var yy :int = _model.getReverseY(int(wpos[ii]));
+                // when the shooting is finished the column will be marked as playable
+                _shooters[scidx].shootLetter(_board, xx, yy);
+            }
         }
     }
 

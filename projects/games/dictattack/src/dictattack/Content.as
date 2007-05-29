@@ -66,13 +66,13 @@ public class Content
     public var inputRect :Rectangle = new Rectangle(100, 470, 250, 20);
 
     public var invaderColors :Array = [
-        makeXform(0x99CC66), makeXform(0x0066FF), makeXform(0xFF0033) ];
+        makeXform(0x00CC00), makeXform(0x0066FF), makeXform(0xFF0033) ];
 
     public var dimInvaderColors :Array = [
-        makeXform(0x99CC66, -64), makeXform(0x0066FF, -64), makeXform(0xFF0033, -64) ];
+        makeXform(0x00CC00, -64), makeXform(0x0066FF, -64), makeXform(0xFF0033, -64) ];
 
     public var ghostInvaderColors :Array = [
-        makeXform(0x99CC66, -192), makeXform(0x0066FF, -192), makeXform(0xFF0033, -192) ];
+        makeXform(0x00CC00, -192), makeXform(0x0066FF, -192), makeXform(0xFF0033, -192) ];
 
     public function Content (pack :EmbeddedSwfLoader)
     {

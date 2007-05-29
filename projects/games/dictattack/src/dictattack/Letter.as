@@ -4,6 +4,7 @@
 package dictattack {
 
 import flash.events.Event;
+import flash.text.GridFitType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
@@ -84,6 +85,8 @@ public class Letter extends Sprite
         label.x = 0;
         label.width = Content.TILE_SIZE;
         label.embedFonts = true;
+        label.gridFitType = GridFitType.PIXEL;
+        label.sharpness = 400; // magic! (400 is the maximum sharpness)
         return label;
     }
 
