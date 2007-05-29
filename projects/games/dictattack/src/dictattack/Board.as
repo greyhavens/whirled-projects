@@ -72,11 +72,11 @@ public class Board extends Sprite
 
     public function roundDidEnd () :void
     {
-        for (var ii :int = 0; ii < _letters.length; ii++) {
-            if (_letters[ii] != null) {
-                _letters[ii].clearGhost();
-            }
-        }
+//         for (var ii :int = 0; ii < _letters.length; ii++) {
+//             if (_letters[ii] != null) {
+//                 _letters[ii].clearGhost();
+//             }
+//         }
     }
 
     public function resetLetters (used :Array) :void

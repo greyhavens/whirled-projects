@@ -18,8 +18,10 @@ public class Letter extends Sprite
     {
         _content = content;
         _type = type;
-        addChild(_invader = makeInvader());
-        addChild(_label = makeLabel());
+        _main = new Sprite();
+        _main.addChild(_invader = makeInvader());
+        _main.addChild(_label = makeLabel());
+        addChild(_main);
         setPlayable(false);
     }
 
@@ -92,10 +94,10 @@ public class Letter extends Sprite
 
     protected function onEnterFrame (event :Event) :void
     {
-        if (_ghost.y != _targety) {
-            _ghost.y++; // TODO: decouple from the framerate
+        if (_main.y != _targety) {
+            _main.y++; // TODO: decouple from the framerate
         }
-        if (_ghost.y == _targety) {
+        if (_main.y == _targety) {
             removeEventListener(Event.ENTER_FRAME, onEnterFrame);
         }
     }
@@ -122,6 +124,8 @@ public class Letter extends Sprite
 
     protected var _content :Content;
     protected var _type :int;
+
+    protected var _main :Sprite;
     protected var _invader :Sprite;
     protected var _label :TextField;
 

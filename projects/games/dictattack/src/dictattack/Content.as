@@ -3,6 +3,7 @@
 
 package dictattack {
 
+import flash.media.Sound;
 import flash.text.TextFormat;
 
 import flash.display.Graphics;
@@ -72,7 +73,12 @@ public class Content
         makeXform(0x00CC00, -64), makeXform(0x0066FF, -64), makeXform(0xFF0033, -64) ];
 
     public var ghostInvaderColors :Array = [
-        makeXform(0x00CC00, -192), makeXform(0x0066FF, -192), makeXform(0xFF0033, -192) ];
+        makeXform(0x00CC00, -128), makeXform(0x0066FF, -128), makeXform(0xFF0033, -128) ];
+
+    public static function getShootSound () :Sound
+    {
+        return SHOOT_SOUND;
+    }
 
     public function Content (pack :EmbeddedSwfLoader)
     {
@@ -126,11 +132,15 @@ public class Content
 
     [Embed(source="../../rsrc/letter_font.ttf", fontName="Letter",
            mimeType="application/x-font-truetype")]
-    protected var LETTER_FONT :Class;
+    protected static var LETTER_FONT :Class;
 
     [Embed(source="../../rsrc/name_font.ttf", fontName="Name",
            mimeType="application/x-font-truetype")]
-    protected var NAME_FONT :Class;
+    protected static var NAME_FONT :Class;
+
+    [Embed(source="../../rsrc/shoot.mp3")]
+    protected static var SHOOT_CLASS :Class;
+    protected static const SHOOT_SOUND :Sound = Sound(new SHOOT_CLASS());
 }
 
 }

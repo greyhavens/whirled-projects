@@ -3,6 +3,7 @@
 
 package dictattack {
 
+import flash.events.Event;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
@@ -17,10 +18,6 @@ public class Shooter extends Sprite
         _pidx = pidx;
         _posidx = posidx;
         rotation = (posidx+1)%4 * 90;
-
-        _ship = content.createShip();
-        _ship.y = -Content.SHOOTER_SIZE/2;
-        addChild(_ship);
 
         _name = new TextField();
         _name.text = "";
@@ -38,6 +35,12 @@ public class Shooter extends Sprite
         _score.autoSize = TextFieldAutoSize.RIGHT;
         addChild(_score);
         setScore(0);
+
+        _ship = content.createShip();
+        _ship.y = -Content.SHOOTER_SIZE/2;
+        addChild(_ship);
+
+        addEventListener(Event.ENTER_FRAME, onEnterFrame);
     }
 
     public function setName (name :String) :void
@@ -74,51 +77,75 @@ public class Shooter extends Sprite
 
     public function shootLetter (board :Board, xx :int, yy :int) :void
     {
+        _board = board;
         _targets.push([xx, yy]);
-        if (_current == null) {
-            shootNextTarget(board);
+        if (_tgtx == -1) {
+            shootNextTarget();
         }
     }
 
-    protected function shootNextTarget (board :Board) :void
+    protected function shootNextTarget () :void
     {
         if (_targets.length == 0) {
             return;
         }
 
-        _current = _targets.shift() as Array;
-        var xx :int = int(_current[0]);
-        var yy :int = int(_current[1]);
+        // obtain the coordinates of our next target
+        var data :Array = _targets.shift() as Array;
+        _tgtx = int(data[0]);
+        _tgty = int(data[1]);
 
-        // TEMP: position our ship under that letter
-        var size :int = board.getSize(), cx :int = int(size/2);
+        // position our ship under that letter
+        var size :int = _board.getSize(), cx :int = int(size/2);
         switch (_posidx) {
         default:
         case 3:
-            _ship.x = (xx - cx) * (Content.TILE_SIZE + Board.GAP);
+            _shipx = (_tgtx - cx) * (Content.TILE_SIZE + Board.GAP);
             break;
         case 1:
-            _ship.x = ((size-1-xx) - cx) * (Content.TILE_SIZE + Board.GAP);
+            _shipx = ((size-1-_tgtx) - cx) * (Content.TILE_SIZE + Board.GAP);
             break;
         case 2:
-            _ship.x = ((size-1-yy) - cx) * (Content.TILE_SIZE + Board.GAP);
+            _shipx = ((size-1-_tgty) - cx) * (Content.TILE_SIZE + Board.GAP);
             break;
         case 0:
-            _ship.x = (yy - cx) * (Content.TILE_SIZE + Board.GAP);
+            _shipx = (_tgty - cx) * (Content.TILE_SIZE + Board.GAP);
             break;
         }
+    }
 
-        // TODO: move the ship into position, shoot the letter, then destroy it
-        board.destroyLetter(xx, yy);
+    protected function readyToShoot () :void
+    {
+        Content.getShootSound().play();
 
-        Util.invokeLater(500, function () :void {
-            if (_targets.length > 0) {
-                shootNextTarget(board);
+        // TODO: fire a missile at the letter, blow it up when the missile hits
+        _board.destroyLetter(_tgtx, _tgty);
+
+        if (_targets.length > 0) {
+            shootNextTarget();
+        } else {
+            _shipx = 0;
+            _tgtx = _tgty = -1;
+            _board = null;
+        }
+    }
+
+    protected function onEnterFrame (event :Event) :void
+    {
+        if (_ship.x != _shipx) {
+            var dx :int = (_shipx - _ship.x);
+            if (Math.abs(dx) < 3) {
+                _ship.x = _shipx;
+                if (_tgtx != -1) {
+                    readyToShoot();
+                }
             } else {
-                _current = null;
-                _ship.x = 0;
+                _ship.x += dx/2;
             }
-        });
+
+        } else if (_tgtx != -1) {
+            readyToShoot();
+        }
     }
 
     protected static function makeTextFormat (color :uint) : TextFormat
@@ -137,8 +164,11 @@ public class Shooter extends Sprite
     protected var _name :TextField;
     protected var _score :TextField;
 
+    protected var _board :Board;
     protected var _targets :Array = new Array();
-    protected var _current :Array;
+    protected var _tgtx :int = -1;
+    protected var _tgty :int = -1;
+    protected var _shipx :int = 0;
 
     protected static const SCORE_X :Array = [ 0, -0.5, -1, -0.5 ];
     protected static const SCORE_Y :Array = [ -0.5, 0, -0.5, -1 ];

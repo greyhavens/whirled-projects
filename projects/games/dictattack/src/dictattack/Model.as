@@ -189,6 +189,10 @@ public class Model
 
     public function updateColumnPlayable (board :Board, xx :int) :void
     {
+        if (!_control.isInPlay()) {
+            return;
+        }
+
         // scan from the bottom upwards looking for the first letter
         for (var yy :int = _size-1; yy >= 0; yy--) {
             var l :String = getLetter(xx, yy);

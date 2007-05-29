@@ -220,7 +220,7 @@ public class GameView extends Sprite
     protected static const SHOOTER_Y :Array = [ 0.5, 0, 0.5, 1 ];
 
     protected static const HELP_CONTENTS :String = "<b>How to Play</b>\n" +
-        "Make words from the row of <b>dark green</b> letters along the bottom of the board.\n\n" +
+        "Make words from the row of letters along the bottom of the board.\n\n" +
         "<font color='#0000ff'>Blue</font> squares multiply the word score by two.\n\n" +
         "<font color='#ff0000'>Red</font> squares multiply the word score by three.\n\n" +
         "Minimum word length: MINLEN.\n\n" +
