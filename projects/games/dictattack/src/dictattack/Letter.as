@@ -37,7 +37,6 @@ public class Letter extends Sprite
             playable ? _content.invaderColors[_type] : _content.dimInvaderColors[_type];
 
         if (dghost > 0 && _ghost == null) {
-            _targety = (Content.TILE_SIZE + Board.GAP) * dghost;
             _ghost = new Sprite();
 
             var invader :Sprite = makeInvader();
@@ -49,8 +48,11 @@ public class Letter extends Sprite
             label.y = (Content.TILE_SIZE - label.height)/2 + FONT_ADJUST_HACK;
             _ghost.addChild(label);
 
-            addEventListener(Event.ENTER_FRAME, onEnterFrame);
             addChild(_ghost);
+
+            // move our main sprite down to the bottom row
+            var ty :int = (Content.TILE_SIZE + Board.GAP) * dghost;
+            LinePath.moveTo(_main, _main.x, ty, 1000).start();
         }
     }
 
@@ -63,7 +65,6 @@ public class Letter extends Sprite
     {
         if (_ghost != null) {
             removeChild(_ghost);
-            removeEventListener(Event.ENTER_FRAME, onEnterFrame);
             _ghost = null;
         }
     }
@@ -90,16 +91,6 @@ public class Letter extends Sprite
         label.gridFitType = GridFitType.PIXEL;
         label.sharpness = 400; // magic! (400 is the maximum sharpness)
         return label;
-    }
-
-    protected function onEnterFrame (event :Event) :void
-    {
-        if (_main.y != _targety) {
-            _main.y++; // TODO: decouple from the framerate
-        }
-        if (_main.y == _targety) {
-            removeEventListener(Event.ENTER_FRAME, onEnterFrame);
-        }
     }
 
     protected static function makePlainFormat () : TextFormat
@@ -130,7 +121,6 @@ public class Letter extends Sprite
     protected var _label :TextField;
 
     protected var _ghost :Sprite;
-    protected var _targety :int = -1;
 
     protected static const FONT_ADJUST_HACK :int = 2;
 }
