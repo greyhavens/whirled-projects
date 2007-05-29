@@ -14,7 +14,22 @@ public class PatternMatcher
         [ "test", "~areyou testing me?" ],
         [ "repeat (WORDS)", "here you go: $1" ],
 
-        // Statements about people
+        // Statements about self
+        [ "i (DESIREVERB) (WORDS)", [ "~whysay you $1 that?", "are you unhappy because you $1 $2?",
+                                      "why do you $1 $2?", "are you ~sure you $1 $2?" ] ],
+        [ "i am not", [ "~whysay you are not?",
+                        "~talkabout why you think you are not",
+                        "~please ~talkabout that",
+                        "~continue" ] ],
+        [ "i am", [ "how often?", "do you wish you weren't?", "how do you feel about that?",
+                    "are you really?", "you are?" ] ],
+
+        // Statements about things
+        [ "(INDEXICAL) (COPULA) NOT (WORDS)", [ "~whysay $1 $2 not?", "~really, not $3?" ] ],
+        [ "(INDEXICAL) (COPULA) (WORDS)", [ "$2 $1 ~really $3", "~really $3?",
+                                            "but $2 $1 really?" ] ],
+        
+        // Statements about people 
         [ "(PRONOUN) COPULA NICEADJ", [ "is $1 special to you?",
                                         "what else is $1 like?",
                                         "~maybe $1 means a lot to you?",
@@ -28,7 +43,7 @@ public class PatternMatcher
         [ "(PRONOUN) (COPULA)", [ "what else $2 $1 like?",
                                   "is there something about $1 you really like?",
                                   "$2 $1 someone you'd look up to?",
-                                  "does it annoy you?" ] ],
+                                  "does $1 annoy you?" ] ],
 
         // Statements about unknown topic
         [ "i (NICEVERB) (WORDS)", [ "you feel strongly about $2",
@@ -38,16 +53,6 @@ public class PatternMatcher
         [ "i (BADVERB) (WORDS)",  [ "is there anything positive about it?",
                                     "does it make you feel energized to talk about it?",
                                     "do you like $2 even one bit?" ] ],
-
-        // Statements about self
-        [ "i (DESIREVERB) (WORDS)", [ "~whysay you $1 that?", "are you unhappy because you $1 $2?",
-                                      "why do you $1 $2?", "are you ~sure you $1 $2?" ] ],
-        [ "i am not", [ "~whysay you are not?",
-                        "~talkabout why you think you are not",
-                        "~please ~talkabout that",
-                        "~continue" ] ],
-        [ "i am", [ "how often?", "do you wish you weren't?", "how do you feel about that?",
-                    "are you really?", "you are?" ] ],
 
         // Justifications
         [ "why", [ "~maybe that ~isrelated to why you came to me",
@@ -70,6 +75,8 @@ public class PatternMatcher
         [ "PRONOUN_ACCUSATIVE", "(?:me|you|him|her|it|us|them)" ],
         [ "PRONOUN", "\\b(?:I|you|he|she|it|we|they)\\b" ],
         [ "COPULA", "\\b(?:is|are)\\b" ],
+        [ "INDEXICAL", "\\b(?:it|this|that|these|those)\\b" ],
+        [ "NOT", "\\b(?:no|not)\\b" ],
         [ "WORDS", "(?:\\w+\\s*)+" ],
         [ "WORD", "\\w+" ],
         [ "NICEADJ", "(?:nice|sweet|lovely|pretty|cool|awesome|cheer)" ],
@@ -99,7 +106,6 @@ public class PatternMatcher
         [ "can't", "can not" ], // yeah, not grammatical, but easy to parse
         // remove filler words
         [ "//b(?:so|really|frankly|actually|please|eh|oh|maybe|perhaps|well)//b", "" ],
-        [ "//b(?:yes|no),", "" ],
         // remove punctuation
         [ "[!?.,;:'\"\\-=_+]", "" ],
         [ "  ", " " ],
@@ -133,7 +139,8 @@ public class PatternMatcher
                           "is caused by", "is because of" ] ],
         [ "~arerelated", [ "have something to do with", "are related to",
                            "could be the reasons for", "are caused by", "are because of" ] ],
-        [ "~maybe", [ "maybe", "perhaps", "possibly" ] ],
+        [ "~maybe", [ "maybe", "perhaps" ] ],
+        [ "~really", [ "really", "are you sure", "actually" ] ],
         [ "~whysay", [ "why do you say", "what makes you believe", "are you sure",
                        "do you really think", "what makes you think" ] ],
         [ "~isee", [ "i see...", "yes,", "i understand.", "oh." ] ],
@@ -186,7 +193,7 @@ public class PatternMatcher
     {
         var response :String;
         var t :String = replace(text.toLocaleLowerCase(), PREPROCESSING);
-        trace("PROCESSED INPUT: " + t);
+//        trace("PROCESSED INPUT: " + t);
         
         _regexps.some(function (pair :Array, i :int, a :Array) :Boolean {
                 return (response = processPattern(pair[0], pair[1], t, speaker)) != null;
@@ -204,7 +211,7 @@ public class PatternMatcher
             return null;
         }
 
-        trace("MATCHED REGEXP: " + re);
+//        trace("MATCHED REGEXP: " + re);
 
         // the line matched! pick a replacement
         if (response is Array) {
@@ -219,7 +226,7 @@ public class PatternMatcher
     protected function processReplacement (bindings :Object, response :String, speaker :String)
         :String
     {
-        trace("PROCESS REPL");
+//        trace("PROCESS REPL");
         
         // in the replacement function, i'm using bindings from one regexp
         // to populate a completely different response string. but this means
@@ -232,8 +239,6 @@ public class PatternMatcher
                                     [ "$5", replace(bindings[5], POV) ],
                                     [ "~name", speaker ] ];
 
-        //response = replace(response.toLowerCase(), replacements);
-        
         for each (var pair :Array in replacements) {
                 if (pair[1] != null) {
                     response = response.replace(pair[0], (pair[1] as String).toLowerCase());
@@ -242,9 +247,9 @@ public class PatternMatcher
             }
         
         response = replace(response.toLowerCase(), CONSTANTS);
-        trace("RESPONSE: " + response);
+//        trace("RESPONSE: " + response);
         response = replace(response, POSTPROCESSING);
-        trace("FINAL RESPONSE: " + response);
+//        trace("FINAL RESPONSE: " + response);
         
         return response;
     }
