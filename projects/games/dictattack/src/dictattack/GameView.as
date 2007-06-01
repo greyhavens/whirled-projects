@@ -51,6 +51,7 @@ public class GameView extends Sprite
         _input.y = _content.inputRect.y;
         _input.width = _content.inputRect.width;
         _input.height = _content.inputRect.height;
+        _input.restrict = "^ "; // we use space specially
 
         // listen for property changed and message events
         _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
@@ -125,7 +126,7 @@ public class GameView extends Sprite
 
         marquee.display("Round " + _control.getRound() + "...", 1000);
         Util.invokeLater(1000, function () :void {
-            addEventListener(KeyboardEvent.KEY_UP, keyReleased);
+            addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
             _input.selectable = true;
             _input.text = "";
             _input.stage.focus = _input;
@@ -141,7 +142,7 @@ public class GameView extends Sprite
             _board.roundDidEnd();
         }
 
-        removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
+        removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
         _input.stage.focus = null;
         removeChild(_input);
         removeChild(_tip);
@@ -226,12 +227,18 @@ public class GameView extends Sprite
         }
     }
 
-    protected function keyReleased (event :KeyboardEvent) : void
+    protected function keyPressed (event :KeyboardEvent) : void
     {
-        if (event.keyCode == 13) {
+        switch (event.keyCode) {
+        case 13:
             if (_model.submitWord(_board, _input.text)) {
                 _input.text = "";
             }
+            break;
+
+        case 32:
+            _model.requestChange();
+            break;
         }
     }
 

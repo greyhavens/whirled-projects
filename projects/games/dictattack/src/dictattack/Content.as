@@ -99,6 +99,11 @@ public class Content
         return MovieClip(new (_pack.getClass("ship_color"))());
     }
 
+    public function createSaucer () :MovieClip
+    {
+        return MovieClip(new (_pack.getClass("alienship"))());
+    }
+
     public function createExplosion () :Explosion
     {
         return new Explosion(MovieClip(new (_pack.getClass("explosion"))()));

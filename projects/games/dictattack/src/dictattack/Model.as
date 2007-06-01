@@ -23,6 +23,9 @@ public class Model
     /** An event sent when a word is played. */
     public static const WORD_PLAY :String = "wordPlay";
 
+    /** An event sent when a player requests a letter change. */
+    public static const LETTER_CHANGE :String = "letterChange";
+
     public function Model (size :int, control :WhirledGameControl)
     {
         _size = size;
@@ -180,6 +183,13 @@ public class Model
         return true;
     }
 
+    /**
+     * Called when the player requests a change to some of their letters due to a lack of vowels.
+     */
+    public function requestChange () :void
+    {
+    }
+
     public function updatePlayable (board :Board) :void
     {
         for (var xx :int = 0; xx < _size; xx++) {
@@ -276,7 +286,7 @@ public class Model
     protected var _size :int;
     protected var _control :WhirledGameControl;
 
-    protected static const INTER_ROUND_DELAY :int = 10;
+    protected static const INTER_ROUND_DELAY :int = 7;
 
     protected static const TYPE_NORMAL :int = 0;
     protected static const TYPE_DOUBLE :int = 1;
