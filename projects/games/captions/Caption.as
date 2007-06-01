@@ -26,6 +26,9 @@ import com.threerings.ezgame.MessageReceivedListener;
 
 import com.whirled.WhirledGameControl;
 
+//
+// TODO: Brady says: post winning caption as a comment on the photo.
+//
 [SWF(width="550", height="550")]
 public class Caption extends Sprite
 {
@@ -42,6 +45,8 @@ public class Caption extends Sprite
     /** The size of the pictures we show. */
     public static const PICTURE_SIZE :int = 500;
 
+    public static const DEBUG :Boolean = true;
+
     public function Caption ()
     {
         // draw a nice black background
@@ -51,6 +56,7 @@ public class Caption extends Sprite
 
         _ctrl = new WhirledGameControl(this);
         _ctrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
+        _ctrl.addEventListener(MessageReceivedEvent.TYPE, handleMessageReceived);
         _ctrl.addEventListener(StateChangedEvent.CONTROL_CHANGED, checkControl);
 
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
@@ -77,6 +83,11 @@ public class Caption extends Sprite
         _clock.height = 20;
         addChild(_clock);
 
+        _prompt = new TextField();
+        _prompt.textColor = 0xFFFFFF;
+        _prompt.x = PICTURE_SIZE;
+        addChild(_prompt);
+
         checkControl();
         checkPhase();
     }
@@ -92,9 +103,14 @@ public class Caption extends Sprite
         case "photo":
             showPhoto();
             break;
+        }
+    }
 
-        case "caption":
-            checkCaptionTick();
+    protected function handleMessageReceived (event :MessageReceivedEvent) :void
+    {
+        switch (event.name) {
+        case "tick":
+            updateTick(event.value as int);
             break;
         }
     }
@@ -105,21 +121,49 @@ public class Caption extends Sprite
         _loader.load(new URLRequest(url));
     }
 
-    protected function checkCaptionTick () :void
+    protected function updateTick (value :int) :void
     {
-        var val :int = _ctrl.get("caption") as int;
-        trace("Check caption tick: " + val);
-        var remaining :int = Math.max(0, CAPTION_DURATION - val);
+        var remaining :int = Math.max(0, (getDuration() / (DEBUG ? 2 : 1)) - value);
 
         _clock.text = String(remaining);
 
         if (remaining == 0) {
-            _entry.type = TextFieldType.DYNAMIC;
-
-            if (_inControl && _ctrl.get("phase") == "caption") {
-                _ctrl.stopTicker("caption");
-                _ctrl.setImmediate("phase", "vote");
+            if (_ctrl.get("phase") == "caption") {
+                _entry.type = TextFieldType.DYNAMIC;
             }
+
+            if (_inControl) {
+                _ctrl.stopTicker("tick");
+                _ctrl.setImmediate("phase", getNextPhase());
+            }
+        }
+    }
+
+    protected function getDuration () :int
+    {
+        switch (_ctrl.get("phase")) {
+        default:
+            return CAPTION_DURATION;
+
+        case "vote":
+            return VOTE_DURATION;
+
+        case "results":
+            return RESULTS_DURATION;
+        }
+    }
+
+    protected function getNextPhase () :String
+    {
+        switch (_ctrl.get("phase")) {
+        default:
+            return "vote";
+
+        case "vote":
+            return "results";
+
+        case "results":
+            return "caption";
         }
     }
 
@@ -158,8 +202,9 @@ public class Caption extends Sprite
             break;
 
         case "caption":
-            trace("Starting ticker...");
-            _ctrl.startTicker("caption", 1000);
+        case "vote":
+        case "results":
+            _ctrl.startTicker("tick", 1000);
             break;
         }
     }
@@ -237,6 +282,7 @@ public class Caption extends Sprite
 
     protected var _entry :TextField;
     protected var _clock :TextField;
+    protected var _prompt :TextField;
 
     protected var _flickr :FlickrService;
 
