@@ -11,7 +11,7 @@ public class Boomer extends Sprite
     public static const WIDTH :int = 80;
     public static const HEIGHT :int = 50;
 
-    public static const BALLS :int = 29;
+    public static const BALLS :int = 39;
 
     public function Boomer ()
     {
