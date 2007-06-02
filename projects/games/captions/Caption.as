@@ -36,16 +36,12 @@ public class Caption extends Sprite
 
     public static const HEIGHT :int = 550;
 
-    public static const CAPTION_DURATION :int = 120;
-
-    public static const VOTE_DURATION :int = 30;
-
-    public static const RESULTS_DURATION :int = 30;
+    public static const CAPTION_DURATION :int = 60/2;
+    public static const VOTE_DURATION :int = 30/2;
+    public static const RESULTS_DURATION :int = 30/2;
 
     /** The size of the pictures we show. */
     public static const PICTURE_SIZE :int = 500;
-
-    public static const DEBUG :Boolean = true;
 
     public function Caption ()
     {
@@ -123,7 +119,7 @@ public class Caption extends Sprite
 
     protected function updateTick (value :int) :void
     {
-        var remaining :int = Math.max(0, (getDuration() / (DEBUG ? 2 : 1)) - value);
+        var remaining :int = Math.max(0, getDuration() - value);
 
         _clock.text = String(remaining);
 
@@ -185,6 +181,13 @@ public class Caption extends Sprite
         } else {
             _loader.scaleX = 1;
             _loader.scaleY = 1;
+        }
+
+        if (phase == "vote") {
+            var vc :VotingControl = new VotingControl();
+            vc.x = PICTURE_SIZE / 2;
+            vc.y = 10;
+            addChild(vc);
         }
     }
 
@@ -288,4 +291,76 @@ public class Caption extends Sprite
 
     protected var _ourCaption :String;
 }
+}
+
+import flash.display.DisplayObject;
+import flash.display.SimpleButton;
+import flash.display.Sprite;
+
+import flash.events.MouseEvent;
+
+import flash.text.TextField;
+import flash.text.TextFieldType;
+
+class VotingControl extends Sprite 
+{
+    public function VotingControl ()
+    {
+        addChild(new CheckBox());
+    }
+}
+
+class CheckBox extends SimpleButton
+{
+    public static const WIDTH :int = 17;
+    public static const HEIGHT :int = 17;
+
+    public function CheckBox ()
+    {
+        updateVis();
+
+        addEventListener(MouseEvent.CLICK, handleClick);
+    }
+
+    public function setChecked (checked :Boolean) :void
+    {
+        _checked = checked;
+        updateVis();
+    }
+
+    public function isChecked () :Boolean
+    {
+        return _checked;
+    }
+
+    protected function updateVis () :void
+    {
+        var clazz :Class = _checked ? CHECKED : UNCHECKED;
+        var up_img :DisplayObject = new clazz() as DisplayObject;
+        var down_img :DisplayObject = new clazz() as DisplayObject;
+
+        var downWrapper :Sprite = new Sprite();
+        down_img.x = 1;
+        down_img.y = 1;
+        downWrapper.addChild(down_img);
+
+        this.upState = up_img;
+        this.overState = up_img;
+        this.hitTestState = up_img;
+        this.downState = downWrapper;
+    }
+
+    protected function handleClick (event :MouseEvent) :void
+    {
+        _checked = !_checked;
+        updateVis();
+    }
+
+    protected var _checked :Boolean;
+
+    [Embed(source="checkbox_unchecked.png")]
+    protected static const UNCHECKED :Class;
+
+    [Embed(source="checkbox_checked.png")]
+    protected static const CHECKED :Class;
 }
