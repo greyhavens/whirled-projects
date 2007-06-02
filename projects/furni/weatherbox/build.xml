@@ -4,6 +4,7 @@
   <!-- define some basic project parameters -->
   <property name="app.name" value="WeatherBox"/>
   <property name="app.source-suffix" value="mxml"/>
+  <property name="flex.use-network" value="true"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
