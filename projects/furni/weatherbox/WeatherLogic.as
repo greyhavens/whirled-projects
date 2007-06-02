@@ -5,6 +5,8 @@ import flash.events.Event;
 import mx.containers.HBox;
 import mx.controls.ComboBox;
 
+import com.threerings.util.Config;
+
 import com.bogocorp.weather.NOAAWeatherService;
 
 /**
@@ -24,23 +26,50 @@ public class WeatherLogic
 
         _svc = new NOAAWeatherService();
         _svc.getDirectory(directoryReceived);
+
+        _config = new Config("weatherbox");
     }
 
     protected function directoryReceived () :void
     {
         _box.stateBox.dataProvider = _svc.getStates();
+
+        var state :String = _config.getValue("state", null) as String;
+        if (state != null) {
+            _box.stateBox.selectedItem = state;
+            handleStatePicked(null); // FUCKING HELL, this shouldn't be necessary
+        }
     }
 
     protected function handleStatePicked (event :Event) :void
     {
         var state :String = String(_box.stateBox.selectedItem);
-        _box.stationBox.dataProvider = _svc.getStations(state);
+        _config.setValue("state", state);
+
+        var stations :Array = _svc.getStations(state);
+        _box.stationBox.dataProvider = stations;
         _box.stationBox.enabled = true;
+
+        if (_autoPick) {
+            var station :String = _config.getValue("station_id", null) as String;
+            if (station != null) {
+                for each (var o :Object in stations) {
+                    if (o.station == station) {
+                        _box.stationBox.selectedItem = o;
+                        handleStationPicked(null); // FUCKING HELL, this shouldn't be necessary
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     protected function handleStationPicked (event :Event) :void
     {
         var station :Object = _box.stationBox.selectedItem;
+        _config.setValue("station_id", station.station);
+        _autoPick = false;
+
         _svc.getWeather(station.station, gotWeatherData);
     }
 
@@ -59,5 +88,9 @@ public class WeatherLogic
     protected var _svc :NOAAWeatherService;
 
     protected var _box :WeatherBox;
+
+    protected var _autoPick :Boolean = true;
+
+    protected var _config :Config;
 }
 }
