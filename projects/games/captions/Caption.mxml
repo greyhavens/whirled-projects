@@ -15,7 +15,7 @@
         <mx:VBox>
             <mx:Label id="phaseLabel"/>
             <mx:Text id="phaseText"/>
-            <mx:VBox id="sideBox"/>
+            <mx:Grid id="sideBox"/>
         </mx:VBox>
     </mx:HBox>
     <Controller id="controller"/>

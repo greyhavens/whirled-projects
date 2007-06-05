@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
-    <mx:Label id="nameLabel"/>
-    <mx:HBox>
-        <mx:Label id="votesLabel" fontSize="18"/>
-        <mx:Label id="captionLabel"/>
-    </mx:HBox>
-</mx:VBox>
+<mx:GridRow xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:GridItem>
+        <mx:VBox>
+            <mx:Label id="nameLabel"/>
+            <mx:Label id="statusLabel"/>
+        </mx:VBox>
+    </mx:GridItem>
+    <mx:GridItem>
+        <mx:VBox>
+            <mx:Label id="votesLabel" fontSize="18"/>
+            <mx:Label id="captionLabel"/>
+        </mx:VBox>
+    </mx:GridItem>
+</mx:GridRow>

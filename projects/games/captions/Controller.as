@@ -5,12 +5,16 @@ import flash.events.TimerEvent;
 
 import flash.utils.Timer;
 
+import mx.controls.RadioButtonGroup;
+
 import com.adobe.webapis.flickr.FlickrService;
 import com.adobe.webapis.flickr.PagedPhotoList;
 import com.adobe.webapis.flickr.Photo;
 import com.adobe.webapis.flickr.PhotoSize;
 import com.adobe.webapis.flickr.PhotoUrl;
 import com.adobe.webapis.flickr.events.FlickrResultEvent;
+
+import com.threerings.util.ArrayUtil;
 
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
@@ -30,9 +34,6 @@ public class Controller
     public static const VOTE_DURATION :int = 30/2;
     public static const RESULTS_DURATION :int = 30/2;
 
-    /** The size of the pictures we show. */
-    public static const PICTURE_SIZE :int = 500;
-
     public function init (ui :Caption) :void
     {
         _ui = ui;
@@ -43,6 +44,9 @@ public class Controller
         _ctrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
         _ctrl.addEventListener(MessageReceivedEvent.TYPE, handleMessageReceived);
         _ctrl.addEventListener(StateChangedEvent.CONTROL_CHANGED, checkControl);
+
+        _myId = _ctrl.getMyId();
+        _myName = _ctrl.getOccupantName(_myId);
 
         _timer = new Timer(500);
         _timer.addEventListener(TimerEvent.TIMER, handleCaptionTimer);
@@ -55,7 +59,6 @@ public class Controller
     {
         switch (event.name) {
         case "phase":
-            trace("Got new phase: " + event.newValue);
             checkPhase();
             break;
 
@@ -64,9 +67,17 @@ public class Controller
             break;
 
         case "captions":
+        case "ids":
             var caps :Array = _ctrl.get("captions") as Array;
             if (caps != null) {
                 initVoting(caps);
+            }
+            break;
+
+        case "results":
+            var results :Array = _ctrl.get("results") as Array;
+            if (results != null) {
+                initResults(results);
             }
             break;
         }
@@ -122,14 +133,18 @@ public class Controller
     protected function getNextPhase () :String
     {
         switch (_ctrl.get("phase")) {
-        default:
+        case "start":
+            return "caption";
+
+        case "caption":
             return "vote";
 
         case "vote":
             return "results";
 
         case "results":
-            return "caption";
+        default:
+            return "start";
         }
     }
 
@@ -144,27 +159,62 @@ public class Controller
         var phase :String = _ctrl.get("phase") as String;
         _ui.captionInput.editable = (phase == "caption");
 
-        if (phase == "vote" || phase == "results") {
+        switch (phase) {
+        case "vote":
+        case "results":
             _ui.image.scaleX = .5;
             _ui.image.scaleY = .5;
             _timer.reset();
+            break;
 
-        } else {
+        default:
+            _ui.image.visible = false;
+            break;
+
+        case "caption":
+            _ui.image.visible = true;
             _ui.image.scaleX = 1;
             _ui.image.scaleY = 1;
-
             _myCaption = "";
+            _ui.captionInput.text = _myCaption;
+            _ui.captionInput.callLater(function () :void {
+                _ui.captionInput.setFocus();
+            });
             _timer.start();
+            break;
         }
 
-        if (phase == "vote") {
+        switch (phase) {
+        default:
+            _ui.phaseLabel.text = "Caption the picture";
+            _ui.phaseText.text = "Enter a caption for the picture";
+            _ui.sideBox.removeAllChildren();
+            break;
+
+        case "vote":
+            _ui.phaseLabel.text = "Voting";
+            _ui.phaseText.text = "Vote for a caption other than your own. Your caption will " +
+                "be disqualified unless you vote.";
             var caps :Array = _ctrl.get("captions") as Array;
             if (caps != null) {
                 initVoting(caps);
             }
+            break;
+
+        case "results":
+            _ui.phaseLabel.text = "Results";
+            _ui.phaseText.text = "Congratulations!";
+            var results :Array = _ctrl.get("results") as Array;
+            if (results != null) {
+                initResults(results);
+            }
+            break;
         }
     }
 
+    /**
+     * As the controlling player, take any actions necessary at the start of a phase.
+     */
     protected function checkPhaseControl () :void
     {
         var phase :String = _ctrl.get("phase") as String;
@@ -187,18 +237,83 @@ public class Controller
 
         switch (phase) {
         case "vote":
-            var caps :Array = _ctrl.get("captions") as Array;
-            if (caps == null) {
-                // find ALL the captions
-                var props :Array = _ctrl.getPropertyNames("caption:");
-                caps = [];
-                for each (var prop :String in props) {
-                    caps.push(_ctrl.get(prop));
-                }
-                _ctrl.set("captions", caps);
-            }
+            startVotePhase();
+            break;
+
+        case "results":
+            startResultsPhase();
             break;
         }
+    }
+
+    protected function startVotePhase () :void
+    {
+        var caps :Array = _ctrl.get("captions") as Array;
+        if (caps != null) {
+            return; // vote phase already started.
+        }
+
+        // find ALL the captions, even for players that may have left.
+        var props :Array = _ctrl.getPropertyNames("caption:");
+        caps = [];
+        var ids :Array = [];
+        for each (var prop :String in props) {
+            var submitterId :int = parseInt(prop.substring(8));
+
+            ids.push(submitterId);
+            caps.push(_ctrl.get(prop));
+
+            // clear out the original prop
+            _ctrl.set(prop, null);
+        }
+        _ctrl.set("ids", ids);
+        _ctrl.setImmediate("captions", caps);
+    }
+
+    protected function startResultsPhase () :void
+    {
+        var results :Array = _ctrl.get("results") as Array;
+        if (results != null) {
+            return; // results phase already started.
+        }
+
+        // find all the votes
+        var ii :int;
+        var didVote :Array = [];
+        results = [];
+        var ids :Array = _ctrl.get("ids") as Array;
+        for (ii = 0; ii < ids.length; ii++) {
+            results[ii] = 0;
+            didVote[ii] = false;
+        }
+        var props :Array = _ctrl.getPropertyNames("vote:");
+        for each (var prop :String in props) {
+            var voterId :int = parseInt(prop.substring(5));
+            var voteeId :int = _ctrl.get(prop) as int;
+
+            var voterIndex :int = ids.indexOf(voterId);
+            var voteeIndex :int = ids.indexOf(voteeId);
+
+            // TODO: do we want to count votes from players that didn't submit a caption? Sure...
+
+            if (voteeIndex == -1) {
+                // this is a miscast vote?!
+                continue;
+            }
+            results[voteeIndex]++;
+            if (voterIndex != -1) {
+                didVote[voterIndex] = true;
+            }
+        }
+
+        // now one more pass through results, flipping any disqualified votes to negative
+        for (ii = 0; ii < results.length; ii++) {
+            if (!didVote[ii]) {
+                results[ii] *= -1;
+            }
+        }
+
+        _ctrl.setImmediate("results", results);
     }
 
     protected function checkControl (... ignored) :void
@@ -227,24 +342,108 @@ public class Controller
             // We could do that now, but currently don't have a way to verify which user
             // submitted which caption...
             _myCaption = _ui.captionInput.text;
-            _ctrl.set("caption:" + _ctrl.getMyId(), _myCaption);
+
+            _ctrl.set("caption:" + _myId, _myCaption);
+            if (_ctrl.get("name:" + _myId) != _myName) {
+                _ctrl.setImmediate("name:" + _myId, _myName);
+            }
+        }
+    }
+
+    protected function handleVoteCast (event :Event) :void
+    {
+        var voteGroup :RadioButtonGroup = (event.currentTarget as RadioButtonGroup);
+
+        // submit our vote
+        _ctrl.set("vote:" + _myId, voteGroup.selectedValue);
+    }
+
+    protected function initVoting (caps :Array) :void
+    {
+        var ii :int;
+        var ids :Array = _ctrl.get("ids") as Array;
+        if (ids == null) {
+            return;
+        }
+
+        // randomize the displayed order for each player..
+        var indexes :Array = [];
+        for (ii = 0; ii < caps.length; ii++) {
+            indexes.push(ii);
+        }
+        ArrayUtil.shuffle(indexes);
+
+        _ui.sideBox.removeAllChildren();
+
+        var voteGroup :RadioButtonGroup = new RadioButtonGroup();
+        voteGroup.addEventListener(Event.CHANGE, handleVoteCast);
+
+        for (ii = 0; ii < indexes.length; ii++) {
+            var index :int = int(indexes[ii]);
+
+            var pan :VotePanel = new VotePanel();
+            _ui.sideBox.addChild(pan);
+            pan.captionLabel.text = String(caps[index]);
+            pan.voteButton.group = voteGroup;
+            if (ids[index] == _myId) {
+                pan.voteButton.enabled = false;
+            }
+            pan.voteButton.value = ids[index];
+        }
+    }
+
+    protected function initResults (results :Array) :void
+    {
+        _ui.sideBox.removeAllChildren();
+
+        var ii :int;
+        var indexes :Array = [];
+        for (ii = 0; ii < results.length; ii++) {
+            indexes[ii] = ii;
+        }
+
+        indexes.sort(function (dex1 :int, dex2 :int) :int {
+            var abs1 :int = Math.abs(results[dex1]);
+            var abs2 :int = Math.abs(results[dex2]);
+
+            if (abs1 > abs2) {
+                return -1;
+
+            } else if (abs1 < abs2) {
+                return 1;
+
+            } else {
+                return 0;
+            }
+        });
+
+        var ids :Array = _ctrl.get("ids") as Array;
+        var caps :Array = _ctrl.get("captions") as Array;
+        var winnerVal :int = -1;
+        for (ii = 0; ii < indexes.length; ii++) {
+            var index :int = int(indexes[ii]);
+            var result :int = int(results[index]);
+
+            var pan :ResultsPanel = new ResultsPanel();
+            _ui.sideBox.addChild(pan);
+            pan.nameLabel.text = String(_ctrl.get("name:" + ids[index]));
+            pan.votesLabel.text = String(Math.abs(result));
+            pan.captionLabel.text = String(caps[index]);
+
+            if (result < 0) {
+                pan.statusLabel.text = "Disqualified";
+
+            } else if (-1 == winnerVal || result == winnerVal) {
+                // we can have multiple winners..
+                pan.statusLabel.text = "Winner!";
+                winnerVal = result;
+            }
         }
     }
 
     protected function loadNextPicture () :void
     {
         _flickr.photos.getRecent("", 1, 1);
-    }
-
-    protected function initVoting (caps :Array) :void
-    {
-        _ui.sideBox.removeAllChildren();
-
-        for each (var caption :String in caps) {
-            var pan :VotePanel = new VotePanel();
-            _ui.sideBox.addChild(pan);
-            pan.captionLabel.text = caption;
-        }
     }
 
     protected function handlePhotoResult (evt :FlickrResultEvent) :void
@@ -265,7 +464,7 @@ public class Controller
             return;
         }
 
-        var p :PhotoSize = getMediumPhotoSource(evt.data.photoSizes as Array);
+        var p :PhotoSize = getPhotoSource(evt.data.photoSizes as Array);
         if (p == null) {
             trace("Could not find medium photo!");
             return;
@@ -273,16 +472,35 @@ public class Controller
 
         _ctrl.set("photo", p.source);
         _ctrl.set("captions", null);
+        _ctrl.set("ids", null);
+        _ctrl.set("results", null);
+        var prop :String;
+        for each (prop in _ctrl.getPropertyNames("caption:")) {
+            _ctrl.set(prop, null);
+        }
+        for each (prop in _ctrl.getPropertyNames("vote:")) {
+            _ctrl.set(prop, null);
+        }
+        for each (prop in _ctrl.getPropertyNames("name:")) {
+            _ctrl.set(prop, null);
+        }
         _ctrl.setImmediate("phase", "caption");
     }
 
-    protected function getMediumPhotoSource (sizes :Array) :PhotoSize
+    protected function getPhotoSource (sizes :Array) :PhotoSize
     {
-        for each (var p :PhotoSize in sizes) {
-            if (p.label == "Medium") {
-                return p;
+        const preferredSizes :Array = [ "Medium", "Small", "Original", "Thumbnail" ];
+
+        for each (var prefSize :String in preferredSizes) {
+            for each (var p :PhotoSize in sizes) {
+                if (p.label == prefSize) {
+                    return p;
+                }
             }
         }
+
+        // whoa!
+
         return null;
     }
 
@@ -291,6 +509,10 @@ public class Controller
     }
 
     protected var _ctrl :WhirledGameControl;
+
+    protected var _myId :int;
+
+    protected var _myName :String;
 
     protected var _inControl :Boolean;
 

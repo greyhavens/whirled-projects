@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml">
-  <mx:RadioButton groupName="vote" id="voteButton"/>
-  <mx:Label id="captionLabel"/>
-</mx:HBox>
+<mx:GridRow xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:GridItem>
+      <mx:RadioButton id="voteButton"/>
+  </mx:GridItem>
+  <mx:GridItem>
+      <mx:Label id="captionLabel"/>
+  </mx:GridItem>
+</mx:GridRow>
