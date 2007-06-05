@@ -1,14 +1,9 @@
 package {
 
 import flash.events.Event;
+import flash.events.TimerEvent;
 
-import flash.display.Loader;
-import flash.display.Sprite;
-
-import flash.net.URLRequest;
-
-import flash.text.TextField;
-import flash.text.TextFieldType;
+import flash.utils.Timer;
 
 import com.adobe.webapis.flickr.FlickrService;
 import com.adobe.webapis.flickr.PagedPhotoList;
@@ -29,13 +24,8 @@ import com.whirled.WhirledGameControl;
 //
 // TODO: Brady says: post winning caption as a comment on the photo.
 //
-[SWF(width="550", height="550")]
-public class Caption extends Sprite
+public class Controller
 {
-    public static const WIDTH :int = 550;
-
-    public static const HEIGHT :int = 550;
-
     public static const CAPTION_DURATION :int = 60/2;
     public static const VOTE_DURATION :int = 30/2;
     public static const RESULTS_DURATION :int = 30/2;
@@ -43,46 +33,19 @@ public class Caption extends Sprite
     /** The size of the pictures we show. */
     public static const PICTURE_SIZE :int = 500;
 
-    public function Caption ()
+    public function init (ui :Caption) :void
     {
-        // draw a nice black background
-        graphics.beginFill(0x000000);
-        graphics.drawRect(0, 0, WIDTH, HEIGHT);
-        graphics.endFill();
+        _ui = ui;
 
-        _ctrl = new WhirledGameControl(this);
+        ui.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+
+        _ctrl = new WhirledGameControl(ui);
         _ctrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
         _ctrl.addEventListener(MessageReceivedEvent.TYPE, handleMessageReceived);
         _ctrl.addEventListener(StateChangedEvent.CONTROL_CHANGED, checkControl);
 
-        this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
-
-        _loader = new Loader();
-        _loader.mouseEnabled = false;
-        _loader.mouseChildren = false;
-        addChild(_loader);
-
-        _entry = new TextField();
-        _entry.type = TextFieldType.DYNAMIC;
-        _entry.background = true;
-        _entry.backgroundColor = 0xFFFFFF;
-        _entry.width = PICTURE_SIZE;
-        _entry.height = 20;
-        _entry.y = PICTURE_SIZE;
-        addChild(_entry);
-
-        _clock = new TextField();
-        _clock.textColor = 0xFFFFFF;
-        _clock.x = PICTURE_SIZE;
-        _clock.y = PICTURE_SIZE;
-        _clock.width = 40;
-        _clock.height = 20;
-        addChild(_clock);
-
-        _prompt = new TextField();
-        _prompt.textColor = 0xFFFFFF;
-        _prompt.x = PICTURE_SIZE;
-        addChild(_prompt);
+        _timer = new Timer(500);
+        _timer.addEventListener(TimerEvent.TIMER, handleCaptionTimer);
 
         checkControl();
         checkPhase();
@@ -99,6 +62,13 @@ public class Caption extends Sprite
         case "photo":
             showPhoto();
             break;
+
+        case "captions":
+            var caps :Array = _ctrl.get("captions") as Array;
+            if (caps != null) {
+                initVoting(caps);
+            }
+            break;
         }
     }
 
@@ -114,18 +84,18 @@ public class Caption extends Sprite
     protected function showPhoto () :void
     {
         var url :String = _ctrl.get("photo") as String;
-        _loader.load(new URLRequest(url));
+        _ui.image.load(url);
     }
 
     protected function updateTick (value :int) :void
     {
         var remaining :int = Math.max(0, getDuration() - value);
 
-        _clock.text = String(remaining);
+        _ui.clockLabel.text = String(remaining);
 
         if (remaining == 0) {
             if (_ctrl.get("phase") == "caption") {
-                _entry.type = TextFieldType.DYNAMIC;
+                _ui.captionInput.editable = false;
             }
 
             if (_inControl) {
@@ -172,22 +142,26 @@ public class Caption extends Sprite
         }
 
         var phase :String = _ctrl.get("phase") as String;
-        _entry.type = (phase == "caption") ? TextFieldType.INPUT : TextFieldType.DYNAMIC;
+        _ui.captionInput.editable = (phase == "caption");
 
         if (phase == "vote" || phase == "results") {
-            _loader.scaleX = .5;
-            _loader.scaleY = .5;
+            _ui.image.scaleX = .5;
+            _ui.image.scaleY = .5;
+            _timer.reset();
 
         } else {
-            _loader.scaleX = 1;
-            _loader.scaleY = 1;
+            _ui.image.scaleX = 1;
+            _ui.image.scaleY = 1;
+
+            _myCaption = "";
+            _timer.start();
         }
 
         if (phase == "vote") {
-            var vc :VotingControl = new VotingControl();
-            vc.x = PICTURE_SIZE / 2;
-            vc.y = 10;
-            addChild(vc);
+            var caps :Array = _ctrl.get("captions") as Array;
+            if (caps != null) {
+                initVoting(caps);
+            }
         }
     }
 
@@ -210,6 +184,21 @@ public class Caption extends Sprite
             _ctrl.startTicker("tick", 1000);
             break;
         }
+
+        switch (phase) {
+        case "vote":
+            var caps :Array = _ctrl.get("captions") as Array;
+            if (caps == null) {
+                // find ALL the captions
+                var props :Array = _ctrl.getPropertyNames("caption:");
+                caps = [];
+                for each (var prop :String in props) {
+                    caps.push(_ctrl.get(prop));
+                }
+                _ctrl.set("captions", caps);
+            }
+            break;
+        }
     }
 
     protected function checkControl (... ignored) :void
@@ -230,9 +219,32 @@ public class Caption extends Sprite
         checkPhaseControl();
     }
 
+    protected function handleCaptionTimer (event :TimerEvent) :void
+    {
+        if (_ui.captionInput.text != _myCaption) {
+            // TODO: possibly a new way to support private data, whereby users can submit
+            // data to private little collections, which are then combined and retrieved.
+            // We could do that now, but currently don't have a way to verify which user
+            // submitted which caption...
+            _myCaption = _ui.captionInput.text;
+            _ctrl.set("caption:" + _ctrl.getMyId(), _myCaption);
+        }
+    }
+
     protected function loadNextPicture () :void
     {
         _flickr.photos.getRecent("", 1, 1);
+    }
+
+    protected function initVoting (caps :Array) :void
+    {
+        _ui.sideBox.removeAllChildren();
+
+        for each (var caption :String in caps) {
+            var pan :VotePanel = new VotePanel();
+            _ui.sideBox.addChild(pan);
+            pan.captionLabel.text = caption;
+        }
     }
 
     protected function handlePhotoResult (evt :FlickrResultEvent) :void
@@ -260,6 +272,7 @@ public class Caption extends Sprite
         }
 
         _ctrl.set("photo", p.source);
+        _ctrl.set("captions", null);
         _ctrl.setImmediate("phase", "caption");
     }
 
@@ -281,86 +294,13 @@ public class Caption extends Sprite
 
     protected var _inControl :Boolean;
 
-    protected var _loader :Loader;
-
-    protected var _entry :TextField;
-    protected var _clock :TextField;
-    protected var _prompt :TextField;
+    /** Our user interface class. */
+    protected var _ui :Caption;
 
     protected var _flickr :FlickrService;
 
-    protected var _ourCaption :String;
+    protected var _timer :Timer;
+
+    protected var _myCaption :String;
 }
-}
-
-import flash.display.DisplayObject;
-import flash.display.SimpleButton;
-import flash.display.Sprite;
-
-import flash.events.MouseEvent;
-
-import flash.text.TextField;
-import flash.text.TextFieldType;
-
-class VotingControl extends Sprite 
-{
-    public function VotingControl ()
-    {
-        addChild(new CheckBox());
-    }
-}
-
-class CheckBox extends SimpleButton
-{
-    public static const WIDTH :int = 17;
-    public static const HEIGHT :int = 17;
-
-    public function CheckBox ()
-    {
-        updateVis();
-
-        addEventListener(MouseEvent.CLICK, handleClick);
-    }
-
-    public function setChecked (checked :Boolean) :void
-    {
-        _checked = checked;
-        updateVis();
-    }
-
-    public function isChecked () :Boolean
-    {
-        return _checked;
-    }
-
-    protected function updateVis () :void
-    {
-        var clazz :Class = _checked ? CHECKED : UNCHECKED;
-        var up_img :DisplayObject = new clazz() as DisplayObject;
-        var down_img :DisplayObject = new clazz() as DisplayObject;
-
-        var downWrapper :Sprite = new Sprite();
-        down_img.x = 1;
-        down_img.y = 1;
-        downWrapper.addChild(down_img);
-
-        this.upState = up_img;
-        this.overState = up_img;
-        this.hitTestState = up_img;
-        this.downState = downWrapper;
-    }
-
-    protected function handleClick (event :MouseEvent) :void
-    {
-        _checked = !_checked;
-        updateVis();
-    }
-
-    protected var _checked :Boolean;
-
-    [Embed(source="checkbox_unchecked.png")]
-    protected static const UNCHECKED :Class;
-
-    [Embed(source="checkbox_checked.png")]
-    protected static const CHECKED :Class;
 }

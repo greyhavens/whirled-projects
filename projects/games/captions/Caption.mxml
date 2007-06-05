@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+        horizontalScrollPolicy="off" width="600" height="550"
+        applicationComplete="controller.init(this);">
+    <mx:HBox>
+        <mx:VBox>
+            <mx:HBox>
+                <mx:Image id="image"/>
+            </mx:HBox>
+            <mx:HBox>
+                <mx:TextInput id="captionInput"/>
+                <mx:Label id="clockLabel" selectable="false" fontSize="24"/>
+            </mx:HBox>
+        </mx:VBox>
+        <mx:VBox>
+            <mx:Label id="phaseLabel"/>
+            <mx:Text id="phaseText"/>
+            <mx:VBox id="sideBox"/>
+        </mx:VBox>
+    </mx:HBox>
+    <Controller id="controller"/>
+</mx:Application>

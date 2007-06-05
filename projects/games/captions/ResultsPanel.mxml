@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Label id="nameLabel"/>
+    <mx:HBox>
+        <mx:Label id="votesLabel" fontSize="18"/>
+        <mx:Label id="captionLabel"/>
+    </mx:HBox>
+</mx:VBox>
