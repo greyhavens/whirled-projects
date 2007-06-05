@@ -9,7 +9,7 @@
     <mx:GridItem>
         <mx:VBox>
             <mx:Label id="votesLabel" fontSize="18"/>
-            <mx:Label id="captionLabel"/>
+            <mx:Text id="captionText"/>
         </mx:VBox>
     </mx:GridItem>
 </mx:GridRow>

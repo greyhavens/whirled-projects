@@ -25,9 +25,18 @@ import com.threerings.ezgame.MessageReceivedListener;
 
 import com.whirled.WhirledGameControl;
 
-//
-// TODO: Brady says: post winning caption as a comment on the photo.
-//
+/**
+ * Outstanding issues:
+ * - text in a Text control is not wrapping to be multiline
+ * - focus problems with caption input
+ * - jumping goddamn radio buttons
+ * - if not enough captions, just go to the next round
+ * - broken images are very common..
+ *
+ *
+ * 
+ *  TODO: Brady says: post winning caption as a comment on the photo.
+ */
 public class Controller
 {
     public static const CAPTION_DURATION :int = 60/2;
@@ -41,6 +50,12 @@ public class Controller
         ui.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         _ctrl = new WhirledGameControl(ui);
+
+        if (!_ctrl.isConnected()) {
+            _ui.phaseText.htmlText = "This game must be played inside Whirled.";
+            return;
+        }
+
         _ctrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
         _ctrl.addEventListener(MessageReceivedEvent.TYPE, handleMessageReceived);
         _ctrl.addEventListener(StateChangedEvent.CONTROL_CHANGED, checkControl);
@@ -157,7 +172,14 @@ public class Controller
         }
 
         var phase :String = _ctrl.get("phase") as String;
-        _ui.captionInput.editable = (phase == "caption");
+        var isCaptionPhase :Boolean = (phase == "caption");
+        _ui.captionInput.enabled = isCaptionPhase;
+        _ui.captionInput.editable = isCaptionPhase;
+        if (!isCaptionPhase) {
+            var lastDex :int = _ui.captionInput.text.length;
+            _ui.captionInput.setSelection(lastDex, lastDex);
+        }
+        //_ui.captionInput.setStyle("backgroundColor", (phase == "caption") ? 0xFFFFFF : 0x999999);
 
         switch (phase) {
         case "vote":
@@ -187,13 +209,13 @@ public class Controller
         switch (phase) {
         default:
             _ui.phaseLabel.text = "Caption the picture";
-            _ui.phaseText.text = "Enter a caption for the picture";
+            _ui.phaseText.htmlText = "Enter a caption for the picture";
             _ui.sideBox.removeAllChildren();
             break;
 
         case "vote":
             _ui.phaseLabel.text = "Voting";
-            _ui.phaseText.text = "Vote for a caption other than your own. Your caption will " +
+            _ui.phaseText.htmlText = "Vote for a caption other than your own. Your caption will " +
                 "be disqualified unless you vote.";
             var caps :Array = _ctrl.get("captions") as Array;
             if (caps != null) {
@@ -203,7 +225,7 @@ public class Controller
 
         case "results":
             _ui.phaseLabel.text = "Results";
-            _ui.phaseText.text = "Congratulations!";
+            _ui.phaseText.htmlText = "Congratulations!";
             var results :Array = _ctrl.get("results") as Array;
             if (results != null) {
                 initResults(results);
@@ -383,13 +405,15 @@ public class Controller
 
             var pan :VotePanel = new VotePanel();
             _ui.sideBox.addChild(pan);
-            pan.captionLabel.text = String(caps[index]);
+            pan.captionText.htmlText = deHTML(String(caps[index]));
             pan.voteButton.group = voteGroup;
             if (ids[index] == _myId) {
                 pan.voteButton.enabled = false;
             }
             pan.voteButton.value = ids[index];
         }
+
+        _ui.validateNow();
     }
 
     protected function initResults (results :Array) :void
@@ -428,21 +452,37 @@ public class Controller
             _ui.sideBox.addChild(pan);
             pan.nameLabel.text = String(_ctrl.get("name:" + ids[index]));
             pan.votesLabel.text = String(Math.abs(result));
-            pan.captionLabel.text = String(caps[index]);
+            pan.captionText.htmlText = deHTML(String(caps[index]));
 
             if (result < 0) {
                 pan.statusLabel.text = "Disqualified";
 
-            } else if (-1 == winnerVal || result == winnerVal) {
+            } else if (result > 0 && (-1 == winnerVal || result == winnerVal)) {
                 // we can have multiple winners..
                 pan.statusLabel.text = "Winner!";
                 winnerVal = result;
             }
         }
+
+        _ui.validateNow();
+    }
+
+    protected function deHTML (s :String) :String
+    {
+        s = s.replace("&", "&amp;");
+        s = s.replace("<", "&lt;");
+        s = s.replace(">", "&gt;");
+
+        return s;
     }
 
     protected function loadNextPicture () :void
     {
+        if (_gettingPicture) {
+            return;
+        }
+
+        _gettingPicture = true;
         _flickr.photos.getRecent("", 1, 1);
     }
 
@@ -450,6 +490,7 @@ public class Controller
     {
         if (!evt.success) {
             trace("Failure loading the next photo [" + evt.data.error.errorMessage + "]");
+            _gettingPicture = false;
             return;
         }
 
@@ -459,6 +500,8 @@ public class Controller
 
     protected function handlePhotoUrlKnown (evt :FlickrResultEvent) :void
     {
+        _gettingPicture = false;
+
         if (!evt.success) {
             trace("Failure getting photo sizes [" + evt.data.error.errorMessage + "]");
             return;
@@ -522,6 +565,8 @@ public class Controller
     protected var _flickr :FlickrService;
 
     protected var _timer :Timer;
+
+    protected var _gettingPicture :Boolean;
 
     protected var _myCaption :String;
 }

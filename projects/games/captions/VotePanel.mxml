@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:GridRow xmlns:mx="http://www.adobe.com/2006/mxml">
   <mx:GridItem>
-      <mx:RadioButton id="voteButton"/>
+      <mx:RadioButton id="voteButton" top="0" left="0"/>
   </mx:GridItem>
   <mx:GridItem>
-      <mx:Label id="captionLabel"/>
+      <mx:Text id="captionText"/>
   </mx:GridItem>
 </mx:GridRow>
