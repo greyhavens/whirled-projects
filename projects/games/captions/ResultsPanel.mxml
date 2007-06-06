@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:GridRow xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:GridRow xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
     <mx:GridItem>
         <mx:VBox>
             <mx:Label id="nameLabel"/>
             <mx:Label id="statusLabel"/>
         </mx:VBox>
     </mx:GridItem>
-    <mx:GridItem>
-        <mx:VBox>
+    <mx:GridItem width="100%">
+        <mx:VBox width="100%">
             <mx:Label id="votesLabel" fontSize="18"/>
-            <mx:Text id="captionText"/>
+            <mx:Text id="captionText" width="100%"/>
         </mx:VBox>
     </mx:GridItem>
 </mx:GridRow>

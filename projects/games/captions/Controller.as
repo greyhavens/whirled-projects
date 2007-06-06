@@ -27,7 +27,6 @@ import com.whirled.WhirledGameControl;
 
 /**
  * Outstanding issues:
- * - text in a Text control is not wrapping to be multiline
  * - focus problems with caption input
  * - jumping goddamn radio buttons
  * - if not enough captions, just go to the next round
@@ -208,8 +207,8 @@ public class Controller
 
         switch (phase) {
         default:
-            _ui.phaseLabel.text = "Caption the picture";
-            _ui.phaseText.htmlText = "Enter a caption for the picture";
+            _ui.phaseLabel.text = "Caption";
+            _ui.phaseText.htmlText = "Enter a witty caption for the picture.";
             _ui.sideBox.removeAllChildren();
             break;
 

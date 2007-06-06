@@ -14,7 +14,7 @@
                 <mx:Label id="clockLabel" selectable="false" fontSize="24"/>
             </mx:HBox>
         </mx:VBox>
-        <mx:VBox>
+        <mx:VBox width="100%">
             <mx:Label id="phaseLabel" fontSize="24" width="100%"/>
             <mx:Text id="phaseText" width="100%"/>
             <mx:Grid id="sideBox" width="100%"/>
