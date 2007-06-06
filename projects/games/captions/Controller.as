@@ -28,13 +28,17 @@ import com.whirled.WhirledGameControl;
 /**
  * Outstanding issues:
  * - focus problems with caption input
- * - jumping goddamn radio buttons
- * - if not enough captions, just go to the next round
+ * - jumping goddamn radio buttons: also, you should be able to un-vote...
  * - broken images are very common..
  *
  *
- * 
- *  TODO: Brady says: post winning caption as a comment on the photo.
+ * Other enhancements:
+ * - don't disqualify single entries that get votes
+ * - maybe move captionInput from below the photo- gets scrolled off sometimes in whirled
+ * - Brady's idea: post winning caption as a comment on the photo.
+ * - possibly create a 'skip' checkbox, and if enough people vote to skip the photo,
+ *   it is immediately skipped...
+ *
  */
 public class Controller
 {
@@ -287,8 +291,15 @@ public class Controller
             // clear out the original prop
             _ctrl.set(prop, null);
         }
-        _ctrl.set("ids", ids);
-        _ctrl.setImmediate("captions", caps);
+
+        if (ids.length > 0) {
+            _ctrl.set("ids", ids);
+            _ctrl.setImmediate("captions", caps);
+
+        } else {
+            // if there are no captions, just move to the next picture
+            _ctrl.setImmediate("phase", "start");
+        }
     }
 
     protected function startResultsPhase () :void
@@ -460,6 +471,12 @@ public class Controller
                 // we can have multiple winners..
                 pan.statusLabel.text = "Winner!";
                 winnerVal = result;
+
+                if (ids[index] == _myId) {
+                    // Award ourselves 100 flow every time we win a round.
+                    // TODO: make this better when the flow awarding API gets unfucked.
+                    _ctrl.awardFlow(100);
+                }
             }
         }
 
