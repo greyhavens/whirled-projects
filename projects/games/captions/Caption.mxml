@@ -5,15 +5,16 @@
         layout="horizontal"
         applicationComplete="controller.init(this);">
     <mx:Image id="image"/>
-    <mx:VBox width="100%" height="500">
+    <mx:VBox width="100%" height="500" verticalScrollPolicy="off">
         <mx:HBox verticalAlign="bottom">
             <mx:Label id="phaseLabel" fontSize="24" width="100%"/>
             <mx:Label id="clockLabel" selectable="false" fontSize="20" color="0x0000FF"/>
         </mx:HBox>
         <mx:Text id="phaseText" width="100%"/>
         <mx:TextInput id="captionInput" width="100%"/>
-        <mx:Grid id="sideBox" width="100%"/>
+        <mx:VBox width="100%" height="420">
+            <mx:Grid id="sideBox" width="100%"/>
+        </mx:VBox>
     </mx:VBox>
-    <!--<mx:Spacer width="20"/>-->
     <Controller id="controller"/>
 </mx:Application>
