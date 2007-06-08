@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
-        styleName="plain"
-        horizontalScrollPolicy="off" width="600" height="550"
+        styleName="plain" width="600" height="550"
+        horizontalScrollPolicy="off" verticalScrollPolicy="off"
         applicationComplete="controller.init(this);">
-    <mx:HBox width="100%">
+    <mx:HBox width="100%" height="100%" verticalScrollPolicy="off">
         <mx:VBox>
             <mx:HBox>
                 <mx:Image id="image"/>
@@ -14,7 +14,7 @@
                 <mx:Label id="clockLabel" selectable="false" fontSize="24"/>
             </mx:HBox>
         </mx:VBox>
-        <mx:VBox width="100%">
+        <mx:VBox width="100%" height="500">
             <mx:Label id="phaseLabel" fontSize="24" width="100%"/>
             <mx:Text id="phaseText" width="100%"/>
             <mx:Grid id="sideBox" width="100%"/>
