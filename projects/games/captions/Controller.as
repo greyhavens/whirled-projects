@@ -73,6 +73,7 @@ public class Controller
 
         checkControl();
         checkPhase();
+        showPhoto();
     }
 
     protected function handlePropertyChanged (event :PropertyChangedEvent) :void
@@ -115,7 +116,9 @@ public class Controller
     protected function showPhoto () :void
     {
         var url :String = _ctrl.get("photo") as String;
-        _ui.image.load(url);
+        if (url != null) {
+            _ui.image.load(url);
+        }
     }
 
     protected function updateTick (value :int) :void
