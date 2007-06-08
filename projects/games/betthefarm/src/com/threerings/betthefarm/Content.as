@@ -15,6 +15,8 @@ public class Content
     [Embed(source="../../../../rsrc/farmbackground.png")]
     public static const BACKGROUND :Class;
 
+    // QUESTION UI
+
     [Embed(source="../../../../rsrc/AnswerBubbles/AnswerBubble1.png")]
     public static const ANSWER_BUBBLE_1 :Class;
 
@@ -30,6 +32,8 @@ public class Content
     [Embed(source="../../../../rsrc/BuzzButton.png")]
     public static const BUZZ_BUTTON :Class;
 
+    // PLAQUES
+
     [Embed(source="../../../../rsrc/PlayerColors/PlayerBuzz.png")]
     public static const PLAQUE_TYPING :Class;
 
@@ -41,6 +45,8 @@ public class Content
 
     [Embed(source="../../../../rsrc/PlayerColors/PlayerNormal.png")]
     public static const PLAQUE_NORMAL :Class;
+
+    // SOUNDS
 
     [Embed(source="../../../../rsrc/You Did Great.mp3")]
     public static const SND_Q_CORRECT :Class;
@@ -54,6 +60,8 @@ public class Content
     [Embed(source="../../../../rsrc/Bet The Farm Round.mp3")]
     public static const SND_ROUND_INTRO :Class;
 
+    // ROUND NAMES
+
     [Embed(source="../../../../rsrc/WelcomeFrontPage/WelcomeToTheFarm.png")]
     public static const IMG_WELCOME :Class;
 
@@ -65,6 +73,9 @@ public class Content
 
     [Embed(source="../../../../rsrc/Rounds/WagerRound.png")]
     public static const IMG_ROUND_WAGER :Class;
+
+    [Embed(source="../../../../rsrc/GameOver/GameOver.png")]
+    public static const IMG_GAME_OVER :Class;
 
     // TIMER
 
@@ -95,6 +106,20 @@ public class Content
 
     [Embed(source="../../../../rsrc/Incorrect!/RoundOver.png")]
     public static const IMG_ROUND_OVER :Class;
+
+    // END GAME SCREEN
+
+    [Embed(source="../../../../rsrc/GameOver/HighestScorer.png")]
+    public static const IMG_HIGHEST_SCORER :Class;
+
+    [Embed(source="../../../../rsrc/GameOver/2ndHighest.png")]
+    public static const IMG_2ND_HIGHEST_SCORER :Class;
+
+    [Embed(source="../../../../rsrc/GameOver/3rdHighest.png")]
+    public static const IMG_3RD_HIGHEST_SCORER :Class;
+
+    [Embed(source="../../../../rsrc/GameOver/Lowest.png")]
+    public static const IMG_LOWEST_SCORER :Class;
 
 
     public static const NUMBERS :Array = [

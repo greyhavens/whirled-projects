@@ -99,14 +99,51 @@ public class View extends Sprite
 
     public function gameDidEnd () :void
     {
-        trace("Game ended!");
+        updateRound(-1);
+
+        doorClear();
+
+        var players :Array = _control.seating.getPlayerIds();
+
+        var bits :Array = new Array();
+        for (var ii :int = 0; ii < players.length; ii ++) {
+            bits.push({ player: _control.getOccupantName(players[ii]),
+                        score: _control.get(Model.SCORES, ii) });
+//             bits.push({ player: _control.getOccupantName(players[ii]),
+//                         score: _control.get(Model.SCORES, ii) });
+//             bits.push({ player: _control.getOccupantName(players[ii]),
+//                         score: _control.get(Model.SCORES, ii) });
+//             bits.push({ player: _control.getOccupantName(players[ii]),
+                        score: _control.get(Model.SCORES, ii) });
+        }
+        bits.sortOn([ "score" ], Array.NUMERIC);
+
+        var y :uint = 60;
+        var x :uint = Content.DOOR_RECT.width/2;
+
+        for (ii = 0; ii < bits.length; ii ++) {
+            var imgClass :Class;
+            if (ii == 0) {
+                imgClass = Content.IMG_HIGHEST_SCORER;
+            } else if (ii == bits.length-1) {
+                imgClass = Content.IMG_LOWEST_SCORER;
+            } else if (ii == 1) {
+                imgClass = Content.IMG_2ND_HIGHEST_SCORER;
+            } else if (ii == 2) {
+                imgClass = Content.IMG_3RD_HIGHEST_SCORER;
+            }
+
+            addImage(imgClass, _doorArea, 20, y, false);
+            addTextField(bits[ii].player, _doorArea, 160, y, 0, 0, false, 18).border = true;
+            y += 40;
+        }
     }
 
     public function roundDidStart () :void
     {
         trace("Beginning round: " + _control.getRound());
         doorClear();
-        updateRound();
+        updateRound(_control.getRound());
 
         if (_model.getRoundType() == Model.ROUND_INTRO) {
             showIntro();
@@ -159,7 +196,7 @@ public class View extends Sprite
         }
         _answered = false;
 
-        updateRound(questionIx);
+//        updateRound(_control.getRound(), questionIx);
 
         if (_model.getRoundType() == Model.ROUND_WAGER) {
             var score :int = _control.get(Model.SCORES, _control.seating.getMyPosition()) as int;
@@ -258,7 +295,7 @@ public class View extends Sprite
         addWagerClickHandler(button, score, farm);
     }
 
-    protected function addWagerClickHandler(
+    protected function addWagerClickHandler (
         button :SimpleButton, score :int, farm :Boolean) :void
     {
         button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
@@ -512,13 +549,16 @@ public class View extends Sprite
         _control.sendMessage(Model.MSG_ANSWER_FREE, { player: _myId, correct: false });
     }
 
-    protected function updateRound (questionIx :int = 0) :void
+    protected function updateRound (round :int = -1, questionIx :int = 0) :void
     {
+        var imgClass :Class =
+            (round < 0) ? Content.IMG_GAME_OVER : Content.ROUND_NAMES[round-1];
+
         if (_roundImage != null) {
             removeChild(_roundImage);
         }
         _roundImage = addImage(
-            Content.ROUND_NAMES[_control.getRound()-1], this,
+            imgClass, this,
             (Content.ROUND_RECT.left + Content.ROUND_RECT.right)/2,
             (Content.ROUND_RECT.top + Content.ROUND_RECT.bottom)/2);
 
@@ -546,7 +586,7 @@ public class View extends Sprite
         return int(seconds / 60) + (secs < 10 ? ":0" : ":") + secs;
     }
 
-    protected function addTextField(
+    protected function addTextField (
         txt :String, parent :DisplayObjectContainer, x :Number, y :Number, width :Number = 0,
         height :Number = 0, wordWrap :Boolean = true, fontSize :int = 16) :TextField
     {
@@ -578,11 +618,12 @@ public class View extends Sprite
     }
 
     protected function addImage (
-        imgClass :Class, parent :DisplayObjectContainer, x :Number, y :Number) :DisplayObject
+        imgClass :Class, parent :DisplayObjectContainer, x :Number, y :Number,
+        center :Boolean = true) :DisplayObject
     {
         var img :DisplayObject = new imgClass();
-        img.x = x - img.width/2;
-        img.y = y - img.height/2;
+        img.x = x - (center ? img.width/2 : 0);
+        img.y = y - (center ? img.height/2 : 0);
         parent.addChild(img);
         return img;
     }
