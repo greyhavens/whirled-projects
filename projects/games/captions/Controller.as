@@ -11,6 +11,8 @@ import mx.containers.GridItem;
 import mx.controls.HRule;
 import mx.controls.RadioButtonGroup;
 
+import mx.utils.StringUtil;
+
 import com.adobe.webapis.flickr.FlickrService;
 import com.adobe.webapis.flickr.PagedPhotoList;
 import com.adobe.webapis.flickr.Photo;
@@ -208,9 +210,9 @@ public class Controller
             _ui.image.scaleY = 1;
             _myCaption = "";
             _ui.captionInput.text = _myCaption;
-            _ui.captionInput.callLater(function () :void {
-                _ui.captionInput.setFocus();
-            });
+//            _ui.captionInput.callLater(function () :void {
+//                _ui.captionInput.setFocus();
+//            });
             _timer.start();
             break;
         }
@@ -374,12 +376,13 @@ public class Controller
 
     protected function handleCaptionTimer (event :TimerEvent) :void
     {
-        if (_ui.captionInput.text != _myCaption) {
+        var text :String = StringUtil.trim(_ui.captionInput.text);
+        if (text != _myCaption) {
             // TODO: possibly a new way to support private data, whereby users can submit
             // data to private little collections, which are then combined and retrieved.
             // We could do that now, but currently don't have a way to verify which user
             // submitted which caption...
-            _myCaption = _ui.captionInput.text;
+            _myCaption = text;
 
             _ctrl.set("caption:" + _myId, _myCaption);
             if (_ctrl.get("name:" + _myId) != _myName) {
