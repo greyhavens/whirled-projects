@@ -170,7 +170,8 @@ public class Model
                                   _questionCount);
             }
 
-        } else if (event.name == BUZZER && value > 0 && getRoundType() == ROUND_BUZZ) {
+        } else if (event.name == BUZZER && !betweenRounds() && value > 0 &&
+                   getRoundType() == ROUND_BUZZ) {
             _view.gainedBuzzControl(value as int);
 
         } else if (event.name == SCORES && event.index != -1) {
