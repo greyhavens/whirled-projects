@@ -86,7 +86,7 @@ public class Server
 
     protected function handleTimeout(action :String, data :Object) :void
     {
-        if (betweenRounds()) {
+        if (_model.betweenRounds()) {
             return;
         }
         if (action == Model.ACT_BEGIN_ROUND) {
@@ -264,11 +264,9 @@ public class Server
         for (var ii :int = 0; ii < _playerCount; ii ++) {
             done &&= _control.get(Model.RESPONSES, ii);
         }
+        _control.sendMessage(Model.MSG_ANSWERED, { player: player, correct: correct });
         if (correct || done) {
             questionDone(correct ? player : -1);
-
-        } else {
-            _control.sendMessage(Model.MSG_ANSWERED, { player: player, correct: correct });
         }
     }
 

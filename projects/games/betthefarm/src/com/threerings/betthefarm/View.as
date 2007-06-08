@@ -328,18 +328,10 @@ public class View extends Sprite
 
     public function questionDone (winner :int) :void
     {
-        doorClear();
-
         if (winner == _myId) {
+            doorClear();
             doorHeader(Content.IMG_CORRECT);
             _sndCorrect.play();
-
-        } else if (_answered) {
-            doorHeader(Content.IMG_INCORRECT);
-            _sndIncorrect.play();
-
-        } else {
-            // show anything if we didn't answer?
         }
 
         if (winner) {
@@ -354,7 +346,16 @@ public class View extends Sprite
 
     public function questionAnswered (player :int, correct :Boolean) :void
     {
-        _plaques[player].setState(correct ? Plaque.STATE_CORRECT : Plaque.STATE_INCORRECT);
+        if (correct) {
+            _plaques[player].setState(Plaque.STATE_CORRECT);
+        } else {
+            _plaques[player].setState(Plaque.STATE_INCORRECT);
+            if (player == _myId) {
+                doorClear();
+                doorHeader(Content.IMG_INCORRECT);
+                _sndIncorrect.play();
+            }
+        }
     }
 
     public function gainedBuzzControl (player :int) :void
@@ -362,6 +363,7 @@ public class View extends Sprite
         _plaques[player].setState(Plaque.STATE_TYPING);
         if (player == _myId) {
             // our buzz won!
+            _buzzButton.visible = false;
             _freeArea.visible = true;
             stage.focus = _freeField;
         }
@@ -482,7 +484,7 @@ public class View extends Sprite
     protected function buzzClick (event :MouseEvent) :void
     {
         // you wouldn't think this test would be necessary...
-        if (_buzzClick.enabled) {
+        if (_buzzButton.enabled) {
             _control.sendMessage(Model.MSG_BUZZ, { player: _myId });
         }
     }
