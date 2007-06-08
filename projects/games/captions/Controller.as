@@ -44,9 +44,9 @@ import com.whirled.WhirledGameControl;
  */
 public class Controller
 {
-    public static const CAPTION_DURATION :int = 60/2;
-    public static const VOTE_DURATION :int = 30/2;
-    public static const RESULTS_DURATION :int = 30/2;
+    public static const CAPTION_DURATION :int = 45;
+    public static const VOTE_DURATION :int = 30;
+    public static const RESULTS_DURATION :int = 15;
 
     public function init (ui :Caption) :void
     {
