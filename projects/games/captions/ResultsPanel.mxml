@@ -3,12 +3,12 @@
     <mx:GridItem>
         <mx:VBox>
             <mx:Label id="nameLabel"/>
-            <mx:Label id="statusLabel"/>
+            <mx:Label id="votesLabel" fontSize="18"/>
         </mx:VBox>
     </mx:GridItem>
     <mx:GridItem width="100%">
         <mx:VBox width="100%">
-            <mx:Label id="votesLabel" fontSize="18"/>
+            <mx:Label id="statusLabel"/>
             <mx:Text id="captionText" width="100%"/>
         </mx:VBox>
     </mx:GridItem>

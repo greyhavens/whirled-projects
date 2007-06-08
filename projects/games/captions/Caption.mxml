@@ -1,24 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
-        styleName="plain" width="600" height="550"
+        styleName="plain" width="700" height="500"
         horizontalScrollPolicy="off" verticalScrollPolicy="off"
         layout="horizontal"
         applicationComplete="controller.init(this);">
-    <mx:VBox>
-        <mx:HBox>
-            <mx:Image id="image"/>
-        </mx:HBox>
-        <mx:HBox width="100%">
-            <mx:Spacer width="20"/>
-            <mx:TextInput id="captionInput" width="100%"/>
-            <mx:Label id="clockLabel" selectable="false" fontSize="24"/>
-        </mx:HBox>
-    </mx:VBox>
+    <mx:Image id="image"/>
     <mx:VBox width="100%" height="500">
-        <mx:Label id="phaseLabel" fontSize="24" width="100%"/>
+        <mx:HBox verticalAlign="bottom">
+            <mx:Label id="phaseLabel" fontSize="24" width="100%"/>
+            <mx:Label id="clockLabel" selectable="false" fontSize="20" color="0x0000FF"/>
+        </mx:HBox>
         <mx:Text id="phaseText" width="100%"/>
+        <mx:TextInput id="captionInput" width="100%"/>
         <mx:Grid id="sideBox" width="100%"/>
     </mx:VBox>
-    <mx:Spacer width="20"/>
+    <!--<mx:Spacer width="20"/>-->
     <Controller id="controller"/>
 </mx:Application>

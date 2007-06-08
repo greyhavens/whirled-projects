@@ -5,6 +5,10 @@ import flash.events.TimerEvent;
 
 import flash.utils.Timer;
 
+import mx.containers.GridRow;
+import mx.containers.GridItem;
+
+import mx.controls.HRule;
 import mx.controls.RadioButtonGroup;
 
 import com.adobe.webapis.flickr.FlickrService;
@@ -28,13 +32,11 @@ import com.whirled.WhirledGameControl;
 /**
  * Outstanding issues:
  * - focus problems with caption input
- * - jumping goddamn radio buttons: also, you should be able to un-vote...
  * - broken images are very common..
  *
  *
  * Other enhancements:
  * - don't disqualify single entries that get votes
- * - maybe move captionInput from below the photo- gets scrolled off sometimes in whirled
  * - Brady's idea: post winning caption as a comment on the photo.
  * - possibly create a 'skip' checkbox, and if enough people vote to skip the photo,
  *   it is immediately skipped...
@@ -176,8 +178,9 @@ public class Controller
 
         var phase :String = _ctrl.get("phase") as String;
         var isCaptionPhase :Boolean = (phase == "caption");
-        _ui.captionInput.enabled = isCaptionPhase;
         _ui.captionInput.editable = isCaptionPhase;
+        _ui.captionInput.visible = isCaptionPhase;
+        _ui.captionInput.includeInLayout = isCaptionPhase;
         if (!isCaptionPhase) {
             var lastDex :int = _ui.captionInput.text.length;
             _ui.captionInput.setSelection(lastDex, lastDex);
@@ -455,6 +458,18 @@ public class Controller
         var caps :Array = _ctrl.get("captions") as Array;
         var winnerVal :int = -1;
         for (ii = 0; ii < indexes.length; ii++) {
+
+            if (ii > 0) {
+                var rule :HRule = new HRule();
+                rule.percentWidth = 100;
+                var item :GridItem = new GridItem();
+                item.colSpan = 2;
+                item.addChild(rule);
+                var row :GridRow = new GridRow();
+                row.addChild(item);
+                _ui.sideBox.addChild(row);
+            }
+
             var index :int = int(indexes[ii]);
             var result :int = int(results[index]);
 
