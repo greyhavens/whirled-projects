@@ -86,6 +86,9 @@ public class Server
 
     protected function handleTimeout(action :String, data :Object) :void
     {
+        if (betweenRounds()) {
+            return;
+        }
         if (action == Model.ACT_BEGIN_ROUND) {
             if (_model.getRoundType() == Model.ROUND_LIGHTNING) {
                 _control.setImmediate(
