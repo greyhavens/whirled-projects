@@ -264,6 +264,7 @@ public class View extends Sprite
         button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             _myWager = farm ? score : -score;
             showAnswerUI();
+            event.stopImmediatePropagation();
         });
     }
 
