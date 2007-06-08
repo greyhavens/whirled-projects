@@ -347,9 +347,12 @@ public class Controller
         }
 
         // now one more pass through results, flipping any disqualified votes to negative
-        for (ii = 0; ii < results.length; ii++) {
-            if (!didVote[ii]) {
-                results[ii] *= -1;
+        // But, if there was only one caption, let it proceed if it got votes..
+        if (results.length > 1) {
+            for (ii = 0; ii < results.length; ii++) {
+                if (!didVote[ii]) {
+                    results[ii] *= -1;
+                }
             }
         }
 
@@ -384,7 +387,8 @@ public class Controller
             // submitted which caption...
             _myCaption = text;
 
-            _ctrl.set("caption:" + _myId, _myCaption);
+            // clear their submission if they clear out the input field
+            _ctrl.set("caption:" + _myId, (_myCaption == "") ? null : _myCaption);
             if (_ctrl.get("name:" + _myId) != _myName) {
                 _ctrl.setImmediate("name:" + _myId, _myName);
             }
