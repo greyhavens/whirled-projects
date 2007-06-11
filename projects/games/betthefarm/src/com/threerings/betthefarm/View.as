@@ -103,17 +103,16 @@ public class View extends Sprite
 
         doorClear();
 
+        // if the game never had a chance to really start, end here
+        if (_control.get(Model.SCORES) == null) {
+            return;
+        }
+
         var players :Array = _control.seating.getPlayerIds();
 
         var bits :Array = new Array();
         for (var ii :int = 0; ii < players.length; ii ++) {
             bits.push({ player: _control.getOccupantName(players[ii]),
-                        score: _control.get(Model.SCORES, ii) });
-//             bits.push({ player: _control.getOccupantName(players[ii]),
-//                         score: _control.get(Model.SCORES, ii) });
-//             bits.push({ player: _control.getOccupantName(players[ii]),
-//                         score: _control.get(Model.SCORES, ii) });
-//             bits.push({ player: _control.getOccupantName(players[ii]),
                         score: _control.get(Model.SCORES, ii) });
         }
         bits.sortOn([ "score" ], Array.NUMERIC);
