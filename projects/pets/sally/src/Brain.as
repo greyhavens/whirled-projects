@@ -82,9 +82,9 @@ public class Brain
 
         // 25% chance of walking somewhere
         if (_state.canWalk && _rando.nextInt(100) > 75) {
-            var oxpos :Number = _ctrl.getLocation()[0];
+            var oxpos :Number = _ctrl.getLogicalLocation()[0];
             var nxpos :Number = Math.random();
-            _ctrl.setLocation(nxpos, 0, Math.random(), (nxpos < oxpos) ? 270 : 90);
+            _ctrl.setLogicalLocation(nxpos, 0, Math.random(), (nxpos < oxpos) ? 270 : 90);
             return;
         }
     }
