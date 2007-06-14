@@ -34,6 +34,9 @@ public class Popper
         _naturalScaleX = _target.scaleX;
         _naturalScaleY = _target.scaleY;
         _target.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+
+        // apply the starting scale
+        onEnterFrame(null);
     }
 
     /**

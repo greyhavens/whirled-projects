@@ -195,7 +195,7 @@ public class Sign extends Sprite
 
         // draw a background and border for the text
         var g :Graphics = sign.graphics;
-        g.beginFill(0xFFCC99);
+        g.beginFill(BACKGROUND_COLOR);
         g.lineStyle(2, 0x333333);
         g.drawRect(0, 0, width + 2*BORDER, height + 2*BORDER);
         g.endFill();
@@ -244,6 +244,7 @@ public class Sign extends Sprite
     protected static const TEXT_SIZE :int = 18;
     protected static const TIP_SIZE :int = 12;
 
+    protected static const BACKGROUND_COLOR :uint = 0x99CCFF;
     protected static const FILTER_COLOR :uint = 0xFF00FF;
 
     protected static const EDITOR_WIDTH :int = 250;
