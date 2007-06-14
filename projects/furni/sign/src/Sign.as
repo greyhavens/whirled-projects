@@ -203,8 +203,8 @@ public class Sign extends Sprite
         return sign;
     }
 
-        protected function createLabel (
-            text :String, htmlText :String, size :int, link :Boolean = false) :TextField
+    protected function createLabel (
+        text :String, htmlText :String, size :int, link :Boolean = false) :TextField
     {
         var tfield :TextField = new TextField();
         tfield.autoSize = TextFieldAutoSize.LEFT;
