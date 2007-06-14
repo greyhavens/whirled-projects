@@ -1,0 +1,17 @@
+<!-- build configuration -->
+<project name="Sign" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Sign"/>
+  <property name="app.source-dir" value="src"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+  <!-- copies our compiled media into our local media directory for testing -->
+  <property name="hash" value="c26375194deb0fe85afb9a0b790df1423090c186"/>
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/${hash}.swf"/>
+  </target>
+
+</project>
