@@ -114,10 +114,13 @@ public class Controller
 
         if (_inControl) {
             if (StringUtil.startsWith(event.name, "skip:")) {
-                var props :Array = _ctrl.getPropertyNames("skip:");
+                var skipVotes :int = _ctrl.getPropertyNames("skip:").length;
+
                 // if more than half the people voted to skip, then skip
-                if (props.length > (_ctrl.getOccupants().length/2)) {
-                    _ctrl.sendChat("" + props.length + " players have voted to skip the picture.");
+                if (skipVotes > (_ctrl.getOccupants().length/2)) {
+                    if (skipVotes > 1) {
+                        _ctrl.sendChat("" + skipVotes + " players have voted to skip the picture.");
+                    }
                     _ctrl.stopTicker("tick");
                     _ctrl.setImmediate("phase", "start");
                 }
