@@ -8,10 +8,10 @@ import flash.utils.Timer;
 import mx.containers.GridRow;
 import mx.containers.GridItem;
 
+import mx.controls.CheckBox;
 import mx.controls.HRule;
 import mx.controls.RadioButtonGroup;
-
-import mx.utils.StringUtil;
+import mx.controls.TextInput;
 
 import com.adobe.webapis.flickr.FlickrService;
 import com.adobe.webapis.flickr.PagedPhotoList;
@@ -21,6 +21,7 @@ import com.adobe.webapis.flickr.PhotoUrl;
 import com.adobe.webapis.flickr.events.FlickrResultEvent;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.StringUtil;
 
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
@@ -33,22 +34,28 @@ import com.whirled.WhirledGameControl;
 
 /**
  * Outstanding issues:
- * - focus problems with caption input
- * - broken images are very common..
+ * - focus problems with caption input (solved? We never try to focus it anymore- it's rude)
+ * - broken images are common.. I guess "Skip" will help.
  *
+ * TODO:
+ * - Set up the game with a set of tags. Skip around amongst the pics in that list...
  *
- * Other enhancements:
- * - don't disqualify single entries that get votes
- * - Brady's idea: post winning caption as a comment on the photo.
- * - possibly create a 'skip' checkbox, and if enough people vote to skip the photo,
- *   it is immediately skipped...
- *
+ * Maybe do:
+ * - Maybe show any partially entered captions after a skip.
+ * - Hall of fame (using built-in whirled high score lists) keeps a list of recent
+ *   excellent captions along with their pictures.
+ * - Players see a score of their average vote snare percentage, maybe with 5-round
+ *   and 10-round trailing averages.
  */
 public class Controller
 {
     public static const CAPTION_DURATION :int = 45;
     public static const VOTE_DURATION :int = 30;
     public static const RESULTS_DURATION :int = 15;
+
+    public static const CAPTION_FLOW :int = 10; // I'm worried people will just enter "asdasd"
+    public static const VOTE_FLOW :int = 30;
+    public static const WINNER_FLOW :int = 80;
 
     public function init (ui :Caption) :void
     {
@@ -104,6 +111,18 @@ public class Controller
             }
             break;
         }
+
+        if (_inControl) {
+            if (StringUtil.startsWith(event.name, "skip:")) {
+                var props :Array = _ctrl.getPropertyNames("skip:");
+                // if more than half the people voted to skip, then skip
+                if (props.length > (_ctrl.getOccupants().length/2)) {
+                    _ctrl.sendChat("" + props.length + " players have voted to skip the picture.");
+                    _ctrl.stopTicker("tick");
+                    _ctrl.setImmediate("phase", "start");
+                }
+            }
+        }
     }
 
     protected function handleMessageReceived (event :MessageReceivedEvent) :void
@@ -131,7 +150,7 @@ public class Controller
 
         if (remaining == 0) {
             if (_ctrl.get("phase") == "caption") {
-                _ui.captionInput.editable = false;
+                _captionInput.editable = false;
             }
 
             if (_inControl) {
@@ -182,15 +201,6 @@ public class Controller
         }
 
         var phase :String = _ctrl.get("phase") as String;
-        var isCaptionPhase :Boolean = (phase == "caption");
-        _ui.captionInput.editable = isCaptionPhase;
-        _ui.captionInput.visible = isCaptionPhase;
-        _ui.captionInput.includeInLayout = isCaptionPhase;
-        if (!isCaptionPhase) {
-            var lastDex :int = _ui.captionInput.text.length;
-            _ui.captionInput.setSelection(lastDex, lastDex);
-        }
-        //_ui.captionInput.setStyle("backgroundColor", (phase == "caption") ? 0xFFFFFF : 0x999999);
 
         switch (phase) {
         case "vote":
@@ -198,9 +208,14 @@ public class Controller
             _ui.image.scaleX = .5;
             _ui.image.scaleY = .5;
             _timer.reset();
+            _captionInput = null;
             break;
 
         default:
+            if (_captionInput != null) {
+                _captionInput.text = "";
+                _myCaption = "";
+            }
             _ui.image.visible = false;
             break;
 
@@ -209,10 +224,6 @@ public class Controller
             _ui.image.scaleX = 1;
             _ui.image.scaleY = 1;
             _myCaption = "";
-            _ui.captionInput.text = _myCaption;
-//            _ui.captionInput.callLater(function () :void {
-//                _ui.captionInput.setFocus();
-//            });
             _timer.start();
             break;
         }
@@ -221,7 +232,7 @@ public class Controller
         default:
             _ui.phaseLabel.text = "Caption";
             _ui.phaseText.htmlText = "Enter a witty caption for the picture.";
-            _ui.sideBox.removeAllChildren();
+            initCaptioning();
             break;
 
         case "vote":
@@ -356,7 +367,7 @@ public class Controller
             }
         }
 
-        _ctrl.setImmediate("results", results);
+        _ctrl.set("results", results);
     }
 
     protected function checkControl (... ignored) :void
@@ -379,7 +390,7 @@ public class Controller
 
     protected function handleCaptionTimer (event :TimerEvent) :void
     {
-        var text :String = StringUtil.trim(_ui.captionInput.text);
+        var text :String = StringUtil.trim(_captionInput.text);
         if (text != _myCaption) {
             // TODO: possibly a new way to support private data, whereby users can submit
             // data to private little collections, which are then combined and retrieved.
@@ -401,6 +412,23 @@ public class Controller
 
         // submit our vote
         _ctrl.set("vote:" + _myId, voteGroup.selectedValue);
+    }
+
+    protected function handleVoteToSkip (event :Event) :void
+    {
+        var skipBox :CheckBox = (event.currentTarget as CheckBox);
+        _ctrl.set("skip:" + _myId, skipBox.selected ? true : null);
+    }
+
+    protected function initCaptioning () :void
+    {
+        _ui.sideBox.removeAllChildren();
+
+        var pan :CaptionPanel = new CaptionPanel();
+        _ui.sideBox.addChild(pan);
+
+        _captionInput = pan.input;
+        pan.skip.addEventListener(Event.CHANGE, handleVoteToSkip);
     }
 
     protected function initVoting (caps :Array) :void
@@ -441,6 +469,8 @@ public class Controller
 
     protected function initResults (results :Array) :void
     {
+        var earnedFlow :int = 0;
+
         _ui.sideBox.removeAllChildren();
 
         var ii :int;
@@ -498,14 +528,26 @@ public class Controller
                 winnerVal = result;
 
                 if (ids[index] == _myId) {
-                    // Award ourselves 100 flow every time we win a round.
                     // TODO: make this better when the flow awarding API gets unfucked.
-                    _ctrl.awardFlow(100);
+                    earnedFlow += WINNER_FLOW;
                 }
             }
         }
 
         _ui.validateNow();
+
+        // see what other flow we get
+        if (null != _ctrl.get("caption:" + _myId)) {
+            earnedFlow += CAPTION_FLOW;
+        }
+        if (null != _ctrl.get("vote:" + _myId)) {
+            earnedFlow += VOTE_FLOW;
+        }
+
+        if (earnedFlow > 0) {
+            trace(_myName + " earned " + earnedFlow + " flow");
+            _ctrl.awardFlow(earnedFlow);
+        }
     }
 
     protected function deHTML (s :String) :String
@@ -568,6 +610,9 @@ public class Controller
         for each (prop in _ctrl.getPropertyNames("name:")) {
             _ctrl.set(prop, null);
         }
+        for each (prop in _ctrl.getPropertyNames("skip:")) {
+            _ctrl.set(prop, null);
+        }
         _ctrl.setImmediate("phase", "caption");
     }
 
@@ -590,6 +635,7 @@ public class Controller
 
     protected function handleUnload (... ignored) :void
     {
+        // nada
     }
 
     protected var _ctrl :WhirledGameControl;
@@ -602,6 +648,8 @@ public class Controller
 
     /** Our user interface class. */
     protected var _ui :Caption;
+
+    protected var _captionInput :TextInput;
 
     protected var _flickr :FlickrService;
 
