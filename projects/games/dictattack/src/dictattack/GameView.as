@@ -3,6 +3,7 @@
 
 package dictattack {
 
+import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFieldType;
@@ -100,6 +101,14 @@ public class GameView extends Sprite
                     "POINTS", _model.getWinningPoints()).replace(
                         "ROUNDS", _model.getWinningScore());
             addChild(help);
+
+            // relocate the chat view out of the way
+            var bsize :int = Content.BOARD_BORDER * 2 + _board.getPixelSize();
+            var bounds :Rectangle = _control.getStageBounds();
+            bounds.x = bsize;
+            bounds.y = 0;
+            bounds.width -= bsize;
+            _control.setChatBounds(bounds);
         }
     }
 
@@ -114,7 +123,6 @@ public class GameView extends Sprite
     public function roundDidStart () :void
     {
         _board.roundDidStart();
-        _control.setChatEnabled(false);
 
         addChild(_tip);
         _tip.text = "Enter words:";
@@ -146,7 +154,6 @@ public class GameView extends Sprite
         _input.stage.focus = null;
         removeChild(_input);
         removeChild(_tip);
-        _control.setChatEnabled(true);
     }
 
     public function gameDidEnd (flow :int) :void

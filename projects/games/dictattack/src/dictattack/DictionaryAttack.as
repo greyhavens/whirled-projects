@@ -6,6 +6,7 @@ package dictattack {
 import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.geom.Rectangle;
 
 import flash.events.Event;
 import flash.utils.ByteArray;
@@ -41,8 +42,11 @@ public class DictionaryAttack extends Sprite
 
         // make our background totally black
         opaqueBackground = 0x000000;
-        // TODO: add a method to the control to tell us how big our viewable area is
-        graphics.drawRect(0, 0, 1024, 600);
+        var bounds :Rectangle = _control.getStageBounds();
+        if (bounds == null) {
+            bounds = new Rectangle(0, 0, 1000, 550);
+        }
+        graphics.drawRect(0, 0, bounds.width, bounds.height);
     }
 
     protected function finishInit (event :Event) :void
