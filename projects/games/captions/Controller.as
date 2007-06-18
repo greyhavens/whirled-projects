@@ -284,7 +284,7 @@ public class Controller
 
         switch (phase) {
         case "vote":
-            startVotePhase();
+            _ctrl.doBatch(startVotePhase);
             break;
 
         case "results":
@@ -599,24 +599,26 @@ public class Controller
             return;
         }
 
-        _ctrl.set("photo", p.source);
-        _ctrl.set("captions", null);
-        _ctrl.set("ids", null);
-        _ctrl.set("results", null);
-        var prop :String;
-        for each (prop in _ctrl.getPropertyNames("caption:")) {
-            _ctrl.set(prop, null);
-        }
-        for each (prop in _ctrl.getPropertyNames("vote:")) {
-            _ctrl.set(prop, null);
-        }
-        for each (prop in _ctrl.getPropertyNames("name:")) {
-            _ctrl.set(prop, null);
-        }
-        for each (prop in _ctrl.getPropertyNames("skip:")) {
-            _ctrl.set(prop, null);
-        }
-        _ctrl.setImmediate("phase", "caption");
+        _ctrl.doBatch(function () :void {
+            _ctrl.set("photo", p.source);
+            _ctrl.set("captions", null);
+            _ctrl.set("ids", null);
+            _ctrl.set("results", null);
+            var prop :String;
+            for each (prop in _ctrl.getPropertyNames("caption:")) {
+                _ctrl.set(prop, null);
+            }
+            for each (prop in _ctrl.getPropertyNames("vote:")) {
+                _ctrl.set(prop, null);
+            }
+            for each (prop in _ctrl.getPropertyNames("name:")) {
+                _ctrl.set(prop, null);
+            }
+            for each (prop in _ctrl.getPropertyNames("skip:")) {
+                _ctrl.set(prop, null);
+            }
+            _ctrl.setImmediate("phase", "caption");
+        });
     }
 
     protected function getPhotoSource (sizes :Array) :PhotoSize
