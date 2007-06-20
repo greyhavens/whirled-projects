@@ -3,9 +3,11 @@
 
 package {
 
+import flash.display.Bitmap;
 import flash.display.BlendMode;
 import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.geom.Point;
 
 import flash.text.AntiAliasType;
 import flash.text.GridFitType;
@@ -26,30 +28,29 @@ import com.threerings.flash.SimpleTextButton;
 import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
 
-[SWF(width="400", height="400")]
+// [SWF(width="418", height="529")]
+[SWF(width="512", height="226")]
 public class Sign extends Sprite
 {
-    public static const WIDTH :int = 400;
-    public static const HEIGHT :int = 400;
+    public static const WIDTH :int = 512;
+    public static const HEIGHT :int = 226;
+//     public static const WIDTH :int = 418;
+//     public static const HEIGHT :int = 529;
 
     public function Sign ()
     {
         _ctrl = new FurniControl(this);
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        // TEMP: draw something to click on
         _post = new Sprite();
-        var g :Graphics = _post.graphics;
-        g.beginFill(0x33CC99);
-        g.lineStyle(2, 0x333333);
-        g.drawEllipse(-16, -8, 32, 16);
-        g.endFill();
-        _post.x = WIDTH/2;
-        _post.y = HEIGHT;
+        _post.addChild(_image = Bitmap(new SIGN_IMAGE()));
+        _image.smoothing = true;
+        _post.x = (WIDTH - _post.width)/2;
+        _post.y = HEIGHT - _post.height;
         addChild(_post);
         _ctrl.setHotSpot(WIDTH/2, HEIGHT);
 
-        _post.addEventListener(MouseEvent.CLICK, handleClick);
+        _post.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
         _post.addEventListener(MouseEvent.MOUSE_OVER, handleMouseOver);
         _post.addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
     }
@@ -70,8 +71,8 @@ public class Sign extends Sprite
             _sign = null;
 
         } else {
-            var title: String = String(_ctrl.lookupMemory("title", "Title"));
-            var text: String = String(_ctrl.lookupMemory("text", "Text"));
+            var title: String = String(_ctrl.lookupMemory("title", DEF_TITLE));
+            var text: String = String(_ctrl.lookupMemory("text", DEF_TEXT));
             _sign = createSign(title, text);
             _sign.addEventListener(MouseEvent.CLICK, handleClick);
 
@@ -81,24 +82,41 @@ public class Sign extends Sprite
 
             addChild(_sign);
             _sign.x = (WIDTH - _sign.width)/2;
-            _sign.y = HEIGHT - _sign.height - 10;
+            _sign.y = HEIGHT - _post.height/2 - _sign.height - 10;
 
             // "pop" the sign into view
             new Popper(_sign, 0.1, 1, 100);
         }
     }
 
+    protected function handleMouseMove (event :MouseEvent) :void
+    {
+        setHovered(_image.bitmapData.hitTest(
+                       new Point(0, 0), 0, new Point(event.localX, event.localY)));
+    }
+
     protected function handleMouseOver (event :MouseEvent) :void
     {
-        // only set up the filter if it hasn't already
-        if (_post.filters == null || _post.filters.length == 0) {
-            _post.filters = [ new GlowFilter(FILTER_COLOR, 1, 10, 10) ];
-        }
+        setHovered(true);
     }
 
     protected function handleMouseOut (event :MouseEvent) :void
     {
-        _post.filters = null;
+        setHovered(false);
+    }
+
+    protected function setHovered (hovered :Boolean) :void
+    {
+        if (_hovered = hovered) {
+            _post.addEventListener(MouseEvent.CLICK, handleClick);
+            // only set up the filter if it hasn't already
+            if (_post.filters == null || _post.filters.length == 0) {
+                _post.filters = [ new GlowFilter(FILTER_COLOR, 1, 10, 10) ];
+            }
+        } else {
+            _post.removeEventListener(MouseEvent.CLICK, handleClick);
+            _post.filters = null;
+        }
     }
 
     protected function handleEdit (event :MouseEvent) :void
@@ -126,8 +144,8 @@ public class Sign extends Sprite
 
         _editText.y = _editTitle.height + 5;
 
-        var save :SimpleTextButton =
-            new SimpleTextButton("Save", true, uint(0x000000), uint(0xFFFFFF), uint(0x000000), 0);
+        var save :SimpleTextButton = new SimpleTextButton(
+            "Save", true, uint(0x000000), uint(0xFFFFFF), uint(0x000000), 0);
         editor.addChild(save);
         save.addEventListener(MouseEvent.CLICK, function (event: MouseEvent) :void {
             _ctrl.updateMemory("title", _editTitle.text);
@@ -138,8 +156,8 @@ public class Sign extends Sprite
         });
         save.y = _editTitle.height + _editText.height + 10;
 
-        var cancel :SimpleTextButton =
-            new SimpleTextButton("Cancel", true, uint(0x000000), uint(0xFFFFFF), uint(0x000000), 0);
+        var cancel :SimpleTextButton = new SimpleTextButton(
+            "Cancel", true, uint(0x000000), uint(0xFFFFFF), uint(0x000000), 0);
         editor.addChild(cancel);
         cancel.x = EDITOR_WIDTH - cancel.width;
         cancel.y = _editTitle.height + _editText.height + 10;
@@ -197,7 +215,7 @@ public class Sign extends Sprite
         var g :Graphics = sign.graphics;
         g.beginFill(BACKGROUND_COLOR);
         g.lineStyle(2, 0x333333);
-        g.drawRect(0, 0, width + 2*BORDER, height + 2*BORDER);
+        g.drawRoundRect(0, 0, width + 2*BORDER, height + 2*BORDER, BORDER, BORDER);
         g.endFill();
 
         return sign;
@@ -209,7 +227,6 @@ public class Sign extends Sprite
         var tfield :TextField = new TextField();
         tfield.autoSize = TextFieldAutoSize.LEFT;
         tfield.selectable = false;
-        tfield.embedFonts = true;
         tfield.antiAliasType = AntiAliasType.ADVANCED;
         tfield.gridFitType = GridFitType.PIXEL;
 
@@ -222,7 +239,7 @@ public class Sign extends Sprite
         }
 
         var format :TextFormat = new TextFormat();
-        format.font = "Sign";
+        format.font = "Verdana";
         format.size = size;
         if (link) {
             format.underline = true;
@@ -233,25 +250,35 @@ public class Sign extends Sprite
     }
 
     protected var _ctrl :FurniControl;
+    protected var _image :Bitmap;
     protected var _post :Sprite;
     protected var _sign :Sprite;
 
     protected var _editTitle :TextField;
     protected var _editText :TextField;
 
-    protected static const BORDER :int = 5;
+    protected var _hovered :Boolean;
+
+    protected static const BORDER :int = 15;
     protected static const TITLE_SIZE :int = 24;
     protected static const TEXT_SIZE :int = 18;
     protected static const TIP_SIZE :int = 12;
 
-    protected static const BACKGROUND_COLOR :uint = 0x99CCFF;
-    protected static const FILTER_COLOR :uint = 0xFF00FF;
+    protected static const BACKGROUND_COLOR :uint = 0xFFFFFF;
+    protected static const FILTER_COLOR :uint = 0xFFFFFF;
 
     protected static const EDITOR_WIDTH :int = 250;
     protected static const EDITOR_TEXT_HEIGHT :int = 200;
 
-    [Embed(source="../rsrc/sign_font.ttf", fontName="Sign",
-           mimeType="application/x-font-truetype")]
-    protected static var SIGN_FONT :Class;
+    protected static const DEF_TITLE :String = "Your Title Here!";
+    protected static const DEF_TEXT :String =
+        "This is the text of your sign.\n" +
+        "Wow people with a charming and witty\n" +
+        "statement and your sign will be loved\n" +
+        "and remembered for all time.";
+
+    [Embed(source="../rsrc/gallery.png")]
+//     [Embed(source="../rsrc/bravenewwhirled.png")]
+    protected static var SIGN_IMAGE :Class;
 }
 }
