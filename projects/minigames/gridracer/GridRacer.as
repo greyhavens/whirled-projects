@@ -50,7 +50,7 @@ public class GridRacer extends Sprite
         var angleInc :Number = Math.PI/5;
         while (true) {
             angle += angleInc + Math.random() * angleInc;
-            dist += 10 + (Math.random() * 10);
+            dist += 20 + (Math.random() * 20);
 
             var nextP :Point = new Point(Math.cos(angle) * dist, Math.sin(angle) * dist);
             if (nextP.x > MAX_BOUND || nextP.x < MIN_BOUND || nextP.y > MAX_BOUND ||

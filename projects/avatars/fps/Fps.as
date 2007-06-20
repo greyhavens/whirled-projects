@@ -9,8 +9,6 @@ public class Fps extends Sprite
 {
     public function Fps ()
     {
-//        var f :FPSDisplay = new FPSDisplay();
-//        trace("f: " + f.width + " , " + f.height);
         addChild(new FPSDisplay());
     }
 }

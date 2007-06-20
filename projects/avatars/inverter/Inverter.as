@@ -19,13 +19,14 @@ import flash.system.SecurityDomain;
 [SWF(width="600", height="450")]
 public class Inverter extends Sprite
 {
-    public static const URL :String = "http://media.whirled.com/c95c59abc8da0ac99628fbc4c68799b93c129716.swf";
+    //public static const URL :String = "http://media.whirled.com/c95c59abc8da0ac99628fbc4c68799b93c129716.swf";
+    public static const URL :String = "http://media.whirled.com/14e440599431ae0cb4bd04e38ec0b5cdbff38224.swf"
 
     public static const WIDTH :int = 600;
     public static const HEIGHT :int = 450;
 
-    public static const CONTENT_WIDTH :int = 200;
-    public static const CONTENT_HEIGHT :int = 150;
+    public static const CONTENT_WIDTH :int = 600;
+    public static const CONTENT_HEIGHT :int = 450;
 
     public function Inverter ()
     {

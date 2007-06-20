@@ -11,4 +11,5 @@
 <file name="minuteHand" type="DisplayObject" value="minute_hand.png"/>
 <file name="secondHand" type="DisplayObject" value="second_hand.png"/>
 <file name="decoration" type="DisplayObject"/> <!-- no value -->
+<file name="tickSound" type="DisplayObject" value="SoundWrapper.swf"/>
 </datapack>

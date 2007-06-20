@@ -2,13 +2,13 @@
 <data name="faceCenter" type="Point" value="111, 157"/>
 <data name="hourPoint" type="Point" value="5, 39"/>
 <data name="minutePoint" type="Point" value="5, 49"/>
-<data name="secondPoint" type="Point"/> <!-- no value -->
-<data name="facePosition" type="Point"/> <!-- no value -->
-<data name="decorationPoint" type="Point"/> <!-- no value -->
+<data name="secondPoint" type="Point" optional="true"/> <!-- no value -->
+<data name="facePosition" type="Point" optional="true"/> <!-- no value -->
+<data name="decorationPoint" type="Point" optional="true"/> <!-- no value -->
 <data name="smoothSeconds" type="Boolean" value="false"/>
 <file name="face" type="DisplayObject" value="animated_face.swf"/>
 <file name="hourHand" type="DisplayObject" value="hourHand.png"/>
 <file name="minuteHand" type="DisplayObject" value="minuteHand.png"/>
-<file name="secondHand" type="DisplayObject"/> <!-- no value -->
-<file name="decoration" type="DisplayObject"/> <!-- no value -->
+<file name="secondHand" type="DisplayObject" optional="true"/> <!-- no value -->
+<file name="decoration" type="DisplayObject" optional="true"/> <!-- no value -->
 </datapack>

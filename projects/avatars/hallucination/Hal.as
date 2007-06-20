@@ -20,13 +20,15 @@ import com.whirled.AvatarControl;
 public class Hal extends FrameSprite
 {
     public static const URL :String =
-        "http://media.whirled.com/8ae8c90ab458b138b64f831383a826b505d60a79.swf";
-        //"http://media.whirled.com/c95c59abc8da0ac99628fbc4c68799b93c129716.swf";
+        "http://media.whirled.com/14e440599431ae0cb4bd04e38ec0b5cdbff38224.swf"; // Superstaler
+        //"http://media.whirled.com/495b8868ecca0e0b06ad33c2f93f8bde11be8a01.swf"; // Fairy
+        //"http://media.whirled.com/8ae8c90ab458b138b64f831383a826b505d60a79.swf"; // Lynn
+        //"http://media.whirled.com/c95c59abc8da0ac99628fbc4c68799b93c129716.swf"; // Tofu
 
     public static const WIDTH :int = 600;
     public static const HEIGHT :int = 450;
 
-    public static const SCALE :Number = .8;
+    public static const SCALE :Number = 1;
 
     public function Hal ()
     {
@@ -91,7 +93,7 @@ public class Hal extends FrameSprite
         var dy :Number = DY + _dy.value;
 
         var baseX :Number = 0;
-        if (_orient < 180) {
+        if (isNaN(_orient) || _orient < 180) {
             dx *= -1;
             baseX = WIDTH - w;
         }
@@ -222,9 +224,9 @@ public class Hal extends FrameSprite
 
     protected var _orient :Number;
 
-    protected var _dx :Siner = new Siner(2, 2, 3, 1.9);
+    protected var _dx :Siner = new Siner(1, 2, 1.5, 1.9);
 
-    protected var _dy :Siner = new Siner(3, 2.1, 3, 5);
+    protected var _dy :Siner = new Siner(1.5, 2.1, 1.5, 5);
 
     protected var _scaler :Siner = new Siner(.005, 5, .01, 9.1, .01, 2.9);
 
