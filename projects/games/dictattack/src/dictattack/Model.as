@@ -106,13 +106,42 @@ public class Model
         return scorer;
     }
 
+    public function highlightWord (board :Board, word :String) :void
+    {
+        // first reset any existing highlight
+        for (var xx :int = 0; xx < _size; xx++) {
+            // scan from the bottom upwards looking for the first letter
+            for (var yy :int = _size-1; yy >= 0; yy--) {
+                var pos :int = yy * _size + xx;
+                var l :Letter = board.getLetter(pos);
+                if (l != null) {
+                    l.setHighlighted(false);
+                    break;
+                }
+            }
+        }
+
+        // now highlight the word in question
+        var used :Array = new Array();
+        for (var ii :int = 0; ii < word.length; ii++) {
+            var c :String = word.charAt(ii);
+            var idx :int = locateLetter(c, used);
+            if (idx == -1) {
+                return;
+            }
+            used.push(idx);
+            board.getLetter(idx).setHighlighted(true);
+        }
+    }
+
     /**
      * Called by the display when the player submits a word.
      */
-    public function submitWord (board :Board, word :String) :Boolean
+    public function submitWord (board :Board, word :String, callback :Function) :void
     {
         if (word.length < getMinWordLength()) {
-            return false;
+            callback(word + " is less than " + getMinWordLength() + " letters long.");
+            return;
         }
 
         // make sure this word is on the board and determine the columns used by this word in the
@@ -124,7 +153,8 @@ public class Model
             if (idx == -1) {
                 // TODO: play a sound indicating the mismatch
                 board.resetLetters(used);
-                return false;
+                callback(word + " is not on the board.");
+                return;
             }
             used.push(idx);
             board.getLetter(idx).setHighlighted(true);
@@ -136,6 +166,7 @@ public class Model
             if (!isValid) {
                 // TODO: play a sound indicating the mismatch
                 board.resetLetters(used);
+                callback(word + " is not in the dictionary.");
                 return;
             }
 
@@ -178,9 +209,6 @@ public class Model
                 }
             }
         });
-
-        // the word is on the board at least, so tell the caller to clear the input field
-        return true;
     }
 
     /**

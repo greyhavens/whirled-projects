@@ -10,6 +10,7 @@ import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.events.KeyboardEvent;
 
 import com.threerings.ezgame.MessageReceivedEvent;
@@ -135,6 +136,7 @@ public class GameView extends Sprite
         marquee.display("Round " + _control.getRound() + "...", 1000);
         Util.invokeLater(1000, function () :void {
             addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+            _input.addEventListener(Event.CHANGE, textChanged);
             _input.selectable = true;
             _input.text = "";
             _input.stage.focus = _input;
@@ -151,6 +153,7 @@ public class GameView extends Sprite
         }
 
         removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+        _input.removeEventListener(Event.CHANGE, textChanged);
         _input.stage.focus = null;
         removeChild(_input);
         removeChild(_tip);
@@ -238,15 +241,21 @@ public class GameView extends Sprite
     {
         switch (event.keyCode) {
         case 13:
-            if (_model.submitWord(_board, _input.text)) {
-                _input.text = "";
-            }
+            _model.submitWord(_board, _input.text, function (text :String) :void {
+                marquee.display(text, 1000);
+            });
+            _input.text = "";
             break;
 
         case 32:
             _model.requestChange();
             break;
         }
+    }
+
+    protected function textChanged (event :Event) :void
+    {
+        _model.highlightWord(_board, _input.text);
     }
 
     protected var _control :WhirledGameControl;
