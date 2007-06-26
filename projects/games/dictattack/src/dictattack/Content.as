@@ -4,11 +4,14 @@
 package dictattack {
 
 import flash.media.Sound;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 
 import flash.geom.ColorTransform;
@@ -44,7 +47,7 @@ public class Content
     public static const LETTER_FONT_COLOR :uint = uint(0x000000);
 
     /** The highlighted color of the letters. */
-    public static const HIGH_FONT_COLOR :uint = uint(0xFF0000);
+    public static const HIGH_FONT_COLOR :uint = uint(0xFFFFFF);
 
     /** The point size of the letters when rendered (TODO: scale?). */
     public static const TILE_FONT_SIZE :int = 12;
@@ -129,13 +132,13 @@ public class Content
         return format;
     }
 
-    public function makeMarqueeFormat () :TextFormat
+    public function makeMarqueeFormat (size :int = 16) :TextFormat
     {
         var format :TextFormat = new TextFormat();
         format.font = "Name";
         format.bold = true;
         format.color = FONT_COLOR;
-        format.size = 16;
+        format.size = size;
         return format;
     }
 
@@ -146,6 +149,49 @@ public class Content
         format.color = FONT_COLOR;
         format.size = 16;
         return format;
+    }
+
+    public function makeButton (text :String) :SimpleButton
+    {
+        var button :SimpleButton = new SimpleButton();
+        var foreground :int = uint(0xFFFFFF);
+        var background :int = uint(0x000000);
+        var highlight :int = uint(0x0000FF);
+        button.upState = makeFace(text, foreground, background);
+        button.overState = makeFace(text, highlight, background);
+        button.downState = makeFace(text, background, highlight);
+        button.hitTestState = button.upState;
+        return button;
+    }
+
+    protected function makeFace (text :String, foreground :uint, background :uint) :Sprite
+    {
+        var face :Sprite = new Sprite();
+
+        // create the label so that we can measure its size
+        var label :TextField = new TextField();
+        label.textColor = foreground;
+        label.autoSize = TextFieldAutoSize.LEFT;
+        label.selectable = false;
+        label.defaultTextFormat = makeMarqueeFormat(10);
+        label.embedFonts = true;
+        label.text = text;
+        face.addChild(label);
+
+        var padding :int = 5;
+        var w :Number = label.width + 2 * padding;
+        var h :Number = label.height + 2 * padding;
+
+        // draw our button background (and outline)
+        face.graphics.beginFill(background);
+        face.graphics.lineStyle(1, foreground);
+        face.graphics.drawRect(0, 0, w, h);
+        face.graphics.endFill();
+
+        label.x = padding;
+        label.y = padding;
+
+        return face;
     }
 
     protected function makeXform (rgb :int, alphaOffset :Number = 0) :ColorTransform

@@ -28,7 +28,7 @@ public class DictionaryAttack extends Sprite
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         // create and wire ourselves into our multiplayer game control
-        _control = new WhirledGameControl(this);
+        _control = new WhirledGameControl(this, false);
         _control.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _control.addEventListener(StateChangedEvent.ROUND_STARTED, roundDidStart);
         _control.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);
@@ -61,18 +61,12 @@ public class DictionaryAttack extends Sprite
         _view.init(size, pcount);
         addChild(_view);
 
-        // if the game was already started but we weren't ready yet, start now (TODO: allow us to
-        // delay our playerReady() until we're actually ready...)
-        if (_control.isInPlay()) {
-            gameDidStart(null);
-        }
+        // now that we're actually ready, go ahead and request that the game start
+        _control.playerReady();
     }
 
     protected function gameDidStart (event :StateChangedEvent) :void
     {
-        if (_view == null) {
-            return; // we'll get recalled when the view is ready
-        }
         _view.gameDidStart();
 
         // zero out the scores

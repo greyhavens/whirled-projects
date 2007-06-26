@@ -216,6 +216,7 @@ public class Model
      */
     public function requestChange () :void
     {
+        trace("Change!");
     }
 
     public function updatePlayable (board :Board) :void

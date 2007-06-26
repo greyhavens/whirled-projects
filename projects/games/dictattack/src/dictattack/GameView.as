@@ -9,9 +9,12 @@ import flash.text.TextFieldAutoSize;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
+import flash.display.Graphics;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
+import flash.events.MouseEvent;
 
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -67,12 +70,6 @@ public class GameView extends Sprite
         _board.y = Content.BOARD_BORDER;
         addChild(_board);
 
-        // create a marquee that we'll use to display feedback
-        marquee = new Marquee(_content.makeMarqueeFormat(),
-                              Content.BOARD_BORDER + _board.getPixelSize()/2,
-                              Content.BOARD_BORDER + _board.getPixelSize());
-        addChild(marquee);
-
         var mypidx :int = _control.isConnected() ? _control.seating.getMyPosition() : 0;
         var psize :int = Content.BOARD_BORDER * 2 + _board.getPixelSize();
         for (var pidx :int = 0; pidx < playerCount; pidx++) {
@@ -88,6 +85,12 @@ public class GameView extends Sprite
             addChild(shooter);
             _shooters[pidx] = shooter;
         }
+
+        // create a marquee that we'll use to display feedback
+        marquee = new Marquee(_content.makeMarqueeFormat(),
+                              Content.BOARD_BORDER + _board.getPixelSize()/2,
+                              Content.BOARD_BORDER + _board.getPixelSize());
+        addChild(marquee);
 
         if (_control.isConnected()) {
             var help :TextField = new TextField();
@@ -161,7 +164,9 @@ public class GameView extends Sprite
 
     public function gameDidEnd (flow :int) :void
     {
-        marquee.display(flow > 0 ? "Game over! You earned " + flow + " flow!" : "Game over!", 3000);
+        Util.invokeLater(2000, function () :void {
+            showGameOver(flow);
+        });
     }
 
     /**
@@ -173,6 +178,56 @@ public class GameView extends Sprite
             _board.roundDidEnd();
             _roundEndPending = false;
         }
+    }
+
+    protected function showGameOver (flow :int) :void
+    {
+        var overifc :Sprite = new Sprite();
+        var border: int = 5;
+
+        var text :TextField = new TextField();
+        text.autoSize = TextFieldAutoSize.LEFT;
+        text.selectable = false;
+        text.defaultTextFormat = _content.makeMarqueeFormat();
+        text.embedFonts = true;
+        text.x = border;
+        text.y = border;
+
+        var msg :String = "Game over!";
+        if (flow > 0) {
+            msg += "\nYou earned " + flow + " flow!";
+        }
+        text.text = msg;
+        overifc.addChild(text);
+
+        var restart :SimpleButton = _content.makeButton("Play Again");
+        restart.x = border;
+        restart.y = border + text.height + border;
+        restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            removeChild(overifc);
+            _control.playerReady();
+        });
+        overifc.addChild(restart);
+
+        var leave :SimpleButton = _content.makeButton("To Whirled");
+        leave.y = border + text.height + border;
+        leave.x = border + text.width - leave.width;
+        leave.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            removeChild(overifc);
+            _control.backToWhirled();
+        });
+        overifc.addChild(leave);
+
+        // draw a border around our window
+        var g :Graphics = overifc.graphics;
+        g.beginFill(uint(0x333333));
+        g.lineStyle(2, 0xCCCCCC);
+        g.drawRect(0, 0, overifc.width + 2*border, overifc.height + 2*border);
+        g.endFill();
+
+        overifc.x = Content.BOARD_BORDER + (_board.getPixelSize() - overifc.width)/2;
+        overifc.y = Content.BOARD_BORDER + (_board.getPixelSize() - overifc.height)/2;
+        addChild(overifc);
     }
 
     /**
