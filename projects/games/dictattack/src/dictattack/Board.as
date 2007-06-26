@@ -39,7 +39,7 @@ public class Board extends Sprite
         if (bounds == null) {
             bounds = new Rectangle(0, 0, 1000, 550);
         }
-        var havail :int = bounds.height - Content.BOARD_BORDER*2 - 50 /* text box */;
+        var havail :int = bounds.height - Content.BOARD_BORDER*2 - GameView.INPUT_HEIGHT;
         Content.TILE_SIZE = (havail / _size) - 2;
 
         // listen for property changed events

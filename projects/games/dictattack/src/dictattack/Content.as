@@ -69,8 +69,8 @@ public class Content
     public static const SHOOTER_COLOR :Array =
         [ uint(0x6699CC), uint(0x336600), uint(0x996699), uint(0xCC6666) ];
 
-    /** The location and dimensions of the input field. */
-    public var inputRect :Rectangle = new Rectangle(170, 470, 150, 20);
+    /** The location and dimensions of the input field. (y pos is determined automatically) */
+    public var inputRect :Rectangle = new Rectangle(170, -1, 150, 20);
 
     /** The colors of the invaders that comprise a player's active letter set. */
     public var invaderColors :Array = [

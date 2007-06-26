@@ -26,6 +26,8 @@ import com.whirled.WhirledGameControl;
  */
 public class GameView extends Sprite
 {
+    public static const INPUT_HEIGHT :int = 50;
+
     public var marquee :Marquee;
 
     public function GameView (control :WhirledGameControl, model :Model, content :Content)
@@ -44,7 +46,6 @@ public class GameView extends Sprite
         // _tip.embedFonts = true;
         _tip.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF), true);
         _tip.autoSize = TextFieldAutoSize.RIGHT;
-        _tip.y = _content.inputRect.y;
 
         // create the text field via which we'll accept player input
         _input = new TextField();
@@ -53,7 +54,6 @@ public class GameView extends Sprite
         _input.defaultTextFormat = _content.makeInputFormat(uint(0x000000), true);
         _input.type = TextFieldType.INPUT;
         _input.x = _content.inputRect.x;
-        _input.y = _content.inputRect.y;
         _input.width = _content.inputRect.width;
         _input.height = _content.inputRect.height;
         _input.restrict = "[A-Za-z]"; // only allow letters to be typed; TODO: i18n?
@@ -147,6 +147,9 @@ public class GameView extends Sprite
         _tip.text = "Enter words:";
         _tip.x = _content.inputRect.x - _tip.width - 5;
 
+        _input.y = _control.getStageBounds().height - _input.height -
+            (INPUT_HEIGHT - _input.height)/2;
+        _tip.y = _input.y;
         _input.selectable = false;
         addChild(_input);
         _input.text = "Type words here!";
