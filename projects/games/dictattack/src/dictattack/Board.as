@@ -36,9 +36,6 @@ public class Board extends Sprite
 
         // scale our tiles to fit the board
         var bounds :Rectangle = _control.getStageBounds();
-        if (bounds == null) {
-            bounds = new Rectangle(0, 0, 1000, 550);
-        }
         var havail :int = bounds.height - Content.BOARD_BORDER*2 - GameView.INPUT_HEIGHT;
         Content.TILE_SIZE = (havail / _size) - 2;
 

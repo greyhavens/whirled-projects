@@ -42,10 +42,8 @@ public class DictionaryAttack extends Sprite
 
         // make our background totally black
         opaqueBackground = 0x000000;
-        var bounds :Rectangle = _control.isConnected() ? _control.getStageBounds() : null;
-        if (bounds == null) {
-            bounds = new Rectangle(0, 0, 1000, 550);
-        }
+        var bounds :Rectangle = _control.isConnected() ?
+            _control.getStageBounds() : new Rectangle(0, 0, 1000, 550);
         graphics.drawRect(0, 0, bounds.width, bounds.height);
     }
 
