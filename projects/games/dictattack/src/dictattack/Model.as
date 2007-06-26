@@ -188,11 +188,11 @@ public class Model
             // it, compute our points
             var wpoints :int = used.length - getMinWordLength() + 1;
             var wpos :Array = new Array();
-            var ii :int, xx :int, yy :int, mult :int = 1;
+            var ii :int, mult :int = 1;
             for (ii = 0; ii < used.length; ii++) {
                 // map our local coordinates back to a global position coordinates
-                xx = int(used[ii] % _size);
-                yy = int(used[ii] / _size);
+                var xx :int = int(used[ii] % _size);
+                var yy :int = int(used[ii] / _size);
                 mult = Math.max(TYPE_MULTIPLIER[getType(xx, yy)], mult);
                 var pos :int = getPosition(xx, yy);
                 _control.setImmediate(BOARD_DATA, null, pos);
@@ -237,9 +237,9 @@ public class Model
     public function nonEmptyColumns () :int
     {
         var columns :int = 0;
-        for (xx = 0; xx < _size; xx++) {
+        for (var xx: int = 0; xx < _size; xx++) {
             // scan from the bottom upwards looking for the first letter
-            for (yy = _size-1; yy >= 0; yy--) {
+            for (var yy :int = _size-1; yy >= 0; yy--) {
                 var letter :String = getLetter(xx, yy);
                 if (letter != null) {
                     columns++;
