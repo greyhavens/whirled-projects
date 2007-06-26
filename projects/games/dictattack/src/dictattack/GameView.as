@@ -70,13 +70,13 @@ public class GameView extends Sprite
         _board.y = Content.BOARD_BORDER;
         addChild(_board);
 
+        var isMulti :Boolean = _control.isConnected() ? _model.isMultiPlayer() : true;
         var mypidx :int = _control.isConnected() ? _control.seating.getMyPosition() : 0;
         var psize :int = Content.BOARD_BORDER * 2 + _board.getPixelSize();
         for (var pidx :int = 0; pidx < playerCount; pidx++) {
             // the board is rotated so that our position is always at the bottom
             var posidx :int = POS_MAP[mypidx][pidx];
-            var shooter :Shooter = new Shooter(
-                this, _content, posidx, pidx, _model.isMultiPlayer());
+            var shooter :Shooter = new Shooter(this, _content, posidx, pidx, isMulti);
             shooter.x = SHOOTER_X[posidx] * psize;
             shooter.y = SHOOTER_Y[posidx] * psize;
             // if this is ours (the one on the bottom), lower it a smidgen further
@@ -123,6 +123,12 @@ public class GameView extends Sprite
             bounds.width -= bsize;
             _control.setChatBounds(bounds);
         }
+    }
+
+    public function attractMode () :void
+    {
+        // for now just show a board with ? letters
+        _board.roundDidStart();
     }
 
     public function gameDidStart () :void

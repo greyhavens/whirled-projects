@@ -29,12 +29,16 @@ public class Board extends Sprite
         _model = model;
         _content = content;
 
+        // if we're not connected, stop here
+        if (!_control.isConnected()) {
+            return;
+        }
+
         // scale our tiles to fit the board
         var bounds :Rectangle = _control.getStageBounds();
         if (bounds == null) {
             bounds = new Rectangle(0, 0, 1000, 550);
         }
-
         var havail :int = bounds.height - Content.BOARD_BORDER*2 - 50 /* text box */;
         Content.TILE_SIZE = (havail / _size) - 2;
 

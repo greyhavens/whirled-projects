@@ -42,7 +42,7 @@ public class DictionaryAttack extends Sprite
 
         // make our background totally black
         opaqueBackground = 0x000000;
-        var bounds :Rectangle = _control.getStageBounds();
+        var bounds :Rectangle = _control.isConnected() ? _control.getStageBounds() : null;
         if (bounds == null) {
             bounds = new Rectangle(0, 0, 1000, 550);
         }
@@ -62,7 +62,11 @@ public class DictionaryAttack extends Sprite
         addChild(_view);
 
         // now that we're actually ready, go ahead and request that the game start
-        _control.playerReady();
+        if (_control.isConnected()) {
+            _control.playerReady();
+        } else {
+            _view.attractMode();
+        }
     }
 
     protected function gameDidStart (event :StateChangedEvent) :void
