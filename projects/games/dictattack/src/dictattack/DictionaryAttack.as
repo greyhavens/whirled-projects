@@ -52,7 +52,7 @@ public class DictionaryAttack extends Sprite
     protected function finishInit (event :Event) :void
     {
         // TODO: get this info from the game config
-        var size :int = Content.BOARD_SIZE;
+        var size :int = 5; // Content.BOARD_SIZE;
         var pcount :int = _control.isConnected() ? _control.seating.getPlayerIds().length : 4;
 
         // create our model and our view, and initialize them
@@ -84,14 +84,16 @@ public class DictionaryAttack extends Sprite
 
     protected function roundDidEnd (event :StateChangedEvent) :void
     {
-        _view.roundDidEnd();
         var scorer :String = _model.roundDidEnd();
-        _view.marquee.display("Round over. Point to " + scorer + ".", 2000);
+        _view.roundDidEnd(scorer);
     }
 
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
         roundDidEnd(event);
+
+        // TODO: single player scoring, flow awarding, bonus for perfectly cleared single player
+        // board, record high scores, etc.
 
         // grant ourselves flow based on how many players we defeated
         var scores :Array = (_control.get(Model.SCORES) as Array);

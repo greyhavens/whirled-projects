@@ -52,6 +52,11 @@ public class Board extends Sprite
         return (_letters[pos] as Letter);
     }
 
+    public function getLetterAt (xx :int, yy :int) :Letter
+    {
+        return getLetter(yy * _size + xx);
+    }
+
     public function roundDidStart () :void
     {
         while (numChildren > 0) {
@@ -131,18 +136,16 @@ public class Board extends Sprite
      */
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (event.name == Model.BOARD_DATA) {
-            if (event.index == -1) {
-                // display the board
-                for (var yy :int = 0; yy < _size; yy++) {
-                    for (var xx :int = 0; xx < _size; xx++) {
-                        var letter :String = _model.getLetter(xx, yy);
-                        var pos :int = yy * _size + xx;
-                        if (letter == null) {
-                            clearLetter(pos);
-                        } else {
-                            getLetter(pos).setText(letter);
-                        }
+        if (event.name == Model.BOARD_DATA && event.index == -1) {
+            // display the board
+            for (var yy :int = 0; yy < _size; yy++) {
+                for (var xx :int = 0; xx < _size; xx++) {
+                    var letter :String = _model.getLetter(xx, yy);
+                    var pos :int = yy * _size + xx;
+                    if (letter == null) {
+                        clearLetter(pos);
+                    } else {
+                        getLetter(pos).setText(letter);
                     }
                 }
             }

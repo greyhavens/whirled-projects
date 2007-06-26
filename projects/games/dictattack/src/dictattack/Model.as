@@ -3,6 +3,10 @@
 
 package dictattack {
 
+import flash.utils.getTimer;
+
+import com.threerings.util.Random;
+
 import com.whirled.WhirledGameControl;
 
 /**
@@ -41,19 +45,28 @@ public class Model
     }
 
     /**
-     * Returns the points needed to win the round.
+     * Returns the points needed to win the round or -1 if we're in single player mode.
      */
     public function getWinningPoints () :int
     {
-        return int(_control.getConfig()["Points per round"]);
+        return isMultiPlayer() ? int(_control.getConfig()["Points per round"]) : -1;
     }
 
     /**
-     * Returns the number of round wins needed to win the game.
+     * Returns the number of round wins needed to win the game or -1 if we're in single player
+     * mode.
      */
     public function getWinningScore () :int
     {
-        return int(_control.getConfig()["Round wins"]);
+        return isMultiPlayer() ? int(_control.getConfig()["Round wins"]) : -1;
+    }
+
+    /**
+     * Returns true if this is a multiplayer game.
+     */
+    public function isMultiPlayer () :Boolean
+    {
+        return (_control.seating.getPlayerNames().length > 1);
     }
 
     /**
@@ -175,14 +188,14 @@ public class Model
             // it, compute our points
             var wpoints :int = used.length - getMinWordLength() + 1;
             var wpos :Array = new Array();
-            var ii :int, mult :int = 1;
+            var ii :int, xx :int, yy :int, mult :int = 1;
             for (ii = 0; ii < used.length; ii++) {
                 // map our local coordinates back to a global position coordinates
-                var xx :int = int(used[ii] % _size);
-                var yy :int = int(used[ii] / _size);
+                xx = int(used[ii] % _size);
+                yy = int(used[ii] / _size);
                 mult = Math.max(TYPE_MULTIPLIER[getType(xx, yy)], mult);
                 var pos :int = getPosition(xx, yy);
-                _control.set(BOARD_DATA, null, pos);
+                _control.setImmediate(BOARD_DATA, null, pos);
                 wpos.push(pos);
             }
             wpoints *= mult;
@@ -198,8 +211,15 @@ public class Model
                 _control.set(POINTS, newpoints, myidx);
             }
 
-            // if we have exceeded the winning points, score a point and end the round 
-            if (newpoints >= getWinningPoints()) {
+            // if this is a single player game, they go until the board is clear
+            if (!isMultiPlayer()) {
+                if (nonEmptyColumns() < getMinWordLength()) {
+                    _control.endGame(new Array().concat(myidx));
+                }
+
+            // if it's a multiplayer game, see if we have exceeded the winning points
+            } else if (newpoints >= getWinningPoints()) {
+                // if so, score a point and end the round 
                 var newscore :int = (_control.get(SCORES) as Array)[myidx] + 1;
                 _control.set(SCORES, newscore, myidx);
                 if (newscore >= getWinningScore()) {
@@ -212,11 +232,56 @@ public class Model
     }
 
     /**
+     * Returns the number of columns that have letters in them.
+     */
+    public function nonEmptyColumns () :int
+    {
+        var columns :int = 0;
+        for (xx = 0; xx < _size; xx++) {
+            // scan from the bottom upwards looking for the first letter
+            for (yy = _size-1; yy >= 0; yy--) {
+                var letter :String = getLetter(xx, yy);
+                if (letter != null) {
+                    columns++;
+                    break;
+                }
+            }
+        }
+        return columns;
+    }
+
+    /**
      * Called when the player requests a change to some of their letters due to a lack of vowels.
      */
     public function requestChange () :void
     {
-        trace("Change!");
+        var vowels :Array = [], consonants :Array = [];
+        for (var xx :int = 0; xx < _size; xx++) {
+            // scan from the bottom upwards looking for the first letter
+            for (var yy :int = _size-1; yy >= 0; yy--) {
+                var letter :String = getLetter(xx, yy);
+                var pos :int = getPosition(xx, yy);
+                if (letter == null) {
+                    continue;
+                }
+                (VOWELS.indexOf(letter) != -1 ? vowels : consonants).push(pos);
+                break;
+            }
+        }
+
+        var set :Array;
+        var chars :String;
+        if (vowels.length > consonants.length) {
+            set = vowels;
+            chars = CONSONANTS;
+        } else {
+            set = consonants;
+            chars = VOWELS;
+        }
+
+        var rpos :int = int(set[_rando.nextInt(set.length)]);
+        var nlet :String = chars.substr(_rando.nextInt(chars.length), 1);
+        _control.set(BOARD_DATA, nlet, rpos);
     }
 
     public function updatePlayable (board :Board) :void
@@ -314,6 +379,11 @@ public class Model
 
     protected var _size :int;
     protected var _control :WhirledGameControl;
+    protected var _rando :Random = new Random(getTimer());
+
+    // yay english!
+    protected static const VOWELS :String = "aeiou";
+    protected static const CONSONANTS :String = "bcdfghjklmnpqrstvwxyz";
 
     protected static const INTER_ROUND_DELAY :int = 7;
 

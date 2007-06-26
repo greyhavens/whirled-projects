@@ -114,7 +114,9 @@ public class Content
 
     public function createWordScoreDisplay () :MovieClip
     {
-        return MovieClip(new (_pack.getClass("ProgressBar"))());
+        var score :MovieClip = MovieClip(new (_pack.getClass("ProgressBar"))());
+        score.scaleX = -1; // TODO: get Bill to redo source
+        return score;
     }
 
     public function createRoundScoreIcon () :MovieClip

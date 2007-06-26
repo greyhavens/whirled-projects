@@ -15,7 +15,7 @@ import flash.display.Sprite
 
 public class Shooter extends Sprite
 {
-    public function Shooter (view :GameView, content :Content, posidx :int, pidx :int)
+    public function Shooter (view :GameView, content :Content, posidx :int, pidx :int, mp :Boolean)
     {
         _content = content;
         _view = view;
@@ -34,13 +34,15 @@ public class Shooter extends Sprite
         _ship.y = -3*Content.SHOOTER_SIZE/2;
         addChild(_ship);
 
-        addChild(_points = content.createWordScoreDisplay());
-        _points.gotoAndStop(0);
-        _points.y = -Content.SHOOTER_SIZE/2;
+        if (mp) {
+            addChild(_points = content.createWordScoreDisplay());
+            _points.gotoAndStop(0);
+            _points.y = -Content.SHOOTER_SIZE/2;
 
-        addChild(_score = new Sprite());
-        _score.x = _points.width/2 + 5;
-        _score.y = -Content.SHOOTER_SIZE/2;
+            addChild(_score = new Sprite());
+            _score.x = _points.width/2 + 5;
+            _score.y = -Content.SHOOTER_SIZE/2;
+        }
 
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
     }
@@ -48,18 +50,30 @@ public class Shooter extends Sprite
     public function setName (name :String) :void
     {
         _name.text = name;
-        _name.x = -_points.width/2 - _name.width - 2;
+        if (_points == null) {
+            _name.x = -_name.width/2;
+        } else {
+            _name.x = -_points.width/2 - _name.width - 2;
+        }
         _name.y = -Content.SHOOTER_SIZE/2 - _name.getLineMetrics(0).ascent/2 + FONT_Y_HACK;
     }
 
     public function setPoints (points :int, maxPoints :int) :void
     {
-        var frame :int = int(_points.totalFrames * points / maxPoints);
-        _points.gotoAndStop(frame);
+        if (_points == null) { // single player mode
+            _name.text = "Points: " + points;
+            _name.x = -_name.width/2;
+        } else {
+            var frame :int = int(_points.totalFrames * points / maxPoints);
+            _points.gotoAndStop(frame);
+        }
     }
 
     public function setScore (score :int) :void
     {
+        if (_score == null) {
+            return; // single player mode
+        }
         while (_score.numChildren > 0) { // no removeAllChildren()? WTF?
             _score.removeChildAt(0);
         }

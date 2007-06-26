@@ -75,7 +75,8 @@ public class GameView extends Sprite
         for (var pidx :int = 0; pidx < playerCount; pidx++) {
             // the board is rotated so that our position is always at the bottom
             var posidx :int = POS_MAP[mypidx][pidx];
-            var shooter :Shooter = new Shooter(this, _content, posidx, pidx);
+            var shooter :Shooter = new Shooter(
+                this, _content, posidx, pidx, _model.isMultiPlayer());
             shooter.x = SHOOTER_X[posidx] * psize;
             shooter.y = SHOOTER_Y[posidx] * psize;
             // if this is ours (the one on the bottom), lower it a smidgen further
@@ -99,11 +100,17 @@ public class GameView extends Sprite
             help.y = 50;
             help.autoSize = TextFieldAutoSize.LEFT;
             help.wordWrap = true;
-            help.width = 200;
-            help.htmlText = HELP_CONTENTS.replace(
-                "MINLEN", _model.getMinWordLength()).replace(
-                    "POINTS", _model.getWinningPoints()).replace(
-                        "ROUNDS", _model.getWinningScore());
+            help.width = HELP_WIDTH;
+            var htext :String = HELP_CONTENTS;
+            if (isMultiPlayer()) {
+                htext += HELP_MULTI.replace(
+                    "MINLEN", _model.getMinWordLength()).replace(
+                        "POINTS", _model.getWinningPoints()).replace(
+                            "ROUNDS", _model.getWinningScore());
+            } else {
+                htext += HELP_SINGLE.replace("MINLEN", _model.getMinWordLength());
+            }
+            help.htmlText = htext;
             addChild(help);
 
             // relocate the chat view out of the way
@@ -136,7 +143,9 @@ public class GameView extends Sprite
         addChild(_input);
         _input.text = "Type words here!";
 
-        marquee.display("Round " + _control.getRound() + "...", 1000);
+        var ready :String = (_model.getWinningScore() > 1) ?
+            "Round " + _control.getRound() + "..." : "Ready...";
+        marquee.display(ready, 1000);
         Util.invokeLater(1000, function () :void {
             addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
             _input.addEventListener(Event.CHANGE, textChanged);
@@ -147,13 +156,26 @@ public class GameView extends Sprite
         });
     }
 
-    public function roundDidEnd () :void
+    public function roundDidEnd (scorer :String) :void
     {
         if (_shotsInProgress > 0) {
             _roundEndPending = true;
         } else {
             _board.roundDidEnd();
         }
+
+        var text :String = "";
+        if (isMultiPlayer()) {
+            if (_model.getWinningScore() > 1) {
+                text = "Round over. ";
+            }
+            text += "Point to " + scorer + ".";
+        } else if (_model.nonEmptyColumns() == 0) {
+            text = "Board clear! Excellent!";
+        } else {
+            text = "No more words possible.";
+        }
+        marquee.display(text, 2000);
 
         removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
         _input.removeEventListener(Event.CHANGE, textChanged);
@@ -178,6 +200,11 @@ public class GameView extends Sprite
             _board.roundDidEnd();
             _roundEndPending = false;
         }
+    }
+
+    protected function isMultiPlayer () :Boolean
+    {
+        return (_control.seating.getPlayerNames().length > 1);
     }
 
     protected function showGameOver (flow :int) :void
@@ -258,6 +285,13 @@ public class GameView extends Sprite
             if (event.index == -1) {
                 // we got our board, update the playable letters display
                 _model.updatePlayable(_board);
+
+            } else if (event.newValue != null) {
+                // map the global position into to our local coordinates
+                var xx :int = _model.getReverseX(event.index);
+                var yy :int = _model.getReverseY(event.index);
+                // TODO: animate a spaceship flying over and changing the letter
+                _board.getLetterAt(xx, yy).setText(String(event.newValue));
             }
         }
     }
@@ -332,13 +366,22 @@ public class GameView extends Sprite
     protected static const SHOOTER_X :Array = [ 0, 0.5, 1, 0.5 ];
     protected static const SHOOTER_Y :Array = [ 0.5, 0, 0.5, 1 ];
 
+    protected static const HELP_WIDTH :int = 300;
     protected static const HELP_CONTENTS :String = "<b>How to Play</b>\n" +
         "Make words from the row of letters along the bottom of the board.\n\n" +
-        "<font color='#0000ff'>Blue</font> squares multiply the word score by two.\n\n" +
-        "<font color='#ff0000'>Red</font> squares multiply the word score by three.\n\n" +
+        "<font color='#0000ff'>Blue</font> squares multiply the word score by two.\n" +
+        "<font color='#ff0000'>Red</font> squares multiply the word score by three.\n" +
+        "Only one multiplier per word will count.\n\n";
+
+    protected static const HELP_MULTI :String =
+        "Minimum word length: MINLEN. The first to score POINTS points wins the round.\n\n" +
+        "Win ROUNDS rounds to win the game.\n\n" +
+        "Press space to change a letter if you can't make a word.";
+
+    protected static const HELP_SINGLE :String =
         "Minimum word length: MINLEN.\n\n" +
-        "Be the first to score POINTS points to win the round.\n\n" +
-        "Win ROUNDS rounds to win the game.";
+        "Clear the board using long words to get a high score!\n\n" +
+        "Press space to change a letter if you can't make a word.";
 }
 
 }
