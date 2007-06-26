@@ -56,7 +56,7 @@ public class GameView extends Sprite
         _input.y = _content.inputRect.y;
         _input.width = _content.inputRect.width;
         _input.height = _content.inputRect.height;
-        _input.restrict = "^ "; // we use space specially
+        _input.restrict = "[A-Za-z]"; // only allow letters to be typed; TODO: i18n?
 
         // listen for property changed and message events
         _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
@@ -108,7 +108,9 @@ public class GameView extends Sprite
                         "POINTS", _model.getWinningPoints()).replace(
                             "ROUNDS", _model.getWinningScore());
             } else {
-                htext += HELP_SINGLE.replace("MINLEN", _model.getMinWordLength());
+                htext += HELP_SINGLE.replace(
+                    "MINLEN", _model.getMinWordLength()).replace(
+                        "PENALTY", _model.getChangePenalty());
             }
             help.htmlText = htext;
             addChild(help);
@@ -147,7 +149,7 @@ public class GameView extends Sprite
             "Round " + _control.getRound() + "..." : "Ready...";
         marquee.display(ready, 1000);
         Util.invokeLater(1000, function () :void {
-            addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+            _input.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
             _input.addEventListener(Event.CHANGE, textChanged);
             _input.selectable = true;
             _input.text = "";
@@ -177,7 +179,7 @@ public class GameView extends Sprite
         }
         marquee.display(text, 2000);
 
-        removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+        _input.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
         _input.removeEventListener(Event.CHANGE, textChanged);
         _input.stage.focus = null;
         removeChild(_input);
@@ -336,7 +338,8 @@ public class GameView extends Sprite
             _input.text = "";
             break;
 
-        case 32:
+        case 33: // !
+        case 49: // 1 (flash doesn't process the shift key)
             _model.requestChange();
             break;
         }
@@ -376,12 +379,13 @@ public class GameView extends Sprite
     protected static const HELP_MULTI :String =
         "Minimum word length: MINLEN. The first to score POINTS points wins the round.\n\n" +
         "Win ROUNDS rounds to win the game.\n\n" +
-        "Press space to change a letter if you can't make a word.";
+        "Press ! to change a letter if you can't make a word.";
 
     protected static const HELP_SINGLE :String =
         "Minimum word length: MINLEN.\n\n" +
         "Clear the board using long words to get a high score!\n\n" +
-        "Press space to change a letter if you can't make a word.";
+        "Press ! to change a letter if you can't make a word, but " +
+        "this will cost you PENALTY points.";
 }
 
 }

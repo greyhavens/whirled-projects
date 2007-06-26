@@ -62,6 +62,22 @@ public class Model
     }
 
     /**
+     * Returns the penalty for changing a letter.
+     */
+    public function getChangePenalty () :int
+    {
+        return isMultiPlayer() ? 0 : 4;
+    }
+
+    /**
+     * Returns the bonus for perfectly clearing the board.
+     */
+    public function getPerfectClearBonus () :int
+    {
+        return 10;
+    }
+
+    /**
      * Returns true if this is a multiplayer game.
      */
     public function isMultiPlayer () :Boolean
@@ -279,9 +295,15 @@ public class Model
             chars = VOWELS;
         }
 
+        // select the letter to change and issue the change notification
         var rpos :int = int(set[_rando.nextInt(set.length)]);
         var nlet :String = chars.substr(_rando.nextInt(chars.length), 1);
         _control.set(BOARD_DATA, nlet, rpos);
+
+        // penalize our score
+        var points :Array = (_control.get(POINTS) as Array);
+        var myidx : int = _control.seating.getMyPosition();
+        _control.set(POINTS, points[myidx] - getChangePenalty(), myidx);
     }
 
     public function updatePlayable (board :Board) :void

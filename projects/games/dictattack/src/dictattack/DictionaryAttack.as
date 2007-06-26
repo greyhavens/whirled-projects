@@ -51,9 +51,9 @@ public class DictionaryAttack extends Sprite
 
     protected function finishInit (event :Event) :void
     {
-        // TODO: get this info from the game config
-        var size :int = Content.BOARD_SIZE;
         var pcount :int = _control.isConnected() ? _control.seating.getPlayerIds().length : 4;
+        // TODO: get this info from the game config
+        var size :int = (pcount == 1) ? Content.SINGLE_BOARD_SIZE : Content.BOARD_SIZE;
 
         // create our model and our view, and initialize them
         _model = new Model(size, _control);

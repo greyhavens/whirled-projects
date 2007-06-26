@@ -31,6 +31,9 @@ public class Content
     /** The number of letters along one side of the board. This must be an odd number. */
     public static const BOARD_SIZE :int = 11;
 
+    /** The number of letters along one side of the board. This must be an odd number. */
+    public static const SINGLE_BOARD_SIZE :int = 9;
+
     /** The border around the board in which the shooters reside. */
     public static const BOARD_BORDER :int = 50;
 
@@ -52,8 +55,8 @@ public class Content
     /** The point size of the letters when rendered (TODO: scale?). */
     public static const TILE_FONT_SIZE :int = 12;
 
-    /** The pixels size of the letter tiles (TODO: scale?). */
-    public static const TILE_SIZE :int = 30;
+    /** The pixels size of the letter tiles. This is scaled when the board is initialized. */
+    public static var TILE_SIZE :int = 30;
 
     /** The outline colors for our various types of tiles. */
     public static const TILE_OUTLINE_COLORS :Array =

@@ -7,7 +7,9 @@ import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
+
 import flash.events.Event;
+import flash.geom.Rectangle;
 
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.whirled.WhirledGameControl;
@@ -26,6 +28,15 @@ public class Board extends Sprite
         _control = control;
         _model = model;
         _content = content;
+
+        // scale our tiles to fit the board
+        var bounds :Rectangle = _control.getStageBounds();
+        if (bounds == null) {
+            bounds = new Rectangle(0, 0, 1000, 550);
+        }
+
+        var havail :int = bounds.height - Content.BOARD_BORDER*2 - 50 /* text box */;
+        Content.TILE_SIZE = (havail / _size) - 2;
 
         // listen for property changed events
         _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
