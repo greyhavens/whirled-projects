@@ -37,6 +37,14 @@ public class Model
     }
 
     /**
+     * Returns the size of the board along one edge.
+     */
+    public function getBoardSize () :int
+    {
+        return _size;
+    }
+
+    /**
      * Returns the minimum world length.
      */
     public function getMinWordLength () :int
@@ -66,7 +74,7 @@ public class Model
      */
     public function getChangePenalty () :int
     {
-        return isMultiPlayer() ? 0 : 4;
+        return isMultiPlayer() ? 0 : 3;
     }
 
     /**
@@ -280,7 +288,11 @@ public class Model
                 if (letter == null) {
                     continue;
                 }
-                (VOWELS.indexOf(letter) != -1 ? vowels : consonants).push(pos);
+                if (VOWELS.indexOf(letter) != -1) {
+                    vowels.push(pos);
+                } else if (CONSONANTS.indexOf(letter) != -1) {
+                    consonants.push(pos);
+                }
                 break;
             }
         }
@@ -295,9 +307,16 @@ public class Model
             chars = VOWELS;
         }
 
+        // sanity check
+        if (set.length == 0) {
+            trace("No non-wildcard letters to change. Sorry.");
+            return;
+        }
+
         // select the letter to change and issue the change notification
         var rpos :int = int(set[_rando.nextInt(set.length)]);
-        var nlet :String = chars.substr(_rando.nextInt(chars.length), 1);
+//         var nlet :String = chars.substr(_rando.nextInt(chars.length), 1);
+        var nlet :String = "*";
         _control.set(BOARD_DATA, nlet, rpos);
 
         // penalize our score
@@ -375,6 +394,12 @@ public class Model
      */
     protected function locateLetter (c :String, used :Array) :int
     {
+        var pos :int = locateLetterWild(c, used, false);
+        return (pos == -1) ? locateLetterWild(c, used, true) : pos;
+    }
+
+    protected function locateLetterWild (c :String, used :Array, wildCard :Boolean) :int
+    {
         for (var ii :int = 0; ii < _size; ii++) {
             // this searches like so: 14 12 10 8 6 4 2 0 1 3 5 7 9 11 13
             var xx :int = int(_size/2) + ((ii%2 == 0) ? int(-ii/2) : (int(ii/2)+1));
@@ -389,7 +414,7 @@ public class Model
                     continue;
                 } else if (used.indexOf(pos) != -1) {
                     break; // try the next column
-                } else if (l == c) {
+                } else if (wildCard ? l == "*" : l == c) {
                     return pos;
                 } else {
                     break; // try the next column

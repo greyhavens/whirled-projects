@@ -94,21 +94,37 @@ public class DictionaryAttack extends Sprite
     {
         roundDidEnd(event);
 
-        // TODO: single player scoring, flow awarding, bonus for perfectly cleared single player
-        // board, record high scores, etc.
-
-        // grant ourselves flow based on how many players we defeated
-        var scores :Array = (_control.get(Model.SCORES) as Array);
+        // grant ourselves flow
         var myidx :int = _control.seating.getMyPosition();
-        var beat :int = 0;
-        for (var ii :int = 0; ii < scores.length; ii++) {
-            if (ii != myidx && scores[ii] < scores[myidx]) {
-                beat++;
+        var factor :Number = 0;
+        if (_model.isMultiPlayer()) {
+            // if it's multiplayer, it's based on how many players we defeated
+            var scores :Array = (_control.get(Model.SCORES) as Array);
+            var beat :int = 0;
+            for (var ii :int = 0; ii < scores.length; ii++) {
+                if (ii != myidx && scores[ii] < scores[myidx]) {
+                    beat++;
+                }
             }
+            factor = ((0.5/3) * beat + 0.5);
+            trace("Defeated: " + beat);
+
+        } else {
+            // single player is based on how well we cleared the board; 25% of available flow for
+            // getting all minimum length words, 100% of available flow for getting all LONG_WORD
+            // letter words (with bonuses helping players to approach that score)
+            var points :Array = (_control.get(Model.POINTS) as Array);
+            var letters :int = _model.getBoardSize() * _model.getBoardSize();
+            var minpoints :int = Math.round(letters / _model.getMinWordLength());
+            var maxpoints :int = Math.round(letters / LONG_WORD) *
+                (LONG_WORD - _model.getMinWordLength() + 1);
+            trace("Min: " + minpoints + " max: " + maxpoints + " points: " + points[myidx] + ".");
+            // TODO: bonus for perfectly cleared single player board, record high scores, etc.
+            factor = (points[myidx] - minpoints) / (maxpoints - minpoints);
         }
-        var factor :Number = ((0.5/3) * beat + 0.5);
-        var award: int = int(factor * _control.getAvailableFlow());
-        trace("Defeated: " + beat + " factor: " + factor + " award: " + award);
+
+        var award :int = int(factor * _control.getAvailableFlow());
+        trace("Factor: " + factor + " award: " + award);
         if (award > 0) {
             _control.awardFlow(award);
         }
@@ -128,6 +144,8 @@ public class DictionaryAttack extends Sprite
 
     [Embed(source="../../rsrc/invaders.swf", mimeType="application/octet-stream")]
     protected var CONTENT :Class;
+
+    protected static const LONG_WORD :int = 8;
 }
 
 }

@@ -393,8 +393,8 @@ public class GameView extends Sprite
     protected static const HELP_SINGLE :String =
         "Minimum word length: MINLEN.\n\n" +
         "Clear the board using long words to get a high score!\n\n" +
-        "Press ! to change a letter if you can't make a word, but " +
-        "this will cost you PENALTY points.";
+        "Press ! to change a letter into a wildcard if you can't find a word. " +
+        "This will cost you PENALTY points.";
 }
 
 }
