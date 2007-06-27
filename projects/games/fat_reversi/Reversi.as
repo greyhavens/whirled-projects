@@ -1,4 +1,4 @@
-﻿package {
+package {
 
 import flash.display.Sprite;
 import flash.display.MovieClip;
@@ -21,12 +21,7 @@ public class Reversi extends Sprite
         _gameCtrl.registerListener(this);
 
         var config :Object = _gameCtrl.getConfig();
-        if ("boardSize" in config) {
-            _boardSize = int(config["boardSize"]);
-
-        } else {
-            _boardSize = 8;
-        }
+        _boardSize = ("boardSize" in config) ? int(config["boardSize"]) : 8;
 
         var players :ReversiPlayersDisplay = new ReversiPlayersDisplay();
         // position it to the right of the play board
@@ -185,9 +180,7 @@ public class Reversi extends Sprite
     }
 
     protected var _pieces :Array;
-
     protected var _boardSize :int;
-
     protected var _board :Board;
 
     /** Our game control object. */
