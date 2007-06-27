@@ -1,0 +1,5 @@
+This is a simple game of Reversi implemented entirely in ActionScript and built
+from the command line.
+
+Take a look at the "fat_reversi" example for a version of Reversi that is built
+using the Flash Authoring Tool.

@@ -1,0 +1,6 @@
+This is a simple game of Reversi built using the Flash Authoring Tool. Use the
+fatserver.bat script in the top-level whirled SDK directory to run the
+resulting Reversi.swf file in the game test environment.
+
+Take a look at the "reversi" example for a version of Reversi written entirely
+in ActionScript and built and tested from the command line.
