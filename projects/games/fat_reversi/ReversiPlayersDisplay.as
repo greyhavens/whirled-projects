@@ -1,4 +1,4 @@
-﻿package {
+package {
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -25,14 +25,14 @@ public class ReversiPlayersDisplay extends PlayersDisplay
         piece.height = 25;
         return piece;
     }
-	
-	override protected function createPlayerLabel (playerId :int, name :String) :TextField
-	{
-		var field :TextField = TextField((new player_label()).field);
-		field.text = name;
-		return field;
-	}
-	
+
+    override protected function createPlayerLabel (playerId :int, name :String) :TextField
+    {
+        var field :TextField = TextField((new player_label()).field);
+        field.text = name;
+        return field;
+    }
+
     override protected function getBorderSpacing () :int
     {
         return 5;
