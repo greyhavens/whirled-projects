@@ -107,7 +107,7 @@ public class DictionaryAttack extends Sprite
                 }
             }
             factor = ((0.5/3) * beat + 0.5);
-            trace("Defeated: " + beat);
+            Log.getLog(this).info("Defeated: " + beat);
 
         } else {
             // single player is based on how well we cleared the board; 25% of available flow for
@@ -118,7 +118,8 @@ public class DictionaryAttack extends Sprite
             var minpoints :int = Math.round(letters / _model.getMinWordLength());
             var maxpoints :int = Math.round(letters / LONG_WORD) *
                 (LONG_WORD - _model.getMinWordLength() + 1);
-            trace("Min: " + minpoints + " max: " + maxpoints + " points: " + points[myidx] + ".");
+            Log.getLog(this).info("Min: " + minpoints + " max: " + maxpoints +
+                                  " points: " + points[myidx] + ".");
             // TODO: bonus for perfectly cleared single player board, record high scores, etc.
 //             factor = (points[myidx] - minpoints) / (maxpoints - minpoints);
             // for now do straight points over maxpoints until we stop penalizing for * usage
@@ -126,7 +127,7 @@ public class DictionaryAttack extends Sprite
         }
 
         var award :int = int(factor * _control.getAvailableFlow());
-        trace("Factor: " + factor + " award: " + award);
+        Log.getLog(this).info("Factor: " + factor + " award: " + award);
         if (award > 0) {
             _control.awardFlow(award);
         }
