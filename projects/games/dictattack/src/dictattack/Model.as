@@ -49,7 +49,7 @@ public class Model
      */
     public function getMinWordLength () :int
     {
-        return int(_control.getConfig()["Minimum word length"]);
+        return getConfig("min_word_len", 4);
     }
 
     /**
@@ -57,7 +57,7 @@ public class Model
      */
     public function getWinningPoints () :int
     {
-        return isMultiPlayer() ? int(_control.getConfig()["Points per round"]) : -1;
+        return isMultiPlayer() ? getConfig("pp_round", 15) : -1;
     }
 
     /**
@@ -66,7 +66,7 @@ public class Model
      */
     public function getWinningScore () :int
     {
-        return isMultiPlayer() ? int(_control.getConfig()["Round wins"]) : -1;
+        return isMultiPlayer() ? getConfig("round_wins", 1) : -1;
     }
 
     /**
@@ -422,6 +422,11 @@ public class Model
             }
         }
         return -1;
+    }
+
+    protected function getConfig (key :String, defval :int) :int
+    {
+        return (key in _control.getConfig()) ? int(_control.getConfig()[key]) : defval;
     }
 
     protected var _size :int;
