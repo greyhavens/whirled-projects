@@ -3,7 +3,6 @@ package {
 import flash.display.Sprite;
 import flash.display.MovieClip;
 
-import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -11,13 +10,15 @@ import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
 
+import com.whirled.WhirledGameControl;
+
 [SWF(width="400", height="400")]
 public class Reversi extends Sprite
     implements PropertyChangedListener, StateChangedListener
 {
     public function Reversi ()
     {
-        _gameCtrl = new EZGameControl(this);
+        _gameCtrl = new WhirledGameControl(this);
         _gameCtrl.registerListener(this);
 
         var config :Object = _gameCtrl.getConfig();
@@ -191,6 +192,6 @@ public class Reversi extends Sprite
     protected var _board :Board;
 
     /** Our game control object. */
-    protected var _gameCtrl :EZGameControl;
+    protected var _gameCtrl :WhirledGameControl;
 }
 }
