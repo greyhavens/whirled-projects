@@ -120,7 +120,9 @@ public class DictionaryAttack extends Sprite
                 (LONG_WORD - _model.getMinWordLength() + 1);
             trace("Min: " + minpoints + " max: " + maxpoints + " points: " + points[myidx] + ".");
             // TODO: bonus for perfectly cleared single player board, record high scores, etc.
-            factor = (points[myidx] - minpoints) / (maxpoints - minpoints);
+//             factor = (points[myidx] - minpoints) / (maxpoints - minpoints);
+            // for now do straight points over maxpoints until we stop penalizing for * usage
+            factor = points[myidx] / maxpoints;
         }
 
         var award :int = int(factor * _control.getAvailableFlow());
@@ -147,5 +149,4 @@ public class DictionaryAttack extends Sprite
 
     protected static const LONG_WORD :int = 8;
 }
-
 }
