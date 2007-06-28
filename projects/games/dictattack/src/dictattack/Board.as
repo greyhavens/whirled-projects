@@ -22,12 +22,12 @@ public class Board extends Sprite
     /** The gap between tiles on the board. */
     public static const GAP :int = 2;
 
-    public function Board (size :int, control :WhirledGameControl, model :Model, content :Content)
+    public function Board (control :WhirledGameControl, model :Model, content :Content)
     {
-        _size = size;
         _control = control;
         _model = model;
         _content = content;
+        _size = _model.getBoardSize();
 
         // if we're not connected, stop here
         if (!_control.isConnected()) {

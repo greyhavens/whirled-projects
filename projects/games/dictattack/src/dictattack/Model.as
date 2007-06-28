@@ -74,7 +74,7 @@ public class Model
      */
     public function getChangePenalty () :int
     {
-        return isMultiPlayer() ? 0 : 3;
+        return isMultiPlayer() ? 2 : 3;
     }
 
     /**

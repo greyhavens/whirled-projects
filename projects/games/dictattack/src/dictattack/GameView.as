@@ -63,9 +63,9 @@ public class GameView extends Sprite
         _control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
     }
 
-    public function init (boardSize :int, playerCount :int) :void
+    public function init (playerCount :int) :void
     {
-        _board = new Board(boardSize, _control, _model, _content);
+        _board = new Board(_control, _model, _content);
         _board.x = Content.BOARD_BORDER;
         _board.y = Content.BOARD_BORDER;
         addChild(_board);
@@ -106,7 +106,8 @@ public class GameView extends Sprite
                 htext += HELP_MULTI.replace(
                     "MINLEN", _model.getMinWordLength()).replace(
                         "POINTS", _model.getWinningPoints()).replace(
-                            "ROUNDS", _model.getWinningScore());
+                            "ROUNDS", _model.getWinningScore()).replace(
+                                "PENALTY", _model.getChangePenalty())
             } else {
                 htext += HELP_SINGLE.replace(
                     "MINLEN", _model.getMinWordLength()).replace(
@@ -416,7 +417,8 @@ public class GameView extends Sprite
     protected static const HELP_MULTI :String =
         "Minimum word length: MINLEN. The first to score POINTS points wins the round.\n\n" +
         "Win ROUNDS rounds to win the game.\n\n" +
-        "Press ! to change a letter if you can't make a word.";
+        "Press ! to change a letter into a wildcard if you can't find a word. " +
+        "This will cost you PENALTY points.";
 
     protected static const HELP_SINGLE :String =
         "Minimum word length: MINLEN.\n\n" +

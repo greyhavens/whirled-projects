@@ -28,11 +28,9 @@ public class Content
     /** Defines the dictionary we use for word validation and letter frequency. */
     public static const LOCALE :String = "en-us";
 
-    /** The number of letters along one side of the board. This must be an odd number. */
-    public static const BOARD_SIZE :int = 11;
-
-    /** The number of letters along one side of the board. This must be an odd number. */
-    public static const SINGLE_BOARD_SIZE :int = 9;
+    /** The number of letters along one side of the board, by number of players (1, 2, 3, 4). These
+     * must be odd numbers. */
+    public static const BOARD_SIZES :Array = [ 9, 9, 11, 11 ];
 
     /** The border around the board in which the shooters reside. */
     public static const BOARD_BORDER :int = 50;
