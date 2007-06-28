@@ -62,6 +62,8 @@ public class DictionaryAttack extends Sprite
         // now that we're actually ready, go ahead and request that the game start
         if (_control.isConnected()) {
             _control.playerReady();
+            // also load up our user cookie
+            _control.getUserCookie(_control.getMyId(), gotUserCookie);
         } else {
             _view.attractMode();
         }
@@ -124,6 +126,27 @@ public class DictionaryAttack extends Sprite
 //             factor = (points[myidx] - minpoints) / (maxpoints - minpoints);
             // for now do straight points over maxpoints until we stop penalizing for * usage
             factor = points[myidx] / maxpoints;
+
+            // also update their personal high scores
+            if (_cookie != null) {
+                var hiscores :Array = _cookie["highscores"] as Array;
+                if (hiscores == null) {
+                    hiscores = new Array();
+                }
+
+                // add our score onto the list, sort it and prune it
+                hiscores.push([ points, new Date().getTime() ]);
+                hiscores.sort(function (one :Array, two :Array) :int {
+                    return int(two[0]) - int(one[0]);
+                });
+                _cookie["highscores"] = hiscores.slice(0, Math.min(hiscores.length, MAX_HISCORES));
+
+                // update our highscore display and save our high score
+                _view.gotUserCookie(_cookie);
+                if (!_control.setUserCookie(_cookie)) {
+                    Log.getLog(this).warning("Failed to save cookie " + _cookie + ".");
+                }
+            }
         }
 
         var award :int = int(factor * _control.getAvailableFlow());
@@ -140,14 +163,22 @@ public class DictionaryAttack extends Sprite
         // TODO: clean up things that need cleaning up
     }
 
+    protected function gotUserCookie (cookie :Object) :void
+    {
+        _cookie = (cookie == null) ? new Object() : cookie;
+        _view.gotUserCookie(_cookie);
+    }
+
     protected var _control :WhirledGameControl;
     protected var _model :Model;
     protected var _view :GameView;
     protected var _content :Content;
+    protected var _cookie :Object;
 
     [Embed(source="../../rsrc/invaders.swf", mimeType="application/octet-stream")]
     protected var CONTENT :Class;
 
     protected static const LONG_WORD :int = 8;
+    protected static const MAX_HISCORES :int = 4;
 }
 }

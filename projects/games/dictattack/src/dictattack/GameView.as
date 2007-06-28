@@ -115,12 +115,21 @@ public class GameView extends Sprite
             help.htmlText = htext;
             addChild(help);
 
+            _hiscores = new TextField();
+            _hiscores.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF));
+            _hiscores.x = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
+            _hiscores.y = help.y + help.height + 10;
+            _hiscores.autoSize = TextFieldAutoSize.LEFT;
+            _hiscores.width = HELP_WIDTH;
+            addChild(_hiscores);
+
             // relocate the chat view out of the way
             var bsize :int = Content.BOARD_BORDER * 2 + _board.getPixelSize();
             var bounds :Rectangle = _control.getStageBounds();
             bounds.x = bsize;
-            bounds.y = 0;
+            bounds.y = bounds.height - CHAT_HEIGHT;
             bounds.width -= bsize;
+            bounds.height = CHAT_HEIGHT;
             _control.setChatBounds(bounds);
         }
     }
@@ -129,6 +138,21 @@ public class GameView extends Sprite
     {
         // for now just show a board with ? letters
         _board.roundDidStart();
+    }
+
+    public function gotUserCookie (cookie :Object) :void
+    {
+        var hiscores :Array = cookie["highscores"] as Array;
+        if (hiscores != null) {
+            var text :String = "<b>Your High Scores:</b>\n";
+            var date :Date = new Date();
+            for (var ii :int = 0; ii < hiscores.length; ii++) {
+                var data :Array = hiscores[ii] as Array;
+                date.setTime(data[1] as Number);
+                text += data[0] + " on " + (date.getMonth()+1) + "/" + date.getDate() + "\n";
+            }
+            _hiscores.htmlText = text;
+        }
     }
 
     public function gameDidStart () :void
@@ -372,11 +396,15 @@ public class GameView extends Sprite
     protected var _roundEndPending :Boolean;
     protected var _shotsInProgress :int;
 
+    protected var _hiscores :TextField;
+
     protected static const POS_MAP :Array = [
         [ 3, 1, 0, 2 ], [ 1, 3, 2, 0 ], [ 2, 0, 3, 1 ], [ 0, 2, 1, 3 ] ];
 
     protected static const SHOOTER_X :Array = [ 0, 0.5, 1, 0.5 ];
     protected static const SHOOTER_Y :Array = [ 0.5, 0, 0.5, 1 ];
+
+    protected static const CHAT_HEIGHT :int = 200;
 
     protected static const HELP_WIDTH :int = 300;
     protected static const HELP_CONTENTS :String = "<b>How to Play</b>\n" +
