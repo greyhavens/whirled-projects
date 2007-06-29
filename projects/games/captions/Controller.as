@@ -1,6 +1,7 @@
 package {
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 
 import flash.utils.Timer;
@@ -33,12 +34,13 @@ import com.threerings.ezgame.MessageReceivedListener;
 import com.whirled.WhirledGameControl;
 
 /**
- * Outstanding issues:
- * - focus problems with caption input (solved? We never try to focus it anymore- it's rude)
- * - broken images are common.. I guess "Skip" will help.
- *
  * TODO:
- * - Set up the game with a set of tags. Skip around amongst the pics in that list...
+ * - some pizzaz, some fanfare around the results screen. Reveal the names last??
+ *   Naw, revealing sucks. Just show.
+ *
+ * Past issues: (seem to not be much of a problem anymore)
+ * - focus problems with caption input
+ * - broken images are common.. I guess "Skip" will help.
  *
  * Maybe do:
  * - Maybe show any partially entered captions after a skip.
@@ -46,6 +48,9 @@ import com.whirled.WhirledGameControl;
  *   excellent captions along with their pictures.
  * - Players see a score of their average vote snare percentage, maybe with 5-round
  *   and 10-round trailing averages.
+ *
+ * Out of favor:
+ * - Set up the game with a set of tags. Skip around amongst the pics in that list...
  */
 public class Controller
 {
@@ -152,7 +157,7 @@ public class Controller
         _ui.clockLabel.text = String(remaining);
 
         if (remaining == 0) {
-            if (_ctrl.get("phase") == "caption") {
+            if (isPhase("caption")) {
                 _captionInput.editable = false;
             }
 
@@ -193,6 +198,11 @@ public class Controller
         default:
             return "start";
         }
+    }
+
+    protected function isPhase (phase :String) :Boolean
+    {
+        return (phase === _ctrl.get("phase"));
     }
 
     /**
@@ -272,7 +282,7 @@ public class Controller
             break;
 
         case "start":
-            loadNextPicture();
+            loadNextPictures();
             break;
 
         case "caption":
@@ -317,6 +327,8 @@ public class Controller
         if (ids.length > 0) {
             _ctrl.set("ids", ids);
             _ctrl.setImmediate("captions", caps);
+
+            loadNextPictures();
 
         } else {
             // if there are no captions, just move to the next picture
@@ -423,6 +435,12 @@ public class Controller
         _ctrl.set("skip:" + _myId, skipBox.selected ? true : null);
     }
 
+    protected function handlePhotoVoteCast (event :Event) :void
+    {
+        var voteGroup :RadioButtonGroup = (event.currentTarget as RadioButtonGroup);
+        _ctrl.set("pvote:" + _myId, voteGroup.selectedValue);
+    }
+
     protected function initCaptioning () :void
     {
         _ui.sideBox.removeAllChildren();
@@ -503,14 +521,7 @@ public class Controller
         for (ii = 0; ii < indexes.length; ii++) {
 
             if (ii > 0) {
-                var rule :HRule = new HRule();
-                rule.percentWidth = 100;
-                var item :GridItem = new GridItem();
-                item.colSpan = 2;
-                item.addChild(rule);
-                var row :GridRow = new GridRow();
-                row.addChild(item);
-                _ui.sideBox.addChild(row);
+                _ui.sideBox.addChild(new HSeparator());
             }
 
             var index :int = int(indexes[ii]);
@@ -535,6 +546,27 @@ public class Controller
                     earnedFlow += WINNER_FLOW;
                 }
             }
+        }
+
+        // see if there are any preview pics to vote on...
+        var nextUrls :Array = [];
+        for (ii = 0; ii < 6; ii++) {
+            var nexts :Array = _ctrl.get("next_" + ii) as Array;
+            if (nexts != null) {
+                nextUrls[ii] = nexts[0]; // thumbnail..
+            }
+        }
+        if (nextUrls.length > 0) {
+            var nextPan :PicturePickPanel = new PicturePickPanel();
+            _ui.sideBox.addChild(new HSeparator());
+            _ui.sideBox.addChild(nextPan);
+            for (ii = 0; ii < 6; ii++) {
+                if (nextUrls[ii] != null) {
+                    nextPan["img" + ii].load(nextUrls[ii]);
+                    nextPan["pvote" + ii].value = ii;
+                }
+            }
+            nextPan.pvote.addEventListener(Event.CHANGE, handlePhotoVoteCast);
         }
 
         _ui.validateNow();
@@ -562,45 +594,133 @@ public class Controller
         return s;
     }
 
-    protected function loadNextPicture () :void
+    protected function loadNextPictures () :void
     {
-        if (_gettingPicture) {
-            return;
+        if (_photosToGet > 0) {
+            return; // already getting
         }
 
-        _gettingPicture = true;
-        _flickr.photos.getRecent("", 1, 1);
+        var isStartPhase :Boolean = isPhase("start");
+        if (isStartPhase) {
+            // check to see if we already have some votes in for any of the preview pics
+            var votes :Array = [0, 0, 0, 0, 0, 0];
+            for each (var prop :String in _ctrl.getPropertyNames("pvote:")) {
+                var dex :int = _ctrl.get(prop) as int;
+                votes[dex]++;
+            }
+            var firstPlaces :Array = [];
+            var secondPlaces :Array = null;
+            var first :int = 0;
+            var second :int = 0;
+            for (var ii :int = 0; ii < votes.length; ii++) {
+                var sizes :Array = _ctrl.get("next_" + ii) as Array;
+                if (sizes == null) {
+                    continue;
+                }
+
+                if (votes[ii] > first) {
+                    secondPlaces = firstPlaces;
+                    second = first;
+                    firstPlaces = [];
+                    first = votes[ii];
+                }
+                if (votes[ii] == first) {
+                    firstPlaces.push(sizes);
+
+                } else if (votes[ii] == second) {
+                    secondPlaces.push(sizes);
+                }
+            }
+
+            // see if there are any winners
+            if (firstPlaces.length > 0) {
+                var pick :int = Math.random() * firstPlaces.length;
+                var pickedUrl :String = firstPlaces.splice(pick, 1)[0][1];
+
+                if (firstPlaces.length > 0) {
+                    // if there are unpicked tied first places, they become the 2nd places..
+                    secondPlaces = firstPlaces;
+                }
+                if (secondPlaces.length > 0) {
+                    pick = Math.round(Math.random() * secondPlaces.length);
+                    _secondSizes = secondPlaces[pick];
+                }
+
+                // we found a pic, use it!
+                startRound(pickedUrl);
+                return;
+            }
+
+            // if we already had a 2nd place picked out, let's just use that!
+            if (_secondSizes != null) {
+                startRound(_secondSizes[1]);
+                _secondSizes = null;
+                return;
+            }
+
+            // alas, we didn't have any previous photos, so pick one now
+            _photosToGet = 1;
+
+        } else if (_secondSizes != null) {
+            _ctrl.set("next_5", _secondSizes);
+            _secondSizes = null;
+            _photosToGet = 5;
+
+        } else {
+            _photosToGet = 6;
+        }
+
+        _flickr.photos.getRecent("", _photosToGet, 1);
     }
 
     protected function handlePhotoResult (evt :FlickrResultEvent) :void
     {
         if (!evt.success) {
             trace("Failure loading the next photo [" + evt.data.error.errorMessage + "]");
-            _gettingPicture = false;
+            _photosToGet = 0;
             return;
         }
 
-        var photo :Photo = (evt.data.photos as PagedPhotoList).photos[0] as Photo;
-        _flickr.photos.getSizes(photo.id);
+        var photos :Array = (evt.data.photos as PagedPhotoList).photos;
+        for (var ii :int = 0; ii < photos.length; ii++) {
+            var photo :Photo = photos[ii] as Photo;
+            _flickr.photos.getSizes(photo.id);
+        }
     }
 
     protected function handlePhotoUrlKnown (evt :FlickrResultEvent) :void
     {
-        _gettingPicture = false;
+        var id :int = --_photosToGet;
 
         if (!evt.success) {
             trace("Failure getting photo sizes [" + evt.data.error.errorMessage + "]");
             return;
         }
 
-        var p :PhotoSize = getPhotoSource(evt.data.photoSizes as Array);
-        if (p == null) {
-            trace("Could not find medium photo!");
-            return;
+        var returnedSizes :Array = (evt.data.photoSizes as Array);
+        var medium :PhotoSize = getPhotoSource(returnedSizes, MEDIUM_SIZE);
+        if (medium == null) {
+            trace("Could not find photo sources for photo: " + returnedSizes);
+            return; // DOH
         }
 
+        if (isPhase("start")) {
+            startRound(medium.source);
+
+        } else {
+            var thumb :PhotoSize = getPhotoSource(returnedSizes, THUMBNAIL_SIZE);
+            if (thumb == null) {
+                trace("Could not find photo sources for photo: " + returnedSizes);
+                return;
+            }
+            _ctrl.set("next_" + id, [ thumb.source, medium.source ]);
+        }
+    }
+
+    protected function startRound (photoUrl :String) :void
+    {
         _ctrl.doBatch(function () :void {
-            _ctrl.set("photo", p.source);
+            _ctrl.set("photo", photoUrl);
             _ctrl.set("captions", null);
             _ctrl.set("ids", null);
             _ctrl.set("results", null);
@@ -617,16 +737,20 @@ public class Controller
             for each (prop in _ctrl.getPropertyNames("skip:")) {
                 _ctrl.set(prop, null);
             }
+            for each (prop in _ctrl.getPropertyNames("pvote:")) {
+                _ctrl.set(prop, null);
+            }
+            for each (prop in _ctrl.getPropertyNames("next_")) {
+                _ctrl.set(prop, null);
+            }
             _ctrl.setImmediate("phase", "caption");
         });
     }
 
-    protected function getPhotoSource (sizes :Array) :PhotoSize
+    protected function getPhotoSource (photoSizes :Array, PREF_SIZE :Array) :PhotoSize
     {
-        const preferredSizes :Array = [ "Medium", "Small", "Original", "Thumbnail" ];
-
-        for each (var prefSize :String in preferredSizes) {
-            for each (var p :PhotoSize in sizes) {
+        for each (var prefSize :String in PREF_SIZE) {
+            for each (var p :PhotoSize in photoSizes) {
                 if (p.label == prefSize) {
                     return p;
                 }
@@ -642,6 +766,10 @@ public class Controller
     {
         // nada
     }
+
+    protected static const MEDIUM_SIZE :Array = [ "Medium", "Small", "Original", "Thumbnail" ];
+
+    protected static const THUMBNAIL_SIZE :Array = [ "Thumbnail", "Square", "Small" ];
 
     protected var _ctrl :WhirledGameControl;
 
@@ -660,7 +788,10 @@ public class Controller
 
     protected var _timer :Timer;
 
-    protected var _gettingPicture :Boolean;
+    protected var _photosToGet :int;
+
+    /** The [ thumb , medium ] urls for the photo that took 2nd place last round. */
+    protected var _secondSizes :Array;
 
     protected var _myCaption :String;
 }
