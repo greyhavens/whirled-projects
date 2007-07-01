@@ -232,6 +232,10 @@ public class Model
                 var pos :int = getPosition(xx, yy);
                 _control.setImmediate(BOARD_DATA, null, pos);
                 wpos.push(pos);
+                // if this was a wildcard, it scores no point
+                if (board.getLetter(used[ii]).getText() == "*") {
+                    wpoints = Math.max(wpoints-1, 0);
+                }
             }
             wpoints *= mult;
 

@@ -31,6 +31,11 @@ public class Letter extends Sprite
         _label.y = (Content.TILE_SIZE - _label.height)/2 + FONT_ADJUST_HACK;
     }
 
+    public function getText () :String
+    {
+        return _label.text;
+    }
+
     public function setPlayable (playable :Boolean, dghost :int = -1) :void
     {
         _invader.transform.colorTransform =
