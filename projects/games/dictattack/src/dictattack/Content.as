@@ -82,6 +82,86 @@ public class Content
     public var ghostInvaderColors :Array = [
         makeXform(0x00CC00, -128), makeXform(0x0066FF, -128), makeXform(0xFF0033, -128) ];
 
+    /** A selection of 9x9 board patterns. */
+    public static const BOARDS_9 :Array = [
+        "x.x.x.x.x" +
+        ".x.x.x.x." +
+        "x.x.x.x.x" +
+        ".x.x.x.x." +
+        "x.x.x.x.x" +
+        ".x.x.x.x." +
+        "x.x.x.x.x" +
+        ".x.x.x.x." +
+        "x.x.x.x.x",
+
+        "....x...." +
+        "...xxx..." +
+        "..xxxxx.." +
+        ".xxxxxxx." +
+        "xxxxxxxxx" +
+        ".xxxxxxx." +
+        "..xxxxx.." +
+        "...xxx..." +
+        "....x....",
+
+        "xxxxxxxxx" +
+        ".xxxxxxx." +
+        "..xxxxx.." +
+        "...xxx..." +
+        "....x...." +
+        "...xxx..." +
+        "..xxxxx.." +
+        ".xxxxxxx." +
+        "xxxxxxxxx",
+
+        "xx.....xx" +
+        "..xxxxx.." +
+        ".xx.x.xx." +
+        "xxxxxxxxx" +
+        "xxxxxxxxx" +
+        ".xxxxxxx." +
+        "..xxxxx.." +
+        ".x.....x." +
+        "x.......x",
+
+        ".xx...xx." +
+        "..xxxxx.." +
+        ".xx.x.xx." +
+        "xxxxxxxxx" +
+        "xxxxxxxxx" +
+        ".xxxxxxx." +
+        "..xxxxx.." +
+        "..x...x.." +
+        "xxx.xxx..",
+        ];
+
+    /** A selection of 11x11 board patterns. */
+    public static const BOARDS_11 :Array = [
+        "xxxxxxxxxxx" +
+        "xxxxxxxxxxx" +
+        "xxxxxxxxxxx" +
+        "xxxxxxxxxxx" +
+        "xxxxxxxxxxx" +
+        "xxxxxxxxxxx" +
+        "xxxxxxxxxxx" +
+        "xxxxxxxxxxx" +
+        "xxxxxxxxxxx" +
+        "xxxxxxxxxxx" +
+        "xxxxxxxxxxx",
+
+        ".....x....." +
+        "....xxx...." +
+        "...xxxxx..." +
+        "..xxxxxxx.." +
+        ".xxxxxxxxx." +
+        "xxxxxxxxxxx" +
+        ".xxxxxxxxx." +
+        "..xxxxxxx.." +
+        "...xxxxx..." +
+        "....xxx...." +
+        ".....x.....",
+        ];
+
     public function Content (pack :EmbeddedSwfLoader)
     {
         _pack = pack;

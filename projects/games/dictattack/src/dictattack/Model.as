@@ -8,6 +8,7 @@ import flash.utils.getTimer;
 import com.threerings.util.Random;
 
 import com.threerings.ezgame.MessageReceivedEvent;
+import com.threerings.ezgame.PropertyChangedEvent;
 
 import com.whirled.WhirledGameControl;
 
@@ -35,10 +36,14 @@ public class Model
     /** The character used to indicate a wildcard letter. */
     public static const WILDCARD :String = "*";
 
+    /** The character used to indicate a blank or already used space. */
+    public static const BLANK :String = " ";
+
     public function Model (size :int, control :WhirledGameControl)
     {
         _size = size;
         _control = control;
+        _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
         _control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
     }
 
@@ -48,6 +53,14 @@ public class Model
     public function getBoardSize () :int
     {
         return _size;
+    }
+
+    /**
+     * Returns the total number of usable letters that were on the board at the start of the round.
+     */
+    public function getLetterCount () :int
+    {
+        return _letterCount;
     }
 
     /**
@@ -132,10 +145,7 @@ public class Model
         if (_control.amInControl()) {
             var pcount :int = _control.seating.getPlayerIds().length;
             _control.set(POINTS, new Array(pcount).map(function (): int { return 0; }));
-            _control.getDictionaryLetterSet(
-                Content.LOCALE, _size*_size, function (letters :Array) :void {
-                _control.set(BOARD_DATA, letters);
-            });
+            _control.getDictionaryLetterSet(Content.LOCALE, _size*_size, gotBoard);
         }
     }
 
@@ -164,9 +174,9 @@ public class Model
             // scan from the bottom upwards looking for the first letter
             for (var yy :int = _size-1; yy >= 0; yy--) {
                 var pos :int = yy * _size + xx;
-                var l :Letter = board.getLetter(pos);
-                if (l != null) {
-                    l.setHighlighted(false);
+                var letter :Letter = board.getLetter(pos);
+                if (letter != null) {
+                    letter.setHighlighted(false);
                     break;
                 }
             }
@@ -233,7 +243,7 @@ public class Model
                 var yy :int = int(used[ii] / _size);
                 mult = Math.max(TYPE_MULTIPLIER[getType(xx, yy)], mult);
                 var pos :int = getPosition(xx, yy);
-                _control.setImmediate(BOARD_DATA, null, pos);
+                _control.setImmediate(BOARD_DATA, BLANK, pos);
                 wpos.push(pos);
                 // if this was a wildcard, it scores no point
                 if (board.getLetter(used[ii]).getText() == WILDCARD) {
@@ -283,7 +293,7 @@ public class Model
             // scan from the bottom upwards looking for the first letter
             for (var yy :int = _size-1; yy >= 0; yy--) {
                 var letter :String = getLetter(xx, yy);
-                if (letter != null) {
+                if (letter != BLANK) {
                     columns++;
                     break;
                 }
@@ -309,7 +319,7 @@ public class Model
             for (var yy :int = _size-1; yy >= 0; yy--) {
                 var letter :String = getLetter(xx, yy);
                 var pos :int = getPosition(xx, yy);
-                if (letter == null) {
+                if (letter == BLANK) {
                     continue;
                 }
                 if (VOWELS.indexOf(letter) != -1) {
@@ -333,7 +343,7 @@ public class Model
 
         // sanity check
         if (set.length == 0) {
-            trace("No non-wildcard letters to change. Sorry.");
+            Log.getLog(this).info("No non-wildcard letters to change. Sorry.");
             return;
         }
 
@@ -367,7 +377,7 @@ public class Model
         // scan from the bottom upwards looking for the first letter
         for (var yy :int = _size-1; yy >= 0; yy--) {
             var l :String = getLetter(xx, yy);
-            if (l != null) {
+            if (l != BLANK) {
                 board.getLetter(yy * _size + xx).setPlayable(true, _size-1-yy);
                 break;
             }
@@ -413,6 +423,47 @@ public class Model
         return data[getPosition(xx, yy)];
     }
 
+    public function dumpCurrentBoard () :void
+    {
+        dumpBoard(_control.get(BOARD_DATA) as Array);
+    }
+
+    public function dumpBoard (data :Array) :void
+    {
+        for (var yy :int = 0; yy < _size; yy++) {
+            var row :String = "";
+            for (var xx :int = 0; xx < _size; xx++) {
+                var letter :String = (data[yy * _size + xx] as String);
+                row += letter;
+            }
+            trace("Board: " + row);
+        }
+    }
+
+    protected function gotBoard (letters :Array) :void
+    {
+        var pattern :String = null;
+        switch (getBoardSize()) {
+        case 9:
+            pattern = Content.BOARDS_9[_rando.nextInt(Content.BOARDS_9.length)] as String;
+            break;
+        case 11:
+            pattern = Content.BOARDS_9[_rando.nextInt(Content.BOARDS_11.length)] as String;
+            break;
+        }
+        if (pattern != null) {
+            for (var ii :int = 0; ii < pattern.length; ii++) {
+                if (pattern.charAt(ii) == ".") {
+                    letters[ii] = " ";
+                }
+            }
+        }
+        _control.set(BOARD_DATA, letters);
+    }
+
+    /**
+     * Called when a message comes in.
+     */
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == Model.LETTER_CHANGE) {
@@ -420,6 +471,23 @@ public class Model
             if (int(data[0]) == _control.getMyId()) {
                 _changePending = false;
             }
+        }
+    }
+
+    /**
+     * Called when our distributed game state changes.
+     */
+    protected function propertyChanged (event :PropertyChangedEvent) :void
+    {
+        if (event.name == Model.BOARD_DATA && event.index == -1) {
+            var data :Array = (event.newValue as Array);
+            _letterCount = 0;
+            for each (var letter :String in data) {
+                if (letter != BLANK) {
+                    _letterCount++;
+                }
+            }
+            Log.getLog(this).info("Board has " + _letterCount + " letters.");
         }
     }
 
@@ -446,7 +514,7 @@ public class Model
             for (var yy :int = _size-1; yy >= 0; yy--) {
                 var l :String = getLetter(xx, yy);
                 var pos :int = yy * _size + xx;
-                if (l == null) {
+                if (l == BLANK) {
                     continue;
                 } else if (used.indexOf(pos) != -1) {
                     break; // try the next column
@@ -466,6 +534,7 @@ public class Model
     }
 
     protected var _size :int;
+    protected var _letterCount :int;
     protected var _control :WhirledGameControl;
     protected var _rando :Random = new Random(getTimer());
     protected var _changePending :Boolean;

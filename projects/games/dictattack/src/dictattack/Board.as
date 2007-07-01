@@ -7,8 +7,10 @@ import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.utils.Timer;
 
 import flash.events.Event;
+import flash.events.TimerEvent;
 import flash.geom.Rectangle;
 
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -71,25 +73,6 @@ public class Board extends Sprite
 
     public function roundDidStart () :void
     {
-        while (numChildren > 0) {
-            removeChildAt(0);
-        }
-
-        for (var yy :int = 0; yy < _size; yy++) {
-            for (var xx : int = 0; xx < _size; xx++) {
-                var ll :Letter = new Letter(_content, _model.getType(xx, yy));
-                ll.setText("?");
-                var sx :int = (Content.TILE_SIZE + GAP) * xx;
-                var sy :int = (Content.TILE_SIZE + GAP) * (yy-_size-5);
-                var dy :int = (Content.TILE_SIZE + GAP) * yy;
-                ll.x = sx;
-                ll.y = sy;
-                addChild(ll);
-                var delay :int = (_size-yy-1) * (_size*20) + ((yy%2 == 0) ? xx : (_size-xx-1)) * 20;
-                DelayedPath.delay(LinePath.move(ll, sx, sy, sx, dy, 1000), delay).start();
-                _letters[yy * _size + xx] = ll;
-            }
-        }
     }
 
     public function roundDidEnd () :void
@@ -149,19 +132,53 @@ public class Board extends Sprite
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
         if (event.name == Model.BOARD_DATA && event.index == -1) {
-            // display the board
-            for (var yy :int = 0; yy < _size; yy++) {
-                for (var xx :int = 0; xx < _size; xx++) {
-                    var letter :String = _model.getLetter(xx, yy);
-                    var pos :int = yy * _size + xx;
-                    if (letter == null) {
-                        clearLetter(pos);
-                    } else {
-                        getLetter(pos).setText(letter);
-                    }
+            gotBoard();
+        }
+    }
+
+    protected function gotBoard () :void
+    {
+        while (numChildren > 0) {
+            removeChildAt(0);
+        }
+
+        var longestDelay :int = 0;
+        for (var yy :int = 0; yy < _size; yy++) {
+            for (var xx : int = 0; xx < _size; xx++) {
+                var letter :String = _model.getLetter(xx, yy);
+                var pos :int = yy * _size + xx;
+                if (letter == Model.BLANK) {
+                    continue;
                 }
+
+                var ll :Letter = new Letter(_content, _model.getType(xx, yy));
+                ll.setText(letter);
+                var sx :int = (Content.TILE_SIZE + GAP) * xx;
+                var sy :int = (Content.TILE_SIZE + GAP) * (yy-_size-5);
+                var dy :int = (Content.TILE_SIZE + GAP) * yy;
+                ll.x = sx;
+                ll.y = sy;
+                addChild(ll);
+                var delay :int = (_size-yy-1) * (_size*20) + ((yy%2 == 0) ? xx : (_size-xx-1)) * 20;
+                DelayedPath.delay(LinePath.move(ll, sx, sy, sx, dy, 1000), delay).start();
+                if (delay > longestDelay) {
+                    longestDelay = delay;
+                }
+                _letters[yy * _size + xx] = ll;
             }
         }
+
+        // once the last alien moves into position, drop our aliens into place
+        var timer :Timer = new Timer(longestDelay + 1500, 1);
+        timer.addEventListener(TimerEvent.TIMER, boardAnimationComplete);
+        timer.start();
+    }
+
+    // have to do this in a separate function because we can't use this in an anonymous function
+    // and ActionScript has no Board.this
+    protected function boardAnimationComplete (event :TimerEvent) :void
+    {
+        _model.updatePlayable(this);
     }
 
     protected var _size :int;
@@ -172,5 +189,4 @@ public class Board extends Sprite
 
     protected static const LETTER_RESET_DELAY :int = 1000;
 }
-
 }

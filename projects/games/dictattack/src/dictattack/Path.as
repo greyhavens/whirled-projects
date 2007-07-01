@@ -31,6 +31,16 @@ public /* abstract */ class Path
     }
 
     /**
+     * Configures this path's onComplete function. This should generally only be called shortly
+     * after construction as the function will not be called if the path is already completed or
+     * aborted.
+     */
+    public function setOnComplete (onComplete :Function) :void
+    {
+        _onComplete = onComplete;
+    }
+
+    /**
      * Aborts this path. Any onComplete() function will be called as if the path terminated
      * normally. The callback can call {@link #wasAborted} to discover whether the path was aborted
      * or terminated normally.

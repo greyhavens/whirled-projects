@@ -330,11 +330,7 @@ public class GameView extends Sprite
             }
 
         } else if (event.name == Model.BOARD_DATA) {
-            if (event.index == -1) {
-                // we got our board, update the playable letters display
-                _model.updatePlayable(_board);
-
-            } else if (event.newValue != null) {
+            if (event.index != -1 && event.newValue != Model.BLANK) {
                 // map the global position into to our local coordinates
                 var xx :int = _model.getReverseX(event.index);
                 var yy :int = _model.getReverseY(event.index);

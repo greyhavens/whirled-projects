@@ -114,7 +114,7 @@ public class DictionaryAttack extends Sprite
             // getting all minimum length words, 100% of available flow for getting all LONG_WORD
             // letter words (with bonuses helping players to approach that score)
             var points :Array = (_control.get(Model.POINTS) as Array);
-            var letters :int = _model.getBoardSize() * _model.getBoardSize();
+            var letters :int = _model.getLetterCount();
             var minpoints :int = Math.round(letters / _model.getMinWordLength());
             var maxpoints :int = Math.round(letters / LONG_WORD) *
                 (LONG_WORD - _model.getMinWordLength() + 1);
