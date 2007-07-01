@@ -105,7 +105,10 @@ public class Content
 
     public function createSaucer () :MovieClip
     {
-        return MovieClip(new (_pack.getClass("alienship"))());
+        var saucer :MovieClip = MovieClip(new (_pack.getClass("alienship"))());
+        saucer.scaleX = 0.3; // TODO: get Bill to redo source
+        saucer.scaleY = 0.3;
+        return saucer;
     }
 
     public function createExplosion () :Explosion

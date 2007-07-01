@@ -4,6 +4,7 @@
 package dictattack {
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -51,7 +52,7 @@ public class Shooter extends Sprite
     {
         _name.text = name;
         if (_points == null) {
-            _name.x = -_name.width/2;
+            _name.x = -_view.getBoard().getPixelSize()/2;
         } else {
             _name.x = -_points.width/2 - _name.width - 2;
         }
@@ -62,7 +63,7 @@ public class Shooter extends Sprite
     {
         if (_points == null) { // single player mode
             _name.text = "Points: " + points;
-            _name.x = -_name.width/2;
+            _name.x = -_view.getBoard().getPixelSize()/2;
         } else {
             var frame :int = int(_points.totalFrames * points / maxPoints);
             _points.gotoAndStop(frame);
@@ -82,6 +83,27 @@ public class Shooter extends Sprite
             icon.x = ii * (icon.width + 2) + icon.width/2;
             _score.addChild(icon);
         }
+    }
+
+    public function setSaucers (count :int) :void
+    {
+        for each (var child :MovieClip in _saucers) {
+            removeChild(child);
+        }
+        for (var ii :int = 0; ii < count; ii++) {
+            var saucer :MovieClip = _content.createSaucer();
+            saucer.x = _view.getBoard().getPixelSize()/2 - (saucer.width + 5) * ii;
+            saucer.y = -Content.SHOOTER_SIZE/2;
+            saucer.addEventListener(MouseEvent.CLICK, saucerClicked);
+            _saucers.push(saucer);
+            addChild(saucer);
+        }
+    }
+
+    public function flySaucer (board :Board, xx :int, yy :int) :void
+    {
+        // TODO: animate
+        removeChild(_saucers.pop() as MovieClip);
     }
 
     public function shootLetter (board :Board, xx :int, yy :int) :void
@@ -140,6 +162,11 @@ public class Shooter extends Sprite
         }
     }
 
+    protected function saucerClicked (event :MouseEvent) :void
+    {
+        _view.getModel().requestChange();
+    }
+
     protected function onEnterFrame (event :Event) :void
     {
         if (_ship.x != _shipx) {
@@ -162,10 +189,12 @@ public class Shooter extends Sprite
     protected var _view :GameView;
     protected var _pidx :int;
     protected var _posidx :int;
+
     protected var _ship :Sprite;
     protected var _points :MovieClip;
     protected var _name :TextField;
     protected var _score :Sprite;
+    protected var _saucers :Array = new Array();
 
     protected var _board :Board;
     protected var _targets :Array = new Array();

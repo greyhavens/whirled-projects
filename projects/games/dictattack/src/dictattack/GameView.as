@@ -106,12 +106,10 @@ public class GameView extends Sprite
                 htext += HELP_MULTI.replace(
                     "MINLEN", _model.getMinWordLength()).replace(
                         "POINTS", _model.getWinningPoints()).replace(
-                            "ROUNDS", _model.getWinningScore()).replace(
-                                "PENALTY", _model.getChangePenalty())
+                            "ROUNDS", _model.getWinningScore());
             } else {
                 htext += HELP_SINGLE.replace(
-                    "MINLEN", _model.getMinWordLength()).replace(
-                        "PENALTY", _model.getChangePenalty());
+                    "MINLEN", _model.getMinWordLength());
             }
             help.htmlText = htext;
             addChild(help);
@@ -133,6 +131,16 @@ public class GameView extends Sprite
             bounds.height = CHAT_HEIGHT;
             _control.setChatBounds(bounds);
         }
+    }
+
+    public function getBoard () :Board
+    {
+        return _board;
+    }
+
+    public function getModel () :Model
+    {
+        return _model;
     }
 
     public function attractMode () :void
@@ -167,6 +175,10 @@ public class GameView extends Sprite
     public function roundDidStart () :void
     {
         _board.roundDidStart();
+
+        for each (var shooter :Shooter in _shooters) {
+            shooter.setSaucers(_model.getChangesAllowed());
+        }
 
         addChild(_tip);
         _tip.text = "Enter words:";
@@ -338,28 +350,42 @@ public class GameView extends Sprite
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == Model.WORD_PLAY) {
-            var data :Array = (event.value as Array);
-            var scidx :int = int(data[0]);
-            var scorer :String = _control.seating.getPlayerNames()[scidx];
-            var word :String = (data[1] as String);
-            var points :int = int(data[2]);
-            var mult :int = int(data[3]);
-            if (mult > 1) {
-                marquee.display(scorer + ": " + word + " x" + mult + " for " + points, 1000);
-            } else {
-                marquee.display(scorer + ": " + word + " for " + points, 1000);
-            }
-
-            var wpos :Array = (data[4] as Array);
-            for (var ii :int = 0; ii < wpos.length; ii++) {
-                // map the global position into to our local coordinates
-                var xx :int = _model.getReverseX(int(wpos[ii]));
-                var yy :int = _model.getReverseY(int(wpos[ii]));
-                // when the shooting is finished the column will be marked as playable
-                _shotsInProgress++;
-                _shooters[scidx].shootLetter(_board, xx, yy);
-            }
+            handleWordPlay(event.value as Array);
+        } else if (event.name == Model.LETTER_CHANGE) {
+            handleLetterChange(event.value as Array);
         }
+    }
+
+    protected function handleWordPlay (data :Array) :void
+    {
+        var scidx :int = int(data[0]);
+        var scorer :String = _control.seating.getPlayerNames()[scidx];
+        var word :String = (data[1] as String);
+        var points :int = int(data[2]);
+        var mult :int = int(data[3]);
+        if (mult > 1) {
+            marquee.display(scorer + ": " + word + " x" + mult + " for " + points, 1000);
+        } else {
+            marquee.display(scorer + ": " + word + " for " + points, 1000);
+        }
+
+        var wpos :Array = (data[4] as Array);
+        for (var ii :int = 0; ii < wpos.length; ii++) {
+            // map the global position into to our local coordinates
+            var xx :int = _model.getReverseX(int(wpos[ii]));
+            var yy :int = _model.getReverseY(int(wpos[ii]));
+            // when the shooting is finished the column will be marked as playable
+            _shotsInProgress++;
+            _shooters[scidx].shootLetter(_board, xx, yy);
+        }
+    }
+
+    protected function handleLetterChange (data :Array) :void
+    {
+        var pidx :int = _control.seating.getPlayerPosition(int(data[0]));
+        var xx :int = _model.getReverseX(int(data[1]));
+        var yy :int = _model.getReverseY(int(data[1]));
+        _shooters[pidx].flySaucer(_board, xx, yy);
     }
 
     protected function keyPressed (event :KeyboardEvent) : void
@@ -370,11 +396,6 @@ public class GameView extends Sprite
                 marquee.display(text, 1000);
             });
             _input.text = "";
-            break;
-
-        case 33: // !
-        case 49: // 1 (flash doesn't process the shift key)
-            _model.requestChange();
             break;
         }
     }
@@ -417,14 +438,12 @@ public class GameView extends Sprite
     protected static const HELP_MULTI :String =
         "Minimum word length: MINLEN. The first to score POINTS points wins the round.\n\n" +
         "Win ROUNDS rounds to win the game.\n\n" +
-        "Press ! to change a letter into a wildcard if you can't find a word. " +
-        "This will cost you PENALTY points.";
+        "Click a flying saucer to change a letter into a wildcard if you can't find a word.";
 
     protected static const HELP_SINGLE :String =
         "Minimum word length: MINLEN.\n\n" +
         "Clear the board using long words to get a high score!\n\n" +
-        "Press ! to change a letter into a wildcard if you can't find a word. " +
-        "This will cost you PENALTY points.";
+        "Click a flying saucer to change a letter into a wildcard if you can't find a word.";
 }
 
 }

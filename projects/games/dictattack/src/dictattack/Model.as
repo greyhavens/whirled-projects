@@ -7,6 +7,8 @@ import flash.utils.getTimer;
 
 import com.threerings.util.Random;
 
+import com.threerings.ezgame.MessageReceivedEvent;
+
 import com.whirled.WhirledGameControl;
 
 /**
@@ -34,6 +36,7 @@ public class Model
     {
         _size = size;
         _control = control;
+        _control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
     }
 
     /**
@@ -70,12 +73,20 @@ public class Model
     }
 
     /**
-     * Returns the penalty for changing a letter.
+     * Returns the number of word changes allowed for this player in a round.
      */
-    public function getChangePenalty () :int
+    public function getChangesAllowed () :int
     {
         return isMultiPlayer() ? 2 : 3;
     }
+
+//     /**
+//      * Returns the penalty for changing a letter.
+//      */
+//     public function getChangePenalty () :int
+//     {
+//         return isMultiPlayer() ? 2 : 3;
+//     }
 
     /**
      * Returns the bonus for perfectly clearing the board.
@@ -279,6 +290,12 @@ public class Model
      */
     public function requestChange () :void
     {
+        if (_changePending) {
+            Log.getLog(this).info("Rejecting change request. Have one in progress.");
+            return;
+        }
+        _changePending = true;
+
         var vowels :Array = [], consonants :Array = [];
         for (var xx :int = 0; xx < _size; xx++) {
             // scan from the bottom upwards looking for the first letter
@@ -319,10 +336,13 @@ public class Model
         var nlet :String = "*";
         _control.set(BOARD_DATA, nlet, rpos);
 
-        // penalize our score
-        var points :Array = (_control.get(POINTS) as Array);
-        var myidx : int = _control.seating.getMyPosition();
-        _control.set(POINTS, points[myidx] - getChangePenalty(), myidx);
+//         // penalize our score
+//         var points :Array = (_control.get(POINTS) as Array);
+//         var myidx : int = _control.seating.getMyPosition();
+//         _control.set(POINTS, points[myidx] - getChangePenalty(), myidx);
+
+        // finally send a message indicating what we've done so that the UI can react
+        _control.sendMessage(LETTER_CHANGE, [ _control.getMyId(), rpos ]);
     }
 
     public function updatePlayable (board :Board) :void
@@ -387,6 +407,16 @@ public class Model
         return data[getPosition(xx, yy)];
     }
 
+    protected function messageReceived (event :MessageReceivedEvent) :void
+    {
+        if (event.name == Model.LETTER_CHANGE) {
+            var data :Array = (event.value as Array);
+            if (int(data[0]) == _control.getMyId()) {
+                _changePending = false;
+            }
+        }
+    }
+
     /**
      * Locates the column that contains the supplied letter, ignoring columns in the supplied
      * "used" columns array. The columns are searched from the center outwards. Returns the
@@ -432,6 +462,7 @@ public class Model
     protected var _size :int;
     protected var _control :WhirledGameControl;
     protected var _rando :Random = new Random(getTimer());
+    protected var _changePending :Boolean;
 
     // yay english!
     protected static const VOWELS :String = "aeiou";
