@@ -28,9 +28,9 @@ public class Content
     /** Defines the dictionary we use for word validation and letter frequency. */
     public static const LOCALE :String = "en-us";
 
-    /** The number of letters along one side of the board, by number of players (1, 2, 3, 4). These
-     * must be odd numbers. */
-    public static const BOARD_SIZES :Array = [ 9, 9, 11, 11 ];
+    /** The number of letters along one side of the board. This must be an odd number and correlate
+     * with the various board patterns below. */
+    public static const BOARD_SIZE :int = 11;
 
     /** The border around the board in which the shooters reside. */
     public static const BOARD_BORDER :int = 50;
@@ -82,61 +82,71 @@ public class Content
     public var ghostInvaderColors :Array = [
         makeXform(0x00CC00, -128), makeXform(0x0066FF, -128), makeXform(0xFF0033, -128) ];
 
-    /** A selection of 9x9 board patterns. */
-    public static const BOARDS_9 :Array = [
-        "x.x.x.x.x" +
-        ".x.x.x.x." +
-        "x.x.x.x.x" +
-        ".x.x.x.x." +
-        "x.x.x.x.x" +
-        ".x.x.x.x." +
-        "x.x.x.x.x" +
-        ".x.x.x.x." +
-        "x.x.x.x.x",
+    /** A selection of single player board patterns. */
+    public static const BOARDS_SINGLE :Array = [
+        "x.x.x.x.x.x" +
+        ".x.x.x.x.x." +
+        "x.x.x.x.x.x" +
+        ".x.x.x.x.x." +
+        "x.x.x.x.x.x" +
+        ".x.x.x.x.x." +
+        "x.x.x.x.x.x" +
+        ".x.x.x.x.x." +
+        "x.x.x.x.x.x" +
+        ".x.x.x.x.x." +
+        "x.x.x.x.x.x",
 
-        "....x...." +
-        "...xxx..." +
-        "..xxxxx.." +
-        ".xxxxxxx." +
-        "xxxxxxxxx" +
-        ".xxxxxxx." +
-        "..xxxxx.." +
-        "...xxx..." +
-        "....x....",
+        ".....x....." +
+        "....xxx...." +
+        "...xxxxx..." +
+        "..xxxxxxx.." +
+        ".xxxxxxxxx." +
+        "xxxxxxxxxxx" +
+        ".xxxxxxxxx." +
+        "..xxxxxxx.." +
+        "...xxxxx..." +
+        "....xxx...." +
+        ".....x.....",
 
-        "xxxxxxxxx" +
-        ".xxxxxxx." +
-        "..xxxxx.." +
-        "...xxx..." +
-        "....x...." +
-        "...xxx..." +
-        "..xxxxx.." +
-        ".xxxxxxx." +
-        "xxxxxxxxx",
+        "xxxxxxxxxxx" +
+        ".xxxxxxxxx." +
+        "..xxxxxxx.." +
+        "...xxxxx..." +
+        "....xxx...." +
+        ".....x....." +
+        "....xxx...." +
+        "...xxxxx..." +
+        "..xxxxxxx.." +
+        ".xxxxxxxxx." +
+        "xxxxxxxxxxx",
 
-        "xx.....xx" +
-        "..xxxxx.." +
-        ".xx.x.xx." +
-        "xxxxxxxxx" +
-        "xxxxxxxxx" +
-        ".xxxxxxx." +
-        "..xxxxx.." +
-        ".x.....x." +
-        "x.......x",
+        ".xx.....xx." +
+        ".xx.....xx." +
+        "...xxxxx..." +
+        "..xx.x.xx.." +
+        ".xxxxxxxxx." +
+        ".xxxxxxxxx." +
+        "..xxxxxxx.." +
+        "...xxxxx..." +
+        "..x.....x.." +
+        ".x.......x." +
+        ".x.......x.",
 
-        ".xx...xx." +
-        "..xxxxx.." +
-        ".xx.x.xx." +
-        "xxxxxxxxx" +
-        "xxxxxxxxx" +
-        ".xxxxxxx." +
-        "..xxxxx.." +
-        "..x...x.." +
-        "xxx.xxx..",
+        "..xx...xx.." +
+        "..xx...xx.." +
+        "...xxxxx..." +
+        "..xx.x.xx.." +
+        ".xxxxxxxxx." +
+        ".xxxxxxxxx." +
+        "..xxxxxxx.." +
+        "...xxxxx..." +
+        "...x...x..." +
+        ".xxx.xxx..." +
+        ".xxx.xxx...",
         ];
 
-    /** A selection of 11x11 board patterns. */
-    public static const BOARDS_11 :Array = [
+    /** A selection of multiplayer board patterns (must be 4 way symmetrical). */
+    public static const BOARDS_MULTI :Array = [
         "xxxxxxxxxxx" +
         "xxxxxxxxxxx" +
         "xxxxxxxxxxx" +

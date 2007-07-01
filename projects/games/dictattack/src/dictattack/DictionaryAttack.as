@@ -52,7 +52,7 @@ public class DictionaryAttack extends Sprite
         var pcount :int = _control.isConnected() ? _control.seating.getPlayerIds().length : 4;
 
         // create our model and our view, and initialize them
-        _model = new Model(int(Content.BOARD_SIZES[pcount-1]), _control);
+        _model = new Model(Content.BOARD_SIZE, _control);
         _view = new GameView(_control, _model, _content);
         _view.init(pcount);
         addChild(_view);

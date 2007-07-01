@@ -442,20 +442,11 @@ public class Model
 
     protected function gotBoard (letters :Array) :void
     {
-        var pattern :String = null;
-        switch (getBoardSize()) {
-        case 9:
-            pattern = Content.BOARDS_9[_rando.nextInt(Content.BOARDS_9.length)] as String;
-            break;
-        case 11:
-            pattern = Content.BOARDS_9[_rando.nextInt(Content.BOARDS_11.length)] as String;
-            break;
-        }
-        if (pattern != null) {
-            for (var ii :int = 0; ii < pattern.length; ii++) {
-                if (pattern.charAt(ii) == ".") {
-                    letters[ii] = " ";
-                }
+        var patterns :Array = isMultiPlayer() ? Content.BOARDS_MULTI : Content.BOARDS_SINGLE;
+        var pattern :String = patterns[_rando.nextInt(patterns.length)] as String;
+        for (var ii :int = 0; ii < pattern.length; ii++) {
+            if (pattern.charAt(ii) == ".") {
+                letters[ii] = " ";
             }
         }
         _control.set(BOARD_DATA, letters);
