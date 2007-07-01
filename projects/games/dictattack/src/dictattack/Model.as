@@ -32,6 +32,9 @@ public class Model
     /** An event sent when a player requests a letter change. */
     public static const LETTER_CHANGE :String = "letterChange";
 
+    /** The character used to indicate a wildcard letter. */
+    public static const WILDCARD :String = "*";
+
     public function Model (size :int, control :WhirledGameControl)
     {
         _size = size;
@@ -233,7 +236,7 @@ public class Model
                 _control.setImmediate(BOARD_DATA, null, pos);
                 wpos.push(pos);
                 // if this was a wildcard, it scores no point
-                if (board.getLetter(used[ii]).getText() == "*") {
+                if (board.getLetter(used[ii]).getText() == WILDCARD) {
                     wpoints = Math.max(wpoints-1, 0);
                 }
             }
@@ -337,8 +340,7 @@ public class Model
         // select the letter to change and issue the change notification
         var rpos :int = int(set[_rando.nextInt(set.length)]);
 //         var nlet :String = chars.substr(_rando.nextInt(chars.length), 1);
-        var nlet :String = "*";
-        _control.set(BOARD_DATA, nlet, rpos);
+        _control.set(BOARD_DATA, WILDCARD, rpos);
 
 //         // penalize our score
 //         var points :Array = (_control.get(POINTS) as Array);
@@ -448,7 +450,7 @@ public class Model
                     continue;
                 } else if (used.indexOf(pos) != -1) {
                     break; // try the next column
-                } else if (wildCard ? l == "*" : l == c) {
+                } else if (wildCard ? l == WILDCARD : l == c) {
                     return pos;
                 } else {
                     break; // try the next column
