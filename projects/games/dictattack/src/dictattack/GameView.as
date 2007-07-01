@@ -4,6 +4,7 @@
 package dictattack {
 
 import flash.geom.Rectangle;
+import flash.text.GridFitType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFieldType;
@@ -265,6 +266,8 @@ public class GameView extends Sprite
         text.selectable = false;
         text.defaultTextFormat = _content.makeMarqueeFormat();
         text.embedFonts = true;
+        text.gridFitType = GridFitType.PIXEL;
+        text.sharpness = 400;
         text.x = border;
         text.y = border;
 

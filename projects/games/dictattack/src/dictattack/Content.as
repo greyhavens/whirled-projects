@@ -4,6 +4,7 @@
 package dictattack {
 
 import flash.media.Sound;
+import flash.text.GridFitType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
@@ -271,6 +272,8 @@ public class Content
         label.selectable = false;
         label.defaultTextFormat = makeMarqueeFormat(10);
         label.embedFonts = true;
+        label.gridFitType = GridFitType.PIXEL;
+        label.sharpness = 400;
         label.text = text;
         face.addChild(label);
 
