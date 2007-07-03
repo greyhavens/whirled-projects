@@ -194,7 +194,22 @@ public class Server
     protected function doEndRound () :void
     {
         if (_control.getRound() == Content.ROUND_NAMES.length) {
-            _control.endGame([ ]);
+            var players :Array = _control.seating.getPlayerIds();
+            var winners :Array = [ ];
+            var maxScore :int = -1;
+            for (var ii :int = 0; ii < players.length; ii ++) {
+                var score :int = _control.get(Model.SCORES, ii) as int;
+                if (score > maxScore) {
+                    maxScore = score;
+                    winners = [ players[ii] ];
+
+                } else if (score == maxScore) {
+                    // if several people share top score, report them all as winners
+                    winners.push(players[ii]);
+                }
+            }
+
+            _control.endGame(winners);
             return;
         }
 
