@@ -4,6 +4,7 @@
 package {
 
 import flash.display.DisplayObject;
+import flash.display.Graphics;
 import flash.display.Loader;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
@@ -54,43 +55,131 @@ public class AlbumViewer extends Sprite
         // Set up the flickr service
         // This is my (Ray Greenwell)'s personal Flickr key!!
         _flickr = new FlickrService("7aa4cc43b7fd51f0f118b0022b7ab13e")
+        _flickr.addEventListener(FlickrResultEvent.PEOPLE_FIND_BY_USERNAME,
+            handleFindUsername);
         _flickr.addEventListener(FlickrResultEvent.PEOPLE_GET_PUBLIC_PHOTOS,
-            handlePublicPhotoResult);
+            handleGotPhotos);
+        _flickr.addEventListener(FlickrResultEvent.PHOTOSETS_GET_PHOTOS,
+            handleGotPhotos);
         _flickr.addEventListener(FlickrResultEvent.PHOTOS_GET_SIZES,
             handlePhotoUrlKnown);
 
-        _loader = new Loader();
-        _loader.mouseEnabled = true;
-        _loader.mouseChildren = true;
-        _loader.addEventListener(MouseEvent.CLICK, handleClick);
-        _loader.addEventListener(MouseEvent.ROLL_OVER, handleMouseRoll);
-        _loader.addEventListener(MouseEvent.ROLL_OUT, handleMouseRoll);
-        addChild(_loader);
+        for (var ii :int = 0; ii < 2; ii++) {
+            var loader :Loader = new Loader();
+            loader = new Loader();
+            loader.mouseEnabled = true;
+            loader.mouseChildren = true;
+            loader.addEventListener(MouseEvent.CLICK, handleClick);
+            loader.addEventListener(MouseEvent.ROLL_OVER, handleMouseRoll);
+            loader.addEventListener(MouseEvent.ROLL_OUT, handleMouseRoll);
+            loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleImageLoaded);
+            addChild(loader);
+            if (ii == 0) {
+                _curLoader = loader;
+            } else {
+                loader.visible = false;
+                _nextLoader = loader;
+            }
+        }
 
-        if (_furni.canEditRoom()) {
+        var showConfig :Boolean;
+        if (_furni.isConnected()) {
+            showConfig = _furni.canEditRoom();
+
+        } else {
+            setLabel("This flickr AlbumViewer is normally used inside whirled. You may configure " +
+                "it here just for testing.");
+            showConfig = true;
+        }
+
+        if (showConfig) {
             _configBtn = new SimpleTextButton("config");
             _configBtn.x = WIDTH - _configBtn.width;
             _configBtn.y = HEIGHT - _configBtn.height;
+            _configBtn.addEventListener(MouseEvent.CLICK, handleConfig);
             addChild(_configBtn);
         }
 
         _overlay = new Sprite();
         addChild(_overlay);
 
-        _userId = "76219749@N00";
+        //_userId = "76219749@N00";
 
         findPhotos();
     }
 
+    /**
+     * Set the text to be displayed in a label.
+     */
+    protected function setLabel (text :String) :void
+    {
+        if (_label == null) {
+            _label = new TextField();
+            _label.background = true;
+            _label.backgroundColor = 0xFFFFFF;
+            _label.autoSize = TextFieldAutoSize.LEFT;
+            _label.wordWrap = true;
+            _label.defaultTextFormat = new TextFormat(null, 16);
+            _label.width = WIDTH;
+            addChild(_label);
+        }
+
+        _label.visible = (text != null);
+        if (text != null) {
+            _label.text = text;
+            _label.height = _label.textHeight + 4;
+        }
+    }
+
+    protected function handleConfig (event :MouseEvent) :void
+    {
+        if (_pasteEntry == null) {
+            setLabel("Enter the URL of the public flickr photo album you'd like to have " + 
+                "this viewer display and press the config button again.");
+            _pasteEntry = new TextField();
+            _pasteEntry.type = TextFieldType.INPUT;
+            _pasteEntry.background = true;
+            _pasteEntry.backgroundColor = 0xCCCCFF;
+            _pasteEntry.width = WIDTH;
+            _pasteEntry.defaultTextFormat = new TextFormat(null, 16);
+            _pasteEntry.text = "Wp";
+            _pasteEntry.height = _pasteEntry.textHeight + 4;
+            _pasteEntry.text = "";
+            _pasteEntry.y = _configBtn.y - _pasteEntry.height;
+            addChild(_pasteEntry);
+
+        } else {
+            var url :String = _pasteEntry.text;
+
+            removeChild(_pasteEntry);
+            _pasteEntry = null;
+            setLabel(null);
+
+            if (url != "") {
+                _userId = url;
+                findPhotos();
+            }
+        }
+    }
+
     protected function findPhotos () :void
     {
-        _flickr.people.getPublicPhotos(_userId);
+        if (_setId != null) {
+            _flickr.photosets.getPhotos(_setId);
+
+        } else if (_userId != null) {
+            _flickr.people.getPublicPhotos(_userId);
+        }
+    }
+
+    protected function handleFindUsername (evt :FlickrResultEvent) :void
+    {
     }
 
     /**
-     * Handle the results of a tag search.
+     * Handle the results photo search.
      */
-    protected function handlePublicPhotoResult (evt :FlickrResultEvent) :void
+    protected function handleGotPhotos (evt :FlickrResultEvent) :void
     {
         if (!evt.success) {
             trace("Failure looking for photos " +
@@ -99,7 +188,7 @@ public class AlbumViewer extends Sprite
         }
 
         // save the metadata about photos
-        _ourPhotos = (evt.data.photos as PagedPhotoList).photos;
+        _ourPhotos = evt.data.photos as PagedPhotoList;
         getNextPhotoUrl();
     }
 
@@ -108,12 +197,14 @@ public class AlbumViewer extends Sprite
      */
     protected function getNextPhotoUrl () :void
     {
-        if (_ourPhotos == null || _ourPhotos.length == 0) {
+        if (_ourPhotos == null || _ourPhotos.photos.length == 0) {
             _ourPhotos = null;
+            // loop back around
+            findPhotos();
             return;
         }
 
-        var photo :Photo = (_ourPhotos.shift() as Photo);
+        var photo :Photo = (_ourPhotos.photos.shift() as Photo);
         _nextPhotoLink = "http://www.flickr.com/photos/" + photo.ownerId + "/" + photo.id;
         _flickr.photos.getSizes(photo.id);
     }
@@ -133,40 +224,13 @@ public class AlbumViewer extends Sprite
         var p :PhotoSize = getMediumPhotoSource(sizes);
         if (p != null) {
             // yay! We've looked-up our next photo item
-            clearLoader();
-            _photoLink = _nextPhotoLink;
-            _loader.x = (WIDTH - p.width) / 2;
-            _loader.y = HEIGHT - p.height;
-            _overlay.x = _loader.x;
-            _overlay.y = _loader.y;
-            _loader.load(new URLRequest(p.source));
-
-            if (_timer == null) {
-                _timer = new Timer(7000, 1);
-                _timer.addEventListener(TimerEvent.TIMER, handleTimerExpired);
-            }
-            _timer.reset();
-            _timer.start();
+            _nextLoader.x = (WIDTH - p.width) / 2;
+            _nextLoader.y = HEIGHT - p.height;
+            _nextLoader.load(new URLRequest(p.source));
 
         } else {
             getNextPhotoUrl();
         }
-    }
-
-    /**
-     * Clear any resources from the loader and prepare it to load
-     * another photo, or be unloaded.
-     */
-    protected function clearLoader () :void
-    {
-        try {
-            _loader.close();
-        } catch (e :Error) {
-            // nada
-        }
-        _loader.unload();
-        _photoLink = null;
-        handleMouseRoll(null);
     }
 
     /**
@@ -182,6 +246,35 @@ public class AlbumViewer extends Sprite
         }
 
         return null;
+    }
+
+    protected function handleImageLoaded (event :Event) :void
+    {
+        // swap the loaders around
+        var lastLoader :Loader = _curLoader;
+        _curLoader = _nextLoader;
+        _nextLoader = lastLoader;
+
+        handleMouseRoll(null);
+        _photoLink = _nextPhotoLink;
+        _curLoader.visible = true;
+        lastLoader.visible = false;
+        _overlay.x = _curLoader.x;
+        _overlay.y = _curLoader.y;
+
+        try {
+            lastLoader.close();
+        } catch (e :Error) {
+            // nada
+        }
+        lastLoader.unload();
+
+        if (_timer == null) {
+            _timer = new Timer(7000, 1);
+            _timer.addEventListener(TimerEvent.TIMER, handleTimerExpired);
+        }
+        _timer.reset();
+        _timer.start();
     }
 
     /**
@@ -204,12 +297,11 @@ public class AlbumViewer extends Sprite
         var draw :Boolean = (event == null || event.type == MouseEvent.ROLL_OVER) &&
             (_photoLink != null);
 
-        with (_overlay.graphics) {
-            clear();
-            if (draw) {
-                lineStyle(1, 0xFF4040);
-                drawRect(0, 0, _loader.width, _loader.height);
-            }
+        var g :Graphics = _overlay.graphics;
+        g.clear();
+        if (draw) {
+            g.lineStyle(1, 0xFF4040);
+            g.drawRect(0, 0, _curLoader.width, _curLoader.height);
         }
     }
 
@@ -227,7 +319,22 @@ public class AlbumViewer extends Sprite
             _timer.stop();
             _timer = null;
         }
-        clearLoader();
+        try {
+            _curLoader.close();
+        } catch (e :Error) {
+            // nada
+        }
+        try {
+            _nextLoader.close();
+        } catch (e :Error) {
+            // nada
+        }
+        _curLoader.unload();
+        _nextLoader.unload();
+        _photoLink = null;
+        handleMouseRoll(null);
+
+        // TODO: set a flag so that we don't react to any more asynchronously arriving events
     }
 
     /** The interface through which we communicate with metasoy. */
@@ -236,21 +343,17 @@ public class AlbumViewer extends Sprite
     /** The interface through which we make flickr API requests. */
     protected var _flickr :FlickrService;
 
-    /** The user's photos we're looking for. */
-    protected var _userId :String;
+    /** The currently visible loader. */
+    protected var _curLoader :Loader;
 
     /** Loads up photos for display. */
-    protected var _loader :Loader;
+    protected var _nextLoader :Loader;
 
     /** Used for drawing UI on top of the photo. */
     protected var _overlay :Sprite;
 
-    /** A button for editing users to configure this damn thing. */
-    protected var _configBtn :SimpleTextButton;
-
-    /** The high-level metadata for the result set of photos from our
-     * tag search. */
-    protected var _ourPhotos :Array;
+    /** The photo metadata from the last photo search. */
+    protected var _ourPhotos :PagedPhotoList;
 
     /** The url of the photo we're about to show. */
     protected var _nextPhotoLink :String;
@@ -263,5 +366,20 @@ public class AlbumViewer extends Sprite
 
     /** Timer used to control loading of photos. */
     protected var _timer :Timer;
+
+    /** The user's photos we're looking for. */
+    protected var _userId :String;
+
+    /** The photoset id we're looking for. */
+    protected var _setId :String;
+
+    /** A button for editing users to configure this damn thing. */
+    protected var _configBtn :SimpleTextButton;
+
+    /** A label we use to prompt the user. */
+    protected var _label :TextField;
+
+    /** The place where a configuring user enters the flickr URL. */
+    protected var _pasteEntry :TextField;
 }
 }
