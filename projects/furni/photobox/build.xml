@@ -2,7 +2,7 @@
 <project name="photobox" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name" value="PhotoBox"/>
+  <property name="app.name" value="AlbumViewer"/>
   <property name="flex.use-network" value="true"/>
 
   <!-- include the standard build script -->
