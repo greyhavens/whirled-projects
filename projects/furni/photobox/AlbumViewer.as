@@ -13,8 +13,6 @@ import flash.text.TextField;
 import flash.text.TextFieldType;
 
 import flash.events.Event;
-import flash.events.FocusEvent;
-import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 
@@ -22,8 +20,6 @@ import flash.net.URLRequest;
 
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
-
-import flash.ui.Keyboard;
 
 import flash.utils.Timer;
 
@@ -37,6 +33,7 @@ import com.adobe.webapis.flickr.events.FlickrResultEvent;
 import com.threerings.flash.SimpleTextButton;
 
 import com.whirled.FurniControl;
+import com.whirled.ControlEvent;
 
 [SWF(width="500", height="500")]
 public class AlbumViewer extends Sprite
@@ -58,9 +55,9 @@ public class AlbumViewer extends Sprite
         _flickr.addEventListener(FlickrResultEvent.PEOPLE_FIND_BY_USERNAME,
             handleFindUsername);
         _flickr.addEventListener(FlickrResultEvent.PEOPLE_GET_PUBLIC_PHOTOS,
-            handleGotPhotos);
+            handleGotPeoplePhotos);
         _flickr.addEventListener(FlickrResultEvent.PHOTOSETS_GET_PHOTOS,
-            handleGotPhotos);
+            handleGotSetPhotos);
         _flickr.addEventListener(FlickrResultEvent.PHOTOS_GET_SIZES,
             handlePhotoUrlKnown);
 
@@ -87,12 +84,11 @@ public class AlbumViewer extends Sprite
             showConfig = _furni.canEditRoom();
 
         } else {
-            setLabel("This flickr AlbumViewer is normally used inside whirled. You may configure " +
-                "it here just for testing.");
             showConfig = true;
         }
 
-        if (showConfig) {
+        // show the config button in contexts where the user may configure it
+        if (!_furni.isConnected() || _furni.canEditRoom()) {
             _configBtn = new SimpleTextButton("config");
             _configBtn.x = WIDTH - _configBtn.width;
             _configBtn.y = HEIGHT - _configBtn.height;
@@ -103,7 +99,46 @@ public class AlbumViewer extends Sprite
         _overlay = new Sprite();
         addChild(_overlay);
 
-        //_userId = "76219749@N00";
+        if (_furni.isConnected()) {
+            _furni.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
+            getSourceFromMemory();
+
+        } else {
+            setLabel("This flickr AlbumViewer is normally used inside whirled. You may configure " +
+                "it here just for testing.");
+        }
+
+        // TESTING
+        //configureSource("roguenet", "72157600249803400");
+        //configureSource("76219749@N00");
+    }
+
+    protected function handleMemoryChanged (evt :ControlEvent) :void
+    {
+        if (evt.name == "userId" || evt.name == "setId") {
+            getSourceFromMemory();
+        }
+    }
+
+    protected function getSourceFromMemory () :void
+    {
+        configureSource(_furni.lookupMemory("userId", null) as String,
+            _furni.lookupMemory("setId", null) as String);
+    }
+
+    protected function configureSource (userId :String, setId :String = null) :void
+    {
+        _userId = userId;
+        _setId = setId;
+
+        if (_furni.isConnected() && _furni.canEditRoom()) {
+            if (userId != _furni.lookupMemory("userId", null)) {
+                _furni.updateMemory("userId", userId);
+            }
+            if (setId != _furni.lookupMemory("setId", null)) {
+                _furni.updateMemory("setId", setId);
+            }
+        }
 
         findPhotos();
     }
@@ -131,35 +166,86 @@ public class AlbumViewer extends Sprite
         }
     }
 
-    protected function handleConfig (event :MouseEvent) :void
+    protected function handleConfig (... ignored) :void
     {
-        if (_pasteEntry == null) {
-            setLabel("Enter the URL of the public flickr photo album you'd like to have " + 
-                "this viewer display and press the config button again.");
-            _pasteEntry = new TextField();
-            _pasteEntry.type = TextFieldType.INPUT;
-            _pasteEntry.background = true;
-            _pasteEntry.backgroundColor = 0xCCCCFF;
-            _pasteEntry.width = WIDTH;
-            _pasteEntry.defaultTextFormat = new TextFormat(null, 16);
-            _pasteEntry.text = "Wp";
-            _pasteEntry.height = _pasteEntry.textHeight + 4;
-            _pasteEntry.text = "";
-            _pasteEntry.y = _configBtn.y - _pasteEntry.height;
-            addChild(_pasteEntry);
-
-        } else {
-            var url :String = _pasteEntry.text;
-
+        if (_pasteEntry != null) {
+            checkPastedText()
             removeChild(_pasteEntry);
             _pasteEntry = null;
             setLabel(null);
-
-            if (url != "") {
-                _userId = url;
-                findPhotos();
-            }
+            return;
         }
+
+        // otherwise, set up the pasteEntry
+        _pasteEntry = new TextField();
+        _pasteEntry.type = TextFieldType.INPUT;
+        _pasteEntry.background = true;
+        _pasteEntry.backgroundColor = 0xCCCCFF;
+        _pasteEntry.width = WIDTH;
+        _pasteEntry.defaultTextFormat = new TextFormat(null, 16);
+        _pasteEntry.text = "Wp"; // for measuring
+        _pasteEntry.height = _pasteEntry.textHeight + 4;
+        _pasteEntry.text = "";
+        _pasteEntry.y = _configBtn.y - _pasteEntry.height;
+        addChild(_pasteEntry);
+
+        var prompt :String = "To configure this album viewer, enter a flickr username or the URL " +
+            "of a public flickr photo album. The url should be in one " +
+            "of the following formats: http://www.flickr.com/photos/[userId]/ or " +
+            "http://www.flickr.com/photos/[userId]/sets/[photoSetId]/.";
+
+        if (_userId != null) {
+            prompt += "\n\nCurrently displaying userId=" + _userId;
+            if (_setId != null) {
+                prompt += ", setId=" + _setId;
+            }
+            prompt += ".";
+        }
+
+        prompt += "\n\nPress the config button again when done.";
+
+        setLabel(prompt);
+    }
+
+    /**
+     * @return true if the pasteEntry should be removed.
+     */
+    protected function checkPastedText () :void
+    {
+        var text :String = _pasteEntry.text;
+        // if there's no text, just stop configuring
+        if (text == "") {
+            return;
+        }
+
+        var result :Object;
+        result = (new RegExp("flickr\\.com/photos/([^/]+)/sets/([^/]+)")).exec(text);
+        if (result) {
+            configureSource(result[1], result[2]);
+            return;
+        }
+
+        result = (new RegExp("flickr\\.com/photos/(.+?)\\@(...)/?$")).exec(text);
+        if (result) {
+            configureSource(result[1] + "@" + result[2]);
+            return;
+        }
+
+        result = (new RegExp("flickr\\.com/photos/([^/]*)")).exec(text);
+        if (result) {
+            _flickr.people.findByUsername(result[1]);
+            return;
+        }
+
+        result = (new RegExp("^(.+?)\\@(...)$")).exec(text);
+        if (result) {
+            configureSource(result[1] + "@" + result[2]);
+            return;
+        }
+
+        // otherwise, assume it's a username
+        _flickr.people.findByUsername(text);
+        return;
     }
 
     protected function findPhotos () :void
@@ -174,12 +260,21 @@ public class AlbumViewer extends Sprite
 
     protected function handleFindUsername (evt :FlickrResultEvent) :void
     {
+        if (!evt.success) {
+            handleConfig();
+            setLabel("Failure identifying username [" + evt.data.error.errorMessage + "]" +
+                " Please try again.");
+            return;
+        }
+
+        setLabel(null);
+        configureSource(evt.data.user.nsid);
     }
 
     /**
-     * Handle the results photo search.
+     * Handle the photoset photo search results.
      */
-    protected function handleGotPhotos (evt :FlickrResultEvent) :void
+    protected function handleGotSetPhotos (evt :FlickrResultEvent) :void
     {
         if (!evt.success) {
             trace("Failure looking for photos " +
@@ -188,7 +283,24 @@ public class AlbumViewer extends Sprite
         }
 
         // save the metadata about photos
-        _ourPhotos = evt.data.photos as PagedPhotoList;
+        _ourPhotos = evt.data.photoSet.photos;
+        getNextPhotoUrl();
+    }
+
+    /**
+     * Handle the people photo search results.
+     */
+    protected function handleGotPeoplePhotos (evt :FlickrResultEvent) :void
+    {
+        if (!evt.success) {
+            trace("Failure looking for photos " +
+                "[" + evt.data.error.errorMessage + "]");
+            return;
+        }
+
+        // save the metadata about photos
+        // TODO: evt.data.photos == PagedPhotoList;
+        _ourPhotos = evt.data.photos.photos;
         getNextPhotoUrl();
     }
 
@@ -197,15 +309,16 @@ public class AlbumViewer extends Sprite
      */
     protected function getNextPhotoUrl () :void
     {
-        if (_ourPhotos == null || _ourPhotos.photos.length == 0) {
+        if (_ourPhotos == null || _ourPhotos.length == 0) {
             _ourPhotos = null;
             // loop back around
             findPhotos();
             return;
         }
 
-        var photo :Photo = (_ourPhotos.photos.shift() as Photo);
-        _nextPhotoLink = "http://www.flickr.com/photos/" + photo.ownerId + "/" + photo.id;
+        var photo :Photo = (_ourPhotos.shift() as Photo);
+        _nextPhotoLink = "http://www.flickr.com/photos/" + _userId + "/" + photo.id;
+        //_nextPhotoLink = "http://www.flickr.com/photos/" + photo.ownerId + "/" + photo.id;
         _flickr.photos.getSizes(photo.id);
     }
 
@@ -353,7 +466,7 @@ public class AlbumViewer extends Sprite
     protected var _overlay :Sprite;
 
     /** The photo metadata from the last photo search. */
-    protected var _ourPhotos :PagedPhotoList;
+    protected var _ourPhotos :Array;
 
     /** The url of the photo we're about to show. */
     protected var _nextPhotoLink :String;
