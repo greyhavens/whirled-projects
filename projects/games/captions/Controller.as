@@ -394,8 +394,8 @@ public class Controller
 
         if (_flickr == null) {
             // Set up the flickr service
-            // This is my (Ray Greenwell)'s personal Flickr key!! Get your own!
-            _flickr = new FlickrService("7aa4cc43b7fd51f0f118b0022b7ab13e");
+            // This is my (Ray Greenwell)'s personal Flickr key for this game!! Get your own!
+            _flickr = new FlickrService("5d29b1d793cc58bc495dda72e979f4af");
             _flickr.addEventListener(FlickrResultEvent.PHOTOS_GET_RECENT, handlePhotoResult);
             _flickr.addEventListener(FlickrResultEvent.PHOTOS_GET_SIZES, handlePhotoUrlKnown); 
         }
