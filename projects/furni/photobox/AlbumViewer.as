@@ -41,6 +41,8 @@ public class AlbumViewer extends Sprite
     public static const WIDTH :int = 500;
     public static const HEIGHT :int = 500;
 
+    public static const RESULTS_PER_PAGE :int = 20;
+
     public function AlbumViewer ()
     {
         // be prepared to clean up after ourselves...
@@ -130,6 +132,7 @@ public class AlbumViewer extends Sprite
     {
         _userId = userId;
         _setId = setId;
+        _nextPage = 1;
 
         if (_furni.isConnected() && _furni.canEditRoom()) {
             if (userId != _furni.lookupMemory("userId", null)) {
@@ -254,7 +257,7 @@ public class AlbumViewer extends Sprite
             _flickr.photosets.getPhotos(_setId);
 
         } else if (_userId != null) {
-            _flickr.people.getPublicPhotos(_userId);
+            _flickr.people.getPublicPhotos(_userId, "", RESULTS_PER_PAGE, _nextPage);
         }
     }
 
@@ -299,8 +302,14 @@ public class AlbumViewer extends Sprite
         }
 
         // save the metadata about photos
-        // TODO: evt.data.photos == PagedPhotoList;
-        _ourPhotos = evt.data.photos.photos;
+        var list :PagedPhotoList = evt.data.photos as PagedPhotoList;
+        _ourPhotos = list.photos;
+        if (list.pages > _nextPage) {
+            _nextPage++;
+        } else {
+            _nextPage = 1;
+        }
+
         getNextPhotoUrl();
     }
 
@@ -485,6 +494,9 @@ public class AlbumViewer extends Sprite
 
     /** The photoset id we're looking for. */
     protected var _setId :String;
+
+    /** The next page of photos we should load. */
+    protected var _nextPage :int;
 
     /** A button for editing users to configure this damn thing. */
     protected var _configBtn :SimpleTextButton;
