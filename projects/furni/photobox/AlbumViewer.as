@@ -13,6 +13,7 @@ import flash.text.TextField;
 import flash.text.TextFieldType;
 
 import flash.events.Event;
+import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 
@@ -20,6 +21,8 @@ import flash.net.URLRequest;
 
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
+
+import flash.ui.Keyboard;
 
 import flash.utils.Timer;
 
@@ -52,8 +55,8 @@ public class AlbumViewer extends Sprite
         _furni = new FurniControl(this);
 
         // Set up the flickr service
-        // This is my (Ray Greenwell)'s personal Flickr key!!
-        _flickr = new FlickrService("7aa4cc43b7fd51f0f118b0022b7ab13e")
+        // This is my (Ray Greenwell)'s personal Flickr key for the AlbumViewer!! Get your own!
+        _flickr = new FlickrService("f7d0090207c8e05dbced9ba2ec206647");
         _flickr.addEventListener(FlickrResultEvent.PEOPLE_FIND_BY_USERNAME,
             handleFindUsername);
         _flickr.addEventListener(FlickrResultEvent.PEOPLE_GET_PUBLIC_PHOTOS,
@@ -184,12 +187,13 @@ public class AlbumViewer extends Sprite
         _pasteEntry.type = TextFieldType.INPUT;
         _pasteEntry.background = true;
         _pasteEntry.backgroundColor = 0xCCCCFF;
-        _pasteEntry.width = WIDTH;
         _pasteEntry.defaultTextFormat = new TextFormat(null, 16);
         _pasteEntry.text = "Wp"; // for measuring
         _pasteEntry.height = _pasteEntry.textHeight + 4;
         _pasteEntry.text = "";
-        _pasteEntry.y = _configBtn.y - _pasteEntry.height;
+        _pasteEntry.y = HEIGHT - _pasteEntry.height;
+        _pasteEntry.width = WIDTH - _configBtn.width - 1;
+        _pasteEntry.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyEntry);
         addChild(_pasteEntry);
 
         var prompt :String = "To configure this album viewer, enter a flickr username or the URL " +
@@ -208,6 +212,13 @@ public class AlbumViewer extends Sprite
         prompt += "\n\nPress the config button again when done.";
 
         setLabel(prompt);
+    }
+
+    protected function handleKeyEntry (event :KeyboardEvent) :void
+    {
+        if (event.keyCode == Keyboard.ENTER) {
+            handleConfig();
+        }
     }
 
     /**
