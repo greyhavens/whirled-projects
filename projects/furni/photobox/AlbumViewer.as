@@ -427,7 +427,7 @@ public class AlbumViewer extends Sprite
 
     protected function handleMouseRoll (event :MouseEvent) :void
     {
-        var draw :Boolean = (event == null || event.type == MouseEvent.ROLL_OVER) &&
+        var draw :Boolean = (event != null && event.type == MouseEvent.ROLL_OVER) &&
             (_photoLink != null);
 
         var g :Graphics = _overlay.graphics;
