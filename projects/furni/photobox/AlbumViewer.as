@@ -274,7 +274,10 @@ public class AlbumViewer extends Sprite
 
     protected function handleFindUsername (evt :FlickrResultEvent) :void
     {
-        if (!evt.success) {
+        if (_shutdown) {
+            return;
+
+        } else if (!evt.success) {
             handleConfig();
             setLabel("Failure identifying username [" + evt.data.error.errorMessage + "]" +
                 " Please try again.");
@@ -290,7 +293,10 @@ public class AlbumViewer extends Sprite
      */
     protected function handleGotSetPhotos (evt :FlickrResultEvent) :void
     {
-        if (!evt.success) {
+        if (_shutdown) {
+            return;
+
+        } else if (!evt.success) {
             trace("Failure looking for photos " +
                 "[" + evt.data.error.errorMessage + "]");
             return;
@@ -306,7 +312,10 @@ public class AlbumViewer extends Sprite
      */
     protected function handleGotPeoplePhotos (evt :FlickrResultEvent) :void
     {
-        if (!evt.success) {
+        if (_shutdown) {
+            return;
+
+        } else if (!evt.success) {
             trace("Failure looking for photos " +
                 "[" + evt.data.error.errorMessage + "]");
             return;
@@ -347,7 +356,10 @@ public class AlbumViewer extends Sprite
      */
     protected function handlePhotoUrlKnown (evt :FlickrResultEvent) :void
     {
-        if (!evt.success) {
+        if (_shutdown) {
+            return;
+
+        } else if (!evt.success) {
             trace("Failure getting photo sizes " +
                 "[" + evt.data.error.errorMessage + "]");
             return;
@@ -383,6 +395,10 @@ public class AlbumViewer extends Sprite
 
     protected function handleImageLoaded (event :Event) :void
     {
+        if (_shutdown) {
+            return;
+        }
+
         // swap the loaders around
         var lastLoader :Loader = _curLoader;
         _curLoader = _nextLoader;
@@ -467,7 +483,7 @@ public class AlbumViewer extends Sprite
         _photoLink = null;
         handleMouseRoll(null);
 
-        // TODO: set a flag so that we don't react to any more asynchronously arriving events
+        _shutdown = true;
     }
 
     /** The interface through which we communicate with metasoy. */
@@ -475,6 +491,9 @@ public class AlbumViewer extends Sprite
 
     /** The interface through which we make flickr API requests. */
     protected var _flickr :FlickrService;
+
+    /** If true, we're shut down and should stop doing things. */
+    protected var _shutdown :Boolean;
 
     /** The currently visible loader. */
     protected var _curLoader :Loader;
