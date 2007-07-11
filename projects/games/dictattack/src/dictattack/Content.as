@@ -160,17 +160,17 @@ public class Content
         "xxxxxxxxxxx" +
         "xxxxxxxxxxx",
 
-        ".....x....." +
         "....xxx...." +
-        "...xxxxx..." +
         "..xxxxxxx.." +
+        ".xxxxxxxxx." +
         ".xxxxxxxxx." +
         "xxxxxxxxxxx" +
+        "xxxxxxxxxxx" +
+        "xxxxxxxxxxx" +
+        ".xxxxxxxxx." +
         ".xxxxxxxxx." +
         "..xxxxxxx.." +
-        "...xxxxx..." +
-        "....xxx...." +
-        ".....x.....",
+        "....xxx....",
         ];
 
     public function Content (pack :EmbeddedSwfLoader)

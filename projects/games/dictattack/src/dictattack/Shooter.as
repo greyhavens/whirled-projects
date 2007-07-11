@@ -87,9 +87,13 @@ public class Shooter extends Sprite
 
     public function setSaucers (count :int) :void
     {
+        // out with the old
         for each (var child :MovieClip in _saucers) {
             removeChild(child);
         }
+        _saucers.length = 0;
+
+        // in with the new
         for (var ii :int = 0; ii < count; ii++) {
             var saucer :MovieClip = _content.createSaucer();
             saucer.x = _view.getBoard().getPixelSize()/2 - (saucer.width + 5) * ii;
