@@ -34,6 +34,18 @@ animation for a particular emotional state is omitted, the pet will transition
 from its current emotional state to "content" and then walk and then transition
 back to its previous emotional state's idle animation.
 
+=== Random Scene Selection ===
+
+Multiple idle or walking animations can be provided and the pet will randomly
+select from one when operating in that state. For example:
+
+playful_idle_1
+playful_idle_2
+playful_idle_3
+
+content_walking_1
+content_walking_2
+
 === Transitions ===
 
 Create transitions between emotional states for any pair of states for which a

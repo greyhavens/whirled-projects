@@ -47,7 +47,7 @@ public class Body
             } else if (scene.name.match("^[a-z]+_to_[a-z]+$")) { // state_to_state
                 _scenes.put(scene.name, new SceneList(scene.name, scene));
 
-            } else if (scene.name.match("^[a-z]+_[a-z]+_[0-9]+$")) { // state_to_action_N
+            } else if (scene.name.match("^[a-z]+_[a-z]+_[0-9]+$")) { // state_action_N
                 var idx :int = scene.name.lastIndexOf("_");
                 var key :String = scene.name.substring(0, idx);
                 var list :SceneList = (_scenes.get(key) as SceneList);
