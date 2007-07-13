@@ -36,6 +36,9 @@ import com.threerings.flash.Siner;
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 
+// TODO
+// - allow a point to be selected as a temporary mouthspot, to "throw" your voice onto
+//   another avatar
 [SWF(width="600", height="450")]
 public class Fairy extends Sprite
 {
@@ -84,7 +87,7 @@ public class Fairy extends Sprite
                 _ctrl.requestControl();
             }
 
-            _ctrl.registerStates(DEFAULT_STATE, SWIRL_STATE /*, MOTION_STATE*/);
+            _ctrl.registerStates(DEFAULT_STATE, SWIRL_STATE, MOTION_STATE);
             _ctrl.registerActions(SKYWRITE_ACTION);
         }
 
@@ -116,9 +119,9 @@ public class Fairy extends Sprite
     {
         switch (event.name) {
         case MOTION_STATE:
-            var p :Point = event.value as Point;
-            _fairy.x = p.x;
-            _fairy.y = p.y;
+            var p :Array = event.value as Array;
+            _fairy.x = Number(p[0]);
+            _fairy.y = Number(p[1]);
             break;
 
         case SKYWRITE_MSG:
@@ -133,6 +136,7 @@ public class Fairy extends Sprite
 
         switch (_state) {
         default:
+            _platform.graphics.clear();
             removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMotion);
             shutdownMotionTimer();
             // send one last update?
@@ -147,8 +151,12 @@ public class Fairy extends Sprite
         case MOTION_STATE:
             trace("Switching to motion...");
             if (_ctrl.hasControl()) {
+                _platform.graphics.beginFill(0xFFFFFF, 0);
+                _platform.graphics.drawRect(-600, -450, 1200, 900);
+                _platform.graphics.endFill();
+
                 trace("HAS got control!");
-                addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMotion);
+                _platform.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMotion);
                 if (_motionTimer == null) {
                     _motionTimer = new Timer(100);
                     _motionTimer.addEventListener(TimerEvent.TIMER, handleMotionTimer);
@@ -163,7 +171,7 @@ public class Fairy extends Sprite
 
     protected function recheckEnterFrame () :void
     {
-        if (_onStage && (_state == SWIRL_STATE)) {
+        if (_onStage && (_state == SWIRL_STATE || _state == MOTION_STATE)) {
             addEventListener(Event.ENTER_FRAME, handleFrame);
         } else {
             removeEventListener(Event.ENTER_FRAME, handleFrame);
@@ -186,6 +194,8 @@ public class Fairy extends Sprite
             var extent :Number = Math.abs(_center.value);
             _fairy.x = _swirlX.value * extent;
             _fairy.y = _swirlY.value * extent;
+        }
+        if (_state == SWIRL_STATE || _state == MOTION_STATE) {
             _platform.addChildAt(new Sparkle(_fairy.x, _fairy.y), 0);
         }
     }
@@ -200,14 +210,13 @@ public class Fairy extends Sprite
 
     protected function handleMouseMotion (event :MouseEvent) :void
     {
-        trace("Got motion point..");
-        _motionPoint = new Point(event.localX, event.localY);
+        _motionPoint = _platform.globalToLocal(new Point(event.stageX, event.stageY));
     }
 
     protected function handleMotionTimer (... ignored) :void
     {
         if (_motionPoint != null) {
-            _ctrl.sendMessage(MOTION_STATE, _motionPoint);
+            _ctrl.sendMessage(MOTION_STATE, [_motionPoint.x, _motionPoint.y]);
             _motionPoint = null;
         }
     }

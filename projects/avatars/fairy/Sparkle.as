@@ -36,11 +36,17 @@ public class Sparkle extends FrameSprite
     override protected function handleFrame (... ignored) :void
     {
         var elapsed :Number = (getTimer() - _stamp) / 1000;
-        if (elapsed > 2) {
+        if (elapsed > LIFETIME) {
             // remove ourselves, end it
             this.parent.removeChild(this);
             return;
         }
+
+//        // temp: adjust color
+//        var left :Number = (LIFETIME - elapsed) / LIFETIME;
+//        var bright :int = (0xFF * left)
+//        _color = (bright << 16) | (bright << 8) | bright;
+//        _glow.color = _color;
 
         y = _y + (10 * (elapsed * elapsed));
 
@@ -71,5 +77,7 @@ public class Sparkle extends FrameSprite
     protected var _stamp :Number;
 
     protected var _glow :GlowFilter;
+
+    protected static const LIFETIME :Number = 2; // seconds
 }
 }
