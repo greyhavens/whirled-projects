@@ -9,20 +9,16 @@ import flash.display.Loader;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 
-import flash.text.TextField;
-import flash.text.TextFieldType;
-
 import flash.events.Event;
-import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 
 import flash.net.URLRequest;
 
+import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
+import flash.text.TextFieldType;
 import flash.text.TextFormat;
-
-import flash.ui.Keyboard;
 
 import flash.utils.Timer;
 
@@ -150,7 +146,7 @@ public class AlbumViewer extends Sprite
     }
 
     /**
-     * Set the text to be displayed in a label.
+     * Set the text to be displayed in a label inside the viewer.
      */
     protected function setLabel (text :String) :void
     {
@@ -174,92 +170,72 @@ public class AlbumViewer extends Sprite
 
     protected function handleConfig (... ignored) :void
     {
-        if (_pasteEntry != null) {
-            checkPastedText()
-            removeChild(_pasteEntry);
-            _pasteEntry = null;
-            setLabel(null);
-            return;
+        setLabel(null);
+        if (_configPanel == null) {
+            _configPanel = new ConfigPanel(this, _userId, _setId);
         }
-
-        // otherwise, set up the pasteEntry
-        _pasteEntry = new TextField();
-        _pasteEntry.type = TextFieldType.INPUT;
-        _pasteEntry.background = true;
-        _pasteEntry.backgroundColor = 0xCCCCFF;
-        _pasteEntry.defaultTextFormat = new TextFormat(null, 16);
-        _pasteEntry.text = "Wp"; // for measuring
-        _pasteEntry.height = _pasteEntry.textHeight + 4;
-        _pasteEntry.text = "";
-        _pasteEntry.y = HEIGHT - _pasteEntry.height;
-        _pasteEntry.width = WIDTH - _configBtn.width - 1;
-        _pasteEntry.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyEntry);
-        addChild(_pasteEntry);
-
-        var prompt :String = "To configure this album viewer, enter a flickr username or the URL " +
-            "of a public flickr photo album. The url should be in one " +
-            "of the following formats: http://www.flickr.com/photos/[userId]/ or " +
-            "http://www.flickr.com/photos/[userId]/sets/[photoSetId]/.";
-
-        if (_userId != null) {
-            prompt += "\n\nCurrently displaying userId=" + _userId;
-            if (_setId != null) {
-                prompt += ", setId=" + _setId;
+        if (!_configPanel.stage) {
+            if (_furni.isConnected()) {
+                _furni.showPopup("Configure the album viewer", _configPanel, 
+                    ConfigPanel.WIDTH, _configPanel.height);
+            } else {
+                addChild(_configPanel);
             }
-            prompt += ".";
         }
-
-        prompt += "\n\nPress the config button again when done.";
-
-        setLabel(prompt);
     }
 
-    protected function handleKeyEntry (event :KeyboardEvent) :void
+    public function removeConfigPanel () :void
     {
-        if (event.keyCode == Keyboard.ENTER) {
-            handleConfig();
+        if (_furni.isConnected()) {
+            _furni.clearPopup();
+        } else {
+            removeChild(_configPanel);
         }
+    }
+
+    public function configPanelRemoved () :void
+    {
+        _configPanel = null;
     }
 
     /**
-     * @return true if the pasteEntry should be removed.
+     * @return true if the configPanel should be removed.
      */
-    protected function checkPastedText () :void
+    public function checkPastedText (text :String) :Boolean
     {
-        var text :String = _pasteEntry.text;
         // if there's no text, just stop configuring
         if (text == "") {
-            return;
+            return true;
         }
 
         var result :Object;
         result = (new RegExp("flickr\\.com/photos/([^/]+)/sets/([^/]+)")).exec(text);
         if (result) {
             configureSource(result[1], result[2]);
-            return;
+            return true;
         }
 
         result = (new RegExp("flickr\\.com/photos/(.+?)\\@(...)/?$")).exec(text);
         if (result) {
             configureSource(result[1] + "@" + result[2]);
-            return;
+            return true;
         }
 
         result = (new RegExp("flickr\\.com/photos/([^/]*)")).exec(text);
         if (result) {
             _flickr.people.findByUsername(result[1]);
-            return;
+            return false;
         }
 
         result = (new RegExp("^(.+?)\\@(...)$")).exec(text);
         if (result) {
             configureSource(result[1] + "@" + result[2]);
-            return;
+            return true;
         }
 
         // otherwise, assume it's a username
         _flickr.people.findByUsername(text);
-        return;
+        return false;
     }
 
     protected function findPhotos () :void
@@ -278,13 +254,12 @@ public class AlbumViewer extends Sprite
             return;
 
         } else if (!evt.success) {
-            handleConfig();
-            setLabel("Failure identifying username [" + evt.data.error.errorMessage + "]" +
-                " Please try again.");
+            _configPanel.setLabel("Failure identifying username " +
+                "[" + evt.data.error.errorMessage + "] Please try again.");
             return;
         }
 
-        setLabel(null);
+        removeConfigPanel();
         configureSource(evt.data.user.nsid);
     }
 
@@ -536,5 +511,115 @@ public class AlbumViewer extends Sprite
 
     /** The place where a configuring user enters the flickr URL. */
     protected var _pasteEntry :TextField;
+
+    protected var _configPanel :ConfigPanel;
 }
+}
+
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+
+import flash.events.Event;
+import flash.events.KeyboardEvent;
+import flash.events.MouseEvent;
+
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFieldType;
+import flash.text.TextFormat;
+
+import flash.ui.Keyboard;
+
+import com.threerings.flash.SimpleTextButton;
+
+class ConfigPanel extends Sprite
+{
+    public static const WIDTH :int = 350;
+
+    public function ConfigPanel (av :AlbumViewer, userId :String, setId :String)
+    {
+        _av = av;
+
+        var okBtn :SimpleTextButton = new SimpleTextButton("OK");
+        okBtn.x = WIDTH - okBtn.width;
+        okBtn.addEventListener(MouseEvent.CLICK, checkEntry);
+        addChild(okBtn);
+
+        // set up the pasteEntry
+        _pasteEntry = new TextField();
+        _pasteEntry.type = TextFieldType.INPUT;
+        _pasteEntry.defaultTextFormat = new TextFormat(null, 16);
+        _pasteEntry.text = "Wp"; // for measuring
+        _pasteEntry.height = _pasteEntry.textHeight + 4;
+        _pasteEntry.text = "";
+        _pasteEntry.width = WIDTH - (okBtn.width + 5);
+        _pasteEntry.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyEntry);
+
+        // add a skin for the text entry area
+        var entrySkin :DisplayObject = DisplayObject(new ENTRY_SKIN());
+        entrySkin.width = _pasteEntry.width;
+        entrySkin.height = _pasteEntry.height;
+        addChild(entrySkin);
+        addChild(_pasteEntry);
+
+        // create the label
+        _label = new TextField();
+        _label.background = true;
+        _label.backgroundColor = 0xFFFFFF;
+        _label.autoSize = TextFieldAutoSize.LEFT;
+        _label.wordWrap = true;
+        _label.defaultTextFormat = new TextFormat(null, 16);
+        _label.width = WIDTH;
+        _label.y = Math.max(_pasteEntry.height, okBtn.height) + 1;
+        addChild(_label);
+
+        var prompt :String = "To configure this album viewer, enter a flickr username or the URL " +
+            "of a public flickr photo album. The url should be in one " +
+            "of the following formats: http://www.flickr.com/photos/[userId]/ or " +
+            "http://www.flickr.com/photos/[userId]/sets/[photoSetId]/.";
+        if (userId != null) {
+            prompt += "\n\nCurrently displaying userId=" + userId;
+            if (setId != null) {
+                prompt += ", setId=" + setId;
+            }
+            prompt += ".";
+        }
+        setLabel(prompt);
+
+        // listen for the end..
+        addEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
+    }
+
+    public function setLabel (text :String) :void
+    {
+        _label.text = text;
+        _label.height = _label.textHeight + 4;
+    }
+
+    protected function handleKeyEntry (event :KeyboardEvent) :void
+    {
+        if (event.keyCode == Keyboard.ENTER) {
+            checkEntry();
+        }
+    }
+
+    protected function checkEntry (... ignored) :void
+    {
+        if (_av.checkPastedText(_pasteEntry.text)) {
+            _av.removeConfigPanel();
+        }
+    }
+
+    protected function handleRemovedFromStage (event :Event) :void
+    {
+        _av.configPanelRemoved();
+    }
+
+    protected var _av :AlbumViewer;
+
+    protected var _label :TextField;
+    protected var _pasteEntry :TextField;
+
+    [Embed(source="skins.swf#textbox")]
+    protected const ENTRY_SKIN :Class;
 }
