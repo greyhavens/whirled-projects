@@ -147,12 +147,8 @@ public class DictionaryAttack extends Sprite
             }
         }
 
-        var award :int = int(factor * _control.getAvailableFlow());
+        var award :int = _control.grantFlowAward(factor * 100);
         Log.getLog(this).info("Factor: " + factor + " award: " + award);
-        if (award > 0) {
-            _control.awardFlow(award);
-        }
-
         _view.gameDidEnd(award);
     }
 

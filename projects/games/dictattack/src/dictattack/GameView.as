@@ -75,8 +75,9 @@ public class GameView extends Sprite
         var mypidx :int = _control.isConnected() ? _control.seating.getMyPosition() : 0;
         var psize :int = Content.BOARD_BORDER * 2 + _board.getPixelSize();
         for (var pidx :int = 0; pidx < playerCount; pidx++) {
-            // the board is rotated so that our position is always at the bottom
-            var posidx :int = POS_MAP[mypidx][pidx];
+            // the board is rotated so that our position is always at the bottom (if we're a
+            // non-player use position 0)
+            var posidx :int = POS_MAP[Math.max(mypidx, 0)][pidx];
             var shooter :Shooter = new Shooter(this, _content, posidx, pidx, isMulti);
             shooter.x = SHOOTER_X[posidx] * psize;
             shooter.y = SHOOTER_Y[posidx] * psize;

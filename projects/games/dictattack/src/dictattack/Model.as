@@ -45,6 +45,11 @@ public class Model
         _control = control;
         _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
         _control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
+
+        // if we're already in play, load up the board immediately
+        if (_control.isConnected() && _control.isInPlay()) {
+            gotBoard();
+        }
     }
 
     /**
@@ -145,7 +150,7 @@ public class Model
         if (_control.amInControl()) {
             var pcount :int = _control.seating.getPlayerIds().length;
             _control.set(POINTS, new Array(pcount).map(function (): int { return 0; }));
-            _control.getDictionaryLetterSet(Content.LOCALE, _size*_size, gotBoard);
+            _control.getDictionaryLetterSet(Content.LOCALE, _size*_size, gotLetterSet);
         }
     }
 
@@ -440,7 +445,7 @@ public class Model
         }
     }
 
-    protected function gotBoard (letters :Array) :void
+    protected function gotLetterSet (letters :Array) :void
     {
         var patterns :Array = isMultiPlayer() ? Content.BOARDS_MULTI : Content.BOARDS_SINGLE;
         var pattern :String = patterns[_rando.nextInt(patterns.length)] as String;
@@ -471,15 +476,20 @@ public class Model
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
         if (event.name == Model.BOARD_DATA && event.index == -1) {
-            var data :Array = (event.newValue as Array);
-            _letterCount = 0;
-            for each (var letter :String in data) {
-                if (letter != BLANK) {
-                    _letterCount++;
-                }
-            }
-            Log.getLog(this).info("Board has " + _letterCount + " letters.");
+            gotBoard();
         }
+    }
+
+    protected function gotBoard () :void
+    {
+        var data :Array = (_control.get(BOARD_DATA) as Array);
+        _letterCount = 0;
+        for each (var letter :String in data) {
+            if (letter != BLANK) {
+                _letterCount++;
+            }
+        }
+        Log.getLog(this).info("Board has " + _letterCount + " letters.");
     }
 
     /**

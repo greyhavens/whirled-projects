@@ -43,6 +43,11 @@ public class Board extends Sprite
 
         // listen for property changed events
         _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
+
+        // if we're already in play, load up the board immediately
+        if (_control.isInPlay()) {
+            gotBoard();
+        }
     }
 
     /**
