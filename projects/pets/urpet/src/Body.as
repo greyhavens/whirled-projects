@@ -89,7 +89,7 @@ public class Body
      */
     public function switchToState (state :String) :void
     {
-        log.info("Changing state from " + _state + " to " + state + ".");
+        debugMessage("I'm transitioning to '" + _state.name + "'.");
 
         // queue our transition animation (direct if we have one, through 'content' if we don't)
         var direct :SceneList = (_scenes.get(_state + "_to_" + state) as SceneList);
@@ -184,14 +184,14 @@ public class Body
             return;
 
         } else if (_playing == null || force) {
-            log.info("Switching immediately to " + scene.name + ".");
+            debugMessage("Switching immediately to " + scene.name + ".");
             _sceneQueue.length = 0;
             _playing = scene;
             _playing.updateScene();
             _media.gotoAndPlay(1, _playing.current.name);
 
         } else {
-            log.info("Queueing " + scene.name + ".");
+            debugMessage("Queueing " + scene.name + ".");
             _sceneQueue.push(scene);
         }
     }
@@ -211,6 +211,15 @@ public class Body
             log.warning("Unable to find scene [state=" + _state + ", action=" + action + "].");
         }
         return scene;
+    }
+
+    protected function debugMessage (message :String) :void
+    {
+        if (Body.debug && _ctrl.isConnected()) {
+            _ctrl.sendChatMessage(message);
+        } else {
+            log.info(message);
+        }
     }
 
     protected var _ctrl :PetControl;

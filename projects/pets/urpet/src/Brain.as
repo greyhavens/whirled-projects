@@ -22,13 +22,6 @@ public class Brain
     /** Used to enable debugging feedback. */
     public static var debug :Boolean = false;
 
-    public function debugMessage (message :String) :void
-    {
-        if (debug && _ctrl.isConnected()) {
-            _ctrl.sendChatMessage(message);
-        }
-    }
-
     /**
      * Creates a brain that will use the supplied control to interact with the Whirled and will
      * control the supplied body.
@@ -79,7 +72,6 @@ public class Brain
     protected function stateChanged (event :ControlEvent) :void
     {
         _state = State.getState(_ctrl.getState());
-        debugMessage("I switched to '" + _state.name + "'.");
         _body.switchToState(_state.name);
     }
 
@@ -120,6 +112,15 @@ public class Brain
             return State.CONTENT;
         }
         return (avail[_rando.nextInt(avail.length)] as State);
+    }
+
+    protected function debugMessage (message :String) :void
+    {
+        if (debug && _ctrl.isConnected()) {
+            _ctrl.sendChatMessage(message);
+        } else {
+            log.info(message);
+        }
     }
 
     protected var _ctrl :PetControl;
