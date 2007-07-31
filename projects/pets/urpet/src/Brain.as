@@ -19,6 +19,16 @@ public class Brain
     /** Use this to log things. */
     public static var log :Log = Log.getLog(Brain);
 
+    /** Used to enable debugging feedback. */
+    public static var debug :Boolean = false;
+
+    public function debugMessage (message :String) :void
+    {
+        if (debug && _ctrl.isConnected()) {
+            _ctrl.sendChatMessage(message);
+        }
+    }
+
     /**
      * Creates a brain that will use the supplied control to interact with the Whirled and will
      * control the supplied body.
@@ -36,6 +46,7 @@ public class Brain
         // animation for them (and ideally a transition to and from content)
         for each (var state :State in State.enumerateStates()) {
             if (_body.supportsState(state.name)) {
+                debugMessage("I can do '" + state.name + "'.");
                 _states.put(state.name, state);
             }
         }
@@ -53,6 +64,7 @@ public class Brain
             log.warning("Requested to switch to unsupported state " + state + ".");
             state = State.CONTENT; // fall back to contented
         }
+        debugMessage("I'm switching to '" + state.name + "'.");
         _ctrl.setState(state.name);
     }
 
@@ -67,6 +79,7 @@ public class Brain
     protected function stateChanged (event :ControlEvent) :void
     {
         _state = State.getState(_ctrl.getState());
+        debugMessage("I switched to '" + _state.name + "'.");
         _body.switchToState(_state.name);
     }
 
