@@ -47,14 +47,23 @@ public class Body
             } else if (scene.name.match("^[a-z]+_to_[a-z]+$")) { // state_to_state
                 _scenes.put(scene.name, new SceneList(scene.name, scene));
 
-            } else if (scene.name.match("^[a-z]+_[a-z]+_[0-9]+$")) { // state_action_N
+            } else if (scene.name.match("^[a-z]+_[a-z]+_[0-9]+(:[0-9]+)?$")) { // state_action_N:W
                 var idx :int = scene.name.lastIndexOf("_");
                 var key :String = scene.name.substring(0, idx);
+                var bits :String = scene.name.substring(idx+1);
+
+                // see if we have a weight specification
+                var weight :int = 1;
+                var cidx :int = bits.indexOf(":");
+                if (cidx != -1) {
+                    weight = int(bits.substring(cidx+1));
+                }
+
                 var list :SceneList = (_scenes.get(key) as SceneList);
                 if (list == null) {
-                    _scenes.put(key, new SceneList(key, scene));
+                    _scenes.put(key, new SceneList(key, scene, weight));
                 } else {
-                    list.addScene(scene);
+                    list.addScene(scene, weight);
                 }
 
             } else {
@@ -89,7 +98,7 @@ public class Body
      */
     public function switchToState (state :String) :void
     {
-        debugMessage("I'm transitioning to '" + _state.name + "'.");
+        debugMessage("I'm transitioning to '" + state + "'.");
 
         // queue our transition animation (direct if we have one, through 'content' if we don't)
         var direct :SceneList = (_scenes.get(_state + "_to_" + state) as SceneList);
@@ -215,7 +224,7 @@ public class Body
 
     protected function debugMessage (message :String) :void
     {
-        if (Body.debug && _ctrl.isConnected()) {
+        if (Brain.debug && _ctrl.isConnected()) {
             _ctrl.sendChatMessage(message);
         } else {
             log.info(message);
@@ -248,23 +257,36 @@ class SceneList
         return (_scenes[_curidx] as Scene);
     }
 
-    public function SceneList (name :String, scene :Scene)
+    public function SceneList (name :String, scene :Scene, weight :int = 1)
     {
         this.name = name;
-        addScene(scene);
+        addScene(scene, weight);
     }
 
-    public function addScene (scene :Scene) :void
+    public function addScene (scene :Scene, weight :int = 1) :void
     {
         _scenes.push(scene);
+        _weights.push(weight);
+        _totalWeight += weight;
     }
 
     public function updateScene () :void
     {
-        _curidx = _rando.nextInt(_scenes.length);
+        var value :int = _rando.nextInt(_totalWeight);
+        for (var ii :int = 0; ii < _scenes.length; ii++) {
+            if (value < int(_weights[ii])) {
+                _curidx == ii;
+                return;
+            }
+            value -= int(_weights[ii]);
+        }
     }
 
     protected var _curidx :int;
+
     protected var _scenes :Array = new Array();
+    protected var _weights :Array = new Array();
+    protected var _totalWeight :int = 0;
+
     protected var _rando :Random = new Random();
 }
