@@ -28,6 +28,7 @@ public class Brain
         _ctrl = ctrl;
         _body = body;
 
+        _ctrl.addEventListener(ControlEvent.STATE_CHANGED, stateChanged);
         _ctrl.addEventListener(TimerEvent.TIMER, tick);
         _ctrl.setTickInterval(3000);
 
@@ -39,8 +40,8 @@ public class Brain
             }
         }
 
-        // start in the 'content' state
-        switchToState(State.CONTENT);
+        // start in our current state
+        stateChanged(null);
     }
 
     /**
@@ -52,9 +53,7 @@ public class Brain
             log.warning("Requested to switch to unsupported state " + state + ".");
             state = State.CONTENT; // fall back to contented
         }
-
-        _state = state;
-        _body.switchToState(_state.name);
+        _ctrl.setState(state.name);
     }
 
     /**
@@ -63,6 +62,12 @@ public class Brain
     public function shutdown () :void
     {
         // nada for now
+    }
+
+    protected function stateChanged (event :ControlEvent) :void
+    {
+        _state = State.getState(_ctrl.getState());
+        _body.switchToState(_state.name);
     }
 
     protected function tick (event :TimerEvent) :void

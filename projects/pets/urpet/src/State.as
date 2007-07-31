@@ -25,7 +25,7 @@ public class State
      */
     public static function getState (name :String) :State
     {
-        return (_states.get(name) as State);
+        return (name == null) ? CONTENT : (_states.get(name) as State);
     }
 
     /**
