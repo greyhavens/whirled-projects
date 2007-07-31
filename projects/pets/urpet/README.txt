@@ -91,11 +91,14 @@ pose to a sleeping neutral pose, sleeping_idle would start and end with the
 sleeping neutral pose, then sleeping_to_content would switch back from the
 sleeping neutral pose to the content neutral pose.
 
-=== TODO ===
+=== ActionScript ===
 
-* info on setting up the FAT project
-* adding class paths, etc.
-* put all this in the Wiki
+Add two paths to your project path:
+
+whirled\src\as
+whirled\projects\pets\urpet\src
+
+Create a scene and place the following ActionScript code in it:
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
@@ -119,3 +122,9 @@ function handleUnload (... ignored) :void
 var _ctrl :PetControl;
 var _body :Body;
 var _brain :Brain;
+
+=== TODO ===
+
+* more info on setting up the FAT project
+* adding class paths, etc.
+* put all this in the Wiki
