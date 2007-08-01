@@ -8,9 +8,7 @@ import flash.net.URLRequest;
 
 import flash.utils.Dictionary;
 
-import com.adobe.webapis.URLLoaderBase;
-
-public class NOAAWeatherService // extends URLLoaderBase
+public class NOAAWeatherService
 {
     /** Downlaod the directory. */
     public function getDirectory (hollaback :Function) :void
