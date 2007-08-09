@@ -34,7 +34,7 @@ public class Sally extends Sprite
         addChild(_media = media);
 
         _ctrl = new PetControl(this);
-        _body = new Body(_ctrl, _media);
+        _body = new Body(_ctrl, _media, 350);
         _brain = new Brain(_ctrl, _body);
     }
 
