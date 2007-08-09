@@ -45,6 +45,7 @@ public class Body
 
         // we'll keep track of all known states and actions
         var states :Array = [];
+        var actions :Array = [];
 
         // map our scenes by name; we support the following types of scenes:
         // (state|action)_NAME_(idle|walk)(_N:W)
@@ -52,7 +53,7 @@ public class Body
         for each (var scene :Scene in _media.scenes) {
             var bits :Array = scene.name.split("_");
             if (bits.length < 2) {
-                log.warning("Unknown scene type: " + scene.name);
+                log.warning("Invalid scene name: " + scene.name);
                 continue;
             }
 
@@ -80,10 +81,13 @@ public class Body
             var name :String = String(bits[1]);
             if (type == "action") {
                 key = type + "_" + name;
+                if (actions.indexOf(name) == -1) {
+                    actions.push(name);
+                }
 
             } else if (type == "state") {
                 if (bits.length < 3) {
-                    log.warning("Invalid state scene name: " + scene.name);
+                    log.warning("State scene missing mode ('walk' or 'idle'): " + scene.name);
                     continue;
                 }
                 var mode :String = String(bits[2]);
@@ -92,6 +96,13 @@ public class Body
                     continue;
                 }
                 key = type + "_" + name + "_" + mode;
+                if (states.indexOf(name) == -1) {
+                    states.push(name);
+                }
+
+            } else {
+                log.warning("Scene should start with 'state' or 'action': " + scene.name);
+                continue;
             }
 
             log.info("Registering scene " + key + " [weight=" + weight + ", num=" + number + "].");
@@ -101,6 +112,13 @@ public class Body
             } else {
                 list.addScene(scene, weight);
             }
+        }
+
+        if (actions.length > 0) {
+            _ctrl.registerActions(actions);
+        }
+        if (states.length > 0) {
+            _ctrl.registerStates(states);
         }
     }
 
