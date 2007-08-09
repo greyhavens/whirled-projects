@@ -38,8 +38,12 @@ public class Body
         // register to hear when we start and stop walking
         _ctrl = ctrl;
         _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, appearanceChanged);
-        _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, actionTriggered);
-        _ctrl.addEventListener(ControlEvent.STATE_CHANGED, stateChanged);
+        _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, function (event :ControlEvent) :void {
+            triggerAction(event.name);
+        });
+        _ctrl.addEventListener(ControlEvent.STATE_CHANGED, function (event :ControlEvent) :void {
+            switchToState(event.name);
+        });
 
         // register a frame callback so that we can manage our animations
         _media = media;
@@ -132,7 +136,7 @@ public class Body
      */
     public function switchToState (state :String) :void
     {
-        debugMessage("I'm transitioning to '" + state + "'.");
+        log.info("I'm transitioning to '" + state + "'.");
 
         // transtion from our current state to the new state
         queueTransitions(_state, state);
@@ -148,7 +152,7 @@ public class Body
      */
     public function triggerAction (action :String) :void
     {
-        debugMessage("I'm triggering action '" + action + "'.");
+        log.info("I'm triggering action '" + action + "'.");
 
         // transition from our current state to the action
         queueTransitions(_state, action);
@@ -226,17 +230,6 @@ public class Body
         queueScene(findStateScene(_ctrl.isMoving() ? "walk" : "idle"), true);
     }
 
-    protected function actionTriggered (event :ControlEvent) :void
-    {
-        switch (event.name) {
-        }
-    }
-
-    protected function stateChanged (event :ControlEvent) :void
-    {
-        switchToState(event.name);
-    }
-
     /**
      * Queues animations that transition between the specified states/actions. If a direct
      * transition is available, it will be used, otherwise we transition through "default".
@@ -264,14 +257,14 @@ public class Body
             return;
 
         } else if (_playing == null || force) {
-            debugMessage("Switching immediately to " + scene.name + ".");
+            log.info("Switching immediately to " + scene.name + ".");
             _sceneQueue.length = 0;
             _playing = scene;
             _playing.updateScene();
             _media.gotoAndPlay(1, _playing.current.name);
 
         } else {
-            debugMessage("Queueing " + scene.name + ".");
+            log.info("Queueing " + scene.name + ".");
             _sceneQueue.push(scene);
         }
     }
@@ -293,14 +286,9 @@ public class Body
         return scene;
     }
 
-	protected function getScene (key :String) :SceneList
-	{
-		return _scenes.get(key.toLowerCase()) as SceneList;
-	}
-
-	protected function debugMessage (message :String) :void
+    protected function getScene (key :String) :SceneList
     {
-        log.info(message);
+        return _scenes.get(key.toLowerCase()) as SceneList;
     }
 
     protected var _ctrl :AvatarControl;
