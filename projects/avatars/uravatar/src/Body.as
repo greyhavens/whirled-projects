@@ -30,8 +30,10 @@ public class Body
      * use the supplied control to adjust the avatar's attachment to the floor (hotspot). The
      * caller should attach the supplied media to the display hierarchy, the body will simply
      * select scenes in the supplied MovieClip.
+     *
+     * @param width the width of the "stage" on which your MovieClip was built.
      */
-    public function Body (ctrl :AvatarControl, media :MovieClip)
+    public function Body (ctrl :AvatarControl, media :MovieClip, width :int)
     {
         // register to hear when we start and stop walking
         _ctrl = ctrl;
@@ -42,6 +44,7 @@ public class Body
         // register a frame callback so that we can manage our animations
         _media = media;
         _media.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+        _mediaWidth = width;
 
         // we'll keep track of all known states and actions
         var states :Array = [];
@@ -211,7 +214,7 @@ public class Body
     {
         var orient :Number = _ctrl.getOrientation();
         if (orient < 180) {
-            _media.x = 200;
+            _media.x = _mediaWidth;
             _media.scaleX = -1;
         } else {
             _media.x = 0;
@@ -303,6 +306,7 @@ public class Body
     protected var _ctrl :AvatarControl;
     protected var _media :MovieClip;
     protected var _center :DisplayObject;
+    protected var _mediaWidth :int;
 
     protected var _scenes :HashMap = new HashMap();
     protected var _rando :Random = new Random();

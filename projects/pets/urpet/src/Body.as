@@ -27,8 +27,10 @@ public class Body
      * the supplied control to adjust the pet's attachment to the floor (hotspot). The caller
      * should attach the supplied media to the display hierarchy, the body will simply select
      * scenes in the supplied MovieClip.
+     *
+     * @param width the width of the "stage" on which your MovieClip was built.
      */
-    public function Body (ctrl :PetControl, media :MovieClip)
+    public function Body (ctrl :PetControl, media :MovieClip, width :int)
     {
         // register to hear when we start and stop walking
         _ctrl = ctrl;
@@ -37,6 +39,7 @@ public class Body
         // register a frame callback so that we can manage our animations
         _media = media;
         _media.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+        _mediaWidth = width;
 
         // map our scenes by name
         for each (var scene :Scene in _media.scenes) {
@@ -171,7 +174,7 @@ public class Body
     {
         var orient :Number = _ctrl.getOrientation();
         if (orient < 180) {
-            _media.x = 350; // TODO
+            _media.x = _mediaWidth;
             _media.scaleX = -1;
         } else {
             _media.x = 0;
@@ -234,6 +237,7 @@ public class Body
     protected var _ctrl :PetControl;
     protected var _media :MovieClip;
     protected var _center :DisplayObject;
+    protected var _mediaWidth :int;
 
     protected var _scenes :HashMap = new HashMap();
     protected var _rando :Random = new Random();
