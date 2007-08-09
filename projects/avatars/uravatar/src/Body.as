@@ -1,4 +1,4 @@
-//
+﻿//
 // $Id$
 
 package {
@@ -58,7 +58,7 @@ public class Body
             }
 
             if (bits.length == 3 && String(bits[1]) == "to") { // NAME_to_NAME
-                _scenes.put(scene.name, new SceneList(scene.name, scene));
+                _scenes.put(scene.name.toLowerCase(), new SceneList(scene.name, scene));
                 continue;
             }
 
@@ -106,9 +106,9 @@ public class Body
             }
 
             log.info("Registering scene " + key + " [weight=" + weight + ", num=" + number + "].");
-            var list :SceneList = (_scenes.get(key) as SceneList);
+            var list :SceneList = getScene(key);
             if (list == null) {
-                _scenes.put(key, new SceneList(key, scene, weight));
+                _scenes.put(key.toLowerCase(), new SceneList(key, scene, weight));
             } else {
                 list.addScene(scene, weight);
             }
@@ -120,6 +120,8 @@ public class Body
         if (states.length > 0) {
             _ctrl.registerStates(states);
         }
+
+		switchToState("default");
     }
 
     /**
@@ -134,7 +136,8 @@ public class Body
         // update our internal state variable
         _state = state;
         // queue our new idle animation
-        queueScene(findStateScene("idle"));
+//        queueScene(findStateScene("idle"));
+        queueScene(findStateScene("walk"));
     }
 
     /**
@@ -147,7 +150,7 @@ public class Body
         // transition from our current state to the action
         queueTransitions(_state, action);
         // play the action animation
-        queueScene(_scenes.get("action_" + action));;
+        queueScene(getScene("action_" + action));
         // then transition back to our current state
         queueTransitions(action, _state);
     }
@@ -208,7 +211,7 @@ public class Body
     {
         var orient :Number = _ctrl.getOrientation();
         if (orient < 180) {
-            _media.x = 350; // TODO
+            _media.x = 200;
             _media.scaleX = -1;
         } else {
             _media.x = 0;
@@ -238,13 +241,13 @@ public class Body
     protected function queueTransitions (from :String, to :String) :void
     {
         // queue our transition animation (direct if we have one, through 'default' if we don't)
-        var direct :SceneList = (_scenes.get(from + "_to_" + to) as SceneList);
+        var direct :SceneList = getScene(from + "_to_" + to);
         if (direct != null) {
             queueScene(direct);
         } else {
             // TODO: if we lack one or both of these, should we do anything special?
-            queueScene(_scenes.get(from + "_to_default") as SceneList);
-            queueScene(_scenes.get("default_to_" + to) as SceneList);
+            queueScene(getScene(from + "_to_default"));
+            queueScene(getScene("default_to_" + to));
         }
     }
 
@@ -277,9 +280,9 @@ public class Body
      */
     protected function findStateScene (action :String) :SceneList
     {
-        var scene :SceneList = (_scenes.get(_state + "_" + action) as SceneList);
+        var scene :SceneList = getScene("state_" + _state + "_" + action);
         if (scene == null) {
-            scene = (_scenes.get("default_" + action) as SceneList);
+            scene = getScene("state_default_" + action);
         }
         if (scene == null) {
             log.warning("Unable to find scene [state=" + _state + ", action=" + action + "].");
@@ -287,13 +290,14 @@ public class Body
         return scene;
     }
 
-    protected function debugMessage (message :String) :void
+	protected function getScene (key :String) :SceneList
+	{
+		return _scenes.get(key.toLowerCase()) as SceneList;
+	}
+
+	protected function debugMessage (message :String) :void
     {
-        if (debug && _ctrl.isConnected()) {
-            _ctrl.sendChatMessage(message);
-        } else {
-            log.info(message);
-        }
+        log.info(message);
     }
 
     protected var _ctrl :AvatarControl;
