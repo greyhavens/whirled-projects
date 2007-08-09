@@ -143,8 +143,7 @@ public class Body
         // update our internal state variable
         _state = state;
         // queue our new idle animation
-//        queueScene(findStateScene("idle"));
-        queueScene(findStateScene("walk"));
+        queueScene(findStateScene("idle"));
     }
 
     /**
