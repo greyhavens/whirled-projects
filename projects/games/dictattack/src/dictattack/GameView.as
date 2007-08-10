@@ -17,6 +17,9 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
+import mx.containers.VBox;
+import mx.controls.Button;
+
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.PropertyChangedEvent;
 
@@ -96,41 +99,38 @@ public class GameView extends Sprite
         addChild(marquee);
 
         if (_control.isConnected()) {
-            var help :TextField = new TextField();
-            help.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF));
-            help.x = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
-            help.y = 50;
-            help.autoSize = TextFieldAutoSize.LEFT;
-            help.wordWrap = true;
-            help.width = HELP_WIDTH;
-            var htext :String = HELP_CONTENTS;
-            if (isMultiPlayer()) {
-                htext += HELP_MULTI.replace(
-                    "MINLEN", _model.getMinWordLength()).replace(
-                        "POINTS", _model.getWinningPoints()).replace(
-                            "ROUNDS", _model.getWinningScore());
-            } else {
-                htext += HELP_SINGLE.replace(
-                    "MINLEN", _model.getMinWordLength());
-            }
-            help.htmlText = htext;
-            addChild(help);
+            // create our sidebar
+            var sidebar :VBox = new VBox();
+            sidebar.x = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
+            sidebar.y = 5;
+            sidebar.width = 250;
+            sidebar.height = 300;
+            addChild(sidebar);
+
+            var help :Button = new Button();
+            help.label = "How to Play";
+            help.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+                showHelp();
+            });
+//             help.x = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
+//             help.y = 50;
+            sidebar.addChild(help);
 
             _hiscores = new TextField();
             _hiscores.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF));
-            _hiscores.x = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
-            _hiscores.y = help.y + help.height + 10;
+//             _hiscores.x = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
+//             _hiscores.y = help.y + help.height + 10;
             _hiscores.autoSize = TextFieldAutoSize.LEFT;
             _hiscores.width = HELP_WIDTH;
-            addChild(_hiscores);
+            sidebar.addChild(_hiscores);
 
             // relocate the chat view out of the way
             var bsize :int = Content.BOARD_BORDER * 2 + _board.getPixelSize();
             var bounds :Rectangle = _control.getStageBounds();
             bounds.x = bsize;
-            bounds.y = bounds.height - CHAT_HEIGHT;
+            bounds.y = sidebar.y + 10;
             bounds.width -= bsize;
-            bounds.height = CHAT_HEIGHT;
+            bounds.height = bounds.height - sidebar.height - 15;
             _control.setChatBounds(bounds);
         }
     }
@@ -259,9 +259,6 @@ public class GameView extends Sprite
 
     protected function showGameOver (flow :int) :void
     {
-        var overifc :Sprite = new Sprite();
-        var border: int = 5;
-
         var text :TextField = new TextField();
         text.autoSize = TextFieldAutoSize.LEFT;
         text.selectable = false;
@@ -269,44 +266,58 @@ public class GameView extends Sprite
         text.embedFonts = true;
         text.gridFitType = GridFitType.PIXEL;
         text.sharpness = 400;
-        text.x = border;
-        text.y = border;
 
         var msg :String = "Game over!";
         if (flow > 0) {
             msg += "\nYou earned " + flow + " flow!";
         }
         text.text = msg;
-        overifc.addChild(text);
+
+        var overifc :Dialog = new Dialog(text);
 
         var restart :SimpleButton = _content.makeButton("Play Again");
-        restart.x = border;
-        restart.y = border + text.height + border;
         restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             removeChild(overifc);
             _control.playerReady();
         });
-        overifc.addChild(restart);
+        overifc.addButton(restart, Dialog.LEFT);
 
         var leave :SimpleButton = _content.makeButton("To Whirled");
-        leave.y = border + text.height + border;
-        leave.x = border + text.width - leave.width;
         leave.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             removeChild(overifc);
             _control.backToWhirled();
         });
-        overifc.addChild(leave);
+        overifc.addButton(leave, Dialog.RIGHT);
 
-        // draw a border around our window
-        var g :Graphics = overifc.graphics;
-        g.beginFill(uint(0x333333));
-        g.lineStyle(2, 0xCCCCCC);
-        g.drawRect(0, 0, overifc.width + 2*border, overifc.height + 2*border);
-        g.endFill();
+        overifc.show(this);
+    }
 
-        overifc.x = Content.BOARD_BORDER + (_board.getPixelSize() - overifc.width)/2;
-        overifc.y = Content.BOARD_BORDER + (_board.getPixelSize() - overifc.height)/2;
-        addChild(overifc);
+    protected function showHelp () :void
+    {
+        var help :TextField = new TextField();
+        help.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF));
+        help.autoSize = TextFieldAutoSize.LEFT;
+        help.wordWrap = true;
+        help.width = HELP_WIDTH;
+        var htext :String = HELP_CONTENTS;
+        if (isMultiPlayer()) {
+            htext += HELP_MULTI.replace(
+                "MINLEN", _model.getMinWordLength()).replace(
+                    "POINTS", _model.getWinningPoints()).replace(
+                        "ROUNDS", _model.getWinningScore());
+        } else {
+            htext += HELP_SINGLE.replace(
+                "MINLEN", _model.getMinWordLength());
+        }
+        help.htmlText = htext;
+
+        var dialog :Dialog = new Dialog(help);
+        var dismiss :SimpleButton = _content.makeButton("Dismiss");
+        dismiss.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            removeChild(dialog);
+        });
+        dialog.addButton(dismiss, Dialog.CENTER);
+        dialog.show(this);
     }
 
     /**
@@ -431,19 +442,19 @@ public class GameView extends Sprite
     protected static const HELP_WIDTH :int = 300;
     protected static const HELP_CONTENTS :String = "<b>How to Play</b>\n" +
         "Make words from the row of letters along the bottom of the board.\n\n" +
-        "<font color='#0000ff'>Blue</font> squares multiply the word score by two.\n" +
-        "<font color='#ff0000'>Red</font> squares multiply the word score by three.\n" +
+        "<font color='#0000ff'><b>Blue</b></font> squares multiply the word score by two.\n" +
+        "<font color='#ff0000'><b>Red</b></font> squares multiply the word score by three.\n" +
         "Only one multiplier per word will count.\n\n";
 
     protected static const HELP_MULTI :String =
         "Minimum word length: MINLEN. The first to score POINTS points wins the round.\n\n" +
         "Win ROUNDS rounds to win the game.\n\n" +
-        "Click a flying saucer to change a letter into a wildcard if you can't find a word.";
+        "Click a flying saucer to change a letter into a wildcard (*) if you can't find a word.";
 
     protected static const HELP_SINGLE :String =
         "Minimum word length: MINLEN.\n\n" +
         "Clear the board using long words to get a high score!\n\n" +
-        "Click a flying saucer to change a letter into a wildcard if you can't find a word.";
+        "Click a flying saucer to change a letter into a wildcard (*) if you can't find a word.";
 }
 
 }

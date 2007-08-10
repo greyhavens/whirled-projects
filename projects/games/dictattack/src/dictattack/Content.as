@@ -253,15 +253,15 @@ public class Content
         var button :SimpleButton = new SimpleButton();
         var foreground :int = uint(0xFFFFFF);
         var background :int = uint(0x000000);
-        var highlight :int = uint(0x0000FF);
-        button.upState = makeFace(text, foreground, background);
-        button.overState = makeFace(text, highlight, background);
-        button.downState = makeFace(text, background, highlight);
+        var highlight :int = uint(0x888888);
+        button.upState = makeButtonFace(text, foreground, background);
+        button.overState = makeButtonFace(text, highlight, background);
+        button.downState = makeButtonFace(text, background, highlight);
         button.hitTestState = button.upState;
         return button;
     }
 
-    protected function makeFace (text :String, foreground :uint, background :uint) :Sprite
+    protected function makeButtonFace (text :String, foreground :uint, background :uint) :Sprite
     {
         var face :Sprite = new Sprite();
 
@@ -270,10 +270,7 @@ public class Content
         label.textColor = foreground;
         label.autoSize = TextFieldAutoSize.LEFT;
         label.selectable = false;
-        label.defaultTextFormat = makeMarqueeFormat(10);
-        label.embedFonts = true;
-        label.gridFitType = GridFitType.PIXEL;
-        label.sharpness = 400;
+        label.defaultTextFormat = makeInputFormat(uint(0xFFFFFF), true);
         label.text = text;
         face.addChild(label);
 

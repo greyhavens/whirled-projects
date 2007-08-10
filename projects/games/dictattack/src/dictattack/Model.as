@@ -375,7 +375,7 @@ public class Model
 
     public function updateColumnPlayable (board :Board, xx :int) :void
     {
-        if (!_control.isInPlay()) {
+        if (!_control.isConnected() || !_control.isInPlay()) {
             return;
         }
 
