@@ -22,9 +22,6 @@ public class Body
     /** Use this to log things. */
     public static var log :Log = Log.getLog(Body);
 
-    /** Used to enable debugging feedback. */
-    public static var debug :Boolean = false;
-
     /**
      * Creates a body that will manipulate the supplied MovieClip to animate the avatar. It will
      * use the supplied control to adjust the avatar's attachment to the floor (hotspot). The
@@ -32,8 +29,9 @@ public class Body
      * select scenes in the supplied MovieClip.
      *
      * @param width the width of the "stage" on which your MovieClip was built.
+     * @param height the height above the hotspot identifier to display the avatar's name.
      */
-    public function Body (ctrl :AvatarControl, media :MovieClip, width :int)
+    public function Body (ctrl :AvatarControl, media :MovieClip, width :int, height :int = -1)
     {
         // register to hear when we start and stop walking
         _ctrl = ctrl;
@@ -49,18 +47,23 @@ public class Body
         _media = media;
         _media.addEventListener(Event.ENTER_FRAME, onEnterFrame);
         _mediaWidth = width;
+        _mediaHeight = height;
 
         // we'll keep track of all known states and actions
         var states :Array = [];
         var actions :Array = [];
 
         // map our scenes by name; we support the following types of scenes:
-        // (state|action)_NAME_(idle|walk)(_N:W)
+        // (state|action)_NAME(_N:W)
+        // state_NAME_(walking|sleeping)(_N:W)
+        // state_NAME_(towalking|tosleeping|fromwalking|fromsleeping)
         // NAME_to_NAME
         for each (var scene :Scene in _media.scenes) {
             var bits :Array = scene.name.split("_");
             if (bits.length < 2) {
-                log.warning("Invalid scene name: " + scene.name);
+                if (scene.name != "main") {
+                    log.warning("Invalid scene name [scene=" + scene.name + "].");
+                }
                 continue;
             }
 
@@ -94,21 +97,22 @@ public class Body
 
             } else if (type == "state") {
                 if (bits.length < 3) {
-                    log.warning("State scene missing mode ('walk' or 'idle'): " + scene.name);
-                    continue;
+                    key = type + "_" + name;
+                } else {
+                    var mode :String = String(bits[2]);
+                    if (mode != "walking" && mode != "towalking" && mode != "fromwalking" &&
+                        mode != "sleeping" && mode != "tosleeping" && mode != "fromsleeping") {
+                        log.warning("Invalid mode [scene=" + scene.name + ", mode=" + mode + "].");
+                        continue;
+                    }
+                    key = type + "_" + name + "_" + mode;
                 }
-                var mode :String = String(bits[2]);
-                if (mode != "walk" && mode != "idle") {
-                    log.warning("Invalid state mode (must be 'walk' or 'idle'): " + scene.name);
-                    continue;
-                }
-                key = type + "_" + name + "_" + mode;
                 if (states.indexOf(name) == -1) {
                     states.push(name);
                 }
 
             } else {
-                log.warning("Scene should start with 'state' or 'action': " + scene.name);
+                log.warning("Invalid type [scene=" + scene.name + "].");
                 continue;
             }
 
@@ -128,7 +132,7 @@ public class Body
             _ctrl.registerStates(states);
         }
 
-		switchToState("default");
+        switchToState("default");
     }
 
     /**
@@ -142,8 +146,8 @@ public class Body
         queueTransitions(_state, state);
         // update our internal state variable
         _state = state;
-        // queue our new idle animation
-        queueScene(findStateScene("idle"));
+        // queue our new standing animation
+        queueScene(getScene("state_" + _state));
     }
 
     /**
@@ -159,14 +163,6 @@ public class Body
         queueScene(getScene("action_" + action));
         // then transition back to our current state
         queueTransitions(action, _state);
-    }
-
-    /**
-     * Switches to a new idle animation, remaining in the current state.
-     */
-    public function updateIdle () :void
-    {
-        queueScene(findStateScene("idle"));
     }
 
     /**
@@ -208,7 +204,7 @@ public class Body
                 _center = _media.getChildByName("ground");
             }
             if (_center != null) {
-                _ctrl.setHotSpot(_center.x, _center.y, 160);
+                _ctrl.setHotSpot(_center.x, _center.y, _mediaHeight);
             }
         }
     }
@@ -224,9 +220,32 @@ public class Body
             _media.scaleX = 1;
         }
 
-        // we force an immediate transition here because we're switching from standing to walking
-        // or vice versa which looks weird if we allow the animation to complete
-        queueScene(findStateScene(_ctrl.isMoving() ? "walk" : "idle"), true);
+        var mode :String = "";
+        if (_ctrl.isMoving()) {
+            mode = "walking";
+        } else if (_ctrl.isSleeping()) {
+            mode = "sleeping";
+        }
+        if (_mode == mode) {
+            return;
+        }
+
+        var transition :SceneList = null;
+        if (_mode == "") {
+            // if we're transitioning from standing, try a toMODE scene if we have one
+            transition = getScene("state_" + _state + "_to" + mode);
+        } else if (mode == "") {
+            // if we're transitioning to standing, try a fromMODE scene if we have one
+            transition = getScene("state_" + _state + "_from" + mode);
+        }
+        var key :String = "state_" + _state + ((mode != "") ? ("_" + mode) : "");
+        if (transition != null) {
+            queueScene(transition, true);
+            queueScene(getScene(key), false);
+        } else {
+            queueScene(getScene(key), true);
+        }
+        _mode = mode;
     }
 
     /**
@@ -293,12 +312,15 @@ public class Body
     protected var _ctrl :AvatarControl;
     protected var _media :MovieClip;
     protected var _center :DisplayObject;
+
     protected var _mediaWidth :int;
+    protected var _mediaHeight :int;
 
     protected var _scenes :HashMap = new HashMap();
     protected var _rando :Random = new Random();
 
     protected var _state :String;
+    protected var _mode :String = "";
     protected var _playing :SceneList;
     protected var _sceneQueue :Array = new Array();
 }
