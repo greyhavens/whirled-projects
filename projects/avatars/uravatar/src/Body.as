@@ -236,7 +236,7 @@ public class Body
             transition = getScene("state_" + _state + "_to" + mode);
         } else if (mode == "") {
             // if we're transitioning to standing, try a fromMODE scene if we have one
-            transition = getScene("state_" + _state + "_from" + mode);
+            transition = getScene("state_" + _state + "_from" + _mode);
         }
         var key :String = "state_" + _state + ((mode != "") ? ("_" + mode) : "");
         if (transition != null) {
