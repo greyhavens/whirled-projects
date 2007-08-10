@@ -17,20 +17,16 @@ Create a scene named "main" and place the following ActionScript code in it:
 ------------------------- ActionScript Code -------------------------
 import flash.display.MovieClip;
 import flash.display.Sprite;
-
 import flash.events.Event;
-
 import com.whirled.AvatarControl;
 
 if (_ctrl == null) {
     _ctrl = new AvatarControl(this);
     _body = new Body(_ctrl, this);
-}
-
-addEventListener(Event.UNLOAD, handleUnload);
-function handleUnload (... ignored) :void
-{
-    _body.shutdown();
+    addEventListener(Event.UNLOAD, handleUnload);
+    function handleUnload (... ignored) :void {
+        _body.shutdown();
+    }
 }
 
 var _ctrl :AvatarControl;
