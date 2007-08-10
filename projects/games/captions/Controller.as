@@ -490,7 +490,7 @@ public class Controller
 
     protected function initResults (results :Array) :void
     {
-        var earnedFlow :int = 0;
+        var flowFactor :Number = 0;
 
         _ui.sideBox.removeAllChildren();
 
@@ -543,7 +543,7 @@ public class Controller
 
                 if (ids[index] == _myId) {
                     // TODO: make this better when the flow awarding API gets unfucked.
-                    earnedFlow += WINNER_FLOW;
+                    flowFactor += 0.75;
                 }
             }
         }
@@ -573,15 +573,15 @@ public class Controller
 
         // see what other flow we get
         if (null != _ctrl.get("caption:" + _myId)) {
-            earnedFlow += CAPTION_FLOW;
+            flowFactor += 0.20;
         }
         if (null != _ctrl.get("vote:" + _myId)) {
-            earnedFlow += VOTE_FLOW;
+            flowFactor += 0.05;
         }
 
-        if (earnedFlow > 0) {
+        if (flowFactor > 0) {
+            var earnedFlow :int = _ctrl.grantFlowAward(flowFactor * 100);
             trace(_myName + " earned " + earnedFlow + " flow");
-            _ctrl.awardFlow(earnedFlow);
         }
     }
 
