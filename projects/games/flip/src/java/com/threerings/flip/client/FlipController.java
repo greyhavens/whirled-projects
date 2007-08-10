@@ -13,6 +13,7 @@ import com.threerings.parlor.game.client.GameController;
 import com.threerings.parlor.turn.client.TurnGameController;
 import com.threerings.parlor.turn.client.TurnGameControllerDelegate;
 
+// import com.whirled.client.WhirledGameController;
 import com.whirled.util.WhirledContext;
 
 import com.threerings.flip.data.FlipCodes;
@@ -29,7 +30,7 @@ public class FlipController extends GameController
         addDelegate(_turnDelegate = new TurnGameControllerDelegate(this));
     }
 
-    @Override
+    @Override // from Controller
     public boolean handleAction (Object source, String action, Object arg)
     {
         if (DROP.equals(action)) {
@@ -49,7 +50,7 @@ public class FlipController extends GameController
         return (!_moveSentToServer && _turnDelegate.isOurTurn());
     }
 
-    // documentation inherited
+    @Override // from PlaceController
     public void willEnterPlace (PlaceObject plobj)
     {
         super.willEnterPlace(plobj);
@@ -58,14 +59,14 @@ public class FlipController extends GameController
         checkTurn();
     }
 
-    // documentation inherited from interface TurnGameController
+    // from interface TurnGameController
     public void turnDidChange (Name turnHolder)
     {
         _moveSentToServer = false;
         checkTurn();
     }
 
-    // documentation inherited
+    @Override // from PlaceController
     protected void didInit ()
     {
         super.didInit();
@@ -73,7 +74,7 @@ public class FlipController extends GameController
         _ctx = (WhirledContext) super._ctx;
     }
 
-    // documentation inherited
+    @Override // from PlaceController
     protected PlaceView createPlaceView (CrowdContext ctx)
     {
         _panel = new FlipPanel((WhirledContext) ctx, this);
@@ -90,12 +91,20 @@ public class FlipController extends GameController
         }
     }
 
-    // documentation inherited
+    @Override // from GameController
     protected void gameDidStart ()
     {
         super.gameDidStart();
         _panel.view.playSound(FlipSounds.GAME_START);
         _panel.view.roundStarted();
+    }
+
+    @Override // from GameController
+    protected void gameDidEnd ()
+    {
+        super.gameDidEnd();
+
+        // TODO: award flow
     }
 
     /** Our lover. */

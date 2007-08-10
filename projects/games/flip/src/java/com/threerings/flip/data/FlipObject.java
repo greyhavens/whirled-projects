@@ -14,13 +14,14 @@ import com.samskivert.util.RandomUtil;
 
 import com.threerings.presents.dobj.ObjectAccessException;
 
-import com.threerings.parlor.game.data.GameObject;
 import com.threerings.parlor.turn.data.TurnGameObject;
+
+import com.whirled.data.WhirledGameObject;
 
 /**
  * The objet du game.
  */
-public class FlipObject extends GameObject
+public class FlipObject extends WhirledGameObject
     implements TurnGameObject, FlipCodes
 {
     // AUTO-GENERATED: FIELDS START
