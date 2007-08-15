@@ -18,7 +18,10 @@ public class Defense extends Sprite
     public var whirled :WhirledGameControl;
     public var controller :Controller;
     public var display :Display;
-    public var model :Model;
+    public var game :Game;
+    public var monitor :Monitor;
+    public var sharedState :SharedState;
+    public var validator :Validator;
     
     public function Defense () :void
     {
@@ -30,15 +33,18 @@ public class Defense extends Sprite
         this.whirled.registerListener (this);
 
         // Create MVC elements
-        this.controller = new Controller(this);
-        this.display = new Display(this, this.controller);
-        this.model = new Model(this, this.display);
+        this.controller = new Controller(whirled);
+        this.display = new Display(controller);
+        this.game = new Game(display);
+        this.monitor = new Monitor(game, whirled);
+        this.sharedState = new SharedState(display, game, whirled);
+        this.validator = new Validator(sharedState, whirled);
         trace("MVC CREATED");
 
         addChild (display);
 
         if (whirled.isConnected()) {
-            model.resetBoard();
+            // Start the game
         } else {
             // Initialize the background bitmap?
             trace("NOT CONNECTED");
@@ -48,9 +54,14 @@ public class Defense extends Sprite
     /** Clean up and shut down. */
     public function handleUnload (event : Event) :void
     {
-        model.handleUnload(event);
+        validator.handleUnload(event);
+        sharedState.handleUnload(event);
+        monitor.handleUnload(event);
+        game.handleUnload(event);
         display.handleUnload(event);
         controller.handleUnload(event);
+        whirled.unregisterListener(this);
+        root.loaderInfo.removeEventListener(Event.UNLOAD, handleUnload);
     }
 }
     

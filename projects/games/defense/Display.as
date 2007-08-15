@@ -4,77 +4,78 @@ import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.events.MouseEvent;
 
 public class Display extends Sprite
 {
-    public function Display (game :Defense, controller :Controller)
+    // Public display properties
+    public static const pixelBoardLeft :int = 50;
+    public static const pixelBoardTop :int = 50;
+    
+    public function Display (controller :Controller)
     {
-        AssetFactory.makeTower(AssetFactory.TOWER_DEFAULT);
-        _game = game;
         _controller = controller;
-        
-        initBoard();
+
+        // initialize graphics
+        _boardSprite = new Sprite();
+        _boardSprite.x = pixelBoardLeft;
+        _boardSprite.y = pixelBoardTop;
+        addChild(_boardSprite);
+
+        _backdrop = new Shape();
+        _boardSprite.addChild(_backdrop);
+
+        // initialize event handlers
+        _boardSprite.addEventListener(MouseEvent.CLICK, handleClick);
+        _boardSprite.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
     }
 
     public function handleUnload (event : Event) : void
     {
+        _boardSprite.removeEventListener(MouseEvent.CLICK, handleClick);
+        _boardSprite.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
         trace("DISPLAY UNLOAD");
     }
 
-    public function addTower (type :int) :TowerSprite
-    {
-        var t :TowerSprite = new TowerSprite(type);
-        _towers.push(t);
-        _board.addChild(t);
-        return t;
-    }
-
-    public function removeTower (tower :TowerSprite) :void
-    {
-        var ii :int = _towers.indexOf(tower);
-        if (ii != -1) {
-            _towers.splice(ii, 1);
-            removeChild(tower);
-        }
-    }
+    // Functions available to the game logic
 
     /** Initializes the empty board. */
-    protected function initBoard () :void
+    public function resetBoard (def :BoardDefinition) :void
     {
-        _board = new Sprite();
-        _board.x = Properties.pixelBoardLeft;
-        _board.y = Properties.pixelBoardTop;
-        addChild(_board);
-
-        var bg :Shape = new Shape();
-        _board.addChild(bg);
+        var pixelWidth :int = def.width * def.squareWidth;
+        var pixelHeight :int = def.height * def.squareHeight;
         
-        var g :Graphics = bg.graphics;
+        var g :Graphics = _backdrop.graphics;
         g.clear();
-        g.beginFill(0x0000ff, 0.1);
-        g.drawRoundRect(0, 0, Properties.pixelWidth, Properties.pixelHeight, 5, 5);
+        g.beginFill(0x4444ff, 0.1);
+        g.drawRoundRect(0, 0, pixelWidth, pixelHeight, 5, 5);
         g.endFill();
 
         // now draw the grid
         g.lineStyle(1, 0x000000, 0.1);
-        var colwidth :int = Properties.pixelWidth / Properties.boardWidth;
-        var rowheight :int = Properties.pixelHeight / Properties.boardHeight;
-        for (var col :int = 0; col <= Properties.boardWidth; col++) {
-            g.moveTo(col * colwidth, 0);
-            g.lineTo(col * colwidth, Properties.pixelHeight);
+        for (var col :int = 0; col <= def.width; col++) {
+            g.moveTo(col * def.squareWidth, 0);
+            g.lineTo(col * def.squareWidth, pixelHeight);
         }
-        for (var row :int = 0; row <= Properties.boardHeight; row++) {
-            g.moveTo(0, row * rowheight);
-            g.lineTo(Properties.pixelWidth, row * rowheight);
+        for (var row :int = 0; row <= def.height; row++) {
+            g.moveTo(0, row * def.squareHeight);
+            g.lineTo(pixelWidth, row * def.squareHeight);
         }
     }
-    
-    /** Simple gridded board display. */
-    protected var _board :Sprite;
 
-    protected var _towers :Array = new Array(); // of TowerSprite
+    protected function handleClick (event :MouseEvent) :void
+    {
+        trace("*** CLICK: " + event);
+        _controller.addTower();
+    }
+
+    protected function handleMouseMove (event :MouseEvent) :void
+    {
+    }
     
-    protected var _game :Defense;
     protected var _controller :Controller;
+
+    protected var _boardSprite :Sprite;
+    protected var _backdrop :Shape;
 }
 }
