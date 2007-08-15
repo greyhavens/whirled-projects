@@ -97,6 +97,7 @@ public class DictionaryAttack extends Sprite
         // grant ourselves flow
         var myidx :int = _control.seating.getMyPosition();
         var factor :Number = 0;
+        var mypoints :int = -1;
         if (_model.isMultiPlayer()) {
             // if it's multiplayer, it's based on how many players we defeated
             var scores :Array = (_control.get(Model.SCORES) as Array);
@@ -118,12 +119,13 @@ public class DictionaryAttack extends Sprite
             var minpoints :int = Math.round(letters / _model.getMinWordLength());
             var maxpoints :int = Math.round(letters / LONG_WORD) *
                 (LONG_WORD - _model.getMinWordLength() + 1);
+            mypoints = points[myidx];
             Log.getLog(this).info("Min: " + minpoints + " max: " + maxpoints +
-                                  " points: " + points[myidx] + ".");
+                                  " points: " + mypoints + ".");
             // TODO: bonus for perfectly cleared single player board, record high scores, etc.
-//             factor = (points[myidx] - minpoints) / (maxpoints - minpoints);
+//             factor = (mypoints - minpoints) / (maxpoints - minpoints);
             // for now do straight points over maxpoints until we stop penalizing for * usage
-            factor = points[myidx] / maxpoints;
+            factor = mypoints / maxpoints;
 
             // also update their personal high scores
             if (_cookie != null) {
@@ -149,7 +151,7 @@ public class DictionaryAttack extends Sprite
 
         var award :int = _control.grantFlowAward(factor * 100);
         Log.getLog(this).info("Factor: " + factor + " award: " + award);
-        _view.gameDidEnd(award);
+        _view.gameDidEnd(award, mypoints);
     }
 
     protected function handleUnload (event :Event) :void

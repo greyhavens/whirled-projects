@@ -383,7 +383,7 @@ public class Model
         for (var yy :int = _size-1; yy >= 0; yy--) {
             var l :String = getLetter(xx, yy);
             if (l != BLANK) {
-                board.getLetter(yy * _size + xx).setPlayable(true, _size-1-yy);
+                board.getLetter(yy * _size + xx).setPlayable(true, _size-1-yy, !isMultiPlayer());
                 break;
             }
         }

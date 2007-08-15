@@ -17,8 +17,8 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
-import mx.containers.VBox;
-import mx.controls.Button;
+// import mx.containers.VBox;
+// import mx.controls.Button;
 
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -99,38 +99,48 @@ public class GameView extends Sprite
         addChild(marquee);
 
         if (_control.isConnected()) {
-            // create our sidebar
-            var sidebar :VBox = new VBox();
-            sidebar.x = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
-            sidebar.y = 5;
-            sidebar.width = 250;
-            sidebar.height = 300;
-            addChild(sidebar);
+            var xpos :int = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
+//             // create our sidebar
+//             var sidebar :VBox = new VBox();
+//             sidebar.x = xpos;
+//             sidebar.y = 5;
+//             sidebar.width = 250;
+//             sidebar.height = 300;
+//             addChild(sidebar);
 
-            var help :Button = new Button();
-            help.label = "How to Play";
+//             var help :Button = new Button();
+//             help.label = "How to Play";
+//             help.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+//                 showHelp();
+//             });
+//             sidebar.addChild(help);
+
+            var help :SimpleButton = _content.makeButton("How to Play");
             help.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
                 showHelp();
             });
-//             help.x = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
-//             help.y = 50;
-            sidebar.addChild(help);
+            help.x = xpos;
+            help.y = 50;
+            addChild(help);
 
             _hiscores = new TextField();
             _hiscores.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF));
-//             _hiscores.x = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
-//             _hiscores.y = help.y + help.height + 10;
+            _hiscores.x = xpos;
+            _hiscores.y = help.y + help.height + 10;
             _hiscores.autoSize = TextFieldAutoSize.LEFT;
             _hiscores.width = HELP_WIDTH;
-            sidebar.addChild(_hiscores);
+            addChild(_hiscores);
+//             sidebar.addChild(_hiscores);
 
             // relocate the chat view out of the way
             var bsize :int = Content.BOARD_BORDER * 2 + _board.getPixelSize();
             var bounds :Rectangle = _control.getStageBounds();
             bounds.x = bsize;
-            bounds.y = sidebar.y + 10;
+            bounds.y = _hiscores.y + _hiscores.height + 10;
+//             bounds.y = sidebar.y + 10;
             bounds.width -= bsize;
-            bounds.height = bounds.height - sidebar.height - 15;
+            bounds.height = bounds.height - 50 - help.height - 10 - _hiscores.height - 15;
+//             bounds.height = bounds.height - sidebar.height - 15;
             _control.setChatBounds(bounds);
         }
     }
@@ -234,10 +244,10 @@ public class GameView extends Sprite
         removeChild(_tip);
     }
 
-    public function gameDidEnd (flow :int) :void
+    public function gameDidEnd (flow :int, mypoints :int) :void
     {
         Util.invokeLater(2000, function () :void {
-            showGameOver(flow);
+            showGameOver(flow, mypoints);
         });
     }
 
@@ -257,7 +267,7 @@ public class GameView extends Sprite
         return (_control.seating.getPlayerNames().length > 1);
     }
 
-    protected function showGameOver (flow :int) :void
+    protected function showGameOver (flow :int, mypoints :int) :void
     {
         var text :TextField = new TextField();
         text.autoSize = TextFieldAutoSize.LEFT;
@@ -268,8 +278,22 @@ public class GameView extends Sprite
         text.sharpness = 400;
 
         var msg :String = "Game over!";
+        if (mypoints > 0) {
+            msg += "\nScore: " + mypoints + " points.";
+            if (mypoints > 70) {
+                msg += " Holy crap!";
+            } else if (mypoints > 60) {
+                msg += " You rock!";
+            } else if (mypoints > 40) {
+                msg += " Amazing!";
+            } else if (mypoints > 25) {
+                msg += " Nice work.";
+            } else if (mypoints > 10) {
+                msg += " Not bad.";
+            }
+        }
         if (flow > 0) {
-            msg += "\nYou earned " + flow + " flow!";
+            msg += "\nAward: " + flow + " flow!";
         }
         text.text = msg;
 

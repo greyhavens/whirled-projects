@@ -36,24 +36,25 @@ public class Letter extends Sprite
         return _label.text;
     }
 
-    public function setPlayable (playable :Boolean, dghost :int = -1) :void
+    public function setPlayable (
+        playable :Boolean, dghost :int = -1, noghost :Boolean = false) :void
     {
         _invader.transform.colorTransform =
             playable ? _content.invaderColors[_type] : _content.dimInvaderColors[_type];
 
         if (dghost > 0 && _ghost == null) {
-            _ghost = new Sprite();
+            if (!noghost) {
+                _ghost = new Sprite();
 
-            var invader :Sprite = makeInvader();
-            invader.transform.colorTransform = _content.ghostInvaderColors[_type];
-            _ghost.addChild(invader);
+                var invader :Sprite = makeInvader();
+                invader.transform.colorTransform = _content.ghostInvaderColors[_type];
+                _ghost.addChild(invader);
 
-            var label :TextField = makeLabel();
-            label.text = _label.text;
-            label.y = (Content.TILE_SIZE - label.height)/2 + FONT_ADJUST_HACK;
-            _ghost.addChild(label);
-
-            addChild(_ghost);
+                var label :TextField = makeLabel();
+                label.text = _label.text;
+                label.y = (Content.TILE_SIZE - label.height)/2 + FONT_ADJUST_HACK;
+                _ghost.addChild(label);
+            }
 
             // move our main sprite down to the bottom row
             var ty :int = (Content.TILE_SIZE + Board.GAP) * dghost;
