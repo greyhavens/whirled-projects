@@ -34,7 +34,7 @@ public class Defense extends Sprite
 
         // Create MVC elements
         this.controller = new Controller(whirled);
-        this.display = new Display(controller);
+        this.display = new Display(controller, new BoardDefinition());
         this.game = new Game(display);
         this.monitor = new Monitor(game, whirled);
         this.sharedState = new SharedState(display, game, whirled);

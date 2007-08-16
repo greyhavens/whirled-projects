@@ -23,7 +23,7 @@ public class Game
 
     public function startGame () :void
     {
-        _display.resetBoard(new BoardDefinition());
+        _display.resetBoard();
     }
 
     public function endGame () :void
