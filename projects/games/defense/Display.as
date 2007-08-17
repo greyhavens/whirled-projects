@@ -1,13 +1,14 @@
 package {
 
 import flash.display.Graphics;
-import flash.display.Shape;
-import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
-public class Display extends Sprite
+import mx.containers.Canvas;
+import mx.controls.Image;
+
+public class Display extends Canvas
 {
     public var def :BoardDefinition;
 
@@ -15,25 +16,14 @@ public class Display extends Sprite
     public static const pixelBoardLeft :int = 50;
     public static const pixelBoardTop :int = 50;
     
-    public function Display (controller :Controller, def :BoardDefinition)
+    public function Display ()
+    {
+    }
+
+    public function init (controller :Controller, def :BoardDefinition) :void
     {
         _controller = controller;
         this.def = def;
-
-        // initialize graphics
-        _boardSprite = new Sprite();
-        _boardSprite.x = pixelBoardLeft;
-        _boardSprite.y = pixelBoardTop;
-        addChild(_boardSprite);
-
-        _backdrop = new Shape();
-        _boardSprite.addChild(_backdrop);
-
-        // initialize event handlers
-        _boardSprite.addEventListener(MouseEvent.CLICK, handleBoardClick);
-        _boardSprite.addEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);
-        _boardSprite.addEventListener(MouseEvent.ROLL_OVER, handleBoardOver);
-        _boardSprite.addEventListener(MouseEvent.ROLL_OUT, handleBoardOut);
 
         testInit();
     }
@@ -79,7 +69,9 @@ public class Display extends Sprite
     /** Adds a new tower that will be displayed on the board. */
     public function addTowerSprite (tower :TowerSprite) :void
     {
+        trace("*** ADD");
         _boardSprite.addChild(tower);
+        trace("*** ADD 2");
         _towers.add(tower);
     }
 
@@ -112,7 +104,7 @@ public class Display extends Sprite
             var visible :Boolean = _boardSprite.contains(_cursor);
             if (! visible && show) {
                 _boardSprite.addChild(_cursor);
-                _cursor.enabled = true;
+                _cursor.setState(true);
             }
             if (visible && ! show) {
                 _boardSprite.removeChild(_cursor);
@@ -120,11 +112,30 @@ public class Display extends Sprite
         } 
     }
     
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+        
+        // initialize graphics
+        _boardSprite = new Canvas();
+        _boardSprite.x = pixelBoardLeft;
+        _boardSprite.y = pixelBoardTop;
+        addChild(_boardSprite);
+
+        _backdrop = new Image();
+        _boardSprite.addChild(_backdrop);
+
+        // initialize event handlers
+        _boardSprite.addEventListener(MouseEvent.CLICK, handleBoardClick);
+        _boardSprite.addEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);
+        _boardSprite.addEventListener(MouseEvent.ROLL_OVER, handleBoardOver);
+        _boardSprite.addEventListener(MouseEvent.ROLL_OUT, handleBoardOut);
+    }
+
     protected function handleBoardClick (event :MouseEvent) :void
     {
         trace("*** CLICK: " + event);
         _controller.addTower();
-        showCursor(true);
     }
 
     protected function handleBoardMove (event :MouseEvent) :void
@@ -135,7 +146,7 @@ public class Display extends Sprite
             if (p.x < 0 || p.y < 0 || p.x >= def.width || p.y >= def.height) {
                 showCursor(false);
             } else {
-                _cursor.move(p.x, p.y);
+                _cursor.setBoardPosition(p.x, p.y);
             }
         } 
     }
@@ -149,13 +160,15 @@ public class Display extends Sprite
     protected function handleBoardOut (event :MouseEvent) :void
     {
         trace("*** OUT: " + event);
-        showCursor(false);
+        if (event.relatedObject != null) {
+            showCursor(false);
+        }
     }
 
     protected var _controller :Controller;
     
-    protected var _boardSprite :Sprite;
-    protected var _backdrop :Shape;
+    protected var _boardSprite :Canvas;
+    protected var _backdrop :Image;
     protected var _cursor :TowerSprite;
 
     protected var _towers :Array = new Array(); /* of TowerSprite */

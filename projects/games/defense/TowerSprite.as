@@ -1,31 +1,24 @@
 package {
 
-import flash.display.DisplayObject;
-import flash.display.Shape;
-import flash.display.Sprite;
 import flash.geom.Point;
+import mx.controls.Image;
 
-public class TowerSprite extends Sprite
+public class TowerSprite extends Image
 {
     public var display :Display;
+    public var type :int;
     
     public function TowerSprite (type :int, display :Display)
     {
         this.display = display;
-
-        _bitmap = AssetFactory.makeTower(type);
-        addChild(_bitmap);
-
-        this.scaleX = display.def.squareWidth / _bitmap.width;
-        this.scaleY = display.def.squareHeight / _bitmap.height;
-        _hotspot = new Point(_bitmap.width / 2, _bitmap.height / 2);
+        this.type = type;
     }
 
     /**
      * Given logical board coordinates, find the appropriate screen position,
      * and moves the sprite there.
      */
-    public function move (x :int, y :int) :void
+    public function setBoardPosition (x :int, y :int) :void
     {
         var p :Point = display.def.logicalToScreen(x, y);
         this.x = p.x - _hotspot.x * scaleX;
@@ -35,12 +28,22 @@ public class TowerSprite extends Sprite
     /**
      * Sets cursor as enabled or disabled.
      */
-    public function set enabled (value :Boolean) :void
+    public function setState (value :Boolean) :void
     {
-        _bitmap.alpha = value ? 1.0 : 0.3;
+        this.alpha = value ? 1.0 : 0.3;
     }
 
-    protected var _bitmap :DisplayObject;
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+        
+        this.source = AssetFactory.makeTower(type);
+
+        this.scaleX = display.def.squareWidth / source.width;
+        this.scaleY = display.def.squareHeight / source.height;
+        _hotspot = new Point(source.width / 2, source.height / 2);
+    }
+
     protected var _hotspot :Point = new Point(0, 0);
 }
 }
