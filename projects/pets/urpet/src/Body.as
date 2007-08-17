@@ -30,7 +30,7 @@ public class Body
      *
      * @param width the width of the "stage" on which your MovieClip was built.
      */
-    public function Body (ctrl :PetControl, media :MovieClip, width :int)
+    public function Body (ctrl :PetControl, media :MovieClip, width :int, nameHeight :Number = NaN)
     {
         // register to hear when we start and stop walking
         _ctrl = ctrl;
@@ -40,6 +40,7 @@ public class Body
         _media = media;
         _media.addEventListener(Event.ENTER_FRAME, onEnterFrame);
         _mediaWidth = width;
+        _nameHeight = nameHeight;
 
         // map our scenes by name
         for each (var scene :Scene in _media.scenes) {
@@ -165,7 +166,7 @@ public class Body
                 _center = _media.getChildByName("ground");
             }
             if (_center != null) {
-                _ctrl.setHotSpot(_center.x, _center.y, 160);
+                _ctrl.setHotSpot(_center.x, _center.y, _nameHeight);
             }
         }
     }
@@ -238,6 +239,7 @@ public class Body
     protected var _media :MovieClip;
     protected var _center :DisplayObject;
     protected var _mediaWidth :int;
+    protected var _nameHeight :Number;
 
     protected var _scenes :HashMap = new HashMap();
     protected var _rando :Random = new Random();
