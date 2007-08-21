@@ -8,6 +8,8 @@ import flash.geom.Point;
 import mx.containers.Canvas;
 import mx.controls.Image;
 
+import com.threerings.util.ArrayUtil;
+
 public class Display extends Canvas
 {
     public var def :BoardDefinition;
@@ -22,24 +24,14 @@ public class Display extends Canvas
 
     public function init (controller :Controller, def :BoardDefinition) :void
     {
-        _controller = controller;
         this.def = def;
-
-        testInit();
-    }
-
-    // ONLY FOR TESTING
-    public function testInit () :void
-    {
-        setCursor(new TowerSprite(Tower.TYPE_SIMPLE, this));
+        _controller = controller;
     }
 
     public function handleUnload (event : Event) : void
     {
-        _boardSprite.removeEventListener(MouseEvent.CLICK, handleBoardClick);
-        _boardSprite.removeEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);
-        _boardSprite.removeEventListener(MouseEvent.ROLL_OVER, handleBoardOver);
-        _boardSprite.removeEventListener(MouseEvent.ROLL_OUT, handleBoardOut);
+        removeEventListener(MouseEvent.CLICK, handleBoardClick);
+        removeEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);
         trace("DISPLAY UNLOAD");
     }
 
@@ -66,52 +58,28 @@ public class Display extends Canvas
         }
     }
 
+    /** Creates a new cursor, initialized by the game object. */
+    public function setCursor (cursor :Cursor) :void
+    {
+        _cursor = cursor;
+        // test test test
+        _cursor.setCursorType(Tower.TYPE_SIMPLE);
+    }
+    
     /** Adds a new tower that will be displayed on the board. */
     public function addTowerSprite (tower :TowerSprite) :void
     {
-        trace("*** ADD");
         _boardSprite.addChild(tower);
-        trace("*** ADD 2");
-        _towers.add(tower);
+        _towers.push(tower);
     }
 
     /** Removes a tower from the board. */
     public function removeTowerSprite (tower :TowerSprite) :void
     {
         _boardSprite.removeChild(tower);
-        _towers.remove(tower);
+        ArrayUtil.removeFirst(_towers, tower);
     }
 
-    /** Set or clear the cursor. The new cursor will not be displayed by default. */
-    public function setCursor (tower :TowerSprite) :void
-    {
-        if (_cursor == tower) {
-            return; // we're so done
-        }
-        if (_cursor != null) {
-            showCursor(false);
-            _cursor = null;
-        }
-        if (tower != null) {
-            _cursor = tower;
-        }             
-    }
-
-    /** Show or hide the currently selected cursor. */
-    public function showCursor (show :Boolean) :void
-    {
-        if (_cursor != null) {
-            var visible :Boolean = _boardSprite.contains(_cursor);
-            if (! visible && show) {
-                _boardSprite.addChild(_cursor);
-                _cursor.setState(true);
-            }
-            if (visible && ! show) {
-                _boardSprite.removeChild(_cursor);
-            }
-        } 
-    }
-    
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -126,50 +94,32 @@ public class Display extends Canvas
         _boardSprite.addChild(_backdrop);
 
         // initialize event handlers
-        _boardSprite.addEventListener(MouseEvent.CLICK, handleBoardClick);
-        _boardSprite.addEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);
-        _boardSprite.addEventListener(MouseEvent.ROLL_OVER, handleBoardOver);
-        _boardSprite.addEventListener(MouseEvent.ROLL_OUT, handleBoardOut);
+        addEventListener(MouseEvent.CLICK, handleBoardClick);
+        addEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);
     }
 
     protected function handleBoardClick (event :MouseEvent) :void
     {
         trace("*** CLICK: " + event);
-        _controller.addTower();
+        _controller.addTower(_cursor.getTower());
     }
 
     protected function handleBoardMove (event :MouseEvent) :void
     {
         if (_cursor != null) {
             var local :Point = _boardSprite.globalToLocal(new Point(event.stageX, event.stageY));
-            var p :Point = def.screenToLogical(local.x, local.y);
-            if (p.x < 0 || p.y < 0 || p.x >= def.width || p.y >= def.height) {
-                showCursor(false);
-            } else {
-                _cursor.setBoardPosition(p.x, p.y);
-            }
+            var logical :Point = def.screenToLogicalPosition(local.x, local.y);
+            //trace("MOVE: " + local + "->" + logical);
+            _cursor.setBoardLocation(logical.x, logical.y);
         } 
     }
 
-    protected function handleBoardOver (event :MouseEvent) :void
-    {
-        trace("*** OVER: " + event);
-        showCursor(true);
-    }
-
-    protected function handleBoardOut (event :MouseEvent) :void
-    {
-        trace("*** OUT: " + event);
-        if (event.relatedObject != null) {
-            showCursor(false);
-        }
-    }
-
+    protected var _defense :Defense;
     protected var _controller :Controller;
     
     protected var _boardSprite :Canvas;
     protected var _backdrop :Image;
-    protected var _cursor :TowerSprite;
+    protected var _cursor :Cursor;
 
     protected var _towers :Array = new Array(); /* of TowerSprite */
 }

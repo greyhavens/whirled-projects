@@ -2,6 +2,7 @@ package {
 
 import flash.events.Event;
 import flash.geom.Point;    
+import flash.geom.Rectangle;
 
 import com.whirled.WhirledGameControl;
 
@@ -17,10 +18,13 @@ public class Controller
         trace("CONTROLLER UNLOAD");
     }
 
-    public function addTower (/* def :Tower */) :void
+    public function addTower (tower :Tower) :void
     {
+        var loc :Rectangle = tower.getBoardLocation();
+        var def :Object = { x: loc.x, y: loc.y, type: tower.type };
+
         // sends a request to everyone to add a new tower
-        _whirled.sendMessage(Validator.MSG_ADD, { foo: "bar" });
+        _whirled.sendMessage(Validator.MSG_ADD, def);
     }
 
     public function removeTower (/* def :Tower */) :void

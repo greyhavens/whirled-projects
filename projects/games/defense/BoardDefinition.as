@@ -13,16 +13,17 @@ public class BoardDefinition
     public var pixelWidth :int = width * squareWidth;
     public var pixelHeight :int = height * squareHeight;
         
-    /** Returns logical (board) coordinates corresponding to screen coordinates (in board space) */
-    public function screenToLogical (x :int, y :int) :Point
+    /** Converts screen coordinates (relative to the upper left corner of the board) to 
+     *  logical coordinates in board space. */
+    public function screenToLogicalPosition (x :int, y :int) :Point
     {
-        return new Point(int(x / squareWidth), int(y / squareHeight));
+        return new Point(int(Math.floor(x / squareWidth)), int(Math.floor(y / squareHeight)));
     }
 
-    /** Returns screen coordinates of the center of the square with specifies logical coords */
-    public function logicalToScreen (x :int, y :int) :Point
+    /** Converts board coordinates to screen coordinates. */
+    public function logicalToScreenPosition (x :int, y :int) :Point
     {
-        return new Point((x + 0.5) * squareWidth, (y + 0.5) * squareHeight);
+        return new Point(x * squareWidth, y * squareHeight);
     }
 }
 }

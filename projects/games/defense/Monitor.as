@@ -19,8 +19,8 @@ public class Monitor
         _whirled.registerListener(this);
 
         _thunks = new Object();
-        _thunks[StateChangedEvent.GAME_STARTED] = _game.startGame();
-        _thunks[StateChangedEvent.GAME_ENDED] = _game.endGame();
+        _thunks[StateChangedEvent.GAME_STARTED] = _game.startGame;
+        _thunks[StateChangedEvent.GAME_ENDED] = _game.endGame;
     }
 
     public function handleUnload (event : Event) :void

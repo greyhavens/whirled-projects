@@ -1,49 +1,42 @@
 package {
 
 import flash.geom.Point;
+import flash.geom.Rectangle;
 import mx.controls.Image;
 
 public class TowerSprite extends Image
 {
+    public var tower :Tower;
     public var display :Display;
-    public var type :int;
     
-    public function TowerSprite (type :int, display :Display)
+    public function TowerSprite (tower :Tower, display :Display)
     {
+        this.tower = tower;
         this.display = display;
-        this.type = type;
     }
 
-    /**
-     * Given logical board coordinates, find the appropriate screen position,
-     * and moves the sprite there.
-     */
-    public function setBoardPosition (x :int, y :int) :void
+    public function updateLocation () :void
     {
-        var p :Point = display.def.logicalToScreen(x, y);
-        this.x = p.x - _hotspot.x * scaleX;
-        this.y = p.y - _hotspot.y * scaleY;
-    }
-
-    /**
-     * Sets cursor as enabled or disabled.
-     */
-    public function setState (value :Boolean) :void
-    {
-        this.alpha = value ? 1.0 : 0.3;
+        if (tower.isOnBoard()) {
+            var r :Rectangle = tower.getBoardLocation();
+            var p :Point = display.def.logicalToScreenPosition(r.x, r.y);
+            this.x = p.x;
+            this.y = p.y;
+            this.alpha = (tower.isOnFreeSpace() ? 1.0 : 0.3);
+        } else {
+            this.alpha = 0.0;
+        }
     }
 
     override protected function createChildren () :void
     {
         super.createChildren();
+
+        var loc :Rectangle = tower.getBoardLocation();
         
-        this.source = AssetFactory.makeTower(type);
-
-        this.scaleX = display.def.squareWidth / source.width;
-        this.scaleY = display.def.squareHeight / source.height;
-        _hotspot = new Point(source.width / 2, source.height / 2);
+        this.source = AssetFactory.makeTower(tower.type);
+        this.scaleX = display.def.squareWidth * loc.width / source.width;
+        this.scaleY = display.def.squareHeight * loc.height / source.height;
     }
-
-    protected var _hotspot :Point = new Point(0, 0);
 }
 }

@@ -1,6 +1,7 @@
 package {
 
 import flash.events.Event;
+import mx.utils.ObjectUtil;
 
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
@@ -31,7 +32,7 @@ public class SharedState
     // from interface PropertyChangedListener
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
-        trace("*** PROPERTY CHANGED: " + event);
+        trace("*** PROPERTY CHANGED: " + ObjectUtil.toString(event.newValue));
         switch (event.name) {
         case TOWER_SET:
             if (event.index < 0) {
@@ -65,6 +66,8 @@ public class SharedState
 
     protected function updateSingleTower (index :int, info :Object) :void
     {
+        // unpack the request, and create a tower
+        _game.addTower(info.type, info.x, info.y);
     }
         
     protected var _game :Game;
