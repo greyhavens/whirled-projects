@@ -23,20 +23,31 @@ public class Tower
         return _location;
     }
 
-    public function setBoardLocation (x :int, y :int) :void
+    public function setBoardLocation (x :int, y :int, isCursor :Boolean = false) :void
     {
         _location.x = x;
         _location.y = y;
-        _sprite.updateLocation();
+        if (_sprite == null) {
+            return;
+        }
+
+        if (isOnBoard()) {
+            _sprite.updateLocation();
+        }
+        if (isCursor) {
+            _sprite.updateAlpha();
+        }
     }
 
+    /** Is the tower inside board bounds? */
     public function isOnBoard () :Boolean
     {
         return (_location.left >= 0 && _location.top >= 0 &&
-                _location.right <= _sprite.display.def.width &&
-                _location.bottom <= _sprite.display.def.height);
+                _location.right <= _game.def.width &&
+                _location.bottom <= _game.def.height);
     }
 
+    /** Are all cells under the tower empty? Note: the tower could be out of bounds. */
     public function isOnFreeSpace () :Boolean
     {
         return _game.checkLocation(getBoardLocation());
@@ -49,6 +60,7 @@ public class Tower
         }
         _sprite = new TowerSprite(this, display);
         _sprite.display.addTowerSprite(_sprite);
+        _sprite.updateLocation();
     }
 
     public function removeFromDisplay () :void

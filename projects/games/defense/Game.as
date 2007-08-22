@@ -13,12 +13,17 @@ public class Game
     public function Game (display :Display)
     {
         _display = display;
+        _board = new Board(display.def.height, display.def.width);
+
         _display.addEventListener(Event.ENTER_FRAME, tickHandler);
         _display.setCursor(new Cursor(this, _display));
-        
-        _board = new Board(display.def.height, display.def.width);
     }
 
+    public function get def () :BoardDefinition
+    {
+        return _display.def;
+    }
+    
     public function handleUnload (event : Event) : void
     {
         _display.removeEventListener(Event.ENTER_FRAME, tickHandler);
@@ -38,14 +43,12 @@ public class Game
         _critters = null;
     }
 
-    public function addTower (type :int, x :int, y :int) :void
+    public function addTower (tower :Tower) :void
     {
-        var tower :Tower = new Tower(type, this);
-        tower.addToDisplay(_display);
-        tower.setBoardLocation(x, y); // must happen after adding to display
-
         _towers.push(tower);
         _board.setState(tower.getBoardLocation(), Board.OCCUPIED);
+
+        tower.addToDisplay(_display);
     }
 
     public function removeTower (tower :Tower) :void

@@ -22,9 +22,9 @@ public class Controller
     {
         var loc :Rectangle = tower.getBoardLocation();
         var def :Object = { x: loc.x, y: loc.y, type: tower.type };
-
+        
         // sends a request to everyone to add a new tower
-        _whirled.sendMessage(Validator.MSG_ADD, def);
+        _whirled.sendMessage(Validator.REQUEST_ADD, def);
     }
 
     public function removeTower (/* def :Tower */) :void

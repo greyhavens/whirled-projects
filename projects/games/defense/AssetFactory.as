@@ -15,7 +15,7 @@ public class AssetFactory
         }
     }
 
-    [Embed(source="rsrc/tower.png")]
+    [Embed(source="rsrc/test.swf")]
     private static const _defaultTower : Class;
 }
 }

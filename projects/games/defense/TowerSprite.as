@@ -17,17 +17,21 @@ public class TowerSprite extends Image
 
     public function updateLocation () :void
     {
+        var r :Rectangle = tower.getBoardLocation();
+        var p :Point = display.def.logicalToScreenPosition(r.x, r.y);
+        this.x = p.x;
+        this.y = p.y;
+    }
+
+    public function updateAlpha () :void
+    {
         if (tower.isOnBoard()) {
-            var r :Rectangle = tower.getBoardLocation();
-            var p :Point = display.def.logicalToScreenPosition(r.x, r.y);
-            this.x = p.x;
-            this.y = p.y;
             this.alpha = (tower.isOnFreeSpace() ? 1.0 : 0.3);
         } else {
             this.alpha = 0.0;
         }
     }
-
+    
     override protected function createChildren () :void
     {
         super.createChildren();

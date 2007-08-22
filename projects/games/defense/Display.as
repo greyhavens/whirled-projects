@@ -4,9 +4,11 @@ import flash.display.Graphics;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.utils.getTimer; // function import
 
 import mx.containers.Canvas;
 import mx.controls.Image;
+import mx.controls.Label;
 
 import com.threerings.util.ArrayUtil;
 
@@ -32,6 +34,7 @@ public class Display extends Canvas
     {
         removeEventListener(MouseEvent.CLICK, handleBoardClick);
         removeEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);
+        removeEventListener(Event.ENTER_FRAME, handleFrame);
         trace("DISPLAY UNLOAD");
     }
 
@@ -93,9 +96,14 @@ public class Display extends Canvas
         _backdrop = new Image();
         _boardSprite.addChild(_backdrop);
 
+        _counter = new Label();
+        _counter.x = _counter.y = 20;
+        addChild(_counter);
+        
         // initialize event handlers
         addEventListener(MouseEvent.CLICK, handleBoardClick);
         addEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);
+        addEventListener(Event.ENTER_FRAME, handleFrame);
     }
 
     protected function handleBoardClick (event :MouseEvent) :void
@@ -114,13 +122,23 @@ public class Display extends Canvas
         } 
     }
 
+    protected function handleFrame (event :Event) :void
+    {
+        var now :int = getTimer();
+        var delta :Number = (now - _lastFrameTime) / 1000;
+        _lastFrameTime = now;
+        _counter.text = "FPS: " + (1 / delta);
+    }
+
     protected var _defense :Defense;
     protected var _controller :Controller;
     
     protected var _boardSprite :Canvas;
     protected var _backdrop :Image;
     protected var _cursor :Cursor;
-
+    protected var _counter :Label;
+    protected var _lastFrameTime :int;
+    
     protected var _towers :Array = new Array(); /* of TowerSprite */
 }
 }

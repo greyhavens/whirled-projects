@@ -26,7 +26,7 @@ public class Main
         this.game = new Game(display);
         this.monitor = new Monitor(game, whirled);
         this.sharedState = new SharedState(display, game, whirled);
-        this.validator = new Validator(sharedState, whirled);
+        this.validator = new Validator(sharedState, game, whirled);
         trace("MVC CREATED");
         
         if (whirled.isConnected()) {

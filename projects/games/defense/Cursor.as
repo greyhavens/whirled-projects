@@ -23,7 +23,7 @@ public class Cursor
 
     public function setBoardLocation (x :int, y :int) :void
     {
-        _tower.setBoardLocation(x, y);
+        _tower.setBoardLocation(x, y, true);
     }
 
     public function getTower () :Tower

@@ -66,8 +66,11 @@ public class SharedState
 
     protected function updateSingleTower (index :int, info :Object) :void
     {
+        // todo: differentiate between adds and updates
+        
         // unpack the request, and create a tower
-        _game.addTower(info.type, info.x, info.y);
+        var tower :Tower = Validator.unpackTower(info, _game);
+        _game.addTower(tower);
     }
         
     protected var _game :Game;
