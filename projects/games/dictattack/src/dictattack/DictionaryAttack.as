@@ -14,6 +14,7 @@ import flash.utils.ByteArray;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.util.EmbeddedSwfLoader;
 
+import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
 
 [SWF(width="1000", height="550")]
@@ -32,6 +33,7 @@ public class DictionaryAttack extends Sprite
         _control.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _control.addEventListener(StateChangedEvent.ROUND_STARTED, roundDidStart);
         _control.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);
+        _control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
         _control.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
 
         // load up our content pack
@@ -69,6 +71,7 @@ public class DictionaryAttack extends Sprite
 
     protected function gameDidStart (event :StateChangedEvent) :void
     {
+        _flowAward = 0;
         _view.gameDidStart();
 
         // zero out the scores
@@ -90,44 +93,22 @@ public class DictionaryAttack extends Sprite
         _view.roundDidEnd(scorer);
     }
 
+    protected function flowAwarded (event :FlowAwardedEvent) :void
+    {
+        _flowAward = event.amount;
+    }
+
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
         roundDidEnd(event);
 
-        // grant ourselves flow
-        var myidx :int = _control.seating.getMyPosition();
-        var factor :Number = 0;
+        // note our score in non-multiplayer games
         var mypoints :int = -1;
-        if (_model.isMultiPlayer()) {
-            // if it's multiplayer, it's based on how many players we defeated
-            var scores :Array = (_control.get(Model.SCORES) as Array);
-            var beat :int = 0;
-            for (var ii :int = 0; ii < scores.length; ii++) {
-                if (ii != myidx && scores[ii] < scores[myidx]) {
-                    beat++;
-                }
-            }
-            factor = ((0.5/3) * beat + 0.5);
-            Log.getLog(this).info("Defeated: " + beat);
-
-        } else {
-            // single player is based on how well we cleared the board; 25% of available flow for
-            // getting all minimum length words, 100% of available flow for getting all LONG_WORD
-            // letter words (with bonuses helping players to approach that score)
+        if (!_model.isMultiPlayer()) {
             var points :Array = (_control.get(Model.POINTS) as Array);
-            var letters :int = _model.getLetterCount();
-            var minpoints :int = Math.round(letters / _model.getMinWordLength());
-            var maxpoints :int = Math.round(letters / LONG_WORD) *
-                (LONG_WORD - _model.getMinWordLength() + 1);
-            mypoints = points[myidx];
-            Log.getLog(this).info("Min: " + minpoints + " max: " + maxpoints +
-                                  " points: " + mypoints + ".");
-            // TODO: bonus for perfectly cleared single player board, record high scores, etc.
-//             factor = (mypoints - minpoints) / (maxpoints - minpoints);
-            // for now do straight points over maxpoints until we stop penalizing for * usage
-            factor = mypoints / maxpoints;
+            mypoints = points[_control.seating.getMyPosition()];
 
-            // also update their personal high scores
+            // update our personal high scores
             if (_cookie != null) {
                 var hiscores :Array = _cookie["highscores"] as Array;
                 if (hiscores == null) {
@@ -149,9 +130,8 @@ public class DictionaryAttack extends Sprite
             }
         }
 
-        var award :int = _control.grantFlowAward(factor * 100);
-        Log.getLog(this).info("Factor: " + factor + " award: " + award);
-        _view.gameDidEnd(award, mypoints);
+        // _flowAward is set via a FLOW_AWARDED event that precedes the GAME_ENDED event
+        _view.gameDidEnd(_flowAward, mypoints);
     }
 
     protected function handleUnload (event :Event) :void
@@ -170,6 +150,7 @@ public class DictionaryAttack extends Sprite
     protected var _view :GameView;
     protected var _content :Content;
     protected var _cookie :Object;
+    protected var _flowAward :int;
 
     [Embed(source="../../rsrc/invaders.swf", mimeType="application/octet-stream")]
     protected var CONTENT :Class;

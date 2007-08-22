@@ -271,16 +271,18 @@ public class Model
             // if this is a single player game, they go until the board is clear
             if (!isMultiPlayer()) {
                 if (nonEmptyColumns() < getMinWordLength()) {
-                    _control.endGame(new Array().concat(myidx));
+                    _control.endGameWithScore(newpoints);
                 }
 
             // if it's a multiplayer game, see if we have exceeded the winning points
             } else if (newpoints >= getWinningPoints()) {
                 // if so, score a point and end the round 
-                var newscore :int = (_control.get(SCORES) as Array)[myidx] + 1;
-                _control.set(SCORES, newscore, myidx);
-                if (newscore >= getWinningScore()) {
-                    _control.endGame(new Array().concat(myidx));
+                var scores :Array = (_control.get(SCORES) as Array);
+                scores[myidx] = scores[myidx] + 1;
+                _control.set(SCORES, scores[myidx], myidx);
+                if (scores[myidx] >= getWinningScore()) {
+                    _control.endGameWithScores(_control.seating.getPlayerIds(), scores,
+                                               WhirledGameControl.CASCADING_PAYOUT);
                 } else {
                     _control.endRound(INTER_ROUND_DELAY);
                 }
