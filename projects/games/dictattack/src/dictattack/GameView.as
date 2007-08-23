@@ -283,7 +283,7 @@ public class GameView extends Sprite
         text.gridFitType = GridFitType.PIXEL;
         text.sharpness = 400;
 
-        var msg :String = "    Game over!    ";
+        var msg :String = "Game over!        "; // forces dialog to be wide
         if (mypoints > 0) {
             msg += "\nScore: " + mypoints + " points.";
             if (mypoints > 70) {
@@ -298,6 +298,7 @@ public class GameView extends Sprite
                 msg += " Not bad.";
             }
         }
+        // TODO: else if (multiplayer): msg += "\nWinner " + winner + "!";
         if (flow > 0) {
             msg += "\nAward: " + flow + " flow!";
         }
