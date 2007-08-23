@@ -368,6 +368,12 @@ public class Model
         _control.sendMessage(LETTER_CHANGE, [ _control.getMyId(), rpos ]);
     }
 
+    public function endGameEarly () :void
+    {
+        var myidx :int = _control.seating.getMyPosition();
+        _control.endGameWithScore((_control.get(POINTS) as Array)[myidx]);
+    }
+
     public function updatePlayable (board :Board) :void
     {
         for (var xx :int = 0; xx < _size; xx++) {

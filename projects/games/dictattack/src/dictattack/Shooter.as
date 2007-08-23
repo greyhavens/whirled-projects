@@ -12,6 +12,7 @@ import flash.text.TextFormat;
 
 import flash.display.MovieClip;
 import flash.display.Shape;
+import flash.display.SimpleButton;
 import flash.display.Sprite
 
 public class Shooter extends Sprite
@@ -43,6 +44,10 @@ public class Shooter extends Sprite
             addChild(_score = new Sprite());
             _score.x = _points.width/2 + 5;
             _score.y = -Content.SHOOTER_SIZE/2;
+
+        } else {
+            // we may add this later
+            _endGame = content.makeButton("End Game");
         }
 
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
@@ -108,6 +113,16 @@ public class Shooter extends Sprite
     {
         // TODO: animate
         removeChild(_saucers.pop() as MovieClip);
+
+        // if we have no saucers left, and we're a single player game, add the "end game" button
+        if (_saucers.length == 0 && _points == null) { // single player mode
+            _endGame.x = _view.getBoard().getPixelSize()/2;
+            _endGame.y = -Content.SHOOTER_SIZE/2;
+            _endGame.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+                _view.getModel().endGameEarly();
+            });
+            addChild(_endGame);
+        }
     }
 
     public function shootLetter (board :Board, xx :int, yy :int) :void
@@ -116,6 +131,13 @@ public class Shooter extends Sprite
         _targets.push([xx, yy]);
         if (_tgtx == -1) {
             shootNextTarget();
+        }
+    }
+
+    public function roundDidEnd () :void
+    {
+        if (_endGame.parent != null) {
+            removeChild(_endGame);
         }
     }
 
@@ -199,6 +221,7 @@ public class Shooter extends Sprite
     protected var _name :TextField;
     protected var _score :Sprite;
     protected var _saucers :Array = new Array();
+    protected var _endGame :SimpleButton;
 
     protected var _board :Board;
     protected var _targets :Array = new Array();

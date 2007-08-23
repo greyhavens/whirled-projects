@@ -232,10 +232,16 @@ public class GameView extends Sprite
             text += "Point to " + scorer + ".";
         } else if (_model.nonEmptyColumns() == 0) {
             text = "Board clear! Excellent!";
-        } else {
+        } else if (_model.nonEmptyColumns() < _model.getMinWordLength()) {
             text = "No more words possible.";
+        } else {
+            text = "Game over.";
         }
         marquee.display(text, 2000);
+
+        for (var ii :int = 0; ii < _shooters.length; ii++) {
+            _shooters[ii].roundDidEnd();
+        }
 
         _input.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
         _input.removeEventListener(Event.CHANGE, textChanged);
@@ -277,7 +283,7 @@ public class GameView extends Sprite
         text.gridFitType = GridFitType.PIXEL;
         text.sharpness = 400;
 
-        var msg :String = "Game over!";
+        var msg :String = "    Game over!    ";
         if (mypoints > 0) {
             msg += "\nScore: " + mypoints + " points.";
             if (mypoints > 70) {
