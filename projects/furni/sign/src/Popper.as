@@ -18,12 +18,12 @@ public class Popper
      * in the specified number of milliseconds.
      */
     public function Popper (target :DisplayObject, from :Number, to :Number, duration :int,
-                            removeOnComplete :Boolean = false)
+                            removeFunc :Function = null)
     {
         _from = from;
         _to = to;
         _duration = duration;
-        _removeOnComplete = removeOnComplete;
+        _removeFunc = removeFunc;
 
         _startStamp = getTimer();
         _target = target;
@@ -46,8 +46,8 @@ public class Popper
     {
         if (_target != null) {
             _target.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
-            if (_removeOnComplete) {
-                _target.parent.removeChild(_target);
+            if (_removeFunc != null) {
+                _removeFunc(_target);
             } else {
                 _target.x = _naturalX;
                 _target.y = _naturalY;
@@ -76,7 +76,7 @@ public class Popper
     protected var _target :DisplayObject;
     protected var _from :Number, _to :Number;
     protected var _duration :int, _startStamp :int;
-    protected var _removeOnComplete :Boolean;
+    protected var _removeFunc :Function;
 
     protected var _naturalX :Number, _naturalY :Number;
     protected var _naturalScaleX :Number, _naturalScaleY :Number;

@@ -5,6 +5,7 @@ package {
 
 import flash.display.Bitmap;
 import flash.display.BlendMode;
+import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.geom.Point;
@@ -51,7 +52,6 @@ public class Sign extends Sprite
         _ctrl.setHotSpot(WIDTH/2, HEIGHT);
 
         _post.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
-        _post.addEventListener(MouseEvent.MOUSE_OVER, handleMouseOver);
         _post.addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
     }
 
@@ -65,9 +65,12 @@ public class Sign extends Sprite
     {
         if (_sign != null) {
             _sign.removeEventListener(MouseEvent.CLICK, handleClick);
-            // rarely, we get big rather than small when going away, whee!
-            var tscale :Number = ((getTimer() % 10000) == 42) ? 10 : 0.1;
-            new Popper(_sign, 1, tscale, 100, true);
+//             // rarely, we get big rather than small when going away, whee!
+//             var tscale :Number = ((getTimer() % 10000) == 42) ? 10 : 0.1;
+//             new Popper(_sign, 1, tscale, 100, function (sign :DisplayObject) :void {
+//                 _ctrl.clearPopup();
+//             });
+            _ctrl.clearPopup();
             _sign = null;
 
         } else {
@@ -75,17 +78,10 @@ public class Sign extends Sprite
             var text: String = String(_ctrl.lookupMemory("text", DEF_TEXT));
             _sign = createSign(title, text);
             _sign.addEventListener(MouseEvent.CLICK, handleClick);
-
-            // undo our scaling
-            _sign.scaleX = 1 / transform.concatenatedMatrix.a;
-            _sign.scaleY = 1 / transform.concatenatedMatrix.d;
-
-            addChild(_sign);
-            _sign.x = (WIDTH - _sign.width)/2;
-            _sign.y = HEIGHT - _post.height/2 - _sign.height - 10;
-
-            // "pop" the sign into view
-            new Popper(_sign, 0.1, 1, 100);
+            trace("Showing popup");
+            _ctrl.showPopup(title, _sign, _sign.width, _sign.height);
+//             // "pop" the sign into view
+//             new Popper(_sign, 0.1, 1, 100);
         }
     }
 
@@ -93,11 +89,6 @@ public class Sign extends Sprite
     {
         setHovered(_image.bitmapData.hitTest(
                        new Point(0, 0), 0, new Point(event.localX, event.localY)));
-    }
-
-    protected function handleMouseOver (event :MouseEvent) :void
-    {
-        setHovered(true);
     }
 
     protected function handleMouseOut (event :MouseEvent) :void
@@ -152,7 +143,7 @@ public class Sign extends Sprite
             _ctrl.updateMemory("text", _editText.text);
             _editTitle = null;
             _editText = null;
-            removeChild(editor);
+            _ctrl.clearPopup();
         });
         save.y = _editTitle.height + _editText.height + 10;
 
@@ -164,17 +155,10 @@ public class Sign extends Sprite
         cancel.addEventListener(MouseEvent.CLICK, function (event: MouseEvent) :void {
             _editTitle = null;
             _editText = null;
-            removeChild(editor);
+            _ctrl.clearPopup();
         });
 
-        // undo our scaling
-        editor.scaleX = 1 / transform.concatenatedMatrix.a;
-        editor.scaleY = 1 / transform.concatenatedMatrix.d;
-
-        addChild(editor);
-
-        editor.x = (WIDTH - editor.width)/2;
-        editor.y = HEIGHT - editor.height - 10;
+        _ctrl.showPopup("Edit Sign", editor, editor.width, editor.height);
     }
 
     protected function createSign (titleText :String, signText :String) :Sprite
@@ -210,6 +194,12 @@ public class Sign extends Sprite
         close.x = BORDER + (width - close.width);
         close.y = BORDER + height;
         height += close.height;
+
+        // create our background and border
+        var bg :Sprite = Sprite(new BACKGROUND());
+//         bg.width = (width + 2*BORDER);
+//         bg.height = (height + 2*BORDER);
+        sign.addChildAt(bg, 0);
 
         // draw a background and border for the text
         var g :Graphics = sign.graphics;
@@ -277,8 +267,11 @@ public class Sign extends Sprite
         "statement and your sign will be loved\n" +
         "and remembered for all time.";
 
-    [Embed(source="../rsrc/gallery.png")]
-//     [Embed(source="../rsrc/bravenewwhirled.png")]
+//    [Embed(source="../rsrc/gallery.png")]
+    [Embed(source="../rsrc/bravenewwhirled.png")]
     protected static var SIGN_IMAGE :Class;
+
+    [Embed(source="../rsrc/background.swf")]
+    protected static var BACKGROUND :Class;
 }
 }

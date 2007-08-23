@@ -9,7 +9,7 @@
   <import file="../../../etc/project-include.xml"/>
 
   <!-- copies our compiled media into our local media directory for testing -->
-  <property name="hash" value="c26375194deb0fe85afb9a0b790df1423090c186"/>
+  <property name="hash" value="a87a7cbd7cdba6385c64fd720ad7a118f8419ea5"/>
   <target name="dist" depends="compile">
     <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/${hash}.swf"/>
   </target>
