@@ -139,6 +139,9 @@ public class Shooter extends Sprite
         if (_endGame.parent != null) {
             removeChild(_endGame);
         }
+        for each (var child :MovieClip in _saucers) {
+            removeChild(child);
+        }
     }
 
     protected function shootNextTarget () :void
