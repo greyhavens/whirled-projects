@@ -18,21 +18,23 @@ public class Controller
     
     // PUBLIC METHODS
     
-    public function Controller (
-        gameCtrl : WhirledGameControl, model : Model, rounds : RoundProvider) : void
+    public function Controller (gameCtrl : WhirledGameControl, model : Model) : void
     {
         _gameCtrl = gameCtrl;
         _model = model;
-        _rounds = rounds;
-        _rounds.addEventListener (RoundProviderEvent.STARTED, roundStartedHandler);
-        _rounds.addEventListener (RoundProviderEvent.ENDED, roundEndedHandler);
     }
 
-    /** Shutdown handler */
-    public function handleUnload (event : Event) : void
+    /** Called when the round starts - enables user input, randomizes data. */
+    public function roundStarted () : void
     {
-        _rounds.removeEventListener (RoundProviderEvent.STARTED, roundStartedHandler);
-        _rounds.removeEventListener (RoundProviderEvent.ENDED, roundEndedHandler);
+        initializeLetterSet ();
+        enabled = true;
+    }
+
+    /** Called when the round ends - disables user input. */
+    public function roundEnded () : void
+    {
+        enabled = false;
     }
 
     /** Update model that's being controlled. */
@@ -137,23 +139,6 @@ public class Controller
             _model.removeAllSelectedLetters ();
         }
     }
-    
-
-
-    // EVENT HANDLERS
-
-    /** Called when the round starts - enables user input, randomizes data. */
-    private function roundStartedHandler (event : RoundProviderEvent) : void
-    {
-        initializeLetterSet ();
-        enabled = true;
-    }
-
-    /** Called when the round ends - disables user input. */
-    private function roundEndedHandler (event : RoundProviderEvent) : void
-    {
-        enabled = false;
-    }
 
 
 
@@ -192,9 +177,6 @@ public class Controller
     
     /** Game data interface */
     private var _model : Model;
-
-    /** Round provider */
-    private var _rounds : RoundProvider;
 
     /** Does the controller accept user input? */
     private var _enabled : Boolean;

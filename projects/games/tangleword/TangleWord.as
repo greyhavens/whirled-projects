@@ -1,14 +1,16 @@
 package
 {
 
-import flash.display.Sprite;    
+import flash.display.Sprite;
 import flash.display.Shape;
 import flash.events.Event;
 import flash.text.TextField;
 import mx.core.BitmapAsset;
 
-import com.whirled.WhirledGameControl;
+import com.threerings.ezgame.MessageReceivedEvent;
+import com.threerings.ezgame.StateChangedEvent;
 
+import com.whirled.WhirledGameControl;
 
 /**
    Main game takes care of initializing network connections,
@@ -18,11 +20,12 @@ import com.whirled.WhirledGameControl;
 [SWF(width="600", height="400")]
 public class TangleWord extends Sprite
 {
-    
+    //
+    //
     // PUBLIC METHODS
 
-    // Constructor creates the board, and registers itself for events
-    // and other startup information.
+    // Constructor creates the board, and registers itself for events and other startup
+    // information.
     public function TangleWord () : void
     {
         // Register unloader
@@ -31,25 +34,11 @@ public class TangleWord extends Sprite
         // Initialize game data
         _gameCtrl = new WhirledGameControl (this);
         _gameCtrl.registerListener (this);
-        if (_gameCtrl.isConnected())
+        if (!_gameCtrl.isConnected())
         {
-            _rounds = new RoundProvider (
-                _gameCtrl, Properties.ROUND_LENGTH, Properties.PAUSE_LENGTH);
-            
-            // Create MVC elements
-            _controller = new Controller (_gameCtrl, null, _rounds); // we'll set the model later...
-            _display = new Display (_gameCtrl, _controller, _rounds, "Tangleword v. 1.2");
-            _model = new Model (_gameCtrl, _rounds, _display);
-            _controller.setModel (_model);                           // ... as in, right here :)
-            addChild (_display);
-            
-            // Try initializing the game state
-            startGame ();
-            
-        } else {
             // Initialize the background bitmap
             var background :BitmapAsset = Resources.makeGameBackground ();
-            Assert.NotNull (background, "Background bitmap failed to initialize!"); 
+            Assert.NotNull (background, "Background bitmap failed to initialize!");
             addChild (background);
             // Error message
             var label :TextField = new TextField();
@@ -57,42 +46,86 @@ public class TangleWord extends Sprite
             label.y = Properties.BOARD.y;
             label.width = Properties.BOARD.width;
             label.multiline = true;
-            label.htmlText = "<center><p align=\"center\"><font size=\"+2\">TangleWord</font><br/>This game can only be played in <a href=\"http://www.whirled.com\"><u>the Whirled</u></a>.</p>";
+            label.htmlText = "<center><p align=\"center\"><font size=\"+2\">TangleWord</font>" +
+                "<br/>This game can only be played in <a href=\"http://www.whirled.com\">" +
+                "<u>the Whirled</u></a>.</p>";
             addChild(label);
+            return;
+        }
+
+        _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
+        _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
+        _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+
+        // Create MVC elements
+        _controller = new Controller (_gameCtrl, null); // we'll set the model later...
+        _display = new Display (_gameCtrl, _controller, "Tangleword v. 1.2");
+        _model = new Model (_gameCtrl, _display);
+        _controller.setModel (_model); // ... as in, right here :)
+        addChild (_display);
+
+        // If I'm in control, initialize the scoreboard
+        if (_gameCtrl.amInControl()) {
+            initializeScoreboard ();
+        }
+
+        // If the game's already going, start up our bits
+        if (_gameCtrl.isInPlay()) {
+            gameDidStart(null);
         }
     }
 
     /** Clean up and shut down. */
     public function handleUnload (event : Event) : void
     {
-        _model.handleUnload (event);
         _display.handleUnload (event);
-        _controller.handleUnload (event);
-        _rounds.handleUnload (event);
     }
-        
+
+    protected function gameDidStart (event :StateChangedEvent) :void
+    {
+        // start up our game ticker if we're the one in control
+        if (_gameCtrl.amInControl()) {
+            _gameCtrl.startTicker("countdown", 5000);
+        }
+        _model.roundStarted();
+        _controller.roundStarted();
+        // TODO: if the game is already in progress, deduct the start time from the round length;
+        // also we need the board to be in the game object
+        _display.roundStarted(Properties.ROUND_LENGTH);
+    }
+
+    protected function messageReceived (event :MessageReceivedEvent) :void
+    {
+        if (event.name == "countdown") {
+            var elapsed :int = int(event.value) * Properties.TICK_SECONDS;
+            // end the round when the ticks have met or exceeded our round length
+            if (elapsed >= Properties.ROUND_LENGTH) {
+                _model.endRound();
+            }
+        }
+    }
+
+    protected function gameDidEnd (event :StateChangedEvent) :void
+    {
+        _model.roundEnded();
+        _controller.roundEnded();
+        _display.roundEnded(Properties.PAUSE_LENGTH);
+
+        if (_gameCtrl.amInControl()) {
+            _gameCtrl.restartGameIn(Properties.PAUSE_LENGTH);
+        }
+    }
+
     /**
        Sets up the game information. This needs to happen after all of the
        MVC objects have been initialized.
     */
     private function startGame () : void
     {
-        _rounds.initialize();
-        
-        // If I joined an existing game, display time remaining till next round
-        if (! _gameCtrl.amInControl ())
-        {
-            var now : int = (new Date()).time;
-            var delta : int = Math.round((_rounds.endTime - now) / 1000);
-            _display.forceTimerStart (delta);
-            _display.logPleaseWait ();
-        } else {
-            // However, if I somehow became the host, just initialize everything anew.
-            initializeScoreboard ();
-        }
     }
 
-
+    //
+    //
     // IMPLEMENTATION DETAILS
 
     /** Creates a new distributed scoreboard */
@@ -109,13 +142,10 @@ public class TangleWord extends Sprite
         // Finally, share it!
         _gameCtrl.set (SHARED_SCOREBOARD, board.internalScoreObject);
     }
-        
+
     /** Game control object */
     private var _gameCtrl : WhirledGameControl;
 
-    /** Coordinates round info */
-    private var _rounds : RoundProvider;
-    
     /** Data interface */
     private var _model : Model;
 
@@ -134,9 +164,9 @@ public class TangleWord extends Sprite
     /** Key name: shared scoreboard */
     private static const SHARED_SCOREBOARD : String = "Shared Scoreboard";
 
-    
+
 }
-    
-    
-    
+
+
+
 }

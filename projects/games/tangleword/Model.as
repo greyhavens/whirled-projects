@@ -8,6 +8,7 @@ import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
 
+import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
 
 import flash.geom.Point;
@@ -20,38 +21,64 @@ import flash.geom.Point;
 public class Model
     implements MessageReceivedListener, PropertyChangedListener
 {
-
+    //
+    //
     // PUBLIC METHODS
-    
-    public function Model (
-        gameCtrl : WhirledGameControl, rounds : RoundProvider, display : Display) : void
+
+    public function Model (gameCtrl : WhirledGameControl, display : Display) : void
     {
         // Squirrel the pointers away
         _gameCtrl = gameCtrl;
-        _rounds = rounds;
         _display = display;
         _playerName = _gameCtrl.getOccupantName(_gameCtrl.getMyId());
 
         // Register for updates
         _gameCtrl.registerListener (this);
-        _rounds.addEventListener (RoundProviderEvent.STARTED, roundStartedHandler);
-        _rounds.addEventListener (RoundProviderEvent.ENDED, roundEndedHandler);
+        _gameCtrl.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
 
         // Initialize game data storage
         initializeStorage ();
     }
 
-    /** Shutdown handler */
-    public function handleUnload (event : Event) : void
+    /** Called at the beginning of a round - push my scoreboard on everyone. */
+    public function roundStarted () : void
     {
-        _rounds.removeEventListener (RoundProviderEvent.STARTED, roundStartedHandler);
-        _rounds.removeEventListener (RoundProviderEvent.ENDED, roundEndedHandler);
+        if (_gameCtrl.amInControl ())
+        {
+            // Share the scoreboard
+            _gameCtrl.sendMessage (SCOREBOARD_UPDATE_MSG, _scoreboard.internalScoreObject);
+        }
     }
-    
+
+    public function endRound () :void
+    {
+        if (!_gameCtrl.amInControl()) {
+            return;
+        }
+
+        var playerIds :Array = [];
+        var scores :Array = [];
+        for each (var playerId :int in _gameCtrl.getOccupants()) {
+            var score :int = _scoreboard.getRoundScore(_gameCtrl.getOccupantName(playerId));
+            if (score > 0) {
+                playerIds.push(playerId);
+                scores.push(score);
+            }
+        }
+        _gameCtrl.endGameWithScores(playerIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
+    }
+
+    /** Called when the round ends - cleans up data, and awards flow! */
+    public function roundEnded () : void
+    {
+        removeAllSelectedLetters ();
+        _scoreboard.resetWordClaims();
+    }
+
     //
     //
     // LETTER ACCESSORS
-    
+
     /** If this board letter is already selected as part of the word, returns true.  */
     public function isLetterSelectedAtPosition (position : Point) : Boolean
     {
@@ -107,7 +134,7 @@ public class Model
         // return true;
 
         if (word.length == 0) return false;
-        
+
         for (var x : int = 0; x < Properties.LETTERS; x++) {
             for (var y : int = 0; y < Properties.LETTERS; y++) {
                 if (wordExists (word, 0, x, y, new Array ()))
@@ -126,14 +153,14 @@ public class Model
 
         // if the letter doesn't match, fail.
         var l : String = _board[x][y];
-        if (start + l.length > word.length || word.indexOf (l, start) != start) 
+        if (start + l.length > word.length || word.indexOf (l, start) != start)
             return false;
 
         // if we've seen it before, fail.
         for each (var p : Point in visited) {
             if (p.x == x && p.y == y) return false;
         }
-        
+
         // finally, check all neighbors
         visited.push (new Point (x, y));
         for (var dx : int = -1; dx <= 1; dx++) {
@@ -149,12 +176,9 @@ public class Model
             }
         }
         visited.pop();
-        
+
         return false;
     }
-            
-        
-
 
     //
     //
@@ -182,9 +206,6 @@ public class Model
     {
         _gameCtrl.set (LETTER_SET_MSG, a);
     }
-        
-        
-
 
     //
     //
@@ -201,13 +222,13 @@ public class Model
         switch (event.name)
         {
         case ADD_SCORE_MSG:
-            
+
             // Store the score in a local data structure
             addWordToScoreboard (
                 event.value.player, event.value.word, event.value.score, event.value.isvalid);
 
             updateScoreDisplay ();
-            
+
             break;
 
         case SCOREBOARD_UPDATE_MSG:
@@ -217,14 +238,14 @@ public class Model
             Assert.Fail ("Clobbering existing scoreboard...");
             _scoreboard.internalScoreObject = event.value;
             updateScoreDisplay ();
-            
+
         default:
             // Ignore any other messages; they're not for us.
 
         }
 
     }
-    
+
     /** From PropertyChangedListener: deal with distributed game data changes */
     public function propertyChanged (event : PropertyChangedEvent) : void
     {
@@ -247,51 +268,30 @@ public class Model
             //Assert.Fail ("Unknown property changed: " + event.name + ", from: " +
             //            event.oldValue + " to " + event.newValue);
         }
-        
+
     }
-
-    /** Called at the beginning of a round - push my scoreboard
-        on everyone. */
-    public function roundStartedHandler (event : RoundProviderEvent) : void
-    {
-        if (_gameCtrl.amInControl ())
-        {
-            // Share the scoreboard
-            _gameCtrl.sendMessage (SCOREBOARD_UPDATE_MSG, _scoreboard.internalScoreObject);
-        }
-    }
-
-    /** Called when the round ends - cleans up data, and awards flow! */
-    public function roundEndedHandler (event : RoundProviderEvent) : void
-    {
-        removeAllSelectedLetters ();
-        var score :Number = _scoreboard.getRoundScore (_playerName);
-        var maxflow :Number = _gameCtrl.getAvailableFlow ();
-
-        // Player's performance compared to a built-in max. I'm just
-        // pulling this out of thin air for now. :)
-        var flow :int = int (Math.min (score / 25 * maxflow, maxflow));
-
-        _gameCtrl.awardFlow (flow);
-        _display.logRoundEnded (score, flow);
-        _scoreboard.resetWordClaims ();
-    }
-
-    
 
     //
     //
     // PRIVATE METHODS
+
+    /** Called when flow is awarded at the end of the round. */
+    protected function flowAwarded (event :FlowAwardedEvent) :void
+    {
+        var roundScore :int = _scoreboard.getRoundScore(_playerName);
+        if (roundScore > 0) {
+            _display.logRoundEnded(roundScore, event.amount);
+        }
+    }
 
     /** Resets the currently guessed word */
     private function resetWord () : void
     {
         _word = new Array ();
     }
-         
 
     /** Initializes letter and word storage */
-    public function initializeStorage () : void
+    private function initializeStorage () : void
     {
         // First, the board
         _board = new Array (Properties.LETTERS);
@@ -312,7 +312,7 @@ public class Model
     }
 
     /** Sets up a new game board, based on a flat array of letters. */
-    public function setGameBoard (s : Array) : void
+    private function setGameBoard (s : Array) : void
     {
         // Copy them over to the data set
         for (var x : int = 0; x < Properties.LETTERS; x++)
@@ -332,7 +332,7 @@ public class Model
         player : String, word : String, score : Number, isvalid : Boolean) : void
     {
         // if this message came in after the end of the round, just ignore it
-        if (_rounds.inPause) {
+        if (!_gameCtrl.isInPlay()) {
             return;
         }
 
@@ -357,9 +357,9 @@ public class Model
         }
 
         // the word was valid and already claimed, when another player tried to claim it.
-        // just ignore.    
-    }      
-    
+        // just ignore.
+    }
+
     /** Updates a single letter at specified /position/ to display a new /text/.  */
     private function updateBoardLetter (position : Point, text : String) : void
     {
@@ -374,9 +374,8 @@ public class Model
         _display.updateScores (_scoreboard);
     }
 
-
-    
-
+    //
+    //
     // PRIVATE CONSTANTS
 
     /** Message types */
@@ -384,15 +383,13 @@ public class Model
     private static const LETTER_SET_MSG : String = "Letter Set Update";
     private static const SCOREBOARD_UPDATE_MSG : String = "Scoreboard Update";
 
-    
+    //
+    //
     // PRIVATE VARIABLES
 
     /** Main game control structure */
     private var _gameCtrl : WhirledGameControl;
 
-    /** Round provider */
-    private var _rounds : RoundProvider;
-    
     /** Cache the player's name */
     private var _playerName : String;
 
@@ -401,16 +398,13 @@ public class Model
 
     /** Current word data (as array of board coordinates) */
     private var _word : Array;
-    
+
     /** Game board view */
     private var _display : Display;
 
     /** List of players and their scores */
     private var _scoreboard : Scoreboard;
-
 }
-
-
 }
 
 

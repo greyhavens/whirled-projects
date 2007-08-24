@@ -1,7 +1,7 @@
 package
 {
 
-import flash.display.Sprite;    
+import flash.display.Sprite;
 import flash.display.Stage;
 import flash.display.SimpleButton;
 import flash.display.DisplayObject;
@@ -28,23 +28,22 @@ import com.whirled.WhirledGameControl;
     and game state display. */
 public class Display extends Sprite
 {
-    
+
     // PUBLIC FUNCTIONS
 
     /** Initializes the board and everything on it */
     public function Display (gameCtrl : WhirledGameControl, controller : Controller,
-                             rounds : RoundProvider, version : String) : void
+                             version : String) : void
     {
         // Copy parameters
         _controller = controller;
-        _rounds = rounds;
         _gameCtrl = gameCtrl;
 
         // Initialize the background bitmap
         _background = Resources.makeGameBackground ();
-        Assert.NotNull (_background, "Background bitmap failed to initialize!"); 
+        Assert.NotNull (_background, "Background bitmap failed to initialize!");
         addChild (_background);
-        
+
         // Initialize empty letters
         initializeLetters ();
 
@@ -53,8 +52,6 @@ public class Display extends Sprite
 
         // Register for events
         _gameCtrl.registerListener (this);
-        _rounds.addEventListener (RoundProviderEvent.STARTED, roundStartedHandler);
-        _rounds.addEventListener (RoundProviderEvent.ENDED, roundEndedHandler);
         addEventListener (MouseEvent.CLICK, clickHandler);
         addEventListener (MouseEvent.MOUSE_MOVE, mouseHandler);
         addEventListener (KeyboardEvent.KEY_UP, typingHandler);
@@ -65,14 +62,27 @@ public class Display extends Sprite
     /** Shutdown handler */
     public function handleUnload (event : Event) : void
     {
-        _rounds.removeEventListener (RoundProviderEvent.STARTED, roundStartedHandler);
-        _rounds.removeEventListener (RoundProviderEvent.ENDED, roundEndedHandler);
         removeEventListener (MouseEvent.CLICK, clickHandler);
         removeEventListener (MouseEvent.MOUSE_MOVE, mouseHandler);
         removeEventListener (KeyboardEvent.KEY_UP, typingHandler);
         _gameCtrl.unregisterListener (this);
     }
-    
+
+    /** Called when the round starts - enables display. */
+    public function roundStarted (duration :int) : void
+    {
+        logRoundStarted ();
+        _timer.start (duration);
+        setEnableState (true);
+    }
+
+    /** Called when the round ends - disables display. */
+    public function roundEnded (untilNext :int) : void
+    {
+        _timer.start (untilNext);
+        setEnableState (false);
+    }
+
     /** Called from the model, this accessor modifies the display /text/
         for one letter at specified board /position/. */
     public function setLetter (position : Point, text : String) : void
@@ -140,7 +150,7 @@ public class Display extends Sprite
         var message : String = player + ": " + word + " is not valid.";
         _logger.Log (message);
     }
-    
+
     /** Adds a "please wait" message */
     public function logPleaseWait () : void
     {
@@ -159,7 +169,7 @@ public class Display extends Sprite
         _logger.Log ("Round ended: " + points + " points");
         _logger.Log ("You received " + flow + " flow!");
     }
-    
+
     /** Sets scores based on the scoreboard. */
     public function updateScores (board : Scoreboard) : void
     {
@@ -172,7 +182,7 @@ public class Display extends Sprite
     {
         _timer.start (seconds);
     }
- 
+
     // PRIVATE EVENT HANDLERS
 
     private function clickHandler (event : MouseEvent) : void
@@ -184,7 +194,7 @@ public class Display extends Sprite
             _controller.tryAddLetter (i);
         }
     }
-        
+
     private function mouseHandler (event : MouseEvent) : void
     {
         var p : Point = new Point (event.stageX, event.stageY);
@@ -195,21 +205,6 @@ public class Display extends Sprite
     private function okButtonClickHandler (event : MouseEvent) : void
     {
         _controller.tryScoreWord (_wordfield.text, false);
-    }
-
-    /** Called when the round starts - enables display. */
-    private function roundStartedHandler (event : RoundProviderEvent) : void
-    {
-        logRoundStarted ();
-        _timer.start (int(Math.round(event.lengthMs / 1000)));
-        setEnableState (true);
-    }
-
-    /** Called when the round ends - disables display. */
-    private function roundEndedHandler (event : RoundProviderEvent) : void
-    {
-        _timer.start (int(Math.round(event.lengthMs / 1000)));
-        setEnableState (false);
     }
 
     /** Called when the user types a letter inside the word field. */
@@ -229,7 +224,7 @@ public class Display extends Sprite
             _controller.processKeystroke (event);
         }
     }
-            
+
 
 
     // PRIVATE HELPER FUNCTIONS
@@ -308,11 +303,11 @@ public class Display extends Sprite
                 _letters[x][y].isLetterEnabled = value;
             }
         }
-        
+
         // Set other UI elements
         _wordfield.visible = _okbutton.visible = value;
     }
-    
+
 
     /**
        Set cursor over a letter at specified board /location/, and removes the cursor
@@ -322,7 +317,7 @@ public class Display extends Sprite
     private function setCursor (location : Point) : void
     {
         var l : Letter = null;
-        
+
         if (location != null &&
             _lastCursor != null &&
             location.equals (_lastCursor))
@@ -346,7 +341,7 @@ public class Display extends Sprite
             l.isCursorEnabled = true;
             _lastCursor = location;
         }
-    }        
+    }
 
 
     /** Helper function: converts screen coordinate to a board square position.
@@ -366,7 +361,7 @@ public class Display extends Sprite
             return null;
         }
 
-        return newp;        
+        return newp;
     }
 
     /** Helper function: converts board square coordinate into the screen coordinates
@@ -393,18 +388,15 @@ public class Display extends Sprite
     }
 
 
-    
+
     // PRIVATE VARIABLES
 
     /** Whirled controller */
     private var _gameCtrl : WhirledGameControl;
-    
+
     /** Game logic */
     private var _controller : Controller;
 
-    /** Round info provider */
-    private var _rounds : RoundProvider;
-    
     /** Overall game background */
     private var _background : BitmapAsset;
 
@@ -428,7 +420,7 @@ public class Display extends Sprite
 
     /** Timer display */
     private var _timer : CountdownTimer;
-    
+
 }
 
 } // package
@@ -455,10 +447,10 @@ class OKButton extends Sprite
     {
         this.buttonMode = true;
 
-        _outFilters = new Array (); 
+        _outFilters = new Array ();
         _overFilters = new Array ();
         _overFilters.push (Resources.makeButtonOverFilter ());
-        
+
         _bg = Resources.makeButtonBackground ();
         addChild (_bg);
 
@@ -489,7 +481,7 @@ class OKButton extends Sprite
     private var _overFilters : Array;
     private var _outFilters : Array;
     private var _bg : BitmapAsset;
-    
+
 }
 
 class ScoreField extends TextField
@@ -521,7 +513,7 @@ class ScoreField extends TextField
     }
 }
 
-        
-                        
+
+
 
 

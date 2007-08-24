@@ -1,8 +1,6 @@
 package
 {
-
 import flash.geom.Rectangle;
-
 
 /**
    Constants which would normally be read from a config file;
@@ -10,16 +8,17 @@ import flash.geom.Rectangle;
 */
 public class Properties
 {
-
     /** Default language/culture settings */
     public static const LOCALE : String = "en-us";
 
     /** Default round length, in seconds */
-    public static const ROUND_LENGTH : Number = 120;
+    public static const ROUND_LENGTH :int = 120;
 
     /** Default pause length */
-    public static const PAUSE_LENGTH : Number = 30;
+    public static const PAUSE_LENGTH :int = 30;
 
+    /** The duration of the tick counter, must divide evenly into ROUND_LENGTH and PAUSE_LENGTH. */
+    public static const TICK_SECONDS :int = 5;
 
     /**
        Game display is composed of the letter board, and various
@@ -48,7 +47,7 @@ public class Properties
        Position of the score box
     */
     public static const SCOREFIELD : Rectangle = new Rectangle (360, 50, 180, 100);
-    
+
     /**
        Position of the log text field
     */
@@ -58,7 +57,6 @@ public class Properties
        Position of the timer
     */
     public static const TIMER : Rectangle = new Rectangle (360, 312, 180, 28);
-
 
     /** Each letter is a simple square - but we want to know how big to draw them.
         This is the width and height of each letter in pixels. */
@@ -71,7 +69,4 @@ public class Properties
     /** The total number of letters in the matrix. */
     public static const LETTER_COUNT : int = LETTERS * LETTERS;
 }
-    
-
-    
 } // package
