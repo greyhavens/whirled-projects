@@ -165,7 +165,8 @@ public class Display extends Canvas
         var now :int = getTimer();
         var delta :Number = (now - _lastFrameTime) / 1000;
         _lastFrameTime = now;
-        _counter.text = "FPS: " + (1 / delta);
+        _fps = Math.round((_fps + 1 / delta) / 2);
+        _counter.text = "FPS: " + _fps;
     }
 
     protected var _board :Board;
@@ -176,6 +177,7 @@ public class Display extends Canvas
     protected var _backdrop :Image;
     protected var _counter :Label;
     protected var _lastFrameTime :int;
+    protected var _fps :Number = 0;
 
     protected var _cursor :TowerSprite;
     protected var _towers :HashMap = new HashMap(); // from Tower guid to TowerSprite

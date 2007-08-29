@@ -15,7 +15,7 @@ public class AssetFactory
         }
     }
     
-    [Embed(source="rsrc/test.swf")]
+    [Embed(source="rsrc/tower.png")]
     private static const _defaultTower :Class;
 
     /** Returns the backdrop image. */

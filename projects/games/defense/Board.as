@@ -5,6 +5,8 @@ import flash.geom.Point;
 
 import com.threerings.util.HashMap;
 
+import com.whirled.WhirledGameControl;
+
 /**
  * Game board, which can be queried for information about static board definition,
  * as well as positions of the different pieces.
@@ -19,19 +21,30 @@ public class Board
     public var pixelWidth :int = width * squareWidth;
     public var pixelHeight :int = height * squareHeight;
 
-    public function Board ()
+    public function Board (whirled :WhirledGameControl)
     {
+        _whirled = whirled;
         _gameboard = new Grid(width, height);
     }
 
+    public function get myId () :int
+    {
+        return _whirled.getMyId();
+    }
+    
     public function handleUnload (event : Event) :void
     {
         trace("BOARD UNLOAD");
     }
 
+    public function markAsOccupied (def :TowerDef, playerId :int) :void
+    {
+        _gameboard.fillAllTowerCells(def, playerId);
+    }
+    
     public function isUnoccupied (def :TowerDef) :Boolean
     {
-        return true;
+        return _gameboard.isEachTowerCellEqual(def, Grid.UNOCCUPIED);
     }
 
     public function isOnBoard (def :TowerDef) :Boolean
@@ -77,7 +90,8 @@ public class Board
     
     /** Hash map of all towers, indexed by their id. */
     protected var _towers :HashMap = new HashMap();
-    
-    
+
+    /** This is where we get game settings from. */
+    protected var _whirled :WhirledGameControl;
 }
 }

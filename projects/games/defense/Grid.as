@@ -37,7 +37,9 @@ public class Grid
      */
     public function forEachTowerCell (def :TowerDef, fn :Function) :void
     {
-        def.forEach(function (x :int, y :int) :void { fn(getCell(x, y)); });
+        def.forEach(function (x :int, y :int) :void {
+                fn(getCell(x, y));
+            });
     }
 
     /**
@@ -62,6 +64,16 @@ public class Grid
                 result = result || (value == cellValue);
             });
         return result;
+    }
+
+    /**
+     * Fills all cells intersected by the tower location with specified value.
+     */
+    public function fillAllTowerCells (def :TowerDef, value :*) :void
+    {
+        def.forEach(function (x :int, y :int) :void {
+                setCell(x, y, value);
+            });
     }
 
     /** Grid dimensions. */

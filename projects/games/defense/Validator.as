@@ -54,8 +54,7 @@ public class Validator
     {
         if (_whirled.amInControl()) {
             var tower :Tower = Marshaller.unserializeTower(event.value);
-            // todo: validation
-            if (true) { // :)
+            if (_board.isOnBoard(tower.def) && _board.isUnoccupied(tower.def)) { 
                 _whirled.set(Monitor.TOWER_SET, event.value, 1);
             }
         } else {

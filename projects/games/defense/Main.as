@@ -25,7 +25,7 @@ public class Main
         app.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         _display = app.display;
-        _board = new Board();
+        _board = new Board(_whirled);
         _validator = new Validator(_board, _whirled);
         _game = new Game(_board, _display);
         _simulator = new Simulator(_board, _game);

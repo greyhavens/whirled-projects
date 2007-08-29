@@ -52,7 +52,7 @@ public class TowerDef
         var right :int = x + width;
         var bottom :int = y + height;
         for (var xx :int = x; xx < right; xx++) {
-            for (var yy :int = y; xx < bottom; yy++) {
+            for (var yy :int = y; yy < bottom; yy++) {
                 fn(xx, yy);
             }
         }
@@ -69,7 +69,7 @@ public class TowerDef
         var right :int = x + width;
         var bottom :int = y + height;
         for (var xx :int = x; xx < right; xx++) {
-            for (var yy :int = y; xx < bottom; yy++) {
+            for (var yy :int = y; yy < bottom; yy++) {
                 results.push(fn(xx, yy));
             }
         }
