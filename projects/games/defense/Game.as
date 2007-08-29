@@ -26,6 +26,7 @@ public class Game
     /** Handles the start of a new game. */
     public function startGame () :void
     {
+        _board.reset();
         _display.resetBoard();
         
         _towers = new Array(Board.HEIGHT * Board.WIDTH);

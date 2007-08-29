@@ -27,7 +27,7 @@ public class Board
     public function Board (whirled :WhirledGameControl)
     {
         _whirled = whirled;
-        _gameboard = new Grid(WIDTH, HEIGHT);
+        _groundmap = new GroundMap(WIDTH, HEIGHT);
     }
 
     public function get myPlayerIndex () :int
@@ -45,22 +45,39 @@ public class Board
         trace("BOARD UNLOAD");
     }
 
+    public function reset () :void
+    {
+        var playerCount :int = _whirled.seating.getPlayerIds().length;
+        var mapId :int = 1; // todo
+        _groundmap.loadDefinition(mapId, playerCount);
+    }
+    
     // Functions used by game logic to mark / clear towers on the board
 
     public function markAsOccupied (def :TowerDef, playerId :int) :void
     {
-        _gameboard.fillAllTowerCells(def, playerId);
+        _groundmap.fillAllTowerCells(def, playerId);
     }
     
     public function isUnoccupied (def :TowerDef) :Boolean
     {
-        return _gameboard.isEachTowerCellEqual(def, Grid.UNOCCUPIED);
+        return _groundmap.isEachTowerCellEqual(def, Map.UNOCCUPIED);
     }
 
     public function isOnBoard (def :TowerDef) :Boolean
     {
         return (def.x >= 0 && def.y >= 0 &&
                 def.x + def.width <= WIDTH && def.y + def.height <= HEIGHT);
+    }
+
+    public function getPlayerSource (playerIndex :int) :Point
+    {
+        return _groundmap.getPlayerSource(playerIndex);
+    }
+    
+    public function getPlayerTarget (playerIndex :int) :Point
+    {
+        return _groundmap.getPlayerTarget(playerIndex);
     }
 
     public function towerIndexToPosition (index :int) :Point
@@ -105,8 +122,8 @@ public class Board
     }
 
 
-    /** Board occupancy map. */
-    protected var _gameboard :Grid;
+    /** Various game-related maps. */
+    protected var _groundmap :GroundMap;
     
     /** Hash map of all towers, indexed by their id. */
     protected var _towers :HashMap = new HashMap();
