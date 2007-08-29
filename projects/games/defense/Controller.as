@@ -8,8 +8,9 @@ import com.whirled.WhirledGameControl;
 
 public class Controller
 {
-    public function Controller (whirled :WhirledGameControl)
+    public function Controller (board :Board, whirled :WhirledGameControl)
     {
+        _board = board;
         _whirled = whirled;
     }
 
@@ -18,13 +19,11 @@ public class Controller
         trace("CONTROLLER UNLOAD");
     }
 
-    public function addTower (tower :Tower) :void
+    public function addTower (def :TowerDef) :void
     {
-        var loc :Rectangle = tower.getBoardLocation();
-        var def :Object = { x: loc.x, y: loc.y, type: tower.type };
-        
-        // sends a request to everyone to add a new tower
-        _whirled.sendMessage(Validator.REQUEST_ADD, def);
+        var tower :Tower = new Tower(def, 42 /* todo */, Tower.makeGuid());
+        var serialized :Object = Marshaller.serializeTower(tower);
+        _whirled.sendMessage(Validator.REQUEST_ADD, serialized);
     }
 
     public function removeTower (/* def :Tower */) :void
@@ -36,7 +35,8 @@ public class Controller
     {
         // sends a request to everyone to update a tower
     }
-    
+
+    protected var _board :Board;
     protected var _whirled :WhirledGameControl;
 }
 }

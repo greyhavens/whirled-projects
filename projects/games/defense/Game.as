@@ -6,35 +6,30 @@ import flash.geom.Rectangle;
 
 public class Game
 {
-    // Names of properties set on the distributed object.
-    public static const TOWERS :String = "TowersProperty";
-    public static const START_TIME :String = "StartTimeProperty";
-
-    public function Game (display :Display)
+    public function Game (board :Board, display :Display)
     {
+        _board = board;
         _display = display;
-        _board = new Board(display.def.height, display.def.width);
 
-        _display.addEventListener(Event.ENTER_FRAME, tickHandler);
-        _display.setCursor(new Cursor(this, _display));
+        _display.addEventListener(Event.ENTER_FRAME, handleGameTick);
+
+        // initialize the cursor with dummy data - it will all get overwritten
+        _cursor = new Tower(new TowerDef(0, 0, Tower.TYPE_SIMPLE), -1, Tower.makeGuid()); 
     }
 
-    public function get def () :BoardDefinition
-    {
-        return _display.def;
-    }
-    
     public function handleUnload (event : Event) : void
     {
-        _display.removeEventListener(Event.ENTER_FRAME, tickHandler);
+        _display.removeEventListener(Event.ENTER_FRAME, handleGameTick);
         trace("GAME UNLOAD");
     }
 
+    /** Handles the start of a new game. */
     public function startGame () :void
     {
         _display.resetBoard();
-        _critters = new Array();
+        
         _towers = new Array();
+        _critters = new Array();
     }
 
     public function endGame () :void
@@ -43,41 +38,44 @@ public class Game
         _critters = null;
     }
 
-    public function addTower (tower :Tower) :void
-    {
-        _towers.push(tower);
-        _board.setState(tower.getBoardLocation(), Board.OCCUPIED);
-
-        tower.addToDisplay(_display);
-    }
-
-    public function removeTower (tower :Tower) :void
-    {
-        // todo
-    }
-
     public function resetRound () :void
     {
     }
 
-    public function checkLocation (r :Rectangle) :Boolean
+    public function handleAddTower (tower :Tower) :void
     {
-        return _board.allClear(r);
+        _towers.push(tower);
+        _display.handleAddTower(tower);
     }
 
-    protected function tickHandler (event :Event) :void
+    public function handleRemoveTower (towerId :int) :void
     {
-        /*
-        if (simulator.isActive) {
-            simulator.tick();
-        }
-        */
     }
-    
+
+    public function handleMouseMove (logical :Point) :void
+    {
+        var def :TowerDef = new TowerDef(logical.x, logical.y, _cursor.def.type);
+        if (! _cursor.def.equals(def)) {
+            var onBoard :Boolean = _board.isOnBoard(def);
+            var overEmptySpace :Boolean = onBoard && _board.isUnoccupied(def);
+            if (onBoard) {
+                _cursor.def = def;
+                _display.showCursor(def, overEmptySpace);
+            } else {
+                _display.hideCursor();                    
+            }
+        }
+    }
+        
+    protected function handleGameTick (event :Event) :void
+    {
+    }
+
+    protected var _board :Board;
     protected var _display :Display;
 
+    protected var _cursor :Tower;
     protected var _towers :Array; // of Tower
     protected var _critters :Array; // of Critter
-    protected var _board :Board;
 }
 }

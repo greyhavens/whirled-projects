@@ -1,61 +1,83 @@
 package {
 
-import flash.geom.Rectangle;
-    
+import flash.events.Event;
+import flash.geom.Point;
+
+import com.threerings.util.HashMap;
+
 /**
- * Occupancy grid representation, used for pathfinding and occupancy tests.
+ * Game board, which can be queried for information about static board definition,
+ * as well as positions of the different pieces.
  */
 public class Board
 {
-    public static const EMPTY :int = 0;
-    public static const OCCUPIED :int = 1;
+    public var width :int = 20;
+    public var height :int = 15;
+
+    public var squareWidth :int = 20;
+    public var squareHeight :int = 20;
+    public var pixelWidth :int = width * squareWidth;
+    public var pixelHeight :int = height * squareHeight;
+
+    public function Board ()
+    {
+        _gameboard = new Grid(width, height);
+    }
+
+    public function handleUnload (event : Event) :void
+    {
+        trace("BOARD UNLOAD");
+    }
+
+    public function isUnoccupied (def :TowerDef) :Boolean
+    {
+        return true;
+    }
+
+    public function isOnBoard (def :TowerDef) :Boolean
+    {
+        return (def.x >= 0 && def.y >= 0 &&
+                def.x + def.width <= width && def.y + def.height <= height);
+    }
+
+    /*
+    public function getTower (id :int) :Tower
+    {
+    }
+
+    public function handleAddTower (tower :Tower) :Boolean
+    {
+    }
+
+    public function handleRemoveTower (tower :Tower) :Boolean
+    {
+    }
+    */
     
-    public function Board (rows :int, columns :int)
+    /**
+     * Converts screen coordinates (relative to the upper left corner of the board)
+     * to logical coordinates in board space.
+     */
+    public function screenToLogicalPosition (x :int, y :int) :Point
     {
-        _rows = new Array();
-        for (var rr :int = 0; rr < rows; rr++) {
-            _rows[rr] = new Array(columns);
-            for (var cc :int = 0; cc < columns; cc++) {
-                _rows[rr][cc] = EMPTY;
-            }
-        }
+        return new Point(int(Math.floor(x / squareWidth)), int(Math.floor(y / squareHeight)));
     }
 
-    /** Maps the function over all cells in the rectangle, and returns an array of results. */
-    public function map (r :Rectangle, fn :Function) :Array
+    /**
+     * Converts board coordinates to screen coordinates (relative to upper left corner).
+     */
+    public function logicalToScreenPosition (x :int, y :int) :Point
     {
-        var results :Array = new Array();
-        for (var rr :int = r.top; rr < r.bottom; rr++) {
-            for (var cc :int = r.left; cc < r.right; cc++) {
-                results.push(fn(_rows[rr][cc]));
-            }
-        }
-        return results;
+        return new Point(x * squareWidth, y * squareHeight);
     }
 
-    /** Runs the function over all cells in the rectangle, storing the results back in the cell. */
-    public function forEach (r :Rectangle, fn :Function) :void
-    {
-        for (var rr :int = r.top; rr < r.bottom; rr++) {
-            for (var cc :int = r.left; cc < r.right; cc++) {
-                _rows[rr][cc] = fn(_rows[rr][cc]);
-            }
-        }
-    }
 
-    /** Returns true if all cells in the rectangle are clear. */
-    public function allClear (r :Rectangle) :Boolean
-    {
-        var results :Array = map(r, function (val :int) :Boolean { return val == EMPTY; });
-        return results.every(function (val :Boolean, i :*, a :*) :Boolean { return val; });
-    }
-
-    /** Sets all cells in the rectangle to specified state. */
-    public function setState (r :Rectangle, state :int) :void
-    {
-        forEach(r, function (... ignored) :int { return state; });
-    }        
-        
-    protected var _rows :Array = null;
+    /** Board occupancy map. */
+    protected var _gameboard :Grid;
+    
+    /** Hash map of all towers, indexed by their id. */
+    protected var _towers :HashMap = new HashMap();
+    
+    
 }
 }

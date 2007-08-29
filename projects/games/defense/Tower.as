@@ -1,76 +1,53 @@
 package {
 
-import flash.geom.Rectangle;
-    
 /**
  * Definition of a single tower, including all state information, and a pointer to display object.
  */
 public class Tower
 {
-    public static const TYPE_SIMPLE :int = 0;
-
-    public var type :int;
-
-    public function Tower (type :int, game :Game)
-    {
-        this.type = type;
-        _game = game;
-        _location = new Rectangle(0, 0, 2, 2); // todo: this will change based on type
-    }
-
-    public function getBoardLocation () :Rectangle
-    {
-        return _location;
-    }
-
-    public function setBoardLocation (x :int, y :int, isCursor :Boolean = false) :void
-    {
-        _location.x = x;
-        _location.y = y;
-        if (_sprite == null) {
-            return;
-        }
-
-        if (isOnBoard()) {
-            _sprite.updateLocation();
-        }
-        if (isCursor) {
-            _sprite.updateAlpha();
-        }
-    }
-
-    /** Is the tower inside board bounds? */
-    public function isOnBoard () :Boolean
-    {
-        return (_location.left >= 0 && _location.top >= 0 &&
-                _location.right <= _game.def.width &&
-                _location.bottom <= _game.def.height);
-    }
-
-    /** Are all cells under the tower empty? Note: the tower could be out of bounds. */
-    public function isOnFreeSpace () :Boolean
-    {
-        return _game.checkLocation(getBoardLocation());
-    }        
+    public static const NO_PLAYER :int = -1;
     
-    public function addToDisplay (display :Display) :void
+    public static const TYPE_SIMPLE :int = 1;
+
+    public static function makeGuid () :int
     {
-        if (_sprite != null) {
-            throw new Error("TowerSprite already initialized!");
-        }
-        _sprite = new TowerSprite(this, display);
-        _sprite.display.addTowerSprite(_sprite);
-        _sprite.updateLocation();
+        return int(Math.random() * int.MAX_VALUE);
+    }
+    
+    public function Tower (def :TowerDef, player :int, guid :int)
+    {
+        _def = def; 
+        _player = player;
+        _guid = guid
     }
 
-    public function removeFromDisplay () :void
+    public function get guid () :int
     {
-        _sprite.display.removeTowerSprite(_sprite);
-        _sprite = null;
+        return _guid;
+    }
+    
+    public function get def () :TowerDef
+    {
+        return _def;
     }
 
-    protected var _game :Game;
-    protected var _sprite :TowerSprite;
-    protected var _location :Rectangle;
+    public function set def (newdef :TowerDef) :void
+    {
+        _def.copyFrom(newdef);
+    }
+
+    public function get player () :int
+    {
+        return _player;
+    }
+
+    public function toString () :String
+    {
+        return "Tower [player: " + _player + ", guid: " + _guid + ", def: " + _def + "].";
+    }
+    
+    protected var _player :int;
+    protected var _def :TowerDef;
+    protected var _guid :int;
 }
 }

@@ -14,8 +14,17 @@ public class AssetFactory
             return null;
         }
     }
-
+    
     [Embed(source="rsrc/test.swf")]
-    private static const _defaultTower : Class;
+    private static const _defaultTower :Class;
+
+    /** Returns the backdrop image. */
+    public static function makeBackground () :IFlexDisplayObject
+    {
+        return IFlexDisplayObject(new _bg());
+    }
+
+    [Embed(source="rsrc/background.png")]
+    private static const _bg :Class;
 }
 }

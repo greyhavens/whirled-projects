@@ -19,15 +19,14 @@ public class Validator
     public static const REQUEST_REMOVE :String = "MessageRemove";
     public static const REQUEST_UPDATE :String = "MessageUpdate";
 
-    public function Validator (sharedState :SharedState, game :Game, whirled :WhirledGameControl)
+    public function Validator (board :Board, whirled :WhirledGameControl)
     {
-        _sharedState = sharedState;
-        _game = game;
+        _board = board;
         _whirled = whirled;
         _whirled.registerListener(this);
 
         _handlers = new Object();
-        _handlers[REQUEST_ADD] = handleAdd;
+        _handlers[REQUEST_ADD] = handleAddRequest;
 //        _handlers[REQUEST_REMOVE] = handleRemove;
 //        _handlers[REQUEST_UPDATE] = handleUpdate;
     }
@@ -49,29 +48,15 @@ public class Validator
         }
     }
 
-    // Helper functions to serialize object definitions for validator requests
-
-    public static function packTower (tower :Tower) :Object
-    {
-        var r :Rectangle = tower.getBoardLocation();
-        return { x: r.x, y: r.y, type: tower.type };
-    }
-
-    public static function unpackTower (def :Object, game :Game) :Tower
-    {
-        var t :Tower = new Tower(def.type, game);
-        t.setBoardLocation(def.x, def.y);
-        return t;
-    }
-
     // Validators for individual actions
     
-    protected function handleAdd (event :MessageReceivedEvent) :void
+    protected function handleAddRequest (event :MessageReceivedEvent) :void
     {
         if (_whirled.amInControl()) {
-            var tower :Tower = unpackTower(event.value, _game);
-            if (tower.isOnBoard() && tower.isOnFreeSpace()) {
-                _whirled.set(SharedState.TOWER_SET, event.value); // test
+            var tower :Tower = Marshaller.unserializeTower(event.value);
+            // todo: validation
+            if (true) { // :)
+                _whirled.set(Monitor.TOWER_SET, event.value, 1);
             }
         } else {
             trace("Ignoring event " + event.name + ", not in control");
@@ -81,8 +66,7 @@ public class Validator
  
     
     protected var _handlers :Object;
-    protected var _sharedState :SharedState;
-    protected var _game :Game;
+    protected var _board :Board;
     protected var _whirled :WhirledGameControl;
 }
 }

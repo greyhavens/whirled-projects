@@ -6,41 +6,57 @@ import mx.controls.Image;
 
 public class TowerSprite extends Image
 {
-    public var tower :Tower;
-    public var display :Display;
-    
-    public function TowerSprite (tower :Tower, display :Display)
+    public function TowerSprite (defref :TowerDef, board :Board)
     {
-        this.tower = tower;
-        this.display = display;
+        _defref = defref;
+        _board = board;
+    }
+
+    public function get defref () :TowerDef
+    {
+        return _defref;
+    }
+
+    public function set defref (newdef :TowerDef) :void
+    {
+        if (_defref != newdef) {
+            _defref = newdef;
+            if (_currentAssetType != _defref.type) { // let's not reload assets needlessly
+                reloadAssets();
+            }
+        }
     }
 
     public function updateLocation () :void
     {
-        var r :Rectangle = tower.getBoardLocation();
-        var p :Point = display.def.logicalToScreenPosition(r.x, r.y);
+        var p :Point = _board.logicalToScreenPosition(_defref.x, _defref.y);
         this.x = p.x;
         this.y = p.y;
     }
 
-    public function updateAlpha () :void
+    public function setValid (valid :Boolean) :void
     {
-        if (tower.isOnBoard()) {
-            this.alpha = (tower.isOnFreeSpace() ? 1.0 : 0.3);
-        } else {
-            this.alpha = 0.0;
-        }
+        this.alpha = valid ? 1.0 : 0.3;
+    }
+
+    public function reloadAssets () :void
+    {
+        this.source = AssetFactory.makeTower(_defref.type);
+        this.scaleX = _board.squareWidth * _defref.width / source.width;
+        this.scaleY = _board.squareHeight * _defref.height / source.height;
+        _currentAssetType = _defref.type;
     }
     
     override protected function createChildren () :void
     {
         super.createChildren();
-
-        var loc :Rectangle = tower.getBoardLocation();
-        
-        this.source = AssetFactory.makeTower(tower.type);
-        this.scaleX = display.def.squareWidth * loc.width / source.width;
-        this.scaleY = display.def.squareHeight * loc.height / source.height;
+        reloadAssets();
+        updateLocation();
     }
+
+    protected var _currentAssetType :int;
+    protected var _defref :TowerDef;
+    protected var _board :Board;
+
 }
 }

@@ -6,30 +6,37 @@ import com.whirled.WhirledGameControl;
 
 public class Main
 {
-    protected var whirled :WhirledGameControl;
-    protected var controller :Controller;
-    protected var display :Display;
-    protected var game :Game;
-    protected var monitor :Monitor;
-    protected var sharedState :SharedState;
-    protected var validator :Validator;
+    protected var _whirled :WhirledGameControl;
+    protected var _monitor :Monitor;
+    protected var _validator :Validator;
+    
+    protected var _controller :Controller;
+    
+    protected var _board :Board;
+    protected var _game :Game;
+    protected var _simulator :Simulator;
+    
+    protected var _display :Display;
 
     public function init (app :Defense) :void
     {
+        _whirled = new WhirledGameControl(app);
+
         app.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        whirled = new WhirledGameControl(app);
+        _display = app.display;
+        _board = new Board();
+        _validator = new Validator(_board, _whirled);
+        _game = new Game(_board, _display);
+        _simulator = new Simulator(_board, _game);
+        _monitor = new Monitor(_game, _whirled);
+        _controller = new Controller(_board, _whirled);
 
-        this.controller = new Controller(whirled);
-        this.display = app.display;
-        this.display.init(controller, new BoardDefinition());
-        this.game = new Game(display);
-        this.monitor = new Monitor(game, whirled);
-        this.sharedState = new SharedState(display, game, whirled);
-        this.validator = new Validator(sharedState, game, whirled);
+        _display.init(_board, _game, _controller);
+        
         trace("MVC CREATED");
         
-        if (whirled.isConnected()) {
+        if (_whirled.isConnected()) {
             trace("* CONNECTED!");
             // initialize the game
         } else {
@@ -39,14 +46,14 @@ public class Main
    
     protected function handleUnload (event :Event) :void
     {
-        for each (var obj :Object in
-                  [ validator, sharedState, monitor, game, display, controller ]) {
+        for each (var obj :Object in [ _controller, _monitor, _simulator, _game,
+                                       _validator, _board, _display ]) {
             var handler :Function = obj["handleUnload"];
             if (handler != null) {
                 handler(event);
             }
         }
-        whirled.unregisterListener(this);
+        _whirled.unregisterListener(this);
     }
 }
 }
