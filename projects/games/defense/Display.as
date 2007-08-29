@@ -8,18 +8,17 @@ import flash.ui.Mouse;
 import flash.utils.getTimer; // function import
 
 import mx.containers.Canvas;
+import mx.controls.Button;
+import mx.controls.ButtonBar;
 import mx.controls.Image;
 import mx.controls.Label;
+import mx.events.ItemClickEvent;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 
 public class Display extends Canvas
 {
-    // Public display properties
-    public static const pixelBoardLeft :int = 50;
-    public static const pixelBoardTop :int = 40;
-     
     public function Display ()
     {
     }
@@ -37,16 +36,15 @@ public class Display extends Canvas
         addChild(bg);
 
         _boardSprite = new Canvas();
-        _boardSprite.x = pixelBoardLeft;
-        _boardSprite.y = pixelBoardTop;
+        _boardSprite.x = 50;
+        _boardSprite.y = 40;
         addChild(_boardSprite);
 
         _backdrop = new Image();
+        _backdrop.source = MapFactory.makeMapBackground(1);
         _boardSprite.addChild(_backdrop);
 
-        _counter = new Label();
-        _counter.x = _counter.y = 20;
-        addChild(_counter);
+        createUI();
         
         // initialize event handlers
         addEventListener(MouseEvent.CLICK, handleBoardClick);
@@ -54,6 +52,21 @@ public class Display extends Canvas
         addEventListener(Event.ENTER_FRAME, handleFrame);
     }
 
+    /** Creates buttons and other UI elements. */
+    protected function createUI () :void
+    {
+        _counter = new Label();
+        _counter.x = 700;
+        _counter.y = 480;
+        addChild(_counter);
+
+        var buttonBar :ButtonBar = new ButtonBar();
+        buttonBar.addEventListener(ItemClickEvent.ITEM_CLICK, handleButtonBarClick);
+        buttonBar.x = 700;
+        buttonBar.y = 40;
+        addChild(buttonBar);
+    }
+        
     public function init (board :Board, game :Game, controller :Controller) :void
     {
         trace("*** DISPLAY: INIT");
@@ -76,24 +89,8 @@ public class Display extends Canvas
     /** Initializes the empty board. */
     public function resetBoard () :void
     {
-        var g :Graphics = _backdrop.graphics;
-        g.clear();
-        g.beginFill(0xffeedd, 0.1);
-        g.drawRoundRect(0, 0, _board.pixelWidth, _board.pixelHeight, 5, 5);
-        g.endFill();
-
-        // now draw the grid
-        g.lineStyle(1, 0x000000, 0.1);
-        for (var col :int = 0; col <= _board.width; col++) {
-            g.moveTo(col * _board.squareWidth, 0);
-            g.lineTo(col * _board.squareWidth, _board.pixelHeight);
-        }
-        for (var row :int = 0; row <= _board.height; row++) {
-            g.moveTo(0, row * _board.squareHeight);
-            g.lineTo(_board.pixelWidth, row * _board.squareHeight);
-        }
+        // todo
     }
-
 
     // Functions called by the game controller
     
@@ -105,7 +102,7 @@ public class Display extends Canvas
     {
         Mouse.hide();
         if (_cursor == null) {
-            _cursor = new TowerSprite(defref, _board);
+            _cursor = new TowerSprite(defref);
             _boardSprite.addChild(_cursor);
         } else {
             _cursor.defref = defref;
@@ -140,7 +137,7 @@ public class Display extends Canvas
      */
     public function handleAddTower (tower :Tower) :void
     {
-        var sprite :TowerSprite = new TowerSprite(tower.def, _board);
+        var sprite :TowerSprite = new TowerSprite(tower.def);
         _boardSprite.addChild(sprite);
         _towers.put(tower.guid, sprite);
     }
@@ -156,7 +153,7 @@ public class Display extends Canvas
     protected function handleBoardMove (event :MouseEvent) :void
     {
         var local :Point = _boardSprite.globalToLocal(new Point(event.stageX, event.stageY));
-        var logical :Point = _board.screenToLogicalPosition(local.x, local.y);
+        var logical :Point = Board.screenToLogicalPosition(local.x, local.y);
         _game.handleMouseMove(logical);
     }
 
@@ -169,6 +166,10 @@ public class Display extends Canvas
         _counter.text = "FPS: " + _fps;
     }
 
+    protected function handleButtonBarClick (itemClick :ItemClickEvent) :void
+    {
+    }
+    
     protected var _board :Board;
     protected var _game :Game;
     protected var _controller :Controller;

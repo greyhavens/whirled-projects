@@ -57,12 +57,12 @@ public class Monitor
         case TOWER_SET:
             trace("*** TOWER SET: " + event.index + ", " + event.newValue);
             if (event.index == -1) {
-                // the entire board is cleared
+                trace("*** CLEARING THE BOARD!");
             } else {
                 // setting a single entry
                 var tower :Tower = Marshaller.unserializeTower(event.newValue);
                 trace("*** GOT TOWER: " + tower);
-                _game.handleAddTower(tower);
+                _game.handleAddTower(tower, event.index);
             }                
         }
     }

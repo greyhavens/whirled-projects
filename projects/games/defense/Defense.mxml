@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
-        styleName="plain" width="600" height="400"
+        styleName="plain" width="750" height="500"
         horizontalScrollPolicy="off" verticalScrollPolicy="off"
         layout="horizontal"
         applicationComplete="main.init(this);">

@@ -6,10 +6,9 @@ import mx.controls.Image;
 
 public class TowerSprite extends Image
 {
-    public function TowerSprite (defref :TowerDef, board :Board)
+    public function TowerSprite (defref :TowerDef)
     {
         _defref = defref;
-        _board = board;
     }
 
     public function get defref () :TowerDef
@@ -29,7 +28,7 @@ public class TowerSprite extends Image
 
     public function updateLocation () :void
     {
-        var p :Point = _board.logicalToScreenPosition(_defref.x, _defref.y);
+        var p :Point = Board.logicalToScreenPosition(_defref.x, _defref.y);
         this.x = p.x;
         this.y = p.y;
     }
@@ -42,8 +41,8 @@ public class TowerSprite extends Image
     public function reloadAssets () :void
     {
         this.source = AssetFactory.makeTower(_defref.type);
-        this.scaleX = _board.squareWidth * _defref.width / source.width;
-        this.scaleY = _board.squareHeight * _defref.height / source.height;
+        this.scaleX = Board.SQUARE_WIDTH * _defref.width / source.width;
+        this.scaleY = Board.SQUARE_HEIGHT * _defref.height / source.height;
         _currentAssetType = _defref.type;
     }
     
@@ -56,7 +55,6 @@ public class TowerSprite extends Image
 
     protected var _currentAssetType :int;
     protected var _defref :TowerDef;
-    protected var _board :Board;
 
 }
 }

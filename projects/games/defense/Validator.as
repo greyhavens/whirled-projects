@@ -1,7 +1,7 @@
 package {
 
 import flash.events.Event;
-import flash.geom.Rectangle;
+import flash.geom.Point;
 
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
@@ -54,8 +54,9 @@ public class Validator
     {
         if (_whirled.amInControl()) {
             var tower :Tower = Marshaller.unserializeTower(event.value);
-            if (_board.isOnBoard(tower.def) && _board.isUnoccupied(tower.def)) { 
-                _whirled.set(Monitor.TOWER_SET, event.value, 1);
+            if (_board.isOnBoard(tower.def) && _board.isUnoccupied(tower.def)) {
+                _whirled.set(Monitor.TOWER_SET, event.value,
+                             _board.towerPositionToIndex(tower.def.x, tower.def.y));
             }
         } else {
             trace("Ignoring event " + event.name + ", not in control");

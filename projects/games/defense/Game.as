@@ -13,8 +13,8 @@ public class Game
 
         _display.addEventListener(Event.ENTER_FRAME, handleGameTick);
 
-        // initialize the cursor with dummy data - it will all get overwritten
-        _cursor = new Tower(new TowerDef(0, 0, Tower.TYPE_SIMPLE), -1, Tower.makeGuid()); 
+        // initialize the cursor with dummy data - it will all get overwritten, eventually
+        _cursor = new Tower(new TowerDef(0, 0, Tower.TYPE_SIMPLE), -1, Tower.makeGuid());
     }
 
     public function handleUnload (event : Event) : void
@@ -28,7 +28,7 @@ public class Game
     {
         _display.resetBoard();
         
-        _towers = new Array();
+        _towers = new Array(Board.HEIGHT * Board.WIDTH);
         _critters = new Array();
     }
 
@@ -42,7 +42,7 @@ public class Game
     {
     }
 
-    public function handleAddTower (tower :Tower) :void
+    public function handleAddTower (tower :Tower, index :int) :void
     {
         _towers.push(tower);
         _display.handleAddTower(tower);
