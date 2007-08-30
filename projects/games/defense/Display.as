@@ -36,12 +36,14 @@ public class Display extends Canvas
         addChild(bg);
 
         _boardSprite = new Canvas();
-        _boardSprite.x = 50;
-        _boardSprite.y = 40;
+        _boardSprite.x = 0;
+        _boardSprite.y = 20;
         addChild(_boardSprite);
 
         _backdrop = new Image();
         _backdrop.source = MapFactory.makeMapBackground(1);
+        _backdrop.scaleX = Board.PIXEL_WIDTH / _backdrop.source.width;
+        _backdrop.scaleY = Board.PIXEL_HEIGHT / _backdrop.source.height;
         _boardSprite.addChild(_backdrop);
 
         createUI();

@@ -13,13 +13,13 @@ import com.whirled.WhirledGameControl;
  */
 public class Board
 {
-    public static const WIDTH :int = 30;
-    public static const HEIGHT :int = 20;
+    public static const WIDTH :int = 23;
+    public static const HEIGHT :int = 24;
 
-    public static const SQUARE_WIDTH :int = 20;
+    public static const SQUARE_WIDTH :int = 30;
     public static const SQUARE_HEIGHT :int = 20;
-    public static const PIXEL_WIDTH :int = 600;  // WIDTH * SQUARE_WIDTH
-    public static const PIXEL_HEIGHT :int = 400; // HEIGHT * SQUARE_HEIGHT
+    public static const PIXEL_WIDTH :int = 690;  // WIDTH * SQUARE_WIDTH
+    public static const PIXEL_HEIGHT :int = 480; // HEIGHT * SQUARE_HEIGHT
 
     public static const PLAYER_COLORS :Array = [ 0x000000ff /* player 0 */,
                                                  0x0000ff00 /* player 1 */ ];
