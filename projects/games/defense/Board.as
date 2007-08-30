@@ -30,14 +30,19 @@ public class Board
         _groundmap = new GroundMap(WIDTH, HEIGHT);
     }
 
-    public function get myPlayerIndex () :int
+    public function getMyPlayerIndex () :int
     {
         return _whirled.seating.getMyPosition();
     }
 
-    public function get myColor () :uint
+    public function getMyColor () :uint
     {
-        return PLAYER_COLORS[myPlayerIndex];
+        return PLAYER_COLORS[getMyPlayerIndex()];
+    }
+
+    public function getPlayerCount () :uint
+    {
+        return _whirled.seating.getPlayerIds().length;
     }
     
     public function handleUnload (event : Event) :void
@@ -47,9 +52,8 @@ public class Board
 
     public function reset () :void
     {
-        var playerCount :int = _whirled.seating.getPlayerIds().length;
         var mapId :int = 1; // todo
-        _groundmap.loadDefinition(mapId, playerCount);
+        _groundmap.loadDefinition(mapId, getPlayerCount());
     }
     
     // Functions used by game logic to mark / clear towers on the board
@@ -89,20 +93,6 @@ public class Board
     {
         return x * HEIGHT + y;
     }
-    
-    /*
-    public function getTower (id :int) :Tower
-    {
-    }
-
-    public function handleAddTower (tower :Tower) :Boolean
-    {
-    }
-
-    public function handleRemoveTower (tower :Tower) :Boolean
-    {
-    }
-    */
     
     /**
      * Converts screen coordinates (relative to the upper left corner of the board)

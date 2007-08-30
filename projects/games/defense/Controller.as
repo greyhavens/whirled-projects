@@ -21,7 +21,7 @@ public class Controller
 
     public function addTower (def :TowerDef) :void
     {
-        var tower :Tower = new Tower(def, _board.myPlayerIndex, Tower.makeGuid());
+        var tower :Tower = new Tower(def, _board.getMyPlayerIndex(), Tower.makeGuid());
         var serialized :Object = Marshaller.serializeTower(tower);
         _whirled.sendMessage(Validator.REQUEST_ADD, serialized);
     }

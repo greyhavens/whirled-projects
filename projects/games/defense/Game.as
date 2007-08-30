@@ -11,6 +11,8 @@ public class Game
         _board = board;
         _display = display;
 
+        _simulator = new Simulator(_board, this);
+
         _display.addEventListener(Event.ENTER_FRAME, handleGameTick);
 
         // initialize the cursor with dummy data - it will all get overwritten, eventually
@@ -27,10 +29,11 @@ public class Game
     public function startGame () :void
     {
         _board.reset();
-        _display.resetBoard();
+        _display.reset();
         
         _towers = new Array(Board.HEIGHT * Board.WIDTH);
         _critters = new Array();
+        initializeSpawners();
     }
 
     public function endGame () :void
@@ -41,6 +44,15 @@ public class Game
 
     public function resetRound () :void
     {
+    }
+
+    public function initializeSpawners () :void
+    {
+        var playerCount :uint = _board.getPlayerCount();
+        _spawners = new Array(playerCount);
+        for (var ii :int = 0; ii < playerCount; ii++) {
+            _spawners[ii] = new Spawner(this, ii, _board.getPlayerSource(ii));
+        }
     }
 
     public function handleAddTower (tower :Tower, index :int) :void
@@ -54,6 +66,12 @@ public class Game
     {
     }
 
+    public function handleAddCritter (critter :Critter) :void
+    {
+        _critters.push(critter);
+        _display.handleAddCritter(critter);
+    }
+    
     public function handleMouseMove (logical :Point) :void
     {
         var def :TowerDef = new TowerDef(logical.x, logical.y, _cursor.def.type);
@@ -71,13 +89,16 @@ public class Game
         
     protected function handleGameTick (event :Event) :void
     {
+        _simulator.processSpawners(_spawners);
     }
 
     protected var _board :Board;
     protected var _display :Display;
-
+    protected var _simulator :Simulator;
+    
     protected var _cursor :Tower;
     protected var _towers :Array; // of Tower
     protected var _critters :Array; // of Critter
+    protected var _spawners :Array; // of Spawner
 }
 }

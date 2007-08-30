@@ -87,9 +87,9 @@ public class Display extends Canvas
     // Functions available to the game logic
     
     /** Initializes the empty board. */
-    public function resetBoard () :void
+    public function reset () :void
     {
-        // todo
+        removeAllTowers();
     }
 
     // Functions called by the game controller
@@ -132,16 +132,32 @@ public class Display extends Canvas
         showCursor(defref, true);
     }
         
-    /**
-     * Adds a tower sprite
-     */
     public function handleAddTower (tower :Tower) :void
     {
         var sprite :TowerSprite = new TowerSprite(tower.def);
         _boardSprite.addChild(sprite);
         _towers.put(tower.guid, sprite);
     }
+    
+    public function handleAddCritter (critter :Critter) :void
+    {
+        var sprite :CritterSprite = new CritterSprite(critter);
+        _boardSprite.addChild(sprite);
+        _critters.put(critter.guid, sprite);
+        sprite.update();
+    }
 
+    /**
+     * Gets rid of all towers.
+     */
+    protected function removeAllTowers () :void
+    {
+        for each (var sprite :TowerSprite in _towers) {
+                _boardSprite.removeChild(sprite);
+            };
+        _towers = new HashMap();
+    }
+    
     // Event handlers
     
     protected function handleBoardClick (event :MouseEvent) :void
@@ -168,6 +184,7 @@ public class Display extends Canvas
 
     protected function handleButtonBarClick (itemClick :ItemClickEvent) :void
     {
+        
     }
     
     protected var _board :Board;
@@ -182,5 +199,6 @@ public class Display extends Canvas
 
     protected var _cursor :TowerSprite;
     protected var _towers :HashMap = new HashMap(); // from Tower guid to TowerSprite
+    protected var _critters :HashMap = new HashMap(); // from Critter guid to CritterSprite
 }
 }

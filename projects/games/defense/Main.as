@@ -14,7 +14,6 @@ public class Main
     
     protected var _board :Board;
     protected var _game :Game;
-    protected var _simulator :Simulator;
     
     protected var _display :Display;
 
@@ -28,7 +27,6 @@ public class Main
         _board = new Board(_whirled);
         _validator = new Validator(_board, _whirled);
         _game = new Game(_board, _display);
-        _simulator = new Simulator(_board, _game);
         _monitor = new Monitor(_game, _whirled);
         _controller = new Controller(_board, _whirled);
 
@@ -46,7 +44,7 @@ public class Main
    
     protected function handleUnload (event :Event) :void
     {
-        for each (var obj :Object in [ _controller, _monitor, _simulator, _game,
+        for each (var obj :Object in [ _controller, _monitor, _game,
                                        _validator, _board, _display ]) {
             var handler :Function = obj["handleUnload"];
             if (handler != null) {

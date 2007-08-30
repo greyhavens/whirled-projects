@@ -1,7 +1,5 @@
 package {
 
-import flash.events.Event;
-    
 /**
  * Contains all the game logic for directing critters on the map.
  */
@@ -13,13 +11,11 @@ public class Simulator
         _game = game;
     }
 
-    public function handleUnload (event : Event) :void
+    public function processSpawners (spawners :Array) :void
     {
-        trace("SIMULATOR UNLOAD");
-    }
-
-    public function handleGameTick () :void
-    {
+        for each (var spawner :Spawner in spawners) {
+                spawner.tick();
+            }
     }
 
     protected var _board :Board;

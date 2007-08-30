@@ -18,6 +18,26 @@ public class AssetFactory
     [Embed(source="rsrc/tower.png")]
     private static const _defaultTower :Class;
 
+
+    /** Returns a new critter of specified type. */
+    public static function makeCritterAssets () :Array // of BitmapAsset
+    {
+        return [ BitmapAsset(new _defaultCritterRight()),
+                 BitmapAsset(new _defaultCritterUp()),
+                 BitmapAsset(new _defaultCritterLeft()),
+                 BitmapAsset(new _defaultCritterDown()) ];
+    }
+
+    [Embed(source="rsrc/critters/default_left.png")]
+    private static const _defaultCritterLeft :Class;
+    [Embed(source="rsrc/critters/default_right.png")]
+    private static const _defaultCritterRight :Class;
+    [Embed(source="rsrc/critters/default_up.png")]
+    private static const _defaultCritterUp :Class;
+    [Embed(source="rsrc/critters/default_down.png")]
+    private static const _defaultCritterDown :Class;
+    
+    
     /** Returns a new shape for the specified player's source. */
     public static function makeSource (playerIndex :int) :BitmapAsset
     {

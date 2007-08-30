@@ -65,10 +65,10 @@ public class GroundMap extends Map
             _data[x][y] = INVALID;
         } else if (p == RESERVED_PIXEL) {
             _data[x][y] = RESERVED; 
-        } else if ((p & SOURCE_MASK) == p) {
-            processSpecial(x, y, _sources, PLAYER_SOURCE_PIXELS.indexOf(p));
-        } else if ((p & TARGET_MASK) == p) {
-            processSpecial(x, y, _targets, PLAYER_TARGET_PIXELS.indexOf(p));
+        } else if ((p & SOURCE_MASK) != 0) {
+            processSpecial(x, y, _sources, PLAYER_SOURCE_PIXELS.indexOf(p & SOURCE_MASK));
+        } else if ((p & TARGET_MASK) != 0) {
+            processSpecial(x, y, _targets, PLAYER_TARGET_PIXELS.indexOf(p & TARGET_MASK));
         }
     }
 
