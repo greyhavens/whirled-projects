@@ -3,6 +3,7 @@ package {
 import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.utils.getTimer; // function import
 
 public class Game
 {
@@ -89,7 +90,12 @@ public class Game
         
     protected function handleGameTick (event :Event) :void
     {
+        var thisTick :int = getTimer();
+        var dt :Number = (thisTick - _lastTick) / 1000.0;
         _simulator.processSpawners(_spawners);
+        _simulator.processCritters(_critters, dt);
+        _lastTick = thisTick;
+        
     }
 
     protected var _board :Board;
@@ -100,5 +106,7 @@ public class Game
     protected var _towers :Array; // of Tower
     protected var _critters :Array; // of Critter
     protected var _spawners :Array; // of Spawner
+
+    protected var _lastTick :int = getTimer();
 }
 }

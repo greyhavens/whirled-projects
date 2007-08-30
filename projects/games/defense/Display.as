@@ -149,6 +149,7 @@ public class Display extends Canvas
         sprite.update();
     }
 
+  
     /**
      * Gets rid of all towers.
      */
@@ -159,7 +160,17 @@ public class Display extends Canvas
             };
         _towers = new HashMap();
     }
+
     
+    public function updateCritterSprites () :void
+    {
+        var sprites :Array = _critters.values();
+        for each (var cs :CritterSprite in sprites) {
+                cs.update();
+            }
+    }
+
+
     // Event handlers
     
     protected function handleBoardClick (event :MouseEvent) :void
@@ -182,6 +193,8 @@ public class Display extends Canvas
         _lastFrameTime = now;
         _fps = Math.round((_fps + 1 / delta) / 2);
         _counter.text = "FPS: " + _fps;
+        
+        updateCritterSprites();
     }
 
     protected function handleButtonBarClick (itemClick :ItemClickEvent) :void

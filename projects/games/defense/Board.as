@@ -76,12 +76,12 @@ public class Board
 
     public function getPlayerSource (playerIndex :int) :Point
     {
-        return _groundmap.getPlayerSource(playerIndex);
+        return _groundmap.getPlayerSource(playerIndex).clone();
     }
     
     public function getPlayerTarget (playerIndex :int) :Point
     {
-        return _groundmap.getPlayerTarget(playerIndex);
+        return _groundmap.getPlayerTarget(playerIndex).clone();
     }
 
     public function towerIndexToPosition (index :int) :Point
@@ -96,9 +96,9 @@ public class Board
     
     /**
      * Converts screen coordinates (relative to the upper left corner of the board)
-     * to logical coordinates in board space.
+     * to logical coordinates in board space. Rounds results down to integer coordinates.
      */
-    public static function screenToLogicalPosition (x :int, y :int) :Point
+    public static function screenToLogicalPosition (x :Number, y :Number) :Point
     {
         return new Point(int(Math.floor(x / SQUARE_WIDTH)), int(Math.floor(y / SQUARE_HEIGHT)));
     }
@@ -106,7 +106,7 @@ public class Board
     /**
      * Converts board coordinates to screen coordinates (relative to upper left corner).
      */
-    public static function logicalToScreenPosition (x :int, y :int) :Point
+    public static function logicalToScreenPosition (x :Number, y :Number) :Point
     {
         return new Point(x * SQUARE_WIDTH, y * SQUARE_HEIGHT);
     }
