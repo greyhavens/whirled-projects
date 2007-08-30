@@ -23,8 +23,10 @@ public class Spawner
         if (! _temp) {
             trace("SPAWNING SOME TEST CRITTERS");
             _temp = true;
-            var critter :Critter = new Critter(_loc.x, _loc.y, Critter.TYPE_WEAK, player);
-            _game.handleAddCritter(critter);
+            for each (var d :int in [-1, 0, 1]) {
+                var critter :Critter = new Critter(_loc.x + d * 2, _loc.y - d, Critter.TYPE_WEAK, player);
+                _game.handleAddCritter(critter);
+            }
         }
     }
 

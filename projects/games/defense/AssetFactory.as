@@ -52,19 +52,10 @@ public class AssetFactory
         return BitmapAsset(new _target());
     }
 
-    /** Returns the backdrop image. */
-    public static function makeBackground () :BitmapAsset
-    {
-        return BitmapAsset(new _bg());
-    }
-
     [Embed(source="rsrc/source.png")]
     private static const _source :Class;
 
     [Embed(source="rsrc/target.png")]
     private static const _target :Class;
-
-    [Embed(source="rsrc/background.png")]
-    private static const _bg :Class;
 }
 }

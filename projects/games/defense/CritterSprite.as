@@ -40,7 +40,6 @@ public class CritterSprite extends Image
         }
         
         if (newIndex != _assetIndex) {
-            trace("LOADING BITMAP #" + newIndex);
             _assetIndex = newIndex;
             this.source = _assets[_assetIndex] as BitmapAsset;
             this.scaleX = _screenWidth / source.width;

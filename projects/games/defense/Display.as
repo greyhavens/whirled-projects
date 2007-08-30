@@ -31,10 +31,6 @@ public class Display extends Canvas
         super.createChildren();
         
         // initialize graphics
-        var bg :Image = new Image();
-        bg.source = AssetFactory.makeBackground();
-        addChild(bg);
-
         _boardSprite = new Canvas();
         _boardSprite.x = 0;
         _boardSprite.y = 20;
@@ -58,8 +54,8 @@ public class Display extends Canvas
     protected function createUI () :void
     {
         _counter = new Label();
-        _counter.x = 700;
-        _counter.y = 480;
+        _counter.x = 10;
+        _counter.y = 0;
         addChild(_counter);
 
         var buttonBar :ButtonBar = new ButtonBar();
