@@ -16,6 +16,12 @@ public class MapFactory
         }
     }
 
+    public static function makeBlankOverlay () :BitmapAsset
+    {
+        // todo
+        return new _m1_1() as BitmapAsset;
+    }
+    
     /** Returns a new bitmap corresponding to the specified map for some number of players. */
     public static function makeGroundMapData (id :int, playerCount :int) :BitmapData
     {

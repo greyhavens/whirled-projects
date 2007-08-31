@@ -59,8 +59,8 @@ public class Game
     public function handleAddTower (tower :Tower, index :int) :void
     {
         _towers.push(tower);
-        _display.handleAddTower(tower);
         _board.markAsOccupied(tower.def, tower.player);
+        _display.handleAddTower(tower);
     }
 
     public function handleRemoveTower (towerId :int) :void

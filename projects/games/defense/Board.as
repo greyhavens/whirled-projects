@@ -1,5 +1,6 @@
 package {
 
+import flash.display.BitmapData;
 import flash.events.Event;
 import flash.geom.Point;
 
@@ -23,7 +24,7 @@ public class Board
 
     public static const PLAYER_COLORS :Array = [ 0x000000ff /* player 0 */,
                                                  0x0000ff00 /* player 1 */ ];
-    
+
     public function Board (whirled :WhirledGameControl)
     {
         _whirled = whirled;
@@ -92,6 +93,12 @@ public class Board
     public function towerPositionToIndex (x :int, y :int) :int
     {
         return x * HEIGHT + y;
+    }
+
+
+    public function getMapOccupancy () :Map
+    {
+        return _groundmap;
     }
     
     /**

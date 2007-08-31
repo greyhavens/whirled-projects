@@ -8,11 +8,9 @@ import flash.ui.Mouse;
 import flash.utils.getTimer; // function import
 
 import mx.containers.Canvas;
-import mx.controls.Button;
-import mx.controls.ButtonBar;
 import mx.controls.Image;
 import mx.controls.Label;
-import mx.events.ItemClickEvent;
+import mx.managers.PopUpManager;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
@@ -38,33 +36,37 @@ public class Display extends Canvas
 
         _backdrop = new Image();
         _backdrop.source = MapFactory.makeMapBackground(1);
-        _backdrop.scaleX = Board.PIXEL_WIDTH / _backdrop.source.width;
-        _backdrop.scaleY = Board.PIXEL_HEIGHT / _backdrop.source.height;
+        resizeImageToBoard(_backdrop);
         _boardSprite.addChild(_backdrop);
 
         createUI();
+        createOverlays();
         
         // initialize event handlers
         addEventListener(MouseEvent.CLICK, handleBoardClick);
         addEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);
         addEventListener(Event.ENTER_FRAME, handleFrame);
     }
-
+  
     /** Creates buttons and other UI elements. */
     protected function createUI () :void
     {
+        PopUpManager.addPopUp(_ui = new UIWindow(), this, false);
+        
         _counter = new Label();
         _counter.x = 10;
         _counter.y = 0;
         addChild(_counter);
-
-        var buttonBar :ButtonBar = new ButtonBar();
-        buttonBar.addEventListener(ItemClickEvent.ITEM_CLICK, handleButtonBarClick);
-        buttonBar.x = 700;
-        buttonBar.y = 40;
-        addChild(buttonBar);
     }
         
+    /** Creates images for board overlay bitmaps. */
+    protected function createOverlays () :void
+    {
+        _overlayOcc = new Overlay();
+        _overlayOcc.visible = false;
+        _boardSprite.addChild(_overlayOcc);
+    }
+
     public function init (board :Board, game :Game, controller :Controller) :void
     {
         trace("*** DISPLAY: INIT");
@@ -76,6 +78,7 @@ public class Display extends Canvas
 
     public function handleUnload (event : Event) : void
     {
+        PopUpManager.removePopUp(_ui);
         removeEventListener(MouseEvent.CLICK, handleBoardClick);
         removeEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);
         removeEventListener(Event.ENTER_FRAME, handleFrame);
@@ -88,6 +91,13 @@ public class Display extends Canvas
     public function reset () :void
     {
         removeAllTowers();
+        resetOverlays();
+    }
+
+    protected function resetOverlays () :void
+    {
+        _overlayOcc.init(_board.getMapOccupancy());
+        _overlayOcc.update(_board.getMyPlayerIndex());
     }
 
     // Functions called by the game controller
@@ -135,6 +145,9 @@ public class Display extends Canvas
         var sprite :TowerSprite = new TowerSprite(tower.def);
         _boardSprite.addChild(sprite);
         _towers.put(tower.guid, sprite);
+        if (_overlayOcc.visible) {
+            _overlayOcc.update(_board.getMyPlayerIndex());
+        }
     }
     
     public function handleAddCritter (critter :Critter) :void
@@ -193,21 +206,30 @@ public class Display extends Canvas
         updateCritterSprites();
     }
 
-    protected function handleButtonBarClick (itemClick :ItemClickEvent) :void
+    /**
+     * Scales image to be displayed at the same size as the board.
+     */
+    protected function resizeImageToBoard (image :Image) :void
     {
-        
+        image.scaleX = Board.PIXEL_WIDTH / image.source.width;
+        image.scaleY = Board.PIXEL_HEIGHT / image.source.height;
     }
+
+
     
     protected var _board :Board;
     protected var _game :Game;
     protected var _controller :Controller;
-    
+
+    protected var _ui :UIWindow;
     protected var _boardSprite :Canvas;
     protected var _backdrop :Image;
     protected var _counter :Label;
     protected var _lastFrameTime :int;
     protected var _fps :Number = 0;
 
+    protected var _overlayOcc :Overlay;
+    
     protected var _cursor :TowerSprite;
     protected var _towers :HashMap = new HashMap(); // from Tower guid to TowerSprite
     protected var _critters :HashMap = new HashMap(); // from Critter guid to CritterSprite

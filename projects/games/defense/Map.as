@@ -1,5 +1,7 @@
 package {
 
+import flash.display.BitmapData;
+    
 /**
  * Rectangular occupancy map storing the game board. Each cell is marked as UNOCCUPIED, or if it
  * supports a tower, with the player id of the tower owner. 
@@ -47,7 +49,19 @@ public class Map
         var value :* = _data[x][y];
         return (value == UNOCCUPIED) || (value == RESERVED);
     }
-    
+
+    /**
+     * Updates the overlay bitmap that represents this map.
+     */
+    public function fillOverlay (overlay :BitmapData, player :int) :void
+    {
+        for (var xx :int = 0; xx < _width; xx++) {
+            for (var yy :int = 0; yy < _height; yy++) {
+                overlay.setPixel32(xx, yy, getColor(xx, yy, player));
+            }
+        }
+    }
+        
     /**
      * Runs the specified function over all cells that intersect the tower location.
      * Function should be of the form: function (cellValue :*) :void { }
@@ -93,6 +107,18 @@ public class Map
             });
     }
 
+    /**
+     * Given cell, returns the ARGB color to be used for drawing the bitmap.
+     */
+    protected function getColor (x :int, y :int, player :int) :uint
+    {
+        if (isPassable(x, y)) {
+            return 0x00000000;
+        } else {
+            return (player == getCell(x, y)) ? 0xff00ff00 : 0xff000000;
+        }                    
+    }
+    
     /** Grid dimensions. */
     protected var _width :int;
     protected var _height :int;
