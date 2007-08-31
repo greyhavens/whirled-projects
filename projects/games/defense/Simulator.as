@@ -46,6 +46,14 @@ public class Simulator
         
     protected function updateTarget (c :Critter) :void
     {
+        var p :Point = _board.getPathMap(c.player).getNextNode(c.target.x, c.target.y);
+        if (p != null) {
+            c.target.x = p.x;
+            c.target.y = p.y;
+        } else {
+            trace("UNABLE TO ADVANCE CRITTER " + c + " - NO PATH FOUND!");
+        }
+        /*
         var delta :Point = _board.getPlayerTarget(c.player);
         delta.offset(-c.target.x, -c.target.y);
 
@@ -53,7 +61,8 @@ public class Simulator
             c.target.x += MathUtil.clamp(delta.x, -1, 1);
         } else {
             c.target.y += MathUtil.clamp(delta.y, -1, 1);
-        }
+            }
+        */
     }
 
     protected var _targetUpdateEpsilon :Number = 0.1;

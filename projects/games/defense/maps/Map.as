@@ -23,11 +23,9 @@ public class Map
         for (var xx :int = 0; xx < _width; xx++) {
             _data[xx] = new Array(_height);
         }
-
-        init();
     }
 
-    public function init () :void
+    public function clear () :void
     {
         for (var xx :int = 0; xx < _width; xx++) {
             for (var yy :int = 0; yy < _height; yy++) {

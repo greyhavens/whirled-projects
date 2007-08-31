@@ -44,6 +44,10 @@ public class Board
             _pathmaps[ii] = new PathMap(this, ii);
             _allmaps.push(_pathmaps[ii]);
         }
+
+        for each (var m :Map in _allmaps) {
+            m.clear();
+        }
     }
 
     public function getMyPlayerIndex () :int
@@ -76,7 +80,16 @@ public class Board
     public function reset () :void
     {
         var mapId :int = 1; // todo
+
+        // reset everything
+        for each (var m :Map in _allmaps) {
+            m.clear();
+        }
+
+        // initialize the ground map
         _groundmap.loadDefinition(mapId, getPlayerCount());
+
+        // and based on that, the pathfinding maps
         for (var ii :int = 0; ii < getPlayerCount(); ii++) {
             var t :Point = getPlayerTarget(ii);
             (_pathmaps[ii] as PathMap).setTarget(t.x, t.y);
@@ -127,12 +140,12 @@ public class Board
     }
 
 
-    public function getMapOccupancy () :Map
+    public function getMapOccupancy () :GroundMap
     {
         return _groundmap;
     }
 
-    public function getPathMap (player :int) :Map
+    public function getPathMap (player :int) :PathMap
     {
         return _pathmaps[player];
     }

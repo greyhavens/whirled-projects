@@ -24,7 +24,7 @@ public class Spawner
             trace("SPAWNING SOME TEST CRITTERS");
             _temp = true;
             for each (var d :int in [-1, 0, 1]) {
-                var critter :Critter = new Critter(_loc.x + d * 2, _loc.y - d, Critter.TYPE_WEAK, player);
+                var critter :Critter = new Critter(_loc.x + d, _loc.y, Critter.TYPE_WEAK, player);
                 _game.handleAddCritter(critter);
             }
         }
