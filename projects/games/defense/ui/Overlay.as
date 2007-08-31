@@ -17,9 +17,10 @@ public class Overlay extends Image
     {
     }
 
-    public function init (map :Map) :void
+    public function init (map :Map, player :int) :void
     {
         _map = map;
+        _player = player;
     }
 
     override protected function createChildren () :void
@@ -32,12 +33,15 @@ public class Overlay extends Image
         this.scaleY = Board.PIXEL_HEIGHT / source.height;
     }
 
-    public function update (player :int) :void
+    public function update () :void
     {
-        _map.fillOverlay(_bitmap.bitmapData, player);
+        if (this.visible) {
+            _map.maybeRefreshOverlay(_bitmap.bitmapData, _player);
+        }
     }
 
     protected var _map :Map;
+    protected var _player :int;
     protected var _bitmap :BitmapAsset;
 }
 }

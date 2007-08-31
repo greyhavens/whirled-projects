@@ -75,7 +75,7 @@ public class Display extends Canvas
     protected function createOverlays () :void
     {
         _overlayOcc = new Overlay();
-        _overlayOcc.visible = false;
+//        _overlayOcc.visible = false;
         _boardSprite.addChild(_overlayOcc);
     }
 
@@ -108,8 +108,7 @@ public class Display extends Canvas
 
     protected function resetOverlays () :void
     {
-        _overlayOcc.init(_board.getMapOccupancy());
-        _overlayOcc.update(_board.getMyPlayerIndex());
+        _overlayOcc.init(_board.getMapOccupancy(), _board.getMyPlayerIndex());
     }
 
     // Functions called by the game controller
@@ -158,7 +157,7 @@ public class Display extends Canvas
         _boardSprite.addChild(sprite);
         _towers.put(tower.guid, sprite);
         if (_overlayOcc.visible) {
-            _overlayOcc.update(_board.getMyPlayerIndex());
+            _overlayOcc.update();
         }
     }
     
@@ -191,6 +190,10 @@ public class Display extends Canvas
             }
     }
 
+    public function updateOverlays () :void
+    {
+        _overlayOcc.update();
+    }
 
     // Event handlers
     

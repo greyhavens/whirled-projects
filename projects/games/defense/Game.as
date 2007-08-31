@@ -96,10 +96,12 @@ public class Game
     {
         var thisTick :int = getTimer();
         var dt :Number = (thisTick - _lastTick) / 1000.0;
+        _lastTick = thisTick;
+
         _simulator.processSpawners(_spawners);
         _simulator.processCritters(_critters, dt);
-        _lastTick = thisTick;
-        
+
+        _board.processMaps();
     }
 
     protected var _board :Board;

@@ -20,11 +20,6 @@ public class GroundMap extends Map
     public static const PLAYER_TARGET_PIXELS :Array =
         [ Board.PLAYER_COLORS[0] & TARGET_MASK,
           Board.PLAYER_COLORS[1] & TARGET_MASK ];
-    
-    public function GroundMap (width :int, height :int)
-    {
-        super(width, height);
-    }
 
     public function loadDefinition (id :int, playerCount :int) :void
     {
@@ -47,6 +42,8 @@ public class GroundMap extends Map
             }
         }
         data.unlock();
+
+        invalidate();
     }
 
     public function getPlayerSource (playerIndex :int) :Point
@@ -86,6 +83,5 @@ public class GroundMap extends Map
         
     /** Contains default critter targets, indexed by player index */
     protected var _targets :Array; // of Point
-
 }
 }

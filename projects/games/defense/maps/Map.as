@@ -15,19 +15,32 @@ public class Map
     /** Marks cells that can't be built on, and are impassable for critters. */
     public static const INVALID :int = -3;
     
-    public function Map (width :int, height :int)
+    public function Map ()
     {
-        _width = width;
-        _height = height;
-        _data = new Array(width);
-        for (var xx :int = 0; xx < width; xx++) {
-            _data[xx] = new Array(height);
-            for (var yy :int = 0; yy < height; yy++) {
+        _width = Board.WIDTH;
+        _height = Board.HEIGHT;
+        _data = new Array(_width);
+        for (var xx :int = 0; xx < _width; xx++) {
+            _data[xx] = new Array(_height);
+        }
+
+        init();
+    }
+
+    public function init () :void
+    {
+        for (var xx :int = 0; xx < _width; xx++) {
+            for (var yy :int = 0; yy < _height; yy++) {
                 _data[xx][yy] = UNOCCUPIED;
             }
         }
     }
 
+    public function invalidate () :void
+    {
+        _hasNewData = true;
+    }
+    
     public function getCell (x :int, y :int) :*
     {
         return _data[x][y];
@@ -50,15 +63,23 @@ public class Map
         return (value == UNOCCUPIED) || (value == RESERVED);
     }
 
-    /**
-     * Updates the overlay bitmap that represents this map.
-     */
-    public function fillOverlay (overlay :BitmapData, player :int) :void
+    /** Processes the per-frame updates of map data. */
+    public function update () :void
     {
-        for (var xx :int = 0; xx < _width; xx++) {
-            for (var yy :int = 0; yy < _height; yy++) {
-                overlay.setPixel32(xx, yy, getColor(xx, yy, player));
+        // no op - children should override this
+    }
+
+  
+    /** Updates the overlay bitmap that represents this map. */
+    public function maybeRefreshOverlay (overlay :BitmapData, player :int) :void
+    {
+        if (_hasNewData) {
+            for (var xx :int = 0; xx < _width; xx++) {
+                for (var yy :int = 0; yy < _height; yy++) {
+                    overlay.setPixel32(xx, yy, getColor(xx, yy, player));
+                }
             }
+            _hasNewData = false;
         }
     }
         
@@ -69,8 +90,8 @@ public class Map
     public function forEachTowerCell (def :TowerDef, fn :Function) :void
     {
         def.forEach(function (x :int, y :int) :void {
-                fn(getCell(x, y));
-            });
+            fn(getCell(x, y));
+        });
     }
 
     /**
@@ -80,8 +101,8 @@ public class Map
     {
         var result :Boolean = true;
         forEachTowerCell(def, function (cellValue :*) :void {
-                result = result && (value == cellValue);
-            });
+            result = result && (value == cellValue);
+        });
         return result;
     }
 
@@ -92,24 +113,24 @@ public class Map
     {
         var result :Boolean = false;
         forEachTowerCell(def, function (cellValue :*) :void {
-                result = result || (value == cellValue);
-            });
+            result = result || (value == cellValue);
+        });
         return result;
     }
 
     /**
      * Fills all cells intersected by the tower location with specified value.
+     * Also marks the map as invalidated, which will cause it to be redrawn.
      */
     public function fillAllTowerCells (def :TowerDef, value :*) :void
     {
         def.forEach(function (x :int, y :int) :void {
-                setCell(x, y, value);
-            });
+            setCell(x, y, value);
+        });
+        invalidate();
     }
 
-    /**
-     * Given cell, returns the ARGB color to be used for drawing the bitmap.
-     */
+    /** Given cell, returns the ARGB color to be used for drawing the bitmap. */
     protected function getColor (x :int, y :int, player :int) :uint
     {
         if (isPassable(x, y)) {
@@ -123,6 +144,9 @@ public class Map
     protected var _width :int;
     protected var _height :int;
     
+    /** True if this map was recently updated but not yet redrawn. */
+    protected var _hasNewData :Boolean = false;
+
     /** Column-major representation of the grid data. */
     protected var _data :Array;
 }

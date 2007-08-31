@@ -10,6 +10,7 @@ import com.whirled.WhirledGameControl;
 
 import maps.GroundMap;
 import maps.Map;
+import maps.PathMap;
 
 /**
  * Game board, which can be queried for information about static board definition,
@@ -31,7 +32,18 @@ public class Board
     public function Board (whirled :WhirledGameControl)
     {
         _whirled = whirled;
-        _groundmap = new GroundMap(WIDTH, HEIGHT);
+
+        _allmaps = new Array();
+
+        _groundmap = new GroundMap();
+        _allmaps.push(_groundmap);
+
+        var count :int = getPlayerCount();
+        _pathmaps = new Array(count);
+        for (var ii :int = 0; ii < count; ii++) {
+            _pathmaps[ii] = new PathMap();
+            _allmaps.push(_pathmaps[ii]);
+        }
     }
 
     public function getMyPlayerIndex () :int
@@ -54,6 +66,13 @@ public class Board
         trace("BOARD UNLOAD");
     }
 
+    public function processMaps () :void
+    {
+        for each (var map :Map in _allmaps) {
+            map.update();
+        }
+    }
+    
     public function reset () :void
     {
         var mapId :int = 1; // todo
@@ -103,6 +122,11 @@ public class Board
     {
         return _groundmap;
     }
+
+    public function getPathMap (player :int) :Map
+    {
+        return _pathmaps[player];
+    }
     
     /**
      * Converts screen coordinates (relative to the upper left corner of the board)
@@ -124,6 +148,8 @@ public class Board
 
     /** Various game-related maps. */
     protected var _groundmap :GroundMap;
+    protected var _pathmaps :Array; // of PathMap, indexed by player
+    protected var _allmaps :Array; // of Map;
     
     /** Hash map of all towers, indexed by their id. */
     protected var _towers :HashMap = new HashMap();
