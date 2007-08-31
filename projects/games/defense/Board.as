@@ -41,7 +41,7 @@ public class Board
         var count :int = getPlayerCount();
         _pathmaps = new Array(count);
         for (var ii :int = 0; ii < count; ii++) {
-            _pathmaps[ii] = new PathMap();
+            _pathmaps[ii] = new PathMap(this, ii);
             _allmaps.push(_pathmaps[ii]);
         }
     }
@@ -77,13 +77,22 @@ public class Board
     {
         var mapId :int = 1; // todo
         _groundmap.loadDefinition(mapId, getPlayerCount());
+        for (var ii :int = 0; ii < getPlayerCount(); ii++) {
+            var t :Point = getPlayerTarget(ii);
+            (_pathmaps[ii] as PathMap).setTarget(t.x, t.y);
+        }
     }
     
     // Functions used by game logic to mark / clear towers on the board
 
     public function markAsOccupied (def :TowerDef, playerId :int) :void
     {
+        // mark the main map
         _groundmap.fillAllTowerCells(def, playerId);
+        // ... and force all pathing maps to get recalculated
+        for each (var m :PathMap in _pathmaps) {
+            m.fillAllTowerCells(def, playerId);
+        }
     }
     
     public function isUnoccupied (def :TowerDef) :Boolean

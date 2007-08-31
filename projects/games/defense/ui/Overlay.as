@@ -23,6 +23,11 @@ public class Overlay extends Image
         _player = player;
     }
 
+    public function ready () :Boolean
+    {
+        return (_map != null);
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -35,7 +40,7 @@ public class Overlay extends Image
 
     public function update () :void
     {
-        if (this.visible) {
+        if (ready() && visible) {
             _map.maybeRefreshOverlay(_bitmap.bitmapData, _player);
         }
     }

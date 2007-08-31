@@ -18,8 +18,7 @@ public class MapFactory
 
     public static function makeBlankOverlay () :BitmapAsset
     {
-        // todo
-        return new _m1_1() as BitmapAsset;
+        return new _blank() as BitmapAsset;
     }
     
     /** Returns a new bitmap corresponding to the specified map for some number of players. */
@@ -43,6 +42,9 @@ public class MapFactory
             throw new Error("Unknown map type id: " + id + ", playerCount: " + playerCount);
         }        
     }
+
+    [Embed(source="../rsrc/maps/blank.png")]
+    protected static const _blank :Class;
 
     [Embed(source="../rsrc/maps/1.png")]
     protected static const _m1 :Class;

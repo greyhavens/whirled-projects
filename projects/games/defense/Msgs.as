@@ -15,7 +15,9 @@ public class Msgs
 
     public static var data :Object =
     {
-        menu_title: "Buildings"
+        menu_title: "Buildings",
+        path_1: "Player 1 Map",
+        path_2: "Player 2 Map"
     }
 }
 

@@ -29,6 +29,8 @@ import maps.MapFactory;
 
 public class Display extends Canvas
 {
+    public static const MAX_PLAYERS :int = 2; // used for laying out display elements
+    
     public function Display ()
     {
     }
@@ -63,7 +65,7 @@ public class Display extends Canvas
     /** Creates buttons and other UI elements. */
     protected function createUI () :void
     {
-        PopUpManager.addPopUp(_ui = new UIWindow(), this, false);
+        PopUpManager.addPopUp(_ui = new UIWindow(this), this, false);
         
         _counter = new Label();
         _counter.x = 10;
@@ -74,9 +76,23 @@ public class Display extends Canvas
     /** Creates images for board overlay bitmaps. */
     protected function createOverlays () :void
     {
+        _allOverlays = new Array();
+        
         _overlayOcc = new Overlay();
 //        _overlayOcc.visible = false;
-        _boardSprite.addChild(_overlayOcc);
+        _allOverlays.push(_overlayOcc);
+
+        // these have to be created before we know how many player we actually have...
+        // so let's make all of them, but only initialize those that we'll be using...
+        _pathOverlays = new Array(MAX_PLAYERS);
+        for (var ii :int = 0; ii < MAX_PLAYERS; ii++) {
+            _pathOverlays[ii] = new Overlay();
+            _allOverlays.push(_pathOverlays[ii]);
+        }
+
+        for each (var o :Overlay in _allOverlays) { 
+            _boardSprite.addChild(o);
+        }
     }
 
     public function init (board :Board, game :Game, controller :Controller) :void
@@ -91,6 +107,8 @@ public class Display extends Canvas
     public function handleUnload (event : Event) : void
     {
         PopUpManager.removePopUp(_ui);
+        _ui.handleUnload(event);
+        
         removeEventListener(MouseEvent.CLICK, handleBoardClick);
         removeEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);
         removeEventListener(Event.ENTER_FRAME, handleFrame);
@@ -109,8 +127,21 @@ public class Display extends Canvas
     protected function resetOverlays () :void
     {
         _overlayOcc.init(_board.getMapOccupancy(), _board.getMyPlayerIndex());
+
+        var count :int = _board.getPlayerCount();
+        for (var ii :int = 0; ii < count; ii++) {
+            (_pathOverlays[ii] as Overlay).init(_board.getPathMap(ii), ii);
+        }
     }
 
+    public function togglePathOverlay (player :int) :void
+    {
+        var o :Overlay = _pathOverlays[player] as Overlay;
+        if (o.ready()) {
+            o.visible = ! o.visible;
+        }
+    }
+    
     // Functions called by the game controller
     
     /**
@@ -156,9 +187,6 @@ public class Display extends Canvas
         var sprite :TowerSprite = new TowerSprite(tower.def);
         _boardSprite.addChild(sprite);
         _towers.put(tower.guid, sprite);
-        if (_overlayOcc.visible) {
-            _overlayOcc.update();
-        }
     }
     
     public function handleAddCritter (critter :Critter) :void
@@ -192,7 +220,9 @@ public class Display extends Canvas
 
     public function updateOverlays () :void
     {
-        _overlayOcc.update();
+        for each (var o :Overlay in _allOverlays) {
+            o.update();
+        }
     }
 
     // Event handlers
@@ -221,6 +251,7 @@ public class Display extends Canvas
         _counter.text = "FPS: " + _fps;
         
         updateCritterSprites();
+        updateOverlays();
     }
 
     /**
@@ -246,6 +277,8 @@ public class Display extends Canvas
     protected var _fps :Number = 0;
 
     protected var _overlayOcc :Overlay;
+    protected var _pathOverlays :Array; // of Overlay, one per player
+    protected var _allOverlays :Array; // of Overlay
     
     protected var _cursor :TowerSprite;
     protected var _towers :HashMap = new HashMap(); // from Tower guid to TowerSprite
