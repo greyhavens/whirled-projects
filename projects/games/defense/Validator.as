@@ -7,6 +7,8 @@ import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.whirled.WhirledGameControl;
 
+import units.Tower;
+
 /**
  * Checks all board modification requests arriving from the clients, and if it's running
  * on the hosting client, checks their validity and updates shared data accordingly.

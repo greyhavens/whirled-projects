@@ -4,6 +4,9 @@ import flash.geom.Point;
     
 import com.threerings.flash.MathUtil;
 
+import units.Critter;
+import units.Spawner;
+
 /**
  * Contains all the game logic for directing critters on the map.
  */

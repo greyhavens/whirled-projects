@@ -5,6 +5,10 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.utils.getTimer; // function import
 
+import units.Critter;
+import units.Spawner;
+import units.Tower;
+
 public class Game
 {
     public function Game (board :Board, display :Display)

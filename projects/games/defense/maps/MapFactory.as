@@ -1,4 +1,4 @@
-package {
+package maps {
 
 import flash.display.BitmapData;
 
@@ -44,11 +44,11 @@ public class MapFactory
         }        
     }
 
-    [Embed(source="rsrc/maps/1.png")]
+    [Embed(source="../rsrc/maps/1.png")]
     protected static const _m1 :Class;
-    [Embed(source="rsrc/maps/1-1.png")]
+    [Embed(source="../rsrc/maps/1-1.png")]
     protected static const _m1_1 :Class;
-    [Embed(source="rsrc/maps/1-2.png")]
+    [Embed(source="../rsrc/maps/1-2.png")]
     protected static const _m1_2 :Class;
 }
 }

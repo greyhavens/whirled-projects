@@ -1,10 +1,16 @@
-package {
+package ui {
 
 import flash.display.BitmapData;
 
 import mx.controls.Image;
 import mx.core.BitmapAsset;
 
+import maps.Map;
+import maps.MapFactory;
+
+/**
+ * Graphical representation of a Map object's data.
+ */
 public class Overlay extends Image
 {
     public function Overlay ()

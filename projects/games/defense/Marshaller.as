@@ -1,5 +1,7 @@
 package {
 
+import units.Tower;
+
 /**
  * Helper class that handles class serialization for sending over the network.
  */

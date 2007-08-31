@@ -1,5 +1,7 @@
 package {
 
+import units.Tower;
+
 /**
  * Tower definition contains information sufficient to create or display a new tower of specified
  * type at specified location. Tower locations are rectangular subsets of the board; this class

@@ -1,4 +1,4 @@
-package {
+package maps {
 
 import flash.display.BitmapData;
     

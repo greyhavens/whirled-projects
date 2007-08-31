@@ -2,6 +2,8 @@ package {
 
 import mx.core.BitmapAsset;
 
+import units.Tower;
+
 public class AssetFactory
 {
     /** Returns a new shape for the specified tower. */

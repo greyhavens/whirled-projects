@@ -6,6 +6,8 @@ import flash.geom.Rectangle;
 
 import com.whirled.WhirledGameControl;
 
+import units.Tower;
+
 public class Controller
 {
     public function Controller (board :Board, whirled :WhirledGameControl)

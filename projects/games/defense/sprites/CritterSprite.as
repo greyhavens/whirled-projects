@@ -1,8 +1,10 @@
-package {
+package sprites {
 
 import flash.geom.Point;
 import mx.core.BitmapAsset;
 import mx.controls.Image;
+
+import units.Critter;
 
 public class CritterSprite extends Image
 {

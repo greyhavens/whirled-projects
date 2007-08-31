@@ -1,6 +1,5 @@
-package
-{
-
+package units {
+    
 import flash.geom.Point;
     
 public class Critter

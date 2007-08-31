@@ -1,4 +1,4 @@
-package {
+package sprites {
 
 import flash.geom.Point;
 import flash.geom.Rectangle;

@@ -10,6 +10,8 @@ import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
 import com.whirled.WhirledGameControl;
 
+import units.Tower;
+
 /**
  * Monitors game progress, and updates the main simulation as necessary.
  */

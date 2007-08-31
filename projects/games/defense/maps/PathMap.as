@@ -1,5 +1,4 @@
-package
-{
+package maps {
 
 /**
  * Stores pathfinding information for a single player's critters.

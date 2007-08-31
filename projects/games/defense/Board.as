@@ -8,6 +8,9 @@ import com.threerings.util.HashMap;
 
 import com.whirled.WhirledGameControl;
 
+import maps.GroundMap;
+import maps.Map;
+
 /**
  * Game board, which can be queried for information about static board definition,
  * as well as positions of the different pieces.

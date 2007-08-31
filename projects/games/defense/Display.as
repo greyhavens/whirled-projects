@@ -15,6 +15,18 @@ import mx.managers.PopUpManager;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 
+import units.Critter;
+import units.Spawner;
+import units.Tower;
+
+import sprites.CritterSprite;
+import sprites.TowerSprite;
+
+import ui.Overlay;
+import ui.UIWindow;
+
+import maps.MapFactory;
+
 public class Display extends Canvas
 {
     public function Display ()
@@ -185,7 +197,9 @@ public class Display extends Canvas
     protected function handleBoardClick (event :MouseEvent) :void
     {
         trace("*** CLICK: " + event);
-        _controller.addTower(_cursor.defref);
+        if (_cursor != null) {
+            _controller.addTower(_cursor.defref);
+        }
     }
 
     protected function handleBoardMove (event :MouseEvent) :void
