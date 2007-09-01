@@ -1,0 +1,7 @@
+<!-- a config file used when doing standalone testing -->
+<game>
+  <params>
+    <choice ident="difficulty" name="Difficulty"
+            choices="Easy,Normal,Hard,Inferno" start="Normal"/>
+  </params>
+</game>
