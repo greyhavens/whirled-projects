@@ -18,19 +18,17 @@ public class TowerSprite extends UnitSprite
         return _unit as Tower;
     }
 
+    public function get assets () :TowerAssets
+    {
+        return _assets as TowerAssets;
+    }
+    
     public function updateTower (value :Tower) :void
     {
-        trace("UPDATE TOWER CALLED");
         if (value != null && ! value.equals(tower)) {
             _unit = value;
-            reloadAssets();
+            startReloadingAssets();
         }
-    }
-
-    public function updateLocation () :void
-    {
-        this.x = _unit.screenx;
-        this.y = _unit.screeny;
     }
 
     public function setValid (valid :Boolean) :void
@@ -38,22 +36,18 @@ public class TowerSprite extends UnitSprite
         this.alpha = valid ? 1.0 : 0.3;
     }
 
-    public function reloadAssets () :void
+    override protected function reloadAssets () :void
     {
         _assets = AssetFactory.makeTowerAssets(tower);
-        this.source = _assets.base;
-        this.scaleX = _assets.screenWidth / source.width;
-        this.scaleY = _assets.screenHeight / source.height;
+        this.source = assets.base;
+        this.scaleX = assets.screenWidth / source.width;
+        this.scaleY = assets.screenHeight / source.height;
     }
     
     override protected function createChildren () :void
     {
         super.createChildren();
-        reloadAssets();
-        updateLocation();
+        startReloadingAssets();
     }
-
-    protected var _assets :TowerAssets;
-
 }
 }

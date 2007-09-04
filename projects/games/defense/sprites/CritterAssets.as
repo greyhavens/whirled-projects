@@ -5,7 +5,7 @@ import mx.core.IFlexDisplayObject;
 /**
  * Encapsulates animations for the different critter states, and their dimension info.
  */
-public class CritterAssets
+public class CritterAssets extends UnitAssets
 {
     public static const WALK_RIGHT :int = 0;
     public static const WALK_UP :int = 1;
@@ -16,10 +16,7 @@ public class CritterAssets
     public var up :IFlexDisplayObject;
     public var left :IFlexDisplayObject;
     public var down :IFlexDisplayObject;
-
-    public var screenHeight :Number;
-    public var screenWidth :Number;
-
+    
     public function getWalkAsset (walkDirection :int) :IFlexDisplayObject
     {
         switch (walkDirection) {

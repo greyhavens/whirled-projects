@@ -27,12 +27,12 @@ public class Critter extends Unit
     // position of the sprite centroid in screen coordinates
     override public function get centroidx () :Number
     {
-        return Board.SQUARE_WIDTH * (x + width/2);
+        return Board.SQUARE_WIDTH * (pos.x + size.x / 2);
     }
 
     override public function get centroidy () :Number
     {
-        return Board.SQUARE_HEIGHT * (y + height/2);
+        return Board.SQUARE_HEIGHT * (pos.y + size.y / 2);
     }
 
 }

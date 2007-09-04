@@ -13,30 +13,31 @@ public class CritterSprite extends UnitSprite
     public function CritterSprite (critter :Critter)
     {
         super(critter);
-        reloadAssets();
+        startReloadingAssets();
     }
 
     public function get critter () :Critter
     {
         return _unit as Critter;
     }
+
+    public function get assets () :CritterAssets
+    {
+        return _assets as CritterAssets;
+    }
     
-    public function reloadAssets () :void
+    override public function update () :void
+    {
+        super.update();
+        updateAngle();
+    }
+    
+    override protected function reloadAssets () :void
     {
         _assets = AssetFactory.makeCritterAssets(critter);
         updateAngle(); // since we aren't moving yet, just loads the first one
     }
 
-    /** Called after the critted had moved, updates the sprite's location and state accordingly. */
-    public function update () :void
-    {
-        this.x = _unit.centroidx + _bitmapOffset.x;
-        this.y = _unit.centroidy + _bitmapOffset.y;
-
-        trace("CRITTER POS: " + this.x + ", " + this.y);
-        updateAngle();
-    }
-    
     /** Adjusts animation frames to fit movement in the specified direction. */
     public function updateAngle () :void
     {
@@ -47,16 +48,12 @@ public class CritterSprite extends UnitSprite
             walkDir = (critter.vel.x >= 0) ? CritterAssets.WALK_RIGHT : CritterAssets.WALK_LEFT;
         }
 
-        var walkAsset :IFlexDisplayObject = _assets.getWalkAsset(walkDir);
+        var walkAsset :IFlexDisplayObject = assets.getWalkAsset(walkDir);
         if (walkAsset != this.source) {
             this.source = walkAsset;
-            this.scaleX = _assets.screenWidth / source.width;
-            this.scaleY = _assets.screenHeight / source.height;
-            _bitmapOffset = new Point(- _assets.screenWidth / 2, - _assets.screenHeight);
+            this.scaleX = assets.screenWidth / source.width;
+            this.scaleY = assets.screenHeight / source.height;
         }
     }
-
-    protected var _assets :CritterAssets;
-    protected var _bitmapOffset :Point = new Point(0, 0);
 }
 }

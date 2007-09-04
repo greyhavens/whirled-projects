@@ -157,7 +157,7 @@ public class Display extends Canvas
         if (_cursor.tower != tower) {
             _cursor.updateTower(tower);
         }
-        _cursor.updateLocation();
+        _cursor.update();
         _cursor.setValid(valid);
     }
 

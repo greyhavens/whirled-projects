@@ -49,8 +49,12 @@ public class Unit
     public function get screeny () :Number { return pos.y * Board.SQUARE_HEIGHT; }
 
     // position of the sprite centroid in screen coordinates
-    public function get centroidx () :Number { return Board.SQUARE_WIDTH * (x + width/2); }
-    public function get centroidy () :Number { return Board.SQUARE_HEIGHT * (y + height); }
+    public function get centroidx () :Number {
+        return Board.SQUARE_WIDTH * (pos.x + size.x / 2);
+    }
+    public function get centroidy () :Number {
+        return Board.SQUARE_HEIGHT * (pos.y + size.y);
+    }
     
     // from interface Hashable
     public function hashCode () :int
