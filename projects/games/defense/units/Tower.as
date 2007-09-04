@@ -105,6 +105,16 @@ public class Tower
         return results;
     }
 
+    public function serialize () :Object
+    {
+        return { x: this.x, y: this.y, type: this.type, player: this.player, guid: this.guid };
+    }
+
+    public static function deserialize (obj :Object) :Tower
+    {
+        return new Tower(obj.x, obj.y, obj.type, obj.player, obj.guid);
+    }
+
     public function toString () :String
     {
         return "Tower [" + _type + ": " + x + ", " + y + " : " + _width + "x" + _height +

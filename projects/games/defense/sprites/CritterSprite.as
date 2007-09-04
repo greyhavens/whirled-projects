@@ -1,7 +1,9 @@
 package sprites {
 
 import flash.geom.Point;
+
 import mx.core.BitmapAsset;
+import mx.core.IFlexDisplayObject;
 import mx.controls.Image;
 
 import units.Critter;
@@ -43,7 +45,7 @@ public class CritterSprite extends Image
         
         if (newIndex != _assetIndex) {
             _assetIndex = newIndex;
-            this.source = _assets[_assetIndex] as BitmapAsset;
+            this.source = _assets[_assetIndex] as IFlexDisplayObject;
             this.scaleX = _screenWidth / source.width;
             this.scaleY = _screenHeight / source.height;
             _bitmapOffset = new Point(Board.SQUARE_WIDTH / 2 - _screenWidth / 2,
@@ -59,7 +61,7 @@ public class CritterSprite extends Image
     protected var _screenHeight :Number = 30;
     protected var _screenWidth :Number = 20;
     
-    protected var _assets :Array; // of BitmapAsset, arranged as: right, up, left, down
+    protected var _assets :Array; // of IFlexDisplayObject, arranged as: right, up, left, down
     protected var _assetIndex :int = -1;
     protected var _critter :Critter;
     protected var _bitmapOffset :Point = new Point(0, 0);

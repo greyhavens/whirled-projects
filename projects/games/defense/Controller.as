@@ -23,7 +23,7 @@ public class Controller
 
     public function addTower (tower :Tower) :void
     {        
-        var serialized :Object = Marshaller.serializeTower(tower);
+        var serialized :Object = tower.serialize();
         serialized.guid = Tower.makeGuid(); // give the request a brand new guid
         _whirled.sendMessage(Validator.REQUEST_ADD, serialized);
     }

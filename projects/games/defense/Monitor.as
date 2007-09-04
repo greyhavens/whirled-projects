@@ -62,7 +62,7 @@ public class Monitor
                 trace("*** CLEARING THE BOARD!");
             } else {
                 // setting a single entry
-                var tower :Tower = Marshaller.unserializeTower(event.newValue);
+                var tower :Tower = Tower.deserialize(event.newValue);
                 trace("*** GOT TOWER: " + tower);
                 _game.handleAddTower(tower, event.index);
             }                

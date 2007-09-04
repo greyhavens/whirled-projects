@@ -1,6 +1,7 @@
 package {
 
 import mx.core.BitmapAsset;
+import mx.core.IFlexDisplayObject;
 
 import units.Tower;
 
@@ -22,17 +23,17 @@ public class AssetFactory
 
 
     /** Returns a new critter of specified type. */
-    public static function makeCritterAssets () :Array // of BitmapAsset
+    public static function makeCritterAssets () :Array // of IFlexDisplayObject
     {
-        return [ BitmapAsset(new _defaultCritterRight()),
-                 BitmapAsset(new _defaultCritterUp()),
-                 BitmapAsset(new _defaultCritterLeft()),
-                 BitmapAsset(new _defaultCritterDown()) ];
+        return [ IFlexDisplayObject(new _defaultCritterRight()),
+                 IFlexDisplayObject(new _defaultCritterUp()),
+                 IFlexDisplayObject(new _defaultCritterLeft()),
+                 IFlexDisplayObject(new _defaultCritterDown()) ];
     }
 
     [Embed(source="rsrc/critters/default_left.png")]
     private static const _defaultCritterLeft :Class;
-    [Embed(source="rsrc/critters/default_right.png")]
+    [Embed(source="rsrc/critters/bully_right.swf")]
     private static const _defaultCritterRight :Class;
     [Embed(source="rsrc/critters/default_up.png")]
     private static const _defaultCritterUp :Class;
