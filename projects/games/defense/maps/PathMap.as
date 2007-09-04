@@ -38,10 +38,12 @@ public class PathMap extends Map
     // from Map
     override public function update () :void
     {
-        var changeCount :int = pathingPass();
-        if (changeCount > 0) {
-            trace("Found " + changeCount + " new values!");
-            invalidate();
+        for (var ii :int = 0; ii < UPDATES_PER_FRAME; ii++) {
+            var changeCount :int = pathingPass();
+            if (changeCount > 0) {
+                trace("Found " + changeCount + " new values!");
+                invalidate();
+            }
         }
     }
 
@@ -181,6 +183,8 @@ public class PathMap extends Map
     protected static const NEIGHBORS :Array = [ [-1, 0], [0, -1], [0, 0], [0, 1], [1, 0] ];
     
     protected static const NO_GRADIENT :Array = NEIGHBORS[2];
+
+    protected static const UPDATES_PER_FRAME :int = 3;
     
     /** Contains path gradient map for the entire board. */
     protected var _gradient :Array; // of Arrays like [x, y].
