@@ -8,6 +8,7 @@ import flash.utils.getTimer; // function import
 import units.Critter;
 import units.Spawner;
 import units.Tower;
+import units.Unit;
 
 public class Game
 {
@@ -77,11 +78,12 @@ public class Game
         _display.handleAddCritter(critter);
     }
     
-    public function handleMouseMove (logical :Point) :void
+    public function handleMouseMove (boardx :int, boardy :int) :void
     {
-        if (logical.x != _cursor.x || logical.y != _cursor.y) {
-            _cursor.x = logical.x;
-            _cursor.y = logical.y;
+        var logical :Point = Unit.screenToLogicalPosition(boardx, boardy);
+        if (logical.x != _cursor.pos.x || logical.y != _cursor.pos.y) {
+            _cursor.pos.x = logical.x;
+            _cursor.pos.y = logical.y;
             var onBoard :Boolean = _board.isOnBoard(_cursor);
             var overEmptySpace :Boolean = onBoard && _board.isUnoccupied(_cursor);
             if (onBoard) {

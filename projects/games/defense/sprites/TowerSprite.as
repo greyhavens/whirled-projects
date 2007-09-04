@@ -6,32 +6,31 @@ import mx.controls.Image;
 
 import units.Tower;
 
-public class TowerSprite extends Image
+public class TowerSprite extends UnitSprite
 {
     public function TowerSprite (tower :Tower)
     {
-        _tower = tower;
+        super(tower);
     }
 
     public function get tower () :Tower
     {
-        return _tower
+        return _unit as Tower;
     }
 
     public function updateTower (value :Tower) :void
     {
         trace("UPDATE TOWER CALLED");
-        if (value != null && ! value.equals(_tower)) {
-            _tower = value;
+        if (value != null && ! value.equals(tower)) {
+            _unit = value;
             reloadAssets();
         }
     }
 
     public function updateLocation () :void
     {
-        var p :Point = Board.logicalToScreenPosition(_tower.x, _tower.y);
-        this.x = p.x;
-        this.y = p.y;
+        this.x = _unit.screenx;
+        this.y = _unit.screeny;
     }
 
     public function setValid (valid :Boolean) :void
@@ -41,7 +40,7 @@ public class TowerSprite extends Image
 
     public function reloadAssets () :void
     {
-        _assets = AssetFactory.makeTowerAssets(_tower);
+        _assets = AssetFactory.makeTowerAssets(tower);
         this.source = _assets.base;
         this.scaleX = _assets.screenWidth / source.width;
         this.scaleY = _assets.screenHeight / source.height;
@@ -55,7 +54,6 @@ public class TowerSprite extends Image
     }
 
     protected var _assets :TowerAssets;
-    protected var _tower :Tower;
 
 }
 }

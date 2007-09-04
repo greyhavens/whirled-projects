@@ -117,8 +117,8 @@ public class Board
 
     public function isOnBoard (tower :Tower) :Boolean
     {
-        return (tower.x >= 0 && tower.y >= 0 &&
-                tower.x + tower.width <= WIDTH && tower.y + tower.height <= HEIGHT);
+        return (tower.pos.x >= 0 && tower.pos.y >= 0 &&
+                tower.pos.x + tower.width <= WIDTH && tower.pos.y + tower.height <= HEIGHT);
     }
 
     public function getPlayerSource (playerIndex :int) :Point
@@ -152,24 +152,6 @@ public class Board
         return _pathmaps[player];
     }
     
-    /**
-     * Converts screen coordinates (relative to the upper left corner of the board)
-     * to logical coordinates in board space. Rounds results down to integer coordinates.
-     */
-    public static function screenToLogicalPosition (x :Number, y :Number) :Point
-    {
-        return new Point(int(Math.floor(x / SQUARE_WIDTH)), int(Math.floor(y / SQUARE_HEIGHT)));
-    }
-
-    /**
-     * Converts board coordinates to screen coordinates (relative to upper left corner).
-     */
-    public static function logicalToScreenPosition (x :Number, y :Number) :Point
-    {
-        return new Point(x * SQUARE_WIDTH, y * SQUARE_HEIGHT);
-    }
-
-
     /** Various game-related maps. */
     protected var _groundmap :GroundMap;
     protected var _pathmaps :Array; // of PathMap, indexed by player

@@ -7,6 +7,7 @@ import flash.geom.Rectangle;
 import com.whirled.WhirledGameControl;
 
 import units.Tower;
+import units.Unit;
 
 public class Controller
 {
@@ -24,7 +25,7 @@ public class Controller
     public function addTower (tower :Tower) :void
     {        
         var serialized :Object = tower.serialize();
-        serialized.guid = Tower.makeGuid(); // give the request a brand new guid
+        serialized.guid = Unit.makeGuid(); // give the request a brand new guid
         _whirled.sendMessage(Validator.REQUEST_ADD, serialized);
     }
 

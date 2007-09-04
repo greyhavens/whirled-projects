@@ -58,7 +58,7 @@ public class Validator
             var tower :Tower = Tower.deserialize(event.value);
             if (_board.isOnBoard(tower) && _board.isUnoccupied(tower)) {
                 _whirled.set(Monitor.TOWER_SET, event.value,
-                             _board.towerPositionToIndex(tower.x, tower.y));
+                             _board.towerPositionToIndex(tower.pos.x, tower.pos.y));
             }
         } else {
             trace("Ignoring event " + event.name + ", not in control");
