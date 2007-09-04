@@ -56,9 +56,9 @@ public class Validator
     {
         if (_whirled.amInControl()) {
             var tower :Tower = Marshaller.unserializeTower(event.value);
-            if (_board.isOnBoard(tower.def) && _board.isUnoccupied(tower.def)) {
+            if (_board.isOnBoard(tower) && _board.isUnoccupied(tower)) {
                 _whirled.set(Monitor.TOWER_SET, event.value,
-                             _board.towerPositionToIndex(tower.def.x, tower.def.y));
+                             _board.towerPositionToIndex(tower.x, tower.y));
             }
         } else {
             trace("Ignoring event " + event.name + ", not in control");

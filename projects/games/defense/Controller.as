@@ -21,10 +21,10 @@ public class Controller
         trace("CONTROLLER UNLOAD");
     }
 
-    public function addTower (def :TowerDef) :void
-    {
-        var tower :Tower = new Tower(def, _board.getMyPlayerIndex(), Tower.makeGuid());
+    public function addTower (tower :Tower) :void
+    {        
         var serialized :Object = Marshaller.serializeTower(tower);
+        serialized.guid = Tower.makeGuid(); // give the request a brand new guid
         _whirled.sendMessage(Validator.REQUEST_ADD, serialized);
     }
 

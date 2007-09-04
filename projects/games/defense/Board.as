@@ -12,6 +12,8 @@ import maps.GroundMap;
 import maps.Map;
 import maps.PathMap;
 
+import units.Tower;
+
 /**
  * Game board, which can be queried for information about static board definition,
  * as well as positions of the different pieces.
@@ -98,25 +100,25 @@ public class Board
     
     // Functions used by game logic to mark / clear towers on the board
 
-    public function markAsOccupied (def :TowerDef, playerId :int) :void
+    public function markAsOccupied (tower :Tower) :void
     {
         // mark the main map
-        _groundmap.fillAllTowerCells(def, playerId);
+        _groundmap.fillAllTowerCells(tower, tower.player);
         // ... and force all pathing maps to get recalculated
         for each (var m :PathMap in _pathmaps) {
-            m.fillAllTowerCells(def, playerId);
+            m.fillAllTowerCells(tower, tower.player);
         }
     }
     
-    public function isUnoccupied (def :TowerDef) :Boolean
+    public function isUnoccupied (tower :Tower) :Boolean
     {
-        return _groundmap.isEachTowerCellEqual(def, Map.UNOCCUPIED);
+        return _groundmap.isEachTowerCellEqual(tower, Map.UNOCCUPIED);
     }
 
-    public function isOnBoard (def :TowerDef) :Boolean
+    public function isOnBoard (tower :Tower) :Boolean
     {
-        return (def.x >= 0 && def.y >= 0 &&
-                def.x + def.width <= WIDTH && def.y + def.height <= HEIGHT);
+        return (tower.x >= 0 && tower.y >= 0 &&
+                tower.x + tower.width <= WIDTH && tower.y + tower.height <= HEIGHT);
     }
 
     public function getPlayerSource (playerIndex :int) :Point

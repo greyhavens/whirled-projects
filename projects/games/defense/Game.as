@@ -21,7 +21,7 @@ public class Game
         _display.addEventListener(Event.ENTER_FRAME, handleGameTick);
 
         // initialize the cursor with dummy data - it will all get overwritten, eventually
-        _cursor = new Tower(new TowerDef(0, 0, Tower.TYPE_SIMPLE), -1, Tower.makeGuid());
+        _cursor = new Tower(0, 0, Tower.TYPE_SIMPLE, _board.getMyPlayerIndex(), 0);
     }
 
     public function handleUnload (event : Event) : void
@@ -63,7 +63,7 @@ public class Game
     public function handleAddTower (tower :Tower, index :int) :void
     {
         _towers.push(tower);
-        _board.markAsOccupied(tower.def, tower.player);
+        _board.markAsOccupied(tower);
         _display.handleAddTower(tower);
     }
 
@@ -79,13 +79,13 @@ public class Game
     
     public function handleMouseMove (logical :Point) :void
     {
-        var def :TowerDef = new TowerDef(logical.x, logical.y, _cursor.def.type);
-        if (! _cursor.def.equals(def)) {
-            var onBoard :Boolean = _board.isOnBoard(def);
-            var overEmptySpace :Boolean = onBoard && _board.isUnoccupied(def);
+        if (logical.x != _cursor.x || logical.y != _cursor.y) {
+            _cursor.x = logical.x;
+            _cursor.y = logical.y;
+            var onBoard :Boolean = _board.isOnBoard(_cursor);
+            var overEmptySpace :Boolean = onBoard && _board.isUnoccupied(_cursor);
             if (onBoard) {
-                _cursor.def = def;
-                _display.showCursor(def, overEmptySpace);
+                _display.showCursor(_cursor, overEmptySpace);
             } else {
                 _display.hideCursor();                    
             }

@@ -2,6 +2,7 @@ package units {
 
 /**
  * Definition of a single tower, including all state information, and a pointer to display object.
+ * Towers occupy rectangular subsets of the board.
  */
 public class Tower
 {
@@ -9,16 +10,44 @@ public class Tower
     
     public static const TYPE_SIMPLE :int = 1;
 
+    public var x :int;
+    public var y :int;
+    public var player :int;
+    
+    protected var _guid :int;
+    protected var _type :int;
+    protected var _width :int;
+    protected var _height :int;
+
     public static function makeGuid () :int
     {
         return int(Math.random() * int.MAX_VALUE);
     }
     
-    public function Tower (def :TowerDef, player :int, guid :int)
+    public function Tower (x :int, y :int, type :int, player :int, guid :int)
     {
-        _def = def; 
-        _player = player;
-        _guid = guid
+        this.x = x;
+        this.y = y;
+        this.player = player;
+
+        _guid = guid;
+
+        updateType(type);
+    }
+
+    public function get type () :int
+    {
+        return _type;
+    }
+
+    public function get width () :int
+    {
+        return _width;
+    }
+
+    public function get height () :int
+    {
+        return _height;
     }
 
     public function get guid () :int
@@ -26,28 +55,61 @@ public class Tower
         return _guid;
     }
     
-    public function get def () :TowerDef
+    public function equals (t :Tower) :Boolean
     {
-        return _def;
+        return t.guid == this.guid;
+    }
+    
+    public function updateType (value :int) :void
+    {
+        _type = value;
+        switch(_type) {
+        case Tower.TYPE_SIMPLE:
+            _width = _height = 2;
+            break;
+        default:
+            _width = _height = 1;
+        }
     }
 
-    public function set def (newdef :TowerDef) :void
+    /**
+     * Iterates the specified function over all cells contained inside the location.
+     * Function should be of the type: function (x :int, y :int) :void { }
+     */
+    public function forEach (fn :Function) :void
     {
-        _def.copyFrom(newdef);
+        var right :int = x + width;
+        var bottom :int = y + height;
+        for (var xx :int = x; xx < right; xx++) {
+            for (var yy :int = y; yy < bottom; yy++) {
+                fn(xx, yy);
+            }
+        }
     }
 
-    public function get player () :int
+    /**
+     * Iterates the specified function over all cells contained inside the location, and collects
+     * all results into an array.
+     * Function should be of the type: function (x :int, y :int) :* { }
+     */
+    public function map (fn :Function) :Array
     {
-        return _player;
+        var results :Array = new Array;
+        var right :int = x + width;
+        var bottom :int = y + height;
+        for (var xx :int = x; xx < right; xx++) {
+            for (var yy :int = y; yy < bottom; yy++) {
+                results.push(fn(xx, yy));
+            }
+        }
+        return results;
     }
 
     public function toString () :String
     {
-        return "Tower [player: " + _player + ", guid: " + _guid + ", def: " + _def + "].";
+        return "Tower [" + _type + ": " + x + ", " + y + " : " + _width + "x" + _height +
+            ", player: " + player + ", guid: " + _guid + "].";
     }
     
-    protected var _player :int;
-    protected var _def :TowerDef;
-    protected var _guid :int;
 }
 }

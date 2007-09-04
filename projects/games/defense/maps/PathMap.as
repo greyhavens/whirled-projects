@@ -4,6 +4,8 @@ import flash.geom.Point;
 
 import com.threerings.flash.MathUtil;
 
+import units.Tower;
+
 /**
  * Stores pathfinding information for a single player's critters.
  */
@@ -48,14 +50,14 @@ public class PathMap extends Map
     }
 
     // from Map
-    override public function fillAllTowerCells (def :TowerDef, value :*) :void
+    override public function fillAllTowerCells (tower :Tower, value :*) :void
     {
         // since this is the pathing map, instead of filling in with player id,
         // we fill the cells underneath the tower with infinite pathing cost.
-        super.fillAllTowerCells(def, Infinity);
+        super.fillAllTowerCells(tower, Infinity);
 
         // and now propagate pathing failures
-        def.forEach(propagatePathingFailures);
+        tower.forEach(propagatePathingFailures);
     }
 
     /** Called by the board, to clear the map and set up a new pathfinding target */

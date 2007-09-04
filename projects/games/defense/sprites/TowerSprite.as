@@ -4,23 +4,25 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import mx.controls.Image;
 
+import units.Tower;
+
 public class TowerSprite extends Image
 {
-    public function TowerSprite (defref :TowerDef)
+    public function TowerSprite (tower :Tower)
     {
-        _defref = defref;
+        _tower = tower;
     }
 
-    public function get defref () :TowerDef
+    public function get tower () :Tower
     {
-        return _defref;
+        return _tower
     }
 
-    public function set defref (newdef :TowerDef) :void
+    public function updateTower (value :Tower) :void
     {
-        if (_defref != newdef) {
-            _defref = newdef;
-            if (_currentAssetType != _defref.type) { // let's not reload assets needlessly
+        if (value != null && ! value.equals(_tower)) {
+            _tower = value;
+            if (_currentAssetType != _tower.type) { // let's not reload assets needlessly
                 reloadAssets();
             }
         }
@@ -28,7 +30,7 @@ public class TowerSprite extends Image
 
     public function updateLocation () :void
     {
-        var p :Point = Board.logicalToScreenPosition(_defref.x, _defref.y);
+        var p :Point = Board.logicalToScreenPosition(_tower.x, _tower.y);
         this.x = p.x;
         this.y = p.y;
     }
@@ -40,10 +42,10 @@ public class TowerSprite extends Image
 
     public function reloadAssets () :void
     {
-        this.source = AssetFactory.makeTower(_defref.type);
-        this.scaleX = Board.SQUARE_WIDTH * _defref.width / source.width;
-        this.scaleY = Board.SQUARE_HEIGHT * _defref.height / source.height;
-        _currentAssetType = _defref.type;
+        this.source = AssetFactory.makeTower(_tower.type);
+        this.scaleX = Board.SQUARE_WIDTH * _tower.width / source.width;
+        this.scaleY = Board.SQUARE_HEIGHT * _tower.height / source.height;
+        _currentAssetType = _tower.type;
     }
     
     override protected function createChildren () :void
@@ -54,7 +56,7 @@ public class TowerSprite extends Image
     }
 
     protected var _currentAssetType :int;
-    protected var _defref :TowerDef;
+    protected var _tower :Tower;
 
 }
 }

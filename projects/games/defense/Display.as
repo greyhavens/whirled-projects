@@ -148,14 +148,14 @@ public class Display extends Canvas
      * Single function for moving and/or changing the cursor. If the cursor was not previously
      * shown, it will be created.
      */
-    public function showCursor (defref :TowerDef, valid :Boolean) :void
+    public function showCursor (tower :Tower, valid :Boolean) :void
     {
         Mouse.hide();
         if (_cursor == null) {
-            _cursor = new TowerSprite(defref);
+            _cursor = new TowerSprite(tower);
             _boardSprite.addChild(_cursor);
         } else {
-            _cursor.defref = defref;
+            _cursor.updateTower(tower);
         }
         _cursor.updateLocation();
         _cursor.setValid(valid);
@@ -176,15 +176,15 @@ public class Display extends Canvas
     /**
      * Changes the bitmap displayed under the cursor.
      */
-    public function setCursorType (defref :TowerDef) :void
+    public function setCursorType (tower :Tower) :void
     {
         hideCursor();
-        showCursor(defref, true);
+        showCursor(tower, true);
     }
         
     public function handleAddTower (tower :Tower) :void
     {
-        var sprite :TowerSprite = new TowerSprite(tower.def);
+        var sprite :TowerSprite = new TowerSprite(tower);
         _boardSprite.addChild(sprite);
         _towers.put(tower.guid, sprite);
     }
@@ -231,7 +231,7 @@ public class Display extends Canvas
     {
         trace("*** CLICK: " + event);
         if (_cursor != null) {
-            _controller.addTower(_cursor.defref);
+            _controller.addTower(_cursor.tower);
         }
     }
 

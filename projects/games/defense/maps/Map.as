@@ -1,6 +1,8 @@
 package maps {
 
 import flash.display.BitmapData;
+
+import units.Tower;
     
 /**
  * Rectangular occupancy map storing the game board. Each cell is marked as UNOCCUPIED, or if it
@@ -85,9 +87,9 @@ public class Map
      * Runs the specified function over all cells that intersect the tower location.
      * Function should be of the form: function (cellValue :*) :void { }
      */
-    public function forEachTowerCell (def :TowerDef, fn :Function) :void
+    public function forEachTowerCell (tower :Tower, fn :Function) :void
     {
-        def.forEach(function (x :int, y :int) :void {
+        tower.forEach(function (x :int, y :int) :void {
             fn(getCell(x, y));
         });
     }
@@ -95,10 +97,10 @@ public class Map
     /**
      * Tests all cells intersected by the tower location for equality with specified value.
      */
-    public function isEachTowerCellEqual (def :TowerDef, value :*) :Boolean
+    public function isEachTowerCellEqual (tower :Tower, value :*) :Boolean
     {
         var result :Boolean = true;
-        forEachTowerCell(def, function (cellValue :*) :void {
+        forEachTowerCell(tower, function (cellValue :*) :void {
             result = result && (value == cellValue);
         });
         return result;
@@ -107,10 +109,10 @@ public class Map
     /**
      * Tests all cells intersected by the tower location for equality with specified value.
      */
-    public function isAnyTowerCellEqual (def :TowerDef, value :*) :Boolean
+    public function isAnyTowerCellEqual (tower :Tower, value :*) :Boolean
     {
         var result :Boolean = false;
-        forEachTowerCell(def, function (cellValue :*) :void {
+        forEachTowerCell(tower, function (cellValue :*) :void {
             result = result || (value == cellValue);
         });
         return result;
@@ -120,9 +122,9 @@ public class Map
      * Fills all cells intersected by the tower location with specified value.
      * Also marks the map as invalidated, which will cause it to be redrawn.
      */
-    public function fillAllTowerCells (def :TowerDef, value :*) :void
+    public function fillAllTowerCells (tower :Tower, value :*) :void
     {
-        def.forEach(function (x :int, y :int) :void {
+        tower.forEach(function (x :int, y :int) :void {
             setCell(x, y, value);
         });
         invalidate();
