@@ -79,7 +79,6 @@ public class Display extends Canvas
         _allOverlays = new Array();
         
         _overlayOcc = new Overlay();
-//        _overlayOcc.visible = false;
         _allOverlays.push(_overlayOcc);
 
         // these have to be created before we know how many player we actually have...
@@ -154,7 +153,8 @@ public class Display extends Canvas
         if (_cursor == null) {
             _cursor = new TowerSprite(tower);
             _boardSprite.addChild(_cursor);
-        } else {
+        }
+        if (_cursor.tower != tower) {
             _cursor.updateTower(tower);
         }
         _cursor.updateLocation();

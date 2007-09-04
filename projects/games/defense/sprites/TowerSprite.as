@@ -20,11 +20,10 @@ public class TowerSprite extends Image
 
     public function updateTower (value :Tower) :void
     {
+        trace("UPDATE TOWER CALLED");
         if (value != null && ! value.equals(_tower)) {
             _tower = value;
-            if (_currentAssetType != _tower.type) { // let's not reload assets needlessly
-                reloadAssets();
-            }
+            reloadAssets();
         }
     }
 
@@ -42,10 +41,10 @@ public class TowerSprite extends Image
 
     public function reloadAssets () :void
     {
-        this.source = AssetFactory.makeTower(_tower.type);
-        this.scaleX = Board.SQUARE_WIDTH * _tower.width / source.width;
-        this.scaleY = Board.SQUARE_HEIGHT * _tower.height / source.height;
-        _currentAssetType = _tower.type;
+        _assets = AssetFactory.makeTowerAssets(_tower);
+        this.source = _assets.base;
+        this.scaleX = _assets.screenWidth / source.width;
+        this.scaleY = _assets.screenHeight / source.height;
     }
     
     override protected function createChildren () :void
@@ -55,7 +54,7 @@ public class TowerSprite extends Image
         updateLocation();
     }
 
-    protected var _currentAssetType :int;
+    protected var _assets :TowerAssets;
     protected var _tower :Tower;
 
 }

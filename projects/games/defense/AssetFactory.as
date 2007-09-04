@@ -3,19 +3,29 @@ package {
 import mx.core.BitmapAsset;
 import mx.core.IFlexDisplayObject;
 
+import units.Critter;
 import units.Tower;
+
+import sprites.CritterAssets;
+import sprites.TowerAssets;
 
 public class AssetFactory
 {
     /** Returns a new shape for the specified tower. */
-    public static function makeTower (type :int) :BitmapAsset
+    public static function makeTowerAssets (tower :Tower) :TowerAssets
     {
-        switch (type) {
-        case Tower.TYPE_SIMPLE: return BitmapAsset(new _defaultTower());
-        default:
-            throw new Error("Unknown tower type: " + type);
-            return null;
+        // todo: this should vary depending on tower type
+        
+        var ta :TowerAssets = new TowerAssets();
+        switch (tower.type) {
+        case Tower.TYPE_SIMPLE: ta.base = IFlexDisplayObject(new _defaultTower()); break;
+        default: throw new Error("Unknown tower type: " + tower.type);
         }
+
+        ta.screenHeight = 50;
+        ta.screenWidth = 60;
+
+        return ta;
     }
 
     [Embed(source="rsrc/tower.png")]
@@ -23,12 +33,19 @@ public class AssetFactory
 
 
     /** Returns a new critter of specified type. */
-    public static function makeCritterAssets () :Array // of IFlexDisplayObject
+    public static function makeCritterAssets (critter :Critter) :CritterAssets
     {
-        return [ IFlexDisplayObject(new _defaultCritterRight()),
-                 IFlexDisplayObject(new _defaultCritterUp()),
-                 IFlexDisplayObject(new _defaultCritterLeft()),
-                 IFlexDisplayObject(new _defaultCritterDown()) ];
+        // todo: this should vary depending on critter type
+        
+        var ca :CritterAssets = new CritterAssets();
+        ca.right = IFlexDisplayObject(new _defaultCritterRight());
+        ca.up = IFlexDisplayObject(new _defaultCritterUp());
+        ca.left = IFlexDisplayObject(new _defaultCritterLeft());
+        ca.down = IFlexDisplayObject(new _defaultCritterDown());
+        ca.screenHeight = 30;
+        ca.screenWidth = 20;
+        
+        return ca;
     }
 
     [Embed(source="rsrc/critters/default_left.png")]

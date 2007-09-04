@@ -18,9 +18,8 @@ public class CritterSprite extends Image
 
     public function reloadAssets () :void
     {
-        _assets = AssetFactory.makeCritterAssets();
-        // just load the first one
-        updateAngle();
+        _assets = AssetFactory.makeCritterAssets(_critter);
+        updateAngle(); // since we aren't moving yet, just loads the first one
     }
 
     /** Called after the critted had moved, updates the sprite's location and state accordingly. */
@@ -36,33 +35,24 @@ public class CritterSprite extends Image
     /** Adjusts animation frames to fit movement in the specified direction. */
     public function updateAngle () :void
     {
-        var newIndex :int = _assetIndex;
+        var walkDir :int = -1;
         if (Math.abs(_critter.vel.y) > Math.abs(_critter.vel.x)) {
-            newIndex = (_critter.vel.y >= 0) ? ASSET_UP : ASSET_DOWN;
+            walkDir = (_critter.vel.y >= 0) ? CritterAssets.WALK_DOWN : CritterAssets.WALK_UP;
         } else {
-            newIndex = (_critter.vel.x >= 0) ? ASSET_RIGHT : ASSET_LEFT;
+            walkDir = (_critter.vel.x >= 0) ? CritterAssets.WALK_RIGHT : CritterAssets.WALK_LEFT;
         }
-        
-        if (newIndex != _assetIndex) {
-            _assetIndex = newIndex;
-            this.source = _assets[_assetIndex] as IFlexDisplayObject;
-            this.scaleX = _screenWidth / source.width;
-            this.scaleY = _screenHeight / source.height;
-            _bitmapOffset = new Point(Board.SQUARE_WIDTH / 2 - _screenWidth / 2,
-                                      Board.SQUARE_HEIGHT / 2 - _screenHeight);
+
+        var walkAsset :IFlexDisplayObject = _assets.getWalkAsset(walkDir);
+        if (walkAsset != this.source) {
+            this.source = walkAsset;
+            this.scaleX = _assets.screenWidth / source.width;
+            this.scaleY = _assets.screenHeight / source.height;
+            _bitmapOffset = new Point(Board.SQUARE_WIDTH / 2 - _assets.screenWidth / 2,
+                                      Board.SQUARE_HEIGHT / 2 - _assets.screenHeight);
         }
     }
 
-    protected static const ASSET_RIGHT :int = 0;
-    protected static const ASSET_UP :int = 1;
-    protected static const ASSET_LEFT :int = 2;
-    protected static const ASSET_DOWN :int = 3;
-
-    protected var _screenHeight :Number = 30;
-    protected var _screenWidth :Number = 20;
-    
-    protected var _assets :Array; // of IFlexDisplayObject, arranged as: right, up, left, down
-    protected var _assetIndex :int = -1;
+    protected var _assets :CritterAssets;
     protected var _critter :Critter;
     protected var _bitmapOffset :Point = new Point(0, 0);
 }
