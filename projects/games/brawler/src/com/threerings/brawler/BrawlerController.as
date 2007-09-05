@@ -437,7 +437,7 @@ public class BrawlerController extends Controller
                     Enemy.createState(ii, config, _difficulty, occupants.length));
             }
         }
-        _clear = (_enemies == 0 || _room == 2);
+        _clear = (_enemies == 0);
         _view.hud.updateClear();
     }
 
