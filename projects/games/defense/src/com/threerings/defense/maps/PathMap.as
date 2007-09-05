@@ -36,17 +36,25 @@ public class PathMap extends Map
                 _gradient[xx][yy] = NO_GRADIENT;
             }
         }
+        
+        invalidate();
     }
 
     // from Map
     override public function update () :void
     {
-        for (var ii :int = 0; ii < UPDATES_PER_FRAME; ii++) {
-            var changeCount :int = pathingPass();
-            if (changeCount > 0) {
-                trace("Found " + changeCount + " new values!");
-                invalidate();
+        if (! _upToDate) {
+            for (var ii :int = 0; ii < UPDATES_PER_FRAME; ii++) {
+                var changeCount :int = pathingPass();
+                if (changeCount > 0) {
+                    trace("Found " + changeCount + " new values!");
+                } else {
+                    trace("Path up to date!");
+                    _upToDate = true;  
+                    return; // we're done for now
+                }
             }
+            invalidate();
         }
     }
 
@@ -59,15 +67,21 @@ public class PathMap extends Map
 
         // and now propagate pathing failures
         tower.forEach(propagatePathingFailures);
+        invalidate();
+    }
+
+    // from Map
+    override public function invalidate () :void
+    {
+        super.invalidate();
+        _upToDate = false;
     }
 
     /** Called by the board, to clear the map and set up a new pathfinding target */
     public function setTarget (x :int, y :int) :void
     {
         clear();
-        
         setCell(x, y, 0);
-        
         invalidate();
     }
 
@@ -124,6 +138,10 @@ public class PathMap extends Map
     /** Performs a single pass of spreading activation */
     protected function pathingPass () :int
     {
+        if (_upToDate) {
+            return 0; // nothing to be done
+        }
+        
         var occ :Map = _board.getMapOccupancy();
         
         var count :int = 0;
@@ -192,6 +210,9 @@ public class PathMap extends Map
     /** Contains path gradient map for the entire board. */
     protected var _gradient :Array; // of Arrays like [x, y].
 
+    /** Is this path info up to date? */
+    protected var _upToDate :Boolean;
+    
     protected var _board :Board;
     protected var _player :int;
 }
