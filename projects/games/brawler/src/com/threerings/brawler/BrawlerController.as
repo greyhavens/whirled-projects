@@ -121,11 +121,13 @@ public class BrawlerController extends Controller
     }
 
     /**
-     * Returns the current value of the hit counter.
+     * Modifies the local score.
      */
-    public function get hits () :int
+    public function set score (value :int) :void
     {
-        return _hits;
+        var oscore :int = _score;
+        _score = value;
+        _view.hud.updateScore(_score - oscore);
     }
 
     /**
@@ -153,7 +155,12 @@ public class BrawlerController extends Controller
                 }
             }
             createEnemies();
-            _view.enterRoom();
+            if (_clear) {
+                _control.endGame(_control.getOccupants());
+                _view.showResults();
+            } else {
+                _view.enterRoom();
+            }
         });
     }
 
@@ -204,36 +211,19 @@ public class BrawlerController extends Controller
     }
 
     /**
-     * Called by the local {@link Player} to notify the controller that the player scored a hit
-     * on an enemy.
-     */
-    public function playerScoredHit (damage :Number) :void
-    {
-        // update the hit count and score
-        var increment :int = Math.round(damage * _self.level * (++_hits));
-        _score += increment;
-        _hitResetCountdown = HIT_RESET_INTERVAL;
-
-        // update the hud
-        _view.hud.updateHits();
-        _view.hud.updateScore(increment);
-    }
-
-    /**
      * Notes the removal of an enemy.
      */
     public function enemyWasDestroyed (enemy :Enemy) :void
     {
         if (enemy.finalBoss) {
             _bossPresent = false;
-            _bossDestroyed = true;
-            _clear = true;
             for each (var actor :Actor in _actors) {
                 if (actor.master && actor is Enemy) {
                     actor.destroy();
                 }
             }
-        } else if (--_enemies == 0) {
+        }
+        if (--_enemies == 0) {
             // proceed to the next wave
             var owave :int = _wave, nwave :int = _wave + 1;
             _throttle.send(function () :void {
@@ -243,11 +233,11 @@ public class BrawlerController extends Controller
     }
 
     /**
-     * Creates a coin drop at the specified location.
+     * Creates a pickup with the supplied state and adds it to the scene.
      */
-    public function createCoin (x :Number, y :Number) :void
+    public function createPickup (state :Object) :void
     {
-        createActor(createActorName(), Coin.createState(_view, x, y));
+        createActor(createActorName(), state);
     }
 
     /**
@@ -264,12 +254,6 @@ public class BrawlerController extends Controller
         // shrink the door to prevent further notifications
         _view.door.height = 0;
 
-        // if the boss is dead, end the game
-        if (_bossDestroyed) {
-            _control.endGame(_control.getOccupants());
-            return;
-        }
-
         // otherwise, advance to the next room
         var oroom :int = _room, nroom :int = _room + 1;
         var owave :int = _wave;
@@ -280,14 +264,16 @@ public class BrawlerController extends Controller
     }
 
     /**
-     * Called by the view on each frame.
+     * Increments one of the shared statistics if this controller is in control.
      */
-    public function enterFrame (elapsed :Number) :void
+    public function incrementStat (stat :String, amount :Number = 1) :void
     {
-        // reset the hit count if enough time has passed
-        if ((_hitResetCountdown -= elapsed) <= 0) {
-            _hits = 0;
+        if (!_control.amInControl()) {
+            return;
         }
+        _throttle.send(function () :void {
+            _control.setImmediate(stat, _control.get(stat) + amount);
+        });
     }
 
     // documentation inherited from interface PropertyChangedListener
@@ -358,10 +344,6 @@ public class BrawlerController extends Controller
     {
         if (event.type == StateChangedEvent.CONTROL_CHANGED) {
             _view.hud.updateConnection();
-        } else if (event.type == StateChangedEvent.GAME_ENDED) {
-            _view.exitRoom(function () :void {
-                _view.showResults();
-            });
         }
     }
 
@@ -404,6 +386,9 @@ public class BrawlerController extends Controller
         if (_control.amInControl()) {
             _control.set("room", _room);
             _control.set("wave", _wave);
+            _control.set("koCount", 0);
+            _control.set("playerDamage", 0);
+            _control.set("enemyDamage", 0);
             _control.startTicker("clock", CLOCK_DELAY);
         } else {
             var croom :Object = _control.get("room");
@@ -452,7 +437,7 @@ public class BrawlerController extends Controller
                     Enemy.createState(ii, config, _difficulty, occupants.length));
             }
         }
-        _clear = (_enemies == 0);
+        _clear = (_enemies == 0 || _room == 2);
         _view.hud.updateClear();
     }
 
@@ -552,9 +537,6 @@ public class BrawlerController extends Controller
     /** The local score. */
     protected var _score :int = 0;
 
-    /** The hit counter. */
-    protected var _hits :int = 0;
-
     /** The currently occupied room. */
     protected var _room :int = 1;
 
@@ -567,17 +549,11 @@ public class BrawlerController extends Controller
     /** Whether or not the final boss is present in the room. */
     protected var _bossPresent :Boolean = false;
 
-    /** Whether or not the final boss has been destroyed. */
-    protected var _bossDestroyed :Boolean = false;
-
     /** If true, we are clear to proceed to the next room. */
     protected var _clear :Boolean;
 
     /** Whether or not we should sprint, if possible, when moving. */
     protected var _sprinting :Boolean = false;
-
-    /** The countdown until the hit count is reset. */
-    protected var _hitResetCountdown :Number = 0;
 
     /** The enemy configurations. */
     protected var _econfigs :Array = new Array();
@@ -603,8 +579,5 @@ public class BrawlerController extends Controller
 
     /** Key codes for the sprint command. */
     protected static const SPRINT_CODES :Array = [ 49, 87 ]; // 1, W
-
-    /** The amount of time after the last hit at which the hit count is cleared (s). */
-    protected static const HIT_RESET_INTERVAL :Number = 2;
 }
 }

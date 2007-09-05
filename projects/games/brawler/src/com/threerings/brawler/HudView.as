@@ -32,8 +32,7 @@ public class HudView extends Sprite
         });
 
         // get rid of various transient bits
-        removeChildren(
-            _hud, _hud.respawn, _hud.dc);
+        removeChildren(_hud, _hud.respawn, _hud.dc);
         _hud.removeChild(_hud.fader);
 
         // update the connection display
@@ -78,16 +77,19 @@ public class HudView extends Sprite
             _hud.stats.hp.gotoAndStop(1);
         }
 
-        // update the weapon display
-        _hud.stats.exp.weapon.weapon.gotoAndStop(Weapon.FRAME_LABELS[self.weapon]);
-
         // display the warning if appropriate
         _hud.hp_warning.gotoAndStop((frame <= 20) ? "on" : "off");
+
+        // update the weapon display
+        _hud.stats.exp.weapon.weapon.gotoAndStop(Weapon.FRAME_LABELS[self.weapon]);
 
 		// update the energy display (the "depleted" frames follow the normal ones)
         var pct :Number = Math.round(self.energy);
         _hud.stats.energy.gotoAndStop((self.depleted ? 101 : 0) + pct + 1);
         _hud.stats.energy.num.text = pct + "%";
+
+        // display the energy warning if depleted
+        _hud.energy_warning.gotoAndStop(self.depleted ? "on" : "off");
 
         // update the experience display
         var exp :Number = Math.round(self.experience) + 1;
@@ -168,6 +170,14 @@ public class HudView extends Sprite
     }
 
     /**
+     * Returns the contents of the clock display.
+     */
+    public function get clock () :String
+    {
+        return _hud.time.text;
+    }
+
+    /**
      * Updates the score.
      */
     public function updateScore (increment :int = 0) :void
@@ -184,8 +194,9 @@ public class HudView extends Sprite
      */
     public function updateHits () :void
     {
-        if (_ctrl.hits > 0) {
-            _hud.hitcounter.num.hits.text = _ctrl.hits;
+        var hits :int = (_ctrl.self == null) ? 0 : _ctrl.self.hits;
+        if (hits > 0) {
+            _hud.hitcounter.num.hits.text = hits;
             _view.animmgr.play(_hud.hitcounter, "go");
         } else {
             _hud.hitcounter.gotoAndStop("stop");
@@ -231,6 +242,14 @@ public class HudView extends Sprite
     {
         blip.x = (x / _view.ground.width) * 200;
         blip.y = 0;
+    }
+
+    /**
+     * Shows that the player's weapon has been damaged.
+     */
+    public function weaponDamaged () :void
+    {
+        _view.animmgr.play(_hud.stats.exp.weapon, "damage");
     }
 
     /**

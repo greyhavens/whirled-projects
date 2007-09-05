@@ -1,8 +1,11 @@
 package com.threerings.brawler.actor {
 
 import flash.display.Sprite;
+import flash.geom.Point;
 
 import com.threerings.util.ArrayUtil;
+
+import com.threerings.brawler.util.BrawlerUtil;
 
 /**
  * Represents an enemy.
@@ -50,11 +53,47 @@ public class Enemy extends Pawn
         return VARIANT_NAMES[_variant] == "BOSS";
     }
 
+    /**
+     * Determines whether this enemy can be knocked back by another enemy.
+     */
+    public function get knockable () :Boolean
+    {
+        return !(dead || knocked || _action == "hurt");
+    }
+
+    /**
+     * Initiates an attack.
+     */
+    public function attack (dir :int = -1) :void
+    {
+        if (_master) {
+            // make sure we can attack
+            if (_action != "idle" && _action != "walk") {
+                return;
+            }
+            // use the current orientation
+            dir = _character.scaleX;
+        }
+
+        // play the attack animation
+        setAction("attack", false, "punch");
+        orient(dir);
+
+        if (_master) {
+            // stop the pawn and announce the attack
+            stop();
+            send({ type: ATTACK, dir: dir });
+        }
+    }
+
     // documentation inherited
     override public function wasDestroyed () :void
     {
         super.wasDestroyed();
         _ctrl.enemyWasDestroyed(this);
+        if (_character.visible) {
+            _view.addTransient(new Ghost(), x, y, 1, true);
+        }
     }
 
     // documentation inherited
@@ -64,8 +103,15 @@ public class Enemy extends Pawn
         // perhaps release a coin
         super.hurt(attacker, damage, knockback, stun);
         if (Math.random() < COIN_DROP_PROBABILITY) {
-            _ctrl.createCoin(x, y);
+            _ctrl.createPickup(Coin.createState(_view, x, y));
         }
+    }
+
+    // documentation inherited
+    override public function wasHit (attacker :Pawn, damage :Number) :void
+    {
+        super.wasHit(attacker, damage);
+        _ctrl.incrementStat("enemyDamage", damage);
     }
 
     // documentation inherited
@@ -81,6 +127,16 @@ public class Enemy extends Pawn
     }
 
     // documentation inherited
+    override public function receive (message :Object) :void
+    {
+        if (message.type == ATTACK) {
+            attack(message.dir);
+        } else {
+            super.receive(message);
+        }
+    }
+
+    // documentation inherited
     override public function decode (state :Object) :void
     {
         super.decode(state);
@@ -90,9 +146,16 @@ public class Enemy extends Pawn
     // documentation inherited
     override public function enterFrame (elapsed :Number) :void
     {
-        // hide the health bar if the player is far enough away
         super.enterFrame(elapsed);
+
+        // hide the health bar if the player is far enough away
         _health.visible = (Math.abs(x - _ctrl.self.x) < HIDE_HEALTH_DISTANCE);
+
+        // check for collisions against players
+        hitTestPlayers();
+
+        // check for collisions against other enemies being knocked back
+        hitTestEnemies();
     }
 
     // documentation inherited
@@ -127,6 +190,73 @@ public class Enemy extends Pawn
 
         // reposition the health bar above the character
         _health.y = -_character.height;
+    }
+
+    /**
+     * Checks for hits against players.
+     */
+    protected function hitTestPlayers () :void
+    {
+        if (_action != "attack") {
+            return;
+        }
+        for each (var actor :Actor in _ctrl.actors) {
+            if (!(actor is Player && actor.master)) {
+                continue;
+            }
+            var player :Player = actor as Player;
+            if (!(player.hittable && _character.dmgbox.hitTestObject(player.bounds))) {
+                continue;
+            }
+            player.hurt(this, BrawlerUtil.random(_max, _min), _knockback, _stun);
+        }
+    }
+
+    /**
+     * Checks for hits against enemies.
+     */
+    protected function hitTestEnemies () :void
+    {
+        if (!knocked) {
+            return;
+        }
+        var distance :Number = Point.distance(new Point(x, y), _goal);
+        var slide :Number = getSlideSpeed(distance) / 30; // fps
+        if (slide <= 1) {
+            return;
+        }
+        for each (var actor :Actor in _ctrl.actors) {
+            if (!(actor is Enemy && actor.master && actor != this)) {
+                continue;
+            }
+            var enemy :Enemy = actor as Enemy;
+            if (!(enemy.knockable && bounds.hitTestObject(enemy.bounds))) {
+                continue;
+            }
+            enemy.hurt(this, 0, slide, 0);
+        }
+    }
+
+    // documentation inherited
+    override protected function died () :void
+    {
+        super.died();
+        if (!_master) {
+            return;
+        }
+        // perhaps drop a pickup
+        var prob :Number = Math.random();
+        var state :Object;
+        if (prob < HEALTH_DROP_PROBABILITY) {
+            _ctrl.createPickup(Health.createState(x, y));
+        } else if (prob < HEALTH_DROP_PROBABILITY + WEAPON_DROP_PROBABILITY) {
+            var weapon :int = WEAPON_TYPES[_variant];
+            if (weapon == -1) {
+                return;
+            }
+            var level :int = BrawlerUtil.pickRandomIndex(WEAPON_LEVEL_PROBABILITIES) + 1;
+            _ctrl.createPickup(Weapon.createState(x, y, weapon, level));
+        }
     }
 
     // documentation inherited
@@ -284,6 +414,19 @@ public class Enemy extends Pawn
 
     /** The chance that the enemy will drop a coin each time it's hit. */
     protected static const COIN_DROP_PROBABILITY :Number = 0.25;
+
+    /** The chance that the enemy will drop a health pickup when it dies. */
+    protected static const HEALTH_DROP_PROBABILITY :Number = 0.15;
+
+    /** The chance that the enemy will drop a weapon pickup when it dies. */
+    protected static const WEAPON_DROP_PROBABILITY :Number = 0.35;
+
+    /** The weapon types carried by each enemy variant. */
+    protected static const WEAPON_TYPES :Array =
+        [ Weapon.SWORD, Weapon.BOW, Weapon.HAMMER, -1, -1 ];
+
+    /** The probabilities for each weapon level. */
+    protected static const WEAPON_LEVEL_PROBABILITIES :Array = [ 0.70, 0.25, 0.05 ];
 
     /** Hide the health bar when the local player is this far away from the enemy. */
     protected static const HIDE_HEALTH_DISTANCE :Number = 210;

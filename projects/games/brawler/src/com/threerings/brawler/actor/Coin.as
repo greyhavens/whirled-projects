@@ -22,12 +22,16 @@ public class Coin extends Pickup
 
     public function Coin ()
     {
-        addChild(_csprite = new CoinSprite());
+        super(CoinSprite);
     }
 
     // documentation inherited
     override public function enterFrame (elapsed :Number) :void
     {
+        super.enterFrame(elapsed);
+        if (_age >= LIFESPAN) {
+            return;
+        }
         // move towards the goal
         if (!locationEquals(_goal.x, _goal.y)) {
             var location :Point = new Point(x, y);
@@ -47,8 +51,8 @@ public class Coin extends Pickup
         if (Math.random() < SPARKLE_PROBABILITY) {
             var sparkle :MovieClip = new Sparkle();
             var x :Number = x + BrawlerUtil.random(-15, +15);
-            var y :Number = y + _csprite.cn.y + BrawlerUtil.random(-15, +15);
-            _view.addTransient(sparkle, x, y, 0.1, true);
+            var y :Number = y + _clip.cn.y + BrawlerUtil.random(-15, +15);
+            _view.addTransient(sparkle, x, y, 0.5, true);
         }
     }
 
@@ -67,6 +71,28 @@ public class Coin extends Pickup
         state.gx = _goal.x;
         state.gy = _goal.y;
         return state;
+    }
+
+    // documentation inherited
+    override protected function hit (player :Player) :void
+    {
+        super.hit(player);
+        var sparks :MovieClip = new Sparks();
+        _view.addTransient(sparks, x, y, 1, true);
+    }
+
+    // documentation inherited
+    override protected function award () :void
+    {
+        // grant the player some flow
+        super.award();
+        _ctrl.control.grantFlowAward(1);
+    }
+
+    // documentation inherited
+    override protected function get points () :int
+    {
+        return 5;
     }
 
     /**
@@ -93,9 +119,6 @@ public class Coin extends Pickup
     /** The sparks effect class. */
     [Embed(source="../../../../../rsrc/raw.swf", symbol="coinGOT")]
     protected static const Sparks :Class;
-
-    /** The coin sprite. */
-    protected var _csprite :MovieClip;
 
     /** The location towards which the coin is sliding. */
     protected var _goal :Point;

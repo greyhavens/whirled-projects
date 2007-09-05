@@ -33,16 +33,20 @@ public class Weapon extends Pickup
 
     public function Weapon ()
     {
-        addChild(_clip = new WeaponDrop());
+        super(WeaponDrop);
     }
 
     // documentation inherited
-    override public function decode (state :Object) :void
+    override protected function didInit (state :Object) :void
     {
-        super.decode(state);
+        // initialize the position and scale
+        _view.setPosition(this, state.x, state.y);
+        _clip.scaleX = 1 / scaleX;
+
+        // initialize the type and level
         _weapon = state.weapon;
         _level = state.level;
-        _clip.gotoAndStop(WEAPON_NAMES[_weapon] + _level);
+        _clip.cn.gotoAndStop(label);
     }
 
     // documentation inherited
@@ -54,8 +58,42 @@ public class Weapon extends Pickup
         return state;
     }
 
-    /** The weapon drop clip. */
-    protected var _clip :MovieClip;
+    // documentation inherited
+    override protected function get available () :Boolean
+    {
+        return _age > 1.2;
+    }
+
+    // documentation inherited
+    override protected function hit (player :Player) :void
+    {
+        super.hit(player);
+        var sparks :MovieClip = new Sparks();
+        sparks.cn.gotoAndStop(label);
+        _view.addTransient(sparks, x, y, 1, true);
+    }
+
+    /**
+     * Returns the weapon's animation label.
+     */
+    protected function get label () :String
+    {
+        return WEAPON_NAMES[_weapon] + _level;
+    }
+
+    // documentation inherited
+    override protected function award () :void
+    {
+        // set the weapon
+        super.award();
+        _ctrl.self.setWeapon(_weapon, _level);
+    }
+
+    // documentation inherited
+    override protected function get points () :int
+    {
+        return 150;
+    }
 
     /** The index of the weapon. */
     protected var _weapon :int;
@@ -66,6 +104,10 @@ public class Weapon extends Pickup
     /** The weapon drop sprite class. */
     [Embed(source="../../../../../rsrc/raw.swf", symbol="weapon_drop")]
     protected static const WeaponDrop :Class;
+
+    /** The sparks effect class. */
+    [Embed(source="../../../../../rsrc/raw.swf", symbol="weapon_drop_got")]
+    protected static const Sparks :Class;
 
     /** The base names of the weapons. */
     protected static const WEAPON_NAMES :Array = [ "fists", "sword", "hammer", "bow" ];

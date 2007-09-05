@@ -131,6 +131,14 @@ public class Pawn extends Actor
     }
 
     /**
+     * Returns the action that the pawn is currently executing.
+     */
+    public function get action () :String
+    {
+        return _action;
+    }
+
+    /**
      * Checks whether or not the pawn is dead.
      */
     public function get dead () :Boolean
@@ -174,11 +182,6 @@ public class Pawn extends Actor
         _hp = points
         if (_hp < ohp) {
             showDamage(ohp - _hp);
-            if (dead) {
-                died();
-            } else {
-                setAction("hurt");
-            }
         } else if (ohp == 0 && !dead) {
             respawned();
         }
@@ -265,6 +268,14 @@ public class Pawn extends Actor
      */
     public function hurt (attacker :Pawn, damage :Number, knockback :Number, stun :Number) :void
     {
+        if (blocking) {
+            block(attacker, damage, knockback);
+            return;
+        }
+
+        // report the hit
+        wasHit(attacker, damage);
+
         // update hit points
         hp = Math.max(0, _hp - damage);
 
@@ -285,10 +296,59 @@ public class Pawn extends Actor
         publish();
     }
 
-    // documentation inherited
-    override public function get bounds () :Sprite
+    /**
+     * Handles a block.
+     */
+    public function block (attacker :Pawn, damage :Number, knockback :Number) :void
     {
-        return _bounds;
+        // report the block
+        didBlock(attacker, damage);
+    }
+
+    /**
+     * Notes that the pawn blocked another.
+     */
+    public function didBlock (attacker :Pawn, damage :Number) :void
+    {
+        var hurt :Boolean = (damage > maxhp * 0.15);
+        showBlock(hurt);
+        attacker.wasBlocked(hurt);
+        if (_master) {
+            send({ type: DID_BLOCK, attacker: attacker.name, damage: damage });
+        }
+    }
+
+    /**
+     * Notes that the pawn was blocked by another.
+     */
+    public function wasBlocked (hurt :Boolean) :void
+    {
+        if (hurt) {
+            setAction("hurt");
+            if (_master) {
+                stop();
+            }
+        }
+    }
+
+    /**
+     * Notes that the pawn was hit by another.
+     */
+    public function wasHit (attacker :Pawn, damage :Number) :void
+    {
+        if (attacker.master) {
+            attacker.didHit(this, damage);
+        }
+        if (_master) {
+            send({ type: WAS_HIT, attacker: attacker.name, damage: damage });
+        }
+    }
+
+    /**
+     * Notes that the pawn hit another.
+     */
+    public function didHit (target :Pawn, damage :Number) :void
+    {
     }
 
     // documentation inherited
@@ -302,6 +362,16 @@ public class Pawn extends Actor
         // move towards the new position, if we're not yet there
         if (!locationEquals(state.x, state.y)) {
             move(state.x, state.y, state.motion, false);
+        }
+    }
+
+    // documentation inherited
+    override public function receive (message :Object) :void
+    {
+        if (message.type == WAS_HIT) {
+            wasHit(_ctrl.actors[message.attacker], message.damage);
+        } else if (message.type == DID_BLOCK) {
+            didBlock(_ctrl.actors[message.attacker], message.damage);
         }
     }
 
@@ -338,8 +408,8 @@ public class Pawn extends Actor
 
         // update the death clock
         if (dead && (_deathClock += elapsed) >= 1) {
-            if (_deathClock >= 2) {
-                _character.alpha = 0;
+            if (_deathClock >= 2 && visible) {
+                _character.visible = false;
                 disappeared();
             } else {
                 _character.alpha = ((_blink++ / 2) % 2 == 0) ? 1 : 0;
@@ -558,6 +628,18 @@ public class Pawn extends Actor
     }
 
     /**
+     * Shows a block effect.
+     */
+    protected function showBlock (hurt :Boolean) :void
+    {
+        if (hurt) {
+            _view.playCameraEffect("light");
+        }
+        var block :MovieClip = new Block();
+        _view.addTransient(block, x + BrawlerUtil.random(50), y, 1.25, true);
+    }
+
+    /**
      * Updates the pawn's action based on its current state.
      */
     protected function updateAction () :void
@@ -599,7 +681,7 @@ public class Pawn extends Actor
      */
     protected function disappeared () :void
     {
-        _blip.alpha = 0;
+        _blip.visible = false;
     }
 
     /**
@@ -618,8 +700,8 @@ public class Pawn extends Actor
     protected function respawned () :void
     {
         setAction("spawn");
-        _character.alpha = 1;
-        _blip.alpha = 1;
+        _character.alpha = _blip.alpha = 1;
+        _character.visible = _blip.visible = true;
     }
 
     /**
@@ -706,9 +788,6 @@ public class Pawn extends Actor
     /** The character clip. */
     protected var _character :MovieClip;
 
-    /** The bounds of the character. */
-    protected var _bounds :MovieClip;
-
     /** The damage box. */
     protected var _dmgbox :MovieClip;
 
@@ -762,6 +841,10 @@ public class Pawn extends Actor
     [Embed(source="../../../../../rsrc/raw.swf", symbol="slide_dust")]
     protected static const Dust :Class;
 
+    /** The block effect class. */
+    [Embed(source="../../../../../rsrc/raw.swf", symbol="block")]
+    protected static const Block :Class;
+
     /** The damage number effect class. */
     [Embed(source="../../../../../rsrc/raw.swf", symbol="dmg_num")]
     protected static const DamageNumber :Class;
@@ -777,8 +860,11 @@ public class Pawn extends Actor
     /** Identifies an attack message (fired when we start an attack). */
     protected static const ATTACK :int = 0;
 
-    /** Identifies a hit message (fired when an attack lands). */
-    protected static const HIT :int = 1;
+    /** Identifies a hit message (fired when an attack hits us). */
+    protected static const WAS_HIT :int = 1;
+
+    /** Identifies a block message (fired when we block an attack). */
+    protected static const DID_BLOCK :int = 2;
 
     /** Actions we allow to run to completion. */
     protected static const TRANSIENT_ACTIONS :Array = [ "spawn", "hurt", "attack" ];

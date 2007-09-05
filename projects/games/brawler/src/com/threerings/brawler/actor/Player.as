@@ -73,6 +73,11 @@ public class Player extends Pawn
             return;
         }
         _character.weapon.gotoAndStop(Weapon.FRAME_LABELS[_weapon = index]);
+        if (_weapon == Weapon.FISTS) {
+            // show the break effect
+            var sparks :MovieClip = new WeaponBreak();
+            _view.addTransient(sparks, x, y, 1, true);
+        }
         maybePublish();
     }
 
@@ -85,12 +90,27 @@ public class Player extends Pawn
     }
 
     /**
+     * Sets the player's experience amount.
+     */
+    public function set experience (amount :Number) :void
+    {
+        if (_experience == amount) {
+            return;
+        }
+        _experience = amount;
+        if (_experience == 0 && _weapon != Weapon.FISTS) {
+            // break the weapon
+            setWeapon(Weapon.FISTS, 0);
+        }
+    }
+
+    /**
      * Returns the player's experience level (from one to {@link #EXPERIENCE_LEVELS}, inclusive).
      */
     public function get level () :int
     {
-        var level :Number = Math.floor(_experience / EXPERIENCE_PER_LEVEL) + 1;
-        return Math.min(level, EXPERIENCE_LEVELS);
+        var level :Number = Math.ceil(_experience / EXPERIENCE_PER_LEVEL);
+        return Math.max(level, 1);
     }
 
     /**
@@ -99,6 +119,14 @@ public class Player extends Pawn
     public function get attackLevel () :int
     {
         return _attackLevel;
+    }
+
+    /**
+     * Returns the current value of the hit counter.
+     */
+    public function get hits () :int
+    {
+        return _hits;
     }
 
     /**
@@ -152,20 +180,45 @@ public class Player extends Pawn
         }
     }
 
-    /**
-     * Lands an attack.
-     */
-    public function hit (target :Enemy, damage :Number, knockback :Number, stun :Number) :void
+    // documentation inherited
+    override public function wasHit (attacker :Pawn, damage :Number) :void
     {
-        if (target.master) {
-            // let the target know it was hurt
-            target.hurt(this, damage, knockback, stun);
+        super.wasHit(attacker, damage);
+        _ctrl.incrementStat("playerDamage", damage);
+    }
 
-        } else if (_master) {
-            // announce the hit
-            send({ type: HIT, target: target.name, damage: damage,
-                knockback: knockback, stun: stun });
+    // documentation inherited
+    override public function didHit (target :Pawn, damage :Number) :void
+    {
+        // update the hit count and score
+        var points :int = Math.round(damage * level * (++_hits));
+        _ctrl.score = _ctrl.score + points;
+        _hitResetCountdown = HIT_RESET_INTERVAL;
+        _view.hud.updateHits();
+
+        // damage the weapon for hits after the first
+        if (_hits > 1) {
+            damageWeapon();
         }
+    }
+
+    // documentation inherited
+    override public function block (attacker :Pawn, damage :Number, knockback :Number) :void
+    {
+        super.block(attacker, damage, knockback);
+
+        // damage weapon, reduce energy
+        var amount :Number = damage / 30;
+        _energy = Math.max(0, _energy - amount);
+        damageWeapon(amount);
+
+        // slide
+        var slide :Number = amount + knockback*0.15;
+        var pt :Point = getSlideLocation(x, y, x - attacker.x, 0, slide * 30);
+        move(pt.x, pt.y, SLIDE);
+
+        // delay the health tick
+        _healthTickCountdown = HEALTH_TICK_INTERVAL;
     }
 
     // documentation inherited
@@ -192,9 +245,106 @@ public class Player extends Pawn
     {
         if (message.type == ATTACK) {
             attack(message.secondary, message.level, message.dir);
-        } else if (message.type == HIT) {
-            hit(_ctrl.actors[message.target], message.damage, message.knockback, message.stun);
+        } else {
+            super.receive(message);
         }
+    }
+
+    // documentation inherited
+    override public function decode (state :Object) :void
+    {
+        super.decode(state);
+        weapon = state.weapon;
+    }
+
+    // documentation inherited
+    override public function enterFrame (elapsed :Number) :void
+    {
+        super.enterFrame(elapsed);
+
+        // check for collision of damage box with enemies when attacking
+        hitTestEnemies();
+        if (!_master) {
+            return;
+        }
+
+        // blocking and sprinting deplete energy
+        var rate :Number;
+        if (sprinting) {
+            rate = SPRINT_ENERGY_RATE;
+        } else if (blocking) {
+            rate = BLOCK_ENERGY_RATE;
+        } else if (_depleted) {
+            rate = DEPLETED_ENERGY_RATE;
+        } else {
+            rate = NORMAL_ENERGY_RATE;
+        }
+        _energy = MathUtil.clamp(_energy + rate*elapsed, 0, 100);
+        if (_energy == 0) {
+            _depleted = true;
+            if (blocking) {
+                blocking = false;
+            } else if (sprinting) {
+                stop();
+            }
+        } else if (_energy == 100) {
+            _depleted = false;
+        }
+
+        // reset the attack level if enough time has passed
+        if ((_attackResetCountdown -= elapsed) <= 0) {
+            _attackLevel = 0;
+        }
+
+        // reset the hit count if enough time has passed
+        if ((_hitResetCountdown -= elapsed) <= 0) {
+            _hits = 0;
+        }
+
+        // increment the player's health over time
+        if ((_healthTickCountdown -= elapsed) <= 0) {
+            heal(maxhp * HEALTH_TICK_AMOUNTS[_ctrl.difficulty]);
+            _healthTickCountdown = HEALTH_TICK_INTERVAL;
+        }
+
+        // if he isn't moving, have him face the cursor
+        if (_action == "idle") {
+            face(_view.cursor.x);
+        }
+        // if he's on the door, notify the controller
+        if (_view.door.hitTestObject(_bounds)) {
+            _ctrl.playerOnDoor();
+        }
+    }
+
+    /**
+     * Heals the local player by the specified amount.
+     */
+    public function heal (amount :Number) :void
+    {
+        var ohp :Number = _hp;
+        if ((_hp = Math.min(_hp + amount, maxhp)) != ohp) {
+            publish();
+        }
+    }
+
+    /**
+     * Sets or boosts the local player's weapon.
+     */
+    public function setWeapon (weapon :int, level :int) :void
+    {
+        // setting the same weapon increments the experience
+        var exp :Number = level*EXPERIENCE_PER_LEVEL;
+        if (_weapon == weapon) {
+            _experience = Math.min(_experience + exp, MAX_EXPERIENCE);
+            return;
+        }
+        // drop the current weapon, if any (and it's not broken)
+        if (_weapon != Weapon.FISTS && _experience > 0) {
+            _ctrl.createPickup(Weapon.createState(x, y, _weapon, this.level));
+        }
+        _experience = exp;
+        this.weapon = weapon;
     }
 
     // documentation inherited
@@ -223,78 +373,15 @@ public class Player extends Pawn
         }
     }
 
-    // documentation inherited
-    override public function decode (state :Object) :void
-    {
-        super.decode(state);
-        weapon = state.weapon;
-    }
-
-    // documentation inherited
-    override public function enterFrame (elapsed :Number) :void
-    {
-        super.enterFrame(elapsed);
-        if (!_master) {
-            return;
-        }
-        // blocking and sprinting deplete energy
-        var rate :Number;
-        if (sprinting) {
-            rate = SPRINT_ENERGY_RATE;
-        } else if (blocking) {
-            rate = BLOCK_ENERGY_RATE;
-        } else if (_depleted) {
-            rate = DEPLETED_ENERGY_RATE;
-        } else {
-            rate = NORMAL_ENERGY_RATE;
-        }
-        _energy = MathUtil.clamp(_energy + rate*elapsed, 0, 100);
-        if (_energy == 0) {
-            _depleted = true;
-            if (blocking) {
-                blocking = false;
-            } else if (sprinting) {
-                stop();
-            }
-        } else if (_energy == 100) {
-            _depleted = false;
-        }
-
-        // check for collision of damage box with enemies when attacking
-        hitTestEnemies();
-
-        // reset the attack level if enough time has passed
-        if ((_attackResetCountdown -= elapsed) <= 0) {
-            _attackLevel = 0;
-        }
-
-        // increment the player's health over time
-        if ((_healthTickCountdown -= elapsed) <= 0) {
-            var ohp :Number = _hp;
-            var amount :Number = maxhp * HEALTH_TICK_AMOUNTS[_ctrl.difficulty];
-            _hp = Math.min(_hp + amount, maxhp);
-            if (_hp != ohp) {
-                publish();
-            }
-            _healthTickCountdown = HEALTH_TICK_INTERVAL;
-        }
-
-        // if he isn't moving, have him face the cursor
-        if (_action == "idle") {
-            face(_view.cursor.x);
-        }
-        // if he's on the door, notify the controller
-        if (_view.door.hitTestObject(_bounds)) {
-            _ctrl.playerOnDoor();
-        }
-    }
-
     /**
-     * Checks for hits against pickups.
+     * Damages the player's weapon.
      */
-    protected function hitTestPickups () :void
+    protected function damageWeapon (amount :Number = 7.5) :void
     {
-
+        amount *= DIFFICULTY_DAMAGE_MULTIPLIERS[_ctrl.difficulty];
+        amount *= LEVEL_DAMAGE_MULTIPLIERS[level-1];
+        experience = Math.max(0, experience - amount);
+        _view.hud.weaponDamaged();
     }
 
     /**
@@ -306,7 +393,7 @@ public class Player extends Pawn
             return;
         }
         for each (var actor :Actor in _ctrl.actors) {
-            if (!(actor is Enemy)) {
+            if (!(actor is Enemy && actor.master)) {
                 continue;
             }
             var enemy :Enemy = actor as Enemy;
@@ -327,10 +414,7 @@ public class Player extends Pawn
             var stun :Number = _attack.stun;
 
             // announce the hit
-            hit(enemy, damage, knockback, stun);
-
-            // notify the controller to update the hit count and score
-            _ctrl.playerScoredHit(damage);
+            enemy.hurt(this, damage, knockback, stun);
         }
     }
 
@@ -342,6 +426,13 @@ public class Player extends Pawn
         if (_master) {
             _view.hideGoal();
         }
+    }
+
+    // documentation inherited
+    override protected function died () :void
+    {
+        super.died();
+        _ctrl.incrementStat("koCount");
     }
 
     // documentation inherited
@@ -406,8 +497,11 @@ public class Player extends Pawn
     /** The player's attack level. */
     protected var _attackLevel :int = 0;
 
-    /** The attack that the pawn is executing, if any. */
+    /** The attack that the player is executing, if any. */
     protected var _attack :Attack;
+
+    /** The hit counter. */
+    protected var _hits :int = 0;
 
     /** The countdown until the attack level is reset. */
     protected var _attackResetCountdown :Number = 0;
@@ -415,13 +509,12 @@ public class Player extends Pawn
     /** The countdown until the next health tick. */
     protected var _healthTickCountdown :Number = 0;
 
+    /** The countdown until the hit count is reset. */
+    protected var _hitResetCountdown :Number = 0;
+
     /** The player blip class. */
     [Embed(source="../../../../../rsrc/raw.swf", symbol="blip_pc")]
     protected static const PlayerBlip :Class;
-
-    /** The block effect class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="block")]
-    protected static const Block :Class;
 
     /** The player damage number effect class. */
     [Embed(source="../../../../../rsrc/raw.swf", symbol="dmg_num_player")]
@@ -434,6 +527,10 @@ public class Player extends Pawn
     /** The player damage snap sprite class. */
     [Embed(source="../../../../../rsrc/raw.swf", symbol="dmg_snap_player")]
     protected static const PlayerDamageSnap :Class;
+
+    /** The weapon break effect class. */
+    [Embed(source="../../../../../rsrc/raw.swf", symbol="weapon_drop_break")]
+    protected static const WeaponBreak :Class;
 
     /** The rate (u/s) at which players lose energy when blocking. */
     protected static const BLOCK_ENERGY_RATE :Number = -20;
@@ -453,11 +550,20 @@ public class Player extends Pawn
     /** The amount of time after the last attack at which the attack level is cleared (s). */
     protected static const ATTACK_RESET_INTERVAL :Number = 2;
 
+    /** The amount of time after the last hit at which the hit count is cleared (s). */
+    protected static const HIT_RESET_INTERVAL :Number = 2;
+
     /** The (default) amount of time between health ticks (s). */
     protected static const HEALTH_TICK_INTERVAL :Number = 3;
 
     /** For each difficulty level, the health proportion regained at regular intervals. */
     protected static const HEALTH_TICK_AMOUNTS :Array = [ 1/10, 1/20, 1/20, 0 ];
+
+    /** Weapon damage multipliers for each difficulty level. */
+    protected static const DIFFICULTY_DAMAGE_MULTIPLIERS :Array = [ 1.25, 1.0, 0.75, 0.5 ];
+
+    /** Weapon damage multipliers for each weapon level (starting at one). */
+    protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 1, 1.5, 2 ];
 
     /** The number of seconds of invulnerability players experience after a respawn. */
     protected static const RESPAWN_INVULNERABILITY :Number = 2;

@@ -50,7 +50,9 @@ public class Actor extends Sprite
      */
     public function destroy () :void
     {
-        setState(null);
+        _ctrl.throttle.send(function () :void {
+            _ctrl.control.set(name, null);
+        });
     }
 
     /**
@@ -66,7 +68,7 @@ public class Actor extends Sprite
      */
     public function get bounds () :Sprite
     {
-        return null;
+        return _bounds;
     }
 
     /**
@@ -184,6 +186,9 @@ public class Actor extends Sprite
 
     /** Is this the master copy? */
     protected var _master :Boolean = false;
+
+    /** The bounds of the actor. */
+    protected var _bounds :Sprite;
 
     /** The timeout for low priority messages (ms). */
     protected static const LOW_PRIORITY_TIMEOUT :int = 2500;

@@ -289,7 +289,36 @@ public class BrawlerView extends Sprite
      */
     public function showResults () :void
     {
+        var results :MovieClip = new Results();
+        removeChild(_game);
+        addChild(results);
 
+        // display the KO count/points
+        var koCount :Number = _ctrl.control.get("koCount") as Number;
+        var koPoints :Number = Math.max(0, 5000 - 1000*koCount);
+        results.stats.pko.playerkos.text = koCount + " (+" + koPoints + ")";
+
+        // display the damage points
+        var playerDamage :Number = _ctrl.control.get("playerDamage") as Number;
+        var enemyDamage :Number = _ctrl.control.get("enemyDamage") as Number;
+        var damagePoints :Number = Math.max(0, enemyDamage - playerDamage*2);
+        results.stats.dmg.enemydamage.text = "+" + damagePoints;
+
+        // display the final clock value, bonus score
+        results.stats.ct.cleartime.text = _hud.clock;
+        results.stats.sb.bonusscore.text = "+" + _ctrl.score;
+
+        // compute and display the rank
+        var score :Number = koPoints + damagePoints + _ctrl.score;
+        var par :Number = enemyDamage + 5000;
+        var pct :Number = Math.round((score / par) * 100);
+        var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
+        results.stats.r.rank.text = GRADES[grade] + " (" + pct + "%)";
+
+        // show and award the flow
+        var flow :int = pct;
+        results.stats.f.flow.text = flow;
+        _ctrl.control.grantFlowAward(flow);
     }
 
     /**
@@ -337,9 +366,6 @@ public class BrawlerView extends Sprite
         for each (var actor :Actor in _actors) {
             actor.enterFrame(elapsed);
         }
-
-        // notify the controller
-        _ctrl.enterFrame(elapsed);
 
         // update the camera position
         updateCamera(elapsed);
@@ -539,12 +565,22 @@ public class BrawlerView extends Sprite
     [Embed(source="../../../../rsrc/raw.swf", symbol="destination")]
     protected static const Destination :Class;
 
+    /** The results screen class. */
+    [Embed(source="../../../../rsrc/raw.swf", symbol="_ENDSCREEN")]
+    protected static const Results :Class;
+
     /** The number of background layers. */
     protected static const BACKGROUND_LAYERS :int = 5;
 
     /** The exponential rate at which the camera approaches its target position
      * (1/4 there after 1/30 of a second). */
     protected static const CAMERA_RATE :Number = 30 * Math.log(3/4);
+
+    /** The array of possible grades. */
+    protected static const GRADES :Array = [ "S", "A", "B", "C", "D", "F" ];
+
+    /** The required percent score for each grade. */
+    protected static const GRADE_LEVELS :Array = [ 100, 90, 80, 70, 60, 0 ];
 }
 }
 
