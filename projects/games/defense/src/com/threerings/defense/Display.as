@@ -40,15 +40,14 @@ public class Display extends Canvas
         super.createChildren();
         
         // initialize graphics
-        _boardSprite = new Canvas();
-        _boardSprite.x = 0;
-        _boardSprite.y = 20;
-        addChild(_boardSprite);
-
         _backdrop = new Image();
         _backdrop.source = MapFactory.makeMapBackground(1);
-        resizeImageToBoard(_backdrop);
-        _boardSprite.addChild(_backdrop);
+        addChild(_backdrop);
+
+        _boardSprite = new Canvas();
+        _boardSprite.x = Board.BOARD_OFFSETX;
+        _boardSprite.y = Board.BOARD_OFFSETY;
+        addChild(_boardSprite);
 
         createUI();
         createOverlays();
@@ -250,17 +249,6 @@ public class Display extends Canvas
         updateOverlays();
     }
 
-    /**
-     * Scales image to be displayed at the same size as the board.
-     */
-    protected function resizeImageToBoard (image :Image) :void
-    {
-        image.scaleX = Board.PIXEL_WIDTH / image.source.width;
-        image.scaleY = Board.PIXEL_HEIGHT / image.source.height;
-    }
-
-
-    
     protected var _board :Board;
     protected var _game :Game;
     protected var _controller :Controller;

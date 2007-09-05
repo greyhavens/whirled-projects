@@ -104,7 +104,7 @@ public class UnitSprite extends Image
      */
     protected function getMyZOrder () :Number
     {
-        return _unit.centroidy * Board.PIXEL_WIDTH + _unit.centroidx;
+        return _unit.centroidy * Board.BOARD_WIDTH + _unit.centroidx;
     }
 
     /** Helper function that wraps getMyZOrder in a retrieval operation. */

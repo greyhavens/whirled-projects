@@ -35,8 +35,8 @@ public class Overlay extends Image
         
         _bitmap = MapFactory.makeBlankOverlay();
         this.source = _bitmap;
-        this.scaleX = Board.PIXEL_WIDTH / source.width;
-        this.scaleY = Board.PIXEL_HEIGHT / source.height;
+        this.scaleX = Board.BOARD_WIDTH / source.width;
+        this.scaleY = Board.BOARD_HEIGHT / source.height;
 
         this.visible = false;
     }

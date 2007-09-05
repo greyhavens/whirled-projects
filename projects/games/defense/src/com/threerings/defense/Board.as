@@ -24,9 +24,14 @@ public class Board
 
     public static const SQUARE_WIDTH :int = 30;
     public static const SQUARE_HEIGHT :int = 20;
-    public static const PIXEL_WIDTH :int = 690;  // WIDTH * SQUARE_WIDTH
-    public static const PIXEL_HEIGHT :int = 480; // HEIGHT * SQUARE_HEIGHT
-
+    public static const BOARD_WIDTH :int = 690;  // WIDTH * SQUARE_WIDTH
+    public static const BOARD_HEIGHT :int = 480; // HEIGHT * SQUARE_HEIGHT
+    public static const BOARD_OFFSETX :int = 105;
+    public static const BOARD_OFFSETY :int = 10;
+    
+    public static const BG_WIDTH :int = 900;
+    public static const BG_HEIGHT :int = 500;
+    
     public static const PLAYER_COLORS :Array = [ 0x000000ff /* player 0 */,
                                                  0x0000ff00 /* player 1 */ ];
 

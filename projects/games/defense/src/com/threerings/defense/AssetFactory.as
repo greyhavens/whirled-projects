@@ -1,10 +1,13 @@
 package com.threerings.defense {
 
+    import flash.events.Event;
+    
 import mx.core.BitmapAsset;
 import mx.core.IFlexDisplayObject;
 
 import com.threerings.defense.units.Critter;
 import com.threerings.defense.units.Tower;
+import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.defense.sprites.CritterAssets;
 import com.threerings.defense.sprites.TowerAssets;
 
@@ -50,6 +53,7 @@ public class AssetFactory
     [Embed(source="../../../../rsrc/critters/default_left.png")]
     private static const _defaultCritterLeft :Class;
     [Embed(source="../../../../rsrc/critters/bully_right.swf")]
+    //    [Embed(source="../../../../TreeHouseD_01_c.swf#walkingbully")]
     private static const _defaultCritterRight :Class;
     [Embed(source="../../../../rsrc/critters/default_up.png")]
     private static const _defaultCritterUp :Class;
