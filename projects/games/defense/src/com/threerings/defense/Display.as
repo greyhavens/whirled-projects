@@ -17,12 +17,17 @@ import com.threerings.util.HashMap;
 
 import com.threerings.defense.maps.MapFactory;
 import com.threerings.defense.sprites.CritterSprite;
+import com.threerings.defense.sprites.MissileSprite;
 import com.threerings.defense.sprites.TowerSprite;
+import com.threerings.defense.sprites.UnitSprite;
 import com.threerings.defense.ui.Overlay;
 import com.threerings.defense.ui.UIWindow;
 import com.threerings.defense.units.Critter;
+import com.threerings.defense.units.Missile;
 import com.threerings.defense.units.Spawner;
 import com.threerings.defense.units.Tower;
+
+import Log;
 
 public class Display extends Canvas
 {
@@ -193,7 +198,26 @@ public class Display extends Canvas
         sprite.update();
     }
 
-  
+    public function handleAddMissile (missile :Missile) :void
+    {
+        var sprite :MissileSprite = new MissileSprite(missile);
+        _boardSprite.addChild(sprite);
+        _missiles.put(missile.guid, sprite);
+        sprite.update();
+    }
+
+    public function handleRemoveMissile (missile :Missile) :void
+    {
+        var sprite :MissileSprite = _missiles.get(missile.guid);
+        if (sprite == null) {
+            Log.getLog(this).info("Missile not in display list, cannot remove: " + missile);
+            return;
+        }
+        
+        _boardSprite.removeChild(sprite);
+        _missiles.remove(missile.guid);
+    }
+    
     /**
      * Gets rid of all towers.
      */
@@ -205,15 +229,6 @@ public class Display extends Canvas
         _towers = new HashMap();
     }
 
-    
-    public function updateCritterSprites () :void
-    {
-        var sprites :Array = _critters.values();
-        for each (var cs :CritterSprite in sprites) {
-                cs.update();
-            }
-    }
-
     public function updateOverlays () :void
     {
         for each (var o :Overlay in _allOverlays) {
@@ -221,6 +236,18 @@ public class Display extends Canvas
         }
     }
 
+    public function updateSprites () :void
+    {
+        // this type of iteration avoids the creation of temporary arrays
+        _critters.forEach(unitSpriteUpdateWrapper);
+        _missiles.forEach(unitSpriteUpdateWrapper);
+    }
+
+    protected function unitSpriteUpdateWrapper (guid :*, sprite :UnitSprite) :void
+    {
+        sprite.update();
+    }
+                                      
     // Event handlers
     
     protected function handleBoardClick (event :MouseEvent) :void
@@ -245,7 +272,7 @@ public class Display extends Canvas
         _fps = Math.round((_fps + 1 / delta) / 2);
         _counter.text = "FPS: " + _fps;
         
-        updateCritterSprites();
+        updateSprites();
         updateOverlays();
     }
 
@@ -267,5 +294,6 @@ public class Display extends Canvas
     protected var _cursor :TowerSprite;
     protected var _towers :HashMap = new HashMap(); // from Tower guid to TowerSprite
     protected var _critters :HashMap = new HashMap(); // from Critter guid to CritterSprite
+    protected var _missiles :HashMap = new HashMap(); // from Missile guid to MissileSprite
 }
 }

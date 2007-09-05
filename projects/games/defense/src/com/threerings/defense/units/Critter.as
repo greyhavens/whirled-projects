@@ -13,7 +13,11 @@ public class Critter extends Unit
     public var vel :Point;    // current velocity, in board units per second
     public var maxvel :Number // max velocity (in board units per second, axis-independent)
     public var type :int;
-    
+
+    /** Position on the critter (in board units, potentially fractional, from the upper left)
+     *  where missiles will try to hit. */
+    public var missileHotspot :Point;
+
     public function Critter (x :int, y :int, type :int, player :int)
     {
         super(player, x, y, 1, 1);
@@ -24,6 +28,8 @@ public class Critter extends Unit
         
         this.type = type;
         this.maxvel = 1;
+
+        this.missileHotspot = new Point(size.x / 2, - size.y / 2); // todo: configurable
     }
 
     // position of the sprite centroid in screen coordinates

@@ -6,9 +6,11 @@ import flash.geom.Rectangle;
 import flash.utils.getTimer; // function import
 
 import com.threerings.defense.units.Critter;
+import com.threerings.defense.units.Missile;
 import com.threerings.defense.units.Spawner;
 import com.threerings.defense.units.Tower;
 import com.threerings.defense.units.Unit;
+import com.threerings.util.ArrayUtil;
 
 public class Game
 {
@@ -39,6 +41,8 @@ public class Game
         
         _towers = new Array(Board.HEIGHT * Board.WIDTH);
         _critters = new Array();
+        _missiles = new Array();
+        
         initializeSpawners();
     }
 
@@ -61,6 +65,13 @@ public class Game
         }
     }
 
+    public function missileReachedTarget (missile :Missile) :void
+    {
+        // subtract some health from the critter, maybe remove it
+
+        handleRemoveMissile(missile);
+    }
+
     public function handleAddTower (tower :Tower, index :int) :void
     {
         _towers.push(tower);
@@ -76,6 +87,23 @@ public class Game
     {
         _critters.push(critter);
         _display.handleAddCritter(critter);
+    }
+
+    public function getCritters () :Array // of Critter
+    {
+        return _critters;
+    }
+
+    public function handleAddMissile (missile :Missile) :void
+    {
+        _missiles.push(missile);
+        _display.handleAddMissile(missile);
+    }
+
+    public function handleRemoveMissile (missile :Missile) :void
+    {
+        _display.handleRemoveMissile(missile);
+        ArrayUtil.removeFirst(_missiles, missile);
     }
     
     public function handleMouseMove (boardx :int, boardy :int) :void
@@ -100,9 +128,13 @@ public class Game
         var dt :Number = (thisTick - _lastTick) / 1000.0;
         _lastTick = thisTick;
 
+        var gameTime :Number = thisTick / 1000.0; // todo: fix timers across clients?
+        
         _simulator.processSpawners(_spawners);
+        _simulator.processTowers(_towers, gameTime);
         _simulator.processCritters(_critters, dt);
-
+        _simulator.processMissiles(_missiles, dt);
+        
         _board.processMaps();
     }
 
@@ -114,7 +146,8 @@ public class Game
     protected var _towers :Array; // of Tower
     protected var _critters :Array; // of Critter
     protected var _spawners :Array; // of Spawner
-
+    protected var _missiles :Array; // of Missile
+    
     protected var _lastTick :int = getTimer();
 }
 }

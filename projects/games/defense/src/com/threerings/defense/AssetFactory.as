@@ -5,11 +5,13 @@ package com.threerings.defense {
 import mx.core.BitmapAsset;
 import mx.core.IFlexDisplayObject;
 
+import com.threerings.defense.sprites.CritterAssets;
+import com.threerings.defense.sprites.MissileAssets;
+import com.threerings.defense.sprites.TowerAssets;
 import com.threerings.defense.units.Critter;
+import com.threerings.defense.units.Missile;
 import com.threerings.defense.units.Tower;
 import com.threerings.util.EmbeddedSwfLoader;
-import com.threerings.defense.sprites.CritterAssets;
-import com.threerings.defense.sprites.TowerAssets;
 
 public class AssetFactory
 {
@@ -60,6 +62,20 @@ public class AssetFactory
     [Embed(source="../../../../rsrc/critters/default_down.png")]
     private static const _defaultCritterDown :Class;
     
+
+    /** Returns a new missile. */
+    public static function makeMissileAssets (missile :Missile) :MissileAssets
+    {
+        var ma :MissileAssets = new MissileAssets();
+        ma.screenHeight = 10;
+        ma.screenWidth = 10;
+        ma.base = IFlexDisplayObject(new _defaultMissile());
+        return ma;
+    }
+
+    [Embed(source="../../../../rsrc/testmissile.png")]
+    private static const _defaultMissile :Class;
+
     
     /** Returns a new shape for the specified player's source. */
     public static function makeSource (playerIndex :int) :BitmapAsset

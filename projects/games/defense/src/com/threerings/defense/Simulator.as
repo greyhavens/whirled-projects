@@ -5,7 +5,9 @@ import flash.geom.Point;
 import com.threerings.flash.MathUtil;
 
 import com.threerings.defense.units.Critter;
+import com.threerings.defense.units.Missile;
 import com.threerings.defense.units.Spawner;
+import com.threerings.defense.units.Tower;
 
 /**
  * Contains all the game logic for directing critters on the map.
@@ -25,17 +27,34 @@ public class Simulator
             }
     }
 
+    public function processTowers (towers :Array, gameTime :Number) :void
+    {
+        for each (var tower :Tower in towers) {
+                tower.fireIfPossible(_game, gameTime);
+            }
+    }
+    
     public function processCritters (critters :Array, dt :Number) :void
     {
         for each (var critter :Critter in critters) {
-                updateCurrentPosition(critter, dt);
+                updateCritterPosition(critter, dt);
                 if (critter.delta.length < _targetUpdateEpsilon) {
                     updateTarget(critter);
                 }
             }
-    };
+    }
 
-    protected function updateCurrentPosition (c :Critter, dt :Number) :void
+    public function processMissiles (missiles :Array, dt :Number) :void
+    {
+        for each (var missile :Missile in missiles) {
+                updateMissilePosition(missile, dt);
+                if (missile.delta.length < _targetUpdateEpsilon) {
+                    _game.missileReachedTarget(missile);
+                }
+            }
+    }
+    
+    protected function updateCritterPosition (c :Critter, dt :Number) :void
     {
         c.delta.x = c.target.x - c.pos.x;
         c.delta.y = c.target.y - c.pos.y;
@@ -44,6 +63,15 @@ public class Simulator
         c.pos.offset(c.vel.x * dt, c.vel.y * dt);
     }
         
+    protected function updateMissilePosition (m :Missile, dt :Number) :void
+    {
+        m.delta.x = m.target.x + m.target.missileHotspot.x - m.pos.x;
+        m.delta.y = m.target.y + m.target.missileHotspot.y - m.pos.y;
+        m.vel.x = MathUtil.clamp(m.delta.x / dt, - m.maxvel, m.maxvel);
+        m.vel.y = MathUtil.clamp(m.delta.y / dt, - m.maxvel, m.maxvel);
+        m.pos.offset(m.vel.x * dt, m.vel.y * dt);
+    }
+
     protected function updateTarget (c :Critter) :void
     {
         var p :Point = _board.getPathMap(c.player).getNextNode(c.target.x, c.target.y);
