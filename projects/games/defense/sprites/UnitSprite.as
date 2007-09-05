@@ -25,6 +25,7 @@ public class UnitSprite extends Image
     {
         this.x = _unit.centroidx + anchorOffset.x;
         this.y = _unit.centroidy + anchorOffset.y;
+        adjustZOrder();
     }
 
     /** Called to refresh assets. */
@@ -33,6 +34,11 @@ public class UnitSprite extends Image
         // todo: in the future this will be listener-based, if we load from external swfs
         reloadAssets();
         assetsReloaded();
+    }
+
+    override public function toString () :String
+    {
+        return "UnitSprite: " + _unit;
     }
     
     /** Asset loading, to be overridden by subclasses. */
@@ -49,6 +55,64 @@ public class UnitSprite extends Image
         update();
     }
 
+    /**
+     * Called after a position update, adjusts this sprite's z order with regard to other
+     * sprites. Most of the time, the order will only need to be shifted up or down by a bit,
+     * so bubble sort works just fine.
+     */
+    protected function adjustZOrder () :void
+    {
+        if (this.parent == null) {
+            return; // we haven't been added to the display list yet. 
+        }
+        
+        // what's our current location?
+        var oldindex :int = this.parent.getChildIndex(this);
+        var newindex :int = oldindex;
+
+        var myz :Number = getMyZOrder();
+
+        // see if we need to get pushed back
+        while (newindex > 1) {  // make sure the background at 0 stays at 0
+            if (getZOfChildAt(newindex - 1) < myz) {
+                break;
+            }
+            newindex--;
+        }
+
+        // see if we need to get pushed forward
+        if (newindex == oldindex) {
+            var lastindex :int = this.parent.numChildren - 1;
+            while (newindex < lastindex) {
+                if (getZOfChildAt(newindex + 1) > myz) {
+                    break;
+                }
+                newindex++;
+            }
+        }
+
+        if (newindex != oldindex) {
+            this.parent.setChildIndex(this, newindex);
+        }
+    }
+
+    /**
+     * Collapses board position into a single positional number, which increases in a row-major
+     * way, left to right, top to bottom, based on the unit's anchor position.
+     * The resulting total ordering can be used for z-order adjustment.
+     */
+    protected function getMyZOrder () :Number
+    {
+        return _unit.centroidy * Board.PIXEL_WIDTH + _unit.centroidx;
+    }
+
+    /** Helper function that wraps getMyZOrder in a retrieval operation. */
+    protected function getZOfChildAt (index :int) :Number
+    {
+        var sprite :UnitSprite = this.parent.getChildAt(index) as UnitSprite;
+        return (sprite != null) ? sprite.getMyZOrder() : NaN;
+    }
+    
     protected var _unit :Unit;
     protected var _assets :UnitAssets;
 }

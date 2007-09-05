@@ -22,7 +22,7 @@ public class AssetFactory
         default: throw new Error("Unknown tower type: " + tower.type);
         }
 
-        ta.screenHeight = 50;
+        ta.screenHeight = 60;
         ta.screenWidth = 60;
 
         return ta;
