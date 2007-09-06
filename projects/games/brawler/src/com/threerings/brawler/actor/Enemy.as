@@ -204,7 +204,7 @@ public class Enemy extends Pawn
                         return;
                     }
                     dx = getRandomLocation(
-                        _target.x, SIGHT_RANGE*0.25, SIGHT_RANGE*1.25,
+                        _target.x, SIGHT_RANGE * 0.25, SIGHT_RANGE * 1.25,
                         0, ground.width, x);
                     dy = getRandomLocation(
                         _target.y, 0, 125, ground.y - ground.height, ground.y,

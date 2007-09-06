@@ -98,6 +98,14 @@ public class Actor extends Sprite
     }
 
     /**
+     * Changes the master state of this actor.
+     */
+    public function set master (value :Boolean) :void
+    {
+        _master = value;
+    }
+
+    /**
      * For convenience, this method publishes the actor's state if and only if it is a master
      * copy.
      */

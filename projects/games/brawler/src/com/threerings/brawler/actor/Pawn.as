@@ -179,9 +179,9 @@ public class Pawn extends Actor
             return;
         }
         var ohp :Number = _hp;
-        _hp = points
+        _hp = points;
         if (_hp < ohp) {
-            showDamage(ohp - _hp);
+            wasHurt(ohp - _hp);
         } else if (ohp == 0 && !dead) {
             respawned();
         }
@@ -280,9 +280,14 @@ public class Pawn extends Actor
         }
 
         // knock back (amount is initial velocity in pixels per frame)
+        if (damage >= maxhp * KNOCK_DAMAGE) {
+            knockback += 12;
+        }
         if (knockback > 0) {
             var pt :Point = getSlideLocation(x, y, x - attacker.x, 0, knockback * 30);
             move(pt.x, pt.y, KNOCK, false);
+        } else if (damage >= maxhp * STOP_DAMAGE) {
+            stop(false);
         }
 
         // publish the updated state
@@ -329,11 +334,25 @@ public class Pawn extends Actor
      */
     public function wasHit (attacker :Pawn, damage :Number) :void
     {
+        showDamage(damage);
         if (attacker.master) {
             attacker.didHit(this, damage);
         }
         if (_master) {
             send({ type: WAS_HIT, attacker: attacker.name, damage: damage });
+        }
+    }
+
+    /**
+     * Notes that the pawn lost hp.
+     */
+    public function wasHurt (damage :Number) :void
+    {
+        // play the hurt animation if we're not dead
+        if (dead) {
+            died();
+        } else if (damage >= maxhp * STOP_DAMAGE) {
+            setAction("hurt");
         }
     }
 
@@ -629,13 +648,6 @@ public class Pawn extends Actor
         var scale :Number = BrawlerUtil.random(0.1, -0.1);
         snap.scaleX += scale;
         snap.scaleY += scale;
-
-        // play the hurt animation if we're not dead
-        if (dead) {
-            died();
-        } else {
-            setAction("hurt");
-        }
     }
 
     /**
@@ -901,6 +913,12 @@ public class Pawn extends Actor
 
     /** The damage threshold for which we show messages. */
     protected static const MESSAGE_DAMAGE :Number = 1500;
+
+    /** The percent damage at which we stop the hurt pawn. */
+    protected static const STOP_DAMAGE :Number = 0.025;
+
+    /** The percent damage at which we knock back the hurt pawn. */
+    protected static const KNOCK_DAMAGE :Number = 0.6;
 
     /** The messages from which we pick randomly. */
     protected static const DAMAGE_MESSAGES :Array = [

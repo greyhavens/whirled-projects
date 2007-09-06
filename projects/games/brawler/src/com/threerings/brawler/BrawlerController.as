@@ -329,12 +329,21 @@ public class BrawlerController extends Controller
     // documentation inherited from interface OccupantChangedListener
     public function occupantLeft (event :OccupantChangedEvent) :void
     {
-        // get rid of their player; reassign their other actors
+        // get rid of their player; take over their other actors
         var playerId :int = event.occupantId;
         var prefix :String = "actor" + event.occupantId + "_";
+        var occupants :Array = _control.getOccupants();
+        var midx :int = occupants.indexOf(_control.getMyId());
+        var aidx :int = 0;
         for each (var actor :Actor in _actors) {
-            if (StringUtil.startsWith(actor.name, prefix)) {
-
+            if (!StringUtil.startsWith(actor.name, prefix)) {
+                continue;
+            }
+            if (aidx++ % occupants.length == midx) {
+                actor.master = true;
+                if (actor is Player) {
+                    actor.destroy();
+                }
             }
         }
     }
