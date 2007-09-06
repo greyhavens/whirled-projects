@@ -198,6 +198,18 @@ public class Display extends Canvas
         sprite.update();
     }
 
+    public function handleRemoveCritter (critter :Critter) :void
+    {
+        var sprite :CritterSprite = _critters.get(critter.guid);
+        if (sprite == null) {
+            Log.getLog(this).info("Unit not in display list, cannot remove: " + critter);
+            return;
+        }
+
+        _boardSprite.removeChild(sprite);
+        _critters.remove(critter.guid);
+    }
+    
     public function handleAddMissile (missile :Missile) :void
     {
         var sprite :MissileSprite = new MissileSprite(missile);

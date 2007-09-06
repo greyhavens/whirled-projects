@@ -68,8 +68,13 @@ public class Game
     public function missileReachedTarget (missile :Missile) :void
     {
         // subtract some health from the critter, maybe remove it
+        var target :Critter = missile.target;
+        target.health -= missile.damage;
 
         handleRemoveMissile(missile);
+        if (target.health <= 0) {
+            handleRemoveCritter(target);
+        }
     }
 
     public function handleAddTower (tower :Tower, index :int) :void
@@ -92,6 +97,12 @@ public class Game
     public function getCritters () :Array // of Critter
     {
         return _critters;
+    }
+
+    public function handleRemoveCritter (critter :Critter) :void
+    {
+        _display.handleRemoveCritter(critter);
+        ArrayUtil.removeFirst(_critters, critter);
     }
 
     public function handleAddMissile (missile :Missile) :void
@@ -130,11 +141,11 @@ public class Game
 
         var gameTime :Number = thisTick / 1000.0; // todo: fix timers across clients?
         
-        _simulator.processSpawners(_spawners);
+        _simulator.processSpawners(_spawners, gameTime);
         _simulator.processTowers(_towers, gameTime);
         _simulator.processCritters(_critters, dt);
         _simulator.processMissiles(_missiles, dt);
-        
+
         _board.processMaps();
     }
 

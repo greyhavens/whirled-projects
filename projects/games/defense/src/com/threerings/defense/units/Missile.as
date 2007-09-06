@@ -34,6 +34,9 @@ public class Missile extends Unit
 
     /** Max velocity, in board units per second. */
     public var maxvel :Number; 
+
+    /** How much damage this missile inflicts on the critter. */
+    public var damage :Number;
     
     public function Missile (source :Tower, target :Critter, type :int, player :int)
     {
@@ -46,7 +49,9 @@ public class Missile extends Unit
         this.target = target;
         this.delta = new Point(Infinity, Infinity); // this will be recalculated anyway
         this.vel = new Point(0, 0);
+
         this.maxvel = 5;
+        this.damage = 1;
     }
 
     // from Unit

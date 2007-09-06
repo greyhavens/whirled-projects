@@ -8,16 +8,28 @@ public class Critter extends Unit
 {
     public static const TYPE_WEAK :int = 1;
 
-    public var target :Point; // target position, in board units
-    public var delta :Point;  // distance to target position
-    public var vel :Point;    // current velocity, in board units per second
-    public var maxvel :Number // max velocity (in board units per second, axis-independent)
+    /** Target position on board. */
+    public var target :Point;
+
+    /** Distance to target position, in board units. */
+    public var delta :Point;
+
+    /** Current velocity vector, in board units per second. */
+    public var vel :Point;
+
+    /** Max velocity, in board units per second, for each axis. */
+    public var maxvel :Number;
+
+    /** Critter type, one of TYPE_* constants. */
     public var type :int;
 
-    /** Position on the critter (in board units, potentially fractional, from the upper left)
-     *  where missiles will try to hit. */
+    /** Locations where missiles will try to hit (relative to current board position,
+     *  potentially fractional) */
     public var missileHotspot :Point;
 
+    /** Critter health. Once it drops below zero, it's gone! */
+    public var health :Number;
+    
     public function Critter (x :int, y :int, type :int, player :int)
     {
         super(player, x, y, 1, 1);
@@ -26,10 +38,12 @@ public class Critter extends Unit
         this.target = new Point(x, y);
         this.delta = new Point(0, 0);
         
+        // todo: make all this stuff configurable
+
         this.type = type;
         this.maxvel = 1;
-
-        this.missileHotspot = new Point(size.x / 2, - size.y / 2); // todo: configurable
+        this.health = 3;
+        this.missileHotspot = new Point(size.x / 2, - size.y / 2); 
     }
 
     // position of the sprite centroid in screen coordinates

@@ -32,7 +32,7 @@ public class AssetFactory
         return ta;
     }
 
-    [Embed(source="../../../../rsrc/tower.png")]
+    [Embed(source="../../../../TreeHouseD_01_c.swf#tower_sandbox")]
     private static const _defaultTower :Class;
 
 

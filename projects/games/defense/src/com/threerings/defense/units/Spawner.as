@@ -20,22 +20,24 @@ public class Spawner
     }
 
     // this is just scaffolding
-    public function tick () :void
+    public function spawnIfPossible (gameTime :Number) :void
     {
-        if (! _temp) {
-            trace("SPAWNING SOME TEST CRITTERS");
-            _temp = true;
-            for each (var d :int in [-1, 0, 1]) {
+        if (gameTime < _nextSpawnTime) {
+            return;
+        }
+
+        for each (var d :int in [-1, 0, 1]) {
                 var critter :Critter = new Critter(_loc.x + d, _loc.y, Critter.TYPE_WEAK, player);
                 _game.handleAddCritter(critter);
             }
-        }
+        _nextSpawnTime = gameTime + _spawnDelay;
     }
-
-    protected var _temp :Boolean = false;
 
     protected var _game :Game;
     protected var _player :int;
     protected var _loc :Point;
+
+    protected var _nextSpawnTime :Number = 0;
+    protected var _spawnDelay :Number = 5;
 }
 }
