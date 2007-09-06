@@ -239,13 +239,6 @@ public class Pawn extends Actor
         _goal.y = y;
         _motion = motion;
 
-        // start the appropriate animation
-        if (_motion == WALK || _motion == SPRINT) {
-            face(_goal.x);
-        } else if (_motion == KNOCK) {
-            face(2*x - _goal.x); // face the other direction
-        }
-
         // initialize the dust countdown
         _dustCountdown = dustInterval;
 
@@ -412,6 +405,7 @@ public class Pawn extends Actor
                 _character.visible = false;
                 disappeared();
             } else {
+                // toggle alpha every other frame
                 _character.alpha = ((_blink++ / 2) % 2 == 0) ? 1 : 0;
             }
         }
@@ -447,6 +441,9 @@ public class Pawn extends Actor
 
         // update the pawn's action
         updateAction();
+
+        // update the pawn's direction
+        updateDirection();
 
         // update the location of the radar blip
         _view.hud.updateRadarBlip(_blip, x);
@@ -490,6 +487,20 @@ public class Pawn extends Actor
         state.stunCountdown = _stunCountdown;
         state.invulnerableCountdown = _invulnerableCountdown;
         return state;
+    }
+
+    /**
+     * Updates the direction that the pawn is facing.
+     */
+    protected function updateDirection () :void
+    {
+        if (moving) {
+            if (_motion == WALK || _motion == SPRINT) {
+                face(_goal.x);
+            } else if (_motion == KNOCK) {
+                face(2*x - _goal.x); // face opposite direction
+            }
+        }
     }
 
     /**
@@ -659,7 +670,7 @@ public class Pawn extends Actor
         } else if (blocking) {
             setAction("block");
         } else if (moving) {
-            setAction("walk", true, "walk_loop");
+            setAction("walk", true);
         } else {
             setAction("idle", true);
         }

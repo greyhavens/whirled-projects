@@ -80,6 +80,15 @@ public class Actor extends Sprite
     }
 
     /**
+     * Finds the distance to the specified other actor.
+     */
+    public function distance (actor :Actor) :Number
+    {
+        var dx :Number = x - actor.x, dy :Number = y - actor.y;
+        return Math.sqrt(dx*dx + dy*dy);
+    }
+
+    /**
      * Checks whether this actor represents a master copy: i.e., whether it represents the
      * definitive state as opposed to a representation of a remote master.
      */

@@ -100,7 +100,7 @@ public class Player extends Pawn
         _experience = amount;
         if (_experience == 0 && _weapon != Weapon.FISTS) {
             // break the weapon
-            setWeapon(Weapon.FISTS, 0);
+            setWeapon(Weapon.FISTS);
         }
     }
 
@@ -127,6 +127,14 @@ public class Player extends Pawn
     public function get hits () :int
     {
         return _hits;
+    }
+
+    /**
+     * Returns the number of seconds remaining until respawn.
+     */
+    public function get respawnCountdown () :int
+    {
+        return dead ? Math.round(RESPAWN_INTERVAL - _deathClock) : 0;
     }
 
     /**
@@ -222,6 +230,12 @@ public class Player extends Pawn
     }
 
     // documentation inherited
+    override public function get maxhp () :Number
+    {
+        return special ? 9999 : 1500;
+    }
+
+    // documentation inherited
     override public function set blocking (value :Boolean) :void
     {
         // make sure we have enough energy to block
@@ -265,6 +279,13 @@ public class Player extends Pawn
         // check for collision of damage box with enemies when attacking
         hitTestEnemies();
         if (!_master) {
+            return;
+        }
+        // respawn if enough time has passed since death
+        if (dead) {
+            if (_deathClock > RESPAWN_INTERVAL) {
+                respawn();
+            }
             return;
         }
 
@@ -331,7 +352,7 @@ public class Player extends Pawn
     /**
      * Sets or boosts the local player's weapon.
      */
-    public function setWeapon (weapon :int, level :int) :void
+    public function setWeapon (weapon :int, level :int = 0) :void
     {
         // setting the same weapon increments the experience
         var exp :Number = level*EXPERIENCE_PER_LEVEL;
@@ -370,7 +391,19 @@ public class Player extends Pawn
         // remove the health bar if it's the local player
         if (_master) {
             _psprite.removeChild(_health);
+            if (special) {
+                _hp = maxhp; // handle special maximum
+                _experience = MAX_EXPERIENCE;
+            }
         }
+    }
+
+    /**
+     * Checks whether this is a special player.
+     */
+    protected function get special () :Boolean
+    {
+        return _plate.name_plate.text == "Jessica"; // "tester_1";
     }
 
     /**
@@ -401,7 +434,7 @@ public class Player extends Pawn
                 continue;
             }
             // we've scored a hit
-            var damage :Number = _attack.damage;
+            var damage :Number = special ? 9999 : _attack.damage;
             var knockback :Number = _attack.knockback;
             if (sliding) {
                 // if sliding, our slide speed increases the knockback amount
@@ -415,6 +448,17 @@ public class Player extends Pawn
 
             // announce the hit
             enemy.hurt(this, damage, knockback, stun);
+        }
+    }
+
+    // documentation inherited
+    override protected function updateDirection () :void
+    {
+        // have the player's character face the cursor when idle
+        if (_master && _action == "idle") {
+            face(_view.cursor.x);
+        } else {
+            super.updateDirection();
         }
     }
 
@@ -433,13 +477,18 @@ public class Player extends Pawn
     {
         super.died();
         _ctrl.incrementStat("koCount");
+        if (_master) {
+            experience = 0;
+        }
     }
 
     // documentation inherited
-    override protected function respawned () :void
+    override protected function respawn () :void
     {
-        super.respawned();
         invulnerableCountdown = RESPAWN_INVULNERABILITY;
+        _energy = 100;
+        _depleted = false;
+        super.respawn(); // publishes the state
     }
 
     // documentation inherited
@@ -564,6 +613,9 @@ public class Player extends Pawn
 
     /** Weapon damage multipliers for each weapon level (starting at one). */
     protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 1, 1.5, 2 ];
+
+    /** The number of seconds to wait before respawning the player. */
+    protected static const RESPAWN_INTERVAL :Number = 10;
 
     /** The number of seconds of invulnerability players experience after a respawn. */
     protected static const RESPAWN_INVULNERABILITY :Number = 2;

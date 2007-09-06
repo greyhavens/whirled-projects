@@ -32,7 +32,7 @@ public class HudView extends Sprite
         });
 
         // get rid of various transient bits
-        removeChildren(_hud, _hud.respawn, _hud.dc);
+        _hud.respawn.visible = _hud.dc.visible = false;
         _hud.removeChild(_hud.fader);
 
         // update the connection display
@@ -78,7 +78,7 @@ public class HudView extends Sprite
         }
 
         // display the warning if appropriate
-        _hud.hp_warning.gotoAndStop((frame <= 20) ? "on" : "off");
+        _hud.hp_warning.gotoAndStop((frame <= 20 && !self.dead) ? "on" : "off");
 
         // update the weapon display
         _hud.stats.exp.weapon.weapon.gotoAndStop(Weapon.FRAME_LABELS[self.weapon]);
@@ -109,6 +109,23 @@ public class HudView extends Sprite
             _hud.attacks["k" + ii].gotoAndStop(level < ii ? "off" : (level == ii ? "next" : "on"));
         }
         _hud.attacks.pk.gotoAndPlay(self.experience == Player.MAX_EXPERIENCE ? "on" : "off");
+
+        // update the respawn clock
+        var respawn :int = self.respawnCountdown;
+        if (respawn > 0) {
+            if (!_hud.dc.visible) {
+                _hud.dc.visible = true;
+                _hud.respawn.visible = true;
+                _view.animmgr.play(_hud.respawn, "on");
+            }
+            _hud.dc.text = StringUtil.prepad(respawn.toString(), 2, "0");
+
+        } else if (_hud.dc.visible) {
+            _view.animmgr.play(_hud.respawn, "off", false, function () :void {
+                _hud.respawn.visible = false;
+            });
+            _hud.dc.visible = false;
+        }
     }
 
     /**
@@ -266,16 +283,6 @@ public class HudView extends Sprite
         }
         if (disp is clazz) {
             fn(disp);
-        }
-    }
-
-    /**
-     * Removes any number of children from the specified container.
-     */
-    protected function removeChildren (cont :DisplayObjectContainer, ... children) :void
-    {
-        for each (var child :DisplayObject in children) {
-            cont.removeChild(child);
         }
     }
 

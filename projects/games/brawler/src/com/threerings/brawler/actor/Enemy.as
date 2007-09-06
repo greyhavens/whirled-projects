@@ -62,6 +62,18 @@ public class Enemy extends Pawn
     }
 
     /**
+     * Sets the target of the enemy.
+     */
+    public function set target (player :Player) :void
+    {
+        if (_target == player) {
+            return;
+        }
+        _target = player;
+        maybePublish();
+    }
+
+    /**
      * Initiates an attack.
      */
     public function attack (dir :int = -1) :void
@@ -73,6 +85,9 @@ public class Enemy extends Pawn
             }
             // use the current orientation
             dir = _character.scaleX;
+
+            // push out the attack countdown
+            _attackCountdown = _cooldown;
         }
 
         // play the attack animation
@@ -83,6 +98,15 @@ public class Enemy extends Pawn
             // stop the pawn and announce the attack
             stop();
             send({ type: ATTACK, dir: dir });
+        }
+    }
+
+    // documentation inherited
+    override public function wasBlocked (hurt :Boolean) :void
+    {
+        super.wasBlocked(hurt);
+        if (_master && hurt) {
+            _attackCountdown = Math.max(_attackCountdown, 0) + 2;
         }
     }
 
@@ -141,6 +165,7 @@ public class Enemy extends Pawn
     {
         super.decode(state);
         _respawns = state.respawns;
+        _target = (state.target == null) ? null : _ctrl.actors[state.target];
     }
 
     // documentation inherited
@@ -156,6 +181,76 @@ public class Enemy extends Pawn
 
         // check for collisions against other enemies being knocked back
         hitTestEnemies();
+
+        // update ai behavior
+        _attackCountdown -= elapsed;
+        if (!(_master && canMove)) {
+            return;
+        }
+        var ground :Sprite = _view.ground;
+        if (_target != null) {
+            if (_target.parent == null || _target.dead) {
+                // target died/disappeared: flee back to spawn point
+                _target = null;
+                move(_spawnX, _spawnY, WALK);
+                return;
+            }
+            var tdist :Number = distance(_target);
+            if (!moving) {
+                var dx :Number, dy :Number;
+                if (_attackCountdown > 0) {
+                    // evade (stay out of player's reach)
+                    if (tdist >= SIGHT_RANGE && tdist <= SIGHT_RANGE * 1.5) {
+                        return;
+                    }
+                    dx = getRandomLocation(
+                        _target.x, SIGHT_RANGE*0.25, SIGHT_RANGE*1.25,
+                        0, ground.width, x);
+                    dy = getRandomLocation(
+                        _target.y, 0, 125, ground.y - ground.height, ground.y,
+                        _view.groundCenterY);
+                } else {
+                    // approach (get within attack range)
+                    dx = getRandomLocation(
+                        _target.x, _range * scaleX * 0.85, _range * scaleX,
+                        0, ground.width, x);
+                    dy = getRandomLocation(
+                        _target.y, 0, 5, ground.y - ground.height, ground.y,
+                        _target.y);
+                }
+                move(dx, dy, WALK);
+            }
+            if (_attackCountdown <= 0 && distance(_target) <= _range*scaleX &&
+                    Math.abs(y - _target.y) <= 5) {
+                attack();
+                return; // don't fall through to random movement
+            }
+        } else {
+            // choose the closest player in range as a new target
+            var cplayer :Player = null;
+            var cdist :Number = Number.MAX_VALUE;
+            for each (var actor :Actor in _ctrl.actors) {
+                if (!(actor is Player)) {
+                    continue;
+                }
+                var player :Player = actor as Player;
+                var dist :Number = distance(player);
+                if (!player.dead && dist <= SIGHT_RANGE && dist < cdist) {
+                    cplayer = player;
+                    cdist = dist;
+                }
+            }
+            if ((_target = cplayer) != null) {
+                return; // approach target next go-round
+            }
+        }
+        if (!moving) {
+            // if we have nothing else to do, move to a random destination on the ground
+            move(
+                BrawlerUtil.random(ground.width),
+                BrawlerUtil.random(ground.y, ground.y - ground.height),
+                WALK);
+        }
     }
 
     // documentation inherited
@@ -172,7 +267,7 @@ public class Enemy extends Pawn
         _speed = parseFloat(config.spd.text) * SPEED_MULTIPLIERS[difficulty];
         _maxhp = parseFloat(config.hp.text) * HP_MULTIPLIERS[difficulty];
         _range = parseFloat(config.rng.text);
-        _cooldown = parseFloat(config.fst.text) * COOLDOWN_MULTIPLIERS[difficulty];
+        _cooldown = (parseFloat(config.fst.text) * COOLDOWN_MULTIPLIERS[difficulty]) / 1000;
         _min = parseFloat(config.min.text) * MINMAX_MULTIPLIERS[difficulty];
         _max = parseFloat(config.max.text) * MINMAX_MULTIPLIERS[difficulty];
         _knockback = parseFloat(config.knockback.text) * KNOCKBACK_MULTIPLIERS[difficulty];
@@ -190,6 +285,9 @@ public class Enemy extends Pawn
 
         // reposition the health bar above the character
         _health.y = -_character.height;
+
+        // initialize the attack countdown
+        _attackCountdown = _cooldown;
     }
 
     /**
@@ -274,6 +372,13 @@ public class Enemy extends Pawn
     }
 
     // documentation inherited
+    override protected function respawn () :void
+    {
+        super.respawn();
+        _attackCountdown = _cooldown;
+    }
+
+    // documentation inherited
     override protected function knockEnded () :void
     {
         super.knockEnded();
@@ -294,7 +399,19 @@ public class Enemy extends Pawn
         var state :Object = super.encode();
         state.config = _config;
         state.respawns = _respawns;
+        state.target = (_target == null) ? null : _target.name;
         return state;
+    }
+
+    // documentation inherited
+    override protected function updateDirection () :void
+    {
+        // the enemy should normal face the target
+        if (_target != null && (_action == "idle" || _action == "walk")) {
+            face(_target.x);
+        } else if (knocked) {
+            super.updateDirection();
+        }
     }
 
     // documentation inherited
@@ -313,6 +430,37 @@ public class Enemy extends Pawn
     override protected function get baseSpeed () :Number
     {
         return _speed;
+    }
+
+    /**
+     * Finds a random location that lies within a distance range from a center position,
+     * subject to upper and lower bounds, and preferring locations on the same side as
+     * a reference position.
+     *
+     * @param center the center position (assumed to lie between the upper and lower bounds).
+     * @param minDist the minimum distance from the reference position.
+     * @param maxDist the maximum distance from the reference position.
+     * @param lowerBound the minimum value that positions may take.
+     * @param upperBound the maximum value that positions may take.
+     * @param reference a reference position used to determine the preferred side.
+     */
+    protected static function getRandomLocation (
+        center :Number, minDist :Number, maxDist :Number,
+        lowerBound :Number, upperBound :Number, reference :Number) :Number
+    {
+        var lmin :Number = Math.max(center - maxDist, lowerBound);
+        var lmax :Number = Math.max(center - minDist, lowerBound);
+        var rmin :Number = Math.min(center + minDist, upperBound);
+        var rmax :Number = Math.min(center + maxDist, upperBound);
+        var llen :Number = lmax - lmin, rlen :Number = rmax - rmin;
+        if (reference < center && llen > 0) { // use values left of center
+            return BrawlerUtil.random(lmax, lmin);
+        } else if (reference > center && rlen > 0) { // use right
+            return BrawlerUtil.random(rmax, rmin);
+        } else { // use both
+            var loc :Number = BrawlerUtil.random(llen + rlen);
+            return (loc < llen) ? (lmin + loc) : rmin + (loc - llen);
+        }
     }
 
     /** The enemy's configuration index. */
@@ -350,6 +498,12 @@ public class Enemy extends Pawn
 
     /** The enemy's remaining respawns. */
     protected var _respawns :Number;
+
+    /** The enemy's current target. */
+    protected var _target :Player;
+
+    /** The countdown until the enemy can attack. */
+    protected var _attackCountdown :Number;
 
     /** The peon character class. */
     [Embed(source="../../../../../rsrc/raw.swf", symbol="mob1")]
@@ -430,5 +584,8 @@ public class Enemy extends Pawn
 
     /** Hide the health bar when the local player is this far away from the enemy. */
     protected static const HIDE_HEALTH_DISTANCE :Number = 210;
+
+    /** The distance within which enemies can "see." */
+    protected static const SIGHT_RANGE :Number = 1500;
 }
 }
