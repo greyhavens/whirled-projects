@@ -11,13 +11,17 @@ import com.threerings.defense.tuning.UnitDefinitions;
  */
 public class Tower extends Unit
 {
-    public static const TYPE_INVALID :int = 0;
-    public static const TYPE_SANDBOX :int = 1;
-    public static const TYPE_BOULDER :int = 2;
-    public static const TYPE_WAGON   :int = 3;
+    public static const TYPE_INVALID  :int = 0;
+    public static const TYPE_SANDBOX  :int = 1;
+    public static const TYPE_BOULDER  :int = 2;
+    public static const TYPE_WAGON    :int = 3;
+    public static const TYPE_BOX      :int = 4;
+    public static const TYPE_SHRUB    :int = 5;
+    public static const TYPE_TRASHCAN :int = 6;
+    public static const TYPE_TREE     :int = 7;
 
     public static const ALL_TYPES :Array =
-        [ TYPE_SANDBOX, TYPE_BOULDER, TYPE_WAGON ];
+        [ TYPE_SANDBOX, TYPE_BOULDER, TYPE_WAGON, TYPE_BOX, TYPE_SHRUB, TYPE_TRASHCAN, TYPE_TREE ];
     
     /** Position on the tower (in board units, potentially fractional, from the upper left)
      *  from which missiles should be fired. */

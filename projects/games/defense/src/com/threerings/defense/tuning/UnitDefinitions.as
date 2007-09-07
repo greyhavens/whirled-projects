@@ -14,17 +14,24 @@ import com.threerings.util.HashMap;
  */
 public class UnitDefinitions
 {
+    /** Specifies roots of Flash asset names for each tower type. */
     public static const TOWER_ASSET_TYPES :Array =
-        [ { key: Tower.TYPE_SANDBOX, value: "sandbox" },
-          { key: Tower.TYPE_BOULDER, value: "boulder" },
-          { key: Tower.TYPE_WAGON,   value: "wagon" }
+        [ { key: Tower.TYPE_SANDBOX,  value: "sandbox" },
+          { key: Tower.TYPE_BOULDER,  value: "boulder" },
+          { key: Tower.TYPE_WAGON,    value: "wagon" },
+          { key: Tower.TYPE_BOX,      value: "box" },
+          { key: Tower.TYPE_SHRUB,    value: "shrub" },
+          { key: Tower.TYPE_TRASHCAN, value: "trashcan" },
+          { key: Tower.TYPE_TREE,     value: "tree" },
             ];
-    
+
+    /** Specifies Flash asset suffixes for each tower state. */
     public static const TOWER_ASSET_STATES :Array =
         [ { key: TowerSprite.STATE_REST, value: null },
           { key: TowerSprite.STATE_FIRE, value: "fire" }
             ];
 
+    /** Specifies tuning parameters for all tower types. */
     public static const TOWER_DEFINITIONS :Array =
         [ { key: Tower.TYPE_SANDBOX, value:
             { name: "Sandbox",
@@ -52,9 +59,46 @@ public class UnitDefinitions
               rangeMax: 8,
               firingDelay: 10,
               size: [3, 1]
+            } },
+          { key: Tower.TYPE_BOX, value:
+            { name: "Box",
+              description: "Pandora would be proud.",
+              cost: 15,
+              rangeMin: 1,
+              rangeMax: 3,
+              firingDelay: 2,
+              size: [1, 1]
+            } },
+          { key: Tower.TYPE_SHRUB, value:
+            { name: "Shrub",
+              description: "Don't go in the bushes!",
+              cost: 20,
+              rangeMin: 1,
+              rangeMax: 8,
+              firingDelay: 8,
+              size: [1, 1]
+            } },
+          { key: Tower.TYPE_TRASHCAN, value:
+            { name: "Trash",
+              description: "I wouldn't want to be the one assigned to that post.",
+              cost: 30,
+              rangeMin: 3,
+              rangeMax: 8,
+              firingDelay: 5,
+              size: [1, 1]
+            } },
+          { key: Tower.TYPE_TREE, value:
+            { name: "Tree",
+              description: "A giant obstacle with very long range.",
+              cost: 15,
+              rangeMin: 3,
+              rangeMax: 10,
+              firingDelay: 10,
+              size: [2, 3]
             } }
             ];
 
+    /** Specifies tuning parameters for all missile types. */
     public static const MISSILE_DEFINITIONS :Array =
         [ { key: Missile.TYPE_PAPER_PLANE, value:
             { name: "Paper plane",
@@ -63,10 +107,15 @@ public class UnitDefinitions
             } }
             ];
 
+    /** Specifies which tower produces which missile type. */
     public static const TOWER_MISSILE_MAP :Array =
-        [ { key: Tower.TYPE_SANDBOX, value: Missile.TYPE_PAPER_PLANE },
-          { key: Tower.TYPE_BOULDER, value: Missile.TYPE_PAPER_PLANE },
-          { key: Tower.TYPE_WAGON,   value: Missile.TYPE_PAPER_PLANE }
+        [ { key: Tower.TYPE_SANDBOX,  value: Missile.TYPE_PAPER_PLANE },
+          { key: Tower.TYPE_BOULDER,  value: Missile.TYPE_PAPER_PLANE },
+          { key: Tower.TYPE_WAGON,    value: Missile.TYPE_PAPER_PLANE },
+          { key: Tower.TYPE_BOX,      value: Missile.TYPE_PAPER_PLANE },
+          { key: Tower.TYPE_SHRUB,    value: Missile.TYPE_PAPER_PLANE },
+          { key: Tower.TYPE_TRASHCAN, value: Missile.TYPE_PAPER_PLANE },
+          { key: Tower.TYPE_TREE,     value: Missile.TYPE_PAPER_PLANE }
             ];
           
 
