@@ -62,7 +62,7 @@ public class Simulator
     {
         for each (var missile :Missile in missiles) {
                 updateMissilePosition(missile, dt);
-                if (missile.delta.length < _targetUpdateEpsilon) {
+                if (missile.delta.length < _missileUpdateEpsilon) {
                     _game.missileReachedTarget(missile);
                 }
             }
@@ -79,11 +79,19 @@ public class Simulator
         
     protected function updateMissilePosition (m :Missile, dt :Number) :void
     {
-        m.delta.x = m.target.x + m.target.missileHotspot.x - m.pos.x;
+        m.delta.x = m.target.x + m.target.missileHotspot.x - m.pos.x; 
         m.delta.y = m.target.y + m.target.missileHotspot.y - m.pos.y;
-        m.vel.x = MathUtil.clamp(m.delta.x / dt, - m.maxvel, m.maxvel);
-        m.vel.y = MathUtil.clamp(m.delta.y / dt, - m.maxvel, m.maxvel);
-        m.pos.offset(m.vel.x * dt, m.vel.y * dt);
+
+        if (m.delta.length > _missileUpdateEpsilon) {
+            var dd :Point = m.delta.clone();
+            dd.normalize(m.maxvel);
+            m.vel.x = dd.x;
+            m.vel.y = dd.y;
+            m.pos.offset(m.vel.x * dt, m.vel.y * dt);
+        } else {
+            m.pos.x = m.target.x;
+            m.pos.y = m.target.y;
+        }
     }
 
     protected function updateTarget (c :Critter) :void
@@ -98,6 +106,7 @@ public class Simulator
     }
 
     protected var _targetUpdateEpsilon :Number = 0.1;
+    protected var _missileUpdateEpsilon :Number = 0.2;
     
     protected var _board :Board;
     protected var _game :Game;

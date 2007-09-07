@@ -74,13 +74,17 @@ public class Level
     
     // temp: placeholder assets
 
-    [Embed(source="../../../../rsrc/critters/default_left.png")]
+//    [Embed(source="../../../../rsrc/critters/default_left.png")]
+    [Embed(source="../../../../rsrc/levels/Level01.swf#tower_box")]
     private static const _defaultCritterLeft :Class;
-    [Embed(source="../../../../TreeHouseD_01_c.swf#walkingbully")]
+//    [Embed(source="../../../../rsrc/levels/Level01.swf#walkingbully")]
+    [Embed(source="../../../../rsrc/levels/Level01.swf#tower_box")]
     private static const _defaultCritterRight :Class;
-    [Embed(source="../../../../rsrc/critters/default_up.png")]
+//    [Embed(source="../../../../rsrc/critters/default_up.png")]
+    [Embed(source="../../../../rsrc/levels/Level01.swf#tower_box")]
     private static const _defaultCritterUp :Class;
-    [Embed(source="../../../../rsrc/critters/default_down.png")]
+//    [Embed(source="../../../../rsrc/critters/default_down.png")]
+    [Embed(source="../../../../rsrc/levels/Level01.swf#tower_box")]
     private static const _defaultCritterDown :Class;
     [Embed(source="../../../../rsrc/testmissile.png")]
     private static const _defaultMissile :Class;

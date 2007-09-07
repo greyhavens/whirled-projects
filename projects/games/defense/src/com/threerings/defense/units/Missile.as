@@ -43,9 +43,6 @@ public class Missile extends Unit
         this.vel = new Point(0, 0);
 
         UnitDefinitions.initializeMissile(type, this);
-        
-        this.maxvel = 5;
-        this.damage = 1;
     }
 
     // from Unit

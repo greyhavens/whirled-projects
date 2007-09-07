@@ -72,7 +72,7 @@ public class LevelLoader
         return (cl != null) ? new cl() : null;
     }
 
-    [Embed(source="../../../../TreeHouseD_01_c.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../../../rsrc/levels/Level01.swf", mimeType="application/octet-stream")]
     protected static const LEVEL_1_SWF :Class;
     
     protected var _swfLoader :EmbeddedSwfLoader;
