@@ -3,6 +3,7 @@ package com.threerings.defense.units {
 import flash.geom.Point;
 
 import com.threerings.defense.Game;
+import com.threerings.defense.tuning.UnitDefinitions;
     
 /**
  * Definition of a single tower, including all state information, and a pointer to display object.
@@ -11,8 +12,12 @@ import com.threerings.defense.Game;
 public class Tower extends Unit
 {
     public static const TYPE_INVALID :int = 0;
-    public static const TYPE_SIMPLE :int = 1;
-    public static const TYPE_2 :int = 2;
+    public static const TYPE_SANDBOX :int = 1;
+    public static const TYPE_BOULDER :int = 2;
+    public static const TYPE_WAGON   :int = 3;
+
+    public static const ALL_TYPES :Array =
+        [ TYPE_SANDBOX, TYPE_BOULDER, TYPE_WAGON ];
     
     /** Position on the tower (in board units, potentially fractional, from the upper left)
      *  from which missiles should be fired. */
@@ -47,17 +52,7 @@ public class Tower extends Unit
     {
         // remember type
         _type = value;
-
-        // update size from type
-        switch(_type) {
-        case Tower.TYPE_SIMPLE:
-            size.x = size.y = 2;
-            rangeMaxSq = 6;
-            firingDelay = 2;
-            break;
-        default:
-            size.x = size.y = 1;
-        }
+        UnitDefinitions.initializeTower(_type, this);
 
         // now update missile hotspot from size
         missileHotspot = new Point(size.x / 2, size.y / 2);
@@ -75,8 +70,8 @@ public class Tower extends Unit
         }
         
         // got one, let's fire!
-        var missileType :int = Missile.missileTypeForTower(this.type);
-        var missile :Missile = new Missile(this, critter, type, player);
+        var missileType :int = UnitDefinitions.getMissileType(this.type);
+        var missile :Missile = new Missile(this, critter, missileType, player);
         game.handleAddMissile(missile);
 
         // now cool down

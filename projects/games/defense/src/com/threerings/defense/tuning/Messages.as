@@ -1,9 +1,9 @@
-package com.threerings.defense {
+package com.threerings.defense.tuning {
 
 /**
  * String internationalization helper.
  */
-public class Msgs
+public class Messages
 {
     /** Retrieves a string with the given key. */
     public static function get (key :String) :String
@@ -15,9 +15,12 @@ public class Msgs
 
     public static var data :Object =
     {
-        menu_title: "Buildings",
-        path_1: "Player 1 Map",
-        path_2: "Player 2 Map"
+        menu_title: "Main Menu",
+        off: "Off",
+        path_1: "P1 Map",
+        path_2: "P2 Map",
+        death_1: "P1 Death",
+        death_2: "P2 Death"
     }
 }
 

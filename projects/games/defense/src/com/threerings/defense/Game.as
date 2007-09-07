@@ -24,7 +24,7 @@ public class Game
         _display.addEventListener(Event.ENTER_FRAME, handleGameTick);
 
         // initialize the cursor with dummy data - it will all get overwritten, eventually
-        _cursor = new Tower(0, 0, Tower.TYPE_SIMPLE, _board.getMyPlayerIndex(), 0);
+        _cursor = new Tower(0, 0, Tower.TYPE_SANDBOX, _board.getMyPlayerIndex(), 0);
     }
 
     public function handleUnload (event : Event) : void
@@ -77,6 +77,14 @@ public class Game
         }
     }
 
+    public function critterReachedTarget (critter :Critter) :void
+    {
+        // todo: subtract some points from the player
+        
+        // now just remove the critter
+        handleRemoveCritter(critter);
+    }
+
     public function handleAddTower (tower :Tower, index :int) :void
     {
         _towers.push(tower);
@@ -123,13 +131,25 @@ public class Game
         if (logical.x != _cursor.pos.x || logical.y != _cursor.pos.y) {
             _cursor.pos.x = logical.x;
             _cursor.pos.y = logical.y;
-            var onBoard :Boolean = _board.isOnBoard(_cursor);
-            var overEmptySpace :Boolean = onBoard && _board.isUnoccupied(_cursor);
-            if (onBoard) {
-                _display.showCursor(_cursor, overEmptySpace);
-            } else {
-                _display.hideCursor();                    
-            }
+            updateCursorDisplay();
+        }
+    }
+
+    /** Change the current cursor type. */
+    public function setCursorType (type :int) :void
+    {
+        _cursor.updateFromType(type);
+        updateCursorDisplay();
+    }
+    
+    protected function updateCursorDisplay () :void
+    {
+        var onBoard :Boolean = _board.isOnBoard(_cursor);
+        var overEmptySpace :Boolean = onBoard && _board.isUnoccupied(_cursor);
+        if (onBoard) {
+            _display.showCursor(_cursor, overEmptySpace);
+        } else {
+            _display.hideCursor();                    
         }
     }
         

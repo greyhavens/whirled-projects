@@ -36,11 +36,25 @@ public class Simulator
     
     public function processCritters (critters :Array, dt :Number) :void
     {
+        var crittersToRemove :Array = null;
         for each (var critter :Critter in critters) {
                 updateCritterPosition(critter, dt);
                 if (critter.delta.length < _targetUpdateEpsilon) {
-                    updateTarget(critter);
+                    const end :Point = _board.getPlayerTarget(critter.player);
+                    if (end.x == critter.target.x && end.y == critter.target.y) {
+                        if (crittersToRemove == null) {
+                            // delayed initialization, only rarely necessary
+                            crittersToRemove = new Array(); 
+                        }
+                        crittersToRemove.push(critter);
+                    } else {
+                        updateTarget(critter);
+                    }
                 }
+            }
+
+        for each (critter in crittersToRemove) {
+                _game.critterReachedTarget(critter);
             }
     }
 
@@ -81,16 +95,6 @@ public class Simulator
         } else {
             // trace("UNABLE TO ADVANCE CRITTER " + c + " - NO PATH FOUND!");
         }
-        /*
-        var delta :Point = _board.getPlayerTarget(c.player);
-        delta.offset(-c.target.x, -c.target.y);
-
-        if (Math.abs(delta.x) > Math.abs(delta.y)) {
-            c.target.x += MathUtil.clamp(delta.x, -1, 1);
-        } else {
-            c.target.y += MathUtil.clamp(delta.y, -1, 1);
-            }
-        */
     }
 
     protected var _targetUpdateEpsilon :Number = 0.1;

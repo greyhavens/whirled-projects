@@ -8,7 +8,7 @@ package com.threerings.defense {
  */
 public class Assert
 {
-    public static function True (testvalue :*, message :String) : void
+    public static function True (testvalue :*, message :String) :void
     {
         var result :Boolean = false;
         
@@ -16,12 +16,17 @@ public class Assert
             result = testvalue;
         } else if (testvalue is Function) {
             result = testvalue();
-        } else {
-            result = (testvalue != null);
-        }
+        } 
 
         if (! result) {
-            Log.getLog("Assert").warning(message + "[test=" + testvalue + "].");
+            Log.getLog("Assert.True").warning(message + " [testvalue=" + testvalue + "].");
+        }
+    }
+
+    public static function NotNull (testvalue :*, message :String) :void
+    {
+        if (testvalue == null || testvalue == undefined) {
+            Log.getLog("Assert.NotNull").warning(message);
         }
     }
 }

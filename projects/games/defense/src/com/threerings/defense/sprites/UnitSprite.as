@@ -57,8 +57,7 @@ public /* abstract */ class UnitSprite extends Image
         return "UnitSprite: " + _unit;
     }
 
-    /** Loads all assets for this type of sprite. Since UnitSprite doesn't have interesting
-     *  assets, subclasses should override this with more interesting functionality. */
+    /** Loads all assets for this type of sprite. */
     protected function loadAllAssets () :void
     {
         _allAssets = _level.loadSpriteAssets(this);

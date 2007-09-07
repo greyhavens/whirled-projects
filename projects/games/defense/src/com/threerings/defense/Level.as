@@ -6,6 +6,7 @@ import com.threerings.defense.sprites.CritterSprite;
 import com.threerings.defense.sprites.MissileSprite;
 import com.threerings.defense.sprites.TowerSprite;
 import com.threerings.defense.sprites.UnitSprite;
+import com.threerings.defense.tuning.UnitDefinitions;
 import com.threerings.defense.units.Tower;
 
 /** Encapsulates level-specific definitions and resource access. */
@@ -34,9 +35,15 @@ public class Level
         return null; // oh dear
     }
 
+    /** Returns an array of tower sprite assets in their default state. */
+    public function loadTowerIcons () :Array // of DisplayObjects, indexed by Tower.TYPE_*
+    {
+        return UnitDefinitions.getTowerAssetNamesForState(TowerSprite.STATE_REST).map(load);
+    }
+    
     protected function loadTowerAssets (sprite :TowerSprite) :Array
     {
-        var assetNames :Array = Definitions.getTowerAssetNames(sprite.tower.type);
+        var assetNames :Array = UnitDefinitions.getTowerAssetNames(sprite.tower.type);
         return assetNames.map(load);
     }
     
@@ -67,13 +74,13 @@ public class Level
     
     // temp: placeholder assets
 
-    [Embed(source="../../../../TreeHouseD_01_c.swf#tower_shrub")]
+    [Embed(source="../../../../rsrc/critters/default_left.png")]
     private static const _defaultCritterLeft :Class;
-    [Embed(source="../../../../TreeHouseD_01_c.swf#tower_shrub")]
+    [Embed(source="../../../../TreeHouseD_01_c.swf#walkingbully")]
     private static const _defaultCritterRight :Class;
-    [Embed(source="../../../../TreeHouseD_01_c.swf#tower_box")]
+    [Embed(source="../../../../rsrc/critters/default_up.png")]
     private static const _defaultCritterUp :Class;
-    [Embed(source="../../../../TreeHouseD_01_c.swf#tower_box")]
+    [Embed(source="../../../../rsrc/critters/default_down.png")]
     private static const _defaultCritterDown :Class;
     [Embed(source="../../../../rsrc/testmissile.png")]
     private static const _defaultMissile :Class;

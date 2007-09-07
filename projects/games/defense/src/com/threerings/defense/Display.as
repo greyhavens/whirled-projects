@@ -102,6 +102,8 @@ public class Display extends Canvas
         _board = board;
         _game = game;
         _controller = controller;
+
+        _ui.init(board, game);
     }
 
     public function handleUnload (event : Event) : void
@@ -134,14 +136,25 @@ public class Display extends Canvas
         }
     }
 
-    public function togglePathOverlay (player :int) :void
+    /** Shows path overlay for the specified player. Does not hide any other overlays. */
+    public function showPathOverlay (player :int) :void
     {
         var o :Overlay = _pathOverlays[player] as Overlay;
         if (o.ready()) {
-            o.visible = ! o.visible;
+            o.visible = true;
         }
     }
-    
+
+    /** Hides all path overlays. */
+    public function hidePathOverlays () :void
+    {
+        for each (var o :Overlay in _pathOverlays) {
+                if (o.ready()) {
+                    o.visible = false;
+                }
+            }
+    }
+
     // Functions called by the game controller
     
     /**
@@ -203,7 +216,8 @@ public class Display extends Canvas
     {
         var sprite :CritterSprite = _critters.get(critter.guid);
         if (sprite == null) {
-            Log.getLog(this).info("Unit not in display list, cannot remove: " + critter);
+            // this critter's already dead!
+            // Log.getLog(this).info("Unit not in display list, cannot remove: " + critter);
             return;
         }
 

@@ -3,20 +3,12 @@ package com.threerings.defense.units {
 import flash.geom.Point;
 
 import com.threerings.defense.Board;
+import com.threerings.defense.tuning.UnitDefinitions;
     
 public class Missile extends Unit
 {
-    public static const TYPE_STANDARD :int = 1;
+    public static const TYPE_PAPER_PLANE :int = 1;
 
-    public static function missileTypeForTower (towerType :int) :int
-    {
-        if (towerType == Tower.TYPE_SIMPLE) {
-            return TYPE_STANDARD;
-        } else {
-            throw new Error("TODO");
-        }
-    }
-    
     /** Missile type, one of the TYPE_* constants. */
     public var type :int;
 
@@ -50,6 +42,8 @@ public class Missile extends Unit
         this.delta = new Point(Infinity, Infinity); // this will be recalculated anyway
         this.vel = new Point(0, 0);
 
+        UnitDefinitions.initializeMissile(type, this);
+        
         this.maxvel = 5;
         this.damage = 1;
     }
