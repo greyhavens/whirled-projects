@@ -32,8 +32,7 @@ public class HudView extends Sprite
         });
 
         // get rid of various transient bits
-        _hud.respawn.visible = _hud.dc.visible = false;
-        _hud.removeChild(_hud.fader);
+        _hud.dc.visible = false;
 
         // update the connection display
         updateConnection();
@@ -78,7 +77,7 @@ public class HudView extends Sprite
         }
 
         // display the warning if appropriate
-        _hud.hp_warning.gotoAndStop((frame <= 20 && !self.dead) ? "on" : "off");
+        _hud.hp_warning.gotoAndPlay((frame <= 20 && !self.dead) ? "on" : "off");
 
         // update the weapon display
         _hud.stats.exp.weapon.weapon.gotoAndStop(Weapon.FRAME_LABELS[self.weapon]);
@@ -89,7 +88,7 @@ public class HudView extends Sprite
         _hud.stats.energy.num.text = pct + "%";
 
         // display the energy warning if depleted
-        _hud.energy_warning.gotoAndStop(self.depleted ? "on" : "off");
+        _hud.energy_warning.gotoAndPlay(self.depleted ? "on" : "off");
 
         // update the experience display
         var exp :Number = Math.round(self.experience) + 1;
@@ -115,15 +114,12 @@ public class HudView extends Sprite
         if (respawn > 0) {
             if (!_hud.dc.visible) {
                 _hud.dc.visible = true;
-                _hud.respawn.visible = true;
-                _view.animmgr.play(_hud.respawn, "on");
+                _hud.respawn.gotoAndStop("on");
             }
             _hud.dc.text = StringUtil.prepad(respawn.toString(), 2, "0");
 
         } else if (_hud.dc.visible) {
-            _view.animmgr.play(_hud.respawn, "off", false, function () :void {
-                _hud.respawn.visible = false;
-            });
+            _hud.respawn.gotoAndStop("off");
             _hud.dc.visible = false;
         }
     }
@@ -133,13 +129,7 @@ public class HudView extends Sprite
      */
     public function fade (type :String, callback :Function = null) :void
     {
-        _hud.addChild(_hud.fader);
-        _view.animmgr.play(_hud.fader, type, false, function () :void {
-            _hud.removeChild(_hud.fader);
-            if (callback != null) {
-                callback();
-            }
-        });
+        _view.animmgr.play(_hud.fader, type, callback);
     }
 
     /**
@@ -202,7 +192,7 @@ public class HudView extends Sprite
         _hud.score.text = _ctrl.score;
         if (increment > 0) {
             _hud.score_add.score_add.score_add.text = "+" + increment;
-            _view.animmgr.play(_hud.score_add, "go");
+            _hud.score_add.gotoAndPlay("go");
         }
     }
 
@@ -214,7 +204,7 @@ public class HudView extends Sprite
         var hits :int = (_ctrl.self == null) ? 0 : _ctrl.self.hits;
         if (hits > 0) {
             _hud.hitcounter.num.hits.text = hits;
-            _view.animmgr.play(_hud.hitcounter, "go");
+            _hud.hitcounter.gotoAndPlay("go");
         } else {
             _hud.hitcounter.gotoAndStop("stop");
         }
@@ -266,7 +256,8 @@ public class HudView extends Sprite
      */
     public function weaponDamaged () :void
     {
-        _view.animmgr.play(_hud.stats.exp.weapon, "damage");
+        // returns to idle after showing damage effect
+        _hud.stats.exp.weapon.gotoAndPlay("damage");
     }
 
     /**

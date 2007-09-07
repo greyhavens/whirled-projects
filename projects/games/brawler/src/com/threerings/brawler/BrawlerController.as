@@ -156,7 +156,8 @@ public class BrawlerController extends Controller
             }
             createEnemies();
             if (_clear) {
-                _control.endGame(_control.getOccupants());
+                // post our score to the dobj and show the game results
+                _control.set("scores", _score, _control.seating.getMyPosition());
                 _view.showResults();
             } else {
                 _view.enterRoom();
@@ -284,6 +285,24 @@ public class BrawlerController extends Controller
 
         } else if (event.name == "wave") {
             wave = event.newValue as int;
+
+        } else if (event.name == "scores" && _control.amInControl()) {
+            // once we have scores from all players present, end the game
+            var scores :Array = _control.get("scores") as Array;
+            var players :Array = _control.seating.getPlayerIds();
+            for (var ii :int = 0; ii < players.length; ii++) {
+                if (players[ii] > 0 && scores[ii] == undefined) {
+                    return;
+                }
+            }
+            var pplayers :Array = new Array(), pscores :Array = new Array();
+            for (ii = 0; ii < players.length; ii++) {
+                if (players[ii] > 0) {
+                    pplayers.push(players[ii]);
+                    pscores.push(scores[ii]);
+                }
+            }
+            _control.endGameWithScores(pplayers, pscores, WhirledGameControl.TO_EACH_THEIR_OWN);
 
         } else if (StringUtil.startsWith(event.name, "actor")) {
             // it's the state of an actor
@@ -566,10 +585,6 @@ public class BrawlerController extends Controller
 
     /** The enemy configurations. */
     protected var _econfigs :Array = new Array();
-
-    /** Contains the initial configurations of the enemies. */
-    [Embed(source="../../../../rsrc/raw.swf", symbol="all_mobs")]
-    protected static const EnemyConfigs :Class;
 
     /** The available difficulty levels. */
     protected static const DIFFICULTY_LEVELS :Array = [ "Easy", "Normal", "Hard", "Inferno" ];

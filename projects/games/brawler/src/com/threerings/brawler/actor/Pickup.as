@@ -75,7 +75,7 @@ public class Pickup extends Actor
     protected function award () :void
     {
         // award some number of points
-        _ctrl.score = _ctrl.score + points;
+        _ctrl.score += points;
     }
 
     /**

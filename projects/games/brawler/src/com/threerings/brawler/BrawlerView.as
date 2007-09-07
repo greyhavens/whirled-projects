@@ -30,7 +30,7 @@ public class BrawlerView extends Sprite
         _ctrl = ctrl;
 
         // create the animation manager
-        _animmgr = new AnimationManager(disp);
+        _animmgr = new AnimationManager();
     }
 
     /**
@@ -56,9 +56,8 @@ public class BrawlerView extends Sprite
 
         // create and attach the cursor and goal
         _background.cursor_zone.addChild(_cursor = new Cursor());
-        _cursor.visible = false;
         _background.cursor_zone.addChild(_goal = new Destination());
-        _goal.visible = false;
+        _goal.gotoAndPlay("off");
 
         // if the game is in play, jump right into the main view; otherwise, show the preloader
         // display and wait for the game to start
@@ -144,8 +143,7 @@ public class BrawlerView extends Sprite
      */
     public function showGoal (x :Number, y :Number) :void
     {
-        _goal.visible = true;
-        _animmgr.play(_goal, "on");
+        _goal.gotoAndPlay("on");
         setPosition(_goal, x, y);
     }
 
@@ -154,9 +152,7 @@ public class BrawlerView extends Sprite
      */
     public function hideGoal () :void
     {
-        _animmgr.play(_goal, "off", false, function () :void {
-            _goal.visible = false;
-        });
+        _goal.gotoAndPlay("off");
     }
 
     /**
@@ -164,7 +160,7 @@ public class BrawlerView extends Sprite
      */
     public function playCameraEffect (effect :String) :void
     {
-        _animmgr.play(_camera, effect);
+        _camera.gotoAndPlay(effect);
     }
 
     /**
@@ -186,18 +182,15 @@ public class BrawlerView extends Sprite
     }
 
     /**
-     * Adds a transient sprite that will be removed after the specified amount of time (in seconds)
-     * elapses.
+     * Adds a transient sprite that will remove itself after its animation completes.
      *
      * @param background if true, add this sprite to the background rather than the actor layer.
      */
     public function addTransient (
-        sprite :Sprite, x :Number, y :Number, lifespan :Number = 1,
-        background :Boolean = false) :void
+        sprite :Sprite, x :Number, y :Number, background :Boolean = false) :void
     {
         (background ? _background : _background.actors).addChild(sprite);
         setPosition(sprite, x, y);
-        _transients.push(new Transient(sprite, lifespan));
     }
 
     /**
@@ -315,10 +308,9 @@ public class BrawlerView extends Sprite
         var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
         results.stats.r.rank.text = GRADES[grade] + " (" + pct + "%)";
 
-        // show and award the flow
+        // show the flow awarded (TODO: make this accurate)
         var flow :int = pct;
         results.stats.f.flow.text = flow;
-        _ctrl.control.grantFlowAward(flow);
     }
 
     /**
@@ -369,9 +361,6 @@ public class BrawlerView extends Sprite
 
         // update the camera position
         updateCamera(elapsed);
-
-        // update the transient sprites
-        updateTransients(elapsed);
 
         // update the locations of the background layers
         updateBackgroundLayers();
@@ -425,20 +414,6 @@ public class BrawlerView extends Sprite
     }
 
     /**
-     * Updates the transient sprites.
-     */
-    protected function updateTransients (elapsed :Number) :void
-    {
-        for each (var transient :Transient in _transients) {
-            if ((transient.lifespan -= elapsed) <= 0) {
-                (_background.actors.contains(transient.sprite) ?
-                    _background.actors : _background).removeChild(transient.sprite);
-                ArrayUtil.removeFirst(_transients, transient);
-            }
-        }
-    }
-
-    /**
      * Updates the positions of the background layers.
      */
     protected function updateBackgroundLayers () :void
@@ -462,17 +437,14 @@ public class BrawlerView extends Sprite
         if (_ground.hitTestPoint(mouseX, mouseY)) {
             if (!_cursorOn) {
                 _cursorOn = true;
-                _cursor.visible = true;
-                _animmgr.play(_cursor, "on");
+                _cursor.gotoAndPlay("on");
             }
             var local :Point = _background.globalToLocal(new Point(mouseX, mouseY));
             setPosition(_cursor, local.x, local.y);
 
         } else if (_cursorOn) {
             _cursorOn = false;
-            _animmgr.play(_cursor, "off", false, function () :void {
-                _cursor.visible = false;
-            });
+            _cursor.gotoAndPlay("off");
         }
     }
 
@@ -529,16 +501,13 @@ public class BrawlerView extends Sprite
     protected var _cursor :MovieClip;
 
     /** Whether or not the cursor is currently "on" (or transitioning thereto). */
-    protected var _cursorOn :Boolean = false;
+    protected var _cursorOn :Boolean = true;
 
     /** The player goal sprite. */
     protected var _goal :MovieClip;
 
     /** The actors in the view. */
     protected var _actors :Array = new Array();
-
-    /** The transients in the view. */
-    protected var _transients :Array = new Array();
 
     /** The time of the last frame. */
     protected var _timer :int = getTimer();
@@ -548,26 +517,6 @@ public class BrawlerView extends Sprite
 
     /** The number of frames rendered in the last second. */
     protected var _frameCount :int = 0;
-
-    /** The preloader display class. */
-    [Embed(source="../../../../rsrc/raw.swf", symbol="_PRELOADER")]
-    protected static const Preloader :Class;
-
-    /** The game display class. */
-    [Embed(source="../../../../rsrc/raw.swf", symbol="_GAME")]
-    protected static const Game :Class;
-
-    /** The ground cursor class. */
-    [Embed(source="../../../../rsrc/raw.swf", symbol="cursor")]
-    protected static const Cursor :Class;
-
-    /** The player destination class. */
-    [Embed(source="../../../../rsrc/raw.swf", symbol="destination")]
-    protected static const Destination :Class;
-
-    /** The results screen class. */
-    [Embed(source="../../../../rsrc/raw.swf", symbol="_ENDSCREEN")]
-    protected static const Results :Class;
 
     /** The number of background layers. */
     protected static const BACKGROUND_LAYERS :int = 5;
@@ -582,21 +531,4 @@ public class BrawlerView extends Sprite
     /** The required percent score for each grade. */
     protected static const GRADE_LEVELS :Array = [ 100, 90, 80, 70, 60, 0 ];
 }
-}
-
-import flash.display.Sprite;
-
-class Transient
-{
-    /** The transient sprite. */
-    public var sprite :Sprite;
-
-    /** The transient's remaining lifespan. */
-    public var lifespan :Number;
-
-    public function Transient (sprite :Sprite, lifespan :Number)
-    {
-        this.sprite = sprite;
-        this.lifespan = lifespan;
-    }
 }

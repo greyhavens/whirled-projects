@@ -52,7 +52,7 @@ public class Coin extends Pickup
             var sparkle :MovieClip = new Sparkle();
             var x :Number = x + BrawlerUtil.random(-15, +15);
             var y :Number = y + _clip.cn.y + BrawlerUtil.random(-15, +15);
-            _view.addTransient(sparkle, x, y, 0.5, true);
+            _view.addTransient(sparkle, x, y, true);
         }
     }
 
@@ -77,16 +77,8 @@ public class Coin extends Pickup
     override protected function hit (player :Player) :void
     {
         super.hit(player);
-        var sparks :MovieClip = new Sparks();
-        _view.addTransient(sparks, x, y, 1, true);
-    }
-
-    // documentation inherited
-    override protected function award () :void
-    {
-        // grant the player some flow
-        super.award();
-        _ctrl.control.grantFlowAward(1);
+        var sparks :MovieClip = new CoinSparks();
+        _view.addTransient(sparks, x, y, true);
     }
 
     // documentation inherited
@@ -107,18 +99,6 @@ public class Coin extends Pickup
         v.normalize(1);
         return view.clampToGround(x + v.x*distance, y + v.y*distance);
     }
-
-    /** The coin sprite class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="coin")]
-    protected static const CoinSprite :Class;
-
-    /** The sparkle effect class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="coin_spark")]
-    protected static const Sparkle :Class;
-
-    /** The sparks effect class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="coinGOT")]
-    protected static const Sparks :Class;
 
     /** The location towards which the coin is sliding. */
     protected var _goal :Point;

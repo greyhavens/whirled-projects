@@ -76,7 +76,7 @@ public class Player extends Pawn
         if (_weapon == Weapon.FISTS) {
             // show the break effect
             var sparks :MovieClip = new WeaponBreak();
-            _view.addTransient(sparks, x, y, 1, true);
+            _view.addTransient(sparks, x, y, true);
         }
         maybePublish();
     }
@@ -173,7 +173,7 @@ public class Player extends Pawn
         // play the attack animations
         var attacks :Array = secondary ? Attack.SECONDARY_ATTACKS : Attack.PRIMARY_ATTACKS;
         _attack = attacks[_weapon][level];
-        setAction("attack", false, _attack.animation, _attack.name);
+        setAction("attack", _attack.animation, _attack.name);
         orient(dir);
 
         if (_master) {
@@ -200,7 +200,7 @@ public class Player extends Pawn
     {
         // update the hit count and score
         var points :int = Math.round(damage * level * (++_hits));
-        _ctrl.score = _ctrl.score + points;
+        _ctrl.score += points;
         _hitResetCountdown = HIT_RESET_INTERVAL;
         _view.hud.updateHits();
 
@@ -560,26 +560,6 @@ public class Player extends Pawn
 
     /** The countdown until the hit count is reset. */
     protected var _hitResetCountdown :Number = 0;
-
-    /** The player blip class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="blip_pc")]
-    protected static const PlayerBlip :Class;
-
-    /** The player damage number effect class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="dmg_num_player")]
-    protected static const PlayerDamageNumber :Class;
-
-    /** The player critical damage number effect class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="dmg_crit_num_player")]
-    protected static const PlayerCriticalDamageNumber :Class;
-
-    /** The player damage snap sprite class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="dmg_snap_player")]
-    protected static const PlayerDamageSnap :Class;
-
-    /** The weapon break effect class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="weapon_drop_break")]
-    protected static const WeaponBreak :Class;
 
     /** The rate (u/s) at which players lose energy when blocking. */
     protected static const BLOCK_ENERGY_RATE :Number = -20;

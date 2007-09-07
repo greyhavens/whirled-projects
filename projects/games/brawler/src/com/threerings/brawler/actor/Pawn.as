@@ -452,7 +452,7 @@ public class Pawn extends Actor
                 // perhaps emit a dust poof
                 if ((_dustCountdown -= elapsed) <= 0) {
                     var dust :Sprite = new Dust();
-                    _view.addTransient(dust, x, y, 1.125);
+                    _view.addTransient(dust, x, y);
                     _dustCountdown = dustInterval;
                 }
             }
@@ -639,12 +639,12 @@ public class Pawn extends Actor
         } else {
             number.txt.dmg.text = "-" + Math.round(damage);
         }
-        _view.addTransient(number, x + BrawlerUtil.random(50), y, 1.25, true);
+        _view.addTransient(number, x + BrawlerUtil.random(50), y, true);
 
         // create the snap effect
         var snap :MovieClip = createDamageSnap();
         _view.addTransient(
-            snap, x + BrawlerUtil.random(20), y + BrawlerUtil.random(20), 0.5, true);
+            snap, x + BrawlerUtil.random(20), y + BrawlerUtil.random(20), true);
         var scale :Number = BrawlerUtil.random(0.1, -0.1);
         snap.scaleX += scale;
         snap.scaleY += scale;
@@ -659,7 +659,7 @@ public class Pawn extends Actor
             _view.playCameraEffect("light");
         }
         var block :MovieClip = new Block();
-        _view.addTransient(block, x + BrawlerUtil.random(50), y, 1.25, true);
+        _view.addTransient(block, x + BrawlerUtil.random(50), y, true);
     }
 
     /**
@@ -682,9 +682,9 @@ public class Pawn extends Actor
         } else if (blocking) {
             setAction("block");
         } else if (moving) {
-            setAction("walk", true);
+            setAction("walk");
         } else {
-            setAction("idle", true);
+            setAction("idle");
         }
     }
 
@@ -747,25 +747,25 @@ public class Pawn extends Actor
      * Sets the pawn's action.
      */
     protected function setAction (
-        action :String, loop :Boolean = false, anim :String = null, danim :String = null) :void
+        action :String, anim :String = null, danim :String = null) :void
     {
         if (_action == action) {
             return;
         }
-        _action = action;
         var callback :Function = ArrayUtil.contains(TRANSIENT_ACTIONS, action) ?
             (function () :void { _action = null; }) : null;
-        play(anim == null ? action : anim, loop, callback, danim);
+        play(anim == null ? action : anim, callback, danim);
+        _action = action;
     }
 
     /**
      * Plays an animation on both the character and its damage box.
      */
     protected function play (
-        anim :String, loop :Boolean = false, callback :Function = null, danim :String = null) :void
+        anim :String, callback :Function = null, danim :String = null) :void
     {
-        _view.animmgr.play(_character, anim, loop, callback);
-        _view.animmgr.play(_dmgbox, danim == null ? anim : danim, loop);
+        _view.animmgr.play(_character, anim, callback);
+        _dmgbox.gotoAndPlay(danim == null ? anim : danim);
     }
 
     /**
@@ -855,30 +855,6 @@ public class Pawn extends Actor
 
     /** Used to blink the pawn. */
     protected var _blink :int = 0;
-
-    /** The player sprite class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="player")]
-    protected static const PlayerSprite :Class;
-
-    /** The dust effect class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="slide_dust")]
-    protected static const Dust :Class;
-
-    /** The block effect class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="block")]
-    protected static const Block :Class;
-
-    /** The damage number effect class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="dmg_num")]
-    protected static const DamageNumber :Class;
-
-    /** The critical damage number effect class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="dmg_crit_num")]
-    protected static const CriticalDamageNumber :Class;
-
-    /** The damage snap effect class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="dmg_snap")]
-    protected static const DamageSnap :Class;
 
     /** Identifies an attack message (fired when we start an attack). */
     protected static const ATTACK :int = 0;

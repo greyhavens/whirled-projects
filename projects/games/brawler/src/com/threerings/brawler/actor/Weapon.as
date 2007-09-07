@@ -68,9 +68,9 @@ public class Weapon extends Pickup
     override protected function hit (player :Player) :void
     {
         super.hit(player);
-        var sparks :MovieClip = new Sparks();
+        var sparks :MovieClip = new WeaponSparks();
         sparks.cn.gotoAndStop(label);
-        _view.addTransient(sparks, x, y, 1, true);
+        _view.addTransient(sparks, x, y, true);
     }
 
     /**
@@ -100,14 +100,6 @@ public class Weapon extends Pickup
 
     /** The level of the weapon. */
     protected var _level :int;
-
-    /** The weapon drop sprite class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="weapon_drop")]
-    protected static const WeaponDrop :Class;
-
-    /** The sparks effect class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="weapon_drop_got")]
-    protected static const Sparks :Class;
 
     /** The base names of the weapons. */
     protected static const WEAPON_NAMES :Array = [ "fists", "sword", "hammer", "bow" ];

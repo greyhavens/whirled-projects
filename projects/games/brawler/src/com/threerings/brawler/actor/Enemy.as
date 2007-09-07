@@ -91,7 +91,7 @@ public class Enemy extends Pawn
         }
 
         // play the attack animation
-        setAction("attack", false, "punch");
+        setAction("attack", "punch");
         orient(dir);
 
         if (_master) {
@@ -116,7 +116,7 @@ public class Enemy extends Pawn
         super.wasDestroyed();
         _ctrl.enemyWasDestroyed(this);
         if (_character.visible) {
-            _view.addTransient(new Ghost(), x, y, 1, true);
+            _view.addTransient(new Ghost(), x, y, true);
         }
     }
 
@@ -504,34 +504,6 @@ public class Enemy extends Pawn
 
     /** The countdown until the enemy can attack. */
     protected var _attackCountdown :Number;
-
-    /** The peon character class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="mob1")]
-    protected static const Peon :Class;
-
-    /** The grunt character class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="mob2")]
-    protected static const Grunt :Class;
-
-    /** The brute character class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="mob3")]
-    protected static const Brute :Class;
-
-    /** The midboss character class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="midboss")]
-    protected static const Midboss :Class;
-
-    /** The boss character class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="boss")]
-    protected static const Boss :Class;
-
-    /** The enemy blip class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="blip_npc")]
-    protected static const EnemyBlip :Class;
-
-    /** The ghost class. */
-    [Embed(source="../../../../../rsrc/raw.swf", symbol="death_effect")]
-    protected static const Ghost :Class;
 
     /** Character classes for the enemy variants. */
     protected static const VARIANT_CLASSES :Array = [ Peon, Grunt, Brute, Midboss, Boss ];
