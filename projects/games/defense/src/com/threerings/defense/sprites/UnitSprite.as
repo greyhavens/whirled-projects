@@ -1,58 +1,67 @@
 package com.threerings.defense.sprites {
 
+import flash.display.DisplayObject;
 import flash.geom.Point;
 
 import mx.controls.Image;
 
 import com.threerings.defense.Board;
+import com.threerings.defense.Level;
+import com.threerings.defense.ui.Overlay;
 import com.threerings.defense.units.Unit;
 
 /**
  * Base class for sprites that display unit objects.
  */
-public class UnitSprite extends Image
+public /* abstract */ class UnitSprite extends Image
 {
-    /** Offset in pixels from the image anchor hotspot, to the image upper-left coordinate. */
-    public var anchorOffset :Point = new Point(0, 0);
+    public static const STATE_INVALID :int = -1;
+    public static const STATE_DEFAULT :int = 0; // deleteme!
 
-    public function UnitSprite (unit :Unit)
+    
+    /** Offset in pixels from the image anchor hotspot, to the image upper-left coordinate. */
+    public var assetOffset :Point = new Point(0, 0);
+
+    public function UnitSprite (unit :Unit, level :Level)
     {
         _unit = unit;
+        _level = level;
+
+        loadAllAssets();
     }
 
     /** Called after the unit had moved, this function updates screen position and z-ordering
      *  of the sprite appropriately. */
     public function update () :void
     {
-        this.x = _unit.centroidx + anchorOffset.x;
-        this.y = _unit.centroidy + anchorOffset.y;
+        var newstate :int = recomputeCurrentState();
+        if (newstate != _currentState) {
+            _currentState = newstate;
+            _currentAsset = _allAssets[_currentState];
+            this.source = _currentAsset;
+        }
+        this.x = _unit.centroidx;
+        this.y = _unit.centroidy;
         adjustZOrder();
     }
-
-    /** Called to refresh assets. */
-    public function startReloadingAssets () :void
+    
+    /** Returns the new state in which this sprite should be based on the unit.
+     *  Subclasses should override this with a more meaningful algorithm. */
+    public function recomputeCurrentState () :int
     {
-        // todo: in the future this will be listener-based, if we load from external swfs
-        reloadAssets();
-        assetsReloaded();
+        return STATE_DEFAULT;
     }
 
     override public function toString () :String
     {
         return "UnitSprite: " + _unit;
     }
-    
-    /** Asset loading, to be overridden by subclasses. */
-    protected function reloadAssets () :void
-    {
-        // no op
-    }
 
-    /** Called after asset loading, displays the loaded asset. */
-    protected function assetsReloaded () :void
+    /** Loads all assets for this type of sprite. Since UnitSprite doesn't have interesting
+     *  assets, subclasses should override this with more interesting functionality. */
+    protected function loadAllAssets () :void
     {
-        anchorOffset.x = - _assets.screenWidth / 2;
-        anchorOffset.y = - _assets.screenHeight;
+        _allAssets = _level.loadSpriteAssets(this);
         update();
     }
 
@@ -74,7 +83,7 @@ public class UnitSprite extends Image
         var myz :Number = getMyZOrder();
 
         // see if we need to get pushed back
-        while (newindex > 1) {  // make sure the background at 0 stays at 0
+        while (newindex > 0) {  
             if (getZOfChildAt(newindex - 1) < myz) {
                 break;
             }
@@ -110,11 +119,18 @@ public class UnitSprite extends Image
     /** Helper function that wraps getMyZOrder in a retrieval operation. */
     protected function getZOfChildAt (index :int) :Number
     {
-        var sprite :UnitSprite = this.parent.getChildAt(index) as UnitSprite;
-        return (sprite != null) ? sprite.getMyZOrder() : NaN;
+        var obj :DisplayObject = this.parent.getChildAt(index);
+        if (obj is UnitSprite) {
+            return (obj as UnitSprite).getMyZOrder();
+        } else {
+            return (obj is Overlay) ? 1 : NaN;
+        }
     }
     
     protected var _unit :Unit;
-    protected var _assets :UnitAssets;
+    protected var _level :Level;
+    protected var _currentState :int = STATE_INVALID;
+    protected var _currentAsset :DisplayObject;
+    protected var _allAssets :Array; // of DisplayObject
 }
 }

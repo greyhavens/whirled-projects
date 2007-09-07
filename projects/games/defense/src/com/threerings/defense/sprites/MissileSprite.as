@@ -1,21 +1,16 @@
 package com.threerings.defense.sprites {
 
-import flash.geom.Point;
-
-import mx.core.BitmapAsset;
-import mx.core.IFlexDisplayObject;
-import mx.controls.Image;
-
-import com.threerings.defense.AssetFactory;
 import com.threerings.defense.Board;
+import com.threerings.defense.Level;
 import com.threerings.defense.units.Missile;
 
 public class MissileSprite extends UnitSprite
 {
-    public function MissileSprite (missile :Missile)
+    public static const STATE_ACTIVE :int = 0;
+    
+    public function MissileSprite (missile :Missile, level :Level)
     {
-        super(missile);
-        startReloadingAssets();
+        super(missile, level);
     }
 
     public function get missile () :Missile
@@ -23,26 +18,9 @@ public class MissileSprite extends UnitSprite
         return _unit as Missile;
     }
 
-    public function get assets () :MissileAssets
+    override public function recomputeCurrentState () :int
     {
-        return _assets as MissileAssets;
-    }
-
-    // from UnitSprite
-    override protected function reloadAssets () :void
-    {
-        _assets = AssetFactory.makeMissileAssets(missile);
-        this.source = assets.base;
-        this.scaleX = assets.screenWidth / source.width;
-        this.scaleY = assets.screenHeight / source.height;
-    }
-
-    // from UnitSprite
-    override protected function assetsReloaded () :void
-    {
-        anchorOffset.x = - _assets.screenWidth / 2;
-        anchorOffset.y = - _assets.screenHeight / 2;
-        update();
+        return STATE_ACTIVE;
     }
 
     // from UnitSprite

@@ -2,19 +2,21 @@ package com.threerings.defense.sprites {
 
 import flash.geom.Point;
 
-import mx.core.BitmapAsset;
-import mx.core.IFlexDisplayObject;
-import mx.controls.Image;
-
-import com.threerings.defense.AssetFactory;
+import com.threerings.defense.Level;
 import com.threerings.defense.units.Critter;
 
 public class CritterSprite extends UnitSprite
 {
-    public function CritterSprite (critter :Critter)
+    public static const STATE_RIGHT :int = 0;
+    public static const STATE_UP    :int = 1;
+    public static const STATE_LEFT  :int = 2;
+    public static const STATE_DOWN  :int = 3;
+
+    public static const ALL_STATES :Array = [ STATE_RIGHT, STATE_UP, STATE_LEFT, STATE_DOWN ];
+    
+    public function CritterSprite (critter :Critter, level :Level)
     {
-        super(critter);
-        startReloadingAssets();
+        super(critter, level);
     }
 
     public function get critter () :Critter
@@ -22,39 +24,17 @@ public class CritterSprite extends UnitSprite
         return _unit as Critter;
     }
 
-    public function get assets () :CritterAssets
-    {
-        return _assets as CritterAssets;
-    }
-    
-    override public function update () :void
-    {
-        super.update();
-        updateAngle();
-    }
-    
-    override protected function reloadAssets () :void
-    {
-        _assets = AssetFactory.makeCritterAssets(critter);
-        updateAngle(); // since we aren't moving yet, just loads the first one
-    }
-
-    /** Adjusts animation frames to fit movement in the specified direction. */
-    public function updateAngle () :void
+    override public function recomputeCurrentState () :int
     {
         var walkDir :int = -1;
-        if (Math.abs(critter.vel.y) > Math.abs(critter.vel.x)) {
-            walkDir = (critter.vel.y >= 0) ? CritterAssets.WALK_DOWN : CritterAssets.WALK_UP;
+        var vel :Point = critter.vel;
+        if (Math.abs(vel.y) > Math.abs(vel.x)) {
+            walkDir = (vel.y >= 0) ? STATE_DOWN : STATE_UP;
         } else {
-            walkDir = (critter.vel.x >= 0) ? CritterAssets.WALK_RIGHT : CritterAssets.WALK_LEFT;
+            walkDir = (vel.x >= 0) ? STATE_RIGHT : STATE_LEFT;
         }
 
-        var walkAsset :IFlexDisplayObject = assets.getWalkAsset(walkDir);
-        if (walkAsset != this.source) {
-            this.source = walkAsset;
-            this.scaleX = assets.screenWidth / source.width;
-            this.scaleY = assets.screenHeight / source.height;
-        }
+        return walkDir;
     }
 }
 }

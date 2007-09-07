@@ -42,7 +42,7 @@ public class Missile extends Unit
     {
         var startx :Number = source.pos.x + source.missileHotspot.x;
         var starty :Number = source.pos.y + source.missileHotspot.y;
-        super(player, startx, starty, 1, 1);
+        super(player, startx, starty, 0.5, 0.5);
 
         this.type = type;
         this.source = source;

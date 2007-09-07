@@ -29,7 +29,7 @@ public class Unit
         return int(Math.random() * int.MAX_VALUE);
     }
     
-    public function Unit (player :int, x :int, y :int, width :int, height :int)
+    public function Unit (player :int, x :Number, y :Number, width :Number, height :Number)
     {
         this.player = player;
         this.pos = new Point(x, y);

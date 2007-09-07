@@ -79,7 +79,7 @@ public class Simulator
             c.target.x = p.x;
             c.target.y = p.y;
         } else {
-            trace("UNABLE TO ADVANCE CRITTER " + c + " - NO PATH FOUND!");
+            // trace("UNABLE TO ADVANCE CRITTER " + c + " - NO PATH FOUND!");
         }
         /*
         var delta :Point = _board.getPlayerTarget(c.player);

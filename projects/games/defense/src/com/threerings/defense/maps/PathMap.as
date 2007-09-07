@@ -47,7 +47,7 @@ public class PathMap extends Map
             for (var ii :int = 0; ii < UPDATES_PER_FRAME; ii++) {
                 var changeCount :int = pathingPass();
                 if (changeCount > 0) {
-                    trace("Found " + changeCount + " new values!");
+                    // trace("Found " + changeCount + " new values!");
                 } else {
                     trace("Path up to date!");
                     _upToDate = true;  

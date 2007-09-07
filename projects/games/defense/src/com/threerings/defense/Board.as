@@ -35,6 +35,9 @@ public class Board
     public static const PLAYER_COLORS :Array = [ 0x000000ff /* player 0 */,
                                                  0x0000ff00 /* player 1 */ ];
 
+    /** Level information. */
+    public var level :Level; 
+
     public function Board (whirled :WhirledGameControl)
     {
         _whirled = whirled;
@@ -56,6 +59,11 @@ public class Board
         }
     }
 
+    public function handleUnload (event : Event) :void
+    {
+        trace("BOARD UNLOAD");
+    }
+
     public function getMyPlayerIndex () :int
     {
         return _whirled.seating.getMyPosition();
@@ -71,11 +79,6 @@ public class Board
         return _whirled.seating.getPlayerIds().length;
     }
     
-    public function handleUnload (event : Event) :void
-    {
-        trace("BOARD UNLOAD");
-    }
-
     public function processMaps () :void
     {
         for each (var map :Map in _allmaps) {
@@ -166,5 +169,6 @@ public class Board
 
     /** This is where we get game settings from. */
     protected var _whirled :WhirledGameControl;
+
 }
 }

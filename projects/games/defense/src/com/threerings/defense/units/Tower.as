@@ -12,7 +12,8 @@ public class Tower extends Unit
 {
     public static const TYPE_INVALID :int = 0;
     public static const TYPE_SIMPLE :int = 1;
-
+    public static const TYPE_2 :int = 2;
+    
     /** Position on the tower (in board units, potentially fractional, from the upper left)
      *  from which missiles should be fired. */
     public var missileHotspot :Point;
@@ -25,15 +26,15 @@ public class Tower extends Unit
 
     /** Firing delay between missiles, in seconds. */
     public var firingDelay :Number = 1;
-    
+
     /** Tower type, one of the TYPE_* constants. */
     protected var _type :int;
 
     /** Game time when the tower will be able to fire again. */
     protected var _nextFiringTime :Number = 0;
-
+   
     
-    public function Tower (x :int, y :int, type :int, player :int, guid :int)
+    public function Tower (x :Number, y :Number, type :int, player :int, guid :int)
     {
         super(player, x, y, 1, 1);
         updateFromType(type);
@@ -51,7 +52,7 @@ public class Tower extends Unit
         switch(_type) {
         case Tower.TYPE_SIMPLE:
             size.x = size.y = 2;
-            rangeMaxSq = 16;
+            rangeMaxSq = 6;
             firingDelay = 2;
             break;
         default:

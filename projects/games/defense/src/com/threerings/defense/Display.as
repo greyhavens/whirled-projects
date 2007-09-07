@@ -152,7 +152,7 @@ public class Display extends Canvas
     {
         Mouse.hide();
         if (_cursor == null) {
-            _cursor = new TowerSprite(tower);
+            _cursor = new TowerSprite(tower, _board.level);
             _boardSprite.addChild(_cursor);
         }
         if (_cursor.tower != tower) {
@@ -185,14 +185,15 @@ public class Display extends Canvas
         
     public function handleAddTower (tower :Tower) :void
     {
-        var sprite :TowerSprite = new TowerSprite(tower);
+        var sprite :TowerSprite = new TowerSprite(tower, _board.level);
         _boardSprite.addChild(sprite);
         _towers.put(tower.guid, sprite);
+        sprite.update();
     }
     
     public function handleAddCritter (critter :Critter) :void
     {
-        var sprite :CritterSprite = new CritterSprite(critter);
+        var sprite :CritterSprite = new CritterSprite(critter, _board.level);
         _boardSprite.addChild(sprite);
         _critters.put(critter.guid, sprite);
         sprite.update();
@@ -212,7 +213,7 @@ public class Display extends Canvas
     
     public function handleAddMissile (missile :Missile) :void
     {
-        var sprite :MissileSprite = new MissileSprite(missile);
+        var sprite :MissileSprite = new MissileSprite(missile, _board.level);
         _boardSprite.addChild(sprite);
         _missiles.put(missile.guid, sprite);
         sprite.update();
