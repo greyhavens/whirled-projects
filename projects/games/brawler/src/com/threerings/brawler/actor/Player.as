@@ -146,7 +146,7 @@ public class Player extends Pawn
      */
     public function attack (secondary :Boolean, level :int = -1, dir :int = -1) :void
     {
-        if (_master) {
+        if (amOwner) {
             // make sure we can attack
             if (_action != "idle" && _action != "walk") {
                 return;
@@ -176,7 +176,7 @@ public class Player extends Pawn
         setAction("attack", _attack.animation, _attack.name);
         orient(dir);
 
-        if (_master) {
+        if (amOwner) {
             // stop the pawn and announce the attack
             stop();
             send({ type: ATTACK, secondary: secondary, level: level, dir: dir });
@@ -239,7 +239,7 @@ public class Player extends Pawn
     override public function set blocking (value :Boolean) :void
     {
         // make sure we have enough energy to block
-        if (!(_master && value && (_energy <= 0 || _depleted))) {
+        if (!(amOwner && value && (_energy <= 0 || _depleted))) {
             super.blocking = value;
         }
     }
@@ -249,7 +249,7 @@ public class Player extends Pawn
         x :Number, y :Number, motion :int = SNAP, publish :Boolean = true) :void
     {
         // make sure we have enough energy to sprint
-        if (!(_master && motion == SPRINT && (_energy <= 0 || _depleted))) {
+        if (!(amOwner && motion == SPRINT && (_energy <= 0 || _depleted))) {
             super.move(x, y, motion, publish);
         }
     }
@@ -278,7 +278,7 @@ public class Player extends Pawn
 
         // check for collision of damage box with enemies when attacking
         hitTestEnemies();
-        if (!_master) {
+        if (!amOwner) {
             return;
         }
         // respawn if enough time has passed since death
@@ -389,7 +389,7 @@ public class Player extends Pawn
         weapon = state.weapon;
 
         // remove the health bar if it's the local player
-        if (_master) {
+        if (amOwner) {
             _psprite.removeChild(_health);
             if (special) {
                 _hp = maxhp; // handle special maximum
@@ -403,7 +403,7 @@ public class Player extends Pawn
      */
     protected function get special () :Boolean
     {
-        return _plate.name_plate.text == "Jessica";
+        return _plate.name_plate.text == "tester_1";
     }
 
     /**
@@ -426,7 +426,7 @@ public class Player extends Pawn
             return;
         }
         for each (var actor :Actor in _ctrl.actors) {
-            if (!(actor is Enemy && actor.master)) {
+            if (!(actor is Enemy && actor.amOwner)) {
                 continue;
             }
             var enemy :Enemy = actor as Enemy;
@@ -455,7 +455,7 @@ public class Player extends Pawn
     override protected function updateDirection () :void
     {
         // have the player's character face the cursor when idle
-        if (_master && _action == "idle") {
+        if (amOwner && _action == "idle") {
             face(_view.cursor.x);
         } else {
             super.updateDirection();
@@ -467,7 +467,7 @@ public class Player extends Pawn
     {
         // make sure the goal sprite is hidden
         super.stopped();
-        if (_master) {
+        if (amOwner) {
             _view.hideGoal();
         }
     }
@@ -477,7 +477,7 @@ public class Player extends Pawn
     {
         super.died();
         _ctrl.incrementStat("koCount");
-        if (_master) {
+        if (amOwner) {
             experience = 0;
         }
     }

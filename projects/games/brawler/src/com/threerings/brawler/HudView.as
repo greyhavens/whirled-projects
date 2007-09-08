@@ -27,27 +27,30 @@ public class HudView extends Sprite
      */
     public function init () :void
     {
-        visit(_hud.stats, MovieClip, function (clip :MovieClip) :void {
-            clip.stop();
-        });
+        // initialize states
+        _hud.respawn.state = "off";
 
-        // get rid of various transient bits
-        _hud.dc.visible = false;
+        // update the room
+        updateRoom();
 
         // update the connection display
         updateConnection();
+
+        // update the all-clear display
+        updateClear();
+
+        // if we're not playing, there's not much to show
+        if (!_ctrl.amPlaying) {
+            _hud.stats.visible = false;
+            _hud.score.visible = false;
+            return;
+        }
 
         // update the score
         updateScore();
 
         // update the hit count
         updateHits();
-
-        // update the room
-        updateRoom();
-
-        // update the all-clear display
-        updateClear();
     }
 
     /**
@@ -77,10 +80,10 @@ public class HudView extends Sprite
         }
 
         // display the warning if appropriate
-        _hud.hp_warning.gotoAndPlay((frame <= 20 && !self.dead) ? "on" : "off");
+        setState(_hud.hp_warning, (frame <= 20 && !self.dead) ? "on" : "off");
 
         // update the weapon display
-        _hud.stats.exp.weapon.weapon.gotoAndStop(Weapon.FRAME_LABELS[self.weapon]);
+        setState(_hud.stats.exp.weapon.weapon, Weapon.FRAME_LABELS[self.weapon]);
 
 		// update the energy display (the "depleted" frames follow the normal ones)
         var pct :Number = Math.round(self.energy);
@@ -88,7 +91,7 @@ public class HudView extends Sprite
         _hud.stats.energy.num.text = pct + "%";
 
         // display the energy warning if depleted
-        _hud.energy_warning.gotoAndPlay(self.depleted ? "on" : "off");
+        setState(_hud.energy_warning, self.depleted ? "on" : "off");
 
         // update the experience display
         var exp :Number = Math.round(self.experience) + 1;
@@ -101,25 +104,23 @@ public class HudView extends Sprite
         // update the attack bar
         var level :int = self.attackLevel + 1;
         for (var ii :int = 1; ii <= PUNCH_LEVELS; ii++) {
-            _hud.attacks["p" + ii].gotoAndStop(level < ii ? "off" : (level == ii ? "next" : "on"));
+            setState(_hud.attacks["p" + ii], (level < ii) ? "off" : (level == ii ? "next" : "on"));
         }
         level = Math.floor(level * (KICK_LEVELS / PUNCH_LEVELS));
         for (ii = 1; ii <= KICK_LEVELS; ii++) {
-            _hud.attacks["k" + ii].gotoAndStop(level < ii ? "off" : (level == ii ? "next" : "on"));
+            setState(_hud.attacks["k" + ii], (level < ii) ? "off" : (level == ii ? "next" : "on"));
         }
-        _hud.attacks.pk.gotoAndPlay(self.experience == Player.MAX_EXPERIENCE ? "on" : "off");
+        setState(_hud.attacks.pk, (self.experience == Player.MAX_EXPERIENCE) ? "on" : "off");
 
         // update the respawn clock
         var respawn :int = self.respawnCountdown;
         if (respawn > 0) {
-            if (!_hud.dc.visible) {
-                _hud.dc.visible = true;
-                _hud.respawn.gotoAndStop("on");
-            }
+            setState(_hud.respawn, "on");
             _hud.dc.text = StringUtil.prepad(respawn.toString(), 2, "0");
+            _hud.dc.visible = true;
 
-        } else if (_hud.dc.visible) {
-            _hud.respawn.gotoAndStop("off");
+        } else {
+            setState(_hud.respawn, "off");
             _hud.dc.visible = false;
         }
     }
@@ -261,19 +262,14 @@ public class HudView extends Sprite
     }
 
     /**
-     * Visits all of the display objects below the one specified, calling the provided function
-     * for each one that is an instance of the provided class.
+     * Goes to the specified label and stops if the clip isn't already there.
      */
-    protected function visit (disp :DisplayObject, clazz :Class, fn :Function) :void
+    protected static function setState (clip :MovieClip, state :String) :void
     {
-        var cont :DisplayObjectContainer = disp as DisplayObjectContainer;
-        if (cont != null) {
-            for (var ii :int = 0; ii < cont.numChildren; ii++) {
-                visit(cont.getChildAt(ii), clazz, fn);
-            }
-        }
-        if (disp is clazz) {
-            fn(disp);
+        var ostate :String = (clip.state == undefined) ? clip.currentLabel : clip.state;
+        if (ostate != state) {
+            clip.alpha = 1; // make sure it's visible
+            clip.gotoAndStop(clip.state = state);
         }
     }
 

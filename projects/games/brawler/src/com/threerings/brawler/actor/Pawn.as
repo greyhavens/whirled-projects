@@ -72,11 +72,11 @@ public class Pawn extends Actor
         if (_blocking == value) {
             return;
         }
-        if (_master && value && _action != "idle" && _action != "walk") {
+        if (amOwner && value && _action != "idle" && _action != "walk") {
             return;
         }
         _blocking = value;
-        if (_master) {
+        if (amOwner) {
             stop(false);
             publish();
         }
@@ -227,7 +227,7 @@ public class Pawn extends Actor
         x :Number, y :Number, motion :int = SNAP, publish :Boolean = true) :void
     {
         // when the player requests to sprint, tack on the slide distance
-        if (_master && motion == SPRINT) {
+        if (amOwner && motion == SPRINT) {
             var pt :Point = getSlideLocation(
                 x, y, x - this.x, y - this.y, getWalkSpeed(_view.getScale(y), true));
             x = pt.x;
@@ -311,7 +311,7 @@ public class Pawn extends Actor
         var hurt :Boolean = (damage > maxhp * 0.15);
         showBlock(hurt);
         attacker.wasBlocked(hurt);
-        if (_master) {
+        if (amOwner) {
             send({ type: DID_BLOCK, attacker: attacker.name, damage: damage });
         }
     }
@@ -323,7 +323,7 @@ public class Pawn extends Actor
     {
         if (hurt) {
             setAction("hurt");
-            if (_master) {
+            if (amOwner) {
                 stop();
             }
         }
@@ -335,10 +335,10 @@ public class Pawn extends Actor
     public function wasHit (attacker :Pawn, damage :Number) :void
     {
         showDamage(damage);
-        if (attacker.master) {
+        if (attacker.amOwner) {
             attacker.didHit(this, damage);
         }
-        if (_master) {
+        if (amOwner) {
             send({ type: WAS_HIT, attacker: attacker.name, damage: damage });
         }
     }
@@ -434,27 +434,28 @@ public class Pawn extends Actor
             var location :Point = new Point(x, y);
             var distance :Number = Point.distance(location, _goal);
             var speed :Number = getSpeed(distance);
-            var f :Number = (speed * elapsed) / distance;
-            if (speed <= SLIDE_STOP_SPEED || f >= 1) {
-                _view.setPosition(this, _goal.x, _goal.y);
+            var f :Number = (speed <= SLIDE_STOP_SPEED) ?
+                1 : Math.min(1, (speed * elapsed) / distance);
+
+            // update the location
+            location = Point.interpolate(_goal, location, f);
+            _view.setPosition(this, location.x, location.y);
+
+            // are we there yet?
+            if (!moving) {
                 stopped();
-            } else {
-                // find out if we've switched from sprinting to sliding
-                if (_motion == SPRINT && speed < getWalkSpeed(scaleX, true)) {
-                    stopped();
-                    _motion = SLIDE;
-                }
 
-                // update the location
-                location = Point.interpolate(_goal, location, f);
-                _view.setPosition(this, location.x, location.y);
+            // find out if we've switched from sprinting to sliding
+            } else if (_motion == SPRINT && speed < getWalkSpeed(scaleX, true)) {
+                stopped();
+                _motion = SLIDE;
+            }
 
-                // perhaps emit a dust poof
-                if ((_dustCountdown -= elapsed) <= 0) {
-                    var dust :Sprite = new Dust();
-                    _view.addTransient(dust, x, y);
-                    _dustCountdown = dustInterval;
-                }
+            // perhaps emit a dust poof
+            if ((_dustCountdown -= elapsed) <= 0) {
+                var dust :Sprite = new Dust();
+                _view.addTransient(dust, x, y);
+                _dustCountdown = dustInterval;
             }
         }
 

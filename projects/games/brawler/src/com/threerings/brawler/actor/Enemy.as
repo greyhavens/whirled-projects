@@ -78,7 +78,7 @@ public class Enemy extends Pawn
      */
     public function attack (dir :int = -1) :void
     {
-        if (_master) {
+        if (amOwner) {
             // make sure we can attack
             if (_action != "idle" && _action != "walk") {
                 return;
@@ -94,7 +94,7 @@ public class Enemy extends Pawn
         setAction("attack", "punch");
         orient(dir);
 
-        if (_master) {
+        if (amOwner) {
             // stop the pawn and announce the attack
             stop();
             send({ type: ATTACK, dir: dir });
@@ -105,7 +105,7 @@ public class Enemy extends Pawn
     override public function wasBlocked (hurt :Boolean) :void
     {
         super.wasBlocked(hurt);
-        if (_master && hurt) {
+        if (amOwner && hurt) {
             _attackCountdown = Math.max(_attackCountdown, 0) + 2;
         }
     }
@@ -174,7 +174,7 @@ public class Enemy extends Pawn
         super.enterFrame(elapsed);
 
         // hide the health bar if the player is far enough away
-        _health.visible = (Math.abs(x - _ctrl.self.x) < HIDE_HEALTH_DISTANCE);
+        _health.visible = (Math.abs(x - _ctrl.cameraTarget.x) < HIDE_HEALTH_DISTANCE);
 
         // check for collisions against players
         hitTestPlayers();
@@ -184,7 +184,7 @@ public class Enemy extends Pawn
 
         // update ai behavior
         _attackCountdown -= elapsed;
-        if (!(_master && canMove)) {
+        if (!(amOwner && canMove)) {
             return;
         }
         var ground :Sprite = _view.ground;
@@ -299,7 +299,7 @@ public class Enemy extends Pawn
             return;
         }
         for each (var actor :Actor in _ctrl.actors) {
-            if (!(actor is Player && actor.master)) {
+            if (!(actor is Player && actor.amOwner)) {
                 continue;
             }
             var player :Player = actor as Player;
@@ -324,7 +324,7 @@ public class Enemy extends Pawn
             return;
         }
         for each (var actor :Actor in _ctrl.actors) {
-            if (!(actor is Enemy && actor.master && actor != this)) {
+            if (!(actor is Enemy && actor.amOwner && actor != this)) {
                 continue;
             }
             var enemy :Enemy = actor as Enemy;
@@ -339,7 +339,7 @@ public class Enemy extends Pawn
     override protected function died () :void
     {
         super.died();
-        if (!_master) {
+        if (!amOwner) {
             return;
         }
         // perhaps drop a pickup
@@ -361,7 +361,7 @@ public class Enemy extends Pawn
     override protected function disappeared () :void
     {
         super.disappeared();
-        if (!_master) {
+        if (!amOwner) {
             return;
         }
         if (_respawns-- > 0 || (_ctrl.bossPresent && !boss)) {

@@ -48,7 +48,7 @@ public class BrawlerView extends Sprite
         _horizon = _ground.y - 3*_ground.height;
         _lip = _ground.y + _ground.height;
 
-        // create the hud view to wrap the existing hud
+        // remove the existing hud, wrap it in the hud view
         var hud :MovieClip = _game["hud"] as MovieClip;
         var idx :int = _game.getChildIndex(hud);
         _game.removeChildAt(idx);
@@ -282,35 +282,35 @@ public class BrawlerView extends Sprite
      */
     public function showResults () :void
     {
-        var results :MovieClip = new Results();
+        var results :MovieClip = new Endscreen();
         removeChild(_game);
         addChild(results);
 
         // display the KO count/points
         var koCount :Number = _ctrl.control.get("koCount") as Number;
         var koPoints :Number = Math.max(0, 5000 - 1000*koCount);
-        results.stats.pko.playerkos.text = koCount + " (+" + koPoints + ")";
+        //results.stats.pko.playerkos.text = koCount + " (+" + koPoints + ")";
 
         // display the damage points
         var playerDamage :Number = _ctrl.control.get("playerDamage") as Number;
         var enemyDamage :Number = _ctrl.control.get("enemyDamage") as Number;
         var damagePoints :Number = Math.max(0, enemyDamage - playerDamage*2);
-        results.stats.dmg.enemydamage.text = "+" + damagePoints;
+//        results.stats.dmg.enemydamage.text = "+" + damagePoints;
 
         // display the final clock value, bonus score
-        results.stats.ct.cleartime.text = _hud.clock;
-        results.stats.sb.bonusscore.text = "+" + _ctrl.score;
+//        results.stats.ct.cleartime.text = _hud.clock;
+//        results.stats.sb.bonusscore.text = "+" + _ctrl.score;
 
         // compute and display the rank
         var score :Number = koPoints + damagePoints + _ctrl.score;
         var par :Number = enemyDamage + 5000;
         var pct :Number = Math.round((score / par) * 100);
         var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
-        results.stats.r.rank.text = GRADES[grade] + " (" + pct + "%)";
+        //results.stats.r.rank.text = GRADES[grade] + " (" + pct + "%)";
 
         // show the flow awarded (TODO: make this accurate)
         var flow :int = pct;
-        results.stats.f.flow.text = flow;
+//        results.stats.f.flow.text = flow;
     }
 
     /**
@@ -365,10 +365,10 @@ public class BrawlerView extends Sprite
         // update the locations of the background layers
         updateBackgroundLayers();
 
-        // update the state of the cursor
+        // update the state of the cursor and hud
         updateCursor();
 
-        // update the hud
+        // update the state of the hud
         _hud.enterFrame(elapsed);
     }
 
@@ -399,7 +399,7 @@ public class BrawlerView extends Sprite
         var offset :Number = -_camera.x;
 
         // and where we'd like to be (clamped to the background limits)
-        var goal :Number = _ctrl.self.x - Brawler.WIDTH/2;
+        var goal :Number = _ctrl.cameraTarget.x - Brawler.WIDTH/2;
         goal = MathUtil.clamp(goal, 0, _background.bg_1.width - Brawler.WIDTH);
         if (Math.abs(offset - goal) <= 1) {
             return; // close enough!
@@ -480,7 +480,7 @@ public class BrawlerView extends Sprite
     protected var _preloader :Sprite;
 
     /** The main game display. */
-    protected var _game :Sprite;
+    protected var _game :Game;
 
     /** The game camera. */
     protected var _camera :MovieClip;

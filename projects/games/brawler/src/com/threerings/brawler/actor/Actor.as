@@ -33,7 +33,7 @@ public class Actor extends Sprite
     {
         _ctrl = ctrl;
         _view = ctrl.view;
-        _master = StringUtil.startsWith(name, "actor" + _ctrl.control.getMyId() + "_");
+        _owner = parseInt(name.substring(5, name.indexOf("_")));
 
         // give subclasses a chance to set up
         didInit(state);
@@ -50,9 +50,8 @@ public class Actor extends Sprite
      */
     public function destroy () :void
     {
-        _ctrl.throttle.send(function () :void {
-            _ctrl.control.set(name, null);
-        });
+        setState(null);
+        _ctrl.destroyActor(this);
     }
 
     /**
@@ -89,20 +88,28 @@ public class Actor extends Sprite
     }
 
     /**
-     * Checks whether this actor represents a master copy: i.e., whether it represents the
-     * definitive state as opposed to a representation of a remote master.
+     * Returns the player id of the owner of this actor.
      */
-    public function get master () :Boolean
+    public function get owner () :int
     {
-        return _master;
+        return _owner;
     }
 
     /**
-     * Changes the master state of this actor.
+     * Changes the player id of the owner of this actor.
      */
-    public function set master (value :Boolean) :void
+    public function set owner (value :int) :void
     {
-        _master = value;
+        _owner = value;
+    }
+
+    /**
+     * Checks whether this actor represents a master copy: i.e., whether it represents the
+     * definitive state as opposed to a representation of a remote master.
+     */
+    public function get amOwner () :Boolean
+    {
+        return _owner == _ctrl.control.getMyId();
     }
 
     /**
@@ -111,7 +118,7 @@ public class Actor extends Sprite
      */
     public function maybePublish () :void
     {
-        if (_master) {
+        if (amOwner) {
             publish();
         }
     }
@@ -201,8 +208,8 @@ public class Actor extends Sprite
     /** The game view. */
     protected var _view :BrawlerView;
 
-    /** Is this the master copy? */
-    protected var _master :Boolean = false;
+    /** The player id of the owner of this actor. */
+    protected var _owner :int;
 
     /** The bounds of the actor. */
     protected var _bounds :Sprite;

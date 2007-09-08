@@ -97,11 +97,42 @@ public class BrawlerController extends Controller
     }
 
     /**
+     * Checks whether we're playing or just watching.
+     */
+    public function get amPlaying () :Boolean
+    {
+        return _control.seating.getMyPosition() > -1;
+    }
+
+    /**
      * Returns a reference to the local player.
      */
     public function get self () :Player
     {
         return _self;
+    }
+
+    /**
+     * Returns the player the camera is tracking (ourself, if playing).
+     */
+    public function get cameraTarget () :Player
+    {
+        if (amPlaying) {
+            return _self;
+        }
+        // prefer a live player (TODO: allow watchers to cycle between players)
+        var dplayer :Player = null;
+        for each (var actor :Actor in _actors) {
+            if (actor is Player) {
+                var player :Player = actor as Player;
+                if (!player.dead) {
+                    return player;
+                } else if (dplayer == null) {
+                    dplayer = player;
+                }
+            }
+        }
+        return dplayer;
     }
 
     /**
@@ -150,14 +181,16 @@ public class BrawlerController extends Controller
         _view.exitRoom(function () :void {
             // clear out the old actors, replace with the new
             for each (var actor :Actor in _actors) {
-                if (actor.master && actor != _self) {
+                if (actor.amOwner && actor != _self) {
                     actor.destroy();
                 }
             }
             createEnemies();
             if (_clear) {
                 // post our score to the dobj and show the game results
-                _control.set("scores", _score, _control.seating.getMyPosition());
+                if (amPlaying) {
+                    _control.set("scores", _score, _control.seating.getMyPosition());
+                }
                 _view.showResults();
             } else {
                 _view.enterRoom();
@@ -219,7 +252,7 @@ public class BrawlerController extends Controller
         if (enemy.finalBoss) {
             _bossPresent = false;
             for each (var actor :Actor in _actors) {
-                if (actor.master && actor is Enemy) {
+                if (actor.amOwner && actor is Enemy) {
                     actor.destroy();
                 }
             }
@@ -310,18 +343,26 @@ public class BrawlerController extends Controller
             if (event.newValue == null) {
                 // remove the actor
                 if (actor != null) {
-                    actor.wasDestroyed();
-                    delete _actors[event.name];
+                    destroyActor(actor);
                 }
             } else if (actor == null) {
                 // create the actor
                 createActor(event.name, event.newValue);
 
-            } else if (!actor.master) {
+            } else if (!actor.amOwner) {
                 // update the actor state
                 actor.decode(event.newValue);
             }
         }
+    }
+
+    /**
+     * (Immediately) destroys an actor.
+     */
+    public function destroyActor (actor :Actor) :void
+    {
+        actor.wasDestroyed();
+        delete _actors[actor.name];
     }
 
     // documentation inherited from interface MessageReceivedListener
@@ -334,7 +375,7 @@ public class BrawlerController extends Controller
         } else if (StringUtil.startsWith(event.name, "actor")) {
             // it's a message for an actor
             var actor :Actor = _actors[event.name];
-            if (actor != null && !actor.master) {
+            if (actor != null && !actor.amOwner) {
                 actor.receive(event.value);
             }
         }
@@ -350,19 +391,16 @@ public class BrawlerController extends Controller
     {
         // get rid of their player; take over their other actors
         var playerId :int = event.occupantId;
-        var prefix :String = "actor" + event.occupantId + "_";
-        var occupants :Array = _control.getOccupants();
-        var midx :int = occupants.indexOf(_control.getMyId());
+        var players :Array = remainingPlayers;
+        var midx :int = players.indexOf(_control.getMyId());
         var aidx :int = 0;
         for each (var actor :Actor in _actors) {
-            if (!StringUtil.startsWith(actor.name, prefix)) {
+            if (actor.owner != playerId) {
                 continue;
             }
-            if (aidx++ % occupants.length == midx) {
-                actor.master = true;
-                if (actor is Player) {
-                    actor.destroy();
-                }
+            actor.owner = players[aidx++ % players.length];
+            if (actor.amOwner && actor is Player) {
+                actor.destroy();
             }
         }
     }
@@ -381,7 +419,9 @@ public class BrawlerController extends Controller
     protected function init () :void
     {
         // report readiness and initialize the view
-        _control.playerReady();
+        if (amPlaying) {
+            _control.playerReady();
+        }
         _view.init();
 
         // wait for the game to start before finishing
@@ -417,6 +457,7 @@ public class BrawlerController extends Controller
             _control.set("koCount", 0);
             _control.set("playerDamage", 0);
             _control.set("enemyDamage", 0);
+            _control.set("scores", new Array(_control.seating.getPlayerIds().length));
             _control.startTicker("clock", CLOCK_DELAY);
         } else {
             var croom :Object = _control.get("room");
@@ -426,8 +467,10 @@ public class BrawlerController extends Controller
         }
 
         // create and announce our own pawn
-        var start :Point = _view.playerStart;
-        _self = createActor(createActorName(), Player.createState(start.x, start.y)) as Player;
+        if (amPlaying) {
+            var start :Point = _view.playerStart;
+            _self = createActor(createActorName(), Player.createState(start.x, start.y)) as Player;
+        }
 
         // copy the configurations to an array (for some reason they disappear if we try to keep
         // them in the clip) and create our share of the enemies
@@ -437,13 +480,15 @@ public class BrawlerController extends Controller
         }
         createEnemies();
 
-        // listen for mouse clicks on the ground
-        _view.ground.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
+        if (amPlaying) {
+            // listen for mouse clicks on the ground
+            _view.ground.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 
-        // listen for keyboard events through the blocker
-        _blocker = new KeyRepeatBlocker(_control);
-        _blocker.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
-        _blocker.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
+            // listen for keyboard events through the blocker
+            _blocker = new KeyRepeatBlocker(_control);
+            _blocker.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+            _blocker.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
+        }
     }
 
     /**
@@ -452,17 +497,17 @@ public class BrawlerController extends Controller
     protected function createEnemies () :void
     {
         var name :String = "m" + _room + "_w" + _wave;
-        var occupants :Array = _control.getOccupants();
-        var midx :int = occupants.indexOf(_control.getMyId());
+        var players :Array = remainingPlayers;
+        var midx :int = players.indexOf(_control.getMyId());
         _enemies = 0;
         for (var ii :int = 0; ii < _econfigs.length; ii++) {
             var config :Object = _econfigs[ii];
             if (config.name != name) {
                 continue;
             }
-            if (_enemies++ % occupants.length == midx) {
+            if (_enemies++ % players.length == midx) {
                 createActor(createActorName(),
-                    Enemy.createState(ii, config, _difficulty, occupants.length));
+                    Enemy.createState(ii, config, _difficulty, players.length));
             }
         }
         _clear = (_enemies == 0);
@@ -533,6 +578,17 @@ public class BrawlerController extends Controller
         } else if (ArrayUtil.contains(SPRINT_CODES, code)) {
             _sprinting = false;
         }
+    }
+
+    /**
+     * Returns an array containing the ids of players still present.
+     */
+    protected function get remainingPlayers () :Array
+    {
+        return _control.seating.getPlayerIds().filter(
+            function (element :*, index :int, array :Array) :Boolean {
+                return element > 0;
+            });
     }
 
     /** The Whirled interface. */

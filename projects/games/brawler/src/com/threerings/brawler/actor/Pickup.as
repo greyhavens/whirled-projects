@@ -23,7 +23,7 @@ public class Pickup extends Actor
     override public function enterFrame (elapsed :Number) :void
     {
         if ((_age += elapsed) >= LIFESPAN) {
-            if (_master && visible) {
+            if (amOwner && visible) {
                 visible = false;
                 destroy();
             }
@@ -40,7 +40,7 @@ public class Pickup extends Actor
      */
     protected function hitTestPlayers () :void
     {
-        if (!(_master && available && visible)) {
+        if (!(amOwner && available && visible)) {
             return;
         }
         for each (var actor :Actor in _ctrl.actors) {
@@ -59,10 +59,10 @@ public class Pickup extends Actor
      */
     protected function hit (player :Player) :void
     {
-        if (player.master) {
+        if (player.amOwner) {
             award();
         }
-        if (_master) {
+        if (amOwner) {
             send({ player: player.name }, HIGH_PRIORITY_TIMEOUT);
             destroy();
         }
