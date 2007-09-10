@@ -46,8 +46,8 @@ public /* abstract */ class UnitSprite extends Image
                 (_currentAsset as MovieClip).gotoAndPlay(0);
             }
         }
-        this.x = _unit.centroidx;
-        this.y = _unit.centroidy;
+        this.x = _unit.centroidx + _tileOffset.x;
+        this.y = _unit.centroidy + _tileOffset.y; 
         adjustZOrder();
     }
     
@@ -134,6 +134,8 @@ public /* abstract */ class UnitSprite extends Image
     
     protected var _unit :Unit;
     protected var _level :Level;
+
+    protected var _tileOffset :Point = new Point(0, 0);
     protected var _currentState :int = STATE_INVALID;
     protected var _currentAsset :DisplayObject;
     protected var _allAssets :Array; // of DisplayObject

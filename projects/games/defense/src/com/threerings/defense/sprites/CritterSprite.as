@@ -17,6 +17,9 @@ public class CritterSprite extends UnitSprite
     public function CritterSprite (critter :Critter, level :Level)
     {
         super(critter, level);
+        
+        // shift tiles over some random number of pixels from the tile center
+        _tileOffset = new Point(Math.random() * 10 - 5, Math.random() * 6 - 3);
     }
 
     public function get critter () :Critter
