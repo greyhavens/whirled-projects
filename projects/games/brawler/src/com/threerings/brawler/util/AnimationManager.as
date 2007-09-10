@@ -19,7 +19,7 @@ public class AnimationManager
      * @param callback if non-null, call this function when the animation completes or is
      * cancelled.
      */
-    public function play (clip :MovieClip, anim :String, callback :Function) :void
+    public function play (clip :MovieClip, anim :String, callback :Function = null) :void
     {
         var oanim :Animation = _anims[clip];
         if (oanim == null) {

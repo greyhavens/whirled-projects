@@ -423,6 +423,7 @@ public class Pawn extends Actor
             var location :Point = new Point(x, y);
             var distance :Number = Point.distance(location, _goal);
             var speed :Number = getSpeed(distance);
+            var wspeed :Number = getWalkSpeed(scaleX, true);
             var f :Number = (speed <= SLIDE_STOP_SPEED) ?
                 1 : Math.min(1, (speed * elapsed) / distance);
 
@@ -435,7 +436,7 @@ public class Pawn extends Actor
                 stopped();
 
             // find out if we've switched from sprinting to sliding
-            } else if (_motion == SPRINT && speed < getWalkSpeed(scaleX, true)) {
+            } else if (_motion == SPRINT && speed < wspeed) {
                 stopped();
                 _motion = SLIDE;
             }
@@ -678,7 +679,7 @@ public class Pawn extends Actor
             return; // wait for action to clear
         } else if (blocking) {
             setAction("block");
-        } else if (moving) {
+        } else if (moving && (_motion == WALK || _motion == SPRINT)) {
             setAction("walk");
         } else {
             setAction("idle");
@@ -761,8 +762,13 @@ public class Pawn extends Actor
     protected function play (
         anim :String, callback :Function = null, danim :String = null) :void
     {
-        _view.animmgr.play(_character, anim, callback);
-        _dmgbox.gotoAndPlay(danim == null ? anim : danim);
+        if (danim == null) {
+            _view.animmgr.play(_character, anim, callback);
+            _view.animmgr.play(_dmgbox, anim);
+        } else {
+            _view.animmgr.play(_character, anim);
+            _view.animmgr.play(_dmgbox, danim, callback);
+        }
     }
 
     /**

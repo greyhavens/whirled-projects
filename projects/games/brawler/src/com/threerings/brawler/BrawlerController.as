@@ -202,7 +202,7 @@ public class BrawlerController extends Controller
                 }
             }
             createEnemies();
-            if (true || _clear) {
+            if (_clear) {
                 // post our score to the dobj and show the game results
                 if (amPlaying) {
                     _control.set("scores", _score, _control.seating.getMyPosition());
