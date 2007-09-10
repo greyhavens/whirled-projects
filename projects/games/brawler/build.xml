@@ -5,7 +5,6 @@
   <property name="app.name" value="Brawler"/>
   <property name="app.source-dir" value="src"/>
   <property name="app.package-dir" value="com/threerings/brawler"/>
-  <property name="app.library-dir" value="lib"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>

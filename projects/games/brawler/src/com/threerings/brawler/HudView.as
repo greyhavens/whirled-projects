@@ -29,6 +29,7 @@ public class HudView extends Sprite
     {
         // initialize states
         _hud.respawn.state = "off";
+        _hud.fader.gotoAndStop("out");
 
         // update the room
         updateRoom();

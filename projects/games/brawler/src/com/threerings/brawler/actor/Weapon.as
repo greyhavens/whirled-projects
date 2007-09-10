@@ -31,14 +31,11 @@ public class Weapon extends Pickup
         return { type: "Weapon", x: x, y: y, weapon: weapon, level: level };
     }
 
-    public function Weapon ()
-    {
-        super(WeaponDrop);
-    }
-
     // documentation inherited
     override protected function didInit (state :Object) :void
     {
+        super.didInit(state);
+
         // initialize the position and scale
         _view.setPosition(this, state.x, state.y);
         _clip.scaleX = 1 / scaleX;
@@ -47,6 +44,12 @@ public class Weapon extends Pickup
         _weapon = state.weapon;
         _level = state.level;
         _clip.cn.gotoAndStop(label);
+    }
+
+    // documentation inherited
+    override protected function get clipClass () :String
+    {
+        return "WeaponDrop";
     }
 
     // documentation inherited
@@ -68,7 +71,7 @@ public class Weapon extends Pickup
     override protected function hit (player :Player) :void
     {
         super.hit(player);
-        var sparks :MovieClip = new WeaponSparks();
+        var sparks :MovieClip = _ctrl.create("WeaponSparks");
         sparks.cn.gotoAndStop(label);
         _view.addTransient(sparks, x, y, true);
     }

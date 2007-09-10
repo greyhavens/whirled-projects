@@ -39,7 +39,7 @@ public class BrawlerView extends Sprite
     public function init () :void
     {
         // create the game display, fetching references to its various bits and bobs
-        _game = new Game();
+        _game = _ctrl.create("Game");
         _camera = _game["camera"];
         _background = _camera._zoom.bg;
         _ground = _background.ground;
@@ -55,8 +55,8 @@ public class BrawlerView extends Sprite
         _game.addChildAt(_hud = new HudView(_ctrl, this, hud), idx);
 
         // create and attach the cursor and goal
-        _background.cursor_zone.addChild(_cursor = new Cursor());
-        _background.cursor_zone.addChild(_goal = new Destination());
+        _background.cursor_zone.addChild(_cursor = _ctrl.create("Cursor"));
+        _background.cursor_zone.addChild(_goal = _ctrl.create("Destination"));
         _goal.gotoAndPlay("off");
 
         // if the game is in play, jump right into the main view; otherwise, show the preloader
@@ -64,11 +64,10 @@ public class BrawlerView extends Sprite
         if (_ctrl.control.isInPlay()) {
             finishInit();
         } else {
-            addChild(_preloader = new Preloader());
-            _preloader["fade"].play();
+            addChild(_preloader = _ctrl.create("Preloader"));
             _ctrl.control.addEventListener(StateChangedEvent.GAME_STARTED,
                 function (event :StateChangedEvent) :void {
-                    removeChild(_preloader);
+                    _preloader["fade"].play();
                     finishInit();
                 });
         }
@@ -282,35 +281,35 @@ public class BrawlerView extends Sprite
      */
     public function showResults () :void
     {
-        var results :MovieClip = new Endscreen();
+        var results :MovieClip = _ctrl.create("Endscreen");
         removeChild(_game);
         addChild(results);
 
         // display the KO count/points
         var koCount :Number = _ctrl.control.get("koCount") as Number;
         var koPoints :Number = Math.max(0, 5000 - 1000*koCount);
-        //results.stats.pko.playerkos.text = koCount + " (+" + koPoints + ")";
+        results.stats.pko.playerkos.text = koCount + " (+" + koPoints + ")";
 
         // display the damage points
         var playerDamage :Number = _ctrl.control.get("playerDamage") as Number;
         var enemyDamage :Number = _ctrl.control.get("enemyDamage") as Number;
-        var damagePoints :Number = Math.max(0, enemyDamage - playerDamage*2);
-//        results.stats.dmg.enemydamage.text = "+" + damagePoints;
+        var damagePoints :Number = Math.max(0, Math.round(enemyDamage - playerDamage*2));
+        results.stats.dmg.enemydamage.text = "+" + damagePoints;
 
         // display the final clock value, bonus score
-//        results.stats.ct.cleartime.text = _hud.clock;
-//        results.stats.sb.bonusscore.text = "+" + _ctrl.score;
+        results.stats.ct.cleartime.text = _hud.clock;
+        results.stats.sb.bonusscore.text = "+" + _ctrl.score;
 
         // compute and display the rank
         var score :Number = koPoints + damagePoints + _ctrl.score;
         var par :Number = enemyDamage + 5000;
         var pct :Number = Math.round((score / par) * 100);
         var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
-        //results.stats.r.rank.text = GRADES[grade] + " (" + pct + "%)";
+        results.stats.r.rank.text = GRADES[grade] + " (" + pct + "%)";
 
         // show the flow awarded (TODO: make this accurate)
         var flow :int = pct;
-//        results.stats.f.flow.text = flow;
+        results.stats.f.flow.text = flow;
     }
 
     /**
@@ -480,7 +479,7 @@ public class BrawlerView extends Sprite
     protected var _preloader :Sprite;
 
     /** The main game display. */
-    protected var _game :Game;
+    protected var _game :MovieClip;
 
     /** The game camera. */
     protected var _camera :MovieClip;

@@ -29,17 +29,6 @@ public class Pawn extends Actor
     /** The knocked motion. */
     public static const KNOCK :int = 4;
 
-    public function Pawn ()
-    {
-        addChild(_psprite = new PlayerSprite());
-        _character = _psprite["character"];
-        _bounds = _psprite["boundbox"];
-        _dmgbox = _psprite["dmgbox"];
-        _effects = _psprite["effects"];
-        _health = _psprite["health_bar"];
-        _plate = _psprite["name_plate"];
-    }
-
     // documentation inherited
     override public function wasDestroyed () :void
     {
@@ -453,8 +442,7 @@ public class Pawn extends Actor
 
             // perhaps emit a dust poof
             if ((_dustCountdown -= elapsed) <= 0) {
-                var dust :Sprite = new Dust();
-                _view.addTransient(dust, x, y);
+                _view.addTransient(_ctrl.create("Dust"), x, y);
                 _dustCountdown = dustInterval;
             }
         }
@@ -472,6 +460,15 @@ public class Pawn extends Actor
     // documentation inherited
     override protected function didInit (state :Object) :void
     {
+        // add the player sprite
+        addChild(_psprite = _ctrl.create("PlayerSprite"));
+        _character = _psprite["character"];
+        _bounds = _psprite["boundbox"];
+        _dmgbox = _psprite["dmgbox"];
+        _effects = _psprite["effects"];
+        _health = _psprite["health_bar"];
+        _plate = _psprite["name_plate"];
+
         // initialize the position and goal
         _view.setPosition(this, state.x, state.y);
         _goal = new Point(state.x, state.y);
@@ -659,8 +656,7 @@ public class Pawn extends Actor
         if (hurt) {
             _view.playCameraEffect("light");
         }
-        var block :MovieClip = new Block();
-        _view.addTransient(block, x + BrawlerUtil.random(50), y, true);
+        _view.addTransient(_ctrl.create("Block"), x + BrawlerUtil.random(50), y, true);
     }
 
     /**
@@ -774,7 +770,7 @@ public class Pawn extends Actor
      */
     protected function createDamageNumber (critical :Boolean) :MovieClip
     {
-        return critical ? new CriticalDamageNumber() : new DamageNumber();
+        return _ctrl.create(critical ? "CriticalDamageNumber" : "DamageNumber");
     }
 
     /**
@@ -782,7 +778,7 @@ public class Pawn extends Actor
      */
     protected function createDamageSnap () :MovieClip
     {
-        return new DamageSnap();
+        return _ctrl.create("DamageSnap");
     }
 
     /**

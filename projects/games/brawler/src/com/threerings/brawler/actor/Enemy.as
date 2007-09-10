@@ -116,7 +116,7 @@ public class Enemy extends Pawn
         super.wasDestroyed();
         _ctrl.enemyWasDestroyed(this);
         if (_character.visible) {
-            _view.addTransient(new Ghost(), x, y, true);
+            _view.addTransient(_ctrl.create("Ghost"), x, y, true);
         }
     }
 
@@ -136,6 +136,10 @@ public class Enemy extends Pawn
     {
         super.wasHit(attacker, damage);
         _ctrl.incrementStat("enemyDamage", damage);
+        if (amOwner && attacker is Player) {
+            // target the attacker
+            _target = attacker as Player;
+        }
     }
 
     // documentation inherited
@@ -281,7 +285,7 @@ public class Enemy extends Pawn
 
         // swap in the character corresponding to the variant
         _psprite.removeChild(_character);
-        _psprite.addChild(_character = new VARIANT_CLASSES[_variant]);
+        _psprite.addChild(_character = _ctrl.create(VARIANT_CLASSES[_variant]));
 
         // reposition the health bar above the character
         _health.y = -_character.height;
@@ -390,7 +394,7 @@ public class Enemy extends Pawn
     // documentation inherited
     override protected function createRadarBlip () :Sprite
     {
-        return new EnemyBlip();
+        return _ctrl.create("EnemyBlip");
     }
 
     // documentation inherited
@@ -506,10 +510,12 @@ public class Enemy extends Pawn
     protected var _attackCountdown :Number;
 
     /** Character classes for the enemy variants. */
-    protected static const VARIANT_CLASSES :Array = [ Peon, Grunt, Brute, Midboss, Boss ];
+    protected static const VARIANT_CLASSES :Array =
+        [ "Peon", "Grunt", "Brute", "Midboss", "Boss" ];
 
     /** The names of the enemy variants. */
-    protected static const VARIANT_NAMES :Array = [ "Peon", "Grunt", "Brute", "Midboss", "BOSS" ];
+    protected static const VARIANT_NAMES :Array =
+        [ "Peon", "Grunt", "Brute", "Midboss", "BOSS" ];
 
     /** The names of the boss variants. */
     protected static const BOSS_NAMES :Array = [ "Midboss", "BOSS" ];

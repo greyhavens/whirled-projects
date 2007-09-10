@@ -75,8 +75,7 @@ public class Player extends Pawn
         _character.weapon.gotoAndStop(Weapon.FRAME_LABELS[_weapon = index]);
         if (_weapon == Weapon.FISTS) {
             // show the break effect
-            var sparks :MovieClip = new WeaponBreak();
-            _view.addTransient(sparks, x, y, true);
+            _view.addTransient(_ctrl.create("WeaponBreak"), x, y, true);
         }
         maybePublish();
     }
@@ -508,7 +507,7 @@ public class Player extends Pawn
     // documentation inherited
     override protected function createRadarBlip () :Sprite
     {
-        return new PlayerBlip();
+        return _ctrl.create("PlayerBlip");
     }
 
     // documentation inherited
@@ -522,13 +521,13 @@ public class Player extends Pawn
     // documentation inherited
     override protected function createDamageNumber (critical :Boolean) :MovieClip
     {
-        return critical ? new PlayerCriticalDamageNumber() : new PlayerDamageNumber();
+        return _ctrl.create(critical ? "PlayerCriticalDamageNumber" : "PlayerDamageNumber");
     }
 
     // documentation inherited
     override protected function createDamageSnap () :MovieClip
     {
-        return new PlayerDamageSnap();
+        return _ctrl.create("PlayerDamageSnap");
     }
 
     /** The player's current energy level. */

@@ -20,11 +20,6 @@ public class Coin extends Pickup
         return { type: "Coin", x: x, y: y, gx: goal.x, gy: goal.y };
     }
 
-    public function Coin ()
-    {
-        super(CoinSprite);
-    }
-
     // documentation inherited
     override public function enterFrame (elapsed :Number) :void
     {
@@ -49,19 +44,26 @@ public class Coin extends Pickup
 
         // perhaps emit a sparkle
         if (Math.random() < SPARKLE_PROBABILITY) {
-            var sparkle :MovieClip = new Sparkle();
             var x :Number = x + BrawlerUtil.random(-15, +15);
             var y :Number = y + _clip.cn.y + BrawlerUtil.random(-15, +15);
-            _view.addTransient(sparkle, x, y, true);
+            _view.addTransient(_ctrl.create("Sparkle"), x, y, true);
         }
     }
 
     // documentation inherited
     override protected function didInit (state :Object) :void
     {
+        super.didInit(state);
+
         // initialize the position and goal
         _view.setPosition(this, state.x, state.y);
         _goal = new Point(state.gx, state.gy);
+    }
+
+    // documentation inherited
+    override protected function get clipClass () :String
+    {
+        return "CoinSprite";
     }
 
     // documentation inherited
@@ -77,8 +79,7 @@ public class Coin extends Pickup
     override protected function hit (player :Player) :void
     {
         super.hit(player);
-        var sparks :MovieClip = new CoinSparks();
-        _view.addTransient(sparks, x, y, true);
+        _view.addTransient(_ctrl.create("CoinSparks"), x, y, true);
     }
 
     // documentation inherited

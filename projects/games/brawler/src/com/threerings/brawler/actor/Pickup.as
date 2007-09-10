@@ -2,17 +2,13 @@ package com.threerings.brawler.actor {
 
 import flash.display.MovieClip;
 
+import com.threerings.brawler.BrawlerController;
+
 /**
  * Represents something that can be picked up by players (coins, weapon drops).
  */
 public class Pickup extends Actor
 {
-    public function Pickup (cclass :Class)
-    {
-        addChild(_clip = new cclass());
-        _bounds = _clip.boundbox;
-    }
-
     // documentation inherited
     override public function receive (message :Object) :void
     {
@@ -33,6 +29,21 @@ public class Pickup extends Actor
         if (_age >= LIFESPAN - FLASH_INTERVAL) {
             alpha = 1 - alpha;
         }
+    }
+
+    // documentation inherited
+    override protected function didInit (state :Object) :void
+    {
+        addChild(_clip = _ctrl.create(clipClass));
+        _bounds = _clip.boundbox;
+    }
+
+    /**
+     * Returns the name of the pickup's movie clip class.
+     */
+    protected function get clipClass () :String
+    {
+        return null;
     }
 
     /**

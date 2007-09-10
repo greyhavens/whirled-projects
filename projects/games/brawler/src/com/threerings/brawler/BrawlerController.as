@@ -7,6 +7,7 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.utils.ByteArray;
 import flash.utils.getTimer;
 
 import com.threerings.ezgame.MessageReceivedEvent;
@@ -22,6 +23,7 @@ import com.threerings.flash.KeyRepeatBlocker;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
+import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.StringUtil;
 
 import com.whirled.WhirledGameControl;
@@ -53,15 +55,29 @@ public class BrawlerController extends Controller
         // create the view
         _view = new BrawlerView(disp, this);
 
-        // wait for loading to complete
-        var linfo :LoaderInfo = disp.loaderInfo;
-        if (linfo.bytesTotal == 0 || linfo.bytesLoaded < linfo.bytesTotal) {
-            linfo.addEventListener(Event.COMPLETE, function (event :Event) :void {
-                init();
-            });
-        } else {
+        // create the SWF loader and use it to load the raw data
+        _loader = new EmbeddedSwfLoader();
+        _loader.addEventListener(Event.COMPLETE, function (event :Event) :void {
             init();
-        }
+        });
+        _loader.load(new RAW_SWF() as ByteArray);
+    }
+
+    /**
+     * Returns a reference to the embedded SWF loader.
+     */
+    public function get loader () :EmbeddedSwfLoader
+    {
+        return _loader;
+    }
+
+    /**
+     * Creates an instance of the asset with the supplied class name.
+     */
+    public function create (name :String) :*
+    {
+        var clazz :Class = _loader.getClass(name);
+        return new clazz();
     }
 
     /**
@@ -186,7 +202,7 @@ public class BrawlerController extends Controller
                 }
             }
             createEnemies();
-            if (_clear) {
+            if (true || _clear) {
                 // post our score to the dobj and show the game results
                 if (amPlaying) {
                     _control.set("scores", _score, _control.seating.getMyPosition());
@@ -474,7 +490,7 @@ public class BrawlerController extends Controller
 
         // copy the configurations to an array (for some reason they disappear if we try to keep
         // them in the clip) and create our share of the enemies
-        var configs :MovieClip = new EnemyConfigs();
+        var configs :MovieClip = create("EnemyConfigs");
         for (var ii :int = 0; ii < configs.numChildren; ii++) {
             _econfigs.push(configs.getChildAt(ii));
         }
@@ -591,6 +607,9 @@ public class BrawlerController extends Controller
             });
     }
 
+    /** The SWF loader. */
+    protected var _loader :EmbeddedSwfLoader;
+
     /** The Whirled interface. */
     protected var _control :WhirledGameControl;
 
@@ -641,6 +660,10 @@ public class BrawlerController extends Controller
 
     /** The enemy configurations. */
     protected var _econfigs :Array = new Array();
+
+    /** The raw SWF data. */
+    [Embed(source="../../../../rsrc/raw.swf", mimeType="application/octet-stream")]
+    protected static const RAW_SWF :Class;
 
     /** The available difficulty levels. */
     protected static const DIFFICULTY_LEVELS :Array = [ "Easy", "Normal", "Hard", "Inferno" ];

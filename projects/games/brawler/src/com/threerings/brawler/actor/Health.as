@@ -15,20 +15,20 @@ public class Health extends Pickup
         return { type: "Health", x: x, y: y };
     }
 
-    public function Health ()
+    // documentation inherited
+    override protected function get clipClass () :String
     {
-        super(HealthSprite);
+        return "HealthSprite";
     }
 
     // documentation inherited
     override protected function hit (player :Player) :void
     {
         super.hit(player);
-        var crosses :MovieClip = new Crosses();
-        _view.addTransient(crosses, x, y, true);
+        _view.addTransient(_ctrl.create("Crosses"), x, y, true);
         var amount :Number = Math.round(player.maxhp - player.hp);
         if (amount > 0) {
-            var health :MovieClip = new HealthNumber();
+            var health :MovieClip = _ctrl.create("HealthNumber");
             health.txt.dmg.text = "+" + Math.round(amount);
             _view.addTransient(health, x, y, true);
         }

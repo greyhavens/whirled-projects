@@ -50,7 +50,9 @@ public class Actor extends Sprite
      */
     public function destroy () :void
     {
-        setState(null);
+        _ctrl.throttle.send(function () :void {
+            _ctrl.control.set(name, null);
+        });
         _ctrl.destroyActor(this);
     }
 
