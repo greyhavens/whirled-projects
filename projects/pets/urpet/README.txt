@@ -96,7 +96,7 @@ sleeping neutral pose to the content neutral pose.
 Add two paths to your project path:
 
 whirled\src\as
-whirled\projects\pets\urpet\src
+whirled\examples\pets\urpet\src
 
 Create a scene and place the following ActionScript code in it:
 

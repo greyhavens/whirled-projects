@@ -10,7 +10,7 @@ Create a new project in the Flash Authoring Tool do the following.
 Add two paths to your project path:
 
 whirled\src\as
-whirled\projects\avatars\uravatar\src
+whirled\examples\avatars\uravatar\src
 
 Create a scene named "main" and place the following ActionScript code in it:
 
