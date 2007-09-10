@@ -30,7 +30,11 @@ public class Simulator
     public function processTowers (towers :Array, gameTime :Number) :void
     {
         for each (var tower :Tower in towers) {
-                tower.fireIfPossible(_game, gameTime);
+                var target :Critter = tower.canFire(_game, gameTime);
+                if (target != null) {
+                    tower.fireAt(target, _game, gameTime);
+                    _game.towerFiredAt(tower, target);
+                }
             }
     }
     

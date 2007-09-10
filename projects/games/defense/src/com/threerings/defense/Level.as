@@ -1,6 +1,8 @@
 package com.threerings.defense {
 
 import flash.display.DisplayObject;
+import flash.errors.IllegalOperationError;
+import flash.utils.describeType;
 
 import com.threerings.defense.sprites.CritterSprite;
 import com.threerings.defense.sprites.MissileSprite;
@@ -64,7 +66,14 @@ public class Level
 
     protected function load (name :String, ... ignore) :DisplayObject
     {
-        return DisplayObject(new (_loader.getClass(name))());
+        try {
+            var c :Class = _loader.getClass(name);
+        } catch (e :IllegalOperationError) {
+            Log.getLog(this).warning("Cannot load asset: " + name);
+            c = _placeholder;
+        }
+        
+        return DisplayObject(new c());
     }
     
     protected var _loader :LevelLoader;
@@ -74,20 +83,21 @@ public class Level
     
     // temp: placeholder assets
 
-//    [Embed(source="../../../../rsrc/critters/default_left.png")]
-    [Embed(source="../../../../rsrc/levels/Level01.swf#tower_box")]
+    [Embed(source="../../../../rsrc/levels/Level01.swf#walkingbully_left")]
     private static const _defaultCritterLeft :Class;
-//    [Embed(source="../../../../rsrc/levels/Level01.swf#walkingbully")]
-    [Embed(source="../../../../rsrc/levels/Level01.swf#tower_box")]
+    [Embed(source="../../../../rsrc/levels/Level01.swf#walkingbully_right")]
     private static const _defaultCritterRight :Class;
-//    [Embed(source="../../../../rsrc/critters/default_up.png")]
-    [Embed(source="../../../../rsrc/levels/Level01.swf#tower_box")]
+    [Embed(source="../../../../rsrc/levels/Level01.swf#walkingbully_up")]
     private static const _defaultCritterUp :Class;
-//    [Embed(source="../../../../rsrc/critters/default_down.png")]
-    [Embed(source="../../../../rsrc/levels/Level01.swf#tower_box")]
+    [Embed(source="../../../../rsrc/levels/Level01.swf#walkingbully_down")]
     private static const _defaultCritterDown :Class;
+
     [Embed(source="../../../../rsrc/testmissile.png")]
     private static const _defaultMissile :Class;
+
+    [Embed(source="../../../../rsrc/placeholder.png")]
+    private static const _placeholder :Class;
+    
 
 }
 }

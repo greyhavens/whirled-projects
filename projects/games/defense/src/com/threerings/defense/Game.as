@@ -85,6 +85,11 @@ public class Game
         handleRemoveCritter(critter);
     }
 
+    public function towerFiredAt (tower :Tower, critter :Critter) :void
+    {
+        _display.handleTowerFired(tower, critter);
+    }
+    
     public function handleAddTower (tower :Tower, index :int) :void
     {
         _towers.push(tower);

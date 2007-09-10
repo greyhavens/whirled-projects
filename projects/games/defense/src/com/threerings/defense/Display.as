@@ -224,6 +224,14 @@ public class Display extends Canvas
         _boardSprite.removeChild(sprite);
         _critters.remove(critter.guid);
     }
+
+    public function handleTowerFired (tower :Tower, critter :Critter) :void
+    {
+        var sprite :TowerSprite = _towers.get(tower.guid);
+        if (sprite != null) {
+            sprite.firingTarget = critter.pos;
+        }
+    }
     
     public function handleAddMissile (missile :Missile) :void
     {
@@ -265,7 +273,7 @@ public class Display extends Canvas
 
     public function updateSprites () :void
     {
-        // this type of iteration avoids the creation of temporary arrays
+        _towers.forEach(unitSpriteUpdateWrapper);
         _critters.forEach(unitSpriteUpdateWrapper);
         _missiles.forEach(unitSpriteUpdateWrapper);
     }

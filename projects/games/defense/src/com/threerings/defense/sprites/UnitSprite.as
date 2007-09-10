@@ -1,6 +1,7 @@
 package com.threerings.defense.sprites {
 
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.geom.Point;
 
 import mx.controls.Image;
@@ -36,9 +37,14 @@ public /* abstract */ class UnitSprite extends Image
     {
         var newstate :int = recomputeCurrentState();
         if (newstate != _currentState) {
+            // set new state asset
             _currentState = newstate;
             _currentAsset = _allAssets[_currentState];
             this.source = _currentAsset;
+            // if the new asset is a movie, rewind it and play from the first frame
+            if (_currentAsset is MovieClip) {
+                (_currentAsset as MovieClip).gotoAndPlay(0);
+            }
         }
         this.x = _unit.centroidx;
         this.y = _unit.centroidy;

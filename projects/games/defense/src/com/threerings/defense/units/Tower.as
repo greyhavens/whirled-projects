@@ -41,8 +41,7 @@ public class Tower extends Unit
 
     /** Game time when the tower will be able to fire again. */
     protected var _nextFiringTime :Number = 0;
-   
-    
+
     public function Tower (x :Number, y :Number, type :int, player :int, guid :int)
     {
         super(player, x, y, 1, 1);
@@ -62,17 +61,20 @@ public class Tower extends Unit
         missileHotspot = new Point(size.x / 2, size.y / 2);
     }
 
-    public function fireIfPossible (game :Game, gameTime :Number) :void
+    /** Checks if the tower can fire at anything right now, and if so, returns a target critter;
+     *  otherwise returns null. */
+    public function canFire (game :Game, gameTime :Number) :Critter
     {
         if (gameTime <= _nextFiringTime) {
-            return; // be patient
+            return null; // be patient
         }
         
-        var critter :Critter = findTargetCritter(game);
-        if (critter == null) {
-            return; // critters are too far!
-        }
-        
+        return findTargetCritter(game);
+    }
+
+    /** Creates a missile and fires it at the critter. */
+    public function fireAt (critter :Critter, game :Game, gameTime :Number) :void
+    {
         // got one, let's fire!
         var missileType :int = UnitDefinitions.getMissileType(this.type);
         var missile :Missile = new Missile(this, critter, missileType, player);
@@ -82,7 +84,8 @@ public class Tower extends Unit
         _nextFiringTime = gameTime + firingDelay;
     }
 
-    public function findTargetCritter (game :Game) :Critter
+    /** Returns a target critter within range, or null if none could be found. */
+    protected function findTargetCritter (game :Game) :Critter
     {
         var critters :Array = game.getCritters();
         for each (var critter :Critter in critters) {
