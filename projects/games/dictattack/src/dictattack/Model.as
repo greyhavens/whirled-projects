@@ -281,8 +281,13 @@ public class Model
                 scores[myidx] = scores[myidx] + 1;
                 _control.set(SCORES, scores[myidx], myidx);
                 if (scores[myidx] >= getWinningScore()) {
-                    _control.endGameWithScores(_control.seating.getPlayerIds(), scores,
-                                               WhirledGameControl.CASCADING_PAYOUT);
+                    var winners :Array = [ _control.getMyId() ];
+                    var losers :Array = _control.seating.getPlayerIds().filter(
+                        function (o :*, i :int, a :Array) :Boolean {
+                            return (int(o) != _control.getMyId());
+                        });
+                    _control.endGameWithWinners(
+                        winners, losers, WhirledGameControl.CASCADING_PAYOUT);
                 } else {
                     _control.endRound(INTER_ROUND_DELAY);
                 }
