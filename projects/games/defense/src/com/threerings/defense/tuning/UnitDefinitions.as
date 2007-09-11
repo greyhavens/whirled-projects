@@ -27,7 +27,7 @@ public class UnitDefinitions
 
     /** Specifies Flash asset suffixes for each tower state. */
     public static const TOWER_ASSET_STATES :Array =
-        [ { key: TowerSprite.STATE_REST,       value: null },
+        [ { key: TowerSprite.STATE_REST,       value: "rest" },
           { key: TowerSprite.STATE_FIRE_RIGHT, value: "fire_right" },
           { key: TowerSprite.STATE_FIRE_UP,    value: "fire_up" },
           { key: TowerSprite.STATE_FIRE_LEFT,  value: "fire_left" },
@@ -61,7 +61,7 @@ public class UnitDefinitions
               rangeMin: 1,
               rangeMax: 8,
               firingDelay: 10,
-              size: [3, 1]
+              size: [2, 1]
             } },
           { key: Tower.TYPE_BOX, value:
             { name: "Box",
