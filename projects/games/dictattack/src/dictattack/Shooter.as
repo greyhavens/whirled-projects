@@ -136,7 +136,7 @@ public class Shooter extends Sprite
 
     public function roundDidEnd () :void
     {
-        if (_endGame.parent != null) {
+        if (_endGame != null && _endGame.parent != null) {
             removeChild(_endGame);
         }
         for each (var child :MovieClip in _saucers) {
