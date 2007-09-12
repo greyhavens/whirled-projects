@@ -31,7 +31,7 @@ public class Simulator
     {
         for each (var tower :Tower in towers) {
                 var target :Critter = tower.canFire(_game, gameTime);
-                if (target != null) {
+                if (target != null && target.player != tower.player) {
                     tower.fireAt(target, _game, gameTime);
                     _game.towerFiredAt(tower, target);
                 }
