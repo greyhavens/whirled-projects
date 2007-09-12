@@ -65,6 +65,10 @@ public class Simulator
     public function processMissiles (missiles :Array, dt :Number) :void
     {
         for each (var missile :Missile in missiles) {
+                if (! missile.isActive()) {
+                    continue; // skip a bit brother!
+                }
+                
                 updateMissilePosition(missile, dt);
                 if (missile.delta.length < _missileUpdateEpsilon) {
                     _game.missileReachedTarget(missile);

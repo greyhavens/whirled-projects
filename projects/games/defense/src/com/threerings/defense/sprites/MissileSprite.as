@@ -6,7 +6,8 @@ import com.threerings.defense.units.Missile;
 
 public class MissileSprite extends UnitSprite
 {
-    public static const STATE_ACTIVE :int = 0;
+    public static const STATE_WAITING :int = 0;
+    public static const STATE_ACTIVE :int = 1;
     
     public function MissileSprite (missile :Missile, level :Level)
     {
@@ -20,7 +21,7 @@ public class MissileSprite extends UnitSprite
 
     override public function recomputeCurrentState () :int
     {
-        return STATE_ACTIVE;
+        return (missile.isActive() ? STATE_ACTIVE : STATE_WAITING);
     }
 
     // from UnitSprite

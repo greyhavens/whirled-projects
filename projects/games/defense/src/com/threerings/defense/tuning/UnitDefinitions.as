@@ -42,7 +42,7 @@ public class UnitDefinitions
               cost: 5,
               rangeMin: 0,
               rangeMax: 3,
-              firingDelay: 2,
+              pauseBetweenMissiles: 2,
               size: [2, 2]
             } },
           { key: Tower.TYPE_BOULDER, value:
@@ -51,7 +51,7 @@ public class UnitDefinitions
               cost: 10,
               rangeMin: 0,
               rangeMax: 5,
-              firingDelay: 6,
+              pauseBetweenMissiles: 6,
               size: [1, 1]
             } },
           { key: Tower.TYPE_WAGON, value:
@@ -60,7 +60,7 @@ public class UnitDefinitions
               cost: 15,
               rangeMin: 1,
               rangeMax: 8,
-              firingDelay: 10,
+              pauseBetweenMissiles: 10,
               size: [2, 1]
             } },
           { key: Tower.TYPE_BOX, value:
@@ -69,7 +69,7 @@ public class UnitDefinitions
               cost: 15,
               rangeMin: 1,
               rangeMax: 3,
-              firingDelay: 2,
+              pauseBetweenMissiles: 2,
               size: [1, 1]
             } },
           { key: Tower.TYPE_SHRUB, value:
@@ -78,7 +78,7 @@ public class UnitDefinitions
               cost: 20,
               rangeMin: 1,
               rangeMax: 8,
-              firingDelay: 8,
+              pauseBetweenMissiles: 8,
               size: [1, 1]
             } },
           { key: Tower.TYPE_TRASHCAN, value:
@@ -87,7 +87,7 @@ public class UnitDefinitions
               cost: 30,
               rangeMin: 3,
               rangeMax: 8,
-              firingDelay: 5,
+              pauseBetweenMissiles: 5,
               size: [1, 1]
             } },
           { key: Tower.TYPE_TREE, value:
@@ -96,29 +96,63 @@ public class UnitDefinitions
               cost: 15,
               rangeMin: 3,
               rangeMax: 10,
-              firingDelay: 10,
+              pauseBetweenMissiles: 10,
               size: [2, 3]
             } }
             ];
 
     /** Specifies tuning parameters for all missile types. */
     public static const MISSILE_DEFINITIONS :Array =
-        [ { key: Missile.TYPE_PAPER_PLANE, value:
-            { name: "Paper plane",
-              maxvel: 5,
-              damage: 1
-            } }
+        [ { key: Missile.TYPE_WATER_BALLOON, value:
+            { maxvel: 3,
+              damage: 2,
+              assets: [ "missile_balloon" ],
+              extra: [ "???" ]
+            } },
+          { key: Missile.TYPE_SLINGSHOT, value:
+            { maxvel: 4,
+              damage: 1,
+              assets: [ "missile_rock" ]
+            } },
+          { key: Missile.TYPE_BOOMERANG, value:
+            { maxvel: 5,
+              damage: 1,
+              delay: 500,
+              assets: [ "missile_boomerang" ]
+            } },
+          { key: Missile.TYPE_SQUIRT_GUN, value:
+            { maxvel: 5,
+              damage: 1,
+              assets: [ "missile_waterjet" ],
+              extra: [ "water_splash" ]
+            } },
+          { key: Missile.TYPE_SPORTS_BALL, value:
+            { maxvel: 3,
+              damage: 2,
+              assets: [ "missile_basketball", "missile_soccerball", "missile_football" ]
+            } },
+          { key: Missile.TYPE_SPITBALL, value:
+            { maxvel: 4,
+              damage: 1,
+              assets: [ "missile_spitball" ]
+            } },
+          { key: Missile.TYPE_PAPER_AIRPLANE, value:
+            { maxvel: 4,
+              damage: 2,
+              assets: [ "missile_airplane" ]
+            } },
+            
             ];
 
     /** Specifies which tower produces which missile type. */
     public static const TOWER_MISSILE_MAP :Array =
-        [ { key: Tower.TYPE_SANDBOX,  value: Missile.TYPE_PAPER_PLANE },
-          { key: Tower.TYPE_BOULDER,  value: Missile.TYPE_PAPER_PLANE },
-          { key: Tower.TYPE_WAGON,    value: Missile.TYPE_PAPER_PLANE },
-          { key: Tower.TYPE_BOX,      value: Missile.TYPE_PAPER_PLANE },
-          { key: Tower.TYPE_SHRUB,    value: Missile.TYPE_PAPER_PLANE },
-          { key: Tower.TYPE_TRASHCAN, value: Missile.TYPE_PAPER_PLANE },
-          { key: Tower.TYPE_TREE,     value: Missile.TYPE_PAPER_PLANE }
+        [ { key: Tower.TYPE_SANDBOX,  value: Missile.TYPE_SLINGSHOT },
+          { key: Tower.TYPE_BOULDER,  value: Missile.TYPE_BOOMERANG },
+          { key: Tower.TYPE_WAGON,    value: Missile.TYPE_SQUIRT_GUN },
+          { key: Tower.TYPE_BOX,      value: Missile.TYPE_SPORTS_BALL },
+          { key: Tower.TYPE_SHRUB,    value: Missile.TYPE_WATER_BALLOON },
+          { key: Tower.TYPE_TRASHCAN, value: Missile.TYPE_SPITBALL },
+          { key: Tower.TYPE_TREE,     value: Missile.TYPE_PAPER_AIRPLANE }
             ];
           
 
@@ -130,6 +164,14 @@ public class UnitDefinitions
         return int(missileType);
     }
 
+    /** Returns a list of asset names for given missile type, indexed by state name. */
+    public static function getMissileAssetNames (type :int) :Array // of String
+    {
+        var def :Object = getValue(MISSILE_DEFINITIONS, type);
+        Assert.NotNull(def, "Failed to get missile assets, unknown type: " + type);
+        return [ null, def.assets ];
+    }
+    
     /** Initializes missile of given type. */
     public static function initializeMissile (type :int, missile :Missile) :void
     {
@@ -138,6 +180,8 @@ public class UnitDefinitions
 
         missile.maxvel = def.maxvel;
         missile.damage = def.damage;
+        missile.activationTime =
+            missile.creationTime + ((def.delay != null) ? int(def.delay) : 1000); 
     }
     
     /** Returns a list of asset names for all different tower states, for a tower of given type. */
@@ -169,7 +213,7 @@ public class UnitDefinitions
 
         tower.rangeMinSq = def.rangeMin * def.rangeMin;
         tower.rangeMaxSq = def.rangeMax * def.rangeMax;
-        tower.firingDelay = def.firingDelay;
+        tower.pauseBetweenMissiles = def.pauseBetweenMissiles;
         tower.size = new Point(def.size[0], def.size[1]);
     }
 
@@ -196,6 +240,6 @@ public class UnitDefinitions
     }
 
     /** Map from tower type to array of asset names. */
-    protected static var _towers :HashMap = new HashMap(); 
+    protected static var _towers :HashMap = new HashMap();
 }
 }

@@ -34,7 +34,7 @@ public class Tower extends Unit
     public var rangeMaxSq :Number = 0;
 
     /** Firing delay between missiles, in seconds. */
-    public var firingDelay :Number = 1;
+    public var pauseBetweenMissiles :Number = 1;
 
     /** Tower type, one of the TYPE_* constants. */
     protected var _type :int;
@@ -58,7 +58,7 @@ public class Tower extends Unit
         UnitDefinitions.initializeTower(_type, this);
 
         // now update missile hotspot from size
-        missileHotspot = new Point(size.x / 2, size.y / 2);
+        missileHotspot = new Point(size.x / 2, 0);
     }
 
     /** Checks if the tower can fire at anything right now, and if so, returns a target critter;
@@ -81,7 +81,7 @@ public class Tower extends Unit
         game.handleAddMissile(missile);
 
         // now cool down
-        _nextFiringTime = gameTime + firingDelay;
+        _nextFiringTime = gameTime + pauseBetweenMissiles;
     }
 
     /** Returns a target critter within range, or null if none could be found. */

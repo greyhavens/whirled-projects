@@ -40,13 +40,14 @@ public class Level
     /** Returns an array of tower sprite assets in their default state. */
     public function loadTowerIcons () :Array // of DisplayObjects, indexed by Tower.TYPE_*
     {
-        return UnitDefinitions.getTowerAssetNamesForState(TowerSprite.STATE_REST).map(load);
+        return UnitDefinitions.getTowerAssetNamesForState(TowerSprite.STATE_REST)
+            .map(loadTowerAsset);
     }
     
     protected function loadTowerAssets (sprite :TowerSprite) :Array
     {
         var assetNames :Array = UnitDefinitions.getTowerAssetNames(sprite.tower.type);
-        return assetNames.map(load);
+        return assetNames.map(loadTowerAsset);
     }
     
     protected function loadCritterAssets (sprite :CritterSprite) :Array 
@@ -60,17 +61,33 @@ public class Level
 
     protected function loadMissileAssets (sprite :MissileSprite) :Array
     {
-        // todo: this only loads temp values 
-        return [ DisplayObject(new _defaultMissile()) ];
+        return UnitDefinitions.getMissileAssetNames(sprite.missile.type)
+            .map(loadMissileAsset);
     }
 
-    protected function load (name :String, ... ignore) :DisplayObject
+    protected function loadTowerAsset (name :String, ... ignore) :DisplayObject
     {
         try {
             var c :Class = _loader.getClass(name);
         } catch (e :IllegalOperationError) {
             Log.getLog(this).warning("Cannot load asset: " + name);
             c = _placeholder;
+        }
+        
+        return DisplayObject(new c());
+    }
+
+    protected function loadMissileAsset (names :Array, ... ignore) :DisplayObject
+    {
+        try {
+            // pick a random element from the array of missiles, or null
+            var c :Class = _initMissile;
+            if (names != null) {
+                var name :String = names[uint(Math.floor(Math.random() * names.length))];
+                c = _loader.getClass(name);
+            }
+        } catch (e :IllegalOperationError) {
+            Log.getLog(this).warning("Cannot load asset: " + name);
         }
         
         return DisplayObject(new c());
@@ -94,6 +111,8 @@ public class Level
 
     [Embed(source="../../../../rsrc/testmissile.png")]
     private static const _defaultMissile :Class;
+    [Embed(source="../../../../rsrc/init_missile.png")]
+    private static const _initMissile :Class;
 
     [Embed(source="../../../../rsrc/placeholder.png")]
     private static const _placeholder :Class;
