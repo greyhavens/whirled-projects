@@ -87,13 +87,19 @@ public class Tower extends Unit
     /** Returns a target critter within range, or null if none could be found. */
     protected function findTargetCritter (game :Game) :Critter
     {
+        var singlePlayer :Boolean = game.isSinglePlayerGame();
         var critters :Array = game.getCritters();
         for each (var critter :Critter in critters) {
                 var dx :Number = pos.x - critter.pos.x;
                 var dy :Number = pos.y - critter.pos.y;
                 var dsquared :Number = dx * dx + dy * dy;
+                // check if distance is within range
                 if (dsquared >= rangeMinSq && dsquared <= rangeMaxSq) {
-                    return critter;
+                    // check ownership - for single player games, any critter will do,
+                    // otherwise we have to make sure we're not shooting at our guys
+                    if (singlePlayer || critter.player != this.player) {
+                        return critter;
+                    }
                 }
             }
         

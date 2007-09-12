@@ -31,7 +31,7 @@ public class Simulator
     {
         for each (var tower :Tower in towers) {
                 var target :Critter = tower.canFire(_game, gameTime);
-                if (target != null && target.player != tower.player) {
+                if (target != null) {
                     tower.fireAt(target, _game, gameTime);
                     _game.towerFiredAt(tower, target);
                 }
@@ -75,7 +75,8 @@ public class Simulator
                 }
             }
     }
-    
+
+    /** Critters simply move towards the target tile. */
     protected function updateCritterPosition (c :Critter, dt :Number) :void
     {
         c.delta.x = c.target.x - c.pos.x;
@@ -84,7 +85,8 @@ public class Simulator
         c.vel.y = MathUtil.clamp(c.delta.y / dt, - c.maxvel, c.maxvel);
         c.pos.offset(c.vel.x * dt, c.vel.y * dt);
     }
-        
+
+    /** Missiles move towards the target even as the target moves. */
     protected function updateMissilePosition (m :Missile, dt :Number) :void
     {
         m.delta.x = m.target.x + m.target.missileHotspot.x - m.pos.x; 
@@ -97,11 +99,13 @@ public class Simulator
             m.vel.y = dd.y;
             m.pos.offset(m.vel.x * dt, m.vel.y * dt);
         } else {
+            // if we're close enough, just snap to the target
             m.pos.x = m.target.x;
             m.pos.y = m.target.y;
         }
     }
 
+    /** Finds and sets the critter's target point. */
     protected function updateTarget (c :Critter) :void
     {
         var p :Point = _board.getPathMap(c.player).getNextNode(c.target.x, c.target.y);

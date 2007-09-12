@@ -33,6 +33,11 @@ public class Game
         trace("GAME UNLOAD");
     }
 
+    public function isSinglePlayerGame () :Boolean
+    {
+        return _board.getPlayerCount() == 1;
+    }
+    
     /** Handles the start of a new game. */
     public function startGame () :void
     {
