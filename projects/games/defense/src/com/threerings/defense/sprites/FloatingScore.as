@@ -13,6 +13,7 @@ public class FloatingScore extends Label
         this.text = value;
         this.x = x;
         this.y = y;
+        this.styleName = "floatingScore";
     }
 
     override protected function createChildren () :void

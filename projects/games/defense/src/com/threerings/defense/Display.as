@@ -244,7 +244,7 @@ public class Display extends Canvas
     {
         // if it's this player's kill, display floating score display
         if (playerId == _board.getMyPlayerIndex()) {
-            var floater :FloatingScore = new FloatingScore(String(points), x, y);
+            var floater :FloatingScore = new FloatingScore("+" + String(points), x, y);
             _boardSprite.addChild(floater);
         }
         

@@ -1,0 +1,12 @@
+Label 
+{ 
+  fontSize: 11;
+}
+
+.floatingScore
+{ 
+  fontFamily: Arial;
+  fontSize: 16;
+  fontWeight: bold;
+  color: #ffdd00;
+}
