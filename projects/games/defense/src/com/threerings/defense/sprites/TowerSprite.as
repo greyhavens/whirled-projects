@@ -29,22 +29,6 @@ public class TowerSprite extends UnitSprite
         return _unit as Tower;
     }
 
-    public function updateTower (value :Tower) :void
-    {
-        throw new Error("TODO!");
-        /*
-        if (value != null && ! value.equals(tower)) {
-            _unit = value;
-            update();
-            }
-        */
-    }
-
-    public function setValid (valid :Boolean) :void
-    {
-        this.alpha = valid ? 1.0 : 0.3;
-    }
-
     override public function recomputeCurrentState () :int
     {
         if (_currentAsset == null) {

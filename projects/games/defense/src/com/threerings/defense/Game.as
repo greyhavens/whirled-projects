@@ -161,6 +161,9 @@ public class Game
     public function setCursorType (type :int) :void
     {
         _cursor.updateFromType(type);
+        if (_board.isOnBoard(_cursor)) {
+            _display.refreshCursor(_cursor);
+        }
         updateCursorDisplay();
     }
     

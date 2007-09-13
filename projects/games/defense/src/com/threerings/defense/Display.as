@@ -19,6 +19,7 @@ import com.threerings.util.HashMap;
 
 import com.threerings.defense.maps.MapFactory;
 import com.threerings.defense.sprites.CritterSprite;
+import com.threerings.defense.sprites.CursorSprite;
 import com.threerings.defense.sprites.FloatingScore;
 import com.threerings.defense.sprites.MissileSprite;
 import com.threerings.defense.sprites.TowerSprite;
@@ -167,15 +168,13 @@ public class Display extends Canvas
 
     // Functions called by the game controller
     
-    /**
-     * Single function for moving and/or changing the cursor. If the cursor was not previously
-     * shown, it will be created.
-     */
+    /** Single function for moving and/or changing the cursor. If the cursor was not previously
+     *  shown, it will be created. */
     public function showCursor (tower :Tower, valid :Boolean) :void
     {
         Mouse.hide();
         if (_cursor == null) {
-            _cursor = new TowerSprite(tower, _board.level);
+            _cursor = new CursorSprite(tower, _board.level);
             _boardSprite.addChild(_cursor);
         }
         if (_cursor.tower != tower) {
@@ -185,9 +184,7 @@ public class Display extends Canvas
         _cursor.setValid(valid);
     }
 
-    /**
-     * Hides the cursor (if one is visible)
-     */
+    /** Hides the cursor (if one is visible) */
     public function hideCursor () :void
     {
         if (_cursor != null) {
@@ -197,13 +194,13 @@ public class Display extends Canvas
         Mouse.show();
     }
 
-    /**
-     * Changes the bitmap displayed under the cursor.
-     */
-    public function setCursorType (tower :Tower) :void
+    /** If the cursor is currently displayed, changes its sprite. */
+    public function refreshCursor (tower :Tower) :void
     {
-        hideCursor();
-        showCursor(tower, true);
+        if (_cursor != null) {
+            hideCursor();
+            showCursor(tower, true);
+        }
     }
         
     public function handleAddTower (tower :Tower) :void
@@ -321,7 +318,6 @@ public class Display extends Canvas
     
     protected function handleBoardClick (event :MouseEvent) :void
     {
-        trace("*** CLICK: " + event);
         if (_cursor != null) {
             _controller.addTower(_cursor.tower);
         }
@@ -366,7 +362,7 @@ public class Display extends Canvas
     protected var _pathOverlays :Array; // of Overlay, one per player
     protected var _allOverlays :Array; // of Overlay
     
-    protected var _cursor :TowerSprite;
+    protected var _cursor :CursorSprite;
     protected var _towers :HashMap = new HashMap(); // from Tower guid to TowerSprite
     protected var _critters :HashMap = new HashMap(); // from Critter guid to CritterSprite
     protected var _missiles :HashMap = new HashMap(); // from Missile guid to MissileSprite

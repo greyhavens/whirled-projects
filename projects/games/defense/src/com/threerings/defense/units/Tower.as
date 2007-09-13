@@ -2,6 +2,7 @@ package com.threerings.defense.units {
 
 import flash.geom.Point;
 
+import com.threerings.defense.Board;
 import com.threerings.defense.Game;
 import com.threerings.defense.tuning.UnitDefinitions;
     
@@ -90,8 +91,8 @@ public class Tower extends Unit
         var singlePlayer :Boolean = game.isSinglePlayerGame();
         var critters :Array = game.getCritters();
         for each (var critter :Critter in critters) {
-                var dx :Number = pos.x - critter.pos.x;
-                var dy :Number = pos.y - critter.pos.y;
+                var dx :Number = (centroidx - critter.centroidx) / Board.SQUARE_WIDTH;
+                var dy :Number = (centroidy - critter.centroidy) / Board.SQUARE_HEIGHT;
                 var dsquared :Number = dx * dx + dy * dy;
                 // check if distance is within range
                 if (dsquared >= rangeMinSq && dsquared <= rangeMaxSq) {
