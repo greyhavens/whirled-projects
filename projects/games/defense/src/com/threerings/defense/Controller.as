@@ -39,6 +39,16 @@ public class Controller
         // sends a request to everyone to update a tower
     }
 
+    public function changeScore (playerId :int, delta :Number) :void
+    {
+        // just change the score. we don't need to request it from the validator,
+        // because there's no risk of contention. but only do this for this player.
+        if (playerId == _board.getMyPlayerIndex()) {
+            var currentScore :Number = _whirled.get(Monitor.SCORE_SET, playerId) as Number;
+            _whirled.set(Monitor.SCORE_SET, currentScore + delta, playerId);
+        }
+    }
+    
     protected var _board :Board;
     protected var _whirled :WhirledGameControl;
 }

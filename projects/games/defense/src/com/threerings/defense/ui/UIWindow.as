@@ -39,6 +39,9 @@ public class UIWindow extends TitleWindow
             { label: Messages.get("path_2"), player: 1 },
         ];
 
+        _scores = new ScorePanel();
+        addChild(_scores);
+        
         _towers = new ToggleButtonBar();
         _towers.direction = BoxDirection.VERTICAL;
         _towers.addEventListener(ItemClickEvent.ITEM_CLICK, handleTowerBarClick);
@@ -72,6 +75,11 @@ public class UIWindow extends TitleWindow
         _towers.selectedIndex = 0;
     }
 
+    public function get scorePanel () :ScorePanel
+    {
+        return _scores;
+    }
+    
     public function handleUnload (event :Event) :void
     {
         _bb.removeEventListener(ItemClickEvent.ITEM_CLICK, handleButtonBarClick);
@@ -107,11 +115,11 @@ public class UIWindow extends TitleWindow
 
     protected var _board :Board;
     protected var _game :Game;
+    protected var _display :Display;
     
     protected var _bb :ToggleButtonBar;
     protected var _towers :ToggleButtonBar;
-    protected var _display :Display;
-
+    protected var _scores :ScorePanel;
 }
 }
 

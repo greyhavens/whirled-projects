@@ -21,16 +21,19 @@ public class Monitor
     // Names of properties set on the distributed object.
     public static const TOWER_SET :String = "TowersProperty";
     public static const START_TIME :String = "StartTimeProperty";
-
+    public static const SCORE_SET :String = "ScoreSetProperty";
+    
     public function Monitor (game :Game, whirled :WhirledGameControl)
     {
         _game = game;
         _whirled = whirled;
         _whirled.registerListener(this);
 
-        _thunks = new Object();
-        _thunks[StateChangedEvent.GAME_STARTED] = startGame;
-        _thunks[StateChangedEvent.GAME_ENDED] = endGame;
+        _handlers = new Object();
+        _handlers[TOWER_SET] = towersChanged;
+        _handlers[SCORE_SET] = scoresChanged;
+        _handlers[StateChangedEvent.GAME_STARTED] = startGame;
+        _handlers[StateChangedEvent.GAME_ENDED] = endGame;
     }
 
     public function handleUnload (event : Event) :void
@@ -43,45 +46,54 @@ public class Monitor
     public function stateChanged (event :StateChangedEvent) :void
     {
         trace("*** STATE CHANGED: " + event);
-        var fn :Function = _thunks[event.type] as Function;
+        var fn :Function = _handlers[event.type] as Function;
         if (fn != null) {
-            fn();
+            fn(event);
         }
     }
 
     // from interface PropertyChangedListener
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
-        // todo: this shoudl probably move to message handler
-        trace("*** PROPERTY CHANGED: " + event.name); // ObjectUtil.toString(event.newValue));
-        
-        switch (event.name) {
-        case TOWER_SET:
-            trace("*** TOWER SET: " + event.index + ", " + event.newValue);
-            if (event.index == -1) {
-                trace("*** CLEARING THE BOARD!");
-            } else {
-                // setting a single entry
-                var tower :Tower = Tower.deserialize(event.newValue);
-                trace("*** GOT TOWER: " + tower);
-                _game.handleAddTower(tower, event.index);
-            }                
-        }
+        var fn :Function = _handlers[event.name] as Function;
+        if (fn != null) {
+            fn(event);
+        } 
     }
 
-    protected function startGame () :void
+    protected function startGame (event :StateChangedEvent) :void
     {
-        _whirled.set(Monitor.TOWER_SET, new Array());
         _game.startGame();
     }
 
-    protected function endGame () :void
+    protected function endGame (event :StateChangedEvent) :void
     {
         _game.endGame();
+    }
+
+    protected function towersChanged (event :PropertyChangedEvent) :void
+    {
+        trace("*** TOWER SET: " + event.index + ", " + event.newValue);
+        if (event.index == -1) {
+            trace("*** CLEARING THE BOARD!");
+        } else {
+            // setting a single entry
+            var tower :Tower = Tower.deserialize(event.newValue);
+            trace("*** GOT TOWER: " + tower);
+            _game.handleAddTower(tower, event.index);
+        }                
+    }
+
+    protected function scoresChanged (event :PropertyChangedEvent) :void
+    {
+        if (event.index != -1) {
+            // if only one cell in the array changed, update it!
+            _game.handleUpdateScore(event.index, Number(event.newValue));
+        }
     }
     
     protected var _game :Game;
     protected var _whirled :WhirledGameControl;
-    protected var _thunks :Object;
+    protected var _handlers :Object;
 }
 }

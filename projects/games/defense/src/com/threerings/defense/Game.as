@@ -76,10 +76,17 @@ public class Game
         var target :Critter = missile.target;
         target.health -= missile.damage;
 
-        handleRemoveMissile(missile);
         if (target.health <= 0) {
-            handleRemoveCritter(target);
+            // the missile might have reached a critter that's already removed from the game.
+            // don't try to remove it twice.
+            if (ArrayUtil.contains(_critters, target)) {
+                _display.displayKill(
+                    missile.source.player, target.pointValue, target.centroidx, target.centroidy);
+                handleRemoveCritter(target);
+            } 
         }
+
+        handleRemoveMissile(missile);
     }
 
     public function critterReachedTarget (critter :Critter) :void
@@ -116,7 +123,7 @@ public class Game
     {
         return _critters;
     }
-
+    
     public function handleRemoveCritter (critter :Critter) :void
     {
         _display.handleRemoveCritter(critter);
@@ -133,6 +140,11 @@ public class Game
     {
         _display.handleRemoveMissile(missile);
         ArrayUtil.removeFirst(_missiles, missile);
+    }
+
+    public function handleUpdateScore (playerId :int, score :Number) :void
+    {
+        _display.updateScore(playerId, score);
     }
     
     public function handleMouseMove (boardx :int, boardy :int) :void

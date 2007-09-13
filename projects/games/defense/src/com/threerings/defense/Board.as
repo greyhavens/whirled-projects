@@ -78,6 +78,11 @@ public class Board
     {
         return _whirled.seating.getPlayerIds().length;
     }
+
+    public function getPlayerNames () :Array
+    {
+        return _whirled.seating.getPlayerNames();
+    }
     
     public function processMaps () :void
     {

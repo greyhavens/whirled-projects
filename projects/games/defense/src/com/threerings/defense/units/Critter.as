@@ -29,21 +29,25 @@ public class Critter extends Unit
 
     /** Critter health. Once it drops below zero, it's gone! */
     public var health :Number;
+
+    /** How many points is this critter worth? */
+    public var pointValue :Number;
     
     public function Critter (x :int, y :int, type :int, player :int)
     {
         super(player, x, y, 1, 1);
 
+        this.type = type;
         this.vel = new Point(0, 0);
         this.target = new Point(x, y);
         this.delta = new Point(0, 0);
+        this.missileHotspot = new Point(size.x / 2, - size.y / 2); 
         
-        // todo: make all this stuff configurable
+        // the following will (eventually) be overwritten from unit definitions:
 
-        this.type = type;
+        this.pointValue = 1;
         this.maxvel = 1;
         this.health = 3;
-        this.missileHotspot = new Point(size.x / 2, - size.y / 2); 
     }
 
     // position of the sprite centroid in screen coordinates

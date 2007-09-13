@@ -100,13 +100,13 @@ public class Level
     
     // temp: placeholder assets
 
-    [Embed(source="../../../../rsrc/levels/Level01.swf#walkingbully_left")]
+    [Embed(source="../../../../rsrc/levels/Level01.swf#enemy_bully_walk_left")]
     private static const _defaultCritterLeft :Class;
-    [Embed(source="../../../../rsrc/levels/Level01.swf#walkingbully_right")]
+    [Embed(source="../../../../rsrc/levels/Level01.swf#enemy_bully_walk_right")]
     private static const _defaultCritterRight :Class;
-    [Embed(source="../../../../rsrc/levels/Level01.swf#walkingbully_up")]
+    [Embed(source="../../../../rsrc/levels/Level01.swf#enemy_bully_walk_up")]
     private static const _defaultCritterUp :Class;
-    [Embed(source="../../../../rsrc/levels/Level01.swf#walkingbully_down")]
+    [Embed(source="../../../../rsrc/levels/Level01.swf#enemy_bully_walk_down")]
     private static const _defaultCritterDown :Class;
 
     [Embed(source="../../../../rsrc/testmissile.png")]

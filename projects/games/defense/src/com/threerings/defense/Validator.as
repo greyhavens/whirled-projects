@@ -5,6 +5,8 @@ import flash.geom.Point;
 
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
+import com.threerings.ezgame.StateChangedEvent;
+import com.threerings.ezgame.StateChangedListener;
 import com.whirled.WhirledGameControl;
 
 import com.threerings.defense.units.Tower;
@@ -14,7 +16,7 @@ import com.threerings.defense.units.Tower;
  * on the hosting client, checks their validity and updates shared data accordingly.
  */
 public class Validator
-    implements MessageReceivedListener
+    implements MessageReceivedListener, StateChangedListener
 {
     // Names of messages arriving from the players
     public static const REQUEST_ADD :String = "MessageAdd";
@@ -28,6 +30,7 @@ public class Validator
         _whirled.registerListener(this);
 
         _handlers = new Object();
+        _handlers[StateChangedEvent.ROUND_STARTED] = resetRoundData;
         _handlers[REQUEST_ADD] = handleAddRequest;
 //        _handlers[REQUEST_REMOVE] = handleRemove;
 //        _handlers[REQUEST_UPDATE] = handleUpdate;
@@ -50,8 +53,22 @@ public class Validator
         }
     }
 
-    // Validators for individual actions
+    // from interface StateChangedListener
+    public function stateChanged (event :StateChangedEvent) :void
+    {
+        var fn :Function = _handlers[event.type] as Function;
+        if (fn != null) {
+            fn(event);
+        }
+    }
     
+    // Validators for individual actions
+
+    /**
+     * When a tower addition request from one of the players comes in,
+     * we check it against the board, and if valid, add it to the dset.
+     * This in effect serializes all add actions, preventing contention.
+     */
     protected function handleAddRequest (event :MessageReceivedEvent) :void
     {
         if (_whirled.amInControl()) {
@@ -65,7 +82,20 @@ public class Validator
         }
     }
 
- 
+    /** When the round changes, reset shared board and score data. */
+    protected function resetRoundData (event :StateChangedEvent) :void
+    {
+        if (_whirled.amInControl()) {
+            var playerCount :int = _whirled.seating.getPlayerIds().length;
+            var initialScores :Array = new Array(playerCount);
+            for (var ii :int = 0; ii < playerCount; ii++) {
+                initialScores[ii] = 0;
+            }
+            
+            _whirled.set(Monitor.TOWER_SET, new Array());
+            _whirled.set(Monitor.SCORE_SET, initialScores);
+        }
+    }
     
     protected var _handlers :Object;
     protected var _board :Board;

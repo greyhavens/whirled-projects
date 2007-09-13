@@ -17,6 +17,7 @@ import com.threerings.util.HashMap;
 
 import com.threerings.defense.maps.MapFactory;
 import com.threerings.defense.sprites.CritterSprite;
+import com.threerings.defense.sprites.FloatingScore;
 import com.threerings.defense.sprites.MissileSprite;
 import com.threerings.defense.sprites.TowerSprite;
 import com.threerings.defense.sprites.UnitSprite;
@@ -124,6 +125,8 @@ public class Display extends Canvas
     {
         removeAllTowers();
         resetOverlays();
+
+        _ui.scorePanel.resetNamesAndScores(_board.getPlayerNames());
     }
 
     protected function resetOverlays () :void
@@ -231,6 +234,30 @@ public class Display extends Canvas
         if (sprite != null) {
             sprite.firingTarget = critter.pos;
         }
+    }
+
+    /**
+     * Displays a little floating score bubble, and forwards the points over to the controller
+     * to add to the scoreboard.
+     */
+    public function displayKill (playerId :int, points :Number, x :Number, y :Number) :void
+    {
+        // if it's this player's kill, display floating score display
+        if (playerId == _board.getMyPlayerIndex()) {
+            var floater :FloatingScore = new FloatingScore(String(points), x, y);
+            _boardSprite.addChild(floater);
+        }
+        
+        _controller.changeScore(playerId, points);
+    }
+
+    /**
+     * This function is called as the result of score change making its round-trip to the server.
+     * Given the player id and new score, updates the display.
+     */
+    public function updateScore (player :int, score :Number) :void
+    {
+        _ui.scorePanel.updateScore(player, score);
     }
     
     public function handleAddMissile (missile :Missile) :void
