@@ -1,0 +1,9 @@
+<!-- build configuration -->
+<project name="locksmith" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Locksmith"/>
+  <property name="app.source-dir" value="src"/>
+
+  <import file="../../../etc/project-include.xml"/>
+</project>
