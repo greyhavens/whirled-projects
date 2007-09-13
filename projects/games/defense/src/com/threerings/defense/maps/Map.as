@@ -1,6 +1,7 @@
 package com.threerings.defense.maps {
 
 import flash.display.BitmapData;
+import flash.geom.Rectangle;
 
 import com.threerings.defense.Board;
 import com.threerings.defense.units.Tower;
@@ -71,17 +72,23 @@ public class Map
     }
 
   
-    /** Updates the overlay bitmap that represents this map. */
-    public function maybeRefreshOverlay (overlay :BitmapData, player :int) :void
+    /** Updates the overlay bitmap that represents this map. Returns true if the bitmap
+     *  was updated during this call, false if it remains unchanged. */
+    public function maybeRefreshOverlay (overlay :BitmapData, player :int) :Boolean
     {
         if (_hasNewData) {
+            overlay.lock();
             for (var xx :int = 0; xx < _width; xx++) {
                 for (var yy :int = 0; yy < _height; yy++) {
                     overlay.setPixel32(xx, yy, getColor(xx, yy, player));
                 }
             }
+            overlay.unlock();
             _hasNewData = false;
+            return true;
         }
+        
+        return false;
     }
         
     /**
@@ -137,7 +144,7 @@ public class Map
         if (isPassable(x, y)) {
             return 0x00000000;
         } else {
-            return (player == getCell(x, y)) ? 0xff00ff00 : 0xff000000;
+            return (player == getCell(x, y)) ? 0xff3fff00 : 0xff7f7f7f;
         }                    
     }
     

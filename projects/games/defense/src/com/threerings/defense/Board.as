@@ -24,8 +24,10 @@ public class Board
 
     public static const SQUARE_WIDTH :int = 30;
     public static const SQUARE_HEIGHT :int = 20;
-    public static const BOARD_WIDTH :int = 690;  // WIDTH * SQUARE_WIDTH
-    public static const BOARD_HEIGHT :int = 480; // HEIGHT * SQUARE_HEIGHT
+
+    public static const BOARD_WIDTH :int = WIDTH * SQUARE_WIDTH;
+    public static const BOARD_HEIGHT :int = HEIGHT * SQUARE_HEIGHT;
+        
     public static const BOARD_OFFSETX :int = 105;
     public static const BOARD_OFFSETY :int = 30;
     

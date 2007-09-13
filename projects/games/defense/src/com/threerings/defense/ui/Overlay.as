@@ -9,15 +9,10 @@ import com.threerings.defense.Board;
 import com.threerings.defense.maps.Map;
 import com.threerings.defense.maps.MapFactory;
 
-/**
- * Graphical representation of a Map object's data.
- */
+/** Graphical representation of a Map object's data, with a low res bitmap where each pixel
+ *  corresponds to a single board cell. */
 public class Overlay extends Image
 {
-    public function Overlay ()
-    {
-    }
-
     public function init (map :Map, player :int) :void
     {
         _map = map;
@@ -35,17 +30,23 @@ public class Overlay extends Image
         
         _bitmap = MapFactory.makeBlankOverlay();
         this.source = _bitmap;
-        this.scaleX = Board.BOARD_WIDTH / source.width;
-        this.scaleY = Board.BOARD_HEIGHT / source.height;
+        this.scaleX = Board.BOARD_WIDTH / _bitmap.width;
+        this.scaleY = Board.BOARD_HEIGHT / _bitmap.height;
 
         this.visible = false;
     }
 
     public function update () :void
     {
+        refreshFromMap(); // try to refresh on every iteration
+    }
+
+    public function refreshFromMap () :Boolean
+    {
         if (ready() && visible) {
-            _map.maybeRefreshOverlay(_bitmap.bitmapData, _player);
+            return _map.maybeRefreshOverlay(_bitmap.bitmapData, _player);
         }
+        return false;
     }
 
     protected var _map :Map;

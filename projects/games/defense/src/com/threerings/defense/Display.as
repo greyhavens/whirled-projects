@@ -24,6 +24,7 @@ import com.threerings.defense.sprites.FloatingScore;
 import com.threerings.defense.sprites.MissileSprite;
 import com.threerings.defense.sprites.TowerSprite;
 import com.threerings.defense.sprites.UnitSprite;
+import com.threerings.defense.ui.GroundOverlay;
 import com.threerings.defense.ui.Overlay;
 import com.threerings.defense.ui.UIWindow;
 import com.threerings.defense.units.Critter;
@@ -82,8 +83,8 @@ public class Display extends Canvas
     {
         _allOverlays = new Array();
         
-        _overlayOcc = new Overlay();
-        _allOverlays.push(_overlayOcc);
+        _groundOverlay = new GroundOverlay();
+        _allOverlays.push(_groundOverlay);
 
         // these have to be created before we know how many players we actually have.
         // so let's make all of them, but only initialize those that we'll be using...
@@ -139,7 +140,7 @@ public class Display extends Canvas
     
     protected function resetOverlays () :void
     {
-        _overlayOcc.init(_board.getMapOccupancy(), _board.getMyPlayerIndex());
+        _groundOverlay.init(_board.getMapOccupancy(), _board.getMyPlayerIndex());
 
         var count :int = _board.getPlayerCount();
         for (var ii :int = 0; ii < count; ii++) {
@@ -358,7 +359,7 @@ public class Display extends Canvas
     protected var _fps :Number = 0;
     protected var _maxmem :Number = 0;
     
-    protected var _overlayOcc :Overlay;
+    protected var _groundOverlay :Overlay;
     protected var _pathOverlays :Array; // of Overlay, one per player
     protected var _allOverlays :Array; // of Overlay
     
