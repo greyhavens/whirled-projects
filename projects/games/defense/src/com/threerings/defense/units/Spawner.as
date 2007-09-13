@@ -26,8 +26,8 @@ public class Spawner
             return;
         }
 
-        for each (var d :int in [-1, 0, 1]) {
-                var critter :Critter = new Critter(_loc.x + d, _loc.y, Critter.TYPE_WEAK, player);
+        for each (var d :int in [0]) {
+                var critter :Critter = new Critter(_loc.x + d, _loc.y, Critter.TYPE_BULLY, player);
                 _game.handleAddCritter(critter);
             }
         _nextSpawnTime = gameTime + _spawnDelay;
@@ -38,6 +38,6 @@ public class Spawner
     protected var _loc :Point;
 
     protected var _nextSpawnTime :Number = 0;
-    protected var _spawnDelay :Number = 5;
+    protected var _spawnDelay :Number = 3;
 }
 }

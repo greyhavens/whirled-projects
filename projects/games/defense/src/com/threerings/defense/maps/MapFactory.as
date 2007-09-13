@@ -7,16 +7,6 @@ import mx.core.IFlexDisplayObject;
 
 public class MapFactory
 {
-    public static function makeMapBackground (id :int) :IFlexDisplayObject
-    {
-        // this will all be fixed by remixing...
-    
-        switch (id) {
-        case 1: return new _m1() as IFlexDisplayObject;
-        default: throw new Error("Unknown map id: " + id);
-        }
-    }
-
     public static function makeBlankOverlay () :BitmapAsset
     {
         return new _blank() as BitmapAsset;
@@ -47,9 +37,6 @@ public class MapFactory
     [Embed(source="../../../../../rsrc/maps/blank.png")]
     protected static const _blank :Class;
 
-    [Embed(source="../../../../../rsrc/levels/Level01.swf#FullBG")]
-    //    [Embed(source="../../../../../rsrc/maps/1.png")]
-    protected static const _m1 :Class;
     [Embed(source="../../../../../rsrc/maps/1-1.png")]
     protected static const _m1_1 :Class;
     [Embed(source="../../../../../rsrc/maps/1-2.png")]

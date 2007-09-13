@@ -6,7 +6,7 @@ import com.threerings.defense.Board;
     
 public class Critter extends Unit
 {
-    public static const TYPE_WEAK :int = 1;
+    public static const TYPE_BULLY :int = 1;
 
     /** Target position on board. */
     public var target :Point;

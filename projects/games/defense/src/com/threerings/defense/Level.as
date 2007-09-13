@@ -14,6 +14,8 @@ import com.threerings.defense.units.Tower;
 /** Encapsulates level-specific definitions and resource access. */
 public class Level
 {
+    public static const BACKGROUND_ASSET_NAME :String = "FullBG";
+    
     public function Level (loader :LevelLoader)
     {
         _loader = loader;
@@ -41,22 +43,24 @@ public class Level
     public function loadTowerIcons () :Array // of DisplayObjects, indexed by Tower.TYPE_*
     {
         return UnitDefinitions.getTowerAssetNamesForState(TowerSprite.STATE_REST)
-            .map(loadTowerAsset);
+            .map(loadSimpleAsset);
+    }
+
+    public function loadBackground () :DisplayObject
+    {
+        return loadSimpleAsset(BACKGROUND_ASSET_NAME);
     }
     
     protected function loadTowerAssets (sprite :TowerSprite) :Array
     {
         var assetNames :Array = UnitDefinitions.getTowerAssetNames(sprite.tower.type);
-        return assetNames.map(loadTowerAsset);
+        return assetNames.map(loadSimpleAsset);
     }
     
     protected function loadCritterAssets (sprite :CritterSprite) :Array 
     {
-        // todo: this only loads temp values 
-        return [ DisplayObject(new _defaultCritterRight()), 
-                 DisplayObject(new _defaultCritterUp()),
-                 DisplayObject(new _defaultCritterLeft()),
-                 DisplayObject(new _defaultCritterDown()) ];
+        var assetNames :Array = UnitDefinitions.getCritterAssetNames(sprite.critter.type);
+        return assetNames.map(loadSimpleAsset);
     }
 
     protected function loadMissileAssets (sprite :MissileSprite) :Array
@@ -65,7 +69,7 @@ public class Level
             .map(loadMissileAsset);
     }
 
-    protected function loadTowerAsset (name :String, ... ignore) :DisplayObject
+    protected function loadSimpleAsset (name :String, ... ignore) :DisplayObject
     {
         try {
             var c :Class = _loader.getClass(name);
@@ -99,15 +103,6 @@ public class Level
 
     
     // temp: placeholder assets
-
-    [Embed(source="../../../../rsrc/levels/Level01.swf#enemy_bully_walk_left")]
-    private static const _defaultCritterLeft :Class;
-    [Embed(source="../../../../rsrc/levels/Level01.swf#enemy_bully_walk_right")]
-    private static const _defaultCritterRight :Class;
-    [Embed(source="../../../../rsrc/levels/Level01.swf#enemy_bully_walk_up")]
-    private static const _defaultCritterUp :Class;
-    [Embed(source="../../../../rsrc/levels/Level01.swf#enemy_bully_walk_down")]
-    private static const _defaultCritterDown :Class;
 
     [Embed(source="../../../../rsrc/testmissile.png")]
     private static const _defaultMissile :Class;

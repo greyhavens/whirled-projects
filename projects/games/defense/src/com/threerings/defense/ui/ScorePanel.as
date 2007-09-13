@@ -7,6 +7,7 @@ import mx.containers.VBox;
 import mx.controls.Label;
 
 import com.threerings.defense.tuning.Messages;
+import com.threerings.util.StringUtil;
 
 public class ScorePanel extends VBox
 {
@@ -34,7 +35,7 @@ public class ScorePanel extends VBox
             var row :GridRow = new GridRow();
             var ni :GridItem = new GridItem();
             var name :Label = new Label();
-            name.text = names[ii];
+            name.text = StringUtil.truncate(names[ii], 10, "...");
             var si :GridItem = new GridItem();
             var score :Label = new Label();
             score.text = "0";

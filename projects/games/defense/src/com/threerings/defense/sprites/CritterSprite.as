@@ -11,7 +11,7 @@ public class CritterSprite extends UnitSprite
     public static const STATE_UP    :int = 1;
     public static const STATE_LEFT  :int = 2;
     public static const STATE_DOWN  :int = 3;
-
+    
     public static const ALL_STATES :Array = [ STATE_RIGHT, STATE_UP, STATE_LEFT, STATE_DOWN ];
     
     public function CritterSprite (critter :Critter, level :Level)

@@ -3,7 +3,9 @@ package com.threerings.defense.tuning {
 import flash.geom.Point;
     
 import com.threerings.defense.Assert;
+import com.threerings.defense.sprites.CritterSprite;
 import com.threerings.defense.sprites.TowerSprite;
+import com.threerings.defense.units.Critter;
 import com.threerings.defense.units.Missile;
 import com.threerings.defense.units.Tower;
 import com.threerings.util.HashMap;
@@ -155,7 +157,20 @@ public class UnitDefinitions
           { key: Tower.TYPE_TREE,     value: Missile.TYPE_PAPER_AIRPLANE }
             ];
           
+    /** Specifies tuning parameters for enemies. */
+    public static const ENEMY_ASSET_TYPES :Array =
+        [ { key: Critter.TYPE_BULLY, value: "enemy_bully" }
+            ];
 
+    /** Specifies asset names for different enemy states. */
+    public static const ENEMY_ASSET_STATES :Array =
+        [ { key: CritterSprite.STATE_RIGHT, value: "walk_right" },
+          { key: CritterSprite.STATE_UP,    value: "walk_up" },
+          { key: CritterSprite.STATE_LEFT,  value: "walk_left" },
+          { key: CritterSprite.STATE_DOWN,  value: "walk_down" }
+            ];
+    
+    
     /** Returns missile type appropriate for the given tower type. */
     public static function getMissileType (towerType :int) :int
     {
@@ -206,6 +221,19 @@ public class UnitDefinitions
             });
     }
 
+    /** Returns a list of asset walk names for an enemy of given type. */
+    public static function getCritterAssetNames (type :int) :Array // of String
+    {
+        if (! _critters.containsKey(type)) {
+            // memoize asset names
+            _critters.put(type, CritterSprite.ALL_STATES.map(function (state :int, i:*, a:*) :* {
+                        return getCritterAssetName(type, state);
+                    }));
+        }
+
+        return _critters.get(type);
+    }
+    
     public static function initializeTower (type :int, tower :Tower) :void
     {
         var def :Object = getValue(TOWER_DEFINITIONS, type);
@@ -228,6 +256,14 @@ public class UnitDefinitions
         return "tower_" + assetname + suffix;
     }
 
+    protected static function getCritterAssetName (type :int, state :int) :String
+    {
+        var assetname :String = getValue(ENEMY_ASSET_TYPES, type);
+        var statename :String = getValue(ENEMY_ASSET_STATES, state);
+
+        return assetname + "_" + statename;
+    }
+    
     protected static function getValue (table :Array, key :*) :*
     {
         for each (var def :Object in table) {
@@ -241,5 +277,7 @@ public class UnitDefinitions
 
     /** Map from tower type to array of asset names. */
     protected static var _towers :HashMap = new HashMap();
+    /** Map from critter type to array of asset names. */
+    protected static var _critters :HashMap = new HashMap();
 }
 }

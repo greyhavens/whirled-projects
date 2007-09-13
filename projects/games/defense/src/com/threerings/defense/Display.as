@@ -4,12 +4,14 @@ import flash.display.Graphics;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.system.System;
 import flash.ui.Mouse;
 import flash.utils.getTimer; // function import
 
 import mx.containers.Canvas;
 import mx.controls.Image;
 import mx.controls.Label;
+import mx.controls.Text;
 import mx.managers.PopUpManager;
 
 import com.threerings.util.ArrayUtil;
@@ -47,7 +49,6 @@ public class Display extends Canvas
         
         // initialize graphics
         _backdrop = new Image();
-        _backdrop.source = MapFactory.makeMapBackground(1);
         addChild(_backdrop);
 
         _boardSprite = new Canvas();
@@ -69,7 +70,7 @@ public class Display extends Canvas
     {
         PopUpManager.addPopUp(_ui = new UIWindow(this), this, false);
         
-        _counter = new Label();
+        _counter = new Text();
         _counter.x = 10;
         _counter.y = 0;
         addChild(_counter);
@@ -83,7 +84,7 @@ public class Display extends Canvas
         _overlayOcc = new Overlay();
         _allOverlays.push(_overlayOcc);
 
-        // these have to be created before we know how many player we actually have...
+        // these have to be created before we know how many players we actually have.
         // so let's make all of them, but only initialize those that we'll be using...
         _pathOverlays = new Array(MAX_PLAYERS);
         for (var ii :int = 0; ii < MAX_PLAYERS; ii++) {
@@ -125,10 +126,16 @@ public class Display extends Canvas
     {
         removeAllTowers();
         resetOverlays();
-
+        resetBoardDisplay();
+        
         _ui.scorePanel.resetNamesAndScores(_board.getPlayerNames());
     }
 
+    protected function resetBoardDisplay () :void
+    {
+        _backdrop.source = _board.level.loadBackground();
+    }
+    
     protected function resetOverlays () :void
     {
         _overlayOcc.init(_board.getMapOccupancy(), _board.getMyPlayerIndex());
@@ -331,8 +338,12 @@ public class Display extends Canvas
         var now :int = getTimer();
         var delta :Number = (now - _lastFrameTime) / 1000;
         _lastFrameTime = now;
+
         _fps = Math.round((_fps + 1 / delta) / 2);
-        _counter.text = "FPS: " + _fps;
+        var mem :Number = System.totalMemory;
+        _maxmem = Math.max(mem, _maxmem);
+        
+        _counter.htmlText = "MEM: " + mem + "<br>MAX: " + _maxmem + "<br>FPS: " + _fps;
         
         updateSprites();
         updateOverlays();
@@ -345,10 +356,12 @@ public class Display extends Canvas
     protected var _ui :UIWindow;
     protected var _boardSprite :Canvas;
     protected var _backdrop :Image;
-    protected var _counter :Label;
+    protected var _counter :Text;
     protected var _lastFrameTime :int;
-    protected var _fps :Number = 0;
 
+    protected var _fps :Number = 0;
+    protected var _maxmem :Number = 0;
+    
     protected var _overlayOcc :Overlay;
     protected var _pathOverlays :Array; // of Overlay, one per player
     protected var _allOverlays :Array; // of Overlay
