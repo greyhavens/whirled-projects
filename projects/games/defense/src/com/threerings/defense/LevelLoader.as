@@ -5,6 +5,7 @@ import flash.events.IOErrorEvent;
 import flash.utils.ByteArray;
 
 import com.threerings.util.EmbeddedSwfLoader;
+import com.threerings.util.HashMap;
 
 /**
  * Loads Level objects, and the swf files that include their assets.
@@ -50,7 +51,13 @@ public class LevelLoader
      */
     public function getClass (className :String) :Class
     {
-        return (_swfLoader != null) ? _swfLoader.getClass(className) : null;
+        var c :Class = _classes.get(className);
+        if (c == null && _swfLoader != null) {
+            c = _swfLoader.getClass(className);
+            _classes.put(className, c);
+        }
+
+        return c; // possibly null, if the loader isn't initialized yet.
     }
     
     protected function failureHandler (event :IOErrorEvent) :void
@@ -77,5 +84,8 @@ public class LevelLoader
     
     protected var _swfLoader :EmbeddedSwfLoader;
     protected var _callback :Function;
+
+    /** Map from class names to instances. */
+    protected var _classes :HashMap = new HashMap();
 }
 }
