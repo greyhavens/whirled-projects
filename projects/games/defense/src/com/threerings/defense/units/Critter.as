@@ -3,11 +3,16 @@ package com.threerings.defense.units {
 import flash.geom.Point;
 
 import com.threerings.defense.Board;
+import com.threerings.defense.tuning.UnitDefinitions;
     
 public class Critter extends Unit
 {
     public static const TYPE_BULLY :int = 1;
+    public static const TYPE_GIRL :int = 2;
 
+    public static const ALL_TYPES :Array =
+        [ TYPE_BULLY, TYPE_GIRL ];
+    
     /** Target position on board. */
     public var target :Point;
 
@@ -18,7 +23,7 @@ public class Critter extends Unit
     public var vel :Point;
 
     /** Max velocity, in board units per second, for each axis. */
-    public var maxvel :Number;
+    public var maxspeed :Number;
 
     /** Critter type, one of TYPE_* constants. */
     public var type :int;
@@ -29,6 +34,9 @@ public class Critter extends Unit
 
     /** Critter health. Once it drops below zero, it's gone! */
     public var health :Number;
+
+    /** Critter's starting health. */
+    public var maxhealth :Number;
 
     /** How many points is this critter worth? */
     public var pointValue :Number;
@@ -42,12 +50,8 @@ public class Critter extends Unit
         this.target = new Point(x, y);
         this.delta = new Point(0, 0);
         this.missileHotspot = new Point(size.x / 2, - size.y / 2); 
-        
-        // the following will (eventually) be overwritten from unit definitions:
 
-        this.pointValue = 1;
-        this.maxvel = 1;
-        this.health = 3;
+        UnitDefinitions.initializeCritter(type, this);
     }
 
     // position of the sprite centroid in screen coordinates

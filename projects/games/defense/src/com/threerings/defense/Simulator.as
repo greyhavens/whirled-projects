@@ -4,9 +4,9 @@ import flash.geom.Point;
     
 import com.threerings.flash.MathUtil;
 
+import com.threerings.defense.spawners.Spawner;
 import com.threerings.defense.units.Critter;
 import com.threerings.defense.units.Missile;
-import com.threerings.defense.units.Spawner;
 import com.threerings.defense.units.Tower;
 
 /**
@@ -81,8 +81,8 @@ public class Simulator
     {
         c.delta.x = c.target.x - c.pos.x;
         c.delta.y = c.target.y - c.pos.y;
-        c.vel.x = MathUtil.clamp(c.delta.x / dt, - c.maxvel, c.maxvel);
-        c.vel.y = MathUtil.clamp(c.delta.y / dt, - c.maxvel, c.maxvel);
+        c.vel.x = MathUtil.clamp(c.delta.x / dt, - c.maxspeed, c.maxspeed);
+        c.vel.y = MathUtil.clamp(c.delta.y / dt, - c.maxspeed, c.maxspeed);
         c.pos.offset(c.vel.x * dt, c.vel.y * dt);
     }
 

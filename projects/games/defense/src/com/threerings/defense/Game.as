@@ -5,9 +5,10 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.utils.getTimer; // function import
 
+import com.threerings.defense.spawners.AutoSpawner;
+import com.threerings.defense.spawners.PlayerSpawner;
 import com.threerings.defense.units.Critter;
 import com.threerings.defense.units.Missile;
-import com.threerings.defense.units.Spawner;
 import com.threerings.defense.units.Tower;
 import com.threerings.defense.units.Unit;
 import com.threerings.util.ArrayUtil;
@@ -64,9 +65,11 @@ public class Game
     public function initializeSpawners () :void
     {
         var playerCount :uint = _board.getPlayerCount();
+        var spawnerClass :Class = (playerCount == 1) ? AutoSpawner : PlayerSpawner;
+
         _spawners = new Array(playerCount);
         for (var ii :int = 0; ii < playerCount; ii++) {
-            _spawners[ii] = new Spawner(this, ii, _board.getPlayerSource(ii));
+            _spawners[ii] = new spawnerClass(this, ii, _board.getPlayerSource(ii));
         }
     }
 

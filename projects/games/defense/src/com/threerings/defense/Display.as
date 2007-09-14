@@ -18,6 +18,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 
 import com.threerings.defense.maps.MapFactory;
+import com.threerings.defense.spawners.Spawner;
 import com.threerings.defense.sprites.CritterSprite;
 import com.threerings.defense.sprites.CursorSprite;
 import com.threerings.defense.sprites.FloatingScore;
@@ -29,7 +30,6 @@ import com.threerings.defense.ui.Overlay;
 import com.threerings.defense.ui.UIWindow;
 import com.threerings.defense.units.Critter;
 import com.threerings.defense.units.Missile;
-import com.threerings.defense.units.Spawner;
 import com.threerings.defense.units.Tower;
 
 import Log;

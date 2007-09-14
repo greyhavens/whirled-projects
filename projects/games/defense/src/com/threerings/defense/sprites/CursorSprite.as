@@ -66,7 +66,7 @@ public class CursorSprite extends TowerSprite
         m.createGradientBox(w, h, 0, -w/2, -h/2);
         
         g.clear();
-        g.beginGradientFill(GradientType.RADIAL, [0xffffff, 0xffffff], [0, 0.3], [0xa0, 0xff], m);
+        g.beginGradientFill(GradientType.RADIAL, [0xffffff, 0xffffff], [0, 0.3], [0xe0, 0xff], m);
         g.drawEllipse(-w/2, -h/2, w, h);
         g.endFill();
     }

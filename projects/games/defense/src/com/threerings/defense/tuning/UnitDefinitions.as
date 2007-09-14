@@ -16,7 +16,7 @@ import com.threerings.util.HashMap;
  */
 public class UnitDefinitions
 {
-    /** Specifies roots of Flash asset names for each tower type. */
+    /** Asset name roots for each tower type. */
     public static const TOWER_ASSET_TYPES :Array =
         [ { key: Tower.TYPE_SANDBOX,  value: "sandbox" },
           { key: Tower.TYPE_BOULDER,  value: "boulder" },
@@ -27,7 +27,7 @@ public class UnitDefinitions
           { key: Tower.TYPE_TREE,     value: "tree" },
             ];
 
-    /** Specifies Flash asset suffixes for each tower state. */
+    /** Asset suffixes for each tower state. */
     public static const TOWER_ASSET_STATES :Array =
         [ { key: TowerSprite.STATE_REST,       value: "rest" },
           { key: TowerSprite.STATE_FIRE_RIGHT, value: "fire_right" },
@@ -36,7 +36,7 @@ public class UnitDefinitions
           { key: TowerSprite.STATE_FIRE_DOWN,  value: "fire_down" },
             ];
 
-    /** Specifies tuning parameters for all tower types. */
+    /** Tuning parameters for all tower types. */
     public static const TOWER_DEFINITIONS :Array =
         [ { key: Tower.TYPE_SANDBOX, value:
             { name: "Sandbox",
@@ -103,7 +103,7 @@ public class UnitDefinitions
             } }
             ];
 
-    /** Specifies tuning parameters for all missile types. */
+    /** Tuning parameters for all missile types. */
     public static const MISSILE_DEFINITIONS :Array =
         [ { key: Missile.TYPE_WATER_BALLOON, value:
             { maxvel: 3,
@@ -142,10 +142,9 @@ public class UnitDefinitions
             { maxvel: 4,
               damage: 2,
               assets: [ "missile_airplane" ]
-            } },
-            
+            } }
             ];
-
+    
     /** Specifies which tower produces which missile type. */
     public static const TOWER_MISSILE_MAP :Array =
         [ { key: Tower.TYPE_SANDBOX,  value: Missile.TYPE_SLINGSHOT },
@@ -156,13 +155,26 @@ public class UnitDefinitions
           { key: Tower.TYPE_TRASHCAN, value: Missile.TYPE_SPITBALL },
           { key: Tower.TYPE_TREE,     value: Missile.TYPE_PAPER_AIRPLANE }
             ];
-          
-    /** Specifies tuning parameters for enemies. */
+
+    /** Tuning parameters for enemies. */
+    public static const ENEMY_DEFINITIONS :Array =
+        [ { key: Critter.TYPE_BULLY, value:
+            { maxhealth: 3,
+              maxspeed: 1.2,
+              points: 1 } },
+          { key: Critter.TYPE_GIRL, value:
+            { maxhealth: 5,
+              maxspeed: 1,
+              points: 2 } },
+            ];
+    
+    /** Asset names for enemies. */
     public static const ENEMY_ASSET_TYPES :Array =
-        [ { key: Critter.TYPE_BULLY, value: "enemy_girl" },
+            [ { key: Critter.TYPE_BULLY, value: "enemy_bully" },
+              { key: Critter.TYPE_GIRL,  value: "enemy_girl" },
             ];
 
-    /** Specifies asset names for different enemy states. */
+    /** Asset names for different enemy states. */
     public static const ENEMY_ASSET_STATES :Array =
         [ { key: CritterSprite.STATE_RIGHT, value: "walk_right" },
           { key: CritterSprite.STATE_UP,    value: "walk_up" },
@@ -245,6 +257,15 @@ public class UnitDefinitions
         tower.size = new Point(def.size[0], def.size[1]);
     }
 
+    public static function initializeCritter (type :int, critter :Critter) :void
+    {
+        var def :Object = getValue(ENEMY_DEFINITIONS, type);
+        Assert.NotNull(def, "Failed to initialize critter, unknown type: " + type);
+
+        critter.pointValue = def.points;
+        critter.maxhealth = critter.health = def.maxhealth;
+        critter.maxspeed = def.maxspeed;
+    }
         
     protected static function getTowerAssetName (type :int, state :int) :String
     {
