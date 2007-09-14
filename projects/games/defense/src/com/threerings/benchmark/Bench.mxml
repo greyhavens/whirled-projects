@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+ 	xmlns="com.threerings.benchmark.*"
+        styleName="plain" width="700" height="500"
+        horizontalScrollPolicy="off" verticalScrollPolicy="off"
+        layout="horizontal"
+        applicationComplete="controller.init(this);">
+    <mx:Text id="thelabel" width="100%"/>
+    <mx:Text id="results" width="100%"/>
+    <Controller id="controller"/>
+</mx:Application>

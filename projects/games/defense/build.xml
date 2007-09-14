@@ -15,4 +15,25 @@
   <target name="dist" depends="compile">
     <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/${media_hash}.swf"/>
   </target>
+
+  <!-- builds our benchmarking tool -->
+  <property name="bench.name" value="Bench"/>
+  <property name="bench.source-suffix" value="mxml"/>
+  <property name="bench.source-dir" value="src"/>
+  <property name="bench.package-dir" value="com/threerings/benchmark"/>
+  <target name="benchmark" depends="prepare-flex,buildtop">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${etc.dir}/whirled-config.xml"/>
+      <arg value="-library-path+=${app.library-dir}"/>
+      <arg value="-use-network=${flex.use-network}"/>
+      <arg value="-compiler.source-path=${bench.source-dir}"/>
+      <arg value="-file-specs"/>
+      <arg value="${bench.source-dir}/${bench.package-dir}/${bench.name}.${bench.source-suffix}"/>
+      <arg value="-output"/>
+      <arg value="${bench.name}.swf"/>
+    </java>
+  </target>
+
 </project>
+
