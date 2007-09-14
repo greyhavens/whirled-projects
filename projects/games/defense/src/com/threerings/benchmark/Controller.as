@@ -5,10 +5,21 @@ import flash.system.System;
 
 import flash.utils.getTimer; // function import
 
+import com.threerings.util.EmbeddedSwfLoader;
+
 public class Controller
 {
-    public const setcount :int = 4; 
-    public const iterations :int = 10000; 
+    public const setcount :int = 10; 
+    public const iterations :int = 1000000; 
+
+    [Embed(source="../../../../rsrc/placeholder.png")]
+    public static const TESTPNG :Class;
+    [Embed(source="../../../../rsrc/levels/Level01.swf", mimeType="application/octet-stream")]
+    public static const TESTSWF :Class;
+
+    public static const swfStaticObject :String = "tower_sandbox_rest";
+    public static const swfAnimatedObject :String = "tower_sandbox_fire_up";
+    public static const swfBigObject :String = "FullBG";
 
     // global values used in tests
     public var ix :int = 1;
@@ -26,6 +37,9 @@ public class Controller
     public var f2 :Function = function (i :*, j :*) :void { };
     public var s1 :String = "foo";
     public var s2 :String = "bar";
+    public var objStatic :Class; // to be filled in later
+    public var objAnimated :Class;
+    public var objBig :Class;
     
     // test definitions
     public var tests :Array = new Array();
@@ -33,7 +47,8 @@ public class Controller
     public var currentindex :int = -1;
     public var totalstartup :Number = 0; // in ms over all iterations
     public var test :Bench;
-    
+    public var swfLoader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
+   
     public function t (label :String, thunk :Function) :void
     {
         tests.push({ label: label, thunk: thunk, results: new Array() });
@@ -104,9 +119,9 @@ public class Controller
             iterations + " iterations each.\r\n";
         for each (var test :Object in tests) {
             var results :Object = findresults(test.results as Array);
-            data += (test.label + ": " +
-                     Number(results.m).toFixed(1) + "ns      s = " +
-                     Number(results.s).toFixed(1) + "\r\n");
+            data += (test.label + ": avg = " +
+                     Number(results.m).toFixed(1) + "ns, stdev = " +
+                     Number(results.s).toFixed(1) + "ns\r\n");
         }
 
         trace(data);
@@ -131,8 +146,22 @@ public class Controller
         for (var i :int = 0; i < 100; i++) {
             this.a100[i] = 0;
         }
-        
+
         definetests();
+
+        // wait for the swf loader to initialize, and then continue init
+        swfLoader.addEventListener(Event.COMPLETE, handleSwfLoaded);
+        swfLoader.load(new TESTSWF());
+    }
+
+    public function handleSwfLoaded (event :Event) :void
+    {
+        // we have the loader - continue initialization
+        swfLoader.removeEventListener(Event.COMPLETE, handleSwfLoaded);
+        objStatic = swfLoader.getClass(swfStaticObject);
+        objAnimated = swfLoader.getClass(swfAnimatedObject);
+        objBig = swfLoader.getClass(swfBigObject);
+        
         calibrate();
         test.addEventListener(Event.ENTER_FRAME, handleframe);
     }
@@ -148,11 +177,14 @@ public class Controller
     {
         t("No op",
           function () :void { });
-        t("Scalar variable declaration",
+
+        // Generic Actionscript tests
+
+        t("Integer variable declaration",
           function () :void { var r :int; });
-        t("Scalar variable assignment from constant",
+        t("Integer variable assignment from constant",
           function () :void { var r :int = 1; });
-        t("Scalar variable assignment from variable",
+        t("Integer variable assignment from variable",
           function () :void { var r :int = ix; });
         t("Untyped variable declaration",
           function () :void { var r :*; });
@@ -186,6 +218,8 @@ public class Controller
           function () :void { var r :Number = ix; });
         t("Number -> integer conversion",
           function () :void { var r :int = nx; });
+        t("Number -> unsigned integer conversion",
+          function () :void { var r :uint = nx; });
         
         t("Anonymous function declaration",
           function () :void { var r: Function = function () :void { }; });
@@ -205,6 +239,8 @@ public class Controller
         t("Math.floor",
           function () :void { var r: Number = Math.floor(nx); });
 
+        // Memory-allocation related tests
+        
         t("String assignment from literal",
           function () :void { var s :String = "foo"; });
         t("String assignment from variable",
@@ -232,7 +268,9 @@ public class Controller
         t("Reading from object with string keys",
           function () :void { var r :* = os3["bar"]; });
 
-        t("Unrolled array access",
+        /*
+          
+        t("Array access over 100 elements, sequence from 0 to 99, unrolled",
           function () :void {
             var r :Number = 0;
             r += a100[0];
@@ -336,29 +374,42 @@ public class Controller
             r += a100[98];
             r += a100[99];
         });
-        
-        t("Array iteration using an int-indexed for loop",
+
+        t("Array iteration over 100 elements using a for loop",
           function () :void {
-            var r :Number = 0;
-            for (var i :int = 0; i < 100; i++) {
+              var r :Number = 0;
+              for (var i :int = 0; i < 100; i++) {
                 r += a100[i];
             }
-        });
-        t("Array iteration using forEach and an anonymous function",
+          });
+        t("Array iteration over 100 elements using forEach and an anonymous function",
           function () :void {
-            var r :Number = 0;
-            var fn :Function = function (elt :Number, i :*, a :*) :void {
-                r += elt;
-            };
-            a100.forEach(fn);
-        });
-        t("Array iteration using 'for each' special syntax",
+              var r :Number = 0;
+              var fn :Function = function (elt :Number, i :*, a :*) :void {
+                  r += elt;
+              };
+              a100.forEach(fn);
+          });
+        t("Array iteration over 100 elements using 'for each' special syntax",
           function () :void {
-            var r :Number = 0;
-            for each (var elt :Number in a100) {
-                r += elt;
-            }
-        });
+              var r :Number = 0;
+              for each (var elt :Number in a100) {
+                    r += elt;
+                }
+          });
+
+        t("Instantiating a static image from embedded PNG file",
+          function () :void { var o :Object = new TESTPNG(); });
+        t("Instantiating a static image from embedded SWF file",
+          function () :void { var o :Object = new objStatic(); });
+        t("Instantiating a small movie clip from embedded SWF file",
+          function () :void { var o :Object = new objAnimated(); });
+        t("Instantiating a large movie clip (900x500px) from embedded SWF file",
+          function () :void { var o :Object = new objBig(); });
+        t("Loading a class from embedded SWF file",
+          function () :void { var c :Class = swfLoader.getClass(swfStaticObject); });
+
+        */
 
     }
 }
