@@ -159,7 +159,7 @@ public class UnitDefinitions
           
     /** Specifies tuning parameters for enemies. */
     public static const ENEMY_ASSET_TYPES :Array =
-        [ { key: Critter.TYPE_BULLY, value: "enemy_bully" }
+        [ { key: Critter.TYPE_BULLY, value: "enemy_girl" },
             ];
 
     /** Specifies asset names for different enemy states. */

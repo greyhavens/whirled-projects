@@ -18,8 +18,6 @@
 
   <!-- builds our benchmarking tool -->
   <property name="bench.name" value="Bench"/>
-  <property name="bench.source-suffix" value="mxml"/>
-  <property name="bench.source-dir" value="src"/>
   <property name="bench.package-dir" value="com/threerings/benchmark"/>
   <target name="benchmark" depends="prepare-flex,buildtop">
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
@@ -27,11 +25,28 @@
       <arg value="${etc.dir}/whirled-config.xml"/>
       <arg value="-library-path+=${app.library-dir}"/>
       <arg value="-use-network=${flex.use-network}"/>
-      <arg value="-compiler.source-path=${bench.source-dir}"/>
+      <arg value="-compiler.source-path=${app.source-dir}"/>
       <arg value="-file-specs"/>
-      <arg value="${bench.source-dir}/${bench.package-dir}/${bench.name}.${bench.source-suffix}"/>
+      <arg value="${app.source-dir}/${bench.package-dir}/${bench.name}.${app.source-suffix}"/>
       <arg value="-output"/>
       <arg value="${bench.name}.swf"/>
+    </java>
+  </target>
+
+  <!-- builds the display benchmarks -->
+  <property name="dispbench.name" value="DispBench"/>
+  <property name="dispbench.package-dir" value="com/threerings/benchmark/display"/>
+  <target name="dispbenchmark" depends="prepare-flex,buildtop">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${etc.dir}/whirled-config.xml"/>
+      <arg value="-library-path+=${app.library-dir}"/>
+      <arg value="-use-network=${flex.use-network}"/>
+      <arg value="-compiler.source-path=${app.source-dir}"/>
+      <arg value="-file-specs"/>
+      <arg value="${app.source-dir}/${dispbench.package-dir}/${dispbench.name}.${app.source-suffix}"/>
+      <arg value="-output"/>
+      <arg value="${dispbench.name}.swf"/>
     </java>
   </target>
 
