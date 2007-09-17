@@ -1,4 +1,4 @@
-﻿package com.threerings.defense.tuning {
+package com.threerings.defense.tuning {
 
 import flash.geom.Point;
     
@@ -159,15 +159,18 @@ public class UnitDefinitions
     /** Tuning parameters for enemies. */
     public static const ENEMY_DEFINITIONS :Array =
         [ { key: Critter.TYPE_BULLY, value:
-            { maxhealth: 3,
+            { name: "Bully",
+              maxhealth: 3,
               maxspeed: 1.2,
               points: 1 } },
           { key: Critter.TYPE_GIRL, value:
-            { maxhealth: 5,
+            { name: "Girl",
+              maxhealth: 5,
               maxspeed: 1,
               points: 2 } },
           { key: Critter.TYPE_BIRD, value:
-            { maxhealth: 1,
+            { name: "Bird",
+              maxhealth: 1,
               maxspeed: 3,
               points: 1 } },
             ];
