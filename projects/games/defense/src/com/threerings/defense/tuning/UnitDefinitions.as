@@ -1,4 +1,4 @@
-package com.threerings.defense.tuning {
+﻿package com.threerings.defense.tuning {
 
 import flash.geom.Point;
     
@@ -166,12 +166,17 @@ public class UnitDefinitions
             { maxhealth: 5,
               maxspeed: 1,
               points: 2 } },
+          { key: Critter.TYPE_BIRD, value:
+            { maxhealth: 1,
+              maxspeed: 3,
+              points: 1 } },
             ];
     
     /** Asset names for enemies. */
     public static const ENEMY_ASSET_TYPES :Array =
             [ { key: Critter.TYPE_BULLY, value: "enemy_bully" },
               { key: Critter.TYPE_GIRL,  value: "enemy_girl" },
+              { key: Critter.TYPE_BIRD,  value: "enemy_bird" },
             ];
 
     /** Asset names for different enemy states. */
