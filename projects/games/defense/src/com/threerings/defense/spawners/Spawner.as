@@ -33,7 +33,7 @@ public class Spawner
         }
 
         // it's alive!
-        var critter :Critter = new Critter(_loc.x, _loc.y, int(_toSpawn.pop()), player);
+        var critter :Critter = new Critter(_loc.x, _loc.y, int(_toSpawn.shift()), player);
         _game.handleAddCritter(critter);
         _nextSpawnTime = gameTime + _unitDelay;
 

@@ -171,15 +171,27 @@ public class UnitDefinitions
           { key: Critter.TYPE_BIRD, value:
             { name: "Bird",
               maxhealth: 1,
+              maxspeed: 4,
+              points: 1 } },
+          { key: Critter.TYPE_SQUIRREL, value:
+            { name: "Bird",
+              maxhealth: 1,
               maxspeed: 3,
+              points: 1 } },
+          { key: Critter.TYPE_SKATER, value:
+            { name: "Bird",
+              maxhealth: 1,
+              maxspeed: 4,
               points: 1 } },
             ];
     
     /** Asset names for enemies. */
     public static const ENEMY_ASSET_TYPES :Array =
-            [ { key: Critter.TYPE_BULLY, value: "enemy_bully" },
-              { key: Critter.TYPE_GIRL,  value: "enemy_girl" },
-              { key: Critter.TYPE_BIRD,  value: "enemy_bird" },
+            [ { key: Critter.TYPE_BULLY,    value: "enemy_bully" },
+              { key: Critter.TYPE_GIRL,     value: "enemy_girl" },
+              { key: Critter.TYPE_BIRD,     value: "enemy_bird" },
+              { key: Critter.TYPE_SQUIRREL, value: "enemy_squirrel" },
+              { key: Critter.TYPE_SKATER,   value: "enemy_skater" },
             ];
 
     /** Asset names for different enemy states. */

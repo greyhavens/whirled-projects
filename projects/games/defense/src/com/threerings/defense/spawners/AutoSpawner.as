@@ -17,7 +17,8 @@ public class AutoSpawner extends Spawner
     override protected function getSpawnDefinitions () :Array // of int
     {
         // todo: something more interesting
-        return [ Critter.TYPE_GIRL, Critter.TYPE_BULLY, Critter.TYPE_BIRD ];
+        return [ Critter.TYPE_GIRL, Critter.TYPE_BULLY, Critter.TYPE_BIRD,
+                 Critter.TYPE_SQUIRREL, Critter.TYPE_SKATER ];
     }
 }
 }

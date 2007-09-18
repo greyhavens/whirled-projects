@@ -1,4 +1,4 @@
-﻿package com.threerings.defense.units {
+package com.threerings.defense.units {
     
 import flash.geom.Point;
 
@@ -10,6 +10,8 @@ public class Critter extends Unit
     public static const TYPE_BULLY :int = 1;
     public static const TYPE_GIRL :int = 2;
     public static const TYPE_BIRD :int = 3;
+    public static const TYPE_SQUIRREL :int = 4;
+    public static const TYPE_SKATER :int = 5;
 
     public static const ALL_TYPES :Array =
         [ TYPE_BULLY, TYPE_GIRL, TYPE_BIRD ];

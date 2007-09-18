@@ -31,6 +31,13 @@ public class CritterSprite extends UnitSprite
     {
         var walkDir :int = -1;
         var vel :Point = critter.vel;
+
+        if (vel.x == 0 && vel.y == 0) {
+            // we're stopped - just return the last known state
+            return _currentState;
+        }
+
+        // we're moving! let's figure out where.
         if (Math.abs(vel.y) > Math.abs(vel.x)) {
             walkDir = (vel.y >= 0) ? STATE_DOWN : STATE_UP;
         } else {

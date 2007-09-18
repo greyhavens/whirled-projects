@@ -12,12 +12,11 @@ import com.threerings.defense.ui.Overlay;
 import com.threerings.defense.units.Unit;
 
 /**
- * Base class for sprites that display unit objects.
+ * Base class for sprites that display unit objects. Do not instantiate directly.
  */
 public /* abstract */ class UnitSprite extends Image
 {
     public static const STATE_INVALID :int = -1;
-    public static const STATE_DEFAULT :int = 0; // deleteme!
 
     
     /** Offset in pixels from the image anchor hotspot, to the image upper-left coordinate. */
@@ -55,7 +54,7 @@ public /* abstract */ class UnitSprite extends Image
      *  Subclasses should override this with a more meaningful algorithm. */
     public function recomputeCurrentState () :int
     {
-        return STATE_DEFAULT;
+        return STATE_INVALID;
     }
 
     override public function toString () :String
