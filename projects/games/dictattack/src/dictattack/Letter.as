@@ -69,7 +69,7 @@ public class Letter extends Sprite
 
     public function clearGhost () :void
     {
-        if (_ghost != null) {
+        if (_ghost != null && _ghost.parent != null) {
             removeChild(_ghost);
             _ghost = null;
         }

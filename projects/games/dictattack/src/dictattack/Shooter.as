@@ -142,6 +142,7 @@ public class Shooter extends Sprite
         for each (var child :MovieClip in _saucers) {
             removeChild(child);
         }
+        _saucers.length = 0;
     }
 
     protected function shootNextTarget () :void
