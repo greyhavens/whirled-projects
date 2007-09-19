@@ -50,7 +50,7 @@ public class UnitDefinitions
             } },
           { key: Tower.TYPE_BOULDER, value:
             { name: "Boulder",
-              styleName: "boulderButton",
+              styleName: "rockButton",
               description: "Watch out for the kid throwing water balloons!",
               cost: 10,
               rangeMin: 0,
@@ -90,7 +90,7 @@ public class UnitDefinitions
             } },
           { key: Tower.TYPE_TRASHCAN, value:
             { name: "Trash",
-              styleName: "trashcanButton",
+              styleName: "trashButton",
               description: "I wouldn't want to be the one assigned to that post.",
               cost: 30,
               rangeMin: 3,

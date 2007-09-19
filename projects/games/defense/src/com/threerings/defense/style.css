@@ -36,3 +36,51 @@ Tile
   overSkin: Embed(source="../../../../rsrc/icons/shrub_over.png");
   disabledSkin: Embed(source="../../../../rsrc/icons/shrub_disabled.png");
 }
+
+.wagonButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/wagon_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/wagon_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/wagon_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/wagon_disabled.png");
+}
+
+.boxButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/box_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/box_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/box_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/box_disabled.png");
+}
+
+.trashButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/trash_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/trash_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/trash_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/trash_disabled.png");
+}
+
+.treeButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/tree_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/tree_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/tree_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/tree_disabled.png");
+}
+
+.sandboxButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/sandbox_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/sandbox_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/sandbox_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/sandbox_disabled.png");
+}
+
+.rockButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/rock_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/rock_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/rock_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/rock_disabled.png");
+}
