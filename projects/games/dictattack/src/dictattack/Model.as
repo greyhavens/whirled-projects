@@ -90,7 +90,7 @@ public class Model
      */
     public function getWinningScore () :int
     {
-        return isMultiPlayer() ? getConfig("round_wins", 1) : -1;
+        return isMultiPlayer() ? getConfig("round_wins", 3) : -1;
     }
 
     /**
