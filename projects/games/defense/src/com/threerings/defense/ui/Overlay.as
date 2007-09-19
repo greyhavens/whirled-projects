@@ -34,6 +34,7 @@ public class Overlay extends Image
         this.scaleY = Board.BOARD_HEIGHT / _bitmap.height;
 
         this.visible = false;
+        this.cacheAsBitmap = true;
     }
 
     public function update () :void

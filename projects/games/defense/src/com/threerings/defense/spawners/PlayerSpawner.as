@@ -17,7 +17,7 @@ public class PlayerSpawner extends Spawner
     override protected function getSpawnDefinitions () :Array // of int
     {
         // todo: make this player-configurable
-        return [ Critter.TYPE_GIRL, Critter.TYPE_GIRL, Critter.TYPE_BULLY, Critter.TYPE_BULLY ];
+        return [ Critter.TYPE_GIRL, Critter.TYPE_GIRL ];
     }
 }
 }

@@ -22,6 +22,7 @@ public class CursorSprite extends TowerSprite
         super.createChildren();
 
         _range = new Shape();
+        _range.cacheAsBitmap = true;
         addChild(_range);
     }
 

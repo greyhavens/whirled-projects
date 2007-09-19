@@ -21,8 +21,8 @@ public class MapFactory
         switch (id) {
         case 1:
             switch (playerCount) {
-            case 1: b = new _m1_1() as BitmapAsset;
-            case 2: b = new _m1_2() as BitmapAsset;
+            case 1: b = new _m1_1() as BitmapAsset; break;
+            case 2: b = new _m1_2() as BitmapAsset; break;
             }
             break;
         }

@@ -1,5 +1,7 @@
 package com.threerings.defense.tuning {
 
+import mx.controls.Label;
+    
 /**
  * String internationalization helper.
  */
@@ -13,10 +15,19 @@ public class Messages
         return (val != null) ? val : key;
     }
 
+    /** Retrieves a string as a Label object. */
+    public static function getLabel (key :String) :Label
+    {
+        var l :Label = new Label();
+        l.text = get(key);
+        return l;
+    }
+    
     public static var data :Object =
     {
         menu_title: "Main Menu",
-        score: "Scores:",
+        score: "Score:",
+        health: "Health:",
         
         off: "Off",
         path_1: "P1 Map",

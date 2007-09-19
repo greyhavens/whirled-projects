@@ -3,6 +3,16 @@ Label
   fontSize: 11;
 }
 
+ApplicationControlBar 
+{ 
+  fillAlphas: 0.5, 0.5;
+}
+
+VBox 
+{ 
+  verticalGap: 0;
+}
+
 .floatingScore
 { 
   fontFamily: Arial;

@@ -17,9 +17,9 @@ import com.threerings.defense.Game;
 import com.threerings.defense.tuning.Messages;
 import com.threerings.defense.tuning.UnitDefinitions;
 
-public class UIWindow extends TitleWindow
+public class TowerPanel extends TitleWindow
 {
-    public function UIWindow (display :Display)
+    public function TowerPanel (display :Display)
     {
         _display = display;
         
@@ -39,9 +39,6 @@ public class UIWindow extends TitleWindow
             { label: Messages.get("path_2"), player: 1 },
         ];
 
-        _scores = new ScorePanel();
-        addChild(_scores);
-        
         _towers = new ToggleButtonBar();
         _towers.direction = BoxDirection.VERTICAL;
         _towers.addEventListener(ItemClickEvent.ITEM_CLICK, handleTowerBarClick);
@@ -75,11 +72,6 @@ public class UIWindow extends TitleWindow
         _towers.selectedIndex = 0;
     }
 
-    public function get scorePanel () :ScorePanel
-    {
-        return _scores;
-    }
-    
     public function handleUnload (event :Event) :void
     {
         _bb.removeEventListener(ItemClickEvent.ITEM_CLICK, handleButtonBarClick);
@@ -119,7 +111,6 @@ public class UIWindow extends TitleWindow
     
     protected var _bb :ToggleButtonBar;
     protected var _towers :ToggleButtonBar;
-    protected var _scores :ScorePanel;
 }
 }
 

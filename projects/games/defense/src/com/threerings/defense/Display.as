@@ -27,7 +27,9 @@ import com.threerings.defense.sprites.TowerSprite;
 import com.threerings.defense.sprites.UnitSprite;
 import com.threerings.defense.ui.GroundOverlay;
 import com.threerings.defense.ui.Overlay;
-import com.threerings.defense.ui.UIWindow;
+import com.threerings.defense.ui.ScorePanel;
+import com.threerings.defense.ui.StatusBar;
+import com.threerings.defense.ui.TowerPanel;
 import com.threerings.defense.units.Critter;
 import com.threerings.defense.units.Missile;
 import com.threerings.defense.units.Tower;
@@ -70,7 +72,15 @@ public class Display extends Canvas
     /** Creates buttons and other UI elements. */
     protected function createUI () :void
     {
-        PopUpManager.addPopUp(_ui = new UIWindow(this), this, false);
+        PopUpManager.addPopUp(_ui = new TowerPanel(this), this, false);
+        addChild(_statusbar = new StatusBar());
+
+        // these have to be created before we know how many players we actually have.
+        // so let's make all of them, and later initialize those that get used.
+        _scorePanels = new Array(MAX_PLAYERS);
+        for (var ii :int = 0; ii < MAX_PLAYERS; ii++) {
+            addChild(_scorePanels[ii] = new ScorePanel());
+        }
         
         _counter = new Text();
         _counter.x = 10;
@@ -129,8 +139,14 @@ public class Display extends Canvas
         removeAllTowers();
         resetOverlays();
         resetBoardDisplay();
-        
-        _ui.scorePanel.resetNamesAndScores(_board.getPlayerNames());
+
+        var count :int = _board.getPlayerCount();
+        var names :Array = _board.getPlayerNames();
+        for (var ii :int = 0; ii < count; ii++) {
+            _scorePanels[ii].init(ii, names[ii]);
+        }
+
+        _statusbar.init(names[_board.getMyPlayerIndex()]);
     }
 
     protected function resetBoardDisplay () :void
@@ -262,7 +278,10 @@ public class Display extends Canvas
      */
     public function updateScore (player :int, score :Number) :void
     {
-        _ui.scorePanel.updateScore(player, score);
+        (_scorePanels[player] as ScorePanel).score = score;
+        if (player == _board.getMyPlayerIndex()) {
+            _statusbar.score = score;
+        }
     }
     
     public function handleAddMissile (missile :Missile) :void
@@ -350,7 +369,10 @@ public class Display extends Canvas
     protected var _game :Game;
     protected var _controller :Controller;
 
-    protected var _ui :UIWindow;
+    protected var _ui :TowerPanel;
+    protected var _statusbar :StatusBar;
+    protected var _scorePanels :Array; // of ScorePanel
+    
     protected var _boardSprite :Canvas;
     protected var _backdrop :Image;
     protected var _counter :Text;
