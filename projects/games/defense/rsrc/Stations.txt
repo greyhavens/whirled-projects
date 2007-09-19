@@ -1,0 +1,60 @@
+Sandbox Station
+
+A slow-firing, short range station that covers a large area. 
+
+Cost: 4
+Damage: 2
+
+============
+
+Boulder Station
+
+A long range, compact station that is slow to reload.
+
+Cost: 3
+Damage: 1
+
+=============
+
+Wagon Station
+
+A medium range station that delivers some high damage and covers a wide area.
+
+Cost: 3
+Damage: 2
+
+=============
+
+Box Station
+
+A medium range tower with a quick reload speed.
+
+Cost: 2
+Damage: 1
+
+=============
+
+Shrub Station
+
+A cheap, short range tower with a fast reload speed.
+
+Cost: 2
+Damage: 1
+
+=============
+
+Trashcan Station
+
+A compact, long range, fast-loading tower.
+
+Cost: 4
+Damage: 1
+
+=============
+
+Tree Station
+
+A long range, slow loading tower that covers a wide area and delivers some massive damage.
+
+Cost: 6
+Damage: 3
