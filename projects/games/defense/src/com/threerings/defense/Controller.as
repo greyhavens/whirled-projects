@@ -48,6 +48,16 @@ public class Controller
             _whirled.set(Monitor.SCORE_SET, currentScore + delta, playerId);
         }
     }
+
+    public function decrementHealth (attackerPlayer :int, targetPlayer :int) :void
+    {
+        // only decrement the score if this is single player, or if this client
+        // is the one that succeeded in attacking the other
+        if (_board.getPlayerCount() == 1 || attackerPlayer == _board.getMyPlayerIndex()) {
+            var currentHealth :Number = _whirled.get(Monitor.HEALTH_SET, targetPlayer) as Number;
+            _whirled.set(Monitor.HEALTH_SET, currentHealth - 1, targetPlayer);
+        }
+    }
     
     protected var _board :Board;
     protected var _whirled :WhirledGameControl;

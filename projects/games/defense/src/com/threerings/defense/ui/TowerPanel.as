@@ -5,6 +5,7 @@ import flash.events.MouseEvent;
 import flash.ui.Mouse;
 
 import mx.containers.BoxDirection;
+import mx.containers.Tile;
 import mx.containers.TitleWindow;
 import mx.controls.Button;
 import mx.controls.ButtonBar;
@@ -33,23 +34,15 @@ public class TowerPanel extends TitleWindow
     {
         super.createChildren();
         
-        var defs :Array = [
-            { label: Messages.get("off") },
-            { label: Messages.get("path_1"), player: 0 },
-            { label: Messages.get("path_2"), player: 1 },
-        ];
-
         _towers = new ToggleButtonBar();
         _towers.direction = BoxDirection.VERTICAL;
         _towers.addEventListener(ItemClickEvent.ITEM_CLICK, handleTowerBarClick);
         addChild(_towers);
-        
-        _bb = new ToggleButtonBar();
-        _bb.direction = BoxDirection.VERTICAL;
-        _bb.dataProvider = defs;
-        _bb.addEventListener(ItemClickEvent.ITEM_CLICK, handleButtonBarClick);
-        addChild(_bb);
 
+        _buttons = new Tile();
+        _buttons.width = 120;
+        addChild(_buttons);
+        
         addEventListener(MouseEvent.MOUSE_OVER, handleMouseOver);
         addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
     }
@@ -70,17 +63,35 @@ public class TowerPanel extends TitleWindow
 
         _towers.dataProvider = defs;
         _towers.selectedIndex = 0;
+
+        UnitDefinitions.TOWER_DEFINITIONS.forEach(function(def :Object, i :*, a :*) :void {
+                var b :Button = new Button();
+                b.styleName = def.value.styleName;
+                b.id = def.key;
+                b.addEventListener(MouseEvent.CLICK, handleTowerClick);
+                _buttons.addChild(b);
+            });
+
     }
 
     public function handleUnload (event :Event) :void
     {
-        _bb.removeEventListener(ItemClickEvent.ITEM_CLICK, handleButtonBarClick);
         _towers.removeEventListener(ItemClickEvent.ITEM_CLICK, handleTowerBarClick);
         
         removeEventListener(MouseEvent.MOUSE_OVER, handleMouseOver);
         removeEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
     }
 
+    public function locateAround (panel :ScorePanel) :void
+    {
+        this.x = panel.x;
+        if (panel.y < this.height) {
+            this.y = panel.y + panel.height + 20;
+        } else {
+            this.y = panel.y - this.height - 100;
+        }
+    }
+    
     protected function handleMouseOver (event :MouseEvent) :void
     {
         Mouse.show();
@@ -90,24 +101,21 @@ public class TowerPanel extends TitleWindow
     {
     }
     
-    protected function handleButtonBarClick (itemClick :ItemClickEvent) :void
-    {
-        if (itemClick.item.player != null) {
-            // this is a toggle request for the specified player's pathing map
-            _display.showPathOverlay(int(itemClick.item.player));
-        } else {
-            _display.hidePathOverlays();
-        }        
-    }
-
     protected function handleTowerBarClick (itemClick :ItemClickEvent) :void
     {
         _game.setCursorType(itemClick.item.type);
     }
 
+    protected function handleTowerClick (event :MouseEvent) :void
+    {
+        _game.setCursorType(event.target.id);
+        trace("CLICK! " + event.target.id + " -> " + event);
+    }
+    
     protected var _board :Board;
     protected var _game :Game;
     protected var _display :Display;
+    protected var _buttons :Tile;
     
     protected var _bb :ToggleButtonBar;
     protected var _towers :ToggleButtonBar;

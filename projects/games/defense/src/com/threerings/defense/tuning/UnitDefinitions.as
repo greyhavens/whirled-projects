@@ -40,6 +40,7 @@ public class UnitDefinitions
     public static const TOWER_DEFINITIONS :Array =
         [ { key: Tower.TYPE_SANDBOX, value:
             { name: "Sandbox",
+              styleName: "sandboxButton",
               description: "Simple, cheap obstacle",
               cost: 5,
               rangeMin: 0,
@@ -49,6 +50,7 @@ public class UnitDefinitions
             } },
           { key: Tower.TYPE_BOULDER, value:
             { name: "Boulder",
+              styleName: "boulderButton",
               description: "Watch out for the kid throwing water balloons!",
               cost: 10,
               rangeMin: 0,
@@ -58,6 +60,7 @@ public class UnitDefinitions
             } },
           { key: Tower.TYPE_WAGON, value:
             { name: "Wagon",
+              styleName: "wagonButton",
               description: "Is there someone hiding behind the wagon?",
               cost: 15,
               rangeMin: 1,
@@ -67,6 +70,7 @@ public class UnitDefinitions
             } },
           { key: Tower.TYPE_BOX, value:
             { name: "Box",
+              styleName: "boxButton",
               description: "Pandora would be proud.",
               cost: 15,
               rangeMin: 1,
@@ -76,6 +80,7 @@ public class UnitDefinitions
             } },
           { key: Tower.TYPE_SHRUB, value:
             { name: "Shrub",
+              styleName: "shrubButton",
               description: "Don't go in the bushes!",
               cost: 20,
               rangeMin: 1,
@@ -85,6 +90,7 @@ public class UnitDefinitions
             } },
           { key: Tower.TYPE_TRASHCAN, value:
             { name: "Trash",
+              styleName: "trashcanButton",
               description: "I wouldn't want to be the one assigned to that post.",
               cost: 30,
               rangeMin: 3,
@@ -94,6 +100,7 @@ public class UnitDefinitions
             } },
           { key: Tower.TYPE_TREE, value:
             { name: "Tree",
+              styleName: "treeButton",
               description: "A giant obstacle with very long range.",
               cost: 15,
               rangeMin: 3,

@@ -19,7 +19,7 @@ import com.threerings.defense.units.Tower;
  */
 public class Board
 {
-    public static const WIDTH :int = 23;
+    public static const WIDTH :int = 21;
     public static const HEIGHT :int = 22;
 
     public static const SQUARE_WIDTH :int = 30;
@@ -28,7 +28,7 @@ public class Board
     public static const BOARD_WIDTH :int = WIDTH * SQUARE_WIDTH;
     public static const BOARD_HEIGHT :int = HEIGHT * SQUARE_HEIGHT;
         
-    public static const BOARD_OFFSETX :int = 105;
+    public static const BOARD_OFFSETX :int = 135;
     public static const BOARD_OFFSETY :int = 30;
     
     public static const BG_WIDTH :int = 900;
@@ -37,6 +37,9 @@ public class Board
     public static const PLAYER_COLORS :Array = [ 0x000000ff /* player 0 */,
                                                  0x0000ff00 /* player 1 */ ];
 
+    public static const SCOREPANEL_POS :Array = [ new Point(790, 440), new Point(10, 140) ];
+    public static const TOWERPANEL_POS :Array = [ new Point(790, 80),  new Point(10, 200) ];
+    
     /** Level information. */
     public var level :Level; 
 
@@ -84,6 +87,11 @@ public class Board
     public function getPlayerNames () :Array
     {
         return _whirled.seating.getPlayerNames();
+    }
+
+    public function getInitialHealth () :int
+    {
+        return 20; // todo: scale with difficulty?
     }
     
     public function processMaps () :void

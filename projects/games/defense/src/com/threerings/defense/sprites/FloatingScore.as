@@ -8,12 +8,13 @@ import mx.events.EffectEvent;
 
 public class FloatingScore extends Label
 {
-    public function FloatingScore (value :String, x :Number, y :Number)
+    public function FloatingScore (
+        value :String, x :Number, y :Number, styleName :String = "floatingScore")
     {
         this.text = value;
         this.x = x;
         this.y = y;
-        this.styleName = "floatingScore";
+        this.styleName = styleName;
     }
 
     override protected function createChildren () :void

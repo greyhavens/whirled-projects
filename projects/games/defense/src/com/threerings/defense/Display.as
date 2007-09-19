@@ -25,6 +25,7 @@ import com.threerings.defense.sprites.FloatingScore;
 import com.threerings.defense.sprites.MissileSprite;
 import com.threerings.defense.sprites.TowerSprite;
 import com.threerings.defense.sprites.UnitSprite;
+import com.threerings.defense.ui.DebugPanel;
 import com.threerings.defense.ui.GroundOverlay;
 import com.threerings.defense.ui.Overlay;
 import com.threerings.defense.ui.ScorePanel;
@@ -73,6 +74,7 @@ public class Display extends Canvas
     protected function createUI () :void
     {
         PopUpManager.addPopUp(_ui = new TowerPanel(this), this, false);
+        PopUpManager.addPopUp(_debug = new DebugPanel(this), this, false);
         addChild(_statusbar = new StatusBar());
 
         // these have to be created before we know how many players we actually have.
@@ -143,10 +145,14 @@ public class Display extends Canvas
         var count :int = _board.getPlayerCount();
         var names :Array = _board.getPlayerNames();
         for (var ii :int = 0; ii < count; ii++) {
-            _scorePanels[ii].init(ii, names[ii]);
+            (_scorePanels[ii] as ScorePanel).init(ii, names[ii], _board.getInitialHealth());
         }
 
         _statusbar.init(names[_board.getMyPlayerIndex()]);
+
+        var pos :Point = Board.TOWERPANEL_POS[_board.getMyPlayerIndex()];
+        _ui.x = pos.x;
+        _ui.y = pos.y;
     }
 
     protected function resetBoardDisplay () :void
@@ -272,15 +278,44 @@ public class Display extends Canvas
         _controller.changeScore(playerId, points);
     }
 
+    /** Forwards a health decrease request to the server. */
+    public function displayEnemySuccess (critterPlayer :int) :void
+    {
+        var myIndex :int = _board.getMyPlayerIndex();
+        
+        // who was the target of this attack?
+        var targetPlayer :int = myIndex;         // in single player i'm the target
+        if (_board.getPlayerCount() == 2 &&      // but in multiplayer,
+            critterPlayer == myIndex)            // if this was my critter,
+        {
+            targetPlayer = (1 - myIndex);        // then the other player was the target.
+        }
+        
+        // tell the server
+        _controller.decrementHealth(critterPlayer, targetPlayer);
+    }
+    
     /**
      * This function is called as the result of score change making its round-trip to the server.
      * Given the player id and new score, updates the display.
      */
     public function updateScore (player :int, score :Number) :void
     {
-        (_scorePanels[player] as ScorePanel).score = score;
+        //(_scorePanels[player] as ScorePanel).score = score;
         if (player == _board.getMyPlayerIndex()) {
             _statusbar.score = score;
+        }
+    }
+
+    /**
+     * This function is called as the result of health change making its server round-trip.
+     * Given the player id and new health, updates the display.
+     */
+    public function updateHealth (player :int, health :Number) :void
+    {
+        (_scorePanels[player] as ScorePanel).health = health;
+        if (player == _board.getMyPlayerIndex()) {
+            _statusbar.health = health;
         }
     }
     
@@ -370,6 +405,7 @@ public class Display extends Canvas
     protected var _controller :Controller;
 
     protected var _ui :TowerPanel;
+    protected var _debug :DebugPanel;
     protected var _statusbar :StatusBar;
     protected var _scorePanels :Array; // of ScorePanel
     

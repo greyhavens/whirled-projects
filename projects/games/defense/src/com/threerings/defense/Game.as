@@ -94,7 +94,8 @@ public class Game
 
     public function critterReachedTarget (critter :Critter) :void
     {
-        // todo: subtract some points from the player
+        // show the enemy reaching the target
+        _display.displayEnemySuccess(critter.player);
         
         // now just remove the critter
         handleRemoveCritter(critter);
@@ -150,6 +151,11 @@ public class Game
         _display.updateScore(playerId, score);
     }
     
+    public function handleUpdateHealth (playerId :int, health :Number) :void
+    {
+        _display.updateHealth(playerId, health);
+    }
+
     public function handleMouseMove (boardx :int, boardy :int) :void
     {
         var logical :Point = Unit.screenToLogicalPosition(boardx, boardy);

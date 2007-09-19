@@ -22,6 +22,7 @@ public class Monitor
     public static const TOWER_SET :String = "TowersProperty";
     public static const START_TIME :String = "StartTimeProperty";
     public static const SCORE_SET :String = "ScoreSetProperty";
+    public static const HEALTH_SET :String = "HealthSetProperty";
     
     public function Monitor (game :Game, whirled :WhirledGameControl)
     {
@@ -32,6 +33,7 @@ public class Monitor
         _handlers = new Object();
         _handlers[TOWER_SET] = towersChanged;
         _handlers[SCORE_SET] = scoresChanged;
+        _handlers[HEALTH_SET] = healthChanged;
         _handlers[StateChangedEvent.GAME_STARTED] = startGame;
         _handlers[StateChangedEvent.GAME_ENDED] = endGame;
     }
@@ -92,6 +94,14 @@ public class Monitor
         }
     }
     
+    protected function healthChanged (event :PropertyChangedEvent) :void
+    {
+        if (event.index != -1) {
+            // if only one cell in the array changed, update it!
+            _game.handleUpdateHealth(event.index, Number(event.newValue));
+        }
+    }
+
     protected var _game :Game;
     protected var _whirled :WhirledGameControl;
     protected var _handlers :Object;

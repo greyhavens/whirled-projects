@@ -13,10 +13,26 @@ VBox
   verticalGap: 0;
 }
 
+Tile 
+{ 
+  horizontalGap: 0;
+  verticalGap: 0;
+  paddingLeft: 0;
+  paddingRight: 0;
+}
+
 .floatingScore
 { 
   fontFamily: Arial;
   fontSize: 16;
   fontWeight: bold;
   color: #ffdd00;
+}
+
+.shrubButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/shrub_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/shrub_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/shrub_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/shrub_disabled.png");
 }

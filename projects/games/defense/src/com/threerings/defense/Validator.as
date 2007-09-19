@@ -88,12 +88,15 @@ public class Validator
         if (_whirled.amInControl()) {
             var playerCount :int = _whirled.seating.getPlayerIds().length;
             var initialScores :Array = new Array(playerCount);
+            var initialHealth :Array = new Array(playerCount);
             for (var ii :int = 0; ii < playerCount; ii++) {
                 initialScores[ii] = 0;
+                initialHealth[ii] = _board.getInitialHealth();
             }
             
             _whirled.set(Monitor.TOWER_SET, new Array());
             _whirled.set(Monitor.SCORE_SET, initialScores);
+            _whirled.set(Monitor.HEALTH_SET, initialHealth);
         }
     }
     
