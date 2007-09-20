@@ -20,9 +20,9 @@ public class StatusBar extends ApplicationControlBar
     {
         super.createChildren();
 
-        this.x = Board.BOARD_OFFSETX;
+        this.x = 0;
         this.y = 0;
-        this.width = Board.BOARD_WIDTH;
+        this.width = Board.BG_WIDTH;
         this.height = Board.BOARD_OFFSETY;
 
         var spacer :Spacer = new Spacer();

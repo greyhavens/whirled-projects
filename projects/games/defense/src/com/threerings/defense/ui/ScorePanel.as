@@ -2,16 +2,16 @@ package com.threerings.defense.ui {
 
 import flash.geom.Point;
         
-import mx.containers.ApplicationControlBar;
 import mx.containers.HBox;
 import mx.containers.VBox;
+import mx.containers.TitleWindow;
 import mx.controls.Label;
 
 import com.threerings.defense.Board;
 import com.threerings.defense.tuning.Messages;
 import com.threerings.util.StringUtil;
 
-public class ScorePanel extends ApplicationControlBar
+public class ScorePanel extends TitleWindow
 {
     public function ScorePanel()
     {
@@ -23,20 +23,15 @@ public class ScorePanel extends ApplicationControlBar
     {
         super.createChildren ();
 
-        var contents :VBox = new VBox();
-        addChild(contents);
-
-        contents.addChild(_name = new Label());
-
         var row :HBox = new HBox();
         row.addChild(Messages.getLabel("health"));
         row.addChild(_health = new Label());
-        contents.addChild(row);
+        addChild(row);
     }
 
     public function init (player :int, name :String, health :int) :void
     {
-        _name.text = StringUtil.truncate(name, 10, "...");
+        this.title = StringUtil.truncate(name, 10, "...");
         this.health = health;
         this.visible = true;
         this.includeInLayout = true;

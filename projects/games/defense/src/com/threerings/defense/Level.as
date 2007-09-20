@@ -112,6 +112,8 @@ public class Level
     [Embed(source="../../../../rsrc/placeholder.png")]
     private static const _placeholder :Class;
     
-
+    [Embed(source='../../../../rsrc/fonts/dadhand.ttf', fontName='defaultFont', 
+           mimeType='application/x-font' )]
+    private static const _defaultFont :Class;
 }
 }

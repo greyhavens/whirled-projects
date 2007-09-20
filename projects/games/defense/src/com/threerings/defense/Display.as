@@ -86,7 +86,7 @@ public class Display extends Canvas
         
         _counter = new Text();
         _counter.x = 10;
-        _counter.y = 0;
+        _counter.y = 40;
         addChild(_counter);
     }
         

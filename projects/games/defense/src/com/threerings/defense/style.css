@@ -1,6 +1,8 @@
-Label 
+Label, Font
 { 
-  fontSize: 11;
+  fontFamily: defaultFont;
+  fontSize: 12;
+  color: #ffffff;
 }
 
 ApplicationControlBar {
@@ -22,11 +24,38 @@ Tile
   paddingRight: 0;
 }
 
-.floatingScore
-{ 
-  fontFamily: Arial;
+TitleWindow {
+   paddingLeft: 0;
+   paddingRight: 0;
+   borderStyle: solid;
+   borderColor: #5c3915;
+   borderAlpha: 0.6;
+   borderThickness: 0;
+   borderThicknessLeft: 0;
+   borderThicknessTop: 0;
+   borderThicknessBottom: 0;
+   borderThicknessRight: 0;
+   roundedBottomCorners: true;
+   cornerRadius: 6;
+   headerHeight: 15;
+   backgroundAlpha: 0.6;
+   backgroundColor: #38201b;
+   dropShadowEnabled: true;
+   shadowDistance: 2;
+   shadowDirection: left;
+   dropShadowColor: #241b1b;
+              
+   titleStyleName: "mypanelStyle";
+}
+
+.mypanelStyle {
+  fontFamily: defaultFont;
+  color: #ffffff;
+}
+
+.floatingScore { 
+  fontFamily: defaultFont;
   fontSize: 16;
-  fontWeight: bold;
   color: #ffdd00;
 }
 
@@ -86,24 +115,3 @@ Tile
   disabledSkin: Embed(source="../../../../rsrc/icons/rock_disabled.png");
 }
 
-TitleWindow {
-   paddingLeft: 0;
-   paddingRight: 0;
-   borderStyle: solid;
-   borderColor: #5c3915;
-   borderAlpha: 0.6;
-   borderThickness: 0;
-   borderThicknessLeft: 0;
-   borderThicknessTop: 0;
-   borderThicknessBottom: 0;
-   borderThicknessRight: 0;
-   roundedBottomCorners: true;
-   cornerRadius: 6;
-   headerHeight: 15;
-   backgroundAlpha: 0.6;
-   backgroundColor: #38201b;
-   dropShadowEnabled: true;
-   shadowDistance: 2;
-   shadowDirection: left;
-   dropShadowColor: #241b1b;
-}
