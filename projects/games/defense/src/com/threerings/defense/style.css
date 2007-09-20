@@ -11,11 +11,6 @@ ApplicationControlBar {
    backgroundAlpha: 0.6;
 }
 
-VBox 
-{ 
-  verticalGap: 0;
-}
-
 Tile 
 { 
   horizontalGap: 0;

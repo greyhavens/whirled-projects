@@ -2,12 +2,11 @@ package com.threerings.defense.ui {
 
 import mx.containers.ApplicationControlBar;
 import mx.containers.HBox;
+import mx.controls.Image;
 import mx.controls.Label;
 import mx.controls.Spacer;
 
 import com.threerings.defense.Board;
-import com.threerings.defense.Display;
-import com.threerings.defense.tuning.Messages;
 import com.threerings.util.StringUtil;
 
 public class StatusBar extends ApplicationControlBar
@@ -20,37 +19,52 @@ public class StatusBar extends ApplicationControlBar
     {
         super.createChildren();
 
+        var makeSpacer :Function = function (width :int, isPercent :Boolean) :Spacer {
+            var s :Spacer = new Spacer();
+            if (isPercent) {
+                s.percentWidth = width;
+            } else {
+                s.width = width;
+            }
+            return s;
+        }
+
         this.x = 0;
         this.y = 0;
         this.width = Board.BG_WIDTH;
         this.height = Board.BOARD_OFFSETY;
 
-        var spacer :Spacer = new Spacer();
-        spacer.percentWidth = 50;
-        addChild(spacer);
+        addChild(makeSpacer(50, true));
 
         addChild(_name = new Label());
+        addChild(makeSpacer(50, false));
+        
+        addChild(_money = new Label());
+        addChild(_moneyIcon = new Image());
+        addChild(makeSpacer(30, false));
 
-        var row :HBox = new HBox();
-        row.addChild(Messages.getLabel("health"));
-        row.addChild(_health = new Label());
-        addChild(row);
+        addChild(_health = new Label());
+        addChild(_healthIcon = new Image());
+        addChild(makeSpacer(30, false));
 
-        row = new HBox();
-        row.addChild(Messages.getLabel("score"));
-        row.addChild(_score = new Label());
-        addChild(row);
+        addChild(_score = new Label());
+        addChild(_scoreIcon = new Image());
 
-        spacer = new Spacer();
-        spacer.percentWidth = 50;
-        addChild(spacer);
+        addChild(makeSpacer(50, true));
     }
 
-    public function init (name :String) :void
+    public function init (board :Board) :void
+    {
+        _healthIcon.source = board.level.loadHealthIcon();
+        _moneyIcon.source = board.level.loadMoneyIcon();
+    }
+    
+    public function reset (name :String) :void
     {
         this.playerName = name;
         this.health = 0;
         this.score = 0;
+        this.money = 0;
     }
     
     public function set playerName (name :String) :void
@@ -67,10 +81,18 @@ public class StatusBar extends ApplicationControlBar
     {
         _score.text = String(value);
     }
+
+    public function set money (value :Number) :void
+    {
+        _money.text = String(value);
+    }
     
     protected var _name :Label;
     protected var _health :Label;
     protected var _score :Label;
-
+    protected var _money :Label;
+    protected var _healthIcon :Image;
+    protected var _scoreIcon :Image;
+    protected var _moneyIcon :Image;
 }
 }

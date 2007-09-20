@@ -120,6 +120,7 @@ public class Display extends Canvas
         _controller = controller;
 
         _ui.init(board, game);
+        _statusbar.init(board);
     }
 
     public function handleUnload (event : Event) : void
@@ -148,7 +149,7 @@ public class Display extends Canvas
             (_scorePanels[ii] as ScorePanel).init(ii, names[ii], _board.getInitialHealth());
         }
 
-        _statusbar.init(names[_board.getMyPlayerIndex()]);
+        _statusbar.reset(names[_board.getMyPlayerIndex()]);
 
         var pos :Point = Board.TOWERPANEL_POS[_board.getMyPlayerIndex()];
         _ui.x = pos.x;

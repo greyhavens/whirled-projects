@@ -51,6 +51,16 @@ public class Level
         return loadSimpleAsset(BACKGROUND_ASSET_NAME);
     }
     
+    public function loadHealthIcon () :DisplayObject
+    {
+        return DisplayObject(new _healthIcon());
+    }
+    
+    public function loadMoneyIcon () :DisplayObject
+    {
+        return DisplayObject(new _moneyIcon());
+    }
+    
     protected function loadTowerAssets (sprite :TowerSprite) :Array
     {
         var assetNames :Array = UnitDefinitions.getTowerAssetNames(sprite.tower.type);
@@ -101,17 +111,17 @@ public class Level
     protected var _handlers :Array;
 
 
-    
-    // temp: placeholder assets
-
-    [Embed(source="../../../../rsrc/testmissile.png")]
-    private static const _defaultMissile :Class;
     [Embed(source="../../../../rsrc/init_missile.png")]
     private static const _initMissile :Class;
 
     [Embed(source="../../../../rsrc/placeholder.png")]
     private static const _placeholder :Class;
     
+    [Embed(source="../../../../rsrc/icons/health.png")]
+    private static const _healthIcon :Class;
+    [Embed(source="../../../../rsrc/icons/money.png")]
+    private static const _moneyIcon :Class;
+
     [Embed(source='../../../../rsrc/fonts/dadhand.ttf', fontName='defaultFont', 
            mimeType='application/x-font' )]
     private static const _defaultFont :Class;
