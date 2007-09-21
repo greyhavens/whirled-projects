@@ -42,19 +42,19 @@ public class UnitDefinitions
             { name: "Sandbox",
               styleName: "sandboxButton",
               description: "Simple, cheap obstacle",
-              cost: 5,
+              cost: 4,
               rangeMin: 0,
               rangeMax: 3,
-              pauseBetweenMissiles: 2,
+              pauseBetweenMissiles: 8,
               size: [2, 2]
             } },
           { key: Tower.TYPE_BOULDER, value:
             { name: "Boulder",
               styleName: "rockButton",
               description: "Watch out for the kid throwing water balloons!",
-              cost: 10,
+              cost: 3,
               rangeMin: 0,
-              rangeMax: 5,
+              rangeMax: 5.5,
               pauseBetweenMissiles: 6,
               size: [1, 1]
             } },
@@ -62,50 +62,50 @@ public class UnitDefinitions
             { name: "Wagon",
               styleName: "wagonButton",
               description: "Is there someone hiding behind the wagon?",
-              cost: 15,
-              rangeMin: 1,
-              rangeMax: 8,
-              pauseBetweenMissiles: 10,
+              cost: 3,
+              rangeMin: 0,
+              rangeMax: 4,
+              pauseBetweenMissiles: 5,
               size: [2, 1]
             } },
           { key: Tower.TYPE_BOX, value:
             { name: "Box",
               styleName: "boxButton",
               description: "Pandora would be proud.",
-              cost: 15,
-              rangeMin: 1,
-              rangeMax: 3,
-              pauseBetweenMissiles: 2,
+              cost: 2,
+              rangeMin: 0,
+              rangeMax: 3.5,
+              pauseBetweenMissiles: 4,
               size: [1, 1]
             } },
           { key: Tower.TYPE_SHRUB, value:
             { name: "Shrub",
               styleName: "shrubButton",
               description: "Don't go in the bushes!",
-              cost: 20,
-              rangeMin: 1,
-              rangeMax: 8,
-              pauseBetweenMissiles: 8,
+              cost: 2,
+              rangeMin: 0,
+              rangeMax: 2.5,
+              pauseBetweenMissiles: 3,
               size: [1, 1]
             } },
           { key: Tower.TYPE_TRASHCAN, value:
             { name: "Trash",
               styleName: "trashButton",
               description: "I wouldn't want to be the one assigned to that post.",
-              cost: 30,
-              rangeMin: 3,
-              rangeMax: 8,
-              pauseBetweenMissiles: 5,
+              cost: 4,
+              rangeMin: 0,
+              rangeMax: 5.5,
+              pauseBetweenMissiles: 3.5,
               size: [1, 1]
             } },
           { key: Tower.TYPE_TREE, value:
             { name: "Tree",
               styleName: "treeButton",
               description: "A giant obstacle with very long range.",
-              cost: 15,
-              rangeMin: 3,
-              rangeMax: 10,
-              pauseBetweenMissiles: 10,
+              cost: 6,
+              rangeMin: 0,
+              rangeMax: 7,
+              pauseBetweenMissiles: 7,
               size: [2, 3]
             } }
             ];
@@ -114,13 +114,13 @@ public class UnitDefinitions
     public static const MISSILE_DEFINITIONS :Array =
         [ { key: Missile.TYPE_WATER_BALLOON, value:
             { maxvel: 3,
-              damage: 2,
+              damage: 1,
               assets: [ "missile_balloon" ],
               extra: [ "???" ]
             } },
           { key: Missile.TYPE_SLINGSHOT, value:
             { maxvel: 4,
-              damage: 1,
+              damage: 2,
               assets: [ "missile_rock" ]
             } },
           { key: Missile.TYPE_BOOMERANG, value:
@@ -131,13 +131,13 @@ public class UnitDefinitions
             } },
           { key: Missile.TYPE_SQUIRT_GUN, value:
             { maxvel: 5,
-              damage: 1,
+              damage: 2,
               assets: [ "missile_waterjet" ],
               extra: [ "water_splash" ]
             } },
           { key: Missile.TYPE_SPORTS_BALL, value:
             { maxvel: 3,
-              damage: 2,
+              damage: 1,
               assets: [ "missile_basketball", "missile_soccerball", "missile_football" ]
             } },
           { key: Missile.TYPE_SPITBALL, value:
@@ -147,7 +147,7 @@ public class UnitDefinitions
             } },
           { key: Missile.TYPE_PAPER_AIRPLANE, value:
             { maxvel: 4,
-              damage: 2,
+              damage: 3,
               assets: [ "missile_airplane" ]
             } }
             ];
@@ -167,27 +167,27 @@ public class UnitDefinitions
     public static const ENEMY_DEFINITIONS :Array =
         [ { key: Critter.TYPE_BULLY, value:
             { name: "Bully",
-              maxhealth: 3,
-              maxspeed: 1.2,
-              points: 1 } },
+              maxhealth: 12,
+              maxspeed: 2,
+              points: 2 } },
           { key: Critter.TYPE_GIRL, value:
             { name: "Girl",
-              maxhealth: 5,
+              maxhealth: 8,
               maxspeed: 1,
               points: 2 } },
           { key: Critter.TYPE_BIRD, value:
             { name: "Bird",
-              maxhealth: 1,
+              maxhealth: 4,
               maxspeed: 4,
               points: 1 } },
           { key: Critter.TYPE_SQUIRREL, value:
             { name: "Bird",
-              maxhealth: 1,
+              maxhealth: 3,
               maxspeed: 3,
               points: 1 } },
           { key: Critter.TYPE_SKATER, value:
             { name: "Bird",
-              maxhealth: 1,
+              maxhealth: 8,
               maxspeed: 4,
               points: 1 } },
             ];
@@ -260,6 +260,12 @@ public class UnitDefinitions
             });
     }
 
+    /** Returns a bare tower definition. */
+    public static function getTowerDefinition (type :int) :Object
+    {
+        return getValue(TOWER_DEFINITIONS, type);
+    }
+    
     /** Returns a list of asset walk names for an enemy of given type. */
     public static function getCritterAssetNames (type :int) :Array // of String
     {
@@ -281,6 +287,7 @@ public class UnitDefinitions
         tower.rangeMinSq = def.rangeMin * def.rangeMin;
         tower.rangeMaxSq = def.rangeMax * def.rangeMax;
         tower.pauseBetweenMissiles = def.pauseBetweenMissiles;
+        tower.cost = def.cost;
         tower.size = new Point(def.size[0], def.size[1]);
     }
 

@@ -8,17 +8,17 @@ import com.threerings.defense.sprites.CritterSprite;
 import com.threerings.defense.sprites.MissileSprite;
 import com.threerings.defense.sprites.TowerSprite;
 import com.threerings.defense.sprites.UnitSprite;
+import com.threerings.defense.tuning.LevelDefinitions;
 import com.threerings.defense.tuning.UnitDefinitions;
 import com.threerings.defense.units.Tower;
 
 /** Encapsulates level-specific definitions and resource access. */
 public class Level
 {
-    public static const BACKGROUND_ASSET_NAME :String = "FullBG";
-    
-    public function Level (loader :LevelLoader)
+    public function Level (loader :LevelLoader, levelNumber :int)
     {
         _loader = loader;
+        _number = levelNumber;
 
         _handlers =
             [ { type: TowerSprite, handler: this.loadTowerAssets },
@@ -26,6 +26,12 @@ public class Level
               { type: MissileSprite, handler: this.loadMissileAssets }  ];
     }
 
+    /** Returns current level number. */
+    public function get number () :int
+    {
+        return _number;
+    }
+    
     /** Returns an array of sprite assets for the specified sprite. */
     public function loadSpriteAssets (sprite :UnitSprite) :Array // of DisplayObjects
     {
@@ -46,9 +52,10 @@ public class Level
             .map(loadSimpleAsset);
     }
 
-    public function loadBackground () :DisplayObject
+    public function loadBackground (playerCount :int) :DisplayObject
     {
-        return loadSimpleAsset(BACKGROUND_ASSET_NAME);
+        var def :Object = LevelDefinitions.getLevelDefinition(playerCount, number);
+        return loadSimpleAsset(def.backgroundAssetName);
     }
     
     public function loadHealthIcon () :DisplayObject
@@ -106,7 +113,8 @@ public class Level
         
         return DisplayObject(new c());
     }
-    
+
+    protected var _number :int;
     protected var _loader :LevelLoader;
     protected var _handlers :Array;
 

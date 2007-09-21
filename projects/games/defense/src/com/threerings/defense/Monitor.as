@@ -23,6 +23,7 @@ public class Monitor
     public static const START_TIME :String = "StartTimeProperty";
     public static const SCORE_SET :String = "ScoreSetProperty";
     public static const HEALTH_SET :String = "HealthSetProperty";
+    public static const MONEY_SET :String = "MoneySetProperty";
     
     public function Monitor (game :Game, whirled :WhirledGameControl)
     {
@@ -32,8 +33,9 @@ public class Monitor
 
         _handlers = new Object();
         _handlers[TOWER_SET] = towersChanged;
-        _handlers[SCORE_SET] = scoresChanged;
-        _handlers[HEALTH_SET] = healthChanged;
+        _handlers[SCORE_SET] = makeHandler(null, _game.handleUpdateScore);
+        _handlers[HEALTH_SET] = makeHandler(null, _game.handleUpdateHealth);
+        _handlers[MONEY_SET] = makeHandler(null, _game.handleUpdateMoney);
         _handlers[StateChangedEvent.GAME_STARTED] = startGame;
         _handlers[StateChangedEvent.GAME_ENDED] = endGame;
     }
@@ -86,22 +88,29 @@ public class Monitor
         }                
     }
 
-    protected function scoresChanged (event :PropertyChangedEvent) :void
+    /** Makes and returns a handler function, which monitors when a distributed property changed.
+     * resetFn takes no parameters.
+     * updateFn takes index of the element changed, and its new value.
+     */
+    protected function makeHandler (resetFn :Function, updateFn :Function) :Function
     {
-        if (event.index != -1) {
-            // if only one cell in the array changed, update it!
-            _game.handleUpdateScore(event.index, Number(event.newValue));
+        if (resetFn == null) {
+            resetFn = function () :void { };
         }
-    }
-    
-    protected function healthChanged (event :PropertyChangedEvent) :void
-    {
-        if (event.index != -1) {
-            // if only one cell in the array changed, update it!
-            _game.handleUpdateHealth(event.index, Number(event.newValue));
-        }
-    }
 
+        if (updateFn == null) {
+            updateFn = function (a :*, b :*) :void { };
+        }
+        
+        return function (event :PropertyChangedEvent) :void {
+            if (event.index == -1) {
+                resetFn();
+            } else {
+                updateFn(event.index, Number(event.newValue));
+            }
+        }
+    }
+        
     protected var _game :Game;
     protected var _whirled :WhirledGameControl;
     protected var _handlers :Object;

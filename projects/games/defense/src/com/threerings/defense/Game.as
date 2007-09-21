@@ -28,6 +28,11 @@ public class Game
         _cursor = new Tower(0, 0, Tower.TYPE_SANDBOX, _board.getMyPlayerIndex(), 0);
     }
 
+    public function get myMoney () :Number
+    {
+        return _myMoney;
+    }
+    
     public function handleUnload (event : Event) : void
     {
         _display.removeEventListener(Event.ENTER_FRAME, handleGameTick);
@@ -89,6 +94,11 @@ public class Game
             } 
         }
 
+        missileExpired(missile);
+    }
+
+    public function missileExpired (missile :Missile) :void
+    {
         handleRemoveMissile(missile);
     }
 
@@ -156,6 +166,14 @@ public class Game
         _display.updateHealth(playerId, health);
     }
 
+    public function handleUpdateMoney (playerId :int, money :Number) :void
+    {
+        _display.updateMoney(playerId, money);
+        if (playerId == _board.getMyPlayerIndex()) {
+            _myMoney = money;
+        }
+    }
+        
     public function handleMouseMove (boardx :int, boardy :int) :void
     {
         var logical :Point = Unit.screenToLogicalPosition(boardx, boardy);
@@ -212,6 +230,7 @@ public class Game
     protected var _critters :Array; // of Critter
     protected var _spawners :Array; // of Spawner
     protected var _missiles :Array; // of Missile
+    protected var _myMoney :Number;
     
     protected var _lastTick :int = getTimer();
 }

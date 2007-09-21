@@ -73,6 +73,9 @@ public class Simulator
                 if (missile.delta.length < _missileUpdateEpsilon) {
                     _game.missileReachedTarget(missile);
                 }
+                if (missile.getAgeMs() >= _missileTTLMs) {
+                    _game.missileExpired(missile);
+                }
             }
     }
 
@@ -119,6 +122,7 @@ public class Simulator
 
     protected var _targetUpdateEpsilon :Number = 0.1;
     protected var _missileUpdateEpsilon :Number = 0.2;
+    protected var _missileTTLMs :int = 1000; // in milliseconds
     
     protected var _board :Board;
     protected var _game :Game;

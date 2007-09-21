@@ -37,6 +37,9 @@ public class Tower extends Unit
     /** Firing delay between missiles, in seconds. */
     public var pauseBetweenMissiles :Number = 1;
 
+    /** Tower cost. */
+    public var cost :Number = 1;
+    
     /** Tower type, one of the TYPE_* constants. */
     protected var _type :int;
 

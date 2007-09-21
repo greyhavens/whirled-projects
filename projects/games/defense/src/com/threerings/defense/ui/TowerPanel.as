@@ -1,5 +1,6 @@
 package com.threerings.defense.ui {
 
+import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.ui.Mouse;
@@ -56,6 +57,18 @@ public class TowerPanel extends TitleWindow
 
     }
 
+    /** Called with the player's current money amount, disables buttons for unaffordable towers. */
+    public function updateAvailability (money :int) :void
+    {
+        _buttons.getChildren().forEach(function (obj :DisplayObject, i :*, a :*) :void {
+                var b :Button = obj as Button;
+                if (b != null && b.id != null && isFinite(int(b.id))) {
+                    var def :Object = UnitDefinitions.getTowerDefinition(int(b.id));
+                    b.enabled = (def.cost <= money);
+                }
+            });
+    }                        
+    
     public function handleUnload (event :Event) :void
     {
         removeEventListener(MouseEvent.MOUSE_OVER, handleMouseOver);

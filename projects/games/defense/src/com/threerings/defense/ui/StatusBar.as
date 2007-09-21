@@ -59,12 +59,12 @@ public class StatusBar extends ApplicationControlBar
         _moneyIcon.source = board.level.loadMoneyIcon();
     }
     
-    public function reset (name :String) :void
+    public function reset (name :String, board :Board) :void
     {
         this.playerName = name;
-        this.health = 0;
+        this.health = board.getInitialHealth();
         this.score = 0;
-        this.money = 0;
+        this.money = board.getInitialMoney();
     }
     
     public function set playerName (name :String) :void

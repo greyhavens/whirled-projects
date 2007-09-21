@@ -29,7 +29,7 @@ public class ScorePanel extends TitleWindow
         addChild(row);
     }
 
-    public function init (player :int, name :String, health :int) :void
+    public function reset (player :int, name :String, health :int) :void
     {
         this.title = StringUtil.truncate(name, 10, "...");
         this.health = health;

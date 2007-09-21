@@ -42,6 +42,7 @@ public class LevelLoader
     {
         if (_callback == null) {
             _callback = cont;
+            _level = level;
             _swfLoader.load(getSwf(level));
         }
     }
@@ -68,7 +69,7 @@ public class LevelLoader
 
     protected function successHandler (event :Event) :void
     {
-        _callback(new Level(this));
+        _callback(new Level(this, _level));
         _callback = null;
     }
 
@@ -84,7 +85,8 @@ public class LevelLoader
     
     protected var _swfLoader :EmbeddedSwfLoader;
     protected var _callback :Function;
-
+    protected var _level :int;
+    
     /** Map from class names to instances. */
     protected var _classes :HashMap = new HashMap();
 }

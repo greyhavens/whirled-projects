@@ -73,9 +73,16 @@ public class Validator
     {
         if (_whirled.amInControl()) {
             var tower :Tower = Tower.deserialize(event.value);
+
+            var money :Number = _whirled.get(Monitor.MONEY_SET, tower.player) as Number;
+            if (money < tower.cost) {
+                return; // nothing to do
+            }
+
             if (_board.isOnBoard(tower) && _board.isUnoccupied(tower)) {
                 _whirled.set(Monitor.TOWER_SET, event.value,
                              _board.towerPositionToIndex(tower.pos.x, tower.pos.y));
+                _whirled.set(Monitor.MONEY_SET, money - tower.cost, tower.player);
             }
         } else {
             trace("Ignoring event " + event.name + ", not in control");
@@ -89,14 +96,17 @@ public class Validator
             var playerCount :int = _whirled.seating.getPlayerIds().length;
             var initialScores :Array = new Array(playerCount);
             var initialHealth :Array = new Array(playerCount);
+            var initialMoney :Array = new Array(playerCount);
             for (var ii :int = 0; ii < playerCount; ii++) {
                 initialScores[ii] = 0;
                 initialHealth[ii] = _board.getInitialHealth();
+                initialMoney[ii] = _board.getInitialMoney();
             }
             
             _whirled.set(Monitor.TOWER_SET, new Array());
             _whirled.set(Monitor.SCORE_SET, initialScores);
             _whirled.set(Monitor.HEALTH_SET, initialHealth);
+            _whirled.set(Monitor.MONEY_SET, initialMoney);
         }
     }
     

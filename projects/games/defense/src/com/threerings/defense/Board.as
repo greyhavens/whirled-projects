@@ -11,6 +11,7 @@ import com.whirled.WhirledGameControl;
 import com.threerings.defense.maps.GroundMap;
 import com.threerings.defense.maps.Map;
 import com.threerings.defense.maps.PathMap;
+import com.threerings.defense.tuning.LevelDefinitions;
 import com.threerings.defense.units.Tower;
 
 /**
@@ -91,9 +92,14 @@ public class Board
 
     public function getInitialHealth () :int
     {
-        return 20; // todo: scale with difficulty?
+        return LevelDefinitions.getStartingHealth(getPlayerCount(), level.number);
     }
     
+    public function getInitialMoney () :int
+    {
+        return LevelDefinitions.getStartingMoney(getPlayerCount(), level.number);
+    }
+
     public function processMaps () :void
     {
         for each (var map :Map in _allmaps) {

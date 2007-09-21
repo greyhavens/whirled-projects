@@ -22,8 +22,8 @@ public class Controller
         trace("CONTROLLER UNLOAD");
     }
 
-    public function addTower (tower :Tower) :void
-    {        
+    public function requestAddTower (tower :Tower) :void
+    {
         var serialized :Object = tower.serialize();
         serialized.guid = Unit.makeGuid(); // give the request a brand new guid
         _whirled.sendMessage(Validator.REQUEST_ADD, serialized);
@@ -46,6 +46,15 @@ public class Controller
         if (playerId == _board.getMyPlayerIndex()) {
             var currentScore :Number = _whirled.get(Monitor.SCORE_SET, playerId) as Number;
             _whirled.set(Monitor.SCORE_SET, currentScore + delta, playerId);
+        }
+    }
+
+    public function changeMoney (playerId :int, delta :Number) :void
+    {
+        // just change the money. 
+        if (playerId == _board.getMyPlayerIndex()) {
+            var currentMoney :Number = _whirled.get(Monitor.MONEY_SET, playerId) as Number;
+            _whirled.set(Monitor.MONEY_SET, currentMoney + delta, playerId);
         }
     }
 

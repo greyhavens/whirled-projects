@@ -73,9 +73,9 @@ public class Display extends Canvas
     /** Creates buttons and other UI elements. */
     protected function createUI () :void
     {
-        PopUpManager.addPopUp(_ui = new TowerPanel(this), this, false);
-        PopUpManager.addPopUp(_debug = new DebugPanel(this), this, false);
-        addChild(_statusbar = new StatusBar());
+        PopUpManager.addPopUp(_towerPanel = new TowerPanel(this), this, false);
+        PopUpManager.addPopUp(_debugPanel = new DebugPanel(this), this, false);
+        addChild(_statusBar = new StatusBar());
 
         // these have to be created before we know how many players we actually have.
         // so let's make all of them, and later initialize those that get used.
@@ -119,14 +119,14 @@ public class Display extends Canvas
         _game = game;
         _controller = controller;
 
-        _ui.init(board, game);
-        _statusbar.init(board);
+        _towerPanel.init(board, game);
+        _statusBar.init(board);
     }
 
     public function handleUnload (event : Event) : void
     {
-        PopUpManager.removePopUp(_ui);
-        _ui.handleUnload(event);
+        PopUpManager.removePopUp(_towerPanel);
+        _towerPanel.handleUnload(event);
         
         removeEventListener(MouseEvent.CLICK, handleBoardClick);
         removeEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);
@@ -146,19 +146,19 @@ public class Display extends Canvas
         var count :int = _board.getPlayerCount();
         var names :Array = _board.getPlayerNames();
         for (var ii :int = 0; ii < count; ii++) {
-            (_scorePanels[ii] as ScorePanel).init(ii, names[ii], _board.getInitialHealth());
+            (_scorePanels[ii] as ScorePanel).reset(ii, names[ii], _board.getInitialHealth());
         }
 
-        _statusbar.reset(names[_board.getMyPlayerIndex()]);
+        _statusBar.reset(names[_board.getMyPlayerIndex()], _board);
 
         var pos :Point = Board.TOWERPANEL_POS[_board.getMyPlayerIndex()];
-        _ui.x = pos.x;
-        _ui.y = pos.y;
+        _towerPanel.x = pos.x;
+        _towerPanel.y = pos.y;
     }
 
     protected function resetBoardDisplay () :void
     {
-        _backdrop.source = _board.level.loadBackground();
+        _backdrop.source = _board.level.loadBackground(_board.getPlayerCount());
     }
     
     protected function resetOverlays () :void
@@ -196,6 +196,10 @@ public class Display extends Canvas
      *  shown, it will be created. */
     public function showCursor (tower :Tower, valid :Boolean) :void
     {
+        if (tower.cost > _game.myMoney) {
+            return; // we can't afford it - don't even show the cursor
+        }
+        
         Mouse.hide();
         if (_cursor == null) {
             _cursor = new CursorSprite(tower, _board.level);
@@ -277,6 +281,7 @@ public class Display extends Canvas
         }
         
         _controller.changeScore(playerId, points);
+        _controller.changeMoney(playerId, points);
     }
 
     /** Forwards a health decrease request to the server. */
@@ -295,7 +300,7 @@ public class Display extends Canvas
         // tell the server
         _controller.decrementHealth(critterPlayer, targetPlayer);
     }
-    
+
     /**
      * This function is called as the result of score change making its round-trip to the server.
      * Given the player id and new score, updates the display.
@@ -304,7 +309,7 @@ public class Display extends Canvas
     {
         //(_scorePanels[player] as ScorePanel).score = score;
         if (player == _board.getMyPlayerIndex()) {
-            _statusbar.score = score;
+            _statusBar.score = score;
         }
     }
 
@@ -316,10 +321,28 @@ public class Display extends Canvas
     {
         (_scorePanels[player] as ScorePanel).health = health;
         if (player == _board.getMyPlayerIndex()) {
-            _statusbar.health = health;
+            _statusBar.health = health;
         }
     }
     
+    /**
+     * This function is called as the result of money change making its server round-trip.
+     * Given the player id and new health, updates the display.
+     */
+    public function updateMoney (player :int, money :Number) :void
+    {
+        if (player == _board.getMyPlayerIndex()) {
+            // update displays
+            _statusBar.money = money;
+            _towerPanel.updateAvailability(money);
+
+            // if the player's current tower is too expensive, reset the cursor
+            if (_cursor != null && _cursor.tower.cost > money) {
+                hideCursor();
+            }
+        }
+    }
+
     public function handleAddMissile (missile :Missile) :void
     {
         var sprite :MissileSprite = new MissileSprite(missile, _board.level);
@@ -331,13 +354,10 @@ public class Display extends Canvas
     public function handleRemoveMissile (missile :Missile) :void
     {
         var sprite :MissileSprite = _missiles.get(missile.guid);
-        if (sprite == null) {
-            Log.getLog(this).info("Missile not in display list, cannot remove: " + missile);
-            return;
+        if (sprite != null) {
+            _boardSprite.removeChild(sprite);
+            _missiles.remove(missile.guid);
         }
-        
-        _boardSprite.removeChild(sprite);
-        _missiles.remove(missile.guid);
     }
     
     /**
@@ -375,7 +395,7 @@ public class Display extends Canvas
     protected function handleBoardClick (event :MouseEvent) :void
     {
         if (_cursor != null) {
-            _controller.addTower(_cursor.tower);
+            _controller.requestAddTower(_cursor.tower);
         }
     }
 
@@ -405,9 +425,9 @@ public class Display extends Canvas
     protected var _game :Game;
     protected var _controller :Controller;
 
-    protected var _ui :TowerPanel;
-    protected var _debug :DebugPanel;
-    protected var _statusbar :StatusBar;
+    protected var _towerPanel :TowerPanel;
+    protected var _debugPanel :DebugPanel;
+    protected var _statusBar :StatusBar;
     protected var _scorePanels :Array; // of ScorePanel
     
     protected var _boardSprite :Canvas;

@@ -72,9 +72,14 @@ public class Missile extends Unit
         return Board.SQUARE_HEIGHT * pos.y;
     }
 
+    public function getAgeMs () :int
+    {
+        return getTimer() - activationTime;
+    }
+
     public function isActive () :Boolean
     {
-        return getTimer() > activationTime;
+        return getAgeMs() > 0;
     }
 }
 }
