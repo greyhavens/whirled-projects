@@ -7,6 +7,7 @@ import mx.controls.Label;
 import mx.controls.Spacer;
 
 import com.threerings.defense.Board;
+import com.threerings.defense.tuning.Messages;
 import com.threerings.util.StringUtil;
 
 public class StatusBar extends ApplicationControlBar
@@ -37,6 +38,7 @@ public class StatusBar extends ApplicationControlBar
         addChild(makeSpacer(50, true));
 
         addChild(_name = new Label());
+        addChild(_score = new Label());
         addChild(makeSpacer(50, false));
         
         addChild(_money = new Label());
@@ -46,9 +48,6 @@ public class StatusBar extends ApplicationControlBar
         addChild(_health = new Label());
         addChild(_healthIcon = new Image());
         addChild(makeSpacer(30, false));
-
-        addChild(_score = new Label());
-        addChild(_scoreIcon = new Image());
 
         addChild(makeSpacer(50, true));
     }
@@ -69,7 +68,7 @@ public class StatusBar extends ApplicationControlBar
     
     public function set playerName (name :String) :void
     {
-        _name.text = StringUtil.truncate(name, 10, "...");
+        _name.text = StringUtil.truncate(name, 10, "...") + Messages.get("score");
     }
 
     public function set health (value :Number) :void
@@ -92,7 +91,6 @@ public class StatusBar extends ApplicationControlBar
     protected var _score :Label;
     protected var _money :Label;
     protected var _healthIcon :Image;
-    protected var _scoreIcon :Image;
     protected var _moneyIcon :Image;
 }
 }

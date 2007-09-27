@@ -22,6 +22,11 @@ public class Controller
         trace("CONTROLLER UNLOAD");
     }
 
+    public function playerReady () :void
+    {
+        _whirled.playerReady();
+    }
+    
     public function requestAddTower (tower :Tower) :void
     {
         var serialized :Object = tower.serialize();

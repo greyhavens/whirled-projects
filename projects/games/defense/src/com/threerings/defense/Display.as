@@ -9,6 +9,7 @@ import flash.ui.Mouse;
 import flash.utils.getTimer; // function import
 
 import mx.containers.Canvas;
+import mx.controls.Button;
 import mx.controls.Image;
 import mx.controls.Label;
 import mx.controls.Text;
@@ -77,6 +78,8 @@ public class Display extends Canvas
         PopUpManager.addPopUp(_debugPanel = new DebugPanel(this), this, false);
         addChild(_statusBar = new StatusBar());
 
+        hideUI();
+        
         // these have to be created before we know how many players we actually have.
         // so let's make all of them, and later initialize those that get used.
         _scorePanels = new Array(MAX_PLAYERS);
@@ -88,6 +91,9 @@ public class Display extends Canvas
         _counter.x = 10;
         _counter.y = 40;
         addChild(_counter);
+
+        _splash = new Splash(handlePlayClicked);
+        addChild(_splash);
     }
         
     /** Creates images for board overlay bitmaps. */
@@ -190,12 +196,38 @@ public class Display extends Canvas
             }
     }
 
+    /** Shows the game UI elements. */
+    public function showUI () :void
+    {
+        _towerPanel.visible = _debugPanel.visible = true;
+    }
+
+    /** Shows the game UI elements. */
+    public function hideUI () :void
+    {
+        _towerPanel.visible = _debugPanel.visible = false;
+    }
+    
     // Functions called by the game controller
+
+    /** Called when the game state was changed (e.g. switching between levels). */
+    public function gameStateUpdated (oldstate :int, newstate :int) :void
+    {
+        if (oldstate == Game.GAME_STATE_SPLASH) {
+            removeChild(_splash);
+            showUI();
+        }
+    }
     
     /** Single function for moving and/or changing the cursor. If the cursor was not previously
      *  shown, it will be created. */
     public function showCursor (tower :Tower, valid :Boolean) :void
     {
+        if (_game.state != Game.GAME_STATE_PLAY) {
+            Mouse.show();
+            return; // only show a tower cursor during play
+        }
+        
         if (tower.cost > _game.myMoney) {
             return; // we can't afford it - don't even show the cursor
         }
@@ -391,6 +423,12 @@ public class Display extends Canvas
     }
                                       
     // Event handlers
+
+    protected function handlePlayClicked () :void
+    {
+        _controller.playerReady();
+        _game.state = Game.GAME_STATE_PLAY;
+    }
     
     protected function handleBoardClick (event :MouseEvent) :void
     {
@@ -425,6 +463,7 @@ public class Display extends Canvas
     protected var _game :Game;
     protected var _controller :Controller;
 
+    protected var _splash :Splash;
     protected var _towerPanel :TowerPanel;
     protected var _debugPanel :DebugPanel;
     protected var _statusBar :StatusBar;

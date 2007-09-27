@@ -110,3 +110,18 @@ TitleWindow {
   disabledSkin: Embed(source="../../../../rsrc/icons/rock_disabled.png");
 }
 
+
+
+.playButton
+{ 
+  upSkin: Embed(source="../../../../rsrc/splash/play_default.png");
+  downSkin: Embed(source="../../../../rsrc/splash/play_default.png");
+  overSkin: Embed(source="../../../../rsrc/splash/play_over.png");
+}
+
+.helpButton
+{ 
+  upSkin: Embed(source="../../../../rsrc/splash/help_default.png");
+  downSkin: Embed(source="../../../../rsrc/splash/help_default.png");
+  overSkin: Embed(source="../../../../rsrc/splash/help_over.png");
+}

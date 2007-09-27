@@ -39,7 +39,7 @@ public class Board
                                                  0x0000ff00 /* player 1 */ ];
 
     public static const SCOREPANEL_POS :Array = [ new Point(790, 440), new Point(10, 140) ];
-    public static const TOWERPANEL_POS :Array = [ new Point(790, 80),  new Point(10, 200) ];
+    public static const TOWERPANEL_POS :Array = [ new Point(790, 80),  new Point(10, 200) ];   
     
     /** Level information. */
     public var level :Level; 

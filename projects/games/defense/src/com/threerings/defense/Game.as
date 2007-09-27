@@ -15,19 +15,38 @@ import com.threerings.util.ArrayUtil;
 
 public class Game
 {
+    public static const GAME_STATE_SPLASH :int = 1;
+    public static const GAME_STATE_PLAY :int = 2;
+    public static const GAME_STATE_WAIT :int = 3;
+    public static const GAME_STATE_DONE :int = 4;
+
     public function Game (board :Board, display :Display)
     {
         _board = board;
         _display = display;
-
+        
         _simulator = new Simulator(_board, this);
 
         _display.addEventListener(Event.ENTER_FRAME, handleGameTick);
 
         // initialize the cursor with dummy data - it will all get overwritten, eventually
         _cursor = new Tower(0, 0, Tower.TYPE_SANDBOX, _board.getMyPlayerIndex(), 0);
+
+        _gamestate = GAME_STATE_SPLASH;
     }
 
+    public function get state () :int
+    {
+        return _gamestate;
+    }
+
+    public function set state (value :int) :void
+    {
+        var oldvalue :int = _gamestate;
+        _gamestate = value;
+        _display.gameStateUpdated(oldvalue, value);
+    }
+    
     public function get myMoney () :Number
     {
         return _myMoney;
@@ -231,7 +250,8 @@ public class Game
     protected var _spawners :Array; // of Spawner
     protected var _missiles :Array; // of Missile
     protected var _myMoney :Number;
-    
+
+    protected var _gamestate :int;
     protected var _lastTick :int = getTimer();
 }
 }

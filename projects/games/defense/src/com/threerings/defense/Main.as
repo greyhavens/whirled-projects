@@ -36,6 +36,15 @@ public class Main
        
         trace("MVC CREATED");
 
+        if (_whirled.isConnected()) {
+            trace("* CONNECTED!");
+            // initialize the game
+        } else {
+            trace("* DISCONNECTED!");
+        }
+
+        
+        
         // todo: move level loading elsewhere
         _loader.load(LevelLoader.LEVEL_1, function (level :Level) :void {
                 if (level != null) {
@@ -44,13 +53,7 @@ public class Main
 
                     _display.init(_board, _game, _controller);
 
-                    _whirled.playerReady();
-                    if (_whirled.isConnected()) {
-                        trace("* CONNECTED!");
-                        // initialize the game
-                    } else {
-                        trace("* DISCONNECTED!");
-                    }
+//                    _whirled.playerReady();
                 } 
             });
     }

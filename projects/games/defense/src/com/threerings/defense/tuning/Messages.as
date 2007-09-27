@@ -26,8 +26,8 @@ public class Messages
     public static var data :Object =
     {
         menu_title: "Main Menu",
-        score: "Score:",
         health: "Health:",
+        score: " score:",
         
         off: "Off",
         path_1: "P1 Map",
