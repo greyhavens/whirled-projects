@@ -93,7 +93,7 @@ public class Game
 
         _spawners = new Array(playerCount);
         for (var ii :int = 0; ii < playerCount; ii++) {
-            _spawners[ii] = new spawnerClass(this, ii, _board.getPlayerSource(ii));
+            _spawners[ii] = new spawnerClass(this, _board.level, ii, _board.getPlayerSource(ii));
         }
     }
 
@@ -156,7 +156,7 @@ public class Game
     {
         return _critters;
     }
-    
+
     public function handleRemoveCritter (critter :Critter) :void
     {
         _display.handleRemoveCritter(critter);

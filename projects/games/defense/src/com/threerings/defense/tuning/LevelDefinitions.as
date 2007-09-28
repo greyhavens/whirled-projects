@@ -1,5 +1,7 @@
 package com.threerings.defense.tuning {
 
+import com.threerings.defense.units.Critter;
+
 public class LevelDefinitions
 {
     /** Total number of levels, indexed by player count. */
@@ -13,7 +15,16 @@ public class LevelDefinitions
         // level 1
         {   backgroundAssetName: "FullBG",
             startingHealth: 20,
-            startingMoney: 25
+            startingMoney: 25,
+            spawner: [ [ [ Critter.TYPE_SQUIRREL, 1 ] ],
+                       [ [ Critter.TYPE_BULLY, 1 ] ],
+                       [ [ Critter.TYPE_BIRD, 1 ] ],
+                       [ [ Critter.TYPE_SKATER, 1 ] ],
+                       [ [ Critter.TYPE_BULLY, 1 ], [ Critter.TYPE_SKATER, 1 ] ],
+                       [ [ Critter.TYPE_SQUIRREL, 2 ] ],
+                       [ [ Critter.TYPE_GIRL, 2 ] ],
+                       [ [ Critter.TYPE_BIRD, 1 ], [ Critter.TYPE_SQUIRREL, 1 ] ],
+                ]
         },
         
         ];

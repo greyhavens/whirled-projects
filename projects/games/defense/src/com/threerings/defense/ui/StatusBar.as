@@ -35,7 +35,7 @@ public class StatusBar extends ApplicationControlBar
         this.width = Board.BG_WIDTH;
         this.height = Board.BOARD_OFFSETY;
 
-        addChild(makeSpacer(50, true));
+        addChild(makeSpacer(300, false));
 
         addChild(_name = new Label());
         addChild(_score = new Label());

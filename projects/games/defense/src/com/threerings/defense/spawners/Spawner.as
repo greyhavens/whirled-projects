@@ -3,14 +3,16 @@ package com.threerings.defense.spawners {
 import flash.geom.Point;
 
 import com.threerings.defense.Game;
+import com.threerings.defense.Level;
 import com.threerings.defense.units.Critter;
     
 /** Thing that spawns critters. :) */
 public class Spawner
 {
-    public function Spawner (game :Game, player :int, loc :Point)
+    public function Spawner (game :Game, level :Level, player :int, loc :Point)
     {
         _game = game;
+        _level = level;
         _player = player;
         _loc = loc;
     }
@@ -19,27 +21,36 @@ public class Spawner
     {
         return _player;
     }
-
+    
     /** Spawning function. */
     public function spawnIfPossible (gameTime :Number) :void
     {
-        if (gameTime < _nextSpawnTime) {
-            return;  // not yet!
-        }
-       
-        // figure out what to spawn
-        if (_toSpawn.length <= 0) {
-            _toSpawn = getSpawnDefinitions();
-        }
+        var spawningCurrentWave :Boolean = (_toSpawn.length > 0);
+        
+        if (spawningCurrentWave) {
+            // spawn the next one when we're good and ready
+            if (gameTime >= _nextSpawnTime) {
+                var critter :Critter = new Critter(_loc.x, _loc.y, int(_toSpawn.shift()), player);
+                _game.handleAddCritter(critter);
+                _nextSpawnTime = gameTime + _unitDelay;
 
-        // it's alive!
-        var critter :Critter = new Critter(_loc.x, _loc.y, int(_toSpawn.shift()), player);
-        _game.handleAddCritter(critter);
-        _nextSpawnTime = gameTime + _unitDelay;
+                // if we just finished a wave, wait a little longer before we start the next one
+                if (_toSpawn.length == 0) {
+                    _nextSpawnTime = gameTime + _groupDelay;
+                }
+            }
 
-        // if we ran out of things to spawn, wait a little longer
-        if (_toSpawn.length <= 0) {
-            _nextSpawnTime = gameTime + _groupDelay;
+        } else {
+            // we ran out of things to spawn. should we start another wave?
+
+            var playerBusy :Boolean =
+                (gameTime < _nextSpawnTime) ||    // not enough time
+                (_game.getCritters().length > 0); // the last wave is still on board
+
+            if (! playerBusy) {
+                // figure out what to spawn
+                _toSpawn = getSpawnDefinitions();
+            }
         }
     }
 
@@ -49,8 +60,9 @@ public class Spawner
         // this base version doesn't provide anything interesting. subclasses need to replace it.
         return [ ];
     }
-
+            
     protected var _game :Game;
+    protected var _level :Level;
     protected var _player :int;
     protected var _loc :Point;
 

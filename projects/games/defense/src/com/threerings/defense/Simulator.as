@@ -122,7 +122,7 @@ public class Simulator
 
     protected var _targetUpdateEpsilon :Number = 0.1;
     protected var _missileUpdateEpsilon :Number = 0.2;
-    protected var _missileTTLMs :int = 1000; // in milliseconds
+    protected var _missileTTLMs :int = 2000; // in milliseconds
     
     protected var _board :Board;
     protected var _game :Game;

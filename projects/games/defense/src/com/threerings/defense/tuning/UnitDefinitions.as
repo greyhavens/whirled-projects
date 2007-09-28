@@ -113,13 +113,13 @@ public class UnitDefinitions
     /** Tuning parameters for all missile types. */
     public static const MISSILE_DEFINITIONS :Array =
         [ { key: Missile.TYPE_WATER_BALLOON, value:
-            { maxvel: 3,
+            { maxvel: 4,
               damage: 1,
               assets: [ "missile_balloon" ],
               extra: [ "???" ]
             } },
           { key: Missile.TYPE_SLINGSHOT, value:
-            { maxvel: 4,
+            { maxvel: 5,
               damage: 2,
               assets: [ "missile_rock" ]
             } },
@@ -130,23 +130,23 @@ public class UnitDefinitions
               assets: [ "missile_boomerang" ]
             } },
           { key: Missile.TYPE_SQUIRT_GUN, value:
-            { maxvel: 5,
+            { maxvel: 6,
               damage: 2,
               assets: [ "missile_waterjet" ],
               extra: [ "water_splash" ]
             } },
           { key: Missile.TYPE_SPORTS_BALL, value:
-            { maxvel: 3,
+            { maxvel: 5,
               damage: 1,
               assets: [ "missile_basketball", "missile_soccerball", "missile_football" ]
             } },
           { key: Missile.TYPE_SPITBALL, value:
-            { maxvel: 4,
+            { maxvel: 6,
               damage: 1,
               assets: [ "missile_spitball" ]
             } },
           { key: Missile.TYPE_PAPER_AIRPLANE, value:
-            { maxvel: 4,
+            { maxvel: 3,
               damage: 3,
               assets: [ "missile_airplane" ]
             } }
