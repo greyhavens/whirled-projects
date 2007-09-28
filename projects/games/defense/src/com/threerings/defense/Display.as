@@ -127,6 +127,8 @@ public class Display extends Canvas
 
         _towerPanel.init(board, game);
         _statusBar.init(board);
+
+        _statusBar.reset(_board.getPlayerNames()[_board.getMyPlayerIndex()], _board);
     }
 
     public function handleUnload (event : Event) : void
@@ -143,9 +145,8 @@ public class Display extends Canvas
     // Functions available to the game logic
     
     /** Initializes the empty board. */
-    public function reset () :void
+    public function roundStarted () :void
     {
-        removeAllTowers();
         resetOverlays();
         resetBoardDisplay();
 
@@ -155,13 +156,16 @@ public class Display extends Canvas
             (_scorePanels[ii] as ScorePanel).reset(ii, names[ii], _board.getInitialHealth());
         }
 
-        _statusBar.reset(names[_board.getMyPlayerIndex()], _board);
-
         var pos :Point = Board.TOWERPANEL_POS[_board.getMyPlayerIndex()];
         _towerPanel.x = pos.x;
         _towerPanel.y = pos.y;
     }
 
+    public function roundEnded () :void
+    {
+        hideCursor();
+    }
+    
     protected function resetBoardDisplay () :void
     {
         _backdrop.source = _board.level.loadBackground(_board.getPlayerCount());
@@ -271,6 +275,15 @@ public class Display extends Canvas
         sprite.update();
     }
     
+    public function handleRemoveTower (tower :Tower) :void
+    {
+        var sprite :TowerSprite = _towers.get(tower.guid);
+        if (sprite != null) {
+            _boardSprite.removeChild(sprite);
+            _towers.remove(tower.guid);
+        }
+    }
+
     public function handleAddCritter (critter :Critter) :void
     {
         var sprite :CritterSprite = new CritterSprite(critter, _board.level);
@@ -355,6 +368,10 @@ public class Display extends Canvas
         if (player == _board.getMyPlayerIndex()) {
             _statusBar.health = health;
         }
+
+        if (health <= 0) {
+            _controller.playerLost(player);
+        }
     }
     
     /**
@@ -390,17 +407,6 @@ public class Display extends Canvas
             _boardSprite.removeChild(sprite);
             _missiles.remove(missile.guid);
         }
-    }
-    
-    /**
-     * Gets rid of all towers.
-     */
-    protected function removeAllTowers () :void
-    {
-        for each (var sprite :TowerSprite in _towers) {
-                _boardSprite.removeChild(sprite);
-            };
-        _towers = new HashMap();
     }
 
     public function updateOverlays () :void

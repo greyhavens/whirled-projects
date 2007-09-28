@@ -72,6 +72,11 @@ public class Controller
             _whirled.set(Monitor.HEALTH_SET, currentHealth - 1, targetPlayer);
         }
     }
+
+    public function playerLost (player :int) :void
+    {
+        _whirled.endRound(Game.ROUND_DELAY);
+    }
     
     protected var _board :Board;
     protected var _whirled :WhirledGameControl;

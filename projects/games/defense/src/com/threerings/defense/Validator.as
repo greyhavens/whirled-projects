@@ -30,7 +30,10 @@ public class Validator
         _whirled.registerListener(this);
 
         _handlers = new Object();
-        _handlers[StateChangedEvent.ROUND_STARTED] = resetRoundData;
+        _handlers[StateChangedEvent.ROUND_STARTED] = roundStarted;
+        _handlers[StateChangedEvent.ROUND_ENDED] = roundEnded;
+        _handlers[StateChangedEvent.GAME_STARTED] = gameStarted;
+        _handlers[StateChangedEvent.GAME_ENDED] = gameEnded;
         _handlers[REQUEST_ADD] = handleAddRequest;
 //        _handlers[REQUEST_REMOVE] = handleRemove;
 //        _handlers[REQUEST_UPDATE] = handleUpdate;
@@ -89,27 +92,53 @@ public class Validator
         }
     }
 
-    /** When the round changes, reset shared board and score data. */
-    protected function resetRoundData (event :StateChangedEvent) :void
+    /** When the game starts, initialize scores. */
+    protected function gameStarted (event :StateChangedEvent) :void
     {
         if (_whirled.amInControl()) {
             var playerCount :int = _whirled.seating.getPlayerIds().length;
             var initialScores :Array = new Array(playerCount);
+            for (var ii :int = 0; ii < playerCount; ii++) {
+                initialScores[ii] = 0;
+            }
+            _whirled.set(Monitor.SCORE_SET, initialScores);
+        }
+    }
+
+    /** When the game ends, reset data. */
+    protected function gameEnded (event :StateChangedEvent) :void
+    {
+        if (_whirled.amInControl()) {
+            // no op for now
+        }
+    }
+    
+    /** When the round starts, reset shared board and score data. */
+    protected function roundStarted (event :StateChangedEvent) :void
+    {
+        if (_whirled.amInControl()) {
+            var playerCount :int = _whirled.seating.getPlayerIds().length;
             var initialHealth :Array = new Array(playerCount);
             var initialMoney :Array = new Array(playerCount);
             for (var ii :int = 0; ii < playerCount; ii++) {
-                initialScores[ii] = 0;
                 initialHealth[ii] = _board.getInitialHealth();
                 initialMoney[ii] = _board.getInitialMoney();
             }
             
             _whirled.set(Monitor.TOWER_SET, new Array());
-            _whirled.set(Monitor.SCORE_SET, initialScores);
             _whirled.set(Monitor.HEALTH_SET, initialHealth);
             _whirled.set(Monitor.MONEY_SET, initialMoney);
         }
     }
     
+    /** When the round ends, reset shared board. */
+    protected function roundEnded (event :StateChangedEvent) :void
+    {
+        if (_whirled.amInControl()) {
+            _whirled.set(Monitor.TOWER_SET, new Array());
+        }
+    }
+
     protected var _handlers :Object;
     protected var _board :Board;
     protected var _whirled :WhirledGameControl;

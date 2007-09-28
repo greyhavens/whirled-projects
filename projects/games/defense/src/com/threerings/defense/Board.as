@@ -107,7 +107,7 @@ public class Board
         }
     }
     
-    public function reset () :void
+    public function roundStarted () :void
     {
         var mapId :int = 1; // todo
 
@@ -125,6 +125,10 @@ public class Board
             (_pathmaps[ii] as PathMap).setTarget(t.x, t.y);
         }
     }
+
+    public function roundEnded () :void
+    {
+    }
     
     // Functions used by game logic to mark / clear towers on the board
 
@@ -138,6 +142,16 @@ public class Board
         }
     }
     
+    public function markAsUnoccupied (tower :Tower) :void
+    {
+        // mark the main map
+        _groundmap.fillAllTowerCells(tower, Map.UNOCCUPIED);
+        // ... and force all pathing maps to get recalculated
+        for each (var m :PathMap in _pathmaps) {
+            m.fillAllTowerCells(tower, Map.UNOCCUPIED);
+        }
+    }
+
     public function isUnoccupied (tower :Tower) :Boolean
     {
         return _groundmap.isEachTowerCellEqual(tower, Map.UNOCCUPIED);

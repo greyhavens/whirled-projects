@@ -35,9 +35,11 @@ public class Monitor
         _handlers[TOWER_SET] = towersChanged;
         _handlers[SCORE_SET] = makeHandler(null, _game.handleUpdateScore);
         _handlers[HEALTH_SET] = makeHandler(null, _game.handleUpdateHealth);
-        _handlers[MONEY_SET] = makeHandler(null, _game.handleUpdateMoney);
-        _handlers[StateChangedEvent.GAME_STARTED] = startGame;
-        _handlers[StateChangedEvent.GAME_ENDED] = endGame;
+        _handlers[MONEY_SET] = makeHandler(_game.handleResetMoney, _game.handleUpdateMoney);
+        _handlers[StateChangedEvent.GAME_STARTED] = _game.gameStarted;
+        _handlers[StateChangedEvent.GAME_ENDED] = _game.gameEnded;
+        _handlers[StateChangedEvent.ROUND_STARTED] = _game.roundStarted;
+        _handlers[StateChangedEvent.ROUND_ENDED] = _game.roundEnded;
     }
 
     public function handleUnload (event : Event) :void
@@ -65,16 +67,6 @@ public class Monitor
         } 
     }
 
-    protected function startGame (event :StateChangedEvent) :void
-    {
-        _game.startGame();
-    }
-
-    protected function endGame (event :StateChangedEvent) :void
-    {
-        _game.endGame();
-    }
-
     protected function towersChanged (event :PropertyChangedEvent) :void
     {
         trace("*** TOWER SET: " + event.index + ", " + event.newValue);
@@ -89,7 +81,7 @@ public class Monitor
     }
 
     /** Makes and returns a handler function, which monitors when a distributed property changed.
-     * resetFn takes no parameters.
+     * resetFn takes the entire array of new values
      * updateFn takes index of the element changed, and its new value.
      */
     protected function makeHandler (resetFn :Function, updateFn :Function) :Function
@@ -104,7 +96,7 @@ public class Monitor
         
         return function (event :PropertyChangedEvent) :void {
             if (event.index == -1) {
-                resetFn();
+                resetFn(event.newValue);
             } else {
                 updateFn(event.index, Number(event.newValue));
             }

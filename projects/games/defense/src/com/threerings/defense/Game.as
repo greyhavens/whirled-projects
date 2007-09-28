@@ -7,6 +7,7 @@ import flash.utils.getTimer; // function import
 
 import com.threerings.defense.spawners.AutoSpawner;
 import com.threerings.defense.spawners.PlayerSpawner;
+import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.defense.units.Critter;
 import com.threerings.defense.units.Missile;
 import com.threerings.defense.units.Tower;
@@ -15,6 +16,8 @@ import com.threerings.util.ArrayUtil;
 
 public class Game
 {
+    public static const ROUND_DELAY :int = 3;
+    
     public static const GAME_STATE_SPLASH :int = 1;
     public static const GAME_STATE_PLAY :int = 2;
     public static const GAME_STATE_WAIT :int = 3;
@@ -64,26 +67,38 @@ public class Game
     }
     
     /** Handles the start of a new game. */
-    public function startGame () :void
+    public function gameStarted (event :StateChangedEvent) :void
     {
-        _board.reset();
-        _display.reset();
-        
-        _towers = new Array(Board.HEIGHT * Board.WIDTH);
+        _towers = new Array();
         _critters = new Array();
         _missiles = new Array();
-        
-        initializeSpawners();
     }
 
-    public function endGame () :void
+    public function gameEnded (event :StateChangedEvent) :void
     {
         _towers = null;
         _critters = null;
+        _missiles = null;
     }
 
-    public function resetRound () :void
+    public function roundStarted (event :StateChangedEvent) :void
     {
+        state = GAME_STATE_PLAY;
+        
+        _board.roundStarted();
+        _display.roundStarted();
+       
+        initializeSpawners();
+    }
+
+    public function roundEnded (event :StateChangedEvent) :void
+    {
+        state = GAME_STATE_WAIT;
+        
+        removeAllUnits();
+
+        _board.roundEnded();
+        _display.roundEnded();
     }
 
     public function initializeSpawners () :void
@@ -134,6 +149,21 @@ public class Game
     {
         _display.handleTowerFired(tower, critter);
     }
+
+    public function removeAllUnits () :void
+    {
+        var remove :Function = function (array :Array, removefn :Function) :void
+        {
+            var copy :Array = array.map (function (elt :*, ... ignore) :* { return elt; });
+            for each (var elt :* in copy) {
+                    removefn(elt);
+                }
+        }
+
+        remove(_missiles, handleRemoveMissile);
+        remove(_critters, handleRemoveCritter);
+        remove(_towers, handleRemoveTower);        
+    }
     
     public function handleAddTower (tower :Tower, index :int) :void
     {
@@ -142,8 +172,11 @@ public class Game
         _display.handleAddTower(tower);
     }
 
-    public function handleRemoveTower (towerId :int) :void
+    public function handleRemoveTower (tower :Tower) :void
     {
+        _display.handleRemoveTower(tower);
+        _board.markAsUnoccupied(tower);
+        ArrayUtil.removeFirst(_towers, tower);
     }
 
     public function handleAddCritter (critter :Critter) :void
@@ -191,6 +224,13 @@ public class Game
         if (playerId == _board.getMyPlayerIndex()) {
             _myMoney = money;
         }
+    }
+
+    public function handleResetMoney (allMoney :Array) :void
+    {
+        var myindex :int = _board.getMyPlayerIndex();
+        _myMoney = allMoney[myindex];
+        _display.updateMoney(myindex, _myMoney);
     }
         
     public function handleMouseMove (boardx :int, boardy :int) :void
