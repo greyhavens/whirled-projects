@@ -163,6 +163,8 @@ public class Body
         queueScene(getScene("action_" + action));
         // then transition back to our current state
         queueTransitions(action, _state);
+        // and queue our standing animation
+        queueScene(getScene("state_" + _state));
     }
 
     /**
