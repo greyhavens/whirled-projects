@@ -3,14 +3,17 @@
 package {
 
 import flash.display.Sprite;
-import flash.display.BlendMode;
 
 import flash.events.Event;
+
+import flash.filters.ColorMatrixFilter;
 
 import flash.geom.Matrix;
 import flash.geom.Point;
 
 import flash.utils.getTimer;
+
+import mx.core.MovieClipAsset;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
@@ -30,54 +33,32 @@ public class Ring extends Sprite
         _holes = holes;
         _marbles = new HashMap();
 
-        // enables the use of BlendMode.ERASE on children
-        blendMode = BlendMode.LAYER;
-
-        _ring = new Sprite();
-        addChild(_ring);
-        setActive(false);
-
-        var inner :Sprite = new Sprite();
-        inner.graphics.beginFill(0);
-        inner.graphics.drawCircle(0, 0, ringNumber * SIZE_PER_RING);
-        inner.graphics.endFill();
-        inner.blendMode = BlendMode.ERASE;
-        addChild(inner);
-
-        // give the marbles a little breating room
-        var size :int = Marble.SIZE + 4;
-        _holeSprites = new Sprite();
-        for (var hole :int = 0; hole < holes.length; hole++) {
-            var angle :Number = (2 * Math.PI / Math.pow(2, Locksmith.NUM_RINGS)) * holes[hole];
-            var rect :Sprite = new Sprite();
-            rect.graphics.beginFill(0);
-            rect.graphics.drawRect(-size, -size / 2, size * 2, size);
-            rect.graphics.endFill();
-            var trans :Matrix = new Matrix();
-            trans.translate((ringNumber + 0.5) * SIZE_PER_RING, 0);
-            trans.rotate(-angle);
-            rect.transform.matrix = trans;
-            _holeSprites.addChild(rect);
+        _ringMovie = 
+            _ringNumber == 3 ? null : new Ring["RING_" + _ringNumber]() as MovieClipAsset;
+        if (_ringMovie != null) {
+            _ringMovie.gotoAndStop(1);
+            addChild(_ringMovie);
         }
-        _holeSprites.blendMode = BlendMode.ERASE;
-        addChild(_holeSprites);
+
+        var channelMovie :MovieClipAsset;
+        for each (var hole :int in holes) {
+            addChild(channelMovie = new Ring["CHANNEL_" + _ringNumber]() as MovieClipAsset);
+            _channels.push(new Channel(channelMovie, hole));
+        }
 
         Locksmith.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     public function setActive (active :Boolean) :void
     {
-        _ring.graphics.clear();
-        _ring.graphics.beginFill(active ? _colorsActive[_ringNumber - 1] :
-           _colorsInactive[_ringNumber - 1]);
-        _ring.graphics.drawCircle(0, 0, (_ringNumber + 1) * SIZE_PER_RING);
-        _ring.graphics.endFill();
+        filters = active ? [ activeRingFilter ] : [];
     }
 
     public function rotate (direction :int) :void
     {
         _rotationStart = getTimer();
         _rotationDirection = direction;
+        /* Temporarily disable stages... we're just testing new artwork for the rings at the moment.
         var stages :Array = [ { percent: 0.25, stage: DoLater.ROTATION_25 },
             { percent: 0.5, stage: DoLater.ROTATION_50 }, 
             { percent: 0.75, stage: DoLater.ROTATION_75 },
@@ -109,7 +90,7 @@ public class Ring extends Sprite
                 }
             }(boundAngle));
         }
-        DoLater.instance.trigger(DoLater.ROTATION_BEGIN);
+        DoLater.instance.trigger(DoLater.ROTATION_BEGIN);*/
     }
 
     /** 
@@ -216,20 +197,31 @@ public class Ring extends Sprite
     protected function enterFrame (evt :Event) :void
     {
         if (_rotationDirection != STATIONARY) {
-            var rotationPercent :Number = (getTimer() - _rotationStart) / ROTATION_TIME;
-            DoLater.instance.atPercent(rotationPercent);
-            var angle :Number;
-            if (rotationPercent >= 1) {
+            // experimenting with just doing 1 degree per frame, as it makes the animation 
+            // smoother with the new art.  This may cause some timing trickiness once we're running 
+            // 2-player again.
+
+            //DoLater.instance.atPercent(rotationPercent);
+            var angle :int;
+            if (Math.abs(_rotationAngle) == 89) {
                 DoLater.instance.trigger(DoLater.ROTATION_END);
-                angle = _baseRotation = (_baseRotation + (Math.PI / 2) * 
-                    _rotationDirection + 2 * Math.PI) % (2 * Math.PI);
+                angle = _baseRotation = (_baseRotation + 90 * -_rotationDirection + 360) % 360;
                 _rotationDirection = STATIONARY;
                 _rotationAngle = 0;
                 DoLater.instance.trigger(DoLater.ROTATION_AFTER_END);
             } else {
-                _rotationAngle = rotationPercent * (Math.PI / 2) * _rotationDirection;
-                angle = _baseRotation + _rotationAngle;
+                _rotationAngle += 1 * -_rotationDirection;
+                angle = (_baseRotation + _rotationAngle + 360) % 360;
             }
+
+            if (_ringMovie != null) {
+                _ringMovie.gotoAndStop(angle + 1);
+            }
+            for each (var channel :Channel in _channels) {
+                channel.setAngle(angle);
+            }
+
+            /* Note: this old code assumes the angle is in radians
             var trans :Matrix = new Matrix();
             trans.rotate(-angle);
             _holeSprites.transform.matrix = trans;
@@ -238,26 +230,67 @@ public class Ring extends Sprite
                 var marble :Marble = _marbles.get(hole);
                 marble.x = pos.x;
                 marble.y = pos.y;
-            }
+            }*/
         }
     }
 
-    protected static const _colorsInactive :Array = [ 0x3E4E57, 0x51636E, 0x70828C, 0x899FAB ];
-    protected static const _colorsActive :Array = [ 0x5B3C1C, 0x774E23, 0xA5662E, 0xCA7D38 ];
+    /** Ring movies - There is no movie for Ring 3 */
+    [Embed(source="../rsrc/locksmith_art.swf#ring_1")]
+    protected static const RING_1 :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#ring_2")]
+    protected static const RING_2 :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#ring_4")]
+    protected static const RING_4 :Class;
 
-    protected static const ROTATION_TIME :int = 3000; // in ms
+    /** Channel movies */
+    [Embed(source="../rsrc/locksmith_art.swf#ring_1_channel")]
+    protected static const CHANNEL_1 :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#ring_2_channel")]
+    protected static const CHANNEL_2 :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#ring_3_channel")]
+    protected static const CHANNEL_3 :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#ring_4_channel")]
+    protected static const CHANNEL_4 :Class;
+
+    // filter array obtained from the ColorMatrixFilter page: 
+    // http://www.adobe.com/devnet/flash/articles/matrix_transformations_04.html
+    // This matrix adjusts contrast and brightness by 10 each
+    protected static const activeRingFilter :ColorMatrixFilter = 
+        new ColorMatrixFilter([1.12,0,0,0,3.58,0,1.12,0,0,3.58,0,0,1.12,0,3.58,0,0,0,1,0]);
 
     protected var _ringNumber :int;
-    protected var _ring :Sprite;
     protected var _position :int = 0;
     protected var _marbles :HashMap;
     protected var _holes :Array;
     protected var _holeSprites :Sprite;
-    protected var _baseRotation :Number = 0;
-    protected var _rotationAngle :Number = 0;
+    protected var _baseRotation :int = 0;
+    protected var _rotationAngle :int = 0;
     protected var _rotationDirection :Number = STATIONARY;
     protected var _rotationStart :int = 0;
     protected var _inner :Ring;
     protected var _outer :Ring;
+
+    protected var _ringMovie :MovieClipAsset;
+    protected var _channels :Array = [];
 }
+}
+
+import mx.core.MovieClipAsset;
+
+class Channel
+{
+    public function Channel (movie :MovieClipAsset, holeNumber :int) 
+    {
+        _channel = movie;
+        _baseAngle = Math.round((360 / Math.pow(2, Locksmith.NUM_RINGS)) * holeNumber) as int;
+        setAngle(0);
+    }
+
+    public function setAngle(angle :int) :void
+    {
+        _channel.gotoAndStop(((_baseAngle + angle) % 360) + 1);
+    }
+
+    protected var _channel :MovieClipAsset;
+    protected var _baseAngle :int;
 }

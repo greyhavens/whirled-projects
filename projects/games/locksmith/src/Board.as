@@ -169,7 +169,7 @@ public class Board extends Sprite
     protected static const LAUNCH_BLUE :int = 0x6D7BFC;
     protected static const LAUNCH_RED :int = 0xFE8585;
 
-    protected static const BACKGROUND_COLOR :int = 0xEDF6F0;
+    protected static const BACKGROUND_COLOR :int = 0x5C4A38;
 
     protected var _loadedLauncher :int;
     protected var _ring :Ring;

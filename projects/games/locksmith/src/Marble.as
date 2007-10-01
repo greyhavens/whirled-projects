@@ -42,6 +42,7 @@ public class Marble extends Sprite
 
     public function launch (onlyOne :Boolean = false) :Boolean 
     {
+        /* We're not testing marble movement at the moment - only new Ring art.
         var hole :int = _nextRing == null ? -1 : _nextRing.getHoleAt(_pos);
         if (hole != -1 && _nextRing.holeIsEmpty(hole)) {
             _origin = new Point(x, y);
@@ -65,7 +66,8 @@ public class Marble extends Sprite
                 _board.removeChild(this);
             } 
             return false;
-        }
+        }*/
+        return false;
     }
 
     protected function scorePoint (color :int) :void    
