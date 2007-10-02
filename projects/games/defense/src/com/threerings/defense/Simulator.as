@@ -111,7 +111,21 @@ public class Simulator
     /** Finds and sets the critter's target point. */
     protected function updateTarget (c :Critter) :void
     {
-        var p :Point = _board.getPathMap(c.player).getNextNode(c.target.x, c.target.y);
+        var p :Point;
+
+        if (c.isFlying) {
+            // it's a flying critter, it will fly to the y position first, and then over to x
+            var delta :Point = _board.getPlayerTarget(c.player).subtract(c.pos);
+            if (Math.abs(delta.y) >= 1) {
+                p = c.pos.add(new Point(0, delta.y / Math.abs(delta.y)));
+            } else {
+                p = c.pos.add(new Point(delta.x / Math.abs(delta.x), 0));
+            }
+        } else {
+            // it's a walking critter, let's find a path
+            p = _board.getPathMap(c.player).getNextNode(c.target.x, c.target.y);
+        }
+        
         if (p != null) {
             c.target.x = p.x;
             c.target.y = p.y;

@@ -12,9 +12,10 @@ public class Critter extends Unit
     public static const TYPE_BIRD :int = 3;
     public static const TYPE_SQUIRREL :int = 4;
     public static const TYPE_SKATER :int = 5;
-
+    public static const TYPE_SKUNK :int = 6;
+    
     public static const ALL_TYPES :Array =
-        [ TYPE_BULLY, TYPE_GIRL, TYPE_BIRD ];
+        [ TYPE_BULLY, TYPE_GIRL, TYPE_BIRD, TYPE_SQUIRREL, TYPE_SKATER, TYPE_SKUNK ];
     
     /** Target position on board. */
     public var target :Point;
@@ -43,6 +44,9 @@ public class Critter extends Unit
 
     /** How many points is this critter worth? */
     public var pointValue :Number;
+
+    /** Is this a flying critter? If so, it will ignore obstacles. */
+    public var isFlying :Boolean;
     
     public function Critter (x :int, y :int, type :int, player :int)
     {
@@ -53,7 +57,7 @@ public class Critter extends Unit
         this.target = new Point(x, y);
         this.delta = new Point(0, 0);
         this.missileHotspot = new Point(size.x / 2, - size.y / 2); 
-
+        
         UnitDefinitions.initializeCritter(type, this);
     }
 

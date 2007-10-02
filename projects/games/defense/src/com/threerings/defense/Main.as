@@ -17,16 +17,27 @@ public class Main
     
     protected var _display :Display;
 
-    protected var _loader :LevelLoader;
+    protected var _loader :AssetLoader;
     protected var _level :Level;
     
     public function init (app :Defense) :void
     {
         _whirled = new WhirledGameControl(app, false);
+        var level :int = 1;  // initial
+
+        if (_whirled.isConnected()) {
+            var config :Object = _whirled.getConfig();
+            var boardName :String = config.boardType;
+            if (boardName != null) {
+                level = int(boardName.charAt(0));
+            }
+        } else {
+            trace("* DISCONNECTED");
+            return; // todo: do something interesting here!
+        }
 
         app.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        _loader = new LevelLoader();
         _display = app.display;
         _board = new Board(_whirled);
         _validator = new Validator(_board, _whirled);
@@ -35,24 +46,18 @@ public class Main
         _controller = new Controller(_board, _whirled);
        
         trace("MVC CREATED");
-
-        if (_whirled.isConnected()) {
-            trace("* CONNECTED!");
-            // initialize the game
-        } else {
-            trace("* DISCONNECTED!");
-        }
-
-        
         
         // todo: move level loading elsewhere
-        _loader.load(LevelLoader.LEVEL_1, function (level :Level) :void {
+        _loader = new AssetLoader(
+            level,
+            function (level :Level) :void
+            {
                 if (level != null) {
                     _level = level;
                     _board.level = level;
-
+                    
                     _display.init(_board, _game, _controller);
-
+                    
 //                    _whirled.playerReady();
                 } 
             });

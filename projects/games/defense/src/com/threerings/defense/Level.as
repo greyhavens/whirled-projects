@@ -15,13 +15,13 @@ import com.threerings.defense.units.Tower;
 /** Encapsulates level-specific definitions and resource access. */
 public class Level
 {
-    public function Level (loader :LevelLoader, levelNumber :int)
+    public function Level (loader :AssetLoader, levelNumber :int)
     {
         _loader = loader;
         _number = levelNumber;
 
         _handlers =
-            [ { type: TowerSprite, handler: this.loadTowerAssets },
+            [ { type: TowerSprite,   handler: this.loadTowerAssets },
               { type: CritterSprite, handler: this.loadCritterAssets },
               { type: MissileSprite, handler: this.loadMissileAssets }  ];
     }
@@ -49,13 +49,13 @@ public class Level
     public function loadTowerIcons () :Array // of DisplayObjects, indexed by Tower.TYPE_*
     {
         return UnitDefinitions.getTowerAssetNamesForState(TowerSprite.STATE_REST)
-            .map(loadSimpleAsset);
+            .map(loadUnitAsset);
     }
 
     public function loadBackground (playerCount :int) :DisplayObject
     {
         var def :Object = LevelDefinitions.getLevelDefinition(playerCount, number);
-        return loadSimpleAsset(def.backgroundAssetName);
+        return DisplayObject(new (_loader.getBoardClass(def.backgroundAssetName))());
     }
     
     public function loadHealthIcon () :DisplayObject
@@ -71,13 +71,13 @@ public class Level
     protected function loadTowerAssets (sprite :TowerSprite) :Array
     {
         var assetNames :Array = UnitDefinitions.getTowerAssetNames(sprite.tower.type);
-        return assetNames.map(loadSimpleAsset);
+        return assetNames.map(loadUnitAsset);
     }
     
     protected function loadCritterAssets (sprite :CritterSprite) :Array 
     {
         var assetNames :Array = UnitDefinitions.getCritterAssetNames(sprite.critter.type);
-        return assetNames.map(loadSimpleAsset);
+        return assetNames.map(loadUnitAsset);
     }
 
     protected function loadMissileAssets (sprite :MissileSprite) :Array
@@ -86,10 +86,10 @@ public class Level
             .map(loadMissileAsset);
     }
 
-    protected function loadSimpleAsset (name :String, ... ignore) :DisplayObject
+    protected function loadUnitAsset (name :String, ... ignore) :DisplayObject
     {
         try {
-            var c :Class = _loader.getClass(name);
+            var c :Class = _loader.getUnitClass(name);
         } catch (e :IllegalOperationError) {
             Log.getLog(this).warning("Cannot load asset: " + name);
             c = _placeholder;
@@ -105,7 +105,7 @@ public class Level
             var c :Class = _initMissile;
             if (names != null) {
                 var name :String = names[uint(Math.floor(Math.random() * names.length))];
-                c = _loader.getClass(name);
+                c = _loader.getUnitClass(name);
             }
         } catch (e :IllegalOperationError) {
             Log.getLog(this).warning("Cannot load asset: " + name);
@@ -115,7 +115,7 @@ public class Level
     }
 
     protected var _number :int;
-    protected var _loader :LevelLoader;
+    protected var _loader :AssetLoader;
     protected var _handlers :Array;
 
 

@@ -445,8 +445,10 @@ public class Display extends Canvas
 
     protected function handleBoardMove (event :MouseEvent) :void
     {
-        var local :Point = _boardSprite.globalToLocal(new Point(event.stageX, event.stageY));
-        _game.handleMouseMove(local.x, local.y);
+        if (_game != null) {
+            var local :Point = _boardSprite.globalToLocal(new Point(event.stageX, event.stageY));
+            _game.handleMouseMove(local.x, local.y);
+        }
     }
 
     protected function handleFrame (event :Event) :void

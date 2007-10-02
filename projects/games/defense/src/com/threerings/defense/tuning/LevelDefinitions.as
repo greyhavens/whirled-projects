@@ -13,20 +13,46 @@ public class LevelDefinitions
         { },
 
         // level 1
-        {   backgroundAssetName: "FullBG",
+        {   backgroundAssetName: "Level01_BG",
             startingHealth: 20,
             startingMoney: 25,
-            spawner: [ [ [ Critter.TYPE_SQUIRREL, 1 ] ],
+            spawner: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
+                       [ [ Critter.TYPE_SKUNK, 3 ] ],
+                       [ [ Critter.TYPE_SQUIRREL, 1 ] ],
+                       [ [ Critter.TYPE_GIRL, 2 ] ],
+                       [ [ Critter.TYPE_BIRD, 1 ] ],
+                       [ [ Critter.TYPE_SKUNK, 5 ] ],
                        [ [ Critter.TYPE_BULLY, 1 ] ],
                        [ [ Critter.TYPE_BIRD, 1 ] ],
                        [ [ Critter.TYPE_SKATER, 1 ] ],
                        [ [ Critter.TYPE_BULLY, 1 ], [ Critter.TYPE_SKATER, 1 ] ],
-                       [ [ Critter.TYPE_SQUIRREL, 2 ] ],
+                       [ [ Critter.TYPE_SQUIRREL, 3 ] ],
                        [ [ Critter.TYPE_GIRL, 2 ] ],
+                       [ [ Critter.TYPE_SKUNK, 9 ] ],
                        [ [ Critter.TYPE_BIRD, 1 ], [ Critter.TYPE_SQUIRREL, 1 ] ],
                 ]
         },
         
+        // level 1
+        {   backgroundAssetName: "Level02_BG",
+            startingHealth: 10,
+            startingMoney: 50,
+            spawner: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
+                       [ [ Critter.TYPE_SKUNK, 3 ] ],
+                       [ [ Critter.TYPE_SQUIRREL, 1 ] ],
+                       [ [ Critter.TYPE_GIRL, 2 ] ],
+                       [ [ Critter.TYPE_BIRD, 1 ] ],
+                       [ [ Critter.TYPE_SKUNK, 5 ] ],
+                       [ [ Critter.TYPE_BULLY, 1 ] ],
+                       [ [ Critter.TYPE_BIRD, 1 ] ],
+                       [ [ Critter.TYPE_SKATER, 1 ] ],
+                       [ [ Critter.TYPE_BULLY, 1 ], [ Critter.TYPE_SKATER, 1 ] ],
+                       [ [ Critter.TYPE_SQUIRREL, 3 ] ],
+                       [ [ Critter.TYPE_GIRL, 2 ] ],
+                       [ [ Critter.TYPE_SKUNK, 9 ] ],
+                       [ [ Critter.TYPE_BIRD, 1 ], [ Critter.TYPE_SQUIRREL, 1 ] ],
+                ]
+        },
         ];
 
     /** Retrieves level count for the specified player count. */

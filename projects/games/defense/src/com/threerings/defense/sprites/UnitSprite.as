@@ -115,9 +115,14 @@ public /* abstract */ class UnitSprite extends Image
      * way, left to right, top to bottom, based on the unit's anchor position.
      * The resulting total ordering can be used for z-order adjustment.
      */
-    protected function getMyZOrder () :Number
+    protected function getMyZOrder (isFlying :Boolean = false) :Number
     {
-        return _unit.centroidy * Board.BOARD_WIDTH + _unit.centroidx;
+        var ordering :Number = _unit.centroidy * Board.BOARD_WIDTH + _unit.centroidx;
+        if (isFlying) {
+            ordering += Board.BOARD_WIDTH * Board.BOARD_HEIGHT; // offset to push in front
+        }
+
+        return ordering;
     }
 
     /** Helper function that wraps getMyZOrder in a retrieval operation. */

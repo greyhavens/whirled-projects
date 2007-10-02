@@ -177,18 +177,24 @@ public class UnitDefinitions
               points: 2 } },
           { key: Critter.TYPE_BIRD, value:
             { name: "Bird",
+              isFlying: true,
               maxhealth: 4,
               maxspeed: 4,
               points: 1 } },
           { key: Critter.TYPE_SQUIRREL, value:
             { name: "Bird",
-              maxhealth: 3,
+              maxhealth: 2,
               maxspeed: 3,
               points: 1 } },
           { key: Critter.TYPE_SKATER, value:
             { name: "Bird",
               maxhealth: 8,
               maxspeed: 4,
+              points: 1 } },
+          { key: Critter.TYPE_SKUNK, value:
+            { name: "Skunk",
+              maxhealth: 1,
+              maxspeed: 1,
               points: 1 } },
             ];
     
@@ -199,6 +205,7 @@ public class UnitDefinitions
               { key: Critter.TYPE_BIRD,     value: "enemy_bird" },
               { key: Critter.TYPE_SQUIRREL, value: "enemy_squirrel" },
               { key: Critter.TYPE_SKATER,   value: "enemy_skater" },
+              { key: Critter.TYPE_SKUNK,    value: "enemy_skunk" },
             ];
 
     /** Asset names for different enemy states. */
@@ -299,6 +306,7 @@ public class UnitDefinitions
         critter.pointValue = def.points;
         critter.maxhealth = critter.health = def.maxhealth;
         critter.maxspeed = def.maxspeed;
+        critter.isFlying = Boolean(def.isFlying);
     }
         
     protected static function getTowerAssetName (type :int, state :int) :String

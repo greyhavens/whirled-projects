@@ -1,6 +1,5 @@
 package com.threerings.defense.sprites {
 
-import com.threerings.defense.Board;
 import com.threerings.defense.Level;
 import com.threerings.defense.units.Missile;
 
@@ -35,13 +34,11 @@ public class MissileSprite extends UnitSprite
     }
 
     // from UnitSprite
-    override protected function getMyZOrder () :Number
+    override protected function getMyZOrder (isFlying :Boolean = false) :Number
     {
         // missiles are on top of everything else -
         // but among themselves, they're ordered in the same way as other sprites
-
-        return Board.BOARD_WIDTH * Board.BOARD_HEIGHT +  // offset to put them in front of all else
-            _unit.centroidy * Board.BOARD_WIDTH + _unit.centroidx;
+        return super.getMyZOrder(true);
     }
 }
 }

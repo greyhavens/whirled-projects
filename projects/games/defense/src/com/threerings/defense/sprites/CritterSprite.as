@@ -46,5 +46,12 @@ public class CritterSprite extends UnitSprite
 
         return walkDir;
     }
+
+    // from UnitSprite
+    override protected function getMyZOrder (isFlying :Boolean = false) :Number
+    {
+        // the critter flag overrides any arguments
+        return super.getMyZOrder(critter.isFlying);
+    }
 }
 }
