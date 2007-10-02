@@ -103,7 +103,7 @@ public class Shooter extends Sprite
             var saucer :MovieClip = _content.createSaucer();
             saucer.x = _view.getBoard().getPixelSize()/2 - (saucer.width + 5) * ii;
             saucer.y = -Content.SHOOTER_SIZE/2;
-            saucer.addEventListener(MouseEvent.CLICK, saucerClicked);
+            saucer.addEventListener(MouseEvent.CLICK, _view.saucerClicked);
             _saucers.push(saucer);
             addChild(saucer);
         }
@@ -190,11 +190,6 @@ public class Shooter extends Sprite
             _tgtx = _tgty = -1;
             _board = null;
         }
-    }
-
-    protected function saucerClicked (event :MouseEvent) :void
-    {
-        _view.getModel().requestChange();
     }
 
     protected function onEnterFrame (event :Event) :void

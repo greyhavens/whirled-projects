@@ -44,20 +44,12 @@ public class GameView extends Sprite
         x = 5;
         y = 5;
 
-        // add text that says "Type here:"
-        _tip = new TextField();
-        _tip.selectable = false;
-        // _tip.embedFonts = true;
-        _tip.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF), true);
-        _tip.autoSize = TextFieldAutoSize.RIGHT;
-
         // create the text field via which we'll accept player input
         _input = new TextField();
         _input.background = true;
         _input.backgroundColor = uint(0xFFFFFF);
         _input.defaultTextFormat = _content.makeInputFormat(uint(0x000000), true);
         _input.type = TextFieldType.INPUT;
-        _input.x = _content.inputRect.x;
         _input.width = _content.inputRect.width;
         _input.height = _content.inputRect.height;
         _input.restrict = "[A-Za-z]"; // only allow letters to be typed; TODO: i18n?
@@ -135,6 +127,7 @@ public class GameView extends Sprite
             // relocate the chat view out of the way
             var bsize :int = Content.BOARD_BORDER * 2 + _board.getPixelSize();
             var bounds :Rectangle = _control.getStageBounds();
+            _control.sendChat("Stage is " + _control.getStageBounds());
             bounds.x = bsize;
             bounds.y = _hiscores.y + _hiscores.height + 10;
 //             bounds.y = sidebar.y + 10;
@@ -174,6 +167,13 @@ public class GameView extends Sprite
             }
             _hiscores.htmlText = text;
         }
+
+        var seenHelp :Boolean = (cookie["seen_help"] as Boolean);
+        if (!seenHelp) {
+            showHelp();
+            cookie["seen_help"] = true;
+            _control.setUserCookie(cookie)
+        }
     }
 
     public function gameDidStart () :void
@@ -192,15 +192,38 @@ public class GameView extends Sprite
             shooter.setSaucers(_model.getChangesAllowed());
         }
 
-        addChild(_tip);
-        _tip.text = "Enter words:";
-        _tip.x = _content.inputRect.x - _tip.width - 5;
+        // this will contain all of our input bits
+        if (_inputBox == null) {
+            _inputBox = new Sprite();
 
-        _input.y = _control.getStageBounds().height - _input.height -
-            (INPUT_HEIGHT - _input.height)/2;
-        _tip.y = _input.y;
+            // add text that says "Type here:"
+            var tip :TextField = new TextField();
+            tip.selectable = false;
+            // tip.embedFonts = true;
+            tip.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF), true);
+            tip.autoSize = TextFieldAutoSize.RIGHT;
+            tip.text = "Enter word:";
+
+            _inputBox.addChild(tip);
+
+            _input.x = tip.x + tip.width + 5;
+            _inputBox.addChild(_input);
+
+            var go :SimpleButton = _content.makeButton("Go!");
+            go.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+                submitWord();
+            });
+            go.x = _input.x + _input.width + 5;
+            go.y = (_input.height - go.height) / 2;
+            _inputBox.addChild(go);
+
+            _inputBox.x = _content.inputRect.x - tip.width - 5;
+            _inputBox.y = _control.getStageBounds().height - _input.height -
+                (INPUT_HEIGHT - _input.height)/2;
+        }
+        addChild(_inputBox);
+        
         _input.selectable = false;
-        addChild(_input);
         _input.text = "Type words here!";
 
         var ready :String = (_model.getWinningScore() > 1) ?
@@ -214,6 +237,13 @@ public class GameView extends Sprite
             _input.stage.focus = _input;
             marquee.display("Start!", 1000);
         });
+    }
+
+    public function saucerClicked (event :MouseEvent) :void
+    {
+        _model.requestChange();
+        // refocus the input text box because they clicked outside it
+        _input.stage.focus = _input;
     }
 
     public function roundDidEnd (scorer :String) :void
@@ -246,8 +276,7 @@ public class GameView extends Sprite
         _input.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
         _input.removeEventListener(Event.CHANGE, textChanged);
         _input.stage.focus = null;
-        removeChild(_input);
-        removeChild(_tip);
+        removeChild(_inputBox);
     }
 
     public function gameDidEnd (flow :int, mypoints :int) :void
@@ -287,7 +316,7 @@ public class GameView extends Sprite
         if (mypoints > 0) {
             msg += "\nScore: " + mypoints + " points.";
             if (mypoints > 70) {
-                msg += " Holy crap!";
+                msg += " ZOMG! Are you a computer?";
             } else if (mypoints > 60) {
                 msg += " You rock!";
             } else if (mypoints > 40) {
@@ -330,17 +359,8 @@ public class GameView extends Sprite
         help.autoSize = TextFieldAutoSize.LEFT;
         help.wordWrap = true;
         help.width = HELP_WIDTH;
-        var htext :String = HELP_CONTENTS;
-        if (isMultiPlayer()) {
-            htext += HELP_MULTI.replace(
-                "MINLEN", _model.getMinWordLength()).replace(
-                    "POINTS", _model.getWinningPoints()).replace(
-                        "ROUNDS", _model.getWinningScore());
-        } else {
-            htext += HELP_SINGLE.replace(
-                "MINLEN", _model.getMinWordLength());
-        }
-        help.htmlText = htext;
+        help.htmlText = (makeHelp(HELP_CONTENTS) +
+                         makeHelp(isMultiPlayer() ? HELP_MULTI : HELP_SINGLE));
 
         var dialog :Dialog = new Dialog(help);
         var dismiss :SimpleButton = _content.makeButton("Dismiss");
@@ -349,6 +369,26 @@ public class GameView extends Sprite
         });
         dialog.addButton(dismiss, Dialog.CENTER);
         dialog.show(this);
+    }
+
+    protected function makeHelp (text :String) :String
+    {
+        return text.replace(
+            "MINLEN", _model.getMinWordLength()).replace(
+                "POINTS", _model.getWinningPoints()).replace(
+                    "ROUNDS", _model.getWinningScore());
+    }
+
+    protected function submitWord () :void
+    {
+        if (_input.text.length == 0) {
+            return;
+        }
+        _model.submitWord(_board, _input.text, function (text :String) :void {
+            marquee.display(text, 1000);
+        });
+        _input.text = "";
+        _input.stage.focus = _input;
     }
 
     /**
@@ -434,10 +474,7 @@ public class GameView extends Sprite
     {
         switch (event.keyCode) {
         case 13:
-            _model.submitWord(_board, _input.text, function (text :String) :void {
-                marquee.display(text, 1000);
-            });
-            _input.text = "";
+            submitWord();
             break;
         }
     }
@@ -451,7 +488,7 @@ public class GameView extends Sprite
     protected var _model :Model;
     protected var _content :Content;
 
-    protected var _tip :TextField;
+    protected var _inputBox :Sprite;
     protected var _input :TextField;
 
     protected var _board :Board;
@@ -472,18 +509,18 @@ public class GameView extends Sprite
 
     protected static const HELP_WIDTH :int = 300;
     protected static const HELP_CONTENTS :String = "<b>How to Play</b>\n" +
-        "Make words from the row of letters along the bottom of the board.\n\n" +
-        "<font color='#0000ff'><b>Blue</b></font> squares multiply the word score by two.\n" +
-        "<font color='#ff0000'><b>Red</b></font> squares multiply the word score by three.\n" +
+        "Use the letters along the bottom of the board to make words " +
+        "that are at least MINLEN letters long.\n\n" +
+        "<font color='#0000ff'><b>Blue</b></font> letters multiply the word score by two.\n" +
+        "<font color='#ff0000'><b>Red</b></font> letters multiply the word score by three.\n" +
         "Only one multiplier per word will count.\n\n";
 
     protected static const HELP_MULTI :String =
-        "Minimum word length: MINLEN. The first to score POINTS points wins the round.\n\n" +
+        "The first to score POINTS points wins the round.\n\n" +
         "Win ROUNDS rounds to win the game.\n\n" +
         "Click a flying saucer to change a letter into a wildcard (*) if you can't find a word.";
 
     protected static const HELP_SINGLE :String =
-        "Minimum word length: MINLEN.\n\n" +
         "Clear the board using long words to get a high score!\n\n" +
         "Click a flying saucer to change a letter into a wildcard (*) if you can't find a word.";
 }
