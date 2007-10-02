@@ -99,13 +99,13 @@ public class Content
 
         ".....x....." +
         "....xxx...." +
+        "..x.xxx.x.." +
         "...xxxxx..." +
-        "..xxxxxxx.." +
         ".xxxxxxxxx." +
         "xxxxxxxxxxx" +
         ".xxxxxxxxx." +
-        "..xxxxxxx.." +
         "...xxxxx..." +
+        "..x.xxx.x.." +
         "....xxx...." +
         ".....x.....",
 
@@ -121,29 +121,17 @@ public class Content
         ".xxxxxxxxx." +
         "xxxxxxxxxxx",
 
-        ".xx.....xx." +
-        ".xx.....xx." +
-        "...xxxxx..." +
-        "..xx.x.xx.." +
-        ".xxxxxxxxx." +
-        ".xxxxxxxxx." +
-        "..xxxxxxx.." +
-        "...xxxxx..." +
-        "..x.....x.." +
-        ".x.......x." +
-        ".x.......x.",
-
-        "..xx...xx.." +
-        "..xx...xx.." +
-        "...xxxxx..." +
-        "..xx.x.xx.." +
-        ".xxxxxxxxx." +
+        "xx.......xx" +
+        "xx.......xx" +
+        "..x xxx x.." +
+        ".xxx.x.xxx." +
+        "xxxxxxxxxxx" +
+        "xxxxxxxxxxx" +
         ".xxxxxxxxx." +
         "..xxxxxxx.." +
-        "...xxxxx..." +
-        "...x...x..." +
-        ".xxx.xxx..." +
-        ".xxx.xxx...",
+        ".xx.....xx." +
+        "xx.......xx" +
+        "xx.......xx",
         ];
 
     /** A selection of multiplayer board patterns (must be 4 way symmetrical). */
