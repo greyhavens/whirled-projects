@@ -30,15 +30,15 @@ public class Splash extends Canvas
         
         var play :Button = new Button();
         play.styleName = "playButton";
-        play.x = 337;
-        play.y = 290;
+        play.x = 220;
+        play.y = 267;
         play.addEventListener(MouseEvent.CLICK, playClicked);
         addChild(play);
 
         var help :Button = new Button();
         help.styleName = "helpButton";
-        help.x = 502;
-        help.y = 354;
+        help.x = 339;
+        help.y = 382;
         help.addEventListener(MouseEvent.CLICK, helpClicked);
         addChild(help);
     }
