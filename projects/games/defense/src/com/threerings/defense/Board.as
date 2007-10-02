@@ -29,7 +29,7 @@ public class Board
     public static const BOARD_WIDTH :int = WIDTH * SQUARE_WIDTH;
     public static const BOARD_HEIGHT :int = HEIGHT * SQUARE_HEIGHT;
         
-    public static const BOARD_OFFSETX :int = 70;
+    public static const BOARD_OFFSETX :int = 40;
     public static const BOARD_OFFSETY :int = 27;
     
     public static const BG_WIDTH :int = 700;
@@ -109,15 +109,13 @@ public class Board
     
     public function roundStarted () :void
     {
-        var mapId :int = 1; // todo
-
         // reset everything
         for each (var m :Map in _allmaps) {
             m.clear();
         }
 
         // initialize the ground map
-        _groundmap.loadDefinition(mapId, getPlayerCount());
+        _groundmap.loadDefinition(level.number, getPlayerCount());
 
         // and based on that, the pathfinding maps
         for (var ii :int = 0; ii < getPlayerCount(); ii++) {

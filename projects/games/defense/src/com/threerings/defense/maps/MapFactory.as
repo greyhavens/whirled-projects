@@ -15,25 +15,17 @@ public class MapFactory
     /** Returns a new bitmap corresponding to the specified map for some number of players. */
     public static function makeGroundMapData (id :int, playerCount :int) :BitmapData
     {
-        // my kingdom for some remixing!
-
-        var b :BitmapAsset;
-        switch (id) {
-        case 1:
-            switch (playerCount) {
-            case 1: b = new _m1_1() as BitmapAsset; break;
-            case 2: b = new _m1_2() as BitmapAsset; break;
-            }
-            break;
-        }
-
-        if (b != null) {
-            return b.bitmapData;
-        } else {
+        var name :String = "_m" + id + "_" + playerCount;
+        
+        var c :Class = MapFactory[name] as Class;
+        if (c == null) {
             throw new Error("Unknown map type id: " + id + ", playerCount: " + playerCount);
-        }        
+        } else {
+            var b :BitmapAsset = BitmapAsset(new c());
+            return b.bitmapData;
+        }
     }
-
+        
     [Embed(source="../../../../../rsrc/maps/blank.png")]
     protected static const _blank :Class;
 
@@ -41,5 +33,10 @@ public class MapFactory
     protected static const _m1_1 :Class;
     [Embed(source="../../../../../rsrc/maps/1-2.png")]
     protected static const _m1_2 :Class;
+
+    [Embed(source="../../../../../rsrc/maps/2-1.png")]
+    protected static const _m2_1 :Class;
+    [Embed(source="../../../../../rsrc/maps/2-2.png")]
+    protected static const _m2_2 :Class;
 }
 }
