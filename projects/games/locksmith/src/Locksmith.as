@@ -80,23 +80,23 @@ public class Locksmith extends Sprite
     public function gameDidStart (event :StateChangedEvent) :void
     {
         var playerIds :Array = _control.seating.getPlayerIds();
-        addChild(_scoreBoard = new ScoreBoard(_control.getOccupantName(_redPlayer = 
-            playerIds[0]), _control.getOccupantName(_bluePlayer = playerIds[1]), 
+        addChild(_scoreBoard = new ScoreBoard(_control.getOccupantName(_moonPlayer = 
+            playerIds[0]), _control.getOccupantName(_sunPlayer = playerIds[1]), 
             function () :void {
                 DoLater.instance.finishAndCall(function () :void {
                     _board.stopRotation();
                     _scoreBoard.newTurn(-1);
                     if (_control.amInControl()) {
                         var winners :Array = [];
-                        if (_scoreBoard.blueScore >= WIN_SCORE) {
-                            winners.push(_bluePlayer);
+                        if (_scoreBoard.sunScore >= WIN_SCORE) {
+                            winners.push(_sunPlayer);
                         }
-                        if (_scoreBoard.redScore >= WIN_SCORE) {
-                            winners.push(_bluePlayer);
+                        if (_scoreBoard.moonScore >= WIN_SCORE) {
+                            winners.push(_moonPlayer);
                         }
-                        _control.endGameWithScores([_bluePlayer, _redPlayer], 
-                            [Math.round((_scoreBoard.blueScore / WIN_SCORE) * 100),
-                             Math.round((_scoreBoard.redScore / WIN_SCORE) * 100)],
+                        _control.endGameWithScores([_sunPlayer, _moonPlayer], 
+                            [Math.round((_scoreBoard.sunScore / WIN_SCORE) * 100),
+                             Math.round((_scoreBoard.moonScore / WIN_SCORE) * 100)],
                             WhirledGameControl.CASCADING_PAYOUT);
                     }
                 });
@@ -112,12 +112,12 @@ public class Locksmith extends Sprite
         _board.stopRotation();
         _gameIsOver = true;
         _control.localChat("Game Over!");
-        if (_scoreBoard.redScore >= WIN_SCORE && _scoreBoard.blueScore >= WIN_SCORE) {
+        if (_scoreBoard.moonScore >= WIN_SCORE && _scoreBoard.sunScore >= WIN_SCORE) {
             _control.localChat("The game is a tie!");
-        } else if (_scoreBoard.redScore >= WIN_SCORE) {
-            _control.localChat(_control.getOccupantName(_redPlayer) + " is the Winner!");
-        } else if (_scoreBoard.blueScore >= WIN_SCORE) {
-            _control.localChat(_control.getOccupantName(_bluePlayer) + " is the Winner!");
+        } else if (_scoreBoard.moonScore >= WIN_SCORE) {
+            _control.localChat(_control.getOccupantName(_moonPlayer) + " is the Winner!");
+        } else if (_scoreBoard.sunScore >= WIN_SCORE) {
+            _control.localChat(_control.getOccupantName(_sunPlayer) + " is the Winner!");
         }
     }
 
@@ -126,8 +126,8 @@ public class Locksmith extends Sprite
         if (_currentRing != null && !_gameIsOver) {
             DoLater.instance.registerAt(DoLater.ROTATION_AFTER_END, 
                 function (currentStage :int) :void {
-                    _scoreBoard.newTurn(_control.getTurnHolder() == _redPlayer ? 
-                        ScoreBoard.RED_PLAYER : ScoreBoard.BLUE_PLAYER);
+                    _scoreBoard.newTurn(_control.getTurnHolder() == _moonPlayer ? 
+                        ScoreBoard.MOON_PLAYER : ScoreBoard.SUN_PLAYER);
                     if (_control.isMyTurn()) {
                         _currentRing.setActive(true);
                     } else {
@@ -155,8 +155,8 @@ public class Locksmith extends Sprite
             if (_control.isMyTurn()) {
                 _currentRing.setActive(true);
             }
-            _scoreBoard.newTurn(_control.getTurnHolder() == _redPlayer ? ScoreBoard.RED_PLAYER :
-                ScoreBoard.BLUE_PLAYER);
+            _scoreBoard.newTurn(_control.getTurnHolder() == _moonPlayer ? ScoreBoard.MOON_PLAYER :
+                ScoreBoard.SUN_PLAYER);
             _board.loadNextLauncher();
         } else if (event.name == "ringRotation") {
             ring = _currentRing.smallest;
@@ -233,8 +233,8 @@ public class Locksmith extends Sprite
     protected var _control :WhirledGameControl;
     protected var _currentRing :Ring;
     protected var _scoreBoard :ScoreBoard;
-    protected var _redPlayer :int;
-    protected var _bluePlayer :int;
+    protected var _moonPlayer :int;
+    protected var _sunPlayer :int;
     protected var _gameIsOver :Boolean = false;
 }
 }

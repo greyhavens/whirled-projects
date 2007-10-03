@@ -2,30 +2,49 @@
 
 package {
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.events.Event;
+
+import flash.filters.DropShadowFilter;
 
 import flash.geom.Matrix;
 import flash.geom.Point;
 
 import flash.utils.getTimer;
 
+import mx.core.MovieClipAsset;
+
 public class Marble extends Sprite
 {
-    public static const SIZE :int = 30;
+    public static const MOON :int = 1;
+    public static const SUN :int = 2;
 
-    public static const BLUE :int = 0x0012FF;
-    public static const RED  :int = 0xFF3C00;
-
-    public function Marble (board :Board, ring :Ring, pos :int, color :int) {
-        graphics.beginFill(color);
-        graphics.drawCircle(0, 0, SIZE / 2);
-        graphics.endFill();
+    public function Marble (board :Board, ring :Ring, pos :int, type :int, 
+        positionTransform :Matrix) 
+    {
         _board = board;
         _nextRing = ring;
         _pos = pos;
-        _color = color;
+        _type = type;
+
+        if (_type == MOON) {
+            addChild(_movie = new MOON_BALL() as MovieClipAsset);
+        } else if (_type == SUN) {
+            addChild(_movie = new SUN_BALL() as MovieClipAsset);
+        } else {
+            Log.getLog(this).debug(
+                "Crazy! We got asked to make a Marble of an unkown type [" + _type + "]");
+        }
+        _movie.gotoAndStop(Math.round(_movie.totalFrames * Math.random()) + 1);
+
+        addChild(new BALL_SHINE() as DisplayObject);
+        filters = [ DROP_SHADOW ];
+
+        var position :Point = positionTransform.transformPoint(new Point(0, 0));
+        x = position.x;
+        y = position.y;
 
         Locksmith.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
@@ -54,10 +73,10 @@ public class Marble extends Sprite
         } else {
             if (_nextRing == null) {
                 if (_pos <= 2 || _pos >= 14) {
-                    scorePoint(RED);
+                    scorePoint(MOON);
                     return true;
                 } else if (_pos >= 6 && _pos <= 10) {
-                    scorePoint(BLUE);
+                    scorePoint(SUN);
                     return true;
                 }
             } else if (_nextRing.outer == null) {
@@ -70,10 +89,10 @@ public class Marble extends Sprite
         return false;
     }
 
-    protected function scorePoint (color :int) :void    
+    protected function scorePoint (type :int) :void    
     {
-        if (color == _color) {
-            _board.scorePoint(_color);
+        if (type == _type) {
+            _board.scorePoint(_type);
         }
         _origin = new Point(x, y);
         _destination = new Point(0, 0);
@@ -110,9 +129,9 @@ public class Marble extends Sprite
                 } else {
                     _moving = false;
                     if (!_onlyOne && (_pos <= 2 || _pos >= 14)) {
-                        scorePoint(RED);
+                        scorePoint(MOON);
                     } else if (!_onlyOne && (_pos >= 6 && _pos <= 10)) {
-                        scorePoint(BLUE);
+                        scorePoint(SUN);
                     } else {
                         hole = _nextRing.getHoleAt(_pos);
                         _nextRing.putMarbleInHole(this, hole);
@@ -127,6 +146,16 @@ public class Marble extends Sprite
         }
     }
 
+    [Embed(source="../rsrc/locksmith_art.swf#ball_sun")]
+    protected static const SUN_BALL :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#ball_moon")]
+    protected static const MOON_BALL :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#ball_shine")]
+    protected static const BALL_SHINE :Class;
+    
+    protected static const DROP_SHADOW :DropShadowFilter = 
+        new DropShadowFilter(5, 90, 0x563C15, 1, 5, 5);
+
     protected static const ANIMATION_TIME :int = 100; // in ms
 
     protected var _board :Board;
@@ -137,6 +166,7 @@ public class Marble extends Sprite
     protected var _moveStart :int = 0;
     protected var _moving :Boolean = false;
     protected var _onlyOne :Boolean = false;
-    protected var _color :int;
+    protected var _type :int;
+    protected var _movie :MovieClipAsset;
 }
 }

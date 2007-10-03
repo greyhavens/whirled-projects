@@ -11,64 +11,62 @@ import flash.text.TextFieldAutoSize;
 
 public class ScoreBoard extends Sprite 
 {
-    public static const RED_PLAYER :int = 1;
-    public static const BLUE_PLAYER :int = 2;
+    public static const MOON_PLAYER :int = 1;
+    public static const SUN_PLAYER :int = 2;
 
-    public function ScoreBoard (redPlayer :String, bluePlayer :String, gameEndedCallback :Function) 
+    public function ScoreBoard (moonPlayer :String, sunPlayer :String, gameEndedCallback :Function) 
     {
-        _red = new Sprite();
-        var redName :TextField = createTextField(redPlayer + ": ", Marble.RED, 
-            TextFieldAutoSize.LEFT);
-        _red.addChild(redName);
-        _red.addChild(_redScoreField = createTextField(" 0", Marble.RED));
-        _redScoreField.x = redName.width;
-        addChild(_red);
-        _redScore = 0;
+        _moon = new Sprite();
+        var moonName :TextField = createTextField(moonPlayer + ": ", TextFieldAutoSize.LEFT);
+        _moon.addChild(moonName);
+        _moon.addChild(_moonScoreField = createTextField(" 0"));
+        _moonScoreField.x = moonName.width;
+        addChild(_moon);
+        _moonScore = 0;
 
-        _blue = new Sprite();
-        var blueName :TextField = createTextField(bluePlayer + ": ", Marble.BLUE,
-            TextFieldAutoSize.LEFT);
-        _blue.addChild(blueName);
-        _blue.addChild(_blueScoreField = createTextField(" 0", Marble.BLUE));
-        _blueScoreField.x = blueName.width;
-        _blue.x = Locksmith.DISPLAY_WIDTH - _blue.width;
-        _blue.y = Locksmith.DISPLAY_HEIGHT - _blue.height;
-        addChild(_blue);
-        _blueScore = 0;
+        _sun = new Sprite();
+        var sunName :TextField = createTextField(sunPlayer + ": ", TextFieldAutoSize.LEFT);
+        _sun.addChild(sunName);
+        _sun.addChild(_sunScoreField = createTextField(" 0"));
+        _sunScoreField.x = sunName.width;
+        _sun.x = Locksmith.DISPLAY_WIDTH - _sun.width;
+        _sun.y = Locksmith.DISPLAY_HEIGHT - _sun.height;
+        addChild(_sun);
+        _sunScore = 0;
 
         _gameEndedCallback = gameEndedCallback;
     }
 
-    public function get redScore () :int
+    public function get moonScore () :int
     {
-        return _redScore;
+        return _moonScore;
     }
 
-    public function set redScore (score :int) :void
+    public function set moonScore (score :int) :void
     {
-        updateScore(_redScore = score, _redScoreField);
-        if (_redScore == Locksmith.WIN_SCORE) {
+        updateScore(_moonScore = score, _moonScoreField);
+        if (_moonScore == Locksmith.WIN_SCORE) {
             _gameEndedCallback();
         }
     }
     
-    public function get blueScore () :int
+    public function get sunScore () :int
     {
-        return _blueScore;
+        return _sunScore;
     }
 
-    public function set blueScore (score :int) :void
+    public function set sunScore (score :int) :void
     {
-        updateScore(_blueScore = score, _blueScoreField);
-        if (_blueScore == Locksmith.WIN_SCORE) {
+        updateScore(_sunScore = score, _sunScoreField);
+        if (_sunScore == Locksmith.WIN_SCORE) {
             _gameEndedCallback();
         }
     }
 
     public function newTurn (currentPlayer :int) :void
     {
-        setShadow(currentPlayer == RED_PLAYER, _red);
-        setShadow(currentPlayer == BLUE_PLAYER, _blue);
+        setShadow(currentPlayer == MOON_PLAYER, _moon);
+        setShadow(currentPlayer == SUN_PLAYER, _sun);
     }
 
     protected function updateScore (score :int, field :TextField) :void
@@ -80,15 +78,14 @@ public class ScoreBoard extends Sprite
         }
     }
 
-    protected function createTextField (text :String, color :int, autoSize :String = 
-        TextFieldAutoSize.CENTER) :TextField
+    protected function createTextField (text :String, 
+        autoSize :String = TextFieldAutoSize.CENTER) :TextField
     {
         var field :TextField = new TextField();
         field.text = text;
         field.selectable = false;
         field.autoSize = autoSize;
         field.scaleX = field.scaleY = 2;
-        field.textColor = color;
         return field;
     }
 
@@ -122,12 +119,12 @@ public class ScoreBoard extends Sprite
         }
     }
 
-    protected var _red :Sprite;
-    protected var _redScore :int;
-    protected var _redScoreField :TextField;
-    protected var _blue :Sprite;
-    protected var _blueScore :int;
-    protected var _blueScoreField :TextField;
+    protected var _moon :Sprite;
+    protected var _moonScore :int;
+    protected var _moonScoreField :TextField;
+    protected var _sun :Sprite;
+    protected var _sunScore :int;
+    protected var _sunScoreField :TextField;
     protected var _gameEndedCallback :Function;
 }
 }
