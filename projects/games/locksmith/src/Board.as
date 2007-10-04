@@ -2,8 +2,11 @@
 
 package {
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.BlendMode;
+
+import flash.events.Event;
 
 import flash.geom.Matrix;
 
@@ -16,15 +19,17 @@ public class Board extends Sprite
         colorBackground.graphics.drawRect(-Locksmith.DISPLAY_WIDTH / 2 , 
             -Locksmith.DISPLAY_HEIGHT / 2, Locksmith.DISPLAY_WIDTH, Locksmith.DISPLAY_HEIGHT);
         addChild(colorBackground);
-
         addGoals();
+        addChild(_marbleLayer = new Sprite());
 
         _loadedLauncher = -1;
+
+        Locksmith.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     public function addRing (ring :Ring) :void
     {
-        addChild(_ring = ring);
+        addChildAt(_ring = ring, numChildren - 1);
     }
 
     public function loadNextLauncher () :void
@@ -50,6 +55,26 @@ public class Board extends Sprite
             sunLaunchMarble.launch();
             moonLaunchMarble.launch();
         });
+    }
+
+    override public function addChild (child :DisplayObject) :DisplayObject
+    {
+        if (child is Marble) {
+            _marbles.push(child);
+            return _marbleLayer.addChild(child);
+        } else {
+            return super.addChild(child);
+        }
+    }
+
+    override public function removeChild (child :DisplayObject) :DisplayObject
+    {
+        if (child is Marble) {
+            _marbles.splice(_marbles.indexOf(child), 1);
+            return _marbleLayer.removeChild(child);
+        } else {
+            return super.removeChild(child);
+        }
     }
 
     public function set scoreBoard (scoreBoard :ScoreBoard) :void 
@@ -140,6 +165,16 @@ public class Board extends Sprite
         addChild(goals);
     }
 
+    protected function enterFrame (evt :Event) :void
+    {
+        _marbles.sort(function (obj1 :DisplayObject, obj2 :DisplayObject) :int {
+            return obj1.y < obj2.y ? -1 : (obj2.y < obj1.y ? 1 : 0);
+        });
+        for (var ii :int = 0; ii < _marbles.length; ii++) {
+            _marbleLayer.setChildIndex(_marbles[ii], ii);
+        }
+    }
+
     protected static const LAUNCH_BLUE :int = 0x6D7BFC;
     protected static const LAUNCH_RED :int = 0xFE8585;
 
@@ -148,5 +183,9 @@ public class Board extends Sprite
     protected var _loadedLauncher :int;
     protected var _ring :Ring;
     protected var _scoreBoard :ScoreBoard;
+    /** This is where all the marbles get deposited.  Then on each frame, they are reordered 
+     * according to position so that their drop shadows don't look wonky. */
+    protected var _marbleLayer :Sprite;
+    protected var _marbles :Array = [];
 }
 }
