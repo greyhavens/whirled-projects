@@ -21,7 +21,7 @@ import com.whirled.WhirledGameControl;
 [SWF(width="500", height="500")]
 public class Locksmith extends Sprite
 {
-    public static const DISPLAY_WIDTH :int = 500;
+    public static const DISPLAY_WIDTH :int = 700;
     public static const DISPLAY_HEIGHT :int = 500;
 
     public static const NUM_RINGS :int = 4;
@@ -133,6 +133,8 @@ public class Locksmith extends Sprite
                     } else {
                         _currentRing.setActive(false);
                     }
+                    _board.updateTurnIndicator(_control.getTurnHolder() == _moonPlayer ? 
+                        ScoreBoard.MOON_PLAYER : ScoreBoard.SUN_PLAYER);
                     _board.loadNextLauncher();
                 });
         }

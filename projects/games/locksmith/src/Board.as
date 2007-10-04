@@ -10,26 +10,57 @@ import flash.events.Event;
 
 import flash.geom.Matrix;
 
+import mx.core.MovieClipAsset;
+
 public class Board extends Sprite
 {
     public function Board () 
     {
-        var colorBackground :Sprite = new Sprite();
-        colorBackground.graphics.beginFill(BACKGROUND_COLOR);
-        colorBackground.graphics.drawRect(-Locksmith.DISPLAY_WIDTH / 2 , 
-            -Locksmith.DISPLAY_HEIGHT / 2, Locksmith.DISPLAY_WIDTH, Locksmith.DISPLAY_HEIGHT);
-        addChild(colorBackground);
-        addGoals();
+        var background :DisplayObject = new BACKGROUND() as DisplayObject;
+        background.cacheAsBitmap = true;
+        addChild(background);
+        var goalDome :DisplayObject = new GOAL_DOME() as DisplayObject;
+        goalDome.cacheAsBitmap = true;
+        addChild(goalDome);
         addChild(_marbleLayer = new Sprite());
 
         _loadedLauncher = -1;
+
+        updateTurnIndicator(ScoreBoard.MOON_PLAYER);
 
         Locksmith.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     public function addRing (ring :Ring) :void
     {
-        addChildAt(_ring = ring, numChildren - 1);
+        // rings go under the marble layer, the turn indicator and the goal dome.
+        addChildAt(_ring = ring, numChildren - 3);
+    }
+
+    public function updateTurnIndicator (player :int) :void
+    {
+        var firstTurn :Boolean = true;
+        if (_turnIndicator != null) {
+            removeChild(_turnIndicator);
+            Locksmith.unregisterEventListener(_turnIndicator, Event.ENTER_FRAME, 
+                                              indicatorEnterFrame);
+            firstTurn = false;
+
+            // temp
+            if (_turnIndicator is TURN_TO_MOON) {
+                player = ScoreBoard.SUN_PLAYER;
+            } else {
+                player = ScoreBoard.MOON_PLAYER;
+            }
+        }
+        _turnIndicator = 
+            new (player == ScoreBoard.MOON_PLAYER ? TURN_TO_MOON : TURN_TO_SUN)() as MovieClipAsset;
+        _turnIndicator.cacheAsBitmap = true;
+        if (firstTurn) {
+            _turnIndicator.gotoAndStop(_turnIndicator.totalFrames);
+        }
+        Locksmith.registerEventListener(_turnIndicator, Event.ENTER_FRAME, indicatorEnterFrame);
+        addChild(_turnIndicator);
     }
 
     public function loadNextLauncher () :void
@@ -102,67 +133,11 @@ public class Board extends Sprite
         }
     }
 
-    protected function addGoals () :void
+    protected function indicatorEnterFrame (evt :Event) :void
     {
-        // red goal
-        var goals :Sprite = new Sprite();
-        goals.blendMode = BlendMode.LAYER;
-        var goal :Sprite = new Sprite();
-        var color :Sprite = new Sprite();
-        color.graphics.beginFill(LAUNCH_RED);
-        color.graphics.drawCircle(0, 0, Ring.SIZE_PER_RING);
-        color.graphics.endFill();
-        goal.addChild(color);
-        var mask :Sprite = new Sprite();
-        mask.graphics.beginFill(0);
-        mask.graphics.drawRect(-Ring.SIZE_PER_RING, -Ring.SIZE_PER_RING, Ring.SIZE_PER_RING, 
-            Ring.SIZE_PER_RING * 2);
-        mask.graphics.endFill();
-        mask.blendMode = BlendMode.ERASE;
-        goal.addChild(mask);
-        goals.addChild(goal);
-
-        // blue goal
-        goal = new Sprite();
-        goal.blendMode = BlendMode.LAYER;
-        color = new Sprite();
-        color.graphics.beginFill(LAUNCH_BLUE);
-        color.graphics.drawCircle(0, 0, Ring.SIZE_PER_RING);
-        color.graphics.endFill();
-        goal.addChild(color);
-        mask = new Sprite();
-        mask.graphics.beginFill(0);
-        mask.graphics.drawRect(0, -Ring.SIZE_PER_RING, Ring.SIZE_PER_RING, 
-            Ring.SIZE_PER_RING * 2);
-        mask.graphics.endFill();
-        mask.blendMode = BlendMode.ERASE;
-        goal.addChild(mask);
-        goals.addChild(goal);
-
-        // neutral zone
-        var zone :Sprite = new Sprite();
-        zone.blendMode = BlendMode.LAYER;
-        color = new Sprite();
-        color.graphics.beginFill(0);
-        color.graphics.drawCircle(0, 0, Ring.SIZE_PER_RING);
-        color.graphics.endFill();
-        zone.addChild(color);
-        mask = new Sprite();
-        mask.graphics.beginFill(0);
-        mask.graphics.drawRect(Ring.SIZE_PER_RING / 2, -Ring.SIZE_PER_RING, Ring.SIZE_PER_RING / 2,
-            Ring.SIZE_PER_RING * 2);
-        mask.graphics.endFill();
-        mask.blendMode = BlendMode.ERASE;
-        zone.addChild(mask);
-        mask = new Sprite();
-        mask.graphics.beginFill(0);
-        mask.graphics.drawRect(-Ring.SIZE_PER_RING, -Ring.SIZE_PER_RING, Ring.SIZE_PER_RING / 2, 
-            Ring.SIZE_PER_RING * 2);
-        mask.blendMode = BlendMode.ERASE;
-        zone.addChild(mask);
-        goals.addChild(zone);
-
-        addChild(goals);
+        if (_turnIndicator.currentFrame == _turnIndicator.totalFrames) {
+            _turnIndicator.stop();
+        }
     }
 
     protected function enterFrame (evt :Event) :void
@@ -175,10 +150,15 @@ public class Board extends Sprite
         }
     }
 
-    protected static const LAUNCH_BLUE :int = 0x6D7BFC;
-    protected static const LAUNCH_RED :int = 0xFE8585;
+    [Embed(source="../rsrc/locksmith_art.swf#background")]
+    protected static const BACKGROUND :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#dome")]
+    protected static const GOAL_DOME :Class;
 
-    protected static const BACKGROUND_COLOR :int = 0x5C4A38;
+    [Embed(source="../rsrc/locksmith_art.swf#turn_to_moon")]
+    protected static const TURN_TO_MOON :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#turn_to_sun")]
+    protected static const TURN_TO_SUN :Class;
 
     protected var _loadedLauncher :int;
     protected var _ring :Ring;
@@ -187,5 +167,6 @@ public class Board extends Sprite
      * according to position so that their drop shadows don't look wonky. */
     protected var _marbleLayer :Sprite;
     protected var _marbles :Array = [];
+    protected var _turnIndicator :MovieClipAsset;
 }
 }
