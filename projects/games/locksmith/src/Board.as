@@ -23,6 +23,7 @@ public class Board extends Sprite
         goalDome.cacheAsBitmap = true;
         addChild(goalDome);
         addChild(_marbleLayer = new Sprite());
+        addChild(new Clock());
 
         _loadedLauncher = -1;
 
@@ -33,8 +34,8 @@ public class Board extends Sprite
 
     public function addRing (ring :Ring) :void
     {
-        // rings go under the marble layer, the turn indicator and the goal dome.
-        addChildAt(_ring = ring, numChildren - 3);
+        // rings go under the marble layer, the turn indicator, the goal dome, and the clock hands.
+        addChildAt(_ring = ring, numChildren - 4);
     }
 
     public function updateTurnIndicator (player :int) :void
