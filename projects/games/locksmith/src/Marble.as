@@ -37,14 +37,16 @@ public class Marble extends Sprite
             Log.getLog(this).debug(
                 "Crazy! We got asked to make a Marble of an unkown type [" + _type + "]");
         }
+        // start the marble at a random frame
         _movie.gotoAndStop(Math.round(_movie.totalFrames * Math.random()) + 1);
 
         addChild(new BALL_SHINE() as DisplayObject);
         filters = [ DROP_SHADOW ];
 
-        var position :Point = positionTransform.transformPoint(new Point(0, 0));
-        x = position.x;
-        y = position.y;
+        _origin = positionTransform.transformPoint(new Point(0, 0));
+        x = _origin.x;
+        y = _origin.y;
+        updateRotation();
 
         Locksmith.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
@@ -61,13 +63,12 @@ public class Marble extends Sprite
 
     public function launch (onlyOne :Boolean = false) :Boolean 
     {
-        /* We're not testing marble movement at the moment - only new Ring art.
         var hole :int = _nextRing == null ? -1 : _nextRing.getHoleAt(_pos);
         if (hole != -1 && _nextRing.holeIsEmpty(hole)) {
             _origin = new Point(x, y);
             _destination = _nextRing.getHoleLocation(hole);
             _moveStart = getTimer();
-            _moving = true;
+            setMoving(true);
             _onlyOne = onlyOne;
             return true;
         } else {
@@ -85,8 +86,24 @@ public class Marble extends Sprite
                 _board.removeChild(this);
             } 
             return false;
-        }*/
-        return false;
+        }
+    }
+
+    protected function updateRotation () :void
+    {
+        var angle :int = Math.round(Math.atan2(y, x) * 180 / Math.PI) as int;
+        // this will make each marble type by upside-down at the correct angles, etc
+        _movie.rotation = _type == MOON ? angle - 180: angle;
+    }
+
+    protected function setMoving (moving :Boolean) :void
+    {
+        _moving = moving;
+        if (moving) {
+            _movie.play();
+        } else {
+            _movie.stop();
+        }
     }
 
     protected function scorePoint (type :int) :void    
@@ -97,7 +114,7 @@ public class Marble extends Sprite
         _origin = new Point(x, y);
         _destination = new Point(0, 0);
         _moveStart = getTimer();
-        _moving = true;
+        setMoving(true);
     }
 
     protected function enterFrame (evt :Event) :void 
@@ -122,12 +139,12 @@ public class Marble extends Sprite
                         _destination = _nextRing.inner.getHoleLocation(hole);
                         _moveStart = getTimer();
                     } else {
-                        _moving = false;
+                        setMoving(false);
                         hole = _nextRing.getHoleAt(_pos);
                         _nextRing.putMarbleInHole(this, hole);
                     }
                 } else {
-                    _moving = false;
+                    setMoving(false);
                     if (!_onlyOne && (_pos <= 2 || _pos >= 14)) {
                         scorePoint(MOON);
                     } else if (!_onlyOne && (_pos >= 6 && _pos <= 10)) {
@@ -144,6 +161,7 @@ public class Marble extends Sprite
                 y = loc.y;
             }
         }
+        updateRotation();
     }
 
     [Embed(source="../rsrc/locksmith_art.swf#ball_sun")]
@@ -156,7 +174,7 @@ public class Marble extends Sprite
     protected static const DROP_SHADOW :DropShadowFilter = 
         new DropShadowFilter(5, 90, 0x563C15, 1, 5, 5);
 
-    protected static const ANIMATION_TIME :int = 100; // in ms
+    protected static const ANIMATION_TIME :int = 200; // in ms
 
     protected var _board :Board;
     protected var _nextRing :Ring;

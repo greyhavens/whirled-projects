@@ -58,14 +58,13 @@ public class Ring extends Sprite
     {
         _rotationStart = getTimer();
         _rotationDirection = direction;
-        /* Temporarily disable stages... we're just testing new artwork for the rings at the moment.
-        var stages :Array = [ { percent: 0.25, stage: DoLater.ROTATION_25 },
+        /*var stages :Array = [ { percent: 0.25, stage: DoLater.ROTATION_25 },
             { percent: 0.5, stage: DoLater.ROTATION_50 }, 
             { percent: 0.75, stage: DoLater.ROTATION_75 },
             { percent: 1, stage: DoLater.ROTATION_END } ];
         for (var curStage :int = 0; curStage < stages.length; curStage++) {
-            var boundAngle :Number = (_baseRotation + stages[curStage].percent * Math.PI / 2 * 
-                direction + Math.PI * 2) % Math.PI * 2;
+            var boundAngle :int = (_baseRotation + Math.round(stages[curStage].percent * 90 * 
+                direction) + 360) % 360;
             // call an anonymous function to create our DoLater function in order to bind boundAngle
             // properly.
             DoLater.instance.registerAt(stages[curStage].stage, function(angle :int) :Function {
@@ -104,8 +103,8 @@ public class Ring extends Sprite
 
     public function getHoleAt (pos :int) :int 
     {
-        var offset :int = (_baseRotation / (Math.PI * 2)) * 16 + DoLater.getPercent() *
-            4 * _rotationDirection;
+        var offset :int = 
+            (_baseRotation / 360) * 16 + DoLater.getPercent() * 4 * _rotationDirection;
         var hole :int = (pos - offset + 16) % 16;
 
         return ArrayUtil.contains(_holes, hole) ? hole : -1;
@@ -127,7 +126,7 @@ public class Ring extends Sprite
 
     public function getHoleLocation (hole :int) :Point
     {
-        var angle :Number = (hole / 16) * Math.PI * 2 + _baseRotation + _rotationAngle;
+        var angle :Number = ((hole / 16) * 360 + _baseRotation + _rotationAngle) * Math.PI / 180;
         var trans :Matrix = new Matrix();
         trans.translate((_ringNumber + 0.5) * SIZE_PER_RING, 0);
         trans.rotate(-angle);
@@ -197,40 +196,33 @@ public class Ring extends Sprite
     protected function enterFrame (evt :Event) :void
     {
         if (_rotationDirection != STATIONARY) {
-            // experimenting with just doing 1 degree per frame, as it makes the animation 
-            // smoother with the new art.  This may cause some timing trickiness once we're running 
-            // 2-player again.
-
-            //DoLater.instance.atPercent(rotationPercent);
+            DoLater.instance.atPercent(Math.abs(_rotationAngle) / 90);
             var angle :int;
             if (Math.abs(_rotationAngle) == 89) {
                 DoLater.instance.trigger(DoLater.ROTATION_END);
-                angle = _baseRotation = (_baseRotation + 90 * -_rotationDirection + 360) % 360;
+                angle = _baseRotation = (_baseRotation + 90 * _rotationDirection + 360) % 360;
                 _rotationDirection = STATIONARY;
                 _rotationAngle = 0;
                 DoLater.instance.trigger(DoLater.ROTATION_AFTER_END);
             } else {
-                _rotationAngle += 1 * -_rotationDirection;
+                _rotationAngle += _rotationDirection;
                 angle = (_baseRotation + _rotationAngle + 360) % 360;
             }
 
             if (_ringMovie != null) {
-                _ringMovie.gotoAndStop(angle + 1);
+                var frame :int = (-angle + 360) % 360;
+                _ringMovie.gotoAndStop(frame + 1);
             }
             for each (var channel :Channel in _channels) {
                 channel.setAngle(angle);
             }
 
-            /* Note: this old code assumes the angle is in radians
-            var trans :Matrix = new Matrix();
-            trans.rotate(-angle);
-            _holeSprites.transform.matrix = trans;
             for each (var hole :int in _marbles.keys()) {
                 var pos :Point = getHoleLocation(hole);
                 var marble :Marble = _marbles.get(hole);
                 marble.x = pos.x;
                 marble.y = pos.y;
-            }*/
+            }
         }
     }
 
@@ -286,9 +278,11 @@ class Channel
         setAngle(0);
     }
 
-    public function setAngle(angle :int) :void
+    public function setAngle (angle :int) :void
     {
-        _channel.gotoAndStop(((_baseAngle + angle) % 360) + 1);
+        var frame :int = (_baseAngle + angle) % 360;
+        frame = (-frame + 360 + 90) % 360;
+        _channel.gotoAndStop(frame + 1);
     }
 
     protected var _channel :MovieClipAsset;
