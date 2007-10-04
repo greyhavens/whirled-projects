@@ -37,12 +37,14 @@ public class Ring extends Sprite
             _ringNumber == 3 ? null : new Ring["RING_" + _ringNumber]() as MovieClipAsset;
         if (_ringMovie != null) {
             _ringMovie.gotoAndStop(1);
+            _ringMovie.cacheAsBitmap = true;
             addChild(_ringMovie);
         }
 
         var channelMovie :MovieClipAsset;
         for each (var hole :int in holes) {
             addChild(channelMovie = new Ring["CHANNEL_" + _ringNumber]() as MovieClipAsset);
+            channelMovie.cacheAsBitmap = true;
             _channels.push(new Channel(channelMovie, hole));
         }
 

@@ -39,8 +39,11 @@ public class Marble extends Sprite
         }
         // start the marble at a random frame
         _movie.gotoAndStop(Math.round(_movie.totalFrames * Math.random()) + 1);
+        _movie.cacheAsBitmap = true;
 
-        addChild(new BALL_SHINE() as DisplayObject);
+        var shine :DisplayObject = new BALL_SHINE() as DisplayObject;
+        shine.cacheAsBitmap = true;
+        addChild(shine);
         filters = [ DROP_SHADOW ];
 
         _origin = positionTransform.transformPoint(new Point(0, 0));
