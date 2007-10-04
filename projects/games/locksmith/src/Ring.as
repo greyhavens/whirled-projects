@@ -58,7 +58,7 @@ public class Ring extends Sprite
     {
         _rotationStart = getTimer();
         _rotationDirection = direction;
-        /*var stages :Array = [ { percent: 0.25, stage: DoLater.ROTATION_25 },
+        var stages :Array = [ { percent: 0.25, stage: DoLater.ROTATION_25 },
             { percent: 0.5, stage: DoLater.ROTATION_50 }, 
             { percent: 0.75, stage: DoLater.ROTATION_75 },
             { percent: 1, stage: DoLater.ROTATION_END } ];
@@ -80,7 +80,7 @@ public class Ring extends Sprite
                     // check if any marbles in the ring above need to move in
                     if (_outer != null) {
                         for each (hole in _holes) {
-                            var offset :int = (_baseRotation / (Math.PI * 2)) * 16 +
+                            var offset :int = (_baseRotation / 360) * 16 +
                                 DoLater.getPercent(currentStage) * 4 * _rotationDirection;
                             var pos :int = (hole + offset + 16) % 16;
                             _outer.launchFrom(pos);
@@ -89,7 +89,7 @@ public class Ring extends Sprite
                 }
             }(boundAngle));
         }
-        DoLater.instance.trigger(DoLater.ROTATION_BEGIN);*/
+        DoLater.instance.trigger(DoLater.ROTATION_BEGIN);
     }
 
     /** 

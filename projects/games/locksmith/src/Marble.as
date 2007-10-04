@@ -174,7 +174,7 @@ public class Marble extends Sprite
     protected static const DROP_SHADOW :DropShadowFilter = 
         new DropShadowFilter(5, 90, 0x563C15, 1, 5, 5);
 
-    protected static const ANIMATION_TIME :int = 200; // in ms
+    protected static const ANIMATION_TIME :int = 150; // in ms
 
     protected var _board :Board;
     protected var _nextRing :Ring;
