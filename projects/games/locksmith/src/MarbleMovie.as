@@ -23,6 +23,7 @@ public class MarbleMovie extends Sprite
         shine.cacheAsBitmap = true;
         addChild(shine);
         filters = [ DROP_SHADOW ];
+        cacheAsBitmap = true;
     }
 
     public override function get rotation () :Number
@@ -40,9 +41,14 @@ public class MarbleMovie extends Sprite
         return _movie.totalFrames;
     }
 
-    public function gotoAndStop(frame :int) :void
+    public function gotoAndStop (frame :int) :void
     {
         _movie.gotoAndStop(frame);
+    }
+
+    public function gotoAndPlay (frame :int) :void
+    {
+        _movie.gotoAndPlay(frame);
     }
 
     public function play () :void
