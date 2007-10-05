@@ -54,7 +54,8 @@ public class Locksmith extends Sprite
         registerEventListener(root.loaderInfo, Event.UNLOAD, handleUnload);
 
         addChild(_board = new Board());
-        // centering the board display makes all the match *a lot* easier for this game
+        // centering the board display makes all placement and animation *a lot* easier for this 
+        // game
         _board.x = DISPLAY_WIDTH / 2;
         _board.y = DISPLAY_HEIGHT / 2;
         _control = new WhirledGameControl(this);
@@ -80,27 +81,12 @@ public class Locksmith extends Sprite
     public function gameDidStart (event :StateChangedEvent) :void
     {
         var playerIds :Array = _control.seating.getPlayerIds();
-        addChild(_scoreBoard = new ScoreBoard(_control.getOccupantName(_moonPlayer = 
-            playerIds[0]), _control.getOccupantName(_sunPlayer = playerIds[1]), 
-            function () :void {
-                DoLater.instance.finishAndCall(function () :void {
-                    _board.stopRotation();
-                    _scoreBoard.newTurn(-1);
-                    if (_control.amInControl()) {
-                        var winners :Array = [];
-                        if (_scoreBoard.sunScore >= WIN_SCORE) {
-                            winners.push(_sunPlayer);
-                        }
-                        if (_scoreBoard.moonScore >= WIN_SCORE) {
-                            winners.push(_moonPlayer);
-                        }
-                        _control.endGameWithScores([_sunPlayer, _moonPlayer], 
-                            [Math.round((_scoreBoard.sunScore / WIN_SCORE) * 100),
-                             Math.round((_scoreBoard.moonScore / WIN_SCORE) * 100)],
-                            WhirledGameControl.CASCADING_PAYOUT);
-                    }
-                });
-            }));
+        addChild(_scoreBoard = new ScoreBoard(
+            _control.getOccupantName(_moonPlayer = playerIds[0]), 
+            _control.getOccupantName(_sunPlayer = playerIds[1]), 
+            endGame));
+        _scoreBoard.x = DISPLAY_WIDTH / 2;
+        _scoreBoard.y = DISPLAY_HEIGHT / 2;
         _board.scoreBoard = _scoreBoard;
         if (_control.amInControl()) {
             _control.sendMessage("newRings", createRings());
@@ -126,8 +112,6 @@ public class Locksmith extends Sprite
         if (_currentRing != null && !_gameIsOver) {
             DoLater.instance.registerAt(DoLater.ROTATION_AFTER_END, 
                 function (currentStage :int) :void {
-                    _scoreBoard.newTurn(_control.getTurnHolder() == _moonPlayer ? 
-                        ScoreBoard.MOON_PLAYER : ScoreBoard.SUN_PLAYER);
                     if (_control.isMyTurn()) {
                         _currentRing.setActive(true);
                     } else {
@@ -157,8 +141,6 @@ public class Locksmith extends Sprite
             if (_control.isMyTurn()) {
                 _currentRing.setActive(true);
             }
-            _scoreBoard.newTurn(_control.getTurnHolder() == _moonPlayer ? ScoreBoard.MOON_PLAYER :
-                ScoreBoard.SUN_PLAYER);
             _board.loadNextLauncher();
         } else if (event.name == "ringRotation") {
             ring = _currentRing.smallest;
@@ -167,6 +149,26 @@ public class Locksmith extends Sprite
             }
             ring.rotate(event.value.direction);
         }
+    }
+
+    protected function endGame () :void
+    {
+        DoLater.instance.finishAndCall(function () :void {
+            _board.stopRotation();
+            if (_control.amInControl()) {
+                var winners :Array = [];
+                if (_scoreBoard.sunScore >= WIN_SCORE) {
+                    winners.push(_sunPlayer);
+                }
+                if (_scoreBoard.moonScore >= WIN_SCORE) {
+                    winners.push(_moonPlayer);
+                }
+                _control.endGameWithScores([_sunPlayer, _moonPlayer], 
+                    [Math.round((_scoreBoard.sunScore / WIN_SCORE) * 100),
+                        Math.round((_scoreBoard.moonScore / WIN_SCORE) * 100)],
+                    WhirledGameControl.CASCADING_PAYOUT);
+            }
+        });
     }
 
     protected function keyDownHandler (event :KeyboardEvent) :void

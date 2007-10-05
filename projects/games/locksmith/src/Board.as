@@ -122,12 +122,11 @@ public class Board extends Sprite
 
     public function scorePoint (type :int) :void
     {
+        // TODO: This will have to register a method for the end of the stage, and do all of the 
+        // scoring at once - with the current system, the end game score may not be correct if more
+        // than one point is scored in that stage.
         if (_scoreBoard != null) {
-            if (type == Marble.MOON) {
-                _scoreBoard.moonScore++;
-            } else {
-                _scoreBoard.sunScore++;
-            }   
+            _scoreBoard.scorePoint(type);
         }
     }
 
