@@ -202,7 +202,7 @@ public class Display extends Sprite
         setCursor (i);
     }
 
-    private function okButtonClickHandler (event :MouseEvent) :void
+    private function okButtonClickHandler () :void
     {
         _controller.tryScoreWord (_wordfield.text, false);
     }
@@ -253,8 +253,10 @@ public class Display extends Sprite
     /** Initializes word display, countdown timer, etc. */
     private function initializeUI (version :String) :void
     {
-        _okbutton = new OKButton (okButtonClickHandler);
-        doLayout (_okbutton, Properties.OKBUTTON);
+        _okbutton = new Button(new Resources.buttonOkOver(),
+                               new Resources.buttonOkOut(),
+                               okButtonClickHandler);
+        doPosition (_okbutton, Properties.OKBUTTON);
         addChild (_okbutton);
 
         _wordfield = new TextField ();
@@ -293,6 +295,13 @@ public class Display extends Sprite
         o.height = rect.height;
     }
 
+    /** Helper function that updates display object position. */
+    private function doPosition (o :DisplayObject, p :Point) :void
+    {
+        o.x = p.x;
+        o.y = p.y;
+    }
+    
     /** Enables or disables a number of UI elements */
     private function setEnableState (value :Boolean) :void
     {
@@ -411,7 +420,7 @@ public class Display extends Sprite
     private var _wordfield :TextField;
 
     /** The OK button, of course */
-    private var _okbutton :OKButton;
+    private var _okbutton :Button;
 
     /** Logger text box */
     private var _logger :Logger;
@@ -439,7 +448,7 @@ import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
 import mx.core.BitmapAsset;
 
-
+/*
 class OKButton extends Sprite
 {
     // Constructor, sets up the button. Takes a MOUSE_CLICK handler function
@@ -484,7 +493,8 @@ class OKButton extends Sprite
     private var _bg :BitmapAsset;
 
 }
-
+*/
+    
 class ScoreField extends TextField
 {
     // Constructor, sets up the field.

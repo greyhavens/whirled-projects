@@ -142,6 +142,12 @@ public class Resources
 
     [Embed(source="rsrc/button.png")]
     private static const _defaultButton :Class;
+
+    [Embed(source="rsrc/ok_over.png")]
+    public static const buttonOkOver :Class;
+    [Embed(source="rsrc/ok.png")]
+    public static const buttonOkOut :Class;
+
 }
 
 
