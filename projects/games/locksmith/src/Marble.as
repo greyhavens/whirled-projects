@@ -2,19 +2,14 @@
 
 package {
 
-import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.events.Event;
-
-import flash.filters.DropShadowFilter;
 
 import flash.geom.Matrix;
 import flash.geom.Point;
 
 import flash.utils.getTimer;
-
-import mx.core.MovieClipAsset;
 
 public class Marble extends Sprite
 {
