@@ -4,10 +4,13 @@ package
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.net.URLRequest;
 import flash.net.navigateToURL; // function import
+
+import mx.core.MovieClipLoaderAsset
 
 /** Splash screen! */
 public class Splash extends Sprite
@@ -16,11 +19,7 @@ public class Splash extends Sprite
     
     public function Splash ()
     {
-        var logo :DisplayObject = new Resources.logo();
-        logo.x = logo.y = 0;
-        addChild(logo);
-        
-        var bg :MovieClip = new Resources.splash();
+        var bg :MovieClipLoaderAsset = new Resources.splash();
         bg.x = bg.y = 0;
         addChild(bg);
 
@@ -42,9 +41,22 @@ public class Splash extends Sprite
         position(play, Properties.PLAY);
         addChild(play);
 
+        var logo :DisplayObject = new Resources.logo();
+        logo.x = logo.y = 0;
+        addChild(logo);
+        
+        // subscribe for notification when the movie is ready to play, to hide the logo
+        bg.addEventListener(Event.COMPLETE, function (event :Event) :void {
+                trace("READY!");
+                removeChild(logo);
+            });
+        
+        // don't send clicks over to the main game board
         addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
                 event.stopPropagation();
             });
+
+        
     }
 
     /** Helper function that updates display object position. */
