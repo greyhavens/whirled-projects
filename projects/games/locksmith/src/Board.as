@@ -43,8 +43,6 @@ public class Board extends Sprite
         var firstTurn :Boolean = true;
         if (_turnIndicator != null) {
             removeChild(_turnIndicator);
-            Locksmith.unregisterEventListener(_turnIndicator, Event.ENTER_FRAME, 
-                                              indicatorEnterFrame);
             firstTurn = false;
 
             // temp
@@ -60,7 +58,6 @@ public class Board extends Sprite
         if (firstTurn) {
             _turnIndicator.gotoAndStop(_turnIndicator.totalFrames);
         }
-        Locksmith.registerEventListener(_turnIndicator, Event.ENTER_FRAME, indicatorEnterFrame);
         addChild(_turnIndicator);
     }
 
@@ -102,8 +99,13 @@ public class Board extends Sprite
     override public function removeChild (child :DisplayObject) :DisplayObject
     {
         if (child is Marble) {
-            _marbles.splice(_marbles.indexOf(child), 1);
-            return _marbleLayer.removeChild(child);
+            var index :int = _marbles.indexOf(child);
+            if (index == -1) {
+                return child.parent.removeChild(child);
+            } else {
+                _marbles.splice(index, 1);
+                return _marbleLayer.removeChild(child);
+            }
         } else {
             return super.removeChild(child);
         }
@@ -134,11 +136,24 @@ public class Board extends Sprite
         }
     }
 
-    protected function indicatorEnterFrame (evt :Event) :void
+    public function marbleToGoal (marble :Marble, goalType :int) :void
     {
-        if (_turnIndicator.currentFrame == _turnIndicator.totalFrames) {
-            _turnIndicator.stop();
-        }
+        removeChild(marble);
+        var goalBoard :Sprite = new Sprite();
+        addChild(goalBoard);
+        goalBoard.addChild(marble);
+        var marbleMask :Sprite = new Sprite();
+        marbleMask.graphics.beginFill(0);
+        marbleMask.graphics.drawRect(
+            goalType == Marble.SUN ? -Ring.SIZE_PER_RING * 2.5 : Ring.SIZE_PER_RING * 0.5, 
+            -Ring.SIZE_PER_RING * 2, Ring.SIZE_PER_RING * 2, Ring.SIZE_PER_RING * 4);
+        goalBoard.addChild(marbleMask);
+        goalBoard.mask = marbleMask;
+
+        // marbles remove themselves when they're done with the goal animation.
+        marble.addEventListener(Event.REMOVED, function (evt :Event) :void {
+            goalBoard.parent.removeChild(goalBoard);
+        });
     }
 
     protected function enterFrame (evt :Event) :void
@@ -148,6 +163,10 @@ public class Board extends Sprite
         });
         for (var ii :int = 0; ii < _marbles.length; ii++) {
             _marbleLayer.setChildIndex(_marbles[ii], ii);
+        }
+
+        if (_turnIndicator != null && _turnIndicator.currentFrame == _turnIndicator.totalFrames) {
+            _turnIndicator.stop();
         }
     }
 

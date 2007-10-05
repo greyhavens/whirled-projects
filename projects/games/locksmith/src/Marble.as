@@ -114,6 +114,7 @@ public class Marble extends Sprite
         if (type == _type) {
             _board.scorePoint(_type);
         }
+        _board.marbleToGoal(this, type);
         _origin = new Point(x, y);
         _destination = new Point(0, 0);
         _moveStart = getTimer();

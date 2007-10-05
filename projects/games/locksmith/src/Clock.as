@@ -18,7 +18,7 @@ public class Clock extends Sprite
 
         updateTime();
 
-        // Update the time as soon as we switch to a new minute, then do it ever 60 seconds from
+        // Update the time as soon as we switch to a new minute, then do it every 60 seconds from
         // then on.
         _timer = new Timer((60 - (new Date()).seconds + 1) * 1000, 1);
         var tempTimer :Function 
@@ -38,8 +38,6 @@ public class Clock extends Sprite
         var now :Date = new Date();
         _minute.rotation = 6 * now.minutes;
         _hour.rotation = 30 * (now.hours % 12);
-        Log.getLog(this).debug("setting time [" + now.minutes + ", " + _minute.rotation + ", " + 
-            now.hours + ", " + _hour.rotation + "]");
     }
 
     [Embed(source="../rsrc/locksmith_art.swf#hand_minute")]
