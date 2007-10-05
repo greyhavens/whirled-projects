@@ -29,22 +29,9 @@ public class Marble extends Sprite
         _pos = pos;
         _type = type;
 
-        if (_type == MOON) {
-            addChild(_movie = new MOON_BALL() as MovieClipAsset);
-        } else if (_type == SUN) {
-            addChild(_movie = new SUN_BALL() as MovieClipAsset);
-        } else {
-            Log.getLog(this).debug(
-                "Crazy! We got asked to make a Marble of an unkown type [" + _type + "]");
-        }
+        addChild(_movie = new MarbleMovie(type));
         // start the marble at a random frame
         _movie.gotoAndStop(Math.round(_movie.totalFrames * Math.random()) + 1);
-        _movie.cacheAsBitmap = true;
-
-        var shine :DisplayObject = new BALL_SHINE() as DisplayObject;
-        shine.cacheAsBitmap = true;
-        addChild(shine);
-        filters = [ DROP_SHADOW ];
 
         _origin = positionTransform.transformPoint(new Point(0, 0));
         x = _origin.x;
@@ -125,7 +112,7 @@ public class Marble extends Sprite
     {
         if (_moving) {
             var distance :Number = Point.distance(_origin, _destination);
-            var percent :Number = (getTimer() - _moveStart) / ANIMATION_TIME;
+            var percent :Number = (getTimer() - _moveStart) / ROLL_TIME;
             if (percent >= 1) {
                 if (DoLater.instance.mostRecentStage >= DoLater.ROTATION_END) {
                     // fall as far as we can at the end of the rotation
@@ -168,17 +155,7 @@ public class Marble extends Sprite
         updateRotation();
     }
 
-    [Embed(source="../rsrc/locksmith_art.swf#ball_sun")]
-    protected static const SUN_BALL :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#ball_moon")]
-    protected static const MOON_BALL :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#ball_shine")]
-    protected static const BALL_SHINE :Class;
-    
-    protected static const DROP_SHADOW :DropShadowFilter = 
-        new DropShadowFilter(5, 90, 0x563C15, 1, 5, 5);
-
-    protected static const ANIMATION_TIME :int = 150; // in ms
+    protected static const ROLL_TIME :int = 150; // in ms
 
     protected var _board :Board;
     protected var _nextRing :Ring;
@@ -189,6 +166,6 @@ public class Marble extends Sprite
     protected var _moving :Boolean = false;
     protected var _onlyOne :Boolean = false;
     protected var _type :int;
-    protected var _movie :MovieClipAsset;
+    protected var _movie :MarbleMovie;
 }
 }
