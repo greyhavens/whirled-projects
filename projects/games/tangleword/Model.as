@@ -204,23 +204,23 @@ public class Model
         The array contains strings corresponding to the individual letters. */
     public function sendNewLetterSet (a :Array) :void
     {
-        _gameCtrl.set (LETTER_SET_MSG, a);
+        _gameCtrl.set (LETTER_SET, a);
     }
 
-    /** Re-reads letters from the shared object, and displays them on board. */
-    public function updateLettersOnBoard () :void
+    /** Called only when joining an existing game, tells the model to update itself
+     *  from the dobj, and by requesting whatever transient data is needed from peer in control. */
+    public function updateFromExistingGame () :void
     {
-        var letters :Array = _gameCtrl.get(LETTER_SET_MSG) as Array;
-        if (letters != null) {
-            setGameBoard(letters);
-        }
+        updateLettersOnBoard();
+        _gameCtrl.sendMessage (SCOREBOARD_REQUEST_MSG, _scoreboard.internalScoreObject);
     }
+
     
     //
     //
     // EVENT HANDLERS
 
-    /** From MessageReceivedListener:checks for special messages signaling
+    /** From MessageReceivedListener: checks for special messages signaling
         game data updates. */
     public function messageReceived (event :MessageReceivedEvent) :void
     {
@@ -231,22 +231,29 @@ public class Model
         switch (event.name)
         {
         case ADD_SCORE_MSG:
-
             // Store the score in a local data structure
             addWordToScoreboard (
                 event.value.player, event.value.word, event.value.score, event.value.isvalid);
-
             updateScoreDisplay ();
-
             break;
 
         case SCOREBOARD_UPDATE_MSG:
-
             // Take the scoreboard we've received, and use it instead of
             // our previous one.
             Assert.Fail ("Clobbering existing scoreboard...");
             _scoreboard.internalScoreObject = event.value;
             updateScoreDisplay ();
+            break;
+
+        case SCOREBOARD_REQUEST_MSG:
+            // Someone requested my current scoreboard - if i'm in control, i should send it
+            if (_gameCtrl.amInControl ())
+            {
+                var playerId :int = int(event.value);
+                _gameCtrl.sendMessage (
+                    SCOREBOARD_UPDATE_MSG, _scoreboard.internalScoreObject, playerId);
+            }
+            break;
 
         default:
             // Ignore any other messages; they're not for us.
@@ -258,17 +265,23 @@ public class Model
     /** From PropertyChangedListener: deal with distributed game data changes */
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (event.name == LETTER_SET_MSG) {
+        if (event.name == LETTER_SET) {
             updateLettersOnBoard();
-            // We recieved a notification of a new shared letter set -
-            // let's update the board
-            
         }
     }
 
     //
     //
     // PRIVATE METHODS
+
+    /** Re-reads letters from the shared object, and displays them on board. */
+    private function updateLettersOnBoard () :void
+    {
+        var letters :Array = _gameCtrl.get(LETTER_SET) as Array;
+        if (letters != null) {
+            setGameBoard(letters);
+        }
+    }
 
     /** Called when flow is awarded at the end of the round. */
     protected function flowAwarded (event :FlowAwardedEvent) :void
@@ -370,9 +383,10 @@ public class Model
     // PRIVATE CONSTANTS
 
     /** Message types */
+    private static const LETTER_SET :String = "Letter Set Update";
     private static const ADD_SCORE_MSG :String = "Score Update";
-    private static const LETTER_SET_MSG :String = "Letter Set Update";
     private static const SCOREBOARD_UPDATE_MSG :String = "Scoreboard Update";
+    private static const SCOREBOARD_REQUEST_MSG :String = "Scoreboard Request";
 
     //
     //

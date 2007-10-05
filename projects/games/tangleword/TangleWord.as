@@ -70,10 +70,12 @@ public class TangleWord extends Sprite
             initializeScoreboard ();
         }
 
-        // If the game's already going, start up our bits
+        // If the game's already going, do what you have to do to catch up
         if (_gameCtrl.isInPlay()) {
             gameDidStart(null);
-            _model.updateLettersOnBoard();
+            if (! _gameCtrl.amInControl()) {
+                _model.updateFromExistingGame();
+            }
         }
     }
 
