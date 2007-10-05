@@ -74,9 +74,9 @@ public class ScoreBoard extends Sprite
     }
 
     protected static const SUN_RAMP_BEGIN :Point = new Point(256, 38);
-    protected static const SUN_RAMP_END :Point = new Point(312, 99);
+    protected static const SUN_RAMP_END :Point = new Point(312, 197);
     protected static const MOON_RAMP_BEGIN :Point = new Point(-257, 38);
-    protected static const MOON_RAMP_END :Point = new Point(-313, 99);
+    protected static const MOON_RAMP_END :Point = new Point(-313, 197);
 
     protected var _moonScore :int = 0;
     protected var _sunScore :int = 0;
@@ -140,36 +140,48 @@ class RampAnimation
 
     protected function moveTowardsRamp () :void
     {
-        _fadeInTime++;
-        if (_fadeInTime >= FADE_IN_TIME) {
-            _marble.x = _rampTop.x;
-            _marble.y = _rampTop.y;
-            _phase = PHASE_MOVE_DOWN_RAMP;
-            var parent :DisplayObjectContainer = _marble.parent.parent;
-            parent.removeChild(_marble.parent);
-            _marble.parent.removeChild(_marble);
-            parent.addChild(_marble);
-        } else {
+        if (_fadeInTime++ < FADE_IN_TIME) {
             _marble.x = (_fadeInTime / FADE_IN_TIME) * (_rampTop.x - _startX) + _startX;
             _marble.y = (_fadeInTime / FADE_IN_TIME) * (_rampTop.y - _startY) + _startY;
             _darkness.graphics.clear();
             _darkness.graphics.beginFill(0, 1 - _fadeInTime / FADE_IN_TIME);
             _darkness.graphics.drawCircle(_rampTop.x, _rampTop.y, MARBLE_RADIUS);
             _darkness.graphics.endFill();
+        } else {
+            _marble.x = _rampTop.x;
+            _marble.y = _rampTop.y;
+            _phase = PHASE_MOVE_DOWN_RAMP;
+            var parent :DisplayObjectContainer = _marble.parent.parent;
+            parent.removeChild(_marble.parent);
+            _marble.parent.removeChild(_marble);
+            parent.addChildAt(_marble, 0);
         }
     }
 
     protected function moveDownRamp () :void
     {
-        Log.getLog(this).debug("would move down ramp now");
-        _marble.play();
-        _marble.removeEventListener(Event.ENTER_FRAME, enterFrame);
+        if (_rollDownTime++ < ROLL_DOWN_TIME) {
+            var percent :Number = _rollDownTime / ROLL_DOWN_TIME;
+            _marble.scaleX = _marble.scaleY = percent * (FINAL_SCALE - 1) + 1;
+            _marble.x = Math.pow(percent, 2) * (_rampBottom.x - _rampTop.x) + _rampTop.x;
+            percent = (ROLL_DOWN_TIME - _rollDownTime) / ROLL_DOWN_TIME;
+            _marble.y = (1 - Math.pow(percent, 2)) * (_rampBottom.y - _rampTop.y) + _rampTop.y;
+        } else {
+            _marble.x = _rampBottom.x;
+            _marble.y = _rampBottom.y;
+            _marble.scaleX = _marble.scaleY = FINAL_SCALE;
+            _marble.removeEventListener(Event.ENTER_FRAME, enterFrame);
+            _marble.stop();
+        }
     }
 
     protected static const PHASE_MOVE_TO_RAMP :int = 1;
     protected static const PHASE_MOVE_DOWN_RAMP :int = 2;
 
     protected static const FADE_IN_TIME :int = 15; // in frames;
+    protected static const ROLL_DOWN_TIME :int = 15; // in frames;
+
+    protected static const FINAL_SCALE :Number = 1.25;
 
     protected static const MARBLE_RADIUS :Number = 20;
 
@@ -182,4 +194,5 @@ class RampAnimation
     protected var _fadeInTime :int = 0;
     protected var _startX :int;
     protected var _startY :int;
+    protected var _rollDownTime :int = 0;
 }
