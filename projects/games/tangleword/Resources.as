@@ -14,28 +14,6 @@ import mx.core.BitmapAsset;
  */
 public class Resources
 {
-    // BITMAPS
-    
-    /** Returns a new instance of the default bitmap to serve as the background. */
-    public static function makeGameBackground () :DisplayObject
-    {
-        return new _defaultBackground();
-    }
-
-    /** Returns a new instance of the default empty square bitmap resource */
-    public static function makeSquare () :BitmapAsset 
-    {
-        return new _defaultSquare();
-    }
-
-    /** Returns a new instance of the default button background bitmap resource */
-    public static function makeButtonBackground () :BitmapAsset
-    {
-        return new _defaultButton();
-    }
-
-
-    
     // FORMATS
 
     /** Returns a new instance of text style used for individual letters */
@@ -135,19 +113,27 @@ public class Resources
     // RESOURCE DEFINITIONS
 
     [Embed(source="rsrc/background.swf")]
-    private static const _defaultBackground :Class;
+    public static const background :Class;
+    [Embed(source="rsrc/splash.swf")]
+    public static const splash :Class;
 
     [Embed(source="rsrc/square.png")]
-    private static const _defaultSquare :Class;
-
-    [Embed(source="rsrc/button.png")]
-    private static const _defaultButton :Class;
+    public static const square :Class;
 
     [Embed(source="rsrc/ok_over.png")]
     public static const buttonOkOver :Class;
     [Embed(source="rsrc/ok.png")]
     public static const buttonOkOut :Class;
 
+    [Embed(source="rsrc/play_over.png")]
+    public static const buttonPlayOver :Class;
+    [Embed(source="rsrc/play.png")]
+    public static const buttonPlayOut :Class;
+
+    [Embed(source="rsrc/help_over.png")]
+    public static const buttonHelpOver :Class;
+    [Embed(source="rsrc/help.png")]
+    public static const buttonHelpOut :Class;
 }
 
 

@@ -38,7 +38,7 @@ public class TangleWord extends Sprite
         if (!_gameCtrl.isConnected())
         {
             // Initialize the background bitmap
-            var background :DisplayObject = Resources.makeGameBackground ();
+            var background :DisplayObject = new Resources.background ();
             Assert.NotNull (background, "Background bitmap failed to initialize!");
             addChild (background);
             // Error message

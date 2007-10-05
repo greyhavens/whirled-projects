@@ -70,5 +70,11 @@ public class Properties
 
     /** The total number of letters in the matrix. */
     public static const LETTER_COUNT :int = LETTERS * LETTERS;
+
+    /** Splash screen: play button. */
+    public static const PLAY :Point = new Point(328, 385);
+    
+    /** Splash screen: help button. */
+    public static const HELP :Point = new Point(290, 420);
 }
 } // package

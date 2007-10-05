@@ -18,8 +18,6 @@ import flash.text.TextField;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
-import mx.core.BitmapAsset;
-
 import com.threerings.ezgame.EZGameControl;
 
 import com.whirled.WhirledGameControl;
@@ -40,7 +38,7 @@ public class Display extends Sprite
         _gameCtrl = gameCtrl;
 
         // Initialize the background bitmap
-        _background = Resources.makeGameBackground ();
+        _background = new Resources.background ();
         Assert.NotNull (_background, "Background bitmap failed to initialize!");
         addChild (_background);
 
@@ -283,6 +281,9 @@ public class Display extends Sprite
         _timer = new CountdownTimer ();
         doLayout (_timer, Properties.TIMER);
         addChild (_timer);
+
+        _splash = new Splash();
+        addChild(_splash);
     }
 
     /** Helper function that copies x, y, width and height properties
@@ -385,7 +386,7 @@ public class Display extends Sprite
         }
 
         var p :Point = new Point (p.x * Properties.LETTER_SIZE + Properties.BOARD.x,
-                                   p.y * Properties.LETTER_SIZE + Properties.BOARD.y);
+                                  p.y * Properties.LETTER_SIZE + Properties.BOARD.y);
 
         return p;
     }
@@ -431,6 +432,8 @@ public class Display extends Sprite
     /** Timer display */
     private var _timer :CountdownTimer;
 
+    /** Splash screen */
+    private var _splash :Splash;
 }
 
 } // package
@@ -441,60 +444,8 @@ public class Display extends Sprite
 // HELPER CLASSES LOCAL TO THIS MODULE
 
 import flash.display.Sprite;
-import flash.events.MouseEvent;
-import flash.filters.GlowFilter;
 import flash.text.TextField;
-import flash.text.TextFormat;
-import flash.text.TextFieldAutoSize;
-import mx.core.BitmapAsset;
 
-/*
-class OKButton extends Sprite
-{
-    // Constructor, sets up the button. Takes a MOUSE_CLICK handler function
-    // to be called when the player clicks on the button.
-    public function OKButton (mouseClickHandler :Function)
-    {
-        this.buttonMode = true;
-
-        _outFilters = new Array ();
-        _overFilters = new Array ();
-        _overFilters.push (Resources.makeButtonOverFilter ());
-
-        _bg = Resources.makeButtonBackground ();
-        addChild (_bg);
-
-        addEventListener (MouseEvent.MOUSE_OVER, mouseOverHandler);
-        addEventListener (MouseEvent.MOUSE_OUT, mouseOutHandler);
-        addEventListener (MouseEvent.CLICK, mouseClickHandler);
-
-        var t :TextField = new TextField ();
-        t.autoSize = TextFieldAutoSize.CENTER;
-        t.selectable = false;
-        t.defaultTextFormat = Resources.makeFormatForUI ();
-        t.text = "OK";
-        t.x = (Properties.OKBUTTON.width  - t.width) / 2;
-        t.y = (Properties.OKBUTTON.height - t.height) / 2;
-        addChild (t);
-    }
-
-    private function mouseOverHandler (event :MouseEvent) :void
-    {
-        _bg.filters = _overFilters;
-    }
-
-    private function mouseOutHandler (event :MouseEvent) :void
-    {
-        _bg.filters = _outFilters;
-    }
-
-    private var _overFilters :Array;
-    private var _outFilters :Array;
-    private var _bg :BitmapAsset;
-
-}
-*/
-    
 class ScoreField extends TextField
 {
     // Constructor, sets up the field.
