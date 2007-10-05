@@ -44,7 +44,7 @@ public class Resources
         var format :TextFormat = new TextFormat ();
         format.font = "Verdana";
         format.color = uint(0x77aabb);
-        format.size = 12;
+        format.size = 10;
         format.bold = false;
         return format;
     }

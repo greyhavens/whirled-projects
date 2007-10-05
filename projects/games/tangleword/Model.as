@@ -25,7 +25,7 @@ public class Model
     //
     // PUBLIC METHODS
 
-    public function Model (gameCtrl : WhirledGameControl, display : Display) : void
+    public function Model (gameCtrl :WhirledGameControl, display :Display) :void
     {
         // Squirrel the pointers away
         _gameCtrl = gameCtrl;
@@ -41,7 +41,7 @@ public class Model
     }
 
     /** Called at the beginning of a round - push my scoreboard on everyone. */
-    public function roundStarted () : void
+    public function roundStarted () :void
     {
         if (_gameCtrl.amInControl ())
         {
@@ -69,7 +69,7 @@ public class Model
     }
 
     /** Called when the round ends - cleans up data, and awards flow! */
-    public function roundEnded () : void
+    public function roundEnded () :void
     {
         removeAllSelectedLetters ();
         _scoreboard.resetWordClaims();
@@ -80,10 +80,10 @@ public class Model
     // LETTER ACCESSORS
 
     /** If this board letter is already selected as part of the word, returns true.  */
-    public function isLetterSelectedAtPosition (position : Point) : Boolean
+    public function isLetterSelectedAtPosition (position :Point) :Boolean
     {
-        var pointMatches : Function =
-            function (item : Point, index : int, array : Array) : Boolean
+        var pointMatches :Function =
+            function (item :Point, index :int, array :Array) :Boolean
             {
                 return (item.equals (position));
             };
@@ -92,7 +92,7 @@ public class Model
     }
 
     /** Returns coordinates of the most recently added word, or null. */
-    public function getLastLetterPosition () : Point
+    public function getLastLetterPosition () :Point
     {
         if (_word.length > 0)
         {
@@ -103,14 +103,14 @@ public class Model
     }
 
     /** Adds a new letter to the word (by adding a pair of coordinates) */
-    public function selectLetterAtPosition (position : Point) : void
+    public function selectLetterAtPosition (position :Point) :void
     {
         _word.push (position);
         _display.updateLetterSelection (_word);
     }
 
     /** Removes last selected letter from the word (if applicable) */
-    public function removeLastSelectedLetter () : void
+    public function removeLastSelectedLetter () :void
     {
         if (_word.length > 0)
         {
@@ -120,7 +120,7 @@ public class Model
     }
 
     /** Removes all selected letters, resetting the word. */
-    public function removeAllSelectedLetters () : void
+    public function removeAllSelectedLetters () :void
     {
         _word = new Array ();
         _display.updateLetterSelection (_word);
@@ -128,15 +128,15 @@ public class Model
 
     /** Checks if the word exists on the board, by doing an exhaustive
         search of all possible combinations. */
-    public function wordExistsOnBoard (word : String) : Boolean
+    public function wordExistsOnBoard (word :String) :Boolean
     {
         // TODO
         // return true;
 
         if (word.length == 0) return false;
 
-        for (var x : int = 0; x < Properties.LETTERS; x++) {
-            for (var y : int = 0; y < Properties.LETTERS; y++) {
+        for (var x :int = 0; x < Properties.LETTERS; x++) {
+            for (var y :int = 0; y < Properties.LETTERS; y++) {
                 if (wordExists (word, 0, x, y, new Array ()))
                     return true;
             }
@@ -146,27 +146,27 @@ public class Model
     }
 
     protected function wordExists (
-        word : String, start : Number, x : Number, y : Number, visited : Array) : Boolean
+        word :String, start :Number, x :Number, y :Number, visited :Array) :Boolean
     {
         // recursion finished successfully.
         if (start >= word.length) return true;
 
         // if the letter doesn't match, fail.
-        var l : String = _board[x][y];
+        var l :String = _board[x][y];
         if (start + l.length > word.length || word.indexOf (l, start) != start)
             return false;
 
         // if we've seen it before, fail.
-        for each (var p : Point in visited) {
+        for each (var p :Point in visited) {
             if (p.x == x && p.y == y) return false;
         }
 
         // finally, check all neighbors
         visited.push (new Point (x, y));
-        for (var dx : int = -1; dx <= 1; dx++) {
-            for (var dy : int = -1; dy <= 1; dy++) {
-                var xx : int = x + dx;
-                var yy : int = y + dy;
+        for (var dx :int = -1; dx <= 1; dx++) {
+            for (var dy :int = -1; dy <= 1; dy++) {
+                var xx :int = x + dx;
+                var yy :int = y + dy;
                 if (xx >= 0 && xx < Properties.LETTERS &&
                     yy >= 0 && yy < Properties.LETTERS)
                 {
@@ -186,9 +186,9 @@ public class Model
 
     /** Sends out a message to everyone, informing them about adding
         the new word to their lists. */
-    public function addScore (word : String, score : Number, isvalid : Boolean) : void
+    public function addScore (word :String, score :Number, isvalid :Boolean) :void
     {
-        var obj : Object = new Object ();
+        var obj :Object = new Object ();
         obj.player = _playerName;
         obj.word = word;
         obj.score = score;
@@ -202,18 +202,27 @@ public class Model
 
     /** Sends out a message to everyone, informing them about a new letter set.
         The array contains strings corresponding to the individual letters. */
-    public function sendNewLetterSet (a : Array) : void
+    public function sendNewLetterSet (a :Array) :void
     {
         _gameCtrl.set (LETTER_SET_MSG, a);
     }
 
+    /** Re-reads letters from the shared object, and displays them on board. */
+    public function updateLettersOnBoard () :void
+    {
+        var letters :Array = _gameCtrl.get(LETTER_SET_MSG) as Array;
+        if (letters != null) {
+            setGameBoard(letters);
+        }
+    }
+    
     //
     //
     // EVENT HANDLERS
 
-    /** From MessageReceivedListener: checks for special messages signaling
+    /** From MessageReceivedListener:checks for special messages signaling
         game data updates. */
-    public function messageReceived (event : MessageReceivedEvent) : void
+    public function messageReceived (event :MessageReceivedEvent) :void
     {
 //        _gameCtrl.localChat (_gameCtrl.amInControl () ?
 //                           "Model: I AM THE HOST! :)" :
@@ -247,28 +256,14 @@ public class Model
     }
 
     /** From PropertyChangedListener: deal with distributed game data changes */
-    public function propertyChanged (event : PropertyChangedEvent) : void
+    public function propertyChanged (event :PropertyChangedEvent) :void
     {
-        // What kind of a message did we get?
-        switch (event.name)
-        {
-        case LETTER_SET_MSG:
-
+        if (event.name == LETTER_SET_MSG) {
+            updateLettersOnBoard();
             // We recieved a notification of a new shared letter set -
             // let's update the board
-            var s : Array = event.newValue as Array;
-            if (s != null)
-            {
-                setGameBoard (s);
-            }
-
-            break;
-
-        default:
-            //Assert.Fail ("Unknown property changed: " + event.name + ", from: " +
-            //            event.oldValue + " to " + event.newValue);
+            
         }
-
     }
 
     //
@@ -285,21 +280,19 @@ public class Model
     }
 
     /** Resets the currently guessed word */
-    private function resetWord () : void
+    private function resetWord () :void
     {
         _word = new Array ();
     }
 
     /** Initializes letter and word storage */
-    private function initializeStorage () : void
+    private function initializeStorage () :void
     {
         // First, the board
         _board = new Array (Properties.LETTERS);
-        for (var x : int = 0; x < _board.length; x++)
-        {
+        for (var x :int = 0; x < _board.length; x++) {
             _board[x] = new Array (Properties.LETTERS);
-            for (var y : int = 0; y < _board[x].length; y++)
-            {
+            for (var y :int = 0; y < _board[x].length; y++) {
                 _board[x][y] = "!";
             }
         }
@@ -312,13 +305,11 @@ public class Model
     }
 
     /** Sets up a new game board, based on a flat array of letters. */
-    private function setGameBoard (s : Array) : void
+    private function setGameBoard (s :Array) :void
     {
         // Copy them over to the data set
-        for (var x : int = 0; x < Properties.LETTERS; x++)
-        {
-            for (var y : int = 0; y < Properties.LETTERS; y++)
-            {
+        for (var x :int = 0; x < Properties.LETTERS; x++) {
+            for (var y :int = 0; y < Properties.LETTERS; y++) {
                 updateBoardLetter (new Point (x, y), s [x * Properties.LETTERS + y]);
             }
         }
@@ -329,7 +320,7 @@ public class Model
        If the word is not valid, prints out a message.
      */
     private function addWordToScoreboard (
-        player : String, word : String, score : Number, isvalid : Boolean) : void
+        player :String, word :String, score :Number, isvalid :Boolean) :void
     {
         // if this message came in after the end of the round, just ignore it
         if (!_gameCtrl.isInPlay()) {
@@ -361,7 +352,7 @@ public class Model
     }
 
     /** Updates a single letter at specified /position/ to display a new /text/.  */
-    private function updateBoardLetter (position : Point, text : String) : void
+    private function updateBoardLetter (position :Point, text :String) :void
     {
         Assert.NotNull (_board, "Board needs to be initialized first.");
         _board[position.x][position.y] = text;
@@ -369,7 +360,7 @@ public class Model
     }
 
     /** Updates the total scores displayed on the board */
-    private function updateScoreDisplay () : void
+    private function updateScoreDisplay () :void
     {
         _display.updateScores (_scoreboard);
     }
@@ -379,31 +370,31 @@ public class Model
     // PRIVATE CONSTANTS
 
     /** Message types */
-    private static const ADD_SCORE_MSG : String = "Score Update";
-    private static const LETTER_SET_MSG : String = "Letter Set Update";
-    private static const SCOREBOARD_UPDATE_MSG : String = "Scoreboard Update";
+    private static const ADD_SCORE_MSG :String = "Score Update";
+    private static const LETTER_SET_MSG :String = "Letter Set Update";
+    private static const SCOREBOARD_UPDATE_MSG :String = "Scoreboard Update";
 
     //
     //
     // PRIVATE VARIABLES
 
     /** Main game control structure */
-    private var _gameCtrl : WhirledGameControl;
+    private var _gameCtrl :WhirledGameControl;
 
     /** Cache the player's name */
-    private var _playerName : String;
+    private var _playerName :String;
 
     /** Game board data */
-    private var _board : Array;
+    private var _board :Array;
 
     /** Current word data (as array of board coordinates) */
-    private var _word : Array;
+    private var _word :Array;
 
     /** Game board view */
-    private var _display : Display;
+    private var _display :Display;
 
     /** List of players and their scores */
-    private var _scoreboard : Scoreboard;
+    private var _scoreboard :Scoreboard;
 }
 }
 

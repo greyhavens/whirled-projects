@@ -47,7 +47,6 @@ public class Splash extends Sprite
         
         // subscribe for notification when the movie is ready to play, to hide the logo
         bg.addEventListener(Event.COMPLETE, function (event :Event) :void {
-                trace("READY!");
                 removeChild(logo);
             });
         

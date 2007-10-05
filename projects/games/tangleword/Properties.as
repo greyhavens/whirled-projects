@@ -14,13 +14,10 @@ public class Properties
     public static const LOCALE :String = "en-us";
 
     /** Default round length, in seconds */
-    public static const ROUND_LENGTH :int = 120;
+    public static const ROUND_LENGTH :int = 90;
 
     /** Default pause length */
-    public static const PAUSE_LENGTH :int = 30;
-
-    /** The duration of the tick counter, must divide evenly into ROUND_LENGTH and PAUSE_LENGTH. */
-    public static const TICK_SECONDS :int = 5;
+    public static const PAUSE_LENGTH :int = 5;
 
     /**
        Game display is composed of the letter board, and various
@@ -34,6 +31,7 @@ public class Properties
        The letter matrix will fill the board completely.
     */
     public static const BOARD :Rectangle = new Rectangle (48, 102, 250, 250);
+    public static const BOARDPOS :Point = new Point(BOARD.x, BOARD.y);
 
     /**
        Position of a text box that displays currently selected word.

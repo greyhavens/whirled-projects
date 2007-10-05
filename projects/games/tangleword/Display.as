@@ -19,6 +19,7 @@ import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
 import com.threerings.ezgame.EZGameControl;
+import com.threerings.util.StringUtil;
 
 import com.whirled.WhirledGameControl;
 
@@ -70,14 +71,12 @@ public class Display extends Sprite
     public function roundStarted (duration :int) :void
     {
         logRoundStarted ();
-        _timer.start (duration);
         setEnableState (true);
     }
 
     /** Called when the round ends - disables display. */
     public function roundEnded (untilNext :int) :void
     {
-        _timer.start (untilNext);
         setEnableState (false);
     }
 
@@ -131,28 +130,28 @@ public class Display extends Sprite
     /** Updates the log with a success message */
     public function logSuccess (player :String, word :String, score :Number) :void
     {
-        var message :String = player + ": " + word + ", " + score + " pts.";
-        _logger.Log (message);
+        _logger.Log(StringUtil.truncate(player, 18, "...") + ": +" + score + " (" + word + ")");
     }
 
     /** Updates the log with a failure message */
     public function logAlreadyClaimed (player :String, word :String) :void
     {
-        var message :String = player + ": " + word + " already claimed.";
-        _logger.Log (message);
+        _logger.Log(StringUtil.truncate(player, 18, "...") + ":");
+        _logger.Log("  " + word + " already claimed.");
     }
 
     /** Updates the log with an invalid word message */
     public function logInvalidWord (player :String, word :String) :void
     {
-        var message :String = player + ": " + word + " is not valid.";
-        _logger.Log (message);
+        _logger.Log(StringUtil.truncate(player, 18, "...") + ":");
+        _logger.Log("  " + word + " is not valid.");
     }
 
     /** Adds a "please wait" message */
     public function logPleaseWait () :void
     {
-        _logger.Log ("Please wait for\n    the next round.");
+        _logger.Log ("Please wait for");
+        _logger.Log ("   the next round.");
     }
 
     /** Adds a "round started" message */
@@ -174,13 +173,17 @@ public class Display extends Sprite
         _scorefield.updateScores (board);
     }
 
-    /** Forces the timer display to start with the given time.
-        Will not enable the timer if it's disabled. */
-    public function forceTimerStart (seconds :Number) :void
+    /** Sets timer based on specified number. */
+    public function setTimer (remainingsecs :Number) :void
     {
-        _timer.start (seconds);
-    }
+        var minutes :Number = Math.floor(remainingsecs / 60);
+        var seconds :Number = Math.abs(remainingsecs % 60);
 
+        var mm :String = StringUtil.prepad(minutes.toString(), 2, "0");
+        var ss :String = StringUtil.prepad(seconds.toString(), 2, "0");
+        _timerbox.text = mm + ":" + ss;
+    }
+    
     // PRIVATE EVENT HANDLERS
 
     private function clickHandler (event :MouseEvent) :void
@@ -278,10 +281,20 @@ public class Display extends Sprite
         doLayout (_scorefield, Properties.SCOREFIELD);
         addChild (_scorefield);
 
+        /*
         _timer = new CountdownTimer ();
         doLayout (_timer, Properties.TIMER);
         addChild (_timer);
+        */
 
+        _timerbox = new TextField();
+        _timerbox.selectable = false;
+        _timerbox.defaultTextFormat = Resources.makeFormatForCountdown ();
+        _timerbox.borderColor = Resources.defaultBorderColor;
+//        _timerbox.border = true;
+        doLayout (_timerbox, Properties.TIMER);
+        addChild (_timerbox);
+        
         _splash = new Splash();
         addChild(_splash);
     }
@@ -360,7 +373,8 @@ public class Display extends Sprite
     private function screenToBoard (p :Point) :Point
     {
         // remove offset
-        var newp :Point = new Point (p.x - Properties.BOARD.x, p.y - Properties.BOARD.y);
+        var newp :Point = globalToLocal(p).subtract(Properties.BOARDPOS);
+//        var newp :Point = new Point (p.x - Properties.BOARD.x, p.y - Properties.BOARD.y);
 
         // convert to board coordinates
         newp.x = Math.floor (newp.x / Properties.LETTER_SIZE);
@@ -430,7 +444,8 @@ public class Display extends Sprite
     private var _scorefield :ScoreField;
 
     /** Timer display */
-    private var _timer :CountdownTimer;
+//    private var _timer :CountdownTimer;
+    private var _timerbox :TextField;
 
     /** Splash screen */
     private var _splash :Splash;
@@ -445,6 +460,7 @@ public class Display extends Sprite
 
 import flash.display.Sprite;
 import flash.text.TextField;
+import com.threerings.util.StringUtil;
 
 class ScoreField extends TextField
 {
@@ -469,7 +485,7 @@ class ScoreField extends TextField
         for each (var player :String in players)
         {
             var score :Number = board.getTotalScore (player);
-            var line :String = player + ": " + score + " pts.\n";
+            var line :String = StringUtil.truncate(player, 18, "...") + ": " + score + " pts.\n";
             appendText (line);
         }
     }

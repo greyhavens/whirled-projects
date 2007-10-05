@@ -38,18 +38,18 @@ public class TangleWord extends Sprite
         if (!_gameCtrl.isConnected())
         {
             // Initialize the background bitmap
-            var background :DisplayObject = new Resources.background ();
+            var background :DisplayObject = new Resources.logo();
             Assert.NotNull (background, "Background bitmap failed to initialize!");
             addChild (background);
             // Error message
             var label :TextField = new TextField();
-            label.x = Properties.BOARD.x;
-            label.y = Properties.BOARD.y;
-            label.width = Properties.BOARD.width;
+            label.x = 100;
+            label.y = 400;
+            label.width = Properties.DISPLAY.width - 200;
             label.multiline = true;
             label.htmlText = "<center><p align=\"center\"><font size=\"+2\">TangleWord</font>" +
                 "<br/>This game can only be played in <a href=\"http://www.whirled.com\">" +
-                "<u>the Whirled</u></a>.</p>";
+                "<u>Whirled</u></a>.</p>";
             addChild(label);
             return;
         }
@@ -60,7 +60,7 @@ public class TangleWord extends Sprite
 
         // Create MVC elements
         _controller = new Controller (_gameCtrl, null); // we'll set the model later...
-        _display = new Display (_gameCtrl, _controller, "Tangleword v. 1.2");
+        _display = new Display (_gameCtrl, _controller, "Tangleword v. 1.3");
         _model = new Model (_gameCtrl, _display);
         _controller.setModel (_model); // ... as in, right here :)
         addChild (_display);
@@ -73,6 +73,7 @@ public class TangleWord extends Sprite
         // If the game's already going, start up our bits
         if (_gameCtrl.isInPlay()) {
             gameDidStart(null);
+            _model.updateLettersOnBoard();
         }
     }
 
@@ -84,9 +85,9 @@ public class TangleWord extends Sprite
 
     protected function gameDidStart (event :StateChangedEvent) :void
     {
-        // start up our game ticker if we're the one in control
+        // start up our game ticker if we're the one in control, and call every second
         if (_gameCtrl.amInControl()) {
-            _gameCtrl.startTicker("countdown", 5000);
+            _gameCtrl.startTicker("countdown", 1000);
         }
         _model.roundStarted();
         _controller.roundStarted();
@@ -98,10 +99,24 @@ public class TangleWord extends Sprite
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == "countdown") {
-            var elapsed :int = int(event.value) * Properties.TICK_SECONDS;
+            var elapsed :int = int(event.value);
             // end the round when the ticks have met or exceeded our round length
+            _display.setTimer(Properties.ROUND_LENGTH - elapsed);
             if (elapsed >= Properties.ROUND_LENGTH) {
                 _model.endRound();
+            }                 
+        } else if (event.name == "restart") {
+            // we're in a paused state between games
+            elapsed = int(event.value);
+            _display.setTimer(Properties.PAUSE_LENGTH - elapsed);
+            if (elapsed >= Properties.PAUSE_LENGTH) {
+                if (_gameCtrl.amInControl()) {
+                    // note: this doesn't work on the test server right now
+                    _gameCtrl.restartGameIn(1);
+                    // to work around the bug, use this when on test server:
+                    // _gameCtrl.playerReady();
+                    _gameCtrl.stopTicker("restart");
+                }
             }
         }
     }
@@ -113,7 +128,8 @@ public class TangleWord extends Sprite
         _display.roundEnded(Properties.PAUSE_LENGTH);
 
         if (_gameCtrl.amInControl()) {
-            _gameCtrl.restartGameIn(Properties.PAUSE_LENGTH);
+            _gameCtrl.stopTicker("countdown");
+            _gameCtrl.startTicker("restart", 1000);
         }
     }
 
@@ -124,10 +140,6 @@ public class TangleWord extends Sprite
     private function startGame () :void
     {
     }
-
-    //
-    //
-    // IMPLEMENTATION DETAILS
 
     /** Creates a new distributed scoreboard */
     private function initializeScoreboard () :void
