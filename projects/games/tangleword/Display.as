@@ -205,7 +205,7 @@ public class Display extends Sprite
 
     private function okButtonClickHandler () :void
     {
-        _controller.tryScoreWord (_wordfield.text, false);
+        _controller.tryScoreWord (_wordfield.text);
     }
 
     /** Called when the user types a letter inside the word field. */
@@ -216,7 +216,7 @@ public class Display extends Sprite
         case 13:
             // If it's an ENTER, try scoring.
             if (_wordfield.text != "") {
-                _controller.tryScoreWord (_wordfield.text, true);
+                _controller.tryScoreWord (_wordfield.text);
             }
             break;
 
