@@ -22,7 +22,7 @@ public class Logger extends TextField
         this.selectable = false;
         this.defaultTextFormat = format;
         this.borderColor = Resources.defaultBorderColor;
-        this.border = true;
+//        this.border = true;
         this.multiline = true;
     }
 

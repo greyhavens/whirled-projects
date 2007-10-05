@@ -23,7 +23,7 @@ public class CountdownTimer extends TextField
         this.selectable = false;
         this.defaultTextFormat = format;
         this.borderColor = Resources.defaultBorderColor;
-        this.border = true;
+//        this.border = true;
 
         // Subscribe to ticks every second
         _timer = new Timer (1000, 0);

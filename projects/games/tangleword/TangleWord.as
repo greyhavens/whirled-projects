@@ -1,6 +1,7 @@
 package
 {
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.Shape;
 import flash.events.Event;
@@ -13,11 +14,11 @@ import com.threerings.ezgame.StateChangedEvent;
 import com.whirled.WhirledGameControl;
 
 /**
-   Main game takes care of initializing network connections,
-   maintaining distributed data representation, and responding to events.
-*/
+ * Main game takes care of initializing network connections,
+ * maintaining distributed data representation, and responding to events.
+ */
 
-[SWF(width="600", height="400")]
+[SWF(width="700", height="500")]
 public class TangleWord extends Sprite
 {
     //
@@ -26,7 +27,7 @@ public class TangleWord extends Sprite
 
     // Constructor creates the board, and registers itself for events and other startup
     // information.
-    public function TangleWord () : void
+    public function TangleWord () :void
     {
         // Register unloader
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
@@ -37,7 +38,7 @@ public class TangleWord extends Sprite
         if (!_gameCtrl.isConnected())
         {
             // Initialize the background bitmap
-            var background :BitmapAsset = Resources.makeGameBackground ();
+            var background :DisplayObject = Resources.makeGameBackground ();
             Assert.NotNull (background, "Background bitmap failed to initialize!");
             addChild (background);
             // Error message
@@ -76,7 +77,7 @@ public class TangleWord extends Sprite
     }
 
     /** Clean up and shut down. */
-    public function handleUnload (event : Event) : void
+    public function handleUnload (event :Event) :void
     {
         _display.handleUnload (event);
     }
@@ -120,7 +121,7 @@ public class TangleWord extends Sprite
        Sets up the game information. This needs to happen after all of the
        MVC objects have been initialized.
     */
-    private function startGame () : void
+    private function startGame () :void
     {
     }
 
@@ -129,12 +130,12 @@ public class TangleWord extends Sprite
     // IMPLEMENTATION DETAILS
 
     /** Creates a new distributed scoreboard */
-    private function initializeScoreboard () : void
+    private function initializeScoreboard () :void
     {
         // Create a new instance, and fill in the names
-        var board : Scoreboard = new Scoreboard ();
-        var occupants : Array = _gameCtrl.getOccupants ();
-        for each (var id : int in occupants)
+        var board :Scoreboard = new Scoreboard ();
+        var occupants :Array = _gameCtrl.getOccupants ();
+        for each (var id :int in occupants)
         {
             board.addPlayer (_gameCtrl.getOccupantName (id));
         }
@@ -144,25 +145,25 @@ public class TangleWord extends Sprite
     }
 
     /** Game control object */
-    private var _gameCtrl : WhirledGameControl;
+    private var _gameCtrl :WhirledGameControl;
 
     /** Data interface */
-    private var _model : Model;
+    private var _model :Model;
 
     /** Data display */
-    private var _display : Display;
+    private var _display :Display;
 
     /** Data validation */
-    private var _controller : Controller;
+    private var _controller :Controller;
 
 
     // PRIVATE CONSTANTS
 
     /** Key name: shared letter set */
-    private static const SHARED_LETTER_SET : String = "Shared Letter Set";
+    private static const SHARED_LETTER_SET :String = "Shared Letter Set";
 
     /** Key name: shared scoreboard */
-    private static const SHARED_SCOREBOARD : String = "Shared Scoreboard";
+    private static const SHARED_SCOREBOARD :String = "Shared Scoreboard";
 
 
 }

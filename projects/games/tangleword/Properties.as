@@ -25,38 +25,38 @@ public class Properties
        status windows TBD. This display size is the bounding box
        of all these elements.
     */
-    public static const DISPLAY : Rectangle = new Rectangle (0, 0, 600, 500);
+    public static const DISPLAY : Rectangle = new Rectangle (0, 0, 700, 500);
 
     /**
        The board contains a collection of letters arranged in a square.
        The letter matrix will fill the board completely.
     */
-    public static const BOARD : Rectangle = new Rectangle (50, 50, 250, 250);
+    public static const BOARD : Rectangle = new Rectangle (48, 102, 250, 250);
 
     /**
        Position of a text box that displays currently selected word.
     */
-    public static const WORDFIELD : Rectangle = new Rectangle (50, 312, 190, 28);
+    public static const WORDFIELD : Rectangle = new Rectangle (50, 370, 190, 28);
 
     /**
        Position of the OK button
     */
-    public static const OKBUTTON : Rectangle = new Rectangle (250, 312, 50, 28);
+    public static const OKBUTTON : Rectangle = new Rectangle (250, 370, 50, 28);
 
     /**
        Position of the score box
     */
-    public static const SCOREFIELD : Rectangle = new Rectangle (360, 50, 180, 100);
+    public static const SCOREFIELD : Rectangle = new Rectangle (360, 109, 178, 100);
 
     /**
        Position of the log text field
     */
-    public static const LOGFIELD : Rectangle = new Rectangle (360, 160, 180, 140);
+    public static const LOGFIELD : Rectangle = new Rectangle (360, 226, 178, 130);
 
     /**
        Position of the timer
     */
-    public static const TIMER : Rectangle = new Rectangle (360, 312, 180, 28);
+    public static const TIMER : Rectangle = new Rectangle (360, 370, 178, 28);
 
     /** Each letter is a simple square - but we want to know how big to draw them.
         This is the width and height of each letter in pixels. */
