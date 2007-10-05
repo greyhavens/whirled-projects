@@ -3,6 +3,7 @@ package
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.net.URLRequest;
 import flash.net.navigateToURL; // function import
@@ -35,6 +36,10 @@ public class Splash extends Sprite
                                       });
         position(play, Properties.PLAY);
         addChild(play);
+
+        addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+                event.stopPropagation();
+            });
     }
 
     /** Helper function that updates display object position. */
