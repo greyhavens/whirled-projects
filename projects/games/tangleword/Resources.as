@@ -117,6 +117,9 @@ public class Resources
     [Embed(source="rsrc/splash.swf")]
     public static const splash :Class;
 
+    [Embed(source="rsrc/logo.png")]
+    public static const logo :Class;
+
     [Embed(source="rsrc/square.png")]
     public static const square :Class;
 

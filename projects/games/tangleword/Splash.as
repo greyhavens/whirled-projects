@@ -2,6 +2,7 @@ package
 {
 
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
@@ -15,7 +16,11 @@ public class Splash extends Sprite
     
     public function Splash ()
     {
-        var bg :DisplayObject = new Resources.splash();
+        var logo :DisplayObject = new Resources.logo();
+        logo.x = logo.y = 0;
+        addChild(logo);
+        
+        var bg :MovieClip = new Resources.splash();
         bg.x = bg.y = 0;
         addChild(bg);
 
@@ -27,7 +32,7 @@ public class Splash extends Sprite
         position(help, Properties.HELP);
         addChild(help);
 
-        // to prevent "this" reference confusion in play button handler
+        // to prevent "this" reference confusion in event handlers
         var splash :Splash = this;
         var play :Button = new Button(new Resources.buttonPlayOver(),
                                       new Resources.buttonPlayOut(),
