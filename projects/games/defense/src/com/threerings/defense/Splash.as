@@ -12,7 +12,7 @@ import mx.controls.Image;
 
 public class Splash extends Canvas
 {
-    public static const HELP_URL :String = "http://whirled.threerings.net/";
+    public static const HELP_URL :String = "http://wiki.whirled.com/Tree_House_Defense";
     
     public function Splash (playCallback :Function)
     {
