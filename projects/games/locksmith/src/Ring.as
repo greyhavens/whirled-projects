@@ -118,13 +118,25 @@ public class Ring extends Sprite
         }
     }
 
-    public function getHoleLocation (hole :int) :Point
+    public function getHoleLocation (hole :int, rotationAngle :Number = NaN) :Point
     {
-        var angle :Number = ((hole / 16) * 360 + _baseRotation + _rotationAngle) * Math.PI / 180;
+        if (isNaN(rotationAngle)) {
+            rotationAngle = _rotationAngle;
+        }
+        var angle :Number = ((hole / 16) * 360 + _baseRotation + rotationAngle) * Math.PI / 180;
         var trans :Matrix = new Matrix();
         trans.translate((_ringNumber + 0.5) * SIZE_PER_RING, 0);
         trans.rotate(-angle);
         return trans.transformPoint(new Point(0, 0));
+    }
+
+    /** 
+     * Returns the target location for a marble that is falling into this hole.  If this ring is 
+     * currently rotating, that is taken into account.
+     */
+    public function getHoleTargetLocation (hole :int) :Point
+    {
+        return getHoleLocation(hole, _rotationAngle + _rotationDirection * Marble.ROLL_FRAMES);
     }
 
     public function get num () :int

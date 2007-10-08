@@ -16,6 +16,9 @@ public class Marble extends Sprite
     public static const MOON :int = 1;
     public static const SUN :int = 2;
 
+    // The number of frames that it takes for a marble to move from one ring to the next.
+    public static const ROLL_FRAMES :int = 8;
+
     public function Marble (board :Board, ring :Ring, pos :int, type :int, 
         positionTransform :Matrix) 
     {
@@ -51,7 +54,7 @@ public class Marble extends Sprite
         var hole :int = _nextRing == null ? -1 : _nextRing.getHoleAt(_pos);
         if (hole != -1 && _nextRing.holeIsEmpty(hole)) {
             _origin = new Point(x, y);
-            _destination = _nextRing.getHoleLocation(hole);
+            _destination = _nextRing.getHoleTargetLocation(hole);
             _moveStart = getTimer();
             setMoving(true);
             _onlyOne = onlyOne;
@@ -122,7 +125,7 @@ public class Marble extends Sprite
                     var hole :int = _nextRing.inner.getHoleAt(_pos);
                     if (!_onlyOne && hole != -1 && _nextRing.inner.holeIsEmpty(hole)) {
                         _origin = _destination;
-                        _destination = _nextRing.inner.getHoleLocation(hole);
+                        _destination = _nextRing.inner.getHoleTargetLocation(hole);
                         _moveStart = getTimer();
                     } else {
                         setMoving(false);
@@ -150,7 +153,7 @@ public class Marble extends Sprite
         updateRotation();
     }
 
-    protected static const ROLL_TIME :int = 150; // in ms
+    protected static const ROLL_TIME :int = ROLL_FRAMES * 20; // in ms
 
     protected var _board :Board;
     protected var _nextRing :Ring;
