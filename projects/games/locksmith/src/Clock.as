@@ -3,7 +3,6 @@
 package {
 
 import flash.display.Sprite;
-import flash.display.DisplayObject;
 
 import flash.events.TimerEvent;
 
@@ -13,8 +12,10 @@ public class Clock extends Sprite
 {
     public function Clock ()
     {
-        addChild(_minute = new MINUTE() as DisplayObject);
-        addChild(_hour = new HOUR() as DisplayObject);
+        addChild(_minute = new MINUTE() as Sprite);
+        addChild(_hour = new HOUR() as Sprite);
+
+        _ringIndicator = new SELECTOR() as Sprite;
 
         updateTime();
 
@@ -33,10 +34,24 @@ public class Clock extends Sprite
         _timer.start();
     }
 
+    public function setRingIndicator (ringNum :int) :void
+    {
+        if (ringNum < 0) {
+            if (_ringIndicator.parent == _minute) {
+                _minute.removeChild(_ringIndicator);
+            }
+            return;
+        }
+
+        if (_ringIndicator.parent != _minute) { 
+            _minute.addChild(_ringIndicator);
+        }
+        _ringIndicator.y = -(ringNum + 0.5) * Ring.SIZE_PER_RING;
+    }
+
     protected function updateTime (...ignored) :void
     {
         var now :Date = new Date();
-        _minute.rotation = 6 * now.minutes;
         _hour.rotation = 30 * (now.hours % 12);
     }
 
@@ -44,9 +59,12 @@ public class Clock extends Sprite
     protected static const MINUTE :Class;
     [Embed(source="../rsrc/locksmith_art.swf#hand_hour")]
     protected static const HOUR :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#selector")]
+    protected static const SELECTOR :Class;
 
-    protected var _minute :DisplayObject;
-    protected var _hour :DisplayObject;
+    protected var _minute :Sprite;
+    protected var _hour :Sprite;
+    protected var _ringIndicator :Sprite;
 
     protected var _timer :Timer;
 }

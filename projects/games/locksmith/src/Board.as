@@ -23,7 +23,7 @@ public class Board extends Sprite
         goalDome.cacheAsBitmap = true;
         addChild(goalDome);
         addChild(_marbleLayer = new Sprite());
-        addChild(new Clock());
+        addChild(_clock = new Clock());
 
         _loadedLauncher = -1;
 
@@ -35,6 +35,11 @@ public class Board extends Sprite
     public function addRing (ring :Ring) :void
     {
         addChildAt(_ring = ring, numChildren - RING_LAYER);
+    }
+
+    public function setActiveRing (ringNum :int) :void
+    {
+        _clock.setRingIndicator(ringNum);
     }
 
     public function updateTurnIndicator (player :int) :void
@@ -189,5 +194,6 @@ public class Board extends Sprite
     protected var _marbleLayer :Sprite;
     protected var _marbles :Array = [];
     protected var _turnIndicator :MovieClipAsset;
+    protected var _clock :Clock;
 }
 }

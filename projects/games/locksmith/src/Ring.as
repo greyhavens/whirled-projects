@@ -6,8 +6,6 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
-import flash.filters.ColorMatrixFilter;
-
 import flash.geom.Matrix;
 import flash.geom.Point;
 
@@ -49,11 +47,6 @@ public class Ring extends Sprite
         }
 
         Locksmith.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
-    }
-
-    public function setActive (active :Boolean) :void
-    {
-        filters = active ? [ activeRingFilter ] : [];
     }
 
     public function rotate (direction :int) :void
@@ -100,7 +93,6 @@ public class Ring extends Sprite
     public function stopRotation () :void
     {
         _rotationDirection = STATIONARY;
-        setActive(false);
     }
 
     public function getHoleAt (pos :int) :int 
@@ -245,12 +237,6 @@ public class Ring extends Sprite
     protected static const CHANNEL_3 :Class;
     [Embed(source="../rsrc/locksmith_art.swf#ring_4_channel")]
     protected static const CHANNEL_4 :Class;
-
-    // filter array obtained from the ColorMatrixFilter page: 
-    // http://www.adobe.com/devnet/flash/articles/matrix_transformations_04.html
-    // This matrix adjusts contrast and brightness by 10 each
-    protected static const activeRingFilter :ColorMatrixFilter = 
-        new ColorMatrixFilter([1.12,0,0,0,3.58,0,1.12,0,0,3.58,0,0,1.12,0,3.58,0,0,0,1,0]);
 
     protected var _ringNumber :int;
     protected var _position :int = 0;

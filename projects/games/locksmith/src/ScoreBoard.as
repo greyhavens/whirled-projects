@@ -4,6 +4,8 @@ package {
 
 import flash.display.Sprite;
 
+import flash.display.MovieClip;
+
 import flash.geom.Point;
 
 public class ScoreBoard extends Sprite 
@@ -13,6 +15,13 @@ public class ScoreBoard extends Sprite
 
     public function ScoreBoard (moonPlayer :String, sunPlayer :String, gameEndedCallback :Function) 
     {
+        addChild(_marbleLayer = new Sprite());
+        var trough :Sprite = new TROUGH_OVERLAY() as Sprite;
+        //trough.x = 350;
+        trough.y = 210;
+        //trough.x = Locksmith.DISPLAY_WIDTH / 2;
+        //trough.y = Locksmith.DISPLAY_HEIGHT / 2;
+        addChild(trough);
         _gameEndedCallback = gameEndedCallback;
     }
 
@@ -61,7 +70,7 @@ public class ScoreBoard extends Sprite
             marble.y = MOON_RAMP_BEGIN.y - 10;
             marble.rotation = 90;
             marble.gotoAndPlay((Math.random() * marble.totalFrames) + 1);
-            addChild(marble);
+            _marbleLayer.addChild(marble);
             new RampAnimation(marble, MOON_RAMP_BEGIN.clone(), MOON_RAMP_END.clone(), point);
         } else {
             marble = new MarbleMovie(Marble.SUN);
@@ -69,10 +78,13 @@ public class ScoreBoard extends Sprite
             marble.y = SUN_RAMP_BEGIN.y - 10;
             marble.rotation = -90;
             marble.gotoAndPlay((Math.random() * marble.totalFrames) + 1);
-            addChild(marble);
+            _marbleLayer.addChild(marble);
             new RampAnimation(marble, SUN_RAMP_BEGIN.clone(), SUN_RAMP_END.clone(), point);
         }
     }
+
+    [Embed(source="../rsrc/locksmith_art.swf#trough_overlay")]
+    protected static const TROUGH_OVERLAY :Class;
 
     protected static const SUN_RAMP_BEGIN :Point = new Point(256, 38);
     protected static const SUN_RAMP_END :Point = new Point(313, 199);
@@ -82,6 +94,7 @@ public class ScoreBoard extends Sprite
     protected var _moonScore :int = 0;
     protected var _sunScore :int = 0;
     protected var _gameEndedCallback :Function;
+    protected var _marbleLayer :Sprite = new Sprite();
 }
 }
 

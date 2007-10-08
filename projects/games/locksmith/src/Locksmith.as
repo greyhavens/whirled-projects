@@ -113,9 +113,9 @@ public class Locksmith extends Sprite
             DoLater.instance.registerAt(DoLater.ROTATION_AFTER_END, 
                 function (currentStage :int) :void {
                     if (_control.isMyTurn()) {
-                        _currentRing.setActive(true);
+                        _board.setActiveRing(_currentRing.num);
                     } else {
-                        _currentRing.setActive(false);
+                        _board.setActiveRing(-1);
                     }
                     _board.updateTurnIndicator(_control.getTurnHolder() == _moonPlayer ? 
                         ScoreBoard.MOON_PLAYER : ScoreBoard.SUN_PLAYER);
@@ -139,7 +139,7 @@ public class Locksmith extends Sprite
             }
 
             if (_control.isMyTurn()) {
-                _currentRing.setActive(true);
+                _board.setActiveRing(_currentRing.num);
             }
             _board.loadNextLauncher();
         } else if (event.name == "ringRotation") {
@@ -187,16 +187,14 @@ public class Locksmith extends Sprite
                 break;
             case Keyboard.UP:
                 if (_currentRing != _currentRing.largest) {
-                    _currentRing.setActive(false);
                     _currentRing = _currentRing.outer;
-                    _currentRing.setActive(true);
+                    _board.setActiveRing(_currentRing.num);
                 }
                 break;
             case Keyboard.DOWN:
                 if (_currentRing != _currentRing.smallest) {
-                    _currentRing.setActive(false);
                     _currentRing = _currentRing.inner;
-                    _currentRing.setActive(true);
+                    _board.setActiveRing(_currentRing.num);
                 }
                 break;
             }
