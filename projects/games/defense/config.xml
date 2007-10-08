@@ -1,7 +1,10 @@
 <!-- a config file used when doing standalone testing -->
 <game>
   <params>
-<!--    <choice ident="boardType" choices="1: Playground,2: Halloween" start="1: Playground"/>-->
-    <choice ident="boardType" choices="1: Playground,2: Halloween" start="2: Halloween"/>
+    <choice ident="boardType" choices="1: Playground,2: Halloween" start="1: Playground"/>
+<!-- 
+    <choice ident="boardType" choices="1: Playground,2: Halloween" 
+            start="2: Halloween"/> 
+-->
   </params>
 </game>

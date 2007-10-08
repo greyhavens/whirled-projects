@@ -38,70 +38,71 @@ public class UnitDefinitions
 
     /** Tuning parameters for all tower types. */
     public static const TOWER_DEFINITIONS :Array =
-        [ { key: Tower.TYPE_SANDBOX, value:
-            { name: "Sandbox",
-              styleName: "sandboxButton",
-              description: "Simple, cheap obstacle",
-              cost: 4,
-              rangeMin: 0,
-              rangeMax: 3,
-              pauseBetweenMissiles: 8,
-              size: [2, 2]
-            } },
-          { key: Tower.TYPE_BOULDER, value:
-            { name: "Boulder",
-              styleName: "rockButton",
-              description: "Watch out for the kid throwing water balloons!",
-              cost: 3,
-              rangeMin: 0,
-              rangeMax: 5.5,
-              pauseBetweenMissiles: 6,
-              size: [1, 1]
-            } },
-          { key: Tower.TYPE_WAGON, value:
-            { name: "Wagon",
-              styleName: "wagonButton",
-              description: "Is there someone hiding behind the wagon?",
-              cost: 3,
-              rangeMin: 0,
-              rangeMax: 4,
-              pauseBetweenMissiles: 5,
-              size: [2, 1]
-            } },
-          { key: Tower.TYPE_BOX, value:
-            { name: "Box",
-              styleName: "boxButton",
-              description: "Pandora would be proud.",
-              cost: 2,
-              rangeMin: 0,
-              rangeMax: 3.5,
-              pauseBetweenMissiles: 4,
-              size: [1, 1]
-            } },
+        [
           { key: Tower.TYPE_SHRUB, value:
             { name: "Shrub",
               styleName: "shrubButton",
-              description: "Don't go in the bushes!",
+              description: "Basic station, with a short range and fast reloads.",
               cost: 2,
               rangeMin: 0,
               rangeMax: 2.5,
               pauseBetweenMissiles: 3,
               size: [1, 1]
             } },
+          { key: Tower.TYPE_BOX, value:
+            { name: "Box",
+              styleName: "boxButton",
+              description: "Basic station, with longer range but slower reloads.",
+              cost: 2,
+              rangeMin: 0,
+              rangeMax: 4.5,
+              pauseBetweenMissiles: 5,
+              size: [1, 1]
+            } },
           { key: Tower.TYPE_TRASHCAN, value:
-            { name: "Trash",
+            { name: "Trashcan",
               styleName: "trashButton",
-              description: "I wouldn't want to be the one assigned to that post.",
+              description: "Basic station, with longer range but more expensive.",
               cost: 4,
               rangeMin: 0,
               rangeMax: 5.5,
-              pauseBetweenMissiles: 3.5,
+              pauseBetweenMissiles: 3,
               size: [1, 1]
+            } },
+          { key: Tower.TYPE_BOULDER, value:
+            { name: "Boulder",
+              styleName: "rockButton",
+              description: "Basic station, very fast but expensive.",
+              cost: 5,
+              rangeMin: 0,
+              rangeMax: 3.5,
+              pauseBetweenMissiles: 2,
+              size: [1, 1]
+            } },
+          { key: Tower.TYPE_SANDBOX, value:
+            { name: "Sandbox",
+              styleName: "sandboxButton",
+              description: "Medium-damage station, with longer range but slower reloads.",
+              cost: 3,
+              rangeMin: 0,
+              rangeMax: 5.5,
+              pauseBetweenMissiles: 7,
+              size: [2, 2]
+            } },
+          { key: Tower.TYPE_WAGON, value:
+            { name: "Wagon",
+              styleName: "wagonButton",
+              description: "Medium-damage station, faster but more expensive.",
+              cost: 4,
+              rangeMin: 0,
+              rangeMax: 4,
+              pauseBetweenMissiles: 5,
+              size: [2, 1]
             } },
           { key: Tower.TYPE_TREE, value:
             { name: "Tree",
               styleName: "treeButton",
-              description: "A giant obstacle with very long range.",
+              description: "High-damage, long range station.",
               cost: 6,
               rangeMin: 0,
               rangeMax: 7,
@@ -309,6 +310,16 @@ public class UnitDefinitions
         critter.isFlying = Boolean(def.isFlying);
     }
         
+    public static function getValue (table :Array, key :*) :*
+    {
+        for each (var def :Object in table) {
+                if (def.key == key) {
+                    return def.value;
+                }
+            }
+        return undefined;
+    }
+
     protected static function getTowerAssetName (type :int, state :int) :String
     {
         var assetname :String = getValue(TOWER_ASSET_TYPES, type);
@@ -327,17 +338,6 @@ public class UnitDefinitions
         return assetname + "_" + statename;
     }
     
-    protected static function getValue (table :Array, key :*) :*
-    {
-        for each (var def :Object in table) {
-                if (def.key == key) {
-                    return def.value;
-                }
-            }
-
-        return undefined;
-    }
-
     /** Map from tower type to array of asset names. */
     protected static var _towers :HashMap = new HashMap();
     /** Map from critter type to array of asset names. */

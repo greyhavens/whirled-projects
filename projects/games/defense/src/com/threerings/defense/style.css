@@ -54,6 +54,12 @@ TitleWindow {
   color: #ffdd00;
 }
 
+.towerNameBox { 
+  backgroundColor: #993300;
+  left: 1;
+  right: 1;
+}
+
 .shrubButton 
 { 
   upSkin: Embed(source="../../../../rsrc/icons/shrub_default.png");

@@ -8,7 +8,10 @@ import flash.ui.Mouse;
 import mx.containers.BoxDirection;
 import mx.containers.Tile;
 import mx.containers.TitleWindow;
+import mx.containers.HBox;
 import mx.controls.Button;
+import mx.controls.Label;
+import mx.controls.Text;
 import mx.events.ItemClickEvent;
 
 import com.threerings.defense.Board;
@@ -36,6 +39,20 @@ public class TowerPanel extends TitleWindow
         _buttons = new Tile();
         _buttons.width = 110;
         addChild(_buttons);
+
+        var titlebar :HBox = new HBox();
+        titlebar.styleName = "towerNameBox";
+        addChild(titlebar);
+
+        _title = new Label();
+        _title.text = "title?";
+        _title.width = 110;
+        titlebar.addChild(_title);
+        
+        _desc = new Text();
+        _desc.text = "TEST llalallala but where and why? who knows...";
+        _desc.width = 110;
+        addChild(_desc);
         
         addEventListener(MouseEvent.MOUSE_OVER, handleMouseOver);
         addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
@@ -86,6 +103,14 @@ public class TowerPanel extends TitleWindow
     
     protected function handleTowerClick (event :MouseEvent) :void
     {
+        var def :Object = UnitDefinitions.getValue(
+            UnitDefinitions.TOWER_DEFINITIONS, event.target.id);
+        
+        if (def != null) {
+            _title.text = def.name;
+            _desc.text = def.description;
+        }
+
         _game.setCursorType(event.target.id);
     }
     
@@ -93,6 +118,8 @@ public class TowerPanel extends TitleWindow
     protected var _game :Game;
     protected var _display :Display;
     protected var _buttons :Tile;
+    protected var _title :Label;
+    protected var _desc :Text;
 }
 }
 
