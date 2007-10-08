@@ -18,7 +18,7 @@ import com.threerings.util.ArrayUtil;
 import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
 
-[SWF(width="500", height="500")]
+[SWF(width="700", height="500")]
 public class Locksmith extends Sprite
 {
     public static const DISPLAY_WIDTH :int = 700;
