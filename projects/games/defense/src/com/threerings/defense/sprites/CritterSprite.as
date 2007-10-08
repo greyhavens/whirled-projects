@@ -1,7 +1,11 @@
 package com.threerings.defense.sprites {
 
+import flash.display.Graphics;
 import flash.geom.Point;
 
+import mx.controls.Image;
+
+import com.threerings.defense.Board;
 import com.threerings.defense.Level;
 import com.threerings.defense.units.Critter;
 
@@ -20,11 +24,40 @@ public class CritterSprite extends UnitSprite
         
         // shift tiles over some random number of pixels from the tile center
         _tileOffset = new Point(Math.random() * 10 - 5, Math.random() * 6 - 3);
+
+        _health = new Image();
     }
 
     public function get critter () :Critter
     {
         return _unit as Critter;
+    }
+
+    public function updateHealth () :void
+    {
+        var g :Graphics = _health.graphics;
+        var w :Number = Board.SQUARE_WIDTH - 2;
+        var h :Number = 5;
+
+        var health :Number = critter.health / critter.maxhealth;
+
+        g.clear();
+        
+        g.beginFill(0x000000, 0.3);
+        g.drawRoundRect(- w / 2, 0, w, h, 3, 3);
+        g.endFill();
+
+        g.beginFill(0x00ff00, 0.8);
+        g.drawRect(- w / 2 + 1, 1, (w - 2) * health, h - 2);
+        g.endFill();
+    }
+    
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+        
+        _health.cacheAsBitmap = true;
+        addChild(_health);
     }
 
     override public function recomputeCurrentState () :int
@@ -53,5 +86,7 @@ public class CritterSprite extends UnitSprite
         // the critter flag overrides any arguments
         return super.getMyZOrder(critter.isFlying);
     }
+
+    protected var _health :Image;
 }
 }

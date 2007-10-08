@@ -126,6 +126,8 @@ public class Game
                     missile.source.player, target.pointValue, target.centroidx, target.centroidy);
                 handleRemoveCritter(target);
             } 
+        } else {
+            _display.updateCritterHealth(target);
         }
 
         missileExpired(missile);

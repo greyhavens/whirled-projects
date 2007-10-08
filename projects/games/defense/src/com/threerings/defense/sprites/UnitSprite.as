@@ -5,6 +5,7 @@ import flash.display.MovieClip;
 import flash.geom.Point;
 
 import mx.controls.Image;
+import mx.containers.Canvas;
 
 import com.threerings.defense.Board;
 import com.threerings.defense.Level;
@@ -14,10 +15,9 @@ import com.threerings.defense.units.Unit;
 /**
  * Base class for sprites that display unit objects. Do not instantiate directly.
  */
-public /* abstract */ class UnitSprite extends Image
+public /* abstract */ class UnitSprite extends Canvas
 {
     public static const STATE_INVALID :int = -1;
-
     
     /** Offset in pixels from the image anchor hotspot, to the image upper-left coordinate. */
     public var assetOffset :Point = new Point(0, 0);
@@ -26,6 +26,8 @@ public /* abstract */ class UnitSprite extends Image
     {
         _unit = unit;
         _level = level;
+
+        _sprite = new Image();
 
         loadAllAssets();
     }
@@ -39,7 +41,7 @@ public /* abstract */ class UnitSprite extends Image
             // set new state asset
             _currentState = newstate;
             _currentAsset = _allAssets[_currentState];
-            this.source = _currentAsset;
+            _sprite.source = _currentAsset;
             // if the new asset is a movie, rewind it and play from the first frame
             if (_currentAsset is MovieClip) {
                 (_currentAsset as MovieClip).gotoAndPlay(0);
@@ -56,12 +58,19 @@ public /* abstract */ class UnitSprite extends Image
     {
         return STATE_INVALID;
     }
-
+    
     override public function toString () :String
     {
         return "UnitSprite: " + _unit;
     }
 
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+        
+        addChild(_sprite);
+    }
+    
     /** Loads all assets for this type of sprite. */
     protected function loadAllAssets () :void
     {
@@ -139,6 +148,8 @@ public /* abstract */ class UnitSprite extends Image
     protected var _unit :Unit;
     protected var _level :Level;
 
+    protected var _sprite :Image;
+    
     protected var _tileOffset :Point = new Point(0, 0);
     protected var _currentState :int = STATE_INVALID;
     protected var _currentAsset :DisplayObject;

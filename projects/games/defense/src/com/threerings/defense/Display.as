@@ -290,6 +290,7 @@ public class Display extends Canvas
         _boardSprite.addChild(sprite);
         _critters.put(critter.guid, sprite);
         sprite.update();
+        sprite.updateHealth();
     }
 
     public function handleRemoveCritter (critter :Critter) :void
@@ -313,6 +314,14 @@ public class Display extends Canvas
         }
     }
 
+    public function updateCritterHealth (critter :Critter) :void
+    {
+        var sprite :CritterSprite = _critters.get(critter.guid);
+        if (sprite != null) {
+            sprite.updateHealth();
+        }
+    }
+    
     /**
      * Displays a little floating score bubble, and forwards the points over to the controller
      * to add to the scoreboard.

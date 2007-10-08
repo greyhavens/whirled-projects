@@ -2,9 +2,10 @@ package com.threerings.defense.sprites {
 
 import flash.display.GradientType;
 import flash.display.Graphics;
-import flash.display.Shape;
 import flash.geom.Matrix;
 import flash.geom.Point;
+
+import mx.controls.Image;
 
 import com.threerings.defense.Board;
 import com.threerings.defense.Level;
@@ -21,7 +22,7 @@ public class CursorSprite extends TowerSprite
     {
         super.createChildren();
 
-        _range = new Shape();
+        _range = new Image();
         _range.cacheAsBitmap = true;
         addChild(_range);
     }
@@ -72,6 +73,6 @@ public class CursorSprite extends TowerSprite
         g.endFill();
     }
 
-    protected var _range :Shape;
+    protected var _range :Image;
 }
 }
