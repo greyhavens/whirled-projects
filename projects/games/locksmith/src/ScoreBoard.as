@@ -188,9 +188,11 @@ class RampAnimation
             percent = 1 - (_myScore - 1) / 10;
             percent = Math.pow(percent, 2);
         }
-        _marble.scaleX = _marble.scaleY = percent * (FINAL_SCALE - 1) + 1;
-        _marble.x = Math.pow(percent, 1.80) * (_rampBottom.x - _rampTop.x) + _rampTop.x;
-        _marble.y = (1 - Math.pow(1 - percent, 1.50)) * (_rampBottom.y - _rampTop.y) + _rampTop.y;
+        var factorX :Number = Math.pow(percent, 1.8);
+        _marble.x = factorX * (_rampBottom.x - _rampTop.x) + _rampTop.x;
+        var factorY :Number = 1 - Math.pow(1 - percent, 1.5);
+        _marble.y = factorY * (_rampBottom.y - _rampTop.y) + _rampTop.y;
+        _marble.scaleX = _marble.scaleY = ((factorX + factorY) / 2) * (FINAL_SCALE - 1) + 1;
     }
 
     protected static const PHASE_MOVE_TO_RAMP :int = 1;
