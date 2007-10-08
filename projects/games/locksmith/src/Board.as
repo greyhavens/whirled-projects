@@ -22,11 +22,6 @@ public class Board extends Sprite
         var goalDome :DisplayObject = new GOAL_DOME() as DisplayObject;
         goalDome.cacheAsBitmap = true;
         addChild(goalDome);
-        var ringGlare :DisplayObject = new RING_GLARE () as DisplayObject;
-        ringGlare.cacheAsBitmap = true;
-        ringGlare.blendMode = BlendMode.OVERLAY;
-        ringGlare.rotation = 30;
-        addChild(ringGlare);
         addChild(_marbleLayer = new Sprite());
         addChild(new Clock());
 
@@ -183,11 +178,8 @@ public class Board extends Sprite
     [Embed(source="../rsrc/locksmith_art.swf#turn_to_sun")]
     protected static const TURN_TO_SUN :Class;
 
-    [Embed(source="../rsrc/locksmith_art.swf#ring_glare")]
-    protected static const RING_GLARE :Class;
-
-    // rings sit under the turn indicator, scoring dome, ring glare, clock hands and marble layer.
-    protected static const RING_LAYER :int = 5;
+    // rings sit under the turn indicator, scoring dome, clock hands and marble layer.
+    protected static const RING_LAYER :int = 4;
 
     protected var _loadedLauncher :int;
     protected var _ring :Ring;

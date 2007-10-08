@@ -75,9 +75,9 @@ public class ScoreBoard extends Sprite
     }
 
     protected static const SUN_RAMP_BEGIN :Point = new Point(256, 38);
-    protected static const SUN_RAMP_END :Point = new Point(312, 199);
+    protected static const SUN_RAMP_END :Point = new Point(313, 199);
     protected static const MOON_RAMP_BEGIN :Point = new Point(-257, 38);
-    protected static const MOON_RAMP_END :Point = new Point(-313, 199);
+    protected static const MOON_RAMP_END :Point = new Point(-312, 199);
 
     protected var _moonScore :int = 0;
     protected var _sunScore :int = 0;
@@ -166,14 +166,16 @@ class RampAnimation
         var percent :Number;
         if (++_rollDownTime < ROLL_DOWN_TIME * (1 - (_myScore - 1) / 10)) {
             percent = _rollDownTime / ROLL_DOWN_TIME;
+            percent = Math.pow(percent, 2);
         } else {
             _marble.removeEventListener(Event.ENTER_FRAME, enterFrame);
             _marble.stop();
             percent = 1 - (_myScore - 1) / 10;
+            percent = Math.pow(percent, 2);
         }
         _marble.scaleX = _marble.scaleY = percent * (FINAL_SCALE - 1) + 1;
-        _marble.x = Math.pow(percent, 1.75) * (_rampBottom.x - _rampTop.x) + _rampTop.x;
-        _marble.y = (1 - Math.pow(1 - percent, 1.75)) * (_rampBottom.y - _rampTop.y) + _rampTop.y;
+        _marble.x = Math.pow(percent, 1.80) * (_rampBottom.x - _rampTop.x) + _rampTop.x;
+        _marble.y = (1 - Math.pow(1 - percent, 1.50)) * (_rampBottom.y - _rampTop.y) + _rampTop.y;
     }
 
     protected static const PHASE_MOVE_TO_RAMP :int = 1;
@@ -182,7 +184,7 @@ class RampAnimation
     protected static const FADE_IN_TIME :int = 15; // in frames;
     protected static const ROLL_DOWN_TIME :int = 15; // in frames;
 
-    protected static const FINAL_SCALE :Number = 1.4;
+    protected static const FINAL_SCALE :Number = 1.3;
 
     protected static const MARBLE_RADIUS :Number = 20;
 
