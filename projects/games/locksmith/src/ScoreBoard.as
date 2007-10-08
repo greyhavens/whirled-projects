@@ -95,6 +95,7 @@ public class ScoreBoard extends Sprite
 }
 }
 
+import flash.display.BlendMode;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 
@@ -122,7 +123,9 @@ class RampAnimation
         // via masking so that the marble seems to roll into place at the hole.
         var mask :Sprite = new Sprite();
         mask.graphics.beginFill(0);
-        mask.graphics.drawCircle(rampTop.x, rampTop.y, MARBLE_RADIUS);
+        mask.graphics.drawCircle(rampTop.x, rampTop.y + 2, MARBLE_RADIUS * 0.9);
+        mask.graphics.drawRect(rampTop.x - MARBLE_RADIUS * 0.9, rampTop.y, MARBLE_RADIUS * 1.8,
+                                    MARBLE_RADIUS * 2);
         mask.graphics.endFill();
         var marbleLayer :Sprite = new Sprite();
         marbleLayer.mask = mask;
@@ -132,10 +135,11 @@ class RampAnimation
         marbleLayer.addChild(_marble);
         parent.addChildAt(marbleLayer, 0);
         _darkness = new Sprite();
-        _darkness.graphics.beginFill(0);
-        _darkness.graphics.drawCircle(rampTop.x, rampTop.y, MARBLE_RADIUS);
+        _darkness.graphics.beginFill(0, 0.01);
+        _darkness.graphics.drawCircle(0, 0, MARBLE_RADIUS * 1.5);
         _darkness.graphics.endFill();
-        marbleLayer.addChild(_darkness);
+        _darkness.blendMode = BlendMode.ALPHA;
+        _marble.addChild(_darkness);
 
         _marble.addEventListener(Event.ENTER_FRAME, enterFrame);
     }
@@ -153,14 +157,15 @@ class RampAnimation
 
     protected function moveTowardsRamp () :void
     {
-        if (_fadeInTime++ < FADE_IN_TIME) {
+        if (++_fadeInTime < FADE_IN_TIME) {
             _marble.x = (_fadeInTime / FADE_IN_TIME) * (_rampTop.x - _startX) + _startX;
             _marble.y = (_fadeInTime / FADE_IN_TIME) * (_rampTop.y - _startY) + _startY;
             _darkness.graphics.clear();
-            _darkness.graphics.beginFill(0, 1 - _fadeInTime / FADE_IN_TIME);
-            _darkness.graphics.drawCircle(_rampTop.x, _rampTop.y, MARBLE_RADIUS);
+            _darkness.graphics.beginFill(0, _fadeInTime / FADE_IN_TIME);
+            _darkness.graphics.drawCircle(0, 0, MARBLE_RADIUS * 1.5);
             _darkness.graphics.endFill();
         } else {
+            _marble.removeChild(_darkness);
             _marble.x = _rampTop.x;
             _marble.y = _rampTop.y;
             _phase = PHASE_MOVE_DOWN_RAMP;
