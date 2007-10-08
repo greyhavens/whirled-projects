@@ -136,6 +136,11 @@ public class Ring extends Sprite
      */
     public function getHoleTargetLocation (hole :int) :Point
     {
+        if (Math.abs(_rotationAngle) > 85) {
+            // if we're almost done with the rotation, don't try to predict a location, it will be
+            // wrong.
+            return getHoleLocation(hole);
+        }
         return getHoleLocation(hole, _rotationAngle + _rotationDirection * Marble.ROLL_FRAMES);
     }
 

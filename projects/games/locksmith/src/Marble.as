@@ -108,49 +108,49 @@ public class Marble extends Sprite
 
     protected function enterFrame (evt :Event) :void 
     {
+        updateRotation();
         if (_moving) {
-            var distance :Number = Point.distance(_origin, _destination);
             var percent :Number = (getTimer() - _moveStart) / ROLL_TIME;
-            if (percent >= 1) {
-                if (DoLater.instance.mostRecentStage >= DoLater.ROTATION_END) {
-                    // fall as far as we can at the end of the rotation
-                    _onlyOne = false;
-                }
-                x = _destination.x;
-                y = _destination.y;
-                if (_destination.equals(new Point(0, 0))) {
-                    Locksmith.unregisterEventListener(this, Event.ENTER_FRAME, enterFrame);
-                    _board.removeChild(this);
-                } else if (_nextRing.inner != null) {
-                    var hole :int = _nextRing.inner.getHoleAt(_pos);
-                    if (!_onlyOne && hole != -1 && _nextRing.inner.holeIsEmpty(hole)) {
-                        _origin = _destination;
-                        _destination = _nextRing.inner.getHoleTargetLocation(hole);
-                        _moveStart = getTimer();
-                    } else {
-                        setMoving(false);
-                        hole = _nextRing.getHoleAt(_pos);
-                        _nextRing.putMarbleInHole(this, hole);
-                    }
-                } else {
-                    setMoving(false);
-                    if (!_onlyOne && (_pos <= 2 || _pos >= 14)) {
-                        scorePoint(MOON);
-                    } else if (!_onlyOne && (_pos >= 6 && _pos <= 10)) {
-                        scorePoint(SUN);
-                    } else {
-                        hole = _nextRing.getHoleAt(_pos);
-                        _nextRing.putMarbleInHole(this, hole);
-                    }
-                }
-                _nextRing = _nextRing != null ? _nextRing.inner : null;
-            } else {
+            if (percent < 1) {
                 var loc :Point = Point.interpolate(_destination, _origin, percent);
                 x = loc.x;
                 y = loc.y;
+                return;
             }
+
+            if (DoLater.instance.mostRecentStage >= DoLater.ROTATION_END) {
+                // fall as far as we can at the end of the rotation
+                _onlyOne = false;
+            }
+            x = _destination.x;
+            y = _destination.y;
+            if (_destination.equals(new Point(0, 0))) {
+                Locksmith.unregisterEventListener(this, Event.ENTER_FRAME, enterFrame);
+                _board.removeChild(this);
+            } else if (_nextRing.inner != null) {
+                var hole :int = _nextRing.inner.getHoleAt(_pos);
+                if (!_onlyOne && hole != -1 && _nextRing.inner.holeIsEmpty(hole)) {
+                    _origin = _destination;
+                    _destination = _nextRing.inner.getHoleTargetLocation(hole);
+                    _moveStart = getTimer();
+                } else {
+                    setMoving(false);
+                    hole = _nextRing.getHoleAt(_pos);
+                    _nextRing.putMarbleInHole(this, hole);
+                }
+            } else {
+                setMoving(false);
+                if (!_onlyOne && (_pos <= 2 || _pos >= 14)) {
+                    scorePoint(MOON);
+                } else if (!_onlyOne && (_pos >= 6 && _pos <= 10)) {
+                    scorePoint(SUN);
+                } else {
+                    hole = _nextRing.getHoleAt(_pos);
+                    _nextRing.putMarbleInHole(this, hole);
+                }
+            }
+            _nextRing = _nextRing != null ? _nextRing.inner : null;
         }
-        updateRotation();
     }
 
     protected static const ROLL_TIME :int = ROLL_FRAMES * 20; // in ms

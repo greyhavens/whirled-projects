@@ -162,7 +162,12 @@ public class Board extends Sprite
     protected function enterFrame (evt :Event) :void
     {
         _marbles.sort(function (obj1 :DisplayObject, obj2 :DisplayObject) :int {
-            return obj1.y < obj2.y ? -1 : (obj2.y < obj1.y ? 1 : 0);
+            if (obj1.y == obj2.y) {
+                var x1 :Number = Math.abs(obj1.x);
+                var x2 :Number = Math.abs(obj2.x);
+                return x1 < x2 ? -1 : (x2 < x1 ? 1 : 0);
+            }
+            return obj1.y < obj2.y ? -1 : 1;
         });
         for (var ii :int = 0; ii < _marbles.length; ii++) {
             _marbleLayer.setChildIndex(_marbles[ii], ii);
