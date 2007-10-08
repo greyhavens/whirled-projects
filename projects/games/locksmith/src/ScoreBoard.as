@@ -17,10 +17,7 @@ public class ScoreBoard extends Sprite
     {
         addChild(_marbleLayer = new Sprite());
         var trough :Sprite = new TROUGH_OVERLAY() as Sprite;
-        //trough.x = 350;
         trough.y = 210;
-        //trough.x = Locksmith.DISPLAY_WIDTH / 2;
-        //trough.y = Locksmith.DISPLAY_HEIGHT / 2;
         addChild(trough);
         _gameEndedCallback = gameEndedCallback;
     }
