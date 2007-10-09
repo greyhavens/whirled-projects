@@ -45,7 +45,7 @@ public class UnitDefinitions
               description: "Basic station, with a short range and fast reloads.",
               cost: 4,
               rangeMin: 0,
-              rangeMax: 2.5,
+              rangeMax: 3.5,
               pauseBetweenMissiles: 3,
               size: [1, 1]
             } },
@@ -65,7 +65,7 @@ public class UnitDefinitions
               description: "Basic station, with longer range but more expensive.",
               cost: 8,
               rangeMin: 0,
-              rangeMax: 5.5,
+              rangeMax: 4.5,
               pauseBetweenMissiles: 3,
               size: [1, 1]
             } },
@@ -75,7 +75,7 @@ public class UnitDefinitions
               description: "Basic station, very fast but expensive.",
               cost: 10,
               rangeMin: 0,
-              rangeMax: 3.5,
+              rangeMax: 4.5,
               pauseBetweenMissiles: 2,
               size: [1, 1]
             } },
@@ -85,7 +85,7 @@ public class UnitDefinitions
               description: "Medium-damage station, with longer range but slower reloads.",
               cost: 6,
               rangeMin: 0,
-              rangeMax: 5.5,
+              rangeMax: 5,
               pauseBetweenMissiles: 7,
               size: [2, 2]
             } },
