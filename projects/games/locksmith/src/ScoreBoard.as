@@ -116,7 +116,7 @@ class RampAnimation
         _startY = _marble.y;
         _rampTop = rampTop;
         _rampBottom = rampBottom;
-        _phase = PHASE_MOVE_TO_RAMP;
+        _phase = PHASE_DELAY;
         _myScore = myScore;
 
         // replace the marble on the marble's parent with a layer that only shows the ramp top hole
@@ -147,6 +147,7 @@ class RampAnimation
     protected function enterFrame (evt :Event) :void
     {
         switch(_phase) {
+        case PHASE_DELAY: delayTick(); break;
         case PHASE_MOVE_TO_RAMP: moveTowardsRamp(); break;
         case PHASE_MOVE_DOWN_RAMP: moveDownRamp(); break;
         default:
@@ -155,13 +156,21 @@ class RampAnimation
         }
     }
 
+    protected function delayTick () :void
+    {
+        if (++_phaseTime >= DELAY_TIME) {
+            _phase = PHASE_MOVE_TO_RAMP;
+            _phaseTime = 0;
+        }
+    }
+
     protected function moveTowardsRamp () :void
     {
-        if (++_fadeInTime < FADE_IN_TIME) {
-            _marble.x = (_fadeInTime / FADE_IN_TIME) * (_rampTop.x - _startX) + _startX;
-            _marble.y = (_fadeInTime / FADE_IN_TIME) * (_rampTop.y - _startY) + _startY;
+        if (++_phaseTime < FADE_IN_TIME) {
+            _marble.x = (_phaseTime / FADE_IN_TIME) * (_rampTop.x - _startX) + _startX;
+            _marble.y = (_phaseTime / FADE_IN_TIME) * (_rampTop.y - _startY) + _startY;
             _darkness.graphics.clear();
-            _darkness.graphics.beginFill(0, _fadeInTime / FADE_IN_TIME);
+            _darkness.graphics.beginFill(0, _phaseTime / FADE_IN_TIME);
             _darkness.graphics.drawCircle(0, 0, MARBLE_RADIUS * 1.5);
             _darkness.graphics.endFill();
         } else {
@@ -169,6 +178,7 @@ class RampAnimation
             _marble.x = _rampTop.x;
             _marble.y = _rampTop.y;
             _phase = PHASE_MOVE_DOWN_RAMP;
+            _phaseTime = 0;
             var parent :DisplayObjectContainer = _marble.parent.parent;
             parent.removeChild(_marble.parent);
             _marble.parent.removeChild(_marble);
@@ -179,8 +189,8 @@ class RampAnimation
     protected function moveDownRamp () :void
     {
         var percent :Number;
-        if (++_rollDownTime < ROLL_DOWN_TIME * (1 - (_myScore - 1) / 10)) {
-            percent = _rollDownTime / ROLL_DOWN_TIME;
+        if (++_phaseTime < ROLL_DOWN_TIME * (1 - (_myScore - 1) / 10)) {
+            percent = _phaseTime / ROLL_DOWN_TIME;
             percent = Math.pow(percent, 2);
         } else {
             _marble.removeEventListener(Event.ENTER_FRAME, enterFrame);
@@ -195,9 +205,11 @@ class RampAnimation
         _marble.scaleX = _marble.scaleY = ((factorX + factorY) / 2) * (FINAL_SCALE - 1) + 1;
     }
 
-    protected static const PHASE_MOVE_TO_RAMP :int = 1;
-    protected static const PHASE_MOVE_DOWN_RAMP :int = 2;
+    protected static const PHASE_DELAY :int = 1;
+    protected static const PHASE_MOVE_TO_RAMP :int = 2;
+    protected static const PHASE_MOVE_DOWN_RAMP :int = 3;
 
+    protected static const DELAY_TIME :int = 10; // in frames;
     protected static const FADE_IN_TIME :int = 15; // in frames;
     protected static const ROLL_DOWN_TIME :int = 15; // in frames;
 
@@ -210,9 +222,8 @@ class RampAnimation
     protected var _rampBottom :Point;
     protected var _phase :int;
     protected var _darkness :Sprite;
-    protected var _fadeInTime :int = 0;
+    protected var _phaseTime :int = 0;
     protected var _startX :int;
     protected var _startY :int;
-    protected var _rollDownTime :int = 0;
     protected var _myScore :int;
 }
