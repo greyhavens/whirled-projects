@@ -10,28 +10,30 @@ import flash.utils.Timer;
 
 public class Clock extends Sprite
 {
-    public function Clock ()
+    public function Clock (outOfTime :Function)
     {
         addChild(_minute = new MINUTE() as Sprite);
         addChild(_hour = new HOUR() as Sprite);
 
         _ringIndicator = new SELECTOR() as Sprite;
+        _outOfTime = outOfTime;
+        _inTurn = false;
 
-        updateTime();
-
-        // Update the time as soon as we switch to a new minute, then do it every 60 seconds from
-        // then on.
-        _timer = new Timer((60 - (new Date()).seconds + 1) * 1000, 1);
-        var tempTimer :Function 
-        tempTimer = function (...ignored) :void {
-            updateTime();
-            Locksmith.unregisterEventListener(_timer, TimerEvent.TIMER, tempTimer);
-            _timer = new Timer(60 * 1000);
-            Locksmith.registerEventListener(_timer, TimerEvent.TIMER, updateTime);
-            _timer.start();
-        }
-        Locksmith.registerEventListener(_timer, TimerEvent.TIMER, tempTimer);
+        _timer = new Timer(1000);
+        Locksmith.registerEventListener(_timer, TimerEvent.TIMER, updateTime);
         _timer.start();
+    }
+
+    public function turnOver () :void
+    {
+        _inTurn = false;
+        _hour.rotation = 0;
+    }
+
+    public function newTurn () :void
+    {
+        _inTurn = true;
+        _hour.rotation = 0;
     }
 
     public function setRingIndicator (ringNum :int) :void
@@ -51,8 +53,11 @@ public class Clock extends Sprite
 
     protected function updateTime (...ignored) :void
     {
-        var now :Date = new Date();
-        _hour.rotation = 30 * (now.hours % 12);
+        if (_inTurn && (_hour.rotation += 6) == 0) {
+            _outOfTime();
+            _inTurn = false;
+            _hour.rotation = 0;
+        }
     }
 
     [Embed(source="../rsrc/locksmith_art.swf#hand_minute")]
@@ -67,5 +72,8 @@ public class Clock extends Sprite
     protected var _ringIndicator :Sprite;
 
     protected var _timer :Timer;
+    
+    protected var _outOfTime :Function;
+    protected var _inTurn :Boolean;
 }
 }

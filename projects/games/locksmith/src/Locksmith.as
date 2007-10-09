@@ -69,6 +69,7 @@ public class Locksmith extends Sprite
                 function (event :FlowAwardedEvent) :void {
                     _control.localChat("You were awarded " + event.amount + " flow!");
                 });
+            _board.control = _control;
         } else {
             // show some rings so there is something visible when the game is not connected
             var ringData: Array = createRings();
@@ -110,17 +111,23 @@ public class Locksmith extends Sprite
     public function turnDidChange (event :StateChangedEvent) :void
     {
         if (_currentRing != null && !_gameIsOver) {
-            DoLater.instance.registerAt(DoLater.ROTATION_AFTER_END, 
-                function (currentStage :int) :void {
-                    if (_control.isMyTurn()) {
-                        _board.setActiveRing(_currentRing.num);
-                    } else {
-                        _board.setActiveRing(-1);
-                    }
-                    _board.updateTurnIndicator(_control.getTurnHolder() == _moonPlayer ? 
-                        ScoreBoard.MOON_PLAYER : ScoreBoard.SUN_PLAYER);
-                    _board.loadNextLauncher();
-                });
+            _board.clock.turnOver();
+            _board.setActiveRing(-1);
+            var newTurn :Function = function (...ignored) :void {
+                _board.clock.newTurn();
+                if (_control.isMyTurn()) {
+                    _board.setActiveRing(_currentRing.num);
+                }
+                _board.updateTurnIndicator(_control.getTurnHolder() == _moonPlayer ? 
+                    ScoreBoard.MOON_PLAYER : ScoreBoard.SUN_PLAYER);
+                _board.loadNextLauncher();
+            }
+            DoLater.instance.registerAt(DoLater.ROTATION_AFTER_END, newTurn);
+            if (DoLater.instance.mostRecentStage == DoLater.ROTATION_AFTER_END) {
+                // assume that this turn timed out, and trigger ROTATION_AFTER_END again
+                DoLater.instance.trigger(DoLater.ROTATION_END);
+                DoLater.instance.trigger(DoLater.ROTATION_AFTER_END);
+            }
         }
     }
 

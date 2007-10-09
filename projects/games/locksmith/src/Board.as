@@ -12,6 +12,8 @@ import flash.geom.Matrix;
 
 import mx.core.MovieClipAsset;
 
+import com.whirled.WhirledGameControl;
+
 public class Board extends Sprite
 {
     public function Board () 
@@ -23,13 +25,24 @@ public class Board extends Sprite
         goalDome.cacheAsBitmap = true;
         addChild(goalDome);
         addChild(_marbleLayer = new Sprite());
-        addChild(_clock = new Clock());
+        addChild(_clock = new Clock(turnTimeout));
+        _clock.newTurn();
 
         _loadedLauncher = -1;
 
         updateTurnIndicator(ScoreBoard.MOON_PLAYER);
 
         Locksmith.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
+    }
+
+    public function get clock () :Clock
+    {
+        return _clock;
+    }
+
+    public function set control (control :WhirledGameControl) :void
+    {
+        _control = control;
     }
 
     public function addRing (ring :Ring) :void
@@ -190,6 +203,13 @@ public class Board extends Sprite
         });
     }
 
+    protected function turnTimeout () :void
+    {
+        if (_control != null && _control.isMyTurn()) {
+            _control.endTurn();
+        }
+    }
+
     protected function enterFrame (evt :Event) :void
     {
         _marbles.sort(function (obj1 :DisplayObject, obj2 :DisplayObject) :int {
@@ -222,6 +242,7 @@ public class Board extends Sprite
     // rings sit under the turn indicator, scoring dome, clock hands and marble layer.
     protected static const RING_LAYER :int = 4;
 
+    protected var _control :WhirledGameControl;
     protected var _loadedLauncher :int;
     protected var _ring :Ring;
     protected var _scoreBoard :ScoreBoard;
