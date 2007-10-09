@@ -4,6 +4,7 @@ package {
 
 import flash.display.Sprite;
 
+import flash.events.Event;
 import flash.events.TimerEvent;
 
 import flash.utils.Timer;
@@ -19,20 +20,24 @@ public class Clock extends Sprite
         _outOfTime = outOfTime;
         _inTurn = false;
 
-        _timer = new Timer(1000);
-        Locksmith.registerEventListener(_timer, TimerEvent.TIMER, updateTime);
-        _timer.start();
+        _secondTimer = new Timer(1000);
+        Locksmith.registerEventListener(_secondTimer, TimerEvent.TIMER, updateTime);
+        _secondTimer.start();
+
+        Locksmith.registerEventListener(this, Event.ENTER_FRAME, fastRotation);
     }
 
     public function turnOver () :void
     {
         _inTurn = false;
-        _hour.rotation = 0;
+        _fastRotation = true;
+        _fastRotationFrame = (360 - ((_hour.rotation + 360) % 360)) / 90;
     }
 
     public function newTurn () :void
     {
         _inTurn = true;
+        _fastRotation = false;
         _hour.rotation = 0;
     }
 
@@ -53,10 +58,24 @@ public class Clock extends Sprite
 
     protected function updateTime (...ignored) :void
     {
-        if (_inTurn && (_hour.rotation += 6) == 0) {
-            _outOfTime();
-            _inTurn = false;
-            _hour.rotation = 0;
+        if (_inTurn) {
+            _hour.rotation += 6;
+            _inTurn = _hour.rotation != 0;
+            if (!_inTurn) {
+                _outOfTime();
+            }
+        }
+    }
+
+    protected function fastRotation (...ignored) :void
+    {
+        if (_fastRotation) {
+            if (_hour.rotation < 0 && _hour.rotation + _fastRotationFrame >= 0) {
+                _fastRotation = false;
+                _hour.rotation = 0;
+            } else {
+                _hour.rotation += _fastRotationFrame;
+            }
         }
     }
 
@@ -71,9 +90,11 @@ public class Clock extends Sprite
     protected var _hour :Sprite;
     protected var _ringIndicator :Sprite;
 
-    protected var _timer :Timer;
+    protected var _secondTimer :Timer;
     
     protected var _outOfTime :Function;
     protected var _inTurn :Boolean;
+    protected var _fastRotation :Boolean;
+    protected var _fastRotationFrame :Number;
 }
 }
