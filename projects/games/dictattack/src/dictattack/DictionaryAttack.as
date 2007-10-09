@@ -128,6 +128,14 @@ public class DictionaryAttack extends Sprite
                     Log.getLog(this).warning("Failed to save cookie " + _cookie + ".");
                 }
             }
+
+            // see if we qualify for any end-of-game trophies
+            for each (var score :int in SCORE_AWARDS) {
+                if (mypoints > score && !_control.holdsTrophy("score_over_" + score)) {
+                    _control.awardTrophy("score_over_" + score);
+                    break;
+                }
+            }
         }
 
         // _flowAward is set via a FLOW_AWARDED event that precedes the GAME_ENDED event
@@ -157,5 +165,7 @@ public class DictionaryAttack extends Sprite
 
     protected static const LONG_WORD :int = 8;
     protected static const MAX_HISCORES :int = 4;
+
+    protected static const SCORE_AWARDS :Array = [60, 50, 40, 30, 20];
 }
 }
