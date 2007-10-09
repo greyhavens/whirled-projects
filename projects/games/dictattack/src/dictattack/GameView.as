@@ -366,6 +366,7 @@ public class GameView extends Sprite
         var dismiss :SimpleButton = _content.makeButton("Dismiss");
         dismiss.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             removeChild(dialog);
+            _input.stage.focus = _input; // refocus the input field
         });
         dialog.addButton(dismiss, Dialog.CENTER);
         dialog.show(this);

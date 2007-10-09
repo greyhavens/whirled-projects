@@ -239,9 +239,9 @@ public class Model
             // remove our tiles from the distributed state (we do this in individual events so that
             // watchers coming into a game half way through will see valid state), while we're at
             // it, compute our points
-            var wpoints :int = used.length - getMinWordLength() + 1;
+            var wpoints :int = used.length - getMinWordLength() + 1, ii :int, mult :int = 1;
             var wpos :Array = new Array();
-            var ii :int, mult :int = 1;
+            var usedWild :Boolean = false;
             for (ii = 0; ii < used.length; ii++) {
                 // map our local coordinates back to a global position coordinates
                 var xx :int = int(used[ii] % _size);
@@ -253,6 +253,7 @@ public class Model
                 // if this was a wildcard, it scores no point
                 if (board.getLetter(used[ii]).getText() == WILDCARD) {
                     wpoints = Math.max(wpoints-1, 0);
+                    usedWild = true;
                 }
             }
             wpoints *= mult;
@@ -266,6 +267,13 @@ public class Model
             var newpoints :int = points[myidx] + wpoints;
             if (wpoints > 0) {
                 _control.set(POINTS, newpoints, myidx);
+            }
+
+            // if they earned a trophy due to the length of this word, award it
+            if (used.length >= 8 && !usedWild) {
+                if (!_control.holdsTrophy("word_length_" + used.length)) {
+                    _control.awardTrophy("word_length_" + used.length);
+                }
             }
 
             // if this is a single player game, they go until the board is clear
