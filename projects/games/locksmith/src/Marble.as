@@ -19,6 +19,8 @@ public class Marble extends Sprite
     // The number of frames that it takes for a marble to move from one ring to the next.
     public static const ROLL_FRAMES :int = 8;
 
+    public static const RING_MULTIPLIER :int = 20;
+
     public function Marble (board :Board, ring :Ring, pos :int, type :int, 
         positionTransform :Matrix) 
     {
@@ -49,15 +51,26 @@ public class Marble extends Sprite
         return _pos;
     }
 
+    public function getDestination () :int
+    {
+        if (!_moving || _nextRing == null) {
+            return -1;
+        }
+
+        return RING_MULTIPLIER * _nextRing.num + _nextRing.getHoleAt(_pos);
+    }
+
     public function launch (onlyOne :Boolean = false) :Boolean 
     {
         var hole :int = _nextRing == null ? -1 : _nextRing.getHoleAt(_pos);
-        if (hole != -1 && _nextRing.holeIsEmpty(hole)) {
+        if (hole != -1 && _nextRing.holeIsEmpty(hole) && 
+            _board.getMarbleGoingToHole(_nextRing.num, hole) == null) {
             _origin = new Point(x, y);
             _destination = _nextRing.getHoleTargetLocation(hole);
             _moveStart = getTimer();
             setMoving(true);
             _onlyOne = onlyOne;
+            _board.marbleIsRoaming(this, true);
             return true;
         } else {
             if (_nextRing == null) {
@@ -127,9 +140,11 @@ public class Marble extends Sprite
             if (_destination.equals(new Point(0, 0))) {
                 Locksmith.unregisterEventListener(this, Event.ENTER_FRAME, enterFrame);
                 _board.removeChild(this);
+                _board.marbleIsRoaming(this, false);
             } else if (_nextRing.inner != null) {
                 var hole :int = _nextRing.inner.getHoleAt(_pos);
-                if (!_onlyOne && hole != -1 && _nextRing.inner.holeIsEmpty(hole)) {
+                if (!_onlyOne && hole != -1 && _nextRing.inner.holeIsEmpty(hole) && 
+                    _board.getMarbleGoingToHole(_nextRing.inner.num, hole) == null) {
                     _origin = _destination;
                     _destination = _nextRing.inner.getHoleTargetLocation(hole);
                     _moveStart = getTimer();
@@ -137,6 +152,7 @@ public class Marble extends Sprite
                     setMoving(false);
                     hole = _nextRing.getHoleAt(_pos);
                     _nextRing.putMarbleInHole(this, hole);
+                    _board.marbleIsRoaming(this, false);
                 }
             } else {
                 setMoving(false);
@@ -147,6 +163,7 @@ public class Marble extends Sprite
                 } else {
                     hole = _nextRing.getHoleAt(_pos);
                     _nextRing.putMarbleInHole(this, hole);
+                    _board.marbleIsRoaming(this, false);
                 }
             }
             _nextRing = _nextRing != null ? _nextRing.inner : null;

@@ -42,6 +42,37 @@ public class Board extends Sprite
         _clock.setRingIndicator(ringNum);
     }
 
+    public function marbleIsRoaming (marble :Marble, roaming :Boolean) :void
+    {
+        var ii :int = _roamingMarbles.indexOf(marble);
+        if (roaming) {
+            if (ii != -1) {
+                _roamingMarbles.splice(ii, 1);
+            }
+        } else {
+            if (ii == -1) {
+                _roamingMarbles.push(marble);
+            }
+        }
+    }
+
+    public function getMarbleGoingToHole (ring :int, hole :int) :Marble
+    {
+        for each (var marble :Marble in _roamingMarbles) {
+            var destination :int = marble.getDestination();
+            if (destination == -1) {
+                continue;
+            }
+
+            var destHole :int = destination % Marble.RING_MULTIPLIER;
+            var destRing :int = (destination - destHole) / Marble.RING_MULTIPLIER;
+            if (ring == destRing && hole == destHole) {
+                return marble;
+            }
+        }
+        return null;
+    }
+
     public function updateTurnIndicator (player :int) :void
     {
         var firstTurn :Boolean = true;
@@ -200,5 +231,6 @@ public class Board extends Sprite
     protected var _marbles :Array = [];
     protected var _turnIndicator :MovieClipAsset;
     protected var _clock :Clock;
+    protected var _roamingMarbles :Array = [];
 }
 }
