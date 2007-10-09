@@ -35,7 +35,7 @@ public class StatusBar extends ApplicationControlBar
         this.width = Board.BG_WIDTH;
         this.height = Board.BOARD_OFFSETY;
 
-        addChild(makeSpacer(300, false));
+        addChild(makeSpacer(200, false));
 
         addChild(_name = new Label());
         addChild(_score = new Label());
@@ -47,15 +47,16 @@ public class StatusBar extends ApplicationControlBar
 
         addChild(_health = new Label());
         addChild(_healthIcon = new Image());
-        addChild(makeSpacer(30, false));
 
-        addChild(makeSpacer(50, true));
+        addChild(makeSpacer(100, true));
     }
 
     public function init (board :Board) :void
     {
         _healthIcon.source = board.level.loadHealthIcon();
+        _healthIcon.toolTip = Messages.get("health_desc");
         _moneyIcon.source = board.level.loadMoneyIcon();
+        _moneyIcon.toolTip = Messages.get("health_desc");
     }
     
     public function reset (name :String, board :Board) :void

@@ -33,7 +33,7 @@ public class Game
         _display.addEventListener(Event.ENTER_FRAME, handleGameTick);
 
         // initialize the cursor with dummy data - it will all get overwritten, eventually
-        _cursor = new Tower(0, 0, Tower.TYPE_SANDBOX, _board.getMyPlayerIndex(), 0);
+        _cursor = new Tower(0, 0, Tower.TYPE_SHRUB, _board.getMyPlayerIndex(), 0);
 
         _gamestate = GAME_STATE_SPLASH;
     }

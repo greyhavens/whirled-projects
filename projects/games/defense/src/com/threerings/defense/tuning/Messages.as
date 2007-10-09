@@ -26,8 +26,12 @@ public class Messages
     public static var data :Object =
     {
         menu_title: "Stations",
-        health: "Health:",
+        health: "Health: ",
         score: " score:",
+        cost: "Cost: ",
+
+        cost_desc: "This is how much money you have for new stations.",
+        health_desc: "This is your tree house health level.",
         
         off: "Off",
         path_1: "P1 Map",

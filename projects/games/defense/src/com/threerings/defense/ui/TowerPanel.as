@@ -45,12 +45,10 @@ public class TowerPanel extends TitleWindow
         addChild(titlebar);
 
         _title = new Label();
-        _title.text = "title?";
         _title.width = 110;
         titlebar.addChild(_title);
         
         _desc = new Text();
-        _desc.text = "TEST llalallala but where and why? who knows...";
         _desc.width = 110;
         addChild(_desc);
         
@@ -68,6 +66,8 @@ public class TowerPanel extends TitleWindow
                 var b :Button = new Button();
                 b.styleName = def.value.styleName;
                 b.id = def.key;
+                b.addEventListener(MouseEvent.MOUSE_OVER, makeDescriptionFn(def.value));
+                b.addEventListener(MouseEvent.MOUSE_OUT, makeDescriptionFn(null));
                 b.addEventListener(MouseEvent.CLICK, handleTowerClick);
                 _buttons.addChild(b);
             });
@@ -103,15 +103,22 @@ public class TowerPanel extends TitleWindow
     
     protected function handleTowerClick (event :MouseEvent) :void
     {
-        var def :Object = UnitDefinitions.getValue(
-            UnitDefinitions.TOWER_DEFINITIONS, event.target.id);
-        
-        if (def != null) {
-            _title.text = def.name;
-            _desc.text = def.description;
-        }
-
         _game.setCursorType(event.target.id);
+    }
+
+    /** Makes a mouse over handler that will display an appropriate tower description. */
+    protected function makeDescriptionFn (def :Object) :Function
+    {
+        return function (event :MouseEvent) :void {
+            if (def != null) {
+                _title.text = def.name;
+                _desc.htmlText =
+                    def.description + "<br><br>" +
+                    Messages.get("cost") + def.cost;
+            } else {
+                _title.text = _desc.text = "";
+            }
+        }
     }
     
     protected var _board :Board;
