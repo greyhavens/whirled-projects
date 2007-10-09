@@ -27,7 +27,7 @@ public class Locksmith extends Sprite
     public static const NUM_RINGS :int = 4;
     public static const RING_POSITIONS :int = 16;
 
-    public static const WIN_SCORE :int = 10;
+    public static const WIN_SCORE :int = 6;
 
     public static function registerEventListener (dispatcher :IEventDispatcher, event :String,
         listener :Function) :void

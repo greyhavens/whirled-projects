@@ -190,10 +190,10 @@ class RampAnimation
     {
         var percent :Number = ++_phaseTime / ROLL_DOWN_TIME;
         percent = Math.pow(percent, 2);
-        if (percent >= (1 - (_myScore - 1) / 10)) {
+        if (percent >= (1 - (_myScore - 1) / Locksmith.WIN_SCORE)) {
             _marble.removeEventListener(Event.ENTER_FRAME, enterFrame);
             _marble.stop();
-            percent = 1 - (_myScore - 1) / 10;
+            percent = 1 - (_myScore - 1) / Locksmith.WIN_SCORE;
         } 
         var factorX :Number = Math.pow(percent, 1.8);
         _marble.x = factorX * (_rampBottom.x - _rampTop.x) + _rampTop.x;
