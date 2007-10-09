@@ -14,10 +14,10 @@ public class Properties
     public static const LOCALE :String = "en-us";
 
     /** Default round length, in seconds */
-    public static const ROUND_LENGTH :int = 90;
+    public static const ROUND_LENGTH :int = 120;
 
     /** Default pause length */
-    public static const PAUSE_LENGTH :int = 5;
+    public static const PAUSE_LENGTH :int = 10;
 
     /**
        Game display is composed of the letter board, and various
