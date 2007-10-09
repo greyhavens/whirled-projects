@@ -2,6 +2,9 @@ package com.threerings.defense {
 
 import flash.events.Event;
 
+import flash.net.LocalConnection;
+import flash.system.Capabilities;
+
 import com.whirled.WhirledGameControl;
 
 public class Main
@@ -19,6 +22,24 @@ public class Main
 
     protected var _loader :AssetLoader;
     protected var _level :Level;
+
+    // This is a very naughty hack, using unsupported error handling to force a full GC pass.
+    // Without this, some debug players will allocate *all* available OS memory (I'm looking
+    // at you, Linux debug plugin! :). See:
+    // http://blog.739saintlouis.com/2007/03/28/flash-player-memory-management-and-garbage-collection-redux/
+    // This wouldn't be necessary if 1. all Flash players behaved correctly, or better,
+    // 2. Adobe wasn't trying to abstract away something as performance-critical as the
+    // system-wide memory manager. Very naughty, indeed.     
+    public static function gcHack () :void {
+        if (Capabilities.isDebugger) {
+            try {
+                var l1 :LocalConnection = new LocalConnection();
+                var l2 :LocalConnection = new LocalConnection();
+                l1.connect('name');
+                l2.connect('name');
+            } catch (e :Error) { }
+        }
+    }
     
     public function init (app :Defense) :void
     {

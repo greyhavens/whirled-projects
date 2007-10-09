@@ -4,6 +4,7 @@ import flash.geom.Point;
 
 import com.threerings.defense.Game;
 import com.threerings.defense.Level;
+import com.threerings.defense.Main;
 import com.threerings.defense.units.Critter;
     
 /** Thing that spawns critters. :) */
@@ -50,6 +51,7 @@ public class Spawner
             if (! playerBusy) {
                 // figure out what to spawn
                 _toSpawn = getSpawnDefinitions();
+                Main.gcHack(); // so naughty
             }
         }
     }
