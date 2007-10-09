@@ -188,16 +188,13 @@ class RampAnimation
 
     protected function moveDownRamp () :void
     {
-        var percent :Number;
-        if (++_phaseTime < ROLL_DOWN_TIME * (1 - (_myScore - 1) / 10)) {
-            percent = _phaseTime / ROLL_DOWN_TIME;
-            percent = Math.pow(percent, 2);
-        } else {
+        var percent :Number = ++_phaseTime / ROLL_DOWN_TIME;
+        percent = Math.pow(percent, 2);
+        if (percent >= (1 - (_myScore - 1) / 10)) {
             _marble.removeEventListener(Event.ENTER_FRAME, enterFrame);
             _marble.stop();
             percent = 1 - (_myScore - 1) / 10;
-            percent = Math.pow(percent, 2);
-        }
+        } 
         var factorX :Number = Math.pow(percent, 1.8);
         _marble.x = factorX * (_rampBottom.x - _rampTop.x) + _rampTop.x;
         var factorY :Number = 1 - Math.pow(1 - percent, 1.5);
