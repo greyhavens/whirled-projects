@@ -54,6 +54,12 @@ TitleWindow {
   color: #ffdd00;
 }
 
+.floatingRoundInfo { 
+  fontFamily: defaultFont;
+  fontSize: 24;
+  color: #ffdd00;
+}
+
 .towerNameBox { 
   backgroundColor: #993300;
   left: 1;

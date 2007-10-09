@@ -117,6 +117,7 @@ public class Validator
     protected function roundStarted (event :StateChangedEvent) :void
     {
         if (_whirled.amInControl()) {
+            // otherwise clear the board, and start a new round
             var playerCount :int = _whirled.seating.getPlayerIds().length;
             var initialHealth :Array = new Array(playerCount);
             var initialMoney :Array = new Array(playerCount);
@@ -135,10 +136,32 @@ public class Validator
     protected function roundEnded (event :StateChangedEvent) :void
     {
         if (_whirled.amInControl()) {
+            // should we end the game right here?
+            var round :int = - event.gameControl.getRound();
+            trace("ROUND ENDED: " + round);
+            if (round >= _board.rounds) {
+                endGame();
+                return;
+            }
+
             _whirled.set(Monitor.TOWER_SET, new Array());
         }
     }
 
+    /** The game should end - if we're the controller, collect up the scores, and finish up. */
+    protected function endGame () :void
+    {
+        var playerIds :Array = _whirled.seating.getPlayerIds();
+        var playerCount :int = playerIds.length;
+        var scores :Array = new Array();
+        for (var ii :int = 0; ii < playerIds.length; ii++) {
+            scores.push(_whirled.get(Monitor.SCORE_SET, ii));
+        }
+
+        trace("GAME ENDED WITH SCORES: " + playerIds + "->" + scores);
+        _whirled.endGameWithScores(playerIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
+    }
+    
     protected var _handlers :Object;
     protected var _board :Board;
     protected var _whirled :WhirledGameControl;

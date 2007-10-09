@@ -38,15 +38,15 @@ public class Board
     public static const PLAYER_COLORS :Array = [ 0x000000ff /* player 0 */,
                                                  0x0000ff00 /* player 1 */ ];
 
-    public static const SCOREPANEL_POS :Array = [ new Point(590, 440), new Point(10, 140) ];
-    public static const TOWERPANEL_POS :Array = [ new Point(590, 80),  new Point(10, 200) ];   
+    public static const SCOREPANEL_POS :Array = [ new Point(580, 440), new Point(5, 40) ];
     
     /** Level information. */
     public var level :Level; 
 
-    public function Board (whirled :WhirledGameControl)
+    public function Board (whirled :WhirledGameControl, rounds :int)
     {
         _whirled = whirled;
+        _rounds = rounds;
 
         _allmaps = new Array();
 
@@ -70,6 +70,11 @@ public class Board
         trace("BOARD UNLOAD");
     }
 
+    public function get rounds () :int
+    {
+        return _rounds;
+    }
+    
     public function getMyPlayerIndex () :int
     {
         return _whirled.seating.getMyPosition();
@@ -203,5 +208,7 @@ public class Board
     /** This is where we get game settings from. */
     protected var _whirled :WhirledGameControl;
 
+    /** Number of rounds, as specified in game config. */
+    protected var _rounds :int;
 }
 }

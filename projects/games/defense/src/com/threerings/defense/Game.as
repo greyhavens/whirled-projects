@@ -17,6 +17,7 @@ import com.threerings.util.ArrayUtil;
 public class Game
 {
     public static const ROUND_DELAY :int = 3;
+    public static const TOTAL_ROUNDS :int = 3;
     
     public static const GAME_STATE_SPLASH :int = 1;
     public static const GAME_STATE_PLAY :int = 2;
@@ -72,10 +73,14 @@ public class Game
         _towers = new Array();
         _critters = new Array();
         _missiles = new Array();
+
+        _display.gameStarted();
     }
 
     public function gameEnded (event :StateChangedEvent) :void
     {
+        _display.gameEnded();
+        
         _towers = null;
         _critters = null;
         _missiles = null;
@@ -86,7 +91,7 @@ public class Game
         state = GAME_STATE_PLAY;
         
         _board.roundStarted();
-        _display.roundStarted();
+        _display.roundStarted(event.gameControl.getRound());
        
         initializeSpawners();
     }
@@ -98,7 +103,7 @@ public class Game
         removeAllUnits();
 
         _board.roundEnded();
-        _display.roundEnded();
+        _display.roundEnded(event.gameControl.getRound());
     }
 
     public function initializeSpawners () :void

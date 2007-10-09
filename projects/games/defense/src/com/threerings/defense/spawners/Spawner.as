@@ -26,6 +26,10 @@ public class Spawner
     /** Spawning function. */
     public function spawnIfPossible (gameTime :Number) :void
     {
+        if (_game.state != Game.GAME_STATE_PLAY) {
+            return; // nothing to do right now
+        }
+        
         var spawningCurrentWave :Boolean = (_toSpawn.length > 0);
         
         if (spawningCurrentWave) {

@@ -19,6 +19,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 
 import com.threerings.defense.maps.MapFactory;
+import com.threerings.defense.tuning.Messages;
 import com.threerings.defense.spawners.Spawner;
 import com.threerings.defense.sprites.CritterSprite;
 import com.threerings.defense.sprites.CursorSprite;
@@ -32,6 +33,7 @@ import com.threerings.defense.ui.Overlay;
 import com.threerings.defense.ui.ScorePanel;
 import com.threerings.defense.ui.StatusBar;
 import com.threerings.defense.ui.TowerPanel;
+import com.threerings.defense.ui.WaitingPanel;
 import com.threerings.defense.units.Critter;
 import com.threerings.defense.units.Missile;
 import com.threerings.defense.units.Tower;
@@ -78,6 +80,9 @@ public class Display extends Canvas
         PopUpManager.addPopUp(_debugPanel = new DebugPanel(this), this, false);
         addChild(_statusBar = new StatusBar());
 
+        _towerPanel.x = 580;
+        _towerPanel.y = 40;
+        
         hideUI();
         
         // these have to be created before we know how many players we actually have.
@@ -88,8 +93,8 @@ public class Display extends Canvas
         }
         
         _counter = new Text();
-        _counter.x = 10;
-        _counter.y = 40;
+        _counter.x = 5;
+        _counter.y = 420;
         addChild(_counter);
 
         _splash = new Splash(handlePlayClicked);
@@ -143,9 +148,19 @@ public class Display extends Canvas
     }
     
     // Functions available to the game logic
+
+    public function gameStarted () :void
+    {
+        hideWaitingPopup();
+    }
+
+    public function gameEnded () :void
+    {
+        resetOverlays();
+        resetBoardDisplay();
+    }
     
-    /** Initializes the empty board. */
-    public function roundStarted () :void
+    public function roundStarted (round :int) :void
     {
         resetOverlays();
         resetBoardDisplay();
@@ -156,16 +171,17 @@ public class Display extends Canvas
             (_scorePanels[ii] as ScorePanel).reset(ii, names[ii], _board.getInitialHealth());
         }
 
-        var pos :Point = Board.TOWERPANEL_POS[_board.getMyPlayerIndex()];
-        _towerPanel.x = pos.x;
-        _towerPanel.y = pos.y;
+        addChild(new FloatingScore(Messages.get("round_start") + round,
+                                   Board.BG_WIDTH / 2 - 50, Board.BG_HEIGHT / 2));
     }
 
-    public function roundEnded () :void
+    public function roundEnded (round :int) :void
     {
+        addChild(new FloatingScore(Messages.get("round_end"),
+                                   Board.BG_WIDTH / 2 - 50, Board.BG_HEIGHT / 2));
         hideCursor();
     }
-    
+
     protected function resetBoardDisplay () :void
     {
         _backdrop.source = _board.level.loadBackground(_board.getPlayerCount());
@@ -441,8 +457,8 @@ public class Display extends Canvas
 
     protected function handlePlayClicked () :void
     {
+        showWaitingPopup();
         _controller.playerReady();
-        _game.state = Game.GAME_STATE_PLAY;
     }
     
     protected function handleBoardClick (event :MouseEvent) :void
@@ -476,6 +492,22 @@ public class Display extends Canvas
         updateOverlays();
     }
 
+    protected function showWaitingPopup () :void
+    {
+        // if we're waiting for more players, show a popup...
+        if (_waiting == null && _board.getPlayerCount() > 1) {
+            PopUpManager.addPopUp(_waiting = new WaitingPanel(_controller), this, false);
+        }
+    }
+
+    protected function hideWaitingPopup () :void
+    {
+        if (_waiting != null) {
+            PopUpManager.removePopUp(_waiting);
+            _waiting = null;
+        }
+    }
+    
     protected var _board :Board;
     protected var _game :Game;
     protected var _controller :Controller;
@@ -483,6 +515,7 @@ public class Display extends Canvas
     protected var _splash :Splash;
     protected var _towerPanel :TowerPanel;
     protected var _debugPanel :DebugPanel;
+    protected var _waiting :WaitingPanel;
     protected var _statusBar :StatusBar;
     protected var _scorePanels :Array; // of ScorePanel
     

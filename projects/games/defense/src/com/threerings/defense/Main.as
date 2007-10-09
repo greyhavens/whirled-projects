@@ -44,14 +44,15 @@ public class Main
     public function init (app :Defense) :void
     {
         _whirled = new WhirledGameControl(app, false);
-        var level :int = 1;  // initial
-
+        var level :int = 1;  // default values
+        var rounds :int = 3; 
         if (_whirled.isConnected()) {
             var config :Object = _whirled.getConfig();
-            var boardName :String = config.boardType;
+            var boardName :String = config["Board name"];
             if (boardName != null) {
                 level = int(boardName.charAt(0));
             }
+            rounds = int(config["Rounds"]);
         } else {
             trace("* DISCONNECTED");
             return; // todo: do something interesting here!
@@ -60,7 +61,7 @@ public class Main
         app.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         _display = app.display;
-        _board = new Board(_whirled);
+        _board = new Board(_whirled, rounds);
         _validator = new Validator(_board, _whirled);
         _game = new Game(_board, _display);
         _monitor = new Monitor(_game, _whirled);
