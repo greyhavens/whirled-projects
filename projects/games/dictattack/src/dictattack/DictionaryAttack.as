@@ -136,6 +136,17 @@ public class DictionaryAttack extends Sprite
                     break;
                 }
             }
+            var perfectClear :Boolean = (_model.nonEmptyColumns() == 0);
+            if (perfectClear && _model.getNotOnBoardPlays() == 0) {
+                if (!_control.holdsTrophy("no_not_on_board")) {
+                    _control.awardTrophy("no_not_on_board");
+                }
+            }
+            if (perfectClear && _model.getNotInDictPlays() == 0) {
+                if (!_control.holdsTrophy("no_not_in_dict")) {
+                    _control.awardTrophy("no_not_in_dict");
+                }
+            }
         }
 
         // _flowAward is set via a FLOW_AWARDED event that precedes the GAME_ENDED event

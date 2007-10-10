@@ -126,6 +126,22 @@ public class Model
     }
 
     /**
+     * Returns the number of words played that were not on the board.
+     */
+    public function getNotOnBoardPlays () :int
+    {
+        return _notOnBoard;
+    }
+
+    /**
+     * Returns the number of words played that were not in the dictionary.
+     */
+    public function getNotInDictPlays () :int
+    {
+        return _notInDict;
+    }
+
+    /**
      * Returns the type of tile at the specified coordinate.
      */
     public function getType (xx :int, yy :int) :int
@@ -152,6 +168,10 @@ public class Model
             _control.set(POINTS, new Array(pcount).map(function (): int { return 0; }));
             _control.getDictionaryLetterSet(Content.LOCALE, _size*_size, gotLetterSet);
         }
+
+        // clear out our non-on-board and not-in-dictionary counters
+        _notOnBoard = 0;
+        _notInDict = 0;
     }
 
     /**
@@ -220,6 +240,7 @@ public class Model
                 // TODO: play a sound indicating the mismatch
                 board.resetLetters(used);
                 callback(word + " is not on the board.");
+                _notOnBoard++;
                 return;
             }
             used.push(idx);
@@ -233,6 +254,7 @@ public class Model
                 // TODO: play a sound indicating the mismatch
                 board.resetLetters(used);
                 callback(word + " is not in the dictionary.");
+                _notInDict++;
                 return;
             }
 
@@ -560,6 +582,8 @@ public class Model
     protected var _control :WhirledGameControl;
     protected var _rando :Random = new Random(getTimer());
     protected var _changePending :Boolean;
+
+    protected var _notOnBoard :int, _notInDict :int;
 
     // yay english!
     protected static const VOWELS :String = "aeiou";
