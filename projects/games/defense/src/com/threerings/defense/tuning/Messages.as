@@ -37,6 +37,10 @@ public class Messages
         
         round_start: "ROUND ",
         round_end: "ROUND ENDED",
+
+        game_ended: "Game ended! Here are the final scores:",
+        play_again: "Play again!",
+        quit: "Quit",
         
         off: "Off",
         path_1: "P1 Map",

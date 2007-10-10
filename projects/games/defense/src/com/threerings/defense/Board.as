@@ -38,6 +38,9 @@ public class Board
     public static const PLAYER_COLORS :Array = [ 0x000000ff /* player 0 */,
                                                  0x0000ff00 /* player 1 */ ];
 
+    public static const UI_COLOR_MINE :uint = 0xff3fff00;
+    public static const UI_COLOR_THEIRS :uint = 0xff7f7f7f;
+
     public static const SCOREPANEL_POS :Array = [ new Point(580, 440), new Point(5, 40) ];
     
     /** Level information. */

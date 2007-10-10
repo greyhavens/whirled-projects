@@ -47,7 +47,7 @@ public class CritterSprite extends UnitSprite
         g.drawRoundRect(- w / 2, 0, w, h, 3, 3);
         g.endFill();
 
-        g.beginFill(0x00ff00, 0.8);
+        g.beginFill(0xcc3300, 0.8);
         g.drawRect(- w / 2 + 1, 1, (w - 2) * health, h - 2);
         g.endFill();
     }

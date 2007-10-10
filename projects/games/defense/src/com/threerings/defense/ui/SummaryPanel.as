@@ -22,7 +22,7 @@ public class SummaryPanel extends TitleWindow
         
         this.showCloseButton = false;
         this.x = 200;
-        this.y = 350;
+        this.y = 150;
     }
 
     override protected function createChildren () :void
@@ -34,26 +34,27 @@ public class SummaryPanel extends TitleWindow
         var scores :Array = _board.getPlayerScores();
         
         _title = new Text();
-        _title.htmlText = Messages.get("GAME ENDED SCORES:") + "<br><br>";
         addChild(_title);
 
+        var text :String = Messages.get("game_ended") + "<br><br>";
         for (var ii :int = 0; ii < count; ii++) {
-            _title.htmlText += names[ii] + ": " + scores[ii] + "<br>";
+            text += names[ii] + ": " + scores[ii] + "<br>";
         }       
-
+        _title.htmlText = text;
+        
         var buttons :HBox = new HBox();
         addChild(buttons);
         
         var replay :Button = new Button();
         replay.width = 150;
-        replay.label = Messages.get("TEMP PLAY AGAIN");
+        replay.label = Messages.get("play_again");
         replay.addEventListener(MouseEvent.CLICK,
                                 function (event :MouseEvent) :void { _playFn(); });
         buttons.addChild(replay);
 
         var quit :Button = new Button();
         quit.width = 150;
-        quit.label = Messages.get("TEMP QUIT");
+        quit.label = Messages.get("quit");
         quit.addEventListener(MouseEvent.CLICK,
                               function (event :MouseEvent) :void { _quitFn(); });
         buttons.addChild(quit);

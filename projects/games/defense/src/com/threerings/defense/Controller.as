@@ -27,9 +27,9 @@ public class Controller
         _whirled.playerReady();
     }
     
-    public function forceQuitGame () :void
+    public function forceQuitGame (showLobby :Boolean = true) :void
     {
-        _whirled.backToWhirled();
+        _whirled.backToWhirled(showLobby);
     }
     
     public function requestAddTower (tower :Tower) :void

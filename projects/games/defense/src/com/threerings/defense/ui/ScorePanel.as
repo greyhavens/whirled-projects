@@ -29,9 +29,10 @@ public class ScorePanel extends TitleWindow
         addChild(_health);
     }
 
-    public function reset (player :int, name :String, health :int) :void
+    public function reset (player :int, name :String, health :int, myscore :Boolean) :void
     {
         _maxhealth = health;
+        _myscore = myscore;
         
         this.title = StringUtil.truncate(name, 10, "...");
         this.health = health;
@@ -54,7 +55,7 @@ public class ScorePanel extends TitleWindow
         g.endFill();
 
         if (value > 0) {
-            g.beginFill(0x00ff00, 0.8);
+            g.beginFill(_myscore ? Board.UI_COLOR_MINE : Board.UI_COLOR_THEIRS, 0.8);
             g.drawRect(1, 1, (value / _maxhealth) * 98, 4);
             g.endFill();
         }
@@ -62,6 +63,7 @@ public class ScorePanel extends TitleWindow
         _health.toolTip = Messages.get("health") + value;
     }
 
+    protected var _myscore :Boolean;
     protected var _maxhealth :Number;
     protected var _health :Image;
 }

@@ -172,7 +172,8 @@ public class Display extends Canvas
         var count :int = _board.getPlayerCount();
         var names :Array = _board.getPlayerNames();
         for (var ii :int = 0; ii < count; ii++) {
-            (_scorePanels[ii] as ScorePanel).reset(ii, names[ii], _board.getInitialHealth());
+            (_scorePanels[ii] as ScorePanel).reset(
+                ii, names[ii], _board.getInitialHealth(), (ii == _board.getMyPlayerIndex()));
         }
 
         addChild(new FloatingScore(Messages.get("round_start") + round,

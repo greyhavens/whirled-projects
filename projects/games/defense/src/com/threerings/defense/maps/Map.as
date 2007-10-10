@@ -144,7 +144,7 @@ public class Map
         if (isPassable(x, y)) {
             return 0x00000000;
         } else {
-            return (player == getCell(x, y)) ? 0xff3fff00 : 0xff7f7f7f;
+            return (player == getCell(x, y)) ? Board.UI_COLOR_MINE : Board.UI_COLOR_THEIRS;
         }                    
     }
     

@@ -38,5 +38,10 @@ public class MapFactory
     protected static const _m2_1 :Class;
     [Embed(source="../../../../../rsrc/maps/2-2.png")]
     protected static const _m2_2 :Class;
+
+    [Embed(source="../../../../../rsrc/maps/3-1.png")]
+    protected static const _m3_1 :Class;
+    [Embed(source="../../../../../rsrc/maps/3-2.png")]
+    protected static const _m3_2 :Class;
 }
 }

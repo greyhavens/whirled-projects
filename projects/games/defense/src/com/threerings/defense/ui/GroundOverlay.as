@@ -17,9 +17,6 @@ public class GroundOverlay extends Overlay
     {
         super.createChildren();
 
-//        _hires = new BitmapData(Board.BOARD_WIDTH, Board.BOARD_HEIGHT, true);
-//        _hires.fillRect(new Rectangle(0, 0, _hires.width, _hires.height), 0x00000000);
-
         _scalingMatrix = new Matrix();
         _scalingMatrix.scale(Board.SQUARE_WIDTH, Board.SQUARE_HEIGHT);
 

@@ -18,7 +18,6 @@ import com.threerings.util.ArrayUtil;
 public class Game
 {
     public static const ROUND_DELAY :int = 3;
-    public static const TOTAL_ROUNDS :int = 3;
     
     public static const GAME_STATE_SPLASH :int = 1;
     public static const GAME_STATE_PLAY :int = 2;

@@ -5,6 +5,17 @@ Label, Font
   color: #ffffff;
 }
 
+Button {
+  fontFamily: defaultFont;
+  fontWeight: normal;
+  fontSize: 12;
+  color: #000000;
+  fillAlphas: 0.6, 0.22, 0.75, 0.53;
+  fillColors: #ffffff, #ffffff, #ffffff, #ffffff;
+  borderColor: #cc6600;
+  themeColor: #993300;
+}
+
 ApplicationControlBar {
    borderStyle: none;
    backgroundColor: #38201b;

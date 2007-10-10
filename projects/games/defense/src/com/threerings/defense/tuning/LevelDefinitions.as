@@ -16,9 +16,7 @@ public class LevelDefinitions
         {   backgroundAssetName: "Level01_BG",
             startingHealth: 1,
             startingMoney: 25,
-            spawner: [ /* test */  [ [ Critter.TYPE_BIRD, 1 ] ],
-                       
-                       [ [ Critter.TYPE_SKUNK, 1 ] ],
+            spawner: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
                        [ [ Critter.TYPE_SKUNK, 3 ] ],
                        [ [ Critter.TYPE_SQUIRREL, 1 ] ],
                        [ [ Critter.TYPE_GIRL, 2 ] ],
@@ -45,8 +43,29 @@ public class LevelDefinitions
                 ]
         },
         
-        // level 1
+        // level 2
         {   backgroundAssetName: "Level02_BG",
+            startingHealth: 10,
+            startingMoney: 50,
+            spawner: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
+                       [ [ Critter.TYPE_SKUNK, 3 ] ],
+                       [ [ Critter.TYPE_SQUIRREL, 1 ] ],
+                       [ [ Critter.TYPE_GIRL, 2 ] ],
+                       [ [ Critter.TYPE_BIRD, 1 ] ],
+                       [ [ Critter.TYPE_SKUNK, 5 ] ],
+                       [ [ Critter.TYPE_BULLY, 1 ] ],
+                       [ [ Critter.TYPE_BIRD, 1 ] ],
+                       [ [ Critter.TYPE_SKATER, 1 ] ],
+                       [ [ Critter.TYPE_BULLY, 1 ], [ Critter.TYPE_SKATER, 1 ] ],
+                       [ [ Critter.TYPE_SQUIRREL, 3 ] ],
+                       [ [ Critter.TYPE_GIRL, 2 ] ],
+                       [ [ Critter.TYPE_SKUNK, 9 ] ],
+                       [ [ Critter.TYPE_BIRD, 1 ], [ Critter.TYPE_SQUIRREL, 1 ] ],
+                ]
+        },
+
+        // level 3
+        {   backgroundAssetName: "Level03_BG",
             startingHealth: 10,
             startingMoney: 50,
             spawner: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
