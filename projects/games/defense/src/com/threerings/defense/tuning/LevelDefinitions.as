@@ -14,7 +14,7 @@ public class LevelDefinitions
 
         // level 1
         {   backgroundAssetName: "Level01_BG",
-            startingHealth: 1,
+            startingHealth: 10,
             startingMoney: 25,
             spawner: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
                        [ [ Critter.TYPE_SKUNK, 3 ] ],
