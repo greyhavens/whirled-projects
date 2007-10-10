@@ -50,10 +50,11 @@ public class Actor extends Sprite
      */
     public function destroy () :void
     {
+        _ctrl.destroyActor(this);
         _ctrl.throttle.send(function () :void {
             _ctrl.control.set(name, null);
         });
-        _ctrl.destroyActor(this);
+        _destroyed = true;
     }
 
     /**
@@ -173,6 +174,9 @@ public class Actor extends Sprite
     protected function setState (state :Object) :void
     {
         // replace any existing state message from this actor
+        if (_destroyed) {
+            return;
+        }
         _ctrl.throttle.send(function () :void {
             _ctrl.control.set(name, state);
         }, this);
@@ -187,6 +191,9 @@ public class Actor extends Sprite
     protected function send (message :Object, timeout :int = NORMAL_PRIORITY_TIMEOUT) :void
     {
         // send the message through the throttle with a timeout
+        if (_destroyed) {
+            return;
+        }
         _ctrl.throttle.send(function () :void {
             _ctrl.control.sendMessage(name, message);
         }, null, timeout);
@@ -215,6 +222,9 @@ public class Actor extends Sprite
 
     /** The bounds of the actor. */
     protected var _bounds :Sprite;
+
+    /** Set when the actor is destroyed to make sure that no further updates are transmitted. */
+    protected var _destroyed :Boolean = false;
 
     /** The timeout for low priority messages (ms). */
     protected static const LOW_PRIORITY_TIMEOUT :int = 2500;
