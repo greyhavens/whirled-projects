@@ -32,6 +32,7 @@ import com.threerings.defense.ui.GroundOverlay;
 import com.threerings.defense.ui.Overlay;
 import com.threerings.defense.ui.ScorePanel;
 import com.threerings.defense.ui.StatusBar;
+import com.threerings.defense.ui.SummaryPanel;
 import com.threerings.defense.ui.TowerPanel;
 import com.threerings.defense.ui.WaitingPanel;
 import com.threerings.defense.units.Critter;
@@ -152,14 +153,17 @@ public class Display extends Canvas
     public function gameStarted () :void
     {
         hideWaitingPopup();
+        hideScorePopup();
     }
 
     public function gameEnded () :void
     {
         resetOverlays();
         resetBoardDisplay();
+
+        showScorePopup();
     }
-    
+
     public function roundStarted (round :int) :void
     {
         resetOverlays();
@@ -182,6 +186,11 @@ public class Display extends Canvas
         hideCursor();
     }
 
+    public function reportFlowAward (amount :int, percentile :int) :void
+    {
+        trace("FLOW AWARD: " + amount + ", " + percentile);
+    }
+    
     protected function resetBoardDisplay () :void
     {
         _backdrop.source = _board.level.loadBackground(_board.getPlayerCount());
@@ -457,6 +466,7 @@ public class Display extends Canvas
 
     protected function handlePlayClicked () :void
     {
+        hideScorePopup(); // if it's shown at all...
         showWaitingPopup();
         _controller.playerReady();
     }
@@ -507,6 +517,22 @@ public class Display extends Canvas
             _waiting = null;
         }
     }
+
+    protected function showScorePopup () :void
+    {
+        if (_summary == null) {
+            _summary = new SummaryPanel(_board, handlePlayClicked, _controller.forceQuitGame)
+            PopUpManager.addPopUp(_summary, this, false);
+        }
+    }
+
+    protected function hideScorePopup () :void
+    {
+        if (_summary != null) {
+            PopUpManager.removePopUp(_summary);
+            _summary = null;
+        }
+    }
     
     protected var _board :Board;
     protected var _game :Game;
@@ -516,6 +542,7 @@ public class Display extends Canvas
     protected var _towerPanel :TowerPanel;
     protected var _debugPanel :DebugPanel;
     protected var _waiting :WaitingPanel;
+    protected var _summary :SummaryPanel;
     protected var _statusBar :StatusBar;
     protected var _scorePanels :Array; // of ScorePanel
     

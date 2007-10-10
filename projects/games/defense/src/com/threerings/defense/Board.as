@@ -74,7 +74,7 @@ public class Board
     {
         return _rounds;
     }
-    
+
     public function getMyPlayerIndex () :int
     {
         return _whirled.seating.getMyPosition();
@@ -95,6 +95,11 @@ public class Board
         return _whirled.seating.getPlayerNames();
     }
 
+    public function getPlayerScores () :Array
+    {
+        return _whirled.get(Monitor.SCORE_SET) as Array;
+    }
+    
     public function getInitialHealth () :int
     {
         return LevelDefinitions.getStartingHealth(getPlayerCount(), level.number);

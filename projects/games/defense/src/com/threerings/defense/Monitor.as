@@ -8,6 +8,7 @@ import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
+import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
 
 import com.threerings.defense.units.Tower;
@@ -30,6 +31,7 @@ public class Monitor
         _game = game;
         _whirled = whirled;
         _whirled.registerListener(this);
+        _whirled.addEventListener(FlowAwardedEvent.FLOW_AWARDED, _game.flowAwarded);
 
         _handlers = new Object();
         _handlers[TOWER_SET] = towersChanged;
@@ -45,12 +47,14 @@ public class Monitor
     public function handleUnload (event : Event) :void
     {
         trace("MONITOR UNLOAD");
+        _whirled.removeEventListener(FlowAwardedEvent.FLOW_AWARDED, _game.flowAwarded);
         _whirled.unregisterListener(this);
     }
 
     // from interface StateChangedListener
     public function stateChanged (event :StateChangedEvent) :void
     {
+        trace("*** STATE CHANGED: " + event);
         var fn :Function = _handlers[event.type] as Function;
         if (fn != null) {
             fn(event);
@@ -60,6 +64,7 @@ public class Monitor
     // from interface PropertyChangedListener
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
+//        trace("*** PROPERTY CHANGED: " + event);
         var fn :Function = _handlers[event.name] as Function;
         if (fn != null) {
             fn(event);

@@ -7,6 +7,7 @@ import flash.utils.getTimer; // function import
 
 import com.threerings.defense.spawners.AutoSpawner;
 import com.threerings.defense.spawners.PlayerSpawner;
+import com.whirled.FlowAwardedEvent;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.defense.units.Critter;
 import com.threerings.defense.units.Missile;
@@ -37,6 +38,10 @@ public class Game
         _cursor = new Tower(0, 0, Tower.TYPE_SHRUB, _board.getMyPlayerIndex(), 0);
 
         _gamestate = GAME_STATE_SPLASH;
+
+        _towers = new Array();
+        _critters = new Array();
+        _missiles = new Array();
     }
 
     public function get state () :int
@@ -70,20 +75,18 @@ public class Game
     /** Handles the start of a new game. */
     public function gameStarted (event :StateChangedEvent) :void
     {
-        _towers = new Array();
-        _critters = new Array();
-        _missiles = new Array();
-
         _display.gameStarted();
     }
 
     public function gameEnded (event :StateChangedEvent) :void
     {
         _display.gameEnded();
-        
+
+        /*
         _towers = null;
         _critters = null;
         _missiles = null;
+        */
     }
 
     public function roundStarted (event :StateChangedEvent) :void
@@ -106,6 +109,11 @@ public class Game
         _display.roundEnded(event.gameControl.getRound());
     }
 
+    public function flowAwarded (event :FlowAwardedEvent) :void
+    {
+        _display.reportFlowAward(event.amount, event.percentile);
+    }
+    
     public function initializeSpawners () :void
     {
         var playerCount :uint = _board.getPlayerCount();

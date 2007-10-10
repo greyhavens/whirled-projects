@@ -22,6 +22,7 @@ public class Validator
     public static const REQUEST_ADD :String = "MessageAdd";
     public static const REQUEST_REMOVE :String = "MessageRemove";
     public static const REQUEST_UPDATE :String = "MessageUpdate";
+    public static const REQUEST_END_ROUND :String = "MessageEndRound";
 
     public function Validator (board :Board, whirled :WhirledGameControl)
     {
@@ -37,6 +38,7 @@ public class Validator
         _handlers[REQUEST_ADD] = handleAddRequest;
 //        _handlers[REQUEST_REMOVE] = handleRemove;
 //        _handlers[REQUEST_UPDATE] = handleUpdate;
+        _handlers[REQUEST_END_ROUND] = handleEndRoundRequest;
     }
         
     public function handleUnload (event : Event) :void
@@ -92,6 +94,16 @@ public class Validator
         }
     }
 
+    /** Called by the first player to lose, causes the round to end. */
+    public function handleEndRoundRequest (event :MessageReceivedEvent) :void
+    {
+        if (_whirled.amInControl() && _whirled.getRound() > 0) {
+            // only restart if we're not in the last round
+            var nextRound :Number = (_whirled.getRound() >= _board.rounds) ? 0 : Game.ROUND_DELAY;
+            _whirled.endRound(nextRound);
+        }
+    }
+
     /** When the game starts, initialize scores. */
     protected function gameStarted (event :StateChangedEvent) :void
     {
@@ -136,9 +148,10 @@ public class Validator
     protected function roundEnded (event :StateChangedEvent) :void
     {
         if (_whirled.amInControl()) {
-            // should we end the game right here?
-            var round :int = - event.gameControl.getRound();
+            var round :int = - _whirled.getRound();
             trace("ROUND ENDED: " + round);
+            
+            // should we end the game right here?
             if (round >= _board.rounds) {
                 endGame();
                 return;

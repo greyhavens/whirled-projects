@@ -27,6 +27,11 @@ public class Controller
         _whirled.playerReady();
     }
     
+    public function forceQuitGame () :void
+    {
+        _whirled.backToWhirled();
+    }
+    
     public function requestAddTower (tower :Tower) :void
     {
         var serialized :Object = tower.serialize();
@@ -75,9 +80,11 @@ public class Controller
 
     public function playerLost (player :int) :void
     {
-        _whirled.endRound(Game.ROUND_DELAY);
+        if (player == _board.getMyPlayerIndex()) {
+            _whirled.sendMessage(Validator.REQUEST_END_ROUND, player);
+        }
     }
-    
+
     protected var _board :Board;
     protected var _whirled :WhirledGameControl;
 }
