@@ -38,8 +38,8 @@ public class LevelDefinitions
                            [ Critter.TYPE_SKATER, 1 ] ],
                          [ [ Critter.TYPE_BULLY, 3 ] ],
                 ],
-            spawner2p: [ [ [ Critter.TYPE_SKUNK, 5 ] ],
-                         [ [ Critter.TYPE_SQUIRREL, 1 ] ],
+            spawner2p: [ [ [ Critter.TYPE_SKUNK, 3 ] ],
+                         [ [ Critter.TYPE_BULLY, 1 ] ],
                          [ [ Critter.TYPE_GIRL, 2 ] ]
                 ]
         },
@@ -68,7 +68,7 @@ public class LevelDefinitions
 
         // level 3
         {   backgroundAssetName: "Level03_BG",
-            startingHealth: 10,
+            startingHealth: 3,
             startingMoney: 50,
             spawner1p: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
                          [ [ Critter.TYPE_SKUNK, 3 ] ],
@@ -79,14 +79,16 @@ public class LevelDefinitions
                          [ [ Critter.TYPE_BULLY, 1 ] ],
                          [ [ Critter.TYPE_BIRD, 1 ] ],
                          [ [ Critter.TYPE_SKATER, 1 ] ],
+                         [ [ Critter.TYPE_SKUNK, 7 ] ],
                          [ [ Critter.TYPE_BULLY, 1 ], [ Critter.TYPE_SKATER, 1 ] ],
                          [ [ Critter.TYPE_SQUIRREL, 3 ] ],
                          [ [ Critter.TYPE_GIRL, 2 ] ],
                          [ [ Critter.TYPE_SKUNK, 9 ] ],
-                         [ [ Critter.TYPE_BIRD, 1 ], [ Critter.TYPE_SQUIRREL, 1 ] ],
+                         [ [ Critter.TYPE_BIRD, 1 ], [ Critter.TYPE_SQUIRREL, 2 ] ],
+                         [ [ Critter.TYPE_BULLY, 3 ] ],
                 ],
-            spawner2p: [ [ [ Critter.TYPE_SKUNK, 5 ] ],
-                         [ [ Critter.TYPE_SQUIRREL, 1 ] ],
+            spawner2p: [ [ [ Critter.TYPE_BULLY, 1 ] ],
+                         [ [ Critter.TYPE_SKATER, 1 ] ],
                          [ [ Critter.TYPE_GIRL, 2 ] ]
                 ]
         },

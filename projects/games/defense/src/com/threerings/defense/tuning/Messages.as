@@ -29,6 +29,7 @@ public class Messages
         health: "Health: ",
         score: " score:",
         cost: "Cost: ",
+        level: "Level ",
 
         cost_desc: "This is how much money you have for new stations.",
         health_desc: "This is your tree house health level.",

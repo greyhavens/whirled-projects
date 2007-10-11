@@ -255,12 +255,12 @@ public class Display extends Canvas
     public function showNewSpawnerDifficulty (playerIndex :int, difficulty :int) :void
     {
         if (_board.getPlayerCount() == 1) {
-            addChild(new FloatingScore(Messages.get("level ") + difficulty,
+            addChild(new FloatingScore(Messages.get("level") + difficulty,
                                        Board.BG_WIDTH / 2 - 50, Board.BG_HEIGHT / 2,
                                        "floatingRoundInfo"));
         } else {
             var pos :Point = Board.SCOREPANEL_POS[playerIndex];
-            addChild(new FloatingScore(Messages.get("level ") + difficulty, pos.x, pos.y));
+            addChild(new FloatingScore(Messages.get("level") + difficulty, pos.x, pos.y));
         }
     }
     
