@@ -41,6 +41,7 @@ public class BrawlerView extends Sprite
         // create the game display, fetching references to its various bits and bobs
         _game = _ctrl.create("Game");
         _camera = _game["camera"];
+		_camera._zoom.addChild(_camera._zoom.bg = MovieClip(_ctrl.create("bg_export")));
         _background = _camera._zoom.bg;
         _ground = _background.ground;
 

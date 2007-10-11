@@ -61,6 +61,9 @@ public class BrawlerController extends Controller
             init();
         });
         _loader.load(new RAW_SWF() as ByteArray);
+		_loader.load(new BGS_SWF() as ByteArray);
+		_loader.load(new PC_SWF() as ByteArray);
+		_loader.load(new MOBS_SWF() as ByteArray);
     }
 
     /**
@@ -662,8 +665,16 @@ public class BrawlerController extends Controller
     protected var _econfigs :Array = new Array();
 
     /** The raw SWF data. */
-    [Embed(source="../../../../rsrc/raw.swf", mimeType="application/octet-stream")]
+    //[Embed(source="../../../../rsrc/raw.swf", mimeType="application/octet-stream")]
+    //protected static const RAW_SWF :Class;
+	[Embed(source="../../../../rsrc/hud_effects.swf", mimeType="application/octet-stream")]
     protected static const RAW_SWF :Class;
+	[Embed(source="../../../../rsrc/bgs.swf", mimeType="application/octet-stream")]
+    protected static const BGS_SWF :Class;
+	[Embed(source="../../../../rsrc/pc.swf", mimeType="application/octet-stream")]
+    protected static const PC_SWF :Class;
+	[Embed(source="../../../../rsrc/mobs.swf", mimeType="application/octet-stream")]
+    protected static const MOBS_SWF :Class;
 
     /** The available difficulty levels. */
     protected static const DIFFICULTY_LEVELS :Array = [ "Easy", "Normal", "Hard", "Inferno" ];
