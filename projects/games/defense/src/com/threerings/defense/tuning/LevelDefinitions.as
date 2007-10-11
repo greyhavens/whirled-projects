@@ -11,7 +11,7 @@ public class LevelDefinitions
 
         // level 1
         {   backgroundAssetName: "Level01_BG",
-            startingHealth: 1,
+            startingHealth: 5,
             startingMoney: 25,
             spawner1p: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
                          [ [ Critter.TYPE_SKUNK, 3 ] ],
@@ -46,27 +46,22 @@ public class LevelDefinitions
         
         // level 2
         {   backgroundAssetName: "Level02_BG",
-            startingHealth: 10,
+            startingHealth: 3,
             startingMoney: 25,
             spawner1p: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
                          [ [ Critter.TYPE_SKUNK, 3 ] ],
-                         /*
                          [ [ Critter.TYPE_SQUIRREL, 1 ] ],
-                         [ [ Critter.TYPE_GIRL, 2 ] ],
                          [ [ Critter.TYPE_BIRD, 1 ] ],
                          [ [ Critter.TYPE_SKUNK, 5 ] ],
-                         [ [ Critter.TYPE_BULLY, 1 ] ],
-                         [ [ Critter.TYPE_BIRD, 1 ] ],
-                         [ [ Critter.TYPE_SKATER, 1 ] ],
-                         [ [ Critter.TYPE_BULLY, 1 ], [ Critter.TYPE_SKATER, 1 ] ],
-                         [ [ Critter.TYPE_SQUIRREL, 3 ] ],
+                         [ [ Critter.TYPE_SQUIRREL, 2 ] ],
+                         [ [ Critter.TYPE_BIRD, 2 ] ],
                          [ [ Critter.TYPE_GIRL, 2 ] ],
-                         [ [ Critter.TYPE_SKUNK, 9 ] ],
-                         */
-                         [ [ Critter.TYPE_BIRD, 1 ], [ Critter.TYPE_SQUIRREL, 1 ] ],
+                         [ [ Critter.TYPE_BULLY, 1 ], [ Critter.TYPE_SKATER, 1 ] ],
+                         [ [ Critter.TYPE_BULLY, 1 ], [ Critter.TYPE_GIRL, 2 ] ]
                 ],
             spawner2p: [ [ [ Critter.TYPE_SKUNK, 5 ] ],
-                         [ [ Critter.TYPE_SQUIRREL, 1 ] ],
+                         [ [ Critter.TYPE_BULLY, 1 ] ],
+                         [ [ Critter.TYPE_SQUIRREL, 2 ] ],
                          [ [ Critter.TYPE_GIRL, 2 ] ]
                 ]
         },

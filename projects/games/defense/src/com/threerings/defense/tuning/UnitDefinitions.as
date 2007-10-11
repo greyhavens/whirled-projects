@@ -170,7 +170,7 @@ public class UnitDefinitions
             { name: "Bully",
               maxhealth: 12,
               maxspeed: 2,
-              powerup: 1.5,
+              powerup: 2,
               points: 2 } },
           { key: Critter.TYPE_GIRL, value:
             { name: "Girl",
@@ -189,7 +189,7 @@ public class UnitDefinitions
             { name: "Fox",
               maxhealth: 2,
               maxspeed: 3,
-              powerup: 2,
+              powerup: 1.5,
               points: 1 } },
           { key: Critter.TYPE_SKATER, value:
             { name: "Skater",
@@ -201,7 +201,7 @@ public class UnitDefinitions
             { name: "Skunk",
               maxhealth: 1,
               maxspeed: 1,
-              powerup: 1.2,
+              powerup: 1.5,
               points: 1 } },
             ];
     
