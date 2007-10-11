@@ -7,6 +7,7 @@ import flash.utils.getTimer; // function import
 
 import com.threerings.defense.spawners.AutoSpawner;
 import com.threerings.defense.spawners.PlayerSpawner;
+import com.threerings.defense.spawners.Spawner;
 import com.whirled.FlowAwardedEvent;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.defense.units.Critter;
@@ -24,10 +25,11 @@ public class Game
     public static const GAME_STATE_WAIT :int = 3;
     public static const GAME_STATE_DONE :int = 4;
 
-    public function Game (board :Board, display :Display)
+    public function Game (board :Board, display :Display, controller :Controller)
     {
         _board = board;
         _display = display;
+        _controller = controller;
         
         _simulator = new Simulator(_board, this);
 
@@ -246,6 +248,13 @@ public class Game
             (_spawners[player] as PlayerSpawner).setSpawnGroup(spawnGroupIndex);
         }
     }            
+
+    public function handleUpdateAllSpawnersReady (allReady :Array) :void
+    {
+        for each (var spawner :Spawner in _spawners) {
+                spawner.ready = true;
+            }
+    }
     
     public function handleResetMoney (allMoney :Array) :void
     {
@@ -293,7 +302,7 @@ public class Game
 
         var gameTime :Number = thisTick / 1000.0; // todo: fix timers across clients?
         
-        _simulator.processSpawners(_spawners, gameTime);
+        _simulator.processSpawners(_spawners, gameTime, _controller);
         _simulator.processTowers(_towers, gameTime);
         _simulator.processCritters(_critters, dt);
         _simulator.processMissiles(_missiles, dt);
@@ -303,6 +312,7 @@ public class Game
 
     protected var _board :Board;
     protected var _display :Display;
+    protected var _controller :Controller;
     protected var _simulator :Simulator;
     
     protected var _cursor :Tower;

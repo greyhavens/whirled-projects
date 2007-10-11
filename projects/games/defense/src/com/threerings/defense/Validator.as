@@ -5,6 +5,8 @@ import flash.geom.Point;
 
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
+import com.threerings.ezgame.PropertyChangedEvent;
+import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
 import com.whirled.WhirledGameControl;
@@ -16,14 +18,14 @@ import com.threerings.defense.units.Tower;
  * on the hosting client, checks their validity and updates shared data accordingly.
  */
 public class Validator
-    implements MessageReceivedListener, StateChangedListener
+    implements MessageReceivedListener, PropertyChangedListener, StateChangedListener
 {
     // Names of messages arriving from the players
     public static const REQUEST_ADD :String = "MessageAdd";
     public static const REQUEST_REMOVE :String = "MessageRemove";
     public static const REQUEST_UPDATE :String = "MessageUpdate";
     public static const REQUEST_END_ROUND :String = "MessageEndRound";
-
+    
     public function Validator (board :Board, whirled :WhirledGameControl)
     {
         _board = board;
@@ -35,6 +37,7 @@ public class Validator
         _handlers[StateChangedEvent.ROUND_ENDED] = roundEnded;
         _handlers[StateChangedEvent.GAME_STARTED] = gameStarted;
         _handlers[StateChangedEvent.GAME_ENDED] = gameEnded;
+        _handlers[Monitor.SPAWNERREADY] = handleSpawnerReady;
         _handlers[REQUEST_ADD] = handleAddRequest;
 //        _handlers[REQUEST_REMOVE] = handleRemove;
 //        _handlers[REQUEST_UPDATE] = handleUpdate;
@@ -53,9 +56,16 @@ public class Validator
         var fn :Function = _handlers[event.name] as Function;
         if (fn != null) {
             fn(event);
-        } else {
-            throw new Error("Unknown message: " + event.name);
-        }
+        } 
+    }
+
+    // from interface PropertyChangedListener
+    public function propertyChanged (event :PropertyChangedEvent) :void
+    {
+        var fn :Function = _handlers[event.name] as Function;
+        if (fn != null) {
+            fn(event);
+        } 
     }
 
     // from interface StateChangedListener
@@ -90,7 +100,7 @@ public class Validator
                 _whirled.set(Monitor.MONEY_SET, money - tower.cost, tower.player);
             }
         } else {
-            trace("Ignoring event " + event.name + ", not in control");
+            // trace("Ignoring event " + event.name + ", not in control");
         }
     }
 
@@ -101,6 +111,36 @@ public class Validator
             // only restart if we're not in the last round
             var nextRound :Number = (_whirled.getRound() >= _board.rounds) ? 0 : Game.ROUND_DELAY;
             _whirled.endRound(nextRound);
+        }
+    }
+
+    /**
+     * Called when a spawner declares itself ready to spawn the next wave. If this is the
+     * last spawner to be ready, set the entire dset to a new array, causing all spawners
+     * to restart. 
+     */
+    protected function handleSpawnerReady (event :PropertyChangedEvent) :void
+    {
+        if (event.index == -1) {
+            return; // this is an overall spawner reset - we caused it, so ignore it
+        }
+        
+        if (_whirled.amInControl()) {
+
+            // one of the players declared they're ready to spawn more. 
+            // test all players, and if they're all ready, restart!
+            var count :int = _board.getPlayerCount();
+            var ready :Array = new Array (count);
+            for (var ii :int = 0; ii < count; ii++) {
+                if (! Boolean(_whirled.get(Monitor.SPAWNERREADY, ii))) {
+                    return; // one of them isn't ready yet
+                } else {
+                    ready[ii] = false;
+                }
+            }
+
+            // everyone's ready, reset the whole array
+            _whirled.set(Monitor.SPAWNERREADY, ready);
         }
     }
 
@@ -136,14 +176,17 @@ public class Validator
             var playerCount :int = _whirled.seating.getPlayerIds().length;
             var initialHealth :Array = new Array(playerCount);
             var initialMoney :Array = new Array(playerCount);
+            var initialSpawnerReady :Array = new Array(playerCount);
             for (var ii :int = 0; ii < playerCount; ii++) {
                 initialHealth[ii] = _board.getInitialHealth();
                 initialMoney[ii] = _board.getInitialMoney();
+                initialSpawnerReady[ii] = false;
             }
             
             _whirled.set(Monitor.TOWER_SET, new Array());
             _whirled.set(Monitor.HEALTH_SET, initialHealth);
             _whirled.set(Monitor.MONEY_SET, initialMoney);
+            _whirled.set(Monitor.SPAWNERREADY, initialSpawnerReady);
         }
     }
     
@@ -175,6 +218,7 @@ public class Validator
 
         _whirled.endGameWithScores(playerIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
     }
+
     
     protected var _handlers :Object;
     protected var _board :Board;

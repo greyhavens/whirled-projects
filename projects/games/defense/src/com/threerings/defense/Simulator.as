@@ -20,10 +20,11 @@ public class Simulator
         _game = game;
     }
 
-    public function processSpawners (spawners :Array, gameTime :Number) :void
+    public function processSpawners (
+        spawners :Array, gameTime :Number, controller :Controller) :void
     {
         for each (var spawner :Spawner in spawners) {
-                spawner.spawnIfPossible(gameTime);
+                spawner.spawnIfPossible(gameTime, controller);
             }
     }
 

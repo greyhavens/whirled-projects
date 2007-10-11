@@ -49,7 +49,7 @@ public class PathMap extends Map
                 if (changeCount > 0) {
                     // trace("Found " + changeCount + " new values!");
                 } else {
-                    trace("Path up to date!");
+//                    trace("Path up to date!");
                     _upToDate = true;  
                     return; // we're done for now
                 }

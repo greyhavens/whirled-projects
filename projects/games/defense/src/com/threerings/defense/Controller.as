@@ -17,7 +17,7 @@ public class Controller
         _whirled = whirled;
     }
 
-    public function handleUnload (event : Event) :void
+    public function handleUnload (event :Event) :void
     {
         trace("CONTROLLER UNLOAD");
     }
@@ -47,6 +47,11 @@ public class Controller
     public function updateTower (/* def :Tower */) :void
     {
         // sends a request to everyone to update a tower
+    }
+
+    public function requestNextWave (playerId :int) :void
+    {
+        _whirled.set(Monitor.SPAWNERREADY, true, playerId);
     }
 
     public function changeScore (playerId :int, delta :Number) :void

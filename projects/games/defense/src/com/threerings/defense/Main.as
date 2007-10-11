@@ -44,6 +44,7 @@ public class Main
     public function init (app :Defense) :void
     {
         _whirled = new WhirledGameControl(app, false);
+
         var level :int = 1;  // default values
         var rounds :int = 3; 
         if (_whirled.isConnected()) {
@@ -64,9 +65,9 @@ public class Main
         _display = app.display;
         _board = new Board(_whirled, rounds);
         _validator = new Validator(_board, _whirled);
-        _game = new Game(_board, _display);
-        _monitor = new Monitor(_game, _whirled);
         _controller = new Controller(_board, _whirled);
+        _game = new Game(_board, _display, _controller);
+        _monitor = new Monitor(_game, _whirled);
        
         trace("MVC CREATED");
         
@@ -88,7 +89,7 @@ public class Main
    
     protected function handleUnload (event :Event) :void
     {
-        for each (var obj :Object in [ _controller, _monitor, _game,
+        for each (var obj :Object in [ _monitor, _game, _controller,
                                        _validator, _board, _display, _loader ]) {
             var handler :Function = obj["handleUnload"];
             if (handler != null) {

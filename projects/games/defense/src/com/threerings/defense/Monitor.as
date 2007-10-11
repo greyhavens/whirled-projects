@@ -25,7 +25,8 @@ public class Monitor
     public static const SCORE_SET :String = "ScoreSetProperty";
     public static const HEALTH_SET :String = "HealthSetProperty";
     public static const MONEY_SET :String = "MoneySetProperty";
-    public static const SPAWNGROUPS :String = "SpawnGroupsProperty";
+    public static const SPAWNGROUPS :String = "SpawnGroupsProperty";  // which units get spawned
+    public static const SPAWNERREADY :String = "SpawnReadyProperty";  // which spawners are ready
     
     public function Monitor (game :Game, whirled :WhirledGameControl)
     {
@@ -40,6 +41,7 @@ public class Monitor
         _handlers[HEALTH_SET] = makeHandler(null, _game.handleUpdateHealth);
         _handlers[MONEY_SET] = makeHandler(_game.handleResetMoney, _game.handleUpdateMoney);
         _handlers[SPAWNGROUPS] = makeHandler(null, _game.handleUpdateSpawnGroup);
+        _handlers[SPAWNERREADY] = makeHandler(_game.handleUpdateAllSpawnersReady, null);
         _handlers[StateChangedEvent.GAME_STARTED] = _game.gameStarted;
         _handlers[StateChangedEvent.GAME_ENDED] = _game.gameEnded;
         _handlers[StateChangedEvent.ROUND_STARTED] = _game.roundStarted;
@@ -56,7 +58,7 @@ public class Monitor
     // from interface StateChangedListener
     public function stateChanged (event :StateChangedEvent) :void
     {
-        trace("*** STATE CHANGED: " + event);
+//        trace("*** STATE CHANGED: " + event);
         var fn :Function = _handlers[event.type] as Function;
         if (fn != null) {
             fn(event);
