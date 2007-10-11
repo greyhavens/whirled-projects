@@ -50,16 +50,16 @@ public class ScorePanel extends TitleWindow
         this.x = pos.x;
         this.y = pos.y;
 
-        if (board.getPlayerCount() > 1 && _myPanel) {
-            var enemy :Button = new Button();
-            enemy.styleName = "enemyButton";
-            enemy.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+        if (board.getPlayerCount() > 1 && _myPanel && _enemy == null) {
+            _enemy = new Button();
+            _enemy.styleName = "enemyButton";
+            _enemy.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
                     var selector :SpawnSelector =
                         new SpawnSelector(board, controller.changeSpawnGroup);
                     PopUpManager.addPopUp(selector, panel.parent, false);
                     PopUpManager.centerPopUp(selector);
                 });
-            addChild(enemy);
+            addChild(_enemy);
         }
     }
 
@@ -85,5 +85,6 @@ public class ScorePanel extends TitleWindow
     protected var _myPanel :Boolean;
     protected var _maxHealth :Number;
     protected var _health :Image;
+    protected var _enemy :Button;
 }
 }

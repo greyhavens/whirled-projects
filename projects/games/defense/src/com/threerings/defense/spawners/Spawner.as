@@ -26,8 +26,8 @@ public class Spawner
         _level = level;
         _player = player;
         _loc = loc;
-
-        ready = true;
+        _difficulty = 1;
+        _state = STATE_READY;
     }
 
     public function get player () :int
@@ -35,16 +35,16 @@ public class Spawner
         return _player;
     }
 
-    public function get ready () :Boolean
-    {
-        return _state == STATE_READY;
-    }
-
-    public function set ready (value :Boolean) :void
+    public function setReady (value :Boolean) :void
     {
         if (value) {
             _state = STATE_READY;
         }
+    }
+
+    public function setDifficulty (value :int) :void
+    {
+        _difficulty = value;
     }
     
     /**
@@ -66,7 +66,9 @@ public class Spawner
         case STATE_SPAWNING:
             // spawn the next one when we're good and ready
             if (gameTime >= _nextSpawnTime) {
-                var critter :Critter = new Critter(_loc.x, _loc.y, int(_toSpawn.shift()), player);
+                var critter :Critter =
+                    new Critter(_loc.x, _loc.y, int(_toSpawn.shift()), player, _difficulty);
+                
                 _game.handleAddCritter(critter);
                 _nextSpawnTime = gameTime + _unitDelay;
 
@@ -84,7 +86,10 @@ public class Spawner
                 (_game.getCritters().length > 0); // the last wave is still on board
 
             if (! playerBusy) {
-                controller.requestNextWave(player);
+                if (_difficulty != reevaluateDifficultyLevel()) {
+                    controller.updateSpawnerDifficulty(player, reevaluateDifficultyLevel());
+                }
+                controller.readyToSpawn(player);
                 _state = STATE_PENDING;
             }
             break;
@@ -95,7 +100,7 @@ public class Spawner
             break;
 
         case STATE_READY:
-            // figure out what to spawn
+            // figure out what to spawn           
             _toSpawn = getSpawnDefinitions();
             _state = STATE_SPAWNING;
             Main.gcHack(); // so naughty
@@ -112,12 +117,23 @@ public class Spawner
         // this base version doesn't provide anything interesting. subclasses need to replace it.
         return [ ];
     }
-            
+
+    /**
+     * Called before spawning a new wave, it returns the difficulty level that should be used
+     * while spawning all units in this wave.
+     */
+    protected function reevaluateDifficultyLevel () :int
+    {
+        // this base version doesn't provide anything interesting. subclasses should replace it.
+        return 1;
+    }
+
     protected var _game :Game;
     protected var _level :Level;
     protected var _player :int;
     protected var _loc :Point;
     protected var _state :int;
+    protected var _difficulty :int;
     protected var _nextSpawnTime :Number = 0;
 
     protected var _toSpawn :Array = new Array();

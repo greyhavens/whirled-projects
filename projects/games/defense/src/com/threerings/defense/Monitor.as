@@ -4,6 +4,8 @@ import flash.events.Event;
 
 import mx.utils.ObjectUtil;
 
+import com.threerings.ezgame.MessageReceivedEvent;
+import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
@@ -17,7 +19,7 @@ import com.threerings.defense.units.Tower;
  * Monitors game progress, and updates the main simulation as necessary.
  */
 public class Monitor
-    implements StateChangedListener, PropertyChangedListener
+    implements MessageReceivedListener, StateChangedListener, PropertyChangedListener
 {
     // Names of properties set on the distributed object.
     public static const TOWER_SET :String = "TowersProperty";
@@ -27,6 +29,8 @@ public class Monitor
     public static const MONEY_SET :String = "MoneySetProperty";
     public static const SPAWNGROUPS :String = "SpawnGroupsProperty";  // which units get spawned
     public static const SPAWNERREADY :String = "SpawnReadyProperty";  // which spawners are ready
+    // Names of messages
+    public static const SPAWNER_DIFFICULTY :String = "SpawnerDifficultyMessage";
     
     public function Monitor (game :Game, whirled :WhirledGameControl)
     {
@@ -36,12 +40,17 @@ public class Monitor
         _whirled.addEventListener(FlowAwardedEvent.FLOW_AWARDED, _game.flowAwarded);
 
         _handlers = new Object();
+        
+        // dobj change handlers
         _handlers[TOWER_SET] = towersChanged;
         _handlers[SCORE_SET] = makeHandler(null, _game.handleUpdateScore);
         _handlers[HEALTH_SET] = makeHandler(null, _game.handleUpdateHealth);
         _handlers[MONEY_SET] = makeHandler(_game.handleResetMoney, _game.handleUpdateMoney);
         _handlers[SPAWNGROUPS] = makeHandler(null, _game.handleUpdateSpawnGroup);
         _handlers[SPAWNERREADY] = makeHandler(_game.handleUpdateAllSpawnersReady, null);
+
+        // message handlers
+        _handlers[SPAWNER_DIFFICULTY] = _game.handleSpawnerDifficulty;
         _handlers[StateChangedEvent.GAME_STARTED] = _game.gameStarted;
         _handlers[StateChangedEvent.GAME_ENDED] = _game.gameEnded;
         _handlers[StateChangedEvent.ROUND_STARTED] = _game.roundStarted;
@@ -67,6 +76,16 @@ public class Monitor
 
     // from interface PropertyChangedListener
     public function propertyChanged (event :PropertyChangedEvent) :void
+    {
+//        trace("*** PROPERTY CHANGED: " + event);
+        var fn :Function = _handlers[event.name] as Function;
+        if (fn != null) {
+            fn(event);
+        } 
+    }
+
+    // from interface MessageReceivedEvent
+    public function messageReceived (event :MessageReceivedEvent) :void
     {
 //        trace("*** PROPERTY CHANGED: " + event);
         var fn :Function = _handlers[event.name] as Function;

@@ -45,10 +45,13 @@ public class Critter extends Unit
     /** How many points is this critter worth? */
     public var pointValue :Number;
 
+    /** Powerup value for this critter, per difficulty level. */
+    public var powerup :Number;
+    
     /** Is this a flying critter? If so, it will ignore obstacles. */
     public var isFlying :Boolean;
     
-    public function Critter (x :int, y :int, type :int, player :int)
+    public function Critter (x :int, y :int, type :int, player :int, level :uint)
     {
         super(player, x, y, 1, 1);
 
@@ -58,7 +61,7 @@ public class Critter extends Unit
         this.delta = new Point(0, 0);
         this.missileHotspot = new Point(size.x / 2, - size.y / 2); 
         
-        UnitDefinitions.initializeCritter(type, this);
+        UnitDefinitions.initializeCritter(type, this, level);
     }
 
     // position of the sprite centroid in screen coordinates

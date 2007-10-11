@@ -14,6 +14,7 @@ public class AutoSpawner extends Spawner
     {
         super(game, level, player, loc);
         _currentWave = 0;
+        _waveCount = 0;
     }
 
     // from Spawner
@@ -23,8 +24,16 @@ public class AutoSpawner extends Spawner
         var spawndefs :Array = LevelDefinitions.getSpawnWaves(1, _level.number);
         var wave :Array = (spawndefs[_currentWave]) as Array;
         _currentWave = (_currentWave + 1) % spawndefs.length;
-
+        _waveCount++;
+        
         return flattenWave(wave);
+    }
+
+    // from Spawner
+    override protected function reevaluateDifficultyLevel () :int
+    {
+        var spawndefs :Array = LevelDefinitions.getSpawnWaves(1, _level.number);
+        return int(1 + Math.floor(_waveCount / spawndefs.length));
     }
 
     protected function flattenWave (wave :Array) :Array
@@ -43,5 +52,6 @@ public class AutoSpawner extends Spawner
     }
 
     protected var _currentWave :int;
+    protected var _waveCount :int; // how many sets of waves we've gone through
 }
 }

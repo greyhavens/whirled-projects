@@ -170,32 +170,38 @@ public class UnitDefinitions
             { name: "Bully",
               maxhealth: 12,
               maxspeed: 2,
+              powerup: 1.5,
               points: 2 } },
           { key: Critter.TYPE_GIRL, value:
             { name: "Girl",
               maxhealth: 8,
               maxspeed: 1,
+              powerup: 2,
               points: 2 } },
           { key: Critter.TYPE_BIRD, value:
             { name: "Bird",
               isFlying: true,
               maxhealth: 4,
               maxspeed: 4,
+              powerup: 1.5,
               points: 1 } },
           { key: Critter.TYPE_SQUIRREL, value:
             { name: "Fox",
               maxhealth: 2,
               maxspeed: 3,
+              powerup: 2,
               points: 1 } },
           { key: Critter.TYPE_SKATER, value:
             { name: "Skater",
               maxhealth: 8,
               maxspeed: 4,
+              powerup: 1.5,
               points: 1 } },
           { key: Critter.TYPE_SKUNK, value:
             { name: "Skunk",
               maxhealth: 1,
               maxspeed: 1,
+              powerup: 1.2,
               points: 1 } },
             ];
     
@@ -299,14 +305,16 @@ public class UnitDefinitions
         tower.size = new Point(def.size[0], def.size[1]);
     }
 
-    public static function initializeCritter (type :int, critter :Critter) :void
+    public static function initializeCritter (type :int, critter :Critter, level :uint) :void
     {
         var def :Object = getValue(ENEMY_DEFINITIONS, type);
         Assert.NotNull(def, "Failed to initialize critter, unknown type: " + type);
 
         critter.pointValue = def.points;
-        critter.maxhealth = critter.health = def.maxhealth;
         critter.maxspeed = def.maxspeed;
+        critter.powerup = def.powerup;
+        critter.maxhealth = critter.health =
+            def.maxhealth * Math.pow(def.powerup, level - 1);
         critter.isFlying = Boolean(def.isFlying);
     }
         

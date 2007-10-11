@@ -4,9 +4,6 @@ import com.threerings.defense.units.Critter;
 
 public class LevelDefinitions
 {
-    /** Total number of levels, indexed by player count. */
-    public static const LEVEL_COUNT :Array = [ 0, 1, 1 ];
-    
     /** Level definitions, indexed by player count. */
     public static const LEVEL_DEFINITIONS :Array = [
         // level 0
@@ -50,9 +47,10 @@ public class LevelDefinitions
         // level 2
         {   backgroundAssetName: "Level02_BG",
             startingHealth: 10,
-            startingMoney: 50,
+            startingMoney: 25,
             spawner1p: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
                          [ [ Critter.TYPE_SKUNK, 3 ] ],
+                         /*
                          [ [ Critter.TYPE_SQUIRREL, 1 ] ],
                          [ [ Critter.TYPE_GIRL, 2 ] ],
                          [ [ Critter.TYPE_BIRD, 1 ] ],
@@ -64,6 +62,7 @@ public class LevelDefinitions
                          [ [ Critter.TYPE_SQUIRREL, 3 ] ],
                          [ [ Critter.TYPE_GIRL, 2 ] ],
                          [ [ Critter.TYPE_SKUNK, 9 ] ],
+                         */
                          [ [ Critter.TYPE_BIRD, 1 ], [ Critter.TYPE_SQUIRREL, 1 ] ],
                 ],
             spawner2p: [ [ [ Critter.TYPE_SKUNK, 5 ] ],
@@ -97,12 +96,6 @@ public class LevelDefinitions
                 ]
         },
         ];
-
-    /** Retrieves level count for the specified player count. */
-    public static function getLevelCount (playerCount :int) :int
-    {
-        return (LEVEL_COUNT[playerCount]) as int;
-    }
 
     /** Retrieves level definition for the specified player count. */
     public static function getLevelDefinition (playerCount :int, level :int) :Object

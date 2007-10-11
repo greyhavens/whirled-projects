@@ -25,7 +25,7 @@ public class GroundMap extends Map
 
     public function loadDefinition (id :int, playerCount :int) :void
     {
-        trace("LOAD DEF: LEVEL: " + id + ", PLAYER COUNT: " + playerCount);
+        // trace("LOAD DEF: LEVEL: " + id + ", PLAYER COUNT: " + playerCount);
         _sources = new Array(playerCount);
         _targets = new Array(playerCount);
         

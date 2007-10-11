@@ -250,6 +250,19 @@ public class Display extends Canvas
             showUI();
         }
     }
+
+    /** Displays a little bit of feedback when a spawner's difficulty level increases. */
+    public function showNewSpawnerDifficulty (playerIndex :int, difficulty :int) :void
+    {
+        if (_board.getPlayerCount() == 1) {
+            addChild(new FloatingScore(Messages.get("level ") + difficulty,
+                                       Board.BG_WIDTH / 2 - 50, Board.BG_HEIGHT / 2,
+                                       "floatingRoundInfo"));
+        } else {
+            var pos :Point = Board.SCOREPANEL_POS[playerIndex];
+            addChild(new FloatingScore(Messages.get("level ") + difficulty, pos.x, pos.y));
+        }
+    }
     
     /** Single function for moving and/or changing the cursor. If the cursor was not previously
      *  shown, it will be created. */

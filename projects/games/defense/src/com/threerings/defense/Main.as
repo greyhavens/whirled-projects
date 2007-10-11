@@ -48,7 +48,7 @@ public class Main
         var level :int = 1;  // default values
         var rounds :int = 3; 
         if (_whirled.isConnected()) {
-            trace("Tree House Defense 0.10.10.2");
+            trace("Tree House Defense 0.10.11.1");
             var config :Object = _whirled.getConfig();
             var boardName :String = config["Board name"];
             if (boardName != null) {

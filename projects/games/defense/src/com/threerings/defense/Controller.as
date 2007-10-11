@@ -39,6 +39,12 @@ public class Controller
         _whirled.sendMessage(Validator.REQUEST_ADD, serialized);
     }
 
+    public function updateSpawnerDifficulty (playerIndex :int, difficulty :int) :void
+    {
+        var serialized :Object = { playerIndex: playerIndex, difficulty: difficulty };
+        _whirled.sendMessage(Monitor.SPAWNER_DIFFICULTY, serialized);
+    }
+    
     public function removeTower (/* def :Tower */) :void
     {
         // sends a request to everyone to remove a tower
@@ -49,7 +55,7 @@ public class Controller
         // sends a request to everyone to update a tower
     }
 
-    public function requestNextWave (playerId :int) :void
+    public function readyToSpawn (playerId :int) :void
     {
         _whirled.set(Monitor.SPAWNERREADY, true, playerId);
     }

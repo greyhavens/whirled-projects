@@ -9,6 +9,7 @@ import com.threerings.defense.spawners.AutoSpawner;
 import com.threerings.defense.spawners.PlayerSpawner;
 import com.threerings.defense.spawners.Spawner;
 import com.whirled.FlowAwardedEvent;
+import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.defense.units.Critter;
 import com.threerings.defense.units.Missile;
@@ -242,18 +243,27 @@ public class Game
         }
     }
 
-    public function handleUpdateSpawnGroup (player :int, spawnGroupIndex :int) :void
+    public function handleUpdateSpawnGroup (playerIndex :int, spawnGroupIndex :int) :void
     {
         if (_board.getPlayerCount() != 1) { // this is not valid for a single player game
-            (_spawners[player] as PlayerSpawner).setSpawnGroup(spawnGroupIndex);
+            (_spawners[playerIndex] as PlayerSpawner).setSpawnGroup(spawnGroupIndex);
         }
     }            
 
     public function handleUpdateAllSpawnersReady (allReady :Array) :void
     {
         for each (var spawner :Spawner in _spawners) {
-                spawner.ready = true;
+                spawner.setReady(true);
             }
+    }
+
+    public function handleSpawnerDifficulty (event :MessageReceivedEvent) :void
+    {
+        // for the format of the event payload, see Controller.updateSpawnerDifficulty()
+        var playerIndex :int = event.value.playerIndex;
+        var difficulty :int = event.value.difficulty;
+        _spawners[playerIndex].setDifficulty(difficulty);
+        _display.showNewSpawnerDifficulty(playerIndex, difficulty);
     }
     
     public function handleResetMoney (allMoney :Array) :void
