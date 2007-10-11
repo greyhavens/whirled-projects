@@ -314,7 +314,9 @@ public class Display extends Canvas
 
     public function handleAddCritter (critter :Critter) :void
     {
-        var sprite :CritterSprite = new CritterSprite(critter, _board.level);
+        var friendly :Boolean =
+            (_board.getPlayerCount() > 1) && (_board.getMyPlayerIndex() == critter.player);
+        var sprite :CritterSprite = new CritterSprite(critter, _board.level, friendly);
         _boardSprite.addChild(sprite);
         _critters.put(critter.guid, sprite);
         sprite.update();

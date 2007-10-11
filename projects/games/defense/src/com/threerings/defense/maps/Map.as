@@ -65,6 +65,11 @@ public class Map
         return (value == UNOCCUPIED) || (value == RESERVED);
     }
 
+    public function playerOccupied (x :int, y :int) :Boolean
+    {
+        return (_data[x][y] as Number) > UNOCCUPIED;
+    }
+
     /** Processes the per-frame updates of map data. */
     public function update () :void
     {
@@ -141,7 +146,7 @@ public class Map
     /** Given cell, returns the ARGB color to be used for drawing the bitmap. */
     protected function getColor (x :int, y :int, player :int) :uint
     {
-        if (isPassable(x, y)) {
+        if (! playerOccupied(x, y)) {
             return 0x00000000;
         } else {
             return (player == getCell(x, y)) ? Board.UI_COLOR_MINE : Board.UI_COLOR_THEIRS;

@@ -18,7 +18,7 @@ public class CritterSprite extends UnitSprite
     
     public static const ALL_STATES :Array = [ STATE_RIGHT, STATE_UP, STATE_LEFT, STATE_DOWN ];
     
-    public function CritterSprite (critter :Critter, level :Level)
+    public function CritterSprite (critter :Critter, level :Level, mine :Boolean)
     {
         super(critter, level);
         
@@ -26,6 +26,7 @@ public class CritterSprite extends UnitSprite
         _tileOffset = new Point(Math.random() * 10 - 5, Math.random() * 6 - 3);
 
         _health = new Image();
+        _mine = mine;
     }
 
     public function get critter () :Critter
@@ -35,6 +36,8 @@ public class CritterSprite extends UnitSprite
 
     public function updateHealth () :void
     {
+        var color :uint = _mine ? Board.UI_COLOR_MINE : Board.UI_COLOR_THEIRS;
+                           
         var g :Graphics = _health.graphics;
         var w :Number = Board.SQUARE_WIDTH - 2;
         var h :Number = 5;
@@ -47,7 +50,7 @@ public class CritterSprite extends UnitSprite
         g.drawRoundRect(- w / 2, 0, w, h, 3, 3);
         g.endFill();
 
-        g.beginFill(0xcc3300, 0.8);
+        g.beginFill(color, 0.8);
         g.drawRect(- w / 2 + 1, 1, (w - 2) * health, h - 2);
         g.endFill();
     }
@@ -88,5 +91,6 @@ public class CritterSprite extends UnitSprite
     }
 
     protected var _health :Image;
+    protected var _mine :Boolean;
 }
 }
