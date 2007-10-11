@@ -110,10 +110,13 @@ public class Validator
         if (_whirled.amInControl()) {
             var playerCount :int = _whirled.seating.getPlayerIds().length;
             var initialScores :Array = new Array(playerCount);
+            var initialSpawnGroups :Array = new Array(playerCount);
             for (var ii :int = 0; ii < playerCount; ii++) {
                 initialScores[ii] = 0;
+                initialSpawnGroups[ii] = 0;
             }
             _whirled.set(Monitor.SCORE_SET, initialScores);
+            _whirled.set(Monitor.SPAWNGROUPS, initialSpawnGroups);
         }
     }
 
@@ -149,7 +152,6 @@ public class Validator
     {
         if (_whirled.amInControl()) {
             var round :int = - _whirled.getRound();
-            trace("ROUND ENDED: " + round);
             
             // should we end the game right here?
             if (round >= _board.rounds) {
@@ -171,7 +173,6 @@ public class Validator
             scores.push(_whirled.get(Monitor.SCORE_SET, ii));
         }
 
-        trace("GAME ENDED WITH SCORES: " + playerIds + "->" + scores);
         _whirled.endGameWithScores(playerIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
     }
     

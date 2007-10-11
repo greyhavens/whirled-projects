@@ -38,7 +38,12 @@ public class Messages
         round_start: "ROUND ",
         round_end: "ROUND ENDED",
 
+        spawn_choice: "Select what units you would like to send to attack your enemy's tree house:",
+        cancel: "Cancel",
+
         game_ended: "Game ended! Here are the final scores:",
+        you_won: "Your winnings this round: ",
+        flow: "flow",
         play_again: "Play again!",
         quit: "Quit",
         

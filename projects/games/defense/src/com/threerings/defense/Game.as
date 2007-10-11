@@ -112,7 +112,7 @@ public class Game
     {
         _display.reportFlowAward(event.amount, event.percentile);
     }
-    
+
     public function initializeSpawners () :void
     {
         var playerCount :uint = _board.getPlayerCount();
@@ -240,6 +240,13 @@ public class Game
         }
     }
 
+    public function handleUpdateSpawnGroup (player :int, spawnGroupIndex :int) :void
+    {
+        if (_board.getPlayerCount() != 1) { // this is not valid for a single player game
+            (_spawners[player] as PlayerSpawner).setSpawnGroup(spawnGroupIndex);
+        }
+    }            
+    
     public function handleResetMoney (allMoney :Array) :void
     {
         var myindex :int = _board.getMyPlayerIndex();

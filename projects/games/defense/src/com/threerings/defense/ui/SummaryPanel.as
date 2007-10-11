@@ -25,6 +25,13 @@ public class SummaryPanel extends TitleWindow
         this.y = 150;
     }
 
+    public function addFlowScore (amount :Number) :void
+    {
+        var text :String = _title.htmlText;
+        text += "<br><br>" + Messages.get("you_won") + amount + " " + Messages.get("flow");
+        _title.htmlText = text;
+    }
+    
     override protected function createChildren () :void
     {
         super.createChildren();

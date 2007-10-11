@@ -153,7 +153,7 @@ public class Display extends Canvas
     public function gameStarted () :void
     {
         hideWaitingPopup();
-        hideScorePopup();
+        hideSummaryPopup();
     }
 
     public function gameEnded () :void
@@ -161,7 +161,7 @@ public class Display extends Canvas
         resetOverlays();
         resetBoardDisplay();
 
-        showScorePopup();
+        showSummaryPopup();
     }
 
     public function roundStarted (round :int) :void
@@ -172,24 +172,26 @@ public class Display extends Canvas
         var count :int = _board.getPlayerCount();
         var names :Array = _board.getPlayerNames();
         for (var ii :int = 0; ii < count; ii++) {
-            (_scorePanels[ii] as ScorePanel).reset(
-                ii, names[ii], _board.getInitialHealth(), (ii == _board.getMyPlayerIndex()));
+            (_scorePanels[ii] as ScorePanel).reset(ii, names[ii], _board, _controller);
         }
 
         addChild(new FloatingScore(Messages.get("round_start") + round,
-                                   Board.BG_WIDTH / 2 - 50, Board.BG_HEIGHT / 2));
+                                   Board.BG_WIDTH / 2 - 50, Board.BG_HEIGHT / 2,
+                                   "floatingRoundInfo"));
     }
 
     public function roundEnded (round :int) :void
     {
         addChild(new FloatingScore(Messages.get("round_end"),
-                                   Board.BG_WIDTH / 2 - 50, Board.BG_HEIGHT / 2));
+                                   Board.BG_WIDTH / 2 - 50, Board.BG_HEIGHT / 2,
+                                   "floatingRoundInfo"));
         hideCursor();
     }
 
     public function reportFlowAward (amount :int, percentile :int) :void
     {
-        trace("FLOW AWARD: " + amount + ", " + percentile);
+        showSummaryPopup();
+        _summary.addFlowScore(amount);
     }
     
     protected function resetBoardDisplay () :void
@@ -467,7 +469,7 @@ public class Display extends Canvas
 
     protected function handlePlayClicked () :void
     {
-        hideScorePopup(); // if it's shown at all...
+        hideSummaryPopup(); // if it's shown at all...
         showWaitingPopup();
         _controller.playerReady();
     }
@@ -519,7 +521,7 @@ public class Display extends Canvas
         }
     }
 
-    protected function showScorePopup () :void
+    protected function showSummaryPopup () :void
     {
         if (_summary == null) {
             _summary = new SummaryPanel(_board, handlePlayClicked, _controller.forceQuitGame)
@@ -527,7 +529,7 @@ public class Display extends Canvas
         }
     }
 
-    protected function hideScorePopup () :void
+    protected function hideSummaryPopup () :void
     {
         if (_summary != null) {
             PopUpManager.removePopUp(_summary);

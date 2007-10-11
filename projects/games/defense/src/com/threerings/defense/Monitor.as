@@ -25,6 +25,7 @@ public class Monitor
     public static const SCORE_SET :String = "ScoreSetProperty";
     public static const HEALTH_SET :String = "HealthSetProperty";
     public static const MONEY_SET :String = "MoneySetProperty";
+    public static const SPAWNGROUPS :String = "SpawnGroupsProperty";
     
     public function Monitor (game :Game, whirled :WhirledGameControl)
     {
@@ -38,6 +39,7 @@ public class Monitor
         _handlers[SCORE_SET] = makeHandler(null, _game.handleUpdateScore);
         _handlers[HEALTH_SET] = makeHandler(null, _game.handleUpdateHealth);
         _handlers[MONEY_SET] = makeHandler(_game.handleResetMoney, _game.handleUpdateMoney);
+        _handlers[SPAWNGROUPS] = makeHandler(null, _game.handleUpdateSpawnGroup);
         _handlers[StateChangedEvent.GAME_STARTED] = _game.gameStarted;
         _handlers[StateChangedEvent.GAME_ENDED] = _game.gameEnded;
         _handlers[StateChangedEvent.ROUND_STARTED] = _game.roundStarted;

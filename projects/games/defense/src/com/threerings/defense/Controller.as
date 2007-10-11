@@ -68,6 +68,14 @@ public class Controller
         }
     }
 
+    public function changeSpawnGroup (playerId :int, spawnGroup :int) :void
+    {
+        // only change this player's spawn group index
+        if (playerId == _board.getMyPlayerIndex()) {
+            _whirled.set(Monitor.SPAWNGROUPS, spawnGroup, playerId);
+        }
+    }
+
     public function decrementHealth (attackerPlayer :int, targetPlayer :int) :void
     {
         // only decrement the score if this is single player, or if this client

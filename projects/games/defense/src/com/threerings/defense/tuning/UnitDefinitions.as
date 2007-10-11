@@ -183,12 +183,12 @@ public class UnitDefinitions
               maxspeed: 4,
               points: 1 } },
           { key: Critter.TYPE_SQUIRREL, value:
-            { name: "Bird",
+            { name: "Fox",
               maxhealth: 2,
               maxspeed: 3,
               points: 1 } },
           { key: Critter.TYPE_SKATER, value:
-            { name: "Bird",
+            { name: "Skater",
               maxhealth: 8,
               maxspeed: 4,
               points: 1 } },

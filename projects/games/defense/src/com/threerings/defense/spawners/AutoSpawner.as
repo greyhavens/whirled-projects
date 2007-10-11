@@ -20,11 +20,15 @@ public class AutoSpawner extends Spawner
     override protected function getSpawnDefinitions () :Array // of int
     {
         // get the appropriate list of level definition
-        var def :Object = LevelDefinitions.getLevelDefinition(1, _level.number);
-        var wave :Array = ((def.spawner as Array)[_currentWave]) as Array;
-        
-        _currentWave = (_currentWave + 1) % (def.spawner as Array).length;
+        var spawndefs :Array = LevelDefinitions.getSpawnWaves(1, _level.number);
+        var wave :Array = (spawndefs[_currentWave]) as Array;
+        _currentWave = (_currentWave + 1) % spawndefs.length;
 
+        return flattenWave(wave);
+    }
+
+    protected function flattenWave (wave :Array) :Array
+    {
         var flatwave :Array = new Array();
         for each (var unitdef :Array in wave) {
                 // def is of form: [ type, count ]

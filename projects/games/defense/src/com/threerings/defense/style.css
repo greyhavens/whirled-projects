@@ -133,6 +133,12 @@ TitleWindow {
   disabledSkin: Embed(source="../../../../rsrc/icons/rock_disabled.png");
 }
 
+.enemyButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/enemy_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/enemy_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/enemy_over.png");
+}
 
 
 .playButton
@@ -148,3 +154,4 @@ TitleWindow {
   downSkin: Embed(source="../../../../rsrc/splash/help_default.png");
   overSkin: Embed(source="../../../../rsrc/splash/help_over.png");
 }
+
