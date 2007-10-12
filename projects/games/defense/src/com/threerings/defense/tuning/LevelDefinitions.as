@@ -15,8 +15,8 @@ public class LevelDefinitions
             startingHealth: 5,
             startingMoney: 50,
 
-            towers: [ Tower.TYPE_SHRUB, Tower.TYPE_BOX, Tower.TYPE_TRASHCAN, Tower.TYPE_BOULDER,
-                      Tower.TYPE_SANDBOX, Tower.TYPE_WAGON, Tower.TYPE_TREE ],
+            towers: [ Tower.TYPE_SHRUB, Tower.TYPE_BOX, Tower.TYPE_SANDBOX, Tower.TYPE_TRASHCAN, 
+                      Tower.TYPE_WAGON, Tower.TYPE_BOULDER, Tower.TYPE_TREE ],
             
             spawner1p: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
                          [ [ Critter.TYPE_SKUNK, 3 ] ],
@@ -55,8 +55,8 @@ public class LevelDefinitions
             startingHealth: 3,
             startingMoney: 25,
 
-            towers: [ Tower.TYPE_SHRUB, Tower.TYPE_BOX, Tower.TYPE_TRASHCAN, Tower.TYPE_BOULDER,
-                      Tower.TYPE_SANDBOX, Tower.TYPE_WAGON, Tower.TYPE_TREE, Tower.TYPE_PUMPKIN ],
+            towers: [ Tower.TYPE_SHRUB, Tower.TYPE_BOX, Tower.TYPE_PUMPKIN, Tower.TYPE_SANDBOX,
+                      Tower.TYPE_TRASHCAN, Tower.TYPE_WAGON, Tower.TYPE_BOULDER, Tower.TYPE_TREE ],
             
             spawner1p: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
                          [ [ Critter.TYPE_CAT, 1 ] ],
@@ -83,7 +83,8 @@ public class LevelDefinitions
             startingMoney: 50,
 
             towers: [ Tower.TYPE_SHRUBWINTER, Tower.TYPE_BOX, Tower.TYPE_TRASHCAN,
-                      Tower.TYPE_BOULDER, Tower.TYPE_SNOWMAN, Tower.TYPE_WAGON ],
+                      Tower.TYPE_SNOWMAN, Tower.TYPE_WAGON, Tower.TYPE_BOULDER, 
+                      Tower.TYPE_TREEWINTER ],
             
             spawner1p: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
                          [ [ Critter.TYPE_SKUNK, 3 ] ],
@@ -112,8 +113,8 @@ public class LevelDefinitions
             startingHealth: 10,
             startingMoney: 30,
 
-            towers: [ Tower.TYPE_BOX, Tower.TYPE_BOULDER, Tower.TYPE_SANDBOX,
-                      Tower.TYPE_WAGON, Tower.TYPE_UMBRELLA ],
+            towers: [ Tower.TYPE_BOX, Tower.TYPE_UMBRELLA, Tower.TYPE_SANDBOX,
+                      Tower.TYPE_WAGON, Tower.TYPE_BOULDER ],
 
             spawner1p: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
                          [ [ Critter.TYPE_CRAB, 1 ] ],

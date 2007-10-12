@@ -29,6 +29,7 @@ public class UnitDefinitions
           { key: Tower.TYPE_SNOWMAN,     value: "snowman" },
           { key: Tower.TYPE_UMBRELLA,    value: "umbrella" },
           { key: Tower.TYPE_SHRUBWINTER, value: "shrubwinter" },
+          { key: Tower.TYPE_TREEWINTER,  value: "treewinter" },
             ];
 
     /** Asset suffixes for each tower state. */
@@ -49,7 +50,7 @@ public class UnitDefinitions
               description: "Basic station, with a short range and fast reloads.",
               cost: 4,
               rangeMin: 0,
-              rangeMax: 3.5,
+              rangeMax: 2.5,
               pauseBetweenMissiles: 3,
               size: [1, 1]
             } },
@@ -81,7 +82,7 @@ public class UnitDefinitions
               description: "Basic station, very fast but expensive.",
               cost: 10,
               rangeMin: 0,
-              rangeMax: 4.5,
+              rangeMax: 3.5,
               pauseBetweenMissiles: 2,
               size: [1, 1]
             } },
@@ -122,7 +123,7 @@ public class UnitDefinitions
           // level 2 only
           { key: Tower.TYPE_PUMPKIN, value:
             { name: "Pumpkin",
-              styleName: "treeButton",
+              styleName: "pumpkinButton",
               description: "High-damage station, inexpensive but slow to reload.",
               cost: 4,
               rangeMin: 0,
@@ -134,18 +135,29 @@ public class UnitDefinitions
           // level 3 only
           { key: Tower.TYPE_SHRUBWINTER, value:
             { name: "Winter Shrub",
-              styleName: "shrubButton",
+              styleName: "shrubwinterButton",
               description: "Basic station, with a range and fast reloads.",
               cost: 4,
               rangeMin: 0,
-              rangeMax: 3.5,
+              rangeMax: 2.5,
               pauseBetweenMissiles: 3,
               size: [1, 1]
             } },
 
+          { key: Tower.TYPE_TREEWINTER, value:
+            { name: "Tree",
+              styleName: "treewinterButton",
+              description: "High-damage, long range station.",
+              cost: 12,
+              rangeMin: 0,
+              rangeMax: 7,
+              pauseBetweenMissiles: 7,
+              size: [2, 3]
+            } },
+
           { key: Tower.TYPE_SNOWMAN, value:
             { name: "Snowman",
-              styleName: "treeButton",
+              styleName: "snowmanButton",
               description: "Basic station, with a longer range and faster reloads.",
               cost: 8,
               rangeMin: 0,
@@ -157,7 +169,7 @@ public class UnitDefinitions
           // level 4 only
           { key: Tower.TYPE_UMBRELLA, value:
             { name: "Umbrella",
-              styleName: "treeButton",
+              styleName: "umbrellaButton",
               description: "High-damage, inexpensive station, slow to reload.",
               cost: 4,
               rangeMin: 0,
@@ -195,6 +207,7 @@ public class UnitDefinitions
           { key: Missile.TYPE_SPORTS_BALL, value:
             { maxvel: 5,
               damage: 1,
+              delay: 500,
               assets: [ "missile_basketball", "missile_soccerball", "missile_football" ]
             } },
           { key: Missile.TYPE_SPITBALL, value:
@@ -222,11 +235,18 @@ public class UnitDefinitions
               assets: [ "missile_snowball" ]
             } },
 
+          { key: Missile.TYPE_SNOWFLAKE, value:
+            { maxvel: 5,
+              damage: 3,
+              delay: 700,
+              assets: [ "missile_snowflake" ]
+            } },
+            
           // level 4
           { key: Missile.TYPE_BEACHBALL, value:
             { maxvel: 3,
               damage: 3,
-              assets: [ "missile_snowball" ]
+              assets: [ "missile_beachball" ]
             } },
             ];
     
@@ -241,6 +261,7 @@ public class UnitDefinitions
           { key: Tower.TYPE_TREE,        value: Missile.TYPE_PAPER_AIRPLANE },
           { key: Tower.TYPE_PUMPKIN,     value: Missile.TYPE_FIREBALL },
           { key: Tower.TYPE_SHRUBWINTER, value: Missile.TYPE_SNOWBALL },
+          { key: Tower.TYPE_TREEWINTER,  value: Missile.TYPE_SNOWFLAKE },
           { key: Tower.TYPE_SNOWMAN,     value: Missile.TYPE_SNOWBALL },
           { key: Tower.TYPE_UMBRELLA,    value: Missile.TYPE_BEACHBALL },
             ];

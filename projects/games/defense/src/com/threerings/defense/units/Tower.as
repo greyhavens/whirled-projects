@@ -24,6 +24,7 @@ public class Tower extends Unit
     public static const TYPE_SNOWMAN     :int = 9;
     public static const TYPE_UMBRELLA    :int = 10;
     public static const TYPE_SHRUBWINTER :int = 11;
+    public static const TYPE_TREEWINTER  :int = 12;
 
     /** Position on the tower (in board units, potentially fractional, from the upper left)
      *  from which missiles should be fired. */

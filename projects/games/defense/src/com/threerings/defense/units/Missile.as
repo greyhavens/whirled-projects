@@ -17,7 +17,8 @@ public class Missile extends Unit
     public static const TYPE_SPITBALL       :int = 6;
     public static const TYPE_FIREBALL       :int = 7;
     public static const TYPE_SNOWBALL       :int = 8;
-    public static const TYPE_BEACHBALL      :int = 9;
+    public static const TYPE_SNOWFLAKE      :int = 9;
+    public static const TYPE_BEACHBALL      :int = 10;
 
     /** Missile type, one of the TYPE_* constants. */
     public var type :int;
