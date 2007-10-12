@@ -234,7 +234,7 @@ public class GameView extends Sprite
             _input.addEventListener(Event.CHANGE, textChanged);
             _input.selectable = true;
             _input.text = "";
-            _input.stage.focus = _input;
+            focusInput(true);
             marquee.display("Start!", 1000);
         });
     }
@@ -243,7 +243,7 @@ public class GameView extends Sprite
     {
         _model.requestChange();
         // refocus the input text box because they clicked outside it
-        _input.stage.focus = _input;
+        focusInput(true);
     }
 
     public function roundDidEnd (scorer :String) :void
@@ -275,7 +275,7 @@ public class GameView extends Sprite
 
         _input.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
         _input.removeEventListener(Event.CHANGE, textChanged);
-        _input.stage.focus = null;
+        focusInput(false);
         removeChild(_inputBox);
     }
 
@@ -300,6 +300,13 @@ public class GameView extends Sprite
     protected function isMultiPlayer () :Boolean
     {
         return (_control.seating.getPlayerNames().length > 1);
+    }
+
+    protected function focusInput (focus :Boolean) :void
+    {
+        if (_input.stage != null) {
+            _input.stage.focus = focus ? _input : null;
+        }
     }
 
     protected function showGameOver (flow :int, mypoints :int) :void
@@ -366,7 +373,7 @@ public class GameView extends Sprite
         var dismiss :SimpleButton = _content.makeButton("Dismiss");
         dismiss.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             removeChild(dialog);
-            _input.stage.focus = _input; // refocus the input field
+            focusInput(true);
         });
         dialog.addButton(dismiss, Dialog.CENTER);
         dialog.show(this);
@@ -389,7 +396,7 @@ public class GameView extends Sprite
             marquee.display(text, 1000);
         });
         _input.text = "";
-        _input.stage.focus = _input;
+        focusInput(true);
     }
 
     /**
