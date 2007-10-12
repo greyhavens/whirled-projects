@@ -10,11 +10,11 @@ import com.threerings.defense.Board;
  */
 public class GroundMap extends Map
 {
-    public static const SOURCE_MASK :uint = 0x00808080;
-    public static const TARGET_MASK :uint = 0x00404040;
+    public static const SOURCE_MASK :uint = 0x00008080;
+    public static const TARGET_MASK :uint = 0x00004040;
     
     public static const INVALID_PIXEL :uint = 0xff000000;
-    public static const RESERVED_PIXEL :uint = 0x0f000000;
+    public static const RESERVED_PIXEL :uint = 0xffff0000;
     public static const PLAYER_SOURCE_PIXELS :Array =
         [ Board.PLAYER_COLORS[0] & SOURCE_MASK,
           Board.PLAYER_COLORS[1] & SOURCE_MASK ];

@@ -20,13 +20,14 @@ public class GroundOverlay extends Overlay
         _scalingMatrix = new Matrix();
         _scalingMatrix.scale(Board.SQUARE_WIDTH, Board.SQUARE_HEIGHT);
 
-        var blur :BlurFilter = new BlurFilter(5, 5, 1);
+        var blur :BlurFilter = new BlurFilter(10, 5, 1);
         
 //        this.source = new BitmapAsset(_hires);
         this.scaleX = this.scaleY = 1;
         this.visible = true;
         this.alpha = 0.3;
         this.filters = [ blur ];
+        this.cacheAsBitmap = true;
     }
 
     override public function update () :void

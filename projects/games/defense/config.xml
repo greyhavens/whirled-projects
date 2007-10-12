@@ -1,11 +1,12 @@
 <!-- a config file used when doing standalone testing -->
 <game>
   <params>
-    <choice ident="Board name" choices="1: Playground,2: Halloween,3: Winter" 
-            start="3: Winter" />
+    <choice ident="Board name" choices="1: Playground,2: Halloween,3: Winter,4: The Beach" 
+            start="2: Halloween" />
 <!--            start="1: Playground" />  -->
 <!--            start="2: Halloween" /> -->
 <!--            start="3: Winter" /> -->
+<!--            start="4: The Beach" /> -->
     <range ident="Rounds" minimum="1" maximum="10" start="2" />
   </params>
 </game>

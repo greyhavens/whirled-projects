@@ -92,6 +92,35 @@ public class LevelDefinitions
                          [ [ Critter.TYPE_GIRL, 2 ] ]
                 ]
         },
+
+        // level 4
+        {   backgroundAssetName: "Level04_BG",
+            startingHealth: 10,
+            startingMoney: 10,
+            spawner1p: [ [ [ Critter.TYPE_SKUNK, 1 ] ],
+                         [ [ Critter.TYPE_SKUNK, 3 ] ],
+                         [ [ Critter.TYPE_BIRD, 1 ] ],
+                         [ [ Critter.TYPE_SKUNK, 5 ] ],
+                         [ [ Critter.TYPE_SQUIRREL, 1 ] ],
+                         [ [ Critter.TYPE_GIRL, 2 ] ],
+                         [ [ Critter.TYPE_SKUNK, 5 ] ],
+                         [ [ Critter.TYPE_BULLY, 1 ] ],
+                         [ [ Critter.TYPE_BIRD, 1 ] ],
+                         [ [ Critter.TYPE_SKATER, 1 ] ],
+                         [ [ Critter.TYPE_SKUNK, 7 ] ],
+                         [ [ Critter.TYPE_BULLY, 1 ], [ Critter.TYPE_SKATER, 1 ] ],
+                         [ [ Critter.TYPE_SQUIRREL, 3 ] ],
+                         [ [ Critter.TYPE_GIRL, 2 ] ],
+                         [ [ Critter.TYPE_SKUNK, 9 ] ],
+                         [ [ Critter.TYPE_BIRD, 1 ], [ Critter.TYPE_SQUIRREL, 2 ] ],
+                         [ [ Critter.TYPE_BULLY, 3 ] ],
+                ],
+            spawner2p: [ [ [ Critter.TYPE_BULLY, 1 ] ],
+                         [ [ Critter.TYPE_SKATER, 1 ] ],
+                         [ [ Critter.TYPE_GIRL, 2 ] ]
+                ]
+        },
+
         ];
 
     /** Retrieves level definition for the specified player count. */
