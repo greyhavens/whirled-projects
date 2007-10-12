@@ -133,8 +133,6 @@ public class Display extends Canvas
 
         _towerPanel.init(board, game);
         _statusBar.init(board);
-
-        _statusBar.reset(_board.getPlayerNames()[_board.getMyPlayerIndex()], _board);
     }
 
     public function handleUnload (event : Event) : void
@@ -154,6 +152,7 @@ public class Display extends Canvas
     {
         hideWaitingPopup();
         hideSummaryPopup();
+        _statusBar.score = 0;
     }
 
     public function gameEnded () :void
@@ -174,6 +173,7 @@ public class Display extends Canvas
         for (var ii :int = 0; ii < count; ii++) {
             (_scorePanels[ii] as ScorePanel).reset(ii, names[ii], _board, _controller);
         }
+        _statusBar.reset(_board.getPlayerNames()[_board.getMyPlayerIndex()], _board);
 
         addChild(new FloatingScore(Messages.get("round_start") + round,
                                    Board.BG_WIDTH / 2 - 50, Board.BG_HEIGHT / 2,

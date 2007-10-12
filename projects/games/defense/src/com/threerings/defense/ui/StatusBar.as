@@ -57,13 +57,13 @@ public class StatusBar extends ApplicationControlBar
         _healthIcon.toolTip = Messages.get("health_desc");
         _moneyIcon.source = board.level.loadMoneyIcon();
         _moneyIcon.toolTip = Messages.get("money_desc");
+        this.score = 0;
     }
     
     public function reset (name :String, board :Board) :void
     {
         this.playerName = name;
         this.health = board.getInitialHealth();
-        this.score = 0;
         this.money = board.getInitialMoney();
     }
     

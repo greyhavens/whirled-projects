@@ -8,14 +8,16 @@ import com.threerings.defense.tuning.UnitDefinitions;
     
 public class Missile extends Unit
 {
-    public static const TYPE_SQUIRT_GUN :int = 1;
-    public static const TYPE_SLINGSHOT :int = 2;
+    public static const TYPE_SQUIRT_GUN     :int = 1;
+    public static const TYPE_SLINGSHOT      :int = 2;
     public static const TYPE_PAPER_AIRPLANE :int = 3;
-    public static const TYPE_SPORTS_BALL :int = 4;
-    public static const TYPE_WATER_BALLOON :int = 5;
-    public static const TYPE_BOOMERANG :int = 6;
-    public static const TYPE_SPITBALL :int = 6;
-    
+    public static const TYPE_SPORTS_BALL    :int = 4;
+    public static const TYPE_WATER_BALLOON  :int = 5;
+    public static const TYPE_BOOMERANG      :int = 6;
+    public static const TYPE_SPITBALL       :int = 6;
+    public static const TYPE_FIREBALL       :int = 7;
+    public static const TYPE_SNOWBALL       :int = 8;
+    public static const TYPE_BEACHBALL      :int = 9;
 
     /** Missile type, one of the TYPE_* constants. */
     public var type :int;

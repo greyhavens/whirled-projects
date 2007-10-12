@@ -8,6 +8,7 @@ import flash.utils.getTimer; // function import
 import com.threerings.defense.spawners.AutoSpawner;
 import com.threerings.defense.spawners.PlayerSpawner;
 import com.threerings.defense.spawners.Spawner;
+import com.threerings.defense.tuning.LevelDefinitions;
 import com.whirled.FlowAwardedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.StateChangedEvent;
@@ -77,6 +78,9 @@ public class Game
     /** Handles the start of a new game. */
     public function gameStarted (event :StateChangedEvent) :void
     {
+        var firstTowerType :int = LevelDefinitions.getLevelTowers(
+            _board.getPlayerCount(), _board.level.number)[0].key;
+        setCursorType(firstTowerType);
         _display.gameStarted();
     }
 

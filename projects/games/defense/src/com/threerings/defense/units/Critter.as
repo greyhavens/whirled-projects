@@ -13,9 +13,9 @@ public class Critter extends Unit
     public static const TYPE_SQUIRREL :int = 4;
     public static const TYPE_SKATER :int = 5;
     public static const TYPE_SKUNK :int = 6;
-    
-    public static const ALL_TYPES :Array =
-        [ TYPE_BULLY, TYPE_GIRL, TYPE_BIRD, TYPE_SQUIRREL, TYPE_SKATER, TYPE_SKUNK ];
+    public static const TYPE_CAT :int = 7;
+    public static const TYPE_YETI :int = 8;
+    public static const TYPE_CRAB :int = 9;
     
     /** Target position on board. */
     public var target :Point;

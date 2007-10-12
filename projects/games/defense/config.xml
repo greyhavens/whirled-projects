@@ -2,7 +2,7 @@
 <game>
   <params>
     <choice ident="Board name" choices="1: Playground,2: Halloween,3: Winter,4: The Beach" 
-            start="2: Halloween" />
+            start="4: The Beach" />
 <!--            start="1: Playground" />  -->
 <!--            start="2: Halloween" /> -->
 <!--            start="3: Winter" /> -->

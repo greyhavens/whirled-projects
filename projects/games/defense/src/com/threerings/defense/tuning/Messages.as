@@ -31,7 +31,7 @@ public class Messages
         cost: "Cost: ",
         level: "Level ",
 
-        cost_desc: "This is how much money you have for new stations.",
+        money_desc: "This is how much money you have for new stations.",
         health_desc: "This is your tree house health level.",
         wait_desc: "Please wait for the other player to join. The game will begin in a moment.",
         wait_cancel: "Cancel and return to Whirled",

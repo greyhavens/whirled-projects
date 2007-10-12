@@ -18,13 +18,17 @@ public class UnitDefinitions
 {
     /** Asset name roots for each tower type. */
     public static const TOWER_ASSET_TYPES :Array =
-        [ { key: Tower.TYPE_SANDBOX,  value: "sandbox" },
-          { key: Tower.TYPE_BOULDER,  value: "boulder" },
-          { key: Tower.TYPE_WAGON,    value: "wagon" },
-          { key: Tower.TYPE_BOX,      value: "box" },
-          { key: Tower.TYPE_SHRUB,    value: "shrub" },
-          { key: Tower.TYPE_TRASHCAN, value: "trashcan" },
-          { key: Tower.TYPE_TREE,     value: "tree" },
+        [ { key: Tower.TYPE_SANDBOX,     value: "sandbox" },
+          { key: Tower.TYPE_BOULDER,     value: "boulder" },
+          { key: Tower.TYPE_WAGON,       value: "wagon" },
+          { key: Tower.TYPE_BOX,         value: "box" },
+          { key: Tower.TYPE_SHRUB,       value: "shrub" },
+          { key: Tower.TYPE_TRASHCAN,    value: "trashcan" },
+          { key: Tower.TYPE_TREE,        value: "tree" },
+          { key: Tower.TYPE_PUMPKIN,     value: "pumpkin" },
+          { key: Tower.TYPE_SNOWMAN,     value: "snowman" },
+          { key: Tower.TYPE_UMBRELLA,    value: "umbrella" },
+          { key: Tower.TYPE_SHRUBWINTER, value: "shrubwinter" },
             ];
 
     /** Asset suffixes for each tower state. */
@@ -59,6 +63,7 @@ public class UnitDefinitions
               pauseBetweenMissiles: 5,
               size: [1, 1]
             } },
+
           { key: Tower.TYPE_TRASHCAN, value:
             { name: "Trashcan",
               styleName: "trashButton",
@@ -69,6 +74,7 @@ public class UnitDefinitions
               pauseBetweenMissiles: 3,
               size: [1, 1]
             } },
+
           { key: Tower.TYPE_BOULDER, value:
             { name: "Boulder",
               styleName: "rockButton",
@@ -79,6 +85,7 @@ public class UnitDefinitions
               pauseBetweenMissiles: 2,
               size: [1, 1]
             } },
+
           { key: Tower.TYPE_SANDBOX, value:
             { name: "Sandbox",
               styleName: "sandboxButton",
@@ -89,6 +96,7 @@ public class UnitDefinitions
               pauseBetweenMissiles: 7,
               size: [2, 2]
             } },
+          
           { key: Tower.TYPE_WAGON, value:
             { name: "Wagon",
               styleName: "wagonButton",
@@ -99,6 +107,7 @@ public class UnitDefinitions
               pauseBetweenMissiles: 5,
               size: [2, 1]
             } },
+          
           { key: Tower.TYPE_TREE, value:
             { name: "Tree",
               styleName: "treeButton",
@@ -108,7 +117,54 @@ public class UnitDefinitions
               rangeMax: 7,
               pauseBetweenMissiles: 7,
               size: [2, 3]
-            } }
+            } },
+
+          // level 2 only
+          { key: Tower.TYPE_PUMPKIN, value:
+            { name: "Pumpkin",
+              styleName: "treeButton",
+              description: "High-damage station, inexpensive but slow to reload.",
+              cost: 4,
+              rangeMin: 0,
+              rangeMax: 3,
+              pauseBetweenMissiles: 7,
+              size: [1, 1]
+            } },
+
+          // level 3 only
+          { key: Tower.TYPE_SHRUBWINTER, value:
+            { name: "Winter Shrub",
+              styleName: "shrubButton",
+              description: "Basic station, with a range and fast reloads.",
+              cost: 4,
+              rangeMin: 0,
+              rangeMax: 3.5,
+              pauseBetweenMissiles: 3,
+              size: [1, 1]
+            } },
+
+          { key: Tower.TYPE_SNOWMAN, value:
+            { name: "Snowman",
+              styleName: "treeButton",
+              description: "Basic station, with a longer range and faster reloads.",
+              cost: 8,
+              rangeMin: 0,
+              rangeMax: 5,
+              pauseBetweenMissiles: 2,
+              size: [2, 1]
+            } },
+
+          // level 4 only
+          { key: Tower.TYPE_UMBRELLA, value:
+            { name: "Umbrella",
+              styleName: "treeButton",
+              description: "High-damage, inexpensive station, slow to reload.",
+              cost: 4,
+              rangeMin: 0,
+              rangeMax: 5,
+              pauseBetweenMissiles: 7,
+              size: [2, 3]
+            } },
             ];
 
     /** Tuning parameters for all missile types. */
@@ -150,18 +206,43 @@ public class UnitDefinitions
             { maxvel: 3,
               damage: 3,
               assets: [ "missile_airplane" ]
-            } }
+            } },
+
+          // level 2
+          { key: Missile.TYPE_FIREBALL, value:
+            { maxvel: 6,
+              damage: 3,
+              assets: [ "missile_fireball" ]
+            } },
+
+          // level 3
+          { key: Missile.TYPE_SNOWBALL, value:
+            { maxvel: 4,
+              damage: 1,
+              assets: [ "missile_snowball" ]
+            } },
+
+          // level 4
+          { key: Missile.TYPE_BEACHBALL, value:
+            { maxvel: 3,
+              damage: 3,
+              assets: [ "missile_snowball" ]
+            } },
             ];
     
     /** Specifies which tower produces which missile type. */
     public static const TOWER_MISSILE_MAP :Array =
-        [ { key: Tower.TYPE_SANDBOX,  value: Missile.TYPE_SLINGSHOT },
-          { key: Tower.TYPE_BOULDER,  value: Missile.TYPE_BOOMERANG },
-          { key: Tower.TYPE_WAGON,    value: Missile.TYPE_SQUIRT_GUN },
-          { key: Tower.TYPE_BOX,      value: Missile.TYPE_SPORTS_BALL },
-          { key: Tower.TYPE_SHRUB,    value: Missile.TYPE_WATER_BALLOON },
-          { key: Tower.TYPE_TRASHCAN, value: Missile.TYPE_SPITBALL },
-          { key: Tower.TYPE_TREE,     value: Missile.TYPE_PAPER_AIRPLANE }
+        [ { key: Tower.TYPE_SANDBOX,     value: Missile.TYPE_SLINGSHOT },
+          { key: Tower.TYPE_BOULDER,     value: Missile.TYPE_BOOMERANG },
+          { key: Tower.TYPE_WAGON,       value: Missile.TYPE_SQUIRT_GUN },
+          { key: Tower.TYPE_BOX,         value: Missile.TYPE_SPORTS_BALL },
+          { key: Tower.TYPE_SHRUB,       value: Missile.TYPE_WATER_BALLOON },
+          { key: Tower.TYPE_TRASHCAN,    value: Missile.TYPE_SPITBALL },
+          { key: Tower.TYPE_TREE,        value: Missile.TYPE_PAPER_AIRPLANE },
+          { key: Tower.TYPE_PUMPKIN,     value: Missile.TYPE_FIREBALL },
+          { key: Tower.TYPE_SHRUBWINTER, value: Missile.TYPE_SNOWBALL },
+          { key: Tower.TYPE_SNOWMAN,     value: Missile.TYPE_SNOWBALL },
+          { key: Tower.TYPE_UMBRELLA,    value: Missile.TYPE_BEACHBALL },
             ];
 
     /** Tuning parameters for enemies. */
@@ -203,6 +284,24 @@ public class UnitDefinitions
               maxspeed: 1,
               powerup: 1.5,
               points: 1 } },
+          { key: Critter.TYPE_CAT, value:
+            { name: "Cat",
+              maxhealth: 4,
+              maxspeed: 1.5,
+              powerup: 1.5,
+              points: 1 } },
+          { key: Critter.TYPE_YETI, value:
+            { name: "Yeti",
+              maxhealth: 10,
+              maxspeed: 1,
+              powerup: 2,
+              points: 2 } },
+          { key: Critter.TYPE_CRAB, value:
+            { name: "Crab",
+              maxhealth: 2,
+              maxspeed: 3,
+              powerup: 1.5,
+              points: 1 } },
             ];
     
     /** Asset names for enemies. */
@@ -213,6 +312,9 @@ public class UnitDefinitions
               { key: Critter.TYPE_SQUIRREL, value: "enemy_squirrel" },
               { key: Critter.TYPE_SKATER,   value: "enemy_skater" },
               { key: Critter.TYPE_SKUNK,    value: "enemy_skunk" },
+              { key: Critter.TYPE_CAT,      value: "enemy_cat" },
+              { key: Critter.TYPE_YETI,     value: "enemy_yeti" },
+              { key: Critter.TYPE_CRAB,     value: "enemy_crab" },
             ];
 
     /** Asset names for different enemy states. */
@@ -269,8 +371,8 @@ public class UnitDefinitions
     public static function getTowerAssetNamesForState (state :int) :Array // of String
     {
         // maybe memoize? but this should only get called once.
-        return Tower.ALL_TYPES.map(function (type :int, i :*, a :*) :* {
-                return getTowerAssetName(type, state);
+        return TOWER_DEFINITIONS.map(function (def :Object, i :*, a :*) :* {
+                return getTowerAssetName(def.key, state);
             });
     }
 

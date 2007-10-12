@@ -17,6 +17,7 @@ import mx.events.ItemClickEvent;
 import com.threerings.defense.Board;
 import com.threerings.defense.Display;
 import com.threerings.defense.Game;
+import com.threerings.defense.tuning.LevelDefinitions;
 import com.threerings.defense.tuning.Messages;
 import com.threerings.defense.tuning.UnitDefinitions;
 
@@ -61,8 +62,11 @@ public class TowerPanel extends TitleWindow
     {
         _board = board;
         _game = game;
-        
-        UnitDefinitions.TOWER_DEFINITIONS.forEach(function(def :Object, i :*, a :*) :void {
+
+        var towers :Array =
+            LevelDefinitions.getLevelTowers(_board.getPlayerCount(), _board.level.number);
+            
+        towers.forEach(function(def :Object, i :*, a :*) :void {
                 var b :Button = new Button();
                 b.styleName = def.value.styleName;
                 b.id = def.key;
