@@ -42,8 +42,8 @@ public class DictionaryAttack extends Sprite
         _content = new Content(loader);
         loader.load(ByteArray(new CONTENT()));
 
-        // make our background totally black
-        opaqueBackground = 0x000000;
+        // make our background totally black (actually 222222 as that's MSOY's black)
+        opaqueBackground = 0x222222;
         var bounds :Rectangle = _control.isConnected() ?
             _control.getStageBounds() : new Rectangle(0, 0, 1000, 550);
         graphics.drawRect(0, 0, bounds.width, bounds.height);
