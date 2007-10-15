@@ -559,17 +559,17 @@ public class Controller
                 winnerVal = result;
 
                 if (_inControl) {
-                    flowScores[index] += 0.75;
+                    flowScores[index] += 75;
                 }
             }
 
             // check to see if this player earned any flow for other participations
             if (_inControl) {
                 if (null != _ctrl.get("caption:" + playerId)) {
-                    flowScores[index] += 0.20;
+                    flowScores[index] += 20;
                 }
                 if (null != _ctrl.get("vote:" + playerId)) {
-                    flowScores[index] += 0.05;
+                    flowScores[index] += 5;
                 }
             }
         }
@@ -599,6 +599,8 @@ public class Controller
 
         // award flow and "end the game"
         if (_inControl) {
+            trace("ids        : " + ids);
+            trace("flowScores : " + flowScores);
             _ctrl.endGameWithScores(ids, flowScores, WhirledGameControl.TO_EACH_THEIR_OWN);
             _ctrl.restartGameIn(0);
         }
@@ -660,7 +662,7 @@ public class Controller
                     // if there are unpicked tied first places, they become the 2nd places..
                     secondPlaces = firstPlaces;
                 }
-                if (secondPlaces.length > 0) {
+                if (secondPlaces != null && secondPlaces.length > 0) {
                     pick = Math.round(Math.random() * secondPlaces.length);
                     _secondSizes = secondPlaces[pick];
                 }
@@ -790,6 +792,8 @@ public class Controller
         if (amount > 0) {
             _ctrl.localChat("You earned " + amount + " flow for your " +
                 "participation in this round.");
+        } else {
+            _ctrl.localChat("You got screwed out of flow.");
         }
     }
 
@@ -798,7 +802,6 @@ public class Controller
 //        trace("Game started : " + _myName + " : " + _inControl);
         if (_inControl) {
             var phase :String = _ctrl.get("phase") as String;
-            trace("And phase is " + phase);
             if (phase == "results") {
                 _ctrl.startTicker("tick", 1000);
             }
