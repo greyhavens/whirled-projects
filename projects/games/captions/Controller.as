@@ -31,10 +31,13 @@ import com.threerings.ezgame.StateChangedListener;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 
+import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
 
 /**
  * TODO:
+ * - checkboxes instead of radio for vote-for-next
+ * - show list of players
  * - some pizzaz, some fanfare around the results screen. Reveal the names last??
  *   Naw, revealing sucks. Just show.
  *
@@ -75,9 +78,12 @@ public class Controller
             return;
         }
 
+        _ctrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
+        _ctrl.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
         _ctrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
         _ctrl.addEventListener(MessageReceivedEvent.TYPE, handleMessageReceived);
         _ctrl.addEventListener(StateChangedEvent.CONTROL_CHANGED, checkControl);
+        _ctrl.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
 
         _myId = _ctrl.getMyId();
         _myName = _ctrl.getOccupantName(_myId);
@@ -287,7 +293,6 @@ public class Controller
 
         case "caption":
         case "vote":
-        case "results":
             _ctrl.startTicker("tick", 1000);
             break;
         }
@@ -400,6 +405,13 @@ public class Controller
             _flickr.addEventListener(FlickrResultEvent.PHOTOS_GET_SIZES, handlePhotoUrlKnown); 
         }
 
+// TODO: not sure if this is needed. Complexity!
+//        // if someone dropped out right after ending the game,
+//        // be sure to fix that.
+//        if (!_ctrl.isInPlay()) {
+//            _ctrl.restartGameIn(0);
+//        }
+
         checkPhaseControl();
     }
 
@@ -490,8 +502,6 @@ public class Controller
 
     protected function initResults (results :Array) :void
     {
-        var flowFactor :Number = 0;
-
         _ui.sideBox.removeAllChildren();
 
         var ii :int;
@@ -517,6 +527,12 @@ public class Controller
 
         var ids :Array = _ctrl.get("ids") as Array;
         var caps :Array = _ctrl.get("captions") as Array;
+        var flowScores :Array = [];
+        if (_inControl) {
+            for (ii = 0; ii < ids.length; ii++) {
+                flowScores[ii] = 0;
+            }
+        }
         var winnerVal :int = -1;
         for (ii = 0; ii < indexes.length; ii++) {
 
@@ -524,12 +540,13 @@ public class Controller
                 _ui.sideBox.addChild(new HSeparator());
             }
 
+            var playerId :int = int(ids[index]);
             var index :int = int(indexes[ii]);
             var result :int = int(results[index]);
 
             var pan :ResultsPanel = new ResultsPanel();
             _ui.sideBox.addChild(pan);
-            pan.nameLabel.text = String(_ctrl.get("name:" + ids[index]));
+            pan.nameLabel.text = String(_ctrl.get("name:" + playerId));
             pan.votesLabel.text = String(Math.abs(result));
             pan.captionText.htmlText = deHTML(String(caps[index]));
 
@@ -541,9 +558,18 @@ public class Controller
                 pan.statusLabel.text = "Winner!";
                 winnerVal = result;
 
-                if (ids[index] == _myId) {
-                    // TODO: make this better when the flow awarding API gets unfucked.
-                    flowFactor += 0.75;
+                if (_inControl) {
+                    flowScores[index] += 0.75;
+                }
+            }
+
+            // check to see if this player earned any flow for other participations
+            if (_inControl) {
+                if (null != _ctrl.get("caption:" + playerId)) {
+                    flowScores[index] += 0.20;
+                }
+                if (null != _ctrl.get("vote:" + playerId)) {
+                    flowScores[index] += 0.05;
                 }
             }
         }
@@ -571,17 +597,10 @@ public class Controller
 
         _ui.validateNow();
 
-        // see what other flow we get
-        if (null != _ctrl.get("caption:" + _myId)) {
-            flowFactor += 0.20;
-        }
-        if (null != _ctrl.get("vote:" + _myId)) {
-            flowFactor += 0.05;
-        }
-
-        if (flowFactor > 0) {
-            var earnedFlow :int = _ctrl.grantFlowAward(flowFactor * 100);
-            trace(_myName + " earned " + earnedFlow + " flow");
+        // award flow and "end the game"
+        if (_inControl) {
+            _ctrl.endGameWithScores(ids, flowScores, WhirledGameControl.TO_EACH_THEIR_OWN);
+            _ctrl.restartGameIn(0);
         }
     }
 
@@ -760,6 +779,35 @@ public class Controller
         // whoa!
 
         return null;
+    }
+
+    /**
+     * Handle the result of flow being awarded to us.
+     */
+    protected function handleFlowAwarded (event :FlowAwardedEvent) :void
+    {
+        var amount :int = event.amount;
+        if (amount > 0) {
+            _ctrl.localChat("You earned " + amount + " flow for your " +
+                "participation in this round.");
+        }
+    }
+
+    protected function handleGameStarted (event :StateChangedEvent) :void
+    {
+//        trace("Game started : " + _myName + " : " + _inControl);
+        if (_inControl) {
+            var phase :String = _ctrl.get("phase") as String;
+            trace("And phase is " + phase);
+            if (phase == "results") {
+                _ctrl.startTicker("tick", 1000);
+            }
+        }
+    }
+
+    protected function handleGameEnded (event :StateChangedEvent) :void
+    {
+//        trace("Game ended : " + _myName + " : " + _inControl);
     }
 
     protected function handleUnload (... ignored) :void
