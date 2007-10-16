@@ -55,8 +55,7 @@ public class Coin extends Pickup
     {
         super.didInit(state);
 
-        // initialize the position and goal
-        _view.setPosition(this, state.x, state.y);
+        // initialize the goal
         _goal = new Point(state.gx, state.gy);
     }
 

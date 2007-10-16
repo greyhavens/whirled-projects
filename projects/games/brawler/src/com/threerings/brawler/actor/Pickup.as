@@ -36,6 +36,9 @@ public class Pickup extends Actor
     {
         addChild(_clip = _ctrl.create(clipClass));
         _bounds = _clip.boundbox;
+
+        // initialize the position
+        _view.setPosition(this, state.x, state.y);
     }
 
     /**

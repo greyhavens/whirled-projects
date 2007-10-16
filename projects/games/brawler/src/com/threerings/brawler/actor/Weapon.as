@@ -36,8 +36,7 @@ public class Weapon extends Pickup
     {
         super.didInit(state);
 
-        // initialize the position and scale
-        _view.setPosition(this, state.x, state.y);
+        // initialize the scale
         _clip.scaleX = 1 / scaleX;
 
         // initialize the type and level
