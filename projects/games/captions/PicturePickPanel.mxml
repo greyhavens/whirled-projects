@@ -4,7 +4,7 @@
         <mx:Grid>
             <mx:GridRow>
                 <mx:GridItem colSpan="3">
-                    <mx:Label text="Choose your preference for the next photo:"/>
+                    <mx:Label text="Select photos you prefer to caption next:"/>
                 </mx:GridItem>
             </mx:GridRow>
             <mx:RadioButtonGroup id="pvote"/>
@@ -12,19 +12,19 @@
                 <mx:GridItem>
                     <mx:VBox horizontalAlign="center">
                         <mx:Image id="img0"/>
-                        <mx:RadioButton id="pvote0" groupName="pvote" label=" "/>
+                        <mx:CheckBox id="pvote0" label=" "/>
                     </mx:VBox>
                 </mx:GridItem>
                 <mx:GridItem>
                     <mx:VBox horizontalAlign="center">
                         <mx:Image id="img1"/>
-                        <mx:RadioButton id="pvote1" groupName="pvote" label=" "/>
+                        <mx:CheckBox id="pvote1" label=" "/>
                     </mx:VBox>
                 </mx:GridItem>
                 <mx:GridItem>
                     <mx:VBox horizontalAlign="center">
                         <mx:Image id="img2"/>
-                        <mx:RadioButton id="pvote2" groupName="pvote" label=" "/>
+                        <mx:CheckBox id="pvote2" label=" "/>
                     </mx:VBox>
                 </mx:GridItem>
             </mx:GridRow>
@@ -32,19 +32,19 @@
                 <mx:GridItem>
                     <mx:VBox horizontalAlign="center">
                         <mx:Image id="img3"/>
-                        <mx:RadioButton id="pvote3" groupName="pvote" label=" "/>
+                        <mx:CheckBox id="pvote3" label=" "/>
                     </mx:VBox>
                 </mx:GridItem>
                 <mx:GridItem>
                     <mx:VBox horizontalAlign="center">
                         <mx:Image id="img4"/>
-                        <mx:RadioButton id="pvote4" groupName="pvote" label=" "/>
+                        <mx:CheckBox id="pvote4" label=" "/>
                     </mx:VBox>
                 </mx:GridItem>
                 <mx:GridItem>
                     <mx:VBox horizontalAlign="center">
                         <mx:Image id="img5"/>
-                        <mx:RadioButton id="pvote5" groupName="pvote" label=" "/>
+                        <mx:CheckBox id="pvote5" label=" "/>
                     </mx:VBox>
                 </mx:GridItem>
             </mx:GridRow>

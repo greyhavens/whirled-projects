@@ -36,7 +36,6 @@ import com.whirled.WhirledGameControl;
 
 /**
  * TODO:
- * - checkboxes instead of radio for vote-for-next
  * - show list of players
  * - some pizzaz, some fanfare around the results screen. Reveal the names last??
  *   Naw, revealing sucks. Just show.
@@ -451,8 +450,29 @@ public class Controller
 
     protected function handlePhotoVoteCast (event :Event) :void
     {
-        var voteGroup :RadioButtonGroup = (event.currentTarget as RadioButtonGroup);
-        _ctrl.set("pvote:" + _myId, voteGroup.selectedValue);
+        var box :CheckBox = (event.currentTarget as CheckBox);
+        var value :int = int(box.data);
+        var selected :Boolean = box.selected;
+        var votes :Array = _ctrl.get("pvote:" + _myId) as Array;
+        if (votes == null) {
+            if (selected) {
+                votes = [ value ];
+            }
+
+        } else {
+            var index :int = votes.indexOf(value);
+            if (selected && index == -1) {
+                votes.push(value);
+
+            } else if (!selected && index != -1) {
+                votes.splice(index, 1);
+                if (votes.length == 0) {
+                    votes = null;
+                }
+            }
+        }
+
+        _ctrl.setImmediate("pvote:" + _myId, votes);
     }
 
     protected function initCaptioning () :void
@@ -582,10 +602,10 @@ public class Controller
             for (ii = 0; ii < 6; ii++) {
                 if (nextUrls[ii] != null) {
                     nextPan["img" + ii].load(nextUrls[ii]);
-                    nextPan["pvote" + ii].value = ii;
+                    nextPan["pvote" + ii].data = ii;
+                    nextPan["pvote" + ii].addEventListener(Event.CHANGE, handlePhotoVoteCast);
                 }
             }
-            nextPan.pvote.addEventListener(Event.CHANGE, handlePhotoVoteCast);
         }
 
         _ui.validateNow();
@@ -606,6 +626,8 @@ public class Controller
                 scoreIds.push(parseInt(playerId));
                 scores.push(int(flowScores[playerId]));
             }
+//            trace("ids    : " + scoreIds);
+//            trace("scores : " + scores);
             _ctrl.endGameWithScores(scoreIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
             _ctrl.restartGameIn(0);
         }
@@ -631,8 +653,10 @@ public class Controller
             // check to see if we already have some votes in for any of the preview pics
             var votes :Array = [0, 0, 0, 0, 0, 0];
             for each (var prop :String in _ctrl.getPropertyNames("pvote:")) {
-                var dex :int = _ctrl.get(prop) as int;
-                votes[dex]++;
+                var dexes :Array = _ctrl.get(prop) as Array;
+                for each (var dex :int in dexes) {
+                    votes[dex]++;
+                }
             }
             var firstPlaces :Array = [];
             var secondPlaces :Array = null;
