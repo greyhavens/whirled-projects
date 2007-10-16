@@ -57,13 +57,15 @@ import com.whirled.WhirledGameControl;
  */
 public class Controller
 {
+    /** Durations of game phases, in seconds. */
     public static const CAPTION_DURATION :int = 45;
     public static const VOTE_DURATION :int = 30;
     public static const RESULTS_DURATION :int = 15;
 
-    public static const CAPTION_FLOW :int = 10; // I'm worried people will just enter "asdasd"
-    public static const VOTE_FLOW :int = 30;
-    public static const WINNER_FLOW :int = 80;
+    /** Scoring values for various actions taken during a game. */
+    public static const CAPTION_SCORE :int = 30; // I'm worried people will just enter "asdasd"
+    public static const VOTE_SCORE :int = 20;
+    public static const WINNER_SCORE :int = 50;
 
     public function init (ui :Caption) :void
     {
@@ -527,12 +529,9 @@ public class Controller
 
         var ids :Array = _ctrl.get("ids") as Array;
         var caps :Array = _ctrl.get("captions") as Array;
-        var flowScores :Array = [];
-        if (_inControl) {
-            for (ii = 0; ii < ids.length; ii++) {
-                flowScores[ii] = 0;
-            }
-        }
+
+        var flowScores :Object = {};
+        var playerId :String;
         var winnerVal :int = -1;
         for (ii = 0; ii < indexes.length; ii++) {
 
@@ -540,9 +539,13 @@ public class Controller
                 _ui.sideBox.addChild(new HSeparator());
             }
 
-            var playerId :int = int(ids[index]);
             var index :int = int(indexes[ii]);
             var result :int = int(results[index]);
+            playerId = String(ids[index]);
+
+            if (_inControl) {
+                flowScores[playerId] = CAPTION_SCORE;
+            }
 
             var pan :ResultsPanel = new ResultsPanel();
             _ui.sideBox.addChild(pan);
@@ -559,17 +562,7 @@ public class Controller
                 winnerVal = result;
 
                 if (_inControl) {
-                    flowScores[index] += 75;
-                }
-            }
-
-            // check to see if this player earned any flow for other participations
-            if (_inControl) {
-                if (null != _ctrl.get("caption:" + playerId)) {
-                    flowScores[index] += 20;
-                }
-                if (null != _ctrl.get("vote:" + playerId)) {
-                    flowScores[index] += 5;
+                    flowScores[playerId] = WINNER_SCORE + int(flowScores[playerId]);
                 }
             }
         }
@@ -597,11 +590,23 @@ public class Controller
 
         _ui.validateNow();
 
-        // award flow and "end the game"
+        // if we're in control, do score awarding for all players (ending the "game" (round))
         if (_inControl) {
-            trace("ids        : " + ids);
-            trace("flowScores : " + flowScores);
-            _ctrl.endGameWithScores(ids, flowScores, WhirledGameControl.TO_EACH_THEIR_OWN);
+            // give points just for voting (people may have voted but not be in the other array)
+            var props :Array = _ctrl.getPropertyNames("vote:");
+            for each (var prop :String in props) {
+                playerId = prop.substring(5);
+                flowScores[playerId] = VOTE_SCORE + int(flowScores[playerId]);
+            }
+
+            // now turn it into two parallel arrays for reporting to the game
+            var scoreIds :Array = [];
+            var scores :Array = [];
+            for (playerId in flowScores) {
+                scoreIds.push(parseInt(playerId));
+                scores.push(int(flowScores[playerId]));
+            }
+            _ctrl.endGameWithScores(scoreIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
             _ctrl.restartGameIn(0);
         }
     }
