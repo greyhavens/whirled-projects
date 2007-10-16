@@ -34,11 +34,11 @@ public class Pickup extends Actor
     // documentation inherited
     override protected function didInit (state :Object) :void
     {
+        super.didInit(state);
+
+        // create the clip
         addChild(_clip = _ctrl.create(clipClass));
         _bounds = _clip.boundbox;
-
-        // initialize the position
-        _view.setPosition(this, state.x, state.y);
     }
 
     /**
