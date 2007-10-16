@@ -38,6 +38,7 @@ public class Weapon extends Pickup
 
         // initialize the scale
         _clip.scaleX = 1 / scaleX;
+		_clip.scaleY = 1 / scaleX;
 
         // initialize the type and level
         _weapon = state.weapon;

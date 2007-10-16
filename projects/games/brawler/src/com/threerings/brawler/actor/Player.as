@@ -159,7 +159,7 @@ public class Player extends Pawn
             // use and adjust the player's attack level (primary attacks increment it;
             // secondary attacks bring it back to zero)
             level = _attackLevel;
-            _attackLevel = secondary ? 0 : Math.min(_attackLevel + 1, Attack.MAX_LEVEL);
+            _attackLevel = secondary ? 0 : ((_attackLevel + 1) % (Attack.MAX_LEVEL + 1));
             _attackResetCountdown = ATTACK_RESET_INTERVAL;
 
             // attacking delays the health tick
@@ -361,7 +361,7 @@ public class Player extends Pawn
         }
         // drop the current weapon, if any (and it's not broken)
         if (_weapon != Weapon.FISTS && _experience > 0) {
-            _ctrl.createPickup(Weapon.createState(x, y, _weapon, this.level));
+            _ctrl.createPickup(Weapon.createState(x+80, y+50, _weapon, this.level));
         }
         _experience = exp;
         this.weapon = weapon;
@@ -487,6 +487,10 @@ public class Player extends Pawn
         invulnerableCountdown = RESPAWN_INVULNERABILITY;
         _energy = 100;
         _depleted = false;
+		if (amOwner) {
+            setWeapon(1,1);
+			_experience = 100;
+        }
         super.respawn(); // publishes the state
     }
 

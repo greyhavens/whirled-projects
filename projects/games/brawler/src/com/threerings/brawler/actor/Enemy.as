@@ -548,17 +548,17 @@ public class Enemy extends Pawn
     protected static const COIN_DROP_PROBABILITY :Number = 0.25;
 
     /** The chance that the enemy will drop a health pickup when it dies. */
-    protected static const HEALTH_DROP_PROBABILITY :Number = 0.15;
+    protected static const HEALTH_DROP_PROBABILITY :Number = 1.0;
 
     /** The chance that the enemy will drop a weapon pickup when it dies. */
-    protected static const WEAPON_DROP_PROBABILITY :Number = 0.35;
+    protected static const WEAPON_DROP_PROBABILITY :Number = 0.50;
 
     /** The weapon types carried by each enemy variant. */
     protected static const WEAPON_TYPES :Array =
         [ Weapon.SWORD, Weapon.BOW, Weapon.HAMMER, -1, -1 ];
 
     /** The probabilities for each weapon level. */
-    protected static const WEAPON_LEVEL_PROBABILITIES :Array = [ 0.70, 0.25, 0.05 ];
+    protected static const WEAPON_LEVEL_PROBABILITIES :Array = [ 0.80, 0.15, 0.05 ];
 
     /** Hide the health bar when the local player is this far away from the enemy. */
     protected static const HIDE_HEALTH_DISTANCE :Number = 210;

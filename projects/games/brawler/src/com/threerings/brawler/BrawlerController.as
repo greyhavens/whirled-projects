@@ -6,9 +6,11 @@ import flash.display.MovieClip;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+import flash.events.*;
 import flash.geom.Point;
 import flash.utils.ByteArray;
 import flash.utils.getTimer;
+import flash.utils.Timer;
 
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
@@ -498,18 +500,21 @@ public class BrawlerController extends Controller
             _econfigs.push(configs.getChildAt(ii));
         }
         createEnemies();
-
+		
+		_clickTimer.addEventListener( TimerEvent.TIMER, onClickTimer);
+		_clickTimer.start();
+		
         if (amPlaying) {
             // listen for mouse clicks on the ground
             _view.ground.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
-
+			
             // listen for keyboard events through the blocker
             _blocker = new KeyRepeatBlocker(_control);
             _blocker.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
             _blocker.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
         }
     }
-
+	
     /**
      * Creates and maps a set of enemies for the current room and wave.
      */
@@ -565,6 +570,13 @@ public class BrawlerController extends Controller
         if (_self.locationEquals(x, y)) {
             return;
         }
+		// Double-click test
+		if(_lastClick <= 400){
+			_sprinting = true;
+		}else{
+			_sprinting = false;
+		}
+		_lastClick = 0;
         _view.showGoal(x, y);
         _self.move(x, y, _sprinting ? Pawn.SPRINT : Pawn.WALK);
     }
@@ -582,7 +594,7 @@ public class BrawlerController extends Controller
         } else if (ArrayUtil.contains(BLOCK_CODES, code)) {
             _self.blocking = true;
         } else if (ArrayUtil.contains(SPRINT_CODES, code)) {
-            _sprinting = true;
+            //_sprinting = true;
         }
     }
 
@@ -595,7 +607,7 @@ public class BrawlerController extends Controller
         if (ArrayUtil.contains(BLOCK_CODES, code)) {
             _self.blocking = false;
         } else if (ArrayUtil.contains(SPRINT_CODES, code)) {
-            _sprinting = false;
+            //_sprinting = false;
         }
     }
 
@@ -609,6 +621,10 @@ public class BrawlerController extends Controller
                 return element > 0;
             });
     }
+	
+	private function onClickTimer( e: Event):void{
+		_lastClick += 100;
+	}
 
     /** The SWF loader. */
     protected var _loader :EmbeddedSwfLoader;
@@ -660,6 +676,12 @@ public class BrawlerController extends Controller
 
     /** Whether or not we should sprint, if possible, when moving. */
     protected var _sprinting :Boolean = false;
+	
+	/** Time since last click. */
+    protected var _lastClick :Number = 0;
+	
+	/** Time since last click. */
+    protected var _clickTimer :Timer = new Timer(100);
 
     /** The enemy configurations. */
     protected var _econfigs :Array = new Array();
