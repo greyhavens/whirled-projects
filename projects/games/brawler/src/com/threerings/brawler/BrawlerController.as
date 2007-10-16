@@ -273,7 +273,7 @@ public class BrawlerController extends Controller
         if (enemy.finalBoss) {
             _bossPresent = false;
             for each (var actor :Actor in _actors) {
-                if (actor.amOwner && actor is Enemy) {
+                if (actor.amOwner && actor is Enemy && actor != enemy) {
                     actor.destroy();
                 }
             }
