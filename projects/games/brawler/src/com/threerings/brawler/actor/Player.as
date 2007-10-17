@@ -159,7 +159,7 @@ public class Player extends Pawn
             // use and adjust the player's attack level (primary attacks increment it;
             // secondary attacks bring it back to zero)
             level = _attackLevel;
-            _attackLevel = secondary ? 0 : ((_attackLevel + 1) % (Attack.MAX_LEVEL + 1));
+            _attackLevel = secondary ? 0 : (_attackLevel + 1) % (Attack.MAX_LEVEL + 1);
             _attackResetCountdown = ATTACK_RESET_INTERVAL;
 
             // attacking delays the health tick

@@ -500,21 +500,21 @@ public class BrawlerController extends Controller
             _econfigs.push(configs.getChildAt(ii));
         }
         createEnemies();
-		
+
 		_clickTimer.addEventListener( TimerEvent.TIMER, onClickTimer);
 		_clickTimer.start();
-		
+
         if (amPlaying) {
             // listen for mouse clicks on the ground
             _view.ground.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
-			
+
             // listen for keyboard events through the blocker
             _blocker = new KeyRepeatBlocker(_control);
             _blocker.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
             _blocker.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
         }
     }
-	
+
     /**
      * Creates and maps a set of enemies for the current room and wave.
      */
@@ -621,7 +621,7 @@ public class BrawlerController extends Controller
                 return element > 0;
             });
     }
-	
+
 	private function onClickTimer( e: Event):void{
 		_lastClick += 100;
 	}
@@ -676,10 +676,10 @@ public class BrawlerController extends Controller
 
     /** Whether or not we should sprint, if possible, when moving. */
     protected var _sprinting :Boolean = false;
-	
+
 	/** Time since last click. */
     protected var _lastClick :Number = 0;
-	
+
 	/** Time since last click. */
     protected var _clickTimer :Timer = new Timer(100);
 

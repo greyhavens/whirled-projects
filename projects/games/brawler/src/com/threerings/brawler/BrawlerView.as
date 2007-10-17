@@ -356,7 +356,9 @@ public class BrawlerView extends Sprite
 
         // notify the actors
         for each (var actor :Actor in _actors) {
-            actor.enterFrame(elapsed);
+            if (actor.parent != null) {
+                actor.enterFrame(elapsed);
+            }
         }
 
         // update the camera position

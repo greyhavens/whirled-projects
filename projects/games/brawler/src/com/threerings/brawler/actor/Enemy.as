@@ -76,7 +76,7 @@ public class Enemy extends Pawn
     /**
      * Initiates an attack.
      */
-    public function attack (dir :int = -1) :void
+    public function attack (level :int = -1, dir :int = -1) :void
     {
         if (amOwner) {
             // make sure we can attack
@@ -86,18 +86,22 @@ public class Enemy extends Pawn
             // use the current orientation
             dir = _character.scaleX;
 
+            // use and update the attack level
+            level = _attackLevel;
+            _attackLevel = (_attackLevel + 1) % (Attack.MAX_LEVEL + 1);
+
             // push out the attack countdown
             _attackCountdown = _cooldown;
         }
 
-        // play the attack animation
-        setAction("attack", "punch");
+        // play the attack animation (for the boss, append the attack level)
+        setAction("attack", "punch" + (finalBoss ? (level + 1) : ""));
         orient(dir);
 
         if (amOwner) {
             // stop the pawn and announce the attack
             stop();
-            send({ type: ATTACK, dir: dir });
+            send({ type: ATTACK, level: level, dir: dir });
         }
     }
 
@@ -505,6 +509,9 @@ public class Enemy extends Pawn
 
     /** The enemy's current target. */
     protected var _target :Player;
+
+    /** The enemy's attack level. */
+    protected var _attackLevel :int = 0;
 
     /** The countdown until the enemy can attack. */
     protected var _attackCountdown :Number;
