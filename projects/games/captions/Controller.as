@@ -34,6 +34,9 @@ import com.threerings.ezgame.MessageReceivedListener;
 import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
 
+import com.threerings.ezgame.PlayersFlexDisplay;
+import com.threerings.ezgame.ScorePlayersFlexDisplay;
+
 /**
  * TODO:
  * - show list of players
@@ -57,14 +60,17 @@ import com.whirled.WhirledGameControl;
 public class Controller
 {
     /** Durations of game phases, in seconds. */
-    public static const CAPTION_DURATION :int = 45;
-    public static const VOTE_DURATION :int = 30;
+    public static const CAPTION_DURATION :int = 20;//45;
+    public static const VOTE_DURATION :int = 10;//30;
     public static const RESULTS_DURATION :int = 15;
 
     /** Scoring values for various actions taken during a game. */
     public static const CAPTION_SCORE :int = 30; // I'm worried people will just enter "asdasd"
     public static const VOTE_SCORE :int = 20;
     public static const WINNER_SCORE :int = 50;
+
+    /** The number of rounds to track votes for the score display. */
+    public static const ROUNDS_USED_FOR_SCORES :int = 10;
 
     public function init (ui :Caption) :void
     {
@@ -91,6 +97,10 @@ public class Controller
 
         _timer = new Timer(500);
         _timer.addEventListener(TimerEvent.TIMER, handleCaptionTimer);
+
+        _scoreDisplay = new ScorePlayersFlexDisplay();
+        _scoreDisplay.configure(_ctrl);
+        _ui.players.addChild(_scoreDisplay);
 
         checkControl();
         checkPhase();
@@ -286,6 +296,7 @@ public class Controller
         case null:
             // start the game
             _ctrl.setImmediate("phase", "start");
+            _ctrl.setImmediate("round", 1);
             break;
 
         case "start":
@@ -358,6 +369,7 @@ public class Controller
             results[ii] = 0;
             didVote[ii] = false;
         }
+        var scores :Object = {};
         var props :Array = _ctrl.getPropertyNames("vote:");
         for each (var prop :String in props) {
             var voterId :int = parseInt(prop.substring(5));
@@ -365,8 +377,6 @@ public class Controller
 
             var voterIndex :int = ids.indexOf(voterId);
             var voteeIndex :int = ids.indexOf(voteeId);
-
-            // TODO: do we want to count votes from players that didn't submit a caption? Sure...
 
             if (voteeIndex == -1) {
                 // this is a miscast vote?!
@@ -376,6 +386,8 @@ public class Controller
             if (voterIndex != -1) {
                 didVote[voterIndex] = true;
             }
+
+            scores[voteeId] = int(scores[voteeId]) + 1;
         }
 
         // now one more pass through results, flipping any disqualified votes to negative
@@ -388,6 +400,16 @@ public class Controller
             }
         }
 
+        // update the round and round info
+        var roundId :int = _ctrl.get("round") as int;
+        _ctrl.set("scores-" + roundId, scores);
+        var oldRoundId :int = roundId - ROUNDS_USED_FOR_SCORES;
+        if (oldRoundId > 0) {
+            _ctrl.set("scores-" + oldRoundId, null);
+        }
+        _ctrl.set("round", roundId + 1);
+
+        // and trigger the results
         _ctrl.set("results", results);
     }
 
@@ -608,6 +630,8 @@ public class Controller
             }
         }
 
+        updateScoreDisplay();
+
         _ui.validateNow();
 
         // if we're in control, do score awarding for all players (ending the "game" (round))
@@ -631,6 +655,19 @@ public class Controller
             _ctrl.endGameWithScores(scoreIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
             _ctrl.restartGameIn(0);
         }
+    }
+
+    protected function updateScoreDisplay () :void
+    {
+        var scores :Object = {};
+        for each (var prop :String in _ctrl.getPropertyNames("scores-")) {
+            var roundScores :Object = _ctrl.get(prop);
+            for (var playerId :String in roundScores) {
+                scores[playerId] = int(scores[playerId]) + int(roundScores[playerId]);
+            }
+        }
+
+        _scoreDisplay.setScores(scores);
     }
 
     protected function deHTML (s :String) :String
@@ -861,6 +898,8 @@ public class Controller
 
     /** Our user interface class. */
     protected var _ui :Caption;
+
+    protected var _scoreDisplay :ScorePlayersFlexDisplay;
 
     protected var _captionInput :TextInput;
 

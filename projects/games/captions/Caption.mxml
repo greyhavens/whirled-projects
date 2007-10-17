@@ -12,6 +12,7 @@
         </mx:HBox>
         <mx:Text id="phaseText" width="100%"/>
         <mx:VBox width="100%" height="420">
+            <mx:VBox id="players" width="100%"/>
             <mx:Grid id="sideBox" width="100%"/>
         </mx:VBox>
     </mx:VBox>
