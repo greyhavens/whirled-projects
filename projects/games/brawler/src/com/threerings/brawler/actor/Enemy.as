@@ -574,7 +574,7 @@ public class Enemy extends Pawn
     protected static const COIN_DROP_PROBABILITY :Number = 0.25;
 
     /** The chance that the enemy will drop a health pickup when it dies. */
-    protected static const HEALTH_DROP_PROBABILITY :Number = 1.0;
+    protected static const HEALTH_DROP_PROBABILITY :Number = 0.10;
 
     /** The chance that the enemy will drop a weapon pickup when it dies. */
     protected static const WEAPON_DROP_PROBABILITY :Number = 0.50;
