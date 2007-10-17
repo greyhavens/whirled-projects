@@ -367,9 +367,10 @@ public class BrawlerController extends Controller
                     destroyActor(actor);
                 }
             } else if (actor == null) {
-                // create the actor
-                createActor(event.name, event.newValue);
-
+                // create the actor (unless it's an old state that we generated)
+                if (!StringUtil.startsWith(event.name, _actorNamePrefix)) {
+                    createActor(event.name, event.newValue);
+                }
             } else if (!actor.amOwner) {
                 // update the actor state
                 actor.decode(event.newValue);
@@ -461,6 +462,9 @@ public class BrawlerController extends Controller
      */
     protected function finishInit () :void
     {
+        // create our actor name prefix
+        _actorNamePrefix = "actor" + _control.getMyId() + "_";
+
         // find existing actors, start listening for updates
         var names :Array = _control.getPropertyNames("actor");
         for each (var name :String in names) {
@@ -555,7 +559,7 @@ public class BrawlerController extends Controller
      */
     protected function createActorName () :String
     {
-        return "actor" + _control.getMyId() + "_" + (++_lastActorId);
+        return _actorNamePrefix + (++_lastActorId);
     }
 
     /**
@@ -649,6 +653,9 @@ public class BrawlerController extends Controller
 
     /** The last actor id assigned. */
     protected var _lastActorId :int = 0;
+
+    /** The prefix we use for the names of all actors we create. */
+    protected var _actorNamePrefix :String;
 
     /** Our own actor. */
     protected var _self :Player;
