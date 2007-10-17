@@ -173,7 +173,7 @@ public class StarFight extends Sprite
 
         // Set up ships for all ships already in the world.
         if (_gameCtrl.isConnected()) {
-            var occupants :Array = _gameCtrl.getOccupants();
+            var occupants :Array = _gameCtrl.getOccupantIds();
             for (var ii :int = 0; ii < occupants.length; ii++) {
                 // Skip ownship.
                 if (occupants[ii] == _myId) {

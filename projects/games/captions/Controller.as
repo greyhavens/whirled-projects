@@ -139,7 +139,7 @@ public class Controller
                 var skipVotes :int = _ctrl.getPropertyNames("skip:").length;
 
                 // if more than half the people voted to skip, then skip
-                if (skipVotes > (_ctrl.getOccupants().length/2)) {
+                if (skipVotes > (_ctrl.getOccupantIds().length/2)) {
                     if (skipVotes > 1) {
                         _ctrl.sendChat("" + skipVotes + " players have voted to skip the picture.");
                     }
@@ -370,7 +370,7 @@ public class Controller
             didVote[ii] = false;
         }
         var scores :Object = {};
-        for each (var playerId :int in _ctrl.getOccupants()) {
+        for each (var playerId :int in _ctrl.getOccupantIds()) {
             scores[playerId] = 0;
         }
         var props :Array = _ctrl.getPropertyNames("vote:");

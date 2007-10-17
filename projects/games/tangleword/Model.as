@@ -58,7 +58,7 @@ public class Model
 
         var playerIds :Array = [];
         var scores :Array = [];
-        for each (var playerId :int in _gameCtrl.getOccupants()) {
+        for each (var playerId :int in _gameCtrl.getOccupantIds()) {
             var score :int = _scoreboard.getRoundScore(_gameCtrl.getOccupantName(playerId));
             if (score > 0) {
                 playerIds.push(playerId);

@@ -52,7 +52,7 @@ public class Gotcha extends Sprite
             return; // only "it" tags others
         }
         var ownLoc :Array = _gameCtrl.getOccupantLocation(myId);
-        var occIds :Array = _gameCtrl.getOccupants();
+        var occIds :Array = _gameCtrl.getOccupantIds();
         for each (var otherId :int in occIds) {
             if (otherId == myId) {
                 continue;
