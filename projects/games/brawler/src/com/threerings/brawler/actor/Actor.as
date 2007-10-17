@@ -184,13 +184,10 @@ public class Actor extends Sprite
 
     /**
      * Sends a message to the remote instances of this actor.
-     *
-     * @param timeout if not equal to -1, the time after which the message will be discard if it
-     * is throttled.
      */
-    protected function send (message :Object, timeout :int = NORMAL_PRIORITY_TIMEOUT) :void
+    protected function send (message :Object) :void
     {
-        // send the message through the throttle with a timeout
+        // send the message through the throttle
         if (_destroyed) {
             return;
         }
@@ -225,15 +222,6 @@ public class Actor extends Sprite
 
     /** Set when the actor is destroyed to make sure that no further updates are transmitted. */
     protected var _destroyed :Boolean = false;
-
-    /** The timeout for low priority messages (ms). */
-    protected static const LOW_PRIORITY_TIMEOUT :int = 2500;
-
-    /** The timeout for normal priority messages. */
-    protected static const NORMAL_PRIORITY_TIMEOUT :int = 5000;
-
-    /** The timeout for high priority messages. */
-    protected static const HIGH_PRIORITY_TIMEOUT :int = -1;
 
     /** Our threshold for coordinate equality. */
     protected static const EPSILON :Number = 0.5;

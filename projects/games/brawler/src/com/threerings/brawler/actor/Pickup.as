@@ -77,7 +77,7 @@ public class Pickup extends Actor
             award();
         }
         if (amOwner) {
-            send({ player: player.name }, HIGH_PRIORITY_TIMEOUT);
+            send({ player: player.name });
             destroy();
         }
         visible = false;
