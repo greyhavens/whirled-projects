@@ -25,6 +25,7 @@ public class AnimationManager
         if (oanim == null) {
             clip.addEventListener(ANIMATION_COMPLETE, handleAnimationComplete);
         } else if (oanim.callback != null) {
+            delete _anims[clip]; // prevent stack overflow if the callback tries to play a clip
             oanim.callback();
         }
         _anims[clip] = new Animation(clip, callback);

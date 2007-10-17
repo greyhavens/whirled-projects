@@ -119,7 +119,8 @@ public class Enemy extends Pawn
     {
         super.wasDestroyed();
         _ctrl.enemyWasDestroyed(this);
-        if (_character.visible) {
+        if (!dead) {
+            // strangely enough, the ghost appears when we're *not* dead
             _view.addTransient(_ctrl.create("Ghost"), x, y, true);
         }
     }
@@ -142,7 +143,7 @@ public class Enemy extends Pawn
         _ctrl.incrementStat("enemyDamage", damage);
         if (amOwner && attacker is Player) {
             // target the attacker
-            _target = attacker as Player;
+            target = attacker as Player;
         }
     }
 
@@ -162,7 +163,7 @@ public class Enemy extends Pawn
     override public function receive (message :Object) :void
     {
         if (message.type == ATTACK) {
-            attack(message.dir);
+            attack(message.level, message.dir);
         } else {
             super.receive(message);
         }
@@ -248,7 +249,7 @@ public class Enemy extends Pawn
                     cdist = dist;
                 }
             }
-            if ((_target = cplayer) != null) {
+            if ((target = cplayer) != null) {
                 return; // approach target next go-round
             }
         }
@@ -296,6 +297,9 @@ public class Enemy extends Pawn
 
         // initialize the attack countdown
         _attackCountdown = _cooldown;
+
+        // play the spawn animation
+        setAction("spawn");
     }
 
     /**

@@ -277,9 +277,15 @@ public class Player extends Pawn
 
         // check for collision of damage box with enemies when attacking
         hitTestEnemies();
+
+        // if he's on the door, notify the controller
+        if (!dead && _view.door.hitTestObject(_bounds)) {
+            _ctrl.playerOnDoor();
+        }
         if (!amOwner) {
             return;
         }
+
         // respawn if enough time has passed since death
         if (dead) {
             if (_deathClock > RESPAWN_INTERVAL) {
@@ -330,10 +336,6 @@ public class Player extends Pawn
         // if he isn't moving, have him face the cursor
         if (_action == "idle") {
             face(_view.cursor.x);
-        }
-        // if he's on the door, notify the controller
-        if (_view.door.hitTestObject(_bounds)) {
-            _ctrl.playerOnDoor();
         }
     }
 

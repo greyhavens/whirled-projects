@@ -57,15 +57,17 @@ public class BrawlerController extends Controller
         // create the view
         _view = new BrawlerView(disp, this);
 
-        // create the SWF loader and use it to load the raw data
+        // create the SWF loader and use it to load the raw data, one swf at a time
         _loader = new EmbeddedSwfLoader();
+        var idx :int = 0;
         _loader.addEventListener(Event.COMPLETE, function (event :Event) :void {
-            init();
+            if (++idx == INIT_SWFS.length) {
+                init();
+            } else {
+                _loader.load(new INIT_SWFS[idx] as ByteArray);
+            }
         });
-        _loader.load(new RAW_SWF() as ByteArray);
-		_loader.load(new BGS_SWF() as ByteArray);
-		_loader.load(new PC_SWF() as ByteArray);
-		_loader.load(new MOBS_SWF() as ByteArray);
+        _loader.load(new INIT_SWFS[0] as ByteArray);
     }
 
     /**
@@ -278,11 +280,11 @@ public class BrawlerController extends Controller
                 }
             }
         }
-        if (--_enemies == 0) {
+        if (--_enemies == 0 && _control.amInControl()) {
             // proceed to the next wave
-            var owave :int = _wave, nwave :int = _wave + 1;
+            var nwave :int = _wave + 1;
             _throttle.send(function () :void {
-                _control.testAndSet("wave", nwave, owave);
+                _control.set("wave", nwave);
             });
         }
     }
@@ -296,25 +298,23 @@ public class BrawlerController extends Controller
     }
 
     /**
-     * Called by the local {@link Player} to notify the controller that we're standing on the
-     * door to the next room.
+     * Called to notify the controller that we're standing on the door to the next room.
      */
     public function playerOnDoor () :void
     {
         // wait until we're clear to proceed
-        if (!_clear) {
+        if (!(_clear && _control.amInControl())) {
             return;
         }
 
         // shrink the door to prevent further notifications
         _view.door.height = 0;
 
-        // otherwise, advance to the next room
-        var oroom :int = _room, nroom :int = _room + 1;
-        var owave :int = _wave;
+        // advance to the next room
+        var nroom :int = _room + 1;
         _throttle.send(function () :void {
-            _control.testAndSet("wave", 1, owave);
-            _control.testAndSet("room", nroom, oroom);
+            _control.set("wave", 1);
+            _control.set("room", nroom);
         });
     }
 
@@ -704,6 +704,9 @@ public class BrawlerController extends Controller
     protected static const PC_SWF :Class;
 	[Embed(source="../../../../rsrc/mobs.swf", mimeType="application/octet-stream")]
     protected static const MOBS_SWF :Class;
+
+    /** The SWFs to load on initialization. */
+    protected static const INIT_SWFS :Array = [ RAW_SWF, BGS_SWF, PC_SWF, MOBS_SWF ];
 
     /** The available difficulty levels. */
     protected static const DIFFICULTY_LEVELS :Array = [ "Easy", "Normal", "Hard", "Inferno" ];
