@@ -370,6 +370,9 @@ public class Controller
             didVote[ii] = false;
         }
         var scores :Object = {};
+        for each (var playerId :int in _ctrl.getOccupants()) {
+            scores[playerId] = 0;
+        }
         var props :Array = _ctrl.getPropertyNames("vote:");
         for each (var prop :String in props) {
             var voterId :int = parseInt(prop.substring(5));
