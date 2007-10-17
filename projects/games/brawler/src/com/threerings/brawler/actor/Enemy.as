@@ -64,13 +64,23 @@ public class Enemy extends Pawn
     /**
      * Sets the target of the enemy.
      */
-    public function set target (player :Player) :void
+    public function setTarget (player :Player, publish :Boolean = true) :void
     {
         if (_target == player) {
             return;
         }
+        if (_target != null) {
+            _target.attackers--;
+        }
         _target = player;
-        maybePublish();
+        if (publish) {
+            maybePublish();
+        }
+        if (_target != null) {
+            // the target becomes the owner
+            _owner = _target.owner;
+            _target.attackers++;
+        }
     }
 
     /**
@@ -143,7 +153,7 @@ public class Enemy extends Pawn
         _ctrl.incrementStat("enemyDamage", damage);
         if (amOwner && attacker is Player) {
             // target the attacker
-            target = attacker as Player;
+            setTarget(attacker as Player);
         }
     }
 
@@ -174,7 +184,7 @@ public class Enemy extends Pawn
     {
         super.decode(state);
         _respawns = state.respawns;
-        _target = (state.target == null) ? null : _ctrl.actors[state.target];
+        setTarget(state.target == null ? null : _ctrl.actors[state.target], false);
     }
 
     // documentation inherited
@@ -200,7 +210,7 @@ public class Enemy extends Pawn
         if (_target != null) {
             if (_target.parent == null || _target.dead) {
                 // target died/disappeared: flee back to spawn point
-                _target = null;
+                setTarget(null, false);
                 move(_spawnX, _spawnY, WALK);
                 return;
             }
@@ -235,21 +245,23 @@ public class Enemy extends Pawn
                 return; // don't fall through to random movement
             }
         } else {
-            // choose the closest player in range as a new target
-            var cplayer :Player = null;
-            var cdist :Number = Number.MAX_VALUE;
+            // choose the best player based on distance and current number of attackers
+            var bplayer :Player = null;
+            var bscore :Number = Number.MAX_VALUE;
             for each (var actor :Actor in _ctrl.actors) {
                 if (!(actor is Player)) {
                     continue;
                 }
                 var player :Player = actor as Player;
                 var dist :Number = distance(player);
-                if (!player.dead && dist <= SIGHT_RANGE && dist < cdist) {
-                    cplayer = player;
-                    cdist = dist;
+                var score :Number = dist + player.attackers*1000;
+                if (!player.dead && dist <= SIGHT_RANGE && score < bscore) {
+                    bplayer = player;
+                    bscore = score;
                 }
             }
-            if ((target = cplayer) != null) {
+            setTarget(bplayer);
+            if (!(amOwner && _target == null)) {
                 return; // approach target next go-round
             }
         }
@@ -354,6 +366,9 @@ public class Enemy extends Pawn
         if (!amOwner) {
             return;
         }
+        // clear out the target
+        setTarget(null, false);
+
         // perhaps drop a pickup
         var prob :Number = Math.random();
         var state :Object;

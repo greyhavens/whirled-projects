@@ -137,6 +137,22 @@ public class Player extends Pawn
     }
 
     /**
+     * Returns the number of enemies targeting this player.
+     */
+    public function get attackers () :int
+    {
+        return _attackers;
+    }
+
+    /**
+     * Sets the number of enemies targeting this player.
+     */
+    public function set attackers (number :int) :void
+    {
+        _attackers = number;
+    }
+
+    /**
      * Performs an attack.
      *
      * @param secondary if true, use the secondary ("kick") attack mode.
@@ -565,6 +581,9 @@ public class Player extends Pawn
 
     /** The countdown until the hit count is reset. */
     protected var _hitResetCountdown :Number = 0;
+
+    /** The number of enemies targeting this player. */
+    protected var _attackers :int = 0;
 
     /** The rate (u/s) at which players lose energy when blocking. */
     protected static const BLOCK_ENERGY_RATE :Number = -20;
