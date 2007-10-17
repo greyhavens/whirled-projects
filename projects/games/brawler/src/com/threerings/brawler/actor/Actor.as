@@ -179,7 +179,7 @@ public class Actor extends Sprite
         }
         _ctrl.throttle.send(function () :void {
             _ctrl.control.set(name, state);
-        }, this);
+        });
     }
 
     /**
@@ -196,7 +196,7 @@ public class Actor extends Sprite
         }
         _ctrl.throttle.send(function () :void {
             _ctrl.control.sendMessage(name, message);
-        }, null, timeout);
+        });
     }
 
     /**
