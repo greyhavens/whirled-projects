@@ -123,18 +123,6 @@ public class GameView extends Sprite
             _hiscores.width = HELP_WIDTH;
             addChild(_hiscores);
 //             sidebar.addChild(_hiscores);
-
-            // relocate the chat view out of the way
-            var bsize :int = Content.BOARD_BORDER * 2 + _board.getPixelSize();
-            var bounds :Rectangle = _control.getStageBounds();
-            _control.sendChat("Stage is " + _control.getStageBounds());
-            bounds.x = bsize;
-            bounds.y = _hiscores.y + _hiscores.height + 10;
-//             bounds.y = sidebar.y + 10;
-            bounds.width -= bsize;
-            bounds.height = bounds.height - 50 - help.height - 10 - _hiscores.height - 15;
-//             bounds.height = bounds.height - sidebar.height - 15;
-            _control.setChatBounds(bounds);
         }
     }
 
