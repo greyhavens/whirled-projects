@@ -225,6 +225,14 @@ public class HudView extends Sprite
      */
     public function updateClear () :void
     {
+		if(_ctrl.clear){
+			if(_hud.go.playthrough != true){
+				_hud.go.playthrough = true;
+				_hud.go.gotoAndPlay(1);
+			}
+		}else{
+			_hud.go.playthrough = false;
+		}
         _hud.go.visible = _ctrl.clear;
     }
 
