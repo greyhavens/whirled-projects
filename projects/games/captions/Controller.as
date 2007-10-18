@@ -34,9 +34,6 @@ import com.threerings.ezgame.MessageReceivedListener;
 import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
 
-import com.threerings.ezgame.PlayersFlexDisplay;
-import com.threerings.ezgame.ScorePlayersFlexDisplay;
-
 /**
  * TODO:
  * - show list of players
@@ -97,10 +94,6 @@ public class Controller
 
         _timer = new Timer(500);
         _timer.addEventListener(TimerEvent.TIMER, handleCaptionTimer);
-
-        _scoreDisplay = new ScorePlayersFlexDisplay();
-        _scoreDisplay.configure(_ctrl);
-        _ui.players.addChild(_scoreDisplay);
 
         checkControl();
         checkPhase();
@@ -670,7 +663,7 @@ public class Controller
             }
         }
 
-        _scoreDisplay.setScores(scores);
+        // TODO: pass scores to _ctrl for displaying.
     }
 
     protected function deHTML (s :String) :String
@@ -901,8 +894,6 @@ public class Controller
 
     /** Our user interface class. */
     protected var _ui :Caption;
-
-    protected var _scoreDisplay :ScorePlayersFlexDisplay;
 
     protected var _captionInput :TextInput;
 
