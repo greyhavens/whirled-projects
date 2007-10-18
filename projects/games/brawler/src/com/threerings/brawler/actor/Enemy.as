@@ -105,7 +105,7 @@ public class Enemy extends Pawn
         }
 
         // play the attack animation (for the boss, append the attack level)
-        setAction("attack", "punch" + (finalBoss ? (level + 1) : ""));
+        setAction("attack", "punch" + (boss  ? (level + 1) : ""));
         orient(dir);
 
         if (amOwner) {
