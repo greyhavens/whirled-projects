@@ -5,14 +5,14 @@ import flash.display.Sprite;
 /**
  * The Brawler entry point.
  */
-[SWF(width="800", height="505", frameRate="30")]
+[SWF(width="800", height="500", frameRate="30")]
 public class Brawler extends Sprite
 {
     /** The width of the display. */
-    public static const WIDTH :Number = 800;
+    public static const WIDTH :Number = 700;
 
     /** The height of the display. */
-    public static const HEIGHT :Number = 505;
+    public static const HEIGHT :Number = 500;
 
     public function Brawler ()
     {
