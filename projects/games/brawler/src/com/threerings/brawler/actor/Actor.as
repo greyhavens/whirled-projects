@@ -52,9 +52,7 @@ public class Actor extends Sprite
     {
         _destroyed = true;
         _ctrl.destroyActor(this);
-        _ctrl.throttle.send(function () :void {
-            _ctrl.control.set(name, null);
-        });
+        _ctrl.throttle.set(name, null);
     }
 
     /**
@@ -177,9 +175,7 @@ public class Actor extends Sprite
         if (_destroyed) {
             return;
         }
-        _ctrl.throttle.send(function () :void {
-            _ctrl.control.set(name, state);
-        });
+        _ctrl.throttle.set(name, state);
     }
 
     /**
@@ -192,9 +188,7 @@ public class Actor extends Sprite
             return;
         }
         message.sender = _ctrl.control.getMyId();
-        _ctrl.throttle.send(function () :void {
-            _ctrl.control.sendMessage(name, message);
-        });
+        _ctrl.throttle.sendMessage(name, message);
     }
 
     /**

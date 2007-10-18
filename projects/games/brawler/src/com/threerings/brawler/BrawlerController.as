@@ -212,7 +212,7 @@ public class BrawlerController extends Controller
             if (_clear) {
                 // post our score to the dobj and show the game results
                 if (amPlaying) {
-                    _control.set("scores", _score, _control.seating.getMyPosition());
+                    _throttle.set("scores", _score, _control.seating.getMyPosition());
                 }
                 _view.showResults();
             } else {
@@ -282,10 +282,7 @@ public class BrawlerController extends Controller
         }
         if (--_enemies == 0 && _control.amInControl()) {
             // proceed to the next wave
-            var nwave :int = _wave + 1;
-            _throttle.send(function () :void {
-                _control.set("wave", nwave);
-            });
+            _throttle.set("wave", _wave + 1);
         }
     }
 
@@ -311,11 +308,8 @@ public class BrawlerController extends Controller
         _view.door.height = 0;
 
         // advance to the next room
-        var nroom :int = _room + 1;
-        _throttle.send(function () :void {
-            _control.set("wave", 1);
-            _control.set("room", nroom);
-        });
+        _throttle.set("wave", 1);
+        _throttle.set("room", _room + 1);
     }
 
     /**
@@ -475,13 +469,13 @@ public class BrawlerController extends Controller
 
         // if we are in control, initialize
         if (_control.amInControl()) {
-            _control.set("room", _room);
-            _control.set("wave", _wave);
-            _control.set("koCount", 0);
-            _control.set("playerDamage", 0);
-            _control.set("enemyDamage", 0);
-            _control.set("scores", new Array(_control.seating.getPlayerIds().length));
-            _control.startTicker("clock", CLOCK_DELAY);
+            _throttle.set("room", _room);
+            _throttle.set("wave", _wave);
+            _throttle.set("koCount", 0);
+            _throttle.set("playerDamage", 0);
+            _throttle.set("enemyDamage", 0);
+            _throttle.set("scores", new Array(_control.seating.getPlayerIds().length));
+            _throttle.startTicker("clock", CLOCK_DELAY);
         } else {
             var croom :Object = _control.get("room");
             var cwave :Object = _control.get("wave");

@@ -29,6 +29,36 @@ public class MessageThrottle
     }
 
     /**
+     * Sets a property through the throttle.
+     */
+    public function set (propName :String, value :Object, index :int = -1) :void
+    {
+        send(function () :void {
+            _ctrl.set(propName, value, index);
+        });
+    }
+
+    /**
+     * Sends a message through the throttle.
+     */
+    public function sendMessage (messageName :String, value :Object, playerId :int = 0) :void
+    {
+        send(function () :void {
+            _ctrl.sendMessage(messageName, value, playerId);
+        });
+    }
+
+    /**
+     * Starts a ticker through the throttle.
+     */
+    public function startTicker (tickerName :String, msOfDelay :int) :void
+    {
+        send(function () :void {
+            _ctrl.startTicker(tickerName, msOfDelay);
+        });
+    }
+
+    /**
      * Batches a message (as embedded in the function provided) for transmission.
      */
     public function send (fn :Function) :void
