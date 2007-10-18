@@ -43,7 +43,7 @@ public class DictionaryAttack extends Sprite
         graphics.drawRect(0, 0, bounds.width, bounds.height);
 
         // show our splash screen
-        var splash :SplashView = new SplashView(function () :void {
+        var splash :SplashView = new SplashView(this, function () :void {
             removeChild(splash);
             maybeFinishInit(null);
         });

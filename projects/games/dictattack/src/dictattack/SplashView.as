@@ -17,9 +17,11 @@ import com.threerings.util.EmbeddedSwfLoader;
  */
 public class SplashView extends Sprite
 {
-    public function SplashView (onClear :Function)
+    public function SplashView (parent :Sprite, onClear :Function)
     {
         _onClear = onClear;
+        _parent = parent;
+        _parent.addEventListener(MouseEvent.CLICK, onClick);
 
         // nothing is ever simple in Flash
         _loader = new EmbeddedSwfLoader();
@@ -31,7 +33,6 @@ public class SplashView extends Sprite
     {
         _clip = (_loader.getContent() as MovieClip);
         _clip.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-        stage.addEventListener(MouseEvent.CLICK, onClick);
         addChild(_clip);
     }
 
@@ -46,9 +47,10 @@ public class SplashView extends Sprite
 
     protected function onClick (event :MouseEvent) :void
     {
-        trace("Click " + event);
-        _clip.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
-        stage.removeEventListener(MouseEvent.CLICK, onClick);
+        if (_clip != null) {
+            _clip.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+        }
+        _parent.removeEventListener(MouseEvent.CLICK, onClick);
         _onClear();
     }
 
@@ -63,6 +65,7 @@ public class SplashView extends Sprite
         }
     }
 
+    protected var _parent :Sprite;
     protected var _onClear :Function;
     protected var _loader :EmbeddedSwfLoader;
     protected var _clip :MovieClip;
