@@ -426,7 +426,7 @@ public class Player extends Pawn
     /**
      * Damages the player's weapon.
      */
-    protected function damageWeapon (amount :Number = 7.5) :void
+    protected function damageWeapon (amount :Number = 4.5) :void
     {
         amount *= DIFFICULTY_DAMAGE_MULTIPLIERS[_ctrl.difficulty];
         amount *= LEVEL_DAMAGE_MULTIPLIERS[level-1];
@@ -613,7 +613,7 @@ public class Player extends Pawn
     protected static const HEALTH_TICK_AMOUNTS :Array = [ 1/10, 1/20, 1/20, 0 ];
 
     /** Weapon damage multipliers for each difficulty level. */
-    protected static const DIFFICULTY_DAMAGE_MULTIPLIERS :Array = [ 1.25, 1.0, 0.75, 0.5 ];
+    protected static const DIFFICULTY_DAMAGE_MULTIPLIERS :Array = [ 1.00, 0.75, 0.60, 0.45 ];
 
     /** Weapon damage multipliers for each weapon level (starting at one). */
     protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 1, 1.5, 2 ];
