@@ -52,7 +52,7 @@ public class BrawlerController extends Controller
         _control = new WhirledGameControl(disp, false);
 
         // create the throttle to limit message output (to about eight messages per second)
-        _throttle = new MessageThrottle(disp, _control, 125);
+        _throttle = new MessageThrottle(disp, _control, 200);
 
         // create the view
         _view = new BrawlerView(disp, this);
