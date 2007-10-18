@@ -17,9 +17,6 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
-// import mx.containers.VBox;
-// import mx.controls.Button;
-
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.PropertyChangedEvent;
 
@@ -92,21 +89,6 @@ public class GameView extends Sprite
 
         if (_control.isConnected()) {
             var xpos :int = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
-//             // create our sidebar
-//             var sidebar :VBox = new VBox();
-//             sidebar.x = xpos;
-//             sidebar.y = 5;
-//             sidebar.width = 250;
-//             sidebar.height = 300;
-//             addChild(sidebar);
-
-//             var help :Button = new Button();
-//             help.label = "How to Play";
-//             help.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-//                 showHelp();
-//             });
-//             sidebar.addChild(help);
-
             var help :SimpleButton = _content.makeButton("How to Play");
             help.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
                 showHelp();
@@ -120,9 +102,8 @@ public class GameView extends Sprite
             _hiscores.x = xpos;
             _hiscores.y = help.y + help.height + 10;
             _hiscores.autoSize = TextFieldAutoSize.LEFT;
-            _hiscores.width = HELP_WIDTH;
+            _hiscores.width = 150;
             addChild(_hiscores);
-//             sidebar.addChild(_hiscores);
         }
     }
 
@@ -243,7 +224,7 @@ public class GameView extends Sprite
         }
 
         var text :String = "";
-        if (isMultiPlayer()) {
+        if (_model.isMultiPlayer()) {
             if (_model.getWinningScore() > 1) {
                 text = "Round over. ";
             }
@@ -285,12 +266,7 @@ public class GameView extends Sprite
         }
     }
 
-    protected function isMultiPlayer () :Boolean
-    {
-        return (_control.seating.getPlayerNames().length > 1);
-    }
-
-    protected function focusInput (focus :Boolean) :void
+    public function focusInput (focus :Boolean) :void
     {
         if (_input.stage != null) {
             _input.stage.focus = focus ? _input : null;
@@ -349,30 +325,7 @@ public class GameView extends Sprite
 
     protected function showHelp () :void
     {
-        var help :TextField = new TextField();
-        help.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF));
-        help.autoSize = TextFieldAutoSize.LEFT;
-        help.wordWrap = true;
-        help.width = HELP_WIDTH;
-        help.htmlText = (makeHelp(HELP_CONTENTS) +
-                         makeHelp(isMultiPlayer() ? HELP_MULTI : HELP_SINGLE));
-
-        var dialog :Dialog = new Dialog(help);
-        var dismiss :SimpleButton = _content.makeButton("Dismiss");
-        dismiss.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            removeChild(dialog);
-            focusInput(true);
-        });
-        dialog.addButton(dismiss, Dialog.CENTER);
-        dialog.show(this);
-    }
-
-    protected function makeHelp (text :String) :String
-    {
-        return text.replace(
-            "MINLEN", _model.getMinWordLength()).replace(
-                "POINTS", _model.getWinningPoints()).replace(
-                    "ROUNDS", _model.getWinningScore());
+        HelpView.show(this, _model, _content);
     }
 
     protected function submitWord () :void
@@ -502,23 +455,6 @@ public class GameView extends Sprite
     protected static const SHOOTER_Y :Array = [ 0.5, 0, 0.5, 1 ];
 
     protected static const CHAT_HEIGHT :int = 200;
-
-    protected static const HELP_WIDTH :int = 300;
-    protected static const HELP_CONTENTS :String = "<b>How to Play</b>\n" +
-        "Use the letters along the bottom of the board to make words " +
-        "that are at least MINLEN letters long.\n\n" +
-        "<font color='#0000ff'><b>Blue</b></font> letters multiply the word score by two.\n" +
-        "<font color='#ff0000'><b>Red</b></font> letters multiply the word score by three.\n" +
-        "Only one multiplier per word will count.\n\n";
-
-    protected static const HELP_MULTI :String =
-        "The first to score POINTS points wins the round.\n\n" +
-        "Win ROUNDS rounds to win the game.\n\n" +
-        "Click a flying saucer to change a letter into a wildcard (*) if you can't find a word.";
-
-    protected static const HELP_SINGLE :String =
-        "Clear the board using long words to get a high score!\n\n" +
-        "Click a flying saucer to change a letter into a wildcard (*) if you can't find a word.";
 }
 
 }

@@ -36,20 +36,34 @@ public class DictionaryAttack extends Sprite
         _control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
         _control.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
 
-        // load up our content pack
-        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
-        loader.addEventListener(Event.COMPLETE, finishInit);
-        _content = new Content(loader);
-        loader.load(ByteArray(new CONTENT()));
-
         // make our background totally black (actually 222222 as that's MSOY's black)
         opaqueBackground = 0x222222;
         var bounds :Rectangle = _control.isConnected() ?
             _control.getStageBounds() : new Rectangle(0, 0, 1000, 550);
         graphics.drawRect(0, 0, bounds.width, bounds.height);
+
+        // show our splash screen
+        var splash :SplashView = new SplashView(function () :void {
+            removeChild(splash);
+            maybeFinishInit(null);
+        });
+        addChild(splash);
+
+        // load up our content pack
+        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
+        loader.addEventListener(Event.COMPLETE, maybeFinishInit);
+        _content = new Content(loader);
+        loader.load(ByteArray(new CONTENT()));
     }
 
-    protected function finishInit (event :Event) :void
+    protected function maybeFinishInit (event :Event) :void
+    {
+        if (++_initComplete == 2) {
+            finishInit();
+        }
+    }
+
+    protected function finishInit () :void
     {
         var pcount :int = _control.isConnected() ? _control.seating.getPlayerIds().length : 4;
 
@@ -170,6 +184,7 @@ public class DictionaryAttack extends Sprite
     protected var _content :Content;
     protected var _cookie :Object;
     protected var _flowAward :int;
+    protected var _initComplete :int;
 
     [Embed(source="../../rsrc/invaders.swf", mimeType="application/octet-stream")]
     protected var CONTENT :Class;

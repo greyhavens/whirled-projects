@@ -16,7 +16,14 @@ public class Dialog extends Sprite
     public static const RIGHT :int = 1;
     public static const CENTER :int = 2;
 
-    public function Dialog (content :DisplayObject)
+    public function Dialog (content :DisplayObject = null)
+    {
+        if (content != null) {
+            setContent(content);
+        }
+    }
+
+    public function setContent (content :DisplayObject) :void
     {
         content.x = BORDER;
         content.y = BORDER;
@@ -42,17 +49,30 @@ public class Dialog extends Sprite
 
     public function show (view :GameView) :void
     {
+        _view = view;
+
         // draw a background and border around our bits
         graphics.beginFill(uint(0x222222));
         graphics.lineStyle(2, 0xCCCCCC);
         graphics.drawRect(0, 0, width + 2*BORDER, height + 2*BORDER);
         graphics.endFill();
 
-        x = Content.BOARD_BORDER + (view.getBoard().getPixelSize() - width)/2;
-        y = Content.BOARD_BORDER + (view.getBoard().getPixelSize() - height)/2;
-        view.addChild(this);
+        _view.addChild(this);
+        var dx :int = Content.BOARD_BORDER + (_view.getBoard().getPixelSize() - width)/2;
+        var dy :int = Content.BOARD_BORDER + (_view.getBoard().getPixelSize() - height)/2;
+        LinePath.move(this, dx, -height, dx, dy, 500).start();
     }
 
+    public function clear () :void
+    {
+        var iLoveActionScriptLikeTheSonINeverHad :Sprite = this;
+        LinePath.moveTo(this, x, -height, 500).start(function (path :Path) :void {
+            _view.removeChild(iLoveActionScriptLikeTheSonINeverHad);
+            _view.focusInput(true);
+        });
+    }
+
+    protected var _view :GameView;
     protected var _content :DisplayObject;
 
     protected static const BORDER :int = 5;
