@@ -361,19 +361,20 @@ public class BrawlerController extends Controller
         } else if (StringUtil.startsWith(event.name, "actor")) {
             // it's the state of an actor
             var actor :Actor = _actors[event.name];
-            if (event.newValue == null) {
+            var state :Object = event.newValue;
+            if (state == null) {
                 // remove the actor
                 if (actor != null) {
                     destroyActor(actor);
                 }
-            } else if (actor == null) {
-                // create the actor (unless it's an old state that we generated)
-                if (!StringUtil.startsWith(event.name, _actorNamePrefix)) {
-                    createActor(event.name, event.newValue);
+            } else if (state.sender != _control.getMyId()) {
+                if (actor == null) {
+                    // create the new actor
+                    createActor(event.name, state);
+                } else {
+                    // update the actor state
+                    actor.decode(state);
                 }
-            } else if (!actor.amOwner) {
-                // update the actor state
-                actor.decode(event.newValue);
             }
         }
     }
@@ -397,7 +398,7 @@ public class BrawlerController extends Controller
         } else if (StringUtil.startsWith(event.name, "actor")) {
             // it's a message for an actor
             var actor :Actor = _actors[event.name];
-            if (actor != null && !actor.amOwner) {
+            if (actor != null && event.value.sender != _control.getMyId()) {
                 actor.receive(event.value);
             }
         }
@@ -462,9 +463,6 @@ public class BrawlerController extends Controller
      */
     protected function finishInit () :void
     {
-        // create our actor name prefix
-        _actorNamePrefix = "actor" + _control.getMyId() + "_";
-
         // find existing actors, start listening for updates
         var names :Array = _control.getPropertyNames("actor");
         for each (var name :String in names) {
@@ -559,7 +557,7 @@ public class BrawlerController extends Controller
      */
     protected function createActorName () :String
     {
-        return _actorNamePrefix + (++_lastActorId);
+        return "actor" + _control.getMyId() + "_" + (++_lastActorId);
     }
 
     /**
@@ -653,9 +651,6 @@ public class BrawlerController extends Controller
 
     /** The last actor id assigned. */
     protected var _lastActorId :int = 0;
-
-    /** The prefix we use for the names of all actors we create. */
-    protected var _actorNamePrefix :String;
 
     /** Our own actor. */
     protected var _self :Player;

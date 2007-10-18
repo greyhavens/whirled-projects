@@ -64,7 +64,7 @@ public class Enemy extends Pawn
     /**
      * Sets the target of the enemy.
      */
-    public function setTarget (player :Player, publish :Boolean = true) :void
+    public function set target (player :Player) :void
     {
         if (_target == player) {
             return;
@@ -73,12 +73,7 @@ public class Enemy extends Pawn
             _target.attackers--;
         }
         _target = player;
-        if (publish) {
-            maybePublish();
-        }
         if (_target != null) {
-            // the target becomes the owner
-            _owner = _target.owner;
             _target.attackers++;
         }
     }
@@ -129,6 +124,7 @@ public class Enemy extends Pawn
     {
         super.wasDestroyed();
         _ctrl.enemyWasDestroyed(this);
+        target = null;
         if (!dead) {
             // strangely enough, the ghost appears when we're *not* dead
             _view.addTransient(_ctrl.create("Ghost"), x, y, true);
@@ -153,7 +149,7 @@ public class Enemy extends Pawn
         _ctrl.incrementStat("enemyDamage", damage);
         if (amOwner && attacker is Player) {
             // target the attacker
-            setTarget(attacker as Player);
+            target = attacker as Player;
         }
     }
 
@@ -184,7 +180,10 @@ public class Enemy extends Pawn
     {
         super.decode(state);
         _respawns = state.respawns;
-        setTarget(state.target == null ? null : _ctrl.actors[state.target], false);
+        target = (state.target == null) ? null : _ctrl.actors[state.target];
+        if (_target != null) {
+            _owner = _target.owner;
+        }
     }
 
     // documentation inherited
@@ -210,7 +209,7 @@ public class Enemy extends Pawn
         if (_target != null) {
             if (_target.parent == null || _target.dead) {
                 // target died/disappeared: flee back to spawn point
-                setTarget(null, false);
+                target = null;
                 move(_spawnX, _spawnY, WALK);
                 return;
             }
@@ -260,8 +259,7 @@ public class Enemy extends Pawn
                     bscore = score;
                 }
             }
-            setTarget(bplayer);
-            if (!(amOwner && _target == null)) {
+            if ((target = bplayer) != null) {
                 return; // approach target next go-round
             }
         }
@@ -367,7 +365,7 @@ public class Enemy extends Pawn
             return;
         }
         // clear out the target
-        setTarget(null, false);
+        target = null;
 
         // perhaps drop a pickup
         var prob :Number = Math.random();
@@ -418,6 +416,16 @@ public class Enemy extends Pawn
     override protected function createRadarBlip () :Sprite
     {
         return _ctrl.create("EnemyBlip");
+    }
+
+    // documentation inherited
+    override protected function publish () :void
+    {
+        // update the owner immediately after publishing
+        super.publish();
+        if (_target != null) {
+            _owner = _target.owner;
+        }
     }
 
     // documentation inherited

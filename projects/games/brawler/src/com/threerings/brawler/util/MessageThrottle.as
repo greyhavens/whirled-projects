@@ -63,10 +63,11 @@ public class MessageThrottle
         var now :int = getTimer();
         if (_batch.length > 0 && now - _last >= _interval) {
             _ctrl.doBatch(function () :void {
-                while (_batch.length > 0) {
-                    _batch.shift()();
+                for each (var fn :Function in _batch) {
+                    fn();
                 }
             });
+            _batch = new Array();
             _last = now;
             _counter++;
         }

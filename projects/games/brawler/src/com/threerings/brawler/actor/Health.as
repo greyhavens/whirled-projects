@@ -24,9 +24,9 @@ public class Health extends Pickup
     // documentation inherited
     override protected function hit (player :Player) :void
     {
+        var amount :Number = Math.round(player.maxhp - player.hp);
         super.hit(player);
         _view.addTransient(_ctrl.create("Crosses"), x, y, true);
-        var amount :Number = Math.round(player.maxhp - player.hp);
         if (amount > 0) {
             var health :MovieClip = _ctrl.create("HealthNumber");
             health.txt.dmg.text = "+" + Math.round(amount);

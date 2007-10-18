@@ -73,12 +73,12 @@ public class Pickup extends Actor
      */
     protected function hit (player :Player) :void
     {
-        if (player.amOwner) {
-            award();
-        }
         if (amOwner) {
             send({ player: player.name });
             destroy();
+        }
+        if (player.amOwner) {
+            award();
         }
         visible = false;
     }

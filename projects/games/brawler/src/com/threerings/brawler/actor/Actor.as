@@ -191,6 +191,7 @@ public class Actor extends Sprite
         if (_destroyed) {
             return;
         }
+        message.sender = _ctrl.control.getMyId();
         _ctrl.throttle.send(function () :void {
             _ctrl.control.sendMessage(name, message);
         });
@@ -205,6 +206,7 @@ public class Actor extends Sprite
         state.type = ClassUtil.tinyClassName(this);
         state.x = x;
         state.y = y;
+        state.sender = _ctrl.control.getMyId();
         return state;
     }
 
