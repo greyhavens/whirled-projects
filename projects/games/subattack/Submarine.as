@@ -9,6 +9,8 @@ import flash.text.TextFieldAutoSize;
 
 import flash.geom.ColorTransform;
 
+import com.whirled.WhirledGameControl;
+
 public class Submarine extends BaseSprite
 {
     /** Color schemes for each player. */
@@ -24,11 +26,14 @@ public class Submarine extends BaseSprite
     ];
 
     public function Submarine (
-        playerIdx :int, playerName :String, startx :int, starty :int,
-        board :Board)
+        playerId :int, playerIdx :int, playerName :String, startx :int, starty :int,
+        board :Board, gameCtrl :WhirledGameControl)
     {
         super(playerIdx, board);
 
+        _gameCtrl = gameCtrl;
+
+        _playerId = playerId;
         _playerName = playerName;
         _x = startx;
         _y = starty;
@@ -57,17 +62,6 @@ public class Submarine extends BaseSprite
         _nameLabel.y = -1 * (_nameLabel.textHeight + NAME_PADDING);
         _nameLabel.x = (SeaDisplay.TILE_SIZE - _nameLabel.textWidth) / 2;
         addChild(_nameLabel);
-
-//        _statsLabel = new TextField();
-//        _statsLabel.autoSize = TextFieldAutoSize.CENTER;
-//        _statsLabel.selectable = false;
-//        _statsLabel.text = "0 0";
-//        _statsLabel.textColor = uint(0x000000);
-//        _statsLabel.backgroundColor = uint(0xCCFFCC);
-//        _statsLabel.background = true;
-//        _statsLabel.y = _nameLabel.y - (_statsLabel.textHeight + NAME_PADDING);
-//        _statsLabel.x = (SeaDisplay.TILE_SIZE - _statsLabel.textWidth) / 2;
-//        addChild(_statsLabel);
 
         updateVisual();
         updateLocation();
@@ -242,6 +236,7 @@ public class Submarine extends BaseSprite
         // track the kills
         _kills += kills;
         _totalKills += kills;
+        updateDisplayedScore();
     }
 
     /**
@@ -287,9 +282,14 @@ public class Submarine extends BaseSprite
         }
         _avatar.gotoAndStop(orientToFrame());
 
-        if (_statsLabel != null) {
-            _statsLabel.text = "" + _totalKills + " " + _totalDeaths;
-        }
+        updateDisplayedScore();
+    }
+
+    protected function updateDisplayedScore () :void
+    {
+        var score :Object = {};
+        score[_playerId] = [_totalKills + " kills, " + _totalDeaths + " deaths.", _totalKills];
+        _gameCtrl.setMappedScores(score);
     }
 
     protected function orientToFrame () :int
@@ -314,6 +314,12 @@ public class Submarine extends BaseSprite
     protected var _queuedActions :Array = [];
 
     protected var _dead :Boolean;
+
+    /** The game control. */
+    protected var _gameCtrl :WhirledGameControl;
+
+    /** The id of this player. */
+    protected var _playerId :int;
 
     /** The name of the player controlling this sub. */
     protected var _playerName :String;
@@ -349,7 +355,6 @@ public class Submarine extends BaseSprite
     protected var _shootSound :Sound;
 
     protected var _nameLabel :TextField;
-    protected var _statsLabel :TextField;
 
     /** The maximum number of torpedos that may be in-flight at once. */
     protected static const MAX_TORPEDOS :int = 2;

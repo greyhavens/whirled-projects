@@ -25,11 +25,18 @@ public class Board
         _width = int(DIMENSIONS[playerCount][0]);
         _height = int(DIMENSIONS[playerCount][1]);
 
+        var ii :int;
+//        // set up the sort order for the players
+//        var sortOrder :Array = [];
+//        for (ii = 0; ii < playerIds.length; ii++) {
+//            sortOrder[ii] = playerIds.length - ii;
+//        }
+//        _gameCtrl.setPlayerScores(null, sortOrder);
+
         _maxDeaths = playerCount * 5;
 
         _seaDisplay.setupSea(_width, _height);
 
-        var ii :int;
         for (ii = _width * _height - 1; ii >= 0; ii--) {
             _traversable[ii] = BLOCKED;
         }
@@ -41,7 +48,7 @@ public class Board
             var p :Point = getStartingPosition(ii);
 
             sub = new Submarine(
-                ii, _gameCtrl.getOccupantName(playerId), p.x, p.y, this);
+                playerId, ii, _gameCtrl.getOccupantName(playerId), p.x, p.y, this, _gameCtrl);
             _gameCtrl.getUserCookie(playerId, sub.gotPlayerCookie);
             _seaDisplay.addChild(sub);
             _subs[ii] = sub;
@@ -221,11 +228,12 @@ public class Board
                     sub.getPlayerName());
 
                 if (killerIdx == _gameCtrl.seating.getMyPosition()) {
-                    var flowAvailable :Number = _gameCtrl.getAvailableFlow();
-                    trace("Available flow at time of kill: " + flowAvailable);
-                    var awarded :int = int(flowAvailable * .75);
-                    trace("Awarding: " + awarded);
-                    _gameCtrl.awardFlow(awarded);
+                    // TODO: new flow awarding
+//                    var flowAvailable :Number = _gameCtrl.getAvailableFlow();
+//                    trace("Available flow at time of kill: " + flowAvailable);
+//                    var awarded :int = int(flowAvailable * .75);
+//                    trace("Awarding: " + awarded);
+//                    _gameCtrl.awardFlow(awarded);
                 }
             }
         }
@@ -536,6 +544,7 @@ public class Board
     protected static const DIMENSIONS :Array = [
         [  0,  0 ], // 0 player game
         [ 10, 10 ], // 1 player game
+//        [ 10, 10 ], // 2 player game (testing)
         [ 50, 25 ], // 2 player game
         [ 60, 30 ], // 3 player game
         [ 75, 30 ], // 4 player game
