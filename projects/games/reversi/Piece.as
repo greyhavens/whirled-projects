@@ -6,7 +6,7 @@ import flash.events.MouseEvent;
 
 public class Piece extends Sprite
 {
-    public static const SIZE :int = 20;
+    public static const SIZE :int = 40;
 
     public static const COLORS :Array = [ 0xFFFFFF, 0x000000 ];
 
