@@ -589,7 +589,7 @@ public class Pawn extends Actor
      */
     protected function getWalkSpeed (scale :Number, sprinting :Boolean = false) :Number
     {
-        return baseSpeed * scale * (sprinting ? 2 : 1);
+        return baseSpeed * scale * (sprinting ? 3.5 : 1);
     }
 
     /**
@@ -679,7 +679,9 @@ public class Pawn extends Actor
             return; // wait for action to clear
         } else if (blocking) {
             setAction("block");
-        } else if (moving && (_motion == WALK || _motion == SPRINT)) {
+        } else if (moving && _motion == SPRINT) {
+            setAction("sprint");
+		} else if (moving && _motion == WALK) {
             setAction("walk");
         } else {
             setAction("idle");

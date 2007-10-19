@@ -163,7 +163,7 @@ public class Player extends Pawn
     {
         if (amOwner) {
             // make sure we can attack
-            if (_action != "idle" && _action != "walk") {
+            if (_action != "idle" && _action != "walk" && _action != "sprint") {
                 return;
             }
             // make sure we have enough energy to attack (and aren't recharging)
