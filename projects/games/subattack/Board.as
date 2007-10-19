@@ -27,7 +27,7 @@ public class Board
 
         // compute some game-ending numbers
         _maxTotalDeaths = playerCount * 5;
-        _maxKills = (playerCount - 1) * 5;
+        _maxKills = Math.max(1, (playerCount - 1) * 5);
 
         _seaDisplay.setupSea(_width, _height);
 
