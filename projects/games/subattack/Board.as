@@ -25,18 +25,13 @@ public class Board
         _width = int(DIMENSIONS[playerCount][0]);
         _height = int(DIMENSIONS[playerCount][1]);
 
-        var ii :int;
-//        // set up the sort order for the players
-//        var sortOrder :Array = [];
-//        for (ii = 0; ii < playerIds.length; ii++) {
-//            sortOrder[ii] = playerIds.length - ii;
-//        }
-//        _gameCtrl.setPlayerScores(null, sortOrder);
-
-        _maxDeaths = playerCount * 5;
+        // compute some game-ending numbers
+        _maxTotalDeaths = playerCount * 5;
+        _maxKills = (playerCount - 1) * 5;
 
         _seaDisplay.setupSea(_width, _height);
 
+        var ii :int;
         for (ii = _width * _height - 1; ii >= 0; ii--) {
             _traversable[ii] = BLOCKED;
         }
@@ -326,21 +321,7 @@ public class Board
             _gameCtrl.setUserCookie(Submarine(_subs[mydex]).getNewCookie());
         }
 
-        var text :String = "<P align=\"center\"><font size=\"+2\">Game Over</font><br><br>" +
-            "<font size=\"+1\">Final scores:</font><br>";
-
-        var subs :Array = _subs.concat();
-        subs.sort(function (s1 :Submarine, s2 :Submarine) :int {
-            return s2.getScore() - s1.getScore();
-        });
-
-        for each (var sub :Submarine in subs) {
-            text += sub.getPlayerName() + ": " + sub.getKills() + " kills and " +
-                sub.getDeaths() + " deaths.<br>";
-        }
-        text += "</P>";
-
-        _seaDisplay.setStatus(text);
+        _seaDisplay.setStatus("<P align=\"center\"><font size=\"+4\"><b>Game Over</b></font></P>");
     }
 
     /**
@@ -404,25 +385,35 @@ public class Board
 
     protected function checkGameOver () :void
     {
-        // find the highest scoring players
-        var winners :Array;
-        var hiScore :int = int.MIN_VALUE;
-        for each (var sub :Submarine in _subs) {
-            var score :int = sub.getScore();
-            if (score > hiScore) {
-                hiScore = score;
-                winners = [];
+        var endGame :Boolean = (_totalDeaths >= _maxTotalDeaths);
+        var sub :Submarine;
+        if (!endGame) {
+            for each (sub in _subs) {
+                if (sub.getKills() >= _maxKills) {
+                    endGame = true;
+                    break;
+                }
             }
-            if (score == hiScore) {
-                winners.push(sub.getPlayerIndex());
+            if (!endGame) {
+                return;
             }
         }
 
-        // maybe end the game and declare them winners
-        if (hiScore >= 5 || _totalDeaths >= _maxDeaths) {
-            _gameCtrl.endGame(winners);
-            _endedGame = true;
+        // if we get here, we DO want to end the game.
+        // compute a score for each player based on _maxKills and normalize
+        // from 0 - 99.
+        var ids :Array = [];
+        var scores :Array = [];
+        for (var ii :int = 0; ii < _subs.length; ii++) {
+            sub = _subs[ii] as Submarine;
+            ids[ii] = sub.getPlayerId();
+            scores[ii] = int(99 * Math.max(0, sub.getKills() - sub.getDeaths()) / _maxKills);
         }
+
+        trace("Computed scores as " + scores);
+
+        _gameCtrl.endGameWithScores(ids, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
+        _endedGame = true;
     }
 
     protected function checkTorpedos () :void
@@ -517,8 +508,11 @@ public class Board
 
     protected var _totalDeaths :int = 0;
 
-    /** The maximum number of deaths before we end the game. */
-    protected var _maxDeaths :int;
+    /** The maximum number of total deaths before we end the game. */
+    protected var _maxTotalDeaths :int;
+
+    /** The maximum number of kills any player may accumulate before we end the game. */
+    protected var _maxKills :int;
 
     /** The width of the board. */
     protected var _width :int;

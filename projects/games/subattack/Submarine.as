@@ -6,6 +6,7 @@ import flash.media.Sound;
 
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
 
 import flash.geom.ColorTransform;
 
@@ -54,6 +55,10 @@ public class Submarine extends BaseSprite
         addChild(_avatar);
 
         _nameLabel = new TextField();
+        var tf :TextFormat = new TextFormat();
+        tf.size = 16;
+        tf.bold = true;
+        _nameLabel.defaultTextFormat = tf;
         _nameLabel.autoSize = TextFieldAutoSize.CENTER;
         _nameLabel.selectable = false;
         _nameLabel.text = playerName;
@@ -72,14 +77,14 @@ public class Submarine extends BaseSprite
         return _colorTransform;
     }
 
+    public function getPlayerId () :int
+    {
+        return _playerId;
+    }
+
     public function getPlayerName () :String
     {
         return _playerName;
-    }
-
-    public function getScore () :int
-    {
-        return _kills - _deaths;
     }
 
     public function getKills () :int
@@ -288,7 +293,7 @@ public class Submarine extends BaseSprite
     protected function updateDisplayedScore () :void
     {
         var score :Object = {};
-        score[_playerId] = [_totalKills + " kills, " + _totalDeaths + " deaths.", _totalKills];
+        score[_playerId] = [_kills + " kills, " + _deaths + " deaths.", _kills];
         _gameCtrl.setMappedScores(score);
     }
 
