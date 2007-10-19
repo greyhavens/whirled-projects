@@ -76,6 +76,7 @@ public class Controller
         ui.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         _ctrl = new WhirledGameControl(ui);
+        _ctrl.setOccupantsLabel("Votes received in last " + ROUNDS_USED_FOR_SCORES + " rounds");
 
         if (!_ctrl.isConnected()) {
             _ui.phaseText.htmlText = "This game must be played inside Whirled.";
@@ -98,6 +99,7 @@ public class Controller
         checkControl();
         checkPhase();
         showPhoto();
+        updateScoreDisplay();
     }
 
     protected function handlePropertyChanged (event :PropertyChangedEvent) :void
@@ -663,7 +665,8 @@ public class Controller
             }
         }
 
-        // TODO: pass scores to _ctrl for displaying.
+        _ctrl.clearScores(0);
+        _ctrl.setMappedScores(scores);
     }
 
     protected function deHTML (s :String) :String
