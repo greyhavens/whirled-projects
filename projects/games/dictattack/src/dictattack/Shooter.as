@@ -17,10 +17,9 @@ import flash.display.Sprite
 
 public class Shooter extends Sprite
 {
-    public function Shooter (view :GameView, content :Content, posidx :int, pidx :int, mp :Boolean)
+    public function Shooter (ctx :Context, posidx :int, pidx :int, mp :Boolean)
     {
-        _content = content;
-        _view = view;
+        _ctx = ctx;
         _pidx = pidx;
         _posidx = posidx;
         rotation = (posidx+1)%4 * 90;
@@ -28,16 +27,16 @@ public class Shooter extends Sprite
         addChild(_name = new TextField());
         _name.text = "";
         _name.selectable = false;
-        _name.defaultTextFormat = content.makeNameFormat();
+        _name.defaultTextFormat = _ctx.content.makeNameFormat();
         _name.embedFonts = true;
         _name.autoSize = TextFieldAutoSize.RIGHT;
 
-        _ship = content.createShip();
+        _ship = _ctx.content.createShip();
         _ship.y = -3*Content.SHOOTER_SIZE/2;
         addChild(_ship);
 
         if (mp) {
-            addChild(_points = content.createWordScoreDisplay());
+            addChild(_points = _ctx.content.createWordScoreDisplay());
             _points.gotoAndStop(0);
             _points.y = -Content.SHOOTER_SIZE/2;
 
@@ -47,7 +46,7 @@ public class Shooter extends Sprite
 
         } else {
             // we may add this later
-            _endGame = content.makeButton("End Game");
+            _endGame = _ctx.content.makeButton("End Game");
         }
 
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
@@ -57,7 +56,7 @@ public class Shooter extends Sprite
     {
         _name.text = name;
         if (_points == null) {
-            _name.x = -_view.getBoard().getPixelSize()/2;
+            _name.x = -_ctx.view.getBoard().getPixelSize()/2;
         } else {
             _name.x = -_points.width/2 - _name.width - 2;
         }
@@ -68,7 +67,7 @@ public class Shooter extends Sprite
     {
         if (_points == null) { // single player mode
             _name.text = "Points: " + points;
-            _name.x = -_view.getBoard().getPixelSize()/2;
+            _name.x = -_ctx.view.getBoard().getPixelSize()/2;
         } else {
             var frame :int = int(_points.totalFrames * points / maxPoints);
             _points.gotoAndStop(frame);
@@ -84,7 +83,7 @@ public class Shooter extends Sprite
             _score.removeChildAt(0);
         }
         for (var ii :int = 0; ii < score; ii++) {
-            var icon :MovieClip = _content.createRoundScoreIcon();
+            var icon :MovieClip = _ctx.content.createRoundScoreIcon();
             icon.x = ii * (icon.width + 2) + icon.width/2;
             _score.addChild(icon);
         }
@@ -100,10 +99,10 @@ public class Shooter extends Sprite
 
         // in with the new
         for (var ii :int = 0; ii < count; ii++) {
-            var saucer :MovieClip = _content.createSaucer();
-            saucer.x = _view.getBoard().getPixelSize()/2 - (saucer.width + 5) * ii;
+            var saucer :MovieClip = _ctx.content.createSaucer();
+            saucer.x = _ctx.view.getBoard().getPixelSize()/2 - (saucer.width + 5) * ii;
             saucer.y = -Content.SHOOTER_SIZE/2;
-            saucer.addEventListener(MouseEvent.CLICK, _view.saucerClicked);
+            saucer.addEventListener(MouseEvent.CLICK, _ctx.view.saucerClicked);
             _saucers.push(saucer);
             addChild(saucer);
         }
@@ -116,10 +115,10 @@ public class Shooter extends Sprite
 
         // if we have no saucers left, and we're a single player game, add the "end game" button
         if (_saucers.length == 0 && _points == null) { // single player mode
-            _endGame.x = _view.getBoard().getPixelSize()/2;
+            _endGame.x = _ctx.view.getBoard().getPixelSize()/2;
             _endGame.y = -Content.SHOOTER_SIZE/2;
             _endGame.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-                _view.getModel().endGameEarly();
+                _ctx.model.endGameEarly();
             });
             addChild(_endGame);
         }
@@ -177,11 +176,11 @@ public class Shooter extends Sprite
 
     protected function readyToShoot () :void
     {
-        _content.getShootSound().play();
+        _ctx.content.getShootSound().play();
 
         // TODO: fire a missile at the letter, blow it up when the missile hits
         _board.destroyLetter(_tgtx, _tgty);
-        _view.shotTaken(this);
+        _ctx.view.shotTaken(this);
 
         if (_targets.length > 0) {
             shootNextTarget();
@@ -210,8 +209,7 @@ public class Shooter extends Sprite
         }
     }
 
-    protected var _content :Content;
-    protected var _view :GameView;
+    protected var _ctx :Context;
     protected var _pidx :int;
     protected var _posidx :int;
 

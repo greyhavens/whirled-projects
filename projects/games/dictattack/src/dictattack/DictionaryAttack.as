@@ -9,10 +9,8 @@ import flash.display.Sprite;
 import flash.geom.Rectangle;
 
 import flash.events.Event;
-import flash.utils.ByteArray;
 
 import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.util.EmbeddedSwfLoader;
 
 import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
@@ -28,83 +26,79 @@ public class DictionaryAttack extends Sprite
         // wire up our unloader
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        // create and wire ourselves into our multiplayer game control
-        _control = new WhirledGameControl(this, false);
-        _control.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
-        _control.addEventListener(StateChangedEvent.ROUND_STARTED, roundDidStart);
-        _control.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);
-        _control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
-        _control.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+        // we use this function to wait for our various bits to complete
+        var initComplete :int = 0;
+        var maybeFinishInit :Function = function () :void {
+//            if (++initComplete == 2) {
+            if (++initComplete == 1) {
+                finishInit();
+            }
+        };
 
-        // make our background totally black (actually 222222 as that's MSOY's black)
-        opaqueBackground = 0x222222;
-        var bounds :Rectangle = _control.isConnected() ?
-            _control.getStageBounds() : new Rectangle(0, 0, 1000, 550);
+        // create and wire ourselves into our multiplayer game control (and create our content)
+        _ctx = new Context(new WhirledGameControl(this, false), new Content(maybeFinishInit));
+        _ctx.control.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
+        _ctx.control.addEventListener(StateChangedEvent.ROUND_STARTED, roundDidStart);
+        _ctx.control.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);
+        _ctx.control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
+        _ctx.control.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+
+        // make our background totally black
+        opaqueBackground = 0x000000;
+        var bounds :Rectangle = _ctx.control.isConnected() ?
+            _ctx.control.getStageBounds() : new Rectangle(0, 0, 1000, 550);
         graphics.drawRect(0, 0, bounds.width, bounds.height);
 
-        // show our splash screen
-        var splash :SplashView = new SplashView(this, function () :void {
-            removeChild(splash);
-            maybeFinishInit(null);
-        });
-        addChild(splash);
-
-        // load up our content pack
-        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
-        loader.addEventListener(Event.COMPLETE, maybeFinishInit);
-        _content = new Content(loader);
-        loader.load(ByteArray(new CONTENT()));
-    }
-
-    protected function maybeFinishInit (event :Event) :void
-    {
-        if (++_initComplete == 2) {
-            finishInit();
-        }
+//         // show our splash screen
+//         var splash :SplashView = new SplashView(this, function () :void {
+//             removeChild(splash);
+//             maybeFinishInit();
+//         });
+//         addChild(splash);
     }
 
     protected function finishInit () :void
     {
-        var pcount :int = _control.isConnected() ? _control.seating.getPlayerIds().length : 4;
+        var pcount :int = _ctx.control.isConnected() ?
+            _ctx.control.seating.getPlayerIds().length : 4;
 
         // create our model and our view, and initialize them
-        _model = new Model(Content.BOARD_SIZE, _control);
-        _view = new GameView(_control, _model, _content);
-        _view.init(pcount);
-        addChild(_view);
+        _ctx.init(new Model(Content.BOARD_SIZE, _ctx), new GameView(_ctx));
+        _ctx.view.init(pcount);
+        addChild(_ctx.view);
 
         // now that we're actually ready, go ahead and request that the game start
-        if (_control.isConnected()) {
-            _control.playerReady();
+        if (_ctx.control.isConnected()) {
+            _ctx.control.playerReady();
             // also load up our user cookie
-            _control.getUserCookie(_control.getMyId(), gotUserCookie);
+            _ctx.control.getUserCookie(_ctx.control.getMyId(), gotUserCookie);
         } else {
-            _view.attractMode();
+            _ctx.view.attractMode();
         }
     }
 
     protected function gameDidStart (event :StateChangedEvent) :void
     {
         _flowAward = 0;
-        _view.gameDidStart();
+        _ctx.view.gameDidStart();
 
         // zero out the scores
-        var pcount :int = _control.seating.getPlayerIds().length;
-        if (_control.amInControl()) {
-            _control.set(Model.SCORES, new Array(pcount).map(function (): int { return 0; }));
+        var pcount :int = _ctx.control.seating.getPlayerIds().length;
+        if (_ctx.control.amInControl()) {
+            _ctx.control.set(Model.SCORES, new Array(pcount).map(function (): int { return 0; }));
         }
     }
 
     protected function roundDidStart (event :StateChangedEvent) :void
     {
-        _model.roundDidStart();
-        _view.roundDidStart();
+        _ctx.model.roundDidStart();
+        _ctx.view.roundDidStart();
     }
 
     protected function roundDidEnd (event :StateChangedEvent) :void
     {
-        var scorer :String = _model.roundDidEnd();
-        _view.roundDidEnd(scorer);
+        var scorer :String = _ctx.model.roundDidEnd();
+        _ctx.view.roundDidEnd(scorer);
     }
 
     protected function flowAwarded (event :FlowAwardedEvent) :void
@@ -118,9 +112,9 @@ public class DictionaryAttack extends Sprite
 
         // note our score in non-multiplayer games
         var mypoints :int = -1;
-        if (!_model.isMultiPlayer()) {
-            var points :Array = (_control.get(Model.POINTS) as Array);
-            mypoints = points[_control.seating.getMyPosition()];
+        if (!_ctx.model.isMultiPlayer()) {
+            var points :Array = (_ctx.control.get(Model.POINTS) as Array);
+            mypoints = points[_ctx.control.seating.getMyPosition()];
 
             // update our personal high scores
             if (_cookie != null) {
@@ -137,34 +131,34 @@ public class DictionaryAttack extends Sprite
                 _cookie["highscores"] = hiscores.slice(0, Math.min(hiscores.length, MAX_HISCORES));
 
                 // update our highscore display and save our high score
-                _view.gotUserCookie(_cookie);
-                if (!_control.setUserCookie(_cookie)) {
+                _ctx.view.gotUserCookie(_cookie);
+                if (!_ctx.control.setUserCookie(_cookie)) {
                     Log.getLog(this).warning("Failed to save cookie " + _cookie + ".");
                 }
             }
 
             // see if we qualify for any end-of-game trophies
             for each (var score :int in SCORE_AWARDS) {
-                if (mypoints > score && !_control.holdsTrophy("score_over_" + score)) {
-                    _control.awardTrophy("score_over_" + score);
+                if (mypoints > score && !_ctx.control.holdsTrophy("score_over_" + score)) {
+                    _ctx.control.awardTrophy("score_over_" + score);
                     break;
                 }
             }
-            var perfectClear :Boolean = (_model.nonEmptyColumns() == 0);
-            if (perfectClear && _model.getNotOnBoardPlays() == 0) {
-                if (!_control.holdsTrophy("no_not_on_board")) {
-                    _control.awardTrophy("no_not_on_board");
+            var perfectClear :Boolean = (_ctx.model.nonEmptyColumns() == 0);
+            if (perfectClear && _ctx.model.getNotOnBoardPlays() == 0) {
+                if (!_ctx.control.holdsTrophy("no_not_on_board")) {
+                    _ctx.control.awardTrophy("no_not_on_board");
                 }
             }
-            if (perfectClear && _model.getNotInDictPlays() == 0) {
-                if (!_control.holdsTrophy("no_not_in_dict")) {
-                    _control.awardTrophy("no_not_in_dict");
+            if (perfectClear && _ctx.model.getNotInDictPlays() == 0) {
+                if (!_ctx.control.holdsTrophy("no_not_in_dict")) {
+                    _ctx.control.awardTrophy("no_not_in_dict");
                 }
             }
         }
 
         // _flowAward is set via a FLOW_AWARDED event that precedes the GAME_ENDED event
-        _view.gameDidEnd(_flowAward, mypoints);
+        _ctx.view.gameDidEnd(_flowAward);
     }
 
     protected function handleUnload (event :Event) :void
@@ -175,19 +169,12 @@ public class DictionaryAttack extends Sprite
     protected function gotUserCookie (cookie :Object) :void
     {
         _cookie = (cookie == null) ? new Object() : cookie;
-        _view.gotUserCookie(_cookie);
+        _ctx.view.gotUserCookie(_cookie);
     }
 
-    protected var _control :WhirledGameControl;
-    protected var _model :Model;
-    protected var _view :GameView;
-    protected var _content :Content;
+    protected var _ctx :Context;
     protected var _cookie :Object;
     protected var _flowAward :int;
-    protected var _initComplete :int;
-
-    [Embed(source="../../rsrc/invaders.swf", mimeType="application/octet-stream")]
-    protected var CONTENT :Class;
 
     protected static const LONG_WORD :int = 8;
     protected static const MAX_HISCORES :int = 4;

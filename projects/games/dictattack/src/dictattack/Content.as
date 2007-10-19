@@ -3,11 +3,13 @@
 
 package dictattack {
 
+import flash.events.Event;
 import flash.media.Sound;
 import flash.text.GridFitType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
+import flash.utils.ByteArray;
 
 import flash.display.Graphics;
 import flash.display.MovieClip;
@@ -36,8 +38,11 @@ public class Content
     /** The border around the board in which the shooters reside. */
     public static const BOARD_BORDER :int = 50;
 
-    /** The font used for the letters. */
-    public static const FONT_NAME :String = "Verdana";
+    /** The font used for the text input. */
+    public static const INPUT_FONT_NAME :String = "Verdana";
+
+    /** The name of our pixelly font. */
+    public static const FONT_NAME :String = "Amiga Forever Pro2";
 
     /** The point size of our general purpose font. */
     public static const FONT_SIZE :int = 12;
@@ -161,9 +166,22 @@ public class Content
         "....xxx....",
         ];
 
-    public function Content (pack :EmbeddedSwfLoader)
+    public function Content (onReady :Function)
     {
-        _pack = pack;
+        var packs :int = 0;
+        var packLoaded :Function = function (event :Event) :void {
+            if (++packs == 2) {
+                onReady();
+            }
+        };
+
+        _invaders = new EmbeddedSwfLoader();
+        _invaders.addEventListener(Event.COMPLETE, packLoaded);
+        _invaders.load(ByteArray(new INVADERS()));
+
+        _screens = new EmbeddedSwfLoader();
+        _screens.addEventListener(Event.COMPLETE, packLoaded);
+        _screens.load(ByteArray(new SCREENS()));
     }
 
     public function getShootSound () :Sound
@@ -174,17 +192,17 @@ public class Content
     public function createInvader (type :int) :MovieClip
     {
         var suff :String = (type == 0) ? "01" : "03"
-        return MovieClip(new (_pack.getClass("space_invader_" + suff))());
+        return MovieClip(new (_invaders.getClass("space_invader_" + suff))());
     }
 
     public function createShip () :MovieClip
     {
-        return MovieClip(new (_pack.getClass("ship_color"))());
+        return MovieClip(new (_invaders.getClass("ship_color"))());
     }
 
     public function createSaucer () :MovieClip
     {
-        var saucer :MovieClip = MovieClip(new (_pack.getClass("alienship"))());
+        var saucer :MovieClip = MovieClip(new (_invaders.getClass("alienship"))());
         saucer.scaleX = 0.3; // TODO: get Bill to redo source
         saucer.scaleY = 0.3;
         return saucer;
@@ -192,25 +210,30 @@ public class Content
 
     public function createExplosion () :Explosion
     {
-        return new Explosion(MovieClip(new (_pack.getClass("explosion"))()));
+        return new Explosion(MovieClip(new (_invaders.getClass("explosion"))()));
     }
 
     public function createWordScoreDisplay () :MovieClip
     {
-        var score :MovieClip = MovieClip(new (_pack.getClass("ProgressBar"))());
+        var score :MovieClip = MovieClip(new (_invaders.getClass("ProgressBar"))());
         score.scaleX = -1; // TODO: get Bill to redo source
         return score;
     }
 
     public function createRoundScoreIcon () :MovieClip
     {
-        return MovieClip(new (_pack.getClass("ProgressIcon"))());
+        return MovieClip(new (_invaders.getClass("ProgressIcon"))());
+    }
+
+    public function createGameOverSingle () :MovieClip
+    {
+        return MovieClip(new (_screens.getClass("game_over_single"))());
     }
 
     public function makeInputFormat (color :uint, bold :Boolean = false) :TextFormat
     {
         var format :TextFormat = new TextFormat();
-        format.font = FONT_NAME;
+        format.font = INPUT_FONT_NAME;
         format.color = color;
         format.size = FONT_SIZE;
         format.bold = bold;
@@ -220,7 +243,7 @@ public class Content
     public function makeMarqueeFormat (size :int = 16) :TextFormat
     {
         var format :TextFormat = new TextFormat();
-        format.font = "Name";
+        format.font = FONT_NAME;
         format.bold = true;
         format.color = FONT_COLOR;
         format.size = size;
@@ -230,7 +253,7 @@ public class Content
     public function makeNameFormat () : TextFormat
     {
         var format : TextFormat = new TextFormat();
-        format.font = "Name";
+        format.font = FONT_NAME;
         format.color = FONT_COLOR;
         format.size = 16;
         return format;
@@ -286,13 +309,10 @@ public class Content
         return new ColorTransform(red/0xFF, green/0xFF, blue/0xFF, 1, 0, 0, 0, alphaOffset);
     }
 
-    protected var _pack :EmbeddedSwfLoader;
+    protected var _invaders :EmbeddedSwfLoader;
+    protected var _screens :EmbeddedSwfLoader;
 
-    [Embed(source="../../rsrc/letter_font.ttf", fontName="Letter",
-           mimeType="application/x-font-truetype")]
-    protected static var LETTER_FONT :Class;
-
-    [Embed(source="../../rsrc/name_font.ttf", fontName="Name",
+    [Embed(source="../../rsrc/name_font.ttf", fontName="Amiga Forever Pro2",
            mimeType="application/x-font-truetype")]
     protected static var NAME_FONT :Class;
 
@@ -300,6 +320,12 @@ public class Content
     [Embed(source="../../rsrc/shoot.mp3")]
     protected static var SHOOT_CLASS :Class;
     protected static const SHOOT_SOUND :Sound = Sound(new SHOOT_CLASS());
+
+    [Embed(source="../../rsrc/invaders.swf", mimeType="application/octet-stream")]
+    protected var INVADERS :Class;
+
+    [Embed(source="../../rsrc/screens.swf", mimeType="application/octet-stream")]
+    protected var SCREENS :Class;
 }
 
 }

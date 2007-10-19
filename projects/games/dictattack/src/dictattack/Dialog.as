@@ -75,6 +75,6 @@ public class Dialog extends Sprite
     protected var _view :GameView;
     protected var _content :DisplayObject;
 
-    protected static const BORDER :int = 5;
+    protected static const BORDER :int = 15;
 }
 }

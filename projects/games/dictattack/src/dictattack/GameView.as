@@ -11,6 +11,7 @@ import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
 import flash.display.Graphics;
+import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.Event;
@@ -31,11 +32,9 @@ public class GameView extends Sprite
 
     public var marquee :Marquee;
 
-    public function GameView (control :WhirledGameControl, model :Model, content :Content)
+    public function GameView (ctx :Context)
     {
-        _control = control;
-        _model = model;
-        _content = content;
+        _ctx = ctx;
 
         // position ourselves a smidgen away from the edge
         x = 5;
@@ -45,32 +44,32 @@ public class GameView extends Sprite
         _input = new TextField();
         _input.background = true;
         _input.backgroundColor = uint(0xFFFFFF);
-        _input.defaultTextFormat = _content.makeInputFormat(uint(0x000000), true);
+        _input.defaultTextFormat = _ctx.content.makeInputFormat(uint(0x000000), true);
         _input.type = TextFieldType.INPUT;
-        _input.width = _content.inputRect.width;
-        _input.height = _content.inputRect.height;
+        _input.width = _ctx.content.inputRect.width;
+        _input.height = _ctx.content.inputRect.height;
         _input.restrict = "[A-Za-z]"; // only allow letters to be typed; TODO: i18n?
 
         // listen for property changed and message events
-        _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
-        _control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
+        _ctx.control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
+        _ctx.control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
     }
 
     public function init (playerCount :int) :void
     {
-        _board = new Board(_control, _model, _content);
+        _board = new Board(_ctx);
         _board.x = Content.BOARD_BORDER;
         _board.y = Content.BOARD_BORDER;
         addChild(_board);
 
-        var isMulti :Boolean = _control.isConnected() ? _model.isMultiPlayer() : true;
-        var mypidx :int = _control.isConnected() ? _control.seating.getMyPosition() : 0;
+        var isMulti :Boolean = _ctx.control.isConnected() ? _ctx.model.isMultiPlayer() : true;
+        var mypidx :int = _ctx.control.isConnected() ? _ctx.control.seating.getMyPosition() : 0;
         var psize :int = Content.BOARD_BORDER * 2 + _board.getPixelSize();
         for (var pidx :int = 0; pidx < playerCount; pidx++) {
             // the board is rotated so that our position is always at the bottom (if we're a
             // non-player use position 0)
             var posidx :int = POS_MAP[Math.max(mypidx, 0)][pidx];
-            var shooter :Shooter = new Shooter(this, _content, posidx, pidx, isMulti);
+            var shooter :Shooter = new Shooter(_ctx, posidx, pidx, isMulti);
             shooter.x = SHOOTER_X[posidx] * psize;
             shooter.y = SHOOTER_Y[posidx] * psize;
             // if this is ours (the one on the bottom), lower it a smidgen further
@@ -82,14 +81,14 @@ public class GameView extends Sprite
         }
 
         // create a marquee that we'll use to display feedback
-        marquee = new Marquee(_content.makeMarqueeFormat(),
+        marquee = new Marquee(_ctx.content.makeMarqueeFormat(),
                               Content.BOARD_BORDER + _board.getPixelSize()/2,
                               Content.BOARD_BORDER + _board.getPixelSize());
         addChild(marquee);
 
-        if (_control.isConnected()) {
+        if (_ctx.control.isConnected()) {
             var xpos :int = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
-            var help :SimpleButton = _content.makeButton("How to Play");
+            var help :SimpleButton = _ctx.content.makeButton("How to Play");
             help.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
                 showHelp();
             });
@@ -98,7 +97,7 @@ public class GameView extends Sprite
             addChild(help);
 
             _hiscores = new TextField();
-            _hiscores.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF));
+            _hiscores.defaultTextFormat = _ctx.content.makeInputFormat(uint(0xFFFFFF));
             _hiscores.x = xpos;
             _hiscores.y = help.y + help.height + 10;
             _hiscores.autoSize = TextFieldAutoSize.LEFT;
@@ -110,11 +109,6 @@ public class GameView extends Sprite
     public function getBoard () :Board
     {
         return _board;
-    }
-
-    public function getModel () :Model
-    {
-        return _model;
     }
 
     public function attractMode () :void
@@ -141,13 +135,13 @@ public class GameView extends Sprite
         if (!seenHelp) {
             showHelp();
             cookie["seen_help"] = true;
-            _control.setUserCookie(cookie)
+            _ctx.control.setUserCookie(cookie)
         }
     }
 
     public function gameDidStart () :void
     {
-        var names :Array = _control.seating.getPlayerNames();
+        var names :Array = _ctx.control.seating.getPlayerNames();
         for (var ii :int = 0; ii < names.length; ii++) {
             _shooters[ii].setName(names[ii]);
         }
@@ -158,7 +152,7 @@ public class GameView extends Sprite
         _board.roundDidStart();
 
         for each (var shooter :Shooter in _shooters) {
-            shooter.setSaucers(_model.getChangesAllowed());
+            shooter.setSaucers(_ctx.model.getChangesAllowed());
         }
 
         // this will contain all of our input bits
@@ -169,7 +163,7 @@ public class GameView extends Sprite
             var tip :TextField = new TextField();
             tip.selectable = false;
             // tip.embedFonts = true;
-            tip.defaultTextFormat = _content.makeInputFormat(uint(0xFFFFFF), true);
+            tip.defaultTextFormat = _ctx.content.makeInputFormat(uint(0xFFFFFF), true);
             tip.autoSize = TextFieldAutoSize.RIGHT;
             tip.text = "Enter word:";
 
@@ -178,7 +172,7 @@ public class GameView extends Sprite
             _input.x = tip.x + tip.width + 5;
             _inputBox.addChild(_input);
 
-            var go :SimpleButton = _content.makeButton("Go!");
+            var go :SimpleButton = _ctx.content.makeButton("Go!");
             go.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
                 submitWord();
             });
@@ -186,8 +180,8 @@ public class GameView extends Sprite
             go.y = (_input.height - go.height) / 2;
             _inputBox.addChild(go);
 
-            _inputBox.x = _content.inputRect.x - tip.width - 5;
-            _inputBox.y = _control.getStageBounds().height - _input.height -
+            _inputBox.x = _ctx.content.inputRect.x - tip.width - 5;
+            _inputBox.y = _ctx.control.getStageBounds().height - _input.height -
                 (INPUT_HEIGHT - _input.height)/2;
         }
         addChild(_inputBox);
@@ -195,8 +189,8 @@ public class GameView extends Sprite
         _input.selectable = false;
         _input.text = "Type words here!";
 
-        var ready :String = (_model.getWinningScore() > 1) ?
-            "Round " + _control.getRound() + "..." : "Ready...";
+        var ready :String = (_ctx.model.getWinningScore() > 1) ?
+            "Round " + _ctx.control.getRound() + "..." : "Ready...";
         marquee.display(ready, 1000);
         Util.invokeLater(1000, function () :void {
             _input.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
@@ -210,7 +204,7 @@ public class GameView extends Sprite
 
     public function saucerClicked (event :MouseEvent) :void
     {
-        _model.requestChange();
+        _ctx.model.requestChange();
         // refocus the input text box because they clicked outside it
         focusInput(true);
     }
@@ -224,14 +218,14 @@ public class GameView extends Sprite
         }
 
         var text :String = "";
-        if (_model.isMultiPlayer()) {
-            if (_model.getWinningScore() > 1) {
+        if (_ctx.model.isMultiPlayer()) {
+            if (_ctx.model.getWinningScore() > 1) {
                 text = "Round over. ";
             }
             text += "Point to " + scorer + ".";
-        } else if (_model.nonEmptyColumns() == 0) {
+        } else if (_ctx.model.nonEmptyColumns() == 0) {
             text = "Board clear! Excellent!";
-        } else if (_model.nonEmptyColumns() < _model.getMinWordLength()) {
+        } else if (_ctx.model.nonEmptyColumns() < _ctx.model.getMinWordLength()) {
             text = "No more words possible.";
         } else {
             text = "Game over.";
@@ -248,10 +242,10 @@ public class GameView extends Sprite
         removeChild(_inputBox);
     }
 
-    public function gameDidEnd (flow :int, mypoints :int) :void
+    public function gameDidEnd (flow :int) :void
     {
         Util.invokeLater(2000, function () :void {
-            showGameOver(flow, mypoints);
+            showGameOver(flow);
         });
     }
 
@@ -273,16 +267,23 @@ public class GameView extends Sprite
         }
     }
 
-    protected function showGameOver (flow :int, mypoints :int) :void
+    protected function showGameOver (flow :int) :void
     {
+        if (!_ctx.model.isMultiPlayer()) {
+            new EndGameSingle(_ctx, flow).show(this);
+            return;
+        }
+
         var text :TextField = new TextField();
         text.autoSize = TextFieldAutoSize.LEFT;
         text.selectable = false;
-        text.defaultTextFormat = _content.makeMarqueeFormat();
+        text.defaultTextFormat = _ctx.content.makeMarqueeFormat();
         text.embedFonts = true;
         text.gridFitType = GridFitType.PIXEL;
         text.sharpness = 400;
 
+        var points :Array = (_ctx.control.get(Model.POINTS) as Array);
+        var mypoints :int = points[_ctx.control.seating.getMyPosition()];
         var msg :String = "Game over!        "; // forces dialog to be wide
         if (mypoints > 0) {
             msg += "\nScore: " + mypoints + " points.";
@@ -306,17 +307,17 @@ public class GameView extends Sprite
 
         var overifc :Dialog = new Dialog(text);
 
-        var restart :SimpleButton = _content.makeButton("Play Again");
+        var restart :SimpleButton = _ctx.content.makeButton("Play Again");
         restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             removeChild(overifc);
-            _control.playerReady();
+            _ctx.control.playerReady();
         });
         overifc.addButton(restart, Dialog.LEFT);
 
-        var leave :SimpleButton = _content.makeButton("To Whirled");
+        var leave :SimpleButton = _ctx.content.makeButton("To Whirled");
         leave.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             removeChild(overifc);
-            _control.backToWhirled();
+            _ctx.control.backToWhirled();
         });
         overifc.addButton(leave, Dialog.RIGHT);
 
@@ -325,7 +326,7 @@ public class GameView extends Sprite
 
     protected function showHelp () :void
     {
-        HelpView.show(this, _model, _content);
+        HelpView.show(this, _ctx.model, _ctx.content);
     }
 
     protected function submitWord () :void
@@ -333,7 +334,7 @@ public class GameView extends Sprite
         if (_input.text.length == 0) {
             return;
         }
-        _model.submitWord(_board, _input.text, function (text :String) :void {
+        _ctx.model.submitWord(_board, _input.text, function (text :String) :void {
             marquee.display(text, 1000);
         });
         _input.text = "";
@@ -349,10 +350,11 @@ public class GameView extends Sprite
         if (event.name == Model.POINTS) {
             if (event.index == -1) {
                 for (ii = 0; ii < _shooters.length; ii++) {
-                    _shooters[ii].setPoints(0, _model.getWinningPoints());
+                    _shooters[ii].setPoints(0, _ctx.model.getWinningPoints());
                 }
             } else {
-                _shooters[event.index].setPoints(int(event.newValue), _model.getWinningPoints());
+                _shooters[event.index].setPoints(
+                    int(event.newValue), _ctx.model.getWinningPoints());
             }
 
         } else if (event.name == Model.SCORES) {
@@ -367,8 +369,8 @@ public class GameView extends Sprite
         } else if (event.name == Model.BOARD_DATA) {
             if (event.index != -1 && event.newValue != Model.BLANK) {
                 // map the global position into to our local coordinates
-                var xx :int = _model.getReverseX(event.index);
-                var yy :int = _model.getReverseY(event.index);
+                var xx :int = _ctx.model.getReverseX(event.index);
+                var yy :int = _ctx.model.getReverseY(event.index);
                 // TODO: animate a spaceship flying over and changing the letter
                 _board.getLetterAt(xx, yy).setText(String(event.newValue));
             }
@@ -381,41 +383,39 @@ public class GameView extends Sprite
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == Model.WORD_PLAY) {
-            handleWordPlay(event.value as Array);
+            handleWordPlay(WordPlay.unflatten(event.value as Array));
         } else if (event.name == Model.LETTER_CHANGE) {
             handleLetterChange(event.value as Array);
         }
     }
 
-    protected function handleWordPlay (data :Array) :void
+    protected function handleWordPlay (play :WordPlay) :void
     {
-        var scidx :int = int(data[0]);
-        var scorer :String = _control.seating.getPlayerNames()[scidx];
-        var word :String = (data[1] as String);
-        var points :int = int(data[2]);
-        var mult :int = int(data[3]);
+        var scorer :String = _ctx.control.seating.getPlayerNames()[play.pidx];
+        var mult :int = play.getMultiplier();
+        var points :int = play.getPoints(_ctx.model);
+
         if (mult > 1) {
-            marquee.display(scorer + ": " + word + " x" + mult + " for " + points, 1000);
+            marquee.display(scorer + ": " + play.word + " x" + mult + " for " + points, 1000);
         } else {
-            marquee.display(scorer + ": " + word + " for " + points, 1000);
+            marquee.display(scorer + ": " + play.word + " for " + points, 1000);
         }
 
-        var wpos :Array = (data[4] as Array);
-        for (var ii :int = 0; ii < wpos.length; ii++) {
+        for (var ii :int = 0; ii < play.positions.length; ii++) {
             // map the global position into to our local coordinates
-            var xx :int = _model.getReverseX(int(wpos[ii]));
-            var yy :int = _model.getReverseY(int(wpos[ii]));
+            var xx :int = _ctx.model.getReverseX(int(play.positions[ii]));
+            var yy :int = _ctx.model.getReverseY(int(play.positions[ii]));
             // when the shooting is finished the column will be marked as playable
             _shotsInProgress++;
-            _shooters[scidx].shootLetter(_board, xx, yy);
+            _shooters[play.pidx].shootLetter(_board, xx, yy);
         }
     }
 
     protected function handleLetterChange (data :Array) :void
     {
-        var pidx :int = _control.seating.getPlayerPosition(int(data[0]));
-        var xx :int = _model.getReverseX(int(data[1]));
-        var yy :int = _model.getReverseY(int(data[1]));
+        var pidx :int = _ctx.control.seating.getPlayerPosition(int(data[0]));
+        var xx :int = _ctx.model.getReverseX(int(data[1]));
+        var yy :int = _ctx.model.getReverseY(int(data[1]));
         _shooters[pidx].flySaucer(_board, xx, yy);
     }
 
@@ -430,12 +430,10 @@ public class GameView extends Sprite
 
     protected function textChanged (event :Event) :void
     {
-        _model.highlightWord(_board, _input.text);
+        _ctx.model.highlightWord(_board, _input.text);
     }
 
-    protected var _control :WhirledGameControl;
-    protected var _model :Model;
-    protected var _content :Content;
+    protected var _ctx :Context;
 
     protected var _inputBox :Sprite;
     protected var _input :TextField;

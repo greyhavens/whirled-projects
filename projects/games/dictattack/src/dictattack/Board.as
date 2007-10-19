@@ -24,28 +24,26 @@ public class Board extends Sprite
     /** The gap between tiles on the board. */
     public static const GAP :int = 2;
 
-    public function Board (control :WhirledGameControl, model :Model, content :Content)
+    public function Board (ctx :Context)
     {
-        _control = control;
-        _model = model;
-        _content = content;
-        _size = _model.getBoardSize();
+        _ctx = ctx;
+        _size = _ctx.model.getBoardSize();
 
         // if we're not connected, stop here
-        if (!_control.isConnected()) {
+        if (!_ctx.control.isConnected()) {
             return;
         }
 
         // scale our tiles to fit the board
-        var bounds :Rectangle = _control.getStageBounds();
+        var bounds :Rectangle = _ctx.control.getStageBounds();
         var havail :int = bounds.height - Content.BOARD_BORDER*2 - GameView.INPUT_HEIGHT;
         Content.TILE_SIZE = (havail / _size) - 2;
 
         // listen for property changed events
-        _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
+        _ctx.control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
 
         // if we're already in play, load up the board immediately
-        if (_control.isInPlay()) {
+        if (_ctx.control.isInPlay()) {
             gotBoard();
         }
     }
@@ -113,12 +111,12 @@ public class Board extends Sprite
     public function destroyLetter (xx :int, yy :int) :void
     {
         if (clearLetter(yy * _size + xx)) {
-            var boom :Explosion = _content.createExplosion();
+            var boom :Explosion = _ctx.content.createExplosion();
             boom.x = (Content.TILE_SIZE + GAP) * xx;
             boom.y = (Content.TILE_SIZE + GAP) * yy;
             addChild(boom);
         }
-        _model.updateColumnPlayable(this, xx);
+        _ctx.model.updateColumnPlayable(this, xx);
     }
 
     public function clearLetter (lidx :int) :Boolean
@@ -150,13 +148,13 @@ public class Board extends Sprite
         var longestDelay :int = 0;
         for (var yy :int = 0; yy < _size; yy++) {
             for (var xx : int = 0; xx < _size; xx++) {
-                var letter :String = _model.getLetter(xx, yy);
+                var letter :String = _ctx.model.getLetter(xx, yy);
                 var pos :int = yy * _size + xx;
                 if (letter == Model.BLANK) {
                     continue;
                 }
 
-                var ll :Letter = new Letter(_content, _model.getType(xx, yy));
+                var ll :Letter = new Letter(_ctx.content, _ctx.model.getType(xx, yy));
                 ll.setText(letter);
                 var sx :int = (Content.TILE_SIZE + GAP) * xx;
                 var sy :int = (Content.TILE_SIZE + GAP) * (yy-_size-5);
@@ -183,13 +181,11 @@ public class Board extends Sprite
     // and ActionScript has no Board.this
     protected function boardAnimationComplete (event :TimerEvent) :void
     {
-        _model.updatePlayable(this);
+        _ctx.model.updatePlayable(this);
     }
 
     protected var _size :int;
-    protected var _control :WhirledGameControl;
-    protected var _model :Model;
-    protected var _content :Content;
+    protected var _ctx :Context;
     protected var _letters :Array = new Array();
 
     protected static const LETTER_RESET_DELAY :int = 1000;

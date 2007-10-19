@@ -39,15 +39,15 @@ public class Model
     /** The character used to indicate a blank or already used space. */
     public static const BLANK :String = " ";
 
-    public function Model (size :int, control :WhirledGameControl)
+    public function Model (size :int, ctx :Context)
     {
         _size = size;
-        _control = control;
-        _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
-        _control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
+        _ctx = ctx;
+        _ctx.control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
+        _ctx.control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
 
         // if we're already in play, load up the board immediately
-        if (_control.isConnected() && _control.isInPlay()) {
+        if (_ctx.control.isConnected() && _ctx.control.isInPlay()) {
             gotBoard();
         }
     }
@@ -122,7 +122,7 @@ public class Model
      */
     public function isMultiPlayer () :Boolean
     {
-        return (_control.seating.getPlayerNames().length > 1);
+        return (_ctx.control.seating.getPlayerNames().length > 1);
     }
 
     /**
@@ -139,6 +139,77 @@ public class Model
     public function getNotInDictPlays () :int
     {
         return _notInDict;
+    }
+
+    /**
+     * Returns the duration of the most recently completed round in milliseconds.
+     */
+    public function getRoundDuration () :int
+    {
+        return _roundDuration;
+    }
+
+    /**
+     * Returns the duration of the most recently completed game in milliseconds.
+     */
+    public function getGameDuration () :int
+    {
+        return _gameDuration;
+    }
+
+    /**
+     * Returns the longest word played in this round, if multiple words of the same length are the
+     * longest the first is returned.
+     */
+    public function getLongestWord () :WordPlay
+    {
+        var length :int = 0;
+        var word :WordPlay = null;
+        for (var pp :int = 0; pp < _plays.length; pp++) {
+            for (var ii :int = 0; ii < _plays[pp].length; ii++) {
+                var play :WordPlay = (_plays[pp][ii] as WordPlay);
+                if (play.word.length > length || play.when < word.when) {
+                    word = play;
+                    length = play.word.length;
+                }
+            }
+        }
+        return word;
+    }
+
+    /**
+     * Returns the highest scoring word played in this round, if multiple words of the same length
+     * are the highest the first is returned.
+     */
+    public function getHighestScoringWord () :WordPlay
+    {
+        var points :int = 0;
+        var word :WordPlay = null;
+        for (var pp :int = 0; pp < _plays.length; pp++) {
+            for (var ii :int = 0; ii < _plays[pp].length; ii++) {
+                var play :WordPlay = (_plays[pp][ii] as WordPlay);
+                if (play.getPoints(this) > points || play.when < word.when) {
+                    word = play;
+                    points = play.getPoints(this);
+                }
+            }
+        }
+        return word;
+    }
+
+    public function getWordCountsByLength () :Array
+    {
+        var counts :Array = [];
+        for (var ll :int = getMinWordLength(); ll <= Content.BOARD_SIZE; ll++) {
+            counts[ll] = 0;
+        }
+        for (var pp :int = 0; pp < _plays.length; pp++) {
+            for (var ii :int = 0; ii < _plays[pp].length; ii++) {
+                var play :WordPlay = (_plays[pp][ii] as WordPlay);
+                counts[play.word.length]++;
+            }
+        }
+        return counts;
     }
 
     /**
@@ -162,16 +233,25 @@ public class Model
      */
     public function roundDidStart () :void
     {
+        var pcount :int = _ctx.control.seating.getPlayerIds().length;
+
         // if we are in control, zero out the points, create a board and publish it
-        if (_control.amInControl()) {
-            var pcount :int = _control.seating.getPlayerIds().length;
-            _control.set(POINTS, new Array(pcount).map(function (): int { return 0; }));
-            _control.getDictionaryLetterSet(Content.LOCALE, _size*_size, gotLetterSet);
+        if (_ctx.control.amInControl()) {
+            _ctx.control.set(POINTS, new Array(pcount).map(function (): int { return 0; }));
+            _ctx.control.getDictionaryLetterSet(Content.LOCALE, _size*_size, gotLetterSet);
+        }
+
+        // create our play history (TODO: we should probably store this in the game object)
+        for (var ii :int = 0; ii < pcount; ii++) {
+            _plays[ii] = [];
         }
 
         // clear out our non-on-board and not-in-dictionary counters
         _notOnBoard = 0;
         _notInDict = 0;
+
+        // note our round start time
+        _roundStart = getTimer();
     }
 
     /**
@@ -179,14 +259,18 @@ public class Model
      */
     public function roundDidEnd () :String
     {
+        // note our round duration and accumulate to game duration
+        _roundDuration = getTimer() - _roundStart;
+        _gameDuration += _roundDuration;
+
         var scorer :String = "";
-        var points :Array = (_control.get(POINTS) as Array);
+        var points :Array = (_ctx.control.get(POINTS) as Array);
         for (var ii :int = 0; ii < points.length; ii++) {
             if (points[ii] >= getWinningPoints()) {
                 if (scorer.length > 0) {
                     scorer += ", ";
                 }
-                scorer += _control.seating.getPlayerNames()[ii];
+                scorer += _ctx.control.seating.getPlayerNames()[ii];
             }
         }
         return scorer;
@@ -248,7 +332,7 @@ public class Model
         }
 
         // submit the word to the server to see if it is valid
-        _control.checkDictionaryWord(
+        _ctx.control.checkDictionaryWord(
             Content.LOCALE, word, function (word :String, isValid :Boolean) : void {
             if (!isValid) {
                 // TODO: play a sound indicating the mismatch
@@ -261,65 +345,63 @@ public class Model
             // remove our tiles from the distributed state (we do this in individual events so that
             // watchers coming into a game half way through will see valid state), while we're at
             // it, compute our points
-            var wpoints :int = used.length - getMinWordLength() + 1, ii :int, mult :int = 1;
-            var wpos :Array = new Array();
-            var usedWild :Boolean = false;
-            for (ii = 0; ii < used.length; ii++) {
+            var play :WordPlay = new WordPlay();
+            play.pidx = _ctx.control.seating.getMyPosition();
+            play.word = word;
+            for (var ii :int = 0; ii < used.length; ii++) {
                 // map our local coordinates back to a global position coordinates
                 var xx :int = int(used[ii] % _size);
                 var yy :int = int(used[ii] / _size);
-                mult = Math.max(TYPE_MULTIPLIER[getType(xx, yy)], mult);
+                play.mults[ii] = TYPE_MULTIPLIER[getType(xx, yy)];
                 var pos :int = getPosition(xx, yy);
-                _control.setImmediate(BOARD_DATA, BLANK, pos);
-                wpos.push(pos);
+                _ctx.control.setImmediate(BOARD_DATA, BLANK, pos);
+                play.positions[ii] = pos;
                 // if this was a wildcard, it scores no point
                 if (board.getLetter(used[ii]).getText() == WILDCARD) {
-                    wpoints = Math.max(wpoints-1, 0);
-                    usedWild = true;
+                    play.wilds[ii] = true;
                 }
             }
-            wpoints *= mult;
 
             // broadcast our our played word as a message
-            var myidx :int = _control.seating.getMyPosition();
-            _control.sendMessage(WORD_PLAY, [ myidx, word, wpoints, mult, wpos ]);
+            _ctx.control.sendMessage(WORD_PLAY, play.flatten());
 
             // update our points
-            var points :Array = (_control.get(POINTS) as Array);
-            var newpoints :int = points[myidx] + wpoints;
-            if (wpoints > 0) {
-                _control.set(POINTS, newpoints, myidx);
+            var points :Array = (_ctx.control.get(POINTS) as Array);
+            var ppoints :int = play.getPoints(_ctx.model);
+            var newpoints :int = points[play.pidx] + ppoints;
+            if (ppoints > 0) {
+                _ctx.control.set(POINTS, newpoints, play.pidx);
             }
 
             // if they earned a trophy due to the length of this word, award it
-            if (used.length >= 8 && !usedWild) {
-                if (!_control.holdsTrophy("word_length_" + used.length)) {
-                    _control.awardTrophy("word_length_" + used.length);
+            if (used.length >= 8 && !play.usedWild()) {
+                if (!_ctx.control.holdsTrophy("word_length_" + used.length)) {
+                    _ctx.control.awardTrophy("word_length_" + used.length);
                 }
             }
 
             // if this is a single player game, they go until the board is clear
             if (!isMultiPlayer()) {
                 if (nonEmptyColumns() < getMinWordLength()) {
-                    _control.endGameWithScore(newpoints);
+                    _ctx.control.endGameWithScore(newpoints);
                 }
 
             // if it's a multiplayer game, see if we have exceeded the winning points
             } else if (newpoints >= getWinningPoints()) {
                 // if so, score a point and end the round 
-                var scores :Array = (_control.get(SCORES) as Array);
-                scores[myidx] = scores[myidx] + 1;
-                _control.set(SCORES, scores[myidx], myidx);
-                if (scores[myidx] >= getWinningScore()) {
-                    var winners :Array = [ _control.getMyId() ];
-                    var losers :Array = _control.seating.getPlayerIds().filter(
+                var scores :Array = (_ctx.control.get(SCORES) as Array);
+                scores[play.pidx] = scores[play.pidx] + 1;
+                _ctx.control.set(SCORES, scores[play.pidx], play.pidx);
+                if (scores[play.pidx] >= getWinningScore()) {
+                    var winners :Array = [ _ctx.control.getMyId() ];
+                    var losers :Array = _ctx.control.seating.getPlayerIds().filter(
                         function (o :*, i :int, a :Array) :Boolean {
-                            return (int(o) != _control.getMyId());
+                            return (int(o) != _ctx.control.getMyId());
                         });
-                    _control.endGameWithWinners(
+                    _ctx.control.endGameWithWinners(
                         winners, losers, WhirledGameControl.CASCADING_PAYOUT);
                 } else {
-                    _control.endRound(INTER_ROUND_DELAY);
+                    _ctx.control.endRound(INTER_ROUND_DELAY);
                 }
             }
         });
@@ -392,21 +474,21 @@ public class Model
         // select the letter to change and issue the change notification
         var rpos :int = int(set[_rando.nextInt(set.length)]);
 //         var nlet :String = chars.substr(_rando.nextInt(chars.length), 1);
-        _control.set(BOARD_DATA, WILDCARD, rpos);
+        _ctx.control.set(BOARD_DATA, WILDCARD, rpos);
 
 //         // penalize our score
-//         var points :Array = (_control.get(POINTS) as Array);
-//         var myidx : int = _control.seating.getMyPosition();
-//         _control.set(POINTS, points[myidx] - getChangePenalty(), myidx);
+//         var points :Array = (_ctx.control.get(POINTS) as Array);
+//         var myidx : int = _ctx.control.seating.getMyPosition();
+//         _ctx.control.set(POINTS, points[myidx] - getChangePenalty(), myidx);
 
         // finally send a message indicating what we've done so that the UI can react
-        _control.sendMessage(LETTER_CHANGE, [ _control.getMyId(), rpos ]);
+        _ctx.control.sendMessage(LETTER_CHANGE, [ _ctx.control.getMyId(), rpos ]);
     }
 
     public function endGameEarly () :void
     {
-        var myidx :int = _control.seating.getMyPosition();
-        _control.endGameWithScore((_control.get(POINTS) as Array)[myidx]);
+        var myidx :int = _ctx.control.seating.getMyPosition();
+        _ctx.control.endGameWithScore((_ctx.control.get(POINTS) as Array)[myidx]);
     }
 
     public function updatePlayable (board :Board) :void
@@ -418,7 +500,7 @@ public class Model
 
     public function updateColumnPlayable (board :Board, xx :int) :void
     {
-        if (!_control.isConnected() || !_control.isInPlay()) {
+        if (!_ctx.control.isConnected() || !_ctx.control.isInPlay()) {
             return;
         }
 
@@ -434,7 +516,7 @@ public class Model
 
     public function getPosition (xx :int, yy :int) :int
     {
-        switch (_control.seating.getMyPosition()) {
+        switch (_ctx.control.seating.getMyPosition()) {
         default:
         case 0: return yy * _size + xx;
         case 1: return (_size-1 - yy) * _size + (_size-1 - xx);
@@ -445,7 +527,7 @@ public class Model
 
     public function getReverseX (pos :int) :int
     {
-        switch (_control.seating.getMyPosition()) {
+        switch (_ctx.control.seating.getMyPosition()) {
         default:
         case 0: return pos % _size;
         case 1: return _size-1 - pos % _size;
@@ -456,7 +538,7 @@ public class Model
 
     public function getReverseY (pos :int) :int
     {
-        switch (_control.seating.getMyPosition()) {
+        switch (_ctx.control.seating.getMyPosition()) {
         default:
         case 0: return int(pos / _size);
         case 1: return _size-1 - int(pos / _size);
@@ -467,13 +549,13 @@ public class Model
 
     public function getLetter (xx :int, yy :int) :String
     {
-        var data :Array = (_control.get(BOARD_DATA) as Array);
+        var data :Array = (_ctx.control.get(BOARD_DATA) as Array);
         return data[getPosition(xx, yy)];
     }
 
     public function dumpCurrentBoard () :void
     {
-        dumpBoard(_control.get(BOARD_DATA) as Array);
+        dumpBoard(_ctx.control.get(BOARD_DATA) as Array);
     }
 
     public function dumpBoard (data :Array) :void
@@ -497,7 +579,7 @@ public class Model
                 letters[ii] = " ";
             }
         }
-        _control.set(BOARD_DATA, letters);
+        _ctx.control.set(BOARD_DATA, letters);
     }
 
     /**
@@ -507,9 +589,14 @@ public class Model
     {
         if (event.name == Model.LETTER_CHANGE) {
             var data :Array = (event.value as Array);
-            if (int(data[0]) == _control.getMyId()) {
+            if (int(data[0]) == _ctx.control.getMyId()) {
                 _changePending = false;
             }
+
+        } else if (event.name == Model.WORD_PLAY) {
+            var play :WordPlay = WordPlay.unflatten(event.value as Array);
+            play.when = getTimer();
+            _plays[play.pidx].push(play);
         }
     }
 
@@ -525,7 +612,7 @@ public class Model
 
     protected function gotBoard () :void
     {
-        var data :Array = (_control.get(BOARD_DATA) as Array);
+        var data :Array = (_ctx.control.get(BOARD_DATA) as Array);
         _letterCount = 0;
         for each (var letter :String in data) {
             if (letter != BLANK) {
@@ -574,15 +661,19 @@ public class Model
 
     protected function getConfig (key :String, defval :int) :int
     {
-        return (key in _control.getConfig()) ? int(_control.getConfig()[key]) : defval;
+        return (key in _ctx.control.getConfig()) ? int(_ctx.control.getConfig()[key]) : defval;
     }
 
     protected var _size :int;
+    protected var _ctx :Context;
+
     protected var _letterCount :int;
-    protected var _control :WhirledGameControl;
     protected var _rando :Random = new Random(getTimer());
     protected var _changePending :Boolean;
 
+    protected var _plays :Array = [];
+
+    protected var _roundStart :int, _roundDuration :int, _gameDuration :int
     protected var _notOnBoard :int, _notInDict :int;
 
     // yay english!

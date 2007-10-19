@@ -3,7 +3,6 @@
 
 package dictattack {
 
-import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.Event;
@@ -52,17 +51,6 @@ public class SplashView extends Sprite
         }
         _parent.removeEventListener(MouseEvent.CLICK, onClick);
         _onClear();
-    }
-
-    protected static function dump (object :Object, indent :String) :void
-    {
-        trace("D: " + indent + object);
-        if (object is DisplayObjectContainer) {
-            var doc :DisplayObjectContainer = (object as DisplayObjectContainer);
-            for (var ii :int = 0; ii < doc.numChildren; ii++) {
-                dump(doc.getChildAt(ii), indent + " ");
-            }
-        }
     }
 
     protected var _parent :Sprite;
