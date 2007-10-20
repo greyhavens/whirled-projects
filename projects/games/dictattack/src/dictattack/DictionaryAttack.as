@@ -29,8 +29,7 @@ public class DictionaryAttack extends Sprite
         // we use this function to wait for our various bits to complete
         var initComplete :int = 0;
         var maybeFinishInit :Function = function () :void {
-//            if (++initComplete == 2) {
-            if (++initComplete == 1) {
+            if (++initComplete == 2) {
                 finishInit();
             }
         };
@@ -48,13 +47,14 @@ public class DictionaryAttack extends Sprite
         var bounds :Rectangle = _ctx.control.isConnected() ?
             _ctx.control.getStageBounds() : new Rectangle(0, 0, 1000, 550);
         graphics.drawRect(0, 0, bounds.width, bounds.height);
+        trace("Painting over " + _ctx.control.getStageBounds());
 
-//         // show our splash screen
-//         var splash :SplashView = new SplashView(this, function () :void {
-//             removeChild(splash);
-//             maybeFinishInit();
-//         });
-//         addChild(splash);
+        // show our splash screen
+        var splash :SplashView = new SplashView(this, function () :void {
+            removeChild(splash);
+            maybeFinishInit();
+        });
+        addChild(splash);
     }
 
     protected function finishInit () :void

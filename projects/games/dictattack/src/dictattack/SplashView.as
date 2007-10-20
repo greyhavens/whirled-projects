@@ -37,10 +37,8 @@ public class SplashView extends Sprite
 
     protected function onEnterFrame (event :Event) :void
     {
-        if (_clip.currentFrame < _lastFrame) {
-            onClick(null); // we've looped, eject!
-        } else {
-            _lastFrame = _clip.currentFrame;
+        if (_clip.currentFrame > 157) { // magic!
+            onClick(null);
         }
     }
 
@@ -57,7 +55,6 @@ public class SplashView extends Sprite
     protected var _onClear :Function;
     protected var _loader :EmbeddedSwfLoader;
     protected var _clip :MovieClip;
-    protected var _lastFrame :int;
 
     [Embed(source="../../rsrc/splash.swf", mimeType="application/octet-stream")]
     protected var SPLASH :Class;
