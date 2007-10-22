@@ -890,7 +890,7 @@ public class Pawn extends Actor
     protected static const SLIDE_DUST_INTERVAL :Number = 3/10;
 
     /** The damage threshold for critical attacks. */
-    protected static const CRITICAL_DAMAGE :Number = 1200;
+    protected static const CRITICAL_DAMAGE :Number = 300;
 
     /** The damage threshold for which we show messages. */
     protected static const MESSAGE_DAMAGE :Number = 1500;
