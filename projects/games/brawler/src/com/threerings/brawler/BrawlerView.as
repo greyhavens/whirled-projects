@@ -160,7 +160,7 @@ public class BrawlerView extends Sprite
      */
     public function playCameraEffect (effect :String) :void
     {
-        _camera.gotoAndPlay(effect);
+        _cameraEffect = effect;
     }
 
     /**
@@ -354,6 +354,12 @@ public class BrawlerView extends Sprite
             _lastPerSecond = _timer;
         }
 
+        // play the camera effect, if any
+        if (_cameraEffect != null) {
+            _camera.gotoAndPlay(_cameraEffect);
+            _cameraEffect = null;
+        }
+
         // notify the actors
         for each (var actor :Actor in _actors) {
             if (actor.parent != null) {
@@ -519,6 +525,9 @@ public class BrawlerView extends Sprite
 
     /** The number of frames rendered in the last second. */
     protected var _frameCount :int = 0;
+
+    /** An effect to play on the camera. */
+    protected var _cameraEffect :String;
 
     /** The number of background layers. */
     protected static const BACKGROUND_LAYERS :int = 5;
