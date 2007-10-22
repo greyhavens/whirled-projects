@@ -156,11 +156,16 @@ public class BrawlerView extends Sprite
     }
 
     /**
-     * Plays a camera effect.
+     * Sets the camera effect to play at the start of the next frame.  If there is already
+     * an effect, it will only be replaced if the specified effect is more intense.
      */
     public function playCameraEffect (effect :String) :void
     {
-        _cameraEffect = effect;
+        var oidx :int = ArrayUtil.indexOf(CAMERA_EFFECTS, _cameraEffect);
+        var nidx :int = ArrayUtil.indexOf(CAMERA_EFFECTS, effect);
+        if (nidx >= oidx) {
+            _cameraEffect = effect;
+        }
     }
 
     /**
@@ -354,7 +359,9 @@ public class BrawlerView extends Sprite
             _lastPerSecond = _timer;
         }
 
-        // play the camera effect, if any
+        // play the camera effect, if any (we postpone this until the start of the next
+        // frame because of a bug where the hit boxes would be frozen at their active
+        // frame)
         if (_cameraEffect != null) {
             _camera.gotoAndPlay(_cameraEffect);
             _cameraEffect = null;
@@ -535,6 +542,9 @@ public class BrawlerView extends Sprite
     /** The exponential rate at which the camera approaches its target position
      * (1/4 there after 1/30 of a second). */
     protected static const CAMERA_RATE :Number = 30 * Math.log(3/4);
+
+    /** The camera effects, in order of intensity. */
+    protected static const CAMERA_EFFECTS :Array = [ "x_light", "light", "medium" ];
 
     /** The array of possible grades. */
     protected static const GRADES :Array = [ "S", "A", "B", "C", "D", "F" ];
