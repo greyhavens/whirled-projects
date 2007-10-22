@@ -42,9 +42,11 @@ public class Board extends Sprite
         // listen for property changed events
         _ctx.control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
 
-        // if we're already in play, load up the board immediately
+        // if we're already in play, start displaying the board immediately
         if (_ctx.control.isInPlay()) {
-            gotBoard();
+            _gotBoard = true;
+            _roundStarted = true;
+            maybeStartRound();
         }
     }
 
@@ -76,6 +78,8 @@ public class Board extends Sprite
 
     public function roundDidStart () :void
     {
+        _roundStarted = true;
+        maybeStartRound();
     }
 
     public function roundDidEnd () :void
@@ -94,6 +98,10 @@ public class Board extends Sprite
                 DelayedPath.delay(LinePath.move(ll, sx, sy, dx, sy, 1000), delay).start();
             }
         }
+
+        // clear out our state tracking flags
+        _roundStarted = false;
+        _gotBoard = false;
     }
 
     public function resetLetters (used :Array) :void
@@ -135,12 +143,18 @@ public class Board extends Sprite
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
         if (event.name == Model.BOARD_DATA && event.index == -1) {
-            gotBoard();
+            _gotBoard = true;
+            maybeStartRound();
         }
     }
 
-    protected function gotBoard () :void
+    protected function maybeStartRound () :void
     {
+        // if one of our two conditions is not yet met, then wait; we'll be called again
+        if (!_gotBoard || !_roundStarted) {
+            return;
+        }
+
         while (numChildren > 0) {
             removeChildAt(0);
         }
@@ -187,6 +201,9 @@ public class Board extends Sprite
     protected var _size :int;
     protected var _ctx :Context;
     protected var _letters :Array = new Array();
+
+    protected var _roundStarted :Boolean = false;
+    protected var _gotBoard :Boolean = false;
 
     protected static const LETTER_RESET_DELAY :int = 1000;
 }

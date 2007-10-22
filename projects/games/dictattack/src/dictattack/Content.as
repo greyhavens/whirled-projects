@@ -170,7 +170,7 @@ public class Content
     {
         var packs :int = 0;
         var packLoaded :Function = function (event :Event) :void {
-            if (++packs == 2) {
+            if (++packs == 3) {
                 onReady();
             }
         };
@@ -182,6 +182,10 @@ public class Content
         _screens = new EmbeddedSwfLoader();
         _screens.addEventListener(Event.COMPLETE, packLoaded);
         _screens.load(ByteArray(new SCREENS()));
+
+        _between = new EmbeddedSwfLoader();
+        _between.addEventListener(Event.COMPLETE, packLoaded);
+        _between.load(ByteArray(new BETWEEN()));
     }
 
     public function getShootSound () :Sound
@@ -223,6 +227,11 @@ public class Content
     public function createRoundScoreIcon () :MovieClip
     {
         return MovieClip(new (_invaders.getClass("ProgressIcon"))());
+    }
+
+    public function createBetweenRound (round :int) :MovieClip
+    {
+        return MovieClip(new (_between.getClass("Round_" + round))());
     }
 
     public function createGameOverSingle () :MovieClip
@@ -311,6 +320,7 @@ public class Content
 
     protected var _invaders :EmbeddedSwfLoader;
     protected var _screens :EmbeddedSwfLoader;
+    protected var _between :EmbeddedSwfLoader;
 
     [Embed(source="../../rsrc/name_font.ttf", fontName="Amiga Forever Pro2",
            mimeType="application/x-font-truetype")]
@@ -326,6 +336,9 @@ public class Content
 
     [Embed(source="../../rsrc/screens.swf", mimeType="application/octet-stream")]
     protected var SCREENS :Class;
+
+    [Embed(source="../../rsrc/betweenrounds.swf", mimeType="application/octet-stream")]
+    protected var BETWEEN :Class;
 }
 
 }

@@ -149,8 +149,6 @@ public class GameView extends Sprite
 
     public function roundDidStart () :void
     {
-        _board.roundDidStart();
-
         for each (var shooter :Shooter in _shooters) {
             shooter.setSaucers(_ctx.model.getChangesAllowed());
         }
@@ -189,17 +187,46 @@ public class GameView extends Sprite
         _input.selectable = false;
         _input.text = "Type words here!";
 
-        var ready :String = (_ctx.model.getWinningScore() > 1) ?
-            "Round " + _ctx.control.getRound() + "..." : "Ready...";
-        marquee.display(ready, 1000);
-        Util.invokeLater(1000, function () :void {
-            _input.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
-            _input.addEventListener(Event.CHANGE, textChanged);
-            _input.selectable = true;
-            _input.text = "";
-            focusInput(true);
+        if (_ctx.model.getWinningScore() > 1) {
+            Util.invokeLater(1000, function () :void {
+                showBetweenRound();
+            });
+
+        } else {
+            _board.roundDidStart();
             marquee.display("Start!", 1000);
-        });
+            enableInput();
+        }
+    }
+
+    protected function showBetweenRound () :void
+    {
+        var tweenRound :MovieClip = _ctx.content.createBetweenRound(_ctx.control.getRound());
+        tweenRound.x = 219;
+        tweenRound.y = 258;
+        var frameIdx :int = 0;
+        var frameFunc :Function = function (event :Event) :void {
+            if (tweenRound.currentFrame == frameIdx) {
+                tweenRound.removeEventListener(Event.ENTER_FRAME, frameFunc);
+                removeChild(tweenRound);
+                _board.roundDidStart();
+                marquee.display("Start!", 1000);
+                enableInput();
+            } else {
+                frameIdx = tweenRound.currentFrame;
+            }
+        };
+        tweenRound.addEventListener(Event.ENTER_FRAME, frameFunc);
+        addChild(tweenRound);
+    }
+
+    protected function enableInput () :void
+    {
+        _input.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+        _input.addEventListener(Event.CHANGE, textChanged);
+        _input.selectable = true;
+        _input.text = "";
+        focusInput(true);
     }
 
     public function saucerClicked (event :MouseEvent) :void

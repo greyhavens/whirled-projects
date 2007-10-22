@@ -47,7 +47,6 @@ public class DictionaryAttack extends Sprite
         var bounds :Rectangle = _ctx.control.isConnected() ?
             _ctx.control.getStageBounds() : new Rectangle(0, 0, 1000, 550);
         graphics.drawRect(0, 0, bounds.width, bounds.height);
-        trace("Painting over " + _ctx.control.getStageBounds());
 
         // show our splash screen
         var splash :SplashView = new SplashView(this, function () :void {
