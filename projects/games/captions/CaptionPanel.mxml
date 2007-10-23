@@ -2,7 +2,7 @@
 <mx:GridRow xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
     <mx:GridItem>
         <mx:VBox>
-            <mx:TextInput id="input"/>
+            <!--<mx:TextInput id="input"/>-->
             <mx:Spacer height="20"/>
             <mx:CheckBox id="skip" label="Vote to skip this image"/>
         </mx:VBox>

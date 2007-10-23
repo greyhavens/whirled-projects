@@ -4,7 +4,9 @@
         horizontalScrollPolicy="off" verticalScrollPolicy="off"
         layout="horizontal"
         applicationComplete="controller.init(this);">
-    <mx:Image id="image"/>
+    <mx:Canvas id="canv">
+        <mx:Image id="image"/>
+    </mx:Canvas>
     <mx:VBox width="100%" height="500" verticalScrollPolicy="off">
         <mx:HBox verticalAlign="bottom">
             <mx:Label id="phaseLabel" fontSize="24" width="100%"/>
@@ -12,7 +14,6 @@
         </mx:HBox>
         <mx:Text id="phaseText" width="100%"/>
         <mx:VBox width="100%" height="420">
-            <mx:VBox id="players" width="100%"/>
             <mx:Grid id="sideBox" width="100%"/>
         </mx:VBox>
     </mx:VBox>

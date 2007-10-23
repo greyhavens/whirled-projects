@@ -2,6 +2,7 @@ package {
 
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.ProgressEvent;
 import flash.events.TimerEvent;
 
 import flash.utils.Timer;
@@ -36,13 +37,12 @@ import com.whirled.WhirledGameControl;
 
 /**
  * TODO:
- * - show list of players
  * - some pizzaz, some fanfare around the results screen. Reveal the names last??
  *   Naw, revealing sucks. Just show.
  *
  * Past issues: (seem to not be much of a problem anymore)
  * - focus problems with caption input
- * - broken images are common.. I guess "Skip" will help.
+ * - broken images are common.. I guess "Skip" works for that.
  *
  * Maybe do:
  * - Maybe show any partially entered captions after a skip.
@@ -95,6 +95,9 @@ public class Controller
 
         _timer = new Timer(500);
         _timer.addEventListener(TimerEvent.TIMER, handleCaptionTimer);
+
+        _ui.image.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
+        _ui.image.addEventListener(Event.COMPLETE, handleImageComplete);
 
         checkControl();
         checkPhase();
@@ -233,7 +236,10 @@ public class Controller
             _ui.image.scaleX = .5;
             _ui.image.scaleY = .5;
             _timer.reset();
-            _captionInput = null;
+            if (_captionInput != null) {
+                _ui.canv.removeChild(_captionInput);
+                _captionInput = null;
+            }
             break;
 
         default:
@@ -501,8 +507,15 @@ public class Controller
 
         var pan :CaptionPanel = new CaptionPanel();
         _ui.sideBox.addChild(pan);
+        //_captionInput = pan.input;
 
-        _captionInput = pan.input;
+        if (_captionInput == null) {
+            _captionInput = new CaptionTextArea();
+            _captionInput.includeInLayout = false;
+            _ui.canv.addChild(_captionInput);
+        }
+        recheckInputBounds();
+
         pan.skip.addEventListener(Event.CHANGE, handleVoteToSkip);
     }
 
@@ -849,6 +862,36 @@ public class Controller
     }
 
     /**
+     * Handle image loading.
+     */
+    protected function handleImageProgress (event :ProgressEvent) :void
+    {
+        recheckInputBounds();
+    }
+
+    /**
+     * Handle image loading.
+     */
+    protected function handleImageComplete (event :Event) :void
+    {
+        recheckInputBounds();
+    }
+
+    /**
+     * Position the input area on top of the image.
+     */
+    protected function recheckInputBounds () :void
+    {
+        _captionInput.x = _ui.image.x;
+        _captionInput.y = _ui.image.y;
+        _captionInput.width = _ui.image.contentWidth;
+        _captionInput.height = _ui.image.contentHeight;
+
+        // TODO: this can be quite annoying
+        _ui.stage.focus = _captionInput;
+    }
+
+    /**
      * Handle the result of flow being awarded to us.
      */
     protected function handleFlowAwarded (event :FlowAwardedEvent) :void
@@ -898,7 +941,8 @@ public class Controller
     /** Our user interface class. */
     protected var _ui :Caption;
 
-    protected var _captionInput :TextInput;
+    //protected var _captionInput :TextInput;
+    protected var _captionInput :CaptionTextArea;
 
     protected var _flickr :FlickrService;
 
