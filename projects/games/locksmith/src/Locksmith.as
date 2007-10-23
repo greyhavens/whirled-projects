@@ -90,7 +90,7 @@ public class Locksmith extends Sprite
         _scoreBoard.y = DISPLAY_HEIGHT / 2;
         _board.scoreBoard = _scoreBoard;
         if (_control.amInControl()) {
-            _control.endTurn();
+            _control.startNextTurn();
             _control.sendMessage("newRings", createRings());
         }
     }
@@ -186,12 +186,12 @@ public class Locksmith extends Sprite
             case Keyboard.LEFT:
                 _control.sendMessage("ringRotation", { ring: _currentRing.num, direction: 
                     Ring.COUNTER_CLOCKWISE });
-                _control.endTurn();
+                _control.startNextTurn();
                 break;
             case Keyboard.RIGHT:
                 _control.sendMessage("ringRotation", { ring: _currentRing.num, direction:
                     Ring.CLOCKWISE });
-                _control.endTurn();
+                _control.startNextTurn();
                 break;
             case Keyboard.UP:
                 if (_currentRing != _currentRing.largest) {

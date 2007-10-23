@@ -72,7 +72,7 @@ public class Reversi extends Sprite
         // enact the play
         var myIdx :int = _gameCtrl.seating.getMyPosition();
         _board.playPiece(pieceIndex, myIdx);
-        _gameCtrl.endTurn();
+        _gameCtrl.startNextTurn();
 
         // display something so that the player knows they clicked
         readBoard();
@@ -129,7 +129,7 @@ public class Reversi extends Sprite
                 _gameCtrl.sendChat(
                     _gameCtrl.getOccupantName(turnHolderId) +
                     " cannot play and so loses a turn.");
-                _gameCtrl.endTurn();
+                _gameCtrl.startNextTurn();
             }
         }
     }
@@ -157,8 +157,8 @@ public class Reversi extends Sprite
             // configure the board
             _board = new Board(_gameCtrl, _boardSize);
             if (_gameCtrl.amInControl()) {
-                // end the "nobody's turn" turn, which randomly assigns a starter turn
-                _gameCtrl.endTurn();
+                // start the first turn
+                _gameCtrl.startNextTurn();
             }
 
         } else if (event.type == StateChangedEvent.GAME_ENDED) {

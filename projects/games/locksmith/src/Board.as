@@ -206,7 +206,7 @@ public class Board extends Sprite
     protected function turnTimeout () :void
     {
         if (_control != null && _control.isMyTurn()) {
-            _control.endTurn();
+            _control.startNextTurn();
         }
     }
 
