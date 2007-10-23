@@ -90,6 +90,7 @@ public class Locksmith extends Sprite
         _scoreBoard.y = DISPLAY_HEIGHT / 2;
         _board.scoreBoard = _scoreBoard;
         if (_control.amInControl()) {
+            _control.endTurn();
             _control.sendMessage("newRings", createRings());
         }
     }

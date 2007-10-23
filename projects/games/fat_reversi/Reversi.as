@@ -156,6 +156,10 @@ public class Reversi extends Sprite
 
             // configure the board
             _board = new Board(_gameCtrl, _boardSize);
+            if (_gameCtrl.amInControl()) {
+                // end the "nobody's turn" turn, which randomly assigns a starter turn
+                _gameCtrl.endTurn();
+            }
 
         } else if (event.type == StateChangedEvent.GAME_ENDED) {
             _gameCtrl.localChat("Thank you for playing Reversi!");
