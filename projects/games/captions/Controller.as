@@ -15,6 +15,8 @@ import mx.controls.HRule;
 import mx.controls.RadioButtonGroup;
 import mx.controls.TextInput;
 
+import mx.events.FlexEvent;
+
 import com.adobe.webapis.flickr.FlickrService;
 import com.adobe.webapis.flickr.PagedPhotoList;
 import com.adobe.webapis.flickr.Photo;
@@ -69,9 +71,13 @@ public class Controller
     /** The number of rounds to track votes for the score display. */
     public static const ROUNDS_USED_FOR_SCORES :int = 10;
 
+    /** How many 'next' pictures should we load and display? */
+    public static const NEXT_PICTURE_COUNT :int = 4;
+
     public function init (ui :Caption) :void
     {
         _ui = ui;
+        _ui.setStyle("backgroundImage", BACKGROUND);
 
         ui.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
@@ -94,7 +100,7 @@ public class Controller
         _myName = _ctrl.getOccupantName(_myId);
 
         _timer = new Timer(500);
-        _timer.addEventListener(TimerEvent.TIMER, handleCaptionTimer);
+        _timer.addEventListener(TimerEvent.TIMER, handleSubmitCaption);
 
         _ui.image.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
         _ui.image.addEventListener(Event.COMPLETE, handleImageComplete);
@@ -236,8 +242,9 @@ public class Controller
             _ui.image.scaleX = .5;
             _ui.image.scaleY = .5;
             _timer.reset();
+            _ui.sideBox.removeAllChildren();
             if (_captionInput != null) {
-                _ui.canv.removeChild(_captionInput);
+                _ui.imageCanvas.removeChild(_captionInput);
                 _captionInput = null;
             }
             break;
@@ -442,7 +449,11 @@ public class Controller
         checkPhaseControl();
     }
 
-    protected function handleCaptionTimer (event :TimerEvent) :void
+    /**
+     * Called both by the Timer event and when the user presses the (largely unneeded)
+     * enter button.
+     */
+    protected function handleSubmitCaption (event :Event) :void
     {
         var text :String = StringUtil.trim(_captionInput.text);
         if (text != _myCaption) {
@@ -503,7 +514,9 @@ public class Controller
 
     protected function initCaptioning () :void
     {
+        _ui.bottomGrid.removeAllChildren();
         _ui.sideBox.removeAllChildren();
+        _ui.nextBox.removeAllChildren();
 
         var pan :CaptionPanel = new CaptionPanel();
         _ui.sideBox.addChild(pan);
@@ -512,10 +525,11 @@ public class Controller
         if (_captionInput == null) {
             _captionInput = new CaptionTextArea();
             _captionInput.includeInLayout = false;
-            _ui.canv.addChild(_captionInput);
+            _ui.imageCanvas.addChild(_captionInput);
         }
         recheckInputBounds();
 
+        pan.enterButton.addEventListener(FlexEvent.BUTTON_DOWN, handleSubmitCaption);
         pan.skip.addEventListener(Event.CHANGE, handleVoteToSkip);
     }
 
@@ -534,7 +548,7 @@ public class Controller
         }
         ArrayUtil.shuffle(indexes);
 
-        _ui.sideBox.removeAllChildren();
+        _ui.bottomGrid.removeAllChildren();
 
         var voteGroup :RadioButtonGroup = new RadioButtonGroup();
         voteGroup.addEventListener(Event.CHANGE, handleVoteCast);
@@ -543,7 +557,7 @@ public class Controller
             var index :int = int(indexes[ii]);
 
             var pan :VotePanel = new VotePanel();
-            _ui.sideBox.addChild(pan);
+            _ui.bottomGrid.addChild(pan);
             pan.captionText.htmlText = deHTML(String(caps[index]));
             pan.voteButton.group = voteGroup;
             if (ids[index] == _myId) {
@@ -557,7 +571,7 @@ public class Controller
 
     protected function initResults (results :Array) :void
     {
-        _ui.sideBox.removeAllChildren();
+        _ui.bottomGrid.removeAllChildren();
 
         var ii :int;
         var indexes :Array = [];
@@ -589,7 +603,7 @@ public class Controller
         for (ii = 0; ii < indexes.length; ii++) {
 
             if (ii > 0) {
-                _ui.sideBox.addChild(new HSeparator());
+                _ui.bottomGrid.addChild(new HSeparator());
             }
 
             var index :int = int(indexes[ii]);
@@ -601,7 +615,7 @@ public class Controller
             }
 
             var pan :ResultsPanel = new ResultsPanel();
-            _ui.sideBox.addChild(pan);
+            _ui.bottomGrid.addChild(pan);
             pan.nameLabel.text = String(_ctrl.get("name:" + playerId));
             pan.votesLabel.text = String(Math.abs(result));
             pan.captionText.htmlText = deHTML(String(caps[index]));
@@ -622,7 +636,7 @@ public class Controller
 
         // see if there are any preview pics to vote on...
         var nextUrls :Array = [];
-        for (ii = 0; ii < 6; ii++) {
+        for (ii = 0; ii < NEXT_PICTURE_COUNT; ii++) {
             var nexts :Array = _ctrl.get("next_" + ii) as Array;
             if (nexts != null) {
                 nextUrls[ii] = nexts[0]; // thumbnail..
@@ -630,9 +644,9 @@ public class Controller
         }
         if (nextUrls.length > 0) {
             var nextPan :PicturePickPanel = new PicturePickPanel();
-            _ui.sideBox.addChild(new HSeparator());
-            _ui.sideBox.addChild(nextPan);
-            for (ii = 0; ii < 6; ii++) {
+            //_ui.nextBox.addChild(new HSeparator());
+            _ui.nextBox.addChild(nextPan);
+            for (ii = 0; ii < NEXT_PICTURE_COUNT; ii++) {
                 if (nextUrls[ii] != null) {
                     nextPan["img" + ii].load(nextUrls[ii]);
                     nextPan["pvote" + ii].data = ii;
@@ -761,12 +775,12 @@ public class Controller
             _photosToGet = 1;
 
         } else if (_secondSizes != null) {
-            _ctrl.set("next_5", _secondSizes);
+            _ctrl.set("next_" + (NEXT_PICTURE_COUNT - 1), _secondSizes);
             _secondSizes = null;
-            _photosToGet = 5;
+            _photosToGet = NEXT_PICTURE_COUNT - 1;
 
         } else {
-            _photosToGet = 6;
+            _photosToGet = NEXT_PICTURE_COUNT;
         }
 
         _flickr.photos.getRecent("", _photosToGet, 1);
@@ -882,6 +896,11 @@ public class Controller
      */
     protected function recheckInputBounds () :void
     {
+        if (_captionInput == null) {
+            // we could be loading up the image when we're in a different phase
+            return;
+        }
+
         _captionInput.x = _ui.image.x;
         _captionInput.y = _ui.image.y;
         _captionInput.width = _ui.image.contentWidth;
@@ -925,6 +944,9 @@ public class Controller
     {
         // nada
     }
+
+    [Embed(source="background.png")]
+    protected static const BACKGROUND :Class;
 
     protected static const MEDIUM_SIZE :Array = [ "Medium", "Small", "Original", "Thumbnail" ];
 

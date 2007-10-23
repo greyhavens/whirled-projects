@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:GridRow xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
-    <mx:GridItem>
-        <mx:VBox>
-            <!--<mx:TextInput id="input"/>-->
-            <mx:Spacer height="20"/>
-            <mx:CheckBox id="skip" label="Vote to skip this image"/>
-        </mx:VBox>
-    </mx:GridItem>
-</mx:GridRow>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
+    <!--<mx:TextInput id="input"/>-->
+    <mx:Spacer height="20"/>
+    <mx:Button id="enterButton" label="Enter"/>
+    <mx:CheckBox id="skip" label="Vote to skip this image"/>
+</mx:VBox>

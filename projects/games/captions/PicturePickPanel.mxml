@@ -1,53 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:GridRow xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
-    <mx:GridItem colSpan="2">
-        <mx:Grid>
-            <mx:GridRow>
-                <mx:GridItem colSpan="3">
-                    <mx:Label text="Select photos you prefer to caption next:"/>
-                </mx:GridItem>
-            </mx:GridRow>
-            <mx:RadioButtonGroup id="pvote"/>
-            <mx:GridRow>
-                <mx:GridItem>
-                    <mx:VBox horizontalAlign="center">
-                        <mx:Image id="img0"/>
-                        <mx:CheckBox id="pvote0" label=" "/>
-                    </mx:VBox>
-                </mx:GridItem>
-                <mx:GridItem>
-                    <mx:VBox horizontalAlign="center">
-                        <mx:Image id="img1"/>
-                        <mx:CheckBox id="pvote1" label=" "/>
-                    </mx:VBox>
-                </mx:GridItem>
-                <mx:GridItem>
-                    <mx:VBox horizontalAlign="center">
-                        <mx:Image id="img2"/>
-                        <mx:CheckBox id="pvote2" label=" "/>
-                    </mx:VBox>
-                </mx:GridItem>
-            </mx:GridRow>
-            <mx:GridRow>
-                <mx:GridItem>
-                    <mx:VBox horizontalAlign="center">
-                        <mx:Image id="img3"/>
-                        <mx:CheckBox id="pvote3" label=" "/>
-                    </mx:VBox>
-                </mx:GridItem>
-                <mx:GridItem>
-                    <mx:VBox horizontalAlign="center">
-                        <mx:Image id="img4"/>
-                        <mx:CheckBox id="pvote4" label=" "/>
-                    </mx:VBox>
-                </mx:GridItem>
-                <mx:GridItem>
-                    <mx:VBox horizontalAlign="center">
-                        <mx:Image id="img5"/>
-                        <mx:CheckBox id="pvote5" label=" "/>
-                    </mx:VBox>
-                </mx:GridItem>
-            </mx:GridRow>
-        </mx:Grid>
-    </mx:GridItem>
-</mx:GridRow>
+<mx:Grid xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
+    <mx:GridRow>
+        <mx:GridItem colSpan="2">
+            <mx:Label text="Select photos you prefer to caption next:"/>
+        </mx:GridItem>
+    </mx:GridRow>
+    <mx:RadioButtonGroup id="pvote"/>
+    <mx:GridRow>
+        <mx:GridItem>
+            <mx:VBox horizontalAlign="center">
+                <mx:Image id="img0"/>
+                <mx:CheckBox id="pvote0" label=" "/>
+            </mx:VBox>
+        </mx:GridItem>
+        <mx:GridItem>
+            <mx:VBox horizontalAlign="center">
+                <mx:Image id="img1"/>
+                <mx:CheckBox id="pvote1" label=" "/>
+            </mx:VBox>
+        </mx:GridItem>
+    </mx:GridRow>
+    <mx:GridRow>
+        <mx:GridItem>
+            <mx:VBox horizontalAlign="center">
+                <mx:Image id="img2"/>
+                <mx:CheckBox id="pvote2" label=" "/>
+            </mx:VBox>
+        </mx:GridItem>
+        <mx:GridItem>
+            <mx:VBox horizontalAlign="center">
+                <mx:Image id="img3"/>
+                <mx:CheckBox id="pvote3" label=" "/>
+            </mx:VBox>
+        </mx:GridItem>
+    </mx:GridRow>
+</mx:Grid>
