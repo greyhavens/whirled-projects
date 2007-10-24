@@ -19,7 +19,7 @@ public class CaptionTextArea extends TextArea
 
         editable = true;
 
-        setStyle("backgroundAlpha", 0);
+        setStyle("backgroundAlpha", .2);
         setStyle("textAlign", "center");
         setStyle("color", 0x000000);
         setProperties(2, 50, 16);

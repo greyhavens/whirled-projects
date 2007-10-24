@@ -4,28 +4,21 @@
         width="700" height="500"
         horizontalScrollPolicy="off" verticalScrollPolicy="off"
         layout="horizontal" backgroundColor="black"
-        color="white" themeColor="0xCCCCCC"
+        color="white" themeColor="#CCCCCC"
         applicationComplete="controller.init(this);">
-    <mx:VBox width="100%" height="500" verticalScrollPolicy="off">
-        <mx:HBox width="100%">
-            <mx:VBox width="100%" verticalScrollPolicy="off">
-                <mx:Label id="phaseLabel" fontSize="24" width="100%"/>
-                <mx:Label id="clockLabel" selectable="false" fontSize="36" color="0x0000FF"/>
-                <mx:Text id="phaseText" width="100%"/>
-            </mx:VBox>
-            <mx:Canvas id="imageCanvas">
-                <mx:Image id="image"/>
-            </mx:Canvas>
-            <mx:VBox width="100%" id="sideBox" verticalScrollPolicy="off">
-            </mx:VBox>
-        </mx:HBox>
-        <mx:HBox width="100%">
-            <mx:VBox width="100%" height="100%" verticalScrollPolicy="on">
-                <mx:Grid id="bottomGrid" width="100%"/>
-            </mx:VBox>
-            <mx:VBox width="100%" id="nextBox">
-            </mx:VBox>
-        </mx:HBox>
+    <mx:VBox id="leftBox" height="100%"/>
+    <mx:VBox id="centerBox" height="100%">
+        <mx:Canvas id="imageCanvas">
+            <mx:Image id="image"/>
+        </mx:Canvas>
+        <mx:VBox id="bottomBox"/>
+    </mx:VBox>
+    <mx:VBox id="rightBox" height="100%">
+        <mx:Label id="phaseLabel" fontSize="24" width="100%"/>
+        <mx:Label id="clockLabel" selectable="false" fontSize="36" color="0x0000FF"/>
+        <mx:Text id="phaseText" width="100%"/>
+        <mx:VBox id="sideBox" width="100%"/>
+        <mx:Grid id="gridArea" width="100%"/>
     </mx:VBox>
     <Controller id="controller"/>
 </mx:Application>

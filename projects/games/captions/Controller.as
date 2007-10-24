@@ -5,6 +5,8 @@ import flash.events.MouseEvent;
 import flash.events.ProgressEvent;
 import flash.events.TimerEvent;
 
+import flash.geom.Rectangle;
+
 import flash.utils.Timer;
 
 import mx.containers.GridRow;
@@ -27,12 +29,10 @@ import com.adobe.webapis.flickr.events.FlickrResultEvent;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.StringUtil;
 
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.PropertyChangedListener;
-import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.ezgame.StateChangedListener;
 import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.MessageReceivedListener;
+import com.threerings.ezgame.OccupantChangedEvent;
+import com.threerings.ezgame.PropertyChangedEvent;
+import com.threerings.ezgame.StateChangedEvent;
 
 import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
@@ -77,7 +77,6 @@ public class Controller
     public function init (ui :Caption) :void
     {
         _ui = ui;
-        _ui.setStyle("backgroundImage", BACKGROUND);
 
         ui.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
@@ -89,12 +88,23 @@ public class Controller
             return;
         }
 
+        // TODO: when we have it, wire up to listen to the boundsChange event
+// Commented out, because doing this makes the background image go away! I know!
+// FUCK YOU FLEX, FUCK YOU TO HELL. It shouldn't be going away. It should be showing!
+// I did all sorts of debugging to ensure that nothing else was re-setting the backgroundImage
+// and no, nothing is. This is probably just a bug deep in the land of flex. FUCK YOU FLEX.
+//        var r :Rectangle = _ctrl.getStageBounds();
+//        _ui.width = r.width;
+//        _ui.height = r.height;
+        _ui.setStyle("backgroundImage", BACKGROUND);
+
         _ctrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
         _ctrl.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
         _ctrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
         _ctrl.addEventListener(MessageReceivedEvent.TYPE, handleMessageReceived);
         _ctrl.addEventListener(StateChangedEvent.CONTROL_CHANGED, checkControl);
         _ctrl.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
+        _ctrl.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED, handleOccupantEntered);
 
         _myId = _ctrl.getMyId();
         _myName = _ctrl.getOccupantName(_myId);
@@ -514,19 +524,25 @@ public class Controller
 
     protected function initCaptioning () :void
     {
-        _ui.bottomGrid.removeAllChildren();
+        _ui.centerBox.width = NaN;
+        _ui.centerBox.setStyle("verticalAlign", "middle");
+        _ui.leftBox.percentWidth = 100;
+        _ui.rightBox.percentWidth = 100;
+
+        _ui.gridArea.removeAllChildren();
         _ui.sideBox.removeAllChildren();
-        _ui.nextBox.removeAllChildren();
+        _ui.bottomBox.removeAllChildren();
 
         var pan :CaptionPanel = new CaptionPanel();
         _ui.sideBox.addChild(pan);
-        //_captionInput = pan.input;
 
-        if (_captionInput == null) {
-            _captionInput = new CaptionTextArea();
-            _captionInput.includeInLayout = false;
-            _ui.imageCanvas.addChild(_captionInput);
+        if (_captionInput != null) {
+            _ui.imageCanvas.removeChild(_captionInput);
         }
+        _captionInput = new CaptionTextArea();
+        _captionInput.includeInLayout = false;
+        _ui.imageCanvas.addChild(_captionInput);
+
         recheckInputBounds();
 
         pan.enterButton.addEventListener(FlexEvent.BUTTON_DOWN, handleSubmitCaption);
@@ -548,7 +564,11 @@ public class Controller
         }
         ArrayUtil.shuffle(indexes);
 
-        _ui.bottomGrid.removeAllChildren();
+        _ui.centerBox.width = 250;
+        _ui.centerBox.setStyle("verticalAlign", "top");
+        _ui.leftBox.width = 0;
+        _ui.rightBox.percentWidth = NaN;
+        _ui.gridArea.removeAllChildren();
 
         var voteGroup :RadioButtonGroup = new RadioButtonGroup();
         voteGroup.addEventListener(Event.CHANGE, handleVoteCast);
@@ -557,7 +577,7 @@ public class Controller
             var index :int = int(indexes[ii]);
 
             var pan :VotePanel = new VotePanel();
-            _ui.bottomGrid.addChild(pan);
+            _ui.gridArea.addChild(pan);
             pan.captionText.htmlText = deHTML(String(caps[index]));
             pan.voteButton.group = voteGroup;
             if (ids[index] == _myId) {
@@ -571,7 +591,11 @@ public class Controller
 
     protected function initResults (results :Array) :void
     {
-        _ui.bottomGrid.removeAllChildren();
+        _ui.gridArea.removeAllChildren();
+        _ui.centerBox.width = 250;
+        _ui.centerBox.setStyle("verticalAlign", "top");
+        _ui.leftBox.width = 0;
+        _ui.rightBox.percentWidth = NaN;
 
         var ii :int;
         var indexes :Array = [];
@@ -603,7 +627,7 @@ public class Controller
         for (ii = 0; ii < indexes.length; ii++) {
 
             if (ii > 0) {
-                _ui.bottomGrid.addChild(new HSeparator());
+                _ui.gridArea.addChild(new HSeparator());
             }
 
             var index :int = int(indexes[ii]);
@@ -615,7 +639,7 @@ public class Controller
             }
 
             var pan :ResultsPanel = new ResultsPanel();
-            _ui.bottomGrid.addChild(pan);
+            _ui.gridArea.addChild(pan);
             pan.nameLabel.text = String(_ctrl.get("name:" + playerId));
             pan.votesLabel.text = String(Math.abs(result));
             pan.captionText.htmlText = deHTML(String(caps[index]));
@@ -644,8 +668,7 @@ public class Controller
         }
         if (nextUrls.length > 0) {
             var nextPan :PicturePickPanel = new PicturePickPanel();
-            //_ui.nextBox.addChild(new HSeparator());
-            _ui.nextBox.addChild(nextPan);
+            _ui.bottomBox.addChild(nextPan);
             for (ii = 0; ii < NEXT_PICTURE_COUNT; ii++) {
                 if (nextUrls[ii] != null) {
                     nextPan["img" + ii].load(nextUrls[ii]);
@@ -907,7 +930,9 @@ public class Controller
         _captionInput.height = _ui.image.contentHeight;
 
         // TODO: this can be quite annoying
-        _ui.stage.focus = _captionInput;
+        if (_ui.stage) {
+            _ui.stage.focus = _captionInput;
+        }
     }
 
     /**
@@ -920,7 +945,7 @@ public class Controller
             _ctrl.localChat("You earned " + amount + " flow for your " +
                 "participation in this round.");
         } else {
-            _ctrl.localChat("You got screwed out of flow.");
+            _ctrl.localChat("You did not receive any flow this round.");
         }
     }
 
@@ -938,6 +963,12 @@ public class Controller
     protected function handleGameEnded (event :StateChangedEvent) :void
     {
 //        trace("Game ended : " + _myName + " : " + _inControl);
+    }
+
+    protected function handleOccupantEntered (event :OccupantChangedEvent) :void
+    {
+        // we don't want the occupant to have an empty slot where they should have a score..
+        updateScoreDisplay();
     }
 
     protected function handleUnload (... ignored) :void

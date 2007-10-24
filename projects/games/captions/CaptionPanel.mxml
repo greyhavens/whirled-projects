@@ -3,5 +3,5 @@
     <!--<mx:TextInput id="input"/>-->
     <mx:Spacer height="20"/>
     <mx:Button id="enterButton" label="Enter"/>
-    <mx:CheckBox id="skip" label="Vote to skip this image"/>
+    <mx:CheckBox id="skip" label="Vote to skip"/>
 </mx:VBox>
