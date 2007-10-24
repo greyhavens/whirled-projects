@@ -549,8 +549,22 @@ public class Controller
         pan.skip.addEventListener(Event.CHANGE, handleVoteToSkip);
     }
 
+    /**
+     * Configure layout stuff for the voting or results phases.
+     */
+    protected function initNonCaptionLayout () :void
+    {
+        _ui.centerBox.width = 250;
+        _ui.centerBox.setStyle("verticalAlign", "top");
+        _ui.leftBox.width = 0;
+        _ui.rightBox.width = 430; // there are two 10-pixel gaps
+        _ui.gridArea.removeAllChildren();
+    }
+
     protected function initVoting (caps :Array) :void
     {
+        initNonCaptionLayout();
+
         var ii :int;
         var ids :Array = _ctrl.get("ids") as Array;
         if (ids == null) {
@@ -564,15 +578,10 @@ public class Controller
         }
         ArrayUtil.shuffle(indexes);
 
-        _ui.centerBox.width = 250;
-        _ui.centerBox.setStyle("verticalAlign", "top");
-        _ui.leftBox.width = 0;
-        _ui.rightBox.percentWidth = NaN;
-        _ui.gridArea.removeAllChildren();
-
         var voteGroup :RadioButtonGroup = new RadioButtonGroup();
         voteGroup.addEventListener(Event.CHANGE, handleVoteCast);
 
+//for (var jj :int = 0; jj < 20; jj++) {
         for (ii = 0; ii < indexes.length; ii++) {
             var index :int = int(indexes[ii]);
 
@@ -585,17 +594,14 @@ public class Controller
             }
             pan.voteButton.value = ids[index];
         }
+//}
 
         _ui.validateNow();
     }
 
     protected function initResults (results :Array) :void
     {
-        _ui.gridArea.removeAllChildren();
-        _ui.centerBox.width = 250;
-        _ui.centerBox.setStyle("verticalAlign", "top");
-        _ui.leftBox.width = 0;
-        _ui.rightBox.percentWidth = NaN;
+        initNonCaptionLayout();
 
         var ii :int;
         var indexes :Array = [];
@@ -624,6 +630,7 @@ public class Controller
         var flowScores :Object = {};
         var playerId :String;
         var winnerVal :int = -1;
+//for (var jj :int = 0; jj < 20; jj++) {
         for (ii = 0; ii < indexes.length; ii++) {
 
             if (ii > 0) {
@@ -657,6 +664,7 @@ public class Controller
                 }
             }
         }
+//}
 
         // see if there are any preview pics to vote on...
         var nextUrls :Array = [];
