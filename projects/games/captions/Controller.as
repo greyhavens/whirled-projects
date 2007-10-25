@@ -80,6 +80,7 @@ public class Controller
     public function init (ui :Caption) :void
     {
         _ui = ui;
+        _ui.setStyle("backgroundImage", BACKGROUND);
 
         ui.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
@@ -94,7 +95,6 @@ public class Controller
         var size :Point = _ctrl.getSize();
         _ui.width = size.x;
         _ui.height = size.y;
-        _ui.setStyle("backgroundImage", BACKGROUND);
 
         _ctrl.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
         _ctrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
@@ -612,14 +612,22 @@ public class Controller
             indexes[ii] = ii;
         }
 
+        // sort all the qualified entries by score above all the disqualified entries (by score)
         indexes.sort(function (dex1 :int, dex2 :int) :int {
-            var abs1 :int = Math.abs(results[dex1]);
-            var abs2 :int = Math.abs(results[dex2]);
+            var val1 :int = int(results[dex1]);
+            var val2 :int = int(results[dex2]);
 
-            if (abs1 > abs2) {
+            // if they're both negative, then we're comparing two different disqualified
+            // entries: make them positive and compare as usual.
+            if (val1 < 0 && val2 < 0) {
+                val1 = -1 * val1;
+                val2 = -1 * val2;
+            }
+
+            if (val1 > val2) {
                 return -1;
 
-            } else if (abs1 < abs2) {
+            } else if (val1 < val2) {
                 return 1;
 
             } else {
@@ -991,7 +999,7 @@ public class Controller
 
     protected function handleUnload (... ignored) :void
     {
-        // nada
+        _timer.reset();
     }
 
     [Embed(source="background.png")]
