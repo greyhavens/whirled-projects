@@ -5,7 +5,7 @@ import flash.events.MouseEvent;
 import flash.events.ProgressEvent;
 import flash.events.TimerEvent;
 
-import flash.geom.Rectangle;
+import flash.geom.Point;
 
 import flash.utils.Timer;
 
@@ -32,6 +32,7 @@ import com.threerings.util.StringUtil;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.OccupantChangedEvent;
 import com.threerings.ezgame.PropertyChangedEvent;
+import com.threerings.ezgame.SizeChangedEvent;
 import com.threerings.ezgame.StateChangedEvent;
 
 import com.whirled.FlowAwardedEvent;
@@ -58,9 +59,11 @@ import com.whirled.WhirledGameControl;
  */
 public class Controller
 {
+    public static const DEBUG :Boolean = true;
+
     /** Durations of game phases, in seconds. */
-    public static const CAPTION_DURATION :int = 20;//45;
-    public static const VOTE_DURATION :int = 10;//30;
+    public static const CAPTION_DURATION :int = 45;
+    public static const VOTE_DURATION :int = 30;
     public static const RESULTS_DURATION :int = 15;
 
     /** Scoring values for various actions taken during a game. */
@@ -88,16 +91,12 @@ public class Controller
             return;
         }
 
-        // TODO: when we have it, wire up to listen to the boundsChange event
-// Commented out, because doing this makes the background image go away! I know!
-// FUCK YOU FLEX, FUCK YOU TO HELL. It shouldn't be going away. It should be showing!
-// I did all sorts of debugging to ensure that nothing else was re-setting the backgroundImage
-// and no, nothing is. This is probably just a bug deep in the land of flex. FUCK YOU FLEX.
-//        var r :Rectangle = _ctrl.getStageBounds();
-//        _ui.width = r.width;
-//        _ui.height = r.height;
+        var size :Point = _ctrl.getSize();
+        _ui.width = size.x;
+        _ui.height = size.y;
         _ui.setStyle("backgroundImage", BACKGROUND);
 
+        _ctrl.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
         _ctrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
         _ctrl.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
         _ctrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
@@ -183,7 +182,11 @@ public class Controller
 
     protected function updateTick (value :int) :void
     {
-        var remaining :int = Math.max(0, getDuration() - value);
+        var duration :int = getDuration();
+        if (DEBUG) {
+            duration /= 2;
+        }
+        var remaining :int = Math.max(0, duration - value);
 
         _ui.clockLabel.text = String(remaining);
 
@@ -977,6 +980,13 @@ public class Controller
     {
         // we don't want the occupant to have an empty slot where they should have a score..
         updateScoreDisplay();
+    }
+
+    protected function handleSizeChanged (event :SizeChangedEvent) :void
+    {
+        var size :Point = event.size;
+        _ui.width = size.x;
+        _ui.height = size.y;
     }
 
     protected function handleUnload (... ignored) :void
