@@ -2,7 +2,7 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
         styleName="plain" width="700" height="500"
         horizontalScrollPolicy="off" verticalScrollPolicy="off" horizontalGap="10"
-        layout="horizontal" backgroundColor="black" color="white"
+        layout="absolute" backgroundColor="black" color="white"
         applicationComplete="controller.init(this);">
     <mx:Style>
         @font-face {

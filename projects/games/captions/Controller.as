@@ -543,6 +543,11 @@ public class Controller
 
     protected function initCaptioning () :void
     {
+        if (_leftSpacer != null) {
+            // already set up
+            return;
+        }
+
         _ui.removeAllChildren();
 
         var capPanel :CaptionPanel = new CaptionPanel();
@@ -978,6 +983,8 @@ public class Controller
         // TODO: adjust spacers (pretty close tho!)
         _leftSpacer.height = _image.contentHeight - 80;
         _rightSpacer.height = _image.contentHeight - 130;
+
+        _ui.validateNow();
 
         // TODO: this can be quite annoying
         if (_ui.stage) {
