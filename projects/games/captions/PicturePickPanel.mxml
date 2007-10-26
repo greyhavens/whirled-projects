@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Grid xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
     <mx:GridRow>
-        <mx:GridItem colSpan="2">
-            <mx:Label text="Select photos you prefer to caption next:"/>
-        </mx:GridItem>
-    </mx:GridRow>
-    <mx:RadioButtonGroup id="pvote"/>
-    <mx:GridRow>
         <mx:GridItem>
             <mx:VBox horizontalAlign="center">
                 <mx:Image id="img0"/>

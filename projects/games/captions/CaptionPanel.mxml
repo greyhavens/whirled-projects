@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
-    <!--<mx:TextInput id="input"/>-->
-    <mx:Spacer height="20"/>
-    <mx:Button id="enterButton" label="Enter"/>
-    <mx:CheckBox id="skip" label="Vote to skip" textRollOverColor="white"/>
-</mx:VBox>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%">
+    <mx:VBox width="100%" height="100%" verticalAlign="top" paddingLeft="6" paddingTop="6">
+        <mx:Spacer id="leftSpacer"/>
+        <mx:Label text="Caption:" fontFamily="chocolat_bleu" fontSize="48"/>
+        <mx:CheckBox id="skip" label="vote to skip" fontFamily="chocolat_bleu" fontSize="24"
+                textRollOverColor="white"/>
+    </mx:VBox>
+    <mx:VBox id="imageBox" width="100%" height="100%"
+            verticalAlign="middle" horizontalAlign="center">
+        <mx:Canvas id="imageCanvas"/>
+    </mx:VBox>
+    <mx:VBox width="100%" height="100%" verticalAlign="top" paddingRight="6" paddingTop="6">
+        <mx:HBox id="clockBox" width="100%" height="50" horizontalAlign="right"/>
+        <mx:Spacer id="rightSpacer"/>
+        <mx:Button id="enterButton" label="Enter"/>
+    </mx:VBox>
+</mx:HBox>

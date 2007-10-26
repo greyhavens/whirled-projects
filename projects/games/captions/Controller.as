@@ -13,8 +13,11 @@ import mx.containers.GridRow;
 import mx.containers.GridItem;
 
 import mx.controls.CheckBox;
-import mx.controls.HRule;
+import mx.controls.Image;
+import mx.controls.Label;
 import mx.controls.RadioButtonGroup;
+import mx.controls.Spacer;
+import mx.controls.Text;
 import mx.controls.TextInput;
 
 import mx.events.FlexEvent;
@@ -82,19 +85,26 @@ public class Controller
         _ui = ui;
         _ui.setStyle("backgroundImage", BACKGROUND);
 
-        ui.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
-
         _ctrl = new WhirledGameControl(ui);
-        _ctrl.setOccupantsLabel("Votes received in last " + ROUNDS_USED_FOR_SCORES + " rounds");
-
         if (!_ctrl.isConnected()) {
-            _ui.phaseText.htmlText = "This game must be played inside Whirled.";
+            var oops :Text = new Text();
+            oops.percentWidth = 100;
+            oops.percentHeight= 100;
+            oops.setStyle("fontSize", 36);
+            oops.htmlText = "<P align=\"center\"><font size=\"+2\">LOLcaptions</font><br><br>" +
+                "The fun flickr captioning game.<br><br>" +
+                "This game is multiplayer and must be played inside Whirled.</P>";
+            _ui.addChild(oops);
             return;
         }
+
+        ui.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         var size :Point = _ctrl.getSize();
         _ui.width = size.x;
         _ui.height = size.y;
+
+        _ctrl.setOccupantsLabel("Votes received in last " + ROUNDS_USED_FOR_SCORES + " rounds");
 
         _ctrl.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
         _ctrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
@@ -111,8 +121,14 @@ public class Controller
         _timer = new Timer(500);
         _timer.addEventListener(TimerEvent.TIMER, handleSubmitCaption);
 
-        _ui.image.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
-        _ui.image.addEventListener(Event.COMPLETE, handleImageComplete);
+        _image = new Image();
+        _image.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
+        _image.addEventListener(Event.COMPLETE, handleImageComplete);
+
+        _clockLabel = new Label();
+        _clockLabel.selectable = false;
+        _clockLabel.setStyle("fontFamily", "chocolat_bleu");
+        _clockLabel.setStyle("fontSize", 36);
 
         checkControl();
         checkPhase();
@@ -176,7 +192,7 @@ public class Controller
     {
         var url :String = _ctrl.get("photo") as String;
         if (url != null) {
-            _ui.image.load(url);
+            _image.load(url);
         }
     }
 
@@ -188,7 +204,12 @@ public class Controller
         }
         var remaining :int = Math.max(0, duration - value);
 
-        _ui.clockLabel.text = String(remaining);
+        var minStr :String = String(int(remaining / 60));
+        var secStr :String = String(remaining % 60);
+        if (secStr.length == 1) {
+            secStr = "0" + secStr;
+        }
+        _clockLabel.text = minStr + ":" + secStr;
 
         if (remaining == 0) {
             if (isPhase("caption")) {
@@ -252,14 +273,10 @@ public class Controller
         switch (phase) {
         case "vote":
         case "results":
-            _ui.image.scaleX = .5;
-            _ui.image.scaleY = .5;
+            _image.scaleX = .5;
+            _image.scaleY = .5;
             _timer.reset();
-            _ui.sideBox.removeAllChildren();
-            if (_captionInput != null) {
-                _ui.imageCanvas.removeChild(_captionInput);
-                _captionInput = null;
-            }
+            //_ui.sideBox.removeAllChildren();
             break;
 
         default:
@@ -267,13 +284,13 @@ public class Controller
                 _captionInput.text = "";
                 _myCaption = "";
             }
-            _ui.image.visible = false;
+            _image.visible = false;
             break;
 
         case "caption":
-            _ui.image.visible = true;
-            _ui.image.scaleX = 1;
-            _ui.image.scaleY = 1;
+            _image.visible = true;
+            _image.scaleX = 1;
+            _image.scaleY = 1;
             _myCaption = "";
             _timer.start();
             break;
@@ -281,15 +298,14 @@ public class Controller
 
         switch (phase) {
         default:
-            _ui.phaseLabel.text = "Caption";
-            _ui.phaseText.htmlText = "Enter a witty caption for the picture.";
+//            _ui.phaseLabel.text = "Caption";
             initCaptioning();
             break;
 
         case "vote":
-            _ui.phaseLabel.text = "Voting";
-            _ui.phaseText.htmlText = "Vote for a caption other than your own. Your caption will " +
-                "be disqualified unless you vote.";
+//            _ui.phaseLabel.text = "Voting";
+//            _ui.phaseText.htmlText = "Vote for a caption other than your own. Your caption will " +
+//                "be disqualified unless you vote.";
             var caps :Array = _ctrl.get("captions") as Array;
             if (caps != null) {
                 initVoting(caps);
@@ -297,8 +313,8 @@ public class Controller
             break;
 
         case "results":
-            _ui.phaseLabel.text = "Results";
-            _ui.phaseText.htmlText = "Congratulations!";
+//            _ui.phaseLabel.text = "Results";
+//            _ui.phaseText.htmlText = "Congratulations!";
             var results :Array = _ctrl.get("results") as Array;
             if (results != null) {
                 initResults(results);
@@ -527,46 +543,54 @@ public class Controller
 
     protected function initCaptioning () :void
     {
-        _ui.centerBox.width = NaN;
-        _ui.centerBox.setStyle("verticalAlign", "middle");
-        _ui.leftBox.percentWidth = 100;
-        _ui.rightBox.percentWidth = 100;
+        _ui.removeAllChildren();
 
-        _ui.gridArea.removeAllChildren();
-        _ui.sideBox.removeAllChildren();
-        _ui.bottomBox.removeAllChildren();
+        var capPanel :CaptionPanel = new CaptionPanel();
+        _ui.addChild(capPanel);
 
-        var pan :CaptionPanel = new CaptionPanel();
-        _ui.sideBox.addChild(pan);
+        _leftSpacer = capPanel.leftSpacer;
+        _rightSpacer = capPanel.rightSpacer;
+        capPanel.clockBox.addChild(_clockLabel);
+        capPanel.imageCanvas.addChild(_image);
 
-        if (_captionInput != null) {
-            _ui.imageCanvas.removeChild(_captionInput);
-        }
         _captionInput = new CaptionTextArea();
         _captionInput.includeInLayout = false;
-        _ui.imageCanvas.addChild(_captionInput);
+        capPanel.imageCanvas.addChild(_captionInput);
 
         recheckInputBounds();
 
-        pan.enterButton.addEventListener(FlexEvent.BUTTON_DOWN, handleSubmitCaption);
-        pan.skip.addEventListener(Event.CHANGE, handleVoteToSkip);
+        capPanel.enterButton.addEventListener(FlexEvent.BUTTON_DOWN, handleSubmitCaption);
+        capPanel.skip.addEventListener(Event.CHANGE, handleVoteToSkip);
+
+        _ui.validateNow();
     }
 
     /**
      * Configure layout stuff for the voting or results phases.
      */
-    protected function initNonCaptionLayout () :void
+    protected function initNonCaptionLayout () :OtherPanel
     {
-        _ui.centerBox.width = 250;
-        _ui.centerBox.setStyle("verticalAlign", "top");
-        _ui.leftBox.width = 0;
-        _ui.rightBox.width = 430; // there are two 10-pixel gaps
-        _ui.gridArea.removeAllChildren();
+        _ui.removeAllChildren();
+        _leftSpacer = null;
+        _rightSpacer = null;
+
+        var pan :OtherPanel = new OtherPanel();
+        _ui.addChild(pan);
+
+        pan.clockBox.addChild(_clockLabel);
+        pan.imageBox.addChild(_image);
+        pan.sideBox.setStyle("backgroundImage", SIDEBAR_BACKGROUND);
+        return pan;
     }
 
     protected function initVoting (caps :Array) :void
     {
-        initNonCaptionLayout();
+        var otherPan :OtherPanel = initNonCaptionLayout();
+        otherPan.phaseLabel.source = VOTING_LABEL;
+
+        var instructions :Image = new Image();
+        instructions.source = VOTING_INSTRUCTIONS;
+        otherPan.belowBox.addChild(instructions);
 
         var ii :int;
         var ids :Array = _ctrl.get("ids") as Array;
@@ -589,7 +613,7 @@ public class Controller
             var index :int = int(indexes[ii]);
 
             var pan :VotePanel = new VotePanel();
-            _ui.gridArea.addChild(pan);
+            otherPan.grid.addChild(pan);
             pan.captionText.htmlText = deHTML(String(caps[index]));
             pan.voteButton.group = voteGroup;
             if (ids[index] == _myId) {
@@ -604,7 +628,8 @@ public class Controller
 
     protected function initResults (results :Array) :void
     {
-        initNonCaptionLayout();
+        var otherPan :OtherPanel = initNonCaptionLayout();
+        otherPan.phaseLabel.source = RESULTS_LABEL;
 
         var ii :int;
         var indexes :Array = [];
@@ -645,7 +670,7 @@ public class Controller
         for (ii = 0; ii < indexes.length; ii++) {
 
             if (ii > 0) {
-                _ui.gridArea.addChild(new HSeparator());
+                otherPan.grid.addChild(new HSeparator());
             }
 
             var index :int = int(indexes[ii]);
@@ -657,17 +682,17 @@ public class Controller
             }
 
             var pan :ResultsPanel = new ResultsPanel();
-            _ui.gridArea.addChild(pan);
-            pan.nameLabel.text = String(_ctrl.get("name:" + playerId));
-            pan.votesLabel.text = String(Math.abs(result));
+            otherPan.grid.addChild(pan);
             pan.captionText.htmlText = deHTML(String(caps[index]));
+            pan.nameAndVotesLabel.text = "- " + String(_ctrl.get("name:" + playerId)) +
+                ", " + Math.abs(result);
 
             if (result < 0) {
-                pan.statusLabel.text = "Disqualified";
+                pan.statusIcon.source = DISQUAL_ICON;
 
             } else if (result > 0 && (-1 == winnerVal || result == winnerVal)) {
                 // we can have multiple winners..
-                pan.statusLabel.text = "Winner!";
+                pan.statusIcon.source = WINNER_ICON;
                 winnerVal = result;
 
                 if (_inControl) {
@@ -686,8 +711,11 @@ public class Controller
             }
         }
         if (nextUrls.length > 0) {
+            var instructions :Image = new Image();
+            instructions.source = PICKNEXT_INSTRUCTIONS;
+            otherPan.belowBox.addChild(instructions);
             var nextPan :PicturePickPanel = new PicturePickPanel();
-            _ui.bottomBox.addChild(nextPan);
+            otherPan.belowBox.addChild(nextPan);
             for (ii = 0; ii < NEXT_PICTURE_COUNT; ii++) {
                 if (nextUrls[ii] != null) {
                     nextPan["img" + ii].load(nextUrls[ii]);
@@ -879,27 +907,25 @@ public class Controller
             _ctrl.set("captions", null);
             _ctrl.set("ids", null);
             _ctrl.set("results", null);
-            var prop :String;
-            for each (prop in _ctrl.getPropertyNames("caption:")) {
-                _ctrl.set(prop, null);
-            }
-            for each (prop in _ctrl.getPropertyNames("vote:")) {
-                _ctrl.set(prop, null);
-            }
-            for each (prop in _ctrl.getPropertyNames("name:")) {
-                _ctrl.set(prop, null);
-            }
-            for each (prop in _ctrl.getPropertyNames("skip:")) {
-                _ctrl.set(prop, null);
-            }
-            for each (prop in _ctrl.getPropertyNames("pvote:")) {
-                _ctrl.set(prop, null);
-            }
-            for each (prop in _ctrl.getPropertyNames("next_")) {
-                _ctrl.set(prop, null);
-            }
+            clearProps("caption:");
+            clearProps("vote:");
+            clearProps("name:");
+            clearProps("skip:");
+            clearProps("pvote:");
+            clearProps("next_");
             _ctrl.setImmediate("phase", "caption");
         });
+    }
+
+    /**
+     * Clear all the properties with the specified prefix. This should be called from
+     * within a doBatch().
+     */
+    protected function clearProps (prefix :String) :void
+    {
+        for each (var prop :String in _ctrl.getPropertyNames(prefix)) {
+            _ctrl.set(prop, null);
+        }
     }
 
     protected function getPhotoSource (photoSizes :Array, PREF_SIZE :Array) :PhotoSize
@@ -943,10 +969,14 @@ public class Controller
             return;
         }
 
-        _captionInput.x = _ui.image.x;
-        _captionInput.y = _ui.image.y;
-        _captionInput.width = _ui.image.contentWidth;
-        _captionInput.height = _ui.image.contentHeight;
+        _captionInput.x = _image.x;
+        _captionInput.y = _image.y;
+        _captionInput.width = _image.contentWidth;
+        _captionInput.height = _image.contentHeight;
+
+        // TODO: adjust spacers (pretty close tho!)
+        _leftSpacer.height = _image.contentHeight - 80;
+        _rightSpacer.height = _image.contentHeight - 130;
 
         // TODO: this can be quite annoying
         if (_ui.stage) {
@@ -1002,8 +1032,29 @@ public class Controller
         _timer.reset();
     }
 
-    [Embed(source="background.png")]
+    [Embed(source="rsrc/background.png")]
     protected static const BACKGROUND :Class;
+
+    [Embed(source="rsrc/sidebar_background.png")]
+    protected static const SIDEBAR_BACKGROUND :Class;
+
+    [Embed(source="rsrc/voting_label.png")]
+    protected static const VOTING_LABEL :Class;
+
+    [Embed(source="rsrc/voting_instructions.png")]
+    protected static const VOTING_INSTRUCTIONS :Class;
+
+    [Embed(source="rsrc/results_label.png")]
+    protected static const RESULTS_LABEL :Class;
+
+    [Embed(source="rsrc/winner_icon.png")]
+    protected static const WINNER_ICON :Class;
+
+    [Embed(source="rsrc/dq_icon.png")]
+    protected static const DISQUAL_ICON :Class;
+
+    [Embed(source="rsrc/picknext_instructions.png")]
+    protected static const PICKNEXT_INSTRUCTIONS :Class;
 
     protected static const MEDIUM_SIZE :Array = [ "Medium", "Small", "Original", "Thumbnail" ];
 
@@ -1020,8 +1071,14 @@ public class Controller
     /** Our user interface class. */
     protected var _ui :Caption;
 
-    //protected var _captionInput :TextInput;
+    protected var _image :Image;
+
+    protected var _clockLabel :Label;
+
     protected var _captionInput :CaptionTextArea;
+
+    protected var _leftSpacer :Spacer;
+    protected var _rightSpacer :Spacer;
 
     protected var _flickr :FlickrService;
 

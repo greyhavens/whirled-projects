@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%">
+    <mx:VBox id="sideBox" width="262" height="100%" backgroundSize="100%"
+            paddingLeft="6" paddingTop="6" paddingRight="6" paddingBottom="6">
+        <mx:VBox id="imageBox" width="100%" height="262" horizontalAlign="center"/>
+        <mx:VBox id="belowBox" width="100%" height="100%"/>
+    </mx:VBox>
+    <mx:VBox width="100%" height="100%"
+            paddingLeft="6" paddingTop="6" paddingRight="6" paddingBottom="6">
+        <mx:HBox width="100%" height="86">
+            <mx:HBox width="100%" height="100%" horizontalAlign="left">
+                <mx:Image id="phaseLabel"/>
+            </mx:HBox>
+            <mx:HBox id="clockBox" width="100%" height="100%" horizontalAlign="right"/>
+        </mx:HBox>
+        <mx:Grid id="grid" width="100%" height="100%"/>
+    </mx:VBox>
+</mx:HBox>
