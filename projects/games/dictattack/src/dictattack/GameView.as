@@ -204,16 +204,13 @@ public class GameView extends Sprite
         var tweenRound :MovieClip = _ctx.content.createBetweenRound(_ctx.control.getRound());
         tweenRound.x = 219;
         tweenRound.y = 258;
-        var frameIdx :int = 0;
         var frameFunc :Function = function (event :Event) :void {
-            if (tweenRound.currentFrame == frameIdx) {
+            if (tweenRound.currentFrame == tweenRound.totalFrames) {
                 tweenRound.removeEventListener(Event.ENTER_FRAME, frameFunc);
                 removeChild(tweenRound);
                 _board.roundDidStart();
                 marquee.display("Start!", 1000);
                 enableInput();
-            } else {
-                frameIdx = tweenRound.currentFrame;
             }
         };
         tweenRound.addEventListener(Event.ENTER_FRAME, frameFunc);

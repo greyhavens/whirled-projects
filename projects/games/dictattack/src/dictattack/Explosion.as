@@ -22,16 +22,13 @@ public class Explosion extends Sprite
 
     protected function onEnterFrame (event :Event) :void
     {
-        if (_movie.currentFrame == _lastFrame) {
+        if (_movie.currentFrame == _movie.totalFrames) {
             removeEventListener(Event.ENTER_FRAME, onEnterFrame);
             parent.removeChild(this);
-        } else {
-            _lastFrame = _movie.currentFrame;
         }
     }
 
     protected var _movie :MovieClip;
-    protected var _lastFrame :int = -1;
 }
 
 }
