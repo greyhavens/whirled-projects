@@ -601,7 +601,7 @@ public class Player extends Pawn
     protected static const ATTACK_ENERGY :Number = 25;
 
     /** The amount of time after the last attack at which the attack level is cleared (s). */
-    protected static const ATTACK_RESET_INTERVAL :Number = 2;
+    protected static const ATTACK_RESET_INTERVAL :Number = 0.75;
 
     /** The amount of time after the last hit at which the hit count is cleared (s). */
     protected static const HIT_RESET_INTERVAL :Number = 2;

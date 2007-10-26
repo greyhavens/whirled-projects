@@ -469,7 +469,7 @@ public class Pawn extends Actor
         _effects = _psprite["effects"];
         _health = _psprite["health_bar"];
         _plate = _psprite["name_plate"];
-
+		
         // initialize the position and goal
         _view.setPosition(this, state.x, state.y);
         _goal = new Point(state.x, state.y);
@@ -890,7 +890,7 @@ public class Pawn extends Actor
     protected static const SLIDE_DUST_INTERVAL :Number = 3/10;
 
     /** The damage threshold for critical attacks. */
-    protected static const CRITICAL_DAMAGE :Number = 300;
+    protected static const CRITICAL_DAMAGE :Number = 500;
 
     /** The damage threshold for which we show messages. */
     protected static const MESSAGE_DAMAGE :Number = 1500;

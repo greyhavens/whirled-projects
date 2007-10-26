@@ -24,15 +24,15 @@ public class Attack
 
     /** The primary sword attacks for each level. */
     public static const PRIMARY_SWORD_ATTACKS :Array = [
-        new Attack("left swing", "punch1", 90, 150),
-        new Attack("right swing", "punch3", 100, 150),
-        new Attack("thrust", "punch2", 115, 150, 20, 20) ];
+        new Attack("sword_lt_1", "sword_lt_1", 90, 140),
+        new Attack("sword_lt_2", "sword_lt_2", 100, 150),
+        new Attack("sword_lt_3", "sword_lt_3", 115, 150, 0, 5, 0, 2) ];
 
     /** The secondary sword attacks for each level. */
     public static const SECONDARY_SWORD_ATTACKS :Array = [
-        new Attack("up cut", "punch1", 300, 450, 20, 20, 0.5, 0.5),
-        new Attack("down cut", "punch3", 200, 300, 0, 0, 1.5, 1.5, "light"),
-        new Attack("wide cut", "punch1", 400, 650, 40, 40) ];
+        new Attack("sword_hv_1", "sword_hv_1", 100, 200, 0, 10, 0, 0),
+        new Attack("sword_hv_2", "sword_hv_2", 150, 250, 15, 30, 0, 0),
+        new Attack("sword_hv_3", "sword_hv_3", 200, 300, 0, 0, 2, 3) ];
 
     /** The primary hammer attacks for each level. */
     public static const PRIMARY_HAMMER_ATTACKS :Array = [
