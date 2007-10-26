@@ -577,6 +577,7 @@ public class Controller
         var pan :OtherPanel = new OtherPanel();
         _ui.addChild(pan);
 
+        pan.mainBox.setStyle("backgroundImage", OTHER_BACKGROUND);
         pan.clockBox.addChild(_clockLabel);
         pan.imageBox.addChild(_image);
         pan.sideBox.setStyle("backgroundImage", SIDEBAR_BACKGROUND);
@@ -1037,6 +1038,9 @@ public class Controller
 
     [Embed(source="rsrc/sidebar_background.png")]
     protected static const SIDEBAR_BACKGROUND :Class;
+
+    [Embed(source="rsrc/other_background.png")]
+    protected static const OTHER_BACKGROUND :Class;
 
     [Embed(source="rsrc/voting_label.png")]
     protected static const VOTING_LABEL :Class;
