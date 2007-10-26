@@ -37,7 +37,7 @@ public class SplashView extends Sprite
 
     protected function onEnterFrame (event :Event) :void
     {
-        if (_clip.currentFrame > 157) { // magic!
+        if (_clip.currentFrame >= _clip.totalFrames) {
             onClick(null);
         }
     }
