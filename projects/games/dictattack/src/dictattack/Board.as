@@ -7,11 +7,11 @@ import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
-import flash.utils.Timer;
+import flash.geom.Point;
 
 import flash.events.Event;
 import flash.events.TimerEvent;
-import flash.geom.Rectangle;
+import flash.utils.Timer;
 
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.whirled.WhirledGameControl;
@@ -35,8 +35,8 @@ public class Board extends Sprite
         }
 
         // scale our tiles to fit the board
-        var bounds :Rectangle = _ctx.control.getStageBounds();
-        var havail :int = bounds.height - Content.BOARD_BORDER*2 - GameView.INPUT_HEIGHT;
+        var size :Point = _ctx.control.getSize();
+        var havail :int = size.y - Content.BOARD_BORDER*2 - GameView.INPUT_HEIGHT;
         Content.TILE_SIZE = (havail / _size) - 2;
 
         // listen for property changed events

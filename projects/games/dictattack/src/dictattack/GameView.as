@@ -179,7 +179,7 @@ public class GameView extends Sprite
             _inputBox.addChild(go);
 
             _inputBox.x = _ctx.content.inputRect.x - tip.width - 5;
-            _inputBox.y = _ctx.control.getStageBounds().height - _input.height -
+            _inputBox.y = _ctx.control.getSize().y - _input.height -
                 (INPUT_HEIGHT - _input.height)/2;
         }
         addChild(_inputBox);

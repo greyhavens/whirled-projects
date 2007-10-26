@@ -6,7 +6,7 @@ package dictattack {
 import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
-import flash.geom.Rectangle;
+import flash.geom.Point;
 
 import flash.events.Event;
 
@@ -44,9 +44,9 @@ public class DictionaryAttack extends Sprite
 
         // make our background totally black
         opaqueBackground = 0x000000;
-        var bounds :Rectangle = _ctx.control.isConnected() ?
-            _ctx.control.getStageBounds() : new Rectangle(0, 0, 1000, 550);
-        graphics.drawRect(0, 0, bounds.width, bounds.height);
+        var size :Point = _ctx.control.isConnected() ?
+            _ctx.control.getSize() : new Point(1000, 550);
+        graphics.drawRect(0, 0, size.x, size.y);
 
         // show our splash screen
         var splash :SplashView = new SplashView(this, function () :void {
