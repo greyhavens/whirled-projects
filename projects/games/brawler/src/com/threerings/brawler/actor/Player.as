@@ -112,6 +112,12 @@ public class Player extends Pawn
         return Math.max(level, 1);
     }
 
+	// documentation inherited
+    override public function get bounds () :Sprite
+    {
+        return _dmgbox.boundbox;
+    }
+	
     /**
      * Returns the player's attack level.
      */
@@ -451,7 +457,7 @@ public class Player extends Pawn
                 continue;
             }
             // we've scored a hit
-            var damage :Number = special ? 9999 : _attack.damage;
+            var damage :Number = special ? 9999 : _attack.damage*ATTACK_LEVEL_MULTIPLIERS[level];
             var knockback :Number = _attack.knockback;
             if (sliding) {
                 // if sliding, our slide speed increases the knockback amount
@@ -592,16 +598,16 @@ public class Player extends Pawn
     protected static const SPRINT_ENERGY_RATE :Number = -100;
 
     /** The rate at which players regain energy (normally). */
-    protected static const NORMAL_ENERGY_RATE :Number = +100;
+    protected static const NORMAL_ENERGY_RATE :Number = +50;
 
     /** The rate at which players regain energy after depletion. */
-    protected static const DEPLETED_ENERGY_RATE :Number = +50;
+    protected static const DEPLETED_ENERGY_RATE :Number = +25;
 
     /** The amount of energy required to attack. */
     protected static const ATTACK_ENERGY :Number = 25;
 
     /** The amount of time after the last attack at which the attack level is cleared (s). */
-    protected static const ATTACK_RESET_INTERVAL :Number = 0.75;
+    protected static const ATTACK_RESET_INTERVAL :Number = 0.90;
 
     /** The amount of time after the last hit at which the hit count is cleared (s). */
     protected static const HIT_RESET_INTERVAL :Number = 2;
@@ -612,12 +618,16 @@ public class Player extends Pawn
     /** For each difficulty level, the health proportion regained at regular intervals. */
     protected static const HEALTH_TICK_AMOUNTS :Array = [ 1/10, 1/20, 1/20, 0 ];
 
+	/** Attack damage multipliers for each weapon level. */
+    protected static const ATTACK_LEVEL_MULTIPLIERS :Array = [ 1.00, 1.50, 2.00, 2.50 ];
+
     /** Weapon damage multipliers for each difficulty level. */
     protected static const DIFFICULTY_DAMAGE_MULTIPLIERS :Array = [ 1.00, 0.75, 0.60, 0.45 ];
 
     /** Weapon damage multipliers for each weapon level (starting at one). */
-    protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 1, 1.5, 2 ];
-
+    //protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 1, 1.5, 2 ];
+	protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 0, 0, 0 ]; //<---Weapon decay disabled for testing
+	
     /** The number of seconds to wait before respawning the player. */
     protected static const RESPAWN_INTERVAL :Number = 10;
 

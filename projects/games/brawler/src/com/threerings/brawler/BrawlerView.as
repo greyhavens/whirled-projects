@@ -274,7 +274,7 @@ public class BrawlerView extends Sprite
                 var player :Player = actor as Player;
                 player.x = -150;
                 player.y = ty;
-                player.move(100, ty, Pawn.WALK, false);
+                player.move(250, ty, Pawn.WALK, false);
             }
         }
 

@@ -136,7 +136,13 @@ public class Enemy extends Pawn
         attacker :Pawn, damage :Number, knockback :Number, stun :Number) :void
     {
         // perhaps release a coin
-        super.hurt(attacker, damage, knockback, stun);
+		if(knockback > 0){
+			var temp_kb:Number = knockback - _weight;
+			if(temp_kb < 0){
+				temp_kb = 0;
+			}
+		}
+        super.hurt(attacker, damage, temp_kb, stun);
         if (Math.random() < COIN_DROP_PROBABILITY) {
             _ctrl.createPickup(Coin.createState(_view, x, y));
         }
@@ -291,6 +297,8 @@ public class Enemy extends Pawn
         _max = parseFloat(config.max.text) * MINMAX_MULTIPLIERS[difficulty];
         _knockback = parseFloat(config.knockback.text) * KNOCKBACK_MULTIPLIERS[difficulty];
         _stun = parseFloat(config.stun.text) * STUN_MULTIPLIERS[difficulty];
+		_weight = parseFloat(config.weight.text);
+		_def = parseFloat(config.def.text);
         _respawns = state.respawns;
 
         // remove various unnecessary bits
@@ -530,6 +538,12 @@ public class Enemy extends Pawn
 
     /** The enemy's stun amount. */
     protected var _stun :Number;
+	
+	/** The enemy's knockback dampening. */
+    protected var _weight :Number;
+	
+	/** The enemy's chance to block attacks. */
+    protected var _def :Number;
 
     /** The enemy's remaining respawns. */
     protected var _respawns :Number;

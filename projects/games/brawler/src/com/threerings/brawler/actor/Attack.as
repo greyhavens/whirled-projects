@@ -25,26 +25,26 @@ public class Attack
     /** The primary sword attacks for each level. */
     public static const PRIMARY_SWORD_ATTACKS :Array = [
         new Attack("sword_lt_1", "sword_lt_1", 90, 140),
-        new Attack("sword_lt_2", "sword_lt_2", 100, 150),
-        new Attack("sword_lt_3", "sword_lt_3", 115, 150, 0, 5, 0, 2) ];
+        new Attack("sword_lt_2", "sword_lt_2", 100, 145),
+        new Attack("sword_lt_3", "sword_lt_3", 110, 150, 2, 6, 0, 2) ];
 
     /** The secondary sword attacks for each level. */
     public static const SECONDARY_SWORD_ATTACKS :Array = [
-        new Attack("sword_hv_1", "sword_hv_1", 100, 200, 0, 10, 0, 0),
+        new Attack("sword_hv_1", "sword_hv_1", 120, 150, 0, 15, 0, 0),
         new Attack("sword_hv_2", "sword_hv_2", 150, 250, 15, 30, 0, 0),
-        new Attack("sword_hv_3", "sword_hv_3", 200, 300, 0, 0, 2, 3) ];
+        new Attack("sword_hv_3", "sword_hv_3", 300, 500, 0, 0, 2, 3) ];
 
     /** The primary hammer attacks for each level. */
     public static const PRIMARY_HAMMER_ATTACKS :Array = [
-        new Attack("hammer swipe", "punch1", 120, 145),
-        new Attack("hammer down", "punch3", 160, 190, 0, 0, 1, 1),
-        new Attack("hammer round", "punch2", 180, 215, 5, 15) ];
+        new Attack("hammer_lt_1", "hammer_lt_1", 120, 175),
+        new Attack("hammer_lt_2", "hammer_lt_2", 200, 255, 0, 0, 1, 2),
+        new Attack("hammer_lt_3", "hammer_lt_3", 220, 300, 40, 60) ];
 
     /** The secondary hammer attacks for each level. */
     public static const SECONDARY_HAMMER_ATTACKS :Array = [
-        new Attack("mass stun", "kick", 30, 60, 0, 0, 1, 3, "medium"), // mass stun
+        new Attack("mass stun", "kick", 30, 60, 0, 0, 1, 3), // mass stun
         new Attack("home run", "punch1", 450, 600, 40, 40), // home run
-        new Attack("shock wave", "punch3", 45, 75, 10, 10, 0, 0, "light") ]; // shock wave
+        new Attack("shock wave", "punch3", 45, 75, 10, 10, 0, 0) ]; // shock wave
 
     /** The primary bow attacks for each level. */
     public static const PRIMARY_BOW_ATTACKS :Array = [
