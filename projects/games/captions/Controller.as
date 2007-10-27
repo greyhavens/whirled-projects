@@ -20,6 +20,8 @@ import mx.controls.Spacer;
 import mx.controls.Text;
 import mx.controls.TextInput;
 
+import mx.core.ScrollPolicy;
+
 import mx.events.FlexEvent;
 
 import com.adobe.webapis.flickr.FlickrService;
@@ -276,7 +278,6 @@ public class Controller
             _image.scaleX = .5;
             _image.scaleY = .5;
             _timer.reset();
-            //_ui.sideBox.removeAllChildren();
             break;
 
         default:
@@ -298,14 +299,10 @@ public class Controller
 
         switch (phase) {
         default:
-//            _ui.phaseLabel.text = "Caption";
             initCaptioning();
             break;
 
         case "vote":
-//            _ui.phaseLabel.text = "Voting";
-//            _ui.phaseText.htmlText = "Vote for a caption other than your own. Your caption will " +
-//                "be disqualified unless you vote.";
             var caps :Array = _ctrl.get("captions") as Array;
             if (caps != null) {
                 initVoting(caps);
@@ -313,8 +310,6 @@ public class Controller
             break;
 
         case "results":
-//            _ui.phaseLabel.text = "Results";
-//            _ui.phaseText.htmlText = "Congratulations!";
             var results :Array = _ctrl.get("results") as Array;
             if (results != null) {
                 initResults(results);
@@ -543,10 +538,10 @@ public class Controller
 
     protected function initCaptioning () :void
     {
-        if (_leftSpacer != null) {
-            // already set up
-            return;
-        }
+//        if (_leftSpacer != null) {
+//            // already set up
+//            return;
+//        }
 
         _ui.removeAllChildren();
 
@@ -614,7 +609,11 @@ public class Controller
         var voteGroup :RadioButtonGroup = new RadioButtonGroup();
         voteGroup.addEventListener(Event.CHANGE, handleVoteCast);
 
-//for (var jj :int = 0; jj < 20; jj++) {
+        otherPan.verticalScrollPolicy = ScrollPolicy.OFF;
+        otherPan.mainBox.verticalScrollPolicy = ScrollPolicy.OFF;
+        otherPan.gridBox.verticalScrollPolicy = ScrollPolicy.ON;
+
+for (var jj :int = 0; jj < 20; jj++) {
         for (ii = 0; ii < indexes.length; ii++) {
             var index :int = int(indexes[ii]);
 
@@ -627,7 +626,7 @@ public class Controller
             }
             pan.voteButton.value = ids[index];
         }
-//}
+}
 
         _ui.validateNow();
     }
@@ -672,7 +671,7 @@ public class Controller
         var flowScores :Object = {};
         var playerId :String;
         var winnerVal :int = -1;
-//for (var jj :int = 0; jj < 20; jj++) {
+for (var jj :int = 0; jj < 20; jj++) {
         for (ii = 0; ii < indexes.length; ii++) {
 
             if (ii > 0) {
@@ -706,7 +705,7 @@ public class Controller
                 }
             }
         }
-//}
+}
 
         // see if there are any preview pics to vote on...
         var nextUrls :Array = [];

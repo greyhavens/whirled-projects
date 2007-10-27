@@ -8,8 +8,7 @@
         @font-face {
             src:url("rsrc/chocolat_bleu.ttf");
             fontFamily: "chocolat_bleu";
-            flashType: true;
-            fontAliasType: advanced;
+            advancedAntiAliasing: true;
         }
     </mx:Style>
     <Controller id="controller"/>
