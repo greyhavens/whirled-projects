@@ -74,7 +74,6 @@ public class SeaDisplay extends Sprite
         graphics.lineStyle(0, 0, 0); // turn off lines
     }
 
-
     /**
      * Set the status message to be shown over the game board.
      */

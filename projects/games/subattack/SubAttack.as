@@ -55,7 +55,7 @@ public class SubAttack extends Sprite
                 "<P align=\"center\"><font size=\"+2\">Truckyard Shootout</font>" +
                 "<br>A fast-action maze-building and shooting game for " +
                 "2-8 players.<br>Must be played inside Whirled.</P>");
-            var sub :Submarine = new Submarine(0, 0, "Player 1", 3, 3, null, _gameCtrl);
+            var sub :Submarine = new Submarine(0, 0, "Player 1", 3, 3, null, null);
             _seaDisplay.addChild(sub);
             return;
         }

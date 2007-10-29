@@ -294,7 +294,9 @@ public class Submarine extends BaseSprite
     {
         var score :Object = {};
         score[_playerId] = [_kills + " kills, " + _deaths + " deaths.", _kills];
-        _gameCtrl.setMappedScores(score);
+        if (_gameCtrl != null) {
+            _gameCtrl.setMappedScores(score);
+        }
     }
 
     protected function orientToFrame () :int
