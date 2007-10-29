@@ -11,6 +11,7 @@ import flash.utils.Timer;
 
 import mx.containers.GridRow;
 import mx.containers.GridItem;
+import mx.containers.VBox;
 
 import mx.controls.CheckBox;
 import mx.controls.Image;
@@ -103,8 +104,7 @@ public class Controller
         ui.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         var size :Point = _ctrl.getSize();
-        _ui.width = size.x;
-        _ui.height = size.y;
+        updateSize(_ctrl.getSize());
 
         _ctrl.setOccupantsLabel("Votes received in last " + ROUNDS_USED_FOR_SCORES + " rounds");
 
@@ -543,6 +543,7 @@ public class Controller
 //            return;
 //        }
 
+        _gridBox = null;
         _ui.removeAllChildren();
 
         var capPanel :CaptionPanel = new CaptionPanel();
@@ -576,6 +577,8 @@ public class Controller
 
         var pan :OtherPanel = new OtherPanel();
         _ui.addChild(pan);
+        _gridBox = pan.gridBox;
+        _gridBox.height = _gridHeight;
 
         pan.mainBox.setStyle("backgroundImage", OTHER_BACKGROUND);
         pan.clockBox.addChild(_clockLabel);
@@ -609,11 +612,7 @@ public class Controller
         var voteGroup :RadioButtonGroup = new RadioButtonGroup();
         voteGroup.addEventListener(Event.CHANGE, handleVoteCast);
 
-        otherPan.verticalScrollPolicy = ScrollPolicy.OFF;
-        otherPan.mainBox.verticalScrollPolicy = ScrollPolicy.OFF;
-        otherPan.gridBox.verticalScrollPolicy = ScrollPolicy.ON;
-
-for (var jj :int = 0; jj < 20; jj++) {
+//for (var jj :int = 0; jj < 20; jj++) {
         for (ii = 0; ii < indexes.length; ii++) {
             var index :int = int(indexes[ii]);
 
@@ -626,7 +625,7 @@ for (var jj :int = 0; jj < 20; jj++) {
             }
             pan.voteButton.value = ids[index];
         }
-}
+//}
 
         _ui.validateNow();
     }
@@ -671,7 +670,7 @@ for (var jj :int = 0; jj < 20; jj++) {
         var flowScores :Object = {};
         var playerId :String;
         var winnerVal :int = -1;
-for (var jj :int = 0; jj < 20; jj++) {
+//for (var jj :int = 0; jj < 20; jj++) {
         for (ii = 0; ii < indexes.length; ii++) {
 
             if (ii > 0) {
@@ -705,7 +704,7 @@ for (var jj :int = 0; jj < 20; jj++) {
                 }
             }
         }
-}
+//}
 
         // see if there are any preview pics to vote on...
         var nextUrls :Array = [];
@@ -1029,9 +1028,18 @@ for (var jj :int = 0; jj < 20; jj++) {
 
     protected function handleSizeChanged (event :SizeChangedEvent) :void
     {
-        var size :Point = event.size;
+        updateSize(event.size);
+    }
+
+    protected function updateSize (size :Point) :void
+    {
         _ui.width = size.x;
         _ui.height = size.y;
+        _gridHeight = size.y - 92; // 92 pix reserved for header bar area
+
+        if (_gridBox != null) {
+            _gridBox.height = _gridHeight;
+        }
     }
 
     protected function handleUnload (... ignored) :void
@@ -1095,6 +1103,10 @@ for (var jj :int = 0; jj < 20; jj++) {
     protected var _timer :Timer;
 
     protected var _photosToGet :int;
+
+    protected var _gridHeight :int = 408;
+
+    protected var _gridBox :VBox;
 
     /** The [ thumb , medium ] urls for the photo that took 2nd place last round. */
     protected var _secondSizes :Array;

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:GridRow xmlns:mx="http://www.adobe.com/2006/mxml" fontSize="12" verticalAlign="middle">
-    <mx:GridItem>
+<mx:GridRow xmlns:mx="http://www.adobe.com/2006/mxml" fontSize="12" width="100%"
+        verticalAlign="middle">
+    <mx:GridItem width="10%">
         <mx:RadioButton id="voteButton" label=" "/>
     </mx:GridItem>
     <mx:GridItem width="100%">

@@ -14,8 +14,8 @@
             </mx:Canvas>
             <mx:Canvas id="clockBox" top="0" right="0"/>
         </mx:Canvas>
-        <mx:VBox id="gridBox" left="0" top="92" right="0" bottom="0" verticalAlign="top">
-            <mx:Grid id="grid"/>
+        <mx:VBox id="gridBox" left="0" top="92" right="0" height="408" verticalAlign="top">
+            <mx:Grid id="grid" width="100%"/>
         </mx:VBox>
     </mx:Canvas>
 </mx:Canvas>
