@@ -17,46 +17,44 @@ public class Properties
     public static const ROUND_LENGTH :int = 120;
 
     /** Default pause length */
-    public static const PAUSE_LENGTH :int = 10;
+    public static const PAUSE_LENGTH :int = 20;
 
     /**
-       Game display is composed of the letter board, and various
-       status windows TBD. This display size is the bounding box
-       of all these elements.
-    */
-    public static const DISPLAY :Rectangle = new Rectangle (0, 0, 700, 500);
+     * Game display is composed of the letter board, and various
+     * status windows TBD. This display size is the bounding box
+     * of all these elements.
+     */
+    public static const DISPLAY :Rectangle = new Rectangle (0, 0, 600, 500);
 
     /**
-       The board contains a collection of letters arranged in a square.
-       The letter matrix will fill the board completely.
-    */
+     * The board contains a collection of letters arranged in a square.
+     * The letter matrix will fill the board completely.
+     */
     public static const BOARD :Rectangle = new Rectangle (48, 102, 250, 250);
     public static const BOARDPOS :Point = new Point(BOARD.x, BOARD.y);
 
-    /**
-       Position of a text box that displays currently selected word.
-    */
+    /** Position of a text box that displays currently selected word. */
     public static const WORDFIELD :Rectangle = new Rectangle (50, 370, 190, 28);
 
-    /**
-       Position of the OK button (automatically sized)
-    */
+    /** Position of the OK button (automatically sized) */
     public static const OKBUTTON :Point = new Point (240, 362);
 
-    /**
-       Position of the score box
-    */
+    /** Position of the score box */
     public static const SCOREFIELD :Rectangle = new Rectangle (360, 109, 178, 100);
 
-    /**
-       Position of the log text field
-    */
+    /** Position of the log text field */
     public static const LOGFIELD :Rectangle = new Rectangle (360, 226, 178, 130);
 
-    /**
-       Position of the timer
-    */
+    /** Position of the timer */
     public static const TIMER :Rectangle = new Rectangle (360, 370, 178, 28);
+
+    /** Positions of the various stats display elements. */
+    public static const STATS_TOPPLAYER :Rectangle =
+        new Rectangle (100, 170, DISPLAY.width - 200, 40);
+    public static const STATS_TOPSCORE  :Rectangle =
+        new Rectangle (100, 200, DISPLAY.width - 200, 40);
+    public static const STATS_WORDLIST  :Rectangle =
+        new Rectangle (100, 240, DISPLAY.width - 200, 200);
 
     /** Each letter is a simple square - but we want to know how big to draw them.
         This is the width and height of each letter in pixels. */

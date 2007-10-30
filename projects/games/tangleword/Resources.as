@@ -16,34 +16,39 @@ public class Resources
 {
     // FORMATS
 
-    /** Returns a new instance of text style used for individual letters */
-    public static function makeFormatForBoardLetters () :TextFormat
+    /** Makes a default format instance. */
+    public static function makeDefaultFormat () :TextFormat
     {
+        // no css without flex? so sad.
         var format :TextFormat = new TextFormat();
         format.font = "Verdana";
         format.color = uint(0x77aabb);
+        format.bold = true;
+        return format;
+    }        
+    
+    /** Returns a new instance of text style used for individual letters */
+    public static function makeFormatForBoardLetters () :TextFormat
+    {
+        var format :TextFormat = makeDefaultFormat();
+        format.align = TextFormatAlign.CENTER;
+        format.bold = false;
         format.size = 42;
-
         return format;
     }
 
     /** Returns a new instance of text style used for game messages and UI */
     public static function makeFormatForUI () :TextFormat
     {
-        var format :TextFormat = new TextFormat();
-        format.font = "Verdana";
-        format.color = uint(0x77aabb);
+        var format :TextFormat = makeDefaultFormat();
         format.size = 18;
-        format.bold = true;
         return format;
     }
 
     /** Returns a new instance of a text style for the logging window */
     public static function makeFormatForLogger () :TextFormat
     {
-        var format :TextFormat = new TextFormat ();
-        format.font = "Verdana";
-        format.color = uint(0x77aabb);
+        var format :TextFormat = makeDefaultFormat();
         format.size = 10;
         format.bold = false;
         return format;
@@ -52,23 +57,45 @@ public class Resources
     /** Returns a new instance of a text style for the score window */
     public static function makeFormatForScore () :TextFormat
     {
-        var format :TextFormat = new TextFormat ();
-        format.font = "Verdana";
+        var format :TextFormat = makeDefaultFormat();
         format.color = uint(0x77aabb);
         format.size = 12;
-        format.bold = true;
         return format;
     }
 
     /** Returns a new instance of a text style for the countdown timer */
     public static function makeFormatForCountdown () :TextFormat
     {
-        var format :TextFormat = new TextFormat ();
-        format.font = "Verdana";
+        var format :TextFormat = makeDefaultFormat();
+        format.align = TextFormatAlign.CENTER;
         format.color = uint(0xaa6666);
         format.size = 18;
-        format.bold = true;
+        return format;
+    }
+
+    /** Returns a new instance of a text style for the stats display. */
+    public static function makeFormatForStatsWinner () :TextFormat
+    {
+        var format :TextFormat = makeDefaultFormat();
         format.align = TextFormatAlign.CENTER;
+        format.bold = false;
+        format.size = 18;
+        return format;
+    }
+
+    /** Returns a new instance of a text style for the stats display. */
+    public static function makeFormatForStatsScore () :TextFormat
+    {
+        var format :TextFormat = makeFormatForStatsWinner();
+        format.size = 16;
+        return format;
+    }
+
+    /** Returns a new instance of a text style for the stats display. */
+    public static function makeFormatForStatsWords () :TextFormat
+    {
+        var format :TextFormat = makeFormatForStatsWinner();
+        format.size = 12;
         return format;
     }
 
@@ -115,7 +142,12 @@ public class Resources
     [Embed(source="rsrc/background.swf")]
     public static const background :Class;
     [Embed(source="rsrc/splash.swf")]
-    public static const splash :Class;
+        public static const splash :Class;
+    
+    [Embed(source="rsrc/stats_fg.swf", mimeType="application/octet-stream")]
+    public static const stats_fg :Class;
+    [Embed(source="rsrc/stats_bg.swf", mimeType="application/octet-stream")]
+    public static const stats_bg :Class;
 
     [Embed(source="rsrc/logo.png")]
     public static const logo :Class;

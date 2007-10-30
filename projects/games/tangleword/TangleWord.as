@@ -60,7 +60,7 @@ public class TangleWord extends Sprite
 
         // Create MVC elements
         _controller = new Controller (_gameCtrl, null); // we'll set the model later...
-        _display = new Display (_gameCtrl, _controller, "Tangleword v. 1.3.1");
+        _display = new Display (_gameCtrl, _controller, "Tangleword v. 1.3.3");
         _model = new Model (_gameCtrl, _display);
         _controller.setModel (_model); // ... as in, right here :)
         addChild (_display);
@@ -125,9 +125,9 @@ public class TangleWord extends Sprite
 
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
-        _model.roundEnded();
+        _display.roundEnded(_model.scoreboard);
         _controller.roundEnded();
-        _display.roundEnded(Properties.PAUSE_LENGTH);
+        _model.roundEnded();
 
         if (_gameCtrl.amInControl()) {
             _gameCtrl.stopTicker("countdown");

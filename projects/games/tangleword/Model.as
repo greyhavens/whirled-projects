@@ -40,6 +40,11 @@ public class Model
         initializeStorage ();
     }
 
+    public function get scoreboard () :Scoreboard
+    {
+        return _scoreboard;
+    }
+
     /** Called at the beginning of a round - push my scoreboard on everyone. */
     public function roundStarted () :void
     {

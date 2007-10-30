@@ -75,9 +75,11 @@ public class Display extends Sprite
     }
 
     /** Called when the round ends - disables display. */
-    public function roundEnded (untilNext :int) :void
+    public function roundEnded (board :Scoreboard) :void
     {
         setEnableState (false);
+
+        _stats.show(board);
     }
 
     /** Called from the model, this accessor modifies the display /text/
@@ -182,6 +184,11 @@ public class Display extends Sprite
         var mm :String = StringUtil.prepad(minutes.toString(), 2, "0");
         var ss :String = StringUtil.prepad(seconds.toString(), 2, "0");
         _timerbox.text = mm + ":" + ss;
+
+        // check if we need to start hiding the inter-round display
+        if (! getEnableState() && int(remainingsecs) == Stats.HIDE_DELAY) {
+            _stats.hide();
+        }
     }
     
     // PRIVATE EVENT HANDLERS
@@ -261,7 +268,7 @@ public class Display extends Sprite
         addChild (_okbutton);
 
         _wordfield = new TextField ();
-        _wordfield.defaultTextFormat = Resources.makeFormatForUI ();
+        _wordfield.defaultTextFormat = Resources.makeFormatForUI();
         _wordfield.borderColor = Resources.defaultBorderColor;
 //        _wordfield.border = true;
         _wordfield.type = TextFieldType.INPUT;
@@ -289,7 +296,7 @@ public class Display extends Sprite
 
         _timerbox = new TextField();
         _timerbox.selectable = false;
-        _timerbox.defaultTextFormat = Resources.makeFormatForCountdown ();
+        _timerbox.defaultTextFormat = Resources.makeFormatForCountdown();
         _timerbox.borderColor = Resources.defaultBorderColor;
 //        _timerbox.border = true;
         doLayout (_timerbox, Properties.TIMER);
@@ -297,6 +304,9 @@ public class Display extends Sprite
         
         _splash = new Splash();
         addChild(_splash);
+
+        _stats = new Stats();
+        addChild(_stats);
     }
 
     /** Helper function that copies x, y, width and height properties
@@ -316,7 +326,7 @@ public class Display extends Sprite
         o.y = p.y;
     }
     
-    /** Enables or disables a number of UI elements */
+    /** Enables or disables a number of UI elements. */
     private function setEnableState (value :Boolean) :void
     {
         // Set each letter
@@ -329,15 +339,21 @@ public class Display extends Sprite
         }
 
         // Set other UI elements
-        _wordfield.visible = _okbutton.visible = value;
+        _okbutton.visible = value;
     }
 
+    /** Are we in the middle of a round? */
+    private function getEnableState () :Boolean
+    {
+        return _okbutton.visible; // this is controlled directly by enabled state
+    }
+    
 
     /**
-       Set cursor over a letter at specified board /location/, and removes the cursor
-       from the previous letter. If the location point is null, it just removes
-       the cursor from the previous letter.
-    */
+     * Set cursor over a letter at specified board /location/, and removes the cursor
+     * from the previous letter. If the location point is null, it just removes
+     * the cursor from the previous letter.
+     */
     private function setCursor (location :Point) :void
     {
         var l :Letter = null;
@@ -449,6 +465,9 @@ public class Display extends Sprite
 
     /** Splash screen */
     private var _splash :Splash;
+
+    /** Stats screen */
+    private var _stats :Stats;
 }
 
 } // package
