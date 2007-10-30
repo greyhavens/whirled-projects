@@ -4,6 +4,7 @@
 package {
 
 import flash.events.Event;
+import flash.events.TextEvent;
 
 import flash.filters.GlowFilter;
 
@@ -11,25 +12,38 @@ import flash.text.TextLineMetrics;
 
 import mx.controls.TextArea;
 
+/**
+ * Dispatched when the user presses return in this control.
+ */
+[Event(name="ReturnPressed", type="flash.events.Event")]
+
 public class CaptionTextArea extends TextArea
 {
     public function CaptionTextArea ()
     {
         super();
 
-        editable = true;
-
-        setStyle("backgroundAlpha", .2);
         setStyle("textAlign", "center");
         setStyle("color", 0x000000);
-        setProperties(2, 50, 16);
+        setProperties(1, 50, 16);
 
         addEventListener(Event.CHANGE, handleTextChanged);
+        addEventListener(TextEvent.TEXT_INPUT, handleTextInput);
+        editable = true;
+    }
+
+    override public function set editable (nowEditable :Boolean) :void
+    {
+        super.editable = nowEditable;
+
+        setStyle("backgroundAlpha", nowEditable ? .2 : 0);
+        setStyle("borderStyle", nowEditable ? "solid" : "none");
     }
 
     override protected function initializationComplete () :void
     {
         super.initializationComplete();
+
         evalStyle();
     }
 
@@ -47,6 +61,19 @@ public class CaptionTextArea extends TextArea
     {
         _outline = outline;
         evalStyle();
+    }
+
+    public function calculateHeight () :void
+    {
+        // god, what hackery
+        text = "Wj";
+        validateNow();
+
+        var height :int = textHeight;
+        text = "";
+        validateNow();
+
+        this.height = height + 4;
     }
 
     /**
@@ -89,6 +116,17 @@ public class CaptionTextArea extends TextArea
         }
     }
 
+    protected function handleTextInput (event :TextEvent) :void
+    {
+        // Don't let the user press return
+        if (event.text == "\n") {
+            event.preventDefault();
+
+            // but also notify
+            dispatchEvent(new Event("ReturnPressed"));
+        }
+    }
+
     protected function handleTextChanged (event :Event) :void
     {
         evalStyle();
@@ -96,7 +134,7 @@ public class CaptionTextArea extends TextArea
 
     protected var _lastText :String = "";
 
-    protected var _maxLines :int = 2;
+    protected var _maxLines :int = 1;
 
     protected var _outline :Boolean = true;
 

@@ -1,5 +1,8 @@
 package {
 
+import flash.display.Sprite;
+import mx.controls.Button;
+
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.ProgressEvent;
@@ -13,6 +16,7 @@ import mx.containers.GridRow;
 import mx.containers.GridItem;
 import mx.containers.VBox;
 
+import mx.controls.Button;
 import mx.controls.CheckBox;
 import mx.controls.Image;
 import mx.controls.Label;
@@ -65,7 +69,7 @@ import com.whirled.WhirledGameControl;
  */
 public class Controller
 {
-    public static const DEBUG :Boolean = true;
+    public static const DEBUG :Boolean = false;
 
     /** Durations of game phases, in seconds. */
     public static const CAPTION_DURATION :int = 45;
@@ -473,6 +477,21 @@ public class Controller
         checkPhaseControl();
     }
 
+    protected function handleSubmitButton (event :Event) :void
+    {
+        var nowEditing :Boolean = !_captionInput.editable;
+
+        _captionInput.editable = nowEditing;
+
+        _enterButton.label = nowEditing ? "Enter" : "Edit";
+
+        if (!nowEditing) {
+            handleSubmitCaption(event);
+        } else {
+            _captionInput.setFocus();
+        }
+    }
+
     /**
      * Called both by the Timer event and when the user presses the (largely unneeded)
      * enter button.
@@ -555,12 +574,17 @@ public class Controller
         capPanel.imageCanvas.addChild(_image);
 
         _captionInput = new CaptionTextArea();
+        _captionInput.addEventListener("ReturnPressed", handlePositionToggle);
+        //_captionInput.setStyle("fontFamily", "chocolat_bleu");
         _captionInput.includeInLayout = false;
         capPanel.imageCanvas.addChild(_captionInput);
 
+        _captionInput.calculateHeight();
+        _captionOnBottom = true;
         recheckInputBounds();
 
-        capPanel.enterButton.addEventListener(FlexEvent.BUTTON_DOWN, handleSubmitCaption);
+        _enterButton = capPanel.enterButton;
+        capPanel.enterButton.addEventListener(FlexEvent.BUTTON_DOWN, handleSubmitButton);
         capPanel.skip.addEventListener(Event.CHANGE, handleVoteToSkip);
 
         _ui.validateNow();
@@ -612,7 +636,7 @@ public class Controller
         var voteGroup :RadioButtonGroup = new RadioButtonGroup();
         voteGroup.addEventListener(Event.CHANGE, handleVoteCast);
 
-//for (var jj :int = 0; jj < 20; jj++) {
+for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         for (ii = 0; ii < indexes.length; ii++) {
             var index :int = int(indexes[ii]);
 
@@ -625,7 +649,7 @@ public class Controller
             }
             pan.voteButton.value = ids[index];
         }
-//}
+}
 
         _ui.validateNow();
     }
@@ -635,11 +659,21 @@ public class Controller
         var otherPan :OtherPanel = initNonCaptionLayout();
         otherPan.phaseLabel.source = RESULTS_LABEL;
 
+        _captionInput = new CaptionTextArea();
+        _captionOnBottom = true;
+        _captionInput.includeInLayout = false;
+        _captionInput.editable = false;
+        otherPan.imageBox.addChild(_captionInput);
+        _captionInput.calculateHeight();
+
         var ii :int;
         var indexes :Array = [];
         for (ii = 0; ii < results.length; ii++) {
             indexes[ii] = ii;
         }
+
+        var ids :Array = _ctrl.get("ids") as Array;
+        var caps :Array = _ctrl.get("captions") as Array;
 
         // sort all the qualified entries by score above all the disqualified entries (by score)
         indexes.sort(function (dex1 :int, dex2 :int) :int {
@@ -660,17 +694,20 @@ public class Controller
                 return 1;
 
             } else {
+                // if the same number of votes, position our own caption higher
+                if (ids[dex1] == _myId) {
+                    return -1;
+                } else if (ids[dex2] == _myId) {
+                    return 1;
+                }
                 return 0;
             }
         });
 
-        var ids :Array = _ctrl.get("ids") as Array;
-        var caps :Array = _ctrl.get("captions") as Array;
-
         var flowScores :Object = {};
         var playerId :String;
         var winnerVal :int = -1;
-//for (var jj :int = 0; jj < 20; jj++) {
+for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         for (ii = 0; ii < indexes.length; ii++) {
 
             if (ii > 0) {
@@ -691,6 +728,10 @@ public class Controller
             pan.nameAndVotesLabel.text = "- " + String(_ctrl.get("name:" + playerId)) +
                 ", " + Math.abs(result);
 
+            if (ii == 0) {
+                _captionInput.text = String(caps[index]);
+            }
+
             if (result < 0) {
                 pan.statusIcon.source = DISQUAL_ICON;
 
@@ -704,7 +745,7 @@ public class Controller
                 }
             }
         }
-//}
+}
 
         // see if there are any preview pics to vote on...
         var nextUrls :Array = [];
@@ -730,6 +771,7 @@ public class Controller
         }
 
         updateScoreDisplay();
+        recheckInputBounds();
 
         _ui.validateNow();
 
@@ -974,13 +1016,21 @@ public class Controller
         }
 
         _captionInput.x = _image.x;
-        _captionInput.y = _image.y;
         _captionInput.width = _image.contentWidth;
-        _captionInput.height = _image.contentHeight;
+        _captionInput.scaleX = _image.scaleX;
+        _captionInput.scaleY = _image.scaleY;
+        if (_captionOnBottom) {
+            _captionInput.y = _image.y +
+                (_image.scaleY * _image.contentHeight) - _captionInput.height;
+        } else {
+            _captionInput.y = _image.y;
+        }
 
         // TODO: adjust spacers (pretty close tho!)
-        _leftSpacer.height = _image.contentHeight - 80;
-        _rightSpacer.height = _image.contentHeight - 130;
+        if (_leftSpacer != null) {
+            _leftSpacer.height = _image.contentHeight - 80;
+            _rightSpacer.height = _image.contentHeight - 130;
+        }
 
         _ui.validateNow();
 
@@ -988,6 +1038,19 @@ public class Controller
         if (_ui.stage) {
             _ui.stage.focus = _captionInput;
         }
+    }
+
+    /**
+     * Handle toggling the position of the caption input area from the top of the image
+     * to the bottom.
+     */
+    protected function handlePositionToggle (event :Event) :void
+    {
+
+    // TODO: this is kinda annoying?
+//        _captionOnBottom = !_captionOnBottom;
+//
+//        recheckInputBounds();
     }
 
     /**
@@ -1094,6 +1157,11 @@ public class Controller
     protected var _clockLabel :Label;
 
     protected var _captionInput :CaptionTextArea;
+
+    protected var _enterButton :Button;
+
+    /** Whether the caption is on the bottom or top. */
+    protected var _captionOnBottom :Boolean;
 
     protected var _leftSpacer :Spacer;
     protected var _rightSpacer :Spacer;
