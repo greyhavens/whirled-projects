@@ -12,6 +12,7 @@ import flash.geom.Point;
 
 import flash.utils.Timer;
 
+import mx.containers.Grid;
 import mx.containers.GridRow;
 import mx.containers.GridItem;
 import mx.containers.VBox;
@@ -69,7 +70,7 @@ import com.whirled.WhirledGameControl;
  */
 public class Controller
 {
-    public static const DEBUG :Boolean = false;
+    public static const DEBUG :Boolean = true;
 
     /** Durations of game phases, in seconds. */
     public static const CAPTION_DURATION :int = 45;
@@ -107,9 +108,6 @@ public class Controller
 
         ui.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        var size :Point = _ctrl.getSize();
-        updateSize(_ctrl.getSize());
-
         _ctrl.setOccupantsLabel("Votes received in last " + ROUNDS_USED_FOR_SCORES + " rounds");
 
         _ctrl.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
@@ -130,11 +128,21 @@ public class Controller
         _image = new Image();
         _image.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
         _image.addEventListener(Event.COMPLETE, handleImageComplete);
+        _ui.addChild(_image);
 
         _clockLabel = new Label();
+        _clockLabel.width = 200; // big enough, anyway
+        _clockLabel.includeInLayout = false;
         _clockLabel.selectable = false;
+        _clockLabel.setStyle("textAlign", "right");
         _clockLabel.setStyle("fontFamily", "chocolat_bleu");
         _clockLabel.setStyle("fontSize", 36);
+        _clockLabel.setStyle("top", 6);
+        _clockLabel.setStyle("right", 6);
+        _ui.addChild(_clockLabel);
+
+        var size :Point = _ctrl.getSize();
+        updateSize(_ctrl.getSize());
 
         checkControl();
         checkPhase();
@@ -219,7 +227,7 @@ public class Controller
 
         if (remaining == 0) {
             if (isPhase("caption")) {
-                _captionInput.editable = false;
+                _capInput.editable = false;
             }
 
             if (_inControl) {
@@ -279,23 +287,17 @@ public class Controller
         switch (phase) {
         case "vote":
         case "results":
-            _image.scaleX = .5;
-            _image.scaleY = .5;
             _timer.reset();
             break;
 
         default:
-            if (_captionInput != null) {
-                _captionInput.text = "";
+            if (_capInput != null) {
+                _capInput.text = "";
                 _myCaption = "";
             }
-            _image.visible = false;
             break;
 
         case "caption":
-            _image.visible = true;
-            _image.scaleX = 1;
-            _image.scaleY = 1;
             _myCaption = "";
             _timer.start();
             break;
@@ -479,16 +481,17 @@ public class Controller
 
     protected function handleSubmitButton (event :Event) :void
     {
-        var nowEditing :Boolean = !_captionInput.editable;
+        var nowEditing :Boolean = !_capInput.editable;
 
-        _captionInput.editable = nowEditing;
+        _capInput.editable = nowEditing;
+        _capPanel.setStyle("backgroundAlpha", nowEditing ? .2 : 0);
 
-        _enterButton.label = nowEditing ? "Enter" : "Edit";
+        _capPanel.enterButton.label = nowEditing ? "Enter" : "Edit";
 
         if (!nowEditing) {
             handleSubmitCaption(event);
         } else {
-            _captionInput.setFocus();
+            _capPanel.enterButton.setFocus();
         }
     }
 
@@ -498,7 +501,7 @@ public class Controller
      */
     protected function handleSubmitCaption (event :Event) :void
     {
-        var text :String = StringUtil.trim(_captionInput.text);
+        var text :String = StringUtil.trim(_capInput.text);
         if (text != _myCaption) {
             // TODO: possibly a new way to support private data, whereby users can submit
             // data to private little collections, which are then combined and retrieved.
@@ -557,68 +560,71 @@ public class Controller
 
     protected function initCaptioning () :void
     {
-//        if (_leftSpacer != null) {
-//            // already set up
-//            return;
-//        }
+        trace("... initCaptioning");
+        // TODO: it seems that removing helps a lot, but we want to avoid re-setup if we can
+        if (_capPanel != null) {
+            _ui.removeChild(_capPanel);
+        }
+        if (_capInput != null) {
+            _ui.removeChild(_capInput);
+            _capInput = null;
+        }
 
-        _gridBox = null;
-        _ui.removeAllChildren();
+        if (_grid != null) {
+            _ui.removeChild(_grid);
+            _grid = null;
+        }
 
-        var capPanel :CaptionPanel = new CaptionPanel();
-        _ui.addChild(capPanel);
+        if (_nextPanel != null) {
+            _ui.removeChild(_nextPanel);
+            _nextPanel = null;
+        }
 
-        _leftSpacer = capPanel.leftSpacer;
-        _rightSpacer = capPanel.rightSpacer;
-        capPanel.clockBox.addChild(_clockLabel);
-        capPanel.imageCanvas.addChild(_image);
+        _capPanel = new CaptionPanel();
+        _ui.addChild(_capPanel);
 
-        _captionInput = new CaptionTextArea();
-        _captionInput.addEventListener("ReturnPressed", handlePositionToggle);
-        //_captionInput.setStyle("fontFamily", "chocolat_bleu");
-        _captionInput.includeInLayout = false;
-        capPanel.imageCanvas.addChild(_captionInput);
-
-        _captionInput.calculateHeight();
         _captionOnBottom = true;
-        recheckInputBounds();
 
-        _enterButton = capPanel.enterButton;
-        capPanel.enterButton.addEventListener(FlexEvent.BUTTON_DOWN, handleSubmitButton);
-        capPanel.skip.addEventListener(Event.CHANGE, handleVoteToSkip);
+        _capInput = new CaptionTextArea();
+        _capInput.includeInLayout = false;
+        _capInput.addEventListener("ReturnPressed", handlePositionToggle);
 
-        _ui.validateNow();
+        _ui.addChild(_capInput);
+        _capInput.calculateHeight();
+
+        _capPanel.enterButton.addEventListener(FlexEvent.BUTTON_DOWN, handleSubmitButton);
+        _capPanel.skip.addEventListener(Event.CHANGE, handleVoteToSkip);
+
+        updateLayout();
     }
 
     /**
      * Configure layout stuff for the voting or results phases.
      */
-    protected function initNonCaptionLayout () :OtherPanel
+    protected function initNonCaptionLayout () :void
     {
-        _ui.removeAllChildren();
-        _leftSpacer = null;
-        _rightSpacer = null;
+        if (_capPanel != null) {
+            _ui.removeChild(_capPanel);
+            _capPanel = null;
+        }
 
-        var pan :OtherPanel = new OtherPanel();
-        _ui.addChild(pan);
-        _gridBox = pan.gridBox;
-        _gridBox.height = _gridHeight;
+        if (_capInput != null) {
+            _ui.removeChild(_capInput);
+            _capInput = null;
+        }
 
-        pan.mainBox.setStyle("backgroundImage", OTHER_BACKGROUND);
-        pan.clockBox.addChild(_clockLabel);
-        pan.imageBox.addChild(_image);
-        pan.sideBox.setStyle("backgroundImage", SIDEBAR_BACKGROUND);
-        return pan;
+        if (_grid != null) {
+            _ui.removeChild(_grid);
+        }
+
+        _grid = new Grid();
+        _ui.addChild(_grid);
     }
 
     protected function initVoting (caps :Array) :void
     {
-        var otherPan :OtherPanel = initNonCaptionLayout();
-        otherPan.phaseLabel.source = VOTING_LABEL;
-
-        var instructions :Image = new Image();
-        instructions.source = VOTING_INSTRUCTIONS;
-        otherPan.belowBox.addChild(instructions);
+        trace("... initVoting");
+        initNonCaptionLayout();
 
         var ii :int;
         var ids :Array = _ctrl.get("ids") as Array;
@@ -640,31 +646,31 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         for (ii = 0; ii < indexes.length; ii++) {
             var index :int = int(indexes[ii]);
 
-            var pan :VotePanel = new VotePanel();
-            otherPan.grid.addChild(pan);
-            pan.captionText.htmlText = deHTML(String(caps[index]));
-            pan.voteButton.group = voteGroup;
+            var row :VotingRow = new VotingRow();
+            _grid.addChild(row);
+            row.captionText.htmlText = deHTML(String(caps[index]));
+            row.voteButton.group = voteGroup;
             if (ids[index] == _myId) {
-                pan.voteButton.enabled = false;
+                row.voteButton.enabled = false;
             }
-            pan.voteButton.value = ids[index];
+            row.voteButton.value = ids[index];
         }
 }
 
-        _ui.validateNow();
+        updateLayout();
     }
 
     protected function initResults (results :Array) :void
     {
-        var otherPan :OtherPanel = initNonCaptionLayout();
-        otherPan.phaseLabel.source = RESULTS_LABEL;
+        trace("... initResults");
+        initNonCaptionLayout();
 
-        _captionInput = new CaptionTextArea();
+        _capInput = new CaptionTextArea();
         _captionOnBottom = true;
-        _captionInput.includeInLayout = false;
-        _captionInput.editable = false;
-        otherPan.imageBox.addChild(_captionInput);
-        _captionInput.calculateHeight();
+        _capInput.includeInLayout = false;
+        _capInput.editable = false;
+        _capInput.calculateHeight();
+        _ui.addChild(_capInput);
 
         var ii :int;
         var indexes :Array = [];
@@ -711,7 +717,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         for (ii = 0; ii < indexes.length; ii++) {
 
             if (ii > 0) {
-                otherPan.grid.addChild(new HSeparator());
+                _grid.addChild(new HSeparator());
             }
 
             var index :int = int(indexes[ii]);
@@ -722,22 +728,22 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
                 flowScores[playerId] = CAPTION_SCORE;
             }
 
-            var pan :ResultsPanel = new ResultsPanel();
-            otherPan.grid.addChild(pan);
-            pan.captionText.htmlText = deHTML(String(caps[index]));
-            pan.nameAndVotesLabel.text = "- " + String(_ctrl.get("name:" + playerId)) +
+            var row :ResultRow = new ResultRow();
+            _grid.addChild(row);
+            row.captionText.htmlText = deHTML(String(caps[index]));
+            row.nameAndVotesLabel.text = "- " + String(_ctrl.get("name:" + playerId)) +
                 ", " + Math.abs(result);
 
             if (ii == 0) {
-                _captionInput.text = String(caps[index]);
+                _capInput.text = String(caps[index]);
             }
 
             if (result < 0) {
-                pan.statusIcon.source = DISQUAL_ICON;
+                row.statusIcon.source = DISQUAL_ICON;
 
             } else if (result > 0 && (-1 == winnerVal || result == winnerVal)) {
                 // we can have multiple winners..
-                pan.statusIcon.source = WINNER_ICON;
+                row.statusIcon.source = WINNER_ICON;
                 winnerVal = result;
 
                 if (_inControl) {
@@ -756,24 +762,20 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             }
         }
         if (nextUrls.length > 0) {
-            var instructions :Image = new Image();
-            instructions.source = PICKNEXT_INSTRUCTIONS;
-            otherPan.belowBox.addChild(instructions);
-            var nextPan :PicturePickPanel = new PicturePickPanel();
-            otherPan.belowBox.addChild(nextPan);
+            _nextPanel = new PicturePickPanel();
+            _ui.addChild(_nextPanel);
             for (ii = 0; ii < NEXT_PICTURE_COUNT; ii++) {
                 if (nextUrls[ii] != null) {
-                    nextPan["img" + ii].load(nextUrls[ii]);
-                    nextPan["pvote" + ii].data = ii;
-                    nextPan["pvote" + ii].addEventListener(Event.CHANGE, handlePhotoVoteCast);
+                    _nextPanel["img" + ii].load(nextUrls[ii]);
+                    _nextPanel["pvote" + ii].data = ii;
+                    _nextPanel["pvote" + ii].addEventListener(Event.CHANGE, handlePhotoVoteCast);
                 }
             }
         }
 
-        updateScoreDisplay();
-        recheckInputBounds();
+        updateLayout();
 
-        _ui.validateNow();
+        updateScoreDisplay();
 
         // if we're in control, do score awarding for all players (ending the "game" (round))
         if (_inControl) {
@@ -994,7 +996,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
      */
     protected function handleImageProgress (event :ProgressEvent) :void
     {
-        recheckInputBounds();
+        updateLayout();
     }
 
     /**
@@ -1002,42 +1004,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
      */
     protected function handleImageComplete (event :Event) :void
     {
-        recheckInputBounds();
-    }
-
-    /**
-     * Position the input area on top of the image.
-     */
-    protected function recheckInputBounds () :void
-    {
-        if (_captionInput == null) {
-            // we could be loading up the image when we're in a different phase
-            return;
-        }
-
-        _captionInput.x = _image.x;
-        _captionInput.width = _image.contentWidth;
-        _captionInput.scaleX = _image.scaleX;
-        _captionInput.scaleY = _image.scaleY;
-        if (_captionOnBottom) {
-            _captionInput.y = _image.y +
-                (_image.scaleY * _image.contentHeight) - _captionInput.height;
-        } else {
-            _captionInput.y = _image.y;
-        }
-
-        // TODO: adjust spacers (pretty close tho!)
-        if (_leftSpacer != null) {
-            _leftSpacer.height = _image.contentHeight - 80;
-            _rightSpacer.height = _image.contentHeight - 130;
-        }
-
-        _ui.validateNow();
-
-        // TODO: this can be quite annoying
-        if (_ui.stage) {
-            _ui.stage.focus = _captionInput;
-        }
+        updateLayout();
     }
 
     /**
@@ -1098,11 +1065,76 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     {
         _ui.width = size.x;
         _ui.height = size.y;
-        _gridHeight = size.y - 92; // 92 pix reserved for header bar area
 
-        if (_gridBox != null) {
-            _gridBox.height = _gridHeight;
+        _gridHeight = size.y - TOP_BAR_HEIGHT;
+        updateLayout();
+    }
+
+    protected function updateLayout () :void
+    {
+        var phase :String = _ctrl.get("phase") as String;
+
+        switch (phase) {
+        case "vote":
+        case "results":
+            _image.visible = true;
+            _image.scaleX = .5;
+            _image.scaleY = .5;
+            _image.y = PAD;
+            _image.x = (SIDE_BAR_WIDTH - (.5 * _image.contentWidth)) / 2;
+            break;
+
+        default:
+            _image.visible = false;
+            break;
+
+        case "caption":
+            _image.visible = true;
+            _image.scaleX = 1;
+            _image.scaleY = 1;
+            _image.x = (_ui.width - _image.contentWidth) / 2;
+            _image.y = (_ui.height - _image.contentHeight) / 2;
+            break;
         }
+
+        if (_capInput != null) {
+            _capInput.x = _image.x;
+            _capInput.width = _image.contentWidth;
+            _capInput.scaleX = _image.scaleX;
+            _capInput.scaleY = _image.scaleY;
+            if (_captionOnBottom) {
+                _capInput.y = _image.y +
+                    (_image.scaleY * _image.contentHeight) - _capInput.height;
+            } else {
+                _capInput.y = _image.y;
+            }
+        }
+
+        if (_capPanel != null) {
+            _capPanel.x = PAD;
+            _capPanel.width = 700 - (PAD * 2);
+            if (_captionOnBottom) {
+                _capPanel.y = _image.y +
+                    (_image.contentHeight - _capPanel.height);
+
+            } else {
+                _capPanel.y = _image.y;
+            }
+        }
+
+        if (_grid != null) {
+            _grid.y = TOP_BAR_HEIGHT + PAD;
+            _grid.x = SIDE_BAR_WIDTH + PAD;
+            _grid.height = _gridHeight;
+            _grid.width = _ui.width - _grid.x;
+        }
+
+        if (_nextPanel != null) {
+            _nextPanel.x = PAD;
+            _nextPanel.y = 300;
+        }
+
+        _ui.validateNow();
     }
 
     protected function handleUnload (... ignored) :void
@@ -1113,20 +1145,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     [Embed(source="rsrc/background.png")]
     protected static const BACKGROUND :Class;
 
-    [Embed(source="rsrc/sidebar_background.png")]
-    protected static const SIDEBAR_BACKGROUND :Class;
-
     [Embed(source="rsrc/other_background.png")]
     protected static const OTHER_BACKGROUND :Class;
-
-    [Embed(source="rsrc/voting_label.png")]
-    protected static const VOTING_LABEL :Class;
-
-    [Embed(source="rsrc/voting_instructions.png")]
-    protected static const VOTING_INSTRUCTIONS :Class;
-
-    [Embed(source="rsrc/results_label.png")]
-    protected static const RESULTS_LABEL :Class;
 
     [Embed(source="rsrc/winner_icon.png")]
     protected static const WINNER_ICON :Class;
@@ -1134,12 +1154,15 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     [Embed(source="rsrc/dq_icon.png")]
     protected static const DISQUAL_ICON :Class;
 
-    [Embed(source="rsrc/picknext_instructions.png")]
-    protected static const PICKNEXT_INSTRUCTIONS :Class;
-
     protected static const MEDIUM_SIZE :Array = [ "Medium", "Small", "Original", "Thumbnail" ];
 
     protected static const THUMBNAIL_SIZE :Array = [ "Thumbnail", "Square", "Small" ];
+
+    protected static const PAD :int = 6;
+
+    protected static const TOP_BAR_HEIGHT :int = 92;
+
+    protected static const SIDE_BAR_WIDTH :int = 250 + (PAD * 2);
 
     protected var _ctrl :WhirledGameControl;
 
@@ -1156,15 +1179,22 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected var _clockLabel :Label;
 
-    protected var _captionInput :CaptionTextArea;
+    protected var _capPanel :CaptionPanel;
 
-    protected var _enterButton :Button;
+    protected var _capInput :CaptionTextArea;
+//
+//    protected var _captionInput :CaptionTextArea;
+//
+//    protected var _enterButton :Button;
+
+    protected var _grid :Grid;
+
+    protected var _captionDisplay :CaptionTextArea;
+
+    protected var _nextPanel :PicturePickPanel;
 
     /** Whether the caption is on the bottom or top. */
     protected var _captionOnBottom :Boolean;
-
-    protected var _leftSpacer :Spacer;
-    protected var _rightSpacer :Spacer;
 
     protected var _flickr :FlickrService;
 
@@ -1174,7 +1204,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected var _gridHeight :int = 408;
 
-    protected var _gridBox :VBox;
+//    protected var _gridBox :VBox;
 
     /** The [ thumb , medium ] urls for the photo that took 2nd place last round. */
     protected var _secondSizes :Array;

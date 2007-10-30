@@ -25,19 +25,13 @@ public class CaptionTextArea extends TextArea
 
         setStyle("textAlign", "center");
         setStyle("color", 0x000000);
+        setStyle("borderStyle", "none");
+        setStyle("backgroundAlpha", 0);
+
         setProperties(1, 50, 16);
 
         addEventListener(Event.CHANGE, handleTextChanged);
         addEventListener(TextEvent.TEXT_INPUT, handleTextInput);
-        editable = true;
-    }
-
-    override public function set editable (nowEditable :Boolean) :void
-    {
-        super.editable = nowEditable;
-
-        setStyle("backgroundAlpha", nowEditable ? .2 : 0);
-        setStyle("borderStyle", nowEditable ? "solid" : "none");
     }
 
     override protected function initializationComplete () :void
