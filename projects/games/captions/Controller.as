@@ -153,8 +153,8 @@ public class Controller
         _clockLabel.selectable = false;
         _clockLabel.setStyle("textAlign", "right");
         _clockLabel.setStyle("fontFamily", "chocolat_bleu");
-        _clockLabel.setStyle("fontSize", 36);
-        _clockLabel.setStyle("top", 6);
+        _clockLabel.setStyle("fontSize", 48);
+        _clockLabel.setStyle("top", -12);
         _clockLabel.setStyle("right", 6);
         _ui.addChild(_clockLabel);
 
