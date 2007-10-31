@@ -33,7 +33,7 @@ public class Player extends Pawn
         state.y = y;
         state.motion = SNAP;
         state.hp = 1500;
-        state.weapon = Weapon.SWORD;
+        state.weapon = Weapon.BOW;
         state.blocking = false;
         state.stunCountdown = 0;
         state.invulnerableCountdown = 0;
