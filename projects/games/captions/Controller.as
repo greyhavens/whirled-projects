@@ -22,7 +22,6 @@ import mx.controls.Button;
 import mx.controls.CheckBox;
 import mx.controls.Image;
 import mx.controls.Label;
-import mx.controls.RadioButtonGroup;
 import mx.controls.Text;
 
 import mx.core.ScrollPolicy;
@@ -315,11 +314,6 @@ public class Controller
                 _myCaption = "";
             }
             break;
-
-        case "caption":
-            _myCaption = "";
-            _timer.start();
-            break;
         }
 
         switch (phase) {
@@ -433,21 +427,22 @@ public class Controller
         var props :Array = _ctrl.getPropertyNames("vote:");
         for each (var prop :String in props) {
             var voterId :int = parseInt(prop.substring(5));
-            var voteeId :int = _ctrl.get(prop) as int;
-
             var voterIndex :int = ids.indexOf(voterId);
-            var voteeIndex :int = ids.indexOf(voteeId);
+            var votes :Array = _ctrl.get(prop) as Array;
+            for each (var voteeId :int in votes) {
+                var voteeIndex :int = ids.indexOf(voteeId);
 
-            if (voteeIndex == -1) {
-                // this is a miscast vote?!
-                continue;
-            }
-            results[voteeIndex]++;
-            if (voterIndex != -1) {
-                didVote[voterIndex] = true;
-            }
+                if (voteeIndex == -1) {
+                    // this is a miscast vote?!
+                    continue;
+                }
+                results[voteeIndex]++;
+                if (voterIndex != -1) {
+                    didVote[voterIndex] = true;
+                }
 
-            scores[voteeId] = int(scores[voteeId]) + 1;
+                scores[voteeId] = int(scores[voteeId]) + 1;
+            }
         }
 
         // now one more pass through results, flipping any disqualified votes to negative
@@ -538,10 +533,12 @@ public class Controller
 
     protected function handleVoteCast (event :Event) :void
     {
-        var voteGroup :RadioButtonGroup = (event.currentTarget as RadioButtonGroup);
+        var box :CheckBox = (event.currentTarget as CheckBox);
+        var value :int = int(box.data);
 
+        _myVote = computeApprovalVote(_myVote, value, box.selected);
         // submit our vote
-        _ctrl.set("vote:" + _myId, voteGroup.selectedValue);
+        _ctrl.set("vote:" + _myId, _myVote);
     }
 
     protected function handleVoteToSkip (event :Event) :void
@@ -554,19 +551,27 @@ public class Controller
     {
         var box :CheckBox = (event.currentTarget as CheckBox);
         var value :int = int(box.data);
-        var selected :Boolean = box.selected;
-        var votes :Array = _ctrl.get("pvote:" + _myId) as Array;
+
+        _myNextPhotoVote = computeApprovalVote(_myNextPhotoVote, value, box.selected);
+        _ctrl.set("pvote:" + _myId, _myNextPhotoVote);
+    }
+
+    /**
+     * Compute the new approval-vote array, adding or removing the specified value.
+     */
+    protected function computeApprovalVote (votes :Array, value :int, add :Boolean) :Array
+    {
         if (votes == null) {
-            if (selected) {
+            if (add) {
                 votes = [ value ];
             }
 
         } else {
             var index :int = votes.indexOf(value);
-            if (selected && index == -1) {
+            if (add && index == -1) {
                 votes.push(value);
 
-            } else if (!selected && index != -1) {
+            } else if (!add && index != -1) {
                 votes.splice(index, 1);
                 if (votes.length == 0) {
                     votes = null;
@@ -574,7 +579,7 @@ public class Controller
             }
         }
 
-        _ctrl.setImmediate("pvote:" + _myId, votes);
+        return votes;
     }
 
     protected function initCaptioning () :void
@@ -601,10 +606,13 @@ public class Controller
             _nextPanel = null;
         }
 
-        _capPanel = new CaptionPanel();
-        _ui.addChild(_capPanel);
-
         _captionOnBottom = true;
+        _myCaption = "";
+        _timer.start();
+
+        _capPanel = new CaptionPanel();
+        _capPanel.includeInLayout = false;
+        _ui.addChild(_capPanel);
 
         _capInput = new CaptionTextArea();
         _capInput.includeInLayout = false;
@@ -654,15 +662,14 @@ public class Controller
             return;
         }
 
+        _myVote = null;
+
         // randomize the displayed order for each player..
         var indexes :Array = [];
         for (ii = 0; ii < caps.length; ii++) {
             indexes.push(ii);
         }
         ArrayUtil.shuffle(indexes);
-
-        var voteGroup :RadioButtonGroup = new RadioButtonGroup();
-        voteGroup.addEventListener(Event.CHANGE, handleVoteCast);
 
 for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         for (ii = 0; ii < indexes.length; ii++) {
@@ -671,11 +678,11 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             var row :VotingRow = new VotingRow();
             _grid.addChild(row);
             row.captionText.htmlText = deHTML(String(caps[index]));
-            row.voteButton.group = voteGroup;
+            row.voteButton.data = ids[index];
+            row.voteButton.addEventListener(Event.CHANGE, handleVoteCast);
             if (ids[index] == _myId) {
                 row.voteButton.enabled = false;
             }
-            row.voteButton.value = ids[index];
         }
 }
 
@@ -687,6 +694,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         trace("... initResults");
         animateSceneChange();
         initNonCaptionLayout();
+
+        _myNextPhotoVote = null;
 
         _capInput = new CaptionTextArea();
         _captionOnBottom = true;
@@ -1295,6 +1304,13 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     /** The [ thumb , medium ] urls for the photo that took 2nd place last round. */
     protected var _secondSizes :Array;
 
+    /** Our last-submitted captions. */
     protected var _myCaption :String;
+
+    /** Our last-submitted vote. */
+    protected var _myVote :Array;
+
+    /** Our last-submitted next-photo vote. */
+    protected var _myNextPhotoVote :Array;
 }
 }

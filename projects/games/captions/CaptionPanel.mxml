@@ -7,6 +7,6 @@
                 textRollOverColor="white"/>
     </mx:VBox>
     <mx:VBox width="100%" height="100%" verticalAlign="bottom" horizontalAlign="right">
-        <mx:Button id="enterButton" label="Enter"/>
+        <mx:Button id="enterButton" label="Done"/>
     </mx:VBox>
 </mx:HBox>
