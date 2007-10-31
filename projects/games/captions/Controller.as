@@ -26,6 +26,8 @@ import mx.controls.Text;
 
 import mx.core.ScrollPolicy;
 
+import mx.effects.Fade;
+
 import mx.events.FlexEvent;
 
 import com.adobe.webapis.flickr.FlickrService;
@@ -69,7 +71,7 @@ import com.whirled.WhirledGameControl;
  */
 public class Controller
 {
-    public static const DEBUG :Boolean = false;
+    public static const DEBUG :Boolean = true;
 
     /** Durations of game phases, in seconds. */
     public static const CAPTION_DURATION :int = 45;
@@ -131,6 +133,7 @@ public class Controller
         // set up a bunch of UI Stuff
 
         _gradientBackground = new Canvas();
+        _gradientBackground.alpha = 0;
         _gradientBackground.includeInLayout = false;
         _gradientBackground.x = SIDE_BAR_WIDTH;
         _gradientBackground.setStyle("backgroundImage", OTHER_BACKGROUND);
@@ -265,7 +268,7 @@ public class Controller
             return VOTE_DURATION;
 
         case "results":
-            return RESULTS_DURATION;
+            return DEBUG ? 60 : RESULTS_DURATION;
         }
     }
 
@@ -504,8 +507,11 @@ public class Controller
 
         if (!nowEditing) {
             handleSubmitCaption(event);
+
         } else {
-            _capPanel.enterButton.setFocus();
+            // Because we're in a button's event handler, it apparently grabs focus after
+            // this, so we need to re-set the focus a frame later.
+            _capInput.callLater(_capInput.setFocus);
         }
     }
 
@@ -648,6 +654,12 @@ public class Controller
 
         _grid = new Grid();
         _ui.addChild(_grid);
+
+        var fade :Fade = new Fade(_gradientBackground);
+        fade.alphaFrom = 0;
+        fade.alphaTo = 1;
+        fade.duration = 2000;
+        fade.play();
     }
 
     protected function initVoting (caps :Array) :void
@@ -794,13 +806,29 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             }
         }
         if (nextUrls.length > 0) {
-            _nextPanel = new PicturePickPanel();
+            _nextPanel = new Canvas();
             _ui.addChild(_nextPanel);
             for (ii = 0; ii < NEXT_PICTURE_COUNT; ii++) {
                 if (nextUrls[ii] != null) {
-                    _nextPanel["img" + ii].load(nextUrls[ii]);
-                    _nextPanel["pvote" + ii].data = ii;
-                    _nextPanel["pvote" + ii].addEventListener(Event.CHANGE, handlePhotoVoteCast);
+                    // once again, it's easier for me to hard-code this layout
+                    // than to fight with flex layout to accomplish the same thing.
+                    // (Part of the reason for this is that the checkbox takes up retarded
+                    // amounts of space, even when the label is blank)
+                    var img :Image = new Image();
+                    var cb :CheckBox = new CheckBox();
+                    cb.label = " "; // prevent buggage
+                    cb.data = ii;
+                    cb.addEventListener(Event.CHANGE, handlePhotoVoteCast);
+                    
+                    cb.includeInLayout = false;
+
+                    img.x = ((ii % 2) == 0) ? 14 : 140;
+                    img.y = (int(ii / 2) == 0) ? 1 : 111;
+                    cb.x = ((ii % 2) == 0) ? 0 : 126;
+                    cb.y = (int(ii / 2) == 0) ? 0 : 110;
+                    _nextPanel.addChild(img);
+                    _nextPanel.addChild(cb);
+                    img.load(nextUrls[ii]);
                 }
             }
         }
@@ -1163,7 +1191,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         switch (phase) {
         case "vote":
         case "results":
-            _gradientBackground.alpha = 1;
+            //_gradientBackground.alpha = 1;
             _image.visible = true;
             _image.scaleX = .5;
             _image.scaleY = .5;
@@ -1222,8 +1250,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         }
 
         if (_nextPanel != null) {
-            _nextPanel.x = PAD;
-            _nextPanel.y = 300;
+            _nextPanel.x = PAD + 2;
+            _nextPanel.y = 280;
         }
 
         _ui.validateNow();
@@ -1290,7 +1318,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected var _captionDisplay :CaptionTextArea;
 
-    protected var _nextPanel :PicturePickPanel;
+    protected var _nextPanel :Canvas;
 
     /** Whether the caption is on the bottom or top. */
     protected var _captionOnBottom :Boolean;
