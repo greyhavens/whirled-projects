@@ -1,7 +1,6 @@
 package {
 
-import flash.display.Sprite;
-import mx.controls.Button;
+import flash.display.MovieClip;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -10,8 +9,10 @@ import flash.events.TimerEvent;
 
 import flash.geom.Point;
 
+import flash.utils.ByteArray;
 import flash.utils.Timer;
 
+import mx.containers.Canvas;
 import mx.containers.Grid;
 import mx.containers.GridRow;
 import mx.containers.GridItem;
@@ -22,9 +23,7 @@ import mx.controls.CheckBox;
 import mx.controls.Image;
 import mx.controls.Label;
 import mx.controls.RadioButtonGroup;
-import mx.controls.Spacer;
 import mx.controls.Text;
-import mx.controls.TextInput;
 
 import mx.core.ScrollPolicy;
 
@@ -38,6 +37,7 @@ import com.adobe.webapis.flickr.PhotoUrl;
 import com.adobe.webapis.flickr.events.FlickrResultEvent;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.StringUtil;
 
 import com.threerings.ezgame.MessageReceivedEvent;
@@ -70,7 +70,7 @@ import com.whirled.WhirledGameControl;
  */
 public class Controller
 {
-    public static const DEBUG :Boolean = true;
+    public static const DEBUG :Boolean = false;
 
     /** Durations of game phases, in seconds. */
     public static const CAPTION_DURATION :int = 45;
@@ -106,6 +106,10 @@ public class Controller
             return;
         }
 
+        _loader = new EmbeddedSwfLoader();
+        _loader.addEventListener(Event.COMPLETE, handleAnimationsLoaded);
+        _loader.load(new ANIMATIONS() as ByteArray);
+
         ui.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         _ctrl.setOccupantsLabel("Votes received in last " + ROUNDS_USED_FOR_SCORES + " rounds");
@@ -125,6 +129,19 @@ public class Controller
         _timer = new Timer(500);
         _timer.addEventListener(TimerEvent.TIMER, handleSubmitCaption);
 
+        // set up a bunch of UI Stuff
+
+        _gradientBackground = new Canvas();
+        _gradientBackground.includeInLayout = false;
+        _gradientBackground.x = SIDE_BAR_WIDTH;
+        _gradientBackground.setStyle("backgroundImage", OTHER_BACKGROUND);
+        _gradientBackground.setStyle("backgroundSize", "100%");
+        _ui.addChild(_gradientBackground);
+
+        _animationHolder = new Canvas();
+        _animationHolder.includeInLayout = false;
+        _ui.addChild(_animationHolder);
+
         _image = new Image();
         _image.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
         _image.addEventListener(Event.COMPLETE, handleImageComplete);
@@ -143,6 +160,8 @@ public class Controller
 
         var size :Point = _ctrl.getSize();
         updateSize(_ctrl.getSize());
+
+        // get us rolling
 
         checkControl();
         checkPhase();
@@ -304,7 +323,7 @@ public class Controller
         }
 
         switch (phase) {
-        default:
+        case "caption":
             initCaptioning();
             break;
 
@@ -561,6 +580,8 @@ public class Controller
     protected function initCaptioning () :void
     {
         trace("... initCaptioning");
+        animateSceneChange();
+
         // TODO: it seems that removing helps a lot, but we want to avoid re-setup if we can
         if (_capPanel != null) {
             _ui.removeChild(_capPanel);
@@ -624,6 +645,7 @@ public class Controller
     protected function initVoting (caps :Array) :void
     {
         trace("... initVoting");
+        animateSceneChange();
         initNonCaptionLayout();
 
         var ii :int;
@@ -663,6 +685,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected function initResults (results :Array) :void
     {
         trace("... initResults");
+        animateSceneChange();
         initNonCaptionLayout();
 
         _capInput = new CaptionTextArea();
@@ -716,9 +739,9 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         for (ii = 0; ii < indexes.length; ii++) {
 
-            if (ii > 0) {
-                _grid.addChild(new HSeparator());
-            }
+//            if (ii > 0) {
+//                _grid.addChild(new HSeparator());
+//            }
 
             var index :int = int(indexes[ii]);
             var result :int = int(results[index]);
@@ -1056,6 +1079,61 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         updateScoreDisplay();
     }
 
+    protected function handleAnimationsLoaded (event :Event) :void
+    {
+        _animations = _loader.getContent() as MovieClip;
+        _loader = null;
+
+        _animations.mouseEnabled = false;
+        _animations.mouseChildren = false;
+        _animationHolder.rawChildren.addChild(_animations);
+
+        // and now do a bit of debuggery on _animations
+        var scenes :Array = _animations.scenes;
+        for each (var s :Object in scenes) {
+            trace("Scene: " + s.name);
+            for each (var f :Object in s.labels) {
+                trace("   frame: " + f.name + " : " + f.frame);
+                _animations.addFrameScript(f.frame - 1, handleFrameScript);
+            }
+        }
+        _animations.addFrameScript(_animations.totalFrames, handleFrameScript);
+
+        animateSceneChange();
+    }
+
+    protected function handleFrameScript () :void
+    {
+        trace("+=== ah-ha, I reached frame # " + _animations.currentFrame);
+    }
+
+    protected function animateSceneChange () :void
+    {
+        if (_animations == null) {
+            return;
+        }
+
+        switch (_ctrl.get("phase")) {
+        case "caption":
+        default:
+            trace("Showing caption anim");
+            _animations.gotoAndPlay("Caption");
+            break;
+
+        case "vote":
+            trace("Showing vote anim");
+            _animations.gotoAndPlay("Voting");
+            break;
+
+        case "results":
+            trace("Showing results anim");
+            _animations.gotoAndPlay("Results");
+            break;
+        }
+
+        trace("Out");
+    }
+
     protected function handleSizeChanged (event :SizeChangedEvent) :void
     {
         updateSize(event.size);
@@ -1066,7 +1144,6 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         _ui.width = size.x;
         _ui.height = size.y;
 
-        _gridHeight = size.y - TOP_BAR_HEIGHT;
         updateLayout();
     }
 
@@ -1077,6 +1154,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         switch (phase) {
         case "vote":
         case "results":
+            _gradientBackground.alpha = 1;
             _image.visible = true;
             _image.scaleX = .5;
             _image.scaleY = .5;
@@ -1085,10 +1163,12 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             break;
 
         default:
+            _gradientBackground.alpha = 0;
             _image.visible = false;
             break;
 
         case "caption":
+            _gradientBackground.alpha = 0;
             _image.visible = true;
             _image.scaleX = 1;
             _image.scaleY = 1;
@@ -1096,6 +1176,9 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             _image.y = (_ui.height - _image.contentHeight) / 2;
             break;
         }
+
+        _gradientBackground.height = _ui.height;
+        _gradientBackground.width = _ui.width - SIDE_BAR_WIDTH;
 
         if (_capInput != null) {
             _capInput.x = _image.x;
@@ -1111,7 +1194,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         }
 
         if (_capPanel != null) {
-            _capPanel.x = PAD;
+            _capPanel.x = (_ui.width - 700) / 2 + PAD;
             _capPanel.width = 700 - (PAD * 2);
             if (_captionOnBottom) {
                 _capPanel.y = _image.y +
@@ -1125,7 +1208,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         if (_grid != null) {
             _grid.y = TOP_BAR_HEIGHT + PAD;
             _grid.x = SIDE_BAR_WIDTH + PAD;
-            _grid.height = _gridHeight;
+            _grid.height = _ui.height - TOP_BAR_HEIGHT - PAD;
             _grid.width = _ui.width - _grid.x;
         }
 
@@ -1154,13 +1237,16 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     [Embed(source="rsrc/dq_icon.png")]
     protected static const DISQUAL_ICON :Class;
 
+    [Embed(source="rsrc/animations.swf", mimeType="application/octet-stream")]
+    protected static const ANIMATIONS :Class;
+
     protected static const MEDIUM_SIZE :Array = [ "Medium", "Small", "Original", "Thumbnail" ];
 
     protected static const THUMBNAIL_SIZE :Array = [ "Thumbnail", "Square", "Small" ];
 
     protected static const PAD :int = 6;
 
-    protected static const TOP_BAR_HEIGHT :int = 92;
+    protected static const TOP_BAR_HEIGHT :int = 66;
 
     protected static const SIDE_BAR_WIDTH :int = 250 + (PAD * 2);
 
@@ -1175,6 +1261,14 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     /** Our user interface class. */
     protected var _ui :Caption;
 
+    protected var _loader :EmbeddedSwfLoader;
+
+    protected var _gradientBackground :Canvas;
+
+    protected var _animationHolder :Canvas;
+
+    protected var _animations :MovieClip;
+
     protected var _image :Image;
 
     protected var _clockLabel :Label;
@@ -1182,10 +1276,6 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected var _capPanel :CaptionPanel;
 
     protected var _capInput :CaptionTextArea;
-//
-//    protected var _captionInput :CaptionTextArea;
-//
-//    protected var _enterButton :Button;
 
     protected var _grid :Grid;
 
@@ -1201,10 +1291,6 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected var _timer :Timer;
 
     protected var _photosToGet :int;
-
-    protected var _gridHeight :int = 408;
-
-//    protected var _gridBox :VBox;
 
     /** The [ thumb , medium ] urls for the photo that took 2nd place last round. */
     protected var _secondSizes :Array;

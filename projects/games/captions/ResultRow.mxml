@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:GridRow xmlns:mx="http://www.adobe.com/2006/mxml" fontSize="12" width="100%">
-    <mx:GridItem width="10%">
+<mx:GridRow xmlns:mx="http://www.adobe.com/2006/mxml" fontSize="12" width="100%"
+        verticalAlign="middle">
+    <mx:GridItem width="10%" verticalAlign="bottom">
         <mx:Image id="statusIcon"/>
     </mx:GridItem>
     <mx:GridItem width="60%">
-        <mx:Text id="captionText" width="100%"/>
+        <mx:Text id="captionText" fontSize="24" width="100%"/>
     </mx:GridItem>
     <mx:GridItem width="30%">
-        <mx:Label id="nameAndVotesLabel"/>
+        <mx:Label id="nameAndVotesLabel" fontSize="24"/>
+    </mx:GridItem>
+    <mx:GridItem>
+        <mx:Spacer width="10"/>
     </mx:GridItem>
 </mx:GridRow>
