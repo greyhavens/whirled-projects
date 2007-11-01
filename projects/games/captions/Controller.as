@@ -748,8 +748,15 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         } else {
             _gradientBackground.alpha = 0;
             updateLayout();
-            animateToFrame(setupResultsUI);
+            animateToFrame(setupWinnerUI, "Winner");
         }
+    }
+
+    protected function setupWinnerUI () :void
+    {
+        // TODO
+
+        animateToFrame(setupResultsUI);
     }
 
     protected function setupResultsUI () :void
@@ -1185,23 +1192,33 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         _animations.mouseChildren = false;
         _animationHolder.rawChildren.addChild(_animations);
 
+//        var sequences :Array = [];
+//        var sequence :Array = [];
+
+        trace("Current frame is " + _animations.currentFrame);
+
         // and now do a bit of debuggery on _animations
         for each (var s :Object in _animations.scenes) {
-//            trace("Scene: " + s.name);
             for each (var f :Object in s.labels) {
 //                trace("   frame: " + f.name + " : " + f.frame);
                 var frameId :int = f.frame;
-                if (frameId > 1) {
-                    frameId--;
-                    if (frameId == 2) {
-                        frameId = 1; /// HACK!
-                    }
+//                sequence.push(frameId);
+                if (frameId > 2) {
+                    frameId -= 2;
+//                    sequence.push(frameId);
+//                    sequences.push(sequence);
+//                    sequence = [ frameId + 2 ];
                     trace("Registering handler on frame " + frameId + ".");
-                    _animations.addFrameScript(frameId - 1, handleFrameScript);
+                    _animations.addFrameScript(frameId, handleFrameScript);
                 }
             }
         }
-        _animations.addFrameScript(_animations.totalFrames - 1, handleFrameScript);
+//        sequence.push(_animations.totalFrames - 2);
+//        sequences.push(sequence);
+//
+//        _animSequences = sequences;
+        trace("Registering handler on frame " + (_animations.totalFrames - 2) + ".");
+        _animations.addFrameScript(_animations.totalFrames - 2, handleFrameScript);
 
         skipToFrame();
     }
@@ -1222,7 +1239,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     }
 
     /**
-     * Get the _animations frame name for the current phase.
+     * Get the _animations sequence for the current phase.
      */
     protected function getFrameForPhase () :String
     {
@@ -1239,11 +1256,13 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         }
     }
 
-    protected function animateToFrame (frameReachedCallback :Function) :void
+    protected function animateToFrame (frameReachedCallback :Function, frame :String = null) :void
     {
         if (_animations != null) {
             _frameReachedCallback = frameReachedCallback;
-            var frame :String = getFrameForPhase();
+            if (frame == null) {
+                frame = getFrameForPhase();
+            }
             trace("animating to frame: " + frame);
             _animations.gotoAndPlay(frame);
 
@@ -1271,7 +1290,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         }
 
         if (found) {
-            _animations.gotoAndPlay(_animations.totalFrames);
+            _animations.gotoAndPlay(_animations.totalFrames - 1);
         }
     }
 
