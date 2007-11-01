@@ -71,7 +71,7 @@ import com.whirled.WhirledGameControl;
  */
 public class Controller
 {
-    public static const DEBUG :Boolean = true;
+    public static const DEBUG :Boolean = false;
 
     /** Durations of game phases, in seconds. */
     public static const CAPTION_DURATION :int = 45;
@@ -166,7 +166,7 @@ public class Controller
         // get us rolling
 
         checkControl();
-        checkPhase();
+        checkPhase(true);
         showPhoto();
         updateScoreDisplay();
     }
@@ -183,17 +183,16 @@ public class Controller
             break;
 
         case "captions":
-        case "ids":
             var caps :Array = _ctrl.get("captions") as Array;
             if (caps != null) {
-                initVoting(caps);
+                initVoting(false);
             }
             break;
 
         case "results":
             var results :Array = _ctrl.get("results") as Array;
             if (results != null) {
-                initResults(results);
+                initResults(false);
             }
             break;
         }
@@ -248,7 +247,14 @@ public class Controller
 
         if (remaining == 0) {
             if (isPhase("caption")) {
-                _capInput.editable = false;
+                // on all clients, we need to immediately squish interactivity
+                if (_capInput != null) {
+                    _capInput.editable = false;
+                }
+                if (_capPanel != null) {
+                    _ui.removeChild(_capPanel);
+                    _capPanel = null;
+                }
             }
 
             if (_inControl) {
@@ -297,7 +303,7 @@ public class Controller
 
     /**
      */
-    protected function checkPhase () :void
+    protected function checkPhase (skipAnimations :Boolean = false) :void
     {
         if (_inControl) {
             checkPhaseControl();
@@ -321,20 +327,20 @@ public class Controller
 
         switch (phase) {
         case "caption":
-            initCaptioning();
+            initCaptioning(skipAnimations);
             break;
 
         case "vote":
             var caps :Array = _ctrl.get("captions") as Array;
             if (caps != null) {
-                initVoting(caps);
+                initVoting(skipAnimations);
             }
             break;
 
         case "results":
             var results :Array = _ctrl.get("results") as Array;
             if (results != null) {
-                initResults(results);
+                initResults(skipAnimations);
             }
             break;
         }
@@ -397,7 +403,7 @@ public class Controller
 
         if (ids.length > 0) {
             _ctrl.set("ids", ids);
-            _ctrl.setImmediate("captions", caps);
+            _ctrl.set("captions", caps);
 
             loadNextPictures();
 
@@ -521,6 +527,9 @@ public class Controller
      */
     protected function handleSubmitCaption (event :Event) :void
     {
+        if (_capInput == null) {
+            return;
+        }
         var text :String = StringUtil.trim(_capInput.text);
         if (text != _myCaption) {
             // TODO: possibly a new way to support private data, whereby users can submit
@@ -588,12 +597,8 @@ public class Controller
         return votes;
     }
 
-    protected function initCaptioning () :void
+    protected function initCaptioning (skipAnimations :Boolean) :void
     {
-        trace("... initCaptioning");
-        animateSceneChange();
-
-        // TODO: it seems that removing helps a lot, but we want to avoid re-setup if we can
         if (_capPanel != null) {
             _ui.removeChild(_capPanel);
         }
@@ -601,17 +606,27 @@ public class Controller
             _ui.removeChild(_capInput);
             _capInput = null;
         }
-
         if (_grid != null) {
             _ui.removeChild(_grid);
             _grid = null;
         }
-
         if (_nextPanel != null) {
             _ui.removeChild(_nextPanel);
             _nextPanel = null;
         }
 
+        if (skipAnimations) {
+            skipToFrame();
+            setupCaptioningUI();
+
+        } else {
+            updateLayout();
+            animateToFrame(setupCaptioningUI);
+        }
+    }
+
+    protected function setupCaptioningUI () :void
+    {
         _captionOnBottom = true;
         _myCaption = "";
         _timer.start();
@@ -636,7 +651,7 @@ public class Controller
     /**
      * Configure layout stuff for the voting or results phases.
      */
-    protected function initNonCaptionLayout () :void
+    protected function initNonCaption () :void
     {
         if (_capPanel != null) {
             _ui.removeChild(_capPanel);
@@ -651,7 +666,10 @@ public class Controller
         if (_grid != null) {
             _ui.removeChild(_grid);
         }
+    }
 
+    protected function initNonCaptionUI () :void
+    {
         _grid = new Grid();
         _ui.addChild(_grid);
 
@@ -662,15 +680,32 @@ public class Controller
         fade.play();
     }
 
-    protected function initVoting (caps :Array) :void
+    protected function initVoting (skipAnimations :Boolean) :void
     {
-        trace("... initVoting");
-        animateSceneChange();
-        initNonCaptionLayout();
+        initNonCaption();
+
+        if (skipAnimations) {
+            _gradientBackground.alpha = 1;
+            skipToFrame();
+            setupVotingUI();
+
+        } else {
+            _gradientBackground.alpha = 0;
+            updateLayout();
+            animateToFrame(setupVotingUI);
+        }
+    }
+
+    protected function setupVotingUI () :void
+    {
+        initNonCaptionUI();
 
         var ii :int;
+        var caps :Array = _ctrl.get("captions") as Array;
         var ids :Array = _ctrl.get("ids") as Array;
         if (ids == null) {
+            trace("Good god, does this happen???");
+            Log.dumpStack();
             return;
         }
 
@@ -701,11 +736,27 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         updateLayout();
     }
 
-    protected function initResults (results :Array) :void
+    protected function initResults (skipAnimations :Boolean) :void
     {
-        trace("... initResults");
-        animateSceneChange();
-        initNonCaptionLayout();
+        initNonCaption();
+
+        if (skipAnimations) {
+            _gradientBackground.alpha = 1;
+            skipToFrame();
+            setupResultsUI();
+
+        } else {
+            _gradientBackground.alpha = 0;
+            updateLayout();
+            animateToFrame(setupResultsUI);
+        }
+    }
+
+    protected function setupResultsUI () :void
+    {
+        initNonCaptionUI();
+
+        var results :Array = _ctrl.get("results") as Array;
 
         _myNextPhotoVote = null;
 
@@ -1030,7 +1081,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             clearProps("skip:");
             clearProps("pvote:");
             clearProps("next_");
-            _ctrl.setImmediate("phase", "caption");
+            _ctrl.set("phase", "caption");
         });
     }
 
@@ -1135,49 +1186,93 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         _animationHolder.rawChildren.addChild(_animations);
 
         // and now do a bit of debuggery on _animations
-        var scenes :Array = _animations.scenes;
-        for each (var s :Object in scenes) {
-            trace("Scene: " + s.name);
+        for each (var s :Object in _animations.scenes) {
+//            trace("Scene: " + s.name);
             for each (var f :Object in s.labels) {
-                trace("   frame: " + f.name + " : " + f.frame);
-                _animations.addFrameScript(f.frame - 1, handleFrameScript);
+//                trace("   frame: " + f.name + " : " + f.frame);
+                var frameId :int = f.frame;
+                if (frameId > 1) {
+                    frameId--;
+                    if (frameId == 2) {
+                        frameId = 1; /// HACK!
+                    }
+                    trace("Registering handler on frame " + frameId + ".");
+                    _animations.addFrameScript(frameId - 1, handleFrameScript);
+                }
             }
         }
-        _animations.addFrameScript(_animations.totalFrames, handleFrameScript);
+        _animations.addFrameScript(_animations.totalFrames - 1, handleFrameScript);
 
-        animateSceneChange();
+        skipToFrame();
     }
 
     protected function handleFrameScript () :void
     {
         trace("+=== ah-ha, I reached frame # " + _animations.currentFrame);
+
+        // TODO: stopping the goddamn thing shouldn't be needed
+        _animations.gotoAndStop(_animations.currentFrame);
+
+        // possibly call the callback
+        var fn :Function = _frameReachedCallback;
+        if (fn != null) {
+            _frameReachedCallback = null;
+            fn();
+        }
     }
 
-    protected function animateSceneChange () :void
+    /**
+     * Get the _animations frame name for the current phase.
+     */
+    protected function getFrameForPhase () :String
     {
-        if (_animations == null) {
-            return;
-        }
-
         switch (_ctrl.get("phase")) {
         case "caption":
         default:
-            trace("Showing caption anim");
-            _animations.gotoAndPlay("Caption");
-            break;
+            return "Caption";
 
         case "vote":
-            trace("Showing vote anim");
-            _animations.gotoAndPlay("Voting");
-            break;
+            return "Voting";
 
         case "results":
-            trace("Showing results anim");
-            _animations.gotoAndPlay("Results");
-            break;
+            return "Results";
+        }
+    }
+
+    protected function animateToFrame (frameReachedCallback :Function) :void
+    {
+        if (_animations != null) {
+            _frameReachedCallback = frameReachedCallback;
+            var frame :String = getFrameForPhase();
+            trace("animating to frame: " + frame);
+            _animations.gotoAndPlay(frame);
+
+        } else {
+            // better just go straight there, and we'll do the skipToFrame when it loads
+            frameReachedCallback();
+        }
+    }
+
+    protected function skipToFrame () :void
+    {
+        var frame :String = getFrameForPhase();
+        var found :Boolean = false;
+        for each (var s :Object in _animations.scenes) {
+            for each (var f :Object in s.labels) {
+                if (found) {
+                    _animations.gotoAndPlay(f.frame - 1);
+                    return;
+                }
+                if (f.name == frame) {
+                    found = true;
+                    // so that we go to the NEXT one...
+                }
+            }
         }
 
-        trace("Out");
+        if (found) {
+            _animations.gotoAndPlay(_animations.totalFrames);
+        }
     }
 
     protected function handleSizeChanged (event :SizeChangedEvent) :void
@@ -1316,6 +1411,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected var _animationHolder :Canvas;
 
     protected var _animations :MovieClip;
+
+    protected var _frameReachedCallback :Function;
 
     protected var _image :Image;
 
