@@ -16,11 +16,13 @@ public class Codes {
 
     /** How often we send updates to the server. */
     public static const FRAMES_PER_UPDATE :int = 3;
+    public static const TIME_PER_UPDATE :Number = 125;
 
     /** The different available types of ships. */
     public static const SHIP_TYPES :Array = [
         new WaspShipType(),
-        new RhinoShipType()
+        new RhinoShipType(),
+        new SaucerShipType()
     ]
 
 }

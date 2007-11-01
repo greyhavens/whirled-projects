@@ -36,13 +36,13 @@ import com.whirled.WhirledGameControl;
 /**
  * The main game class for the client.
  */
-[SWF(width="800", height="530")]
+[SWF(width="700", height="500")]
 public class StarFight extends Sprite
     implements PropertyChangedListener, MessageReceivedListener, StateChangedListener,
         OccupantChangedListener
 {
-    public static const WIDTH :int = 800;
-    public static const HEIGHT :int = 530;
+    public static const WIDTH :int = 700;
+    public static const HEIGHT :int = 500;
 
     /**
      * Constructs our main view area for the game.
@@ -68,7 +68,6 @@ public class StarFight extends Sprite
         mask.graphics.drawRect(0, 0, WIDTH, HEIGHT);
         mask.graphics.endFill();
         this.mask = mask;
-
         graphics.beginFill(Codes.BLACK);
         graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
 
@@ -135,20 +134,20 @@ public class StarFight extends Sprite
         var boardObj :Board;
 
         // TODO: This should be configurable as a game option once such is available.
-        var sizeFactor :int = 2;
+        var sizeFactor :int = 4;
 
         // We don't already have a board and we're the host?  Create it
         //  and our initial ship array too.
         var size :int =
             int(Math.sqrt(sizeFactor) * 50);
-        
+
         boardObj = new Board(size, size, true);
         if (_gameCtrl.isConnected()) {
             _gameCtrl.setImmediate("board", boardObj.writeTo(new ByteArray()));
         } else {
             gotBoard(boardObj);
         }
-                
+
         var maxPowerups :int = Math.max(1,
             boardObj.width*boardObj.height/MIN_TILES_PER_POWERUP);
         if (_gameCtrl.isConnected()) {
@@ -179,7 +178,7 @@ public class StarFight extends Sprite
                 if (occupants[ii] == _myId) {
                     continue;
                 }
-                
+
                 var bytes :ByteArray = ByteArray(_gameCtrl.get(shipKey(occupants[ii])));
                 if (bytes != null) {
                     var ship :ShipSprite = new ShipSprite(_board, this, true, ii,
@@ -188,12 +187,13 @@ public class StarFight extends Sprite
                     ship.readFrom(bytes);
                     _shipLayer.addChild(ship);
                     _ships.put(occupants[ii], ship);
+                    _status.addShip(occupants[ii]);
                 }
             }
-        
+
             // Set up our initial powerups.
             var gamePows :Array = (_gameCtrl.get("powerup") as Array);
-            
+
             // The game already has some powerups, create sprites for em.
             if (gamePows != null) {
                 for (var pp :int = 0; pp < gamePows.length; pp++)
@@ -205,6 +205,7 @@ public class StarFight extends Sprite
                         gamePows[pp].position = 0;
                         _powerups[pp].readFrom(gamePows[pp]);
                         _board.powerupLayer.addChild(_powerups[pp]);
+                        _status.addPowerup(pp);
                     }
                 }
             }
@@ -250,13 +251,13 @@ public class StarFight extends Sprite
             // Our ship is interested in keystrokes.
             _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, _ownShip.keyPressed);
             _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, _ownShip.keyReleased);
-            
+
         }
 
         _ships.put(_myId, _ownShip);
 
         // Set up our ticker that will control movement.
-        var screenTimer :Timer = new Timer(Codes.REFRESH_RATE, 0); // As fast as possible.
+        var screenTimer :Timer = new Timer(1, 0); // As fast as possible.
         screenTimer.addEventListener(TimerEvent.TIMER, tick);
         screenTimer.start();
     }
@@ -315,6 +316,7 @@ public class StarFight extends Sprite
                 _gameCtrl.setImmediate("powerup", _powerups[ii].writeTo(new ByteArray()),
                     ii);
                 _board.powerupLayer.addChild(_powerups[ii]);
+                _status.addPowerup(ii);
                 return;
             }
         }
@@ -327,6 +329,7 @@ public class StarFight extends Sprite
         _gameCtrl.setImmediate("powerup", null, idx);
         _board.powerupLayer.removeChild(_powerups[idx]);
         _powerups[idx] = null;
+        _status.removePowerup(idx);
     }
 
     // from PropertyChangedListener
@@ -352,6 +355,7 @@ public class StarFight extends Sprite
                     _gameCtrl.localChat(remShip.playerName + " left the game.");
                     if (remShip != null) {
                         _shipLayer.removeChild(remShip);
+                        _status.removeShip(id);
                     }
                 } else {
                     var ship :ShipSprite = _ships.get(id);
@@ -361,8 +365,9 @@ public class StarFight extends Sprite
                         _ships.put(id, ship);
                         _shipLayer.addChild(ship);
                         _gameCtrl.localChat(ship.playerName + " entered the game.");
+                        _status.addShip(id);
                     }
-                
+
                     bytes.position = 0;
                     var sentShip :ShipSprite = new ShipSprite(_board, this, true,
                         event.index, occName, false);
@@ -378,6 +383,7 @@ public class StarFight extends Sprite
                         _board.powerupLayer.removeChild(
                             _powerups[event.index]);
                         _powerups[event.index] = null;
+                        _status.removePowerup(event.index);
                     }
                     return;
                 }
@@ -387,6 +393,7 @@ public class StarFight extends Sprite
                     _powerups[event.index] =
                         pow = new Powerup(0, 0, 0);
                     _board.powerupLayer.addChild(pow);
+                    _status.addPowerup(event.index);
                 }
                 var pBytes :ByteArray = ByteArray(event.newValue);
                 pBytes.position = 0;
@@ -429,7 +436,7 @@ public class StarFight extends Sprite
 
             if (arr[3] == _ownShip.shipId) {
                 addScore(KILL_PTS);
-                _gameCtrl.awardFlow(KILL_FLOW);
+                //_gameCtrl.awardFlow(KILL_FLOW);
             }
         }
     }
@@ -472,7 +479,7 @@ public class StarFight extends Sprite
         } else if (shooterId == _ownShip.shipId) {
             // We hit someone!  Give us some points.
             addScore(HIT_PTS);
-            _gameCtrl.awardFlow(HIT_FLOW);
+            //_gameCtrl.awardFlow(HIT_FLOW);
         }
     }
 
@@ -556,6 +563,7 @@ public class StarFight extends Sprite
         _gameCtrl.localChat(remShip.playerName + " left the game.");
         if (remShip != null) {
             _shipLayer.removeChild(remShip);
+            _status.removeShip(event.occupantId);
         }
 
         if (_gameCtrl.amInControl()) {
@@ -607,7 +615,7 @@ public class StarFight extends Sprite
     public function tick (event :TimerEvent) :void
     {
         var now :int = getTimer();
-        var time :Number = (now - _lastTickTime)/Codes.REFRESH_RATE;
+        var time :Number = now - _lastTickTime;
 
         var ownOldX :Number = _ownShip.boardX;
         var ownOldY :Number = _ownShip.boardY;
@@ -641,6 +649,7 @@ public class StarFight extends Sprite
 
         // Recenter the board on our ship.
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
+        _board.tick(time);
         _bg.setAsCenter(_ownShip.boardX, _ownShip.boardY);
         _status.setPowerups(_ownShip.powerups);
 
@@ -662,8 +671,13 @@ public class StarFight extends Sprite
             _shotLayer.removeChild(shot);
         }
 
+        // Update the radar
+        _status.updateRadar(_ships, _powerups, _board);
+
         // Every few frames, broadcast our status to everyone else.
-        if (_updateCount++ % Codes.FRAMES_PER_UPDATE == 0) {
+        _updateCount += time;
+        if (_updateCount > Codes.TIME_PER_UPDATE) {
+            _updateCount = 0;
             _gameCtrl.setImmediate(shipKey(_myId), _ownShip.writeTo(new ByteArray()));
         }
 
@@ -698,7 +712,7 @@ public class StarFight extends Sprite
     protected var _status :StatusOverlay;
 
     /** How many frames its been since we broadcasted. */
-    protected var _updateCount :int = 0;
+    protected var _updateCount :Number = 0;
 
     protected var _lastTickTime :int;
 

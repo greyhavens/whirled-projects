@@ -34,8 +34,8 @@ public class BoardSprite extends Sprite
      */
     public function setAsCenter (boardX :Number, boardY :Number) :void
     {
-        x = StarFight.WIDTH/2 - (boardX*Codes.PIXELS_PER_TILE);
-        y = StarFight.HEIGHT/2 - (boardY*Codes.PIXELS_PER_TILE);
+        x = StarFight.WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
+        y = StarFight.HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
     }
 
     /**
@@ -90,7 +90,7 @@ public class BoardSprite extends Sprite
 
         // Check each obstacle and figure out which one we hit first.
         for each (var obs :Obstacle in _obstacles) {
-            
+
             // Find how long it is til our X coords collide.
             var timeToX :Number;
             if (dx > 0.0) {
@@ -102,7 +102,7 @@ public class BoardSprite extends Sprite
             } else {
                 timeToX = 2.0; // doesn't hit.
             }
-            
+
             // Find how long it is til our Y coords collide.
             var timeToY :Number;
             if (dy > 0.0) {
@@ -137,7 +137,7 @@ public class BoardSprite extends Sprite
                 return obs;
             }
         }
-        
+
         return null;
     }
 
@@ -218,6 +218,13 @@ public class BoardSprite extends Sprite
         }
 
         addChild(powerupLayer = new Sprite());
+    }
+
+    public function tick (time :Number) :void
+    {
+        for each (var obs :Obstacle in _obstacles) {
+            obs.tick(time);
+        }
     }
 
     /** All the obstacles in the world. */

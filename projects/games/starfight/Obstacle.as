@@ -4,8 +4,10 @@ import flash.display.Graphics;
 
 import flash.utils.ByteArray;
 
+import flash.display.PixelSnapping;
 import flash.display.Sprite;
 
+import mx.core.BitmapAsset;
 import mx.core.MovieClipAsset;
 
 /**
@@ -35,6 +37,10 @@ public class Obstacle extends Sprite
         this.type = type;
         this.x = x * Codes.PIXELS_PER_TILE;
         this.y = y * Codes.PIXELS_PER_TILE;
+        if (type != WALL) {
+            this.x += Codes.PIXELS_PER_TILE/2;
+            this.y += Codes.PIXELS_PER_TILE/2;
+        }
 
         bX = x;
         bY = y;
@@ -47,9 +53,16 @@ public class Obstacle extends Sprite
 
     protected function setupGraphics () :void
     {
-        var obsMovie :MovieClipAsset = MovieClipAsset(new obstacleAnim);
-        obsMovie.gotoAndStop(type);
-        addChild(obsMovie);
+        if (type == WALL) {
+            var obsBitmap :BitmapAsset = BitmapAsset(new obstacleBox);
+            obsBitmap.pixelSnapping = PixelSnapping.ALWAYS;
+            addChild(obsBitmap);
+        } else {
+            var obsMovie :MovieClipAsset = MovieClipAsset(new obstacleAnim);
+            obsMovie.gotoAndStop(type);
+            addChild(obsMovie);
+            rotation = Math.random()*360;
+        }
     }
 
     /**
@@ -69,8 +82,14 @@ public class Obstacle extends Sprite
         type = bytes.readInt();
         x = bytes.readInt();
         y = bytes.readInt();
-        bX = x / Codes.PIXELS_PER_TILE;
-        bY = y / Codes.PIXELS_PER_TILE;
+        bX = x;
+        bY = y;
+        if (type != WALL) {
+            bX -= Codes.PIXELS_PER_TILE/2;
+            bY -= Codes.PIXELS_PER_TILE/2;
+        }
+        bX /= Codes.PIXELS_PER_TILE;
+        bY /= Codes.PIXELS_PER_TILE;
 
         setupGraphics();
     }
@@ -87,7 +106,17 @@ public class Obstacle extends Sprite
         return bytes;
     }
 
+    public function tick (time :Number) :void
+    {
+        if (type != WALL) {
+            rotation = (rotation + (360 * time / 10000)) % 360;
+        }
+    }
+
     [Embed(source="rsrc/obstacle.swf#obstacles_movie")]
     protected var obstacleAnim :Class;
+
+    [Embed(source="rsrc/box_bitmap.gif")]
+    protected var obstacleBox :Class;
 }
 }

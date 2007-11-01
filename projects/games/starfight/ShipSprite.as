@@ -48,6 +48,7 @@ public class ShipSprite extends Sprite
     public static const IDLE :int = 1;
     public static const FORWARD :int = 3;
     public static const REVERSE :int = 2;
+    public static const FORWARD_FAST :int = 4;
 
     /** How fast the ship is accelerating. */
     public var accel :Number;
@@ -251,7 +252,7 @@ public class ShipSprite extends Sprite
             }
 
             _engineSound.gotoAndStop(2);
-        
+
             setVisible(false);
 
             // Stop moving and firing.
@@ -319,15 +320,16 @@ public class ShipSprite extends Sprite
      */
     public function tick (time :Number) :void
     {
+        var rtime :Number = time / Codes.REFRESH_RATE;
         var turnFriction :Number =
-            Math.pow(Codes.SHIP_TYPES[shipType].turnFriction, time);
+            Math.pow(Codes.SHIP_TYPES[shipType].turnFriction, rtime);
 
         turnRate = turnRate * turnFriction + turnAccelRate;
-        turn(turnRate*time);
+        turn(turnRate*rtime);
 
-        move(time);
+        move(rtime);
         if (accel > 0.0) {
-            setAnimMode(FORWARD, false);
+            setAnimMode((powerups & SPEED_MASK) ? FORWARD_FAST : FORWARD, false);
         } else if (accel < 0.0) {
             setAnimMode(REVERSE, false);
         } else {
@@ -430,7 +432,7 @@ public class ShipSprite extends Sprite
 
         } else if (event.keyCode == KV_SPACE) {
             if (_ticksToFire <= 0) {
-                fire();
+                //fire();
             }
             _firing = true;
         }
@@ -495,16 +497,18 @@ public class ShipSprite extends Sprite
         var shotX :Number = cos * SHOT_SPD + xVel;
         var shotY :Number = sin * SHOT_SPD + yVel;
 
-        var shotVel :Number = Math.sqrt(shotX*shotX + shotY*shotY);
+        //var shotVel :Number = Math.sqrt(shotX*shotX + shotY*shotY);
+        var shotVel :Number = SHOT_SPD;
         var shotAngle :Number = Math.atan2(shotY, shotX);
 
         var type :int = (powerups & SPREAD_MASK) ? ShotSprite.SPREAD :
             ShotSprite.NORMAL;
 
-        _game.fireShot(boardX + cos * COLLISION_RAD, boardY + sin * COLLISION_RAD,
+        //_game.fireShot(boardX + cos * COLLISION_RAD, boardY + sin * COLLISION_RAD,
+        _game.fireShot(boardX + shotX, boardY + shotY,
             shotVel, shotAngle, shipId, shipType, type);
 
-        _ticksToFire = TICKS_PER_SHOT - 1;
+        _ticksToFire = TIME_PER_SHOT;
     }
 
     /**
@@ -668,11 +672,11 @@ public class ShipSprite extends Sprite
     protected var _ship :Sprite;
 
     protected var _firing :Boolean;
-    protected var _ticksToFire :int;
+    protected var _ticksToFire :Number = 0;
 
     /** Ship performance characteristics. */
-    protected static const SHOT_SPD :Number = 0.5;
-    protected static const TICKS_PER_SHOT :int = 8;
+    protected static const SHOT_SPD :Number = 1;
+    protected static const TIME_PER_SHOT :Number = 500;
     protected static const SPEED_BOOST_FACTOR :Number = 1.5;
     protected static const RESPAWN_DELAY :int = 3000;
     protected static const DEAD :Number = 0.001;

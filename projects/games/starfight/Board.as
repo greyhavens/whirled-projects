@@ -34,7 +34,7 @@ public class Board
     {
         width = bytes.readInt();
         height = bytes.readInt();
-        
+
         obstacles = [];
         while (bytes.bytesAvailable > 0) {
             var obs :Obstacle = new Obstacle(0, 0, 0, false);
@@ -65,6 +65,7 @@ public class Board
         obstacles = [];
 
         var ii :int;
+        var anim :Boolean = true;
 
         // TODO Load obstacles from a file instead of random.
         var numAsteroids :int = width*height/100;
@@ -75,19 +76,19 @@ public class Board
             case 1: type = Obstacle.ASTEROID_2; break;
             }
             obstacles.push(new Obstacle(type,
-                Math.random()*width, Math.random()*height, true));
+                Math.random()*width, Math.random()*height, anim));
         }
-        
+
         // Place a wall around the outside of the board.
 
         for (ii = 0; ii < height; ii++) {
-            obstacles.push(new Obstacle(Obstacle.WALL, 0, ii, true));
-            obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii, true));
+            obstacles.push(new Obstacle(Obstacle.WALL, 0, ii, anim));
+            obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii, anim));
         }
 
         for (ii = 0; ii < width; ii++) {
-            obstacles.push(new Obstacle(Obstacle.WALL, ii, 0, true));
-            obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1, true));
+            obstacles.push(new Obstacle(Obstacle.WALL, ii, 0, anim));
+            obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1, anim));
         }
     }
 }

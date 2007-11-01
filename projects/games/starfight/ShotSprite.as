@@ -39,7 +39,7 @@ public class ShotSprite extends Sprite {
         this.yVel = vel * Math.sin(angle);
         this.shipId = shipId;
 
-        ttl = TIME_TO_LIVE * 1000.0 / Codes.REFRESH_RATE;
+        ttl = TIME_TO_LIVE * 1000.0;
 
         complete = false;
 
@@ -75,21 +75,22 @@ public class ShotSprite extends Sprite {
             return;
         }
 
+        var rtime :Number = time / Codes.REFRESH_RATE;
         var coll :Collision = board.getCollision(boardX, boardY,
-            boardX + xVel*time, boardY + yVel*time, COLLISION_RAD, shipId);
+            boardX + xVel*rtime, boardY + yVel*rtime, COLLISION_RAD, shipId);
         if (coll == null) {
-            boardX += xVel*time;
-            boardY += yVel*time;
+            boardX += xVel*rtime;
+            boardY += yVel*rtime;
         } else {
             if (coll.hit is ShipSprite) {
                 var ship :ShipSprite = ShipSprite(coll.hit);
-                _game.hitShip(ship, boardX + (xVel*coll.time*time),
-                    boardY + (yVel*coll.time*time), shipId, shipType);
+                _game.hitShip(ship, boardX + (xVel*coll.time*rtime),
+                    boardY + (yVel*coll.time*rtime), shipId, shipType);
 
             } else {
                 var obs :Obstacle = Obstacle(coll.hit);
-                _game.hitObs(obs, boardX + (xVel*coll.time*time),
-                    boardY + (yVel*coll.time*time));
+                _game.hitObs(obs, boardX + (xVel*coll.time*rtime),
+                    boardY + (yVel*coll.time*rtime));
             }
             complete = true;
         }
