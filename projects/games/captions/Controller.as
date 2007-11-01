@@ -25,6 +25,7 @@ import mx.controls.Label;
 import mx.controls.Text;
 
 import mx.core.ScrollPolicy;
+import mx.core.UIComponent;
 
 import mx.effects.Fade;
 
@@ -71,7 +72,7 @@ import com.whirled.WhirledGameControl;
  */
 public class Controller
 {
-    public static const DEBUG :Boolean = false;
+    public static const DEBUG :Boolean = true;
 
     /** Durations of game phases, in seconds. */
     public static const CAPTION_DURATION :int = 45;
@@ -129,6 +130,9 @@ public class Controller
 
         _timer = new Timer(500);
         _timer.addEventListener(TimerEvent.TIMER, handleSubmitCaption);
+
+        _winnerTimer = new Timer(2000, 1);
+        _winnerTimer.addEventListener(TimerEvent.TIMER, handleWinnerTimer);
 
         // set up a bunch of UI Stuff
 
@@ -597,6 +601,16 @@ public class Controller
         return votes;
     }
 
+    protected function doFade (
+        target :UIComponent, alphaFrom :Number, alphaTo :Number, duration :int = 1000) :void
+    {
+        var fade :Fade = new Fade(target);
+        fade.alphaFrom = alphaFrom;
+        fade.alphaTo = alphaTo;
+        fade.duration = duration;
+        fade.play();
+    }
+
     protected function initCaptioning (skipAnimations :Boolean) :void
     {
         if (_capPanel != null) {
@@ -620,6 +634,8 @@ public class Controller
             setupCaptioningUI();
 
         } else {
+            _phasePhase = 0;
+            doFade(_image, 0, 1);
             updateLayout();
             animateToFrame(setupCaptioningUI);
         }
@@ -627,6 +643,7 @@ public class Controller
 
     protected function setupCaptioningUI () :void
     {
+        _phasePhase = 1;
         _captionOnBottom = true;
         _myCaption = "";
         _timer.start();
@@ -668,28 +685,19 @@ public class Controller
         }
     }
 
-    protected function initNonCaptionUI () :void
-    {
-        _grid = new Grid();
-        _ui.addChild(_grid);
-
-        var fade :Fade = new Fade(_gradientBackground);
-        fade.alphaFrom = 0;
-        fade.alphaTo = 1;
-        fade.duration = 2000;
-        fade.play();
-    }
-
     protected function initVoting (skipAnimations :Boolean) :void
     {
         initNonCaption();
 
         if (skipAnimations) {
+            _image.alpha = 1;
             _gradientBackground.alpha = 1;
             skipToFrame();
             setupVotingUI();
 
         } else {
+            _phasePhase = 0;
+            doFade(_image, 1, 0);
             _gradientBackground.alpha = 0;
             updateLayout();
             animateToFrame(setupVotingUI);
@@ -698,7 +706,14 @@ public class Controller
 
     protected function setupVotingUI () :void
     {
-        initNonCaptionUI();
+        _phasePhase = 1;
+        _grid = new Grid();
+        _ui.addChild(_grid);
+        doFade(_gradientBackground, 0, 1, 2000);
+
+        if (_image.alpha != 1) {
+            doFade(_image, 0, 1);
+        }
 
         var ii :int;
         var caps :Array = _ctrl.get("captions") as Array;
@@ -739,13 +754,20 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected function initResults (skipAnimations :Boolean) :void
     {
         initNonCaption();
+        _grid = new Grid();
+        computeResults();
 
         if (skipAnimations) {
+            _image.alpha = 1;
             _gradientBackground.alpha = 1;
             skipToFrame();
             setupResultsUI();
 
         } else {
+            _capInput.alpha = 0;
+            _phasePhase = 0;
+            doFade(_image, 1, 0);
+            doFade(_gradientBackground, 1, 0);
             _gradientBackground.alpha = 0;
             updateLayout();
             animateToFrame(setupWinnerUI, "Winner");
@@ -754,19 +776,25 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected function setupWinnerUI () :void
     {
-        // TODO
+        _phasePhase = 1;
+        doFade(_image, 0, 1);
+        doFade(_capInput, 0, 1);
+        updateLayout();
 
+        _winnerTimer.reset();
+        _winnerTimer.start();
+    }
+
+    protected function handleWinnerTimer (event :TimerEvent) :void
+    {
+        _phasePhase = 2;
+        doFade(_image, 1, 0);
+        doFade(_capInput, 1, 0);
         animateToFrame(setupResultsUI);
     }
 
-    protected function setupResultsUI () :void
+    protected function computeResults () :void
     {
-        initNonCaptionUI();
-
-        var results :Array = _ctrl.get("results") as Array;
-
-        _myNextPhotoVote = null;
-
         _capInput = new CaptionTextArea();
         _captionOnBottom = true;
         _capInput.includeInLayout = false;
@@ -774,14 +802,15 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         _ui.addChild(_capInput);
         _capInput.calculateHeight();
 
-        var ii :int;
+        var results :Array = _ctrl.get("results") as Array;
+        var ids :Array = _ctrl.get("ids") as Array;
+        var caps :Array = _ctrl.get("captions") as Array;
         var indexes :Array = [];
+
+        var ii :int;
         for (ii = 0; ii < results.length; ii++) {
             indexes[ii] = ii;
         }
-
-        var ids :Array = _ctrl.get("ids") as Array;
-        var caps :Array = _ctrl.get("captions") as Array;
 
         // sort all the qualified entries by score above all the disqualified entries (by score)
         indexes.sort(function (dex1 :int, dex2 :int) :int {
@@ -855,28 +884,6 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         }
 }
 
-        // see if there are any preview pics to vote on...
-        var nextUrls :Array = [];
-        for (ii = 0; ii < NEXT_PICTURE_COUNT; ii++) {
-            var nexts :Array = _ctrl.get("next_" + ii) as Array;
-            if (nexts != null) {
-                nextUrls[ii] = nexts[0]; // thumbnail..
-            }
-        }
-        if (nextUrls.length > 0) {
-            _nextPanel = new Canvas();
-            _ui.addChild(_nextPanel);
-            for (ii = 0; ii < NEXT_PICTURE_COUNT; ii++) {
-                if (nextUrls[ii] != null) {
-                    addPreviewPhoto(_nextPanel, ii, nextUrls[ii]);
-                }
-            }
-        }
-
-        updateLayout();
-
-        updateScoreDisplay();
-
         // if we're in control, do score awarding for all players (ending the "game" (round))
         if (_inControl) {
             // give points just for voting (people may have voted but not be in the other array)
@@ -898,6 +905,45 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             _ctrl.endGameWithScores(scoreIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
             _ctrl.restartGameIn(0);
         }
+    }
+
+    protected function setupResultsUI () :void
+    {
+        _phasePhase = 3;
+
+        _ui.addChild(_grid);
+        doFade(_gradientBackground, 0, 1, 2000);
+
+        if (_image.alpha != 1) {
+            doFade(_capInput, 0, 1);
+            doFade(_image, 0, 1);
+        }
+
+        _myNextPhotoVote = null;
+
+        var ii :int;
+
+        // see if there are any preview pics to vote on...
+        var nextUrls :Array = [];
+        for (ii = 0; ii < NEXT_PICTURE_COUNT; ii++) {
+            var nexts :Array = _ctrl.get("next_" + ii) as Array;
+            if (nexts != null) {
+                nextUrls[ii] = nexts[0]; // thumbnail..
+            }
+        }
+        if (nextUrls.length > 0) {
+            _nextPanel = new Canvas();
+            _ui.addChild(_nextPanel);
+            for (ii = 0; ii < NEXT_PICTURE_COUNT; ii++) {
+                if (nextUrls[ii] != null) {
+                    addPreviewPhoto(_nextPanel, ii, nextUrls[ii]);
+                }
+            }
+        }
+
+        updateLayout();
+
+        updateScoreDisplay();
     }
 
     protected function addPreviewPhoto (panel :Canvas, number :int, url :String) :void
@@ -1192,32 +1238,18 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         _animations.mouseChildren = false;
         _animationHolder.rawChildren.addChild(_animations);
 
-//        var sequences :Array = [];
-//        var sequence :Array = [];
-
-        trace("Current frame is " + _animations.currentFrame);
-
         // and now do a bit of debuggery on _animations
         for each (var s :Object in _animations.scenes) {
             for each (var f :Object in s.labels) {
-//                trace("   frame: " + f.name + " : " + f.frame);
                 var frameId :int = f.frame;
-//                sequence.push(frameId);
                 if (frameId > 2) {
                     frameId -= 2;
-//                    sequence.push(frameId);
-//                    sequences.push(sequence);
-//                    sequence = [ frameId + 2 ];
-                    trace("Registering handler on frame " + frameId + ".");
+//                    trace("Registering handler on frame " + frameId + ".");
                     _animations.addFrameScript(frameId, handleFrameScript);
                 }
             }
         }
-//        sequence.push(_animations.totalFrames - 2);
-//        sequences.push(sequence);
-//
-//        _animSequences = sequences;
-        trace("Registering handler on frame " + (_animations.totalFrames - 2) + ".");
+//        trace("Registering handler on frame " + (_animations.totalFrames - 2) + ".");
         _animations.addFrameScript(_animations.totalFrames - 2, handleFrameScript);
 
         skipToFrame();
@@ -1225,7 +1257,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected function handleFrameScript () :void
     {
-        trace("+=== ah-ha, I reached frame # " + _animations.currentFrame);
+//        trace("+=== ah-ha, I reached frame # " + _animations.currentFrame);
 
         // TODO: stopping the goddamn thing shouldn't be needed
         _animations.gotoAndStop(_animations.currentFrame);
@@ -1312,14 +1344,24 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         var phase :String = _ctrl.get("phase") as String;
 
         switch (phase) {
-        case "vote":
         case "results":
-            //_gradientBackground.alpha = 1;
             _image.visible = true;
-            _image.scaleX = .5;
-            _image.scaleY = .5;
-            _image.y = PAD;
-            _image.x = (SIDE_BAR_WIDTH - (.5 * _image.contentWidth)) / 2;
+            if (_phasePhase == 1 || _phasePhase == 2) {
+                centerImage(.9);
+
+            } else {
+                sidebarImage();
+            }
+            break;
+
+        case "vote":
+            _image.visible = true;
+            if (_phasePhase == 0) {
+                centerImage();
+
+            } else {
+                sidebarImage();
+            }
             break;
 
         default:
@@ -1332,8 +1374,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             _image.visible = true;
             _image.scaleX = 1;
             _image.scaleY = 1;
-            _image.x = (_ui.width - _image.contentWidth) / 2;
-            _image.y = (_ui.height - _image.contentHeight) / 2;
+            centerImage();
             break;
         }
 
@@ -1342,12 +1383,13 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
         if (_capInput != null) {
             _capInput.x = _image.x;
+            _capInput.setStyle("backgroundAlpha", .2);
             _capInput.scaleX = _image.scaleX;
             _capInput.scaleY = _image.scaleY;
             _capInput.width = _image.contentWidth;
             if (_captionOnBottom) {
                 _capInput.y = _image.y +
-                    (_image.scaleY * _image.contentHeight) - _capInput.height;
+                    _image.scaleY * (_image.contentHeight - _capInput.height);
             } else {
                 _capInput.y = _image.y;
             }
@@ -1378,6 +1420,22 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         }
 
         _ui.validateNow();
+    }
+
+    protected function centerImage (scale :Number = 1) :void
+    {
+        _image.scaleX = scale;
+        _image.scaleY = scale;
+        _image.x = (_ui.width - (_image.contentWidth * scale)) / 2;
+        _image.y = (_ui.height - (_image.contentHeight * scale)) / 2;
+    }
+
+    protected function sidebarImage () :void
+    {
+        _image.scaleX = .5;
+        _image.scaleY = .5;
+        _image.y = PAD;
+        _image.x = (SIDE_BAR_WIDTH - (.5 * _image.contentWidth)) / 2;
     }
 
     protected function handleUnload (... ignored) :void
@@ -1447,12 +1505,17 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected var _nextPanel :Canvas;
 
+    /** Which phase of animating the current phase are we in? */
+    protected var _phasePhase :int;
+
     /** Whether the caption is on the bottom or top. */
     protected var _captionOnBottom :Boolean;
 
     protected var _flickr :FlickrService;
 
     protected var _timer :Timer;
+
+    protected var _winnerTimer :Timer;
 
     protected var _photosToGet :int;
 
