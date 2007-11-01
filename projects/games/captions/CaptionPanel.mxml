@@ -4,7 +4,7 @@
     <mx:VBox width="100%" height="100%" verticalAlign="bottom" horizontalAlign="left">
         <mx:Label text="Caption:" fontFamily="chocolat_bleu" fontSize="48"/>
         <mx:CheckBox id="skip" label="vote to skip" fontFamily="chocolat_bleu" fontSize="24"
-                textRollOverColor="white"/>
+                textRollOverColor="white" textSelectedColor="white"/>
     </mx:VBox>
     <mx:VBox width="100%" height="100%" verticalAlign="bottom" horizontalAlign="right">
         <mx:Button id="enterButton" label="Done"/>

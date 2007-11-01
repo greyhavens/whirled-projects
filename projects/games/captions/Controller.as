@@ -503,7 +503,7 @@ public class Controller
         _capInput.editable = nowEditing;
         _capPanel.setStyle("backgroundAlpha", nowEditing ? .2 : 0);
 
-        _capPanel.enterButton.label = nowEditing ? "Enter" : "Edit";
+        _capPanel.enterButton.label = nowEditing ? "Done" : "Edit";
 
         if (!nowEditing) {
             handleSubmitCaption(event);
@@ -713,8 +713,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         _captionOnBottom = true;
         _capInput.includeInLayout = false;
         _capInput.editable = false;
-        _capInput.calculateHeight();
         _ui.addChild(_capInput);
+        _capInput.calculateHeight();
 
         var ii :int;
         var indexes :Array = [];
@@ -810,25 +810,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             _ui.addChild(_nextPanel);
             for (ii = 0; ii < NEXT_PICTURE_COUNT; ii++) {
                 if (nextUrls[ii] != null) {
-                    // once again, it's easier for me to hard-code this layout
-                    // than to fight with flex layout to accomplish the same thing.
-                    // (Part of the reason for this is that the checkbox takes up retarded
-                    // amounts of space, even when the label is blank)
-                    var img :Image = new Image();
-                    var cb :CheckBox = new CheckBox();
-                    cb.label = " "; // prevent buggage
-                    cb.data = ii;
-                    cb.addEventListener(Event.CHANGE, handlePhotoVoteCast);
-                    
-                    cb.includeInLayout = false;
-
-                    img.x = ((ii % 2) == 0) ? 14 : 140;
-                    img.y = (int(ii / 2) == 0) ? 1 : 111;
-                    cb.x = ((ii % 2) == 0) ? 0 : 126;
-                    cb.y = (int(ii / 2) == 0) ? 0 : 110;
-                    _nextPanel.addChild(img);
-                    _nextPanel.addChild(cb);
-                    img.load(nextUrls[ii]);
+                    addPreviewPhoto(_nextPanel, ii, nextUrls[ii]);
                 }
             }
         }
@@ -858,6 +840,33 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             _ctrl.endGameWithScores(scoreIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
             _ctrl.restartGameIn(0);
         }
+    }
+
+    protected function addPreviewPhoto (panel :Canvas, number :int, url :String) :void
+    {
+        // once again, it's easier for me to hard-code this layout
+        // than to fight with flex layout to accomplish the same thing.
+        // (Part of the reason for this is that the checkbox takes up retarded
+        // amounts of space, even when the label is blank)
+        var img :Image = new Image();
+        var cb :CheckBox = new CheckBox();
+        cb.label = " "; // prevent buggage
+        cb.data = number;
+        cb.addEventListener(Event.CHANGE, handlePhotoVoteCast);
+
+        img.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+            cb.selected = !cb.selected;
+        });
+        
+        cb.includeInLayout = false;
+
+        img.x = ((number % 2) == 0) ? 14 : 140;
+        img.y = (int(number / 2) == 0) ? 1 : 111;
+        cb.x = ((number % 2) == 0) ? 0 : 126;
+        cb.y = (int(number / 2) == 0) ? 0 : 110;
+        panel.addChild(img);
+        panel.addChild(cb);
+        img.load(url);
     }
 
     protected function updateScoreDisplay () :void
@@ -1219,9 +1228,9 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
         if (_capInput != null) {
             _capInput.x = _image.x;
-            _capInput.width = _image.contentWidth;
             _capInput.scaleX = _image.scaleX;
             _capInput.scaleY = _image.scaleY;
+            _capInput.width = _image.contentWidth;
             if (_captionOnBottom) {
                 _capInput.y = _image.y +
                     (_image.scaleY * _image.contentHeight) - _capInput.height;
@@ -1231,8 +1240,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         }
 
         if (_capPanel != null) {
-            _capPanel.x = (_ui.width - 700) / 2 + PAD;
-            _capPanel.width = 700 - (PAD * 2);
+            _capPanel.x = (_ui.width - IDEAL_WIDTH) / 2 + PAD;
+            _capPanel.width = IDEAL_WIDTH - (PAD * 2);
             if (_captionOnBottom) {
                 _capPanel.y = _image.y +
                     (_image.contentHeight - _capPanel.height);
@@ -1282,6 +1291,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected static const THUMBNAIL_SIZE :Array = [ "Thumbnail", "Square", "Small" ];
 
     protected static const PAD :int = 6;
+
+    protected static const IDEAL_WIDTH :int = 700;
 
     protected static const TOP_BAR_HEIGHT :int = 66;
 
