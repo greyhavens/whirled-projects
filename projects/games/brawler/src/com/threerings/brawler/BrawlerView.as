@@ -449,12 +449,12 @@ public class BrawlerView extends Sprite
      */
     protected function updateCursor () :void
     {
-        if (_ground.hitTestPoint(mouseX, mouseY)) {
+        if (_ground.hitTestPoint(mouseX, mouseY+5)) {
             if (!_cursorOn) {
                 _cursorOn = true;
                 _cursor.gotoAndPlay("on");
             }
-            var local :Point = _background.globalToLocal(new Point(mouseX, mouseY));
+            var local :Point = _background.globalToLocal(new Point(mouseX, mouseY+5));
             setPosition(_cursor, local.x, local.y);
 
         } else if (_cursorOn) {

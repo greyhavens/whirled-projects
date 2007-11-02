@@ -33,7 +33,7 @@ public class Player extends Pawn
         state.y = y;
         state.motion = SNAP;
         state.hp = 1500;
-        state.weapon = Weapon.BOW;
+        state.weapon = Weapon.SWORD;
         state.blocking = false;
         state.stunCountdown = 0;
         state.invulnerableCountdown = 0;
@@ -601,13 +601,13 @@ public class Player extends Pawn
     protected static const NORMAL_ENERGY_RATE :Number = +50;
 
     /** The rate at which players regain energy after depletion. */
-    protected static const DEPLETED_ENERGY_RATE :Number = +25;
+    protected static const DEPLETED_ENERGY_RATE :Number = +50;
 
     /** The amount of energy required to attack. */
-    protected static const ATTACK_ENERGY :Number = 25;
+    protected static const ATTACK_ENERGY :Number = 33;
 
     /** The amount of time after the last attack at which the attack level is cleared (s). */
-    protected static const ATTACK_RESET_INTERVAL :Number = 0.90;
+    protected static const ATTACK_RESET_INTERVAL :Number = 1.50;
 
     /** The amount of time after the last hit at which the hit count is cleared (s). */
     protected static const HIT_RESET_INTERVAL :Number = 2;
@@ -625,8 +625,8 @@ public class Player extends Pawn
     protected static const DIFFICULTY_DAMAGE_MULTIPLIERS :Array = [ 1.00, 0.75, 0.60, 0.45 ];
 
     /** Weapon damage multipliers for each weapon level (starting at one). */
-    //protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 1, 1.5, 2 ];
-	protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 0, 0, 0 ]; //<---Weapon decay disabled for testing
+    protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 1, 1.5, 2 ];
+	//protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 0, 0, 0 ]; //<---Weapon decay disabled for testing
 	
     /** The number of seconds to wait before respawning the player. */
     protected static const RESPAWN_INTERVAL :Number = 10;
