@@ -151,6 +151,7 @@ public class Controller
         _ui.addChild(_animationHolder);
 
         _image = new Image();
+        //_image.includeInLayout = false;
         _image.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
         _image.addEventListener(Event.COMPLETE, handleImageComplete);
         _ui.addChild(_image);
@@ -171,9 +172,9 @@ public class Controller
 
         // get us rolling
 
+        showPhoto();
         checkControl();
         checkPhase(true);
-        showPhoto();
         updateScoreDisplay();
     }
 
@@ -233,6 +234,7 @@ public class Controller
         var url :String = _ctrl.get("photo") as String;
         if (url != null) {
             _image.load(url);
+            updateLayout();
         }
     }
 
@@ -617,6 +619,7 @@ public class Controller
     {
         if (_capPanel != null) {
             _ui.removeChild(_capPanel);
+            _capPanel = null;
         }
         if (_capInput != null) {
             _ui.removeChild(_capInput);
@@ -665,6 +668,8 @@ public class Controller
 
         // validate the panel now so that we know the _capPanel.height in updateLayout()
         _ui.validateNow();
+
+        doFade(_capPanel, 0, 1, 2000);
 
         updateLayout();
     }
@@ -1031,7 +1036,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         var isStartPhase :Boolean = isPhase("start");
         if (isStartPhase) {
             // check to see if we already have some votes in for any of the preview pics
-            var votes :Array = [0, 0, 0, 0, 0, 0];
+            var votes :Array = [0, 0, 0, 0];
             for each (var prop :String in _ctrl.getPropertyNames("pvote:")) {
                 var dexes :Array = _ctrl.get(prop) as Array;
                 for each (var dex :int in dexes) {
@@ -1371,7 +1376,6 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
         switch (phase) {
         case "results":
-            _image.visible = true;
             if (_phasePhase == 1 || _phasePhase == 2) {
                 centerImage(.8);
 
@@ -1381,7 +1385,6 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             break;
 
         case "vote":
-            _image.visible = true;
             if (_phasePhase == 0) {
                 centerImage();
 
@@ -1392,14 +1395,11 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
         default:
             _gradientBackground.alpha = 0;
-            _image.visible = false;
+            _image.alpha = 0;
             break;
 
         case "caption":
             _gradientBackground.alpha = 0;
-            _image.visible = true;
-            _image.scaleX = 1;
-            _image.scaleY = 1;
             centerImage();
             break;
         }
@@ -1409,13 +1409,13 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
         if (_capInput != null) {
             _capInput.x = _image.x;
-            _capInput.setStyle("backgroundAlpha", .2);
+            //_capInput.setStyle("backgroundAlpha", .2);
             _capInput.scaleX = _image.scaleX;
             _capInput.scaleY = _image.scaleY;
-            _capInput.width = _image.contentWidth;
+            _capInput.width = imageWidth();
             if (_captionOnBottom) {
                 _capInput.y = _image.y +
-                    _image.scaleY * (_image.contentHeight - _capInput.height);
+                    _image.scaleY * (imageHeight() - _capInput.height);
             } else {
                 _capInput.y = _image.y;
             }
@@ -1425,8 +1425,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             _capPanel.x = (_ui.width - IDEAL_WIDTH) / 2 + PAD;
             _capPanel.width = IDEAL_WIDTH - (PAD * 2);
             if (_captionOnBottom) {
-                _capPanel.y = _image.y +
-                    (_image.contentHeight - _capPanel.height);
+                _capPanel.y = _image.y + (imageHeight() - _capPanel.height);
 
             } else {
                 _capPanel.y = _image.y;
@@ -1454,12 +1453,24 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         _ui.validateNow();
     }
 
+    protected function imageWidth () :int
+    {
+        var width :int = _image.contentWidth;
+        return (width != 0) ? width : 500;
+    }
+
+    protected function imageHeight () :int
+    {
+        var height :int = _image.contentHeight;
+        return (height != 0) ? height : 500;
+    }
+
     protected function centerImage (scale :Number = 1) :void
     {
         _image.scaleX = scale;
         _image.scaleY = scale;
-        _image.x = (_ui.width - (_image.contentWidth * scale)) / 2;
-        _image.y = (_ui.height - (_image.contentHeight * scale)) / 2;
+        _image.x = (_ui.width - (imageWidth() * scale)) / 2;
+        _image.y = (_ui.height - (imageHeight() * scale)) / 2;
     }
 
     protected function sidebarImage () :void
@@ -1467,7 +1478,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         _image.scaleX = .5;
         _image.scaleY = .5;
         _image.y = PAD;
-        _image.x = (SIDE_BAR_WIDTH - (.5 * _image.contentWidth)) / 2;
+        _image.x = (SIDE_BAR_WIDTH - (.5 * imageWidth())) / 2;
     }
 
     protected function handleUnload (... ignored) :void
