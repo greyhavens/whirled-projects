@@ -318,6 +318,9 @@ public class Enemy extends Pawn
 
         // play the spawn animation
         setAction("spawn");
+		
+		// add to total Monster HP
+		_ctrl._mobHpTotal += _maxhp;
     }
 
     /**
@@ -408,6 +411,8 @@ public class Enemy extends Pawn
     override protected function respawn () :void
     {
         super.respawn();
+		// add to total Monster HP
+		_ctrl._mobHpTotal += _maxhp;
         _attackCountdown = _cooldown;
     }
 
@@ -593,13 +598,13 @@ public class Enemy extends Pawn
     protected static const RESPAWNS_PER_PLAYER :Array = [ 0, 1.75, 2.25, 2.5 ];
 
     /** The chance that the enemy will drop a coin each time it's hit. */
-    protected static const COIN_DROP_PROBABILITY :Number = 0.25;
+    protected static const COIN_DROP_PROBABILITY :Number = 0.18;
 
     /** The chance that the enemy will drop a health pickup when it dies. */
-    protected static const HEALTH_DROP_PROBABILITY :Number = 0.10;
+    protected static const HEALTH_DROP_PROBABILITY :Number = 0.15;
 
     /** The chance that the enemy will drop a weapon pickup when it dies. */
-    protected static const WEAPON_DROP_PROBABILITY :Number = 0.50;
+    protected static const WEAPON_DROP_PROBABILITY :Number = 0.65;
 
     /** The weapon types carried by each enemy variant. */
     protected static const WEAPON_TYPES :Array =

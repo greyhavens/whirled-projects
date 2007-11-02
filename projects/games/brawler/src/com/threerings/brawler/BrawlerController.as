@@ -212,7 +212,7 @@ public class BrawlerController extends Controller
             if (_clear) {
                 // post our score to the dobj and show the game results
                 if (amPlaying) {
-                    _throttle.set("scores", _score, _control.seating.getMyPosition());
+                    _throttle.set("scores", _grade, _control.seating.getMyPosition());
                 }
                 _view.showResults();
             } else {
@@ -654,7 +654,10 @@ public class BrawlerController extends Controller
 
     /** The local score. */
     protected var _score :int = 0;
-
+	
+	/** The local grade. */
+    public var _grade :int = 0;
+	
     /** The currently occupied room. */
     protected var _room :int = 1;
 
@@ -681,6 +684,9 @@ public class BrawlerController extends Controller
 
     /** The enemy configurations. */
     protected var _econfigs :Array = new Array();
+	
+	/** Totale amount of Mob Hit Points. */
+	public var _mobHpTotal :Number = 0;
 
     /** The raw SWF data. */
     //[Embed(source="../../../../rsrc/raw.swf", mimeType="application/octet-stream")]

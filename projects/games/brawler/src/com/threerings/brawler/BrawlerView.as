@@ -299,7 +299,8 @@ public class BrawlerView extends Sprite
         // display the damage points
         var playerDamage :Number = _ctrl.control.get("playerDamage") as Number;
         var enemyDamage :Number = _ctrl.control.get("enemyDamage") as Number;
-        var damagePoints :Number = Math.max(0, Math.round(enemyDamage - playerDamage*2));
+        //var damagePoints :Number = Math.max(0, Math.round(enemyDamage - playerDamage*2));
+		var damagePoints :Number = Math.max(0, Math.round(_ctrl.score));
         results.stats.dmg.enemydamage.text = "+" + damagePoints;
 
         // display the final clock value, bonus score
@@ -307,15 +308,16 @@ public class BrawlerView extends Sprite
         results.stats.sb.bonusscore.text = "+" + _ctrl.score;
 
         // compute and display the rank
-        var score :Number = koPoints + damagePoints + _ctrl.score;
-        var par :Number = enemyDamage + 5000;
+        var score :Number = koPoints + _ctrl.score;
+        var par :Number = _ctrl._mobHpTotal+2000;
         var pct :Number = Math.round((score / par) * 100);
         var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
         results.stats.r.rank.text = GRADES[grade] + " (" + pct + "%)";
+		_ctrl._grade = pct;
 
         // show the flow awarded (TODO: make this accurate)
         var flow :int = pct;
-        results.stats.f.flow.text = flow;
+        results.stats.f.flow.text = "DISABLED";
     }
 
     /**

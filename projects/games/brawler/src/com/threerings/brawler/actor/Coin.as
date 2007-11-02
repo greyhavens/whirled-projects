@@ -84,7 +84,7 @@ public class Coin extends Pickup
     // documentation inherited
     override protected function get points () :int
     {
-        return 5;
+        return 1000;
     }
 
     /**

@@ -46,7 +46,7 @@ public class Health extends Pickup
     // documentation inherited
     override protected function get points () :int
     {
-        return 25;
+        return 250;
     }
 }
 }

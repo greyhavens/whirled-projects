@@ -212,6 +212,8 @@ public class Player extends Pawn
     // documentation inherited
     override public function wasHit (attacker :Pawn, damage :Number) :void
     {
+		var points :int = Math.round(damage * 2);
+        _ctrl.score -= points;
         super.wasHit(attacker, damage);
         _ctrl.incrementStat("playerDamage", damage);
     }
@@ -220,7 +222,7 @@ public class Player extends Pawn
     override public function didHit (target :Pawn, damage :Number) :void
     {
         // update the hit count and score
-        var points :int = Math.round(damage * level * (++_hits));
+        var points :int = Math.round((damage/5) * (++_hits));
         _ctrl.score += points;
         _hitResetCountdown = HIT_RESET_INTERVAL;
         _view.hud.updateHits();

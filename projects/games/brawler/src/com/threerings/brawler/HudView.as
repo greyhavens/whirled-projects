@@ -192,6 +192,8 @@ public class HudView extends Sprite
     public function updateScore (increment :int = 0) :void
     {
         _hud.score.text = _ctrl.score;
+		_hud.score_par.text = _ctrl._mobHpTotal;
+		_hud.score_grade.text = String(Math.round((_ctrl.score/_ctrl._mobHpTotal)*100))+"%";
         if (increment > 0) {
             _hud.score_add.score_add.score_add.text = "+" + increment;
             _hud.score_add.gotoAndPlay("go");

@@ -95,7 +95,7 @@ public class Weapon extends Pickup
     // documentation inherited
     override protected function get points () :int
     {
-        return 150;
+        return 100;
     }
 
     /** The index of the weapon. */
