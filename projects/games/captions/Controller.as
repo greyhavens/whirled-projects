@@ -663,6 +663,9 @@ public class Controller
         _capPanel.enterButton.addEventListener(FlexEvent.BUTTON_DOWN, handleSubmitButton);
         _capPanel.skip.addEventListener(Event.CHANGE, handleVoteToSkip);
 
+        // validate the panel now so that we know the _capPanel.height in updateLayout()
+        _ui.validateNow();
+
         updateLayout();
     }
 
