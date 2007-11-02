@@ -9,6 +9,8 @@ import flash.events.TimerEvent;
 
 import flash.geom.Point;
 
+import flash.filters.GlowFilter;
+
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 
@@ -654,7 +656,6 @@ public class Controller
 
         _capInput = new CaptionTextArea();
         _capInput.includeInLayout = false;
-        _capInput.addEventListener("ReturnPressed", handlePositionToggle);
 
         _ui.addChild(_capInput);
         _capInput.calculateHeight();
@@ -755,7 +756,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     {
         initNonCaption();
         _grid = new Grid();
-        computeResults();
+        computeResults(skipAnimations);
 
         if (skipAnimations) {
             _image.alpha = 1;
@@ -779,6 +780,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         _phasePhase = 1;
         doFade(_image, 0, 1);
         doFade(_capInput, 0, 1);
+        doFade(_winnerLabel, 0, 1);
         updateLayout();
 
         _winnerTimer.reset();
@@ -790,10 +792,11 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         _phasePhase = 2;
         doFade(_image, 1, 0);
         doFade(_capInput, 1, 0);
+        doFade(_winnerLabel, 1, 0);
         animateToFrame(setupResultsUI);
     }
 
-    protected function computeResults () :void
+    protected function computeResults (skipAnimations :Boolean) :void
     {
         _capInput = new CaptionTextArea();
         _captionOnBottom = true;
@@ -801,6 +804,17 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         _capInput.editable = false;
         _ui.addChild(_capInput);
         _capInput.calculateHeight();
+
+        if (!skipAnimations) {
+            _winnerLabel = new Label();
+            _winnerLabel.alpha = 0;
+            _winnerLabel.includeInLayout = false;
+            _winnerLabel.setStyle("fontSize", 36);
+            _winnerLabel.setStyle("textAlign", "center");
+            // if I don't put the glowfilter on, it doesn't respect the setting to alpha
+            _winnerLabel.filters = [ new GlowFilter(0x000000, 1, 1, 1, 1) ];
+            _ui.addChild(_winnerLabel);
+        }
 
         var results :Array = _ctrl.get("results") as Array;
         var ids :Array = _ctrl.get("ids") as Array;
@@ -862,11 +876,15 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             var row :ResultRow = new ResultRow();
             _grid.addChild(row);
             row.captionText.htmlText = deHTML(String(caps[index]));
-            row.nameAndVotesLabel.text = "- " + String(_ctrl.get("name:" + playerId)) +
-                ", " + Math.abs(result);
+            var name :String = String(_ctrl.get("name:" + playerId));
+            var votes :int = int(Math.abs(result));
+            row.nameAndVotesLabel.text = "- " + name + ", " + votes;
 
             if (ii == 0) {
                 _capInput.text = String(caps[index]);
+                if (_winnerLabel != null) {
+                    _winnerLabel.text = name + " wins!";
+                }
             }
 
             if (result < 0) {
@@ -910,6 +928,11 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected function setupResultsUI () :void
     {
         _phasePhase = 3;
+
+        if (_winnerLabel != null) {
+            _ui.removeChild(_winnerLabel);
+            _winnerLabel = null;
+        }
 
         _ui.addChild(_grid);
         doFade(_gradientBackground, 0, 1, 2000);
@@ -1347,7 +1370,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         case "results":
             _image.visible = true;
             if (_phasePhase == 1 || _phasePhase == 2) {
-                centerImage(.9);
+                centerImage(.8);
 
             } else {
                 sidebarImage();
@@ -1417,6 +1440,12 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         if (_nextPanel != null) {
             _nextPanel.x = PAD + 2;
             _nextPanel.y = 280;
+        }
+
+        if (_winnerLabel != null) {
+            _winnerLabel.x = 0;
+            _winnerLabel.y = 0;
+            _winnerLabel.width = _ui.width;
         }
 
         _ui.validateNow();
@@ -1504,6 +1533,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected var _captionDisplay :CaptionTextArea;
 
     protected var _nextPanel :Canvas;
+
+    protected var _winnerLabel :Label;
 
     /** Which phase of animating the current phase are we in? */
     protected var _phasePhase :int;
