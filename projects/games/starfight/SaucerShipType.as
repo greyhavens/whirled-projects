@@ -8,7 +8,7 @@ public class SaucerShipType extends ShipType
 {
     public function SaucerShipType () :void
     {
-        super("Saucer", 6.0, 0.2, 0.0, 0.6, 0.5, 0.2, 0.8);
+        super("Saucer", 4.0, 0.17, 0.0, 0.6, 0.5, 0.2, 0.8);
         ENGINE_MOV.gotoAndStop(2);
     }
 
@@ -48,10 +48,11 @@ public class SaucerShipType extends ShipType
     [Embed(source="rsrc/ships/saucer/ship_shield.swf")]
     public const SHIELD_ANIM :Class;
 
-    [Embed(source="rsrc/ships/wasp/ship_explosion_big.swf")]
+    [Embed(source="rsrc/ships/saucer/ship_explosion_big.swf")]
     public const EXPLODE_ANIM :Class;
 
     [Embed(source="rsrc/ships/saucer/beam.swf")]
     public const SHOT_ANIM :Class;
 
+}
 }

@@ -8,7 +8,7 @@ public class RhinoShipType extends ShipType
 {
     public function RhinoShipType () :void
     {
-        super("Rhino", 1.75, 0.01, -0.005, 0.975, 0.825, 0.25, 1.5);
+        super("Rhino", 1.25, 0.01, -0.005, 0.975, 0.825, 0.25, 1.5);
         ENGINE_MOV.gotoAndStop(2);
     }
 

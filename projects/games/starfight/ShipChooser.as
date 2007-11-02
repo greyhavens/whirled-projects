@@ -9,7 +9,7 @@ import flash.text.TextFieldAutoSize;
 
 public class ShipChooser extends Sprite
 {
-    public function ShipChooser(game :StarFight)
+    public function ShipChooser(game :StarFight, newGame :Boolean)
     {
 
         // Partially obscure background.
@@ -21,6 +21,7 @@ public class ShipChooser extends Sprite
         graphics.drawRoundRect((StarFight.WIDTH - SPACING * (Codes.SHIP_TYPES.length+1))/2,
             StarFight.HEIGHT/2 - SPACING, SPACING * (Codes.SHIP_TYPES.length+1), 2 * SPACING, 10.0, 10.0);
         _game = game;
+        _newGame = newGame;
 
         var format:TextFormat = new TextFormat();
         format.font = "Verdana";
@@ -88,7 +89,11 @@ public class ShipChooser extends Sprite
      */
     public function choose (typeIdx :int) :void
     {
-        _game.chooseShip(typeIdx);
+        if (_newGame) {
+            _game.chooseShip(typeIdx);
+        } else {
+            _game.changeShip(typeIdx);
+        }
         _game.removeChild(this);
     }
 
@@ -96,5 +101,6 @@ public class ShipChooser extends Sprite
     protected static const HIGHLIGHT_SCALE :Number = 1.2;
 
     protected var _game :StarFight;
+    protected var _newGame :Boolean;
 }
 }

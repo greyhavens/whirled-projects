@@ -85,6 +85,15 @@ public class ShipSprite extends Sprite
     /** The ship's current score. */
     public var score :int;
 
+    /** Shield health. */
+    public var shieldPower :Number;
+
+    /** Engine bonus remaining. */
+    public var enginePower :Number;
+
+    /** Weapons bonus remaining. */
+    public var weaponPower :Number;
+
     /**
      * Constructs a new ship.  If skipStartingPos, don't bother finding an
      *  empty space to start in.
@@ -101,6 +110,9 @@ public class ShipSprite extends Sprite
         power = 1.0; // full
         powerups = 0;
         score = 0;
+        shieldPower = 0.0;
+        enginePower = 0.0;
+        weaponPower = 0.0;
         if (_isOwnShip && _shieldSound != null) {
             _shieldSound.gotoAndStop(2);
             _shieldSound = null;
@@ -159,6 +171,15 @@ public class ShipSprite extends Sprite
         yVel = yVel*friction + Math.sin(_ship.rotation*Codes.DEGS_TO_RADS)*accelFact;
 
         resolveMove(boardX, boardY, boardX + xVel*time, boardY + yVel*time);
+
+        if (_isOwnShip && accel != 0 && powerups | SPEED_MASK) {
+            enginePower -= time * Codes.REFRESH_RATE / 60000;
+            if (enginePower <= 0) {
+                powerups ^= SPEED_MASK;
+                accel = Math.min(accel, Codes.SHIP_TYPES[shipType].forwardAccel);
+                accel = Math.max(accel, Codes.SHIP_TYPES[shipType].backwardAccel);
+            }
+        }
     }
 
     /**
@@ -236,7 +257,21 @@ public class ShipSprite extends Sprite
         var hitPower :Number = Codes.SHIP_TYPES[shooterType].hitPower /
             Codes.SHIP_TYPES[shipType].armor;
 
-        power -= ((powerups & SHIELDS_MASK) ? hitPower/2 : hitPower);
+        if (powerups & SHIELDS_MASK) {
+            // shields always have an armor of 0.5
+            hitPower = Codes.SHIP_TYPES[shooterType].hitPower * 2;
+            shieldPower -= hitPower;
+            if (shieldPower <= DEAD) {
+                powerups ^= SHIELDS_MASK;
+                if (_shieldSound != null) {
+                    _shieldSound.gotoAndStop(2);
+                    _shieldSound = null;
+                }
+            }
+            return;
+        }
+
+        power -= hitPower;
         if (power <= DEAD) {
             _game.explode(boardX, boardY, _ship.rotation, shooterId, shipType);
 
@@ -265,16 +300,21 @@ public class ShipSprite extends Sprite
 
             // After a 5 second interval, reposition & reset.
             var timer :Timer = new Timer(RESPAWN_DELAY, 1);
-            timer.addEventListener(TimerEvent.TIMER, restart);
+            timer.addEventListener(TimerEvent.TIMER, newShip);
             timer.start();
         }
+    }
+
+    public function newShip (event :TimerEvent) :void
+    {
+        _game.addChild(new ShipChooser(_game, false));
     }
 
     /**
      * Positions the ship at a brand new spot after exploding and resets its
      *  dynamics.
      */
-    public function restart (event :TimerEvent) :void
+    public function restart () :void
     {
         power = 1.0; //full
         powerups = 0;
@@ -287,6 +327,9 @@ public class ShipSprite extends Sprite
         accel = 0;
         turnAccelRate = 0;
         _ship.rotation = 0;
+        shieldPower = 0.0;
+        weaponPower = 0.0;
+        enginePower = 0.0;
 
         _engineSound.gotoAndStop(1);
 
@@ -501,8 +544,14 @@ public class ShipSprite extends Sprite
         var shotVel :Number = SHOT_SPD;
         var shotAngle :Number = Math.atan2(shotY, shotX);
 
-        var type :int = (powerups & SPREAD_MASK) ? ShotSprite.SPREAD :
-            ShotSprite.NORMAL;
+        var type :int = ShotSprite.NORMAL;
+        if (powerups & SPREAD_MASK) {
+            type = ShotSprite.SPREAD;
+            weaponPower -= 0.02;
+            if (weaponPower <= 0.0) {
+                powerups ^= SPREAD_MASK;
+            }
+        }
 
         //_game.fireShot(boardX + cos * COLLISION_RAD, boardY + sin * COLLISION_RAD,
         _game.fireShot(boardX + shotX, boardY + shotY,
@@ -551,11 +600,25 @@ public class ShipSprite extends Sprite
      */
     public function awardPowerup (type :int) :void
     {
+        if (type == Powerup.HEALTH) {
+            power = Math.min(1.0, power + 0.5);
+            return;
+        }
         powerups |= (1 << type);
-
-        if (_isOwnShip && type == Powerup.SHIELDS && _shieldSound == null) {
-            _shieldSound = Sounds.SHIELDS_MOV;
-            _shieldSound.gotoAndStop(1);
+        switch (type) {
+        case Powerup.SHIELDS:
+            shieldPower = 1.0;
+            if (_isOwnShip && _shieldSound == null) {
+                _shieldSound = Sounds.SHIELDS_MOV;
+                _shieldSound.gotoAndStop(1);
+            }
+            break;
+        case Powerup.SPEED:
+            enginePower = 1.0;
+            break;
+        case Powerup.SPREAD:
+            weaponPower = 1.0;
+            break;
         }
     }
 
@@ -676,7 +739,7 @@ public class ShipSprite extends Sprite
 
     /** Ship performance characteristics. */
     protected static const SHOT_SPD :Number = 1;
-    protected static const TIME_PER_SHOT :Number = 500;
+    protected static const TIME_PER_SHOT :Number = 330;
     protected static const SPEED_BOOST_FACTOR :Number = 1.5;
     protected static const RESPAWN_DELAY :int = 3000;
     protected static const DEAD :Number = 0.001;

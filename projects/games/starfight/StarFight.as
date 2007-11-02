@@ -219,13 +219,13 @@ public class StarFight extends Sprite
             timer.start();
         }
 
-        addChild(new ShipChooser(this));
+        addChild(new ShipChooser(this, true));
     }
 
     /**
      * Choose the type of ship for ownship.
      */
-    public function chooseShip(typeIdx :int) :void
+    public function chooseShip (typeIdx :int) :void
     {
         var myName :String = "Guest";
 
@@ -260,6 +260,15 @@ public class StarFight extends Sprite
         var screenTimer :Timer = new Timer(1, 0); // As fast as possible.
         screenTimer.addEventListener(TimerEvent.TIMER, tick);
         screenTimer.start();
+    }
+
+    /**
+     * Changes the ship type.
+     */
+    public function changeShip (typeIdx :int) :void
+    {
+        _ownShip.setShipType(typeIdx);
+        _ownShip.restart();
     }
 
     /**
@@ -311,7 +320,7 @@ public class StarFight extends Sprite
                     }
                 }
 
-                _powerups[ii] = new Powerup(1+Math.random()*3, x, y);
+                _powerups[ii] = new Powerup(1+Math.random()*Powerup.COUNT, x, y);
 
                 _gameCtrl.setImmediate("powerup", _powerups[ii].writeTo(new ByteArray()),
                     ii);
@@ -373,7 +382,9 @@ public class StarFight extends Sprite
                         event.index, occName, false);
                     sentShip.readFrom(bytes);
                     ship.updateForReport(sentShip);
-                    _status.checkHiScore(ship);
+                    var scores :Object = {};
+                    scores[id] = sentShip.score;
+                    _gameCtrl.setMappedScores(scores);
                 }
             }
         } else if ((name =="powerup") && (event.index >= 0)) {
@@ -458,8 +469,11 @@ public class StarFight extends Sprite
     {
         _status.addScore(score);
         _ownShip.addScore(score);
-        _status.checkHiScore(_ownShip);
+        var scores :Object = {};
+        scores[_ownShip.shipId] = _ownShip.score;
+        _gameCtrl.setMappedScores(scores);
     }
+
 
     /**
      * Register that a ship was hit at the location.
@@ -489,7 +503,7 @@ public class StarFight extends Sprite
     public function forceStatusUpdate () :void
     {
         _status.setPower(_ownShip.power);
-        _status.setPowerups(_ownShip.powerups);
+        _status.setPowerups(_ownShip);
     }
 
 
@@ -651,7 +665,7 @@ public class StarFight extends Sprite
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
         _board.tick(time);
         _bg.setAsCenter(_ownShip.boardX, _ownShip.boardY);
-        _status.setPowerups(_ownShip.powerups);
+        forceStatusUpdate();
 
         // Update all live shots.
         var completed :Array = []; // Array<ShotSprite>

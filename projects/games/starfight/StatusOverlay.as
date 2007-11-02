@@ -39,15 +39,33 @@ public class StatusOverlay extends Sprite
         addChild(vitals);
         vitals.x = StarFight.WIDTH - 109;
 
-        addChild(_spread = (Bitmap(new spreadAsset())));
+        addChild(_spread = new Sprite());
         _spread.x = StarFight.WIDTH - 104;
-        _spread.y = 63;
-        addChild(_speed = (Bitmap(new speedAsset())));
+        _spread.y = 61;
+        _spread.addChild(Bitmap(new spreadAsset()));
+        mask = new Shape();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, POW_SIZE, POW_SIZE);
+        _spread.addChild(mask);
+        _spread.mask = mask;
+        addChild(_speed = new Sprite());
+        _speed.addChild(Bitmap(new speedAsset()));
         _speed.x = StarFight.WIDTH - 73;
-        _speed.y = 63;
-        addChild(_shields = (Bitmap(new shieldsAsset())));
+        _speed.y = 61;
+        mask = new Shape();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, POW_SIZE, POW_SIZE);
+        _speed.addChild(mask);
+        _speed.mask = mask;
+        addChild(_shields = new Sprite());
+        _shields.addChild(Bitmap(new shieldsAsset()));
         _shields.x = StarFight.WIDTH - 42;
-        _shields.y = 63;
+        _shields.y = 61;
+        mask = new Shape();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, POW_SIZE, POW_SIZE);
+        _shields.addChild(mask);
+        _shields.mask = mask;
 
         var format:TextFormat = new TextFormat();
         format.font = "Verdana";
@@ -66,36 +84,30 @@ public class StatusOverlay extends Sprite
         _scoreText.defaultTextFormat = format;
         _scoreText.text = String(_score);
         addChild(_scoreText);
-
-/*
-        _hiScore = 0;
-        _hiScoreText = new TextField();
-        _hiScoreText.autoSize = TextFieldAutoSize.LEFT;
-        _hiScoreText.selectable = false;
-        _hiScoreText.x = 20;
-        _hiScoreText.y = 8;
-        _hiScoreText.defaultTextFormat = format;
-        addChild(_hiScoreText);
-
-        _hiNameText = new TextField();
-        _hiNameText.autoSize = TextFieldAutoSize.LEFT;
-        _hiNameText.selectable = false;
-        _hiNameText.x = 20;
-        _hiNameText.y = 28;
-        format.size = 10;
-        _hiNameText.defaultTextFormat = format;
-        addChild(_hiNameText);
-*/
     }
 
     /**
      * Shows the powerups held by the ship.
      */
-    public function setPowerups (powerups :int) :void
+    public function setPowerups (ship :ShipSprite) :void
     {
-        _speed.alpha = ((powerups & ShipSprite.SPEED_MASK) ? 1.0 : 0.0);
-        _spread.alpha = ((powerups & ShipSprite.SPREAD_MASK) ? 1.0 : 0.0);
-        _shields.alpha = ((powerups & ShipSprite.SHIELDS_MASK) ? 1.0 : 0.0);
+        var mask :Shape = Shape(_speed.mask);
+        mask.graphics.clear();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, POW_SIZE * (1.0 - ship.enginePower), POW_SIZE, POW_SIZE);
+        mask.graphics.endFill();
+
+        mask = Shape(_spread.mask);
+        mask.graphics.clear();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, POW_SIZE * (1.0 - ship.weaponPower), POW_SIZE, POW_SIZE);
+        mask.graphics.endFill();
+
+        mask = Shape(_shields.mask);
+        mask.graphics.clear();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, POW_SIZE * (1.0 - ship.shieldPower), POW_SIZE, POW_SIZE);
+        mask.graphics.endFill();
     }
 
     /**
@@ -117,20 +129,6 @@ public class StatusOverlay extends Sprite
     {
         _score += score;
         _scoreText.text = String(_score);
-    }
-
-    /**
-     * Sets the hi score readout.
-     */
-    public function checkHiScore (ship :ShipSprite) :void
-    {
-    /*
-        if (ship.score > _hiScore) {
-            _hiScoreText.text = String(ship.score);
-            _hiNameText.text = ship.playerName;
-            _hiScore = ship.score;
-        }
-        */
     }
 
     /**
@@ -244,9 +242,9 @@ public class StatusOverlay extends Sprite
     protected var shieldsAsset :Class;
 
     /** Powerup bitmaps. */
-    protected var _speed :Bitmap;
-    protected var _spread :Bitmap;
-    protected var _shields :Bitmap;
+    protected var _speed :Sprite;
+    protected var _spread :Sprite;
+    protected var _shields :Sprite;
 
     /** HP bar. */
     protected var _power :Sprite;
@@ -265,5 +263,6 @@ public class StatusOverlay extends Sprite
 
     protected static const POW_WIDTH :int = 85;
     protected static const POW_HEIGHT :int = 8;
+    protected static const POW_SIZE :int = 25;
 }
 }

@@ -8,7 +8,7 @@ public class WaspShipType extends ShipType
 {
     public function WaspShipType () :void
     {
-        super("Wasp", 2.0, 0.014, -0.007, 0.975, 0.825, 0.25, 1.0);
+        super("Wasp", 1.0, 0.024, -0.007, 0.95, 0.825, 0.25, 1.0);
         ENGINE_MOV.gotoAndStop(2);
     }
 

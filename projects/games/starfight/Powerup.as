@@ -10,6 +10,8 @@ public class Powerup extends Sprite
     public static const SHIELDS :int = 1;
     public static const SPEED :int = 2;
     public static const SPREAD :int = 3;
+    public static const HEALTH :int = 4;
+    public static const COUNT :int = 3;
 
     public var type :int;
     public var boardX :int;
@@ -21,8 +23,8 @@ public class Powerup extends Sprite
         this.boardX = boardX;
         this.boardY = boardY;
 
-        x = boardX * Codes.PIXELS_PER_TILE;
-        y = boardY * Codes.PIXELS_PER_TILE;
+        x = (boardX + 0.5) * Codes.PIXELS_PER_TILE;
+        y = (boardY + 0.5) * Codes.PIXELS_PER_TILE;
 
         setupGraphics();
     }
@@ -42,8 +44,8 @@ public class Powerup extends Sprite
         type = bytes.readInt();
         x = bytes.readInt();
         y = bytes.readInt();
-        boardX = x / Codes.PIXELS_PER_TILE;
-        boardY = y / Codes.PIXELS_PER_TILE; 
+        boardX = (x - Codes.PIXELS_PER_TILE/2) / Codes.PIXELS_PER_TILE;
+        boardY = (y - Codes.PIXELS_PER_TILE/2) / Codes.PIXELS_PER_TILE;
 
         setupGraphics();
     }
