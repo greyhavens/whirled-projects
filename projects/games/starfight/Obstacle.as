@@ -106,7 +106,7 @@ public class Obstacle extends Sprite
         return bytes;
     }
 
-    public function tick (time :Number) :void
+    public function tick (time :int) :void
     {
         if (type != WALL) {
             rotation = (rotation + (360 * time / 10000)) % 360;

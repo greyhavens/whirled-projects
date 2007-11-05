@@ -84,6 +84,12 @@ public class StatusOverlay extends Sprite
         _scoreText.defaultTextFormat = format;
         _scoreText.text = String(_score);
         addChild(_scoreText);
+
+        _roundText = new TextField();
+        _roundText.autoSize = TextFieldAutoSize.CENTER;
+        _roundText.selectable = false;
+        _roundText.defaultTextFormat = format;
+        addChild(_roundText);
     }
 
     /**
@@ -175,7 +181,8 @@ public class StatusOverlay extends Sprite
         ships.forEach(function (key :Object, value :Object) :void {
             var dot :Shape = _ships.get(int(key));
             if (dot != null) {
-                var sprite :Sprite = Sprite(value);
+                var sprite :ShipSprite = ShipSprite(value);
+                dot.visible = sprite.isAlive();
                 positionDot(dot, sprite.x, sprite.y);
             }
         });
@@ -188,6 +195,15 @@ public class StatusOverlay extends Sprite
             }
         }
     }
+
+    /**
+     * Updates the round text display.
+     */
+     public function updateRoundText (text :String) :void
+     {
+        _roundText.text = text;
+        _roundText.x = (StarFight.WIDTH - _roundText.width) / 2;
+     }
 
     /**
      * Positions the dot inside the radar.
@@ -254,12 +270,13 @@ public class StatusOverlay extends Sprite
     protected var _score :int;
     protected var _hiScore :int;
     protected var _scoreText :TextField;
-    protected var _hiScoreText :TextField;
-    protected var _hiNameText :TextField;
 
     /** Radar elements. */
     protected var _ships :HashMap = new HashMap();
     protected var _powerups :HashMap = new HashMap();
+
+    /** Status elements. */
+    protected var _roundText :TextField;
 
     protected static const POW_WIDTH :int = 85;
     protected static const POW_HEIGHT :int = 8;

@@ -109,7 +109,7 @@ public class ShotSprite extends Sprite {
     protected static const COLLISION_RAD :Number = 0.1;
 
     /** Time to live in seconds. */
-    protected static const TIME_TO_LIVE :Number = 5.0;
+    protected static const TIME_TO_LIVE :Number = 3.0;
 
     /** Our shot animation. */
     protected var _shotMovie :MovieClipAsset;

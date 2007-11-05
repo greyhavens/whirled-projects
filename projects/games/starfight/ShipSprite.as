@@ -183,6 +183,14 @@ public class ShipSprite extends Sprite
     }
 
     /**
+     * Returns true if the ship is alive.
+     */
+    public function isAlive () :Boolean
+    {
+        return power > DEAD;
+    }
+
+    /**
      * Try to move the ship between the specified points, reacting to any
      *  collisions along the way.  This function calls itself recursively
      *  to resolve collisions created in the rebound from earlier collisions.
@@ -250,7 +258,7 @@ public class ShipSprite extends Sprite
     public function hit (shooterId :int, shooterType :int) :void
     {
         // Already dead, don't bother.
-        if (power <= DEAD) {
+        if (!isAlive()) {
             return;
         }
 
@@ -272,7 +280,7 @@ public class ShipSprite extends Sprite
         }
 
         power -= hitPower;
-        if (power <= DEAD) {
+        if (!isAlive()) {
             _game.explode(boardX, boardY, _ship.rotation, shooterId, shipType);
 
             // Turn off sound loops.
@@ -361,7 +369,7 @@ public class ShipSprite extends Sprite
     /**
      * Process the movement of the ship for this timestep.
      */
-    public function tick (time :Number) :void
+    public function tick (time :int) :void
     {
         var rtime :Number = time / Codes.REFRESH_RATE;
         var turnFriction :Number =
@@ -428,7 +436,7 @@ public class ShipSprite extends Sprite
     public function keyPressed (event :KeyboardEvent) :void
     {
         // Can't do squat while dead.
-        if (power <= DEAD) {
+        if (!isAlive()) {
             return;
         }
 
@@ -566,7 +574,7 @@ public class ShipSprite extends Sprite
     public function keyReleased (event :KeyboardEvent) :void
     {
         // Can't do squat while dead.
-        if (power <= DEAD) {
+        if (!isAlive()) {
             return;
         }
 
@@ -735,11 +743,11 @@ public class ShipSprite extends Sprite
     protected var _ship :Sprite;
 
     protected var _firing :Boolean;
-    protected var _ticksToFire :Number = 0;
+    protected var _ticksToFire :int = 0;
 
     /** Ship performance characteristics. */
     protected static const SHOT_SPD :Number = 1;
-    protected static const TIME_PER_SHOT :Number = 330;
+    protected static const TIME_PER_SHOT :int = 330;
     protected static const SPEED_BOOST_FACTOR :Number = 1.5;
     protected static const RESPAWN_DELAY :int = 3000;
     protected static const DEAD :Number = 0.001;

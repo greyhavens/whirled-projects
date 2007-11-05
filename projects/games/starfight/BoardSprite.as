@@ -62,7 +62,7 @@ public class BoardSprite extends Sprite
                     continue;
                 }
 
-                if (ship.shipId == ignoreShip || (dx == 0 && dy == 0)) {
+                if (!ship.isAlive() || ship.shipId == ignoreShip || (dx == 0 && dy == 0)) {
                     continue;
                 }
 
@@ -220,7 +220,7 @@ public class BoardSprite extends Sprite
         addChild(powerupLayer = new Sprite());
     }
 
-    public function tick (time :Number) :void
+    public function tick (time :int) :void
     {
         for each (var obs :Obstacle in _obstacles) {
             obs.tick(time);

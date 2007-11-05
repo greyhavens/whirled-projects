@@ -16,7 +16,12 @@ public class Codes {
 
     /** How often we send updates to the server. */
     public static const FRAMES_PER_UPDATE :int = 3;
-    public static const TIME_PER_UPDATE :Number = 125;
+    public static const TIME_PER_UPDATE :int = 125;
+
+    /** Game states. */
+    public static const PRE_ROUND :int = 1;
+    public static const IN_ROUND :int = 2;
+    public static const POST_ROUND :int = 3;
 
     /** The different available types of ships. */
     public static const SHIP_TYPES :Array = [
