@@ -1,0 +1,10 @@
+                var load :Function =
+                    function (name :String) :void { trace (name + ": " + _test.getClass(name)); }
+
+                load("Foo");      // loads symbol 'Foo'
+                load("Settings"); // loads *class* 'Settings', although the symbol is different
+
+                var sc :Class = _test.getClass("Settings");
+                var s :Object = new sc();   
+		// do this to get at instance variables (note to self: how to get static ones?)
+                trace("Settings testvar: " + s.testvar);
