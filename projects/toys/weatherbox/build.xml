@@ -13,6 +13,6 @@
   <!--<property name="app.package-dir" value="com.foo.bar"/>-->
 
   <!-- include the standard build script -->
-  <import file="../etc/project-include.xml"/>
+  <import file="../../../etc/project-include.xml"/>
 
 </project>

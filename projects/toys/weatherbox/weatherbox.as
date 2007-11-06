@@ -26,9 +26,12 @@ import com.whirled.ControlEvent;
 /**
  * weatherbox is the coolest piece of Furni ever.
  */
-[SWF(width="250", height="130")]
+[SWF(width="250", height="150")]
 public class weatherbox extends Sprite
 {
+    public static const WIDTH :int = 250;
+    public static const HEIGHT :int = 150;
+
     public function weatherbox ()
     {
         // listen for an unload event
@@ -42,13 +45,20 @@ public class weatherbox extends Sprite
 
     protected function init () :void
     {
+        // draw our background
+        graphics.beginFill(0xFFFFFF);
+        graphics.drawRect(0, 0, WIDTH, HEIGHT);
+
         _stateBox = new ComboBox();
+        _stateBox.setSize(200, 22);
+        _stateBox.prompt = "Choose state...";
         _stateBox.addEventListener(Event.CHANGE, handleStatePicked);
         addChild(_stateBox);
         _stationBox = new ComboBox();
+        _stationBox.prompt = "Choose station...";
         _stationBox.enabled = false;
         _stationBox.addEventListener(Event.CHANGE, handleStationPicked);
-        _stationBox.width = 200;
+        _stationBox.setSize(200, 22);
         _stationBox.y = 25;
         addChild(_stationBox);
 
@@ -73,6 +83,7 @@ public class weatherbox extends Sprite
     protected function addTextField (x :int, y :int) :TextField
     {
         var tf :TextField = new TextField();
+        tf.selectable = false;
         tf.width = 200;
         tf.x = x;
         tf.y = y;
