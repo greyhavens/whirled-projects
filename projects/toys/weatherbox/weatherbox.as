@@ -26,11 +26,11 @@ import com.whirled.ControlEvent;
 /**
  * weatherbox is the coolest piece of Furni ever.
  */
-[SWF(width="250", height="150")]
+[SWF(width="250", height="95")]
 public class weatherbox extends Sprite
 {
     public static const WIDTH :int = 250;
-    public static const HEIGHT :int = 150;
+    public static const HEIGHT :int = 95;
 
     public function weatherbox ()
     {
@@ -38,12 +38,20 @@ public class weatherbox extends Sprite
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         // instantiate and wire up our controls and configs
-        _control = new FurniControl(this);
-        _config = new Config("weatherbox");
         _svc = new NOAAWeatherService();
+        _config = new Config("weatherbox");
+        _control = new FurniControl(this);
+        _control.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
 
+        setupUI();
+
+        loadWeather(getStationURL(), true);
+    }
+
+    protected function setupUI () :void
+    {
         // draw our background
-        graphics.beginFill(0xFFFFFF);
+        graphics.beginFill(0xFFFFFF, .75);
         graphics.drawRect(0, 0, WIDTH, HEIGHT);
 
         _iconArea = new ScrollPane();
@@ -58,14 +66,17 @@ public class weatherbox extends Sprite
         _windLabel = addTextField(60, 45);
         _timeLabel = addTextField(0, 75);
 
-        _configButton = new Button();
-        _configButton.label = "";
-        _configButton.setStyle("icon", WRENCH_ICON);
-        _configButton.addEventListener(MouseEvent.CLICK, handleConfigClicked);
-        _configButton.y = 110;
-        addChild(_configButton);
-
-        loadWeather();
+        // if we're in-whirled, only show the config button to room editors
+        var showConfigButton :Boolean = !_control.isConnected() || _control.canEditRoom();
+        if (showConfigButton) {
+            _configButton = new Button();
+            _configButton.label = "Config";
+            _configButton.addEventListener(MouseEvent.CLICK, handleConfigClicked);
+            _configButton.x = 199;
+            _configButton.y = 70;
+            _configButton.setSize(50, 22);
+            addChild(_configButton);
+        }
     }
 
     /**
@@ -73,13 +84,17 @@ public class weatherbox extends Sprite
      */
     public function configure (state :String, stationId :String) :void
     {
+        if (stationId == _stationId) {
+            return; // no change
+        }
+
         _state = state;
         setConfigs("state", _state);
         _stationId = stationId;
         setConfigs("station_id", _stationId);
         _stationURL = (_stationId == null) ? null : _svc.getStationURL(_stationId);
         setConfigs("station_url", _stationURL);
-        loadWeather();
+        loadWeather(_stationURL, true);
     }
 
     /**
@@ -90,11 +105,11 @@ public class weatherbox extends Sprite
         if (_cfgPanel == null) {
             return;
         }
-//        if (_control.isConnected()) {
-//            _control.clearPopup();
-//        } else {
+        if (_control.isConnected()) {
+            _control.clearPopup();
+        } else {
             removeChild(_cfgPanel);
-//        }
+        }
         _cfgPanel = null;
     }
 
@@ -148,12 +163,19 @@ public class weatherbox extends Sprite
         return tf;
     }
 
-    protected function loadWeather () :void
+    protected function loadWeather (stationURL :String, informLoading :Boolean = false) :void
     {
-        var stationURL :String = getStationURL();
         if (stationURL != null) {
             _svc.getWeather(stationURL, gotWeatherData);
-            _weatherLabel.text = "Retrieving weather...";
+
+            if (informLoading) {
+                _iconArea.source = null;
+                _weatherLabel.text = "";
+                _locationLabel.text = "";
+                _tempLabel.text = "";
+                _windLabel.text = "";
+                _timeLabel.text = "Retrieving weather...";
+            }
 
         } else {
             _weatherLabel.text = "Click the configure button to configure!";
@@ -181,12 +203,28 @@ public class weatherbox extends Sprite
             return;
         }
 
-        _cfgPanel = new ConfigPanel(this, _svc);
-//        if (_control.isConnected()) {
-//            _control.showPopup("Configure weather", _cfgPanel, WIDTH, HEIGHT);
-//        } else {
+        var connected :Boolean = _control.isConnected();
+        _cfgPanel = new ConfigPanel(this, _svc, connected);
+        if (connected) {
+            _control.showPopup("Configure weather", _cfgPanel, _cfgPanel.width, _cfgPanel.height);
+
+        } else {
             addChild(_cfgPanel);
-//        }
+        }
+    }
+
+    protected function handleMemoryChanged (event :ControlEvent) :void
+    {
+        if (event.name == "station_url") {
+            // only show the new weather if we aren't already showing this station
+            var newURL :String = event.value as String;
+            if (_stationURL != newURL) {
+                _stationURL = newURL;
+                _state = _control.lookupMemory("state", null) as String;
+                _stationId = _control.lookupMemory("station_id", null) as String;
+                loadWeather(_stationURL);
+            }
+        }
     }
 
     /**
@@ -216,8 +254,5 @@ public class weatherbox extends Sprite
     protected var _svc :NOAAWeatherService;
 
     protected var _cfgPanel :ConfigPanel;
-
-    [Embed(source="rsrc/WrenchIcon.gif")]
-    protected static const WRENCH_ICON :Class;
 }
 }

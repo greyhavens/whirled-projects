@@ -19,44 +19,68 @@ import com.bogocorp.weather.NOAAWeatherService;
 
 public class ConfigPanel extends Sprite
 {
-    public function ConfigPanel (box :weatherbox, svc :NOAAWeatherService)
+    public function ConfigPanel (box :weatherbox, svc :NOAAWeatherService, bigMode :Boolean)
     {
         _box = box;
         _svc = svc;
 
-        graphics.beginFill(0xFFFFFF);
-        graphics.drawRect(0, 0, weatherbox.WIDTH, weatherbox.HEIGHT);
-
+        _stateBox = new ComboBox();
+        _stationBox = new ComboBox();
         _statusLabel = new TextField();
+        _close = new Button();
+
+        if (bigMode) {
+            _height = 150;
+            _close.y = 127;
+            _statusLabel.y = 130;
+            // rowCount defaults are 5
+
+        } else {
+            _height = weatherbox.HEIGHT;
+            _close.y = 70;
+            _statusLabel.y = 70;
+            _stateBox.rowCount = 3;
+            _stationBox.rowCount = 2;
+        }
+
+        graphics.beginFill(0xFFFFFF);
+        graphics.drawRect(0, 0, width, height);
+
         _statusLabel.selectable =  false;
         _statusLabel.width = 200;
-        _statusLabel.y = 120;
         _statusLabel.text = "Retrieving station directory...";
         addChild(_statusLabel);
 
-        _stateBox = new ComboBox();
         _stateBox.setSize(200, 22);
         _stateBox.prompt = "Choose state...";
         _stateBox.enabled = false;
         _stateBox.addEventListener(Event.CHANGE, handleStatePicked);
         _stateBox.y = 0;
         addChild(_stateBox);
-        _stationBox = new ComboBox();
+        _stationBox.setSize(200, 22);
         _stationBox.prompt = "Choose station...";
         _stationBox.enabled = false;
         _stationBox.addEventListener(Event.CHANGE, handleStationPicked);
-        _stationBox.setSize(200, 22);
         _stationBox.y = 25;
         addChild(_stationBox);
 
-        _close = new Button();
         _close.label = "Close";
         _close.addEventListener(MouseEvent.CLICK, handleCloseClicked);
-        _close.x = 150;
-        _close.y = 120;
+        _close.setSize(50, 22);
+        _close.x = 199;
         addChild(_close);
 
         svc.getDirectory(directoryReceived);
+    }
+
+    override public function get width () :Number
+    {
+        return weatherbox.WIDTH;
+    }
+
+    override public function get height () :Number
+    {
+        return _height;
     }
 
     protected function directoryReceived () :void
@@ -127,5 +151,7 @@ public class ConfigPanel extends Sprite
     protected var _stationBox :ComboBox;
 
     protected var _close :Button;
+
+    protected var _height :int;
 }
 }
