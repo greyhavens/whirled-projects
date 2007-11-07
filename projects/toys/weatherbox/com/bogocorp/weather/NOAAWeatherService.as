@@ -15,6 +15,10 @@ public class NOAAWeatherService // extends URLLoaderBase
     /** Downlaod the directory. */
     public function getDirectory (hollaback :Function) :void
     {
+        if (_directory != null) {
+            hollaback();
+            return;
+        }
         getDataFromURL(DIRECTORY_URL, function (data :Object) :void {
                 _directory = XML(data);
                 hollaback();
@@ -76,14 +80,22 @@ public class NOAAWeatherService // extends URLLoaderBase
     }
 
     /**
+     * Get the station url from the specified stationCode. (Directory must be loaded.
+     */
+    public function getStationURL (stationCode :String) :String
+    {
+        var station :XML = _directory..station.(station_id == stationCode)[0];
+        return String(station.xml_url);
+    }
+
+    /**
      * Download the weather for the specified station.
      *
      * TODO: document format of XML.
      */
-    public function getWeather (stationCode :String, hollaback_XML :Function) :void
+    public function getWeather (stationURL :String, hollaback_XML :Function) :void
     {
-        var station :XML = _directory..station.(station_id == stationCode)[0];
-        getDataFromURL(station.xml_url, function (data :Object) :void {
+        getDataFromURL(stationURL, function (data :Object) :void {
             hollaback_XML(XML(data));
         });
     }
