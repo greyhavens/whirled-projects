@@ -84,6 +84,10 @@ public class NOAAWeatherService // extends URLLoaderBase
      */
     public function getStationURL (stationCode :String) :String
     {
+        if (_directory == null) {
+            throw new Error("getDirectory() and wait until the callback.");
+        }
+
         var station :XML = _directory..station.(station_id == stationCode)[0];
         return String(station.xml_url);
     }

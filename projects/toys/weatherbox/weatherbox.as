@@ -9,8 +9,11 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.TimerEvent;
 
 import flash.text.TextField;
+
+import flash.utils.Timer;
 
 import fl.data.DataProvider;
 import fl.containers.ScrollPane;
@@ -34,20 +37,26 @@ public class WeatherBox extends Sprite
 
     public function WeatherBox ()
     {
-        // listen for an unload event
-        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
-
         // instantiate and wire up our controls and configs
         _svc = new NOAAWeatherService();
         _config = new Config("WeatherBox");
         _control = new FurniControl(this);
         _control.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
 
+        _timer = new Timer(1, 1);
+        _timer.addEventListener(TimerEvent.TIMER, handleTimerExpired);
+
+        // listen for an unload event
+        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+
         setupUI();
 
         loadWeather(getStationURL(), true);
     }
 
+    /**
+     * Build the user interface.
+     */
     protected function setupUI () :void
     {
         // draw our background
@@ -64,7 +73,7 @@ public class WeatherBox extends Sprite
         _weatherLabel = addTextField(60, 15);
         _tempLabel = addTextField(60, 30);
         _windLabel = addTextField(60, 45);
-        _timeLabel = addTextField(0, 75);
+        _statusLabel = addTextField(0, 75);
 
         // if we're in-whirled, only show the config button to room editors
         var showConfigButton :Boolean = !_control.isConnected() || _control.canEditRoom();
@@ -80,6 +89,20 @@ public class WeatherBox extends Sprite
     }
 
     /**
+     * Helper method for building the UI.
+     */
+    protected function addTextField (x :int, y :int) :TextField
+    {
+        var tf :TextField = new TextField();
+        tf.selectable = false;
+        tf.width = WIDTH - x;
+        tf.x = x;
+        tf.y = y;
+        addChild(tf);
+        return tf;
+    }
+
+    /**
      * Called to configure our station and state.
      */
     public function configure (state :String, stationId :String) :void
@@ -89,11 +112,11 @@ public class WeatherBox extends Sprite
         }
 
         _state = state;
-        setConfigs("state", _state);
+        setConfigs(STATE_KEY, _state);
         _stationId = stationId;
-        setConfigs("station_id", _stationId);
+        setConfigs(STATION_ID_KEY, _stationId);
         _stationURL = (_stationId == null) ? null : _svc.getStationURL(_stationId);
-        setConfigs("station_url", _stationURL);
+        setConfigs(STATION_URL_KEY, _stationURL);
         loadWeather(_stationURL, true);
     }
 
@@ -118,19 +141,28 @@ public class WeatherBox extends Sprite
      */
     public function getStation () :String
     {
-        return getFromConfigs("station_id", _stationId);
+        return getFromConfigs(STATION_ID_KEY, _stationId);
     }
 
+    /**
+     * Return the configured state.
+     */
     public function getState () :String
     {
-        return getFromConfigs("state", _state);
+        return getFromConfigs(STATE_KEY, _state);
     }
 
+    /**
+     * Return the configured url for retrieving weather data.
+     */
     public function getStationURL () :String
     {
-        return getFromConfigs("station_url", _stationURL);
+        return getFromConfigs(STATION_URL_KEY, _stationURL);
     }
 
+    /**
+     * Helper method to retrieve a configured value.
+     */
     protected function getFromConfigs (key :String, defval :String) :String
     {
         var value :String;
@@ -144,6 +176,9 @@ public class WeatherBox extends Sprite
         return _config.getValue(key, defval) as String;
     }
 
+    /**
+     * Store a configured value.
+     */
     protected function setConfigs (key :String, value :String) :void
     {
         if (_control.isConnected()) {
@@ -152,36 +187,31 @@ public class WeatherBox extends Sprite
         _config.setValue(key, value);
     }
 
-    protected function addTextField (x :int, y :int) :TextField
-    {
-        var tf :TextField = new TextField();
-        tf.selectable = false;
-        tf.width = 200;
-        tf.x = x;
-        tf.y = y;
-        addChild(tf);
-        return tf;
-    }
-
+    /**
+     * Load weather data from the specified stationURL.
+     */
     protected function loadWeather (stationURL :String, informLoading :Boolean = false) :void
     {
         if (stationURL != null) {
-            _svc.getWeather(stationURL, gotWeatherData);
-
             if (informLoading) {
                 _iconArea.source = null;
                 _weatherLabel.text = "";
                 _locationLabel.text = "";
                 _tempLabel.text = "";
                 _windLabel.text = "";
-                _timeLabel.text = "Retrieving weather...";
+                _statusLabel.text = "Retrieving weather...";
             }
+            _timer.stop();
+            _svc.getWeather(stationURL, gotWeatherData);
 
         } else {
-            _weatherLabel.text = "Click the configure button to configure!";
+            _statusLabel.text = "Click the configure button to configure!";
         }
     }
 
+    /**
+     * A callback called when weather data is received.
+     */
     protected function gotWeatherData (data :XML) :void
     {
         _iconArea.source = String(data.icon_url_base) + data.icon_url_name;
@@ -191,11 +221,22 @@ public class WeatherBox extends Sprite
         _locationLabel.text = data.location;
         _tempLabel.text = data.temperature_string;
         _windLabel.text = "Wind: " + data.wind_string;
-        _timeLabel.text = data.observation_time;
+        _statusLabel.text = data.observation_time;
+
+        var delay :int = int(data.suggested_pickup_period);
+        if (delay == 0) {
+            delay = 60;
+        }
+        _timer.delay = delay * 60 * 1000; // convert minutes to milliseconds
+        _timer.reset();
+        _timer.start();
 
         //trace("weather: " + data);
     }
 
+    /**
+     * Handle a click on the config button.
+     */
     protected function handleConfigClicked (event :MouseEvent) :void
     {
         if (_cfgPanel != null) {
@@ -203,6 +244,7 @@ public class WeatherBox extends Sprite
             return;
         }
 
+        _timer.stop();
         var connected :Boolean = _control.isConnected();
         _cfgPanel = new ConfigPanel(this, _svc, connected);
         if (connected) {
@@ -213,27 +255,37 @@ public class WeatherBox extends Sprite
         }
     }
 
+    /**
+     * Handle a memory change in-whirled.
+     */
     protected function handleMemoryChanged (event :ControlEvent) :void
     {
-        if (event.name == "station_url") {
+        if (event.name == STATION_URL_KEY) {
             // only show the new weather if we aren't already showing this station
             var newURL :String = event.value as String;
             if (_stationURL != newURL) {
                 _stationURL = newURL;
-                _state = _control.lookupMemory("state", null) as String;
-                _stationId = _control.lookupMemory("station_id", null) as String;
+                _state = _control.lookupMemory(STATE_KEY, null) as String;
+                _stationId = _control.lookupMemory(STATION_ID_KEY, null) as String;
                 loadWeather(_stationURL);
             }
         }
     }
 
     /**
-     * This is called when your furni is unloaded.
+     * Handle our refresh timer expiring.
+     */
+    protected function handleTimerExpired (event :TimerEvent) :void
+    {
+        loadWeather(getStationURL());
+    }
+
+    /**
+     * This is called when the toy is unloaded.
      */
     protected function handleUnload (event :Event) :void
     {
-        // stop any sounds, clean up any resources that need it.  This specifically includes 
-        // unregistering listeners to any events - especially Event.ENTER_FRAME
+        _timer.stop();
     }
 
     protected var _state :String = null;
@@ -245,7 +297,7 @@ public class WeatherBox extends Sprite
     protected var _locationLabel :TextField;
     protected var _tempLabel :TextField;
     protected var _windLabel :TextField;
-    protected var _timeLabel :TextField;
+    protected var _statusLabel :TextField;
 
     protected var _configButton :Button;
 
@@ -253,6 +305,12 @@ public class WeatherBox extends Sprite
     protected var _config :Config;
     protected var _svc :NOAAWeatherService;
 
+    protected var _timer :Timer;
+
     protected var _cfgPanel :ConfigPanel;
+
+    protected static const STATE_KEY :String = "state";
+    protected static const STATION_ID_KEY :String = "station_id";
+    protected static const STATION_URL_KEY :String = "station_url";
 }
 }
