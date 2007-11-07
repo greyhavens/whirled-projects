@@ -70,10 +70,14 @@ public class Weapon extends Pickup
     // documentation inherited
     override protected function hit (player :Player) :void
     {
-        super.hit(player);
-        var sparks :MovieClip = _ctrl.create("WeaponSparks");
-        sparks.cn.gotoAndStop(label);
-        _view.addTransient(sparks, x, y, true);
+		if(player.blocking || player.weapon == _weapon || player.weapon == FISTS){
+			super.hit(player);
+			var sparks :MovieClip = _ctrl.create("WeaponSparks");
+			sparks.cn.gotoAndStop(label);
+			_view.addTransient(sparks, x, y, true);
+		}else{
+			_view.hud.showPickUp(x);
+		}
     }
 
     /**

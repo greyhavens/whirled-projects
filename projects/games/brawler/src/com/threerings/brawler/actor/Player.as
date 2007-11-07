@@ -298,69 +298,70 @@ public class Player extends Pawn
     override public function enterFrame (elapsed :Number) :void
     {
         super.enterFrame(elapsed);
+		if(_ctrl._disablePlayers != true){
+			// check for collision of damage box with enemies when attacking
+			hitTestEnemies();
 
-        // check for collision of damage box with enemies when attacking
-        hitTestEnemies();
+			// if he's on the door, notify the controller
+			if (!dead && _view.door.hitTestObject(_bounds)) {
+				_ctrl.playerOnDoor();
+			}
+			if (!amOwner) {
+				return;
+			}
 
-        // if he's on the door, notify the controller
-        if (!dead && _view.door.hitTestObject(_bounds)) {
-            _ctrl.playerOnDoor();
-        }
-        if (!amOwner) {
-            return;
-        }
+			// respawn if enough time has passed since death
+			if (dead) {
+				if (_deathClock > RESPAWN_INTERVAL) {
+					respawn();
+				}
+				return;
+			}
 
-        // respawn if enough time has passed since death
-        if (dead) {
-            if (_deathClock > RESPAWN_INTERVAL) {
-                respawn();
-            }
-            return;
-        }
+			// blocking and sprinting deplete energy
+			var rate :Number;
+			if (sprinting) {
+				rate = SPRINT_ENERGY_RATE;
+			} else if (blocking) {
+				rate = BLOCK_ENERGY_RATE;
+			} else if (_depleted) {
+				rate = DEPLETED_ENERGY_RATE;
+			} else {
+				rate = NORMAL_ENERGY_RATE;
+			}
+			_energy = MathUtil.clamp(_energy + rate*elapsed, 0, 100);
+			if (_energy == 0) {
+				_depleted = true;
+				if (blocking) {
+					blocking = false;
+				} else if (sprinting) {
+					stop();
+				}
+			} else if (_energy == 100) {
+				_depleted = false;
+			}
 
-        // blocking and sprinting deplete energy
-        var rate :Number;
-        if (sprinting) {
-            rate = SPRINT_ENERGY_RATE;
-        } else if (blocking) {
-            rate = BLOCK_ENERGY_RATE;
-        } else if (_depleted) {
-            rate = DEPLETED_ENERGY_RATE;
-        } else {
-            rate = NORMAL_ENERGY_RATE;
-        }
-        _energy = MathUtil.clamp(_energy + rate*elapsed, 0, 100);
-        if (_energy == 0) {
-            _depleted = true;
-            if (blocking) {
-                blocking = false;
-            } else if (sprinting) {
-                stop();
-            }
-        } else if (_energy == 100) {
-            _depleted = false;
-        }
+			// reset the attack level if enough time has passed
+			if ((_attackResetCountdown -= elapsed) <= 0) {
+				_attackLevel = 0;
+			}
 
-        // reset the attack level if enough time has passed
-        if ((_attackResetCountdown -= elapsed) <= 0) {
-            _attackLevel = 0;
-        }
+			// reset the hit count if enough time has passed
+			if ((_hitResetCountdown -= elapsed) <= 0) {
+				_hits = 0;
+			}
 
-        // reset the hit count if enough time has passed
-        if ((_hitResetCountdown -= elapsed) <= 0) {
-            _hits = 0;
-        }
+			// increment the player's health over time
+			if ((_healthTickCountdown -= elapsed) <= 0) {
+				heal(maxhp * HEALTH_TICK_AMOUNTS[_ctrl.difficulty]);
+				_healthTickCountdown = HEALTH_TICK_INTERVAL;
+			}
 
-        // increment the player's health over time
-        if ((_healthTickCountdown -= elapsed) <= 0) {
-            heal(maxhp * HEALTH_TICK_AMOUNTS[_ctrl.difficulty]);
-            _healthTickCountdown = HEALTH_TICK_INTERVAL;
-        }
-
-        // if he isn't moving, have him face the cursor
-        if (_action == "idle") {
-            face(_view.cursor.x);
-        }
+			// if he isn't moving, have him face the cursor
+			if (_action == "idle") {
+				face(_view.cursor.x);
+			}
+		}
     }
 
     /**

@@ -4,6 +4,7 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.geom.Point;
 
 import com.threerings.util.StringUtil;
 
@@ -176,6 +177,9 @@ public class HudView extends Sprite
         var minutes :Number = Math.floor(_ctrl.clock / 60);
         var seconds :String = (_ctrl.clock % 60).toString();
         _hud.time.text = minutes + "'" + StringUtil.prepad(seconds, 2, "0") + "''";
+		_hud.score_par.text = (_ctrl.calculateGrade("damage"));
+		_hud.score_time.text = (_ctrl.calculateGrade("time"));
+		_hud.score_grade.text = _ctrl.calculateGrade()+"%";
     }
 
     /**
@@ -192,8 +196,6 @@ public class HudView extends Sprite
     public function updateScore (increment :int = 0) :void
     {
         _hud.score.text = _ctrl.score;
-		_hud.score_par.text = _ctrl._mobHpTotal;
-		_hud.score_grade.text = String(Math.round((_ctrl.score/_ctrl._mobHpTotal)*100))+"%";
         if (increment > 0) {
             _hud.score_add.score_add.score_add.text = "+" + increment;
             _hud.score_add.gotoAndPlay("go");
@@ -270,6 +272,22 @@ public class HudView extends Sprite
     {
         // returns to idle after showing damage effect
         _hud.stats.exp.weapon.gotoAndPlay("damage");
+    }
+	
+	/**
+     * Flash PICKUP image for new weapon.
+     */
+    public function showPickUp(weaponX:Number) :void
+    {
+		var self :Player = _ctrl.self;
+        if (self == null) {
+            return;
+        }
+		var local :Point = self.parent.localToGlobal(new Point(weaponX, 0));
+		_hud.pickup.x = local.x;
+        if(_hud.pickup.currentFrame > 14){
+				_hud.pickup.gotoAndPlay(1);
+		}
     }
 
     /**

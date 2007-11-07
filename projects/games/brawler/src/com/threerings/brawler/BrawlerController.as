@@ -181,6 +181,9 @@ public class BrawlerController extends Controller
     {
         var oscore :int = _score;
         _score = value;
+		if(_score < 0){
+			_score = 0;
+		}
         _view.hud.updateScore(_score - oscore);
     }
 
@@ -210,17 +213,60 @@ public class BrawlerController extends Controller
             }
             createEnemies();
             if (_clear) {
+				endGame();
                 // post our score to the dobj and show the game results
-                if (amPlaying) {
-                    _throttle.set("scores", _grade, _control.seating.getMyPosition());
-                }
-                _view.showResults();
+                //_view.showResults();
+				//_grade = calculateGrade();
+				//if (amPlaying) {
+                //    _throttle.set("scores", _grade, _control.seating.getMyPosition());
+                //}
             } else {
                 _view.enterRoom();
             }
         });
     }
+	
+	/**
+     * Ends the game and brings up the Grade Card.
+     */
+    public function endGame () :void
+    {
+		_disableEnemies = true;
+		_disableControls = true;
+		
+        // post our score to the dobj
+		_grade = calculateGrade();
+		
+		// show the game results
+		_view.showResults();
+		
+		//Set up Exit key.
+		results.exit_btn.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown_exit);
+		
+		//Listen to flow award.
+		_ctrl.control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, onFLowAward);
+		
+		if (amPlaying) {
+            _throttle.set("scores", _grade, _control.seating.getMyPosition());
+        }
+    }
 
+	/**
+     * The game is over and flow has been awarded.
+     */
+    public function onFlowAward (event :FlowAwardedEvent) :void
+    {
+		control.localChat("You recieved "+event.amount+" flow for your performance rate of "+event.percentile+"!");
+	}
+	
+	/**
+     * The button to exit the game has been hit.
+     */
+    public function mouseDown_exit (event:MouseEvent):void
+    {
+		control.backToWhirled(true);
+	}
+	
     /**
      * Sets the current wave.
      */
@@ -279,6 +325,8 @@ public class BrawlerController extends Controller
                     actor.destroy();
                 }
             }
+			_clear = true;
+			endGame();
         }
         if (--_enemies == 0 && _control.amInControl()) {
             // proceed to the next wave
@@ -430,6 +478,42 @@ public class BrawlerController extends Controller
         }
     }
 
+    // Calculate grade and return it.
+    public function calculateGrade (toggle:String = "grade", handicap:Boolean = false) :Number
+    {
+		var temp_grade:Number = 0;
+		var num_players:Number = control.seating.getPlayerIds().length;
+		var koCount :Number = control.get("koCount") as Number;
+        var koPoints :Number = 0;//Math.max(0, 5000 - 5000*koCount);
+		
+		var local_dmgpar:Number = (_score+koPoints)/(_mobHpTotal/num_players);
+		var local_timepar:Number = (_mobHpTotal/(210*num_players))/clock;
+		var local_difficult:Number;
+		if(handicap){
+			if(_difficulty == 0){
+				local_difficult = 0.5;
+			}else if(_difficulty == 2){
+				local_difficult = 1.5;
+			}else if(_difficulty == 3){
+				local_difficult = 2.0;
+			}else{
+				local_difficult = 1.0;
+			}
+		}else{
+			local_difficult = 1.0;
+		}
+		temp_grade = Math.round((local_dmgpar*local_timepar*local_difficult)*100);
+		if(toggle == "grade"){
+			return temp_grade;
+		}else if(toggle == "damage"){
+			return local_dmgpar;
+		}else if(toggle == "time"){
+			return local_timepar;
+		}else{
+			return temp_grade;
+		}
+    }
+	
     /**
      * Called when the SWF is done loading.
      */
@@ -638,7 +722,7 @@ public class BrawlerController extends Controller
     protected var _blocker :KeyRepeatBlocker;
 
     /** The configured difficulty level. */
-    protected var _difficulty :int;
+    public var _difficulty :int;
 
     /** The set of actors, mapped by name ("actor[owner id]_[actor id]"). */
     protected var _actors :Object = new Object();
@@ -685,8 +769,14 @@ public class BrawlerController extends Controller
     /** The enemy configurations. */
     protected var _econfigs :Array = new Array();
 	
-	/** Totale amount of Mob Hit Points. */
+	/** Total amount of Mob Hit Points. */
 	public var _mobHpTotal :Number = 0;
+	
+	/** If on, turns off enemies. */
+	public var _disableEnemies :Boolean = false;
+	
+	/** If on, turns off controls.  */
+	public var _disableControls :Boolean = false;
 
     /** The raw SWF data. */
     //[Embed(source="../../../../rsrc/raw.swf", mimeType="application/octet-stream")]

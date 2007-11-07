@@ -288,36 +288,37 @@ public class BrawlerView extends Sprite
     public function showResults () :void
     {
         var results :MovieClip = _ctrl.create("Endscreen");
-        removeChild(_game);
+        //removeChild(_game);
+		_hud.alpha = 0;
         addChild(results);
+		results.gotoAndPlay(1);
 
         // display the KO count/points
-        var koCount :Number = _ctrl.control.get("koCount") as Number;
-        var koPoints :Number = Math.max(0, 5000 - 1000*koCount);
-        results.stats.pko.playerkos.text = koCount + " (+" + koPoints + ")";
+        //var koCount :Number = _ctrl.control.get("koCount") as Number;
+        //var koPoints :Number = Math.max(0, 5000 - 5000*koCount);
+        //results.stats.pko.playerkos.text = koCount + " (+" + koPoints + ")";
 
         // display the damage points
-        var playerDamage :Number = _ctrl.control.get("playerDamage") as Number;
-        var enemyDamage :Number = _ctrl.control.get("enemyDamage") as Number;
-        //var damagePoints :Number = Math.max(0, Math.round(enemyDamage - playerDamage*2));
-		var damagePoints :Number = Math.max(0, Math.round(_ctrl.score));
-        results.stats.dmg.enemydamage.text = "+" + damagePoints;
-
+        results.score.points.text = Math.round(_ctrl.score);
+		
+		if(_ctrl._difficulty == 0){
+			results.difficulty.text = "EASY";
+		}else if(_ctrl._difficulty == 1){
+			results.difficulty.text = "NORMAL";
+		}else if(_ctrl._difficulty == 2){
+			results.difficulty.text = "HARD";
+		}else{
+			results.difficulty.text = "INFERNO";
+		}
+		
         // display the final clock value, bonus score
-        results.stats.ct.cleartime.text = _hud.clock;
-        results.stats.sb.bonusscore.text = "+" + _ctrl.score;
+        results.time.points.text = _hud.clock;
 
         // compute and display the rank
-        var score :Number = koPoints + _ctrl.score;
-        var par :Number = _ctrl._mobHpTotal+2000;
-        var pct :Number = Math.round((score / par) * 100);
+        var pct :Number = Math.round(_ctrl.calculateGrade("grade",true));
         var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
-        results.stats.r.rank.text = GRADES[grade] + " (" + pct + "%)";
-		_ctrl._grade = pct;
-
-        // show the flow awarded (TODO: make this accurate)
-        var flow :int = pct;
-        results.stats.f.flow.text = "DISABLED";
+        results.grade.gotoAndStop(GRADES[grade]);
+		results.percent.points.text = pct;
     }
 
     /**
