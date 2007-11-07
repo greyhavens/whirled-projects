@@ -1,10 +1,9 @@
 <!-- build configuration -->
-<project name="weatherbox" default="compile" basedir=".">
+<project name="WeatherBox" default="compile" basedir=".">
 
   <!-- defines our project name -->
-  <property name="app.name" value="weatherbox"/>
+  <property name="app.name" value="WeatherBox"/>
   <property name="flex.use-network" value="true"/>
-  <property name="flex.args" value="-compiler.include-libraries=/home/ray/whirled/lib/v3components.swc"/>
 
   <!-- if you wish to put your source in a subdirectory, uncomment this line -->
   <!--<property name="app.source-dir" value="src"/>-->

@@ -1,7 +1,7 @@
 //
 // $Id$
 //
-// weatherbox - a piece of furni for Whirled
+// WeatherBox - a piece of furni for Whirled
 
 package {
 
@@ -24,22 +24,22 @@ import com.whirled.FurniControl;
 import com.whirled.ControlEvent;
 
 /**
- * weatherbox is the coolest piece of Furni ever.
+ * WeatherBox is a 'toy' that displays weather data for a configured station.
  */
 [SWF(width="250", height="95")]
-public class weatherbox extends Sprite
+public class WeatherBox extends Sprite
 {
     public static const WIDTH :int = 250;
     public static const HEIGHT :int = 95;
 
-    public function weatherbox ()
+    public function WeatherBox ()
     {
         // listen for an unload event
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         // instantiate and wire up our controls and configs
         _svc = new NOAAWeatherService();
-        _config = new Config("weatherbox");
+        _config = new Config("WeatherBox");
         _control = new FurniControl(this);
         _control.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
 

@@ -19,7 +19,7 @@ import com.bogocorp.weather.NOAAWeatherService;
 
 public class ConfigPanel extends Sprite
 {
-    public function ConfigPanel (box :weatherbox, svc :NOAAWeatherService, bigMode :Boolean)
+    public function ConfigPanel (box :WeatherBox, svc :NOAAWeatherService, bigMode :Boolean)
     {
         _box = box;
         _svc = svc;
@@ -36,7 +36,7 @@ public class ConfigPanel extends Sprite
             // rowCount defaults are 5
 
         } else {
-            _height = weatherbox.HEIGHT;
+            _height = WeatherBox.HEIGHT;
             _close.y = 70;
             _statusLabel.y = 70;
             _stateBox.rowCount = 3;
@@ -75,7 +75,7 @@ public class ConfigPanel extends Sprite
 
     override public function get width () :Number
     {
-        return weatherbox.WIDTH;
+        return WeatherBox.WIDTH;
     }
 
     override public function get height () :Number
@@ -142,7 +142,7 @@ public class ConfigPanel extends Sprite
         }
     }
     
-    protected var _box :weatherbox;
+    protected var _box :WeatherBox;
     protected var _svc :NOAAWeatherService;
 
     protected var _statusLabel :TextField;
