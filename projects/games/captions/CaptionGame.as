@@ -34,8 +34,12 @@ import com.threerings.ezgame.StateChangedEvent;
 import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
 
+/**
+ * Back-end logic for running a caption game!
+ */
 public class CaptionGame extends EventDispatcher
 {
+    /** Phase constants. */
     public static const CAPTIONING_PHASE :int = 0;
     public static const VOTING_PHASE :int = 1;
     public static const RESULTS_PHASE :int = 2;
@@ -46,29 +50,22 @@ public class CaptionGame extends EventDispatcher
     /** The event type dispatched when the phase changes. */
     public static const PHASE_CHANGED_EVENT :String = "phaseChanged";
 
-    public static const DEFAULT_DURATIONS :Array = [45, 30, 15];
-
     /** Scoring values for various actions taken during a game. */
     public static const CAPTION_SCORE :int = 30; // I'm worried people will just enter "asdasd"
     public static const VOTE_SCORE :int = 20;
     public static const WINNER_SCORE :int = 50;
 
+    /**
+     * Create a caption game.
+     */
     public function CaptionGame (
         gameCtrl :WhirledGameControl, previewCount :int = 4, scoreRounds :int = 10,
-        durations :Array = null)
+        captioningDuration :int = 45, votingDuration :int = 30, resultsDuration :int = 15)
     {
-        if (durations == null) {
-            durations = DEFAULT_DURATIONS;
-
-        } else if (durations.length != 3) {
-            throw new ArgumentError("durations must contain three values: " +
-                "durations for [ CAPTIONING_PHASE, VOTE_PHASE, RESULTS_PHASE ].");
-        }
-
         _ctrl = gameCtrl;
         _previewCount = previewCount;
         _scoreRounds = scoreRounds;
-        _durations = durations;
+        _durations = [ captioningDuration, votingDuration, resultsDuration ];
 
         init();
     }
@@ -78,7 +75,8 @@ public class CaptionGame extends EventDispatcher
      */
     public function getCurrentPhase () :int
     {
-        return int(_ctrl.get("phase"));
+        // hide the secret phase -1 we use to restart a round
+        return Math.max(CAPTIONING_PHASE, int(_ctrl.get("phase")));
     }
 
     /**
@@ -92,11 +90,12 @@ public class CaptionGame extends EventDispatcher
     /**
      * Valid during any phase.
      *
-     * @return the URL of the photo which is being captioned.
+     * @return the URL of the photo which is being captioned, or null if we do not yet have a
+     * photo (the game is being started up).
      */
     public function getPhoto () :String
     {
-        return String(_ctrl.get("photo"));
+        return _ctrl.get("photo") as String;
     }
 
     /**
@@ -173,7 +172,11 @@ public class CaptionGame extends EventDispatcher
             return;
         }
 
-        _myVote = computeApprovalVote(_myVote, captionIndex, on);
+        // convert the index (which was randomized on this client) to the player id of the caption
+        var ids :Array = _ctrl.get("ids") as Array;
+        var captionId :int = int(ids[int(_indexes[captionIndex])]);
+
+        _myVote = computeApprovalVote(_myVote, captionId, on);
         _ctrl.set("vote:" + _myId, _myVote);
     }
 
@@ -242,7 +245,6 @@ public class CaptionGame extends EventDispatcher
 
         _ctrl.addEventListener(Event.UNLOAD, handleUnload);
         _ctrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
-        _ctrl.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
         _ctrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
         _ctrl.addEventListener(MessageReceivedEvent.TYPE, handleMessageReceived);
         _ctrl.addEventListener(StateChangedEvent.CONTROL_CHANGED, checkControl);
@@ -258,6 +260,9 @@ public class CaptionGame extends EventDispatcher
         updateScoreDisplay();
     }
 
+    /**
+     * Updated the last-X-rounds display of votes received.
+     */
     protected function updateScoreDisplay () :void
     {
         var scores :Object = {};
@@ -272,13 +277,16 @@ public class CaptionGame extends EventDispatcher
         _ctrl.setMappedScores(scores);
     }
 
-
+    /**
+     * Handle a change to a property on the game object.
+     */
     protected function handlePropertyChanged (event :PropertyChangedEvent) :void
     {
         switch (event.name) {
         case "phase":
-            checkPhase();
-            dispatchEvent(new Event(PHASE_CHANGED_EVENT));
+            if (checkPhase()) {
+                dispatchEvent(new Event(PHASE_CHANGED_EVENT));
+            }
             break;
         }
 
@@ -297,12 +305,16 @@ public class CaptionGame extends EventDispatcher
                     }
                     _ctrl.setImmediate("skipping", true);
                     _ctrl.stopTicker("tick");
+                    setPhase(-1);
                     setCtrlPhase(GET_PHOTO_CTRL_PHASE);
                 }
             }
         }
     }
 
+    /**
+     * Handle a message received on the game object.
+     */
     protected function handleMessageReceived (event :MessageReceivedEvent) :void
     {
         switch (event.name) {
@@ -312,6 +324,9 @@ public class CaptionGame extends EventDispatcher
         }
     }
 
+    /**
+     * Update the tick and handle ending the current phase.
+     */
     protected function updateTick (value :int) :void
     {
         var duration :int = int(_durations[getCurrentPhase()]);
@@ -360,26 +375,41 @@ public class CaptionGame extends EventDispatcher
         return votes;
     }
 
+    /**
+     * Are we in the specified phase?
+     */
     protected function isPhase (phase :int) :Boolean
     {
         return (phase === getCurrentPhase());
     }
 
+    /**
+     * Get the current control phase.
+     */
     protected function getControlPhase () :int
     {
         return int(_ctrl.get("cphase"));
     }
 
+    /**
+     * Are we in the specified control phase?
+     */
     protected function isCtrlPhase (phase :int) :Boolean
     {
         return (phase === getControlPhase());
     }
 
+    /**
+     * Set the control phase.
+     */
     protected function setCtrlPhase (phase :int) :void
     {
         _ctrl.setImmediate("cphase", phase);
     }
 
+    /**
+     * Set the game phase.
+     */
     protected function setPhase (phase :int) :void
     {
         _ctrl.set("phase", phase);
@@ -387,10 +417,15 @@ public class CaptionGame extends EventDispatcher
     }
 
     /**
+     * , return true if we should dispatch an event to clients.
      */
-    protected function checkPhase () :void
+    protected function checkPhase () :Boolean
     {
-        switch (getCurrentPhase()) {
+        switch (int(_ctrl.get("phase"))) {
+        default:
+            // do not dispatch an event for internal funky phases
+            return false;
+
         case CAPTIONING_PHASE:
             setupCaptioning();
             break;
@@ -403,13 +438,21 @@ public class CaptionGame extends EventDispatcher
             setupResults();
             break;
         }
+
+        return true;
     }
 
+    /**
+     * Set us up to be in the captioning phase.
+     */
     protected function setupCaptioning () :void
     {
         _myCaption = "";
     }
 
+    /**
+     * Set us up to be in the voting phase.
+     */
     protected function setupVoting () :void
     {
         var ii :int;
@@ -417,17 +460,17 @@ public class CaptionGame extends EventDispatcher
         var ids :Array = _ctrl.get("ids") as Array;
 
         // randomize the displayed order for each player..
-        var indexes :Array = [];
+        _indexes = [];
         for (ii = 0; ii < caps.length; ii++) {
-            indexes.push(ii);
+            _indexes.push(ii);
         }
-        ArrayUtil.shuffle(indexes);
+        ArrayUtil.shuffle(_indexes);
 
         _myVote = null;
         _votableCaptions = [];
         _ourCaptionIndex = -1;
-        for (ii = 0; ii < indexes.length; ii++) {
-            var index :int = int(indexes[ii]);
+        for (ii = 0; ii < _indexes.length; ii++) {
+            var index :int = int(_indexes[ii]);
             _votableCaptions.push(String(caps[index]));
             if (ids[index] == _myId) {
                 _ourCaptionIndex = ii;
@@ -435,6 +478,9 @@ public class CaptionGame extends EventDispatcher
         }
     }
 
+    /**
+     * Set us up to be in the results phase.
+     */
     protected function setupResults () :void
     {
         var results :Array = _ctrl.get("results") as Array;
@@ -513,6 +559,8 @@ public class CaptionGame extends EventDispatcher
             _results.push(record);
         }
 
+        updateScoreDisplay();
+
         // if we're in control, do score awarding for all players (ending the "game" (round))
         if (_inControl) {
             // give points just for voting (people may have voted but not be in the other array)
@@ -536,33 +584,6 @@ public class CaptionGame extends EventDispatcher
         }
     }
 
-//    protected function setupResultsUI () :void
-//    {
-//        _myNextPhotoVote = null;
-//
-//        var ii :int;
-//
-//        // see if there are any preview pics to vote on...
-//        var nextUrls :Array = [];
-//        for (ii = 0; ii < NEXT_PICTURE_COUNT; ii++) {
-//            var nexts :Array = _ctrl.get("next_" + ii) as Array;
-//            if (nexts != null) {
-//                nextUrls[ii] = nexts[0]; // thumbnail..
-//            }
-//        }
-//        if (nextUrls.length > 0) {
-//            _nextPanel = new Canvas();
-//            _ui.addChild(_nextPanel);
-//            for (ii = 0; ii < NEXT_PICTURE_COUNT; ii++) {
-//                if (nextUrls[ii] != null) {
-//                    addPreviewPhoto(_nextPanel, ii, nextUrls[ii]);
-//                }
-//            }
-//        }
-//
-//        updateScoreDisplay();
-//    }
-
     // Below here are methods only called by the user in control
     // ---------------------------------------------
 
@@ -579,8 +600,8 @@ public class CaptionGame extends EventDispatcher
 
         var ctrlPhase :int = getControlPhase();
 
-        // the ctrl phase should be 1 more than the current phase...
-        if (ctrlPhase != (1 + getCurrentPhase())) {
+        // the ctrl phase should be 1 more than the current (raw) phase...
+        if (ctrlPhase != (1 + int(_ctrl.get("phase"))) % PHASE_COUNT) {
             // otherwise, we need do nothing (the phase is already started)
             // TODO: we could freeze here if we get control right after the ticker stops...
             return;
@@ -602,7 +623,39 @@ public class CaptionGame extends EventDispatcher
     }
 
     /**
-     * Called by the user in control, set up voting.
+     * Start the new round.
+     */
+    protected function startRound (photoUrl :String) :void
+    {
+        _ctrl.doBatch(function () :void {
+            _ctrl.set("skipping", null);
+            _ctrl.set("photo", photoUrl);
+            _ctrl.set("captions", null);
+            _ctrl.set("ids", null);
+            _ctrl.set("results", null);
+            clearProps("caption:");
+            clearProps("vote:");
+            clearProps("name:");
+            clearProps("skip:");
+            clearProps("pvote:");
+            clearProps("next_");
+            setPhase(CAPTIONING_PHASE);
+        });
+    }
+
+    /**
+     * Clear all the properties with the specified prefix. This should be called from
+     * within a doBatch().
+     */
+    protected function clearProps (prefix :String) :void
+    {
+        for each (var prop :String in _ctrl.getPropertyNames(prefix)) {
+            _ctrl.set(prop, null);
+        }
+    }
+
+    /**
+     * Initialize the properties needed for the voting phase.
      */
     protected function initVotingPhase () :void
     {
@@ -623,6 +676,7 @@ public class CaptionGame extends EventDispatcher
         if (ids.length == 0) {
             // there were no submitted captions
             // move straight to the next round
+            setPhase(-1);
             setCtrlPhase(GET_PHOTO_CTRL_PHASE);
             return;
         }
@@ -636,6 +690,9 @@ public class CaptionGame extends EventDispatcher
         loadNextPictures();
     }
 
+    /**
+     * Initialize the properties needed for the results phase.
+     */
     protected function initResultsPhase () :void
     {
         // find all the votes
@@ -696,6 +753,9 @@ public class CaptionGame extends EventDispatcher
         setPhase(RESULTS_PHASE);
     }
 
+    /**
+     * Check to see if we're in control and if so, control things!
+     */
     protected function checkControl (... ignored) :void
     {
         _inControl = _ctrl.amInControl();
@@ -720,6 +780,11 @@ public class CaptionGame extends EventDispatcher
 
         checkControlPhase();
     }
+
+    /**
+     * If we are ready to start a new round, pick a photo from the previews, or if none, look up
+     * 1 new photo. Otherwise, retrieve some new preview photos.
+     */
     protected function loadNextPictures () :void
     {
         if (_photosToGet > 0) {
@@ -817,94 +882,6 @@ public class CaptionGame extends EventDispatcher
         return pickedUrl;
     }
 
-    protected function handlePhotoResult (evt :FlickrResultEvent) :void
-    {
-        if (!evt.success) {
-            trace("Failure loading the next photo [" + evt.data.error.errorMessage + "]");
-            _photosToGet = 0;
-            return;
-        }
-
-        var photos :Array = (evt.data.photos as PagedPhotoList).photos;
-        for (var ii :int = 0; ii < photos.length; ii++) {
-            var photo :Photo = photos[ii] as Photo;
-            _flickr.photos.getSizes(photo.id);
-        }
-    }
-
-    protected function handlePhotoUrlKnown (evt :FlickrResultEvent) :void
-    {
-        var id :int = --_photosToGet;
-
-        if (!evt.success) {
-            trace("Failure getting photo sizes [" + evt.data.error.errorMessage + "]");
-            return;
-        }
-
-        var returnedSizes :Array = (evt.data.photoSizes as Array);
-        var medium :PhotoSize = getPhotoSource(returnedSizes, MEDIUM_SIZE);
-        if (medium == null) {
-            trace("Could not find photo sources for photo: " + returnedSizes);
-            return; // DOH
-        }
-
-        if (isCtrlPhase(GET_PHOTO_CTRL_PHASE)) {
-            startRound(medium.source);
-
-        } else {
-            var thumb :PhotoSize = getPhotoSource(returnedSizes, THUMBNAIL_SIZE);
-            if (thumb == null) {
-                trace("Could not find photo sources for photo: " + returnedSizes);
-                return;
-            }
-            _ctrl.set("next_" + id, [ thumb.source, medium.source ]);
-        }
-    }
-
-    protected function startRound (photoUrl :String) :void
-    {
-        _ctrl.doBatch(function () :void {
-            _ctrl.set("skipping", null);
-            _ctrl.set("photo", photoUrl);
-            _ctrl.set("captions", null);
-            _ctrl.set("ids", null);
-            _ctrl.set("results", null);
-            clearProps("caption:");
-            clearProps("vote:");
-            clearProps("name:");
-            clearProps("skip:");
-            clearProps("pvote:");
-            clearProps("next_");
-            setPhase(CAPTIONING_PHASE);
-        });
-    }
-
-    /**
-     * Clear all the properties with the specified prefix. This should be called from
-     * within a doBatch().
-     */
-    protected function clearProps (prefix :String) :void
-    {
-        for each (var prop :String in _ctrl.getPropertyNames(prefix)) {
-            _ctrl.set(prop, null);
-        }
-    }
-
-    protected function getPhotoSource (photoSizes :Array, PREF_SIZE :Array) :PhotoSize
-    {
-        for each (var prefSize :String in PREF_SIZE) {
-            for each (var p :PhotoSize in photoSizes) {
-                if (p.label == prefSize) {
-                    return p;
-                }
-            }
-        }
-
-        // whoa!
-
-        return null;
-    }
-
     /**
      * Handle the result of flow being awarded to us.
      */
@@ -920,19 +897,21 @@ public class CaptionGame extends EventDispatcher
         }
     }
 
+    /**
+     * Possibly restart the ticker for the results phase (the game ends at the
+     * start of the result phase.
+     */
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
 //        trace("Game started : " + _myName + " : " + _inControl);
         if (_inControl && isCtrlPhase(INIT_RESULTS_CTRL_PHASE)) {
-            setPhase(RESULTS_PHASE);
+            _ctrl.startTicker("tick", 1000);
         }
     }
 
-    protected function handleGameEnded (event :StateChangedEvent) :void
-    {
-//        trace("Game ended : " + _myName + " : " + _inControl);
-    }
-
+    /**
+     * Handle a new player arriving in the room (update the score display).
+     */
     protected function handleOccupantEntered (event :OccupantChangedEvent) :void
     {
         // we don't want the occupant to have an empty slot where they should have a score..
@@ -944,6 +923,78 @@ public class CaptionGame extends EventDispatcher
         // TODO
     }
 
+    // Flickr result handlers
+    // ----------------------
+
+    /**
+     * A photo was returned by flickr, now get the sizing info.
+     */
+    protected function handlePhotoResult (evt :FlickrResultEvent) :void
+    {
+        if (!evt.success) {
+            trace("Failure loading the next photo [" + evt.data.error.errorMessage + "]");
+            _photosToGet = 0;
+            return;
+        }
+
+        var photos :Array = (evt.data.photos as PagedPhotoList).photos;
+        for (var ii :int = 0; ii < photos.length; ii++) {
+            var photo :Photo = photos[ii] as Photo;
+            _flickr.photos.getSizes(photo.id);
+        }
+    }
+
+    /**
+     * The sizes of a photo are now known, either start the round or store
+     * the sizes as a preview photo.
+     */
+    protected function handlePhotoUrlKnown (evt :FlickrResultEvent) :void
+    {
+        var id :int = --_photosToGet;
+
+        if (!evt.success) {
+            trace("Failure getting photo sizes [" + evt.data.error.errorMessage + "]");
+            return;
+        }
+
+        var returnedSizes :Array = (evt.data.photoSizes as Array);
+        var captionSize :PhotoSize = getPhotoSource(returnedSizes, CAPTION_SIZE);
+        if (captionSize == null) {
+            trace("Could not find photo sources for photo: " + returnedSizes);
+            return; // DOH
+        }
+
+        if (isCtrlPhase(GET_PHOTO_CTRL_PHASE)) {
+            startRound(captionSize.source);
+
+        } else {
+            var previewSize :PhotoSize = getPhotoSource(returnedSizes, PREVIEW_SIZE);
+            if (previewSize == null) {
+                trace("Could not find photo sources for photo: " + returnedSizes);
+                return;
+            }
+            _ctrl.set("next_" + id, [ previewSize.source, captionSize.source ]);
+        }
+    }
+
+    /**
+     * Find the closest matching photo size to the preferred sizes specified.
+     */
+    protected function getPhotoSource (photoSizes :Array, preferredSizes :Array) :PhotoSize
+    {
+        for each (var prefSize :String in preferredSizes) {
+            for each (var p :PhotoSize in photoSizes) {
+                if (p.label == prefSize) {
+                    return p;
+                }
+            }
+        }
+
+        // whoa!
+
+        return null;
+    }
+
     /** Control phase constants, the phase that the control user is currently engaged in. */
     protected static const GET_PHOTO_CTRL_PHASE :int = 0;
     protected static const INIT_VOTING_CTRL_PHASE :int = 1;
@@ -951,39 +1002,31 @@ public class CaptionGame extends EventDispatcher
 
     protected static const PHASE_COUNT :int = 3;
 
-    protected static const MEDIUM_SIZE :Array = [ "Medium", "Small", "Original", "Thumbnail" ];
+    /** Preferred photo sizes for captioning. */
+    protected static const CAPTION_SIZE :Array = [ "Medium", "Small", "Original", "Thumbnail" ];
 
-    protected static const THUMBNAIL_SIZE :Array = [ "Thumbnail", "Square", "Small" ];
+    /** Preferred photo sizes for previewing. */
+    protected static const PREVIEW_SIZE :Array = [ "Thumbnail", "Square", "Small" ];
 
     protected var _ctrl :WhirledGameControl;
 
+    /** How many previews should we load for the results phase? */
     protected var _previewCount :int
 
     /** How many rounds to keep the scores. */
     protected var _scoreRounds :int;
 
+    /** The durations of each phase. */
     protected var _durations :Array;
 
+    /** How many seconds are remaining in the current phase. */
     protected var _secondsRemaining :int = 0;
 
+    /** Our player Id. */
     protected var _myId :int;
 
+    /** Our name. */
     protected var _myName :String;
-
-    protected var _inControl :Boolean;
-
-    protected var _votableCaptions :Array;
-
-    protected var _ourCaptionIndex :int = -1;
-
-    protected var _results :Array;
-
-    protected var _flickr :FlickrService;
-
-    protected var _photosToGet :int;
-
-    /** The [ thumb , medium ] urls for the preview that took 2nd place last round. */
-    protected var _carryOverPreview :Array;
 
     /** Our last-submitted captions. */
     protected var _myCaption :String;
@@ -993,5 +1036,29 @@ public class CaptionGame extends EventDispatcher
 
     /** Our last-submitted preview vote. */
     protected var _myPreviewVote :Array;
+
+    /** The captions we can vote upon. */
+    protected var _votableCaptions :Array;
+
+    /** The index into _votableCaptions of a caption we cannot vote on, or -1. */
+    protected var _ourCaptionIndex :int = -1;
+
+    /** An array mapping our shuffled captions to the playerIds that submitted them. */
+    protected var _indexes :Array;
+
+    /** The results of the current round. See getResults(). */
+    protected var _results :Array;
+
+    /** Are we in control? */
+    protected var _inControl :Boolean;
+
+    /** The flickr service (only used by the player in control). */
+    protected var _flickr :FlickrService;
+
+    /** How many photos is the player in control currently trying to retrieve? */
+    protected var _photosToGet :int;
+
+    /** The [ thumb , medium ] urls for the preview that took 2nd place last round. */
+    protected var _carryOverPreview :Array;
 }
 }

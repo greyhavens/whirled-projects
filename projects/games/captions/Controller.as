@@ -60,7 +60,7 @@ import com.whirled.WhirledGameControl;
  */
 public class Controller
 {
-    public static const DEBUG :Boolean = true;
+    public static const DEBUG :Boolean = false;
 
     public function init (ui :Caption) :void
     {
@@ -133,9 +133,10 @@ public class Controller
         updateSize(_ctrl.getSize());
 
         // get us rolling
-        showPhoto();
-        updateClock();
-        checkPhase();
+        if (showPhoto()) {
+            updateClock();
+            checkPhase();
+        }
     }
 
     protected function updateClock (... ignored) :void
@@ -180,13 +181,16 @@ public class Controller
         }
     }
 
-    protected function showPhoto () :void
+    protected function showPhoto () :Boolean
     {
         var url :String = _game.getPhoto();
         if (url != null) {
             _image.load(url);
             updateLayout();
+            return true;
         }
+
+        return false;
     }
 
     protected function handleSubmitButton (event :Event) :void
@@ -252,7 +256,6 @@ public class Controller
 
     protected function initCaptioning (skipAnimations :Boolean) :void
     {
-        trace("initCaptioning(" + skipAnimations + ")");
         if (_capPanel != null) {
             _ui.removeChild(_capPanel);
             _capPanel = null;
@@ -272,12 +275,15 @@ public class Controller
 
         if (skipAnimations) {
             skipToFrame();
+            _image.alpha = 1;
+            showPhoto();
             setupCaptioningUI();
 
         } else {
             _phasePhase = 0;
+            _image.alpha = 0;
+            showPhoto();
             doFade(_image, 0, 1);
-            updateLayout();
             animateToFrame(setupCaptioningUI);
         }
     }
@@ -297,8 +303,6 @@ public class Controller
 
         _ui.addChild(_capInput);
         _capInput.calculateHeight();
-
-        showPhoto();
 
         _capPanel.enterButton.addEventListener(FlexEvent.BUTTON_DOWN, handleSubmitButton);
         _capPanel.skip.addEventListener(Event.CHANGE, handleVoteToSkip);
@@ -334,7 +338,6 @@ public class Controller
 
     protected function initVoting (skipAnimations :Boolean) :void
     {
-        trace("initVoting(" + skipAnimations + ")");
         initNonCaption();
 
         if (skipAnimations) {
@@ -384,7 +387,6 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected function initResults (skipAnimations :Boolean) :void
     {
-        trace("initResults(" + skipAnimations + ")");
         initNonCaption();
         _grid = new Grid();
         computeResults(skipAnimations);
@@ -642,7 +644,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             if (frame == null) {
                 frame = getFrameForPhase();
             }
-            trace("animating to frame: " + frame);
+//            trace("animating to frame: " + frame);
             _animations.gotoAndPlay(frame);
 
         } else {
