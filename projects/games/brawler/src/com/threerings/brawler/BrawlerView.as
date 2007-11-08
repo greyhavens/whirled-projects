@@ -287,7 +287,7 @@ public class BrawlerView extends Sprite
      */
     public function showResults () :void
     {
-        var results :MovieClip = _ctrl.create("Endscreen");
+        results = _ctrl.create("Endscreen");
         //removeChild(_game);
 		_hud.alpha = 0;
         addChild(results);
@@ -494,6 +494,9 @@ public class BrawlerView extends Sprite
     /** Keeps the HUD up-to-date. */
     protected var _hud :HudView;
 
+	/** The Score Card display. */
+    public var results :MovieClip;
+	
     /** The preloader display. */
     protected var _preloader :Sprite;
 

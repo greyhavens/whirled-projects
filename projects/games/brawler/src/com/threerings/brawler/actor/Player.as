@@ -298,7 +298,7 @@ public class Player extends Pawn
     override public function enterFrame (elapsed :Number) :void
     {
         super.enterFrame(elapsed);
-		if(_ctrl._disablePlayers != true){
+		if(_ctrl._disableControls != true){
 			// check for collision of damage box with enemies when attacking
 			hitTestEnemies();
 
@@ -410,7 +410,74 @@ public class Player extends Pawn
         format.color = 0x99BFFF;
         _plate.name_plate.defaultTextFormat = format;
         _plate.name_plate.text = _ctrl.control.getOccupantName(playerId);
-
+		
+		// Configure appearance based on name
+		var ta: String = _plate.name_plate.text; //Grab the name
+		var face: int = 0; //Which hair/face to use
+		var appearance: int = 1; //Which Frame to use
+		var gender: Boolean = false; //False = male, True = female
+		if ((ta.length % 2) == 0) { gender = false; } else { gender = true; }
+		ta = ta.toLowerCase(); //convert to lower case
+		switch (ta.charAt()) {
+			case "a":
+			case "d":
+			case "g":
+			case "j":
+			case "m":
+			case "p":
+			case "s":
+			case "v":
+			case "y":
+				face = 1;
+				break;
+			case "c":
+			case "f":
+			case "i":
+			case "l":
+			case "o":
+			case "r":
+			case "u":
+			case "x":
+				face = 1;
+				break;
+			default :
+				face = 0;
+				break;
+		}
+		if(gender){
+			if(face == 2){
+				appearance = 5;
+			}else if(face == 1){
+				appearance = 3;
+			}else{
+				appearance = 1;
+			}
+		}else{
+			if(face == 2){
+				appearance = 6;
+			}else if(face == 1){
+				appearance = 4;
+			}else{
+				appearance = 2;
+			}
+		}
+		
+		//Special Cases
+		if(ta == "cherub"){ //Myself
+			appearance = 7;
+		}else if(ta == "jessica"){ //My dearest
+			appearance = 8;
+		}else if(ta == "tester_1"){ //Testing
+			appearance = 2;
+		}
+		_character.hat.gotoAndStop(appearance);
+		_character.face.gotoAndStop(appearance);
+		_character.f_hair.gotoAndStop(appearance);
+		_character.f_ear.gotoAndStop(appearance);
+		_character.skull.gotoAndStop(appearance);
+		_character.r_ear.gotoAndStop(appearance);
+		_character.r_hair.gotoAndStop(appearance);
+		
         // set the weapon
         weapon = state.weapon;
 

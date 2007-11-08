@@ -29,6 +29,7 @@ import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.StringUtil;
 
 import com.whirled.WhirledGameControl;
+import com.whirled.FlowAwardedEvent;
 
 import com.threerings.brawler.actor.Actor;
 import com.threerings.brawler.actor.Coin;
@@ -241,10 +242,10 @@ public class BrawlerController extends Controller
 		_view.showResults();
 		
 		//Set up Exit key.
-		results.exit_btn.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown_exit);
+		_view.results.exit_btn.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown_exit);
 		
 		//Listen to flow award.
-		_ctrl.control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, onFLowAward);
+		control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
 		
 		if (amPlaying) {
             _throttle.set("scores", _grade, _control.seating.getMyPosition());
@@ -254,9 +255,9 @@ public class BrawlerController extends Controller
 	/**
      * The game is over and flow has been awarded.
      */
-    public function onFlowAward (event :FlowAwardedEvent) :void
+    public function flowAwarded (event :FlowAwardedEvent) :void
     {
-		control.localChat("You recieved "+event.amount+" flow for your performance rate of "+event.percentile+"!");
+		control.localChat("You recieved "+event.amount+" for completing the mission!");
 	}
 	
 	/**
@@ -264,7 +265,7 @@ public class BrawlerController extends Controller
      */
     public function mouseDown_exit (event:MouseEvent):void
     {
-		control.backToWhirled(true);
+		control.backToWhirled(false);
 	}
 	
     /**
@@ -483,11 +484,11 @@ public class BrawlerController extends Controller
     {
 		var temp_grade:Number = 0;
 		var num_players:Number = control.seating.getPlayerIds().length;
-		var koCount :Number = control.get("koCount") as Number;
+		var koCount :Number = 0;//control.get("koCount") as Number;
         var koPoints :Number = 0;//Math.max(0, 5000 - 5000*koCount);
 		
 		var local_dmgpar:Number = (_score+koPoints)/(_mobHpTotal/num_players);
-		var local_timepar:Number = (_mobHpTotal/(210*num_players))/clock;
+		var local_timepar:Number = (_mobHpTotal/(300*num_players))/clock;
 		var local_difficult:Number;
 		if(handicap){
 			if(_difficulty == 0){
