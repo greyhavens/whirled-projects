@@ -477,23 +477,6 @@ package fl.controls {
 			setStyles();
 			focusEnabled = false;
 		}
-
-        private function referenceSkins () :void
-        {
-            ScrollArrowDown_disabledSkin;
-            ScrollArrowDown_downSkin;
-            ScrollArrowDown_overSkin;
-            ScrollArrowDown_upSkin;
-            ScrollThumb_upSkin;
-            ScrollThumb_downSkin;
-            ScrollThumb_overSkin;
-            ScrollTrack_skin;
-            ScrollArrowUp_disabledSkin;
-            ScrollArrowUp_downSkin;
-            ScrollArrowUp_overSkin;
-            ScrollArrowUp_upSkin;
-            ScrollBar_thumbIcon;
-        }
 		
 		/**
          * @copy fl.core.UIComponent#setSize()

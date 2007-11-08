@@ -656,16 +656,6 @@ package fl.controls {
 			super();
 		}
 
-        private static function referenceSkins () :void
-        {
-            focusRectSkin;
-            ComboBox_downSkin;
-            ComboBox_overSkin;
-            ComboBox_upSkin;
-            ComboBox_disabledSkin;
-            fl.core.ComponentShim;
-        }
-
 		[Inspectable(defaultValue=false)]
         /**
          * Gets or sets a Boolean value that indicates whether the ComboBox 
