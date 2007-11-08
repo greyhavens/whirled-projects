@@ -8,8 +8,46 @@ public class RhinoShipType extends ShipType
 {
     public function RhinoShipType () :void
     {
-        super("Rhino", 1.25, 0.01, -0.005, 0.975, 0.825, 0.25, 1.5);
+        name = "Rhino";
+        turnAccelRate = 1.25;
+        forwardAccel = 0.01;
+        backwardAccel = -0.007;
+        friction = 0.95;
+        turnFriction = 0.825;
+
+        hitPower = 0.2;
+        primaryShotCost = 0.2;
+        primaryShotRecharge = 0.4;
+        primaryPowerRecharge = 6;
+        primaryShotSpeed = 1.5;
+        primaryShotLife = 2.5;
+        primaryShotSize = 0.1;
+
+        secondaryShotCost = 0.5;
+        secondaryShotRecharge = 3;
+        secondaryPowerRecharge = 20;
+
+        armor = 1.5;
+        size = 1.2;
+
         ENGINE_MOV.gotoAndStop(2);
+    }
+
+    override public function primaryShot (sf :StarFight, val :Array) :void
+    {
+        var left :Number = val[3] + Math.PI/2;
+        var right :Number = val[3] - Math.PI/2;
+        var leftOffsetX :Number = Math.cos(left) * 0.5;
+        var leftOffsetY :Number = Math.sin(left) * 0.5;
+        var rightOffsetX :Number = Math.cos(right) * 0.5;
+        var rightOffsetY :Number = Math.sin(right) * 0.5;
+
+        var damage :Number = (val[6] == ShotSprite.SPREAD ? hitPower * 1.5 : hitPower);
+
+        sf.addShot(new ShotSprite(val[0] + leftOffsetX, val[1] + leftOffsetY,
+                val[2], val[3], val[4], damage, val[5], sf));
+        sf.addShot(new ShotSprite(val[0] + rightOffsetX, val[1] + rightOffsetY,
+                val[2], val[3], val[4], damage, val[5], sf));
     }
 
     // Shooting sounds.

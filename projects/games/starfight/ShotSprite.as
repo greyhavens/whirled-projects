@@ -29,8 +29,10 @@ public class ShotSprite extends Sprite {
 
     public var ttl :Number;
 
+    public var damage :Number;
+
     public function ShotSprite (x :Number, y :Number,
-        vel :Number, angle :Number, shipId :int, shipType :int,
+        vel :Number, angle :Number, shipId :int, damage :Number, shipType :int,
         game :StarFight) :void
     {
         boardX = x;
@@ -38,8 +40,9 @@ public class ShotSprite extends Sprite {
         this.xVel = vel * Math.cos(angle);
         this.yVel = vel * Math.sin(angle);
         this.shipId = shipId;
+        this.damage = damage;
 
-        ttl = TIME_TO_LIVE * 1000.0;
+        ttl = Codes.SHIP_TYPES[shipType].primaryShotLife * 1000.0;
 
         complete = false;
 
@@ -76,8 +79,8 @@ public class ShotSprite extends Sprite {
         }
 
         var rtime :Number = time / Codes.REFRESH_RATE;
-        var coll :Collision = board.getCollision(boardX, boardY,
-            boardX + xVel*rtime, boardY + yVel*rtime, COLLISION_RAD, shipId);
+        var coll :Collision = board.getCollision(boardX, boardY, boardX + xVel*rtime,
+                boardY + yVel*rtime, Codes.SHIP_TYPES[shipType].primaryShotSize, shipId);
         if (coll == null) {
             boardX += xVel*rtime;
             boardY += yVel*rtime;
@@ -85,7 +88,7 @@ public class ShotSprite extends Sprite {
             if (coll.hit is ShipSprite) {
                 var ship :ShipSprite = ShipSprite(coll.hit);
                 _game.hitShip(ship, boardX + (xVel*coll.time*rtime),
-                    boardY + (yVel*coll.time*rtime), shipId, shipType);
+                    boardY + (yVel*coll.time*rtime), shipId, damage);
 
             } else {
                 var obs :Obstacle = Obstacle(coll.hit);

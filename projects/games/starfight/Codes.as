@@ -27,7 +27,8 @@ public class Codes {
     public static const SHIP_TYPES :Array = [
         new WaspShipType(),
         new RhinoShipType(),
-        new SaucerShipType()
+        new SaucerShipType(),
+        new RaptorShipType()
     ]
 
 }

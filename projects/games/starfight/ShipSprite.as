@@ -49,6 +49,7 @@ public class ShipSprite extends Sprite
     public static const FORWARD :int = 3;
     public static const REVERSE :int = 2;
     public static const FORWARD_FAST :int = 4;
+    public static const REVERSE_FAST :int = 5;
 
     /** How fast the ship is accelerating. */
     public var accel :Number;
@@ -94,6 +95,12 @@ public class ShipSprite extends Sprite
     /** Weapons bonus remaining. */
     public var weaponPower :Number;
 
+    /** Primary shot power. */
+    public var primaryPower :Number;
+
+    /** Secondary shot power. */
+    public var secondaryPower :Number;
+
     /**
      * Constructs a new ship.  If skipStartingPos, don't bother finding an
      *  empty space to start in.
@@ -113,6 +120,8 @@ public class ShipSprite extends Sprite
         shieldPower = 0.0;
         enginePower = 0.0;
         weaponPower = 0.0;
+        primaryPower = 1.0;
+        secondaryPower = 0.0;
         if (_isOwnShip && _shieldSound != null) {
             _shieldSound.gotoAndStop(2);
             _shieldSound = null;
@@ -199,7 +208,7 @@ public class ShipSprite extends Sprite
         endX :Number, endY :Number) :void
     {
         var coll :Collision = _board.getCollision(startX, startY, endX, endY,
-            COLLISION_RAD, -1);
+            Codes.SHIP_TYPES[shipType].size, -1);
         if (coll != null) {
             var obstacle :Obstacle = Obstacle(coll.hit);
             var bounce :Number = obstacle.getElasticity();
@@ -255,19 +264,18 @@ public class ShipSprite extends Sprite
     /**
      * Registers that the ship was hit.
      */
-    public function hit (shooterId :int, shooterType :int) :void
+    public function hit (shooterId :int, damage :Number) :void
     {
         // Already dead, don't bother.
         if (!isAlive()) {
             return;
         }
 
-        var hitPower :Number = Codes.SHIP_TYPES[shooterType].hitPower /
-            Codes.SHIP_TYPES[shipType].armor;
+        var hitPower :Number = damage / Codes.SHIP_TYPES[shipType].armor;
 
         if (powerups & SHIELDS_MASK) {
             // shields always have an armor of 0.5
-            hitPower = Codes.SHIP_TYPES[shooterType].hitPower * 2;
+            hitPower = damage * 2;
             shieldPower -= hitPower;
             if (shieldPower <= DEAD) {
                 powerups ^= SHIELDS_MASK;
@@ -338,6 +346,8 @@ public class ShipSprite extends Sprite
         shieldPower = 0.0;
         weaponPower = 0.0;
         enginePower = 0.0;
+        primaryPower = 1.0;
+        secondaryPower = 0.0;
 
         _engineSound.gotoAndStop(1);
 
@@ -362,7 +372,6 @@ public class ShipSprite extends Sprite
      */
     public function getFriction () :Number
     {
-        // Maybe make this different per ship type.
         return Codes.SHIP_TYPES[shipType].friction;
     }
 
@@ -377,6 +386,10 @@ public class ShipSprite extends Sprite
 
         turnRate = turnRate * turnFriction + turnAccelRate;
         turn(turnRate*rtime);
+        primaryPower = Math.min(
+            1.0, primaryPower + time / (1000 * Codes.SHIP_TYPES[shipType].primaryPowerRecharge));
+        secondaryPower = Math.min(1.0,
+            secondaryPower + time / (1000 * Codes.SHIP_TYPES[shipType].secondaryPowerRecharge));
 
         move(rtime);
         if (accel > 0.0) {
@@ -393,7 +406,8 @@ public class ShipSprite extends Sprite
             _shieldMovie.alpha = 0.0;
         }
 
-        if (_firing && (_ticksToFire <= 0)) {
+        if (_firing && (_ticksToFire <= 0) &&
+            (primaryPower >= Codes.SHIP_TYPES[shipType].primaryShotCost)) {
             fire();
         } else if (_ticksToFire > 0) {
             _ticksToFire -= time;
@@ -536,6 +550,8 @@ public class ShipSprite extends Sprite
                 _engineSound = Codes.SHIP_TYPES[shipType].ENGINE_MOV;
                 _engineSound.gotoAndStop(1);
             }
+            scaleX = Codes.SHIP_TYPES[shipType].size + 0.1;
+            scaleY = Codes.SHIP_TYPES[shipType].size + 0.1;
         }
     }
 
@@ -545,11 +561,11 @@ public class ShipSprite extends Sprite
         var cos :Number = Math.cos(rads);
         var sin :Number = Math.sin(rads);
 
-        var shotX :Number = cos * SHOT_SPD + xVel;
-        var shotY :Number = sin * SHOT_SPD + yVel;
+        var shotX :Number = cos * Codes.SHIP_TYPES[shipType].primaryShotSpeed + xVel;
+        var shotY :Number = sin * Codes.SHIP_TYPES[shipType].primaryShotSpeed + yVel;
 
         //var shotVel :Number = Math.sqrt(shotX*shotX + shotY*shotY);
-        var shotVel :Number = SHOT_SPD;
+        var shotVel :Number = Codes.SHIP_TYPES[shipType].primaryShotSpeed;
         var shotAngle :Number = Math.atan2(shotY, shotX);
 
         var type :int = ShotSprite.NORMAL;
@@ -562,10 +578,10 @@ public class ShipSprite extends Sprite
         }
 
         //_game.fireShot(boardX + cos * COLLISION_RAD, boardY + sin * COLLISION_RAD,
-        _game.fireShot(boardX + shotX, boardY + shotY,
-            shotVel, shotAngle, shipId, shipType, type);
+        _game.fireShot(boardX + shotX, boardY + shotY, shotVel, shotAngle, shipId, shipType, type);
 
-        _ticksToFire = TIME_PER_SHOT;
+        _ticksToFire = Codes.SHIP_TYPES[shipType].primaryShotRecharge * 1000;
+        primaryPower -= Codes.SHIP_TYPES[shipType].primaryShotCost;
     }
 
     /**

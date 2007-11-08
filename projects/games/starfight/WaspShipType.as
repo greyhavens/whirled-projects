@@ -8,9 +8,51 @@ public class WaspShipType extends ShipType
 {
     public function WaspShipType () :void
     {
-        super("Wasp", 1.0, 0.024, -0.007, 0.95, 0.825, 0.25, 1.0);
+        name = "Wasp";
+
+        turnAccelRate = 1.0;
+        forwardAccel = 0.024;
+        backwardAccel = -0.007;
+        friction = 0.95;
+        turnFriction = 0.825;
+
+        hitPower = 0.2;
+        primaryShotCost = 0.18;
+        primaryShotRecharge = 0.2;
+        primaryPowerRecharge = 3.0;
+        primaryShotSpeed = 1;
+        primaryShotLife = 3;
+        primaryShotSize = 0.1;
+
+        secondaryShotCost = 0.33;
+        secondaryShotRecharge = 1;
+        secondaryPowerRecharge = 30;
+        secondaryShotSpeed = 0.5;
+        secondaryShotLife = 4;
+
+        armor = 1;
+        size = 0.9;
+
         ENGINE_MOV.gotoAndStop(2);
     }
+
+    override public function primaryShot (sf :StarFight, val :Array) :void
+    {
+        sf.addShot(new ShotSprite(val[0], val[1], val[2], val[3], val[4], hitPower, val[5], sf));
+
+        if (val[6] == ShotSprite.SPREAD) {
+            sf.addShot(new ShotSprite(val[0], val[1], val[2],
+                        val[3] + SPREAD, val[4], hitPower, val[5], sf));
+            sf.addShot(new ShotSprite(val[0], val[1], val[2],
+                        val[3] - SPREAD, val[4], hitPower, val[5], sf));
+        }
+    }
+
+    override public function secondaryShot () :void
+    {
+    }
+
+    protected static var SPREAD :Number = 0.1;
 
     // Shooting sounds.
     [Embed(source="rsrc/ships/wasp/beam.mp3")]

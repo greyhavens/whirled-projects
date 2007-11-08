@@ -20,6 +20,7 @@ public class StatusOverlay extends Sprite
 
     public function StatusOverlay () :void
     {
+        /*
         addChild(_power = new Sprite());
         _power.graphics.beginFill(Codes.CYAN);
         _power.graphics.drawRoundRect(0, 0, POW_WIDTH, POW_HEIGHT, 2.0, 2.0);
@@ -30,6 +31,7 @@ public class StatusOverlay extends Sprite
         mask.graphics.drawRect(0, 0, POW_WIDTH, POW_HEIGHT);
         _power.addChild(mask);
         _power.mask = mask;
+        */
 
         addChild(Bitmap(new radarAsset()));
         addChild(_radar = new Sprite());
@@ -39,9 +41,37 @@ public class StatusOverlay extends Sprite
         addChild(vitals);
         vitals.x = StarFight.WIDTH - 109;
 
+        addChild(_health = new Sprite());
+        _health.x = StarFight.WIDTH - 103;
+        _health.y = 8;
+        _health.addChild(Bitmap(new healthAsset()));
+        var mask :Shape = new Shape();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, HEALTH_WIDTH, HEALTH_HEIGHT);
+        _health.addChild(mask);
+        _health.mask = mask;
+        addChild(_primary = new Sprite());
+        _primary.x = StarFight.WIDTH - 91;
+        _primary.y = 39;
+        _primary.addChild(Bitmap(new primaryAsset()));
+        mask = new Shape();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, POW_WIDTH, POW_HEIGHT);
+        _primary.addChild(mask);
+        _primary.mask = mask;
+        addChild(_secondary = new Sprite());
+        _secondary.x = StarFight.WIDTH - 91;
+        _secondary.y = 56;
+        _secondary.addChild(Bitmap(new secondaryAsset()));
+        mask = new Shape();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, POW_WIDTH, POW_HEIGHT);
+        _secondary.addChild(mask);
+        _secondary.mask = mask;
+
         addChild(_spread = new Sprite());
         _spread.x = StarFight.WIDTH - 104;
-        _spread.y = 61;
+        _spread.y = 84;
         _spread.addChild(Bitmap(new spreadAsset()));
         mask = new Shape();
         mask.graphics.beginFill(0xFFFFFF);
@@ -51,7 +81,7 @@ public class StatusOverlay extends Sprite
         addChild(_speed = new Sprite());
         _speed.addChild(Bitmap(new speedAsset()));
         _speed.x = StarFight.WIDTH - 73;
-        _speed.y = 61;
+        _speed.y = 84;
         mask = new Shape();
         mask.graphics.beginFill(0xFFFFFF);
         mask.graphics.drawRect(0, 0, POW_SIZE, POW_SIZE);
@@ -60,7 +90,7 @@ public class StatusOverlay extends Sprite
         addChild(_shields = new Sprite());
         _shields.addChild(Bitmap(new shieldsAsset()));
         _shields.x = StarFight.WIDTH - 42;
-        _shields.y = 61;
+        _shields.y = 84;
         mask = new Shape();
         mask.graphics.beginFill(0xFFFFFF);
         mask.graphics.drawRect(0, 0, POW_SIZE, POW_SIZE);
@@ -73,6 +103,7 @@ public class StatusOverlay extends Sprite
         format.size = 16;
         format.bold = true;
 
+        /*
         _score = 0;
         _scoreText = new TextField();
         _scoreText.autoSize = TextFieldAutoSize.RIGHT;
@@ -84,6 +115,7 @@ public class StatusOverlay extends Sprite
         _scoreText.defaultTextFormat = format;
         _scoreText.text = String(_score);
         addChild(_scoreText);
+        */
 
         _roundText = new TextField();
         _roundText.autoSize = TextFieldAutoSize.CENTER;
@@ -114,6 +146,18 @@ public class StatusOverlay extends Sprite
         mask.graphics.beginFill(0xFFFFFF);
         mask.graphics.drawRect(0, POW_SIZE * (1.0 - ship.shieldPower), POW_SIZE, POW_SIZE);
         mask.graphics.endFill();
+
+        mask = Shape(_primary.mask);
+        mask.graphics.clear();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, POW_WIDTH * ship.primaryPower, POW_HEIGHT);
+        mask.graphics.endFill();
+
+        mask = Shape(_secondary.mask);
+        mask.graphics.clear();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, POW_WIDTH * ship.secondaryPower, POW_HEIGHT);
+        mask.graphics.endFill();
     }
 
     /**
@@ -121,10 +165,10 @@ public class StatusOverlay extends Sprite
      */
     public function setPower (power :Number) :void
     {
-        var mask :Shape = Shape(_power.mask);
+        var mask :Shape = Shape(_health.mask);
         mask.graphics.clear();
         mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, 0, POW_WIDTH*power, POW_HEIGHT);
+        mask.graphics.drawRect(0, 0, HEALTH_WIDTH*power, HEALTH_HEIGHT);
         mask.graphics.endFill();
     }
 
@@ -133,8 +177,10 @@ public class StatusOverlay extends Sprite
      */
     public function addScore (score :Number) :void
     {
+        /*
         _score += score;
         _scoreText.text = String(_score);
+        */
     }
 
     /**
@@ -257,13 +303,24 @@ public class StatusOverlay extends Sprite
     [Embed(source="rsrc/shields.png")]
     protected var shieldsAsset :Class;
 
+    [Embed(source="rsrc/bar_health.png")]
+    protected var healthAsset :Class;
+
+    [Embed(source="rsrc/bar_shot.png")]
+    protected var primaryAsset :Class;
+
+    [Embed(source="rsrc/bar_secondary.png")]
+    protected var secondaryAsset :Class;
+
     /** Powerup bitmaps. */
     protected var _speed :Sprite;
     protected var _spread :Sprite;
     protected var _shields :Sprite;
 
     /** HP bar. */
-    protected var _power :Sprite;
+    protected var _health :Sprite;
+    protected var _primary :Sprite;
+    protected var _secondary :Sprite;
     protected var _radar :Sprite;
 
     /** Score readout. */
@@ -278,8 +335,10 @@ public class StatusOverlay extends Sprite
     /** Status elements. */
     protected var _roundText :TextField;
 
-    protected static const POW_WIDTH :int = 85;
-    protected static const POW_HEIGHT :int = 8;
+    protected static const POW_WIDTH :int = 72;
+    protected static const POW_HEIGHT :int = 6;
+    protected static const HEALTH_WIDTH :int = 86;
+    protected static const HEALTH_HEIGHT :int = 15;
     protected static const POW_SIZE :int = 25;
 }
 }

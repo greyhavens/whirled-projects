@@ -111,7 +111,7 @@ public class StarFight extends Sprite
         updateRoundStatus();
 
         // If someone already created the board, let's get it now.  If not, we'll get it on the
-        //  update.
+        // update.
         var boardBytes :ByteArray =  ByteArray(_gameCtrl.get("board"));
         if (boardBytes != null) {
             var boardObj :Board = new Board(0, 0, false);
@@ -474,24 +474,11 @@ public class StarFight extends Sprite
     {
         if (event.name == "shot") {
             var val :Array = (event.value as Array);
-            addShot(new ShotSprite(val[0], val[1], val[2], val[3], val[4],
-                        val[5], this));
-
-            if (val[6] == ShotSprite.SPREAD) {
-                addShot(new ShotSprite(val[0], val[1], val[2],
-                            val[3] + ShotSprite.SPREAD_FACT, val[4], val[5],
-                            this));
-                addShot(new ShotSprite(val[0], val[1], val[2],
-                            val[3] - ShotSprite.SPREAD_FACT, val[4], val[5],
-                            this));
-            } else {
-
-            }
+            Codes.SHIP_TYPES[val[5]].primaryShot(this, val);
 
             // Shooting sound.
             var sound :Sound = (val[6] == ShotSprite.SPREAD) ?
-                Codes.SHIP_TYPES[val[5]].TRI_BEAM :
-                Codes.SHIP_TYPES[val[5]].BEAM;
+                Codes.SHIP_TYPES[val[5]].TRI_BEAM : Codes.SHIP_TYPES[val[5]].BEAM;
 
             playSoundAt(sound, val[0], val[1]);
 
@@ -511,7 +498,7 @@ public class StarFight extends Sprite
     /**
      * Adds a shot to the game and gets its sprite going.
      */
-    protected function addShot (shot :ShotSprite) :void
+    public function addShot (shot :ShotSprite) :void
     {
         _shots.push(shot);
         shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
@@ -523,7 +510,7 @@ public class StarFight extends Sprite
      */
     protected function addScore (score :int) :void
     {
-        _status.addScore(score);
+        //_status.addScore(score);
         _ownShip.addScore(score);
         var scores :Object = {};
         scores[_ownShip.shipId] = _ownShip.score;
