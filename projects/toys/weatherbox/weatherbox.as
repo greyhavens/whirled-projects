@@ -130,6 +130,7 @@ public class WeatherBox extends Sprite
         }
         if (_control.isConnected()) {
             _control.clearPopup();
+
         } else {
             removeChild(_cfgPanel);
         }
@@ -165,15 +166,13 @@ public class WeatherBox extends Sprite
      */
     protected function getFromConfigs (key :String, defval :String) :String
     {
-        var value :String;
         if (_control.isConnected()) {
-            value = _control.lookupMemory(key) as String;
-            if (value != null) {
-                return value;
-            }
-        }
+            var value :String = _control.lookupMemory(key) as String;
+            return (value != null) ? value : defval;
 
-        return _config.getValue(key, defval) as String;
+        } else {
+            return _config.getValue(key, defval) as String;
+        }
     }
 
     /**
@@ -183,8 +182,10 @@ public class WeatherBox extends Sprite
     {
         if (_control.isConnected()) {
             _control.updateMemory(key, value);
+
+        } else {
+            _config.setValue(key, value);
         }
-        _config.setValue(key, value);
     }
 
     /**
@@ -214,6 +215,13 @@ public class WeatherBox extends Sprite
      */
     protected function gotWeatherData (data :XML) :void
     {
+        // if we hear back asynchronously, make sure we care
+        if (_unloaded) {
+            return;
+        }
+
+        //trace("weather: " + data);
+
         _iconArea.source = String(data.icon_url_base) + data.icon_url_name;
         addChild(_iconArea);
 
@@ -223,15 +231,41 @@ public class WeatherBox extends Sprite
         _windLabel.text = "Wind: " + data.wind_string;
         _statusLabel.text = data.observation_time;
 
-        var delay :int = int(data.suggested_pickup_period);
-        if (delay == 0) {
-            delay = 60;
-        }
-        _timer.delay = delay * 60 * 1000; // convert minutes to milliseconds
+        _timer.delay = computeNextPickup(data);
+        trace("Scheduled next pickup for " + int(_timer.delay / 1000) + " seconds");
         _timer.reset();
         _timer.start();
+    }
 
-        //trace("weather: " + data);
+    /**
+     * Compute the time until the next pickup for the specified weather data.
+     *
+     * @return a delay, in milliseconds.
+     */
+    protected function computeNextPickup (data :XML) :int
+    {
+        var suggested :String = String(data.suggested_pickup);
+
+        // see if it matches a pattern we see all the time
+        var afterHour :RegExp = /(\d+) minutes after the hour/i;
+        var result :Object = afterHour.exec(suggested);
+        if (result != null) {
+            var pickupMinutes :int = int(result[1]);
+            var now :Date = new Date();
+            if (now.minutes < pickupMinutes) {
+                // if the pickupMinutes is 15 and the current time is 10mins40secs,
+                // we want to schedule the pickup for 4 minutes and 20 seconds
+                return ((((pickupMinutes - 1) - now.minutes) * 60) + (60 - now.seconds)) * 1000;
+
+            } else {
+                // if the pickupMinutes is 15 and the current time is 30mins20secs,
+                // we want to schedule the pickup for 44 minutes and 40 seconds
+                return (((pickupMinutes + (59 - now.minutes)) * 60) + (60 - now.seconds)) * 1000;
+            }
+        }
+
+        // otherwise just check again in 30 minutes.
+        return 30 * 60 * 1000;
     }
 
     /**
@@ -286,6 +320,7 @@ public class WeatherBox extends Sprite
     protected function handleUnload (event :Event) :void
     {
         _timer.stop();
+        _unloaded = true;
     }
 
     protected var _state :String = null;
@@ -306,6 +341,9 @@ public class WeatherBox extends Sprite
     protected var _svc :NOAAWeatherService;
 
     protected var _timer :Timer;
+
+    /** Tracks whether we've been unloaded. */
+    protected var _unloaded :Boolean = false;
 
     protected var _cfgPanel :ConfigPanel;
 

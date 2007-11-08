@@ -127,10 +127,10 @@ public class ConfigPanel extends Sprite
 
     protected function handleCloseClicked (event :MouseEvent) :void
     {
-        var state :String;
-        var station :String;
+        var state :String = null;
+        var station :String = null;
 
-        if (_stationBox.enabled) {
+        if (_stationBox.enabled && _stationBox.selectedItem != null) {
             state = String(_stateBox.selectedItem.label);
             station = String(_stationBox.selectedItem.station);
         }
