@@ -57,10 +57,15 @@ public class CaptionGame extends EventDispatcher
 
     /**
      * Create a caption game.
+     *
+     * @param minPlayersForStatStorage the minimum number of players required to be present
+     * for a round to persistently store the round (and count towards a CaptionsSubmittedEver
+     * trophy).
      */
     public function CaptionGame (
         gameCtrl :WhirledGameControl, previewCount :int = 4, scoreRounds :int = 10,
-        captioningDuration :int = 45, votingDuration :int = 30, resultsDuration :int = 15)
+        captioningDuration :int = 45, votingDuration :int = 30, resultsDuration :int = 15,
+        minPlayersStatStorage :int = 3)
     {
         _ctrl = gameCtrl;
         _previewCount = previewCount;
@@ -68,6 +73,53 @@ public class CaptionGame extends EventDispatcher
         _durations = [ captioningDuration, votingDuration, resultsDuration ];
 
         init();
+    }
+
+    /**
+     * Configure a trophy to be awarded for consecutive wins of (counting) rounds.
+     * A round only counts if it has the required number of players. Rounds that don't
+     * count do not break the "consecutive" streak.
+     * This may be called multiple times to set up trophies at different levels.
+     * For example:
+     *    configureTrophyConsecutiveWin("bronze_wins", 3);
+     *    configureTrophyConsecutiveWin("silver_wins", 5);
+     *    configureTrophyConsecutiveWin("gold_wins", 10);
+     */
+    public function configureTrophyConsecutiveWin (
+        trophyIdent :String, consecWins :int, minPlayers :int = 3) :void
+    {
+        // TODO
+    }
+
+    /**
+     * Configure a trophy to be awarded if a player receives at least a certain percentage
+     * of votes over a number of consecutive rounds.
+     *
+     * I guess if you win one of these you also automatically win the consecWin trophy..
+     */
+    public function configureTrophyPercentVotesOverRounds (
+        trophyIdent :String, percentVotes :Number, overRounds :int, minPlayers :int = 3) :void
+    {
+        // TODO
+    }
+
+    /**
+     * Configure a trophy to be awarded if a player gets all the votes (but his own) in a round.
+     */
+    public function configureTrophyUnanimous (trophyIdent :String, minPlayers :int = 5) :void
+    {
+        // TODO
+    }
+
+    /**
+     * Configure a trophy to be awarded when a player has submitted a certain number of captions,
+     * ever. Rounds only count if they have at least minPlayersStatStorage players, as specified
+     * in the constructor.
+     */
+    public function configureTrophyCaptionsSubmittedEver (
+        trophyIdent :String, captionsSubmitted :int) :void
+    {
+        // TODO
     }
 
     /**
