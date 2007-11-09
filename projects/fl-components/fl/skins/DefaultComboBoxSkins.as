@@ -17,6 +17,7 @@ public class DefaultComboBoxSkins
 
         // and other skins
         DefaultScrollBarSkins;
+        DefaultListSkins;
     }
 }
 }
