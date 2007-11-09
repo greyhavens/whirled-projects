@@ -13,6 +13,9 @@ import flash.text.TextField;
 import fl.controls.Button;
 import fl.controls.ComboBox;
 
+import fl.skins.DefaultButtonSkins;
+import fl.skins.DefaultComboBoxSkins;
+
 import fl.data.DataProvider;
 
 import com.bogocorp.weather.NOAAWeatherService;
@@ -71,6 +74,12 @@ public class ConfigPanel extends Sprite
         addChild(_close);
 
         svc.getDirectory(directoryReceived);
+    }
+
+    private static function referenceSkins () :void
+    {
+        DefaultButtonSkins;
+        DefaultComboBoxSkins;
     }
 
     override public function get width () :Number

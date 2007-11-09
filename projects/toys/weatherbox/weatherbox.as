@@ -19,6 +19,9 @@ import fl.data.DataProvider;
 import fl.containers.ScrollPane;
 import fl.controls.Button;
 
+import fl.skins.DefaultButtonSkins;
+import fl.skins.DefaultScrollPaneSkins;
+
 import com.bogocorp.weather.NOAAWeatherService;
 
 import com.threerings.util.Config;
@@ -52,6 +55,15 @@ public class WeatherBox extends Sprite
         setupUI();
 
         loadWeather(getStationURL(), true);
+    }
+
+    /**
+     * Reference any default skins we use so that they get compiled in.
+     */
+    private static function referenceSkins () :void
+    {
+        DefaultScrollPaneSkins;
+        DefaultButtonSkins;
     }
 
     /**
@@ -232,7 +244,6 @@ public class WeatherBox extends Sprite
         _statusLabel.text = data.observation_time;
 
         _timer.delay = computeNextPickup(data);
-        trace("Scheduled next pickup for " + int(_timer.delay / 1000) + " seconds");
         _timer.reset();
         _timer.start();
     }
