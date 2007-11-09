@@ -1097,23 +1097,8 @@ package fl.controls {
 		protected function positionPalette () :DisplayObjectContainer
         {
 			var p :Point = swatchButton.localToGlobal(new Point(0,0));
-            var container :DisplayObjectContainer;
-            if (swatchButton.stage == UIComponent.stageAlias) {
-                container = UIComponent.stageAlias;
-
-            } else {
-                // in case we're in a different component hierarchy than the stageAlias, walk
-                // upwards to find the real parent that we should add to.
-                container = swatchButtin.parent;
-                try {
-                    while (container != UIComponent.stageAlias && container.parent != null) {
-                        container = container.parent;
-                    }
-                } catch (err :SecurityError) {
-                    // stop when we can't access a parent
-                }
-                p = container.globalToLocal(p);
-            }
+            var container :DisplayObjectContainer = findAppropriateParent(swatchButton);
+            p = container.globalToLocal(p);
 
 			var padding:Number = getStyleValue("backgroundPadding") as Number;
 
@@ -1121,7 +1106,7 @@ package fl.controls {
             var heightFit :int;
             try {
                 doesntFit = (p.x + palette.width > stage.stageWidth);
-                heightFit = stageHeight - palette.height;
+                heightFit = stage.stageHeight - palette.height;
 			} catch (err :SecurityError) {
                 doesntFit = false; // well, who knows, but let's just roll with it
                 heightFit = p.y;

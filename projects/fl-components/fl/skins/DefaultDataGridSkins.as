@@ -14,7 +14,7 @@ public class DefaultDataGridSkins
         HeaderSortArrow_descIcon;
         HeaderSortArrow_ascIcon;
         ColumnStretch_cursor;
-        DataGrid_Skin;
+        DataGrid_skin;
     }
 }
 }

@@ -1251,7 +1251,6 @@ package fl.controls {
 
 			dispatchEvent(new Event(Event.OPEN));
 			isOpen = true;
-                        Log.dumpStack();
 
 			// Add a listener to the stage to close the combobox when something
 			// else is clicked.  We need to wait a frame, otherwise the same click

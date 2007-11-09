@@ -1475,8 +1475,6 @@ package fl.core {
                 } catch (err :SecurityError) {
                     stageAlias = DisplayObjectContainer(this.root);
                 }
-                Log.configureFrameBreaks(stageAlias);
-                trace("Stage alias set as " + stageAlias);
             }
         }
 
