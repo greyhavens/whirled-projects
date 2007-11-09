@@ -402,6 +402,7 @@ public class BrawlerController extends Controller
                     pscores.push(scores[ii]);
                 }
             }
+			_throttle.set("clockOffset", _clock);
             _control.endGameWithScores(pplayers, pscores, WhirledGameControl.TO_EACH_THEIR_OWN);
 
         } else if (StringUtil.startsWith(event.name, "actor")) {
@@ -438,7 +439,8 @@ public class BrawlerController extends Controller
     public function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == "clock") {
-            _clock = event.value as int;
+			_clock = _control.get("clockOffset") + (event.value as int);
+            //_clock = event.value as int;
             _view.hud.updateClock();
 
         } else if (StringUtil.startsWith(event.name, "actor")) {
@@ -545,6 +547,9 @@ public class BrawlerController extends Controller
      */
     protected function finishInit () :void
     {	if(init_finished){
+			if (_control.amInControl()) {
+				_throttle.startTicker("clock", CLOCK_DELAY);
+			}
 		}else{
 			init_finished = true;
 			// find existing actors, start listening for updates
@@ -565,6 +570,7 @@ public class BrawlerController extends Controller
 				_throttle.set("playerDamage", 0);
 				_throttle.set("enemyDamage", 0);
 				_throttle.set("scores", new Array(_control.seating.getPlayerIds().length));
+				_throttle.set("clockOffset", 0);
 				_throttle.startTicker("clock", CLOCK_DELAY);
 			} else {
 				var croom :Object = _control.get("room");
