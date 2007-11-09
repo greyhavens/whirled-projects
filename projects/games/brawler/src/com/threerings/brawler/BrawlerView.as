@@ -20,6 +20,8 @@ import com.threerings.brawler.actor.Player;
 import com.threerings.brawler.util.AnimationManager;
 import com.threerings.brawler.util.BrawlerUtil;
 
+import com.whirled.FlowAwardedEvent;
+
 /**
  * Depicts the state of the Brawler game.
  */
@@ -257,6 +259,14 @@ public class BrawlerView extends Sprite
         }
         // fade out
         _hud.fade("out", callback);
+		
+		// status report
+		_hud.zoneClear();
+		
+		// end game, sorta, and award flow.
+		_ctrl._grade = _ctrl.calculateGrade();
+		_ctrl.control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, _ctrl.flowAwarded);
+		_ctrl._throttle.set("scores", _ctrl._grade, _ctrl.control.seating.getMyPosition());
     }
 
     /**
@@ -280,6 +290,9 @@ public class BrawlerView extends Sprite
 
         // fade in
         _hud.fade("in");
+		
+		// status report remove
+		_hud.zoneClear(true);
     }
 
     /**
@@ -315,7 +328,7 @@ public class BrawlerView extends Sprite
         results.time.points.text = _hud.clock;
 
         // compute and display the rank
-        var pct :Number = Math.round(_ctrl.calculateGrade("grade",true));
+        var pct :Number = Math.round(_ctrl.calculateGrade("grade",false));
         var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
         results.grade.gotoAndStop(GRADES[grade]);
 		results.percent.points.text = pct;
@@ -326,20 +339,24 @@ public class BrawlerView extends Sprite
      */
     protected function finishInit () :void
     {
-        // add the game display
-        addChild(_game);
+		if(init_finished){
+		}else{
+			init_finished = true;
+			// add the game display
+			addChild(_game);
 
-        // turn the camera effect off
-        _camera.stop();
+			// turn the camera effect off
+			_camera.stop();
 
-        // set up the first room
-        updateRoom();
+			// set up the first room
+			updateRoom();
 
-        // initialize the hud
-        _hud.init();
+			// initialize the hud
+			_hud.init();
 
-        // start updating at every frame
-        root.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+			// start updating at every frame
+			root.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+		}
     }
 
     /**
@@ -485,6 +502,9 @@ public class BrawlerView extends Sprite
         door.height = _ground.height;
     }
 
+	/** Do this only once */
+    protected var init_finished :Boolean;
+	
     /** The Brawler controller. */
     protected var _ctrl :BrawlerController;
 

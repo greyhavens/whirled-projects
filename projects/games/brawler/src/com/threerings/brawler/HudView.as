@@ -10,6 +10,7 @@ import com.threerings.util.StringUtil;
 
 import com.threerings.brawler.actor.Player;
 import com.threerings.brawler.actor.Weapon;
+import com.threerings.brawler.util.BrawlerUtil;
 
 /**
  * Displays the Brawler HUD.
@@ -289,6 +290,28 @@ public class HudView extends Sprite
 				_hud.pickup.gotoAndPlay(1);
 		}
     }
+	
+	/**
+     * Toggle Zone Clear results.
+     */
+    public function zoneClear(off:Boolean = false) :void
+    {
+		if(off){
+			_hud.zoneclear_off.alpha = 1;
+			//_hud.zoneclear.alpha = 0;
+			_hud.zoneclear.alpha = 1;
+			_hud.zoneclear_off.gotoAndPlay(1);
+			_hud.zoneclear.gotoAndStop(1);
+		}else{
+			_hud.zoneclear.alpha = 1;
+			_hud.zoneclear_off.alpha = 0;
+			var pct :Number = Math.round(_ctrl.calculateGrade("grade",false));
+			var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
+			_hud.zoneclear.grade.points.text = (GRADES[grade]);
+			_hud.zoneclear.percent.points.text = pct;
+			_hud.zoneclear.gotoAndPlay(2);
+		}
+    }
 
     /**
      * Goes to the specified label and stops if the clip isn't already there.
@@ -316,5 +339,11 @@ public class HudView extends Sprite
 
     /** The number of kick levels in the attack bar. */
     protected static const KICK_LEVELS :int = 3;
+	
+	/** The array of possible grades. */
+    protected static const GRADES :Array = [ "S", "A", "B", "C", "D", "F" ];
+	
+	/** The required percent score for each grade. */
+    protected static const GRADE_LEVELS :Array = [ 100, 90, 80, 70, 60, 0 ];
 }
 }

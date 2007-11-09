@@ -257,7 +257,10 @@ public class BrawlerController extends Controller
      */
     public function flowAwarded (event :FlowAwardedEvent) :void
     {
-		control.localChat("You recieved "+event.amount+" for completing the mission!");
+		control.localChat("You recieved "+event.amount+" bits!");
+		control.localChat("[DEBUG] Performance Rate: "+event.percentile+"%");
+		control.removeEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
+		_control.playerReady();
 	}
 	
 	/**
@@ -541,59 +544,62 @@ public class BrawlerController extends Controller
      * Called when the game is known to be started.
      */
     protected function finishInit () :void
-    {
-        // find existing actors, start listening for updates
-        var names :Array = _control.getPropertyNames("actor");
-        for each (var name :String in names) {
-            createActor(name, _control.get(name));
-        }
-        _control.registerListener(this);
+    {	if(init_finished){
+		}else{
+			init_finished = true;
+			// find existing actors, start listening for updates
+			var names :Array = _control.getPropertyNames("actor");
+			for each (var name :String in names) {
+				createActor(name, _control.get(name));
+			}
+			_control.registerListener(this);
 
-        // fetch the difficulty level
-        _difficulty = DIFFICULTY_LEVELS.indexOf(_control.getConfig()["difficulty"]);
+			// fetch the difficulty level
+			_difficulty = DIFFICULTY_LEVELS.indexOf(_control.getConfig()["difficulty"]);
 
-        // if we are in control, initialize
-        if (_control.amInControl()) {
-            _throttle.set("room", _room);
-            _throttle.set("wave", _wave);
-            _throttle.set("koCount", 0);
-            _throttle.set("playerDamage", 0);
-            _throttle.set("enemyDamage", 0);
-            _throttle.set("scores", new Array(_control.seating.getPlayerIds().length));
-            _throttle.startTicker("clock", CLOCK_DELAY);
-        } else {
-            var croom :Object = _control.get("room");
-            var cwave :Object = _control.get("wave");
-            _room = (croom == null) ? 1 : (croom as int);
-            _wave = (cwave == null) ? 1 : (cwave as int);
-        }
+			// if we are in control, initialize
+			if (_control.amInControl()) {
+				_throttle.set("room", _room);
+				_throttle.set("wave", _wave);
+				_throttle.set("koCount", 0);
+				_throttle.set("playerDamage", 0);
+				_throttle.set("enemyDamage", 0);
+				_throttle.set("scores", new Array(_control.seating.getPlayerIds().length));
+				_throttle.startTicker("clock", CLOCK_DELAY);
+			} else {
+				var croom :Object = _control.get("room");
+				var cwave :Object = _control.get("wave");
+				_room = (croom == null) ? 1 : (croom as int);
+				_wave = (cwave == null) ? 1 : (cwave as int);
+			}
 
-        // create and announce our own pawn
-        if (amPlaying) {
-            var start :Point = _view.playerStart;
-            _self = createActor(createActorName(), Player.createState(start.x, start.y)) as Player;
-        }
+			// create and announce our own pawn
+			if (amPlaying) {
+				var start :Point = _view.playerStart;
+				_self = createActor(createActorName(), Player.createState(start.x, start.y)) as Player;
+			}
 
-        // copy the configurations to an array (for some reason they disappear if we try to keep
-        // them in the clip) and create our share of the enemies
-        var configs :MovieClip = create("EnemyConfigs");
-        for (var ii :int = 0; ii < configs.numChildren; ii++) {
-            _econfigs.push(configs.getChildAt(ii));
-        }
-        createEnemies();
+			// copy the configurations to an array (for some reason they disappear if we try to keep
+			// them in the clip) and create our share of the enemies
+			var configs :MovieClip = create("EnemyConfigs");
+			for (var ii :int = 0; ii < configs.numChildren; ii++) {
+				_econfigs.push(configs.getChildAt(ii));
+			}
+			createEnemies();
 
-		_clickTimer.addEventListener( TimerEvent.TIMER, onClickTimer);
-		_clickTimer.start();
+			_clickTimer.addEventListener( TimerEvent.TIMER, onClickTimer);
+			_clickTimer.start();
 
-        if (amPlaying) {
-            // listen for mouse clicks on the ground
-            _view.ground.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
+			if (amPlaying) {
+				// listen for mouse clicks on the ground
+				_view.ground.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 
-            // listen for keyboard events through the blocker
-            _blocker = new KeyRepeatBlocker(_control);
-            _blocker.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
-            _blocker.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
-        }
+				// listen for keyboard events through the blocker
+				_blocker = new KeyRepeatBlocker(_control);
+				_blocker.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+				_blocker.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
+			}
+		}
     }
 
     /**
@@ -707,6 +713,9 @@ public class BrawlerController extends Controller
 		_lastClick += 100;
 	}
 
+	/** Do this only once */
+    protected var init_finished :Boolean;
+	
     /** The SWF loader. */
     protected var _loader :EmbeddedSwfLoader;
 
@@ -714,7 +723,7 @@ public class BrawlerController extends Controller
     protected var _control :WhirledGameControl;
 
     /** The throttle through which messages are sent. */
-    protected var _throttle :MessageThrottle;
+    public var _throttle :MessageThrottle;
 
     /** The game view. */
     protected var _view :BrawlerView;

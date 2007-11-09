@@ -76,7 +76,10 @@ public class Weapon extends Pickup
 			sparks.cn.gotoAndStop(label);
 			_view.addTransient(sparks, x, y, true);
 		}else{
-			_view.hud.showPickUp(x);
+			var self :Player = _ctrl.self;
+			if(self == player){
+				_view.hud.showPickUp(x);
+			}
 		}
     }
 
