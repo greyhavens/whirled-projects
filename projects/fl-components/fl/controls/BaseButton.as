@@ -534,7 +534,6 @@ package fl.controls {
 			if (selected) { styleName = "selected"+styleName.substr(0,1).toUpperCase()+styleName.substr(1); }
 			styleName += "Skin";
 			var bg:DisplayObject = background;
-                        trace("trying to draw: "  + getStyleValue(styleName));
 			background = getDisplayObjectInstance(getStyleValue(styleName));
 			addChildAt(background, 0);
 			if (bg != null && bg != background) { removeChild(bg); }

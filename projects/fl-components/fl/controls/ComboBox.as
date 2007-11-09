@@ -1285,9 +1285,7 @@ package fl.controls {
 			dispatchEvent(new Event(Event.CLOSE));
 			UIComponent.stageAlias.removeEventListener(MouseEvent.MOUSE_DOWN, onStageClick);
 			isOpen = false;
-            if (list.parent != null) {
-                list.parent.removeChild(list);
-            }
+            list.parent.removeChild(list);
 		}
 		
 		/**
