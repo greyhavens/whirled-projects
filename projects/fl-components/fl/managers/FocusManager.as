@@ -313,12 +313,15 @@ package fl.managers {
 		 */
 		private function isTabVisible(o:DisplayObject):Boolean {
 			var p:DisplayObjectContainer = o.parent;
-			while (p && !(p is Stage) && !(p.parent && p.parent is Stage)) {
-				if (!p.tabChildren) {
-					return false;
-				}
-				p = p.parent;
-			}
+            try {
+                while (p && !(p is Stage) && !(p.parent && p.parent is Stage)) {
+                    if (!p.tabChildren) {
+                        return false;
+                    }
+                    p = p.parent;
+                }
+            } catch (err :SecurityError) {
+            }
 			return true;
 		}
 
