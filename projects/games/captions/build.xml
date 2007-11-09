@@ -2,8 +2,11 @@
 <project name="captions" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
+  <!--
   <property name="app.name"   value="Caption"/>
   <property name="app.source-suffix" value="mxml"/>
+  -->
+  <property name="app.name"   value="LOL"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
