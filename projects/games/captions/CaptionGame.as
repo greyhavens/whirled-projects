@@ -36,7 +36,15 @@ import com.whirled.WhirledGameControl;
 
 /**
  * Back-end logic for running a caption game!
+ * 
+ * Note: this uses the game cookie to store trophy-related stats, so you cannot
+ * use the cookie for your own purposes by code that uses this back-end.
  */
+// TODO:
+// - provide flickr page URL for the image
+// - implement trophies
+// - tag configuration
+// 
 public class CaptionGame extends EventDispatcher
 {
     /** Phase constants. */
@@ -58,19 +66,21 @@ public class CaptionGame extends EventDispatcher
     /**
      * Create a caption game.
      *
-     * @param minPlayersForStatStorage the minimum number of players required to be present
+     * @param minCaptionersStatStorage the minimum number of captioners required to be present
      * for a round to persistently store the round (and count towards a CaptionsSubmittedEver
      * trophy).
      */
     public function CaptionGame (
         gameCtrl :WhirledGameControl, previewCount :int = 4, scoreRounds :int = 10,
-        captioningDuration :int = 45, votingDuration :int = 30, resultsDuration :int = 15,
-        minPlayersStatStorage :int = 3)
+        captioningDuration :int = 45, votingDuration :int = 30, resultsDuration :int = 20,
+//        captioningDuration :int = 20, votingDuration :int = 15, resultsDuration :int = 15,
+        minCaptionersStatStorage :int = 3)
     {
         _ctrl = gameCtrl;
         _previewCount = previewCount;
         _scoreRounds = scoreRounds;
         _durations = [ captioningDuration, votingDuration, resultsDuration ];
+        _minCaptionersStatStorage = _minCaptionersStatStorage;
 
         init();
     }
@@ -119,7 +129,7 @@ public class CaptionGame extends EventDispatcher
     public function configureTrophyCaptionsSubmittedEver (
         trophyIdent :String, captionsSubmitted :int) :void
     {
-        // TODO
+        _trophiesCaptionsEver[trophyIdent] = captionsSubmitted;
     }
 
     /**
@@ -127,8 +137,8 @@ public class CaptionGame extends EventDispatcher
      */
     public function getCurrentPhase () :int
     {
-        // hide the secret phase -1 we use to restart a round
-        return Math.max(CAPTIONING_PHASE, int(_ctrl.get("phase")));
+        // normalize the raw phase, hiding internal phase -1
+        return Math.max(CAPTIONING_PHASE, getRawPhase());
     }
 
     /**
@@ -207,7 +217,7 @@ public class CaptionGame extends EventDispatcher
     public function getOurCaptionIndex () :int
     {
         if (isPhase(VOTING_PHASE)) {
-            return _ourCaptionIndex;
+            return _myCaptionIndex;
         }
 
         return -1;
@@ -220,7 +230,7 @@ public class CaptionGame extends EventDispatcher
     public function setCaptionVote (captionIndex :int, on :Boolean = true) :void
     {
         // if it's not the time to vote, or we're submitting a vote for ourselves, don't do it!
-        if (!isPhase(VOTING_PHASE) || captionIndex == _ourCaptionIndex) {
+        if (!isPhase(VOTING_PHASE) || captionIndex == _myCaptionIndex) {
             return;
         }
 
@@ -305,6 +315,9 @@ public class CaptionGame extends EventDispatcher
 
         _myId = _ctrl.getMyId();
         _myName = _ctrl.getOccupantName(_myId);
+
+        // retrieve our stats from the server
+        _ctrl.getUserCookie(_myId, gotCookie);
 
         // get us rolling
         checkControl();
@@ -428,6 +441,15 @@ public class CaptionGame extends EventDispatcher
     }
 
     /**
+     * Get the current phase, even if it's the special phase -1 we use for
+     * restarting a round.
+     */
+    protected function getRawPhase () :int
+    {
+        return int(_ctrl.get("phase"));
+    }
+
+    /**
      * Are we in the specified phase?
      */
     protected function isPhase (phase :int) :Boolean
@@ -438,7 +460,7 @@ public class CaptionGame extends EventDispatcher
     /**
      * Get the current control phase.
      */
-    protected function getControlPhase () :int
+    protected function getCtrlPhase () :int
     {
         return int(_ctrl.get("cphase"));
     }
@@ -448,7 +470,7 @@ public class CaptionGame extends EventDispatcher
      */
     protected function isCtrlPhase (phase :int) :Boolean
     {
-        return (phase === getControlPhase());
+        return (phase === getCtrlPhase());
     }
 
     /**
@@ -473,7 +495,7 @@ public class CaptionGame extends EventDispatcher
      */
     protected function checkPhase () :Boolean
     {
-        switch (int(_ctrl.get("phase"))) {
+        switch (getRawPhase()) {
         default:
             // do not dispatch an event for internal funky phases
             return false;
@@ -520,14 +542,16 @@ public class CaptionGame extends EventDispatcher
 
         _myVote = null;
         _votableCaptions = [];
-        _ourCaptionIndex = -1;
+        _myCaptionIndex = -1;
         for (ii = 0; ii < _indexes.length; ii++) {
             var index :int = int(_indexes[ii]);
             _votableCaptions.push(String(caps[index]));
             if (ids[index] == _myId) {
-                _ourCaptionIndex = ii;
+                _myCaptionIndex = ii;
             }
         }
+
+        updateStats();
     }
 
     /**
@@ -636,6 +660,55 @@ public class CaptionGame extends EventDispatcher
         }
     }
 
+    /**
+     * Called when the user cookie has been retrieved.
+     */
+    protected function gotCookie (cookie :Object) :void
+    {
+        _hasCookie = true;
+        var fromServer :Array = cookie as Array;
+        if (fromServer != null) {
+            // merge in server values into our cookie
+            if (fromServer.length > 0) {
+                _statCookie[0] = int(_statCookie[0]) + int(fromServer[0]);
+            }
+            // TODO: handle each new stat in a custom way
+        }
+    }
+
+    /**
+     * Called during voting initialization to update any persistent stats.
+     */
+    protected function updateStats () :void
+    {
+        var changed :Boolean = false;
+        if (_votableCaptions.length >= _minCaptionersStatStorage && (_myCaptionIndex != -1)) {
+            var newCaptionsEver :int = 1 + int(_statCookie[0]);
+            _statCookie[0] = newCaptionsEver;
+            checkCaptionsEverTrophies(newCaptionsEver);
+            changed = true;
+        }
+
+        if (changed && _hasCookie) {
+//            trace("Updating stat cookie for " + _myName + ": " + _statCookie[0]);
+            _ctrl.setUserCookie(_statCookie);
+        }
+    }
+
+    /**
+     * Check to see if we should award any trophies for captions submitted ever.
+     */
+    protected function checkCaptionsEverTrophies (captionsEver :int) :void
+    {
+        for (var trophyName :String in _trophiesCaptionsEver) {
+            var count :int = int(_trophiesCaptionsEver[trophyName]);
+            if (captionsEver >= count) {
+//                trace("Awarding trophy to " + _myName + ": " + trophyName);
+                _ctrl.awardTrophy(trophyName);
+            }
+        }
+    }
+
     // Below here are methods only called by the user in control
     // ---------------------------------------------
 
@@ -650,10 +723,10 @@ public class CaptionGame extends EventDispatcher
             return;
         }
 
-        var ctrlPhase :int = getControlPhase();
+        var ctrlPhase :int = getCtrlPhase();
 
         // the ctrl phase should be 1 more than the current (raw) phase...
-        if (ctrlPhase != (1 + int(_ctrl.get("phase"))) % PHASE_COUNT) {
+        if (ctrlPhase != (1 + getRawPhase()) % PHASE_COUNT) {
             // otherwise, we need do nothing (the phase is already started)
             // TODO: we could freeze here if we get control right after the ticker stops...
             return;
@@ -1071,6 +1144,9 @@ public class CaptionGame extends EventDispatcher
     /** The durations of each phase. */
     protected var _durations :Array;
 
+    /** The minimum number of captioners needed for stat storage. */
+    protected var _minCaptionersStatStorage :int;
+
     /** How many seconds are remaining in the current phase. */
     protected var _secondsRemaining :int = 0;
 
@@ -1083,6 +1159,18 @@ public class CaptionGame extends EventDispatcher
     /** Our last-submitted captions. */
     protected var _myCaption :String;
 
+    /** Tracks persistent user stats related to the game.
+     * index 0: captions submitted (when _minCaptionersStatStorage is satisfied) 
+     */
+    protected var _statCookie :Array = [ 0 ];
+
+    /** True if the cookie value has been received from the server (prior to that,
+     * the _statCookie contains local stats. */
+    protected var _hasCookie :Boolean = false;
+
+    /** Stores info on trophies for captions submitted ever. */
+    protected var _trophiesCaptionsEver :Object = {};
+
     /** Our last-submitted vote. */
     protected var _myVote :Array;
 
@@ -1093,7 +1181,7 @@ public class CaptionGame extends EventDispatcher
     protected var _votableCaptions :Array;
 
     /** The index into _votableCaptions of a caption we cannot vote on, or -1. */
-    protected var _ourCaptionIndex :int = -1;
+    protected var _myCaptionIndex :int = -1;
 
     /** An array mapping our shuffled captions to the playerIds that submitted them. */
     protected var _indexes :Array;
