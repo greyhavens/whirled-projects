@@ -17,7 +17,6 @@ import com.threerings.flash.MathUtil;
 import com.threerings.brawler.actor.Actor;
 import com.threerings.brawler.actor.Pawn;
 import com.threerings.brawler.actor.Player;
-import com.threerings.brawler.util.AnimationManager;
 import com.threerings.brawler.util.BrawlerUtil;
 
 import com.whirled.FlowAwardedEvent;
@@ -30,9 +29,6 @@ public class BrawlerView extends Sprite
     public function BrawlerView (disp :DisplayObject, ctrl :BrawlerController)
     {
         _ctrl = ctrl;
-
-        // create the animation manager
-        _animmgr = new AnimationManager();
     }
 
     /**
@@ -74,14 +70,6 @@ public class BrawlerView extends Sprite
                     finishInit();
                 });
         }
-    }
-
-    /**
-     * Returns a reference to the animation manager.
-     */
-    public function get animmgr () :AnimationManager
-    {
-        return _animmgr;
     }
 
     /**
@@ -247,7 +235,7 @@ public class BrawlerView extends Sprite
     /**
      * Exits the current room.
      */
-    public function exitRoom (callback :Function) :void
+    public function exitRoom () :void
     {
         // depict all the players moving out of the scene
         var tx :Number = _ground.width + 500;
@@ -257,12 +245,12 @@ public class BrawlerView extends Sprite
                 (actor as Player).move(tx, ty, Pawn.WALK, false);
             }
         }
-        // fade out
-        _hud.fade("out", callback);
-		
+        // start the fade-out (the hud will report to the controller when finished)
+        _hud.fade("out");
+
 		// status report
 		_hud.zoneClear();
-		
+
 		// end game, sorta, and award flow.
 		_ctrl._grade = _ctrl.calculateGrade();
 		_ctrl.control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, _ctrl.flowAwarded);
@@ -290,7 +278,7 @@ public class BrawlerView extends Sprite
 
         // fade in
         _hud.fade("in");
-		
+
 		// status report remove
 		_hud.zoneClear(true);
     }
@@ -313,7 +301,7 @@ public class BrawlerView extends Sprite
 
         // display the damage points
         results.score.points.text = Math.round(_ctrl.score);
-		
+
 		if(_ctrl._difficulty == 0){
 			results.difficulty.text = "EASY";
 		}else if(_ctrl._difficulty == 1){
@@ -323,7 +311,7 @@ public class BrawlerView extends Sprite
 		}else{
 			results.difficulty.text = "INFERNO";
 		}
-		
+
         // display the final clock value, bonus score
         results.time.points.text = _hud.clock;
 
@@ -504,19 +492,16 @@ public class BrawlerView extends Sprite
 
 	/** Do this only once */
     protected var init_finished :Boolean;
-	
+
     /** The Brawler controller. */
     protected var _ctrl :BrawlerController;
-
-    /** Tracks animated clips. */
-    protected var _animmgr :AnimationManager;
 
     /** Keeps the HUD up-to-date. */
     protected var _hud :HudView;
 
 	/** The Score Card display. */
     public var results :MovieClip;
-	
+
     /** The preloader display. */
     protected var _preloader :Sprite;
 

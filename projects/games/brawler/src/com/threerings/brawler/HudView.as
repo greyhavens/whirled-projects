@@ -4,6 +4,7 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.geom.Point;
 
 import com.threerings.util.StringUtil;
@@ -32,6 +33,7 @@ public class HudView extends Sprite
         // initialize states
         _hud.respawn.state = "off";
         _hud.fader.gotoAndStop("out");
+        _hud.fader.addEventListener("animationComplete", handleFadeComplete);
 
         // update the room
         updateRoom();
@@ -133,7 +135,10 @@ public class HudView extends Sprite
      */
     public function fade (type :String, callback :Function = null) :void
     {
-        _view.animmgr.play(_hud.fader, type, callback);
+        if (_fadeType == type) {
+            return;
+        }
+        _hud.fader.gotoAndPlay(_fadeType = type);
     }
 
     /**
@@ -274,7 +279,7 @@ public class HudView extends Sprite
         // returns to idle after showing damage effect
         _hud.stats.exp.weapon.gotoAndPlay("damage");
     }
-	
+
 	/**
      * Flash PICKUP image for new weapon.
      */
@@ -290,7 +295,7 @@ public class HudView extends Sprite
 				_hud.pickup.gotoAndPlay(1);
 		}
     }
-	
+
 	/**
      * Toggle Zone Clear results.
      */
@@ -314,6 +319,18 @@ public class HudView extends Sprite
     }
 
     /**
+     * Called when the fade animation completes.
+     */
+    protected function handleFadeComplete (event :Event) :void
+    {
+        var type :String = _fadeType;
+        _fadeType = null;
+        if (type == "out") {
+            _ctrl.fadedOut();
+        }
+    }
+
+    /**
      * Goes to the specified label and stops if the clip isn't already there.
      */
     protected static function setState (clip :MovieClip, state :String) :void
@@ -334,15 +351,18 @@ public class HudView extends Sprite
     /** The game hud. */
     protected var _hud :MovieClip;
 
+    /** The type of fade being performed. */
+    protected var _fadeType :String;
+
     /** The number of punch levels in the attack bar. */
     protected static const PUNCH_LEVELS :int = 6;
 
     /** The number of kick levels in the attack bar. */
     protected static const KICK_LEVELS :int = 3;
-	
+
 	/** The array of possible grades. */
     protected static const GRADES :Array = [ "S", "A", "B", "C", "D", "F" ];
-	
+
 	/** The required percent score for each grade. */
     protected static const GRADE_LEVELS :Array = [ 100, 90, 80, 70, 60, 0 ];
 }

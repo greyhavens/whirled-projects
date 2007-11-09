@@ -205,28 +205,34 @@ public class BrawlerController extends Controller
             return;
         }
         _room = number;
-        _view.exitRoom(function () :void {
-            // clear out the old actors, replace with the new
-            for each (var actor :Actor in _actors) {
-                if (actor.amOwner && actor != _self) {
-                    actor.destroy();
-                }
-            }
-            createEnemies();
-            if (_clear) {
-				endGame();
-                // post our score to the dobj and show the game results
-                //_view.showResults();
-				//_grade = calculateGrade();
-				//if (amPlaying) {
-                //    _throttle.set("scores", _grade, _control.seating.getMyPosition());
-                //}
-            } else {
-                _view.enterRoom();
-            }
-        });
+        _view.exitRoom();
     }
-	
+
+	/**
+	 * Called by the view when the post-room fade has completed.
+	 */
+	public function fadedOut () :void
+	{
+	    // clear out the old actors, replace with the new
+        for each (var actor :Actor in _actors) {
+            if (actor.amOwner && actor != _self) {
+                actor.destroy();
+            }
+        }
+        createEnemies();
+        if (_clear) {
+			endGame();
+            // post our score to the dobj and show the game results
+            //_view.showResults();
+			//_grade = calculateGrade();
+			//if (amPlaying) {
+            //    _throttle.set("scores", _grade, _control.seating.getMyPosition());
+            //}
+        } else {
+            _view.enterRoom();
+        }
+	}
+
 	/**
      * Ends the game and brings up the Grade Card.
      */
@@ -234,19 +240,19 @@ public class BrawlerController extends Controller
     {
 		_disableEnemies = true;
 		_disableControls = true;
-		
+
         // post our score to the dobj
 		_grade = calculateGrade();
-		
+
 		// show the game results
 		_view.showResults();
-		
+
 		//Set up Exit key.
 		_view.results.exit_btn.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown_exit);
-		
+
 		//Listen to flow award.
 		control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
-		
+
 		if (amPlaying) {
             _throttle.set("scores", _grade, _control.seating.getMyPosition());
         }
@@ -262,7 +268,7 @@ public class BrawlerController extends Controller
 		control.removeEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
 		_control.playerReady();
 	}
-	
+
 	/**
      * The button to exit the game has been hit.
      */
@@ -270,7 +276,7 @@ public class BrawlerController extends Controller
     {
 		control.backToWhirled(false);
 	}
-	
+
     /**
      * Sets the current wave.
      */
@@ -491,7 +497,7 @@ public class BrawlerController extends Controller
 		var num_players:Number = control.seating.getPlayerIds().length;
 		var koCount :Number = 0;//control.get("koCount") as Number;
         var koPoints :Number = 0;//Math.max(0, 5000 - 5000*koCount);
-		
+
 		var local_dmgpar:Number = (_score+koPoints)/(_mobHpTotal/num_players);
 		var local_timepar:Number = (_mobHpTotal/(300*num_players))/clock;
 		var local_difficult:Number;
@@ -519,7 +525,7 @@ public class BrawlerController extends Controller
 			return temp_grade;
 		}
     }
-	
+
     /**
      * Called when the SWF is done loading.
      */
@@ -721,7 +727,7 @@ public class BrawlerController extends Controller
 
 	/** Do this only once */
     protected var init_finished :Boolean;
-	
+
     /** The SWF loader. */
     protected var _loader :EmbeddedSwfLoader;
 
@@ -754,10 +760,10 @@ public class BrawlerController extends Controller
 
     /** The local score. */
     protected var _score :int = 0;
-	
+
 	/** The local grade. */
     public var _grade :int = 0;
-	
+
     /** The currently occupied room. */
     protected var _room :int = 1;
 
@@ -784,13 +790,13 @@ public class BrawlerController extends Controller
 
     /** The enemy configurations. */
     protected var _econfigs :Array = new Array();
-	
+
 	/** Total amount of Mob Hit Points. */
 	public var _mobHpTotal :Number = 0;
-	
+
 	/** If on, turns off enemies. */
 	public var _disableEnemies :Boolean = false;
-	
+
 	/** If on, turns off controls.  */
 	public var _disableControls :Boolean = false;
 

@@ -309,6 +309,8 @@ public class Enemy extends Pawn
         // swap in the character corresponding to the variant
         _psprite.removeChild(_character);
         _psprite.addChild(_character = _ctrl.create(VARIANT_CLASSES[_variant]));
+        _character.addEventListener("animationComplete", handleAnimationComplete);
+        _dmgbox = null;
 
         // reposition the health bar above the character
         _health.y = -_character.height;
@@ -318,7 +320,7 @@ public class Enemy extends Pawn
 
         // play the spawn animation
         setAction("spawn");
-		
+
 		// add to total Monster HP
 		_ctrl._mobHpTotal += _maxhp;
     }
@@ -543,10 +545,10 @@ public class Enemy extends Pawn
 
     /** The enemy's stun amount. */
     protected var _stun :Number;
-	
+
 	/** The enemy's knockback dampening. */
     protected var _weight :Number;
-	
+
 	/** The enemy's chance to block attacks. */
     protected var _def :Number;
 

@@ -2,6 +2,7 @@ package com.threerings.brawler.actor {
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.geom.Point;
 import flash.utils.getTimer;
 
@@ -32,7 +33,7 @@ public class Pawn extends Actor
     // documentation inherited
     override public function wasDestroyed () :void
     {
-        // remove our radar blip
+        // clear any animation and remove our radar blip
         super.wasDestroyed();
         _view.hud.removeRadarBlip(_blip);
     }
@@ -471,7 +472,11 @@ public class Pawn extends Actor
         _effects = _psprite["effects"];
         _health = _psprite["health_bar"];
         _plate = _psprite["name_plate"];
-		
+
+        // listen for animation complete events
+        _character.addEventListener("animationComplete", handleAnimationComplete);
+        _dmgbox.addEventListener("animationComplete", handleAnimationComplete);
+
         // initialize the position and goal
         _view.setPosition(this, state.x, state.y);
         _goal = new Point(state.x, state.y);
@@ -540,7 +545,10 @@ public class Pawn extends Actor
      */
     protected function orient (dir :Number) :void
     {
-        _character.scaleX = _dmgbox.scaleX = dir;
+        _character.scaleX = dir;
+        if (_dmgbox != null) {
+            _dmgbox.scaleX = dir;
+        }
     }
 
     /**
@@ -754,24 +762,28 @@ public class Pawn extends Actor
         if (_action == action) {
             return;
         }
-        var callback :Function = ArrayUtil.contains(TRANSIENT_ACTIONS, action) ?
-            (function () :void { _action = null; }) : null;
-        play(anim == null ? action : anim, callback, danim);
         _action = action;
+        play(anim == null ? action : anim, danim);
     }
 
     /**
      * Plays an animation on both the character and its damage box.
      */
-    protected function play (
-        anim :String, callback :Function = null, danim :String = null) :void
+    protected function play (anim :String, danim :String = null) :void
     {
-        if (danim == null) {
-            _view.animmgr.play(_character, anim, callback);
-            _view.animmgr.play(_dmgbox, anim);
-        } else {
-            _view.animmgr.play(_character, anim);
-            _view.animmgr.play(_dmgbox, danim, callback);
+        _character.gotoAndPlay(anim);
+        if (_dmgbox != null) {
+            _dmgbox.gotoAndPlay(danim == null ? anim : danim);
+        }
+    }
+
+    /**
+     * Called when an animation finishes.
+     */
+    protected function handleAnimationComplete (event :Event) :void
+    {
+        if (ArrayUtil.contains(TRANSIENT_ACTIONS, _action)) {
+            _action = null;
         }
     }
 
