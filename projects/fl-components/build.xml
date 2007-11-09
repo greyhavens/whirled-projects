@@ -1,0 +1,21 @@
+<project name="fl-components" default="compile" basedir=".">
+
+  <import file="../../etc/project-include.xml"/>
+
+  <target name="compile" description="Builds the fl-components.swc">
+    <java jar="${flex.path}/lib/compc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${etc.dir}/whirled-config.xml"/>
+      <arg value="-library-path+=lib/v3components.swc"/>
+      <arg value="-include-sources=."/>
+      <arg value="-output"/>
+      <arg value="fl-components.swc"/>
+    </java>
+  </target>
+
+  <target name="install" description="Installs the fl-components.swc in lib/"
+    depends="compile">
+    <copy file="fl-components.swc" todir="${build.root}/lib"/>
+  </target>
+
+</project>
