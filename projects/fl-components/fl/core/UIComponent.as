@@ -1170,6 +1170,29 @@ package fl.core {
 		}
 
         /**
+         * Utility function for subclasses to find an appropriate parent container
+         * for various things.
+         */
+        protected function findAppropriateParent (base :DisplayObject) :DisplayObjectContainer
+        {
+            initStageAlias();
+            if (stageAlias is Stage) {
+                return stageAlias;
+            }
+
+            // there could be danger in accessing this first parent... TODO?
+            var container :DisplayObjectContainer = base.parent;
+            try {
+                while (container != stageAlias && container.parent != null) {
+                    container = container.parent;
+                }
+            } catch (err :SecurityError) {
+                // stop when we can't access a parent.
+            }
+            return container;
+        }
+
+        /**
          * @private (protected)
          *
          * @langversion 3.0
@@ -1438,26 +1461,24 @@ package fl.core {
 			}
 		}
 
-
-                protected function initStageAlias () :void
-                {
-                    if (stageAlias == null) {
-                        if (stage == null) {
-                            trace("=-====== OUCH! initing stagealias while stage == null");
-                        }
-                        try {
-                            var dummyFn :Function = function () :void {};
-                            stage.addEventListener(Event.ENTER_FRAME, dummyFn);
-                            stage.removeEventListener(Event.ENTER_FRAME, dummyFn);
-                            stageAlias = stage;
-                        } catch (err :SecurityError) {
-                            stageAlias = DisplayObjectContainer(this.root);
-                        }
-                        Log.configureFrameBreaks(stageAlias);
-                        trace("Stage alias set as " + stageAlias);
-                    }
+        protected function initStageAlias () :void
+        {
+            if (stageAlias == null) {
+                if (stage == null) {
+                    trace("=-====== OUCH! initing stagealias while stage == null");
                 }
-
+                try {
+                    var dummyFn :Function = function () :void {};
+                    stage.addEventListener(Event.ENTER_FRAME, dummyFn);
+                    stage.removeEventListener(Event.ENTER_FRAME, dummyFn);
+                    stageAlias = stage;
+                } catch (err :SecurityError) {
+                    stageAlias = DisplayObjectContainer(this.root);
+                }
+                Log.configureFrameBreaks(stageAlias);
+                trace("Stage alias set as " + stageAlias);
+            }
+        }
 
 		/**
          * @private (protected)

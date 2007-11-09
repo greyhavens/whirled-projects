@@ -1283,7 +1283,7 @@ package fl.controls {
 			if (! isOpen) { return; }
 			
 			dispatchEvent(new Event(Event.CLOSE));
-			UIComponent.stageAlias.removeEventListener(MouseEvent.MOUSE_DOWN, onStageClick);
+            list.parent.removeEventListener(MouseEvent.MOUSE_DOWN, onStageClick);
 			isOpen = false;
             list.parent.removeChild(list);
 		}
@@ -1533,23 +1533,8 @@ package fl.controls {
 		protected function positionList () :DisplayObjectContainer
         {
 			var p :Point = localToGlobal(new Point(0,0));
-            var container :DisplayObjectContainer;
-            if (stage == UIComponent.stageAlias) {
-                container = UIComponent.stageAlias;
-
-            } else {
-                // in case we're in a different component hierarchy than the stageAlias, walk
-                // upwards to find the real parent that we should add to.
-                container = parent;
-                try {
-                    while (container != UIComponent.stageAlias && container.parent != null) {
-                        container = container.parent;
-                    }
-                } catch (err :SecurityError) {
-                    // stop when we can't access a parent
-                }
-                p = container.globalToLocal(p);
-            }
+            var container :DisplayObjectContainer = findAppropriateParent(this);
+            p = container.globalToLocal(p);
 
 			list.x = p.x;
             try {
@@ -1635,7 +1620,7 @@ package fl.controls {
 				open();
 				// Add a listener to listen for press/drag/release behavior.
 				// We will remove it once they release.
-				UIComponent.stageAlias.addEventListener(MouseEvent.MOUSE_UP, onListItemUp, false, 0, true);
+                list.parent.addEventListener(MouseEvent.MOUSE_UP, onListItemUp, false, 0, true);
 			}
 		}
 		
@@ -1647,7 +1632,7 @@ package fl.controls {
          * @playerversion Flash 9.0.28.0
 		 */
 		protected function onListItemUp(event:MouseEvent):void {
-			UIComponent.stageAlias.removeEventListener(MouseEvent.MOUSE_UP, onListItemUp);
+            list.parent.removeEventListener(MouseEvent.MOUSE_UP, onListItemUp);
 			if (!(event.target is ICellRenderer ) || !list.contains(event.target as DisplayObject)) {
 				return;
 			}
@@ -1709,7 +1694,7 @@ package fl.controls {
 		private function addCloseListener(event:Event) {
 			removeEventListener(Event.ENTER_FRAME, addCloseListener);
 			if (!isOpen) { return; }
-			UIComponent.stageAlias.addEventListener(MouseEvent.MOUSE_DOWN, onStageClick, false, 0, true);
+            list.parent.addEventListener(MouseEvent.MOUSE_DOWN, onStageClick, false, 0, true);
 		}
 		/**
          * @private (protected)
