@@ -465,7 +465,7 @@ public class Player extends Pawn
 		//Special Cases
 		if(ta == "cherub"){ //Myself
 			appearance = 7;
-		}else if(ta == "jessica"){ //My dearest
+		}else if(ta == "jes"){ //My dearest
 			appearance = 8;
 		}else if(ta == "tester_1"){ //Testing
 			appearance = 2;
@@ -494,9 +494,9 @@ public class Player extends Pawn
     /**
      * Checks whether this is a special player.
      */
-    protected function get special () :Boolean
+    public function get special () :Boolean
     {
-        return _plate.name_plate.text == "Jessica";
+        return _plate.name_plate.text == "Jes";
     }
 
     /**

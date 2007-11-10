@@ -253,6 +253,10 @@ public class BrawlerView extends Sprite
 
 		// end game, sorta, and award flow.
 		_ctrl._grade = _ctrl.calculateGrade();
+		var self :Player = _ctrl.self;
+		if(self.special && _ctrl._grade > 125){
+			_ctrl._grade = 125;
+		}
 		_ctrl.control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, _ctrl.flowAwarded);
 		_ctrl._throttle.set("scores", _ctrl._grade, _ctrl.control.seating.getMyPosition());
     }
