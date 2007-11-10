@@ -1,0 +1,16 @@
+<?xml version="1.0" standalone="yes"?>
+<game>
+  <ident>atlantis</ident>
+  <controller>com.samskivert.atlanti.client.AtlantiController</controller>
+  <manager>com.samskivert.atlanti.server.AtlantiManager</manager>
+
+  <match type="table">
+    <min_seats>2</min_seats>
+    <max_seats>4</max_seats>
+    <start_seats>2</start_seats>
+  </match>
+
+  <params>
+    <ai ident="aicount" maximum="3"/>
+  </params>
+</game>

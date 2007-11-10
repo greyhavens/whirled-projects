@@ -1,0 +1,14 @@
+<!-- build configuration -->
+<project name="atlantis" default="compile" basedir=".">
+
+  <!-- things you may want to change -->
+  <property name="app.name" value="atlantis"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/java-project-include.xml"/>
+
+  <!-- handles project specific build preparations -->
+  <target name="project-prepare">
+  </target>
+
+</project>
