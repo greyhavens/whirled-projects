@@ -24,7 +24,7 @@ import com.samskivert.atlanti.data.TileCodes;
 public class TileUtil implements TileCodes
 {
     /** Enable to use smaller tileset when testing. */
-    public static final boolean TESTING = true;
+    public static final boolean TESTING = false;
 
     /**
      * Returns an instance of the starting tile (properly cloned so that
