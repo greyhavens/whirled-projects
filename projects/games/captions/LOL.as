@@ -16,6 +16,8 @@ import flash.filters.GlowFilter;
 
 import flash.text.TextField;
 import flash.text.TextFieldType;
+import flash.text.TextFormat;
+import flash.text.TextFormatAlign;
 
 import flash.utils.ByteArray;
 import flash.utils.Timer;
@@ -24,8 +26,12 @@ import fl.core.UIComponent;
 import fl.containers.ScrollPane;
 import fl.controls.Button;
 import fl.controls.CheckBox;
+import fl.controls.Label;
+import fl.controls.ScrollPolicy;
+import fl.controls.TextArea;
 import fl.controls.TextInput;
 
+import com.threerings.util.ClassUtil;
 import com.threerings.util.EmbeddedSwfLoader;
 
 import com.threerings.ezgame.SizeChangedEvent;
@@ -79,66 +85,95 @@ public class LOL extends Sprite
         }
     }
 
-    protected function referenceClasses () :void
-    {
-        CheckBox;
-        UIComponent;
-        ScrollPane;
-    }
-
     protected function handleUILoaded (event :Event) :void
     {
         _ui = _loader.getContent() as MovieClip;
         addChild(_ui);
         _loader = null;
 
-        // scrape for children
-        findNamedChildren(_ui);
-
         // and now do a bit of debuggery on _animations
         for each (var s :Object in _ui.scenes) {
             trace("Scene: " + s.name + " contains " + s.numFrames + " frames.");
             for each (var f :Object in s.labels) {
-                trace("Frame: " + f.name);
+                trace("Frame: " + f.name + ", " + f.frame);
             }
         }
+        dumpHierarchy(_ui);
 
-//        // and now do a bit of debuggery on _animations
-//        for each (var s :Object in _animations.scenes) {
-//            for each (var f :Object in s.labels) {
-//                var frameId :int = f.frame;
-//                if (frameId > 2) {
-//                    frameId -= 2;
-////                    trace("Registering handler on frame " + frameId + ".");
-//                    _animations.addFrameScript(frameId, handleFrameScript);
-//                }
-//            }
-//        }
-////        trace("Registering handler on frame " + (_animations.totalFrames - 2) + ".");
-//        _animations.addFrameScript(_animations.totalFrames - 2, handleFrameScript);
+        _ui.addFrameScript(0, initUIBits);
 
-//        skipToFrame();
+        initUIBits();
+
+        checkPhase(null);
     }
 
-    protected function initCaptioning (skipAnimations :Boolean = false) :void
+    /** For debugging. */
+    protected function dumpHierarchy (
+        container :DisplayObjectContainer, spaces :String = "") :void
     {
-        trace("---initCaptioning(" + skipAnimations + ")");
-        _ui.gotoAndPlay(1, "Caption");
+        for (var ii :int = 0; ii < container.numChildren; ii++) {
+            try {
+                var child :DisplayObject = container.getChildAt(ii);
+                if (child != null) {
+                    trace(spaces + child.name + ": " + ClassUtil.getClassName(child));
+                    if (child is DisplayObjectContainer) {
+                        dumpHierarchy(child as DisplayObjectContainer, spaces + "  ");
+                    }
+                }
+            } catch (err :SecurityError) {
+                trace(spaces + "SECURITY-BLOCKED");
+                // skip inaccessible children
+            }
+        }
+    }
+
+    protected function initUIBits () :void
+    {
+        // find all the children we care about
+        for (var ii :int = 0; ii < 4; ii++) {
+            var pp :ScrollPane = findDeepChild("preview_pane_" + (ii + 1), _ui) as ScrollPane;
+            pp.verticalScrollPolicy = ScrollPolicy.OFF;
+            pp.horizontalScrollPolicy = ScrollPolicy.OFF;
+            pp.addEventListener(MouseEvent.CLICK, handlePreviewPhotoClick);
+            var pb :CheckBox = findDeepChild("checkbox_" + (ii + 1), _ui) as CheckBox;
+            pb.addEventListener(Event.CHANGE, handlePreviewVote);
+            pb.enabled = true;
+            _previewPane[ii] = pp;
+            _previewBox[ii] = pb;
+        }
+
         _image = findDeepChild("image", _ui) as ScrollPane;
-        var skip :CheckBox = findDeepChild(_themePrefix + "skip", _ui) as CheckBox;
-        //_input = findDeepChild(_themePrefix + "input", _ui) as TextField;
-        _input = findDeepChild(_themePrefix + "input", _ui) as TextInput;
-        _clock = findDeepChild(_themePrefix + "clock", _ui) as TextField;
-        _doneButton = findDeepChild("__id0_", _ui) as Button;
+        _image.verticalScrollPolicy = ScrollPolicy.OFF;
+        _skipBox = findDeepChild("lol_skip", _ui) as CheckBox;
+        _input = findDeepChild("lol_text_input", _ui) as TextArea;
+        _input.setStyle("upSkin", new Sprite());
+        _clock = findDeepChild("lol_clock", _ui) as TextField;
+        _doneButton = findDeepChild("lol_done", _ui) as Button;
 
-        // clean up UI bits
-        skip.selected = false;
+        _votingPane = findDeepChild("voting_scrollpane", _ui) as ScrollPane;
+        _resultsPane = findDeepChild("results_scrollpane", _ui) as ScrollPane;
 
-        updateClock();
-        showPhoto();
-        skip.addEventListener(Event.CHANGE, handleVoteToSkip);
+        _winningCaption = findDeepChild("lol_winning_caption", _ui) as TextField;
+        _winnerName = findDeepChild("winner_name", _ui) as TextField;
+
+        _skipBox.addEventListener(Event.CHANGE, handleVoteToSkip);
         _doneButton.addEventListener(MouseEvent.CLICK, handleSubmitButton);
-        _timer.start();
+
+
+// TODO: re-init propertly here
+        switch (_game.getCurrentPhase()) {
+        case CaptionGame.CAPTIONING_PHASE:
+            initCaptioning();
+            break;
+
+        case CaptionGame.VOTING_PHASE:
+            initVoting();
+            break;
+
+        case CaptionGame.RESULTS_PHASE:
+            initResults();
+            break;
+        }
     }
 
     protected function findDeepChild (name :String, container :DisplayObjectContainer)
@@ -171,25 +206,6 @@ public class LOL extends Sprite
         return null;
     }
 
-    /** For debugging. */
-    protected function findNamedChildren (
-        container :DisplayObjectContainer, spaces :String = "") :void
-    {
-        for (var ii :int = 0; ii < container.numChildren; ii++) {
-            try {
-                var child :DisplayObject = container.getChildAt(ii);
-                if (child != null) {
-                    trace(spaces + child.name);
-                    if (child is DisplayObjectContainer) {
-                        findNamedChildren(child as DisplayObjectContainer, spaces + "  ");
-                    }
-                }
-            } catch (err :SecurityError) {
-                // skip inaccessible children
-            }
-        }
-    }
-
     protected function updateClock (... ignored) :void
     {
         var remaining :int = _game.getSecondsRemaining();
@@ -201,34 +217,41 @@ public class LOL extends Sprite
         }
 
         if (_clock != null) {
+            // TEMP
+            _clock.defaultTextFormat = _textFormat;
             _clock.text = minStr + ":" + secStr;
         }
 
         if (remaining == 0 && _game.getCurrentPhase() == CaptionGame.CAPTIONING_PHASE) {
+            _timer.stop();
+            handleSubmitCaption(); // one last time!
             if (_input != null) {
-                // TODO
-                //_input.type = TextFieldType.DYNAMIC;
+                _input.editable = false;
+            }
+            if (_doneButton != null) {
+                _doneButton.enabled = false;
             }
         }
     }
 
     protected function checkPhase (arg :Object = null) :void
     {
-        var skipAnimations :Boolean = (arg == null);
-
         switch (_game.getCurrentPhase()) {
         case CaptionGame.CAPTIONING_PHASE:
-            initCaptioning(skipAnimations);
+            initCaptioning();
             break;
 
         case CaptionGame.VOTING_PHASE:
-            initVoting(skipAnimations);
+            initVoting();
             break;
 
         case CaptionGame.RESULTS_PHASE:
-            initResults(skipAnimations);
+            initResults();
             break;
         }
+
+        var animate :Boolean = (arg != null);
+        showFrame(animate);
     }
 
     protected function showPhoto () :Boolean
@@ -247,28 +270,30 @@ public class LOL extends Sprite
     protected function handleSubmitButton (event :Event) :void
     {
         trace("Submit button pressed.");
-//        var nowEditing :Boolean = !_capInput.editable;
-//
-//        _capInput.editable = nowEditing;
-//        _capPanel.setStyle("backgroundAlpha", nowEditing ? .2 : 0);
-//
-//        _capPanel.enterButton.label = nowEditing ? "Done" : "Edit";
-//
-//        if (!nowEditing) {
-//            handleSubmitCaption(event);
-//
-//        } else {
-//            // Because we're in a button's event handler, it apparently grabs focus after
-//            // this, so we need to re-set the focus a frame later.
-//            _capInput.callLater(_capInput.setFocus);
-//        }
+        var nowEditing :Boolean = !_input.editable;
+
+        _input.editable = nowEditing;
+
+        //_capPanel.setStyle("backgroundAlpha", nowEditing ? .2 : 0);
+
+        _doneButton.label = nowEditing ? "Done" : "Edit";
+
+        if (!nowEditing) {
+            handleSubmitCaption(event);
+
+        } else {
+            // Because we're in a button's event handler, it apparently grabs focus after
+            // this, so we need to re-set the focus a frame later.
+            _input.setFocus();
+            //_input.callLater(_input.setFocus);
+        }
     }
 
     /**
      * Called both by the Timer event and when the user presses the (largely unneeded)
      * enter button.
      */
-    protected function handleSubmitCaption (event :Event) :void
+    protected function handleSubmitCaption (event :Event = null) :void
     {
         if (_input != null) {
             _game.submitCaption(_input.text);
@@ -277,210 +302,103 @@ public class LOL extends Sprite
 
     protected function handleVoteToSkip (event :Event) :void
     {
-        var skipBox :CheckBox = (event.currentTarget as CheckBox);
-        _game.voteToSkipPhoto(skipBox.selected);
+        trace("Voting to skip: " + _skipBox.selected);
+        _game.voteToSkipPhoto(_skipBox.selected);
     }
 
     protected function handleCaptionVote (event :Event) :void
     {
-//        var box :CheckBox = (event.currentTarget as CheckBox);
-//        var value :int = int(box.data);
-//        _game.setCaptionVote(value, box.selected);
+        var box :DataCheckBox = (event.currentTarget as DataCheckBox);
+        var value :int = int(box.data);
+        _game.setCaptionVote(value, box.selected);
+    }
+
+    protected function handlePreviewPhotoClick (event :MouseEvent) :void
+    {
+        var pane :ScrollPane = event.currentTarget as ScrollPane;
+
+        for (var ii :int = 0; ii < 4; ii++) {
+            if (pane == _previewPane[ii]) {
+                var box :CheckBox = _previewBox[ii] as CheckBox;
+                if (box.enabled && box.visible) {
+                    box.selected = !box.selected;
+                }
+                return;
+            }
+        }
+
+        trace("DO NOT WANT");
+        Log.dumpStack();
     }
 
     protected function handlePreviewVote (event :Event) :void
     {
-//        var box :CheckBox = (event.currentTarget as CheckBox);
-//        var value :int = int(box.data);
-//        _game.setPreviewVote(value, box.selected);
+        var box :CheckBox = (event.currentTarget as CheckBox);
+        for (var ii :int = 0; ii < 4; ii++) {
+            if (box == _previewBox[ii]) {
+                trace("Voted preview: " + ii);
+                _game.setPreviewVote(ii, box.selected);
+                return;
+            }
+        }
+
+        trace("DO NOT WANT");
+        Log.dumpStack();
     }
 
-//    protected function initCaptioning (skipAnimations :Boolean) :void
-//    {
-//        if (_capPanel != null) {
-//            _ui.removeChild(_capPanel);
-//            _capPanel = null;
-//        }
-//        if (_capInput != null) {
-//            _ui.removeChild(_capInput);
-//            _capInput = null;
-//        }
-//        if (_grid != null) {
-//            _ui.removeChild(_grid);
-//            _grid = null;
-//        }
-//        if (_nextPanel != null) {
-//            _ui.removeChild(_nextPanel);
-//            _nextPanel = null;
-//        }
-//
-//        if (skipAnimations) {
-//            skipToFrame();
-//            _image.alpha = 1;
-//            showPhoto();
-//            setupCaptioningUI();
-//
-//        } else {
-//            _phasePhase = 0;
-//            _image.alpha = 0;
-//            showPhoto();
-//            doFade(_image, 0, 1);
-//            animateToFrame(setupCaptioningUI);
-//        }
-//    }
-
-    protected function setupCaptioningUI () :void
+    protected function initCaptioning () :void
     {
-//        _phasePhase = 1;
-//        _captionOnBottom = true;
-//        _timer.start();
-//
-//        _capPanel = new CaptionPanel();
-//        _capPanel.includeInLayout = false;
-//        _ui.addChild(_capPanel);
-//
-//        _capInput = new CaptionTextArea();
-//        _capInput.includeInLayout = false;
-//
-//        _ui.addChild(_capInput);
-//        _capInput.calculateHeight();
-//
-//        _capPanel.enterButton.addEventListener(FlexEvent.BUTTON_DOWN, handleSubmitButton);
-//        _capPanel.skip.addEventListener(Event.CHANGE, handleVoteToSkip);
-//
-//        // validate the panel now so that we know the _capPanel.height in updateLayout()
-//        _ui.validateNow();
-//
-//        doFade(_capPanel, 0, 1, 2000);
-//
-//        updateLayout();
+        if (_input == null || _input.stage == null) {
+            trace("Not ready!");
+        }
+        showPhoto();
+
+        _votingPane.source = null;
+        _resultsPane.source = null;
+
+        _input.editable = true;
+        _doneButton.label = "Done";
+        _doneButton.enabled = true;
+        _skipBox.selected = false;
+        _input.text = "";
+
+        _timer.start();
     }
 
-    /**
-     * Configure layout stuff for the voting or results phases.
-     */
-    protected function initNonCaption () :void
+    protected function initVoting () :void
     {
-//        if (_capPanel != null) {
-//            _ui.removeChild(_capPanel);
-//            _capPanel = null;
-//        }
-//
-//        if (_capInput != null) {
-//            _ui.removeChild(_capInput);
-//            _capInput = null;
-//        }
-//
-//        if (_grid != null) {
-//            _ui.removeChild(_grid);
-//            _grid = null;
-//        }
+        _resultsPane.source = null;
+        _timer.stop();
+        var caps :Array = _game.getVotableCaptions();
+        var ourIdx :int = _game.getOurCaptionIndex();
+
+        var s :Sprite = new Sprite();
+for (var jj :int = 0; jj < 20; jj++) {
+        for (var ii :int = 0; ii < caps.length; ii++) {
+            var cb :DataCheckBox = new DataCheckBox();
+            cb.label = deHTML(String(caps[ii]));
+
+            cb.setStyle("disabledTextFormat", _textFormat);
+            cb.setStyle("textFormat", _textFormat);
+            cb.data = ii;
+            cb.addEventListener(Event.CHANGE, handleCaptionVote);
+            if (ii == ourIdx) {
+                cb.enabled = false;
+            }
+            cb.setSize(400, 22);
+            cb.y = (jj * 100) + ii * 25;
+
+            s.addChild(cb);
+        }
+}
+        _votingPane.source = s;
     }
 
-    protected function initVoting (skipAnimations :Boolean) :void
+    protected function initResults () :void
     {
-        trace("---initVoting(" + skipAnimations + ")");
-        _ui.gotoAndPlay(1, "Voting");
+        _votingPane.source = null;
+        _timer.stop();
 
-        findNamedChildren(_ui);
-
-
-//        initNonCaption();
-//
-//        if (skipAnimations) {
-//            _image.alpha = 1;
-//            _gradientBackground.alpha = 1;
-//            skipToFrame();
-//            setupVotingUI();
-//
-//        } else {
-//            _phasePhase = 0;
-//            doFade(_image, 1, 0);
-//            _gradientBackground.alpha = 0;
-//            updateLayout();
-//            animateToFrame(setupVotingUI);
-//        }
-    }
-
-    protected function setupVotingUI () :void
-    {
-//        _phasePhase = 1;
-//        _grid = new Grid();
-//        _ui.addChild(_grid);
-//        doFade(_gradientBackground, 0, 1, 2000);
-//
-//        if (_image.alpha != 1) {
-//            doFade(_image, 0, 1);
-//        }
-//
-//        var caps :Array = _game.getVotableCaptions();
-//        var ourIdx :int = _game.getOurCaptionIndex();
-//
-//for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
-//        for (var ii :int = 0; ii < caps.length; ii++) {
-//            var row :VotingRow = new VotingRow();
-//            _grid.addChild(row);
-//            row.captionText.htmlText = deHTML(String(caps[ii]));
-//            row.voteButton.data = ii;
-//            row.voteButton.addEventListener(Event.CHANGE, handleCaptionVote);
-//            if (ii == ourIdx) {
-//                row.voteButton.enabled = false;
-//            }
-//        }
-//}
-//
-//        updateLayout();
-    }
-
-    protected function initResults (skipAnimations :Boolean) :void
-    {
-        findNamedChildren(_ui);
-        trace("---initResults(" + skipAnimations + ")");
-        _ui.gotoAndPlay(0, "Winner");
-//        initNonCaption();
-//        _grid = new Grid();
-//        computeResults(skipAnimations);
-//
-//        if (skipAnimations) {
-//            _image.alpha = 1;
-//            _gradientBackground.alpha = 1;
-//            skipToFrame();
-//            setupResultsUI();
-//
-//        } else {
-//            _capInput.alpha = 0;
-//            _phasePhase = 0;
-//            doFade(_image, 1, 0);
-//            doFade(_gradientBackground, 1, 0);
-//            _gradientBackground.alpha = 0;
-//            updateLayout();
-//            animateToFrame(setupWinnerUI, "Winner");
-//        }
-    }
-
-    protected function setupWinnerUI () :void
-    {
-//        _phasePhase = 1;
-//        doFade(_image, 0, 1);
-//        doFade(_capInput, 0, 1);
-//        doFade(_winnerLabel, 0, 1);
-//        updateLayout();
-//
-//        _winnerTimer.reset();
-//        _winnerTimer.start();
-    }
-
-    protected function handleWinnerTimer (event :TimerEvent) :void
-    {
-//        _phasePhase = 2;
-//        doFade(_image, 1, 0);
-//        doFade(_capInput, 1, 0);
-//        doFade(_winnerLabel, 1, 0);
-//        animateToFrame(setupResultsUI);
-    }
-
-    protected function computeResults (skipAnimations :Boolean) :void
-    {
 //        _capInput = new CaptionTextArea();
 //        _captionOnBottom = true;
 //        _capInput.includeInLayout = false;
@@ -499,97 +417,65 @@ public class LOL extends Sprite
 //            _ui.addChild(_winnerLabel);
 //        }
 //
-//        var results :Array = _game.getResults();
-//
-//for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
-//        for (var ii :int = 0; ii < results.length; ii++) {
-//
-////            if (ii > 0) {
-////                _grid.addChild(new HSeparator());
-////            }
-//
-//            var result :Object = results[ii];
-//
-//            var row :ResultRow = new ResultRow();
-//            _grid.addChild(row);
-//            row.captionText.htmlText = deHTML(String(result.caption));
-//            row.nameAndVotesLabel.text = "- " + result.playerName + ", " + result.votes;
-//
-//            if (ii == 0) {
+        var results :Array = _game.getResults();
+        var s :Sprite = new Sprite();
+for (var jj :int = 0; jj < 20; jj++) {
+        for (var ii :int = 0; ii < results.length; ii++) {
+            var result :Object = results[ii];
+            var y :int = (jj * 100) + (ii * 25);
+
+            var lbl :Label = new Label();
+            lbl.setStyle("textFormat", _textFormat);
+            lbl.text = deHTML(String(result.caption));
+            lbl.setSize(300, 42);
+            lbl.x = 50;
+            lbl.y = y;
+            s.addChild(lbl);
+            
+            var name :Label = new Label();
+            name.setStyle("textFormat", _textFormat);
+            name.text = "- " + result.playerName + ", " + result.votes;
+            name.setSize(100, 42);
+            name.x = 350;
+            name.y = y;
+            s.addChild(name);
+
+            if (ii == 0) {
 //                _capInput.text = String(result.caption);
 //                if (_winnerLabel != null) {
 //                    _winnerLabel.text = result.playerName + " wins!";
 //                }
-//            }
-//
-//            if (result.winner) {
-//                row.statusIcon.source = WINNER_ICON;
-//
-//            } else if (result.disqual) {
-//                row.statusIcon.source = DISQUAL_ICON;
-//            }
-//        }
-//}
-    }
+            }
 
-    protected function setupResultsUI () :void
-    {
-//        _phasePhase = 3;
-//
-//        if (_winnerLabel != null) {
-//            _ui.removeChild(_winnerLabel);
-//            _winnerLabel = null;
-//        }
-//
-//        _ui.addChild(_grid);
-//        doFade(_gradientBackground, 0, 1, 2000);
-//
-//        if (_image.alpha != 1) {
-//            doFade(_capInput, 0, 1);
-//            doFade(_image, 0, 1);
-//        }
-//
-//        _nextPanel = new Canvas();
-//        _ui.addChild(_nextPanel);
-//
-//        // see if there are any preview pics to vote on...
-//        var previews :Array = _game.getPreviews();
-//        for (var ii :int = 0; ii < previews.length; ii++) {
-//            addPreviewPhoto(_nextPanel, ii, previews[ii]);
-//        }
-//
-//        updateLayout();
-    }
+            var icon :Class = null;
+            if (result.winner) {
+                icon = WINNER_ICON;
 
-//    protected function addPreviewPhoto (panel :Canvas, number :int, url :String) :void
-//    {
-//        if (url == null) {
-//            return;
-//        }
-//        // once again, it's easier for me to hard-code this layout
-//        // than to fight with flex layout to accomplish the same thing.
-//        // (Part of the reason for this is that the checkbox takes up retarded
-//        // amounts of space, even when the label is blank)
-//        var img :Image = new Image();
-//        var cb :CheckBox = new CheckBox();
-//        cb.label = " "; // prevent buggage
-//        cb.data = number;
-//        cb.addEventListener(Event.CHANGE, handlePreviewVote);
-//
-//        img.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
-//            cb.selected = !cb.selected;
-//        });
-//        
-//        cb.includeInLayout = false;
-//
-//        img.x = ((number % 2) == 0) ? 14 : 140;
-//        img.y = (int(number / 2) == 0) ? 1 : 111;
-//        cb.x = ((number % 2) == 0) ? 0 : 126;
-//        cb.y = (int(number / 2) == 0) ? 0 : 110;
-//        panel.addChild(img);
-//        panel.addChild(cb);
-//        img.load(url);
-//    }
+            } else if (result.disqual) {
+                icon = DISQUAL_ICON;
+            }
+
+            if (icon != null) {
+                var dicon :DisplayObject = new icon() as DisplayObject;
+                dicon.y = y;
+                s.addChild(dicon);
+            }
+        }
+}
+        _resultsPane.source = s;
+
+        // see if there are any preview pics to vote on...
+        var previews :Array = _game.getPreviews();
+        for (var count :int = 0; count < 4; count++) {
+            var pp :ScrollPane = _previewPane[count] as ScrollPane;
+            var pb :CheckBox = _previewBox[count] as CheckBox;
+            var url :String = previews[count] as String;
+            pp.source = url;
+            pp.visible = (url != null);
+            pb.selected = false;
+            pb.visible = (url != null);
+        }
+    }
 
     protected function deHTML (s :String) :String
     {
@@ -616,19 +502,6 @@ public class LOL extends Sprite
 //        updateLayout();
     }
 
-    /**
-     * Handle toggling the position of the caption input area from the top of the image
-     * to the bottom.
-     */
-    protected function handlePositionToggle (event :Event) :void
-    {
-
-    // TODO: this is kinda annoying?
-//        _captionOnBottom = !_captionOnBottom;
-//
-//        recheckInputBounds();
-    }
-
     protected function handleFrameScript () :void
     {
 //        trace("+=== ah-ha, I reached frame # " + _animations.currentFrame);
@@ -645,62 +518,34 @@ public class LOL extends Sprite
     }
 
     /**
-     * Get the _animations sequence for the current phase.
+     * Get the _ui sequence for the current phase.
      */
     protected function getFrameForPhase () :String
     {
         switch (_game.getCurrentPhase()) {
         default:
-            return "Caption";
+            return "caption";
 
         case CaptionGame.VOTING_PHASE:
-            return "Voting";
+            return "voting";
 
         case CaptionGame.RESULTS_PHASE:
-            return "Results";
+            return "results";
         }
     }
 
-    protected function animateToFrame (frameReachedCallback :Function, frame :String = null) :void
-    {
-        if (_ui != null) {
-            _frameReachedCallback = frameReachedCallback;
-            if (frame == null) {
-                frame = getFrameForPhase();
-            }
-//            trace("animating to frame: " + frame);
-            _ui.gotoAndPlay(frame);
-
-        } else {
-            // better just go straight there, and we'll do the skipToFrame when it loads
-            frameReachedCallback();
-        }
-    }
-
-    protected function skipToFrame () :void
+    protected function showFrame (animate :Boolean = true) :void
     {
         if (_ui == null) {
             return;
         }
 
         var frame :String = getFrameForPhase();
-        var found :Boolean = false;
-        for each (var s :Object in _ui.scenes) {
-            for each (var f :Object in s.labels) {
-                if (found) {
-                    _ui.gotoAndPlay(f.frame - 1);
-                    return;
-                }
-                if (f.name == frame) {
-                    found = true;
-                    // so that we go to the NEXT one...
-                }
-            }
+        if (!animate) {
+            frame += "_end";
         }
-
-        if (found) {
-            _ui.gotoAndPlay(_ui.totalFrames - 1);
-        }
+        trace((animate ? "animating" : "skipping") + " to frame " + frame);
+        _ui.gotoAndPlay(frame);
     }
 
     protected function handleSizeChanged (event :SizeChangedEvent) :void
@@ -778,14 +623,30 @@ public class LOL extends Sprite
 
     protected var _themePrefix :String = "lol_";
 
+    protected var _textFormat :TextFormat = new TextFormat(
+        "_sans", 24, 0xFFFFFF, false, false, false, "", "", TextFormatAlign.LEFT, 0, 0, 0, 0);
+
     protected var _image :ScrollPane;
 
+    protected var _skipBox :CheckBox;
+
 //    protected var _input :TextField;
-    protected var _input :TextInput;
+    protected var _input :TextArea;
 
     protected var _clock :TextField;
 
+    protected var _winnerName :TextField;
+
+    protected var _winningCaption :TextField;
+
+    protected var _votingPane :ScrollPane;
+    protected var _resultsPane :ScrollPane;
+
     protected var _doneButton :Button;
+
+    protected var _previewPane :Array = [];
+
+    protected var _previewBox :Array = [];
 
     /** Which phase of animating the current phase are we in? */
     protected var _phasePhase :int;
