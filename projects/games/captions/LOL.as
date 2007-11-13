@@ -40,6 +40,7 @@ import fl.controls.TextInput;
 
 import com.threerings.util.ClassUtil;
 import com.threerings.util.EmbeddedSwfLoader;
+import com.threerings.util.Log;
 
 import com.threerings.ezgame.SizeChangedEvent;
 
@@ -149,11 +150,11 @@ public class LOL extends Sprite
             var pp :ScrollPane = findDeepChild("preview_pane_" + (ii + 1), _ui) as ScrollPane;
             pp.horizontalScrollPolicy = ScrollPolicy.OFF;
             pp.verticalScrollPolicy = ScrollPolicy.OFF;
-            pp.setStyle("upSkin", new Shape());
             pp.addEventListener(MouseEvent.CLICK, handlePreviewPhotoClick);
+            pp.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
+            pp.addEventListener(Event.COMPLETE, handleImageComplete);
             var pb :CheckBox = findDeepChild("checkbox_" + (ii + 1), _ui) as CheckBox;
             pb.addEventListener(Event.CHANGE, handlePreviewVote);
-            pb.enabled = true;
             _previewPane[ii] = pp;
             _previewBox[ii] = pb;
         }
@@ -161,24 +162,22 @@ public class LOL extends Sprite
         _image = findDeepChild("image", _ui) as ScrollPane;
         _image.horizontalScrollPolicy = ScrollPolicy.OFF;
         _image.verticalScrollPolicy = ScrollPolicy.OFF;
-        _image.setStyle("upSkin", new Shape());
-        _skipBox = findDeepChild("lol_skip", _ui) as CheckBox;
-        _input = findDeepChild("lol_text_input", _ui) as TextArea;
+        _skipBox = findDeepChild("skip", _ui) as CheckBox;
+        _input = findDeepChild("text_input", _ui) as TextArea;
         _input.setStyle("upSkin", new Shape());
-        _clock = findDeepChild("lol_clock", _ui) as TextField;
-        _doneButton = findDeepChild("lol_done", _ui) as Button;
+        _clock = findDeepChild("clock", _ui) as TextField;
+        _doneButton = findDeepChild("done", _ui) as Button;
 
-        _inputPalette = findDeepChild("lol_input_palette", _ui) as Sprite;
+        _inputPalette = findDeepChild("input_palette", _ui) as Sprite;
 
         _votingPane = findDeepChild("voting_scrollpane", _ui) as ScrollPane;
-        // TEMP
-        _votingPane.setStyle("upSkin", new Shape());
         _resultsPane = findDeepChild("results_scrollpane", _ui) as ScrollPane;
-        // TEMP
-        _resultsPane.setStyle("upSkin", new Shape());
 
-        _winningCaption = findDeepChild("lol_winning_caption", _ui) as TextField;
+        _winningCaption = findDeepChild("winning_caption", _ui) as TextField;
+        _winningCaption.selectable = false;
+        _winningCaption.mouseEnabled = false;
         _winnerName = findDeepChild("winner_name", _ui) as TextField;
+        _winnerName.mouseEnabled = false;
 
         _skipBox.addEventListener(Event.CHANGE, handleVoteToSkip);
         _doneButton.addEventListener(MouseEvent.CLICK, handleSubmitButton);
@@ -230,8 +229,6 @@ public class LOL extends Sprite
         }
 
         if (_clock != null) {
-            // TEMP
-            _clock.defaultTextFormat = _textFormat;
             _clock.text = minStr + ":" + secStr;
         }
 
@@ -320,7 +317,6 @@ public class LOL extends Sprite
             // Because we're in a button's event handler, it apparently grabs focus after
             // this, so we need to re-set the focus a frame later.
             _input.setFocus();
-            //_input.callLater(_input.setFocus);
         }
     }
 
@@ -517,7 +513,7 @@ for (var jj :int = 0; jj < 1; jj++) {
      */
     protected function handleImageProgress (event :ProgressEvent) :void
     {
-        centerImage();
+        centerImage(event.currentTarget as ScrollPane);
     }
 
     /**
@@ -525,22 +521,7 @@ for (var jj :int = 0; jj < 1; jj++) {
      */
     protected function handleImageComplete (event :Event) :void
     {
-        centerImage();
-    }
-
-    protected function handleFrameScript () :void
-    {
-//        trace("+=== ah-ha, I reached frame # " + _animations.currentFrame);
-
-        // TODO: stopping the goddamn thing shouldn't be needed
-        _ui.gotoAndStop(_ui.currentFrame);
-
-        // possibly call the callback
-        var fn :Function = _frameReachedCallback;
-        if (fn != null) {
-            _frameReachedCallback = null;
-            fn();
-        }
+        centerImage(event.currentTarget as ScrollPane);
     }
 
     /**
@@ -592,16 +573,18 @@ for (var jj :int = 0; jj < 1; jj++) {
         _ui.y = _mask.y = (height - IDEAL_HEIGHT) / 2;
     }
 
-    protected function centerImage () :void
+    protected function centerImage (pane :ScrollPane) :void
     {
-        if (_image == null || _image.content == null) {
+        if (pane.content == null) {
             return;
         }
-        var w :int = _image.content.width;
-        var h :int = _image.content.height;
+        var w :int = pane.content.width;
+        var h :int = pane.content.height;
 
-        _image.x = (500 - w) / 2;
-        _image.y = (500 - h) / 2;
+        var size :int = (pane == _image) ? 500 : 100;
+
+        pane.x = (size - w) / 2;
+        pane.y = (size - h) / 2;
     }
 
     protected function handleUnload (... ignored) :void
@@ -633,9 +616,7 @@ for (var jj :int = 0; jj < 1; jj++) {
     protected var _loader :EmbeddedSwfLoader;
 
     protected var _frameReachedCallback :Function;
-//
-//    protected var _themePrefix :String = "lol_";
-//
+
     protected var _textFormat :TextFormat = new TextFormat(
         "_sans", 24, 0xFFFFFF, false, false, false, "", "", TextFormatAlign.LEFT, 0, 0, 0, 0);
 
