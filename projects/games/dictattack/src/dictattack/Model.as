@@ -239,7 +239,7 @@ public class Model
         // if we are in control, zero out the points, create a board and publish it
         if (_ctx.control.amInControl()) {
             _ctx.control.set(POINTS, new Array(pcount).map(function (): int { return 0; }));
-            _ctx.control.getDictionaryLetterSet(Content.LOCALE, _size*_size, gotLetterSet);
+            _ctx.control.getDictionaryLetterSet(Content.LOCALE, null, _size*_size, gotLetterSet);
         }
 
         // create our play history (TODO: we should probably store this in the game object)
@@ -334,7 +334,7 @@ public class Model
 
         // submit the word to the server to see if it is valid
         _ctx.control.checkDictionaryWord(
-            Content.LOCALE, word, function (word :String, isValid :Boolean) : void {
+            Content.LOCALE, null, word, function (word :String, isValid :Boolean) : void {
             if (!isValid) {
                 // TODO: play a sound indicating the mismatch
                 board.resetLetters(used);
