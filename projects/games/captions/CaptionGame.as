@@ -73,7 +73,7 @@ public class CaptionGame extends EventDispatcher
     public function CaptionGame (
         gameCtrl :WhirledGameControl, previewCount :int = 4, scoreRounds :int = 10,
         captioningDuration :int = 45, votingDuration :int = 30, resultsDuration :int = 20,
-//        captioningDuration :int = 20, votingDuration :int = 15, resultsDuration :int = 15,
+//        captioningDuration :int = 20, votingDuration :int = 20, resultsDuration :int = 20,
         minCaptionersStatStorage :int = 3)
     {
         _ctrl = gameCtrl;
@@ -397,6 +397,9 @@ public class CaptionGame extends EventDispatcher
         var duration :int = int(_durations[getCurrentPhase()]);
         _secondsRemaining = Math.max(0, duration - value);
 
+        // dispatch the tick event
+        dispatchEvent(new Event(TICK_EVENT));
+
         // see if we should move to the next phase
         if (_secondsRemaining == 0) {
             if (_inControl) {
@@ -409,9 +412,6 @@ public class CaptionGame extends EventDispatcher
                 }
             }
         }
-
-        // dispatch the tick event
-        dispatchEvent(new Event(TICK_EVENT));
     }
 
     /**
