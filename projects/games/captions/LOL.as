@@ -2,7 +2,9 @@ package {
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
+import flash.display.Graphics;
 import flash.display.MovieClip;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -13,6 +15,11 @@ import flash.events.TimerEvent;
 import flash.geom.Point;
 
 import flash.filters.GlowFilter;
+
+import flash.net.URLRequest;
+
+import flash.system.ApplicationDomain;
+import flash.system.LoaderContext;
 
 import flash.text.TextField;
 import flash.text.TextFieldType;
@@ -53,12 +60,13 @@ public class LOL extends Sprite
         _ctrl = new WhirledGameControl(this);
         if (!_ctrl.isConnected()) {
             var oops :TextField = new TextField();
-            oops.width = 700;
-            oops.height = 500;
-            //oops.setStyle("fontSize", 36);
+            oops.width = IDEAL_WIDTH;
+            oops.height = IDEAL_HEIGHT;
+            oops.multiline = true;
+            oops.defaultTextFormat = _textFormat;
             oops.htmlText = "<P align=\"center\"><font size=\"+2\">LOLcaptions</font><br><br>" +
                 "The fun flickr captioning game.<br><br>" +
-                "This game is multiplayer and must be played inside Whirled.</P>";
+                "This game is multiplayer and<br>must be played inside Whirled.</P>";
             addChild(oops);
             return;
         }
@@ -68,6 +76,11 @@ public class LOL extends Sprite
         _loader = new EmbeddedSwfLoader();
         _loader.addEventListener(Event.COMPLETE, handleUILoaded);
         _loader.load(new UI() as ByteArray);
+
+        _mask = new Shape();
+        _mask.graphics.beginFill(0x000000, 1);
+        _mask.graphics.drawRect(0, 0, IDEAL_WIDTH, IDEAL_HEIGHT);
+        addChild(_mask);
 
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
@@ -88,6 +101,8 @@ public class LOL extends Sprite
     protected function handleUILoaded (event :Event) :void
     {
         _ui = _loader.getContent() as MovieClip;
+        _ui.mask = _mask;
+        updateSize(_ctrl.getSize());
         addChild(_ui);
         _loader = null;
 
@@ -104,7 +119,7 @@ public class LOL extends Sprite
 
         initUIBits();
 
-        checkPhase(null);
+        checkPhase();
     }
 
     /** For debugging. */
@@ -132,8 +147,9 @@ public class LOL extends Sprite
         // find all the children we care about
         for (var ii :int = 0; ii < 4; ii++) {
             var pp :ScrollPane = findDeepChild("preview_pane_" + (ii + 1), _ui) as ScrollPane;
-            pp.verticalScrollPolicy = ScrollPolicy.OFF;
             pp.horizontalScrollPolicy = ScrollPolicy.OFF;
+            pp.verticalScrollPolicy = ScrollPolicy.OFF;
+            pp.setStyle("upSkin", new Shape());
             pp.addEventListener(MouseEvent.CLICK, handlePreviewPhotoClick);
             var pb :CheckBox = findDeepChild("checkbox_" + (ii + 1), _ui) as CheckBox;
             pb.addEventListener(Event.CHANGE, handlePreviewVote);
@@ -143,15 +159,23 @@ public class LOL extends Sprite
         }
 
         _image = findDeepChild("image", _ui) as ScrollPane;
+        _image.horizontalScrollPolicy = ScrollPolicy.OFF;
         _image.verticalScrollPolicy = ScrollPolicy.OFF;
+        _image.setStyle("upSkin", new Shape());
         _skipBox = findDeepChild("lol_skip", _ui) as CheckBox;
         _input = findDeepChild("lol_text_input", _ui) as TextArea;
-        _input.setStyle("upSkin", new Sprite());
+        _input.setStyle("upSkin", new Shape());
         _clock = findDeepChild("lol_clock", _ui) as TextField;
         _doneButton = findDeepChild("lol_done", _ui) as Button;
 
+        _inputPalette = findDeepChild("lol_input_palette", _ui) as Sprite;
+
         _votingPane = findDeepChild("voting_scrollpane", _ui) as ScrollPane;
+        // TEMP
+        _votingPane.setStyle("upSkin", new Shape());
         _resultsPane = findDeepChild("results_scrollpane", _ui) as ScrollPane;
+        // TEMP
+        _resultsPane.setStyle("upSkin", new Shape());
 
         _winningCaption = findDeepChild("lol_winning_caption", _ui) as TextField;
         _winnerName = findDeepChild("winner_name", _ui) as TextField;
@@ -159,21 +183,10 @@ public class LOL extends Sprite
         _skipBox.addEventListener(Event.CHANGE, handleVoteToSkip);
         _doneButton.addEventListener(MouseEvent.CLICK, handleSubmitButton);
 
+        _image.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
+        _image.addEventListener(Event.COMPLETE, handleImageComplete);
 
-// TODO: re-init propertly here
-        switch (_game.getCurrentPhase()) {
-        case CaptionGame.CAPTIONING_PHASE:
-            initCaptioning();
-            break;
-
-        case CaptionGame.VOTING_PHASE:
-            initVoting();
-            break;
-
-        case CaptionGame.RESULTS_PHASE:
-            initResults();
-            break;
-        }
+        checkPhase(null);
     }
 
     protected function findDeepChild (name :String, container :DisplayObjectContainer)
@@ -234,7 +247,12 @@ public class LOL extends Sprite
         }
     }
 
-    protected function checkPhase (arg :Object = null) :void
+    /**
+     * @param arg null: don't change the current frame
+     *            undefined: skip to current frame
+     *            non-null: animate to current frame
+     */
+    protected function checkPhase (arg :* = undefined) :void
     {
         switch (_game.getCurrentPhase()) {
         case CaptionGame.CAPTIONING_PHASE:
@@ -250,8 +268,10 @@ public class LOL extends Sprite
             break;
         }
 
-        var animate :Boolean = (arg != null);
-        showFrame(animate);
+        if (arg !== null) {
+            var animate :Boolean = (arg !== undefined);
+            showFrame(animate);
+        }
     }
 
     protected function showPhoto () :Boolean
@@ -259,7 +279,7 @@ public class LOL extends Sprite
         var url :String = _game.getPhoto();
         if (url != null) {
             if (_image != null) {
-                _image.source = url;
+                loadIntoPane(_image, url);
             }
             return true;
         }
@@ -267,12 +287,27 @@ public class LOL extends Sprite
         return false;
     }
 
+    protected function loadIntoPane (pane :ScrollPane, url :String) :void
+    {
+        if (url != null) {
+            pane.load(new URLRequest(url),
+                new LoaderContext(true, ApplicationDomain.currentDomain));
+        } else {
+            pane.source = null;
+        }
+    }
+
     protected function handleSubmitButton (event :Event) :void
     {
-        trace("Submit button pressed.");
         var nowEditing :Boolean = !_input.editable;
 
+        if (!nowEditing && _input.text == "") {
+            // don't let them be "done" with nothing
+            return;
+        }
+
         _input.editable = nowEditing;
+        colorInputPalette();
 
         //_capPanel.setStyle("backgroundAlpha", nowEditing ? .2 : 0);
 
@@ -346,6 +381,14 @@ public class LOL extends Sprite
         Log.dumpStack();
     }
 
+    protected function colorInputPalette () :void
+    {
+        var g :Graphics = _inputPalette.graphics;
+        g.clear();
+        g.beginFill(0xFFFFFF, _input.editable ? .25 : 0);
+        g.drawRect(0, 0, _inputPalette.width, _inputPalette.height);
+    }
+
     protected function initCaptioning () :void
     {
         if (_input == null || _input.stage == null) {
@@ -361,6 +404,7 @@ public class LOL extends Sprite
         _doneButton.enabled = true;
         _skipBox.selected = false;
         _input.text = "";
+        colorInputPalette();
 
         _timer.start();
     }
@@ -373,7 +417,7 @@ public class LOL extends Sprite
         var ourIdx :int = _game.getOurCaptionIndex();
 
         var s :Sprite = new Sprite();
-for (var jj :int = 0; jj < 20; jj++) {
+for (var jj :int = 0; jj < 1; jj++) {
         for (var ii :int = 0; ii < caps.length; ii++) {
             var cb :DataCheckBox = new DataCheckBox();
             cb.label = deHTML(String(caps[ii]));
@@ -391,6 +435,7 @@ for (var jj :int = 0; jj < 20; jj++) {
             s.addChild(cb);
         }
 }
+        _votingPane.verticalScrollPosition = 0;
         _votingPane.source = s;
     }
 
@@ -399,27 +444,9 @@ for (var jj :int = 0; jj < 20; jj++) {
         _votingPane.source = null;
         _timer.stop();
 
-//        _capInput = new CaptionTextArea();
-//        _captionOnBottom = true;
-//        _capInput.includeInLayout = false;
-//        _capInput.editable = false;
-//        _ui.addChild(_capInput);
-//        _capInput.calculateHeight();
-//
-//        if (!skipAnimations) {
-//            _winnerLabel = new Label();
-//            _winnerLabel.alpha = 0;
-//            _winnerLabel.includeInLayout = false;
-//            _winnerLabel.setStyle("fontSize", 36);
-//            _winnerLabel.setStyle("textAlign", "center");
-//            // if I don't put the glowfilter on, it doesn't respect the setting to alpha
-//            _winnerLabel.filters = [ new GlowFilter(0x000000, 1, 1, 1, 1) ];
-//            _ui.addChild(_winnerLabel);
-//        }
-//
         var results :Array = _game.getResults();
         var s :Sprite = new Sprite();
-for (var jj :int = 0; jj < 20; jj++) {
+for (var jj :int = 0; jj < 1; jj++) {
         for (var ii :int = 0; ii < results.length; ii++) {
             var result :Object = results[ii];
             var y :int = (jj * 100) + (ii * 25);
@@ -441,10 +468,8 @@ for (var jj :int = 0; jj < 20; jj++) {
             s.addChild(name);
 
             if (ii == 0) {
-//                _capInput.text = String(result.caption);
-//                if (_winnerLabel != null) {
-//                    _winnerLabel.text = result.playerName + " wins!";
-//                }
+                _winningCaption.text = String(result.caption);
+                _winnerName.text = result.playerName + " wins!";
             }
 
             var icon :Class = null;
@@ -462,6 +487,7 @@ for (var jj :int = 0; jj < 20; jj++) {
             }
         }
 }
+        _resultsPane.verticalScrollPosition = 0;
         _resultsPane.source = s;
 
         // see if there are any preview pics to vote on...
@@ -470,7 +496,7 @@ for (var jj :int = 0; jj < 20; jj++) {
             var pp :ScrollPane = _previewPane[count] as ScrollPane;
             var pb :CheckBox = _previewBox[count] as CheckBox;
             var url :String = previews[count] as String;
-            pp.source = url;
+            loadIntoPane(pp, url);
             pp.visible = (url != null);
             pb.selected = false;
             pb.visible = (url != null);
@@ -491,7 +517,7 @@ for (var jj :int = 0; jj < 20; jj++) {
      */
     protected function handleImageProgress (event :ProgressEvent) :void
     {
-//        updateLayout();
+        centerImage();
     }
 
     /**
@@ -499,7 +525,7 @@ for (var jj :int = 0; jj < 20; jj++) {
      */
     protected function handleImageComplete (event :Event) :void
     {
-//        updateLayout();
+        centerImage();
     }
 
     protected function handleFrameScript () :void
@@ -550,44 +576,33 @@ for (var jj :int = 0; jj < 20; jj++) {
 
     protected function handleSizeChanged (event :SizeChangedEvent) :void
     {
-        // TODO
+        updateSize(event.size);
     }
 
     protected function updateSize (size :Point) :void
     {
-//        _ui.width = size.x;
-//        _ui.height = size.y;
-//
-//        updateLayout();
+        var width :int = Math.max(size.x, IDEAL_WIDTH);
+        var height :int = Math.max(size.y, IDEAL_HEIGHT);
+
+        this.graphics.clear();
+        this.graphics.beginFill(0x000000, 1);
+        this.graphics.drawRect(0, 0, width, height);
+
+        _ui.x = _mask.x = (width - IDEAL_WIDTH) / 2;
+        _ui.y = _mask.y = (height - IDEAL_HEIGHT) / 2;
     }
 
-//    protected function imageWidth () :int
-//    {
-//        var width :int = _image.contentWidth;
-//        return (width != 0) ? width : 500;
-//    }
-//
-//    protected function imageHeight () :int
-//    {
-//        var height :int = _image.contentHeight;
-//        return (height != 0) ? height : 500;
-//    }
-//
-//    protected function centerImage (scale :Number = 1) :void
-//    {
-//        _image.scaleX = scale;
-//        _image.scaleY = scale;
-//        _image.x = (_ui.width - (imageWidth() * scale)) / 2;
-//        _image.y = (_ui.height - (imageHeight() * scale)) / 2;
-//    }
-//
-//    protected function sidebarImage () :void
-//    {
-//        _image.scaleX = .5;
-//        _image.scaleY = .5;
-//        _image.y = PAD;
-//        _image.x = (SIDE_BAR_WIDTH - (.5 * imageWidth())) / 2;
-//    }
+    protected function centerImage () :void
+    {
+        if (_image == null || _image.content == null) {
+            return;
+        }
+        var w :int = _image.content.width;
+        var h :int = _image.content.height;
+
+        _image.x = (500 - w) / 2;
+        _image.y = (500 - h) / 2;
+    }
 
     protected function handleUnload (... ignored) :void
     {
@@ -603,13 +618,9 @@ for (var jj :int = 0; jj < 20; jj++) {
     [Embed(source="rsrc/ui.swf", mimeType="application/octet-stream")]
     protected static const UI :Class;
 
-    protected static const PAD :int = 6;
-
     protected static const IDEAL_WIDTH :int = 700;
 
-    protected static const TOP_BAR_HEIGHT :int = 66;
-
-    protected static const SIDE_BAR_WIDTH :int = 250 + (PAD * 2);
+    protected static const IDEAL_HEIGHT :int = 500;
 
     protected var _ctrl :WhirledGameControl;
 
@@ -617,12 +628,14 @@ for (var jj :int = 0; jj < 20; jj++) {
 
     protected var _ui :MovieClip;
 
+    protected var _mask :Shape;
+
     protected var _loader :EmbeddedSwfLoader;
 
     protected var _frameReachedCallback :Function;
-
-    protected var _themePrefix :String = "lol_";
-
+//
+//    protected var _themePrefix :String = "lol_";
+//
     protected var _textFormat :TextFormat = new TextFormat(
         "_sans", 24, 0xFFFFFF, false, false, false, "", "", TextFormatAlign.LEFT, 0, 0, 0, 0);
 
@@ -630,8 +643,9 @@ for (var jj :int = 0; jj < 20; jj++) {
 
     protected var _skipBox :CheckBox;
 
-//    protected var _input :TextField;
     protected var _input :TextArea;
+
+    protected var _inputPalette :Sprite;
 
     protected var _clock :TextField;
 
@@ -648,11 +662,9 @@ for (var jj :int = 0; jj < 20; jj++) {
 
     protected var _previewBox :Array = [];
 
-    /** Which phase of animating the current phase are we in? */
-    protected var _phasePhase :int;
-
-    /** Whether the caption is on the bottom or top. */
-    protected var _captionOnBottom :Boolean;
+//
+//    /** Whether the caption is on the bottom or top. */
+//    protected var _captionOnBottom :Boolean;
 
     protected var _timer :Timer;
 }
