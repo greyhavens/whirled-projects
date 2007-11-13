@@ -8,6 +8,8 @@ import flash.display.MovieClip;
 
 import flash.geom.Point;
 
+import com.threerings.util.Log;
+
 public class ScoreBoard extends Sprite 
 {
     public static const MOON_PLAYER :int = 1;

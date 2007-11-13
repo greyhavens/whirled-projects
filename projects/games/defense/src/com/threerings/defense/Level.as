@@ -4,6 +4,8 @@ import flash.display.DisplayObject;
 import flash.errors.IllegalOperationError;
 import flash.utils.describeType;
 
+import com.threerings.util.Log;
+
 import com.threerings.defense.sprites.CritterSprite;
 import com.threerings.defense.sprites.MissileSprite;
 import com.threerings.defense.sprites.TowerSprite;

@@ -1,5 +1,7 @@
 package com.threerings.defense {
 
+import com.threerings.util.Log;
+
 /**
  * Experimental implementation of asserts.
  *

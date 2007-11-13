@@ -2,6 +2,8 @@ package com.threerings.defense.spawners {
 
 import flash.geom.Point;
 
+import com.threerings.util.Log;
+
 import com.threerings.defense.Controller;
 import com.threerings.defense.Game;
 import com.threerings.defense.Level;

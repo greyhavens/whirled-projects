@@ -6,6 +6,7 @@ package {
 import flash.events.TimerEvent;
 
 import com.threerings.util.HashMap;
+import com.threerings.util.Log;
 import com.threerings.util.Random;
 
 import com.whirled.ControlEvent;

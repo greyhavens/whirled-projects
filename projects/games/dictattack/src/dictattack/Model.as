@@ -5,6 +5,7 @@ package dictattack {
 
 import flash.utils.getTimer;
 
+import com.threerings.util.Log;
 import com.threerings.util.Random;
 
 import com.threerings.ezgame.MessageReceivedEvent;

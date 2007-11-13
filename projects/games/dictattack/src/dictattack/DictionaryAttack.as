@@ -10,6 +10,8 @@ import flash.geom.Point;
 
 import flash.events.Event;
 
+import com.threerings.util.Log;
+
 import com.threerings.ezgame.StateChangedEvent;
 
 import com.whirled.FlowAwardedEvent;

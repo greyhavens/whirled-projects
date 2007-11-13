@@ -17,6 +17,7 @@ import mx.managers.PopUpManager;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
+import com.threerings.util.Log;
 
 import com.threerings.defense.maps.MapFactory;
 import com.threerings.defense.tuning.Messages;
