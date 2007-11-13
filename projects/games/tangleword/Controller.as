@@ -120,7 +120,7 @@ public class Controller
         word = word.toLowerCase ();
 
         // Now check if it's an actual word.
-        _gameCtrl.checkDictionaryWord (Properties.LOCALE, word, success);
+        _gameCtrl.checkDictionaryWord (Properties.LOCALE, null, word, success);
 
     }
             
@@ -160,9 +160,8 @@ public class Controller
             {
                 _model.sendNewLetterSet (a);
             }
-            _gameCtrl.getDictionaryLetterSet (Properties.LOCALE,
-                                              Properties.LETTER_COUNT,
-                                              success);
+            _gameCtrl.getDictionaryLetterSet (
+                Properties.LOCALE, null, Properties.LETTER_COUNT, success);
         }
     }
 

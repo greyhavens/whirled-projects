@@ -5,6 +5,8 @@ package
        a preprocessor, we can try to fake it using this wrapper around Log.
     */
 
+    import com.threerings.util.Log;
+
     public class Assert
     {
         /**
