@@ -10,6 +10,8 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
+import flash.utils.getTimer;
+
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 
@@ -76,6 +78,27 @@ public class Snowman extends Sprite
         var headSphere :Sphere = new Sphere(material, 50, 16, 10);
         headSphere.y = 550;
 
+        material = new ColorMaterial(0x000033);
+        var leftEye :Sphere = new Sphere(material, 8);
+        leftEye.x = -10;
+        leftEye.y = 575;
+        leftEye.z = 40;
+
+        var rightEye :Sphere = new Sphere(material, 8);
+        rightEye.x = 10;
+        rightEye.y = 575;
+        rightEye.z = 40;
+
+//        material = new ColorMaterial(0x777700);
+//        var brim :Cylinder = new Cylinder(material, 80, 5, 16);
+//        brim.pitch(-20);
+//        brim.y = 595;
+//        brim.z = -10;
+//
+//        var hat :Cylinder = new Cylinder(material, 30, 30, 16);
+//        hat.pitch(-20);
+//        hat.y = 615;
+
         //material = new BitmapMaterial(Bitmap(new TEXTURE()).bitmapData);
         material = new ColorMaterial(0xFFa900);
         // Cone is broken, it always makes a cylinder, so just use cylinder directly
@@ -88,6 +111,10 @@ public class Snowman extends Sprite
         rootNode.addChild(midSphere);
         rootNode.addChild(headSphere);
         rootNode.addChild(nose);
+        rootNode.addChild(leftEye);
+        rootNode.addChild(rightEye);
+//        rootNode.addChild(brim);
+//        rootNode.addChild(hat);
 
         _camera = new Camera3D(buttSphere);
         // put the camera at the same height as the head..
@@ -119,35 +146,45 @@ public class Snowman extends Sprite
 
         if (targetOrient == _orient) {
             needRender = false;
+            _stamp = NaN;
 
         } else if (isNaN(_orient)) {
             _orient = targetOrient;
 
         } else {
-            // figure out which way to rotate the orient.
-            var upDist :Number = (targetOrient + 360) - _orient;
-            if (upDist > 360) {
-                upDist -= 360;
-            }
-
-            var downDist :Number = (_orient + 360) - targetOrient;
-            if (downDist > 360) {
-                downDist -= 360;
-            }
-
-            if (upDist < downDist) {
-                _orient += Math.min(upDist, MAX_REORIENT);
+            var now :Number = getTimer();
+            if (isNaN(_stamp)) {
+                needRender = false;
 
             } else {
-                _orient -= Math.min(downDist, MAX_REORIENT);
+                // figure out which way to rotate the orient.
+                var upDist :Number = (targetOrient + 360) - _orient;
+                if (upDist > 360) {
+                    upDist -= 360;
+                }
+
+                var downDist :Number = (_orient + 360) - targetOrient;
+                if (downDist > 360) {
+                    downDist -= 360;
+                }
+
+                var maxDegrees :Number = REORIENT_RATE * (now - _stamp) / 1000;
+                if (upDist < downDist) {
+                    _orient += Math.min(upDist, maxDegrees);
+
+                } else {
+                    _orient -= Math.min(downDist, maxDegrees);
+                }
+
+                if (_orient > 360) {
+                    _orient -= 360;
+
+                } else if (_orient < 0) {
+                    _orient += 360;
+                }
             }
 
-            if (_orient > 360) {
-                _orient -= 360;
-
-            } else if (_orient < 0) {
-                _orient += 360;
-            }
+            _stamp = now;
         }
         
         if (needRender) {
@@ -165,6 +202,7 @@ public class Snowman extends Sprite
             if (_enterFrame) {
                 removeEventListener(Event.ENTER_FRAME, handleFrame);
                 _enterFrame = false;
+                _stamp = NaN;
             }
         }
 
@@ -210,12 +248,14 @@ public class Snowman extends Sprite
 
     protected static const CAMERA_DISTANCE :Number = 400;
 
-    /** The maximum amount we re-orient, in degrees, per frame. */
-    protected static const MAX_REORIENT :Number = 5;
+    /** The maximum amount we re-orient, in degrees, per second. */
+    protected static const REORIENT_RATE :Number = 125;
 
     protected var _control :AvatarControl;
 
     protected var _orient :Number = NaN;
+
+    protected var _stamp :Number;
 
     /** Are we listening on ENTER_FRAME? */
     protected var _enterFrame :Boolean = false;
