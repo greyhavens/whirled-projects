@@ -42,6 +42,8 @@ import com.threerings.util.ClassUtil;
 import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Log;
 
+import com.threerings.flash.DisplayUtil;
+
 import com.threerings.ezgame.SizeChangedEvent;
 
 import com.whirled.WhirledGameControl;
@@ -71,6 +73,8 @@ public class LOL extends Sprite
             addChild(oops);
             return;
         }
+
+        _formatter = new LOLTextFieldFormatter();
 
         _ctrl.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
 
@@ -107,7 +111,7 @@ public class LOL extends Sprite
         addChild(_ui);
         _loader = null;
 
-        //trace(DisplayUtil.dumpHierarchy(_ui));
+        trace(DisplayUtil.dumpHierarchy(_ui));
 
         // For some reason, when the movie wraps around, we need to re-grab all the bits
         _ui.addFrameScript(0, initUIBits);
@@ -121,38 +125,38 @@ public class LOL extends Sprite
     {
         // find all the children we care about
         for (var ii :int = 0; ii < 4; ii++) {
-            var pp :ScrollPane = findDeepChild("preview_pane_" + (ii + 1), _ui) as ScrollPane;
+            var pp :ScrollPane = find("preview_pane_" + (ii + 1)) as ScrollPane;
             pp.horizontalScrollPolicy = ScrollPolicy.OFF;
             pp.verticalScrollPolicy = ScrollPolicy.OFF;
             pp.addEventListener(MouseEvent.CLICK, handlePreviewPhotoClick);
             pp.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
             pp.addEventListener(Event.COMPLETE, handleImageComplete);
-            var pb :CheckBox = findDeepChild("checkbox_" + (ii + 1), _ui) as CheckBox;
+            var pb :CheckBox = find("checkbox_" + (ii + 1)) as CheckBox;
             pb.addEventListener(Event.CHANGE, handlePreviewVote);
             _previewPane[ii] = pp;
             _previewBox[ii] = pb;
         }
 
-        _image = findDeepChild("image", _ui) as ScrollPane;
+        _image = find("image") as ScrollPane;
         _image.horizontalScrollPolicy = ScrollPolicy.OFF;
         _image.verticalScrollPolicy = ScrollPolicy.OFF;
-        _skipBox = findDeepChild("skip", _ui) as CheckBox;
-        _input = findDeepChild("text_input", _ui) as TextArea;
+        _skipBox = find("skip") as CheckBox;
+        _input = find("text_input") as TextArea;
         _input.setStyle("upSkin", new Shape());
-        _clock = findDeepChild("clock", _ui) as TextField;
+        _clock = find("clock") as TextField;
         _clock.selectable = false;
-        _doneButton = findDeepChild("done", _ui) as Button;
+        _doneButton = find("done") as Button;
 
         _doneButton.label = "";
         updateButtonSkin();
 
-        _inputPalette = findDeepChild("input_palette", _ui) as Sprite;
+        _inputPalette = find("input_palette") as Sprite;
 
-        _votingPane = findDeepChild("voting_scrollpane", _ui) as ScrollPane;
-        _resultsPane = findDeepChild("results_scrollpane", _ui) as ScrollPane;
+        _votingPane = find("voting_scrollpane") as ScrollPane;
+        _resultsPane = find("results_scrollpane") as ScrollPane;
 
-        _winningCaption = findDeepChild("winning_caption", _ui) as TextField;
-        _winnerName = findDeepChild("winner_name", _ui) as TextField;
+        _winningCaption = find("winning_caption") as TextField;
+        _winnerName = find("winner_name") as TextField;
         _winnerName.selectable = false;
 
         _skipBox.addEventListener(Event.CHANGE, handleVoteToSkip);
@@ -164,34 +168,13 @@ public class LOL extends Sprite
         checkPhase(null);
     }
 
-    protected function findDeepChild (name :String, container :DisplayObjectContainer)
-        :DisplayObject
+    /**
+     * Helper for initUIBits.
+     */
+    protected function find (name :String) :DisplayObject
     {
-        var ii :int;
-        var child :DisplayObject;
-        for (ii = 0; ii < container.numChildren; ii++) {
-            try {
-                child = container.getChildAt(ii);
-                if (child is DisplayObjectContainer) {
-                    var result :DisplayObject = findDeepChild(name,
-                            child as DisplayObjectContainer);
-                    if (result != null) {
-                        return result;
-                    }
-                }
-            } catch (err :SecurityError) {
-                // skip this child (probably a flickr image)
-            }
-        }
-
-        for (ii = 0; ii < container.numChildren; ii++) {
-            child = container.getChildAt(ii);
-            if (child != null && child.name == name) {
-                return child;
-            }
-        }
-
-        return null;
+        // find deeply
+        return DisplayUtil.findInHierarchy(_ui, name, false);
     }
 
     protected function updateClock (... ignored) :void
@@ -213,6 +196,7 @@ public class LOL extends Sprite
             handleSubmitCaption(); // one last time!
             if (_input != null) {
                 _input.editable = false;
+                _formatter.format(_input.textField);
             }
             if (_doneButton != null) {
                 _doneButton.enabled = false;
@@ -327,6 +311,8 @@ public class LOL extends Sprite
                 var box :CheckBox = _previewBox[ii] as CheckBox;
                 if (box.enabled && box.visible) {
                     box.selected = !box.selected;
+                    // and manually submit the vote
+                    _game.setPreviewVote(ii, box.selected);
                 }
                 return;
             }
@@ -341,7 +327,6 @@ public class LOL extends Sprite
         var box :CheckBox = (event.currentTarget as CheckBox);
         for (var ii :int = 0; ii < 4; ii++) {
             if (box == _previewBox[ii]) {
-                trace("Voted preview: " + ii);
                 _game.setPreviewVote(ii, box.selected);
                 return;
             }
@@ -389,6 +374,7 @@ public class LOL extends Sprite
         _resultsPane.source = null;
 
         _input.editable = true;
+        _formatter.watch(_input.textField);
         _doneButton.enabled = true;
         _skipBox.selected = false;
         _input.text = "";
@@ -495,7 +481,6 @@ for (var jj :int = 0; jj < 1; jj++) {
         _winningCaption.text = caption;
 
         var star :DisplayObject = new STAR_ICON() as DisplayObject;
-        trace("Starwidth: " + star.width);
 
         var truncing :Boolean = false;
         while (true) {
@@ -648,6 +633,8 @@ for (var jj :int = 0; jj < 1; jj++) {
     protected var _ui :MovieClip;
 
     protected var _mask :Shape;
+
+    protected var _formatter :LOLTextFieldFormatter;
 
     protected var _loader :EmbeddedSwfLoader;
 
