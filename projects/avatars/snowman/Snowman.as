@@ -205,7 +205,7 @@ public class Snowman extends Sprite
         }
     }
 
-    [Embed(source="free-snow-texture-008.jpg")]
+    [Embed(source="snow.jpg")]
     protected static const SNOW_TEXTURE :Class;
 
     protected static const CAMERA_DISTANCE :Number = 400;
