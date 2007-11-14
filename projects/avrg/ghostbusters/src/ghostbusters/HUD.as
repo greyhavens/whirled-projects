@@ -23,22 +23,13 @@ import com.whirled.AVRGameControlEvent;
 import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Log;
 
-[SWF(width="450", height="100")]
 public class HUD extends Sprite
 {
     public function HUD ()
     {
-        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
-
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         loader.addEventListener(Event.COMPLETE, handleHUDLoaded);
         loader.load(ByteArray(new HUD_VISUAL()));
-
-        _control = new AVRGameControl(this);
-        _control.addEventListener(
-            AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
-        _control.addEventListener(
-            AVRGameControlEvent.PLAYER_PROPERTY_CHANGED, playerPropertyChanged);
 
 //        _mask = new Sprite();
 //        with(_mask.graphics) {
@@ -51,9 +42,9 @@ public class HUD extends Sprite
 //        this.addEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
-    protected static const LANTERN :String = "instance61";
-    protected static const HELP :String = "instance64";
-    protected static const LOOT :String = "instance65";
+    public function shutdown () :void
+    {
+    }
 
     protected function handleHUDLoaded (evt :Event) :void
     {
@@ -64,8 +55,9 @@ public class HUD extends Sprite
 
         for (var ii :int = 0; ii < hud.numChildren; ii ++) {
             var child :DisplayObject = hud.getChildAt(ii);
-            Log.getLog(this).debug("Child #" + ii + ": " + child + " (" + child.name + ")");
+//            Log.getLog(this).debug("HUD Child #" + ii + ": " + child + " (" + child.name + ")");
             if (child.name == LANTERN || child.name == HELP || child.name == LOOT) {
+                Log.getLog(this).debug("HUD Child #" + ii + ": " + child + " (" + child.name + ")");
                 child.addEventListener(MouseEvent.CLICK, handleButton);
             }
         }
@@ -76,30 +68,17 @@ public class HUD extends Sprite
         Log.getLog(this).debug("Whee, button clicked: " + evt);
     }
 
-    protected function handleUnload (event :Event) :void
-    {
-        this.removeEventListener(Event.ENTER_FRAME, enterFrame);
-    }
-
     protected function enterFrame (event :Event) :void
     {
         _mask.x = this.mouseX;
         _mask.y = this.mouseY;
     }
 
-    protected function propertyChanged (event: AVRGameControlEvent) :void
-    {
-        trace("property changed: " + event.name + "=" + event.value);
-    }
-
-    protected function playerPropertyChanged (event: AVRGameControlEvent) :void
-    {
-        trace("property changed: " + event.name + "=" + event.value);
-    }
-
-    protected var _control :AVRGameControl;
-
     protected var _mask :Sprite;
+
+    protected static const LANTERN :String = "lanternbutton";
+    protected static const HELP :String = "helpbutton";
+    protected static const LOOT :String = "lootbutton";
 
     [Embed(source="../../rsrc/HUD_visual.swf", mimeType="application/octet-stream")]
     protected static const HUD_VISUAL :Class;
