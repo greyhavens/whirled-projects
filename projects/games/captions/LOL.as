@@ -107,41 +107,15 @@ public class LOL extends Sprite
         addChild(_ui);
         _loader = null;
 
-        // and now do a bit of debuggery on _animations
-        for each (var s :Object in _ui.scenes) {
-            trace("Scene: " + s.name + " contains " + s.numFrames + " frames.");
-            for each (var f :Object in s.labels) {
-                trace("Frame: " + f.name + ", " + f.frame);
-            }
-        }
-        dumpHierarchy(_ui);
+        //trace(DisplayUtil.dumpHierarchy(_ui));
 
+        // For some reason, when the movie wraps around, we need to re-grab all the bits
         _ui.addFrameScript(0, initUIBits);
 
         initUIBits();
-
         checkPhase();
     }
 
-    /** For debugging. */
-    protected function dumpHierarchy (
-        container :DisplayObjectContainer, spaces :String = "") :void
-    {
-        for (var ii :int = 0; ii < container.numChildren; ii++) {
-            try {
-                var child :DisplayObject = container.getChildAt(ii);
-                if (child != null) {
-                    trace(spaces + child.name + ": " + ClassUtil.getClassName(child));
-                    if (child is DisplayObjectContainer) {
-                        dumpHierarchy(child as DisplayObjectContainer, spaces + "  ");
-                    }
-                }
-            } catch (err :SecurityError) {
-                trace(spaces + "SECURITY-BLOCKED");
-                // skip inaccessible children
-            }
-        }
-    }
 
     protected function initUIBits () :void
     {
@@ -166,7 +140,11 @@ public class LOL extends Sprite
         _input = findDeepChild("text_input", _ui) as TextArea;
         _input.setStyle("upSkin", new Shape());
         _clock = findDeepChild("clock", _ui) as TextField;
+        _clock.selectable = false;
         _doneButton = findDeepChild("done", _ui) as Button;
+
+        _doneButton.label = "";
+        updateButtonSkin();
 
         _inputPalette = findDeepChild("input_palette", _ui) as Sprite;
 
@@ -174,10 +152,8 @@ public class LOL extends Sprite
         _resultsPane = findDeepChild("results_scrollpane", _ui) as ScrollPane;
 
         _winningCaption = findDeepChild("winning_caption", _ui) as TextField;
-        _winningCaption.selectable = false;
-        _winningCaption.mouseEnabled = false;
         _winnerName = findDeepChild("winner_name", _ui) as TextField;
-        _winnerName.mouseEnabled = false;
+        _winnerName.selectable = false;
 
         _skipBox.addEventListener(Event.CHANGE, handleVoteToSkip);
         _doneButton.addEventListener(MouseEvent.CLICK, handleSubmitButton);
@@ -306,9 +282,8 @@ public class LOL extends Sprite
         _input.editable = nowEditing;
         colorInputPalette();
 
-        //_capPanel.setStyle("backgroundAlpha", nowEditing ? .2 : 0);
-
-        _doneButton.label = nowEditing ? "Done" : "Edit";
+        //_doneButton.label = nowEditing ? "Done" : "Edit";
+        updateButtonSkin();
 
         if (!nowEditing) {
             handleSubmitCaption(event);
@@ -333,7 +308,6 @@ public class LOL extends Sprite
 
     protected function handleVoteToSkip (event :Event) :void
     {
-        trace("Voting to skip: " + _skipBox.selected);
         _game.voteToSkipPhoto(_skipBox.selected);
     }
 
@@ -382,13 +356,32 @@ public class LOL extends Sprite
         var g :Graphics = _inputPalette.graphics;
         g.clear();
         g.beginFill(0xFFFFFF, _input.editable ? .25 : 0);
-        g.drawRect(0, 0, _inputPalette.width, _inputPalette.height);
+        g.drawRoundRect(0, 0, _inputPalette.width, _inputPalette.height, 10, 10);
+    }
+
+    protected function updateButtonSkin () :void
+    {
+        // go ahead and instantiate the skins so that they switch smoother later
+        var upSkin :DisplayObject;
+        var downSkin :DisplayObject;
+        if (_input.editable) {
+            upSkin = new DONE_UP_SKIN() as DisplayObject;
+            downSkin = new DONE_DOWN_SKIN() as DisplayObject;
+        } else {
+            upSkin = new EDIT_UP_SKIN() as DisplayObject;
+            downSkin = new EDIT_DOWN_SKIN() as DisplayObject;
+        }
+
+        _doneButton.setStyle("upSkin", upSkin);
+        _doneButton.setStyle("overSkin", upSkin);
+        _doneButton.setStyle("downSkin", downSkin);
+        _doneButton.setStyle("disabledSkin", downSkin);
     }
 
     protected function initCaptioning () :void
     {
         if (_input == null || _input.stage == null) {
-            trace("Not ready!");
+            return;
         }
         showPhoto();
 
@@ -396,7 +389,6 @@ public class LOL extends Sprite
         _resultsPane.source = null;
 
         _input.editable = true;
-        _doneButton.label = "Done";
         _doneButton.enabled = true;
         _skipBox.selected = false;
         _input.text = "";
@@ -464,8 +456,7 @@ for (var jj :int = 0; jj < 1; jj++) {
             s.addChild(name);
 
             if (ii == 0) {
-                _winningCaption.text = String(result.caption);
-                _winnerName.text = result.playerName + " wins!";
+                displayWinningCaption(String(result.caption), String(result.playerName));
             }
 
             var icon :Class = null;
@@ -497,6 +488,36 @@ for (var jj :int = 0; jj < 1; jj++) {
             pb.selected = false;
             pb.visible = (url != null);
         }
+    }
+
+    protected function displayWinningCaption (caption :String, name :String) :void
+    {
+        _winningCaption.text = caption;
+
+        var star :DisplayObject = new STAR_ICON() as DisplayObject;
+        trace("Starwidth: " + star.width);
+
+        var truncing :Boolean = false;
+        while (true) {
+            _winnerName.text = name + (truncing ? "..." : "") + " wins!";
+
+            if (_winnerName.textWidth + star.width < IDEAL_WIDTH) {
+                break;
+            }
+
+            if (truncing) {
+                name = name.substr(0, name.length - 1);
+            } else {
+                name = name.substr(0, name.length -  3);
+                truncing = true;
+            }
+        }
+
+        // then add the star
+        const PAD :int = 10;
+        star.y = _winnerName.y;
+        star.x = _winnerName.x + (IDEAL_WIDTH - _winnerName.textWidth) / 2 - star.width - PAD;
+        _winnerName.parent.addChild(star);
     }
 
     protected function deHTML (s :String) :String
@@ -597,6 +618,21 @@ for (var jj :int = 0; jj < 1; jj++) {
 
     [Embed(source="rsrc/dq_icon.png")]
     protected static const DISQUAL_ICON :Class;
+
+    [Embed(source="rsrc/Star.swf")]
+    protected static const STAR_ICON :Class;
+
+    [Embed(source="rsrc/DoneButton.swf")]
+    protected static const DONE_UP_SKIN :Class;
+
+    [Embed(source="rsrc/DoneClick.swf")]
+    protected static const DONE_DOWN_SKIN :Class;
+
+    [Embed(source="rsrc/EditButton.swf")]
+    protected static const EDIT_UP_SKIN :Class;
+
+    [Embed(source="rsrc/EditClick.swf")]
+    protected static const EDIT_DOWN_SKIN :Class;
 
     [Embed(source="rsrc/ui.swf", mimeType="application/octet-stream")]
     protected static const UI :Class;
