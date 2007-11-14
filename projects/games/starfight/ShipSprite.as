@@ -1,5 +1,6 @@
 package {
 
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.KeyboardEvent;
@@ -80,6 +81,9 @@ public class ShipSprite extends Sprite
     /** Type of ship we're using. */
     public var shipType :int;
 
+    /** The sprite with our ship graphics in it. */
+    public var ship :Sprite;
+
     /** The player name for the ship. */
     public var playerName :String;
 
@@ -100,6 +104,8 @@ public class ShipSprite extends Sprite
 
     /** Secondary shot power. */
     public var secondaryPower :Number;
+
+    public var aShape :Shape, dShape :Shape, vShape :Shape;
 
     /**
      * Constructs a new ship.  If skipStartingPos, don't bother finding an
@@ -141,8 +147,26 @@ public class ShipSprite extends Sprite
         _game = game;
 
         /** Used to rotate our ship itself without touching associated info. */
-        _ship = new Sprite();
-        addChild(_ship);
+        ship = new Sprite();
+        addChild(ship);
+        aShape = new Shape();
+        aShape.graphics.clear();
+        aShape.graphics.beginFill(0XFF0000);
+        aShape.graphics.drawRect(0, 0, 1, 1);
+        aShape.graphics.endFill();
+        addChild(aShape);
+        dShape = new Shape();
+        dShape.graphics.clear();
+        dShape.graphics.beginFill(0X00FF00);
+        dShape.graphics.drawRect(0, 0, 1, 1);
+        dShape.graphics.endFill();
+        addChild(dShape);
+        vShape = new Shape();
+        vShape.graphics.clear();
+        vShape.graphics.beginFill(0X4444FF);
+        vShape.graphics.drawRect(0, 0, 1, 1);
+        vShape.graphics.endFill();
+        addChild(vShape);
 
         setShipType(shipType);
 
@@ -173,16 +197,39 @@ public class ShipSprite extends Sprite
      */
     public function move (time :Number) :void
     {
-        var friction :Number = Math.pow(getFriction(), time);
-        var accelFact :Number = accel * time;
 
-        xVel = xVel*friction + Math.cos(_ship.rotation*Codes.DEGS_TO_RADS)*accelFact;
-        yVel = yVel*friction + Math.sin(_ship.rotation*Codes.DEGS_TO_RADS)*accelFact;
+        var newBoardX :Number = boardX;
+        var newBoardY :Number = boardY;
+        var drag :Number = Codes.SHIP_TYPES[shipType].friction;
 
-        resolveMove(boardX, boardY, boardX + xVel*time, boardY + yVel*time);
+        for (var etime :Number = time; etime > 0; etime -= 100) {
+            var xComp :Number = Math.cos(ship.rotation * Codes.DEGS_TO_RADS);
+            var yComp :Number = Math.sin(ship.rotation * Codes.DEGS_TO_RADS);
+            var dtime :Number = Math.min(etime / 1000, 0.1);
+            var velDir :Number = Math.atan2(yVel, xVel);
+            var oldVel2 :Number = xVel*xVel + yVel*yVel;
+            var fricFact :Number = drag*oldVel2;
+
+            if (dtime < 0.1) {
+                dShape.scaleX = fricFact*10;
+                dShape.rotation = velDir * Codes.RADS_TO_DEGS + 180;
+                aShape.scaleX = accel*10;
+                aShape.rotation = ship.rotation;
+            }
+            xVel = xVel + dtime * ((accel * xComp) - (fricFact * Math.cos(velDir)));
+            yVel = yVel + dtime * ((accel * yComp) - (fricFact * Math.sin(velDir)));
+            if (dtime < 0.1) {
+                vShape.scaleX = Math.sqrt(xVel*xVel + yVel*yVel)*10;
+                vShape.rotation = Math.atan2(yVel, xVel)*Codes.RADS_TO_DEGS;
+            }
+            newBoardX += xVel * dtime;
+            newBoardY += yVel * dtime;
+        }
+
+        resolveMove(boardX, boardY, newBoardX, newBoardY);
 
         if (_isOwnShip && accel != 0 && powerups | SPEED_MASK) {
-            enginePower -= time * Codes.REFRESH_RATE / 60000;
+            enginePower -= time / 30000;
             if (enginePower <= 0) {
                 powerups ^= SPEED_MASK;
                 accel = Math.min(accel, Codes.SHIP_TYPES[shipType].forwardAccel);
@@ -289,7 +336,7 @@ public class ShipSprite extends Sprite
 
         power -= hitPower;
         if (!isAlive()) {
-            _game.explode(boardX, boardY, _ship.rotation, shooterId, shipType);
+            _game.explode(boardX, boardY, ship.rotation, shooterId, shipType);
 
             // Turn off sound loops.
             if (_thrusterSound != null) {
@@ -342,7 +389,7 @@ public class ShipSprite extends Sprite
         turnRate = 0;
         accel = 0;
         turnAccelRate = 0;
-        _ship.rotation = 0;
+        ship.rotation = 0;
         shieldPower = 0.0;
         weaponPower = 0.0;
         enginePower = 0.0;
@@ -380,22 +427,17 @@ public class ShipSprite extends Sprite
      */
     public function tick (time :int) :void
     {
-        var rtime :Number = time / Codes.REFRESH_RATE;
-        var turnFriction :Number =
-            Math.pow(Codes.SHIP_TYPES[shipType].turnFriction, rtime);
-
-        turnRate = turnRate * turnFriction + turnAccelRate;
-        turn(turnRate*rtime);
         primaryPower = Math.min(
             1.0, primaryPower + time / (1000 * Codes.SHIP_TYPES[shipType].primaryPowerRecharge));
         secondaryPower = Math.min(1.0,
             secondaryPower + time / (1000 * Codes.SHIP_TYPES[shipType].secondaryPowerRecharge));
 
-        move(rtime);
+        turn(time);
+        move(time);
         if (accel > 0.0) {
             setAnimMode((powerups & SPEED_MASK) ? FORWARD_FAST : FORWARD, false);
         } else if (accel < 0.0) {
-            setAnimMode(REVERSE, false);
+            setAnimMode((powerups & SPEED_MASK) ? REVERSE_FAST : REVERSE, false);
         } else {
             setAnimMode(IDLE, false);
         }
@@ -407,7 +449,7 @@ public class ShipSprite extends Sprite
         }
 
         if (_firing && (_ticksToFire <= 0) &&
-            (primaryPower >= Codes.SHIP_TYPES[shipType].primaryShotCost)) {
+                (primaryPower >= Codes.SHIP_TYPES[shipType].primaryShotCost)) {
             fire();
         } else if (_ticksToFire > 0) {
             _ticksToFire -= time;
@@ -426,12 +468,19 @@ public class ShipSprite extends Sprite
     }
 
     /**
-     * Turns the ship by the angle specified in degrees clockwise (negative
-     *  for CCW)
+     * Turns the ship based on the current turn acceleration over time.
      */
-    public function turn (degCW :Number) :void
+    public function turn (time :Number) :void
     {
-        _ship.rotation += degCW;
+        var turn :Number = 0;
+        for (var etime :Number = time; etime > 0; etime -= 10) {
+            var dtime :Number = Math.min(etime / 1000, 0.01);
+            var turnSign :Number = (turnRate > 0 ? 1 : -1) * dtime;
+            turnRate += dtime * turnAccelRate -
+                    turnSign * Codes.SHIP_TYPES[shipType].turnFriction * (turnRate * turnRate);
+            turn += turnRate * dtime;
+        }
+        ship.rotation = (ship.rotation + turn) % 360;
     }
 
     /**
@@ -513,8 +562,8 @@ public class ShipSprite extends Sprite
 
             // Remove any old movies of other types of ship.
             if (_shipMovie != null) {
-                _ship.removeChild(_shipMovie);
-                _ship.removeChild(_shieldMovie);
+                ship.removeChild(_shipMovie);
+                ship.removeChild(_shieldMovie);
             }
 
             // Set up our animation.
@@ -526,7 +575,7 @@ public class ShipSprite extends Sprite
             _shipMovie.x = WIDTH/2;
             _shipMovie.y = -HEIGHT/2;
             _shipMovie.rotation = 90;
-            _ship.addChild(_shipMovie);
+            ship.addChild(_shipMovie);
 
             _shieldMovie.gotoAndStop(1);
             _shieldMovie.x = 55/2;
@@ -537,7 +586,7 @@ public class ShipSprite extends Sprite
             } else {
                 _shieldMovie.alpha = 0.0;
             }
-            _ship.addChild(_shieldMovie);
+            ship.addChild(_shieldMovie);
 
             if (_isOwnShip) {
                 // Start the engine sound...
@@ -557,28 +606,13 @@ public class ShipSprite extends Sprite
 
     public function fire () :void
     {
-        var rads :Number = _ship.rotation*Codes.DEGS_TO_RADS;
-        var cos :Number = Math.cos(rads);
-        var sin :Number = Math.sin(rads);
-
-        var shotX :Number = cos * Codes.SHIP_TYPES[shipType].primaryShotSpeed + xVel;
-        var shotY :Number = sin * Codes.SHIP_TYPES[shipType].primaryShotSpeed + yVel;
-
-        //var shotVel :Number = Math.sqrt(shotX*shotX + shotY*shotY);
-        var shotVel :Number = Codes.SHIP_TYPES[shipType].primaryShotSpeed;
-        var shotAngle :Number = Math.atan2(shotY, shotX);
-
-        var type :int = ShotSprite.NORMAL;
+        Codes.SHIP_TYPES[shipType].primaryShotMessage(this, _game);
         if (powerups & SPREAD_MASK) {
-            type = ShotSprite.SPREAD;
-            weaponPower -= 0.02;
+            weaponPower -= 0.03;
             if (weaponPower <= 0.0) {
                 powerups ^= SPREAD_MASK;
             }
         }
-
-        //_game.fireShot(boardX + cos * COLLISION_RAD, boardY + sin * COLLISION_RAD,
-        _game.fireShot(boardX + shotX, boardY + shotY, shotVel, shotAngle, shipId, shipType, type);
 
         _ticksToFire = Codes.SHIP_TYPES[shipType].primaryShotRecharge * 1000;
         primaryPower -= Codes.SHIP_TYPES[shipType].primaryShotCost;
@@ -666,7 +700,7 @@ public class ShipSprite extends Sprite
         boardY = bytes.readFloat();
         turnRate = bytes.readFloat();
         turnAccelRate = bytes.readFloat();
-        _ship.rotation = bytes.readShort();
+        ship.rotation = bytes.readShort();
         power = bytes.readFloat();
         powerups = bytes.readInt();
         setShipType(bytes.readInt());
@@ -679,7 +713,7 @@ public class ShipSprite extends Sprite
      */
     public function pointUp () :void
     {
-        _ship.rotation = -90;
+        ship.rotation = -90;
     }
 
     /**
@@ -712,11 +746,11 @@ public class ShipSprite extends Sprite
         turnRate = report.turnRate;
 
         // Maybe let rotation float if we're not too far off.
-        var dTheta :Number = report._ship.rotation - _ship.rotation;
+        var dTheta :Number = report.ship.rotation - ship.rotation;
         if (Math.abs(dTheta) < 45) {
             turnRate += dTheta/(Codes.FRAMES_PER_UPDATE*2);
         } else {
-            _ship.rotation = report._ship.rotation;
+            ship.rotation = report.ship.rotation;
         }
 
         // These we always update exactly as reported.
@@ -739,7 +773,7 @@ public class ShipSprite extends Sprite
         bytes.writeFloat(boardY);
         bytes.writeFloat(turnRate);
         bytes.writeFloat(turnAccelRate);
-        bytes.writeShort(_ship.rotation);
+        bytes.writeShort(ship.rotation);
         bytes.writeFloat(power);
         bytes.writeInt(powerups);
         bytes.writeInt(shipType);
@@ -754,9 +788,6 @@ public class ShipSprite extends Sprite
 
     /** The main game object. */
     protected var _game :StarFight;
-
-    /** The sprite with our ship graphics in it. */
-    protected var _ship :Sprite;
 
     protected var _firing :Boolean;
     protected var _ticksToFire :int = 0;

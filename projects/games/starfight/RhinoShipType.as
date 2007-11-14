@@ -9,17 +9,17 @@ public class RhinoShipType extends ShipType
     public function RhinoShipType () :void
     {
         name = "Rhino";
-        turnAccelRate = 1.25;
-        forwardAccel = 0.01;
-        backwardAccel = -0.007;
-        friction = 0.95;
-        turnFriction = 0.825;
+        turnAccelRate = 4000.0;
+        forwardAccel = 6.0;
+        backwardAccel = -2;
+        friction = 0.1;
+        turnFriction = 0.05;
 
         hitPower = 0.2;
         primaryShotCost = 0.2;
         primaryShotRecharge = 0.4;
-        primaryPowerRecharge = 6;
-        primaryShotSpeed = 1.5;
+        primaryPowerRecharge = 4;
+        primaryShotSpeed = 30;
         primaryShotLife = 2.5;
         primaryShotSize = 0.1;
 
@@ -35,19 +35,19 @@ public class RhinoShipType extends ShipType
 
     override public function primaryShot (sf :StarFight, val :Array) :void
     {
-        var left :Number = val[3] + Math.PI/2;
-        var right :Number = val[3] - Math.PI/2;
+        var left :Number = val[6] + Math.PI/2;
+        var right :Number = val[6] - Math.PI/2;
         var leftOffsetX :Number = Math.cos(left) * 0.5;
         var leftOffsetY :Number = Math.sin(left) * 0.5;
         var rightOffsetX :Number = Math.cos(right) * 0.5;
         var rightOffsetY :Number = Math.sin(right) * 0.5;
 
-        var damage :Number = (val[6] == ShotSprite.SPREAD ? hitPower * 1.5 : hitPower);
+        var damage :Number = (val[2] == ShotSprite.SUPER ? hitPower * 1.5 : hitPower);
 
-        sf.addShot(new ShotSprite(val[0] + leftOffsetX, val[1] + leftOffsetY,
-                val[2], val[3], val[4], damage, val[5], sf));
-        sf.addShot(new ShotSprite(val[0] + rightOffsetX, val[1] + rightOffsetY,
-                val[2], val[3], val[4], damage, val[5], sf));
+        sf.addShot(new MissileShotSprite(val[3] + leftOffsetX, val[4] + leftOffsetY,
+                val[5], val[6], val[0], damage, primaryShotLife, val[1], sf));
+        sf.addShot(new MissileShotSprite(val[3] + rightOffsetX, val[4] + rightOffsetY,
+                val[5], val[6], val[0], damage, primaryShotLife, val[1], sf));
     }
 
     // Shooting sounds.

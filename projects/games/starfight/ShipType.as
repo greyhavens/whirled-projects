@@ -12,6 +12,12 @@ public class ShipType
     public var friction :Number;
     public var turnFriction :Number;
 
+    public var maxSpeed :Number = 20.0;
+    public var maxSpeedRev :Number = 10;
+    public var fAccel :Number = 8.0;
+    public var rAccel :Number = -3.0;
+    public var drag :Number = 0.1;
+
     /** armorment statistics. */
     public var hitPower :Number;
     public var primaryShotCost :Number;
@@ -43,6 +49,37 @@ public class ShipType
      */
     public function secondaryShot () :void
     {
+    }
+
+    /**
+     * Sends a standard forward fire message.
+     */
+    public function primaryShotMessage (ship :ShipSprite, sf: StarFight) :void
+    {
+        var rads :Number = ship.ship.rotation*Codes.DEGS_TO_RADS;
+        var cos :Number = Math.cos(rads);
+        var sin :Number = Math.sin(rads);
+
+        var shotX :Number = cos * primaryShotSpeed + ship.xVel;
+        var shotY :Number = sin * primaryShotSpeed + ship.yVel;
+
+        //var shotVel :Number = Math.sqrt(shotX*shotX + shotY*shotY);
+        var shotVel :Number = primaryShotSpeed;
+        var shotAngle :Number = Math.atan2(shotY, shotX);
+
+        var type :int = (ship.powerups & ShipSprite.SPREAD_MASK) ?
+                ShotSprite.SUPER : ShotSprite.NORMAL;
+
+        var args :Array = new Array(7);
+        args[0] = ship.shipId;
+        args[1] = ship.shipType;
+        args[2] = type;
+        args[3] = ship.boardX + cos * size + 0.1 * ship.xVel;
+        args[4] = ship.boardY + sin * size + 0.1 * ship.yVel;
+        args[5] = shotVel;
+        args[6] = rads;
+
+        sf.fireShot(args);
     }
 }
 }

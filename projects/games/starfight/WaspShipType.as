@@ -10,17 +10,17 @@ public class WaspShipType extends ShipType
     {
         name = "Wasp";
 
-        turnAccelRate = 1.0;
-        forwardAccel = 0.024;
-        backwardAccel = -0.007;
-        friction = 0.95;
-        turnFriction = 0.825;
+        turnAccelRate = 1000.0;
+        forwardAccel = 8.0;
+        backwardAccel = -3.0;
+        friction = 0.1;
+        turnFriction = 0.05;
 
         hitPower = 0.2;
         primaryShotCost = 0.18;
         primaryShotRecharge = 0.2;
         primaryPowerRecharge = 3.0;
-        primaryShotSpeed = 1;
+        primaryShotSpeed = 20;
         primaryShotLife = 3;
         primaryShotSize = 0.1;
 
@@ -38,13 +38,14 @@ public class WaspShipType extends ShipType
 
     override public function primaryShot (sf :StarFight, val :Array) :void
     {
-        sf.addShot(new ShotSprite(val[0], val[1], val[2], val[3], val[4], hitPower, val[5], sf));
+        sf.addShot(new MissileShotSprite(
+            val[3], val[4], val[5], val[6], val[0], hitPower, primaryShotLife, val[1], sf));
 
-        if (val[6] == ShotSprite.SPREAD) {
-            sf.addShot(new ShotSprite(val[0], val[1], val[2],
-                        val[3] + SPREAD, val[4], hitPower, val[5], sf));
-            sf.addShot(new ShotSprite(val[0], val[1], val[2],
-                        val[3] - SPREAD, val[4], hitPower, val[5], sf));
+        if (val[2] == ShotSprite.SUPER) {
+            sf.addShot(new MissileShotSprite(val[3], val[4], val[5],
+                        val[6] + SPREAD, val[0], hitPower, primaryShotLife, val[1], sf));
+            sf.addShot(new MissileShotSprite(val[3], val[4], val[5],
+                        val[6] - SPREAD, val[0], hitPower, primaryShotLife, val[1], sf));
         }
     }
 

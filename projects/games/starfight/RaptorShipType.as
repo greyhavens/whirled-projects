@@ -10,17 +10,17 @@ public class RaptorShipType extends ShipType
     {
         name = "Raptor";
 
-        turnAccelRate = 1.0;
-        forwardAccel = 0.012;
-        backwardAccel = -0.007;
-        friction = 0.98;
-        turnFriction = 0.825;
+        turnAccelRate = 1000.0;
+        forwardAccel = 4.0;
+        backwardAccel = -1.5;
+        friction = 0.01;
+        turnFriction = 0.05;
 
-        hitPower = 0.05;
+        hitPower = 0.12;
         primaryShotCost = 0.25;
         primaryShotRecharge = 0.1;
         primaryPowerRecharge = 2.5;
-        primaryShotSpeed = 0.75;
+        primaryShotSpeed = 20;
         primaryShotLife = 0.5;
         primaryShotSize = 0.3;
 
@@ -38,9 +38,13 @@ public class RaptorShipType extends ShipType
 
     override public function primaryShot (sf :StarFight, val :Array) :void
     {
+        var ttl :Number = primaryShotLife;
+        if (val[2] == ShotSprite.SUPER) {
+            ttl *= 2;
+        }
         for (var ii :Number = -0.3; ii <= 0.3; ii += 0.3) {
-            sf.addShot(new ShotSprite(
-                    val[0], val[1], val[2], val[3] + ii, val[4], hitPower, val[5], sf));
+            sf.addShot(new MissileShotSprite(
+                    val[3], val[4], val[5], val[6] + ii, val[0], hitPower, ttl, val[1], sf));
         }
     }
 

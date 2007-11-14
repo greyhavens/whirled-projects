@@ -53,10 +53,12 @@ public class StarFight extends Sprite
         _gameCtrl.registerListener(this);
 
         _boardLayer = new Sprite();
+        _subShotLayer = new Sprite();
         _shipLayer = new Sprite();
         _shotLayer = new Sprite();
         _statusLayer = new Sprite();
         addChild(_boardLayer);
+        addChild(_subShotLayer);
         addChild(_shipLayer);
         addChild(_shotLayer);
         addChild(_statusLayer);
@@ -437,6 +439,11 @@ public class StarFight extends Sprite
         maybeStartRound();
     }
 
+    public function getShip (id :int) :ShipSprite
+    {
+        return _ships.get(id);
+    }
+
     public function maybeStartRound () :void
     {
         if (_population > 1 && _gameState == Codes.PRE_ROUND && _gameCtrl.amInControl()) {
@@ -474,13 +481,13 @@ public class StarFight extends Sprite
     {
         if (event.name == "shot") {
             var val :Array = (event.value as Array);
-            Codes.SHIP_TYPES[val[5]].primaryShot(this, val);
+            Codes.SHIP_TYPES[val[1]].primaryShot(this, val);
 
             // Shooting sound.
-            var sound :Sound = (val[6] == ShotSprite.SPREAD) ?
-                Codes.SHIP_TYPES[val[5]].TRI_BEAM : Codes.SHIP_TYPES[val[5]].BEAM;
+            var sound :Sound = (val[2] == ShotSprite.SUPER) ?
+                Codes.SHIP_TYPES[val[1]].TRI_BEAM : Codes.SHIP_TYPES[val[1]].BEAM;
 
-            playSoundAt(sound, val[0], val[1]);
+            //playSoundAt(sound, val[3], val[4]);
 
         } else if (event.name == "explode") {
             var arr :Array = (event.value as Array);
@@ -502,7 +509,11 @@ public class StarFight extends Sprite
     {
         _shots.push(shot);
         shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
-        _shotLayer.addChild(shot);
+        if (shot is LaserShotSprite) {
+            _subShotLayer.addChild(shot);
+        } else {
+            _shotLayer.addChild(shot);
+        }
     }
 
     /**
@@ -522,7 +533,7 @@ public class StarFight extends Sprite
      * Register that a ship was hit at the location.
      */
     public function hitShip (ship :ShipSprite, x :Number, y :Number,
-        shooterId :int, shooterType :int) :void
+        shooterId :int, damage :Number) :void
     {
         _board.explode(x, y, 0, true, 0);
 
@@ -531,7 +542,7 @@ public class StarFight extends Sprite
         playSoundAt(sound, x, y);
 
         if (ship == _ownShip) {
-            ship.hit(shooterId, shooterType);
+            ship.hit(shooterId, damage);
             _status.setPower(ship.power);
         } else if (shooterId == _ownShip.shipId) {
             // We hit someone!  Give us some points.
@@ -653,19 +664,26 @@ public class StarFight extends Sprite
     /**
      * Send a message to the server about our shot.
      */
-    public function fireShot (x :Number, y :Number,
-        vel :Number, angle :Number, shipId :int, shipType :int,
-        type :int) :void
+    public function fireShot (args :Array) :void
     {
-        var args :Array = new Array(5);
-        args[0] = x;
-        args[1] = y;
-        args[2] = vel;
-        args[3] = angle;
-        args[4] = shipId;
-        args[5] = shipType;
-        args[6] = type;
         _gameCtrl.sendMessage("shot", args);
+    }
+
+    /**
+     * Returns all the ships within a certain distance of the supplied coordinates.
+     */
+    public function findShips (x :Number, y :Number, dist :Number) :Array
+    {
+        var dist2 :Number = dist * dist;
+        var nearShips :Array = new Array();
+        for each (var ship :ShipSprite in _ships.values()) {
+            if (ship != null) {
+                if ((ship.boardX-x)*(ship.boardX-x) + (ship.boardY-y)*(ship.boardY-y) < dist2) {
+                    nearShips[nearShips.length] = ship;
+                }
+            }
+        }
+        return nearShips;
     }
 
     /**
@@ -674,7 +692,7 @@ public class StarFight extends Sprite
     public function explode (x :Number, y :Number, rot :int,
         shooterId :int, shipType :int) :void
     {
-        var args :Array = new Array(3);
+        var args :Array = new Array(5);
         args[0] = x;
         args[1] = y;
         args[2] = rot;
@@ -752,7 +770,11 @@ public class StarFight extends Sprite
         // Remove any that were done.
         for each (shot in completed) {
             _shots.splice(_shots.indexOf(shot), 1);
-            _shotLayer.removeChild(shot);
+            if (shot is LaserShotSprite) {
+                _subShotLayer.removeChild(shot);
+            } else {
+                _shotLayer.removeChild(shot);
+            }
         }
 
         // Update the radar
@@ -823,6 +845,7 @@ public class StarFight extends Sprite
     protected var _boardLayer :Sprite;
     protected var _shipLayer :Sprite;
     protected var _shotLayer :Sprite;
+    protected var _subShotLayer :Sprite;
     protected var _statusLayer :Sprite;
 
     /** This could be more dynamic. */

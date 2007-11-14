@@ -29,7 +29,7 @@ public class Codes {
         new RhinoShipType(),
         new SaucerShipType(),
         new RaptorShipType()
-    ]
+    ];
 
 }
 }
