@@ -1,0 +1,199 @@
+Label, Font
+{ 
+  fontFamily: defaultFont;
+  fontSize: 12;
+  color: #ffffff;
+}
+
+Button {
+  fontFamily: defaultFont;
+  fontWeight: normal;
+  fontSize: 12;
+  color: #000000;
+  fillAlphas: 0.6, 0.22, 0.75, 0.53;
+  fillColors: #ffffff, #ffffff, #ffffff, #ffffff;
+  borderColor: #cc6600;
+  themeColor: #993300;
+}
+
+ApplicationControlBar {
+   borderStyle: none;
+   backgroundColor: #38201b;
+   backgroundAlpha: 0.6;
+}
+
+Tile 
+{ 
+  horizontalGap: 0;
+  verticalGap: 0;
+  paddingLeft: 0;
+  paddingRight: 0;
+}
+
+TitleWindow {
+   paddingLeft: 0;
+   paddingRight: 0;
+   borderStyle: solid;
+   borderColor: #5c3915;
+   borderAlpha: 0.6;
+   borderThickness: 0;
+   borderThicknessLeft: 0;
+   borderThicknessTop: 0;
+   borderThicknessBottom: 0;
+   borderThicknessRight: 0;
+   roundedBottomCorners: true;
+   cornerRadius: 6;
+   headerHeight: 15;
+   backgroundAlpha: 0.6;
+   backgroundColor: #38201b;
+   dropShadowEnabled: true;
+   shadowDistance: 2;
+   shadowDirection: left;
+   dropShadowColor: #241b1b;
+              
+   titleStyleName: "mypanelStyle";
+}
+
+.mypanelStyle {
+  fontFamily: defaultFont;
+  color: #ffffff;
+}
+
+.floatingScore { 
+  fontFamily: defaultFont;
+  fontSize: 16;
+  color: #ffdd00;
+}
+
+.floatingRoundInfo { 
+  fontFamily: defaultFont;
+  fontSize: 24;
+  color: #ffdd00;
+}
+
+.towerNameBox { 
+  backgroundColor: #38201b; 
+  left: 1;
+  right: 1;
+}
+
+/*
+.shrubButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/shrub_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/shrub_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/shrub_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/shrub_disabled.png");
+}
+
+.wagonButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/wagon_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/wagon_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/wagon_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/wagon_disabled.png");
+}
+
+.boxButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/box_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/box_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/box_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/box_disabled.png");
+}
+
+.trashButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/trash_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/trash_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/trash_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/trash_disabled.png");
+}
+
+.treeButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/tree_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/tree_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/tree_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/tree_disabled.png");
+}
+
+.sandboxButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/sandbox_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/sandbox_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/sandbox_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/sandbox_disabled.png");
+}
+
+.rockButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/rock_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/rock_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/rock_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/rock_disabled.png");
+}
+
+.pumpkinButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/pumpkin_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/pumpkin_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/pumpkin_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/pumpkin_disabled.png");
+}
+
+.umbrellaButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/umbrella_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/umbrella_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/umbrella_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/umbrella_disabled.png");
+}
+
+.snowmanButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/snowman_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/snowman_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/snowman_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/snowman_disabled.png");
+}
+
+.shrubwinterButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/shrubwinter_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/shrubwinter_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/shrubwinter_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/shrubwinter_disabled.png");
+}
+
+.treewinterButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/treewinter_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/treewinter_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/treewinter_over.png");
+  disabledSkin: Embed(source="../../../../rsrc/icons/treewinter_disabled.png");
+}
+
+.enemyButton 
+{ 
+  upSkin: Embed(source="../../../../rsrc/icons/enemy_default.png");
+  downSkin: Embed(source="../../../../rsrc/icons/enemy_pressed.png");
+  overSkin: Embed(source="../../../../rsrc/icons/enemy_over.png");
+}
+
+
+.playButton
+{ 
+  upSkin: Embed(source="../../../../rsrc/splash/play_default.png");
+  downSkin: Embed(source="../../../../rsrc/splash/play_default.png");
+  overSkin: Embed(source="../../../../rsrc/splash/play_over.png");
+}
+
+.helpButton
+{ 
+  upSkin: Embed(source="../../../../rsrc/splash/help_default.png");
+  downSkin: Embed(source="../../../../rsrc/splash/help_default.png");
+  overSkin: Embed(source="../../../../rsrc/splash/help_over.png");
+}
+
+*/

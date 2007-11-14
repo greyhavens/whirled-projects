@@ -1,0 +1,33 @@
+<!-- build configuration -->
+<project name="defense" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Defense"/>
+  <property name="app.source-suffix" value="mxml"/>
+  <property name="app.source-dir" value="src"/>
+  <property name="app.package-dir" value="defense"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+  <!-- copy content packs over to the dist directory -->
+  <target name="copypacks">
+    <copy todir="${build.root}/dist/packs">
+      <fileset dir="rsrc/packs" />
+    </copy>
+  </target>
+
+  <!-- copy content packs over, and run the test -->
+  <target name="testpacks" depends="compile, copypacks, test" />
+
+
+
+  <!-- compiles and then jams the SWF into the document tree with the right filename -->
+  <!--
+  <property name="media_hash" value="cfe291b493d9974d3fe3518ea454ae7f46cb6732"/>
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/${media_hash}.swf"/>
+  </target>
+  -->
+</project>
+
