@@ -141,8 +141,21 @@ public class LOL extends Sprite
         _image.horizontalScrollPolicy = ScrollPolicy.OFF;
         _image.verticalScrollPolicy = ScrollPolicy.OFF;
         _skipBox = find("skip") as CheckBox;
-        _input = find("text_input") as TextArea;
-        _input.setStyle("upSkin", new Shape());
+        // TEMP?
+        _skipBox.label = "              "; // so that it's more easily clickable
+
+        // TEMP: have brittney place a TextField
+        var ta :TextArea = find("text_input") as TextArea;
+        //_input.setStyle("upSkin", new Shape());
+        ta.visible = false;
+        _input = new TextField();
+        _input.type = TextFieldType.INPUT;
+        _input.x = ta.x;
+        _input.y = ta.y;
+        _input.width = ta.width;
+        _input.height = ta.height;
+        ta.parent.addChild(_input);
+
         _clock = find("clock") as TextField;
         _clock.selectable = false;
         _doneButton = find("done") as Button;
@@ -195,8 +208,9 @@ public class LOL extends Sprite
             _timer.stop();
             handleSubmitCaption(); // one last time!
             if (_input != null) {
-                _input.editable = false;
-                _formatter.format(_input.textField);
+                _input.type = TextFieldType.DYNAMIC;
+                //_input.editable = false;
+                //_formatter.format(_input);
             }
             if (_doneButton != null) {
                 _doneButton.enabled = false;
@@ -256,14 +270,14 @@ public class LOL extends Sprite
 
     protected function handleSubmitButton (event :Event) :void
     {
-        var nowEditing :Boolean = !_input.editable;
+        var nowEditing :Boolean = (_input.type == TextFieldType.DYNAMIC);
 
         if (!nowEditing && _input.text == "") {
             // don't let them be "done" with nothing
             return;
         }
 
-        _input.editable = nowEditing;
+        _input.type = nowEditing ? TextFieldType.INPUT : TextFieldType.DYNAMIC;
         colorInputPalette();
 
         //_doneButton.label = nowEditing ? "Done" : "Edit";
@@ -273,9 +287,8 @@ public class LOL extends Sprite
             handleSubmitCaption(event);
 
         } else {
-            // Because we're in a button's event handler, it apparently grabs focus after
-            // this, so we need to re-set the focus a frame later.
-            _input.setFocus();
+            _input.stage.focus = _input;
+            _input.setSelection(_input.length, _input.length);
         }
     }
 
@@ -340,7 +353,7 @@ public class LOL extends Sprite
     {
         var g :Graphics = _inputPalette.graphics;
         g.clear();
-        g.beginFill(0xFFFFFF, _input.editable ? .25 : 0);
+        g.beginFill(0xFFFFFF, (_input.type == TextFieldType.INPUT) ? .25 : 0);
         g.drawRoundRect(0, 0, _inputPalette.width, _inputPalette.height, 10, 10);
     }
 
@@ -349,7 +362,7 @@ public class LOL extends Sprite
         // go ahead and instantiate the skins so that they switch smoother later
         var upSkin :DisplayObject;
         var downSkin :DisplayObject;
-        if (_input.editable) {
+        if (_input.type == TextFieldType.INPUT) {
             upSkin = new DONE_UP_SKIN() as DisplayObject;
             downSkin = new DONE_DOWN_SKIN() as DisplayObject;
         } else {
@@ -373,11 +386,10 @@ public class LOL extends Sprite
         _votingPane.source = null;
         _resultsPane.source = null;
 
-        _input.editable = true;
-        _formatter.watch(_input.textField);
+        _input.text = "";
+        _formatter.watch(_input);
         _doneButton.enabled = true;
         _skipBox.selected = false;
-        _input.text = "";
         colorInputPalette();
 
         _timer.start();
@@ -647,7 +659,7 @@ for (var jj :int = 0; jj < 1; jj++) {
 
     protected var _skipBox :CheckBox;
 
-    protected var _input :TextArea;
+    protected var _input :TextField;
 
     protected var _inputPalette :Sprite;
 
