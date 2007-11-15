@@ -1,7 +1,6 @@
 ﻿package {
 
 import flash.display.MovieClip;
-import flash.system.Security;
 
 /**
  * A Settings class needs to provide an array of level definitions. See the description 
@@ -11,7 +10,6 @@ public class Settings extends MovieClip
 {
 	public function Settings () 
 	{
-		Security.allowDomain("*");
 		super();
 	}
 	
@@ -33,7 +31,5 @@ public class Settings extends MovieClip
 		board: "Level02_BG"
 	  } 
 	  ];
-	 
-	private static var singleton :Settings = new Settings();
 }
 }
