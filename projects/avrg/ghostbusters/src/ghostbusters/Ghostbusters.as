@@ -38,6 +38,13 @@ public class Ghostbusters extends Sprite
             AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
         _control.addEventListener(
             AVRGameControlEvent.PLAYER_PROPERTY_CHANGED, playerPropertyChanged);
+
+        var box :TextBox = new TextBox();
+        this.addChild(box);
+        box.showBox("La la la, it's snowing.", false);
+        box.addButton("Whatever", true, function () :void {
+            box.hideBox();
+        });
     }
 
     protected function handleUnload (event :Event) :void
