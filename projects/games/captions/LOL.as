@@ -3,6 +3,7 @@ package {
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
+import flash.display.LoaderInfo;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
@@ -31,6 +32,7 @@ import flash.utils.Timer;
 
 import fl.core.UIComponent;
 import fl.containers.ScrollPane;
+import fl.containers.UILoader;
 import fl.controls.Button;
 import fl.controls.CheckBox;
 import fl.controls.Label;
@@ -41,6 +43,7 @@ import fl.controls.TextInput;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Log;
+import com.threerings.util.StringUtil;
 
 import com.threerings.flash.DisplayUtil;
 
@@ -125,43 +128,22 @@ public class LOL extends Sprite
     {
         // find all the children we care about
         for (var ii :int = 0; ii < 4; ii++) {
-            var pp :ScrollPane = find("preview_pane_" + (ii + 1)) as ScrollPane;
-            pp.horizontalScrollPolicy = ScrollPolicy.OFF;
-            pp.verticalScrollPolicy = ScrollPolicy.OFF;
-            pp.addEventListener(MouseEvent.CLICK, handlePreviewPhotoClick);
-            pp.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
-            pp.addEventListener(Event.COMPLETE, handleImageComplete);
+            var pi :UILoader = find("preview_pane_" + (ii + 1)) as UILoader;
+            pi.addEventListener(MouseEvent.CLICK, handlePreviewPhotoClick);
+            pi.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
+            pi.addEventListener(Event.COMPLETE, handleImageComplete);
             var pb :CheckBox = find("checkbox_" + (ii + 1)) as CheckBox;
             pb.addEventListener(Event.CHANGE, handlePreviewVote);
-            _previewPane[ii] = pp;
+            _previewImage[ii] = pi;
             _previewBox[ii] = pb;
         }
 
-        _image = find("image") as ScrollPane;
-        _image.horizontalScrollPolicy = ScrollPolicy.OFF;
-        _image.verticalScrollPolicy = ScrollPolicy.OFF;
+        _image = find("image") as UILoader;
         _skipBox = find("skip") as CheckBox;
-        // TEMP?
         _skipBox.label = "              "; // so that it's more easily clickable
 
-        // TEMP
-        if (_input != null) {
-            // throw away the old one
-            _input.parent.removeChild(_input);
-        }
-
-        // TEMP: have brittney place a TextField
-        var ta :TextArea = find("text_input") as TextArea;
-        //_input.setStyle("upSkin", new Shape());
-        ta.visible = false;
-        _input = new TextField();
-        _input.type = TextFieldType.INPUT;
-        _input.x = ta.x;
-        _input.y = ta.y - 50;
-        _input.width = ta.width;
-        _input.height = ta.height + 50;
-        ta.parent.addChild(_input);
-        _formatter.watch(_input, handleTextFieldChanged);
+        _input = find("text_input") as TextField;
+        _input.height = 200;
 
         _clock = find("clock") as TextField;
         _clock.selectable = false;
@@ -176,7 +158,9 @@ public class LOL extends Sprite
         _resultsPane = find("results_scrollpane") as ScrollPane;
 
         _winningCaption = find("winning_caption") as TextField;
-        //_formatter.watch(_winningCaption, handleTextFieldChanged);
+        // TEMP?
+        _winningCaption.selectable = false;
+        _winningCaption.mouseEnabled = false;
         _winnerName = find("winner_name") as TextField;
         _winnerName.selectable = false;
 
@@ -185,6 +169,11 @@ public class LOL extends Sprite
 
         _image.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
         _image.addEventListener(Event.COMPLETE, handleImageComplete);
+
+
+        // set up LOL formatting on the two textfields
+        _formatter.watch(_input, handleTextFieldChanged);
+        _formatter.watch(_winningCaption);
 
         checkPhase(DONT_ALTER_FRAME);
     }
@@ -255,7 +244,7 @@ public class LOL extends Sprite
         var url :String = _game.getPhoto();
         if (url != null) {
             if (_image != null) {
-                loadIntoPane(_image, url);
+                loadInto(_image, url);
             }
             return true;
         }
@@ -263,13 +252,13 @@ public class LOL extends Sprite
         return false;
     }
 
-    protected function loadIntoPane (pane :ScrollPane, url :String) :void
+    protected function loadInto (image :UILoader, url :String) :void
     {
         if (url != null) {
-            pane.load(new URLRequest(url),
+            image.load(new URLRequest(url),
                 new LoaderContext(true, ApplicationDomain.currentDomain));
         } else {
-            pane.source = null;
+            image.source = null;
         }
     }
 
@@ -323,10 +312,10 @@ public class LOL extends Sprite
 
     protected function handlePreviewPhotoClick (event :MouseEvent) :void
     {
-        var pane :ScrollPane = event.currentTarget as ScrollPane;
+        var image :UILoader = event.currentTarget as UILoader;
 
         for (var ii :int = 0; ii < 4; ii++) {
-            if (pane == _previewPane[ii]) {
+            if (image == _previewImage[ii]) {
                 var box :CheckBox = _previewBox[ii] as CheckBox;
                 if (box.enabled && box.visible) {
                     box.selected = !box.selected;
@@ -360,8 +349,13 @@ public class LOL extends Sprite
         var g :Graphics = _inputPalette.graphics;
         g.clear();
         if (_input.type == TextFieldType.INPUT) {
+            var w :int = MIN_IMAGE_WIDTH;
+            if (_image.content != null) {
+                w = Math.max(_image.content.width, w);
+            }
+
             g.beginFill(0xFFFFFF, .25);
-            g.drawRoundRect(0, 0, _inputPalette.width, _input.textHeight + 4, 10, 10);
+            g.drawRoundRect((_inputPalette.width - w) / 2, 0, w, _input.textHeight + 4, 10, 10);
         }
     }
 
@@ -394,6 +388,7 @@ public class LOL extends Sprite
         _votingPane.source = null;
         _resultsPane.source = null;
 
+        _input.type = TextFieldType.INPUT;
         _input.text = "";
         _doneButton.enabled = true;
         _skipBox.selected = false;
@@ -417,13 +412,13 @@ public class LOL extends Sprite
 for (var jj :int = 0; jj < 20; jj++) {
         for (var ii :int = 0; ii < caps.length; ii++) {
             var cb :DataCheckBox = new DataCheckBox();
-            cb.textField.width = PANE_WIDTH - 30;
-            cb.textField.wordWrap = true;
-            cb.label = deHTML(String(caps[ii]));
-
+            cb.data = ii;
             cb.setStyle("disabledTextFormat", _textFormat);
             cb.setStyle("textFormat", _textFormat);
-            cb.data = ii;
+            cb.label = deHTML(String(caps[ii]));
+            cb.textField.width = PANE_WIDTH - 30;
+            cb.textField.wordWrap = true;
+
             cb.addEventListener(Event.CHANGE, handleCaptionVote);
             if (ii == ourIdx) {
                 cb.enabled = false;
@@ -463,6 +458,7 @@ for (var jj :int = 0; jj < 20; jj++) {
             votes.setSize(46, 30);
             votes.validateNow();
             width -= votes.textField.textWidth + 5;
+            votes.textField.width = votes.textField.textWidth + 5;
             votes.x = width;
             votes.y = yPos;
             s.addChild(votes);
@@ -515,11 +511,11 @@ for (var jj :int = 0; jj < 20; jj++) {
         // see if there are any preview pics to vote on...
         var previews :Array = _game.getPreviews();
         for (var count :int = 0; count < 4; count++) {
-            var pp :ScrollPane = _previewPane[count] as ScrollPane;
+            var pi :UILoader = _previewImage[count] as UILoader;
             var pb :CheckBox = _previewBox[count] as CheckBox;
             var url :String = previews[count] as String;
-            loadIntoPane(pp, url);
-            pp.visible = (url != null);
+            loadInto(pi, url);
+            pi.visible = (url != null);
             pb.selected = false;
             pb.visible = (url != null);
         }
@@ -568,7 +564,7 @@ for (var jj :int = 0; jj < 20; jj++) {
      */
     protected function handleImageProgress (event :ProgressEvent) :void
     {
-        centerImage(event.currentTarget as ScrollPane);
+        // TODO: See if we can properly access the width/height DURING loading.
     }
 
     /**
@@ -576,10 +572,9 @@ for (var jj :int = 0; jj < 20; jj++) {
      */
     protected function handleImageComplete (event :Event) :void
     {
-        centerImage(event.currentTarget as ScrollPane);
-
         // and also update the text field position
         if (_input != null) {
+            trace("Image complete: updating input");
             handleTextFieldChanged(_input);
         }
     }
@@ -611,38 +606,66 @@ for (var jj :int = 0; jj < 20; jj++) {
         if (!animate) {
             frame += "_end";
         }
-        trace((animate ? "animating" : "skipping") + " to frame " + frame);
         _ui.gotoAndPlay(frame);
     }
 
     protected function handleTextFieldChanged (field :TextField) :void
     {
+        var w :int = MIN_IMAGE_WIDTH;
+        var h :int = 500;
         // position the field properly over the image control
-        if (_image.content == null) {
-            return;
+        if (_image.content != null) {
+            w = Math.max(w, _image.content.width);
+            h = _image.content.height;
         }
 
-        var w :int = Math.max(MIN_IMAGE_WIDTH, _image.content.width);
-    //    var h :int = Math.max(MIN_IMAGE_HEIGTH, _image.content.height);
-
         field.width = w;
+        field.background = true;
+        field.backgroundColor = 0xFF0000;
+        field.alpha = .30;
 
-        var p :Point = new Point((500 - w) / 2,
-            _image.y + _image.content.height - (field.textHeight + 4));
-        p = _image.parent.localToGlobal(p);
-        p = field.parent.globalToLocal(p);
+        var fieldHeight :int;
 
+        // TESTING
+        if (StringUtil.isBlank(field.text) && field.text != "") {
+            trace("-===-=-=======================");
+        }
+        if (field.text == "") {
+            field.text = "W";
+            fieldHeight = field.textHeight + 4;
+            field.text = "";
+
+        } else {
+            fieldHeight = field.textHeight + 4;
+        }
+
+        if (fieldHeight < 10) {
+            trace("text is '" + field.text + "'");
+            Log.dumpStack();
+        }
+
+        trace("Field width: " + w);
+        trace("Field textHeight: " + fieldHeight);
+
+        var p :Point = new Point((500 - w) / 2, (500 - h) / 2 + h - fieldHeight);
+        p = _image.localToGlobal(p);
+        var paletteP :Point = _inputPalette.parent.globalToLocal(p);
+        _inputPalette.y = paletteP.y;
+
+        p = _inputPalette.globalToLocal(p);
         field.x = p.x;
         field.y = p.y;
 
-        if (_game.getCurrentPhase() == CaptionGame.CAPTIONING_PHASE) {
-            // move the input palette
-            p = field.localToGlobal(new Point(0, 0));
-            p = _inputPalette.parent.globalToLocal(p);
-            _inputPalette.y = p.y;
+        colorInputPalette();
 
-            colorInputPalette();
-        }
+//        if (_game.getCurrentPhase() == CaptionGame.CAPTIONING_PHASE) {
+//            // move the input palette
+//            p = field.localToGlobal(new Point(0, 0));
+//            p = _inputPalette.parent.globalToLocal(p);
+//            _inputPalette.y = p.y;
+//
+//            colorInputPalette();
+//        }
     }
 
     protected function handlePhaseChanged (event :Event) :void
@@ -666,20 +689,6 @@ for (var jj :int = 0; jj < 20; jj++) {
 
         _ui.x = _mask.x = (width - IDEAL_WIDTH) / 2;
         _ui.y = _mask.y = (height - IDEAL_HEIGHT) / 2;
-    }
-
-    protected function centerImage (pane :ScrollPane) :void
-    {
-        if (pane.content == null) {
-            return;
-        }
-        var w :int = pane.content.width;
-        var h :int = pane.content.height;
-
-        var size :int = (pane == _image) ? 500 : 100;
-
-        pane.x = (size - w) / 2;
-        pane.y = (size - h) / 2;
     }
 
     protected function handleUnload (... ignored) :void
@@ -746,7 +755,7 @@ for (var jj :int = 0; jj < 20; jj++) {
     protected var _textFormat :TextFormat = new TextFormat(
         "_sans", 24, 0xFFFFFF, false, false, false, "", "", TextFormatAlign.LEFT, 0, 0, 0, 0);
 
-    protected var _image :ScrollPane;
+    protected var _image :UILoader;
 
     protected var _skipBox :CheckBox;
 
@@ -765,13 +774,9 @@ for (var jj :int = 0; jj < 20; jj++) {
 
     protected var _doneButton :Button;
 
-    protected var _previewPane :Array = [];
+    protected var _previewImage :Array = [];
 
     protected var _previewBox :Array = [];
-
-//
-//    /** Whether the caption is on the bottom or top. */
-//    protected var _captionOnBottom :Boolean;
 
     protected var _timer :Timer;
 }
