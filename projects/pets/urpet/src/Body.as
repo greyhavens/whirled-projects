@@ -183,9 +183,30 @@ public class Body
             _media.scaleX = 1;
         }
 
+        // if we're finishing a walk and have selected a _fromwalk animation to use, play that now
+        var force :Boolean = true;
+        if (!_ctrl.isMoving() && _fromWalk != null) {
+            queueScene(_fromWalk, true);
+            force = false;
+        }
+
+        // if we're about to start a walk, check to see if we have a _towalk and _fromwalk that
+        // should be used
+        if (_ctrl.isMoving()) {
+            var state :String = (findScene("walk", false) == null) ? "content" : _state;
+            // if we have a _towalk, start that playing immediately
+            var towalk :SceneList = (_scenes.get(state + "_towalk") as SceneList);
+            if (towalk != null) {
+                queueScene(towalk, true);
+                force = false;
+            }
+            // note the _fromwalk we'll want to use when we stop walking
+            _fromWalk = (_scenes.get(state + "_fromwalk") as SceneList);
+        }
+
         // we force an immediate transition here because we're switching from standing to walking
         // or vice versa which looks weird if we allow the animation to complete
-        queueScene(findScene(_ctrl.isMoving() ? "walk" : "idle"), true);
+        queueScene(findScene(_ctrl.isMoving() ? "walk" : "idle"), force);
     }
 
     /**
@@ -247,6 +268,7 @@ public class Body
 
     protected var _state :String;
     protected var _playing :SceneList;
+    protected var _fromWalk :SceneList;
     protected var _sceneQueue :Array = new Array();
 }
 }
