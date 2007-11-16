@@ -18,6 +18,8 @@ import flash.ui.Keyboard;
 
 import flash.utils.Dictionary;
 
+import com.threerings.util.Log;
+
 public class LOLTextFieldFormatter
 {
     public function LOLTextFieldFormatter (
@@ -46,21 +48,26 @@ public class LOLTextFieldFormatter
 
     /**
      * Watch the specified field, re-formatting it when something changes.
+     *
+     * @param callback a function to call after we've made adjustments to the field.
+     *                  function (field :TextField) :void
      */
-    public function watch (field :TextField) :void
+    public function watch (field :TextField, callback :Function = null) :void
     {
         field.addEventListener(Event.CHANGE, handleChange);
         field.addEventListener(TextEvent.TEXT_INPUT, handleTextInput);
         field.addEventListener(FocusEvent.FOCUS_IN, handleFocusIn);
         field.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
 
+        _callbacks[field] = callback;
+
         format(field);
     }
 
     /**
-     * Evaluate the style return true if the text currently fits.
+     * Evaluate the style.
      */
-    protected function evalStyle (field :TextField, goBig :Boolean = false) :Boolean
+    protected function evalStyle (field :TextField, goBig :Boolean = false) :void
     {
         var format :TextFormat = field.getTextFormat();
         var size :int = int(format.size);
@@ -77,17 +84,32 @@ public class LOLTextFieldFormatter
                 updateFormat(field, format);
 
             } else {
-                doesFit = false;
+                // let's prune ends off the text
+                var text :String = field.text;
+                if (text.length > 0) {
+                    text = text.substr(0, text.length - 1);
+                    field.text = text; // thankfully, this doesn't seem to trigger another CHANGE
+                } else {
+                    Log.dumpStack();
+                    break;
+                }
                 break;
             }
         }
+
+//        trace("text w/h: " + field.textWidth + ", " + field.textHeight);
+
 //        trace("(" + goBig + ", " + field.numLines + ") Banged size to :" + size);
 
         var outlineSize :int = Math.max(1,
             int(5 * (size - _minFontSize) / (_maxFontSize - _minFontSize)));
         field.filters = [ new GlowFilter(0xFFFFFF, 1, 4, 4, 255) ];
 
-        return doesFit;
+        // now notfiy
+        var fn :Function = _callbacks[field] as Function;
+        if (fn != null) {
+            fn(field);
+        }
     }
 
     protected function updateFormat (field :TextField, fmt :TextFormat) :void
@@ -114,6 +136,7 @@ public class LOLTextFieldFormatter
 
     protected function handleChange (event :Event) :void
     {
+        trace("Got change");
         var field :TextField = event.currentTarget as TextField;
         var curText :String = field.text;
         var lastText :String = _lastText[field];
@@ -135,6 +158,8 @@ public class LOLTextFieldFormatter
     {
         var field :TextField = event.currentTarget as TextField;
         evalStyle(field, (event.keyCode == Keyboard.BACKSPACE));
+
+        event.updateAfterEvent();
     }
 
     protected var _fontFamily :String;
@@ -145,6 +170,10 @@ public class LOLTextFieldFormatter
 
     protected var _minFontSize :int;
 
+    /* Maps a watched TextField to the last text we saw in handleChange. */
     protected var _lastText :Dictionary = new Dictionary(true);
+
+    /* Maps a watched TextField to the callback function. */
+    protected var _callbacks :Dictionary = new Dictionary(true);
 }
 }

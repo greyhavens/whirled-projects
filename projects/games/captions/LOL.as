@@ -91,7 +91,7 @@ public class LOL extends Sprite
 
         _game = new CaptionGame(_ctrl);
         _game.addEventListener(CaptionGame.TICK_EVENT, updateClock);
-        _game.addEventListener(CaptionGame.PHASE_CHANGED_EVENT, checkPhase);
+        _game.addEventListener(CaptionGame.PHASE_CHANGED_EVENT, handlePhaseChanged);
 
         _timer = new Timer(500);
         _timer.addEventListener(TimerEvent.TIMER, handleSubmitCaption);
@@ -99,7 +99,7 @@ public class LOL extends Sprite
         // get us rolling
         if (showPhoto()) {
             updateClock();
-            checkPhase();
+            checkPhase(SKIP_TO_FRAME);
         }
     }
 
@@ -117,7 +117,7 @@ public class LOL extends Sprite
         _ui.addFrameScript(0, initUIBits);
 
         initUIBits();
-        checkPhase();
+        checkPhase(SKIP_TO_FRAME);
     }
 
 
@@ -144,6 +144,12 @@ public class LOL extends Sprite
         // TEMP?
         _skipBox.label = "              "; // so that it's more easily clickable
 
+        // TEMP
+        if (_input != null) {
+            // throw away the old one
+            _input.parent.removeChild(_input);
+        }
+
         // TEMP: have brittney place a TextField
         var ta :TextArea = find("text_input") as TextArea;
         //_input.setStyle("upSkin", new Shape());
@@ -151,10 +157,11 @@ public class LOL extends Sprite
         _input = new TextField();
         _input.type = TextFieldType.INPUT;
         _input.x = ta.x;
-        _input.y = ta.y;
+        _input.y = ta.y - 50;
         _input.width = ta.width;
-        _input.height = ta.height;
+        _input.height = ta.height + 50;
         ta.parent.addChild(_input);
+        _formatter.watch(_input, handleTextFieldChanged);
 
         _clock = find("clock") as TextField;
         _clock.selectable = false;
@@ -169,6 +176,7 @@ public class LOL extends Sprite
         _resultsPane = find("results_scrollpane") as ScrollPane;
 
         _winningCaption = find("winning_caption") as TextField;
+        //_formatter.watch(_winningCaption, handleTextFieldChanged);
         _winnerName = find("winner_name") as TextField;
         _winnerName.selectable = false;
 
@@ -178,7 +186,7 @@ public class LOL extends Sprite
         _image.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
         _image.addEventListener(Event.COMPLETE, handleImageComplete);
 
-        checkPhase(null);
+        checkPhase(DONT_ALTER_FRAME);
     }
 
     /**
@@ -219,11 +227,9 @@ public class LOL extends Sprite
     }
 
     /**
-     * @param arg null: don't change the current frame
-     *            undefined: skip to current frame
-     *            non-null: animate to current frame
+     * @param frameBehavior one of ANIMATE_TO_FRAME, SKIP_TO_FRAME, DONT_ALTER_FRAME.
      */
-    protected function checkPhase (arg :* = undefined) :void
+    protected function checkPhase (frameBehavior :int) :void
     {
         switch (_game.getCurrentPhase()) {
         case CaptionGame.CAPTIONING_PHASE:
@@ -239,9 +245,8 @@ public class LOL extends Sprite
             break;
         }
 
-        if (arg !== null) {
-            var animate :Boolean = (arg !== undefined);
-            showFrame(animate);
+        if (frameBehavior != DONT_ALTER_FRAME) {
+            showFrame(frameBehavior == ANIMATE_TO_FRAME);
         }
     }
 
@@ -353,8 +358,10 @@ public class LOL extends Sprite
     {
         var g :Graphics = _inputPalette.graphics;
         g.clear();
-        g.beginFill(0xFFFFFF, (_input.type == TextFieldType.INPUT) ? .25 : 0);
-        g.drawRoundRect(0, 0, _inputPalette.width, _inputPalette.height, 10, 10);
+        if (_input.type == TextFieldType.INPUT) {
+            g.beginFill(0xFFFFFF, .25);
+            g.drawRoundRect(0, 0, _inputPalette.width, _input.textHeight + 4, 10, 10);
+        }
     }
 
     protected function updateButtonSkin () :void
@@ -387,7 +394,6 @@ public class LOL extends Sprite
         _resultsPane.source = null;
 
         _input.text = "";
-        _formatter.watch(_input);
         _doneButton.enabled = true;
         _skipBox.selected = false;
         colorInputPalette();
@@ -540,6 +546,11 @@ for (var jj :int = 0; jj < 1; jj++) {
     protected function handleImageComplete (event :Event) :void
     {
         centerImage(event.currentTarget as ScrollPane);
+
+        // and also update the text field position
+        if (_input != null) {
+            handleTextFieldChanged(_input);
+        }
     }
 
     /**
@@ -571,6 +582,41 @@ for (var jj :int = 0; jj < 1; jj++) {
         }
         trace((animate ? "animating" : "skipping") + " to frame " + frame);
         _ui.gotoAndPlay(frame);
+    }
+
+    protected function handleTextFieldChanged (field :TextField) :void
+    {
+        // position the field properly over the image control
+        if (_image.content == null) {
+            return;
+        }
+
+        var w :int = Math.max(MIN_IMAGE_WIDTH, _image.content.width);
+    //    var h :int = Math.max(MIN_IMAGE_HEIGTH, _image.content.height);
+
+        field.width = w;
+
+        var p :Point = new Point((500 - w) / 2,
+            _image.y + _image.content.height - (field.textHeight + 4));
+        p = _image.parent.localToGlobal(p);
+        p = field.parent.globalToLocal(p);
+
+        field.x = p.x;
+        field.y = p.y;
+
+        if (_game.getCurrentPhase() == CaptionGame.CAPTIONING_PHASE) {
+            // move the input palette
+            p = field.localToGlobal(new Point(0, 0));
+            p = _inputPalette.parent.globalToLocal(p);
+            _inputPalette.y = p.y;
+
+            colorInputPalette();
+        }
+    }
+
+    protected function handlePhaseChanged (event :Event) :void
+    {
+        checkPhase(ANIMATE_TO_FRAME);
     }
 
     protected function handleSizeChanged (event :SizeChangedEvent) :void
@@ -637,6 +683,16 @@ for (var jj :int = 0; jj < 1; jj++) {
     protected static const IDEAL_WIDTH :int = 700;
 
     protected static const IDEAL_HEIGHT :int = 500;
+
+    /** Constants to pass to checkPhase(). */
+    protected static const ANIMATE_TO_FRAME :int = 0;
+    protected static const SKIP_TO_FRAME :int = 1;
+    protected static const DONT_ALTER_FRAME :int = 2;
+
+    /** For now, these are just used for layout of the _input and _winningCaption fields.
+     * It might be nice to restrict flickr photos to those sizes. */
+    protected static const MIN_IMAGE_WIDTH :int = 350;
+    protected static const MIN_IMAGE_HEIGHT :int = 350;
 
     protected var _ctrl :WhirledGameControl;
 
