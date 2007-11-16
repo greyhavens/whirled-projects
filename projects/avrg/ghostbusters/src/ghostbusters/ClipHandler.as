@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package tutorial {
+package ghostbusters {
 
 import flash.display.MovieClip;
 import flash.display.Scene;
@@ -46,6 +46,16 @@ public class ClipHandler
             return true;
         }
         return false;
+    }
+
+    public function gotoSceneNumber (sceneNum: int, done :Function = null) :Boolean
+    {
+        _scene = _clip.scenes[sceneNum];
+        _callback = done;
+        _clip.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+        _clip.gotoAndPlay(1);
+        log.debug("Playing: <" + sceneNum + ">");
+        return true;
     }
 
     public function disengage () :void

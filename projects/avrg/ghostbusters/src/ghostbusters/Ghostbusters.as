@@ -30,7 +30,10 @@ public class Ghostbusters extends Sprite
     {
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
+        _splash.addEventListener(MouseEvent.CLICK, handleClick);
+
         _hud = new HUD();
+        _hud.visible = false;
         this.addChild(_hud);
 
         _control = new AVRGameControl(this);
@@ -39,12 +42,63 @@ public class Ghostbusters extends Sprite
         _control.addEventListener(
             AVRGameControlEvent.PLAYER_PROPERTY_CHANGED, playerPropertyChanged);
 
-        var box :TextBox = new TextBox();
-        this.addChild(box);
-        box.showBox("La la la, it's snowing.", false);
-        box.addButton("Whatever", true, function () :void {
-            box.hideBox();
+        this.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
+
+    }
+
+    protected function handleAdded (evt :Event) :void
+    {
+        showSplash();
+    }
+
+    protected function showHelp () :void
+    {
+        if (_box) {
+            this.removeChild(_box);
+        }
+        var bits :TextBits = new TextBits("HELP HELP HELP HELP");
+        bits.addButton("Whatever", true, function () :void {
+            showSplash();
         });
+        _box = new Box(bits);
+        _box.x = 100;
+        _box.y = 100;
+        _box.scaleX = _box.scaleY = 0.5;
+        this.addChild(_box);
+        _box.show();
+    }
+
+    protected function showSplash () :void
+    {
+        if (_box) {
+            this.removeChild(_box);
+        }
+        _box = new Box(_splash);
+        _box.x = 100;
+        _box.y = 100;
+        _box.scaleX = _box.scaleY = 0.5;
+        this.addChild(_box);
+        _box.show();
+    }
+
+    protected function handleClick (evt :MouseEvent) :void
+    {
+        if (evt.target.name == "close") {
+            _box.hide();
+            // TODO: only do this when box finishes hiding
+            _control.deactivateGame();
+
+        } else if (evt.target.name == "help") {
+            showHelp();
+
+        } else if (evt.target.name == "playnow") {
+            _box.hide();
+            _hud.visible = true;
+
+        } else {
+            Log.getLog(this).debug("Clicked on: " + evt.target);
+            Log.getLog(this).debug("Clicked on name: " + (evt.target as DisplayObject).name);
+        }
     }
 
     protected function handleUnload (event :Event) :void
@@ -65,5 +119,11 @@ public class Ghostbusters extends Sprite
     protected var _control :AVRGameControl;
 
     protected var _hud :HUD;
+    protected var _box :Box;
+
+    protected var _splash :MovieClip = MovieClip(new SPLASH());
+
+    [Embed(source="../../rsrc/splash01.swf")]
+    protected static const SPLASH :Class;
 }
 }
