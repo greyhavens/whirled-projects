@@ -136,7 +136,6 @@ public class LOLTextFieldFormatter
 
     protected function handleChange (event :Event) :void
     {
-        trace("Got change");
         var field :TextField = event.currentTarget as TextField;
         var curText :String = field.text;
         var lastText :String = _lastText[field];

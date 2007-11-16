@@ -283,6 +283,7 @@ public class LOL extends Sprite
         }
 
         _input.type = nowEditing ? TextFieldType.INPUT : TextFieldType.DYNAMIC;
+        _input.selectable = nowEditing;
         colorInputPalette();
 
         //_doneButton.label = nowEditing ? "Done" : "Edit";
@@ -409,9 +410,15 @@ public class LOL extends Sprite
         var ourIdx :int = _game.getOurCaptionIndex();
 
         var s :Sprite = new Sprite();
-for (var jj :int = 0; jj < 1; jj++) {
+        // set up an unnoticable glow filter so that we fade correctly
+        s.filters = [ new GlowFilter(0xFFFFFF, .01, 1, 1, 1) ];
+        const GAP :int = 10;
+        var yPos :int = 0;
+for (var jj :int = 0; jj < 20; jj++) {
         for (var ii :int = 0; ii < caps.length; ii++) {
             var cb :DataCheckBox = new DataCheckBox();
+            cb.textField.width = PANE_WIDTH - 30;
+            cb.textField.wordWrap = true;
             cb.label = deHTML(String(caps[ii]));
 
             cb.setStyle("disabledTextFormat", _textFormat);
@@ -421,8 +428,12 @@ for (var jj :int = 0; jj < 1; jj++) {
             if (ii == ourIdx) {
                 cb.enabled = false;
             }
-            cb.setSize(400, 22);
-            cb.y = (jj * 100) + ii * 25;
+            cb.setSize(PANE_WIDTH, 22);
+            cb.validateNow();
+            var height :int = cb.textField.textHeight + 4;
+            cb.setSize(PANE_WIDTH, height);
+            cb.y = yPos;
+            yPos += height + GAP;
 
             s.addChild(cb);
         }
@@ -433,31 +444,49 @@ for (var jj :int = 0; jj < 1; jj++) {
 
     protected function initResults () :void
     {
-        _votingPane.source = null;
         _timer.stop();
 
         var results :Array = _game.getResults();
         var s :Sprite = new Sprite();
-for (var jj :int = 0; jj < 1; jj++) {
+        // set up an unnoticable glow filter so that we fade correctly
+        s.filters = [ new GlowFilter(0xFFFFFF, .01, 1, 1, 1) ];
+        const GAP :int = 10;
+        var yPos :int = 0;
+for (var jj :int = 0; jj < 20; jj++) {
         for (var ii :int = 0; ii < results.length; ii++) {
             var result :Object = results[ii];
-            var y :int = (jj * 100) + (ii * 25);
+            var width :int = PANE_WIDTH;
+
+            var votes :Label = new Label();
+            votes.setStyle("textFormat", _textFormat);
+            votes.text = ", " + result.votes;
+            votes.setSize(46, 30);
+            votes.validateNow();
+            width -= votes.textField.textWidth + 5;
+            votes.x = width;
+            votes.y = yPos;
+            s.addChild(votes);
+
+            var name :Label = new Label();
+            name.setStyle("textFormat", _textFormat);
+            name.text = "- " + result.playerName;
+            name.setSize(100, 30);
+            width -= 100 + 5;
+            name.x = width;
+            name.y = yPos;
+            s.addChild(name);
 
             var lbl :Label = new Label();
             lbl.setStyle("textFormat", _textFormat);
             lbl.text = deHTML(String(result.caption));
-            lbl.setSize(300, 42);
-            lbl.x = 50;
-            lbl.y = y;
+            lbl.textField.wordWrap = true;
+            lbl.setSize(width, 30);
+            lbl.validateNow();
+            var height :int = lbl.textField.textHeight + 4;
+            lbl.setSize(width, height);
+            lbl.x = 0;
+            lbl.y = yPos;
             s.addChild(lbl);
-            
-            var name :Label = new Label();
-            name.setStyle("textFormat", _textFormat);
-            name.text = "- " + result.playerName + ", " + result.votes;
-            name.setSize(100, 42);
-            name.x = 350;
-            name.y = y;
-            s.addChild(name);
 
             if (ii == 0) {
                 displayWinningCaption(String(result.caption), String(result.playerName));
@@ -473,9 +502,11 @@ for (var jj :int = 0; jj < 1; jj++) {
 
             if (icon != null) {
                 var dicon :DisplayObject = new icon() as DisplayObject;
-                dicon.y = y;
+                dicon.y = yPos;
                 s.addChild(dicon);
             }
+
+            yPos += height + GAP;
         }
 }
         _resultsPane.verticalScrollPosition = 0;
@@ -693,6 +724,10 @@ for (var jj :int = 0; jj < 1; jj++) {
      * It might be nice to restrict flickr photos to those sizes. */
     protected static const MIN_IMAGE_WIDTH :int = 350;
     protected static const MIN_IMAGE_HEIGHT :int = 350;
+
+    /** The width of the voting/results pane, which is the ideal width, minus padding, 
+     * minus the sidebar and minus a possible scrollbar. */
+    protected static const PANE_WIDTH :int = IDEAL_WIDTH - (16 + 250 + 16);
 
     protected var _ctrl :WhirledGameControl;
 
