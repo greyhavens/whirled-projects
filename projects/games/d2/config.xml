@@ -1,17 +1,10 @@
 <!-- a config file used when doing standalone testing -->
 <game>
   <params>
-    <choice ident="Board name" choices="1: Playground,2: Halloween,3: Winter,4: The Beach" 
-            start="4: The Beach" />
-<!--            start="1: Playground" />  -->
-<!--            start="2: Halloween" /> -->
-<!--            start="3: Winter" /> -->
-<!--            start="4: The Beach" /> -->
-    <range ident="Rounds" minimum="1" maximum="10" start="2" />
   </params>
   <packs>
-    <item ident="itemtest" name="Item test" mediaURL="/packs/foo.swf" />
-    <level ident="leveltest" name="Level test" mediaURL="/packs/bar.swf" premium="false"/>
-    <level ident="leveltestpremium" name="Level test premium" mediaURL="/packs/baz.swf" premium="true"/>
+    <level ident="d" name="d" mediaURL="http://127.0.0.1:8080/packs/default/Boards.swf" premium="false"/>
+    <level ident="ep1" name="ep1" mediaURL="http://127.0.0.1:8080/packs/ep1/Boards.swf" premium="false"/>
+    <level ident="ep2" name="ep2" mediaURL="http://127.0.0.1:8080/packs/ep2/Boards.swf" premium="false"/>
   </packs>
 </game>

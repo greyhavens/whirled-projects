@@ -1,13 +1,17 @@
 package defense {
 
+import flash.display.Loader;
 import flash.events.Event;
 
 import flash.net.LocalConnection;
 import flash.system.Capabilities;
+import flash.utils.describeType;
 
 import mx.utils.ObjectUtil;
 
 import com.whirled.WhirledGameControl;
+import com.whirled.util.ContentPack;
+import com.whirled.util.ContentPackLoader;
 
 public class Main
 {
@@ -27,6 +31,29 @@ public class Main
     protected var _loader :AssetLoader;
     protected var _level :Level;
     */
+
+
+    public function init (app :Defense) :void
+    {
+        app.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+
+        _whirled = new WhirledGameControl(app, false);
+    }
+
+    protected function handleUnload (event :Event) :void
+    {
+        /*
+        for each (var obj :Object in [ _monitor, _game, _controller,
+                                       _validator, _board, _display, _loader ]) {
+            var handler :Function = obj["handleUnload"];
+            if (handler != null) {
+                handler(event);
+            }
+            }
+        */
+        _whirled.unregisterListener(this);
+    }
+
     
     // This is a very naughty hack, using unsupported error handling to force a full GC pass.
     // Without this, some debug players will allocate *all* available OS memory (I'm looking
@@ -42,17 +69,32 @@ public class Main
             } catch (e :Error) { }
         }
     }
-    
+
+    /*
     public function init (app :Defense) :void
     {
-        app.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        _whirled = new WhirledGameControl(app, false);
         trace("CONNECTED? " + _whirled.isConnected());
 
         trace("LEVELS: " + ObjectUtil.toString(_whirled.getLevelPacks()));
         trace("ITEMS: " + ObjectUtil.toString(_whirled.getItemPacks()));
-        
+
+        var packs :ContentPackLoader =
+            new ContentPackLoader(
+                _whirled.getLevelPacks(),
+                function (pack :ContentPack) :void {
+                                      trace("GOT PACK: " + ObjectUtil.toString(pack));
+                                      if (pack != null) {
+//                                          trace(describeType(pack.getLoader()));
+//                                          trace(ObjectUtil.toString(pack.getLoader()));
+                                          trace("Level01_BG? " + pack.getSymbol("Level01_BG"));
+                                          trace("SETTINGS? " + pack.getSymbol("Settings"));
+                                          trace("DEFS? " + ObjectUtil.toString(new (pack.getClass("Settings"))()));
+                                          trace("BLA?" + pack.getSymbol("BLA"));
+                                      }
+                                  },
+                function () :void { trace("DONE!"); });
+
         /*
         var level :int = 1;  // default values
         var rounds :int = 3; 
@@ -93,21 +135,8 @@ public class Main
 //                    _whirled.playerReady();
                 } 
             });
-        */
     }
+        */
    
-    protected function handleUnload (event :Event) :void
-    {
-        /*
-        for each (var obj :Object in [ _monitor, _game, _controller,
-                                       _validator, _board, _display, _loader ]) {
-            var handler :Function = obj["handleUnload"];
-            if (handler != null) {
-                handler(event);
-            }
-            }
-        */
-        _whirled.unregisterListener(this);
-    }
 }
 }
