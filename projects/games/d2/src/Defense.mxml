@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application  xmlns:mx="http://www.adobe.com/2006/mxml" 
- 	xmlns="defense.*"
+ 	xmlns="*"
         styleName="plain" width="700" height="500"
         horizontalScrollPolicy="off" verticalScrollPolicy="off"
         layout="horizontal"

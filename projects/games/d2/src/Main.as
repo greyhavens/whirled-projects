@@ -1,4 +1,4 @@
-package defense {
+package {
 
 import flash.display.Loader;
 import flash.events.Event;
@@ -38,6 +38,13 @@ public class Main
         app.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         _whirled = new WhirledGameControl(app, false);
+
+        if (! _whirled.isConnected()) {
+            trace("* DISCONNECTED");
+            return; // todo: do something interesting here!
+        }
+
+        trace("Tree House Defense 0.11.15");
     }
 
     protected function handleUnload (event :Event) :void
