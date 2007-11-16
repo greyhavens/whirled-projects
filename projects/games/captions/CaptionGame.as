@@ -73,7 +73,8 @@ public class CaptionGame extends EventDispatcher
     public function CaptionGame (
         gameCtrl :WhirledGameControl, previewCount :int = 4, scoreRounds :int = 10,
         captioningDuration :int = 45, votingDuration :int = 30, resultsDuration :int = 20,
-//        captioningDuration :int = 20, votingDuration :int = 20, resultsDuration :int = 20,
+//        captioningDuration :int = 45, votingDuration :int = 10, resultsDuration :int = 10,
+//        captioningDuration :int = 20, votingDuration :int = 20, resultsDuration :int = 30,
         minCaptionersStatStorage :int = 3)
     {
         _ctrl = gameCtrl;
@@ -369,6 +370,7 @@ public class CaptionGame extends EventDispatcher
                         _ctrl.sendChat("" + skipVotes + " players have voted to skip the picture.");
                     }
                     _ctrl.setImmediate("skipping", true);
+                    //_ctrl.set("image", null); TODO ??
                     _ctrl.stopTicker("tick");
                     setPhase(-1);
                     setCtrlPhase(GET_PHOTO_CTRL_PHASE);
@@ -487,7 +489,9 @@ public class CaptionGame extends EventDispatcher
     protected function setPhase (phase :int) :void
     {
         _ctrl.set("phase", phase);
-        _ctrl.startTicker("tick", 1000);
+        if (phase >= CAPTIONING_PHASE) {
+            _ctrl.startTicker("tick", 1000);
+        }
     }
 
     /**
@@ -936,6 +940,7 @@ public class CaptionGame extends EventDispatcher
             _photosToGet = _previewCount;
         }
 
+//        trace("Requesting " + _photosToGet + " new photos.");
         _flickr.photos.getRecent("", _photosToGet, 1);
     }
 
