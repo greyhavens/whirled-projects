@@ -1,35 +1,25 @@
 package {
 
 import flash.display.Sprite;
-import flash.events.Event;
 import flash.geom.Point;
 
+import com.threerings.flash.FrameSprite;
+
 [SWF(width="160", height="160")]
-public class Zap extends Sprite
+public class Zap extends FrameSprite
 {
     public function Zap ()
     {
-        this.addEventListener(Event.ADDED_TO_STAGE, start);
-        this.addEventListener(Event.REMOVED_FROM_STAGE, stop);
+        super(true);
 
         _canvas = new Sprite();
         this.addChild(_canvas);
-        _canvas.x = 80;
-        _canvas.y = 80;
-        _canvas.scaleX = _canvas.scaleY = 1.6;
+        _canvas.x = 70;
+        _canvas.y = 70;
+        _canvas.scaleX = _canvas.scaleY = 1.4;
     }
 
-    protected function start (ignored :*) :void
-    {
-        this.addEventListener(Event.ENTER_FRAME, frame);
-    }
-
-    protected function stop (ignored :*) :void
-    {
-        this.removeEventListener(Event.ENTER_FRAME, frame);
-    }
-
-    protected function frame (ignored :*) :void
+    protected override function handleFrame (... ignored) :void
     {
         _canvas.rotation += 1;
 
@@ -39,6 +29,7 @@ public class Zap extends Sprite
             lineStyle(2, 0xFFAA44);
             drawCircle(0, 0, 40);
 
+            beginFill(0x000000);
             drawCircle(0, -40, 9);
             drawCircle(0, 40, 9);
             endFill();
