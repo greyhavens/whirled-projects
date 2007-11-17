@@ -298,6 +298,11 @@ public class BrawlerView extends Sprite
         addChild(results);
 		results.gotoAndPlay(1);
 
+		
+		if(_ctrl.lemmingCount <= 0){
+			_ctrl.control.awardTrophy("immortal");
+		}
+		
         // display the KO count/points
         //var koCount :Number = _ctrl.control.get("koCount") as Number;
         //var koPoints :Number = Math.max(0, 5000 - 5000*koCount);

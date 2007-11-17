@@ -186,6 +186,41 @@ public class HudView extends Sprite
 		_hud.score_par.text = (_ctrl.calculateGrade("damage"));
 		_hud.score_time.text = (_ctrl.calculateGrade("time"));
 		_hud.score_grade.text = _ctrl.calculateGrade()+"%";
+		
+		var self :Player = _ctrl.self;
+        if (self == null) {
+            return;
+        }
+		
+		if (_ctrl.difficulty_setting != "Easy"){
+			if(self.blocking && _ctrl.timeSpentBlocking_awarded != true){
+				_ctrl.timeSpentBlocking += 1;
+				if(_ctrl.timeSpentBlocking >= _ctrl.timeSpentBlocking_goal && _ctrl.timeSpentBlocking_awarded != true){
+					_ctrl.control.awardTrophy("cautious");
+					_ctrl.timeSpentBlocking_awarded = true;
+				}
+			}
+			if(_ctrl.lemmingCount >= _ctrl.lemmingCount_goal && _ctrl.lemmingCount_awarded != true){
+				_ctrl.control.awardTrophy("lemming");
+				_ctrl.lemmingCount_awarded = true;
+			}
+			if(_ctrl.damageTaken >= _ctrl.damageTaken_goal && _ctrl.damageTaken_awarded != true){
+				_ctrl.control.awardTrophy("battle_scarred");
+				_ctrl.damageTaken_awarded = true;
+			}
+			if(_ctrl.coinsCollected >= _ctrl.coinsCollected_goal && _ctrl.coinsCollected_awarded != true){
+				_ctrl.control.awardTrophy("extra_life");
+				_ctrl.coinsCollected_awarded = true;
+			}
+			if(_ctrl.weaponsBroken >= _ctrl.weaponsBroken_goal && _ctrl.weaponsBroken_awarded != true){
+				_ctrl.control.awardTrophy("entropy");
+				_ctrl.weaponsBroken_awarded = true;
+			}
+			if(_ctrl.weaponsCollected >= _ctrl.weaponsCollected_goal && _ctrl.weaponsCollected_awarded != true){
+				_ctrl.control.awardTrophy("arms_dealer");
+				_ctrl.weaponsCollected_awarded = true;
+			}
+		}
     }
 
     /**

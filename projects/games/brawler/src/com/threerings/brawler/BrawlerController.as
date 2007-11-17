@@ -567,6 +567,7 @@ public class BrawlerController extends Controller
 
 			// fetch the difficulty level
 			_difficulty = DIFFICULTY_LEVELS.indexOf(_control.getConfig()["difficulty"]);
+			difficulty_setting = _control.getConfig()["difficulty"];
 
 			// if we are in control, initialize
 			if (_control.amInControl()) {
@@ -832,5 +833,26 @@ public class BrawlerController extends Controller
 
     /** Key codes for the sprint command. */
     protected static const SPRINT_CODES :Array = [ 49, 87 ]; // 1, W
+	
+	/** Variables for the trophies  */
+	public var difficulty_setting :String 	= "Normal";
+	public var timeSpentBlocking :Number 	= 0;
+		public var timeSpentBlocking_goal :Number 	= 180;
+		public var timeSpentBlocking_awarded :Boolean 	= false;
+	public var lemmingCount :Number 		= 0;
+		public var lemmingCount_goal :Number 		= 10;
+		public var lemmingCount_awarded :Boolean 	= false;
+	public var damageTaken :Number 			= 0;
+		public var damageTaken_goal :Number 		= 30000;
+		public var damageTaken_awarded :Boolean 	= false;
+	public var coinsCollected :Number 		= 0;
+		public var coinsCollected_goal :Number 		= 100;
+		public var coinsCollected_awarded :Boolean 	= false;
+	public var weaponsBroken :Number 		= 0;
+		public var weaponsBroken_goal :Number 		= 25;
+		public var weaponsBroken_awarded :Boolean 	= false;
+	public var weaponsCollected :Number 	= 0;
+		public var weaponsCollected_goal :Number 	= 50;
+		public var weaponsCollected_awarded :Boolean 	= false;
 }
 }

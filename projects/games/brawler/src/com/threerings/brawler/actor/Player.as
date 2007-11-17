@@ -76,6 +76,9 @@ public class Player extends Pawn
         if (_weapon == Weapon.FISTS) {
             // show the break effect
             _view.addTransient(_ctrl.create("WeaponBreak"), x, y, true);
+			if (amOwner) {
+				_ctrl.weaponsBroken += 1;
+			}
         }
         maybePublish();
     }
@@ -216,6 +219,9 @@ public class Player extends Pawn
         _ctrl.score -= points;
         super.wasHit(attacker, damage);
         _ctrl.incrementStat("playerDamage", damage);
+		if (amOwner) {
+			_ctrl.damageTaken += damage;
+		}
     }
 
     // documentation inherited
@@ -227,6 +233,10 @@ public class Player extends Pawn
         _hitResetCountdown = HIT_RESET_INTERVAL;
         _view.hud.updateHits();
 
+		if(damage >= 1500){
+			_ctrl.control.awardTrophy("hax");
+		}
+		
         // damage the weapon for hits after the first
         if (_hits > 1) {
             damageWeapon();
@@ -572,6 +582,7 @@ public class Player extends Pawn
         _ctrl.incrementStat("koCount");
         if (amOwner) {
             experience = 0;
+			_ctrl.lemmingCount += 1;
         }
     }
 

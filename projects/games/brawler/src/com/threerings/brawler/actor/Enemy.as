@@ -600,7 +600,7 @@ public class Enemy extends Pawn
     protected static const RESPAWNS_PER_PLAYER :Array = [ 0, 1.75, 2.25, 2.5 ];
 
     /** The chance that the enemy will drop a coin each time it's hit. */
-    protected static const COIN_DROP_PROBABILITY :Number = 0.18;
+    protected static const COIN_DROP_PROBABILITY :Number = 0.25;
 
     /** The chance that the enemy will drop a health pickup when it dies. */
     protected static const HEALTH_DROP_PROBABILITY :Number = 0.15;

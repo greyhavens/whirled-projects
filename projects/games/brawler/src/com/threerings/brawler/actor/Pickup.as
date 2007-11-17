@@ -79,6 +79,7 @@ public class Pickup extends Actor
         }
         if (player.amOwner) {
             award();
+			_ctrl.coinsCollected += 1;
         }
         visible = false;
     }

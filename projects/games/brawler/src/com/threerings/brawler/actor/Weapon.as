@@ -79,6 +79,7 @@ public class Weapon extends Pickup
 			var self :Player = _ctrl.self;
 			if(self == player){
 				_view.hud.showPickUp(x);
+				_ctrl.weaponsCollected += 1;
 			}
 		}
     }
