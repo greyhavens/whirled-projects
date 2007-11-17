@@ -9,14 +9,19 @@ import flash.utils.describeType;
 
 import mx.utils.ObjectUtil;
 
+import com.threerings.util.Assert;
+
 import com.whirled.WhirledGameControl;
 import com.whirled.util.ContentPack;
 import com.whirled.util.ContentPackLoader;
+
 
 public class Main
 {
     protected var _whirled :WhirledGameControl;
 
+    protected var _display :Display;
+    
     /*
     protected var _monitor :Monitor;
     protected var _validator :Validator;
@@ -45,6 +50,9 @@ public class Main
         }
 
         trace("Tree House Defense 0.11.15");
+
+        // initialize all the components
+        _display = app.display;
     }
 
     protected function handleUnload (event :Event) :void
