@@ -114,7 +114,7 @@ public class LOL extends Sprite
         addChild(_ui);
         _loader = null;
 
-        trace(DisplayUtil.dumpHierarchy(_ui));
+        //trace(DisplayUtil.dumpHierarchy(_ui));
 
         // For some reason, when the movie wraps around, we need to re-grab all the bits
         _ui.addFrameScript(0, initUIBits);
@@ -353,9 +353,13 @@ public class LOL extends Sprite
             if (_image.content != null) {
                 w = Math.max(_image.content.width, w);
             }
+            //trace("coloring, (" + (_image.content != null) + ") " + w + ", " + _image.scaleX);
 
-            g.beginFill(0xFFFFFF, .25);
-            g.drawRoundRect((_inputPalette.width - w) / 2, 0, w, _input.textHeight + 4, 10, 10);
+            var p :Point = _input.localToGlobal(new Point());
+            p = _inputPalette.globalToLocal(p);
+
+            g.beginFill(0xFFFFFF, .4);
+            g.drawRoundRect(p.x, 0, w, _input.textHeight + 4, 10, 10);
         }
     }
 
@@ -574,7 +578,6 @@ for (var jj :int = 0; jj < 20; jj++) {
     {
         // and also update the text field position
         if (_input != null) {
-            trace("Image complete: updating input");
             handleTextFieldChanged(_input);
         }
     }
@@ -620,16 +623,8 @@ for (var jj :int = 0; jj < 20; jj++) {
         }
 
         field.width = w;
-        field.background = true;
-        field.backgroundColor = 0xFF0000;
-        field.alpha = .30;
 
         var fieldHeight :int;
-
-        // TESTING
-        if (StringUtil.isBlank(field.text) && field.text != "") {
-            trace("-===-=-=======================");
-        }
         if (field.text == "") {
             field.text = "W";
             fieldHeight = field.textHeight + 4;
@@ -638,14 +633,6 @@ for (var jj :int = 0; jj < 20; jj++) {
         } else {
             fieldHeight = field.textHeight + 4;
         }
-
-        if (fieldHeight < 10) {
-            trace("text is '" + field.text + "'");
-            Log.dumpStack();
-        }
-
-        trace("Field width: " + w);
-        trace("Field textHeight: " + fieldHeight);
 
         var p :Point = new Point((500 - w) / 2, (500 - h) / 2 + h - fieldHeight);
         p = _image.localToGlobal(p);
@@ -657,15 +644,6 @@ for (var jj :int = 0; jj < 20; jj++) {
         field.y = p.y;
 
         colorInputPalette();
-
-//        if (_game.getCurrentPhase() == CaptionGame.CAPTIONING_PHASE) {
-//            // move the input palette
-//            p = field.localToGlobal(new Point(0, 0));
-//            p = _inputPalette.parent.globalToLocal(p);
-//            _inputPalette.y = p.y;
-//
-//            colorInputPalette();
-//        }
     }
 
     protected function handlePhaseChanged (event :Event) :void
