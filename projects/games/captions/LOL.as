@@ -23,6 +23,7 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
@@ -413,21 +414,27 @@ public class LOL extends Sprite
         s.filters = [ new GlowFilter(0xFFFFFF, .01, 1, 1, 1) ];
         const GAP :int = 10;
         var yPos :int = 0;
-for (var jj :int = 0; jj < 20; jj++) {
+for (var jj :int = 0; jj < 1; jj++) {
         for (var ii :int = 0; ii < caps.length; ii++) {
             var cb :DataCheckBox = new DataCheckBox();
+            var width :int = PANE_WIDTH - 30; // save some room for the checkbox icon
             cb.data = ii;
             cb.setStyle("disabledTextFormat", _textFormat);
             cb.setStyle("textFormat", _textFormat);
+            cb.textField.autoSize = TextFieldAutoSize.LEFT;
             cb.label = deHTML(String(caps[ii]));
-            cb.textField.width = PANE_WIDTH - 30;
-            cb.textField.wordWrap = true;
 
             cb.addEventListener(Event.CHANGE, handleCaptionVote);
             if (ii == ourIdx) {
                 cb.enabled = false;
             }
             cb.setSize(PANE_WIDTH, 22);
+            cb.validateNow();
+            cb.textField.width = PANE_WIDTH * 2;;
+            if (cb.textField.textWidth + 5 > width) {
+                cb.textField.wordWrap = true;
+            }
+            cb.textField.width = width;
             cb.validateNow();
             var height :int = cb.textField.textHeight + 4;
             cb.setSize(PANE_WIDTH, height);
@@ -437,6 +444,7 @@ for (var jj :int = 0; jj < 20; jj++) {
             s.addChild(cb);
         }
 }
+
         _votingPane.verticalScrollPosition = 0;
         _votingPane.source = s;
     }
@@ -451,14 +459,14 @@ for (var jj :int = 0; jj < 20; jj++) {
         s.filters = [ new GlowFilter(0xFFFFFF, .01, 1, 1, 1) ];
         const GAP :int = 10;
         var yPos :int = 0;
-for (var jj :int = 0; jj < 20; jj++) {
+for (var jj :int = 0; jj < 1; jj++) {
         for (var ii :int = 0; ii < results.length; ii++) {
             var result :Object = results[ii];
             var width :int = PANE_WIDTH;
 
             var votes :Label = new Label();
             votes.setStyle("textFormat", _textFormat);
-            votes.text = ", " + result.votes;
+            votes.text = " " + result.votes;
             votes.setSize(46, 30);
             votes.validateNow();
             width -= votes.textField.textWidth + 5;
@@ -480,15 +488,15 @@ for (var jj :int = 0; jj < 20; jj++) {
             lbl.setStyle("textFormat", _textFormat);
             lbl.text = deHTML(String(result.caption));
             lbl.textField.wordWrap = true;
-            lbl.setSize(width, 30);
+            lbl.setSize(width - 36, 30);
             lbl.validateNow();
             var height :int = lbl.textField.textHeight + 4;
-            lbl.setSize(width, height);
-            lbl.x = 0;
+            lbl.setSize(width - 36, height);
+            lbl.x = 36;
             lbl.y = yPos;
             s.addChild(lbl);
 
-            if (ii == 0) {
+            if (ii == 0 && jj == 0) {
                 displayWinningCaption(String(result.caption), String(result.playerName));
             }
 
@@ -529,7 +537,14 @@ for (var jj :int = 0; jj < 20; jj++) {
     {
         _winningCaption.text = caption;
 
+        // remove any old star
+        var oldStar :DisplayObject = find("star");
+        if (oldStar != null) {
+            oldStar.parent.removeChild(oldStar);
+        }
+
         var star :DisplayObject = new STAR_ICON() as DisplayObject;
+        star.name = "star";
 
         var truncing :Boolean = false;
         while (true) {

@@ -97,13 +97,8 @@ public class LOLTextFieldFormatter
             }
         }
 
-//        trace("text w/h: " + field.textWidth + ", " + field.textHeight);
-
-//        trace("(" + goBig + ", " + field.numLines + ") Banged size to :" + size);
-
-        var outlineSize :int = Math.max(1,
-            int(5 * (size - _minFontSize) / (_maxFontSize - _minFontSize)));
-        field.filters = [ new GlowFilter(0xFFFFFF, 1, 4, 4, 255) ];
+        var outlineSize :int = (size > _minFontSize) ? 1 : .5;
+        field.filters = [ new GlowFilter(0xFFFFFF, outlineSize, 4, 4, 255) ];
 
         // now notfiy
         var fn :Function = _callbacks[field] as Function;
