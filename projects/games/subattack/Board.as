@@ -65,14 +65,26 @@ public class Board
 
         _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
         if (gameCtrl.isInPlay()) {
-            // TODO: this should never happen
+            // this may happen if we're rematching
             gameDidStart(null);
+
         } else {
             _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED,
                 gameDidStart);
         }
         _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED,
             gameDidEnd);
+    }
+
+    /**
+     * Shutdown this board when it's no longer the active board.
+     */
+    public function shutdown () :void
+    {
+        _seaDisplay.removeEventListener(Event.ENTER_FRAME, enterFrame);
+        _gameCtrl.removeEventListener(MessageReceivedEvent.TYPE, msgReceived);
+        _gameCtrl.removeEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
+        _gameCtrl.removeEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
     }
 
     /**
@@ -188,7 +200,7 @@ public class Board
     public function torpedoAdded (torpedo :Torpedo) :void
     {
         _torpedos.push(torpedo);
-        _seaDisplay.addChild(torpedo);
+        _seaDisplay.addChildAt(torpedo, 0);
     }
 
     /**
@@ -237,7 +249,7 @@ public class Board
         if (xx >= 0 && xx < _width && yy >= 0 && yy < _height) {
             // mark the board area as traversable there
             noteTorpedoExploded(xx, yy, killerIdx);
-            _seaDisplay.addChild(new Explode(xx, yy, this));
+            _seaDisplay.addChildAt(new Explode(xx, yy, this), 0);
         }
 
         return killCount;
@@ -322,6 +334,7 @@ public class Board
         }
 
         _seaDisplay.setStatus("<P align=\"center\"><font size=\"+4\"><b>Game Over</b></font></P>");
+        shutdown();
     }
 
     /**

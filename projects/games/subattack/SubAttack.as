@@ -15,6 +15,10 @@ import flash.ui.Keyboard;
 
 import flash.utils.getTimer; // function import
 
+import fl.controls.Button;
+
+import fl.skins.DefaultButtonSkins;
+
 import com.threerings.flash.KeyRepeatBlocker;
 
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -26,7 +30,7 @@ import com.threerings.ezgame.MessageReceivedListener;
 
 import com.whirled.WhirledGameControl;
 
-[SWF(width="416", height="416")]
+[SWF(width="700", height="500")]
 public class SubAttack extends Sprite
 {
     /** How many tiles does our vision extend past our tile? */
@@ -69,7 +73,12 @@ public class SubAttack extends Sprite
             addEventListener(Event.ENTER_FRAME, enterFrame);
         }
 
+        _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
+        _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
+
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+
+        DefaultButtonSkins;
     }
 
     /**
@@ -78,6 +87,44 @@ public class SubAttack extends Sprite
     protected function handleUnload (evt :Event) :void
     {
         removeEventListener(Event.ENTER_FRAME, enterFrame);
+    }
+
+    /**
+     * React to a successful rematch and remove the rematch button.
+     */
+    protected function handleGameStarted (event :StateChangedEvent) :void
+    {
+        if (_rematch != null) {
+            removeChild(_rematch);
+            _rematch = null;
+
+            _seaDisplay.clearStatus();
+            removeChild(_seaDisplay);
+            addChildAt(_seaDisplay = new SeaDisplay(), 0);
+            _board = new Board(_gameCtrl, _seaDisplay);
+        }
+    }
+
+    /**
+     * Show the rematch button.
+     */
+    protected function handleGameEnded (event :StateChangedEvent) :void
+    {
+        // put the rematch button up
+        if (_myIndex != -1) {
+            _rematch = new Button();
+            _rematch.label = "Rematch";
+            _rematch.toggle = true;
+            _rematch.addEventListener(MouseEvent.CLICK, handleRematchClicked);
+            _rematch.setSize(100, 22);
+            addChild(_rematch);
+        }
+    }
+
+    protected function handleRematchClicked (event :MouseEvent) :void
+    {
+        _gameCtrl.playerReady();
+        _rematch.enabled = false;
     }
 
     /**
@@ -170,6 +217,9 @@ public class SubAttack extends Sprite
 
     /** The actions we have queued to be sent. */
     protected var _queued :Array;
+
+    /** The rematch button. */
+    protected var _rematch :Button;
 
     protected static const SEND_THROTTLE :int = 105;
 }

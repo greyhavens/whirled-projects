@@ -2,6 +2,8 @@ package {
 
 import flash.display.MovieClip;
 
+import flash.filters.GlowFilter;
+
 import flash.media.Sound;
 
 import flash.text.TextField;
@@ -62,7 +64,8 @@ public class Submarine extends BaseSprite
         _nameLabel.autoSize = TextFieldAutoSize.CENTER;
         _nameLabel.selectable = false;
         _nameLabel.text = playerName;
-        _nameLabel.textColor = uint(0x33CC33);
+        _nameLabel.textColor = 0x000000;
+        _nameLabel.filters = [ new GlowFilter(0xFFFFFF, 1, 2, 2, 255) ];
         // center the label above us
         _nameLabel.y = -1 * (_nameLabel.textHeight + NAME_PADDING);
         _nameLabel.x = (SeaDisplay.TILE_SIZE - _nameLabel.textWidth) / 2;
