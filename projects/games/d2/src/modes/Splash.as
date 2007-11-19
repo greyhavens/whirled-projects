@@ -13,14 +13,15 @@ import mx.controls.Button;
 import mx.controls.Image;
 
 import com.threerings.util.Assert;
+import com.whirled.util.GameModeManager;
 
 public class Splash extends GameModeCanvas
 {
     public static const HELP_URL :String = "http://wiki.whirled.com/Tree_House_Defense";
     
-    public function Splash (playCallback :Function)
+    public function Splash (modes :GameModeManager)
     {
-        _playCallback = playCallback;
+        super(modes);
     }
 
     // from interface GameMode
@@ -67,12 +68,10 @@ public class Splash extends GameModeCanvas
 
     protected function playClicked (event :MouseEvent) :void
     {
-        _playCallback();
+        getGameModeManager().push(new SelectBoard(_modes));
     }
     
     [Embed(source="../../rsrc/splash/splash.swf")]
     private static const _splash :Class;
-
-    protected var _playCallback :Function;
 }
 }
