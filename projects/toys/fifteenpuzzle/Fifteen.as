@@ -36,12 +36,20 @@ import com.whirled.FurniControl;
 [SWF(width="420", height="450")]
 public class Fifteen extends Sprite
 {
+    public static const BOARD_WIDTH :int = 400;
+    public static const BOARD_HEIGHT :int = 400;
+
+    /** How many tiles per side should we use? */
+    public static const SIZE :int = 4;
+
+    public static const TILE_WIDTH :int = int(BOARD_WIDTH / SIZE);
+    public static const TILE_HEIGHT :int = int(BOARD_HEIGHT / SIZE);
+
     public function Fifteen ()
     {
         _ctrl = new FurniControl(this);
-        _toy = new ToyState(_ctrl , true, 15);
+        _toy = new ToyState(_ctrl, true, 15);
         _toy.addEventListener(ToyState.STATE_UPDATED, handleStateUpdated);
-//        _toy.addEventListener("rejected", handleRejected);
 
         initUI();
         readState();
@@ -50,7 +58,6 @@ public class Fifteen extends Sprite
     private static function refSkins () :void
     {
         DefaultButtonSkins;
-//        DefaultTextAreaSkins;
     }
 
     protected function initUI () :void
@@ -58,11 +65,11 @@ public class Fifteen extends Sprite
         // draw the board background
         graphics.beginFill(0xFFFFFF);
         graphics.lineStyle(0x000000, 1);
-        graphics.drawRoundRect(0, 30, 420, 420, 20, 20);
+        graphics.drawRoundRect(0, 30, BOARD_WIDTH + 20, BOARD_HEIGHT + 20, 20, 20);
 
         graphics.beginFill(0x000000);
         graphics.lineStyle(0, 0, 0);
-        graphics.drawRect(10, 40, 400, 400);
+        graphics.drawRect(10, 40, BOARD_WIDTH, BOARD_HEIGHT);
 
         var tileHolder :Sprite = new Sprite();
         tileHolder.x = 10;
@@ -70,8 +77,9 @@ public class Fifteen extends Sprite
         addChild(tileHolder);
 
         // create our numbery sprites
-        for (var ii :int = 0; ii < 15; ii++) {
+        for (var ii :int = 0; ii < BLANK_TILE; ii++) {
             var tile :Sprite = makeTileSprite(String(ii + 1));
+            tile.addEventListener(MouseEvent.CLICK, handleClick);
             _tiles.push(tile);
             tileHolder.addChild(tile);
         }
@@ -98,19 +106,16 @@ public class Fifteen extends Sprite
             addChild(_button);
             _button.addEventListener(MouseEvent.CLICK, resetState);
         }
-
-//        _text = new TextArea();
-//        _text.verticalScrollPolicy = ScrollPolicy.ON;
-//        _text.y = 450;
-//        _text.setSize(420, 200);
-//        addChild(_text);
     }
 
     protected function readState () :void
     {
         _state = _toy.getState() as Array;
         if (_state == null) {
-            _state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+            _state = [];
+            for (var ii :int = 0; ii < (SIZE * SIZE); ii++) {
+                _state.push(ii);
+            }
         }
         positionTiles();
     }
@@ -123,7 +128,7 @@ public class Fifteen extends Sprite
             // they'll be cleared, too
         }
 
-        for (var ii :int = 0; ii < 16; ii++) {
+        for (var ii :int = 0; ii < _state.length; ii++) {
             var number :int = int(_state[ii]);
             var tile :Sprite = _tiles[number] as Sprite;
             var p :Point = computeTilePosition(ii);
@@ -134,7 +139,7 @@ public class Fifteen extends Sprite
 
     protected function computeTilePosition (position :int) :Point
     {
-        return new Point((position % 4) * 100, int(position / 4) * 100);
+        return new Point((position % SIZE) * TILE_WIDTH, int(position / SIZE) * TILE_HEIGHT);
     }
 
     protected function makeTileSprite (number :String) :Sprite
@@ -142,19 +147,17 @@ public class Fifteen extends Sprite
         var s :Sprite = new Sprite();
         s.graphics.beginFill(0xFFFFEE);
         s.graphics.lineStyle(1, 0x000033);
-        s.graphics.drawRoundRect(0, 0, 100, 100, 10, 10);
+        s.graphics.drawRoundRect(0, 0, TILE_WIDTH, TILE_HEIGHT, 10, 10);
 
         var tf :TextField = new TextField();
         tf.selectable = false;
         tf.text = number
         tf.setTextFormat(new TextFormat(null, 32, 0x000000, true, null, null, null, null,
             TextFormatAlign.CENTER));
-        tf.width = 100;
+        tf.width = TILE_WIDTH;
         tf.height = tf.textHeight + 4;
-        tf.y = (100 - tf.height) / 2;
+        tf.y = (TILE_HEIGHT - tf.height) / 2;
         s.addChild(tf);
-
-        s.addEventListener(MouseEvent.CLICK, handleClick);
 
         return s;
     }
@@ -173,35 +176,39 @@ public class Fifteen extends Sprite
         var blankPosition :int = findPosition(BLANK_TILE);
         if (areAdjacent(position, blankPosition)) {
             var tile :Sprite = _tiles[_state[position]] as Sprite;
+            if (tile == null) {
+                // TODO: saw a bug here once, but haven't been able to duplicate it since
+                trace("position: " + position + ", " + blankPosition);
+                trace("state: " + _state);
+            }
 
             // update our state
             _state[blankPosition] = _state[position];
             _state[position] = BLANK_TILE;
             if (doSet) {
-//                _text.appendText("\nSet state: " + _state);
+                _stateQueue.length = 0; // truncate our state queue, we're taking control
                 _toy.setState(_state);
             }
 
             // animate the tile moving to the blank position
-            var path :Path = Path.moveTo(tile, _blank.x, _blank.y, 250);
+            var src :Point = computeTilePosition(position);
+
+            var path :Path = Path.move(tile, src.x, src.y, _blank.x, _blank.y, 250);
             path.setOnComplete(handlePathComplete);
             _paths.push(path);
-            if (_paths.length == 1) {
-                path.start();
-            }
+            path.start();
 
             // and jump the blank tile to its new home
-            var dest :Point = computeTilePosition(position);
-            _blank.x = dest.x;
-            _blank.y = dest.y;
+            _blank.x = src.x;
+            _blank.y = src.y;
         }
     }
 
     protected function handlePathComplete (path :Path) :void
     {
         _paths.splice(_paths.indexOf(path), 1);
-        if (_paths.length > 0) {
-            (_paths[0] as Path).start();
+        if (_paths.length == 0 && _stateQueue.length > 0) {
+            moveToState(_stateQueue.shift() as Array);
         }
     }
 
@@ -215,7 +222,7 @@ public class Fifteen extends Sprite
         var p :Point = new Point(event.localX, event.localY);
         p = (event.target as DisplayObject).localToGlobal(p);
         p = _blank.parent.globalToLocal(p);
-        trySwap(int(p.x / 100) + 4 * int(p.y / 100), true);
+        trySwap(int(p.x / TILE_WIDTH) + SIZE * int(p.y / TILE_HEIGHT), true);
     }
 
     protected function handleMouseUp (event :MouseEvent) :void
@@ -226,7 +233,7 @@ public class Fifteen extends Sprite
 
     protected function identifyTile (tile :Sprite) :int
     {
-        for (var ii :int = 0; ii < 16; ii++) {
+        for (var ii :int = 0; ii < _tiles.length; ii++) {
             if (tile == _tiles[ii]) {
                 return ii;
             }
@@ -238,7 +245,7 @@ public class Fifteen extends Sprite
 
     protected function findPosition (tileId :int) :int
     {
-        for (var ii :int = 0; ii < 16; ii++) {
+        for (var ii :int = 0; ii < _state.length; ii++) {
             if (tileId == _state[ii]) {
                 return ii;
             }
@@ -250,10 +257,14 @@ public class Fifteen extends Sprite
 
     protected function areAdjacent (pos1 :int, pos2 :int) :Boolean
     {
-        var x1 :int = (pos1 % 4);
-        var y1 :int = int(pos1 / 4);
-        var x2 :int = (pos2 % 4);
-        var y2 :int = int(pos2 / 4);
+        if (pos1 < 0 || pos1 >= (SIZE * SIZE) || pos2 < 0 || pos2 >= (SIZE * SIZE)) {
+            return false;
+        }
+
+        var x1 :int = (pos1 % SIZE);
+        var y1 :int = int(pos1 / SIZE);
+        var x2 :int = (pos2 % SIZE);
+        var y2 :int = int(pos2 / SIZE);
 
         return ((x1 == x2) && (1 == Math.abs(y1 - y2))) ||
             ((y1 == y2) && (1 == Math.abs(x1 - x2)));
@@ -263,7 +274,6 @@ public class Fifteen extends Sprite
     {
         _toy.resetState();
         readState();
-//        _text.appendText("\nSet state: " + _state);
     }
 
     protected function shuffleState (... ignored) :void
@@ -276,20 +286,24 @@ public class Fifteen extends Sprite
         positionTiles();
     }
 
-//    protected function handleRejected (event :ValueEvent) :void
-//    {
-//        _text.appendText("\nRejected : " + event.value);
-//    }
-
     protected function handleStateUpdated (... ignored) :void
     {
         var newState :Array = _toy.getState() as Array;
-//        _text.appendText("\nGot state: " + newState);
 
+        if (_paths.length > 0) {
+            _stateQueue.push(newState);
+
+        } else {
+            moveToState(newState);
+        }
+    }
+
+    protected function moveToState (newState :Array) :void
+    {
         var diffCount :int = 0;
         var swapPos :int = -1;
         if (newState != null) {
-            for (var ii :int = 0; ii < 16; ii++) {
+            for (var ii :int = 0; ii < (SIZE * SIZE); ii++) {
                 if (_state[ii] != newState[ii]) {
                     diffCount++;
                     if (diffCount == 1) {
@@ -324,7 +338,7 @@ public class Fifteen extends Sprite
         }
     }
 
-    protected static const BLANK_TILE :int = 15; 
+    protected static const BLANK_TILE :int = (SIZE * SIZE) - 1; 
 
     protected var _ctrl :FurniControl;
 
@@ -334,6 +348,8 @@ public class Fifteen extends Sprite
 
     protected var _state :Array;
 
+    protected var _stateQueue :Array = [];
+
     protected var _tiles :Array = [];
 
     protected var _paths :Array = [];
@@ -341,8 +357,6 @@ public class Fifteen extends Sprite
     protected var _button :Button;
 
 //    protected var _label :Label;
-//
-//    protected var _text :TextArea;
 }
 }
 
@@ -389,12 +403,13 @@ class BlankTile extends Sprite
     {
         graphics.clear();
         graphics.beginFill(0x000000);
-        graphics.drawRect(0, 0, 100, 100);
+        graphics.drawRect(0, 0, Fifteen.TILE_WIDTH, Fifteen.TILE_HEIGHT);
         graphics.endFill();
 
         if (_over || _down) {
             graphics.lineStyle(5, _down ? 0x660000 : 0x000066);
-            graphics.drawRoundRect(10, 10, 80, 80, 10, 10);
+            graphics.drawRoundRect(10, 10, Fifteen.TILE_WIDTH - 20, Fifteen.TILE_HEIGHT - 20,
+                10, 10);
         }
     }
 

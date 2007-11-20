@@ -136,7 +136,6 @@ public class ToyState extends EventDispatcher
         // follow a new key if it's time
         if (key != _followKey) {
             if (getTimer() < _timeout) {
-//                dispatchEvent(new ValueEvent("rejected", incoming[1]));
                 return; // not time yet...
             }
             _followKey = key;
@@ -150,7 +149,7 @@ public class ToyState extends EventDispatcher
 
     protected function findFollowState () :void
     {
-        var highId :int = 0;
+        var highId :int = int.MIN_VALUE;
         var lowId :int = int.MAX_VALUE;
         var high :Object;
         var highKey :String;
@@ -163,7 +162,8 @@ public class ToyState extends EventDispatcher
                 var mem :Array = memories[key] as Array;
                 var seqId :int = int(mem[0]);
                 if (seqId > highId) {
-                    if (highId == 0) {
+                    if (highId == int.MIN_VALUE) {
+                        lowId = seqId;
                         lowKey = key; // it's also the low if we never see anything lower
                     }
                     highId = seqId;
