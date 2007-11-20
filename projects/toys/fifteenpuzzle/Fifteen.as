@@ -15,13 +15,18 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
+
 import fl.controls.Button;
 import fl.controls.Label;
+import fl.controls.ScrollPolicy;
+import fl.controls.TextArea;
 
 import fl.skins.DefaultButtonSkins;
+import fl.skins.DefaultTextAreaSkins;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.path.Path;
 
@@ -34,23 +39,18 @@ public class Fifteen extends Sprite
     public function Fifteen ()
     {
         _ctrl = new FurniControl(this);
-
-        if (_ctrl.isConnected()) {
-            _state = _ctrl.lookupMemory("state") as Array;
-            _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
-        }
-        if (_state == null) {
-            _state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-            stateUpdated();
-        }
+        _toy = new ToyState(_ctrl , true, 15);
+        _toy.addEventListener(ToyState.STATE_UPDATED, handleStateUpdated);
+//        _toy.addEventListener("rejected", handleRejected);
 
         initUI();
-        positionTiles();
+        readState();
     }
 
     private static function refSkins () :void
     {
         DefaultButtonSkins;
+//        DefaultTextAreaSkins;
     }
 
     protected function initUI () :void
@@ -85,17 +85,34 @@ public class Fifteen extends Sprite
         tileHolder.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
 
         // create the button and label
-        _label = new Label();
-        _label.setSize(420, 22);
-        addChild(_label);
-        _label.visible = false;
+//        _label = new Label();
+//        _label.setSize(420, 22);
+//        addChild(_label);
+//        _label.visible = false;
+//
+        if (!_ctrl.isConnected() || _ctrl.canEditRoom()) {
+            _button = new Button();
+            _button.label = "Reset";
+            _button.setSize(_button.textField.textWidth + 25, 22);
+            _button.x = (420 - _button.width) / 2;
+            addChild(_button);
+            _button.addEventListener(MouseEvent.CLICK, resetState);
+        }
 
-        _shuffle = new Button();
-        _shuffle.label = "Shuffle";
-        _shuffle.setSize(_shuffle.textField.textWidth + 25, 22);
-        _shuffle.x = (420 - _shuffle.width) / 2;
-        addChild(_shuffle);
-        _shuffle.addEventListener(MouseEvent.CLICK, shuffleState);
+//        _text = new TextArea();
+//        _text.verticalScrollPolicy = ScrollPolicy.ON;
+//        _text.y = 450;
+//        _text.setSize(420, 200);
+//        addChild(_text);
+    }
+
+    protected function readState () :void
+    {
+        _state = _toy.getState() as Array;
+        if (_state == null) {
+            _state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        }
+        positionTiles();
     }
 
     protected function positionTiles () :void
@@ -148,10 +165,10 @@ public class Fifteen extends Sprite
         var number :int = identifyTile(tile);
         var position :int = findPosition(number);
 
-        trySwap(position);
+        trySwap(position, true);
     }
 
-    protected function trySwap (position :int) :void
+    protected function trySwap (position :int, doSet :Boolean = false) :void
     {
         var blankPosition :int = findPosition(BLANK_TILE);
         if (areAdjacent(position, blankPosition)) {
@@ -160,18 +177,31 @@ public class Fifteen extends Sprite
             // update our state
             _state[blankPosition] = _state[position];
             _state[position] = BLANK_TILE;
-            stateUpdated();
+            if (doSet) {
+//                _text.appendText("\nSet state: " + _state);
+                _toy.setState(_state);
+            }
 
             // animate the tile moving to the blank position
             var path :Path = Path.moveTo(tile, _blank.x, _blank.y, 250);
             path.setOnComplete(handlePathComplete);
             _paths.push(path);
-            path.start();
+            if (_paths.length == 1) {
+                path.start();
+            }
 
             // and jump the blank tile to its new home
             var dest :Point = computeTilePosition(position);
             _blank.x = dest.x;
             _blank.y = dest.y;
+        }
+    }
+
+    protected function handlePathComplete (path :Path) :void
+    {
+        _paths.splice(_paths.indexOf(path), 1);
+        if (_paths.length > 0) {
+            (_paths[0] as Path).start();
         }
     }
 
@@ -185,7 +215,7 @@ public class Fifteen extends Sprite
         var p :Point = new Point(event.localX, event.localY);
         p = (event.target as DisplayObject).localToGlobal(p);
         p = _blank.parent.globalToLocal(p);
-        trySwap(int(p.x / 100) + 4 * int(p.y / 100));
+        trySwap(int(p.x / 100) + 4 * int(p.y / 100), true);
     }
 
     protected function handleMouseUp (event :MouseEvent) :void
@@ -229,11 +259,11 @@ public class Fifteen extends Sprite
             ((y1 == y2) && (1 == Math.abs(x1 - x2)));
     }
 
-    protected function stateUpdated () :void
+    protected function resetState (... ignored) :void
     {
-        if (_ctrl.isConnected()) {
-            _ctrl.updateMemory("state", _state);
-        }
+        _toy.resetState();
+        readState();
+//        _text.appendText("\nSet state: " + _state);
     }
 
     protected function shuffleState (... ignored) :void
@@ -241,24 +271,64 @@ public class Fifteen extends Sprite
         // TODO: this is actually invalid, because there is a "parity" issue with board states,
         // only half of them are solvable
         ArrayUtil.shuffle(_state);
-        stateUpdated();
+        _toy.setState(_state);
 
         positionTiles();
     }
 
-    protected function handleMemoryChanged (event :ControlEvent) :void
-    {
-        // TODO
-    }
+//    protected function handleRejected (event :ValueEvent) :void
+//    {
+//        _text.appendText("\nRejected : " + event.value);
+//    }
 
-    protected function handlePathComplete (path :Path) :void
+    protected function handleStateUpdated (... ignored) :void
     {
-        _paths.slice(_paths.indexOf(path), 1);
+        var newState :Array = _toy.getState() as Array;
+//        _text.appendText("\nGot state: " + newState);
+
+        var diffCount :int = 0;
+        var swapPos :int = -1;
+        if (newState != null) {
+            for (var ii :int = 0; ii < 16; ii++) {
+                if (_state[ii] != newState[ii]) {
+                    diffCount++;
+                    if (diffCount == 1) {
+                        swapPos = ii;
+
+                    } else if (diffCount == 2) {
+                        if ((_state[ii] == newState[swapPos]) &&
+                                (_state[swapPos] == newState[ii])) {
+                            if (_state[swapPos] == BLANK_TILE) {
+                                swapPos = ii;
+
+                            } else if (_state[ii] != BLANK_TILE) {
+                                diffCount++; // no good, one needs to be the blank tile
+                            }
+
+                        } else {
+                            diffCount++; // no good, count that as a difference
+                        }
+                    }
+                    if (diffCount > 2) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (diffCount == 2) {
+            trySwap(swapPos);
+
+        } else {
+            readState();
+        }
     }
 
     protected static const BLANK_TILE :int = 15; 
 
     protected var _ctrl :FurniControl;
+
+    protected var _toy :ToyState;
 
     protected var _blank :BlankTile;
 
@@ -268,9 +338,11 @@ public class Fifteen extends Sprite
 
     protected var _paths :Array = [];
 
-    protected var _shuffle :Button;
+    protected var _button :Button;
 
-    protected var _label :Label;
+//    protected var _label :Label;
+//
+//    protected var _text :TextArea;
 }
 }
 
