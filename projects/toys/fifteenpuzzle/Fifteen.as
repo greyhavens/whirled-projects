@@ -3,6 +3,7 @@
 
 package {
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -39,7 +40,7 @@ public class Fifteen extends Sprite
             _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
         }
         if (_state == null) {
-            _state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, null];
+            _state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
             stateUpdated();
         }
 
@@ -75,6 +76,14 @@ public class Fifteen extends Sprite
             tileHolder.addChild(tile);
         }
 
+        // make the blank sprite
+        _blank = new BlankTile();
+        _tiles.push(_blank);
+        tileHolder.addChildAt(_blank, 0); // lowest drawn
+        _blank.addEventListener(MouseEvent.MOUSE_DOWN, handleBlankDown);
+
+        tileHolder.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
+
         // create the button and label
         _label = new Label();
         _label.setSize(420, 22);
@@ -98,13 +107,11 @@ public class Fifteen extends Sprite
         }
 
         for (var ii :int = 0; ii < 16; ii++) {
-            if (_state[ii] != null) {
-                var number :int = int(_state[ii]);
-                var tile :Sprite = _tiles[number] as Sprite;
-                var p :Point = computeTilePosition(ii);
-                tile.x = p.x;
-                tile.y = p.y;
-            }
+            var number :int = int(_state[ii]);
+            var tile :Sprite = _tiles[number] as Sprite;
+            var p :Point = computeTilePosition(ii);
+            tile.x = p.x;
+            tile.y = p.y;
         }
     }
 
@@ -141,25 +148,55 @@ public class Fifteen extends Sprite
         var number :int = identifyTile(tile);
         var position :int = findPosition(number);
 
-        var blankPosition :int = findPosition(null);
+        trySwap(position);
+    }
+
+    protected function trySwap (position :int) :void
+    {
+        var blankPosition :int = findPosition(BLANK_TILE);
         if (areAdjacent(position, blankPosition)) {
+            var tile :Sprite = _tiles[_state[position]] as Sprite;
+
             // update our state
-            _state[blankPosition] = number;
-            _state[position] = null;
+            _state[blankPosition] = _state[position];
+            _state[position] = BLANK_TILE;
             stateUpdated();
 
             // animate the tile moving to the blank position
-            var dest :Point = computeTilePosition(blankPosition);
-            var path :Path = Path.moveTo(tile, dest.x, dest.y, 250);
+            var path :Path = Path.moveTo(tile, _blank.x, _blank.y, 250);
             path.setOnComplete(handlePathComplete);
             _paths.push(path);
             path.start();
+
+            // and jump the blank tile to its new home
+            var dest :Point = computeTilePosition(position);
+            _blank.x = dest.x;
+            _blank.y = dest.y;
         }
+    }
+
+    protected function handleBlankDown (event :MouseEvent) :void
+    {
+        _blank.parent.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
+    }
+
+    protected function handleMouseMove (event :MouseEvent) :void
+    {
+        var p :Point = new Point(event.localX, event.localY);
+        p = (event.target as DisplayObject).localToGlobal(p);
+        p = _blank.parent.globalToLocal(p);
+        trySwap(int(p.x / 100) + 4 * int(p.y / 100));
+    }
+
+    protected function handleMouseUp (event :MouseEvent) :void
+    {
+        _blank.parent.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
+        _blank.setMouseUp();
     }
 
     protected function identifyTile (tile :Sprite) :int
     {
-        for (var ii :int = 0; ii < 15; ii++) {
+        for (var ii :int = 0; ii < 16; ii++) {
             if (tile == _tiles[ii]) {
                 return ii;
             }
@@ -169,7 +206,7 @@ public class Fifteen extends Sprite
         return -1;
     }
 
-    protected function findPosition (tileId :Object) :int
+    protected function findPosition (tileId :int) :int
     {
         for (var ii :int = 0; ii < 16; ii++) {
             if (tileId == _state[ii]) {
@@ -219,7 +256,11 @@ public class Fifteen extends Sprite
         _paths.slice(_paths.indexOf(path), 1);
     }
 
+    protected static const BLANK_TILE :int = 15; 
+
     protected var _ctrl :FurniControl;
+
+    protected var _blank :BlankTile;
 
     protected var _state :Array;
 
@@ -231,4 +272,61 @@ public class Fifteen extends Sprite
 
     protected var _label :Label;
 }
+}
+
+import flash.display.Sprite;
+
+import flash.events.MouseEvent;
+
+class BlankTile extends Sprite
+{
+    public function BlankTile ()
+    {
+        addEventListener(MouseEvent.MOUSE_OVER, handleMouse);
+        addEventListener(MouseEvent.MOUSE_OUT, handleMouse);
+        addEventListener(MouseEvent.MOUSE_DOWN, handleMouse);
+        repaint();
+    }
+
+    public function setMouseUp () :void
+    {
+        _down = false;
+        repaint();
+    }
+
+    protected function handleMouse (event :MouseEvent) :void
+    {
+        switch (event.type) {
+        case MouseEvent.MOUSE_OVER:
+            _over = true;
+            break;
+
+        case MouseEvent.MOUSE_OUT:
+            _over = false;
+            break;
+
+        case MouseEvent.MOUSE_DOWN:
+            _down = true;
+            break;
+        }
+
+        repaint();
+    }
+
+    protected function repaint () :void
+    {
+        graphics.clear();
+        graphics.beginFill(0x000000);
+        graphics.drawRect(0, 0, 100, 100);
+        graphics.endFill();
+
+        if (_over || _down) {
+            graphics.lineStyle(5, _down ? 0x660000 : 0x000066);
+            graphics.drawRoundRect(10, 10, 80, 80, 10, 10);
+        }
+    }
+
+    protected var _over :Boolean;
+    protected var _down :Boolean;
+
 }
