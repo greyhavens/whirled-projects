@@ -3,8 +3,9 @@ package modes
 
 import mx.containers.Canvas;
 
-import com.whirled.util.GameMode;
-import com.whirled.util.GameModeManager;
+import com.threerings.ezgame.util.GameMode;
+import com.threerings.ezgame.util.GameModeStack;
+
 
 /**
  * Simple canvas with stubbed-out game mode functions.
@@ -12,14 +13,14 @@ import com.whirled.util.GameModeManager;
 public class GameModeCanvas extends Canvas
     implements GameMode
 {
-    public function GameModeCanvas (modes :GameModeManager)
+    public function GameModeCanvas (modes :GameModeStack)
     {
         super();
         _modes = modes;
     }
 
-    /** Returns the current GameModeManager. */
-    public function getGameModeManager () :GameModeManager
+    /** Returns the current GameModeStack. */
+    public function getGameModeStack () :GameModeStack
     {
         return _modes;
     }
@@ -48,6 +49,6 @@ public class GameModeCanvas extends Canvas
         // no op
     }
 
-    protected var _modes :GameModeManager;
+    protected var _modes :GameModeStack;
 }
 }

@@ -11,10 +11,9 @@ import flash.utils.getTimer; // function import
 
 import mx.containers.Canvas;
 
+import com.threerings.ezgame.util.GameMode;
+import com.threerings.ezgame.util.GameModeStack;
 import com.threerings.util.Assert;
-
-import com.whirled.util.GameMode;
-import com.whirled.util.GameModeManager;
 
 import modes.Splash;
 import modes.SelectBoard;
@@ -37,7 +36,7 @@ public class Display extends Canvas
         super.createChildren();
         
         // initialize graphics
-        _modes = new GameModeManager(modeSwitcher);
+        _modes = new GameModeStack(modeSwitcher);
 
         // base mode
         _modes.push(new Splash(_modes));
@@ -59,9 +58,8 @@ public class Display extends Canvas
             addChild(newChild);
         }
     }
+      
 
-       
-
-    protected var _modes :GameModeManager;
+    protected var _modes :GameModeStack;
 }
 }

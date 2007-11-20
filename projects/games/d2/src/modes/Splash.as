@@ -12,14 +12,14 @@ import mx.containers.Canvas;
 import mx.controls.Button;
 import mx.controls.Image;
 
+import com.threerings.ezgame.util.GameModeStack;
 import com.threerings.util.Assert;
-import com.whirled.util.GameModeManager;
 
 public class Splash extends GameModeCanvas
 {
     public static const HELP_URL :String = "http://wiki.whirled.com/Tree_House_Defense";
     
-    public function Splash (modes :GameModeManager)
+    public function Splash (modes :GameModeStack)
     {
         super(modes);
     }
@@ -68,7 +68,7 @@ public class Splash extends GameModeCanvas
 
     protected function playClicked (event :MouseEvent) :void
     {
-        getGameModeManager().push(new SelectBoard(_modes));
+        getGameModeStack().push(new SelectBoard(_modes));
     }
     
     [Embed(source="../../rsrc/splash/splash.swf")]

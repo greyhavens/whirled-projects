@@ -8,14 +8,14 @@ import flash.events.MouseEvent;
 import mx.core.MovieClipLoaderAsset;
 import mx.controls.Image;
 
+import com.threerings.ezgame.util.GameModeStack;
 import com.threerings.flash.DisplayUtil;
+
 import com.threerings.util.Assert;
-import com.threerings.util.EmbeddedSwfLoader;
-import com.whirled.util.GameModeManager;
 
 public class SelectBoard extends GameModeCanvas
 {
-    public function SelectBoard (modes :GameModeManager)
+    public function SelectBoard (modes :GameModeStack)
     {
         super(modes);
     }
@@ -52,7 +52,7 @@ public class SelectBoard extends GameModeCanvas
     protected function goBack (event :Event) :void
     {
         trace("GO BACK!");
-        getGameModeManager().pop();
+        getGameModeStack().pop();
     }
 
         
