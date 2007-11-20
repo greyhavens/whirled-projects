@@ -56,6 +56,7 @@ public class SeaDisplay extends Sprite
          ];
         _downWall = Bitmap(new DOWN_WALL()).bitmapData;
 
+        graphics.clear();
         for (var yy :int = -SubAttack.VISION_TILES;
                 yy < boardHeight + SubAttack.VISION_TILES; yy++) {
             for (var xx :int = -SubAttack.VISION_TILES;

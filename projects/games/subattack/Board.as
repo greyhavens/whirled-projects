@@ -18,6 +18,7 @@ public class Board
     public function Board (gameCtrl :WhirledGameControl, seaDisplay :SeaDisplay)
     {
         _gameCtrl = gameCtrl;
+        _gameCtrl.addEventListener(Event.UNLOAD, shutdown);
         _seaDisplay = seaDisplay;
 
         var playerIds :Array = _gameCtrl.seating.getPlayerIds();
@@ -79,7 +80,7 @@ public class Board
     /**
      * Shutdown this board when it's no longer the active board.
      */
-    public function shutdown () :void
+    public function shutdown (... ignored) :void
     {
         _seaDisplay.removeEventListener(Event.ENTER_FRAME, enterFrame);
         _gameCtrl.removeEventListener(MessageReceivedEvent.TYPE, msgReceived);

@@ -15,10 +15,6 @@ import flash.ui.Keyboard;
 
 import flash.utils.getTimer; // function import
 
-import fl.controls.Button;
-
-import fl.skins.DefaultButtonSkins;
-
 import com.threerings.flash.KeyRepeatBlocker;
 
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -51,10 +47,12 @@ public class SubAttack extends Sprite
         this.mask = masker;
         addChild(masker); // the mask must be added to the display
 
+        // set up a fake starting sea
+        _seaDisplay.setupSea(VIEW_TILES, VIEW_TILES);
+
         _gameCtrl = new WhirledGameControl(this);
         if (!_gameCtrl.isConnected()) {
             // just show a demo-mode display
-            _seaDisplay.setupSea(VIEW_TILES, VIEW_TILES);
             _seaDisplay.setStatus(
                 "<P align=\"center\"><font size=\"+2\">Truckyard Shootout</font>" +
                 "<br>A fast-action maze-building and shooting game for " +
@@ -64,7 +62,6 @@ public class SubAttack extends Sprite
             return;
         }
 
-        _board = new Board(_gameCtrl, _seaDisplay);
         _myIndex = _gameCtrl.seating.getMyPosition();
 
         if (_myIndex != -1) {
@@ -74,11 +71,8 @@ public class SubAttack extends Sprite
         }
 
         _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
-        _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
 
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
-
-        DefaultButtonSkins;
     }
 
     /**
@@ -94,37 +88,10 @@ public class SubAttack extends Sprite
      */
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
-        if (_rematch != null) {
-            removeChild(_rematch);
-            _rematch = null;
-
-            _seaDisplay.clearStatus();
-            removeChild(_seaDisplay);
-            addChildAt(_seaDisplay = new SeaDisplay(), 0);
-            _board = new Board(_gameCtrl, _seaDisplay);
-        }
-    }
-
-    /**
-     * Show the rematch button.
-     */
-    protected function handleGameEnded (event :StateChangedEvent) :void
-    {
-        // put the rematch button up
-        if (_myIndex != -1) {
-            _rematch = new Button();
-            _rematch.label = "Rematch";
-            _rematch.toggle = true;
-            _rematch.addEventListener(MouseEvent.CLICK, handleRematchClicked);
-            _rematch.setSize(100, 22);
-            addChild(_rematch);
-        }
-    }
-
-    protected function handleRematchClicked (event :MouseEvent) :void
-    {
-        _gameCtrl.playerReady();
-        _rematch.enabled = false;
+        _seaDisplay.clearStatus();
+        removeChild(_seaDisplay);
+        addChildAt(_seaDisplay = new SeaDisplay(), 0);
+        _board = new Board(_gameCtrl, _seaDisplay);
     }
 
     /**
@@ -217,9 +184,6 @@ public class SubAttack extends Sprite
 
     /** The actions we have queued to be sent. */
     protected var _queued :Array;
-
-    /** The rematch button. */
-    protected var _rematch :Button;
 
     protected static const SEND_THROTTLE :int = 105;
 }
