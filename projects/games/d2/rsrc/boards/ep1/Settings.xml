@@ -1,0 +1,9 @@
+<settings>
+  <boards>
+    <board name="EP1 Test" icon="Level06_BG.jpg" background="Level06_BG">
+      <squares cols="17" rows="22" />
+      <pixelsize width="510" height="440" />
+      <topleft x="40" y="27" />
+    </board>
+  </boards>
+</settings>
