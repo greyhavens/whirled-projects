@@ -160,6 +160,11 @@ public class ToyState extends EventDispatcher
             if (STATE_KEY.test(key)) {
                 count++;
                 var mem :Array = memories[key] as Array;
+                // TEMP: work around a current bug in whirled where null mems are returned
+                // TODO: remove
+                if (mem == null) {
+                    continue;
+                }
                 var seqId :int = int(mem[0]);
                 if (seqId > highId) {
                     if (highId == int.MIN_VALUE) {
