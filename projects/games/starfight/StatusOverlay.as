@@ -20,31 +20,18 @@ public class StatusOverlay extends Sprite
 
     public function StatusOverlay () :void
     {
-        /*
-        addChild(_power = new Sprite());
-        _power.graphics.beginFill(Codes.CYAN);
-        _power.graphics.drawRoundRect(0, 0, POW_WIDTH, POW_HEIGHT, 2.0, 2.0);
-        _power.x = StarFight.WIDTH - 103;
-        _power.y = 38;
-        var mask :Shape = new Shape();
-        mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, 0, POW_WIDTH, POW_HEIGHT);
-        _power.addChild(mask);
-        _power.mask = mask;
-        */
-
-        addChild(Bitmap(new radarAsset()));
+        addChild(Resources.getBitmap("status_radar.png"));
         addChild(_radar = new Sprite());
         _radar.x = 70;
         _radar.y = 61;
-        var vitals :Bitmap = Bitmap(new vitalsAsset());
+        var vitals :Bitmap = Resources.getBitmap("status_vitals.png");
         addChild(vitals);
         vitals.x = StarFight.WIDTH - 109;
 
         addChild(_health = new Sprite());
         _health.x = StarFight.WIDTH - 103;
         _health.y = 8;
-        _health.addChild(Bitmap(new healthAsset()));
+        _health.addChild(Resources.getBitmap("bar_health.png"));
         var mask :Shape = new Shape();
         mask.graphics.beginFill(0xFFFFFF);
         mask.graphics.drawRect(0, 0, HEALTH_WIDTH, HEALTH_HEIGHT);
@@ -53,7 +40,7 @@ public class StatusOverlay extends Sprite
         addChild(_primary = new Sprite());
         _primary.x = StarFight.WIDTH - 91;
         _primary.y = 39;
-        _primary.addChild(Bitmap(new primaryAsset()));
+        _primary.addChild(Resources.getBitmap("bar_shot.png"));
         mask = new Shape();
         mask.graphics.beginFill(0xFFFFFF);
         mask.graphics.drawRect(0, 0, POW_WIDTH, POW_HEIGHT);
@@ -62,7 +49,7 @@ public class StatusOverlay extends Sprite
         addChild(_secondary = new Sprite());
         _secondary.x = StarFight.WIDTH - 91;
         _secondary.y = 56;
-        _secondary.addChild(Bitmap(new secondaryAsset()));
+        _secondary.addChild(Resources.getBitmap("bar_secondary.png"));
         mask = new Shape();
         mask.graphics.beginFill(0xFFFFFF);
         mask.graphics.drawRect(0, 0, POW_WIDTH, POW_HEIGHT);
@@ -72,14 +59,14 @@ public class StatusOverlay extends Sprite
         addChild(_spread = new Sprite());
         _spread.x = StarFight.WIDTH - 104;
         _spread.y = 84;
-        _spread.addChild(Bitmap(new spreadAsset()));
+        _spread.addChild(Resources.getBitmap("spread.png"));
         mask = new Shape();
         mask.graphics.beginFill(0xFFFFFF);
         mask.graphics.drawRect(0, 0, POW_SIZE, POW_SIZE);
         _spread.addChild(mask);
         _spread.mask = mask;
         addChild(_speed = new Sprite());
-        _speed.addChild(Bitmap(new speedAsset()));
+        _speed.addChild(Resources.getBitmap("speed.png"));
         _speed.x = StarFight.WIDTH - 73;
         _speed.y = 84;
         mask = new Shape();
@@ -88,7 +75,7 @@ public class StatusOverlay extends Sprite
         _speed.addChild(mask);
         _speed.mask = mask;
         addChild(_shields = new Sprite());
-        _shields.addChild(Bitmap(new shieldsAsset()));
+        _shields.addChild(Resources.getBitmap("shields.png"));
         _shields.x = StarFight.WIDTH - 42;
         _shields.y = 84;
         mask = new Shape();
@@ -102,20 +89,6 @@ public class StatusOverlay extends Sprite
         format.color = Codes.CYAN;
         format.size = 16;
         format.bold = true;
-
-        /*
-        _score = 0;
-        _scoreText = new TextField();
-        _scoreText.autoSize = TextFieldAutoSize.RIGHT;
-        _scoreText.selectable = false;
-        //_scoreText.textColor = Codes.CYAN;
-        // center the label above us
-        _scoreText.x = StarFight.WIDTH - 25;
-        _scoreText.y = 5;
-        _scoreText.defaultTextFormat = format;
-        _scoreText.text = String(_score);
-        addChild(_scoreText);
-        */
 
         _roundText = new TextField();
         _roundText.autoSize = TextFieldAutoSize.CENTER;
@@ -170,17 +143,6 @@ public class StatusOverlay extends Sprite
         mask.graphics.beginFill(0xFFFFFF);
         mask.graphics.drawRect(0, 0, HEALTH_WIDTH*power, HEALTH_HEIGHT);
         mask.graphics.endFill();
-    }
-
-    /**
-     * Add some points to our score.
-     */
-    public function addScore (score :Number) :void
-    {
-        /*
-        _score += score;
-        _scoreText.text = String(_score);
-        */
     }
 
     /**
@@ -287,30 +249,6 @@ public class StatusOverlay extends Sprite
         circle.graphics.endFill();
         return circle;
     }
-
-    [Embed(source="rsrc/status_vitals.png")]
-    protected var vitalsAsset :Class;
-
-    [Embed(source="rsrc/status_radar.png")]
-    protected var radarAsset :Class;
-
-    [Embed(source="rsrc/spread.png")]
-    protected var spreadAsset :Class;
-
-    [Embed(source="rsrc/speed.png")]
-    protected var speedAsset :Class;
-
-    [Embed(source="rsrc/shields.png")]
-    protected var shieldsAsset :Class;
-
-    [Embed(source="rsrc/bar_health.png")]
-    protected var healthAsset :Class;
-
-    [Embed(source="rsrc/bar_shot.png")]
-    protected var primaryAsset :Class;
-
-    [Embed(source="rsrc/bar_secondary.png")]
-    protected var secondaryAsset :Class;
 
     /** Powerup bitmaps. */
     protected var _speed :Sprite;

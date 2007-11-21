@@ -1,22 +1,27 @@
 package {
 
+import flash.display.MovieClip;
+import flash.events.Event;
+import flash.events.IOErrorEvent;
+import flash.media.Sound;
+import flash.utils.ByteArray;
+
+import com.threerings.util.EmbeddedSwfLoader;
+
 public class ShipType
 {
     /** The name of the ship type. */
     public var name :String;
 
     /** maneuverability statistics. */
-    public var turnAccelRate :Number;
     public var forwardAccel :Number;
     public var backwardAccel :Number;
     public var friction :Number;
+    public var velThreshold :Number = 0.5;
+    public var turnAccel :Number;
     public var turnFriction :Number;
-
-    public var maxSpeed :Number = 20.0;
-    public var maxSpeedRev :Number = 10;
-    public var fAccel :Number = 8.0;
-    public var rAccel :Number = -3.0;
-    public var drag :Number = 0.1;
+    public var turnThreshold :Number = 45;
+    public var turnRate :Number;
 
     /** armorment statistics. */
     public var hitPower :Number;
@@ -37,24 +42,31 @@ public class ShipType
     public var armor :Number;
     public var size :Number;
 
+    public var shipAnim :Class, shieldAnim :Class, explodeAnim :Class, shotAnim :Class, secondaryAnim :Class;
+    public var shotSound :Sound, supShotSound :Sound, spawnSound :Sound, engineSound :Sound;
+
     /**
      * Called to have the ship perform their primary shot action.
      */
     public function primaryShot (sf :StarFight, val :Array) :void
     {
+        // Shooting sound.
+        var sound :Sound = (val[2] == ShotSprite.SUPER) ? supShotSound : shotSound;
+
+        sf.playSoundAt(sound, val[3], val[4]);
     }
 
     /**
      * Called to have the ship perform their secondary shot action.
      */
-    public function secondaryShot () :void
+    public function secondaryShot (sf :StarFight, val :Array) :void
     {
     }
 
     /**
      * Sends a standard forward fire message.
      */
-    public function primaryShotMessage (ship :ShipSprite, sf: StarFight) :void
+    public function primaryShotMessage (ship :ShipSprite, sf :StarFight) :void
     {
         var rads :Number = ship.ship.rotation*Codes.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
@@ -81,5 +93,58 @@ public class ShipType
 
         sf.fireShot(args);
     }
+
+    /**
+     * Secondary shot message generator.
+     */
+    public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :void
+    {
+    }
+
+    public function loadAssets (callback :Function) :void
+    {
+        _callback = callback;
+        _loader = new EmbeddedSwfLoader(true);
+        _loader.addEventListener(Event.COMPLETE, successHandler);
+        _loader.addEventListener(IOErrorEvent.IO_ERROR, failureHandler);
+        Logger.log("loading assets for " + name + " and class " + swfAsset());
+        _loader.load(new (swfAsset())());
+    }
+
+    protected function swfAsset () :Class
+    {
+        return null;
+    }
+
+    protected function failureHandler (event :IOErrorEvent) :void
+    {
+        _callback(false);
+        finish();
+        _loader = null;
+    }
+
+    protected function successHandler (event :Event) :void
+    {
+        _callback(true);
+        finish();
+        shipAnim = _loader.getClass("ship");
+        shieldAnim = _loader.getClass("ship_shield");
+        explodeAnim = _loader.getClass("ship_explosion_big");
+        shotAnim = _loader.getClass("beam");
+        shotSound = Sound(new (_loader.getClass("beam.wav"))());
+        supShotSound = Sound(new (_loader.getClass("beam_powerup.wav"))());
+        spawnSound = Sound(new (_loader.getClass("spawn.wav"))());
+        engineSound = Sound(new (_loader.getClass("engine_sound.wav"))());
+    }
+
+    protected function finish () :void
+    {
+        _loader.removeEventListener(Event.COMPLETE, successHandler);
+        _loader.removeEventListener(IOErrorEvent.IO_ERROR, failureHandler);
+    }
+
+    protected var _loader :EmbeddedSwfLoader;
+    protected var _callback :Function;
+
 }
 }

@@ -4,11 +4,11 @@ import flash.display.Graphics;
 
 import flash.utils.ByteArray;
 
+import flash.display.Bitmap;
+import flash.display.MovieClip;
 import flash.display.PixelSnapping;
 import flash.display.Sprite;
 
-import mx.core.BitmapAsset;
-import mx.core.MovieClipAsset;
 
 /**
  * Represents something in the world that ships may interact with.
@@ -16,10 +16,10 @@ import mx.core.MovieClipAsset;
 public class Obstacle extends Sprite
 {
     /** Constants for types of obstacles. */
-    public static const ASTEROID_1 :int = 2;
-    public static const ASTEROID_2 :int = 3;
-    public static const JUNK :int = 4;
-    public static const WALL :int = 6;
+    public static const ASTEROID_1 :int = 0;
+    public static const ASTEROID_2 :int = 1;
+    public static const JUNK :int = 2;
+    public static const WALL :int = 3;
 
     public static const LEFT :int = 0;
     public static const RIGHT :int = 1;
@@ -48,18 +48,16 @@ public class Obstacle extends Sprite
         if (anim) {
             setupGraphics();
         }
-
     }
 
     protected function setupGraphics () :void
     {
         if (type == WALL) {
-            var obsBitmap :BitmapAsset = BitmapAsset(new obstacleBox);
+            var obsBitmap :Bitmap = Resources.getBitmap("box_bitmap.gif");
             obsBitmap.pixelSnapping = PixelSnapping.ALWAYS;
             addChild(obsBitmap);
         } else {
-            var obsMovie :MovieClipAsset = MovieClipAsset(new obstacleAnim);
-            obsMovie.gotoAndStop(type);
+            var obsMovie :MovieClip = MovieClip(new (Resources.getClass(OBS_MOVIES[type]))());
             addChild(obsMovie);
             rotation = Math.random()*360;
         }
@@ -113,10 +111,8 @@ public class Obstacle extends Sprite
         }
     }
 
-    [Embed(source="rsrc/obstacle.swf#obstacles_movie")]
-    protected var obstacleAnim :Class;
-
-    [Embed(source="rsrc/box_bitmap.gif")]
-    protected var obstacleBox :Class;
+    protected static const OBS_MOVIES :Array = [
+        "meteor1", "meteor2", "junk_metal"
+    ];
 }
 }

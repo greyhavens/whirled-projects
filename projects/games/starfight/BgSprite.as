@@ -3,6 +3,7 @@ package {
 import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.Bitmap;
+import flash.display.BitmapData;
 
 public class BgSprite extends Sprite
 {
@@ -31,7 +32,7 @@ public class BgSprite extends Sprite
     public function setupGraphics () :void
     {
         // Our background, tiled if necessary.
-        var tmpBmp :Bitmap = Bitmap(new spaceBg());
+        var tmpBmp :Bitmap = Resources.getBitmap("space_bg.png");
 
         var xRep :Number = Math.ceil((boardWidth*Codes.BG_PIXELS_PER_TILE +
                                          StarFight.WIDTH)/tmpBmp.width);
@@ -40,16 +41,12 @@ public class BgSprite extends Sprite
 
         for (var x :int = 0; x < xRep; x++) {
             for (var y :int = 0; y < yRep; y++) {
-                var bmp :Bitmap = Bitmap(new spaceBg());
+                var bmp :Bitmap = Resources.getBitmap("space_bg.png");
                 bmp.x = x*tmpBmp.width;
                 bmp.y = y*tmpBmp.height;
                 addChild(bmp);
             }
         }
     }
-
-    /** Add in the spacey background image. */
-    [Embed(source="rsrc/space_bg.png")]
-    protected var spaceBg :Class;
 }
 }

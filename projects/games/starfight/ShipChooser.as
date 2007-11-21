@@ -1,5 +1,7 @@
 package {
 
+import flash.display.Bitmap;
+import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
@@ -13,15 +15,22 @@ public class ShipChooser extends Sprite
     {
 
         // Partially obscure background.
-        alpha = 0.5;
-        graphics.beginFill(Codes.BLACK);
-        graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
-        graphics.endFill();
-        graphics.lineStyle(2, Codes.CYAN);
-        graphics.drawRoundRect((StarFight.WIDTH - SPACING * (Codes.SHIP_TYPES.length+1))/2,
-            StarFight.HEIGHT/2 - SPACING, SPACING * (Codes.SHIP_TYPES.length+1), 2 * SPACING, 10.0, 10.0);
+        var fadeOut :Shape = new Shape();
+        fadeOut.alpha = 0.5;
+        fadeOut.graphics.beginFill(Codes.BLACK);
+        fadeOut.graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
+        fadeOut.graphics.endFill();
+        addChild(fadeOut);
+        //graphics.lineStyle(2, Codes.CYAN);
+        //graphics.drawRoundRect((StarFight.WIDTH - SPACING * (Codes.SHIP_TYPES.length+1))/2,
+        //    StarFight.HEIGHT/2 - SPACING, SPACING * (Codes.SHIP_TYPES.length+1), 2 * SPACING, 10.0, 10.0);
         _game = game;
         _newGame = newGame;
+
+        var bg :Bitmap = Resources.getBitmap("ship_select.png");
+        addChild(bg);
+        bg.x = (StarFight.WIDTH - bg.width) / 2;
+        bg.y = (StarFight.HEIGHT - bg.height) / 2;
 
         var format:TextFormat = new TextFormat();
         format.font = "Verdana";
@@ -33,7 +42,7 @@ public class ShipChooser extends Sprite
         selectText.autoSize = TextFieldAutoSize.CENTER;
         selectText.selectable = false;
         selectText.x = StarFight.WIDTH/2;
-        selectText.y = StarFight.HEIGHT/2 - SPACING;
+        selectText.y = StarFight.HEIGHT/2 - TEXT_SPACING;
         selectText.defaultTextFormat = format;
         selectText.text = "Select Your Ship";
         addChild(selectText);
@@ -49,22 +58,25 @@ public class ShipChooser extends Sprite
      */
     protected function addButton (type :ShipType, idx :int, total :int) :void
     {
+        var selection :Sprite = new Sprite();
         var ship :ShipSprite = new ShipSprite(null, null, true, -1, type.name, false);
         ship.pointUp();
         ship.setShipType(idx);
-        ship.addEventListener(MouseEvent.CLICK, chooseHandler);
-        ship.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
-        ship.addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
+        selection.addChild(ship);
+        selection.addEventListener(MouseEvent.CLICK, chooseHandler);
+        selection.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
+        selection.addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
 
-        ship.x = StarFight.WIDTH/2 + SPACING * (idx - (total-1)/2.0);
-        ship.y = StarFight.HEIGHT/2;
+        selection.x = StarFight.WIDTH/2 + SPACING * (idx - (total-1)/2.0);
+        selection.y = StarFight.HEIGHT/2 + 15;
 
-        addChild(ship);
+        addChild(selection);
     }
 
     public function chooseHandler (event :MouseEvent) :void
     {
-        choose((event.currentTarget as ShipSprite).shipType);
+        var ship :ShipSprite = ShipSprite((event.currentTarget as Sprite).getChildAt(0));
+        choose(ship.shipType);
 
         // prevent NPE on further click event handlers
         event.stopImmediatePropagation();
@@ -72,14 +84,16 @@ public class ShipChooser extends Sprite
 
     public function mouseOverHandler (event :MouseEvent) :void
     {
-        (event.currentTarget as ShipSprite).setAnimMode(ShipSprite.FORWARD, false);
+        var ship :ShipSprite = ShipSprite((event.currentTarget as Sprite).getChildAt(0));
+        ship.setAnimMode(ShipSprite.SELECT, false);
         event.currentTarget.scaleX = HIGHLIGHT_SCALE;
         event.currentTarget.scaleY = HIGHLIGHT_SCALE;
     }
 
     public function mouseOutHandler (event :MouseEvent) :void
     {
-        (event.currentTarget as ShipSprite).setAnimMode(ShipSprite.IDLE, false);
+        var ship :ShipSprite = ShipSprite((event.currentTarget as Sprite).getChildAt(0));
+        ship.setAnimMode(ShipSprite.IDLE, false);
         event.currentTarget.scaleX = 1.0;
         event.currentTarget.scaleY = 1.0;
     }
@@ -97,7 +111,8 @@ public class ShipChooser extends Sprite
         _game.removeChild(this);
     }
 
-    protected static const SPACING :int = 60;
+    protected static const SPACING :int = 80;
+    protected static const TEXT_SPACING :int = 70;
     protected static const HIGHLIGHT_SCALE :Number = 1.2;
 
     protected var _game :StarFight;

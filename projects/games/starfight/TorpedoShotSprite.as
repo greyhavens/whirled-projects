@@ -2,13 +2,13 @@ package {
 
 import flash.display.MovieClip;
 
-public class MissileShotSprite extends ShotSprite {
+public class TorpedoShotSprite extends ShotSprite {
 
     /** Velocity. */
     public var xVel :Number;
     public var yVel :Number;
 
-    public function MissileShotSprite (x :Number, y :Number, vel :Number, angle :Number,
+    public function TorpedoShotSprite (x :Number, y :Number, vel :Number, angle :Number,
             shipId :int, damage :Number, ttl :Number, shipType :int, game :StarFight) :void
     {
         super(x, y, shipId, damage, ttl, shipType, game);
@@ -16,11 +16,12 @@ public class MissileShotSprite extends ShotSprite {
         this.xVel = vel * Math.cos(angle);
         this.yVel = vel * Math.sin(angle);
 
-        _shotMovie = MovieClip(new Codes.SHIP_TYPES[shipType].shotAnim());
+        var shotMovie :MovieClip = MovieClip(new Codes.SHIP_TYPES[shipType].secondaryAnim());
 
-        _shotMovie.gotoAndStop(1);
+        //shotMovie.x = -shotMovie.width/2;
+        //shotMovie.y = 0;
         rotation = Codes.RADS_TO_DEGS*Math.atan2(xVel, -yVel);
-        addChild(_shotMovie);
+        addChild(shotMovie);
     }
 
     /**
@@ -46,7 +47,7 @@ public class MissileShotSprite extends ShotSprite {
         }
 
         var coll :Collision = board.getCollision(boardX, boardY, boardX + xVel*time,
-                boardY + yVel*time, Codes.SHIP_TYPES[shipType].primaryShotSize, shipId);
+                boardY + yVel*time, Codes.SHIP_TYPES[shipType].secondaryShotSize, shipId);
         if (coll == null) {
             boardX += xVel*time;
             boardY += yVel*time;
@@ -64,8 +65,5 @@ public class MissileShotSprite extends ShotSprite {
             complete = true;
         }
     }
-
-    /** Our shot animation. */
-    protected var _shotMovie :MovieClip;
 }
 }

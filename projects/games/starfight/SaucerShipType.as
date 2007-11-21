@@ -1,6 +1,6 @@
 package {
 
-import mx.core.MovieClipAsset;
+import flash.display.MovieClip;
 import flash.media.Sound;
 import flash.media.SoundTransform;
 
@@ -10,11 +10,14 @@ public class SaucerShipType extends ShipType
     {
         name = "Saucer";
 
-        turnAccelRate = 8000;
         forwardAccel = 60.0;
         backwardAccel = 0.0;
         friction = 0.5;
-        turnFriction = 0.4;
+        velThreshold = 5;
+        turnRate = 180;
+        turnAccel = 38;
+        turnFriction = 0.02;
+        turnThreshold = 180;
 
         hitPower = 0.09;
 
@@ -31,7 +34,6 @@ public class SaucerShipType extends ShipType
 
         armor = 0.8;
         size = 0.9;
-        ENGINE_MOV.gotoAndStop(2);
     }
 
     override public function primaryShot (sf :StarFight, val :Array) :void
@@ -43,8 +45,8 @@ public class SaucerShipType extends ShipType
         var ships :Array = sf.findShips(ship.boardX, ship.boardY, RANGE);
 
         // no one in range so shoot straight
-        if (ships.length == 1) {
-            sf.addShot(new LaserShotSprite(ship.boardX + ship.xVel, ship.boardY + ship.yVel,
+        if (ships.length <= 1) {
+            sf.addShot(new LaserShotSprite(ship.boardX, ship.boardY,
                 ship.ship.rotation, RANGE, val[0], hitPower, primaryShotLife, val[1], -1, sf));
             return;
         }
@@ -58,10 +60,13 @@ public class SaucerShipType extends ShipType
             dist = Math.min(RANGE, dist);
             var angle :Number = Codes.RADS_TO_DEGS *
                     Math.atan2(tShip.boardY - ship.boardY, tShip.boardX - ship.boardX);
-            sf.addShot(new LaserShotSprite(ship.boardX + ship.xVel, ship.boardY + ship.yVel,
+            sf.addShot(new LaserShotSprite(ship.boardX, ship.boardY,
                 angle, dist, val[0], hitPower, primaryShotLife, val[1], tShip.shipId, sf));
         }
 
+        var sound :Sound = (val[2] == ShotSprite.SUPER) ? supShotSound : shotSound;
+
+        sf.playSoundAt(sound, ship.boardX, ship.boardY);
     }
 
     override public function primaryShotMessage (ship :ShipSprite, sf :StarFight) :void
@@ -76,50 +81,15 @@ public class SaucerShipType extends ShipType
         sf.fireShot(args);
     }
 
+    override protected function swfAsset () :Class
+    {
+        return SHIP;
+    }
+
     protected static var RANGE :Number = 5;
     protected static var TARGET :Number = 12;
 
-    // Shooting sounds.
-    [Embed(source="rsrc/ships/wasp/beam.mp3")]
-    protected static var beamSound :Class;
-
-    public const BEAM :Sound = Sound(new beamSound());
-
-    [Embed(source="rsrc/ships/wasp/beam_tri.mp3")]
-    protected static var triBeamSound :Class;
-
-    public const TRI_BEAM :Sound = Sound(new triBeamSound());
-
-    // Ship spawning.
-    [Embed(source="rsrc/ships/wasp/spawn.mp3")]
-    protected static var spawnSound :Class;
-
-    public const SPAWN :Sound = Sound(new spawnSound());
-
-    // Looping sound - this is a movieclip to make the looping work without
-    //  hiccups.  This is pretty hacky - we can't control the looping sound
-    //  appropriately, so we just manipulate the volume.  So, the sounds are
-    //  always running, just sometimes really quietly.  Bleh.
-
-    // Engine hum.
-    [Embed(source="rsrc/ships/wasp/engine_sound.swf#sound_main")]
-    protected static var engineSound :Class;
-
-    public const ENGINE_MOV :MovieClipAsset =
-        MovieClipAsset(new engineSound());
-
-    // Animations
-    [Embed(source="rsrc/ships/saucer/ship.swf#ship_movie_01")]
-    public const SHIP_ANIM :Class;
-
-    [Embed(source="rsrc/ships/saucer/ship_shield.swf")]
-    public const SHIELD_ANIM :Class;
-
-    [Embed(source="rsrc/ships/saucer/ship_explosion_big.swf")]
-    public const EXPLODE_ANIM :Class;
-
-    [Embed(source="rsrc/ships/saucer/beam.swf")]
-    public const SHOT_ANIM :Class;
-
+    [Embed(source="rsrc/ships/xyru.swf", mimeType="application/octet-stream")]
+    protected static var SHIP :Class;
 }
 }

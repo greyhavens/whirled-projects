@@ -1,21 +1,25 @@
 package {
 
+import flash.display.MovieClip;
 import flash.display.Sprite;
-import mx.core.MovieClipAsset;
 
 import flash.utils.ByteArray;
 
 public class Powerup extends Sprite
 {
-    public static const SHIELDS :int = 1;
-    public static const SPEED :int = 2;
-    public static const SPREAD :int = 3;
-    public static const HEALTH :int = 4;
+    public static const SHIELDS :int = 0;
+    public static const SPEED :int = 1;
+    public static const SPREAD :int = 2;
+    public static const HEALTH :int = 3;
     public static const COUNT :int = 3;
 
     public var type :int;
     public var boardX :int;
     public var boardY :int;
+
+    public static const SOUNDS :Array = [
+        "powerup_shield.wav", "powerup_engine.wav", "powerup_shot.wav"
+    ];
 
     public function Powerup (type :int, boardX :int, boardY :int) :void
     {
@@ -31,8 +35,7 @@ public class Powerup extends Sprite
 
     protected function setupGraphics () :void
     {
-        var powMovie :MovieClipAsset = MovieClipAsset(new powerupAnim());
-        powMovie.gotoAndStop(type);
+        var powMovie :MovieClip = MovieClip(new (Resources.getClass(MOVIES[type]))());
         addChild(powMovie);
     }
 
@@ -62,7 +65,8 @@ public class Powerup extends Sprite
         return bytes;
     }
 
-    [Embed(source="rsrc/powerups.swf#power_ups_movie")]
-    protected var powerupAnim :Class;
+    protected static const MOVIES :Array = [
+        "powerup_shield", "powerup_engine", "powerup_gun", "powerup_health"
+    ];
 }
 }

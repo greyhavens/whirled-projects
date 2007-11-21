@@ -7,13 +7,12 @@ import flash.display.MovieClip;
 import flash.media.Sound;
 import flash.media.SoundTransform;
 
-import mx.core.MovieClipAsset;
-
 import flash.utils.ByteArray;
 
 import flash.external.ExternalInterface;
 
 import flash.events.KeyboardEvent;
+import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 
 import flash.utils.Timer;
@@ -52,6 +51,31 @@ public class StarFight extends Sprite
         _gameCtrl = new WhirledGameControl(this);
         _gameCtrl.registerListener(this);
 
+        var mask :Shape = new Shape();
+        addChild(mask);
+        mask.graphics.clear();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, WIDTH, HEIGHT);
+        mask.graphics.endFill();
+        this.mask = mask;
+        graphics.beginFill(Codes.BLACK);
+        graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
+
+        var introMovie :MovieClip = MovieClip(new introAsset());
+        introMovie.addEventListener(MouseEvent.CLICK, setupBoard);
+        addChild(introMovie);
+
+        Resources.init(assetLoaded);
+    }
+
+
+    public function setupBoard (event :MouseEvent) :void
+    {
+        if (_assets < Codes.SHIP_TYPES.length) {
+            return;
+        }
+        removeChild(event.currentTarget as MovieClip);
+
         _boardLayer = new Sprite();
         _subShotLayer = new Sprite();
         _shipLayer = new Sprite();
@@ -63,22 +87,20 @@ public class StarFight extends Sprite
         addChild(_shotLayer);
         addChild(_statusLayer);
 
-        var mask :Shape = new Shape();
-        addChild(mask);
-        mask.graphics.clear();
-        mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, 0, WIDTH, HEIGHT);
-        mask.graphics.endFill();
-        this.mask = mask;
-        graphics.beginFill(Codes.BLACK);
-        graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
+        _statusLayer.addChild(_status = new StatusOverlay());
+        log("Created Game Controller");
 
         _lastTickTime = getTimer();
 
-        _statusLayer.addChild(_status = new StatusOverlay());
-
         setGameObject();
-        log("Created Game Controller");
+    }
+
+    public function assetLoaded (success :Boolean) :void {
+        if (success) {
+            if (_assets < Codes.SHIP_TYPES.length) {
+                Codes.SHIP_TYPES[_assets++].loadAssets(assetLoaded);
+            }
+        }
     }
 
     /**
@@ -97,8 +119,8 @@ public class StarFight extends Sprite
         if (!_gameCtrl.isConnected()) {
             _myId = 1;
             _gameState = Codes.PRE_ROUND;
-            _gameCtrl.setImmediate("gameState", _gameState);
-            _gameCtrl.setImmediate("stateTime", 0);
+            //_gameCtrl.setImmediate("gameState", _gameState);
+            //_gameCtrl.setImmediate("stateTime", 0);
             createBoard();
             return;
         }
@@ -268,6 +290,9 @@ public class StarFight extends Sprite
         _screenTimer = new Timer(1, 0); // As fast as possible.
         _screenTimer.addEventListener(TimerEvent.TIMER, tick);
         _screenTimer.start();
+
+        _ownShip.restart();
+        _lastTickTime = getTimer();
     }
 
     /**
@@ -277,6 +302,7 @@ public class StarFight extends Sprite
     {
         _ownShip.setShipType(typeIdx);
         _ownShip.restart();
+        _lastTickTime = getTimer();
     }
 
     /**
@@ -328,7 +354,7 @@ public class StarFight extends Sprite
                     }
                 }
 
-                _powerups[ii] = new Powerup(1+Math.random()*Powerup.COUNT, x, y);
+                _powerups[ii] = new Powerup(Math.random()*Powerup.COUNT, x, y);
 
                 _gameCtrl.setImmediate("powerup", _powerups[ii].writeTo(new ByteArray()),
                     ii);
@@ -446,7 +472,7 @@ public class StarFight extends Sprite
 
     public function maybeStartRound () :void
     {
-        if (_population > 1 && _gameState == Codes.PRE_ROUND && _gameCtrl.amInControl()) {
+        if (_population >= 1 && _gameState == Codes.PRE_ROUND && _gameCtrl.amInControl()) {
             _gameCtrl.set("gameState", Codes.IN_ROUND);
         }
     }
@@ -483,21 +509,19 @@ public class StarFight extends Sprite
             var val :Array = (event.value as Array);
             Codes.SHIP_TYPES[val[1]].primaryShot(this, val);
 
-            // Shooting sound.
-            var sound :Sound = (val[2] == ShotSprite.SUPER) ?
-                Codes.SHIP_TYPES[val[1]].TRI_BEAM : Codes.SHIP_TYPES[val[1]].BEAM;
-
-            //playSoundAt(sound, val[3], val[4]);
+        } else if (event.name == "secondary") {
+            val = (event.value as Array);
+            Codes.SHIP_TYPES[val[1]].secondaryShot(this, val);
 
         } else if (event.name == "explode") {
             var arr :Array = (event.value as Array);
 
             _board.explode(arr[0], arr[1], arr[2], false, arr[4]);
-            playSoundAt(Sounds.SHIP_EXPLODE, arr[0], arr[1]);
+            playSoundAt(Resources.getSound("ship_explodes.wav"), arr[0], arr[1]);
+            getShip(arr[3]).kill();
 
             if (arr[3] == _ownShip.shipId) {
                 addScore(KILL_PTS);
-                //_gameCtrl.awardFlow(KILL_FLOW);
             }
         }
     }
@@ -538,7 +562,7 @@ public class StarFight extends Sprite
         _board.explode(x, y, 0, true, 0);
 
         var sound :Sound = (ship.powerups & ShipSprite.SHIELDS_MASK) ?
-            Sounds.SHIELDS_HIT : Sounds.SHIP_HIT;
+            Resources.getSound("shields_hit.wav") : Resources.getSound("ship_hit.wav");
         playSoundAt(sound, x, y);
 
         if (ship == _ownShip) {
@@ -547,7 +571,6 @@ public class StarFight extends Sprite
         } else if (shooterId == _ownShip.shipId) {
             // We hit someone!  Give us some points.
             addScore(HIT_PTS);
-            //_gameCtrl.awardFlow(HIT_FLOW);
         }
     }
 
@@ -571,14 +594,14 @@ public class StarFight extends Sprite
         switch (obs.type) {
         case Obstacle.ASTEROID_1:
         case Obstacle.ASTEROID_2:
-            sound = Sounds.ASTEROID_HIT;
+            sound = Resources.getSound("asteroid_hit.wav");
             break;
         case Obstacle.JUNK:
-            sound = Sounds.JUNK_HIT;
+            sound = Resources.getSound("junk_hit.wav");
             break;
         case Obstacle.WALL:
         default:
-            sound = Sounds.METAL_HIT;
+            sound = Resources.getSound("metal_hit.wav");
             break;
         }
         playSoundAt(sound, x, y);
@@ -670,6 +693,14 @@ public class StarFight extends Sprite
     }
 
     /**
+     * Send a message to the server about our shot.
+     */
+    public function sendMessage (name :String, args :Array) :void
+    {
+        _gameCtrl.sendMessage(name, args);
+    }
+
+    /**
      * Returns all the ships within a certain distance of the supplied coordinates.
      */
     public function findShips (x :Number, y :Number, dist :Number) :Array
@@ -739,9 +770,10 @@ public class StarFight extends Sprite
         var powIdx :int = _board.getPowerupIdx(ownOldX, ownOldY,
             _ownShip.boardX, _ownShip.boardY, ShipSprite.COLLISION_RAD);
         while (powIdx != -1) {
-            _ownShip.awardPowerup(_powerups[powIdx].type);
-            playSoundAt(Sounds.POWERUP, _powerups[powIdx].boardX,
-                _powerups[powIdx].boardY);
+            var powType :int = _powerups[powIdx].type;
+            _ownShip.awardPowerup(powType);
+            //playSoundAt(Resources.getSound(Powerup.SOUNDS[powType]), _powerups[powIdx].boardX,
+                //_powerups[powIdx].boardY);
             addScore(POWERUP_PTS);
             removePowerup(powIdx);
 
@@ -800,6 +832,9 @@ public class StarFight extends Sprite
         _lastTickTime = now;
     }
 
+    [Embed(source="rsrc/intro_movie.swf")]
+    protected var introAsset :Class;
+
     /** Our game control object. */
     protected var _gameCtrl :WhirledGameControl;
 
@@ -848,6 +883,8 @@ public class StarFight extends Sprite
     protected var _subShotLayer :Sprite;
     protected var _statusLayer :Sprite;
 
+    protected var _assets :int = 0;
+
     /** This could be more dynamic. */
     protected static const MIN_TILES_PER_POWERUP :int = 250;
 
@@ -855,10 +892,6 @@ public class StarFight extends Sprite
     protected static const POWERUP_PTS :int = 25;
     protected static const HIT_PTS :int = 10;
     protected static const KILL_PTS :int = 50;
-
-    /** Flow awarded for various things in the game. */
-    protected static const KILL_FLOW :int = 5;
-    protected static const HIT_FLOW :int = 1;
 
     /** Amount of time to wait between sending time updates. */
     protected static const TIME_WAIT :int = 10000;
