@@ -3,8 +3,8 @@ package modes
 
 import mx.containers.Canvas;
 
-import com.threerings.ezgame.util.GameMode;
-import com.threerings.ezgame.util.GameModeStack;
+import com.whirled.contrib.GameMode;
+import com.whirled.contrib.GameModeStack;
 
 
 /**

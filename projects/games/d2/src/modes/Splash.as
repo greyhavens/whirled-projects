@@ -12,8 +12,9 @@ import mx.containers.Canvas;
 import mx.controls.Button;
 import mx.controls.Image;
 
-import com.threerings.ezgame.util.GameModeStack;
 import com.threerings.util.Assert;
+
+import com.whirled.contrib.GameModeStack;
 
 public class Splash extends GameModeCanvas
 {

@@ -8,10 +8,11 @@ import flash.events.MouseEvent;
 import mx.core.MovieClipLoaderAsset;
 import mx.controls.Image;
 
-import com.threerings.ezgame.util.GameModeStack;
 import com.threerings.flash.DisplayUtil;
-
 import com.threerings.util.Assert;
+
+import com.whirled.contrib.GameMode;
+import com.whirled.contrib.GameModeStack;
 
 public class SelectBoard extends GameModeCanvas
 {

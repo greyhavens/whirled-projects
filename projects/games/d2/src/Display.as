@@ -11,12 +11,13 @@ import flash.utils.getTimer; // function import
 
 import mx.containers.Canvas;
 
-import com.threerings.ezgame.util.GameMode;
-import com.threerings.ezgame.util.GameModeStack;
 import com.threerings.util.Assert;
 
 import modes.Splash;
 import modes.SelectBoard;
+
+import com.whirled.contrib.GameMode;
+import com.whirled.contrib.GameModeStack;
 
 
 /**

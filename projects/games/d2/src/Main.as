@@ -15,6 +15,9 @@ import com.whirled.WhirledGameControl;
 import com.whirled.util.ContentPack;
 import com.whirled.util.ContentPackLoader;
 
+import util.ContentLoader;
+import util.ContentPackUtil;
+
 
 public class Main
 {
@@ -53,6 +56,14 @@ public class Main
 
         // initialize all the components
         _display = app.display;
+
+        var c :ContentLoader = new ContentLoader(
+            _whirled.getLevelPacks(),
+            function (packs :Array) :void {
+                trace("CONTENT PACKS: " + ObjectUtil.toString(
+                          ContentPackUtil.collectClassVariableDefinitions(
+                              packs, "Settings", ["boards"])));
+            });
     }
 
     protected function handleUnload (event :Event) :void
