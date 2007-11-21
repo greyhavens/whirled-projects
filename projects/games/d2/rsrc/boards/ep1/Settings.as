@@ -1,4 +1,4 @@
-﻿package ep1_code {
+﻿package {
 
 import flash.display.MovieClip;
 
