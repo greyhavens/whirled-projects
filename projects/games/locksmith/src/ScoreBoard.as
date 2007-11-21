@@ -47,7 +47,7 @@ public class ScoreBoard extends Sprite
                 gameOver();
             }
         } else {
-            Log.getLog(this).debug("Asked to score point for unknown player [" + player + "]");
+            log.debug("Asked to score point for unknown player [" + player + "]");
         }
     }
 
@@ -94,6 +94,8 @@ public class ScoreBoard extends Sprite
     protected var _sunScore :int = 0;
     protected var _gameEndedCallback :Function;
     protected var _marbleLayer :Sprite = new Sprite();
+
+    private static const log :Log = Log.getLog(ScoreBoard);
 }
 }
 
@@ -105,6 +107,8 @@ import flash.events.Event;
 
 import flash.geom.Matrix;
 import flash.geom.Point;
+
+import com.threerings.util.Log;
 
 import MarbleMovie;
 
@@ -153,7 +157,7 @@ class RampAnimation
         case PHASE_MOVE_TO_RAMP: moveTowardsRamp(); break;
         case PHASE_MOVE_DOWN_RAMP: moveDownRamp(); break;
         default:
-            Log.getLog(this).debug("Unknown phase [" + _phase + "]");
+            log.debug("Unknown phase [" + _phase + "]");
             _marble.removeEventListener(Event.ENTER_FRAME, enterFrame);
         }
     }
@@ -225,4 +229,6 @@ class RampAnimation
     protected var _startX :int;
     protected var _startY :int;
     protected var _myScore :int;
+
+    private static const log :Log = Log.getLog(RampAnimation);
 }
