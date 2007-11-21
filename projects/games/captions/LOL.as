@@ -127,19 +127,12 @@ public class LOL extends Sprite
 
     protected function initUIBits () :void
     {
-        // find all the children we care about
-        for (var ii :int = 0; ii < 4; ii++) {
-            var pi :UILoader = find("preview_pane_" + (ii + 1)) as UILoader;
-            pi.addEventListener(MouseEvent.CLICK, handlePreviewPhotoClick);
-            pi.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
-            pi.addEventListener(Event.COMPLETE, handleImageComplete);
-            var pb :CheckBox = find("checkbox_" + (ii + 1)) as CheckBox;
-            pb.addEventListener(Event.CHANGE, handlePreviewVote);
-            _previewImage[ii] = pi;
-            _previewBox[ii] = pb;
+        _image = find("image") as UILoader;
+        if (_image == null) {
+            // the UI doesn't seem to be ready to read. Wait.
+            return;
         }
 
-        _image = find("image") as UILoader;
         _skipBox = find("skip") as CheckBox;
         _skipBox.label = "              "; // so that it's more easily clickable
 
@@ -164,6 +157,18 @@ public class LOL extends Sprite
         _winningCaption.mouseEnabled = false;
         _winnerName = find("winner_name") as TextField;
         _winnerName.selectable = false;
+
+        // find all the children we care about
+        for (var ii :int = 0; ii < 4; ii++) {
+            var pi :UILoader = find("preview_pane_" + (ii + 1)) as UILoader;
+            pi.addEventListener(MouseEvent.CLICK, handlePreviewPhotoClick);
+            pi.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
+            pi.addEventListener(Event.COMPLETE, handleImageComplete);
+            var pb :CheckBox = find("checkbox_" + (ii + 1)) as CheckBox;
+            pb.addEventListener(Event.CHANGE, handlePreviewVote);
+            _previewImage[ii] = pi;
+            _previewBox[ii] = pb;
+        }
 
         _skipBox.addEventListener(Event.CHANGE, handleVoteToSkip);
         _doneButton.addEventListener(MouseEvent.CLICK, handleSubmitButton);
