@@ -15,7 +15,6 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
-
 import fl.controls.Button;
 import fl.controls.Label;
 import fl.controls.ScrollPolicy;
@@ -76,11 +75,10 @@ public class Fifteen extends Sprite
         tileHolder.y = 40;
         addChild(tileHolder);
 
-        // create our numbery sprites
-        for (var ii :int = 0; ii < BLANK_TILE; ii++) {
-            var tile :Sprite = makeTileSprite(String(ii + 1));
+        // create the normal tile sprites
+        _tiles = makeTileSprites();
+        for each (var tile :Sprite in _tiles) {
             tile.addEventListener(MouseEvent.CLICK, handleClick);
-            _tiles.push(tile);
             tileHolder.addChild(tile);
         }
 
@@ -93,16 +91,17 @@ public class Fifteen extends Sprite
         tileHolder.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
 
         // create the button and label
-//        _label = new Label();
-//        _label.setSize(420, 22);
-//        addChild(_label);
+        _label = new Label();
+        _label.text = "";
+        _label.setSize(420, 22);
+        addChild(_label);
 //        _label.visible = false;
-//
+
         if (!_ctrl.isConnected() || _ctrl.canEditRoom()) {
             _button = new Button();
             _button.label = "Reset";
             _button.setSize(_button.textField.textWidth + 25, 22);
-            _button.x = (420 - _button.width) / 2;
+            _button.x = 420 - _button.width;
             addChild(_button);
             _button.addEventListener(MouseEvent.CLICK, resetState);
         }
@@ -111,7 +110,8 @@ public class Fifteen extends Sprite
     protected function readState () :void
     {
         _state = _toy.getState() as Array;
-        if (_state == null) {
+        // detect an invalid state and reset
+        if (_state == null || _state.length != (SIZE * SIZE)) {
             _state = [];
             for (var ii :int = 0; ii < (SIZE * SIZE); ii++) {
                 _state.push(ii);
@@ -142,24 +142,28 @@ public class Fifteen extends Sprite
         return new Point((position % SIZE) * TILE_WIDTH, int(position / SIZE) * TILE_HEIGHT);
     }
 
-    protected function makeTileSprite (number :String) :Sprite
+    protected function makeTileSprites () :Array
     {
-        var s :Sprite = new Sprite();
-        s.graphics.beginFill(0xFFFFEE);
-        s.graphics.lineStyle(1, 0x000033);
-        s.graphics.drawRoundRect(0, 0, TILE_WIDTH, TILE_HEIGHT, 10, 10);
+        var tiles :Array = [];
+        for (var ii :int = 0; ii < BLANK_TILE; ii++) {
+            var s :Sprite = new Sprite();
+            s.graphics.beginFill(0xFFFFEE);
+            s.graphics.lineStyle(1, 0x000033);
+            s.graphics.drawRoundRect(0, 0, TILE_WIDTH, TILE_HEIGHT, 10, 10);
 
-        var tf :TextField = new TextField();
-        tf.selectable = false;
-        tf.text = number
-        tf.setTextFormat(new TextFormat(null, 32, 0x000000, true, null, null, null, null,
-            TextFormatAlign.CENTER));
-        tf.width = TILE_WIDTH;
-        tf.height = tf.textHeight + 4;
-        tf.y = (TILE_HEIGHT - tf.height) / 2;
-        s.addChild(tf);
+            var tf :TextField = new TextField();
+            tf.selectable = false;
+            tf.text = String(ii + 1);
+            tf.setTextFormat(new TextFormat(null, 32, 0x000000, true, null, null, null, null,
+                TextFormatAlign.CENTER));
+            tf.width = TILE_WIDTH;
+            tf.height = tf.textHeight + 4;
+            tf.y = (TILE_HEIGHT - tf.height) / 2;
+            s.addChild(tf);
 
-        return s;
+            tiles.push(s);
+        }
+        return tiles;
     }
 
     protected function handleClick (event :MouseEvent) :void
@@ -350,13 +354,13 @@ public class Fifteen extends Sprite
 
     protected var _stateQueue :Array = [];
 
-    protected var _tiles :Array = [];
+    protected var _tiles :Array;
 
     protected var _paths :Array = [];
 
     protected var _button :Button;
 
-//    protected var _label :Label;
+    protected var _label :Label;
 }
 }
 
