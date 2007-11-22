@@ -118,6 +118,12 @@ public class Fifteen extends Sprite
             }
         }
         positionTiles();
+        updateModifierName(_toy.getUsernameOfState());
+    }
+
+    protected function updateModifierName (name :String) :void
+    {
+        _label.text = (name == null) ? "" : (name + " is modifying the puzzle.");
     }
 
     protected function positionTiles () :void
@@ -191,6 +197,7 @@ public class Fifteen extends Sprite
             _state[position] = BLANK_TILE;
             if (doSet) {
                 _stateQueue.length = 0; // truncate our state queue, we're taking control
+                _label.text = "YOU are modifying the puzzle.";
                 _toy.setState(_state);
             }
 
@@ -212,7 +219,7 @@ public class Fifteen extends Sprite
     {
         _paths.splice(_paths.indexOf(path), 1);
         if (_paths.length == 0 && _stateQueue.length > 0) {
-            moveToState(_stateQueue.shift() as Array);
+            moveToState(_stateQueue.shift() as Array, _stateQueue.shift() as String);
         }
     }
 
@@ -293,16 +300,17 @@ public class Fifteen extends Sprite
     protected function handleStateUpdated (... ignored) :void
     {
         var newState :Array = _toy.getState() as Array;
+        var username :String = _toy.getUsernameOfState();
 
         if (_paths.length > 0) {
-            _stateQueue.push(newState);
+            _stateQueue.push(newState, username);
 
         } else {
-            moveToState(newState);
+            moveToState(newState, username);
         }
     }
 
-    protected function moveToState (newState :Array) :void
+    protected function moveToState (newState :Array, username :String) :void
     {
         var diffCount :int = 0;
         var swapPos :int = -1;
@@ -336,6 +344,7 @@ public class Fifteen extends Sprite
 
         if (diffCount == 2) {
             trySwap(swapPos);
+            updateModifierName(username);
 
         } else {
             readState();
