@@ -119,7 +119,7 @@ public class CaptionGame extends EventDispatcher
      */
     public function configureTrophyUnanimous (trophyIdent :String, minPlayers :int = 5) :void
     {
-        // TODO
+        _trophiesUnanimous[trophyIdent] = minPlayers;
     }
 
     /**
@@ -602,6 +602,9 @@ public class CaptionGame extends EventDispatcher
             }
         });
 
+        // check to see if this user qualifies for a trophy
+        checkUnanimousTrophies(indexes, results, ids);
+
         _results = [];
 
         var flowScores :Object = {};
@@ -708,6 +711,46 @@ public class CaptionGame extends EventDispatcher
             var count :int = int(_trophiesCaptionsEver[trophyName]);
             if (captionsEver >= count) {
 //                trace("Awarding trophy to " + _myName + ": " + trophyName);
+                _ctrl.awardTrophy(trophyName);
+            }
+        }
+    }
+
+    /**
+     * Check to see if we should award any trophies for unanimous votes.
+     */
+    protected function checkUnanimousTrophies (indexes :Array, results :Array, ids :Array) :void
+    {
+        var winnerIndex :int = int(indexes[0]);
+        if (int(ids[winnerIndex]) != _myId) {
+            return; // if we didn't win, we certainly aren't unanimous
+        }
+        var numCaptions :int = results.length;
+        if (int(results[winnerIndex]) < numCaptions - 1) { // must not be disqualified!
+            return; // not enough votes
+        }
+        // now look through all the other results, we should find at most 1 other vote
+        // (the vote we cast for someone else)
+        // (We also count votes on disqualified entries)
+        var foundOne :Boolean = false;
+        for (var ii :int = 1; ii < indexes.length; ii++) {
+            var index :int = int(indexes[ii]);
+            var numVotes :int = Math.abs(int(results[index]));
+            if (numVotes == 1) {
+                if (foundOne) {
+                    return; // can't have two..
+                }
+                foundOne = true;
+            } else if (numVotes > 1) {
+                return;
+            }
+        }
+
+        // yay, you passed the gauntlet, now see if you actually qualify for any trophies
+        for (var trophyName :String in _trophiesUnanimous) {
+            var count :int = int(_trophiesUnanimous[trophyName]);
+            if (numCaptions >= count) {
+                trace("Awarding trophy to " + _myName + ": " + trophyName);
                 _ctrl.awardTrophy(trophyName);
             }
         }
@@ -1175,6 +1218,9 @@ public class CaptionGame extends EventDispatcher
 
     /** Stores info on trophies for captions submitted ever. */
     protected var _trophiesCaptionsEver :Object = {};
+
+    /** Stores info on trophies for (nearly) unanimous winning trophies. */
+    protected var _trophiesUnanimous :Object = {};
 
     /** Our last-submitted vote. */
     protected var _myVote :Array;
