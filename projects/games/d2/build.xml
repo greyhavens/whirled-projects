@@ -16,6 +16,7 @@
     <copy todir="${build.root}/dist/packs">
       <fileset dir="rsrc/boards">
         <include name="**/*.swf" />
+        <include name="*.data" />
       </fileset>
     </copy>
   </target>

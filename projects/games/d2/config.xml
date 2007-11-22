@@ -3,8 +3,7 @@
   <params>
   </params>
   <packs>
-    <level ident="d" name="d" mediaURL="http://127.0.0.1:8080/packs/default/Boards.swf" premium="false"/>
-    <level ident="ep1" name="ep1" mediaURL="http://127.0.0.1:8080/packs/ep1/Boards.swf" premium="false"/>
-    <level ident="ep2" name="ep2" mediaURL="http://127.0.0.1:8080/packs/ep2/Boards.swf" premium="false"/>
+    <level ident="d" name="d" mediaURL="http://127.0.0.1:8080/packs/default.data" premium="false"/>
+    <level ident="e" name="e" mediaURL="http://127.0.0.1:8080/packs/ep1.data" premium="false"/>
   </packs>
 </game>
