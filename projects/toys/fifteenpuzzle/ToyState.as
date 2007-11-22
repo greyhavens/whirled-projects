@@ -42,7 +42,7 @@ public class ToyState extends EventDispatcher
 
             _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
 
-            _myId = _ctrl.getInstanceId();
+            _myKey = STATE_PREFIX + _ctrl.getInstanceId();
             _deleteCount = deleteCount;
             findFollowState();
         }
@@ -59,16 +59,29 @@ public class ToyState extends EventDispatcher
     }
 
     /**
+     * Get the username of the player that set the current state, or null if unknown.
+     */
+    public function getUsernameOfState () :String
+    {
+        if (_ctrl != null && _followKey != null) {
+            var instanceId :int = int(_followKey.substring(STATE_PREFIX.length));
+            return _ctrl.getViewerName(instanceId);
+        }
+
+        return null;
+    }
+
+    /**
      * Set the state. Ignores any states set by other clients.
      */
     public function setState (state :Object) :void
     {
         _state = state;
         _seqId++;
-        _followKey = null;
+        _followKey = _myKey;
         setTimeout();
         if (isSaving()) {
-            _ctrl.updateMemory(STATE_PREFIX + _myId, [ _seqId, state ]);
+            _ctrl.updateMemory(_myKey, [ _seqId, state ]);
         }
     }
 
@@ -113,8 +126,8 @@ public class ToyState extends EventDispatcher
         }
 
         var incoming :Array = event.value as Array;
-        if (incoming == null) {
-            // ignore clears
+        // ignore state clears and our own state events
+        if (incoming == null || key == _myKey) {
             return;
         }
 
@@ -136,7 +149,7 @@ public class ToyState extends EventDispatcher
         // follow a new key if it's time
         if (key != _followKey) {
             if (getTimer() < _timeout) {
-                return; // not time yet...
+                return; // it's not time yet
             }
             _followKey = key;
         }
@@ -204,8 +217,6 @@ public class ToyState extends EventDispatcher
 
     protected var _ctrl :FurniControl;
 
-    protected var _myId :int;
-
     protected var _nonOwnersCanSave :Boolean;
 
     protected var _idleDelay :int;
@@ -213,6 +224,8 @@ public class ToyState extends EventDispatcher
     protected var _timeout :Number = 0;
 
     protected var _followKey :String;
+
+    protected var _myKey :String;
 
     protected var _deleteCount :int;
 }
