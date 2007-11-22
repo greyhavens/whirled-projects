@@ -2,6 +2,8 @@ package {
 
 import flash.media.Sound;
 import flash.media.SoundTransform;
+import flash.events.Event;
+import flash.display.MovieClip;
 
 public class RhinoShipType extends ShipType
 {
@@ -50,6 +52,53 @@ public class RhinoShipType extends ShipType
         super.primaryShot(sf, val);
     }
 
+    override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :void
+    {
+        var args :Array = new Array(5);
+        args[0] = ship.shipId;
+        args[1] = ship.shipType;
+        args[2] = ship.boardX;
+        args[3] = ship.boardY;
+        args[4] = ship.ship.rotation;
+
+        warpNow(ship, sf, args);
+    }
+
+    override public function secondaryShot (sf :StarFight, val :Array) :void
+    {
+        var ship :ShipSprite = sf.getShip(val[0]);
+        if (ship == null || ship.isOwnShip) {
+            return;
+        }
+        warpNow(ship, sf, val);
+    }
+
+    protected function warpNow (ship :ShipSprite, sf :StarFight, val :Array) :void
+    {
+        var endWarp :Function = function (event:Event) :void
+        {
+            ship.removeEventListener(Event.COMPLETE, endWarp);
+            ship.setAnimMode(ShipSprite.IDLE, true);
+        };
+        var warp :Function = function (event :Event) :void
+        {
+            clip.removeEventListener(Event.COMPLETE, warp);
+            if (ship.isOwnShip) {
+                sf.sendMessage("secondary", val);
+            }
+            var startX :Number = val[2];
+            var startY :Number = val[3];
+            var rads :Number = val[4] * Codes.DEGS_TO_RADS;
+            var endX :Number = startX + Math.cos(rads) * JUMP;
+            var endY :Number = startY + Math.sin(rads) * JUMP;
+
+            ship.resolveMove(startX, startY, endX, endY, 1);
+            ship.setAnimMode(ShipSprite.WARP_END, true).addEventListener(Event.COMPLETE, endWarp);
+        };
+        var clip :MovieClip = ship.setAnimMode(ShipSprite.WARP_BEGIN, true);
+        clip.addEventListener(Event.COMPLETE, warp);
+    }
+
     override protected function swfAsset () :Class
     {
         return SHIP;
@@ -57,5 +106,7 @@ public class RhinoShipType extends ShipType
 
     [Embed(source="rsrc/ships/rhino.swf", mimeType="application/octet-stream")]
     protected static const SHIP :Class;
+
+    protected static const JUMP :int = 15;
 }
 }

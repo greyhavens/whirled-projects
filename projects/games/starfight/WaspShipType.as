@@ -1,5 +1,6 @@
 package {
 
+import flash.display.MovieClip;
 import flash.media.Sound;
 import flash.media.SoundTransform;
 
@@ -8,6 +9,7 @@ import flash.events.Event;
 public class WaspShipType extends ShipType
 {
     public var secondaryHitPower :Number = 0.5;
+    public var secondaryExplode :Class;
 
     public function WaspShipType () :void
     {
@@ -93,6 +95,7 @@ public class WaspShipType extends ShipType
     {
         super.successHandler(event);
         secondaryAnim = _loader.getClass("torpedo");
+        secondaryExplode = _loader.getClass("torpedo_explosion");
     }
 
     [Embed(source="rsrc/ships/wasp.swf", mimeType="application/octet-stream")]

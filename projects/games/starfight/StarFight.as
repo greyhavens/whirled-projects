@@ -516,9 +516,10 @@ public class StarFight extends Sprite
         } else if (event.name == "explode") {
             var arr :Array = (event.value as Array);
 
-            _board.explode(arr[0], arr[1], arr[2], false, arr[4]);
+            var ship :ShipSprite = getShip(arr[4]);
+            _board.explode(arr[0], arr[1], arr[2], false, ship.shipType);
             playSoundAt(Resources.getSound("ship_explodes.wav"), arr[0], arr[1]);
-            getShip(arr[3]).kill();
+            ship.kill();
 
             if (arr[3] == _ownShip.shipId) {
                 addScore(KILL_PTS);
@@ -572,6 +573,14 @@ public class StarFight extends Sprite
             // We hit someone!  Give us some points.
             addScore(HIT_PTS);
         }
+    }
+
+    /**
+     * Custom explosion.
+     */
+    public function explodeCustom (x :Number, y :Number, movie :MovieClip) :void
+    {
+        _board.explodeCustom(x, y, movie);
     }
 
     /**
@@ -721,14 +730,14 @@ public class StarFight extends Sprite
      * Register a big ole' explosion at the location.
      */
     public function explode (x :Number, y :Number, rot :int,
-        shooterId :int, shipType :int) :void
+        shooterId :int, shipId :int) :void
     {
         var args :Array = new Array(5);
         args[0] = x;
         args[1] = y;
         args[2] = rot;
         args[3] = shooterId;
-        args[4] = shipType;
+        args[4] = shipId;
         _gameCtrl.sendMessage("explode", args);
     }
 

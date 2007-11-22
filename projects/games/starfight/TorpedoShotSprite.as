@@ -47,21 +47,23 @@ public class TorpedoShotSprite extends ShotSprite {
         }
 
         var coll :Collision = board.getCollision(boardX, boardY, boardX + xVel*time,
-                boardY + yVel*time, Codes.SHIP_TYPES[shipType].secondaryShotSize, shipId);
+                boardY + yVel*time, Codes.SHIP_TYPES[shipType].secondaryShotSize, shipId, 0);
         if (coll == null) {
             boardX += xVel*time;
             boardY += yVel*time;
         } else {
+            var hitX :Number = boardX + xVel * coll.time * time;
+            var hitY :Number = boardY + yVel * coll.time * time;
             if (coll.hit is ShipSprite) {
                 var ship :ShipSprite = ShipSprite(coll.hit);
-                _game.hitShip(ship, boardX + (xVel*coll.time*time),
-                    boardY + (yVel*coll.time*time), shipId, damage);
+                _game.hitShip(ship, hitX, hitY, shipId, damage);
 
             } else {
                 var obs :Obstacle = Obstacle(coll.hit);
-                _game.hitObs(obs, boardX + (xVel*coll.time*time),
-                    boardY + (yVel*coll.time*time));
+                _game.hitObs(obs, hitX, hitY);
             }
+            _game.explodeCustom(
+                    hitX, hitY, MovieClip(new Codes.SHIP_TYPES[shipType].secondaryExplode()));
             complete = true;
         }
     }

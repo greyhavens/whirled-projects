@@ -46,7 +46,7 @@ public class MissileShotSprite extends ShotSprite {
         }
 
         var coll :Collision = board.getCollision(boardX, boardY, boardX + xVel*time,
-                boardY + yVel*time, Codes.SHIP_TYPES[shipType].primaryShotSize, shipId);
+                boardY + yVel*time, Codes.SHIP_TYPES[shipType].primaryShotSize, shipId, 0);
         if (coll == null) {
             boardX += xVel*time;
             boardY += yVel*time;

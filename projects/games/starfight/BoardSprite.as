@@ -1,5 +1,6 @@
 package {
 
+import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.Bitmap;
@@ -44,7 +45,7 @@ public class BoardSprite extends Sprite
      *  we  ignore all if -1.
      */
     public function getCollision (oldX :Number, oldY :Number,
-        newX :Number, newY :Number, rad :Number, ignoreShip :int) :Collision
+        newX :Number, newY :Number, rad :Number, ignoreShip :int, ignoreObs :int) :Collision
     {
         var hits :Array = [];
 
@@ -90,6 +91,9 @@ public class BoardSprite extends Sprite
 
         // Check each obstacle and figure out which one we hit first.
         for each (var obs :Obstacle in _obstacles) {
+            if (ignoreObs == 1 && obs.type != Obstacle.WALL) {
+                continue;
+            }
 
             // Find how long it is til our X coords collide.
             var timeToX :Number;
@@ -191,7 +195,7 @@ public class BoardSprite extends Sprite
             pt = new Point(Math.random() * (boardWidth - 4) + 2,
                 Math.random() * (boardHeight - 4) + 2);
             if (getCollision(pt.x, pt.y, pt.x, pt.y, ShipSprite.COLLISION_RAD,
-                    -1) == null) {
+                    -1, 0) == null) {
                 return pt;
             }
         }
@@ -203,8 +207,15 @@ public class BoardSprite extends Sprite
     public function explode (x :Number, y :Number, rot :int,
         isSmall :Boolean, shipType :int) :void
     {
-        var exp :Explosion = new Explosion(x * Codes.PIXELS_PER_TILE,
-            y * Codes.PIXELS_PER_TILE, rot, isSmall, shipType, this);
+        var exp :Explosion = Explosion.createExplosion(
+            x * Codes.PIXELS_PER_TILE, y * Codes.PIXELS_PER_TILE, rot, isSmall, shipType);
+        addChild(exp);
+    }
+
+    public function explodeCustom (x :Number, y :Number, movie :MovieClip) :void
+    {
+        var exp :Explosion = new Explosion(
+            x * Codes.PIXELS_PER_TILE, y * Codes.PIXELS_PER_TILE, movie);
         addChild(exp);
     }
 

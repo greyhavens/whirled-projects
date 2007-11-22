@@ -50,6 +50,7 @@ public class Powerup extends Sprite
         boardX = (x - Codes.PIXELS_PER_TILE/2) / Codes.PIXELS_PER_TILE;
         boardY = (y - Codes.PIXELS_PER_TILE/2) / Codes.PIXELS_PER_TILE;
 
+        removeChildAt(0);
         setupGraphics();
     }
 

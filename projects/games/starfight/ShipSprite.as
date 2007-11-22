@@ -59,6 +59,8 @@ public class ShipSprite extends Sprite
     public static const FORWARD_FAST :int = 3;
     public static const REVERSE_FAST :int = 4;
     public static const SELECT :int = 5;
+    public static const WARP_BEGIN :int = 6;
+    public static const WARP_END :int = 7;
 
     /** How fast the ship is accelerating. */
     public var accel :Number;
@@ -255,6 +257,11 @@ public class ShipSprite extends Sprite
         }
     }
 
+    public function get isOwnShip () :Boolean
+    {
+        return _isOwnShip;
+    }
+
     /**
      * Returns true if the ship is alive.
      */
@@ -269,9 +276,10 @@ public class ShipSprite extends Sprite
      *  to resolve collisions created in the rebound from earlier collisions.
      */
     public function resolveMove (startX :Number, startY :Number,
-        endX :Number, endY :Number) :void
+        endX :Number, endY :Number, colType :int = 0) :void
     {
-        var coll :Collision = _board.getCollision(startX, startY, endX, endY, _shipType.size, -1);
+        var coll :Collision = _board.getCollision(
+                startX, startY, endX, endY, _shipType.size, -1, colType);
         if (coll != null) {
             var obstacle :Obstacle = Obstacle(coll.hit);
             var bounce :Number = obstacle.getElasticity();
@@ -294,6 +302,11 @@ public class ShipSprite extends Sprite
             }
             _game.playSoundAt(sound, startX + dx * coll.time,
                 startY + dy * coll.time);
+            if (colType == 1) {
+                boardX = startX + dx * coll.time;
+                boardY = startY + dy * coll.time;
+                return;
+            }
 
             if (coll.isHoriz) {
                 xVel = -xVel * bounce;
@@ -351,7 +364,7 @@ public class ShipSprite extends Sprite
 
         power -= hitPower;
         if (!isAlive()) {
-            _game.explode(boardX, boardY, ship.rotation, shooterId, shipType);
+            _game.explode(boardX, boardY, ship.rotation, shooterId, shipId);
 
             // Stop moving and firing.
             xVel = 0;
@@ -384,10 +397,12 @@ public class ShipSprite extends Sprite
 
         setVisible(false);
 
-        // After a 5 second interval, reposition & reset.
-        var timer :Timer = new Timer(RESPAWN_DELAY, 1);
-        timer.addEventListener(TimerEvent.TIMER, newShip);
-        timer.start();
+        if (_isOwnShip) {
+            // After a 5 second interval, reposition & reset.
+            var timer :Timer = new Timer(RESPAWN_DELAY, 1);
+            timer.addEventListener(TimerEvent.TIMER, newShip);
+            timer.start();
+        }
     }
 
     public function newShip (event :TimerEvent) :void
@@ -458,14 +473,16 @@ public class ShipSprite extends Sprite
         secondaryPower = Math.min(1.0,
             secondaryPower + time / (1000 * _shipType.secondaryPowerRecharge));
 
-        turn(time);
-        move(time);
-        if (accel > 0.0) {
-            setAnimMode((powerups & SPEED_MASK) ? FORWARD_FAST : FORWARD, false);
-        } else if (accel < 0.0) {
-            setAnimMode((powerups & SPEED_MASK) ? REVERSE_FAST : REVERSE, false);
-        } else {
-            setAnimMode(IDLE, false);
+        if (_animMode != WARP_BEGIN && _animMode != WARP_END) {
+            turn(time);
+            move(time);
+            if (accel > 0.0) {
+                setAnimMode((powerups & SPEED_MASK) ? FORWARD_FAST : FORWARD, false);
+            } else if (accel < 0.0) {
+                setAnimMode((powerups & SPEED_MASK) ? REVERSE_FAST : REVERSE, false);
+            } else {
+                setAnimMode(IDLE, false);
+            }
         }
 
         if (powerups & SHIELDS_MASK) {
@@ -493,12 +510,14 @@ public class ShipSprite extends Sprite
     /**
      * Sets our animation to show forward/idle/reverse
      */
-    public function setAnimMode (mode :int, force :Boolean) :void
+    public function setAnimMode (mode :int, force :Boolean) :MovieClip
     {
         if (force || _animMode != mode) {
             _shipMovie.gotoAndPlay(ANIM_MODES[mode]);
             _animMode = mode;
+            return _shipMovie;
         }
+        return null;
     }
 
     /**
@@ -746,6 +765,10 @@ public class ShipSprite extends Sprite
      */
     public function updateForReport (report :ShipSprite) :void
     {
+        if (_animMode == WARP_BEGIN || _animMode == WARP_END) {
+            return;
+        }
+
         accel = report.accel;
         xVel = report.xVel;
         yVel = report.yVel;
@@ -848,7 +871,7 @@ public class ShipSprite extends Sprite
     protected var _animMode :int;
 
     protected static const ANIM_MODES :Array = [
-        "ship", "retro", "thrust", "super_thrust", "super_retro", "select"
+        "ship", "retro", "thrust", "super_thrust", "super_retro", "select", "warp_begin", "warp_end"
     ];
 }
 }
