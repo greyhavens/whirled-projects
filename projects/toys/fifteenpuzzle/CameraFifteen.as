@@ -28,7 +28,7 @@ public class CameraFifteen extends Fifteen
     {
         var tiles :Array = super.makeTileSprites();
 
-        var camera :Camera = Camera.getCamera();
+        var camera :Camera = _ctrl.getCamera();
         if (camera != null) {
             camera.addEventListener(ActivityEvent.ACTIVITY, handleCameraActivity);
             camera.addEventListener(StatusEvent.STATUS, handleCameraStatus);
@@ -41,6 +41,10 @@ public class CameraFifteen extends Fifteen
                 while (tile.numChildren > 0) {
                     tile.removeChildAt(0);
                 }
+            }
+
+            if (!camera.muted) {
+                addEventListener(Event.ENTER_FRAME, handleFrame);
             }
         }
 
