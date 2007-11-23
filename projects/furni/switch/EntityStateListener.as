@@ -15,7 +15,7 @@ import com.whirled.EntityControl;
  * part of its state using a {@link EntityStatePublisher}.
  *
  * When we intercept a state change signal with the right key, we dispatch an event which
- * the instantiated entity may respond to. When first instantiated, we send out a special
+ * our instantiating entity may respond to. When first instantiated, we send out a special
  * signal that request a re-broadcast of the publisher's state.
  */
 public class EntityStateListener extends EventDispatcher
