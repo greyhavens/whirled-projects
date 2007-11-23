@@ -1,0 +1,16 @@
+<!-- build configuration -->
+<project name="Switch" default="bits" basedir=".">
+
+  <import file="../../../etc/project-include.xml"/>
+
+  <target name="bits" depends="fan,switch"/>
+
+  <target name="fan">
+    <antcall target="compile"><param name="app.name" value="Fan"/></antcall>
+  </target>
+
+  <target name="switch">
+    <antcall target="compile"><param name="app.name" value="Switch"/></antcall>
+  </target>
+
+</project>
