@@ -1,6 +1,6 @@
 <!-- build configuration -->
 <project name="Switch" default="bits" basedir=".">
-
+  <property name="app.source-extras" value="../../../contrib/src/as/"/>
   <import file="../../../etc/project-include.xml"/>
 
   <target name="bits" depends="fan,switch"/>

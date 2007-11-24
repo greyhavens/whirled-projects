@@ -12,6 +12,9 @@ import com.threerings.util.EmbeddedSwfLoader;
 import com.whirled.FurniControl;
 import com.whirled.ControlEvent;
 
+import com.whirled.contrib.EntityStateEvent;
+import com.whirled.contrib.EntityStateListener;
+
 [SWF(width="400", height="400")]
 public class Fan extends Sprite
 {

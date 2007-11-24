@@ -14,6 +14,9 @@ import com.threerings.util.Log;
 import com.whirled.FurniControl;
 import com.whirled.ControlEvent;
 
+import com.whirled.contrib.EntityStateEvent;
+import com.whirled.contrib.EntityStatePublisher;
+
 [SWF(width="128", height="128")]
 public class Switch extends Sprite
 {
