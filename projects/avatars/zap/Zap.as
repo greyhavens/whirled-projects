@@ -5,6 +5,9 @@ import flash.geom.Point;
 
 import com.threerings.flash.FrameSprite;
 
+import com.whirled.AvatarControl;
+import com.whirled.ControlEvent;
+
 [SWF(width="160", height="160")]
 public class Zap extends FrameSprite
 {
@@ -13,15 +16,36 @@ public class Zap extends FrameSprite
         super(true);
 
         _canvas = new Sprite();
-        this.addChild(_canvas);
         _canvas.x = 70;
         _canvas.y = 70;
         _canvas.scaleX = _canvas.scaleY = 1.4;
+        this.addChild(_canvas);
+
+        _control = new AvatarControl(this);
+
+        _control.addEventListener(ControlEvent.AVATAR_SPOKE, avatarSpoke);
+
+//        _control.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
+//        _control.registerActions("");
+
+//        _control.addEventListener(ControlEvent.STATE_CHANGED, handleAction);
+//        _control.registerStates("");
+    }
+
+    protected function avatarSpoke (... ignored) :void
+    {
+        _speakFrames = 20;
     }
 
     protected override function handleFrame (... ignored) :void
     {
-        _canvas.rotation += 1;
+        if (_control.isMoving()) {
+            var orient :Number = _control.getOrientation();
+            this.scaleX = Math.abs(Math.sin(Math.PI * orient / 180));
+            _canvas.rotation += (_control.getOrientation() < 180) ? 10 : -10;
+        } else {
+            this.scaleX = Math.sqrt(this.scaleX);
+        }
 
         with (_canvas.graphics) {
             clear();
@@ -38,13 +62,26 @@ public class Zap extends FrameSprite
         var from :Point = new Point(0, -30);
         var to :Point = new Point(0, 30);
 
-        _canvas.graphics.lineStyle(1, 0xFFCC88);
+        var c1 :Number, c2 :Number, c3 :Number, w :Number;
+        if (_speakFrames > 0) {
+            _speakFrames -= 1;
+            c1 = c2 = c3 = 0xFFFFFF;
+            w = 3;
+
+        } else {
+            c1 = 0xFFCC88;
+            c2 = 0x88FFCC;
+            c3 = 0xCC88FF;
+            w = 1;
+        }
+
+        _canvas.graphics.lineStyle(w, c1);
 	recursiveLightning(from, to, 50);
 
-        _canvas.graphics.lineStyle(1, 0x88FFCC);
+        _canvas.graphics.lineStyle(w, c2);
 	recursiveLightning(from, to, 50);
 
-        _canvas.graphics.lineStyle(1, 0xCC88FF);
+        _canvas.graphics.lineStyle(w, c3);
 	recursiveLightning(from, to, 50);
     }
 
@@ -62,5 +99,7 @@ public class Zap extends FrameSprite
     }
 
     protected var _canvas :Sprite;
+    protected var _control :AvatarControl;
+    protected var _speakFrames :int;
 }
 }
