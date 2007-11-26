@@ -10,6 +10,8 @@ import flash.geom.Point;
 
 import flash.media.Sound;
 
+import com.whirled.ControlEvent;
+import com.whirled.FurniControl;
 
 /**
  * <code>Bell</code> is a simple ringable bell.
@@ -28,6 +30,11 @@ public class Bell extends Sprite
         var scale :Number = Math.min(100/_bellImg.width, 100/_bellImg.height);
         _bellImg.scaleX = _bellImg.scaleY = scale;
         furni.addChild(_bellImg);
+
+        _control = new FurniControl(this);
+        _control.addEventListener(ControlEvent.MESSAGE_RECEIVED, function (... ignored) :void {
+            ding();
+        });
     }
 
     public function clickHandler (event :MouseEvent) :void
@@ -35,9 +42,19 @@ public class Bell extends Sprite
         // Mouse events trigger even on transparent pixels, so we have to test the bitmap data.
         var p :Point = _bellImg.globalToLocal(new Point(event.stageX, event.stageY));
         if (_bellImg.bitmapData.hitTest(new Point(0, 0), 0, p)) {
-            _bellSnd.play();
+            if (_control.isConnected()) {
+                _control.sendMessage("ding");
+            }
+            ding();
         }
     }
+
+    protected function ding () :void
+    {
+        _bellSnd.play();
+    }
+
+    protected var _control :FurniControl;
 
     // An instance of the bell image to use
     protected var _bellImg :Bitmap = new _bellImgClass();
