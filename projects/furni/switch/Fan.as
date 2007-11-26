@@ -12,9 +12,6 @@ import com.threerings.util.EmbeddedSwfLoader;
 import com.whirled.FurniControl;
 import com.whirled.ControlEvent;
 
-import com.whirled.contrib.EntityStateEvent;
-import com.whirled.contrib.EntityStateListener;
-
 [SWF(width="400", height="400")]
 public class Fan extends Sprite
 {
@@ -33,14 +30,21 @@ public class Fan extends Sprite
 
         _control = new FurniControl(this);
         if (_control.isConnected()) {
-            _listener = new EntityStateListener(_control, "circuit01");
-            _listener.addEventListener(EntityStateEvent.STATE_CHANGED, setCircuitState);
+            _control.addEventListener(ControlEvent.ROOM_PROPERTY_CHANGED, handleChange);
+            update();
         }
     }
 
-    protected function setCircuitState (event :EntityStateEvent) :void
+    protected function handleChange (event :ControlEvent) :void
     {
-        if (event.value) {
+        if (event.name == Switch.KEY) {
+            update();
+        }
+    }
+
+    protected function update () :void
+    {
+        if (_control.getRoomProperty(Switch.KEY)) {
             _clip.play();
         } else {
             _clip.stop();
@@ -48,7 +52,6 @@ public class Fan extends Sprite
     }
 
     protected var _control :FurniControl;
-    protected var _listener :EntityStateListener;
     protected var _clip :MovieClip;
 
     [Embed(source="fan_clip.swf", mimeType="application/octet-stream")]
