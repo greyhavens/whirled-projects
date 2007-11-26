@@ -16,15 +16,9 @@ package {
 import flash.events.Event;
 import flash.events.EventDispatcher;
 
-import com.adobe.webapis.flickr.FlickrService;
-import com.adobe.webapis.flickr.PagedPhotoList;
-import com.adobe.webapis.flickr.Photo;
-import com.adobe.webapis.flickr.PhotoSize;
-import com.adobe.webapis.flickr.PhotoUrl;
-import com.adobe.webapis.flickr.events.FlickrResultEvent;
-
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.StringUtil;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.OccupantChangedEvent;
@@ -71,7 +65,8 @@ public class CaptionGame extends EventDispatcher
      * trophy).
      */
     public function CaptionGame (
-        gameCtrl :WhirledGameControl, previewCount :int = 4, scoreRounds :int = 10,
+        gameCtrl :WhirledGameControl, photoService :PhotoService = null,
+        previewCount :int = 4, scoreRounds :int = 10,
         captioningDuration :int = 45, votingDuration :int = 30, resultsDuration :int = 30,
 //        captioningDuration :int = 45, votingDuration :int = 10, resultsDuration :int = 10,
 //        captioningDuration :int = 20, votingDuration :int = 20, resultsDuration :int = 30,
@@ -82,6 +77,8 @@ public class CaptionGame extends EventDispatcher
         _scoreRounds = scoreRounds;
         _durations = [ captioningDuration, votingDuration, resultsDuration ];
         _minCaptionersStatStorage = _minCaptionersStatStorage;
+
+        _photoService = (photoService != null) ? photoService : new LatestFlickrPhotoService();
 
         init();
     }
@@ -280,7 +277,7 @@ public class CaptionGame extends EventDispatcher
         for (var ii :int = 0; ii < _previewCount; ii++) {
             var nexts :Array = _ctrl.get("next_" + ii) as Array;
             if (nexts != null) {
-                previewURLS[ii] = nexts[0]; // thumbnail..
+                previewURLS[ii] = nexts[0]; // preview info..
             }
         }
         return previewURLS;
@@ -781,7 +778,7 @@ public class CaptionGame extends EventDispatcher
 
         switch (ctrlPhase) {
         case GET_PHOTO_CTRL_PHASE:
-            loadNextPictures()
+            loadNextPictures();
             break;
 
         case INIT_VOTING_CTRL_PHASE:
@@ -930,18 +927,18 @@ public class CaptionGame extends EventDispatcher
      */
     protected function checkControl (... ignored) :void
     {
+        if (_inControl) {
+            return; // if we're already in control, we need do nothing
+        }
         _inControl = _ctrl.amInControl();
         if (!_inControl) {
             return;
         }
 
-        if (_flickr == null) {
-            // Set up the flickr service
-            // This is my (Ray Greenwell)'s personal Flickr key for this game!! Get your own!
-            _flickr = new FlickrService("5d29b1d793cc58bc495dda72e979f4af");
-            _flickr.addEventListener(FlickrResultEvent.PHOTOS_GET_RECENT, handlePhotoResult);
-            _flickr.addEventListener(FlickrResultEvent.PHOTOS_GET_SIZES, handlePhotoUrlKnown); 
-        }
+        // initialize the photo service
+        _photoService.init();
+        _photoService.addEventListener(PhotoService.PHOTO_AVAILABLE, handlePhotoAvailable);
+        _photoService.addEventListener(PhotoService.PREVIEW_AVAILABLE, handlePreviewAvailable);
 
 // TODO: not sure if this is needed. Complexity!
 //        // if someone dropped out right after ending the game,
@@ -959,10 +956,6 @@ public class CaptionGame extends EventDispatcher
      */
     protected function loadNextPictures () :void
     {
-        if (_photosToGet > 0) {
-            return; // already getting
-        }
-
         if (isCtrlPhase(GET_PHOTO_CTRL_PHASE)) {
             var url :String = chooseNextPhotoFromPreviews();
             if (url != null) {
@@ -971,20 +964,18 @@ public class CaptionGame extends EventDispatcher
             }
 
             // alas, we didn't have any previous photos, so pick one now
-            _photosToGet = 1;
-
-        } else if (_carryOverPreview != null) {
-            _ctrl.set("next_" + (_previewCount - 1), _carryOverPreview);
-            _carryOverPreview = null;
-            _photosToGet = _previewCount - 1;
-
-        } else {
-            // get all the previews
-            _photosToGet = _previewCount;
+            _photoService.getPhoto();
+            return;
         }
 
-//        trace("Requesting " + _photosToGet + " new photos.");
-        _flickr.photos.getRecent("", _photosToGet, 1);
+        var toGet :int = _previewCount;
+        if (_carryOverPreview != null) {
+            toGet--;
+            _ctrl.set("next_" + toGet, _carryOverPreview);
+            _carryOverPreview = null;
+        }
+
+        _photoService.getPreviews(toGet);
     }
 
     /**
@@ -1096,76 +1087,22 @@ public class CaptionGame extends EventDispatcher
         // TODO
     }
 
-    // Flickr result handlers
-    // ----------------------
-
     /**
-     * A photo was returned by flickr, now get the sizing info.
+     * Used only by the instance in control, handle the arrival of our next photo.
      */
-    protected function handlePhotoResult (evt :FlickrResultEvent) :void
+    protected function handlePhotoAvailable (event :ValueEvent) :void
     {
-        if (!evt.success) {
-            trace("Failure loading the next photo [" + evt.data.error.errorMessage + "]");
-            _photosToGet = 0;
-            return;
-        }
-
-        var photos :Array = (evt.data.photos as PagedPhotoList).photos;
-        for (var ii :int = 0; ii < photos.length; ii++) {
-            var photo :Photo = photos[ii] as Photo;
-            _flickr.photos.getSizes(photo.id);
-        }
+        var info :Array = event.value as Array;
+        startRound(info[0] as String);
     }
 
     /**
-     * The sizes of a photo are now known, either start the round or store
-     * the sizes as a preview photo.
+     * Used only by the instance in control, handle the arrival of a preview photo.
      */
-    protected function handlePhotoUrlKnown (evt :FlickrResultEvent) :void
+    protected function handlePreviewAvailable (event :ValueEvent) :void
     {
-        var id :int = --_photosToGet;
-
-        if (!evt.success) {
-            trace("Failure getting photo sizes [" + evt.data.error.errorMessage + "]");
-            return;
-        }
-
-        var returnedSizes :Array = (evt.data.photoSizes as Array);
-        var captionSize :PhotoSize = getPhotoSource(returnedSizes, CAPTION_SIZE);
-        if (captionSize == null) {
-            trace("Could not find photo sources for photo: " + returnedSizes);
-            return; // DOH
-        }
-
-        if (isCtrlPhase(GET_PHOTO_CTRL_PHASE)) {
-            startRound(captionSize.source);
-
-        } else {
-            var previewSize :PhotoSize = getPhotoSource(returnedSizes, PREVIEW_SIZE);
-            if (previewSize == null) {
-                trace("Could not find photo sources for photo: " + returnedSizes);
-                return;
-            }
-            _ctrl.set("next_" + id, [ previewSize.source, captionSize.source ]);
-        }
-    }
-
-    /**
-     * Find the closest matching photo size to the preferred sizes specified.
-     */
-    protected function getPhotoSource (photoSizes :Array, preferredSizes :Array) :PhotoSize
-    {
-        for each (var prefSize :String in preferredSizes) {
-            for each (var p :PhotoSize in photoSizes) {
-                if (p.label == prefSize) {
-                    return p;
-                }
-            }
-        }
-
-        // whoa!
-
-        return null;
+        var info :Array = event.value as Array;
+        _ctrl.set("next_" + info[0], [ info[1], info[2] ]);
     }
 
     /** Control phase constants, the phase that the control user is currently engaged in. */
@@ -1175,13 +1112,10 @@ public class CaptionGame extends EventDispatcher
 
     protected static const PHASE_COUNT :int = 3;
 
-    /** Preferred photo sizes for captioning. */
-    protected static const CAPTION_SIZE :Array = [ "Medium", "Small", "Original", "Thumbnail" ];
-
-    /** Preferred photo sizes for previewing. */
-    protected static const PREVIEW_SIZE :Array = [ "Thumbnail", "Square", "Small" ];
-
     protected var _ctrl :WhirledGameControl;
+    
+    /** The photo service we use for retrieving photos. */
+    protected var _photoService :PhotoService;
 
     /** How many previews should we load for the results phase? */
     protected var _previewCount :int
@@ -1243,13 +1177,7 @@ public class CaptionGame extends EventDispatcher
     /** Are we in control? */
     protected var _inControl :Boolean;
 
-    /** The flickr service (only used by the player in control). */
-    protected var _flickr :FlickrService;
-
-    /** How many photos is the player in control currently trying to retrieve? */
-    protected var _photosToGet :int;
-
-    /** The [ thumb , medium ] urls for the preview that took 2nd place last round. */
+    /** The preview info for a preview photo that was carried over from the last round. */
     protected var _carryOverPreview :Array;
 }
 }
