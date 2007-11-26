@@ -44,8 +44,9 @@ public class Bell extends Sprite
         if (_bellImg.bitmapData.hitTest(new Point(0, 0), 0, p)) {
             if (_control.isConnected()) {
                 _control.sendMessage("ding");
+            } else {
+                ding();
             }
-            ding();
         }
     }
 
