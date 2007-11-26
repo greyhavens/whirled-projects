@@ -11,12 +11,16 @@ import mx.utils.ObjectUtil;
 
 import com.threerings.util.Assert;
 
+import com.whirled.DataPack;
 import com.whirled.WhirledGameControl;
 import com.whirled.util.ContentPack;
 import com.whirled.util.ContentPackLoader;
+import com.whirled.util.DataPackLoader;
 
 import util.ContentLoader;
 import util.ContentPackUtil;
+
+import def.Definitions;
 
 
 public class Main
@@ -57,13 +61,49 @@ public class Main
         // initialize all the components
         _display = app.display;
 
+        var defs :Definitions = new Definitions("settings");
+
+        var levelPacks :Array = _whirled.getLevelPacks();
+        var packs :Array = levelPacks.map(function (definition :Object, i :*, a :*) :DataPack {
+                trace("WILL LOAD: " + definition.mediaURL);
+                return new DataPack(definition.mediaURL);
+                });
+        
+        
+        /*
+        var loader :DataPackLoader =
+            new DataPackLoader(  // _whirled.getLevelPacks(),
+                                 // [{ mediaURL: "http://127.0.0.1:8080/packs/ep2.data" }],
+                packs,
+                function (pack :DataPack) :void {
+                                    defs.processPack(pack);
+                                    
+                                    trace("Processing Pack: " + pack);
+                                    if (! pack.isComplete()) {
+                                        return;
+                                    }
+                                    
+                                    var settings :XML = pack.getFileAsXML("settings");
+                                    trace("settings: " + settings);
+                                    
+                                    trace("DEFS: " + defs.boards);
+                                    
+                                },
+                function (packs :Array) :void {
+                                    trace("ALL PACKS: " + packs);
+                                    trace("ALL DEFS: " + defs.boards);
+                                });
+        */
+                               
+        /*
         var c :ContentLoader = new ContentLoader(
             _whirled.getLevelPacks(),
             function (packs :Array) :void {
                 trace("CONTENT PACKS: " + ObjectUtil.toString(
                           ContentPackUtil.collectClassVariableDefinitions(
                               packs, "Settings", ["boards"])));
-            });
+                              });
+        */
     }
 
     protected function handleUnload (event :Event) :void

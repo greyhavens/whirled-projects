@@ -23,7 +23,7 @@ public class ContentLoader
     public function ContentLoader (definitions :Array, callback :Function)
     {
         _callback = callback;
-        _loader = new ContentPackLoader(definitions, handleGotOne, handleDone);        
+        _loader = new ContentPackLoader(definitions, handleGotOne, handleDone, true);        
     }
 
     /** Returns currently loaded content packs. */
