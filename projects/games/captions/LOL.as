@@ -120,10 +120,13 @@ public class LOL extends Sprite
         // For some reason, when the movie wraps around, we need to re-grab all the bits
         _ui.addFrameScript(0, initUIBits);
 
+        // TODO: get Brittney to label these frames?
+        _ui.addFrameScript(84, shrinkImageForWinnerScreen);
+        _ui.addFrameScript(219, unshrinkImageForResultsScreen);
+
         initUIBits();
         checkPhase(SKIP_TO_FRAME);
     }
-
 
     protected function initUIBits () :void
     {
@@ -584,16 +587,45 @@ for (var jj :int = 0; jj < 1; jj++) {
         return s;
     }
 
+    /**
+     * A frame callback for setting us up for the winner screen.
+     */
+    protected function shrinkImageForWinnerScreen () :void
+    {
+        if (_image.content != null) {
+            var loaderInfo :LoaderInfo = _image.content.loaderInfo;
+            // we need to make room for the "<bla> has won" label that shouldn't overlap the image
+            const MAX :int = 380;
+            if (loaderInfo.height > MAX) {
+                var scale :Number = MAX / loaderInfo.height;
+                _image.content.scaleX = scale
+                _image.content.scaleY = scale
+                alignImage();
+            }
+        }
+    }
+
+    /**
+     * A frame callback for setting us up for the winner screen.
+     */
+    protected function unshrinkImageForResultsScreen () :void
+    {
+        if (_image.content != null) {
+            _image.content.scaleX = 1;
+            _image.content.scaleY = 1;
+            alignImage();
+        }
+    }
+
     protected function alignImage () :void
     {
         // TODO: width/height should be available earlier!
         if (_image.content == null) {
             return;
         }
-        var loaderInfo :LoaderInfo = _image.content.loaderInfo;
 
-        _image.x = (MAX_IMAGE_WIDTH - loaderInfo.width) / 2;
-        _image.y = (MAX_IMAGE_HEIGHT - loaderInfo.height) / 2;
+        _image.x = (MAX_IMAGE_WIDTH - _image.content.width) / 2;
+        _image.y = (MAX_IMAGE_HEIGHT - _image.content.height) / 2;
     }
 
     /**
