@@ -1,6 +1,7 @@
 <settings>
   <boards>
-    <board name="EP1 Test" icon="Level06_BG.jpg" background="Level06_BG">
+    <board name="EP1 Test" background="Level06_BG">
+      <icon name="Level06_BG.jpg" width="700" height="500" />
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />

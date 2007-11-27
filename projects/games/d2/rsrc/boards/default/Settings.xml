@@ -1,11 +1,13 @@
 <settings>
   <boards>
-    <board name="Playground" icon="Level01_BG.jpg" background="Level01_BG">
+    <board name="Playground" background="Level01_BG">
+      <icon name="Level01_BG.jpg" width="700" height="500" />
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
     </board>
-    <board name="Halloween" icon="Level02_BG.jpg" background="Level02_BG">
+    <board name="Halloween" background="Level02_BG">
+      <icon name="Level02_BG.jpg" width="700" height="500" />
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
