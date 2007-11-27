@@ -59,17 +59,28 @@ public class Main
         trace("Tree House Defense 0.11.15");
 
         // initialize all the components
-        _display = app.display;
+        addUnloadListener(_display = app.display);
 
-        var defs :Definitions = new Definitions();
+        // load content packs. this is a little baroque, because we first wait for all datapacks
+        // to load, and then wait again for all embedded swfs to load up. 
+        var packs :Array = _whirled.getLevelPacks();
+        addUnloadListener(_defs = new Definitions(packs.length, doneLoadingContent));
 
+        // the first step of loading - just the data packs. we'll load swfs in Definitions.as
         var loader :DataPackLoader =
-            new DataPackLoader(
-                _whirled.getLevelPacks(),
-                function (pack :DataPack) :void { defs.processPack(pack); },
-                function (packs :Array) :void { _display.start(); });
+            new DataPackLoader(packs,
+                               function (pack :DataPack) :void { _defs.processPack(pack); });
+
+        // the rest of processing will happen in doneLoadingContent, which will get called
+        // from Definitions, after all data pack SWFs finished loading.
     }
 
+    protected function doneLoadingContent () :void
+    {
+        _display.start();
+        trace("SO DONE");
+    }
+    
     protected function addUnloadListener (listener :UnloadListener) :void
     {
         _unloadListeners.push(listener);
@@ -84,6 +95,8 @@ public class Main
         _whirled.unregisterListener(this);
     }
 
+
+    protected var _defs :Definitions;
     
     protected var _unloadListeners :Array = new Array(); // of UnloadListener
     
