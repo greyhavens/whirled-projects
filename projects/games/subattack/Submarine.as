@@ -185,7 +185,7 @@ public class Submarine extends BaseSprite
             } else {
                 _torpedos.push(new Torpedo(this, _board));
                 _movedOrShot = true;
-                _shootSound.play();
+//                _shootSound.play();
                 return OK;
             }
         }
