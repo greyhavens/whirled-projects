@@ -106,7 +106,16 @@ public class SeaDisplay extends Sprite
     public function setFollowSub (sub :Submarine) :void
     {
         _sub = sub;
-        subUpdated(sub, sub.getX(), sub.getY());
+        _followSub = sub.getGhost();
+        if (_followSub == null) {
+            _followSub = sub;
+        }
+        subUpdated(_followSub, sub.getX(), sub.getY());
+    }
+
+    public function applyGhostActions (actions :Array) :void
+    {
+        _sub.applyGhostActions(actions);
     }
 
     /**
@@ -151,7 +160,7 @@ public class SeaDisplay extends Sprite
      */
     public function subUpdated (sub :Submarine, xx :int, yy :int) :void
     {
-        if (_sub != sub) {
+        if (_followSub != sub) {
             return;
         }
 
@@ -197,6 +206,8 @@ public class SeaDisplay extends Sprite
     }
 
     /** The submarine that we're following. */
+    protected var _followSub :Submarine;
+
     protected var _sub :Submarine;
 
     protected var _downs :Array;

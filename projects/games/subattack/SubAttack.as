@@ -39,8 +39,8 @@ public class SubAttack extends Sprite
     public function SubAttack ()
     {
         _seaHolder = new Sprite();
-        _seaHolder.scaleX = 500 / 416;
-        _seaHolder.scaleY = 500 / 416;
+        _seaHolder.scaleX = 500 / (VIEW_TILES * SeaDisplay.TILE_SIZE);
+        _seaHolder.scaleY = 500 / (VIEW_TILES * SeaDisplay.TILE_SIZE);
         _seaHolder.x = 200;
         addChild(_seaHolder);
 
@@ -75,7 +75,8 @@ public class SubAttack extends Sprite
         _myIndex = _gameCtrl.seating.getMyPosition();
 
         if (_myIndex != -1) {
-            new KeyRepeatBlocker(_gameCtrl).addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+            //new KeyRepeatBlocker(_gameCtrl).addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
 
             addEventListener(Event.ENTER_FRAME, enterFrame);
         }
@@ -128,6 +129,8 @@ public class SubAttack extends Sprite
                 _lastSent = now;
             }
         }
+
+        _seaDisplay.applyGhostActions(actions);
     }
 
     protected function enterFrame (event :Event) :void

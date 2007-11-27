@@ -60,6 +60,11 @@ public class Board
             sub = (_subs[myIndex] as Submarine);
             _seaDisplay.setChildIndex(sub, _seaDisplay.numChildren - 1);
             _seaDisplay.setFollowSub(sub);
+
+            var ghost :GhostSubmarine = sub.getGhost();
+            if (ghost != null) {
+                _seaDisplay.addChild(ghost);
+            }
         }
 
         _seaDisplay.addEventListener(Event.ENTER_FRAME, enterFrame);

@@ -12,6 +12,8 @@ import flash.text.TextFormat;
 
 import flash.geom.ColorTransform;
 
+import com.threerings.util.Log;
+
 import com.whirled.WhirledGameControl;
 
 public class Submarine extends BaseSprite
@@ -71,8 +73,29 @@ public class Submarine extends BaseSprite
         _nameLabel.x = (SeaDisplay.TILE_SIZE - _nameLabel.textWidth) / 2;
         addChild(_nameLabel);
 
+        if (_gameCtrl.getMyId() == _playerId && !(this is GhostSubmarine)) {
+            _ghost = new GhostSubmarine(playerId, playerIdx, playerName, startx, starty,
+                board, gameCtrl);
+            _ghostActions = [];
+        }
+
         updateVisual();
         updateLocation();
+    }
+
+    public function getGhost () :GhostSubmarine
+    {
+        return _ghost;
+    }
+
+    public function applyGhostActions (actions :Array) :void
+    {
+        for each (var action :int in actions) {
+            _ghostActions.push(action);
+        }
+
+        // and apply them immediately
+        _ghost.addNewActions(actions);
     }
 
     public function getColorTransform () :ColorTransform
@@ -135,6 +158,10 @@ public class Submarine extends BaseSprite
             updateDeath();
             updateLocation();
             updateVisual();
+
+            if (_ghost != null) {
+                _ghost.respawn(xx, yy);
+            }
         }
     }
 
@@ -218,6 +245,18 @@ public class Submarine extends BaseSprite
                 return;
             }
             _queuedActions.shift();
+
+            // ensure that this is the top action in _ghostActions
+            if (_ghost != null) {
+                var ghostAction :int = int(_ghostActions.shift());
+                if (ghostAction != action) {
+                    trace("====OMG!");
+                    Log.dumpStack();
+                    return;
+                }
+                // update stuff with our ghost
+                _ghost.updateQueuedActions(_x, _y, _orient, _ghostActions);
+            }
         }
 
         if (_dead) {
@@ -259,6 +298,12 @@ public class Submarine extends BaseSprite
         updateVisual();
         updateDeath();
         _respawnTicks = AUTO_RESPAWN_TICKS;
+
+        if (_ghost != null) {
+            _ghostActions = [];
+            _ghost.updateQueuedActions(_x, _y, _orient, _ghostActions);
+            _ghost.wasKilled();
+        }
     }
 
     override protected function updateLocation () :void
@@ -279,9 +324,9 @@ public class Submarine extends BaseSprite
 
     protected function updateVisual () :void
     {
-        alpha = _dead ? 0 : 1;
+        alpha = _dead ? 0 : (this is GhostSubmarine) ? .5 : 1;
         // fucking label doesn't alpha out.. so we need to add or remove it
-        if (_dead != (_nameLabel.parent == null)) {
+        if (_nameLabel != null && _dead != (_nameLabel.parent == null)) {
             if (_dead) {
                 removeChild(_nameLabel);
             } else {
@@ -319,6 +364,10 @@ public class Submarine extends BaseSprite
             return 4;
         }
     }
+
+    protected var _ghost :GhostSubmarine;
+
+    protected var _ghostActions :Array;
 
     /** Queued actions. */
     protected var _queuedActions :Array = [];
