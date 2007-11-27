@@ -197,7 +197,7 @@ public class Fifteen extends Sprite
             _state[position] = BLANK_TILE;
             if (doSet) {
                 _stateQueue.length = 0; // truncate our state queue, we're taking control
-                _label.text = "YOU are modifying the puzzle.";
+                _label.text = "You are modifying the puzzle.";
                 _toy.setState(_state);
             }
 
