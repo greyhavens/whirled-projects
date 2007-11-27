@@ -1,33 +1,36 @@
 package {
 
-import flash.display.Loader;
+import flash.display.DisplayObject;
 import flash.events.Event;
-
 import flash.net.LocalConnection;
 import flash.system.Capabilities;
-import flash.utils.describeType;
 
-import mx.utils.ObjectUtil;
+import mx.containers.Canvas;
 
 import com.threerings.util.Assert;
 
 import com.whirled.DataPack;
 import com.whirled.WhirledGameControl;
-import com.whirled.util.ContentPack;
-import com.whirled.util.ContentPackLoader;
 import com.whirled.util.DataPackLoader;
+import com.whirled.contrib.GameMode;
+import com.whirled.contrib.GameModeStack;
 
 import util.ContentLoader;
 import util.ContentPackUtil;
 
 import def.Definitions;
 
+import modes.Splash;
 
-public class Main
+public class Main extends Canvas
 {
     protected var _whirled :WhirledGameControl;
+    protected var _modes :GameModeStack;
+    protected var _defs :Definitions;
 
-    protected var _display :Display;
+    public function get whirled () :WhirledGameControl { return _whirled; }
+    public function get modes () :GameModeStack { return _modes; }
+    public function get defs () :Definitions { return _defs; }
     
     /*
     protected var _monitor :Monitor;
@@ -58,15 +61,15 @@ public class Main
 
         trace("Tree House Defense 0.11.15");
 
-        // initialize all the components
-        addUnloadListener(_display = app.display);
+        // initialize graphics
+        _modes = new GameModeStack(modeSwitcher);
 
-        // load content packs. this is a little baroque, because we first wait for all datapacks
-        // to load, and then wait again for all embedded swfs to load up. 
+        // initialize all the components
         var packs :Array = _whirled.getLevelPacks();
         addUnloadListener(_defs = new Definitions(packs.length, doneLoadingContent));
 
-        // the first step of loading - just the data packs. we'll load swfs in Definitions.as
+        // load content packs. this is a little baroque, because we first wait for all datapacks
+        // to load, and then wait again for all embedded swfs to load up. 
         var loader :DataPackLoader =
             new DataPackLoader(packs,
                                function (pack :DataPack) :void { _defs.processPack(pack); });
@@ -77,7 +80,7 @@ public class Main
 
     protected function doneLoadingContent () :void
     {
-        _display.start();
+        _modes.push(new Splash(this));
         trace("SO DONE");
     }
     
@@ -95,9 +98,23 @@ public class Main
         _whirled.unregisterListener(this);
     }
 
+    /** Takes care of switching visible modes. */
+    protected function modeSwitcher (oldMode :GameMode, newMode :GameMode) :void
+    {
+        var oldChild :DisplayObject = oldMode as DisplayObject;
+        var newChild :DisplayObject = newMode as DisplayObject;
 
-    protected var _defs :Definitions;
-    
+        Assert.isNotNull(newChild); // we should never ever empty the mode stack
+
+        if (oldChild != null && this.contains(oldChild)) {
+            removeChild(oldChild);
+        }
+
+        if (newChild != null && ! this.contains(newChild)) {
+            addChild(newChild);
+        }
+    }
+
     protected var _unloadListeners :Array = new Array(); // of UnloadListener
     
     // This is a very naughty hack, using unsupported error handling to force a full GC pass.

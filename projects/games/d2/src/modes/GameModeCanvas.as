@@ -13,18 +13,12 @@ import com.whirled.contrib.GameModeStack;
 public class GameModeCanvas extends Canvas
     implements GameMode
 {
-    public function GameModeCanvas (modes :GameModeStack)
+    public function GameModeCanvas (main :Main)
     {
         super();
-        _modes = modes;
+        _main = main;
     }
 
-    /** Returns the current GameModeStack. */
-    public function getGameModeStack () :GameModeStack
-    {
-        return _modes;
-    }
-    
     // from interface GameMode
     public function pushed () :void
     {
@@ -49,6 +43,6 @@ public class GameModeCanvas extends Canvas
         // no op
     }
 
-    protected var _modes :GameModeStack;
+    protected var _main :Main;
 }
 }

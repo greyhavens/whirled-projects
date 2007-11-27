@@ -20,9 +20,9 @@ public class Splash extends GameModeCanvas
 {
     public static const HELP_URL :String = "http://wiki.whirled.com/Tree_House_Defense";
     
-    public function Splash (modes :GameModeStack)
+    public function Splash (main :Main)
     {
-        super(modes);
+        super(main);
     }
 
     // from interface GameMode
@@ -69,7 +69,7 @@ public class Splash extends GameModeCanvas
 
     protected function playClicked (event :MouseEvent) :void
     {
-        getGameModeStack().push(new SelectBoard(_modes));
+        _main.modes.push(new SelectBoard(_main));
     }
     
     [Embed(source="../../rsrc/splash/splash.swf")]

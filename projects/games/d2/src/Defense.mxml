@@ -5,7 +5,6 @@
         horizontalScrollPolicy="off" verticalScrollPolicy="off"
         layout="horizontal"
         applicationComplete="main.init(this);">
-    <Display id="display"/>
     <Main id="main"/>
     <mx:Style source="style.css"/>
 </mx:Application>
