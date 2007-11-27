@@ -51,14 +51,14 @@ public class EndGameSingle extends Dialog
 
         var restart :SimpleButton = _ctx.content.makeButton("Play Again");
         restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            clear();
+            _ctx.view.clearGameOverView();
             _ctx.control.playerReady();
         });
         addButton(restart, LEFT);
 
         var leave :SimpleButton = _ctx.content.makeButton("To Whirled");
         leave.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            clear();
+            _ctx.view.clearGameOverView();
             _ctx.control.backToWhirled();
         });
         addButton(leave, RIGHT);

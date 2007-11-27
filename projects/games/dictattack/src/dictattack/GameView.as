@@ -145,6 +145,9 @@ public class GameView extends Sprite
         for (var ii :int = 0; ii < names.length; ii++) {
             _shooters[ii].setName(names[ii]);
         }
+
+        // we might have one of these lingering about
+        clearGameOverView();
     }
 
     public function roundDidStart () :void
@@ -291,10 +294,21 @@ public class GameView extends Sprite
         }
     }
 
+    public function clearGameOverView () :void
+    {
+        if (_overifc != null) {
+            if (_overifc.parent != null) {
+                _overifc.clear();
+            }
+            _overifc = null;
+        }
+    }
+
     protected function showGameOver (flow :int) :void
     {
         if (!_ctx.model.isMultiPlayer()) {
-            new EndGameSingle(_ctx, flow).show(this);
+            _overifc = new EndGameSingle(_ctx, flow);
+            _overifc.show(this);
             return;
         }
 
@@ -329,23 +343,22 @@ public class GameView extends Sprite
         }
         text.text = msg;
 
-        var overifc :Dialog = new Dialog(text);
+        _overifc = new Dialog(text);
 
         var restart :SimpleButton = _ctx.content.makeButton("Play Again");
         restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            removeChild(overifc);
+            clearGameOverView();
             _ctx.control.playerReady();
         });
-        overifc.addButton(restart, Dialog.LEFT);
+        _overifc.addButton(restart, Dialog.LEFT);
 
         var leave :SimpleButton = _ctx.content.makeButton("To Whirled");
         leave.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            removeChild(overifc);
+            clearGameOverView();
             _ctx.control.backToWhirled();
         });
-        overifc.addButton(leave, Dialog.RIGHT);
-
-        overifc.show(this);
+        _overifc.addButton(leave, Dialog.RIGHT);
+        _overifc.show(this);
     }
 
     protected function showHelp () :void
@@ -470,6 +483,8 @@ public class GameView extends Sprite
 
     protected var _hiscores :TextField;
 
+    protected var _overifc :Dialog;
+
     protected static const POS_MAP :Array = [
         [ 3, 1, 0, 2 ], [ 1, 3, 2, 0 ], [ 2, 0, 3, 1 ], [ 0, 2, 1, 3 ] ];
 
@@ -478,5 +493,4 @@ public class GameView extends Sprite
 
     protected static const CHAT_HEIGHT :int = 200;
 }
-
 }

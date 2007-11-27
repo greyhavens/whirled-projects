@@ -65,10 +65,17 @@ public class Dialog extends Sprite
 
     public function clear () :void
     {
-        var iLoveActionScriptLikeTheSonINeverHad :Sprite = this;
+        // if we've already been asked to clear, ignore subsequent reqeusts
+        if (_view == null) {
+            return;
+        }
+
+        var meMyselfAndI :Sprite = this;
+        var view :GameView = _view;
+        _view = null;
         LinePath.moveTo(this, x, -height, 500).start(function (path :Path) :void {
-            _view.removeChild(iLoveActionScriptLikeTheSonINeverHad);
-            _view.focusInput(true);
+            view.removeChild(meMyselfAndI);
+            view.focusInput(true);
         });
     }
 
