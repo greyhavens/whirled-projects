@@ -1,6 +1,9 @@
 package def {
 
+import mx.utils.ObjectUtil;
+    
 import com.threerings.util.Assert;
+import com.threerings.util.HashObjectMap;
 
 import com.whirled.DataPack;
 
@@ -11,12 +14,8 @@ public class Definitions
 {
     /** Array of BoardDefinition instances. */
     public var boards :Array = new Array();
-    
-    public function Definitions (settingsFileName :String)
-    {
-        _settingsFile = settingsFileName;
-    }
 
+    /** Reads definitions from a single data pack, and stores them internally. */
     public function processPack (pack :DataPack) :void
     {
         if (! pack.isComplete()) {
@@ -24,15 +23,27 @@ public class Definitions
             return;
         }
 
-        var settings :XML = pack.getFileAsXML(_settingsFile);
-        Assert.isNotNull(settings, "Failed to retrieve " + _settingsFile + " from " + pack);
+        var settings :XML = pack.getFileAsXML("settings");
+        Assert.isNotNull(settings, "Failed to retrieve settings from " + pack);
+        trace("SETTINGS: " + settings);
+        
+        pack.getDisplayObjects([ "boards", "units" ],
+                               function (results :Object) :void {
+                                   _allSwfs.put(pack, results);
 
-        trace ("PROCESSPACK SETTINGS: " + pack.getFileAsXML(_settingsFile));
+                                   trace("SWFs so far: " + ObjectUtil.toString(results));
+                               },
+                               true);
+        
         for each (var board :XML in settings.boards.board) {
                 boards.push(new BoardDefinition(pack, board));
             }
     }
 
-    protected var _settingsFile :String;
+    /**
+     * Collection of all display objects from all packs. It maps from DataPack to an object,
+     * whose keys are SWF names "board" and "units", and whose values are actual SWF loaders.
+     */
+    protected var _allSwfs :HashObjectMap = new HashObjectMap();
 }
 }

@@ -24,6 +24,7 @@ import com.whirled.contrib.GameModeStack;
  * Display class that contains everything visible to the player.
  */
 public class Display extends Canvas
+    implements UnloadListener
 {
     public function Display ()
     {
@@ -38,11 +39,20 @@ public class Display extends Canvas
         
         // initialize graphics
         _modes = new GameModeStack(modeSwitcher);
-
-        // base mode
-        _modes.push(new Splash(_modes));
     }
 
+    // from interface UnloadListener
+    public function handleUnload (event :Event) :void
+    {
+        // handle all event unsubscriptions here
+    }
+
+    /** Creates the initial splash screen mode. This will trigger everything else. */
+    public function start () :void
+    {    
+        _modes.push(new Splash(_modes));
+    }
+    
     /** Takes care of switching visible modes. */
     protected function modeSwitcher (oldMode :GameMode, newMode :GameMode) :void
     {

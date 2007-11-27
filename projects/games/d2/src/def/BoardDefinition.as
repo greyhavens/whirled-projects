@@ -21,13 +21,11 @@ public class BoardDefinition
         
     public function BoardDefinition (pack :DataPack, board :XML)
     {
-        trace("My Pack: "  + pack);
-        trace("My Board: " + board);
-        trace("My Board name: " + board.@name);
+        trace("Board name: " + board.@name);
         this.name = board.@name;
         this.icon = board.@icon;
         this.background = board.@background;
-
+        
         this.squares = new Point(int(board.squares.@cols), int(board.squares.@rows));
         this.pixelsize = new Point(int(board.pixelsize.@width), int(board.pixelsize.@height));
         this.topleft = new Point(int(board.topleft.@x), int(board.topleft.@y));

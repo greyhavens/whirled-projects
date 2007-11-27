@@ -61,65 +61,31 @@ public class Main
         // initialize all the components
         _display = app.display;
 
-        var defs :Definitions = new Definitions("settings");
+        var defs :Definitions = new Definitions();
 
-        var levelPacks :Array = _whirled.getLevelPacks();
-        var packs :Array = levelPacks.map(function (definition :Object, i :*, a :*) :DataPack {
-                trace("WILL LOAD: " + definition.mediaURL);
-                return new DataPack(definition.mediaURL);
-                });
-        
-        
-        /*
         var loader :DataPackLoader =
-            new DataPackLoader(  // _whirled.getLevelPacks(),
-                                 // [{ mediaURL: "http://127.0.0.1:8080/packs/ep2.data" }],
-                packs,
-                function (pack :DataPack) :void {
-                                    defs.processPack(pack);
-                                    
-                                    trace("Processing Pack: " + pack);
-                                    if (! pack.isComplete()) {
-                                        return;
-                                    }
-                                    
-                                    var settings :XML = pack.getFileAsXML("settings");
-                                    trace("settings: " + settings);
-                                    
-                                    trace("DEFS: " + defs.boards);
-                                    
-                                },
-                function (packs :Array) :void {
-                                    trace("ALL PACKS: " + packs);
-                                    trace("ALL DEFS: " + defs.boards);
-                                });
-        */
-                               
-        /*
-        var c :ContentLoader = new ContentLoader(
-            _whirled.getLevelPacks(),
-            function (packs :Array) :void {
-                trace("CONTENT PACKS: " + ObjectUtil.toString(
-                          ContentPackUtil.collectClassVariableDefinitions(
-                              packs, "Settings", ["boards"])));
-                              });
-        */
+            new DataPackLoader(
+                _whirled.getLevelPacks(),
+                function (pack :DataPack) :void { defs.processPack(pack); },
+                function (packs :Array) :void { _display.start(); });
     }
 
+    protected function addUnloadListener (listener :UnloadListener) :void
+    {
+        _unloadListeners.push(listener);
+    }
+    
     protected function handleUnload (event :Event) :void
     {
-        /*
-        for each (var obj :Object in [ _monitor, _game, _controller,
-                                       _validator, _board, _display, _loader ]) {
-            var handler :Function = obj["handleUnload"];
-            if (handler != null) {
-                handler(event);
+        for each (var listener :UnloadListener in _unloadListeners) {
+                listener.handleUnload(event);
             }
-            }
-        */
+
         _whirled.unregisterListener(this);
     }
 
+    
+    protected var _unloadListeners :Array = new Array(); // of UnloadListener
     
     // This is a very naughty hack, using unsupported error handling to force a full GC pass.
     // Without this, some debug players will allocate *all* available OS memory (I'm looking
