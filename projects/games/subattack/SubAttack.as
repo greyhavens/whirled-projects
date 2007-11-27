@@ -1,5 +1,6 @@
 package {
 
+import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
@@ -37,15 +38,24 @@ public class SubAttack extends Sprite
 
     public function SubAttack ()
     {
-        addChild(_seaDisplay = new SeaDisplay());
+        _seaHolder = new Sprite();
+        _seaHolder.scaleX = 500 / 416;
+        _seaHolder.scaleY = 500 / 416;
+        _seaHolder.x = 200;
+        addChild(_seaHolder);
+
+        _seaHolder.addChild(_seaDisplay = new SeaDisplay());
+
+        addChild(new SIDEBAR() as DisplayObject);
 
         var maskSize :int = VIEW_TILES * SeaDisplay.TILE_SIZE;
         var masker :Shape = new Shape();
         masker.graphics.beginFill(0xFFFFFF);
         masker.graphics.drawRect(0, 0, maskSize, maskSize);
         masker.graphics.endFill();
-        this.mask = masker;
-        addChild(masker); // the mask must be added to the display
+        //masker.x = 200;
+        _seaHolder.mask = masker;
+        _seaHolder.addChild(masker); // the mask must be added to the display
 
         // set up a fake starting sea
         _seaDisplay.setupSea(VIEW_TILES, VIEW_TILES);
@@ -89,8 +99,8 @@ public class SubAttack extends Sprite
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
         _seaDisplay.clearStatus();
-        removeChild(_seaDisplay);
-        addChildAt(_seaDisplay = new SeaDisplay(), 0);
+        _seaHolder.removeChild(_seaDisplay);
+        _seaHolder.addChild(_seaDisplay = new SeaDisplay());
         _board = new Board(_gameCtrl, _seaDisplay);
     }
 
@@ -173,6 +183,8 @@ public class SubAttack extends Sprite
     /** Represents our board. */
     protected var _board :Board;
 
+    protected var _seaHolder :Sprite;
+
     /** The visual display of the game. */
     protected var _seaDisplay :SeaDisplay;
 
@@ -184,6 +196,9 @@ public class SubAttack extends Sprite
 
     /** The actions we have queued to be sent. */
     protected var _queued :Array;
+
+    [Embed(source="sidebar.png")]
+    protected static const SIDEBAR :Class;
 
     protected static const SEND_THROTTLE :int = 105;
 }
