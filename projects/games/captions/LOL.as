@@ -132,6 +132,7 @@ public class LOL extends Sprite
             // the UI doesn't seem to be ready to read. Wait.
             return;
         }
+        _image.scaleContent = false;
 
         _skipBox = find("skip") as CheckBox;
         _skipBox.label = "              "; // so that it's more easily clickable
@@ -583,12 +584,26 @@ for (var jj :int = 0; jj < 1; jj++) {
         return s;
     }
 
+    protected function alignImage () :void
+    {
+        // TODO: width/height should be available earlier!
+        if (_image.content == null) {
+            return;
+        }
+        var loaderInfo :LoaderInfo = _image.content.loaderInfo;
+
+        _image.x = (MAX_IMAGE_WIDTH - loaderInfo.width) / 2;
+        _image.y = (MAX_IMAGE_HEIGHT - loaderInfo.height) / 2;
+    }
+
     /**
      * Handle image loading.
      */
     protected function handleImageProgress (event :ProgressEvent) :void
     {
-        // TODO: See if we can properly access the width/height DURING loading.
+        if (event.target == _image) {
+            alignImage();
+        }
     }
 
     /**
@@ -599,6 +614,10 @@ for (var jj :int = 0; jj < 1; jj++) {
         // and also update the text field position
         if (_input != null) {
             handleTextFieldChanged(_input);
+        }
+
+        if (event.target == _image) {
+            alignImage();
         }
     }
 
@@ -635,7 +654,7 @@ for (var jj :int = 0; jj < 1; jj++) {
     protected function handleTextFieldChanged (field :TextField) :void
     {
         var w :int = MIN_IMAGE_WIDTH;
-        var h :int = 500;
+        var h :int = MAX_IMAGE_HEIGHT;
         // position the field properly over the image control
         if (_image.content != null) {
             w = Math.max(w, _image.content.width);
@@ -654,8 +673,9 @@ for (var jj :int = 0; jj < 1; jj++) {
             fieldHeight = field.textHeight + 4;
         }
 
-        var p :Point = new Point((500 - w) / 2, (500 - h) / 2 + h - fieldHeight);
-        p = _image.localToGlobal(p);
+        var p :Point = new Point((MAX_IMAGE_WIDTH - w) / 2,
+            (MAX_IMAGE_HEIGHT - h) / 2 + h - fieldHeight);
+        p = _image.parent.localToGlobal(p);
         var paletteP :Point = _inputPalette.parent.globalToLocal(p);
         _inputPalette.y = paletteP.y;
 
@@ -719,7 +739,6 @@ for (var jj :int = 0; jj < 1; jj++) {
     protected static const UI :Class;
 
     protected static const IDEAL_WIDTH :int = 700;
-
     protected static const IDEAL_HEIGHT :int = 500;
 
     /** Constants to pass to checkPhase(). */
@@ -731,6 +750,10 @@ for (var jj :int = 0; jj < 1; jj++) {
      * It might be nice to restrict flickr photos to those sizes. */
     protected static const MIN_IMAGE_WIDTH :int = 350;
     protected static const MIN_IMAGE_HEIGHT :int = 350;
+
+    /** The maximum size of an image. */
+    protected static const MAX_IMAGE_WIDTH :int = 500;
+    protected static const MAX_IMAGE_HEIGHT :int = 500;
 
     /** The width of the voting/results pane, which is the ideal width, minus padding, 
      * minus the sidebar and minus a possible scrollbar. */
