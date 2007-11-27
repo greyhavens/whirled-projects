@@ -58,6 +58,20 @@ public class Submarine extends BaseSprite
         _avatar.transform.colorTransform = _colorTransform;
         addChild(_avatar);
 
+        setupNameLabel(playerName);
+
+        if (_gameCtrl.getMyId() == _playerId && !(this is GhostSubmarine)) {
+            _ghost = new GhostSubmarine(playerId, playerIdx, playerName, startx, starty,
+                board, gameCtrl);
+            _ghostActions = [];
+        }
+
+        updateVisual();
+        updateLocation();
+    }
+
+    protected function setupNameLabel (playerName :String) :void
+    {
         _nameLabel = new TextField();
         var tf :TextFormat = new TextFormat();
         tf.size = 16;
@@ -72,15 +86,6 @@ public class Submarine extends BaseSprite
         _nameLabel.y = -1 * (_nameLabel.textHeight + NAME_PADDING);
         _nameLabel.x = (SeaDisplay.TILE_SIZE - _nameLabel.textWidth) / 2;
         addChild(_nameLabel);
-
-        if (_gameCtrl.getMyId() == _playerId && !(this is GhostSubmarine)) {
-            _ghost = new GhostSubmarine(playerId, playerIdx, playerName, startx, starty,
-                board, gameCtrl);
-            _ghostActions = [];
-        }
-
-        updateVisual();
-        updateLocation();
     }
 
     public function getGhost () :GhostSubmarine
