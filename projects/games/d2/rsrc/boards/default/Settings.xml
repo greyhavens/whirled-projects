@@ -10,5 +10,20 @@
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
     </board>
+    <board name="Yeti Land" background="Level03_BG" icon="Level03_BG.jpg">
+      <squares cols="17" rows="22" />
+      <pixelsize width="510" height="440" />
+      <topleft x="40" y="27" />
+    </board>
+    <board name="Crabs!" background="Level04_BG" icon="Level04_BG.jpg">
+      <squares cols="17" rows="22" />
+      <pixelsize width="510" height="440" />
+      <topleft x="40" y="27" />
+    </board>
+    <board name="Playground" background="Level05_BG" icon="Level05_BG.png">
+      <squares cols="17" rows="22" />
+      <pixelsize width="510" height="440" />
+      <topleft x="40" y="27" />
+    </board>
   </boards>
 </settings>
