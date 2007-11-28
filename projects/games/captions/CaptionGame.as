@@ -93,22 +93,9 @@ public class CaptionGame extends EventDispatcher
      *    configureTrophyConsecutiveWin("silver_wins", 5);
      *    configureTrophyConsecutiveWin("gold_wins", 10);
      */
-    public function configureTrophyConsecutiveWin (
-        trophyIdent :String, consecWins :int, minPlayers :int = 3) :void
+    public function configureTrophyConsecutiveWin (trophyIdent :String, consecWins :int) :void
     {
-        // TODO
-    }
-
-    /**
-     * Configure a trophy to be awarded if a player receives at least a certain percentage
-     * of votes over a number of consecutive rounds.
-     *
-     * I guess if you win one of these you also automatically win the consecWin trophy..
-     */
-    public function configureTrophyPercentVotesOverRounds (
-        trophyIdent :String, percentVotes :Number, overRounds :int, minPlayers :int = 3) :void
-    {
-        // TODO
+        _trophiesConsecWins[trophyIdent] = consecWins;
     }
 
     /**
@@ -605,30 +592,34 @@ public class CaptionGame extends EventDispatcher
         _results = [];
 
         var flowScores :Object = {};
-        var playerId :String;
+        var playerIdStr :String;
+        var playerId :int;
         var winnerVal :int = -1;
+        var winnerIds :Array = [];
         for (ii = 0; ii < indexes.length; ii++) {
 
             var index :int = int(indexes[ii]);
             var result :int = int(results[index]);
-            playerId = String(ids[index]);
+            playerId = int(ids[index]);
+            playerIdStr = String(playerId);
 
             if (_inControl) {
-                flowScores[playerId] = CAPTION_SCORE;
+                flowScores[playerIdStr] = CAPTION_SCORE;
             }
 
             var record :Object = {};
             record.caption = String(caps[index]);
-            record.playerName = String(_ctrl.get("name:" + playerId));
+            record.playerName = String(_ctrl.get("name:" + playerIdStr));
             record.votes = int(Math.abs(result));
             record.disqual = (result < 0);
 
             if (result > 0 && (-1 == winnerVal || result == winnerVal)) {
                 // we can have multiple winners..
                 winnerVal = result;
+                winnerIds.push(playerId);
 
                 if (_inControl) {
-                    flowScores[playerId] = WINNER_SCORE + int(flowScores[playerId]);
+                    flowScores[playerIdStr] = WINNER_SCORE + int(flowScores[playerIdStr]);
                 }
                 record.winner = true;
 
@@ -641,21 +632,23 @@ public class CaptionGame extends EventDispatcher
 
         updateScoreDisplay();
 
+        computeConsecWinners(winnerIds, indexes.length);
+
         // if we're in control, do score awarding for all players (ending the "game" (round))
         if (_inControl) {
             // give points just for voting (people may have voted but not be in the other array)
             var props :Array = _ctrl.getPropertyNames("vote:");
             for each (var prop :String in props) {
-                playerId = prop.substring(5);
-                flowScores[playerId] = VOTE_SCORE + int(flowScores[playerId]);
+                playerIdStr = prop.substring(5);
+                flowScores[playerIdStr] = VOTE_SCORE + int(flowScores[playerIdStr]);
             }
 
             // now turn it into two parallel arrays for reporting to the game
             var scoreIds :Array = [];
             var scores :Array = [];
-            for (playerId in flowScores) {
-                scoreIds.push(parseInt(playerId));
-                scores.push(int(flowScores[playerId]));
+            for (playerIdStr in flowScores) {
+                scoreIds.push(parseInt(playerIdStr));
+                scores.push(int(flowScores[playerIdStr]));
             }
 //            trace("ids    : " + scoreIds);
 //            trace("scores : " + scores);
@@ -748,6 +741,82 @@ public class CaptionGame extends EventDispatcher
             var count :int = int(_trophiesUnanimous[trophyName]);
             if (numCaptions >= count) {
                 trace("Awarding trophy to " + _myName + ": " + trophyName);
+                _ctrl.awardTrophy(trophyName);
+            }
+        }
+    }
+
+    /**
+     * Compute the consecutive winner data, and store it if we're in control.
+     */
+    // TODO: if control changes during the results phase, it's possible that this
+    // may get called twice and store data for the round twice.
+    protected function computeConsecWinners (winnerIds :Array, numCaptions :int) :void
+    {
+        if (numCaptions < _minCaptionersStatStorage) {
+            // don't count this round
+            return;
+        }
+
+        var curWinners :Array = winnerIds.concat(); // make a copy
+
+        var winnerData :Array = _ctrl.get("winnerData") as Array;
+        if (winnerData == null) {
+            winnerData = [];
+        }
+
+        // go through all the past winners and prune any ids that are not present in the
+        // current set
+        for (var ii :int = 0; ii < winnerData.length; ii++) {
+            var oldRound :Array = winnerData[ii] as Array;
+            for (var jj :int = oldRound.length - 1; jj >= 0; jj--) {
+                var id :int = int(oldRound[jj]);
+                if (curWinners.indexOf(id) == -1) {
+                    // this old winner is not present in this round, so prune it
+                    oldRound.splice(jj, 1);
+                }
+            }
+            if (oldRound.length > 0) {
+                // and then, for the round previous to THAT, we use whoever's left
+                curWinners = oldRound;
+
+            } else {
+                // we obliterated the old round
+                winnerData.length = ii; // truncate the old winner data
+                break; // and we're done processing
+            }
+        }
+
+        // now add the new data to the front of the array
+        winnerData.unshift(winnerIds);
+        if (_inControl) {
+            _ctrl.set("winnerData", winnerData);
+        }
+
+        // finally, check this data for consecutive win info..
+        checkConsecWinTrophies(winnerData);
+    }
+
+    /**
+     * Check to see if we should award any trophies for consecutive wins.
+     */
+    protected function checkConsecWinTrophies (winnerData :Array) :void
+    {
+        // first compute how many wins in a row we've had..
+        var ourWins :int = 0;
+        for (var ii :int = 0; ii < winnerData.length; ii++) {
+            var roundData :Array = winnerData[ii] as Array;
+            if (roundData.indexOf(_myId) == -1) {
+                break;
+            } else {
+                ourWins++;
+            }
+        }
+
+        for (var trophyName :String in _trophiesConsecWins) {
+            var count :int = int(_trophiesConsecWins[trophyName]);
+            if (ourWins >= count) {
+//                trace("Awarding trophy to " + _myName + ": " + trophyName);
                 _ctrl.awardTrophy(trophyName);
             }
         }
@@ -1155,6 +1224,9 @@ public class CaptionGame extends EventDispatcher
 
     /** Stores info on trophies for (nearly) unanimous winning trophies. */
     protected var _trophiesUnanimous :Object = {};
+
+    /** Stores info on trophies for consecutive wins. */
+    protected var _trophiesConsecWins :Object = {};
 
     /** Our last-submitted vote. */
     protected var _myVote :Array;
