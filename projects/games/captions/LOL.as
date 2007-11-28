@@ -97,6 +97,15 @@ public class LOL extends Sprite
         _game.addEventListener(CaptionGame.TICK_EVENT, updateClock);
         _game.addEventListener(CaptionGame.PHASE_CHANGED_EVENT, handlePhaseChanged);
 
+        _game.configureTrophyConsecutiveWin("3wins", 3);
+        _game.configureTrophyConsecutiveWin("5wins", 5);
+        _game.configureTrophyConsecutiveWin("10wins", 10);
+        _game.configureTrophyCaptionsSubmittedEver("10caps", 10);
+        _game.configureTrophyCaptionsSubmittedEver("100caps", 100);
+        _game.configureTrophyCaptionsSubmittedEver("500caps", 500);
+        _game.configureTrophyCaptionsSubmittedEver("1000caps", 1000);
+        _game.configureTrophyUnanimous("unanimous", 5 /* mincaptions*/);
+
         _timer = new Timer(500);
         _timer.addEventListener(TimerEvent.TIMER, handleSubmitCaption);
 
