@@ -62,9 +62,9 @@ public class Definitions
         trace("Got swfs: " + swfs);
         trace("Boards: " + swfs.boards);
         trace("Units: " + swfs.units);
-        
+
         for each (var board :XML in settings.boards.board) {
-                var bd :BoardDefinition = new BoardDefinition(swfs.boards, board);
+                var bd :BoardDefinition = new BoardDefinition(++_nextid, swfs.boards, board);
                 trace("Pushing definition: " + bd);
                 boards.push(bd);
             }
@@ -79,6 +79,9 @@ public class Definitions
 
     /** Callback that will be run once we run out of packs to process. */
     protected var _callback :Function;
+
+    /** Id counter across all definitions. */
+    protected static var _nextid :int = 0;
     
     /**
      * Collection of all display objects from all packs. It maps from DataPack to an object,

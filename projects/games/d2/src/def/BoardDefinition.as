@@ -11,6 +11,7 @@ import com.threerings.util.EmbeddedSwfLoader;
  */
 public class BoardDefinition
 {
+    public var id :int;
     public var swf :EmbeddedSwfLoader;
     
     public var name :String;
@@ -21,8 +22,9 @@ public class BoardDefinition
     public var pixelsize :Point;
     public var topleft :Point;
         
-    public function BoardDefinition (swf :EmbeddedSwfLoader, board :XML)
+    public function BoardDefinition (id :int, swf :EmbeddedSwfLoader, board :XML)
     {
+        this.id = id;
         this.swf = swf;
         
         this.name = board.@name;

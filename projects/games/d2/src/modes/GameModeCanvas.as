@@ -1,5 +1,4 @@
-package modes
-{
+package modes {
 
 import mx.containers.Canvas;
 

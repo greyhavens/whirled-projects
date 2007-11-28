@@ -16,6 +16,8 @@ import com.threerings.util.Assert;
 
 import com.whirled.contrib.GameModeStack;
 
+import select.SelectBoard;
+
 public class Splash extends GameModeCanvas
 {
     public static const HELP_URL :String = "http://wiki.whirled.com/Tree_House_Defense";

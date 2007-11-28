@@ -1,4 +1,4 @@
-package modes {
+package select {
 
 import flash.display.DisplayObject;
 import flash.display.SimpleButton;
@@ -7,6 +7,7 @@ import flash.events.MouseEvent;
 
 import mx.core.BitmapAsset;
 import mx.core.MovieClipLoaderAsset;
+import mx.containers.VBox;
 import mx.controls.Image;
 
 import com.threerings.flash.DisplayUtil;
@@ -16,6 +17,8 @@ import com.whirled.contrib.GameMode;
 import com.whirled.contrib.GameModeStack;
 
 import def.BoardDefinition;
+
+import modes.GameModeCanvas;
 
 public class SelectBoard extends GameModeCanvas
 {
@@ -55,18 +58,8 @@ public class SelectBoard extends GameModeCanvas
     /** Displays board pictures for all boards, so that players can pick. */
     protected function displayBoardPictures () :void
     {
-        var x :int = 30;
-        var y :int = 30;
-        for each (var board :BoardDefinition in _main.defs.boards) {
-                var icon :Image = new Image();
-                icon.source = new BitmapAsset(board.icon);
-                icon.x = x;
-                icon.y = y;
-                // test test test
-                x += 50;
-                y += 30;
-                addChild(icon);
-            }
+        _display = new BoardDisplay(_main.defs);
+        addChild(_display);
     }
 
     /** Called when the user clicked the back button. */
@@ -80,6 +73,9 @@ public class SelectBoard extends GameModeCanvas
     /** Loader for the embedded screen selection swf. */
     protected var _loader :MovieClipLoaderAsset;
 
+    /** Board selection container. */
+    protected var _display :VBox;
+    
     /** Screen selection screen. */
     [Embed(source="../../rsrc/selectscreen/selectscreen.swf")]
     protected static const _screen :Class;

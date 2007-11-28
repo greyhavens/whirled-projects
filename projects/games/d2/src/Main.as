@@ -1,11 +1,14 @@
 package {
 
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.net.LocalConnection;
 import flash.system.Capabilities;
 
+import mx.controls.Image;
 import mx.containers.Canvas;
+import mx.core.BitmapAsset;
 
 import com.threerings.util.Assert;
 
@@ -47,6 +50,17 @@ public class Main extends Canvas
     protected var _level :Level;
     */
 
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+
+        var mask :BitmapData = new BitmapData(700, 500);
+        mask.floodFill(0, 0, 0x00000000);
+        var img :Image = new Image();
+        img.source = new BitmapAsset(mask);
+        addChild(img);
+        this.mask = img;
+    }        
 
     public function init (app :Defense) :void
     {
@@ -199,6 +213,12 @@ public class Main extends Canvas
             });
     }
         */
-   
+
+
+    // Silly embed to force the font to compile into the SWF file.
+    [Embed(source='../rsrc/fonts/dadhand.ttf', fontName='defaultFont',
+           mimeType='application/x-font' )]
+    private static const _defaultFont :Class;
+
 }
 }

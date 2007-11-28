@@ -54,6 +54,15 @@ TitleWindow {
    titleStyleName: "mypanelStyle";
 }
 
+.boardSelectionContainer {
+  horizontalGap: 40; 
+}
+
+.boardSelectionLabel { 
+  fontSize: 18;
+  color: #000000;
+}
+
 .mypanelStyle {
   fontFamily: defaultFont;
   color: #ffffff;
