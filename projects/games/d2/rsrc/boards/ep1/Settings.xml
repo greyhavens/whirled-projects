@@ -1,6 +1,6 @@
-<settings>
+<settings packname="EP1">
   <boards>
-    <board name="EP1 Test" background="Level06_BG" icon="Level06_BG.jpg">
+    <board name="This is a very long board name. I wonder what will break? I can't tell anymore." background="Level06_BG" icon="Level06_BG.jpg">
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
