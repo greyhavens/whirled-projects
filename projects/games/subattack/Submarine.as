@@ -60,11 +60,11 @@ public class Submarine extends BaseSprite
 
         setupNameLabel(playerName);
 
-        if (_gameCtrl.getMyId() == _playerId && !(this is GhostSubmarine)) {
-            _ghost = new GhostSubmarine(playerId, playerIdx, playerName, startx, starty,
-                board, gameCtrl);
-            _ghostActions = [];
-        }
+//        if (_gameCtrl.getMyId() == _playerId && !(this is GhostSubmarine)) {
+//            _ghost = new GhostSubmarine(playerId, playerIdx, playerName, startx, starty,
+//                board, gameCtrl);
+//            _ghostActions = [];
+//        }
 
         updateVisual();
         updateLocation();
@@ -95,12 +95,14 @@ public class Submarine extends BaseSprite
 
     public function applyGhostActions (actions :Array) :void
     {
-        for each (var action :int in actions) {
-            _ghostActions.push(action);
-        }
+        if (_ghost != null) {
+            for each (var action :int in actions) {
+                _ghostActions.push(action);
+            }
 
-        // and apply them immediately
-        _ghost.addNewActions(actions);
+            // and apply them immediately
+            _ghost.addNewActions(actions);
+        }
     }
 
     public function getColorTransform () :ColorTransform
@@ -346,7 +348,7 @@ public class Submarine extends BaseSprite
     protected function updateDisplayedScore () :void
     {
         var score :Object = {};
-        score[_playerId] = [_kills + " kills, " + _deaths + " deaths.", _kills];
+        score[_playerId] = [_kills + " kills, " + _deaths + " deaths.", (_kills - _deaths)];
         if (_gameCtrl != null) {
             _gameCtrl.setMappedScores(score);
         }
