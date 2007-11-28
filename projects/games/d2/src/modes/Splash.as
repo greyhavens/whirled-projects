@@ -27,16 +27,16 @@ public class Splash extends GameModeCanvas
         super(main);
     }
 
-    // from interface GameMode
+    // from GameModeCanvas
     override public function pushed () :void
     {
         // start playing
     }
     
-    // from interface GameMode
+    // from GameModeCanvas
     override public function popped () :void
     {
-        Assert.fail("Splash screen should never be popped!");
+        // note: splash screen should only be popped when shutting down!
     }
 
     // from Canvas

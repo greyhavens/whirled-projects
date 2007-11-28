@@ -63,6 +63,10 @@ TitleWindow {
   color: #000000;
 }
 
+.boardSelectionButton { 
+  borderStyle: "none";
+}
+
 .mypanelStyle {
   fontFamily: defaultFont;
   color: #ffffff;

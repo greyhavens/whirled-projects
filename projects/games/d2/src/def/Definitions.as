@@ -33,7 +33,18 @@ public class Definitions
     {
         // todo - event listener removal here
     }
-        
+
+    /** Finds an instance of BoardDefinition by guid. Returns null in case of failure. */
+    public function findBoard (guid :String) :BoardDefinition
+    {
+        var result :BoardDefinition = null; 
+        boards.forEach(function (board :BoardDefinition, ... etc) :void {
+                if (board.guid == guid) {
+                    result = board;
+                }});
+        return result;
+    }
+    
     /** Reads definitions from a single data pack, and stores them internally. */
     public function processPack (pack :DataPack) :void
     {
@@ -52,7 +63,7 @@ public class Definitions
             true);
        
     }
-
+    
     /**
      * Called when embedded SWFs for the given data pack have been loaded,
      * finishes up processing.
@@ -64,7 +75,8 @@ public class Definitions
         trace("Units: " + swfs.units);
 
         for each (var board :XML in settings.boards.board) {
-                var bd :BoardDefinition = new BoardDefinition(++_nextid, swfs.boards, board);
+                var bd :BoardDefinition = new BoardDefinition(
+                    swfs.boards, settings.@packname, board);
                 trace("Pushing definition: " + bd);
                 boards.push(bd);
             }
@@ -79,9 +91,6 @@ public class Definitions
 
     /** Callback that will be run once we run out of packs to process. */
     protected var _callback :Function;
-
-    /** Id counter across all definitions. */
-    protected static var _nextid :int = 0;
     
     /**
      * Collection of all display objects from all packs. It maps from DataPack to an object,

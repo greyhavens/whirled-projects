@@ -40,6 +40,20 @@ public class SelectBoard extends GameModeCanvas
         bg.source = _loader;
     }
 
+    // from GameModeCanvas
+    override public function pushed () :void
+    {
+        _controller = new SelectController(_main);
+        _controller.init(_main.whirled, boardSelected, allSelected);
+    }
+    
+    // from GameModeCanvas
+    override public function popped () :void
+    {
+        _controller.shutdown();
+        _controller = null;
+    }
+
     /**
      * After the board selection background loads, populate it with boards,
      * and hook up the back button.
@@ -58,10 +72,24 @@ public class SelectBoard extends GameModeCanvas
     /** Displays board pictures for all boards, so that players can pick. */
     protected function displayBoardPictures () :void
     {
-        _display = new BoardDisplay(_main.defs);
+        Assert.isNotNull(_controller);
+        
+        _display = new BoardDisplay(_main.defs, _controller);
         addChild(_display);
     }
 
+    /** Called when any user pick the board. */
+    protected function boardSelected (playerId :int, board :BoardDefinition) :void
+    {
+        trace("BOARD SELECTED! " + playerId + ": " + board);
+    }
+
+    /** Called when *all* users pick the same board. */
+    protected function allSelected (board :BoardDefinition) :void
+    {
+        trace("ALL SELECTED! " + board);
+    }
+                                                             
     /** Called when the user clicked the back button. */
     protected function goBack (event :Event) :void
     {
@@ -73,6 +101,9 @@ public class SelectBoard extends GameModeCanvas
     /** Loader for the embedded screen selection swf. */
     protected var _loader :MovieClipLoaderAsset;
 
+    /** Controller for player selection clicks. */
+    protected var _controller :SelectController;
+    
     /** Board selection container. */
     protected var _display :VBox;
     

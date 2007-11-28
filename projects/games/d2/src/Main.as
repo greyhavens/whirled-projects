@@ -5,8 +5,11 @@ import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.net.LocalConnection;
 import flash.system.Capabilities;
+import flash.system.System;
+import flash.utils.getTimer; // function import
 
 import mx.controls.Image;
+import mx.controls.Text;
 import mx.containers.Canvas;
 import mx.core.BitmapAsset;
 
@@ -54,12 +57,20 @@ public class Main extends Canvas
     {
         super.createChildren();
 
+        // create a mask to fit standard game screen size
         var mask :BitmapData = new BitmapData(700, 500);
         mask.floodFill(0, 0, 0x00000000);
         var img :Image = new Image();
         img.source = new BitmapAsset(mask);
         addChild(img);
         this.mask = img;
+
+        // frame handler for the fps display
+        _counter = new Text();
+        _counter.x = 5;
+        _counter.y = 420;
+        addChild(_counter);
+        addEventListener(Event.ENTER_FRAME, handleFrame);
     }        
 
     public function init (app :Defense) :void
@@ -92,6 +103,24 @@ public class Main extends Canvas
         // from Definitions, after all data pack SWFs finished loading.
     }
 
+    /** Helper accessor for retrieving the table index of this player. */
+    public function get myIndex () :int
+    {
+        return _whirled.seating.getMyPosition();
+    }
+
+    /** Helper accessor for retrieving the number of players. */
+    public function get playerCount () :int
+    {
+        return _whirled.seating.getPlayerIds().length;
+    }
+
+    /** Helper accessor for checking whether this is a single-player game. */
+    public function get isSinglePlayer () :Boolean
+    {
+        return playerCount == 1;
+    }
+    
     protected function doneLoadingContent () :void
     {
         _modes.push(new Splash(this));
@@ -105,6 +134,9 @@ public class Main extends Canvas
     
     protected function handleUnload (event :Event) :void
     {
+        trace("UNLOADING...");
+        removeEventListener(Event.ENTER_FRAME, handleFrame);
+        
         for each (var listener :UnloadListener in _unloadListeners) {
                 listener.handleUnload(event);
             }
@@ -126,10 +158,34 @@ public class Main extends Canvas
 
         if (newChild != null && ! this.contains(newChild)) {
             addChild(newChild);
+            // make sure the fps counter is up front
+            swapChildren(newChild, _counter);
         }
+
+        gcHack(); // ugh
     }
 
+    /** Updates the FPS counter. */
+    protected function handleFrame (event :Event) :void
+    {
+        var now :int = getTimer();
+        var delta :Number = (now - _lastFrameTime) / 1000;
+        _lastFrameTime = now;
+        _fps = Math.round((_fps + _fps + 1 / delta) / 3); // wee bit of smoothing
+
+        var mem :Number = System.totalMemory;
+        _maxmem = Math.max(mem, _maxmem);
+        
+        _counter.htmlText = "MEM: " + mem + "<br>MAX: " + _maxmem + "<br>FPS: " + _fps;
+    }
+    
     protected var _unloadListeners :Array = new Array(); // of UnloadListener
+
+    // stuff for the fps counter
+    protected var _counter :Text;
+    protected var _lastFrameTime :int;
+    protected var _fps :Number = 0;
+    protected var _maxmem :Number = 0;
     
     // This is a very naughty hack, using unsupported error handling to force a full GC pass.
     // Without this, some debug players will allocate *all* available OS memory (I'm looking
