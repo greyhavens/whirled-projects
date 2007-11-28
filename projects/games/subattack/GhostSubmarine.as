@@ -40,5 +40,10 @@ public class GhostSubmarine extends Submarine
     {
         // Don't.
     }
+
+    override protected function updateDisplayedScore () :void
+    {
+        // Don't.
+    }
 }
 }
