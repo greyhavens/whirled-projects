@@ -41,8 +41,6 @@ public class Furniture extends Sprite
     protected static const HAND_HOUR :Class;
     [Embed(source="../rsrc/furniture.swf#hand_minute")]
     protected static const HAND_MINUTE :Class;
-    [Embed(source="../rsrc/furniture.swf#selector")]
-    protected static const SELECTOR :Class;
 
     protected var _hourHand :Sprite;
     protected var _minuteHand :Sprite;
