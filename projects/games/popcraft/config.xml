@@ -1,0 +1,8 @@
+<!-- a config file used when doing standalone testing -->
+<game>
+  <params>
+    <range ident="min_word_len" minimum="3" maximum="6" start="4"/>
+    <range ident="pp_round" minimum="10" maximum="30" start="5"/>
+    <range ident="round_wins" minimum="1" maximum="5" start="3"/>
+  </params>
+</game>
