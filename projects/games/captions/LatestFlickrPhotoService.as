@@ -25,7 +25,7 @@ public class LatestFlickrPhotoService extends AbstractFlickrPhotoService
     {
         super.init();
 
-        _flickr.addEventListener(FlickrResultEvent.PHOTOS_GET_RECENT, handleFlickrPhotoResult);
+        _flickr.addEventListener(FlickrResultEvent.PHOTOS_GET_RECENT, handleFlickrRecentResult);
     }
 
     override protected function getFlickrKey () :String
@@ -42,7 +42,7 @@ public class LatestFlickrPhotoService extends AbstractFlickrPhotoService
     /**
      * A photo was returned by flickr, now get the sizing info.
      */
-    protected function handleFlickrPhotoResult (evt :FlickrResultEvent) :void
+    protected function handleFlickrRecentResult (evt :FlickrResultEvent) :void
     {
         if (!evt.success) {
             flickrFailure(evt.data.error.errorMessage);

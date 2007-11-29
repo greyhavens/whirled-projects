@@ -97,9 +97,9 @@ public class AbstractFlickrPhotoService extends PhotoService
         }
 
         // Yay. Everything's kosher. Do something with it.
-        var count :int = _previews--;
-        if (count > 0) {
-            dispatchPreview(count, previewSize.source, captionSize.source);
+        _previews--;
+        if (_previews >= 0) {
+            dispatchPreview(_previews, previewSize.source, captionSize.source);
 
         } else {
             // save it
@@ -128,7 +128,7 @@ public class AbstractFlickrPhotoService extends PhotoService
     /**
      * Dispatch photos/previews if we have them.
      *
-     * @return whether we still need to load some new photos.
+     * @return true if we satisfied outstanding photo requests from saved.
      */
     protected function useSaved () :Boolean
     {
@@ -139,11 +139,11 @@ public class AbstractFlickrPhotoService extends PhotoService
                 dispatchPhoto(pic[1]);
 
             } else {
-                dispatchPreview(_previews--, pic[0], pic[1]);
+                dispatchPreview(--_previews, pic[0], pic[1]);
             }
         }
 
-        return (_needPhoto || _previews > 0);
+        return (!_needPhoto && _previews <= 0);
     }
 
     protected function flickrFailure (message :String) :void
