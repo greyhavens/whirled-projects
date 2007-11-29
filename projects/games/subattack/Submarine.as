@@ -38,6 +38,7 @@ public class Submarine extends BaseSprite
 
         _gameCtrl = gameCtrl;
 
+        _isMe = (_gameCtrl.getMyId() == playerId);
         _playerId = playerId;
         _playerName = playerName;
         _x = startx;
@@ -49,7 +50,10 @@ public class Submarine extends BaseSprite
             Number(scheme[0]), Number(scheme[1]), Number(scheme[2]));
 
         _avatar = MovieClip(new AVATAR());
-        _shootSound = Sound(new SHOOT_SOUND());
+        //_shootSound = Sound(new SHOOT_SOUND());
+        if (_isMe) {
+            _cantShootSound = Sound(new CANT_SHOOT_SOUND());
+        }
 
         // TODO: not working: we should only color the recolory child
 //        var colorChild :MovieClip =
@@ -60,7 +64,7 @@ public class Submarine extends BaseSprite
 
         setupNameLabel(playerName);
 
-//        if (_gameCtrl.getMyId() == _playerId && !(this is GhostSubmarine)) {
+//        if (_isMe && !(this is GhostSubmarine)) {
 //            _ghost = new GhostSubmarine(playerId, playerIdx, playerName, startx, starty,
 //                board, gameCtrl);
 //            _ghostActions = [];
@@ -93,13 +97,19 @@ public class Submarine extends BaseSprite
         return _ghost;
     }
 
-    public function applyGhostActions (actions :Array) :void
+    public function canQueueActions () :Boolean
     {
-        if (_ghost != null) {
-            for each (var action :int in actions) {
-                _ghostActions.push(action);
-            }
+        // don't let us get more than 10 actions behind
+        return (_futureActions.length < 10);
+    }
 
+    public function queueActions (actions :Array) :void
+    {
+        for each (var action :int in actions) {
+            _futureActions.push(action);
+        }
+
+        if (_ghost != null) {
             // and apply them immediately
             _ghost.addNewActions(actions);
         }
@@ -214,6 +224,7 @@ public class Submarine extends BaseSprite
         if (action == Action.SHOOT) {
             if (_torpedos.length == MAX_TORPEDOS) {
                 // shoot once per tick, max 2 in-flight
+                _cantShootSound.play();
                 return DROP;
 
             } else {
@@ -253,16 +264,18 @@ public class Submarine extends BaseSprite
             }
             _queuedActions.shift();
 
-            // ensure that this is the top action in _ghostActions
-            if (_ghost != null) {
-                var ghostAction :int = int(_ghostActions.shift());
-                if (ghostAction != action) {
+            if (_isMe) {
+                // ensure that this is the top action in _ghostActions
+                var futureAction :int = int(_futureActions.shift());
+                if (futureAction != action) {
+                    // if this happens, we need to debug some stuff.
                     trace("====OMG!");
                     Log.dumpStack();
-                    return;
                 }
-                // update stuff with our ghost
-                _ghost.updateQueuedActions(_x, _y, _orient, _ghostActions);
+                if (_ghost != null) {
+                    // update stuff with our ghost
+                    _ghost.updateQueuedActions(_x, _y, _orient, _futureActions);
+                }
             }
         }
 
@@ -376,13 +389,19 @@ public class Submarine extends BaseSprite
 
     protected var _ghostActions :Array;
 
-    /** Queued actions. */
+    /** Actions received from the server that we're waiting to execute. */
     protected var _queuedActions :Array = [];
+
+    /** Actions we've sent to the server but haven't applied yet. */
+    protected var _futureActions :Array = [];
 
     protected var _dead :Boolean;
 
     /** The game control. */
     protected var _gameCtrl :WhirledGameControl;
+
+    /** Is this submarine ours? */
+    protected var _isMe :Boolean;
 
     /** The id of this player. */
     protected var _playerId :int;
@@ -420,6 +439,8 @@ public class Submarine extends BaseSprite
     /** Our shooty-shoot sound. */
     protected var _shootSound :Sound;
 
+    protected var _cantShootSound :Sound;
+
     protected var _nameLabel :TextField;
 
     /** The maximum number of torpedos that may be in-flight at once. */
@@ -435,7 +456,8 @@ public class Submarine extends BaseSprite
     protected static const AVATAR :Class;
 
     //[Embed(source="shooting.wav", mimeType="audio/wav")]
+
     [Embed(source="Error.mp3")]
-    protected static const SHOOT_SOUND :Class;
+    protected static const CANT_SHOOT_SOUND :Class;
 }
 }

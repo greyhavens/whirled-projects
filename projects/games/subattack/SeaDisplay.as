@@ -113,9 +113,14 @@ public class SeaDisplay extends Sprite
         subUpdated(_followSub, sub.getX(), sub.getY());
     }
 
-    public function applyGhostActions (actions :Array) :void
+    public function canQueueActions () :Boolean
     {
-        _sub.applyGhostActions(actions);
+        return _sub.canQueueActions();
+    }
+
+    public function queueActions (actions :Array) :void
+    {
+        _sub.queueActions(actions);
     }
 
     /**

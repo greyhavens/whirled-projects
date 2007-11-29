@@ -16,7 +16,7 @@ import flash.ui.Keyboard;
 
 import flash.utils.getTimer; // function import
 
-import com.threerings.flash.KeyRepeatBlocker;
+import com.threerings.flash.KeyRepeatLimiter;
 
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
@@ -31,7 +31,7 @@ import com.whirled.WhirledGameControl;
 public class SubAttack extends Sprite
 {
     /** How many tiles does our vision extend past our tile? */
-    public static const VISION_TILES :int = 9;
+    public static const VISION_TILES :int = 8;
 
     /** How many total tiles are in one direction in the view? */
     public static const VIEW_TILES :int = (VISION_TILES * 2) + 1;
@@ -39,8 +39,10 @@ public class SubAttack extends Sprite
     public function SubAttack ()
     {
         _seaHolder = new Sprite();
-        _seaHolder.scaleX = 500 / (VIEW_TILES * SeaDisplay.TILE_SIZE);
-        _seaHolder.scaleY = 500 / (VIEW_TILES * SeaDisplay.TILE_SIZE);
+        var scale :Number = 500 / (VIEW_TILES * SeaDisplay.TILE_SIZE);
+        trace("Tile scaled size is " + (scale * SeaDisplay.TILE_SIZE));
+        _seaHolder.scaleX = scale;
+        _seaHolder.scaleY = scale;
         _seaHolder.x = 200;
         addChild(_seaHolder);
 
@@ -75,8 +77,8 @@ public class SubAttack extends Sprite
         _myIndex = _gameCtrl.seating.getMyPosition();
 
         if (_myIndex != -1) {
-            new KeyRepeatBlocker(_gameCtrl).addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
-            //_gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+            _keyLimiter = new KeyRepeatLimiter(_gameCtrl, 100);
+            _keyLimiter.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
 
             addEventListener(Event.ENTER_FRAME, enterFrame);
         }
@@ -91,6 +93,7 @@ public class SubAttack extends Sprite
      */
     protected function handleUnload (evt :Event) :void
     {
+        _keyLimiter.shutdown();
         removeEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
@@ -101,7 +104,7 @@ public class SubAttack extends Sprite
     {
         _seaDisplay.clearStatus();
         _seaHolder.removeChild(_seaDisplay);
-        _seaHolder.addChild(_seaDisplay = new SeaDisplay());
+        _seaHolder.addChildAt(_seaDisplay = new SeaDisplay(), 0);
         _board = new Board(_gameCtrl, _seaDisplay);
     }
 
@@ -110,6 +113,12 @@ public class SubAttack extends Sprite
      */
     protected function keyEvent (event :KeyboardEvent) :void
     {
+        if (!_seaDisplay.canQueueActions()) {
+            trace("Can't queue: waiting on serer.");
+            // ignore it, we're still waiting on too much to return from the server
+            return;
+        }
+
         var actions :Array = getActionForKey(event);
         if (actions == null) {
             return;
@@ -130,7 +139,7 @@ public class SubAttack extends Sprite
             }
         }
 
-        _seaDisplay.applyGhostActions(actions);
+        _seaDisplay.queueActions(actions);
     }
 
     protected function enterFrame (event :Event) :void
@@ -190,6 +199,9 @@ public class SubAttack extends Sprite
 
     /** The visual display of the game. */
     protected var _seaDisplay :SeaDisplay;
+
+    /** Limits key repeats. */
+    protected var _keyLimiter :KeyRepeatLimiter;
 
     /** Our player index, or -1 if we're not a player. */
     protected var _myIndex :int;
