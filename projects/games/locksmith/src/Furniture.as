@@ -31,7 +31,7 @@ public class Furniture extends Sprite
     protected function updateHands (...ignored) :void
     {
         var date :Date = new Date();
-        _hourHand.rotation = (date.hours % 12) * 30;
+        _hourHand.rotation = (date.hours % 12) * 30 + date.minutes / 2;
         _minuteHand.rotation = date.minutes * 6;
     }
 
