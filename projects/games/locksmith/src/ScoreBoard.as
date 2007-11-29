@@ -18,9 +18,9 @@ public class ScoreBoard extends Sprite
     public function ScoreBoard (moonPlayer :String, sunPlayer :String, gameEndedCallback :Function) 
     {
         addChild(_marbleLayer = new Sprite());
-        var trough :Sprite = new TROUGH_OVERLAY() as Sprite;
-        trough.y = 210;
-        addChild(trough);
+//        var trough :Sprite = new TROUGH_OVERLAY() as Sprite;
+//        trough.y = 210;
+//        addChild(trough);
         _gameEndedCallback = gameEndedCallback;
     }
 
@@ -82,8 +82,8 @@ public class ScoreBoard extends Sprite
         }
     }
 
-    [Embed(source="../rsrc/locksmith_art.swf#trough_overlay")]
-    protected static const TROUGH_OVERLAY :Class;
+//    [Embed(source="../rsrc/locksmith_art.swf#trough_overlay")]
+//    protected static const TROUGH_OVERLAY :Class;
 
     protected static const SUN_RAMP_BEGIN :Point = new Point(256, 38);
     protected static const SUN_RAMP_END :Point = new Point(313, 199);
