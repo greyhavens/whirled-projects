@@ -222,6 +222,7 @@ public class Submarine extends BaseSprite
         }
 
         if (action == Action.SHOOT) {
+            _movedOrShot = true;
             if (_torpedos.length == MAX_TORPEDOS) {
                 // shoot once per tick, max 2 in-flight
                 _cantShootSound.play();
@@ -229,7 +230,6 @@ public class Submarine extends BaseSprite
 
             } else {
                 _torpedos.push(new Torpedo(this, _board));
-                _movedOrShot = true;
 //                _shootSound.play();
                 return OK;
             }
