@@ -1,29 +1,205 @@
 <settings packname="Standard" packicon="a_level_02.jpg">
   <boards>
-    <board name="Playground" background="Level01_BG" icon="Level01_BG.jpg">
+    <board name="Playground" background="Level01_BG" icon="Level01_BG.jpg"
+	   startingHealth="5" startingMoney="50">
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
+      <availableTowers>
+        <tower id="TYPE_SHRUB" />
+        <tower id="TYPE_BOX" />
+        <tower id="TYPE_SANDBOX" />
+        <tower id="TYPE_TRASHCAN" /> 
+        <tower id="TYPE_WAGON" />
+        <tower id="TYPE_BOULDER" />
+        <tower id="TYPE_TREE" />
+      </availableTowers>
+
+      <singlePlayerEnemyWaves>
+        <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
+        <wave><enemy id="TYPE_SQUIRREL" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="3" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="5" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="1" /></wave>
+        <wave><enemy id="TYPE_GIRL" count="2" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="5" /><enemy id="TYPE_SQUIRREL" count="1" /></wave>
+        <wave><enemy id="TYPE_SKATER" count="1" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="1" /><enemy id="TYPE_SKATER" count="1" /></wave>
+        <wave><enemy id="TYPE_GIRL" count="2" /><enemy id="TYPE_BULLY" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="7" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="1" /><enemy id="TYPE_SKATER" count="2" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="3" /></wave>
+      </singlePlayerEnemyWaves>
+
+      <twoPlayerAllies>
+        <wave><enemy id="TYPE_SKUNK" count="5" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="1" /></wave>
+        <wave><enemy id="TYPE_GIRL" count="2" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="1" /><enemy id="TYPE_SQUIRREL" count="1" /></wave>
+      </twoPlayerAllies>
+
     </board>
-    <board name="Halloween" background="Level02_BG" icon="Level02_BG.jpg">
+
+    <board name="Halloween" background="Level02_BG" icon="Level02_BG.jpg"
+	   startingHealth="3" startingMoney="25">
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
+
+      <availableTowers>
+        <tower id="TYPE_SHRUB" />
+        <tower id="TYPE_BOX" />
+        <tower id="TYPE_PUMPKIN" />
+        <tower id="TYPE_SANDBOX" />
+        <tower id="TYPE_TRASHCAN" />
+        <tower id="TYPE_WAGON" />
+        <tower id="TYPE_BOULDER" />
+        <tower id="TYPE_TREE" />
+      </availableTowers>
+      
+      <singlePlayerEnemyWaves>
+        <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
+        <wave><enemy id="TYPE_CAT" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="3" /></wave>
+        <wave><enemy id="TYPE_SQUIRREL" count="1" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="5" /></wave>
+        <wave><enemy id="TYPE_SQUIRREL" count="2" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="2" /></wave>
+        <wave><enemy id="TYPE_GIRL" count="2" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="1" /><enemy id="TYPE_SKATER" count="1" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="1" /><enemy id="TYPE_GIRL" count="2" /></wave>
+      </singlePlayerEnemyWaves>
+
+      <twoPlayerAllies>
+        <wave><enemy id="TYPE_SKUNK" count="5" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="1" /></wave>
+        <wave><enemy id="TYPE_SQUIRREL" count="2" /></wave>
+        <wave><enemy id="TYPE_GIRL" count="2" /></wave>
+      </twoPlayerAllies>
     </board>
-    <board name="Yeti Land" background="Level03_BG" icon="Level03_BG.jpg">
+
+    <board name="Yeti Land" background="Level03_BG" icon="Level03_BG.jpg"
+	   startingHealth="3" startingMoney="50">
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
+
+      <availableTowers>
+        <tower id="TYPE_SHRUBWINTER" />
+        <tower id="TYPE_BOX" />
+        <tower id="TYPE_TRASHCAN" />
+        <tower id="TYPE_SNOWMAN" />
+        <tower id="TYPE_WAGON" />
+        <tower id="TYPE_BOULDER" /> 
+
+        <tower id="TYPE_TREEWINTER" />
+      </availableTowers>
+      
+      <singlePlayerEnemyWaves>
+        <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="3" /></wave>
+        <wave><enemy id="TYPE_YETI" count="1" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="1" /></wave>
+        <wave><enemy id="TYPE_GIRL" count="2" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="5" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="1" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="1" /></wave>
+        <wave><enemy id="TYPE_SKATER" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="7" /></wave>
+        <wave><enemy id="TYPE_YETI" count="1" /><enemy id="TYPE_SKATER" count="1" /></wave>
+        <wave><enemy id="TYPE_GIRL" count="2" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="9" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="1" /><enemy id="TYPE_YETI" count="2" /></wave>
+        <wave><enemy id="TYPE_YETI" count="3" /></wave>
+      </singlePlayerEnemyWaves>
+
+      <twoPlayerAllies>
+        <wave><enemy id="TYPE_BULLY" count="1" /></wave>
+        <wave><enemy id="TYPE_SKATER" count="1" /></wave>
+        <wave><enemy id="TYPE_GIRL" count="2" /></wave>
+      </twoPlayerAllies>
     </board>
-    <board name="Crabs!" background="Level04_BG" icon="Level04_BG.jpg">
+
+    <board name="Crabs!" background="Level04_BG" icon="Level04_BG.jpg"
+	   startingHealth="10" startingMoney="30">
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
+
+      <availableTowers>
+        <tower id="TYPE_BOX" />
+        <tower id="TYPE_UMBRELLA" />
+        <tower id="TYPE_SANDBOX" />
+        <tower id="TYPE_WAGON" />
+        <tower id="TYPE_BOULDER" />
+      </availableTowers>
+
+      <singlePlayerEnemyWaves>
+        <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
+        <wave><enemy id="TYPE_CRAB" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="3" /></wave>
+        <wave><enemy id="TYPE_CRAB" count="2" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="5" /></wave>
+        <wave><enemy id="TYPE_GIRL" count="2" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="1" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="2" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="7" /></wave>
+        <wave><enemy id="TYPE_CRAB" count="4" /></wave>
+        <wave><enemy id="TYPE_GIRL" count="2" /><enemy id="TYPE_BULLY" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="9" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="2" /><enemy id="TYPE_CRAB" count="3" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="2" /></wave>
+      </singlePlayerEnemyWaves>
+
+      <twoPlayerAllies>
+        <wave><enemy id="TYPE_SKUNK" count="5" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="1" /></wave>
+        <wave><enemy id="TYPE_CRAB" count="2" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="2" /></wave>
+      </twoPlayerAllies>
     </board>
-    <board name="Playground" background="Level05_BG" icon="Level05_BG.png">
+
+    <board name="Back to School" background="Level05_BG" icon="Level05_BG.png"
+	   startingHealth="10" startingMoney="30">
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
+
+      <availableTowers>
+        <tower id="TYPE_BOX" />
+        <tower id="TYPE_UMBRELLA" />
+        <tower id="TYPE_SANDBOX" />
+        <tower id="TYPE_WAGON" />
+        <tower id="TYPE_BOULDER" />
+      </availableTowers>
+
+      <singlePlayerEnemyWaves>
+        <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
+        <wave><enemy id="TYPE_CRAB" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="3" /></wave>
+        <wave><enemy id="TYPE_CRAB" count="2" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="5" /></wave>
+        <wave><enemy id="TYPE_GIRL" count="2" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="1" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="2" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="7" /></wave>
+        <wave><enemy id="TYPE_CRAB" count="4" /></wave>
+        <wave><enemy id="TYPE_GIRL" count="2" /><enemy id="TYPE_BULLY" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="9" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="2" /><enemy id="TYPE_CRAB" count="3" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="2" /></wave>
+      </singlePlayerEnemyWaves>
+
+      <twoPlayerAllies>
+        <wave><enemy id="TYPE_SKUNK" count="5" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="1" /></wave>
+        <wave><enemy id="TYPE_CRAB" count="2" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="2" /></wave>
+      </twoPlayerAllies>
     </board>
   </boards>
 
@@ -189,59 +365,59 @@
   </towers>
 
   <enemies>
-    <enemy id="TYPE_BULLY", assetRoot="enemy_bully"
-           name="Bully",
-           maxhealth="20",
-           maxspeed="2",
-           powerup="2",
+    <enemy id="TYPE_BULLY" assetRoot="enemy_bully"
+           name="Bully"
+           maxhealth="20"
+           maxspeed="2"
+           powerup="2"
            points="5" />
-    <enemy id="TYPE_GIRL", assetRoot="enemy_girl"
-           name="Girl",
-           maxhealth="16",
-           maxspeed="1",
-           powerup="2",
+    <enemy id="TYPE_GIRL" assetRoot="enemy_girl"
+           name="Girl"
+           maxhealth="16"
+           maxspeed="1"
+           powerup="2"
            points="4" />
-    <enemy id="TYPE_BIRD", assetRoot="enemy_bird"
-           name="Bird",
-           isFlying="true",
-           maxhealth="8",
-           maxspeed="4",
+    <enemy id="TYPE_BIRD" assetRoot="enemy_bird"
+           name="Bird"
+           isFlying="true"
+           maxhealth="8"
+           maxspeed="4"
            powerup="1.5" />
-    <enemy id="TYPE_SQUIRREL", assetRoot="enemy_squirrel"
-           name="Fox",
-           maxhealth="4",
-           maxspeed="3",
-           powerup="1.5",
+    <enemy id="TYPE_SQUIRREL" assetRoot="enemy_squirrel"
+           name="Fox"
+           maxhealth="4"
+           maxspeed="3"
+           powerup="1.5"
            points="2" />
-    <enemy id="TYPE_SKATER", assetRoot="enemy_skater"
-           name="Skater",
-           maxhealth="16",
-           maxspeed="4",
-           powerup="1.5",
+    <enemy id="TYPE_SKATER" assetRoot="enemy_skater"
+           name="Skater"
+           maxhealth="16"
+           maxspeed="4"
+           powerup="1.5"
            points="3" />
-    <enemy id="TYPE_SKUNK", assetRoot="enemy_skunk"
-           name="Skunk",
-           maxhealth="2",
-           maxspeed="1",
-           powerup="1.5",
+    <enemy id="TYPE_SKUNK" assetRoot="enemy_skunk"
+           name="Skunk"
+           maxhealth="2"
+           maxspeed="1"
+           powerup="1.5"
            points="1" />
-    <enemy id="TYPE_CAT", assetRoot="enemy_cat"
-           name="Cat",
-           maxhealth="8",
-           maxspeed="1.5",
-           powerup="1.5",
+    <enemy id="TYPE_CAT" assetRoot="enemy_cat"
+           name="Cat"
+           maxhealth="8"
+           maxspeed="1.5"
+           powerup="1.5"
            points="3" />
-    <enemy id="TYPE_YETI", assetRoot="enemy_yeti"
-           name="Yeti",
-           maxhealth="20",
-           maxspeed="1",
-           powerup="2",
+    <enemy id="TYPE_YETI" assetRoot="enemy_yeti"
+           name="Yeti"
+           maxhealth="20"
+           maxspeed="1"
+           powerup="2"
            points="5" />
-    <enemy id="TYPE_CRAB", assetRoot="enemy_crab"
-           name="Crab",
-           maxhealth="4",
-           maxspeed="3",
-           powerup="1.5",
+    <enemy id="TYPE_CRAB" assetRoot="enemy_crab"
+           name="Crab"
+           maxhealth="4"
+           maxspeed="3"
+           powerup="1.5"
            points="2" />
   </enemies>
 </settings>

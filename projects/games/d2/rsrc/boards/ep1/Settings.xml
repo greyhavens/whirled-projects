@@ -1,9 +1,34 @@
 <settings packname="EP1" packicon="a_level_06.jpg">
   <boards>
-    <board name="This is a very long board name. I wonder what will break? I can't tell anymore." background="Level06_BG" icon="Level06_BG.jpg">
+    <board name="This is a very long board name. I wonder what will break? I can't tell anymore." 
+	   background="Level06_BG" icon="Level06_BG.jpg"
+	   startingHealth="5" startingMoney="50">
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
+      <availableTowers>
+        <tower id="TYPE_SHRUB" />
+        <tower id="TYPE_BOX" />
+        <tower id="TYPE_SANDBOX" />
+        <tower id="TYPE_TRASHCAN" /> 
+        <tower id="TYPE_WAGON" />
+        <tower id="TYPE_BOULDER" />
+        <tower id="TYPE_TREE" />
+      </availableTowers>
+
+      <singlePlayerEnemyWaves>
+        <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
+      </singlePlayerEnemyWaves>
+
+      <twoPlayerAllies>
+        <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
+      </twoPlayerAllies>
     </board>
   </boards>
+
+  <towers>
+  </towers>
+
+  <enemies>
+  </enemies>
 </settings>
