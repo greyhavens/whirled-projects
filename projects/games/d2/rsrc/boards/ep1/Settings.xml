@@ -1,4 +1,4 @@
-<settings packname="EP1">
+<settings packname="EP1" packicon="a_level_06.jpg">
   <boards>
     <board name="This is a very long board name. I wonder what will break? I can't tell anymore." background="Level06_BG" icon="Level06_BG.jpg">
       <squares cols="17" rows="22" />

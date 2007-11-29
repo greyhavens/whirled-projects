@@ -1,4 +1,4 @@
-<settings packname="Standard">
+<settings packname="Standard" packicon="a_level_02.jpg">
   <boards>
     <board name="Playground" background="Level01_BG" icon="Level01_BG.jpg">
       <squares cols="17" rows="22" />
