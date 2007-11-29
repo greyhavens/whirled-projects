@@ -133,7 +133,7 @@ public class AbstractFlickrPhotoService extends PhotoService
     protected function useSaved () :Boolean
     {
         while ((_needPhoto || _previews > 0) && _pics.length > 0) {
-            var pic :Array = _pics.unshift() as Array;
+            var pic :Array = _pics.shift() as Array;
             if (_needPhoto) {
                 _needPhoto = false;
                 dispatchPhoto(pic[1]);
