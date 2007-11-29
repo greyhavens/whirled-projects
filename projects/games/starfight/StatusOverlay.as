@@ -57,7 +57,7 @@ public class StatusOverlay extends Sprite
         _secondary.mask = mask;
 
         addChild(_spread = new Sprite());
-        _spread.x = StarFight.WIDTH - 104;
+        _spread.x = StarFight.WIDTH - 103;
         _spread.y = 84;
         _spread.addChild(Resources.getBitmap("spread.png"));
         mask = new Shape();
@@ -67,7 +67,7 @@ public class StatusOverlay extends Sprite
         _spread.mask = mask;
         addChild(_speed = new Sprite());
         _speed.addChild(Resources.getBitmap("speed.png"));
-        _speed.x = StarFight.WIDTH - 73;
+        _speed.x = StarFight.WIDTH - 71;
         _speed.y = 84;
         mask = new Shape();
         mask.graphics.beginFill(0xFFFFFF);
@@ -76,7 +76,7 @@ public class StatusOverlay extends Sprite
         _speed.mask = mask;
         addChild(_shields = new Sprite());
         _shields.addChild(Resources.getBitmap("shields.png"));
-        _shields.x = StarFight.WIDTH - 42;
+        _shields.x = StarFight.WIDTH - 39;
         _shields.y = 84;
         mask = new Shape();
         mask.graphics.beginFill(0xFFFFFF);
@@ -184,8 +184,11 @@ public class StatusOverlay extends Sprite
     /**
      * Updates the radar display.
      */
-    public function updateRadar (ships :HashMap, powerups :Array, board :Sprite) :void
+    public function updateRadar (
+            ships :HashMap, powerups :Array, boardX :Number, boardY :Number) :void
     {
+        boardX = StarFight.WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
+        boardY = StarFight.HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
         ships.forEach(function (key :Object, value :Object) :void {
             var dot :Shape = _ships.get(int(key));
             if (dot != null) {
@@ -198,7 +201,7 @@ public class StatusOverlay extends Sprite
             if (powerups[ii] != null) {
                 var dot :Shape = _powerups.get(ii);
                 if (dot != null) {
-                    positionDot(dot, powerups[ii].x + board.x, powerups[ii].y + board.y);
+                    positionDot(dot, powerups[ii].x + boardX, powerups[ii].y + boardY);
                 }
             }
         }

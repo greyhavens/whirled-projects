@@ -5,7 +5,7 @@ import flash.display.Sprite;
 
 import flash.utils.ByteArray;
 
-public class Powerup extends Sprite
+public class Powerup extends BoardObject
 {
     public static const SHIELDS :int = 0;
     public static const SPEED :int = 1;
@@ -13,57 +13,29 @@ public class Powerup extends Sprite
     public static const HEALTH :int = 3;
     public static const COUNT :int = 3;
 
-    public var type :int;
-    public var boardX :int;
-    public var boardY :int;
-
     public static const SOUNDS :Array = [
         "powerup_shield.wav", "powerup_engine.wav", "powerup_shot.wav"
     ];
 
-    public function Powerup (type :int, boardX :int, boardY :int) :void
+    public static function readPowerup (bytes :ByteArray) :Powerup
     {
-        this.type = type;
-        this.boardX = boardX;
-        this.boardY = boardY;
-
-        x = (boardX + 0.5) * Codes.PIXELS_PER_TILE;
-        y = (boardY + 0.5) * Codes.PIXELS_PER_TILE;
-
-        setupGraphics();
+        var powerup :Powerup = new Powerup(0, 0, 0, false);
+        powerup.readFrom(bytes);
+        return powerup;
     }
 
-    protected function setupGraphics () :void
+    public function Powerup (type :int, boardX :int, boardY :int, graphics :Boolean = true) :void
     {
+        super(type, boardX, boardY, graphics);
+    }
+
+    override protected function setupGraphics () :void
+    {
+        if (numChildren > 0) {
+            removeChildAt(0);
+        }
         var powMovie :MovieClip = MovieClip(new (Resources.getClass(MOVIES[type]))());
         addChild(powMovie);
-    }
-
-    /**
-     * Unserialize our data from a byte array.
-     */
-    public function readFrom (bytes :ByteArray) :void
-    {
-        type = bytes.readInt();
-        x = bytes.readInt();
-        y = bytes.readInt();
-        boardX = (x - Codes.PIXELS_PER_TILE/2) / Codes.PIXELS_PER_TILE;
-        boardY = (y - Codes.PIXELS_PER_TILE/2) / Codes.PIXELS_PER_TILE;
-
-        removeChildAt(0);
-        setupGraphics();
-    }
-
-    /**
-     * Serialize our data to a byte array.
-     */
-    public function writeTo (bytes :ByteArray) :ByteArray
-    {
-        bytes.writeInt(type);
-        bytes.writeInt(x);
-        bytes.writeInt(y);
-
-        return bytes;
     }
 
     protected static const MOVIES :Array = [

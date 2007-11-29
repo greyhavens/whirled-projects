@@ -1,5 +1,6 @@
 package {
 
+import flash.display.MovieClip;
 import flash.display.Sprite;
 
 public class ShotSprite extends Sprite {
@@ -37,7 +38,7 @@ public class ShotSprite extends Sprite {
     /**
      * Allow our shot to update itself.
      */
-    public function tick (board :BoardSprite, time :Number) :void
+    public function tick (board :BoardController, time :Number) :void
     {
     }
 
@@ -52,5 +53,8 @@ public class ShotSprite extends Sprite {
     }
 
     protected var _game :StarFight;
+
+    /** Our shot animation. */
+    protected var _shotMovie :MovieClip;
 }
 }

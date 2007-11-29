@@ -3,9 +3,15 @@ package {
 import flash.display.MovieClip;
 import flash.media.Sound;
 import flash.media.SoundTransform;
+import flash.events.Event;
 
 public class SaucerShipType extends ShipType
 {
+    public var secondaryHitPower :Number = 0.3;
+
+    public var mineFriendly :Class, mineEnemy :Class, mineExplode :Class;
+    public var mineSound :Sound, mineExplodeSound :Sound;
+
     public function SaucerShipType () :void
     {
         name = "Saucer";
@@ -31,6 +37,8 @@ public class SaucerShipType extends ShipType
         secondaryShotCost = 0.5;
         secondaryShotRecharge = 3;
         secondaryPowerRecharge = 30;
+        secondaryShotLife = 90;
+        secondaryShotSize = 0.3;
 
         armor = 0.8;
         size = 0.9;
@@ -81,9 +89,36 @@ public class SaucerShipType extends ShipType
         sf.fireShot(args);
     }
 
+    override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :void
+    {
+        var args :Array = new Array(4);
+        args[0] = ship.shipId;
+        args[1] = ship.shipType;
+        args[2] = ship.boardX;
+        args[3] = ship.boardY;
+
+        sf.sendMessage("secondary", args);
+    }
+
+    override public function secondaryShot (sf :StarFight, val :Array) :void
+    {
+        sf.addShot(new MineShotSprite(
+                val[2], val[3], val[0], secondaryHitPower, secondaryShotLife, val[1], sf));
+    }
+
     override protected function swfAsset () :Class
     {
         return SHIP;
+    }
+
+    override protected function successHandler (event :Event) :void
+    {
+        super.successHandler(event);
+        mineFriendly = _loader.getClass("mine_friendly");
+        mineEnemy = _loader.getClass("mine_enemy");
+        mineExplode = _loader.getClass("mine_explode");
+        mineSound = Sound(new (_loader.getClass("mine_lay.wav"))());
+        mineExplodeSound = Sound(new (_loader.getClass("mine_explode.wav"))());
     }
 
     protected static var RANGE :Number = 5;

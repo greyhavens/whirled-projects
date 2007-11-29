@@ -119,7 +119,7 @@ public class ShipSprite extends Sprite
      * Constructs a new ship.  If skipStartingPos, don't bother finding an
      *  empty space to start in.
      */
-    public function ShipSprite (board :BoardSprite, game :StarFight,
+    public function ShipSprite (board :BoardController, game :StarFight,
         skipStartingPos :Boolean, shipId :int, name :String,
         isOwnShip :Boolean)
     {
@@ -616,8 +616,8 @@ public class ShipSprite extends Sprite
             ship.addChild(_shipMovie);
 
             _shieldMovie.gotoAndStop(1);
-            _shieldMovie.x = 55/2;
-            _shieldMovie.y = -58/2;
+            //_shieldMovie.x = _shieldMovie.width/2;
+            //_shieldMovie.y = -_shieldMovie.height/2;
             _shieldMovie.rotation = 90;
             if (powerups & SHIELDS_MASK) {
                 _shieldMovie.alpha = 1.0;
@@ -831,7 +831,7 @@ public class ShipSprite extends Sprite
     }
 
     /** The board we inhabit. */
-    protected var _board :BoardSprite;
+    protected var _board :BoardController;
 
     /** The main game object. */
     protected var _game :StarFight;

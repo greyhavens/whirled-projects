@@ -16,7 +16,7 @@ public class LaserShotSprite extends ShotSprite {
         super(x, y, shipId, damage, ttl, shipType, game);
         this.tShipId = tShipId;
 
-        _shotMovie = MovieClip(new Codes.SHIP_TYPES[shipType].SHOT_ANIM);
+        _shotMovie = MovieClip(new Codes.SHIP_TYPES[shipType].shotAnim());
 
         _shotMovie.gotoAndStop(1);
         _shotMovie.scaleY = Codes.PIXELS_PER_TILE * length / _shotMovie.height;
@@ -25,13 +25,15 @@ public class LaserShotSprite extends ShotSprite {
         addChild(_shotMovie);
     }
 
-    override public function tick (board :BoardSprite, time :Number) :void
+    override public function tick (board :BoardController, time :Number) :void
     {
         time /= 1000;
         if (!_hit && tShipId != -1) {
             var ship :ShipSprite = _game.getShip(tShipId);
-            _game.hitShip(ship, ship.boardX, ship.boardY, shipId, damage);
-            _hit = true;
+            if (ship != null) {
+                _game.hitShip(ship, ship.boardX, ship.boardY, shipId, damage);
+                _hit = true;
+            }
         }
         // Update our time to live and destroy if appropriate.
         ttl -= time;
@@ -40,9 +42,6 @@ public class LaserShotSprite extends ShotSprite {
             return;
         }
     }
-
-    /** Our shot animation. */
-    protected var _shotMovie :MovieClip;
 
     protected var _hit :Boolean;
 }

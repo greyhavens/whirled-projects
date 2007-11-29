@@ -31,7 +31,7 @@ public class RaptorShipType extends ShipType
         secondaryShotLife = 4;
 
         armor = 1;
-        size = 0.9;
+        size = 1.1;
     }
 
     override public function primaryShot (sf :StarFight, val :Array) :void

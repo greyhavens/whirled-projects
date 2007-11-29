@@ -26,7 +26,7 @@ public class MissileShotSprite extends ShotSprite {
     /**
      * Allow our shot to update itself.
      */
-    override public function tick (board :BoardSprite, time :Number) :void
+    override public function tick (board :BoardController, time :Number) :void
     {
         time /= 1000;
         // Update our time to live and destroy if appropriate.
@@ -64,8 +64,5 @@ public class MissileShotSprite extends ShotSprite {
             complete = true;
         }
     }
-
-    /** Our shot animation. */
-    protected var _shotMovie :MovieClip;
 }
 }

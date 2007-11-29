@@ -7,6 +7,8 @@ import flash.display.MovieClip;
 
 public class RhinoShipType extends ShipType
 {
+    public var warpSound :Sound;
+
     public function RhinoShipType () :void
     {
         name = "Rhino";
@@ -94,6 +96,7 @@ public class RhinoShipType extends ShipType
 
             ship.resolveMove(startX, startY, endX, endY, 1);
             ship.setAnimMode(ShipSprite.WARP_END, true).addEventListener(Event.COMPLETE, endWarp);
+            sf.playSoundAt(warpSound, startX, startY);
         };
         var clip :MovieClip = ship.setAnimMode(ShipSprite.WARP_BEGIN, true);
         clip.addEventListener(Event.COMPLETE, warp);
@@ -102,6 +105,12 @@ public class RhinoShipType extends ShipType
     override protected function swfAsset () :Class
     {
         return SHIP;
+    }
+
+    override protected function successHandler (event :Event) :void
+    {
+        super.successHandler(event);
+        warpSound = Sound(new (_loader.getClass("warp.wav"))());
     }
 
     [Embed(source="rsrc/ships/rhino.swf", mimeType="application/octet-stream")]

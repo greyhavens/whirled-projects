@@ -7,16 +7,6 @@ import flash.display.BitmapData;
 
 public class BgSprite extends Sprite
 {
-    public var boardWidth :int;
-    public var boardHeight :int;
-
-    public function BgSprite (board :Board) :void
-    {
-        this.boardWidth = board.width;
-        this.boardHeight = board.height;
-        setupGraphics();
-    }
-
     /**
      * Sets the center of the screen.  We need to adjust ourselves to match.
      */
@@ -29,14 +19,14 @@ public class BgSprite extends Sprite
     /**
      * Draw the board.
      */
-    public function setupGraphics () :void
+    public function setupGraphics (width :int, height :int) :void
     {
         // Our background, tiled if necessary.
         var tmpBmp :Bitmap = Resources.getBitmap("space_bg.png");
 
-        var xRep :Number = Math.ceil((boardWidth*Codes.BG_PIXELS_PER_TILE +
+        var xRep :Number = Math.ceil((width*Codes.BG_PIXELS_PER_TILE +
                                          StarFight.WIDTH)/tmpBmp.width);
-        var yRep :Number = Math.ceil((boardHeight*Codes.BG_PIXELS_PER_TILE +
+        var yRep :Number = Math.ceil((height*Codes.BG_PIXELS_PER_TILE +
                                          StarFight.HEIGHT)/tmpBmp.height);
 
         for (var x :int = 0; x < xRep; x++) {

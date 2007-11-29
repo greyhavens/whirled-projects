@@ -16,18 +16,16 @@ public class TorpedoShotSprite extends ShotSprite {
         this.xVel = vel * Math.cos(angle);
         this.yVel = vel * Math.sin(angle);
 
-        var shotMovie :MovieClip = MovieClip(new Codes.SHIP_TYPES[shipType].secondaryAnim());
+        _shotMovie = MovieClip(new Codes.SHIP_TYPES[shipType].secondaryAnim());
 
-        //shotMovie.x = -shotMovie.width/2;
-        //shotMovie.y = 0;
         rotation = Codes.RADS_TO_DEGS*Math.atan2(xVel, -yVel);
-        addChild(shotMovie);
+        addChild(_shotMovie);
     }
 
     /**
      * Allow our shot to update itself.
      */
-    override public function tick (board :BoardSprite, time :Number) :void
+    override public function tick (board :BoardController, time :Number) :void
     {
         time /= 1000;
         // Update our time to live and destroy if appropriate.
