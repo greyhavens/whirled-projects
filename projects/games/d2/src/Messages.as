@@ -25,6 +25,10 @@ public class Messages
     
     public static var data :Object =
     {
+        opponent_needs_board: "Please wait while the other player<br>picks their board...",
+        opponent_differs: "Other player chose: ",
+        please_pick_same: "Please choose the same board to start!",
+        
         menu_title: "Stations",
         health: "Health: ",
         score: " score:",

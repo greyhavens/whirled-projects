@@ -15,8 +15,8 @@ import com.whirled.DataPack;
 public class Definitions
     implements UnloadListener
 {
-    /** Array of BoardDefinition instances. */
-    public var boards :Array = new Array();
+    /** Array of PackDefinition instances. */
+    public var packs :Array = new Array(); // of PackDefinition
 
     /**
      * Takes the total number of content packs, and a callback to be run after all those packs have
@@ -34,14 +34,18 @@ public class Definitions
         // todo - event listener removal here
     }
 
-    /** Finds an instance of BoardDefinition by guid. Returns null in case of failure. */
+    /**
+     * Finds an instance of BoardDefinition by guid, across all packs.
+     * Returns null in case of failure.
+     */
     public function findBoard (guid :String) :BoardDefinition
     {
         var result :BoardDefinition = null; 
-        boards.forEach(function (board :BoardDefinition, ... etc) :void {
-                if (board.guid == guid) {
-                    result = board;
-                }});
+        packs.forEach(function (pack :PackDefinition, ... etc) :void {
+                if (result == null) {
+                    result = pack.findBoard(guid);
+                }
+            });
         return result;
     }
     
@@ -59,7 +63,7 @@ public class Definitions
         // load the swfs marked as 'boards' and 'units' in the data pack definition
         pack.getSwfLoaders(
             [ "boards", "units" ],
-            function (results :Object) :void { packedSwfsLoaded(results, settings); },
+            function (results :Object) :void { packedSwfsLoaded(pack, results, settings); },
             true);
        
     }
@@ -68,19 +72,24 @@ public class Definitions
      * Called when embedded SWFs for the given data pack have been loaded,
      * finishes up processing.
      */
-    protected function packedSwfsLoaded (swfs :Object, settings :XML) :void
+    protected function packedSwfsLoaded (pack :DataPack, swfs :Object, settings :XML) :void
     {
         trace("Got swfs: " + swfs);
         trace("Boards: " + swfs.boards);
         trace("Units: " + swfs.units);
 
+        // create a new pack
+        var pd :PackDefinition = new PackDefinition(swfs.boards, settings);
+        packs.push(pd);
+        
         for each (var board :XML in settings.boards.board) {
-                var bd :BoardDefinition = new BoardDefinition(
-                    swfs.boards, settings.@packname, board);
+                var bd :BoardDefinition = new BoardDefinition(swfs.boards, pd, board);
                 trace("Pushing definition: " + bd);
-                boards.push(bd);
+                pd.boards.push(bd);
             }
-   
+
+        trace("GOT PACK: " + pd);
+        
         if (--_remainingPacks <= 0) {
             _callback();
         }

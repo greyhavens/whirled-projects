@@ -11,7 +11,7 @@ import com.threerings.util.EmbeddedSwfLoader;
  */
 public class BoardDefinition
 {
-    public var pack :String;
+    public var pack :PackDefinition;
     public var swf :EmbeddedSwfLoader;
     
     public var name :String;
@@ -22,7 +22,7 @@ public class BoardDefinition
     public var pixelsize :Point;
     public var topleft :Point;
         
-    public function BoardDefinition (swf :EmbeddedSwfLoader, pack :String, board :XML)
+    public function BoardDefinition (swf :EmbeddedSwfLoader, pack :PackDefinition, board :XML)
     {
         this.pack = pack;
         this.swf = swf;
@@ -42,7 +42,7 @@ public class BoardDefinition
 
     public function get guid () :String
     {
-        return pack + "_" + name; 
+        return pack.name + ": " + name; 
     }
     
     public function toString () :String

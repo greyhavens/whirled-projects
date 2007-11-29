@@ -9,9 +9,11 @@ import mx.core.BitmapAsset;
 import mx.core.MovieClipLoaderAsset;
 import mx.containers.VBox;
 import mx.controls.Image;
+import mx.controls.Text;
 
 import com.threerings.flash.DisplayUtil;
 import com.threerings.util.Assert;
+import com.threerings.util.StringUtil;
 
 import com.whirled.contrib.GameMode;
 import com.whirled.contrib.GameModeStack;
@@ -19,6 +21,8 @@ import com.whirled.contrib.GameModeStack;
 import def.BoardDefinition;
 
 import modes.GameModeCanvas;
+
+import Messages;
 
 public class SelectBoard extends GameModeCanvas
 {
@@ -76,17 +80,37 @@ public class SelectBoard extends GameModeCanvas
         
         _display = new BoardDisplay(_main.defs, _controller);
         addChild(_display);
+
+        _feedback = new Text();
+        _feedback.styleName = "boardSelectionLabel";
+        _feedback.x = 250;
+        _feedback.y = 420;
+        addChild(_feedback);
     }
 
     /** Called when any user pick the board. */
-    protected function boardSelected (playerId :int, board :BoardDefinition) :void
+    protected function boardSelected (playerId :int, boardGuid :String) :void
     {
+        var board :BoardDefinition = _main.defs.findBoard(boardGuid);
         trace("BOARD SELECTED! " + playerId + ": " + board);
+
+        if (! _main.isSinglePlayer) {
+            var other :BoardDefinition = _main.defs.findBoard(_controller.getOpponentBoardGuid());
+
+            if (other == null) {
+                _feedback.htmlText = Messages.get("opponent_needs_board");
+            } else {
+                _feedback.htmlText = Messages.get("opponent_differs") +
+                    StringUtil.truncate(other.name, 20, "...") + "<br>" +
+                    Messages.get("please_pick_same");
+            }
+        }
     }
 
     /** Called when *all* users pick the same board. */
-    protected function allSelected (board :BoardDefinition) :void
+    protected function allSelected (boardGuid :String) :void
     {
+        var board :BoardDefinition = _main.defs.findBoard(boardGuid);
         trace("ALL SELECTED! " + board);
     }
                                                              
@@ -106,6 +130,9 @@ public class SelectBoard extends GameModeCanvas
     
     /** Board selection container. */
     protected var _display :VBox;
+
+    /** Board selection feedback label. */
+    protected var _feedback :Text;
     
     /** Screen selection screen. */
     [Embed(source="../../rsrc/selectscreen/selectscreen.swf")]

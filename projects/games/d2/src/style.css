@@ -55,7 +55,7 @@ TitleWindow {
 }
 
 .boardSelectionContainer {
-  horizontalGap: 40; 
+  horizontalGap: 20; 
 }
 
 .boardSelectionLabel { 
