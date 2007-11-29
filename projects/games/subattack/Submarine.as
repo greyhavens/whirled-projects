@@ -225,7 +225,9 @@ public class Submarine extends BaseSprite
             _movedOrShot = true;
             if (_torpedos.length == MAX_TORPEDOS) {
                 // shoot once per tick, max 2 in-flight
-                _cantShootSound.play();
+                if (_cantShootSound != null) {
+                    _cantShootSound.play();
+                }
                 return DROP;
 
             } else {
