@@ -31,13 +31,6 @@ public class PhotoService extends EventDispatcher
     public static const PREVIEW_AVAILABLE :String = "previewAvail";
 
     /**
-     * Constructor.
-     */
-    public function PhotoService ()
-    {
-    }
-
-    /**
      * Called when this instance will actually be used to retrieve photos. Your subclass
      * should avoid any strenuous setup until this method is called.
      */

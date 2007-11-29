@@ -93,7 +93,10 @@ public class LOL extends Sprite
 
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        _game = new CaptionGame(_ctrl);
+        _searchPhotos = new SearchFlickrPhotoService();
+        _searchPhotos.setKeywords("cats");
+
+        _game = new CaptionGame(_ctrl, _searchPhotos);
         _game.addEventListener(CaptionGame.TICK_EVENT, updateClock);
         _game.addEventListener(CaptionGame.PHASE_CHANGED_EVENT, handlePhaseChanged);
 
@@ -803,6 +806,8 @@ for (var jj :int = 0; jj < 1; jj++) {
     protected var _ctrl :WhirledGameControl;
 
     protected var _game :CaptionGame;
+
+    protected var _searchPhotos :SearchFlickrPhotoService;
 
     protected var _ui :MovieClip;
 
