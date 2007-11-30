@@ -52,7 +52,7 @@ public class SearchFlickrPhotoService extends LatestFlickrPhotoService
         switch (_total) {
         case -1:
             // get page 1, we'll figure out the total
-            trace("Getting #1 of <unknown>");
+//            trace("Getting #1 of <unknown>");
             _flickr.photos.search("", tagsStr, "any", textStr, null, null, null, null, -1, "",
                 count, 1);
             break;
@@ -69,7 +69,7 @@ public class SearchFlickrPhotoService extends LatestFlickrPhotoService
                 } while (picks.indexOf(pick) != -1);
                 picks.push(pick);
 
-                trace("Getting #" + pick + " of " + _total);
+//                trace("Getting #" + pick + " of " + _total);
                 _flickr.photos.search("", tagsStr, "any", textStr, null, null, null, null, -1, "",
                     1, pick);
             }
@@ -85,7 +85,7 @@ public class SearchFlickrPhotoService extends LatestFlickrPhotoService
         }
 
         var photoList :PagedPhotoList = (evt.data.photos as PagedPhotoList);
-        _total = photoList.total;
+        _total = Math.min(photoList.total, FLICKR_MAX_IMAGES_LIMIT);
 
         if (_total == 0 && _needPhoto) {
             // we NEED a photo!
@@ -93,7 +93,8 @@ public class SearchFlickrPhotoService extends LatestFlickrPhotoService
             return;
         }
 
-        trace("Got " + photoList.page + " (" + photoList.perPage + ") of " + _total);
+//        trace("Got " + photoList.page + " (" + photoList.perPage + ") of " + _total +
+//            "  (" + photoList.photos[0].id + ")");
 
         // otherwise, make size requests on everything we got
         getUrlsAndDispatchToGame(photoList.photos);
@@ -104,5 +105,9 @@ public class SearchFlickrPhotoService extends LatestFlickrPhotoService
     protected var _tagsOnly :Boolean;
 
     protected var _total :int;
+
+    /** Flickr will only do search results for up to 4000 images, and then they start
+     * repeating even though they report a larger total. */
+    protected static const FLICKR_MAX_IMAGES_LIMIT :int = 4000;
 }
 }
