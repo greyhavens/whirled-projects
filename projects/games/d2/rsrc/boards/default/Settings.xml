@@ -1,4 +1,4 @@
-<settings packname="Standard" button="AdventureMode">
+<settings packname="Standard" button="DefaultLevels">
   <boards>
     <board name="Forest" background="Level01_BG" button="button_level_01"
 	   startingHealth="5" startingMoney="50">

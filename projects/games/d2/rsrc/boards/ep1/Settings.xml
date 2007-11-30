@@ -1,4 +1,4 @@
-<settings packname="EP1" button="AdventureMode">
+<settings packname="EP1" button="DefaultLevels">
   <boards>
     <board name="This is a very long board name. I wonder what will break? I can't tell anymore." 
 	   background="Level01_BG" button="button_level_01"
