@@ -30,6 +30,9 @@ public class Submarine extends BaseSprite
         [ .5, 1, 1]
     ];
 
+    /** How often can we build? */
+    public static const TICKS_PER_BUILD :int = 50; // about every 5 seconds
+
     public function Submarine (
         playerId :int, playerIdx :int, playerName :String, startx :int, starty :int,
         board :Board, gameCtrl :WhirledGameControl)
@@ -210,9 +213,13 @@ public class Submarine extends BaseSprite
         }
 
         if (action == Action.BUILD) {
+            if (_tickCanBuild > _tickCount) {
+                return DROP;
+            }
             if (++_buildingStep == 3) {
                 _board.buildBarrier(_playerIdx, _x, _y);
                 _buildingStep = 0;
+                _tickCanBuild = _tickCount + TICKS_PER_BUILD;
             }
             _movedOrShot = true;
             return OK;
@@ -256,6 +263,7 @@ public class Submarine extends BaseSprite
      */
     public function tick () :void
     {
+        _tickCount++;
         // reset our move counter
         _movedOrShot = false;
 
@@ -419,6 +427,10 @@ public class Submarine extends BaseSprite
 
     /** How many steps have we done to do a 'build'. */
     protected var _buildingStep :int = 0;
+
+    protected var _tickCount :int = 0;
+
+    protected var _tickCanBuild :int = TICKS_PER_BUILD;
 
     /** Our currently in-flight torpedos. */
     protected var _torpedos :Array = [];

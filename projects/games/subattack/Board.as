@@ -9,6 +9,8 @@ import com.threerings.ezgame.MessageReceivedEvent;
 
 import com.whirled.WhirledGameControl;
 
+import com.threerings.util.Log;
+
 public class Board
 {
     /** Traversability constants. */
@@ -225,37 +227,43 @@ public class Board
         _torpedos.splice(idx, 1); // remove that torpedo
         _seaDisplay.removeChild(torpedo);
 
-        // find all the subs affected
-        var killer :Submarine = torpedo.getOwner();
-        var killCount :int = 0;
-        var killerIdx :int = killer.getPlayerIndex();
         var xx :int = torpedo.getX();
         var yy :int = torpedo.getY();
-        for each (var sub :Submarine in _subs) {
-            if (!sub.isDead() && sub.getX() == xx && sub.getY() == yy) {
-                sub.wasKilled();
-                killCount++;
-                _totalDeaths++;
-
-                _gameCtrl.localChat(killer.getPlayerName() + " has shot " +
-                    sub.getPlayerName());
-
-                if (killerIdx == _gameCtrl.seating.getMyPosition()) {
-                    // TODO: new flow awarding
-//                    var flowAvailable :Number = _gameCtrl.getAvailableFlow();
-//                    trace("Available flow at time of kill: " + flowAvailable);
-//                    var awarded :int = int(flowAvailable * .75);
-//                    trace("Awarding: " + awarded);
-//                    _gameCtrl.awardFlow(awarded);
-                }
-            }
-        }
 
         // if it exploded in bounds, make that area traversable
+        var subsAffected :Boolean = false;
         if (xx >= 0 && xx < _width && yy >= 0 && yy < _height) {
             // mark the board area as traversable there
-            noteTorpedoExploded(xx, yy, killerIdx);
+            subsAffected = noteTorpedoExploded(xx, yy, killerIdx);
+            Log.dumpStack();
+            trace("Torp exploded: " + subsAffected);
             _seaDisplay.addChildAt(new Explode(xx, yy, this), 0);
+        }
+
+        // find all the subs affected
+        var killCount :int = 0;
+        if (subsAffected) {
+            var killer :Submarine = torpedo.getOwner();
+            var killerIdx :int = killer.getPlayerIndex();
+            for each (var sub :Submarine in _subs) {
+                if (!sub.isDead() && sub.getX() == xx && sub.getY() == yy) {
+                    sub.wasKilled();
+                    killCount++;
+                    _totalDeaths++;
+
+                    _gameCtrl.localChat(killer.getPlayerName() + " has shot " +
+                        sub.getPlayerName());
+
+                    if (killerIdx == _gameCtrl.seating.getMyPosition()) {
+                        // TODO: new flow awarding
+    //                    var flowAvailable :Number = _gameCtrl.getAvailableFlow();
+    //                    trace("Available flow at time of kill: " + flowAvailable);
+    //                    var awarded :int = int(flowAvailable * .75);
+    //                    trace("Awarding: " + awarded);
+    //                    _gameCtrl.awardFlow(awarded);
+                    }
+                }
+            }
         }
 
         return killCount;
@@ -274,14 +282,17 @@ public class Board
 
     /**
      * Note that a torpedo exploded and make any required modifications to the board.
+     *
+     * @return true if subs should be affected by an explosion on this square.
      */
-    protected function noteTorpedoExploded (xx :int, yy :int, playerIndex :int) :void
+    protected function noteTorpedoExploded (xx :int, yy :int, playerIndex :int) :Boolean
     {
         var idx :int = coordsToIdx(xx, yy);
         var val :int = int(_traversable[idx]);
+        var subsAffected :Boolean = true;
         if (val == BLANK) {
             // that's strange, but ok
-            return; // nothing to do
+            return true; // nothing to do
 
         } else if (val > BLANK) {
             val--;
@@ -290,7 +301,8 @@ public class Board
             var pidx :int = int(val / -100);
             if (playerIndex == pidx) {
                 // the torpedo exploded on one of the player's own defense squares
-                return;
+                // so it must have hit another sub
+                return true;
             }
 
             var level :int = -val % 100;
@@ -300,6 +312,7 @@ public class Board
             } else {
                 val = -(pidx * 100 + level)
             }
+            subsAffected = false;
         }
 
         // record the new traversability
@@ -307,6 +320,9 @@ public class Board
 
         // update the display
         _seaDisplay.updateTraversable(xx, yy, val, isBlank(xx, yy - 1), isBlank(xx, yy + 1));
+        // we are exploding because we hit a non-traversable tile, so we don't affect
+        // any subs on that tile...
+        return false;
     }
 
 //    protected function incTraversable (xx :int, yy :int) :void
