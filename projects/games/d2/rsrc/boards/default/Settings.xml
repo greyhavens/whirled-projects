@@ -1,6 +1,6 @@
-<settings packname="Standard" packicon="a_level_02.jpg">
+<settings packname="Standard" button="AdventureMode">
   <boards>
-    <board name="Playground" background="Level01_BG" icon="Level01_BG.jpg"
+    <board name="Playground" background="Level01_BG" button="button_level_01"
 	   startingHealth="5" startingMoney="50">
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
@@ -41,7 +41,7 @@
 
     </board>
 
-    <board name="Halloween" background="Level02_BG" icon="Level02_BG.jpg"
+    <board name="Halloween" background="Level02_BG" button="button_level_02"
 	   startingHealth="3" startingMoney="25">
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
@@ -80,7 +80,7 @@
       </twoPlayerAllies>
     </board>
 
-    <board name="Yeti Land" background="Level03_BG" icon="Level03_BG.jpg"
+    <board name="Yeti Land" background="Level03_BG" button="button_level_03"
 	   startingHealth="3" startingMoney="50">
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
@@ -122,7 +122,7 @@
       </twoPlayerAllies>
     </board>
 
-    <board name="Crabs!" background="Level04_BG" icon="Level04_BG.jpg"
+    <board name="Crabs!" background="Level04_BG" button="button_level_04"
 	   startingHealth="10" startingMoney="30">
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
@@ -162,7 +162,7 @@
       </twoPlayerAllies>
     </board>
 
-    <board name="Back to School" background="Level05_BG" icon="Level05_BG.png"
+    <board name="Back to School" background="Level05_BG" button="button_level_05"
 	   startingHealth="10" startingMoney="30">
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />

@@ -1,7 +1,7 @@
-<settings packname="EP1" packicon="a_level_06.jpg">
+<settings packname="EP1" button="AdventureMode">
   <boards>
     <board name="This is a very long board name. I wonder what will break? I can't tell anymore." 
-	   background="Level06_BG" icon="Level06_BG.jpg"
+	   background="Level01_BG" button="button_level_01"
 	   startingHealth="5" startingMoney="50">
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
