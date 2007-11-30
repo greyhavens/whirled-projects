@@ -229,22 +229,20 @@ public class Board
 
         var xx :int = torpedo.getX();
         var yy :int = torpedo.getY();
+        var killer :Submarine = torpedo.getOwner();
+        var killerIdx :int = killer.getPlayerIndex();
 
         // if it exploded in bounds, make that area traversable
         var subsAffected :Boolean = false;
         if (xx >= 0 && xx < _width && yy >= 0 && yy < _height) {
             // mark the board area as traversable there
             subsAffected = noteTorpedoExploded(xx, yy, killerIdx);
-            Log.dumpStack();
-            trace("Torp exploded: " + subsAffected);
             _seaDisplay.addChildAt(new Explode(xx, yy, this), 0);
         }
 
         // find all the subs affected
         var killCount :int = 0;
         if (subsAffected) {
-            var killer :Submarine = torpedo.getOwner();
-            var killerIdx :int = killer.getPlayerIndex();
             for each (var sub :Submarine in _subs) {
                 if (!sub.isDead() && sub.getX() == xx && sub.getY() == yy) {
                     sub.wasKilled();
