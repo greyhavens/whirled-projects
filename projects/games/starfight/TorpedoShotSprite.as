@@ -32,7 +32,7 @@ public class TorpedoShotSprite extends ShotSprite {
         ttl -= time;
         if (ttl < 0) {
             complete = true;
-            return;
+            time += ttl;
         }
 
         // See if we're already inside an obstacle, since we could potentially have

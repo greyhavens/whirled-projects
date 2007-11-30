@@ -33,7 +33,8 @@ public class MissileShotSprite extends ShotSprite {
         ttl -= time;
         if (ttl < 0) {
             complete = true;
-            return;
+            // perform the rest of the collision detection for the remaining time of the shot
+            time += ttl;
         }
 
         // See if we're already inside an obstacle, since we could potentially have
