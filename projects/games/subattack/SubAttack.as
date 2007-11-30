@@ -39,10 +39,10 @@ public class SubAttack extends Sprite
     public function SubAttack ()
     {
         _seaHolder = new Sprite();
-        var scale :Number = 500 / (VIEW_TILES * SeaDisplay.TILE_SIZE);
-        trace("Tile scaled size is " + (scale * SeaDisplay.TILE_SIZE));
-        _seaHolder.scaleX = scale;
-        _seaHolder.scaleY = scale;
+//        var scale :Number = 500 / (VIEW_TILES * SeaDisplay.TILE_SIZE);
+//        trace("Tile scaled size is " + (scale * SeaDisplay.TILE_SIZE));
+//        _seaHolder.scaleX = scale;
+//        _seaHolder.scaleY = scale;
         _seaHolder.x = 200;
         addChild(_seaHolder);
 

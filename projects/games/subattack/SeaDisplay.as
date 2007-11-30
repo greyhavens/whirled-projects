@@ -6,6 +6,8 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
+import flash.geom.Matrix;
+
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
@@ -14,7 +16,7 @@ import com.threerings.flash.ColorUtil;
 public class SeaDisplay extends Sprite
 {
     /** The size of a tile. */
-    public static const TILE_SIZE :int = 32;
+    public static const TILE_SIZE :int = 29;
 
     public function SeaDisplay ()
     {
@@ -24,6 +26,8 @@ public class SeaDisplay extends Sprite
         _status.background = true;
         _status.autoSize = TextFieldAutoSize.CENTER;
         _status.selectable = false;
+
+        addChild(_foreground);
     }
 
     /**
@@ -31,48 +35,51 @@ public class SeaDisplay extends Sprite
      */
     public function setupSea (boardWidth :int, boardHeight :int) :void
     {
-        var bigups :Array = [
-            Bitmap(new UP1()).bitmapData,
-            Bitmap(new UP3()).bitmapData,
-            Bitmap(new UP5()).bitmapData
+        _boardWidth = boardWidth;
+
+        var grounds :Array = [
+            Bitmap(new GROUND1()).bitmapData,
+            Bitmap(new GROUND2()).bitmapData,
+            Bitmap(new GROUND3()).bitmapData
         ];
 
-        _ups = [
-            Bitmap(new UP2()).bitmapData,
-            Bitmap(new UP4()).bitmapData,
-            Bitmap(new UP6()).bitmapData,
-            Bitmap(new UP7()).bitmapData,
-            Bitmap(new UP8()).bitmapData,
-            Bitmap(new UP9()).bitmapData,
-            Bitmap(new UP10()).bitmapData,
-            Bitmap(new UP11()).bitmapData
+        _trees = [
+            Bitmap(new TREE1()).bitmapData,
+            Bitmap(new TREE2()).bitmapData,
+            Bitmap(new TREE3()).bitmapData,
+            Bitmap(new TREE4()).bitmapData,
+            Bitmap(new TREE5()).bitmapData,
+            Bitmap(new TREE6()).bitmapData
         ];
-
-        _downs = [
-            Bitmap(new DOWN1()).bitmapData,
-            Bitmap(new DOWN2()).bitmapData,
-            Bitmap(new DOWN3()).bitmapData,
-            Bitmap(new DOWN4()).bitmapData
-         ];
-        _downWall = Bitmap(new DOWN_WALL()).bitmapData;
 
         graphics.clear();
         for (var yy :int = -SubAttack.VISION_TILES;
                 yy < boardHeight + SubAttack.VISION_TILES; yy++) {
             for (var xx :int = -SubAttack.VISION_TILES;
                     xx < boardWidth + SubAttack.VISION_TILES; xx++) {
-                pickBitmap(bigups);
-                graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE,
-                    TILE_SIZE);
+
+                graphics.beginBitmapFill(pickBitmap(grounds));
+                graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                graphics.endFill();
             }
         }
-        graphics.endFill();
 
         // draw a nice border around Mr. Game Area
         graphics.lineStyle(5, 0xFFFFFF);
         graphics.drawRect(-5, -5, boardWidth * TILE_SIZE + 10,
             boardHeight * TILE_SIZE + 10);
         graphics.lineStyle(0, 0, 0); // turn off lines
+
+        // now draw trees into our foreground
+        for (yy = 0; yy < boardHeight; yy++) {
+            for (xx = 0; xx < boardWidth; xx++) {
+                var bmp :Bitmap = new Bitmap(pickBitmap(_trees));
+                _treeBitmaps[yy * boardWidth + xx] = bmp;
+                bmp.x = xx * TILE_SIZE + TREE_OFFSET;
+                bmp.y = yy * TILE_SIZE + TREE_OFFSET;
+                _foreground.addChild(bmp);
+            }
+        }
     }
 
     /**
@@ -131,7 +138,10 @@ public class SeaDisplay extends Sprite
         aboveIsBlank :Boolean, belowIsBlank :Boolean) :void
     {
         if (value == Board.BLOCKED) {
-            pickBitmap(_ups);
+//            _foreground.graphics.beginBitmapFill(pickBitmap(_trees));
+//            _foreground.graphics.drawRect(
+//                xx * TILE_SIZE + TREE_OFFSET, yy * TILE_SIZE + TREE_OFFSET,
+//                TREE_SIZE, TREE_SIZE);
 
         } else if (value < Board.BLANK) {
             var playerIdx :int = int(value / -100);
@@ -143,21 +153,34 @@ public class SeaDisplay extends Sprite
                 // if damaged, draw darker
                 color = ColorUtil.blend(color, 0, .8);
             }
-            graphics.beginFill(color);
+            _foreground.graphics.beginFill(color);
+            _foreground.graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
-        } else if (!aboveIsBlank) {
-            graphics.beginBitmapFill(_downWall);
+//        } else if (!aboveIsBlank) {
+//            graphics.beginBitmapFill(_downWall);
+//        } else {
+//            pickBitmap(_downs);
+//        }
+
         } else {
-            pickBitmap(_downs);
+            // kill a tree
+            var index :int = yy * _boardWidth + xx;
+            var bmp :Bitmap = Bitmap(_treeBitmaps[index]);
+            if (bmp != null) {
+                _treeBitmaps[index] = null;
+                _foreground.removeChild(bmp);
+            }
         }
-        graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
-        if (value == 0 && belowIsBlank) {
-            pickBitmap(_downs);
-            graphics.drawRect(xx * TILE_SIZE, (yy + 1) * TILE_SIZE,
-                TILE_SIZE, TILE_SIZE);
-        }
-        graphics.endFill();
+//
+//        graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+//
+//        if (value == 0 && belowIsBlank) {
+//            pickBitmap(_downs);
+//            graphics.drawRect(xx * TILE_SIZE, (yy + 1) * TILE_SIZE,
+//                TILE_SIZE, TILE_SIZE);
+//        }
+        _foreground.graphics.endFill();
     }
 
     /**
@@ -195,19 +218,9 @@ public class SeaDisplay extends Sprite
      * Set the graphics to begin filling a bitmap picked from the
      * specified set.
      */
-    protected function pickBitmap (choices :Array) :void
+    protected function pickBitmap (choices :Array) :BitmapData
     {
-        graphics.beginBitmapFill(
-            BitmapData(choices[int(Math.random() * choices.length)]));
-//        var n :Number = Math.random();
-//        var ii :int;
-//        for (ii = 0; ii < PICKS.length - 1; ii++) {
-//            n -= PICKS[ii];
-//            if (n <= 0) {
-//                break;
-//            }
-//        }
-//        graphics.beginBitmapFill(BitmapData(choices[ii]));
+        return BitmapData(choices[int(Math.random() * choices.length)]);
     }
 
     /** The submarine that we're following. */
@@ -215,64 +228,49 @@ public class SeaDisplay extends Sprite
 
     protected var _sub :Submarine;
 
-    protected var _downs :Array;
+    protected var _foreground :Sprite = new Sprite();
 
-    protected var _ups :Array;
+    protected var _boardWidth :int;
 
-    protected var _downWall :BitmapData;
+    protected var _treeBitmaps :Array = [];
+
+    protected var _trees :Array;
 
     /** Our status message. */
     protected var _status :TextField;
 
-    /** The frequency with which to pick each bitmap. Must add to 1.0 */
-    protected static const PICKS :Array = [ 0.10, 0.20, 0.30, 0.40 ];
+//    /** The frequency with which to pick each bitmap. Must add to 1.0 */
+//    protected static const PICKS :Array = [ 0.10, 0.20, 0.30, 0.40 ];
 
-    [Embed(source="up_01.png")]
-    protected static const UP1 :Class;
+    protected static const TREE_SIZE :int = 43;
 
-    [Embed(source="up_02.png")]
-    protected static const UP2 :Class;
+    protected static const TREE_OFFSET :int = (TILE_SIZE - TREE_SIZE) / 2;
 
-    [Embed(source="up_03.png")]
-    protected static const UP3 :Class;
+    [Embed(source="tree1.png")]
+    protected static const TREE1 :Class;
 
-    [Embed(source="up_04.png")]
-    protected static const UP4 :Class;
+    [Embed(source="tree2.png")]
+    protected static const TREE2 :Class;
 
-    [Embed(source="up_05.png")]
-    protected static const UP5 :Class;
+    [Embed(source="tree3.png")]
+    protected static const TREE3 :Class;
 
-    [Embed(source="up_06.png")]
-    protected static const UP6 :Class;
+    [Embed(source="tree4.png")]
+    protected static const TREE4 :Class;
 
-    [Embed(source="up_07.png")]
-    protected static const UP7 :Class;
+    [Embed(source="tree5.png")]
+    protected static const TREE5 :Class;
 
-    [Embed(source="up_08.png")]
-    protected static const UP8 :Class;
+    [Embed(source="tree6.png")]
+    protected static const TREE6 :Class;
 
-    [Embed(source="up_09.png")]
-    protected static const UP9 :Class;
+    [Embed(source="ground1.png")]
+    protected static const GROUND1 :Class;
 
-    [Embed(source="up_10.png")]
-    protected static const UP10 :Class;
+    [Embed(source="ground2.png")]
+    protected static const GROUND2 :Class;
 
-    [Embed(source="up_11.png")]
-    protected static const UP11 :Class;
-
-    [Embed(source="down_wall.png")]
-    protected static const DOWN_WALL :Class;
-
-    [Embed(source="down_01.png")]
-    protected static const DOWN1 :Class;
-
-    [Embed(source="down_02.png")]
-    protected static const DOWN2 :Class;
-
-    [Embed(source="down_03.png")]
-    protected static const DOWN3 :Class;
-
-    [Embed(source="down_04.png")]
-    protected static const DOWN4 :Class;
+    [Embed(source="ground3.png")]
+    protected static const GROUND3 :Class;
 }
 }
