@@ -5,8 +5,8 @@ package core {
  */
 public class CoreAppSettings
 {
-	/** The approximate rate that the application will deliver update events at */
-	public var frameRate :int = 30;
+    /** The approximate rate that the application will deliver update events at */
+    public var frameRate :int = 30;
 }
 
 }
