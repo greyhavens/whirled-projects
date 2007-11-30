@@ -94,7 +94,6 @@ public class LOL extends Sprite
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         _searchPhotos = new SearchFlickrPhotoService();
-        _searchPhotos.setKeywords("cats");
 
         _game = new CaptionGame(_ctrl, _searchPhotos);
         _game.addEventListener(CaptionGame.TICK_EVENT, updateClock);
@@ -108,6 +107,8 @@ public class LOL extends Sprite
         _game.configureTrophyCaptionsSubmittedEver("500caps", 500);
         _game.configureTrophyCaptionsSubmittedEver("1000caps", 1000);
         _game.configureTrophyUnanimous("unanimous", 5 /* mincaptions*/);
+
+        _tagWidget = new TagWidget(_ctrl, _searchPhotos);
 
         _timer = new Timer(500);
         _timer.addEventListener(TimerEvent.TIMER, handleSubmitCaption);
@@ -127,27 +128,26 @@ public class LOL extends Sprite
         addChild(_ui);
         _loader = null;
 
-        //trace(DisplayUtil.dumpHierarchy(_ui));
+//        trace(DisplayUtil.dumpHierarchy(_ui));
 
         // For some reason, when the movie wraps around, we need to re-grab all the bits
-        _ui.addFrameScript(0, initUIBits);
+        _ui.addEventListener("frameFirst", initUIBits);
 
-        // TODO: get Brittney to label these frames?
-        _ui.addFrameScript(84, shrinkImageForWinnerScreen);
-        _ui.addFrameScript(219, unshrinkImageForResultsScreen);
+        // listen for these two events for shrinky/expandy
+        _ui.addEventListener("frameWinner", shrinkImageForWinnerScreen);
+        _ui.addEventListener("frameResults", unshrinkImageForResultsScreen);
 
         initUIBits();
         checkPhase(SKIP_TO_FRAME);
     }
 
-    protected function initUIBits () :void
+    protected function initUIBits (... ignored) :void
     {
         _image = find("image") as UILoader;
         if (_image == null) {
             // the UI doesn't seem to be ready to read. Wait.
             return;
         }
-        _image.scaleContent = false;
 
         _skipBox = find("skip") as CheckBox;
         _skipBox.label = "              "; // so that it's more easily clickable
@@ -161,6 +161,17 @@ public class LOL extends Sprite
 
         _doneButton.label = "";
         updateButtonSkin();
+
+        _participateButton = find("Participate_button") as Button;
+        //_participateButton.visible = false;
+
+        _notParticipating = find("np_checkBox") as CheckBox;
+        //_notParticipating.visible = false;
+
+        _tagPane = find("tag_scrollpane") as ScrollPane;
+        _tagPane.horizontalScrollPolicy = ScrollPolicy.OFF;
+        _tagWidget.setSize(_tagPane.width, _tagPane.height);
+        _tagPane.source = _tagWidget;
 
         _inputPalette = find("input_palette") as Sprite;
 
@@ -602,7 +613,7 @@ for (var jj :int = 0; jj < 1; jj++) {
     /**
      * A frame callback for setting us up for the winner screen.
      */
-    protected function shrinkImageForWinnerScreen () :void
+    protected function shrinkImageForWinnerScreen (... ignored) :void
     {
         if (_image.content != null) {
             var loaderInfo :LoaderInfo = _image.content.loaderInfo;
@@ -620,7 +631,7 @@ for (var jj :int = 0; jj < 1; jj++) {
     /**
      * A frame callback for setting us up for the winner screen.
      */
-    protected function unshrinkImageForResultsScreen () :void
+    protected function unshrinkImageForResultsScreen (... ignored) :void
     {
         if (_image.content != null) {
             _image.content.scaleX = 1;
@@ -809,6 +820,8 @@ for (var jj :int = 0; jj < 1; jj++) {
 
     protected var _searchPhotos :SearchFlickrPhotoService;
 
+    protected var _tagWidget :TagWidget;
+
     protected var _ui :MovieClip;
 
     protected var _mask :Shape;
@@ -816,8 +829,6 @@ for (var jj :int = 0; jj < 1; jj++) {
     protected var _formatter :LOLTextFieldFormatter;
 
     protected var _loader :EmbeddedSwfLoader;
-
-    protected var _frameReachedCallback :Function;
 
     protected var _textFormat :TextFormat = new TextFormat(
         "_sans", 24, 0xFFFFFF, false, false, false, "", "", TextFormatAlign.LEFT, 0, 0, 0, 0);
@@ -839,7 +850,11 @@ for (var jj :int = 0; jj < 1; jj++) {
     protected var _votingPane :ScrollPane;
     protected var _resultsPane :ScrollPane;
 
+    protected var _tagPane :ScrollPane;
+
     protected var _doneButton :Button;
+    protected var _participateButton :Button;
+    protected var _notParticipating :CheckBox;
 
     protected var _previewImage :Array = [];
 
