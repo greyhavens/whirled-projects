@@ -1,8 +1,10 @@
 package core {
 	
 import com.threerings.util.Assert;
-import flash.display.Sprite;
+
 import core.tasks.TaskContainer;
+
+import flash.display.Sprite;
 
 public class AppObject extends Sprite
 {

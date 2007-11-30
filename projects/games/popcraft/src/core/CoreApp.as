@@ -1,10 +1,11 @@
 package core {
 	
+import com.threerings.util.Assert;
+
 import flash.display.Sprite;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
-
-import com.threerings.util.Assert;
+import flash.utils.getTimer;
 
 public class CoreApp extends Sprite
 {
@@ -31,7 +32,7 @@ public class CoreApp extends Sprite
 		_mainTimer.addEventListener(TimerEvent.TIMER, update);
 		_mainTimer.start();
 		
-		_lastTime = new Date().getTime();
+		_lastTime = getTimer();
 	}
 	
 	public function pushMode (mode :AppMode) :void
@@ -52,7 +53,7 @@ public class CoreApp extends Sprite
 	}
 	
 	public function unwindToMode (mode :AppMode) :void
-	{
+	{	
 		Assert.isTrue(null != mode);
 		createModeTransition(mode, TRANSITION_UNWIND);
 	}
@@ -77,39 +78,76 @@ public class CoreApp extends Sprite
 	protected function update (e:TimerEvent) :void
 	{
 		// process mode transitions
-		var topMode :AppMode = this.topMode;
+		var initialTopMode :AppMode = this.topMode;
 		
-		// TODO: finish this
-		/*for each(var transition :* in _pendingModeTransitionQueue) {
+		function doDestroyMode (mode :AppMode) :void {
+			Assert.isTrue(null != mode);
+			
+			// if the top mode is destroyed, make sure it's exited first
+			if(mode == initialTopMode) {
+				initialTopMode.exit();
+				initialTopMode = null;
+			}
+			
+			mode.destroy();
+		}
+		
+		for each(var transition :* in _pendingModeTransitionQueue) {
 			var type :uint = transition.transitionType as uint;
 			var mode :AppMode = transition.mode as AppMode;
 			
 			switch(type) {
 			case TRANSITION_PUSH:
-				if(null != topMode) {
-					topMode.exit();
-					topMode = null;
-				}
-				
-				mode.setup();
 				_modeStack.push(mode);
+				mode.setup();
 				break;
 				
-			case TRANSITION_POP: {
-				if(null != topMode) {
-					topMode.exit();
-					topMode = null;
+			case TRANSITION_POP:
+				Assert.isTrue(_modeStack.length > 0);
+				doDestroyMode(_modeStack.pop() as AppMode);
+				break;
+				
+			case TRANSITION_CHANGE:
+				// a pop followed by a push
+				Assert.isTrue(_modeStack.length > 0);
+				doDestroyMode(_modeStack.pop() as AppMode);
+				_modeStack.push(mode);
+				mode.setup();
+				break;
+				
+			case TRANSITION_UNWIND:
+				// pop modes until we find the one we're looking for
+				while(_modeStack.length > 0 && this.topMode != mode) {
+					doDestroyMode(_modeStack.pop() as AppMode);
 				}
 				
-				Assert.isTrue(null != curTop);
-				curTop.exit
-			}
+				Assert.isTrue(this.topMode == mode || _modeStack.length == 0);
 				
+				if(_modeStack.length == 0) {
+					_modeStack.push(mode);
+					mode.setup();
+				}
+				break;
+			}
+		}
+		
+		var topMode :AppMode = this.topMode;
+		
+		if(topMode != initialTopMode) {
+			if(null != initialTopMode) {
+				initialTopMode.exit();
 			}
 			
-		}*/
-		var newTime :Number = new Date().getTime();
+			if(null != topMode) {
+				topMode.enter();
+			}
+		}
+		
+		// update the top mode
+		var newTime :Number = getTimer();
 		var dt :Number = newTime - _lastTime;
+		if(null != topMode)
+			topMode.update(dt);
 		
 		_lastTime = newTime;
 	}

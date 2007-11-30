@@ -8,7 +8,7 @@ import com.threerings.util.Assert;
 
 import core.CoreApp;
 
-[SWF(width="1000", height="550")]
+[SWF(width="700", height="500")]
 public class PopCraft extends CoreApp
 {
 	/**

@@ -34,6 +34,9 @@ public class AppMode
 		
 		obj._parentMode = this;
 		obj._modeIndex = index;
+		
+		// does the object have a name?
+		// TODO: implement name and role functionality
 	}
 	
 	/** Removes an AppObject from the mode. The AppObject must be owned by this mode. */
@@ -53,9 +56,10 @@ public class AppMode
 	}
 	
 	/** Called once per update tick. Updates all objects in the mode. */
-	protected function update (dt :Number) :void
+	public function update (dt :Number) :void
 	{
 		// update all objects in this mode
+		// there may be holes in the array, so check each object against null
 		for each(var obj:* in _objects) {
 			if(null != obj) {
 				(obj as AppObject).updateInternal(dt);
@@ -64,26 +68,28 @@ public class AppMode
 	}
 	
 	/** Called when the mode is added to the mode stack */
-	protected function setup () :void
+	public function setup () :void
 	{
 	}
 	
 	/** Called when the mode is removed from the mode stack */
-	protected function destroy () :void
+	public function destroy () :void
 	{
 	}
 	
 	/** Called when the mode becomes active on the mode stack */
-	protected function enter () :void
+	public function enter () :void
 	{
 	}
 	
 	/** Called when the mode becomes inactive on the mode stack */
-	protected function exit () :void
+	public function exit () :void
 	{
 	}
 	
 	protected var _objects :Array;
+	protected var _namedObjects :Object;
+	protected var _roleObjects :Object;
 	protected var _freeIndexes :Array;
 }
 
