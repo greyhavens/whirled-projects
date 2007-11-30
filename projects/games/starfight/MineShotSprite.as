@@ -24,15 +24,9 @@ public class MineShotSprite extends ShotSprite {
 
         var coll :Collision = board.getCollision(boardX, boardY, boardX, boardY,
                 Codes.SHIP_TYPES[shipType].secondaryShotSize, shipId, 0);
-        if (coll != null) {
-            if (coll.hit is ShipSprite) {
-                var ship :ShipSprite = ShipSprite(coll.hit);
-                _game.hitShip(ship, boardX, boardY, shipId, damage);
-
-            } else {
-                var obs :Obstacle = Obstacle(coll.hit);
-                _game.hitObs(obs, boardX, boardY);
-            }
+        if (coll != null && coll.hit is ShipSprite) {
+            var ship :ShipSprite = ShipSprite(coll.hit);
+            _game.hitShip(ship, boardX, boardY, shipId, damage);
             complete = true;
         }
     }

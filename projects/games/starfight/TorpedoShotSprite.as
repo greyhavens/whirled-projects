@@ -39,7 +39,7 @@ public class TorpedoShotSprite extends ShotSprite {
         //  been shot just inside the edge of one - if so, explode immediately.
         var inObs :Obstacle = board.getObstacleAt(int(boardX), int(boardY));
         if (inObs != null) {
-            _game.hitObs(inObs, boardX,boardY);
+            _game.hitObs(inObs, boardX, boardY, shipId, damage);
             complete = true;
             return;
         }
@@ -58,7 +58,7 @@ public class TorpedoShotSprite extends ShotSprite {
 
             } else {
                 var obs :Obstacle = Obstacle(coll.hit);
-                _game.hitObs(obs, hitX, hitY);
+                _game.hitObs(obs, hitX, hitY, shipId, damage);
             }
             _game.explodeCustom(
                     hitX, hitY, MovieClip(new Codes.SHIP_TYPES[shipType].secondaryExplode()));

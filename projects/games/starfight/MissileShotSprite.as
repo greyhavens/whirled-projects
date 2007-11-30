@@ -40,7 +40,7 @@ public class MissileShotSprite extends ShotSprite {
         //  been shot just inside the edge of one - if so, explode immediately.
         var inObs :Obstacle = board.getObstacleAt(int(boardX), int(boardY));
         if (inObs != null) {
-            _game.hitObs(inObs, boardX,boardY);
+            _game.hitObs(inObs, boardX, boardY, shipId, damage);
             complete = true;
             return;
         }
@@ -59,7 +59,7 @@ public class MissileShotSprite extends ShotSprite {
             } else {
                 var obs :Obstacle = Obstacle(coll.hit);
                 _game.hitObs(obs, boardX + (xVel*coll.time*time),
-                    boardY + (yVel*coll.time*time));
+                    boardY + (yVel*coll.time*time), shipId, damage);
             }
             complete = true;
         }

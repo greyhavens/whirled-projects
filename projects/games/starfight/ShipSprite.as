@@ -253,6 +253,7 @@ public class ShipSprite extends Sprite
                 powerups &= ~SPEED_MASK;
                 accel = Math.min(accel, _shipType.forwardAccel);
                 accel = Math.max(accel, _shipType.backwardAccel);
+                _game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
             }
         }
     }
@@ -357,6 +358,7 @@ public class ShipSprite extends Sprite
                 powerups ^= SHIELDS_MASK;
                 if (_isOwnShip) {
                     _shieldSound.stop();
+                    _game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
                 }
             }
             return;
@@ -648,6 +650,7 @@ public class ShipSprite extends Sprite
             weaponPower -= 0.03;
             if (weaponPower <= 0.0) {
                 powerups ^= SPREAD_MASK;
+                _game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
             }
         }
 
@@ -700,14 +703,16 @@ public class ShipSprite extends Sprite
     /**
      * Give a powerup to the ship.
      */
-    public function awardPowerup (type :int) :void
+    public function awardPowerup (powerup :Powerup) :void
     {
-        if (type == Powerup.HEALTH) {
+        _game.addScore(POWERUP_PTS);
+        _game.playSoundAt(powerup.sound(), powerup.bX, powerup.bY);
+        if (powerup.type == Powerup.HEALTH) {
             power = Math.min(1.0, power + 0.5);
             return;
         }
-        powerups |= (1 << type);
-        switch (type) {
+        powerups |= (1 << powerup.type);
+        switch (powerup.type) {
         case Powerup.SHIELDS:
             shieldPower = 1.0;
             if (_isOwnShip) {
@@ -869,6 +874,8 @@ public class ShipSprite extends Sprite
     /** A reference to the ship type class. */
     protected var _shipType :ShipType;
     protected var _animMode :int;
+
+    protected static const POWERUP_PTS :int = 2;
 
     protected static const ANIM_MODES :Array = [
         "ship", "retro", "thrust", "super_thrust", "super_retro", "select", "warp_begin", "warp_end"

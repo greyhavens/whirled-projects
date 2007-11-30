@@ -169,20 +169,8 @@ public class StarFight extends Sprite
 
     public function boardLoaded () :void
     {
-        var maxPowerups :int = Math.max(1,
-            _boardCtrl.width*_boardCtrl.height/MIN_TILES_PER_POWERUP);
-        if (_gameCtrl.isConnected()) {
-            _powerups = (_gameCtrl.get("powerup") as Array);
-            if (_powerups == null && _gameCtrl.amInControl()) {
-                _gameCtrl.setImmediate("powerup", new Array(maxPowerups));
-            }
-        } else {
-            _powerups = new Array(maxPowerups);
-        }
-
         _shots = [];
-        _powerups = [];
-        _boardCtrl.createSprite(_boardLayer, _ships, _powerups);
+        _boardCtrl.createSprite(_boardLayer, _ships, _status);
 
         // Set up ships for all ships already in the world.
         if (_gameCtrl.isConnected()) {
@@ -202,65 +190,10 @@ public class StarFight extends Sprite
                     addShip(occupants[ii], ship);
                 }
             }
-
-            // Set up our initial powerups.
-            var gamePows :Array = (_gameCtrl.get("powerup") as Array);
-
-            // The game already has some powerups, create sprites for em.
-            if (gamePows != null) {
-                for (var pp :int = 0; pp < gamePows.length; pp++)
-                {
-                    if (gamePows[pp] == null) {
-                        _powerups[pp] = null;
-                    } else {
-                        gamePows[pp].position = 0;
-                        _powerups[pp] = Powerup.readPowerup(gamePows[pp]);
-                        _boardCtrl.powerupLayer.addChild(_powerups[pp]);
-                        _status.addPowerup(pp);
-                    }
-                }
-            }
         }
 
         addChild(new ShipChooser(this, true));
     }
-
-    /**
-     * Creates the board and accompanying data and sets them on the game object.
-    protected function createBoard () :void
-    {
-        var boardObj :Board;
-
-        // TODO: This should be configurable as a game option once such is available.
-        var sizeFactor :int = 4;
-
-        // We don't already have a board and we're the host?  Create it
-        //  and our initial ship array too.
-        var size :int =
-            int(Math.sqrt(sizeFactor) * 50);
-
-        boardObj = new Board(size, size, true);
-        if (_gameCtrl.isConnected()) {
-            _gameCtrl.setImmediate("board", boardObj.writeTo(new ByteArray()));
-        } else {
-            gotBoard(boardObj);
-        }
-
-    }
-     */
-
-    /**
-     * Do some initialization based on a received board.
-    protected function gotBoard (boardObj :Board) :void
-    {
-        _shots = [];
-        _powerups = [];
-
-        //_board = new BoardSprite(boardObj, _ships, _powerups);
-        //_boardLayer.addChild(_board);
-
-    }
-    */
 
     /**
      * Choose the type of ship for ownship.
@@ -344,43 +277,7 @@ public class StarFight extends Sprite
      */
     public function addPowerup (event :TimerEvent) :void
     {
-        for (var ii :int = 0; ii < _powerups.length; ii++) {
-            if (_powerups[ii] == null) {
-                var x :int = Math.random() * _boardCtrl.width;
-                var y :int = Math.random() * _boardCtrl.height;
-
-                var repCt :int = 0;
-
-                while (_boardCtrl.getObstacleAt(x, y) ||
-                    (_boardCtrl.getPowerupIdx(x+0.5, y+0.5, x+0.5, y+0.5, 0.1) != -1)) {
-                    x = Math.random() * _boardCtrl.width;
-                    y = Math.random() * _boardCtrl.height;
-
-                    // Safety valve - if we can't find anything after 100
-                    //  tries, bail.
-                    if (repCt++ > 100) {
-                        return;
-                    }
-                }
-
-                _powerups[ii] = new Powerup(Math.random()*Powerup.COUNT, x, y);
-
-                _gameCtrl.setImmediate("powerup", _powerups[ii].writeTo(new ByteArray()), ii);
-                _boardCtrl.powerupLayer.addChild(_powerups[ii]);
-                _status.addPowerup(ii);
-                return;
-            }
-        }
-
-        // If we're all full up, don't do anything.
-    }
-
-    public function removePowerup (idx :int) :void
-    {
-        _gameCtrl.setImmediate("powerup", null, idx);
-        _boardCtrl.powerupLayer.removeChild(_powerups[idx]);
-        _powerups[idx] = null;
-        _status.removePowerup(idx);
+        _boardCtrl.addRandomPowerup();
     }
 
     // from PropertyChangedListener
@@ -390,17 +287,6 @@ public class StarFight extends Sprite
             return;
         }
         var name :String = event.name;
-        /*
-        if (name == "board" && (_board == null)) {
-            log("Got a board change");
-            // Someone else initialized our board.
-            var boardBytes :ByteArray =  ByteArray(_gameCtrl.get("board"));
-            var boardObj :Board = new Board(0, 0, false);
-            boardBytes.position = 0;
-            boardObj.readFrom(boardBytes);
-            gotBoard(boardObj);
-        } else
-        */
         if (isShipKey(name)) {
             var id :int = shipId(name);
             if (id != myId) {
@@ -432,28 +318,6 @@ public class StarFight extends Sprite
                     scores[id] = sentShip.score;
                     _gameCtrl.setMappedScores(scores);
                 }
-            }
-        } else if ((name == "powerup") && (event.index >= 0)) {
-            if (_powerups != null) {
-                if (event.newValue == null) {
-                    if (_powerups[event.index] != null) {
-                        _boardCtrl.powerupLayer.removeChild(
-                            _powerups[event.index]);
-                        _powerups[event.index] = null;
-                        _status.removePowerup(event.index);
-                    }
-                    return;
-                }
-
-                var pow :Powerup = _powerups[event.index];
-                if (pow == null) {
-                    _powerups[event.index] = pow = new Powerup(0, 0, 0, false);
-                    _boardCtrl.powerupLayer.addChild(pow);
-                    _status.addPowerup(event.index);
-                }
-                var pBytes :ByteArray = ByteArray(event.newValue);
-                pBytes.position = 0;
-                pow.readFrom(pBytes);
             }
 
         } else if (name == "gameState") {
@@ -501,6 +365,7 @@ public class StarFight extends Sprite
         // The first player is in charge of adding powerups.
         if (_gameCtrl.isConnected() && _gameCtrl.amInControl()) {
             _gameCtrl.setImmediate("stateTime", _stateTime);
+            _ownShip.restart();
             addPowerup(null);
             startPowerupTimer();
         }
@@ -558,7 +423,7 @@ public class StarFight extends Sprite
     /**
      * Adds to our score.
      */
-    protected function addScore (score :int) :void
+    public function addScore (score :int) :void
     {
         //_status.addScore(score);
         _ownShip.addScore(score);
@@ -609,25 +474,10 @@ public class StarFight extends Sprite
     /**
      * Register that an obstacle was hit.
      */
-    public function hitObs (obs :Obstacle, x :Number, y :Number) :void
+    public function hitObs (
+            obs :Obstacle, x :Number, y :Number, shooterId :int, damage :Number) :void
     {
-        _boardCtrl.explode(x, y, 0, true, 0);
-
-        var sound :Sound;
-        switch (obs.type) {
-        case Obstacle.ASTEROID_1:
-        case Obstacle.ASTEROID_2:
-            sound = Resources.getSound("asteroid_hit.wav");
-            break;
-        case Obstacle.JUNK:
-            sound = Resources.getSound("junk_hit.wav");
-            break;
-        case Obstacle.WALL:
-        default:
-            sound = Resources.getSound("metal_hit.wav");
-            break;
-        }
-        playSoundAt(sound, x, y);
+        playSoundAt(_boardCtrl.hitObs(obs, x, y, shooterId == _ownShip.shipId, damage), x, y);
     }
 
     /**
@@ -791,19 +641,7 @@ public class StarFight extends Sprite
             }
         }
 
-        var powIdx :int = _boardCtrl.getPowerupIdx(ownOldX, ownOldY,
-            _ownShip.boardX, _ownShip.boardY, ShipSprite.COLLISION_RAD);
-        while (powIdx != -1) {
-            var powType :int = _powerups[powIdx].type;
-            _ownShip.awardPowerup(powType);
-            //playSoundAt(Resources.getSound(Powerup.SOUNDS[powType]), _powerups[powIdx].boardX,
-                //_powerups[powIdx].boardY);
-            addScore(POWERUP_PTS);
-            removePowerup(powIdx);
-
-            powIdx = _boardCtrl.getPowerupIdx(ownOldX, ownOldY,
-                _ownShip.boardX, _ownShip.boardY, ShipSprite.COLLISION_RAD);
-        }
+        _boardCtrl.collectPowerups(_ownShip, ownOldX, ownOldY);
 
         // Recenter the board on our ship.
         _boardCtrl.setAsCenter(_ownShip.boardX, _ownShip.boardY);
@@ -831,9 +669,6 @@ public class StarFight extends Sprite
                 _shotLayer.removeChild(shot);
             }
         }
-
-        // Update the radar
-        _status.updateRadar(_ships, _powerups, _ownShip.boardX, _ownShip.boardY);
 
         // update our round display
         updateRoundStatus();
@@ -866,9 +701,6 @@ public class StarFight extends Sprite
 
     /** All the ships. */
     protected var _ships :HashMap = new HashMap(); // HashMap<int, ShipSprite>
-
-    /** All the active powerups. */
-    protected var _powerups :Array; // Array<Powerup>
 
     /** Live shots. */
     protected var _shots :Array; // Array<ShotSprite>

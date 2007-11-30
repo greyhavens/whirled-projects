@@ -8,8 +8,8 @@ import flash.utils.ByteArray;
  */
 public class BoardObject extends Sprite
 {
-    public var bX :Number;
-    public var bY :Number;
+    public var bX :int;
+    public var bY :int;
     public var type :int;
 
     public function BoardObject (type :int, bX :int, bY :int, graphics :Boolean) :void
@@ -32,6 +32,11 @@ public class BoardObject extends Sprite
         type = bytes.readInt();
         bX = bytes.readInt();
         bY = bytes.readInt();
+    }
+
+    public function reload (bytes :ByteArray) :void
+    {
+        readFrom(bytes);
 
         setPosition();
         setupGraphics();

@@ -2,6 +2,7 @@ package {
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.media.Sound;
 
 import flash.utils.ByteArray;
 
@@ -13,20 +14,21 @@ public class Powerup extends BoardObject
     public static const HEALTH :int = 3;
     public static const COUNT :int = 3;
 
-    public static const SOUNDS :Array = [
-        "powerup_shield.wav", "powerup_engine.wav", "powerup_shot.wav"
-    ];
-
     public static function readPowerup (bytes :ByteArray) :Powerup
     {
         var powerup :Powerup = new Powerup(0, 0, 0, false);
-        powerup.readFrom(bytes);
+        powerup.reload(bytes);
         return powerup;
     }
 
     public function Powerup (type :int, boardX :int, boardY :int, graphics :Boolean = true) :void
     {
         super(type, boardX, boardY, graphics);
+    }
+
+    public function sound () :Sound
+    {
+        return Resources.getSound(MOVIES[type] + ".wav");
     }
 
     override protected function setupGraphics () :void

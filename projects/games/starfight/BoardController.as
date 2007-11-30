@@ -3,6 +3,7 @@ package {
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.geom.Point;
+import flash.media.Sound;
 import flash.utils.ByteArray;
 
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -21,9 +22,6 @@ public class BoardController
     /** Board size in tiles. */
     public var width :int;
     public var height :int;
-
-    /** All the obstacles on the board. */
-    public var obstacles :Array;
 
     public var powerupLayer :Sprite;
 
@@ -47,6 +45,7 @@ public class BoardController
 
         var boardBytes :ByteArray = ByteArray(_gameCtrl.get("board"));
         if (boardBytes != null) {
+            boardBytes.position = 0;
             readBoard(boardBytes);
         } else if (_gameCtrl.amInControl()) {
             create();
@@ -56,9 +55,24 @@ public class BoardController
     protected function readBoard (boardBytes :ByteArray) :void
     {
         readFrom(boardBytes);
-        obstacles = (_gameCtrl.get("obstacles") as Array);
-        for (var ii :int; ii < obstacles.length; ii++) {
-            obstacles[ii] = Obstacle.readObstacle(ByteArray(obstacles[ii]));
+        var obs :Array = (_gameCtrl.get("obstacles") as Array);
+        _obstacles = new Array(obs.length);
+        for (var ii :int; ii < _obstacles.length; ii++) {
+            if (obs[ii] == null) {
+                continue;
+            }
+            obs[ii].position = 0;
+            _obstacles[ii] = Obstacle.readObstacle(ByteArray(obs[ii]));
+            _obstacles[ii].index = ii;
+        }
+        var pups :Array = (_gameCtrl.get("powerup") as Array);
+        _powerups = new Array(pups.length);
+        for (ii = 0; ii < pups.length; ii++) {
+            if (pups[ii] == null) {
+                continue;
+            }
+            pups.position = 0;
+            _powerups[ii] = Powerup.readPowerup(ByteArray(pups[ii]));
         }
         _callback();
     }
@@ -69,23 +83,27 @@ public class BoardController
         this.height = 100;
 
         loadObstacles();
+        var maxPowerups :int = Math.max(1, width * height / MIN_TILES_PER_POWERUP);
+        _powerups = new Array(maxPowerups);
 
         if (_gameCtrl.isConnected()) {
             _gameCtrl.doBatch(function () :void {
-                _gameCtrl.setImmediate("obstacles", new Array(obstacles.length));
-                for (var ii :int; ii < obstacles.length; ii++) {
-                    _gameCtrl.setImmediate("obstacles", obstacles[ii].writeTo(new ByteArray()), ii);
+                _gameCtrl.setImmediate("obstacles", new Array(_obstacles.length));
+                for (var ii :int; ii < _obstacles.length; ii++) {
+                    _gameCtrl.setImmediate("obstacles",
+                            _obstacles[ii].writeTo(new ByteArray()), ii);
                 }
+                _gameCtrl.setImmediate("powerup", new Array(_powerups.length));
                 _gameCtrl.setImmediate("board", writeTo(new ByteArray()));
             });
         }
         _callback();
     }
 
-    public function createSprite (boardLayer :Sprite, ships :HashMap, powerups :Array) :void
+    public function createSprite (boardLayer :Sprite, ships :HashMap, status :StatusOverlay) :void
     {
         _ships = ships;
-        _powerups = powerups;
+        _status = status;
         _bg = new BgSprite();
         _bg.setupGraphics(width, height);
         boardLayer.addChild(_bg);
@@ -99,6 +117,42 @@ public class BoardController
     {
         if (event.name == "board" && (_board == null)) {
             readBoard(ByteArray(_gameCtrl.get("board")));
+
+        } else if ((event.name == "powerup") && (event.index >= 0)) {
+            if (_powerups == null) {
+                return;
+            }
+            if (event.newValue == null) {
+                if (_powerups[event.index] != null) {
+                    powerupLayer.removeChild(_powerups[event.index]);
+                    _powerups[event.index] = null;
+                    _status.removePowerup(event.index);
+                }
+                return;
+            }
+
+            var pow :Powerup = _powerups[event.index];
+            if (pow == null) {
+                _powerups[event.index] = pow = new Powerup(0, 0, 0, false);
+                powerupLayer.addChild(pow);
+                _status.addPowerup(event.index);
+            }
+            var pBytes :ByteArray = ByteArray(event.newValue);
+            pBytes.position = 0;
+            pow.readFrom(pBytes);
+        } else if ((event.name == "obstacles") && (event.index >= 0)) {
+            if (_obstacles == null) {
+                return;
+            }
+            if (event.newValue == null) {
+                if (_obstacles[event.index] != null) {
+                    var obs :Obstacle = _obstacles[event.index];
+                    _obstacles[event.index] = null;
+                    obs.explode(function () :void {
+                        _board.removeChild(obs);
+                    });
+                }
+            }
         }
     }
 
@@ -127,6 +181,52 @@ public class BoardController
         _board.x = StarFight.WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
         _board.y = StarFight.HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
         _bg.setAsCenter(boardX, boardY);
+        _status.updateRadar(_ships, _powerups, boardX, boardY);
+    }
+
+    /**
+     * Adds a new random powerup to the board.
+     */
+    public function addRandomPowerup () :void
+    {
+        for (var ii :int = 0; ii < _powerups.length; ii++) {
+            if (_powerups[ii] == null) {
+                var x :int = Math.random() * width;
+                var y :int = Math.random() * height;
+
+                var repCt :int = 0;
+
+                while (getObstacleAt(x, y) ||
+                        (getPowerupIdx(x+0.5, y+0.5, x+0.5, y+0.5, 0.1) != -1)) {
+                    x = Math.random() * width;
+                    y = Math.random() * height;
+
+                    // Safety valve - if we can't find anything after 100
+                    //  tries, bail.
+                    if (repCt++ > 100) {
+                        return;
+                    }
+                }
+
+                _powerups[ii] = new Powerup(Math.random()*Powerup.COUNT, x, y);
+
+                _gameCtrl.setImmediate("powerup", _powerups[ii].writeTo(new ByteArray()), ii);
+                powerupLayer.addChild(_powerups[ii]);
+                _status.addPowerup(ii);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Removes a powerup from the board.
+     */
+    public function removePowerup (idx :int) :void
+    {
+        _gameCtrl.setImmediate("powerup", null, idx);
+        powerupLayer.removeChild(_powerups[idx]);
+        _powerups[idx] = null;
+        _status.removePowerup(idx);
     }
 
     /**
@@ -180,8 +280,8 @@ public class BoardController
         }
 
         // Check each obstacle and figure out which one we hit first.
-        for each (var obs :Obstacle in obstacles) {
-            if (ignoreObs == 1 && obs.type != Obstacle.WALL) {
+        for each (var obs :Obstacle in _obstacles) {
+            if (obs == null || (ignoreObs == 1 && obs.type != Obstacle.WALL)) {
                 continue;
             }
 
@@ -227,7 +327,10 @@ public class BoardController
     public function getObstacleAt (boardX :int, boardY :int) :Obstacle
     {
         // Check each obstacle and figure out which one we hit first.
-        for each (var obs :Obstacle in obstacles) {
+        for each (var obs :Obstacle in _obstacles) {
+            if (obs == null) {
+                continue;
+            }
             if (obs.bX == boardX && obs.bY == boardY) {
                 return obs;
             }
@@ -291,22 +394,73 @@ public class BoardController
         _board.addChild(exp);
     }
 
+    public function hitObs (
+            obs :Obstacle, x :Number, y :Number, owner :Boolean, damage :Number) :Sound
+    {
+        explode(x, y, 0, true, 0);
+        if (owner) {
+            if (obs.damage(damage)) {
+                _gameCtrl.setImmediate("obstacles", null, obs.index);
+            }
+        }
+
+        var sound :Sound;
+        switch (obs.type) {
+        case Obstacle.ASTEROID_1:
+        case Obstacle.ASTEROID_2:
+            sound = Resources.getSound("asteroid_hit.wav");
+            break;
+        case Obstacle.JUNK:
+            sound = Resources.getSound("junk_hit.wav");
+            break;
+        case Obstacle.WALL:
+        default:
+            sound = Resources.getSound("metal_hit.wav");
+            break;
+        }
+        return sound;
+    }
+
+
     /**
      * Draw the board.
      */
     public function setupGraphics () :void
     {
-        for each (var obs :Obstacle in obstacles) {
-            _board.addChild(obs);
+        for each (var obs :Obstacle in _obstacles) {
+            if (obs != null) {
+                _board.addChild(obs);
+            }
         }
 
         _board.addChild(powerupLayer = new Sprite());
+        for (var ii :int; ii < _powerups.length; ii++) {
+            if (_powerups[ii] != null) {
+                powerupLayer.addChild(_powerups[ii]);
+                _status.addPowerup(ii);
+            }
+        }
+    }
+
+    public function collectPowerups (ownShip :ShipSprite, oldX :Number, oldY :Number) :void
+    {
+        do {
+            var powIdx :int = getPowerupIdx(oldX, oldY, ownShip.boardX, ownShip.boardY,
+                    Codes.SHIP_TYPES[ownShip.shipType].size);
+            if (powIdx == -1) {
+                break;
+            }
+            ownShip.awardPowerup(_powerups[powIdx]);
+            removePowerup(powIdx);
+        } while (powIdx != -1);
     }
 
     public function tick (time :int) :void
     {
-        for each (var obs :Obstacle in obstacles) {
-            obs.tick(time);
+        for each (var obs :Obstacle in _obstacles) {
+            if (obs != null) {
+                obs.tick(time);
+            }
         }
     }
 
@@ -317,14 +471,6 @@ public class BoardController
     {
         width = bytes.readInt();
         height = bytes.readInt();
-        /*
-        obstacles = [];
-        while (bytes.bytesAvailable > 0) {
-            var obs :Obstacle = new Obstacle(0, 0, 0, false);
-            obs.readFrom(bytes);
-            obstacles.push(obs);
-        }
-        */
     }
 
     /**
@@ -334,11 +480,6 @@ public class BoardController
     {
         bytes.writeInt(width);
         bytes.writeInt(height);
-        /*
-        for each (var obs :Obstacle in obstacles) {
-            obs.writeTo(bytes);
-        }
-        */
 
         return bytes;
     }
@@ -348,9 +489,10 @@ public class BoardController
      */
     protected function loadObstacles () :void
     {
-        obstacles = [];
+        _obstacles = [];
 
         var ii :int;
+        var index :int;
 
         // TODO Load obstacles from a file instead of random.
         var numAsteroids :int = width*height/100;
@@ -360,19 +502,24 @@ public class BoardController
             case 0: type = Obstacle.ASTEROID_1; break;
             case 1: type = Obstacle.ASTEROID_2; break;
             }
-            obstacles.push(new Obstacle(type, Math.random()*width, Math.random()*height));
+            _obstacles.push(new Obstacle(type, Math.random()*width, Math.random()*height));
+            _obstacles[_obstacles.length - 1].index = index++;
         }
 
         // Place a wall around the outside of the board.
 
         for (ii = 0; ii < height; ii++) {
-            obstacles.push(new Obstacle(Obstacle.WALL, 0, ii));
-            obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii));
+            _obstacles.push(new Obstacle(Obstacle.WALL, 0, ii));
+            _obstacles[_obstacles.length - 1].index = index++;
+            _obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii));
+            _obstacles[_obstacles.length - 1].index = index++;
         }
 
         for (ii = 0; ii < width; ii++) {
-            obstacles.push(new Obstacle(Obstacle.WALL, ii, 0));
-            obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1));
+            _obstacles.push(new Obstacle(Obstacle.WALL, ii, 0));
+            _obstacles[_obstacles.length - 1].index = index++;
+            _obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1));
+            _obstacles[_obstacles.length - 1].index = index++;
         }
     }
 
@@ -397,5 +544,14 @@ public class BoardController
 
     /** Reference to the array of powerups we know about. */
     protected var _powerups :Array;
+
+    /** All the obstacles on the board. */
+    protected var _obstacles :Array;
+
+    /** Reference to the status overlay. */
+    protected var _status :StatusOverlay;
+
+    /** This could be more dynamic. */
+    protected static const MIN_TILES_PER_POWERUP :int = 250;
 }
 }
