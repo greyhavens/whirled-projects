@@ -3,6 +3,8 @@
 
 package {
 
+import flash.utils.Dictionary;
+
 import com.adobe.webapis.flickr.FlickrService;
 import com.adobe.webapis.flickr.PagedPhotoList;
 import com.adobe.webapis.flickr.Photo;
@@ -56,10 +58,11 @@ public class AbstractFlickrPhotoService extends PhotoService
      * need to know the urls to dispatch to the game, call this. It will even dispatch
      * everything for you, so you're done when you call this.
      */
-    protected function getUrlsAndDispatchToGame (flickrPhotoIds :Array) :void
+    protected function getUrlsAndDispatchToGame (photoArray :Array /* of Photo */) :void
     {
-        for each (var id :String in flickrPhotoIds) {
-            _flickr.photos.getSizes(id);
+        for each (var photo :Photo in photoArray) {
+            _pageUrls[photo.id] = "http://www.flickr.com/photos/" + photo.ownerId + "/" + photo.id;
+            _flickr.photos.getSizes(photo.id);
         }
     }
 
@@ -76,6 +79,7 @@ public class AbstractFlickrPhotoService extends PhotoService
 
         // find a good caption-sized photo
         var returnedSizes :Array = (evt.data.photoSizes as Array);
+        var pageUrl :String = getPageUrl(returnedSizes);
         var captionSize :PhotoSize = getPhotoSource(returnedSizes, CAPTION_SIZE);
         if (captionSize == null) { 
             flickrFailure("Could not find photo sources for photo: " + returnedSizes);
@@ -85,7 +89,7 @@ public class AbstractFlickrPhotoService extends PhotoService
         // We've got enough to satisfy a photo request
         if (_needPhoto) {
             _needPhoto = false;
-            dispatchPhoto(captionSize.source);
+            dispatchPhoto(captionSize.source, pageUrl);
             return;
         }
 
@@ -99,11 +103,11 @@ public class AbstractFlickrPhotoService extends PhotoService
         // Yay. Everything's kosher. Do something with it.
         _previews--;
         if (_previews >= 0) {
-            dispatchPreview(_previews, previewSize.source, captionSize.source);
+            dispatchPreview(_previews, previewSize.source, captionSize.source, pageUrl);
 
         } else {
             // save it
-            _pics.push([ previewSize.source, captionSize.source ]);
+            _pics.push([ previewSize.source, captionSize.source, pageUrl ]);
         }
     }
 
@@ -125,6 +129,23 @@ public class AbstractFlickrPhotoService extends PhotoService
         return null;
     }
 
+    protected function getPageUrl (photoSizes :Array) :String
+    {
+        if (photoSizes.length > 0) {
+            var p :PhotoSize = photoSizes[0] as PhotoSize;
+            var result :Object = (/id=(\d+)/).exec(p.url);
+            if (result) {
+                var id :String = result[1] as String;
+                var url :String = _pageUrls[id];
+                delete _pageUrls[id];
+                return url;
+            }
+        }
+
+        // NOTE: we may leave garbage in _pageUrls, but there's nothing we can do
+        return null;
+    }
+
     /**
      * Dispatch photos/previews if we have them.
      *
@@ -136,10 +157,10 @@ public class AbstractFlickrPhotoService extends PhotoService
             var pic :Array = _pics.shift() as Array;
             if (_needPhoto) {
                 _needPhoto = false;
-                dispatchPhoto(pic[1]);
+                dispatchPhoto(pic[1], pic[2]);
 
             } else {
-                dispatchPreview(--_previews, pic[0], pic[1]);
+                dispatchPreview(--_previews, pic[0], pic[1], pic[2]);
             }
         }
 
@@ -174,5 +195,7 @@ public class AbstractFlickrPhotoService extends PhotoService
     protected var _needPhoto :Boolean;
 
     protected var _pics :Array = [];
+
+    protected var _pageUrls :Dictionary = new Dictionary();
 }
 }

@@ -17,10 +17,6 @@ import com.adobe.webapis.flickr.events.FlickrResultEvent;
  */
 public class LatestFlickrPhotoService extends AbstractFlickrPhotoService
 {
-    public function LatestFlickrPhotoService ()
-    {
-    }
-
     override public function init () :void
     {
         super.init();
@@ -50,13 +46,7 @@ public class LatestFlickrPhotoService extends AbstractFlickrPhotoService
         }
 
         // otherwise, make size requests on everything we got
-        var photos :Array = (evt.data.photos as PagedPhotoList).photos;
-        var photoIds :Array = photos.map(
-            function (photo :Photo, ... sh) :String {
-                return photo.id;
-            }
-        );
-        getUrlsAndDispatchToGame(photoIds);
+        getUrlsAndDispatchToGame((evt.data.photos as PagedPhotoList).photos);
     }
 }
 }

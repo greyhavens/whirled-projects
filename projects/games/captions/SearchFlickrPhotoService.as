@@ -96,14 +96,7 @@ public class SearchFlickrPhotoService extends LatestFlickrPhotoService
         trace("Got " + photoList.page + " (" + photoList.perPage + ") of " + _total);
 
         // otherwise, make size requests on everything we got
-        var photos :Array = photoList.photos;
-        var photoIds :Array = photos.map(
-            function (photo :Photo, ... sh) :String {
-                trace("Photoid: " + photo.id);
-                return photo.id;
-            }
-        );
-        getUrlsAndDispatchToGame(photoIds);
+        getUrlsAndDispatchToGame(photoList.photos);
     }
 
     protected var _str :String;
