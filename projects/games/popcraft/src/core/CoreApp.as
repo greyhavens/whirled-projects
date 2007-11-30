@@ -131,6 +131,8 @@ public class CoreApp extends Sprite
 			}
 		}
 		
+		_pendingModeTransitionQueue = new Array();
+		
 		var topMode :AppMode = this.topMode;
 		
 		if(topMode != initialTopMode) {
