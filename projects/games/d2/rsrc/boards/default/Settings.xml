@@ -204,220 +204,363 @@
   </boards>
 
   <towers>
-    <tower id="TYPE_SHRUB" assetRoot="shrub"
+    <tower id="TYPE_SHRUB" 
            name="Shrub"
            styleName="shrubButton"
            description="Basic station, with a short range and fast reloads."
            cost="3"
-           rangeMin="0"
            rangeMax="2.5"
            pauseBetweenMissiles="3"
            width="1" height="1">
+      <animations>
+        <animationRest>tower_shrub_rest</animationRest>
+	<animationLeft>tower_shrub_fire_left</animationLeft>
+	<animationRight>tower_shrub_fire_right</animationRight>
+	<animationUp>tower_shrub_fire_up</animationUp>
+	<animationDown>tower_shrub_fire_down</animationDown>
+      </animations>
       <missiles maxvel="8" damage="1">
-        <asset>"missile_balloon"</asset>
+        <animation>missile_balloon</animation>
       </missiles>
     </tower>
-    <tower id="TYPE_BOX" assetRoot="box"
+    <tower id="TYPE_BOX"
            name="Box"
            styleName="boxButton"
            description="Basic station, with longer range but slower reloads."
            cost="3"
-           rangeMin="0"
            rangeMax="4.5"
            pauseBetweenMissiles="5"
            width="1" height="1">
+      <animations>
+        <animationRest>tower_box_rest</animationRest>
+	<animationLeft>tower_box_fire_left</animationLeft>
+	<animationRight>tower_box_fire_right</animationRight>
+	<animationUp>tower_box_fire_up</animationUp>
+	<animationDown>tower_box_fire_down</animationDown>
+      </animations>
       <missiles maxvel="8" damage="1" delay="500">
-        <asset>"missile_basketball"</asset>
-        <asset>"missile_soccerball"</asset>
-        <asset>"missile_football"</asset>
+        <animation>missile_basketball</animation>
+        <animation>missile_soccerball</animation>
+        <animation>missile_football</animation>
       </missiles>
     </tower>
-    <tower id="TYPE_TRASHCAN" assetRoot="trashcan"
+    <tower id="TYPE_TRASHCAN"
            name="Trashcan"
            styleName="trashButton"
            description="Basic station, with longer range but more expensive."
            cost="4"
-           rangeMin="0"
            rangeMax="4.5"
            pauseBetweenMissiles="3"
            width="1" height="1">
+      <animations>
+        <animationRest>tower_trashcan_rest</animationRest>
+	<animationLeft>tower_trashcan_fire_left</animationLeft>
+	<animationRight>tower_trashcan_fire_right</animationRight>
+	<animationUp>tower_trashcan_fire_up</animationUp>
+	<animationDown>tower_trashcan_fire_down</animationDown>
+      </animations>
       <missiles maxvel="8" damage="1">
-        <asset>"missile_spitball"</asset>
+        <animation>missile_spitball</animation>
       </missiles>
     </tower>
-    <tower id="TYPE_BOULDER" assetRoot="boulder"
+    <tower id="TYPE_BOULDER"
            name="Boulder"
            styleName="rockButton"
            description="Basic station, very fast but expensive."
            cost="5"
-           rangeMin="0"
            rangeMax="3.5"
            pauseBetweenMissiles="2"
            width="1" height="1">
+      <animations>
+        <animationRest>tower_boulder_rest</animationRest>
+	<animationLeft>tower_boulder_fire_left</animationLeft>
+	<animationRight>tower_boulder_fire_right</animationRight>
+	<animationUp>tower_boulder_fire_up</animationUp>
+	<animationDown>tower_boulder_fire_down</animationDown>
+      </animations>
       <missiles maxvel="8" damage="2" delay="500">
-        <asset>"missile_boomerang"</asset>
+        <animation>missile_boomerang</animation>
       </missiles>
     </tower>
-    <tower id="TYPE_SANDBOX" assetRoot="sandbox"
+    <tower id="TYPE_SANDBOX"
            name="Sandbox"
            styleName="sandboxButton"
            description="Medium-damage station, with longer range but slower reloads."
            cost="3"
-           rangeMin="0"
            rangeMax="5"
            pauseBetweenMissiles="5"
            width="2" height="2">
+      <animations>
+        <animationRest>tower_sandbox_rest</animationRest>
+	<animationLeft>tower_sandbox_fire_left</animationLeft>
+	<animationRight>tower_sandbox_fire_right</animationRight>
+	<animationUp>tower_sandbox_fire_up</animationUp>
+	<animationDown>tower_sandbox_fire_down</animationDown>
+      </animations>
       <missiles maxvel="8" damage="2">
-        <asset>"missile_rock"</asset>
+        <animation>missile_rock</animation>
       </missiles>
     </tower>
-    <tower id="TYPE_WAGON" assetRoot="wagon"
+    <tower id="TYPE_WAGON"
            name="Wagon"
            styleName="wagonButton"
            description="Medium-damage station, faster but more expensive."
            cost="4"
-           rangeMin="0"
            rangeMax="4"
            pauseBetweenMissiles="4"
            width="2" height="1">
+      <animations>
+        <animationRest>tower_wagon_rest</animationRest>
+	<animationLeft>tower_wagon_fire_left</animationLeft>
+	<animationRight>tower_wagon_fire_right</animationRight>
+	<animationUp>tower_wagon_fire_up</animationUp>
+	<animationDown>tower_wagon_fire_down</animationDown>
+      </animations>
       <missiles maxvel="8" damage="2">
-        <asset>"missile_waterjet"</asset>
+        <animation>missile_waterjet</animation>
       </missiles>
     </tower>
-    <tower id="TYPE_TREE" assetRoot="tree"
+    <tower id="TYPE_TREE"
            name="Tree"
            styleName="treeButton"
            description="High-damage, long range station."
            cost="6"
-           rangeMin="0"
            rangeMax="7"
            pauseBetweenMissiles="4"
            width="2" height="3">
+      <animations>
+        <animationRest>tower_tree_rest</animationRest>
+	<animationLeft>tower_tree_fire_left</animationLeft>
+	<animationRight>tower_tree_fire_right</animationRight>
+	<animationUp>tower_tree_fire_up</animationUp>
+	<animationDown>tower_tree_fire_down</animationDown>
+      </animations>
       <missiles maxvel="8" damage="3">
-        <asset>"missile_airplane"</asset>
+        <animation>missile_airplane</animation>
       </missiles>
     </tower>
-    <tower id="TYPE_PUMPKIN" assetRoot="pumpkin"
+    <tower id="TYPE_PUMPKIN"
            name="Pumpkin"
            styleName="pumpkinButton"
            description="High-damage station, inexpensive but slow to reload."
            cost="2"
-           rangeMin="0"
            rangeMax="3"
            pauseBetweenMissiles="7"
            width="1" height="1">
+      <animations>
+        <animationRest>tower_pumpkin_rest</animationRest>
+	<animationLeft>tower_pumpkin_fire_left</animationLeft>
+	<animationRight>tower_pumpkin_fire_right</animationRight>
+	<animationUp>tower_pumpkin_fire_up</animationUp>
+	<animationDown>tower_pumpkin_fire_down</animationDown>
+      </animations>
       <missiles maxvel="8" damage="3">
-        <asset>"missile_fireball"</asset>
+        <animation>missile_fireball</animation>
       </missiles>
     </tower>
-    <tower id="TYPE_SHRUBWINTER" assetRoot="shrubwinter"
+    <tower id="TYPE_SHRUBWINTER"
            name="Winter Shrub"
            styleName="shrubwinterButton"
            description="Basic station, with a range and fast reloads."
            cost="3"
-           rangeMin="0"
            rangeMax="2.5"
            pauseBetweenMissiles="3"
            width="1" height="1">
+      <animations>
+        <animationRest>tower_shrubwinter_rest</animationRest>
+	<animationLeft>tower_shrubwinter_fire_left</animationLeft>
+	<animationRight>tower_shrubwinter_fire_right</animationRight>
+	<animationUp>tower_shrubwinter_fire_up</animationUp>
+	<animationDown>tower_shrubwinter_fire_down</animationDown>
+      </animations>
       <missiles maxvel="8" damage="1">
-        <asset>"missile_snowball"</asset>
+        <animation>missile_snowball</animation>
       </missiles>
     </tower>
-    <tower id="TYPE_TREEWINTER" assetRoot="treewinter"
+    <tower id="TYPE_TREEWINTER"
            name="Tree"
            styleName="treewinterButton"
            description="High-damage, long range station."
            cost="6"
-           rangeMin="0"
            rangeMax="7"
            pauseBetweenMissiles="7"
            width="2" height="3">
+      <animations>
+        <animationRest>tower_treewinter_rest</animationRest>
+	<animationLeft>tower_treewinter_fire_left</animationLeft>
+	<animationRight>tower_treewinter_fire_right</animationRight>
+	<animationUp>tower_treewinter_fire_up</animationUp>
+	<animationDown>tower_treewinter_fire_down</animationDown>
+      </animations>
       <missiles maxvel="8" damage="3" delay="700">
-        <asset>"missile_snowflake"</asset>
+        <animation>missile_snowflake</animation>
       </missiles>
     </tower>
-    <tower id="TYPE_SNOWMAN" assetRoot="snowman"
+    <tower id="TYPE_SNOWMAN"
            name="Snowman"
            styleName="snowmanButton"
            description="Basic station, with a longer range and faster reloads."
            cost="4"
-           rangeMin="0"
            rangeMax="5"
            pauseBetweenMissiles="2"
            width="2" height="1">
+      <animations>
+        <animationRest>tower_snowman_rest</animationRest>
+	<animationLeft>tower_snowman_fire_left</animationLeft>
+	<animationRight>tower_snowman_fire_right</animationRight>
+	<animationUp>tower_snowman_fire_up</animationUp>
+	<animationDown>tower_snowman_fire_down</animationDown>
+      </animations>
       <missiles maxvel="8" damage="1">
-        <asset>"missile_snowball"</asset>
+        <animation>missile_snowball</animation>
       </missiles>
     </tower>
-    <tower id="TYPE_UMBRELLA" assetRoot="umbrella"
+    <tower id="TYPE_UMBRELLA"
            name="Umbrella"
            styleName="umbrellaButton"
            description="High-damage, inexpensive station, slow to reload."
            cost="3"
-           rangeMin="0"
            rangeMax="5"
            pauseBetweenMissiles="7"
            width="2" height="3">
+      <animations>
+        <animationRest>tower_umbrella_rest</animationRest>
+	<animationLeft>tower_umbrella_fire_left</animationLeft>
+	<animationRight>tower_umbrella_fire_right</animationRight>
+	<animationUp>tower_umbrella_fire_up</animationUp>
+	<animationDown>tower_umbrella_fire_down</animationDown>
+      </animations>
       <missiles maxvel="8" damage="3">
-        <asset>"missile_beachball"</asset>
+        <animation>missile_beachball</animation>
       </missiles>
     </tower>
   </towers>
-
+  
   <enemies>
-    <enemy id="TYPE_BULLY" assetRoot="enemy_bully"
-           name="Bully"
-           maxhealth="20"
-           maxspeed="2"
-           powerup="2"
-           points="5" />
-    <enemy id="TYPE_GIRL" assetRoot="enemy_girl"
+    <enemy id="TYPE_BULLY"
+           name="Bully" 
+           isFlying="false"
+           health="20" 
+           speed="2"
+           powerup="2" 
+           points="5">
+      <animations>
+	<animationLeft>enemy_bully_walk_left</animationLeft>
+	<animationRight>enemy_bully_walk_right</animationRight>
+	<animationUp>enemy_bully_walk_up</animationUp>
+	<animationDown>enemy_bully_walk_down</animationDown>
+      </animations>
+    </enemy>
+    <enemy id="TYPE_GIRL"
            name="Girl"
-           maxhealth="16"
-           maxspeed="1"
-           powerup="2"
-           points="4" />
-    <enemy id="TYPE_BIRD" assetRoot="enemy_bird"
+           isFlying="false" 
+           health="16" 
+           speed="1"
+           powerup="2" 
+           points="4" >
+      <animations>
+	<animationLeft>enemy_girl_walk_left</animationLeft>
+	<animationRight>enemy_girl_walk_right</animationRight>
+	<animationUp>enemy_girl_walk_up</animationUp>
+	<animationDown>enemy_girl_walk_down</animationDown>
+      </animations>
+    </enemy>
+    <enemy id="TYPE_BIRD" 
            name="Bird"
-           isFlying="true"
-           maxhealth="8"
-           maxspeed="4"
-           powerup="1.5" />
-    <enemy id="TYPE_SQUIRREL" assetRoot="enemy_squirrel"
-           name="Fox"
-           maxhealth="4"
-           maxspeed="3"
+           isFlying="true" 
+           health="8" 
+           speed="4"
+           powerup="1.5" 
+           points="2" >
+      <animations>
+	<animationLeft>enemy_bird_walk_left</animationLeft>
+	<animationRight>enemy_bird_walk_right</animationRight>
+	<animationUp>enemy_bird_walk_up</animationUp>
+	<animationDown>enemy_bird_walk_down</animationDown>
+      </animations>
+    </enemy>
+    <enemy id="TYPE_SQUIRREL" 
+	   name="Fox"
+           isFlying="false" 
+           health="4" 
+           speed="3"
+           powerup="1.5" 
+           points="2" >
+      <animations>
+	<animationLeft>enemy_squirrel_walk_left</animationLeft>
+	<animationRight>enemy_squirrel_walk_right</animationRight>
+	<animationUp>enemy_squirrel_walk_up</animationUp>
+	<animationDown>enemy_squirrel_walk_down</animationDown>
+      </animations>
+    </enemy>
+    <enemy id="TYPE_SKATER" name="Skater"
+           isFlying="false"
+           health="16"
+           speed="4"
            powerup="1.5"
-           points="2" />
-    <enemy id="TYPE_SKATER" assetRoot="enemy_skater"
-           name="Skater"
-           maxhealth="16"
-           maxspeed="4"
-           powerup="1.5"
-           points="3" />
+           points="3" >
+      <animations>
+	<animationLeft>enemy_skater_walk_left</animationLeft>
+	<animationRight>enemy_skater_walk_right</animationRight>
+	<animationUp>enemy_skater_walk_up</animationUp>
+	<animationDown>enemy_skater_walk_down</animationDown>
+      </animations>
+    </enemy>
     <enemy id="TYPE_SKUNK" assetRoot="enemy_skunk"
            name="Skunk"
-           maxhealth="2"
-           maxspeed="1"
+           isFlying="false"
+           health="2"
+           speed="1"
            powerup="1.5"
-           points="1" />
+           points="1" >
+      <animations>
+	<animationLeft>enemy_skunk_walk_left</animationLeft>
+	<animationRight>enemy_skunk_walk_right</animationRight>
+	<animationUp>enemy_skunk_walk_up</animationUp>
+	<animationDown>enemy_skunk_walk_down</animationDown>
+      </animations>
+    </enemy>
     <enemy id="TYPE_CAT" assetRoot="enemy_cat"
            name="Cat"
-           maxhealth="8"
-           maxspeed="1.5"
+           isFlying="false"
+           health="8"
+           speed="1.5"
            powerup="1.5"
-           points="3" />
+           points="3" >
+      <animations>
+	<animationLeft>enemy_cat_walk_left</animationLeft>
+	<animationRight>enemy_cat_walk_right</animationRight>
+	<animationUp>enemy_cat_walk_up</animationUp>
+	<animationDown>enemy_cat_walk_down</animationDown>
+      </animations>
+    </enemy>
     <enemy id="TYPE_YETI" assetRoot="enemy_yeti"
            name="Yeti"
-           maxhealth="20"
-           maxspeed="1"
+           isFlying="false"
+           health="20"
+           speed="1"
            powerup="2"
-           points="5" />
+           points="5" >
+      <animations>
+	<animationLeft>enemy_yeti_walk_left</animationLeft>
+	<animationRight>enemy_yeti_walk_right</animationRight>
+	<animationUp>enemy_yeti_walk_up</animationUp>
+	<animationDown>enemy_yeti_walk_down</animationDown>
+      </animations>
+    </enemy>
     <enemy id="TYPE_CRAB" assetRoot="enemy_crab"
            name="Crab"
-           maxhealth="4"
-           maxspeed="3"
+           isFlying="false"
+           health="4"
+           speed="3"
            powerup="1.5"
-           points="2" />
+           points="2" >
+      <animations>
+	<animationLeft>enemy_crab_walk_left</animationLeft>
+	<animationRight>enemy_crab_walk_right</animationRight>
+	<animationUp>enemy_crab_walk_up</animationUp>
+	<animationDown>enemy_crab_walk_down</animationDown>
+      </animations>
+    </enemy>
   </enemies>
 </settings>
