@@ -1,23 +1,43 @@
 package select {
 
+import flash.events.MouseEvent;
+
 import mx.containers.HBox;
-import mx.containers.VBox;
+import mx.containers.Canvas;
+import mx.core.MovieClipLoaderAsset;
+import mx.core.ScrollPolicy;
 
 import def.BoardDefinition;
 import def.Definitions;
 import def.PackDefinition;
 
+import com.threerings.flash.MathUtil;
+import com.threerings.flash.DisplayUtil;
 import com.threerings.util.ArrayUtil;
 
-public class BoardDisplay extends VBox
+public class BoardDisplay extends Canvas
 {
-    public function BoardDisplay (defs :Definitions, controller :SelectController)
+    public function BoardDisplay (
+        defs :Definitions, loader :MovieClipLoaderAsset, controller :SelectController)
     {
         _defs = defs;
         _controller = controller;
 
-        this.x = 100;
-        this.y = 150;
+        DisplayUtil.findInHierarchy(loader, "level_prev").addEventListener(
+            MouseEvent.CLICK, function (event :MouseEvent) :void { scroll(_boards, -50); },
+            false, 0, true);
+
+        DisplayUtil.findInHierarchy(loader, "level_next").addEventListener(
+            MouseEvent.CLICK, function (event :MouseEvent) :void { scroll(_boards, 50); },
+            false, 0, true);
+
+        DisplayUtil.findInHierarchy(loader, "pack_prev").addEventListener(
+            MouseEvent.CLICK, function (event :MouseEvent) :void { scroll(_packs, -50); },
+            false, 0, true);
+        
+        DisplayUtil.findInHierarchy(loader, "pack_next").addEventListener(
+            MouseEvent.CLICK, function (event :MouseEvent) :void { scroll(_packs, 50); },
+            false, 0, true);
     }
 
     override protected function createChildren () :void
@@ -25,25 +45,41 @@ public class BoardDisplay extends VBox
         super.createChildren();
 
         _packs = new HBox();
-        _packs.width = 500;
-        _packs.height = 100;
+        _packs.x = 80;
+        _packs.y = 120;
+        _packs.width = 560;
+        _packs.height = 130;
         _packs.styleName = "boardSelectionContainer";
+        _packs.verticalScrollPolicy = ScrollPolicy.OFF;
+        _packs.horizontalScrollPolicy = ScrollPolicy.OFF;
         addChild(_packs);
 
         // make a pack button for each pack
         _defs.packs.forEach(function (pack :PackDefinition, ... ignore) :void {
-                _packs.addChild(new BoardButton(
+                _packs.addChild(new Button(
                                     function () :void { packSelected(pack); },
                                     pack.button, pack.name, null));
             });
         
         _boards = new HBox();
-        _boards.width = 500;
-        _boards.height = 100;
+        _boards.x = 80;
+        _boards.y = 280;
+        _boards.width = 560;
+        _boards.height = 130;
         _boards.styleName = "boardSelectionContainer";
+        _boards.verticalScrollPolicy = ScrollPolicy.OFF;
+        _boards.horizontalScrollPolicy = ScrollPolicy.OFF;
         addChild(_boards);
     }
 
+    /** Scrolls the horizontal button containers. */
+    protected function scroll (container :HBox, delta :int) :void
+    {
+        container.horizontalScrollPosition =
+            MathUtil.clamp(container.horizontalScrollPosition + delta,
+                           0, container.maxHorizontalScrollPosition);
+    }
+            
     /** Called when user clicks on a content pack button. */
     protected function packSelected (pack :PackDefinition) :void
     {
@@ -51,23 +87,23 @@ public class BoardDisplay extends VBox
         
         // make a board button for each board
         pack.boards.forEach(function (board :BoardDefinition, ... ignore) :void {
-                _boards.addChild(new BoardButton(
+                _boards.addChild(new Button(
                                      function () :void { _controller.boardSelected(board); },
                                      board.button, board.name, board));
             });
     }
 
-    protected function findButton (boardGuid :String) :BoardButton
+    protected function findButton (boardGuid :String) :Button
     {
         var children :Array = _boards.getChildren();
         var index :int = ArrayUtil.indexIf(
             children,
             function (elt :*) :Boolean {
-                var board :BoardButton = elt.arg as BoardButton;
+                var board :Button = elt.arg as Button;
                 return (board != null) && (board.guid == boardGuid);
             });
 
-        return (index >= 0) ? (children[index] as BoardButton) : null;
+        return (index >= 0) ? (children[index] as Button) : null;
     }
 
     protected var _packs :HBox, _boards :HBox;
@@ -93,7 +129,7 @@ import select.SelectController;
 import com.threerings.util.StringUtil;
 import com.threerings.util.Assert;
 
-internal class BoardButton extends VBox
+internal class Button extends VBox
 {
     public static const BOARD_WIDTH :int = 70;
     public static const BOARD_HEIGHT :int = 50;
@@ -103,7 +139,7 @@ internal class BoardButton extends VBox
     public var myname :String;
     public var arg :Object;
     
-    public function BoardButton (
+    public function Button (
         thunk :Function, button :DisplayObject, myname :String, arg :Object)
     {
         this.thunk = thunk;
@@ -125,18 +161,14 @@ internal class BoardButton extends VBox
         bc.width = button.width;
         bc.height = button.height;
         addChild(bc);
-        
+
+        // clicking on the entire button should take you places!
         addEventListener(MouseEvent.CLICK,
                          function (event :MouseEvent) :void { thunk(); },
                          false, 0, true);
         
+        this.toolTip = myname;
         this.styleName = "boardSelectionButton";
-        
-        // now add the name
-        var name :Text = new Text();
-        name.styleName = "boardSelectionLabel";
-        name.text = StringUtil.truncate(myname, 20, "...");
-        addChild(name);
     }
 }
 

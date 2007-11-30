@@ -63,21 +63,11 @@ public class SelectBoard extends GameModeCanvas
      */
     protected function doneLoading (event :Event) :void
     {
-        _loader.removeEventListener(Event.COMPLETE, doneLoading);
-
-        displayBoardPictures();
-        
-        var back :DisplayObject = DisplayUtil.findInHierarchy(_loader, "button_back");
-        Assert.isNotNull(back);
-        back.addEventListener(MouseEvent.CLICK, goBack);
-    }
-
-    /** Displays board pictures for all boards, so that players can pick. */
-    protected function displayBoardPictures () :void
-    {
         Assert.isNotNull(_controller);
         
-        _display = new BoardDisplay(_main.defs, _controller);
+        _loader.removeEventListener(Event.COMPLETE, doneLoading);
+
+        _display = new BoardDisplay(_main.defs, _loader, _controller);
         addChild(_display);
 
         _feedback = new Text();
@@ -85,6 +75,10 @@ public class SelectBoard extends GameModeCanvas
         _feedback.x = 250;
         _feedback.y = 420;
         addChild(_feedback);
+
+        var back :DisplayObject = DisplayUtil.findInHierarchy(_loader, "button_back");
+        Assert.isNotNull(back);
+        back.addEventListener(MouseEvent.CLICK, goBack);
     }
 
     /** Called when any user pick the board. */
@@ -128,7 +122,7 @@ public class SelectBoard extends GameModeCanvas
     protected var _controller :SelectController;
     
     /** Board selection container. */
-    protected var _display :VBox;
+    protected var _display :BoardDisplay;
 
     /** Board selection feedback label. */
     protected var _feedback :Text;
