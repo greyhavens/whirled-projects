@@ -39,10 +39,10 @@ public class SelectController
         _done = done;
 
         _whirled.registerListener(this);
-        if (_whirled.amInControl()) {
-            // initialize storage
-            _whirled.testAndSet(BOARD_SELECT, new Array(), null);
-        }
+
+        // the first person to start up initializes storage
+        _whirled.testAndSet(BOARD_SELECT, new Array(), null);
+
     }
 
     public function shutdown () :void

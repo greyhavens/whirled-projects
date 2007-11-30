@@ -16,12 +16,17 @@ public class BoardDefinition
     
     public var name :String;
     public var background :DisplayObject;
-    public var icon :BitmapData;
+    public var button :DisplayObject;
     
     public var squares :Point;
     public var pixelsize :Point;
     public var topleft :Point;
-        
+
+    public var startingHealth :int;
+    public var startingMoney :int;
+
+    public var towers :Array; // of TowerDef
+    
     public function BoardDefinition (swf :EmbeddedSwfLoader, pack :PackDefinition, board :XML)
     {
         this.pack = pack;
@@ -31,13 +36,16 @@ public class BoardDefinition
 
         var bgclass :Class = this.swf.getClass(board.@background);
         this.background = (new bgclass()) as DisplayObject;
-        
-        var iconclass :Class = this.swf.getClass(board.@icon);
-        this.icon = BitmapData(new iconclass(0, 0));
+
+        var bclass :Class = this.swf.getClass(board.@button);
+        this.button = (new bclass()) as DisplayObject;
         
         this.squares = new Point(int(board.squares.@cols), int(board.squares.@rows));
         this.pixelsize = new Point(int(board.pixelsize.@width), int(board.pixelsize.@height));
         this.topleft = new Point(int(board.topleft.@x), int(board.topleft.@y));
+
+        this.startingHealth = board.@startingHealth;
+        this.startingMoney = board.@startingMoney;
     }
 
     public function get guid () :String

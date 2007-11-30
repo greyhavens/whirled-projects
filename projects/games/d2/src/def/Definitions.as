@@ -74,18 +74,27 @@ public class Definitions
      */
     protected function packedSwfsLoaded (pack :DataPack, swfs :Object, settings :XML) :void
     {
-        trace("Got swfs: " + swfs);
-        trace("Boards: " + swfs.boards);
-        trace("Units: " + swfs.units);
-
         // create a new pack
         var pd :PackDefinition = new PackDefinition(swfs.boards, settings);
         packs.push(pd);
+
+        // load up towers
+        for each (var towerxml :XML in settings.towers.tower) {
+                var tower :TowerDefinition = new TowerDefinition(swfs.units, pd, towerxml);
+                pd.towers.push(tower);
+            }
         
-        for each (var board :XML in settings.boards.board) {
-                var bd :BoardDefinition = new BoardDefinition(swfs.boards, pd, board);
-                trace("Pushing definition: " + bd);
-                pd.boards.push(bd);
+        // load up enemies
+        for each (var enemyxml :XML in settings.enemies.enemy) {
+                var enemy :EnemyDefinition = new EnemyDefinition(swfs.units, pd, enemyxml);
+                pd.enemies.push(enemy);
+            }
+
+        // create the boards
+        for each (var boardxml :XML in settings.boards.board) {
+                var board :BoardDefinition = new BoardDefinition(swfs.boards, pd, boardxml);
+                trace("Pushing definition: " + board);
+                pd.boards.push(board);
             }
 
         trace("GOT PACK: " + pd);

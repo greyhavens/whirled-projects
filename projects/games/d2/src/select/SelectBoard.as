@@ -19,10 +19,9 @@ import com.whirled.contrib.GameMode;
 import com.whirled.contrib.GameModeStack;
 
 import def.BoardDefinition;
-
+import game.Display;
 import modes.GameModeCanvas;
 
-import Messages;
 
 public class SelectBoard extends GameModeCanvas
 {
@@ -111,13 +110,13 @@ public class SelectBoard extends GameModeCanvas
     protected function allSelected (boardGuid :String) :void
     {
         var board :BoardDefinition = _main.defs.findBoard(boardGuid);
-        trace("ALL SELECTED! " + board);
+
+        _main.modes.push(new Display(_main, board));
     }
                                                              
     /** Called when the user clicked the back button. */
     protected function goBack (event :Event) :void
     {
-        trace("GO BACK!");
         _main.modes.pop();
     }
 

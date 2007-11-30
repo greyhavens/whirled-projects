@@ -1,6 +1,6 @@
 package def {
 
-import flash.display.BitmapData;
+import flash.display.DisplayObject;
 
 import com.threerings.util.EmbeddedSwfLoader;
 
@@ -9,17 +9,19 @@ public class PackDefinition
 {
     public var guid :String;
     public var name :String;
-    public var icon :BitmapData;
+    public var button :DisplayObject;
 
     public var boards :Array = new Array(); // of BoardDefinition
+    public var towers :Array = new Array(); // of TowerDefinition
+    public var enemies :Array = new Array(); // of EnemyDefinition
     
     public function PackDefinition (swf :EmbeddedSwfLoader, settings :XML)
     {
         this.name = settings.@packname;
         this.guid = this.name;  // for now...
 
-        var iconclass :Class = swf.getClass(settings.@packicon);
-        this.icon = BitmapData(new iconclass(0, 0));
+        var bclass :Class = swf.getClass(settings.@button);
+        this.button = new bclass() as DisplayObject;
     }
 
     /** Finds an instance of BoardDefinition by guid. Returns null in case of failure. */

@@ -34,7 +34,7 @@ public class BoardDisplay extends VBox
         _defs.packs.forEach(function (pack :PackDefinition, ... ignore) :void {
                 _packs.addChild(new BoardButton(
                                     function () :void { packSelected(pack); },
-                                    pack.icon, pack.name, null));
+                                    pack.button, pack.name, null));
             });
         
         _boards = new HBox();
@@ -53,7 +53,7 @@ public class BoardDisplay extends VBox
         pack.boards.forEach(function (board :BoardDefinition, ... ignore) :void {
                 _boards.addChild(new BoardButton(
                                      function () :void { _controller.boardSelected(board); },
-                                     board.icon, board.name, board));
+                                     board.button, board.name, board));
             });
     }
 
@@ -78,9 +78,10 @@ public class BoardDisplay extends VBox
 
 /** Helper class that encapsulates a single board button. */
 
-import flash.display.BitmapData;
+import flash.display.DisplayObject;
 import flash.events.MouseEvent;
 
+import mx.containers.Canvas;
 import mx.containers.VBox;
 import mx.controls.Image;
 import mx.controls.Text;
@@ -98,15 +99,15 @@ internal class BoardButton extends VBox
     public static const BOARD_HEIGHT :int = 50;
 
     public var thunk :Function;
-    public var myicon :BitmapData;
+    public var button :DisplayObject;
     public var myname :String;
     public var arg :Object;
     
     public function BoardButton (
-        thunk :Function, myicon :BitmapData, myname :String, arg :Object)
+        thunk :Function, button :DisplayObject, myname :String, arg :Object)
     {
         this.thunk = thunk;
-        this.myicon = myicon;
+        this.button = button;
         this.myname = myname;
         this.arg = arg;
     }
@@ -116,21 +117,20 @@ internal class BoardButton extends VBox
         super.createChildren();
 
         Assert.isNotNull(thunk);
-        Assert.isNotNull(myicon);
+        Assert.isNotNull(button);
+
+        // wrap the button in a canvas, so that we can add it to the flex display tree
+        var bc :Canvas = new Canvas();
+        bc.rawChildren.addChild(button);
+        bc.width = button.width;
+        bc.height = button.height;
+        addChild(bc);
         
         addEventListener(MouseEvent.CLICK,
                          function (event :MouseEvent) :void { thunk(); },
                          false, 0, true);
         
         this.styleName = "boardSelectionButton";
-        
-        // make a clickable image for each board
-        var img :Image = new Image();
-        img.source = new BitmapAsset(myicon);
-        img.scaleX = BOARD_WIDTH / myicon.width;
-        img.scaleY = BOARD_HEIGHT / myicon.height;
-        img.useHandCursor = true;
-        addChild(img);
         
         // now add the name
         var name :Text = new Text();
