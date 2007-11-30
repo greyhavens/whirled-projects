@@ -2,14 +2,13 @@ package core {
 	
 import com.threerings.util.Assert;
 
-import flash.display.Sprite;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
-public class CoreApp extends Sprite
+public class MainLoop
 {
-	public function CoreApp ()
+	public function MainLoop ()
 	{
 	}
 	
@@ -23,6 +22,10 @@ public class CoreApp extends Sprite
 	
 	public function run () :void
 	{
+		// it's an error to call run() multiple times
+		Assert.isFalse(_running);
+		_running = true;
+		
 		var appSettings :CoreAppSettings = this.applicationSettings;
 		
 		// convert fps to update interval
@@ -134,7 +137,6 @@ public class CoreApp extends Sprite
 		_pendingModeTransitionQueue = new Array();
 		
 		var topMode :AppMode = this.topMode;
-		
 		if(topMode != initialTopMode) {
 			if(null != initialTopMode) {
 				initialTopMode.exit();
@@ -156,6 +158,7 @@ public class CoreApp extends Sprite
 	
 	protected static var g_defaultAppSettings :CoreAppSettings;
 	
+	protected var _running :Boolean = false;
 	protected var _mainTimer :Timer;
 	protected var _lastTime :Number;
 	protected var _modeStack :Array = new Array();

@@ -49,7 +49,7 @@ public class AppObject extends Sprite
 		update(dt);
 	}
 	
-	protected var _anonymousTasks :TaskContainer;
+	protected var _anonymousTasks :TaskContainer = new TaskContainer(TaskContainer.TYPE_PARALLEL);
 	
 	// these variables are managed by AppMode and shouldn't be modified
 	internal var _parentMode :AppMode;

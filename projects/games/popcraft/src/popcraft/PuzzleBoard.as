@@ -1,9 +1,10 @@
 package popcraft {
 
 import com.threerings.util.Assert;
-import flash.display.Sprite;
 
-public class PuzzleBoard extends Sprite
+import core.AppObject;
+
+public class PuzzleBoard extends AppObject
 {
 	public function PuzzleBoard (columns :int, rows :int)
 	{
