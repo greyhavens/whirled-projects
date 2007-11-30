@@ -33,8 +33,7 @@ public class TaskContainer extends ObjectTask
 	{
 		var hasIncompleteTasks :Boolean = false;
 		
-		var i :int = 0;
-		for(i = 0; i < _tasks.length; ++i) {
+		for(var i :int = 0; i < _tasks.length; ++i) {
 			var task :ObjectTask = (_tasks[i] as ObjectTask);
 			Assert.isTrue(null != task);
 			
@@ -42,6 +41,11 @@ public class TaskContainer extends ObjectTask
 			
 			if(status == ObjectTask.STATUS_INCOMPLETE) {
 				hasIncompleteTasks = true;
+				
+				// Serial tasks proceed one task at a time
+				if(_type == TYPE_SERIAL)
+					break;
+					
 			} else {
 				// the task is complete - remove it
 				_tasks.splice(i, 1);
