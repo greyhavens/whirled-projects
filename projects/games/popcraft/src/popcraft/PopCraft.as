@@ -3,9 +3,8 @@
 
 package popcraft {
 
-import com.whirled.WhirledGameControl;
 import com.threerings.util.Assert;
-
+import com.whirled.WhirledGameControl;
 import core.CoreApp;
 
 [SWF(width="700", height="500")]
