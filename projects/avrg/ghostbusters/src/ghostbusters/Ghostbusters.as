@@ -19,6 +19,7 @@ import mx.events.FlexEvent;
 
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
+import com.whirled.MobControl;
 
 import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Log;
@@ -30,11 +31,11 @@ public class Ghostbusters extends Sprite
     {
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        _splash.addEventListener(MouseEvent.CLICK, handleClick);
+        this.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+                Log.getLog(Ghostbusters).debug("CLICK: " + evt);
+            });
 
-        _hud = new HUD();
-        _hud.visible = false;
-        this.addChild(_hud);
+        _splash.addEventListener(MouseEvent.CLICK, handleClick);
 
         _control = new AVRGameControl(this);
         _control.addEventListener(
@@ -42,8 +43,25 @@ public class Ghostbusters extends Sprite
         _control.addEventListener(
             AVRGameControlEvent.PLAYER_PROPERTY_CHANGED, playerPropertyChanged);
 
-        this.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
+        _control.setMobSpriteExporter(exportMobSprite);
 
+        _control.setHitPointTester(hitTestPoint);
+
+        _hud = new HUD(_control);
+        _hud.visible = false;
+        this.addChild(_hud);
+
+        this.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
+    }
+
+    override public function hitTestPoint (
+        x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
+    {
+        if (_hud.visible) {
+            var hit :Boolean = _hud.hitTestPoint(x, y, shapeFlag);
+            return hit;
+        }
+        return _box && _box.hitTestPoint(x, y, shapeFlag);
     }
 
     protected function handleAdded (evt :Event) :void
@@ -116,6 +134,13 @@ public class Ghostbusters extends Sprite
         Log.getLog(this).debug("property changed: " + event.name + "=" + event.value);
     }
 
+    protected function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
+    {
+        _ghost = (new GHOST()) as DisplayObject;
+        Log.getLog(this).debug("Exporting ghost: " + _ghost);
+        return _ghost;
+    }
+
     protected var _control :AVRGameControl;
 
     protected var _hud :HUD;
@@ -123,7 +148,12 @@ public class Ghostbusters extends Sprite
 
     protected var _splash :MovieClip = MovieClip(new SPLASH());
 
+    protected var _ghost :DisplayObject;
+
     [Embed(source="../../rsrc/splash01.swf")]
     protected static const SPLASH :Class;
+
+    [Embed(source="../../rsrc/Ghosthunter_female.swf")]
+    protected static const GHOST :Class;
 }
 }

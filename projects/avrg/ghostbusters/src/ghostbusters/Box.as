@@ -104,7 +104,7 @@ public class Box extends Sprite
     protected var _boxDisappearClip :MovieClip = MovieClip(new TEXT_BOX_DISAPPEAR());
     protected var _boxDisappearHandler :ClipHandler;
 
-    protected static const log :Log = Log.getLog(TextBox);
+    protected static const log :Log = Log.getLog(Box);
 
     protected static const BOX_PADDING :int = 10;
 
