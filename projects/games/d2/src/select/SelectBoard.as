@@ -20,6 +20,7 @@ import com.whirled.contrib.GameModeStack;
 
 import def.BoardDefinition;
 import game.Display;
+import game.GameLoader;
 import modes.GameModeCanvas;
 
 
@@ -30,33 +31,22 @@ public class SelectBoard extends GameModeCanvas
         super(main);
     }
 
-    // from Canvas
-    override protected function createChildren () :void
+    // from GameModeCanvas
+    override public function pushed () :void
     {
-        super.createChildren();
-
         var bg :Image = new Image();
         addChild(bg);
 
         _loader = new _screen();
         _loader.addEventListener(Event.COMPLETE, doneLoading);
         bg.source = _loader;
-    }
 
-    // from GameModeCanvas
-    override public function pushed () :void
-    {
         _controller = new SelectController(_main);
         _controller.init(_main.whirled, boardSelected, allSelected);
+        
+        // rest of initialization will happen in doneLoading()
     }
     
-    // from GameModeCanvas
-    override public function popped () :void
-    {
-        _controller.shutdown();
-        _controller = null;
-    }
-
     /**
      * After the board selection background loads, populate it with boards,
      * and hook up the back button.
@@ -66,7 +56,6 @@ public class SelectBoard extends GameModeCanvas
         Assert.isNotNull(_controller);
         
         _loader.removeEventListener(Event.COMPLETE, doneLoading);
-
         _display = new BoardDisplay(_main.defs, _loader, _controller);
         addChild(_display);
 
@@ -79,6 +68,21 @@ public class SelectBoard extends GameModeCanvas
         var back :DisplayObject = DisplayUtil.findInHierarchy(_loader, "button_back");
         Assert.isNotNull(back);
         back.addEventListener(MouseEvent.CLICK, goBack);
+    }
+
+    // from GameModeCanvas
+    override public function popped () :void
+    {
+        trace("POPPING SELECTBOARD");
+        _display = null;
+        _feedback = null;
+        _loader = null;
+        
+        _controller.shutdown();
+        _controller = null;
+
+        removeAllChildren();
+        trace("SELECTBOARD POPPED");
     }
 
     /** Called when any user pick the board. */
@@ -99,21 +103,20 @@ public class SelectBoard extends GameModeCanvas
             }
         }
     }
-
+    
     /** Called when *all* users pick the same board. */
     protected function allSelected (boardGuid :String) :void
     {
         var board :BoardDefinition = _main.defs.findBoard(boardGuid);
 
-        _main.modes.push(new Display(_main, board));
+        _main.modes.push(new GameLoader(_main, [ board ]));
     }
-                                                             
+
     /** Called when the user clicked the back button. */
     protected function goBack (event :Event) :void
     {
         _main.modes.pop();
     }
-
         
     /** Loader for the embedded screen selection swf. */
     protected var _loader :MovieClipLoaderAsset;

@@ -4,6 +4,8 @@ import flash.display.DisplayObject;
 
 import com.threerings.util.EmbeddedSwfLoader;
 
+import units.Tower;
+
     
 public class PackDefinition
 {
@@ -31,6 +33,17 @@ public class PackDefinition
         boards.forEach(function (board :BoardDefinition, ... etc) :void {
                 if (board.guid == guid) {
                     result = board;
+                }});
+        return result;
+    }
+
+    /** Finds an instance of TowerDefinition by type. Returns null in case of failure. */
+    public function findTower (typeName :String) :TowerDefinition
+    {
+        var result :TowerDefinition = null; 
+        towers.forEach(function (tower :TowerDefinition, ... etc) :void {
+                if (tower.typeName == typeName) {
+                    result = tower;
                 }});
         return result;
     }

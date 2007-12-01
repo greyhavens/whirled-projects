@@ -29,7 +29,7 @@ public class Definitions
     }
     
     // from interface UnloadListener
-    public function handleUnload (event :Event) :void
+    public function handleUnload () :void
     {
         // todo - event listener removal here
     }

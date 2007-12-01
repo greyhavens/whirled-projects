@@ -103,27 +103,16 @@ public class Main extends Canvas
         // from Definitions, after all data pack SWFs finished loading.
     }
 
-    /** Helper accessor for retrieving the table index of this player. */
-    public function get myIndex () :int
-    {
-        return _whirled.seating.getMyPosition();
-    }
+    public function get myIndex () :int { return _whirled.seating.getMyPosition(); }
+    public function get playerCount () :int { return _whirled.seating.getPlayerIds().length; }
+    public function get playerNames () :Array { return _whirled.seating.getPlayerNames(); }
+    public function get isSinglePlayer () :Boolean { return playerCount == 1; }
 
-    /** Helper accessor for retrieving the number of players. */
-    public function get playerCount () :int
-    {
-        return _whirled.seating.getPlayerIds().length;
-    }
-
-    /** Helper accessor for checking whether this is a single-player game. */
-    public function get isSinglePlayer () :Boolean
-    {
-        return playerCount == 1;
-    }
     
     protected function doneLoadingContent () :void
     {
         _modes.push(new Splash(this));
+
         trace("SO DONE");
     }
     
@@ -134,14 +123,16 @@ public class Main extends Canvas
     
     protected function handleUnload (event :Event) :void
     {
-        trace("UNLOADING...");
         removeEventListener(Event.ENTER_FRAME, handleFrame);
         
         for each (var listener :UnloadListener in _unloadListeners) {
-                listener.handleUnload(event);
+                listener.handleUnload();
             }
 
+        _modes.clear();
+        
         _whirled.unregisterListener(this);
+        removeAllChildren();
     }
 
     /** Takes care of switching visible modes. */
@@ -149,8 +140,6 @@ public class Main extends Canvas
     {
         var oldChild :DisplayObject = oldMode as DisplayObject;
         var newChild :DisplayObject = newMode as DisplayObject;
-
-        Assert.isNotNull(newChild); // we should never ever empty the mode stack
 
         if (oldChild != null && this.contains(oldChild)) {
             removeChild(oldChild);
@@ -278,3 +267,4 @@ public class Main extends Canvas
 
 }
 }
+

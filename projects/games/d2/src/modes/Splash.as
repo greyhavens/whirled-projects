@@ -30,15 +30,20 @@ public class Splash extends GameModeCanvas
     // from GameModeCanvas
     override public function pushed () :void
     {
+        super.pushed();
+        
         // start playing
     }
     
     // from GameModeCanvas
     override public function popped () :void
     {
+        super.popped();
+        
         // note: splash screen should only be popped when shutting down!
     }
 
+    
     // from Canvas
     override protected function createChildren () :void
     {
@@ -77,4 +82,14 @@ public class Splash extends GameModeCanvas
     [Embed(source="../../rsrc/splash/splash.swf")]
     private static const _splash :Class;
 }
+}
+
+
+
+import modes.GameModeCanvas;
+
+internal class NewMode extends GameModeCanvas {
+    public function NewMode (main :Main) {
+        super(main);
+    }
 }

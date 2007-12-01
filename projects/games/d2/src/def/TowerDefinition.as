@@ -14,7 +14,7 @@ public class TowerDefinition
     public var pack :PackDefinition;
     public var swf :EmbeddedSwfLoader;
 
-    public var id :String;
+    public var typeName :String;
 
     public var width :int;
     public var height :int;
@@ -41,7 +41,7 @@ public class TowerDefinition
         this.pack = pack;
         this.swf = swf;
 
-        this.id = tower.@id;
+        this.typeName = tower.@id;
         this.width = tower.@width;
         this.height = tower.@height;
         
@@ -69,7 +69,7 @@ public class TowerDefinition
 
     public function get guid () :String
     {
-        return pack.name + ": " + id; 
+        return pack.name + ": " + typeName; 
     }
     
     public function toString () :String

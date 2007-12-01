@@ -46,7 +46,7 @@ public class BoardDisplay extends Canvas
 
         _packs = new HBox();
         _packs.x = 80;
-        _packs.y = 120;
+        _packs.y = 130;
         _packs.width = 560;
         _packs.height = 130;
         _packs.styleName = "boardSelectionContainer";
