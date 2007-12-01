@@ -20,10 +20,24 @@ import com.threerings.util.StringUtil;
  */
 public class SearchFlickrPhotoService extends LatestFlickrPhotoService
 {
-    public function setKeywords (str :String, tagsOnly :Boolean = false) :void
+    /**
+     * Set the keywords to use when searching flick.
+     *
+     * @param words an Array of Strings.
+     * @param tags if true, an ANY search is done on the tags.
+     *             if false the words are used as keywords (that can match title/desc/tags) but
+     *             all must be present in photos!
+     */
+    public function setKeywords (words :Array, tags :Boolean = true) :void
     {
-        _str = str;
-        _tagsOnly = tagsOnly;
+        if (tags) {
+            _tagStr = words.join(",");
+            _textStr = "";
+
+        } else {
+            _tagStr = "";
+            _textStr = words.join(" ");
+        }
 
         // reset saved search info
         _total = -1;
@@ -41,19 +55,17 @@ public class SearchFlickrPhotoService extends LatestFlickrPhotoService
     {
         // if we have no search string or our search string is too restrictive,
         // fall back to returning the latest photos
-        if (StringUtil.isBlank(_str) || _total == 0) {
+        if (_total == 0 || (StringUtil.isBlank(_textStr) && StringUtil.isBlank(_tagStr))) {
+            // TODO: if _textStr is too restrictive, inform the users?
             super.doGetPhotos(count);
             return;
         }
-
-        var tagsStr :String = _tagsOnly ? _str : "";
-        var textStr :String = _tagsOnly ? "" : _str;
 
         switch (_total) {
         case -1:
             // get page 1, we'll figure out the total
 //            trace("Getting #1 of <unknown>");
-            _flickr.photos.search("", tagsStr, "any", textStr, null, null, null, null, -1, "",
+            _flickr.photos.search("", _tagStr, "any", _textStr, null, null, null, null, -1, "",
                 count, 1);
             break;
 
@@ -70,7 +82,7 @@ public class SearchFlickrPhotoService extends LatestFlickrPhotoService
                 picks.push(pick);
 
 //                trace("Getting #" + pick + " of " + _total);
-                _flickr.photos.search("", tagsStr, "any", textStr, null, null, null, null, -1, "",
+                _flickr.photos.search("", _tagStr, "any", _textStr, null, null, null, null, -1, "",
                     1, pick);
             }
             break;
@@ -88,7 +100,7 @@ public class SearchFlickrPhotoService extends LatestFlickrPhotoService
         _total = Math.min(photoList.total, FLICKR_MAX_IMAGES_LIMIT);
 
         if (_total == 0 && _needPhoto) {
-            // we NEED a photo!
+            // we NEED a photo, so re-request, which will fall back to super.doGetPhotos().
             doGetPhotos(1);
             return;
         }
@@ -100,11 +112,14 @@ public class SearchFlickrPhotoService extends LatestFlickrPhotoService
         getUrlsAndDispatchToGame(photoList.photos);
     }
 
-    protected var _str :String;
+    /** The tags string to use for searching. */
+    protected var _tagStr :String = "";
 
-    protected var _tagsOnly :Boolean;
+    /** The text string to use for searching. */
+    protected var _textStr :String = "";
 
-    protected var _total :int;
+    /** The total number of photos that flickr has for the current tag/text strings. */
+    protected var _total :int = -1;
 
     /** Flickr will only do search results for up to 4000 images, and then they start
      * repeating even though they report a larger total. */

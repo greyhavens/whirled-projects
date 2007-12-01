@@ -14,6 +14,7 @@ import fl.containers.ScrollPane;
 
 import fl.controls.Button;
 import fl.controls.CheckBox;
+import fl.controls.Label;
 import fl.controls.ScrollPolicy;
 import fl.controls.TextInput;
 
@@ -37,21 +38,28 @@ public class TagWidget extends Sprite
         _searchPhotoService = searchPhotoService;
         _ctrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
 
+        _tagFormat = new TextFormat();
+        _tagFormat.color = 0xFFFFFF;
+
+        var label :Label = new Label();
+        label.setStyle("textFormat", _tagFormat);
+        label.text = "Tags:";
+        label.setSize(100, 22);
+        addChild(label);
+
         _tagInput = new TextInput();
         _tagInput.restrict = "^ ";
         //_tagInput.addEventListener(TextEvent.TEXT_INPUT, handleTagInput);
         _tagInput.addEventListener(ComponentEvent.ENTER, handleTagInput);
+        _tagInput.y = 25;
         addChild(_tagInput);
 
         _tagPane = new ScrollPane();
         _tagPane.horizontalScrollPolicy = ScrollPolicy.OFF;
         _tagSprite = new Sprite();
         _tagPane.source = _tagSprite;
-        _tagPane.y = 25;
+        _tagPane.y = 50;
         addChild(_tagPane);
-
-        _tagFormat = new TextFormat();
-        _tagFormat.color = 0xFFFFFF;
 
         // add all the tags
         for each (var tag :String in _ctrl.getPropertyNames("tag:")) {
@@ -64,7 +72,7 @@ public class TagWidget extends Sprite
     public function setSize (w :Number, h :Number) :void
     {
         _tagInput.setSize(w, 22);
-        _tagPane.setSize(w, h - 25);
+        _tagPane.setSize(w, h - 50);
     }
 
     protected function addTag (tag :String) :void
@@ -136,16 +144,13 @@ public class TagWidget extends Sprite
 
     protected function updateSearchTags () :void
     {
-        var tags :String = "";
+        var tags :Array = [];
         for each (var tag :String in _ctrl.getPropertyNames("tag:")) {
-            if (tags != "") {
-                tags += " ";
-            }
-            tags += tag.substring(4);
+            tags.push(tag.substring(4));
         }
 
         trace("Updated tag search to: '" + tags + "'.");
-        _searchPhotoService.setKeywords(tags);
+        _searchPhotoService.setKeywords(tags, true);
     }
 
     protected var _ctrl :WhirledGameControl;

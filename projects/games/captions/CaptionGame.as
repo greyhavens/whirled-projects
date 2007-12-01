@@ -17,6 +17,7 @@ import flash.events.Event;
 import flash.events.EventDispatcher;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.HashMap;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
@@ -118,6 +119,17 @@ public class CaptionGame extends EventDispatcher
     }
 
     /**
+     * Sets whether or not this player is participating in the game.
+     * By default, a new player is participating.
+     * Non-participating players will not count towards checking skip votes,
+     * nor will they hold up the end of a caption phase if everyone's submitted.
+     */
+    public function setParticipating (participating :Boolean) :void
+    {
+        _ctrl.set("part:" + _myId, participating ? null : false);
+    }
+
+    /**
      * Get the phase of the game.
      */
     public function getCurrentPhase () :int
@@ -170,6 +182,14 @@ public class CaptionGame extends EventDispatcher
                 _ctrl.setImmediate("name:" + _myId, _myName);
             }
         }
+    }
+
+    /**
+     * Sets whether we're done captioning.
+     */
+    public function setDoneCaptioning (done :Boolean) :void
+    {
+        _ctrl.set("done:" + _myId, done ? true : null);
     }
 
     /**
@@ -297,6 +317,7 @@ public class CaptionGame extends EventDispatcher
         _ctrl.addEventListener(StateChangedEvent.CONTROL_CHANGED, checkControl);
         _ctrl.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
         _ctrl.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED, handleOccupantEntered);
+        _ctrl.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, handleOccupantLeft);
 
         _myId = _ctrl.getMyId();
         _myName = _ctrl.getOccupantName(_myId);
@@ -344,21 +365,10 @@ public class CaptionGame extends EventDispatcher
             if (event.name == "cphase") {
                 checkControlPhase();
 
-            } else if (StringUtil.startsWith(event.name, "skip:")) {
-                var skipVotes :int = _ctrl.getPropertyNames("skip:").length;
-
-                // if more than half the people voted to skip, then skip
-                if (skipVotes > (_ctrl.getOccupantIds().length/2) &&
-                        (_ctrl.get("skipping") == null)) {
-                    if (skipVotes > 1) {
-                        _ctrl.sendChat("" + skipVotes + " players have voted to skip the picture.");
-                    }
-                    _ctrl.setImmediate("skipping", true);
-                    //_ctrl.set("image", null); TODO ??
-                    _ctrl.stopTicker("tick");
-                    setPhase(-1);
-                    setCtrlPhase(GET_PHOTO_CTRL_PHASE);
-                }
+            } else if (StringUtil.startsWith(event.name, "skip:") ||
+                    StringUtil.startsWith(event.name, "done:") ||
+                    StringUtil.startsWith(event.name, "part:")) {
+                checkSkippingAndParticipating();
             }
         }
     }
@@ -387,16 +397,8 @@ public class CaptionGame extends EventDispatcher
         dispatchEvent(new Event(TICK_EVENT));
 
         // see if we should move to the next phase
-        if (_secondsRemaining == 0) {
-            if (_inControl) {
-                _ctrl.stopTicker("tick");
-
-                // if the phase and ctrlPhase are the same, proceed to the next ctrlPhase
-                var phase :int = getCurrentPhase();
-                if (isCtrlPhase(phase)) {
-                    setCtrlPhase((phase + 1) % PHASE_COUNT);
-                }
-            }
+        if (_inControl && _secondsRemaining == 0) {
+            endTickedPhase();
         }
     }
 
@@ -875,6 +877,7 @@ public class CaptionGame extends EventDispatcher
             clearProps("vote:");
             clearProps("name:");
             clearProps("skip:");
+            clearProps("done:");
             clearProps("pvote:");
             clearProps("next_");
             setPhase(CAPTIONING_PHASE);
@@ -889,6 +892,82 @@ public class CaptionGame extends EventDispatcher
     {
         for each (var prop :String in _ctrl.getPropertyNames(prefix)) {
             _ctrl.set(prop, null);
+        }
+    }
+
+    /**
+     * Called by the instance in control to see if we should end the current round..
+     */
+    protected function checkSkippingAndParticipating () :void
+    {
+        if (!isPhase(CAPTIONING_PHASE) || (null != _ctrl.get("skipping"))) {
+            return;
+        }
+
+        var id :int;
+        var allOccs :HashMap = new HashMap();
+        for each (id in _ctrl.getOccupantIds()) {
+            allOccs.put(id, true);
+        }
+
+        // then, remove the non-participants
+        for each (var nonPart :String in _ctrl.getPropertyNames("part:")) {
+            id = parseInt(nonPart.substring(5));
+            allOccs.remove(id);
+        }
+
+        // if there are no participants left, then just proceed as normal...
+        if (allOccs.isEmpty()) {
+            return;
+        }
+
+        // then, we check done-ness from all the participants
+        var allDone :Boolean = true;
+        for each (id in allOccs.keys()) {
+            if (null == _ctrl.get("done:" + id)) {
+                allDone = false;
+                break;
+            }
+        }
+
+        if (allDone) {
+            // stop the ticker and move to the next round
+            endTickedPhase();
+            return;
+        }
+
+        // then, check to see if we should skip if _more than half_ of the participants want to
+        var half :Number = allOccs.size() / 2;
+        var skipVotes :int = 0;
+        for each (id in allOccs.keys()) {
+            if (null != _ctrl.get("skip:" + id)) {
+                skipVotes++;
+                if (skipVotes > half) { // 2 players requires both to skip, 3 players requires 2,
+                                        // 4 players requires 3...
+                    if (skipVotes > 1) {
+                        _ctrl.sendChat("" + skipVotes + " players have voted to skip the picture.");
+                    }
+                    _ctrl.setImmediate("skipping", true);
+                    _ctrl.stopTicker("tick");
+                    setPhase(-1);
+                    setCtrlPhase(GET_PHOTO_CTRL_PHASE);
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * End the current ticked phase.
+     */
+    protected function endTickedPhase () :void
+    {
+        _ctrl.stopTicker("tick");
+
+        // if the phase and ctrlPhase are the same, proceed to the next ctrlPhase
+        var phase :int = getCurrentPhase();
+        if (isCtrlPhase(phase)) {
+            setCtrlPhase((phase + 1) % PHASE_COUNT);
         }
     }
 
@@ -1149,6 +1228,17 @@ public class CaptionGame extends EventDispatcher
     {
         // we don't want the occupant to have an empty slot where they should have a score..
         updateScoreDisplay();
+    }
+
+    /**
+     * Handle a player leaving the room.
+     */
+    protected function handleOccupantLeft (event :OccupantChangedEvent) :void
+    {
+        if (_inControl) {
+            // clear out their participating flag, if any
+            _ctrl.set("part:" + event.occupantId, null);
+        }
     }
 
     protected function handleUnload (... ignored) :void

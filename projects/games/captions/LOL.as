@@ -128,7 +128,7 @@ public class LOL extends Sprite
         addChild(_ui);
         _loader = null;
 
-//        trace(DisplayUtil.dumpHierarchy(_ui));
+        trace(DisplayUtil.dumpHierarchy(_ui));
 
         // For some reason, when the movie wraps around, we need to re-grab all the bits
         _ui.addEventListener("frameFirst", initUIBits);
@@ -157,19 +157,26 @@ public class LOL extends Sprite
 
         _clock = find("clock") as TextField;
         _clock.selectable = false;
-        _doneButton = find("done") as Button;
 
-        _doneButton.label = "";
+        _doneButton = find("done") as Button;
+//        _doneButton.setStyle("embedFonts", true);
+//        _doneButton.setStyle("textFormat", clockFmt);
+//        _doneButton.label = "Done";
+//        setSkins(_doneButton);
         updateButtonSkin();
 
         _participateButton = find("Participate_button") as Button;
+        _participateButton.setStyle("upSkin", new CAP_UP_SKIN() as DisplayObject);
+        _participateButton.setStyle("overSkin", new CAP_OVER_SKIN() as DisplayObject);
+        _participateButton.setStyle("downSkin", new CAP_DOWN_SKIN() as DisplayObject);
         //_participateButton.visible = false;
 
-        _notParticipating = find("np_checkBox") as CheckBox;
-        //_notParticipating.visible = false;
+        _notParticipating = find("np_checkbox") as CheckBox;
+        _notParticipating.label = "              "; // so that it's more easily clickable
 
         _tagPane = find("tag_scrollpane") as ScrollPane;
         _tagPane.horizontalScrollPolicy = ScrollPolicy.OFF;
+        _tagPane.verticalScrollPolicy = ScrollPolicy.OFF;
         _tagWidget.setSize(_tagPane.width, _tagPane.height);
         _tagPane.source = _tagWidget;
 
@@ -203,6 +210,8 @@ public class LOL extends Sprite
         _image.addEventListener(ProgressEvent.PROGRESS, handleImageProgress);
         _image.addEventListener(Event.COMPLETE, handleImageComplete);
 
+        _participateButton.addEventListener(MouseEvent.CLICK, handleStartParticipating);
+        _notParticipating.addEventListener(Event.CHANGE, handleStopParticipating);
 
         // set up LOL formatting on the two textfields
         _formatter.watch(_input, handleTextFieldChanged);
@@ -260,6 +269,9 @@ public class LOL extends Sprite
 
         case CaptionGame.VOTING_PHASE:
             initVoting();
+            if (_participating && (frameBehavior == ANIMATE_TO_FRAME) && (_input.text == "")) {
+                setParticipating(false);
+            }
             break;
 
         case CaptionGame.RESULTS_PHASE:
@@ -318,6 +330,8 @@ public class LOL extends Sprite
             _input.stage.focus = _input;
             _input.setSelection(_input.length, _input.length);
         }
+
+        _game.setDoneCaptioning(!nowEditing);
     }
 
     /**
@@ -334,6 +348,23 @@ public class LOL extends Sprite
     protected function handleVoteToSkip (event :Event) :void
     {
         _game.voteToSkipPhoto(_skipBox.selected);
+    }
+
+    protected function handleStopParticipating (event :Event) :void
+    {
+        setParticipating(false);
+    }
+
+    protected function handleStartParticipating (event :Event) :void
+    {
+        setParticipating(true);
+    }
+
+    protected function setParticipating (part :Boolean) :void
+    {
+        _participating = part;
+        _game.setParticipating(part);
+        displayParticipating();
     }
 
     protected function handleCaptionVote (event :Event) :void
@@ -396,21 +427,33 @@ public class LOL extends Sprite
         }
     }
 
+//    protected function setSkins (button :Button) :void
+//    {
+//        button.setStyle("upSkin", UP_SKIN);
+//        button.setStyle("overSkin", OVER_SKIN);
+//        button.setStyle("downSkin", SELECTED_SKIN);
+//        button.setStyle("disabledSkin", DISABLED_SKIN);
+//    }
+
     protected function updateButtonSkin () :void
     {
         // go ahead and instantiate the skins so that they switch smoother later
         var upSkin :DisplayObject;
+        var overSkin :DisplayObject;
         var downSkin :DisplayObject;
         if (_input.type == TextFieldType.INPUT) {
             upSkin = new DONE_UP_SKIN() as DisplayObject;
+            overSkin = new DONE_OVER_SKIN() as DisplayObject;
             downSkin = new DONE_DOWN_SKIN() as DisplayObject;
+
         } else {
             upSkin = new EDIT_UP_SKIN() as DisplayObject;
+            overSkin = new EDIT_OVER_SKIN() as DisplayObject;
             downSkin = new EDIT_DOWN_SKIN() as DisplayObject;
         }
 
         _doneButton.setStyle("upSkin", upSkin);
-        _doneButton.setStyle("overSkin", upSkin);
+        _doneButton.setStyle("overSkin", overSkin);
         _doneButton.setStyle("downSkin", downSkin);
         _doneButton.setStyle("disabledSkin", downSkin);
     }
@@ -431,7 +474,24 @@ public class LOL extends Sprite
         _skipBox.selected = false;
         colorInputPalette();
 
+        displayParticipating();
+
         _timer.start();
+    }
+
+    protected function displayParticipating () :void
+    {
+        _participateButton.visible = !_participating;
+        //_inputPalette.alpha = _participating ? 1 : 0;
+        _notParticipating.visible = _participating;
+
+        // TODO: the movie needs to be changed around so that the participate button is
+        // not part of the input palette.
+        if (_participating) {
+            _notParticipating.selected = false;
+
+        } else {
+        }
     }
 
     protected function initVoting () :void
@@ -778,17 +838,44 @@ for (var jj :int = 0; jj < 1; jj++) {
     [Embed(source="rsrc/Star.swf")]
     protected static const STAR_ICON :Class;
 
-    [Embed(source="rsrc/DoneButton.swf")]
+    [Embed(source="rsrc/Done_Button.swf")]
     protected static const DONE_UP_SKIN :Class;
 
-    [Embed(source="rsrc/DoneClick.swf")]
+    [Embed(source="rsrc/Done_Over.swf")]
+    protected static const DONE_OVER_SKIN :Class;
+
+    [Embed(source="rsrc/Done_Click.swf")]
     protected static const DONE_DOWN_SKIN :Class;
 
-    [Embed(source="rsrc/EditButton.swf")]
+    [Embed(source="rsrc/Edit_Button.swf")]
     protected static const EDIT_UP_SKIN :Class;
 
-    [Embed(source="rsrc/EditClick.swf")]
+    [Embed(source="rsrc/Edit_Over.swf")]
+    protected static const EDIT_OVER_SKIN :Class;
+
+    [Embed(source="rsrc/Edit_Click.swf")]
     protected static const EDIT_DOWN_SKIN :Class;
+
+    [Embed(source="rsrc/EnterCaption_button.swf")]
+    protected static const CAP_UP_SKIN :Class;
+
+    [Embed(source="rsrc/EnterCaption_Over.swf")]
+    protected static const CAP_OVER_SKIN :Class;
+
+    [Embed(source="rsrc/EnterCaption_Click.swf")]
+    protected static const CAP_DOWN_SKIN :Class;
+
+//    [Embed(source="rsrc/disabled_skin_small.png")]
+//    protected static const DISABLED_SKIN :Class;
+//
+//    [Embed(source="rsrc/over_skin_small.png")]
+//    protected static const OVER_SKIN :Class;
+//
+//    [Embed(source="rsrc/selected_skin_small.png")]
+//    protected static const SELECTED_SKIN :Class;
+//
+//    [Embed(source="rsrc/up_skin_small.png")]
+//    protected static const UP_SKIN :Class;
 
     [Embed(source="rsrc/ui.swf", mimeType="application/octet-stream")]
     protected static const UI :Class;
@@ -851,6 +938,9 @@ for (var jj :int = 0; jj < 1; jj++) {
     protected var _resultsPane :ScrollPane;
 
     protected var _tagPane :ScrollPane;
+
+    /** Are we "participating" in the captioning? */
+    protected var _participating :Boolean = true;
 
     protected var _doneButton :Button;
     protected var _participateButton :Button;
