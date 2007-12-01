@@ -17,6 +17,7 @@ public class GameLoader extends GameModeCanvas {
 
         _unloadables = new Array();
         _unloadables.push(_board = new Board(_main, _boardDef));
+        _unloadables.push(_validator = new Validator(_main, _board));
     }
 
     // from Canvas
@@ -37,6 +38,7 @@ public class GameLoader extends GameModeCanvas {
 
     protected var _unloadables :Array; // of UnloadableListener
     protected var _board :Board;
+    protected var _validator :Validator;
     
     protected var _boardDefs :Array; // of BoardDefinition
     protected var _boardDef :BoardDefinition; 
