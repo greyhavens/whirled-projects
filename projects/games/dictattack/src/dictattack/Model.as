@@ -159,6 +159,15 @@ public class Model
     }
 
     /**
+     * Return true if the player ended the game early, false if they played until there were no
+     * more plays possible.
+     */
+    public function getEndedEarly () :Boolean
+    {
+        return _endedEarly;
+    }
+
+    /**
      * Returns the longest word played in this round, if multiple words of the same length are the
      * longest the first is returned.
      */
@@ -227,6 +236,15 @@ public class Model
         } else {
             return TYPE_NORMAL;
         }
+    }
+
+    /**
+     * Called when the game starts.
+     */
+    public function gameDidStart () :void
+    {
+        _gameDuration = 0;
+        _endedEarly = false;
     }
 
     /**
@@ -490,6 +508,7 @@ public class Model
     {
         var myidx :int = _ctx.control.seating.getMyPosition();
         _ctx.control.endGameWithScore((_ctx.control.get(POINTS) as Array)[myidx]);
+        _endedEarly = true;
     }
 
     public function updatePlayable (board :Board) :void
@@ -671,6 +690,7 @@ public class Model
     protected var _letterCount :int;
     protected var _rando :Random = new Random(getTimer());
     protected var _changePending :Boolean;
+    protected var _endedEarly :Boolean;
 
     protected var _plays :Array = [];
 

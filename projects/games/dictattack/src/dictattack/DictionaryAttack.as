@@ -82,6 +82,7 @@ public class DictionaryAttack extends Sprite
     {
         _flowAward = 0;
         _ctx.view.gameDidStart();
+        _ctx.model.gameDidStart();
 
         // zero out the scores
         var pcount :int = _ctx.control.seating.getPlayerIds().length;
@@ -156,6 +157,18 @@ public class DictionaryAttack extends Sprite
                     _ctx.control.awardTrophy("no_not_in_dict");
                 }
             }
+            if (!_ctx.model.getEndedEarly()) {
+                for each (var adata :Array in TIMED_AWARDS) {
+                    var ascore :int = int(adata[0]);
+                    var aseconds :int = int(adata[1]);
+                    var tname :String = ascore + "_in_" + aseconds;
+                    if (int(_ctx.model.getGameDuration() / 1000) <= aseconds &&
+                        mypoints > ascore && !_ctx.control.holdsTrophy(tname)) {
+                        _ctx.control.awardTrophy(tname);
+                        break;
+                    }
+                }
+            }
         }
 
         // _flowAward is set via a FLOW_AWARDED event that precedes the GAME_ENDED event
@@ -181,5 +194,6 @@ public class DictionaryAttack extends Sprite
     protected static const MAX_HISCORES :int = 4;
 
     protected static const SCORE_AWARDS :Array = [60, 50, 40, 30, 20];
+    protected static const TIMED_AWARDS :Array = [[40, 120], [30, 105], [20, 90]];
 }
 }
