@@ -1,6 +1,7 @@
 package core {
 
 import com.threerings.util.Assert;
+import com.threerings.util.HashMap;
 
 public class AppMode
 {
@@ -33,17 +34,28 @@ public class AppMode
 
         // does the object have a name?
         if (null != obj.objectName) {
-            Assert.isTrue(_namedObjects[obj.objectName] == null, "Can't add two objects with the same name to the same mode.");
-            _namedObjects[obj.objectName] = obj;
+            Assert.isTrue(_namedObjects.get(obj.objectName) == null, "Can't add two objects with the same name to the same mode.");
+            _namedObjects.put(obj.objectName, obj);
         }
 
-        // does the object have any roles?
-        // TODO: implement this
-        //var roles :Array = obj.objectRoles;
+        // does the object have roles?
+        var roles :Array = obj.objectRoles;
+        if (null != roles) {
+            for each (var role :* in roles) {
+
+                var roleSet :HashMap = (_roleObjects.get(role) as HashMap);
+                if (null == roleSet) {
+                    roleSet = new HashMap();
+                    _roleObjects[role] = roleSet;
+                }
+
+                roleSet.put(obj, null);
+            }
+        }
     }
 
     /** Removes an AppObject from the mode. The AppObject must be owned by this mode. */
-    public function removeObject(obj :AppObject) :void
+    public function removeObject (obj :AppObject) :void
     {
         // lots o' sanity checks
         Assert.isTrue(null != obj);
@@ -56,6 +68,39 @@ public class AppMode
 
         obj._parentMode = null;
         obj._modeIndex = -1;
+
+        // does the object have a name?
+        if (null != obj.objectName) {
+            Assert.isTrue(_namedObjects.get(obj.objectName) == obj);
+            _namedObjects.put(obj.objectName, null);
+        }
+
+        // does the object have roles?
+        var roles :Array = obj.objectRoles;
+        if (null != roles) {
+            for each (var role :* in roles) {
+                var roleSet :HashMap = (_roleObjects.get(role) as HashMap);
+                Assert.isTrue(null != roleSet);
+                Assert.isTrue(roleSet.containsKey(obj));
+
+                roleSet.remove(obj);
+
+            }
+        }
+    }
+
+    /** Returns the object in this mode with the given name, or null if no such object exists. */
+    public function getObjectNamed (name :String) :AppObject
+    {
+        return (_namedObjects[name] as AppObject);
+    }
+
+    /** Returns the set of objects in this name that have the given role, or an empty Array if no objects exist. */
+    public function getObjectsWithRole (role :String) :Array
+    {
+        var roleArray :Array = (_roleObjects[role] as Array);
+
+        return (null != roleArray ? roleArray : new Array());
     }
 
     /** Called once per update tick. Updates all objects in the mode. */
@@ -71,7 +116,7 @@ public class AppMode
     }
 
     /** Called when the mode is added to the mode stack */
-    public function setup () :void// TODO: implement name and role functionality
+    public function setup () :void
     {
     }
 
@@ -92,8 +137,8 @@ public class AppMode
 
     protected var _objects :Array = new Array();
     protected var _freeIndexes :Array = new Array();
-    protected var _namedObjects :Object = new Object();
-    protected var _roleObjects :Object = new Object();
+    protected var _namedObjects :Object = new HashMap();
+    protected var _roleObjects :Object = new HashMap();
 }
 
 }

@@ -8,6 +8,8 @@ import com.whirled.WhirledGameControl;
 import core.MainLoop;
 
 import flash.display.Sprite;
+import flash.utils.Dictionary;
+import core.util.ObjectSet;
 
 [SWF(width="700", height="500")]
 public class PopCraft extends Sprite
@@ -23,6 +25,15 @@ public class PopCraft extends Sprite
 
     public function PopCraft ()
     {
+        /*var dict :Dictionary = new Dictionary();
+        trace(dict[1]);
+        dict[1] = null;
+        trace(dict[1]);
+        delete dict[1];
+        trace(dict[1]);*/
+
+        var os :ObjectSet = new ObjectSet();
+
         Assert.isTrue(null == g_instance);
         g_instance = this;
 
