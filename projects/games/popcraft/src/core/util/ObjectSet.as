@@ -48,7 +48,7 @@ public class ObjectSet
     /** Returns true if this set contains the specified element. */
     public function contains (o :Object) :Boolean
     {
-        return (undefined != _dict[o]);
+        return (undefined !== _dict[o]);
     }
 
     /** Retuns the number of elements in this set. */
