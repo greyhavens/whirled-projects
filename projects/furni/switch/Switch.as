@@ -14,13 +14,12 @@ import com.threerings.util.Log;
 import com.whirled.FurniControl;
 import com.whirled.ControlEvent;
 
+import com.whirled.contrib.Configurator;
 import com.whirled.contrib.EntityStatePublisher;
 
 [SWF(width="128", height="128")]
 public class Switch extends Sprite
 {
-    public static const KEY :String = "circuit01";
-
     public function Switch ()
     {
         _imageHolder = new Sprite();
@@ -30,12 +29,18 @@ public class Switch extends Sprite
 
         _control = new FurniControl(this);
         if (_control.isConnected()) {
-            _publisher = new EntityStatePublisher(_control, KEY, false, stateChanged);
-
-            _imageHolder.addEventListener(MouseEvent.CLICK, handleClick);
-            _imageHolder.addChild(_offImage);
-            updateImage();
+            Configurator.requestEntry(_control, this, "circuit", configured);
         }
+    }
+
+    protected function configured (key :String) :void
+    {
+        _key = key;
+
+        _imageHolder.addEventListener(MouseEvent.CLICK, handleClick);
+        _imageHolder.addChild(_offImage);
+
+        _publisher = new EntityStatePublisher(_control, _key, false, stateChanged);
     }
 
     protected function handleClick (event :MouseEvent) :void
@@ -57,6 +62,7 @@ public class Switch extends Sprite
 
     protected var _control :FurniControl;
     protected var _publisher :EntityStatePublisher;
+    protected var _key :String;
     protected var _imageHolder :Sprite;
 
     protected var _onImage :DisplayObject = new SWITCH_IMG_ON();
