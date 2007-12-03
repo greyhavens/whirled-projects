@@ -15,6 +15,7 @@ import flash.events.TimerEvent;
 
 import flash.geom.Point;
 
+import flash.filters.ColorMatrixFilter;
 import flash.filters.GlowFilter;
 
 import flash.net.URLRequest;
@@ -54,8 +55,8 @@ import com.whirled.WhirledGameControl;
 
 /**
  * TODO:
- * - save captioned images.
  * - be able to view the flickr page of an image.
+ * - save captioned images.
  */
 [SWF(width="700", height="500")]
 public class LOL extends Sprite
@@ -82,14 +83,13 @@ public class LOL extends Sprite
 
         _ctrl.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
 
-        _loader = new EmbeddedSwfLoader();
-        _loader.addEventListener(Event.COMPLETE, handleUILoaded);
-        _loader.load(new UI() as ByteArray);
+        _content = new Sprite();
+        addChild(_content);
 
         _mask = new Shape();
         _mask.graphics.beginFill(0x000000, 1);
         _mask.graphics.drawRect(0, 0, IDEAL_WIDTH, IDEAL_HEIGHT);
-        addChild(_mask);
+        _content.addChild(_mask);
 
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
@@ -98,6 +98,7 @@ public class LOL extends Sprite
         _game = new CaptionGame(_ctrl, _searchPhotos);
         _game.addEventListener(CaptionGame.TICK_EVENT, updateClock);
         _game.addEventListener(CaptionGame.PHASE_CHANGED_EVENT, handlePhaseChanged);
+        _game.addEventListener(CaptionGame.ROUND_WILL_START_EVENT, handleRoundWillStart);
 
         _game.configureTrophyConsecutiveWin("3wins", 3);
         _game.configureTrophyConsecutiveWin("5wins", 5);
@@ -114,10 +115,39 @@ public class LOL extends Sprite
         _timer.addEventListener(TimerEvent.TIMER, handleSubmitCaption);
 
         // get us rolling
-        if (showPhoto()) {
-            updateClock();
-            checkPhase(SKIP_TO_FRAME);
+        initTheme();
+    }
+
+    protected function initTheme () :void
+    {
+        var newTheme :String = _ctrl.get("theme") as String;
+        if (_theme == newTheme) {
+            showPhoto();
+            return;
         }
+
+        if (_ui != null) {
+            _content.removeChild(_ui);
+            _ui = null;
+        }
+        _theme = newTheme;
+
+        _loader = new EmbeddedSwfLoader();
+        _loader.addEventListener(Event.COMPLETE, handleUILoaded);
+
+        var ui :Class;
+        switch (_theme) {
+        default:
+        case LOL_THEME:
+            ui = LOL_THEME_UI;
+            break;
+
+        case SILENT_THEME:
+            ui = SILENT_THEME_UI;
+            break;
+        }
+
+        _loader.load(new ui() as ByteArray);
     }
 
     protected function handleUILoaded (event :Event) :void
@@ -125,7 +155,7 @@ public class LOL extends Sprite
         _ui = _loader.getContent() as MovieClip;
         _ui.mask = _mask;
         updateSize(_ctrl.getSize());
-        addChild(_ui);
+        _content.addChild(_ui);
         _loader = null;
 
         trace(DisplayUtil.dumpHierarchy(_ui));
@@ -138,11 +168,13 @@ public class LOL extends Sprite
         _ui.addEventListener("frameResults", unshrinkImageForResultsScreen);
 
         initUIBits();
-        checkPhase(SKIP_TO_FRAME);
+//        checkPhase();
     }
 
     protected function initUIBits (... ignored) :void
     {
+//        trace("isFrameFirst: " + ignored[0]);
+
         _image = find("image") as UILoader;
         if (_image == null) {
             // the UI doesn't seem to be ready to read. Wait.
@@ -217,7 +249,31 @@ public class LOL extends Sprite
         _formatter.watch(_input, handleTextFieldChanged);
         _formatter.watch(_winningCaption);
 
-        checkPhase(DONT_ALTER_FRAME);
+        showPhoto();
+        initThemeSpecificUI();
+
+        checkPhase();
+    }
+
+    protected function initThemeSpecificUI () :void
+    {
+        switch (_ctrl.get("theme")) {
+        default:
+        case LOL_THEME:
+            // nada, currently
+            break;
+
+
+        case SILENT_THEME:
+            // make a grayscale filter for the image
+            const T :Number = 1 / 3;
+            _image.filters = [ new ColorMatrixFilter([
+                T, T, T, 0, 0,
+                T, T, T, 0, 0,
+                T, T, T, 0, 0,
+                0, 0, 0, 1, 0]) ];
+            break;
+        }
     }
 
     /**
@@ -258,10 +314,14 @@ public class LOL extends Sprite
     }
 
     /**
-     * @param frameBehavior one of ANIMATE_TO_FRAME, SKIP_TO_FRAME, DONT_ALTER_FRAME.
      */
-    protected function checkPhase (frameBehavior :int) :void
+    protected function checkPhase () :void
     {
+        initTheme();
+        if (_ui == null) {
+            return;
+        }
+
         switch (_game.getCurrentPhase()) {
         case CaptionGame.CAPTIONING_PHASE:
             initCaptioning();
@@ -269,7 +329,7 @@ public class LOL extends Sprite
 
         case CaptionGame.VOTING_PHASE:
             initVoting();
-            if (_participating && (frameBehavior == ANIMATE_TO_FRAME) && (_input.text == "")) {
+            if (_participating && (_frameBehavior == ANIMATE_TO_FRAME) && (_input.text == "")) {
                 setParticipating(false);
             }
             break;
@@ -279,16 +339,17 @@ public class LOL extends Sprite
             break;
         }
 
-        if (frameBehavior != DONT_ALTER_FRAME) {
-            showFrame(frameBehavior == ANIMATE_TO_FRAME);
+        if (_frameBehavior != DONT_ALTER_FRAME) {
+            showFrame(_frameBehavior == ANIMATE_TO_FRAME);
         }
     }
 
     protected function showPhoto () :Boolean
     {
         var url :String = _game.getPhoto();
-        if (url != null) {
+        if (url != null && _curImage != url) {
             if (_image != null) {
+                _curImage = url;
                 loadInto(_image, url);
             }
             return true;
@@ -427,14 +488,6 @@ public class LOL extends Sprite
         }
     }
 
-//    protected function setSkins (button :Button) :void
-//    {
-//        button.setStyle("upSkin", UP_SKIN);
-//        button.setStyle("overSkin", OVER_SKIN);
-//        button.setStyle("downSkin", SELECTED_SKIN);
-//        button.setStyle("disabledSkin", DISABLED_SKIN);
-//    }
-
     protected function updateButtonSkin () :void
     {
         // go ahead and instantiate the skins so that they switch smoother later
@@ -463,7 +516,6 @@ public class LOL extends Sprite
         if (_input == null || _input.stage == null) {
             return;
         }
-        showPhoto();
 
         _votingPane.source = null;
         _resultsPane.source = null;
@@ -557,7 +609,7 @@ for (var jj :int = 0; jj < 1; jj++) {
             var width :int = PANE_WIDTH;
 
             var votes :Label = new Label();
-            votes.setStyle("textFormat", _textFormat);
+            votes.setStyle("textFormat", _nameFormat);
             votes.text = " " + result.votes;
             votes.setSize(46, 30);
             votes.validateNow();
@@ -568,7 +620,7 @@ for (var jj :int = 0; jj < 1; jj++) {
             s.addChild(votes);
 
             var name :Label = new Label();
-            name.setStyle("textFormat", _textFormat);
+            name.setStyle("textFormat", _nameFormat);
             name.text = "- " + result.playerName;
             name.setSize(100, 30);
             width -= 100 + 5;
@@ -803,7 +855,18 @@ for (var jj :int = 0; jj < 1; jj++) {
 
     protected function handlePhaseChanged (event :Event) :void
     {
-        checkPhase(ANIMATE_TO_FRAME);
+        _frameBehavior = ANIMATE_TO_FRAME;
+        checkPhase();
+    }
+
+    /**
+     * Handle the game's ROUND_WILL_START event, which is only dispatched to the instance
+     * in control.
+     */
+    protected function handleRoundWillStart (event :Event) :void
+    {
+        // pick a new theme
+        _ctrl.set("theme", THEMES[int(Math.random() * THEMES.length)]);
     }
 
     protected function handleSizeChanged (event :SizeChangedEvent) :void
@@ -816,12 +879,21 @@ for (var jj :int = 0; jj < 1; jj++) {
         var width :int = Math.max(size.x, IDEAL_WIDTH);
         var height :int = Math.max(size.y, IDEAL_HEIGHT);
 
+        // draw black behind everything
         this.graphics.clear();
         this.graphics.beginFill(0x000000, 1);
         this.graphics.drawRect(0, 0, width, height);
+        this.graphics.endFill();
 
-        _ui.x = _mask.x = (width - IDEAL_WIDTH) / 2;
-        _ui.y = _mask.y = (height - IDEAL_HEIGHT) / 2;
+        var xscale :Number = width / IDEAL_WIDTH;
+        var yscale :Number = height / IDEAL_HEIGHT;
+        var scale :Number = Math.min(xscale, yscale);
+        // scale will be 1 or higher, since we don't let width/height get smaller than IDEAL
+        _content.scaleX = scale;
+        _content.scaleY = scale;
+
+        _content.x = (width - (IDEAL_WIDTH * scale)) / 2;
+        _content.y = (height - (IDEAL_HEIGHT * scale)) / 2;
     }
 
     protected function handleUnload (... ignored) :void
@@ -877,13 +949,16 @@ for (var jj :int = 0; jj < 1; jj++) {
 //    [Embed(source="rsrc/up_skin_small.png")]
 //    protected static const UP_SKIN :Class;
 
-    [Embed(source="rsrc/ui.swf", mimeType="application/octet-stream")]
-    protected static const UI :Class;
+    [Embed(source="rsrc/lol_theme.swf", mimeType="application/octet-stream")]
+    protected static const LOL_THEME_UI :Class;
+
+    [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
+    protected static const SILENT_THEME_UI :Class;
 
     protected static const IDEAL_WIDTH :int = 700;
     protected static const IDEAL_HEIGHT :int = 500;
 
-    /** Constants to pass to checkPhase(). */
+    /** _frameBehavior constants. */
     protected static const ANIMATE_TO_FRAME :int = 0;
     protected static const SKIP_TO_FRAME :int = 1;
     protected static const DONT_ALTER_FRAME :int = 2;
@@ -901,11 +976,29 @@ for (var jj :int = 0; jj < 1; jj++) {
      * minus the sidebar and minus a possible scrollbar. */
     protected static const PANE_WIDTH :int = IDEAL_WIDTH - (16 + 250 + 16);
 
+    /** Theme constants. */
+    protected static const LOL_THEME :String = "lol";
+    protected static const SILENT_THEME :String = "silent";
+
+    /** The themes we're using. */
+    protected static const THEMES :Array = [ LOL_THEME /*, SILENT_THEME*/ ];
+
     protected var _ctrl :WhirledGameControl;
 
     protected var _game :CaptionGame;
 
     protected var _searchPhotos :SearchFlickrPhotoService;
+
+    protected var _frameBehavior :int = SKIP_TO_FRAME;
+
+    /** A sprite containing our UI. */
+    protected var _content :Sprite;
+
+    /** The currently selected theme. */
+    protected var _theme :String;
+
+    /** The currently shown image. */
+    protected var _curImage :String;
 
     protected var _tagWidget :TagWidget;
 
@@ -918,7 +1011,10 @@ for (var jj :int = 0; jj < 1; jj++) {
     protected var _loader :EmbeddedSwfLoader;
 
     protected var _textFormat :TextFormat = new TextFormat(
-        "_sans", 24, 0xFFFFFF, false, false, false, "", "", TextFormatAlign.LEFT, 0, 0, 0, 0);
+        "_sans", 18, 0xFFFFFF, false, false, false, "", "", TextFormatAlign.LEFT, 0, 0, 0, 0);
+
+    protected var _nameFormat :TextFormat = new TextFormat(
+        "_sans", 12, 0xFFFFFF, false, false, false, "", "", TextFormatAlign.LEFT, 0, 0, 0, 0);
 
     protected var _image :UILoader;
 
