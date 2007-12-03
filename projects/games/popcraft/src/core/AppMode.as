@@ -3,6 +3,9 @@ package core {
 import com.threerings.util.Assert;
 import com.threerings.util.HashMap;
 
+import core.util.HashSet;
+import core.util.ObjectSet;
+
 public class AppMode
 {
     public function AppMode ()
@@ -38,18 +41,18 @@ public class AppMode
             _namedObjects.put(obj.objectName, obj);
         }
 
-        // does the object have roles?
-        var roles :Array = obj.objectRoles;
-        if (null != roles) {
-            for each (var role :* in roles) {
-
-                var roleSet :HashMap = (_roleObjects.get(role) as HashMap);
-                if (null == roleSet) {
-                    roleSet = new HashMap();
-                    _roleObjects[role] = roleSet;
+        // is the object in any groups?
+        var groups :HashSet = obj.objectGroups;
+        if (null != groups) {
+            var groupList :Array = groups.toArray();
+            for each (var group :* in groupList) {
+                var groupSet :ObjectSet = (_groupedObjects.get(group) as ObjectSet);
+                if (null != groupSet) {
+                    groupSet = new ObjectSet();
+                    _groupedObjects.put(group, groupSet);
                 }
 
-                roleSet.put(obj, null);
+                groupSet.add(obj);
             }
         }
     }
@@ -75,16 +78,16 @@ public class AppMode
             _namedObjects.put(obj.objectName, null);
         }
 
-        // does the object have roles?
-        var roles :Array = obj.objectRoles;
-        if (null != roles) {
-            for each (var role :* in roles) {
-                var roleSet :HashMap = (_roleObjects.get(role) as HashMap);
-                Assert.isTrue(null != roleSet);
-                Assert.isTrue(roleSet.containsKey(obj));
+        // is the object in any groups?
+        var groups :HashSet = obj.objectGroups;
+        if (null != groups) {
+            var groupList :Array = groups.toArray();
 
-                roleSet.remove(obj);
-
+            for each (var group :* in groupList) {
+                var groupSet :ObjectSet = (_groupedObjects.get(group) as ObjectSet);
+                Assert.isTrue(null != groupSet);
+                var wasInSet :Boolean = groupSet.remove(obj);
+                Assert.isTrue(wasInSet);
             }
         }
     }
@@ -92,15 +95,15 @@ public class AppMode
     /** Returns the object in this mode with the given name, or null if no such object exists. */
     public function getObjectNamed (name :String) :AppObject
     {
-        return (_namedObjects[name] as AppObject);
+        return (_namedObjects.get(name) as AppObject);
     }
 
-    /** Returns the set of objects in this name that have the given role, or an empty Array if no objects exist. */
-    public function getObjectsWithRole (role :String) :Array
+    /** Returns the set of objects in the given group. This set must not be modified by client code. */
+    public function getObjectsInGroup (role :String) :ObjectSet
     {
-        var roleArray :Array = (_roleObjects[role] as Array);
+        var objects :ObjectSet = (_groupedObjects.get(role) as ObjectSet);
 
-        return (null != roleArray ? roleArray : new Array());
+        return (null != objects ? objects : new ObjectSet());
     }
 
     /** Called once per update tick. Updates all objects in the mode. */
@@ -137,8 +140,12 @@ public class AppMode
 
     protected var _objects :Array = new Array();
     protected var _freeIndexes :Array = new Array();
-    protected var _namedObjects :Object = new HashMap();
-    protected var _roleObjects :Object = new HashMap();
+
+    /** stores a mapping from String to Object */
+    protected var _namedObjects :HashMap = new HashMap();
+
+    /** stores a mapping from String to ObjectSet */
+    protected var _groupedObjects :HashMap = new HashMap();
 }
 
 }

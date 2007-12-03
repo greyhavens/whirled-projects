@@ -1,6 +1,7 @@
 package core.tasks {
 
 import com.threerings.util.Assert;
+
 import core.ObjectTask;
 import core.AppObject;
 
@@ -20,6 +21,12 @@ public class TaskContainer extends ObjectTask
     {
         Assert.isTrue(null != task);
         _tasks.push(task);
+    }
+
+    /** Removes all tasks from the TaskContainer. */
+    public function removeAllTasks () :void
+    {
+        _tasks = new Array();
     }
 
     /** Returns true if the TaskContainer has any child tasks. */

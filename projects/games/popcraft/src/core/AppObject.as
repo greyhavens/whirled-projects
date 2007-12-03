@@ -3,8 +3,10 @@ package core {
 import com.threerings.util.Assert;
 import com.threerings.util.HashMap;
 
-import flash.display.Sprite;
+import core.util.HashSet;
 import core.tasks.TaskContainer;
+
+import flash.display.Sprite;
 
 public class AppObject extends Sprite
 {
@@ -19,20 +21,19 @@ public class AppObject extends Sprite
     }
 
     /**
-     * Returns the set of roles that this object belongs to.
-     * Objects channot change their role array once added to a mode.
+     * Returns the set of groups that this object belongs to.
+     * The groups are returned as a HashSet of Strings.
+     * Objects cannot change their group membership once added to a mode.
      */
-    public function get objectRoles () :Array
+    public function get objectGroups () :HashSet
     {
-        return new Array();
+        return new HashSet();
     }
 
-    /** Returns true if the object has the given role. */
-    public function hasRole (role :String) :Boolean
+    /** Returns true if the object is in the specified group. */
+    public function isInGroup (role :String) :Boolean
     {
-        // TODO: implement this
-        Assert.isTrue(false);
-        return false;
+        return this.objectGroups.contains(role);
     }
 
     /** Removes the AppObject from its parent mode. */
@@ -63,6 +64,22 @@ public class AppObject extends Sprite
         }
 
         namedTaskContainer.addTask(task);
+    }
+
+    /** Removes all tasks from the AppObject. */
+    public function removeAllTasks () :void
+    {
+        _anonymousTasks.removeAllTasks();
+        _namedTasks.clear();
+    }
+
+    /** Removes all tasks with the given name from the AppObject. */
+    public function removedNamedTasks (name :String) :void
+    {
+        Assert.isTrue(null != name);
+        Assert.isTrue(name.length > 0);
+
+        _namedTasks.remove(name);
     }
 
     /** Returns true if the AppObject has any tasks. */
@@ -96,7 +113,12 @@ public class AppObject extends Sprite
     internal function updateInternal(dt :Number) :void
     {
         _anonymousTasks.update(dt, this);
+        _namedTasks.forEach(updateNamedTaskContainer);
         update(dt);
+
+        function updateNamedTaskContainer (name :*, tasks:*) :void {
+            (tasks as TaskContainer).update(dt, this);
+        }
     }
 
     protected var _anonymousTasks :TaskContainer = new TaskContainer(TaskContainer.TYPE_PARALLEL);
