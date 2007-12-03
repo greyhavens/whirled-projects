@@ -37,7 +37,7 @@ public class HashSet
 
         // return true if the key did not already
         // exist in the Set
-        return (undefined == previousValue);
+        return (undefined === previousValue);
     }
 
     public function remove (o :Object) :Boolean
@@ -45,7 +45,7 @@ public class HashSet
         var previousValue :* = _hashMap.remove(o);
 
         // return true if the key existed in the Set
-        return (undefined != previousValue);
+        return (undefined !== previousValue);
     }
 
     public function clear () :void

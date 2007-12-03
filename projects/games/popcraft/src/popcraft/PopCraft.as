@@ -32,6 +32,12 @@ public class PopCraft extends Sprite
         delete dict[1];
         trace(dict[1]);*/
 
+        var asdf :* = undefined;
+        var qwert :* = null;
+
+        trace(asdf == qwert);
+        trace(asdf === qwert);
+
         var os :ObjectSet = new ObjectSet();
 
         Assert.isTrue(null == g_instance);
