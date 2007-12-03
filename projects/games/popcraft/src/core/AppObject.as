@@ -2,8 +2,8 @@ package core {
 
 import com.threerings.util.Assert;
 import com.threerings.util.HashMap;
+import com.threerings.util.HashSet;
 
-import core.util.HashSet;
 import core.tasks.TaskContainer;
 
 import flash.display.Sprite;

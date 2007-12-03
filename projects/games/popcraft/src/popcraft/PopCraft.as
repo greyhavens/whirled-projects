@@ -25,21 +25,6 @@ public class PopCraft extends Sprite
 
     public function PopCraft ()
     {
-        /*var dict :Dictionary = new Dictionary();
-        trace(dict[1]);
-        dict[1] = null;
-        trace(dict[1]);
-        delete dict[1];
-        trace(dict[1]);*/
-
-        var asdf :* = undefined;
-        var qwert :* = null;
-
-        trace(asdf == qwert);
-        trace(asdf === qwert);
-
-        var os :ObjectSet = new ObjectSet();
-
         Assert.isTrue(null == g_instance);
         g_instance = this;
 

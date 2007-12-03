@@ -1,6 +1,7 @@
 package core.util {
 
 import flash.utils.Dictionary;
+import com.threerings.util.ISet;
 
 public class ObjectSet
     implements ISet
