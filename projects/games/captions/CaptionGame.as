@@ -167,7 +167,7 @@ public class CaptionGame extends EventDispatcher
             return;
         }
 
-        caption = StringUtil.trim(caption);
+        caption = _ctrl.filter(StringUtil.trim(caption));
 
         if (caption != _myCaption) {
             // TODO: possibly a new way to support private data, whereby users can submit
@@ -535,9 +535,18 @@ public class CaptionGame extends EventDispatcher
         _myCaptionIndex = -1;
         for (ii = 0; ii < _indexes.length; ii++) {
             var index :int = int(_indexes[ii]);
-            _votableCaptions.push(String(caps[index]));
-            if (ids[index] == _myId) {
-                _myCaptionIndex = ii;
+            var cap :String = String(caps[index]);
+            cap = _ctrl.filter(cap);
+            if (cap != null) {
+                _votableCaptions.push(cap);
+                if (ids[index] == _myId) {
+                    _myCaptionIndex = ii;
+                }
+
+            } else {
+                // do not show this caption: the captioner loses out for being nasty
+                _indexes.splice(ii, 1);
+                ii--;
             }
         }
 
@@ -610,7 +619,10 @@ public class CaptionGame extends EventDispatcher
             }
 
             var record :Object = {};
-            record.caption = String(caps[index]);
+            record.caption = _ctrl.filter(String(caps[index]));
+            if (record.caption == null) {
+                record.caption = "(Filtered)";
+            }
             record.playerName = String(_ctrl.get("name:" + playerIdStr));
             record.votes = int(Math.abs(result));
             record.disqual = (result < 0);
