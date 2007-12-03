@@ -281,7 +281,7 @@ public class ShipSprite extends Sprite
     {
         var coll :Collision = _board.getCollision(
                 startX, startY, endX, endY, _shipType.size, -1, colType);
-        if (coll != null) {
+        if (coll != null && coll.hit is Obstacle) {
             var obstacle :Obstacle = Obstacle(coll.hit);
             var bounce :Number = obstacle.getElasticity();
             var dx :Number = endX - startX;

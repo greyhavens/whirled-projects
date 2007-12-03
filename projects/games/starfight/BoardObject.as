@@ -1,6 +1,7 @@
 package {
 
 import flash.display.Sprite;
+import flash.media.Sound;
 import flash.utils.ByteArray;
 
 /**
@@ -11,6 +12,7 @@ public class BoardObject extends Sprite
     public var bX :int;
     public var bY :int;
     public var type :int;
+    public var index :int;
 
     public function BoardObject (type :int, bX :int, bY :int, graphics :Boolean) :void
     {
@@ -22,6 +24,21 @@ public class BoardObject extends Sprite
         if (graphics) {
             setupGraphics();
         }
+    }
+
+    public function damage (damage :Number) :Boolean
+    {
+        return false;
+    }
+
+    public function arrayName () :String
+    {
+        return "object";
+    }
+
+    public function hitSound () :Sound
+    {
+        return null;
     }
 
     /**

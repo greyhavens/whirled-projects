@@ -280,6 +280,11 @@ public class StarFight extends Sprite
         _boardCtrl.addRandomPowerup();
     }
 
+    public function addMine (shipId :int, x :int, y :int, shipType :int, damage :Number) :void
+    {
+        _boardCtrl.addMine(new Mine(shipId, x, y, shipId == _ownShip.shipId, damage));
+    }
+
     // from PropertyChangedListener
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
@@ -475,9 +480,9 @@ public class StarFight extends Sprite
      * Register that an obstacle was hit.
      */
     public function hitObs (
-            obs :Obstacle, x :Number, y :Number, shooterId :int, damage :Number) :void
+            obj :BoardObject, x :Number, y :Number, shooterId :int, damage :Number) :void
     {
-        playSoundAt(_boardCtrl.hitObs(obs, x, y, shooterId == _ownShip.shipId, damage), x, y);
+        playSoundAt(_boardCtrl.hitObs(obj, x, y, shooterId == _ownShip.shipId, damage), x, y);
     }
 
     /**
@@ -641,7 +646,7 @@ public class StarFight extends Sprite
             }
         }
 
-        _boardCtrl.collectPowerups(_ownShip, ownOldX, ownOldY);
+        _boardCtrl.shipInteraction(_ownShip, ownOldX, ownOldY, this);
 
         // Recenter the board on our ship.
         _boardCtrl.setAsCenter(_ownShip.boardX, _ownShip.boardY);

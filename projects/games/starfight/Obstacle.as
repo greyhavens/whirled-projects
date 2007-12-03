@@ -1,15 +1,17 @@
 package {
 
-import flash.display.Graphics;
-
-import flash.utils.ByteArray;
-
 import flash.display.Bitmap;
+import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.PixelSnapping;
 import flash.display.Sprite;
 
+import flash.media.Sound;
+
 import flash.events.Event;
+
+import flash.utils.ByteArray;
+
 
 /**
  * Represents something in the world that ships may interact with.
@@ -28,7 +30,6 @@ public class Obstacle extends BoardObject
     public static const DOWN :int = 3;
 
     public var health :Number;
-    public var index :int;
 
     public static function readObstacle (bytes :ByteArray) :Obstacle
     {
@@ -59,13 +60,37 @@ public class Obstacle extends BoardObject
         }
     }
 
-    public function damage (damage :Number) :Boolean
+    override public function damage (damage :Number) :Boolean
     {
         if (health < 0 || type == WALL) {
             return false;
         }
         health -= damage;
         return health < 0;
+    }
+
+    override public function arrayName () :String
+    {
+        return "obstacles";
+    }
+
+    override public function hitSound () :Sound
+    {
+        var sound :Sound;
+        switch (type) {
+        case ASTEROID_1:
+        case ASTEROID_2:
+            sound = Resources.getSound("asteroid_hit.wav");
+            break;
+        case JUNK:
+            sound = Resources.getSound("junk_hit.wav");
+            break;
+        case WALL:
+        default:
+            sound = Resources.getSound("metal_hit.wav");
+            break;
+        }
+        return sound;
     }
 
     override public function readFrom (bytes :ByteArray) :void

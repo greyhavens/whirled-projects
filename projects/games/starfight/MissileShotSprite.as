@@ -58,8 +58,8 @@ public class MissileShotSprite extends ShotSprite {
                     boardY + (yVel*coll.time*time), shipId, damage);
 
             } else {
-                var obs :Obstacle = Obstacle(coll.hit);
-                _game.hitObs(obs, boardX + (xVel*coll.time*time),
+                var obj :BoardObject = BoardObject(coll.hit);
+                _game.hitObs(obj, boardX + (xVel*coll.time*time),
                     boardY + (yVel*coll.time*time), shipId, damage);
             }
             complete = true;

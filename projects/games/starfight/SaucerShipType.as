@@ -91,19 +91,19 @@ public class SaucerShipType extends ShipType
 
     override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :void
     {
-        var args :Array = new Array(4);
+        var args :Array = new Array(5);
         args[0] = ship.shipId;
         args[1] = ship.shipType;
-        args[2] = ship.boardX;
-        args[3] = ship.boardY;
+        args[2] = Math.round(ship.boardX);
+        args[3] = Math.round(ship.boardY);
+        args[4] = secondaryHitPower;
 
         sf.sendMessage("secondary", args);
     }
 
     override public function secondaryShot (sf :StarFight, val :Array) :void
     {
-        sf.addShot(new MineShotSprite(
-                val[2], val[3], val[0], secondaryHitPower, secondaryShotLife, val[1], sf));
+        sf.addMine(val[0], val[2], val[3], val[1], val[4]);
     }
 
     override protected function swfAsset () :Class

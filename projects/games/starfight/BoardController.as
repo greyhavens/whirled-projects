@@ -71,8 +71,18 @@ public class BoardController
             if (pups[ii] == null) {
                 continue;
             }
-            pups.position = 0;
+            pups[ii].position = 0;
             _powerups[ii] = Powerup.readPowerup(ByteArray(pups[ii]));
+        }
+        var mines :Array = (_gameCtrl.get("mines") as Array);
+        _mines = new Array(mines.length);
+        for (ii = 0; ii < mines.length; ii++) {
+            if (mines[ii] == null) {
+                continue;
+            }
+            mines[ii].position = 0;
+            _mines[ii] = Mine.readMine(ByteArray(mines[ii]));
+            _mines[ii].index = ii;
         }
         _callback();
     }
@@ -85,6 +95,7 @@ public class BoardController
         loadObstacles();
         var maxPowerups :int = Math.max(1, width * height / MIN_TILES_PER_POWERUP);
         _powerups = new Array(maxPowerups);
+        _mines = new Array();
 
         if (_gameCtrl.isConnected()) {
             _gameCtrl.doBatch(function () :void {
@@ -94,6 +105,7 @@ public class BoardController
                             _obstacles[ii].writeTo(new ByteArray()), ii);
                 }
                 _gameCtrl.setImmediate("powerup", new Array(_powerups.length));
+                _gameCtrl.setImmediate("mines", new Array());
                 _gameCtrl.setImmediate("board", writeTo(new ByteArray()));
             });
         }
@@ -153,6 +165,15 @@ public class BoardController
                     });
                 }
             }
+        } else if ((event.name == "mines") && (event.index >= 0)) {
+            if (_mines == null) {
+                return;
+            }
+            if (event.newValue == null) {
+                if (_mines[event.index] != null) {
+                    removeMine(event.index);
+                }
+            }
         }
     }
 
@@ -197,7 +218,7 @@ public class BoardController
                 var repCt :int = 0;
 
                 while (getObstacleAt(x, y) ||
-                        (getPowerupIdx(x+0.5, y+0.5, x+0.5, y+0.5, 0.1) != -1)) {
+                        (getObjectIdx(x+0.5, y+0.5, x+0.5, y+0.5, 0.1, _powerups) != -1)) {
                     x = Math.random() * width;
                     y = Math.random() * height;
 
@@ -227,6 +248,37 @@ public class BoardController
         powerupLayer.removeChild(_powerups[idx]);
         _powerups[idx] = null;
         _status.removePowerup(idx);
+    }
+
+    /**
+     * Adds a mine to the board.
+     */
+    public function addMine (mine :Mine) :void
+    {
+        var index :int = 0;
+        for (; index < _mines.length; index++) {
+            if (_mines[index] == null) {
+                break;
+            }
+        }
+        _mines[index] = mine;
+        powerupLayer.addChild(mine);
+        if (_gameCtrl.amInControl()) {
+            _gameCtrl.setImmediate("mines", mine.writeTo(new ByteArray()), index);
+        }
+    }
+
+    /**
+     * Removes a mine from the board.
+     */
+    public function removeMine (idx :int) :void
+    {
+        _gameCtrl.setImmediate("mines", null, idx);
+        var mine :Mine = _mines[idx];
+        _mines[idx] = null;
+        mine.explode(function () :void {
+            powerupLayer.removeChild(mine);
+        });
     }
 
     /**
@@ -284,42 +336,58 @@ public class BoardController
             if (obs == null || (ignoreObs == 1 && obs.type != Obstacle.WALL)) {
                 continue;
             }
-
-            // Find how long it is til our X coords collide.
-            var timeToX :Number;
-            if (dx > 0.0) {
-                timeToX = (obs.bX - (oldX+rad))/dx;
-            } else if (dx < 0.0) {
-                timeToX = ((obs.bX+1.0) - (oldX-rad))/dx;
-            } else if ((oldX+rad >= obs.bX) && (oldX-rad <= obs.bX+1.0)) {
-                timeToX = -1.0; // already there.
-            } else {
-                timeToX = 2.0; // doesn't hit.
-            }
-
-            // Find how long it is til our Y coords collide.
-            var timeToY :Number;
-            if (dy > 0.0) {
-                timeToY = (obs.bY - (oldY+rad))/dy;
-            } else if (dy < 0.0) {
-                timeToY = ((obs.bY+1.0) - (oldY-rad))/dy;
-            } else if ((oldY+rad >= obs.bY) && (oldY-rad <= obs.bY+1.0)) {
-                timeToY = -1.0; // already there.
-            } else {
-                timeToY = 2.0; // doesn't hit.
-            }
-
-            // Update our bestTime if this is a legitimate collision and is before any
-            //  others we've found.
-            var time :Number = Math.max(timeToX, timeToY);
-            if (time >= 0.0 && time <= 1.0 && time < bestTime &&
-                ((timeToX >= 0.0 || (oldX+rad >= obs.bX) && (oldX-rad <= obs.bX+1.0))) &&
-                ((timeToY >= 0.0 || (oldY+rad >= obs.bY) && (oldY-rad <= obs.bY+1.0)))){
-                bestTime = time;
-                bestHit = new Collision(obs, time, timeToX > timeToY);
-            }
+            bestHit = findBestHit(oldX, oldY, dx, dy, rad, obs, bestHit);
         }
+
+        // Check each mine and figure out which one we hit first.
+        /*
+        for each (var mine :Mine in _mines) {
+            if (mine == null) {
+                continue;
+            }
+            bestHit = findBestHit(oldX, oldY, dx, dy, rad, mine, bestHit);
+        }
+        */
         return bestHit;
+    }
+
+    protected function findBestHit (oldX :Number, oldY :Number, dx :Number, dy :Number, rad :Number,
+            obj :BoardObject, col :Collision) :Collision
+    {
+        // Find how long it is til our X coords collide.
+        var timeToX :Number;
+        if (dx > 0.0) {
+            timeToX = (obj.bX - (oldX+rad))/dx;
+        } else if (dx < 0.0) {
+            timeToX = ((obj.bX+1.0) - (oldX-rad))/dx;
+        } else if ((oldX+rad >= obj.bX) && (oldX-rad <= obj.bX+1.0)) {
+            timeToX = -1.0; // already there.
+        } else {
+            timeToX = 2.0; // doesn't hit.
+        }
+
+        // Find how long it is til our Y coords collide.
+        var timeToY :Number;
+        if (dy > 0.0) {
+            timeToY = (obj.bY - (oldY+rad))/dy;
+        } else if (dy < 0.0) {
+            timeToY = ((obj.bY+1.0) - (oldY-rad))/dy;
+        } else if ((oldY+rad >= obj.bY) && (oldY-rad <= obj.bY+1.0)) {
+            timeToY = -1.0; // already there.
+        } else {
+            timeToY = 2.0; // doesn't hit.
+        }
+
+        // Update our bestTime if this is a legitimate collision and is before any
+        //  others we've found.
+        var time :Number = Math.max(timeToX, timeToY);
+        var bestTime :Number = (col == null ? 1.0 : col.time);
+        if (time >= 0.0 && time <= 1.0 && time < bestTime &&
+            ((timeToX >= 0.0 || (oldX+rad >= obj.bX) && (oldX-rad <= obj.bX+1.0))) &&
+            ((timeToY >= 0.0 || (oldY+rad >= obj.bY) && (oldY-rad <= obj.bY+1.0)))){
+            return new Collision(obj, time, timeToX > timeToY);
+        }
+        return col;
     }
 
 
@@ -339,8 +407,8 @@ public class BoardController
         return null;
     }
 
-    public function getPowerupIdx (oldX :Number, oldY :Number,
-        newX :Number, newY :Number, rad :Number) :int
+    public function getObjectIdx (oldX :Number, oldY :Number,
+        newX :Number, newY :Number, rad :Number, array :Array) :int
     {
 
         /** The first one we've seen so far. */
@@ -351,15 +419,15 @@ public class BoardController
         var dy :Number = newY - oldY;
 
         // Check each powerup and figure out which one we hit first.
-        for (var ii :int; ii < _powerups.length; ii++) {
-            var pow :Powerup = _powerups[ii];
-            if (pow == null) {
+        for (var ii :int; ii < array.length; ii++) {
+            var bo :BoardObject = BoardObject(array[ii]);
+            if (bo == null) {
                 continue;
             }
-            var bX :Number = pow.bX + 0.5;
-            var bY :Number = pow.bY + 0.5;
+            var bX :Number = bo.bX + 0.5;
+            var bY :Number = bo.bY + 0.5;
             var r :Number = rad + 0.5; // Our radius...
-            // We approximate a powerup as a circle for this...
+            // We approximate a board object as a circle for this...
             var a :Number = dx*dx + dy*dy;
             var b :Number = 2*(dx*(oldX-bX) + dy*(oldY-bY));
             var c :Number = bX*bX + bY*bY + oldX*oldX + oldY*oldY -
@@ -395,30 +463,16 @@ public class BoardController
     }
 
     public function hitObs (
-            obs :Obstacle, x :Number, y :Number, owner :Boolean, damage :Number) :Sound
+            obj :BoardObject, x :Number, y :Number, owner :Boolean, damage :Number) :Sound
     {
         explode(x, y, 0, true, 0);
         if (owner) {
-            if (obs.damage(damage)) {
-                _gameCtrl.setImmediate("obstacles", null, obs.index);
+            if (obj.damage(damage)) {
+                _gameCtrl.setImmediate(obj.arrayName(), null, obj.index);
             }
         }
 
-        var sound :Sound;
-        switch (obs.type) {
-        case Obstacle.ASTEROID_1:
-        case Obstacle.ASTEROID_2:
-            sound = Resources.getSound("asteroid_hit.wav");
-            break;
-        case Obstacle.JUNK:
-            sound = Resources.getSound("junk_hit.wav");
-            break;
-        case Obstacle.WALL:
-        default:
-            sound = Resources.getSound("metal_hit.wav");
-            break;
-        }
-        return sound;
+        return obj.hitSound();
     }
 
 
@@ -440,19 +494,38 @@ public class BoardController
                 _status.addPowerup(ii);
             }
         }
+        for (ii = 0; ii < _mines.length; ii++) {
+            if (_mines[ii] != null) {
+                powerupLayer.addChild(_mines[ii]);
+            }
+        }
     }
 
-    public function collectPowerups (ownShip :ShipSprite, oldX :Number, oldY :Number) :void
+    public function shipInteraction (
+            ownShip :ShipSprite, oldX :Number, oldY :Number, game :StarFight) :void
     {
         do {
-            var powIdx :int = getPowerupIdx(oldX, oldY, ownShip.boardX, ownShip.boardY,
-                    Codes.SHIP_TYPES[ownShip.shipType].size);
+            var powIdx :int = getObjectIdx(oldX, oldY, ownShip.boardX, ownShip.boardY,
+                    Codes.SHIP_TYPES[ownShip.shipType].size, _powerups);
             if (powIdx == -1) {
                 break;
             }
             ownShip.awardPowerup(_powerups[powIdx]);
             removePowerup(powIdx);
         } while (powIdx != -1);
+        do {
+            var mineIdx :int = getObjectIdx(oldX, oldY, ownShip.boardX, ownShip.boardY,
+                    Codes.SHIP_TYPES[ownShip.shipType].size, _mines);
+            if (mineIdx == -1) {
+                break;
+            }
+            var mine :Mine = Mine(_mines[mineIdx]);
+            if (mine.type == ownShip.shipId) {
+                break;
+            }
+            game.hitShip(ownShip, mine.bX, mine.bY, mine.type, mine.dmg);
+            removeMine(mineIdx);
+        } while (mineIdx != -1);
     }
 
     public function tick (time :int) :void
@@ -547,6 +620,9 @@ public class BoardController
 
     /** All the obstacles on the board. */
     protected var _obstacles :Array;
+
+    /** All the mines on the board. */
+    protected var _mines :Array;
 
     /** Reference to the status overlay. */
     protected var _status :StatusOverlay;
