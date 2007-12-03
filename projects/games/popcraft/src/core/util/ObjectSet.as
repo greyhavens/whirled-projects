@@ -1,10 +1,10 @@
 package core.util {
 
 import flash.utils.Dictionary;
-import com.threerings.util.ISet;
+import com.threerings.util.Set;
 
 public class ObjectSet
-    implements ISet
+    implements Set
 {
     public function add (o :Object) :Boolean
     {
