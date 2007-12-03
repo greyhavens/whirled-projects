@@ -13,6 +13,13 @@ package {
  */
 [Event(name="tick", type="Event")]
 
+/**
+ * Dispatched ONLY on the instance "in control" prior to starting a new round, this
+ * lets that client inject any game-specific properties along with the round change.
+ */
+[Event(name="roundWillStart", type="Event")]
+
+
 import flash.events.Event;
 import flash.events.EventDispatcher;
 
@@ -52,6 +59,9 @@ public class CaptionGame extends EventDispatcher
 
     /** The event type dispatched when the phase changes. */
     public static const PHASE_CHANGED_EVENT :String = "phaseChanged";
+
+    /** The event type dispatched for the user in control when a round is being set up. */
+    public static const ROUND_WILL_START_EVENT :String = "roundWillStart";
 
     /** Scoring values for various actions taken during a game. */
     public static const CAPTION_SCORE :int = 30; // I'm worried people will just enter "asdasd"
@@ -880,6 +890,9 @@ public class CaptionGame extends EventDispatcher
     protected function startRound (photoUrl :String) :void
     {
         _ctrl.doBatch(function () :void {
+            // notify our clients that we'll start a new round
+            dispatchEvent(new Event(ROUND_WILL_START_EVENT));
+
             _ctrl.set("skipping", null);
             _ctrl.set("photo", photoUrl);
             _ctrl.set("captions", null);
