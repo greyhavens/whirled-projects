@@ -486,8 +486,12 @@ public class LOL extends Sprite
         g.clear();
         if (_input.type == TextFieldType.INPUT) {
             var w :int = MIN_IMAGE_WIDTH;
-            if (_image.content != null) {
-                w = Math.max(_image.content.width, w);
+            try {
+                if (_image.content != null) {
+                    w = Math.max(_image.content.width, w);
+                }
+            } catch (err :SecurityError) {
+                // no problem, we don't care
             }
             //trace("coloring, (" + (_image.content != null) + ") " + w + ", " + _image.scaleX);
 
@@ -711,16 +715,21 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
      */
     protected function shrinkImageForWinnerScreen (... ignored) :void
     {
-        if (_image.content != null) {
-            var loaderInfo :LoaderInfo = _image.content.loaderInfo;
-            // we need to make room for the "<bla> has won" label that shouldn't overlap the image
-            const MAX :int = 380;
-            if (loaderInfo.height > MAX) {
-                var scale :Number = MAX / loaderInfo.height;
-                _image.content.scaleX = scale
-                _image.content.scaleY = scale
-                alignImage();
+        try {
+            if (_image.content != null) {
+                var loaderInfo :LoaderInfo = _image.content.loaderInfo;
+                // we need to make room for the "<bla> has won" label that shouldn't overlap
+                // the image
+                const MAX :int = 380;
+                if (loaderInfo.height > MAX) {
+                    var scale :Number = MAX / loaderInfo.height;
+                    _image.content.scaleX = scale
+                    _image.content.scaleY = scale
+                    alignImage();
+                }
             }
+        } catch (err :SecurityError) {
+            // oh well!
         }
     }
 
@@ -729,22 +738,28 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
      */
     protected function unshrinkImageForResultsScreen (... ignored) :void
     {
-        if (_image.content != null) {
-            _image.content.scaleX = 1;
-            _image.content.scaleY = 1;
-            alignImage();
+        try {
+            if (_image.content != null) {
+                _image.content.scaleX = 1;
+                _image.content.scaleY = 1;
+                alignImage();
+            }
+        } catch (err :SecurityError) {
+            // oh well!
         }
     }
 
     protected function alignImage () :void
     {
         // TODO: width/height should be available earlier!
-        if (_image.content == null) {
-            return;
+        try {
+            if (_image.content != null) {
+                _image.x = (MAX_IMAGE_WIDTH - _image.content.width) / 2;
+                _image.y = (MAX_IMAGE_HEIGHT - _image.content.height) / 2;
+            }
+        } catch (err :SecurityError) {
+            // oh well!
         }
-
-        _image.x = (MAX_IMAGE_WIDTH - _image.content.width) / 2;
-        _image.y = (MAX_IMAGE_HEIGHT - _image.content.height) / 2;
     }
 
     /**
@@ -807,9 +822,13 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         var w :int = MIN_IMAGE_WIDTH;
         var h :int = MAX_IMAGE_HEIGHT;
         // position the field properly over the image control
-        if (_image.content != null) {
-            w = Math.max(w, _image.content.width);
-            h = _image.content.height;
+        try {
+            if (_image.content != null) {
+                w = Math.max(w, _image.content.width);
+                h = _image.content.height;
+            }
+        } catch (err :SecurityError) {
+            // cope
         }
 
         field.width = w;
