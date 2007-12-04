@@ -48,6 +48,7 @@ import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Log;
 import com.threerings.util.NetUtil;
 import com.threerings.util.StringUtil;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.DisplayUtil;
 
@@ -57,8 +58,7 @@ import com.whirled.WhirledGameControl;
 
 /**
  * TODO:
- * - be able to view the flickr page of an image.
- * - save captioned images.
+ * - save captioned images?
  */
 [SWF(width="700", height="500")]
 public class LOL extends Sprite
@@ -82,6 +82,8 @@ public class LOL extends Sprite
         }
 
         _formatter = new LOLTextFieldFormatter();
+        _formatter.addEventListener(
+            LOLTextFieldFormatter.ENTER_PRESSED_EVENT, handleEnterPressedOnInput);
 
         _ctrl.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
 
@@ -396,6 +398,14 @@ public class LOL extends Sprite
         }
 
         _game.setDoneCaptioning(!nowEditing);
+    }
+
+    protected function handleEnterPressedOnInput (event :ValueEvent) :void
+    {
+        // We know this came from the input area, so make it like pressing done.
+        handleSubmitButton(event);
+        // Tell the formatter that we don't want the enter to go through.
+        event.preventDefault();
     }
 
     /**

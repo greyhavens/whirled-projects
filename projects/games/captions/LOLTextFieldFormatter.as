@@ -4,6 +4,7 @@
 package {
 
 import flash.events.Event;
+import flash.events.EventDispatcher;
 import flash.events.FocusEvent;
 import flash.events.KeyboardEvent;
 import flash.events.TextEvent;
@@ -19,9 +20,22 @@ import flash.ui.Keyboard;
 import flash.utils.Dictionary;
 
 import com.threerings.util.Log;
+import com.threerings.util.ValueEvent;
 
-public class LOLTextFieldFormatter
+/**
+ * Dispatched when the user presses ENTER in a watched TextField.
+ * value: the textfield
+ *
+ * If this event is cancelled, then so it the ENTER.
+ */
+[Event(name="enterPressed", type="com.threerings.util.ValueEvent")]
+
+
+public class LOLTextFieldFormatter extends EventDispatcher
 {
+    /** The event type dispatched when ENTER is pressed in a watched TextField. */
+    public static const ENTER_PRESSED_EVENT :String = "enterPressed";
+
     public function LOLTextFieldFormatter (
         fontFamily :String = "_sans", maxFontSize :int = 50, minFontSize :int = 16,
         maxLines :int = 2)
@@ -122,8 +136,9 @@ public class LOLTextFieldFormatter
         // Don't let the user press return
         if (event.text == "\n") {
             var field :TextField = event.currentTarget as TextField;
-            // no returns if we're already at the max
-            if (field.numLines >= _maxLines) {
+            var pressEvent :ValueEvent = new ValueEvent(ENTER_PRESSED_EVENT, field, false, true);
+            dispatchEvent(pressEvent);
+            if (pressEvent.isDefaultPrevented() || (field.numLines >= _maxLines)) {
                 event.preventDefault();
             }
         }

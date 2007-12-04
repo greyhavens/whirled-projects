@@ -42,11 +42,6 @@ import com.whirled.WhirledGameControl;
  * Note: this uses the game cookie to store trophy-related stats, so you cannot
  * use the cookie for your own purposes by code that uses this back-end.
  */
-// TODO:
-// - provide flickr page URL for the image
-// - implement trophies
-// - tag configuration
-// 
 public class CaptionGame extends EventDispatcher
 {
     /** Phase constants. */
