@@ -66,7 +66,7 @@ public class BrawlerView extends Sprite
             addChild(_preloader = _ctrl.create("Preloader"));
             _ctrl.control.addEventListener(StateChangedEvent.GAME_STARTED,
                 function (event :StateChangedEvent) :void {
-                    _preloader["fade"].play();
+                    //_preloader["fade"].play();
                     finishInit();
                 });
         }
@@ -329,6 +329,24 @@ public class BrawlerView extends Sprite
         var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
         results.grade.gotoAndStop(GRADES[grade]);
 		results.percent.points.text = pct;
+		
+		//Award trophy/prize for room
+		if (_ctrl.difficulty_setting != "Easy"){
+			if ((GRADES[grade]) == "S"){
+				//Got a rank S!
+				var zone:int = 9;
+				if (_ctrl.control.awardTrophy(String("room"+zone))) {
+					_ctrl.control.awardPrize(String("prize_z"+zone));
+				}
+			}
+		}
+		
+		//Award trophy/prize for completion
+		if (_ctrl.control.awardTrophy(String("trophy_"+_ctrl.difficulty_setting))) {
+			_ctrl.control.awardPrize(String("prize_"+_ctrl.difficulty_setting));
+		}
+		
+		
     }
 
     /**

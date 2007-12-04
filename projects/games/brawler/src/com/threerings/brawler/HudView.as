@@ -34,6 +34,12 @@ public class HudView extends Sprite
         _hud.respawn.state = "off";
         _hud.fader.gotoAndStop("out");
         _hud.fader.addEventListener("animationComplete", handleFadeComplete);
+		_hud.zoneclear_off.mouseEnabled = false;
+		_hud.zoneclear.mouseEnabled = false;
+		_hud.zoneclear_off.scaleX = 0.1;
+		_hud.zoneclear_off.scaleY = 0.1;
+		_hud.zoneclear.scaleX = 0.1;
+		_hud.zoneclear.scaleY = 0.1;
 
         // update the room
         updateRoom();
@@ -337,19 +343,42 @@ public class HudView extends Sprite
     public function zoneClear(off:Boolean = false) :void
     {
 		if(off){
+			_hud.zoneclear_off.scaleX = 1.0;
+			_hud.zoneclear_off.scaleY = 1.0;
+			_hud.zoneclear.scaleX = 0.1;
+			_hud.zoneclear.scaleY = 0.1;
 			_hud.zoneclear_off.alpha = 1;
+			
 			//_hud.zoneclear.alpha = 0;
 			_hud.zoneclear.alpha = 1;
 			_hud.zoneclear_off.gotoAndPlay(1);
 			_hud.zoneclear.gotoAndStop(1);
 		}else{
+			_hud.zoneclear_off.scaleX = 0.1;
+			_hud.zoneclear_off.scaleY = 0.1;
+			_hud.zoneclear.scaleX = 1.0;
+			_hud.zoneclear.scaleY = 1.0;
+		
 			_hud.zoneclear.alpha = 1;
 			_hud.zoneclear_off.alpha = 0;
 			var pct :Number = Math.round(_ctrl.calculateGrade("grade",false));
 			var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
 			_hud.zoneclear.grade.points.text = (GRADES[grade]);
 			_hud.zoneclear.percent.points.text = pct;
+			_hud.zoneclear_off.grade.points.text = (GRADES[grade]);
+			_hud.zoneclear_off.percent.points.text = pct;
 			_hud.zoneclear.gotoAndPlay(2);
+			
+			//Award Trophy and Room for beating room at rank S on Normal+
+			if (_ctrl.difficulty_setting != "Easy"){
+				if ((GRADES[grade]) == "S"){
+					//Got a rank S!
+					var zone:int = _ctrl.room-1;
+					if (_ctrl.control.awardTrophy(String("room"+zone))) {
+						_ctrl.control.awardPrize(String("prize_z"+zone));
+					}
+				}
+			}
 		}
     }
 
