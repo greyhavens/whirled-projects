@@ -660,9 +660,10 @@ public class ShipSprite extends Sprite
 
     public function secondaryFire () :void
     {
-        _shipType.secondaryShotMessage(this, _game);
-        _ticksToSecondary = _shipType.secondaryShotRecharge * 1000;
-        secondaryPower -= _shipType.secondaryShotCost;
+        if (_shipType.secondaryShotMessage(this, _game)) {
+            _ticksToSecondary = _shipType.secondaryShotRecharge * 1000;
+            secondaryPower -= _shipType.secondaryShotCost;
+        }
     }
 
     /**

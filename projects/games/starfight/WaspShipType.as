@@ -56,7 +56,7 @@ public class WaspShipType extends ShipType
         super.primaryShot(sf, val);
     }
 
-    override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :void
+    override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :Boolean
     {
         var rads :Number = ship.ship.rotation*Codes.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
@@ -78,6 +78,7 @@ public class WaspShipType extends ShipType
         args[5] = rads;
 
         sf.sendMessage("secondary", args);
+        return true;
     }
 
     override public function secondaryShot (sf :StarFight, val :Array) :void

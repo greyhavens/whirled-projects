@@ -117,7 +117,8 @@ public class StatusOverlay extends Sprite
         mask = Shape(_shields.mask);
         mask.graphics.clear();
         mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, POW_SIZE * (1.0 - ship.shieldPower), POW_SIZE, POW_SIZE);
+        mask.graphics.drawRect(
+            0, POW_SIZE * (1.0 - Math.min(1.0, ship.shieldPower)), POW_SIZE, POW_SIZE);
         mask.graphics.endFill();
 
         mask = Shape(_primary.mask);

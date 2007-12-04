@@ -89,7 +89,7 @@ public class SaucerShipType extends ShipType
         sf.fireShot(args);
     }
 
-    override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :void
+    override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :Boolean
     {
         var args :Array = new Array(5);
         args[0] = ship.shipId;
@@ -99,6 +99,7 @@ public class SaucerShipType extends ShipType
         args[4] = secondaryHitPower;
 
         sf.sendMessage("secondary", args);
+        return true;
     }
 
     override public function secondaryShot (sf :StarFight, val :Array) :void

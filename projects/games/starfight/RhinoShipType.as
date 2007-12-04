@@ -54,7 +54,7 @@ public class RhinoShipType extends ShipType
         super.primaryShot(sf, val);
     }
 
-    override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :void
+    override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :Boolean
     {
         var args :Array = new Array(5);
         args[0] = ship.shipId;
@@ -64,6 +64,7 @@ public class RhinoShipType extends ShipType
         args[4] = ship.ship.rotation;
 
         warpNow(ship, sf, args);
+        return true;
     }
 
     override public function secondaryShot (sf :StarFight, val :Array) :void

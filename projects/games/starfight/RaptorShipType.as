@@ -3,6 +3,9 @@ package {
 import flash.media.Sound;
 import flash.media.SoundTransform;
 
+import flash.events.TimerEvent;
+import flash.utils.Timer;
+
 public class RaptorShipType extends ShipType
 {
     public function RaptorShipType () :void
@@ -24,10 +27,10 @@ public class RaptorShipType extends ShipType
         primaryShotLife = 0.3;
         primaryShotSize = 0.3;
 
-        secondaryShotCost = 0.33;
+        secondaryShotCost = 1.0;
         secondaryShotRecharge = 1;
         secondaryPowerRecharge = 30;
-        secondaryShotSpeed = 0.5;
+        secondaryShotSpeed = 1500;
         secondaryShotLife = 4;
 
         armor = 1;
@@ -45,6 +48,23 @@ public class RaptorShipType extends ShipType
                     val[3], val[4], val[5], val[6] + ii, val[0], hitPower, ttl, val[1], sf));
         }
         super.primaryShot(sf, val);
+    }
+
+    override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :Boolean
+    {
+        if (ship.shieldPower > 0.0) {
+            return false;
+        }
+        ship.powerups |= (1 << Powerup.SHIELDS);
+        ship.shieldPower = 100.0;
+        var shieldTimer :Timer = new Timer(secondaryShotSpeed, 1);
+        shieldTimer.addEventListener(TimerEvent.TIMER, function (event :TimerEvent) :void
+            {
+                ship.powerups &= ~ShipSprite.SHIELDS_MASK;
+                ship.shieldPower = 0.0;
+            });
+        shieldTimer.start();
+        return true;
     }
 
     override public function secondaryShot (sf :StarFight, val :Array) :void

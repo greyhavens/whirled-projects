@@ -97,8 +97,9 @@ public class ShipType
     /**
      * Secondary shot message generator.
      */
-    public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :void
+    public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :Boolean
     {
+        return false;
     }
 
     public function loadAssets (callback :Function) :void
