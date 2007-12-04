@@ -79,6 +79,9 @@ public class TagWidget extends Sprite
     {
         var tagBox :CheckBox = new CheckBox();
         tagBox.setStyle("textFormat", _tagFormat);
+        tagBox.setStyle("upIcon", X_UP_SKIN);
+        tagBox.setStyle("overIcon", X_OVER_SKIN);
+        tagBox.setStyle("downIcon", X_DOWN_SKIN);
         tagBox.addEventListener(MouseEvent.CLICK, handleTagRemove);
         tagBox.label = tag;
         tagBox.y = 25 * _tagSprite.numChildren;
@@ -122,7 +125,10 @@ public class TagWidget extends Sprite
     protected function handleTagRemove (event :MouseEvent) :void
     {
         var cb :CheckBox = event.target as CheckBox;
-        _ctrl.set("tag:" + cb.label, null);
+        var tag :String = cb.label;
+        _ctrl.set("tag:" + tag, null);
+        // remove it locally immediately
+        removeTag(tag);
     }
 
     protected function handlePropertyChanged (event :PropertyChangedEvent) :void
@@ -149,9 +155,18 @@ public class TagWidget extends Sprite
             tags.push(tag.substring(4));
         }
 
-        trace("Updated tag search to: '" + tags + "'.");
+//        trace("Updated tag search to: '" + tags + "'.");
         _searchPhotoService.setKeywords(tags, true);
     }
+
+    [Embed(source="rsrc/x_up.png")]
+    protected static const X_UP_SKIN :Class;
+
+    [Embed(source="rsrc/x_over.png")]
+    protected static const X_OVER_SKIN :Class;
+
+    [Embed(source="rsrc/x_down.png")]
+    protected static const X_DOWN_SKIN :Class;
 
     protected var _ctrl :WhirledGameControl;
 
