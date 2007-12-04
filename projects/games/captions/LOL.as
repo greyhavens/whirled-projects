@@ -917,7 +917,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         _timer.reset();
     }
 
-    [Embed(source="rsrc/winner_icon.png")]
+    [Embed(source="rsrc/winner_icon.swf")]
     protected static const WINNER_ICON :Class;
 
     [Embed(source="rsrc/dq_icon.png")]
