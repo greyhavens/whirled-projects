@@ -13,6 +13,8 @@ public class PuzzleBoard extends AppObject
 
         _cols = columns;
         _rows = rows;
+
+        _board = new Array(_cols * _rows);
     }
 
     protected var _cols :int;

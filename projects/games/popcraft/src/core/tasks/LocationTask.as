@@ -4,21 +4,44 @@ import com.threerings.util.Assert;
 
 import core.ObjectTask;
 import core.util.Interpolator;
-import core.util.LinearInterpolator;
-import core.util.CubicInterpolator;
+import core.util.MXInterpolatorAdapter;
 
 import flash.geom.Point;
+
+import mx.effects.easing.*;
 
 public class LocationTask extends ObjectTask
 {
     public static function LocationTaskLinear (loc :Point, time :Number) :LocationTask
     {
-        return new LocationTask(loc, time, new LinearInterpolator());
+        return new LocationTask(
+            loc,
+            time,
+            new MXInterpolatorAdapter(mx.effects.easing.Linear.easeNone));
     }
 
     public static function LocationTaskSmooth (loc :Point, time :Number) :LocationTask
     {
-        return new LocationTask(loc, time, new CubicInterpolator());
+        return new LocationTask(
+            loc,
+            time,
+            new MXInterpolatorAdapter(mx.effects.easing.Cubic.easeInOut));
+    }
+
+    public static function LocationTaskEaseIn (loc :Point, time :Number) :LocationTask
+    {
+        return new LocationTask(
+            loc,
+            time,
+            new MXInterpolatorAdapter(mx.effects.easing.Cubic.easeIn));
+    }
+
+    public static function LocationTaskEaseOut (loc :Point, time :Number) :LocationTask
+    {
+        return new LocationTask(
+            loc,
+            time,
+            new MXInterpolatorAdapter(mx.effects.easing.Cubic.easeOut));
     }
 
     public function LocationTask (loc :Point, time :Number = 0, interpolator :Interpolator = new LinearInterpolator())
