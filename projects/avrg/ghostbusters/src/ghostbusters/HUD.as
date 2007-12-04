@@ -57,6 +57,20 @@ public class HUD extends Sprite
 
     protected function handleHUDLoaded (evt :Event) :void
     {
+        _mask = new Sprite();
+        _mask.visible = false;
+        _mask.blendMode = BlendMode.LAYER;
+        this.addChild(_mask);
+
+        _dim = new Sprite();
+        with (_dim.graphics) {
+            beginFill(0x000000);
+            drawRect(0, 0, 2000, 1000);
+            endFill();
+        }
+        _dim.alpha = 0.7;
+        _mask.addChild(_dim);
+
         _hud = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
         _hud.x = 10; // damn scrollbar
         _hud.y = 0;
@@ -69,30 +83,13 @@ public class HUD extends Sprite
 
     protected function lanternClick (evt :Event) :void
     {
-        if (_mask) {
+        if (_mask.visible) {
             this.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
-            this.removeChild(_mask);
-            _mask = null;
+            _mask.visible = false;
 
         } else {
-            _mask = new Sprite();
-
-            _mask.mouseEnabled = false;
-            _mask.mouseChildren = false;
-            _mask.blendMode = BlendMode.LAYER;
-            this.addChild(_mask);
-
-            _dim = new Sprite();
-            _dim.mouseEnabled=false;
-            with (_dim.graphics) {
-                beginFill(0x000000);
-                drawRect(0, 0, 2000, 1000);
-                endFill();
-            }
-            _dim.alpha = 0.7;
-            _mask.addChild(_dim);
-
             this.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+            _mask.visible = true;
         }
     }
 
@@ -180,19 +177,17 @@ public class HUD extends Sprite
 
     protected function handleEnterFrame (evt :Event) :void
     {
-        if (_mask) {
-            _ticker ++;
-            if (_ticker < FRAMES_PER_UPDATE) {
-                return;
-            }
-            _ticker = 0;
-
-            var p :Point = new Point(this.mouseX, this.mouseY);
-            
-            p = this.localToGlobal(p);
-            p = _control.stageToRoom(p);
-            _control.state.setProperty("fl", [ _myId, p.x, p.y ], false);
+        _ticker ++;
+        if (_ticker < FRAMES_PER_UPDATE) {
+            return;
         }
+        _ticker = 0;
+
+        var p :Point = new Point(this.mouseX, this.mouseY);
+            
+        p = this.localToGlobal(p);
+        p = _control.stageToRoom(p);
+        _control.state.setProperty("fl", [ _myId, p.x, p.y ], false);
     }
 
     protected var _control :AVRGameControl;
