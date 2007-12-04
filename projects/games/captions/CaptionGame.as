@@ -168,6 +168,17 @@ public class CaptionGame extends EventDispatcher
     }
 
     /**
+     * Valid during any phase.
+     * 
+     * @return the URL of the page on which the photo can be found, or null if there's
+     * no such thing, depending on the PhotoService.
+     */
+    public function getPhotoPage () :String
+    {
+        return _ctrl.get("photoPage") as String;
+    }
+
+    /**
      * Submit a caption for the current photo.
      * Silently does nothing if the game is not currently in the caption phase.
      */
@@ -887,14 +898,19 @@ public class CaptionGame extends EventDispatcher
     /**
      * Start the new round.
      */
-    protected function startRound (photoUrl :String) :void
+    protected function startRound (photoInfo :Array) :void
     {
+        var photoUrl :String = photoInfo[0] as String;
+        var pageUrl :String = (photoInfo.length > 1) ? (photoInfo[1] as String) : null;
+        trace("round starting: " + pageUrl);
+
         _ctrl.doBatch(function () :void {
             // notify our clients that we'll start a new round
             dispatchEvent(new Event(ROUND_WILL_START_EVENT));
 
             _ctrl.set("skipping", null);
             _ctrl.set("photo", photoUrl);
+            _ctrl.set("photoPage", pageUrl);
             _ctrl.set("captions", null);
             _ctrl.set("ids", null);
             _ctrl.set("results", null);
@@ -1130,9 +1146,9 @@ public class CaptionGame extends EventDispatcher
     protected function loadNextPictures () :void
     {
         if (isCtrlPhase(GET_PHOTO_CTRL_PHASE)) {
-            var url :String = chooseNextPhotoFromPreviews();
-            if (url != null) {
-                startRound(url);
+            var next :Array = chooseNextPhotoFromPreviews();
+            if (next != null) {
+                startRound(next);
                 return;
             }
 
@@ -1154,7 +1170,7 @@ public class CaptionGame extends EventDispatcher
     /**
      * Choose the next photo to use from the previews fetched previously.
      */
-    protected function chooseNextPhotoFromPreviews () :String
+    protected function chooseNextPhotoFromPreviews () :Array
     {
         var ii :int;
         var votes :Array = [];
@@ -1192,12 +1208,12 @@ public class CaptionGame extends EventDispatcher
             }
         }
 
-        var pickedUrl :String = null;
+        var picked :Array = null;
 
         // see if there are any winners
         if (firstPlaces.length > 0) {
             var pick :int = Math.random() * firstPlaces.length;
-            pickedUrl = firstPlaces.splice(pick, 1)[0][1];
+            picked = firstPlaces.splice(pick, 1)[0];
 
             if (firstPlaces.length > 0) {
                 // if there are unpicked tied first places, they become the 2nd places..
@@ -1212,11 +1228,16 @@ public class CaptionGame extends EventDispatcher
 
         // if we already had a 2nd place picked out, let's just use that!
         } else if (_carryOverPreview != null) {
-            pickedUrl = String(_carryOverPreview[1]);
+            picked = _carryOverPreview;
             _carryOverPreview = null;
         }
 
-        return pickedUrl;
+        if (picked != null) {
+            // strip off the first element, which is the preview url
+            picked.shift();
+        }
+
+        return picked;
     }
 
     /**
@@ -1277,7 +1298,7 @@ public class CaptionGame extends EventDispatcher
     protected function handlePhotoAvailable (event :ValueEvent) :void
     {
         var info :Array = event.value as Array;
-        startRound(info[0] as String);
+        startRound(info);
     }
 
     /**
@@ -1286,7 +1307,8 @@ public class CaptionGame extends EventDispatcher
     protected function handlePreviewAvailable (event :ValueEvent) :void
     {
         var info :Array = event.value as Array;
-        _ctrl.set("next_" + info[0], [ info[1], info[2] ]);
+        var id :int = int(info.shift());
+        _ctrl.set("next_" + id, info);
     }
 
     /** Control phase constants, the phase that the control user is currently engaged in. */
