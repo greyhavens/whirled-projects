@@ -162,7 +162,7 @@ public class LOL extends Sprite
         _content.addChild(_ui);
         _loader = null;
 
-        trace(DisplayUtil.dumpHierarchy(_ui));
+//        trace(DisplayUtil.dumpHierarchy(_ui));
 
         // For some reason, when the movie wraps around, we need to re-grab all the bits
         _ui.addEventListener("frameFirst", initUIBits);
