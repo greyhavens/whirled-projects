@@ -2,7 +2,11 @@ package popcraft {
 
 import com.threerings.util.Assert;
 
+import core.MainLoop;
 import core.AppObject;
+import core.util.Rand;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
 
 public class PuzzleBoard extends AppObject
 {
@@ -16,16 +20,56 @@ public class PuzzleBoard extends AppObject
         _rows = rows;
         _cellSize = cellSize;
 
+        // create the visual representation of the board
+        _sprite = new Sprite();
+        _sprite.graphics.clear();
+        _sprite.graphics.beginFill(0x88888888);
+        _sprite.graphics.drawRect(0, 0, _cols * cellSize, _rows * cellSize);int
+        _sprite.graphics.endFill();
+
+        // populate the board with a random distribution of resources
         _board = new Array(_cols * _rows);
-    }
+        var i:int;
+        for (i = 0; i < _cols * _rows; ++i) {
+            _board[i] =
+                GameConstants.RESOURCE_TYPES[Rand.nextIntRange(0, GameConstants.RESOURCE_TYPES.length -1)];
+        }
 
-    public function initialize () :void
-    {
-        for (var i :int = 0; i < _cols * _rows; ++i) {
-
+        // create the piece objects
+        for (i = 0; i < _cols * _rows; ++i) {
+            var piece :Piece = new Piece(_board[i] as uint);
+            piece.displayObject.x = idxToX(i) * _cellSize;
+            piece.displayObject.y = idxToY(i) * _cellSize;
+            MainLoop.instance.topMode.addObject(piece, _sprite);
         }
     }
 
+    override public function get displayObject () :DisplayObject
+    {
+        return _sprite;
+    }
+
+    public function setPiece (x :int, y :int, resourceType :uint) :void
+    {
+        _board[coordsToIdx(x, y)] = resourceType;
+    }
+
+    public function coordsToIdx (x :int, y :int) :int
+    {
+        return (y * _cols) + x;
+    }
+
+    public function idxToX (index :int) :int
+    {
+        return (index % _cols);
+    }
+
+    public function idxToY (index :int) :int
+    {
+        return (index / _cols);
+    }
+
+    protected var _sprite :Sprite;
     protected var _cols :int;
     protected var _rows :int;
     protected var _cellSize :int;

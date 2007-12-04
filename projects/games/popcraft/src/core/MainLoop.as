@@ -11,8 +11,16 @@ import flash.display.Sprite;
 
 public class MainLoop
 {
+    public static function get instance () :MainLoop
+    {
+        return g_instance;
+    }
+
     public function MainLoop (applicationSprite :Sprite)
     {
+        Assert.isNull(g_instance);
+        g_instance = this;
+
         Assert.isNotNull(applicationSprite);
         _applicationSprite = applicationSprite;
     }
@@ -91,11 +99,11 @@ public class MainLoop
 
     public function get applicationSettings () :CoreAppSettings
     {
-        if (null == g_defaultAppSettings) {
-            g_defaultAppSettings = new CoreAppSettings();
+        if (null == _defaultAppSettings) {
+            _defaultAppSettings = new CoreAppSettings();
         }
 
-        return g_defaultAppSettings;
+        return _defaultAppSettings;
     }
 
     protected function update (e:TimerEvent) :void
@@ -183,7 +191,9 @@ public class MainLoop
         _lastTime = newTime;
     }
 
-    protected static var g_defaultAppSettings :CoreAppSettings;
+    protected static var g_instance :MainLoop;
+
+    protected var _defaultAppSettings :CoreAppSettings;
 
     protected var _applicationSprite :Sprite;
     protected var _hasSetup :Boolean = false;
