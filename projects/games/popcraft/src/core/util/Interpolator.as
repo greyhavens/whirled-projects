@@ -1,7 +1,5 @@
 package core.util {
 
-import mx.effects.easing
-
 public interface Interpolator
 {
     /**

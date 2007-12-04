@@ -2,6 +2,7 @@ package core.tasks {
 
 import com.threerings.util.Assert;
 
+import core.AppObject;
 import core.ObjectTask;
 import core.util.Interpolator;
 import core.util.MXInterpolatorAdapter;
@@ -45,7 +46,10 @@ public class LocationTask extends ObjectTask
             new MXInterpolatorAdapter(mx.effects.easing.Cubic.easeOut));
     }
 
-    public function LocationTask (loc :Point, time :Number = 0, interpolator :Interpolator = new LinearInterpolator())
+    public function LocationTask (
+        loc :Point,
+        time :Number = 0,
+        interpolator :Interpolator = null)// = new MXInterpolatorAdapter(mx.effects.easing.Linear.easeNone))
     {
         Assert.isTrue(null != loc);
         Assert.isTrue(null != interpolator);
@@ -62,8 +66,8 @@ public class LocationTask extends ObjectTask
         Assert.isNotNull(displayObj, "LocationTask can only be applied to AppObjects with attached display objects.");
 
         if (0 == _elapsedTime) {
-            _from.x = obj.x;
-            _from.y = obj.y;
+            _from.x = displayObj.x;
+            _from.y = displayObj.y;
         }
 
         _elapsedTime += dt;
@@ -80,7 +84,7 @@ public class LocationTask extends ObjectTask
     }
 
     protected var _interpolator :Interpolator;
-    protected var _from :Point;
+    protected var _from :Point = new Point();
     protected var _to :Point;
     protected var _totalTime :Number = 0;
     protected var _elapsedTime :Number = 0;

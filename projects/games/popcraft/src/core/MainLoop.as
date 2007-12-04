@@ -63,7 +63,7 @@ public class MainLoop
         _mainTimer.addEventListener(TimerEvent.TIMER, update);
         _mainTimer.start();
 
-        _lastTime = getTimer();
+        _lastTime = this.elapsedSeconds;
     }
 
     public function pushMode (mode :AppMode) :void
@@ -182,13 +182,19 @@ public class MainLoop
         _pendingModeTransitionQueue = new Array();
 
         // update the top mode
-        var newTime :Number = getTimer();
+        var newTime :Number = this.elapsedSeconds;
         var dt :Number = newTime - _lastTime;
         if (null != topMode) {
             topMode.update(dt);
         }
 
         _lastTime = newTime;
+    }
+
+    /** Returns the number of seconds that have elapsed since the application started. */
+    public function get elapsedSeconds () :Number
+    {
+        return (getTimer() / 1000); // getTimer() returns a value in milliseconds
     }
 
     protected static var g_instance :MainLoop;

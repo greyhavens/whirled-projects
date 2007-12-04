@@ -1,5 +1,6 @@
 package core.tasks {
 
+import core.AppObject;
 import core.ObjectTask;
 
 public class TimedTask extends ObjectTask

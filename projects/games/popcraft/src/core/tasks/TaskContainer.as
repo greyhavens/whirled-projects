@@ -10,6 +10,32 @@ public class TaskContainer extends ObjectTask
     public static const TYPE_PARALLEL :uint = 0;
     public static const TYPE_SERIAL :uint = 1;
 
+    public static function CreateSerialTask (task1 :ObjectTask = null, task2 :ObjectTask = null) :TaskContainer
+    {
+        var container :TaskContainer = new TaskContainer(TYPE_SERIAL);
+        if (null != task1) {
+            container.addTask(task1);
+        }
+        if (null != task2) {
+            container.addTask(task2);
+        }
+
+        return container;
+    }
+
+    public static function CreateParallelTask (task1 :ObjectTask = null, task2 :ObjectTask = null) :TaskContainer
+    {
+        var container :TaskContainer = new TaskContainer(TYPE_PARALLEL);
+        if (null != task1) {
+            container.addTask(task1);
+        }
+        if (null != task2) {
+            container.addTask(task2);
+        }
+
+        return container;
+    }
+
     public function TaskContainer (type :uint)
     {
         Assert.isTrue(type == TYPE_PARALLEL || type == TYPE_SERIAL);

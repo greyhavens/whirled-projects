@@ -4,9 +4,13 @@ import com.threerings.util.Assert;
 
 import core.MainLoop;
 import core.AppObject;
+import core.tasks.TaskContainer;
 import core.util.Rand;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import core.tasks.LocationTask;
+import flash.geom.Point;
+import core.tasks.TimedTask;
 
 public class PuzzleBoard extends AppObject
 {
@@ -23,7 +27,7 @@ public class PuzzleBoard extends AppObject
         // create the visual representation of the board
         _sprite = new Sprite();
         _sprite.graphics.clear();
-        _sprite.graphics.beginFill(0x88888888);
+        _sprite.graphics.beginFill(0xFFFFFF);
         _sprite.graphics.drawRect(0, 0, _cols * cellSize, _rows * cellSize);int
         _sprite.graphics.endFill();
 
@@ -42,6 +46,10 @@ public class PuzzleBoard extends AppObject
             piece.displayObject.y = idxToY(i) * _cellSize;
             MainLoop.instance.topMode.addObject(piece, _sprite);
         }
+
+        this.addTask(TaskContainer.CreateSerialTask(
+            new TimedTask(3),
+            LocationTask.LocationTaskSmooth(new Point(100, 100), 5)));
     }
 
     override public function get displayObject () :DisplayObject

@@ -1,4 +1,4 @@
-package
+package core.util
 {
 
 import core.util.Interpolator;
@@ -17,7 +17,7 @@ public class MXInterpolatorAdapter
         _easingFunction = easingFunction;
     }
 
-    override public function interpolate (a :Number, b :Number, t :Number, duration :Number) :Number
+    public function interpolate (a :Number, b :Number, t :Number, duration :Number) :Number
     {
         // we need to rejuggle arguments to fit the signature of the mx easing functions:
         // ease(t, b, c, d)
