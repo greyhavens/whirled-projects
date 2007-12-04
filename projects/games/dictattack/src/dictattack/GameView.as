@@ -3,8 +3,6 @@
 
 package dictattack {
 
-import flash.geom.Rectangle;
-import flash.text.GridFitType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFieldType;
@@ -226,7 +224,7 @@ public class GameView extends Sprite
 
         if (_ctx.model.isMultiPlayer()) {
             _overifc = new EndRoundMulti(_ctx);
-            _overifc.show(this);
+            _overifc.show();
 
         } else {
             var text :String = "";
@@ -287,59 +285,13 @@ public class GameView extends Sprite
 
     public function showGameOver () :void
     {
-        if (!_ctx.model.isMultiPlayer()) {
+        if (_ctx.model.isMultiPlayer()) {
+            _overifc = new EndGameMulti(_ctx, _flowAward);
+            _overifc.show(false);
+        } else {
             _overifc = new EndGameSingle(_ctx, _flowAward);
-            _overifc.show(this);
-            return;
+            _overifc.show();
         }
-
-        var text :TextField = new TextField();
-        text.autoSize = TextFieldAutoSize.LEFT;
-        text.selectable = false;
-        text.defaultTextFormat = _ctx.content.makeMarqueeFormat();
-        text.embedFonts = true;
-        text.gridFitType = GridFitType.PIXEL;
-        text.sharpness = 400;
-
-        var points :Array = (_ctx.control.get(Model.POINTS) as Array);
-        var mypoints :int = points[_ctx.control.seating.getMyPosition()];
-        var msg :String = "Game over!        "; // forces dialog to be wide
-        if (mypoints > 0) {
-            msg += "\nScore: " + mypoints + " points.";
-            if (mypoints > 70) {
-                msg += " ZOMG! Are you a computer?";
-            } else if (mypoints > 60) {
-                msg += " You rock!";
-            } else if (mypoints > 40) {
-                msg += " Amazing!";
-            } else if (mypoints > 25) {
-                msg += " Nice work.";
-            } else if (mypoints > 10) {
-                msg += " Not bad.";
-            }
-        }
-        // TODO: else if (multiplayer): msg += "\nWinner " + winner + "!";
-        if (_flowAward > 0) {
-            msg += "\nAward: " + _flowAward + " flow!";
-        }
-        text.text = msg;
-
-        _overifc = new Dialog(text);
-
-        var restart :SimpleButton = _ctx.content.makeButton("Play Again");
-        restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            clearOverView();
-            _ctx.control.playerReady();
-        });
-        _overifc.addButton(restart, Dialog.LEFT);
-
-        var leave :SimpleButton = _ctx.content.makeButton("To Whirled");
-        leave.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            clearOverView();
-            _ctx.control.backToWhirled();
-        });
-        _overifc.addButton(leave, Dialog.RIGHT);
-        _overifc.show(this);
     }
 
     protected function showBetweenRound () :void
@@ -370,7 +322,7 @@ public class GameView extends Sprite
 
     protected function showHelp () :void
     {
-        HelpView.show(this, _ctx.model, _ctx.content);
+        HelpView.show(_ctx);
     }
 
     protected function submitWord () :void

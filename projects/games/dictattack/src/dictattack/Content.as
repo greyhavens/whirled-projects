@@ -244,6 +244,11 @@ public class Content
         return MovieClip(new (_screens.getClass("round_over_multi"))());
     }
 
+    public function createGameOverMulti () :MovieClip
+    {
+        return MovieClip(new (_screens.getClass("game_over_multi"))());
+    }
+
     public function makeInputFormat (color :uint, bold :Boolean = false) :TextFormat
     {
         var format :TextFormat = new TextFormat();

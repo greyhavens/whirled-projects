@@ -15,7 +15,7 @@ public class EndGameSingle extends Dialog
 {
     public function EndGameSingle (ctx :Context, flowAward :int)
     {
-        _ctx = ctx;
+        super(ctx);
 
         var points :Array = (_ctx.control.get(Model.POINTS) as Array);
         var mypoints :int = points[_ctx.control.seating.getMyPosition()];
@@ -57,7 +57,5 @@ public class EndGameSingle extends Dialog
         });
         addButton(leave, RIGHT);
     }
-
-    protected var _ctx :Context;
 }
 }

@@ -14,26 +14,28 @@ import flash.text.TextFieldAutoSize;
  */
 public class HelpView extends Dialog
 {
-    public static function show (view :GameView, model :Model, content :Content) :void
+    public static function show (ctx :Context) :void
     {
         if (_showing == null) {
-            _showing = new HelpView(model, content);
-            _showing.show(view);
+            _showing = new HelpView(ctx);
+            _showing.show();
         }
     }
 
-    public function HelpView (model :Model, content :Content)
+    public function HelpView (ctx :Context)
     {
+        super(ctx);
+
         var help :TextField = new TextField();
-        help.defaultTextFormat = content.makeInputFormat(uint(0xFFFFFF));
+        help.defaultTextFormat = _ctx.content.makeInputFormat(uint(0xFFFFFF));
         help.autoSize = TextFieldAutoSize.LEFT;
         help.wordWrap = true;
         help.width = HELP_WIDTH;
-        help.htmlText = (makeHelp(model, HELP_CONTENTS) +
-                         makeHelp(model, model.isMultiPlayer() ? HELP_MULTI : HELP_SINGLE));
+        help.htmlText = (makeHelp(HELP_CONTENTS) +
+                         makeHelp(ctx.model.isMultiPlayer() ? HELP_MULTI : HELP_SINGLE));
         setContent(help);
 
-        var dismiss :SimpleButton = content.makeButton("Dismiss");
+        var dismiss :SimpleButton = _ctx.content.makeButton("Dismiss");
         dismiss.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             clear();
             _showing = null;
@@ -41,12 +43,12 @@ public class HelpView extends Dialog
         addButton(dismiss, Dialog.CENTER);
     }
 
-    protected function makeHelp (model :Model, text :String) :String
+    protected function makeHelp (text :String) :String
     {
         return text.replace(
-            "MINLEN", model.getMinWordLength()).replace(
-                "POINTS", model.getWinningPoints()).replace(
-                    "ROUNDS", model.getWinningScore());
+            "MINLEN", _ctx.model.getMinWordLength()).replace(
+                "POINTS", _ctx.model.getWinningPoints()).replace(
+                    "ROUNDS", _ctx.model.getWinningScore());
     }
 
     protected static var _showing :HelpView;

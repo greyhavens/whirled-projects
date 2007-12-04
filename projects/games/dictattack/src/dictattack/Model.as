@@ -102,6 +102,18 @@ public class Model
         return isMultiPlayer() ? 2 : 3;
     }
 
+    /**
+     * Returns the name of the player at the specified index, truncated to the supplied max length.
+     */
+    public function getPlayerName (pidx :int, maxLength :int) :String
+    {
+        var name :String = _ctx.control.seating.getPlayerNames()[pidx];
+        if (name.length > maxLength) {
+            name = name.substring(0, maxLength);
+        }
+        return name;
+    }
+
 //     /**
 //      * Returns the penalty for changing a letter.
 //      */
@@ -109,14 +121,6 @@ public class Model
 //     {
 //         return isMultiPlayer() ? 2 : 3;
 //     }
-
-    /**
-     * Returns the bonus for perfectly clearing the board.
-     */
-    public function getPerfectClearBonus () :int
-    {
-        return 10;
-    }
 
     /**
      * Returns true if this is a multiplayer game.
@@ -469,6 +473,7 @@ public class Model
             }
         }
 
+        // we select a wildcard from among either the consonants or vowels, whichever are more
         var set :Array;
         var chars :String;
         if (vowels.length > consonants.length) {

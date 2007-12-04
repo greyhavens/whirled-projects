@@ -19,7 +19,7 @@ public class EndRoundMulti extends Dialog
 {
     public function EndRoundMulti (ctx :Context)
     {
-        _ctx = ctx;
+        super(ctx);
 
         var view :MovieClip = _ctx.content.createRoundOverMulti();
         setText(view, "duration", Util.millisToMinSec(_ctx.model.getRoundDuration()));
@@ -38,16 +38,12 @@ public class EndRoundMulti extends Dialog
             if (points[pidx] < _ctx.model.getWinningPoints()) {
                 removeViewChild(view, "winner" + ii);
             }
-            var name :String = _ctx.control.seating.getPlayerNames()[pidx];
-            if (name.length > MAX_NAME_LENGTH) {
-                name = name.substring(0, MAX_NAME_LENGTH);
-            }
-            setText(view, "player_name" + ii, name);
+            setText(view, "player_name" + ii, _ctx.model.getPlayerName(pidx, MAX_NAME_LENGTH));
             setText(view, "points" + ii, ""+points[pidx]);
             var highest :WordPlay = _ctx.model.getHighestScoringWord(pidx);
             var htext :String = ((highest.word.length == 0) ? "" :
                                  highest.word + " for " + highest.getPoints(_ctx.model));
-            setText(view, "highest_score" + ii, htext);
+            setText(view, "highest_score" + ii, htext, true);
         }
 
         for (ii = precs.length; ii < 4; ii++) {
@@ -86,8 +82,6 @@ public class EndRoundMulti extends Dialog
             addButton(results, CENTER);
         }
     }
-
-    protected var _ctx :Context;
 
     protected var _nextField :TextField;
     protected var _nextSecs :int;

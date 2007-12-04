@@ -21,8 +21,9 @@ public class Dialog extends Sprite
     public static const RIGHT :int = 1;
     public static const CENTER :int = 2;
 
-    public function Dialog (content :DisplayObject = null)
+    public function Dialog (ctx :Context, content :DisplayObject = null)
     {
+        _ctx = ctx;
         if (content != null) {
             setContent(content);
         }
@@ -52,9 +53,9 @@ public class Dialog extends Sprite
         addChild(button);
     }
 
-    public function show (view :GameView) :void
+    public function show (fromTop :Boolean = true) :void
     {
-        _view = view;
+        _view = _ctx.view;
 
         // draw a background and border around our bits
         graphics.beginFill(uint(0x222222));
@@ -66,7 +67,11 @@ public class Dialog extends Sprite
         var dx :int = Content.BOARD_BORDER + (_view.getBoard().getPixelSize() - width)/2;
         dx = Math.max(5, dx);
         var dy :int = Content.BOARD_BORDER + (_view.getBoard().getPixelSize() - height)/2;
-        LinePath.move(this, dx, -height, dx, dy, 500).start();
+        if (fromTop) {
+            LinePath.move(this, dx, -height, dx, dy, 500).start();
+        } else {
+            LinePath.move(this, dx, _ctx.control.getSize().y + height, dx, dy, 500).start();
+        }
     }
 
     public function clear () :void
@@ -110,6 +115,7 @@ public class Dialog extends Sprite
         }
     }
 
+    protected var _ctx :Context;
     protected var _view :GameView;
     protected var _content :DisplayObject;
 
