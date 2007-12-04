@@ -9,6 +9,7 @@ import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.geom.Point;
 import flash.filters.GlowFilter;
 
 import flash.events.Event;
@@ -36,7 +37,7 @@ public class HUD extends Sprite
     {
         _control = control;
 
-        _control.addEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
+        _control.state.addEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
         _myId = _control.getPlayerId();
 
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
@@ -69,7 +70,7 @@ public class HUD extends Sprite
     protected function lanternClick (evt :Event) :void
     {
         if (_mask) {
-            this.removeEventListener(Event.ENTER_FRAME, enterFrame);
+            this.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
             this.removeChild(_mask);
             _mask = null;
 
@@ -91,12 +92,13 @@ public class HUD extends Sprite
             _dim.alpha = 0.7;
             _mask.addChild(_dim);
 
-            this.addEventListener(Event.ENTER_FRAME, enterFrame);
+            this.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         }
     }
 
     protected function propertyChanged (event: AVRGameControlEvent) :void
     {
+        Log.getLog(HUD).debug("propchange event: " + event);
         if (event.name == "fl") {
             var bits :Array = event.value as Array;
             if (bits != null) {
@@ -108,17 +110,17 @@ public class HUD extends Sprite
                         updateFlashLight(playerId);
                     } else {
                         // someone turned theirs on or moved it
-                        updateFlashLight(playerId, Number(bits[1]), Number(bits[2]));
+                        updateFlashLight(playerId, new Point(bits[1], bits[2]));
                     }
                 }
             }
         }
     }
 
-    protected function updateFlashLight (playerId :int, x :Number = -1, y :Number = -1) :void
+    protected function updateFlashLight (playerId :int, p :Point = null) :void
     {
         var light :Sprite = _flashLights[playerId];
-        if (x < 0) {
+        if (p == null) {
             // removal
             if (light) {
                 _dim.removeChild(light);
@@ -152,38 +154,44 @@ public class HUD extends Sprite
             }
             light.addChild(photons);
         }
-        // TODO: translate coordinates
-        light.x = x;
-        light.y = y;
+
+        p = _control.roomToStage(p);
+        p = _dim.globalToLocal(p);
+        light.x = p.x;
+        light.y = p.y;
     }
 
     protected function ghostVanished (id :String) :void
     {
-        Log.getLog(this).debug("Ghost vanishing [id=" + id + "]");
+        Log.getLog(HUD).debug("Ghost vanishing [id=" + id + "]");
     }
 
     protected function helpClick (evt :Event) :void
     {
         _control.spawnMob("ghost");
 
-        Log.getLog(this).debug("Whee, button clicked: " + evt);
+        Log.getLog(HUD).debug("Whee, button clicked: " + evt);
     }
 
     protected function lootClick (evt :Event) :void
     {
-        Log.getLog(this).debug("Whee, button clicked: " + evt);
+        Log.getLog(HUD).debug("Whee, button clicked: " + evt);
     }
 
-    protected function enterFrame (evt :Event) :void
+    protected function handleEnterFrame (evt :Event) :void
     {
         if (_mask) {
-            // TODO: translate coordinates
-            // TODO; don't send this every damn frame
-            _control.state.setProperty("fl", [ _myId, this.mouseX, this.mouseY ], false);
-//            _hole.x += (this.mouseX - _hole.x)/2;
-//            _hole.y += (this.mouseY - _hole.y)/2;
-//            _light.x = _hole.x;
-//            _light.y = _hole.y;
+            _ticker ++;
+            if (_ticker < FRAMES_PER_UPDATE) {
+                return;
+            }
+            _ticker = 0;
+
+            var p :Point = new Point(this.mouseX, this.mouseY);
+            
+            p = this.localToGlobal(p);
+            p = _control.stageToRoom(p);
+            _control.state.setProperty("fl", [ _myId, p.x, p.y ], false);
         }
     }
 
@@ -194,10 +202,14 @@ public class HUD extends Sprite
 
     protected var _hud :MovieClip;
 
+    protected var _ticker :int;
+
     protected var _mask :Sprite;
     protected var _dim :Sprite;
     protected var _hole :Sprite;
     protected var _light :Sprite;
+
+    protected static const FRAMES_PER_UPDATE :int = 10;
 
     protected static const LANTERN :String = "lanternbutton";
     protected static const HELP :String = "helpbutton";
