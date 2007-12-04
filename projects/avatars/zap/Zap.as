@@ -40,10 +40,14 @@ public class Zap extends FrameSprite
     protected override function handleFrame (... ignored) :void
     {
         if (_control.isMoving()) {
+            // if we're moving do some semblence of rolling
             var orient :Number = _control.getOrientation();
-            this.scaleX = Math.abs(Math.sin(Math.PI * orient / 180));
+            this.scaleX = Math.sqrt(Math.abs(Math.sin(Math.PI * orient / 180)));
             _canvas.rotation += (_control.getOrientation() < 180) ? 10 : -10;
+
         } else {
+            // otherwise just idly turn
+            _canvas.rotation += 1;
             this.scaleX = Math.sqrt(this.scaleX);
         }
 
