@@ -507,8 +507,8 @@ public class LOL extends Sprite
         _doneButton.visible = editing;
         _editButton.visible = !editing;
 
-        _skipBox.enabled = editing;
-        _notParticipating.enabled = editing;
+        _skipBox.parent.visible = editing;
+        _notParticipating.parent.visible = editing;
 
         colorInputPalette();
     }
