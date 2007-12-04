@@ -296,14 +296,6 @@ public class GameView extends Sprite
 
     protected function showBetweenRound () :void
     {
-        // TODO: have animations for all 9 potential rounds
-        if (_ctx.control.getRound() > 3) {
-            _board.roundDidStart();
-            marquee.display("Round " + _ctx.control.getRound() + " Start!", 1000);
-            enableInput();
-            return;
-        }
-
         var tweenRound :MovieClip = _ctx.content.createBetweenRound(_ctx.control.getRound());
         tweenRound.x = 219;
         tweenRound.y = 258;

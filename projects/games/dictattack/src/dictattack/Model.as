@@ -181,6 +181,23 @@ public class Model
     }
 
     /**
+     * Returns true if we've scored at least the specified number of points in the last specified
+     * number of games.
+     */
+    public function checkConsecutivePoints (games :int, points :int) :Boolean
+    {
+        if (_recentPoints.length < games) {
+            return false;
+        }
+        for (var ii :int = 0; ii < games; ii++) {
+            if (int(_recentPoints[_recentPoints.length-ii-1]) < points) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Returns the longest word played in this round, if multiple words of the same length are the
      * longest the first is returned.
      */
@@ -218,6 +235,23 @@ public class Model
         return word;
     }
 
+    /**
+     * Returns true if we played the specified word.
+     */
+    public function playedWord (word :String) :Boolean
+    {
+        for (var pp :int = 0; pp < _plays.length; pp++) {
+            if (_plays[pp].word == word) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the number of words played by length, starting from zero (lengths below the minimum
+     * allowed word length will simply be zero).
+     */
     public function getWordCountsByLength () :Array
     {
         var counts :Array = [];
@@ -292,6 +326,19 @@ public class Model
         // note our round duration and accumulate to game duration
         _roundDuration = getTimer() - _roundStart;
         _gameDuration += _roundDuration;
+    }
+
+    /**
+     * Called when the game ends.
+     */
+    public function gameDidEnd () :void
+    {
+        // if this is a single player game, append our points to the recent points list
+        var myidx :int = _ctx.control.seating.getMyPosition();
+        if (!isMultiPlayer() && myidx >= 0) {
+            var points :Array = (_ctx.control.get(POINTS) as Array);
+            _recentPoints.push(int(points[myidx]));
+        }
     }
 
     public function highlightWord (board :Board, word :String) :void
@@ -442,6 +489,24 @@ public class Model
             }
         }
         return columns;
+    }
+
+    /**
+     * Returns the total number of unused letters on the board.
+     */
+    public function unusedLetters () :int
+    {
+        var letters :int = 0;
+        for (var xx: int = 0; xx < _size; xx++) {
+            // scan from the bottom upwards looking for non-blank letters
+            for (var yy :int = _size-1; yy >= 0; yy--) {
+                var letter :String = getLetter(xx, yy);
+                if (letter != BLANK) {
+                    letters++;
+                }
+            }
+        }
+        return letters;
     }
 
     /**
@@ -696,6 +761,9 @@ public class Model
 
     protected var _roundStart :int, _roundDuration :int, _gameDuration :int
     protected var _notOnBoard :int, _notInDict :int;
+
+    /** Contains our point totals for all single player games played during this session. */
+    protected var _recentPoints :Array = [];
 
     // yay english!
     protected static const VOWELS :String = "aeiou";

@@ -111,12 +111,12 @@ public class DictionaryAttack extends Sprite
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
         roundDidEnd(event);
+        _ctx.model.gameDidEnd();
 
         // note our score in non-multiplayer games
-        var mypoints :int = -1;
         if (!_ctx.model.isMultiPlayer()) {
             var points :Array = (_ctx.control.get(Model.POINTS) as Array);
-            mypoints = points[_ctx.control.seating.getMyPosition()];
+            var mypoints :int = points[_ctx.control.seating.getMyPosition()];
 
             // update our personal high scores
             if (_cookie != null) {
@@ -139,24 +139,23 @@ public class DictionaryAttack extends Sprite
                 }
             }
 
-            // see if we qualify for any end-of-game trophies
+            // check for total score related trophies
             for each (var score :int in SCORE_AWARDS) {
                 if (mypoints > score && !_ctx.control.holdsTrophy("score_over_" + score)) {
                     _ctx.control.awardTrophy("score_over_" + score);
                     break;
                 }
             }
-            var perfectClear :Boolean = (_ctx.model.nonEmptyColumns() == 0);
-            if (perfectClear && _ctx.model.getNotOnBoardPlays() == 0) {
-                if (!_ctx.control.holdsTrophy("no_not_on_board")) {
-                    _ctx.control.awardTrophy("no_not_on_board");
+
+            // check for consecutive score related trophies
+            for each (var cdata :Array in CONSECUTIVE_POINTS) {
+                if (_ctx.model.checkConsecutivePoints(int(cdata[0]), int(cdata[1]))) {
+                    _ctx.control.awardTrophy("consec_points_" + cdata[0] + "_" + cdata[1]);
+                    break;
                 }
             }
-            if (perfectClear && _ctx.model.getNotInDictPlays() == 0) {
-                if (!_ctx.control.holdsTrophy("no_not_in_dict")) {
-                    _ctx.control.awardTrophy("no_not_in_dict");
-                }
-            }
+
+            // check for timed score trophies
             if (!_ctx.model.getEndedEarly()) {
                 for each (var adata :Array in TIMED_AWARDS) {
                     var ascore :int = int(adata[0]);
@@ -168,6 +167,58 @@ public class DictionaryAttack extends Sprite
                         break;
                     }
                 }
+            }
+
+            // check for perfect clear trophies
+            switch (_ctx.model.unusedLetters()) {
+            case 0:
+                _ctx.control.awardTrophy("perfect_vacuum");
+                break;
+            case 1:
+                _ctx.control.awardTrophy("near_vacuum");
+                break;
+            }
+
+            // check for long word only trophies
+            if (!_ctx.model.getEndedEarly()) {
+                var wlengths :Array = _ctx.model.getWordCountsByLength();
+                var wcount :int = 0;
+                for (var ll :int = _ctx.model.getMinWordLength(); ll <= MAX_BYLENGTH_LENGTH; ll++) {
+                    if (ll >= MIN_BYLENGTH_LENGTH && wcount == 0) {
+                        _ctx.control.awardTrophy("all_length_" + ll);
+                    }
+                    wcount += int(wlengths[ll]);
+                }
+            }
+
+            // check for special trophies
+            var perfectClear :Boolean = (_ctx.model.nonEmptyColumns() == 0);
+            if (perfectClear && _ctx.model.getNotOnBoardPlays() == 0) {
+                _ctx.control.awardTrophy("no_not_on_board");
+            }
+            if (perfectClear && _ctx.model.getNotInDictPlays() == 0) {
+                _ctx.control.awardTrophy("no_not_in_dict");
+            }
+            if (_ctx.model.playedWord("dictionary") && _ctx.model.playedWord("attack")) {
+                _ctx.control.awardTrophy("dictionary_attack");
+            }
+            if (_ctx.model.playedWord("three") && _ctx.model.playedWord("rings")) {
+                _ctx.control.awardTrophy("three_rings");
+            }
+
+        } else {
+            // check for multiplayer trophies
+            var scores :Array = (_ctx.control.get(Model.SCORES) as Array);
+            var myscore :int = scores[_ctx.control.seating.getMyPosition()], oscores :int = 0;
+            for (var pidx :int = 0; pidx < scores.length; pidx++) {
+                if (pidx != _ctx.control.seating.getMyPosition()) {
+                    oscores += int(scores[pidx]);
+                }
+            }
+
+            // if we swept the game (no one else scored and we scored at least once)
+            if (oscores == 0 && myscore > 0) {
+                _ctx.control.awardTrophy("multi_sweep_" + scores.length);
             }
         }
 
@@ -194,6 +245,10 @@ public class DictionaryAttack extends Sprite
     protected static const MAX_HISCORES :int = 4;
 
     protected static const SCORE_AWARDS :Array = [60, 50, 40, 30, 20];
-    protected static const TIMED_AWARDS :Array = [[40, 120], [30, 105], [20, 90]];
+    protected static const TIMED_AWARDS :Array = [[50, 150], [40, 120], [30, 105], [20, 90]];
+    protected static const CONSECUTIVE_POINTS :Array = [[3, 40], [5, 30], [3, 30]];
+
+    protected static const MIN_BYLENGTH_LENGTH :int = 5;
+    protected static const MAX_BYLENGTH_LENGTH :int = 6;
 }
 }
