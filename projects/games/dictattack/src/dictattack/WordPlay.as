@@ -9,15 +9,10 @@ package dictattack {
 public class WordPlay
 {
     public var pidx :int;
-
-    public var word :String;
-
+    public var word :String = "";
     public var positions :Array = [];
-
     public var mults :Array = [];
-
     public var wilds :Array = [];
-
     public var when :int;
 
     public static function unflatten (values :Array) :WordPlay

@@ -99,8 +99,8 @@ public class DictionaryAttack extends Sprite
 
     protected function roundDidEnd (event :StateChangedEvent) :void
     {
-        var scorer :String = _ctx.model.roundDidEnd();
-        _ctx.view.roundDidEnd(scorer);
+        _ctx.model.roundDidEnd();
+        _ctx.view.roundDidEnd();
     }
 
     protected function flowAwarded (event :FlowAwardedEvent) :void

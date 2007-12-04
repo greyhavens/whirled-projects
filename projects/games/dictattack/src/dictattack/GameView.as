@@ -147,7 +147,7 @@ public class GameView extends Sprite
         }
 
         // we might have one of these lingering about
-        clearGameOverView();
+        clearOverView();
     }
 
     public function roundDidStart () :void
@@ -155,6 +155,9 @@ public class GameView extends Sprite
         for each (var shooter :Shooter in _shooters) {
             shooter.setSaucers(_ctx.model.getChangesAllowed());
         }
+
+        // clear any inter-round view
+        clearOverView();
 
         // this will contain all of our input bits
         if (_inputBox == null) {
@@ -202,32 +205,6 @@ public class GameView extends Sprite
         }
     }
 
-    protected function showBetweenRound () :void
-    {
-        var tweenRound :MovieClip = _ctx.content.createBetweenRound(_ctx.control.getRound());
-        tweenRound.x = 219;
-        tweenRound.y = 258;
-        tweenRound.addEventListener(Event.ENTER_FRAME, function (event :Event) :void {
-            if (tweenRound.currentFrame == tweenRound.totalFrames) {
-                tweenRound.removeEventListener(Event.ENTER_FRAME, arguments.callee);
-                removeChild(tweenRound);
-                _board.roundDidStart();
-                marquee.display("Start!", 1000);
-                enableInput();
-            }
-        });
-        addChild(tweenRound);
-    }
-
-    protected function enableInput () :void
-    {
-        _input.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
-        _input.addEventListener(Event.CHANGE, textChanged);
-        _input.selectable = true;
-        _input.text = "";
-        focusInput(true);
-    }
-
     public function saucerClicked (event :MouseEvent) :void
     {
         _ctx.model.requestChange();
@@ -235,7 +212,7 @@ public class GameView extends Sprite
         focusInput(true);
     }
 
-    public function roundDidEnd (scorer :String) :void
+    public function roundDidEnd () :void
     {
         if (_shotsInProgress > 0) {
             _roundEndPending = true;
@@ -243,23 +220,24 @@ public class GameView extends Sprite
             _board.roundDidEnd();
         }
 
-        var text :String = "";
-        if (_ctx.model.isMultiPlayer()) {
-            if (_ctx.model.getWinningScore() > 1) {
-                text = "Round over. ";
-            }
-            text += "Point to " + scorer + ".";
-        } else if (_ctx.model.nonEmptyColumns() == 0) {
-            text = "Board clear! Excellent!";
-        } else if (_ctx.model.nonEmptyColumns() < _ctx.model.getMinWordLength()) {
-            text = "No more words possible.";
-        } else {
-            text = "Game over.";
-        }
-        marquee.display(text, 2000);
-
         for (var ii :int = 0; ii < _shooters.length; ii++) {
             _shooters[ii].roundDidEnd();
+        }
+
+        if (_ctx.model.isMultiPlayer()) {
+            _overifc = new EndRoundMulti(_ctx);
+            _overifc.show(this);
+
+        } else {
+            var text :String = "";
+            if (_ctx.model.nonEmptyColumns() == 0) {
+                text = "Board clear! Excellent!";
+            } else if (_ctx.model.nonEmptyColumns() < _ctx.model.getMinWordLength()) {
+                text = "No more words possible.";
+            } else {
+                text = "Game over.";
+            }
+            marquee.display(text, 2000);
         }
 
         _input.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
@@ -270,9 +248,13 @@ public class GameView extends Sprite
 
     public function gameDidEnd (flow :int) :void
     {
-        Util.invokeLater(2000, function () :void {
-            showGameOver(flow);
-        });
+        _flowAward = flow;
+
+        if (!_ctx.model.isMultiPlayer()) {
+            Util.invokeLater(2000, function () :void {
+                showGameOver();
+            });
+        }
     }
 
     /**
@@ -293,7 +275,7 @@ public class GameView extends Sprite
         }
     }
 
-    public function clearGameOverView () :void
+    public function clearOverView () :void
     {
         if (_overifc != null) {
             if (_overifc.parent != null) {
@@ -303,10 +285,10 @@ public class GameView extends Sprite
         }
     }
 
-    protected function showGameOver (flow :int) :void
+    public function showGameOver () :void
     {
         if (!_ctx.model.isMultiPlayer()) {
-            _overifc = new EndGameSingle(_ctx, flow);
+            _overifc = new EndGameSingle(_ctx, _flowAward);
             _overifc.show(this);
             return;
         }
@@ -337,8 +319,8 @@ public class GameView extends Sprite
             }
         }
         // TODO: else if (multiplayer): msg += "\nWinner " + winner + "!";
-        if (flow > 0) {
-            msg += "\nAward: " + flow + " flow!";
+        if (_flowAward > 0) {
+            msg += "\nAward: " + _flowAward + " flow!";
         }
         text.text = msg;
 
@@ -346,18 +328,44 @@ public class GameView extends Sprite
 
         var restart :SimpleButton = _ctx.content.makeButton("Play Again");
         restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            clearGameOverView();
+            clearOverView();
             _ctx.control.playerReady();
         });
         _overifc.addButton(restart, Dialog.LEFT);
 
         var leave :SimpleButton = _ctx.content.makeButton("To Whirled");
         leave.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            clearGameOverView();
+            clearOverView();
             _ctx.control.backToWhirled();
         });
         _overifc.addButton(leave, Dialog.RIGHT);
         _overifc.show(this);
+    }
+
+    protected function showBetweenRound () :void
+    {
+        var tweenRound :MovieClip = _ctx.content.createBetweenRound(_ctx.control.getRound());
+        tweenRound.x = 219;
+        tweenRound.y = 258;
+        tweenRound.addEventListener(Event.ENTER_FRAME, function (event :Event) :void {
+            if (tweenRound.currentFrame == tweenRound.totalFrames) {
+                tweenRound.removeEventListener(Event.ENTER_FRAME, arguments.callee);
+                removeChild(tweenRound);
+                _board.roundDidStart();
+                marquee.display("Start!", 1000);
+                enableInput();
+            }
+        });
+        addChild(tweenRound);
+    }
+
+    protected function enableInput () :void
+    {
+        _input.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+        _input.addEventListener(Event.CHANGE, textChanged);
+        _input.selectable = true;
+        _input.text = "";
+        focusInput(true);
     }
 
     protected function showHelp () :void
@@ -483,6 +491,7 @@ public class GameView extends Sprite
     protected var _hiscores :TextField;
 
     protected var _overifc :Dialog;
+    protected var _flowAward :int;
 
     protected static const POS_MAP :Array = [
         [ 3, 1, 0, 2 ], [ 1, 3, 2, 0 ], [ 2, 0, 3, 1 ], [ 0, 2, 1, 3 ] ];

@@ -127,6 +127,15 @@ public class Model
     }
 
     /**
+     * Returns the delay between rounds, in seconds.
+     */
+    public function getInterRoundDelay () :int
+    {
+        var pcount :int = _ctx.control.seating.getPlayerIds().length;
+        return INTER_ROUND_DELAY * pcount;
+    }
+
+    /**
      * Returns the number of words played that were not on the board.
      */
     public function getNotOnBoardPlays () :int
@@ -171,16 +180,15 @@ public class Model
      * Returns the longest word played in this round, if multiple words of the same length are the
      * longest the first is returned.
      */
-    public function getLongestWord () :WordPlay
+    public function getLongestWord (pidx :int = -1) :WordPlay
     {
-        var length :int = 0;
-        var word :WordPlay = null;
+        var word :WordPlay = new WordPlay();
         for (var pp :int = 0; pp < _plays.length; pp++) {
             for (var ii :int = 0; ii < _plays[pp].length; ii++) {
                 var play :WordPlay = (_plays[pp][ii] as WordPlay);
-                if (play.word.length > length || play.when < word.when) {
+                if ((pidx == -1 || pidx == play.pidx) &&
+                    (play.word.length > word.word.length || play.when < word.when)) {
                     word = play;
-                    length = play.word.length;
                 }
             }
         }
@@ -191,16 +199,15 @@ public class Model
      * Returns the highest scoring word played in this round, if multiple words of the same length
      * are the highest the first is returned.
      */
-    public function getHighestScoringWord () :WordPlay
+    public function getHighestScoringWord (pidx :int = -1) :WordPlay
     {
-        var points :int = 0;
-        var word :WordPlay = null;
+        var word :WordPlay = new WordPlay();
         for (var pp :int = 0; pp < _plays.length; pp++) {
             for (var ii :int = 0; ii < _plays[pp].length; ii++) {
                 var play :WordPlay = (_plays[pp][ii] as WordPlay);
-                if (play.getPoints(this) > points || play.when < word.when) {
+                if ((pidx == -1 || pidx == play.pidx) &&
+                    (play.getPoints(this) > word.getPoints(this) || play.when < word.when)) {
                     word = play;
-                    points = play.getPoints(this);
                 }
             }
         }
@@ -274,25 +281,13 @@ public class Model
     }
 
     /**
-     * Called when a round ends. Returns the names of the players that scored points.
+     * Called when a round ends.
      */
-    public function roundDidEnd () :String
+    public function roundDidEnd () :void
     {
         // note our round duration and accumulate to game duration
         _roundDuration = getTimer() - _roundStart;
         _gameDuration += _roundDuration;
-
-        var scorer :String = "";
-        var points :Array = (_ctx.control.get(POINTS) as Array);
-        for (var ii :int = 0; ii < points.length; ii++) {
-            if (points[ii] >= getWinningPoints()) {
-                if (scorer.length > 0) {
-                    scorer += ", ";
-                }
-                scorer += _ctx.control.seating.getPlayerNames()[ii];
-            }
-        }
-        return scorer;
     }
 
     public function highlightWord (board :Board, word :String) :void
@@ -420,7 +415,7 @@ public class Model
                     _ctx.control.endGameWithWinners(
                         winners, losers, WhirledGameControl.CASCADING_PAYOUT);
                 } else {
-                    _ctx.control.endRound(INTER_ROUND_DELAY);
+                    _ctx.control.endRound(getInterRoundDelay());
                 }
             }
         });
@@ -701,7 +696,7 @@ public class Model
     protected static const VOWELS :String = "aeiou";
     protected static const CONSONANTS :String = "bcdfghjklmnpqrstvwxyz";
 
-    protected static const INTER_ROUND_DELAY :int = 7;
+    protected static const INTER_ROUND_DELAY :int = 10;
 
     protected static const TYPE_NORMAL :int = 0;
     protected static const TYPE_DOUBLE :int = 1;

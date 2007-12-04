@@ -4,8 +4,13 @@
 package dictattack {
 
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+
+import com.threerings.util.Log;
 
 /**
  * Used to display a popup dialog.
@@ -59,6 +64,7 @@ public class Dialog extends Sprite
 
         _view.addChild(this);
         var dx :int = Content.BOARD_BORDER + (_view.getBoard().getPixelSize() - width)/2;
+        dx = Math.max(5, dx);
         var dy :int = Content.BOARD_BORDER + (_view.getBoard().getPixelSize() - height)/2;
         LinePath.move(this, dx, -height, dx, dy, 500).start();
     }
@@ -77,6 +83,31 @@ public class Dialog extends Sprite
             view.removeChild(meMyselfAndI);
             view.focusInput(true);
         });
+    }
+
+    protected static function setText (view :MovieClip, name :String, text :String,
+                                       autoSize :Boolean = false) :TextField
+    {
+        var tfield :TextField = (view.getChildByName(name) as TextField);
+        if (tfield == null) {
+            Log.getLog(Dialog).warning("Missing text field for set [name=" + name + "].");
+        } else {
+            if (autoSize) {
+                tfield.autoSize = TextFieldAutoSize.LEFT;
+            }
+            tfield.text = text;
+        }
+        return tfield;
+    }
+
+    protected static function removeViewChild (view :MovieClip, name :String) :void
+    {
+        var child :DisplayObject = view.getChildByName(name);
+        if (child == null) {
+            Log.getLog(Dialog).warning("Missing child for remove [name=" + name + "].");
+        } else {
+            view.removeChild(child);
+        }
     }
 
     protected var _view :GameView;
