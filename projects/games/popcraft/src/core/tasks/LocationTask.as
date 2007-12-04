@@ -9,6 +9,7 @@ import core.util.MXInterpolatorAdapter;
 import flash.geom.Point;
 
 import mx.effects.easing.*;
+import flash.display.DisplayObject;
 
 public class LocationTask extends ObjectTask
 {
@@ -57,6 +58,9 @@ public class LocationTask extends ObjectTask
 
     override public function update (dt :Number, obj :AppObject) :uint
     {
+        var displayObj :DisplayObject = obj.displayObject;
+        Assert.isNotNull(displayObj, "LocationTask can only be applied to AppObjects with attached display objects.");
+
         if (0 == _elapsedTime) {
             _from.x = obj.x;
             _from.y = obj.y;
@@ -64,8 +68,8 @@ public class LocationTask extends ObjectTask
 
         _elapsedTime += dt;
 
-        obj.x = _interpolator.interpolate(_from.x, _to.x, _elapsedTime, _totalTime);
-        obj.y = _interpolator.interpolate(_from.y, _to.y, _elapsedTime, _totalTime);
+        displayObj.x = _interpolator.interpolate(_from.x, _to.x, _elapsedTime, _totalTime);
+        displayObj.y = _interpolator.interpolate(_from.y, _to.y, _elapsedTime, _totalTime);
 
         return (_elapsedTime >= _totalTime ? ObjectTask.STATUS_COMPLETE : ObjectTask.STATUS_INCOMPLETE);
     }

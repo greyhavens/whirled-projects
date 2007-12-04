@@ -7,11 +7,14 @@ import flash.utils.Timer;
 import flash.utils.getTimer;
 
 import core.util.Rand;
+import flash.display.Sprite;
 
 public class MainLoop
 {
-    public function MainLoop ()
+    public function MainLoop (applicationSprite :Sprite)
     {
+        Assert.isNotNull(applicationSprite);
+        _applicationSprite = applicationSprite;
     }
 
     public function get topMode () :AppMode
@@ -97,13 +100,16 @@ public class MainLoop
 
     protected function update (e:TimerEvent) :void
     {
-        // process mode transitions
         var initialTopMode :AppMode = this.topMode;
 
-        function doDestroyMode (mode :AppMode) :void {
-            Assert.isTrue(null != mode);
+        function doPopMode () :void {
+            var topMode :AppMode = this.topMode;
+            Assert.isNotNull(mode);
 
-            // if the top mode is destroyed, make sure it's exited first
+            _modeStack.pop();
+            _applicationSprite.removeChild(topMode);
+
+            // if the top mode is popped, make sure it's exited first
             if (mode == initialTopMode) {
                 initialTopMode.exit();
                 initialTopMode = null;
@@ -112,46 +118,47 @@ public class MainLoop
             mode.destroy();
         }
 
+        function doPushMode (mode :AppMode) :void {
+            Assert.isNotNull(mode);
+
+            _modeStack.push(mode);
+            _applicationSprite.addChild(mode);
+            mode.setup();
+        }
+
         for each (var transition :* in _pendingModeTransitionQueue) {
             var type :uint = transition.transitionType as uint;
             var mode :AppMode = transition.mode as AppMode;
 
             switch (type) {
             case TRANSITION_PUSH:
-                _modeStack.push(mode);
-                mode.setup();
+                doPushMode(mode);
                 break;
 
             case TRANSITION_POP:
-                Assert.isTrue(_modeStack.length > 0);
-                doDestroyMode(_modeStack.pop() as AppMode);
+                doPopMode();
                 break;
 
             case TRANSITION_CHANGE:
                 // a pop followed by a push
-                Assert.isTrue(_modeStack.length > 0);
-                doDestroyMode(_modeStack.pop() as AppMode);
-                _modeStack.push(mode);
-                mode.setup();
+                doPopMode();
+                doPushMode(mode);
                 break;
 
             case TRANSITION_UNWIND:
                 // pop modes until we find the one we're looking for
                 while (_modeStack.length > 0 && this.topMode != mode) {
-                    doDestroyMode(_modeStack.pop() as AppMode);
+                    doPopMode();
                 }
 
                 Assert.isTrue(this.topMode == mode || _modeStack.length == 0);
 
                 if (_modeStack.length == 0) {
-                    _modeStack.push(mode);
-                    mode.setup();
+                    doPushMode();
                 }
                 break;
             }
         }
-
-        _pendingModeTransitionQueue = new Array();
 
         var topMode :AppMode = this.topMode;
         if (topMode != initialTopMode) {
@@ -163,6 +170,8 @@ public class MainLoop
                 topMode.enter();
             }
         }
+
+        _pendingModeTransitionQueue = new Array();
 
         // update the top mode
         var newTime :Number = getTimer();
@@ -176,6 +185,7 @@ public class MainLoop
 
     protected static var g_defaultAppSettings :CoreAppSettings;
 
+    protected var _applicationSprite :Sprite;
     protected var _hasSetup :Boolean = false;
     protected var _running :Boolean = false;
     protected var _mainTimer :Timer;

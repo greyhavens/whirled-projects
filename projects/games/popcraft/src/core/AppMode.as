@@ -5,15 +5,22 @@ import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 
 import core.util.ObjectSet;
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.Sprite;
 
-public class AppMode
+public class AppMode extends Sprite
 {
     public function AppMode ()
     {
     }
 
-    /** Adds an AppObject to the mode. The AppObject must not be owned by another mode. */
-    public function addObject (obj :AppObject) :void
+    /**
+     * Adds an AppObject to the mode. The AppObject must not be owned by another mode.
+     * If displayParent is not null, obj's attached DisplayObject will be added as a child
+     * of displayParent.
+     */
+    public function addObject (obj :AppObject, displayParent :DisplayObjectContainer = null) :void
     {
         Assert.isTrue(null != obj);
         Assert.isTrue(null == obj._parentMode);
@@ -55,6 +62,14 @@ public class AppMode
                 groupSet.add(obj);
             }
         }
+
+        // should the object be attached to a display parent?
+        // (this is purely a convenience - the client is free to
+        // do the attaching themselves)
+        if (null != displayParent) {
+            Assert.isNotNull(obj.displayObject);
+            displayParent.addChild(obj.displayObject);
+        }
     }
 
     /** Removes an AppObject from the mode. The AppObject must be owned by this mode. */
@@ -89,6 +104,13 @@ public class AppMode
                 var wasInSet :Boolean = groupSet.remove(obj);
                 Assert.isTrue(wasInSet);
             }
+        }
+
+        // if the object is attached to a DisplayObject, and if that
+        // DisplayObject is in a display list, remove it from the display list
+        // so that it will no longer be drawn to the screen
+        if (null != obj.displayObject && null != obj.displayObject.parent) {
+            obj.displayObject.parent.removeChild(obj.displayObject);
         }
     }
 

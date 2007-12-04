@@ -5,11 +5,19 @@ import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 
 import core.tasks.TaskContainer;
+import flash.display.DisplayObject;
 
-import flash.display.Sprite;
-
-public class AppObject extends Sprite
+public class AppObject
 {
+    /**
+     * Return the DisplayObject attached to this AppObject,
+     * if one exists, and null otherwise.
+     */
+    public function get displayObject () :DisplayObject
+    {
+        return null;
+    }
+
     /**
      * Returns the name of this object.
      * Two objects in the same mode cannot have the same name.

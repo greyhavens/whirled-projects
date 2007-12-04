@@ -32,7 +32,7 @@ public class PopCraft extends Sprite
 
         _gameCtrl = new WhirledGameControl(this);
 
-        var mainLoop :MainLoop = new MainLoop();
+        var mainLoop :MainLoop = new MainLoop(this);
         mainLoop.pushMode(new GameMode());
         mainLoop.run();
     }
