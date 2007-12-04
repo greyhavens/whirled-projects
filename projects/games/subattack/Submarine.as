@@ -48,51 +48,16 @@ public class Submarine extends BaseSprite
         _y = starty;
         _orient = (_x == 0) ? Action.RIGHT : Action.LEFT;
 
-        var scheme :Array = (SCHEMES[playerIdx] as Array);
-        _colorTransform = new ColorTransform(
-            Number(scheme[0]), Number(scheme[1]), Number(scheme[2]));
+        configureVisual(playerIdx, playerName);
 
-        _avatar = MovieClip(new AVATAR());
-        //_shootSound = Sound(new SHOOT_SOUND());
-        if (_isMe) {
-            _cantShootSound = Sound(new CANT_SHOOT_SOUND());
+        if (_isMe && !(this is GhostSubmarine)) {
+            _ghost = new GhostSubmarine(playerId, playerIdx, playerName, startx, starty,
+                board, gameCtrl);
+            _ghostActions = [];
         }
-
-        // TODO: not working: we should only color the recolory child
-//        var colorChild :MovieClip =
-//            (_avatar.getChildByName("color") as MovieClip);
-//        colorChild.transform.colorTransform =
-        _avatar.transform.colorTransform = _colorTransform;
-        addChild(_avatar);
-
-        setupNameLabel(playerName);
-
-//        if (_isMe && !(this is GhostSubmarine)) {
-//            _ghost = new GhostSubmarine(playerId, playerIdx, playerName, startx, starty,
-//                board, gameCtrl);
-//            _ghostActions = [];
-//        }
 
         updateVisual();
         updateLocation();
-    }
-
-    protected function setupNameLabel (playerName :String) :void
-    {
-        _nameLabel = new TextField();
-        var tf :TextFormat = new TextFormat();
-        tf.size = 16;
-        tf.bold = true;
-        _nameLabel.defaultTextFormat = tf;
-        _nameLabel.autoSize = TextFieldAutoSize.CENTER;
-        _nameLabel.selectable = false;
-        _nameLabel.text = playerName;
-        _nameLabel.textColor = 0x000000;
-        _nameLabel.filters = [ new GlowFilter(0xFFFFFF, 1, 2, 2, 255) ];
-        // center the label above us
-        _nameLabel.y = -1 * (_nameLabel.textHeight + NAME_PADDING);
-        _nameLabel.x = (SeaDisplay.TILE_SIZE - _nameLabel.textWidth) / 2;
-        addChild(_nameLabel);
     }
 
     public function getGhost () :GhostSubmarine
@@ -103,18 +68,16 @@ public class Submarine extends BaseSprite
     public function canQueueActions () :Boolean
     {
         // don't let us get more than 10 actions behind
-        return (_futureActions.length < 10);
+        return (_futureActions.length < 20); // since there are 2 values stored for each action
     }
 
-    public function queueActions (actions :Array) :void
+    public function queueAction (now :Number, action :int) :void
     {
-        for each (var action :int in actions) {
-            _futureActions.push(action);
-        }
+        _futureActions.push(now, action);
 
         if (_ghost != null) {
             // and apply them immediately
-            _ghost.addNewActions(actions);
+            _ghost.queueAction(now, action);
         }
     }
 
@@ -194,6 +157,44 @@ public class Submarine extends BaseSprite
         return true;
     }
 
+    /**
+     * Set up the visual of this submarine.
+     */
+    protected function configureVisual (playerIdx :int, playerName :String) :void
+    {
+        var scheme :Array = (SCHEMES[playerIdx] as Array);
+        _colorTransform = new ColorTransform(
+            Number(scheme[0]), Number(scheme[1]), Number(scheme[2]));
+
+        _avatar = MovieClip(new AVATAR());
+        //_shootSound = Sound(new SHOOT_SOUND());
+        if (_isMe) {
+            _cantShootSound = Sound(new CANT_SHOOT_SOUND());
+        }
+
+        // TODO: not working: we should only color the recolory child
+//        var colorChild :MovieClip =
+//            (_avatar.getChildByName("color") as MovieClip);
+//        colorChild.transform.colorTransform =
+        _avatar.transform.colorTransform = _colorTransform;
+        addChild(_avatar);
+
+        _nameLabel = new TextField();
+        var tf :TextFormat = new TextFormat();
+        tf.size = 16;
+        tf.bold = true;
+        _nameLabel.defaultTextFormat = tf;
+        _nameLabel.autoSize = TextFieldAutoSize.CENTER;
+        _nameLabel.selectable = false;
+        _nameLabel.text = playerName;
+        _nameLabel.textColor = 0x000000;
+        _nameLabel.filters = [ new GlowFilter(0xFFFFFF, 1, 2, 2, 255) ];
+        // center the label above us
+        _nameLabel.y = -1 * (_nameLabel.textHeight + NAME_PADDING);
+        _nameLabel.x = (SeaDisplay.TILE_SIZE - _nameLabel.textWidth) / 2;
+        addChild(_nameLabel);
+    }
+
     protected static const OK :int = 0;
     protected static const CANT :int = 1;
     protected static const DROP :int = 2;
@@ -216,16 +217,14 @@ public class Submarine extends BaseSprite
             if (_tickCanBuild > _tickCount) {
                 return DROP;
             }
+            _movedOrShot = true;
             if (++_buildingStep == 3) {
                 _board.buildBarrier(_playerIdx, _x, _y);
                 _buildingStep = 0;
                 _tickCanBuild = _tickCount + TICKS_PER_BUILD;
+                return OK;
             }
-            _movedOrShot = true;
-            return OK;
-
-        } else {
-            _buildingStep = 0;
+            return CANT; // it takes 3 ticks for the build to go through...
         }
 
         if (action == Action.SHOOT) {
@@ -250,7 +249,15 @@ public class Submarine extends BaseSprite
             updateVisual();
         }
         if (!advanceLocation()) {
-            return DROP;
+//            return DROP;
+            // maybe we can shoot?
+            if (_board.isDestructable(_playerIdx, advancedX(), advancedY()) &&
+                    (OK == performActionInternal(Action.SHOOT))) {
+                // we auto-shot, so save the move for next tick
+                return CANT;
+            } else {
+                return DROP;
+            }
         }
 
         // we did it!
@@ -276,7 +283,7 @@ public class Submarine extends BaseSprite
 
             if (_isMe) {
                 // ensure that this is the top action in _ghostActions
-                var futureAction :int = int(_futureActions.shift());
+                var futureAction :int = int(_futureActions.splice(0, 2)[1]);
                 if (futureAction != action) {
                     // if this happens, we need to debug some stuff.
                     trace("====OMG!");
@@ -324,6 +331,7 @@ public class Submarine extends BaseSprite
         _dead = true;
         _deaths++;
         _totalDeaths++;
+        _buildingStep = 0;
         _queuedActions.length = 0; // drop any queued actions
         updateVisual();
         updateDeath();
@@ -354,9 +362,9 @@ public class Submarine extends BaseSprite
 
     protected function updateVisual () :void
     {
-        alpha = _dead ? 0 : (this is GhostSubmarine) ? .5 : 1;
+        alpha = _dead ? 0 : 1;
         // fucking label doesn't alpha out.. so we need to add or remove it
-        if (_nameLabel != null && _dead != (_nameLabel.parent == null)) {
+        if (_dead != (_nameLabel.parent == null)) {
             if (_dead) {
                 removeChild(_nameLabel);
             } else {

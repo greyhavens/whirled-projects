@@ -119,27 +119,26 @@ public class SubAttack extends Sprite
             return;
         }
 
-        var actions :Array = getActionForKey(event);
-        if (actions == null) {
+        var action :int = getActionForKey(event);
+        if (action == Action.NONE) {
             return;
+        }
 
-        } else if (_queued != null) {
-            for each (var val :* in actions) {
-                _queued.push(val);
-            }
+        var now :int = getTimer();
+        if (_queued != null) {
+            _queued.push(action);
 
         } else {
-            var now :int = getTimer();
             if ((now - _lastSent) < SEND_THROTTLE) {
-                _queued = actions;
+                _queued = [ action ];
 
             } else {
-                _gameCtrl.sendMessage("sub" + _myIndex, actions);
+                _gameCtrl.sendMessage("sub" + _myIndex, [ action ]);
                 _lastSent = now;
             }
         }
 
-        _seaDisplay.queueActions(actions);
+        _seaDisplay.queueAction(now, action);
     }
 
     protected function enterFrame (event :Event) :void
@@ -157,35 +156,35 @@ public class SubAttack extends Sprite
     /**
      * Get the action that corresponds to the specified key.
      */
-    protected function getActionForKey (event :KeyboardEvent) :Array
+    protected function getActionForKey (event :KeyboardEvent) :int
     {
         switch (event.keyCode) {
         case Keyboard.DOWN:
-            return [ Action.DOWN ];
+            return Action.DOWN;
 
         case Keyboard.UP:
-            return [ Action.UP ];
+            return Action.UP;
 
         case Keyboard.RIGHT:
-            return [ Action.RIGHT ];
+            return Action.RIGHT;
 
         case Keyboard.LEFT:
-            return [ Action.LEFT ];
+            return Action.LEFT;
 
         case Keyboard.SPACE:
-            return [ Action.SHOOT ];
+            return Action.SHOOT;
 
         case Keyboard.ENTER:
-            return [ Action.RESPAWN ];
+            return Action.RESPAWN;
 
         case Keyboard.CONTROL:
-            return [ Action.BUILD, Action.BUILD, Action.BUILD ];
+            return Action.BUILD;
 
         default:
             if (event.charCode == 90 || event.charCode == 122) { // 'Z' and 'z'
-                return [ Action.BUILD, Action.BUILD, Action.BUILD ];
+                return Action.BUILD;
             }
-            return null;
+            return Action.NONE;
         }
     }
 

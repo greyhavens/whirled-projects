@@ -125,6 +125,24 @@ public class Board
         }
     }
 
+    public function isDestructable (playerIdx :int, xx :int, yy :int) :Boolean
+    {
+        if (xx < 0 || xx >= _width || yy < 0 || yy >= _height) {
+            return false;
+        }
+
+        var val :int = int(_traversable[coordsToIdx(xx, yy)]);
+        if (val == BLOCKED) {
+            return true;
+
+        } else if (val == BLANK) {
+            return false;
+
+        } else {
+            return (playerIdx != int(val / -100));
+        }
+    }
+
     /**
      * Called to build a barrier at the specified location.
      */

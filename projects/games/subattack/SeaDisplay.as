@@ -113,10 +113,10 @@ public class SeaDisplay extends Sprite
     public function setFollowSub (sub :Submarine) :void
     {
         _sub = sub;
-        _followSub = sub.getGhost();
-        if (_followSub == null) {
+//        _followSub = sub.getGhost();
+//        if (_followSub == null) {
             _followSub = sub;
-        }
+//        }
         subUpdated(_followSub, sub.getX(), sub.getY());
     }
 
@@ -125,9 +125,9 @@ public class SeaDisplay extends Sprite
         return _sub.canQueueActions();
     }
 
-    public function queueActions (actions :Array) :void
+    public function queueAction (now :Number, action :int) :void
     {
-        _sub.queueActions(actions);
+        _sub.queueAction(now, action);
     }
 
     /**
