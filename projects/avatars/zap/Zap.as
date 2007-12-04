@@ -8,7 +8,7 @@ import com.threerings.flash.FrameSprite;
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 
-[SWF(width="160", height="160")]
+[SWF(width="140", height="140")]
 public class Zap extends FrameSprite
 {
     public function Zap ()
@@ -51,32 +51,34 @@ public class Zap extends FrameSprite
             this.scaleX = Math.sqrt(this.scaleX);
         }
 
+        var from :Point = new Point(0, -30);
+        var to :Point = new Point(0, 30);
+
+        var c0 :int, c1 :int, c2 :int, c3 :int;
+        var w :Number;
+        if (_speakFrames > 0) {
+            _speakFrames -= 1;
+            c0 = c1 = c2 = c3 = 0xFFFFFF;
+            w = 3;
+
+        } else {
+            c0 = 0x000000;
+            c1 = 0xFFCC88;
+            c2 = 0x88FFCC;
+            c3 = 0xCC88FF;
+            w = 1;
+        }
+
         with (_canvas.graphics) {
             clear();
 
             lineStyle(2, 0xFFAA44);
             drawCircle(0, 0, 40);
 
-            beginFill(0x000000);
+            beginFill(c0);
             drawCircle(0, -40, 9);
             drawCircle(0, 40, 9);
             endFill();
-        }
-
-        var from :Point = new Point(0, -30);
-        var to :Point = new Point(0, 30);
-
-        var c1 :Number, c2 :Number, c3 :Number, w :Number;
-        if (_speakFrames > 0) {
-            _speakFrames -= 1;
-            c1 = c2 = c3 = 0xFFFFFF;
-            w = 3;
-
-        } else {
-            c1 = 0xFFCC88;
-            c2 = 0x88FFCC;
-            c3 = 0xCC88FF;
-            w = 1;
         }
 
         _canvas.graphics.lineStyle(w, c1);
