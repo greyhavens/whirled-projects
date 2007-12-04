@@ -897,7 +897,6 @@ public class CaptionGame extends EventDispatcher
     {
         var photoUrl :String = photoInfo[0] as String;
         var pageUrl :String = (photoInfo.length > 1) ? (photoInfo[1] as String) : null;
-        trace("round starting: " + pageUrl);
 
         _ctrl.doBatch(function () :void {
             // notify our clients that we'll start a new round
