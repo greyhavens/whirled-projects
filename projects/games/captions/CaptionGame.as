@@ -131,7 +131,19 @@ public class CaptionGame extends EventDispatcher
      */
     public function setParticipating (participating :Boolean) :void
     {
-        _ctrl.set("part:" + _myId, participating ? null : false);
+        if (!participating) {
+            submitCaption(null);
+        }
+        // set the value last, so it doesn't block clearing our caption
+        _ctrl.setImmediate("part:" + _myId, participating ? null : false);
+    }
+
+    /**
+     * Is this player actively making captions?
+     */
+    public function isParticipating () :Boolean
+    {
+        return (_ctrl.get("part:" + _myId) == null);
     }
 
     /**
@@ -179,22 +191,26 @@ public class CaptionGame extends EventDispatcher
      */
     public function submitCaption (caption :String) :void
     {
-        if (!isPhase(CAPTIONING_PHASE)) {
+        if (!isPhase(CAPTIONING_PHASE) || !isParticipating()) {
             return;
         }
 
-        caption = _ctrl.filter(StringUtil.trim(caption));
+        if (caption != null) {
+            caption = _ctrl.filter(StringUtil.trim(caption));
+            if (StringUtil.isBlank(caption)) {
+                caption = null;
+            }
+        }
 
         if (caption != _myCaption) {
+            _myCaption = caption;
+
             // TODO: possibly a new way to support private data, whereby users can submit
             // data to private little collections, which are then combined and retrieved.
             // We could do that now, but currently don't have a way to verify which user
             // submitted which caption...
-            _myCaption = caption;
-
-            // clear their submission if they clear out the input field
-            _ctrl.set("caption:" + _myId, (_myCaption == "") ? null : _myCaption);
-            if (_ctrl.get("name:" + _myId) != _myName) {
+            _ctrl.set("caption:" + _myId, _myCaption);
+            if ((_myCaption != null) && ((_ctrl.get("name:" + _myId) != _myName))) {
                 _ctrl.setImmediate("name:" + _myId, _myName);
             }
         }
@@ -527,7 +543,7 @@ public class CaptionGame extends EventDispatcher
      */
     protected function setupCaptioning () :void
     {
-        _myCaption = "";
+        _myCaption = null;
     }
 
     /**
@@ -1338,7 +1354,7 @@ public class CaptionGame extends EventDispatcher
     /** Our name. */
     protected var _myName :String;
 
-    /** Our last-submitted captions. */
+    /** Our last-submitted caption. */
     protected var _myCaption :String;
 
     /** Tracks persistent user stats related to the game.

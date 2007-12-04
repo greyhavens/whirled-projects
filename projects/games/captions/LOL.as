@@ -926,7 +926,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     [Embed(source="rsrc/lol_theme.swf", mimeType="application/octet-stream")]
     protected static const LOL_THEME_UI :Class;
 
-    [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
+//    [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
     protected static const SILENT_THEME_UI :Class;
 
     protected static const IDEAL_WIDTH :int = 700;
