@@ -8,6 +8,7 @@ import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
 /**
  * Displays the end of game information for a single player game.
@@ -20,7 +21,6 @@ public class EndGameSingle extends Dialog
 
         var points :Array = (_ctx.control.get(Model.POINTS) as Array);
         var mypoints :int = points[_ctx.control.seating.getMyPosition()];
-
         var view :MovieClip = _ctx.content.createGameOverSingle();
 
         (view.getChildByName("final_score") as TextField).text = (""+mypoints);
@@ -28,11 +28,14 @@ public class EndGameSingle extends Dialog
             Util.millisToMinSec(_ctx.model.getGameDuration());
 
         var longest :WordPlay = _ctx.model.getLongestWord();
-        (view.getChildByName("longest_word") as TextField).text =
-            (longest == null) ? "<none>" : longest.word;
+        var ltext :TextField = (view.getChildByName("longest_word") as TextField);
+        ltext.autoSize = TextFieldAutoSize.LEFT;
+        ltext.text = (longest == null) ? "<none>" : longest.word;
 
         var highest :WordPlay = _ctx.model.getHighestScoringWord();
-        (view.getChildByName("highest_score") as TextField).text = (highest == null) ? "<none>" :
+        var htext :TextField = (view.getChildByName("highest_score") as TextField);
+        htext.autoSize = TextFieldAutoSize.LEFT;
+        htext.text = (highest == null) ? "<none>" :
             (highest.word + " for " + highest.getPoints(_ctx.model)); // TODO: render colored
 
         var counts :Array = _ctx.model.getWordCountsByLength();
@@ -41,7 +44,10 @@ public class EndGameSingle extends Dialog
             counts[5] + "\n" +
             counts[6] + "\n" +
             counts[7];
-        (view.getChildByName("word_count_right") as TextField).text =
+        var rtext :TextField = (view.getChildByName("word_count_right") as TextField);
+        rtext.autoSize = TextFieldAutoSize.LEFT;
+        rtext.wordWrap = false;
+        rtext.text =
             ((counts[8] > 0) ? counts[8] + " Nice!\n" : "0\n") +
             ((counts[9] > 0) ? counts[9] + " Awesome!\n" : "0\n") +
             ((counts[10] > 0) ? counts[10] + " Amazing!\n" : "0\n") +
