@@ -11,7 +11,7 @@ public class GameMode extends AppMode
     // from core.AppMode
     override public function setup () :void
     {
-        _board = new PuzzleBoard(5, 5);
+        _board = new PuzzleBoard(GameConstants.BOARD_COLS, GameConstants.BOARD_ROWS, GameConstants.BOARD_CELL_SIZE);
         this.addObject(_board);
     }
 

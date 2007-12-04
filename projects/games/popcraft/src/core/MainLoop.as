@@ -6,6 +6,8 @@ import flash.events.TimerEvent;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
+import core.util.Rand;
+
 public class MainLoop
 {
     public function MainLoop ()
@@ -21,8 +23,22 @@ public class MainLoop
         }
     }
 
+    public function setup () :void
+    {
+        if (_hasSetup) {
+            return;
+        }
+
+        _hasSetup = true;
+
+        Rand.setup();
+    }
+
     public function run () :void
     {
+        // ensure that proper setup has completed
+        setup();
+
         // it's an error to call run() multiple times
         Assert.isFalse(_running);
         _running = true;
@@ -160,6 +176,7 @@ public class MainLoop
 
     protected static var g_defaultAppSettings :CoreAppSettings;
 
+    protected var _hasSetup :Boolean = false;
     protected var _running :Boolean = false;
     protected var _mainTimer :Timer;
     protected var _lastTime :Number;
