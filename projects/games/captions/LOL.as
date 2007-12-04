@@ -204,8 +204,6 @@ public class LOL extends Sprite
         _notParticipating.label = "              "; // so that it's more easily clickable
 
         _tagPane = find("tag_scrollpane") as ScrollPane;
-//        trace("_tagPane scales: " + _tagPane.scaleX + ", " + _tagPane.scaleY);
-//        trace("_tagPane scales: " + _tagPane.parent.scaleX + ", " + _tagPane.parent.scaleY);
         _tagPane.horizontalScrollPolicy = ScrollPolicy.OFF;
         _tagPane.verticalScrollPolicy = ScrollPolicy.OFF;
         _tagWidget.setSize(_tagPane.width, _tagPane.height);
@@ -215,8 +213,6 @@ public class LOL extends Sprite
 
         _votingPane = find("voting_scrollpane") as ScrollPane;
         _resultsPane = find("results_scrollpane") as ScrollPane;
-//        trace("_resultsPane scales: " + _resultsPane.scaleX + ", " + _resultsPane.scaleY);
-//        trace("_resultsPane scales: " + _resultsPane.parent.scaleX + ", " + _resultsPane.parent.scaleY);
 
         // TODO: winningCaption still not working!
         _winningCaption = find("winning_caption") as TextField;
@@ -382,12 +378,7 @@ public class LOL extends Sprite
             return;
         }
 
-        _input.type = nowEditing ? TextFieldType.INPUT : TextFieldType.DYNAMIC;
-        _input.selectable = nowEditing;
-        colorInputPalette();
-
-        _doneButton.visible = nowEditing;
-        _editButton.visible = !nowEditing;
+        configureIsEditing(nowEditing);
 
         if (!nowEditing) {
             handleSubmitCaption(event);
@@ -490,6 +481,38 @@ public class LOL extends Sprite
         Log.dumpStack();
     }
 
+    protected function initCaptioning () :void
+    {
+        if (_input == null || _input.stage == null) {
+            return;
+        }
+
+        _votingPane.source = null;
+        _resultsPane.source = null;
+        _input.text = "";
+        _doneButton.enabled = true;
+        _skipBox.selected = false;
+
+        configureIsEditing(_participating);
+        displayParticipating();
+
+        _timer.start();
+    }
+
+    protected function configureIsEditing (editing :Boolean) :void
+    {
+        _input.type = editing ? TextFieldType.INPUT : TextFieldType.DYNAMIC;
+        _input.selectable = editing;
+
+        _doneButton.visible = editing;
+        _editButton.visible = !editing;
+
+        _skipBox.enabled = editing;
+        _notParticipating.enabled = editing;
+
+        colorInputPalette();
+    }
+
     protected function colorInputPalette () :void
     {
         var g :Graphics = _inputPalette.graphics;
@@ -511,26 +534,6 @@ public class LOL extends Sprite
             g.beginFill(0xFFFFFF, .4);
             g.drawRoundRect(p.x, 0, w, _input.textHeight + 4, 10, 10);
         }
-    }
-
-    protected function initCaptioning () :void
-    {
-        if (_input == null || _input.stage == null) {
-            return;
-        }
-
-        _votingPane.source = null;
-        _resultsPane.source = null;
-
-        _input.type = TextFieldType.INPUT;
-        _input.text = "";
-        _doneButton.enabled = true;
-        _skipBox.selected = false;
-        colorInputPalette();
-
-        displayParticipating();
-
-        _timer.start();
     }
 
     protected function displayParticipating () :void
