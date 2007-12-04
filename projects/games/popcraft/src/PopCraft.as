@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package popcraft {
+package {
 
 import com.threerings.util.Assert;
 import com.whirled.WhirledGameControl;
@@ -10,7 +10,8 @@ import core.MainLoop;
 import flash.display.Sprite;
 import flash.utils.Dictionary;
 import core.util.ObjectSet;
-import core.AppMode;
+
+import popcraft.GameMode;
 
 [SWF(width="700", height="500")]
 public class PopCraft extends Sprite
