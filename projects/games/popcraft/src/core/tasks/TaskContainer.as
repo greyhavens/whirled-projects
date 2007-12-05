@@ -13,7 +13,7 @@ internal class TaskContainer extends ObjectTask
 
     public function TaskContainer (type :uint, task1 :ObjectTask = null, task2 :ObjectTask = null)
     {
-        Assert.isTrue(type == TYPE_PARALLEL || type == TYPE_SERIAL);
+        Assert.isTrue(type == TYPE_PARALLEL || type == TYPE_SERIAL || type == TYPE_REPEATING);
         _type = type;
 
         if (null != task1) {

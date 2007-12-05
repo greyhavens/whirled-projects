@@ -9,9 +9,11 @@ import core.util.Rand;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import core.tasks.LocationTask;
+import core.tasks.ScaleTask;
 import flash.geom.Point;
 import core.tasks.TimedTask;
 import core.util.ObjectSet;
+import core.tasks.SerialTask;
 
 public class PuzzleBoard extends AppObject
 {
@@ -41,10 +43,18 @@ public class PuzzleBoard extends AppObject
                 GameConstants.RESOURCE_TYPES[Rand.nextIntRange(0, GameConstants.RESOURCE_TYPES.length)];
 
             var piece :Piece = new Piece(resourceType);
-            piece.displayObject.x = idxToX(i) * _cellSize;
-            piece.displayObject.y = idxToY(i) * _cellSize;
+            piece.displayObject.x = getPieceXLoc(idxToX(i));
+            piece.displayObject.y = getPieceYLoc(idxToY(i));
 
             _board[i] = piece;
+
+            // show a clever scale effect
+            piece.displayObject.scaleX = 0;
+            piece.displayObject.scaleY = 0;
+
+            piece.addTask(new SerialTask(
+                new TimedTask(Rand.nextNumberRange(0.25, 1, Rand.STREAM_COSMETIC)),
+                ScaleTask.CreateSmooth(1, 1, 0.25)));
 
             // add the Piece to the mode, as a child of the board sprite
             MainLoop.instance.topMode.addObject(piece, _sprite);
@@ -77,17 +87,22 @@ public class PuzzleBoard extends AppObject
         _board[index2] = piece1;
 
         // make sure the pieces are in their correct initial locations
-        piece1.displayObject.x = x1 * _cellSize;
-        piece1.displayObject.y = y1 * _cellSize;
-        piece2.displayObject.x = x2 * _cellSize;
-        piece2.displayObject.y = y2 * _cellSize;
+        var px1 :int = getPieceXLoc(x1);
+        var py1 :int = getPieceYLoc(y1);
+        var px2 :int = getPieceXLoc(x2);
+        var py2 :int = getPieceYLoc(y2);
+
+        piece1.displayObject.x = px1;
+        piece1.displayObject.y = py1;
+        piece2.displayObject.x = px2;
+        piece2.displayObject.y = py2;
 
         // animate them to their new locations
         piece1.removeNamedTasks("move");
         piece2.removeNamedTasks("move");
 
-        piece1.addNamedTask("move", LocationTask.CreateSmooth(x2 * _cellSize, y2 * _cellSize, 0.25));
-        piece2.addNamedTask("move", LocationTask.CreateSmooth(x1 * _cellSize, y1 * _cellSize, 0.25));
+        piece1.addNamedTask("move", LocationTask.CreateSmooth(px2, py2, 0.25));
+        piece2.addNamedTask("move", LocationTask.CreateSmooth(px1, py1, 0.25));
     }
 
     protected function findConnectedSimilarPiecesInternal (x :int, y :int, resourceType :uint, pieces :ObjectSet) :void
@@ -139,6 +154,16 @@ public class PuzzleBoard extends AppObject
     public function idxToY (index :int) :int
     {
         return (index / _cols);
+    }
+
+    public function getPieceXLoc (xCoord :int) :int
+    {
+        return (xCoord * _cellSize) + (_cellSize / 2);
+    }
+
+    public function getPieceYLoc (yCoord :int) :int
+    {
+        return (yCoord * _cellSize) + (_cellSize / 2);
     }
 
     protected var _sprite :Sprite;
