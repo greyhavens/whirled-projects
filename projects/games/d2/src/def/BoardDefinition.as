@@ -30,6 +30,10 @@ public class BoardDefinition
     public var availableTowers :Array; // of String, i.e. typeName of each tower
     public var enemies :Array; // of WaveDefinition
     public var allies :Array; // of WaveDefinition
+
+    public var computerPath :Endpoints;
+    public var player1Path :Endpoints;
+    public var player2Path :Endpoints;
     
     public var towers :Array; // of TowerDef
     
@@ -57,6 +61,17 @@ public class BoardDefinition
         this.startingHealth = board.@startingHealth;
         this.startingMoney = board.@startingMoney;
 
+        // copy over endpoints
+
+        var makeEndpoints :Function = function (p :XMLList) :Endpoints {
+            trace(p);
+            return new Endpoints(p.@startx, p.@starty, p.@endx, p.@endy);
+        }
+        this.computerPath = makeEndpoints(board.endpoints.pc);
+        this.player1Path = makeEndpoints(board.endpoints.p1);
+        this.player2Path = makeEndpoints(board.endpoints.p2);
+        trace(this.computerPath);
+        
         // figure out which towers are available
 
         this.availableTowers = new Array();

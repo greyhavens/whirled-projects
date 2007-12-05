@@ -3,6 +3,7 @@ package game {
 import flash.geom.Point;
 
 import def.BoardDefinition;
+import def.Endpoints;
 import def.TowerDefinition;
 
 import units.Tower;
@@ -149,12 +150,12 @@ public class Board
 
     public function getPlayerSource (playerIndex :int) :Point
     {
-        return _groundmap.getPlayerSource(playerIndex).clone();
+        return getEndpoints(playerIndex).start;
     }
     
     public function getPlayerTarget (playerIndex :int) :Point
     {
-        return _groundmap.getPlayerTarget(playerIndex).clone();
+        return getEndpoints(playerIndex).target;
     }
 
     public function towerIndexToPosition (index :int) :Point
@@ -187,6 +188,16 @@ public class Board
                          int(Math.floor(y / tileHeight)));
     }
 
+    /** Selects the appropriate endpoints variable based on game settings. */
+    public function getEndpoints (playerIndex :int) :Endpoints
+    {
+        if (_main.isSinglePlayer) {
+            return _def.computerPath;
+        } else {
+            return (playerIndex == 0) ? _def.player1Path : _def.player2Path;
+        }
+    }
+            
 
     protected var _main :Main;
     protected var _def :BoardDefinition;
