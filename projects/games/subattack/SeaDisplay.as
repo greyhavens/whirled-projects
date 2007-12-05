@@ -28,8 +28,6 @@ public class SeaDisplay extends Sprite
         _status.background = true;
         _status.autoSize = TextFieldAutoSize.CENTER;
         _status.selectable = false;
-
-        addChild(_foreground);
     }
 
     /**
@@ -79,6 +77,9 @@ public class SeaDisplay extends Sprite
             xs.push(xx);
         }
         for (yy = 0; yy < boardHeight; yy++) {
+            var fg :Sprite = new Sprite();
+            addChild(fg);
+            _foregrounds.push(fg);
             var xArray :Array = xs.concat();
             ArrayUtil.shuffle(xArray);
             for (var ii :int = 0; ii < xArray.length; ii++) {
@@ -87,7 +88,7 @@ public class SeaDisplay extends Sprite
                 _treeBitmaps[yy * boardWidth + xx] = bmp;
                 bmp.x = xx * TILE_SIZE + TREE_OFFSET;
                 bmp.y = yy * TILE_SIZE + TREE_OFFSET;
-                _foreground.addChild(bmp);
+                fg.addChild(bmp);
             }
         }
     }
@@ -179,7 +180,7 @@ public class SeaDisplay extends Sprite
             var bmp :Bitmap = Bitmap(_treeBitmaps[index]);
             if (bmp != null) {
                 _treeBitmaps[index] = null;
-                _foreground.removeChild(bmp);
+                (_foregrounds[yy] as Sprite).removeChild(bmp);
 
             } else {
                 // repaint the ground right there
@@ -204,6 +205,16 @@ public class SeaDisplay extends Sprite
      */
     public function subUpdated (sub :Submarine, xx :int, yy :int) :void
     {
+        // make sure they're added before the correct foreground layer
+        var fg :Sprite = _foregrounds[yy] as Sprite;
+        var fgdex :int = getChildIndex(fg);
+        var dex :int = getChildIndex(sub);
+//        trace("dex: " + dex + ", fgdex: " + fgdex);
+        if (dex > fgdex) {
+            fgdex += 1;
+        }
+        setChildIndex(sub, fgdex);
+
         if (_followSub != sub) {
             return;
         }
@@ -244,7 +255,7 @@ public class SeaDisplay extends Sprite
 
     protected var _sub :Submarine;
 
-    protected var _foreground :Sprite = new Sprite();
+    protected var _foregrounds :Array = [];
 
     protected var _boardWidth :int;
 

@@ -20,7 +20,8 @@ import com.whirled.WhirledGameControl;
 public class Submarine extends BaseSprite
 {
     /** The amount we shift hue for each truck. */
-    public static const SHIFTS :Array = [ 40, -80, 120, -160 -40, 80, -120, 160 ];
+    //public static const SHIFTS :Array = [ 40, -80, 120, -160 -40, 80, -120, 160 ];
+    public static const SHIFTS :Array = [ -136, 21, -106, 77, -38, 143, 0, 180 ];
 
     /** How often can we build? */
     public static const TICKS_PER_BUILD :int = 50; // about every 5 seconds
@@ -231,11 +232,13 @@ public class Submarine extends BaseSprite
         }
 
         // we can always re-orient
+        var reoriented :Boolean = false;
         if (_orient != action) {
             _orient = action;
             updateVisual();
+            reoriented = true;
         }
-        if (!advanceLocation()) {
+        if (!advanceLocation() && !reoriented) {
 //            return DROP;
             // maybe we can shoot?
             if (_board.isDestructable(_playerIdx, advancedX(), advancedY()) &&
@@ -359,7 +362,7 @@ public class Submarine extends BaseSprite
                 addChild(_nameLabel);
             }
         }
-        var add :int = (_torpedos.length == 2) ? 0 : 4;
+        var add :int = (_torpedos.length == MAX_TORPEDOS) ? 0 : 4;
         _avatar.gotoAndStop(orientToFrame() + add);
 
         updateDisplayedScore();

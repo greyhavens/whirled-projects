@@ -12,6 +12,8 @@ import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 
+import flash.geom.Point;
+
 import flash.text.TextField;
 
 import flash.ui.Keyboard;
@@ -30,6 +32,7 @@ import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
+import com.threerings.ezgame.SizeChangedEvent;
 
 import com.whirled.WhirledGameControl;
 
@@ -42,26 +45,27 @@ public class SubAttack extends Sprite
     /** How many total tiles are in one direction in the view? */
     public static const VIEW_TILES :int = (VISION_TILES * 2) + 1;
 
+    public static const WIDTH :int = 700;
+    public static const HEIGHT :int = 500;
+
     public function SubAttack ()
     {
+        _content = new Sprite();
+        addChild(_content);
+
         _seaHolder = new Sprite();
-//        var scale :Number = 500 / (VIEW_TILES * SeaDisplay.TILE_SIZE);
-//        trace("Tile scaled size is " + (scale * SeaDisplay.TILE_SIZE));
-//        _seaHolder.scaleX = scale;
-//        _seaHolder.scaleY = scale;
         _seaHolder.x = 200;
-        addChild(_seaHolder);
+        _content.addChild(_seaHolder);
 
         _seaHolder.addChild(_seaDisplay = new SeaDisplay());
 
-        addChild(new SIDEBAR() as DisplayObject);
+        _content.addChild(new SIDEBAR() as DisplayObject);
 
         var maskSize :int = VIEW_TILES * SeaDisplay.TILE_SIZE;
         var masker :Shape = new Shape();
         masker.graphics.beginFill(0xFFFFFF);
         masker.graphics.drawRect(0, 0, maskSize, maskSize);
         masker.graphics.endFill();
-        //masker.x = 200;
         _seaHolder.mask = masker;
         _seaHolder.addChild(masker); // the mask must be added to the display
         // set up a fake starting sea
@@ -80,7 +84,7 @@ public class SubAttack extends Sprite
         }
 
         _splash = new Loader();
-        addChild(_splash);
+        _content.addChild(_splash);
         _splash.loadBytes(ByteArray(new SPLASH_SCREEN()));
         _splash.addEventListener(MouseEvent.CLICK, handleRemoveSplash);
         _splashTimer.addEventListener(TimerEvent.TIMER, handleRemoveSplash);
@@ -95,10 +99,13 @@ public class SubAttack extends Sprite
             addEventListener(Event.ENTER_FRAME, enterFrame);
         }
 
+        _gameCtrl.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
         _gameCtrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
         _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
 
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+
+        updateSize(_gameCtrl.getSize());
 
         // check everyone's current readyness states
         recheckReadyness();
@@ -117,7 +124,7 @@ public class SubAttack extends Sprite
 
     protected function handleRemoveSplash (event :Event) :void
     {
-        removeChild(_splash);
+        _content.removeChild(_splash);
         _splashTimer.stop();
         _splashTimer = null;
         _gameCtrl.set("ready:" + _gameCtrl.getMyId(), true);
@@ -157,6 +164,32 @@ public class SubAttack extends Sprite
         _seaHolder.removeChild(_seaDisplay);
         _seaHolder.addChildAt(_seaDisplay = new SeaDisplay(), 0);
         _board = new Board(_gameCtrl, _seaDisplay);
+    }
+
+    protected function handleSizeChanged (event :SizeChangedEvent) :void
+    {
+        updateSize(event.size);
+    }
+
+    protected function updateSize (size :Point) :void
+    {
+        var width :int = Math.max(size.x, WIDTH);
+        var height :int = Math.max(size.y, HEIGHT);
+
+        // draw black behind everything
+        this.graphics.clear();
+        this.graphics.beginFill(0x000000);
+        this.graphics.drawRect(0, 0, width, height);
+        this.graphics.endFill();
+
+        var xscale :Number = width / WIDTH;
+        var yscale :Number = height / HEIGHT;
+        var scale :Number = Math.min(xscale, yscale);
+        _content.scaleX = scale;
+        _content.scaleY = scale;
+
+        _content.x = (width - (WIDTH * scale)) / 2;
+        _content.y = (height - (HEIGHT * scale)) / 2;
     }
 
     /**
@@ -238,6 +271,9 @@ public class SubAttack extends Sprite
             return Action.NONE;
         }
     }
+
+    /** A child sprite that contains all others. */
+    protected var _content :Sprite;
 
     /** The game control. */
     protected var _gameCtrl :WhirledGameControl;
