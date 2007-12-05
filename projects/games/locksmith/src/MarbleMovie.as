@@ -15,7 +15,7 @@ public class MarbleMovie extends Sprite
 {
     public function MarbleMovie (type :int)
     {
-//        addChild(new BALL_SHADOW() as DisplayObject);
+        addChild(new BALL_SHADOW() as DisplayObject);
         addChild(_movie = new (type == Marble.MOON ? MOON_BALL : SUN_BALL)() as MovieClipAsset);
         _movie.cacheAsBitmap = true;
         var shine :DisplayObject = 
@@ -69,8 +69,8 @@ public class MarbleMovie extends Sprite
     [Embed(source="../rsrc/locksmith_art.swf#ball_shine_moon")]
     protected static const BALL_SHINE_MOON :Class;
 
-//    [Embed(source="../rsrc/locksmith_art.swf#ball_shadow")]
-//    protected static const BALL_SHADOW :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#ball_shadow")]
+    protected static const BALL_SHADOW :Class;
 
     protected var _movie :MovieClipAsset;
 }
