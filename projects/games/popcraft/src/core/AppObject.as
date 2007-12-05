@@ -6,16 +6,27 @@ import com.threerings.util.HashSet;
 
 import core.tasks.TaskContainer;
 import flash.display.DisplayObject;
+import flash.display.InteractiveObject;
 
 public class AppObject
 {
     /**
-     * Return the DisplayObject attached to this AppObject,
-     * if one exists, and null otherwise.
+     * Returns the DisplayObject attached to this AppObject,
+     * if one exists, and null otherwise. Default to null.
      */
     public function get displayObject () :DisplayObject
     {
         return null;
+    }
+
+    /**
+     * Returns the InteractiveObject attached to this AppObject,
+     * if one exists, and null otherwise. Defaults to
+     * (displayObject as InteractiveObject).
+     */
+    public function get interactiveObject () :InteractiveObject
+    {
+        return (this.displayObject as InteractiveObject);
     }
 
     /**
@@ -115,6 +126,22 @@ public class AppObject
 
     /** Called once per update tick. (Subclasses can override this to do something useful.) */
     protected function update (dt :Number) :void
+    {
+    }
+
+    /**
+     * Called immediately after the AppObject has been added to an AppMode.
+     * (Subclasses can override this to do something useful.)
+     */
+    public function addedToMode (mode :AppMode) :void
+    {
+    }
+
+    /**
+     * Called immediately after the AppObject has been removed from an AppMode.
+     * (Subclasses can override this to do something useful.)
+     */
+    public function removedFromMode (mode :AppMode) :void
     {
     }
 

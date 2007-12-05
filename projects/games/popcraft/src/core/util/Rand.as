@@ -38,11 +38,13 @@ public class Rand
         getStream(streamId).setSeed(seed);
     }
 
+    /** Returns an integer in the range [0, MAX) */
     public static function nextInt (streamId :int = STREAM_GAME) :int
     {
         return getStream(streamId).nextInt();
     }
 
+    /** Returns an integer in the range [low, high) */
     public static function nextIntRange (low :int, high :int, streamId :int = STREAM_GAME) :int
     {
         Assert.isTrue(high >= low);

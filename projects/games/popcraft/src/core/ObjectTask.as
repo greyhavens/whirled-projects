@@ -16,7 +16,7 @@ public class ObjectTask
         return STATUS_COMPLETE;
     }
 
-    /** Returns a copy of the IObjectTask */
+    /** Returns a copy of the ObjectTask */
     public function clone () :ObjectTask
     {
         Assert.fail("ObjectTask.clone() called on a task that doesn't implement it.");

@@ -28,15 +28,16 @@ public class PuzzleBoard extends AppObject
         _sprite = new Sprite();
         _sprite.graphics.clear();
         _sprite.graphics.beginFill(0xFFFFFF);
-        _sprite.graphics.drawRect(0, 0, _cols * cellSize, _rows * cellSize);int
+        _sprite.graphics.drawRect(0, 0, _cols * cellSize, _rows * cellSize);
         _sprite.graphics.endFill();
+        _sprite.mouseEnabled = true;
 
         // populate the board with a random distribution of resources
         _board = new Array(_cols * _rows);
         var i:int;
         for (i = 0; i < _cols * _rows; ++i) {
             _board[i] =
-                GameConstants.RESOURCE_TYPES[Rand.nextIntRange(0, GameConstants.RESOURCE_TYPES.length -1)];
+                GameConstants.RESOURCE_TYPES[Rand.nextIntRange(0, GameConstants.RESOURCE_TYPES.length)];
         }
 
         // create the piece objects
@@ -47,9 +48,9 @@ public class PuzzleBoard extends AppObject
             MainLoop.instance.topMode.addObject(piece, _sprite);
         }
 
-        this.addTask(TaskContainer.CreateSerialTask(
-            new TimedTask(3),
-            LocationTask.LocationTaskSmooth(new Point(100, 100), 5)));
+        // create the board cursor
+        var cursor :BoardCursor = new BoardCursor(this);
+        MainLoop.instance.topMode.addObject(cursor, _sprite);
     }
 
     override public function get displayObject () :DisplayObject

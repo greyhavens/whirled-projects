@@ -70,6 +70,8 @@ public class AppMode extends Sprite
             Assert.isNotNull(obj.displayObject);
             displayParent.addChild(obj.displayObject);
         }
+
+        obj.addedToMode(this);
     }
 
     /** Removes an AppObject from the mode. The AppObject must be owned by this mode. */
@@ -112,6 +114,8 @@ public class AppMode extends Sprite
         if (null != obj.displayObject && null != obj.displayObject.parent) {
             obj.displayObject.parent.removeChild(obj.displayObject);
         }
+
+        obj.removedFromMode(this);
     }
 
     /** Returns the object in this mode with the given name, or null if no such object exists. */

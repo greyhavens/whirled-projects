@@ -14,7 +14,7 @@ import flash.display.DisplayObject;
 
 public class LocationTask extends ObjectTask
 {
-    public static function LocationTaskLinear (loc :Point, time :Number) :LocationTask
+    public static function CreateLinear (loc :Point, time :Number) :LocationTask
     {
         return new LocationTask(
             loc,
@@ -22,7 +22,7 @@ public class LocationTask extends ObjectTask
             new MXInterpolatorAdapter(mx.effects.easing.Linear.easeNone));
     }
 
-    public static function LocationTaskSmooth (loc :Point, time :Number) :LocationTask
+    public static function CreateSmooth (loc :Point, time :Number) :LocationTask
     {
         return new LocationTask(
             loc,
@@ -30,7 +30,7 @@ public class LocationTask extends ObjectTask
             new MXInterpolatorAdapter(mx.effects.easing.Cubic.easeInOut));
     }
 
-    public static function LocationTaskEaseIn (loc :Point, time :Number) :LocationTask
+    public static function CreateEaseIn (loc :Point, time :Number) :LocationTask
     {
         return new LocationTask(
             loc,
@@ -38,7 +38,7 @@ public class LocationTask extends ObjectTask
             new MXInterpolatorAdapter(mx.effects.easing.Cubic.easeIn));
     }
 
-    public static function LocationTaskEaseOut (loc :Point, time :Number) :LocationTask
+    public static function CreateEaseOut (loc :Point, time :Number) :LocationTask
     {
         return new LocationTask(
             loc,
@@ -49,10 +49,14 @@ public class LocationTask extends ObjectTask
     public function LocationTask (
         loc :Point,
         time :Number = 0,
-        interpolator :Interpolator = null)// = new MXInterpolatorAdapter(mx.effects.easing.Linear.easeNone))
+        interpolator :Interpolator = null)
     {
+        // default to linear interpolation
+        if (null == interpolator) {
+            interpolator = new MXInterpolatorAdapter(mx.effects.easing.Linear.easeNone);
+        }
+
         Assert.isTrue(null != loc);
-        Assert.isTrue(null != interpolator);
         Assert.isTrue(time >= 0);
 
         _to = loc;
