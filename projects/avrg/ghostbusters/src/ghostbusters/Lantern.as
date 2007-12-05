@@ -94,11 +94,12 @@ public class Lantern
     {
         var hole :Sprite = new Sprite();
         hole.blendMode = BlendMode.ERASE;
-        with (hole.graphics) {
-            beginFill(0xFFA040);
-            drawCircle(0, 0, 40);
-            endFill();
-        }
+
+        var g :Graphics = hole.graphics;
+        g.beginFill(0xFFA040);
+        g.drawCircle(0, 0, 40);
+        g.endFill();
+
         return hole;
     }
 
@@ -107,22 +108,24 @@ public class Lantern
         var photons :Sprite = new Sprite();
         photons.alpha = 0.2;
         photons.filters = [ new GlowFilter(0xFF0000, 1, 32, 32, 2) ];
-        with (photons.graphics) {
-            beginFill(0xFF0000);
-            drawCircle(0, 0, 40);
-            endFill();
-        }
+
+        var g :Graphics = photons.graphics;
+        g.beginFill(0xFF0000);
+        g.drawCircle(0, 0, 40);
+        g.endFill();
+
         return photons;
     }
 
     protected function getLanternMask () :Sprite
     {
         var mask :Sprite = new Sprite();
-        with (mask.graphics) {
-            beginFill(0xFFFFFF);
-            drawCircle(0, 0, 40);
-            endFill();
-        }
+
+        var g :Graphics = mask.graphics;
+        g.beginFill(0xFFFFFF);
+        g.drawCircle(0, 0, 40);
+        g.endFill();
+
         return mask;
     }
 

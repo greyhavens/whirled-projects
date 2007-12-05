@@ -81,11 +81,12 @@ public class HUD extends Sprite
         _lanternia.addChild(_dimBack);
 
         _dimFront = new Sprite();
-        with (_dimFront.graphics) {
-            beginFill(0x000000);
-            drawRect(0, 0, 2000, 1000);
-            endFill();
-        }
+
+        var g Graphics = _dimFront.graphics;
+        g.beginFill(0x000000);
+        g.drawRect(0, 0, 2000, 1000);
+        g.endFill();
+
         _dimFront.alpha = 0.7;
         _dimBack.addChild(_dimFront);
 
