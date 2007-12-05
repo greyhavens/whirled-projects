@@ -14,40 +14,41 @@ import flash.display.DisplayObject;
 
 public class LocationTask extends ObjectTask
 {
-    public static function CreateLinear (loc :Point, time :Number) :LocationTask
+    public static function CreateLinear (x :Number, y :Number, time :Number) :LocationTask
     {
         return new LocationTask(
-            loc,
+            x, y,
             time,
             new MXInterpolatorAdapter(mx.effects.easing.Linear.easeNone));
     }
 
-    public static function CreateSmooth (loc :Point, time :Number) :LocationTask
+    public static function CreateSmooth (x :Number, y :Number, time :Number) :LocationTask
     {
         return new LocationTask(
-            loc,
+            x, y,
             time,
             new MXInterpolatorAdapter(mx.effects.easing.Cubic.easeInOut));
     }
 
-    public static function CreateEaseIn (loc :Point, time :Number) :LocationTask
+    public static function CreateEaseIn (x :Number, y :Number, time :Number) :LocationTask
     {
         return new LocationTask(
-            loc,
+            x, y,
             time,
             new MXInterpolatorAdapter(mx.effects.easing.Cubic.easeIn));
     }
 
-    public static function CreateEaseOut (loc :Point, time :Number) :LocationTask
+    public static function CreateEaseOut (x :Number, y :Number, time :Number) :LocationTask
     {
         return new LocationTask(
-            loc,
+            x, y,
             time,
             new MXInterpolatorAdapter(mx.effects.easing.Cubic.easeOut));
     }
 
     public function LocationTask (
-        loc :Point,
+        x :Number,
+        y :Number,
         time :Number = 0,
         interpolator :Interpolator = null)
     {
@@ -56,10 +57,10 @@ public class LocationTask extends ObjectTask
             interpolator = new MXInterpolatorAdapter(mx.effects.easing.Linear.easeNone);
         }
 
-        Assert.isTrue(null != loc);
         Assert.isTrue(time >= 0);
 
-        _to = loc;
+        _toX = x;
+        _toY = y;
         _totalTime = time;
         _interpolator = interpolator;
     }
@@ -70,26 +71,31 @@ public class LocationTask extends ObjectTask
         Assert.isNotNull(displayObj, "LocationTask can only be applied to AppObjects with attached display objects.");
 
         if (0 == _elapsedTime) {
-            _from.x = displayObj.x;
-            _from.y = displayObj.y;
+            _fromX = displayObj.x;
+            _fromY = displayObj.y;
         }
 
         _elapsedTime += dt;
 
-        displayObj.x = _interpolator.interpolate(_from.x, _to.x, _elapsedTime, _totalTime);
-        displayObj.y = _interpolator.interpolate(_from.y, _to.y, _elapsedTime, _totalTime);
+        displayObj.x = _interpolator.interpolate(_fromX, _toX, _elapsedTime, _totalTime);
+        displayObj.y = _interpolator.interpolate(_fromY, _toY, _elapsedTime, _totalTime);
 
         return (_elapsedTime >= _totalTime ? ObjectTask.STATUS_COMPLETE : ObjectTask.STATUS_INCOMPLETE);
     }
 
     override public function clone () :ObjectTask
     {
-        return new LocationTask(_to, _totalTime, _interpolator);
+        return new LocationTask(_toX, _toY, _totalTime, _interpolator);
     }
 
     protected var _interpolator :Interpolator;
-    protected var _from :Point = new Point();
-    protected var _to :Point;
+
+    protected var _toX :Number;
+    protected var _toY :Number;
+
+    protected var _fromX :Number;
+    protected var _fromY :Number;
+
     protected var _totalTime :Number = 0;
     protected var _elapsedTime :Number = 0;
 }

@@ -25,7 +25,10 @@ public class MXInterpolatorAdapter
         // b - specifies the initial position of a component
         // c - specifies the total change in position of the component
         // d - specifies the duration of the effect, in milliseconds
-        return _easingFunction (t * 1000, a, b, duration * 1000);
+
+        t = Math.max(t, 0);
+        t = Math.min(t, duration);
+        return _easingFunction (t * 1000, a, (b - a), duration * 1000);
     }
 
     protected var _easingFunction :Function;

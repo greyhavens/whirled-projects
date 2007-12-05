@@ -70,7 +70,7 @@ public class AppObject
     }
 
     /** Adds a named task to this AppObject. */
-    public function addNamedTask (task :ObjectTask, name :String) :void
+    public function addNamedTask (name :String, task :ObjectTask) :void
     {
         Assert.isTrue(null != task);
         Assert.isTrue(null != name);
@@ -93,7 +93,7 @@ public class AppObject
     }
 
     /** Removes all tasks with the given name from the AppObject. */
-    public function removedNamedTasks (name :String) :void
+    public function removeNamedTasks (name :String) :void
     {
         Assert.isTrue(null != name);
         Assert.isTrue(name.length > 0);
@@ -148,11 +148,14 @@ public class AppObject
     internal function updateInternal(dt :Number) :void
     {
         _anonymousTasks.update(dt, this);
+
+        var thisAppObject :AppObject = this;
         _namedTasks.forEach(updateNamedTaskContainer);
+
         update(dt);
 
         function updateNamedTaskContainer (name :*, tasks:*) :void {
-            (tasks as TaskContainer).update(dt, this);
+            (tasks as TaskContainer).update(dt, thisAppObject);
         }
     }
 

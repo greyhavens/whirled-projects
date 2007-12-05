@@ -50,19 +50,26 @@ public class BoardCursor extends AppObject
         repositionOnBoard(evt.localX, evt.localY);
     }
 
+    protected function mouseDown (evt :MouseEvent) :void
+    {
+        // ensure that we're correctly position on the board
+        //repositionOnBoard(_sprite.mouseX, _sprite.mouseY);
+        _board.swapPieces(_indexX, _indexY, _indexX + 1, _indexY);
+    }
+
     protected function repositionOnBoard (localX :Number, localY :Number) :void
     {
-        var indexX :int = (localX / GameConstants.BOARD_CELL_SIZE);
-        var indexY :int = (localY / GameConstants.BOARD_CELL_SIZE);
+        _indexX = (localX / GameConstants.BOARD_CELL_SIZE);
+        _indexY = (localY / GameConstants.BOARD_CELL_SIZE);
 
-        indexX = Math.max(indexX, 0);
-        indexX = Math.min(indexX, GameConstants.BOARD_COLS - 2);
+        _indexX = Math.max(_indexX, 0);
+        _indexX = Math.min(_indexX, GameConstants.BOARD_COLS - 2);
 
-        indexY = Math.max(indexY, 0);
-        indexY = Math.min(indexY, GameConstants.BOARD_ROWS - 1);
+        _indexY = Math.max(_indexY, 0);
+        _indexY = Math.min(_indexY, GameConstants.BOARD_ROWS - 1);
 
-        _sprite.x = indexX * GameConstants.BOARD_CELL_SIZE;
-        _sprite.y = indexY * GameConstants.BOARD_CELL_SIZE;
+        _sprite.x = _indexX * GameConstants.BOARD_CELL_SIZE;
+        _sprite.y = _indexY * GameConstants.BOARD_CELL_SIZE;
     }
 
     override public function addedToMode (mode :AppMode) :void
@@ -74,6 +81,8 @@ public class BoardCursor extends AppObject
 
         // the cursor positions itself when the mouse moves around the board
         _board.interactiveObject.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove, false, 0, true);
+
+        _board.interactiveObject.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown, false, 0, true);
     }
 
     override public function removedFromMode (mode :AppMode) :void
@@ -81,10 +90,14 @@ public class BoardCursor extends AppObject
         _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OUT, rollOut);
         _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OVER, rollOver);
         _board.interactiveObject.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
+        _board.interactiveObject.removeEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
     }
 
     protected var _board :PuzzleBoard;
     protected var _sprite :Shape;
+
+    protected var _indexX :int;
+    protected var _indexY :int;
 }
 
 }
