@@ -107,6 +107,11 @@ public class SubAttack extends Sprite
 
         updateSize(_gameCtrl.getSize());
 
+        // set up a random seed
+        if (_myIndex == 0) {
+            _gameCtrl.set("seed", int(Math.random() * int.MAX_VALUE));
+        }
+
         // check everyone's current readyness states
         recheckReadyness();
     }

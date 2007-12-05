@@ -10,12 +10,15 @@ import com.threerings.ezgame.MessageReceivedEvent;
 import com.whirled.WhirledGameControl;
 
 import com.threerings.util.Log;
+import com.threerings.util.Random;
+import com.threerings.util.StringUtil;
 
 public class Board
 {
     /** Traversability constants. */
     public static const BLANK :int = 0;
-    public static const BLOCKED :int = 1;
+    public static const TREE :int = 1;
+    public static const ROCK :int = int.MAX_VALUE;
 
     public function Board (gameCtrl :WhirledGameControl, seaDisplay :SeaDisplay)
     {
@@ -32,12 +35,24 @@ public class Board
         _maxTotalDeaths = playerCount * 5;
         _maxKills = Math.max(1, (playerCount - 1) * 5);
 
-        _seaDisplay.setupSea(_width, _height);
-
         var ii :int;
         for (ii = _width * _height - 1; ii >= 0; ii--) {
-            _traversable[ii] = BLOCKED;
+            _board[ii] = TREE;
         }
+
+        var rando :Random = new Random(int(_gameCtrl.get("seed")));
+
+        // scatter some rocks around
+        var numRocks :int = (_width * _height) / 40;
+        for (ii = 0; ii < numRocks; ii++) {
+            var pick :int;
+            do {
+                pick = rando.nextInt(_width * _height);
+            } while (_board[pick] != TREE);
+            _board[pick] = ROCK;
+        }
+
+        _seaDisplay.setupSea(_width, _height, _board);
 
         // create a submarine for each player
         var sub :Submarine;
@@ -101,7 +116,7 @@ public class Board
     public function isBlank (xx :int, yy :int) :Boolean
     {
         return (xx >= 0) && (xx < _width) && (yy >= 0) && (yy < _height) &&
-            (BLANK == int(_traversable[coordsToIdx(xx, yy)]));
+            (BLANK == int(_board[coordsToIdx(xx, yy)]));
     }
 
     /**
@@ -113,8 +128,8 @@ public class Board
             return false;
         }
 
-        var val :int = int(_traversable[coordsToIdx(xx, yy)]);
-        if (val == BLOCKED) {
+        var val :int = int(_board[coordsToIdx(xx, yy)]);
+        if (val == TREE || val == ROCK) {
             return false;
 
         } else if (val == BLANK) {
@@ -131,11 +146,11 @@ public class Board
             return false;
         }
 
-        var val :int = int(_traversable[coordsToIdx(xx, yy)]);
-        if (val == BLOCKED) {
+        var val :int = int(_board[coordsToIdx(xx, yy)]);
+        if (val == TREE) {
             return true;
 
-        } else if (val == BLANK) {
+        } else if (val == BLANK || val == ROCK) {
             return false;
 
         } else {
@@ -149,10 +164,10 @@ public class Board
     public function buildBarrier (playerIdx :int, xx :int, yy :int) :void
     {
         var dex :int = coordsToIdx(xx, yy);
-        var val :int = int(_traversable[dex]);
+        var val :int = int(_board[dex]);
         if (val == BLANK) {
             val = -1 * (playerIdx * 100 + 2);
-            _traversable[dex] = val;
+            _board[dex] = val;
             _seaDisplay.updateTraversable(xx, yy, val, isBlank(xx, yy - 1), isBlank(xx, yy + 1));
         }
     }
@@ -169,7 +184,7 @@ public class Board
         var bestDist :Number = 0;
         for (var yy :int = 0; yy < _height; yy++) {
             for (var xx :int = 0; xx < _width; xx++) {
-                if (0 == int(_traversable[coordsToIdx(xx, yy)])) {
+                if (0 == int(_board[coordsToIdx(xx, yy)])) {
                     var minDist :Number = Number.MAX_VALUE;
                     for each (var otherSub :Submarine in _subs) {
                         if (otherSub != sub && !otherSub.isDead()) {
@@ -292,7 +307,7 @@ public class Board
 
     protected function setBlank (xx :int, yy :int) :void
     {
-        _traversable[coordsToIdx(xx, yy)] = BLANK;
+        _board[coordsToIdx(xx, yy)] = BLANK;
         _seaDisplay.updateTraversable(xx, yy, BLANK, isBlank(xx, yy - 1), isBlank(xx, yy + 1));
     }
 
@@ -304,7 +319,7 @@ public class Board
     protected function noteTorpedoExploded (xx :int, yy :int, playerIndex :int) :Boolean
     {
         var idx :int = coordsToIdx(xx, yy);
-        var val :int = int(_traversable[idx]);
+        var val :int = int(_board[idx]);
         var subsAffected :Boolean = true;
         if (val == BLANK) {
             // that's strange, but ok
@@ -332,7 +347,7 @@ public class Board
         }
 
         // record the new traversability
-        _traversable[idx] = val;
+        _board[idx] = val;
 
         // update the display
         _seaDisplay.updateTraversable(xx, yy, val, isBlank(xx, yy - 1), isBlank(xx, yy + 1));
@@ -344,10 +359,10 @@ public class Board
 //    protected function incTraversable (xx :int, yy :int) :void
 //    {
 //        var idx :int = coordsToIdx(xx, yy);
-//        var val :int = int(_traversable[idx]);
+//        var val :int = int(_board[idx]);
 //        if (val > 0) {
 //            val--;
-//            _traversable[idx] = val;
+//            _board[idx] = val;
 //            _seaDisplay.updateTraversable(xx, yy, val, isTraversable(xx, yy - 1),
 //                isTraversable(xx, yy + 1));
 //        }
@@ -460,8 +475,6 @@ public class Board
             ids[ii] = sub.getPlayerId();
             scores[ii] = int(99 * Math.max(0, sub.getKills() - sub.getDeaths()) / _maxKills);
         }
-
-        trace("Computed scores as " + scores);
 
         _gameCtrl.endGameWithScores(ids, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
         _endedGame = true;
@@ -579,8 +592,8 @@ public class Board
     /** Contains active torpedos, in no particular order. */
     protected var _torpedos :Array = [];
 
-    /** An array tracking the traversability of each tile. */
-    protected var _traversable :Array = [];
+    /** An array tracking the type of each tile. */
+    protected var _board :Array = [];
 
     /** Have we already ended the game? (Stop trying to do it again while a few
      * last ticks trickle in.) */
@@ -589,7 +602,8 @@ public class Board
     protected static const DIMENSIONS :Array = [
         [  0,  0 ], // 0 player game
         [ 10, 10 ], // 1 player game
-        [ 10, 10 ], // 2 player game (testing)
+//        [ 10, 10 ], // 2 player game (testing)
+//        [ 15, 15 ], // 2 player game (testing)
         [ 50, 25 ], // 2 player game
         [ 60, 30 ], // 3 player game
         [ 75, 30 ], // 4 player game
