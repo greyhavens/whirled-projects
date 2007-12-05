@@ -31,10 +31,6 @@ public class Ghostbusters extends Sprite
     {
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        this.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
-                Log.getLog(Ghostbusters).debug("CLICK: " + evt);
-            });
-
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
 
         _control = new AVRGameControl(this);
