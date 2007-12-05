@@ -36,23 +36,18 @@ public class Lantern
 
         var max :int = Math.max(r, g, b);
 
-        Log.getLog(Lantern).debug("r, g, b: " + r + ", " + g + ", " + b);
-
         // max out its HSV value
         r *= 255/max;
         g *= 255/max;
         b *= 255/max;
 
-        Log.getLog(Lantern).debug("r, g, b: " + r + ", " + g + ", " + b);
-
-        // and make sure it's reasonably saturated
+        // and make sure it's reasonably saturated (i.e. high range)
         var min :int = Math.min(r, g, b);
         if (min > 64) {
             r = 4 * (r - 64) / 3;
             g = 4 * (g - 64) / 3;
             b = 4 * (b - 64) / 3;
         }
-        Log.getLog(Lantern).debug("r, g, b: " + r + ", " + g + ", " + b);
 
         light = getLanternLight((r << 16) + (g << 8) + b);
         light.x = p.x;

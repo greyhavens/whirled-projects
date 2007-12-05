@@ -198,6 +198,11 @@ public class HUD extends Sprite
         p = _lanternia.localToGlobal(p);
         p = _control.stageToRoom(p);
 
+        if (p == null) {
+            // something nutty is going on
+            return;
+        }
+
         // bow to reality: nobody wants to watch roundtrip lag in action
         if (!DEBUG) {
             updateLantern(_myId, p);
