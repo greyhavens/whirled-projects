@@ -50,6 +50,9 @@ public class HUD extends Sprite
 
     public function shutdown () :void
     {
+        if (_lanternia.visible) {
+            removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
+        }
     }
 
     override public function hitTestPoint (
@@ -63,15 +66,15 @@ public class HUD extends Sprite
         _hud = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
         _hud.x = 10; // damn scrollbar
         _hud.y = 0;
-        this.addChild(_hud);
 
         DisplayUtil.findInHierarchy(_hud, LANTERN).addEventListener(MouseEvent.CLICK, lanternClick);
         DisplayUtil.findInHierarchy(_hud, HELP).addEventListener(MouseEvent.CLICK, helpClick);
         DisplayUtil.findInHierarchy(_hud, LOOT).addEventListener(MouseEvent.CLICK, lootClick);
 
         _lanternia = new Sprite();
+        _lanternia.mouseChildren = false;
         _lanternia.visible = false;
-        this.addChild(_lanternia);
+        addChild(_lanternia);
 
         _dimBack = new Sprite();
         _dimBack.blendMode = BlendMode.LAYER;
@@ -97,28 +100,30 @@ public class HUD extends Sprite
         ghost.mask = _maskLayer;
         ghost.x = 300;
         ghost.y = 0;
+
+        // add the HUD last so it overrides all the other complicated nonsense
+        addChild(_hud);
     }
 
     protected function lanternClick (evt :Event) :void
     {
         if (_lanternia.visible) {
-            this.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
+            removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
             _lanternia.visible = false;
 
         } else {
-            this.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+            addEventListener(Event.ENTER_FRAME, handleEnterFrame);
             _lanternia.visible = true;
         }
     }
 
     protected function propertyChanged (event: AVRGameControlEvent) :void
     {
-        Log.getLog(HUD).debug("propchange event: " + event);
         if (event.name == "fl") {
             var bits :Array = event.value as Array;
             if (bits != null) {
                 var playerId :int = int(bits[0]);
-                if (_control.isPlayerHere(playerId)) {
+                if ((DEBUG || playerId != _myId) && _control.isPlayerHere(playerId)) {
                     // flash light update from a local player
                     if (bits.length == 1) {
                         // someone turned theirs off
@@ -172,8 +177,6 @@ public class HUD extends Sprite
 
     protected function helpClick (evt :Event) :void
     {
-        _control.spawnMob("ghost");
-
         Log.getLog(HUD).debug("Whee, button clicked: " + evt);
     }
 
@@ -188,6 +191,17 @@ public class HUD extends Sprite
 
         animateGhost();
 
+        // if so transform the mouse position to room coordinates
+        var p :Point = new Point(Math.max(0, Math.min(_width, _lanternia.mouseX)),
+                                 Math.max(0, Math.min(_height, _lanternia.mouseY)));
+        p = _lanternia.localToGlobal(p);
+        p = _control.stageToRoom(p);
+
+        // bow to reality: nobody wants to watch roundtrip lag in action
+        if (!DEBUG) {
+            updateFlashLight(_myId, p);
+        }
+
         // see if it's time to send an update on our own position
         _ticker ++;
         if (_ticker < FRAMES_PER_UPDATE) {
@@ -195,13 +209,7 @@ public class HUD extends Sprite
         }
         _ticker = 0;
 
-        // if so transform the mouse position to room coordinates
-        var p :Point = new Point(Math.max(0, Math.min(_width, this.mouseX)),
-                                 Math.max(0, Math.min(_height, this.mouseY)));
-        p = this.localToGlobal(p);
-        p = _control.stageToRoom(p);
-
-        // and off it goes!
+        // off it goes!
         _control.state.setProperty("fl", [ _myId, p.x, p.y ], false);
     }
 
@@ -236,7 +244,7 @@ public class HUD extends Sprite
     protected var _lightLayer :Sprite;
     protected var _maskLayer :Sprite;
 
-    protected static const FRAMES_PER_UPDATE :int = 4;
+    protected static const FRAMES_PER_UPDATE :int = 6;
 
     protected static const LANTERN :String = "lanternbutton";
     protected static const HELP :String = "helpbutton";
@@ -244,6 +252,8 @@ public class HUD extends Sprite
 
     [Embed(source="../../rsrc/HUD_visual.swf", mimeType="application/octet-stream")]
     protected static const HUD_VISUAL :Class;
+
+    protected static const DEBUG :Boolean = false;
 }
 }
 
