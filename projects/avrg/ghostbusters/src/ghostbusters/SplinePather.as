@@ -1,0 +1,70 @@
+//
+// $Id$
+
+package ghostbusters {
+
+import flash.geom.Point;
+
+import com.threerings.flash.path.HermiteFunc;
+
+public class SplinePather
+{
+    public function SplinePather (frames :int)
+    {
+        _frames = frames;
+    }
+
+    public function get t () :Number
+    {
+        return _frame / _frames;
+    }
+
+    public function get x () :Number
+    {
+        return _xFun != null ? _xFun.getValue(t) : 0;
+    }
+
+    public function get xDot () :Number
+    {
+        return _xFun != null ? _xFun.getSlope(t) : 0;
+    }
+
+    public function get y () :Number
+    {
+        return _yFun != null ? _yFun.getValue(t) : 0;
+    }
+
+    public function get yDot () :Number
+    {
+        return _yFun != null ? _yFun.getSlope(t) : 0;
+    }
+
+    public function nextFrame () :void
+    {
+        if (_frame < _frames) {
+            _frame ++;
+        }
+    }
+
+    public function newTarget (p :Point, smooth :Boolean) :void
+    {
+        var wX :Number, wY :Number;
+        if (smooth) {
+            wX = xDot;
+            wY = yDot;
+        } else {
+            wX = (p.x - this.x) / (_frames / 30);
+            wY = (p.y - this.y) / (_frames / 30);
+        }
+        _xFun = new HermiteFunc(this.x, p.x, wX, 0);
+        _yFun = new HermiteFunc(this.y, p.y, wY, 0);
+        _frame = 0;
+    }
+
+    protected var _frame :int;
+    protected var _frames :int;
+
+    protected var _xFun :HermiteFunc;
+    protected var _yFun :HermiteFunc;
+}
+}

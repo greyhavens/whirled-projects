@@ -96,11 +96,11 @@ public class HUD extends Sprite
         _maskLayer = new Sprite();
         _lanternia.addChild(_maskLayer);
 
-        var ghost :Ghost = new Ghost();
-        _lanternia.addChild(ghost);
-        ghost.mask = _maskLayer;
-        ghost.x = 300;
-        ghost.y = 0;
+        _ghost = new Ghost(_control.getRoomId());
+        _lanternia.addChild(_ghost);
+        _ghost.mask = _maskLayer;
+        _ghost.x = 300;
+        _ghost.y = 0;
 
         // add the HUD last so it overrides all the other complicated nonsense
         addChild(_hud);
@@ -168,7 +168,7 @@ public class HUD extends Sprite
         }
 
         // else just set our aim for p
-        lantern.newTarget(p);
+        lantern.newTarget(p, false);
     }
 
     protected function ghostVanished (id :String) :void
@@ -190,7 +190,7 @@ public class HUD extends Sprite
     {
         animateLanterns();
 
-        animateGhost();
+        _ghost.nextFrame();
 
         // if so transform the mouse position to room coordinates
         var p :Point = new Point(Math.max(0, Math.min(_width, _lanternia.mouseX)),
@@ -226,10 +226,6 @@ public class HUD extends Sprite
         }
     }
 
-    protected function animateGhost () :void
-    {
-    }
-
     protected var _control :AVRGameControl;
     protected var _myId :int;
 
@@ -240,6 +236,7 @@ public class HUD extends Sprite
     protected var _lanterns :Dictionary = new Dictionary();
 
     protected var _hud :MovieClip;
+    protected var _ghost :Ghost;
 
     protected var _ticker :int;
 

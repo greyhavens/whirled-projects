@@ -29,7 +29,7 @@ public class Ghostbusters extends Sprite
 {
     public function Ghostbusters ()
     {
-        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
 
@@ -132,7 +132,8 @@ public class Ghostbusters extends Sprite
 
     protected function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
     {
-        return _ghost;
+//        return _ghost;
+        return null;
     }
 
     protected var _control :AVRGameControl;
@@ -141,8 +142,6 @@ public class Ghostbusters extends Sprite
     protected var _box :Box;
 
     protected var _splash :MovieClip = MovieClip(new SPLASH());
-
-    protected var _ghost :Ghost = new Ghost();
 
     [Embed(source="../../rsrc/splash01.swf")]
     protected static const SPLASH :Class;

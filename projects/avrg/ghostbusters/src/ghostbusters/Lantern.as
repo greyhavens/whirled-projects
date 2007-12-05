@@ -11,22 +11,21 @@ import flash.filters.GlowFilter;
 
 import flash.geom.Point;
 
-import com.threerings.flash.path.HermiteFunc;
-
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 
-public class Lantern
+public class Lantern extends SplinePather
 {
     public static const FRAMES_PER_SPLINE :int = 8;
 
     public var light :Sprite;
     public var hole :Sprite;
     public var mask :Sprite;
-    public var frame :int;
 
     public function Lantern (playerId :int, p :Point)
     {
+        super(FRAMES_PER_SPLINE);
+
         _random = new Random(playerId);
 
         // pick out a colour for this player
@@ -62,58 +61,12 @@ public class Lantern
         mask.y = p.y;
     }
 
-    public function get t () :Number
+    override public function nextFrame () :void
     {
-        return frame / FRAMES_PER_SPLINE;
-    }
+        super.nextFrame();
 
-    public function get x () :Number
-    {
-        return _xFun != null ? _xFun.getValue(t) : 0;
-    }
-
-    public function get dX () :Number
-    {
-        return _xFun != null ? _xFun.getSlope(t) : 0;
-    }
-
-    public function get y () :Number
-    {
-        return _yFun != null ? _yFun.getValue(t) : 0;
-    }
-
-    public function get dY () :Number
-    {
-        return _yFun != null ? _yFun.getSlope(t) : 0;
-    }
-
-    public function newTarget (p :Point) :void
-    {
-        if (p != null) {
-            var wX :Number = (p.x - light.x) / (FRAMES_PER_SPLINE / 30);
-            var wY :Number = (p.y - light.y) / (FRAMES_PER_SPLINE / 30);
-            _xFun = new HermiteFunc(light.x, p.x, wX, 0);
-            _yFun = new HermiteFunc(light.y, p.y, wY, 0);
-            frame = 0;
-
-        } else {
-            _xFun = _yFun = null;
-        }
-    }
-
-    public function nextFrame () :void
-    {
-        if (_xFun != null) {
-            frame ++;
-
-            light.x = hole.x = mask.x = x;
-            light.y = hole.y = mask.y = y;
-
-            if (frame == FRAMES_PER_SPLINE) {
-                // stop animating if we're done
-                _xFun = _yFun = null;
-            }
-        }
+        light.x = hole.x = mask.x = this.x;
+        light.y = hole.y = mask.y = this.y;
     }
 
     protected function getLanternHole () :Sprite
@@ -156,7 +109,5 @@ public class Lantern
     }
 
     protected var _random :Random;
-    protected var _xFun :HermiteFunc;
-    protected var _yFun :HermiteFunc;
 }
 }
