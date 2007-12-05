@@ -82,7 +82,7 @@ public class HUD extends Sprite
 
         _dimFront = new Sprite();
 
-        var g Graphics = _dimFront.graphics;
+        var g :Graphics = _dimFront.graphics;
         g.beginFill(0x000000);
         g.drawRect(0, 0, 2000, 1000);
         g.endFill();
@@ -158,7 +158,7 @@ public class HUD extends Sprite
 
         if (!lantern) {
             // a new lantern just appears, no splines involved
-            lantern = new Lantern(p);
+            lantern = new Lantern(playerId, p);
             _lanterns[playerId] = lantern;
 
             _maskLayer.addChild(lantern.mask);

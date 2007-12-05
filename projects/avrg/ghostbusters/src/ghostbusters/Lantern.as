@@ -4,6 +4,7 @@
 package ghostbusters {
 
 import flash.display.BlendMode;
+import flash.display.Graphics;
 import flash.display.Sprite;
 
 import flash.filters.GlowFilter;
@@ -11,6 +12,9 @@ import flash.filters.GlowFilter;
 import flash.geom.Point;
 
 import com.threerings.flash.path.HermiteFunc;
+
+import com.threerings.util.Log;
+import com.threerings.util.Random;
 
 public class Lantern
 {
@@ -21,9 +25,36 @@ public class Lantern
     public var mask :Sprite;
     public var frame :int;
 
-    public function Lantern (p :Point)
+    public function Lantern (playerId :int, p :Point)
     {
-        light = getLanternLight();
+        _random = new Random(playerId);
+
+        // pick out a colour for this player
+        var r :int = _random.nextInt(256);
+        var g :int = _random.nextInt(256);
+        var b :int = _random.nextInt(256);
+
+        var max :int = Math.max(r, g, b);
+
+        Log.getLog(Lantern).debug("r, g, b: " + r + ", " + g + ", " + b);
+
+        // max out its HSV value
+        r *= 255/max;
+        g *= 255/max;
+        b *= 255/max;
+
+        Log.getLog(Lantern).debug("r, g, b: " + r + ", " + g + ", " + b);
+
+        // and make sure it's reasonably saturated
+        var min :int = Math.min(r, g, b);
+        if (min > 64) {
+            r = 4 * (r - 64) / 3;
+            g = 4 * (g - 64) / 3;
+            b = 4 * (b - 64) / 3;
+        }
+        Log.getLog(Lantern).debug("r, g, b: " + r + ", " + g + ", " + b);
+
+        light = getLanternLight((r << 16) + (g << 8) + b);
         light.x = p.x;
         light.y = p.y;
 
@@ -103,14 +134,14 @@ public class Lantern
         return hole;
     }
 
-    protected function getLanternLight () :Sprite
+    protected function getLanternLight (colour :int) :Sprite
     {
         var photons :Sprite = new Sprite();
         photons.alpha = 0.2;
-        photons.filters = [ new GlowFilter(0xFF0000, 1, 32, 32, 2) ];
+        photons.filters = [ new GlowFilter(colour, 1, 32, 32, 2) ];
 
         var g :Graphics = photons.graphics;
-        g.beginFill(0xFF0000);
+        g.beginFill(colour);
         g.drawCircle(0, 0, 40);
         g.endFill();
 
@@ -129,6 +160,7 @@ public class Lantern
         return mask;
     }
 
+    protected var _random :Random;
     protected var _xFun :HermiteFunc;
     protected var _yFun :HermiteFunc;
 }
