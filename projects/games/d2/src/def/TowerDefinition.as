@@ -31,6 +31,7 @@ public class TowerDefinition
     public var animationRight :Class;
     public var animationUp :Class;
     public var animationDown :Class;
+    public var button :Class;
 
     public var missileSpeed :Number;
     public var missileDamage :Number;

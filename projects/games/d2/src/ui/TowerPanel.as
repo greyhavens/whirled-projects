@@ -6,6 +6,7 @@ import flash.events.MouseEvent;
 import flash.ui.Mouse;
 
 import mx.containers.BoxDirection;
+import mx.containers.Canvas;
 import mx.containers.Tile;
 import mx.containers.TitleWindow;
 import mx.containers.HBox;
@@ -59,15 +60,25 @@ public class TowerPanel extends TitleWindow
         addEventListener(MouseEvent.MOUSE_OVER, handleMouseOver);
         addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
 
+        var makeClickFn :Function = function (tdef :TowerDefinition) :Function {
+            return function (event :MouseEvent) :void {
+                _game.setCursorType(tdef.typeName);
+            }
+        };
+        
         var towers :Array = _board.getAvailableTowers();
         towers.forEach(function(tdef :TowerDefinition, i :int, a :Array) :void {
-                var b :Button = new Button();
-                b.styleName = tdef.buttonStyleName;
-                b.id = String(i);
+                var b :* = new tdef.button();
                 b.addEventListener(MouseEvent.MOUSE_OVER, makeDescriptionFn(tdef));
                 b.addEventListener(MouseEvent.MOUSE_OUT, makeDescriptionFn(null));
-                b.addEventListener(MouseEvent.CLICK, handleTowerClick);
-                _buttons.addChild(b);
+                b.addEventListener(MouseEvent.CLICK, makeClickFn(tdef));
+
+                // now wrap it in a special container, so that we can add it to flex
+                var c :Canvas = new Canvas();
+                c.rawChildren.addChild(b);
+                c.width = b.width;
+                c.height = b.height;
+                _buttons.addChild(c);
             });
 
     }
@@ -108,12 +119,6 @@ public class TowerPanel extends TitleWindow
     {
     }
     
-    protected function handleTowerClick (event :MouseEvent) :void
-    {
-        var tdef :TowerDefinition = _board.getAvailableTowers()[int(event.target.id)];
-        _game.setCursorType(tdef.typeName);
-    }
-
     /** Makes a mouse over handler that will display an appropriate tower description. */
     protected function makeDescriptionFn (tdef :TowerDefinition) :Function
     {
