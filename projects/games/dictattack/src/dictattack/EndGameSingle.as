@@ -17,8 +17,7 @@ public class EndGameSingle extends Dialog
     {
         super(ctx);
 
-        var points :Array = (_ctx.control.get(Model.POINTS) as Array);
-        var mypoints :int = points[_ctx.control.seating.getMyPosition()];
+        var mypoints :int = (_ctx.control.get(Model.POINTS) as Array)[0];
         var view :MovieClip = _ctx.content.createGameOverSingle();
 
         setText(view, "final_score", ""+mypoints);
@@ -43,12 +42,14 @@ public class EndGameSingle extends Dialog
 
         setContent(view);
 
-        var restart :SimpleButton = _ctx.content.makeButton("Play Again");
-        restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            _ctx.view.clearOverView();
-            _ctx.control.playerReady();
-        });
-        addButton(restart, LEFT);
+        if (_ctx.control.seating.getMyPosition() >= 0) {
+            var restart :SimpleButton = _ctx.content.makeButton("Play Again");
+            restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+                    _ctx.view.clearOverView();
+                    _ctx.control.playerReady();
+                });
+            addButton(restart, LEFT);
+        }
 
         var leave :SimpleButton = _ctx.content.makeButton("To Whirled");
         leave.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {

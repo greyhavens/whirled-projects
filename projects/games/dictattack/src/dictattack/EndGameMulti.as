@@ -47,12 +47,14 @@ public class EndGameMulti extends Dialog
         });
         setContent(view);
 
-        var restart :SimpleButton = _ctx.content.makeButton("Rematch");
-        restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            _ctx.view.clearOverView();
-            _ctx.control.playerReady();
-        });
-        addButton(restart, LEFT);
+        if (_ctx.control.seating.getMyPosition() >= 0) {
+            var restart :SimpleButton = _ctx.content.makeButton("Rematch");
+            restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+                    _ctx.view.clearOverView();
+                    _ctx.control.playerReady();
+                });
+            addButton(restart, LEFT);
+        }
 
         var leave :SimpleButton = _ctx.content.makeButton("To Whirled");
         leave.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {

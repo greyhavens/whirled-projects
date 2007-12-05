@@ -111,107 +111,23 @@ public class DictionaryAttack extends Sprite
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
         roundDidEnd(event);
+
         _ctx.model.gameDidEnd();
+        // _flowAward is set via a FLOW_AWARDED event that precedes the GAME_ENDED event
+        _ctx.view.gameDidEnd(_flowAward);
 
-        // note our score in non-multiplayer games
-        if (!_ctx.model.isMultiPlayer()) {
-            var points :Array = (_ctx.control.get(Model.POINTS) as Array);
-            var mypoints :int = points[_ctx.control.seating.getMyPosition()];
+        // if we were not a player, stop here
+        var myidx :int = _ctx.control.seating.getMyPosition();
+        if (myidx < 0) {
+            return;
+        }
 
-            // update our personal high scores
-            if (_cookie != null) {
-                var hiscores :Array = _cookie["highscores"] as Array;
-                if (hiscores == null) {
-                    hiscores = new Array();
-                }
-
-                // add our score onto the list, sort it and prune it
-                hiscores.push([ points, new Date().getTime() ]);
-                hiscores.sort(function (one :Array, two :Array) :int {
-                    return int(two[0]) - int(one[0]);
-                });
-                _cookie["highscores"] = hiscores.slice(0, Math.min(hiscores.length, MAX_HISCORES));
-
-                // update our highscore display and save our high score
-                _ctx.view.gotUserCookie(_cookie);
-                if (!_ctx.control.setUserCookie(_cookie)) {
-                    Log.getLog(this).warning("Failed to save cookie " + _cookie + ".");
-                }
-            }
-
-            // check for total score related trophies
-            for each (var score :int in SCORE_AWARDS) {
-                if (mypoints > score && !_ctx.control.holdsTrophy("score_over_" + score)) {
-                    _ctx.control.awardTrophy("score_over_" + score);
-                    break;
-                }
-            }
-
-            // check for consecutive score related trophies
-            for each (var cdata :Array in CONSECUTIVE_POINTS) {
-                if (_ctx.model.checkConsecutivePoints(int(cdata[0]), int(cdata[1]))) {
-                    _ctx.control.awardTrophy("consec_points_" + cdata[0] + "_" + cdata[1]);
-                    break;
-                }
-            }
-
-            // check for timed score trophies
-            if (!_ctx.model.getEndedEarly()) {
-                for each (var adata :Array in TIMED_AWARDS) {
-                    var ascore :int = int(adata[0]);
-                    var aseconds :int = int(adata[1]);
-                    var tname :String = ascore + "_in_" + aseconds;
-                    if (int(_ctx.model.getGameDuration() / 1000) <= aseconds &&
-                        mypoints > ascore && !_ctx.control.holdsTrophy(tname)) {
-                        _ctx.control.awardTrophy(tname);
-                        break;
-                    }
-                }
-            }
-
-            // check for perfect clear trophies
-            switch (_ctx.model.unusedLetters()) {
-            case 0:
-                _ctx.control.awardTrophy("perfect_vacuum");
-                break;
-            case 1:
-                _ctx.control.awardTrophy("near_vacuum");
-                break;
-            }
-
-            // check for long word only trophies
-            if (!_ctx.model.getEndedEarly()) {
-                var wlengths :Array = _ctx.model.getWordCountsByLength();
-                var wcount :int = 0;
-                for (var ll :int = _ctx.model.getMinWordLength(); ll <= MAX_BYLENGTH_LENGTH; ll++) {
-                    if (ll >= MIN_BYLENGTH_LENGTH && wcount == 0) {
-                        _ctx.control.awardTrophy("all_length_" + ll);
-                    }
-                    wcount += int(wlengths[ll]);
-                }
-            }
-
-            // check for special trophies
-            var perfectClear :Boolean = (_ctx.model.nonEmptyColumns() == 0);
-            if (perfectClear && _ctx.model.getNotOnBoardPlays() == 0) {
-                _ctx.control.awardTrophy("no_not_on_board");
-            }
-            if (perfectClear && _ctx.model.getNotInDictPlays() == 0) {
-                _ctx.control.awardTrophy("no_not_in_dict");
-            }
-            if (_ctx.model.playedWord("dictionary") && _ctx.model.playedWord("attack")) {
-                _ctx.control.awardTrophy("dictionary_attack");
-            }
-            if (_ctx.model.playedWord("three") && _ctx.model.playedWord("rings")) {
-                _ctx.control.awardTrophy("three_rings");
-            }
-
-        } else {
-            // check for multiplayer trophies
+        // check for multiplayer trophies
+        if (_ctx.model.isMultiPlayer()) {
             var scores :Array = (_ctx.control.get(Model.SCORES) as Array);
-            var myscore :int = scores[_ctx.control.seating.getMyPosition()], oscores :int = 0;
+            var myscore :int = scores[myidx], oscores :int = 0;
             for (var pidx :int = 0; pidx < scores.length; pidx++) {
-                if (pidx != _ctx.control.seating.getMyPosition()) {
+                if (pidx != myidx) {
                     oscores += int(scores[pidx]);
                 }
             }
@@ -220,10 +136,100 @@ public class DictionaryAttack extends Sprite
             if (oscores == 0 && myscore > 0) {
                 _ctx.control.awardTrophy("multi_sweep_" + scores.length);
             }
+            return;
         }
 
-        // _flowAward is set via a FLOW_AWARDED event that precedes the GAME_ENDED event
-        _ctx.view.gameDidEnd(_flowAward);
+        // in single player games we update high scores and award trophies
+        var points :Array = (_ctx.control.get(Model.POINTS) as Array);
+        var mypoints :int = points[myidx];
+
+        // update our personal high scores
+        if (_cookie != null) {
+            var hiscores :Array = _cookie["highscores"] as Array;
+            if (hiscores == null) {
+                hiscores = new Array();
+            }
+
+            // add our score onto the list, sort it and prune it
+            hiscores.push([ points, new Date().getTime() ]);
+            hiscores.sort(function (one :Array, two :Array) :int {
+                return int(two[0]) - int(one[0]);
+            });
+            _cookie["highscores"] = hiscores.slice(0, Math.min(hiscores.length, MAX_HISCORES));
+
+            // update our highscore display and save our high score
+            _ctx.view.gotUserCookie(_cookie);
+            if (!_ctx.control.setUserCookie(_cookie)) {
+                Log.getLog(this).warning("Failed to save cookie " + _cookie + ".");
+            }
+        }
+
+        // check for total score related trophies
+        for each (var score :int in SCORE_AWARDS) {
+            if (mypoints > score && !_ctx.control.holdsTrophy("score_over_" + score)) {
+                _ctx.control.awardTrophy("score_over_" + score);
+                break;
+            }
+        }
+
+        // check for consecutive score related trophies
+        for each (var cdata :Array in CONSECUTIVE_POINTS) {
+            if (_ctx.model.checkConsecutivePoints(int(cdata[0]), int(cdata[1]))) {
+                _ctx.control.awardTrophy("consec_points_" + cdata[0] + "_" + cdata[1]);
+                break;
+            }
+        }
+
+        // check for timed score trophies
+        if (!_ctx.model.getEndedEarly()) {
+            for each (var adata :Array in TIMED_AWARDS) {
+                var ascore :int = int(adata[0]);
+                var aseconds :int = int(adata[1]);
+                var tname :String = ascore + "_in_" + aseconds;
+                if (int(_ctx.model.getGameDuration() / 1000) <= aseconds &&
+                    mypoints > ascore && !_ctx.control.holdsTrophy(tname)) {
+                    _ctx.control.awardTrophy(tname);
+                    break;
+                }
+            }
+        }
+
+        // check for perfect clear trophies
+        switch (_ctx.model.unusedLetters()) {
+        case 0:
+            _ctx.control.awardTrophy("perfect_vacuum");
+            break;
+        case 1:
+            _ctx.control.awardTrophy("near_vacuum");
+            break;
+        }
+
+        // check for long word only trophies
+        if (!_ctx.model.getEndedEarly()) {
+            var wlengths :Array = _ctx.model.getWordCountsByLength();
+            var wcount :int = 0;
+            for (var ll :int = _ctx.model.getMinWordLength(); ll <= MAX_BYLENGTH_LENGTH; ll++) {
+                if (ll >= MIN_BYLENGTH_LENGTH && wcount == 0) {
+                    _ctx.control.awardTrophy("all_length_" + ll);
+                }
+                wcount += int(wlengths[ll]);
+            }
+        }
+
+        // check for special trophies
+        var perfectClear :Boolean = (_ctx.model.nonEmptyColumns() == 0);
+        if (perfectClear && _ctx.model.getNotOnBoardPlays() == 0) {
+            _ctx.control.awardTrophy("no_not_on_board");
+        }
+        if (perfectClear && _ctx.model.getNotInDictPlays() == 0) {
+            _ctx.control.awardTrophy("no_not_in_dict");
+        }
+        if (_ctx.model.playedWord("dictionary") && _ctx.model.playedWord("attack")) {
+            _ctx.control.awardTrophy("dictionary_attack");
+        }
+        if (_ctx.model.playedWord("three") && _ctx.model.playedWord("rings")) {
+            _ctx.control.awardTrophy("three_rings");
+        }
     }
 
     protected function handleUnload (event :Event) :void
