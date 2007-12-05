@@ -50,6 +50,8 @@ public class Model
         // if we're already in play, load up the board immediately
         if (_ctx.control.isConnected() && _ctx.control.isInPlay()) {
             gotBoard();
+            gameDidStart();
+            roundDidStart();
         }
     }
 

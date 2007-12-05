@@ -241,7 +241,9 @@ public class GameView extends Sprite
         _input.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
         _input.removeEventListener(Event.CHANGE, textChanged);
         focusInput(false);
-        removeChild(_inputBox);
+        if (_inputBox != null) {
+            removeChild(_inputBox);
+        }
     }
 
     public function gameDidEnd (flow :int) :void
@@ -409,6 +411,9 @@ public class GameView extends Sprite
 
     protected function handleLetterChange (data :Array) :void
     {
+        if (_ctx.control.seating.getMyPosition() < 0) {
+            return; // do nothing if we're an observer
+        }
         var pidx :int = _ctx.control.seating.getPlayerPosition(int(data[0]));
         var xx :int = _ctx.model.getReverseX(int(data[1]));
         var yy :int = _ctx.model.getReverseY(int(data[1]));
