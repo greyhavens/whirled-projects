@@ -268,7 +268,7 @@ public class ShipSprite extends Sprite
      */
     public function isAlive () :Boolean
     {
-        return power > DEAD;
+        return power > DEAD && _game.gameState != Codes.POST_ROUND;
     }
 
     /**
@@ -381,22 +381,7 @@ public class ShipSprite extends Sprite
 
     public function kill () :void
     {
-        // Turn off sound loops.
-        if (_thrusterForward != null) {
-            _thrusterForward.stop();
-        }
-        if (_thrusterReverse != null) {
-            _thrusterReverse.stop();
-        }
-
-        if (_shieldSound != null) {
-            _shieldSound.stop();
-        }
-
-        if (_engineSound != null) {
-            _engineSound.stop();
-        }
-
+        stopSounds();
         setVisible(false);
 
         if (_isOwnShip) {
@@ -706,7 +691,7 @@ public class ShipSprite extends Sprite
      */
     public function awardPowerup (powerup :Powerup) :void
     {
-        _game.addScore(POWERUP_PTS);
+        _game.addScore(shipId, POWERUP_PTS);
         _game.playSoundAt(powerup.sound(), powerup.bX, powerup.bY);
         if (powerup.type == Powerup.HEALTH) {
             power = Math.min(1.0, power + 0.5);
@@ -834,6 +819,31 @@ public class ShipSprite extends Sprite
         bytes.writeBoolean(visible);
 
         return bytes;
+    }
+
+    protected function handleUnload (... ignored) :void
+    {
+        stopSounds();
+    }
+
+    public function stopSounds () :void
+    {
+        // Turn off sound loops.
+        if (_thrusterForward != null) {
+            _thrusterForward.stop();
+        }
+        if (_thrusterReverse != null) {
+            _thrusterReverse.stop();
+        }
+
+        if (_shieldSound != null) {
+            _shieldSound.stop();
+        }
+
+        if (_engineSound != null) {
+            _engineSound.stop();
+        }
+
     }
 
     /** The board we inhabit. */

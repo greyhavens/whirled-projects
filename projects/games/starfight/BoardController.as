@@ -49,6 +49,8 @@ public class BoardController
             readBoard(boardBytes);
         } else if (_gameCtrl.amInControl()) {
             create();
+        } else {
+            Logger.log("No board and not in control");
         }
     }
 
@@ -95,7 +97,7 @@ public class BoardController
         loadObstacles();
         var maxPowerups :int = Math.max(1, width * height / MIN_TILES_PER_POWERUP);
         _powerups = new Array(maxPowerups);
-        _mines = new Array();
+        _mines = new Array(1);
 
         if (_gameCtrl.isConnected()) {
             _gameCtrl.doBatch(function () :void {
@@ -105,7 +107,7 @@ public class BoardController
                             _obstacles[ii].writeTo(new ByteArray()), ii);
                 }
                 _gameCtrl.setImmediate("powerup", new Array(_powerups.length));
-                _gameCtrl.setImmediate("mines", new Array());
+                _gameCtrl.setImmediate("mines", new Array(1));
                 _gameCtrl.setImmediate("board", writeTo(new ByteArray()));
             });
         }
