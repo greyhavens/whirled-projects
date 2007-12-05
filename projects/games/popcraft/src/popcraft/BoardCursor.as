@@ -9,6 +9,9 @@ import flash.display.InteractiveObject;
 import flash.display.Shape;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import core.tasks.SerialTask;
+import core.tasks.TimedTask;
+import core.tasks.FunctionTask;
 
 public class BoardCursor extends AppObject
 {
@@ -37,24 +40,60 @@ public class BoardCursor extends AppObject
     protected function rollOut (evt :MouseEvent) :void
     {
         _sprite.visible = false;
+        _mouseIsDown = false;
+        _noSwapOnNextClick = false;
+
     }
 
     protected function rollOver (evt :MouseEvent) :void
     {
         _sprite.visible = true;
         repositionOnBoard(evt.localX, evt.localY);
+        _mouseIsDown = false;
+        _noSwapOnNextClick = false;
     }
 
     protected function mouseMove (evt :MouseEvent) :void
     {
+        var originalIndexX :int = _indexX;
+        var originalIndexY :int = _indexY;
+
         repositionOnBoard(evt.localX, evt.localY);
+
+        if (_mouseIsDown && (originalIndexX != _indexX || originalIndexY != _indexY)) {
+            this.removeNamedTasks("pieceClearTimer");
+            _noSwapOnNextClick = true;
+        }
     }
 
     protected function mouseDown (evt :MouseEvent) :void
     {
-        // ensure that we're correctly position on the board
-        //repositionOnBoard(_sprite.mouseX, _sprite.mouseY);
-        _board.swapPieces(_indexX, _indexY, _indexX + 1, _indexY);
+        // install the pieceClearTimer. If it expires before the next mouseUp, the pieces will be cleared.
+        this.addNamedTask("pieceClearTimer",
+            new SerialTask(
+                new TimedTask(GameConstants.PIECE_CLEAR_TIMER_LENGTH),
+                new FunctionTask(clearTimerExpired)));
+
+        _mouseIsDown = true;
+        _noSwapOnNextClick = false;
+    }
+
+    protected function mouseClick (evt :MouseEvent) :void
+    {
+        if (!_noSwapOnNextClick) {
+            _board.swapPieces(_indexX, _indexY, _indexX + 1, _indexY);
+            this.removeNamedTasks("pieceClearTimer");
+            _mouseIsDown = false;
+        }
+
+        _noSwapOnNextClick = false;
+    }
+
+    protected function clearTimerExpired () :void
+    {
+        //trace("clearTimerExpired");
+        _board.beginClearSection(_indexX, _indexY);
+        _noSwapOnNextClick = true;
     }
 
     protected function repositionOnBoard (localX :Number, localY :Number) :void
@@ -83,6 +122,7 @@ public class BoardCursor extends AppObject
         _board.interactiveObject.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove, false, 0, true);
 
         _board.interactiveObject.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown, false, 0, true);
+        _board.interactiveObject.addEventListener(MouseEvent.CLICK, mouseClick, false, 0, true);
     }
 
     override public function removedFromMode (mode :AppMode) :void
@@ -91,6 +131,7 @@ public class BoardCursor extends AppObject
         _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OVER, rollOver);
         _board.interactiveObject.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
         _board.interactiveObject.removeEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+        _board.interactiveObject.removeEventListener(MouseEvent.CLICK, mouseClick);
     }
 
     protected var _board :PuzzleBoard;
@@ -98,6 +139,9 @@ public class BoardCursor extends AppObject
 
     protected var _indexX :int;
     protected var _indexY :int;
+
+    protected var _mouseIsDown :Boolean;
+    protected var _noSwapOnNextClick :Boolean;
 }
 
 }

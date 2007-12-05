@@ -12,7 +12,7 @@ public class Piece extends AppObject
 
         // draw a circle centered on (0, 0)
         _pieceSprite = new Shape();
-        _pieceSprite.graphics.beginFill(_resourceType);
+        _pieceSprite.graphics.beginFill(GameConstants.getResource(_resourceType).color);
         _pieceSprite.graphics.lineStyle(1, 0);
         _pieceSprite.graphics.drawEllipse(-GameConstants.BOARD_CELL_SIZE / 2, -GameConstants.BOARD_CELL_SIZE / 2, GameConstants.BOARD_CELL_SIZE, GameConstants.BOARD_CELL_SIZE);
         _pieceSprite.graphics.endFill();

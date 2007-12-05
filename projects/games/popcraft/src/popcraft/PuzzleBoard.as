@@ -39,8 +39,7 @@ public class PuzzleBoard extends AppObject
         _board = new Array(_cols * _rows);
         var i:int;
         for (i = 0; i < _cols * _rows; ++i) {
-            var resourceType :uint =
-                GameConstants.RESOURCE_TYPES[Rand.nextIntRange(0, GameConstants.RESOURCE_TYPES.length)];
+            var resourceType :uint = Rand.nextIntRange(0, GameConstants.RESOURCE_TYPES.length);
 
             var piece :Piece = new Piece(resourceType);
             piece.displayObject.x = getPieceXLoc(idxToX(i));
@@ -68,6 +67,16 @@ public class PuzzleBoard extends AppObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
+    }
+
+    public function beginClearSection (x :int, y :int) :void
+    {
+        var clearPieces :Array = findConnectedSimilarPieces(x, y);
+
+        for each (var piece :Piece in clearPieces) {
+            piece.addTask(ScaleTask.CreateSmooth(0, 0, 0.25));
+        }
+
     }
 
     public function swapPieces (x1 :int, y1 :int, x2 :int, y2 :int) :void
@@ -118,7 +127,7 @@ public class PuzzleBoard extends AppObject
         }
     }
 
-    public function findConnectedSimilarPieces (x :int, y :int) :ObjectSet
+    public function findConnectedSimilarPieces (x :int, y :int) :Array
     {
         var pieces :ObjectSet = new ObjectSet();
 
@@ -127,7 +136,7 @@ public class PuzzleBoard extends AppObject
             findConnectedSimilarPiecesInternal(x, y, thisPiece.resourceType, pieces);
         }
 
-        return pieces;
+        return pieces.toArray();
     }
 
     public function getPieceAt (x :int, y :int) :Piece
@@ -171,6 +180,8 @@ public class PuzzleBoard extends AppObject
     protected var _rows :int;
     protected var _cellSize :int;
     protected var _board :Array;
+
+    protected var _resolvingClears :Boolean;
 }
 
 }
