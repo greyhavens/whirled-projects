@@ -64,7 +64,7 @@ public class Main extends Canvas
         img.source = new BitmapAsset(mask);
         addChild(img);
         this.mask = img;
-
+        
         // frame handler for the fps display
         _counter = new Text();
         _counter.x = 5;

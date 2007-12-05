@@ -1,9 +1,10 @@
 package units {
 
 import flash.geom.Point;
+import mx.utils.ObjectUtil;
 
 import game.Board;
-//import game.Game;
+import game.Game;
 
 import def.TowerDefinition;
     
@@ -21,12 +22,12 @@ public class Tower extends Unit
     public var tdef :TowerDefinition;
 
     /** Game time when the tower will be able to fire again. */
-    protected var _nextFiringTime :Number = 0;
+    public var nextFiringTime :Number = 0;
 
     public function Tower (
-        board :Board, x :Number, y :Number, type :String, player :int, guid :int)
+        main :Main, board :Board, x :Number, y :Number, type :String, player :int, guid :int)
     {
-        super(board, player, x, y, 1, 1);
+        super(main, board, player, x, y, 1, 1);
         updateFromType(type);
     }
 
@@ -38,7 +39,7 @@ public class Tower extends Unit
     public function updateFromType (typeName :String) :void
     {
         // remember type
-        tdef = board.def.pack.findTower(typeName);
+        this.tdef = board.main.defs.findTower(typeName);
         if (tdef == null) {
             throw new Error("Unexpected tower type: " + typeName);
         }
@@ -52,46 +53,41 @@ public class Tower extends Unit
 
     /** Checks if the tower can fire at anything right now, and if so, returns a target critter;
      *  otherwise returns null. */
-/*
-    public function canFire (game :Game, gameTime :Number) :Critter
+    public function canFire (gameobj :Game, gameTime :Number) :Critter
     {
-        if (gameTime <= _nextFiringTime) {
+        if (gameTime <= nextFiringTime) {
             return null; // be patient
         }
         
-        return findTargetCritter(game);
+        return findTargetCritter(gameobj);
     }
-*/
     
     /** Creates a missile and fires it at the critter. */
-/*
-    public function fireAt (critter :Critter, game :Game, gameTime :Number) :void
+    public function fireAt (critter :Critter, gameobj :Game, gameTime :Number) :void
     {
         // got one, let's fire!
-        var missileType :int = UnitDefinitions.getMissileType(this.type);
-        var missile :Missile = new Missile(this, critter, missileType, player);
-        game.handleAddMissile(missile);
+        var missile :Missile = new Missile(main, board, this, critter, player);
+        gameobj.handleAddMissile(missile);
 
         // now cool down
-        _nextFiringTime = gameTime + pauseBetweenMissiles;
+        nextFiringTime = gameTime + pauseBetweenMissiles;
     }
-*/
     
     /** Returns a target critter within range, or null if none could be found. */
-/*
-    protected function findTargetCritter (game :Game) :Critter
+    protected function findTargetCritter (gameobj :Game) :Critter
     {
-        var singlePlayer :Boolean = game.isSinglePlayerGame();
-        var critters :Array = game.getCritters();
+        var critters :Array = gameobj.getCritters();
         for each (var critter :Critter in critters) {
-                var dx :Number = (centroidx - critter.centroidx) / Board.SQUARE_WIDTH;
-                var dy :Number = (centroidy - critter.centroidy) / Board.SQUARE_HEIGHT;
+                var dx :Number = (centroidx - critter.centroidx) / board.tileWidth;
+                var dy :Number = (centroidy - critter.centroidy) / board.tileHeight;
                 var dsquared :Number = dx * dx + dy * dy;
                 // check if distance is within range
-                if (dsquared >= rangeMinSq && dsquared <= rangeMaxSq) {
+                if (dsquared <= rangeMaxSq) {
                     // check ownership - for single player games, any critter will do,
                     // otherwise we have to make sure we're not shooting at our guys
-                    if (singlePlayer || critter.player != this.player) {
+                    if (main.isSinglePlayer ||
+                        critter.player != this.player)
+                    {
                         return critter;
                     }
                 }
@@ -99,22 +95,21 @@ public class Tower extends Unit
         
         return null;
     }
-*/
 
     public function serialize () :Object
     {
-        return { x: this.pos.x, y: this.pos.y, type: this.typeName,
+        return { x: this.pos.x, y: this.pos.y, typeName: this.typeName,
                 player: this.player, guid: this.guid };
     }
 
-    public static function deserialize (board :Board, obj :Object) :Tower
+    public static function deserialize (main :Main, board :Board, obj :Object) :Tower
     {
-        return new Tower(board, obj.x, obj.y, obj.typeName, obj.player, obj.guid);
+        return new Tower(main, board, obj.x, obj.y, obj.typeName, obj.player, obj.guid);
     }
 
     override public function toString () :String
     {
-        return typeName + super.toString();
+        return typeName + " " + super.toString();
     }
 }
 }

@@ -14,13 +14,14 @@ public class EnemyDefinition
     public var pack :PackDefinition;
     public var swf :EmbeddedSwfLoader;
 
-    public var id :String;
+    public var typeName :String;
     public var name :String;
     public var isFlying :Boolean;
     
     public var health :Number;
     public var speed :Number;
     public var powerup :Number;
+    public var points :Number;
 
     public var animationLeft :Class;
     public var animationRight :Class;
@@ -32,13 +33,14 @@ public class EnemyDefinition
         this.pack = pack;
         this.swf = swf;
 
-        this.id = enemy.@id;
+        this.typeName = enemy.@id;
         this.name = enemy.@name;
         this.isFlying = enemy.@isFlying;
 
         this.health = enemy.@health;
         this.speed = enemy.@speed;
         this.powerup = enemy.@powerup;
+        this.points = enemy.@points;
 
         for each (var anim :XML in enemy.animations.*) {
                 var prop :String = anim.name().localName;

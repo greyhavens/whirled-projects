@@ -34,6 +34,7 @@ public class TowerDefinition
 
     public var missileSpeed :Number;
     public var missileDamage :Number;
+    public var missileDelay :int;
     public var missileAnimations :Array; // of Class
     
     public function TowerDefinition (swf :EmbeddedSwfLoader, pack :PackDefinition, tower :XML)
@@ -60,7 +61,8 @@ public class TowerDefinition
 
         this.missileSpeed = tower.missiles.@maxvel;
         this.missileDamage = tower.missiles.@damage;
-
+        this.missileDelay = int(tower.missiles.@delay);
+        
         this.missileAnimations = new Array();
         for each (anim in tower..animation) {
                 this.missileAnimations.push(this.swf.getClass(anim));
@@ -71,7 +73,7 @@ public class TowerDefinition
     {
         return pack.name + ": " + typeName; 
     }
-    
+
     public function toString () :String
     {
         return "[Tower guid=" + guid + ", swf=" + swf + "]";

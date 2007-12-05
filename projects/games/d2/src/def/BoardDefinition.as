@@ -4,6 +4,8 @@ import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.geom.Point;
 
+import mx.utils.ObjectUtil;
+
 import com.threerings.util.EmbeddedSwfLoader;
 
 /**
@@ -25,6 +27,10 @@ public class BoardDefinition
     public var startingHealth :int;
     public var startingMoney :int;
 
+    public var availableTowers :Array; // of String, i.e. typeName of each tower
+    public var enemies :Array; // of WaveDefinition
+    public var allies :Array; // of WaveDefinition
+    
     public var towers :Array; // of TowerDef
     
     public function BoardDefinition (swf :EmbeddedSwfLoader, pack :PackDefinition, board :XML)
@@ -34,11 +40,15 @@ public class BoardDefinition
         
         this.name = board.@name;
 
+        // resolve display object references
+        
         var bgclass :Class = this.swf.getClass(board.@background);
         this.background = (new bgclass()) as DisplayObject;
 
         var bclass :Class = this.swf.getClass(board.@button);
         this.button = (new bclass()) as DisplayObject;
+
+        // copy over simple properties
         
         this.squares = new Point(int(board.squares.@cols), int(board.squares.@rows));
         this.pixelsize = new Point(int(board.pixelsize.@width), int(board.pixelsize.@height));
@@ -46,6 +56,34 @@ public class BoardDefinition
 
         this.startingHealth = board.@startingHealth;
         this.startingMoney = board.@startingMoney;
+
+        // figure out which towers are available
+
+        this.availableTowers = new Array();
+        for each (var tower :XML in board.availableTowers.tower) {
+                availableTowers.push(tower.@id);
+            }
+        
+        // unpack enemy and ally wave definitions
+
+        this.enemies = new Array();
+        for each (var wave :XML in board.singlePlayerEnemyWaves.wave) {
+            var elts :Array = new Array();
+            for each (var enemy :* in wave.enemy) {
+                elts.push(new WaveElementDefinition(enemy.@id, int(enemy.@count)));
+            }
+            enemies.push(elts);
+        }
+
+        this.allies = new Array();
+        for each (wave in board.twoPlayerAllies.wave) {
+            elts = new Array();
+            for each (enemy in wave.enemy) {
+                elts.push(new WaveElementDefinition(enemy.@id, int(enemy.@count)));
+            }
+            allies.push(elts);
+        }
+
     }
 
     public function get guid () :String

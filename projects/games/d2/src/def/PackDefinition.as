@@ -40,17 +40,28 @@ public class PackDefinition
     /** Finds an instance of TowerDefinition by type. Returns null in case of failure. */
     public function findTower (typeName :String) :TowerDefinition
     {
-        var result :TowerDefinition = null; 
-        towers.forEach(function (tower :TowerDefinition, ... etc) :void {
-                if (tower.typeName == typeName) {
-                    result = tower;
+        return findByTypeName(typeName, towers) as TowerDefinition;
+    }
+
+    /** Finds an instance of EnemyDefinition by type. Returns null in case of failure. */
+    public function findEnemy (typeName :String) :EnemyDefinition
+    {
+        return findByTypeName(typeName, enemies) as EnemyDefinition;
+    }
+
+    /** Find a definition by type name. */
+    protected function findByTypeName (typeName :String, defs :Array) :*
+    {
+        var result :* = null;
+        defs.forEach(function (elt :*, ... etc) :void {
+                if (elt.typeName == typeName) {
+                    result = elt;
                 }});
         return result;
     }
-
+    
     public function toString () :String
     {
-        return "[Pack name=" + name + ", boardCount=" + boards.length + "]";
-    }
+        return "[Pack name=" + name + ", boardCount=" + boards.length + "]";}
 }
 }

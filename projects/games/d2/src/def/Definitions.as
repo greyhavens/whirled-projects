@@ -49,6 +49,36 @@ public class Definitions
         return result;
     }
     
+    /**
+     * Finds an instance of EnemyDefinition by typeName, across all packs.
+     * Returns null in case of failure.
+     */
+    public function findEnemy (typeName :String) :EnemyDefinition
+    {
+        var result :EnemyDefinition = null; 
+        packs.forEach(function (pack :PackDefinition, ... etc) :void {
+                if (result == null) {
+                    result = pack.findEnemy(typeName);
+                }
+            });
+        return result;
+    }
+
+    /**
+     * Finds an instance of EnemyDefinition by typeName, across all packs.
+     * Returns null in case of failure.
+     */
+    public function findTower (typeName :String) :TowerDefinition
+    {
+        var result :TowerDefinition = null; 
+        packs.forEach(function (pack :PackDefinition, ... etc) :void {
+                if (result == null) {
+                    result = pack.findTower(typeName);
+                }
+            });
+        return result;
+    }
+
     /** Reads definitions from a single data pack, and stores them internally. */
     public function processPack (pack :DataPack) :void
     {

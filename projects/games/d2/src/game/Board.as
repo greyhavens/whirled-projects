@@ -3,6 +3,7 @@ package game {
 import flash.geom.Point;
 
 import def.BoardDefinition;
+import def.TowerDefinition;
 
 import units.Tower;
 
@@ -49,7 +50,9 @@ public class Board
         
     }
 
+    public function get main () :Main { return _main; }
     public function get def () :BoardDefinition { return _def; }
+    
     public function get columns () :int { return _def.squares.x; }
     public function get rows () :int { return _def.squares.y; }
     public function get boardWidth () :int { return _def.pixelsize.x; }
@@ -58,6 +61,21 @@ public class Board
     public function get tileHeight () :int { return int(boardHeight / rows); }
 
     public function get rounds () :int { return 1; } // todo: factor me out
+    public function get enemies () :Array { return _def.enemies };
+    public function get allies () :Array { return _def.allies };
+
+
+    public function getAvailableTowers () :Array // of TowerDefinition
+    {
+        if (_availableTowers == null) {
+            _availableTowers =
+                _def.availableTowers.map(function (typeName :String, ... etc) :TowerDefinition {
+                        return _def.pack.findTower(typeName);
+                    });
+        }
+
+        return _availableTowers;
+    }
     
     // from interface UnloadListener
     public function handleUnload () :void
@@ -181,5 +199,6 @@ public class Board
     /** Hash map of all towers, indexed by their id. */
     protected var _towers :HashMap = new HashMap();
 
+    protected var _availableTowers :Array; // of TowerDefinition
 }
 }

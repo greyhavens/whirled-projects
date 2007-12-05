@@ -91,7 +91,7 @@ public class Validator
     {
         trace("VALIDATOR: add request: " + event);
         if (_whirled.amInControl()) {
-            var tower :Tower = Tower.deserialize(_board, event.value);
+            var tower :Tower = Tower.deserialize(_main, _board, event.value);
 
             var money :Number = _whirled.get(Monitor.MONEY_SET, tower.player) as Number;
             if (money < tower.cost) {

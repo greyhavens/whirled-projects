@@ -8,23 +8,23 @@ import flash.utils.getTimer; // function import
 import spawners.AutoSpawner;
 import spawners.PlayerSpawner;
 import spawners.Spawner;
-import tuning.LevelDefinitions;
 
 import com.whirled.FlowAwardedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.defense.units.Critter;
-import com.threerings.defense.units.Missile;
-import com.threerings.defense.units.Tower;
-import com.threerings.defense.units.Unit;
 import com.threerings.util.ArrayUtil;
+
+import units.Critter;
+import units.Missile;
+import units.Tower;
+import units.Unit;
 
 public class Game
     implements UnloadListener
 {
     public static const ROUND_DELAY :int = 3;
     
-    public static const GAME_STATE_SPLASH :int = 1;
+    public static const GAME_STATE_INIT :int = 1;
     public static const GAME_STATE_PLAY :int = 2;
     public static const GAME_STATE_WAIT :int = 3;
     public static const GAME_STATE_DONE :int = 4;
@@ -41,9 +41,9 @@ public class Game
         _display.addEventListener(Event.ENTER_FRAME, handleGameTick);
 
         // initialize the cursor with dummy data - it will all get overwritten, eventually
-        _cursor = new Tower(0, 0, Tower.TYPE_SHRUB, _main.myIndex, 0);
+        _cursor = new Tower(main, board, 0, 0, "TYPE_SHRUB", _main.myIndex, 0);
 
-        _gamestate = GAME_STATE_SPLASH;
+        _gamestate = GAME_STATE_INIT;
 
         _towers = new Array();
         _critters = new Array();
@@ -60,7 +60,7 @@ public class Game
         _gamestate = value;
         _display.gameStateUpdated(oldvalue, value);
     }
-    
+
     public function handleUnload () : void
     {
         _display.removeEventListener(Event.ENTER_FRAME, handleGameTick);
@@ -70,8 +70,7 @@ public class Game
     /** Handles the start of a new game. */
     public function gameStarted (event :StateChangedEvent) :void
     {
-        var firstTowerType :int = LevelDefinitions.getLevelTowers(
-            _board.getPlayerCount(), _board.level.number)[0].key;
+        var firstTowerType :String = _board.def.availableTowers[0];
         setCursorType(firstTowerType);
         _display.gameStarted();
     }
@@ -116,7 +115,7 @@ public class Game
 
         _spawners = new Array(_main.playerCount);
         for (var ii :int = 0; ii < _main.playerCount; ii++) {
-            _spawners[ii] = new spawnerClass(this, _board.level, ii, _board.getPlayerSource(ii));
+            _spawners[ii] = new spawnerClass(_main, _board, this, ii, _board.getPlayerSource(ii));
         }
     }
 
@@ -267,7 +266,7 @@ public class Game
         
     public function handleMouseMove (boardx :int, boardy :int) :void
     {
-        var logical :Point = Unit.screenToLogicalPosition(boardx, boardy);
+        var logical :Point = _board.screenToLogicalPosition(boardx, boardy);
         if (logical.x != _cursor.pos.x || logical.y != _cursor.pos.y) {
             _cursor.pos.x = logical.x;
             _cursor.pos.y = logical.y;
@@ -276,7 +275,7 @@ public class Game
     }
 
     /** Change the current cursor type. */
-    public function setCursorType (type :int) :void
+    public function setCursorType (type :String) :void
     {
         _cursor.updateFromType(type);
         if (_board.isOnBoard(_cursor)) {

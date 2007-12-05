@@ -11,6 +11,9 @@ import com.threerings.util.Hashable;
 public class Unit
     implements Hashable
 {
+    /** General game reference. */
+    public var main :Main;
+    
     /** Pointer back to the board containing this instance. */
     public var board :Board;
     
@@ -33,8 +36,9 @@ public class Unit
     }
     
     public function Unit (
-        board :Board, player :int, x :Number, y :Number, width :Number, height :Number)
+        main :Main, board :Board, player :int, x :Number, y :Number, width :Number, height :Number)
     {
+        this.main = main;
         this.board = board;
         this.player = player;
         this.pos = new Point(x, y);

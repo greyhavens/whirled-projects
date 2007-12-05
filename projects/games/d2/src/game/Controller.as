@@ -64,6 +64,11 @@ public class Controller
         _whirled.set(Monitor.SPAWNERREADY, true, playerId);
     }
 
+    public function getScores () :Array
+    {
+        return _whirled.get(Monitor.SCORE_SET) as Array;
+    }
+    
     public function changeScore (playerId :int, delta :Number) :void
     {
         // just change the score. we don't need to request it from the validator,
