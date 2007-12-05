@@ -60,20 +60,6 @@ public class HUD extends Sprite
 
     protected function handleHUDLoaded (evt :Event) :void
     {
-        _mask = new Sprite();
-        _mask.visible = false;
-        _mask.blendMode = BlendMode.LAYER;
-        this.addChild(_mask);
-
-        _dim = new Sprite();
-        with (_dim.graphics) {
-            beginFill(0x000000);
-            drawRect(0, 0, 2000, 1000);
-            endFill();
-        }
-        _dim.alpha = 0.7;
-        _mask.addChild(_dim);
-
         _hud = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
         _hud.x = 10; // damn scrollbar
         _hud.y = 0;
@@ -82,17 +68,46 @@ public class HUD extends Sprite
         DisplayUtil.findInHierarchy(_hud, LANTERN).addEventListener(MouseEvent.CLICK, lanternClick);
         DisplayUtil.findInHierarchy(_hud, HELP).addEventListener(MouseEvent.CLICK, helpClick);
         DisplayUtil.findInHierarchy(_hud, LOOT).addEventListener(MouseEvent.CLICK, lootClick);
+
+        _lanternia = new Sprite();
+        _lanternia.visible = false;
+        this.addChild(_lanternia);
+
+        _dimBack = new Sprite();
+        _dimBack.blendMode = BlendMode.LAYER;
+        _lanternia.addChild(_dimBack);
+
+        _dimFront = new Sprite();
+        with (_dimFront.graphics) {
+            beginFill(0x000000);
+            drawRect(0, 0, 2000, 1000);
+            endFill();
+        }
+        _dimFront.alpha = 0.7;
+        _dimBack.addChild(_dimFront);
+
+        _lightLayer = new Sprite();
+        _lanternia.addChild(_lightLayer);
+
+        _maskLayer = new Sprite();
+        _lanternia.addChild(_maskLayer);
+
+        var ghost :Ghost = new Ghost();
+        _lanternia.addChild(ghost);
+        ghost.mask = _maskLayer;
+        ghost.x = 300;
+        ghost.y = 0;
     }
 
     protected function lanternClick (evt :Event) :void
     {
-        if (_mask.visible) {
+        if (_lanternia.visible) {
             this.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
-            _mask.visible = false;
+            _lanternia.visible = false;
 
         } else {
             this.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
-            _mask.visible = true;
+            _lanternia.visible = true;
         }
     }
 
@@ -123,7 +138,9 @@ public class HUD extends Sprite
         if (p == null) {
             // removal
             if (light) {
-                _dim.removeChild(light.sprite);
+                _dimFront.removeChild(light.hole);
+                _lightLayer.removeChild(light.light);
+                _maskLayer.removeChild(light.mask);
                 delete _flashLights[playerId];
             }
             return;
@@ -131,13 +148,16 @@ public class HUD extends Sprite
 
         // transform the point from room to overlay coordinates
         p = _control.roomToStage(p);
-        p = _dim.globalToLocal(p);
+        p = _lanternia.globalToLocal(p);
 
         if (!light) {
             // a new flashlight just appears, no splines involved
-            light = new FlashLight(getFlashLightSprite(), p);
+            light = new FlashLight(p);
             _flashLights[playerId] = light;
-            _dim.addChild(light.sprite);
+
+            _maskLayer.addChild(light.mask);
+            _lightLayer.addChild(light.light);
+            _dimFront.addChild(light.hole);
             return;
         }
 
@@ -166,6 +186,8 @@ public class HUD extends Sprite
     {
         animateFlashLights();
 
+        animateGhost();
+
         // see if it's time to send an update on our own position
         _ticker ++;
         if (_ticker < FRAMES_PER_UPDATE) {
@@ -190,30 +212,8 @@ public class HUD extends Sprite
         }
     }
 
-    protected function getFlashLightSprite () :Sprite
+    protected function animateGhost () :void
     {
-        var light :Sprite = new Sprite();
-
-        var hole :Sprite = new Sprite();
-        hole.blendMode = BlendMode.ERASE;
-        with (hole.graphics) {
-            beginFill(0xFFA040);
-            drawCircle(0, 0, 40);
-            endFill();
-        }
-        light.addChild(hole);
-
-        var photons :Sprite = new Sprite();
-        photons.alpha = 0.2;
-        photons.filters = [ new GlowFilter(0xFF0000, 1, 32, 32, 2) ];
-        with (photons.graphics) {
-            beginFill(0xFF0000);
-            drawCircle(0, 0, 40);
-            endFill();
-        }
-        light.addChild(photons);
-
-        return light;
     }
 
     protected var _control :AVRGameControl;
@@ -229,12 +229,14 @@ public class HUD extends Sprite
 
     protected var _ticker :int;
 
-    protected var _mask :Sprite;
-    protected var _dim :Sprite;
-    protected var _hole :Sprite;
-    protected var _light :Sprite;
+    protected var _lanternia :Sprite;
+    protected var _dimBack :Sprite;
+    protected var _dimFront :Sprite;
 
-    protected static const FRAMES_PER_UPDATE :int = 6;
+    protected var _lightLayer :Sprite;
+    protected var _maskLayer :Sprite;
+
+    protected static const FRAMES_PER_UPDATE :int = 4;
 
     protected static const LANTERN :String = "lanternbutton";
     protected static const HELP :String = "helpbutton";

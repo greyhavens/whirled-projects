@@ -136,8 +136,6 @@ public class Ghostbusters extends Sprite
 
     protected function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
     {
-        _ghost = (new GHOST()) as DisplayObject;
-        Log.getLog(this).debug("Exporting ghost: " + _ghost);
         return _ghost;
     }
 
@@ -148,12 +146,9 @@ public class Ghostbusters extends Sprite
 
     protected var _splash :MovieClip = MovieClip(new SPLASH());
 
-    protected var _ghost :DisplayObject;
+    protected var _ghost :Ghost = new Ghost();
 
     [Embed(source="../../rsrc/splash01.swf")]
     protected static const SPLASH :Class;
-
-    [Embed(source="../../rsrc/Ghosthunter_female.swf")]
-    protected static const GHOST :Class;
 }
 }
