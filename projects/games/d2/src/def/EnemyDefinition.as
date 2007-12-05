@@ -35,7 +35,7 @@ public class EnemyDefinition
 
         this.typeName = enemy.@id;
         this.name = enemy.@name;
-        this.isFlying = enemy.@isFlying;
+        this.isFlying = (enemy.@isFlying == "true");
 
         this.health = enemy.@health;
         this.speed = enemy.@speed;
