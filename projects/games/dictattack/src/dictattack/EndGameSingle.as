@@ -39,7 +39,7 @@ public class EndGameSingle extends Dialog
                 ((counts[8] > 0) ? counts[8] + " Nice!\n" : "0\n") +
                 ((counts[9] > 0) ? counts[9] + " Awesome!\n" : "0\n") +
                 ((counts[10] > 0) ? counts[10] + " Amazing!\n" : "0\n") +
-                ((counts[11] > 0) ? counts[11] + " You Rock!" : "0")).wordWrap = false;
+                ((counts[11] > 0) ? counts[11] + " You Rock!" : "0"), true).wordWrap = false;
 
         setContent(view);
 
