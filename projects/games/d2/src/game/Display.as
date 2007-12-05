@@ -75,7 +75,12 @@ public class Display extends GameModeCanvas
         _boardSprite.y = _board.def.topleft.y;
         addChild(_boardSprite);
 
-        createUI();
+        // create ui elements
+        _scorePanels = new Array(_main.playerCount);
+        for (var ii :int = 0; ii < _main.playerCount; ii++) {
+            addChild(_scorePanels[ii] = new ScorePanel());
+        }
+
         createOverlays();
         
         // initialize event handlers
@@ -84,21 +89,6 @@ public class Display extends GameModeCanvas
         addEventListener(Event.ENTER_FRAME, handleFrame);
     }
   
-    /** Creates buttons and other UI elements. */
-    protected function createUI () :void
-    {
-      
-        _scorePanels = new Array(_main.playerCount);
-        for (var ii :int = 0; ii < _main.playerCount; ii++) {
-            addChild(_scorePanels[ii] = new ScorePanel());
-        }
-        
-        _counter = new Text();
-        _counter.x = 5;
-        _counter.y = 420;
-        addChild(_counter);
-    }
-
     /** Creates images for board overlay bitmaps. */
     protected function createOverlays () :void
     {
@@ -529,16 +519,6 @@ public class Display extends GameModeCanvas
 
     protected function handleFrame (event :Event) :void
     {
-        var now :int = getTimer();
-        var delta :Number = (now - _lastFrameTime) / 1000;
-        _lastFrameTime = now;
-
-        _fps = Math.round((_fps + 1 / delta) / 2);
-        var mem :Number = System.totalMemory;
-        _maxmem = Math.max(mem, _maxmem);
-        
-        _counter.htmlText = "MEM: " + mem + "<br>MAX: " + _maxmem + "<br>FPS: " + _fps;
-        
         updateSprites();
         updateOverlays();
     }
@@ -591,12 +571,7 @@ public class Display extends GameModeCanvas
 
     protected var _boardSprite :Canvas;
     protected var _backdrop :Image;
-    protected var _counter :Text;
-    protected var _lastFrameTime :int;
 
-    protected var _fps :Number = 0;
-    protected var _maxmem :Number = 0;
-    
     protected var _groundOverlay :Overlay;
     protected var _pathOverlays :Array; // of Overlay, one per player
     protected var _allOverlays :Array; // of Overlay

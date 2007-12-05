@@ -71,7 +71,6 @@ public class Monitor
     // from interface StateChangedListener
     public function stateChanged (event :StateChangedEvent) :void
     {
-        trace("*** STATE CHANGED: " + event);
         var fn :Function = _handlers[event.type] as Function;
         if (fn != null) {
             fn(event);
@@ -81,7 +80,6 @@ public class Monitor
     // from interface PropertyChangedListener
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
-        trace("*** PROPERTY CHANGED: " + event);
         var fn :Function = _handlers[event.name] as Function;
         if (fn != null) {
             fn(event);
@@ -91,7 +89,6 @@ public class Monitor
     // from interface MessageReceivedEvent
     public function messageReceived (event :MessageReceivedEvent) :void
     {
-        trace("*** PROPERTY CHANGED: " + event);
         var fn :Function = _handlers[event.name] as Function;
         if (fn != null) {
             fn(event);
@@ -101,11 +98,10 @@ public class Monitor
     protected function towersChanged (event :PropertyChangedEvent) :void
     {
         if (event.index == -1) {
-            trace("*** CLEARING THE BOARD!");
+            // trace("*** CLEARING THE BOARD!");
         } else {
             // setting a single entry
             var tower :Tower = Tower.deserialize(_main, _board, event.newValue);
-            trace("*** GOT TOWER: " + tower);
             _game.handleAddTower(tower, event.index);
         }                
     }

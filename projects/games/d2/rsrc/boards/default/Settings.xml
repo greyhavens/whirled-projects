@@ -5,6 +5,13 @@
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
+
+      <endpoints>
+        <p1 startx="16" starty="8"  endx="0"  endy="8"  />
+        <p2 startx="0"  starty="12" endx="16" endy="12" />
+        <pc startx="0"  starty="10" endx="16" endy="10"  />
+      </endpoints>
+
       <availableTowers>
         <tower id="TYPE_SHRUB" />
         <tower id="TYPE_BOX" />
@@ -14,6 +21,9 @@
         <tower id="TYPE_BOULDER" />
         <tower id="TYPE_TREE" />
       </availableTowers>
+
+      <specialTiles>
+      </specialTiles>
 
       <singlePlayerEnemyWaves>
         <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
@@ -46,6 +56,12 @@
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
+
+      <endpoints>
+        <p1 startx="16" starty="8"  endx="0"  endy="8"  />
+        <p2 startx="0"  starty="12" endx="16" endy="12" />
+        <pc startx="0"  starty="10" endx="16" endy="10"  />
+      </endpoints>
 
       <availableTowers>
         <tower id="TYPE_SHRUB" />
@@ -85,6 +101,12 @@
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
+
+      <endpoints>
+        <p1 startx="16" starty="8"  endx="0"  endy="8"  />
+        <p2 startx="0"  starty="12" endx="16" endy="12" />
+        <pc startx="0"  starty="10" endx="16" endy="10"  />
+      </endpoints>
 
       <availableTowers>
         <tower id="TYPE_SHRUBWINTER" />
@@ -128,6 +150,12 @@
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
 
+      <endpoints>
+        <p1 startx="16" starty="8"  endx="0"  endy="8"  />
+        <p2 startx="0"  starty="12" endx="16" endy="12" />
+        <pc startx="0"  starty="10" endx="16" endy="10"  />
+      </endpoints>
+
       <availableTowers>
         <tower id="TYPE_BOX" />
         <tower id="TYPE_UMBRELLA" />
@@ -167,6 +195,12 @@
       <squares cols="17" rows="22" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
+
+      <endpoints>
+        <p1 startx="16" starty="8"  endx="0"  endy="8"  />
+        <p2 startx="0"  starty="12" endx="16" endy="12" />
+        <pc startx="0"  starty="10" endx="16" endy="10"  />
+      </endpoints>
 
       <availableTowers>
         <tower id="TYPE_BOX" />
@@ -218,6 +252,7 @@
 	<animationRight>tower_shrub_fire_right</animationRight>
 	<animationUp>tower_shrub_fire_up</animationUp>
 	<animationDown>tower_shrub_fire_down</animationDown>
+        <button>tower_button_shrub</button>
       </animations>
       <missiles maxvel="8" damage="1">
         <animation>missile_balloon</animation>
@@ -237,6 +272,7 @@
 	<animationRight>tower_box_fire_right</animationRight>
 	<animationUp>tower_box_fire_up</animationUp>
 	<animationDown>tower_box_fire_down</animationDown>
+        <button>tower_button_box</button>
       </animations>
       <missiles maxvel="8" damage="1" delay="500">
         <animation>missile_basketball</animation>
@@ -258,6 +294,7 @@
 	<animationRight>tower_trashcan_fire_right</animationRight>
 	<animationUp>tower_trashcan_fire_up</animationUp>
 	<animationDown>tower_trashcan_fire_down</animationDown>
+        <button>tower_button_trashcan</button>
       </animations>
       <missiles maxvel="8" damage="1">
         <animation>missile_spitball</animation>
@@ -277,6 +314,7 @@
 	<animationRight>tower_boulder_fire_right</animationRight>
 	<animationUp>tower_boulder_fire_up</animationUp>
 	<animationDown>tower_boulder_fire_down</animationDown>
+        <button>tower_button_rock</button>
       </animations>
       <missiles maxvel="8" damage="2" delay="500">
         <animation>missile_boomerang</animation>
@@ -296,6 +334,7 @@
 	<animationRight>tower_sandbox_fire_right</animationRight>
 	<animationUp>tower_sandbox_fire_up</animationUp>
 	<animationDown>tower_sandbox_fire_down</animationDown>
+        <button>tower_button_sandbox</button>
       </animations>
       <missiles maxvel="8" damage="2">
         <animation>missile_rock</animation>
@@ -315,6 +354,7 @@
 	<animationRight>tower_wagon_fire_right</animationRight>
 	<animationUp>tower_wagon_fire_up</animationUp>
 	<animationDown>tower_wagon_fire_down</animationDown>
+        <button>tower_button_wagon</button>
       </animations>
       <missiles maxvel="8" damage="2">
         <animation>missile_waterjet</animation>
@@ -334,6 +374,7 @@
 	<animationRight>tower_tree_fire_right</animationRight>
 	<animationUp>tower_tree_fire_up</animationUp>
 	<animationDown>tower_tree_fire_down</animationDown>
+        <button>tower_button_tree</button>
       </animations>
       <missiles maxvel="8" damage="3">
         <animation>missile_airplane</animation>
@@ -353,6 +394,7 @@
 	<animationRight>tower_pumpkin_fire_right</animationRight>
 	<animationUp>tower_pumpkin_fire_up</animationUp>
 	<animationDown>tower_pumpkin_fire_down</animationDown>
+        <button>tower_button_pumpkin</button>
       </animations>
       <missiles maxvel="8" damage="3">
         <animation>missile_fireball</animation>
@@ -372,6 +414,7 @@
 	<animationRight>tower_shrubwinter_fire_right</animationRight>
 	<animationUp>tower_shrubwinter_fire_up</animationUp>
 	<animationDown>tower_shrubwinter_fire_down</animationDown>
+        <button>tower_button_wintershrub</button>
       </animations>
       <missiles maxvel="8" damage="1">
         <animation>missile_snowball</animation>
@@ -391,6 +434,7 @@
 	<animationRight>tower_treewinter_fire_right</animationRight>
 	<animationUp>tower_treewinter_fire_up</animationUp>
 	<animationDown>tower_treewinter_fire_down</animationDown>
+        <button>tower_button_wintertree</button>
       </animations>
       <missiles maxvel="8" damage="3" delay="700">
         <animation>missile_snowflake</animation>
@@ -410,6 +454,7 @@
 	<animationRight>tower_snowman_fire_right</animationRight>
 	<animationUp>tower_snowman_fire_up</animationUp>
 	<animationDown>tower_snowman_fire_down</animationDown>
+        <button>tower_button_snowman</button>
       </animations>
       <missiles maxvel="8" damage="1">
         <animation>missile_snowball</animation>
@@ -429,6 +474,7 @@
 	<animationRight>tower_umbrella_fire_right</animationRight>
 	<animationUp>tower_umbrella_fire_up</animationUp>
 	<animationDown>tower_umbrella_fire_down</animationDown>
+        <button>tower_button_umbrella</button>
       </animations>
       <missiles maxvel="8" damage="3">
         <animation>missile_beachball</animation>
