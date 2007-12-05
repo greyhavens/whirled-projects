@@ -4,7 +4,7 @@ import com.threerings.util.Assert;
 import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 
-import core.tasks.TaskContainer;
+import core.tasks.ParallelTask;
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 
@@ -76,9 +76,9 @@ public class AppObject
         Assert.isTrue(null != name);
         Assert.isTrue(name.length > 0);
 
-        var namedTaskContainer :TaskContainer = (_namedTasks.get(name) as TaskContainer);
+        var namedTaskContainer :ParallelTask = (_namedTasks.get(name) as ParallelTask);
         if (null == namedTaskContainer) {
-            namedTaskContainer = new TaskContainer(TaskContainer.TYPE_PARALLEL);
+            namedTaskContainer = new ParallelTask();
             _namedTasks.put(name, namedTaskContainer);
         }
 
@@ -108,7 +108,7 @@ public class AppObject
             return true;
         } else {
             for each (var namedTaskContainer :* in _namedTasks) {
-                if ((namedTaskContainer as TaskContainer).hasTasks()) {
+                if ((namedTaskContainer as ParallelTask).hasTasks()) {
                     return true;
                 }
             }
@@ -120,7 +120,7 @@ public class AppObject
     /** Returns true if the AppObject has any tasks with the given name. */
     public function hasTasksNamed (name :String) :Boolean
     {
-        var namedTaskContainer :TaskContainer = (_namedTasks.get(name) as TaskContainer);
+        var namedTaskContainer :ParallelTask = (_namedTasks.get(name) as ParallelTask);
         return (null == namedTaskContainer ? false : namedTaskContainer.hasTasks());
     }
 
@@ -155,11 +155,11 @@ public class AppObject
         update(dt);
 
         function updateNamedTaskContainer (name :*, tasks:*) :void {
-            (tasks as TaskContainer).update(dt, thisAppObject);
+            (tasks as ParallelTask).update(dt, thisAppObject);
         }
     }
 
-    protected var _anonymousTasks :TaskContainer = new TaskContainer(TaskContainer.TYPE_PARALLEL);
+    protected var _anonymousTasks :ParallelTask = new ParallelTask();
     protected var _namedTasks :HashMap = new HashMap();
 
     // these variables are managed by AppMode and shouldn't be modified

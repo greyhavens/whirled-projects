@@ -5,41 +5,23 @@ import com.threerings.util.Assert;
 import core.ObjectTask;
 import core.AppObject;
 
-public class TaskContainer extends ObjectTask
+internal class TaskContainer extends ObjectTask
 {
     public static const TYPE_PARALLEL :uint = 0;
     public static const TYPE_SERIAL :uint = 1;
+    public static const TYPE_REPEATING :uint = 2;
 
-    public static function CreateSerialTask (task1 :ObjectTask = null, task2 :ObjectTask = null) :TaskContainer
-    {
-        var container :TaskContainer = new TaskContainer(TYPE_SERIAL);
-        if (null != task1) {
-            container.addTask(task1);
-        }
-        if (null != task2) {
-            container.addTask(task2);
-        }
-
-        return container;
-    }
-
-    public static function CreateParallelTask (task1 :ObjectTask = null, task2 :ObjectTask = null) :TaskContainer
-    {
-        var container :TaskContainer = new TaskContainer(TYPE_PARALLEL);
-        if (null != task1) {
-            container.addTask(task1);
-        }
-        if (null != task2) {
-            container.addTask(task2);
-        }
-
-        return container;
-    }
-
-    public function TaskContainer (type :uint)
+    public function TaskContainer (type :uint, task1 :ObjectTask = null, task2 :ObjectTask = null)
     {
         Assert.isTrue(type == TYPE_PARALLEL || type == TYPE_SERIAL);
         _type = type;
+
+        if (null != task1) {
+            addTask(task1);
+        }
+        if (null != task2) {
+            addTask(task2);
+        }
     }
 
     /** Adds a child task to the TaskContainer. */
@@ -47,12 +29,14 @@ public class TaskContainer extends ObjectTask
     {
         Assert.isTrue(null != task);
         _tasks.push(task);
+        _completedTasks.push(null);
     }
 
     /** Removes all tasks from the TaskContainer. */
     public function removeAllTasks () :void
     {
         _tasks = new Array();
+        _completedTasks = new Array();
     }
 
     /** Returns true if the TaskContainer has any child tasks. */
@@ -65,26 +49,45 @@ public class TaskContainer extends ObjectTask
     override public function update (dt :Number, obj :AppObject) :uint
     {
         var hasIncompleteTasks :Boolean = false;
-
-        for (var i :int = 0; i < _tasks.length; ++i) {
+        var i :int;
+        for (i = 0; i < _tasks.length; ++i) {
             var task :ObjectTask = (_tasks[i] as ObjectTask);
-            Assert.isTrue(null != task);
+
+            // we can have holes in the array
+            if (null == task) {
+                continue;
+            }
 
             var status :int = task.update(dt, obj);
 
             if (status == ObjectTask.STATUS_INCOMPLETE) {
                 hasIncompleteTasks = true;
 
-                // Serial tasks proceed one task at a time
-                if (_type == TYPE_SERIAL) {
+                // Serial and Repeating tasks proceed one task at a time
+                if (_type != TYPE_PARALLEL) {
                     break;
                 }
 
             } else {
-                // the task is complete - remove it
-                _tasks.splice(i, 1);
-                i -= 1; // back up the index
+                // the task is complete - move it the completed tasks array
+                _completedTasks[i] = _tasks[i];
+                _tasks[i] = null;
             }
+        }
+
+        // if this is a repeating task and all its tasks have been completed, start over again
+        if (_type == TYPE_REPEATING && !hasIncompleteTasks && _completedTasks.length > 0) {
+            _tasks = new Array(_completedTasks.length);
+
+            for (i = 0; i < _completedTasks.length; ++i) {
+                var completedTask :ObjectTask = (_completedTasks[i] as ObjectTask);
+                Assert.isNotNull(completedTask);
+                _tasks[i] = completedTask.clone();
+            }
+
+            _completedTasks = new Array(_tasks.length);
+
+            hasIncompleteTasks = true;
         }
 
         return (hasIncompleteTasks ? STATUS_INCOMPLETE : STATUS_COMPLETE);
@@ -95,9 +98,13 @@ public class TaskContainer extends ObjectTask
     {
         var theClone :TaskContainer = new TaskContainer(_type);
 
+        Assert.isTrue(_tasks.length == _completedTasks.length);
+
         // clone each child task and put it in the cloned container
-        for each (var t :* in _tasks) {
-            theClone.addTask((t as ObjectTask).clone());
+        for (var i:int = 0; i < _tasks.length; ++i) {
+            var task :ObjectTask = (null != _tasks[i] ? _tasks[i] as ObjectTask : _completedTasks[i] as ObjectTask);
+            Assert.isNotNull(task);
+            theClone.addTask(task.clone());
         }
 
         return theClone;
@@ -105,6 +112,7 @@ public class TaskContainer extends ObjectTask
 
     protected var _type :int;
     protected var _tasks :Array = new Array();
+    protected var _completedTasks :Array = new Array();
 }
 
 }

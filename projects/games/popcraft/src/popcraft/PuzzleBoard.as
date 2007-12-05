@@ -90,20 +90,26 @@ public class PuzzleBoard extends AppObject
         piece2.addNamedTask("move", LocationTask.CreateSmooth(x1 * _cellSize, y1 * _cellSize, 0.25));
     }
 
-    public function findConnectedSimilarPieces (x :int, y :int, pieces :ObjectSet = null) :ObjectSet
+    protected function findConnectedSimilarPiecesInternal (x :int, y :int, resourceType :uint, pieces :ObjectSet) :void
     {
-        if (null == pieces) {
-            pieces = new ObjectSet();
-        }
-
         var thisPiece :Piece = getPieceAt(x, y);
 
         // don't recurse unless we have a valid piece and it's not already in the set
-        if (null != thisPiece && pieces.add(thisPiece)) {
-            findConnectedSimilarPieces(x - 1, y,     pieces);
-            findConnectedSimilarPieces(x + 1, y,     pieces);
-            findConnectedSimilarPieces(x,     y - 1, pieces);
-            findConnectedSimilarPieces(x,     y + 1, pieces);
+        if (null != thisPiece && thisPiece.resourceType == resourceType && pieces.add(thisPiece)) {
+            findConnectedSimilarPiecesInternal(x - 1, y,     resourceType, pieces);
+            findConnectedSimilarPiecesInternal(x + 1, y,     resourceType, pieces);
+            findConnectedSimilarPiecesInternal(x,     y - 1, resourceType, pieces);
+            findConnectedSimilarPiecesInternal(x,     y + 1, resourceType, pieces);
+        }
+    }
+
+    public function findConnectedSimilarPieces (x :int, y :int) :ObjectSet
+    {
+        var pieces :ObjectSet = new ObjectSet();
+
+        var thisPiece :Piece = getPieceAt(x, y);
+        if (null != thisPiece) {
+            findConnectedSimilarPiecesInternal(x, y, thisPiece.resourceType, pieces);
         }
 
         return pieces;
