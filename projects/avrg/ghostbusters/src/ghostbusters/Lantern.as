@@ -12,7 +12,7 @@ import flash.geom.Point;
 
 import com.threerings.flash.path.HermiteFunc;
 
-public class FlashLight
+public class Lantern
 {
     public static const FRAMES_PER_SPLINE :int = 8;
 
@@ -21,7 +21,7 @@ public class FlashLight
     public var mask :Sprite;
     public var frame :int;
 
-    public function FlashLight (p :Point)
+    public function Lantern (p :Point)
     {
         light = getLanternLight();
         light.x = p.x;

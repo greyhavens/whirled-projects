@@ -124,29 +124,29 @@ public class HUD extends Sprite
             if (bits != null) {
                 var playerId :int = int(bits[0]);
                 if ((DEBUG || playerId != _myId) && _control.isPlayerHere(playerId)) {
-                    // flash light update from a local player
+                    // lantern update from a local player
                     if (bits.length == 1) {
                         // someone turned theirs off
-                        updateFlashLight(playerId);
+                        updateLantern(playerId);
                     } else {
                         // someone turned theirs on or moved it
-                        updateFlashLight(playerId, new Point(bits[1], bits[2]));
+                        updateLantern(playerId, new Point(bits[1], bits[2]));
                     }
                 }
             }
         }
     }
 
-    protected function updateFlashLight (playerId :int, p :Point = null) :void
+    protected function updateLantern (playerId :int, p :Point = null) :void
     {
-        var light :FlashLight = _flashLights[playerId];
+        var lantern :Lantern = _lanterns[playerId];
         if (p == null) {
             // removal
-            if (light) {
-                _dimFront.removeChild(light.hole);
-                _lightLayer.removeChild(light.light);
-                _maskLayer.removeChild(light.mask);
-                delete _flashLights[playerId];
+            if (lantern) {
+                _dimFront.removeChild(lantern.hole);
+                _lightLayer.removeChild(lantern.light);
+                _maskLayer.removeChild(lantern.mask);
+                delete _lanterns[playerId];
             }
             return;
         }
@@ -155,19 +155,19 @@ public class HUD extends Sprite
         p = _control.roomToStage(p);
         p = _lanternia.globalToLocal(p);
 
-        if (!light) {
-            // a new flashlight just appears, no splines involved
-            light = new FlashLight(p);
-            _flashLights[playerId] = light;
+        if (!lantern) {
+            // a new lantern just appears, no splines involved
+            lantern = new Lantern(p);
+            _lanterns[playerId] = lantern;
 
-            _maskLayer.addChild(light.mask);
-            _lightLayer.addChild(light.light);
-            _dimFront.addChild(light.hole);
+            _maskLayer.addChild(lantern.mask);
+            _lightLayer.addChild(lantern.light);
+            _dimFront.addChild(lantern.hole);
             return;
         }
 
         // else just set our aim for p
-        light.newTarget(p);
+        lantern.newTarget(p);
     }
 
     protected function ghostVanished (id :String) :void
@@ -187,7 +187,7 @@ public class HUD extends Sprite
 
     protected function handleEnterFrame (evt :Event) :void
     {
-        animateFlashLights();
+        animateLanterns();
 
         animateGhost();
 
@@ -199,7 +199,7 @@ public class HUD extends Sprite
 
         // bow to reality: nobody wants to watch roundtrip lag in action
         if (!DEBUG) {
-            updateFlashLight(_myId, p);
+            updateLantern(_myId, p);
         }
 
         // see if it's time to send an update on our own position
@@ -213,10 +213,10 @@ public class HUD extends Sprite
         _control.state.setProperty("fl", [ _myId, p.x, p.y ], false);
     }
 
-    protected function animateFlashLights () :void
+    protected function animateLanterns () :void
     {
-        for each (var light :FlashLight in _flashLights) {
-            light.nextFrame();
+        for each (var lantern :Lantern in _lanterns) {
+            lantern.nextFrame();
         }
     }
 
@@ -231,7 +231,7 @@ public class HUD extends Sprite
     protected var _width :int = 700;
     protected var _height :int = 500;
 
-    protected var _flashLights :Dictionary = new Dictionary();
+    protected var _lanterns :Dictionary = new Dictionary();
 
     protected var _hud :MovieClip;
 
