@@ -64,8 +64,10 @@ public class FlashLight
     public function newTarget (p :Point) :void
     {
         if (p != null) {
-            _xFun = new HermiteFunc(light.x, p.x, dX, 0);
-            _yFun = new HermiteFunc(light.y, p.y, dY, 0);
+            var wX :Number = (p.x - light.x) / (FRAMES_PER_SPLINE / 30);
+            var wY :Number = (p.y - light.y) / (FRAMES_PER_SPLINE / 30);
+            _xFun = new HermiteFunc(light.x, p.x, wX, 0);
+            _yFun = new HermiteFunc(light.y, p.y, wY, 0);
             frame = 0;
 
         } else {
@@ -80,7 +82,6 @@ public class FlashLight
 
             light.x = hole.x = mask.x = x;
             light.y = hole.y = mask.y = y;
-
 
             if (frame == FRAMES_PER_SPLINE) {
                 // stop animating if we're done
