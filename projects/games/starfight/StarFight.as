@@ -30,6 +30,7 @@ import com.threerings.ezgame.OccupantChangedEvent;
 import com.threerings.ezgame.OccupantChangedListener;
 import com.threerings.ezgame.SeatingControl;
 
+import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
 
 /**
@@ -352,7 +353,8 @@ public class StarFight extends Sprite
     public function startRound () :void
     {
         _gameCtrl.localChat("Round starting...");
-        _stateTime = 10 * 60 * 1000;
+        //_stateTime = 10 * 60 * 1000;
+        _stateTime = 30 * 1000;
 
         // The first player is in charge of adding powerups.
         if (_gameCtrl.isConnected() && _gameCtrl.amInControl()) {
@@ -366,7 +368,9 @@ public class StarFight extends Sprite
     public function endRound () :void
     {
         _screenTimer.reset();
-        _ownShip.stopSounds();
+        for each (var ship :ShipSprite in _ships.values()) {
+            ship.roundEnded();
+        }
         if (_gameCtrl.isConnected() && _gameCtrl.amInControl()) {
             var scoreIds :Array = [];
             var scores :Array = [];
@@ -379,7 +383,16 @@ public class StarFight extends Sprite
             _gameCtrl.endGameWithScores(scoreIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
             //_gameCtrl.restartGameIn(1);
         }
-        addChild(MovieClip(new (Resources.getClass("round_results"))()));
+        var shipArr :Array = _ships.values();
+        shipArr.sort(function (shipA :ShipSprite, shipB :ShipSprite) :int {
+            return shipB.score - shipA.score;
+        });
+        var endMovie :MovieClip = MovieClip(new (Resources.getClass("round_results"))());
+        for (var ii :int = 0; ii < shipArr.length; ii++) {
+            endMovie.fields_mc.getChildByName("place_" + (ii + 1)).text =
+                    ShipSprite(shipArr[ii]).playerName;
+        }
+        addChild(endMovie);
     }
 
     /**
@@ -722,6 +735,14 @@ public class StarFight extends Sprite
         }
 
         _lastTickTime = now;
+    }
+
+    protected function handleFlowAwarded (event :FlowAwardedEvent) :void
+    {
+        var amount :int = event.amount;
+        if (amount > 0) {
+            _gameCtrl.localChat("You earned " + amount + " flow this round.");
+        }
     }
 
     protected function handleUnload (... ignored) :void

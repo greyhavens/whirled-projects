@@ -426,6 +426,12 @@ public class ShipSprite extends Sprite
         setVisible(true);
     }
 
+    public function roundEnded () :void
+    {
+        stopSounds();
+        setAnimMode(IDLE, true);
+    }
+
     protected function setVisible (visible :Boolean) :void
     {
         if (this.visible != visible) {
@@ -826,7 +832,7 @@ public class ShipSprite extends Sprite
         stopSounds();
     }
 
-    public function stopSounds () :void
+    protected function stopSounds () :void
     {
         // Turn off sound loops.
         if (_thrusterForward != null) {
