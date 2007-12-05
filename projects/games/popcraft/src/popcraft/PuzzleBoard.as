@@ -11,6 +11,7 @@ import flash.display.Sprite;
 import core.tasks.LocationTask;
 import flash.geom.Point;
 import core.tasks.TimedTask;
+import core.util.ObjectSet;
 
 public class PuzzleBoard extends AppObject
 {
@@ -87,6 +88,36 @@ public class PuzzleBoard extends AppObject
 
         piece1.addNamedTask("move", LocationTask.CreateSmooth(x2 * _cellSize, y2 * _cellSize, 0.25));
         piece2.addNamedTask("move", LocationTask.CreateSmooth(x1 * _cellSize, y1 * _cellSize, 0.25));
+    }
+
+    public function findConnectedSimilarPieces (x :int, y :int, pieces :ObjectSet = null) :ObjectSet
+    {
+        if (null == pieces) {
+            pieces = new ObjectSet();
+        }
+
+        var thisPiece :Piece = getPieceAt(x, y);
+
+        // don't recurse unless we have a valid piece and it's not already in the set
+        if (null != thisPiece && pieces.add(thisPiece)) {
+            findConnectedSimilarPieces(x - 1, y,     pieces);
+            findConnectedSimilarPieces(x + 1, y,     pieces);
+            findConnectedSimilarPieces(x,     y - 1, pieces);
+            findConnectedSimilarPieces(x,     y + 1, pieces);
+        }
+
+        return pieces;
+    }
+
+    public function getPieceAt (x :int, y :int) :Piece
+    {
+        var piece :Piece;
+
+        if (x >= 0 && x < _cols && y >= 0 && y < _rows) {
+            piece = (_board[coordsToIdx(x, y)] as Piece);
+        }
+
+        return piece;
     }
 
     public function coordsToIdx (x :int, y :int) :int
