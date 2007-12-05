@@ -2,6 +2,7 @@ package {
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
+import flash.display.Loader;
 import flash.display.Shape;
 import flash.display.Sprite;
 
@@ -9,12 +10,17 @@ import flash.events.Event;
 import flash.events.FocusEvent;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+import flash.events.TimerEvent;
 
 import flash.text.TextField;
 
 import flash.ui.Keyboard;
 
 import flash.utils.getTimer; // function import
+import flash.utils.ByteArray;
+import flash.utils.Timer;
+
+import com.threerings.util.StringUtil;
 
 import com.threerings.flash.KeyRepeatLimiter;
 
@@ -58,11 +64,10 @@ public class SubAttack extends Sprite
         //masker.x = 200;
         _seaHolder.mask = masker;
         _seaHolder.addChild(masker); // the mask must be added to the display
-
         // set up a fake starting sea
         _seaDisplay.setupSea(VIEW_TILES, VIEW_TILES);
 
-        _gameCtrl = new WhirledGameControl(this);
+        _gameCtrl = new WhirledGameControl(this, false);
         if (!_gameCtrl.isConnected()) {
             // just show a demo-mode display
             _seaDisplay.setStatus(
@@ -74,6 +79,13 @@ public class SubAttack extends Sprite
             return;
         }
 
+        _splash = new Loader();
+        addChild(_splash);
+        _splash.loadBytes(ByteArray(new SPLASH_SCREEN()));
+        _splash.addEventListener(MouseEvent.CLICK, handleRemoveSplash);
+        _splashTimer.addEventListener(TimerEvent.TIMER, handleRemoveSplash);
+        _splashTimer.start();
+
         _myIndex = _gameCtrl.seating.getMyPosition();
 
         if (_myIndex != -1) {
@@ -83,9 +95,33 @@ public class SubAttack extends Sprite
             addEventListener(Event.ENTER_FRAME, enterFrame);
         }
 
+        _gameCtrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
         _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
 
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+
+        // check everyone's current readyness states
+        recheckReadyness();
+    }
+
+    /**
+     * Update the score display to display readyness of all players.
+     */
+    protected function recheckReadyness () :void
+    {
+        _gameCtrl.setPlayerScores(
+            _gameCtrl.seating.getPlayerIds().map(function (id :int, ... ig) :String {
+                return (null == _gameCtrl.get("ready:" + id)) ? "Waiting..." : "Ready!";
+            }));
+    }
+
+    protected function handleRemoveSplash (event :Event) :void
+    {
+        removeChild(_splash);
+        _splashTimer.stop();
+        _splashTimer = null;
+        _gameCtrl.set("ready:" + _gameCtrl.getMyId(), true);
+        _gameCtrl.playerReady();
     }
 
     /**
@@ -93,8 +129,20 @@ public class SubAttack extends Sprite
      */
     protected function handleUnload (evt :Event) :void
     {
+        if (_splashTimer != null) {
+            _splashTimer.stop();
+        }
         _keyLimiter.shutdown();
         removeEventListener(Event.ENTER_FRAME, enterFrame);
+    }
+
+    /**
+     */
+    protected function handlePropertyChanged (event :PropertyChangedEvent) :void
+    {
+        if (StringUtil.startsWith(event.name, "ready:")) {
+            recheckReadyness();
+        }
     }
 
     /**
@@ -102,6 +150,9 @@ public class SubAttack extends Sprite
      */
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
+        // stop listening for ready events
+        _gameCtrl.removeEventListener(PropertyChangedEvent.TYPE, recheckReadyness);
+
         _seaDisplay.clearStatus();
         _seaHolder.removeChild(_seaDisplay);
         _seaHolder.addChildAt(_seaDisplay = new SeaDisplay(), 0);
@@ -194,6 +245,12 @@ public class SubAttack extends Sprite
     /** Represents our board. */
     protected var _board :Board;
 
+    /** Holds the splash screen. */
+    protected var _splash :Loader;
+
+    /** A timer that automatically removes the splash screen. */
+    protected var _splashTimer :Timer = new Timer(20000, 1);
+
     protected var _seaHolder :Sprite;
 
     /** The visual display of the game. */
@@ -210,6 +267,9 @@ public class SubAttack extends Sprite
 
     /** The actions we have queued to be sent. */
     protected var _queued :Array;
+
+    [Embed(source="title_screen.swf", mimeType="application/octet-stream")]
+    protected static const SPLASH_SCREEN :Class;
 
     [Embed(source="sidebar.png")]
     protected static const SIDEBAR :Class;

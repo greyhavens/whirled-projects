@@ -589,7 +589,7 @@ public class Board
     protected static const DIMENSIONS :Array = [
         [  0,  0 ], // 0 player game
         [ 10, 10 ], // 1 player game
-//        [ 10, 10 ], // 2 player game (testing)
+        [ 10, 10 ], // 2 player game (testing)
         [ 50, 25 ], // 2 player game
         [ 60, 30 ], // 3 player game
         [ 75, 30 ], // 4 player game

@@ -2,6 +2,7 @@ package {
 
 import flash.display.MovieClip;
 
+import flash.filters.BitmapFilter;
 import flash.filters.GlowFilter;
 
 import flash.media.Sound;
@@ -10,25 +11,16 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
-import flash.geom.ColorTransform;
-
 import com.threerings.util.Log;
+
+import com.threerings.flash.FilterUtil;
 
 import com.whirled.WhirledGameControl;
 
 public class Submarine extends BaseSprite
 {
-    /** Color schemes for each player. */
-    public static const SCHEMES :Array = [
-        [ 1, .5, 0],
-        [ .5, 0, 1],
-        [ 0, 1, .5],
-        [ 1, 0, 1],
-        [ 0, 1, 1],
-        [ 1, 1, 0],
-        [ 1, .5, 1],
-        [ .5, 1, 1]
-    ];
+    /** The amount we shift hue for each truck. */
+    public static const SHIFTS :Array = [ 40, -80, 120, -160 -40, 80, -120, 160 ];
 
     /** How often can we build? */
     public static const TICKS_PER_BUILD :int = 50; // about every 5 seconds
@@ -81,9 +73,9 @@ public class Submarine extends BaseSprite
         }
     }
 
-    public function getColorTransform () :ColorTransform
+    public function getHueShift () :BitmapFilter
     {
-        return _colorTransform;
+        return _hueShift;
     }
 
     public function getPlayerId () :int
@@ -162,9 +154,7 @@ public class Submarine extends BaseSprite
      */
     protected function configureVisual (playerIdx :int, playerName :String) :void
     {
-        var scheme :Array = (SCHEMES[playerIdx] as Array);
-        _colorTransform = new ColorTransform(
-            Number(scheme[0]), Number(scheme[1]), Number(scheme[2]));
+        _hueShift = FilterUtil.createHueShift(SHIFTS[playerIdx]);
 
         _avatar = MovieClip(new AVATAR());
         //_shootSound = Sound(new SHOOT_SOUND());
@@ -172,11 +162,7 @@ public class Submarine extends BaseSprite
             _cantShootSound = Sound(new CANT_SHOOT_SOUND());
         }
 
-        // TODO: not working: we should only color the recolory child
-//        var colorChild :MovieClip =
-//            (_avatar.getChildByName("color") as MovieClip);
-//        colorChild.transform.colorTransform =
-        _avatar.transform.colorTransform = _colorTransform;
+        _avatar.filters = [ _hueShift ];
         addChild(_avatar);
 
         _nameLabel = new TextField();
@@ -239,6 +225,7 @@ public class Submarine extends BaseSprite
             } else {
                 _torpedos.push(new Torpedo(this, _board));
 //                _shootSound.play();
+                updateVisual();
                 return OK;
             }
         }
@@ -320,6 +307,7 @@ public class Submarine extends BaseSprite
         // track the kills
         _kills += kills;
         _totalKills += kills;
+        updateVisual();
         updateDisplayedScore();
     }
 
@@ -371,7 +359,8 @@ public class Submarine extends BaseSprite
                 addChild(_nameLabel);
             }
         }
-        _avatar.gotoAndStop(orientToFrame());
+        var add :int = (_torpedos.length == 2) ? 0 : 4;
+        _avatar.gotoAndStop(orientToFrame() + add);
 
         updateDisplayedScore();
     }
@@ -427,8 +416,8 @@ public class Submarine extends BaseSprite
     /** The name of the player controlling this sub. */
     protected var _playerName :String;
 
-    /** The color transform to use for this submarine. */
-    protected var _colorTransform :ColorTransform;
+    /** The filter we use to color the truck. */
+    protected var _hueShift :BitmapFilter;
 
     /** Have we moved or shot this tick yet? */
     protected var _movedOrShot :Boolean;
@@ -474,7 +463,7 @@ public class Submarine extends BaseSprite
     /** The number of ticks that may elapse before we're auto-respawned. */
     protected static const AUTO_RESPAWN_TICKS :int = 100;
 
-    [Embed(source="trucks_recolor.swf#animations")]
+    [Embed(source="trucks_drill.swf#animations")]
     protected static const AVATAR :Class;
 
     //[Embed(source="shooting.wav", mimeType="audio/wav")]

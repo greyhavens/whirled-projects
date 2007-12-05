@@ -42,7 +42,8 @@ public class SeaDisplay extends Sprite
         _grounds = [
             Bitmap(new GROUND1()).bitmapData,
             Bitmap(new GROUND2()).bitmapData,
-            Bitmap(new GROUND3()).bitmapData
+            Bitmap(new GROUND3()).bitmapData,
+            Bitmap(new GROUND4()).bitmapData
         ];
 
         _trees = [
@@ -155,9 +156,9 @@ public class SeaDisplay extends Sprite
         } else if (value < Board.BLANK) {
             var playerIdx :int = int(value / -100);
             var level :int = -value % 100;
-            var scheme :Array = (Submarine.SCHEMES[playerIdx] as Array);
-            var color :uint = (uint(scheme[0] * 255) << 16) | (uint(scheme[1] * 255) << 8) |
-                uint(scheme[2] * 255);
+            var color :uint = 0x456789
+//            (uint(scheme[0] * 255) << 16) | (uint(scheme[1] * 255) << 8) |
+//                uint(scheme[2] * 255);
             if (level == 1) {
                 // if damaged, draw darker
                 color = ColorUtil.blend(color, 0, .8);
@@ -289,5 +290,8 @@ public class SeaDisplay extends Sprite
 
     [Embed(source="ground3.png")]
     protected static const GROUND3 :Class;
+
+    [Embed(source="ground4.png")]
+    protected static const GROUND4 :Class;
 }
 }

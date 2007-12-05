@@ -19,7 +19,8 @@ public class Torpedo extends BaseSprite
         missile.x = SeaDisplay.TILE_SIZE / 2;
         missile.y = SeaDisplay.TILE_SIZE;
         addChild(missile);
-        missile.transform.colorTransform = owner.getColorTransform();
+        missile.filters = [ owner.getHueShift() ];
+        //missile.transform.colorTransform = owner.getColorTransform();
 
         _board.torpedoAdded(this);
 
@@ -103,7 +104,7 @@ public class Torpedo extends BaseSprite
     /** The sub that shot us. */
     protected var _sub :Submarine;
 
-    [Embed(source="missile.swf#animations")]
+    [Embed(source="missile_drill.swf#animations")]
     protected static const MISSILE :Class;
 }
 }
