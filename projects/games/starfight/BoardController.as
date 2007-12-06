@@ -75,6 +75,7 @@ public class BoardController
         _obstacles = new Array(obs.length);
         for (var ii :int; ii < _obstacles.length; ii++) {
             if (obs[ii] == null) {
+                _obstacles[ii] = null;
                 continue;
             }
             obs[ii].position = 0;
@@ -85,6 +86,7 @@ public class BoardController
         _powerups = new Array(pups.length);
         for (ii = 0; ii < pups.length; ii++) {
             if (pups[ii] == null) {
+                _powerups[ii] = null;
                 continue;
             }
             pups[ii].position = 0;
@@ -94,6 +96,7 @@ public class BoardController
         _mines = new Array(mines.length);
         for (ii = 0; ii < mines.length; ii++) {
             if (mines[ii] == null) {
+                _mines[ii] = null;
                 continue;
             }
             mines[ii].position = 0;
@@ -170,7 +173,7 @@ public class BoardController
             }
             var pBytes :ByteArray = ByteArray(event.newValue);
             pBytes.position = 0;
-            pow.readFrom(pBytes);
+            pow.reload(pBytes);
 
         } else if ((event.name == "obstacles") && (event.index >= 0)) {
             if (_obstacles == null) {
@@ -441,7 +444,7 @@ public class BoardController
             }
             var bX :Number = bo.bX + 0.5;
             var bY :Number = bo.bY + 0.5;
-            var r :Number = rad + 0.5; // Our radius...
+            var r :Number = rad + 0.8; // Our radius...
             // We approximate a board object as a circle for this...
             var a :Number = dx*dx + dy*dy;
             var b :Number = 2*(dx*(oldX-bX) + dy*(oldY-bY));

@@ -40,6 +40,13 @@ public class Powerup extends BoardObject
         addChild(powMovie);
     }
 
+    override protected function setPosition () :void
+    {
+        super.setPosition();
+        x += Codes.PIXELS_PER_TILE/2;
+        y += Codes.PIXELS_PER_TILE/2;
+    }
+
     protected static const MOVIES :Array = [
         "powerup_shield", "powerup_engine", "powerup_gun", "powerup_health"
     ];
