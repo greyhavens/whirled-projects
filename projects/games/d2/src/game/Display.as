@@ -125,9 +125,12 @@ public class Display extends GameModeCanvas
     public function handleUnload () : void
     {
         Mouse.show();
-        
-        PopUpManager.removePopUp(_towerPanel);
+
         _towerPanel.handleUnload();
+
+        hideUI();
+        hideWaitingPopup();
+        hideSummaryPopup();
         
         removeEventListener(MouseEvent.CLICK, handleBoardClick);
         removeEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);

@@ -64,13 +64,11 @@ public class BoardDefinition
         // copy over endpoints
 
         var makeEndpoints :Function = function (p :XMLList) :Endpoints {
-            trace(p);
             return new Endpoints(p.@startx, p.@starty, p.@endx, p.@endy);
         }
         this.computerPath = makeEndpoints(board.endpoints.pc);
         this.player1Path = makeEndpoints(board.endpoints.p1);
         this.player2Path = makeEndpoints(board.endpoints.p2);
-        trace(this.computerPath);
         
         // figure out which towers are available
 

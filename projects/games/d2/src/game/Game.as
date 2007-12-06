@@ -225,7 +225,7 @@ public class Game
 
     public function handleUpdateScore (playerIndex :int, score :Number) :void
     {
-        var playerId = _main.whirled.seating.getPlayerIds()[playerIndex];
+        var playerId :int = _main.whirled.seating.getPlayerIds()[playerIndex];
         var update :Object = new Object();
         update[playerId] = score;
         _main.whirled.setMappedScores(update);

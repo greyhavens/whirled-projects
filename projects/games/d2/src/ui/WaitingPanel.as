@@ -33,7 +33,7 @@ public class WaitingPanel extends TitleWindow
         button.width = 200;
         button.label = Messages.get("wait_cancel");
         button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-                _controller.forceQuitGame(false);
+                _controller.forceQuitGame();
             });
         addChild(button);
     }
