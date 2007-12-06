@@ -49,8 +49,22 @@ public class BoardController
             readBoard(boardBytes);
         } else if (_gameCtrl.amInControl()) {
             create();
-        } else {
-            Logger.log("No board and not in control");
+        }
+    }
+
+    public function endRound () :void
+    {
+        _obstacles = null;
+        _powerups = null;
+        _mines = null;
+        _board = null;
+        if (_gameCtrl.amInControl()) {
+            _gameCtrl.doBatch(function () :void {
+                _gameCtrl.setImmediate("obstacles", null);
+                _gameCtrl.setImmediate("powerup", null);
+                _gameCtrl.setImmediate("mines", null);
+                _gameCtrl.setImmediate("board", null);
+            });
         }
     }
 
@@ -130,7 +144,10 @@ public class BoardController
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
         if (event.name == "board" && (_board == null)) {
-            readBoard(ByteArray(_gameCtrl.get("board")));
+            var bytes :ByteArray = ByteArray(_gameCtrl.get("board"));
+            if (bytes != null) {
+                readBoard(bytes);
+            }
 
         } else if ((event.name == "powerup") && (event.index >= 0)) {
             if (_powerups == null) {
@@ -598,9 +615,9 @@ public class BoardController
         }
     }
 
-    public function hostChanged (event :StateChangedEvent) :void
+    public function hostChanged (event :StateChangedEvent, gameState :int) :void
     {
-        if (_gameCtrl.amInControl()) {
+        if (_gameCtrl.amInControl() && gameState != Codes.POST_ROUND) {
             if (_gameCtrl.get("board") == null) {
                 create();
             }

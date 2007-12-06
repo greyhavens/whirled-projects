@@ -15,6 +15,9 @@ import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 
+import flash.text.Font;
+import flash.text.TextField;
+
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
@@ -38,11 +41,12 @@ import com.whirled.WhirledGameControl;
  */
 [SWF(width="700", height="500")]
 public class StarFight extends Sprite
-    implements PropertyChangedListener, MessageReceivedListener, StateChangedListener,
-        OccupantChangedListener
+    implements PropertyChangedListener, MessageReceivedListener, OccupantChangedListener
 {
     public static const WIDTH :int = 700;
     public static const HEIGHT :int = 500;
+
+    public static var gameFont :Font;
 
     /** Our seated index. */
     public var myId :int = -1;
@@ -68,20 +72,31 @@ public class StarFight extends Sprite
         graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
 
         var introMovie :MovieClip = MovieClip(new introAsset());
-        introMovie.addEventListener(MouseEvent.CLICK, setupBoard);
+        introMovie.addEventListener(MouseEvent.CLICK, firstStart);
         addChild(introMovie);
 
         Resources.init(assetLoaded);
     }
 
 
-    public function setupBoard (event :MouseEvent) :void
+    public function firstStart (event :MouseEvent) :void
     {
         if (_assets < Codes.SHIP_TYPES.length) {
             return;
         }
         removeChild(event.currentTarget as MovieClip);
+        setupBoard();
 
+        setGameObject();
+    }
+
+    public function setupBoard () :void
+    {
+        if (_boardLayer != null) {
+            for (var ii :int = 1; ii < numChildren; ii++) {
+                removeChildAt(1);
+            }
+        }
         _boardLayer = new Sprite();
         _subShotLayer = new Sprite();
         _shipLayer = new Sprite();
@@ -97,15 +112,18 @@ public class StarFight extends Sprite
         log("Created Game Controller");
 
         _lastTickTime = getTimer();
-
-        setGameObject();
     }
 
     public function assetLoaded (success :Boolean) :void {
         if (success) {
             if (_assets < Codes.SHIP_TYPES.length) {
                 Codes.SHIP_TYPES[_assets++].loadAssets(assetLoaded);
+                return;
             }
+            var gameFontClass :Class = Resources.getClass("game_font");
+            Font.registerFont(gameFontClass);
+            gameFont = Font(new gameFontClass());
+
         }
     }
 
@@ -134,22 +152,13 @@ public class StarFight extends Sprite
                 _stateTime = int(_gameCtrl.get("stateTime"));
             }
             updateRoundStatus();
+            _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
+            _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
+            _gameCtrl.addEventListener(StateChangedEvent.CONTROL_CHANGED, handleHostChanged);
+            _gameCtrl.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
         }
         _boardCtrl = new BoardController(_gameCtrl);
         _boardCtrl.init(boardLoaded);
-    }
-
-    /**
-     * Once the host was found, start the game!
-     */
-    private function hostChanged (event : StateChangedEvent) : void
-    {
-        // Try initializing the game state if there isn't a board yet.
-        if (_gameCtrl.amInControl()) {
-            if (gameState == Codes.IN_ROUND) {
-                startPowerupTimer();
-            }
-        }
     }
 
     public function boardLoaded () :void
@@ -353,15 +362,24 @@ public class StarFight extends Sprite
     public function startRound () :void
     {
         _gameCtrl.localChat("Round starting...");
-        //_stateTime = 10 * 60 * 1000;
-        _stateTime = 30 * 1000;
+        _stateTime = 10 * 60;
+        //_stateTime = 30;
+        if (_gameCtrl.isConnected()) {
+            var occupants :Array = _gameCtrl.getOccupantIds();
+            var scores :Array = [];
+            for (var ii :int = 0; ii < occupants.length; ii++) {
+                scores[occupants[ii]] = 0;
+            }
+            _gameCtrl.setMappedScores(scores);
+            if (_gameCtrl.amInControl()) {
 
-        // The first player is in charge of adding powerups.
-        if (_gameCtrl.isConnected() && _gameCtrl.amInControl()) {
-            _gameCtrl.setImmediate("stateTime", _stateTime);
-            _ownShip.restart();
-            addPowerup(null);
-            startPowerupTimer();
+                // The first player is in charge of adding powerups.
+                _gameCtrl.startTicker("stateTicker", 1000);
+                _gameCtrl.setImmediate("stateTime", _stateTime);
+                _ownShip.restart();
+                addPowerup(null);
+                startPowerupTimer();
+            }
         }
     }
 
@@ -371,6 +389,8 @@ public class StarFight extends Sprite
         for each (var ship :ShipSprite in _ships.values()) {
             ship.roundEnded();
         }
+        _boardCtrl.endRound();
+        _gameCtrl.setImmediate(shipKey(myId), null);
         if (_gameCtrl.isConnected() && _gameCtrl.amInControl()) {
             var scoreIds :Array = [];
             var scores :Array = [];
@@ -381,7 +401,6 @@ public class StarFight extends Sprite
                 scores.push(int(_gameCtrl.get("score:" + id)));
             }
             _gameCtrl.endGameWithScores(scoreIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
-            //_gameCtrl.restartGameIn(1);
         }
         var shipArr :Array = _ships.values();
         shipArr.sort(function (shipA :ShipSprite, shipB :ShipSprite) :int {
@@ -392,6 +411,8 @@ public class StarFight extends Sprite
             endMovie.fields_mc.getChildByName("place_" + (ii + 1)).text =
                     ShipSprite(shipArr[ii]).playerName;
         }
+        _nextRoundTimer = endMovie.fields_mc.timer;
+        _nextRoundTimer.text = String(30);
         addChild(endMovie);
     }
 
@@ -431,6 +452,16 @@ public class StarFight extends Sprite
         } else if (event.name.substring(0, 9) == "addScore-") {
             if (String(myId) == event.name.substring(9)) {
                 addScore(myId, int(event.value));
+            }
+
+        } else if (event.name == "stateTicker") {
+            if (_stateTime > 0) {
+                _stateTime -= 1;
+            }
+
+        } else if (event.name == "nextRoundTicker") {
+            if (_nextRoundTimer != null) {
+                _nextRoundTimer.text = String(Math.max(0, int(_nextRoundTimer.text) - 1));
             }
         }
     }
@@ -486,9 +517,6 @@ public class StarFight extends Sprite
             ship.hit(shooterId, damage);
             _status.setPower(ship.power);
             addScore(shooterId, Math.round(damage * 10));
-        } else if (shooterId == _ownShip.shipId) {
-            // We hit someone!  Give us some points.
-            //addScore(HIT_PTS);
         }
     }
 
@@ -552,7 +580,6 @@ public class StarFight extends Sprite
             _status.updateRoundText("Round over...");
         } else {
             var time :int = Math.max(0, _stateTime);
-            time /= 1000;
             var seconds :int = time % 60;
             var minutes :int = time / 60;
             _status.updateRoundText("" + minutes + (seconds < 10 ? ":0" : ":") + seconds);
@@ -562,18 +589,40 @@ public class StarFight extends Sprite
     /**
      * The game has started - do our initial startup.
      */
-    protected function gameStarted (event :StateChangedEvent) :void
+    protected function handleGameStarted (event :StateChangedEvent) :void
     {
+        if (_gameCtrl.amInControl()) {
+            _gameCtrl.stopTicker("nextRoundTicker");
+            _gameCtrl.setImmediate("gameState", Codes.PRE_ROUND);
+        }
+        _ships = new HashMap();
+        setupBoard();
+        _boardCtrl.init(boardLoaded);
         log("Game started");
     }
 
-    public function stateChanged (event :StateChangedEvent) :void
+    /**
+     * The game has ended - do our initial startup.
+     */
+    protected function handleGameEnded (event :StateChangedEvent) :void
     {
-        if (event.type == StateChangedEvent.GAME_STARTED) {
-            gameStarted(event);
-        } else if (event.type == StateChangedEvent.CONTROL_CHANGED) {
-            hostChanged(event);
-            _boardCtrl.hostChanged(event);
+        if (_gameCtrl.amInControl()) {
+            _gameCtrl.restartGameIn(30);
+            _gameCtrl.startTicker("nextRoundTicker", 1000);
+        }
+    }
+
+    /**
+     * Once the host was found, start the game!
+     */
+    protected function handleHostChanged (event : StateChangedEvent) : void
+    {
+        // Try initializing the game state if there isn't a board yet.
+        if (_gameCtrl.amInControl()) {
+            if (gameState == Codes.IN_ROUND) {
+                startPowerupTimer();
+            }
+            _boardCtrl.hostChanged(event, gameState);
         }
     }
 
@@ -653,9 +702,9 @@ public class StarFight extends Sprite
         var time :int = now - _lastTickTime;
 
         if (gameState == Codes.IN_ROUND) {
-            _stateTime -= time;
             if (_gameCtrl.isConnected() && _gameCtrl.amInControl() && _stateTime <= 0) {
                 gameState = Codes.POST_ROUND;
+                _gameCtrl.stopTicker("stateTicker");
                 _gameCtrl.setImmediate("gameState", gameState);
                 _screenTimer.reset();
                 _powerupTimer.stop();
@@ -799,6 +848,8 @@ public class StarFight extends Sprite
     protected var _assets :int = 0;
 
     protected var _otherScores :Object = new Object();
+
+    protected var _nextRoundTimer :TextField;
 
     /** This could be more dynamic. */
     protected static const MIN_TILES_PER_POWERUP :int = 250;

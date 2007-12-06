@@ -93,6 +93,20 @@ public class Obstacle extends BoardObject
         return sound;
     }
 
+    public function collisionSound () :Sound
+    {
+        switch (type) {
+        case ASTEROID_1:
+        case ASTEROID_2:
+            return Resources.getSound("collision_asteroid2.wav");
+        case JUNK:
+            return Resources.getSound("collision_junk.wav");
+        case WALL:
+        default:
+            return Resources.getSound("collision_metal3.wav");
+        }
+    }
+
     override public function readFrom (bytes :ByteArray) :void
     {
         super.readFrom(bytes);

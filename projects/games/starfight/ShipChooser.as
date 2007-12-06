@@ -33,10 +33,11 @@ public class ShipChooser extends Sprite
         bg.y = (StarFight.HEIGHT - bg.height) / 2;
 
         var format:TextFormat = new TextFormat();
-        format.font = "Verdana";
-        format.color = Codes.CYAN;
+        format.font = StarFight.gameFont.fontName;
+        format.color = Codes.YELLOW;
         format.size = 16;
         format.bold = true;
+        format.rightMargin = 8;
 
         var selectText :TextField = new TextField();
         selectText.autoSize = TextFieldAutoSize.CENTER;
@@ -44,6 +45,7 @@ public class ShipChooser extends Sprite
         selectText.x = StarFight.WIDTH/2;
         selectText.y = StarFight.HEIGHT/2 - TEXT_SPACING;
         selectText.defaultTextFormat = format;
+        selectText.embedFonts = true;
         selectText.text = "Select Your Ship";
         addChild(selectText);
 
@@ -112,7 +114,7 @@ public class ShipChooser extends Sprite
     }
 
     protected static const SPACING :int = 80;
-    protected static const TEXT_SPACING :int = 70;
+    protected static const TEXT_SPACING :int = 66;
     protected static const HIGHLIGHT_SCALE :Number = 1.2;
 
     protected var _game :StarFight;

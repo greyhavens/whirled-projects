@@ -85,7 +85,7 @@ public class StatusOverlay extends Sprite
         _shields.mask = mask;
 
         var format:TextFormat = new TextFormat();
-        format.font = "Verdana";
+        format.font = StarFight.gameFont.fontName;
         format.color = Codes.CYAN;
         format.size = 16;
         format.bold = true;
@@ -93,6 +93,7 @@ public class StatusOverlay extends Sprite
         _roundText = new TextField();
         _roundText.autoSize = TextFieldAutoSize.CENTER;
         _roundText.selectable = false;
+        _roundText.embedFonts = true;
         _roundText.defaultTextFormat = format;
         addChild(_roundText);
     }

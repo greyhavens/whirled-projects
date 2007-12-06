@@ -189,13 +189,15 @@ public class ShipSprite extends Sprite
         nameText.autoSize = TextFieldAutoSize.CENTER;
         nameText.selectable = false;
         nameText.x = 0;
-        nameText.y = HEIGHT/2;
+        nameText.y = TEXT_OFFSET;
 
         var format:TextFormat = new TextFormat();
-        format.font = "Verdana";
+        format.font = StarFight.gameFont.fontName;
         format.color = Codes.CYAN;
-        format.size = 12;
+        format.size = 10;
+        format.rightMargin = 3;
         nameText.defaultTextFormat = format;
+        nameText.embedFonts = true;
         nameText.text = playerName;
         addChild(nameText);
     }
@@ -287,21 +289,7 @@ public class ShipSprite extends Sprite
             var dx :Number = endX - startX;
             var dy :Number = endY - startY;
 
-            var sound :Sound;
-            switch (obstacle.type) {
-            case Obstacle.ASTEROID_1:
-            case Obstacle.ASTEROID_2:
-                sound = Resources.getSound("collision_asteroid2.wav");
-                break;
-            case Obstacle.JUNK:
-                sound = Resources.getSound("collision_junk.wav");
-                break;
-            case Obstacle.WALL:
-            default:
-                sound = Resources.getSound("collision_metal3.wav");
-                break;
-            }
-            _game.playSoundAt(sound, startX + dx * coll.time,
+            _game.playSoundAt(obstacle.collisionSound(), startX + dx * coll.time,
                 startY + dy * coll.time);
             if (colType == 1) {
                 boardX = startX + dx * coll.time;
@@ -609,8 +597,6 @@ public class ShipSprite extends Sprite
             ship.addChild(_shipMovie);
 
             _shieldMovie.gotoAndStop(1);
-            //_shieldMovie.x = _shieldMovie.width/2;
-            //_shieldMovie.y = -_shieldMovie.height/2;
             _shieldMovie.rotation = 90;
             if (powerups & SHIELDS_MASK) {
                 _shieldMovie.alpha = 1.0;
@@ -629,8 +615,8 @@ public class ShipSprite extends Sprite
                 _engineSound = new SoundLoop(_shipType.engineSound);
                 _engineSound.loop();
             }
-            scaleX = _shipType.size + 0.1;
-            scaleY = _shipType.size + 0.1;
+            ship.scaleX = _shipType.size + 0.1;
+            ship.scaleY = _shipType.size + 0.1;
         }
     }
 
@@ -891,6 +877,8 @@ public class ShipSprite extends Sprite
     /** A reference to the ship type class. */
     protected var _shipType :ShipType;
     protected var _animMode :int;
+
+    protected static const TEXT_OFFSET :int = 25;
 
     protected static const POWERUP_PTS :int = 2;
 
