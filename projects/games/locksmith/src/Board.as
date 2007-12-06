@@ -42,9 +42,9 @@ public class Board extends Sprite
         return _clock;
     }
 
-    public function set control (control :WhirledGameControl) :void
+    public function set control (wgc :WhirledGameControl) :void
     {
-        _control = control;
+        _wgc = wgc;
     }
 
     public function addRing (ring :Ring) :void
@@ -207,8 +207,8 @@ public class Board extends Sprite
 
     protected function turnTimeout () :void
     {
-        if (_control != null && _control.isMyTurn()) {
-            _control.startNextTurn();
+        if (_wgc != null && _wgc.isMyTurn()) {
+            _wgc.startNextTurn();
         }
     }
 
@@ -244,7 +244,7 @@ public class Board extends Sprite
     // rings sit under the turn indicator, scoring dome, clock hands and marble layer.
     protected static const RING_LAYER :int = 4;
 
-    protected var _control :WhirledGameControl;
+    protected var _wgc :WhirledGameControl;
     protected var _loadedLauncher :int;
     protected var _ring :Ring;
     protected var _scoreBoard :ScoreBoard;

@@ -10,8 +10,9 @@ import flash.events.IEventDispatcher;
 
 import flash.ui.Keyboard;
 
-import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
+import com.threerings.ezgame.SizeChangedEvent;
+import com.threerings.ezgame.StateChangedEvent;
 
 import com.threerings.util.ArrayUtil;
 
@@ -40,22 +41,30 @@ public class Locksmith extends Sprite
         // game
         _board.x = DISPLAY_WIDTH / 2;
         _board.y = DISPLAY_HEIGHT / 2;
-        _control = new WhirledGameControl(this);
-        if (_control.isConnected()) {
+        _wgc = new WhirledGameControl(this);
+        if (_wgc.isConnected()) {
             EventHandlers.registerEventListener(
-                _control, StateChangedEvent.GAME_STARTED, gameDidStart);
+                _wgc, StateChangedEvent.GAME_STARTED, gameDidStart);
             EventHandlers.registerEventListener(
-                _control, StateChangedEvent.GAME_ENDED, gameDidEnd);
+                _wgc, StateChangedEvent.GAME_ENDED, gameDidEnd);
             EventHandlers.registerEventListener(
-                _control, StateChangedEvent.TURN_CHANGED, turnDidChange);
+                _wgc, StateChangedEvent.TURN_CHANGED, turnDidChange);
             EventHandlers.registerEventListener(
-                _control, MessageReceivedEvent.TYPE, messageReceived);
-            EventHandlers.registerEventListener(_control, KeyboardEvent.KEY_DOWN, keyDownHandler);
-            EventHandlers.registerEventListener(_control, FlowAwardedEvent.FLOW_AWARDED, 
+                _wgc, MessageReceivedEvent.TYPE, messageReceived);
+            EventHandlers.registerEventListener(_wgc, KeyboardEvent.KEY_DOWN, keyDownHandler);
+            EventHandlers.registerEventListener(_wgc, FlowAwardedEvent.FLOW_AWARDED, 
                 function (event :FlowAwardedEvent) :void {
-                    _control.localChat("You were awarded " + event.amount + " flow!");
+                    _wgc.localChat("You were awarded " + event.amount + " flow!");
                 });
-            _board.control = _control;
+            _board.control = _wgc;
+
+            addChild(_leftBackground = new BACKGROUND() as Sprite);
+            addChild(_rightBackground = new BACKGROUND() as Sprite);
+            _leftBackground.width = Math.max(0, (_wgc.getSize().x - DISPLAY_WIDTH) / 2);
+            _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width;
+            _rightBackground.width = _leftBackground.width;
+            _rightBackground.x = _leftBackground.width + DISPLAY_WIDTH - 1;
+            EventHandlers.registerEventListener(_wgc, SizeChangedEvent.TYPE, updateBackgrounds);
         } else {
             // show some rings so there is something visible when the game is not connected
             var ringData: Array = createRings();
@@ -67,17 +76,17 @@ public class Locksmith extends Sprite
 
     public function gameDidStart (event :StateChangedEvent) :void
     {
-        var playerIds :Array = _control.seating.getPlayerIds();
+        var playerIds :Array = _wgc.seating.getPlayerIds();
         addChild(_scoreBoard = new ScoreBoard(
-            _control.getOccupantName(_moonPlayer = playerIds[0]), 
-            _control.getOccupantName(_sunPlayer = playerIds[1]), 
+            _wgc.getOccupantName(_moonPlayer = playerIds[0]), 
+            _wgc.getOccupantName(_sunPlayer = playerIds[1]), 
             endGame));
-        _scoreBoard.x = DISPLAY_WIDTH / 2;
+        _scoreBoard.x = _board.x;
         _scoreBoard.y = DISPLAY_HEIGHT / 2;
         _board.scoreBoard = _scoreBoard;
-        if (_control.amInControl()) {
-            _control.startNextTurn();
-            _control.sendMessage("newRings", createRings());
+        if (_wgc.amInControl()) {
+            _wgc.startNextTurn();
+            _wgc.sendMessage("newRings", createRings());
         }
     }
 
@@ -85,13 +94,13 @@ public class Locksmith extends Sprite
     {
         _board.stopRotation();
         _gameIsOver = true;
-        _control.localChat("Game Over!");
+        _wgc.localChat("Game Over!");
         if (_scoreBoard.moonScore >= WIN_SCORE && _scoreBoard.sunScore >= WIN_SCORE) {
-            _control.localChat("The game is a tie!");
+            _wgc.localChat("The game is a tie!");
         } else if (_scoreBoard.moonScore >= WIN_SCORE) {
-            _control.localChat(_control.getOccupantName(_moonPlayer) + " is the Winner!");
+            _wgc.localChat(_wgc.getOccupantName(_moonPlayer) + " is the Winner!");
         } else if (_scoreBoard.sunScore >= WIN_SCORE) {
-            _control.localChat(_control.getOccupantName(_sunPlayer) + " is the Winner!");
+            _wgc.localChat(_wgc.getOccupantName(_sunPlayer) + " is the Winner!");
         }
     }
 
@@ -102,10 +111,10 @@ public class Locksmith extends Sprite
             _board.setActiveRing(-1);
             var newTurn :Function = function (...ignored) :void {
                 _board.clock.newTurn();
-                if (_control.isMyTurn()) {
+                if (_wgc.isMyTurn()) {
                     _board.setActiveRing(_currentRing.num);
                 }
-                _board.updateTurnIndicator(_control.getTurnHolder() == _moonPlayer ? 
+                _board.updateTurnIndicator(_wgc.getTurnHolder() == _moonPlayer ? 
                     ScoreBoard.MOON_PLAYER : ScoreBoard.SUN_PLAYER);
                 _board.loadNextLauncher();
             }
@@ -132,7 +141,7 @@ public class Locksmith extends Sprite
                 _currentRing = ring;
             }
 
-            if (_control.isMyTurn()) {
+            if (_wgc.isMyTurn()) {
                 _board.setActiveRing(_currentRing.num);
             }
             _board.loadNextLauncher();
@@ -145,11 +154,22 @@ public class Locksmith extends Sprite
         }
     }
 
+    protected function updateBackgrounds (event :SizeChangedEvent) :void
+    {
+        _leftBackground.width = Math.max(0, (_wgc.getSize().x - DISPLAY_WIDTH) / 2);
+        _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width;
+        if (_scoreBoard != null) {
+            _scoreBoard.x = _board.x;
+        }
+        _rightBackground.width = _leftBackground.width;
+        _rightBackground.x = _leftBackground.width + DISPLAY_WIDTH - 1;
+    }
+
     protected function endGame () :void
     {
         DoLater.instance.finishAndCall(function () :void {
             _board.stopRotation();
-            if (_control.amInControl()) {
+            if (_wgc.amInControl()) {
                 var winners :Array = [];
                 if (_scoreBoard.sunScore >= WIN_SCORE) {
                     winners.push(_sunPlayer);
@@ -157,7 +177,7 @@ public class Locksmith extends Sprite
                 if (_scoreBoard.moonScore >= WIN_SCORE) {
                     winners.push(_moonPlayer);
                 }
-                _control.endGameWithScores([_sunPlayer, _moonPlayer], 
+                _wgc.endGameWithScores([_sunPlayer, _moonPlayer], 
                     [Math.round((_scoreBoard.sunScore / WIN_SCORE) * 100),
                         Math.round((_scoreBoard.moonScore / WIN_SCORE) * 100)],
                     WhirledGameControl.CASCADING_PAYOUT);
@@ -167,17 +187,17 @@ public class Locksmith extends Sprite
 
     protected function keyDownHandler (event :KeyboardEvent) :void
     {
-        if (_control.isMyTurn() && !_gameIsOver) {
+        if (_wgc.isMyTurn() && !_gameIsOver) {
             switch(event.keyCode) {
             case Keyboard.LEFT:
-                _control.sendMessage("ringRotation", { ring: _currentRing.num, direction: 
+                _wgc.sendMessage("ringRotation", { ring: _currentRing.num, direction: 
                     Ring.COUNTER_CLOCKWISE });
-                _control.startNextTurn();
+                _wgc.startNextTurn();
                 break;
             case Keyboard.RIGHT:
-                _control.sendMessage("ringRotation", { ring: _currentRing.num, direction:
+                _wgc.sendMessage("ringRotation", { ring: _currentRing.num, direction:
                     Ring.CLOCKWISE });
-                _control.startNextTurn();
+                _wgc.startNextTurn();
                 break;
             case Keyboard.UP:
                 if (_currentRing != _currentRing.largest) {
@@ -214,12 +234,17 @@ public class Locksmith extends Sprite
         return rings;
     }
 
+    [Embed(source="../rsrc/locksmith_art.swf#tile")]
+    protected static const BACKGROUND :Class;
+
+    protected var _wgc :WhirledGameControl;
     protected var _board :Board;
-    protected var _control :WhirledGameControl;
     protected var _currentRing :Ring;
     protected var _scoreBoard :ScoreBoard;
     protected var _moonPlayer :int;
     protected var _sunPlayer :int;
     protected var _gameIsOver :Boolean = false;
+    protected var _leftBackground :Sprite;
+    protected var _rightBackground :Sprite;
 }
 }
