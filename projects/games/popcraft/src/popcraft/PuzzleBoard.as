@@ -14,6 +14,7 @@ import flash.geom.Point;
 import core.util.ObjectSet;
 
 import core.tasks.*;
+import mx.effects.easing.Bounce;
 
 public class PuzzleBoard extends AppObject
 {
@@ -39,14 +40,7 @@ public class PuzzleBoard extends AppObject
         _board = new Array(_cols * _rows);
         var i:int;
         for (i = 0; i < _cols * _rows; ++i) {
-            var resourceType :uint = Rand.nextIntRange(0, GameConstants.RESOURCE_TYPES.length);
-
-            var piece :Piece = new Piece(resourceType, i);
-
-            piece.displayObject.x = getPieceXLoc(idxToX(i));
-            piece.displayObject.y = getPieceYLoc(idxToY(i));
-
-            _board[i] = piece;
+            var piece :Piece = createNewPieceOnBoard(i);
 
             // show a clever scale effect
             piece.displayObject.scaleX = 0;
@@ -55,9 +49,6 @@ public class PuzzleBoard extends AppObject
             piece.addTask(new SerialTask(
                 new TimedTask(Rand.nextNumberRange(0.25, 1, Rand.STREAM_COSMETIC)),
                 ScaleTask.CreateSmooth(1, 1, 0.25)));
-
-            // add the Piece to the mode, as a child of the board sprite
-            MainLoop.instance.topMode.addObject(piece, _sprite);
         }
 
         // create the board cursor
@@ -68,6 +59,25 @@ public class PuzzleBoard extends AppObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
+    }
+
+    protected function createNewPieceOnBoard (boardIndex :int) :Piece
+    {
+        Assert.isTrue(boardIndex >= 0 && boardIndex < _board.length);
+        Assert.isNull(_board[boardIndex]);
+
+        var resourceType :uint = Rand.nextIntRange(0, GameConstants.RESOURCE_TYPES.length);
+        var piece :Piece = new Piece(resourceType, boardIndex);
+
+        piece.displayObject.x = getPieceXLoc(idxToX(boardIndex));
+        piece.displayObject.y = getPieceYLoc(idxToY(boardIndex));
+
+        _board[boardIndex] = piece;
+
+        // add the Piece to the mode, as a child of the board sprite
+        MainLoop.instance.topMode.addObject(piece, _sprite);
+
+        return piece;
     }
 
     public function clearPieceGroup (x :int, y :int) :void
@@ -95,21 +105,27 @@ public class PuzzleBoard extends AppObject
 
             piece.addTask(pieceAnim);
 
-            this.addTask(new SerialTask(
-                new TimedTask(0.65),
-                new FunctionTask(animatePieceDrops)));
-
             // remove the pieces from the board array
             _board[piece.boardIndex] = null;
         }
+
+        // when the pieces are done clearing,
+        // drop the pieces above them.
+        this.addTask(new SerialTask(
+            new TimedTask(0.65),
+            new FunctionTask(animatePieceDrops)));
     }
 
     protected function animatePieceDrops () :void
     {
+        Assert.isTrue(_resolvingClears);
+
         // examine the board array for holes,
         // and drop pieces above any holes into position
 
         var piecesDropped :Boolean = false;
+
+        var timeUntilDone :Number = 0;
 
         for (var col :int = 0; col < _cols; ++col) {
 
@@ -129,9 +145,15 @@ public class PuzzleBoard extends AppObject
                         --dropRow;
                     }
 
+                    var dropDelay :Number = 0;
+
                     // drop the pieces!
                     while (dropRow >= 0 && null != this.getPieceAt(col, dropRow)) {
-                        dropPiece(col, dropRow, holeRow);
+                        var timeUntilThisDropCompletes :Number = drop1Piece(col, dropRow, holeRow, dropDelay);
+                        timeUntilDone = Math.max(timeUntilDone, timeUntilThisDropCompletes);
+
+                        dropDelay += Rand.nextNumberRange(0.05, 0.15, Rand.STREAM_COSMETIC);
+
                         --dropRow;
                         --holeRow;
 
@@ -144,35 +166,65 @@ public class PuzzleBoard extends AppObject
             }
         }
 
-        function dropPiece (col :int, fromRow :int, toRow :int) :void
-        {
-            var fromIndex :int = coordsToIdx(col, fromRow);
-            var toIndex :int = coordsToIdx(col, toRow);
+        addTask(new SerialTask(
+            new TimedTask(timeUntilDone),
+            new FunctionTask(animateAddNewPieces)));
+    }
 
-            Assert.isTrue(fromIndex >= 0 && fromIndex < _board.length);
-            Assert.isTrue(toIndex >= 0 && toIndex < _board.length);
-            Assert.isNull(_board[toIndex]);
+    protected function drop1Piece (col :int, fromRow :int, toRow :int, initialDelay :Number) :Number
+    {
+        Assert.isTrue(_resolvingClears);
 
-            var piece :Piece = (_board[fromIndex] as Piece);
+        var fromIndex :int = coordsToIdx(col, fromRow);
+        var toIndex :int = coordsToIdx(col, toRow);
 
-            Assert.isNotNull(piece);
+        Assert.isTrue(fromIndex >= 0 && fromIndex < _board.length);
+        Assert.isTrue(toIndex >= 0 && toIndex < _board.length);
+        Assert.isNull(_board[toIndex]);
 
-            // move the piece to the correct place in the array
-            swapPiecesInternal(fromIndex, toIndex);
+        var piece :Piece = (_board[fromIndex] as Piece);
 
-            // make sure the piece is in its correct location
-            piece.displayObject.x = getPieceXLoc(col);
-            piece.displayObject.y = getPieceYLoc(fromRow);
+        Assert.isNotNull(piece);
 
-            // animate the piece to its new location
-            piece.removeNamedTasks("move");
+        // move the piece to the correct place in the array
+        swapPiecesInternal(fromIndex, toIndex);
 
-            piece.addNamedTask("move",
-                LocationTask.CreateEaseOut(
+        // make sure the piece is in its correct location
+        piece.displayObject.x = getPieceXLoc(col);
+        piece.displayObject.y = getPieceYLoc(fromRow);
+
+        // animate the piece to its new location
+        piece.removeNamedTasks("move");
+
+        piece.addNamedTask("move",
+            new SerialTask(
+                new TimedTask(initialDelay),
+                LocationTask.CreateEaseIn(
                     getPieceXLoc(col),
                     getPieceYLoc(toRow),
-                    0.5));
+                    0.5)));
+
+        return initialDelay + 0.5;
+    }
+
+    protected function animateAddNewPieces () :void
+    {
+        Assert.isTrue(_resolvingClears);
+
+        // scan the board array for holes, and fill them with new pieces
+        for (var i :int = 0; i < _board.length; ++i) {
+            if (null == _board[i]) {
+                var piece :Piece = createNewPieceOnBoard(i);
+
+                // show a clever scale effect
+                piece.displayObject.scaleX = 0;
+                piece.displayObject.scaleY = 0;
+
+                piece.addTask(ScaleTask.CreateSmooth(1, 1, 0.25));
+            }
         }
+
+        _resolvingClears = false;
     }
 
     public function swapPiecesInternal (index1 :int, index2 :int) :void

@@ -46,6 +46,14 @@ public class LocationTask extends ObjectTask
             new MXInterpolatorAdapter(mx.effects.easing.Cubic.easeOut));
     }
 
+    public static function CreateWithFunction (x :Number, y:Number, time :Number, fn :Function) :LocationTask
+    {
+        return new LocationTask(
+           x, y,
+           time,
+           new MXInterpolatorAdapter(fn));
+    }
+
     public function LocationTask (
         x :Number,
         y :Number,
