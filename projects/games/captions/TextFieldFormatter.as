@@ -31,16 +31,23 @@ import com.threerings.util.ValueEvent;
 [Event(name="enterPressed", type="com.threerings.util.ValueEvent")]
 
 
-public class LOLTextFieldFormatter extends EventDispatcher
+public class TextFieldFormatter extends EventDispatcher
 {
     /** The event type dispatched when ENTER is pressed in a watched TextField. */
     public static const ENTER_PRESSED_EVENT :String = "enterPressed";
 
-    public function LOLTextFieldFormatter (
-        fontFamily :String = "_sans", maxFontSize :int = 50, minFontSize :int = 16,
-        maxLines :int = 2)
+    public function TextFieldFormatter ()
+    {
+        configure();
+    }
+
+    public function configure (
+        fontFamily :String = "_sans", color :uint = 0x000000, outline :Boolean = true,
+        maxFontSize :int = 50, minFontSize :int = 16, maxLines :int = 2) :void
     {
         _fontFamily = fontFamily;
+        _color = color;
+        _outline = outline;
         _maxFontSize = maxFontSize;
         _minFontSize = minFontSize;
         _maxLines = maxLines;
@@ -84,9 +91,21 @@ public class LOLTextFieldFormatter extends EventDispatcher
     protected function evalStyle (field :TextField, goBig :Boolean = false) :void
     {
         var format :TextFormat = field.getTextFormat();
+        var formatChanged :Boolean = false;
         var size :int = int(format.size);
         if (goBig || format.size == null || size < _minFontSize) {
             format.size = size = _maxFontSize;
+            formatChanged = true;
+        }
+        if (format.color != _color) {
+            format.color = _color;
+            formatChanged = true;
+        }
+        if (format.font != _fontFamily) {
+            format.font = _fontFamily;
+            formatChanged = true;
+        }
+        if (formatChanged) {
             updateFormat(field, format);
         }
 
@@ -111,8 +130,13 @@ public class LOLTextFieldFormatter extends EventDispatcher
             }
         }
 
-        var outlineSize :int = (size > _minFontSize) ? 1 : .5;
-        field.filters = [ new GlowFilter(0xFFFFFF, outlineSize, 4, 4, 255) ];
+        if (_outline) {
+            var outlineSize :int = (size > _minFontSize) ? 1 : .5;
+            field.filters = [ new GlowFilter(0xFFFFFF, outlineSize, 4, 4, 255) ];
+
+        } else {
+            field.filters = null;
+        }
 
         // now notfiy
         var fn :Function = _callbacks[field] as Function;
@@ -173,11 +197,15 @@ public class LOLTextFieldFormatter extends EventDispatcher
 
     protected var _fontFamily :String;
 
+    protected var _color :uint;
+
     protected var _maxLines :int;
 
     protected var _maxFontSize :int;
 
     protected var _minFontSize :int;
+
+    protected var _outline :Boolean;
 
     /* Maps a watched TextField to the last text we saw in handleChange. */
     protected var _lastText :Dictionary = new Dictionary(true);

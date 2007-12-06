@@ -24,6 +24,7 @@ import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
+import flash.text.Font;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFieldType;
@@ -81,9 +82,14 @@ public class LOL extends Sprite
             return;
         }
 
-        _formatter = new LOLTextFieldFormatter();
+//        var fonts :Array = Font.enumerateFonts(true);
+//        for each (var font :Font in fonts) {
+//            trace("Font: " + font.fontName);
+//        }
+
+        _formatter = new TextFieldFormatter();
         _formatter.addEventListener(
-            LOLTextFieldFormatter.ENTER_PRESSED_EVENT, handleEnterPressedOnInput);
+            TextFieldFormatter.ENTER_PRESSED_EVENT, handleEnterPressedOnInput);
 
         _ctrl.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
 
@@ -162,7 +168,7 @@ public class LOL extends Sprite
         _content.addChild(_ui);
         _loader = null;
 
-//        trace(DisplayUtil.dumpHierarchy(_ui));
+        trace(DisplayUtil.dumpHierarchy(_ui));
 
         // For some reason, when the movie wraps around, we need to re-grab all the bits
         _ui.addEventListener("frameFirst", initUIBits);
@@ -176,7 +182,7 @@ public class LOL extends Sprite
 
     protected function initUIBits (... ignored) :void
     {
-//        trace("isFrameFirst: " + ignored[0]);
+        trace("isFrameFirst: " + ignored[0]);
 
         _image = find("image") as UILoader;
         if (_image == null) {
@@ -214,10 +220,17 @@ public class LOL extends Sprite
         _votingPane = find("voting_scrollpane") as ScrollPane;
         _resultsPane = find("results_scrollpane") as ScrollPane;
 
-        // TODO: winningCaption still not working!
-        _winningCaption = find("winning_caption") as TextField;
-        _winningCaption.selectable = false;
-        _winningCaption.mouseEnabled = false;
+//        // TODO: winningCaption still not working!
+//        _winningCaption = find("winning_caption") as TextField;
+//        _winningCaption.selectable = false;
+//        _winningCaption.mouseEnabled = false;
+
+        var tf :TextField = new TextField();
+        tf.width = 500;
+        tf.height = 500;
+//        _image.parent.addChild(tf);
+        _winningCaption = tf;
+
         _winnerName = find("winner_name") as TextField;
         _winnerName.selectable = false;
 
@@ -244,7 +257,18 @@ public class LOL extends Sprite
         _participateButton.addEventListener(MouseEvent.CLICK, handleStartParticipating);
         _notParticipating.addEventListener(Event.CHANGE, handleStopParticipating);
 
-        // set up LOL formatting on the two textfields
+        switch (_theme) {
+        default:
+            _formatter.configure(); // defaults
+            break;
+
+        case SILENT_THEME:
+            var grain :MovieClip = find("film_grain") as MovieClip;
+            grain.mouseEnabled = false;
+            grain.mouseChildren = false;
+            _formatter.configure("nickelodeon", 0xFFFFFF, false);
+            break;
+        }
         _formatter.watch(_input, handleTextFieldChanged);
         _formatter.watch(_winningCaption);
 
@@ -261,7 +285,6 @@ public class LOL extends Sprite
         case LOL_THEME:
             // nada, currently
             break;
-
 
         case SILENT_THEME:
             // make a grayscale filter for the image
@@ -515,6 +538,10 @@ public class LOL extends Sprite
 
     protected function colorInputPalette () :void
     {
+        if (_theme != LOL_THEME) {
+            return;
+        }
+
         var g :Graphics = _inputPalette.graphics;
         g.clear();
         if (_input.type == TextFieldType.INPUT) {
@@ -680,7 +707,11 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected function displayWinningCaption (caption :String, name :String) :void
     {
+        trace("Setting winning caption text: " + caption);
         _winningCaption.text = caption;
+        if (_theme == LOL_THEME) {
+            _formatter.format(_winningCaption);
+        }
 
         // remove any old star
         var oldStar :DisplayObject = find("star");
@@ -764,6 +795,9 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected function alignImage () :void
     {
+        if (_theme != LOL_THEME) {
+            return;
+        }
         // TODO: width/height should be available earlier!
         try {
             if (_image.content != null) {
@@ -832,6 +866,10 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected function handleTextFieldChanged (field :TextField) :void
     {
+        if (_theme != LOL_THEME) {
+            return;
+        }
+
         var w :int = MIN_IMAGE_WIDTH;
         var h :int = MAX_IMAGE_HEIGHT;
         // position the field properly over the image control
@@ -929,8 +967,12 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     [Embed(source="rsrc/lol_theme.swf", mimeType="application/octet-stream")]
     protected static const LOL_THEME_UI :Class;
 
-//    [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
+    [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
     protected static const SILENT_THEME_UI :Class;
+
+//    [Embed(source="rsrc/NICKELOD.TTF", fontName="nickelodeon", mimeType="application/x-font")]
+//    [Embed(source="rsrc/Fixedsys500c.ttf", fontName="nickelodeon", mimeType="application/x-font")]
+    protected static const NICKELODEON_FONT :Class;
 
     protected static const IDEAL_WIDTH :int = 700;
     protected static const IDEAL_HEIGHT :int = 500;
@@ -958,7 +1000,9 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected static const SILENT_THEME :String = "silent";
 
     /** The themes we're using. */
-    protected static const THEMES :Array = [ LOL_THEME /*, SILENT_THEME*/ ];
+    protected static const THEMES :Array = [ LOL_THEME, SILENT_THEME ];
+    //protected static const THEMES :Array = [ LOL_THEME ];
+    //protected static const THEMES :Array = [ SILENT_THEME ];
 
     protected var _ctrl :WhirledGameControl;
 
@@ -983,7 +1027,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected var _mask :Shape;
 
-    protected var _formatter :LOLTextFieldFormatter;
+    protected var _formatter :TextFieldFormatter;
 
     protected var _loader :EmbeddedSwfLoader;
 
