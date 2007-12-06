@@ -9,6 +9,8 @@ import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.media.Sound;
+import flash.media.SoundChannel;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -115,13 +117,18 @@ public class HUD extends Sprite
 
     protected function lanternClick (evt :Event) :void
     {
+        if (_lanternLoop != null) {
+            _lanternLoop.stop();
+            _lanternLoop = null;
+        }
         if (_lanternia.visible) {
             removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
             _lanternia.visible = false;
 
         } else {
-            addEventListener(Event.ENTER_FRAME, handleEnterFrame);
             _lanternia.visible = true;
+            _lanternLoop = Sound(new LANTERN_LOOP_AUDIO()).play();
+            addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         }
     }
 
@@ -323,6 +330,8 @@ public class HUD extends Sprite
     // our own random source, not synchronized or seeded
     protected var _random :Random = new Random();
 
+    protected var _lanternLoop :SoundChannel;
+
     protected static const FRAMES_PER_UPDATE :int = 6;
 
     protected static const LANTERN :String = "lanternbutton";
@@ -331,6 +340,9 @@ public class HUD extends Sprite
 
     [Embed(source="../../rsrc/HUD_visual.swf", mimeType="application/octet-stream")]
     protected static const HUD_VISUAL :Class;
+
+    [Embed(source="../../rsrc/wind.mp3")]
+    protected static const LANTERN_LOOP_AUDIO :Class;
 
     protected static const DEBUG :Boolean = false;
 }
