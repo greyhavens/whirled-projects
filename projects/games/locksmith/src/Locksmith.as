@@ -62,7 +62,7 @@ public class Locksmith extends Sprite
             addChildAt(_leftBackground = new BACKGROUND() as Sprite, 0);
             addChildAt(_rightBackground = new BACKGROUND() as Sprite, 0);
             _leftBackground.width = Math.max(0, (_wgc.getSize().x - DISPLAY_WIDTH) / 2) + 1;
-            _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width;
+            _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width - 0.5;
             _rightBackground.width = _leftBackground.width;
             _rightBackground.x = _leftBackground.width + DISPLAY_WIDTH - 1;
             EventHandlers.registerEventListener(_wgc, SizeChangedEvent.TYPE, updateBackgrounds);
@@ -167,7 +167,7 @@ public class Locksmith extends Sprite
     protected function updateBackgrounds (event :SizeChangedEvent) :void
     {
         _leftBackground.width = Math.max(0, (_wgc.getSize().x - DISPLAY_WIDTH) / 2) + 1;
-        _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width;
+        _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width - 0.5;
         if (_scoreBoard != null) {
             _scoreBoard.x = _board.x;
         }

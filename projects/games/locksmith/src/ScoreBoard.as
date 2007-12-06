@@ -2,9 +2,8 @@
 
 package {
 
+import flash.display.Shape;
 import flash.display.Sprite;
-
-import flash.display.MovieClip;
 
 import flash.geom.Point;
 
@@ -84,10 +83,24 @@ public class ScoreBoard extends Sprite
                 headshot.x -= frame.width;
             }
             headshot.y = frame.y + 5;
-            var length :Number = 
-                headshot.width < headshot.height ? headshot.width : headshot.height;
-            var scale :Number = 60 / length;
+            var scale :Number;
+            var masker :Shape = new Shape();
+            masker.graphics.beginFill(0);
+            if (headshot.width < headshot.height) {
+                scale = 60 / headshot.width;
+                var diff :Number = ((headshot.height - headshot.width) * scale) / 2;
+                headshot.y -= diff;
+                masker.graphics.drawRect(0, diff, 60 / scale, 60 / scale);
+            } else {
+                scale = 60 / headshot.height;
+                diff = ((headshot.width - headshot.height) * scale) / 2;
+                headshot.x -= diff;
+                masker.graphics.drawRect(diff, 0, 60 / scale, 60 / scale);
+            }
             headshot.scaleX = headshot.scaleY = scale;
+            masker.graphics.endFill();
+            headshot.addChild(masker);
+            headshot.mask = masker;
             addChildAt(headshot, getChildIndex(frame));
         };
     }
