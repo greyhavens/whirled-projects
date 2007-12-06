@@ -47,7 +47,7 @@ public class Monitor
         
         // dobj change handlers
         _handlers[TOWER_SET] = towersChanged;
-        _handlers[SCORE_SET] = makeHandler(null, _game.handleUpdateScore);
+        _handlers[SCORE_SET] = makeHandler(_game.handleResetScore, _game.handleUpdateScore);
         _handlers[HEALTH_SET] = makeHandler(null, _game.handleUpdateHealth);
         _handlers[MONEY_SET] = makeHandler(_game.handleResetMoney, _game.handleUpdateMoney);
         _handlers[SPAWNGROUPS] = makeHandler(null, _game.handleUpdateSpawnGroup);
@@ -113,7 +113,7 @@ public class Monitor
     protected function makeHandler (resetFn :Function, updateFn :Function) :Function
     {
         if (resetFn == null) {
-            resetFn = function () :void { };
+            resetFn = function (... etc) :void { };
         }
 
         if (updateFn == null) {

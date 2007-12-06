@@ -410,18 +410,6 @@ public class Display extends GameModeCanvas
     }
 
     /**
-     * This function is called as the result of score change making its round-trip to the server.
-     * Given the player id and new score, updates the display.
-     */
-    public function updateScore (player :int, score :Number) :void
-    {
-        //(_scorePanels[player] as ScorePanel).score = score;
-        if (player == _board.main.myIndex) {
-            // _statusBar.score = score;
-        }
-    }
-
-    /**
      * This function is called as the result of health change making its server round-trip.
      * Given the player id and new health, updates the display.
      */

@@ -217,20 +217,29 @@ public class Game
         ArrayUtil.removeFirst(_missiles, missile);
     }
 
-    public function handleUpdateScore (playerId :int, score :Number) :void
+    public function handleResetScore (allScores :Array) :void
     {
-        _display.updateScore(playerId, score);
+        _main.whirled.clearScores();
+        _main.whirled.setPlayerScores(allScores);
     }
 
-    public function handleUpdateHealth (playerId :int, health :Number) :void
+    public function handleUpdateScore (playerIndex :int, score :Number) :void
     {
-        _display.updateHealth(playerId, health);
+        var playerId = _main.whirled.seating.getPlayerIds()[playerIndex];
+        var update :Object = new Object();
+        update[playerId] = score;
+        _main.whirled.setMappedScores(update);
     }
 
-    public function handleUpdateMoney (playerId :int, money :Number) :void
+    public function handleUpdateHealth (playerIndex :int, health :Number) :void
     {
-        _display.updateMoney(playerId, money);
-        if (playerId == _main.myIndex) {
+        _display.updateHealth(playerIndex, health);
+    }
+
+    public function handleUpdateMoney (playerIndex :int, money :Number) :void
+    {
+        _display.updateMoney(playerIndex, money);
+        if (playerIndex == _main.myIndex) {
             _myMoney = money;
         }
     }
