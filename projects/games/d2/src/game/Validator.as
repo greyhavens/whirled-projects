@@ -40,6 +40,7 @@ public class Validator
         _handlers[StateChangedEvent.GAME_STARTED] = gameStarted;
         _handlers[StateChangedEvent.GAME_ENDED] = gameEnded;
         _handlers[Monitor.SPAWNERREADY] = handleSpawnerReady;
+        _handlers[Monitor.SCORE_SET] = handleScoreChange;
         _handlers[REQUEST_ADD] = handleAddRequest;
 //        _handlers[REQUEST_REMOVE] = handleRemove;
 //        _handlers[REQUEST_UPDATE] = handleUpdate;
@@ -149,6 +150,31 @@ public class Validator
         }
     }
 
+    /**
+     * Called when the score changes for any player, retrieves all scores,
+     * and updates the game control's score list appropriately.
+     */
+    protected function handleScoreChange (event :PropertyChangedEvent) :void
+    {
+        if (_whirled.amInControl()) {
+            var scores :Array = new Array(_main.playerCount);
+            
+            if (event.index == -1) {
+                // reset everything
+                for (var ii :int = 0; ii < _main.playerCount; ii++) {
+                    scores[ii] = 0;
+                }
+            } else {
+                for (var ii :int = 0; ii < _main.playerCount; ii++) {
+                    scores[ii] = _whirled.get(Monitor.SCORE_SET, ii);
+                }
+                scores[event.index] = event.newValue;
+            }
+
+            _whirled.setPlayerScores(scores);
+        }
+    }
+    
     /** When the game starts, initialize scores. */
     protected function gameStarted (event :StateChangedEvent) :void
     {
