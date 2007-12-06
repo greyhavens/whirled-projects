@@ -370,7 +370,7 @@ public class HudView extends Sprite
 			_hud.zoneclear.gotoAndPlay(2);
 			
 			//Award Trophy and Room for beating room at rank S on Normal+
-			if (_ctrl.difficulty_setting != "Easy"){
+			if (_ctrl.difficulty_setting != "Easy" || _ctrl.difficulty_setting != "Normal"){
 				if ((GRADES[grade]) == "S"){
 					//Got a rank S!
 					var zone:int = _ctrl.room-1;

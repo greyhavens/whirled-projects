@@ -298,11 +298,6 @@ public class BrawlerView extends Sprite
 		_hud.alpha = 0;
         addChild(results);
 		results.gotoAndPlay(1);
-
-		
-		if(_ctrl.lemmingCount <= 0){
-			_ctrl.control.awardTrophy("immortal");
-		}
 		
         // display the KO count/points
         //var koCount :Number = _ctrl.control.get("koCount") as Number;
@@ -312,13 +307,13 @@ public class BrawlerView extends Sprite
         // display the damage points
         results.score.points.text = Math.round(_ctrl.score);
 
-		if(_ctrl._difficulty == 0){
+		if(_ctrl.difficulty_setting == "Easy"){
 			results.difficulty.text = "EASY";
-		}else if(_ctrl._difficulty == 1){
+		}else if(_ctrl.difficulty_setting == "Normal"){
 			results.difficulty.text = "NORMAL";
-		}else if(_ctrl._difficulty == 2){
+		}else if(_ctrl.difficulty_setting == "Hard"){
 			results.difficulty.text = "HARD";
-		}else{
+		}else if(_ctrl.difficulty_setting == "Inferno"){
 			results.difficulty.text = "INFERNO";
 		}
 
@@ -332,7 +327,7 @@ public class BrawlerView extends Sprite
 		results.percent.points.text = pct;
 		
 		//Award trophy/prize for room
-		if (_ctrl.difficulty_setting != "Easy"){
+		if (_ctrl.difficulty_setting != "Easy" || _ctrl.difficulty_setting != "Normal"){
 			if ((GRADES[grade]) == "S"){
 				//Got a rank S!
 				var zone:int = 9;
@@ -345,6 +340,13 @@ public class BrawlerView extends Sprite
 		//Award trophy/prize for completion
 		if (_ctrl.control.awardTrophy(String("trophy_"+_ctrl.difficulty_setting))) {
 			_ctrl.control.awardPrize(String("prize_"+_ctrl.difficulty_setting));
+		}
+		
+		//Award Immortal Trophy if they didn't die.
+		if (_ctrl.difficulty_setting != "Easy"){
+			if(_ctrl.lemmingCount <= 0){
+				_ctrl.control.awardTrophy("immortal");
+			}
 		}
 		
 		

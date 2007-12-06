@@ -72,6 +72,7 @@ public class Weapon extends Pickup
     {
 		if(player.blocking || player.weapon == _weapon || player.weapon == FISTS){
 			super.hit(player);
+			_ctrl.weaponsCollected += 1;
 			var sparks :MovieClip = _ctrl.create("WeaponSparks");
 			sparks.cn.gotoAndStop(label);
 			_view.addTransient(sparks, x, y, true);
@@ -79,7 +80,6 @@ public class Weapon extends Pickup
 			var self :Player = _ctrl.self;
 			if(self == player){
 				_view.hud.showPickUp(x);
-				_ctrl.weaponsCollected += 1;
 			}
 		}
     }
