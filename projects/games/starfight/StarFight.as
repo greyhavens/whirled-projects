@@ -61,6 +61,8 @@ public class StarFight extends Sprite
     {
         _gameCtrl = new WhirledGameControl(this);
         _gameCtrl.registerListener(this);
+        _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+        _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
 
         var mask :Shape = new Shape();
         addChild(mask);
@@ -73,7 +75,7 @@ public class StarFight extends Sprite
         graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
 
         var introMovie :MovieClip = MovieClip(new introAsset());
-        introMovie.addEventListener(MouseEvent.CLICK, firstStart);
+        addEventListener(MouseEvent.CLICK, firstStart);
         addChild(introMovie);
 
         Font.registerFont(_venusRising);
@@ -88,7 +90,8 @@ public class StarFight extends Sprite
         if (_assets < Codes.SHIP_TYPES.length) {
             return;
         }
-        removeChild(event.currentTarget as MovieClip);
+        removeChildAt(1);
+        removeEventListener(MouseEvent.CLICK, firstStart);
         setupBoard();
 
         setGameObject();
@@ -214,10 +217,6 @@ public class StarFight extends Sprite
         if (_gameCtrl.isConnected()) {
             _gameCtrl.setImmediate(shipKey(myId), _ownShip.writeTo(new ByteArray()));
 
-            // TODO: Get these in place standalone.
-            // Our ship is interested in keystrokes.
-            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, _ownShip.keyPressed);
-            _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, _ownShip.keyReleased);
             _population++;
             maybeStartRound();
         }
@@ -788,6 +787,20 @@ public class StarFight extends Sprite
         }
 
         _lastTickTime = now;
+    }
+
+    protected function keyPressed (event :KeyboardEvent) :void
+    {
+        if (_ownShip != null) {
+            _ownShip.keyPressed(event);
+        }
+    }
+
+    protected function keyReleased (event :KeyboardEvent) :void
+    {
+        if (_ownShip != null) {
+            _ownShip.keyReleased(event);
+        }
     }
 
     protected function handleFlowAwarded (event :FlowAwardedEvent) :void
