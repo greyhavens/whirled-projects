@@ -82,7 +82,7 @@ public class LOL extends Sprite
             return;
         }
 
-        Font.registerFont(NICKELODEON_FONT);
+//        Font.registerFont(NICKELODEON_FONT);
 
         _formatter = new TextFieldFormatter();
         _formatter.addEventListener(
@@ -122,6 +122,7 @@ public class LOL extends Sprite
         _timer.addEventListener(TimerEvent.TIMER, handleSubmitCaption);
 
         // get us rolling
+        updateSize(_ctrl.getSize());
         initTheme();
     }
 
@@ -161,7 +162,6 @@ public class LOL extends Sprite
     {
         _ui = _loader.getContent() as MovieClip;
         _ui.mask = _mask;
-        updateSize(_ctrl.getSize());
         _content.addChild(_ui);
         _loader = null;
 
@@ -965,11 +965,11 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     [Embed(source="rsrc/lol_theme.swf", mimeType="application/octet-stream")]
     protected static const LOL_THEME_UI :Class;
 
-    [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
+//    [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
     protected static const SILENT_THEME_UI :Class;
-
-    [Embed(source="rsrc/NICKELOD.TTF", fontName="nickelodeon", mimeType="application/x-font")]
-    protected static const NICKELODEON_FONT :Class;
+//
+//    [Embed(source="rsrc/NICKELOD.TTF", fontName="nickelodeon", mimeType="application/x-font")]
+//    protected static const NICKELODEON_FONT :Class;
 
     protected static const IDEAL_WIDTH :int = 700;
     protected static const IDEAL_HEIGHT :int = 500;
@@ -997,8 +997,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected static const SILENT_THEME :String = "silent";
 
     /** The themes we're using. */
-    protected static const THEMES :Array = [ LOL_THEME, SILENT_THEME ];
-//    protected static const THEMES :Array = [ LOL_THEME ];
+//    protected static const THEMES :Array = [ LOL_THEME, SILENT_THEME ];
+    protected static const THEMES :Array = [ LOL_THEME ];
 //    protected static const THEMES :Array = [ SILENT_THEME ];
 
     protected var _ctrl :WhirledGameControl;
