@@ -1,6 +1,7 @@
 package ui {
 
 import flash.display.DisplayObject;
+import flash.display.SimpleButton;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.ui.Mouse;
@@ -68,14 +69,15 @@ public class TowerPanel extends TitleWindow
         
         var towers :Array = _board.getAvailableTowers();
         towers.forEach(function(tdef :TowerDefinition, i :int, a :Array) :void {
-                var b :* = new tdef.button();
+                var b :DisplayObject = new tdef.button();
                 b.addEventListener(MouseEvent.MOUSE_OVER, makeDescriptionFn(tdef));
                 b.addEventListener(MouseEvent.MOUSE_OUT, makeDescriptionFn(null));
                 b.addEventListener(MouseEvent.CLICK, makeClickFn(tdef));
 
                 // now wrap it in a special container, so that we can add it to flex
                 var c :Canvas = new Canvas();
-                c.rawChildren.addChild(b);
+                c.id = String(i);
+                c.rawChildren.addChildAt(b, 0);
                 c.width = b.width;
                 c.height = b.height;
                 _buttons.addChild(c);
@@ -89,10 +91,12 @@ public class TowerPanel extends TitleWindow
         var updateFn :Function = function () :void {
             var towers :Array = _board.getAvailableTowers();
             _buttons.getChildren().forEach(function (obj :DisplayObject, i :*, a :*) :void {
-                    var b :Button = obj as Button;
-                    if (b != null && b.id != null && isFinite(int(b.id))) {
-                        var tdef :TowerDefinition = towers[b.id];
-                        b.enabled = (tdef.cost <= money);
+                    var c :Canvas = obj as Canvas;
+                    if (c != null && c.id != null && isFinite(int(c.id))) {
+                        var tdef :TowerDefinition = towers[int(c.id)];
+                        var button :SimpleButton = c.rawChildren.getChildAt(0) as SimpleButton;
+                        button.enabled = (tdef.cost <= money);
+                        button.alpha = (button.enabled ? 1.0 : 0.5);
                     }
                 });
         };
