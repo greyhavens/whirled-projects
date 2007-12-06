@@ -47,6 +47,27 @@ public class BrawlerController extends Controller
     implements OccupantChangedListener, MessageReceivedListener, PropertyChangedListener,
         StateChangedListener
 {
+	/** Variables for the trophies  */
+	public var difficulty_setting :String 		= "Normal";
+	public var timeSpentBlocking :Number 		= 0;
+    public var timeSpentBlocking_goal :Number 	= 180;
+    public var timeSpentBlocking_awarded :Boolean = false;
+	public var lemmingCount :Number 			= 0;
+    public var lemmingCount_goal :Number 		= 10;
+    public var lemmingCount_awarded :Boolean 	= false;
+	public var damageTaken :Number 				= 0;
+    public var damageTaken_goal :Number 		= 30000;
+    public var damageTaken_awarded :Boolean 	= false;
+	public var coinsCollected :Number 			= 0;
+    public var coinsCollected_goal :Number 		= 100;
+    public var coinsCollected_awarded :Boolean 	= false;
+	public var weaponsBroken :Number 			= 0;
+    public var weaponsBroken_goal :Number 		= 25;
+    public var weaponsBroken_awarded :Boolean 	= false;
+	public var weaponsCollected :Number 		= 0;
+    public var weaponsCollected_goal :Number 	= 50;
+    public var weaponsCollected_awarded :Boolean = false;
+
     public function BrawlerController (disp :DisplayObject)
     {
         // create the whirled control
@@ -125,7 +146,7 @@ public class BrawlerController extends Controller
      */
     public function get amPlaying () :Boolean
     {
-        return _control.seating.getMyPosition() > -1;
+        return _control.isConnected() && (_control.seating.getMyPosition() > -1);
     }
 
     /**
@@ -552,67 +573,69 @@ public class BrawlerController extends Controller
      * Called when the game is known to be started.
      */
     protected function finishInit () :void
-    {	if(init_finished){
+    {
+        if (init_finished) {
 			if (_control.amInControl()) {
 				_throttle.startTicker("clock", CLOCK_DELAY);
 			}
-		}else{
-			init_finished = true;
-			// find existing actors, start listening for updates
-			var names :Array = _control.getPropertyNames("actor");
-			for each (var name :String in names) {
-				createActor(name, _control.get(name));
-			}
-			_control.registerListener(this);
+            return;
+        }
+        init_finished = true;
 
-			// fetch the difficulty level
-			_difficulty = DIFFICULTY_LEVELS.indexOf(_control.getConfig()["difficulty"]);
-			difficulty_setting = _control.getConfig()["difficulty"];
-
-			// if we are in control, initialize
-			if (_control.amInControl()) {
-				_throttle.set("room", _room);
-				_throttle.set("wave", _wave);
-				_throttle.set("koCount", 0);
-				_throttle.set("playerDamage", 0);
-				_throttle.set("enemyDamage", 0);
-				_throttle.set("scores", new Array(_control.seating.getPlayerIds().length));
-				_throttle.set("clockOffset", 0);
-				_throttle.startTicker("clock", CLOCK_DELAY);
-			} else {
-				var croom :Object = _control.get("room");
-				var cwave :Object = _control.get("wave");
-				_room = (croom == null) ? 1 : (croom as int);
-				_wave = (cwave == null) ? 1 : (cwave as int);
-			}
-
-			// create and announce our own pawn
-			if (amPlaying) {
-				var start :Point = _view.playerStart;
-				_self = createActor(createActorName(), Player.createState(start.x, start.y)) as Player;
-			}
-
-			// copy the configurations to an array (for some reason they disappear if we try to keep
-			// them in the clip) and create our share of the enemies
-			var configs :MovieClip = create("EnemyConfigs");
-			for (var ii :int = 0; ii < configs.numChildren; ii++) {
-				_econfigs.push(configs.getChildAt(ii));
-			}
-			createEnemies();
-
-			_clickTimer.addEventListener( TimerEvent.TIMER, onClickTimer);
-			_clickTimer.start();
-
-			if (amPlaying) {
-				// listen for mouse clicks on the ground
-				_view.ground.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
-
-				// listen for keyboard events through the blocker
-				_blocker = new KeyRepeatLimiter(_control);
-				_blocker.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
-				_blocker.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
-			}
+        // find existing actors, start listening for updates
+        var names :Array = _control.getPropertyNames("actor");
+        for each (var name :String in names) {
+			createActor(name, _control.get(name));
 		}
+        _control.registerListener(this);
+
+        // fetch the difficulty level
+        _difficulty = DIFFICULTY_LEVELS.indexOf(_control.getConfig()["difficulty"]);
+        difficulty_setting = _control.getConfig()["difficulty"];
+
+        // if we are in control, initialize
+        if (_control.amInControl()) {
+            _throttle.set("room", _room);
+            _throttle.set("wave", _wave);
+            _throttle.set("koCount", 0);
+            _throttle.set("playerDamage", 0);
+            _throttle.set("enemyDamage", 0);
+            _throttle.set("scores", new Array(_control.seating.getPlayerIds().length));
+            _throttle.set("clockOffset", 0);
+            _throttle.startTicker("clock", CLOCK_DELAY);
+        } else {
+            var croom :Object = _control.get("room");
+            var cwave :Object = _control.get("wave");
+            _room = (croom == null) ? 1 : (croom as int);
+            _wave = (cwave == null) ? 1 : (cwave as int);
+        }
+
+        // create and announce our own pawn
+        if (amPlaying) {
+            var start :Point = _view.playerStart;
+            _self = createActor(createActorName(), Player.createState(start.x, start.y)) as Player;
+        }
+
+        // copy the configurations to an array (for some reason they disappear if we try to keep
+        // them in the clip) and create our share of the enemies
+        var configs :MovieClip = create("EnemyConfigs");
+        for (var ii :int = 0; ii < configs.numChildren; ii++) {
+            _econfigs.push(configs.getChildAt(ii));
+        }
+        createEnemies();
+
+        _clickTimer.addEventListener( TimerEvent.TIMER, onClickTimer);
+        _clickTimer.start();
+
+        if (amPlaying) {
+            // listen for mouse clicks on the ground
+            _view.ground.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
+
+            // listen for keyboard events through the blocker
+            _blocker = new KeyRepeatLimiter(_control);
+            _blocker.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+            _blocker.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
+        }
     }
 
     /**
@@ -722,7 +745,8 @@ public class BrawlerController extends Controller
             });
     }
 
-	private function onClickTimer( e: Event):void{
+	private function onClickTimer( e: Event):void
+    {
 		_lastClick += 100;
 	}
 
@@ -833,26 +857,5 @@ public class BrawlerController extends Controller
 
     /** Key codes for the sprint command. */
     protected static const SPRINT_CODES :Array = [ 49, 87 ]; // 1, W
-	
-	/** Variables for the trophies  */
-	public var difficulty_setting :String 	= "Normal";
-	public var timeSpentBlocking :Number 	= 0;
-		public var timeSpentBlocking_goal :Number 	= 180;
-		public var timeSpentBlocking_awarded :Boolean 	= false;
-	public var lemmingCount :Number 		= 0;
-		public var lemmingCount_goal :Number 		= 10;
-		public var lemmingCount_awarded :Boolean 	= false;
-	public var damageTaken :Number 			= 0;
-		public var damageTaken_goal :Number 		= 30000;
-		public var damageTaken_awarded :Boolean 	= false;
-	public var coinsCollected :Number 		= 0;
-		public var coinsCollected_goal :Number 		= 100;
-		public var coinsCollected_awarded :Boolean 	= false;
-	public var weaponsBroken :Number 		= 0;
-		public var weaponsBroken_goal :Number 		= 25;
-		public var weaponsBroken_awarded :Boolean 	= false;
-	public var weaponsCollected :Number 	= 0;
-		public var weaponsCollected_goal :Number 	= 50;
-		public var weaponsCollected_awarded :Boolean 	= false;
 }
 }

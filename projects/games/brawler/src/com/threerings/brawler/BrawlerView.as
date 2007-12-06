@@ -60,8 +60,9 @@ public class BrawlerView extends Sprite
 
         // if the game is in play, jump right into the main view; otherwise, show the preloader
         // display and wait for the game to start
-        if (_ctrl.control.isInPlay()) {
+        if (_ctrl.control.isConnected() && _ctrl.control.isInPlay()) {
             finishInit();
+
         } else {
             addChild(_preloader = _ctrl.create("Preloader"));
             _ctrl.control.addEventListener(StateChangedEvent.GAME_STARTED,
