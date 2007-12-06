@@ -11,6 +11,8 @@ import flash.geom.Point;
 
 import flash.utils.getTimer;
 
+import com.whirled.contrib.EventHandlers;
+
 public class Marble extends Sprite
 {
     public static const MOON :int = 1;
@@ -38,7 +40,7 @@ public class Marble extends Sprite
         y = _origin.y;
         updateRotation();
 
-        Locksmith.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
+        EventHandlers.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     public function set pos (pos :int) :void 
@@ -83,7 +85,7 @@ public class Marble extends Sprite
                 }
             } else if (_nextRing.outer == null) {
                 // only go away if we're in a launcher
-                Locksmith.unregisterEventListener(this, Event.ENTER_FRAME, enterFrame);
+                EventHandlers.unregisterEventListener(this, Event.ENTER_FRAME, enterFrame);
                 _board.removeChild(this);
             } 
             return false;
@@ -138,7 +140,7 @@ public class Marble extends Sprite
             x = _destination.x;
             y = _destination.y;
             if (_destination.equals(new Point(0, 0))) {
-                Locksmith.unregisterEventListener(this, Event.ENTER_FRAME, enterFrame);
+                EventHandlers.unregisterEventListener(this, Event.ENTER_FRAME, enterFrame);
                 _board.removeChild(this);
                 _board.marbleIsRoaming(this, false);
             } else if (_nextRing.inner != null) {

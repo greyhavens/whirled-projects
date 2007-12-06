@@ -4,6 +4,7 @@
   <!-- define some basic project parameters -->
   <property name="app.name" value="Locksmith"/>
   <property name="app.source-dir" value="src"/>
+  <property name="app.source-extras" value="../../../contrib/src/as/"/>
 
   <import file="../../../etc/project-include.xml"/>
 

@@ -18,6 +18,8 @@ import com.threerings.util.ArrayUtil;
 import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
 
+import com.whirled.contrib.EventHandlers;
+
 [SWF(width="700", height="500")]
 public class Locksmith extends Sprite
 {
@@ -29,29 +31,9 @@ public class Locksmith extends Sprite
 
     public static const WIN_SCORE :int = 6;
 
-    public static function registerEventListener (dispatcher :IEventDispatcher, event :String,
-        listener :Function) :void
-    {
-        dispatcher.addEventListener(event, listener);
-        _eventHandlers.push({dispatcher: dispatcher, event: event, func: listener});
-    }
-
-    public static function unregisterEventListener (dispatcher :IEventDispatcher, event :String,
-        listener :Function) :void
-    {
-        dispatcher.removeEventListener(event, listener);
-        for (var ii :int = 0; ii < _eventHandlers.length; ii++) {
-            if (dispatcher == _eventHandlers[ii].dispatcher && event == _eventHandlers[ii].event &&
-                listener == _eventHandlers[ii].listener) {
-                _eventHandlers.splice(ii, 1);
-                break;
-            }
-        }
-    }
-
     public function Locksmith ()
     {
-        registerEventListener(root.loaderInfo, Event.UNLOAD, handleUnload);
+        EventHandlers.registerUnload(root.loaderInfo);
 
         addChild(_board = new Board());
         // centering the board display makes all placement and animation *a lot* easier for this 
@@ -60,12 +42,16 @@ public class Locksmith extends Sprite
         _board.y = DISPLAY_HEIGHT / 2;
         _control = new WhirledGameControl(this);
         if (_control.isConnected()) {
-            registerEventListener(_control, StateChangedEvent.GAME_STARTED, gameDidStart);
-            registerEventListener(_control, StateChangedEvent.GAME_ENDED, gameDidEnd);
-            registerEventListener(_control, StateChangedEvent.TURN_CHANGED, turnDidChange);
-            registerEventListener(_control, MessageReceivedEvent.TYPE, messageReceived);
-            registerEventListener(_control, KeyboardEvent.KEY_DOWN, keyDownHandler);
-            registerEventListener(_control, FlowAwardedEvent.FLOW_AWARDED, 
+            EventHandlers.registerEventListener(
+                _control, StateChangedEvent.GAME_STARTED, gameDidStart);
+            EventHandlers.registerEventListener(
+                _control, StateChangedEvent.GAME_ENDED, gameDidEnd);
+            EventHandlers.registerEventListener(
+                _control, StateChangedEvent.TURN_CHANGED, turnDidChange);
+            EventHandlers.registerEventListener(
+                _control, MessageReceivedEvent.TYPE, messageReceived);
+            EventHandlers.registerEventListener(_control, KeyboardEvent.KEY_DOWN, keyDownHandler);
+            EventHandlers.registerEventListener(_control, FlowAwardedEvent.FLOW_AWARDED, 
                 function (event :FlowAwardedEvent) :void {
                     _control.localChat("You were awarded " + event.amount + " flow!");
                 });
@@ -227,17 +213,6 @@ public class Locksmith extends Sprite
         }
         return rings;
     }
-
-    protected function handleUnload (evt :Event) :void
-    {
-        for each (var handler :Object in _eventHandlers) {
-            handler.dispatcher.removeEventListener(handler.event, handler.func);
-        }
-    }
-
-    /** All event listeners register in Locksmith - these need to be cleaned up when the game is
-     * unloaded so that Locksmith gets fully GC'd */
-    protected static var _eventHandlers :Array = [];
 
     protected var _board :Board;
     protected var _control :WhirledGameControl;

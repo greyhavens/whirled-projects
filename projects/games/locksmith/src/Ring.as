@@ -16,6 +16,8 @@ import mx.core.MovieClipAsset;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 
+import com.whirled.contrib.EventHandlers;
+
 public class Ring extends Sprite 
 {
     public static const RINGS_SIZE :int = 500;
@@ -46,7 +48,7 @@ public class Ring extends Sprite
             _channels.push(new Channel(channelMovie, hole));
         }
 
-        Locksmith.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
+        EventHandlers.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     public function rotate (direction :int) :void

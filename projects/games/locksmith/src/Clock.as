@@ -9,6 +9,8 @@ import flash.events.TimerEvent;
 
 import flash.utils.Timer;
 
+import com.whirled.contrib.EventHandlers;
+
 public class Clock extends Sprite
 {
     public function Clock (outOfTime :Function)
@@ -21,10 +23,10 @@ public class Clock extends Sprite
         _inTurn = false;
 
         _secondTimer = new Timer(1000);
-        Locksmith.registerEventListener(_secondTimer, TimerEvent.TIMER, updateTime);
+        EventHandlers.registerEventListener(_secondTimer, TimerEvent.TIMER, updateTime);
         _secondTimer.start();
 
-        Locksmith.registerEventListener(this, Event.ENTER_FRAME, fastRotation);
+        EventHandlers.registerEventListener(this, Event.ENTER_FRAME, fastRotation);
     }
 
     public function turnOver () :void

@@ -14,6 +14,8 @@ import mx.core.MovieClipAsset;
 
 import com.whirled.WhirledGameControl;
 
+import com.whirled.contrib.EventHandlers;
+
 public class Board extends Sprite
 {
     public function Board () 
@@ -32,7 +34,7 @@ public class Board extends Sprite
 
         updateTurnIndicator(ScoreBoard.MOON_PLAYER);
 
-        Locksmith.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
+        EventHandlers.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     public function get clock () :Clock
