@@ -44,6 +44,7 @@ public class Locksmith extends Sprite
         _board.y = DISPLAY_HEIGHT / 2;
         _wgc = new WhirledGameControl(this);
         if (_wgc.isConnected()) {
+            _wgc.setShowButtons(false);
             EventHandlers.registerEventListener(
                 _wgc, StateChangedEvent.GAME_STARTED, gameDidStart);
             EventHandlers.registerEventListener(
