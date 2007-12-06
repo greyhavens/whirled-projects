@@ -11,6 +11,7 @@ import flash.utils.ByteArray;
 
 import flash.external.ExternalInterface;
 
+import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
@@ -75,6 +76,9 @@ public class StarFight extends Sprite
         introMovie.addEventListener(MouseEvent.CLICK, firstStart);
         addChild(introMovie);
 
+        Font.registerFont(_venusRising);
+        gameFont = Font(new _venusRising());
+
         Resources.init(assetLoaded);
     }
 
@@ -120,10 +124,6 @@ public class StarFight extends Sprite
                 Codes.SHIP_TYPES[_assets++].loadAssets(assetLoaded);
                 return;
             }
-            var gameFontClass :Class = Resources.getClass("game_font");
-            Font.registerFont(gameFontClass);
-            gameFont = Font(new gameFontClass());
-
         }
     }
 
@@ -152,6 +152,7 @@ public class StarFight extends Sprite
                 _stateTime = int(_gameCtrl.get("stateTime"));
             }
             updateRoundStatus();
+            _gameCtrl.addEventListener(Event.UNLOAD, handleUnload);
             _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
             _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
             _gameCtrl.addEventListener(StateChangedEvent.CONTROL_CHANGED, handleHostChanged);
@@ -390,7 +391,6 @@ public class StarFight extends Sprite
             ship.roundEnded();
         }
         _boardCtrl.endRound();
-        _gameCtrl.setImmediate(shipKey(myId), null);
         if (_gameCtrl.isConnected() && _gameCtrl.amInControl()) {
             var scoreIds :Array = [];
             var scores :Array = [];
@@ -606,10 +606,14 @@ public class StarFight extends Sprite
      */
     protected function handleGameEnded (event :StateChangedEvent) :void
     {
-        if (_gameCtrl.amInControl()) {
-            _gameCtrl.restartGameIn(30);
-            _gameCtrl.startTicker("nextRoundTicker", 1000);
-        }
+        _gameCtrl.doBatch(function () :void {
+            _gameCtrl.setImmediate(shipKey(myId), null);
+            _gameCtrl.setImmediate("score:myId", 0);
+            if (_gameCtrl.amInControl()) {
+                _gameCtrl.restartGameIn(30);
+                _gameCtrl.startTicker("nextRoundTicker", 1000);
+            }
+        });
     }
 
     /**
@@ -806,6 +810,9 @@ public class StarFight extends Sprite
 
     [Embed(source="rsrc/intro_movie.swf")]
     protected var introAsset :Class;
+
+    [Embed(source="rsrc/VENUSRIS.TTF", fontName="Venus Rising", mimeType="application/x-font")]
+    protected var _venusRising :Class;
 
     /** Our game control object. */
     protected var _gameCtrl :WhirledGameControl;
