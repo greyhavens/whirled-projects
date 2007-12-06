@@ -3,7 +3,6 @@ package core.tasks {
 import com.threerings.util.Assert;
 import core.ObjectTask;
 import core.AppObject;
-import flash.utils.describeType;
 
 public class FunctionTask extends ObjectTask
 {
@@ -31,7 +30,6 @@ public class FunctionTask extends ObjectTask
     }
 
     protected var _fn :Function;
-    protected var _acceptsObjParam :Boolean;
 }
 
 }

@@ -110,7 +110,7 @@ public class BoardCursor extends AppObject
     protected function clearTimerExpired () :void
     {
         //trace("clearTimerExpired");
-        _board.beginClearSection(_mouseIndexX, _mouseIndexY);
+        _board.clearPieceGroup(_mouseIndexX, _mouseIndexY);
         _noSwapOnNextClick = true;
         this.removeClearTimer();
     }

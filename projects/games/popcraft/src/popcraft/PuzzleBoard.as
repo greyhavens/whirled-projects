@@ -11,9 +11,9 @@ import flash.display.Sprite;
 import core.tasks.LocationTask;
 import core.tasks.ScaleTask;
 import flash.geom.Point;
-import core.tasks.TimedTask;
 import core.util.ObjectSet;
-import core.tasks.SerialTask;
+
+import core.tasks.*;
 
 public class PuzzleBoard extends AppObject
 {
@@ -41,7 +41,8 @@ public class PuzzleBoard extends AppObject
         for (i = 0; i < _cols * _rows; ++i) {
             var resourceType :uint = Rand.nextIntRange(0, GameConstants.RESOURCE_TYPES.length);
 
-            var piece :Piece = new Piece(resourceType);
+            var piece :Piece = new Piece(resourceType, i);
+
             piece.displayObject.x = getPieceXLoc(idxToX(i));
             piece.displayObject.y = getPieceYLoc(idxToY(i));
 
@@ -69,18 +70,135 @@ public class PuzzleBoard extends AppObject
         return _sprite;
     }
 
-    public function beginClearSection (x :int, y :int) :void
+    public function clearPieceGroup (x :int, y :int) :void
     {
-        var clearPieces :Array = findConnectedSimilarPieces(x, y);
+        Assert.isFalse(_resolvingClears);
 
-        for each (var piece :Piece in clearPieces) {
-            piece.addTask(ScaleTask.CreateSmooth(0, 0, 0.25));
+        var clearPieces :Array = findConnectedSimilarPieces(x, y);
+        if (clearPieces.length < GameConstants.MIN_GROUP_SIZE) {
+            return;
         }
 
+        _resolvingClears = true;
+
+        // animate the pieces exploding
+        for each (var piece :Piece in clearPieces) {
+            var pieceAnim :SerialTask = new SerialTask();
+
+            pieceAnim.addTask(ScaleTask.CreateEaseOut(0.5, 0.5, 0.4));
+
+            pieceAnim.addTask(new ParallelTask(
+                ScaleTask.CreateEaseOut(1.25, 1.25, 0.25),
+                new AlphaTask(0, 0.25)));
+
+            pieceAnim.addTask(new SelfDestructTask());
+
+            piece.addTask(pieceAnim);
+
+            this.addTask(new SerialTask(
+                new TimedTask(0.65),
+                new FunctionTask(animatePieceDrops)));
+
+            // remove the pieces from the board array
+            _board[piece.boardIndex] = null;
+        }
+    }
+
+    protected function animatePieceDrops () :void
+    {
+        // examine the board array for holes,
+        // and drop pieces above any holes into position
+
+        var piecesDropped :Boolean = false;
+
+        for (var col :int = 0; col < _cols; ++col) {
+
+            // begin searching for holes from the bottom
+            // don't bother searching the top row - we can't fill holes that begin there
+            for (var row :int = _rows - 1; row > 0; --row) {
+
+                // have we found a hole in this row?
+                if (null == this.getPieceAt(col, row)) {
+
+                    // drop pieces into the hole
+                    var holeRow :int = row;
+
+                    // find the first piece to drop
+                    var dropRow :int = holeRow - 1;
+                    while (dropRow >= 0 && null == this.getPieceAt(col, dropRow)) {
+                        --dropRow;
+                    }
+
+                    // drop the pieces!
+                    while (dropRow >= 0 && null != this.getPieceAt(col, dropRow)) {
+                        dropPiece(col, dropRow, holeRow);
+                        --dropRow;
+                        --holeRow;
+
+                        piecesDropped = true;
+                    }
+
+                    // continue searching for holes wherever the last drop happened
+                    row = dropRow + 1; // row will be decremented by the for-loop
+                }
+            }
+        }
+
+        function dropPiece (col :int, fromRow :int, toRow :int) :void
+        {
+            var fromIndex :int = coordsToIdx(col, fromRow);
+            var toIndex :int = coordsToIdx(col, toRow);
+
+            Assert.isTrue(fromIndex >= 0 && fromIndex < _board.length);
+            Assert.isTrue(toIndex >= 0 && toIndex < _board.length);
+            Assert.isNull(_board[toIndex]);
+
+            var piece :Piece = (_board[fromIndex] as Piece);
+
+            Assert.isNotNull(piece);
+
+            // move the piece to the correct place in the array
+            swapPiecesInternal(fromIndex, toIndex);
+
+            // make sure the piece is in its correct location
+            piece.displayObject.x = getPieceXLoc(col);
+            piece.displayObject.y = getPieceYLoc(fromRow);
+
+            // animate the piece to its new location
+            piece.removeNamedTasks("move");
+
+            piece.addNamedTask("move",
+                LocationTask.CreateEaseOut(
+                    getPieceXLoc(col),
+                    getPieceYLoc(toRow),
+                    0.5));
+        }
+    }
+
+    public function swapPiecesInternal (index1 :int, index2 :int) :void
+    {
+        Assert.isTrue(index1 >= 0 && index1 < _board.length);
+        Assert.isTrue(index2 >= 0 && index2 < _board.length);
+
+        var piece1 :Piece = (_board[index1] as Piece);
+        var piece2 :Piece = (_board[index2] as Piece);
+
+        if (null != piece1) {
+            piece1.boardIndex = index2;
+        }
+
+        if (null != piece2) {
+            piece2.boardIndex = index1;
+        }
+
+        _board[index1] = piece2;
+        _board[index2] = piece1;
     }
 
     public function swapPieces (x1 :int, y1 :int, x2 :int, y2 :int) :void
     {
+        Assert.isFalse(_resolvingClears);
+
         var index1 :int = coordsToIdx(x1, y1);
         var index2 :int = coordsToIdx(x2, y2);
 
@@ -92,8 +210,7 @@ public class PuzzleBoard extends AppObject
         var piece2 :Piece = _board[index2];
 
         // swap their positions in the array
-        _board[index1] = piece2;
-        _board[index2] = piece1;
+        swapPiecesInternal(index1, index2);
 
         // make sure the pieces are in their correct initial locations
         var px1 :int = getPieceXLoc(x1);
@@ -173,6 +290,11 @@ public class PuzzleBoard extends AppObject
     public function getPieceYLoc (yCoord :int) :int
     {
         return (yCoord * _cellSize) + (_cellSize / 2);
+    }
+
+    public function get resolvingClears () :Boolean
+    {
+        return _resolvingClears;
     }
 
     protected var _sprite :Sprite;
