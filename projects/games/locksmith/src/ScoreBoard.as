@@ -26,16 +26,21 @@ public class ScoreBoard extends Sprite
         addChild(trough);
         _gameEndedCallback = gameEndedCallback;
 
-        var leftFrame :Sprite = new PLAYER_FRAME() as Sprite;
-        leftFrame.x = -241;
-        leftFrame.y = -233;
-        leftFrame.scaleX = -1; // invert horizontally
-        addChild(leftFrame);
-        var rightFrame :Sprite = new PLAYER_FRAME() as Sprite;
-        rightFrame.x = 242;
-        rightFrame.y = -233;
-        addChild(rightFrame);
+        _leftFrame = new PLAYER_FRAME() as Sprite;
+        _leftFrame.x = -241;
+        _leftFrame.y = -233;
+        _leftFrame.scaleX = -1; // invert horizontally
+        addChild(_leftFrame);
+        _rightFrame = new PLAYER_FRAME() as Sprite;
+        _rightFrame.x = 242;
+        _rightFrame.y = -233;
+        addChild(_rightFrame);
 
+        var playerIds :Array = wgc.seating.getPlayerIds();
+        wgc.getHeadShot(playerIds[MOON_PLAYER], applyHeadshot(MOON_PLAYER));
+        if (playerIds.length > 1) {
+            wgc.getHeadShot(playerIds[SUN_PLAYER], applyHeadshot(SUN_PLAYER));
+        }
     }
 
     public function get moonScore () :int
@@ -63,6 +68,28 @@ public class ScoreBoard extends Sprite
         } else {
             log.debug("Asked to score point for unknown player [" + player + "]");
         }
+    }
+
+    protected function applyHeadshot (player :int) :Function 
+    {
+        return function (headshot :Sprite, success :Boolean) :void
+        {
+            if (!success) {
+                return;
+            }
+
+            var frame :Sprite = player == MOON_PLAYER ? _leftFrame : _rightFrame;
+            headshot.x = frame.x + 7;
+            if (headshot.x < 0) {
+                headshot.x -= frame.width;
+            }
+            headshot.y = frame.y + 5;
+            var length :Number = 
+                headshot.width < headshot.height ? headshot.width : headshot.height;
+            var scale :Number = 60 / length;
+            headshot.scaleX = headshot.scaleY = scale;
+            addChildAt(headshot, getChildIndex(frame));
+        };
     }
 
     protected function gameOver () :void
@@ -110,6 +137,9 @@ public class ScoreBoard extends Sprite
     protected var _sunScore :int = 0;
     protected var _gameEndedCallback :Function;
     protected var _marbleLayer :Sprite = new Sprite();
+
+    protected var _leftFrame :Sprite;
+    protected var _rightFrame :Sprite;
 
     private static const log :Log = Log.getLog(ScoreBoard);
 }
