@@ -12,6 +12,8 @@ import flash.geom.Matrix;
 
 import mx.core.MovieClipAsset;
 
+import com.threerings.util.Log;
+
 import com.whirled.WhirledGameControl;
 
 import com.whirled.contrib.EventHandlers;
@@ -225,6 +227,8 @@ public class Board extends Sprite
             _turnIndicator.stop();
         }
     }
+
+    private static const log :Log = Log.getLog(Board);
 
     [Embed(source="../rsrc/locksmith_art.swf#background")]
     protected static const BACKGROUND :Class;

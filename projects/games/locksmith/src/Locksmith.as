@@ -84,7 +84,7 @@ public class Locksmith extends Sprite
         _board.scoreBoard = _scoreBoard;
         if (_wgc.amInControl()) {
             _wgc.startNextTurn();
-            _wgc.sendMessage("newRings", createRings());
+            _wgc.sendMessage(NEW_RINGS, createRings());
         }
     }
 
@@ -106,9 +106,8 @@ public class Locksmith extends Sprite
     public function turnDidChange (event :StateChangedEvent) :void
     {
         if (_currentRing != null && !_gameIsOver) {
-            _board.clock.turnOver();
-            _board.setActiveRing(-1);
             var newTurn :Function = function (...ignored) :void {
+                _board.setActiveRing(-1);
                 _board.clock.newTurn();
                 if (_wgc.isMyTurn()) {
                     _board.setActiveRing(_currentRing.num);
@@ -116,12 +115,14 @@ public class Locksmith extends Sprite
                 _board.updateTurnIndicator(_wgc.seating.getPlayerPosition(_wgc.getTurnHolder()));
                 _board.loadNextLauncher();
             }
-            DoLater.instance.registerAt(DoLater.ROTATION_AFTER_END, newTurn);
-            if (DoLater.instance.mostRecentStage == DoLater.ROTATION_AFTER_END) {
-                // assume that this turn timed out, and trigger ROTATION_AFTER_END again
+            if (!_gotRotation) {
+                DoLater.instance.registerAt(DoLater.ROTATION_AFTER_END, newTurn);
                 DoLater.instance.trigger(DoLater.ROTATION_END);
                 DoLater.instance.trigger(DoLater.ROTATION_AFTER_END);
+            } else {
+                newTurn();
             }
+            _gotRotation = false;
         } else {
             // this is the first turn
             _board.updateTurnIndicator(_wgc.seating.getPlayerPosition(_wgc.getTurnHolder()));
@@ -130,7 +131,7 @@ public class Locksmith extends Sprite
 
     public function messageReceived (event :MessageReceivedEvent) :void
     {
-        if (event.name == "newRings") {
+        if (event.name == NEW_RINGS) {
             var ringData :Array = event.value as Array;
             for (var ii :int = 0; ii < ringData.length; ii++) {
                 var ring :Ring = new Ring(ii + 1, ringData[ii]);
@@ -146,7 +147,15 @@ public class Locksmith extends Sprite
                 _board.setActiveRing(_currentRing.num);
             }
             _board.loadNextLauncher();
-        } else if (event.name == "ringRotation") {
+        } else if (event.name == RING_ROTATION) {
+            _gotRotation = true;
+            _board.clock.turnOver();
+            _board.setActiveRing(-1);
+            DoLater.instance.registerAt(DoLater.ROTATION_AFTER_END, function (...ignored) :void {
+                if (_wgc.isMyTurn() && _gotRotation) {
+                    _wgc.startNextTurn();
+                }
+            });
             ring = _currentRing.smallest;
             while (ring.num != event.value.ring) {
                 ring = ring.outer;
@@ -184,17 +193,17 @@ public class Locksmith extends Sprite
 
     protected function keyDownHandler (event :KeyboardEvent) :void
     {
-        if (_wgc.isMyTurn() && !_gameIsOver) {
+        if (_wgc.isMyTurn() && !_gotRotation && !_gameIsOver) {
             switch(event.keyCode) {
             case Keyboard.LEFT:
-                _wgc.sendMessage("ringRotation", { ring: _currentRing.num, direction: 
+                _gotRotation = true;
+                _wgc.sendMessage(RING_ROTATION, { ring: _currentRing.num, direction: 
                     Ring.COUNTER_CLOCKWISE });
-                _wgc.startNextTurn();
                 break;
             case Keyboard.RIGHT:
-                _wgc.sendMessage("ringRotation", { ring: _currentRing.num, direction:
+                _gotRotation = true;
+                _wgc.sendMessage(RING_ROTATION, { ring: _currentRing.num, direction:
                     Ring.CLOCKWISE });
-                _wgc.startNextTurn();
                 break;
             case Keyboard.UP:
                 if (_currentRing != _currentRing.largest) {
@@ -237,6 +246,9 @@ public class Locksmith extends Sprite
         scaleGridTop="28", scaleGridBottom="470", scaleGridLeft="28", scaleGridRight="285")]
     protected static const BACKGROUND :Class;
 
+    protected static const NEW_RINGS :String = "newRings";
+    protected static const RING_ROTATION :String = "ringRotation";
+
     protected var _wgc :WhirledGameControl;
     protected var _board :Board;
     protected var _currentRing :Ring;
@@ -244,5 +256,6 @@ public class Locksmith extends Sprite
     protected var _gameIsOver :Boolean = false;
     protected var _leftBackground :Sprite;
     protected var _rightBackground :Sprite;
+    protected var _gotRotation :Boolean = false;
 }
 }
