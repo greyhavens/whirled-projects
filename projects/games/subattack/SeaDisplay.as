@@ -14,7 +14,10 @@ import flash.filters.ColorMatrixFilter;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
+import flash.utils.getTimer; // function import
+
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Random;
 
 import com.threerings.flash.ColorUtil;
 import com.threerings.flash.FilterUtil;
@@ -37,7 +40,8 @@ public class SeaDisplay extends Sprite
     /**
      * Configure the initial visualization of the sea.
      */
-    public function setupSea (boardWidth :int, boardHeight :int, board :Array = null) :void
+    public function setupSea (
+        boardWidth :int, boardHeight :int, board :Array = null, rando :Random = null) :void
     {
         _boardWidth = boardWidth;
 
@@ -64,22 +68,14 @@ public class SeaDisplay extends Sprite
             Bitmap(new ROCK4()).bitmapData
         ];
 
-        graphics.clear();
-        for (var yy :int = 0; yy < boardHeight; yy++) {
-//        for (var yy :int = -SubAttack.VISION_TILES;
-//                yy < boardHeight + SubAttack.VISION_TILES; yy++) {
-            for (var xx :int = 0; xx < boardWidth; xx++) {
-//            for (var xx :int = -SubAttack.VISION_TILES;
-//                    xx < boardWidth + SubAttack.VISION_TILES; xx++) {
-
-            }
+        if (rando == null) {
+            rando = new Random(int(getTimer()));
         }
 
-        // draw a nice border around Mr. Game Area
-        graphics.lineStyle(5, 0xFFFFFF);
-        graphics.drawRect(-5, -5, boardWidth * TILE_SIZE + 10,
-            boardHeight * TILE_SIZE + 10);
-        graphics.lineStyle(0, 0, 0); // turn off lines
+        graphics.clear();
+
+        var xx :int;
+        var yy :int;
 
         // now draw trees into our foreground, randomizing the order of trees on each row
         var xs :Array = [];
@@ -91,7 +87,7 @@ public class SeaDisplay extends Sprite
             addChild(fg);
             _foreLayers.push(fg);
             var xArray :Array = xs.concat();
-            ArrayUtil.shuffle(xArray);
+            ArrayUtil.shuffle(xArray, rando);
             for (var ii :int = 0; ii < xArray.length; ii++) {
                 xx = int(xArray[ii]);
                 var type :int = (board == null) ? Board.TREE : int(board[xx + yy * boardWidth]);
@@ -99,7 +95,8 @@ public class SeaDisplay extends Sprite
                 switch (type) {
                 case Board.TREE:
                 case Board.ROCK:
-                    var bmp :Bitmap = new Bitmap(pickBitmap((type == Board.TREE) ? _trees : rocks));
+                    var bmp :Bitmap = new Bitmap(
+                        pickBitmap(rando, (type == Board.TREE) ? _trees : rocks));
                     _foregroundObjects[yy * boardWidth + xx] = bmp;
                     bmp.x = xx * TILE_SIZE + TREE_OFFSET;
                     bmp.y = yy * TILE_SIZE + TREE_OFFSET;
@@ -110,7 +107,7 @@ public class SeaDisplay extends Sprite
                 // draw in the background
                 switch (type) {
                 default:
-                    graphics.beginBitmapFill(pickBitmap(_grounds));
+                    graphics.beginBitmapFill(pickBitmap(rando, _grounds));
                     graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                     graphics.endFill();
                     break;
@@ -176,13 +173,7 @@ public class SeaDisplay extends Sprite
     {
         var index :int = yy * _boardWidth + xx;
 
-        if (value == Board.TREE) {
-//            _foreground.graphics.beginBitmapFill(pickBitmap(_trees));
-//            _foreground.graphics.drawRect(
-//                xx * TILE_SIZE + TREE_OFFSET, yy * TILE_SIZE + TREE_OFFSET,
-//                TREE_SIZE, TREE_SIZE);
-
-        } else if (value < Board.BLANK) {
+        if (value < Board.BLANK) {
             var playerIdx :int = int(value / -100);
             var level :int = -value % 100;
             var factory :DisplayObject = DisplayObject(_foregroundObjects[index]);
@@ -194,23 +185,14 @@ public class SeaDisplay extends Sprite
                 (_foreLayers[yy] as Sprite).addChild(factory);
             }
             var filters :Array = [ FilterUtil.createHueShift(Submarine.SHIFTS[playerIdx]) ];
-            if (level == 1) {
-                filters.unshift(new ColorMatrixFilter([.7, 0, 0, 0, 0,
-                                                        0, .7, 0, 0, 0,
-                                                        0, 0, .7, 0, 0,
-                                                        0, 0, 0, 1, 0]));
+            if (level < 3) {
+                var dim :Number = (level == 2) ? .8 : .6;
+                filters.unshift(new ColorMatrixFilter([dim, 0, 0, 0, 0,
+                                                       0, dim, 0, 0, 0,
+                                                       0, 0, dim, 0, 0,
+                                                       0, 0, 0, 1, 0]));
             }
             factory.filters = filters;
-//            if (level == 1) {
-//                // if damaged, draw darker
-//                color = ColorUtil.blend(color, 0, .8);
-//            }
-
-//        } else if (!aboveIsBlank) {
-//            graphics.beginBitmapFill(_downWall);
-//        } else {
-//            pickBitmap(_downs);
-//        }
 
         } else if (value == Board.BLANK) {
             // kill a sprite
@@ -221,20 +203,11 @@ public class SeaDisplay extends Sprite
 
             } else {
                 // repaint the ground right there
-                graphics.beginBitmapFill(pickBitmap(_grounds));
+                graphics.beginBitmapFill(pickBitmap(null, _grounds));
                 graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 graphics.endFill();
             }
         }
-
-//
-//        graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-//
-//        if (value == 0 && belowIsBlank) {
-//            pickBitmap(_downs);
-//            graphics.drawRect(xx * TILE_SIZE, (yy + 1) * TILE_SIZE,
-//                TILE_SIZE, TILE_SIZE);
-//        }
     }
 
     /**
@@ -282,9 +255,11 @@ public class SeaDisplay extends Sprite
      * Set the graphics to begin filling a bitmap picked from the
      * specified set.
      */
-    protected function pickBitmap (choices :Array) :BitmapData
+    protected function pickBitmap (rando :Random, choices :Array) :BitmapData
     {
-        return BitmapData(choices[int(Math.random() * choices.length)]);
+        var pick :int = (rando != null) ? rando.nextInt(choices.length)
+                                        : int(Math.random() * choices.length);
+        return BitmapData(choices[pick]);
     }
 
     /** The submarine that we're following. */
@@ -304,9 +279,6 @@ public class SeaDisplay extends Sprite
 
     /** Our status message. */
     protected var _status :TextField;
-
-//    /** The frequency with which to pick each bitmap. Must add to 1.0 */
-//    protected static const PICKS :Array = [ 0.10, 0.20, 0.30, 0.40 ];
 
     protected static const TREE_SIZE :int = 43;
 

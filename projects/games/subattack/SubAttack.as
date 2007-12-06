@@ -25,6 +25,7 @@ import flash.utils.Timer;
 import com.threerings.util.StringUtil;
 
 import com.threerings.flash.KeyRepeatLimiter;
+import com.threerings.flash.FPSDisplay;
 
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
@@ -40,10 +41,10 @@ import com.whirled.WhirledGameControl;
 public class SubAttack extends Sprite
 {
     /** How many tiles does our vision extend past our tile? */
-    public static const VISION_TILES :int = 8;
+    public static const VISION_TILES :Number = 8;
 
     /** How many total tiles are in one direction in the view? */
-    public static const VIEW_TILES :int = (VISION_TILES * 2) + 1;
+    public static const VIEW_TILES :Number = (VISION_TILES * 2) + 1;
 
     public static const WIDTH :int = 700;
     public static const HEIGHT :int = 500;
@@ -59,8 +60,6 @@ public class SubAttack extends Sprite
 
         _seaHolder.addChild(_seaDisplay = new SeaDisplay());
 
-        _content.addChild(new SIDEBAR() as DisplayObject);
-
         var maskSize :int = VIEW_TILES * SeaDisplay.TILE_SIZE;
         var masker :Shape = new Shape();
         masker.graphics.beginFill(0xFFFFFF);
@@ -69,10 +68,10 @@ public class SubAttack extends Sprite
         _seaHolder.mask = masker;
         _seaHolder.addChild(masker); // the mask must be added to the display
         // set up a fake starting sea
-        _seaDisplay.setupSea(VIEW_TILES, VIEW_TILES);
 
         _gameCtrl = new WhirledGameControl(this, false);
         if (!_gameCtrl.isConnected()) {
+            _seaDisplay.setupSea(VIEW_TILES, VIEW_TILES);
             // just show a demo-mode display
             _seaDisplay.setStatus(
                 "<P align=\"center\"><font size=\"+2\">Truckyard Shootout</font>" +
@@ -102,18 +101,24 @@ public class SubAttack extends Sprite
         _gameCtrl.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
         _gameCtrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
         _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
+        _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
 
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         updateSize(_gameCtrl.getSize());
 
-        // set up a random seed
+        pickSeed();
+        recheckReadyness();
+    }
+
+    /**
+     * Pick a seed for randomness for the upcoming game.
+     */
+    protected function pickSeed () :void
+    {
         if (_myIndex == 0) {
             _gameCtrl.set("seed", int(Math.random() * int.MAX_VALUE));
         }
-
-        // check everyone's current readyness states
-        recheckReadyness();
     }
 
     /**
@@ -133,7 +138,10 @@ public class SubAttack extends Sprite
         _splashTimer.stop();
         _splashTimer = null;
         _gameCtrl.set("ready:" + _gameCtrl.getMyId(), true);
+        _seaDisplay.setStatus("Waiting for other players...");
         _gameCtrl.playerReady();
+        _content.addChild(new SIDEBAR() as DisplayObject);
+//        _content.addChild(new FPSDisplay(20));
     }
 
     /**
@@ -155,6 +163,14 @@ public class SubAttack extends Sprite
         if (StringUtil.startsWith(event.name, "ready:")) {
             recheckReadyness();
         }
+    }
+
+    /**
+     */
+    protected function handleGameEnded (event :StateChangedEvent) :void
+    {
+        // pick a seed now, in case of rematch
+        pickSeed();
     }
 
     /**

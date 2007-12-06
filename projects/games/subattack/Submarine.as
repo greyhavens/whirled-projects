@@ -26,6 +26,9 @@ public class Submarine extends BaseSprite
     /** How often can we build? */
     public static const TICKS_PER_BUILD :int = 50; // about every 5 seconds
 
+    /** How many ticks does it take to build? */
+    public static const TICKS_TO_BUILD :int = 5; // how long does it take to build?
+
     public function Submarine (
         playerId :int, playerIdx :int, playerName :String, startx :int, starty :int,
         board :Board, gameCtrl :WhirledGameControl)
@@ -205,7 +208,7 @@ public class Submarine extends BaseSprite
                 return DROP;
             }
             _movedOrShot = true;
-            if (++_buildingStep == 3) {
+            if (++_buildingStep == TICKS_TO_BUILD) {
                 _board.buildBarrier(_playerIdx, _x, _y);
                 _buildingStep = 0;
                 _tickCanBuild = _tickCount + TICKS_PER_BUILD;

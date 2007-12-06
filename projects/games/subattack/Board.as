@@ -52,7 +52,7 @@ public class Board
             _board[pick] = ROCK;
         }
 
-        _seaDisplay.setupSea(_width, _height, _board);
+        _seaDisplay.setupSea(_width, _height, _board, rando);
 
         // create a submarine for each player
         var sub :Submarine;
@@ -166,7 +166,7 @@ public class Board
         var dex :int = coordsToIdx(xx, yy);
         var val :int = int(_board[dex]);
         if (val == BLANK) {
-            val = -1 * (playerIdx * 100 + 2);
+            val = -1 * (playerIdx * 100 + 3);
             _board[dex] = val;
             _seaDisplay.updateTraversable(xx, yy, val, isBlank(xx, yy - 1), isBlank(xx, yy + 1));
         }
