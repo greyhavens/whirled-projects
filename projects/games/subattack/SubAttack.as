@@ -267,10 +267,12 @@ public class SubAttack extends Sprite
             return Action.RESPAWN;
 
         case Keyboard.CONTROL:
+        case Keyboard.SHIFT:
             return Action.BUILD;
 
         default:
-            if (event.charCode == 90 || event.charCode == 122) { // 'Z' and 'z'
+            if (event.charCode == 90 || event.charCode == 122 || // 'Z' and 'z'
+                    event.charCode == 66 || event.charCode == 98) { // 'B' and 'b'
                 return Action.BUILD;
             }
             return Action.NONE;
@@ -312,7 +314,7 @@ public class SubAttack extends Sprite
     [Embed(source="title_screen.swf", mimeType="application/octet-stream")]
     protected static const SPLASH_SCREEN :Class;
 
-    [Embed(source="sidebar.png")]
+    [Embed(source="sidebar.jpg")]
     protected static const SIDEBAR :Class;
 
     protected static const SEND_THROTTLE :int = 105;

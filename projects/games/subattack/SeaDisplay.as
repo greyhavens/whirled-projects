@@ -212,7 +212,7 @@ public class SeaDisplay extends Sprite
 //            pickBitmap(_downs);
 //        }
 
-        } else {
+        } else if (value == Board.BLANK) {
             // kill a sprite
             var spr :DisplayObject = DisplayObject(_foregroundObjects[index]);
             if (spr != null) {
