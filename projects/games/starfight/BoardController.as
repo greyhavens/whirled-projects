@@ -263,6 +263,20 @@ public class BoardController
         }
     }
 
+    public function addHealth (x :int, y :int) :void
+    {
+        for (var ii :int = 0; ii < _powerups.length; ii++) {
+            if (_powerups[ii] == null) {
+                _powerups[ii] = new Powerup(Powerup.HEALTH, x, y);
+
+                _gameCtrl.setImmediate("powerup", _powerups[ii].writeTo(new ByteArray()), ii);
+                powerupLayer.addChild(_powerups[ii]);
+                _status.addPowerup(ii);
+                return;
+            }
+        }
+    }
+
     /**
      * Removes a powerup from the board.
      */
@@ -471,6 +485,9 @@ public class BoardController
         var exp :Explosion = Explosion.createExplosion(
             x * Codes.PIXELS_PER_TILE, y * Codes.PIXELS_PER_TILE, rot, isSmall, shipType);
         _board.addChild(exp);
+        if (!isSmall && _gameCtrl.amInControl()) {
+            addHealth(x, y);
+        }
     }
 
     public function explodeCustom (x :Number, y :Number, movie :MovieClip) :void
