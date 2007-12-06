@@ -16,6 +16,7 @@ import flash.events.MouseEvent;
 import flash.filters.GlowFilter;
 
 import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
@@ -32,6 +33,7 @@ import com.threerings.flash.path.HermiteFunc;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Log;
+import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
 
 public class HUD extends Sprite
@@ -41,7 +43,11 @@ public class HUD extends Sprite
         _control = control;
 
         _control.state.addEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
+        _control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
+
         _myId = _control.getPlayerId();
+        _roomId = _control.getRoomId();
+        _room = _control.getRoomBounds();
 
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         loader.addEventListener(Event.COMPLETE, handleHUDLoaded);
@@ -118,6 +124,19 @@ public class HUD extends Sprite
         }
     }
 
+    protected function messageReceived (event: AVRGameControlEvent) :void
+    {
+        if (event.name == "g") {
+            var bits :Array = event.value as Array;
+            if (bits != null) {
+                var roomId :int = int(bits[0]);
+                if (roomId == _roomId) {
+                    updateGhost(new Point(bits[1], bits[2]));
+                }
+            }
+        }
+    }
+
     protected function propertyChanged (event: AVRGameControlEvent) :void
     {
         if (event.name == "fl") {
@@ -154,7 +173,14 @@ public class HUD extends Sprite
 
         // transform the point from room to overlay coordinates
         p = _control.roomToStage(p);
-        p = _lanternia.globalToLocal(p);
+        if (p != null) {
+            p = _lanternia.globalToLocal(p);
+        }
+
+        if (p == null) {
+            // funny business
+            return;
+        }
 
         if (!lantern) {
             // a new lantern just appears, no splines involved
@@ -168,7 +194,21 @@ public class HUD extends Sprite
         }
 
         // else just set our aim for p
-        lantern.newTarget(p, false);
+        lantern.newTarget(p, 0.5, false);
+    }
+
+    protected function updateGhost (p :Point = null) :void
+    {
+        if (p != null) {
+            // transform the point from room to overlay coordinates
+            p = _control.roomToStage(p);
+            if (p != null) {
+                p = _lanternia.globalToLocal(p);
+                if (p != null) {
+                    _ghost.newTarget(p);
+                }
+            }
+        }
     }
 
     protected function ghostVanished (id :String) :void
@@ -217,6 +257,15 @@ public class HUD extends Sprite
 
         // off it goes!
         _control.state.setProperty("fl", [ _myId, p.x, p.y ], false);
+
+        if (_ghost.isIdle()) {
+            // it's our job to send the ghost to a new position, figure out where
+            var bounds :Rectangle = _ghost.getBounds(_ghost);
+            var x :int = _random.nextNumber() * (_room.width - bounds.width) - bounds.left;
+            var y :int = _random.nextNumber() * (_room.height - bounds.height) - bounds.top;
+
+            _control.state.sendMessage("g", [ _roomId, x, y ]);
+        }
     }
 
     protected function animateLanterns () :void
@@ -227,11 +276,15 @@ public class HUD extends Sprite
     }
 
     protected var _control :AVRGameControl;
+
     protected var _myId :int;
 
     // TODO: temporary hard-coded
     protected var _width :int = 700;
     protected var _height :int = 500;
+
+    protected var _roomId :int;
+    protected var _room :Rectangle;
 
     protected var _lanterns :Dictionary = new Dictionary();
 
@@ -247,6 +300,9 @@ public class HUD extends Sprite
     protected var _lightLayer :Sprite;
     protected var _maskLayer :Sprite;
 
+    // our own random source, not synchronized or seeded
+    protected var _random :Random = new Random();
+
     protected static const FRAMES_PER_UPDATE :int = 6;
 
     protected static const LANTERN :String = "lanternbutton";
@@ -259,4 +315,3 @@ public class HUD extends Sprite
     protected static const DEBUG :Boolean = false;
 }
 }
-

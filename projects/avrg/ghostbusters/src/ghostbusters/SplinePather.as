@@ -9,9 +9,13 @@ import com.threerings.flash.path.HermiteFunc;
 
 public class SplinePather
 {
-    public function SplinePather (frames :int)
+    public function SplinePather ()
     {
-        _frames = frames;
+    }
+
+    public function get idle () :Boolean
+    {
+        return _frame == _frames;
     }
 
     public function get t () :Number
@@ -46,18 +50,21 @@ public class SplinePather
         }
     }
 
-    public function newTarget (p :Point, smooth :Boolean) :void
+    public function newTarget (p :Point, T :Number, smooth :Boolean) :void
     {
         var wX :Number, wY :Number;
         if (smooth) {
             wX = xDot;
             wY = yDot;
+
         } else {
             wX = (p.x - this.x) / (_frames / 30);
             wY = (p.y - this.y) / (_frames / 30);
         }
         _xFun = new HermiteFunc(this.x, p.x, wX, 0);
         _yFun = new HermiteFunc(this.y, p.y, wY, 0);
+
+        _frames = FRAME_RATE * T;
         _frame = 0;
     }
 
@@ -66,5 +73,7 @@ public class SplinePather
 
     protected var _xFun :HermiteFunc;
     protected var _yFun :HermiteFunc;
+
+    protected static const FRAME_RATE :int = 30;
 }
 }

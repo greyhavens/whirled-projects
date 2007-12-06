@@ -24,7 +24,7 @@ public class Lantern extends SplinePather
 
     public function Lantern (playerId :int, p :Point)
     {
-        super(FRAMES_PER_SPLINE);
+        super();
 
         _random = new Random(playerId);
 
