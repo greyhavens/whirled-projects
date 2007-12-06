@@ -8,6 +8,7 @@ import flash.events.Event;
 public class SaucerShipType extends ShipType
 {
     public var secondaryHitPower :Number = 0.3;
+    public var superShotCost :Number = 0.1;
 
     public var mineFriendly :Class, mineEnemy :Class, mineExplode :Class;
     public var mineSound :Sound, mineExplodeSound :Sound;
@@ -42,6 +43,11 @@ public class SaucerShipType extends ShipType
 
         armor = 0.8;
         size = 0.9;
+    }
+
+    override public function getPrimaryShotCost (ship :ShipSprite) :Number
+    {
+        return (ship.powerups & ShipSprite.SPREAD_MASK ? superShotCost : primaryShotCost);
     }
 
     override public function primaryShot (sf :StarFight, val :Array) :void

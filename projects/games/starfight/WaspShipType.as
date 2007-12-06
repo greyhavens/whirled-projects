@@ -9,6 +9,7 @@ import flash.events.Event;
 public class WaspShipType extends ShipType
 {
     public var secondaryHitPower :Number = 0.5;
+    public var secondaryShotRange :Number = 3.0;
     public var secondaryExplode :Class;
 
     public function WaspShipType () :void

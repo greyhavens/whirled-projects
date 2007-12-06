@@ -63,6 +63,11 @@ public class ShipType
     {
     }
 
+    public function getPrimaryShotCost (ship :ShipSprite) :Number
+    {
+        return primaryShotCost;
+    }
+
     /**
      * Sends a standard forward fire message.
      */

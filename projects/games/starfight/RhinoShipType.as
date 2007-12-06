@@ -8,6 +8,7 @@ import flash.display.MovieClip;
 public class RhinoShipType extends ShipType
 {
     public var warpSound :Sound;
+    public var superShotAnim :Class, superShotExplode :Class;
 
     public function RhinoShipType () :void
     {
@@ -43,13 +44,20 @@ public class RhinoShipType extends ShipType
         var leftOffsetY :Number = Math.sin(left) * 0.5;
         var rightOffsetX :Number = Math.cos(right) * 0.5;
         var rightOffsetY :Number = Math.sin(right) * 0.5;
+        var damage :Number = hitPower;
+        var shotClip :Class = null;
+        var explodeClip :Class = null;
 
-        var damage :Number = (val[2] == ShotSprite.SUPER ? hitPower * 1.5 : hitPower);
+        if (val[2] == ShotSprite.SUPER) {
+            damage *= 1.5;
+            shotClip = superShotAnim;
+            explodeClip = superShotExplode;
+        }
 
-        sf.addShot(new MissileShotSprite(val[3] + leftOffsetX, val[4] + leftOffsetY,
-                val[5], val[6], val[0], damage, primaryShotLife, val[1], sf));
-        sf.addShot(new MissileShotSprite(val[3] + rightOffsetX, val[4] + rightOffsetY,
-                val[5], val[6], val[0], damage, primaryShotLife, val[1], sf));
+        sf.addShot(new MissileShotSprite(val[3] + leftOffsetX, val[4] + leftOffsetY, val[5],
+                val[6], val[0], damage, primaryShotLife, val[1], sf, shotClip, explodeClip));
+        sf.addShot(new MissileShotSprite(val[3] + rightOffsetX, val[4] + rightOffsetY, val[5],
+                val[6], val[0], damage, primaryShotLife, val[1], sf, shotClip, explodeClip));
 
         super.primaryShot(sf, val);
     }
@@ -112,6 +120,8 @@ public class RhinoShipType extends ShipType
     {
         super.successHandler(event);
         warpSound = Sound(new (_loader.getClass("warp.wav"))());
+        superShotAnim = _loader.getClass("missile");
+        superShotExplode = _loader.getClass("missile_explosion");
     }
 
     [Embed(source="rsrc/ships/rhino.swf", mimeType="application/octet-stream")]

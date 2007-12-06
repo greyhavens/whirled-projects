@@ -45,7 +45,13 @@ public class TorpedoShotSprite extends ShotSprite {
         }
 
         var coll :Collision = board.getCollision(boardX, boardY, boardX + xVel*time,
-                boardY + yVel*time, Codes.SHIP_TYPES[shipType].secondaryShotSize, shipId, 0);
+                boardY + yVel*time, Codes.SHIP_TYPES[shipType].secondaryShotRange, shipId, 2);
+
+        if (coll == null) {
+            coll = board.getCollision(boardX, boardY, boardX + xVel*time,
+                    boardY + yVel*time, Codes.SHIP_TYPES[shipType].secondaryShotSize, shipId, 0);
+        }
+
         if (coll == null) {
             boardX += xVel*time;
             boardY += yVel*time;

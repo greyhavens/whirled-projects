@@ -475,7 +475,8 @@ public class ShipSprite extends Sprite
         if (_ticksToFire > 0) {
             _ticksToFire -= time;
         }
-        if (_firing && (_ticksToFire <= 0) && (primaryPower >= _shipType.primaryShotCost)) {
+        if (_firing && (_ticksToFire <= 0) &&
+                (primaryPower >= _shipType.getPrimaryShotCost(this))) {
             fire();
         }
 
@@ -632,7 +633,7 @@ public class ShipSprite extends Sprite
         }
 
         _ticksToFire = _shipType.primaryShotRecharge * 1000;
-        primaryPower -= _shipType.primaryShotCost;
+        primaryPower -= _shipType.getPrimaryShotCost(this);
     }
 
     public function secondaryFire () :void

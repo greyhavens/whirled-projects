@@ -190,6 +190,8 @@ public class StarFight extends Sprite
             }
         }
 
+        startScreen();
+
         addChild(new ShipChooser(this, true));
     }
 
@@ -223,13 +225,7 @@ public class StarFight extends Sprite
 
         _ships.put(myId, _ownShip);
 
-        // Set up our ticker that will control movement.
-        _screenTimer = new Timer(1, 0); // As fast as possible.
-        _screenTimer.addEventListener(TimerEvent.TIMER, tick);
-        _screenTimer.start();
-
         _ownShip.restart();
-        _lastTickTime = getTimer();
     }
 
     /**
@@ -276,7 +272,8 @@ public class StarFight extends Sprite
 
     public function addMine (shipId :int, x :int, y :int, shipType :int, damage :Number) :void
     {
-        _boardCtrl.addMine(new Mine(shipId, x, y, shipId == _ownShip.shipId, damage));
+        _boardCtrl.addMine(new Mine(
+                shipId, x, y, _ownShip == null || shipId != _ownShip.shipId, damage));
     }
 
     // from PropertyChangedListener
@@ -363,6 +360,7 @@ public class StarFight extends Sprite
     {
         _gameCtrl.localChat("Round starting...");
         _stateTime = 10 * 60;
+
         //_stateTime = 30;
         if (_gameCtrl.isConnected()) {
             var occupants :Array = _gameCtrl.getOccupantIds();
@@ -376,11 +374,22 @@ public class StarFight extends Sprite
                 // The first player is in charge of adding powerups.
                 _gameCtrl.startTicker("stateTicker", 1000);
                 _gameCtrl.setImmediate("stateTime", _stateTime);
-                _ownShip.restart();
+                if (_ownShip != null) {
+                    _ownShip.restart();
+                }
                 addPowerup(null);
                 startPowerupTimer();
             }
         }
+    }
+
+    public function startScreen () :void
+    {
+        // Set up our ticker that will control movement.
+        _screenTimer = new Timer(1, 0); // As fast as possible.
+        _screenTimer.addEventListener(TimerEvent.TIMER, tick);
+        _screenTimer.start();
+        _lastTickTime = getTimer();
     }
 
     public function endRound () :void
@@ -444,7 +453,7 @@ public class StarFight extends Sprite
             playSoundAt(Resources.getSound("ship_explodes.wav"), arr[0], arr[1]);
             ship.kill();
 
-            if (arr[3] == _ownShip.shipId) {
+            if (_ownShip != null && arr[3] == _ownShip.shipId) {
                 addScore(arr[3], KILL_PTS);
             }
 
@@ -471,7 +480,11 @@ public class StarFight extends Sprite
     public function addShot (shot :ShotSprite) :void
     {
         _shots.push(shot);
-        shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
+        if (_ownShip != null) {
+            shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
+        } else {
+            shot.setPosRelTo(_boardCtrl.width/2, _boardCtrl.height/2);
+        }
         if (shot is LaserShotSprite) {
             _subShotLayer.addChild(shot);
         } else {
@@ -532,8 +545,10 @@ public class StarFight extends Sprite
      */
     public function forceStatusUpdate () :void
     {
-        _status.setPower(_ownShip.power);
-        _status.setPowerups(_ownShip);
+        if (_ownShip != null) {
+            _status.setPower(_ownShip.power);
+            _status.setPowerups(_ownShip);
+        }
     }
 
     /**
@@ -542,7 +557,8 @@ public class StarFight extends Sprite
     public function hitObs (
             obj :BoardObject, x :Number, y :Number, shooterId :int, damage :Number) :void
     {
-        playSoundAt(_boardCtrl.hitObs(obj, x, y, shooterId == _ownShip.shipId, damage), x, y);
+        playSoundAt(_boardCtrl.hitObs(
+            obj, x, y, _ownShip != null && shooterId == _ownShip.shipId, damage), x, y);
     }
 
     /**
@@ -714,8 +730,15 @@ public class StarFight extends Sprite
             }
         }
 
-        var ownOldX :Number = _ownShip.boardX;
-        var ownOldY :Number = _ownShip.boardY;
+        var ownOldX :Number = _boardCtrl.width/2;
+        var ownOldY :Number = _boardCtrl.height/2;
+        var ownX :Number = ownOldX;
+        var ownY :Number = ownOldY;
+
+        if (_ownShip != null) {
+            ownOldX = _ownShip.boardX;
+            ownOldY = _ownShip.boardY;
+        }
 
         // Update all ships.
         for each (var ship :ShipSprite in _ships.values()) {
@@ -724,17 +747,24 @@ public class StarFight extends Sprite
             }
         }
 
+        if (_ownShip != null) {
+            ownX = _ownShip.boardX;
+            ownY = _ownShip.boardY;
+        }
+
         // And then shift em based on ownship's new pos.
         for each (ship in _ships.values()) {
             if (ship != null) {
-                ship.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
+                ship.setPosRelTo(ownX, ownY);
             }
         }
 
-        _boardCtrl.shipInteraction(_ownShip, ownOldX, ownOldY, this);
+        if (_ownShip != null) {
+            _boardCtrl.shipInteraction(_ownShip, ownOldX, ownOldY, this);
+        }
 
         // Recenter the board on our ship.
-        _boardCtrl.setAsCenter(_ownShip.boardX, _ownShip.boardY);
+        _boardCtrl.setAsCenter(ownX, ownY);
         _boardCtrl.tick(time);
         forceStatusUpdate();
 
@@ -746,7 +776,7 @@ public class StarFight extends Sprite
                 if (shot.complete) {
                     completed.push(shot);
                 }
-                shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
+                shot.setPosRelTo(ownX, ownY);
             }
         }
 
@@ -765,7 +795,7 @@ public class StarFight extends Sprite
 
         // Every few frames, broadcast our status to everyone else.
         _updateCount += time;
-        if (_updateCount > Codes.TIME_PER_UPDATE && _gameCtrl.isConnected()) {
+        if (_ownShip != null && _updateCount > Codes.TIME_PER_UPDATE && _gameCtrl.isConnected()) {
             _updateCount = 0;
             _gameCtrl.doBatch(function () :void {
                 _gameCtrl.setImmediate(shipKey(myId), _ownShip.writeTo(new ByteArray()));
@@ -778,14 +808,6 @@ public class StarFight extends Sprite
             });
             _otherScores = [];
         }
-        if (_gameCtrl.isConnected() && _gameCtrl.amInControl()) {
-            _updateTime += time;
-            if (_updateTime > TIME_WAIT) {
-                _updateTime = 0;
-                _gameCtrl.setImmediate("stateTime", _stateTime);
-            }
-        }
-
         _lastTickTime = now;
     }
 
@@ -847,7 +869,6 @@ public class StarFight extends Sprite
 
     /** How many frames its been since we broadcasted. */
     protected var _updateCount :int = 0;
-    protected var _updateTime :int = 0;
 
     protected var _lastTickTime :int;
 

@@ -9,14 +9,22 @@ public class MissileShotSprite extends ShotSprite {
     public var yVel :Number;
 
     public function MissileShotSprite (x :Number, y :Number, vel :Number, angle :Number,
-            shipId :int, damage :Number, ttl :Number, shipType :int, game :StarFight) :void
+            shipId :int, damage :Number, ttl :Number, shipType :int, game :StarFight,
+            shotClip :Class = null, explodeClip :Class = null) :void
     {
         super(x, y, shipId, damage, ttl, shipType, game);
 
         this.xVel = vel * Math.cos(angle);
         this.yVel = vel * Math.sin(angle);
 
-        _shotMovie = MovieClip(new Codes.SHIP_TYPES[shipType].shotAnim());
+        if (shotClip != null) {
+            _shotMovie = MovieClip(new shotClip());
+        } else {
+            _shotMovie = MovieClip(new Codes.SHIP_TYPES[shipType].shotAnim());
+        }
+        if (explodeClip != null) {
+            _explodeMovie = MovieClip(new explodeClip());
+        }
 
         _shotMovie.gotoAndStop(1);
         rotation = Codes.RADS_TO_DEGS*Math.atan2(xVel, -yVel);
@@ -52,18 +60,23 @@ public class MissileShotSprite extends ShotSprite {
             boardX += xVel*time;
             boardY += yVel*time;
         } else {
+            var hitX :Number = boardX + xVel * coll.time * time;
+            var hitY :Number = boardY + yVel * coll.time * time;
             if (coll.hit is ShipSprite) {
                 var ship :ShipSprite = ShipSprite(coll.hit);
-                _game.hitShip(ship, boardX + (xVel*coll.time*time),
-                    boardY + (yVel*coll.time*time), shipId, damage);
+                _game.hitShip(ship, hitX, hitY, shipId, damage);
 
             } else {
                 var obj :BoardObject = BoardObject(coll.hit);
-                _game.hitObs(obj, boardX + (xVel*coll.time*time),
-                    boardY + (yVel*coll.time*time), shipId, damage);
+                _game.hitObs(obj, hitX, hitY, shipId, damage)
+            }
+            if (_explodeMovie != null) {
+                _game.explodeCustom(hitX, hitY, _explodeMovie);
             }
             complete = true;
         }
     }
+
+    protected var _explodeMovie :MovieClip;
 }
 }

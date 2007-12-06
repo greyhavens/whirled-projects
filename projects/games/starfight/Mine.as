@@ -21,10 +21,14 @@ public class Mine extends BoardObject
     public function Mine (
             type :int, x :int, y :int, active :Boolean, damage :Number, anim :Boolean = true) :void
     {
-        super(type, x, y, anim);
+        super(type, x, y, false);
         health = 1.0;
         this.active = active;
         dmg = damage;
+
+        if (anim) {
+            setupGraphics();
+        }
     }
 
     override public function damage (damage :Number) :Boolean

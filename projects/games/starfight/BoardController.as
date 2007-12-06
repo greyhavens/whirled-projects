@@ -171,6 +171,7 @@ public class BoardController
             var pBytes :ByteArray = ByteArray(event.newValue);
             pBytes.position = 0;
             pow.readFrom(pBytes);
+
         } else if ((event.name == "obstacles") && (event.index >= 0)) {
             if (_obstacles == null) {
                 return;
@@ -184,6 +185,7 @@ public class BoardController
                     });
                 }
             }
+
         } else if ((event.name == "mines") && (event.index >= 0)) {
             if (_mines == null) {
                 return;
@@ -349,6 +351,9 @@ public class BoardController
                 }
             }
         }
+        if (ignoreObs == 2) {
+            return bestHit;
+        }
 
         // Check each obstacle and figure out which one we hit first.
         for each (var obs :Obstacle in _obstacles) {
@@ -358,15 +363,6 @@ public class BoardController
             bestHit = findBestHit(oldX, oldY, dx, dy, rad, obs, bestHit);
         }
 
-        // Check each mine and figure out which one we hit first.
-        /*
-        for each (var mine :Mine in _mines) {
-            if (mine == null) {
-                continue;
-            }
-            bestHit = findBestHit(oldX, oldY, dx, dy, rad, mine, bestHit);
-        }
-        */
         return bestHit;
     }
 
