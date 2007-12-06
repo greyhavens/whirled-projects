@@ -33,6 +33,9 @@ public class Ghostbusters extends Sprite
 
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
 
+        // DEBUG
+        _control.despawnMob("ghost");
+
         _control = new AVRGameControl(this);
         _control.addEventListener(
             AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
@@ -132,14 +135,16 @@ public class Ghostbusters extends Sprite
 
     protected function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
     {
-//        return _ghost;
-        return null;
+        _ghostCtrl = ctrl;
+        return new Ghost(-1); // fix
     }
 
     protected var _control :AVRGameControl;
 
     protected var _hud :HUD;
     protected var _box :Box;
+
+    protected var _ghostCtrl :MobControl;
 
     protected var _splash :MovieClip = MovieClip(new SPLASH());
 

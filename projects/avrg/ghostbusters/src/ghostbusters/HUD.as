@@ -64,7 +64,8 @@ public class HUD extends Sprite
     override public function hitTestPoint (
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
-        return _hud && _hud.hitTestPoint(x, y, shapeFlag);
+        return (_hud && _hud.hitTestPoint(x, y, shapeFlag) ||
+                _ghost && _ghost.hitTestPoint(x, y, shapeFlag));
     }
 
     protected function handleHUDLoaded (evt :Event) :void
@@ -78,7 +79,6 @@ public class HUD extends Sprite
         DisplayUtil.findInHierarchy(_hud, LOOT).addEventListener(MouseEvent.CLICK, lootClick);
 
         _lanternia = new Sprite();
-        _lanternia.mouseChildren = false;
         _lanternia.visible = false;
         addChild(_lanternia);
 
@@ -103,6 +103,7 @@ public class HUD extends Sprite
         _lanternia.addChild(_maskLayer);
 
         _ghost = new Ghost(_control.getRoomId());
+        _ghost.addEventListener(MouseEvent.CLICK, ghostClick);
         _lanternia.addChild(_ghost);
         _ghost.mask = _maskLayer;
         _ghost.x = 300;
@@ -126,13 +127,23 @@ public class HUD extends Sprite
 
     protected function messageReceived (event: AVRGameControlEvent) :void
     {
-        if (event.name == "g") {
+        if (_ghost == null) {
+            return;
+        }
+        if (event.name == "gp") {
             var bits :Array = event.value as Array;
             if (bits != null) {
                 var roomId :int = int(bits[0]);
                 if (roomId == _roomId) {
                     updateGhost(new Point(bits[1], bits[2]));
                 }
+            }
+
+        } else if (event.name == "gc") {
+            if (_ghost.slow()) {
+                // it's standing still! spawn it!
+                _control.spawnMob("ghost");
+                _ghost = null;
             }
         }
     }
@@ -226,11 +237,20 @@ public class HUD extends Sprite
         Log.getLog(HUD).debug("Whee, button clicked: " + evt);
     }
 
+    protected function ghostClick (evt :MouseEvent) :void
+    {
+        // a successful click slows the ghost down
+
+        _control.state.sendMessage("gc", _myId);
+    }
+
     protected function handleEnterFrame (evt :Event) :void
     {
         animateLanterns();
 
-        _ghost.nextFrame();
+        if (_ghost != null) {
+            _ghost.nextFrame();
+        }
 
         // if so transform the mouse position to room coordinates
         var p :Point = new Point(Math.max(0, Math.min(_width, _lanternia.mouseX)),
@@ -258,13 +278,13 @@ public class HUD extends Sprite
         // off it goes!
         _control.state.setProperty("fl", [ _myId, p.x, p.y ], false);
 
-        if (_ghost.isIdle()) {
+        if (_ghost != null && _ghost.isIdle()) {
             // it's our job to send the ghost to a new position, figure out where
-            var bounds :Rectangle = _ghost.getBounds(_ghost);
+            var bounds :Rectangle = _ghost.getGhostBounds();
             var x :int = _random.nextNumber() * (_room.width - bounds.width) - bounds.left;
             var y :int = _random.nextNumber() * (_room.height - bounds.height) - bounds.top;
 
-            _control.state.sendMessage("g", [ _roomId, x, y ]);
+            _control.state.sendMessage("gp", [ _roomId, x, y ]);
         }
     }
 

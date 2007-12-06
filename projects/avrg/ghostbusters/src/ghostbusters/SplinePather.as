@@ -50,6 +50,12 @@ public class SplinePather
         }
     }
 
+    public function adjustRate (adjustment :Number) :void
+    {
+        _frame *= adjustment;
+        _frames *= adjustment;
+    }
+
     public function newTarget (p :Point, T :Number, smooth :Boolean) :void
     {
         var wX :Number, wY :Number;
