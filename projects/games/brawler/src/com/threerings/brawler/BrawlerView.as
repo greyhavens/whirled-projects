@@ -387,6 +387,11 @@ public class BrawlerView extends Sprite
         // increment the frame count
         _frameCount++;
 
+        // if we've become disconencted, stop doing anything
+        if (!_ctrl.control.isConnected()) {
+            return;
+        }
+
         // perhaps do a per-second update
         var delta :Number = (_timer - _lastPerSecond) / 1000;
         if (delta >= 1.0) {

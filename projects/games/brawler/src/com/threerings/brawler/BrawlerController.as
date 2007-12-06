@@ -21,7 +21,7 @@ import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
 
-import com.threerings.flash.KeyRepeatBlocker;
+import com.threerings.flash.KeyRepeatLimiter;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
@@ -608,7 +608,7 @@ public class BrawlerController extends Controller
 				_view.ground.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 
 				// listen for keyboard events through the blocker
-				_blocker = new KeyRepeatBlocker(_control);
+				_blocker = new KeyRepeatLimiter(_control);
 				_blocker.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
 				_blocker.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
 			}
@@ -742,7 +742,7 @@ public class BrawlerController extends Controller
     protected var _view :BrawlerView;
 
     /** An intermediate layer to block repeat keystrokes. */
-    protected var _blocker :KeyRepeatBlocker;
+    protected var _blocker :KeyRepeatLimiter;
 
     /** The configured difficulty level. */
     public var _difficulty :int;
