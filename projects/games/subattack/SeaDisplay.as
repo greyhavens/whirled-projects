@@ -57,6 +57,13 @@ public class SeaDisplay extends Sprite
             Bitmap(new TREE6()).bitmapData
         ];
 
+        var rocks :Array = [
+            Bitmap(new ROCK1()).bitmapData,
+            Bitmap(new ROCK2()).bitmapData,
+            Bitmap(new ROCK3()).bitmapData,
+            Bitmap(new ROCK4()).bitmapData
+        ];
+
         graphics.clear();
         for (var yy :int = 0; yy < boardHeight; yy++) {
 //        for (var yy :int = -SubAttack.VISION_TILES;
@@ -91,23 +98,17 @@ public class SeaDisplay extends Sprite
                 // draw in the foreground
                 switch (type) {
                 case Board.TREE:
-                    var bmp :Bitmap = new Bitmap(pickBitmap(_trees));
+                case Board.ROCK:
+                    var bmp :Bitmap = new Bitmap(pickBitmap((type == Board.TREE) ? _trees : rocks));
                     _foregroundObjects[yy * boardWidth + xx] = bmp;
                     bmp.x = xx * TILE_SIZE + TREE_OFFSET;
                     bmp.y = yy * TILE_SIZE + TREE_OFFSET;
                     fg.addChild(bmp);
                     break;
-
                 }
 
                 // draw in the background
                 switch (type) {
-                case Board.ROCK:
-                    graphics.beginFill(0x444444);
-                    graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                    graphics.endFill();
-                    break;
-
                 default:
                     graphics.beginBitmapFill(pickBitmap(_grounds));
                     graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -340,6 +341,18 @@ public class SeaDisplay extends Sprite
 
     [Embed(source="ground4.png")]
     protected static const GROUND4 :Class;
+
+    [Embed(source="rock1.png")]
+    protected static const ROCK1 :Class;
+
+    [Embed(source="rock2.png")]
+    protected static const ROCK2 :Class;
+
+    [Embed(source="rock3.png")]
+    protected static const ROCK3 :Class;
+
+    [Embed(source="rock4.png")]
+    protected static const ROCK4 :Class;
 
     [Embed(source="factory.swf#factory")]
     protected static const FACTORY :Class;
