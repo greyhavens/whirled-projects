@@ -58,8 +58,8 @@ public class Locksmith extends Sprite
                 });
             _board.control = _wgc;
 
-            addChild(_leftBackground = new BACKGROUND() as Sprite);
-            addChild(_rightBackground = new BACKGROUND() as Sprite);
+            addChildAt(_leftBackground = new BACKGROUND() as Sprite, 0);
+            addChildAt(_rightBackground = new BACKGROUND() as Sprite, 0);
             _leftBackground.width = Math.max(0, (_wgc.getSize().x - DISPLAY_WIDTH) / 2);
             _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width;
             _rightBackground.width = _leftBackground.width;
@@ -234,7 +234,8 @@ public class Locksmith extends Sprite
         return rings;
     }
 
-    [Embed(source="../rsrc/locksmith_art.swf#tile")]
+    [Embed(source="../rsrc/fill_image.png",
+        scaleGridTop="28", scaleGridBottom="470", scaleGridLeft="28", scaleGridRight="285")]
     protected static const BACKGROUND :Class;
 
     protected var _wgc :WhirledGameControl;
