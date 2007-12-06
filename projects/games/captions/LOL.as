@@ -82,10 +82,7 @@ public class LOL extends Sprite
             return;
         }
 
-//        var fonts :Array = Font.enumerateFonts(true);
-//        for each (var font :Font in fonts) {
-//            trace("Font: " + font.fontName);
-//        }
+        Font.registerFont(NICKELODEON_FONT);
 
         _formatter = new TextFieldFormatter();
         _formatter.addEventListener(
@@ -168,7 +165,7 @@ public class LOL extends Sprite
         _content.addChild(_ui);
         _loader = null;
 
-        trace(DisplayUtil.dumpHierarchy(_ui));
+//        trace(DisplayUtil.dumpHierarchy(_ui));
 
         // For some reason, when the movie wraps around, we need to re-grab all the bits
         _ui.addEventListener("frameFirst", initUIBits);
@@ -182,7 +179,7 @@ public class LOL extends Sprite
 
     protected function initUIBits (... ignored) :void
     {
-        trace("isFrameFirst: " + ignored[0]);
+//        trace("isFrameFirst: " + ignored[0]);
 
         _image = find("image") as UILoader;
         if (_image == null) {
@@ -266,6 +263,7 @@ public class LOL extends Sprite
             var grain :MovieClip = find("film_grain") as MovieClip;
             grain.mouseEnabled = false;
             grain.mouseChildren = false;
+            _input.embedFonts = true;
             _formatter.configure("nickelodeon", 0xFFFFFF, false);
             break;
         }
@@ -970,8 +968,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
     protected static const SILENT_THEME_UI :Class;
 
-//    [Embed(source="rsrc/NICKELOD.TTF", fontName="nickelodeon", mimeType="application/x-font")]
-//    [Embed(source="rsrc/Fixedsys500c.ttf", fontName="nickelodeon", mimeType="application/x-font")]
+    [Embed(source="rsrc/NICKELOD.TTF", fontName="nickelodeon", mimeType="application/x-font")]
     protected static const NICKELODEON_FONT :Class;
 
     protected static const IDEAL_WIDTH :int = 700;
@@ -1001,8 +998,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     /** The themes we're using. */
     protected static const THEMES :Array = [ LOL_THEME, SILENT_THEME ];
-    //protected static const THEMES :Array = [ LOL_THEME ];
-    //protected static const THEMES :Array = [ SILENT_THEME ];
+//    protected static const THEMES :Array = [ LOL_THEME ];
+//    protected static const THEMES :Array = [ SILENT_THEME ];
 
     protected var _ctrl :WhirledGameControl;
 
