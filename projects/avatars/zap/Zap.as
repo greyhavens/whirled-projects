@@ -1,9 +1,14 @@
 package {
 
+import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.utils.ByteArray;
+import flash.media.SoundMixer;
 import flash.geom.Point;
 
 import com.threerings.flash.FrameSprite;
+
+import com.threerings.util.Log;
 
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
@@ -54,32 +59,38 @@ public class Zap extends FrameSprite
         var from :Point = new Point(0, -30);
         var to :Point = new Point(0, 30);
 
-        var c0 :int, c1 :int, c2 :int, c3 :int;
+        var bits :Array;
+        var c1 :int, c2 :int, c3 :int;
         var w :Number;
+
         if (_speakFrames > 0) {
             _speakFrames -= 1;
-            c0 = c1 = c2 = c3 = 0xFFFFFF;
+            bits = [ 0xFFFFFF, 0xFFFFFF ];
+            c1 = c2 = c3 = 0xFFFFFF;
             w = 3;
 
         } else {
-            c0 = 0x000000;
+            bits = summarizeSpectrum();
+
             c1 = 0xFFCC88;
             c2 = 0x88FFCC;
             c3 = 0xCC88FF;
             w = 1;
         }
 
-        with (_canvas.graphics) {
-            clear();
+        var g :Graphics = _canvas.graphics;
+        g.clear();
 
-            lineStyle(2, 0xFFAA44);
-            drawCircle(0, 0, 40);
+        g.lineStyle(2, 0xDD9922);
+        g.drawCircle(0, 0, 40);
 
-            beginFill(c0);
-            drawCircle(0, -40, 9);
-            drawCircle(0, 40, 9);
-            endFill();
-        }
+        g.beginFill(bits[0]);
+        g.drawCircle(0, -40, 9);
+        g.endFill();
+
+        g.beginFill(bits[1]);
+        g.drawCircle(0, 40, 9);
+        g.endFill();
 
         _canvas.graphics.lineStyle(w, c1);
 	recursiveLightning(from, to, 50);
@@ -103,6 +114,52 @@ public class Zap extends FrameSprite
         recursiveLightning(from, midPoint, deviation/2);
         recursiveLightning(midPoint, to, deviation/2);
     }
+
+    protected function summarizeSpectrum () :Array
+    {
+        var bytes :ByteArray = new ByteArray();
+        SoundMixer.computeSpectrum(bytes, true);
+
+        var leftLow :Number = 0, leftMid :Number = 0, leftHigh :Number = 0;
+        var rightLow :Number = 0, rightMid :Number = 0, rightHigh :Number = 0;
+
+        var ix :int;
+        for (ix = 0; ix < IX_LOW; ix ++) {
+            leftLow += bytes.readFloat() / IX_LOW;
+        }
+        for (ix = IX_LOW; ix < IX_MID; ix ++) {
+            leftMid += bytes.readFloat() / (IX_MID - IX_LOW);
+        }
+        for (ix = IX_MID; ix < 256; ix ++) {
+            leftHigh += bytes.readFloat() / (256-IX_MID);
+        }
+        for (ix = 0; ix < IX_LOW; ix ++) {
+            rightLow += bytes.readFloat() / IX_LOW;
+        }
+        for (ix = IX_LOW; ix < IX_MID; ix ++) {
+            rightMid += bytes.readFloat() / (IX_MID - IX_LOW);
+        }
+        for (ix = IX_MID; ix < 256; ix ++) {
+            rightHigh += bytes.readFloat() / (256-IX_MID);
+        }
+
+        // convert the linear (0, 1) to logarithmic (decibel) scale
+        leftLow = Math.LOG10E * Math.log(1 + 9 * leftLow);
+        leftMid = Math.LOG10E * Math.log(1 + 9 * leftMid);
+        leftHigh = Math.LOG10E * Math.log(1 + 9 * leftHigh);
+        rightLow = Math.LOG10E * Math.log(1 + 9 * rightLow);
+        rightMid = Math.LOG10E * Math.log(1 + 9 * rightMid);
+        rightHigh = Math.LOG10E * Math.log(1 + 9 * rightHigh);
+
+        var k :Number = 255;
+        return [
+            ((k * leftLow) << 16) + ((k * leftMid) << 8) + (k * leftHigh),
+            ((k * rightLow) << 16) + ((k * rightMid) << 8) + (k * rightHigh)
+        ];
+    }
+
+    protected static const IX_LOW :int = 4;
+    protected static const IX_MID :int = 24;
 
     protected var _canvas :Sprite;
     protected var _control :AvatarControl;
