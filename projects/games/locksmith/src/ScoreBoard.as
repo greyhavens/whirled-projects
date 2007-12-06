@@ -10,12 +10,14 @@ import flash.geom.Point;
 
 import com.threerings.util.Log;
 
+import com.whirled.WhirledGameControl;
+
 public class ScoreBoard extends Sprite 
 {
-    public static const MOON_PLAYER :int = 1;
-    public static const SUN_PLAYER :int = 2;
+    public static const MOON_PLAYER :int = 0;
+    public static const SUN_PLAYER :int = 1;
 
-    public function ScoreBoard (moonPlayer :String, sunPlayer :String, gameEndedCallback :Function) 
+    public function ScoreBoard (wgc :WhirledGameControl, gameEndedCallback :Function) 
     {
         addChild(_marbleLayer = new Sprite());
         var trough :Sprite = new TROUGH_OVERLAY() as Sprite;
@@ -23,6 +25,17 @@ public class ScoreBoard extends Sprite
         trough.y = 170;
         addChild(trough);
         _gameEndedCallback = gameEndedCallback;
+
+        var leftFrame :Sprite = new PLAYER_FRAME() as Sprite;
+        leftFrame.x = -241;
+        leftFrame.y = -233;
+        leftFrame.scaleX = -1; // invert horizontally
+        addChild(leftFrame);
+        var rightFrame :Sprite = new PLAYER_FRAME() as Sprite;
+        rightFrame.x = 242;
+        rightFrame.y = -233;
+        addChild(rightFrame);
+
     }
 
     public function get moonScore () :int
@@ -85,6 +98,8 @@ public class ScoreBoard extends Sprite
 
     [Embed(source="../rsrc/locksmith_art.swf#trough_overlay")]
     protected static const TROUGH_OVERLAY :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#player_frame")]
+    protected static const PLAYER_FRAME :Class;
 
     protected static const SUN_RAMP_BEGIN :Point = new Point(256, 38);
     protected static const SUN_RAMP_END :Point = new Point(313, 199);

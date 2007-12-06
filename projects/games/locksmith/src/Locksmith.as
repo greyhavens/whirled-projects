@@ -15,6 +15,7 @@ import com.threerings.ezgame.SizeChangedEvent;
 import com.threerings.ezgame.StateChangedEvent;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Log;
 
 import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
@@ -60,7 +61,7 @@ public class Locksmith extends Sprite
 
             addChildAt(_leftBackground = new BACKGROUND() as Sprite, 0);
             addChildAt(_rightBackground = new BACKGROUND() as Sprite, 0);
-            _leftBackground.width = Math.max(0, (_wgc.getSize().x - DISPLAY_WIDTH) / 2);
+            _leftBackground.width = Math.max(0, (_wgc.getSize().x - DISPLAY_WIDTH) / 2) + 1;
             _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width;
             _rightBackground.width = _leftBackground.width;
             _rightBackground.x = _leftBackground.width + DISPLAY_WIDTH - 1;
@@ -77,10 +78,7 @@ public class Locksmith extends Sprite
     public function gameDidStart (event :StateChangedEvent) :void
     {
         var playerIds :Array = _wgc.seating.getPlayerIds();
-        addChild(_scoreBoard = new ScoreBoard(
-            _wgc.getOccupantName(_moonPlayer = playerIds[0]), 
-            _wgc.getOccupantName(_sunPlayer = playerIds[1]), 
-            endGame));
+        addChild(_scoreBoard = new ScoreBoard(_wgc, endGame));
         _scoreBoard.x = _board.x;
         _scoreBoard.y = DISPLAY_HEIGHT / 2;
         _board.scoreBoard = _scoreBoard;
@@ -94,13 +92,14 @@ public class Locksmith extends Sprite
     {
         _board.stopRotation();
         _gameIsOver = true;
-        _wgc.localChat("Game Over!");
         if (_scoreBoard.moonScore >= WIN_SCORE && _scoreBoard.sunScore >= WIN_SCORE) {
-            _wgc.localChat("The game is a tie!");
+            _wgc.localChat("Game over - the game is a tie!");
         } else if (_scoreBoard.moonScore >= WIN_SCORE) {
-            _wgc.localChat(_wgc.getOccupantName(_moonPlayer) + " is the Winner!");
+            _wgc.localChat("Game over - " + _wgc.seating.getPlayerNames()[ScoreBoard.MOON_PLAYER] + 
+                " is the Winner!");
         } else if (_scoreBoard.sunScore >= WIN_SCORE) {
-            _wgc.localChat(_wgc.getOccupantName(_sunPlayer) + " is the Winner!");
+            _wgc.localChat("Game over - " + _wgc.seating.getPlayerNames()[ScoreBoard.SUN_PLAYER] + 
+                " is the Winner!");
         }
     }
 
@@ -114,8 +113,7 @@ public class Locksmith extends Sprite
                 if (_wgc.isMyTurn()) {
                     _board.setActiveRing(_currentRing.num);
                 }
-                _board.updateTurnIndicator(_wgc.getTurnHolder() == _moonPlayer ? 
-                    ScoreBoard.MOON_PLAYER : ScoreBoard.SUN_PLAYER);
+                _board.updateTurnIndicator(_wgc.seating.getPlayerPosition(_wgc.getTurnHolder()));
                 _board.loadNextLauncher();
             }
             DoLater.instance.registerAt(DoLater.ROTATION_AFTER_END, newTurn);
@@ -124,6 +122,9 @@ public class Locksmith extends Sprite
                 DoLater.instance.trigger(DoLater.ROTATION_END);
                 DoLater.instance.trigger(DoLater.ROTATION_AFTER_END);
             }
+        } else {
+            // this is the first turn
+            _board.updateTurnIndicator(_wgc.seating.getPlayerPosition(_wgc.getTurnHolder()));
         }
     }
 
@@ -156,7 +157,7 @@ public class Locksmith extends Sprite
 
     protected function updateBackgrounds (event :SizeChangedEvent) :void
     {
-        _leftBackground.width = Math.max(0, (_wgc.getSize().x - DISPLAY_WIDTH) / 2);
+        _leftBackground.width = Math.max(0, (_wgc.getSize().x - DISPLAY_WIDTH) / 2) + 1;
         _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width;
         if (_scoreBoard != null) {
             _scoreBoard.x = _board.x;
@@ -170,16 +171,12 @@ public class Locksmith extends Sprite
         DoLater.instance.finishAndCall(function () :void {
             _board.stopRotation();
             if (_wgc.amInControl()) {
-                var winners :Array = [];
-                if (_scoreBoard.sunScore >= WIN_SCORE) {
-                    winners.push(_sunPlayer);
-                }
-                if (_scoreBoard.moonScore >= WIN_SCORE) {
-                    winners.push(_moonPlayer);
-                }
-                _wgc.endGameWithScores([_sunPlayer, _moonPlayer], 
-                    [Math.round((_scoreBoard.sunScore / WIN_SCORE) * 100),
-                        Math.round((_scoreBoard.moonScore / WIN_SCORE) * 100)],
+                var scores :Array = [];
+                scores[ScoreBoard.MOON_PLAYER] = 
+                    Math.round((_scoreBoard.moonScore / WIN_SCORE) * 100);
+                scores[ScoreBoard.SUN_PLAYER] =
+                    Math.round((_scoreBoard.sunScore / WIN_SCORE) * 100);
+                _wgc.endGameWithScores(_wgc.seating.getPlayerIds(), scores,
                     WhirledGameControl.CASCADING_PAYOUT);
             }
         });
@@ -234,6 +231,8 @@ public class Locksmith extends Sprite
         return rings;
     }
 
+    private static const log :Log = Log.getLog(Locksmith);
+
     [Embed(source="../rsrc/fill_image.png",
         scaleGridTop="28", scaleGridBottom="470", scaleGridLeft="28", scaleGridRight="285")]
     protected static const BACKGROUND :Class;
@@ -242,8 +241,6 @@ public class Locksmith extends Sprite
     protected var _board :Board;
     protected var _currentRing :Ring;
     protected var _scoreBoard :ScoreBoard;
-    protected var _moonPlayer :int;
-    protected var _sunPlayer :int;
     protected var _gameIsOver :Boolean = false;
     protected var _leftBackground :Sprite;
     protected var _rightBackground :Sprite;

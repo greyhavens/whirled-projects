@@ -32,8 +32,6 @@ public class Board extends Sprite
 
         _loadedLauncher = -1;
 
-        updateTurnIndicator(ScoreBoard.MOON_PLAYER);
-
         EventHandlers.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
@@ -49,7 +47,11 @@ public class Board extends Sprite
 
     public function addRing (ring :Ring) :void
     {
-        addChildAt(_ring = ring, numChildren - RING_LAYER);
+        var insertIndex :int = numChildren - RING_LAYER;
+        if (_turnIndicator == null) {
+            insertIndex++;
+        }
+        addChildAt(_ring = ring, insertIndex);
     }
 
     public function setActiveRing (ringNum :int) :void
@@ -94,13 +96,6 @@ public class Board extends Sprite
         if (_turnIndicator != null) {
             removeChild(_turnIndicator);
             firstTurn = false;
-
-            // temp
-            if (_turnIndicator is TURN_TO_MOON) {
-                player = ScoreBoard.SUN_PLAYER;
-            } else {
-                player = ScoreBoard.MOON_PLAYER;
-            }
         }
         _turnIndicator = 
             new (player == ScoreBoard.MOON_PLAYER ? TURN_TO_MOON : TURN_TO_SUN)() as MovieClipAsset;

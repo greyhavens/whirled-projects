@@ -15,8 +15,8 @@ import com.whirled.contrib.EventHandlers;
 
 public class Marble extends Sprite
 {
-    public static const MOON :int = 1;
-    public static const SUN :int = 2;
+    public static const MOON :int = ScoreBoard.MOON_PLAYER;
+    public static const SUN :int = ScoreBoard.SUN_PLAYER;
 
     // The number of frames that it takes for a marble to move from one ring to the next.
     public static const ROLL_FRAMES :int = 8;
