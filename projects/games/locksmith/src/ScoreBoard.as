@@ -5,7 +5,14 @@ package {
 import flash.display.Shape;
 import flash.display.Sprite;
 
+import flash.filters.BitmapFilterQuality;
+import flash.filters.GlowFilter;
+
 import flash.geom.Point;
+
+import flash.text.TextField;
+import flash.text.TextFormat;
+import flash.text.TextFormatAlign;
 
 import com.threerings.util.Log;
 
@@ -13,6 +20,7 @@ import com.whirled.WhirledGameControl;
 
 public class ScoreBoard extends Sprite 
 {
+    // these are used as indexes into WhirledGameControl.seating.getPlayerIds()
     public static const MOON_PLAYER :int = 0;
     public static const SUN_PLAYER :int = 1;
 
@@ -36,9 +44,12 @@ public class ScoreBoard extends Sprite
         addChild(_rightFrame);
 
         var playerIds :Array = wgc.seating.getPlayerIds();
+        var playerNames :Array = wgc.seating.getPlayerNames();
         wgc.getHeadShot(playerIds[MOON_PLAYER], applyHeadshot(MOON_PLAYER));
+        addLabel(MOON_PLAYER, playerNames[MOON_PLAYER]);
         if (playerIds.length > 1) {
             wgc.getHeadShot(playerIds[SUN_PLAYER], applyHeadshot(SUN_PLAYER));
+            addLabel(SUN_PLAYER, playerNames[SUN_PLAYER]);
         }
     }
 
@@ -103,6 +114,38 @@ public class ScoreBoard extends Sprite
             headshot.mask = masker;
             addChildAt(headshot, getChildIndex(frame));
         };
+    }
+
+    protected function addLabel (player :int, name :String) :void
+    {
+        var frame :Sprite = player == MOON_PLAYER ? _leftFrame : _rightFrame;
+        var format :TextFormat = new TextFormat();
+        format.font = "Palatino Linotype";
+        format.bold = true;
+        format.color = 0x503A0B;
+        format.leading = -3;
+        format.size = 11;
+        format.align = TextFormatAlign.CENTER
+        var textField :TextField = new TextField();
+        textField.y = frame.y + 78;
+        textField.x = frame.x + 8;
+        if (textField.x < 0) {
+            textField.x -= frame.width;
+        }
+        textField.width = 57;
+        textField.wordWrap = true;
+        textField.defaultTextFormat = format;
+        textField.selectable = false;
+        textField.text = name;
+        textField.filters = 
+            [new GlowFilter(0xFFFFFF, 1, 2, 2, 3, BitmapFilterQuality.HIGH)];
+        addChildAt(textField, getChildIndex(frame));
+        while (textField.numLines > 2) {
+            textField.text = textField.text.substring(0, textField.text.length - 4) + "...";
+        }
+        if (textField.numLines == 1) {
+            textField.y += textField.textHeight / 2;
+        }
     }
 
     protected function gameOver () :void
