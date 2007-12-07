@@ -115,16 +115,8 @@ public class Zap extends FrameSprite
         recursiveLightning(midPoint, to, deviation/2);
     }
 
-    protected var _foo :int;
-
     protected function summarizeSpectrum () :Array
     {
-        _foo ++;
-        if (_foo < 10) {
-//            return [ 0, 0 ];
-        }
-        _foo = 0;
-
         var bytes :ByteArray = new ByteArray();
         SoundMixer.computeSpectrum(bytes, true);
 
