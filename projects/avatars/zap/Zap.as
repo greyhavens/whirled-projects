@@ -115,8 +115,16 @@ public class Zap extends FrameSprite
         recursiveLightning(midPoint, to, deviation/2);
     }
 
+    protected var _foo :int;
+
     protected function summarizeSpectrum () :Array
     {
+        _foo ++;
+        if (_foo < 10) {
+//            return [ 0, 0 ];
+        }
+        _foo = 0;
+
         var bytes :ByteArray = new ByteArray();
         SoundMixer.computeSpectrum(bytes, true);
 
@@ -125,41 +133,60 @@ public class Zap extends FrameSprite
 
         var ix :int;
         for (ix = 0; ix < IX_LOW; ix ++) {
-            leftLow += bytes.readFloat() / IX_LOW;
+            leftLow += tweakByte(ix, bytes.readFloat(), IX_LOW);
         }
         for (ix = IX_LOW; ix < IX_MID; ix ++) {
-            leftMid += bytes.readFloat() / (IX_MID - IX_LOW);
+            leftMid += tweakByte(ix, bytes.readFloat(), (IX_MID - IX_LOW));
         }
         for (ix = IX_MID; ix < 256; ix ++) {
-            leftHigh += bytes.readFloat() / (256-IX_MID);
+            leftHigh += tweakByte(ix, bytes.readFloat(), (256-IX_MID));
         }
         for (ix = 0; ix < IX_LOW; ix ++) {
-            rightLow += bytes.readFloat() / IX_LOW;
+            rightLow += tweakByte(ix, bytes.readFloat(), IX_LOW);
         }
         for (ix = IX_LOW; ix < IX_MID; ix ++) {
-            rightMid += bytes.readFloat() / (IX_MID - IX_LOW);
+            rightMid += tweakByte(ix, bytes.readFloat(), (IX_MID - IX_LOW));
         }
         for (ix = IX_MID; ix < 256; ix ++) {
-            rightHigh += bytes.readFloat() / (256-IX_MID);
+            rightHigh += tweakByte(ix, bytes.readFloat(), (256-IX_MID));
         }
 
         // convert the linear (0, 1) to logarithmic (decibel) scale
-        leftLow = Math.LOG10E * Math.log(1 + 9 * leftLow);
-        leftMid = Math.LOG10E * Math.log(1 + 9 * leftMid);
-        leftHigh = Math.LOG10E * Math.log(1 + 9 * leftHigh);
-        rightLow = Math.LOG10E * Math.log(1 + 9 * rightLow);
-        rightMid = Math.LOG10E * Math.log(1 + 9 * rightMid);
-        rightHigh = Math.LOG10E * Math.log(1 + 9 * rightHigh);
+        leftLow = tweakSum(leftLow, IX_LOW);
+        leftMid = tweakSum(leftMid, IX_MID - IX_LOW);
+        leftHigh = tweakSum(leftHigh, 256 - IX_MID);
+        rightLow = tweakSum(rightLow, IX_LOW);
+        rightMid = tweakSum(rightMid, IX_MID - IX_LOW);
+        rightHigh = tweakSum(rightHigh, 256 - IX_MID);
 
         var k :Number = 255;
         return [
-            ((k * leftLow) << 16) + ((k * leftMid) << 8) + (k * leftHigh),
-            ((k * rightLow) << 16) + ((k * rightMid) << 8) + (k * rightHigh)
+            ((k * leftLow) << 16) + ((k * leftHigh) << 8) + (k * leftMid),
+            ((k * rightLow) << 16) + ((k * rightHigh) << 8) + (k * rightMid)
         ];
     }
 
+    protected function tweakSum (v :Number, cnt :int) :Number
+    {
+        // the final return value is sqrt(sum(squares)), 16 is heuristic from my music
+        return Math.min(1, 16 * Math.sqrt(v) / cnt);
+    }
+
+    protected function tweakByte (ix :int, v :Number, cnt :int) :Number
+    {
+        // transform the pitch by a heuristic feel-good function to lie in [0, 1]
+        var fScale :Number = Math.sqrt((ix + 1) / 256);
+
+        // transform the amplitude logarithmically, we want decibel
+        var aScale :Number = Math.LOG10E * Math.log(1 + 9 * v);
+
+        // return the square of the products
+        return (fScale * aScale) * (fScale * aScale);
+    }
+
+    // floats 0-255 represents frequencies 0-20,000 so 4 is about 300 Hz, 24 is 1250 Hz
     protected static const IX_LOW :int = 4;
-    protected static const IX_MID :int = 24;
+    protected static const IX_MID :int = 16;
 
     protected var _canvas :Sprite;
     protected var _control :AvatarControl;
