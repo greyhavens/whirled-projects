@@ -75,7 +75,7 @@ public class CaptionGame extends EventDispatcher
         previewCount :int = 4, scoreRounds :int = 10,
         captioningDuration :int = 45, votingDuration :int = 30, resultsDuration :int = 30,
 //        captioningDuration :int = 45, votingDuration :int = 10, resultsDuration :int = 10,
-//        captioningDuration :int = 20, votingDuration :int = 20, resultsDuration :int = 20,
+//        captioningDuration :int = 20, votingDuration :int = 10, resultsDuration :int = 20,
         minCaptionersStatStorage :int = 3)
     {
         _ctrl = gameCtrl;
@@ -1294,6 +1294,9 @@ public class CaptionGame extends EventDispatcher
         if (_inControl) {
             // clear out their participating flag, if any
             _ctrl.set("part:" + event.occupantId, null);
+
+            // see if we now want to skip ahead, or anything
+            checkSkippingAndParticipating();
         }
     }
 
