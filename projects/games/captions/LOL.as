@@ -69,7 +69,7 @@ public class LOL extends Sprite
 
     public function LOL () 
     {
-        trace("Started up LOLcaptions, build ID: reload");
+        trace("Started up LOLcaptions, build ID: reload2");
         _ctrl = new WhirledGameControl(this);
         if (!_ctrl.isConnected()) {
             var oops :TextField = new TextField();
@@ -84,8 +84,12 @@ public class LOL extends Sprite
             return;
         }
 
-//        Font.registerFont(NICKELODEON_FONT);
-        Font.registerFont(IMPACT_FONT);
+        try {
+//            Font.registerFont(NICKELODEON_FONT);
+            Font.registerFont(IMPACT_FONT);
+        } catch (err :Error) {
+            Log.getLog(this).warning("Could not register font: " + err);
+        }
 
         _formatter = new TextFieldFormatter();
         _formatter.addEventListener(
@@ -142,6 +146,7 @@ public class LOL extends Sprite
             _content.removeChild(_ui);
             _ui = null;
         }
+        _curImage = null;
         _theme = newTheme;
 
         _loader = new EmbeddedSwfLoader();
@@ -168,6 +173,7 @@ public class LOL extends Sprite
         _ui.mask = _mask;
         _content.addChild(_ui);
         _loader = null;
+
 
 //        trace(DisplayUtil.dumpHierarchy(_ui));
 
@@ -1023,7 +1029,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
 //    [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
     protected static const SILENT_THEME_UI :Class;
-//
+
 //    [Embed(source="rsrc/NICKELOD.TTF", fontName="nickelodeon", mimeType="application/x-font")]
 //    protected static const NICKELODEON_FONT :Class;
 
