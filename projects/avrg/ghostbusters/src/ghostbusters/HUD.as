@@ -104,7 +104,7 @@ public class HUD extends Sprite
         _maskLayer = new Sprite();
         _lanternia.addChild(_maskLayer);
 
-        _ghost = new Ghost(_control.getRoomId());
+        _ghost = new HidingGhost(_control.getRoomId());
         _ghost.addEventListener(MouseEvent.CLICK, ghostClick);
         _lanternia.addChild(_ghost);
         _ghost.mask = _maskLayer;
@@ -316,7 +316,7 @@ public class HUD extends Sprite
     protected var _lanterns :Dictionary = new Dictionary();
 
     protected var _hud :MovieClip;
-    protected var _ghost :Ghost;
+    protected var _ghost :HidingGhost;
 
     protected var _ticker :int;
 

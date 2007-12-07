@@ -18,29 +18,21 @@ import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 
-public class Ghost extends Sprite
+public class HidingGhost extends GhostBase
 {
-    public function Ghost (roomId :int)
+    public function HidingGhost (roomId :int)
     {
-        _pather = new SplinePather();
+        super();
 
+        _pather = new SplinePather();
         _random = new Random(roomId);
 
         _speed = 150 + 100 * _random.nextNumber();
-
-        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
-        loader.addEventListener(Event.COMPLETE, handleGhostLoaded);
-        loader.load(ByteArray(new GHOST()));
     }
 
     public function isIdle () :Boolean
     {
         return _pather.idle == 1;
-    }
-
-    public function getGhostBounds () :Rectangle
-    {
-        return _bounds;
     }
 
     public function slow () :Boolean
@@ -52,7 +44,7 @@ public class Ghost extends Sprite
             _pather.adjustRate(0);
             return true;
         }
-        Log.getLog(Ghost).debug("new speed: " + newSpeed + "; adjustment: " + (newSpeed / _speed));
+
         _pather.adjustRate(newSpeed / _speed);
         _speed = newSpeed;
         return false;
@@ -75,29 +67,9 @@ public class Ghost extends Sprite
         _pather.newTarget(p, d / _speed, true);
     }
 
-    protected function handleGhostLoaded (evt :Event) :void
-    {
-        var sprite :MovieClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
-        sprite.gotoAndPlay(1, "state_Default_walking"); // standardize
-        addChild(sprite);
-        _bounds = sprite.getBounds(this);
-
-        // dangle the sprite from its head
-        sprite.x = - (_bounds.left + _bounds.width/2);
-        sprite.y = - _bounds.top;
-
-        // refigure the bounds
-        _bounds = sprite.getBounds(this);
-    }
-
     protected var _pather :SplinePather;
     protected var _random :Random;
 
-    protected var _bounds :Rectangle;
-
     protected var _speed :Number;
-
-    [Embed(source="../../rsrc/Ghost.swf", mimeType="application/octet-stream")]
-    protected static const GHOST :Class;
 }
 }

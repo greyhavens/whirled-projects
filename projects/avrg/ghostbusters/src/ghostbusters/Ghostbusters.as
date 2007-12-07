@@ -135,8 +135,8 @@ public class Ghostbusters extends Sprite
 
     protected function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
     {
-        _ghostCtrl = ctrl;
-        return new Ghost(-1); // fix
+        _ghost = new SpawnedGhost(ctrl);
+        return _ghost;
     }
 
     protected var _control :AVRGameControl;
@@ -144,7 +144,7 @@ public class Ghostbusters extends Sprite
     protected var _hud :HUD;
     protected var _box :Box;
 
-    protected var _ghostCtrl :MobControl;
+    protected var _ghost :SpawnedGhost;
 
     protected var _splash :MovieClip = MovieClip(new SPLASH());
 
