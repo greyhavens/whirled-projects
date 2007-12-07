@@ -46,11 +46,11 @@ public class Locksmith extends Sprite
         if (_wgc.isConnected()) {
             _wgc.setShowButtons(false);
             EventHandlers.registerEventListener(
-                _wgc, StateChangedEvent.GAME_STARTED, gameDidStart);
+                _wgc, StateChangedEvent.GAME_STARTED, gameStarted);
             EventHandlers.registerEventListener(
-                _wgc, StateChangedEvent.GAME_ENDED, gameDidEnd);
+                _wgc, StateChangedEvent.GAME_ENDED, gameEnded);
             EventHandlers.registerEventListener(
-                _wgc, StateChangedEvent.TURN_CHANGED, turnDidChange);
+                _wgc, StateChangedEvent.TURN_CHANGED, turnChanged);
             EventHandlers.registerEventListener(
                 _wgc, MessageReceivedEvent.TYPE, messageReceived);
             EventHandlers.registerEventListener(_wgc, KeyboardEvent.KEY_DOWN, keyDownHandler);
@@ -76,9 +76,12 @@ public class Locksmith extends Sprite
         }
     }
 
-    public function gameDidStart (event :StateChangedEvent) :void
+    public function gameStarted (event :StateChangedEvent) :void
     {
-        _gameIsOver = false;
+        _gameEnded = false;
+        // this seems backwards, but we don't really consider the game started until the first
+        // turn has started.
+        _gameStarted = false;
         if (_scoreBoard == null) {
             addChild(_scoreBoard = new ScoreBoard(_wgc, endGame));
             _scoreBoard.x = _board.x;
@@ -96,10 +99,10 @@ public class Locksmith extends Sprite
         }
     }
 
-    public function gameDidEnd (event :StateChangedEvent) :void
+    public function gameEnded (event :StateChangedEvent) :void
     {
         _board.stopRotation();
-        _gameIsOver = true;
+        _gameEnded = true;
         if (_scoreBoard.moonScore >= WIN_SCORE && _scoreBoard.sunScore >= WIN_SCORE) {
             _wgc.localChat("Game over - the game is a tie!");
         } else if (_scoreBoard.moonScore >= WIN_SCORE) {
@@ -111,10 +114,19 @@ public class Locksmith extends Sprite
         }
     }
 
-    public function turnDidChange (event :StateChangedEvent) :void
+    public function turnChanged (event :StateChangedEvent) :void
     {
-        log.debug("turn did change [" + _wgc.seating.getPlayerPosition(_wgc.getTurnHolder()) + "]");
-        if (_currentRing != null && !_gameIsOver) {
+        if (_wgc.getTurnHolder() == 0) {
+            // spurious event at the beginning of the game
+            return;
+        }
+
+        if (_gameEnded) {
+            return;
+        }
+
+        log.debug("turn changed [" + _gameStarted + ", " + _gameEnded + "]");
+        if (_gameStarted) {
             var newTurn :Function = function (...ignored) :void {
                 _board.setActiveRing(-1);
                 _board.clock.newTurn();
@@ -125,6 +137,7 @@ public class Locksmith extends Sprite
                 _board.loadNextLauncher();
             }
             if (!_gotRotation) {
+                // player didn't make his move fast enough, so there was no rotation...
                 DoLater.instance.registerAt(DoLater.ROTATION_AFTER_END, newTurn);
                 DoLater.instance.trigger(DoLater.ROTATION_END);
                 DoLater.instance.trigger(DoLater.ROTATION_AFTER_END);
@@ -134,7 +147,13 @@ public class Locksmith extends Sprite
             _gotRotation = false;
         } else {
             // this is the first turn
+            _gameStarted = true;
+            _board.clock.newTurn();
+            if (_wgc.isMyTurn()) {
+                _board.setActiveRing(_currentRing.num);
+            }
             _board.updateTurnIndicator(_wgc.seating.getPlayerPosition(_wgc.getTurnHolder()));
+            _board.loadNextLauncher();
         }
     }
 
@@ -151,11 +170,6 @@ public class Locksmith extends Sprite
                 }
                 _currentRing = ring;
             }
-
-            if (_wgc.isMyTurn()) {
-                _board.setActiveRing(_currentRing.num);
-            }
-            _board.loadNextLauncher();
         } else if (event.name == RING_ROTATION) {
             _gotRotation = true;
             _board.clock.turnOver();
@@ -202,7 +216,7 @@ public class Locksmith extends Sprite
 
     protected function keyDownHandler (event :KeyboardEvent) :void
     {
-        if (_wgc.isMyTurn() && !_gotRotation && !_gameIsOver) {
+        if (_wgc.isMyTurn() && !_gotRotation && !_gameEnded) {
             switch(event.keyCode) {
             case Keyboard.LEFT:
                 _gotRotation = true;
@@ -262,7 +276,8 @@ public class Locksmith extends Sprite
     protected var _board :Board;
     protected var _currentRing :Ring;
     protected var _scoreBoard :ScoreBoard;
-    protected var _gameIsOver :Boolean = false;
+    protected var _gameEnded :Boolean = false;
+    protected var _gameStarted :Boolean = false;
     protected var _leftBackground :Sprite;
     protected var _rightBackground :Sprite;
     protected var _gotRotation :Boolean = false;

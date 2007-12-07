@@ -30,7 +30,6 @@ public class Board extends Sprite
         addChild(goalDome);
         addChild(_marbleLayer = new Sprite());
         addChild(_clock = new Clock(turnTimeout));
-        _clock.newTurn();
 
         _loadedLauncher = -1;
 
@@ -131,22 +130,18 @@ public class Board extends Sprite
 
     public function loadNextLauncher () :void
     {
-        var launcherAngles :Array = [ { sun: 45, moon: 135 }, { sun: 0, moon: 180 },
-            { sun: 315, moon: 225 } ];
-        var launcherHoles :Array = [ { sun: 2, moon: 6 }, { sun: 0, moon: 8 },
-            { sun: 14, moon: 10 } ];
         _loadedLauncher = (_loadedLauncher + 1) % 3;
         var trans :Matrix = new Matrix();
         trans.translate(Ring.SIZE_PER_RING * 5.5, 0);
-        trans.rotate(-launcherAngles[_loadedLauncher].sun * Math.PI / 180);
+        trans.rotate(-LAUNCHER_ANGLES[_loadedLauncher].sun * Math.PI / 180);
         var sunLaunchMarble :Marble = new Marble(this, _ring.largest, 
-            launcherHoles[_loadedLauncher].sun, Marble.SUN, trans);
+            LAUNCHER_HOLES[_loadedLauncher].sun, Marble.SUN, trans);
         addChild(sunLaunchMarble);
         trans = new Matrix();
         trans.translate(Ring.SIZE_PER_RING * 5.5, 0);
-        trans.rotate(-launcherAngles[_loadedLauncher].moon * Math.PI / 180);
+        trans.rotate(-LAUNCHER_ANGLES[_loadedLauncher].moon * Math.PI / 180);
         var moonLaunchMarble :Marble = new Marble(this, _ring.largest, 
-            launcherHoles[_loadedLauncher].moon, Marble.MOON, trans);
+            LAUNCHER_HOLES[_loadedLauncher].moon, Marble.MOON, trans);
         addChild(moonLaunchMarble);
         DoLater.instance.registerAt(DoLater.ROTATION_END, function (currentStage :int) :void {
             sunLaunchMarble.launch();
@@ -263,6 +258,11 @@ public class Board extends Sprite
 
     // rings sit under the turn indicator, scoring dome, clock hands and marble layer.
     protected static const RING_LAYER :int = 4;
+
+    protected static const LAUNCHER_ANGLES :Array = [ { sun: 45, moon: 135 }, { sun: 0, moon: 180 },
+                                                      { sun: 315, moon: 225 } ];
+    protected static const LAUNCHER_HOLES :Array = [ { sun: 2, moon: 6 }, { sun: 0, moon: 8 },
+                                                     { sun: 14, moon: 10 } ];
 
     protected var _wgc :WhirledGameControl;
     protected var _loadedLauncher :int;
