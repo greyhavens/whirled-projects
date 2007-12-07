@@ -166,7 +166,7 @@ public class LOL extends Sprite
         _content.addChild(_ui);
         _loader = null;
 
-        trace(DisplayUtil.dumpHierarchy(_ui));
+//        trace(DisplayUtil.dumpHierarchy(_ui));
 
         // For some reason, when the movie wraps around, we need to re-grab all the bits
         _ui.addEventListener("frameFirst", initUIBits);
@@ -180,7 +180,7 @@ public class LOL extends Sprite
 
     protected function initUIBits (... ignored) :void
     {
-//        trace("isFrameFirst: " + ignored[0]);
+        trace("isFrameFirst: " + ignored[0]);
 
         _image = find("image") as UILoader;
         if (_image == null) {
@@ -700,7 +700,6 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected function displayWinningCaption (caption :String, name :String) :void
     {
-        trace("Setting winning caption text: " + caption);
         _winningCaption.text = caption;
         if (_theme == LOL_THEME) {
             _formatter.format(_winningCaption);
