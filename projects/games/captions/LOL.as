@@ -69,6 +69,7 @@ public class LOL extends Sprite
 
     public function LOL () 
     {
+        trace("Started up LOLcaptions, build ID: reload");
         _ctrl = new WhirledGameControl(this);
         if (!_ctrl.isConnected()) {
             var oops :TextField = new TextField();
@@ -84,6 +85,7 @@ public class LOL extends Sprite
         }
 
 //        Font.registerFont(NICKELODEON_FONT);
+        Font.registerFont(IMPACT_FONT);
 
         _formatter = new TextFieldFormatter();
         _formatter.addEventListener(
@@ -136,6 +138,7 @@ public class LOL extends Sprite
         }
 
         if (_ui != null) {
+            _image.focusManager.deactivate();
             _content.removeChild(_ui);
             _ui = null;
         }
@@ -184,6 +187,7 @@ public class LOL extends Sprite
 
         _image = find("image") as UILoader;
         if (_image == null) {
+            Log.dumpStack();
             // the UI doesn't seem to be ready to read. Wait.
             return;
         }
@@ -191,6 +195,12 @@ public class LOL extends Sprite
         _pageButton = find("flickr_button") as SimpleButton;
 
         _skipBox = find("skip") as CheckBox;
+        if (_skipBox == null) {
+            Log.dumpStack();
+            _theme = null;
+            initTheme();
+            return;
+        }
         _skipBox.label = "              "; // so that it's more easily clickable
 
         _input = find("text_input") as TextField;
@@ -251,7 +261,13 @@ public class LOL extends Sprite
 
         switch (_theme) {
         default:
-            _formatter.configure(); // defaults
+            _formatter.configure():
+            break;
+
+        case LOL_THEME:
+            _input.embedFonts = true;
+            _winningCaption.embedFonts = true;
+            _formatter.configure("impact");
             break;
 
         case SILENT_THEME:
@@ -1010,6 +1026,9 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 //
 //    [Embed(source="rsrc/NICKELOD.TTF", fontName="nickelodeon", mimeType="application/x-font")]
 //    protected static const NICKELODEON_FONT :Class;
+
+    [Embed(source="rsrc/impact.ttf", fontName="impact", mimeType="application/x-font")]
+    protected static const IMPACT_FONT :Class;
 
     protected static const IDEAL_WIDTH :int = 700;
     protected static const IDEAL_HEIGHT :int = 500;
