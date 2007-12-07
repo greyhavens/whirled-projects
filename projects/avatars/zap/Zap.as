@@ -102,6 +102,8 @@ public class Zap extends FrameSprite
 	recursiveLightning(from, to, 50);
     }
 
+    // this is a basic midpoint displacement algorithm, see e.g.
+    // http://www.lotn.org/~calkinsc/graphics/mid.html
     protected function recursiveLightning (from :Point, to :Point, deviation :Number) :void
     {
         if (Point.distance(from, to) < 1) {
