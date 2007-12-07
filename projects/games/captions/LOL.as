@@ -1,5 +1,6 @@
 package {
 
+import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
@@ -165,7 +166,7 @@ public class LOL extends Sprite
         _content.addChild(_ui);
         _loader = null;
 
-//        trace(DisplayUtil.dumpHierarchy(_ui));
+        trace(DisplayUtil.dumpHierarchy(_ui));
 
         // For some reason, when the movie wraps around, we need to re-grab all the bits
         _ui.addEventListener("frameFirst", initUIBits);
@@ -217,16 +218,10 @@ public class LOL extends Sprite
         _votingPane = find("voting_scrollpane") as ScrollPane;
         _resultsPane = find("results_scrollpane") as ScrollPane;
 
-//        // TODO: winningCaption still not working!
-//        _winningCaption = find("winning_caption") as TextField;
-//        _winningCaption.selectable = false;
-//        _winningCaption.mouseEnabled = false;
-
-        var tf :TextField = new TextField();
-        tf.width = 500;
-        tf.height = 500;
-//        _image.parent.addChild(tf);
-        _winningCaption = tf;
+        _winningCaption = find("winning_caption") as TextField;
+        // unfortunately, Brittney couldn't do all this herself..
+        _winningCaption.parent.parent.mouseChildren = false;
+        _winningCaption.parent.parent.mouseEnabled = false;
 
         _winnerName = find("winner_name") as TextField;
         _winnerName.selectable = false;
@@ -268,7 +263,7 @@ public class LOL extends Sprite
             break;
         }
         _formatter.watch(_input, handleTextFieldChanged);
-        _formatter.watch(_winningCaption);
+        _formatter.watch(_winningCaption, handleWinningCaptionFieldChanged);
 
         showPhoto();
         initThemeSpecificUI();
@@ -773,6 +768,9 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         } catch (err :SecurityError) {
             // oh well!
         }
+        if (_winningCaption != null) {
+            handleWinningCaptionFieldChanged(_winningCaption);
+        }
     }
 
     /**
@@ -788,6 +786,9 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             }
         } catch (err :SecurityError) {
             // oh well!
+        }
+        if (_winningCaption != null) {
+            handleWinningCaptionFieldChanged(_winningCaption);
         }
     }
 
@@ -826,8 +827,15 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         if (_input != null) {
             handleTextFieldChanged(_input);
         }
+        if (_winningCaption != null) {
+            handleWinningCaptionFieldChanged(_winningCaption);
+        }
 
         if (event.target == _image) {
+            // set it up to draw the bitmap smoothly at scale
+            if (_image.content is Bitmap) {
+                Bitmap(_image.content).smoothing = true;
+            }
             alignImage();
         }
     }
@@ -903,6 +911,39 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         field.y = p.y;
 
         colorInputPalette();
+    }
+
+    protected function handleWinningCaptionFieldChanged (field :TextField) :void
+    {
+        if (_theme != LOL_THEME) {
+            return;
+        }
+
+        var w :int = MIN_IMAGE_WIDTH;
+        var h :int = MAX_IMAGE_HEIGHT;
+        var scale :Number = 1;
+        // position the field properly over the image control
+        try {
+            if (_image.content != null) {
+                scale = _image.content.scaleX;
+                w = Math.max(w * scale, _image.content.width);
+                h = _image.content.height;
+            }
+        } catch (err :SecurityError) {
+            // cope
+        }
+
+        field.scaleX = scale;
+        field.scaleY = scale;
+        field.width = w / scale;
+
+        var fieldHeight :int = field.textHeight + 4;
+        var p :Point = new Point((MAX_IMAGE_WIDTH - w) / 2,
+            (MAX_IMAGE_HEIGHT - h) / 2 + h - (fieldHeight * scale));
+        p = _image.parent.localToGlobal(p);
+        p = field.parent.globalToLocal(p);
+        field.x = p.x;
+        field.y = p.y;
     }
 
     protected function handlePhaseChanged (event :Event) :void
