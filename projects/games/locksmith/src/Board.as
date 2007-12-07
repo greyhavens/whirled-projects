@@ -47,8 +47,29 @@ public class Board extends Sprite
         _wgc = wgc;
     }
 
+    public function reinit () :void
+    {
+        // indicate that the next time addRing is called, we should first remove all the old ones.
+        _clearRings = true;
+
+        var index :int = getChildIndex(_marbleLayer);
+        removeChild(_marbleLayer);
+        addChildAt(_marbleLayer = new Sprite(), index);
+        _marbles = [];
+        _roamingMarbles = [];
+        _loadedLauncher = -1;
+    }
+
     public function addRing (ring :Ring) :void
     {
+        if (_clearRings) {
+            _ring = _ring.smallest;
+            while (_ring != null) {
+                removeChild(_ring);
+                _ring = _ring.outer;
+            }
+            _clearRings = false;
+        }
         var insertIndex :int = numChildren - RING_LAYER;
         if (_turnIndicator == null) {
             insertIndex++;
@@ -254,5 +275,6 @@ public class Board extends Sprite
     protected var _turnIndicator :MovieClipAsset;
     protected var _clock :Clock;
     protected var _roamingMarbles :Array = [];
+    protected var _clearRings :Boolean = false;
 }
 }

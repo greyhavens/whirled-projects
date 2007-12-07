@@ -44,13 +44,7 @@ public class DoLater
 
     public function DoLater ()
     {
-        _events = new HashMap;
-        _events.put(ROTATION_BEGIN, new Array());
-        _events.put(ROTATION_25, new Array());
-        _events.put(ROTATION_50, new Array());
-        _events.put(ROTATION_75, new Array());
-        _events.put(ROTATION_END, new Array());
-        _events.put(ROTATION_AFTER_END, new Array());
+        init();
     }
 
     /**
@@ -102,10 +96,32 @@ public class DoLater
         _previousPercent = percent;
     }
 
+    public function flush () :void
+    {
+        init();
+    }
+
+    protected function init () :void
+    {
+        _finishedCallback = null;
+        _processingStage = false;
+        _previousPercent = 0;
+        mostRecentStage = ROTATION_AFTER_END;
+
+        _events = new HashMap;
+        _events.put(ROTATION_BEGIN, new Array());
+        _events.put(ROTATION_25, new Array());
+        _events.put(ROTATION_50, new Array());
+        _events.put(ROTATION_75, new Array());
+        _events.put(ROTATION_END, new Array());
+        _events.put(ROTATION_AFTER_END, new Array());
+    }
+
     protected static var _instance :DoLater;
-    protected static var _previousPercent :Number;
-    protected static var _events :HashMap;
-    protected static var _finishedCallback :Function;
-    protected static var _processingStage :Boolean = false;
+
+    protected var _previousPercent :Number;
+    protected var _events :HashMap;
+    protected var _finishedCallback :Function;
+    protected var _processingStage :Boolean;
 }
 }

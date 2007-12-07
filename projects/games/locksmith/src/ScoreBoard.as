@@ -63,6 +63,14 @@ public class ScoreBoard extends Sprite
         return _sunScore;
     }
 
+    public function reinit () :void
+    {
+        _moonScore = 0;
+        _sunScore = 0;
+        removeChild(_marbleLayer);
+        addChildAt(_marbleLayer = new Sprite(), 0);
+    }
+
     public function scorePoint (player :int) :void
     {
         if (player == MOON_PLAYER) {

@@ -78,14 +78,21 @@ public class Locksmith extends Sprite
 
     public function gameDidStart (event :StateChangedEvent) :void
     {
-        var playerIds :Array = _wgc.seating.getPlayerIds();
-        addChild(_scoreBoard = new ScoreBoard(_wgc, endGame));
-        _scoreBoard.x = _board.x;
-        _scoreBoard.y = DISPLAY_HEIGHT / 2;
-        _board.scoreBoard = _scoreBoard;
+        _gameIsOver = false;
+        if (_scoreBoard == null) {
+            addChild(_scoreBoard = new ScoreBoard(_wgc, endGame));
+            _scoreBoard.x = _board.x;
+            _scoreBoard.y = DISPLAY_HEIGHT / 2;
+            _board.scoreBoard = _scoreBoard;
+        } else {
+            // rematching... just clear out the current score, etc
+            _scoreBoard.reinit();
+            _board.reinit();
+            DoLater.instance.flush();
+        }
         if (_wgc.amInControl()) {
-            _wgc.startNextTurn();
             _wgc.sendMessage(NEW_RINGS, createRings());
+            _wgc.startNextTurn();
         }
     }
 
@@ -106,6 +113,7 @@ public class Locksmith extends Sprite
 
     public function turnDidChange (event :StateChangedEvent) :void
     {
+        log.debug("turn did change [" + _wgc.seating.getPlayerPosition(_wgc.getTurnHolder()) + "]");
         if (_currentRing != null && !_gameIsOver) {
             var newTurn :Function = function (...ignored) :void {
                 _board.setActiveRing(-1);
