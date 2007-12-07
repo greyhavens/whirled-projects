@@ -58,6 +58,9 @@ public class SaucerShipType extends ShipType
         }
         var ships :Array = sf.findShips(ship.boardX, ship.boardY, RANGE);
 
+        var sound :Sound = (val[2] == ShotSprite.SUPER) ? supShotSound : shotSound;
+        sf.playSoundAt(sound, ship.boardX, ship.boardY);
+
         // no one in range so shoot straight
         if (ships.length <= 1) {
             sf.addShot(new LaserShotSprite(ship.boardX, ship.boardY,
@@ -77,10 +80,6 @@ public class SaucerShipType extends ShipType
             sf.addShot(new LaserShotSprite(ship.boardX, ship.boardY,
                 angle, dist, val[0], hitPower, primaryShotLife, val[1], tShip.shipId, sf));
         }
-
-        var sound :Sound = (val[2] == ShotSprite.SUPER) ? supShotSound : shotSound;
-
-        sf.playSoundAt(sound, ship.boardX, ship.boardY);
     }
 
     override public function primaryShotMessage (ship :ShipSprite, sf :StarFight) :void
@@ -111,6 +110,7 @@ public class SaucerShipType extends ShipType
     override public function secondaryShot (sf :StarFight, val :Array) :void
     {
         sf.addMine(val[0], val[2], val[3], val[1], val[4]);
+        sf.playSoundAt(mineSound, val[2], val[3]);
     }
 
     override protected function swfAsset () :Class

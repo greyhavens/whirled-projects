@@ -11,6 +11,7 @@ public class WaspShipType extends ShipType
     public var secondaryHitPower :Number = 0.5;
     public var secondaryShotRange :Number = 3.0;
     public var secondaryExplode :Class;
+    public var secondarySound :Sound;
 
     public function WaspShipType () :void
     {
@@ -86,6 +87,7 @@ public class WaspShipType extends ShipType
     {
         sf.addShot(new TorpedoShotSprite(val[2], val[3], val[4], val[5], val[0],
                 secondaryHitPower, secondaryShotLife, val[1], sf));
+        sf.playSoundAt(secondarySound, val[2], val[3]);
     }
 
     override protected function swfAsset () :Class
@@ -98,6 +100,7 @@ public class WaspShipType extends ShipType
         super.successHandler(event);
         secondaryAnim = _loader.getClass("torpedo");
         secondaryExplode = _loader.getClass("torpedo_explosion");
+        secondarySound = Sound(new (_loader.getClass("torpedo_shot.wav"))());
     }
 
     [Embed(source="rsrc/ships/wasp.swf", mimeType="application/octet-stream")]

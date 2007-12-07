@@ -790,7 +790,7 @@ public class ShipSprite extends Sprite
         power = report.power;
         powerups = report.powerups;
         score = report.score;
-        if (shipType != report.shipTyp || visible != report.visible) {
+        if (shipType != report.shipType || visible != report.visible) {
             boardX = report.boardX;
             boardY = report.boardY;
             ship.rotation = report.ship.rotation;

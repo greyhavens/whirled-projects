@@ -77,6 +77,7 @@ public class StarFight extends Sprite
 
         //Font.registerFont(_venusRising);
         gameFont = Font(new _venusRising());
+        addEventListener(Event.UNLOAD, handleUnload);
 
         if (_gameCtrl.isConnected()) {
             _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
@@ -838,12 +839,15 @@ public class StarFight extends Sprite
         }
     }
 
-    protected function handleUnload (... ignored) :void
+    protected function handleUnload (event :Event) :void
     {
+        Logger.log("Unloading game");
         if (_screenTimer != null) {
+            Logger.log("Clearing screen timer");
             _screenTimer.reset();
         }
         if (_powerupTimer != null) {
+            Logger.log("Clearing powerup timer");
             _powerupTimer.reset();
         }
     }
