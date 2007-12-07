@@ -12,9 +12,9 @@ import flash.events.MouseEvent;
 
 import core.tasks.*;
 
-public class BoardCursor extends AppObject
+public class PuzzleCursor extends AppObject
 {
-    public function BoardCursor (board :PuzzleBoard)
+    public function PuzzleCursor (board :PuzzleBoard)
     {
         Assert.isNotNull(board);
         _board = board;
