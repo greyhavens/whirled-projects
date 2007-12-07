@@ -261,7 +261,7 @@ public class LOL extends Sprite
 
         switch (_theme) {
         default:
-            _formatter.configure():
+            _formatter.configure();
             break;
 
         case LOL_THEME:
