@@ -72,12 +72,11 @@ public class StarFight extends Sprite
         graphics.beginFill(Codes.BLACK);
         graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
 
+        Font.registerFont(_venusRising);
+        gameFont = Font(new _venusRising());
+
         var introMovie :MovieClip = MovieClip(new introAsset());
         addChild(introMovie);
-
-        //Font.registerFont(_venusRising);
-        gameFont = Font(new _venusRising());
-        addEventListener(Event.UNLOAD, handleUnload);
 
         if (_gameCtrl.isConnected()) {
             _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
@@ -127,8 +126,9 @@ public class StarFight extends Sprite
 
     public function assetLoaded (success :Boolean) :void {
         if (success) {
-            if (_assets < Codes.SHIP_TYPES.length) {
-                Codes.SHIP_TYPES[_assets++].loadAssets(assetLoaded);
+            _assets++;
+            if (_assets <= Codes.SHIP_TYPES.length) {
+                Codes.SHIP_TYPES[_assets - 1].loadAssets(assetLoaded);
                 return;
             }
         }
@@ -841,13 +841,10 @@ public class StarFight extends Sprite
 
     protected function handleUnload (event :Event) :void
     {
-        Logger.log("Unloading game");
         if (_screenTimer != null) {
-            Logger.log("Clearing screen timer");
             _screenTimer.reset();
         }
         if (_powerupTimer != null) {
-            Logger.log("Clearing powerup timer");
             _powerupTimer.reset();
         }
     }

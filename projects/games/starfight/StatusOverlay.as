@@ -4,6 +4,7 @@ import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.Bitmap;
 
+import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
@@ -94,6 +95,7 @@ public class StatusOverlay extends Sprite
         _roundText.autoSize = TextFieldAutoSize.CENTER;
         _roundText.selectable = false;
         _roundText.embedFonts = true;
+        _roundText.antiAliasType = AntiAliasType.ADVANCED;
         _roundText.defaultTextFormat = format;
         addChild(_roundText);
     }

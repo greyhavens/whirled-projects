@@ -14,6 +14,7 @@ import flash.utils.ByteArray;
 import flash.media.Sound;
 import flash.media.SoundChannel;
 
+import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
@@ -200,6 +201,7 @@ public class ShipSprite extends Sprite
         format.rightMargin = 3;
         nameText.defaultTextFormat = format;
         nameText.embedFonts = true;
+        nameText.antiAliasType = AntiAliasType.ADVANCED;
         nameText.text = playerName;
         addChild(nameText);
     }

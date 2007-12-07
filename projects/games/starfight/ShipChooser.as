@@ -5,6 +5,7 @@ import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
+import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
@@ -46,6 +47,7 @@ public class ShipChooser extends Sprite
         selectText.y = StarFight.HEIGHT/2 - TEXT_SPACING;
         selectText.defaultTextFormat = format;
         selectText.embedFonts = true;
+        selectText.antiAliasType = AntiAliasType.ADVANCED;
         selectText.text = "Select Your Ship";
         addChild(selectText);
 
