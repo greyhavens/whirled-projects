@@ -467,7 +467,7 @@
            cost="3"
            rangeMax="5"
            pauseBetweenMissiles="7"
-           width="2" height="3">
+           width="2" height="1">
       <animations>
         <animationRest>tower_umbrella_rest</animationRest>
 	<animationLeft>tower_umbrella_fire_left</animationLeft>
