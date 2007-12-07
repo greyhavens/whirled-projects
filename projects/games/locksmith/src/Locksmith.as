@@ -125,7 +125,6 @@ public class Locksmith extends Sprite
             return;
         }
 
-        log.debug("turn changed [" + _gameStarted + ", " + _gameEnded + "]");
         if (_gameStarted) {
             var newTurn :Function = function (...ignored) :void {
                 _board.setActiveRing(-1);
@@ -136,11 +135,14 @@ public class Locksmith extends Sprite
                 _board.updateTurnIndicator(_wgc.seating.getPlayerPosition(_wgc.getTurnHolder()));
                 _board.loadNextLauncher();
             }
-            if (!_gotRotation) {
-                // player didn't make his move fast enough, so there was no rotation...
+            if (!_gotRotation || DoLater.instance.mostRecentStage != DoLater.ROTATION_AFTER_END) {
                 DoLater.instance.registerAt(DoLater.ROTATION_AFTER_END, newTurn);
-                DoLater.instance.trigger(DoLater.ROTATION_END);
-                DoLater.instance.trigger(DoLater.ROTATION_AFTER_END);
+                if (!_gotRotation) {
+                    // player didn't make his move fast enough, so there was no rotation...  this
+                    // is cleanup
+                    DoLater.instance.trigger(DoLater.ROTATION_END);
+                    DoLater.instance.trigger(DoLater.ROTATION_AFTER_END);
+                }
             } else {
                 newTurn();
             }

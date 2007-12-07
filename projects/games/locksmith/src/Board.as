@@ -143,10 +143,7 @@ public class Board extends Sprite
         var moonLaunchMarble :Marble = new Marble(this, _ring.largest, 
             LAUNCHER_HOLES[_loadedLauncher].moon, Marble.MOON, trans);
         addChild(moonLaunchMarble);
-        DoLater.instance.registerAt(DoLater.ROTATION_END, function (currentStage :int) :void {
-            sunLaunchMarble.launch();
-            moonLaunchMarble.launch();
-        });
+        prepareLaunch(sunLaunchMarble, moonLaunchMarble);
     }
 
     override public function addChild (child :DisplayObject) :DisplayObject
@@ -215,6 +212,14 @@ public class Board extends Sprite
         // marbles remove themselves when they're done with the goal animation.
         marble.addEventListener(Event.REMOVED, function (evt :Event) :void {
             goalBoard.parent.removeChild(goalBoard);
+        });
+    }
+
+    protected function prepareLaunch (sun :Marble, moon :Marble) :void
+    {
+        DoLater.instance.registerAt(DoLater.ROTATION_END, function (currentStage :int) :void {
+            sun.launch();
+            moon.launch();
         });
     }
 
