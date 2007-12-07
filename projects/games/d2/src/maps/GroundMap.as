@@ -36,8 +36,9 @@ public class GroundMap extends Map
         trace("LOAD DEF: BOARD: " + board + ", PLAYER COUNT: " + playerCount);
         _sources = new Array(playerCount);
         _targets = new Array(playerCount);
-        
-        var data :BitmapData = MapFactory.makeGroundMapData(board, playerCount);
+
+        // var data :BitmapData = MapFactory.makeGroundMapData(board, playerCount);
+        var data :BitmapData = new BitmapData(_width, _height, true, 0x00000000);
 
         if (data.width != _width || data.height != _height) {
             throw new Error("Invalid ground map for " + board + ", player count: " + playerCount);

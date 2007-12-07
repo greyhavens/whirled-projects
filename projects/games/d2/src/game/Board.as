@@ -71,7 +71,7 @@ public class Board
         if (_availableTowers == null) {
             _availableTowers =
                 _def.availableTowers.map(function (typeName :String, ... etc) :TowerDefinition {
-                        return _def.pack.findTower(typeName);
+                        return _main.defs.findTower(typeName);
                     });
         }
 

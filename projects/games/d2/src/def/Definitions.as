@@ -40,28 +40,16 @@ public class Definitions
      */
     public function findBoard (guid :String) :BoardDefinition
     {
-        var result :BoardDefinition = null; 
-        packs.forEach(function (pack :PackDefinition, ... etc) :void {
-                if (result == null) {
-                    result = pack.findBoard(guid);
-                }
-            });
-        return result;
+        return findInPacks("findBoardInPack", guid) as BoardDefinition;
     }
-    
+
     /**
      * Finds an instance of EnemyDefinition by typeName, across all packs.
      * Returns null in case of failure.
      */
     public function findEnemy (typeName :String) :EnemyDefinition
     {
-        var result :EnemyDefinition = null; 
-        packs.forEach(function (pack :PackDefinition, ... etc) :void {
-                if (result == null) {
-                    result = pack.findEnemy(typeName);
-                }
-            });
-        return result;
+        return findInPacks("findEnemyInPack", typeName) as EnemyDefinition;
     }
 
     /**
@@ -70,13 +58,7 @@ public class Definitions
      */
     public function findTower (typeName :String) :TowerDefinition
     {
-        var result :TowerDefinition = null; 
-        packs.forEach(function (pack :PackDefinition, ... etc) :void {
-                if (result == null) {
-                    result = pack.findTower(typeName);
-                }
-            });
-        return result;
+        return findInPacks("findTowerInPack", typeName) as TowerDefinition;
     }
 
     /** Reads definitions from a single data pack, and stores them internally. */
@@ -134,6 +116,23 @@ public class Definitions
         }
     }        
 
+    /**
+     * Helper function for iterating over all packs and calling some finder function,
+     * returning the first non-null result (or null, if none available).
+     *
+     * Note: this is horribly un-type-safe. :)
+     */
+    protected function findInPacks (findFunctionName :String, id :*) :* {
+        var result :* = null; 
+        packs.forEach(function (pack :PackDefinition, ... etc) :void {
+                var fn :Function = pack[findFunctionName];
+                if (result == null) {
+                    result = fn(id);
+                }
+            });
+        return result;
+    }
+    
     /** Total number of packs that remain to be processed. */
     protected var _remainingPacks :int;
 

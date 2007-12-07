@@ -27,7 +27,7 @@ public class PackDefinition
     }
 
     /** Finds an instance of BoardDefinition by guid. Returns null in case of failure. */
-    public function findBoard (guid :String) :BoardDefinition
+    public function findBoardInPack (guid :String) :BoardDefinition
     {
         var result :BoardDefinition = null; 
         boards.forEach(function (board :BoardDefinition, ... etc) :void {
@@ -38,13 +38,13 @@ public class PackDefinition
     }
 
     /** Finds an instance of TowerDefinition by type. Returns null in case of failure. */
-    public function findTower (typeName :String) :TowerDefinition
+    public function findTowerInPack (typeName :String) :TowerDefinition
     {
         return findByTypeName(typeName, towers) as TowerDefinition;
     }
 
     /** Finds an instance of EnemyDefinition by type. Returns null in case of failure. */
-    public function findEnemy (typeName :String) :EnemyDefinition
+    public function findEnemyInPack (typeName :String) :EnemyDefinition
     {
         return findByTypeName(typeName, enemies) as EnemyDefinition;
     }

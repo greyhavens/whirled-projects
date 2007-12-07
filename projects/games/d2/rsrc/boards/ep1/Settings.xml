@@ -39,9 +39,9 @@
       <topleft x="40" y="27" />
 
       <endpoints>
-        <p1 startx="16" starty="8"  endx="0"  endy="8"  />
-        <p2 startx="0"  starty="12" endx="16" endy="12" />
-        <pc startx="0"  starty="10" endx="16" endy="10"  />
+        <p1 startx="9"  starty="9"  endx="0"  endy="9"  />
+        <p2 startx="0"  starty="0"  endx="9" endy="0" />
+        <pc startx="0"  starty="5" endx="9" endy="5"  />
       </endpoints>
 
       <availableTowers>
