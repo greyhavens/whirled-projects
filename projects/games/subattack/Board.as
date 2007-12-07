@@ -241,7 +241,7 @@ public class Board
     public function torpedoAdded (torpedo :Torpedo) :void
     {
         _torpedos.push(torpedo);
-        _seaDisplay.addChildAt(torpedo, 0);
+        _seaDisplay.addChild(torpedo);
     }
 
     /**
@@ -270,7 +270,7 @@ public class Board
         if (xx >= 0 && xx < _width && yy >= 0 && yy < _height) {
             // mark the board area as traversable there
             subsAffected = noteTorpedoExploded(xx, yy, killerIdx);
-            _seaDisplay.addChildAt(new Explode(xx, yy, this), 0);
+            _seaDisplay.addChild(new Explode(xx, yy, this));
         }
 
         // find all the subs affected
@@ -602,7 +602,7 @@ public class Board
     protected static const DIMENSIONS :Array = [
         [  0,  0 ], // 0 player game
         [ 10, 10 ], // 1 player game
-//        [ 100, 60], // TEST!
+//        [ 90, 60], // TEST!
 //        [ 10, 10 ], // 2 player game (testing)
 //        [ 15, 15 ], // 2 player game (testing)
         [ 50, 25 ], // 2 player game

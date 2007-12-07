@@ -41,7 +41,7 @@ import com.whirled.WhirledGameControl;
 public class SubAttack extends Sprite
 {
     /** How many tiles does our vision extend past our tile? */
-    public static const VISION_TILES :Number = 8;
+    public static const VISION_TILES :Number = 7.5;
 
     /** How many total tiles are in one direction in the view? */
     public static const VIEW_TILES :Number = (VISION_TILES * 2) + 1;
