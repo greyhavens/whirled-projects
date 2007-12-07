@@ -33,7 +33,7 @@
     </board>
     <board name="Test." 
 	   background="Level01_BG" button="button_level_01"
-	   startingHealth="5" startingMoney="50">
+	   startingHealth="1" startingMoney="50">
       <squares cols="10" rows="10" />
       <pixelsize width="510" height="440" />
       <topleft x="40" y="27" />
@@ -55,7 +55,7 @@
       </availableTowers>
 
       <singlePlayerEnemyWaves>
-        <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
+        <wave><enemy id="TYPE_CRAB" count="1" /></wave>
       </singlePlayerEnemyWaves>
 
       <twoPlayerAllies>

@@ -7,7 +7,6 @@ import mx.core.BitmapAsset;
 
 import game.Board;
 import maps.Map;
-import maps.MapFactory;
 
 /** Graphical representation of a Map object's data, with a low res bitmap where each pixel
  *  corresponds to a single board cell. */
@@ -28,8 +27,11 @@ public class Overlay extends Image
     override protected function createChildren () :void
     {
         super.createChildren();
+
+        // make a blank overlay of the right size
+        var data :BitmapData = new BitmapData(_board.columns, _board.rows, true, 0x00000000);
+        _bitmap = new BitmapAsset(data);
         
-        _bitmap = MapFactory.makeBlankOverlay();
         trace("GOT BITMAP: " + _bitmap + " : " + _bitmap.width + " x " + _bitmap.height);
         trace("GOT BOARD: " + _board);
         this.source = _bitmap;

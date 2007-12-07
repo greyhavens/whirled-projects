@@ -15,8 +15,10 @@ public class Map
 {
     /** Marks cells that can be built on, and through which enemies can pass. */
     public static const UNOCCUPIED :int = -1;
+
     /** Marks cells that can't be built on, but through which enemies can pass. */
     public static const RESERVED :int = -2;
+
     /** Marks cells that can't be built on, and are impassable for enemies. */
     public static const INVALID :int = -3;
     

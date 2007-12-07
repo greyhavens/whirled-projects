@@ -20,12 +20,6 @@ import com.threerings.util.HashMap;
 public class Board
     implements UnloadListener
 {
-
-    // todo: factor me out, along with board loading from pngs
-    public static const PLAYER_COLORS :Array = [ 0x000000ff /* player 0 */,
-                                                 0x0000ff00 /* player 1 */ ];
-
-
     public function Board (main :Main, def :BoardDefinition)
     {
         _main = main;
@@ -101,7 +95,7 @@ public class Board
         }
 
         // initialize the ground map
-        _groundmap.loadDefinition(this, _main.playerCount);
+        _groundmap.initializeTerrain(this);
 
         // and based on that, the pathfinding maps
         for (var ii :int = 0; ii < _main.playerCount; ii++) {

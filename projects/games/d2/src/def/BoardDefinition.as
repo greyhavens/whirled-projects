@@ -8,6 +8,8 @@ import mx.utils.ObjectUtil;
 
 import com.threerings.util.EmbeddedSwfLoader;
 
+import def.SpecialTileDefinition;
+
 /**
  * Board definition from an xml settings file, with extra info retrieval, and typesafe variables.
  */
@@ -30,7 +32,8 @@ public class BoardDefinition
     public var availableTowers :Array; // of String, i.e. typeName of each tower
     public var enemies :Array; // of WaveDefinition
     public var allies :Array; // of WaveDefinition
-
+    public var specialTiles :Array // of SpecialTileDefinition
+    
     public var computerPath :Endpoints;
     public var player1Path :Endpoints;
     public var player2Path :Endpoints;
@@ -43,7 +46,7 @@ public class BoardDefinition
         this.swf = swf;
         
         this.name = board.@name;
-
+        
         // resolve display object references
         
         var bgclass :Class = this.swf.getClass(board.@background);
@@ -97,6 +100,14 @@ public class BoardDefinition
             allies.push(elts);
         }
 
+        // unpack special tiles
+        
+        this.specialTiles = new Array();
+        for each (var tile :XML in board.specialTiles.tile) {
+            specialTiles.push(new SpecialTileDefinition(tile.@id, tile.@x, tile.@y));
+        }
+                                     
+        
     }
 
     public function get guid () :String

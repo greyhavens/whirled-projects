@@ -1,17 +1,45 @@
 <settings packname="Standard" button="DefaultLevels">
   <boards>
+
+    <!-- 
+      Each <board></board> entry describes a single board. Required board
+      attributes are:
+
+        name: The board's name that will be displayed in the board selection screen.
+     
+        background: The name of the movie clip symbol for the board. The movie
+ 		clip will be looked up in Boards.fla
+
+        button: The name of the button symbol for this board. The button will
+             be loaded from Boards.fla, and used in the "select a board" screen. 
+
+	startingHealth: How much health each player should start with
+  	startingMoney: The same, only for money :)
+    -->
     <board name="Forest" background="Level01_BG" button="button_level_01"
 	   startingHealth="5" startingMoney="50">
+
+      <!-- How many columns and rows of tiles does the game board contain? -->
       <squares cols="17" rows="22" />
+
+      <!-- How big is the game board, in pixels? -->
       <pixelsize width="510" height="440" />
+
+      <!-- Where should the top-left corner of the game board be placed, in pixels? -->
       <topleft x="40" y="27" />
 
+      <!-- This section describes movement of enemies during the game. Enemies --
+        -- will move from position described in 'startx' and 'starty', and will --
+        -- try to reach 'endx' and 'endy'. The <pc> section describes the --
+        -- computer player during a single player game, and sections <p1> --
+        -- and <p2> describe players 1 and 2 during a multiplayer game. -->
       <endpoints>
         <p1 startx="16" starty="8"  endx="0"  endy="8"  />
         <p2 startx="0"  starty="12" endx="16" endy="12" />
         <pc startx="0"  starty="10" endx="16" endy="10"  />
       </endpoints>
 
+      <!-- Which towers are available for building on this board? -->
       <availableTowers>
         <tower id="TYPE_SHRUB" />
         <tower id="TYPE_BOX" />
@@ -22,9 +50,27 @@
         <tower id="TYPE_TREE" />
       </availableTowers>
 
+      <!-- Describes positions of special tiles on the board. Special tile
+           include the following attributes: 'id', 'x' and 'y' position. 
+           Type id can be:
+             "reserved" - enemies can walk on those tiles, but players can't build there
+             "invalid"  - enemies cannot walk on those tiles, and players can't build either
+
+	   Each tile's 'x' and 'y' attributes are in tile coordinates, where
+           (0, 0) is the upper left corner. 
+	-->
       <specialTiles>
+        <tile id="invalid"  x="0" y="0" />  
+        <tile id="invalid"  x="1" y="0" />  
+        <tile id="invalid"  x="0" y="1" />  
+        <tile id="invalid"  x="1" y="1" />  
+        <tile id="reserved" x="0" y="2" />
+        <tile id="reserved" x="1" y="2" />
       </specialTiles>
 
+      <!-- Describes waves of enemies during a single player game. Each wave --
+        -- can include one or more enemy types, and specifies how many enemies --
+        -- of each type should be sent. -->
       <singlePlayerEnemyWaves>
         <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
         <wave><enemy id="TYPE_SQUIRREL" count="1" /></wave>
@@ -33,15 +79,20 @@
         <wave><enemy id="TYPE_SKUNK" count="5" /></wave>
         <wave><enemy id="TYPE_BULLY" count="1" /></wave>
         <wave><enemy id="TYPE_GIRL" count="2" /></wave>
-        <wave><enemy id="TYPE_SKUNK" count="5" /><enemy id="TYPE_SQUIRREL" count="1" /></wave>
+        <wave><enemy id="TYPE_SKUNK" count="5" />
+              <enemy id="TYPE_SQUIRREL" count="1" /></wave>
         <wave><enemy id="TYPE_SKATER" count="1" /></wave>
-        <wave><enemy id="TYPE_BULLY" count="1" /><enemy id="TYPE_SKATER" count="1" /></wave>
-        <wave><enemy id="TYPE_GIRL" count="2" /><enemy id="TYPE_BULLY" count="1" /></wave>
+        <wave><enemy id="TYPE_BULLY" count="1" />
+              <enemy id="TYPE_SKATER" count="1" /></wave>
+        <wave><enemy id="TYPE_GIRL" count="2" />
+              <enemy id="TYPE_BULLY" count="1" /></wave>
         <wave><enemy id="TYPE_SKUNK" count="7" /></wave>
-        <wave><enemy id="TYPE_BIRD" count="1" /><enemy id="TYPE_SKATER" count="2" /></wave>
+        <wave><enemy id="TYPE_BIRD" count="1" />
+              <enemy id="TYPE_SKATER" count="2" /></wave>
         <wave><enemy id="TYPE_BULLY" count="3" /></wave>
       </singlePlayerEnemyWaves>
 
+      <!-- Describes types of allies available during a multiplayer game -->
       <twoPlayerAllies>
         <wave><enemy id="TYPE_SKUNK" count="5" /></wave>
         <wave><enemy id="TYPE_BULLY" count="1" /></wave>
@@ -60,8 +111,83 @@
       <endpoints>
         <p1 startx="16" starty="8"  endx="0"  endy="8"  />
         <p2 startx="0"  starty="12" endx="16" endy="12" />
-        <pc startx="0"  starty="10" endx="16" endy="10"  />
+        <pc startx="10" starty="0 " endx="16" endy="16"  />
       </endpoints>
+
+      <specialTiles>
+ 	<!-- stream from the top -->
+        <tile id="invalid"  x="8" y="0" />  
+        <tile id="invalid"  x="9" y="0" />  
+        <tile id="invalid"  x="8" y="1" />  
+        <tile id="invalid"  x="9" y="1" />  
+        <tile id="invalid"  x="8" y="2" />  
+        <tile id="invalid"  x="9" y="2" />  
+        <tile id="invalid"  x="8" y="3" />  
+        <tile id="invalid"  x="9" y="3" />  
+        <tile id="invalid"  x="8" y="4" />  
+        <tile id="invalid"  x="9" y="4" />  
+
+ 	<!-- first foot bridge -->
+        <tile id="reserved" x="8"  y="5" />
+        <tile id="invalid"  x="9"  y="5" />
+        <tile id="reserved" x="10" y="5" />
+        <tile id="reserved" x="8"  y="6" />
+        <tile id="reserved" x="9"  y="6" />
+        <tile id="reserved" x="10" y="6" />
+        <tile id="reserved" x="8"  y="7" />
+        <tile id="invalid"  x="9"  y="7" />
+        <tile id="reserved" x="10" y="7" />
+
+ 	<!-- stream between two bridges -->
+        <tile id="invalid"  x="9"  y="8" />  <!-- right -->
+        <tile id="invalid"  x="10" y="8" />  
+        <tile id="invalid"  x="11" y="8" />  
+        <tile id="invalid"  x="12" y="8" />  
+        <tile id="invalid"  x="13" y="8" />  
+        <tile id="invalid"  x="14" y="8" />  
+        <tile id="invalid"  x="15" y="8" />  <!-- down -->
+        <tile id="invalid"  x="15" y="9" />  
+        <tile id="invalid"  x="15" y="10" />  
+        <tile id="invalid"  x="15" y="11" />  
+        <tile id="invalid"  x="15" y="12" /> <!-- left -->
+        <tile id="invalid"  x="14" y="12" />  
+        <tile id="invalid"  x="13" y="12" />  
+        <tile id="invalid"  x="13" y="13" />  
+        <tile id="invalid"  x="12" y="12" /> <!-- down again --> 
+        <tile id="invalid"  x="12" y="13" />
+        <tile id="invalid"  x="12" y="14" />
+        <tile id="invalid"  x="12" y="15" />
+        <tile id="invalid"  x="12" y="16" /> <!-- left again -->
+        <tile id="invalid"  x="11" y="16" />
+        <tile id="invalid"  x="10" y="16" />
+        <tile id="invalid"  x="9" y="16" />
+        <tile id="invalid"  x="8" y="16" />
+        <tile id="invalid"  x="7" y="16" />
+        <tile id="invalid"  x="6" y="16" />
+        <tile id="invalid"  x="6" y="16" />  <!-- kink up and down -->
+        <tile id="invalid"  x="6" y="15" />
+        <tile id="invalid"  x="5" y="15" />
+        <tile id="invalid"  x="4" y="15" />
+        <tile id="invalid"  x="3" y="15" />
+        <tile id="invalid"  x="3" y="16" />
+        <tile id="invalid"  x="2" y="16" />
+        <tile id="invalid"  x="3" y="17" />
+        <tile id="invalid"  x="2" y="17" />
+        <tile id="invalid"  x="3" y="18" />
+        <tile id="invalid"  x="2" y="18" />
+
+        <!-- and the lower foot bridge -->
+        <tile id="reserved" x="2" y="19" />
+        <tile id="invalid"  x="3" y="19" />
+        <tile id="reserved" x="4" y="19" />
+        <tile id="reserved" x="2" y="20" />
+        <tile id="reserved" x="3" y="20" />
+        <tile id="reserved" x="4" y="20" />
+        <tile id="reserved" x="2" y="21" />
+        <tile id="invalid"  x="3" y="21" />
+        <tile id="reserved" x="4" y="21" />
+
+      </specialTiles>
 
       <availableTowers>
         <tower id="TYPE_SHRUB" />
@@ -163,6 +289,46 @@
         <tower id="TYPE_WAGON" />
         <tower id="TYPE_BOULDER" />
       </availableTowers>
+
+      <specialTiles>
+        <!-- upper left blanket -->
+        <tile id="reserved" x="5" y="3" />
+        <tile id="reserved" x="6" y="3" />
+        <tile id="reserved" x="5" y="4" />
+        <tile id="reserved" x="6" y="4" />
+        <tile id="reserved" x="5" y="5" />
+        <tile id="reserved" x="6" y="5" />
+        <tile id="reserved" x="5" y="6" />
+        <tile id="reserved" x="6" y="6" />
+        <!-- lower left blanket -->
+        <tile id="reserved" x="3" y="14" />
+        <tile id="reserved" x="4" y="14" />
+        <tile id="reserved" x="3" y="15" />
+        <tile id="reserved" x="4" y="15" />
+        <tile id="reserved" x="3" y="16" />
+        <tile id="reserved" x="4" y="16" />
+        <tile id="reserved" x="3" y="17" />
+        <tile id="reserved" x="4" y="17" />
+	<!-- upper right -->
+        <tile id="reserved" x="11" y="8" />
+        <tile id="reserved" x="12" y="8" />
+        <tile id="reserved" x="11" y="9" />
+        <tile id="reserved" x="12" y="9" />
+        <tile id="reserved" x="11" y="10" />
+        <tile id="reserved" x="12" y="10" />
+        <tile id="reserved" x="11" y="11" />
+        <tile id="reserved" x="12" y="11" />
+	<!-- lower right -->
+        <tile id="reserved" x="12" y="13" />
+        <tile id="reserved" x="13" y="13" />
+        <tile id="reserved" x="14" y="13" />
+        <tile id="reserved" x="12" y="14" />
+        <tile id="reserved" x="13" y="14" />
+        <tile id="reserved" x="14" y="14" />
+        <tile id="reserved" x="12" y="15" />
+        <tile id="reserved" x="13" y="15" />
+        <tile id="reserved" x="14" y="15" />
+      </specialTiles>
 
       <singlePlayerEnemyWaves>
         <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
