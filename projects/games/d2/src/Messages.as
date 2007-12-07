@@ -28,11 +28,14 @@ public class Messages
         opponent_needs_board: "Please wait while the other player<br>picks their board...",
         opponent_differs: "Other player chose: ",
         please_pick_same: "Please choose the same board to start!",
-        
-        menu_title: "Stations",
-        health: "Health: ",
-        score: " score:",
+
+        money: "YOUR FUNDS",
+        stations: "STATIONS",
         cost: "Cost: ",
+        damage: "Damage: ",
+        range: "Range: ",
+        delay: "Delay: ",
+        
         level: "Level ",
 
         money_desc: "This is how much money you have for new stations.",

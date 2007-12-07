@@ -15,7 +15,7 @@ public class TowerDefinition
     public var swf :EmbeddedSwfLoader;
 
     public var typeName :String;
-
+    public var name :String;
     public var width :int;
     public var height :int;
     
@@ -44,6 +44,7 @@ public class TowerDefinition
         this.swf = swf;
 
         this.typeName = tower.@id;
+        this.name = tower.@name;
         this.width = tower.@width;
         this.height = tower.@height;
         

@@ -435,8 +435,6 @@ public class Display extends GameModeCanvas
     public function updateMoney (player :int, money :Number) :void
     {
         if (player == _board.main.myIndex) {
-            // update displays
-            // _statusBar.money = money;
             _towerPanel.updateAvailability(money);
 
             // if the player's current tower is too expensive, reset the cursor

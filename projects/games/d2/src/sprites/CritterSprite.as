@@ -1,6 +1,7 @@
 package sprites {
 
 import flash.display.Graphics;
+import flash.geom.ColorTransform;
 import flash.geom.Point;
 
 import mx.controls.Image;
@@ -29,6 +30,13 @@ public class CritterSprite extends UnitSprite
 
         _health = new Image();
         _mine = mine;
+
+        if (! _mine && ! board.main.isSinglePlayer) {
+            // in multiplayer game, tweak my supporting guys' colors
+            var ct :ColorTransform = this.transform.colorTransform;
+            ct.redMultiplier = 2;
+            this.transform.colorTransform = ct;
+        }
     }
 
     public function get critter () :Critter

@@ -1,14 +1,14 @@
 Label, Font
 { 
   fontFamily: defaultFont;
-  fontSize: 12;
+  fontSize: 14;
   color: #ffffff;
 }
 
 Button {
   fontFamily: defaultFont;
   fontWeight: normal;
-  fontSize: 12;
+  fontSize: 14;
   color: #000000;
   fillAlphas: 0.6, 0.22, 0.75, 0.53;
   fillColors: #ffffff, #ffffff, #ffffff, #ffffff;
@@ -20,6 +20,7 @@ Tile
 { 
   horizontalGap: 0;
   verticalGap: 0;
+  paddingTop: 0;
   paddingLeft: 0;
   paddingRight: 0;
 }
@@ -63,6 +64,7 @@ TitleWindow {
 
 .mypanelStyle {
   fontFamily: defaultFont;
+  fontSize: 14;
   color: #ffffff;
 }
 
@@ -78,10 +80,27 @@ TitleWindow {
   color: #ffdd00;
 }
 
-.towerNameBox { 
+.towerPanel { 
+  horizontalAlignment: "center";
+  horizontalGap: 0;
+  verticalGap: 0;
+}
+
+.towerPanelDivider { 
   backgroundColor: #38201b; 
   left: 1;
   right: 1;
+  paddingTop: 4;
+  paddingBottom: 4;
+}
+
+.towerPanelMoney { 
+  horizontalGap: 0;
+  verticalAlign: "middle";
+}
+
+.towerPanelLabel { 
+  textAlignment: "center";
 }
 
 .playButton

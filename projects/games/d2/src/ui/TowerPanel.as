@@ -13,6 +13,7 @@ import mx.containers.TitleWindow;
 import mx.containers.HBox;
 import mx.controls.Button;
 import mx.controls.Label;
+import mx.controls.Spacer;
 import mx.controls.Text;
 import mx.events.ItemClickEvent;
 
@@ -31,8 +32,8 @@ public class TowerPanel extends TitleWindow
         _display = display;
         _board = board;
         _game = game;
-        
-        this.title = Messages.get("menu_title");
+
+        this.styleName = "towerPanel";
         this.showCloseButton = false;
         this.x = 800;
         this.y = 10;
@@ -41,18 +42,74 @@ public class TowerPanel extends TitleWindow
     override protected function createChildren () :void
     {
         super.createChildren();
+
+        var makeSpacer :Function = function (val :* = null) :Spacer
+        {
+            var s :Spacer = new Spacer();
+            if (val != null) {
+                s.width = int(val);
+            } else {
+                s.percentWidth = 100;
+            }
+            return s;
+        };
+
+        var makeDivider :Function = function () :HBox
+        {
+            var divider :HBox = new HBox();
+            divider.styleName = "towerPanelDivider";
+            divider.height = 4;
+            divider.width = 110;
+            divider.addChild(new Label()); // it needs *something*
+            return divider;
+        };
         
+        // money!
+        
+        var t :Label = new Label();
+        t.width = 110;
+        t.text = Messages.get("money");
+        t.styleName = "towerPanelLabel";
+        addChild(t);
+        
+        var coinbox :Canvas = new Canvas();
+        var coin :DisplayObject = new _coin();
+        coinbox.rawChildren.addChild(coin);
+        coinbox.width = coin.width;
+        coinbox.height = coin.height;
+                
+        var container :HBox = new HBox();
+        container.styleName = "towerPanelMoney";
+        container.width = 110;
+        addChild(container);
+
+        container.addChild(makeSpacer());
+        container.addChild(_money = new Label());
+        container.addChild(coinbox);
+        container.addChild(makeSpacer(40));
+        
+        // stations
+
+        addChild(makeDivider());
+
+        t = new Label();
+        t.width = 110;
+        t.text = Messages.get("stations");
+        t.styleName = "towerPanelLabel";
+        addChild(t);
+
         _buttons = new Tile();
         _buttons.width = 110;
         addChild(_buttons);
 
-        var titlebar :HBox = new HBox();
-        titlebar.styleName = "towerNameBox";
-        addChild(titlebar);
-
+        // info box
+        
+        addChild(makeDivider());
+        
         _title = new Label();
+        _title.styleName = "towerPanelLabel";
         _title.width = 110;
-        titlebar.addChild(_title);
+        addChild(_title);
         
         _desc = new Text();
         _desc.width = 110;
@@ -82,12 +139,13 @@ public class TowerPanel extends TitleWindow
                 c.height = b.height;
                 _buttons.addChild(c);
             });
-
     }
 
     /** Called with the player's current money amount, disables buttons for unaffordable towers. */
     public function updateAvailability (money :int) :void
     {
+        _money.text = String(money);
+        
         var updateFn :Function = function () :void {
             var towers :Array = _board.getAvailableTowers();
             _buttons.getChildren().forEach(function (obj :DisplayObject, i :*, a :*) :void {
@@ -128,10 +186,12 @@ public class TowerPanel extends TitleWindow
     {
         return function (event :MouseEvent) :void {
             if (tdef != null) {
-                _title.text = tdef.typeName;
+                _title.text = tdef.name;
                 _desc.htmlText =
-                    tdef.description + "<br><br>" +
-                    Messages.get("cost") + tdef.cost;
+                    Messages.get("cost") + tdef.cost + "<br>" +
+                    Messages.get("damage") + tdef.missileDamage + "<br>" +
+                    Messages.get("range") + tdef.rangeMax + "<br>" +
+                    Messages.get("delay") + tdef.pauseBetweenMissiles;
             } else {
                 _title.text = _desc.text = "";
             }
@@ -141,8 +201,13 @@ public class TowerPanel extends TitleWindow
     protected var _board :Board;
     protected var _game :Game;
     protected var _display :Display;
+
+    protected var _money :Label;
     protected var _buttons :Tile;
     protected var _title :Label;
     protected var _desc :Text;
+    
+    [Embed(source="../../rsrc/general/Assets.swf#coin")]
+    private static const _coin :Class;
 }
 }
