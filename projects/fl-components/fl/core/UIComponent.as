@@ -1474,8 +1474,18 @@ package fl.core {
                     stageAlias = stage;
                 } catch (err :SecurityError) {
                     stageAlias = DisplayObjectContainer(this.root);
+                    stageAlias.addEventListener(Event.REMOVED_FROM_STAGE, handleClearStageAlias);
                 }
             }
+        }
+
+        protected function handleClearStageAlias (event :Event) :void
+        {
+            stageAlias.removeEventListener(Event.REMOVED_FROM_STAGE, handleClearStageAlias);
+            if (focusManagers[stageAlias] != null) {
+                IFocusManager(UIComponent.focusManagers[stageAlias]).deactivate();
+            }
+            stageAlias = null;
         }
 
 		/**
