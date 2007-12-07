@@ -85,7 +85,7 @@ public class LOL extends Sprite
         }
 
         try {
-//            Font.registerFont(NICKELODEON_FONT);
+            Font.registerFont(NICKELODEON_FONT);
             Font.registerFont(IMPACT_FONT);
         } catch (err :Error) {
             Log.getLog(this).warning("Could not register font: " + err);
@@ -142,7 +142,6 @@ public class LOL extends Sprite
         }
 
         if (_ui != null) {
-            _image.focusManager.deactivate();
             _content.removeChild(_ui);
             _ui = null;
         }
@@ -1027,11 +1026,11 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     [Embed(source="rsrc/lol_theme.swf", mimeType="application/octet-stream")]
     protected static const LOL_THEME_UI :Class;
 
-//    [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
+    [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
     protected static const SILENT_THEME_UI :Class;
 
-//    [Embed(source="rsrc/NICKELOD.TTF", fontName="nickelodeon", mimeType="application/x-font")]
-//    protected static const NICKELODEON_FONT :Class;
+    [Embed(source="rsrc/NICKELOD.TTF", fontName="nickelodeon", mimeType="application/x-font")]
+    protected static const NICKELODEON_FONT :Class;
 
     [Embed(source="rsrc/impact.ttf", fontName="impact", mimeType="application/x-font")]
     protected static const IMPACT_FONT :Class;
@@ -1062,8 +1061,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected static const SILENT_THEME :String = "silent";
 
     /** The themes we're using. */
-//    protected static const THEMES :Array = [ LOL_THEME, SILENT_THEME ];
-    protected static const THEMES :Array = [ LOL_THEME ];
+    protected static const THEMES :Array = [ LOL_THEME, SILENT_THEME ];
+//    protected static const THEMES :Array = [ LOL_THEME ];
 //    protected static const THEMES :Array = [ SILENT_THEME ];
 
     protected var _ctrl :WhirledGameControl;
