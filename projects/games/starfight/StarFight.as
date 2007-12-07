@@ -61,8 +61,6 @@ public class StarFight extends Sprite
     {
         _gameCtrl = new WhirledGameControl(this);
         _gameCtrl.registerListener(this);
-        _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
-        _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
 
         var mask :Shape = new Shape();
         addChild(mask);
@@ -75,12 +73,17 @@ public class StarFight extends Sprite
         graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
 
         var introMovie :MovieClip = MovieClip(new introAsset());
-        addEventListener(MouseEvent.CLICK, firstStart);
         addChild(introMovie);
 
-        Font.registerFont(_venusRising);
+        //Font.registerFont(_venusRising);
         gameFont = Font(new _venusRising());
 
+        if (_gameCtrl.isConnected()) {
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
+            _gameCtrl.addEventListener(Event.UNLOAD, handleUnload);
+            addEventListener(MouseEvent.CLICK, firstStart);
+        }
         Resources.init(assetLoaded);
     }
 
@@ -155,7 +158,6 @@ public class StarFight extends Sprite
                 _stateTime = int(_gameCtrl.get("stateTime"));
             }
             updateRoundStatus();
-            _gameCtrl.addEventListener(Event.UNLOAD, handleUnload);
             _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
             _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
             _gameCtrl.addEventListener(StateChangedEvent.CONTROL_CHANGED, handleHostChanged);
@@ -298,20 +300,21 @@ public class StarFight extends Sprite
                     }
                 } else {
                     var ship :ShipSprite = getShip(id);
+                    bytes.position = 0;
                     if (ship == null) {
                         ship = new ShipSprite(_boardCtrl, this, true, id,
                             occName, false);
                         _gameCtrl.localChat(ship.playerName + " entered the game.");
+                        ship.readFrom(bytes);
                         addShip(id, ship);
+                    } else {
+                        var sentShip :ShipSprite = new ShipSprite(_boardCtrl, this, true,
+                            id, occName, false);
+                        sentShip.readFrom(bytes);
+                        ship.updateForReport(sentShip);
                     }
-
-                    bytes.position = 0;
-                    var sentShip :ShipSprite = new ShipSprite(_boardCtrl, this, true,
-                        id, occName, false);
-                    sentShip.readFrom(bytes);
-                    ship.updateForReport(sentShip);
                     var scores :Object = {};
-                    scores[id] = sentShip.score;
+                    scores[id] = ship.score;
                     _gameCtrl.setMappedScores(scores);
                 }
             }
@@ -449,9 +452,11 @@ public class StarFight extends Sprite
             var arr :Array = (event.value as Array);
 
             var ship :ShipSprite = getShip(arr[4]);
-            _boardCtrl.explode(arr[0], arr[1], arr[2], false, ship.shipType);
-            playSoundAt(Resources.getSound("ship_explodes.wav"), arr[0], arr[1]);
-            ship.kill();
+            if (ship != null) {
+                _boardCtrl.explode(arr[0], arr[1], arr[2], false, ship.shipType);
+                playSoundAt(Resources.getSound("ship_explodes.wav"), arr[0], arr[1]);
+                ship.kill();
+            }
 
             if (_ownShip != null && arr[3] == _ownShip.shipId) {
                 addScore(arr[3], KILL_PTS);

@@ -22,6 +22,8 @@ import flash.events.TimerEvent;
 
 import flash.utils.Timer;
 
+import mx.effects.easing.Linear;
+
 /**
  * Represents a single ships (ours or opponent's) in the world.
  */
@@ -249,6 +251,13 @@ public class ShipSprite extends Sprite
 
         resolveMove(boardX, boardY, newBoardX, newBoardY);
 
+        if (_reportShip != null) {
+            boardX = Linear.easeNone(INTERPOLATION_TIME - _reportTime, boardX,
+                _reportShip.boardX - boardX, INTERPOLATION_TIME);
+            boardY = Linear.easeNone(INTERPOLATION_TIME - _reportTime, boardY,
+                _reportShip.boardY - boardY, INTERPOLATION_TIME);
+        }
+
         if (_isOwnShip && accel != 0 && powerups & SPEED_MASK) {
             enginePower -= time / 30000;
             if (enginePower <= 0) {
@@ -450,6 +459,14 @@ public class ShipSprite extends Sprite
      */
     public function tick (time :int) :void
     {
+        if (_reportShip != null) {
+            if (_reportTime == 0) {
+                _reportShip = null;
+            } else {
+                _reportTime = Math.max(0, _reportTime - time);
+                _reportShip.tick(time);
+            }
+        }
         primaryPower = Math.min(1.0, primaryPower + time / (1000 * _shipType.primaryPowerRecharge));
         secondaryPower = Math.min(1.0,
             secondaryPower + time / (1000 * _shipType.secondaryPowerRecharge));
@@ -521,6 +538,16 @@ public class ShipSprite extends Sprite
             turn += turnRate * dtime;
         }
         ship.rotation = (ship.rotation + turn * 5) % 360;
+        if (_reportShip != null) {
+            var delta :Number = _reportShip.ship.rotation - ship.rotation;
+            if (delta > 180) {
+                delta -= 360;
+            } else if (delta < -180) {
+                delta += 360;
+            }
+            ship.rotation = Linear.easeNone(INTERPOLATION_TIME - _reportTime, ship.rotation,
+                delta, INTERPOLATION_TIME);
+        }
     }
 
     /**
@@ -749,6 +776,8 @@ public class ShipSprite extends Sprite
      */
     public function updateForReport (report :ShipSprite) :void
     {
+        _reportShip = report;
+        _reportTime = INTERPOLATION_TIME;
         if (_animMode == WARP_BEGIN || _animMode == WARP_END) {
             return;
         }
@@ -756,39 +785,17 @@ public class ShipSprite extends Sprite
         accel = report.accel;
         xVel = report.xVel;
         yVel = report.yVel;
-
-        // Maybe let boardX float if we're not too far off.
-        var dX :Number = report.boardX - boardX;
-
-        if (Math.abs(dX) < 0.5) {
-            xVel += dX/(Codes.FRAMES_PER_UPDATE*2);
-        } else {
-            boardX = report.boardX;
-        }
-
-        // Maybe let boardY float if we're not too far off.
-        var dY :Number = report.boardY - boardY;
-        if (Math.abs(dY) < 0.5) {
-            yVel += dY/(Codes.FRAMES_PER_UPDATE*2);
-        } else {
-            boardY = report.boardY;
-        }
-
         turnRate = report.turnRate;
-
-        // Maybe let rotation float if we're not too far off.
-        var dTheta :Number = report.ship.rotation - ship.rotation;
-        if (Math.abs(dTheta) < 45) {
-            turnRate += dTheta/(Codes.FRAMES_PER_UPDATE*2);
-        } else {
-            ship.rotation = report.ship.rotation;
-        }
-
         // These we always update exactly as reported.
         power = report.power;
         powerups = report.powerups;
-        setShipType(report.shipType);
         score = report.score;
+        if (shipType != report.shipTyp || visible != report.visible) {
+            boardX = report.boardX;
+            boardY = report.boardY;
+            ship.rotation = report.ship.rotation;
+        }
+        setShipType(report.shipType);
         setVisible(report.visible);
     }
 
@@ -878,6 +885,11 @@ public class ShipSprite extends Sprite
     /** A reference to the ship type class. */
     protected var _shipType :ShipType;
     protected var _animMode :int;
+
+    protected var _reportShip :ShipSprite;
+    protected var _reportTime :int;
+
+    protected static const INTERPOLATION_TIME :int = 500;
 
     protected static const TEXT_OFFSET :int = 25;
 
