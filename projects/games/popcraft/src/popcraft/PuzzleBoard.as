@@ -85,9 +85,16 @@ public class PuzzleBoard extends AppObject
         Assert.isFalse(_resolvingClears);
 
         var clearPieces :Array = findConnectedSimilarPieces(x, y);
+
+        Assert.isTrue(clearPieces.length > 0);
+
         if (clearPieces.length < GameConstants.MIN_GROUP_SIZE) {
             return;
         }
+
+        // update the player's resource count
+        var resourceValue :int = GameConstants.CLEAR_VALUE_TABLE.getValueAt(clearPieces.length - 1);
+        GameMode.instance.playerData.offsetResourceAmount((clearPieces[0] as Piece).resourceType, resourceValue);
 
         _resolvingClears = true;
 

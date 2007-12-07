@@ -23,6 +23,10 @@ public class GameConstants
         Assert.isTrue(type < RESOURCE_TYPES.length);
         return (RESOURCE_TYPES[type] as ResourceType);
     }
+
+    public static const CLEAR_VALUE_TABLE :IntValueTable =
+        new IntValueTable( [-20, -10, 10, 20, 30, 20] );
+             // group size:   1,   2,  3,  4,  5,  6+ = 50, 70, 90, ...
 }
 
 }
