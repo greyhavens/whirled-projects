@@ -73,7 +73,6 @@ public class SelectBoard extends GameModeCanvas
     // from GameModeCanvas
     override public function popped () :void
     {
-        trace("POPPING SELECTBOARD");
         _display = null;
         _feedback = null;
         _loader = null;
@@ -82,7 +81,12 @@ public class SelectBoard extends GameModeCanvas
         _controller = null;
 
         removeAllChildren();
-        trace("SELECTBOARD POPPED");
+    }
+
+    // from interface GameMode
+    override public function poppedFrom (mode :GameMode) :void
+    {
+        _display.refresh();
     }
 
     /** Called when any user pick the board. */

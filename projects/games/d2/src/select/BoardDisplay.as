@@ -54,12 +54,7 @@ public class BoardDisplay extends Canvas
         _packs.horizontalScrollPolicy = ScrollPolicy.OFF;
         addChild(_packs);
 
-        // make a pack button for each pack
-        _defs.packs.forEach(function (pack :PackDefinition, ... ignore) :void {
-                _packs.addChild(new Button(
-                                    function () :void { packSelected(pack); },
-                                    pack.button, pack.name, null));
-            });
+        showPacks();
         
         _boards = new HBox();
         _boards.x = 80;
@@ -72,6 +67,15 @@ public class BoardDisplay extends Canvas
         addChild(_boards);
     }
 
+    /**
+     * Called by the select game mode, to refresh all display elements after the mode is
+     * reactivated.
+     */
+    public function refresh () :void
+    {
+        showPacks();
+    }
+    
     /** Scrolls the horizontal button containers. */
     protected function scroll (container :HBox, delta :int) :void
     {
@@ -79,7 +83,20 @@ public class BoardDisplay extends Canvas
             MathUtil.clamp(container.horizontalScrollPosition + delta,
                            0, container.maxHorizontalScrollPosition);
     }
-            
+
+    /** Displays pack buttons. */
+    protected function showPacks () :void
+    {
+        _packs.removeAllChildren();
+        
+        // make a pack button for each pack
+        _defs.packs.forEach(function (pack :PackDefinition, ... ignore) :void {
+                _packs.addChild(new Button(
+                                    function () :void { packSelected(pack); },
+                                    pack.button, pack.name, null));
+            });
+    }
+    
     /** Called when user clicks on a content pack button. */
     protected function packSelected (pack :PackDefinition) :void
     {
@@ -164,8 +181,7 @@ internal class Button extends VBox
 
         // clicking on the entire button should take you places!
         addEventListener(MouseEvent.CLICK,
-                         function (event :MouseEvent) :void { thunk(); },
-                         false, 0, true);
+                         function (event :MouseEvent) :void { thunk(); });
         
         this.toolTip = myname;
         this.styleName = "boardSelectionButton";

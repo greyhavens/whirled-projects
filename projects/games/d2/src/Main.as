@@ -128,7 +128,7 @@ public class Main extends Canvas
             // make sure the fps counter is up front
             swapChildren(newChild, _counter);
         }
-
+        
         gcHack(); // ugh
     }
 
