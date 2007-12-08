@@ -144,31 +144,36 @@ public class PuzzleBoard extends AppObject
                 if (null == this.getPieceAt(col, row)) {
 
                     // drop pieces into the hole
-                    var holeRow :int = row;
+                    var dstRow :int = row;
 
                     // find the first piece to drop
-                    var dropRow :int = holeRow - 1;
-                    while (dropRow >= 0 && null == this.getPieceAt(col, dropRow)) {
-                        --dropRow;
+                    var srcRow :int = dstRow - 1;
+                    while (srcRow >= 0 && null == this.getPieceAt(col, srcRow)) {
+                        --srcRow;
                     }
 
                     var dropDelay :Number = 0;
 
-                    // drop the pieces!
-                    while (dropRow >= 0 && null != this.getPieceAt(col, dropRow)) {
-                        var timeUntilThisDropCompletes :Number = drop1Piece(col, dropRow, holeRow, dropDelay);
-                        timeUntilDone = Math.max(timeUntilDone, timeUntilThisDropCompletes);
+                    // drop the pieces, starting from this piece
+                    // and continuing all the way to the top of the column
+                    while (srcRow >= 0) {
 
-                        dropDelay += Rand.nextNumberRange(0.05, 0.15, Rand.STREAM_COSMETIC);
+                        if (null != this.getPieceAt(col, srcRow)) {
+                            var timeUntilThisDropCompletes :Number = drop1Piece(col, srcRow, dstRow, dropDelay);
+                            timeUntilDone = Math.max(timeUntilDone, timeUntilThisDropCompletes);
 
-                        --dropRow;
-                        --holeRow;
+                            dropDelay += Rand.nextNumberRange(0.05, 0.15, Rand.STREAM_COSMETIC);
 
-                        piecesDropped = true;
+                            --dstRow;
+
+                            piecesDropped = true;
+                        }
+
+                        --srcRow;
                     }
 
-                    // continue searching for holes wherever the last drop happened
-                    row = dropRow + 1; // row will be decremented by the for-loop
+                    // we've finished processing this column
+                    break;
                 }
             }
         }
