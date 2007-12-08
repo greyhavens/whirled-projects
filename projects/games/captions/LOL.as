@@ -468,6 +468,7 @@ public class LOL extends Sprite
     {
         _participating = part;
         _game.setParticipating(part);
+        configureIsEditing(part);
         displayParticipating();
     }
 
