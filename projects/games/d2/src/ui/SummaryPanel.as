@@ -20,16 +20,16 @@ public class SummaryPanel extends TitleWindow
         _controller = controller;
         _playFn = playFn;
         _quitFn = quitFn;
-        
+
         this.showCloseButton = false;
-        this.x = 200;
-        this.y = 150;
+        this.x = 220;
+        this.y = 180;
     }
 
     public function addFlowScore (amount :Number) :void
     {
         var text :String = _title.htmlText;
-        text += "<br><br>" + Messages.get("you_won") + amount + " " + Messages.get("flow");
+        text += "<br>" + Messages.get("you_won") + amount + " " + Messages.get("flow");
         _title.htmlText = text;
     }
     
@@ -42,26 +42,32 @@ public class SummaryPanel extends TitleWindow
         var scores :Array = _controller.getScores();
         
         _title = new Text();
+        _title.styleName = "summaryPanelText";
         addChild(_title);
 
-        var text :String = Messages.get("game_ended") + "<br><br>";
-        for (var ii :int = 0; ii < count; ii++) {
-            text += names[ii] + ": " + scores[ii] + "<br>";
-        }       
+        if (_main.isSinglePlayer) {
+            var text :String =
+                Messages.get("your_score") + scores[_main.myIndex] + Messages.get("points");
+        } else {
+            text = Messages.get("your_scores") + "<br>";
+            for (var ii :int = 0; ii < count; ii++) {
+                text += names[ii] + ": " + scores[ii] + Messages.get("pts") + "<br>";
+            }
+        }
         _title.htmlText = text;
         
         var buttons :HBox = new HBox();
         addChild(buttons);
         
         var replay :Button = new Button();
-        replay.width = 150;
+        replay.width = 120;
         replay.label = Messages.get("play_again");
         replay.addEventListener(MouseEvent.CLICK,
                                 function (event :MouseEvent) :void { _playFn(); });
         buttons.addChild(replay);
 
         var quit :Button = new Button();
-        quit.width = 150;
+        quit.width = 120;
         quit.label = Messages.get("quit");
         quit.addEventListener(MouseEvent.CLICK,
                               function (event :MouseEvent) :void { _quitFn(); });

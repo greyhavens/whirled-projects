@@ -1,5 +1,6 @@
 package game {
 
+import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -130,7 +131,7 @@ public class Display extends GameModeCanvas
 
         hideUI();
         hideWaitingPopup();
-        hideSummaryPopup();
+        hideSummary();
         
         removeEventListener(MouseEvent.CLICK, handleBoardClick);
         removeEventListener(MouseEvent.MOUSE_MOVE, handleBoardMove);
@@ -146,7 +147,7 @@ public class Display extends GameModeCanvas
     {
         trace("*** DISPLAY: GAME STARTED");
         hideWaitingPopup();
-        hideSummaryPopup();
+        hideSummary();
         // todo: reset score?
     }
 
@@ -156,7 +157,7 @@ public class Display extends GameModeCanvas
         resetOverlays();
         resetBoardDisplay();
 
-        showSummaryPopup();
+        showSummary();
     }
 
     public function roundStarted (round :int) :void
@@ -187,7 +188,7 @@ public class Display extends GameModeCanvas
 
     public function reportFlowAward (amount :int, percentile :int) :void
     {
-        showSummaryPopup();
+        showSummary();
         _summary.addFlowScore(amount);
     }
     
@@ -486,7 +487,7 @@ public class Display extends GameModeCanvas
 
     protected function handlePlayClicked () :void
     {
-        hideSummaryPopup(); // if it's shown at all...
+        hideSummary(); // if it's shown at all...
         showWaitingPopup();
         _controller.playerReady();
     }
@@ -528,25 +529,66 @@ public class Display extends GameModeCanvas
         }
     }
 
-    protected function showSummaryPopup () :void
+    protected function showSummary () :void
     {
+        if (_summaryAnimation == null) {
+            _summaryAnimation = makeSummaryAnimation();
+            addChild(_summaryAnimation);
+        }
         if (_summary == null) {
             _summary = new SummaryPanel(
                 _main, _controller, handlePlayClicked, _controller.forceQuitGame)
             PopUpManager.addPopUp(_summary, this, false);
         }
+        
     }
 
-    protected function hideSummaryPopup () :void
+    protected function hideSummary () :void
     {
+        if (_summaryAnimation != null) {
+            removeChild(_summaryAnimation);
+            _summaryAnimation = null;
+        }
         if (_summary != null) {
             PopUpManager.removePopUp(_summary);
             _summary = null;
         }
     }
 
+    protected function makeSummaryAnimation () :Canvas
+    {
+        var anim :Class;
+
+        if (_board.main.isSinglePlayer) {
+            anim = _gameoverscreen;
+            
+        } else {
+            // in multiplayer, compare scores first
+            var myIndex :int = _board.main.myIndex;
+            var otherIndex :int = 1 - _board.main.myIndex;
+
+            if (_game.scores[myIndex] < _game.scores[otherIndex]) {
+                anim = _losescreen;
+            } else {
+                anim = _winscreen;
+            }
+        }
+            
+        // now make a fake canvas to hold it
+        var c :Canvas = new Canvas();
+        c.rawChildren.addChild((new anim()) as DisplayObject);
+
+        return c;
+    }
     
-    
+    [Embed(source="../../rsrc/victory/you_win.swf")]
+        private static const _winscreen :Class;
+
+    [Embed(source="../../rsrc/victory/you_lose.swf")]
+        private static const _losescreen :Class;
+
+    [Embed(source="../../rsrc/victory/GameOver.swf")]
+        private static const _gameoverscreen :Class;
     
     protected var _board :Board;
     protected var _game :Game;
@@ -556,6 +598,7 @@ public class Display extends GameModeCanvas
     protected var _debugPanel :DebugPanel;
     protected var _waiting :WaitingPanel;
     protected var _summary :SummaryPanel;
+    protected var _summaryAnimation :DisplayObject;
     protected var _scorePanels :Array; // of ScorePanel
 
     protected var _boardSprite :Canvas;

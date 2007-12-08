@@ -53,6 +53,7 @@ public class Game
     public function isSinglePlayerGame () :Boolean { return _main.isSinglePlayer; }
 
     public function get myMoney () :Number { return _myMoney; }
+    public function get scores () :Array { return _scores; }
     public function get state () :int { return _gamestate; }
     public function set state (value :int) :void
     {
@@ -219,12 +220,14 @@ public class Game
 
     public function handleResetScore (allScores :Array) :void
     {
+        _scores = allScores;
         _main.whirled.clearScores();
         _main.whirled.setPlayerScores(allScores);
     }
 
     public function handleUpdateScore (playerIndex :int, score :Number) :void
     {
+        _scores[playerIndex] = score;
         var playerId :int = _main.whirled.seating.getPlayerIds()[playerIndex];
         var update :Object = new Object();
         update[playerId] = score;
@@ -332,7 +335,8 @@ public class Game
     protected var _spawners :Array; // of Spawner
     protected var _missiles :Array; // of Missile
     protected var _myMoney :Number;
-
+    protected var _scores :Array; // of Number
+    
     protected var _gamestate :int;
     protected var _lastTick :int = getTimer();
 }

@@ -8,7 +8,7 @@ Label, Font
 Button {
   fontFamily: defaultFont;
   fontWeight: normal;
-  fontSize: 14;
+  fontSize: 16;
   color: #000000;
   fillAlphas: 0.6, 0.22, 0.75, 0.53;
   fillColors: #ffffff, #ffffff, #ffffff, #ffffff;
@@ -54,7 +54,7 @@ TitleWindow {
 }
 
 .boardSelectionLabel { 
-  fontSize: 18;
+  fontSize: 16;
   color: #000000;
 }
 
@@ -92,6 +92,10 @@ TitleWindow {
   right: 1;
   paddingTop: 4;
   paddingBottom: 4;
+}
+
+.summaryPanelText { 
+  fontSize: 16;
 }
 
 .towerPanelMoney { 

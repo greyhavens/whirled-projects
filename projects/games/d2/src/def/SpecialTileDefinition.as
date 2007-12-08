@@ -3,8 +3,8 @@ package def {
 import flash.geom.Point;
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.ContentAssert;
 
+import util.ContentAssert;
 
 
 /** Typesafe wrapper class for specifying special tiles on the board. */
