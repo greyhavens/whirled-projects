@@ -9,6 +9,8 @@ import flash.events.TimerEvent;
 
 import flash.utils.Timer;
 
+import com.threerings.util.Log;
+
 import com.whirled.contrib.EventHandlers;
 
 public class Clock extends Sprite
@@ -58,6 +60,17 @@ public class Clock extends Sprite
         _ringIndicator.y = -(ringNum + 0.5) * Ring.SIZE_PER_RING;
     }
 
+    public function setRotationAngle (angle :Number, finished :Boolean = false) :void
+    {
+        if (finished) {
+            _baseAngle = (_baseAngle + angle + 360) % 360;
+            _rotationAngle = 0;
+        } else {
+            _rotationAngle = angle;
+        }
+        _minute.rotation = (_baseAngle + _rotationAngle + 360) % 360;
+    }
+
     protected function updateTime (...ignored) :void
     {
         if (_inTurn) {
@@ -81,6 +94,8 @@ public class Clock extends Sprite
         }
     }
 
+    private static const log :Log = Log.getLog(Clock);
+
     [Embed(source="../rsrc/locksmith_art.swf#hand_minute")]
     protected static const MINUTE :Class;
     [Embed(source="../rsrc/locksmith_art.swf#hand_hour")]
@@ -98,5 +113,7 @@ public class Clock extends Sprite
     protected var _inTurn :Boolean;
     protected var _fastRotation :Boolean;
     protected var _fastRotationFrame :Number;
+    protected var _baseAngle :Number = 0;
+    protected var _rotationAngle :Number = 0;
 }
 }

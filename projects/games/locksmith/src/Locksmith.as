@@ -154,7 +154,7 @@ public class Locksmith extends Sprite
         if (event.name == NEW_RINGS) {
             var ringData :Array = event.value as Array;
             for (var ii :int = 0; ii < ringData.length; ii++) {
-                var ring :Ring = new Ring(ii + 1, ringData[ii]);
+                var ring :Ring = new Ring(ii + 1, ringData[ii], _board.clock);
                 _board.addRing(ring);
                 if (ii != 0) {
                     ring.inner = _currentRing;

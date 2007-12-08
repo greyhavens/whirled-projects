@@ -27,10 +27,11 @@ public class Ring extends Sprite
     public static const CLOCKWISE :int = -1;
     public static const COUNTER_CLOCKWISE :int = 1;
 
-    public function Ring (ringNumber :int, holes :Array) 
+    public function Ring (ringNumber :int, holes :Array, clock :Clock = null) 
     {
         _ringNumber = ringNumber;
         _holes = holes;
+        _clock = clock;
         _marbles = new HashMap();
 
         _ringMovie = 
@@ -215,11 +216,17 @@ public class Ring extends Sprite
                 DoLater.instance.trigger(DoLater.ROTATION_END);
                 angle = _baseRotation = (_baseRotation + 90 * _rotationDirection + 360) % 360;
                 _rotationDirection = STATIONARY;
+                if (_clock != null) {
+                    _clock.setRotationAngle(90 * (_rotationAngle < 0 ? 1 : -1), true);
+                }
                 _rotationAngle = 0;
                 DoLater.instance.trigger(DoLater.ROTATION_AFTER_END);
             } else {
                 _rotationAngle += _rotationDirection;
                 angle = (_baseRotation + _rotationAngle + 360) % 360;
+                if (_clock != null) {
+                    _clock.setRotationAngle(-_rotationAngle);
+                }
             }
 
             if (_ringMovie != null) {
@@ -268,6 +275,7 @@ public class Ring extends Sprite
     protected var _rotationStart :int = 0;
     protected var _inner :Ring;
     protected var _outer :Ring;
+    protected var _clock :Clock;
 
     protected var _ringMovie :MovieClipAsset;
     protected var _channels :Array = [];
