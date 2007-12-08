@@ -70,7 +70,7 @@ public class LOL extends Sprite
 
     public function LOL () 
     {
-        trace("Started up LOLcaptions, build ID: reload7");
+        trace("Started up LOLcaptions, build ID: reload10");
         _ctrl = new WhirledGameControl(this);
         if (!_ctrl.isConnected()) {
             var oops :TextField = new TextField();
@@ -85,12 +85,12 @@ public class LOL extends Sprite
             return;
         }
 
-        try {
-            Font.registerFont(NICKELODEON_FONT);
-            Font.registerFont(IMPACT_FONT);
-        } catch (err :Error) {
-            Log.getLog(this).warning("Could not register font: " + err);
-        }
+//        try {
+//            Font.registerFont(IMPACT_FONT);
+//            Font.registerFont(NICKELODEON_FONT);
+//        } catch (err :Error) {
+//            Log.getLog(this).warning("Could not register font: " + err);
+//        }
 
         _formatter = new TextFieldFormatter();
         _formatter.addEventListener(
@@ -173,7 +173,6 @@ public class LOL extends Sprite
         _ui.mask = _mask;
         _content.addChild(_ui);
         _loader = null;
-
 
 //        trace(DisplayUtil.dumpHierarchy(_ui));
 
@@ -271,17 +270,19 @@ public class LOL extends Sprite
             break;
 
         case LOL_THEME:
-            _input.embedFonts = true;
-            _winningCaption.embedFonts = true;
-            _formatter.configure("impact");
+            //_input.embedFonts = true;
+            //_winningCaption.embedFonts = true;
+            //_formatter.configure("impact");
+            _formatter.configure("_sans");
             break;
 
         case SILENT_THEME:
             var grain :MovieClip = find("film_grain") as MovieClip;
             grain.mouseEnabled = false;
             grain.mouseChildren = false;
-            _input.embedFonts = true;
-            _formatter.configure("nickelodeon", 0xFFFFFF, false);
+            //_input.embedFonts = true;
+            //_formatter.configure("nickelodeon", 0xFFFFFF, false);
+            _formatter.configure("_sans", 0xFFFFFF, false);
             break;
         }
         _formatter.watch(_input, handleTextFieldChanged);
@@ -533,21 +534,6 @@ public class LOL extends Sprite
 
         configureIsEditing(_participating);
         displayParticipating();
-//        _formatter.format(_input);
-//        trace("_input.type: " + _input.type);
-//        trace("_input.selectable: " + _input.selectable);
-//        trace("_input.height: " + _input.height);
-//        trace("_input.textHeight: " + _input.textHeight);
-//        trace("_input.mouseEnabled: " + _input.mouseEnabled);
-//        trace("_input.restrict: " + _input.restrict);
-//        var o :DisplayObject = _input;
-//        while (o != this) {
-//            o = o.parent;
-//            if (o is InteractiveObject) {
-//                trace("Parent mouseEnabled: " + InteractiveObject(o).mouseEnabled);
-//            }
-//        }
-
         _timer.start();
     }
 
@@ -1044,11 +1030,11 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
     protected static const SILENT_THEME_UI :Class;
 
-    [Embed(source="rsrc/NICKELOD.TTF", fontName="nickelodeon", mimeType="application/x-font")]
-    protected static const NICKELODEON_FONT :Class;
-
-    [Embed(source="rsrc/impact.ttf", fontName="impact", mimeType="application/x-font")]
-    protected static const IMPACT_FONT :Class;
+//    [Embed(source="rsrc/NICKELOD.TTF", fontName="nickelodeon", mimeType="application/x-font")]
+//    protected static const NICKELODEON_FONT :Class;
+//
+//    [Embed(source="rsrc/impact.ttf", fontName="impact", mimeType="application/x-font")]
+//    protected static const IMPACT_FONT :Class;
 
     protected static const IDEAL_WIDTH :int = 700;
     protected static const IDEAL_HEIGHT :int = 500;
