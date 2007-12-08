@@ -4,6 +4,7 @@ import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
+import flash.display.InteractiveObject;
 import flash.display.LoaderInfo;
 import flash.display.MovieClip;
 import flash.display.Shape;
@@ -69,7 +70,7 @@ public class LOL extends Sprite
 
     public function LOL () 
     {
-        trace("Started up LOLcaptions, build ID: reload2");
+        trace("Started up LOLcaptions, build ID: reload7");
         _ctrl = new WhirledGameControl(this);
         if (!_ctrl.isConnected()) {
             var oops :TextField = new TextField();
@@ -410,7 +411,7 @@ public class LOL extends Sprite
     {
         var nowEditing :Boolean = (_input.type == TextFieldType.DYNAMIC);
 
-        if (!nowEditing && _input.text == "") {
+        if (!nowEditing && StringUtil.isBlank(_input.text)) {
             // don't let them be "done" with nothing
             return;
         }
@@ -532,6 +533,20 @@ public class LOL extends Sprite
 
         configureIsEditing(_participating);
         displayParticipating();
+//        _formatter.format(_input);
+//        trace("_input.type: " + _input.type);
+//        trace("_input.selectable: " + _input.selectable);
+//        trace("_input.height: " + _input.height);
+//        trace("_input.textHeight: " + _input.textHeight);
+//        trace("_input.mouseEnabled: " + _input.mouseEnabled);
+//        trace("_input.restrict: " + _input.restrict);
+//        var o :DisplayObject = _input;
+//        while (o != this) {
+//            o = o.parent;
+//            if (o is InteractiveObject) {
+//                trace("Parent mouseEnabled: " + InteractiveObject(o).mouseEnabled);
+//            }
+//        }
 
         _timer.start();
     }
@@ -721,8 +736,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected function displayWinningCaption (caption :String, name :String) :void
     {
-        _winningCaption.text = caption;
         if (_theme == LOL_THEME) {
+            _winningCaption.text = caption;
             _formatter.format(_winningCaption);
         }
 
