@@ -1,37 +1,6 @@
 <settings packname="EP1" button="DefaultLevels">
   <boards>
-    <board name="This is a very long board name. I wonder what will break? I can't tell anymore." 
-	   background="Level01_BG" button="button_level_01"
-	   startingHealth="5" startingMoney="50">
-      <squares cols="17" rows="22" />
-      <pixelsize width="510" height="440" />
-      <topleft x="40" y="27" />
-
-      <endpoints>
-        <p1 startx="16" starty="8"  endx="0"  endy="8"  />
-        <p2 startx="0"  starty="12" endx="16" endy="12" />
-        <pc startx="0"  starty="10" endx="16" endy="10"  />
-      </endpoints>
-
-      <availableTowers>
-        <tower id="TYPE_SHRUB" />
-        <tower id="TYPE_BOX" />
-        <tower id="TYPE_SANDBOX" />
-        <tower id="TYPE_TRASHCAN" /> 
-        <tower id="TYPE_WAGON" />
-        <tower id="TYPE_BOULDER" />
-        <tower id="TYPE_TREE" />
-      </availableTowers>
-
-      <singlePlayerEnemyWaves>
-        <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
-      </singlePlayerEnemyWaves>
-
-      <twoPlayerAllies>
-        <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
-      </twoPlayerAllies>
-    </board>
-    <board name="Test." 
+    <board name="Crab Race!" 
 	   background="Level01_BG" button="button_level_01"
 	   startingHealth="1" startingMoney="50">
       <squares cols="10" rows="10" />
@@ -56,10 +25,13 @@
 
       <singlePlayerEnemyWaves>
         <wave><enemy id="TYPE_CRAB" count="1" /></wave>
+        <wave><enemy id="TYPE_CRAB" count="2" /></wave>
+        <wave><enemy id="TYPE_CRAB" count="3" /></wave>
       </singlePlayerEnemyWaves>
 
       <twoPlayerAllies>
-        <wave><enemy id="TYPE_SKUNK" count="1" /></wave>
+        <wave><enemy id="TYPE_CRAB" count="1" /></wave>
+        <wave><enemy id="TYPE_CRAB" count="3" /></wave>
       </twoPlayerAllies>
     </board>
   </boards>
