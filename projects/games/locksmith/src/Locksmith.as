@@ -101,17 +101,7 @@ public class Locksmith extends Sprite
 
     public function gameEnded (event :StateChangedEvent) :void
     {
-        _board.stopRotation();
         _gameEnded = true;
-        if (_scoreBoard.moonScore >= WIN_SCORE && _scoreBoard.sunScore >= WIN_SCORE) {
-            _wgc.localChat("Game over - the game is a tie!");
-        } else if (_scoreBoard.moonScore >= WIN_SCORE) {
-            _wgc.localChat("Game over - " + _wgc.seating.getPlayerNames()[ScoreBoard.MOON_PLAYER] + 
-                " is the Winner!");
-        } else if (_scoreBoard.sunScore >= WIN_SCORE) {
-            _wgc.localChat("Game over - " + _wgc.seating.getPlayerNames()[ScoreBoard.SUN_PLAYER] + 
-                " is the Winner!");
-        }
     }
 
     public function turnChanged (event :StateChangedEvent) :void
@@ -186,6 +176,14 @@ public class Locksmith extends Sprite
                 ring = ring.outer;
             }
             ring.rotate(event.value.direction);
+        } else if (event.name == WINNER) {
+            var winner :int = event.value as int;
+            if (winner == -1) {
+                _wgc.localChat("Game over - the game is a tie!");
+            } else {
+                _wgc.localChat("Game over - " + _wgc.seating.getPlayerNames()[winner] + 
+                    " is the Winner!");
+            }
         }
     }
 
@@ -212,6 +210,9 @@ public class Locksmith extends Sprite
                     Math.round((_scoreBoard.sunScore / WIN_SCORE) * 100);
                 _wgc.endGameWithScores(_wgc.seating.getPlayerIds(), scores,
                     WhirledGameControl.CASCADING_PAYOUT);
+                var winner :int = scores[0] == scores[1] ? -1 : 
+                    (scores[0] > scores[1] ? ScoreBoard.MOON_PLAYER : ScoreBoard.SUN_PLAYER);
+                _wgc.sendMessage(WINNER, winner);
             }
         });
     }
@@ -273,6 +274,7 @@ public class Locksmith extends Sprite
 
     protected static const NEW_RINGS :String = "newRings";
     protected static const RING_ROTATION :String = "ringRotation";
+    protected static const WINNER :String = "winner";
 
     protected var _wgc :WhirledGameControl;
     protected var _board :Board;
