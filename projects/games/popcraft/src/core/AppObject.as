@@ -11,6 +11,14 @@ import flash.display.InteractiveObject;
 public class AppObject
 {
     /**
+     * Returns the id that uniquely identifies this object in its containing AppMode.
+     */
+    public final function get id () :uint
+    {
+        return _objectId;
+    }
+
+    /**
      * Returns the DisplayObject attached to this AppObject,
      * if one exists, and null otherwise. Default to null.
      */
@@ -58,8 +66,7 @@ public class AppObject
     /** Removes the AppObject from its parent mode. */
     public function removeSelf() :void
     {
-        Assert.isTrue(null != _parentMode);
-        _parentMode.removeObject(this);
+        MainLoop.instance.topMode.removeObject(_objectId);
     }
 
     /** Adds an unnamed task to this AppObject. */
@@ -162,10 +169,8 @@ public class AppObject
     protected var _anonymousTasks :ParallelTask = new ParallelTask();
     protected var _namedTasks :HashMap = new HashMap();
 
-    // these variables are managed by AppMode and shouldn't be modified
-    internal var _parentMode :AppMode;
-    internal var _modeIndex :int = -1;
-
+    // managed by AppMode
+    internal var _objectId :uint = 0xFFFFFFFF;
 }
 
 }

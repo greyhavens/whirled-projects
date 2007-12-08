@@ -20,27 +20,26 @@ public class AppMode extends Sprite
      * If displayParent is not null, obj's attached DisplayObject will be added as a child
      * of displayParent.
      */
-    public function addObject (obj :AppObject, displayParent :DisplayObjectContainer = null) :void
+    public function addObject (obj :AppObject, displayParent :DisplayObjectContainer = null) :uint
     {
         Assert.isTrue(null != obj);
-        Assert.isTrue(null == obj._parentMode);
+        Assert.isTrue(0xFFFFFFFF == obj._objectId);
 
         // if there's no free slot in our objects array,
         // make a new one
         if (_freeIndexes.length == 0) {
-            _freeIndexes.push(_objects.length);
+            _freeIndexes.push(uint(_objects.length));
             _objects.push(null);
         }
 
         Assert.isTrue(_freeIndexes.length > 0);
-        var index :int = _freeIndexes.pop();
+        var index :uint = _freeIndexes.pop();
         Assert.isTrue(index >= 0 && index < _objects.length);
         Assert.isTrue(_objects[index] == null);
 
         _objects[index] = obj;
 
-        obj._parentMode = this;
-        obj._modeIndex = index;
+        obj._objectId = createObjectId(index);
 
         // does the object have a name?
         if (null != obj.objectName) {
@@ -72,22 +71,25 @@ public class AppMode extends Sprite
         }
 
         obj.addedToMode(this);
+
+        return obj.id;
     }
 
-    /** Removes an AppObject from the mode. The AppObject must be owned by this mode. */
-    public function removeObject (obj :AppObject) :void
+    /** Removes an AppObject from the mode. */
+    public function removeObject (id :uint) :void
     {
-        // lots o' sanity checks
-        Assert.isTrue(null != obj);
-        Assert.isTrue(this == obj._parentMode);
-        Assert.isTrue(obj._modeIndex >= 0 && obj._modeIndex < _objects.length);
-        Assert.isTrue(_objects[obj._modeIndex] == obj);
+        var obj :AppObject = getObject(id);
 
-        _objects[obj._modeIndex] = null;
-        _freeIndexes.unshift(obj._modeIndex); // we have a new free index
+        if (null == obj) {
+            return;
+        }
 
-        obj._parentMode = null;
-        obj._modeIndex = -1;
+        var index :uint = idToIndex(id);
+
+        Assert.isTrue(obj == _objects[index]);
+
+        _objects[index] = null;
+        _freeIndexes.unshift(index); // we have a new free index
 
         // does the object have a name?
         if (null != obj.objectName) {
@@ -116,6 +118,22 @@ public class AppMode extends Sprite
         }
 
         obj.removedFromMode(this);
+    }
+
+    public function getObject (id :uint) :AppObject
+    {
+        var index :uint = idToIndex(id);
+
+        if (index < _objects.length) {
+
+            var obj :AppObject = _objects[index];
+
+            if (null != obj && idToSerialNumber(id) == idToSerialNumber(obj.id)) {
+                return obj;
+            }
+        }
+
+        return null;
     }
 
     /** Returns the object in this mode with the given name, or null if no such object exists. */
@@ -164,8 +182,25 @@ public class AppMode extends Sprite
     {
     }
 
+    internal function createObjectId (index :uint) :uint
+    {
+        Assert.isTrue(index <= 0x0000FFFF);
+        return ((_serialNumberCounter++ << 16) | (index & 0x0000FFFF));
+    }
+
+    internal function idToIndex (id :uint) :uint
+    {
+        return (id & 0x0000FFFF);
+    }
+
+    internal function idToSerialNumber (id :uint) :uint
+    {
+        return (id >> 16);
+    }
+
     protected var _objects :Array = new Array();
     protected var _freeIndexes :Array = new Array();
+    protected var _serialNumberCounter :uint = 0;
 
     /** stores a mapping from String to Object */
     protected var _namedObjects :HashMap = new HashMap();
