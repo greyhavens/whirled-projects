@@ -1,10 +1,14 @@
 package {
 
+import flash.display.DisplayObject;
 import flash.display.Bitmap;
+import flash.display.BitmapData;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.PixelSnapping;
 import flash.display.Sprite;
+
+import flash.geom.Matrix;
 
 import flash.media.Sound;
 
@@ -30,6 +34,8 @@ public class Obstacle extends BoardObject
     public static const DOWN :int = 3;
 
     public var health :Number;
+    public var w :int;
+    public var h :int;
 
     public static function readObstacle (bytes :ByteArray) :Obstacle
     {
@@ -38,10 +44,16 @@ public class Obstacle extends BoardObject
         return obs;
     }
 
-    public function Obstacle (type :int, x :int, y :int, anim :Boolean = true) :void
+    public function Obstacle (
+        type :int, x :int, y :int, anim :Boolean = true, w :int = 0, h :int = 0) :void
     {
-        super(type, x, y, anim);
+        super(type, x, y, false);
         health = 1.0;
+        this.w = w;
+        this.h = h;
+        if (anim) {
+            setupGraphics();
+        }
     }
 
     /**
@@ -110,13 +122,15 @@ public class Obstacle extends BoardObject
     override public function readFrom (bytes :ByteArray) :void
     {
         super.readFrom(bytes);
-        //health = bytes.readFloat();
+        w = bytes.readInt();
+        h = bytes.readInt();
     }
 
     override public function writeTo (bytes :ByteArray) :ByteArray
     {
         bytes = super.writeTo(bytes);
-        //bytes.writeFloat(health);
+        bytes.writeInt(w);
+        bytes.writeInt(h);
         return bytes;
     }
 
@@ -135,6 +149,15 @@ public class Obstacle extends BoardObject
         }
     }
 
+    public function createWall (w :int, h :int) :void
+    {
+    }
+
+    public function showObs () :Boolean
+    {
+        return numChildren > 0;
+    }
+
 
     override protected function setPosition () :void
     {
@@ -148,9 +171,22 @@ public class Obstacle extends BoardObject
     override protected function setupGraphics () :void
     {
         if (type == WALL) {
-            var obsBitmap :Bitmap = Resources.getBitmap("box_bitmap.gif");
-            obsBitmap.pixelSnapping = PixelSnapping.ALWAYS;
-            addChild(obsBitmap);
+            if (w == 0 || h == 0) {
+                return;
+            }
+            Logger.log("Create wall bitmap of " + w + "x" + h);
+            var data :BitmapData = new BitmapData(
+                    w * Codes.PIXELS_PER_TILE, h * Codes.PIXELS_PER_TILE);
+            var drawData :BitmapData = Resources.getBitmapData("box_bitmap.gif");
+            var matrix :Matrix;
+            for (var yy :int = 0; yy < h; yy++) {
+                for (var xx :int = 0; xx < w; xx++) {
+                    matrix = new Matrix();
+                    matrix.translate(xx * Codes.PIXELS_PER_TILE, yy * Codes.PIXELS_PER_TILE);
+                    data.draw(drawData, matrix);
+                }
+            }
+            addChild(new Bitmap(data));
         } else {
             var obsMovie :MovieClip = MovieClip(new (Resources.getClass(OBS_MOVIES[type]))());
             addChild(obsMovie);

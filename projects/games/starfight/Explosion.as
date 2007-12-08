@@ -17,10 +17,10 @@ public class Explosion extends Sprite
         } else {
             var explodeMovie :MovieClip =
                 MovieClip(new Codes.SHIP_TYPES[shipType].explodeAnim());
-            explodeMovie.scaleX = Codes.SHIP_TYPES[shipType].size + 0.1;
-            explodeMovie.scaleY = Codes.SHIP_TYPES[shipType].size + 0.1;
             explodeMovie.x = explodeMovie.width/2;
             explodeMovie.y = -explodeMovie.height/2;
+            explodeMovie.scaleX = Codes.SHIP_TYPES[shipType].size + 0.1;
+            explodeMovie.scaleY = Codes.SHIP_TYPES[shipType].size + 0.1;
             explosion = new Explosion(x, y, explodeMovie);
         }
 
@@ -42,8 +42,10 @@ public class Explosion extends Sprite
 
     public function endExplode (event :Event) :void
     {
-        _explodeMovie.removeEventListener(Event.COMPLETE, endExplode);
-        parent.removeChild(this);
+        if (parent != null) {
+            _explodeMovie.removeEventListener(Event.COMPLETE, endExplode);
+            parent.removeChild(this);
+        }
     }
 
     protected var _explodeMovie :MovieClip;

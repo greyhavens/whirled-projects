@@ -41,6 +41,11 @@ public class BoardObject extends Sprite
         return null;
     }
 
+    public function getRad () :Number
+    {
+        return 0.8;
+    }
+
     /**
      * Unserialize our data from a byte array.
      */

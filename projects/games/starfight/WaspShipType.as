@@ -8,7 +8,7 @@ import flash.events.Event;
 
 public class WaspShipType extends ShipType
 {
-    public var secondaryHitPower :Number = 0.5;
+    public var secondaryHitPower :Number = 0.4;
     public var secondaryShotRange :Number = 3.0;
     public var secondaryExplode :Class;
     public var secondarySound :Sound;
@@ -29,7 +29,7 @@ public class WaspShipType extends ShipType
         primaryShotRecharge = 0.2;
         primaryPowerRecharge = 3.0;
         primaryShotSpeed = 20;
-        primaryShotLife = 3;
+        primaryShotLife = 2;
         primaryShotSize = 0.1;
 
         secondaryShotCost = 0.33;

@@ -60,7 +60,6 @@ public class StarFight extends Sprite
     public function StarFight ()
     {
         _gameCtrl = new WhirledGameControl(this);
-        _gameCtrl.registerListener(this);
 
         var mask :Shape = new Shape();
         addChild(mask);
@@ -72,7 +71,7 @@ public class StarFight extends Sprite
         graphics.beginFill(Codes.BLACK);
         graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
 
-        Font.registerFont(_venusRising);
+        //Font.registerFont(_venusRising);
         gameFont = Font(new _venusRising());
 
         var introMovie :MovieClip = MovieClip(new introAsset());
@@ -93,6 +92,7 @@ public class StarFight extends Sprite
         if (_assets < Codes.SHIP_TYPES.length) {
             return;
         }
+        _gameCtrl.registerListener(this);
         removeChildAt(1);
         removeEventListener(MouseEvent.CLICK, firstStart);
         setupBoard();
@@ -294,8 +294,8 @@ public class StarFight extends Sprite
                 var bytes :ByteArray = ByteArray(event.newValue);
                 if (bytes == null) {
                     var remShip :ShipSprite = _ships.remove(id);
-                    _gameCtrl.localChat(remShip.playerName + " left the game.");
                     if (remShip != null) {
+                        _gameCtrl.localChat(remShip.playerName + " left the game.");
                         _shipLayer.removeChild(remShip);
                         _status.removeShip(id);
                     }
@@ -352,7 +352,7 @@ public class StarFight extends Sprite
 
     public function maybeStartRound () :void
     {
-        if (_population >= 1 && gameState == Codes.PRE_ROUND && _gameCtrl.amInControl()) {
+        if (_population >= 2 && gameState == Codes.PRE_ROUND && _gameCtrl.amInControl()) {
             _gameCtrl.set("gameState", Codes.IN_ROUND);
         }
     }
@@ -421,7 +421,7 @@ public class StarFight extends Sprite
         var endMovie :MovieClip = MovieClip(new (Resources.getClass("round_results"))());
         for (var ii :int = 0; ii < shipArr.length; ii++) {
             endMovie.fields_mc.getChildByName("place_" + (ii + 1)).text =
-                    ShipSprite(shipArr[ii]).playerName;
+                    "" + ii + ". " + ShipSprite(shipArr[ii]).playerName;
         }
         _nextRoundTimer = endMovie.fields_mc.timer;
         _nextRoundTimer.text = String(30);
@@ -457,6 +457,10 @@ public class StarFight extends Sprite
                 _boardCtrl.explode(arr[0], arr[1], arr[2], false, ship.shipType);
                 playSoundAt(Resources.getSound("ship_explodes.wav"), arr[0], arr[1]);
                 ship.kill();
+                var sship :ShipSprite = getShip(arr[3]);
+                if (sship != null) {
+                    _gameCtrl.localChat(sship.playerName + " killed " + ship.playerName + "!");
+                }
             }
 
             if (_ownShip != null && arr[3] == _ownShip.shipId) {
@@ -471,6 +475,9 @@ public class StarFight extends Sprite
         } else if (event.name == "stateTicker") {
             if (_stateTime > 0) {
                 _stateTime -= 1;
+                if (_stateTime % 10 == 0 && _gameCtrl.amInControl()) {
+                    _gameCtrl.setImmediate("stateTime", _stateTime);
+                }
             }
 
         } else if (event.name == "nextRoundTicker") {
@@ -617,6 +624,7 @@ public class StarFight extends Sprite
             _gameCtrl.setImmediate("gameState", Codes.PRE_ROUND);
         }
         _ships = new HashMap();
+        _ownShip = null;
         setupBoard();
         _boardCtrl.init(boardLoaded);
         log("Game started");
@@ -847,6 +855,9 @@ public class StarFight extends Sprite
         if (_powerupTimer != null) {
             _powerupTimer.reset();
         }
+        for each (var ship :ShipSprite in _ships.values()) {
+            ship.roundEnded();
+        }
     }
 
     [Embed(source="rsrc/intro_movie.swf")]
@@ -865,7 +876,7 @@ public class StarFight extends Sprite
     protected var _ships :HashMap = new HashMap(); // HashMap<int, ShipSprite>
 
     /** Live shots. */
-    protected var _shots :Array; // Array<ShotSprite>
+    protected var _shots :Array = new Array(); // Array<ShotSprite>
 
     /** The board with all its obstacles. */
     protected var _boardCtrl :BoardController;

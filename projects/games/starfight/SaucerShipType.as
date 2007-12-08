@@ -35,7 +35,7 @@ public class SaucerShipType extends ShipType
         primaryShotLife = 0.1;
         primaryShotSize = 0.4;
 
-        secondaryShotCost = 0.5;
+        secondaryShotCost = 0.4;
         secondaryShotRecharge = 3;
         secondaryPowerRecharge = 30;
         secondaryShotLife = 90;
@@ -128,7 +128,7 @@ public class SaucerShipType extends ShipType
         mineExplodeSound = Sound(new (_loader.getClass("mine_explode.wav"))());
     }
 
-    protected static var RANGE :Number = 5;
+    protected static var RANGE :Number = 7;
     protected static var TARGET :Number = 12;
 
     [Embed(source="rsrc/ships/xyru.swf", mimeType="application/octet-stream")]

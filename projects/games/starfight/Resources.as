@@ -37,17 +37,26 @@ public class Resources
         return asset;
     }
 
-    public static function getBitmap (name :String) :Bitmap
+    public static function getBitmapData (name :String) :BitmapData
     {
         if (_loader == null || !_ready) {
             return null;
         }
         var data :BitmapData = BitmapData(_map.get(name));
         if (data != null) {
-            return new Bitmap(data);
+            return data;
         }
         data = BitmapData(new (_loader.getClass(name))(0, 0));
         _map.put(name, data);
+        return data;
+    }
+
+    public static function getBitmap (name :String) :Bitmap
+    {
+        var data :BitmapData = getBitmapData(name);
+        if (data == null) {
+            return null;
+        }
         return new Bitmap(data);
     }
 

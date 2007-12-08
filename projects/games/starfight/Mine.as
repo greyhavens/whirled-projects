@@ -50,6 +50,11 @@ public class Mine extends BoardObject
         return Resources.getSound("junk_hit.wav");
     }
 
+    override public function getRad () :Number
+    {
+        return 2.5;
+    }
+
     public function explode (callback :Function) :void
     {
         removeChildAt(0);

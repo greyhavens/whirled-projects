@@ -20,7 +20,7 @@ public class ShipType
     public var velThreshold :Number = 0.5;
     public var turnAccel :Number;
     public var turnFriction :Number;
-    public var turnThreshold :Number = 45;
+    public var turnThreshold :Number = 35;
     public var turnRate :Number;
 
     /** armorment statistics. */

@@ -141,6 +141,7 @@ public class BoardController
         _board = new Sprite();
         setupGraphics();
         boardLayer.addChild(_board);
+        _explosions = new Array();
     }
 
     // from PropertyChangedListener
@@ -184,7 +185,9 @@ public class BoardController
                     var obs :Obstacle = _obstacles[event.index];
                     _obstacles[event.index] = null;
                     obs.explode(function () :void {
-                        _board.removeChild(obs);
+                        if (_board != null) {
+                            _board.removeChild(obs);
+                        }
                     });
                 }
             }
@@ -458,7 +461,7 @@ public class BoardController
             }
             var bX :Number = bo.bX + 0.5;
             var bY :Number = bo.bY + 0.5;
-            var r :Number = rad + 0.8; // Our radius...
+            var r :Number = rad + bo.getRad(); // Our radius...
             // We approximate a board object as a circle for this...
             var a :Number = dx*dx + dy*dy;
             var b :Number = 2*(dx*(oldX-bX) + dy*(oldY-bY));
@@ -482,9 +485,21 @@ public class BoardController
     public function explode (x :Number, y :Number, rot :int,
         isSmall :Boolean, shipType :int) :void
     {
-        var exp :Explosion = Explosion.createExplosion(
-            x * Codes.PIXELS_PER_TILE, y * Codes.PIXELS_PER_TILE, rot, isSmall, shipType);
+        var rX :Number = x * Codes.PIXELS_PER_TILE;
+        var rY :Number = y * Codes.PIXELS_PER_TILE;
+        // don't add small explosions that are off the screen
+        if (isSmall && (rX < -_board.x - EXP_OFF || rX > -_board.x + StarFight.WIDTH + EXP_OFF ||
+                        rY < -_board.y - EXP_OFF || rY > -_board.y + StarFight.HEIGHT + EXP_OFF)) {
+            return;
+        }
+        var exp :Explosion = Explosion.createExplosion(rX, rY, rot, isSmall, shipType);
         _board.addChild(exp);
+        if (isSmall) {
+            if (_explosions.length == MAX_EXPLOSIONS) {
+                Explosion(_explosions.shift()).endExplode(null);
+            }
+            _explosions.push(exp);
+        }
         if (!isSmall && _gameCtrl.amInControl()) {
             addHealth(x, y);
         }
@@ -517,7 +532,7 @@ public class BoardController
     public function setupGraphics () :void
     {
         for each (var obs :Obstacle in _obstacles) {
-            if (obs != null) {
+            if (obs != null && obs.showObs()) {
                 _board.addChild(obs);
             }
         }
@@ -610,23 +625,40 @@ public class BoardController
             case 0: type = Obstacle.ASTEROID_1; break;
             case 1: type = Obstacle.ASTEROID_2; break;
             }
-            _obstacles.push(new Obstacle(type, Math.random()*width, Math.random()*height));
+            _obstacles.push(new Obstacle(
+                type, 1 + Math.random()*(width-2), 1+Math.random()*(height-2)));
             _obstacles[_obstacles.length - 1].index = index++;
         }
 
         // Place a wall around the outside of the board.
 
         for (ii = 0; ii < height; ii++) {
-            _obstacles.push(new Obstacle(Obstacle.WALL, 0, ii));
+            if (ii == 0) {
+                _obstacles.push(new Obstacle(Obstacle.WALL, 0, ii, true, 1, height));
+            } else {
+                _obstacles.push(new Obstacle(Obstacle.WALL, 0, ii));
+            }
             _obstacles[_obstacles.length - 1].index = index++;
-            _obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii));
+            if (ii == 0) {
+                _obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii, true, 1, height));
+            } else {
+                _obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii));
+            }
             _obstacles[_obstacles.length - 1].index = index++;
         }
 
         for (ii = 0; ii < width; ii++) {
-            _obstacles.push(new Obstacle(Obstacle.WALL, ii, 0));
+            if (ii == 0) {
+                _obstacles.push(new Obstacle(Obstacle.WALL, ii, 0, true, width, 1));
+            } else {
+                _obstacles.push(new Obstacle(Obstacle.WALL, ii, 0));
+            }
             _obstacles[_obstacles.length - 1].index = index++;
-            _obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1));
+            if (ii == 0) {
+                _obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1, true, width, 1));
+            } else {
+                _obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1));
+            }
             _obstacles[_obstacles.length - 1].index = index++;
         }
     }
@@ -662,7 +694,15 @@ public class BoardController
     /** Reference to the status overlay. */
     protected var _status :StatusOverlay;
 
+    /** All the explosions on the board. */
+    protected var _explosions :Array;
+
     /** This could be more dynamic. */
     protected static const MIN_TILES_PER_POWERUP :int = 250;
+
+    /** The maximum number of explosions on the screen at once. */
+    protected static const MAX_EXPLOSIONS :int = 10;
+
+    protected static const EXP_OFF :int = 2 * Codes.PIXELS_PER_TILE;
 }
 }

@@ -16,16 +16,15 @@ public class RhinoShipType extends ShipType
         forwardAccel = 6.0;
         backwardAccel = -2;
         friction = 0.1;
-        turnRate = 240;
-        turnAccel = 48.0;
-        turnFriction = 0.01;
+        turnAccel = 70.0;
+        turnFriction = 0.03;
 
-        hitPower = 0.2;
+        hitPower = 0.18;
         primaryShotCost = 0.2;
         primaryShotRecharge = 0.4;
         primaryPowerRecharge = 4;
         primaryShotSpeed = 30;
-        primaryShotLife = 2.5;
+        primaryShotLife = 2;
         primaryShotSize = 0.1;
 
         secondaryShotCost = 0.5;
@@ -105,7 +104,7 @@ public class RhinoShipType extends ShipType
 
             ship.resolveMove(startX, startY, endX, endY, 1);
             ship.setAnimMode(ShipSprite.WARP_END, true).addEventListener(Event.COMPLETE, endWarp);
-            sf.playSoundAt(warpSound, startX, startY);
+            sf.playSoundAt(warpSound, endX, endY);
         };
         var clip :MovieClip = ship.setAnimMode(ShipSprite.WARP_BEGIN, true);
         clip.addEventListener(Event.COMPLETE, warp);

@@ -12,14 +12,14 @@ public class RaptorShipType extends ShipType
     {
         name = "Raptor";
 
-        forwardAccel = 4.0;
-        backwardAccel = -1.5;
-        friction = 0.02;
+        forwardAccel = 6.0;
+        backwardAccel = -2;
+        friction = 0.04;
         turnRate = 130;
         turnAccel = 45.0;
         turnFriction = 0.02;
 
-        hitPower = 0.12;
+        hitPower = 0.135;
         primaryShotCost = 0.25;
         primaryShotRecharge = 0.1;
         primaryPowerRecharge = 2.5;
@@ -27,8 +27,8 @@ public class RaptorShipType extends ShipType
         primaryShotLife = 0.3;
         primaryShotSize = 0.3;
 
-        secondaryShotCost = 1.0;
-        secondaryShotRecharge = 1;
+        secondaryShotCost = 0.5;
+        secondaryShotRecharge = 2;
         secondaryPowerRecharge = 30;
         secondaryShotSpeed = 1500;
         secondaryShotLife = 4;
