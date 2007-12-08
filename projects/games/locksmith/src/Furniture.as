@@ -16,10 +16,8 @@ public class Furniture extends Sprite
         x = 170;
         y = 170;
 
-        addChild(new CLOCKFACE() as Sprite);
+        addChild(_clock = new CLOCK() as Sprite);
 
-        addChild(_hourHand = new HAND_HOUR() as Sprite);
-        addChild(_minuteHand = new HAND_MINUTE() as Sprite);
         updateHands();
 
         addEventListener(Event.ENTER_FRAME, updateHands);
@@ -31,18 +29,13 @@ public class Furniture extends Sprite
     protected function updateHands (...ignored) :void
     {
         var date :Date = new Date();
-        _hourHand.rotation = (date.hours % 12) * 30 + date.minutes / 2;
-        _minuteHand.rotation = date.minutes * 6;
+        _clock["hand_hour"].rotation = (date.hours % 12) * 30 + date.minutes / 2;
+        _clock["hand_minute"].rotation = date.minutes * 6;
     }
 
-    [Embed(source="../rsrc/furniture.swf#furni_clockface")]
-    protected static const CLOCKFACE :Class;
-    [Embed(source="../rsrc/furniture.swf#hand_hour")]
-    protected static const HAND_HOUR :Class;
-    [Embed(source="../rsrc/furniture.swf#hand_minute")]
-    protected static const HAND_MINUTE :Class;
+    [Embed(source="../rsrc/furniture.swf#clock")]
+    protected static const CLOCK :Class;
 
-    protected var _hourHand :Sprite;
-    protected var _minuteHand :Sprite;
+    protected var _clock :Sprite;
 }
 }
