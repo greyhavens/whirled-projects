@@ -63,12 +63,10 @@ public class Clock extends Sprite
     public function setRotationAngle (angle :Number, finished :Boolean = false) :void
     {
         if (finished) {
-            _baseAngle = (_baseAngle + angle + 360) % 360;
-            _rotationAngle = 0;
+            _minute.rotation = 0;
         } else {
-            _rotationAngle = angle;
+            _minute.rotation = (angle * 4 + 360) % 360;
         }
-        _minute.rotation = (_baseAngle + _rotationAngle + 360) % 360;
     }
 
     protected function updateTime (...ignored) :void
@@ -113,7 +111,5 @@ public class Clock extends Sprite
     protected var _inTurn :Boolean;
     protected var _fastRotation :Boolean;
     protected var _fastRotationFrame :Number;
-    protected var _baseAngle :Number = 0;
-    protected var _rotationAngle :Number = 0;
 }
 }
