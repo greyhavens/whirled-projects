@@ -18,21 +18,21 @@ import mx.effects.easing.Bounce;
 
 public class PuzzleBoard extends AppObject
 {
-    public function PuzzleBoard (columns :int, rows :int, cellSize :int)
+    public function PuzzleBoard (columns :int, rows :int, tileSize :int)
     {
         Assert.isTrue(columns > 0);
         Assert.isTrue(rows > 0);
-        Assert.isTrue(cellSize > 0);
+        Assert.isTrue(tileSize > 0);
 
         _cols = columns;
         _rows = rows;
-        _cellSize = cellSize;
+        _tileSize = tileSize;
 
         // create the visual representation of the board
         _sprite = new Sprite();
         _sprite.graphics.clear();
         _sprite.graphics.beginFill(0xFFFFFF);
-        _sprite.graphics.drawRect(0, 0, _cols * cellSize, _rows * cellSize);
+        _sprite.graphics.drawRect(0, 0, _cols * tileSize, _rows * tileSize);
         _sprite.graphics.endFill();
         _sprite.mouseEnabled = true;
 
@@ -348,12 +348,12 @@ public class PuzzleBoard extends AppObject
 
     public function getPieceXLoc (xCoord :int) :int
     {
-        return (xCoord * _cellSize) + (_cellSize / 2);
+        return (xCoord * _tileSize) + (_tileSize / 2);
     }
 
     public function getPieceYLoc (yCoord :int) :int
     {
-        return (yCoord * _cellSize) + (_cellSize / 2);
+        return (yCoord * _tileSize) + (_tileSize / 2);
     }
 
     public function get resolvingClears () :Boolean
@@ -364,7 +364,7 @@ public class PuzzleBoard extends AppObject
     protected var _sprite :Sprite;
     protected var _cols :int;
     protected var _rows :int;
-    protected var _cellSize :int;
+    protected var _tileSize :int;
     protected var _board :Array;
 
     protected var _resolvingClears :Boolean;

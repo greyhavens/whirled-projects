@@ -25,10 +25,10 @@ public class PuzzleCursor extends AppObject
         _sprite.graphics.drawRoundRect(
             0,
             0,
-            GameConstants.BOARD_CELL_SIZE * 2,
-            GameConstants.BOARD_CELL_SIZE,
-            GameConstants.BOARD_CELL_SIZE / 2,
-            GameConstants.BOARD_CELL_SIZE / 2);
+            GameConstants.PUZZLE_TILE_SIZE * 2,
+            GameConstants.PUZZLE_TILE_SIZE,
+            GameConstants.PUZZLE_TILE_SIZE / 2,
+            GameConstants.PUZZLE_TILE_SIZE / 2);
     }
 
     override public function get displayObject() :DisplayObject
@@ -118,23 +118,23 @@ public class PuzzleCursor extends AppObject
     protected function repositionOnBoard (localX :Number, localY :Number) :void
     {
         // the mouseIndex is the piece directly under the mouse
-        _mouseIndexX = (localX / GameConstants.BOARD_CELL_SIZE);
-        _mouseIndexY = (localY / GameConstants.BOARD_CELL_SIZE);
+        _mouseIndexX = (localX / GameConstants.PUZZLE_TILE_SIZE);
+        _mouseIndexY = (localY / GameConstants.PUZZLE_TILE_SIZE);
 
         _mouseIndexX = Math.max(_mouseIndexX, 0);
-        _mouseIndexX = Math.min(_mouseIndexX, GameConstants.BOARD_COLS - 1);
+        _mouseIndexX = Math.min(_mouseIndexX, GameConstants.PUZZLE_COLS - 1);
 
         _mouseIndexY = Math.max(_mouseIndexY, 0);
-        _mouseIndexY = Math.min(_mouseIndexY, GameConstants.BOARD_ROWS - 1);
+        _mouseIndexY = Math.min(_mouseIndexY, GameConstants.PUZZLE_ROWS - 1);
 
         // the swapIndex is the index of the left-most piece that will be swapped
         // when the mouse is clicked. If the mouse is over a piece in the
         // right-most column, swapIndex != mouseIndex
-        _swapIndexX = Math.min(_mouseIndexX, GameConstants.BOARD_COLS - 2);
+        _swapIndexX = Math.min(_mouseIndexX, GameConstants.PUZZLE_COLS - 2);
         _swapIndexY = _mouseIndexY;
 
-        _sprite.x = _swapIndexX * GameConstants.BOARD_CELL_SIZE;
-        _sprite.y = _swapIndexY * GameConstants.BOARD_CELL_SIZE;
+        _sprite.x = _swapIndexX * GameConstants.PUZZLE_TILE_SIZE;
+        _sprite.y = _swapIndexY * GameConstants.PUZZLE_TILE_SIZE;
     }
 
     override public function addedToMode (mode :AppMode) :void

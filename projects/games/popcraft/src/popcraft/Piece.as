@@ -43,7 +43,7 @@ public class Piece extends AppObject
         _pieceSprite.graphics.clear();
         _pieceSprite.graphics.beginFill(GameConstants.getResource(_resourceType).color);
         _pieceSprite.graphics.lineStyle(1, 0);
-        _pieceSprite.graphics.drawEllipse(-GameConstants.BOARD_CELL_SIZE / 2, -GameConstants.BOARD_CELL_SIZE / 2, GameConstants.BOARD_CELL_SIZE, GameConstants.BOARD_CELL_SIZE);
+        _pieceSprite.graphics.drawEllipse(-GameConstants.PUZZLE_TILE_SIZE / 2, -GameConstants.PUZZLE_TILE_SIZE / 2, GameConstants.PUZZLE_TILE_SIZE, GameConstants.PUZZLE_TILE_SIZE);
         _pieceSprite.graphics.endFill();
     }
 

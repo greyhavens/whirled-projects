@@ -1,16 +1,25 @@
 package popcraft {
 
 import com.threerings.util.Assert;
+import flash.geom.Point;
 
 public class GameConstants
 {
+    public static const RESOURCE_DISPLAY_LOC :Point = new Point(100, 0);
+    public static const PUZZLE_LOC :Point = new Point(0, 50);
+    public static const BATTLE_LOC :Point = new Point(220, 20);
+
     public static const PIECE_CLEAR_TIMER_LENGTH :Number = 0.75;
 
     public static const MIN_GROUP_SIZE :int = 1; // no min group size right now
 
-    public static const BOARD_COLS :int = 5;
-    public static const BOARD_ROWS :int = 8;
-    public static const BOARD_CELL_SIZE :int = 40;
+    public static const PUZZLE_COLS :int = 5;
+    public static const PUZZLE_ROWS :int = 8;
+    public static const PUZZLE_TILE_SIZE :int = 40;
+
+    public static const BATTLE_COLS :int = 15;
+    public static const BATTLE_ROWS :int = 12;
+    public static const BATTLE_TILE_SIZE :int = 32;
 
     public static const RESOURCE_TYPES :Array = [
         new ResourceType("wood", 0x885300),
