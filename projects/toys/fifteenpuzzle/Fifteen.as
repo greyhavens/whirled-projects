@@ -3,6 +3,7 @@
 
 package {
 
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
@@ -16,11 +17,13 @@ import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
 import fl.controls.Button;
+import fl.controls.ComboBox;
 import fl.controls.Label;
 import fl.controls.ScrollPolicy;
 import fl.controls.TextArea;
 
 import fl.skins.DefaultButtonSkins;
+import fl.skins.DefaultComboBoxSkins;
 import fl.skins.DefaultTextAreaSkins;
 
 import com.threerings.util.ArrayUtil;
@@ -32,17 +35,26 @@ import com.threerings.flash.path.Path;
 import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
 
-[SWF(width="420", height="450")]
+[SWF(width="220", height="250")]
 public class Fifteen extends Sprite
 {
-    public static const BOARD_WIDTH :int = 400;
-    public static const BOARD_HEIGHT :int = 400;
+    public static const BOARD_WIDTH :int = 200;
+    public static const BOARD_HEIGHT :int = 200;
 
     /** How many tiles per side should we use? */
     public static const SIZE :int = 4;
 
     public static const TILE_WIDTH :int = int(BOARD_WIDTH / SIZE);
     public static const TILE_HEIGHT :int = int(BOARD_HEIGHT / SIZE);
+
+    public static const SOLVED_STATE :Array = computeSolvedState();
+
+    public static const SOURCE_NUMBERS :int = 0;
+    public static const SOURCE_MONALISA :int = 1;
+    public static const SOURCE_CAMERA :int = 2;
+    public static const SOURCE_URL :int = 3;
+
+    public static const SOURCES :Array = [ "Numbers", "Mona Lisa", "Camera" ];
 
     public function Fifteen ()
     {
@@ -54,9 +66,18 @@ public class Fifteen extends Sprite
         readState();
     }
 
+    /**
+     * Expose this to the helper classes.
+     */
+    public function computeTilePosition (position :int) :Point
+    {
+        return new Point((position % SIZE) * TILE_WIDTH, int(position / SIZE) * TILE_HEIGHT);
+    }
+
     private static function refSkins () :void
     {
         DefaultButtonSkins;
+        DefaultComboBoxSkins;
     }
 
     protected function initUI () :void
@@ -75,14 +96,18 @@ public class Fifteen extends Sprite
         tileHolder.y = 40;
         addChild(tileHolder);
 
-        // create the normal tile sprites
-        _tiles = makeTileSprites();
-        for each (var tile :Sprite in _tiles) {
+        var ii :int;
+
+        // create the regular tile sprites
+        _tiles = [];
+        for (ii = 0; ii < BLANK_TILE; ii++) {
+            var tile :Sprite = new Sprite();
+            _tiles.push(tile);
             tile.addEventListener(MouseEvent.CLICK, handleClick);
             tileHolder.addChild(tile);
         }
 
-        // make the blank sprite
+        // make the blank tile sprite
         _blank = new BlankTile();
         _tiles.push(_blank);
         tileHolder.addChildAt(_blank, 0); // lowest drawn
@@ -90,21 +115,32 @@ public class Fifteen extends Sprite
 
         tileHolder.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
 
-        // create the button and label
+        // create the label used to report who is modifying
         _label = new Label();
         _label.text = "";
-        _label.setSize(420, 22);
+        _label.setStyle("textFormat", new TextFormat(null, 12, null, true));
+        _label.setSize(220, 22);
         addChild(_label);
-//        _label.visible = false;
 
-        if (!_ctrl.isConnected() || _ctrl.canEditRoom()) {
-            _button = new Button();
-            _button.label = "Reset";
-            _button.setSize(_button.textField.textWidth + 25, 22);
-            _button.x = 420 - _button.width;
-            addChild(_button);
-            _button.addEventListener(MouseEvent.CLICK, resetState);
+        _sourceBox = new ComboBox();
+        for (ii = 0; ii < SOURCES.length; ii++) {
+            _sourceBox.addItem({ label: SOURCES[ii], data: ii });
         }
+        _sourceBox.addEventListener(Event.CHANGE, handleSourceSelected);
+        _sourceBox.setSize(100, 22);
+        _sourceBox.x = 120;
+        addChild(_sourceBox);
+        _sourceBox.selectedIndex = 0;
+        handleSourceSelected();
+
+//        if (!_ctrl.isConnected() || _ctrl.canEditRoom()) {
+//            _button = new Button();
+//            _button.label = "Reset";
+//            _button.setSize(_button.textField.textWidth + 25, 22);
+//            _button.x = 220 - _button.width;
+//            addChild(_button);
+//            _button.addEventListener(MouseEvent.CLICK, resetState);
+//        }
     }
 
     protected function readState () :void
@@ -112,10 +148,8 @@ public class Fifteen extends Sprite
         _state = _toy.getState() as Array;
         // detect an invalid state and reset
         if (_state == null || _state.length != (SIZE * SIZE)) {
-            _state = [];
-            for (var ii :int = 0; ii < (SIZE * SIZE); ii++) {
-                _state.push(ii);
-            }
+            // make a copy of the solved state
+            _state = SOLVED_STATE.concat();
         }
         positionTiles();
         updateModifierName(_toy.getUsernameOfState());
@@ -141,35 +175,6 @@ public class Fifteen extends Sprite
             tile.x = p.x;
             tile.y = p.y;
         }
-    }
-
-    protected function computeTilePosition (position :int) :Point
-    {
-        return new Point((position % SIZE) * TILE_WIDTH, int(position / SIZE) * TILE_HEIGHT);
-    }
-
-    protected function makeTileSprites () :Array
-    {
-        var tiles :Array = [];
-        for (var ii :int = 0; ii < BLANK_TILE; ii++) {
-            var s :Sprite = new Sprite();
-            s.graphics.beginFill(0xFFFFEE);
-            s.graphics.lineStyle(1, 0x000033);
-            s.graphics.drawRoundRect(0, 0, TILE_WIDTH, TILE_HEIGHT, 10, 10);
-
-            var tf :TextField = new TextField();
-            tf.selectable = false;
-            tf.text = String(ii + 1);
-            tf.setTextFormat(new TextFormat(null, 32, 0x000000, true, null, null, null, null,
-                TextFormatAlign.CENTER));
-            tf.width = TILE_WIDTH;
-            tf.height = tf.textHeight + 4;
-            tf.y = (TILE_HEIGHT - tf.height) / 2;
-            s.addChild(tf);
-
-            tiles.push(s);
-        }
-        return tiles;
     }
 
     protected function handleClick (event :MouseEvent) :void
@@ -351,6 +356,39 @@ public class Fifteen extends Sprite
         }
     }
 
+    protected function handleSourceSelected (... ignored) :void
+    {
+        if (_tileProvider != null) {
+            _tileProvider.shutdown();
+            _tileProvider = null;
+        }
+
+        switch (_sourceBox.selectedIndex) {
+        default:
+        case SOURCE_NUMBERS:
+            _tileProvider = new NumberTileProvider();
+            break;
+
+        case SOURCE_CAMERA:
+            _tileProvider = new CameraTileProvider(_ctrl.getCamera());
+            break;
+        }
+
+        _tileProvider.init(this, _tiles);
+    }
+
+    /**
+     * Compute the "solved" state for this puzzle.
+     */
+    protected static function computeSolvedState () :Array
+    {
+        var state :Array = [];
+        for (var ii :int = 0; ii < (SIZE * SIZE); ii++) {
+            state.push(ii);
+        }
+        return state;
+    }
+
     protected static const BLANK_TILE :int = (SIZE * SIZE) - 1; 
 
     protected var _ctrl :FurniControl;
@@ -358,6 +396,8 @@ public class Fifteen extends Sprite
     protected var _toy :ToyState;
 
     protected var _blank :BlankTile;
+
+    protected var _tileProvider :TileProvider;
 
     protected var _state :Array;
 
@@ -369,13 +409,28 @@ public class Fifteen extends Sprite
 
     protected var _button :Button;
 
+    protected var _sourceBox :ComboBox;
+
     protected var _label :Label;
 }
 }
 
+import flash.display.BitmapData;
 import flash.display.Sprite;
 
+import flash.events.Event;
+
+import flash.geom.Matrix;
+import flash.geom.Point;
+
 import flash.events.MouseEvent;
+
+import flash.media.Camera;
+import flash.media.Video;
+
+import flash.text.TextField;
+import flash.text.TextFormat;
+import flash.text.TextFormatAlign;
 
 class BlankTile extends Sprite
 {
@@ -428,5 +483,119 @@ class BlankTile extends Sprite
 
     protected var _over :Boolean;
     protected var _down :Boolean;
+}
 
+class TileProvider
+{
+    public function init (fifteen :Fifteen, tiles :Array) :void
+    {
+        _fifteen = fifteen;
+        _tiles = tiles;
+        clearTiles();
+        startup();
+    }
+
+    public function shutdown () :void
+    {
+    }
+
+    public function startup () :void
+    {
+        // nothing, by default
+    }
+
+    /**
+     * Clear tiles completely.
+     */
+    protected function clearTiles () :void
+    {
+        for (var ii :int = 0; ii < _tiles.length - 1; ii++) {
+            var tile :Sprite = _tiles[ii] as Sprite;
+            tile.graphics.clear();
+            while (tile.numChildren > 0) {
+                tile.removeChildAt(0);
+            }
+        }
+    }
+
+    protected var _tiles :Array;
+
+    protected var _fifteen :Fifteen;
+}
+
+class NumberTileProvider extends TileProvider
+{
+    override public function startup () :void
+    {
+        for (var ii :int = 0; ii < _tiles.length - 1; ii++) {
+            var tile :Sprite = _tiles[ii] as Sprite;
+            tile.graphics.beginFill(0xFFFFEE);
+            tile.graphics.lineStyle(1, 0x000033);
+            tile.graphics.drawRoundRect(0, 0, Fifteen.TILE_WIDTH, Fifteen.TILE_HEIGHT, 10, 10);
+
+            var tf :TextField = new TextField();
+            tf.selectable = false;
+            tf.text = String(ii + 1);
+            tf.setTextFormat(new TextFormat(null, 32, 0x000000, true, null, null, null, null,
+                TextFormatAlign.CENTER));
+            tf.width = Fifteen.TILE_WIDTH;
+            tf.height = tf.textHeight + 4;
+            tf.y = (Fifteen.TILE_HEIGHT - tf.height) / 2;
+            tile.addChild(tf);
+        }
+    }
+}
+
+class ChoppingTileProvider extends TileProvider
+{
+    /**
+     * Utility method for printing a bitmap into the tiles.
+     * This assumes that the bitmap is the correct size.
+     */
+    protected function bitmapToTiles (bitmap :BitmapData) :void
+    {
+        for (var ii :int = 0; ii < _tiles.length - 1; ii++) {
+            var tile :Sprite = _tiles[ii] as Sprite;
+            // get the "natural" position of this tile, not it's current position
+            var p :Point = _fifteen.computeTilePosition(ii);
+            var matrix :Matrix = new Matrix();
+            matrix.translate(-p.x, -p.y);
+            tile.graphics.clear();
+            tile.graphics.beginBitmapFill(bitmap, matrix);
+            tile.graphics.drawRect(0, 0, Fifteen.TILE_WIDTH, Fifteen.TILE_HEIGHT);
+            tile.graphics.endFill();
+        }
+    }
+}
+
+class CameraTileProvider extends ChoppingTileProvider
+{
+    public function CameraTileProvider (cam :Camera)
+    {
+        _video = new Video(Fifteen.BOARD_WIDTH, Fifteen.BOARD_HEIGHT);
+        _video.attachCamera(cam);
+        _bmp = new BitmapData(Fifteen.BOARD_WIDTH, Fifteen.BOARD_HEIGHT, false);
+    }
+
+    override public function startup () :void
+    {
+        _fifteen.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+    }
+
+    override public function shutdown () :void
+    {
+        _fifteen.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
+    }
+
+    protected function handleEnterFrame (event :Event) :void
+    {
+        // render the video into the bitmap
+        _bmp.draw(_video);
+        // render the bitmap onto the tiles
+        bitmapToTiles(_bmp);
+    }
+
+    protected var _video :Video;
+
+    protected var _bmp :BitmapData;
 }
