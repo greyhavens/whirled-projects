@@ -143,6 +143,7 @@ public class Obstacle extends BoardObject
             var obsMovie :MovieClip = MovieClip(new (Resources.getClass(OBS_EXPLODE[type]))());
             obsMovie.addEventListener(Event.COMPLETE, function (event :Event) :void
                 {
+                    obsMovie.removeEventListener(Event.COMPLETE, arguments.callee);
                     callback();
                 });
             addChild(obsMovie);

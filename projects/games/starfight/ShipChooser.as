@@ -22,9 +22,6 @@ public class ShipChooser extends Sprite
         fadeOut.graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
         fadeOut.graphics.endFill();
         addChild(fadeOut);
-        //graphics.lineStyle(2, Codes.CYAN);
-        //graphics.drawRoundRect((StarFight.WIDTH - SPACING * (Codes.SHIP_TYPES.length+1))/2,
-        //    StarFight.HEIGHT/2 - SPACING, SPACING * (Codes.SHIP_TYPES.length+1), 2 * SPACING, 10.0, 10.0);
         _game = game;
         _newGame = newGame;
 
@@ -73,6 +70,7 @@ public class ShipChooser extends Sprite
 
         selection.x = StarFight.WIDTH/2 + SPACING * (idx - (total-1)/2.0);
         selection.y = StarFight.HEIGHT/2 + 15;
+        _buttons.push(selection);
 
         addChild(selection);
     }
@@ -90,16 +88,16 @@ public class ShipChooser extends Sprite
     {
         var ship :ShipSprite = ShipSprite((event.currentTarget as Sprite).getChildAt(0));
         ship.setAnimMode(ShipSprite.SELECT, false);
-        event.currentTarget.scaleX = HIGHLIGHT_SCALE;
-        event.currentTarget.scaleY = HIGHLIGHT_SCALE;
+        ship.scaleX = HIGHLIGHT_SCALE;
+        ship.scaleY = HIGHLIGHT_SCALE;
     }
 
     public function mouseOutHandler (event :MouseEvent) :void
     {
         var ship :ShipSprite = ShipSprite((event.currentTarget as Sprite).getChildAt(0));
         ship.setAnimMode(ShipSprite.IDLE, false);
-        event.currentTarget.scaleX = 1.0;
-        event.currentTarget.scaleY = 1.0;
+        ship.scaleX = 1.0;
+        ship.scaleY = 1.0;
     }
 
     /**
@@ -107,6 +105,11 @@ public class ShipChooser extends Sprite
      */
     public function choose (typeIdx :int) :void
     {
+        for each (var selection :Sprite in _buttons) {
+            selection.removeEventListener(MouseEvent.CLICK, chooseHandler);
+            selection.removeEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
+            selection.removeEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
+        }
         if (_newGame) {
             _game.chooseShip(typeIdx);
         } else {
@@ -121,5 +124,6 @@ public class ShipChooser extends Sprite
 
     protected var _game :StarFight;
     protected var _newGame :Boolean;
+    protected var _buttons :Array = [];
 }
 }

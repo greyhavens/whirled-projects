@@ -107,6 +107,10 @@ public class StarFight extends Sprite
                 removeChildAt(1);
             }
         }
+        if (_endMovie != null) {
+            removeChild(_endMovie);
+            _endMovie = null;
+        }
         _boardLayer = new Sprite();
         _subShotLayer = new Sprite();
         _shipLayer = new Sprite();
@@ -389,6 +393,9 @@ public class StarFight extends Sprite
 
     public function startScreen () :void
     {
+        if (_screenTimer != null) {
+            _screenTimer.removeEventListener(TimerEvent.TIMER, tick);
+        }
         // Set up our ticker that will control movement.
         _screenTimer = new Timer(1, 0); // As fast as possible.
         _screenTimer.addEventListener(TimerEvent.TIMER, tick);
@@ -418,14 +425,14 @@ public class StarFight extends Sprite
         shipArr.sort(function (shipA :ShipSprite, shipB :ShipSprite) :int {
             return shipB.score - shipA.score;
         });
-        var endMovie :MovieClip = MovieClip(new (Resources.getClass("round_results"))());
+        _endMovie = MovieClip(new (Resources.getClass("round_results"))());
         for (var ii :int = 0; ii < shipArr.length; ii++) {
-            endMovie.fields_mc.getChildByName("place_" + (ii + 1)).text =
-                    "" + ii + ". " + ShipSprite(shipArr[ii]).playerName;
+            _endMovie.fields_mc.getChildByName("place_" + (ii + 1)).text =
+                    "" + (ii + 1) + ". " + ShipSprite(shipArr[ii]).playerName;
         }
-        _nextRoundTimer = endMovie.fields_mc.timer;
+        _nextRoundTimer = _endMovie.fields_mc.timer;
         _nextRoundTimer.text = String(30);
-        addChild(endMovie);
+        addChild(_endMovie);
     }
 
     /**
@@ -433,6 +440,9 @@ public class StarFight extends Sprite
      */
     public function startPowerupTimer () :void
     {
+        if (_powerupTimer != null) {
+            _powerupTimer.removeEventListener(TimerEvent.TIMER, addPowerup);
+        }
         _powerupTimer = new Timer(20000, 0);
         _powerupTimer.addEventListener(TimerEvent.TIMER, addPowerup);
         _powerupTimer.start();
@@ -902,6 +912,8 @@ public class StarFight extends Sprite
     protected var _shotLayer :Sprite;
     protected var _subShotLayer :Sprite;
     protected var _statusLayer :Sprite;
+
+    protected var _endMovie :MovieClip;
 
     protected var _assets :int = 0;
 

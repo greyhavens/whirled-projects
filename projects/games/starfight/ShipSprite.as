@@ -303,8 +303,9 @@ public class ShipSprite extends Sprite
             _game.playSoundAt(obstacle.collisionSound(), startX + dx * coll.time,
                 startY + dy * coll.time);
             if (colType == 1) {
-                boardX = startX + dx * coll.time;
-                boardY = startY + dy * coll.time;
+                // we're going to fudge these a bit so we don't end up in a wall
+                boardX = startX + dx * coll.time * 0.98;
+                boardY = startY + dy * coll.time * 0.98;
                 return;
             }
 
@@ -393,7 +394,10 @@ public class ShipSprite extends Sprite
 
     public function newShip (event :TimerEvent) :void
     {
-        _game.addChild(new ShipChooser(_game, false));
+        event.target.removeEventListener(TimerEvent.TIMER, newShip);
+        if (_game.gameState != Codes.POST_ROUND) {
+            _game.addChild(new ShipChooser(_game, false));
+        }
     }
 
     /**
@@ -442,7 +446,8 @@ public class ShipSprite extends Sprite
                 var spawnClip :MovieClip = MovieClip(new (Resources.getClass("ship_spawn"))());
                 addChild(spawnClip);
                 spawnClip.addEventListener(Event.COMPLETE, function complete (event :Event) :void {
-                    removeChild(event.currentTarget as MovieClip);
+                    spawnClip.removeEventListener(Event.COMPLETE, arguments.callee);
+                    removeChild(event.target as MovieClip);
                 });
             }
         }
@@ -582,7 +587,9 @@ public class ShipSprite extends Sprite
 
             if (_isOwnShip) {
                 _thrusterReverse.stop();
-                _thrusterForward.loop();
+                if (accel != 0) {
+                    _thrusterForward.loop();
+                }
             }
 
         } else if (event.keyCode == KV_DOWN || event.keyCode == KV_S) {
@@ -591,7 +598,9 @@ public class ShipSprite extends Sprite
 
             if (_isOwnShip) {
                 _thrusterForward.stop();
-                _thrusterReverse.loop();
+                if (accel != 0) {
+                    _thrusterReverse.loop();
+                }
             }
 
         } else if (event.keyCode == KV_SPACE) {

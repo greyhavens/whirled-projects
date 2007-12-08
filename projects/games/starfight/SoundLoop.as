@@ -27,6 +27,7 @@ public class SoundLoop
     {
         if (_soundChannel != null) {
             _soundChannel.stop();
+            _soundChannel.removeEventListener(Event.SOUND_COMPLETE, soundCompleteHandler);
             _soundChannel = null;
         }
     }

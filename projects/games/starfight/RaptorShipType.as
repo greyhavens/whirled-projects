@@ -19,7 +19,7 @@ public class RaptorShipType extends ShipType
         turnAccel = 45.0;
         turnFriction = 0.02;
 
-        hitPower = 0.135;
+        hitPower = 0.145;
         primaryShotCost = 0.25;
         primaryShotRecharge = 0.1;
         primaryPowerRecharge = 2.5;
@@ -60,6 +60,7 @@ public class RaptorShipType extends ShipType
         var shieldTimer :Timer = new Timer(secondaryShotSpeed, 1);
         shieldTimer.addEventListener(TimerEvent.TIMER, function (event :TimerEvent) :void
             {
+                shieldTimer.removeEventListener(TimerEvent.TIMER, arguments.callee);
                 ship.powerups &= ~ShipSprite.SHIELDS_MASK;
                 ship.shieldPower = 0.0;
             });

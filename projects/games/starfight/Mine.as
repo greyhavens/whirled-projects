@@ -61,6 +61,7 @@ public class Mine extends BoardObject
         var expMovie :MovieClip = MovieClip(new Codes.SHIP_TYPES[2].mineExplode());
         expMovie.addEventListener(Event.COMPLETE, function (event :Event) :void
             {
+                expMovie.removeEventListener(Event.COMPLETE, arguments.callee);
                 callback();
             });
         addChild(expMovie);
