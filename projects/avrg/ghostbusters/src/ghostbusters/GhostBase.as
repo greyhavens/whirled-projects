@@ -33,17 +33,17 @@ public class GhostBase extends Sprite
 
     protected function handleGhostLoaded (evt :Event) :void
     {
-        var sprite :MovieClip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
-        sprite.gotoAndPlay(1, "state_Default_walking"); // standardize
-        addChild(sprite);
-        _bounds = sprite.getBounds(this);
+        _clip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        _clip.gotoAndPlay(1, STATE_WALKING); // standardize
+        addChild(_clip);
+        _bounds = _clip.getBounds(this);
 
         // dangle the sprite from its head
-        sprite.x = - (_bounds.left + _bounds.width/2);
-        sprite.y = - _bounds.top;
+        _clip.x = - (_bounds.left + _bounds.width/2);
+        _clip.y = - _bounds.top;
 
         // refigure the bounds
-        _bounds = sprite.getBounds(this);
+        _bounds = _clip.getBounds(this);
 
         // and let subclassers know we're done
         mediaReady();
@@ -51,6 +51,10 @@ public class GhostBase extends Sprite
 
     protected var _bounds :Rectangle;
 
+    protected var _clip :MovieClip;
+
+    protected static const STATE_WALKING :String = "state_Default_walking";
+    protected static const STATE_APPEAR :String = "state_Appear";
 
     [Embed(source="../../rsrc/Ghost.swf", mimeType="application/octet-stream")]
     protected static const GHOST :Class;
