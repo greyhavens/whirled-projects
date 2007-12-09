@@ -231,17 +231,17 @@ public class HUD extends Sprite
 
     protected function ghostVanished (id :String) :void
     {
-        Log.getLog(HUD).debug("Ghost vanishing [id=" + id + "]");
+        log.debug("Ghost vanishing [id=" + id + "]");
     }
 
     protected function helpClick (evt :Event) :void
     {
-        Log.getLog(HUD).debug("Whee, button clicked: " + evt);
+        log.debug("Whee, button clicked: " + evt);
     }
 
     protected function lootClick (evt :Event) :void
     {
-        Log.getLog(HUD).debug("Whee, button clicked: " + evt);
+        log.debug("Whee, button clicked: " + evt);
     }
 
     protected function ghostClick (evt :MouseEvent) :void
@@ -331,6 +331,8 @@ public class HUD extends Sprite
     protected var _random :Random = new Random();
 
     protected var _lanternLoop :SoundChannel;
+
+    protected static var log :Log = Log.getLog(HUD);
 
     protected static const FRAMES_PER_UPDATE :int = 6;
 

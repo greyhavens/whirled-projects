@@ -113,8 +113,7 @@ public class Ghostbusters extends Sprite
             _hud.visible = true;
 
         } else {
-            Log.getLog(this).debug("Clicked on: " + evt.target);
-            Log.getLog(this).debug("Clicked on name: " + (evt.target as DisplayObject).name);
+            log.debug("Clicked on: " + evt.target + "/" + (evt.target as DisplayObject).name);
         }
     }
 
@@ -125,12 +124,12 @@ public class Ghostbusters extends Sprite
 
     protected function propertyChanged (event: AVRGameControlEvent) :void
     {
-        Log.getLog(this).debug("property changed: " + event.name + "=" + event.value);
+        log.debug("property changed: " + event.name + "=" + event.value);
     }
 
     protected function playerPropertyChanged (event: AVRGameControlEvent) :void
     {
-        Log.getLog(this).debug("property changed: " + event.name + "=" + event.value);
+        log.debug("property changed: " + event.name + "=" + event.value);
     }
 
     protected function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
@@ -147,6 +146,8 @@ public class Ghostbusters extends Sprite
     protected var _ghost :SpawnedGhost;
 
     protected var _splash :MovieClip = MovieClip(new SPLASH());
+
+    protected static var log :Log = Log.getLog(Ghostbusters);
 
     [Embed(source="../../rsrc/splash01.swf")]
     protected static const SPLASH :Class;
