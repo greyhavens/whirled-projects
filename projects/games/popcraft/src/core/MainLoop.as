@@ -43,6 +43,8 @@ public class MainLoop
         _hasSetup = true;
 
         Rand.setup();
+
+        ResourceManager.instance;
     }
 
     public function run () :void

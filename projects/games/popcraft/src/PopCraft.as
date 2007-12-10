@@ -19,7 +19,7 @@ public class PopCraft extends Sprite
     /**
      * Returns the singleton PopCraft instance
      */
-    public static function get instance() :PopCraft
+    public static function get instance () :PopCraft
     {
         Assert.isTrue(null != g_instance);
         return g_instance;

@@ -2,6 +2,7 @@ package popcraft {
 
 import core.AppMode;
 import core.MainLoop;
+import core.ResourceManager;
 import com.threerings.util.Assert;
 
 public class GameMode extends AppMode
@@ -23,6 +24,9 @@ public class GameMode extends AppMode
     override public function setup () :void
     {
         _playerData = new PlayerData();
+
+        // load resources
+        ResourceManager.instance.loadImage("melee", "rsrc/melee.png");
 
         // add the top-level game objects
 
