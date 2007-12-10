@@ -9,12 +9,17 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.TimerEvent;
 
 import flash.geom.Point;
+
+import flash.media.Camera;
 
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
+
+import flash.utils.Timer;
 
 import fl.controls.Button;
 import fl.controls.ComboBox;
@@ -26,11 +31,15 @@ import fl.skins.DefaultButtonSkins;
 import fl.skins.DefaultComboBoxSkins;
 import fl.skins.DefaultTextAreaSkins;
 
+import mx.effects.easing.Cubic;
+
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
+import com.threerings.util.Util;
 
 import com.threerings.flash.path.Path;
+import com.threerings.flash.path.EasingPath;
 
 import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
@@ -50,9 +59,8 @@ public class Fifteen extends Sprite
     public static const SOLVED_STATE :Array = computeSolvedState();
 
     public static const SOURCE_NUMBERS :int = 0;
-    public static const SOURCE_MONALISA :int = 1;
+    public static const SOURCE_URL :int = 1;
     public static const SOURCE_CAMERA :int = 2;
-    public static const SOURCE_URL :int = 3;
 
     public static const SOURCES :Array = [ "Numbers", "Mona Lisa", "Camera" ];
 
@@ -61,6 +69,8 @@ public class Fifteen extends Sprite
         _ctrl = new FurniControl(this);
         _toy = new ToyState(_ctrl, true, 15);
         _toy.addEventListener(ToyState.STATE_UPDATED, handleStateUpdated);
+
+        _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
 
         initUI();
         readState();
@@ -82,6 +92,13 @@ public class Fifteen extends Sprite
 
     protected function initUI () :void
     {
+        var mask :Sprite = new Sprite();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, 220, 250);
+        mask.graphics.endFill();
+        addChild(mask);
+        this.mask = mask;
+
         // draw the board background
         graphics.beginFill(0xFFFFFF);
         graphics.lineStyle(0x000000, 1);
@@ -115,32 +132,195 @@ public class Fifteen extends Sprite
 
         tileHolder.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
 
+        _palette = new Sprite();
+        addChild(_palette);
+
         // create the label used to report who is modifying
         _label = new Label();
         _label.text = "";
         _label.setStyle("textFormat", new TextFormat(null, 12, null, true));
         _label.setSize(220, 22);
-        addChild(_label);
+        _palette.addChild(_label);
 
-        _sourceBox = new ComboBox();
-        for (ii = 0; ii < SOURCES.length; ii++) {
-            _sourceBox.addItem({ label: SOURCES[ii], data: ii });
+        var config :Button = new Button();
+        config.label = "Config";
+        config.setSize(config.textField.textWidth + 25, 22);
+        config.x = 220 - config.width;
+        config.addEventListener(MouseEvent.CLICK, handleOpenConfig);
+        _palette.addChild(config);
+
+        // finally, let's set our tile provider
+        if (_ctrl.isConnected()) {
+            _skinData = _ctrl.lookupMemory("skin") as Array;
         }
-        _sourceBox.addEventListener(Event.CHANGE, handleSourceSelected);
-        _sourceBox.setSize(100, 22);
-        _sourceBox.x = 120;
-        addChild(_sourceBox);
-        _sourceBox.selectedIndex = 0;
-        handleSourceSelected();
+        updateTileProvider();
+    }
 
-//        if (!_ctrl.isConnected() || _ctrl.canEditRoom()) {
-//            _button = new Button();
-//            _button.label = "Reset";
-//            _button.setSize(_button.textField.textWidth + 25, 22);
-//            _button.x = 220 - _button.width;
-//            addChild(_button);
-//            _button.addEventListener(MouseEvent.CLICK, resetState);
-//        }
+    protected function handleOpenConfig (event :MouseEvent) :void
+    {
+        _sourceBox = new ComboBox();
+        _sourceBox.addItem({ label: "Numbers" });
+        _sourceBox.addItem({ label: "Mona Lisa",
+            data: [ SOURCE_URL,
+                    "http://media.whirled.com/16ee8aa22ff39ee61a245c28d0b183d0c1b972dd.jpg" ] });
+// TODO: real URL entry?
+//        _sourceBox.addItem({ label: "URL", data: [ SOURCE_URL, null ] });
+        var names :Array = Camera.names;
+        if (names != null && names.length > 0) {
+// TODO: real camera selection?
+//            for (var ii :int = 0; ii < names.length; ii++) {
+//                _sourceBox.addItem({ label: "Camera: " + names[ii],
+//                    data: [ SOURCE_CAMERA, String(ii) ] });
+//            }
+            _sourceBox.addItem({ label: "Camera (local)", data: [ SOURCE_CAMERA ] });
+        }
+
+        // select the right source
+        var found :Boolean = false;
+        for (var ii :int = 0; ii < _sourceBox.length; ii++) {
+            if (Util.equals(_skinData, _sourceBox.getItemAt(ii).data)) {
+                found = true;
+                _sourceBox.selectedIndex = ii;
+                break;
+            }
+        }
+        if (!found && _skinData[0] == SOURCE_URL) {
+            var item :Object = { label: _skinData[1], data: _skinData };
+            _sourceBox.addItem(item);
+            _sourceBox.selectedItem = item;
+        }
+
+        var close :Button = new Button();
+        close.label = "Close";
+        close.setSize(close.textField.textWidth + 25, 22);
+        close.x = 220 + (220 - close.width);;
+        close.addEventListener(MouseEvent.CLICK, handleCloseConfig)
+        _palette.addChild(close);
+
+        _sourceBox.addEventListener(Event.CHANGE, handleSourceSelected);
+        _sourceBox.addEventListener(Event.OPEN, handleSourceOpened);
+        _sourceBox.addEventListener(Event.CLOSE, handleSourceClosed);
+        _sourceBox.setSize(220 - close.width, 22);
+        _sourceBox.x = 220;
+        _palette.addChild(_sourceBox);
+
+        _closeTimer = new Timer(20000, 1);
+        _closeTimer.addEventListener(TimerEvent.TIMER, handleCloseConfig);
+        _closeTimer.start();
+
+        // then, actually open it
+        new EasingPath(_palette, -220, 0, 1000, Cubic.easeInOut).start();
+    }
+
+    protected function handleSourceSelected (... ignored) :void
+    {
+        var skinData :Array = _sourceBox.selectedItem.data as Array;
+        // TODO: Url entry?
+        setSkin(skinData);
+    }
+
+    protected function handleSourceOpened (... ignored) :void
+    {
+        _closeTimer.reset();
+    }
+
+    protected function handleSourceClosed (... ignored) :void
+    {
+        _closeTimer.start();
+    }
+
+    protected function setSkin (skinData :Array) :void
+    {
+        if (Util.equals(skinData, _skinData)) {
+            // if no change, ignore
+            return;
+        }
+
+        _skinData = skinData;
+        _setOwnSkin = true;
+
+        if (_ctrl.isConnected() && _ctrl.canEditRoom()) {
+            _ctrl.updateMemory("skin", skinData);
+        }
+        updateTileProvider();
+    }
+
+    protected function updateTileProvider () :void
+    {
+        // shutdown any previous provider
+        if (_tileProvider != null) {
+            _tileProvider.shutdown();
+            _tileProvider = null;
+        }
+
+        var provider :int;
+        var arg :String;
+        if (_skinData == null) {
+            provider = SOURCE_NUMBERS;
+
+        } else {
+            provider = int(_skinData[0]);
+            arg = _skinData[1] as String;
+        }
+
+        switch (provider) {
+        case SOURCE_URL:
+            _tileProvider = new UrlTileProvider(arg);
+            break;
+
+        case SOURCE_CAMERA:
+            // make sure this user HAS cameras
+            var camNames :Array = Camera.names;
+            if (camNames != null && camNames.length > 0) {
+                //_tileProvider = new CameraTileProvider(_ctrl.getCamera(arg));
+                _tileProvider = new CameraTileProvider(_ctrl.getCamera());
+                break;
+            }
+            // else, fall through...
+
+        default:
+            _tileProvider = new NumberTileProvider();
+            break;
+        }
+
+        _tileProvider.init(this, _tiles);
+    }
+
+    protected function handleCloseConfig (event :Event) :void
+    {
+        _closeTimer.stop();
+        _closeTimer = null;
+
+        // defang the controls
+        _sourceBox.removeEventListener(Event.CHANGE, handleSourceSelected);
+
+        var closePath :Path = new EasingPath(_palette, 0, 0, 1000, Cubic.easeInOut);
+        closePath.setOnComplete(configWasClosed);
+        closePath.start();
+    }
+
+    protected function configWasClosed (path :Path) :void
+    {
+        _sourceBox = null;
+
+        // clean up palette
+        while (_palette.numChildren > 2) {
+            _palette.removeChildAt(2);
+        }
+    }
+
+    protected function handleMemoryChanged (event :ControlEvent) :void
+    {
+        if (event.name == "skin") {
+            // we only update if this local client hasn't configured their own skin
+            if (!_setOwnSkin) {
+                var skinData :Array = event.value as Array;
+                if (!Util.equals(skinData, _skinData)) {
+                    _skinData = skinData;
+                    updateTileProvider();
+                }
+            }
+        }
     }
 
     protected function readState () :void
@@ -157,7 +337,7 @@ public class Fifteen extends Sprite
 
     protected function updateModifierName (name :String) :void
     {
-        _label.text = (name == null) ? "" : (name + " is modifying the puzzle.");
+        _label.text = (name == null) ? "" : (name + " is solving.");
     }
 
     protected function positionTiles () :void
@@ -202,7 +382,7 @@ public class Fifteen extends Sprite
             _state[position] = BLANK_TILE;
             if (doSet) {
                 _stateQueue.length = 0; // truncate our state queue, we're taking control
-                _label.text = "You are modifying the puzzle.";
+                _label.text = "You are solving.";
                 _toy.setState(_state);
             }
 
@@ -356,27 +536,6 @@ public class Fifteen extends Sprite
         }
     }
 
-    protected function handleSourceSelected (... ignored) :void
-    {
-        if (_tileProvider != null) {
-            _tileProvider.shutdown();
-            _tileProvider = null;
-        }
-
-        switch (_sourceBox.selectedIndex) {
-        default:
-        case SOURCE_NUMBERS:
-            _tileProvider = new NumberTileProvider();
-            break;
-
-        case SOURCE_CAMERA:
-            _tileProvider = new CameraTileProvider(_ctrl.getCamera());
-            break;
-        }
-
-        _tileProvider.init(this, _tiles);
-    }
-
     /**
      * Compute the "solved" state for this puzzle.
      */
@@ -397,6 +556,10 @@ public class Fifteen extends Sprite
 
     protected var _blank :BlankTile;
 
+    protected var _setOwnSkin :Boolean;
+
+    protected var _skinData :Array;
+
     protected var _tileProvider :TileProvider;
 
     protected var _state :Array;
@@ -407,18 +570,22 @@ public class Fifteen extends Sprite
 
     protected var _paths :Array = [];
 
-    protected var _button :Button;
+    protected var _palette :Sprite;
 
     protected var _sourceBox :ComboBox;
+
+    protected var _closeTimer :Timer;
 
     protected var _label :Label;
 }
 }
 
 import flash.display.BitmapData;
+import flash.display.Loader;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.events.ProgressEvent;
 
 import flash.geom.Matrix;
 import flash.geom.Point;
@@ -427,6 +594,10 @@ import flash.events.MouseEvent;
 
 import flash.media.Camera;
 import flash.media.Video;
+
+import flash.system.LoaderContext;
+
+import flash.net.URLRequest;
 
 import flash.text.TextField;
 import flash.text.TextFormat;
@@ -527,6 +698,8 @@ class NumberTileProvider extends TileProvider
 {
     override public function startup () :void
     {
+        super.startup();
+
         for (var ii :int = 0; ii < _tiles.length - 1; ii++) {
             var tile :Sprite = _tiles[ii] as Sprite;
             tile.graphics.beginFill(0xFFFFEE);
@@ -568,6 +741,52 @@ class ChoppingTileProvider extends TileProvider
     }
 }
 
+class UrlTileProvider extends ChoppingTileProvider
+{
+    public function UrlTileProvider (url :String)
+    {
+        _loader = new Loader();
+        _loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, handleDoUpdate);
+        _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleDoUpdate);
+        _bmp = new BitmapData(Fifteen.BOARD_WIDTH, Fifteen.BOARD_HEIGHT, false);
+        _loader.load(new URLRequest(url), new LoaderContext(true));
+    }
+
+    override public function shutdown () :void
+    {
+        super.shutdown();
+        try {
+            _loader.close();
+        } catch (err :Error) {
+            // nada
+        }
+        _loader.unload();
+    }
+
+    protected function handleDoUpdate (event :Event) :void
+    {
+        var w :Number;
+        var h :Number;
+        try {
+            w = _loader.contentLoaderInfo.width;
+            h = _loader.contentLoaderInfo.height;
+        } catch (err :Error) {
+            // not loaded enough yet
+            return;
+        }
+
+        var matrix :Matrix = new Matrix();
+        matrix.scale(Fifteen.BOARD_WIDTH / w, Fifteen.BOARD_HEIGHT / h);
+
+        _bmp.draw(_loader, matrix);
+        bitmapToTiles(_bmp);
+    }
+
+    protected var _loader :Loader;
+
+    protected var _bmp :BitmapData;
+}
+
 class CameraTileProvider extends ChoppingTileProvider
 {
     public function CameraTileProvider (cam :Camera)
@@ -579,11 +798,13 @@ class CameraTileProvider extends ChoppingTileProvider
 
     override public function startup () :void
     {
+        super.startup();
         _fifteen.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
     override public function shutdown () :void
     {
+        super.shutdown();
         _fifteen.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
