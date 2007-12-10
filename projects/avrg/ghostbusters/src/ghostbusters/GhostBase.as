@@ -55,6 +55,7 @@ public class GhostBase extends Sprite
 
     protected static const STATE_WALKING :String = "state_Default_walking";
     protected static const STATE_APPEAR :String = "state_Appear";
+    protected static const STATE_FIGHT :String = "state_fightstance";
 
     [Embed(source="../../rsrc/Ghost.swf", mimeType="application/octet-stream")]
     protected static const GHOST :Class;

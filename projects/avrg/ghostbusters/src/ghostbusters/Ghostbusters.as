@@ -33,7 +33,7 @@ public class Ghostbusters extends Sprite
 
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
 
-        // DEBUG
+        // TODO: this is just while debugging
         _control.despawnMob("ghost");
 
         _control = new AVRGameControl(this);
@@ -125,6 +125,16 @@ public class Ghostbusters extends Sprite
     protected function propertyChanged (event: AVRGameControlEvent) :void
     {
         log.debug("property changed: " + event.name + "=" + event.value);
+        if (_ghost && event.name == "gh") {
+            var bits :Array = event.value as Array;
+            if (bits != null) {
+                var roomId :int = int(bits[0]);
+                // TODO: high time to introduce a proper Model
+                if (roomId == _control.getRoomId()) {
+                    _ghost.updateHealth(Number(bits[1]));
+                }
+            }
+        }
     }
 
     protected function playerPropertyChanged (event: AVRGameControlEvent) :void
