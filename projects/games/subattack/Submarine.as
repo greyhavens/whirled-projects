@@ -23,8 +23,9 @@ public class Submarine extends BaseSprite
     //public static const SHIFTS :Array = [ 40, -80, 120, -160 -40, 80, -120, 160 ];
     public static const SHIFTS :Array = [ -136, 21, -106, 77, -38, 143, 0, 180 ];
 
-    /** How often can we build? */
-    public static const TICKS_PER_BUILD :int = 50; // about every 5 seconds
+    public static const POINTS_TO_BUILD :int = 100;
+    public static const POINTS_PER_KILL :int = 200;
+    public static const POINTS_PER_DEATH :int = -100;
 
     /** How many ticks does it take to build? */
     public static const TICKS_TO_BUILD :int = 5; // how long does it take to build?
@@ -80,6 +81,15 @@ public class Submarine extends BaseSprite
     public function getHueShift () :BitmapFilter
     {
         return _hueShift;
+    }
+
+    public function addPoints (points :int, show :Boolean = false) :void
+    {
+        _points += points;
+        updateDisplayedScore();
+        if (show) {
+            _board.showPoints(_x, _y, points);
+        }
     }
 
     public function getPlayerId () :int
@@ -204,14 +214,14 @@ public class Submarine extends BaseSprite
         }
 
         if (action == Action.BUILD) {
-            if (_tickCanBuild > _tickCount) {
+            if (_points < POINTS_TO_BUILD) {
                 return DROP;
             }
             _movedOrShot = true;
             if (++_buildingStep == TICKS_TO_BUILD) {
+                addPoints(-POINTS_TO_BUILD, true);
                 _board.buildFactory(this);
                 _buildingStep = 0;
-                _tickCanBuild = _tickCount + TICKS_PER_BUILD;
                 return OK;
             }
             return CANT; // it takes 3 ticks for the build to go through...
@@ -307,6 +317,11 @@ public class Submarine extends BaseSprite
             return;
         }
 
+        // get points for every kill
+        if (kills > 0) {
+            addPoints(kills * POINTS_PER_KILL, true);
+        }
+
         // remove it
         _torpedos.splice(idx, 1);
 
@@ -314,7 +329,6 @@ public class Submarine extends BaseSprite
         _kills += kills;
         _totalKills += kills;
         updateVisual();
-        updateDisplayedScore();
     }
 
     /**
@@ -322,6 +336,9 @@ public class Submarine extends BaseSprite
      */
     public function wasKilled () :void
     {
+        // lose points for getting wacked
+        addPoints(POINTS_PER_DEATH, true);
+
         _dead = true;
         _deaths++;
         _totalDeaths++;
@@ -329,6 +346,7 @@ public class Submarine extends BaseSprite
         _queuedActions.length = 0; // drop any queued actions
         updateVisual();
         updateDeath();
+        updateDisplayedScore();
         _respawnTicks = AUTO_RESPAWN_TICKS;
 
         if (_ghost != null) {
@@ -374,7 +392,7 @@ public class Submarine extends BaseSprite
     protected function updateDisplayedScore () :void
     {
         var score :Object = {};
-        score[_playerId] = [_kills + " kills, " + _deaths + " deaths.", (_kills - _deaths)];
+        score[_playerId] = _points; //[_kills + " kills, " + _deaths + " deaths.", (_kills - _deaths)];
         if (_gameCtrl != null) {
             _gameCtrl.setMappedScores(score);
         }
@@ -433,10 +451,11 @@ public class Submarine extends BaseSprite
 
     protected var _tickCount :int = 0;
 
-    protected var _tickCanBuild :int = TICKS_PER_BUILD;
-
     /** Our currently in-flight torpedos. */
     protected var _torpedos :Array = [];
+
+    /** How many points do we have? */
+    protected var _points :int = 0;
 
     /** The number of kills we've had. */
     protected var _kills :int;

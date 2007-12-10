@@ -55,7 +55,7 @@ public class SeaDisplay extends Sprite
             Bitmap(new MOSS2()).bitmapData
         ];
 
-        var trees :Array = [
+        _trees = [
             Bitmap(new TREE1()).bitmapData,
             Bitmap(new TREE2()).bitmapData,
             Bitmap(new TREE3()).bitmapData,
@@ -70,6 +70,8 @@ public class SeaDisplay extends Sprite
             Bitmap(new ROCK3()).bitmapData,
             Bitmap(new ROCK4()).bitmapData
         ];
+
+        var temple :BitmapData = Bitmap(new TEMPLE()).bitmapData;
 
         if (rando == null) {
             rando = new Random(int(getTimer()));
@@ -102,7 +104,7 @@ public class SeaDisplay extends Sprite
                 case Board.BLANK:
                     // if we're blank, we need to be either moss or ground, depending on what's
                     // above us.
-                    if (yy == 0 || (Board.BLANK == int(board[xx * (yy - 1) * boardWidth]))) {
+                    if (yy == 0 || (Board.BLANK == int(board[xx + ((yy - 1) * boardWidth)]))) {
                         toDraw = pickBitmap(rando, _grounds);
                     } else {
                         toDraw = pickBitmap(rando, _moss);
@@ -119,7 +121,12 @@ public class SeaDisplay extends Sprite
                 switch (type) {
                 case Board.TREE:
                 case Board.ROCK:
-                    toDraw = pickBitmap(rando, (type == Board.TREE) ? trees : rocks);
+                case Board.TEMPLE:
+                    if (type == Board.TEMPLE) {
+                        toDraw = temple;
+                    } else {
+                        toDraw = pickBitmap(rando, (type == Board.TREE) ? _trees : rocks);
+                    }
                     data.draw(toDraw, matrix);
                     break;
                 }
@@ -198,9 +205,16 @@ public class SeaDisplay extends Sprite
         xx :int, yy :int, value :int,
         aboveIsBlank :Boolean, belowIsBlank :Boolean) :void
     {
-        if (value == Board.BLANK) {
+        var matrix :Matrix;
+        if (value == Board.TREE) {
+            // we must have destroyed a temple
+            matrix = new Matrix();
+            matrix.translate(xx * TILE_SIZE, yy * TILE_SIZE);
+            _tiles.bitmapData.draw(pickBitmap(null, _trees), matrix);
+
+        } else if (value == Board.BLANK) {
             // draw a blank square
-            var matrix :Matrix = new Matrix();
+            matrix = new Matrix();
             matrix.translate(xx * TILE_SIZE, yy * TILE_SIZE);
             _tiles.bitmapData.draw(pickBitmap(null, aboveIsBlank ? _grounds : _moss), matrix);
 
@@ -262,12 +276,17 @@ public class SeaDisplay extends Sprite
 
     protected var _boardWidth :int;
 
+    protected var _trees :Array;
+
     protected var _grounds :Array;
 
     protected var _moss :Array;
 
     /** Our status message. */
     protected var _status :TextField;
+
+    [Embed(source="temple.png")]
+    protected static const TEMPLE :Class;
 
     [Embed(source="tree1.png")]
     protected static const TREE1 :Class;

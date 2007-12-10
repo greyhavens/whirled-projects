@@ -40,13 +40,16 @@ public class Factory extends BaseSprite
      */
     public function tick () :void
     {
-        // TODO
+        if (++_ticks % 50 == 0) {
+            _board.showPoints(_x, _y, 10);
+            _sub.addPoints(10);
+        }
     }
 
     /** Our owning submarine. */
     protected var _sub :Submarine;
 
-    protected var _damage :int = 0;
+    protected var _ticks :int = 0;
 
     [Embed(source="factory.swf#factory")]
     protected static const FACTORY :Class;

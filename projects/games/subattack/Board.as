@@ -20,6 +20,7 @@ public class Board
     /** Traversability constants. */
     public static const BLANK :int = 0;
     public static const TREE :int = 1;
+    public static const TEMPLE :int = 2;
     public static const ROCK :int = int.MAX_VALUE;
 
     public function Board (gameCtrl :WhirledGameControl, seaDisplay :SeaDisplay)
@@ -37,8 +38,9 @@ public class Board
         _maxTotalDeaths = playerCount * 5;
         _maxKills = Math.max(1, (playerCount - 1) * 5);
 
+        var size :int = _width * _height;
         var ii :int;
-        for (ii = _width * _height - 1; ii >= 0; ii--) {
+        for (ii = size - 1; ii >= 0; ii--) {
             _board[ii] = TREE;
         }
 
@@ -46,21 +48,39 @@ public class Board
         var pick :int;
 
         // scatter some rocks around
-        var numRocks :int = (_width * _height) / 40;
+        var numRocks :int = size / 40;
         for (ii = 0; ii < numRocks; ii++) {
             do {
-                pick = rando.nextInt(_width * _height);
+                pick = rando.nextInt(size);
             } while (_board[pick] != TREE);
             _board[pick] = ROCK;
         }
 
-        // scatter some blanks around
-        var numBlanks :int = (_width * _height) / 20;
-        for (ii = 0; ii < numRocks; ii++) {
+        // scatter some temples around
+        var numTemples :int = size / 10;
+        for (ii = 0; ii < numTemples; ii++) {
             do {
-                pick = rando.nextInt(_width * _height);
+                pick = rando.nextInt(size);
             } while (_board[pick] != TREE);
-            _board[pick] = BLANK;
+            _board[pick] = TEMPLE;
+        }
+
+        // scatter some clumpy clearings
+        var numBlanks :int = size / 100;
+        for (ii = 0; ii < numBlanks; ii++) {
+            do {
+                pick = rando.nextInt(size);
+            } while (_board[pick] != TREE);
+            var radius :int = rando.nextInt(3);
+            var x :int = int(pick % _width);
+            var y :int = int(pick / _width);
+            for (var yy :int = Math.max(0, y - radius); yy <= Math.min(_height - 1, y + radius);
+                    yy++) {
+                for (var xx :int = Math.max(0, x - radius); xx <= Math.min(_width - 1, x + radius);
+                        xx++) {
+                    _board[xx + (yy * _width)] = BLANK;
+                }
+            }
         }
 
         _seaDisplay.setupSea(_width, _height, _board, rando);
@@ -158,15 +178,23 @@ public class Board
         }
 
         var val :int = int(_board[coordsToIdx(xx, yy)]);
-        if (val == TREE) {
-            return true;
-
-        } else if (val == BLANK || val == ROCK) {
+        if (val == BLANK || val == ROCK) {
             return false;
+
+        } else if (val > BLANK) {
+            return true;
 
         } else {
             return (playerIdx != int(val / -100));
         }
+    }
+
+    public function showPoints (x :int, y :int, points :int) :void
+    {
+        var pts :PointsSprite = new PointsSprite(points);
+        pts.x = x * SeaDisplay.TILE_SIZE;
+        pts.y = y * SeaDisplay.TILE_SIZE;
+        _seaDisplay.addChild(pts);
     }
 
     /**
@@ -196,7 +224,7 @@ public class Board
         var bestDist :Number = 0;
         for (var yy :int = 0; yy < _height; yy++) {
             for (var xx :int = 0; xx < _width; xx++) {
-                if (0 == int(_board[coordsToIdx(xx, yy)])) {
+                if (Board.BLANK == int(_board[coordsToIdx(xx, yy)])) {
                     var minDist :Number = Number.MAX_VALUE;
                     for each (var otherSub :Submarine in _subs) {
                         if (otherSub != sub && !otherSub.isDead()) {
