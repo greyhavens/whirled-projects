@@ -209,7 +209,7 @@ public class Locksmith extends Sprite
                 scores[ScoreBoard.SUN_PLAYER] =
                     Math.round((_scoreBoard.sunScore / WIN_SCORE) * 100);
                 _wgc.endGameWithScores(_wgc.seating.getPlayerIds(), scores,
-                    WhirledGameControl.CASCADING_PAYOUT);
+                    WhirledGameControl.TO_EACH_THEIR_OWN);
                 var winner :int = scores[0] == scores[1] ? -1 : 
                     (scores[0] > scores[1] ? ScoreBoard.MOON_PLAYER : ScoreBoard.SUN_PLAYER);
                 _wgc.sendMessage(WINNER, winner);
