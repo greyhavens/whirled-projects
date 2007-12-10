@@ -14,8 +14,6 @@ import flash.geom.Point;
 
 import com.threerings.flash.AlphaFade;
 
-import com.threerings.util.Log;
-
 public class Box extends Sprite
 {
     public function Box (innards :DisplayObject)
@@ -46,7 +44,7 @@ public class Box extends Sprite
         _backdrop.scaleX = innards.width / _boxClip.width;
         _backdrop.scaleY = innards.height / _boxClip.height;
 
-        log.debug("Scaled to: (" + _backdrop.scaleX + ", " + _backdrop.scaleY + ")");
+        Game.log.debug("Scaled to: (" + _backdrop.scaleX + ", " + _backdrop.scaleY + ")");
 
         _fadeIn = new AlphaFade(_foreground, 0, 1, 300);
         _fadeOut = new AlphaFade(_foreground, 1, 0, 300, function () :void {
@@ -103,8 +101,6 @@ public class Box extends Sprite
     protected var _boxAppearHandler :ClipHandler;
     protected var _boxDisappearClip :MovieClip = MovieClip(new TEXT_BOX_DISAPPEAR());
     protected var _boxDisappearHandler :ClipHandler;
-
-    protected static const log :Log = Log.getLog(Box);
 
     protected static const BOX_PADDING :int = 10;
 

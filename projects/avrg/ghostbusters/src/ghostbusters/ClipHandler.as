@@ -7,8 +7,6 @@ import flash.display.MovieClip;
 import flash.display.Scene;
 import flash.events.Event;
 
-import com.threerings.util.Log;
-
 /**
  * A simple utility class that binds to a MovieClip and then plays scenes of that clip on request,
  * executing a callback method when the scene is finished.
@@ -24,8 +22,8 @@ public class ClipHandler
         scenes = new Object();
         for (var ii :int = 0; ii < clip.scenes.length; ii ++) {
             var scene :Scene = _clip.scenes[ii];
-            log.debug("Indexing [scene=" + scene.name + ", frames=" + scene.numFrames +
-                      ", labels=" + scene.labels + "]");
+            Game.log.debug("Indexing [scene=" + scene.name + ", frames=" + scene.numFrames +
+                           ", labels=" + scene.labels + "]");
             scenes[scene.name] = scene;
         }
     }
@@ -42,7 +40,7 @@ public class ClipHandler
             _callback = done;
             _clip.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
             _clip.gotoAndPlay(1, sceneName);
-            log.debug("Playing: " + sceneName);
+            Game.log.debug("Playing: " + sceneName);
             return true;
         }
         return false;
@@ -54,7 +52,7 @@ public class ClipHandler
         _callback = done;
         _clip.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         _clip.gotoAndPlay(1);
-        log.debug("Playing: <" + sceneNum + ">");
+        Game.log.debug("Playing: <" + sceneNum + ">");
         return true;
     }
 
@@ -75,7 +73,7 @@ public class ClipHandler
 
         // otherwise perhaps we're done?
         if (_clip.currentFrame == _scene.numFrames) {
-            log.debug("Clip done, ending [numFrames=" + _scene.numFrames + "]");
+            Game.log.debug("Clip done, ending [numFrames=" + _scene.numFrames + "]");
             // if so trigger the callback (if any)
             if (_callback != null) {
                 _callback();
@@ -85,8 +83,6 @@ public class ClipHandler
             return;
         }
     }
-
-    protected static const log :Log = Log.getLog(ClipHandler);
 
     protected var _clip :MovieClip;
     protected var _scene :Scene;

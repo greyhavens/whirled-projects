@@ -21,36 +21,28 @@ import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.MobControl;
 
+import com.threerings.util.CommandEvent;
 import com.threerings.util.EmbeddedSwfLoader;
-import com.threerings.util.Log;
 
-[SWF(width="700", height="500")]
-public class Ghostbusters extends Sprite
+import ghostbusters.fight.SpawnedGhost;
+
+public class GamePanel extends Sprite
 {
-    public function Ghostbusters ()
+    public function GamePanel (model :GameModel)
     {
-        addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
+        _model = model;
 
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
 
-        // TODO: this is just while debugging
-        _control.despawnMob("ghost");
-
-        _control = new AVRGameControl(this);
-        _control.addEventListener(
-            AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
-        _control.addEventListener(
-            AVRGameControlEvent.PLAYER_PROPERTY_CHANGED, playerPropertyChanged);
-
-        _control.setMobSpriteExporter(exportMobSprite);
-
-        _control.setHitPointTester(hitTestPoint);
-
-        _hud = new HUD(_control);
+        _hud = new HUD();
         _hud.visible = false;
         this.addChild(_hud);
 
         this.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
+    }
+
+    public function shutdown () :void
+    {
     }
 
     override public function hitTestPoint (
@@ -63,9 +55,32 @@ public class Ghostbusters extends Sprite
         return _box && _box.hitTestPoint(x, y, shapeFlag);
     }
 
+    public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
+    {
+        _ghost = new SpawnedGhost(ctrl);
+        return _ghost;
+    }
+
+    public function enterState (state :String) :void
+    {
+        if (state == GameModel.STATE_SEEKING) {
+            // TODO: somehow we need to have received a reference to SeekPanel here
+        }
+    }
+
+    public function ghostHealthUpdated (health :Number) :void
+    {
+        _ghost.updateHealth(health);
+    }
+
     protected function handleAdded (evt :Event) :void
     {
         showSplash();
+    }
+
+    protected function handleUnload (event :Event) :void
+    {
+        _hud.shutdown();
     }
 
     protected function showHelp () :void
@@ -103,52 +118,23 @@ public class Ghostbusters extends Sprite
         if (evt.target.name == "close") {
             _box.hide();
             // TODO: only do this when box finishes hiding
-            _control.deactivateGame();
+            CommandEvent.dispatch(this, GameController.END_GAME);
+//            _control.deactivateGame();
 
         } else if (evt.target.name == "help") {
-            showHelp();
+            CommandEvent.dispatch(this, GameController.HELP);
 
         } else if (evt.target.name == "playnow") {
             _box.hide();
+            CommandEvent.dispatch(this, GameController.PLAY);
             _hud.visible = true;
 
         } else {
-            log.debug("Clicked on: " + evt.target + "/" + (evt.target as DisplayObject).name);
+            Game.log.debug("Clicked on: " + evt.target + "/" + (evt.target as DisplayObject).name);
         }
     }
 
-    protected function handleUnload (event :Event) :void
-    {
-        _hud.shutdown();
-    }
-
-    protected function propertyChanged (event: AVRGameControlEvent) :void
-    {
-        log.debug("property changed: " + event.name + "=" + event.value);
-        if (_ghost && event.name == "gh") {
-            var bits :Array = event.value as Array;
-            if (bits != null) {
-                var roomId :int = int(bits[0]);
-                // TODO: high time to introduce a proper Model
-                if (roomId == _control.getRoomId()) {
-                    _ghost.updateHealth(Number(bits[1]));
-                }
-            }
-        }
-    }
-
-    protected function playerPropertyChanged (event: AVRGameControlEvent) :void
-    {
-        log.debug("property changed: " + event.name + "=" + event.value);
-    }
-
-    protected function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
-    {
-        _ghost = new SpawnedGhost(ctrl);
-        return _ghost;
-    }
-
-    protected var _control :AVRGameControl;
+    protected var _model :GameModel;
 
     protected var _hud :HUD;
     protected var _box :Box;
@@ -156,8 +142,6 @@ public class Ghostbusters extends Sprite
     protected var _ghost :SpawnedGhost;
 
     protected var _splash :MovieClip = MovieClip(new SPLASH());
-
-    protected static var log :Log = Log.getLog(Ghostbusters);
 
     [Embed(source="../../rsrc/splash01.swf")]
     protected static const SPLASH :Class;

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package ghostbusters {
+package ghostbusters.seek {
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -18,6 +18,9 @@ import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 
+import ghostbusters.GhostBase;
+import ghostbusters.SplinePather;
+
 public class HidingGhost extends GhostBase
 {
     public function HidingGhost (roomId :int)
@@ -25,9 +28,6 @@ public class HidingGhost extends GhostBase
         super();
 
         _pather = new SplinePather();
-        _random = new Random(roomId);
-
-        _speed = 150 + 100 * _random.nextNumber();
     }
 
     public function isIdle () :Boolean
@@ -35,19 +35,10 @@ public class HidingGhost extends GhostBase
         return _pather.idle == 1;
     }
 
-    public function slow () :Boolean
+    public function setSpeed (newSpeed :Number) :void
     {
-        // this reduction rate will depend later on weapon level vs ghost level
-        var newSpeed :Number = (_speed * 0.8 - 20);
-        if (newSpeed < 10) {
-            _speed = 0;
-            _pather.adjustRate(0);
-            return true;
-        }
-
         _pather.adjustRate(newSpeed / _speed);
         _speed = newSpeed;
-        return false;
     }
 
     public function nextFrame () :void

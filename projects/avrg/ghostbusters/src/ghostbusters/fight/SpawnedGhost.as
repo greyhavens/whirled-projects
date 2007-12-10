@@ -1,17 +1,16 @@
 //
 // $Id$
 
-package ghostbusters {
+package ghostbusters.fight {
 
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
-import flash.utils.setTimeout;
-
-import com.threerings.util.Log;
-
 import com.whirled.MobControl;
+
+import ghostbusters.ClipHandler;
+import ghostbusters.GhostBase;
 
 public class SpawnedGhost extends GhostBase
 {
@@ -71,8 +70,6 @@ public class SpawnedGhost extends GhostBase
     protected var _control :MobControl;
     protected var _health :Sprite;
     protected var _handler :ClipHandler;
-
-    protected static var log :Log = Log.getLog(SpawnedGhost);
 
     protected static const HEALTH_WIDTH :int = 80;
     protected static const HEALTH_HEIGHT :int = 20;

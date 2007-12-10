@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package ghostbusters {
+package ghostbusters.seek {
 
 import flash.display.BlendMode;
 import flash.display.Graphics;
@@ -13,6 +13,8 @@ import flash.geom.Point;
 
 import com.threerings.util.Log;
 import com.threerings.util.Random;
+
+import ghostbusters.SplinePather;
 
 public class Lantern extends SplinePather
 {

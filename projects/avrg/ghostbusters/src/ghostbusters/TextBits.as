@@ -18,8 +18,6 @@ import flash.text.TextFormatAlign;
 
 import com.threerings.flash.SimpleTextButton;
 
-import com.threerings.util.Log;
-
 public class TextBits extends Sprite
 {
     public function TextBits (text :String)
@@ -122,8 +120,6 @@ public class TextBits extends Sprite
     protected var _rightButtonEdge :int;
 
     protected var _styleSheet :StyleSheet;
-
-    protected static const log :Log = Log.getLog(TextBits);
 
     protected static const GAP :int = 8;
 
