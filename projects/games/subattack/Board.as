@@ -4,6 +4,8 @@ import flash.events.Event;
 
 import flash.geom.Point;
 
+import flash.utils.Dictionary;
+
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 
@@ -41,15 +43,24 @@ public class Board
         }
 
         var rando :Random = new Random(int(_gameCtrl.get("seed")));
+        var pick :int;
 
         // scatter some rocks around
         var numRocks :int = (_width * _height) / 40;
         for (ii = 0; ii < numRocks; ii++) {
-            var pick :int;
             do {
                 pick = rando.nextInt(_width * _height);
             } while (_board[pick] != TREE);
             _board[pick] = ROCK;
+        }
+
+        // scatter some blanks around
+        var numBlanks :int = (_width * _height) / 20;
+        for (ii = 0; ii < numRocks; ii++) {
+            do {
+                pick = rando.nextInt(_width * _height);
+            } while (_board[pick] != TREE);
+            _board[pick] = BLANK;
         }
 
         _seaDisplay.setupSea(_width, _height, _board, rando);
@@ -111,12 +122,12 @@ public class Board
     }
 
     /**
-     * Is the specified tile completely traversable?
+     * Is the specified tile completely traversable, not counting any factories?
      */
-    public function isBlank (xx :int, yy :int) :Boolean
+    public function isBlankOrFactory (xx :int, yy :int) :Boolean
     {
         return (xx >= 0) && (xx < _width) && (yy >= 0) && (yy < _height) &&
-            (BLANK == int(_board[coordsToIdx(xx, yy)]));
+            (BLANK >= int(_board[coordsToIdx(xx, yy)]));
     }
 
     /**
@@ -129,7 +140,7 @@ public class Board
         }
 
         var val :int = int(_board[coordsToIdx(xx, yy)]);
-        if (val == TREE || val == ROCK) {
+        if (val > BLANK) {
             return false;
 
         } else if (val == BLANK) {
@@ -159,16 +170,17 @@ public class Board
     }
 
     /**
-     * Called to build a barrier at the specified location.
+     * Called to build a factory at the specified location.
      */
-    public function buildBarrier (playerIdx :int, xx :int, yy :int) :void
+    public function buildFactory (sub :Submarine) :void
     {
-        var dex :int = coordsToIdx(xx, yy);
+        var dex :int = coordsToIdx(sub.getX(), sub.getY());
         var val :int = int(_board[dex]);
         if (val == BLANK) {
-            val = -1 * (playerIdx * 100 + 3);
-            _board[dex] = val;
-            _seaDisplay.updateTraversable(xx, yy, val, isBlank(xx, yy - 1), isBlank(xx, yy + 1));
+            _board[dex] = -1 * (sub.getPlayerIndex() * 100 + Factory.MAX_HITS);
+            var factory :Factory = new Factory(sub, this);
+            _factories[dex] = factory;
+            _seaDisplay.addFactory(factory);
         }
     }
 
@@ -308,7 +320,8 @@ public class Board
     protected function setBlank (xx :int, yy :int) :void
     {
         _board[coordsToIdx(xx, yy)] = BLANK;
-        _seaDisplay.updateTraversable(xx, yy, BLANK, isBlank(xx, yy - 1), isBlank(xx, yy + 1));
+        _seaDisplay.updateTraversable(xx, yy, BLANK,
+            isBlankOrFactory(xx, yy - 1), isBlankOrFactory(xx, yy + 1));
     }
 
     /**
@@ -320,10 +333,11 @@ public class Board
     {
         var idx :int = coordsToIdx(xx, yy);
         var val :int = int(_board[idx]);
-        var subsAffected :Boolean = true;
-        if (val == BLANK) {
-            // that's strange, but ok
-            return true; // nothing to do
+        if (val == ROCK) {
+            return false; // there shouldn't even be any subs here
+
+        } else if (val == BLANK) {
+            return true; // there's ONLY subs here
 
         } else if (val > BLANK) {
             val--;
@@ -336,37 +350,32 @@ public class Board
                 return true;
             }
 
+            var factory :Factory = Factory(_factories[idx]);
             var level :int = -val % 100;
             level--;
             if (level == 0) {
                 val = BLANK;
+                _seaDisplay.removeChild(factory);
+                delete _factories[idx];
+
             } else {
                 val = -(pidx * 100 + level)
+                factory.updateVisual(level);
             }
-            subsAffected = false;
+            _board[idx] = val;
+            return false;
         }
 
         // record the new traversability
         _board[idx] = val;
 
         // update the display
-        _seaDisplay.updateTraversable(xx, yy, val, isBlank(xx, yy - 1), isBlank(xx, yy + 1));
+        _seaDisplay.updateTraversable(xx, yy, val,
+            isBlankOrFactory(xx, yy - 1), isBlankOrFactory(xx, yy + 1));
         // we are exploding because we hit a non-traversable tile, so we don't affect
         // any subs on that tile...
         return false;
     }
-
-//    protected function incTraversable (xx :int, yy :int) :void
-//    {
-//        var idx :int = coordsToIdx(xx, yy);
-//        var val :int = int(_board[idx]);
-//        if (val > 0) {
-//            val--;
-//            _board[idx] = val;
-//            _seaDisplay.updateTraversable(xx, yy, val, isTraversable(xx, yy - 1),
-//                isTraversable(xx, yy + 1));
-//        }
-//    }
 
     /**
      * Handles game did start, and that's it.
@@ -434,6 +443,9 @@ public class Board
         // tick all subs and torps
         for each (sub in _subs) {
             sub.tick();
+        }
+        for each (var factory :Factory in _factories) {
+            factory.tick();
         }
         var torpsCopy :Array = _torpedos.concat();
         for each (torp in torpsCopy) {
@@ -594,6 +606,9 @@ public class Board
 
     /** An array tracking the type of each tile. */
     protected var _board :Array = [];
+
+    /** Holds the currently active factories. */
+    protected var _factories :Dictionary = new Dictionary();
 
     /** Have we already ended the game? (Stop trying to do it again while a few
      * last ticks trickle in.) */

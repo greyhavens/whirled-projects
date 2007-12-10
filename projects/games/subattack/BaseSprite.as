@@ -7,7 +7,7 @@ import flash.display.Sprite;
  */
 public class BaseSprite extends Sprite
 {
-    public function BaseSprite (playerIdx :int ,board :Board)
+    public function BaseSprite (playerIdx :int, board :Board)
     {
         _playerIdx = playerIdx;
         _board = board;

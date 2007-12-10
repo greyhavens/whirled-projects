@@ -10,8 +10,6 @@ import flash.events.Event;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 
-import flash.filters.ColorMatrixFilter;
-
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
@@ -50,6 +48,11 @@ public class SeaDisplay extends Sprite
             Bitmap(new GROUND1()).bitmapData,
             Bitmap(new GROUND2()).bitmapData,
             Bitmap(new GROUND3()).bitmapData
+        ];
+
+        _moss = [
+            Bitmap(new MOSS1()).bitmapData,
+            Bitmap(new MOSS2()).bitmapData
         ];
 
         var trees :Array = [
@@ -94,6 +97,17 @@ public class SeaDisplay extends Sprite
                 switch (type) {
                 case Board.TREE:
                     // no background needed
+                    break;
+
+                case Board.BLANK:
+                    // if we're blank, we need to be either moss or ground, depending on what's
+                    // above us.
+                    if (yy == 0 || (Board.BLANK == int(board[xx * (yy - 1) * boardWidth]))) {
+                        toDraw = pickBitmap(rando, _grounds);
+                    } else {
+                        toDraw = pickBitmap(rando, _moss);
+                    }
+                    data.draw(toDraw, matrix);
                     break;
 
                 default:
@@ -161,6 +175,22 @@ public class SeaDisplay extends Sprite
         _sub.queueAction(now, action);
     }
 
+    public function addFactory (factory :Factory) :void
+    {
+        // factories need to be added so that they are in front of factories with a lower y
+        // since there aren't many factories, we can do this dumbly
+        var insertionPoint :int = 1;
+        while (true) {
+            var otherFact :DisplayObject = getChildAt(insertionPoint);
+            if (otherFact.name == "factory" && otherFact.y < factory.y) {
+                insertionPoint++;
+            } else {
+                break;
+            }
+        }
+        addChildAt(factory, insertionPoint);
+    }
+
     /**
      * Display the specified tile as now being traversable.
      */
@@ -168,53 +198,14 @@ public class SeaDisplay extends Sprite
         xx :int, yy :int, value :int,
         aboveIsBlank :Boolean, belowIsBlank :Boolean) :void
     {
-        var index :int = yy * _boardWidth + xx;
-        var factory :DisplayObject;
+        if (value == Board.BLANK) {
+            // draw a blank square
+            var matrix :Matrix = new Matrix();
+            matrix.translate(xx * TILE_SIZE, yy * TILE_SIZE);
+            _tiles.bitmapData.draw(pickBitmap(null, aboveIsBlank ? _grounds : _moss), matrix);
 
-        if (value < Board.BLANK) {
-            var playerIdx :int = int(value / -100);
-            var level :int = -value % 100;
-            factory = DisplayObject(_foregroundObjects[index]);
-            if (factory == null) {
-                factory = new FACTORY() as DisplayObject;
-                factory.name = "factory";
-                factory.x = xx * TILE_SIZE;
-                factory.y = yy * TILE_SIZE;
-                _foregroundObjects[index] = factory;
-                // factories need to be added so that they are in front of factories with a lower y
-                // since there aren't many factories, we can do this dumbly
-                var insertionPoint :int = 1;
-                while (true) {
-                    var otherFact :DisplayObject = getChildAt(insertionPoint);
-                    if (otherFact.name == "factory" && otherFact.y < factory.y) {
-                        insertionPoint++;
-                    } else {
-                        break;
-                    }
-                }
-                addChildAt(factory, insertionPoint);
-            }
-            var filters :Array = [ FilterUtil.createHueShift(Submarine.SHIFTS[playerIdx]) ];
-            if (level < 3) {
-                var dim :Number = (level == 2) ? .8 : .6;
-                filters.unshift(new ColorMatrixFilter([dim, 0, 0, 0, 0,
-                                                       0, dim, 0, 0, 0,
-                                                       0, 0, dim, 0, 0,
-                                                       0, 0, 0, 1, 0]));
-            }
-            factory.filters = filters;
-
-        } else if (value == Board.BLANK) {
-            // maybe remove a factory?
-            factory = DisplayObject(_foregroundObjects[index]);
-            if (factory != null) {
-                removeChild(factory);
-                _foregroundObjects[index] = null;
-
-            } else {
-                // draw a blank square
-                var matrix :Matrix = new Matrix();
-                matrix.translate(xx * TILE_SIZE, yy * TILE_SIZE);
+            if (belowIsBlank) {
+                matrix.translate(0, TILE_SIZE);
                 _tiles.bitmapData.draw(pickBitmap(null, _grounds), matrix);
             }
         }
@@ -271,9 +262,9 @@ public class SeaDisplay extends Sprite
 
     protected var _boardWidth :int;
 
-    protected var _foregroundObjects :Array = [];
-
     protected var _grounds :Array;
+
+    protected var _moss :Array;
 
     /** Our status message. */
     protected var _status :TextField;
@@ -305,6 +296,12 @@ public class SeaDisplay extends Sprite
     [Embed(source="ground3.png")]
     protected static const GROUND3 :Class;
 
+    [Embed(source="ground4_moss.png")]
+    protected static const MOSS1 :Class;
+
+    [Embed(source="ground5_moss.png")]
+    protected static const MOSS2 :Class;
+
     [Embed(source="rock1.png")]
     protected static const ROCK1 :Class;
 
@@ -316,8 +313,5 @@ public class SeaDisplay extends Sprite
 
     [Embed(source="rock4.png")]
     protected static const ROCK4 :Class;
-
-    [Embed(source="factory.swf#factory")]
-    protected static const FACTORY :Class;
 }
 }

@@ -209,7 +209,7 @@ public class Submarine extends BaseSprite
             }
             _movedOrShot = true;
             if (++_buildingStep == TICKS_TO_BUILD) {
-                _board.buildBarrier(_playerIdx, _x, _y);
+                _board.buildFactory(this);
                 _buildingStep = 0;
                 _tickCanBuild = _tickCount + TICKS_PER_BUILD;
                 return OK;
