@@ -85,7 +85,7 @@ public class SubAttack extends Sprite
         _splash = new Loader();
         _content.addChild(_splash);
         _splash.loadBytes(ByteArray(new SPLASH_SCREEN()));
-        _splash.addEventListener(MouseEvent.CLICK, handleRemoveSplash);
+        addEventListener(MouseEvent.CLICK, handleRemoveSplash);
         _splashTimer.addEventListener(TimerEvent.TIMER, handleRemoveSplash);
         _splashTimer.start();
 
@@ -134,6 +134,7 @@ public class SubAttack extends Sprite
 
     protected function handleRemoveSplash (event :Event) :void
     {
+        removeEventListener(MouseEvent.CLICK, handleRemoveSplash);
         _content.removeChild(_splash);
         _splashTimer.stop();
         _splashTimer = null;
