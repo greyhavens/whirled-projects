@@ -124,9 +124,6 @@ public class SeekModel extends Sprite
                 }
             }
 
-        } else if (event.name == "gs") {
-            _control.spawnMob("ghost");
-
         } else if (event.name == "gc") {
             _ghostSpeed = _ghostSpeed * 0.8 - 20;
             _panel.ghostSpeedUpdated();

@@ -6,8 +6,11 @@ package ghostbusters.seek {
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
+import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
 import com.whirled.AVRGameControl;
+
+import ghostbusters.GameController;
 
 public class SeekController extends Controller
 {
@@ -37,8 +40,7 @@ public class SeekController extends Controller
     {
         // TODO: test state and whatnot
         if (_model.getGhostSpeed() < 10) {
-            
-            _model.transmitGhostSpawn();
+            CommandEvent.dispatch(getSeekPanel(), GameController.SPAWN_GHOST);
 
         } else {
             _model.transmitGhostClick();

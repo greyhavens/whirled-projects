@@ -5,11 +5,13 @@ package ghostbusters {
 
 import com.threerings.util.Controller;
 import com.whirled.AVRGameControl;
+import com.whirled.AVRGameControlEvent;
 
 import ghostbusters.seek.SeekController;
 
 public class GameController extends Controller
 {
+    public static const SPAWN_GHOST :String = "SpawnGhost";
     public static const TOGGLE_LANTERN :String = "ToggleLantern";
     public static const TOGGLE_LOOT :String = "ToggleLoot";
     public static const END_GAME :String = "EndGame";
@@ -26,6 +28,8 @@ public class GameController extends Controller
         var panel :GamePanel = new GamePanel(_model, _seekController.getSeekPanel());
         _model.init(panel);
         setControlledPanel(panel);
+
+        _control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
     public function shutdown () :void
@@ -68,6 +72,12 @@ public class GameController extends Controller
             enterState(GameModel.STATE_IDLE);
         }
         // else no effect
+    }
+
+    public function handleSpawnGhost () :void
+    {
+        _control.state.sendMessage("gs", null);
+        _control.spawnMob("ghost");
     }
 
     public function enterState (state :String) :void
@@ -115,6 +125,13 @@ public class GameController extends Controller
         Game.log.debug("Dubious state transition, but letting it pass [current=" + current +
                        ", requested=" + requested);
         return false;
+    }
+
+    protected function messageReceived (event: AVRGameControlEvent) :void
+    {
+        if (event.name == "gs") {
+            enterState(GameModel.STATE_FIGHTING);
+        }
     }
 
     protected var _control :AVRGameControl;
