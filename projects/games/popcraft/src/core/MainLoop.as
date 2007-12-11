@@ -1,6 +1,7 @@
 package core {
 
 import com.threerings.util.Assert;
+import com.threerings.util.ArrayUtil;
 
 import flash.events.TimerEvent;
 import flash.utils.Timer;
@@ -25,6 +26,16 @@ public class MainLoop
         _applicationSprite = applicationSprite;
     }
 
+    public function addUpdatable (obj :Updatable) :void
+    {
+        _updatables.push(obj);
+    }
+
+    public function removeUpdatable (obj :Updatable) :void
+    {
+        ArrayUtil.removeFirst(_updatables, obj);
+    }
+
     public function get topMode () :AppMode
     {
         if (_modeStack.length == 0) {
@@ -44,7 +55,7 @@ public class MainLoop
 
         Rand.setup();
 
-        ResourceManager.instance;
+        addUpdatable(ResourceManager.instance);
     }
 
     public function run () :void
@@ -108,7 +119,7 @@ public class MainLoop
         return _defaultAppSettings;
     }
 
-    protected function update (e:TimerEvent) :void
+    protected function update (e :TimerEvent) :void
     {
         var initialTopMode :AppMode = this.topMode;
 
@@ -187,8 +198,10 @@ public class MainLoop
         var newTime :Number = this.elapsedSeconds;
         var dt :Number = newTime - _lastTime;
 
-        // update the ResourceManager
-        ResourceManager.instance.update(dt);
+        // update all our "updatables"
+        for each (var updatable :Updatable in _updatables) {
+            updatable.update(dt);
+        }
 
         // update the top mode
         if (null != topMode) {
@@ -215,6 +228,7 @@ public class MainLoop
     protected var _lastTime :Number;
     protected var _modeStack :Array = new Array();
     protected var _pendingModeTransitionQueue :Array = new Array();
+    protected var _updatables :Array = new Array();
 
     // mode transition constants
     internal static const TRANSITION_PUSH :uint = 0;

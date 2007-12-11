@@ -6,6 +6,7 @@ import flash.display.BitmapData;
 import mx.controls.Image;
 
 public class ResourceManager
+    implements Updatable
 {
     public static function get instance () :ResourceManager
     {
@@ -64,6 +65,7 @@ public class ResourceManager
         return !(_pendingResources.isEmpty());
     }
 
+    // from Updatable
     public function update (dt :Number) :void
     {
         if (!hasPendingResources) {
