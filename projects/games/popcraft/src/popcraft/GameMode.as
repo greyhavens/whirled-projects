@@ -115,16 +115,16 @@ public class GameMode extends AppMode
         button.hitTestState = button.upState;
 
         // how much does it cost?
-        var costString :String = new String();
+        /*var costString :String = new String();
         for (var resType :uint = 0; resType < GameConstants.RESOURCE__LIMIT; ++resType) {
             var resData :ResourceType = GameConstants.getResource(resType);
-            var resCost 
+            var resCost
             costString += (resData.name + " (" + data.getResourceCost(resType) + ")");
-            if( 
+            if(
 
         }
         var costText :TextField = new TextField();
-        //costText.text
+        //costText.text*/
 
         return button;
     }
