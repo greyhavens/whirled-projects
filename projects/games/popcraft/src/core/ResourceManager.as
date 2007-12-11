@@ -105,6 +105,7 @@ class ImageResource
     public function ImageResource (name :String, filename :String)
     {
         _name = name;
+        _filename = filename;
         _loader = new Loader();
         _loader.contentLoaderInfo.addEventListener(Event.INIT, onInit);
         _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onError);
@@ -139,10 +140,12 @@ class ImageResource
 
     protected function onError (e :IOErrorEvent) :void
     {
+        trace("Failed to load image '" + _filename + "': " + e.text);
         _hasError = true;
     }
 
     protected var _name :String;
+    protected var _filename :String;
     protected var _hasError :Boolean;
     protected var _isLoaded :Boolean;
     protected var _loader :Loader;
