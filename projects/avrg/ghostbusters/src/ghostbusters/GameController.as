@@ -10,11 +10,11 @@ import ghostbusters.seek.SeekController;
 
 public class GameController extends Controller
 {
-    public static const TOGGLE_LANTERN :String = "toggleLantern";
-    public static const TOGGLE_LOOT :String = "toggleLoot";
-    public static const END_GAME :String = "endGame";
-    public static const HELP :String = "help";
-    public static const PLAY :String = "play";
+    public static const TOGGLE_LANTERN :String = "ToggleLantern";
+    public static const TOGGLE_LOOT :String = "ToggleLoot";
+    public static const END_GAME :String = "EndGame";
+    public static const HELP :String = "Help";
+    public static const PLAY :String = "Play";
 
     public function GameController (control :AVRGameControl)
     {
@@ -115,6 +115,12 @@ public class GameController extends Controller
         Game.log.debug("Dubious state transition, but letting it pass [current=" + current +
                        ", requested=" + requested);
         return false;
+    }
+
+    override public function handleAction (cmd :String, arg :Object) :Boolean
+    {
+        Game.log.debug("handleAction [cmd=" + cmd + ", arg=" + arg + "]");
+        return super.handleAction(cmd, arg);
     }
 
     protected var _control :AVRGameControl;

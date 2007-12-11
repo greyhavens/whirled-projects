@@ -126,7 +126,6 @@ public class GamePanel extends Sprite
         _box.y = 100;
         _box.scaleX = _box.scaleY = 0.5;
         this.addChild(_box);
-        Game.log.debug("BOX ADDZ0R'D");
         _box.show();
     }
 
