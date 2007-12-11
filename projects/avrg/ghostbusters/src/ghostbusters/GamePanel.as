@@ -25,35 +25,38 @@ import com.threerings.util.CommandEvent;
 import com.threerings.util.EmbeddedSwfLoader;
 
 import ghostbusters.fight.SpawnedGhost;
+import ghostbusters.seek.SeekPanel;
 
 public class GamePanel extends Sprite
 {
-    public function GamePanel (model :GameModel)
+    public function GamePanel (model :GameModel, seekPanel :SeekPanel)
     {
         _model = model;
-
-        _splash.addEventListener(MouseEvent.CLICK, handleClick);
+        _seekPanel = seekPanel;
 
         _hud = new HUD();
 
-        _hud.visible = false;
-        this.addChild(_hud);
-
-        this.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
+        _splash.addEventListener(MouseEvent.CLICK, handleClick);
     }
 
     public function shutdown () :void
     {
+        _hud.shutdown();
     }
 
     override public function hitTestPoint (
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
-        if (_hud.visible) {
-            var hit :Boolean = _hud.hitTestPoint(x, y, shapeFlag);
-            return hit;
+        var hit :Boolean = false;
+
+        if (_hud.parent != null) {
+            hit ||= _hud.hitTestPoint(x, y, shapeFlag);
         }
-        return _box && _box.hitTestPoint(x, y, shapeFlag);
+        if (_box.parent != null) {
+            hit ||= _box.hitTestPoint(x, y, shapeFlag);
+        }
+
+        return hit;
     }
 
     public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
@@ -64,8 +67,17 @@ public class GamePanel extends Sprite
 
     public function enterState (state :String) :void
     {
-        if (state == GameModel.STATE_SEEKING) {
-            // TODO: somehow we need to have received a reference to SeekPanel here
+        if (state == GameModel.STATE_IDLE) {
+            showSplash();
+
+        } else if (state == GameModel.STATE_SEEKING) {
+            showPanels(_hud);
+
+        } else if (state == GameModel.STATE_SEEKING) {
+            showPanels(_seekPanel, _hud);
+
+        } else if (state == GameModel.STATE_FIGHTING) {
+            showPanels(_hud);
         }
     }
 
@@ -74,14 +86,14 @@ public class GamePanel extends Sprite
         _ghost.updateHealth(health);
     }
 
-    protected function handleAdded (evt :Event) :void
+    protected function showPanels (... panels) :void
     {
-        showSplash();
-    }
-
-    protected function handleUnload (event :Event) :void
-    {
-        _hud.shutdown();
+        while (this.numChildren > 0) {
+            this.removeChildAt(0);
+        }
+        for (var ii :int = 0; ii < panels.length; ii ++) {
+            this.addChild(panels[ii]);
+        }
     }
 
     protected function showHelp () :void
@@ -143,6 +155,8 @@ public class GamePanel extends Sprite
     protected var _ghost :SpawnedGhost;
 
     protected var _splash :MovieClip = MovieClip(new SPLASH());
+
+    protected var _seekPanel :SeekPanel;
 
     [Embed(source="../../rsrc/splash01.swf")]
     protected static const SPLASH :Class;

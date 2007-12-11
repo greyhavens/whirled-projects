@@ -18,14 +18,19 @@ public class SeekController extends Controller
         _control = control;
 
         _model = new SeekModel(control);
-        _panel = new SeekPanel(_model);
-        _model.init(_panel);
+        var panel :SeekPanel = new SeekPanel(_model);
+        _model.init(panel);
 
-        setControlledPanel(_panel);
+        setControlledPanel(panel);
     }
 
     public function shutdown () :void
     {
+    }
+
+    public function getSeekPanel () :SeekPanel
+    {
+        return _panel;
     }
 
     protected function ghostClick (evt :MouseEvent) :void

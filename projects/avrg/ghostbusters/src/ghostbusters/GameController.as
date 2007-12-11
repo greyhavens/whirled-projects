@@ -20,13 +20,12 @@ public class GameController extends Controller
     {
         _control = control;
 
-        _model = new GameModel(control);
-        _panel = new GamePanel(_model);
-        _model.init(_panel);
-
-        setControlledPanel(_panel);
-
         _seekController = new SeekController(_control);
+
+        _model = new GameModel(control);
+        var panel :GamePanel = new GamePanel(_model, _seekController.getSeekPanel());
+        _model.init(panel);
+        setControlledPanel(panel);
     }
 
     public function shutdown () :void
@@ -61,12 +60,12 @@ public class GameController extends Controller
             enterState(GameModel.STATE_SEEKING);
 
         } else if (_model.getState() == GameModel.STATE_SEEKING) {
-            enterState(GameModel.STATE_SEEKING);
+            enterState(GameModel.STATE_IDLE);
         }
         // else no effect
     }
 
-    protected function enterState (state :String) :void
+    public function enterState (state :String) :void
     {
         _model.enterState(state);
         getGamePanel().enterState(state);

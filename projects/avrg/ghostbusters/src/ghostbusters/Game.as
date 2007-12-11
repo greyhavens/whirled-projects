@@ -32,11 +32,19 @@ public class Game extends Sprite
 
         // TODO: this is just while debugging
         _control.despawnMob("ghost");
+
+
+        this.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
     }
 
     protected function handleUnload (event :Event) :void
     {
         _controller.shutdown();
+    }
+
+    protected function handleAdded (event :Event) :void
+    {
+        _controller.enterState(GameModel.STATE_INTRO);
     }
 
     protected var _control :AVRGameControl;
