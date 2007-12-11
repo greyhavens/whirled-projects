@@ -13,18 +13,15 @@ public class SeekController extends Controller
 {
     public static const CLICK_GHOST :String = "clickGhost";
 
-    public static function newController (control :AVRGameControl) :SeekController
-    {
-        var model :SeekModel = new SeekModel(control);
-        var panel :SeekPanel = new SeekPanel(model);
-        return new SeekController(control, panel, model);
-    }
-
-    public function SeekController (control :AVRGameControl, panel :SeekPanel, model :SeekModel)
+    public function SeekController (control :AVRGameControl)
     {
         _control = control;
-        _model = model;
-        setControlledPanel(panel);
+
+        _model = new SeekModel(control);
+        _panel = new SeekPanel(_model);
+        _model.init(_panel);
+
+        setControlledPanel(_panel);
     }
 
     public function shutdown () :void
@@ -44,5 +41,6 @@ public class SeekController extends Controller
 
     protected var _control :AVRGameControl;
     protected var _model :SeekModel;
+    protected var _panel :SeekPanel;
 }
 }

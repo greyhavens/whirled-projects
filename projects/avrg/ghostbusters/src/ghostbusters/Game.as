@@ -22,11 +22,13 @@ public class Game extends Sprite
 
         _control = new AVRGameControl(this);
 
-        addChild(_panel);
-        _model.init(_panel);
+        _controller = new GameController(_control);
 
-        _control.setMobSpriteExporter(_panel.exportMobSprite);
-        _control.setHitPointTester(_panel.hitTestPoint);
+        var panel :GamePanel = _controller.getGamePanel();
+        addChild(panel);
+
+        _control.setMobSpriteExporter(panel.exportMobSprite);
+        _control.setHitPointTester(panel.hitTestPoint);
 
         // TODO: this is just while debugging
         _control.despawnMob("ghost");
@@ -35,14 +37,10 @@ public class Game extends Sprite
     protected function handleUnload (event :Event) :void
     {
         _controller.shutdown();
-        _panel.shutdown();
-        _model.shutdown();
     }
 
     protected var _control :AVRGameControl;
 
-    protected var _model :GameModel;
-    protected var _panel :GamePanel;
     protected var _controller :GameController;
 }
 }

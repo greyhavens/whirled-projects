@@ -35,6 +35,7 @@ public class GamePanel extends Sprite
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
 
         _hud = new HUD();
+
         _hud.visible = false;
         this.addChild(_hud);
 

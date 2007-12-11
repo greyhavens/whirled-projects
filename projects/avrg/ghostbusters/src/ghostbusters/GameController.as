@@ -16,24 +16,23 @@ public class GameController extends Controller
     public static const HELP :String = "help";
     public static const PLAY :String = "play";
 
-    public static function newController (control :AVRGameControl) :GameController
-    {
-        var model :GameModel = new GameModel(control);
-        var panel :GamePanel = new GamePanel(model);
-        return new GameController(control, panel, model);
-    }
-
-    public function GameController (control :AVRGameControl, panel :GamePanel, model :GameModel)
+    public function GameController (control :AVRGameControl)
     {
         _control = control;
-        _model = model;
-        setControlledPanel(panel);
 
-        _seekController = SeekController.newController(_control);
+        _model = new GameModel(control);
+        _panel = new GamePanel(_model);
+        _model.init(_panel);
+
+        setControlledPanel(_panel);
+
+        _seekController = new SeekController(_control);
     }
 
     public function shutdown () :void
     {
+        _panel.shutdown();
+        _model.shutdown();
     }
 
     public function getGameModel () :GameModel
@@ -75,6 +74,7 @@ public class GameController extends Controller
 
     protected var _control :AVRGameControl;
     protected var _model :GameModel;
+    protected var _panel :GamePanel;
 
     protected var _seekController :SeekController;
 }
