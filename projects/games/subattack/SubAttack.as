@@ -150,6 +150,7 @@ public class SubAttack extends Sprite
         _content.addChild(new SIDEBAR() as DisplayObject);
 
         _clock = new TextField();
+        _clock.selectable = false;
         _clock.defaultTextFormat = new TextFormat("_sans", 18, 0xFFFFFF, true);
         _clock.text = "8:88";
         _clock.width = _clock.textWidth + 5;
@@ -221,7 +222,7 @@ public class SubAttack extends Sprite
     {
         var ticksLeft :int = TICKS_PER_GAME - tickValue;
         // turn that into a time
-        var secondsLeft :int = int(ticksLeft / (1000 / TIME_PER_TICK));
+        var secondsLeft :int = int(Math.max(0, ticksLeft / (1000 / TIME_PER_TICK)));
         var mins :int = int(secondsLeft / 60);
         var secs :int = int(secondsLeft % 60);
 

@@ -23,11 +23,15 @@ public class Board
     public static const TEMPLE :int = 2;
     public static const ROCK :int = int.MAX_VALUE;
 
+    public static const DODO :int = 100;
+    public static const PANDA :int = 101;
+
     public function Board (gameCtrl :WhirledGameControl, seaDisplay :SeaDisplay)
     {
         _gameCtrl = gameCtrl;
         _gameCtrl.addEventListener(Event.UNLOAD, shutdown);
         _seaDisplay = seaDisplay;
+        _rando = new Random(int(_gameCtrl.get("seed")));
 
         var playerIds :Array = _gameCtrl.seating.getPlayerIds();
         var playerCount :int = playerIds.length;
@@ -44,14 +48,13 @@ public class Board
             _board[ii] = TREE;
         }
 
-        var rando :Random = new Random(int(_gameCtrl.get("seed")));
         var pick :int;
 
         // scatter some rocks around
         var numRocks :int = size / 40;
         for (ii = 0; ii < numRocks; ii++) {
             do {
-                pick = rando.nextInt(size);
+                pick = _rando.nextInt(size);
             } while (_board[pick] != TREE);
             _board[pick] = ROCK;
         }
@@ -60,7 +63,7 @@ public class Board
         var numTemples :int = size / 10;
         for (ii = 0; ii < numTemples; ii++) {
             do {
-                pick = rando.nextInt(size);
+                pick = _rando.nextInt(size);
             } while (_board[pick] != TREE);
             _board[pick] = TEMPLE;
         }
@@ -69,9 +72,9 @@ public class Board
         var numBlanks :int = size / 100;
         for (ii = 0; ii < numBlanks; ii++) {
             do {
-                pick = rando.nextInt(size);
+                pick = _rando.nextInt(size);
             } while (_board[pick] != TREE);
-            var radius :int = rando.nextInt(3);
+            var radius :int = _rando.nextInt(3);
             var x :int = int(pick % _width);
             var y :int = int(pick / _width);
             for (var yy :int = Math.max(0, y - radius); yy <= Math.min(_height - 1, y + radius);
@@ -83,7 +86,7 @@ public class Board
             }
         }
 
-        _seaDisplay.setupSea(_width, _height, _board, rando);
+        _seaDisplay.setupSea(_width, _height, _board, _rando);
 
         // create a submarine for each player
         var sub :Submarine;
@@ -324,15 +327,6 @@ public class Board
 
                     _gameCtrl.localChat(killer.getPlayerName() + " has shot " +
                         sub.getPlayerName());
-
-                    if (killerIdx == _gameCtrl.seating.getMyPosition()) {
-                        // TODO: new flow awarding
-    //                    var flowAvailable :Number = _gameCtrl.getAvailableFlow();
-    //                    trace("Available flow at time of kill: " + flowAvailable);
-    //                    var awarded :int = int(flowAvailable * .75);
-    //                    trace("Awarding: " + awarded);
-    //                    _gameCtrl.awardFlow(awarded);
-                    }
                 }
             }
         }
@@ -366,6 +360,10 @@ public class Board
 
         } else if (val == BLANK) {
             return true; // there's ONLY subs here
+
+        } else if (val == DODO || val == PANDA) {
+            Submarine(_subs[playerIndex]).animalKilled(xx, yy, getAnimalName(val));
+            val = BLANK;
 
         } else if (val > BLANK) {
             val--;
@@ -485,9 +483,28 @@ public class Board
         // then we check torpedo-on-torpedo action, and pass-through
         checkTorpedos();
 
+        if (tickId % 300 == 0) {
+            addAnimal();
+        }
+
         if (_gameCtrl.seating.getMyPosition() == 0 && !_endedGame) {
             checkGameOver(tickId);
         }
+    }
+
+    protected function addAnimal () :void
+    {
+        var size :int = _width * _height;
+        var pick :int = _rando.nextInt(size);
+        var kind :int = (0 == _rando.nextInt(2)) ? PANDA : DODO;
+        while (_board[pick] != BLANK) {
+            pick++;
+            if (pick >= size) {
+                pick = 0;
+            }
+        }
+        _board[pick] = kind;
+        _seaDisplay.updateTraversable(int(pick % _width), int(pick / _width), kind, false, false);
     }
 
     protected function checkGameOver (tickId :int) :void
@@ -557,6 +574,20 @@ public class Board
         }
     }
 
+    protected function getAnimalName (kind :int) :String
+    {
+        switch (kind) {
+        case DODO:
+            return "dodo";
+
+        case PANDA:
+            return "panda";
+
+        default:
+            return "Rick Keagy";
+        }
+    }
+
     /**
      * Return the starting x coordinate for the specified player.
      */
@@ -597,6 +628,9 @@ public class Board
 
     /** The 'sea' where everything lives. */
     protected var _seaDisplay :SeaDisplay;
+
+    /** Used for generating random numbers consistently across clients. */
+    protected var _rando :Random;
 
     protected var _totalDeaths :int = 0;
 

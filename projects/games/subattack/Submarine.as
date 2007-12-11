@@ -27,6 +27,9 @@ public class Submarine extends BaseSprite
     public static const POINTS_PER_KILL :int = 200;
     public static const POINTS_PER_DEATH :int = -100;
 
+    public static const POINTS_SHOOT_ANIMAL :int = 25;
+    public static const POINTS_RUNOVER_ANIMAL :int = 50;
+
     /** How many ticks does it take to build? */
     public static const TICKS_TO_BUILD :int = 5; // how long does it take to build?
 
@@ -81,6 +84,15 @@ public class Submarine extends BaseSprite
     public function getHueShift () :BitmapFilter
     {
         return _hueShift;
+    }
+
+    public function animalKilled (xx :int, yy :int, kind :String) :void
+    {
+        var runOver :Boolean = 
+            (xx == _x && (1 == Math.abs(yy - _y))) || (yy == _y && (1 == Math.abs(xx - _x)));
+        addPoints(runOver ? POINTS_RUNOVER_ANIMAL : POINTS_SHOOT_ANIMAL);
+        _gameCtrl.localChat(getPlayerName() + " has " + (runOver ? "run over" : "shot") + " a " +
+            kind + ".");
     }
 
     public function addPoints (points :int, show :Boolean = true) :void

@@ -72,6 +72,8 @@ public class SeaDisplay extends Sprite
         ];
 
         var temple :BitmapData = Bitmap(new TEMPLE()).bitmapData;
+        _panda = Bitmap(new PANDA()).bitmapData;
+        _dodo = Bitmap(new DODO()).bitmapData;
 
         if (rando == null) {
             rando = new Random(int(getTimer()));
@@ -205,23 +207,25 @@ public class SeaDisplay extends Sprite
         xx :int, yy :int, value :int,
         aboveIsBlank :Boolean, belowIsBlank :Boolean) :void
     {
-        var matrix :Matrix;
-        if (value == Board.TREE) {
-            // we must have destroyed a temple
-            matrix = new Matrix();
-            matrix.translate(xx * TILE_SIZE, yy * TILE_SIZE);
-            _tiles.bitmapData.draw(pickBitmap(null, _trees), matrix);
+        var matrix :Matrix = new Matrix();
+        matrix.translate(xx * TILE_SIZE, yy * TILE_SIZE);
 
-        } else if (value == Board.BLANK) {
+        if (value == Board.BLANK) {
             // draw a blank square
-            matrix = new Matrix();
-            matrix.translate(xx * TILE_SIZE, yy * TILE_SIZE);
             _tiles.bitmapData.draw(pickBitmap(null, aboveIsBlank ? _grounds : _moss), matrix);
 
             if (belowIsBlank) {
                 matrix.translate(0, TILE_SIZE);
                 _tiles.bitmapData.draw(pickBitmap(null, _grounds), matrix);
             }
+
+        } else if (value == Board.TREE) {
+            // we must have destroyed a temple
+            _tiles.bitmapData.draw(pickBitmap(null, _trees), matrix);
+
+        } else if (value == Board.DODO || value == Board.PANDA) {
+            var toDraw :BitmapData = (value == Board.DODO) ? _dodo : _panda;
+            _tiles.bitmapData.draw(toDraw, matrix);
         }
     }
 
@@ -271,6 +275,9 @@ public class SeaDisplay extends Sprite
     protected var _followSub :Submarine;
 
     protected var _tiles :Bitmap;
+
+    protected var _panda :BitmapData;
+    protected var _dodo :BitmapData;
 
     protected var _sub :Submarine;
 
@@ -332,5 +339,11 @@ public class SeaDisplay extends Sprite
 
     [Embed(source="rock4.png")]
     protected static const ROCK4 :Class;
+
+    [Embed(source="animal_panda.png")]
+    protected static const PANDA :Class;
+
+    [Embed(source="animal_dodo.png")]
+    protected static const DODO :Class;
 }
 }
