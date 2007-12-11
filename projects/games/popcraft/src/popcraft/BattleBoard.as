@@ -28,7 +28,7 @@ public class BattleBoard extends AppObject
         var width :int = _cols * _tileSize;
         var height :int = _rows * _tileSize;
 
-        _view = new Shape();
+        _view = new Sprite();
         _view.graphics.beginFill(0xFFFFFF);
         _view.graphics.drawRect(0, 0, width, height);
         _view.graphics.endFill();
@@ -52,7 +52,7 @@ public class BattleBoard extends AppObject
     }
 
     protected var _tileGrid :Array;
-    protected var _view :Shape;
+    protected var _view :Sprite;
     protected var _cols :int;
     protected var _rows :int;
     protected var _tileSize :int;

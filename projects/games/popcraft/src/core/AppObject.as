@@ -7,6 +7,7 @@ import com.threerings.util.HashSet;
 import core.tasks.ParallelTask;
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
+import flash.display.DisplayObjectContainer;
 
 public class AppObject
 {
@@ -35,6 +36,16 @@ public class AppObject
     public function get interactiveObject () :InteractiveObject
     {
         return (this.displayObject as InteractiveObject);
+    }
+
+    /**
+     * Returns the DisplayObjectContainer attached to this AppObject,
+     * if one exists, and null otherwise. Defaults to
+     * (displayObject as DisplayObjectContainer)
+     */
+    public function get displayObjectContainer () :DisplayObjectContainer
+    {
+        return (this.displayObject as DisplayObjectContainer);
     }
 
     /**

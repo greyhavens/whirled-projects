@@ -4,6 +4,7 @@ import core.AppMode;
 import core.MainLoop;
 import core.ResourceManager;
 import com.threerings.util.Assert;
+import flash.display.DisplayObjectContainer;
 
 public class GameMode extends AppMode
 {
@@ -68,6 +69,13 @@ public class GameMode extends AppMode
             _battleBoard.displayObject.y = GameConstants.BATTLE_LOC.y;
 
             this.addObject(_battleBoard, this);
+
+            // tmp
+            var creature :Creature = new Creature();
+            creature.displayObject.x = 50;
+            creature.displayObject.y = 50;
+
+            this.addObject(creature, _battleBoard.displayObjectContainer);
         }
 
         super.update(dt);
