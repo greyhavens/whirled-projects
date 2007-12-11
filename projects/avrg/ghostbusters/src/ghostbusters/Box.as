@@ -80,6 +80,7 @@ public class Box extends Sprite
         });
 
         _backdrop.visible = this.visible = true;
+        Game.log.debug("show() done");
     }
 
     protected function setVisibleClip (box :MovieClip) :void

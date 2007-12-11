@@ -33,7 +33,6 @@ public class Game extends Sprite
         // TODO: this is just while debugging
         _control.despawnMob("ghost");
 
-
         this.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
     }
 

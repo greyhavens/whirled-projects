@@ -7,6 +7,7 @@ import com.whirled.AVRGameControl;
 
 public class GameModel
 {
+    public static const STATE_NONE :String = "none";
     public static const STATE_INTRO :String = "intro";
     public static const STATE_IDLE :String = "idle";
     public static const STATE_SEEKING :String = "seeking";
@@ -15,8 +16,6 @@ public class GameModel
     public function GameModel (control :AVRGameControl)
     {
         _control = control;
-
-        _state = STATE_INTRO;
     }
 
     public function init (panel :GamePanel) :void
@@ -41,6 +40,6 @@ public class GameModel
 
     protected var _control :AVRGameControl;
     protected var _panel :GamePanel;
-    protected var _state :String;
+    protected var _state :String = STATE_NONE;
 }
 }

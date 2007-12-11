@@ -52,7 +52,7 @@ public class GamePanel extends Sprite
         if (_hud.parent != null) {
             hit ||= _hud.hitTestPoint(x, y, shapeFlag);
         }
-        if (_box.parent != null) {
+        if (_box != null && _box.parent != null) {
             hit ||= _box.hitTestPoint(x, y, shapeFlag);
         }
 
@@ -67,10 +67,10 @@ public class GamePanel extends Sprite
 
     public function enterState (state :String) :void
     {
-        if (state == GameModel.STATE_IDLE) {
+        if (state == GameModel.STATE_INTRO) {
             showSplash();
 
-        } else if (state == GameModel.STATE_SEEKING) {
+        } else if (state == GameModel.STATE_IDLE) {
             showPanels(_hud);
 
         } else if (state == GameModel.STATE_SEEKING) {
@@ -78,6 +78,9 @@ public class GamePanel extends Sprite
 
         } else if (state == GameModel.STATE_FIGHTING) {
             showPanels(_hud);
+
+        } else {
+            Game.log.warning("Unknown state requested [state=" + state + "]");
         }
     }
 
@@ -123,6 +126,7 @@ public class GamePanel extends Sprite
         _box.y = 100;
         _box.scaleX = _box.scaleY = 0.5;
         this.addChild(_box);
+        Game.log.debug("BOX ADDZ0R'D");
         _box.show();
     }
 
