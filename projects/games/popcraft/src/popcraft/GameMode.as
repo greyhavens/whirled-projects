@@ -38,6 +38,15 @@ public class GameMode extends AppMode
         _waitingOnResources = true;
     }
 
+    // from core.AppMode
+    override public function destroy() :void
+    {
+        if (null != _messageMgr) {
+            _messageMgr.shutdown();
+            _messageMgr = null;
+        }
+    }
+
     override public function update(dt :Number) :void
     {
         if (_waitingOnResources) {
@@ -83,6 +92,8 @@ public class GameMode extends AppMode
             meleeButton.x = GameConstants.MELEE_BUTTON_LOC.x;
             meleeButton.y = GameConstants.MELEE_BUTTON_LOC.y;
             this.addChild(meleeButton);
+
+            //_messageMgr = new TickedMessageManager(PopCraft.instance.gameControl, TICK_INTERVAL_MS);
 
             // @TEMP
             var creature :Creature = new Creature();
@@ -152,10 +163,13 @@ public class GameMode extends AppMode
         return face;
     }
 
+    protected var _messageMgr :TickedMessageManager;
     protected var _waitingOnResources :Boolean;
     protected var _puzzleBoard :PuzzleBoard;
     protected var _battleBoard :BattleBoard;
     protected var _playerData :PlayerData;
+
+    protected static const TICK_INTERVAL_MS :int = 100; // 1/10 of a second
 }
 
 }

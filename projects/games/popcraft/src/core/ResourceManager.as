@@ -75,7 +75,7 @@ public class ResourceManager
         var pending :Array = _pendingResources.values();
         for each (var resource :ImageResource in pending) {
             if (resource.hasError) {
-                // @TODO - do something here
+                // resource loaders report their own errors, so we don't need to do so here.
                 _pendingResources.remove(resource.name);
             } else if (resource.isLoaded) {
                 _pendingResources.remove(resource.name);

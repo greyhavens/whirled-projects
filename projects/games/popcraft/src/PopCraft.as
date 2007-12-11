@@ -37,7 +37,7 @@ public class PopCraft extends Sprite
         mainLoop.run();
     }
 
-    public function get control () :WhirledGameControl
+    public function get gameControl () :WhirledGameControl
     {
         return _gameCtrl;
     }
