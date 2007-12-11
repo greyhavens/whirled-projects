@@ -183,9 +183,14 @@ public class MainLoop
 
         _pendingModeTransitionQueue = new Array();
 
-        // update the top mode
+        // how much time has elapsed since last frame?
         var newTime :Number = this.elapsedSeconds;
         var dt :Number = newTime - _lastTime;
+
+        // update the ResourceManager
+        ResourceManager.instance.update(dt);
+
+        // update the top mode
         if (null != topMode) {
             topMode.update(dt);
         }

@@ -28,33 +28,49 @@ public class GameMode extends AppMode
         // load resources
         ResourceManager.instance.loadImage("melee", "rsrc/melee.png");
 
-        // add the top-level game objects
+        _waitingOnResources = true;
+    }
 
-        var resourceDisplay :ResourceDisplay = new ResourceDisplay();
-        resourceDisplay.displayObject.x = GameConstants.RESOURCE_DISPLAY_LOC.x;
-        resourceDisplay.displayObject.y = GameConstants.RESOURCE_DISPLAY_LOC.y;
+    override public function update(dt :Number) :void
+    {
+        if (_waitingOnResources) {
+            // don't get started until we have all our resources
+            if (ResourceManager.instance.hasPendingResources) {
+                return;
+            }
 
-        this.addObject(resourceDisplay, this);
+            _waitingOnResources = false;
 
-        _puzzleBoard = new PuzzleBoard(
-            GameConstants.PUZZLE_COLS,
-            GameConstants.PUZZLE_ROWS,
-            GameConstants.PUZZLE_TILE_SIZE);
+            // add the top-level game objects
 
-        _puzzleBoard.displayObject.x = GameConstants.PUZZLE_LOC.x;
-        _puzzleBoard.displayObject.y = GameConstants.PUZZLE_LOC.y;
+            var resourceDisplay :ResourceDisplay = new ResourceDisplay();
+            resourceDisplay.displayObject.x = GameConstants.RESOURCE_DISPLAY_LOC.x;
+            resourceDisplay.displayObject.y = GameConstants.RESOURCE_DISPLAY_LOC.y;
 
-        this.addObject(_puzzleBoard, this);
+            this.addObject(resourceDisplay, this);
 
-        _battleBoard = new BattleBoard(
-            GameConstants.BATTLE_COLS,
-            GameConstants.BATTLE_ROWS,
-            GameConstants.BATTLE_TILE_SIZE);
+            _puzzleBoard = new PuzzleBoard(
+                GameConstants.PUZZLE_COLS,
+                GameConstants.PUZZLE_ROWS,
+                GameConstants.PUZZLE_TILE_SIZE);
 
-        _battleBoard.displayObject.x = GameConstants.BATTLE_LOC.x;
-        _battleBoard.displayObject.y = GameConstants.BATTLE_LOC.y;
+            _puzzleBoard.displayObject.x = GameConstants.PUZZLE_LOC.x;
+            _puzzleBoard.displayObject.y = GameConstants.PUZZLE_LOC.y;
 
-        this.addObject(_battleBoard, this);
+            this.addObject(_puzzleBoard, this);
+
+            _battleBoard = new BattleBoard(
+                GameConstants.BATTLE_COLS,
+                GameConstants.BATTLE_ROWS,
+                GameConstants.BATTLE_TILE_SIZE);
+
+            _battleBoard.displayObject.x = GameConstants.BATTLE_LOC.x;
+            _battleBoard.displayObject.y = GameConstants.BATTLE_LOC.y;
+
+            this.addObject(_battleBoard, this);
+        }
+
+        super.update(dt);
     }
 
     public function get playerData () :PlayerData
@@ -62,6 +78,7 @@ public class GameMode extends AppMode
         return _playerData;
     }
 
+    protected var _waitingOnResources :Boolean;
     protected var _puzzleBoard :PuzzleBoard;
     protected var _battleBoard :BattleBoard;
     protected var _playerData :PlayerData;

@@ -3,6 +3,7 @@ package core {
 import com.threerings.util.Assert;
 import com.threerings.util.HashMap;
 import flash.display.BitmapData;
+import mx.controls.Image;
 
 public class ResourceManager
 {
@@ -23,7 +24,13 @@ public class ResourceManager
 
     public function loadImage (name :String, filename :String) :void
     {
-        _resources.put(name, new ImageResource(filename));
+        var resource :ImageResource = new ImageResource(name, filename);
+
+        if (resource.isLoaded) {
+            _resources.put(resource.name, resource);
+        } else {
+            _pendingResources.put(resource.name, resource);
+        }
     }
 
     public function getImage (name :String) :BitmapData
@@ -44,6 +51,7 @@ public class ResourceManager
     public function unload (name :String) :void
     {
         _resources.remove(name);
+        _pendingResources.remove(name);
     }
 
     public function isLoaded (name :String) :Boolean
@@ -51,7 +59,31 @@ public class ResourceManager
         return (null != getImage(name));
     }
 
+    public function get hasPendingResources () :Boolean
+    {
+        return !(_pendingResources.isEmpty());
+    }
+
+    public function update (dt :Number) :void
+    {
+        if (!hasPendingResources) {
+            return;
+        }
+
+        var pending :Array = _pendingResources.values();
+        for each (var resource :ImageResource in pending) {
+            if (resource.hasError) {
+                // @TODO - do something here
+                _pendingResources.remove(resource.name);
+            } else if (resource.isLoaded) {
+                _pendingResources.remove(resource.name);
+                _resources.put(resource.name, resource);
+            }
+        }
+    }
+
     protected var _resources :HashMap = new HashMap();
+    protected var _pendingResources :HashMap = new HashMap();
 
     protected static var g_instance :ResourceManager;
 }
@@ -68,17 +100,28 @@ import flash.events.IOErrorEvent;
 
 class ImageResource
 {
-    public function ImageResource (filename :String)
+    public function ImageResource (name :String, filename :String)
     {
+        _name = name;
         _loader = new Loader();
         _loader.contentLoaderInfo.addEventListener(Event.INIT, onInit);
         _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onError);
         _loader.load(new URLRequest(filename));
     }
 
+    public function get name () :String
+    {
+        return _name;
+    }
+
     public function get isLoaded () :Boolean
     {
-        return (!_isError && _isLoaded);
+        return (!_hasError && _isLoaded);
+    }
+
+    public function get hasError () :Boolean
+    {
+        return _hasError;
     }
 
     public function get bitmapData () :BitmapData
@@ -94,10 +137,11 @@ class ImageResource
 
     protected function onError (e :IOErrorEvent) :void
     {
-        _isError = true;
+        _hasError = true;
     }
 
-    protected var _isError :Boolean;
+    protected var _name :String;
+    protected var _hasError :Boolean;
     protected var _isLoaded :Boolean;
     protected var _loader :Loader;
 
