@@ -44,7 +44,6 @@ public class Locksmith extends Sprite
         _board.y = DISPLAY_HEIGHT / 2;
         _wgc = new WhirledGameControl(this);
         if (_wgc.isConnected()) {
-            _wgc.setShowButtons(false);
             EventHandlers.registerEventListener(
                 _wgc, StateChangedEvent.GAME_STARTED, gameStarted);
             EventHandlers.registerEventListener(
@@ -78,6 +77,7 @@ public class Locksmith extends Sprite
 
     public function gameStarted (event :StateChangedEvent) :void
     {
+        _gotRotation = false;
         _gameEnded = false;
         // this seems backwards, but we don't really consider the game started until the first
         // turn has started.
@@ -91,6 +91,7 @@ public class Locksmith extends Sprite
             // rematching... just clear out the current score, etc
             _scoreBoard.reinit();
             _board.reinit();
+            _board.clock.reinit();
             DoLater.instance.flush();
         }
         if (_wgc.amInControl()) {
@@ -233,14 +234,12 @@ public class Locksmith extends Sprite
                 break;
             case Keyboard.UP:
                 if (_currentRing != _currentRing.largest) {
-                    _currentRing = _currentRing.outer;
-                    _board.setActiveRing(_currentRing.num);
+                    _board.setActiveRing((_currentRing = _currentRing.outer).num);
                 }
                 break;
             case Keyboard.DOWN:
                 if (_currentRing != _currentRing.smallest) {
-                    _currentRing = _currentRing.inner;
-                    _board.setActiveRing(_currentRing.num);
+                    _board.setActiveRing((_currentRing = _currentRing.inner).num);
                 }
                 break;
             }

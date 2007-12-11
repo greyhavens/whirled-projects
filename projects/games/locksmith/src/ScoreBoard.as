@@ -69,6 +69,7 @@ public class ScoreBoard extends Sprite
         _sunScore = 0;
         removeChild(_marbleLayer);
         addChildAt(_marbleLayer = new Sprite(), 0);
+        _gameEnded = false;
     }
 
     public function scorePoint (player :int) :void
@@ -158,12 +159,12 @@ public class ScoreBoard extends Sprite
 
     protected function gameOver () :void
     {
-        if (_gameEndedCallback == null) {
+        if (_gameEnded || _gameEndedCallback == null) {
             return;
         }
 
         _gameEndedCallback();
-        _gameEndedCallback = null;
+        _gameEnded = true;
     }
 
     protected function scorePointAnimation (player :int, point :int) :void
@@ -200,6 +201,7 @@ public class ScoreBoard extends Sprite
     protected var _moonScore :int = 0;
     protected var _sunScore :int = 0;
     protected var _gameEndedCallback :Function;
+    protected var _gameEnded :Boolean = false;
     protected var _marbleLayer :Sprite = new Sprite();
 
     protected var _leftFrame :Sprite;

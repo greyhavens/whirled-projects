@@ -69,6 +69,13 @@ public class Clock extends Sprite
         }
     }
 
+    public function reinit () :void
+    {
+        _minute.rotation = 0;
+        _hour.rotation = 0;
+        _inTurn = false;
+    }
+
     protected function updateTime (...ignored) :void
     {
         if (_inTurn) {
