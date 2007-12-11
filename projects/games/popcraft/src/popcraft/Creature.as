@@ -12,11 +12,8 @@ public class Creature extends AppObject
     public function Creature ()
     {
         // create the visual representation
-        var bitmap :Bitmap = new Bitmap(ResourceManager.instance.getImage("melee"));
-        bitmap.x = -(bitmap.width / 2);
-        bitmap.y = -bitmap.height;
         _sprite = new Sprite();
-        _sprite.addChild(bitmap);
+        _sprite.addChild(new Content.MELEE());
 
     }
 
