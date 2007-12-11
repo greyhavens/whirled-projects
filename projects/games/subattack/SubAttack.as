@@ -15,6 +15,7 @@ import flash.events.TimerEvent;
 import flash.geom.Point;
 
 import flash.text.TextField;
+import flash.text.TextFormat;
 
 import flash.ui.Keyboard;
 
@@ -42,6 +43,10 @@ public class SubAttack extends Sprite
 {
     /** How many tiles does our vision extend past our tile? */
     public static const VISION_TILES :Number = 7.5;
+
+    public static const TICKS_PER_GAME :int = 10 * 60 * 5;
+
+    public static const TIME_PER_TICK :int = 100;
 
     /** How many total tiles are in one direction in the view? */
     public static const VIEW_TILES :Number = (VISION_TILES * 2) + 1;
@@ -102,6 +107,7 @@ public class SubAttack extends Sprite
         _gameCtrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
         _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
         _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
+        _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, handleMessageReceived);
 
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
@@ -142,6 +148,17 @@ public class SubAttack extends Sprite
         _seaDisplay.setStatus("Waiting for other players...");
         _gameCtrl.playerReady();
         _content.addChild(new SIDEBAR() as DisplayObject);
+
+        _clock = new TextField();
+        _clock.defaultTextFormat = new TextFormat("_sans", 18, 0xFFFFFF, true);
+        _clock.text = "8:88";
+        _clock.width = _clock.textWidth + 5;
+        _clock.height = _clock.textHeight + 4;
+        _clock.y = 100;
+        _clock.x = (200 - _clock.width) / 2;
+        _clock.text = "5:00";
+        _content.addChild(_clock);
+
 //        _content.addChild(new FPSDisplay(20));
     }
 
@@ -188,9 +205,27 @@ public class SubAttack extends Sprite
         _board = new Board(_gameCtrl, _seaDisplay);
     }
 
+    protected function handleMessageReceived (event :MessageReceivedEvent) :void
+    {
+        if (event.name == "tick") {
+            updateClock(int(event.value));
+        }
+    }
+
     protected function handleSizeChanged (event :SizeChangedEvent) :void
     {
         updateSize(event.size);
+    }
+
+    protected function updateClock (tickValue :int) :void
+    {
+        var ticksLeft :int = TICKS_PER_GAME - tickValue;
+        // turn that into a time
+        var secondsLeft :int = int(ticksLeft / (1000 / TIME_PER_TICK));
+        var mins :int = int(secondsLeft / 60);
+        var secs :int = int(secondsLeft % 60);
+
+        _clock.text = (mins + ":" + ((secs < 10) ? "0" : "") + secs);
     }
 
     protected function updateSize (size :Point) :void
@@ -312,6 +347,8 @@ public class SubAttack extends Sprite
     protected var _splashTimer :Timer = new Timer(20000, 1);
 
     protected var _seaHolder :Sprite;
+
+    protected var _clock :TextField;
 
     /** The visual display of the game. */
     protected var _seaDisplay :SeaDisplay;

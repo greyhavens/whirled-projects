@@ -23,7 +23,7 @@ public class Submarine extends BaseSprite
     //public static const SHIFTS :Array = [ 40, -80, 120, -160 -40, 80, -120, 160 ];
     public static const SHIFTS :Array = [ -136, 21, -106, 77, -38, 143, 0, 180 ];
 
-    public static const POINTS_TO_BUILD :int = 100;
+    public static const POINTS_TO_BUILD :int = 50;
     public static const POINTS_PER_KILL :int = 200;
     public static const POINTS_PER_DEATH :int = -100;
 
@@ -83,13 +83,18 @@ public class Submarine extends BaseSprite
         return _hueShift;
     }
 
-    public function addPoints (points :int, show :Boolean = false) :void
+    public function addPoints (points :int, show :Boolean = true) :void
     {
         _points += points;
         updateDisplayedScore();
         if (show) {
             _board.showPoints(_x, _y, points);
         }
+    }
+
+    public function getPoints () :int
+    {
+        return _points;
     }
 
     public function getPlayerId () :int
@@ -219,7 +224,7 @@ public class Submarine extends BaseSprite
             }
             _movedOrShot = true;
             if (++_buildingStep == TICKS_TO_BUILD) {
-                addPoints(-POINTS_TO_BUILD, true);
+                addPoints(-POINTS_TO_BUILD);
                 _board.buildFactory(this);
                 _buildingStep = 0;
                 return OK;
@@ -319,7 +324,7 @@ public class Submarine extends BaseSprite
 
         // get points for every kill
         if (kills > 0) {
-            addPoints(kills * POINTS_PER_KILL, true);
+            addPoints(kills * POINTS_PER_KILL);
         }
 
         // remove it
@@ -337,7 +342,7 @@ public class Submarine extends BaseSprite
     public function wasKilled () :void
     {
         // lose points for getting wacked
-        addPoints(POINTS_PER_DEATH, true);
+        addPoints((_points >= 0) ? POINTS_PER_DEATH : (POINTS_PER_DEATH / 4));
 
         _dead = true;
         _deaths++;

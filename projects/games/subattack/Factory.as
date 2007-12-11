@@ -41,8 +41,8 @@ public class Factory extends BaseSprite
     public function tick () :void
     {
         if (++_ticks % 50 == 0) {
-            _board.showPoints(_x, _y, 10);
-            _sub.addPoints(10);
+            _board.showPoints(_x, _y, 5);
+            _sub.addPoints(5, false);
         }
     }
 

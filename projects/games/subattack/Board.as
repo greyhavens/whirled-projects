@@ -142,11 +142,11 @@ public class Board
     }
 
     /**
-     * Is the specified tile completely traversable, not counting any factories?
+     * Used only for rendering: is the specified tile "blank" or factory?
      */
     public function isBlankOrFactory (xx :int, yy :int) :Boolean
     {
-        return (xx >= 0) && (xx < _width) && (yy >= 0) && (yy < _height) &&
+        return (xx < 0) || (xx >= _width) || (yy < 0) || (yy >= _height) ||
             (BLANK >= int(_board[coordsToIdx(xx, yy)]));
     }
 
@@ -412,7 +412,7 @@ public class Board
     {
         // player 0 starts the ticker
         if (_gameCtrl.seating.getMyPosition() == 0) {
-            _gameCtrl.startTicker("tick", 100);
+            _gameCtrl.startTicker("tick", SubAttack.TIME_PER_TICK);
         }
     }
 
@@ -434,7 +434,7 @@ public class Board
     {
         var name :String = event.name;
         if (name == "tick") {
-            _ticks.push(new Array());
+            _ticks.push([ event.value ]);
 
             if (_ticks.length > MAX_QUEUED_TICKS) {
                 doTick(); // do one now...
@@ -462,6 +462,7 @@ public class Board
     protected function doTick () :void
     {
         var array :Array = (_ticks.shift() as Array);
+        var tickId :int = int(array.shift());
         for (var ii :int = 0; ii < array.length; ii += 2) {
             processAction(String(array[ii]), (array[ii + 1] as Array));
         }
@@ -485,35 +486,22 @@ public class Board
         checkTorpedos();
 
         if (_gameCtrl.seating.getMyPosition() == 0 && !_endedGame) {
-            checkGameOver();
+            checkGameOver(tickId);
         }
     }
 
-    protected function checkGameOver () :void
+    protected function checkGameOver (tickId :int) :void
     {
-        var endGame :Boolean = (_totalDeaths >= _maxTotalDeaths);
-        var sub :Submarine;
-        if (!endGame) {
-            for each (sub in _subs) {
-                if (sub.getKills() >= _maxKills) {
-                    endGame = true;
-                    break;
-                }
-            }
-            if (!endGame) {
-                return;
-            }
+        if (tickId < SubAttack.TICKS_PER_GAME) {
+            return;
         }
 
-        // if we get here, we DO want to end the game.
-        // compute a score for each player based on _maxKills and normalize
-        // from 0 - 99.
         var ids :Array = [];
         var scores :Array = [];
         for (var ii :int = 0; ii < _subs.length; ii++) {
-            sub = _subs[ii] as Submarine;
+            var sub :Submarine = _subs[ii] as Submarine;
             ids[ii] = sub.getPlayerId();
-            scores[ii] = int(99 * Math.max(0, sub.getKills() - sub.getDeaths()) / _maxKills);
+            scores[ii] = int(Math.max(0, sub.getPoints()));
         }
 
         _gameCtrl.endGameWithScores(ids, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
@@ -624,7 +612,7 @@ public class Board
     /** The height of the board. */
     protected var _height :int;
     
-    protected var _ticks :Array = [];
+    protected var _ticks :Array = [ [ 0 ] ];
 
     /** Contains the submarines, indexed by player index. */
     protected var _subs :Array = [];
