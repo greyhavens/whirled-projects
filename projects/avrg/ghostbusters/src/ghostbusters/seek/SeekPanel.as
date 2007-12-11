@@ -25,6 +25,8 @@ import com.whirled.AVRGameControlEvent;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Random;
 
+import ghostbusters.Game;
+
 public class SeekPanel extends Sprite
 {
     public function SeekPanel (model :SeekModel)
@@ -32,13 +34,9 @@ public class SeekPanel extends Sprite
         _model = model;
 
         buildUI();
-    }
 
-    public function shutdown () :void
-    {
-        if (_lanternia.visible) {
-            removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
-        }
+        this.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
+        this.addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
     }
 
     override public function hitTestPoint (
@@ -47,65 +45,9 @@ public class SeekPanel extends Sprite
         return _ghost && _ghost.hitTestPoint(x, y, shapeFlag);
     }
 
-    protected function buildUI () :void
-    {
-        _lanternia = new Sprite();
-        _lanternia.visible = false;
-        addChild(_lanternia);
-
-        _dimBack = new Sprite();
-        _dimBack.blendMode = BlendMode.LAYER;
-        _lanternia.addChild(_dimBack);
-
-        _dimFront = new Sprite();
-
-        var g :Graphics = _dimFront.graphics;
-        g.beginFill(0x000000);
-        g.drawRect(0, 0, 2000, 1000);
-        g.endFill();
-
-        _dimFront.alpha = 0.7;
-        _dimBack.addChild(_dimFront);
-
-        _lightLayer = new Sprite();
-        _lanternia.addChild(_lightLayer);
-
-        _maskLayer = new Sprite();
-        _lanternia.addChild(_maskLayer);
-
-        _ghost = new HidingGhost(_model.getRoomId());
-        _ghost.addEventListener(MouseEvent.CLICK, ghostClick);
-        _lanternia.addChild(_ghost);
-        _ghost.mask = _maskLayer;
-        _ghost.x = 300;
-        _ghost.y = 0;
-    }
-
     public function ghostPositionUpdate (pos :Point) :void
     {
-        _ghost.newTarget(_lanternia.globalToLocal(pos));
-    }
-
-    public function lanternOff () :void
-    {
-        removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
-        _lanternia.visible = false;
-    }
-
-    public function lanternOn () :void
-    {
-        resetLoop();
-        _lanternia.visible = true;
-        _lanternLoop = Sound(new LANTERN_LOOP_AUDIO()).play();
-        addEventListener(Event.ENTER_FRAME, handleEnterFrame);
-    }
-
-    protected function resetLoop () :void
-    {
-        if (_lanternLoop != null) {
-            _lanternLoop.stop();
-            _lanternLoop = null;
-        }
+        _ghost.newTarget(this.globalToLocal(pos));
     }
 
     public function playerLanternOff (playerId :int) :void
@@ -124,9 +66,21 @@ public class SeekPanel extends Sprite
         updateLantern(playerId, pos);
     }
 
-    public function setGhostSpeed (speed :Number) :void
+    public function ghostSpeedUpdated () :void
     {
-        _ghost.setSpeed(speed);
+        _ghost.setSpeed(_model.getGhostSpeed());
+    }
+
+    protected function handleRemoved (evt :Event) :void
+    {
+        removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
+        _lanternLoop.stop();
+    }
+
+    protected function handleAdded (evt :Event) :void
+    {
+        _lanternLoop = Sound(new LANTERN_LOOP_AUDIO()).play();
+        addEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
     protected function ghostClick (evt :MouseEvent) :void
@@ -148,7 +102,7 @@ public class SeekPanel extends Sprite
 
         } else {
             // just set our aim for p
-            lantern.newTarget(_lanternia.globalToLocal(pos), 0.5, false);
+            lantern.newTarget(this.globalToLocal(pos), 0.5, false);
         }
     }
 
@@ -160,12 +114,12 @@ public class SeekPanel extends Sprite
             _ghost.nextFrame();
         }
 
-        var p :Point = new Point(Math.max(0, Math.min(_width, _lanternia.mouseX)),
-                                 Math.max(0, Math.min(_height, _lanternia.mouseY)));
-        p = _lanternia.localToGlobal(p);
+        var p :Point = new Point(Math.max(0, Math.min(_width, this.mouseX)),
+                                 Math.max(0, Math.min(_height, this.mouseY)));
+        p = this.localToGlobal(p);
 
         // bow to reality: nobody wants to watch roundtrip lag in action
-        if (!DEBUG) {
+        if (!Game.DEBUG) {
             updateLantern(_model.getMyId(), p);
         }
 
@@ -190,6 +144,34 @@ public class SeekPanel extends Sprite
         }
     }
 
+    protected function buildUI () :void
+    {
+        _dimBack = new Sprite();
+        _dimBack.blendMode = BlendMode.LAYER;
+        this.addChild(_dimBack);
+
+        _dimFront = new Sprite();
+
+        var g :Graphics = _dimFront.graphics;
+        g.beginFill(0x000000);
+        g.drawRect(0, 0, 2000, 1000);
+        g.endFill();
+
+        _dimFront.alpha = 0.7;
+        _dimBack.addChild(_dimFront);
+
+        _lightLayer = new Sprite();
+        this.addChild(_lightLayer);
+
+        _maskLayer = new Sprite();
+        this.addChild(_maskLayer);
+
+        _ghost = new HidingGhost(_model.getGhostSpeed());
+        _ghost.addEventListener(MouseEvent.CLICK, ghostClick);
+        this.addChild(_ghost);
+//        _ghost.mask = _maskLayer;
+    }
+
     protected var _model :SeekModel;
 
     // TODO: temporary hard-coded
@@ -202,7 +184,6 @@ public class SeekPanel extends Sprite
 
     protected var _ticker :int;
 
-    protected var _lanternia :Sprite;
     protected var _dimBack :Sprite;
     protected var _dimFront :Sprite;
 
@@ -215,7 +196,5 @@ public class SeekPanel extends Sprite
 
     [Embed(source="../../../rsrc/wind.mp3")]
     protected static const LANTERN_LOOP_AUDIO :Class;
-
-    protected static const DEBUG :Boolean = false;
 }
 }

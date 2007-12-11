@@ -52,6 +52,9 @@ public class GamePanel extends Sprite
         if (_hud.parent != null) {
             hit ||= _hud.hitTestPoint(x, y, shapeFlag);
         }
+        if (_seekPanel.parent != null) {
+            hit ||= _seekPanel.hitTestPoint(x, y, shapeFlag);
+        }
         if (_box != null && _box.parent != null) {
             hit ||= _box.hitTestPoint(x, y, shapeFlag);
         }

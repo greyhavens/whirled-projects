@@ -37,6 +37,8 @@ import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
 
+import ghostbusters.Game;
+
 public class SeekModel extends Sprite
 {
     public function SeekModel (control :AVRGameControl)
@@ -51,6 +53,8 @@ public class SeekModel extends Sprite
         _myId = _control.getPlayerId();
         _roomId = _control.getRoomId();
         _room = _control.getRoomBounds();
+
+        _random = new Random();
 
         _ghostRandom = new Random(_roomId);
         _ghostSpeed = 150 + 100 * _ghostRandom.nextNumber();
@@ -94,7 +98,6 @@ public class SeekModel extends Sprite
         var x :int = _random.nextNumber() * (_room.width - ghostBounds.width) - ghostBounds.left;
         var y :int = _random.nextNumber() * (_room.height - ghostBounds.height) - ghostBounds.top;
         _control.state.sendMessage("gp", [ _roomId, x, y ]);
-        
     }
 
     public function getRoomId () :int
@@ -125,7 +128,8 @@ public class SeekModel extends Sprite
             _control.spawnMob("ghost");
 
         } else if (event.name == "gc") {
-            _panel.setGhostSpeed(Math.max(0, _ghostSpeed * 0.8 - 20));
+            _ghostSpeed = _ghostSpeed * 0.8 - 20;
+            _panel.ghostSpeedUpdated();
         }
     }
 
@@ -135,6 +139,10 @@ public class SeekModel extends Sprite
             var bits :Array = event.value as Array;
             if (bits != null) {
                 var playerId :int = int(bits[0]);
+                // ignore our own update, unless we're debugging
+                if (playerId == _myId && !Game.DEBUG) {
+                    return;
+                }
                 if (_control.isPlayerHere(playerId)) {
                     // lantern update from a local player
                     if (bits.length == 1) {

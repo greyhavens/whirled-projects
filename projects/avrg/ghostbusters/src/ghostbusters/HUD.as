@@ -40,14 +40,14 @@ public class HUD extends Sprite
     protected function handleHUDLoaded (evt :Event) :void
     {
         _hud = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
-        _hud.x = 10; // damn scrollbar
-        _hud.y = 0;
+        _hud.x = 20; // damn scrollbar
+        _hud.y = 5;
 
         DisplayUtil.findInHierarchy(_hud, LANTERN).addEventListener(MouseEvent.CLICK, lanternClick);
         DisplayUtil.findInHierarchy(_hud, HELP).addEventListener(MouseEvent.CLICK, helpClick);
         DisplayUtil.findInHierarchy(_hud, LOOT).addEventListener(MouseEvent.CLICK, lootClick);
 
-        addChild(_hud);
+        this.addChild(_hud);
     }
 
     protected function lanternClick (evt :Event) :void

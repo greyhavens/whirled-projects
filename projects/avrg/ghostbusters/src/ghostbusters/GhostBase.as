@@ -34,8 +34,8 @@ public class GhostBase extends Sprite
     protected function handleGhostLoaded (evt :Event) :void
     {
         _clip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
-        _clip.gotoAndPlay(1, STATE_WALKING); // standardize
-        addChild(_clip);
+        _clip.gotoAndStop(1, STATE_WALKING);
+        this.addChild(_clip);
         _bounds = _clip.getBounds(this);
 
         // dangle the sprite from its head
@@ -44,6 +44,8 @@ public class GhostBase extends Sprite
 
         // refigure the bounds
         _bounds = _clip.getBounds(this);
+
+        Game.log.debug("Ghost finished loading [bounds=" + _bounds + "]");
 
         // and let subclassers know we're done
         mediaReady();

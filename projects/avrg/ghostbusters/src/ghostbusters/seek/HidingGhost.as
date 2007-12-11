@@ -23,16 +23,17 @@ import ghostbusters.SplinePather;
 
 public class HidingGhost extends GhostBase
 {
-    public function HidingGhost (roomId :int)
+    public function HidingGhost (speed :int)
     {
         super();
 
+        _speed = speed;
         _pather = new SplinePather();
     }
 
     public function isIdle () :Boolean
     {
-        return _pather.idle == 1;
+        return _pather.idle;
     }
 
     public function setSpeed (newSpeed :Number) :void
@@ -56,6 +57,14 @@ public class HidingGhost extends GhostBase
         var d :Number = Math.sqrt(dX*dX + dY*dY);
 
         _pather.newTarget(p, d / _speed, true);
+    }
+
+    override protected function mediaReady () :void
+    {
+        super.mediaReady();
+
+        // not sure why gotoAndPlay doesn't work here, it loops through all the damn scenes
+        _clip.gotoAndStop(1, STATE_WALKING);
     }
 
     protected var _pather :SplinePather;

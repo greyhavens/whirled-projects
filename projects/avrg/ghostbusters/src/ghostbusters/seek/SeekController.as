@@ -11,7 +11,7 @@ import com.whirled.AVRGameControl;
 
 public class SeekController extends Controller
 {
-    public static const CLICK_GHOST :String = "clickGhost";
+    public static const CLICK_GHOST :String = "ClickGhost";
 
     public function SeekController (control :AVRGameControl)
     {
@@ -30,13 +30,14 @@ public class SeekController extends Controller
 
     public function getSeekPanel () :SeekPanel
     {
-        return _panel;
+        return SeekPanel(_controlledPanel);
     }
 
-    protected function ghostClick (evt :MouseEvent) :void
+    public function handleClickGhost () :void
     {
         // TODO: test state and whatnot
         if (_model.getGhostSpeed() < 10) {
+            
             _model.transmitGhostSpawn();
 
         } else {
@@ -46,6 +47,5 @@ public class SeekController extends Controller
 
     protected var _control :AVRGameControl;
     protected var _model :SeekModel;
-    protected var _panel :SeekPanel;
 }
 }

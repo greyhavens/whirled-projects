@@ -20,7 +20,7 @@ public class GameController extends Controller
     {
         _control = control;
 
-        _seekController = new SeekController(_control);
+        _seekController = new SeekController(control);
 
         _model = new GameModel(control);
         var panel :GamePanel = new GamePanel(_model, _seekController.getSeekPanel());
@@ -115,12 +115,6 @@ public class GameController extends Controller
         Game.log.debug("Dubious state transition, but letting it pass [current=" + current +
                        ", requested=" + requested);
         return false;
-    }
-
-    override public function handleAction (cmd :String, arg :Object) :Boolean
-    {
-        Game.log.debug("handleAction [cmd=" + cmd + ", arg=" + arg + "]");
-        return super.handleAction(cmd, arg);
     }
 
     protected var _control :AVRGameControl;
