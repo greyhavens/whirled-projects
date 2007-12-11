@@ -231,7 +231,7 @@ public class Submarine extends BaseSprite
         }
 
         if (action == Action.BUILD) {
-            if (_points < POINTS_TO_BUILD) {
+            if (_points < POINTS_TO_BUILD || !_board.isBlank(_x, _y)) {
                 return DROP;
             }
             _movedOrShot = true;

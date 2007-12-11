@@ -81,7 +81,7 @@ public class Board
                     yy++) {
                 for (var xx :int = Math.max(0, x - radius); xx <= Math.min(_width - 1, x + radius);
                         xx++) {
-                    _board[xx + (yy * _width)] = BLANK;
+                    _board[coordsToIdx(xx, yy)] = BLANK;
                 }
             }
         }
@@ -151,6 +151,15 @@ public class Board
     {
         return (xx < 0) || (xx >= _width) || (yy < 0) || (yy >= _height) ||
             (BLANK >= int(_board[coordsToIdx(xx, yy)]));
+    }
+
+    /**
+     * Is the specified tile blank?
+     */
+    public function isBlank (xx :int, yy :int) :Boolean
+    {
+        return (xx >= 0) && (xx < _width) && (yy >= 0) && (yy < _height) &&
+            (BLANK == _board[coordsToIdx(xx, yy)]);
     }
 
     /**
@@ -669,7 +678,6 @@ public class Board
         [ 10, 10 ], // 1 player game
 //        [ 90, 60], // TEST!
 //        [ 10, 10 ], // 2 player game (testing)
-//        [ 15, 15 ], // 2 player game (testing)
         [ 50, 25 ], // 2 player game
         [ 60, 30 ], // 3 player game
         [ 75, 30 ], // 4 player game
