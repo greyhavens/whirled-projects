@@ -17,10 +17,18 @@ import flash.utils.getTimer;
 public class TickedMessageManager
     implements Updatable
 {
-    public function TickedMessageManager (gameCtrl :WhirledGameControl, tickIntervalMS :int)
+    public function TickedMessageManager (gameCtrl :WhirledGameControl)
     {
         _gameCtrl = gameCtrl;
         _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
+    }
+
+    /**
+     * Starts a ticker on the server. Only one client should call this function -
+     * the tick messages will be broadcast to everybody.
+     */
+    public function startTicker (tickIntervalMS :int) :void
+    {
         _gameCtrl.startTicker("tick", tickIntervalMS);
     }
 
@@ -43,14 +51,14 @@ public class TickedMessageManager
         }
     }
 
-    public function get numPendingTicks () :uint
+    public function get unprocessedTickCount () :uint
     {
         return (0 == _ticks.length ? 0 : _ticks.length - 1);
     }
 
     public function getNextTickActions () :Array
     {
-        Assert.isTrue(numPendingTicks > 0);
+        Assert.isTrue(unprocessedTickCount > 0);
         return (_ticks.shift() as Array);
     }
 
