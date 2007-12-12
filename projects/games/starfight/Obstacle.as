@@ -150,10 +150,6 @@ public class Obstacle extends BoardObject
         }
     }
 
-    public function createWall (w :int, h :int) :void
-    {
-    }
-
     public function showObs () :Boolean
     {
         return numChildren > 0;
@@ -175,7 +171,6 @@ public class Obstacle extends BoardObject
             if (w == 0 || h == 0) {
                 return;
             }
-            Logger.log("Create wall bitmap of " + w + "x" + h);
             var data :BitmapData = new BitmapData(
                     w * Codes.PIXELS_PER_TILE, h * Codes.PIXELS_PER_TILE);
             var drawData :BitmapData = Resources.getBitmapData("box_bitmap.gif");

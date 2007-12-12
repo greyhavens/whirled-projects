@@ -115,7 +115,7 @@ public class ShipChooser extends Sprite
         } else {
             _game.changeShip(typeIdx);
         }
-        _game.removeChild(this);
+        parent.removeChild(this);
     }
 
     protected static const SPACING :int = 80;

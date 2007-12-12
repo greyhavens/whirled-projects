@@ -1,5 +1,6 @@
 package {
 
+import flash.display.Bitmap;
 import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.MovieClip;
@@ -28,6 +29,7 @@ import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
+import com.threerings.ezgame.SizeChangedEvent;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
 import com.threerings.ezgame.OccupantChangedEvent;
@@ -61,26 +63,33 @@ public class StarFight extends Sprite
     {
         _gameCtrl = new WhirledGameControl(this);
 
+        _center = new Sprite();
         var mask :Shape = new Shape();
-        addChild(mask);
+        _center.addChild(mask);
         mask.graphics.clear();
         mask.graphics.beginFill(0xFFFFFF);
         mask.graphics.drawRect(0, 0, WIDTH, HEIGHT);
         mask.graphics.endFill();
-        this.mask = mask;
-        graphics.beginFill(Codes.BLACK);
-        graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
+        _center.mask = mask;
+        addChild(_left = new BACKGROUND() as Bitmap);
+        addChild(_right = new BACKGROUND() as Bitmap);
+        addChild(_center);
+        _center.graphics.beginFill(Codes.BLACK);
+        _center.graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
+
+        updateDisplay(null);
 
         //Font.registerFont(_venusRising);
         gameFont = Font(new _venusRising());
 
         var introMovie :MovieClip = MovieClip(new introAsset());
-        addChild(introMovie);
+        _center.addChild(introMovie);
 
         if (_gameCtrl.isConnected()) {
             _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
             _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
             _gameCtrl.addEventListener(Event.UNLOAD, handleUnload);
+            _gameCtrl.addEventListener(SizeChangedEvent.TYPE, updateDisplay);
             addEventListener(MouseEvent.CLICK, firstStart);
         }
         Resources.init(assetLoaded);
@@ -93,7 +102,7 @@ public class StarFight extends Sprite
             return;
         }
         _gameCtrl.registerListener(this);
-        removeChildAt(1);
+        _center.removeChildAt(1);
         removeEventListener(MouseEvent.CLICK, firstStart);
         setupBoard();
 
@@ -102,13 +111,10 @@ public class StarFight extends Sprite
 
     public function setupBoard () :void
     {
-        if (_boardLayer != null) {
-            for (var ii :int = 1; ii < numChildren; ii++) {
-                removeChildAt(1);
-            }
+        while (_center.numChildren > 1) {
+            _center.removeChildAt(_center.numChildren - 1);
         }
         if (_endMovie != null) {
-            removeChild(_endMovie);
             _endMovie = null;
         }
         _boardLayer = new Sprite();
@@ -116,11 +122,11 @@ public class StarFight extends Sprite
         _shipLayer = new Sprite();
         _shotLayer = new Sprite();
         _statusLayer = new Sprite();
-        addChild(_boardLayer);
-        addChild(_subShotLayer);
-        addChild(_shipLayer);
-        addChild(_shotLayer);
-        addChild(_statusLayer);
+        _center.addChild(_boardLayer);
+        _center.addChild(_subShotLayer);
+        _center.addChild(_shipLayer);
+        _center.addChild(_shotLayer);
+        _center.addChild(_statusLayer);
 
         _statusLayer.addChild(_status = new StatusOverlay());
         log("Created Game Controller");
@@ -199,7 +205,7 @@ public class StarFight extends Sprite
 
         startScreen();
 
-        addChild(new ShipChooser(this, true));
+        _center.addChild(new ShipChooser(this, true));
     }
 
     /**
@@ -389,6 +395,7 @@ public class StarFight extends Sprite
                 _gameCtrl.setImmediate("stateTime", _stateTime);
                 if (_ownShip != null) {
                     _ownShip.restart();
+                    _boardCtrl.shipKilled(myId);
                 }
                 addPowerup(null);
                 startPowerupTimer();
@@ -437,7 +444,7 @@ public class StarFight extends Sprite
         }
         _nextRoundTimer = _endMovie.fields_mc.timer;
         _nextRoundTimer.text = String(30);
-        addChild(_endMovie);
+        _center.addChild(_endMovie);
     }
 
     /**
@@ -477,6 +484,7 @@ public class StarFight extends Sprite
                     _gameCtrl.localChat(sship.playerName + " killed " + ship.playerName + "!");
                 }
             }
+            _boardCtrl.shipKilled(arr[4]);
 
             if (_ownShip != null && arr[3] == _ownShip.shipId) {
                 addScore(arr[3], KILL_PTS);
@@ -687,6 +695,7 @@ public class StarFight extends Sprite
             _shipLayer.removeChild(remShip);
             _status.removeShip(event.occupantId);
         }
+        _boardCtrl.shipKilled(event.occupantId);
 
         if (_gameCtrl.amInControl()) {
             _gameCtrl.setImmediate(shipKey(event.occupantId), null);
@@ -880,11 +889,22 @@ public class StarFight extends Sprite
         }
     }
 
+    protected function updateDisplay (event :SizeChangedEvent) :void
+    {
+        var displayWidth :Number = _gameCtrl.getSize().x;
+        _center.x = Math.max(0, (displayWidth - WIDTH) / 2);
+        _right.width = _left.width = _center.x;
+        _right.x = displayWidth - _right.width;
+    }
+
     [Embed(source="rsrc/intro_movie.swf")]
     protected var introAsset :Class;
 
     [Embed(source="rsrc/VENUSRIS.TTF", fontName="Venus Rising", mimeType="application/x-font")]
     protected var _venusRising :Class;
+
+    [Embed(source="rsrc/gutters.png")]
+    protected static const BACKGROUND :Class;
 
     /** Our game control object. */
     protected var _gameCtrl :WhirledGameControl;
@@ -930,6 +950,10 @@ public class StarFight extends Sprite
     protected var _otherScores :Object = new Object();
 
     protected var _nextRoundTimer :TextField;
+
+    protected var _center :Sprite;
+    protected var _left :Bitmap;
+    protected var _right :Bitmap;
 
     /** This could be more dynamic. */
     protected static const MIN_TILES_PER_POWERUP :int = 250;

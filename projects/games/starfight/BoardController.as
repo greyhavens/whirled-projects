@@ -483,6 +483,30 @@ public class BoardController
         return bestHit;
     }
 
+    public function shipKilled (shipId :int) :void
+    {
+        var indices :Array = new Array();
+        for (var ii :int = 0; ii < _mines.length; ii++) {
+            if (_mines[ii] != null && Mine(_mines[ii]).type == shipId) {
+                var mine :Mine = _mines[ii];
+                _mines[ii] = null;
+                indices.push(ii);
+                if (mine.parent != null) {
+                    mine.explode(_sf, function () :void {
+                        powerupLayer.removeChild(mine);
+                    });
+                }
+            }
+        }
+        if (indices.length > 0 && _gameCtrl.amInControl()) {
+            _gameCtrl.doBatch(function () :void {
+                for each (var idx :int in indices) {
+                    _gameCtrl.setImmediate("mines", null, idx);
+                }
+            });
+        }
+    }
+
     public function explode (x :Number, y :Number, rot :int,
         isSmall :Boolean, shipType :int) :void
     {
@@ -518,7 +542,7 @@ public class BoardController
     {
         explode(x, y, 0, true, 0);
         if (owner) {
-            if (obj.damage(damage)) {
+            if (_sf.gameState == Codes.IN_ROUND && obj.damage(damage)) {
                 _gameCtrl.setImmediate(obj.arrayName(), null, obj.index);
             }
         }
