@@ -47,19 +47,12 @@ public class GamePanel extends Sprite
     override public function hitTestPoint (
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
-        var hit :Boolean = false;
-
-        if (_hud.parent != null) {
-            hit ||= _hud.hitTestPoint(x, y, shapeFlag);
+        for (var ii :int = 0; ii < this.numChildren; ii ++) {
+            if (this.getChildAt(ii).hitTestPoint(x, y, shapeFlag)) {
+                return true;
+            }
         }
-        if (_seekPanel.parent != null) {
-            hit ||= _seekPanel.hitTestPoint(x, y, shapeFlag);
-        }
-        if (_box != null && _box.parent != null) {
-            hit ||= _box.hitTestPoint(x, y, shapeFlag);
-        }
-
-        return hit;
+        return false;
     }
 
     public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
