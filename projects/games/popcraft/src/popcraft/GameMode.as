@@ -3,15 +3,19 @@ package popcraft {
 import core.AppMode;
 import core.MainLoop;
 import core.ResourceManager;
-import com.threerings.util.Assert;
 
-import flash.display.DisplayObjectContainer;
+import com.threerings.util.Assert;
+import com.threerings.flash.DisablingButton;
+
 import flash.display.SimpleButton;
+import flash.display.DisplayObjectContainer;
+import flash.events.MouseEvent;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.display.DisplayObject;
+import flash.events.Event;
 
 public class GameMode extends AppMode
 {
@@ -61,22 +65,60 @@ public class GameMode extends AppMode
 
         this.addObject(_battleBoard, this);
 
-        // create some buttons
-        var meleeButton :SimpleButton =
-            GameMode.createUnitPurchaseButton(Content.MELEE, GameConstants.CREATURE_MELEE);
+        // create the creature purchase buttons
+        var meleeButton :SimpleButton = createUnitPurchaseButton(Content.MELEE, GameConstants.CREATURE_MELEE);
 
         meleeButton.x = GameConstants.MELEE_BUTTON_LOC.x;
         meleeButton.y = GameConstants.MELEE_BUTTON_LOC.y;
         this.addChild(meleeButton);
 
+        meleeButton.addEventListener(MouseEvent.CLICK,
+            function (e :Event) :void {
+               purchaseCreature(GameConstants.CREATURE_MELEE);
+            });
+
+        _creaturePurchaseButtons[GameConstants.CREATURE_MELEE] = meleeButton;
+
+        updateCreaturePurchaseButtons();
+
         //_messageMgr = new TickedMessageManager(PopCraft.instance.gameControl, TICK_INTERVAL_MS);
+    }
 
-        // @TEMP
-        var creature :Creature = new Creature();
-        creature.displayObject.x = 50;
-        creature.displayObject.y = 50;
+    override public function update(dt :Number) :void
+    {
+        updateCreaturePurchaseButtons();
+        super.update(dt);
+    }
 
-        this.addObject(creature, _battleBoard.displayObjectContainer);
+    protected function updateCreaturePurchaseButtons () :void
+    {
+        for (var creatureType :uint = 0; creatureType < GameConstants.CREATURE__LIMIT; ++creatureType) {
+            var button :SimpleButton = _creaturePurchaseButtons[creatureType];
+            button.enabled = canPurchaseCreature(creatureType);
+        }
+    }
+
+    public function canPurchaseCreature (creatureType :uint) :Boolean
+    {
+        var creatureCosts :Array = (GameConstants.CREATURE_DATA[creatureType] as CreatureData).resourceCosts;
+        for (var resourceType:uint = 0; resourceType < creatureCosts.length; ++resourceType) {
+            if (_playerData.getResourceAmount(resourceType) < creatureCosts[resourceType]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function purchaseCreature (creatureType :uint) :void
+    {
+        Assert.isTrue(canPurchaseCreature(creatureType));
+
+        // deduct the cost of the unit from the player's holdings
+        var creatureCosts :Array = (GameConstants.CREATURE_DATA[creatureType] as CreatureData).resourceCosts;
+        for (var resourceType:uint = 0; resourceType < creatureCosts.length; ++resourceType) {
+            _playerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
+        }
     }
 
     // from core.AppMode
@@ -93,41 +135,60 @@ public class GameMode extends AppMode
         return _playerData;
     }
 
-    protected static function createUnitPurchaseButton (iconClass :Class, creatureType :uint) :SimpleButton
+    protected static function createUnitPurchaseButton (iconClass :Class, creatureType :uint) :DisablingButton
     {
         var data :CreatureData = GameConstants.CREATURE_DATA[creatureType];
 
-        var button :SimpleButton = new SimpleButton();
-        var foreground :int = uint(0xFF0000);
-        var background :int = uint(0xCDC9C9);
-        var highlight :int = uint(0x888888);
-        button.upState = makeButtonFace(iconClass, foreground, background);
-        button.overState = makeButtonFace(iconClass, highlight, background);
-        button.downState = makeButtonFace(iconClass, background, highlight);
-        button.hitTestState = button.upState;
-
         // how much does it cost?
-        /*var costString :String = new String();
+        var costString :String = new String();
         for (var resType :uint = 0; resType < GameConstants.RESOURCE__LIMIT; ++resType) {
             var resData :ResourceType = GameConstants.getResource(resType);
-            var resCost
-            costString += (resData.name + " (" + data.getResourceCost(resType) + ")");
-            if(
+            var resCost :int = data.getResourceCost(resType);
 
+            if (resCost == 0) {
+                continue;
+            }
+
+            if (costString.length > 0) {
+                costString += " ";
+            }
+
+            costString += (resData.name + " (" + data.getResourceCost(resType) + ")");
         }
-        var costText :TextField = new TextField();
-        //costText.text*/
+
+        var button :DisablingButton = new DisablingButton();
+        var foreground :int = uint(0xFFFFFF);
+        var background :int = uint(0xCDC9C9);
+        var rolloverBackground :int = uint(0xFFD800);
+        var disabledBackground :int = uint(0x838383);
+
+        button.upState = makeButtonFace(iconClass, costString, foreground, background);
+        button.overState = makeButtonFace(iconClass, costString, foreground, rolloverBackground);
+        button.downState = makeButtonFace(iconClass, costString, foreground, rolloverBackground);
+        button.downState.x = -1;
+        button.downState.y = -1;
+        button.disabledState = makeButtonFace(iconClass, costString, foreground, disabledBackground);
+        button.hitTestState = button.upState;
 
         return button;
     }
 
-    protected static function makeButtonFace (iconClass :Class, foreground :uint, background :uint) :Sprite
+    protected static function makeButtonFace (iconClass :Class, costString :String, foreground :uint, background :uint) :Sprite
     {
         var face :Sprite = new Sprite();
 
         var icon :DisplayObject = new iconClass();
 
         face.addChild(icon);
+
+        var costText :TextField = new TextField();
+        costText.text = costString;
+        costText.textColor = 0;
+        costText.height = costText.textHeight + 2;
+        costText.width = costText.textWidth;
+        costText.y = icon.height + 5;
+
+        face.addChild(costText);
 
         var padding :int = 5;
         var w :Number = icon.width + 2 * padding;
@@ -144,6 +205,8 @@ public class GameMode extends AppMode
 
         return face;
     }
+
+    protected var _creaturePurchaseButtons :Array = new Array();
 
     protected var _messageMgr :TickedMessageManager;
     protected var _puzzleBoard :PuzzleBoard;

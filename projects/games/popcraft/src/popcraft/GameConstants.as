@@ -45,10 +45,11 @@ public class GameConstants
     }
 
     public static const CREATURE_MELEE :uint = 0;
+    public static const CREATURE__LIMIT :uint = 1;
 
     public static const CREATURE_DATA :Array = [
                                  // wood, gold, mana, morale
-        new CreatureData( "melee", [50,   100,  0,    0] )
+        new CreatureData( "melee", [5,   0,  0,    0] )
     ];
 
     public static const CLEAR_VALUE_TABLE :IntValueTable =
