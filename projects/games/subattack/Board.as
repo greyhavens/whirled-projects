@@ -4,6 +4,8 @@ import flash.events.Event;
 
 import flash.geom.Point;
 
+import flash.media.Sound;
+
 import flash.utils.Dictionary;
 
 import com.threerings.ezgame.StateChangedEvent;
@@ -32,6 +34,9 @@ public class Board
         _gameCtrl.addEventListener(Event.UNLOAD, shutdown);
         _seaDisplay = seaDisplay;
         _rando = new Random(int(_gameCtrl.get("seed")));
+
+        _explode = Sound(new EXPLODE_SOUND());
+        _factoryExplode = Sound(new FACTORY_EXPLODE_SOUND());
 
         var playerIds :Array = _gameCtrl.seating.getPlayerIds();
         var playerCount :int = playerIds.length;
@@ -319,8 +324,10 @@ public class Board
 
         // if it exploded in bounds, make that area traversable
         var subsAffected :Boolean = false;
+        var oldVal :int = Board.BLANK;
         if (xx >= 0 && xx < _width && yy >= 0 && yy < _height) {
             // mark the board area as traversable there
+            oldVal = int(_board[coordsToIdx(xx, yy)]);
             subsAffected = noteTorpedoExploded(xx, yy, killerIdx);
             _seaDisplay.addChild(new Explode(xx, yy, this));
         }
@@ -337,6 +344,14 @@ public class Board
                     _gameCtrl.localChat(killer.getPlayerName() + " has shot " +
                         sub.getPlayerName());
                 }
+            }
+        }
+        if (killCount == 0) {
+            // if no subs were affected, play a generic explode
+            if (oldVal < Board.BLANK) {
+                _factoryExplode.play();
+            } else {
+                _explode.play();
             }
         }
 
@@ -641,6 +656,9 @@ public class Board
     /** Used for generating random numbers consistently across clients. */
     protected var _rando :Random;
 
+    protected var _explode :Sound;
+    protected var _factoryExplode :Sound;
+
     protected var _totalDeaths :int = 0;
 
     /** The maximum number of total deaths before we end the game. */
@@ -690,5 +708,11 @@ public class Board
     protected static const MAX_QUEUED_TICKS :int = 5;
 
     protected static const SHOTS_TO_DESTROY :int = 1; // 2;
+
+    [Embed(source="rsrc/missile_explode.mp3")]
+    protected static const EXPLODE_SOUND :Class;
+
+    [Embed(source="rsrc/factory_explode.mp3")]
+    protected static const FACTORY_EXPLODE_SOUND :Class;
 }
 }

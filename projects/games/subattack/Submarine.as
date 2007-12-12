@@ -33,6 +33,16 @@ public class Submarine extends BaseSprite
     /** How many ticks does it take to build? */
     public static const TICKS_TO_BUILD :int = 5; // how long does it take to build?
 
+    // fake our static initializer
+    staticInit();
+    private static function staticInit () :void
+    {
+        _shootSound = Sound(new SHOOT_SOUND());
+        _explodeSelf = Sound(new EXPLODE_SELF_SOUND());
+        _explodeEnemy = Sound(new EXPLODE_ENEMY_SOUND());
+        _factorySound = Sound(new FACTORY_SOUND());
+    }
+
     public function Submarine (
         playerId :int, playerIdx :int, playerName :String, startx :int, starty :int,
         board :Board, gameCtrl :WhirledGameControl)
@@ -188,7 +198,6 @@ public class Submarine extends BaseSprite
         _hueShift = FilterUtil.createHueShift(SHIFTS[playerIdx]);
 
         _avatar = MovieClip(new AVATAR());
-        //_shootSound = Sound(new SHOOT_SOUND());
         if (_isMe) {
             _cantShootSound = Sound(new CANT_SHOOT_SOUND());
         }
@@ -237,6 +246,7 @@ public class Submarine extends BaseSprite
             _movedOrShot = true;
             if (++_buildingStep == TICKS_TO_BUILD) {
                 addPoints(-POINTS_TO_BUILD);
+                _factorySound.play();
                 _board.buildFactory(this);
                 _buildingStep = 0;
                 return OK;
@@ -255,7 +265,7 @@ public class Submarine extends BaseSprite
 
             } else {
                 _torpedos.push(new Torpedo(this, _board));
-//                _shootSound.play();
+                _shootSound.play();
                 updateVisual();
                 return OK;
             }
@@ -355,6 +365,12 @@ public class Submarine extends BaseSprite
     {
         // lose points for getting wacked
         addPoints((_points >= 0) ? POINTS_PER_DEATH : (POINTS_PER_DEATH / 4));
+
+        if (_isMe) {
+            _explodeSelf.play();
+        } else {
+            _explodeEnemy.play();
+        }
 
         _dead = true;
         _deaths++;
@@ -489,12 +505,18 @@ public class Submarine extends BaseSprite
     /** The movie clip that represents us. */
     protected var _avatar :MovieClip;
 
-    /** Our shooty-shoot sound. */
-    protected var _shootSound :Sound;
-
     protected var _cantShootSound :Sound;
 
     protected var _nameLabel :TextField;
+
+    /** Our shooty-shoot sound. */
+    protected static var _shootSound :Sound;
+
+    protected static var _explodeSelf :Sound;
+
+    protected static var _explodeEnemy :Sound;
+
+    protected static var _factorySound :Sound;
 
     /** The maximum number of torpedos that may be in-flight at once. */
     protected static const MAX_TORPEDOS :int = 2;
@@ -508,9 +530,19 @@ public class Submarine extends BaseSprite
     [Embed(source="rsrc/trucks_drill.swf#animations")]
     protected static const AVATAR :Class;
 
-    //[Embed(source="shooting.wav", mimeType="audio/wav")]
+    [Embed(source="rsrc/shoot.mp3")]
+    protected static const SHOOT_SOUND :Class;
 
-    [Embed(source="rsrc/Error.mp3")]
+    [Embed(source="rsrc/cant_shoot.mp3")]
     protected static const CANT_SHOOT_SOUND :Class;
+
+    [Embed(source="rsrc/you_explode.mp3")]
+    protected static const EXPLODE_SELF_SOUND :Class;
+
+    [Embed(source="rsrc/enemy_explode.mp3")]
+    protected static const EXPLODE_ENEMY_SOUND :Class;
+
+    [Embed(source="rsrc/drop_factory.mp3")]
+    protected static const FACTORY_SOUND :Class;
 }
 }
