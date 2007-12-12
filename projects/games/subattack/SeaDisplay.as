@@ -292,58 +292,58 @@ public class SeaDisplay extends Sprite
     /** Our status message. */
     protected var _status :TextField;
 
-    [Embed(source="temple.png")]
+    [Embed(source="rsrc/temple.png")]
     protected static const TEMPLE :Class;
 
-    [Embed(source="tree1.png")]
+    [Embed(source="rsrc/tree1.png")]
     protected static const TREE1 :Class;
 
-    [Embed(source="tree2.png")]
+    [Embed(source="rsrc/tree2.png")]
     protected static const TREE2 :Class;
 
-    [Embed(source="tree3.png")]
+    [Embed(source="rsrc/tree3.png")]
     protected static const TREE3 :Class;
 
-    [Embed(source="tree4.png")]
+    [Embed(source="rsrc/tree4.png")]
     protected static const TREE4 :Class;
 
-    [Embed(source="tree5.png")]
+    [Embed(source="rsrc/tree5.png")]
     protected static const TREE5 :Class;
 
-    [Embed(source="tree6.png")]
+    [Embed(source="rsrc/tree6.png")]
     protected static const TREE6 :Class;
 
-    [Embed(source="ground1.png")]
+    [Embed(source="rsrc/ground1.png")]
     protected static const GROUND1 :Class;
 
-    [Embed(source="ground2.png")]
+    [Embed(source="rsrc/ground2.png")]
     protected static const GROUND2 :Class;
 
-    [Embed(source="ground3.png")]
+    [Embed(source="rsrc/ground3.png")]
     protected static const GROUND3 :Class;
 
-    [Embed(source="ground4_moss.png")]
+    [Embed(source="rsrc/ground4_moss.png")]
     protected static const MOSS1 :Class;
 
-    [Embed(source="ground5_moss.png")]
+    [Embed(source="rsrc/ground5_moss.png")]
     protected static const MOSS2 :Class;
 
-    [Embed(source="rock1.png")]
+    [Embed(source="rsrc/rock1.png")]
     protected static const ROCK1 :Class;
 
-    [Embed(source="rock2.png")]
+    [Embed(source="rsrc/rock2.png")]
     protected static const ROCK2 :Class;
 
-    [Embed(source="rock3.png")]
+    [Embed(source="rsrc/rock3.png")]
     protected static const ROCK3 :Class;
 
-    [Embed(source="rock4.png")]
+    [Embed(source="rsrc/rock4.png")]
     protected static const ROCK4 :Class;
 
-    [Embed(source="animal_panda.png")]
+    [Embed(source="rsrc/animal_panda.png")]
     protected static const PANDA :Class;
 
-    [Embed(source="animal_dodo.png")]
+    [Embed(source="rsrc/animal_dodo.png")]
     protected static const DODO :Class;
 }
 }

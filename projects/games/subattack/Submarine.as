@@ -41,7 +41,7 @@ public class Submarine extends BaseSprite
 
         _gameCtrl = gameCtrl;
 
-        _isMe = (_gameCtrl.getMyId() == playerId);
+        _isMe = (_gameCtrl != null) && (_gameCtrl.getMyId() == playerId);
         _playerId = playerId;
         _playerName = playerName;
         _x = startx;
@@ -505,12 +505,12 @@ public class Submarine extends BaseSprite
     /** The number of ticks that may elapse before we're auto-respawned. */
     protected static const AUTO_RESPAWN_TICKS :int = 100;
 
-    [Embed(source="trucks_drill.swf#animations")]
+    [Embed(source="rsrc/trucks_drill.swf#animations")]
     protected static const AVATAR :Class;
 
     //[Embed(source="shooting.wav", mimeType="audio/wav")]
 
-    [Embed(source="Error.mp3")]
+    [Embed(source="rsrc/Error.mp3")]
     protected static const CANT_SHOOT_SOUND :Class;
 }
 }

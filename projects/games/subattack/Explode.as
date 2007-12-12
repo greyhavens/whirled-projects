@@ -32,7 +32,7 @@ public class Explode extends BaseSprite
 
     protected static const DURATION :int = 800;
 
-    [Embed(source="explosion.swf")]
+    [Embed(source="rsrc/explosion.swf")]
     protected static const EXPLOSION :Class;
 }
 }

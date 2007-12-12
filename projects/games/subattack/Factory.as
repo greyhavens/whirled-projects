@@ -51,7 +51,7 @@ public class Factory extends BaseSprite
 
     protected var _ticks :int = 0;
 
-    [Embed(source="factory.swf#factory")]
+    [Embed(source="rsrc/factory.swf#factory")]
     protected static const FACTORY :Class;
 }
 }

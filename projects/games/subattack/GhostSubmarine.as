@@ -97,7 +97,7 @@ public class GhostSubmarine extends Submarine
         checkAlpha();
     }
 
-    [Embed(source="futuremove.png")]
+    [Embed(source="rsrc/futuremove.png")]
     protected static const FUTURE_MOVE :Class;
 }
 }

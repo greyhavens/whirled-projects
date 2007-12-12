@@ -366,10 +366,10 @@ public class SubAttack extends Sprite
     /** The actions we have queued to be sent. */
     protected var _queued :Array;
 
-    [Embed(source="title_screen.swf", mimeType="application/octet-stream")]
+    [Embed(source="rsrc/title_screen.swf", mimeType="application/octet-stream")]
     protected static const SPLASH_SCREEN :Class;
 
-    [Embed(source="sidebar.jpg")]
+    [Embed(source="rsrc/sidebar.jpg")]
     protected static const SIDEBAR :Class;
 
     protected static const SEND_THROTTLE :int = 105;

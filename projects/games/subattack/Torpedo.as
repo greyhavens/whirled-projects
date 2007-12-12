@@ -104,7 +104,7 @@ public class Torpedo extends BaseSprite
     /** The sub that shot us. */
     protected var _sub :Submarine;
 
-    [Embed(source="missile_drill.swf#animations")]
+    [Embed(source="rsrc/missile_drill.swf#animations")]
     protected static const MISSILE :Class;
 }
 }
