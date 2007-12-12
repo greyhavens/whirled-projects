@@ -3,6 +3,7 @@ package popcraft {
 import core.AppMode;
 import core.MainLoop;
 import core.ResourceManager;
+import core.util.Rand;
 
 import popcraft.net.TickedMessageManager;
 import popcraft.net.Message;
@@ -40,34 +41,46 @@ public class GameMode extends AppMode
     override public function setup () :void
     {
         var myPosition :int = PopCraft.instance.gameControl.seating.getMyPosition();
+        var isAPlayer :Boolean = (myPosition >= 0);
 
-        // if myPosition < 0, I'm not a player. Error out. (@TODO: this probably needs to be changed)
-        if (myPosition < 0)
-        {
-            trace("GameMode.setup failed: myPosition < 0");
-            return;
-        }
+        // only players get puzzles
+        if (isAPlayer) {
+            _playerData = new PlayerData(uint(myPosition));
 
-        _playerData = new PlayerData(uint(myPosition));
+            var resourceDisplay :ResourceDisplay = new ResourceDisplay();
+            resourceDisplay.displayObject.x = GameConstants.RESOURCE_DISPLAY_LOC.x;
+            resourceDisplay.displayObject.y = GameConstants.RESOURCE_DISPLAY_LOC.y;
 
-        // add the top-level game objects
+            this.addObject(resourceDisplay, this);
 
-        var resourceDisplay :ResourceDisplay = new ResourceDisplay();
-        resourceDisplay.displayObject.x = GameConstants.RESOURCE_DISPLAY_LOC.x;
-        resourceDisplay.displayObject.y = GameConstants.RESOURCE_DISPLAY_LOC.y;
+            _puzzleBoard = new PuzzleBoard(
+                GameConstants.PUZZLE_COLS,
+                GameConstants.PUZZLE_ROWS,
+                GameConstants.PUZZLE_TILE_SIZE);
 
-        this.addObject(resourceDisplay, this);
+            _puzzleBoard.displayObject.x = GameConstants.PUZZLE_LOC.x;
+            _puzzleBoard.displayObject.y = GameConstants.PUZZLE_LOC.y;
 
-        _puzzleBoard = new PuzzleBoard(
-            GameConstants.PUZZLE_COLS,
-            GameConstants.PUZZLE_ROWS,
-            GameConstants.PUZZLE_TILE_SIZE);
+            this.addObject(_puzzleBoard, this);
 
-        _puzzleBoard.displayObject.x = GameConstants.PUZZLE_LOC.x;
-        _puzzleBoard.displayObject.y = GameConstants.PUZZLE_LOC.y;
+            // create the creature purchase buttons
+            var meleeButton :SimpleButton = createUnitPurchaseButton(Content.MELEE, GameConstants.UNIT_MELEE);
 
-        this.addObject(_puzzleBoard, this);
+            meleeButton.x = GameConstants.MELEE_BUTTON_LOC.x;
+            meleeButton.y = GameConstants.MELEE_BUTTON_LOC.y;
+            this.addChild(meleeButton);
 
+            meleeButton.addEventListener(MouseEvent.CLICK,
+                function (e :Event) :void {
+                   purchaseUnit(GameConstants.UNIT_MELEE);
+                });
+
+            _creaturePurchaseButtons[GameConstants.UNIT_MELEE] = meleeButton;
+
+            updateUnitPurchaseButtons();
+       }
+
+        // everyone gets to see the BattleBoard
         _battleBoard = new BattleBoard(
             GameConstants.BATTLE_COLS,
             GameConstants.BATTLE_ROWS,
@@ -78,29 +91,9 @@ public class GameMode extends AppMode
 
         this.addObject(_battleBoard, this);
 
-        // create the creature purchase buttons
-        var meleeButton :SimpleButton = createUnitPurchaseButton(Content.MELEE, GameConstants.UNIT_MELEE);
-
-        meleeButton.x = GameConstants.MELEE_BUTTON_LOC.x;
-        meleeButton.y = GameConstants.MELEE_BUTTON_LOC.y;
-        this.addChild(meleeButton);
-
-        meleeButton.addEventListener(MouseEvent.CLICK,
-            function (e :Event) :void {
-               purchaseUnit(GameConstants.UNIT_MELEE);
-            });
-
-        _creaturePurchaseButtons[GameConstants.UNIT_MELEE] = meleeButton;
-
-        updateUnitPurchaseButtons();
-
         _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
-
-        // only one player starts the ticker
-        if (0 == _playerData.playerId) {
-            _messageMgr.startTicker(TICK_INTERVAL_MS);
-        }
+        _messageMgr.setup((0 == _playerData.playerId), TICK_INTERVAL_MS);
 
         // create a special AppMode for all objects that are synchronized over the network.
         // we will manage this mode ourselves.
@@ -109,6 +102,17 @@ public class GameMode extends AppMode
 
     override public function update(dt :Number) :void
     {
+        // don't start doing anything until the messageMgr is ready
+        if (!_gameIsRunning && _messageMgr.isReady) {
+            trace("Starting game. randomSeed=" + _messageMgr.randomSeed);
+            Rand.seedStream(Rand.STREAM_GAME, _messageMgr.randomSeed);
+            _gameIsRunning = true;
+        }
+
+        if (!_gameIsRunning) {
+            return;
+        }
+
         // update the network
         _messageMgr.update(dt);
         while (_messageMgr.hasUnprocessedTicks) {
@@ -260,6 +264,8 @@ public class GameMode extends AppMode
 
         return face;
     }
+
+    protected var _gameIsRunning :Boolean;
 
     protected var _creaturePurchaseButtons :Array = new Array();
 

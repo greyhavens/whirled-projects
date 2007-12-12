@@ -20,7 +20,6 @@ public class TickedMessageManager
     public function TickedMessageManager (gameCtrl :WhirledGameControl)
     {
         _gameCtrl = gameCtrl;
-        _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
     }
 
     public function addMessageFactory (messageName :String, factory :MessageFactory) :void
@@ -28,35 +27,72 @@ public class TickedMessageManager
         _messageFactories.put(messageName, factory);
     }
 
-    /**
-     * Starts a ticker on the server. Only one client should call this function -
-     * the tick messages will be broadcast to everybody.
-     */
-    public function startTicker (tickIntervalMS :int) :void
+    public function setup (isFirstPlayer :Boolean, tickIntervalMS :int) :void
     {
-        _gameCtrl.startTicker("tick", tickIntervalMS);
+        _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
+
+        _isFirstPlayer = isFirstPlayer;
+        _tickIntervalMS = tickIntervalMS;
+
+        if (isFirstPlayer) {
+            _gameCtrl.sendMessage("randSeed", uint(Math.random() * uint.MAX_VALUE));
+        }
     }
 
     public function shutdown () :void
     {
         _gameCtrl.stopTicker("tick");
         _gameCtrl.removeEventListener(MessageReceivedEvent.TYPE, msgReceived);
+        _receivedRandomSeed = false;
+    }
+
+    public function get isReady () :Boolean
+    {
+        return _receivedRandomSeed;
+    }
+
+    public function get randomSeed () :uint
+    {
+        Assert.isTrue(_receivedRandomSeed);
+        return _randomSeed;
     }
 
     protected function msgReceived (event :MessageReceivedEvent) :void
     {
         var name :String = event.name;
-        if (name == "tick") {
-            _ticks.push(new Array());
-        } else {
-            // add any actions received during this tick
-            var array :Array = (_ticks[_ticks.length - 1] as Array);
-            var msg :Message = deserializeMessage(event.name, event.value);
 
-            if (null != msg) {
-                array.push(msg);
+        if (name == "randSeed") {
+            if (_receivedRandomSeed) {
+                trace("Error: TickedMessageManager received multiple randSeed messages.");
+                return;
             }
-        }
+
+            _randomSeed = uint(event.value);
+            _receivedRandomSeed = true;
+
+            if (_isFirstPlayer) {
+                _gameCtrl.startTicker("tick", _tickIntervalMS);
+            }
+
+        } else {
+
+            if (!_receivedRandomSeed) {
+                trace("Error: TickedMessageManager is receiving game messages prematurely.");
+                return;
+            }
+
+            if (name == "tick") {
+                _ticks.push(new Array());
+            } else {
+                // add any actions received during this tick
+                var array :Array = (_ticks[_ticks.length - 1] as Array);
+                var msg :Message = deserializeMessage(event.name, event.value);
+
+                if (null != msg) {
+                    array.push(msg);
+                }
+            }
+       }
     }
 
     public function get hasUnprocessedTicks () :Boolean
@@ -69,7 +105,7 @@ public class TickedMessageManager
         return (0 == _ticks.length ? 0 : _ticks.length - 1);
     }
 
-    // returns the 
+    // returns the
     public function getNextTick () :Array
     {
         Assert.isTrue(unprocessedTickCount > 0);
@@ -164,6 +200,9 @@ public class TickedMessageManager
         _minSendDelayMS = (0 == val ? 0 : (1000 / val) + 5);
     }
 
+    protected var _isFirstPlayer :Boolean;
+    protected var _tickIntervalMS :uint;
+
     protected var _gameCtrl :WhirledGameControl;
     protected var _ticks :Array = new Array();
     protected var _pendingSends :Array = new Array();
@@ -171,6 +210,9 @@ public class TickedMessageManager
     protected var _minSendDelayMS :uint = 105;  // default to 10 sends/second
     protected var _lastSendTime :int;
     protected var _messageFactories :HashMap = new HashMap();
+
+    protected var _receivedRandomSeed :Boolean;
+    protected var _randomSeed :uint;
 }
 
 }
