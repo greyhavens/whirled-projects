@@ -81,7 +81,7 @@ public class GameMode extends AppMode
 
         updateCreaturePurchaseButtons();
 
-        //_messageMgr = new TickedMessageManager(PopCraft.instance.gameControl, TICK_INTERVAL_MS);
+        _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl, TICK_INTERVAL_MS);
     }
 
     override public function update(dt :Number) :void

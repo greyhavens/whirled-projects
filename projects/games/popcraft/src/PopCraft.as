@@ -12,6 +12,7 @@ import flash.utils.Dictionary;
 import core.util.ObjectSet;
 
 import popcraft.GameMode;
+import com.threerings.ezgame.StateChangedEvent;
 
 [SWF(width="700", height="500", frameRate="30")]
 public class PopCraft extends Sprite
@@ -30,11 +31,16 @@ public class PopCraft extends Sprite
         Assert.isTrue(null == g_instance);
         g_instance = this;
 
-        //_gameCtrl = new WhirledGameControl(this);
+        _gameCtrl = new WhirledGameControl(this, true);
+        _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
 
         var mainLoop :MainLoop = new MainLoop(this);
-        mainLoop.pushMode(new GameMode());
         mainLoop.run();
+    }
+
+    protected function handleGameStarted (event :StateChangedEvent) :void
+    {
+        MainLoop.instance.pushMode(new GameMode());
     }
 
     public function get gameControl () :WhirledGameControl
