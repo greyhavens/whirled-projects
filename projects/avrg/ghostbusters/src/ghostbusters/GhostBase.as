@@ -38,7 +38,7 @@ public class GhostBase extends Sprite
         this.addChild(_clip);
         _bounds = _clip.getBounds(this);
 
-        // dangle the sprite from its head
+        // register the sprite
         _clip.x = - (_bounds.left + _bounds.width/2);
         _clip.y = - _bounds.top;
 
@@ -57,7 +57,7 @@ public class GhostBase extends Sprite
 
     protected static const STATE_WALKING :String = "state_Default_walking";
     protected static const STATE_APPEAR :String = "state_Appear";
-    protected static const STATE_FIGHT :String = "state_fightstance";
+    protected static const STATE_FIGHT :String = "state_Fightstance";
 
     [Embed(source="../../rsrc/Ghost.swf", mimeType="application/octet-stream")]
     protected static const GHOST :Class;

@@ -24,6 +24,8 @@ public class SpawnedGhost extends GhostBase
     public function updateHealth (percentHealth :Number) :void
     {
         var g :Graphics = _health.graphics;
+        g.clear();
+
         g.lineStyle(0, HEALTH_BAR_COLOUR);
         g.beginFill(HEALTH_BAR_COLOUR);
         g.drawRect(-HEALTH_WIDTH/2, -HEALTH_HEIGHT/2, HEALTH_WIDTH * percentHealth, HEALTH_HEIGHT);
@@ -38,13 +40,15 @@ public class SpawnedGhost extends GhostBase
         _handler = new ClipHandler(_clip);
         _handler.gotoScene(STATE_APPEAR, fullySpawned);
 
+        _control.setHotSpot((_bounds.left + _bounds.right)/2, _bounds.bottom, _bounds.height);
+
         // TODO: play some kind of audiovisual effect to make the player understand the
         // TODO: ghost is doing its dramatic appearance act and is not yet fightable
     }
 
     protected function fullySpawned () :void
     {
-        _handler.gotoScene(STATE_FIGHT);
+        _clip.gotoAndStop(1, STATE_FIGHT);
         addEventListener(MouseEvent.CLICK, ghostClicked);
 
         _health = new Sprite();

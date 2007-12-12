@@ -55,7 +55,8 @@ public class GameController extends Controller
 
     public function handleToggleLoot () :void
     {
-        // TODO
+        // TODO: debugging shortcut
+        handleSpawnGhost();
     }
 
     public function handlePlay () :void

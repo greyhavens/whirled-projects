@@ -169,7 +169,7 @@ public class SeekPanel extends Sprite
         _ghost = new HidingGhost(_model.getGhostSpeed());
         _ghost.addEventListener(MouseEvent.CLICK, ghostClick);
         this.addChild(_ghost);
-//        _ghost.mask = _maskLayer;
+        _ghost.mask = _maskLayer;
     }
 
     protected var _model :SeekModel;
