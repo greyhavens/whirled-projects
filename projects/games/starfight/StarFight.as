@@ -168,7 +168,7 @@ public class StarFight extends Sprite
             _gameCtrl.addEventListener(StateChangedEvent.CONTROL_CHANGED, handleHostChanged);
             _gameCtrl.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
         }
-        _boardCtrl = new BoardController(_gameCtrl);
+        _boardCtrl = new BoardController(_gameCtrl, this);
         _boardCtrl.init(boardLoaded);
     }
 
@@ -354,6 +354,11 @@ public class StarFight extends Sprite
         return _ships.get(id);
     }
 
+    public function numShips () :int
+    {
+        return _ships.size();
+    }
+
     public function maybeStartRound () :void
     {
         if (_population >= 2 && gameState == Codes.PRE_ROUND && _gameCtrl.amInControl()) {
@@ -475,6 +480,7 @@ public class StarFight extends Sprite
 
             if (_ownShip != null && arr[3] == _ownShip.shipId) {
                 addScore(arr[3], KILL_PTS);
+                _ownShip.registerKill(arr[4]);
             }
 
         } else if (event.name.substring(0, 9) == "addScore-") {
@@ -535,6 +541,10 @@ public class StarFight extends Sprite
         }
     }
 
+    public function awardTrophy (name :String) :void
+    {
+        _gameCtrl.awardTrophy(name);
+    }
 
     /**
      * Register that a ship was hit at the location.
@@ -784,7 +794,7 @@ public class StarFight extends Sprite
         }
 
         if (_ownShip != null) {
-            _boardCtrl.shipInteraction(_ownShip, ownOldX, ownOldY, this);
+            _boardCtrl.shipInteraction(_ownShip, ownOldX, ownOldY);
         }
 
         // Recenter the board on our ship.
@@ -925,7 +935,6 @@ public class StarFight extends Sprite
     protected static const MIN_TILES_PER_POWERUP :int = 250;
 
     /** Points for various things in the game. */
-    protected static const POWERUP_PTS :int = 25;
     protected static const HIT_PTS :int = 1;
     protected static const KILL_PTS :int = 25;
 

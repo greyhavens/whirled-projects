@@ -68,6 +68,7 @@ public class TorpedoShotSprite extends ShotSprite {
             }
             _game.explodeCustom(
                     hitX, hitY, MovieClip(new Codes.SHIP_TYPES[shipType].secondaryExplode()));
+            _game.playSoundAt(Codes.SHIP_TYPES[shipType].secondaryExplodeSound, hitX, hitY);
             complete = true;
         }
     }

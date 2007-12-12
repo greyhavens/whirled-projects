@@ -11,6 +11,8 @@ public class Codes {
     public static const BLACK :uint = uint(0x000000);
     public static const CYAN :uint = uint(0x00FFFF);
     public static const YELLOW :uint = uint(0xFFFF00);
+    public static const RED :uint = uint(0xFF0000);
+    public static const GREEN :uint = uint(0x00FF00);
 
     /** millis between screen refreshes. */
     public static const REFRESH_RATE :int = 50;

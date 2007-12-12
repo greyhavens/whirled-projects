@@ -245,9 +245,9 @@ public class StatusOverlay extends Sprite
     {
         var color :uint;
         if (type == SHIP) {
-            color = 0xFF0000;
+            color = Codes.RED;
         } else {
-            color = 0x00FF00;
+            color = Codes.GREEN;
         }
         var circle :Shape = new Shape();
         circle.graphics.beginFill(color);

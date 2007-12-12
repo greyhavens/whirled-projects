@@ -3,11 +3,14 @@ package {
 import flash.media.Sound;
 import flash.media.SoundTransform;
 
+import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
 public class RaptorShipType extends ShipType
 {
+    public var secondarySound :Sound;
+
     public function RaptorShipType () :void
     {
         name = "Raptor";
@@ -65,6 +68,7 @@ public class RaptorShipType extends ShipType
                 ship.shieldPower = 0.0;
             });
         shieldTimer.start();
+        sf.playSoundAt(secondarySound, ship.boardX, ship.boardY);
         return true;
     }
 
@@ -75,6 +79,12 @@ public class RaptorShipType extends ShipType
     override protected function swfAsset () :Class
     {
         return SHIP;
+    }
+
+    override protected function successHandler (event :Event) :void
+    {
+        super.successHandler(event);
+        secondarySound = Sound(new (_loader.getClass("shield.wav"))());
     }
 
     [Embed(source="rsrc/ships/raptor.swf", mimeType="application/octet-stream")]

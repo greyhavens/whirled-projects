@@ -28,10 +28,11 @@ public class BoardController
     /**
      * Constructs a brand new board.
      */
-    public function BoardController (gameCtrl :WhirledGameControl)
+    public function BoardController (gameCtrl :WhirledGameControl, sf :StarFight)
     {
         _gameCtrl = gameCtrl;
         _gameCtrl.registerListener(this);
+        _sf = sf;
     }
 
     public function init (callback :Function) :void
@@ -317,7 +318,7 @@ public class BoardController
         _gameCtrl.setImmediate("mines", null, idx);
         var mine :Mine = _mines[idx];
         _mines[idx] = null;
-        mine.explode(function () :void {
+        mine.explode(_sf, function () :void {
             powerupLayer.removeChild(mine);
         });
     }
@@ -552,7 +553,7 @@ public class BoardController
     }
 
     public function shipInteraction (
-            ownShip :ShipSprite, oldX :Number, oldY :Number, game :StarFight) :void
+            ownShip :ShipSprite, oldX :Number, oldY :Number) :void
     {
         do {
             var powIdx :int = getObjectIdx(oldX, oldY, ownShip.boardX, ownShip.boardY,
@@ -573,7 +574,7 @@ public class BoardController
             if (mine.type == ownShip.shipId) {
                 break;
             }
-            game.hitShip(ownShip, mine.bX, mine.bY, mine.type, mine.dmg);
+            _sf.hitShip(ownShip, mine.bX, mine.bY, mine.type, mine.dmg);
             removeMine(mineIdx);
         } while (mineIdx != -1);
     }
@@ -696,6 +697,8 @@ public class BoardController
 
     /** All the explosions on the board. */
     protected var _explosions :Array;
+
+    protected var _sf :StarFight;
 
     /** This could be more dynamic. */
     protected static const MIN_TILES_PER_POWERUP :int = 250;

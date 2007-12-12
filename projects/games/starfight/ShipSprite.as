@@ -196,7 +196,7 @@ public class ShipSprite extends Sprite
 
         var format:TextFormat = new TextFormat();
         format.font = StarFight.gameFont.fontName;
-        format.color = Codes.CYAN;
+        format.color = (isOwnShip || shipId < 0) ? Codes.CYAN : Codes.RED;
         format.size = 10;
         format.rightMargin = 3;
         nameText.defaultTextFormat = format;
@@ -367,6 +367,7 @@ public class ShipSprite extends Sprite
         power -= hitPower;
         if (!isAlive()) {
             _game.explode(boardX, boardY, ship.rotation, shooterId, shipId);
+            checkAwards();
 
             // Stop moving and firing.
             xVel = 0;
@@ -376,7 +377,21 @@ public class ShipSprite extends Sprite
             accel = 0;
             _firing = false;
             _secondary = false;
+            _deaths++;
         }
+    }
+
+    /**
+     * Called when we kill someone.
+     */
+    public function registerKill (shipId :int) :void
+    {
+        _kills++;
+        _killsThisLife++;
+        if (_game.numShips() >= 3) {
+            _killsThisLife3++;
+        }
+        _enemiesKilled[shipId] = true;
     }
 
     public function kill () :void
@@ -422,6 +437,9 @@ public class ShipSprite extends Sprite
         enginePower = 0.0;
         primaryPower = 1.0;
         secondaryPower = 0.0;
+        _killsThisLife = 0;
+        _killsThisLife3 = 0;
+        _powerupsThisLife = false;
 
         _engineSound.loop();
 
@@ -433,6 +451,7 @@ public class ShipSprite extends Sprite
     {
         stopSounds();
         setAnimMode(IDLE, true);
+        checkAwards(true);
     }
 
     protected function setVisible (visible :Boolean) :void
@@ -722,6 +741,7 @@ public class ShipSprite extends Sprite
      */
     public function awardPowerup (powerup :Powerup) :void
     {
+        _powerupsThisLife = true;
         _game.addScore(shipId, POWERUP_PTS);
         _game.playSoundAt(powerup.sound(), powerup.bX, powerup.bY);
         if (powerup.type == Powerup.HEALTH) {
@@ -857,6 +877,49 @@ public class ShipSprite extends Sprite
 
     }
 
+    protected function checkAwards (gameOver :Boolean = false) :void
+    {
+        if (!isOwnShip) {
+            return;
+        }
+
+        if (_killsThisLife >= 10 && !_powerupsThisLife) {
+            _game.awardTrophy("fly_by_wire");
+        }
+        if (_killsThisLife3 >= 10) {
+            _game.awardTrophy(_shipType.name + "_pilot");
+        }
+
+        // see if we've killed 7 other poeple currently playing
+        var bogey :int = 0;
+        for (var id :String in _enemiesKilled) {
+            if (_game.getShip(int(_enemiesKilled[id])) != null) {
+                bogey++;
+            }
+        }
+        if (bogey >= 7) {
+            _game.awardTrophy("bogey_hunter");
+        }
+
+        if (gameOver && _game.numShips() >= 8 && _kills / _deaths >= 4) {
+            _game.awardTrophy("space_ace");
+        }
+
+        if (_game.numShips() < 3) {
+            return;
+        }
+
+        if (score >= 500) {
+            _game.awardTrophy("score1");
+        }
+        if (score >= 1000) {
+            _game.awardTrophy("score2");
+        }
+        if (score >= 1500) {
+            _game.awardTrophy("score3");
+        }
+    }
+
     /** The board we inhabit. */
     protected var _board :BoardController;
 
@@ -899,6 +962,14 @@ public class ShipSprite extends Sprite
 
     protected var _reportShip :ShipSprite;
     protected var _reportTime :int;
+
+    /** Trophy stats. */
+    protected var _killsThisLife :int;
+    protected var _killsThisLife3 :int;
+    protected var _enemiesKilled :Object = new Object();
+    protected var _powerupsThisLife :Boolean = false;
+    protected var _kills :int;
+    protected var _deaths :int;
 
     protected static const INTERPOLATION_TIME :int = 500;
 
