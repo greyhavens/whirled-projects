@@ -1,9 +1,9 @@
 package popcraft {
 
 /** Encapsulates immutable data about a particular type of Creature. */
-public class CreatureData
+public class UnitData
 {
-    public function CreatureData (name :String, costs :Array)
+    public function UnitData (name :String, costs :Array)
     {
         _name = name;
         _costs = costs;

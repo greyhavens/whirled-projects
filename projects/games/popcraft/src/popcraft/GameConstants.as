@@ -44,12 +44,12 @@ public class GameConstants
         return (RESOURCE_TYPES[type] as ResourceType);
     }
 
-    public static const CREATURE_MELEE :uint = 0;
-    public static const CREATURE__LIMIT :uint = 1;
+    public static const UNIT_MELEE :uint = 0;
+    public static const UNIT__LIMIT :uint = 1;
 
-    public static const CREATURE_DATA :Array = [
+    public static const UNIT_DATA :Array = [
                                  // wood, gold, mana, morale
-        new CreatureData( "melee", [5,   0,  0,    0] )
+            new UnitData( "melee", [5,   0,  0,    0] )
     ];
 
     public static const CLEAR_VALUE_TABLE :IntValueTable =

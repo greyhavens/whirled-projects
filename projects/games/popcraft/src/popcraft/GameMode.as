@@ -79,7 +79,7 @@ public class GameMode extends AppMode
         this.addObject(_battleBoard, this);
 
         // create the creature purchase buttons
-        var meleeButton :SimpleButton = createUnitPurchaseButton(Content.MELEE, GameConstants.CREATURE_MELEE);
+        var meleeButton :SimpleButton = createUnitPurchaseButton(Content.MELEE, GameConstants.UNIT_MELEE);
 
         meleeButton.x = GameConstants.MELEE_BUTTON_LOC.x;
         meleeButton.y = GameConstants.MELEE_BUTTON_LOC.y;
@@ -87,12 +87,12 @@ public class GameMode extends AppMode
 
         meleeButton.addEventListener(MouseEvent.CLICK,
             function (e :Event) :void {
-               purchaseCreature(GameConstants.CREATURE_MELEE);
+               purchaseUnit(GameConstants.UNIT_MELEE);
             });
 
-        _creaturePurchaseButtons[GameConstants.CREATURE_MELEE] = meleeButton;
+        _creaturePurchaseButtons[GameConstants.UNIT_MELEE] = meleeButton;
 
-        updateCreaturePurchaseButtons();
+        updateUnitPurchaseButtons();
 
         _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
@@ -106,21 +106,21 @@ public class GameMode extends AppMode
     override public function update(dt :Number) :void
     {
         _messageMgr.update(dt); // @TODO - move this somewhere
-        updateCreaturePurchaseButtons();
+        updateUnitPurchaseButtons();
         super.update(dt);
     }
 
-    protected function updateCreaturePurchaseButtons () :void
+    protected function updateUnitPurchaseButtons () :void
     {
-        for (var creatureType :uint = 0; creatureType < GameConstants.CREATURE__LIMIT; ++creatureType) {
+        for (var creatureType :uint = 0; creatureType < GameConstants.UNIT__LIMIT; ++creatureType) {
             var button :SimpleButton = _creaturePurchaseButtons[creatureType];
-            button.enabled = canPurchaseCreature(creatureType);
+            button.enabled = canPurchaseUnit(creatureType);
         }
     }
 
-    public function canPurchaseCreature (creatureType :uint) :Boolean
+    public function canPurchaseUnit (creatureType :uint) :Boolean
     {
-        var creatureCosts :Array = (GameConstants.CREATURE_DATA[creatureType] as CreatureData).resourceCosts;
+        var creatureCosts :Array = (GameConstants.UNIT_DATA[creatureType] as UnitData).resourceCosts;
         for (var resourceType:uint = 0; resourceType < creatureCosts.length; ++resourceType) {
             if (_playerData.getResourceAmount(resourceType) < creatureCosts[resourceType]) {
                 return false;
@@ -130,12 +130,12 @@ public class GameMode extends AppMode
         return true;
     }
 
-    public function purchaseCreature (creatureType :uint) :void
+    public function purchaseUnit (creatureType :uint) :void
     {
-        Assert.isTrue(canPurchaseCreature(creatureType));
+        Assert.isTrue(canPurchaseUnit(creatureType));
 
         // deduct the cost of the unit from the player's holdings
-        var creatureCosts :Array = (GameConstants.CREATURE_DATA[creatureType] as CreatureData).resourceCosts;
+        var creatureCosts :Array = (GameConstants.UNIT_DATA[creatureType] as UnitData).resourceCosts;
         for (var resourceType:uint = 0; resourceType < creatureCosts.length; ++resourceType) {
             _playerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
         }
@@ -160,7 +160,7 @@ public class GameMode extends AppMode
 
     protected static function createUnitPurchaseButton (iconClass :Class, creatureType :uint) :DisablingButton
     {
-        var data :CreatureData = GameConstants.CREATURE_DATA[creatureType];
+        var data :UnitData = GameConstants.UNIT_DATA[creatureType];
 
         // how much does it cost?
         var costString :String = new String();

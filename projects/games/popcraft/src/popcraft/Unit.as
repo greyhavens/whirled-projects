@@ -7,9 +7,9 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.Bitmap;
 
-public class Creature extends AppObject
+public class Unit extends AppObject
 {
-    public function Creature (owningPlayerId :uint)
+    public function Unit (owningPlayerId :uint)
     {
         _owningPlayerId = owningPlayerId;
 
