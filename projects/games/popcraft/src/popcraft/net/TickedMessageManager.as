@@ -59,12 +59,18 @@ public class TickedMessageManager
         }
     }
 
+    public function get hasUnprocessedTicks () :Boolean
+    {
+        return (unprocessedTickCount > 0);
+    }
+
     public function get unprocessedTickCount () :uint
     {
         return (0 == _ticks.length ? 0 : _ticks.length - 1);
     }
 
-    public function getNextTickMessages () :Array
+    // returns the 
+    public function getNextTick () :Array
     {
         Assert.isTrue(unprocessedTickCount > 0);
         return (_ticks.shift() as Array);

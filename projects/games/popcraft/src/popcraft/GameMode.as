@@ -101,13 +101,45 @@ public class GameMode extends AppMode
         if (0 == _playerData.playerId) {
             _messageMgr.startTicker(TICK_INTERVAL_MS);
         }
+
+        // create a special AppMode for all objects that are synchronized over the network.
+        // we will manage this mode ourselves.
+        _netObjects = new AppMode();
     }
 
     override public function update(dt :Number) :void
     {
-        _messageMgr.update(dt); // @TODO - move this somewhere
+        // update the network
+        _messageMgr.update(dt);
+        while (_messageMgr.hasUnprocessedTicks) {
+
+            // process all messages from this tick
+            var messageArray: Array = _messageMgr.getNextTick();
+            for each (var msg :Message in messageArray) {
+                handleMessage(msg);
+            }
+
+            // run the simulation
+            _netObjects.update(TICK_INTERVAL_S);
+        }
+
+
+        // update all non-net objects
         updateUnitPurchaseButtons();
         super.update(dt);
+    }
+
+    protected function handleMessage (msg :Message) :void
+    {
+        switch (msg.name) {
+        case CreateUnitMessage.messageName:
+            var createUnitMsg :CreateUnitMessage = (msg as CreateUnitMessage);
+            _netObjects.addObject(
+                UnitFactory.createUnit(createUnitMsg.unitType, createUnitMsg.owningPlayer),
+                _battleBoard.displayObjectContainer);
+            break;
+        }
+
     }
 
     protected function updateUnitPurchaseButtons () :void
@@ -236,7 +268,10 @@ public class GameMode extends AppMode
     protected var _battleBoard :BattleBoard;
     protected var _playerData :PlayerData;
 
+    protected var _netObjects :AppMode;
+
     protected static const TICK_INTERVAL_MS :int = 100; // 1/10 of a second
+    protected static const TICK_INTERVAL_S :Number = (Number(1) / Number(TICK_INTERVAL_MS));
 }
 
 }
