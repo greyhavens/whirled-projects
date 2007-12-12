@@ -9,7 +9,6 @@ import flash.events.MouseEvent;
 
 import com.whirled.MobControl;
 
-import ghostbusters.ClipHandler;
 import ghostbusters.GhostBase;
 
 public class SpawnedGhost extends GhostBase
@@ -37,18 +36,10 @@ public class SpawnedGhost extends GhostBase
 
     override protected function mediaReady () :void
     {
-        _handler = new ClipHandler(_clip);
-        _handler.gotoScene(STATE_APPEAR, fullySpawned);
+        _clip.gotoAndStop(1, STATE_FIGHT);
 
         _control.setHotSpot((_bounds.left + _bounds.right)/2, _bounds.bottom, _bounds.height);
 
-        // TODO: play some kind of audiovisual effect to make the player understand the
-        // TODO: ghost is doing its dramatic appearance act and is not yet fightable
-    }
-
-    protected function fullySpawned () :void
-    {
-        _clip.gotoAndStop(1, STATE_FIGHT);
         addEventListener(MouseEvent.CLICK, ghostClicked);
 
         _health = new Sprite();
@@ -73,7 +64,6 @@ public class SpawnedGhost extends GhostBase
 
     protected var _control :MobControl;
     protected var _health :Sprite;
-    protected var _handler :ClipHandler;
 
     protected static const HEALTH_WIDTH :int = 80;
     protected static const HEALTH_HEIGHT :int = 20;
