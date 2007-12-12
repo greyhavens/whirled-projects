@@ -4,6 +4,10 @@ import core.AppMode;
 import core.MainLoop;
 import core.ResourceManager;
 
+import popcraft.net.TickedMessageManager;
+import popcraft.net.Message;
+import popcraft.net.CreateUnitMessage;
+
 import com.threerings.util.Assert;
 import com.threerings.flash.DisablingButton;
 
@@ -81,7 +85,12 @@ public class GameMode extends AppMode
 
         updateCreaturePurchaseButtons();
 
-        _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl, TICK_INTERVAL_MS);
+        _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
+        _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
+
+        if (0 == PopCraft.instance.gameControl.seating.getMyPosition()) {
+            _messageMgr.startTicker(TICK_INTERVAL_MS);
+        }
     }
 
     override public function update(dt :Number) :void

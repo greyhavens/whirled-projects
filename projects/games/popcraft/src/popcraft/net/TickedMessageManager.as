@@ -1,8 +1,8 @@
-package popcraft {
-
+package popcraft.net {
 
 import core.Updatable;
 
+import com.threerings.util.HashMap;
 import com.threerings.util.Assert;
 import com.whirled.WhirledGameControl;
 import com.threerings.ezgame.MessageReceivedEvent;
@@ -21,6 +21,11 @@ public class TickedMessageManager
     {
         _gameCtrl = gameCtrl;
         _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
+    }
+
+    public function addMessageFactory (messageName :String, factory :MessageFactory) :void
+    {
+        _messageFactories.put(messageName, factory);
     }
 
     /**
@@ -62,7 +67,7 @@ public class TickedMessageManager
         return (_ticks.shift() as Array);
     }
 
-    public function sendMessage (name :String, data :Object) :void
+    public function sendMessage (name :String, data :Message) :void
     {
         var now :int = getTimer();
 
@@ -78,9 +83,50 @@ public class TickedMessageManager
         }
     }
 
-    protected function sendMessageNow (name :String, data :Object) :void
+    protected function serializeMessage (name :String, msg :Message) :Object
     {
-        _gameCtrl.sendMessage(name, data);
+        var factory :MessageFactory = (_messageFactories.get(name) as MessageFactory);
+        if (null == factory) {
+            trace("Discarding outgoing '" + name + "' message (no factory)");
+            return null;
+        }
+
+        var serialized :Object = factory.serialize(msg);
+
+        if (null == serialized) {
+            trace("Discarding outgoing '" + name + "' message (failed to serialize)");
+            return null;
+        }
+
+        return serialized;
+    }
+
+    protected function deserializeMessage (name :String, serialized :Object) :Message
+    {
+        var factory :MessageFactory = (_messageFactories.get(name) as MessageFactory);
+        if (null == factory) {
+            trace("Discarding incoming '" + name + "' message (no factory)");
+            return null;
+        }
+
+        var msg :Message = factory.deserialize(serialized);
+
+        if (null == msg) {
+            trace("Discarding incoming '" + name + "' message (failed to deserialize)");
+            return null;
+        }
+
+        return msg;
+    }
+
+    protected function sendMessageNow (name :String, msg :Message) :void
+    {
+        var serialized :Object = serializeMessage(name, msg);
+        if (null == serialized) {
+            return;
+        }
+
+        _gameCtrl.sendMessage(name, serialized);
         _lastSendTime = getTimer();
     }
 
@@ -91,9 +137,9 @@ public class TickedMessageManager
             Assert.isTrue(_pendingSends.length >= 2);
 
             var messageName :String = (_pendingSends.shift() as String);
-            var messageData :Object = _pendingSends.shift();
+            var message :Message = (_pendingSends.shift() as Message);
 
-            sendMessageNow(messageName, messageData);
+            sendMessageNow(messageName, message);
         }
     }
 
@@ -119,6 +165,7 @@ public class TickedMessageManager
     protected var _maxPendingSends :uint = 10;
     protected var _minSendDelayMS :uint = 105;  // default to 10 sends/second
     protected var _lastSendTime :int;
+    protected var _messageFactories :HashMap = new HashMap();
 }
 
 }
