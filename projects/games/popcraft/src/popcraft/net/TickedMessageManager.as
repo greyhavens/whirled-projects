@@ -51,8 +51,11 @@ public class TickedMessageManager
         } else {
             // add any actions received during this tick
             var array :Array = (_ticks[_ticks.length - 1] as Array);
-            array.push(event.name);
-            array.push(event.value);
+            var msg :Message = deserializeMessage(event.name, event.value);
+
+            if (null != msg) {
+                array.push(msg);
+            }
         }
     }
 
@@ -61,13 +64,13 @@ public class TickedMessageManager
         return (0 == _ticks.length ? 0 : _ticks.length - 1);
     }
 
-    public function getNextTickActions () :Array
+    public function getNextTickMessages () :Array
     {
         Assert.isTrue(unprocessedTickCount > 0);
         return (_ticks.shift() as Array);
     }
 
-    public function sendMessage (name :String, data :Message) :void
+    public function sendMessage (msg :Message) :void
     {
         var now :int = getTimer();
 
@@ -75,26 +78,25 @@ public class TickedMessageManager
         var addToQueue :Boolean = ((_pendingSends.length > 0) || ((now - _lastSendTime) < _minSendDelayMS));
 
         if (addToQueue) {
-            _pendingSends.push(name);
-            _pendingSends.push(data);
+            _pendingSends.push(msg);
 
         } else {
-            sendMessageNow(name, data);
+            sendMessageNow(msg);
         }
     }
 
-    protected function serializeMessage (name :String, msg :Message) :Object
+    protected function serializeMessage (msg :Message) :Object
     {
-        var factory :MessageFactory = (_messageFactories.get(name) as MessageFactory);
+        var factory :MessageFactory = (_messageFactories.get(msg.name) as MessageFactory);
         if (null == factory) {
-            trace("Discarding outgoing '" + name + "' message (no factory)");
+            trace("Discarding outgoing '" + msg.name + "' message (no factory)");
             return null;
         }
 
         var serialized :Object = factory.serialize(msg);
 
         if (null == serialized) {
-            trace("Discarding outgoing '" + name + "' message (failed to serialize)");
+            trace("Discarding outgoing '" + msg.name + "' message (failed to serialize)");
             return null;
         }
 
@@ -119,14 +121,14 @@ public class TickedMessageManager
         return msg;
     }
 
-    protected function sendMessageNow (name :String, msg :Message) :void
+    protected function sendMessageNow (msg :Message) :void
     {
-        var serialized :Object = serializeMessage(name, msg);
+        var serialized :Object = serializeMessage(msg);
         if (null == serialized) {
             return;
         }
 
-        _gameCtrl.sendMessage(name, serialized);
+        _gameCtrl.sendMessage(msg.name, serialized);
         _lastSendTime = getTimer();
     }
 
@@ -134,12 +136,9 @@ public class TickedMessageManager
     {
         // if there are messages waiting to go out, send one
         if (_pendingSends.length > 0) {
-            Assert.isTrue(_pendingSends.length >= 2);
-
-            var messageName :String = (_pendingSends.shift() as String);
             var message :Message = (_pendingSends.shift() as Message);
 
-            sendMessageNow(messageName, message);
+            sendMessageNow(message);
         }
     }
 

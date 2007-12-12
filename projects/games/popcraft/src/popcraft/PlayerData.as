@@ -4,12 +4,19 @@ import com.threerings.util.Assert;
 
 public class PlayerData
 {
-    public function PlayerData ()
+    public function PlayerData (playerId :uint)
     {
+        _playerId = playerId;
+
         _resources = new Array(GameConstants.RESOURCE_TYPES.length);
         for (var i :int = 0; i < _resources.length; ++i) {
             _resources[i] = int(0);
         }
+    }
+
+    public function get playerId () :uint
+    {
+        return _playerId;
     }
 
     public function getResourceAmount (resourceType :uint) :int
@@ -30,6 +37,7 @@ public class PlayerData
     }
 
     protected var _resources :Array;
+    protected var _playerId :uint;
 }
 
 }

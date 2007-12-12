@@ -39,7 +39,16 @@ public class GameMode extends AppMode
     // from core.AppMode
     override public function setup () :void
     {
-        _playerData = new PlayerData();
+        var myPosition :int = PopCraft.instance.gameControl.seating.getMyPosition();
+
+        // if myPosition < 0, I'm not a player. Error out. (@TODO: this probably needs to be changed)
+        if (myPosition < 0)
+        {
+            trace("GameMode.setup failed: myPosition < 0");
+            return;
+        }
+
+        _playerData = new PlayerData(uint(myPosition));
 
         // add the top-level game objects
 
@@ -88,13 +97,15 @@ public class GameMode extends AppMode
         _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
 
-        if (0 == PopCraft.instance.gameControl.seating.getMyPosition()) {
+        // only one player starts the ticker
+        if (0 == _playerData.playerId) {
             _messageMgr.startTicker(TICK_INTERVAL_MS);
         }
     }
 
     override public function update(dt :Number) :void
     {
+        _messageMgr.update(dt); // @TODO - move this somewhere
         updateCreaturePurchaseButtons();
         super.update(dt);
     }
@@ -128,6 +139,9 @@ public class GameMode extends AppMode
         for (var resourceType:uint = 0; resourceType < creatureCosts.length; ++resourceType) {
             _playerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
         }
+
+        // send a message!
+        _messageMgr.sendMessage(new CreateUnitMessage(creatureType, _playerData.playerId));
     }
 
     // from core.AppMode

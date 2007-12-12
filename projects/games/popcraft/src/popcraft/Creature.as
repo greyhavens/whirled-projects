@@ -9,8 +9,10 @@ import flash.display.Bitmap;
 
 public class Creature extends AppObject
 {
-    public function Creature ()
+    public function Creature (owningPlayerId :uint)
     {
+        _owningPlayerId = owningPlayerId;
+
         // create the visual representation
         _sprite = new Sprite();
         _sprite.addChild(new Content.MELEE());
@@ -23,6 +25,7 @@ public class Creature extends AppObject
     }
 
     protected var _sprite :Sprite;
+    protected var _owningPlayerId :uint;
 }
 
 }

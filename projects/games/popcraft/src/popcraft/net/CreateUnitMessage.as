@@ -6,6 +6,12 @@ public class CreateUnitMessage
     public var unitType :uint;
     public var owningPlayer :uint;
 
+    public function CreateUnitMessage (unitType :uint, owningPlayer :uint)
+    {
+        this.unitType = unitType;
+        this.owningPlayer = owningPlayer;
+    }
+
     public function get name () :String
     {
         return messageName;
@@ -40,12 +46,7 @@ class CreateUnitMessageFactory
     public function deserialize (obj :Object) :Message
     {
         var data :uint = obj.data;
-
-        var msg :CreateUnitMessage = new CreateUnitMessage();
-        msg.unitType = (data >> 16);
-        msg.owningPlayer = (data & 0x0000FFFF);
-
-        return msg;
+        return new CreateUnitMessage((data >> 16), (data & 0x0000FFFF));
     }
 }
 
