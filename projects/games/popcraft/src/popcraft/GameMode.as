@@ -123,7 +123,9 @@ public class GameMode extends AppMode
                 handleMessage(msg);
             }
 
-            // run the simulation
+            // run the simulation the appropriate amount
+            // (our network update time is unrelated to the application's update time.
+            // network timeslices are always the same distance apart)
             _netObjects.update(TICK_INTERVAL_S);
         }
 
@@ -244,7 +246,7 @@ public class GameMode extends AppMode
         costText.text = costString;
         costText.textColor = 0;
         costText.height = costText.textHeight + 2;
-        costText.width = costText.textWidth;
+        costText.width = costText.textWidth + 3;
         costText.y = icon.height + 5;
 
         face.addChild(costText);
@@ -277,7 +279,7 @@ public class GameMode extends AppMode
     protected var _netObjects :AppMode;
 
     protected static const TICK_INTERVAL_MS :int = 100; // 1/10 of a second
-    protected static const TICK_INTERVAL_S :Number = (Number(1) / Number(TICK_INTERVAL_MS));
+    protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));
 }
 
 }
