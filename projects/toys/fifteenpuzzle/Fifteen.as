@@ -5,6 +5,7 @@ package {
 
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
+import flash.display.Graphics;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -99,19 +100,23 @@ public class Fifteen extends Sprite
         addChild(mask);
         this.mask = mask;
 
-        // draw the board background
-        graphics.beginFill(0xFFFFFF);
-        graphics.lineStyle(0x000000, 1);
-        graphics.drawRoundRect(0, 30, BOARD_WIDTH + 20, BOARD_HEIGHT + 20, 20, 20);
+        _content = new Sprite();
+        addChild(_content);
 
-        graphics.beginFill(0x000000);
-        graphics.lineStyle(0, 0, 0);
-        graphics.drawRect(10, 40, BOARD_WIDTH, BOARD_HEIGHT);
+        // draw the board background
+        var g :Graphics = _content.graphics;
+        g.beginFill(0xFFFFFF);
+        g.lineStyle(0x000000, 1);
+        g.drawRoundRect(0, 30, BOARD_WIDTH + 20, BOARD_HEIGHT + 20, 20, 20);
+
+        g.beginFill(0x000000);
+        g.lineStyle(0, 0, 0);
+        g.drawRect(10, 40, BOARD_WIDTH, BOARD_HEIGHT);
 
         var tileHolder :Sprite = new Sprite();
         tileHolder.x = 10;
         tileHolder.y = 40;
-        addChild(tileHolder);
+        _content.addChild(tileHolder);
 
         var ii :int;
 
@@ -144,7 +149,8 @@ public class Fifteen extends Sprite
 
         var config :Button = new Button();
         config.label = "Config";
-        config.setSize(config.textField.textWidth + 20, 22);
+        config.validateNow();
+        config.setSize(config.textField.textWidth + 15, 22);
         config.x = 220 - config.width;
         config.addEventListener(MouseEvent.CLICK, handleOpenConfig);
         _palette.addChild(config);
@@ -158,6 +164,11 @@ public class Fifteen extends Sprite
 
     protected function handleOpenConfig (event :MouseEvent) :void
     {
+        if (_sourceBox != null) {
+            // already open. ignore.
+            return;
+        }
+
         _sourceBox = new ComboBox();
         _sourceBox.addItem({ label: "Numbers" });
         _sourceBox.addItem({ label: "Mona Lisa",
@@ -167,8 +178,7 @@ public class Fifteen extends Sprite
             data: [ SOURCE_URL, "http://bogocorp.com/bogologo.gif" ] });
         _sourceBox.addItem({ label: "Dude",
             data: [ SOURCE_URL, "http://media.whirled.com/c95c59abc8da0ac99628fbc4c68799b93c129716.swf" ]});
-// TODO: real URL entry?
-//        _sourceBox.addItem({ label: "URL", data: [ SOURCE_URL, null ] });
+        _sourceBox.addItem({ label: "URL", data: [ SOURCE_URL, null ] });
         var names :Array = Camera.names;
         if (names != null && names.length > 0) {
 // TODO: real camera selection?
@@ -196,17 +206,40 @@ public class Fifteen extends Sprite
 
         var close :Button = new Button();
         close.label = "Close";
-        close.setSize(close.textField.textWidth + 20, 22);
+        close.validateNow();
+        close.setSize(close.textField.textWidth + 15, 22);
         close.x = 220 + (220 - close.width);;
         close.addEventListener(MouseEvent.CLICK, handleCloseConfig)
         _palette.addChild(close);
 
         _sourceBox.addEventListener(Event.CHANGE, handleSourceSelected);
-        _sourceBox.addEventListener(Event.OPEN, handleSourceOpened);
-        _sourceBox.addEventListener(Event.CLOSE, handleSourceClosed);
+        _sourceBox.addEventListener(Event.OPEN, resetCloseTimer);
+        _sourceBox.addEventListener(Event.CLOSE, resetCloseTimer);
         _sourceBox.setSize(220 - close.width, 22);
         _sourceBox.x = 220;
         _palette.addChild(_sourceBox);
+
+        if (!_ctrl.isConnected() || _ctrl.canEditRoom()) {
+            var reset :Button = new Button();
+            reset.label = "Reset";
+            reset.validateNow();
+            reset.setSize(reset.textField.textWidth + 15, 22);
+            reset.y = 25;
+            reset.x = 220;
+            reset.addEventListener(MouseEvent.CLICK, resetState);
+            reset.addEventListener(MouseEvent.CLICK, resetCloseTimer);
+            _palette.addChild(reset);
+
+            var scramble :Button = new Button();
+            scramble.label = "Scramble";
+            scramble.validateNow();
+            scramble.setSize(scramble.textField.textWidth + 15, 22);
+            scramble.y = 25;
+            scramble.x = 440 - scramble.width;
+            scramble.addEventListener(MouseEvent.CLICK, shuffleState);
+            scramble.addEventListener(MouseEvent.CLICK, resetCloseTimer);
+            _palette.addChild(scramble);
+        }
 
         _closeTimer = new Timer(20000, 1);
         _closeTimer.addEventListener(TimerEvent.TIMER, handleCloseConfig);
@@ -214,23 +247,29 @@ public class Fifteen extends Sprite
 
         // then, actually open it
         new EasingPath(_palette, -220, 0, 1000, Cubic.easeInOut).start();
+
+        if (!_ctrl.isConnected() || _ctrl.canEditRoom()) {
+            new EasingPath(_content, 0, 25, 1000, Cubic.easeInOut).start();
+        }
     }
 
     protected function handleSourceSelected (... ignored) :void
     {
         var skinData :Array = _sourceBox.selectedItem.data as Array;
-        // TODO: Url entry?
-        setSkin(skinData);
+
+        if (skinData != null && skinData[0] == SOURCE_URL && skinData[1] == null) {
+
+        } else {
+            setSkin(skinData);
+        }
     }
 
-    protected function handleSourceOpened (... ignored) :void
+    protected function resetCloseTimer (event :Event) :void
     {
         _closeTimer.reset();
-    }
-
-    protected function handleSourceClosed (... ignored) :void
-    {
-        _closeTimer.start();
+        if (event.type != Event.OPEN) {
+            _closeTimer.start();
+        }
     }
 
     protected function setSkin (skinData :Array) :void
@@ -292,11 +331,19 @@ public class Fifteen extends Sprite
 
     protected function handleCloseConfig (event :Event) :void
     {
+        if (_closeTimer == null) {
+            // already closing. Ignore.
+            return;
+        }
         _closeTimer.stop();
         _closeTimer = null;
 
         // defang the controls
         _sourceBox.removeEventListener(Event.CHANGE, handleSourceSelected);
+        _sourceBox.removeEventListener(Event.OPEN, resetCloseTimer);
+        _sourceBox.removeEventListener(Event.CLOSE, resetCloseTimer);
+
+        new EasingPath(_content, 0, 0, 1000, Cubic.easeInOut).start();
 
         var closePath :Path = new EasingPath(_palette, 0, 0, 1000, Cubic.easeInOut);
         closePath.setOnComplete(configWasClosed);
@@ -558,6 +605,8 @@ public class Fifteen extends Sprite
 
     protected var _toy :ToyState;
 
+    protected var _content :Sprite;
+
     protected var _blank :BlankTile;
 
     protected var _setOwnSkin :Boolean;
@@ -761,6 +810,17 @@ class UrlTileProvider extends TileProvider
     {
         super.startup();
 
+        var fill :BitmapData = new BitmapData(4, 4, false, 0x666666);
+        var alt :uint = 0x333333;
+        fill.setPixel(0, 0, alt);
+        fill.setPixel(1, 0, alt);
+        fill.setPixel(0, 1, alt);
+        fill.setPixel(3, 1, alt);
+        fill.setPixel(2, 2, alt);
+        fill.setPixel(3, 2, alt);
+        fill.setPixel(1, 3, alt);
+        fill.setPixel(2, 3, alt);
+
         for (var ii :int = 0; ii < _tiles.length - 1; ii++) {
             var tile :Sprite = _tiles[ii] as Sprite;
             // set up a mask so we only show the portion we want
@@ -771,7 +831,7 @@ class UrlTileProvider extends TileProvider
             tile.mask = mask;
             tile.addChild(mask);
             // fill in all pixels in the tile so that they're mouse hittable
-            tile.graphics.beginFill(0x000000, 0);
+            tile.graphics.beginBitmapFill(fill);
             tile.graphics.drawRect(0, 0, Fifteen.TILE_WIDTH, Fifteen.TILE_HEIGHT);
             tile.graphics.endFill();
 
