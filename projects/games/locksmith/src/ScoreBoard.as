@@ -116,6 +116,7 @@ public class ScoreBoard extends Sprite
                         targetMovie, Event.ENTER_FRAME, arguments.callee);
                 }
             });
+        _victory.scaleX = _victory.scaleY = 0.33;
     }
 
     protected function applyHeadshot (player :int) :Function 
