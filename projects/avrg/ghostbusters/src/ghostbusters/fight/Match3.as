@@ -113,7 +113,7 @@ public class Match3 extends FrameSprite
         // create the prompter label thingy
         _prompter = new SiningTextAnimation("Keep it moving!",
             { outlineColor: 0xFFFFFF,
-              format: TextFieldUtil.createFormat({ font: "Arial", size: 36, color: 0x000000 })});
+              defaultTextFormat: TextFieldUtil.createFormat({ font: "Arial", size: 36, color: 0x000000 })});
         _prompter.x = WIDTH/2;
         _prompter.y = HEIGHT/2;
 
@@ -369,7 +369,7 @@ public class Match3 extends FrameSprite
 
     protected var _scoreAnimProps :Object = {
         outlineColor: 0x000000,
-        format: TextFieldUtil.createFormat({ bold: true, font: "System", color: 0xFFFFFF})
+        defaultTextFormat: TextFieldUtil.createFormat({ bold: true, font: "System", color: 0xFFFFFF})
     };
 
     /** The timestamp at which the board was last idle. */
