@@ -20,6 +20,7 @@ import flash.display.Sprite;
 import flash.geom.ColorTransform;
 import flash.geom.Rectangle;
 
+import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.EmbeddedSwfLoader;
 
 /**
@@ -251,31 +252,23 @@ public class Content
 
     public function makeInputFormat (color :uint, bold :Boolean = false) :TextFormat
     {
-        var format :TextFormat = new TextFormat();
-        format.font = INPUT_FONT_NAME;
-        format.color = color;
-        format.size = FONT_SIZE;
-        format.bold = bold;
-        return format;
+        return TextFieldUtil.createFormat({
+              font: INPUT_FONT_NAME, color: color, size: FONT_SIZE, bold: bold
+        });
     }
 
     public function makeMarqueeFormat (size :int = 16) :TextFormat
     {
-        var format :TextFormat = new TextFormat();
-        format.font = FONT_NAME;
-        format.bold = true;
-        format.color = FONT_COLOR;
-        format.size = size;
-        return format;
+        return TextFieldUtil.createFormat({
+              font: FONT_NAME, color: FONT_COLOR, size: size, bold: true
+        });
     }
 
     public function makeNameFormat () : TextFormat
     {
-        var format : TextFormat = new TextFormat();
-        format.font = FONT_NAME;
-        format.color = FONT_COLOR;
-        format.size = 16;
-        return format;
+        return TextFieldUtil.createFormat({
+              font: FONT_NAME, color: FONT_COLOR, size: 16
+        });
     }
 
     public function makeButton (text :String) :SimpleButton

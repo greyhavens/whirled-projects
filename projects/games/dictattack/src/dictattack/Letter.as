@@ -12,6 +12,8 @@ import flash.text.TextFormat;
 import flash.display.Shape;
 import flash.display.Sprite;
 
+import com.threerings.flash.TextFieldUtil;
+
 public class Letter extends Sprite
 {
     public function Letter (content :Content, type :int)
@@ -101,22 +103,18 @@ public class Letter extends Sprite
 
     protected static function makePlainFormat () : TextFormat
     {
-        var format : TextFormat = new TextFormat();
-        format.font = Content.FONT_NAME;
-        format.bold = true;
-        format.color = Content.LETTER_FONT_COLOR;
-        format.size = Content.TILE_FONT_SIZE;
-        return format;
+        return TextFieldUtil.createFormat({
+            font: Content.FONT_NAME, bold: true, color: Content.LETTER_FONT_COLOR,
+            size: Content.TILE_FONT_SIZE
+        });
     }
 
     protected static function makeHighlightFormat () : TextFormat
     {
-        var format : TextFormat = new TextFormat();
-        format.font = Content.FONT_NAME;
-        format.bold = true;
-        format.color = Content.HIGH_FONT_COLOR;
-        format.size = Content.TILE_FONT_SIZE;
-        return format;
+        return TextFieldUtil.createFormat({
+            font: Content.FONT_NAME, bold: true, color: Content.HIGH_FONT_COLOR,
+            size: Content.TILE_FONT_SIZE
+        });
     }
 
     protected var _content :Content;
