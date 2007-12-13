@@ -22,6 +22,8 @@ import com.threerings.util.Random;
 
 import com.threerings.flash.ColorUtil;
 import com.threerings.flash.FilterUtil;
+import com.threerings.flash.SiningTextAnimation;
+import com.threerings.flash.TextFieldUtil;
 
 public class SeaDisplay extends Sprite
 {
@@ -30,13 +32,6 @@ public class SeaDisplay extends Sprite
 
     public function SeaDisplay ()
     {
-        // set up a status text area, to be centered in the main view
-        _status = new TextField();
-        _status.multiline = true;
-        _status.background = true;
-        _status.autoSize = TextFieldAutoSize.CENTER;
-        _status.selectable = false;
-
         var extent :int = int(Math.ceil(SubAttack.VISION_TILES)) * 2 + 1;
         _soundRect = new Rectangle(0, 0, extent, extent);
     }
@@ -145,16 +140,15 @@ public class SeaDisplay extends Sprite
     /**
      * Set the status message to be shown over the game board.
      */
-    public function setStatus (msg :String) :void
+    public function setStatus (msg :String, size :int = 24) :void
     {
-        _status.htmlText = msg;
-        _status.x =
-            ((SubAttack.VIEW_TILES * TILE_SIZE) - _status.textWidth) / 2;
-        _status.y = 
-            ((SubAttack.VIEW_TILES * TILE_SIZE) - _status.textHeight) / 2;
-        if (_status.parent == null) {
-            parent.addChild(_status);
-        }
+        clearStatus();
+
+        _status = new SiningTextAnimation(msg, { outlineColor: 0xFFFFFF,
+            format: TextFieldUtil.createFormat({ font: "_sans", size: size, color: 0x000000 }) });
+        _status.x = (SubAttack.VIEW_TILES * TILE_SIZE) / 2;
+        _status.y = (SubAttack.VIEW_TILES * TILE_SIZE) / 2;
+        parent.addChild(_status);
     }
 
     /**
@@ -162,8 +156,9 @@ public class SeaDisplay extends Sprite
      */
     public function clearStatus () :void
     {
-        if (_status.parent != null) {
+        if (_status != null) {
             parent.removeChild(_status);
+            _status = null;
         }
     }
 
@@ -307,7 +302,7 @@ public class SeaDisplay extends Sprite
     protected var _moss :Array;
 
     /** Our status message. */
-    protected var _status :TextField;
+    protected var _status :SiningTextAnimation;
 
     [Embed(source="rsrc/temple.png")]
     protected static const TEMPLE :Class;
