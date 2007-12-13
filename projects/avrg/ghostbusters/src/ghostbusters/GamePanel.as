@@ -70,11 +70,16 @@ public class GamePanel extends Sprite
     protected function handleGhostClick (evt :MouseEvent) :void
     {
         if (_minigame == null) {
+            var gameHolder :Sprite = new Sprite();
+
             _minigame = new Match3(gamePerformance);
-            _frame.frameContent(_minigame);
+            gameHolder.addChild(_minigame);
+
+            _frame.frameContent(gameHolder);
+
             this.addChild(_frame);
-            _frame.x = 50;
-            _frame.y = 200;
+            _frame.x = 100;
+            _frame.y = 350;
         }
     }
 
@@ -89,6 +94,7 @@ public class GamePanel extends Sprite
             if (_minigame != null) {
                 _frame.frameContent(null);
                 this.removeChild(_frame);
+                _minigame = null;
             }
         }
 

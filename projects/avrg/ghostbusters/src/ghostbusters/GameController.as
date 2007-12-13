@@ -86,9 +86,9 @@ public class GameController extends Controller
     public function handleGhostMelee (score :Number) :void
     {
         var currentHealth :Number = _model.getGhostHealth();
-        if (currentHealth > 0.01) {
+        if (currentHealth > 0.03) {
             // we can't do this properly without control (or server side bits)
-            _model.setGhostHealth(currentHealth - 0.01);
+            _model.setGhostHealth(currentHealth - 0.03);
 
         } else {
             // TODO: something a little more impressive than just a despawn
