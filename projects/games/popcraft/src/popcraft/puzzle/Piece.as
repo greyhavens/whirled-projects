@@ -43,9 +43,15 @@ public class Piece extends AppObject
 
         // draw a circle centered on (0, 0)
         _pieceSprite.graphics.clear();
-        _pieceSprite.graphics.beginFill(GameConstants.getResource(_resourceType).color);
+        _pieceSprite.graphics.beginFill(Constants.getResource(_resourceType).color);
         _pieceSprite.graphics.lineStyle(1, 0);
-        _pieceSprite.graphics.drawEllipse(-GameConstants.PUZZLE_TILE_SIZE / 2, -GameConstants.PUZZLE_TILE_SIZE / 2, GameConstants.PUZZLE_TILE_SIZE, GameConstants.PUZZLE_TILE_SIZE);
+
+        _pieceSprite.graphics.drawEllipse(
+            -Constants.PUZZLE_TILE_SIZE / 2,
+            -Constants.PUZZLE_TILE_SIZE / 2,
+            Constants.PUZZLE_TILE_SIZE,
+            Constants.PUZZLE_TILE_SIZE);
+
         _pieceSprite.graphics.endFill();
     }
 

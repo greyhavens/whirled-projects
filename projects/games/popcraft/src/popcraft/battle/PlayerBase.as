@@ -31,7 +31,7 @@ public class PlayerBase extends AppObject
         _healthMeter.displayObject.y = -_healthMeter.height;
 
         _sprite = new Sprite();
-        _sprite.addChild(new Content.BASE());
+        _sprite.addChild(new Constants.IMAGE_BASE());
     }
 
     override protected function addedToMode (mode :AppMode) :void

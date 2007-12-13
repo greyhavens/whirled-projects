@@ -8,7 +8,7 @@ public class PlayerData
     {
         _playerId = playerId;
 
-        _resources = new Array(GameConstants.RESOURCE_TYPES.length);
+        _resources = new Array(Constants.RESOURCE_TYPES.length);
         for (var i :int = 0; i < _resources.length; ++i) {
             _resources[i] = int(0);
         }

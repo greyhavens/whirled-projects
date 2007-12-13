@@ -22,7 +22,7 @@ public class Unit extends AppObject
 
         // create the visual representation
         _sprite = new Sprite();
-        _sprite.addChild(new Content.MELEE());
+        _sprite.addChild(new Constants.IMAGE_MELEE());
 
         roam();
     }

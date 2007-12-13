@@ -20,7 +20,7 @@ public class ResourceDisplay extends AppObject
         var width :int = 0;
         var height :int = 0;
 
-        for each (var resourceType :ResourceType in GameConstants.RESOURCE_TYPES) {
+        for each (var resourceType :ResourceType in Constants.RESOURCE_TYPES) {
             var format :TextFormat = new TextFormat();
             format.font = FONT_NAME;
             format.color = resourceType.color;
@@ -74,7 +74,7 @@ public class ResourceDisplay extends AppObject
         for (var i :uint = 0; i < _resourceText.length; ++i) {
             var label :TextField = _resourceText[i];
             label.text = getDisplayString(
-                GameConstants.getResource(i).name,
+                Constants.getResource(i).name,
                 GameMode.instance.playerData.getResourceAmount(i));
         }
     }

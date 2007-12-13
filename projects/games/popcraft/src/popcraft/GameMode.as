@@ -47,46 +47,33 @@ public class GameMode extends AppMode
             _playerData = new PlayerData(uint(myPosition));
 
             var resourceDisplay :ResourceDisplay = new ResourceDisplay();
-            resourceDisplay.displayObject.x = GameConstants.RESOURCE_DISPLAY_LOC.x;
-            resourceDisplay.displayObject.y = GameConstants.RESOURCE_DISPLAY_LOC.y;
+            resourceDisplay.displayObject.x = Constants.RESOURCE_DISPLAY_LOC.x;
+            resourceDisplay.displayObject.y = Constants.RESOURCE_DISPLAY_LOC.y;
 
             this.addObject(resourceDisplay, this);
 
             _puzzleBoard = new PuzzleBoard(
-                GameConstants.PUZZLE_COLS,
-                GameConstants.PUZZLE_ROWS,
-                GameConstants.PUZZLE_TILE_SIZE);
+                Constants.PUZZLE_COLS,
+                Constants.PUZZLE_ROWS,
+                Constants.PUZZLE_TILE_SIZE);
 
-            _puzzleBoard.displayObject.x = GameConstants.PUZZLE_LOC.x;
-            _puzzleBoard.displayObject.y = GameConstants.PUZZLE_LOC.y;
+            _puzzleBoard.displayObject.x = Constants.PUZZLE_LOC.x;
+            _puzzleBoard.displayObject.y = Constants.PUZZLE_LOC.y;
 
             this.addObject(_puzzleBoard, this);
 
-            // create the creature purchase buttons
-            var meleeButton :SimpleButton = createUnitPurchaseButton(Content.MELEE, GameConstants.UNIT_MELEE);
-
-            meleeButton.x = GameConstants.MELEE_BUTTON_LOC.x;
-            meleeButton.y = GameConstants.MELEE_BUTTON_LOC.y;
-            this.addChild(meleeButton);
-
-            meleeButton.addEventListener(MouseEvent.CLICK,
-                function (e :Event) :void {
-                   purchaseUnit(GameConstants.UNIT_MELEE);
-                });
-
-            _creaturePurchaseButtons[GameConstants.UNIT_MELEE] = meleeButton;
-
-            updateUnitPurchaseButtons();
+            // create the unit purchase buttons
+            this.addObject(new UnitPurchaseButtonManager());
        }
 
         // everyone gets to see the BattleBoard
         _battleBoard = new BattleBoard(
-            GameConstants.BATTLE_COLS,
-            GameConstants.BATTLE_ROWS,
-            GameConstants.BATTLE_TILE_SIZE);
+            Constants.BATTLE_COLS,
+            Constants.BATTLE_ROWS,
+            Constants.BATTLE_TILE_SIZE);
 
-        _battleBoard.displayObject.x = GameConstants.BATTLE_LOC.x;
-        _battleBoard.displayObject.y = GameConstants.BATTLE_LOC.y;
+        _battleBoard.displayObject.x = Constants.BATTLE_LOC.x;
+        _battleBoard.displayObject.y = Constants.BATTLE_LOC.y;
 
         this.addObject(_battleBoard, this);
 
@@ -135,7 +122,6 @@ public class GameMode extends AppMode
 
 
         // update all non-net objects
-        updateUnitPurchaseButtons();
         super.update(dt);
     }
 
@@ -152,17 +138,9 @@ public class GameMode extends AppMode
 
     }
 
-    protected function updateUnitPurchaseButtons () :void
+    public function canPurchaseUnit (unitType :uint) :Boolean
     {
-        for (var creatureType :uint = 0; creatureType < GameConstants.UNIT__LIMIT; ++creatureType) {
-            var button :SimpleButton = _creaturePurchaseButtons[creatureType];
-            button.enabled = canPurchaseUnit(creatureType);
-        }
-    }
-
-    public function canPurchaseUnit (creatureType :uint) :Boolean
-    {
-        var creatureCosts :Array = (GameConstants.UNIT_DATA[creatureType] as UnitData).resourceCosts;
+        var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
         for (var resourceType:uint = 0; resourceType < creatureCosts.length; ++resourceType) {
             if (_playerData.getResourceAmount(resourceType) < creatureCosts[resourceType]) {
                 return false;
@@ -172,18 +150,20 @@ public class GameMode extends AppMode
         return true;
     }
 
-    public function purchaseUnit (creatureType :uint) :void
+    public function purchaseUnit (unitType :uint) :void
     {
-        Assert.isTrue(canPurchaseUnit(creatureType));
+        if (!canPurchaseUnit(unitType)) {
+            return;
+        }
 
         // deduct the cost of the unit from the player's holdings
-        var creatureCosts :Array = (GameConstants.UNIT_DATA[creatureType] as UnitData).resourceCosts;
+        var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
         for (var resourceType:uint = 0; resourceType < creatureCosts.length; ++resourceType) {
             _playerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
         }
 
         // send a message!
-        _messageMgr.sendMessage(new CreateUnitMessage(creatureType, _playerData.playerId));
+        _messageMgr.sendMessage(new CreateUnitMessage(unitType, _playerData.playerId));
     }
 
     // from core.AppMode
@@ -202,12 +182,12 @@ public class GameMode extends AppMode
 
     protected static function createUnitPurchaseButton (iconClass :Class, creatureType :uint) :DisablingButton
     {
-        var data :UnitData = GameConstants.UNIT_DATA[creatureType];
+        var data :UnitData = Constants.UNIT_DATA[creatureType];
 
         // how much does it cost?
         var costString :String = new String();
-        for (var resType :uint = 0; resType < GameConstants.RESOURCE__LIMIT; ++resType) {
-            var resData :ResourceType = GameConstants.getResource(resType);
+        for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
+            var resData :ResourceType = Constants.getResource(resType);
             var resCost :int = data.getResourceCost(resType);
 
             if (resCost == 0) {
@@ -222,27 +202,28 @@ public class GameMode extends AppMode
         }
 
         var button :DisablingButton = new DisablingButton();
-        var foreground :int = uint(0xFFFFFF);
-        var background :int = uint(0xCDC9C9);
-        var rolloverBackground :int = uint(0xFFD800);
-        var disabledBackground :int = uint(0x838383);
+        var outline :int = uint(0x000000);
+        var background :int = uint(0xFFD800);
+        var rolloverBackground :int = uint(0xCFAF00);
+        var disabledBackground :int = uint(0x525252);
 
-        button.upState = makeButtonFace(iconClass, costString, foreground, background);
-        button.overState = makeButtonFace(iconClass, costString, foreground, rolloverBackground);
-        button.downState = makeButtonFace(iconClass, costString, foreground, rolloverBackground);
+        button.upState = makeButtonFace(iconClass, costString, outline, background);
+        button.overState = makeButtonFace(iconClass, costString, outline, rolloverBackground);
+        button.downState = makeButtonFace(iconClass, costString, outline, rolloverBackground);
         button.downState.x = -1;
         button.downState.y = -1;
-        button.disabledState = makeButtonFace(iconClass, costString, foreground, disabledBackground);
+        button.disabledState = makeButtonFace(iconClass, costString, outline, disabledBackground, 0.5);
         button.hitTestState = button.upState;
 
         return button;
     }
 
-    protected static function makeButtonFace (iconClass :Class, costString :String, foreground :uint, background :uint) :Sprite
+    protected static function makeButtonFace (iconClass :Class, costString :String, foreground :uint, background :uint, iconAlpha :Number = 1.0) :Sprite
     {
         var face :Sprite = new Sprite();
 
         var icon :DisplayObject = new iconClass();
+        icon.alpha = iconAlpha;
 
         face.addChild(icon);
 
@@ -272,8 +253,6 @@ public class GameMode extends AppMode
     }
 
     protected var _gameIsRunning :Boolean;
-
-    protected var _creaturePurchaseButtons :Array = new Array();
 
     protected var _messageMgr :TickedMessageManager;
     protected var _puzzleBoard :PuzzleBoard;

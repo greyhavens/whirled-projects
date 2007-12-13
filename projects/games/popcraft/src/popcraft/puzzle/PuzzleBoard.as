@@ -69,7 +69,7 @@ public class PuzzleBoard extends AppObject
         Assert.isTrue(boardIndex >= 0 && boardIndex < _board.length);
         Assert.isNull(_board[boardIndex]);
 
-        var resourceType :uint = Rand.nextIntRange(0, GameConstants.RESOURCE_TYPES.length);
+        var resourceType :uint = Rand.nextIntRange(0, Constants.RESOURCE_TYPES.length);
         var piece :Piece = new Piece(resourceType, boardIndex);
 
         piece.displayObject.x = getPieceXLoc(idxToX(boardIndex));
@@ -91,12 +91,12 @@ public class PuzzleBoard extends AppObject
 
         Assert.isTrue(clearPieces.length > 0);
 
-        if (clearPieces.length < GameConstants.MIN_GROUP_SIZE) {
+        if (clearPieces.length < Constants.MIN_GROUP_SIZE) {
             return;
         }
 
         // update the player's resource count
-        var resourceValue :int = GameConstants.CLEAR_VALUE_TABLE.getValueAt(clearPieces.length - 1);
+        var resourceValue :int = Constants.CLEAR_VALUE_TABLE.getValueAt(clearPieces.length - 1);
         GameMode.instance.playerData.offsetResourceAmount((clearPieces[0] as Piece).resourceType, resourceValue);
 
         _resolvingClears = true;

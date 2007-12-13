@@ -5,14 +5,16 @@ import popcraft.battle.*;
 import com.threerings.util.Assert;
 import flash.geom.Point;
 
-public class GameConstants
+public class Constants
 {
-    public static const RESOURCE_DISPLAY_LOC :Point = new Point(0, 0);
-    public static const PUZZLE_LOC :Point = new Point(0, 50);
-    public static const BATTLE_LOC :Point = new Point(220, 20);
+    /* Images */
+    [Embed(source="../../rsrc/melee.png")]
+    public static const IMAGE_MELEE :Class;
 
-    public static const MELEE_BUTTON_LOC :Point = new Point(0, 400);
+    [Embed(source="../../rsrc/base.png")]
+    public static const IMAGE_BASE :Class;
 
+    /* Puzzle stuff */
     public static const PIECE_CLEAR_TIMER_LENGTH :Number = 0.75;
 
     public static const MIN_GROUP_SIZE :int = 1; // no min group size right now
@@ -21,11 +23,12 @@ public class GameConstants
     public static const PUZZLE_ROWS :int = 8;
     public static const PUZZLE_TILE_SIZE :int = 40;
 
+    /* Battle stuff */
     public static const BATTLE_COLS :int = 15;
     public static const BATTLE_ROWS :int = 15;
     public static const BATTLE_TILE_SIZE :int = 32;
 
-    // Resource types
+    /* Resource types */
 
     // wow, I miss enums
     public static const RESOURCE_WOOD :uint = 0;
@@ -51,12 +54,21 @@ public class GameConstants
 
     public static const UNIT_DATA :Array = [
                                  // wood, gold, mana, morale
-            new UnitData( "melee", [5,   0,  0,    0] )
+            new UnitData( "melee", [5,   0,  0,    0], IMAGE_MELEE )
     ];
 
     public static const CLEAR_VALUE_TABLE :IntValueTable =
         new IntValueTable( [-20, -10, 10, 20, 30, 20] );
              // group size:   1,   2,  3,  4,  5,  6+ = 50, 70, 90, ...
+
+    /* Screen layout */
+    public static const RESOURCE_DISPLAY_LOC :Point = new Point(0, 0);
+    public static const PUZZLE_LOC :Point = new Point(0, 50);
+    public static const BATTLE_LOC :Point = new Point(220, 20);
+
+    public static const UNIT_BUTTON_LOCS :Array = [
+        new Point(0, 400)
+    ];
 }
 
 }

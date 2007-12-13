@@ -9,7 +9,7 @@ public class UnitFactory
         var unit :Unit;
 
         switch (unitType) {
-        case GameConstants.UNIT_MELEE:
+        case Constants.UNIT_MELEE:
             unit = new Unit(owningPlayerId);
         }
 
