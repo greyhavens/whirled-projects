@@ -56,6 +56,8 @@ public class ScoreBoard extends Sprite
             wgc.getHeadShot(playerIds[SUN_PLAYER], applyHeadshot(SUN_PLAYER));
             addLabel(SUN_PLAYER, playerNames[SUN_PLAYER]);
         }
+
+        addChild(_flowLayer = new Sprite());
     }
 
     public function get moonScore () :int
@@ -78,6 +80,8 @@ public class ScoreBoard extends Sprite
         }
         removeChild(_marbleLayer);
         addChildAt(_marbleLayer = new Sprite(), 0);
+        removeChild(_flowLayer);
+        addChild(_flowLayer = new Sprite());
         _gameEnded = false;
     }
 
@@ -117,6 +121,21 @@ public class ScoreBoard extends Sprite
                 }
             });
         _victory.scaleX = _victory.scaleY = 0.33;
+    }
+
+    public function displayFlow (player :int, flow :int, digits :int) :void
+    {
+        var flowDisplay :FlowDisplay = new FlowDisplay(flow, digits);
+        if (player == MOON_PLAYER) {
+            flowDisplay.x = -316 + (5 - digits) * 13;
+        } else if (player == SUN_PLAYER) {
+            flowDisplay.x = 265;
+        } else {
+            log.debug("asked to display flow for unknown player [" + player + "]");
+            return;
+        }
+        flowDisplay.y = -109;
+        _flowLayer.addChild(flowDisplay);
     }
 
     protected function applyHeadshot (player :int) :Function 
@@ -239,6 +258,7 @@ public class ScoreBoard extends Sprite
     protected var _gameEndedCallback :Function;
     protected var _gameEnded :Boolean = false;
     protected var _marbleLayer :Sprite = new Sprite();
+    protected var _flowLayer :Sprite = new Sprite();
 
     protected var _leftFrame :Sprite;
     protected var _rightFrame :Sprite;
@@ -248,6 +268,7 @@ public class ScoreBoard extends Sprite
 
 import flash.display.BlendMode;
 import flash.display.DisplayObjectContainer;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -256,6 +277,8 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 
 import com.threerings.util.Log;
+
+import com.whirled.contrib.EventHandlers;
 
 import MarbleMovie;
 
@@ -294,7 +317,7 @@ class RampAnimation
         _darkness.blendMode = BlendMode.ALPHA;
         _marble.addChild(_darkness);
 
-        _marble.addEventListener(Event.ENTER_FRAME, enterFrame);
+        EventHandlers.registerEventListener(_marble, Event.ENTER_FRAME, enterFrame);
     }
 
     protected function enterFrame (evt :Event) :void
@@ -305,7 +328,7 @@ class RampAnimation
         case PHASE_MOVE_DOWN_RAMP: moveDownRamp(); break;
         default:
             log.debug("Unknown phase [" + _phase + "]");
-            _marble.removeEventListener(Event.ENTER_FRAME, enterFrame);
+            EventHandlers.unregisterEventListener(_marble, Event.ENTER_FRAME, enterFrame);
         }
     }
 
@@ -344,7 +367,7 @@ class RampAnimation
         var percent :Number = ++_phaseTime / ROLL_DOWN_TIME;
         percent = Math.pow(percent, 2);
         if (percent >= (1 - (_myScore - 1) / Locksmith.WIN_SCORE)) {
-            _marble.removeEventListener(Event.ENTER_FRAME, enterFrame);
+            EventHandlers.unregisterEventListener(_marble, Event.ENTER_FRAME, enterFrame);
             _marble.stop();
             percent = 1 - (_myScore - 1) / Locksmith.WIN_SCORE;
         } 
@@ -378,4 +401,79 @@ class RampAnimation
     protected var _myScore :int;
 
     private static const log :Log = Log.getLog(RampAnimation);
+}
+
+class FlowDisplay extends Sprite
+{
+    public function FlowDisplay (flow :int, digits :int) 
+    {
+        log.debug("displaying flow [" + flow + ", " + digits + "]");
+        for (var ii :int = 0; ii < digits; ii++) {
+            if (flow == 0 && ii != 0) {
+                _digits.unshift(-1);
+            } else {
+                _digits.unshift(flow - Math.floor(flow / 10) * 10);
+                flow = Math.floor(flow / 10);
+            }
+        }
+        if (flow > 0) {
+            log.debug("not giving enough digits to display flow value [" + flow + "]");
+        }
+
+        EventHandlers.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
+    }
+
+    protected function enterFrame (event :Event) :void
+    {
+        var digitSprite :FlowDigit = new FlowDigit(_digits.shift());
+        digitSprite.x = width;
+        addChild(digitSprite);
+
+        if (_digits.length == 0) {
+            EventHandlers.unregisterEventListener(this, Event.ENTER_FRAME, enterFrame);
+        }
+    }
+
+    private static const log :Log = Log.getLog(FlowDisplay);
+
+    protected var _digits :Array = [];
+}
+
+class FlowDigit extends Sprite
+{
+    public function FlowDigit (digit :int) 
+    {
+        if (digit > 9 || digit < -1) {
+            log.debug("digit is invalid [" + digit + "]");
+            return;
+        }
+
+        _digitNum = digit;
+        addChild(_digit = new FLOW_DIGIT() as MovieClip);
+        EventHandlers.registerEventListener(_digit, Event.ENTER_FRAME, enterFrame);
+    }
+
+    protected function enterFrame (event :Event) :void
+    {
+        if (_digit.currentFrame == 3) {
+            if (_digitNum == -1) {
+                _digit["flow_digit"]["digit"].text = "";
+            } else {
+                _digit["flow_digit"]["digit"].text = _digitNum;
+            }
+        }
+
+        if (_digit.currentFrame == _digit.totalFrames) {
+            _digit.stop();
+            EventHandlers.unregisterEventListener(_digit, Event.ENTER_FRAME, enterFrame);
+        }
+    }
+
+    private static const log :Log = Log.getLog(FlowDigit);
+
+    [Embed(source="../rsrc/locksmith_art.swf#digit")]
+    protected const FLOW_DIGIT :Class;
+
+    protected var _digit :MovieClip; 
+    protected var _digitNum :int;
 }

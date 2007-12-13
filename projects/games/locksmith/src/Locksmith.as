@@ -11,6 +11,7 @@ import flash.events.IEventDispatcher;
 import flash.ui.Keyboard;
 
 import com.threerings.ezgame.MessageReceivedEvent;
+import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.SizeChangedEvent;
 import com.threerings.ezgame.StateChangedEvent;
 
@@ -52,10 +53,13 @@ public class Locksmith extends Sprite
                 _wgc, StateChangedEvent.TURN_CHANGED, turnChanged);
             EventHandlers.registerEventListener(
                 _wgc, MessageReceivedEvent.TYPE, messageReceived);
+            EventHandlers.registerEventListener(
+                _wgc, PropertyChangedEvent.TYPE, propertyChanged);
             EventHandlers.registerEventListener(_wgc, KeyboardEvent.KEY_DOWN, keyDownHandler);
             EventHandlers.registerEventListener(_wgc, FlowAwardedEvent.FLOW_AWARDED, 
                 function (event :FlowAwardedEvent) :void {
-                    _wgc.localChat("You were awarded " + event.amount + " flow!");
+                    log.debug("flow award [" + event.amount + "]");
+                    _wgc.set(FLOW_AWARD, event.amount, _wgc.seating.getMyPosition());
                 });
             _board.control = _wgc;
 
@@ -97,6 +101,7 @@ public class Locksmith extends Sprite
         if (_wgc.amInControl()) {
             _wgc.sendMessage(NEW_RINGS, createRings());
             _wgc.startNextTurn();
+            _wgc.set(FLOW_AWARD, [-1, -1]);
         }
     }
 
@@ -189,6 +194,30 @@ public class Locksmith extends Sprite
         }
     }
 
+    protected function propertyChanged (event :PropertyChangedEvent) :void
+    {
+        if (event.index == -1) {
+            return;
+        }
+
+        switch (event.name) {
+        case FLOW_AWARD:
+            var moonFlow :int = _wgc.get(FLOW_AWARD, ScoreBoard.MOON_PLAYER) as int;
+            var sunFlow :int = _wgc.get(FLOW_AWARD, ScoreBoard.SUN_PLAYER) as int;
+            if (moonFlow == -1 || sunFlow == -1) {
+                break;
+            }
+            
+            var digits :int = 1;
+            while (Math.pow(10, digits) <= moonFlow || Math.pow(10, digits) <= sunFlow) {
+                digits++;
+            }
+            _scoreBoard.displayFlow(ScoreBoard.MOON_PLAYER, moonFlow, digits);
+            _scoreBoard.displayFlow(ScoreBoard.SUN_PLAYER, sunFlow, digits);
+            break;
+        }
+    }
+
     protected function updateBackgrounds (event :SizeChangedEvent) :void
     {
         _leftBackground.width = Math.max(0, (_wgc.getSize().x - DISPLAY_WIDTH) / 2) + 1;
@@ -275,6 +304,7 @@ public class Locksmith extends Sprite
     protected static const NEW_RINGS :String = "newRings";
     protected static const RING_ROTATION :String = "ringRotation";
     protected static const WINNER :String = "winner";
+    protected static const FLOW_AWARD :String = "flowAward";
 
     protected var _wgc :WhirledGameControl;
     protected var _board :Board;
