@@ -1,4 +1,6 @@
-package popcraft {
+package popcraft.battle {
+
+import popcraft.*;
 
 import core.AppObject;
 import core.ResourceManager;

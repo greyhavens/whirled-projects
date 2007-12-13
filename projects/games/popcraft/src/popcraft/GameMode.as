@@ -2,12 +2,11 @@ package popcraft {
 
 import core.AppMode;
 import core.MainLoop;
-import core.ResourceManager;
 import core.util.Rand;
 
-import popcraft.net.TickedMessageManager;
-import popcraft.net.Message;
-import popcraft.net.CreateUnitMessage;
+import popcraft.net.*;
+import popcraft.puzzle.*;
+import popcraft.battle.*;
 
 import com.threerings.util.Assert;
 import com.threerings.flash.DisablingButton;

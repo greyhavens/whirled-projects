@@ -1,5 +1,4 @@
-package popcraft
-{
+package popcraft.battle {
 
 import core.AppObject;
 import flash.display.Shape;

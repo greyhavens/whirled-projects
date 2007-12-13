@@ -1,5 +1,7 @@
 package popcraft {
 
+import popcraft.battle.*;
+
 import com.threerings.util.Assert;
 import flash.geom.Point;
 

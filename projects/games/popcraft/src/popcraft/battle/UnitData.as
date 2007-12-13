@@ -1,4 +1,4 @@
-package popcraft {
+package popcraft.battle {
 
 /** Encapsulates immutable data about a particular type of Creature. */
 public class UnitData

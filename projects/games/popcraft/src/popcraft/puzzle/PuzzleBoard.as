@@ -1,17 +1,20 @@
-package popcraft {
+package popcraft.puzzle {
 
 import com.threerings.util.Assert;
+
+import popcraft.*;
 
 import core.MainLoop;
 import core.AppObject;
 import core.tasks.TaskContainer;
 import core.util.Rand;
-import flash.display.DisplayObject;
-import flash.display.Sprite;
 import core.tasks.LocationTask;
 import core.tasks.ScaleTask;
-import flash.geom.Point;
 import core.util.ObjectSet;
+
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.geom.Point;
 
 import core.tasks.*;
 import mx.effects.easing.Bounce;

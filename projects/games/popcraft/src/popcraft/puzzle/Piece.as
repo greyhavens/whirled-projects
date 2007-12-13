@@ -1,4 +1,6 @@
-package popcraft {
+package popcraft.puzzle {
+
+import popcraft.*;
 
 import core.AppObject;
 import flash.display.DisplayObject;

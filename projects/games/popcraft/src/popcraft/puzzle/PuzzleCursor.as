@@ -1,8 +1,11 @@
-package popcraft {
+package popcraft.puzzle {
+
+import popcraft.*;
 
 import core.AppObject;
-import com.threerings.util.Assert;
 import core.AppMode;
+
+import com.threerings.util.Assert;
 
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
