@@ -7,7 +7,7 @@ import flash.geom.Point;
 
 public class GameConstants
 {
-    public static const RESOURCE_DISPLAY_LOC :Point = new Point(100, 0);
+    public static const RESOURCE_DISPLAY_LOC :Point = new Point(0, 0);
     public static const PUZZLE_LOC :Point = new Point(0, 50);
     public static const BATTLE_LOC :Point = new Point(220, 20);
 
@@ -22,7 +22,7 @@ public class GameConstants
     public static const PUZZLE_TILE_SIZE :int = 40;
 
     public static const BATTLE_COLS :int = 15;
-    public static const BATTLE_ROWS :int = 12;
+    public static const BATTLE_ROWS :int = 15;
     public static const BATTLE_TILE_SIZE :int = 32;
 
     // Resource types
