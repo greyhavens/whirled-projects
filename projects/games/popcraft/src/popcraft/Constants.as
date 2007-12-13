@@ -7,6 +7,13 @@ import flash.geom.Point;
 
 public class Constants
 {
+    public static const PLAYER_COLORS :Array = [
+       uint(0xFF0000),
+       uint(0x9FBCFF),
+       uint(0x51FF7E),
+       uint(0xFFE75F)
+    ];
+
     /* Images */
     [Embed(source="../../rsrc/melee.png")]
     public static const IMAGE_MELEE :Class;
@@ -22,6 +29,10 @@ public class Constants
     public static const PUZZLE_COLS :int = 5;
     public static const PUZZLE_ROWS :int = 8;
     public static const PUZZLE_TILE_SIZE :int = 40;
+
+    public static const CLEAR_VALUE_TABLE :IntValueTable =
+        new IntValueTable( [-20, -10, 10, 20, 30, 20] );
+             // group size:   1,   2,  3,  4,  5,  6+ = 50, 70, 90, ...
 
     /* Battle stuff */
     public static const BATTLE_COLS :int = 15;
@@ -50,6 +61,8 @@ public class Constants
         return (RESOURCE_TYPES[type] as ResourceType);
     }
 
+    /* Units */
+
     public static const UNIT_MELEE :uint = 0;
     public static const UNIT__LIMIT :uint = 1;
 
@@ -57,10 +70,6 @@ public class Constants
                                  // wood, gold, mana, morale
             new UnitData( "melee", [5,   0,  0,    0], IMAGE_MELEE )
     ];
-
-    public static const CLEAR_VALUE_TABLE :IntValueTable =
-        new IntValueTable( [-20, -10, 10, 20, 30, 20] );
-             // group size:   1,   2,  3,  4,  5,  6+ = 50, 70, 90, ...
 
     /* Screen layout */
     public static const RESOURCE_DISPLAY_LOC :Point = new Point(0, 0);

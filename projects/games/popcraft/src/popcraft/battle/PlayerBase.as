@@ -9,6 +9,7 @@ import popcraft.*;
 
 import flash.display.Sprite;
 import flash.display.DisplayObject;
+import flash.display.Bitmap;
 import core.tasks.MeterValueTask;
 import flash.geom.Point;
 
@@ -25,11 +26,13 @@ public class PlayerBase extends AppObject
         _sprite.x = loc.x;
         _sprite.y = loc.y;
 
-        var baseImage :DisplayObject = new Constants.IMAGE_BASE();
+        var baseImage :Bitmap = new Constants.IMAGE_BASE();
         baseImage.x = -(baseImage.width / 2);
         baseImage.y = -(baseImage.height / 2);
 
         _sprite.addChild(baseImage);
+
+        _sprite.addChild(Util.createGlowBitmap(baseImage, Constants.PLAYER_COLORS[_owningPlayer] as uint));
 
         // health meter
         _healthMeter = new RectMeter();

@@ -14,6 +14,9 @@ import flash.display.Sprite;
 import flash.display.Bitmap;
 import core.tasks.FunctionTask;
 import flash.geom.Point;
+import flash.filters.GlowFilter;
+import flash.geom.Rectangle;
+import flash.display.BitmapData;
 
 public class Unit extends AppObject
 {
@@ -23,13 +26,18 @@ public class Unit extends AppObject
 
         // create the visual representation
         _sprite = new Sprite();
-        _sprite.addChild(new Constants.IMAGE_MELEE());
+
+        // add the image
+        var image :Bitmap = new Constants.IMAGE_MELEE();
+        _sprite.addChild(image);
+
+        // add a glow around the image
+        _sprite.addChild(Util.createGlowBitmap(image, Constants.PLAYER_COLORS[_owningPlayerId] as uint));
 
         // start at our owning player's base's spawn loc
         var spawnLoc :Point = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
         _sprite.x = spawnLoc.x;
         _sprite.y = spawnLoc.y;
-
         roam();
     }
 
@@ -43,7 +51,7 @@ public class Unit extends AppObject
         //trace("roam to " + x + ", " + y);
 
         this.addNamedTask("roam", new SerialTask(
-            LocationTask.CreateSmooth(x, y, 1.5),
+            LocationTask.CreateSmooth(x, y, 5.5),
             new FunctionTask(roam)));
     }
 
