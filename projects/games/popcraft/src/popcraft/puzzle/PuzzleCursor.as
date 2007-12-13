@@ -140,7 +140,7 @@ public class PuzzleCursor extends AppObject
         _sprite.y = _swapIndexY * GameConstants.PUZZLE_TILE_SIZE;
     }
 
-    override public function addedToMode (mode :AppMode) :void
+    override protected function addedToMode (mode :AppMode) :void
     {
         // the cursor is only visible when the mouse is over the mode
         // @TSC - does it make any difference that I'm using weak refs here?
@@ -154,7 +154,7 @@ public class PuzzleCursor extends AppObject
         _board.interactiveObject.addEventListener(MouseEvent.CLICK, mouseClick, false, 0, true);
     }
 
-    override public function removedFromMode (mode :AppMode) :void
+    override protected function removedFromMode (mode :AppMode) :void
     {
         _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OUT, rollOut);
         _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OVER, rollOver);

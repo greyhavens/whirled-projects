@@ -70,7 +70,7 @@ public class AppMode extends Sprite
             displayParent.addChild(obj.displayObject);
         }
 
-        obj.addedToMode(this);
+        obj.addedToModeInternal(this);
 
         return obj.id;
     }
@@ -117,7 +117,7 @@ public class AppMode extends Sprite
             obj.displayObject.parent.removeChild(obj.displayObject);
         }
 
-        obj.removedFromMode(this);
+        obj.removedFromModeInternal(this);
     }
 
     public function getObject (id :uint) :AppObject

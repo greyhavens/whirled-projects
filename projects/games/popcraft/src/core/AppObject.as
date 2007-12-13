@@ -151,7 +151,7 @@ public class AppObject
      * Called immediately after the AppObject has been added to an AppMode.
      * (Subclasses can override this to do something useful.)
      */
-    public function addedToMode (mode :AppMode) :void
+    protected function addedToMode (mode :AppMode) :void
     {
     }
 
@@ -159,8 +159,18 @@ public class AppObject
      * Called immediately after the AppObject has been removed from an AppMode.
      * (Subclasses can override this to do something useful.)
      */
-    public function removedFromMode (mode :AppMode) :void
+    protected function removedFromMode (mode :AppMode) :void
     {
+    }
+
+    internal function addedToModeInternal (mode :AppMode) :void
+    {
+        addedToMode(mode);
+    }
+
+    internal function removedFromModeInternal (mode :AppMode) :void
+    {
+        removedFromMode(mode);
     }
 
     internal function updateInternal(dt :Number) :void

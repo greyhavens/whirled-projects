@@ -97,6 +97,11 @@ public class GameMode extends AppMode
         // create a special AppMode for all objects that are synchronized over the network.
         // we will manage this mode ourselves.
         _netObjects = new AppMode();
+
+        // create the player bases
+        var base1 :PlayerBase = new PlayerBase(100);
+        base1.displayObject.y = 200;
+        _netObjects.addObject(base1, _battleBoard.displayObjectContainer);
     }
 
     override public function update(dt :Number) :void
