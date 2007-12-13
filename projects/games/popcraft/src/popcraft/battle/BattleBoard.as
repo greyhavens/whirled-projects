@@ -34,12 +34,12 @@ public class BattleBoard extends AppObject
 
         _view.graphics.lineStyle(1, 0);
 
-        for (var col :int = 0; col < _cols; ++col) {
+        for (var col :int = 0; col <= _cols; ++col) {
             _view.graphics.moveTo(col * _tileSize, 0);
             _view.graphics.lineTo(col * _tileSize, height);
         }
 
-        for (var row :int = 0; row < _rows; ++row) {
+        for (var row :int = 0; row <= _rows; ++row) {
             _view.graphics.moveTo(0, row * _tileSize);
             _view.graphics.lineTo(width, row * _tileSize);
         }

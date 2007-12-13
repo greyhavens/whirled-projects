@@ -13,6 +13,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.Bitmap;
 import core.tasks.FunctionTask;
+import flash.geom.Point;
 
 public class Unit extends AppObject
 {
@@ -23,6 +24,11 @@ public class Unit extends AppObject
         // create the visual representation
         _sprite = new Sprite();
         _sprite.addChild(new Constants.IMAGE_MELEE());
+
+        // start at our owning player's base's spawn loc
+        var spawnLoc :Point = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
+        _sprite.x = spawnLoc.x;
+        _sprite.y = spawnLoc.y;
 
         roam();
     }

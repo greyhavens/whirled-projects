@@ -10,13 +10,26 @@ import popcraft.*;
 import flash.display.Sprite;
 import flash.display.DisplayObject;
 import core.tasks.MeterValueTask;
+import flash.geom.Point;
 
 public class PlayerBase extends AppObject
 {
-    public function PlayerBase (maxHealth :uint)
+    public function PlayerBase (owningPlayer :uint, loc :Point, maxHealth :uint)
     {
+        _owningPlayer = owningPlayer;
+        _unitSpawnLoc = loc;
         _maxHealth = maxHealth;
         _health = maxHealth;
+
+        _sprite = new Sprite();
+        _sprite.x = loc.x;
+        _sprite.y = loc.y;
+
+        var baseImage :DisplayObject = new Constants.IMAGE_BASE();
+        baseImage.x = -(baseImage.width / 2);
+        baseImage.y = -(baseImage.height / 2);
+
+        _sprite.addChild(baseImage);
 
         // health meter
         _healthMeter = new RectMeter();
@@ -28,10 +41,8 @@ public class PlayerBase extends AppObject
         _healthMeter.outlineColor = 0x000000;
         _healthMeter.width = 50;
         _healthMeter.height = 10;
-        _healthMeter.displayObject.y = -_healthMeter.height;
-
-        _sprite = new Sprite();
-        _sprite.addChild(new Constants.IMAGE_BASE());
+        _healthMeter.displayObject.x = baseImage.x;
+        _healthMeter.displayObject.y = baseImage.y - _healthMeter.height;
     }
 
     override protected function addedToMode (mode :AppMode) :void
@@ -50,9 +61,19 @@ public class PlayerBase extends AppObject
         return _maxHealth;
     }
 
-    public function get health () :int
+    public function get health () :uint
     {
         return _health;
+    }
+
+    public function get owningPlayer () :uint
+    {
+        return _owningPlayer;
+    }
+
+    public function get unitSpawnLoc () :Point
+    {
+        return _unitSpawnLoc;
     }
 
     public function doDamage (damage :uint) :void
@@ -61,6 +82,9 @@ public class PlayerBase extends AppObject
         _healthMeter.removeAllTasks();
         _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));
     }
+
+    protected var _owningPlayer :uint;
+    protected var _unitSpawnLoc :Point = new Point();
 
     protected var _sprite :Sprite;
     protected var _healthMeter :RectMeter;

@@ -27,6 +27,7 @@ public class Constants
     public static const BATTLE_COLS :int = 15;
     public static const BATTLE_ROWS :int = 15;
     public static const BATTLE_TILE_SIZE :int = 32;
+    public static const BASE_MAX_HEALTH :int = 100;
 
     /* Resource types */
 
@@ -63,12 +64,23 @@ public class Constants
 
     /* Screen layout */
     public static const RESOURCE_DISPLAY_LOC :Point = new Point(0, 0);
-    public static const PUZZLE_LOC :Point = new Point(0, 50);
-    public static const BATTLE_LOC :Point = new Point(220, 20);
+    public static const PUZZLE_BOARD_LOC :Point = new Point(0, 50);
+    public static const BATTLE_BOARD_LOC :Point = new Point(220, 20);
 
     public static const UNIT_BUTTON_LOCS :Array = [
         new Point(0, 400)
     ];
+
+    public static function getPlayerBaseLocations (numPlayers :uint) :Array // of Points
+    {
+        switch (numPlayers) {
+        case 2:
+            return [ new Point(28, 240), new Point(452, 240) ];
+
+        default:
+            return [];
+        }
+    }
 }
 
 }

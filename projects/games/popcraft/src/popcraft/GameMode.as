@@ -20,6 +20,7 @@ import flash.display.Sprite;
 import flash.text.TextField;
 import flash.display.DisplayObject;
 import flash.events.Event;
+import flash.geom.Point;
 
 public class GameMode extends AppMode
 {
@@ -41,6 +42,7 @@ public class GameMode extends AppMode
     {
         var myPosition :int = PopCraft.instance.gameControl.seating.getMyPosition();
         var isAPlayer :Boolean = (myPosition >= 0);
+        var numPlayers :int = PopCraft.instance.gameControl.seating.getPlayerIds().length;
 
         // only players get puzzles
         if (isAPlayer) {
@@ -57,8 +59,8 @@ public class GameMode extends AppMode
                 Constants.PUZZLE_ROWS,
                 Constants.PUZZLE_TILE_SIZE);
 
-            _puzzleBoard.displayObject.x = Constants.PUZZLE_LOC.x;
-            _puzzleBoard.displayObject.y = Constants.PUZZLE_LOC.y;
+            _puzzleBoard.displayObject.x = Constants.PUZZLE_BOARD_LOC.x;
+            _puzzleBoard.displayObject.y = Constants.PUZZLE_BOARD_LOC.y;
 
             this.addObject(_puzzleBoard, this);
 
@@ -72,8 +74,8 @@ public class GameMode extends AppMode
             Constants.BATTLE_ROWS,
             Constants.BATTLE_TILE_SIZE);
 
-        _battleBoard.displayObject.x = Constants.BATTLE_LOC.x;
-        _battleBoard.displayObject.y = Constants.BATTLE_LOC.y;
+        _battleBoard.displayObject.x = Constants.BATTLE_BOARD_LOC.x;
+        _battleBoard.displayObject.y = Constants.BATTLE_BOARD_LOC.y;
 
         this.addObject(_battleBoard, this);
 
@@ -86,16 +88,22 @@ public class GameMode extends AppMode
         _netObjects = new AppMode();
 
         // create the player bases
-        var base1 :PlayerBase = new PlayerBase(100);
-        base1.displayObject.y = 200;
-        _netObjects.addObject(base1, _battleBoard.displayObjectContainer);
+        var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
+        var player :uint = 0;
+        for each (var loc :Point in baseLocs) {
+            var base :PlayerBase = new PlayerBase(player, loc, Constants.BASE_MAX_HEALTH);
+
+            _playerBaseIds.push(_netObjects.addObject(base, _battleBoard.displayObjectContainer));
+
+            ++player;
+        }
     }
 
     override public function update(dt :Number) :void
     {
         // don't start doing anything until the messageMgr is ready
         if (!_gameIsRunning && _messageMgr.isReady) {
-            trace("Starting game. randomSeed=" + _messageMgr.randomSeed);
+            trace("Starting game. randomSeed: " + _messageMgr.randomSeed);
             Rand.seedStream(Rand.STREAM_GAME, _messageMgr.randomSeed);
             _gameIsRunning = true;
         }
@@ -123,6 +131,11 @@ public class GameMode extends AppMode
 
         // update all non-net objects
         super.update(dt);
+    }
+
+    public function getPlayerBase (player :uint) :PlayerBase
+    {
+        return (_netObjects.getObject(_playerBaseIds[player]) as PlayerBase);
     }
 
     protected function handleMessage (msg :Message) :void
@@ -167,7 +180,7 @@ public class GameMode extends AppMode
     }
 
     // from core.AppMode
-    override public function destroy() :void
+    override public function destroy () :void
     {
         if (null != _messageMgr) {
             _messageMgr.shutdown();
@@ -180,78 +193,6 @@ public class GameMode extends AppMode
         return _playerData;
     }
 
-    protected static function createUnitPurchaseButton (iconClass :Class, creatureType :uint) :DisablingButton
-    {
-        var data :UnitData = Constants.UNIT_DATA[creatureType];
-
-        // how much does it cost?
-        var costString :String = new String();
-        for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
-            var resData :ResourceType = Constants.getResource(resType);
-            var resCost :int = data.getResourceCost(resType);
-
-            if (resCost == 0) {
-                continue;
-            }
-
-            if (costString.length > 0) {
-                costString += " ";
-            }
-
-            costString += (resData.name + " (" + data.getResourceCost(resType) + ")");
-        }
-
-        var button :DisablingButton = new DisablingButton();
-        var outline :int = uint(0x000000);
-        var background :int = uint(0xFFD800);
-        var rolloverBackground :int = uint(0xCFAF00);
-        var disabledBackground :int = uint(0x525252);
-
-        button.upState = makeButtonFace(iconClass, costString, outline, background);
-        button.overState = makeButtonFace(iconClass, costString, outline, rolloverBackground);
-        button.downState = makeButtonFace(iconClass, costString, outline, rolloverBackground);
-        button.downState.x = -1;
-        button.downState.y = -1;
-        button.disabledState = makeButtonFace(iconClass, costString, outline, disabledBackground, 0.5);
-        button.hitTestState = button.upState;
-
-        return button;
-    }
-
-    protected static function makeButtonFace (iconClass :Class, costString :String, foreground :uint, background :uint, iconAlpha :Number = 1.0) :Sprite
-    {
-        var face :Sprite = new Sprite();
-
-        var icon :DisplayObject = new iconClass();
-        icon.alpha = iconAlpha;
-
-        face.addChild(icon);
-
-        var costText :TextField = new TextField();
-        costText.text = costString;
-        costText.textColor = 0;
-        costText.height = costText.textHeight + 2;
-        costText.width = costText.textWidth + 3;
-        costText.y = icon.height + 5;
-
-        face.addChild(costText);
-
-        var padding :int = 5;
-        var w :Number = icon.width + 2 * padding;
-        var h :Number = icon.height + 2 * padding;
-
-        // draw our button background (and outline)
-        face.graphics.beginFill(background);
-        face.graphics.lineStyle(1, foreground);
-        face.graphics.drawRect(0, 0, w, h);
-        face.graphics.endFill();
-
-        icon.x = padding;
-        icon.y = padding;
-
-        return face;
-    }
-
     protected var _gameIsRunning :Boolean;
 
     protected var _messageMgr :TickedMessageManager;
@@ -260,6 +201,8 @@ public class GameMode extends AppMode
     protected var _playerData :PlayerData;
 
     protected var _netObjects :AppMode;
+
+    protected var _playerBaseIds :Array = new Array();
 
     protected static const TICK_INTERVAL_MS :int = 100; // 1/10 of a second
     protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));
