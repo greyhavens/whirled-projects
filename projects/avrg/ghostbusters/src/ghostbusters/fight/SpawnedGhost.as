@@ -36,31 +36,18 @@ public class SpawnedGhost extends GhostBase
 
     override protected function mediaReady () :void
     {
+        new GameFrame();
+
         _clip.gotoAndStop(1, STATE_FIGHT);
 
         _control.setHotSpot((_bounds.left + _bounds.right)/2, _bounds.bottom, _bounds.height);
-
-        addEventListener(MouseEvent.CLICK, ghostClicked);
 
         _health = new Sprite();
         updateHealth(1.0);
         _control.setDecoration(_health);
 
         // TODO: switch to battle music? :)
-        // TODO: accept clicks & trigger minigame
     }
-
-    protected function ghostClicked (evt :MouseEvent) :void
-    {
-        // TODO: high high time for a Model, as noted elsewhere
-        var currentHealth :Number = _control.getAVRGameControl().state.getProperty("gh") as Number;
-        if (currentHealth > 0.07) {
-            _control.getAVRGameControl().state.setProperty("gh", currentHealth - 0.07, false);
-        } else {
-            _control.getAVRGameControl().despawnMob("ghost");
-        }
-    }
-
 
     protected var _control :MobControl;
     protected var _health :Sprite;

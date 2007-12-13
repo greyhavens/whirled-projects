@@ -24,8 +24,11 @@ import com.whirled.MobControl;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.EmbeddedSwfLoader;
 
+import ghostbusters.fight.GameFrame;
 import ghostbusters.fight.SpawnedGhost;
 import ghostbusters.seek.SeekPanel;
+
+import ghostbusters.fight.Match3;
 
 public class GamePanel extends Sprite
 {
@@ -35,6 +38,8 @@ public class GamePanel extends Sprite
         _seekPanel = seekPanel;
 
         _hud = new HUD();
+
+        _frame = new GameFrame();
 
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
     }
@@ -58,11 +63,36 @@ public class GamePanel extends Sprite
     public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
     {
         _ghost = new SpawnedGhost(ctrl);
+        _ghost.addEventListener(MouseEvent.CLICK, handleGhostClick);
         return _ghost;
+    }
+
+    protected function handleGhostClick (evt :MouseEvent) :void
+    {
+        if (_minigame == null) {
+            _minigame = new Match3(gamePerformance);
+            Game.log.debug("Minigame bounds: " + _minigame.getBounds(_minigame));
+            _frame.frameContent(_minigame);
+            this.addChild(_frame);
+            _frame.x = 200;
+            _frame.y = 200;
+        }
+    }
+
+    protected function gamePerformance (score :Number, style :Number = 0) :void
+    {
+        CommandEvent.dispatch(this, GameController.GHOST_MELEE, score);
     }
 
     public function enterState (state :String) :void
     {
+        if (_model.getState() == GameModel.STATE_FIGHTING && state != GameModel.STATE_FIGHTING) {
+            if (_minigame != null) {
+                _frame.frameContent(null);
+                this.removeChild(_frame);
+            }
+        }
+
         if (state == GameModel.STATE_INTRO) {
             showSplash();
 
@@ -154,6 +184,9 @@ public class GamePanel extends Sprite
     protected var _ghost :SpawnedGhost;
 
     protected var _splash :MovieClip = MovieClip(new SPLASH());
+
+    protected var _frame :GameFrame;
+    protected var _minigame: DisplayObject;
 
     protected var _seekPanel :SeekPanel;
 

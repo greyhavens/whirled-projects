@@ -12,6 +12,7 @@ import ghostbusters.seek.SeekController;
 public class GameController extends Controller
 {
     public static const SPAWN_GHOST :String = "SpawnGhost";
+    public static const GHOST_MELEE :String = "GhostMelee";
     public static const TOGGLE_LANTERN :String = "ToggleLantern";
     public static const TOGGLE_LOOT :String = "ToggleLoot";
     public static const END_GAME :String = "EndGame";
@@ -78,7 +79,21 @@ public class GameController extends Controller
     public function handleSpawnGhost () :void
     {
         _control.state.sendMessage("gs", null);
+        _model.setGhostHealth(1.0);
         _control.spawnMob("ghost");
+    }
+
+    public function handleGhostMelee (score :Number) :void
+    {
+        var currentHealth :Number = _model.getGhostHealth();
+        if (currentHealth > 0.01) {
+            // we can't do this properly without control (or server side bits)
+            _model.setGhostHealth(currentHealth - 0.01);
+
+        } else {
+            // TODO: something a little more impressive than just a despawn
+            _control.despawnMob("ghost");
+        }
     }
 
     public function enterState (state :String) :void
@@ -96,7 +111,7 @@ public class GameController extends Controller
         } else if (state == GameModel.STATE_IDLE) {
             // forward from the intro or return from seeking or fighting
             checkTransition(state, GameModel.STATE_INTRO, GameModel.STATE_SEEKING,
-                        GameModel.STATE_FIGHTING);
+                            GameModel.STATE_FIGHTING);
 
         } else if (state == GameModel.STATE_SEEKING) {
             // forward from idle
