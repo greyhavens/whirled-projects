@@ -9,6 +9,8 @@ import flash.events.Event;
 
 import flash.utils.getTimer; // function import
 
+import com.threerings.util.Log;
+
 import com.whirled.WhirledGameControl;
 
 public class GhostSubmarine extends Submarine
@@ -23,6 +25,11 @@ public class GhostSubmarine extends Submarine
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
         addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
+    }
+
+    override public function addPoints (points :int, show :Boolean = true) :void
+    {
+        // don't even think about it
     }
 
     public function updateQueuedActions (xx :int, yy :int, orient :int, actions :Array) :void

@@ -68,6 +68,7 @@ public class Submarine extends BaseSprite
 
         updateVisual();
         updateLocation();
+        updateDisplayedScore();
     }
 
     public function getGhost () :GhostSubmarine
@@ -246,7 +247,7 @@ public class Submarine extends BaseSprite
             _movedOrShot = true;
             if (++_buildingStep == TICKS_TO_BUILD) {
                 addPoints(-POINTS_TO_BUILD);
-                _factorySound.play();
+                _board.playSound(_factorySound, _x, _y);
                 _board.buildFactory(this);
                 _buildingStep = 0;
                 return OK;
@@ -265,7 +266,7 @@ public class Submarine extends BaseSprite
 
             } else {
                 _torpedos.push(new Torpedo(this, _board));
-                _shootSound.play();
+                _board.playSound(_shootSound, _x, _y);
                 updateVisual();
                 return OK;
             }
@@ -366,11 +367,7 @@ public class Submarine extends BaseSprite
         // lose points for getting wacked
         addPoints((_points >= 0) ? POINTS_PER_DEATH : (POINTS_PER_DEATH / 4));
 
-        if (_isMe) {
-            _explodeSelf.play();
-        } else {
-            _explodeEnemy.play();
-        }
+        _board.playSound(_isMe ? _explodeSelf : _explodeEnemy, _x, _y);
 
         _dead = true;
         _deaths++;
@@ -379,7 +376,6 @@ public class Submarine extends BaseSprite
         _queuedActions.length = 0; // drop any queued actions
         updateVisual();
         updateDeath();
-        updateDisplayedScore();
         _respawnTicks = AUTO_RESPAWN_TICKS;
 
         if (_ghost != null) {
@@ -418,8 +414,6 @@ public class Submarine extends BaseSprite
         }
         var add :int = (_torpedos.length == MAX_TORPEDOS) ? 0 : 4;
         _avatar.gotoAndStop(orientToFrame() + add);
-
-        updateDisplayedScore();
     }
 
     protected function updateDisplayedScore () :void

@@ -10,6 +10,8 @@ import flash.events.Event;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 
+import flash.media.Sound;
+
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
@@ -34,6 +36,9 @@ public class SeaDisplay extends Sprite
         _status.background = true;
         _status.autoSize = TextFieldAutoSize.CENTER;
         _status.selectable = false;
+
+        var extent :int = int(Math.ceil(SubAttack.VISION_TILES)) * 2 + 1;
+        _soundRect = new Rectangle(0, 0, extent, extent);
     }
 
     /**
@@ -68,7 +73,8 @@ public class SeaDisplay extends Sprite
             Bitmap(new ROCK1()).bitmapData,
             Bitmap(new ROCK2()).bitmapData,
             Bitmap(new ROCK3()).bitmapData,
-            Bitmap(new ROCK4()).bitmapData
+            Bitmap(new ROCK4()).bitmapData,
+            Bitmap(new TEMPLE()).bitmapData
         ];
 
         var temple :BitmapData = Bitmap(new TEMPLE()).bitmapData;
@@ -203,18 +209,17 @@ public class SeaDisplay extends Sprite
     /**
      * Display the specified tile as now being traversable.
      */
-    public function updateTraversable (
-        xx :int, yy :int, value :int,
-        aboveIsBlank :Boolean, belowIsBlank :Boolean) :void
+    public function updateTraversable (xx :int, yy :int, value :int, board :Board) :void
     {
         var matrix :Matrix = new Matrix();
         matrix.translate(xx * TILE_SIZE, yy * TILE_SIZE);
 
         if (value == Board.BLANK) {
             // draw a blank square
-            _tiles.bitmapData.draw(pickBitmap(null, aboveIsBlank ? _grounds : _moss), matrix);
+            _tiles.bitmapData.draw(pickBitmap(null, board.castsMoss(xx, yy - 1) ? _moss : _grounds),
+                matrix);
 
-            if (belowIsBlank) {
+            if (board.isBlank(xx, yy + 1)) {
                 matrix.translate(0, TILE_SIZE);
                 _tiles.bitmapData.draw(pickBitmap(null, _grounds), matrix);
             }
@@ -238,8 +243,18 @@ public class SeaDisplay extends Sprite
             return;
         }
 
+        var extent :int = int(Math.ceil(SubAttack.VISION_TILES));
+        _soundRect.x = xx - extent;
+        _soundRect.y = yy - extent;
         x = (SubAttack.VISION_TILES - xx) * TILE_SIZE;
         y = (SubAttack.VISION_TILES - yy) * TILE_SIZE;
+    }
+
+    public function playSound (sound :Sound, xx :int, yy :int) :void
+    {
+        if (_soundRect.contains(xx, yy)) {
+            sound.play();
+        }
     }
 
     /**
@@ -273,6 +288,8 @@ public class SeaDisplay extends Sprite
 
     /** The submarine that we're following. */
     protected var _followSub :Submarine;
+
+    protected var _soundRect :Rectangle;
 
     protected var _tiles :Bitmap;
 

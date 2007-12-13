@@ -55,23 +55,14 @@ public class Board
 
         var pick :int;
 
-        // scatter some rocks around
-        var numRocks :int = size / 40;
-        for (ii = 0; ii < numRocks; ii++) {
-            do {
-                pick = _rando.nextInt(size);
-            } while (_board[pick] != TREE);
-            _board[pick] = ROCK;
-        }
-
-        // scatter some temples around
-        var numTemples :int = size / 10;
-        for (ii = 0; ii < numTemples; ii++) {
-            do {
-                pick = _rando.nextInt(size);
-            } while (_board[pick] != TREE);
-            _board[pick] = TEMPLE;
-        }
+//        // scatter some temples around
+//        var numTemples :int = size / 10;
+//        for (ii = 0; ii < numTemples; ii++) {
+//            do {
+//                pick = _rando.nextInt(size);
+//            } while (_board[pick] != TREE);
+//            _board[pick] = TEMPLE;
+//        }
 
         // scatter some clumpy clearings
         var numBlanks :int = size / 100;
@@ -91,6 +82,12 @@ public class Board
             }
         }
 
+        // scatter some rocks around
+        var numRocks :int = size / 40;
+        for (ii = 0; ii < numRocks; ii++) {
+            pick = _rando.nextInt(size);
+            _board[pick] = ROCK;
+        }
         _seaDisplay.setupSea(_width, _height, _board, _rando);
 
         // create a submarine for each player
@@ -149,13 +146,22 @@ public class Board
         _gameCtrl.removeEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
     }
 
-    /**
-     * Used only for rendering: is the specified tile "blank" or factory?
-     */
-    public function isBlankOrFactory (xx :int, yy :int) :Boolean
+    public function playSound (sound :Sound, xx :int, yy :int) :void
     {
-        return (xx < 0) || (xx >= _width) || (yy < 0) || (yy >= _height) ||
-            (BLANK >= int(_board[coordsToIdx(xx, yy)]));
+        _seaDisplay.playSound(sound, xx, yy);
+    }
+
+    /**
+     * Used only for rendering: is the specified tile one that casts no moss upon the tile
+     * below it?
+     */
+    public function castsMoss (xx :int, yy :int) :Boolean
+    {
+        if ((xx < 0) || (xx >= _width) || (yy < 0) || (yy >= _height)) {
+            return false; // out of bounds
+        }
+        var val :int = int(_board[coordsToIdx(xx, yy)]);
+        return (BLANK < val) && (val != DODO) && (val != PANDA);
     }
 
     /**
@@ -349,9 +355,9 @@ public class Board
         if (killCount == 0) {
             // if no subs were affected, play a generic explode
             if (oldVal < Board.BLANK) {
-                _factoryExplode.play();
+                playSound(_factoryExplode, xx, yy);
             } else {
-                _explode.play();
+                playSound(_explode, xx, yy);
             }
         }
 
@@ -366,8 +372,7 @@ public class Board
     protected function setBlank (xx :int, yy :int) :void
     {
         _board[coordsToIdx(xx, yy)] = BLANK;
-        _seaDisplay.updateTraversable(xx, yy, BLANK,
-            isBlankOrFactory(xx, yy - 1), isBlankOrFactory(xx, yy + 1));
+        _seaDisplay.updateTraversable(xx, yy, BLANK, this);
     }
 
     /**
@@ -420,8 +425,7 @@ public class Board
         _board[idx] = val;
 
         // update the display
-        _seaDisplay.updateTraversable(xx, yy, val,
-            isBlankOrFactory(xx, yy - 1), isBlankOrFactory(xx, yy + 1));
+        _seaDisplay.updateTraversable(xx, yy, val, this);
         // we are exploding because we hit a non-traversable tile, so we don't affect
         // any subs on that tile...
         return false;
@@ -520,15 +524,34 @@ public class Board
     {
         var size :int = _width * _height;
         var pick :int = _rando.nextInt(size);
+        var origPick :int = pick;
         var kind :int = (0 == _rando.nextInt(2)) ? PANDA : DODO;
-        while (_board[pick] != BLANK) {
+        while (_board[pick] != BLANK || areSubsAt(pick)) {
             pick++;
             if (pick >= size) {
                 pick = 0;
             }
+            if (pick == origPick) {
+                return; // couldn't add the animal
+            }
         }
         _board[pick] = kind;
-        _seaDisplay.updateTraversable(int(pick % _width), int(pick / _width), kind, false, false);
+        _seaDisplay.updateTraversable(int(pick % _width), int(pick / _width), kind, this);
+    }
+
+    /**
+     * Helper method for addAnimal.
+     */
+    protected function areSubsAt (index :int) :Boolean
+    {
+        var xx :int = int(index % _width);
+        var yy :int = int(index / _width);
+        for each (var sub :Submarine in _subs) {
+            if (!sub.isDead() && sub.getX() == xx && sub.getY() == yy) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected function checkGameOver (tickId :int) :void
