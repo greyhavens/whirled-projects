@@ -43,7 +43,7 @@ public class TagWidget extends Sprite
 
         var label :Label = new Label();
         label.setStyle("textFormat", _tagFormat);
-        label.text = "Tags:";
+        label.text = "Requested tags:";
         label.setSize(100, 22);
         addChild(label);
 

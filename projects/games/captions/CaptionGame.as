@@ -73,15 +73,17 @@ public class CaptionGame extends EventDispatcher
     public function CaptionGame (
         gameCtrl :WhirledGameControl, photoService :PhotoService = null,
         previewCount :int = 4, scoreRounds :int = 10,
-        captioningDuration :int = 45, votingDuration :int = 30, resultsDuration :int = 30,
+        captioningDuration :int = 45, votingDuration :int = 20, resultsDuration :int = 30,
 //        captioningDuration :int = 45, votingDuration :int = 10, resultsDuration :int = 10,
 //        captioningDuration :int = 20, votingDuration :int = 10, resultsDuration :int = 20,
-        minCaptionersStatStorage :int = 3)
+        minCaptionersStatStorage :int = 3, additionalVotingTimePerCaption :int = 2,
+        additionalResultsTimePerCaption :int = 0)
     {
         _ctrl = gameCtrl;
         _previewCount = previewCount;
         _scoreRounds = scoreRounds;
         _durations = [ captioningDuration, votingDuration, resultsDuration ];
+        _durationExtras = [ 0, additionalVotingTimePerCaption, additionalResultsTimePerCaption ];
         _minCaptionersStatStorage = _minCaptionersStatStorage;
 
         _photoService = (photoService != null) ? photoService : new LatestFlickrPhotoService();
@@ -422,7 +424,18 @@ public class CaptionGame extends EventDispatcher
      */
     protected function updateTick (value :int) :void
     {
-        var duration :int = int(_durations[getCurrentPhase()]);
+        var phase :int = getCurrentPhase();
+        var multiplier :int = 0;
+        switch (phase) {
+        case VOTING_PHASE:
+            multiplier = _votableCaptions.length;
+            break;
+
+        case RESULTS_PHASE:
+            multiplier = _results.length;
+            break;
+        }
+        var duration :int = int(_durations[phase]) + multiplier * int(_durationExtras[phase]);
         _secondsRemaining = Math.max(0, duration - value);
 
         // dispatch the tick event
@@ -1344,6 +1357,9 @@ public class CaptionGame extends EventDispatcher
 
     /** The durations of each phase. */
     protected var _durations :Array;
+
+    /** Per-caption additional durations. */
+    protected var _durationExtras :Array;
 
     /** The minimum number of captioners needed for stat storage. */
     protected var _minCaptionersStatStorage :int;
