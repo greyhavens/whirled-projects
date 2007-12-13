@@ -144,7 +144,7 @@ public class Fifteen extends Sprite
 
         var config :Button = new Button();
         config.label = "Config";
-        config.setSize(config.textField.textWidth + 25, 22);
+        config.setSize(config.textField.textWidth + 20, 22);
         config.x = 220 - config.width;
         config.addEventListener(MouseEvent.CLICK, handleOpenConfig);
         _palette.addChild(config);
@@ -163,6 +163,10 @@ public class Fifteen extends Sprite
         _sourceBox.addItem({ label: "Mona Lisa",
             data: [ SOURCE_URL,
                     "http://media.whirled.com/16ee8aa22ff39ee61a245c28d0b183d0c1b972dd.jpg" ] });
+        _sourceBox.addItem({ label: "Bogologo",
+            data: [ SOURCE_URL, "http://bogocorp.com/bogologo.gif" ] });
+        _sourceBox.addItem({ label: "Dude",
+            data: [ SOURCE_URL, "http://media.whirled.com/c95c59abc8da0ac99628fbc4c68799b93c129716.swf" ]});
 // TODO: real URL entry?
 //        _sourceBox.addItem({ label: "URL", data: [ SOURCE_URL, null ] });
         var names :Array = Camera.names;
@@ -192,7 +196,7 @@ public class Fifteen extends Sprite
 
         var close :Button = new Button();
         close.label = "Close";
-        close.setSize(close.textField.textWidth + 25, 22);
+        close.setSize(close.textField.textWidth + 20, 22);
         close.x = 220 + (220 - close.width);;
         close.addEventListener(MouseEvent.CLICK, handleCloseConfig)
         _palette.addChild(close);
@@ -580,8 +584,10 @@ public class Fifteen extends Sprite
 }
 }
 
+import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Loader;
+import flash.display.LoaderInfo;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -595,7 +601,9 @@ import flash.events.MouseEvent;
 import flash.media.Camera;
 import flash.media.Video;
 
+import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
+import flash.system.SecurityDomain;
 
 import flash.net.URLRequest;
 
@@ -682,6 +690,7 @@ class TileProvider
     {
         for (var ii :int = 0; ii < _tiles.length - 1; ii++) {
             var tile :Sprite = _tiles[ii] as Sprite;
+            tile.mask = null;
             tile.graphics.clear();
             while (tile.numChildren > 0) {
                 tile.removeChildAt(0);
@@ -741,50 +750,80 @@ class ChoppingTileProvider extends TileProvider
     }
 }
 
-class UrlTileProvider extends ChoppingTileProvider
+class UrlTileProvider extends TileProvider
 {
     public function UrlTileProvider (url :String)
     {
-        _loader = new Loader();
-        _loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, handleDoUpdate);
-        _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleDoUpdate);
-        _bmp = new BitmapData(Fifteen.BOARD_WIDTH, Fifteen.BOARD_HEIGHT, false);
-        _loader.load(new URLRequest(url), new LoaderContext(true));
+        _req = new URLRequest(url);
+    }
+
+    override public function startup () :void
+    {
+        super.startup();
+
+        for (var ii :int = 0; ii < _tiles.length - 1; ii++) {
+            var tile :Sprite = _tiles[ii] as Sprite;
+            // set up a mask so we only show the portion we want
+            var mask :Sprite = new Sprite();
+            mask.graphics.beginFill(0xFFFFFF);
+            mask.graphics.drawRect(0, 0, Fifteen.TILE_WIDTH, Fifteen.TILE_HEIGHT);
+            mask.graphics.endFill();
+            tile.mask = mask;
+            tile.addChild(mask);
+            // fill in all pixels in the tile so that they're mouse hittable
+            tile.graphics.beginFill(0x000000, 0);
+            tile.graphics.drawRect(0, 0, Fifteen.TILE_WIDTH, Fifteen.TILE_HEIGHT);
+            tile.graphics.endFill();
+
+            // put the loader at the right location..
+            var loader :Loader = new Loader();
+            loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleComplete);
+            // load it into our own security domain so we get clicks on loaded SWFs
+            try {
+                loader.load(_req, new LoaderContext(false, new ApplicationDomain(null),
+                    SecurityDomain.currentDomain));
+            } catch (err :SecurityError) {
+                // if we're running locally, we can't specify a SecurityDomain
+                loader.load(_req, new LoaderContext(false, new ApplicationDomain(null)));
+            }
+            var p :Point = _fifteen.computeTilePosition(ii);
+            loader.x = -p.x;
+            loader.y = -p.y;
+            tile.addChild(loader);
+
+            // save the loader so we can stop it later
+            _loaders.push(loader);
+        }
+
+        _req = null;
     }
 
     override public function shutdown () :void
     {
         super.shutdown();
-        try {
-            _loader.close();
-        } catch (err :Error) {
-            // nada
+
+        for each (var loader :Loader in _loaders) {
+            try {
+                loader.close();
+            } catch (er :Error) {
+                // ignore
+            }
+            loader.unload();
         }
-        _loader.unload();
     }
 
-    protected function handleDoUpdate (event :Event) :void
+    protected function handleComplete (event :Event) :void
     {
-        var w :Number;
-        var h :Number;
-        try {
-            w = _loader.contentLoaderInfo.width;
-            h = _loader.contentLoaderInfo.height;
-        } catch (err :Error) {
-            // not loaded enough yet
-            return;
-        }
+        var loaderInfo :LoaderInfo = event.target as LoaderInfo;
 
-        var matrix :Matrix = new Matrix();
-        matrix.scale(Fifteen.BOARD_WIDTH / w, Fifteen.BOARD_HEIGHT / h);
-
-        _bmp.draw(_loader, matrix);
-        bitmapToTiles(_bmp);
+        // scale the loader so that the content fits within the puzzle bounds
+        loaderInfo.loader.scaleX = Fifteen.BOARD_WIDTH / loaderInfo.width;
+        loaderInfo.loader.scaleY = Fifteen.BOARD_HEIGHT / loaderInfo.height;
     }
 
-    protected var _loader :Loader;
+    protected var _req :URLRequest;
 
-    protected var _bmp :BitmapData;
+    protected var _loaders :Array = [];
 }
 
 class CameraTileProvider extends ChoppingTileProvider
