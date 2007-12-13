@@ -184,6 +184,7 @@ public class Locksmith extends Sprite
             } else {
                 _wgc.localChat("Game over - " + _wgc.seating.getPlayerNames()[winner] + 
                     " is the Winner!");
+                _scoreBoard.displayVictory(winner);
             }
         }
     }

@@ -2,8 +2,11 @@
 
 package {
 
+import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
+
+import flash.events.Event;
 
 import flash.filters.BitmapFilterQuality;
 import flash.filters.GlowFilter;
@@ -17,6 +20,8 @@ import flash.text.TextFormatAlign;
 import com.threerings.util.Log;
 
 import com.whirled.WhirledGameControl;
+
+import com.whirled.contrib.EventHandlers;
 
 public class ScoreBoard extends Sprite 
 {
@@ -67,6 +72,10 @@ public class ScoreBoard extends Sprite
     {
         _moonScore = 0;
         _sunScore = 0;
+        if (_victory != null) {
+            removeChild(_victory);
+            _victory = null;
+        }
         removeChild(_marbleLayer);
         addChildAt(_marbleLayer = new Sprite(), 0);
         _gameEnded = false;
@@ -87,6 +96,26 @@ public class ScoreBoard extends Sprite
         } else {
             log.debug("Asked to score point for unknown player [" + player + "]");
         }
+    }
+
+    public function displayVictory (player :int) :void
+    {
+        if (player != MOON_PLAYER && player != SUN_PLAYER) {
+            log.debug("asked to display victory for unknown player [" + player + "]");
+            return;
+        }
+
+        addChild(_victory = new ScoreBoard["WINNER_" + (player == MOON_PLAYER ? "MOON" : "SUN")]()
+            as MovieClip);
+        EventHandlers.registerEventListener(_victory, Event.ENTER_FRAME, 
+            function (event :Event) :void {
+                var targetMovie :MovieClip = event.target as MovieClip;
+                if (_victory == null || targetMovie.currentFrame == targetMovie.totalFrames) {
+                    targetMovie.stop();
+                    EventHandlers.unregisterEventListener(
+                        targetMovie, Event.ENTER_FRAME, arguments.callee);
+                }
+            });
     }
 
     protected function applyHeadshot (player :int) :Function 
@@ -188,10 +217,16 @@ public class ScoreBoard extends Sprite
         }
     }
 
+    private static const log :Log = Log.getLog(ScoreBoard);
+
     [Embed(source="../rsrc/locksmith_art.swf#trough_overlay")]
     protected static const TROUGH_OVERLAY :Class;
     [Embed(source="../rsrc/locksmith_art.swf#player_frame")]
     protected static const PLAYER_FRAME :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#winner_resolve_moon")]
+    protected static const WINNER_MOON :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#winner_resolve_sun")]
+    protected static const WINNER_SUN :Class;
 
     protected static const SUN_RAMP_BEGIN :Point = new Point(256, 38);
     protected static const SUN_RAMP_END :Point = new Point(313, 199);
@@ -206,8 +241,7 @@ public class ScoreBoard extends Sprite
 
     protected var _leftFrame :Sprite;
     protected var _rightFrame :Sprite;
-
-    private static const log :Log = Log.getLog(ScoreBoard);
+    protected var _victory :MovieClip;
 }
 }
 
