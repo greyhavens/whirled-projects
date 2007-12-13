@@ -21,7 +21,7 @@ public class WaspShipType extends ShipType
         forwardAccel = 8.0;
         backwardAccel = -3.0;
         friction = 0.1;
-        turnAccel = 30.0;
+        turnAccel = 60.0;
         turnFriction = 0.05;
         turnRate = 100;
 

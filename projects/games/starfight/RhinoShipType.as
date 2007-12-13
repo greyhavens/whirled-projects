@@ -16,7 +16,7 @@ public class RhinoShipType extends ShipType
         forwardAccel = 6.0;
         backwardAccel = -2;
         friction = 0.1;
-        turnAccel = 70.0;
+        turnAccel = 90.0;
         turnFriction = 0.03;
 
         hitPower = 0.18;

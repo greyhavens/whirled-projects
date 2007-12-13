@@ -300,12 +300,15 @@ public class ShipSprite extends Sprite
             var dx :Number = endX - startX;
             var dy :Number = endY - startY;
 
-            _game.playSoundAt(obstacle.collisionSound(), startX + dx * coll.time,
-                startY + dy * coll.time);
+            if (!_moveSound) {
+                _game.playSoundAt(obstacle.collisionSound(), startX + dx * coll.time,
+                    startY + dy * coll.time);
+                _moveSound = true;
+            }
             if (colType == 1) {
                 // we're going to fudge these a bit so we don't end up in a wall
-                boardX = startX + dx * coll.time * 0.98;
-                boardY = startY + dy * coll.time * 0.98;
+                boardX = startX + dx * coll.time * FUDGE_FACT;
+                boardY = startY + dy * coll.time * FUDGE_FACT;
                 return;
             }
 
@@ -315,9 +318,9 @@ public class ShipSprite extends Sprite
                     boardX = startX;
                     boardY = startY;
                 } else {
-                    resolveMove(startX + dx * coll.time, startY + dy * coll.time,
-                        startX + dx * coll.time - dx * (1.0-coll.time) * bounce,
-                        endY);
+                    resolveMove(
+                        startX + dx * coll.time * FUDGE_FACT, startY + dy * coll.time * FUDGE_FACT,
+                        startX + dx * coll.time - dx * (1.0-coll.time) * bounce, endY);
                 }
             } else { // vertical bounce
                 yVel = -yVel * bounce;
@@ -325,10 +328,9 @@ public class ShipSprite extends Sprite
                     boardX = startX;
                     boardY = startY;
                 } else {
-                    resolveMove(startX + dx * coll.time,
-                        startY + dy * coll.time, endX,
-                        startY + dy * coll.time -
-                        dy * (1.0-coll.time) * bounce);
+                    resolveMove(
+                        startX + dx * coll.time * FUDGE_FACT, startY + dy * coll.time * FUDGE_FACT,
+                        endX, startY + dy * coll.time - dy * (1.0-coll.time) * bounce);
                 }
             }
         } else {
@@ -336,6 +338,7 @@ public class ShipSprite extends Sprite
             boardX = endX;
             boardY = endY;
         }
+        _moveSound = false;
     }
 
     /**
@@ -801,6 +804,11 @@ public class ShipSprite extends Sprite
         ship.rotation = -90;
     }
 
+    public function canHit () :Boolean
+    {
+        return isAlive() && _animMode != WARP_BEGIN && _animMode != WARP_END;
+    }
+
     /**
      * Update our ship to the reported position, BUT if possible try to
      *  set ourselves up to make up for any discrepancy smoothly.
@@ -963,6 +971,8 @@ public class ShipSprite extends Sprite
     protected var _reportShip :ShipSprite;
     protected var _reportTime :int;
 
+    protected var _moveSound :Boolean;
+
     /** Trophy stats. */
     protected var _killsThisLife :int;
     protected var _killsThisLife3 :int;
@@ -970,6 +980,8 @@ public class ShipSprite extends Sprite
     protected var _powerupsThisLife :Boolean = false;
     protected var _kills :int;
     protected var _deaths :int;
+
+    protected static const FUDGE_FACT :Number = 0.98;
 
     protected static const INTERPOLATION_TIME :int = 500;
 

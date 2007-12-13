@@ -347,7 +347,7 @@ public class BoardController
                     continue;
                 }
 
-                if (!ship.isAlive() || ship.shipId == ignoreShip || (dx == 0 && dy == 0)) {
+                if (!ship.canHit() || ship.shipId == ignoreShip || (dx == 0 && dy == 0)) {
                     continue;
                 }
 
