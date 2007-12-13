@@ -347,7 +347,7 @@ public class Match3Overlay extends FrameSprite
 
     protected var _scoreAnimProps :Object = {
         outlineColor: 0x000000,
-        format: TextFieldUtil.createFormat({ bold: true, font: "System", color: 0xFFFFFF})
+        defaultTextFormat: TextFieldUtil.createFormat({ bold: true, font: "System", color: 0xFFFFFF})
     };
 
     /** The timestamp at which the board was last idle. */
