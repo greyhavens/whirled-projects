@@ -40,6 +40,13 @@ import com.threerings.ezgame.SizeChangedEvent;
 
 import com.whirled.WhirledGameControl;
 
+//
+// TODO
+// - subs can drive forward through oncoming missiles
+// - Actual drive-over implementation, instead of shoot-then-move ??
+// - Mark wants arrows showing the direction of the action (like a very rough radar) 
+// - fix up targetting?
+
 [SWF(width="700", height="500")]
 public class SubAttack extends Sprite
 {
@@ -97,8 +104,6 @@ public class SubAttack extends Sprite
         _splashTimer.start();
 
         _myIndex = _gameCtrl.seating.getMyPosition();
-
-        _cantQueue = Sound(new CANT_QUEUE_SOUND());
 
         if (_myIndex != -1) {
             _keyLimiter = new KeyRepeatLimiter(_gameCtrl, 100);
@@ -265,8 +270,7 @@ public class SubAttack extends Sprite
             return;
         }
         if (!_seaDisplay.canQueueActions()) {
-            _cantQueue.play();
-            trace("Can't queue: waiting on serer.");
+            //trace("Can't queue: waiting on serer.");
             // ignore it, we're still waiting on too much to return from the server
             return;
         }
@@ -365,8 +369,6 @@ public class SubAttack extends Sprite
     /** Our player index, or -1 if we're not a player. */
     protected var _myIndex :int;
 
-    protected var _cantQueue :Sound;
-
     /** The time at which we last sent our actions. */
     protected var _lastSent :int = 0;
 
@@ -378,9 +380,6 @@ public class SubAttack extends Sprite
 
     [Embed(source="rsrc/sidebar.jpg")]
     protected static const SIDEBAR :Class;
-
-    [Embed(source="rsrc/cant_move.mp3")]
-    protected static const CANT_QUEUE_SOUND :Class;
 
     protected static const SEND_THROTTLE :int = 105;
 }

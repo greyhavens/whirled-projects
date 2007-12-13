@@ -201,6 +201,7 @@ public class Submarine extends BaseSprite
         _avatar = MovieClip(new AVATAR());
         if (_isMe) {
             _cantShootSound = Sound(new CANT_SHOOT_SOUND());
+            _cantMoveSound = Sound(new CANT_MOVE_SOUND());
         }
 
         _avatar.filters = [ _hueShift ];
@@ -287,6 +288,9 @@ public class Submarine extends BaseSprite
                 // we auto-shot, so save the move for next tick
                 return CANT;
             } else {
+                if (_cantMoveSound != null) {
+                    _cantMoveSound.play();
+                }
                 return DROP;
             }
         }
@@ -500,6 +504,7 @@ public class Submarine extends BaseSprite
     protected var _avatar :MovieClip;
 
     protected var _cantShootSound :Sound;
+    protected var _cantMoveSound :Sound;
 
     protected var _nameLabel :TextField;
 
@@ -529,6 +534,9 @@ public class Submarine extends BaseSprite
 
     [Embed(source="rsrc/cant_shoot.mp3")]
     protected static const CANT_SHOOT_SOUND :Class;
+
+    [Embed(source="rsrc/cant_move.mp3")]
+    protected static const CANT_MOVE_SOUND :Class;
 
     [Embed(source="rsrc/you_explode.mp3")]
     protected static const EXPLODE_SELF_SOUND :Class;
