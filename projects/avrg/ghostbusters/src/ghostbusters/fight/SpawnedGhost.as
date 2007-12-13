@@ -22,6 +22,9 @@ public class SpawnedGhost extends GhostBase
 
     public function updateHealth (percentHealth :Number) :void
     {
+        if (_health == null) {
+            return;
+        }
         var g :Graphics = _health.graphics;
         g.clear();
 

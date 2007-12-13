@@ -93,6 +93,7 @@ public class GameController extends Controller
         } else {
             // TODO: something a little more impressive than just a despawn
             _control.despawnMob("ghost");
+            enterState(GameModel.STATE_IDLE);
         }
     }
 

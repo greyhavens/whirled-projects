@@ -14,6 +14,8 @@ import flash.geom.Rectangle;
 
 import com.threerings.util.EmbeddedSwfLoader;
 
+import ghostbusters.Game;
+
 public class GameFrame extends Sprite
 {
     public function GameFrame ()
@@ -26,6 +28,7 @@ public class GameFrame extends Sprite
     public function frameContent (content :DisplayObject) :void
     {
         if (_content != null) {
+            this.addChild(_clipHolder);
             this.removeChild(_content);
         }
         _content = content;
@@ -45,10 +48,11 @@ public class GameFrame extends Sprite
 
             // then adjust the frame's ratio -- one of these will be 1.0, the other one
             // smaller, linearly proportional to the smaller dimension of the content
-            _clip.scaleX = contentRatioX / contentRatio;
-            _clip.scaleY = contentRatioY / contentRatio;
+            _clipHolder.scaleX = contentRatioX / contentRatio;
+            _clipHolder.scaleY = contentRatioY / contentRatio;
 
             this.addChild(_content);
+            this.addChild(_clipHolder);
         }
     }
 
@@ -58,22 +62,24 @@ public class GameFrame extends Sprite
 
     protected function handleLoaded (evt :Event) :void
     {
-        _clip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
-        this.addChild(_clip);
 
-        // shift the clip so the content can go at (0, 0)
-        _clip.x = INSIDE.left;
-        _clip.y = INSIDE.top;
+        _clipHolder = new Sprite();
+
+        _clip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        _clipHolder.addChild(_clip);
+        _clip.x = -INSIDE.left;
+        _clip.y = -INSIDE.top;
 
         // let subclassers know we're done
         mediaReady();
     }
 
     protected var _clip :MovieClip;
+    protected var _clipHolder :Sprite;
     protected var _content :DisplayObject;
 
     // relative the frame's coordinate system, where can we place the framed material?
-    protected static const INSIDE :Rectangle = new Rectangle(-235, -149, 465, 301);
+    protected static const INSIDE :Rectangle = new Rectangle(50, 46, 465, 301);
 
     [Embed(source="../../../rsrc/minigame_border.swf", mimeType="application/octet-stream")]
     protected static const FRAME :Class;

@@ -14,7 +14,7 @@ import com.threerings.util.Log;
 [SWF(width="700", height="500")]
 public class Game extends Sprite
 {
-    public static const DEBUG :Boolean = true;
+    public static const DEBUG :Boolean = false;
 
     public static var log :Log = Log.getLog(Game);
 

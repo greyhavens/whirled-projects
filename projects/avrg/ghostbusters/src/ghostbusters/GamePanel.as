@@ -71,10 +71,9 @@ public class GamePanel extends Sprite
     {
         if (_minigame == null) {
             _minigame = new Match3(gamePerformance);
-            Game.log.debug("Minigame bounds: " + _minigame.getBounds(_minigame));
             _frame.frameContent(_minigame);
             this.addChild(_frame);
-            _frame.x = 200;
+            _frame.x = 50;
             _frame.y = 200;
         }
     }
