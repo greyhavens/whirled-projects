@@ -69,6 +69,12 @@ public class SeekModel extends Sprite
     {
     }
 
+    public function getRoomSize () :Rectangle
+    {
+        // it's weird that this is in the model, but..
+        return _control.getStageSize(false);
+    }
+
     public function getGhostSpeed () :Number
     {
         return _ghostSpeed;

@@ -35,6 +35,13 @@ public class SeekPanel extends Sprite
 
         buildUI();
 
+        _roomSize = model.getRoomSize();
+        if (_roomSize == null) {
+            Game.log.warning("Can't get room size! Aii!");
+            _roomSize = new Rectangle(0, 0, 700, 500);
+        }
+        Game.log.debug("Room size: " + _roomSize);
+
         this.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         this.addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
     }
@@ -114,8 +121,8 @@ public class SeekPanel extends Sprite
             _ghost.nextFrame();
         }
 
-        var p :Point = new Point(Math.max(0, Math.min(_width, this.mouseX)),
-                                 Math.max(0, Math.min(_height, this.mouseY)));
+        var p :Point = new Point(Math.max(0, Math.min(_roomSize.width, this.mouseX)),
+                                 Math.max(0, Math.min(_roomSize.height, this.mouseY)));
         p = this.localToGlobal(p);
 
         // bow to reality: nobody wants to watch roundtrip lag in action
@@ -174,9 +181,7 @@ public class SeekPanel extends Sprite
 
     protected var _model :SeekModel;
 
-    // TODO: temporary hard-coded
-    protected var _width :int = 700;
-    protected var _height :int = 500;
+    protected var _roomSize :Rectangle;
 
     protected var _lanterns :Dictionary = new Dictionary();
 
