@@ -72,8 +72,8 @@ public class Constants
 
     public static const UNIT_DATA :Array = [
                                  // wood, gold, mana, morale
-            new UnitData( "melee",  [5,   0,  0,    0], IMAGE_MELEE ),
-            new UnitData( "ranged", [0,   5,  0,    0], IMAGE_RANGED )
+            new UnitData( "melee",  [5,   0,  0,    0], IMAGE_MELEE, 30, 5, 25, 64 ),
+            new UnitData( "ranged", [0,   5,  0,    0], IMAGE_RANGED, -1, 0, 0, 40 )
     ];
 
     /* Screen layout */

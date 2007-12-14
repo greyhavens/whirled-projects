@@ -3,36 +3,39 @@ package popcraft.battle {
 /** Encapsulates immutable data about a particular type of Creature. */
 public class UnitData
 {
-    public function UnitData (name :String, costs :Array, imageClass :Class)
-    {
-        _name = name;
-        _costs = costs;
-        _imageClass = imageClass;
-    }
+    public var name :String;
+    public var resourceCosts :Array;
+    public var imageClass :Class;
 
-    public function get resourceCosts () :Array
-    {
-        return _costs;
-    }
+    // movement variables
+    public var wanderEvery :Number;
+    public var wanderRangeMin: Number;
+    public var wanderRangeMax: Number;
+    public var movePixelsPerSecond :Number;
 
-    public function get name () :String
+    public function UnitData (
+        name :String,
+        resourceCosts :Array,
+        imageClass :Class,
+        wanderEvery :Number,
+        wanderRangeMin :Number,
+        wanderRangeMax :Number,
+        movePixelsPerSecond :Number )
     {
-        return _name;
-    }
+        this.name = name;
+        this.resourceCosts = resourceCosts;
+        this.imageClass = imageClass;
 
-    public function get imageClass () :Class
-    {
-        return _imageClass;
+        this.wanderEvery = wanderEvery;
+        this.wanderRangeMin = wanderRangeMin;
+        this.wanderRangeMax = wanderRangeMax;
+        this.movePixelsPerSecond = movePixelsPerSecond;
     }
 
     public function getResourceCost (resourceType :uint) :int
     {
-        return _costs[resourceType];
+        return this.resourceCosts[resourceType];
     }
-
-    protected var _name :String;
-    protected var _costs :Array;
-    protected var _imageClass :Class;
 }
 
 }
