@@ -46,6 +46,11 @@ public class Constants
     public static const BASE_MAX_HEALTH :int = 100;
     public static const BASE_ATTACK_RADIUS :int = 80; // max distance from base that base attacks can occur from
 
+    /* Damage types */
+    public static const DAMAGE_TYPE_MELEE :uint = 0;
+    public static const DAMAGE_TYPE_PROJECTILE :uint = 1;
+    public static const DAMAGE_TYPE_BASE :uint = 2; // bases damage units that attack them
+
     /* Resource types */
 
     // wow, I miss enums
@@ -56,10 +61,10 @@ public class Constants
     public static const RESOURCE__LIMIT :uint = 4;
 
     public static const RESOURCE_TYPES :Array = [
-        new ResourceType("wood", 0x885300),
+        new ResourceType("brown", 0x885300),
         new ResourceType("gold", 0xF8F500),
-        new ResourceType("mana", 0x00F8EF),
-        new ResourceType("morale", 0xFF77BA)
+        new ResourceType("blue", 0x00F8EF),
+        new ResourceType("pink", 0xFF77BA)
     ];
 
     public static function getResource (type :uint) :ResourceType {
@@ -74,9 +79,28 @@ public class Constants
     public static const UNIT__LIMIT :uint = 2;
 
     public static const UNIT_DATA :Array = [
-                                 // wood, gold, mana, morale
-            new UnitData( "melee",  [5,   0,  0,    0], IMAGE_MELEE, 30, new IntRange(5, 25), 64, 100 ),
-            new UnitData( "ranged", [0,   5,  0,    0], IMAGE_RANGED, -1, new IntRange(0, 0), 40, 100 )
+
+            new UnitData(
+                "melee",                    // name
+                [5,   0,  0,    0],         // resource costs (brown, gold, blue, pink)
+                IMAGE_MELEE,                // image
+                30, new IntRange(5, 25),    // wanderEvery, wanderRange
+                64,                         // move speed (pixels/second)
+                100,                        // health
+                new UnitArmor( [DAMAGE_TYPE_MELEE, 0.8, DAMAGE_TYPE_PROJECTILE, 0.7, DAMAGE_TYPE_BASE, 1] )   // armor
+            )
+
+            ,
+
+            new UnitData(
+                "ranged",                   // name
+                [0,   5,  0,    0],         // resource costs (brown, gold, blue, pink)
+                IMAGE_RANGED,               // image
+                -1, new IntRange(0, 0),     // wanderEvery, wanderRange
+                40,                         // move speed (pixels/second)
+                100,                        // health
+                new UnitArmor( [DAMAGE_TYPE_MELEE, 1, DAMAGE_TYPE_PROJECTILE, 1, DAMAGE_TYPE_BASE, 1] )   // armor
+            )
     ];
 
     /* Screen layout */

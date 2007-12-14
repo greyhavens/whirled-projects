@@ -28,7 +28,7 @@ public class PlayerBase extends AppObject
 
         var baseImage :Bitmap = new Constants.IMAGE_BASE();
         baseImage.x = -(baseImage.width / 2);
-        baseImage.y = -(baseImage.height / 2);
+        baseImage.y = -baseImage.height;
 
         _sprite.addChild(baseImage);
 
