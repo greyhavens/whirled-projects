@@ -39,7 +39,8 @@ public class FightController extends Controller
     public function doSpawnGhost () :void
     {
         _control.state.sendMessage("gs", null);
-        _control.spawnMob("ghost");
+        _model.setGhostHealth(1.0);
+        _control.spawnMob("ghost", "Old Dame Bobblewhack");
     }
 
     public function handleGhostMelee (score :Number) :void

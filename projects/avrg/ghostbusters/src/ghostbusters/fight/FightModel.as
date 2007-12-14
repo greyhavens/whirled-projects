@@ -37,7 +37,7 @@ public class FightModel
     protected function propertyChanged (evt :AVRGameControlEvent) :void
     {
         if (evt.name == "gh") {
-            _panel.ghostHealthUpdated(evt.value as Number);
+            _panel.ghostHealthUpdated();
         }
     }
 

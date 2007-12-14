@@ -42,13 +42,16 @@ public class FightPanel extends Sprite
     public function getGhostSprite (ctrl :MobControl) :SpawnedGhost
     {
         _ghost = new SpawnedGhost(ctrl);
+        _ghost.updateHealth(_model.getGhostHealth());
         _ghost.addEventListener(MouseEvent.CLICK, handleGhostClick);
         return _ghost;
     }
 
-    public function ghostHealthUpdated (health :Number) :void
+    public function ghostHealthUpdated () :void
     {
-        _ghost.updateHealth(health);
+        if (_ghost) {
+            _ghost.updateHealth(_model.getGhostHealth());
+        }
     }
 
     public function endFight () :void
