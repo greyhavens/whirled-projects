@@ -172,6 +172,13 @@ public class LOL extends Sprite
         _ui = _loader.getContent() as MovieClip;
         _ui.mask = _mask;
         _content.addChild(_ui);
+
+        var fontName :String = "captionFont";
+        if (_theme == LOL_THEME) {
+            fontName += "2";
+        }
+        var fontClass :Class = _loader.getSymbol(fontName) as Class;
+        _captionFont = new fontClass();
         _loader = null;
 
 //        trace(DisplayUtil.dumpHierarchy(_ui));
@@ -264,25 +271,23 @@ public class LOL extends Sprite
         _participateButton.addEventListener(MouseEvent.CLICK, handleStartParticipating);
         _notParticipating.addEventListener(Event.CHANGE, handleStopParticipating);
 
+        _input.embedFonts = true;
+        _winningCaption.embedFonts = true;
+
         switch (_theme) {
         default:
             _formatter.configure();
             break;
 
         case LOL_THEME:
-            //_input.embedFonts = true;
-            //_winningCaption.embedFonts = true;
-            //_formatter.configure("impact");
-            _formatter.configure("_sans");
+            _formatter.configure(_captionFont.fontName);
             break;
 
         case SILENT_THEME:
             var grain :MovieClip = find("film_grain") as MovieClip;
             grain.mouseEnabled = false;
             grain.mouseChildren = false;
-            //_input.embedFonts = true;
-            //_formatter.configure("nickelodeon", 0xFFFFFF, false);
-            _formatter.configure("_sans", 0xFFFFFF, false);
+            _formatter.configure(_captionFont.fontName, 0xFFFFFF, false);
             break;
         }
         _formatter.watch(_input, handleTextFieldChanged);
@@ -723,10 +728,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected function displayWinningCaption (caption :String, name :String) :void
     {
-        if (_theme == LOL_THEME) {
-            _winningCaption.text = caption;
-            _formatter.format(_winningCaption);
-        }
+        _winningCaption.text = caption;
+        _formatter.format(_winningCaption);
 
         // remove any old star
         var oldStar :DisplayObject = find("star");
@@ -1099,6 +1102,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     protected var _nameFormat :TextFormat = new TextFormat(
         "_sans", 12, 0xFFFFFF, false, false, false, "", "", TextFormatAlign.LEFT, 0, 0, 0, 0);
+
+    protected var _captionFont :Font;
 
     protected var _image :UILoader;
 
