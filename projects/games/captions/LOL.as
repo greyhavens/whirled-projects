@@ -70,7 +70,7 @@ public class LOL extends Sprite
 
     public function LOL () 
     {
-        trace("Started up LOLcaptions, build ID: reload10");
+//        trace("Started up LOLcaptions, build ID: reload10");
         _ctrl = new WhirledGameControl(this);
         if (!_ctrl.isConnected()) {
             var oops :TextField = new TextField();
@@ -188,7 +188,7 @@ public class LOL extends Sprite
 
     protected function initUIBits (... ignored) :void
     {
-        trace("isFrameFirst: " + ignored[0]);
+//        trace("isFrameFirst: " + ignored[0]);
 
         _image = find("image") as UILoader;
         if (_image == null) {
@@ -201,6 +201,7 @@ public class LOL extends Sprite
 
         _skipBox = find("skip") as CheckBox;
         if (_skipBox == null) {
+            trace("The fuckup is happening. Catching the fuckup. Unfucking the fuckup.");
             Log.dumpStack();
             _theme = null;
             initTheme();
