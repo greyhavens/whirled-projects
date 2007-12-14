@@ -20,15 +20,18 @@ import flash.display.BitmapData;
 
 public class Unit extends AppObject
 {
-    public function Unit (owningPlayerId :uint)
+    public function Unit (unitType :uint, owningPlayerId :uint)
     {
+        _unitType = unitType;
         _owningPlayerId = owningPlayerId;
+
+        _unitData = (Constants.UNIT_DATA[unitType] as UnitData);
 
         // create the visual representation
         _sprite = new Sprite();
 
         // add the image
-        var image :Bitmap = new Constants.IMAGE_MELEE();
+        var image :Bitmap = new _unitData.imageClass();
         _sprite.addChild(image);
 
         // add a glow around the image
@@ -43,20 +46,6 @@ public class Unit extends AppObject
         var enemyPlayerId :uint = (_owningPlayerId == 0 ? 1 : 0);
         var moveLoc :Point = GameMode.instance.getPlayerBase(enemyPlayerId).unitSpawnLoc;
         moveTo(moveLoc.x, moveLoc.y);
-    }
-
-    protected function roam () :void
-    {
-        this.removeNamedTasks("roam");
-
-        var x: int = Rand.nextIntRange(50, 450, Rand.STREAM_GAME);
-        var y: int = Rand.nextIntRange(50, 450, Rand.STREAM_GAME);
-
-        //trace("roam to " + x + ", " + y);
-
-        this.addNamedTask("roam", new SerialTask(
-            LocationTask.CreateSmooth(x, y, 5.5),
-            new FunctionTask(roam)));
     }
 
     protected function moveTo (x :int, y :int) :void
@@ -115,7 +104,10 @@ public class Unit extends AppObject
     }
 
     protected var _sprite :Sprite;
+    protected var _unitType :uint;
     protected var _owningPlayerId :uint;
+
+    protected var _unitData :UnitData;
 
     protected static const WANDER_EVERY :Number = 30;  // for each WANDER_EVERY pixels the unit moves, he will wander
     protected static const WANDER_RANGE_MIN :Number = 5; // how far will he wander?

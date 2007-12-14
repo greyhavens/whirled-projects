@@ -18,6 +18,9 @@ public class Constants
     [Embed(source="../../rsrc/melee.png")]
     public static const IMAGE_MELEE :Class;
 
+    [Embed(source="../../rsrc/ranged.png")]
+    public static const IMAGE_RANGED :Class;
+
     [Embed(source="../../rsrc/base.png")]
     public static const IMAGE_BASE :Class;
 
@@ -64,11 +67,13 @@ public class Constants
     /* Units */
 
     public static const UNIT_MELEE :uint = 0;
-    public static const UNIT__LIMIT :uint = 1;
+    public static const UNIT_RANGED :uint = 1;
+    public static const UNIT__LIMIT :uint = 2;
 
     public static const UNIT_DATA :Array = [
                                  // wood, gold, mana, morale
-            new UnitData( "melee", [5,   0,  0,    0], IMAGE_MELEE )
+            new UnitData( "melee",  [5,   0,  0,    0], IMAGE_MELEE ),
+            new UnitData( "ranged", [0,   5,  0,    0], IMAGE_RANGED )
     ];
 
     /* Screen layout */
@@ -77,7 +82,8 @@ public class Constants
     public static const BATTLE_BOARD_LOC :Point = new Point(220, 20);
 
     public static const UNIT_BUTTON_LOCS :Array = [
-        new Point(0, 400)
+        new Point(0, 400),
+        new Point(50, 400)
     ];
 
     public static function getPlayerBaseLocations (numPlayers :uint) :Array // of Points
