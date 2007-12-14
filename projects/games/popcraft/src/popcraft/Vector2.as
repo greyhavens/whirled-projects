@@ -20,27 +20,69 @@ public class Vector2
         return new Vector2(p.x, p.y);
     }
 
+
+    /** Returns v1 + v2. v1 and v2 are not modified. */
+    public static function add (v1 :Vector2, v2 :Vector2) :Vector2
+    {
+        return new Vector2(v1.x + v2.x, v1.y + v2.y);
+    }
+
+    /** Returns v1 - v2. v1 and v2 are not modified. */
+    public static function subtract (v1 :Vector2, v2 :Vector2) :Vector2
+    {
+        return new Vector2(v1.x - v2.x, v1.y - v2.y);
+    }
+
+    /** Returns v * val. v is unmodified. */
+    public static function scale (v :Vector2, val :Number) :Vector2
+    {
+        return new Vector2(v.x * val, v.y * val);
+    }
+
+    /**
+     * Returns the smaller of the two angles between v1 and v2, in radians.
+     * Result will be in range [0, pi].
+     */
+    public static function smallerAngleBetween (v1 :Vector2, v2 :Vector2) :Number
+    {
+        // v1 dot v2 == |v1||v2|cos(theta)
+        // theta = acos ((v1 dot v2) / (|v1||v2|))
+
+        var dot :Number = v1.dot(v2);
+        var len1 :Number = v1.length;
+        var len2 :Number = v2.length;
+
+        return Math.acos(dot / (len1 * len2));
+    }
+
     /**
      * Creates a Vector2 of magnitude 'len' that that has been rotated about the origin by 'angle'.
      */
-    public static function fromAngle (angleRadians :Number, len :Number = 1)
+    public static function fromAngle (angleRadians :Number, len :Number = 1) :Vector2
     {
-        var cosTheta :Number = Math.cos(angleRadians);
-        var sinTheta :Number = Math.sin(angleRadians);
-
-        // we use the unit vector (1, 0)
+       // we use the unit vector (1, 0)
 
         return new Vector2(
             Math.cos(angleRadians) * len,   // == len * (cos(theta)*x - sin(theta)*y)
             Math.sin(angleRadians) * len);  // == len * (sin(theta)*x + cos(theta)*y)
     }
 
+    /**
+     * Converts the Vector2 to a Point.
+     */
+    public function toPoint () :Point
+    {
+        return new Point(x, y);
+    }
+
+    /** Constructs a Vector2 from the given values. */
     public function Vector2 (x :Number = 0, y :Number = 0)
     {
         this.x = x;
         this.y = y;
     }
 
+    /** Returns a copy of this Vector2. */
     public function clone () :Vector2
     {
         return new Vector2(x, y);
@@ -82,8 +124,8 @@ public class Vector2
     /** Rotates the vector by 'angleRadians' radians. */
     public function rotate (angleRadians :Number) :void
     {
-        var cosTheta = Math.cos(angleRadians);
-        var sinTheta = Math.sin(angleRadians);
+        var cosTheta :Number = Math.cos(angleRadians);
+        var sinTheta :Number = Math.sin(angleRadians);
 
         var oldX :Number = x;
         x = (cosTheta * oldX) - (sinTheta * y);
@@ -93,7 +135,7 @@ public class Vector2
     /** Normalizes the vector. */
     public function normalize () :void
     {
-        var len :Number = length();
+        var len :Number = this.length;
 
         x /= len;
         y /= len;
@@ -121,7 +163,7 @@ public class Vector2
 
     /**
      * Returns a vector that is perpendicular to this.
-     * If ccw = true, the perpendicular vector is rotated 90 degrees counter-clockwise rotation from this vector,
+     * If ccw = true, the perpendicular vector is rotated 90 degrees counter-clockwise from this vector,
      * otherwise it's rotated 90 degrees clockwise.
      */
     public function getPerp (ccw :Boolean = true) :Vector2
