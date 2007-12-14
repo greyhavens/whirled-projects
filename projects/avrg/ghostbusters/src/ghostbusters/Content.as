@@ -35,5 +35,8 @@ public class Content
     // audio
     [Embed(source="../../rsrc/473674_SOUNDDOGS_Am.mp3")]
     public static const LANTERN_LOOP_AUDIO :Class;
+
+    [Embed(source="../../rsrc/143135_SOUNDDOGS_MO_modded.mp3")]
+    public static const LANTERN_GHOST_SCREECH :Class;
 }
 }
