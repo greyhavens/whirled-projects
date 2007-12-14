@@ -74,9 +74,12 @@ public class Constants
 
     /* Units */
 
-    public static const UNIT_MELEE :uint = 0;
-    public static const UNIT_RANGED :uint = 1;
-    public static const UNIT__LIMIT :uint = 2;
+    public static const UNIT_TYPE_MELEE :uint = 0;
+    public static const UNIT_TYPE_RANGED :uint = 1;
+    public static const UNIT_TYPE__LIMIT :uint = 2;
+
+    public static const UNIT_CLASS_GROUND :uint = (1 << 0);
+    public static const UNIT_CLASS_AIR :uint = (1 << 1);
 
     public static const UNIT_DATA :Array = [
 

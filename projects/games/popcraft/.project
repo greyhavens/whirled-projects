@@ -16,6 +16,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>[source path] src</name>
+			<type>2</type>
+			<location>/home/tim/tools/Adobe_Flex_Builder_Linux/sdks/3.0.0/frameworks/projects/framework/src</location>
+		</link>
+		<link>
 			<name>[source path] nenya-src-as</name>
 			<type>2</type>
 			<location>/export/whirled/libraries/nenya/src/as</location>
@@ -39,16 +44,6 @@
 			<name>[source path] narya-src-as</name>
 			<type>2</type>
 			<location>/export/whirled/libraries/narya/src/as</location>
-		</link>
-		<link>
-			<name>[source path] framework-src</name>
-			<type>2</type>
-			<location>/home/tim/tools/Adobe_Flex_Builder_Linux/sdks/3.0.0/frameworks/projects/framework/src</location>
-		</link>
-		<link>
-			<name>[source path] popcraft-src</name>
-			<type>2</type>
-			<location>/export/whirled/projects/games/popcraft/src</location>
 		</link>
 		<link>
 			<name>[source path] toybox-src-as</name>
