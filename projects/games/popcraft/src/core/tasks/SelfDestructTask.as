@@ -10,10 +10,10 @@ public class SelfDestructTask extends ObjectTask
     {
     }
 
-    override public function update (dt :Number, obj :AppObject) :uint
+    override public function update (dt :Number, obj :AppObject) :Boolean
     {
         obj.removeSelf();
-        return ObjectTask.STATUS_COMPLETE;
+        return true;
     }
 
     override public function clone () :ObjectTask

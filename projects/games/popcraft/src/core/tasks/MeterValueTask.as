@@ -69,7 +69,7 @@ public class MeterValueTask extends ObjectTask
         _interpolator = interpolator;
     }
 
-    override public function update (dt :Number, obj :AppObject) :uint
+    override public function update (dt :Number, obj :AppObject) :Boolean
     {
         var meterComponent :MeterComponent = (obj as MeterComponent);
         Assert.isNotNull(meterComponent, "MeterValueTask can only be applied to MeterComponents.");
@@ -82,7 +82,7 @@ public class MeterValueTask extends ObjectTask
 
         meterComponent.value = _interpolator.interpolate(_from, _to, _elapsedTime, _totalTime);
 
-        return (_elapsedTime >= _totalTime ? ObjectTask.STATUS_COMPLETE : ObjectTask.STATUS_INCOMPLETE);
+        return (_elapsedTime >= _totalTime);
     }
 
     override public function clone () :ObjectTask

@@ -46,7 +46,7 @@ internal class TaskContainer extends ObjectTask
     }
 
     /** Updates all child tasks. */
-    override public function update (dt :Number, obj :AppObject) :uint
+    override public function update (dt :Number, obj :AppObject) :Boolean
     {
         var hasIncompleteTasks :Boolean = false;
         var i :int;
@@ -58,9 +58,9 @@ internal class TaskContainer extends ObjectTask
                 continue;
             }
 
-            var status :int = task.update(dt, obj);
+            var complete :Boolean = task.update(dt, obj);
 
-            if (status == ObjectTask.STATUS_INCOMPLETE) {
+            if (!complete) {
                 hasIncompleteTasks = true;
 
                 // Serial and Repeating tasks proceed one task at a time
@@ -90,7 +90,7 @@ internal class TaskContainer extends ObjectTask
             hasIncompleteTasks = true;
         }
 
-        return (hasIncompleteTasks ? STATUS_INCOMPLETE : STATUS_COMPLETE);
+        return (!hasIncompleteTasks);
     }
 
     /** Returns a clone of the TaskContainer. */

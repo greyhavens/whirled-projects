@@ -10,11 +10,11 @@ public class TimedTask extends ObjectTask
         _time = time;
     }
 
-    override public function update (dt :Number, obj :AppObject) :uint
+    override public function update (dt :Number, obj :AppObject) :Boolean
     {
         _elapsedTime += dt;
 
-        return (_elapsedTime >= _time ? ObjectTask.STATUS_COMPLETE : ObjectTask.STATUS_INCOMPLETE);
+        return (_elapsedTime >= _time);
     }
 
     override public function clone () :ObjectTask

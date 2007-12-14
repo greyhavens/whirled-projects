@@ -65,7 +65,7 @@ public class ScaleTask extends ObjectTask
         _interpolator = interpolator;
     }
 
-    override public function update (dt :Number, obj :AppObject) :uint
+    override public function update (dt :Number, obj :AppObject) :Boolean
     {
         var displayObj :DisplayObject = obj.displayObject;
         Assert.isNotNull(displayObj, "ScaleTask can only be applied to AppObjects with attached display objects.");
@@ -80,7 +80,7 @@ public class ScaleTask extends ObjectTask
         displayObj.scaleX = _interpolator.interpolate(_fromX, _toX, _elapsedTime, _totalTime);
         displayObj.scaleY = _interpolator.interpolate(_fromY, _toY, _elapsedTime, _totalTime);
 
-        return (_elapsedTime >= _totalTime ? ObjectTask.STATUS_COMPLETE : ObjectTask.STATUS_INCOMPLETE);
+        return (_elapsedTime >= _totalTime);
     }
 
     override public function clone () :ObjectTask

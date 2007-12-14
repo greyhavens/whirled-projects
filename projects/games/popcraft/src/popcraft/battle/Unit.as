@@ -30,22 +30,23 @@ public class Unit extends AppObject
         // create the visual representation
         _sprite = new Sprite();
 
-        // add the image
+        // add the image, aligned by its foot position
         var image :Bitmap = new _unitData.imageClass();
+        image.x = -(image.width / 2);
+        image.y = -image.height;
         _sprite.addChild(image);
 
         // add a glow around the image
         _sprite.addChild(Util.createGlowBitmap(image, Constants.PLAYER_COLORS[_owningPlayerId] as uint));
 
         // start at our owning player's base's spawn loc
-        var spawnLoc :Point = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
+        var spawnLoc :Vector2 = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
         _sprite.x = spawnLoc.x;
         _sprite.y = spawnLoc.y;
 
-        // @TEMP
-        var enemyPlayerId :uint = (_owningPlayerId == 0 ? 1 : 0);
-        var moveLoc :Point = GameMode.instance.getPlayerBase(enemyPlayerId).unitSpawnLoc;
-        moveTo(moveLoc.x, moveLoc.y);
+        // kick off the AI
+        var enemyBaseId :uint = (_owningPlayerId == 0 ? 1 : 0);
+        this.addNamedTask("ai", new AttackBaseTask(enemyBaseId));
     }
 
     protected function moveTo (x :int, y :int) :void
@@ -103,11 +104,81 @@ public class Unit extends AppObject
         return _sprite;
     }
 
+    public function get isMoving () :Boolean
+    {
+        return this.hasTasksNamed("move");
+    }
+
     protected var _sprite :Sprite;
     protected var _unitType :uint;
     protected var _owningPlayerId :uint;
 
     protected var _unitData :UnitData;
+
+    // AI state machine
+    protected static const STATE_ATTACKBASE :uint = 0;
+    protected static const STATE_ATTACKBASE_MOVE :uint = 1;
+    protected static const STATE_ATTACKBASE_ATTACK :uint = 2;
 }
 
+}
+
+import core.*;
+import flash.geom.Point;
+import popcraft.*;
+import popcraft.battle.PlayerBase;
+import popcraft.battle.Unit;
+
+class AttackBaseTask extends ObjectTask
+{
+    public function AttackBaseTask (owningPlayerId :uint)
+    {
+        _owningPlayerId = owningPlayerId;
+    }
+
+    override public function update (dt :Number, obj :AppObject) :Boolean
+    {
+        var unit :Unit = (obj as Unit);
+
+        switch (_state) {
+        case STATE_INIT:
+            handleInit(unit);
+            break;
+
+        case STATE_MOVING:
+            handleMoving(unit);
+            break;
+
+        case STATE_ATTACKING:
+            handleAttacking(unit);
+            break;
+        }
+
+        return (STATE_COMPLETE == _state);
+    }
+
+    protected function handleInit (unit :Unit) :void
+    {
+        // pick a location to attack at
+        var baseLoc :Vector2 = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
+    }
+
+    protected function handleMoving (unit :Unit) :void
+    {
+
+    }
+
+    protected function handleAttacking (unit :Unit) :void
+    {
+
+    }
+
+
+    protected var _owningPlayerId :uint;
+    protected var _state :int = STATE_INIT;
+
+    protected static const STATE_INIT :int = -1;
+    protected static const STATE_MOVING :int = 0;
+    protected static const STATE_ATTACKING :int = 1;
+    protected static const STATE_COMPLETE :int = 2;
 }

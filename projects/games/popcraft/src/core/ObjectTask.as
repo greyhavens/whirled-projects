@@ -4,16 +4,13 @@ import com.threerings.util.Assert;
 
 public class ObjectTask
 {
-    public static const STATUS_INCOMPLETE :uint = 0;
-    public static const STATUS_COMPLETE :uint = 1;
-
     /**
      * Updates the IObjectTask.
-     * Returns STATUS_COMPLETE if the task has completed, otherwise STATUS_INCOMPLETE.
+     * Returns true if the task has completed, otherwise false.
      */
-    public function update (dt :Number, obj :AppObject) :uint
+    public function update (dt :Number, obj :AppObject) :Boolean
     {
-        return STATUS_COMPLETE;
+        return true;
     }
 
     /** Returns a copy of the ObjectTask */

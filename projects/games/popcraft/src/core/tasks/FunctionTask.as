@@ -13,7 +13,7 @@ public class FunctionTask extends ObjectTask
         _fn = fn;
     }
 
-    override public function update (dt :Number, obj :AppObject) :uint
+    override public function update (dt :Number, obj :AppObject) :Boolean
     {
         if (_fn.length == 0) {
             _fn();
@@ -21,7 +21,7 @@ public class FunctionTask extends ObjectTask
             _fn(obj);
         }
 
-        return ObjectTask.STATUS_COMPLETE;
+        return true;
     }
 
     override public function clone () :ObjectTask

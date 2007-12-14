@@ -90,7 +90,7 @@ public class GameMode extends AppMode
         // create the player bases
         var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
         var player :uint = 0;
-        for each (var loc :Point in baseLocs) {
+        for each (var loc :Vector2 in baseLocs) {
             var base :PlayerBase = new PlayerBase(player, loc, Constants.BASE_MAX_HEALTH);
 
             _playerBaseIds.push(_netObjects.addObject(base, _battleBoard.displayObjectContainer));

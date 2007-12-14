@@ -44,6 +44,7 @@ public class Constants
     public static const BATTLE_ROWS :int = 15;
     public static const BATTLE_TILE_SIZE :int = 32;
     public static const BASE_MAX_HEALTH :int = 100;
+    public static const BASE_ATTACK_RADIUS :int = 15; // max distance from base that base attacks can occur from
 
     /* Resource types */
 
@@ -88,11 +89,11 @@ public class Constants
         new Point(50, 400)
     ];
 
-    public static function getPlayerBaseLocations (numPlayers :uint) :Array // of Points
+    public static function getPlayerBaseLocations (numPlayers :uint) :Array // of Vector2s
     {
         switch (numPlayers) {
         case 2:
-            return [ new Point(28, 240), new Point(452, 240) ];
+            return [ new Vector2(28, 240), new Vector2(452, 240) ];
 
         default:
             return [];

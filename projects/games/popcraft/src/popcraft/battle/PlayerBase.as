@@ -15,7 +15,7 @@ import flash.geom.Point;
 
 public class PlayerBase extends AppObject
 {
-    public function PlayerBase (owningPlayer :uint, loc :Point, maxHealth :uint)
+    public function PlayerBase (owningPlayer :uint, loc :Vector2, maxHealth :uint)
     {
         _owningPlayer = owningPlayer;
         _unitSpawnLoc = loc;
@@ -74,7 +74,7 @@ public class PlayerBase extends AppObject
         return _owningPlayer;
     }
 
-    public function get unitSpawnLoc () :Point
+    public function get unitSpawnLoc () :Vector2
     {
         return _unitSpawnLoc;
     }
@@ -87,7 +87,7 @@ public class PlayerBase extends AppObject
     }
 
     protected var _owningPlayer :uint;
-    protected var _unitSpawnLoc :Point = new Point();
+    protected var _unitSpawnLoc :Vector2 = new Vector2();
 
     protected var _sprite :Sprite;
     protected var _healthMeter :RectMeter;

@@ -73,7 +73,7 @@ public class LocationTask extends ObjectTask
         _interpolator = interpolator;
     }
 
-    override public function update (dt :Number, obj :AppObject) :uint
+    override public function update (dt :Number, obj :AppObject) :Boolean
     {
         var displayObj :DisplayObject = obj.displayObject;
         Assert.isNotNull(displayObj, "LocationTask can only be applied to AppObjects with attached display objects.");
@@ -88,7 +88,7 @@ public class LocationTask extends ObjectTask
         displayObj.x = _interpolator.interpolate(_fromX, _toX, _elapsedTime, _totalTime);
         displayObj.y = _interpolator.interpolate(_fromY, _toY, _elapsedTime, _totalTime);
 
-        return (_elapsedTime >= _totalTime ? ObjectTask.STATUS_COMPLETE : ObjectTask.STATUS_INCOMPLETE);
+        return (_elapsedTime >= _totalTime);
     }
 
     override public function clone () :ObjectTask
