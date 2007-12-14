@@ -162,7 +162,7 @@ public class SubAttack extends Sprite
         _splashTimer.stop();
         _splashTimer = null;
         _gameCtrl.set("ready:" + _gameCtrl.getMyId(), true);
-        _seaDisplay.setStatus("Waiting for other players...");
+        _seaDisplay.displayWaiting();
         _gameCtrl.playerReady();
         _content.addChild(new SIDEBAR() as DisplayObject);
 

@@ -150,6 +150,16 @@ public class SeaDisplay extends Sprite
         parent.addChild(_status);
     }
 
+    public function displayWaiting () :void
+    {
+        showStatus(WAITING);
+    }
+
+    public function displayGameOver () :void
+    {
+        showStatus(GAMEOVER);
+    }
+
     /**
      * Clear any status message being shown.
      */
@@ -159,6 +169,19 @@ public class SeaDisplay extends Sprite
             parent.removeChild(_status);
             _status = null;
         }
+    }
+
+    /**
+     * Instantiate and center the specified class as our status.
+     */
+    protected function showStatus (clazz :Class) :void
+    {
+        clearStatus();
+
+        _status = new clazz() as DisplayObject;
+        _status.x = ((SubAttack.VIEW_TILES * TILE_SIZE) - _status.width) / 2;
+        _status.y = ((SubAttack.VIEW_TILES * TILE_SIZE) - _status.height) / 2;
+        parent.addChild(_status);
     }
 
     /**
@@ -301,7 +324,15 @@ public class SeaDisplay extends Sprite
     protected var _moss :Array;
 
     /** Our status message. */
-    protected var _status :SiningTextAnimation;
+    protected var _status :DisplayObject;
+
+    /** A custom status object for "waiting for players". */
+    [Embed(source="rsrc/waiting_for_players.png")]
+    protected static const WAITING :Class;
+
+    /** A custom status object for "Game Over". */
+    [Embed(source="rsrc/game_over.png")]
+    protected static const GAMEOVER :Class;
 
     [Embed(source="rsrc/temple.png")]
     protected static const TEMPLE :Class;

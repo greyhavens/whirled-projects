@@ -455,7 +455,7 @@ public class Board
             _gameCtrl.setUserCookie(Submarine(_subs[mydex]).getNewCookie());
         }
 
-        _seaDisplay.setStatus("Game Over", 48);
+        _seaDisplay.displayGameOver();
         shutdown();
     }
 
