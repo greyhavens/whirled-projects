@@ -120,38 +120,50 @@ public class Zap extends FrameSprite
     protected function summarizeSpectrum () :Array
     {
         var bytes :ByteArray = new ByteArray();
-        SoundMixer.computeSpectrum(bytes, true);
 
+        // let's not spam the error logs if we're not allowed to compute the spectrum
+        try {
+            SoundMixer.computeSpectrum(bytes, true);
+        } catch (err :Error) {
+            return [ 0xFF4444, 0xFF4444 ];
+        }
+
+        // make sure there's the expected number of bytes available
+        if (bytes.bytesAvailable < 2048) {
+            return [ 0x4444FF, 0x4444FF ];
+        }
+
+        // ok, go!
         var leftLow :Number = 0, leftMid :Number = 0, leftHigh :Number = 0;
         var rightLow :Number = 0, rightMid :Number = 0, rightHigh :Number = 0;
 
         var ix :int;
         for (ix = 0; ix < IX_LOW; ix ++) {
-            leftLow += tweakByte(ix, bytes.readFloat(), IX_LOW);
+            leftLow += getNextOctave(ix, bytes);
         }
         for (ix = IX_LOW; ix < IX_MID; ix ++) {
-            leftMid += tweakByte(ix, bytes.readFloat(), (IX_MID - IX_LOW));
+            leftMid += getNextOctave(ix, bytes);
         }
         for (ix = IX_MID; ix < 256; ix ++) {
-            leftHigh += tweakByte(ix, bytes.readFloat(), (256-IX_MID));
+            leftHigh += getNextOctave(ix, bytes);
         }
         for (ix = 0; ix < IX_LOW; ix ++) {
-            rightLow += tweakByte(ix, bytes.readFloat(), IX_LOW);
+            rightLow += getNextOctave(ix, bytes);
         }
         for (ix = IX_LOW; ix < IX_MID; ix ++) {
-            rightMid += tweakByte(ix, bytes.readFloat(), (IX_MID - IX_LOW));
+            rightMid += getNextOctave(ix, bytes);
         }
         for (ix = IX_MID; ix < 256; ix ++) {
-            rightHigh += tweakByte(ix, bytes.readFloat(), (256-IX_MID));
+            rightHigh += getNextOctave(ix, bytes);
         }
 
         // convert the linear (0, 1) to logarithmic (decibel) scale
-        leftLow = tweakSum(leftLow, IX_LOW);
-        leftMid = tweakSum(leftMid, IX_MID - IX_LOW);
-        leftHigh = tweakSum(leftHigh, 256 - IX_MID);
-        rightLow = tweakSum(rightLow, IX_LOW);
-        rightMid = tweakSum(rightMid, IX_MID - IX_LOW);
-        rightHigh = tweakSum(rightHigh, 256 - IX_MID);
+        leftLow = summarizeOctaves(leftLow, IX_LOW);
+        leftMid = summarizeOctaves(leftMid, IX_MID - IX_LOW);
+        leftHigh = summarizeOctaves(leftHigh, 256 - IX_MID);
+        rightLow = summarizeOctaves(rightLow, IX_LOW);
+        rightMid = summarizeOctaves(rightMid, IX_MID - IX_LOW);
+        rightHigh = summarizeOctaves(rightHigh, 256 - IX_MID);
 
         var k :Number = 255;
         return [
@@ -160,14 +172,17 @@ public class Zap extends FrameSprite
         ];
     }
 
-    protected function tweakSum (v :Number, cnt :int) :Number
+    protected function summarizeOctaves (v :Number, cnt :int) :Number
     {
         // the final return value is sqrt(sum(squares)), 16 is heuristic from my music
         return Math.min(1, 16 * Math.sqrt(v) / cnt);
     }
 
-    protected function tweakByte (ix :int, v :Number, cnt :int) :Number
+    protected function getNextOctave (ix :int, bytes :ByteArray) :Number
     {
+        // fetch the next byte
+        var v :Number = bytes.readFloat();
+
         // transform the pitch by a heuristic feel-good function to lie in [0, 1]
         var fScale :Number = Math.sqrt((ix + 1) / 256);
 
