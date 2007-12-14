@@ -96,21 +96,12 @@ public class Box extends Sprite
     protected var _fadeOut :AlphaFade;
     protected var _fadeIn :AlphaFade;
 
-    protected var _boxClip :MovieClip = MovieClip(new TEXT_BOX());
-    protected var _boxAppearClip :MovieClip = MovieClip(new TEXT_BOX_APPEAR());
+    protected var _boxClip :MovieClip = MovieClip(new Content.TEXT_BOX());
+    protected var _boxAppearClip :MovieClip = MovieClip(new Content.TEXT_BOX_APPEAR());
     protected var _boxAppearHandler :ClipHandler;
-    protected var _boxDisappearClip :MovieClip = MovieClip(new TEXT_BOX_DISAPPEAR());
+    protected var _boxDisappearClip :MovieClip = MovieClip(new Content.TEXT_BOX_DISAPPEAR());
     protected var _boxDisappearHandler :ClipHandler;
 
     protected static const BOX_PADDING :int = 10;
-
-    [Embed(source="../../rsrc/text_box.swf#textbox_appear")]
-    protected static const TEXT_BOX_APPEAR :Class;
-
-    [Embed(source="../../rsrc/text_box.swf#textbox")]
-    protected static const TEXT_BOX :Class;
-
-    [Embed(source="../../rsrc/text_box.swf#textbox_disappear")]
-    protected static const TEXT_BOX_DISAPPEAR :Class;
 }
 }

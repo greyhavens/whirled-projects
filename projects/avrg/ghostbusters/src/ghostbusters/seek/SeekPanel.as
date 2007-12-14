@@ -25,6 +25,7 @@ import com.whirled.AVRGameControlEvent;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Random;
 
+import ghostbusters.Content;
 import ghostbusters.Game;
 
 public class SeekPanel extends Sprite
@@ -86,7 +87,7 @@ public class SeekPanel extends Sprite
 
     protected function handleAdded (evt :Event) :void
     {
-        _lanternLoop = Sound(new LANTERN_LOOP_AUDIO()).play();
+        _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
         addEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
@@ -198,8 +199,5 @@ public class SeekPanel extends Sprite
     protected var _lanternLoop :SoundChannel;
 
     protected static const FRAMES_PER_UPDATE :int = 6;
-
-    [Embed(source="../../../rsrc/wind.mp3")]
-    protected static const LANTERN_LOOP_AUDIO :Class;
 }
 }

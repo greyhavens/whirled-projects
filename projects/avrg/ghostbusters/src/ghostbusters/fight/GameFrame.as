@@ -14,6 +14,7 @@ import flash.geom.Rectangle;
 
 import com.threerings.util.EmbeddedSwfLoader;
 
+import ghostbusters.Content;
 import ghostbusters.Game;
 
 public class GameFrame extends Sprite
@@ -22,7 +23,7 @@ public class GameFrame extends Sprite
     {
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         loader.addEventListener(Event.COMPLETE, handleLoaded);
-        loader.load(ByteArray(new FRAME()));
+        loader.load(ByteArray(new Content.FRAME()));
     }
 
     public function frameContent (content :DisplayObject) :void
@@ -80,8 +81,5 @@ public class GameFrame extends Sprite
 
     // relative the frame's coordinate system, where can we place the framed material?
     protected static const INSIDE :Rectangle = new Rectangle(50, 46, 465, 301);
-
-    [Embed(source="../../../rsrc/minigame_border.swf", mimeType="application/octet-stream")]
-    protected static const FRAME :Class;
 }
 }

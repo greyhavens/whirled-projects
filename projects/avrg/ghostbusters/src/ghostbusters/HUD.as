@@ -24,7 +24,7 @@ public class HUD extends Sprite
     {
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         loader.addEventListener(Event.COMPLETE, handleHUDLoaded);
-        loader.load(ByteArray(new HUD_VISUAL()));
+        loader.load(ByteArray(new Content.HUD_VISUAL()));
     }
 
     public function shutdown () :void
@@ -70,9 +70,6 @@ public class HUD extends Sprite
     protected static const LANTERN :String = "lanternbutton";
     protected static const HELP :String = "helpbutton";
     protected static const LOOT :String = "lootbutton";
-
-    [Embed(source="../../rsrc/HUD_visual.swf", mimeType="application/octet-stream")]
-    protected static const HUD_VISUAL :Class;
 
     protected static const DEBUG :Boolean = false;
 }

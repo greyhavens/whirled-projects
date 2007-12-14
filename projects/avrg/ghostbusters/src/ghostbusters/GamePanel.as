@@ -188,14 +188,11 @@ public class GamePanel extends Sprite
 
     protected var _ghost :SpawnedGhost;
 
-    protected var _splash :MovieClip = MovieClip(new SPLASH());
+    protected var _splash :MovieClip = MovieClip(new Content.SPLASH());
 
     protected var _frame :GameFrame;
     protected var _minigame: DisplayObject;
 
     protected var _seekPanel :SeekPanel;
-
-    [Embed(source="../../rsrc/splash01.swf")]
-    protected static const SPLASH :Class;
 }
 }

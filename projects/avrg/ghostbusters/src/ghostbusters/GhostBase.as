@@ -13,13 +13,15 @@ import flash.geom.Rectangle;
 
 import com.threerings.util.EmbeddedSwfLoader;
 
+import ghostbusters.Content;
+
 public class GhostBase extends Sprite
 {
     public function GhostBase ()
     {
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         loader.addEventListener(Event.COMPLETE, handleGhostLoaded);
-        loader.load(ByteArray(new GHOST()));
+        loader.load(ByteArray(new Content.GHOST()));
     }
 
     public function getGhostBounds () :Rectangle
@@ -58,8 +60,5 @@ public class GhostBase extends Sprite
     protected static const STATE_WALKING :String = "state_Default_walking";
     protected static const STATE_APPEAR :String = "state_Appear";
     protected static const STATE_FIGHT :String = "state_Fightstance";
-
-    [Embed(source="../../rsrc/Ghost.swf", mimeType="application/octet-stream")]
-    protected static const GHOST :Class;
 }
 }

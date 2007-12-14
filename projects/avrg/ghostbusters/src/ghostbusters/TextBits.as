@@ -122,9 +122,5 @@ public class TextBits extends Sprite
     protected var _styleSheet :StyleSheet;
 
     protected static const GAP :int = 8;
-
-    [Embed(source="../../rsrc/SunnySide.ttf", fontName="SunnySide",
-           unicodeRange="U+0020-U+007E,U+2022")]
-    protected static const FONT_SUNNYSIDE :Class;
 }
 }
