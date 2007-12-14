@@ -24,6 +24,7 @@ import com.whirled.MobControl;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.EmbeddedSwfLoader;
 
+import ghostbusters.fight.FightPanel;
 import ghostbusters.fight.GameFrame;
 import ghostbusters.fight.SpawnedGhost;
 import ghostbusters.seek.SeekPanel;
@@ -32,14 +33,13 @@ import ghostbusters.fight.Match3;
 
 public class GamePanel extends Sprite
 {
-    public function GamePanel (model :GameModel, seekPanel :SeekPanel)
+    public function GamePanel (model :GameModel, seekPanel :SeekPanel, fightPanel :FightPanel)
     {
         _model = model;
         _seekPanel = seekPanel;
+        _fightPanel = fightPanel;
 
         _hud = new HUD();
-
-        _frame = new GameFrame();
 
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
     }
@@ -60,44 +60,8 @@ public class GamePanel extends Sprite
         return false;
     }
 
-    public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
-    {
-        _ghost = new SpawnedGhost(ctrl);
-        _ghost.addEventListener(MouseEvent.CLICK, handleGhostClick);
-        return _ghost;
-    }
-
-    protected function handleGhostClick (evt :MouseEvent) :void
-    {
-        if (_minigame == null) {
-            var gameHolder :Sprite = new Sprite();
-
-            _minigame = new Match3(gamePerformance);
-            gameHolder.addChild(_minigame);
-
-            _frame.frameContent(gameHolder);
-
-            this.addChild(_frame);
-            _frame.x = 100;
-            _frame.y = 350;
-        }
-    }
-
-    protected function gamePerformance (score :Number, style :Number = 0) :void
-    {
-        CommandEvent.dispatch(this, GameController.GHOST_MELEE, score);
-    }
-
     public function enterState (state :String) :void
     {
-        if (_model.getState() == GameModel.STATE_FIGHTING && state != GameModel.STATE_FIGHTING) {
-            if (_minigame != null) {
-                _frame.frameContent(null);
-                this.removeChild(_frame);
-                _minigame = null;
-            }
-        }
-
         if (state == GameModel.STATE_INTRO) {
             showSplash();
 
@@ -108,16 +72,11 @@ public class GamePanel extends Sprite
             showPanels(_seekPanel, _hud);
 
         } else if (state == GameModel.STATE_FIGHTING) {
-            showPanels(_hud);
+            showPanels(_fightPanel, _hud);
 
         } else {
             Game.log.warning("Unknown state requested [state=" + state + "]");
         }
-    }
-
-    public function ghostHealthUpdated (health :Number) :void
-    {
-        _ghost.updateHealth(health);
     }
 
     protected function showPanels (... panels) :void
@@ -186,13 +145,9 @@ public class GamePanel extends Sprite
     protected var _hud :HUD;
     protected var _box :Box;
 
-    protected var _ghost :SpawnedGhost;
-
     protected var _splash :MovieClip = MovieClip(new Content.SPLASH());
 
-    protected var _frame :GameFrame;
-    protected var _minigame: DisplayObject;
-
     protected var _seekPanel :SeekPanel;
+    protected var _fightPanel :FightPanel;
 }
 }

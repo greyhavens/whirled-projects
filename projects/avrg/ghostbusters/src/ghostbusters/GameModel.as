@@ -17,8 +17,6 @@ public class GameModel
     public function GameModel (control :AVRGameControl)
     {
         _control = control;
-
-        _control.state.addEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
     }
 
     public function init (panel :GamePanel) :void
@@ -30,16 +28,6 @@ public class GameModel
     {
     }
 
-    public function getGhostHealth () :Number
-    {
-        return _control.state.getProperty("gh") as Number;
-    }
-
-    public function setGhostHealth (n :Number) :void
-    {
-        _control.state.setProperty("gh", n, false);
-    }
-
     public function getState () :String
     {
         return _state;
@@ -49,13 +37,6 @@ public class GameModel
     {
         Game.log.debug("Moving from [" + _state + "] to [" + state + "]");
         _state = state;
-    }
-
-    protected function propertyChanged (evt :AVRGameControlEvent) :void
-    {
-        if (evt.name == "gh") {
-            _panel.ghostHealthUpdated(evt.value as Number);
-        }
     }
 
     protected var _control :AVRGameControl;

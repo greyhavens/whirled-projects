@@ -26,6 +26,7 @@ import com.threerings.util.CommandEvent;
 import com.threerings.util.Random;
 
 import ghostbusters.Content;
+import ghostbusters.Dimness;
 import ghostbusters.Game;
 
 public class SeekPanel extends Sprite
@@ -62,7 +63,7 @@ public class SeekPanel extends Sprite
     {
         var lantern :Lantern = _lanterns[playerId];
         if (lantern) {
-            _dimFront.removeChild(lantern.hole);
+            _dimness.removeChild(lantern.hole);
             _lightLayer.removeChild(lantern.light);
             _maskLayer.removeChild(lantern.mask);
             delete _lanterns[playerId];
@@ -106,7 +107,7 @@ public class SeekPanel extends Sprite
 
             _maskLayer.addChild(lantern.mask);
             _lightLayer.addChild(lantern.light);
-            _dimFront.addChild(lantern.hole);
+            _dimness.addChild(lantern.hole);
 
         } else {
             // just set our aim for p
@@ -154,19 +155,8 @@ public class SeekPanel extends Sprite
 
     protected function buildUI () :void
     {
-        _dimBack = new Sprite();
-        _dimBack.blendMode = BlendMode.LAYER;
-        this.addChild(_dimBack);
-
-        _dimFront = new Sprite();
-
-        var g :Graphics = _dimFront.graphics;
-        g.beginFill(0x000000);
-        g.drawRect(0, 0, 2000, 1000);
-        g.endFill();
-
-        _dimFront.alpha = 0.7;
-        _dimBack.addChild(_dimFront);
+        _dimness = new Dimness(0.9, true);
+        this.addChild(_dimness);
 
         _lightLayer = new Sprite();
         this.addChild(_lightLayer);
@@ -190,8 +180,7 @@ public class SeekPanel extends Sprite
 
     protected var _ticker :int;
 
-    protected var _dimBack :Sprite;
-    protected var _dimFront :Sprite;
+    protected var _dimness :Sprite;
 
     protected var _lightLayer :Sprite;
     protected var _maskLayer :Sprite;

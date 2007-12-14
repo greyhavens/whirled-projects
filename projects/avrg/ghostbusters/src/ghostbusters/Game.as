@@ -25,11 +25,11 @@ public class Game extends Sprite
         _control = new AVRGameControl(this);
 
         _controller = new GameController(_control);
+        _control.setMobSpriteExporter(_controller.exportMobSprite);
 
         var panel :GamePanel = _controller.getGamePanel();
         addChild(panel);
 
-        _control.setMobSpriteExporter(panel.exportMobSprite);
         _control.setHitPointTester(panel.hitTestPoint);
 
         // TODO: this is just while debugging

@@ -6,13 +6,17 @@ package ghostbusters {
 import com.threerings.util.Controller;
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
+import com.whirled.MobControl;
 
+import ghostbusters.fight.FightController;
 import ghostbusters.seek.SeekController;
+
+import flash.display.DisplayObject;
 
 public class GameController extends Controller
 {
+    public static const END_FIGHT :String = "EndFight";
     public static const SPAWN_GHOST :String = "SpawnGhost";
-    public static const GHOST_MELEE :String = "GhostMelee";
     public static const TOGGLE_LANTERN :String = "ToggleLantern";
     public static const TOGGLE_LOOT :String = "ToggleLoot";
     public static const END_GAME :String = "EndGame";
@@ -24,9 +28,11 @@ public class GameController extends Controller
         _control = control;
 
         _seekController = new SeekController(control);
+        _fightController = new FightController(control);
 
         _model = new GameModel(control);
-        var panel :GamePanel = new GamePanel(_model, _seekController.getSeekPanel());
+        var panel :GamePanel = new GamePanel(
+            _model, _seekController.getSeekPanel(), _fightController.getFightPanel());
         _model.init(panel);
         setControlledPanel(panel);
 
@@ -49,6 +55,15 @@ public class GameController extends Controller
         return GamePanel(_controlledPanel);
     }
 
+    public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
+    {
+        if (id == "ghost") {
+            return _fightController.getFightPanel().getGhostSprite(ctrl);
+        }
+        Game.log.warning("Unknown MOB requested [id=" + id + "]");
+        return null;
+    }
+
     public function handleHelp () :void
     {
         // TODO
@@ -56,7 +71,6 @@ public class GameController extends Controller
 
     public function handleToggleLoot () :void
     {
-        // TODO: debugging shortcut
         handleSpawnGhost();
     }
 
@@ -78,23 +92,12 @@ public class GameController extends Controller
 
     public function handleSpawnGhost () :void
     {
-        _control.state.sendMessage("gs", null);
-        _model.setGhostHealth(1.0);
-        _control.spawnMob("ghost");
+        _fightController.doSpawnGhost();
     }
 
-    public function handleGhostMelee (score :Number) :void
+    public function handleEndFight () :void
     {
-        var currentHealth :Number = _model.getGhostHealth();
-        if (currentHealth > 0.03) {
-            // we can't do this properly without control (or server side bits)
-            _model.setGhostHealth(currentHealth - 0.03);
-
-        } else {
-            // TODO: something a little more impressive than just a despawn
-            _control.despawnMob("ghost");
-            enterState(GameModel.STATE_IDLE);
-        }
+        enterState(GameModel.STATE_IDLE);
     }
 
     public function enterState (state :String) :void
@@ -155,5 +158,6 @@ public class GameController extends Controller
     protected var _model :GameModel;
 
     protected var _seekController :SeekController;
+    protected var _fightController :FightController;
 }
 }

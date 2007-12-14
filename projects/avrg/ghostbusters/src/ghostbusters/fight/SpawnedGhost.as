@@ -18,13 +18,13 @@ public class SpawnedGhost extends GhostBase
         super();
 
         _control = control;
+
+        _health = new Sprite();
+        updateHealth(1.0);
     }
 
     public function updateHealth (percentHealth :Number) :void
     {
-        if (_health == null) {
-            return;
-        }
         var g :Graphics = _health.graphics;
         g.clear();
 
@@ -45,8 +45,6 @@ public class SpawnedGhost extends GhostBase
 
         _control.setHotSpot((_bounds.left + _bounds.right)/2, _bounds.bottom, _bounds.height);
 
-        _health = new Sprite();
-        updateHealth(1.0);
         _control.setDecoration(_health);
 
         // TODO: switch to battle music? :)
