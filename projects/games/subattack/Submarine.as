@@ -54,8 +54,8 @@ public class Submarine extends BaseSprite
         _isMe = (_gameCtrl != null) && (_gameCtrl.getMyId() == playerId);
         _playerId = playerId;
         _playerName = playerName;
-        _x = startx;
-        _y = starty;
+        _x = _lastX = startx;
+        _y = _lastY = starty;
         _orient = (_x == 0) ? Action.RIGHT : Action.LEFT;
 
         configureVisual(playerIdx, playerName);
@@ -69,6 +69,16 @@ public class Submarine extends BaseSprite
         updateVisual();
         updateLocation();
         updateDisplayedScore();
+    }
+
+    public function getLastX () :int
+    {
+        return _lastX;
+    }
+
+    public function getLastY () :int
+    {
+        return _lastY;
     }
 
     public function getGhost () :GhostSubmarine
@@ -266,7 +276,7 @@ public class Submarine extends BaseSprite
                 return DROP;
 
             } else {
-                _torpedos.push(new Torpedo(this, _board));
+                _torpedos.push(_lastTorp = new Torpedo(this, _board));
                 _board.playSound(_shootSound, _x, _y);
                 updateVisual();
                 return OK;
@@ -305,7 +315,9 @@ public class Submarine extends BaseSprite
      */
     public function tick () :void
     {
-        _tickCount++;
+        _lastTorp = null;
+        _lastX = _x;
+        _lastY = _y;
         // reset our move counter
         _movedOrShot = false;
 
@@ -371,6 +383,16 @@ public class Submarine extends BaseSprite
         // lose points for getting wacked
         addPoints((_points >= 0) ? POINTS_PER_DEATH : (POINTS_PER_DEATH / 4));
 
+        // if we launched a torpedo on the same tick that we were killed, retract it, if possible
+        if (_lastTorp != null) {
+            var idx :int = _torpedos.indexOf(_lastTorp);
+            if (idx != -1) {
+                _torpedos.splice(idx, 1);
+                _board.removeTorpedo(_lastTorp);
+            }
+            _lastTorp = null;
+        }
+
         _board.playSound(_isMe ? _explodeSelf : _explodeEnemy, _x, _y);
 
         _dead = true;
@@ -378,6 +400,7 @@ public class Submarine extends BaseSprite
         _totalDeaths++;
         _buildingStep = 0;
         _queuedActions.length = 0; // drop any queued actions
+        _futureActions.length = 0;
         updateVisual();
         updateDeath();
         _respawnTicks = AUTO_RESPAWN_TICKS;
@@ -447,6 +470,10 @@ public class Submarine extends BaseSprite
         }
     }
 
+    /** Our coordinates prior to the current tick. */
+    protected var _lastX :int;
+    protected var _lastY :int;
+
     protected var _ghost :GhostSubmarine;
 
     protected var _ghostActions :Array;
@@ -480,10 +507,11 @@ public class Submarine extends BaseSprite
     /** How many steps have we done to do a 'build'. */
     protected var _buildingStep :int = 0;
 
-    protected var _tickCount :int = 0;
-
     /** Our currently in-flight torpedos. */
     protected var _torpedos :Array = [];
+
+    /** The torpedo we dropped on the current tick, if any. */
+    protected var _lastTorp :Torpedo;
 
     /** How many points do we have? */
     protected var _points :int = 0;

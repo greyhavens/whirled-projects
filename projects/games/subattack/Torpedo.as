@@ -20,13 +20,8 @@ public class Torpedo extends BaseSprite
         missile.y = SeaDisplay.TILE_SIZE;
         addChild(missile);
         missile.filters = [ owner.getHueShift() ];
-        //missile.transform.colorTransform = owner.getColorTransform();
 
         _board.torpedoAdded(this);
-
-//        // advance it one immediately so that it starts out in front of the sub
-//        // NOTE: This may cause it to explode
-//        advanceLocation();
     }
 
     public function getOwner () :Submarine
@@ -34,12 +29,22 @@ public class Torpedo extends BaseSprite
         return _sub;
     }
 
-    public function willExplode (other :Torpedo) :Boolean
+    /**
+     * Called before we tick, see if we'll pass through a submarine.
+     * @return true if we should explode.
+     */
+    public function checkSubPass (sub :Submarine) :Boolean
+    {
+        return (_x == sub.getX()) && (_y == sub.getY()) && (advancedX() == sub.getLastX()) &&
+            (advancedY() == sub.getLastY());
+    }
+
+    public function willExplode (other :Torpedo, checkAdvance :Boolean) :Boolean
     {
         // we will explode if we're on the same tile
         return ((_x == other.getX()) && (_y == other.getY())) ||
-        // or if we're about to pass through each other
-            ((_x == other.advancedX()) && (_y == other.advancedY()) &&
+        // or if we're about to pass through each other next tick
+            (checkAdvance && (_x == other.advancedX()) && (_y == other.advancedY()) &&
              (other.getX() == advancedX()) && (other.getY() == advancedY()));
     }
 
@@ -96,10 +101,8 @@ public class Torpedo extends BaseSprite
 
     override public function toString () :String
     {
-        return "Torpedo[" + _id + "]";
+        return "Torpedo[owner=" + _sub.getPlayerName() + "]";
     }
-
-    protected var _id :Number = Math.random();
 
     /** The sub that shot us. */
     protected var _sub :Submarine;

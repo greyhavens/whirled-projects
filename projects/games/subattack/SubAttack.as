@@ -50,7 +50,6 @@ import com.whirled.FlowAwardedEvent;
 
 //
 // TODO
-// - subs can drive forward through oncoming missiles
 // - Actual drive-over implementation, instead of shoot-then-move ??
 // - Mark wants arrows showing the direction of the action (like a very rough radar) 
 // - fix up targetting?

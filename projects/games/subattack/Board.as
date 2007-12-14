@@ -308,6 +308,18 @@ public class Board
         _seaDisplay.addChild(torpedo);
     }
 
+    public function removeTorpedo (torpedo :Torpedo) :void
+    {
+        // remove it from our list of torpedos
+        var idx :int = _torpedos.indexOf(torpedo);
+        if (idx == -1) {
+            trace("OMG! Unable to find torpedo??");
+            return;
+        }
+        _torpedos.splice(idx, 1); // remove that torpedo
+        _seaDisplay.removeChild(torpedo);
+    }
+
     /**
      * Called by a torpedo when it has exploded.
      *
@@ -315,14 +327,7 @@ public class Board
      */
     public function torpedoExploded (torpedo :Torpedo) :int
     {
-        // remove it from our list of torpedos
-        var idx :int = _torpedos.indexOf(torpedo);
-        if (idx == -1) {
-            trace("OMG! Unable to find torpedo??");
-            return 0;
-        }
-        _torpedos.splice(idx, 1); // remove that torpedo
-        _seaDisplay.removeChild(torpedo);
+        removeTorpedo(torpedo);
 
         var xx :int = torpedo.getX();
         var yy :int = torpedo.getY();
@@ -500,6 +505,8 @@ public class Board
         for each (sub in _subs) {
             sub.tick();
         }
+        checkTorpedosPassThroughSubs();
+
         for each (var factory :Factory in _factories) {
             factory.tick();
         }
@@ -573,6 +580,30 @@ public class Board
         _endedGame = true;
     }
 
+    /**
+     * Called after we've ticked subs, but prior to ticking torpedos. See if
+     * any of the torpedos will potentially pass through a sub.
+     */
+    protected function checkTorpedosPassThroughSubs () :void
+    {
+        var torp :Torpedo;
+        var sub :Submarine;
+        var exploders :Array = [];
+        for each (torp in _torpedos) {
+            for each (sub in _subs) {
+                if (!sub.isDead() && torp.checkSubPass(sub)) {
+                    exploders.push(torp);
+                    break; // all we need is to hit one sub..
+                }
+            }
+        }
+
+        // now explode them
+        for each (torp in exploders) {
+            torp.explode();
+        }
+    }
+
     protected function checkTorpedos () :void
     {
         // check to see if any torpedos are hitting subs
@@ -582,11 +613,13 @@ public class Board
         var yy :int;
         var exploders :Array = [];
         for each (torp in _torpedos) {
+            var willExplode :Boolean = false;
             xx = torp.getX();
             yy = torp.getY();
             for each (sub in _subs) {
                 if (!sub.isDead() && (xx == sub.getX()) && (yy == sub.getY())) {
                     // we have a hit!
+                    willExplode = true;
                     if (-1 == exploders.indexOf(torp)) {
                         exploders.push(torp);
                     }
@@ -595,7 +628,9 @@ public class Board
             }
 
             for each (var torp2 :Torpedo in _torpedos) {
-                if (torp != torp2 && torp.willExplode(torp2)) {
+                var checkAdvance :Boolean = !willExplode && (-1 == exploders.indexOf(torp2));
+                if (torp != torp2 && torp.willExplode(torp2, checkAdvance)) {
+                    willExplode = true;
                     if (-1 == exploders.indexOf(torp)) {
                         exploders.push(torp);
                     }
