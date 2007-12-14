@@ -40,7 +40,8 @@ public class SeaDisplay extends Sprite
      * Configure the initial visualization of the sea.
      */
     public function setupSea (
-        boardWidth :int, boardHeight :int, board :Array = null, rando :Random = null) :void
+        boardWidth :int, boardHeight :int,
+        theBoard :Board = null, board :Array = null, rando :Random = null) :void
     {
         _boardWidth = boardWidth;
 
@@ -107,11 +108,7 @@ public class SeaDisplay extends Sprite
                 case Board.BLANK:
                     // if we're blank, we need to be either moss or ground, depending on what's
                     // above us.
-                    if (yy == 0 || (Board.BLANK == int(board[xx + ((yy - 1) * boardWidth)]))) {
-                        toDraw = pickBitmap(rando, _grounds);
-                    } else {
-                        toDraw = pickBitmap(rando, _moss);
-                    }
+                    toDraw = pickBitmap(rando, theBoard.castsMoss(xx, yy - 1) ? _moss : _grounds);
                     data.draw(toDraw, matrix);
                     break;
 
@@ -145,6 +142,7 @@ public class SeaDisplay extends Sprite
         clearStatus();
 
         _status = new SiningTextAnimation(msg, { outlineColor: 0xFFFFFF,
+            selectable: false,
             defaultTextFormat:
                 TextFieldUtil.createFormat({ font: "_sans", size: size, color: 0x000000 }) });
         _status.x = (SubAttack.VIEW_TILES * TILE_SIZE) / 2;

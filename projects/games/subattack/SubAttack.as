@@ -39,6 +39,14 @@ import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.SizeChangedEvent;
 
 import com.whirled.WhirledGameControl;
+import com.whirled.FlowAwardedEvent;
+
+/**
+ * Beware all ye who enter here. This code is pretty much a mess. The game's been changed
+ * a number of times and at some point the decision was made to not refactor, but to just
+ * get things working. I will someday create an action game kit using the principles
+ * laid out in this game.
+ */
 
 //
 // TODO
@@ -117,6 +125,7 @@ public class SubAttack extends Sprite
         _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
         _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
         _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, handleMessageReceived);
+        _gameCtrl.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
 
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
@@ -213,6 +222,16 @@ public class SubAttack extends Sprite
         _seaHolder.removeChild(_seaDisplay);
         _seaHolder.addChildAt(_seaDisplay = new SeaDisplay(), 0);
         _board = new Board(_gameCtrl, _seaDisplay);
+    }
+
+    protected function handleFlowAwarded (event :FlowAwardedEvent) :void
+    {
+        var amount :int = event.amount;
+        if (amount > 0) {
+            _gameCtrl.localChat("You earned " + amount + " flow.");
+        } else {
+            _gameCtrl.localChat("You did not earn any flow. Too bad!");
+        }
     }
 
     protected function handleMessageReceived (event :MessageReceivedEvent) :void

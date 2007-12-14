@@ -88,7 +88,7 @@ public class Board
             pick = _rando.nextInt(size);
             _board[pick] = ROCK;
         }
-        _seaDisplay.setupSea(_width, _height, _board, _rando);
+        _seaDisplay.setupSea(_width, _height, this, _board, _rando);
 
         // create a submarine for each player
         var sub :Submarine;
@@ -161,7 +161,8 @@ public class Board
             return false; // out of bounds
         }
         var val :int = int(_board[coordsToIdx(xx, yy)]);
-        return (BLANK < val) && (val != DODO) && (val != PANDA);
+        return (val == TREE);
+        //return (BLANK < val) && (val != DODO) && (val != PANDA);
     }
 
     /**
