@@ -92,6 +92,7 @@ public class GameController extends Controller
 
     public function handleSpawnGhost () :void
     {
+        enterState(GameModel.STATE_FIGHTING);
         _fightController.doSpawnGhost();
     }
 
