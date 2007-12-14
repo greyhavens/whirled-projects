@@ -44,10 +44,9 @@ public class Rand
         return getStream(streamId).nextInt();
     }
 
-    /** Returns an integer in the range [low, high) */
+    /** Returns an int in the range [low, high) */
     public static function nextIntRange (low :int, high :int, streamId :int= STREAM_COSMETIC) :int
     {
-        Assert.isTrue(high >= low);
         return low + getStream(streamId).nextInt(high - low);
     }
 
@@ -61,9 +60,9 @@ public class Rand
         return getStream(streamId).nextNumber();
     }
 
+    /** Returns a Number in the range [low, high) */
     public static function nextNumberRange (low :Number, high :Number, streamId :int= STREAM_COSMETIC) :Number
     {
-        Assert.isTrue(high >= low);
         return low + (getStream(streamId).nextNumber() * (high - low));
     }
 

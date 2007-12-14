@@ -1,5 +1,7 @@
 package popcraft.battle {
 
+import core.util.*;
+
 /** Encapsulates immutable data about a particular type of Creature. */
 public class UnitData
 {
@@ -9,27 +11,29 @@ public class UnitData
 
     // movement variables
     public var wanderEvery :Number;
-    public var wanderRangeMin: Number;
-    public var wanderRangeMax: Number;
+    public var wanderRange :IntRange;
     public var movePixelsPerSecond :Number;
+
+    public var maxHealth :int;
 
     public function UnitData (
         name :String,
         resourceCosts :Array,
         imageClass :Class,
         wanderEvery :Number,
-        wanderRangeMin :Number,
-        wanderRangeMax :Number,
-        movePixelsPerSecond :Number )
+        wanderRange :IntRange,
+        movePixelsPerSecond :Number,
+        maxHealth :int )
     {
         this.name = name;
         this.resourceCosts = resourceCosts;
         this.imageClass = imageClass;
 
         this.wanderEvery = wanderEvery;
-        this.wanderRangeMin = wanderRangeMin;
-        this.wanderRangeMax = wanderRangeMax;
+        this.wanderRange = wanderRange;
         this.movePixelsPerSecond = movePixelsPerSecond;
+
+        this.maxHealth = maxHealth;
     }
 
     public function getResourceCost (resourceType :uint) :int

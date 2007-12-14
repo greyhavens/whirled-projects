@@ -78,7 +78,7 @@ public class Unit extends AppObject
 
             // wander off our path a bit
             var perp :Vector2 = (Rand.nextBoolean(Rand.STREAM_GAME) ? perp1.clone() : perp2.clone());
-            perp.scale(Rand.nextNumberRange(_unitData.wanderRangeMin, _unitData.wanderRangeMax, Rand.STREAM_GAME));
+            perp.scale(_unitData.wanderRange.next(Rand.STREAM_GAME));
             newLoc.add(perp);
 
             // move!

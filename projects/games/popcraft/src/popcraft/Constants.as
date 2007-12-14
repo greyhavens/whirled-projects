@@ -2,6 +2,8 @@ package popcraft {
 
 import popcraft.battle.*;
 
+import core.util.*;
+
 import com.threerings.util.Assert;
 import flash.geom.Point;
 
@@ -72,8 +74,8 @@ public class Constants
 
     public static const UNIT_DATA :Array = [
                                  // wood, gold, mana, morale
-            new UnitData( "melee",  [5,   0,  0,    0], IMAGE_MELEE, 30, 5, 25, 64 ),
-            new UnitData( "ranged", [0,   5,  0,    0], IMAGE_RANGED, -1, 0, 0, 40 )
+            new UnitData( "melee",  [5,   0,  0,    0], IMAGE_MELEE, 30, new IntRange(5, 25), 64, 100 ),
+            new UnitData( "ranged", [0,   5,  0,    0], IMAGE_RANGED, -1, new IntRange(0, 0), 40, 100 )
     ];
 
     /* Screen layout */
