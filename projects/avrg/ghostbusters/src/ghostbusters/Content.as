@@ -33,7 +33,7 @@ public class Content
     public static const FONT_SUNNYSIDE :Class;
 
     // audio
-    [Embed(source="../../rsrc/wind.mp3")]
+    [Embed(source="../../rsrc/473674_SOUNDDOGS_Am.mp3")]
     public static const LANTERN_LOOP_AUDIO :Class;
 }
 }
