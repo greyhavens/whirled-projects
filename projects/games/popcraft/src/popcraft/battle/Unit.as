@@ -49,7 +49,7 @@ public class Unit extends AppObject
         this.addNamedTask("ai", new AttackBaseTask(enemyBaseId));
     }
 
-    protected function moveTo (x :int, y :int) :void
+    public function moveTo (x :int, y :int) :void
     {
         // units wander drunkenly from point to point.
 
@@ -124,6 +124,7 @@ public class Unit extends AppObject
 }
 
 import core.*;
+import core.util.*;
 import flash.geom.Point;
 import popcraft.*;
 import popcraft.battle.PlayerBase;
@@ -161,11 +162,26 @@ class AttackBaseTask extends ObjectTask
     {
         // pick a location to attack at
         var baseLoc :Vector2 = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
+
+        // calculate a vector that points from the base to our loc, rotated a bit
+        var moveLoc :Vector2 = new Vector2(unit.displayObject.x, unit.displayObject.y);
+        moveLoc.subtract(baseLoc);
+        moveLoc.length = Constants.BASE_ATTACK_RADIUS;
+        moveLoc.rotate(Rand.nextNumberRange(-Math.PI/2, Math.PI/2, Rand.STREAM_GAME));
+
+        moveLoc.add(baseLoc);
+
+        unit.moveTo(moveLoc.x, moveLoc.y);
+
+        _state = STATE_MOVING;
     }
 
     protected function handleMoving (unit :Unit) :void
     {
-
+        // just wait till we're done moving
+        if (!unit.isMoving) {
+            _state = STATE_ATTACKING;
+        }
     }
 
     protected function handleAttacking (unit :Unit) :void

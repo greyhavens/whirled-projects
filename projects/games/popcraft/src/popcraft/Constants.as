@@ -44,7 +44,7 @@ public class Constants
     public static const BATTLE_ROWS :int = 15;
     public static const BATTLE_TILE_SIZE :int = 32;
     public static const BASE_MAX_HEALTH :int = 100;
-    public static const BASE_ATTACK_RADIUS :int = 15; // max distance from base that base attacks can occur from
+    public static const BASE_ATTACK_RADIUS :int = 80; // max distance from base that base attacks can occur from
 
     /* Resource types */
 
