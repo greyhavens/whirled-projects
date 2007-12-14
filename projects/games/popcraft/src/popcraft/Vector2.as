@@ -39,6 +39,12 @@ public class Vector2
         return new Vector2(v.x * val, v.y * val);
     }
 
+    /** Returns -v. v is unmodified. */
+    public static function invert (v :Vector2) :Vector2
+    {
+        return new Vector2(-v.x, -v.y);
+    }
+
     /**
      * Returns the smaller of the two angles between v1 and v2, in radians.
      * Result will be in range [0, pi].
@@ -182,6 +188,15 @@ public class Vector2
     {
         x *= value;
         y *= value;
+    }
+
+    /**
+     * Scales the vector by -1;
+     */
+    public function invert () :void
+    {
+        x = -x;
+        y = -y;
     }
 
     /**
