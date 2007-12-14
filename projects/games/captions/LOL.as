@@ -85,13 +85,6 @@ public class LOL extends Sprite
             return;
         }
 
-//        try {
-//            Font.registerFont(IMPACT_FONT);
-//            Font.registerFont(NICKELODEON_FONT);
-//        } catch (err :Error) {
-//            Log.getLog(this).warning("Could not register font: " + err);
-//        }
-
         _formatter = new TextFieldFormatter();
         _formatter.addEventListener(
             TextFieldFormatter.ENTER_PRESSED_EVENT, handleEnterPressedOnInput);
@@ -1033,12 +1026,6 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
     protected static const SILENT_THEME_UI :Class;
-
-//    [Embed(source="rsrc/NICKELOD.TTF", fontName="nickelodeon", mimeType="application/x-font")]
-//    protected static const NICKELODEON_FONT :Class;
-//
-//    [Embed(source="rsrc/impact.ttf", fontName="impact", mimeType="application/x-font")]
-//    protected static const IMPACT_FONT :Class;
 
     protected static const IDEAL_WIDTH :int = 700;
     protected static const IDEAL_HEIGHT :int = 500;
