@@ -40,7 +40,7 @@ public class FightController extends Controller
     {
         _control.state.sendMessage("gs", null);
         _model.setGhostHealth(1.0);
-        _control.spawnMob("ghost", "Old Dame Bobblewhack");
+        _control.spawnMob("ghost", "Duchess Von Bobbleton");
     }
 
     public function handleGhostMelee (score :Number) :void
