@@ -44,6 +44,7 @@ public class SeaDisplay extends Sprite
         theBoard :Board = null, board :Array = null, rando :Random = null) :void
     {
         _boardWidth = boardWidth;
+        _boardHeight = boardHeight;
 
         _grounds = [
             Bitmap(new GROUND1()).bitmapData,
@@ -208,6 +209,32 @@ public class SeaDisplay extends Sprite
         _sub.queueAction(now, action);
     }
 
+    public function applyGameOverAction (action :int) :void
+    {
+        switch (action) {
+        case Action.LEFT:
+            x = Math.min(x + TILE_SIZE, TILE_SIZE * SubAttack.VISION_TILES);
+            break;
+
+        case Action.RIGHT:
+            x = Math.max(x - TILE_SIZE, TILE_SIZE * (SubAttack.VISION_TILES - (_boardWidth - 1)));
+            break;
+
+        case Action.UP:
+            y = Math.min(y + TILE_SIZE, TILE_SIZE * SubAttack.VISION_TILES);
+            break;
+
+        case Action.DOWN:
+            y = Math.max(y - TILE_SIZE, TILE_SIZE * (SubAttack.VISION_TILES - (_boardHeight - 1)));
+            break;
+
+        case Action.SHOOT:
+            // recenter
+            subUpdated(_followSub, _followSub.getX(), _followSub.getY());
+            break;
+        }
+    }
+
     /**
      * Display the specified tile as now being traversable.
      */
@@ -297,6 +324,7 @@ public class SeaDisplay extends Sprite
     protected var _sub :Submarine;
 
     protected var _boardWidth :int;
+    protected var _boardHeight :int;
 
     protected var _trees :Array;
 

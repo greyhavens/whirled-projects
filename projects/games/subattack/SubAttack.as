@@ -207,6 +207,7 @@ public class SubAttack extends Sprite
     {
         // pick a seed now, in case of rematch
         pickSeed();
+        _gameOver = true;
     }
 
     /**
@@ -217,6 +218,7 @@ public class SubAttack extends Sprite
         // stop listening for ready events
         _gameCtrl.removeEventListener(PropertyChangedEvent.TYPE, recheckReadyness);
 
+        _gameOver = false;
         _seaDisplay.clearStatus();
         _seaHolder.removeChild(_seaDisplay);
         _seaHolder.addChildAt(_seaDisplay = new SeaDisplay(), 0);
@@ -282,12 +284,15 @@ public class SubAttack extends Sprite
      */
     protected function keyEvent (event :KeyboardEvent) :void
     {
-
         var action :int = getActionForKey(event);
         if (action == Action.NONE) {
             return;
         }
-        if (!_seaDisplay.canQueueActions()) {
+        if (_gameOver) {
+            _seaDisplay.applyGameOverAction(action);
+            return;
+
+        } else if (!_seaDisplay.canQueueActions()) {
             //trace("Can't queue: waiting on serer.");
             // ignore it, we're still waiting on too much to return from the server
             return;
@@ -369,6 +374,8 @@ public class SubAttack extends Sprite
     protected var _seaHolder :Sprite;
 
     protected var _clock :TextField;
+
+    protected var _gameOver :Boolean;
 
     /** The visual display of the game. */
     protected var _seaDisplay :SeaDisplay;
