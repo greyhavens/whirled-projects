@@ -284,14 +284,11 @@ public class Submarine extends BaseSprite
         }
 
         // we can always re-orient
-        var reoriented :Boolean = false;
         if (_orient != action) {
             _orient = action;
             updateVisual();
-            reoriented = true;
         }
-        if (!advanceLocation() && !reoriented) {
-//            return DROP;
+        if (!advanceLocation()) {
             // maybe we can shoot?
             if (_board.isDestructable(_playerIdx, advancedX(), advancedY()) &&
                     (OK == performActionInternal(Action.SHOOT))) {
