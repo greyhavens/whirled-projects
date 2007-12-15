@@ -91,7 +91,7 @@ public class GameMode extends AppMode
         var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
         var player :uint = 0;
         for each (var loc :Vector2 in baseLocs) {
-            var base :PlayerBase = new PlayerBase(player, loc, Constants.BASE_MAX_HEALTH);
+            var base :PlayerBaseUnit = new PlayerBaseUnit(player, loc);
 
             _playerBaseIds.push(_netObjects.addObject(base, _battleBoard.displayObjectContainer));
 
@@ -133,9 +133,9 @@ public class GameMode extends AppMode
         super.update(dt);
     }
 
-    public function getPlayerBase (player :uint) :PlayerBase
+    public function getPlayerBase (player :uint) :PlayerBaseUnit
     {
-        return (_netObjects.getObject(_playerBaseIds[player]) as PlayerBase);
+        return (_netObjects.getObject(_playerBaseIds[player]) as PlayerBaseUnit);
     }
 
     protected function handleMessage (msg :Message) :void

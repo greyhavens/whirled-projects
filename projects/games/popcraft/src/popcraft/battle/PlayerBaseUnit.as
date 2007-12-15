@@ -13,14 +13,13 @@ import flash.display.Bitmap;
 import core.tasks.MeterValueTask;
 import flash.geom.Point;
 
-public class PlayerBase extends AppObject
+public class PlayerBaseUnit extends Unit
 {
-    public function PlayerBase (owningPlayer :uint, loc :Vector2, maxHealth :uint)
+    public function PlayerBaseUnit (owningPlayerId :uint, loc :Vector2)
     {
-        _owningPlayer = owningPlayer;
+        super(Constants.UNIT_TYPE_BASE, owningPlayerId);
+
         _unitSpawnLoc = loc;
-        _maxHealth = maxHealth;
-        _health = maxHealth;
 
         _sprite = new Sprite();
         _sprite.x = loc.x;
@@ -31,14 +30,13 @@ public class PlayerBase extends AppObject
         baseImage.y = -baseImage.height;
 
         _sprite.addChild(baseImage);
-
-        _sprite.addChild(Util.createGlowBitmap(baseImage, Constants.PLAYER_COLORS[_owningPlayer] as uint));
+        _sprite.addChild(this.createOwningPlayerGlowForBitmap(baseImage));
 
         // health meter
         _healthMeter = new RectMeter();
         _healthMeter.minValue = 0;
-        _healthMeter.maxValue = maxHealth;
-        _healthMeter.value = maxHealth;
+        _healthMeter.maxValue = _unitData.maxHealth;
+        _healthMeter.value = _unitData.maxHealth;
         _healthMeter.foregroundColor = 0xFF0000;
         _healthMeter.backgroundColor = 0x888888;
         _healthMeter.outlineColor = 0x000000;
@@ -48,30 +46,17 @@ public class PlayerBase extends AppObject
         _healthMeter.displayObject.y = baseImage.y - _healthMeter.height;
     }
 
+    // from AppObject
     override protected function addedToMode (mode :AppMode) :void
     {
         // @TODO - this is probably bad practice right here.
         MainLoop.instance.topMode.addObject(_healthMeter, _sprite);
     }
 
+    // from AppObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
-    }
-
-    public function get maxHealth() :uint
-    {
-        return _maxHealth;
-    }
-
-    public function get health () :uint
-    {
-        return _health;
-    }
-
-    public function get owningPlayer () :uint
-    {
-        return _owningPlayer;
     }
 
     public function get unitSpawnLoc () :Vector2
@@ -79,20 +64,17 @@ public class PlayerBase extends AppObject
         return _unitSpawnLoc;
     }
 
-    public function doDamage (damage :uint) :void
+    // from Unit
+    override public function applyAttack (attack :UnitAttack) :void
     {
-        _health -= Math.min(damage, _health);
-        _healthMeter.removeAllTasks();
+        super.applyAttack(attack);
         _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));
     }
 
-    protected var _owningPlayer :uint;
     protected var _unitSpawnLoc :Vector2 = new Vector2();
 
     protected var _sprite :Sprite;
     protected var _healthMeter :RectMeter;
-    protected var _maxHealth :uint;
-    protected var _health :uint;
 }
 
 }

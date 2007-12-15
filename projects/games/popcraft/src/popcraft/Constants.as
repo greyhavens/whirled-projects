@@ -43,7 +43,6 @@ public class Constants
     public static const BATTLE_COLS :int = 15;
     public static const BATTLE_ROWS :int = 15;
     public static const BATTLE_TILE_SIZE :int = 32;
-    public static const BASE_MAX_HEALTH :int = 100;
     public static const BASE_ATTACK_RADIUS :int = 80; // max distance from base that base attacks can occur from
 
     /* Damage types */
@@ -76,33 +75,50 @@ public class Constants
 
     public static const UNIT_TYPE_MELEE :uint = 0;
     public static const UNIT_TYPE_RANGED :uint = 1;
-    public static const UNIT_TYPE__LIMIT :uint = 2;
+
+    public static const UNIT_TYPE__CREATURE_LIMIT :uint = 2;
+
+    public static const UNIT_TYPE_BASE :uint = 2;
 
     public static const UNIT_CLASS_GROUND :uint = (1 << 0);
     public static const UNIT_CLASS_AIR :uint = (1 << 1);
 
     public static const UNIT_DATA :Array = [
 
-            new UnitData(
-                "melee",                    // name
-                [5,   0,  0,    0],         // resource costs (brown, gold, blue, pink)
-                IMAGE_MELEE,                // image
-                30, new IntRange(5, 25),    // wanderEvery, wanderRange
-                64,                         // move speed (pixels/second)
-                100,                        // health
-                new UnitArmor( [DAMAGE_TYPE_MELEE, 0.8, DAMAGE_TYPE_PROJECTILE, 0.7, DAMAGE_TYPE_BASE, 1] )   // armor
+            new UnitData (
+                "melee"                     // name
+                , [5,   0,  0,    0]        // resource costs (brown, gold, blue, pink)
+                , IMAGE_MELEE               // image
+                , 30, new IntRange(5, 25)   // wanderEvery, wanderRange
+                , 64                        // move speed (pixels/second)
+                , 100                       // health
+                , new UnitArmor( [DAMAGE_TYPE_MELEE, 0.8, DAMAGE_TYPE_PROJECTILE, 0.7, DAMAGE_TYPE_BASE, 1] )   // armor
             )
 
             ,
 
-            new UnitData(
-                "ranged",                   // name
-                [0,   5,  0,    0],         // resource costs (brown, gold, blue, pink)
-                IMAGE_RANGED,               // image
-                -1, new IntRange(0, 0),     // wanderEvery, wanderRange
-                40,                         // move speed (pixels/second)
-                100,                        // health
-                new UnitArmor( [DAMAGE_TYPE_MELEE, 1, DAMAGE_TYPE_PROJECTILE, 1, DAMAGE_TYPE_BASE, 1] )   // armor
+            new UnitData (
+                "ranged"                    // name
+                , [0,   5,  0,    0]        // resource costs (brown, gold, blue, pink)
+                , IMAGE_RANGED              // image
+                , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
+                , 40                        // move speed (pixels/second)
+                , 100                       // health
+                , new UnitArmor( [DAMAGE_TYPE_MELEE, 1, DAMAGE_TYPE_PROJECTILE, 1, DAMAGE_TYPE_BASE, 1] )   // armor
+            )
+
+            ,
+
+            // non-creature units must come after creature units
+
+            new UnitData (
+                "base"                      // name
+                , [0,   0,  0,    0]        // resource costs (brown, gold, blue, pink)
+                , IMAGE_BASE                // image
+                , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
+                , 0                         // move speed (pixels/second)
+                , 100                       // health
+                , new UnitArmor( [DAMAGE_TYPE_MELEE, 1, DAMAGE_TYPE_PROJECTILE, 1, DAMAGE_TYPE_BASE, 1] )   // armor
             )
     ];
 

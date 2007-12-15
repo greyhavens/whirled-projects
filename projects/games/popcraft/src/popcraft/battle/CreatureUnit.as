@@ -18,14 +18,11 @@ import flash.filters.GlowFilter;
 import flash.geom.Rectangle;
 import flash.display.BitmapData;
 
-public class CreatureUnit extends AppObject
+public class CreatureUnit extends Unit
 {
     public function CreatureUnit (unitType :uint, owningPlayerId :uint)
     {
-        _unitType = unitType;
-        _owningPlayerId = owningPlayerId;
-
-        _unitData = (Constants.UNIT_DATA[unitType] as CreatureUnitData);
+        super(unitType, owningPlayerId);
 
         // create the visual representation
         _sprite = new Sprite();
@@ -110,10 +107,6 @@ public class CreatureUnit extends AppObject
     }
 
     protected var _sprite :Sprite;
-    protected var _unitType :uint;
-    protected var _owningPlayerId :uint;
-
-    protected var _unitData :CreatureUnitData;
 
     // AI state machine
     protected static const STATE_ATTACKBASE :uint = 0;
@@ -127,7 +120,7 @@ import core.*;
 import core.util.*;
 import flash.geom.Point;
 import popcraft.*;
-import popcraft.battle.PlayerBase;
+import popcraft.battle.PlayerBaseUnit;
 import popcraft.battle.CreatureUnit;
 
 class AttackBaseTask extends ObjectTask

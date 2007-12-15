@@ -15,7 +15,7 @@ public class UnitFactory
 
         return unit;*/
 
-        return new Unit(unitType, owningPlayerId);
+        return new CreatureUnit(unitType, owningPlayerId);
     }
 }
 

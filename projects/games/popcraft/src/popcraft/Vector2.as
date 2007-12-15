@@ -1,6 +1,6 @@
 package popcraft {
-    import flash.geom.Point;
 
+import flash.geom.Point;
 
 public class Vector2
 {

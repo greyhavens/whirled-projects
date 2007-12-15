@@ -4,12 +4,14 @@ import core.AppObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import popcraft.battle.UnitData;
 
 public class UnitPurchaseButtonManager extends AppObject
 {
     public function UnitPurchaseButtonManager ()
     {
-        for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__LIMIT; ++unitType) {
+        for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
+
             var button :UnitPurchaseButton = new UnitPurchaseButton(unitType);
 
             button.addEventListener(MouseEvent.CLICK, createButtonListener(unitType));
@@ -35,7 +37,7 @@ public class UnitPurchaseButtonManager extends AppObject
 
     override protected function update (dt :Number) :void
     {
-        for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__LIMIT; ++unitType) {
+        for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
             (_buttons[unitType] as UnitPurchaseButton).enabled = GameMode.instance.canPurchaseUnit(unitType);
         }
     }
