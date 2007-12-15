@@ -20,18 +20,13 @@ import com.whirled.WhirledGameControl;
 public class Submarine extends BaseSprite
 {
     /** The amount we shift hue for each truck. */
-    //public static const SHIFTS :Array = [ 40, -80, 120, -160 -40, 80, -120, 160 ];
     public static const SHIFTS :Array = [ -136, 21, -106, 77, -38, 143, 0, 180 ];
 
-    public static const POINTS_TO_BUILD :int = 50;
     public static const POINTS_PER_KILL :int = 200;
     public static const POINTS_PER_DEATH :int = -100;
 
     public static const POINTS_SHOOT_ANIMAL :int = 25;
     public static const POINTS_RUNOVER_ANIMAL :int = 50;
-
-    /** How many ticks does it take to build? */
-    public static const TICKS_TO_BUILD :int = 5; // how long does it take to build?
 
     // fake our static initializer
     staticInit();
@@ -40,7 +35,6 @@ public class Submarine extends BaseSprite
         _shootSound = Sound(new SHOOT_SOUND());
         _explodeSelf = Sound(new EXPLODE_SELF_SOUND());
         _explodeEnemy = Sound(new EXPLODE_ENEMY_SOUND());
-        _factorySound = Sound(new FACTORY_SOUND());
     }
 
     public function Submarine (
@@ -251,21 +245,6 @@ public class Submarine extends BaseSprite
             return CANT;
         }
 
-        if (action == Action.BUILD) {
-            if (_points < POINTS_TO_BUILD || !_board.isBlank(_x, _y)) {
-                return DROP;
-            }
-            _movedOrShot = true;
-            if (++_buildingStep == TICKS_TO_BUILD) {
-                addPoints(-POINTS_TO_BUILD);
-                _board.playSound(_factorySound, _x, _y);
-                _board.buildFactory(this);
-                _buildingStep = 0;
-                return OK;
-            }
-            return CANT; // it takes 3 ticks for the build to go through...
-        }
-
         if (action == Action.SHOOT) {
             _movedOrShot = true;
             if (_torpedos.length == MAX_TORPEDOS) {
@@ -395,7 +374,6 @@ public class Submarine extends BaseSprite
         _dead = true;
         _deaths++;
         _totalDeaths++;
-        _buildingStep = 0;
         _queuedActions.length = 0; // drop any queued actions
         _futureActions.length = 0;
         updateVisual();
@@ -501,9 +479,6 @@ public class Submarine extends BaseSprite
     /** Have we moved or shot this tick yet? */
     protected var _movedOrShot :Boolean;
 
-    /** How many steps have we done to do a 'build'. */
-    protected var _buildingStep :int = 0;
-
     /** Our currently in-flight torpedos. */
     protected var _torpedos :Array = [];
 
@@ -540,8 +515,6 @@ public class Submarine extends BaseSprite
 
     protected static var _explodeEnemy :Sound;
 
-    protected static var _factorySound :Sound;
-
     /** The maximum number of torpedos that may be in-flight at once. */
     protected static const MAX_TORPEDOS :int = 2;
 
@@ -568,8 +541,5 @@ public class Submarine extends BaseSprite
 
     [Embed(source="rsrc/enemy_explode.mp3")]
     protected static const EXPLODE_ENEMY_SOUND :Class;
-
-    [Embed(source="rsrc/drop_factory.mp3")]
-    protected static const FACTORY_SOUND :Class;
 }
 }

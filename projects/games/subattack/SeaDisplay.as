@@ -208,22 +208,6 @@ public class SeaDisplay extends Sprite
         _sub.queueAction(now, action);
     }
 
-    public function addFactory (factory :Factory) :void
-    {
-        // factories need to be added so that they are in front of factories with a lower y
-        // since there aren't many factories, we can do this dumbly
-        var insertionPoint :int = 1;
-        while (true) {
-            var otherFact :DisplayObject = getChildAt(insertionPoint);
-            if (otherFact.name == "factory" && otherFact.y < factory.y) {
-                insertionPoint++;
-            } else {
-                break;
-            }
-        }
-        addChildAt(factory, insertionPoint);
-    }
-
     /**
      * Display the specified tile as now being traversable.
      */
@@ -241,10 +225,6 @@ public class SeaDisplay extends Sprite
                 matrix.translate(0, TILE_SIZE);
                 _tiles.bitmapData.draw(pickBitmap(null, _grounds), matrix);
             }
-
-//        } else if (value == Board.TREE) {
-//            // we must have destroyed a temple
-//            _tiles.bitmapData.draw(pickBitmap(null, _trees), matrix);
 
         } else if (value == Board.DODO || value == Board.PANDA) {
             var toDraw :BitmapData = (value == Board.DODO) ? _dodo : _panda;

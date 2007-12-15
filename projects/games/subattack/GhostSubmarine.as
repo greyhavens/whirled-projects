@@ -70,7 +70,6 @@ public class GhostSubmarine extends Submarine
     {
         switch (action) {
         case Action.SHOOT:
-        case Action.BUILD:
         case Action.RESPAWN:
             return OK;
 

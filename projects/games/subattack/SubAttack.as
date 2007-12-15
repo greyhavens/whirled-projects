@@ -346,15 +346,7 @@ public class SubAttack extends Sprite
         case Keyboard.ENTER:
             return Action.RESPAWN;
 
-//        case Keyboard.CONTROL:
-//        case Keyboard.SHIFT:
-//            return Action.BUILD;
-
         default:
-//            if (event.charCode == 90 || event.charCode == 122 || // 'Z' and 'z'
-//                    event.charCode == 66 || event.charCode == 98) { // 'B' and 'b'
-//                return Action.BUILD;
-//            }
             return Action.NONE;
         }
     }

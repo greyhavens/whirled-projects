@@ -35,7 +35,6 @@ public class Board
         _rando = new Random(int(_gameCtrl.get("seed")));
 
         _explode = Sound(new EXPLODE_SOUND());
-        _factoryExplode = Sound(new FACTORY_EXPLODE_SOUND());
 
         var playerIds :Array = _gameCtrl.seating.getPlayerIds();
         var playerCount :int = playerIds.length;
@@ -190,15 +189,7 @@ public class Board
         }
 
         var val :int = int(_board[coordsToIdx(xx, yy)]);
-        if (val > BLANK) {
-            return false;
-
-        } else if (val == BLANK) {
-            return true;
-
-        } else {
-            return (playerIdx == int(val / -100));
-        }
+        return (val == BLANK);
     }
 
     public function isDestructable (playerIdx :int, xx :int, yy :int) :Boolean
@@ -208,35 +199,12 @@ public class Board
         }
 
         var val :int = int(_board[coordsToIdx(xx, yy)]);
-        if (val == BLANK || val == ROCK) {
-            return false;
-
-        } else if (val > BLANK) {
-            return true;
-
-        } else {
-            return (playerIdx != int(val / -100));
-        }
+        return (val != BLANK) && (val != ROCK);
     }
 
     public function showPoints (x :int, y :int, points :int) :void
     {
         _seaDisplay.addChild(new PointsSprite(points, x, y));
-    }
-
-    /**
-     * Called to build a factory at the specified location.
-     */
-    public function buildFactory (sub :Submarine) :void
-    {
-        var dex :int = coordsToIdx(sub.getX(), sub.getY());
-        var val :int = int(_board[dex]);
-        if (val == BLANK) {
-            _board[dex] = -1 * (sub.getPlayerIndex() * 100 + Factory.MAX_HITS);
-            var factory :Factory = new Factory(sub, this);
-            _factories[dex] = factory;
-            _seaDisplay.addFactory(factory);
-        }
     }
 
     /**
@@ -362,11 +330,7 @@ public class Board
         }
         if (killCount == 0) {
             // if no subs were affected, play a generic explode
-            if (oldVal < Board.BLANK) {
-                playSound(_factoryExplode, xx, yy);
-            } else {
-                playSound(_explode, xx, yy);
-            }
+            playSound(_explode, xx, yy);
         }
 
         return killCount;
@@ -402,31 +366,8 @@ public class Board
             Submarine(_subs[playerIndex]).animalKilled(xx, yy, getAnimalName(val));
             val = BLANK;
 
-        } else if (val > BLANK) {
-            val--;
-
         } else {
-            var pidx :int = int(val / -100);
-            if (playerIndex == pidx) {
-                // the torpedo exploded on one of the player's own defense squares
-                // so it must have hit another sub
-                return true;
-            }
-
-            var factory :Factory = Factory(_factories[idx]);
-            var level :int = -val % 100;
-            level--;
-            if (level == 0) {
-                val = BLANK;
-                _seaDisplay.removeChild(factory);
-                delete _factories[idx];
-
-            } else {
-                val = -(pidx * 100 + level)
-                factory.updateVisual(level);
-            }
-            _board[idx] = val;
-            return false;
+            val = BLANK;
         }
 
         // record the new traversability
@@ -509,9 +450,6 @@ public class Board
         }
         checkTorpedosPassThroughSubs();
 
-        for each (var factory :Factory in _factories) {
-            factory.tick();
-        }
         var torpsCopy :Array = _torpedos.concat();
         for each (torp in torpsCopy) {
             // this may explode a torpedo if it hits seaweed or a wall
@@ -715,7 +653,6 @@ public class Board
     protected var _rando :Random;
 
     protected var _explode :Sound;
-    protected var _factoryExplode :Sound;
 
     /** The width of the board. */
     protected var _width :int;
@@ -733,9 +670,6 @@ public class Board
 
     /** An array tracking the type of each tile. */
     protected var _board :Array = [];
-
-    /** Holds the currently active factories. */
-    protected var _factories :Dictionary = new Dictionary();
 
     /** Have we already ended the game? (Stop trying to do it again while a few
      * last ticks trickle in.) */
@@ -759,8 +693,5 @@ public class Board
 
     [Embed(source="rsrc/missile_explode.mp3")]
     protected static const EXPLODE_SOUND :Class;
-
-    [Embed(source="rsrc/factory_explode.mp3")]
-    protected static const FACTORY_EXPLODE_SOUND :Class;
 }
 }
