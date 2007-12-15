@@ -73,7 +73,6 @@ public class SeaDisplay extends Sprite
             Bitmap(new TEMPLE()).bitmapData
         ];
 
-        var temple :BitmapData = Bitmap(new TEMPLE()).bitmapData;
         _panda = Bitmap(new PANDA()).bitmapData;
         _dodo = Bitmap(new DODO()).bitmapData;
 
@@ -121,12 +120,7 @@ public class SeaDisplay extends Sprite
                 switch (type) {
                 case Board.TREE:
                 case Board.ROCK:
-                case Board.TEMPLE:
-                    if (type == Board.TEMPLE) {
-                        toDraw = temple;
-                    } else {
-                        toDraw = pickBitmap(rando, (type == Board.TREE) ? _trees : rocks);
-                    }
+                    toDraw = pickBitmap(rando, (type == Board.TREE) ? _trees : rocks);
                     data.draw(toDraw, matrix);
                     break;
                 }
@@ -141,10 +135,12 @@ public class SeaDisplay extends Sprite
     {
         clearStatus();
 
-        _status = new SiningTextAnimation(msg, { outlineColor: 0xFFFFFF,
-            selectable: false,
-            defaultTextFormat:
-                TextFieldUtil.createFormat({ font: "_sans", size: size, color: 0x000000 }) });
+        _status = new SiningTextAnimation(msg, {
+            outlineColor: 0x004101, selectable: false,
+            defaultTextFormat: TextFieldUtil.createFormat({
+                font: "_sans", size: size, color: 0x91bd04, bold: true
+            })
+        });
         _status.x = (SubAttack.VIEW_TILES * TILE_SIZE) / 2;
         _status.y = (SubAttack.VIEW_TILES * TILE_SIZE) / 2;
         parent.addChild(_status);
@@ -241,9 +237,9 @@ public class SeaDisplay extends Sprite
                 _tiles.bitmapData.draw(pickBitmap(null, _grounds), matrix);
             }
 
-        } else if (value == Board.TREE) {
-            // we must have destroyed a temple
-            _tiles.bitmapData.draw(pickBitmap(null, _trees), matrix);
+//        } else if (value == Board.TREE) {
+//            // we must have destroyed a temple
+//            _tiles.bitmapData.draw(pickBitmap(null, _trees), matrix);
 
         } else if (value == Board.DODO || value == Board.PANDA) {
             var toDraw :BitmapData = (value == Board.DODO) ? _dodo : _panda;

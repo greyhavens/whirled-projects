@@ -22,7 +22,6 @@ public class Board
     /** Traversability constants. */
     public static const BLANK :int = 0;
     public static const TREE :int = 1;
-    public static const TEMPLE :int = 2;
     public static const ROCK :int = int.MAX_VALUE;
 
     public static const DODO :int = 100;
@@ -43,10 +42,8 @@ public class Board
         _width = int(DIMENSIONS[playerCount][0]);
         _height = int(DIMENSIONS[playerCount][1]);
 
-        // compute some game-ending numbers
-        _maxTotalDeaths = playerCount * 5;
-        _maxKills = Math.max(1, (playerCount - 1) * 5);
-
+        var x :int;
+        var y :int;
         var size :int = _width * _height;
         var ii :int;
         for (ii = size - 1; ii >= 0; ii--) {
@@ -55,15 +52,6 @@ public class Board
 
         var pick :int;
 
-//        // scatter some temples around
-//        var numTemples :int = size / 10;
-//        for (ii = 0; ii < numTemples; ii++) {
-//            do {
-//                pick = _rando.nextInt(size);
-//            } while (_board[pick] != TREE);
-//            _board[pick] = TEMPLE;
-//        }
-
         // scatter some clumpy clearings
         var numBlanks :int = size / 100;
         for (ii = 0; ii < numBlanks; ii++) {
@@ -71,8 +59,8 @@ public class Board
                 pick = _rando.nextInt(size);
             } while (_board[pick] != TREE);
             var radius :int = _rando.nextInt(3);
-            var x :int = int(pick % _width);
-            var y :int = int(pick / _width);
+            x = int(pick % _width);
+            y = int(pick / _width);
             for (var yy :int = Math.max(0, y - radius); yy <= Math.min(_height - 1, y + radius);
                     yy++) {
                 for (var xx :int = Math.max(0, x - radius); xx <= Math.min(_width - 1, x + radius);
@@ -85,9 +73,27 @@ public class Board
         // scatter some rocks around
         var numRocks :int = size / 40;
         for (ii = 0; ii < numRocks; ii++) {
-            pick = _rando.nextInt(size);
+            // don't let a rock ever be within 1 tile of another rock, that way we
+            // prevent blocked-off areas
+            var rocksNearby :Boolean;
+            do {
+                pick = _rando.nextInt(size);
+                rocksNearby = false;
+                for (y = -1; y < 2 && !rocksNearby; y++) {
+                    for (x = -1; x < 2; x++) {
+                        // don't worry about the fact that this may wrap around the board
+                        var idx :int = pick + (y * _width) + x;
+                        if (idx >= 0 && idx < size && _board[idx] == ROCK) {
+                            rocksNearby = true;
+                            break;
+                        }
+                    }
+                }
+            } while (rocksNearby);
             _board[pick] = ROCK;
         }
+
+        // now draw the board we've created
         _seaDisplay.setupSea(_width, _height, this, _board, _rando);
 
         // create a submarine for each player
@@ -215,10 +221,7 @@ public class Board
 
     public function showPoints (x :int, y :int, points :int) :void
     {
-        var pts :PointsSprite = new PointsSprite(points);
-        pts.x = x * SeaDisplay.TILE_SIZE;
-        pts.y = y * SeaDisplay.TILE_SIZE;
-        _seaDisplay.addChild(pts);
+        _seaDisplay.addChild(new PointsSprite(points, x, y));
     }
 
     /**
@@ -351,7 +354,6 @@ public class Board
                 if (!sub.isDead() && sub.getX() == xx && sub.getY() == yy) {
                     sub.wasKilled();
                     killCount++;
-                    _totalDeaths++;
 
                     _gameCtrl.localChat(killer.getPlayerName() + " has shot " +
                         sub.getPlayerName());
@@ -519,12 +521,14 @@ public class Board
         // then we check torpedo-on-torpedo action, and pass-through
         checkTorpedos();
 
-        if (tickId % 300 == 0) {
-            addAnimal();
-        }
+        if (tickId < SubAttack.TICKS_PER_GAME) {
+            if (tickId % 300 == 0) {
+                addAnimal();
+            }
 
-        if (_gameCtrl.seating.getMyPosition() == 0 && !_endedGame) {
-            checkGameOver(tickId);
+        } else if (_gameCtrl.seating.getMyPosition() == 0 && !_endedGame) {
+            endGame();
+            _endedGame = true;
         }
     }
 
@@ -562,12 +566,8 @@ public class Board
         return false;
     }
 
-    protected function checkGameOver (tickId :int) :void
+    protected function endGame () :void
     {
-        if (tickId < SubAttack.TICKS_PER_GAME) {
-            return;
-        }
-
         var ids :Array = [];
         var scores :Array = [];
         for (var ii :int = 0; ii < _subs.length; ii++) {
@@ -577,7 +577,6 @@ public class Board
         }
 
         _gameCtrl.endGameWithScores(ids, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
-        _endedGame = true;
     }
 
     /**
@@ -718,14 +717,6 @@ public class Board
     protected var _explode :Sound;
     protected var _factoryExplode :Sound;
 
-    protected var _totalDeaths :int = 0;
-
-    /** The maximum number of total deaths before we end the game. */
-    protected var _maxTotalDeaths :int;
-
-    /** The maximum number of kills any player may accumulate before we end the game. */
-    protected var _maxKills :int;
-
     /** The width of the board. */
     protected var _width :int;
 
@@ -757,16 +748,14 @@ public class Board
 //        [ 10, 10 ], // 2 player game (testing)
         [ 50, 25 ], // 2 player game
         [ 60, 30 ], // 3 player game
-        [ 75, 30 ], // 4 player game
+        [ 60, 40 ], // 4 player game
         [ 75, 40 ], // 5 player game
-        [ 80, 40 ], // 6 player game
-        [ 80, 50 ], // 7 player game
-        [ 90, 50 ]  // 8 players!
+        [ 75, 50 ], // 6 player game
+        [ 80, 54 ], // 7 player game
+        [ 80, 60 ]  // 8 players!
     ];
 
     protected static const MAX_QUEUED_TICKS :int = 5;
-
-    protected static const SHOTS_TO_DESTROY :int = 1; // 2;
 
     [Embed(source="rsrc/missile_explode.mp3")]
     protected static const EXPLODE_SOUND :Class;
