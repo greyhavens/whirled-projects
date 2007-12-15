@@ -100,19 +100,16 @@ public class SeaDisplay extends Sprite
 
                 // draw in the background
                 switch (type) {
-                case Board.TREE:
+                default:
                     // no background needed
                     break;
 
                 case Board.BLANK:
+                case Board.PANDA:
+                case Board.DODO:
                     // if we're blank, we need to be either moss or ground, depending on what's
                     // above us.
                     toDraw = pickBitmap(rando, theBoard.castsMoss(xx, yy - 1) ? _moss : _grounds);
-                    data.draw(toDraw, matrix);
-                    break;
-
-                default:
-                    toDraw = pickBitmap(rando, _grounds);
                     data.draw(toDraw, matrix);
                     break;
                 }
@@ -122,6 +119,14 @@ public class SeaDisplay extends Sprite
                 case Board.ROCK:
                     toDraw = pickBitmap(rando, (type == Board.TREE) ? _trees : rocks);
                     data.draw(toDraw, matrix);
+                    break;
+
+                case Board.PANDA:
+                    data.draw(_panda, matrix);
+                    break;
+
+                case Board.DODO:
+                    data.draw(_dodo, matrix);
                     break;
                 }
             }
