@@ -141,9 +141,9 @@ public class SeaDisplay extends Sprite
         clearStatus();
 
         _status = new SiningTextAnimation(msg, {
-            outlineColor: 0x004101, selectable: false,
+            outlineColor: 0x673c0f, selectable: false,
             defaultTextFormat: TextFieldUtil.createFormat({
-                font: "_sans", size: size, color: 0x91bd04, bold: true
+                font: "_sans", size: size, color: 0xfee610, bold: true
             })
         });
         _status.x = (SubAttack.VIEW_TILES * TILE_SIZE) / 2;
