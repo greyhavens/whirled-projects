@@ -18,14 +18,14 @@ import flash.filters.GlowFilter;
 import flash.geom.Rectangle;
 import flash.display.BitmapData;
 
-public class Unit extends AppObject
+public class CreatureUnit extends AppObject
 {
-    public function Unit (unitType :uint, owningPlayerId :uint)
+    public function CreatureUnit (unitType :uint, owningPlayerId :uint)
     {
         _unitType = unitType;
         _owningPlayerId = owningPlayerId;
 
-        _unitData = (Constants.UNIT_DATA[unitType] as UnitData);
+        _unitData = (Constants.UNIT_DATA[unitType] as CreatureUnitData);
 
         // create the visual representation
         _sprite = new Sprite();
@@ -113,7 +113,7 @@ public class Unit extends AppObject
     protected var _unitType :uint;
     protected var _owningPlayerId :uint;
 
-    protected var _unitData :UnitData;
+    protected var _unitData :CreatureUnitData;
 
     // AI state machine
     protected static const STATE_ATTACKBASE :uint = 0;
@@ -128,7 +128,7 @@ import core.util.*;
 import flash.geom.Point;
 import popcraft.*;
 import popcraft.battle.PlayerBase;
-import popcraft.battle.Unit;
+import popcraft.battle.CreatureUnit;
 
 class AttackBaseTask extends ObjectTask
 {
@@ -139,7 +139,7 @@ class AttackBaseTask extends ObjectTask
 
     override public function update (dt :Number, obj :AppObject) :Boolean
     {
-        var unit :Unit = (obj as Unit);
+        var unit :CreatureUnit = (obj as CreatureUnit);
 
         switch (_state) {
         case STATE_INIT:
@@ -158,7 +158,7 @@ class AttackBaseTask extends ObjectTask
         return (STATE_COMPLETE == _state);
     }
 
-    protected function handleInit (unit :Unit) :void
+    protected function handleInit (unit :CreatureUnit) :void
     {
         // pick a location to attack at
         var baseLoc :Vector2 = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
@@ -176,7 +176,7 @@ class AttackBaseTask extends ObjectTask
         _state = STATE_MOVING;
     }
 
-    protected function handleMoving (unit :Unit) :void
+    protected function handleMoving (unit :CreatureUnit) :void
     {
         // just wait till we're done moving
         if (!unit.isMoving) {
@@ -184,7 +184,7 @@ class AttackBaseTask extends ObjectTask
         }
     }
 
-    protected function handleAttacking (unit :Unit) :void
+    protected function handleAttacking (unit :CreatureUnit) :void
     {
 
     }
