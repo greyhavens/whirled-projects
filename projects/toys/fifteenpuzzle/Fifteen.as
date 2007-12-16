@@ -443,7 +443,7 @@ public class Fifteen extends Sprite
             tile.x = src.x;
             tile.y = src.y;
             Tweener.addTween(tile,
-                { time: 2.25, transition: "linear", x: _blank.x, y: _blank.y,
+                { time: .25, transition: "linear", x: _blank.x, y: _blank.y,
                   onComplete: handleTweenComplete, onOverwrite: handleTweenCancelled });
             _tileTweens++;
 
