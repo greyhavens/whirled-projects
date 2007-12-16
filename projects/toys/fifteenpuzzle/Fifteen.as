@@ -32,15 +32,12 @@ import fl.skins.DefaultButtonSkins;
 import fl.skins.DefaultComboBoxSkins;
 import fl.skins.DefaultTextAreaSkins;
 
-import mx.effects.easing.Cubic;
+import caurina.transitions.Tweener;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 import com.threerings.util.Util;
-
-import com.threerings.flash.path.Path;
-import com.threerings.flash.path.EasingPath;
 
 import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
@@ -147,13 +144,16 @@ public class Fifteen extends Sprite
         _label.setSize(220, 22);
         _palette.addChild(_label);
 
+        _controls = new Sprite();
+        _palette.addChild(_controls);
+
         var config :Button = new Button();
         config.label = "Config";
         config.validateNow();
         config.setSize(config.textField.textWidth + 15, 22);
         config.x = 220 - config.width;
         config.addEventListener(MouseEvent.CLICK, handleOpenConfig);
-        _palette.addChild(config);
+        _controls.addChild(config);
 
         // finally, let's set our tile provider
         if (_ctrl.isConnected()) {
@@ -210,14 +210,14 @@ public class Fifteen extends Sprite
         close.setSize(close.textField.textWidth + 15, 22);
         close.x = 220 + (220 - close.width);;
         close.addEventListener(MouseEvent.CLICK, handleCloseConfig)
-        _palette.addChild(close);
+        _controls.addChild(close);
 
         _sourceBox.addEventListener(Event.CHANGE, handleSourceSelected);
         _sourceBox.addEventListener(Event.OPEN, resetCloseTimer);
         _sourceBox.addEventListener(Event.CLOSE, resetCloseTimer);
         _sourceBox.setSize(220 - close.width, 22);
         _sourceBox.x = 220;
-        _palette.addChild(_sourceBox);
+        _controls.addChild(_sourceBox);
 
         if (!_ctrl.isConnected() || _ctrl.canEditRoom()) {
             var reset :Button = new Button();
@@ -228,7 +228,7 @@ public class Fifteen extends Sprite
             reset.x = 220;
             reset.addEventListener(MouseEvent.CLICK, resetState);
             reset.addEventListener(MouseEvent.CLICK, resetCloseTimer);
-            _palette.addChild(reset);
+            _controls.addChild(reset);
 
             var scramble :Button = new Button();
             scramble.label = "Scramble";
@@ -238,7 +238,7 @@ public class Fifteen extends Sprite
             scramble.x = 440 - scramble.width;
             scramble.addEventListener(MouseEvent.CLICK, shuffleState);
             scramble.addEventListener(MouseEvent.CLICK, resetCloseTimer);
-            _palette.addChild(scramble);
+            _controls.addChild(scramble);
         }
 
         _closeTimer = new Timer(20000, 1);
@@ -246,10 +246,10 @@ public class Fifteen extends Sprite
         _closeTimer.start();
 
         // then, actually open it
-        new EasingPath(_palette, -220, 0, 1000, Cubic.easeInOut).start();
+        Tweener.addTween(_palette, {time: 1, transition: "easeinoutcubic", x: -220});
 
         if (!_ctrl.isConnected() || _ctrl.canEditRoom()) {
-            new EasingPath(_content, 0, 25, 1000, Cubic.easeInOut).start();
+            Tweener.addTween(_content, {time: 1, transition: "easeinoutcubic", y: 25});
         }
     }
 
@@ -258,6 +258,7 @@ public class Fifteen extends Sprite
         var skinData :Array = _sourceBox.selectedItem.data as Array;
 
         if (skinData != null && skinData[0] == SOURCE_URL && skinData[1] == null) {
+            // TODO
 
         } else {
             setSkin(skinData);
@@ -343,20 +344,17 @@ public class Fifteen extends Sprite
         _sourceBox.removeEventListener(Event.OPEN, resetCloseTimer);
         _sourceBox.removeEventListener(Event.CLOSE, resetCloseTimer);
 
-        new EasingPath(_content, 0, 0, 1000, Cubic.easeInOut).start();
-
-        var closePath :Path = new EasingPath(_palette, 0, 0, 1000, Cubic.easeInOut);
-        closePath.setOnComplete(configWasClosed);
-        closePath.start();
+        Tweener.addTween([ _content, _palette ],
+            { time: 1, transition: "easeinoutcubic", onComplete: configWasClosed, x: 0, y: 0 });
     }
 
-    protected function configWasClosed (path :Path) :void
+    protected function configWasClosed () :void
     {
         _sourceBox = null;
 
-        // clean up palette
-        while (_palette.numChildren > 2) {
-            _palette.removeChildAt(2);
+        // clean up controls
+        while (_controls.numChildren > 1) {
+            _controls.removeChildAt(1);
         }
     }
 
@@ -393,10 +391,12 @@ public class Fifteen extends Sprite
 
     protected function positionTiles () :void
     {
-        // cancel any paths
-        for (var jj :int = _paths.length - 1; jj >= 0; jj--) {
-            (_paths[jj] as Path).abort();
-            // they'll be cleared, too
+        // cancel any tweens
+        if (_tileTweens > 0) {
+            for (var jj :int = 0; jj < BLANK_TILE; jj++) {
+                Tweener.removeTweens(_tiles[jj]);
+            }
+            _tileTweens = 0;
         }
 
         for (var ii :int = 0; ii < _state.length; ii++) {
@@ -440,10 +440,12 @@ public class Fifteen extends Sprite
             // animate the tile moving to the blank position
             var src :Point = computeTilePosition(position);
 
-            var path :Path = Path.move(tile, src.x, src.y, _blank.x, _blank.y, 250);
-            path.setOnComplete(handlePathComplete);
-            _paths.push(path);
-            path.start();
+            tile.x = src.x;
+            tile.y = src.y;
+            Tweener.addTween(tile,
+                { time: 2.25, transition: "linear", x: _blank.x, y: _blank.y,
+                  onComplete: handleTweenComplete, onOverwrite: handleTweenCancelled });
+            _tileTweens++;
 
             // and jump the blank tile to its new home
             _blank.x = src.x;
@@ -451,10 +453,17 @@ public class Fifteen extends Sprite
         }
     }
 
-    protected function handlePathComplete (path :Path) :void
+    protected function handleTweenCancelled () :void
     {
-        _paths.splice(_paths.indexOf(path), 1);
-        if (_paths.length == 0 && _stateQueue.length > 0) {
+        _tileTweens--;
+    }
+
+    protected function handleTweenComplete () :void
+    {
+        _tileTweens--;
+
+        // if we know that all the tiles are stopped, maybe transition to the next state
+        if (_tileTweens == 0 && _stateQueue.length > 0) {
             moveToState(_stateQueue.shift() as Array, _stateQueue.shift() as String);
         }
     }
@@ -538,7 +547,7 @@ public class Fifteen extends Sprite
         var newState :Array = _toy.getState() as Array;
         var username :String = _toy.getUsernameOfState();
 
-        if (_paths.length > 0) {
+        if (_tileTweens > 0) {
             _stateQueue.push(newState, username);
 
         } else {
@@ -621,9 +630,11 @@ public class Fifteen extends Sprite
 
     protected var _tiles :Array;
 
-    protected var _paths :Array = [];
+    protected var _tileTweens :int = 0;
 
     protected var _palette :Sprite;
+
+    protected var _controls :Sprite;
 
     protected var _sourceBox :ComboBox;
 
