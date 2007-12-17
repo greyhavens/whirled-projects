@@ -44,7 +44,7 @@ public class Match3 extends FrameSprite
 
     public static var GRAVITY :Number = .00098;
 
-    public static var COLORS_TO_USE :int = 5;
+    public static var COLORS_TO_USE :int = 6;
 
     /** Block colors. */
     public static const COLORS :Array = [
