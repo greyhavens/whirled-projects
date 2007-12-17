@@ -30,6 +30,7 @@ internal class TaskContainer extends ObjectTask
         Assert.isTrue(null != task);
         _tasks.push(task);
         _completedTasks.push(null);
+        _activeTaskCount += 1;
     }
 
     /** Removes all tasks from the TaskContainer. */
@@ -37,12 +38,13 @@ internal class TaskContainer extends ObjectTask
     {
         _tasks = new Array();
         _completedTasks = new Array();
+        _activeTaskCount = 0;
     }
 
     /** Returns true if the TaskContainer has any child tasks. */
     public function hasTasks () :Boolean
     {
-        return (_tasks.length > 0);
+        return (_activeTaskCount > 0);
     }
 
     /** Updates all child tasks. */
@@ -72,6 +74,7 @@ internal class TaskContainer extends ObjectTask
                 // the task is complete - move it the completed tasks array
                 _completedTasks[i] = _tasks[i];
                 _tasks[i] = null;
+                _activeTaskCount -= 1;
             }
         }
 
@@ -88,6 +91,8 @@ internal class TaskContainer extends ObjectTask
             _completedTasks = new Array(_tasks.length);
 
             hasIncompleteTasks = true;
+
+            _activeTaskCount = _tasks.length;
         }
 
         return (!hasIncompleteTasks);
@@ -113,6 +118,7 @@ internal class TaskContainer extends ObjectTask
     protected var _type :int;
     protected var _tasks :Array = new Array();
     protected var _completedTasks :Array = new Array();
+    protected var _activeTaskCount :uint;
 }
 
 }
