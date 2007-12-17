@@ -2,12 +2,10 @@ package popcraft.battle {
 
 import popcraft.*;
 
-import core.AppObject;
-import core.ResourceManager;
-import core.tasks.RepeatingTask;
-import core.tasks.LocationTask;
-import core.tasks.SerialTask;
-import core.util.Rand;
+import core.*;
+import core.tasks.*;
+import core.objects.*;
+import core.util.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -35,6 +33,22 @@ public class CreatureUnit extends Unit
 
         // add a glow around the image
         _sprite.addChild(Util.createGlowBitmap(image, Constants.PLAYER_COLORS[_owningPlayerId] as uint));
+
+        // health meter
+        _healthMeter = new RectMeter();
+        _healthMeter.minValue = 0;
+        _healthMeter.maxValue = _unitData.maxHealth;
+        _healthMeter.value = _health;
+        _healthMeter.foregroundColor = 0xFF0000;
+        _healthMeter.backgroundColor = 0x888888;
+        _healthMeter.outlineColor = 0x000000;
+        _healthMeter.width = 30;
+        _healthMeter.height = 3;
+        _healthMeter.displayObject.x = image.x;
+        _healthMeter.displayObject.y = image.y - _healthMeter.height;
+
+        // @TODO - this is probably bad practice right here.
+        MainLoop.instance.topMode.addObject(_healthMeter, _sprite);
 
         // start at our owning player's base's spawn loc
         var spawnLoc :Vector2 = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
@@ -96,6 +110,13 @@ public class CreatureUnit extends Unit
         this.addNamedTask("move", moveTask);
     }
 
+    // from Unit
+    override public function receiveAttack (sourceId :uint, attack :UnitAttack) :void
+    {
+        super.receiveAttack(sourceId, attack);
+        _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));
+    }
+
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
@@ -107,6 +128,7 @@ public class CreatureUnit extends Unit
     }
 
     protected var _sprite :Sprite;
+    protected var _healthMeter :RectMeter;
 
     // AI state machine
     protected static const STATE_ATTACKBASE :uint = 0;

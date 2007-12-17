@@ -1,11 +1,11 @@
 package popcraft.battle {
 
-import core.AppObject;
-import core.AppMode;
-import core.objects.RectMeter;
-import core.MainLoop;
-
 import popcraft.*;
+
+import core.*;
+import core.tasks.*;
+import core.objects.*;
+import core.util.*;
 
 import flash.display.Sprite;
 import flash.display.DisplayObject;
@@ -36,7 +36,7 @@ public class PlayerBaseUnit extends Unit
         _healthMeter = new RectMeter();
         _healthMeter.minValue = 0;
         _healthMeter.maxValue = _unitData.maxHealth;
-        _healthMeter.value = _unitData.maxHealth;
+        _healthMeter.value = _health;
         _healthMeter.foregroundColor = 0xFF0000;
         _healthMeter.backgroundColor = 0x888888;
         _healthMeter.outlineColor = 0x000000;
@@ -44,11 +44,7 @@ public class PlayerBaseUnit extends Unit
         _healthMeter.height = 10;
         _healthMeter.displayObject.x = baseImage.x;
         _healthMeter.displayObject.y = baseImage.y - _healthMeter.height;
-    }
 
-    // from AppObject
-    override protected function addedToMode (mode :AppMode) :void
-    {
         // @TODO - this is probably bad practice right here.
         MainLoop.instance.topMode.addObject(_healthMeter, _sprite);
     }
