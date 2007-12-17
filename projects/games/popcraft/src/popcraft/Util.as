@@ -5,6 +5,7 @@ import flash.display.Bitmap;
 import flash.filters.GlowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.filters.ColorMatrixFilter;
 
 public class Util
 {
@@ -34,6 +35,34 @@ public class Util
         glowBitmap.y = srcBitmap.y - GLOW_BUFFER;
 
         return glowBitmap;
+    }
+
+    public static function createTintedBitmap (srcBitmap :Bitmap, argbTint :uint) :Bitmap
+    {
+        var tintData :BitmapData = new BitmapData(srcBitmap.width, srcBitmap.height, true, 0);
+
+        // separate tintColor into its ARGB components
+        var a :Number = Number((argbTint >> 24) & 0x000000FF) / Number(255);
+        var r :Number = Number((argbTint >> 16) & 0x000000FF) / Number(255);
+        var g :Number = Number((argbTint >> 8) & 0x000000FF) / Number(255);
+        var b :Number = Number(argbTint & 0x000000FF) / Number(255);
+
+        // build the matrix
+        var mat :Array = [
+            r, 0, 0, 0, 0,
+            0, g, 0, 0, 0,
+            0, 0, b, 0, 0,
+            0, 0, 0, a, 0
+        ];
+
+        tintData.applyFilter(
+            srcBitmap.bitmapData,
+            new Rectangle(0, 0, srcBitmap.width, srcBitmap.height),
+            new Point(0, 0),
+            new ColorMatrixFilter(mat));
+
+        var out :Bitmap = new Bitmap(tintData);
+        return out;
     }
 
     protected static const GLOW_BUFFER :int = 7;

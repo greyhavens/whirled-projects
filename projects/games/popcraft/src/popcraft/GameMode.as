@@ -1,8 +1,7 @@
 package popcraft {
 
-import core.AppMode;
-import core.MainLoop;
-import core.util.Rand;
+import core.*;
+import core.util.*;
 
 import popcraft.net.*;
 import popcraft.puzzle.*;
@@ -97,10 +96,15 @@ public class GameMode extends AppMode
 
             _playerBaseIds.push(baseId);
 
-            trace("adding base " + baseId);
+            // @TMP
+            var waypointMarker :WaypointMarker = new WaypointMarker(player);
+            this.addObject(waypointMarker, _battleBoard.displayObjectContainer);
+            waypointMarker.displayObject.x = loc.x;
+            waypointMarker.displayObject.y = loc.y - 80;
 
             ++player;
         }
+
     }
 
     override public function update(dt :Number) :void

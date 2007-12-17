@@ -10,10 +10,10 @@ import flash.geom.Point;
 public class Constants
 {
     public static const PLAYER_COLORS :Array = [
-       uint(0xFF0000),
-       uint(0x9FBCFF),
-       uint(0x51FF7E),
-       uint(0xFFE75F)
+       uint(0xFFFF0000),
+       uint(0xFF9FBCFF),
+       uint(0xFF51FF7E),
+       uint(0xFFFFE75F)
     ];
 
     /* Images */
@@ -25,6 +25,9 @@ public class Constants
 
     [Embed(source="../../rsrc/base.png")]
     public static const IMAGE_BASE :Class;
+
+    [Embed(source="../../rsrc/waypoint.png")]
+    public static const IMAGE_WAYPOINT :Class;
 
     /* Puzzle stuff */
     public static const PIECE_CLEAR_TIMER_LENGTH :Number = 0.75;
