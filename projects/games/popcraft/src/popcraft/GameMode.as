@@ -93,8 +93,11 @@ public class GameMode extends AppMode
         var player :uint = 0;
         for each (var loc :Vector2 in baseLocs) {
             var base :PlayerBaseUnit = new PlayerBaseUnit(player, loc);
+            var baseId :uint = _netObjects.addObject(base, _battleBoard.displayObjectContainer);
 
-            _playerBaseIds.push(_netObjects.addObject(base, _battleBoard.displayObjectContainer));
+            _playerBaseIds.push(baseId);
+
+            trace("adding base " + baseId);
 
             ++player;
         }

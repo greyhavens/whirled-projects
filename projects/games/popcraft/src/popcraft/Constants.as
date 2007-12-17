@@ -121,7 +121,7 @@ public class Constants
                 , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
                 , 0                         // move speed (pixels/second)
                 , 100                       // health
-                , new UnitArmor( [DAMAGE_TYPE_MELEE, 1, DAMAGE_TYPE_PROJECTILE, 1, DAMAGE_TYPE_BASE, 1] )   // armor
+                , new UnitArmor( [DAMAGE_TYPE_MELEE, 0.1, DAMAGE_TYPE_PROJECTILE, 0.1] )   // armor
                 , [ new UnitAttack(DAMAGE_TYPE_BASE, new NumRange(20, 20), UNIT_CLASS__ALL, 0) ] // attacks
             )
     ];
