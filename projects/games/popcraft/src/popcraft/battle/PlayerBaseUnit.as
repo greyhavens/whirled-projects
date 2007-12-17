@@ -65,9 +65,9 @@ public class PlayerBaseUnit extends Unit
     }
 
     // from Unit
-    override public function applyAttack (attack :UnitAttack) :void
+    override public function receiveAttack (sourceId :uint, attack :UnitAttack) :void
     {
-        super.applyAttack(attack);
+        super.receiveAttack(sourceId, attack);
         _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));
     }
 

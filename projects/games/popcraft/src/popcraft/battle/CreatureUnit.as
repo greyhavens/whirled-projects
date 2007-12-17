@@ -101,7 +101,7 @@ public class CreatureUnit extends Unit
         return _sprite;
     }
 
-    public function get isMoving () :Boolean
+    public function isMoving () :Boolean
     {
         return this.hasTasksNamed("move");
     }
@@ -125,9 +125,9 @@ import popcraft.battle.CreatureUnit;
 
 class AttackBaseTask extends ObjectTask
 {
-    public function AttackBaseTask (owningPlayerId :uint)
+    public function AttackBaseTask (targetBaseId :uint)
     {
-        _owningPlayerId = owningPlayerId;
+        _targetBaseId = targetBaseId;
     }
 
     override public function update (dt :Number, obj :AppObject) :Boolean
@@ -154,7 +154,7 @@ class AttackBaseTask extends ObjectTask
     protected function handleInit (unit :CreatureUnit) :void
     {
         // pick a location to attack at
-        var baseLoc :Vector2 = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
+        var baseLoc :Vector2 = GameMode.instance.getPlayerBase(_targetBaseId).unitSpawnLoc;
 
         // calculate a vector that points from the base to our loc, rotated a bit
         var moveLoc :Vector2 = new Vector2(unit.displayObject.x, unit.displayObject.y);
@@ -172,18 +172,23 @@ class AttackBaseTask extends ObjectTask
     protected function handleMoving (unit :CreatureUnit) :void
     {
         // just wait till we're done moving
-        if (!unit.isMoving) {
+        if (!unit.isMoving()) {
             _state = STATE_ATTACKING;
         }
     }
 
     protected function handleAttacking (unit :CreatureUnit) :void
     {
-
+        // attack the base
+        if (!unit.isAttacking()) {
+            // @TODO - units only have one attack right now, but they might have more in the future
+            trace("[Unit " + unit.id + "] attacking base");
+            unit.sendAttack(_targetBaseId, unit.unitData.attacks[0]);
+        }
     }
 
 
-    protected var _owningPlayerId :uint;
+    protected var _targetBaseId :uint;
     protected var _state :int = STATE_INIT;
 
     protected static const STATE_INIT :int = -1;

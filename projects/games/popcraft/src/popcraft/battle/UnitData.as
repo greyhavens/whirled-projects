@@ -16,6 +16,7 @@ public class UnitData
 
     public var maxHealth :int;
     public var armor :UnitArmor;
+    public var attacks :Array;
 
     public function UnitData (
         name :String,
@@ -25,7 +26,8 @@ public class UnitData
         wanderRange :IntRange,
         movePixelsPerSecond :Number,
         maxHealth :int,
-        armor :UnitArmor )
+        armor :UnitArmor,
+        attacks :Array )
     {
         this.name = name;
         this.resourceCosts = resourceCosts;
@@ -37,6 +39,7 @@ public class UnitData
 
         this.maxHealth = maxHealth;
         this.armor = armor;
+        this.attacks = attacks;
     }
 
     public function getResourceCost (resourceType :uint) :int

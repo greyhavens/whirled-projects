@@ -5,6 +5,7 @@ import popcraft.*;
 import core.AppObject;
 
 import flash.display.Bitmap;
+import core.tasks.TimedTask;
 
 /**
  * If ActionScript allowed the creation of abstract classes or private constructors, I would do that here.
@@ -18,6 +19,7 @@ public class Unit extends AppObject
         _owningPlayerId = owningPlayerId;
 
         _unitData = (Constants.UNIT_DATA[unitType] as UnitData);
+        _health = _unitData.maxHealth;
     }
 
     protected function createOwningPlayerGlowForBitmap (bitmap :Bitmap) :Bitmap
@@ -25,7 +27,35 @@ public class Unit extends AppObject
         return Util.createGlowBitmap(bitmap, Constants.PLAYER_COLORS[_owningPlayerId] as uint);
     }
 
-    public function applyAttack (attack :UnitAttack) :void
+    public function isAttacking () :Boolean
+    {
+        return this.hasTasksNamed("attackCooldown");
+    }
+
+    public function sendAttack (targetId :uint, attack :UnitAttack) :void
+    {
+        // don't attack if we're already attacking
+        if (isAttacking()) {
+            return;
+        }
+
+        // find the target
+        var targetUnit :Unit = (GameMode.instance.netObjects.getObject(targetId) as Unit);
+        if (null == targetUnit) {
+            trace("Discarding attack against " + targetId + " (target doesn't exist or is not a Unit)");
+            return;
+        }
+
+        // send the attack
+        targetUnit.receiveAttack(this.id, attack);
+
+        // install a cooldown timer
+        if (attack.cooldown > 0) {
+            this.addNamedTask("attackCooldown", new TimedTask(attack.cooldown));
+        }
+    }
+
+    public function receiveAttack (sourceId :uint, attack :UnitAttack) :void
     {
         // calculate damage
         var damage :uint = uint(_unitData.armor.getAttackDamage(attack));
@@ -46,6 +76,11 @@ public class Unit extends AppObject
     public function get health () :uint
     {
         return _health;
+    }
+
+    public function get unitData () :UnitData
+    {
+        return _unitData;
     }
 
     protected var _owningPlayerId :uint;

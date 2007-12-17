@@ -21,6 +21,7 @@ import flash.text.TextField;
 import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.geom.Point;
+import com.threerings.parlor.game.data.GameObject;
 
 public class GameMode extends AppMode
 {
@@ -191,6 +192,11 @@ public class GameMode extends AppMode
     public function get playerData () :PlayerData
     {
         return _playerData;
+    }
+
+    public function get netObjects () :AppMode
+    {
+        return _netObjects;
     }
 
     protected var _gameIsRunning :Boolean;
