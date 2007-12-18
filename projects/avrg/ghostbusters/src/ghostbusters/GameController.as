@@ -93,6 +93,7 @@ public class GameController extends Controller
     public function handleSpawnGhost () :void
     {
         enterState(GameModel.STATE_FIGHTING);
+        _control.state.sendMessage("gs", null);
         _fightController.doSpawnGhost();
     }
 
@@ -150,7 +151,7 @@ public class GameController extends Controller
 
     protected function messageReceived (event: AVRGameControlEvent) :void
     {
-        if (event.name == "gs") {
+        if (event.name == "gs" && _model.getState() != GameModel.STATE_FIGHTING) {
             enterState(GameModel.STATE_FIGHTING);
         }
     }

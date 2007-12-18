@@ -80,14 +80,9 @@ public class SeekModel extends Sprite
         return _ghostSpeed;
     }
 
-    public function transmitGhostSpawn () :void
+    public function transmitGhostZap () :void
     {
-        _control.state.sendMessage("gs", null);
-    }
-
-    public function transmitGhostClick () :void
-    {
-        _control.state.sendMessage("gc", _myId);
+        _control.state.sendMessage(MSG_GHOST_ZAP, _myId);
     }
 
     public function transmitLanternPosition (pos :Point) :void
@@ -103,7 +98,7 @@ public class SeekModel extends Sprite
         // it's our job to send the ghost to a new position, figure out where
         var x :int = _random.nextNumber() * (_room.width - ghostBounds.width) - ghostBounds.left;
         var y :int = _random.nextNumber() * (_room.height - ghostBounds.height) - ghostBounds.top;
-        _control.state.sendMessage("gp", [ _roomId, x, y ]);
+        _control.state.sendMessage(MSG_GHOST_POS, [ _roomId, x, y ]);
     }
 
     public function getRoomId () :int
@@ -118,7 +113,7 @@ public class SeekModel extends Sprite
 
     protected function messageReceived (event: AVRGameControlEvent) :void
     {
-        if (event.name == "gp") {
+        if (event.name == MSG_GHOST_POS) {
             var bits :Array = event.value as Array;
             if (bits != null) {
                 var roomId :int = int(bits[0]);
@@ -130,7 +125,8 @@ public class SeekModel extends Sprite
                 }
             }
 
-        } else if (event.name == "gc") {
+        } else if (event.name == MSG_GHOST_ZAP) {
+            _panel.ghostZapped();
             _ghostSpeed = _ghostSpeed * 0.8 - 20;
             _panel.ghostSpeedUpdated();
         }
@@ -183,5 +179,8 @@ public class SeekModel extends Sprite
 
     protected var _ghostRandom :Random;
     protected var _ghostSpeed :Number;
+
+    protected static const MSG_GHOST_ZAP :String = "gz";
+    protected static const MSG_GHOST_POS :String = "gp";
 }
 }

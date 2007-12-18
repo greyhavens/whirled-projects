@@ -14,10 +14,12 @@ import flash.media.SoundChannel;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
+import flash.geom.ColorTransform;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.utils.Dictionary;
+import flash.utils.setTimeout;
 
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
@@ -80,6 +82,11 @@ public class SeekPanel extends Sprite
         _ghost.setSpeed(_model.getGhostSpeed());
     }
 
+    public function ghostZapped () :void
+    {
+        zapStart();
+    }
+
     protected function handleRemoved (evt :Event) :void
     {
         removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
@@ -90,11 +97,6 @@ public class SeekPanel extends Sprite
     {
         _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
         addEventListener(Event.ENTER_FRAME, handleEnterFrame);
-    }
-
-    protected function ghostClick (evt :MouseEvent) :void
-    {
-        CommandEvent.dispatch(this, SeekController.CLICK_GHOST);
     }
 
     protected function updateLantern (playerId :int, pos :Point) :void
@@ -119,10 +121,6 @@ public class SeekPanel extends Sprite
     {
         animateLanterns();
 
-        if (_ghost != null) {
-            _ghost.nextFrame();
-        }
-
         var p :Point = new Point(Math.max(0, Math.min(_roomSize.width, this.mouseX)),
                                  Math.max(0, Math.min(_roomSize.height, this.mouseY)));
         p = this.localToGlobal(p);
@@ -130,6 +128,22 @@ public class SeekPanel extends Sprite
         // bow to reality: nobody wants to watch roundtrip lag in action
         if (!Game.DEBUG) {
             updateLantern(_model.getMyId(), p);
+        }
+
+        if (_ghost != null) {
+            _ghost.nextFrame();
+
+            if (_zapping > 0) {
+                _zapping -= 1;
+                if (_zapping == 0) {
+                    zapStop();
+                }
+            }
+
+            if (_zapping == 0 && _ghost.hitTestPoint(p.x, p.y, true)) {
+                // the player is hovering right over the ghost!
+                CommandEvent.dispatch(this, SeekController.ZAP_GHOST);
+            }
         }
 
         // see if it's time to send an update on our own position
@@ -144,6 +158,20 @@ public class SeekPanel extends Sprite
         if (_ghost != null && _ghost.isIdle()) {
             _model.constructNewGhostPosition(_ghost.getGhostBounds());
         }
+    }
+
+    protected function zapStart () :void
+    {
+        _zapping = 60;
+        Sound(new Content.LANTERN_GHOST_SCREECH()).play();
+
+        // as a temporary visual effect, brighten the ghost by 50%
+        _ghost.transform.colorTransform = new ColorTransform(1.5, 1.5, 1.5);
+    }
+
+    protected function zapStop () :void
+    {
+        _ghost.transform.colorTransform = new ColorTransform();
     }
 
     protected function animateLanterns () :void
@@ -165,7 +193,6 @@ public class SeekPanel extends Sprite
         this.addChild(_maskLayer);
 
         _ghost = new HidingGhost(_model.getGhostSpeed());
-        _ghost.addEventListener(MouseEvent.CLICK, ghostClick);
         this.addChild(_ghost);
         _ghost.mask = _maskLayer;
     }
@@ -177,6 +204,8 @@ public class SeekPanel extends Sprite
     protected var _lanterns :Dictionary = new Dictionary();
 
     protected var _ghost :HidingGhost;
+
+    protected var _zapping :int;
 
     protected var _ticker :int;
 

@@ -14,7 +14,7 @@ import ghostbusters.GameController;
 
 public class SeekController extends Controller
 {
-    public static const CLICK_GHOST :String = "ClickGhost";
+    public static const ZAP_GHOST :String = "ZapGhost";
 
     public function SeekController (control :AVRGameControl)
     {
@@ -36,14 +36,14 @@ public class SeekController extends Controller
         return SeekPanel(_controlledPanel);
     }
 
-    public function handleClickGhost () :void
+    public function handleZapGhost () :void
     {
         // TODO: test state and whatnot
         if (_model.getGhostSpeed() < 10) {
             CommandEvent.dispatch(getSeekPanel(), GameController.SPAWN_GHOST);
 
         } else {
-            _model.transmitGhostClick();
+            _model.transmitGhostZap();
         }
     }
 
