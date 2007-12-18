@@ -8,9 +8,6 @@ import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.MobControl;
 
-import ghostbusters.fight.FightController;
-import ghostbusters.seek.SeekController;
-
 import flash.display.DisplayObject;
 
 public class GameController extends Controller
@@ -23,17 +20,16 @@ public class GameController extends Controller
     public static const HELP :String = "Help";
     public static const PLAY :String = "Play";
 
+    public var panel :GamePanel;
+    public var model :GameModel;
+
     public function GameController (control :AVRGameControl)
     {
         _control = control;
 
-        _seekController = new SeekController(control);
-        _fightController = new FightController(control);
-
-        _model = new GameModel(control);
-        var panel :GamePanel = new GamePanel(
-            _model, _seekController.getSeekPanel(), _fightController.getFightPanel());
-        _model.init(panel);
+        model = new GameModel(control);
+        panel = new GamePanel(model);
+        model.init(panel);
         setControlledPanel(panel);
 
         _control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
@@ -41,27 +37,8 @@ public class GameController extends Controller
 
     public function shutdown () :void
     {
-        getGamePanel().shutdown();
-        _model.shutdown();
-    }
-
-    public function getGameModel () :GameModel
-    {
-        return _model;
-    }
-
-    public function getGamePanel () :GamePanel
-    {
-        return GamePanel(_controlledPanel);
-    }
-
-    public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
-    {
-        if (id == "ghost") {
-            return _fightController.getFightPanel().getGhostSprite(ctrl);
-        }
-        Game.log.warning("Unknown MOB requested [id=" + id + "]");
-        return null;
+        panel.shutdown();
+        model.shutdown();
     }
 
     public function handleHelp () :void
@@ -81,10 +58,10 @@ public class GameController extends Controller
 
     public function handleToggleLantern () :void
     {
-        if (_model.getState() == GameModel.STATE_IDLE) {
+        if (model.getState() == GameModel.STATE_IDLE) {
             enterState(GameModel.STATE_SEEKING);
 
-        } else if (_model.getState() == GameModel.STATE_SEEKING) {
+        } else if (model.getState() == GameModel.STATE_SEEKING) {
             enterState(GameModel.STATE_IDLE);
         }
         // else no effect
@@ -93,8 +70,8 @@ public class GameController extends Controller
     public function handleSpawnGhost () :void
     {
         enterState(GameModel.STATE_FIGHTING);
-        _control.state.sendMessage("gs", null);
-        _fightController.doSpawnGhost();
+        _control.state.sendMessage(Codes.MSG_GHOST_SPAWN, null);
+        Game.fightController.doSpawnGhost();
     }
 
     public function handleEndFight () :void
@@ -104,7 +81,7 @@ public class GameController extends Controller
 
     public function enterState (state :String) :void
     {
-        var current :String = _model.getState();
+        var current :String = model.getState();
 
         if (state == GameModel.STATE_NONE) {
             // we should never transition to NONE
@@ -132,13 +109,13 @@ public class GameController extends Controller
             return;
         }
 
-        _model.enterState(state);
-        getGamePanel().enterState(state);
+        model.enterState(state);
+        panel.enterState(state);
     }
 
     protected function checkTransition(requested :String, ... allowed) :Boolean
     {
-        var current :String = _model.getState();
+        var current :String = model.getState();
         for (var ii :int = 0; ii < allowed.length; ii ++) {
             if (allowed[ii] == current) {
                 return true;
@@ -151,15 +128,11 @@ public class GameController extends Controller
 
     protected function messageReceived (event: AVRGameControlEvent) :void
     {
-        if (event.name == "gs" && _model.getState() != GameModel.STATE_FIGHTING) {
+        if (event.name == Codes.MSG_GHOST_SPAWN && model.getState() != GameModel.STATE_FIGHTING) {
             enterState(GameModel.STATE_FIGHTING);
         }
     }
 
     protected var _control :AVRGameControl;
-    protected var _model :GameModel;
-
-    protected var _seekController :SeekController;
-    protected var _fightController :FightController;
 }
 }

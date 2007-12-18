@@ -9,20 +9,26 @@ import flash.events.MouseEvent;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
 import com.whirled.AVRGameControl;
+import com.whirled.AVRGameControlEvent;
 
+import ghostbusters.Codes;
 import ghostbusters.GameController;
 
 public class SeekController extends Controller
 {
     public static const ZAP_GHOST :String = "ZapGhost";
 
+    public var panel :SeekPanel;
+    public var model :SeekModel;
+
     public function SeekController (control :AVRGameControl)
     {
         _control = control;
+        _control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
 
-        _model = new SeekModel(control);
-        var panel :SeekPanel = new SeekPanel(_model);
-        _model.init(panel);
+        model = new SeekModel(control);
+        panel = new SeekPanel(model);
+        model.init(panel);
 
         setControlledPanel(panel);
     }
@@ -31,23 +37,25 @@ public class SeekController extends Controller
     {
     }
 
-    public function getSeekPanel () :SeekPanel
-    {
-        return SeekPanel(_controlledPanel);
-    }
-
     public function handleZapGhost () :void
     {
         // TODO: test state and whatnot
-        if (_model.getGhostSpeed() < 10) {
-            CommandEvent.dispatch(getSeekPanel(), GameController.SPAWN_GHOST);
+        if (model.getGhostSpeed() < 10) {
+            CommandEvent.dispatch(panel, GameController.SPAWN_GHOST);
 
         } else {
-            _model.transmitGhostZap();
+            _control.state.sendMessage(Codes.MSG_GHOST_ZAP, model.getMyId());
+        }
+    }
+
+    protected function messageReceived (event: AVRGameControlEvent) :void
+    {
+        if (event.name == Codes.MSG_GHOST_ZAP) {
+            panel.ghostZapped();
+            model.ghostZapped();
         }
     }
 
     protected var _control :AVRGameControl;
-    protected var _model :SeekModel;
 }
 }

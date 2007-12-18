@@ -3,13 +3,19 @@
 
 package ghostbusters {
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.events.Event;
 
 import com.whirled.AVRGameControl;
+import com.whirled.MobControl;
 
 import com.threerings.util.Log;
+
+import ghostbusters.fight.FightController;
+
+import ghostbusters.seek.SeekController;
 
 [SWF(width="700", height="500")]
 public class Game extends Sprite
@@ -18,38 +24,50 @@ public class Game extends Sprite
 
     public static var log :Log = Log.getLog(Game);
 
+    public static var gameController :GameController;
+    public static var seekController :SeekController;
+    public static var fightController :FightController;
+
     public function Game ()
     {
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
-        _control = new AVRGameControl(this);
+        var control :AVRGameControl = new AVRGameControl(this);
 
-        _controller = new GameController(_control);
-        _control.setMobSpriteExporter(_controller.exportMobSprite);
+        gameController = new GameController(control);
+        seekController = new SeekController(control);
+        fightController = new FightController(control);
 
-        var panel :GamePanel = _controller.getGamePanel();
-        addChild(panel);
+        addChild(gameController.panel);
 
-        _control.setHitPointTester(panel.hitTestPoint);
-
-        // TODO: this is just while debugging
-        _control.despawnMob("ghost");
+        control.setMobSpriteExporter(exportMobSprite);
+        control.setHitPointTester(gameController.panel.hitTestPoint);
 
         this.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
     }
 
     protected function handleUnload (event :Event) :void
     {
-        _controller.shutdown();
+        gameController.shutdown();
+        fightController.shutdown();
+        seekController.shutdown();
     }
 
     protected function handleAdded (event :Event) :void
     {
-        _controller.enterState(GameModel.STATE_INTRO);
+        gameController.enterState(GameModel.STATE_INTRO);
     }
 
-    protected var _control :AVRGameControl;
+    public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
+    {
+        if (id == Codes.MOB_ID_GHOST) {
+            return Game.fightController.panel.getGhostSprite(ctrl);
+        }
+        Game.log.warning("Unknown MOB requested [id=" + id + "]");
+        return null;
+    }
 
-    protected var _controller :GameController;
+
+    protected var control :AVRGameControl;
 }
 }

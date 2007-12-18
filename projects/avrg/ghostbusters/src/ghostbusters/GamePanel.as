@@ -33,11 +33,9 @@ import ghostbusters.fight.Match3;
 
 public class GamePanel extends Sprite
 {
-    public function GamePanel (model :GameModel, seekPanel :SeekPanel, fightPanel :FightPanel)
+    public function GamePanel (model :GameModel)
     {
         _model = model;
-        _seekPanel = seekPanel;
-        _fightPanel = fightPanel;
 
         _hud = new HUD();
 
@@ -69,10 +67,10 @@ public class GamePanel extends Sprite
             showPanels(_hud);
 
         } else if (state == GameModel.STATE_SEEKING) {
-            showPanels(_seekPanel, _hud);
+            showPanels(Game.seekController.panel, _hud);
 
         } else if (state == GameModel.STATE_FIGHTING) {
-            showPanels(_fightPanel, _hud);
+            showPanels(Game.fightController.panel, _hud);
 
         } else {
             Game.log.warning("Unknown state requested [state=" + state + "]");

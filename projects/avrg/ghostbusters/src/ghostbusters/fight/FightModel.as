@@ -6,6 +6,8 @@ package ghostbusters.fight {
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 
+import ghostbusters.Codes;
+
 public class FightModel
 {
     public function FightModel (control :AVRGameControl)
@@ -26,7 +28,7 @@ public class FightModel
 
     public function newGhost (health :int) :void
     {
-        _control.state.setProperty("gh", [ health, health ], false);
+        _control.state.setProperty(Codes.PROP_GHOST_HEALTH, [ health, health ], false);
     }
 
     public function damageGhost (damage :int) :Boolean
@@ -35,25 +37,26 @@ public class FightModel
         if (damage > health) {
             return true;
         }
-        _control.state.setProperty("gh", [ health-damage, getGhostMaxHealth() ], false);
+        _control.state.setProperty(
+            Codes.PROP_GHOST_HEALTH, [ health-damage, getGhostMaxHealth() ], false);
         return false;
     }
 
     public function getGhostHealth () :int
     {
-        var gh :Object = _control.state.getProperty("gh");
+        var gh :Object = _control.state.getProperty(Codes.PROP_GHOST_HEALTH);
         return gh != null ? gh[0] : 1;
     }
 
     public function getGhostMaxHealth () :Number
     {
-        var gh :Object = _control.state.getProperty("gh");
+        var gh :Object = _control.state.getProperty(Codes.PROP_GHOST_HEALTH);
         return gh != null ? gh[1] : 1;
     }
 
     protected function propertyChanged (evt :AVRGameControlEvent) :void
     {
-        if (evt.name == "gh") {
+        if (evt.name == Codes.PROP_GHOST_HEALTH) {
             _panel.ghostHealthUpdated();
         }
     }

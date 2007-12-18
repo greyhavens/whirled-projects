@@ -37,6 +37,7 @@ import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
 
+import ghostbusters.Codes;
 import ghostbusters.Game;
 
 public class SeekModel extends Sprite
@@ -75,21 +76,22 @@ public class SeekModel extends Sprite
         return _control.getStageSize(false);
     }
 
+    public function ghostZapped () :void
+    {
+        _ghostSpeed = _ghostSpeed * 0.8 - 20;
+        _panel.ghostSpeedUpdated();
+    }
+
     public function getGhostSpeed () :Number
     {
         return _ghostSpeed;
-    }
-
-    public function transmitGhostZap () :void
-    {
-        _control.state.sendMessage(MSG_GHOST_ZAP, _myId);
     }
 
     public function transmitLanternPosition (pos :Point) :void
     {
         pos = _control.stageToRoom(pos);
         if (pos != null) {
-            _control.state.setProperty("fl", [ _myId, pos.x, pos.y ], false);
+            _control.state.setProperty(Codes.PROP_LANTERN_POS, [ _myId, pos.x, pos.y ], false);
         }
     }
 
@@ -98,7 +100,7 @@ public class SeekModel extends Sprite
         // it's our job to send the ghost to a new position, figure out where
         var x :int = _random.nextNumber() * (_room.width - ghostBounds.width) - ghostBounds.left;
         var y :int = _random.nextNumber() * (_room.height - ghostBounds.height) - ghostBounds.top;
-        _control.state.sendMessage(MSG_GHOST_POS, [ _roomId, x, y ]);
+        _control.state.sendMessage(Codes.MSG_GHOST_POS, [ _roomId, x, y ]);
     }
 
     public function getRoomId () :int
@@ -113,7 +115,7 @@ public class SeekModel extends Sprite
 
     protected function messageReceived (event: AVRGameControlEvent) :void
     {
-        if (event.name == MSG_GHOST_POS) {
+        if (event.name == Codes.MSG_GHOST_POS) {
             var bits :Array = event.value as Array;
             if (bits != null) {
                 var roomId :int = int(bits[0]);
@@ -124,17 +126,12 @@ public class SeekModel extends Sprite
                     }
                 }
             }
-
-        } else if (event.name == MSG_GHOST_ZAP) {
-            _panel.ghostZapped();
-            _ghostSpeed = _ghostSpeed * 0.8 - 20;
-            _panel.ghostSpeedUpdated();
         }
     }
 
     protected function propertyChanged (event: AVRGameControlEvent) :void
     {
-        if (event.name == "fl") {
+        if (event.name == Codes.PROP_LANTERN_POS) {
             var bits :Array = event.value as Array;
             if (bits != null) {
                 var playerId :int = int(bits[0]);
@@ -179,8 +176,5 @@ public class SeekModel extends Sprite
 
     protected var _ghostRandom :Random;
     protected var _ghostSpeed :Number;
-
-    protected static const MSG_GHOST_ZAP :String = "gz";
-    protected static const MSG_GHOST_POS :String = "gp";
 }
 }
