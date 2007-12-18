@@ -65,6 +65,9 @@ public class PlayerBaseUnit extends Unit
     {
         super.receiveAttack(sourceId, attack);
         _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));
+
+        // when the player base is attacked, it deals damage back to the attacker
+        this.sendAttack(sourceId, this.unitData.attack);
     }
 
     protected var _unitSpawnLoc :Vector2 = new Vector2();

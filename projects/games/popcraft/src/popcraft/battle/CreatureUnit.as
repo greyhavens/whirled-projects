@@ -151,10 +151,6 @@ import popcraft.battle.CreatureUnit;
 
 class MoveToWaypointTask extends ObjectTask
 {
-    public function MoveToWaypointTask ()
-    {
-    }
-
     override public function update (dt :Number, obj :AppObject) :Boolean
     {
         var unit :CreatureUnit = (obj as CreatureUnit);
@@ -234,8 +230,7 @@ class AttackBaseTask extends ObjectTask
     {
         // attack the base
         if (!unit.isAttacking()) {
-            // @TODO - units only have one attack right now, but they might have more in the future
-            unit.sendAttack(_targetBaseId, unit.unitData.attacks[0]);
+            unit.sendAttack(_targetBaseId, unit.unitData.attack);
         }
     }
 
