@@ -39,29 +39,29 @@ public class Rand
     }
 
     /** Returns an integer in the range [0, MAX) */
-    public static function nextInt (streamId :int= STREAM_COSMETIC) :int
+    public static function nextInt (streamId :int) :int
     {
         return getStream(streamId).nextInt();
     }
 
     /** Returns an int in the range [low, high) */
-    public static function nextIntRange (low :int, high :int, streamId :int= STREAM_COSMETIC) :int
+    public static function nextIntRange (low :int, high :int, streamId :int) :int
     {
         return low + getStream(streamId).nextInt(high - low);
     }
 
-    public static function nextBoolean (streamId :int= STREAM_COSMETIC) :Boolean
+    public static function nextBoolean (streamId :int) :Boolean
     {
         return getStream(streamId).nextBoolean();
     }
 
-    public static function nextNumber (streamId :int= STREAM_COSMETIC) :Number
+    public static function nextNumber (streamId :int) :Number
     {
         return getStream(streamId).nextNumber();
     }
 
     /** Returns a Number in the range [low, high) */
-    public static function nextNumberRange (low :Number, high :Number, streamId :int= STREAM_COSMETIC) :Number
+    public static function nextNumberRange (low :Number, high :Number, streamId :int) :Number
     {
         return low + (getStream(streamId).nextNumber() * (high - low));
     }

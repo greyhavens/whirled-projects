@@ -69,7 +69,7 @@ public class PuzzleBoard extends AppObject
         Assert.isTrue(boardIndex >= 0 && boardIndex < _board.length);
         Assert.isNull(_board[boardIndex]);
 
-        var resourceType :uint = Rand.nextIntRange(0, Constants.RESOURCE_TYPES.length);
+        var resourceType :uint = Rand.nextIntRange(0, Constants.RESOURCE_TYPES.length, Rand.STREAM_COSMETIC);
         var piece :Piece = new Piece(resourceType, boardIndex);
 
         piece.displayObject.x = getPieceXLoc(idxToX(boardIndex));

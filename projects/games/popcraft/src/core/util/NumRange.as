@@ -11,7 +11,7 @@ public class NumRange
         this.max = max;
     }
 
-    public function next (randStreamId :uint = Rand.STREAM_COSMETIC) :Number
+    public function next (randStreamId :uint) :Number
     {
         return Rand.nextNumberRange(this.min, this.max, randStreamId);
     }
