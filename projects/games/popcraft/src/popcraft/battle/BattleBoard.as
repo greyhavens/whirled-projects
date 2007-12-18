@@ -8,6 +8,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import popcraft.net.PlaceWaypointMessage;
+import flash.geom.Point;
 
 public class BattleBoard extends AppObject
 {
@@ -58,10 +59,11 @@ public class BattleBoard extends AppObject
 
     protected function handleMouseDown (e :MouseEvent) :void
     {
-        trace("battleboard.mousedown");
-        // place the player's waypoint marker
-        GameMode.instance.messageManager.sendMessage(
-            new PlaceWaypointMessage(GameMode.instance.playerData.playerId, e.localX, e.localY));
+        // translate the mouse coordinates to local coordinates
+        // (the click may have originated on a display descendent)
+        var loc :Point = _view.globalToLocal(new Point(e.stageX, e.stageY));
+
+        GameMode.instance.placeWaypoint(loc.x, loc.y);
     }
 
     protected var _tileGrid :Array;

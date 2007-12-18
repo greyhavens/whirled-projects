@@ -197,6 +197,19 @@ public class GameMode extends AppMode
         _messageMgr.sendMessage(new CreateUnitMessage(unitType, _playerData.playerId));
     }
 
+    public function placeWaypoint (x :uint, y :uint) :void
+    {
+        // drop redundant clicks
+        if (_lastWaypointPlacement.x == x && _lastWaypointPlacement.y == y) {
+            trace("dropping redundant waypoint placement message");
+            return;
+        }
+
+        _messageMgr.sendMessage(new PlaceWaypointMessage(_playerData.playerId, x, y));
+        _lastWaypointPlacement.x = x;
+        _lastWaypointPlacement.y = y;
+    }
+
     // from core.AppMode
     override public function destroy () :void
     {
@@ -232,6 +245,8 @@ public class GameMode extends AppMode
 
     protected var _playerBaseIds :Array = new Array();
     protected var _playerWaypoints :Array = new Array();
+
+    protected var _lastWaypointPlacement :Point = new Point(-1, -1);
 
     protected static const TICK_INTERVAL_MS :int = 100; // 1/10 of a second
     protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));
