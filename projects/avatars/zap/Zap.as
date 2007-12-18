@@ -92,13 +92,13 @@ public class Zap extends FrameSprite
         g.drawCircle(0, 40, 9);
         g.endFill();
 
-        _canvas.graphics.lineStyle(w, c1);
+        g.lineStyle(w, c1);
 	recursiveLightning(from, to, 50);
 
-        _canvas.graphics.lineStyle(w, c2);
+        g.lineStyle(w, c2);
 	recursiveLightning(from, to, 50);
 
-        _canvas.graphics.lineStyle(w, c3);
+        g.lineStyle(w, c3);
 	recursiveLightning(from, to, 50);
     }
 
