@@ -91,7 +91,7 @@ public class Constants
 
             new UnitData (
                 "melee"                     // name
-                , [5,   0,  0,    0]        // resource costs (brown, gold, blue, pink)
+                , [0,   0,  0,    0]        // resource costs (brown, gold, blue, pink)
                 , IMAGE_MELEE               // image
                 , 30, new IntRange(5, 25)   // wanderEvery, wanderRange
                 , 64                        // move speed (pixels/second)
@@ -107,7 +107,7 @@ public class Constants
 
             new UnitData (
                 "ranged"                    // name
-                , [0,   5,  0,    0]        // resource costs (brown, gold, blue, pink)
+                , [0,   0,  0,    0]        // resource costs (brown, gold, blue, pink)
                 , IMAGE_RANGED              // image
                 , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
                 , 40                        // move speed (pixels/second)
