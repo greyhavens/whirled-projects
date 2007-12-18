@@ -24,6 +24,7 @@ public class AppMode extends Sprite
     {
         Assert.isTrue(null != obj);
         Assert.isTrue(0xFFFFFFFF == obj._objectId);
+        Assert.isTrue(null == obj._parentMode);
 
         // if there's no free slot in our objects array,
         // make a new one
@@ -40,6 +41,7 @@ public class AppMode extends Sprite
         _objects[index] = obj;
 
         obj._objectId = createObjectId(index);
+        obj._parentMode = this;
 
         // does the object have a name?
         if (null != obj.objectName) {
@@ -83,6 +85,8 @@ public class AppMode extends Sprite
         if (null == obj) {
             return;
         }
+
+        obj._parentMode = null;
 
         var index :uint = idToIndex(id);
 

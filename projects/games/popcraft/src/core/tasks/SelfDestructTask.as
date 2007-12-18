@@ -12,7 +12,7 @@ public class SelfDestructTask extends ObjectTask
 
     override public function update (dt :Number, obj :AppObject) :Boolean
     {
-        obj.removeSelf();
+        obj.destroySelf();
         return true;
     }
 

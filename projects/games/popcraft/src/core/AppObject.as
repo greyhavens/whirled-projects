@@ -75,9 +75,9 @@ public class AppObject
     }
 
     /** Removes the AppObject from its parent mode. */
-    public function removeSelf() :void
+    public function destroySelf() :void
     {
-        MainLoop.instance.topMode.removeObject(_objectId);
+        _parentMode.removeObject(_objectId);
     }
 
     /** Adds an unnamed task to this AppObject. */
@@ -192,6 +192,7 @@ public class AppObject
 
     // managed by AppMode
     internal var _objectId :uint = 0xFFFFFFFF;
+    internal var _parentMode :AppMode;
 }
 
 }

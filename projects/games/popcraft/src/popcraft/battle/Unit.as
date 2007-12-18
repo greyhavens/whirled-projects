@@ -61,6 +61,10 @@ public class Unit extends AppObject
         var damage :uint = uint(_unitData.armor.getAttackDamage(attack));
         damage = Math.min(damage, _health);
         _health -= damage;
+
+        if (_health == 0) {
+            this.destroySelf();
+        }
     }
 
     public function get owningPlayerId () :uint
