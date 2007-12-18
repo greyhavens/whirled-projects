@@ -79,15 +79,17 @@ public class GameMode extends AppMode
 
         this.addObject(_battleBoard, this);
 
+        // set up some network stuff
         _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
+        _messageMgr.addMessageFactory(PlaceWaypointMessage.messageName, PlaceWaypointMessage.createFactory());
         _messageMgr.setup((0 == _playerData.playerId), TICK_INTERVAL_MS);
 
         // create a special AppMode for all objects that are synchronized over the network.
         // we will manage this mode ourselves.
         _netObjects = new AppMode();
 
-        // create the player bases
+        // create the player bases & waypoints
         var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
         var player :uint = 0;
         for each (var loc :Vector2 in baseLocs) {
@@ -100,7 +102,8 @@ public class GameMode extends AppMode
             var waypointMarker :WaypointMarker = new WaypointMarker(player);
             this.addObject(waypointMarker, _battleBoard.displayObjectContainer);
             waypointMarker.displayObject.x = loc.x;
-            waypointMarker.displayObject.y = loc.y - 80;
+            waypointMarker.displayObject.y = loc.y;
+            _playerWaypoints.push(waypointMarker);
 
             ++player;
         }
@@ -155,6 +158,13 @@ public class GameMode extends AppMode
                 UnitFactory.createUnit(createUnitMsg.unitType, createUnitMsg.owningPlayer),
                 _battleBoard.displayObjectContainer);
             break;
+
+        case PlaceWaypointMessage.messageName:
+            var placeWaypointMsg :PlaceWaypointMessage = (msg as PlaceWaypointMessage);
+            var marker :WaypointMarker = (_playerWaypoints[placeWaypointMsg.owningPlayerId] as WaypointMarker);
+            marker.displayObject.x = placeWaypointMsg.xLoc;
+            marker.displayObject.y = placeWaypointMsg.yLoc;
+            break;
         }
 
     }
@@ -206,6 +216,11 @@ public class GameMode extends AppMode
         return _netObjects;
     }
 
+    public function get messageManager () :TickedMessageManager
+    {
+        return _messageMgr;
+    }
+
     protected var _gameIsRunning :Boolean;
 
     protected var _messageMgr :TickedMessageManager;
@@ -216,6 +231,7 @@ public class GameMode extends AppMode
     protected var _netObjects :AppMode;
 
     protected var _playerBaseIds :Array = new Array();
+    protected var _playerWaypoints :Array = new Array();
 
     protected static const TICK_INTERVAL_MS :int = 100; // 1/10 of a second
     protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));

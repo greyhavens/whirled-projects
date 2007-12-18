@@ -1,9 +1,13 @@
 package popcraft.battle {
 
+import popcraft.*;
+
 import core.AppObject;
 import flash.display.Shape;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
+import popcraft.net.PlaceWaypointMessage;
 
 public class BattleBoard extends AppObject
 {
@@ -43,11 +47,21 @@ public class BattleBoard extends AppObject
             _view.graphics.moveTo(0, row * _tileSize);
             _view.graphics.lineTo(width, row * _tileSize);
         }
+
+        _view.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown, false);
     }
 
     override public function get displayObject () :DisplayObject
     {
         return _view;
+    }
+
+    protected function handleMouseDown (e :MouseEvent) :void
+    {
+        trace("battleboard.mousedown");
+        // place the player's waypoint marker
+        GameMode.instance.messageManager.sendMessage(
+            new PlaceWaypointMessage(GameMode.instance.playerData.playerId, e.localX, e.localY));
     }
 
     protected var _tileGrid :Array;
