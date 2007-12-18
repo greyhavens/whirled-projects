@@ -69,9 +69,9 @@ public class AppObject
     }
 
     /** Returns true if the object is in the specified group. */
-    public function isInGroup (role :String) :Boolean
+    public function isInGroup (groupName :String) :Boolean
     {
-        return this.objectGroups.contains(role);
+        return this.objectGroups.contains(groupName);
     }
 
     /** Removes the AppObject from its parent mode. */

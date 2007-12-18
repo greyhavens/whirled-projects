@@ -147,9 +147,9 @@ public class AppMode extends Sprite
     }
 
     /** Returns the set of objects in the given group. This set must not be modified by client code. */
-    public function getObjectsInGroup (role :String) :ObjectSet
+    public function getObjectsInGroup (groupName :String) :ObjectSet
     {
-        var objects :ObjectSet = (_groupedObjects.get(role) as ObjectSet);
+        var objects :ObjectSet = (_groupedObjects.get(groupName) as ObjectSet);
 
         return (null != objects ? objects : new ObjectSet());
     }
