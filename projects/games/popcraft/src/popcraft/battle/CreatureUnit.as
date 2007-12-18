@@ -70,7 +70,7 @@ public class CreatureUnit extends Unit
     // this is a hugely descriptive name because I don't want to forget what it does
     public function createEnemyDetectLoopSlashAttackEnemyBaseTask () :ObjectTask
     {
-        /*var task :ParallelTask = new ParallelTask();
+        var task :ParallelTask = new ParallelTask();
         task.addTask(new AttackBaseTask(this.findEnemyBaseToAttack()));
 
         var detectLoop :RepeatingTask = new RepeatingTask();
@@ -79,9 +79,7 @@ public class CreatureUnit extends Unit
 
         task.addTask(detectLoop);
 
-        return task;*/
-
-        return new AttackBaseTask(this.findEnemyBaseToAttack());
+        return task;
     }
 
     public function moveTo (x :int, y :int) :void
@@ -268,6 +266,14 @@ class EnemyAttackTask extends ObjectTask
         }
 
         // the enemy is still alive. Can we attack?
+        if (unit.canAttackUnit(enemy, unit.unitData.attack)) {
+            unit.removeNamedTasks("move");
+            unit.sendAttack(enemy, unit.unitData.attack);
+        } else {
+            // should we try to get closer to the enemy?
+            var attackLoc :Vector2 = unit.findNearestAttackLocation(enemy, unit.unitData.attack);
+            unit.moveTo(attackLoc.x, attackLoc.y);
+        }
 
         return false;
     }
