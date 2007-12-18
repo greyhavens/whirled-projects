@@ -16,9 +16,12 @@ import flash.filters.GlowFilter;
 import flash.geom.Rectangle;
 import flash.display.BitmapData;
 import mx.effects.Move;
+import com.threerings.util.HashSet;
 
 public class CreatureUnit extends Unit
 {
+    public static const GROUP_NAME :String = "CreatureUnit";
+
     public function CreatureUnit (unitType :uint, owningPlayerId :uint)
     {
         super(unitType, owningPlayerId);
@@ -128,9 +131,38 @@ public class CreatureUnit extends Unit
         _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));
     }
 
+    // from AppObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
+    }
+
+    // from AppObject
+    override public function get objectGroups () :HashSet
+    {
+        // every CreatureUnit is in the CreatureUnit.GROUP_NAME group
+        if (null == g_groups) {
+            g_groups = new HashSet();
+            g_groups.add(GROUP_NAME);
+        }
+
+        return g_groups;
+    }
+
+    // returns an enemy within our detect radius, or null if no enemy was found
+    protected function findEnemyToAttack () :CreatureUnit
+    {
+        var allCreatures :Array = GameMode.instance.netObjects.getObjectsInGroup(CreatureUnit.GROUP_NAME).toArray();
+
+        // find the first creature that satisifies our requirements
+        // this function is probably horribly slow
+        for each (var creature :CreatureUnit in allCreatures) {
+            if ((creature.owningPlayerId != this.owningPlayerId) && this.isUnitInDetectRange(creature)) {
+                return creature;
+            }
+        }
+
+        return null;
     }
 
     public function isMoving () :Boolean
@@ -140,6 +172,8 @@ public class CreatureUnit extends Unit
 
     protected var _sprite :Sprite;
     protected var _healthMeter :RectMeter;
+
+    protected static var g_groups :HashSet;
 
     // AI state machine
     protected static const STATE_ATTACKBASE :uint = 0;

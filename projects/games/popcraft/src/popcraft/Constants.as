@@ -2,6 +2,7 @@ package popcraft {
 
 import popcraft.battle.*;
 
+import core.*;
 import core.util.*;
 
 import com.threerings.util.Assert;
@@ -98,6 +99,8 @@ public class Constants
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_MELEE, 0.8, DAMAGE_TYPE_PROJECTILE, 0.7, DAMAGE_TYPE_BASE, 1] )   // armor
                 , new UnitAttack(DAMAGE_TYPE_MELEE, new NumRange(10, 10), UNIT_CLASS_GROUND, 1) // attack
+                , 30                        // collision radius
+                , 90                        // detect radius
             )
 
             ,
@@ -111,6 +114,8 @@ public class Constants
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_MELEE, 1, DAMAGE_TYPE_PROJECTILE, 1, DAMAGE_TYPE_BASE, 1] )   // armor
                 , new UnitAttack(DAMAGE_TYPE_PROJECTILE, new NumRange(10, 10), UNIT_CLASS__ALL, 1) // attack
+                , 30                        // collision radius
+                , 90                        // detect radius
             )
 
             ,
@@ -126,6 +131,8 @@ public class Constants
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_MELEE, 0.1, DAMAGE_TYPE_PROJECTILE, 0.1] )   // armor
                 , new UnitAttack(DAMAGE_TYPE_BASE, new NumRange(20, 20), UNIT_CLASS__ALL, 0) // attack
+                , 30                        // collision radius
+                , 90                        // detect radius
             )
     ];
 

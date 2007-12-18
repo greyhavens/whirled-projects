@@ -2,10 +2,11 @@ package popcraft.battle {
 
 import popcraft.*;
 
-import core.AppObject;
+import core.*;
+import core.util.*;
+import core.tasks.*;
 
 import flash.display.Bitmap;
-import core.tasks.TimedTask;
 
 /**
  * If ActionScript allowed the creation of abstract classes or private constructors, I would do that here.
@@ -85,6 +86,16 @@ public class Unit extends AppObject
     public function get unitData () :UnitData
     {
         return _unitData;
+    }
+
+    /** returns true if the specified Unit's "collision circle" is within our "detect circle" */
+    public function isUnitInDetectRange (unit :Unit) :Boolean
+    {
+        return Collision.circlesIntersect(
+            new Vector2(this.displayObject.x, this.displayObject.y),
+            this.unitData.detectRadius,
+            new Vector2(unit.displayObject.x, unit.displayObject.y),
+            unit.unitData.collisionRadius);
     }
 
     protected var _owningPlayerId :uint;

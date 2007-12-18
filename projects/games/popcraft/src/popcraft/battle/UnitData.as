@@ -18,6 +18,9 @@ public class UnitData
     public var armor :UnitArmor;
     public var attack :UnitAttack;
 
+    public var collisionRadius :Number;
+    public var detectRadius :Number;
+
     public function UnitData (
         name :String,
         resourceCosts :Array,
@@ -27,7 +30,9 @@ public class UnitData
         movePixelsPerSecond :Number,
         maxHealth :int,
         armor :UnitArmor,
-        attack :UnitAttack )
+        attack :UnitAttack,
+        collisionRadius :Number,
+        detectRadius :Number )
     {
         this.name = name;
         this.resourceCosts = resourceCosts;
@@ -40,6 +45,9 @@ public class UnitData
         this.maxHealth = maxHealth;
         this.armor = armor;
         this.attack = attack;
+
+        this.collisionRadius = collisionRadius;
+        this.detectRadius = detectRadius;
     }
 
     public function getResourceCost (resourceType :uint) :int
