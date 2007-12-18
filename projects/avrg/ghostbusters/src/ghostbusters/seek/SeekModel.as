@@ -78,7 +78,7 @@ public class SeekModel extends Sprite
 
     public function ghostZapped () :void
     {
-        _ghostSpeed = _ghostSpeed * 0.8 - 20;
+//        _ghostSpeed = _ghostSpeed * 0.8 - 20;
         _panel.ghostSpeedUpdated();
     }
 
