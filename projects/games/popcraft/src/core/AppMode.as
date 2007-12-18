@@ -55,7 +55,7 @@ public class AppMode extends Sprite
             var groupList :Array = groups.toArray();
             for each (var group :* in groupList) {
                 var groupSet :ObjectSet = (_groupedObjects.get(group) as ObjectSet);
-                if (null != groupSet) {
+                if (null == groupSet) {
                     groupSet = new ObjectSet();
                     _groupedObjects.put(group, groupSet);
                 }
