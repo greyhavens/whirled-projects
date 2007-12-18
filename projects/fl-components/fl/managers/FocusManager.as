@@ -1106,18 +1106,21 @@ package fl.managers {
          * @playerversion Flash 9.0.28.0
 		 */
 		private function getTopLevelFocusTarget(o:InteractiveObject):InteractiveObject {
-			while (o != InteractiveObject(form)) {
-				if (o is IFocusManagerComponent &&
-					IFocusManagerComponent(o).focusEnabled &&
-					IFocusManagerComponent(o).mouseFocusEnabled &&
-					UIComponent(o).enabled) {
-					return o;
-				}
-				o = o.parent;
-				if (o == null) {
-					break;
-				}
-			}
+            try {
+                while (o != InteractiveObject(form)) {
+                    if (o is IFocusManagerComponent &&
+                        IFocusManagerComponent(o).focusEnabled &&
+                        IFocusManagerComponent(o).mouseFocusEnabled &&
+                        UIComponent(o).enabled) {
+                        return o;
+                    }
+                    o = o.parent;
+                    if (o == null) {
+                        break;
+                    }
+                }
+            } catch (err :SecurityError) {
+            }
 			return null;
 		}
 	}
