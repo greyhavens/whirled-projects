@@ -76,6 +76,8 @@ public class SeaDisplay extends Sprite
 
         _panda = Bitmap(new PANDA()).bitmapData;
         _dodo = Bitmap(new DODO()).bitmapData;
+        _dino = Bitmap(new DINO()).bitmapData;
+        _unicorn = Bitmap(new UNICORN()).bitmapData;
 
         if (rando == null) {
             rando = new Random(int(getTimer()));
@@ -99,20 +101,10 @@ public class SeaDisplay extends Sprite
                 matrix = new Matrix();
                 matrix.translate(xx * TILE_SIZE, yy * TILE_SIZE);
 
-                // draw in the background
-                switch (type) {
-                default:
-                    // no background needed
-                    break;
-
-                case Board.BLANK:
-                case Board.PANDA:
-                case Board.DODO:
-                    // if we're blank, we need to be either moss or ground, depending on what's
-                    // above us.
+                // draw in the background, if needed
+                if (type == Board.BLANK || Board.isAnimal(type)) {
                     toDraw = pickBitmap(rando, theBoard.castsMoss(xx, yy - 1) ? _moss : _grounds);
                     data.draw(toDraw, matrix);
-                    break;
                 }
                 // draw in the foreground
                 switch (type) {
@@ -122,12 +114,11 @@ public class SeaDisplay extends Sprite
                     data.draw(toDraw, matrix);
                     break;
 
-                case Board.PANDA:
-                    data.draw(_panda, matrix);
-                    break;
-
-                case Board.DODO:
-                    data.draw(_dodo, matrix);
+                default:
+                    toDraw = animalToBitmap(type);
+                    if (toDraw != null) {
+                        data.draw(toDraw, matrix);
+                    }
                     break;
                 }
             }
@@ -253,9 +244,11 @@ public class SeaDisplay extends Sprite
                 _tiles.bitmapData.draw(pickBitmap(null, _grounds), matrix);
             }
 
-        } else if (value == Board.DODO || value == Board.PANDA) {
-            var toDraw :BitmapData = (value == Board.DODO) ? _dodo : _panda;
-            _tiles.bitmapData.draw(toDraw, matrix);
+        } else {
+            var toDraw :BitmapData = animalToBitmap(value);
+            if (toDraw != null) {
+                _tiles.bitmapData.draw(toDraw, matrix);
+            }
         }
     }
 
@@ -300,6 +293,26 @@ public class SeaDisplay extends Sprite
         }
     }
 
+    protected function animalToBitmap (type :int) :BitmapData
+    {
+        switch (type) {
+        case Board.PANDA:
+            return _panda;
+
+        case Board.DODO:
+            return _dodo;
+
+        case Board.DINOSAUR:
+            return _dino;
+
+        case Board.UNICORN:
+            return _unicorn;
+
+        default:
+            return null;
+        }
+    }
+
     /**
      * Set the graphics to begin filling a bitmap picked from the
      * specified set.
@@ -320,6 +333,8 @@ public class SeaDisplay extends Sprite
 
     protected var _panda :BitmapData;
     protected var _dodo :BitmapData;
+    protected var _dino :BitmapData;
+    protected var _unicorn :BitmapData;
 
     protected var _sub :Submarine;
 
@@ -396,5 +411,11 @@ public class SeaDisplay extends Sprite
 
     [Embed(source="rsrc/animal_dodo.png")]
     protected static const DODO :Class;
+
+    [Embed(source="rsrc/animal_dinosaur.png")]
+    protected static const DINO :Class;
+
+    [Embed(source="rsrc/animal_unicorn.png")]
+    protected static const UNICORN :Class;
 }
 }

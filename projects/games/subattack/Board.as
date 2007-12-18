@@ -26,6 +26,9 @@ public class Board
 
     public static const DODO :int = 100;
     public static const PANDA :int = 101;
+    public static const DINOSAUR :int = 102;
+    public static const UNICORN :int = 103;
+    public static const NUM_ANIMALS :int = 4;
 
     public function Board (gameCtrl :WhirledGameControl, seaDisplay :SeaDisplay)
     {
@@ -154,6 +157,20 @@ public class Board
     public function playSound (sound :Sound, xx :int, yy :int) :void
     {
         _seaDisplay.playSound(sound, xx, yy);
+    }
+
+    public static function isAnimal (tileKind :int) :Boolean
+    {
+        switch (tileKind) {
+        case DODO:
+        case PANDA:
+        case DINOSAUR:
+        case UNICORN:
+            return true;
+
+        default:
+            return false;
+        }
     }
 
     /**
@@ -362,7 +379,7 @@ public class Board
         } else if (val == BLANK) {
             return true; // there's ONLY subs here
 
-        } else if (val == DODO || val == PANDA) {
+        } else if (isAnimal(val)) {
             Submarine(_subs[playerIndex]).animalKilled(xx, yy, getAnimalName(val));
             val = BLANK;
 
@@ -475,7 +492,7 @@ public class Board
         var size :int = _width * _height;
         var pick :int = _rando.nextInt(size);
         var origPick :int = pick;
-        var kind :int = (0 == _rando.nextInt(2)) ? PANDA : DODO;
+        var kind :int = DODO + _rando.nextInt(NUM_ANIMALS);
         while (_board[pick] != BLANK || areSubsAt(pick)) {
             pick++;
             if (pick >= size) {
@@ -602,6 +619,12 @@ public class Board
 
         case PANDA:
             return "panda";
+
+        case DINOSAUR:
+            return "dinosaur";
+
+        case UNICORN:
+            return "unicorn";
 
         default:
             return "Rick Keagy";
