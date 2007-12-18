@@ -2,9 +2,10 @@
 
 package {
 
-import flash.display.DisplayObject;
-import flash.display.Sprite;
 import flash.display.BlendMode;
+import flash.display.DisplayObject;
+import flash.display.MovieClip;
+import flash.display.Sprite;
 
 import flash.events.Event;
 
@@ -30,6 +31,30 @@ public class Board extends Sprite
         addChild(goalDome);
         addChild(_marbleLayer = new Sprite());
         addChild(_clock = new Clock(turnTimeout));
+        var launcherLayer :Sprite = new Sprite();
+        addChild(launcherLayer);
+        var launcherSymbols :Array = [ "UP", "MID", "LOW" ];
+        for (var ii :int = 0; ii < 3; ii++) {
+            var trans :Matrix = new Matrix();
+            trans.translate(Ring.SIZE_PER_RING * 5.5, 0);
+            trans.rotate(-LAUNCHER_ANGLES[ii].moon * Math.PI / 180);
+            var moonLauncher :MovieClip = 
+                new Board["GATE_MOON_" + launcherSymbols[ii]]() as MovieClip;
+            moonLauncher.transform.matrix = trans;
+            moonLauncher.scaleX = moonLauncher.scaleY = -1;
+            launcherLayer.addChild(moonLauncher);
+            _launchers[ScoreBoard.MOON_PLAYER][ii] = new LaunchAnimation(this, moonLauncher);
+
+            trans = new Matrix();
+            trans.translate(Ring.SIZE_PER_RING * 5.5, 0);
+            trans.rotate(-LAUNCHER_ANGLES[ii].sun * Math.PI / 180);
+            var sunLauncher :MovieClip = 
+                new Board["GATE_SUN_" + launcherSymbols[ii]]() as MovieClip;
+            sunLauncher.transform.matrix = trans;
+            sunLauncher.scaleX = sunLauncher.scaleY = -1;
+            launcherLayer.addChild(sunLauncher);
+            _launchers[ScoreBoard.SUN_PLAYER][ii] = new LaunchAnimation(this, sunLauncher);
+        }
 
         _loadedLauncher = -1;
 
@@ -136,14 +161,19 @@ public class Board extends Sprite
         trans.rotate(-LAUNCHER_ANGLES[_loadedLauncher].sun * Math.PI / 180);
         var sunLaunchMarble :Marble = new Marble(this, _ring.largest, 
             LAUNCHER_HOLES[_loadedLauncher].sun, Marble.SUN, trans);
-        addChild(sunLaunchMarble);
+        var sunLauncher :LaunchAnimation = 
+            _launchers[ScoreBoard.SUN_PLAYER][_loadedLauncher] as LaunchAnimation;
+        sunLauncher.load(sunLaunchMarble);
+
         trans = new Matrix();
         trans.translate(Ring.SIZE_PER_RING * 5.5, 0);
         trans.rotate(-LAUNCHER_ANGLES[_loadedLauncher].moon * Math.PI / 180);
         var moonLaunchMarble :Marble = new Marble(this, _ring.largest, 
             LAUNCHER_HOLES[_loadedLauncher].moon, Marble.MOON, trans);
-        addChild(moonLaunchMarble);
-        prepareLaunch(sunLaunchMarble, moonLaunchMarble);
+        var moonLauncher :LaunchAnimation = 
+            _launchers[ScoreBoard.MOON_PLAYER][_loadedLauncher] as LaunchAnimation;
+        moonLauncher.load(moonLaunchMarble);
+        prepareLaunch(sunLauncher, moonLauncher);
     }
 
     override public function addChild (child :DisplayObject) :DisplayObject
@@ -215,7 +245,7 @@ public class Board extends Sprite
         });
     }
 
-    protected function prepareLaunch (sun :Marble, moon :Marble) :void
+    protected function prepareLaunch (sun :LaunchAnimation, moon :LaunchAnimation) :void
     {
         DoLater.instance.registerAt(DoLater.ROTATION_END, function (currentStage :int) :void {
             sun.launch();
@@ -261,8 +291,21 @@ public class Board extends Sprite
     [Embed(source="../rsrc/locksmith_art.swf#turn_to_sun")]
     protected static const TURN_TO_SUN :Class;
 
-    // rings sit under the turn indicator, scoring dome, clock hands and marble layer.
-    protected static const RING_LAYER :int = 4;
+    [Embed(source="../rsrc/locksmith_art.swf#gate_moon_upper")]
+    protected static const GATE_MOON_UP :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#gate_moon")]
+    protected static const GATE_MOON_MID :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#gate_moon_lower")]
+    protected static const GATE_MOON_LOW :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#gate_sun_upper")]
+    protected static const GATE_SUN_UP :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#gate_sun")]
+    protected static const GATE_SUN_MID :Class;
+    [Embed(source="../rsrc/locksmith_art.swf#gate_sun_lower")]
+    protected static const GATE_SUN_LOW :Class;
+
+    // rings sit under the turn indicator, scoring dome, clock hands, marble layer and launchers
+    protected static const RING_LAYER :int = 5;
 
     protected static const LAUNCHER_ANGLES :Array = [ { sun: 45, moon: 135 }, { sun: 0, moon: 180 },
                                                       { sun: 315, moon: 225 } ];
@@ -281,5 +324,70 @@ public class Board extends Sprite
     protected var _clock :Clock;
     protected var _roamingMarbles :Array = [];
     protected var _clearRings :Boolean = false;
+    protected var _launchers :Array = [[],[]];
 }
+}
+
+import flash.display.MovieClip;
+import flash.display.Sprite;
+
+import flash.events.Event;
+
+import com.threerings.util.Log;
+
+import com.whirled.contrib.EventHandlers;
+
+import Marble;
+
+class LaunchAnimation
+{
+    public function LaunchAnimation (board :Sprite, launcherMovie :MovieClip)
+    {
+        _board = board;
+        _movie = launcherMovie;
+        _movie.gotoAndStop(_movie.totalFrames);
+    }
+
+    public function load (marble :Marble) :void
+    {
+        _marble = marble;
+        EventHandlers.registerEventListener(_movie, Event.ENTER_FRAME, 
+            function (event :Event) :void {
+                _movie.gotoAndStop(_movie.currentFrame - 1);
+                if (_movie.currentFrame == MARBLE_FRAME) {
+                    _board.addChild(marble);
+                } else if (_movie.currentFrame == 1) {
+                    EventHandlers.unregisterEventListener(
+                        _movie, Event.ENTER_FRAME, arguments.callee);
+                }
+            });
+    }
+
+    public function launch () :void
+    {
+        if (_marble == null) {
+            log.warning("asked to launch null marble");
+            return;
+        }
+
+        EventHandlers.registerEventListener(_movie, Event.ENTER_FRAME,
+            function (event :Event) :void {
+                _movie.gotoAndStop(_movie.currentFrame + 1);
+                if (_movie.currentFrame == MARBLE_FRAME) {
+                    _marble.launch();
+                    _marble == null;
+                } else if (_movie.currentFrame == _movie.totalFrames) {
+                    EventHandlers.unregisterEventListener(
+                        _movie, Event.ENTER_FRAME, arguments.callee);
+                }
+            });
+    }
+
+    private static const log :Log = Log.getLog(LaunchAnimation);
+
+    protected static const MARBLE_FRAME :int = 6;
+
+    protected var _movie :MovieClip;
+    protected var _marble :Marble;
+    protected var _board :Sprite;
 }
