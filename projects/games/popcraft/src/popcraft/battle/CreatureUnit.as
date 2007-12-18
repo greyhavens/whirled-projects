@@ -66,6 +66,14 @@ public class CreatureUnit extends Unit
 
     public function moveTo (x :int, y :int) :void
     {
+        // cancel any existing move
+        this.removeNamedTasks("move");
+
+        // don't move if we're already at the specified location
+        if (_sprite.x == x && _sprite.y == y) {
+            return;
+        }
+
         // units wander drunkenly from point to point.
 
         var start :Vector2 = new Vector2(_sprite.x, _sprite.y);
@@ -110,7 +118,6 @@ public class CreatureUnit extends Unit
         var moveDist :Number = Math.abs(Vector2.subtract(end, curLoc).length);
         moveTask.addTask(new LocationTask(end.x, end.y, moveDist / _unitData.movePixelsPerSecond));
 
-        this.removeNamedTasks("move");
         this.addNamedTask("move", moveTask);
     }
 
