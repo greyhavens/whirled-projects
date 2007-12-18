@@ -91,21 +91,27 @@ public class GameMode extends AppMode
 
         // create the player bases & waypoints
         var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
-        var player :uint = 0;
+        var playerId :uint = 0;
         for each (var loc :Vector2 in baseLocs) {
-            var base :PlayerBaseUnit = new PlayerBaseUnit(player, loc);
+            var base :PlayerBaseUnit = new PlayerBaseUnit(playerId, loc);
             var baseId :uint = _netObjects.addObject(base, _battleBoard.displayObjectContainer);
 
             _playerBaseIds.push(baseId);
 
-            // @TMP
-            var waypointMarker :WaypointMarker = new WaypointMarker(player);
-            this.addObject(waypointMarker, _battleBoard.displayObjectContainer);
-            waypointMarker.displayObject.x = loc.x;
-            waypointMarker.displayObject.y = loc.y;
-            _playerWaypoints.push(waypointMarker);
+            // waypoint
+            _playerWaypoints.push(loc.toPoint());
 
-            ++player;
+            // create a visual representation of the waypoint
+            // if it belongs to us
+            if (playerId == _playerData.playerId) {
+                _waypointMarker = new WaypointMarker(playerId);
+                _waypointMarker.displayObject.x = loc.x;
+                _waypointMarker.displayObject.y = loc.y;
+
+                this.addObject(_waypointMarker, _battleBoard.displayObjectContainer);
+            }
+
+            ++playerId;
         }
 
     }
@@ -161,9 +167,9 @@ public class GameMode extends AppMode
 
         case PlaceWaypointMessage.messageName:
             var placeWaypointMsg :PlaceWaypointMessage = (msg as PlaceWaypointMessage);
-            var marker :WaypointMarker = (_playerWaypoints[placeWaypointMsg.owningPlayerId] as WaypointMarker);
-            marker.displayObject.x = placeWaypointMsg.xLoc;
-            marker.displayObject.y = placeWaypointMsg.yLoc;
+            var loc :Point = (_playerWaypoints[placeWaypointMsg.owningPlayerId] as Point);
+            loc.x = placeWaypointMsg.xLoc;
+            loc.y = placeWaypointMsg.yLoc;
             break;
         }
 
@@ -200,14 +206,25 @@ public class GameMode extends AppMode
     public function placeWaypoint (x :uint, y :uint) :void
     {
         // drop redundant clicks
-        if (_lastWaypointPlacement.x == x && _lastWaypointPlacement.y == y) {
+        if (_waypointMarker.displayObject.x == x && _waypointMarker.displayObject.y == y) {
             trace("dropping redundant waypoint placement message");
             return;
         }
 
+        // move our waypoint marker immediately.
+        // This causes our visual state to be slightly out of sync with the network state,
+        // but hopefully not for too long. By the time the player buys a new unit, everything should
+        // be caught up.
+        _waypointMarker.displayObject.x = x;
+        _waypointMarker.displayObject.y = y;
+
+        // send a message!
         _messageMgr.sendMessage(new PlaceWaypointMessage(_playerData.playerId, x, y));
-        _lastWaypointPlacement.x = x;
-        _lastWaypointPlacement.y = y;
+    }
+
+    public function getWaypointLoc (playerId :uint) :Point
+    {
+        return (_playerWaypoints[playerId] as Point);
     }
 
     // from core.AppMode
@@ -245,8 +262,7 @@ public class GameMode extends AppMode
 
     protected var _playerBaseIds :Array = new Array();
     protected var _playerWaypoints :Array = new Array();
-
-    protected var _lastWaypointPlacement :Point = new Point(-1, -1);
+    protected var _waypointMarker :WaypointMarker;
 
     protected static const TICK_INTERVAL_MS :int = 100; // 1/10 of a second
     protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));
