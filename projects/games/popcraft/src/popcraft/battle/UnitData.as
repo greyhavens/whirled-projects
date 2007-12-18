@@ -20,6 +20,7 @@ public class UnitData
 
     public var collisionRadius :Number;
     public var detectRadius :Number;
+    public var loseInterestRadius :Number;
 
     public function UnitData (
         name :String,
@@ -32,7 +33,8 @@ public class UnitData
         armor :UnitArmor,
         attack :UnitAttack,
         collisionRadius :Number,
-        detectRadius :Number )
+        detectRadius :Number,
+        loseInterestRadius :Number )
     {
         this.name = name;
         this.resourceCosts = resourceCosts;
@@ -48,6 +50,7 @@ public class UnitData
 
         this.collisionRadius = collisionRadius;
         this.detectRadius = detectRadius;
+        this.loseInterestRadius = loseInterestRadius;
     }
 
     public function getResourceCost (resourceType :uint) :int

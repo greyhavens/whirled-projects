@@ -28,22 +28,77 @@ public class Unit extends AppObject
         return Util.createGlowBitmap(bitmap, Constants.PLAYER_COLORS[_owningPlayerId] as uint);
     }
 
+    public function isUnitInDetectRange (unit :Unit) :Boolean
+    {
+        return Collision.circlesIntersect(
+            new Vector2(this.displayObject.x, this.displayObject.y),
+            this.unitData.detectRadius,
+            new Vector2(unit.displayObject.x, unit.displayObject.y),
+            unit.unitData.collisionRadius);
+    }
+
+    public function isUnitInInterestRange (unit :Unit) :Boolean
+    {
+        return Collision.circlesIntersect(
+            new Vector2(this.displayObject.x, this.displayObject.y),
+            this.unitData.loseInterestRadius,
+            new Vector2(unit.displayObject.x, unit.displayObject.y),
+            unit.unitData.collisionRadius);
+    }
+
     public function isAttacking () :Boolean
     {
         return this.hasTasksNamed("attackCooldown");
     }
 
-    public function sendAttack (targetId :uint, attack :UnitAttack) :void
+    public function isUnitInAttackRange (targetUnit :Unit, attack :UnitAttack) :Boolean
+    {
+        return Collision.circlesIntersect(
+            new Vector2(this.displayObject.x, this.displayObject.y),
+            attack.attackRadius,
+            new Vector2(targetUnit.displayObject.x, targetUnit.displayObject.y),
+            targetUnit.unitData.collisionRadius);
+    }
+
+    public function canAttackUnit (targetUnit :Unit, attack :UnitAttack) :Boolean
+    {
+        // we can attack the unit if we're not already attacking, and if the unit
+        // is within range of the attack
+        return (!isAttacking() && isUnitInAttackRange(targetUnit, attack));
+    }
+
+    public function findNearestAttackLocation (targetUnit :Unit, attack :UnitAttack) :Vector2
+    {
+        // given this unit's current location, find the nearest location
+        // that an attack on the given target can be launched from
+        var myLoc :Vector2 = this.unitLoc;
+
+        if (isUnitInAttackRange(targetUnit, attack)) {
+            return myLoc; // we don't need to move
+        } else {
+            // create a vector that points from the target to us
+            var moveLoc :Vector2 = myLoc;
+            moveLoc.subtract(targetUnit.unitLoc);
+
+            // scale it by the appropriate amount
+            moveLoc.length = (targetUnit.unitData.collisionRadius + attack.attackRadius - 1);
+
+            // add it to the base's location
+            moveLoc.add(targetUnit.unitLoc);
+
+            return moveLoc;
+        }
+    }
+
+    public function sendAttack (targetUnit :Unit, attack :UnitAttack) :void
     {
         // don't attack if we're already attacking
-        if (isAttacking()) {
-            return;
-        }
+        if (!canAttackUnit(targetUnit, attack)) {
+            trace(
+                "discarding attack from "
+                + this.id + " to " + targetUnit.id +
+                " (target out of range, or we're already attacking)");
 
-        // find the target
-        var targetUnit :Unit = (GameMode.instance.netObjects.getObject(targetId) as Unit);
-        if (null == targetUnit) {
-            trace("Discarding attack against " + targetId + " (target doesn't exist or is not a Unit)");
             return;
         }
 
@@ -88,14 +143,9 @@ public class Unit extends AppObject
         return _unitData;
     }
 
-    /** returns true if the specified Unit's "collision circle" is within our "detect circle" */
-    public function isUnitInDetectRange (unit :Unit) :Boolean
+    public function get unitLoc () :Vector2
     {
-        return Collision.circlesIntersect(
-            new Vector2(this.displayObject.x, this.displayObject.y),
-            this.unitData.detectRadius,
-            new Vector2(unit.displayObject.x, unit.displayObject.y),
-            unit.unitData.collisionRadius);
+        return new Vector2(this.displayObject.x, this.displayObject.y);
     }
 
     protected var _owningPlayerId :uint;

@@ -59,12 +59,29 @@ public class CreatureUnit extends Unit
         _sprite.x = spawnLoc.x;
         _sprite.y = spawnLoc.y;
 
-        // kick off the AI
-        var enemyPlayerId :uint = (_owningPlayerId == 0 ? 1 : 0);
-        var enemyBaseId :uint = GameMode.instance.getPlayerBase(enemyPlayerId).id;
+        // kick off our AI!
+        // we'll start by moving directly to our waypoint.
+        // once we get there, we'll move towards an enemy base, and keep our eyes out for enemies
         this.addNamedTask("ai", new SerialTask(
             new MoveToWaypointTask(),
-            new AttackBaseTask(enemyBaseId)));
+            createEnemyDetectLoopSlashAttackEnemyBaseTask()));
+    }
+
+    // this is a hugely descriptive name because I don't want to forget what it does
+    public function createEnemyDetectLoopSlashAttackEnemyBaseTask () :ObjectTask
+    {
+        /*var task :ParallelTask = new ParallelTask();
+        task.addTask(new AttackBaseTask(this.findEnemyBaseToAttack()));
+
+        var detectLoop :RepeatingTask = new RepeatingTask();
+        detectLoop.addTask(new EnemyDetectTask());
+        detectLoop.addTask(new TimedTask(ENEMY_DETECT_LOOP_TIME));
+
+        task.addTask(detectLoop);
+
+        return task;*/
+
+        return new AttackBaseTask(this.findEnemyBaseToAttack());
     }
 
     public function moveTo (x :int, y :int) :void
@@ -150,7 +167,7 @@ public class CreatureUnit extends Unit
     }
 
     // returns an enemy within our detect radius, or null if no enemy was found
-    protected function findEnemyToAttack () :CreatureUnit
+    public function findEnemyToAttack () :CreatureUnit
     {
         var allCreatures :Array = GameMode.instance.netObjects.getObjectsInGroup(CreatureUnit.GROUP_NAME).toArray();
 
@@ -165,6 +182,16 @@ public class CreatureUnit extends Unit
         return null;
     }
 
+    // returns an enemy base.
+    // @TODO: make this work with multiple bases and destroyed bases
+    public function findEnemyBaseToAttack () :uint
+    {
+        var enemyPlayerId :uint = (_owningPlayerId == 0 ? 1 : 0);
+        var enemyBaseId :uint = GameMode.instance.getPlayerBase(enemyPlayerId).id;
+
+        return enemyBaseId;
+    }
+
     public function isMoving () :Boolean
     {
         return this.hasTasksNamed("move");
@@ -174,6 +201,8 @@ public class CreatureUnit extends Unit
     protected var _healthMeter :RectMeter;
 
     protected static var g_groups :HashSet;
+
+    protected static const ENEMY_DETECT_LOOP_TIME :Number = 1;
 
     // AI state machine
     protected static const STATE_ATTACKBASE :uint = 0;
@@ -189,6 +218,62 @@ import flash.geom.Point;
 import popcraft.*;
 import popcraft.battle.PlayerBaseUnit;
 import popcraft.battle.CreatureUnit;
+
+class EnemyDetectTask extends ObjectTask
+{
+    override public function update (dt :Number, obj :AppObject) :Boolean
+    {
+        var unit :CreatureUnit = (obj as CreatureUnit);
+
+        // check to see if there are any enemies nearby
+        var enemy :CreatureUnit = unit.findEnemyToAttack();
+
+        if (null != enemy) {
+            // we found an enemy! stop doing whatever we were doing before, and attack
+            unit.removeNamedTasks("ai");
+            unit.addNamedTask("ai", new EnemyAttackTask(enemy.id));
+        }
+
+        // this task always completes immediately
+        return true;
+    }
+
+    override public function clone () :ObjectTask
+    {
+        return new EnemyDetectTask();
+    }
+}
+
+class EnemyAttackTask extends ObjectTask
+{
+    public function EnemyAttackTask (enemyId :uint)
+    {
+        _enemyId = enemyId;
+    }
+
+    override public function update (dt :Number, obj :AppObject) :Boolean
+    {
+        var unit :CreatureUnit = (obj as CreatureUnit);
+
+        var enemy :CreatureUnit = (GameMode.instance.netObjects.getObject(_enemyId) as CreatureUnit);
+
+        // if the enemy is dead, or no longer holds our interest,
+        // we'll start wandering towards the opponent's base,
+        // keeping our eyes out for enemies on the way
+        if (null == enemy || !unit.isUnitInInterestRange(enemy)) {
+            unit.removeNamedTasks("ai");
+            unit.addNamedTask("ai", unit.createEnemyDetectLoopSlashAttackEnemyBaseTask());
+
+            return true;
+        }
+
+        // the enemy is still alive. Can we attack?
+
+        return false;
+    }
+
+    protected var _enemyId :uint;
+}
 
 class MoveToWaypointTask extends ObjectTask
 {
@@ -244,16 +329,9 @@ class AttackBaseTask extends ObjectTask
     protected function handleInit (unit :CreatureUnit) :void
     {
         // pick a location to attack at
-        var baseLoc :Vector2 = (GameMode.instance.netObjects.getObject(_targetBaseId) as PlayerBaseUnit).unitSpawnLoc;
+        var base :PlayerBaseUnit = (GameMode.instance.netObjects.getObject(_targetBaseId) as PlayerBaseUnit);
 
-        // calculate a vector that points from the base to our loc, rotated a bit
-        var moveLoc :Vector2 = new Vector2(unit.displayObject.x, unit.displayObject.y);
-        moveLoc.subtract(baseLoc);
-        moveLoc.length = Constants.BASE_ATTACK_RADIUS;
-        //moveLoc.rotate(Rand.nextNumberRange(-Math.PI/2, Math.PI/2, Rand.STREAM_GAME));
-
-        moveLoc.add(baseLoc);
-
+        var moveLoc :Vector2 = unit.findNearestAttackLocation(base, unit.unitData.attack);
         unit.moveTo(moveLoc.x, moveLoc.y);
 
         _state = STATE_MOVING;
@@ -270,8 +348,10 @@ class AttackBaseTask extends ObjectTask
     protected function handleAttacking (unit :CreatureUnit) :void
     {
         // attack the base
-        if (!unit.isAttacking()) {
-            unit.sendAttack(_targetBaseId, unit.unitData.attack);
+        var target :PlayerBaseUnit = (GameMode.instance.netObjects.getObject(_targetBaseId) as PlayerBaseUnit);
+
+        if (null != target && unit.canAttackUnit(target, unit.unitData.attack)) {
+            unit.sendAttack(target, unit.unitData.attack);
         }
     }
 

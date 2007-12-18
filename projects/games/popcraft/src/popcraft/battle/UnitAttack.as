@@ -8,13 +8,20 @@ public class UnitAttack
     public var damageRange :NumRange;
     public var targetClassMask :uint;
     public var cooldown :Number;
+    public var attackRadius :Number;
 
-    public function UnitAttack (damageType :uint, damageRange :NumRange, targetClassMask :uint, cooldown :Number)
+    public function UnitAttack (
+        damageType :uint,
+        damageRange :NumRange,
+        targetClassMask :uint,
+        cooldown :Number,
+        attackRadius :Number)
     {
         this.damageType = damageType;
         this.damageRange = damageRange;
         this.targetClassMask = targetClassMask;
         this.cooldown = cooldown;
+        this.attackRadius = attackRadius;
     }
 
     public function isValidTargetClass(targetClass :uint) :Boolean

@@ -47,7 +47,6 @@ public class Constants
     public static const BATTLE_COLS :int = 15;
     public static const BATTLE_ROWS :int = 15;
     public static const BATTLE_TILE_SIZE :int = 32;
-    public static const BASE_ATTACK_RADIUS :int = 80; // max distance from base that base attacks can occur from
 
     /* Damage types */
     public static const DAMAGE_TYPE_MELEE :uint = 0;
@@ -98,9 +97,10 @@ public class Constants
                 , 64                        // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_MELEE, 0.8, DAMAGE_TYPE_PROJECTILE, 0.7, DAMAGE_TYPE_BASE, 1] )   // armor
-                , new UnitAttack(DAMAGE_TYPE_MELEE, new NumRange(10, 10), UNIT_CLASS_GROUND, 1) // attack
+                , new UnitAttack(DAMAGE_TYPE_MELEE, new NumRange(10, 10), UNIT_CLASS_GROUND, 1, 35) // attack
                 , 30                        // collision radius
                 , 90                        // detect radius
+                , 180                       // lose interest radius
             )
 
             ,
@@ -113,9 +113,10 @@ public class Constants
                 , 40                        // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_MELEE, 1, DAMAGE_TYPE_PROJECTILE, 1, DAMAGE_TYPE_BASE, 1] )   // armor
-                , new UnitAttack(DAMAGE_TYPE_PROJECTILE, new NumRange(10, 10), UNIT_CLASS__ALL, 1) // attack
+                , new UnitAttack(DAMAGE_TYPE_PROJECTILE, new NumRange(10, 10), UNIT_CLASS__ALL, 1, 50) // attack
                 , 30                        // collision radius
                 , 90                        // detect radius
+                , 180                       // lose interest radius
             )
 
             ,
@@ -130,9 +131,10 @@ public class Constants
                 , 0                         // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_MELEE, 0.1, DAMAGE_TYPE_PROJECTILE, 0.1] )   // armor
-                , new UnitAttack(DAMAGE_TYPE_BASE, new NumRange(20, 20), UNIT_CLASS__ALL, 0) // attack
-                , 30                        // collision radius
+                , new UnitAttack(DAMAGE_TYPE_BASE, new NumRange(20, 20), UNIT_CLASS__ALL, 0, 1000) // attack
+                , 60                        // collision radius
                 , 90                        // detect radius
+                , 180                       // lose interest radius
             )
     ];
 
