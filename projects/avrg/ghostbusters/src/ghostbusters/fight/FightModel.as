@@ -24,14 +24,31 @@ public class FightModel
     {
     }
 
-    public function getGhostHealth () :Number
+    public function newGhost (health :int) :void
     {
-        return _control.state.getProperty("gh") as Number;
+        _control.state.setProperty("gh", [ health, health ], false);
     }
 
-    public function setGhostHealth (n :Number) :void
+    public function damageGhost (damage :int) :Boolean
     {
-        _control.state.setProperty("gh", n, false);
+        var health :int = getGhostHealth();
+        if (damage > health) {
+            return true;
+        }
+        _control.state.setProperty("gh", [ health-damage, getGhostMaxHealth() ], false);
+        return false;
+    }
+
+    public function getGhostHealth () :int
+    {
+        var gh :Object = _control.state.getProperty("gh");
+        return gh != null ? gh[0] : 1;
+    }
+
+    public function getGhostMaxHealth () :Number
+    {
+        var gh :Object = _control.state.getProperty("gh");
+        return gh != null ? gh[1] : 1;
     }
 
     protected function propertyChanged (evt :AVRGameControlEvent) :void

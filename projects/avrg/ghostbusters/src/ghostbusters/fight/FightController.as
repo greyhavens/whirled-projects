@@ -39,22 +39,19 @@ public class FightController extends Controller
     public function doSpawnGhost () :void
     {
         _control.state.sendMessage("gs", null);
-        _model.setGhostHealth(1.0);
+        _model.newGhost(100);
         _control.spawnMob("ghost", "Duchess Von Bobbleton");
     }
 
     public function handleGhostMelee (score :Number) :void
     {
-        var currentHealth :Number = _model.getGhostHealth();
-        if (currentHealth > 0.03) {
-            // we can't do this properly without control (or server side bits)
-            _model.setGhostHealth(currentHealth - 0.03);
-
-        } else {
+        if (_model.damageGhost((int) (score * 10))) {
             // TODO: something a little more impressive than just a despawn
             _control.despawnMob("ghost");
+
             // TODO: the panel should probably respond to the state change instead
             getFightPanel().endFight();
+
             CommandEvent.dispatch(getFightPanel(), GameController.END_FIGHT);
         }
     }

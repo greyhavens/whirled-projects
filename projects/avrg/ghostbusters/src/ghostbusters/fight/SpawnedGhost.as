@@ -3,10 +3,6 @@
 
 package ghostbusters.fight {
 
-import flash.display.Graphics;
-import flash.display.Sprite;
-import flash.events.MouseEvent;
-
 import com.whirled.MobControl;
 
 import ghostbusters.GhostBase;
@@ -19,22 +15,13 @@ public class SpawnedGhost extends GhostBase
 
         _control = control;
 
-        _health = new Sprite();
-        updateHealth(1.0);
+        _health = new HealthBar(HEALTH_WIDTH, HEALTH_HEIGHT);
+        this.addChild(_health);
     }
 
-    public function updateHealth (percentHealth :Number) :void
+    public function updateHealth (curHealth :Number, maxHealth :Number) :void
     {
-        var g :Graphics = _health.graphics;
-        g.clear();
-
-        g.lineStyle(0, HEALTH_BAR_COLOUR);
-        g.beginFill(HEALTH_BAR_COLOUR);
-        g.drawRect(-HEALTH_WIDTH/2, -HEALTH_HEIGHT/2, HEALTH_WIDTH * percentHealth, HEALTH_HEIGHT);
-        g.endFill();
-
-        g.lineStyle(1, HEALTH_BORDER_COLOUR);
-        g.drawRect(-HEALTH_WIDTH/2, -HEALTH_HEIGHT/2, HEALTH_WIDTH, HEALTH_HEIGHT);
+        _health.updateHealth(curHealth / maxHealth);
     }
 
     override protected function mediaReady () :void
@@ -51,12 +38,9 @@ public class SpawnedGhost extends GhostBase
     }
 
     protected var _control :MobControl;
-    protected var _health :Sprite;
+    protected var _health :HealthBar;
 
     protected static const HEALTH_WIDTH :int = 80;
-    protected static const HEALTH_HEIGHT :int = 20;
-    protected static const HEALTH_BORDER_COLOUR :int = 0xFFFFFF;
-    protected static const HEALTH_BAR_COLOUR :int = 0x22FF44;
-
+    protected static const HEALTH_HEIGHT :int = 14;
 }
 }
