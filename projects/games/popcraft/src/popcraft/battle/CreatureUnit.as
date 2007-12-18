@@ -213,7 +213,7 @@ class AttackBaseTask extends ObjectTask
         var moveLoc :Vector2 = new Vector2(unit.displayObject.x, unit.displayObject.y);
         moveLoc.subtract(baseLoc);
         moveLoc.length = Constants.BASE_ATTACK_RADIUS;
-        moveLoc.rotate(Rand.nextNumberRange(-Math.PI/2, Math.PI/2, Rand.STREAM_GAME));
+        //moveLoc.rotate(Rand.nextNumberRange(-Math.PI/2, Math.PI/2, Rand.STREAM_GAME));
 
         moveLoc.add(baseLoc);
 
