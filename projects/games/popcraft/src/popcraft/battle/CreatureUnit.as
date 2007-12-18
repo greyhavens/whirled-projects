@@ -15,6 +15,7 @@ import flash.geom.Point;
 import flash.filters.GlowFilter;
 import flash.geom.Rectangle;
 import flash.display.BitmapData;
+import mx.effects.Move;
 
 public class CreatureUnit extends Unit
 {
@@ -58,7 +59,9 @@ public class CreatureUnit extends Unit
         // kick off the AI
         var enemyPlayerId :uint = (_owningPlayerId == 0 ? 1 : 0);
         var enemyBaseId :uint = GameMode.instance.getPlayerBase(enemyPlayerId).id;
-        this.addNamedTask("ai", new AttackBaseTask(enemyBaseId));
+        this.addNamedTask("ai", new SerialTask(
+            new MoveToWaypointTask(),
+            new AttackBaseTask(enemyBaseId)));
     }
 
     public function moveTo (x :int, y :int) :void
@@ -145,6 +148,33 @@ import flash.geom.Point;
 import popcraft.*;
 import popcraft.battle.PlayerBaseUnit;
 import popcraft.battle.CreatureUnit;
+
+class MoveToWaypointTask extends ObjectTask
+{
+    public function MoveToWaypointTask ()
+    {
+    }
+
+    override public function update (dt :Number, obj :AppObject) :Boolean
+    {
+        var unit :CreatureUnit = (obj as CreatureUnit);
+
+        if (!_inited) {
+
+            // find our waypoint
+            var waypointLoc :Point = GameMode.instance.getWaypointLoc(unit.owningPlayerId);
+
+            // move there
+            unit.moveTo(waypointLoc.x, waypointLoc.y);
+
+            _inited = true;
+        }
+
+        return (!unit.isMoving());
+    }
+
+    protected var _inited :Boolean;
+}
 
 class AttackBaseTask extends ObjectTask
 {
