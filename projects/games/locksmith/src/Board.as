@@ -51,7 +51,7 @@ public class Board extends Sprite
             var sunLauncher :MovieClip = 
                 new Board["GATE_SUN_" + launcherSymbols[ii]]() as MovieClip;
             sunLauncher.transform.matrix = trans;
-            sunLauncher.scaleX = sunLauncher.scaleY = -1;
+            sunLauncher.scaleX = -1;
             launcherLayer.addChild(sunLauncher);
             _launchers[ScoreBoard.SUN_PLAYER][ii] = new LaunchAnimation(this, sunLauncher);
         }
