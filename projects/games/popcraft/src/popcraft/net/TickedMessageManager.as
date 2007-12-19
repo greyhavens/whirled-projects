@@ -114,17 +114,19 @@ public class TickedMessageManager
 
     public function sendMessage (msg :Message) :void
     {
-        var now :int = getTimer();
-
         // do we need to queue this message?
-        var addToQueue :Boolean = ((_pendingSends.length > 0) || ((now - _lastSendTime) < _minSendDelayMS));
+        var addToQueue :Boolean = ((_pendingSends.length > 0) || (!canSendMessageNow()));
 
         if (addToQueue) {
             _pendingSends.push(msg);
-
         } else {
             sendMessageNow(msg);
         }
+    }
+
+    protected function canSendMessageNow () :Boolean
+    {
+        return ((getTimer() - _lastSendTime) < _minSendDelayMS);
     }
 
     protected function serializeMessage (msg :Message) :Object
@@ -177,9 +179,8 @@ public class TickedMessageManager
     public function update(dt :Number) :void
     {
         // if there are messages waiting to go out, send one
-        if (_pendingSends.length > 0) {
+        if (_pendingSends.length > 0 && canSendMessageNow()) {
             var message :Message = (_pendingSends.shift() as Message);
-
             sendMessageNow(message);
         }
     }
