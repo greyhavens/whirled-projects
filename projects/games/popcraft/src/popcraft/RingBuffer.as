@@ -50,37 +50,47 @@ public class RingBuffer
     }
 
     /**
-     * Adds a new element to the front of the RingBuffer.
+     * Adds the specified elements to the front of the RingBuffer.
      * If the RingBuffer's length is equal to its capacity, this
-     * will cause an element to be removed from the back of
+     * will cause elements to be removed from the back of
      * the RingBuffer.
+     * Returns the new length of the RingBuffer.
      */
-    public function pushFront (obj :*) :void
+    public function unshift (...args) :uint
     {
-        var index = (_firstIndex > 0 ? _firstIndex - 1 : _capacity - 1);
-        _array[index] = obj;
-        _length = Math.min(_length + 1, _capacity);
-        _firstIndex = index;
+        for (var i :uint = 0; i < args.length; ++i) {
+            var index = (_firstIndex > 0 ? _firstIndex - 1 : _capacity - 1);
+            _array[index] = args[i];
+            _length = Math.min(_length + 1, _capacity);
+            _firstIndex = index;
+        }
+
+        return _length;
     }
 
     /**
-     * Adds a new element to the back of the RingBuffer.
+     * Adds the specified elements to the back of the RingBuffer.
      * If the RingBuffer's length is equal to its capacity, this
-     * will cause an element to be removed from the front of
+     * will cause a elements to be removed from the front of
      * the RingBuffer.
+     * Returns the new length of the RingBuffer.
      */
-    public function pushBack (obj :*) :void
+    public function push (...args) :uint
     {
-        var index = (_firstIndex < _capacity - 1 ? _firstIndex + 1 : 0);
-        _array[index] = obj;
-        _length = Math.min(_length + 1, _capacity);
+        for (var i :uint = 0; i < args.length; ++i) {
+            var index = (_firstIndex < _capacity - 1 ? _firstIndex + 1 : 0);
+            _array[index] = args[i];
+            _length = Math.min(_length + 1, _capacity);
+        }
+
+        return _length;
     }
 
     /**
-     * Removes the element from the front of the RingBuffer and returns it.
-     * If the RingBuffer is empty, popFront will return undefined.
+     * Removes the first element from the RingBuffer and returns it.
+     * If the RingBuffer is empty, shift() will return undefined.
      */
-    public function popFront () :*
+    public function shift () :*
     {
         if (this.empty) {
             return undefined;
@@ -95,10 +105,10 @@ public class RingBuffer
     }
 
     /**
-     * Removes the element from the back of the RingBuffer and returns it.
-     * If the RingBuffer is empty, popBack will return undefined.
+     * Removes the last element from the RingBuffer and returns it.
+     * If the RingBuffer is empty, pop() will return undefined.
      */
-    public function popBack () :*
+    public function pop () :*
     {
         if (this.empty) {
             return undefined;
