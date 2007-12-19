@@ -20,7 +20,8 @@ import flash.text.TextField;
 import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.geom.Point;
-import com.threerings.parlor.game.data.GameObject;
+import flash.events.KeyboardEvent;
+import flash.ui.Keyboard;
 
 public class GameMode extends AppMode
 {
@@ -83,6 +84,7 @@ public class GameMode extends AppMode
         _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
         _messageMgr.addMessageFactory(PlaceWaypointMessage.messageName, PlaceWaypointMessage.createFactory());
+        _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
         _messageMgr.setup((0 == _playerData.playerId), TICK_INTERVAL_MS);
 
         // create a special AppMode for all objects that are synchronized over the network.
@@ -114,8 +116,38 @@ public class GameMode extends AppMode
             ++playerId;
         }
 
+        // Listen for all keydowns.
+        // The suggested way to do this is to attach an event listener to the stage,
+        // but that's a security violation. The GameControl re-dispatches global key events for us instead.
+        PopCraft.instance.gameControl.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 0, true);
     }
 
+    // from core.AppMode
+    override public function destroy () :void
+    {
+        PopCraft.instance.gameControl.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false);
+
+        if (null != _messageMgr) {
+            _messageMgr.shutdown();
+            _messageMgr = null;
+        }
+    }
+
+    protected function onKeyDown (e :KeyboardEvent) :void
+    {
+        // there has to be a better way to figure out charCodes
+
+        switch (e.charCode) {
+        case "d".charCodeAt(0):
+           if (++_debugLevel > 1) {
+              _debugLevel = 0;
+           }
+           trace("Player " + _playerData.playerId + " debug level set to " + _debugLevel);
+           break;
+        }
+    }
+
+    // from AppMode
     override public function update(dt :Number) :void
     {
         // don't start doing anything until the messageMgr is ready
@@ -145,19 +177,20 @@ public class GameMode extends AppMode
             _netObjects.update(TICK_INTERVAL_S);
 
             // calculate a checksum for this frame
-            var csum :uint = calculateChecksum();
+            if (_debugLevel >= 1) {
+                var csumMessage :ChecksumMessage = calculateChecksum();
 
-            trace(
-                "(playerId: " + _playerData.playerId + ") " +
-                "(tick: " + _tickCount + ") " +
-                "(checksum: " + csum + ") " +
-                "(netobjs: " + _netObjects.objectCount + ") " +
-                "(localobjs: " + this.objectCount + ") "
-                );
+                // player 1 saves his checksums, player 0 sends his checksums
+                if (_playerData.playerId == 1) {
+                    _myChecksums.unshift(csumMessage);
+                    _lastCachedChecksumTick = _tickCount;
+                } else if ((_tickCount % 2) == 0) {
+                    _messageMgr.sendMessage(csumMessage);
+                }
+            }
 
             ++_tickCount;
         }
-
 
         // update all non-net objects
         super.update(dt);
@@ -168,15 +201,13 @@ public class GameMode extends AppMode
         return (_netObjects.getObject(_playerBaseIds[player]) as PlayerBaseUnit);
     }
 
-    protected function calculateChecksum (printDetails :Boolean = false) :uint
+    protected function calculateChecksum () :ChecksumMessage
     {
+        var msg :ChecksumMessage = new ChecksumMessage(0, 0, 0, "");
+
         // iterate over all the shared state and calculate
         // a simple checksum for it
         var csum :Checksum = new Checksum();
-
-        if (printDetails) {
-            trace("------------- checksum -------------");
-        }
 
         var i :int = 0;
 
@@ -201,14 +232,23 @@ public class GameMode extends AppMode
             ++i;
         }
 
-        return csum.value;
+        msg.playerId = _playerData.playerId;
+        msg.tick = _tickCount;
+        msg.checksum = csum.value;
+
+        return msg;
+
+        var needsLinebreak :Boolean = false;
 
         function add (val :*, desc :String) :void
         {
             csum.add(val);
-            if (printDetails) {
-                trace("csum : " + csum.value + "\t\t(desc: " + desc + ") (val: " + val + ")");
+            if (needsLinebreak) {
+                msg.details += "\n";
             }
+
+            msg.details += String("csum : " + csum.value + "\t(desc: " + desc + ")\t(val: " + val + ")");
+            needsLinebreak = true;
         }
     }
 
@@ -228,8 +268,32 @@ public class GameMode extends AppMode
             loc.x = placeWaypointMsg.xLoc;
             loc.y = placeWaypointMsg.yLoc;
             break;
+
+        case ChecksumMessage.messageName:
+            this.handleChecksumMessage(msg as ChecksumMessage);
+            break;
         }
 
+    }
+
+    protected function handleChecksumMessage (msg :ChecksumMessage) :void
+    {
+        if (msg.playerId != _playerData.playerId) {
+            // check this checksum against our checksum buffer
+            if (msg.tick > _lastCachedChecksumTick || msg.tick <= (_lastCachedChecksumTick - _myChecksums.length)) {
+                trace("discarding checksum message (too old or too new)");
+            } else {
+                var index :uint = (_lastCachedChecksumTick - msg.tick);
+                var myChecksum :ChecksumMessage = (_myChecksums.at(index) as ChecksumMessage);
+                if (myChecksum.checksum != msg.checksum) {
+                    trace("Mismatched checksums!");
+                    trace("-- MINE --");
+                    trace(myChecksum.details);
+                    trace("-- THEIRS --");
+                    trace(msg.details);
+                }
+            }
+        }
     }
 
     public function canPurchaseUnit (unitType :uint) :Boolean
@@ -284,15 +348,6 @@ public class GameMode extends AppMode
         return (_playerWaypoints[playerId] as Point);
     }
 
-    // from core.AppMode
-    override public function destroy () :void
-    {
-        if (null != _messageMgr) {
-            _messageMgr.shutdown();
-            _messageMgr = null;
-        }
-    }
-
     public function get playerData () :PlayerData
     {
         return _playerData;
@@ -322,9 +377,14 @@ public class GameMode extends AppMode
     protected var _waypointMarker :WaypointMarker;
 
     protected var _tickCount :uint;
+    protected var _debugLevel :uint = 1;
+    protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);
+    protected var _lastCachedChecksumTick :int;
 
     protected static const TICK_INTERVAL_MS :int = 100; // 1/10 of a second
     protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));
+
+    protected static const CHECKSUM_BUFFER_LENGTH :int = 10;
 }
 
 }

@@ -126,7 +126,7 @@ public class TickedMessageManager
 
     protected function canSendMessageNow () :Boolean
     {
-        return ((getTimer() - _lastSendTime) < _minSendDelayMS);
+        return ((getTimer() - _lastSendTime) >= _minSendDelayMS);
     }
 
     protected function serializeMessage (msg :Message) :Object
