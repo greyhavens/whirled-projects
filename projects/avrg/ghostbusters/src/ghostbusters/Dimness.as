@@ -15,15 +15,27 @@ public class Dimness extends Sprite
             this.blendMode = BlendMode.LAYER;
         }
 
-        var front :Sprite = new Sprite();
-        front.alpha = alpha;
+        _front = new Sprite();
+        _front.alpha = alpha;
 
-        var g :Graphics = front.graphics;
+        var g :Graphics = _front.graphics;
         g.beginFill(0x000000);
         g.drawRect(0, 0, 2000, 1000);
         g.endFill();
 
-        this.addChild(front);
+        this.addChild(_front);
     }
+
+    public function getAlpha () :Number
+    {
+        return _front.alpha;
+    }
+
+    public function setAlpha (alpha :Number) :void
+    {
+        _front.alpha = alpha;
+    }
+
+    protected var _front :Sprite;
 }
 }

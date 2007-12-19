@@ -38,7 +38,12 @@ public class FightController extends Controller
     public function doSpawnGhost () :void
     {
         model.newGhost(100);
-        _control.spawnMob("ghost", "Duchess Von Bobbleton");
+        _control.spawnMob(Codes.MOB_ID_GHOST, "Duchess Von Bobbleton");
+    }
+
+    public function doDespawnGhost () :void
+    {
+        _control.despawnMob(Codes.MOB_ID_GHOST);
     }
 
     public function handleGhostMelee (score :Number) :void

@@ -78,7 +78,7 @@ public class SeekModel extends Sprite
 
     public function ghostZapped () :void
     {
-//        _ghostSpeed = _ghostSpeed * 0.8 - 20;
+        _ghostSpeed = _ghostSpeed * 0.8 - 20;
         _panel.ghostSpeedUpdated();
     }
 
@@ -132,9 +132,11 @@ public class SeekModel extends Sprite
     protected function propertyChanged (event: AVRGameControlEvent) :void
     {
         if (event.name == Codes.PROP_LANTERN_POS) {
+
             var bits :Array = event.value as Array;
             if (bits != null) {
                 var playerId :int = int(bits[0]);
+
                 // ignore our own update, unless we're debugging
                 if (playerId == _myId && !Game.DEBUG) {
                     return;

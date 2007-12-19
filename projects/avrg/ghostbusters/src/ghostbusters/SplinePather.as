@@ -7,6 +7,8 @@ import flash.geom.Point;
 
 import com.threerings.flash.path.HermiteFunc;
 
+import ghostbusters.Game;
+
 public class SplinePather
 {
     public function SplinePather ()
@@ -63,10 +65,13 @@ public class SplinePather
             wX = xDot;
             wY = yDot;
 
-        } else {
+        } else if (_frames > 0) {
             wX = (p.x - this.x) / (_frames / 30);
             wY = (p.y - this.y) / (_frames / 30);
+        } else {
+            wX = wY = 0;
         }
+
         _xFun = new HermiteFunc(this.x, p.x, wX, 0);
         _yFun = new HermiteFunc(this.y, p.y, wY, 0);
 

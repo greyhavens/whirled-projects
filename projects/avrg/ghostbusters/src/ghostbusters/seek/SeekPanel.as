@@ -29,6 +29,7 @@ import com.threerings.util.Random;
 
 import ghostbusters.Content;
 import ghostbusters.Dimness;
+import ghostbusters.GameController;
 import ghostbusters.Game;
 
 public class SeekPanel extends Sprite
@@ -79,12 +80,25 @@ public class SeekPanel extends Sprite
 
     public function ghostSpeedUpdated () :void
     {
-        _ghost.setSpeed(_model.getGhostSpeed());
+//        _ghost.setSpeed(_model.getGhostSpeed());
     }
 
     public function ghostZapped () :void
     {
         zapStart();
+    }
+
+    public function appearGhost () :void
+    {
+        _alphaFrames = _ghost.appear(spawnGhost);
+        // TODO: this should instead match the true spawn point of the MOB
+        _ghost.newTarget(new Point(_roomSize.width/2, 200));
+        _ghost.mask = null;
+    }
+
+    protected function spawnGhost () :void
+    {
+        CommandEvent.dispatch(this, GameController.SPAWN_GHOST);
     }
 
     protected function handleRemoved (evt :Event) :void
@@ -130,13 +144,23 @@ public class SeekPanel extends Sprite
             updateLantern(_model.getMyId(), p);
         }
 
+        if (_alphaFrames > 1) {
+            // transition dimness factor slowly
+            var alpha :Number = _dimness.getAlpha();
+            _dimness.setAlpha(alpha + (0.6 - alpha)/_alphaFrames);
+            _alphaFrames -= 1;
+        }
+
         if (_ghost != null) {
             _ghost.nextFrame();
 
             if (_zapping > 0) {
                 _zapping -= 1;
                 if (_zapping == 0) {
+                    Game.gameController.panel.hud.showArcs(false);
                     zapStop();
+                } else {
+                    Game.gameController.panel.hud.showArcs(true);
                 }
             }
 
@@ -155,7 +179,7 @@ public class SeekPanel extends Sprite
 
         _model.transmitLanternPosition(p);
 
-        if (_ghost != null && _ghost.isIdle()) {
+        if (_ghost != null && _alphaFrames == 0 && _ghost.isIdle()) {
             _model.constructNewGhostPosition(_ghost.getGhostBounds());
         }
     }
@@ -208,8 +232,9 @@ public class SeekPanel extends Sprite
     protected var _zapping :int;
 
     protected var _ticker :int;
+    protected var _alphaFrames :int = 0;
 
-    protected var _dimness :Sprite;
+    protected var _dimness :Dimness;
 
     protected var _lightLayer :Sprite;
     protected var _maskLayer :Sprite;

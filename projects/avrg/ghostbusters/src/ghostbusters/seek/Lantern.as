@@ -14,6 +14,7 @@ import flash.geom.Point;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 
+import ghostbusters.Game;
 import ghostbusters.SplinePather;
 
 public class Lantern extends SplinePather

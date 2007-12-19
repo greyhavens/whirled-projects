@@ -33,18 +33,20 @@ import ghostbusters.fight.Match3;
 
 public class GamePanel extends Sprite
 {
+    public var hud :HUD;
+
     public function GamePanel (model :GameModel)
     {
         _model = model;
 
-        _hud = new HUD();
+        hud = new HUD();
 
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
     }
 
     public function shutdown () :void
     {
-        _hud.shutdown();
+        hud.shutdown();
     }
 
     override public function hitTestPoint (
@@ -64,13 +66,13 @@ public class GamePanel extends Sprite
             showSplash();
 
         } else if (state == GameModel.STATE_IDLE) {
-            showPanels(_hud);
+            showPanels(hud);
 
         } else if (state == GameModel.STATE_SEEKING) {
-            showPanels(Game.seekController.panel, _hud);
+            showPanels(Game.seekController.panel, hud);
 
         } else if (state == GameModel.STATE_FIGHTING) {
-            showPanels(Game.fightController.panel, _hud);
+            showPanels(Game.fightController.panel, hud);
 
         } else {
             Game.log.warning("Unknown state requested [state=" + state + "]");
@@ -131,7 +133,7 @@ public class GamePanel extends Sprite
         } else if (evt.target.name == "playnow") {
             _box.hide();
             CommandEvent.dispatch(this, GameController.PLAY);
-            _hud.visible = true;
+            hud.visible = true;
 
         } else {
             Game.log.debug("Clicked on: " + evt.target + "/" + (evt.target as DisplayObject).name);
@@ -140,7 +142,6 @@ public class GamePanel extends Sprite
 
     protected var _model :GameModel;
 
-    protected var _hud :HUD;
     protected var _box :Box;
 
     protected var _splash :MovieClip = MovieClip(new Content.SPLASH());

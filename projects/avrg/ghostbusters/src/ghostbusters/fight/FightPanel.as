@@ -12,6 +12,8 @@ import flash.events.MouseEvent;
 import flash.media.Sound;
 import flash.media.SoundChannel;
 
+import flash.utils.setTimeout;
+
 import com.threerings.util.CommandEvent;
 import com.whirled.MobControl;
 
@@ -41,9 +43,8 @@ public class FightPanel extends Sprite
 
     public function getGhostSprite (ctrl :MobControl) :SpawnedGhost
     {
-        _ghost = new SpawnedGhost(ctrl);
-        ghostHealthUpdated();
-        _ghost.addEventListener(MouseEvent.CLICK, handleGhostClick);
+        _ghost = new SpawnedGhost(ctrl, _model.getGhostHealth(), _model.getGhostMaxHealth());
+        setTimeout(startGame, 1000);
         return _ghost;
     }
 
@@ -51,6 +52,22 @@ public class FightPanel extends Sprite
     {
         if (_ghost) {
             _ghost.updateHealth(_model.getGhostHealth(), _model.getGhostMaxHealth());
+        }
+    }
+
+    public function startGame () :void
+    {
+        if (_minigame == null) {
+            var gameHolder :Sprite = new Sprite();
+
+            _minigame = new Match3(gamePerformance);
+            gameHolder.addChild(_minigame);
+
+            _frame.frameContent(gameHolder);
+
+            this.addChild(_frame);
+            _frame.x = 100;
+            _frame.y = 350;
         }
     }
 
@@ -77,22 +94,6 @@ public class FightPanel extends Sprite
     {
         _dimness = new Dimness(0.6, true);
         this.addChild(_dimness);
-    }
-
-    protected function handleGhostClick (evt :MouseEvent) :void
-    {
-        if (_minigame == null) {
-            var gameHolder :Sprite = new Sprite();
-
-            _minigame = new Match3(gamePerformance);
-            gameHolder.addChild(_minigame);
-
-            _frame.frameContent(gameHolder);
-
-            this.addChild(_frame);
-            _frame.x = 100;
-            _frame.y = 350;
-        }
     }
 
     protected function gamePerformance (score :Number, style :Number = 0) :void

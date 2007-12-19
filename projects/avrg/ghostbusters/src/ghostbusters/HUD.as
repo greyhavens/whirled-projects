@@ -3,6 +3,7 @@
 
 package ghostbusters {
 
+import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.geom.Point;
@@ -11,6 +12,7 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 
 import flash.utils.ByteArray;
+import flash.utils.setTimeout;
 
 import com.threerings.flash.DisplayUtil;
 import com.threerings.util.CommandEvent;
@@ -26,9 +28,6 @@ public class HUD extends Sprite
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         loader.addEventListener(Event.COMPLETE, handleHUDLoaded);
         loader.load(ByteArray(new Content.HUD_VISUAL()));
-
-        _arcs = new Sprite();
-        this.addChild(_arcs);
     }
 
     public function shutdown () :void
@@ -43,26 +42,19 @@ public class HUD extends Sprite
 
     public function showArcs (show :Boolean) :void
     {
+        if (_arcs == null) {
+            return;
+        }
         _arcs.graphics.clear();
 
         if (!show) {
             return;
         }
 
-        var from :Point = new Point(30, 50);
-        var to :Point = new Point(130, 30);
-
         _arcs.graphics.lineStyle(5, 0xFFFFFF);
-
-	recursiveLightning(from, to, 50);
-        from.y += 20;
-        to.y += 20;
-
-	recursiveLightning(from, to, 50);
-        from.y += 20;
-        to.y += 20;
-
-	recursiveLightning(from, to, 50);
+	recursiveLightning(new Point(120, 40), new Point(120, 120), 50);
+	recursiveLightning(new Point(150, 40), new Point(150, 120), 50);
+	recursiveLightning(new Point(180, 40), new Point(180, 120), 50);
     }
 
     // this is a basic midpoint displacement algorithm, see e.g.
@@ -86,16 +78,37 @@ public class HUD extends Sprite
         _hud.x = 20; // damn scrollbar
         _hud.y = 5;
 
-        DisplayUtil.findInHierarchy(_hud, LANTERN).addEventListener(MouseEvent.CLICK, lanternClick);
-        DisplayUtil.findInHierarchy(_hud, HELP).addEventListener(MouseEvent.CLICK, helpClick);
-        DisplayUtil.findInHierarchy(_hud, LOOT).addEventListener(MouseEvent.CLICK, lootClick);
+        var button :DisplayObject;
+
+        safelyAdd(LANTERN, lanternClick);
+        safelyAdd(HELP, helpClick);
+        safelyAdd(LOOT, lootClick);
+        safelyAdd(CLOSE, closeClick);
 
         this.addChild(_hud);
+
+        _arcs = new Sprite();
+        this.addChild(_arcs);
+    }
+
+    protected function safelyAdd (name :String, callback :Function) :void
+    {
+        var button :DisplayObject = DisplayUtil.findInHierarchy(_hud, name);
+        if (button == null) {
+            Game.log.warning("Could not find button: " + name);
+            return;
+        }
+        button.addEventListener(MouseEvent.CLICK, callback);
     }
 
     protected function lanternClick (evt :Event) :void
     {
         CommandEvent.dispatch(this, GameController.TOGGLE_LANTERN);
+    }
+
+    protected function closeClick (evt :Event) :void
+    {
+        CommandEvent.dispatch(this, GameController.END_GAME);
     }
 
     protected function helpClick (evt :Event) :void
@@ -111,9 +124,10 @@ public class HUD extends Sprite
     protected var _hud :MovieClip;
     protected var _arcs :Sprite;
 
-    protected static const LANTERN :String = "lanternbutton";
-    protected static const HELP :String = "helpbutton";
-    protected static const LOOT :String = "lootbutton";
+    protected static const LANTERN :String = "button_lantern";
+    protected static const HELP :String = "button_help";
+    protected static const LOOT :String = "button_loot";
+    protected static const CLOSE :String = "button_close";
 
     protected static const DEBUG :Boolean = false;
 }

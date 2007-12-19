@@ -59,6 +59,14 @@ public class HidingGhost extends GhostBase
         _pather.newTarget(p, d / _speed, true);
     }
 
+    public function appear (callback :Function) :int
+    {
+        return _handler.gotoScene(STATE_APPEAR, function () :void {
+            _clip.stop();
+            callback();
+        });
+    }
+
     override protected function mediaReady () :void
     {
         super.mediaReady();

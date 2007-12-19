@@ -12,6 +12,7 @@ import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 
 import ghostbusters.Codes;
+import ghostbusters.Game;
 import ghostbusters.GameController;
 
 public class SeekController extends Controller
@@ -41,7 +42,7 @@ public class SeekController extends Controller
     {
         // TODO: test state and whatnot
         if (model.getGhostSpeed() < 10) {
-            CommandEvent.dispatch(panel, GameController.SPAWN_GHOST);
+            panel.appearGhost();
 
         } else {
             _control.state.sendMessage(Codes.MSG_GHOST_ZAP, model.getMyId());

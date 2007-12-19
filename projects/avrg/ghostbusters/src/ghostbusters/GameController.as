@@ -41,6 +41,12 @@ public class GameController extends Controller
         model.shutdown();
     }
 
+    public function handleEndGame () :void
+    {
+        Game.fightController.doDespawnGhost();
+        _control.deactivateGame();
+    }
+
     public function handleHelp () :void
     {
         // TODO
@@ -48,7 +54,7 @@ public class GameController extends Controller
 
     public function handleToggleLoot () :void
     {
-        handleSpawnGhost();
+//        handleSpawnGhost();
     }
 
     public function handlePlay () :void

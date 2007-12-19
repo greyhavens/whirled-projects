@@ -13,6 +13,7 @@ import flash.geom.Rectangle;
 
 import com.threerings.util.EmbeddedSwfLoader;
 
+import ghostbusters.ClipHandler;
 import ghostbusters.Content;
 
 public class GhostBase extends Sprite
@@ -47,6 +48,8 @@ public class GhostBase extends Sprite
         // refigure the bounds
         _bounds = _clip.getBounds(this);
 
+        _handler = new ClipHandler(_clip);
+
         Game.log.debug("Ghost finished loading [bounds=" + _bounds + "]");
 
         // and let subclassers know we're done
@@ -56,6 +59,7 @@ public class GhostBase extends Sprite
     protected var _bounds :Rectangle;
 
     protected var _clip :MovieClip;
+    protected var _handler :ClipHandler;
 
     protected static const STATE_WALKING :String = "state_Default_walking";
     protected static const STATE_APPEAR :String = "state_Appear";

@@ -33,27 +33,25 @@ public class ClipHandler
         disengage();
     }
 
-    public function gotoScene (sceneName :String, done :Function = null) :Boolean
+    public function gotoScene (sceneName :String, done :Function = null) :int
     {
         _scene = scenes[sceneName];
         if (_scene) {
             _callback = done;
             _clip.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
             _clip.gotoAndPlay(1, sceneName);
-            Game.log.debug("Playing: " + sceneName);
-            return true;
+            return _scene.numFrames;
         }
-        return false;
+        return 0;
     }
 
-    public function gotoSceneNumber (sceneNum: int, done :Function = null) :Boolean
+    public function gotoSceneNumber (sceneNum: int, done :Function = null) :int
     {
         _scene = _clip.scenes[sceneNum];
         _callback = done;
         _clip.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         _clip.gotoAndPlay(1);
-        Game.log.debug("Playing: <" + sceneNum + ">");
-        return true;
+        return _scene.numFrames;
     }
 
     public function disengage () :void

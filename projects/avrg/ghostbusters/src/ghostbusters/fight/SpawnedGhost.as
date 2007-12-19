@@ -9,14 +9,15 @@ import ghostbusters.GhostBase;
 
 public class SpawnedGhost extends GhostBase
 {
-    public function SpawnedGhost (control :MobControl)
+    public function SpawnedGhost (control :MobControl, health :int, maxHealth :int) :void
     {
         super();
 
         _control = control;
 
         _health = new HealthBar(HEALTH_WIDTH, HEALTH_HEIGHT);
-        this.addChild(_health);
+
+        updateHealth(health, maxHealth);
     }
 
     public function updateHealth (curHealth :Number, maxHealth :Number) :void
@@ -26,8 +27,6 @@ public class SpawnedGhost extends GhostBase
 
     override protected function mediaReady () :void
     {
-        new GameFrame();
-
         _clip.gotoAndStop(1, STATE_FIGHT);
 
         _control.setHotSpot((_bounds.left + _bounds.right)/2, _bounds.bottom, _bounds.height);
