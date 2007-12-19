@@ -25,7 +25,7 @@ public class RingBuffer
     {
         // Copy all the elements to a new array.
         var newArray :Array = new Array();
-        var newLength = Math.min(_length, newCapacity);
+        var newLength :uint = Math.min(_length, newCapacity);
         newArray.length = newCapacity;
         for (var i :uint = 0; i < newLength; ++i) {
             newArray[i] = this.at(i);
@@ -58,8 +58,8 @@ public class RingBuffer
      */
     public function unshift (...args) :uint
     {
-        for (var i :uint = 0; i < args.length; ++i) {
-            var index = (_firstIndex > 0 ? _firstIndex - 1 : _capacity - 1);
+        for (var i :int = args.length - 1; i >= 0; --i) {
+            var index :uint = (_firstIndex > 0 ? _firstIndex - 1 : _capacity - 1);
             _array[index] = args[i];
             _length = Math.min(_length + 1, _capacity);
             _firstIndex = index;
@@ -78,9 +78,13 @@ public class RingBuffer
     public function push (...args) :uint
     {
         for (var i :uint = 0; i < args.length; ++i) {
-            var index = (_firstIndex < _capacity - 1 ? _firstIndex + 1 : 0);
+            var index :uint = ((_firstIndex + _length) % _capacity);
             _array[index] = args[i];
             _length = Math.min(_length + 1, _capacity);
+
+            if (index == _firstIndex) {
+                _firstIndex = (_firstIndex < _capacity - 1 ? _firstIndex + 1 : 0);
+            }
         }
 
         return _length;
