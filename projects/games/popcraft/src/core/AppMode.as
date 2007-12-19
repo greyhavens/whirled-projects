@@ -74,6 +74,8 @@ public class AppMode extends Sprite
 
         obj.addedToModeInternal(this);
 
+        ++_objectCount;
+
         return obj.id;
     }
 
@@ -122,6 +124,8 @@ public class AppMode extends Sprite
         }
 
         obj.removedFromModeInternal(this);
+
+        --_objectCount;
     }
 
     public function getObject (id :uint) :AppObject
@@ -202,9 +206,15 @@ public class AppMode extends Sprite
         return (id >> 16);
     }
 
+    public function get objectCount () :uint
+    {
+        return _objectCount;
+    }
+
+    protected var _objectCount :uint;
     protected var _objects :Array = new Array();
     protected var _freeIndexes :Array = new Array();
-    protected var _serialNumberCounter :uint = 0;
+    protected var _serialNumberCounter :uint;
 
     /** stores a mapping from String to Object */
     protected var _namedObjects :HashMap = new HashMap();

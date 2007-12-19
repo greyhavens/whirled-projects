@@ -157,7 +157,9 @@ public class CreatureUnit extends Unit
     {
         // every CreatureUnit is in the CreatureUnit.GROUP_NAME group
         if (null == g_groups) {
+            // @TODO: make inherited groups easier to work with
             g_groups = new HashSet();
+            g_groups.add(Unit.GROUP_NAME);
             g_groups.add(GROUP_NAME);
         }
 

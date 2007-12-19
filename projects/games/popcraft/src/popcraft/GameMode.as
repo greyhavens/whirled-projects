@@ -143,6 +143,17 @@ public class GameMode extends AppMode
             // (our network update time is unrelated to the application's update time.
             // network timeslices are always the same distance apart)
             _netObjects.update(TICK_INTERVAL_S);
+
+            // calculate a checksum for this frame
+            var csum :uint = calculateChecksum();
+
+            trace(
+                "(playerId: " + _playerData.playerId + ") " +
+                "(tick: " + _tickCount + ") " +
+                "(checksum: " + csum + ") "
+                );
+
+            ++_tickCount;
         }
 
 
@@ -153,6 +164,33 @@ public class GameMode extends AppMode
     public function getPlayerBase (player :uint) :PlayerBaseUnit
     {
         return (_netObjects.getObject(_playerBaseIds[player]) as PlayerBaseUnit);
+    }
+
+    protected function calculateChecksum () :uint
+    {
+        // iterate over all the shared state and calculate
+        // a simple checksum for it
+        var csum :Checksum = new Checksum();
+
+        // waypoints
+        csum.add(_playerWaypoints.length);
+        for each (var waypoint :Point in _playerWaypoints) {
+            csum.add(waypoint.x);
+            csum.add(waypoint.y);
+        }
+
+        // units
+        var units :Array = _netObjects.getObjectsInGroup(Unit.GROUP_NAME).toArray();
+        csum.add(units.length);
+        for each (var unit :Unit in units) {
+            csum.add(unit.owningPlayerId);
+            csum.add(unit.unitType);
+            csum.add(unit.displayObject.x);
+            csum.add(unit.displayObject.y);
+            csum.add(unit.health);
+        }
+
+        return csum.value;
     }
 
     protected function handleMessage (msg :Message) :void
@@ -214,7 +252,7 @@ public class GameMode extends AppMode
         // move our waypoint marker immediately.
         // This causes our visual state to be slightly out of sync with the network state,
         // but hopefully not for too long. By the time the player buys a new unit, everything should
-        // be caught up.
+        // be caught up. (the visual state is not used for
         _waypointMarker.displayObject.x = x;
         _waypointMarker.displayObject.y = y;
 
@@ -263,6 +301,8 @@ public class GameMode extends AppMode
     protected var _playerBaseIds :Array = new Array();
     protected var _playerWaypoints :Array = new Array();
     protected var _waypointMarker :WaypointMarker;
+
+    protected var _tickCount :uint;
 
     protected static const TICK_INTERVAL_MS :int = 100; // 1/10 of a second
     protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));

@@ -3,6 +3,10 @@
 
 package {
 
+import popcraft.*;
+import popcraft.net.*;
+import core.*;
+
 import com.threerings.util.Assert;
 import com.whirled.WhirledGameControl;
 import core.MainLoop;
@@ -11,7 +15,6 @@ import flash.display.Sprite;
 import flash.utils.Dictionary;
 import core.util.ObjectSet;
 
-import popcraft.GameMode;
 import com.threerings.ezgame.StateChangedEvent;
 
 [SWF(width="700", height="500", frameRate="30")]
