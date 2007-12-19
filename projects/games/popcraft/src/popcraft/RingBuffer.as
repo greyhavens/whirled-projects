@@ -82,7 +82,8 @@ public class RingBuffer
             _array[index] = args[i];
             _length = Math.min(_length + 1, _capacity);
 
-            if (index == _firstIndex) {
+            // did we overwrite the first index?
+            if (index == _firstIndex && _length == _capacity) {
                 _firstIndex = (_firstIndex < _capacity - 1 ? _firstIndex + 1 : 0);
             }
         }
