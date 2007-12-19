@@ -3,8 +3,15 @@
 
   <!-- define some basic project parameters -->
   <property name="app.name" value="Reversi"/>
+  <property name="app.type" value="game"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
+
+  <!-- compiles and then jams the SWF into the document tree with the right filename -->
+  <property name="media_hash" value="c0414d407a3fd503850ad9133f52b774a558729d"/>
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/${media_hash}.swf"/>
+  </target>
 
 </project>
