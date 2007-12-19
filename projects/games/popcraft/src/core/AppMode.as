@@ -2,9 +2,8 @@ package core {
 
 import com.threerings.util.Assert;
 import com.threerings.util.HashMap;
-import com.threerings.util.HashSet;
+import com.threerings.util.ArrayUtil;
 
-import core.util.ObjectSet;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
@@ -50,17 +49,16 @@ public class AppMode extends Sprite
         }
 
         // is the object in any groups?
-        var groups :HashSet = obj.objectGroups;
-        if (null != groups) {
-            var groupList :Array = groups.toArray();
-            for each (var group :* in groupList) {
-                var groupSet :ObjectSet = (_groupedObjects.get(group) as ObjectSet);
-                if (null == groupSet) {
-                    groupSet = new ObjectSet();
-                    _groupedObjects.put(group, groupSet);
+        var groupNames :Array = obj.objectGroups;
+        if (null != groupNames) {
+            for each (var groupName :* in groupNames) {
+                var groupArray :Array = (_groupedObjects.get(groupName) as Array);
+                if (null == groupArray) {
+                    groupArray = new Array();
+                    _groupedObjects.put(groupName, groupArray);
                 }
 
-                groupSet.add(obj);
+                groupArray.push(obj);
             }
         }
 
@@ -104,15 +102,13 @@ public class AppMode extends Sprite
         }
 
         // is the object in any groups?
-        var groups :HashSet = obj.objectGroups;
-        if (null != groups) {
-            var groupList :Array = groups.toArray();
-
-            for each (var group :* in groupList) {
-                var groupSet :ObjectSet = (_groupedObjects.get(group) as ObjectSet);
-                Assert.isTrue(null != groupSet);
-                var wasInSet :Boolean = groupSet.remove(obj);
-                Assert.isTrue(wasInSet);
+        var groupNames :Array = obj.objectGroups;
+        if (null != groupNames) {
+            for each (var groupName :* in groupNames) {
+                var groupArray :Array = (_groupedObjects.get(groupName) as Array);
+                Assert.isTrue(null != groupArray);
+                var wasInArray :Boolean = ArrayUtil.removeFirst(groupArray, obj);
+                Assert.isTrue(wasInArray);
             }
         }
 
@@ -151,11 +147,11 @@ public class AppMode extends Sprite
     }
 
     /** Returns the set of objects in the given group. This set must not be modified by client code. */
-    public function getObjectsInGroup (groupName :String) :ObjectSet
+    public function getObjectsInGroup (groupName :String) :Array
     {
-        var objects :ObjectSet = (_groupedObjects.get(groupName) as ObjectSet);
+        var objects :Array = (_groupedObjects.get(groupName) as Array);
 
-        return (null != objects ? objects : new ObjectSet());
+        return (null != objects ? objects : new Array());
     }
 
     /** Called once per update tick. Updates all objects in the mode. */
@@ -219,7 +215,7 @@ public class AppMode extends Sprite
     /** stores a mapping from String to Object */
     protected var _namedObjects :HashMap = new HashMap();
 
-    /** stores a mapping from String to ObjectSet */
+    /** stores a mapping from String to Array */
     protected var _groupedObjects :HashMap = new HashMap();
 }
 

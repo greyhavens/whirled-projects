@@ -2,7 +2,6 @@ package core {
 
 import com.threerings.util.Assert;
 import com.threerings.util.HashMap;
-import com.threerings.util.HashSet;
 
 import core.tasks.ParallelTask;
 import flash.display.DisplayObject;
@@ -60,12 +59,12 @@ public class AppObject
 
     /**
      * Returns the set of groups that this object belongs to.
-     * The groups are returned as a HashSet of Strings.
+     * The groups are returned as an Array of Strings.
      * Objects cannot change their group membership once added to a mode.
      */
-    public function get objectGroups () :HashSet
+    public function get objectGroups () :Array
     {
-        return new HashSet();
+        return new Array();
     }
 
     /** Returns true if the object is in the specified group. */

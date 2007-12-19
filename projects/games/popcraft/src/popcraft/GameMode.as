@@ -150,7 +150,9 @@ public class GameMode extends AppMode
             trace(
                 "(playerId: " + _playerData.playerId + ") " +
                 "(tick: " + _tickCount + ") " +
-                "(checksum: " + csum + ") "
+                "(checksum: " + csum + ") " +
+                "(netobjs: " + _netObjects.objectCount + ") " +
+                "(localobjs: " + this.objectCount + ") "
                 );
 
             ++_tickCount;
@@ -166,31 +168,48 @@ public class GameMode extends AppMode
         return (_netObjects.getObject(_playerBaseIds[player]) as PlayerBaseUnit);
     }
 
-    protected function calculateChecksum () :uint
+    protected function calculateChecksum (printDetails :Boolean = false) :uint
     {
         // iterate over all the shared state and calculate
         // a simple checksum for it
         var csum :Checksum = new Checksum();
 
+        if (printDetails) {
+            trace("------------- checksum -------------");
+        }
+
+        var i :int = 0;
+
         // waypoints
-        csum.add(_playerWaypoints.length);
+        add(_playerWaypoints.length, "_playerWaypoints.length");
         for each (var waypoint :Point in _playerWaypoints) {
-            csum.add(waypoint.x);
-            csum.add(waypoint.y);
+            add(waypoint.x, "waypoint.x - " + i);
+            add(waypoint.y, "waypoint.x - " + i);
+            ++i;
         }
 
         // units
-        var units :Array = _netObjects.getObjectsInGroup(Unit.GROUP_NAME).toArray();
-        csum.add(units.length);
+        i = 0;
+        var units :Array = _netObjects.getObjectsInGroup(Unit.GROUP_NAME);
+        add(units.length, "units.length");
         for each (var unit :Unit in units) {
-            csum.add(unit.owningPlayerId);
-            csum.add(unit.unitType);
-            csum.add(unit.displayObject.x);
-            csum.add(unit.displayObject.y);
-            csum.add(unit.health);
+            add(unit.owningPlayerId, "unit.owningPlayerId - " + i);
+            add(unit.unitType, "unit.unitType - " + i);
+            add(unit.displayObject.x, "unit.displayObject.x - " + i);
+            add(unit.displayObject.y, "unit.displayObject.y - " + i);
+            add(unit.health, "unit.health - " + i);
+            ++i;
         }
 
         return csum.value;
+
+        function add (val :*, desc :String) :void
+        {
+            csum.add(val);
+            if (printDetails) {
+                trace("csum : " + csum.value + "\t\t(desc: " + desc + ") (val: " + val + ")");
+            }
+        }
     }
 
     protected function handleMessage (msg :Message) :void

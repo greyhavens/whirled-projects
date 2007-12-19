@@ -7,7 +7,6 @@ import core.util.*;
 import core.tasks.*;
 
 import flash.display.Bitmap;
-import com.threerings.util.HashSet;
 
 /**
  * If ActionScript allowed the creation of abstract classes or private constructors, I would do that here.
@@ -26,12 +25,12 @@ public class Unit extends AppObject
         _health = _unitData.maxHealth;
     }
 
-    override public function get objectGroups () :HashSet
+    override public function get objectGroups () :Array
     {
         // every Unit is in the Unit.GROUP_NAME group
         if (null == g_groups) {
-            g_groups = new HashSet();
-            g_groups.add(GROUP_NAME);
+            g_groups = new Array();
+            g_groups.push(GROUP_NAME);
         }
 
         return g_groups;
@@ -167,7 +166,7 @@ public class Unit extends AppObject
     protected var _unitData :UnitData;
     protected var _health :uint;
 
-    protected static var g_groups :HashSet;
+    protected static var g_groups :Array;
 }
 
 }

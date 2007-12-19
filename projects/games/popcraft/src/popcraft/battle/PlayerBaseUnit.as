@@ -46,7 +46,13 @@ public class PlayerBaseUnit extends Unit
         _healthMeter.displayObject.y = baseImage.y - _healthMeter.height;
 
         // @TODO - this is probably bad practice right here.
-        MainLoop.instance.topMode.addObject(_healthMeter, _sprite);
+        // MainLoop.instance.topMode.addObject(_healthMeter, _sprite);
+        GameMode.instance.netObjects.addObject(_healthMeter, _sprite);
+    }
+
+    override protected function removedFromMode (mode :AppMode) :void
+    {
+        _healthMeter.destroySelf();
     }
 
     // from AppObject

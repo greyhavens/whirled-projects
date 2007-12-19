@@ -12,8 +12,6 @@ import com.whirled.WhirledGameControl;
 import core.MainLoop;
 
 import flash.display.Sprite;
-import flash.utils.Dictionary;
-import core.util.ObjectSet;
 
 import com.threerings.ezgame.StateChangedEvent;
 

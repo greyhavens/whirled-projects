@@ -16,7 +16,6 @@ import flash.filters.GlowFilter;
 import flash.geom.Rectangle;
 import flash.display.BitmapData;
 import mx.effects.Move;
-import com.threerings.util.HashSet;
 
 public class CreatureUnit extends Unit
 {
@@ -52,7 +51,8 @@ public class CreatureUnit extends Unit
         _healthMeter.displayObject.y = image.y - _healthMeter.height;
 
         // @TODO - this is probably bad practice right here.
-        MainLoop.instance.topMode.addObject(_healthMeter, _sprite);
+        //MainLoop.instance.topMode.addObject(_healthMeter, _sprite);
+        GameMode.instance.netObjects.addObject(_healthMeter, _sprite);
 
         // start at our owning player's base's spawn loc
         var spawnLoc :Vector2 = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
@@ -65,6 +65,11 @@ public class CreatureUnit extends Unit
         this.addNamedTask("ai", new SerialTask(
             new MoveToWaypointTask(),
             createEnemyDetectLoopSlashAttackEnemyBaseTask()));
+    }
+
+    override protected function removedFromMode (mode :AppMode) :void
+    {
+        _healthMeter.destroySelf();
     }
 
     // this is a hugely descriptive name because I don't want to forget what it does
@@ -153,14 +158,14 @@ public class CreatureUnit extends Unit
     }
 
     // from AppObject
-    override public function get objectGroups () :HashSet
+    override public function get objectGroups () :Array
     {
         // every CreatureUnit is in the CreatureUnit.GROUP_NAME group
         if (null == g_groups) {
             // @TODO: make inherited groups easier to work with
-            g_groups = new HashSet();
-            g_groups.add(Unit.GROUP_NAME);
-            g_groups.add(GROUP_NAME);
+            g_groups = new Array();
+            g_groups.push(Unit.GROUP_NAME);
+            g_groups.push(GROUP_NAME);
         }
 
         return g_groups;
@@ -169,7 +174,7 @@ public class CreatureUnit extends Unit
     // returns an enemy within our detect radius, or null if no enemy was found
     public function findEnemyToAttack () :CreatureUnit
     {
-        var allCreatures :Array = GameMode.instance.netObjects.getObjectsInGroup(CreatureUnit.GROUP_NAME).toArray();
+        var allCreatures :Array = GameMode.instance.netObjects.getObjectsInGroup(CreatureUnit.GROUP_NAME);
 
         // find the first creature that satisifies our requirements
         // this function is probably horribly slow
@@ -200,7 +205,7 @@ public class CreatureUnit extends Unit
     protected var _sprite :Sprite;
     protected var _healthMeter :RectMeter;
 
-    protected static var g_groups :HashSet;
+    protected static var g_groups :Array;
 
     protected static const ENEMY_DETECT_LOOP_TIME :Number = 1;
 
