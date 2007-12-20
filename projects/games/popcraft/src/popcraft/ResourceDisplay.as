@@ -35,7 +35,7 @@ public class ResourceDisplay extends AppObject
             // determine what the width should be
             label.text = getDisplayString(resourceType.name, 9999);
             label.width = label.textWidth;
-            label.height = label.textHeight;
+            label.height = label.textHeight + 3;
             label.text = "";
 
             label.x = width;
@@ -52,7 +52,6 @@ public class ResourceDisplay extends AppObject
 
         // draw a background for the text
         _parent.graphics.beginFill(BG_COLOR);
-        _parent.graphics.lineStyle(1, 0x000000);
         _parent.graphics.drawRect(0, 0, width, height);
         _parent.graphics.endFill();
 
@@ -91,7 +90,7 @@ public class ResourceDisplay extends AppObject
     protected static const FONT_SIZE :int = 14;
     protected static const LABEL_OFFSET :int = 3;
 
-    protected static const BG_COLOR :uint = 0x1E5EFF;
+    protected static const BG_COLOR :uint = 0x000000;
 }
 
 }

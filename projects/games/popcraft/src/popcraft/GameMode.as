@@ -45,6 +45,17 @@ public class GameMode extends AppMode
         var isAPlayer :Boolean = (myPosition >= 0);
         var numPlayers :int = PopCraft.instance.gameControl.seating.getPlayerIds().length;
 
+        // everyone gets to see the BattleBoard
+        _battleBoard = new BattleBoard(
+            Constants.BATTLE_COLS,
+            Constants.BATTLE_ROWS,
+            Constants.BATTLE_TILE_SIZE);
+
+        _battleBoard.displayObject.x = Constants.BATTLE_BOARD_LOC.x;
+        _battleBoard.displayObject.y = Constants.BATTLE_BOARD_LOC.y;
+
+        this.addObject(_battleBoard, this);
+
         // only players get puzzles
         if (isAPlayer) {
             _playerData = new PlayerData(uint(myPosition));
@@ -69,17 +80,6 @@ public class GameMode extends AppMode
             this.addObject(new UnitPurchaseButtonManager());
        }
 
-        // everyone gets to see the BattleBoard
-        _battleBoard = new BattleBoard(
-            Constants.BATTLE_COLS,
-            Constants.BATTLE_ROWS,
-            Constants.BATTLE_TILE_SIZE);
-
-        _battleBoard.displayObject.x = Constants.BATTLE_BOARD_LOC.x;
-        _battleBoard.displayObject.y = Constants.BATTLE_BOARD_LOC.y;
-
-        this.addObject(_battleBoard, this);
-
         // set up some network stuff
         _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
@@ -98,21 +98,24 @@ public class GameMode extends AppMode
         // create the player bases & waypoints
         var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
         var playerId :uint = 0;
-        for each (var loc :Vector2 in baseLocs) {
-            var base :PlayerBaseUnit = new PlayerBaseUnit(playerId, loc);
-            var baseId :uint = _netObjects.addObject(base, _battleBoard.displayObjectContainer);
+        for (var i :int = 0; i < baseLocs.length; i += 2) {
+            var baseLoc :Vector2 = (baseLocs[i] as Vector2);
+            var waypointLoc :Vector2 = (baseLocs[i + 1] as Vector2);
+
+            var base :PlayerBaseUnit = new PlayerBaseUnit(playerId, baseLoc);
+            var baseId :uint = _netObjects.addObject(base, _battleBoard.unitDisplayParent);
 
             _playerBaseIds.push(baseId);
 
             // waypoint
-            _playerWaypoints.push(loc.toPoint());
+            _playerWaypoints.push(waypointLoc.toPoint());
 
             // create a visual representation of the waypoint
             // if it belongs to us
             if (playerId == _playerData.playerId) {
                 _waypointMarker = new WaypointMarker(playerId);
-                _waypointMarker.displayObject.x = loc.x;
-                _waypointMarker.displayObject.y = loc.y;
+                _waypointMarker.displayObject.x = waypointLoc.x;
+                _waypointMarker.displayObject.y = waypointLoc.y;
 
                 this.addObject(_waypointMarker, _battleBoard.unitDisplayParent);
             }

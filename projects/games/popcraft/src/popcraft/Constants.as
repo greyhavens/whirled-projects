@@ -44,7 +44,7 @@ public class Constants
 
     public static const MIN_GROUP_SIZE :int = 1; // no min group size right now
 
-    public static const PUZZLE_COLS :int = 5;
+    public static const PUZZLE_COLS :int = 4;
     public static const PUZZLE_ROWS :int = 8;
     public static const PUZZLE_TILE_SIZE :int = 40;
 
@@ -65,14 +65,14 @@ public class Constants
     /* Resource types */
 
     // wow, I miss enums
-    public static const RESOURCE_WOOD :uint = 0;
+    public static const RESOURCE_BROWN :uint = 0;
     public static const RESOURCE_GOLD :uint = 1;
-    public static const RESOURCE_MANA :uint = 2;
-    public static const RESOURCE_MORALE :uint = 3;
+    public static const RESOURCE_BLUE :uint = 2;
+    public static const RESOURCE_PINK :uint = 3;
     public static const RESOURCE__LIMIT :uint = 4;
 
     public static const RESOURCE_TYPES :Array = [
-        new ResourceType("brown", 0x885300),
+        new ResourceType("brown", 0xCF7A00),
         new ResourceType("gold", 0xF8F500),
         new ResourceType("blue", 0x00F8EF),
         new ResourceType("pink", 0xFF77BA)
@@ -100,7 +100,7 @@ public class Constants
 
             new UnitData (
                 "melee"                     // name
-                , [0,   0,  0,    0]        // resource costs (brown, gold, blue, pink)
+                , [25,   25,  0,   0]        // resource costs (brown, gold, blue, pink)
                 , IMAGE_MELEE               // image
                 , -1, new IntRange(0, 0)   // wanderEvery, wanderRange
                 , 64                        // move speed (pixels/second)
@@ -116,7 +116,7 @@ public class Constants
 
             new UnitData (
                 "ranged"                    // name
-                , [0,   0,  0,    0]        // resource costs (brown, gold, blue, pink)
+                , [0,   0,  25,   25]        // resource costs (brown, gold, blue, pink)
                 , IMAGE_RANGED              // image
                 , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
                 , 40                        // move speed (pixels/second)
@@ -149,7 +149,7 @@ public class Constants
 
     /* Screen layout */
     public static const RESOURCE_DISPLAY_LOC :Point = new Point(0, 0);
-    public static const PUZZLE_BOARD_LOC :Point = new Point(0, 50);
+    public static const PUZZLE_BOARD_LOC :Point = new Point(20, 50);
     public static const BATTLE_BOARD_LOC :Point = new Point(200, 0);
 
     public static const UNIT_BUTTON_LOCS :Array = [
@@ -161,7 +161,10 @@ public class Constants
     {
         switch (numPlayers) {
         case 2:
-            return [ new Vector2(28, 240), new Vector2(452, 240) ];
+            return [
+                new Vector2(28, 240), new Vector2(75, 240),     // base loc, waypoint loc
+                new Vector2(452, 240), new Vector2(405, 240)
+             ];
 
         default:
             return [];
