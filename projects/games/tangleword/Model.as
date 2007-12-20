@@ -37,6 +37,8 @@ public class Model
 
         // Initialize game data storage
         initializeStorage ();
+
+        _trophies = new Trophies(_gameCtrl);
     }
 
     public function get scoreboard () :Scoreboard
@@ -69,6 +71,8 @@ public class Model
                 scores.push(score);
             }
         }
+
+        _trophies.handleRoundEnded(_scoreboard);
         _gameCtrl.endGameWithScores(playerIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
     }
 
@@ -189,7 +193,7 @@ public class Model
     // SHARED DATA ACCESSORS
 
     /** Sends out a message to everyone, informing them about adding
-        the new word to their lists. */
+     *  the new word to their lists. */
     public function addScore (word :String, score :Number, isvalid :Boolean) :void
     {
         var obj :Object = new Object ();
@@ -198,6 +202,12 @@ public class Model
         obj.score = score;
         obj.isvalid = isvalid;
 
+        // before updating the scoreboard, see if we need to award a trophy
+        if (isvalid) {
+            _trophies.handleAddWord(word, score, _scoreboard);
+        }
+
+        // now tell everyone about the new score
         _gameCtrl.sendMessage (ADD_SCORE_MSG, obj);
 
         // reset selection
@@ -205,7 +215,7 @@ public class Model
     }
 
     /** Sends out a message to everyone, informing them about a new letter set.
-        The array contains strings corresponding to the individual letters. */
+     *  The array contains strings corresponding to the individual letters. */
     public function sendNewLetterSet (a :Array) :void
     {
         _gameCtrl.set (LETTER_SET, a);
@@ -415,6 +425,9 @@ public class Model
 
     /** List of players and their scores */
     private var _scoreboard :Scoreboard;
+
+    /** Trophy manager. */
+    private var _trophies :Trophies;
 }
 }
 
