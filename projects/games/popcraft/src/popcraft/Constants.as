@@ -33,6 +33,12 @@ public class Constants
     [Embed(source="../../rsrc/waypoint.png")]
     public static const IMAGE_WAYPOINT :Class;
 
+    [Embed(source="../../rsrc/city_bg.png")]
+    public static const IMAGE_BATTLE_BG :Class;
+
+    [Embed(source="../../rsrc/city_forefront.png")]
+    public static const IMAGE_BATTLE_FG :Class;
+
     /* Puzzle stuff */
     public static const PIECE_CLEAR_TIMER_LENGTH :Number = 0.75;
 
@@ -96,10 +102,10 @@ public class Constants
                 "melee"                     // name
                 , [0,   0,  0,    0]        // resource costs (brown, gold, blue, pink)
                 , IMAGE_MELEE               // image
-                , 30, new IntRange(5, 25)   // wanderEvery, wanderRange
+                , -1, new IntRange(0, 0)   // wanderEvery, wanderRange
                 , 64                        // move speed (pixels/second)
                 , 100                       // health
-                , new UnitArmor( [DAMAGE_TYPE_MELEE, 0.8, DAMAGE_TYPE_PROJECTILE, 0.7, DAMAGE_TYPE_BASE, 1] )   // armor
+                , new UnitArmor( [DAMAGE_TYPE_MELEE, 0.8, DAMAGE_TYPE_PROJECTILE, 0.7, DAMAGE_TYPE_BASE, 0.8] )   // armor
                 , new UnitAttack(DAMAGE_TYPE_MELEE, new NumRange(10, 10), UNIT_CLASS_GROUND, 1, 35) // attack
                 , 30                        // collision radius
                 , 90                        // detect radius
@@ -144,7 +150,7 @@ public class Constants
     /* Screen layout */
     public static const RESOURCE_DISPLAY_LOC :Point = new Point(0, 0);
     public static const PUZZLE_BOARD_LOC :Point = new Point(0, 50);
-    public static const BATTLE_BOARD_LOC :Point = new Point(220, 20);
+    public static const BATTLE_BOARD_LOC :Point = new Point(200, 0);
 
     public static const UNIT_BUTTON_LOCS :Array = [
         new Point(0, 400),

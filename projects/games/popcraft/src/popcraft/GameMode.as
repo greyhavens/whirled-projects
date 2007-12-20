@@ -114,7 +114,7 @@ public class GameMode extends AppMode
                 _waypointMarker.displayObject.x = loc.x;
                 _waypointMarker.displayObject.y = loc.y;
 
-                this.addObject(_waypointMarker, _battleBoard.displayObjectContainer);
+                this.addObject(_waypointMarker, _battleBoard.unitDisplayParent);
             }
 
             ++playerId;
@@ -292,7 +292,7 @@ public class GameMode extends AppMode
             var createUnitMsg :CreateUnitMessage = (msg as CreateUnitMessage);
             _netObjects.addObject(
                 UnitFactory.createUnit(createUnitMsg.unitType, createUnitMsg.owningPlayer),
-                _battleBoard.displayObjectContainer);
+                _battleBoard.unitDisplayParent);
             break;
 
         case PlaceWaypointMessage.messageName:

@@ -9,6 +9,8 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import popcraft.net.PlaceWaypointMessage;
 import flash.geom.Point;
+import flash.display.Bitmap;
+import flash.display.DisplayObjectContainer;
 
 public class BattleBoard extends AppObject
 {
@@ -27,27 +29,19 @@ public class BattleBoard extends AppObject
             _tileGrid[i] = TILE_GROUND;
         }
 
-        // draw the board
-
-        var width :int = _cols * _tileSize;
-        var height :int = _rows * _tileSize;
-
         _view = new Sprite();
-        _view.graphics.beginFill(0xFFFFFF);
-        _view.graphics.drawRect(0, 0, width, height);
-        _view.graphics.endFill();
 
-        _view.graphics.lineStyle(1, 0);
+        // board units will attach to _unitDisplayParent, which is drawn above
+        // the background and below the foreground
+        _unitDisplayParent = new Sprite();
 
-        for (var col :int = 0; col <= _cols; ++col) {
-            _view.graphics.moveTo(col * _tileSize, 0);
-            _view.graphics.lineTo(col * _tileSize, height);
-        }
+        var bg :Bitmap = new Constants.IMAGE_BATTLE_BG();
+        var fg :Bitmap = new Constants.IMAGE_BATTLE_FG();
+        fg.y = bg.height - fg.height; // fg is aligned to the bottom of the board
 
-        for (var row :int = 0; row <= _rows; ++row) {
-            _view.graphics.moveTo(0, row * _tileSize);
-            _view.graphics.lineTo(width, row * _tileSize);
-        }
+        _view.addChild(bg);
+        _view.addChild(_unitDisplayParent);
+        _view.addChild(fg);
 
         _view.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown, false);
     }
@@ -55,6 +49,11 @@ public class BattleBoard extends AppObject
     override public function get displayObject () :DisplayObject
     {
         return _view;
+    }
+
+    public function get unitDisplayParent () :DisplayObjectContainer
+    {
+        return _unitDisplayParent;
     }
 
     protected function handleMouseDown (e :MouseEvent) :void
@@ -68,6 +67,7 @@ public class BattleBoard extends AppObject
 
     protected var _tileGrid :Array;
     protected var _view :Sprite;
+    protected var _unitDisplayParent :Sprite;
     protected var _cols :int;
     protected var _rows :int;
     protected var _tileSize :int;
