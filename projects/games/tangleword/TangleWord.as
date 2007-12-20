@@ -147,11 +147,11 @@ public class TangleWord extends Sprite
     private function initializeScoreboard () :void
     {
         // Create a new instance, and fill in the names
-        var board :Scoreboard = new Scoreboard ();
+        var board :Scoreboard = new Scoreboard (_gameCtrl);
         var occupants :Array = _gameCtrl.getOccupantIds();
         for each (var id :int in occupants)
         {
-            board.addPlayer(_gameCtrl.getOccupantName(id));
+            board.addPlayerId(id);
         }
 
         // Finally, share it!

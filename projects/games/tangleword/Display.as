@@ -23,8 +23,10 @@ import com.threerings.util.StringUtil;
 
 import com.whirled.WhirledGameControl;
 
-/** The Display class represents the game visualization, including UI
-    and game state display. */
+/**
+ * The Display class represents the game visualization, including UI
+ * and game state display.
+ */
 public class Display extends Sprite
 {
 
@@ -39,45 +41,45 @@ public class Display extends Sprite
         _gameCtrl = gameCtrl;
 
         // Initialize the background bitmap
-        _background = new Resources.background ();
-        Assert.NotNull (_background, "Background bitmap failed to initialize!");
-        addChild (_background);
+        _background = new Resources.background();
+        Assert.NotNull(_background, "Background bitmap failed to initialize!");
+        addChild(_background);
 
         // Initialize empty letters
-        initializeLetters ();
+        initializeLetters();
 
         // Initialize UI elements for selection
-        initializeUI (version);
+        initializeUI(version);
 
         // Register for events
-        _gameCtrl.registerListener (this);
-        addEventListener (MouseEvent.CLICK, clickHandler);
-        addEventListener (MouseEvent.MOUSE_MOVE, mouseHandler);
-        addEventListener (KeyboardEvent.KEY_UP, typingHandler);
+        _gameCtrl.registerListener(this);
+        addEventListener(MouseEvent.CLICK, clickHandler);
+        addEventListener(MouseEvent.MOUSE_MOVE, mouseHandler);
+        addEventListener(KeyboardEvent.KEY_UP, typingHandler);
 
-        _logger.Log (version);
+        _logger.Log(version);
     }
 
     /** Shutdown handler */
     public function handleUnload (event :Event) :void
     {
-        removeEventListener (MouseEvent.CLICK, clickHandler);
-        removeEventListener (MouseEvent.MOUSE_MOVE, mouseHandler);
-        removeEventListener (KeyboardEvent.KEY_UP, typingHandler);
-        _gameCtrl.unregisterListener (this);
+        removeEventListener(MouseEvent.CLICK, clickHandler);
+        removeEventListener(MouseEvent.MOUSE_MOVE, mouseHandler);
+        removeEventListener(KeyboardEvent.KEY_UP, typingHandler);
+        _gameCtrl.unregisterListener(this);
     }
 
     /** Called when the round starts - enables display. */
     public function roundStarted (duration :int) :void
     {
-        logRoundStarted ();
-        setEnableState (true);
+        logRoundStarted();
+        setEnableState(true);
     }
 
     /** Called when the round ends - disables display. */
     public function roundEnded (board :Scoreboard) :void
     {
-        setEnableState (false);
+        setEnableState(false);
 
         _stats.show(board);
     }
@@ -86,17 +88,17 @@ public class Display extends Sprite
         for one letter at specified board /position/. */
     public function setLetter (position :Point, text :String) :void
     {
-        Assert.True (isValidBoardPosition (position),
+        Assert.True(isValidBoardPosition(position),
                      "Bad position received in Display:setText");
-        _letters[position.x][position.y].setText (text);
+        _letters[position.x][position.y].setText(text);
     }
 
     /** Retrieves the text label from one letter at specified board /position/. */
     public function getLetter (position :Point) :String
     {
-        Assert.True (isValidBoardPosition (position),
+        Assert.True(isValidBoardPosition(position),
                      "Bad position received in Display:getText");
-        return _letters[position.x][position.y].getText ();
+        return _letters[position.x][position.y].getText();
     }
 
     /** Called from the model, this accessor takes an array of /points/,
@@ -104,14 +106,14 @@ public class Display extends Sprite
         and updates the text box. */
     public function updateLetterSelection (points :Array) :void
     {
-        Assert.NotNull (points, "Invalid points array!");
+        Assert.NotNull(points, "Invalid points array!");
 
         // First, deselect everything
         for (var x :int = 0; x < _letters.length; x++)
         {
             for (var y :int = 0; y < _letters[x].length; y++)
             {
-                _letters[x][y].setSelection (false);
+                _letters[x][y].setSelection(false);
             }
         }
 
@@ -121,7 +123,7 @@ public class Display extends Sprite
         for each (var p :Point in points)
         {
             var l :Letter = _letters[p.x][p.y];
-            l.setSelection (true);
+            l.setSelection(true);
             word += l.getText();
         }
 
@@ -152,27 +154,29 @@ public class Display extends Sprite
     /** Adds a "please wait" message */
     public function logPleaseWait () :void
     {
-        _logger.Log ("Please wait for");
-        _logger.Log ("   the next round.");
+        _logger.Log("Please wait for");
+        _logger.Log("   the next round.");
     }
 
     /** Adds a "round started" message */
     public function logRoundStarted () :void
     {
-        _logger.Log ("New round started!");
+        _logger.Log("New round started!");
     }
 
     /** Adds a round summary message */
     public function logRoundEnded (points :Number, flow :Number) :void
     {
-        _logger.Log ("Round ended: " + points + " points");
-        _logger.Log ("You received " + flow + " flow!");
+        _logger.Log("Round ended: " + points + " points");
+        _logger.Log("You received " + flow + " flow!");
     }
 
     /** Sets scores based on the scoreboard. */
     public function updateScores (board :Scoreboard) :void
     {
-        _scorefield.updateScores (board);
+        _gameCtrl.clearScores();
+        _gameCtrl.setMappedScores(board.getScores());
+        _scorefield.updateScores(board);
     }
 
     /** Sets timer based on specified number. */
@@ -195,24 +199,24 @@ public class Display extends Sprite
 
     private function clickHandler (event :MouseEvent) :void
     {
-        var p :Point = new Point (event.stageX, event.stageY);
-        var i :Point = screenToBoard (p);
+        var p :Point = new Point(event.stageX, event.stageY);
+        var i :Point = screenToBoard(p);
         if (i != null)
         {
-            _controller.tryAddLetter (i);
+            _controller.tryAddLetter(i);
         }
     }
 
     private function mouseHandler (event :MouseEvent) :void
     {
-        var p :Point = new Point (event.stageX, event.stageY);
-        var i :Point = screenToBoard (p);
-        setCursor (i);
+        var p :Point = new Point(event.stageX, event.stageY);
+        var i :Point = screenToBoard(p);
+        setCursor(i);
     }
 
     private function okButtonClickHandler () :void
     {
-        _controller.tryScoreWord (_wordfield.text);
+        _controller.tryScoreWord(_wordfield.text);
     }
 
     /** Called when the user types a letter inside the word field. */
@@ -223,13 +227,13 @@ public class Display extends Sprite
         case 13:
             // If it's an ENTER, try scoring.
             if (_wordfield.text != "") {
-                _controller.tryScoreWord (_wordfield.text);
+                _controller.tryScoreWord(_wordfield.text);
             }
             break;
 
         default:
             // It's just a regular keystroke. Let the controller know.
-            _controller.processKeystroke (event);
+            _controller.processKeystroke(event);
         }
     }
 
@@ -242,17 +246,17 @@ public class Display extends Sprite
     {
         // Create the 2D array
         var count :int = Properties.LETTERS;
-        _letters = new Array (count);
+        _letters = new Array(count);
         for (var x :int = 0; x < count; x++)
         {
-            _letters[x] = new Array (count);
+            _letters[x] = new Array(count);
             for (var y :int = 0; y < count; y++)
             {
-                var l :Letter = new Letter (this);   // make a new instance
-                var p :Point = boardToScreen (new Point (x, y));
+                var l :Letter = new Letter(this);   // make a new instance
+                var p :Point = boardToScreen(new Point(x, y));
                 l.x = p.x;
                 l.y = p.y;
-                addChild (l);          // add to display
+                addChild(l);          // add to display
                 _letters[x][y] = l;    // add to list
             }
         }
@@ -264,34 +268,34 @@ public class Display extends Sprite
         _okbutton = new Button(new Resources.buttonOkOver(),
                                new Resources.buttonOkOut(),
                                okButtonClickHandler);
-        doPosition (_okbutton, Properties.OKBUTTON);
-        addChild (_okbutton);
+        doPosition(_okbutton, Properties.OKBUTTON);
+        addChild(_okbutton);
 
-        _wordfield = new TextField ();
+        _wordfield = new TextField();
         _wordfield.defaultTextFormat = Resources.makeFormatForUI();
         _wordfield.borderColor = Resources.defaultBorderColor;
 //        _wordfield.border = true;
         _wordfield.type = TextFieldType.INPUT;
         _wordfield.text = "< type here >";
-        doLayout (_wordfield, Properties.WORDFIELD);
-        addChild (_wordfield);
+        doLayout(_wordfield, Properties.WORDFIELD);
+        addChild(_wordfield);
 
         _logger = new Logger ();
-        doLayout (_logger, Properties.LOGFIELD);
-        addChild (_logger);
+        doLayout(_logger, Properties.LOGFIELD);
+        addChild(_logger);
 
-//        _logger.scrollRect = new Rectangle (0, 0, 50, 50);
-//        var box :ScrollContainer = new ScrollContainer (_logger, 100, 200);
+//        _logger.scrollRect = new Rectangle(0, 0, 50, 50);
+//        var box :ScrollContainer = new ScrollContainer(_logger, 100, 200);
 //        this.addChild(box);
 
-        _scorefield = new ScoreField ();
-        doLayout (_scorefield, Properties.SCOREFIELD);
-        addChild (_scorefield);
+        _scorefield = new ScoreField(_gameCtrl);
+        doLayout(_scorefield, Properties.SCOREFIELD);
+        addChild(_scorefield);
 
         /*
-        _timer = new CountdownTimer ();
-        doLayout (_timer, Properties.TIMER);
-        addChild (_timer);
+        _timer = new CountdownTimer();
+        doLayout(_timer, Properties.TIMER);
+        addChild(_timer);
         */
 
         _timerbox = new TextField();
@@ -299,8 +303,8 @@ public class Display extends Sprite
         _timerbox.defaultTextFormat = Resources.makeFormatForCountdown();
         _timerbox.borderColor = Resources.defaultBorderColor;
 //        _timerbox.border = true;
-        doLayout (_timerbox, Properties.TIMER);
-        addChild (_timerbox);
+        doLayout(_timerbox, Properties.TIMER);
+        addChild(_timerbox);
         
         _splash = new Splash();
         addChild(_splash);
@@ -360,7 +364,7 @@ public class Display extends Sprite
 
         if (location != null &&
             _lastCursor != null &&
-            location.equals (_lastCursor))
+            location.equals(_lastCursor))
         {
             // Cursor hasn't changed; ignore.
             return;
@@ -390,14 +394,14 @@ public class Display extends Sprite
     {
         // remove offset
         var newp :Point = globalToLocal(p).subtract(Properties.BOARDPOS);
-//        var newp :Point = new Point (p.x - Properties.BOARD.x, p.y - Properties.BOARD.y);
+//        var newp :Point = new Point(p.x - Properties.BOARD.x, p.y - Properties.BOARD.y);
 
         // convert to board coordinates
-        newp.x = Math.floor (newp.x / Properties.LETTER_SIZE);
-        newp.y = Math.floor (newp.y / Properties.LETTER_SIZE);
+        newp.x = Math.floor(newp.x / Properties.LETTER_SIZE);
+        newp.y = Math.floor(newp.y / Properties.LETTER_SIZE);
 
         // check bounds and return
-        if (! isValidBoardPosition (newp))
+        if (! isValidBoardPosition(newp))
         {
             return null;
         }
@@ -410,12 +414,12 @@ public class Display extends Sprite
         the board, returns /null/. */
     private function boardToScreen (p :Point) :Point
     {
-        if (! isValidBoardPosition (p))
+        if (! isValidBoardPosition(p))
         {
             return null;
         }
 
-        var p :Point = new Point (p.x * Properties.LETTER_SIZE + Properties.BOARD.x,
+        var p :Point = new Point(p.x * Properties.LETTER_SIZE + Properties.BOARD.x,
                                   p.y * Properties.LETTER_SIZE + Properties.BOARD.y);
 
         return p;
@@ -424,7 +428,7 @@ public class Display extends Sprite
     /** Checks if a given point is inside board dimension bounds */
     private function isValidBoardPosition (p :Point) :Boolean
     {
-        return (p.x >= 0 && p.x < Properties.LETTERS &&
+        return(p.x >= 0 && p.x < Properties.LETTERS &&
                 p.y >= 0 && p.y < Properties.LETTERS);
     }
 
@@ -481,33 +485,35 @@ import flash.display.Sprite;
 import flash.text.TextField;
 import com.threerings.util.StringUtil;
 
+import com.whirled.WhirledGameControl;
+
 class ScoreField extends TextField
 {
     // Constructor, sets up the field.
-    public function ScoreField ()
+    public function ScoreField (gameCtrl :WhirledGameControl)
     {
         this.selectable = false;
-        this.defaultTextFormat = Resources.makeFormatForScore ();
+        this.defaultTextFormat = Resources.makeFormatForScore();
         this.multiline = true;
 //        this.border = true;
         this.borderColor = Resources.defaultBorderColor;
+
+        _gameCtrl = gameCtrl;
     }
 
-    // Sets scores. Expects an array of objects with the following
-    // properties:
-    //   object.name : String - contains player name
-    //   object.score : Number - contains player score
     public function updateScores (board :Scoreboard) :void
     {
         this.text = "";
-        var players :Array = board.getPlayers ();
-        for each (var player :String in players)
+        for each (var id :int in board.getPlayerIds())
         {
-            var score :Number = board.getTotalScore (player);
-            var line :String = StringUtil.truncate(player, 18, "...") + ": " + score + " pts.\n";
-            appendText (line);
+            var score :Number = board.getTotalScore(id);
+            var name :String = _gameCtrl.getOccupantName(id);
+            var line :String = StringUtil.truncate(name, 18, "...") + ": " + score + " pts.\n";
+            appendText(line);
         }
     }
+
+    protected var _gameCtrl :WhirledGameControl;
 }
 
 

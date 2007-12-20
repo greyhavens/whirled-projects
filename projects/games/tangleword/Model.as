@@ -30,7 +30,6 @@ public class Model
         // Squirrel the pointers away
         _gameCtrl = gameCtrl;
         _display = display;
-        _playerName = _gameCtrl.getOccupantName(_gameCtrl.getMyId());
 
         // Register for updates
         _gameCtrl.registerListener (this);
@@ -64,7 +63,7 @@ public class Model
         var playerIds :Array = [];
         var scores :Array = [];
         for each (var playerId :int in _gameCtrl.getOccupantIds()) {
-            var score :int = _scoreboard.getRoundScore(_gameCtrl.getOccupantName(playerId));
+            var score :int = _scoreboard.getRoundScore(playerId);
             if (score > 0) {
                 playerIds.push(playerId);
                 scores.push(score);
@@ -194,7 +193,7 @@ public class Model
     public function addScore (word :String, score :Number, isvalid :Boolean) :void
     {
         var obj :Object = new Object ();
-        obj.player = _playerName;
+        obj.playerId = _gameCtrl.getMyId(); 
         obj.word = word;
         obj.score = score;
         obj.isvalid = isvalid;
@@ -238,7 +237,7 @@ public class Model
         case ADD_SCORE_MSG:
             // Store the score in a local data structure
             addWordToScoreboard (
-                event.value.player, event.value.word, event.value.score, event.value.isvalid);
+                event.value.playerId, event.value.word, event.value.score, event.value.isvalid);
             updateScoreDisplay ();
             break;
 
@@ -291,7 +290,7 @@ public class Model
     /** Called when flow is awarded at the end of the round. */
     protected function flowAwarded (event :FlowAwardedEvent) :void
     {
-        var roundScore :int = _scoreboard.getRoundScore(_playerName);
+        var roundScore :int = _scoreboard.getRoundScore(_gameCtrl.getMyId());
         if (roundScore > 0) {
             _display.logRoundEnded(roundScore, event.amount);
         }
@@ -319,7 +318,7 @@ public class Model
         resetWord ();
 
         // Third, make a new scoreboard
-        _scoreboard = new Scoreboard ();
+        _scoreboard = new Scoreboard (_gameCtrl);
     }
 
     /** Sets up a new game board, based on a flat array of letters. */
@@ -338,8 +337,10 @@ public class Model
        If the word is not valid, prints out a message.
      */
     private function addWordToScoreboard (
-        player :String, word :String, score :Number, isvalid :Boolean) :void
+        playerId :int, word :String, score :Number, isvalid :Boolean) :void
     {
+        var playerName :String = _scoreboard.getName(playerId);
+        
         // if this message came in after the end of the round, just ignore it
         if (!_gameCtrl.isInPlay()) {
             return;
@@ -347,21 +348,21 @@ public class Model
 
         // if the word is invalid, display who tried to claim it
         if (! isvalid) {
-            _display.logInvalidWord (player, word);
+            _display.logInvalidWord (playerName, word);
             return;
         }
 
         // if the word is valid and not claimed, score!
         if (! _scoreboard.isWordClaimed (word)) {
-            _scoreboard.addWord (player, word, score);
-            _display.logSuccess (player, word, score);
+            _scoreboard.addWord (playerId, word, score);
+            _display.logSuccess (playerName, word, score);
             return;
         }
 
         // by this point, the word is valid and already claimed.
         // if this was my word, let me know.
-        if (_playerName == player) {
-            _display.logAlreadyClaimed (player, word);
+        if (_gameCtrl.getMyId() == playerId) {
+            _display.logAlreadyClaimed (playerName, word);
             return;
         }
 

@@ -133,7 +133,7 @@ public class Stats extends Sprite
 
         // find top player and scores
         var topWords :Array = scoreboard.getTopWords(5);
-        var topPlayers :Array = scoreboard.getTopPlayers();
+        var topPlayers :Array = scoreboard.getTopPlayerIds().map(scoreboard.getName);
         var topScore :int = scoreboard.getTopScore();
 
         while (_text.numChildren > 0) {
@@ -163,7 +163,7 @@ public class Stats extends Sprite
         for each (var wordDef :Object in topWords) {
                 words += makeDictionaryAnchor(wordDef.word) + ": " +
                     wordDef.score + " pts.  (" +
-                    StringUtil.truncate(wordDef.player, 20, "...") + ")<br>";
+                    StringUtil.truncate(scoreboard.getName(wordDef.playerId), 20, "...") + ")<br>";
         }
         words += "</ul>";
         wordlist.htmlText = words;
