@@ -10,6 +10,8 @@ import flash.geom.Point;
 
 public class Constants
 {
+    public static const DEBUG_LEVEL :int = 1;
+
     public static const PLAYER_COLORS :Array = [
        uint(0xFFFF0000),
        uint(0xFF9FBCFF),

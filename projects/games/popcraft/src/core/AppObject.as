@@ -1,7 +1,7 @@
 package core {
 
 import com.threerings.util.Assert;
-import com.threerings.util.HashMap;
+import com.threerings.util.SortedHashMap;
 
 import core.tasks.ParallelTask;
 import flash.display.DisplayObject;
@@ -182,12 +182,18 @@ public class AppObject
         update(dt);
 
         function updateNamedTaskContainer (name :*, tasks:*) :void {
-            (tasks as ParallelTask).update(dt, thisAppObject);
+            // Tasks may be removed from the object during the _namedTasks.forEach() loop.
+            // When this happens, we'll get undefined 'tasks' objects.
+            if (undefined !== tasks) {
+                (tasks as ParallelTask).update(dt, thisAppObject);
+            }
         }
     }
 
     protected var _anonymousTasks :ParallelTask = new ParallelTask();
-    protected var _namedTasks :HashMap = new HashMap();
+
+    // stores a mapping from String to ParallelTask
+    protected var _namedTasks :SortedHashMap = new SortedHashMap(SortedHashMap.STRING_KEYS);
 
     // managed by AppMode
     internal var _objectId :uint = 0xFFFFFFFF;

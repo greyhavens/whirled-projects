@@ -34,7 +34,7 @@ public class UnitArmor
     public function getAttackDamage (attack :UnitAttack) :Number
     {
         var value :* = _armor.get(attack.damageType);
-        var damageMultiplier :Number = (undefined != value ? value : 1);
+        var damageMultiplier :Number = (undefined !== value ? value : 1);
 
         return (attack.damageRange.next(Rand.STREAM_GAME) * damageMultiplier);
     }

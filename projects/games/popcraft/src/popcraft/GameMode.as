@@ -84,7 +84,11 @@ public class GameMode extends AppMode
         _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
         _messageMgr.addMessageFactory(PlaceWaypointMessage.messageName, PlaceWaypointMessage.createFactory());
-        _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
+
+        if (Constants.DEBUG_LEVEL >= 1) {
+            _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
+        }
+
         _messageMgr.setup((0 == _playerData.playerId), TICK_INTERVAL_MS);
 
         // create a special AppMode for all objects that are synchronized over the network.
@@ -115,35 +119,14 @@ public class GameMode extends AppMode
 
             ++playerId;
         }
-
-        // Listen for all keydowns.
-        // The suggested way to do this is to attach an event listener to the stage,
-        // but that's a security violation. The GameControl re-dispatches global key events for us instead.
-        PopCraft.instance.gameControl.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 0, true);
     }
 
     // from core.AppMode
     override public function destroy () :void
     {
-        PopCraft.instance.gameControl.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false);
-
         if (null != _messageMgr) {
             _messageMgr.shutdown();
             _messageMgr = null;
-        }
-    }
-
-    protected function onKeyDown (e :KeyboardEvent) :void
-    {
-        // there has to be a better way to figure out charCodes
-
-        switch (e.charCode) {
-        case "d".charCodeAt(0):
-           if (++_debugLevel > 1) {
-              _debugLevel = 0;
-           }
-           trace("Player " + _playerData.playerId + " debug level set to " + _debugLevel);
-           break;
         }
     }
 
@@ -163,6 +146,7 @@ public class GameMode extends AppMode
 
         // update the network
         _messageMgr.update(dt);
+
         while (_messageMgr.hasUnprocessedTicks) {
 
             // process all messages from this tick
@@ -176,7 +160,7 @@ public class GameMode extends AppMode
             // network timeslices are always the same distance apart)
             _netObjects.update(TICK_INTERVAL_S);
 
-            if (_debugLevel >= 1) {
+            if (Constants.DEBUG_LEVEL >= 1) {
                 debugNetwork(messageArray);
             }
 
@@ -267,12 +251,15 @@ public class GameMode extends AppMode
         function add (val :*, desc :String) :void
         {
             csum.add(val);
-            if (needsLinebreak) {
-                msg.details += "\n";
-            }
 
-            msg.details += String("csum : " + csum.value + "\t(desc: " + desc + ")\t(val: " + val + ")");
-            needsLinebreak = true;
+            if (Constants.DEBUG_LEVEL >= 2) {
+                if (needsLinebreak) {
+                    msg.details += "\n";
+                }
+
+                msg.details += String("csum : " + csum.value + "\t(desc: " + desc + ")\t(val: " + val + ")");
+                needsLinebreak = true;
+            }
         }
     }
 
@@ -302,7 +289,7 @@ public class GameMode extends AppMode
 
     protected function handleChecksumMessage (msg :ChecksumMessage) :void
     {
-        if (!_dead && msg.playerId != _playerData.playerId) {
+        if (msg.playerId != _playerData.playerId) {
             // check this checksum against our checksum buffer
             if (msg.tick > _lastCachedChecksumTick || msg.tick <= (_lastCachedChecksumTick - _myChecksums.length)) {
                 trace("discarding checksum message (too old or too new)");
@@ -310,12 +297,16 @@ public class GameMode extends AppMode
                 var index :uint = (_lastCachedChecksumTick - msg.tick);
                 var myChecksum :ChecksumMessage = (_myChecksums.at(index) as ChecksumMessage);
                 if (myChecksum.checksum != msg.checksum) {
-                    trace("Mismatched checksums at tick " + msg.tick + "!");
-                    trace("-- PLAYER " + myChecksum.playerId + " --");
-                    trace(myChecksum.details);
-                    trace("-- PLAYER " + msg.playerId + " --");
-                    trace(msg.details);
-                    _dead = true;
+                    trace("** WARNING ** Mismatched checksums at tick " + msg.tick + "!");
+
+                    // only dump the details once
+                    if (!_syncError) {
+                        trace("-- PLAYER " + myChecksum.playerId + " --");
+                        trace(myChecksum.details);
+                        trace("-- PLAYER " + msg.playerId + " --");
+                        trace(msg.details);
+                        _syncError = true;
+                    }
                 }
             }
         }
@@ -402,10 +393,9 @@ public class GameMode extends AppMode
     protected var _waypointMarker :WaypointMarker;
 
     protected var _tickCount :uint;
-    protected var _debugLevel :uint = 1;
     protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);
     protected var _lastCachedChecksumTick :int;
-    protected var _dead :Boolean;
+    protected var _syncError :Boolean;
 
     protected static const TICK_INTERVAL_MS :int = 100; // 1/10 of a second
     protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));

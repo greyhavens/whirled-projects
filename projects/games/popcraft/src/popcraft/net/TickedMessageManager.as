@@ -108,8 +108,11 @@ public class TickedMessageManager
     // returns the
     public function getNextTick () :Array
     {
-        Assert.isTrue(unprocessedTickCount > 0);
-        return (_ticks.shift() as Array);
+        if(_ticks.length <= 1) {
+            return null;
+        } else {
+            return (_ticks.shift() as Array);
+        }
     }
 
     public function sendMessage (msg :Message) :void
