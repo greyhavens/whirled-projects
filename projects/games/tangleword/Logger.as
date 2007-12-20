@@ -13,7 +13,7 @@ import flash.text.TextFormat;
 public class Logger extends TextField
 {
     /** Max number of lines displayed in the log window */
-    public static const MAX_LINES : uint = 9;
+    public static const MAX_LINES : uint = 17;
     
     // Constructor, sets everything up
     public function Logger ()

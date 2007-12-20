@@ -176,7 +176,6 @@ public class Display extends Sprite
     {
         _gameCtrl.clearScores();
         _gameCtrl.setMappedScores(board.getScores());
-        _scorefield.updateScores(board);
     }
 
     /** Sets timer based on specified number. */
@@ -287,10 +286,6 @@ public class Display extends Sprite
 //        _logger.scrollRect = new Rectangle(0, 0, 50, 50);
 //        var box :ScrollContainer = new ScrollContainer(_logger, 100, 200);
 //        this.addChild(box);
-
-        _scorefield = new ScoreField(_gameCtrl);
-        doLayout(_scorefield, Properties.SCOREFIELD);
-        addChild(_scorefield);
 
         /*
         _timer = new CountdownTimer();
@@ -460,9 +455,6 @@ public class Display extends Sprite
     /** Logger text box */
     private var _logger :Logger;
 
-    /** Score display box */
-    private var _scorefield :ScoreField;
-
     /** Timer display */
 //    private var _timer :CountdownTimer;
     private var _timerbox :TextField;
@@ -475,48 +467,3 @@ public class Display extends Sprite
 }
 
 } // package
-
-
-
-
-// HELPER CLASSES LOCAL TO THIS MODULE
-
-import flash.display.Sprite;
-import flash.text.TextField;
-import com.threerings.util.StringUtil;
-
-import com.whirled.WhirledGameControl;
-
-class ScoreField extends TextField
-{
-    // Constructor, sets up the field.
-    public function ScoreField (gameCtrl :WhirledGameControl)
-    {
-        this.selectable = false;
-        this.defaultTextFormat = Resources.makeFormatForScore();
-        this.multiline = true;
-//        this.border = true;
-        this.borderColor = Resources.defaultBorderColor;
-
-        _gameCtrl = gameCtrl;
-    }
-
-    public function updateScores (board :Scoreboard) :void
-    {
-        this.text = "";
-        for each (var id :int in board.getPlayerIds())
-        {
-            var score :Number = board.getTotalScore(id);
-            var name :String = _gameCtrl.getOccupantName(id);
-            var line :String = StringUtil.truncate(name, 18, "...") + ": " + score + " pts.\n";
-            appendText(line);
-        }
-    }
-
-    protected var _gameCtrl :WhirledGameControl;
-}
-
-
-
-
-

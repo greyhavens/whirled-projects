@@ -39,11 +39,8 @@ public class Properties
     /** Position of the OK button (automatically sized) */
     public static const OKBUTTON :Point = new Point (240, 362);
 
-    /** Position of the score box */
-    public static const SCOREFIELD :Rectangle = new Rectangle (360, 109, 178, 100);
-
     /** Position of the log text field */
-    public static const LOGFIELD :Rectangle = new Rectangle (360, 226, 178, 130);
+    public static const LOGFIELD :Rectangle = new Rectangle (360, 110, 178, 240);
 
     /** Position of the timer */
     public static const TIMER :Rectangle = new Rectangle (360, 370, 178, 28);
