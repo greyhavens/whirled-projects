@@ -119,14 +119,36 @@ public class GameMode extends AppMode
 
             ++playerId;
         }
+
+        // Listen for all keydowns.
+        // The suggested way to do this is to attach an event listener to the stage,
+        // but that's a security violation. The GameControl re-dispatches global key events for us instead.
+        PopCraft.instance.gameControl.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 0, true);
     }
 
     // from core.AppMode
     override public function destroy () :void
     {
+        PopCraft.instance.gameControl.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false);
+
         if (null != _messageMgr) {
             _messageMgr.shutdown();
             _messageMgr = null;
+        }
+    }
+
+    // there has to be a better way to figure out charCodes
+    protected static const KEY_4 :uint = "4".charCodeAt(0);
+    protected function onKeyDown (e :KeyboardEvent) :void
+    {
+        if (Constants.CHEATS_ENABLED) {
+            switch (e.charCode) {
+            case KEY_4:
+                for (var i :uint = 0; i < Constants.RESOURCE__LIMIT; ++i) {
+                    _playerData.offsetResourceAmount(i, 100);
+                }
+                break;
+            }
         }
     }
 
