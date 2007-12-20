@@ -74,16 +74,19 @@ public class PuzzleCursor extends AppObject
 
     protected function mouseDown (evt :MouseEvent) :void
     {
-        // install the pieceClearTimer. If it expires before the next mouseUp, the pieces will be cleared.
-        this.installClearTimer();
+        // don't affect the board if it's animating
+        if (!_board.resolvingClears) {
+            // install the pieceClearTimer. If it expires before the next mouseUp, the pieces will be cleared.
+            this.installClearTimer();
 
-        _mouseIsDown = true;
-        _noSwapOnNextClick = false;
+            _mouseIsDown = true;
+            _noSwapOnNextClick = false;
+        }
     }
 
     protected function mouseClick (evt :MouseEvent) :void
     {
-        if (!_noSwapOnNextClick) {
+        if (!_noSwapOnNextClick && !_board.resolvingClears) {
             _board.swapPieces(_swapIndexX, _swapIndexY, _swapIndexX + 1, _swapIndexY);
             _mouseIsDown = false;
 
