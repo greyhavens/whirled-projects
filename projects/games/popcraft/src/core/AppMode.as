@@ -159,9 +159,9 @@ public class AppMode extends Sprite
     {
         // update all objects in this mode
         // there may be holes in the array, so check each object against null
-        for each (var obj:* in _objects) {
+        for each (var obj :AppObject in _objects) {
             if (null != obj) {
-                (obj as AppObject).updateInternal(dt);
+                obj.updateInternal(dt);
             }
         }
     }

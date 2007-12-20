@@ -19,6 +19,14 @@ public class PlaceWaypointMessage
         return messageName;
     }
 
+    public function toString () :String
+    {
+        return new String(
+           "[WAYPOINT. playerId: " + owningPlayerId +
+           ". loc: (" + xLoc + ", " + yLoc + ")" +
+           "]");
+    }
+
     public static function createFactory () :MessageFactory
     {
         return new PlaceWaypointMessageFactory();

@@ -17,6 +17,14 @@ public class CreateUnitMessage
         return messageName;
     }
 
+    public function toString () :String
+    {
+        return new String(
+           "[CREATEUNIT. playerId: " + owningPlayer +
+           ". unitType: " + unitType +
+           "]");
+    }
+
     public static function createFactory () :MessageFactory
     {
         return new CreateUnitMessageFactory();

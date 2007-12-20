@@ -21,6 +21,16 @@ public class ChecksumMessage
         return messageName;
     }
 
+    public function toString () :String
+    {
+        return new String(
+           "[CHECKSUM. playerId: " + playerId +
+           ". tick: " + tick +
+           ". checksum: " + checksum +
+           ". details: " + details +
+           "]");
+    }
+
     public static function createFactory () :MessageFactory
     {
         return new ChecksumMessageFactory();

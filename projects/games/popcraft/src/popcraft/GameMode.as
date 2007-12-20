@@ -176,17 +176,8 @@ public class GameMode extends AppMode
             // network timeslices are always the same distance apart)
             _netObjects.update(TICK_INTERVAL_S);
 
-            // calculate a checksum for this frame
             if (_debugLevel >= 1) {
-                var csumMessage :ChecksumMessage = calculateChecksum();
-
-                // player 1 saves his checksums, player 0 sends his checksums
-                if (_playerData.playerId == 1) {
-                    _myChecksums.unshift(csumMessage);
-                    _lastCachedChecksumTick = _tickCount;
-                } else if ((_tickCount % 2) == 0) {
-                    _messageMgr.sendMessage(csumMessage);
-                }
+                debugNetwork(messageArray);
             }
 
             ++_tickCount;
@@ -201,6 +192,37 @@ public class GameMode extends AppMode
         return (_netObjects.getObject(_playerBaseIds[player]) as PlayerBaseUnit);
     }
 
+    protected function debugNetwork (messageArray :Array) :void
+    {
+        // process all messages from this tick
+        var messageStatus :String = new String();
+        var needsBreak :Boolean = false;
+        for each (var msg :Message in messageArray) {
+            if (msg.name != ChecksumMessage.messageName) {
+                if (needsBreak) {
+                    messageStatus += " ** ";
+                }
+                messageStatus += msg.toString();
+                needsBreak = true;
+            }
+        }
+
+        if (messageStatus.length > 0) {
+            trace("PLAYER: " + _playerData.playerId + " TICK: " + _tickCount + " MESSAGES: " + messageStatus);
+        }
+
+        // calculate a checksum for this frame
+        var csumMessage :ChecksumMessage = calculateChecksum();
+
+        // player 1 saves his checksums, player 0 sends his checksums
+        if (_playerData.playerId == 1) {
+            _myChecksums.unshift(csumMessage);
+            _lastCachedChecksumTick = _tickCount;
+        } else if ((_tickCount % 2) == 0) {
+            _messageMgr.sendMessage(csumMessage);
+        }
+    }
+
     protected function calculateChecksum () :ChecksumMessage
     {
         var msg :ChecksumMessage = new ChecksumMessage(0, 0, 0, "");
@@ -211,25 +233,27 @@ public class GameMode extends AppMode
 
         var i :int = 0;
 
+        // random state
+        add(Rand.nextInt(Rand.STREAM_GAME), "Rand state");
+
         // waypoints
         add(_playerWaypoints.length, "_playerWaypoints.length");
-        for each (var waypoint :Point in _playerWaypoints) {
+        for (i = 0; i < _playerWaypoints.length; ++i) {
+            var waypoint :Point = (_playerWaypoints[i] as Point);
             add(waypoint.x, "waypoint.x - " + i);
             add(waypoint.y, "waypoint.x - " + i);
-            ++i;
         }
 
         // units
-        i = 0;
         var units :Array = _netObjects.getObjectsInGroup(Unit.GROUP_NAME);
         add(units.length, "units.length");
-        for each (var unit :Unit in units) {
+        for (i = 0; i < units.length; ++i) {
+            var unit :Unit = (units[i] as Unit);
             add(unit.owningPlayerId, "unit.owningPlayerId - " + i);
             add(unit.unitType, "unit.unitType - " + i);
             add(unit.displayObject.x, "unit.displayObject.x - " + i);
             add(unit.displayObject.y, "unit.displayObject.y - " + i);
             add(unit.health, "unit.health - " + i);
-            ++i;
         }
 
         msg.playerId = _playerData.playerId;
@@ -278,7 +302,7 @@ public class GameMode extends AppMode
 
     protected function handleChecksumMessage (msg :ChecksumMessage) :void
     {
-        if (msg.playerId != _playerData.playerId) {
+        if (!_dead && msg.playerId != _playerData.playerId) {
             // check this checksum against our checksum buffer
             if (msg.tick > _lastCachedChecksumTick || msg.tick <= (_lastCachedChecksumTick - _myChecksums.length)) {
                 trace("discarding checksum message (too old or too new)");
@@ -286,11 +310,12 @@ public class GameMode extends AppMode
                 var index :uint = (_lastCachedChecksumTick - msg.tick);
                 var myChecksum :ChecksumMessage = (_myChecksums.at(index) as ChecksumMessage);
                 if (myChecksum.checksum != msg.checksum) {
-                    trace("Mismatched checksums!");
-                    trace("-- MINE --");
+                    trace("Mismatched checksums at tick " + msg.tick + "!");
+                    trace("-- PLAYER " + myChecksum.playerId + " --");
                     trace(myChecksum.details);
-                    trace("-- THEIRS --");
+                    trace("-- PLAYER " + msg.playerId + " --");
                     trace(msg.details);
+                    _dead = true;
                 }
             }
         }
@@ -380,6 +405,7 @@ public class GameMode extends AppMode
     protected var _debugLevel :uint = 1;
     protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);
     protected var _lastCachedChecksumTick :int;
+    protected var _dead :Boolean;
 
     protected static const TICK_INTERVAL_MS :int = 100; // 1/10 of a second
     protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));

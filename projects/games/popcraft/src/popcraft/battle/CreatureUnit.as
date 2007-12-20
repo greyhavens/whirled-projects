@@ -51,8 +51,7 @@ public class CreatureUnit extends Unit
         _healthMeter.displayObject.y = image.y - _healthMeter.height;
 
         // @TODO - this is probably bad practice right here.
-        //MainLoop.instance.topMode.addObject(_healthMeter, _sprite);
-        GameMode.instance.netObjects.addObject(_healthMeter, _sprite);
+        GameMode.instance.addObject(_healthMeter, _sprite);
 
         // start at our owning player's base's spawn loc
         var spawnLoc :Vector2 = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;

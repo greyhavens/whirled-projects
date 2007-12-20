@@ -60,3 +60,11 @@ public class PopCraft extends Sprite
 }
 
 }
+
+class Test
+{
+    public function toString () :String
+    {
+        return "asdfasdfasdf";
+    }
+}
