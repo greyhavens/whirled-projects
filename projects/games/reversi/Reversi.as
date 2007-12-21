@@ -30,13 +30,6 @@ public class Reversi extends Sprite
         }
 
         _gameCtrl.setPlayerScores([ "white", "black" ], [ 1, 0 ]);
-//        var players :ReversiPlayersDisplay = new ReversiPlayersDisplay();
-//        // position it to the right of the play board
-//        players.x = Piece.SIZE * _boardSize + 10;
-//        players.y = 0;
-//        addChild(players);
-//
-//        players.setGameControl(_gameCtrl);
     }
 
     /**
