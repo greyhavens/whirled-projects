@@ -74,7 +74,7 @@ public class Scoreboard
         }
         return topplayers;
     }
-        
+
     /** Retrieves player's total score, potentially zero. If the scoring
      *  object doesn't have the player's score, it's initialized on first access. */
     public function getTotalScore (playerId :int) :Number

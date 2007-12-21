@@ -45,7 +45,7 @@ public class TangleWord extends Sprite
             var label :TextField = new TextField();
             label.x = 100;
             label.y = 400;
-            label.width = Properties.DISPLAY.width - 200;
+            label.width = 500;
             label.multiline = true;
             label.htmlText = "<center><p align=\"center\"><font size=\"+2\">TangleWord</font>" +
                 "<br/>This game can only be played in <a href=\"http://www.whirled.com\">" +

@@ -58,6 +58,8 @@ public class Model
 
     public function endRound () :void
     {
+        _trophies.handleRoundEnded(_scoreboard);
+
         if (!_gameCtrl.amInControl()) {
             return;
         }
@@ -72,7 +74,6 @@ public class Model
             }
         }
 
-        _trophies.handleRoundEnded(_scoreboard);
         _gameCtrl.endGameWithScores(playerIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
     }
 
@@ -254,7 +255,6 @@ public class Model
         case SCOREBOARD_UPDATE_MSG:
             // Take the scoreboard we've received, and use it instead of
             // our previous one.
-            Assert.Fail ("Clobbering existing scoreboard...");
             _scoreboard.internalScoreObject = event.value;
             updateScoreDisplay ();
             break;
