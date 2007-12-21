@@ -72,16 +72,18 @@ public class Trophies {
                     }
                 }
 
-            // if the player won this round, count those up as well
-            var winners :Array = scoreboard.getTopPlayerIds();
-            if (winners.indexOf(_gameCtrl.getMyId()) != -1) {
-                _multiplayerWins++;
-                for each (var boundary :int in multiplayerWinsBoundaries) {
-                        trophy = multiplayerWinsTrophyPrefix + String(boundary);
-                        if (_multiplayerWins == boundary && ! _gameCtrl.holdsTrophy(trophy)) {
-                            _gameCtrl.awardTrophy(trophy);
+            // if the player won this round, count those up as well, but only for multiplayer
+            if (scoreboard.getPlayerIds().length > 1) {
+                var winners :Array = scoreboard.getTopPlayerIds();
+                if (winners.indexOf(_gameCtrl.getMyId()) != -1) {
+                    _multiplayerWins++;
+                    for each (var boundary :int in multiplayerWinsBoundaries) {
+                            trophy = multiplayerWinsTrophyPrefix + String(boundary);
+                            if (_multiplayerWins == boundary && ! _gameCtrl.holdsTrophy(trophy)) {
+                                _gameCtrl.awardTrophy(trophy);
+                            }
                         }
-                    }
+                }
             }
             
             // now check the total number of rounds played
