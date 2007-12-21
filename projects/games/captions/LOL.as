@@ -89,7 +89,7 @@ public class LOL extends Sprite
         _formatter.addEventListener(
             TextFieldFormatter.ENTER_PRESSED_EVENT, handleEnterPressedOnInput);
 
-        _ctrl.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
+        _ctrl.local.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
 
         _content = new Sprite();
         addChild(_content);
@@ -123,13 +123,13 @@ public class LOL extends Sprite
         _timer.addEventListener(TimerEvent.TIMER, handleSubmitCaption);
 
         // get us rolling
-        updateSize(_ctrl.getSize());
+        updateSize(_ctrl.local.getSize());
         initTheme();
     }
 
     protected function initTheme () :void
     {
-        var newTheme :String = _ctrl.get("theme") as String;
+        var newTheme :String = _ctrl.net.get("theme") as String;
         if (_theme == newTheme) {
             showPhoto();
             return;
@@ -295,7 +295,7 @@ public class LOL extends Sprite
 
     protected function initThemeSpecificUI () :void
     {
-        switch (_ctrl.get("theme")) {
+        switch (_ctrl.net.get("theme")) {
         default:
         case LOL_THEME:
             // nada, currently
@@ -978,7 +978,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected function handleRoundWillStart (event :Event) :void
     {
         // pick a new theme
-        _ctrl.set("theme", THEMES[int(Math.random() * THEMES.length)]);
+        _ctrl.net.set("theme", THEMES[int(Math.random() * THEMES.length)]);
     }
 
     protected function handleSizeChanged (event :SizeChangedEvent) :void

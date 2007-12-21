@@ -36,7 +36,7 @@ public class TagWidget extends Sprite
     {
         _ctrl = ctrl;
         _searchPhotoService = searchPhotoService;
-        _ctrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
+        _ctrl.net.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
 
         _tagFormat = new TextFormat();
         _tagFormat.color = 0xFFFFFF;
@@ -62,7 +62,7 @@ public class TagWidget extends Sprite
         addChild(_tagPane);
 
         // add all the tags
-        for each (var tag :String in _ctrl.getPropertyNames("tag:")) {
+        for each (var tag :String in _ctrl.net.getPropertyNames("tag:")) {
             addTag(tag.substring(4));
         }
 
@@ -117,7 +117,7 @@ public class TagWidget extends Sprite
         var tag :String = StringUtil.trim(_tagInput.text);
         if (!StringUtil.isBlank(tag)) {
             // go ahead and just add it
-            _ctrl.set("tag:" + tag.toLowerCase(), 1);
+            _ctrl.net.set("tag:" + tag.toLowerCase(), 1);
         }
         _tagInput.text = "";
     }
@@ -126,7 +126,7 @@ public class TagWidget extends Sprite
     {
         var cb :CheckBox = event.target as CheckBox;
         var tag :String = cb.label;
-        _ctrl.set("tag:" + tag, null);
+        _ctrl.net.set("tag:" + tag, null);
         // remove it locally immediately
         removeTag(tag);
     }
@@ -151,7 +151,7 @@ public class TagWidget extends Sprite
     protected function updateSearchTags () :void
     {
         var tags :Array = [];
-        for each (var tag :String in _ctrl.getPropertyNames("tag:")) {
+        for each (var tag :String in _ctrl.net.getPropertyNames("tag:")) {
             tags.push(tag.substring(4));
         }
 
