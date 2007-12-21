@@ -1,6 +1,6 @@
 package {
 
-import com.threerings.ezgame.EZGameControl;
+import com.whirled.WhirledGameControl;
 
 public class Board
 {
@@ -8,7 +8,7 @@ public class Board
     public static const WHITE_IDX :int = 0;
     public static const BLACK_IDX :int = 1;
 
-    public function Board (gameCtrl :EZGameControl, lengthOfSide :int = 8)
+    public function Board (gameCtrl :WhirledGameControl, lengthOfSide :int = 8)
     {
         _gameCtrl = gameCtrl;
         _lengthOfSide = lengthOfSide;
@@ -32,7 +32,7 @@ public class Board
         data[coordsToIdx(half + 1, half + 1)] = WHITE_IDX;
 
         // assign it to the game object
-        _gameCtrl.setImmediate("board", data);
+        _gameCtrl.net.setImmediate("board", data);
     }
 
     /**
@@ -43,7 +43,7 @@ public class Board
     public function getPiece (index :int) :int
     {
         checkIndex(index);
-        return int(_gameCtrl.get("board")[index]);
+        return int(_gameCtrl.net.get("board")[index]);
     }
 
     public function getPieceByCoords (x :int, y :int) :int
@@ -89,7 +89,7 @@ public class Board
 
         // finally, place the new piece
         setPiece(x, y, playerIdx);
-        _gameCtrl.setImmediate("lastMove", index);
+        _gameCtrl.net.setImmediate("lastMove", index);
     }
 
     /**
@@ -133,7 +133,7 @@ public class Board
     {
         var whiteCount :int = 0;
         var blackCount :int = 0;
-        for each (var piece :int in _gameCtrl.get("board")) {
+        for each (var piece :int in _gameCtrl.net.get("board")) {
             if (piece == WHITE_IDX) {
                 whiteCount++;
 
@@ -155,7 +155,7 @@ public class Board
 
     protected function setPiece (x :int, y :int, playerIdx :int) :void
     {
-        _gameCtrl.setImmediate("board", playerIdx, coordsToIdx(x, y));
+        _gameCtrl.net.setImmediate("board", playerIdx, coordsToIdx(x, y));
     }
 
     /**
@@ -273,8 +273,6 @@ public class Board
     /** The length of one side of the board. */
     protected var _lengthOfSide :int;
 
-    /** An array representing the current state of the board.
-     * Each element is -1, 0, or 1. */
-    protected var _gameCtrl :EZGameControl;
+    protected var _gameCtrl :WhirledGameControl;
 }
 }
