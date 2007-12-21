@@ -3,6 +3,7 @@
 
 package {
 
+import flash.events.Event;
 import flash.events.TimerEvent;
 
 import com.threerings.util.HashMap;
@@ -35,6 +36,9 @@ public class Brain
         _ctrl.addEventListener(ControlEvent.STATE_CHANGED, stateChanged);
         _ctrl.addEventListener(TimerEvent.TIMER, tick);
         _ctrl.setTickInterval(3000);
+        _ctrl.addEventListener(Event.UNLOAD, function (event :Event) :void {
+            shutdown();
+        });
 
         // determine which states are available to us by virtue of the body having an idle
         // animation for them (and ideally a transition to and from content)

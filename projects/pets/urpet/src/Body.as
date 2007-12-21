@@ -36,10 +36,17 @@ public class Body
         // register to hear when we start and stop walking
         _ctrl = ctrl;
         _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, appearanceChanged);
+        _ctrl.addEventListener(Event.UNLOAD, function (event :Event) :void {
+            shutdown();
+        });
 
-        // register a frame callback so that we can manage our animations
         _media = media;
-        _media.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+        _media.addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
+        _media.addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
+        // register a frame callback so that we can manage our animations
+        if (_media.stage != null) {
+            _media.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+        }
         _mediaWidth = width;
         _nameHeight = nameHeight;
 
@@ -137,12 +144,30 @@ public class Body
     }
 
     /**
-     * Cleans up after our body, unregistering listeners, etc.
+     * Cleans up after our body, unregistering listeners, etc. Your subclass should
+     * also stop any Timers or do anything else it needs to.
      */
     public function shutdown () :void
     {
-        // clear our enter frame callback
+        _media.removeEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
+        _media.removeEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
+        // this may already be unregistered, but this won't hurt
         _media.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+    }
+
+    /**
+     * Handles the _media being added or removed from the stage.
+     */
+    protected function handleAddRemove (event :Event) :void
+    {
+        if (event.type == Event.ADDED_TO_STAGE) {
+            _media.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+            // and call it now to update it immediately
+            onEnterFrame(event);
+
+        } else {
+            _media.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+        }
     }
 
     protected function onEnterFrame (event :Event) :void

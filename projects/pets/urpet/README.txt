@@ -111,14 +111,6 @@ _ctrl = new PetControl(this);
 _body = new Body(_ctrl, this);
 _brain = new Brain(_ctrl, _body);
 
-addEventListener(Event.UNLOAD, handleUnload);
-
-function handleUnload (... ignored) :void
-{
-    _brain.shutdown();
-    _body.shutdown();
-}
-
 var _ctrl :PetControl;
 var _body :Body;
 var _brain :Brain;
