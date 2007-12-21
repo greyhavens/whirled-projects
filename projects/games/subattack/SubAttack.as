@@ -31,11 +31,8 @@ import com.threerings.flash.KeyRepeatLimiter;
 import com.threerings.flash.FPSDisplay;
 
 import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.ezgame.StateChangedListener;
 import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.SizeChangedEvent;
 
 import com.whirled.WhirledGameControl;
@@ -110,25 +107,25 @@ public class SubAttack extends Sprite
         _splashTimer.addEventListener(TimerEvent.TIMER, handleRemoveSplash);
         _splashTimer.start();
 
-        _myIndex = _gameCtrl.seating.getMyPosition();
+        _myIndex = _gameCtrl.game.seating.getMyPosition();
 
         if (_myIndex != -1) {
-            _keyLimiter = new KeyRepeatLimiter(_gameCtrl, 100);
+            _keyLimiter = new KeyRepeatLimiter(_gameCtrl.local, 100);
             _keyLimiter.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
 
             addEventListener(Event.ENTER_FRAME, enterFrame);
         }
 
-        _gameCtrl.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
-        _gameCtrl.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
-        _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
-        _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
-        _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, handleMessageReceived);
-        _gameCtrl.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
+        _gameCtrl.local.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
+        _gameCtrl.net.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.TYPE, handleMessageReceived);
+        _gameCtrl.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
 
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        updateSize(_gameCtrl.getSize());
+        updateSize(_gameCtrl.local.getSize());
 
         pickSeed();
         recheckReadyness();
@@ -140,7 +137,7 @@ public class SubAttack extends Sprite
     protected function pickSeed () :void
     {
         if (_myIndex == 0) {
-            _gameCtrl.set("seed", int(Math.random() * int.MAX_VALUE));
+            _gameCtrl.net.set("seed", int(Math.random() * int.MAX_VALUE));
         }
     }
 
@@ -149,9 +146,9 @@ public class SubAttack extends Sprite
      */
     protected function recheckReadyness () :void
     {
-        _gameCtrl.setPlayerScores(
-            _gameCtrl.seating.getPlayerIds().map(function (id :int, ... ig) :String {
-                return (null == _gameCtrl.get("ready:" + id)) ? "Waiting..." : "Ready!";
+        _gameCtrl.local.setPlayerScores(
+            _gameCtrl.game.seating.getPlayerIds().map(function (id :int, ... ig) :String {
+                return (null == _gameCtrl.net.get("ready:" + id)) ? "Waiting..." : "Ready!";
             }));
     }
 
@@ -161,9 +158,9 @@ public class SubAttack extends Sprite
         _content.removeChild(_splash);
         _splashTimer.stop();
         _splashTimer = null;
-        _gameCtrl.set("ready:" + _gameCtrl.getMyId(), true);
+        _gameCtrl.net.set("ready:" + _gameCtrl.game.getMyId(), true);
         _seaDisplay.displayWaiting();
-        _gameCtrl.playerReady();
+        _gameCtrl.game.playerReady();
         _content.addChild(new SIDEBAR() as DisplayObject);
 
         _clock = new TextField();
@@ -216,7 +213,7 @@ public class SubAttack extends Sprite
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
         // stop listening for ready events
-        _gameCtrl.removeEventListener(PropertyChangedEvent.TYPE, recheckReadyness);
+        _gameCtrl.net.removeEventListener(PropertyChangedEvent.TYPE, recheckReadyness);
 
         _gameOver = false;
         _seaDisplay.clearStatus();
@@ -229,9 +226,9 @@ public class SubAttack extends Sprite
     {
         var amount :int = event.amount;
         if (amount > 0) {
-            _gameCtrl.localChat("You earned " + amount + " flow.");
+            _gameCtrl.local.feedback("You earned " + amount + " flow.");
         } else {
-            _gameCtrl.localChat("You did not earn any flow. Too bad!");
+            _gameCtrl.local.feedback("You did not earn any flow. Too bad!");
         }
     }
 
@@ -307,7 +304,7 @@ public class SubAttack extends Sprite
                 _queued = [ action ];
 
             } else {
-                _gameCtrl.sendMessage("sub" + _myIndex, [ action ]);
+                _gameCtrl.net.sendMessage("sub" + _myIndex, [ action ]);
                 _lastSent = now;
             }
         }
@@ -320,7 +317,7 @@ public class SubAttack extends Sprite
         if (_queued != null) {
             var now :int = getTimer();
             if ((now - _lastSent) >= SEND_THROTTLE) {
-                _gameCtrl.sendMessage("sub" + _myIndex, _queued);
+                _gameCtrl.net.sendMessage("sub" + _myIndex, _queued);
                 _lastSent = now;
                 _queued = null;
             }

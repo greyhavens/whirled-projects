@@ -12,6 +12,7 @@ import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 
 import com.whirled.WhirledGameControl;
+import com.whirled.GameSubControl;
 
 import com.threerings.util.Log;
 import com.threerings.util.Random;
@@ -35,11 +36,11 @@ public class Board
         _gameCtrl = gameCtrl;
         _gameCtrl.addEventListener(Event.UNLOAD, shutdown);
         _seaDisplay = seaDisplay;
-        _rando = new Random(int(_gameCtrl.get("seed")));
+        _rando = new Random(int(_gameCtrl.net.get("seed")));
 
         _explode = Sound(new EXPLODE_SOUND());
 
-        var playerIds :Array = _gameCtrl.seating.getPlayerIds();
+        var playerIds :Array = _gameCtrl.game.seating.getPlayerIds();
         var playerCount :int = playerIds.length;
         _width = int(DIMENSIONS[playerCount][0]);
         _height = int(DIMENSIONS[playerCount][1]);
@@ -105,8 +106,8 @@ public class Board
             var p :Point = getStartingPosition(ii);
 
             sub = new Submarine(
-                playerId, ii, _gameCtrl.getOccupantName(playerId), p.x, p.y, this, _gameCtrl);
-            _gameCtrl.getUserCookie(playerId, sub.gotPlayerCookie);
+                playerId, ii, _gameCtrl.game.getOccupantName(playerId), p.x, p.y, this, _gameCtrl);
+            _gameCtrl.player.getUserCookie(playerId, sub.gotPlayerCookie);
             _seaDisplay.addChild(sub);
             _subs[ii] = sub;
 
@@ -116,7 +117,7 @@ public class Board
 
         // if we're a player, put our submarine last, so that it
         // shows up always on top of other submarines
-        var myIndex :int = gameCtrl.seating.getMyPosition();
+        var myIndex :int = gameCtrl.game.seating.getMyPosition();
         if (myIndex != -1) {
             sub = (_subs[myIndex] as Submarine);
             _seaDisplay.setChildIndex(sub, _seaDisplay.numChildren - 1);
@@ -130,17 +131,15 @@ public class Board
 
         _seaDisplay.addEventListener(Event.ENTER_FRAME, enterFrame);
 
-        _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
-        if (gameCtrl.isInPlay()) {
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
+        if (gameCtrl.game.isInPlay()) {
             // this may happen if we're rematching
             gameDidStart(null);
 
         } else {
-            _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED,
-                gameDidStart);
+            _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         }
-        _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED,
-            gameDidEnd);
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
     }
 
     /**
@@ -149,9 +148,9 @@ public class Board
     public function shutdown (... ignored) :void
     {
         _seaDisplay.removeEventListener(Event.ENTER_FRAME, enterFrame);
-        _gameCtrl.removeEventListener(MessageReceivedEvent.TYPE, msgReceived);
-        _gameCtrl.removeEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
-        _gameCtrl.removeEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+        _gameCtrl.net.removeEventListener(MessageReceivedEvent.TYPE, msgReceived);
+        _gameCtrl.game.removeEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
+        _gameCtrl.game.removeEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
     }
 
     public function playSound (sound :Sound, xx :int, yy :int) :void
@@ -340,7 +339,7 @@ public class Board
                     sub.wasKilled();
                     killCount++;
 
-                    _gameCtrl.localChat(killer.getPlayerName() + " has shot " +
+                    _gameCtrl.local.feedback(killer.getPlayerName() + " has shot " +
                         sub.getPlayerName());
                 }
             }
@@ -403,16 +402,16 @@ public class Board
     protected function gameDidStart (event :StateChangedEvent) :void
     {
         // player 0 starts the ticker
-        if (_gameCtrl.seating.getMyPosition() == 0) {
-            _gameCtrl.startTicker("tick", SubAttack.TIME_PER_TICK);
+        if (_gameCtrl.game.seating.getMyPosition() == 0) {
+            _gameCtrl.services.startTicker("tick", SubAttack.TIME_PER_TICK);
         }
     }
 
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
-        var mydex :int = _gameCtrl.seating.getMyPosition();
+        var mydex :int = _gameCtrl.game.seating.getMyPosition();
         if (mydex >= 0) {
-            _gameCtrl.setUserCookie(Submarine(_subs[mydex]).getNewCookie());
+            _gameCtrl.player.setUserCookie(Submarine(_subs[mydex]).getNewCookie());
         }
 
         _seaDisplay.displayGameOver();
@@ -481,7 +480,7 @@ public class Board
                 addAnimal();
             }
 
-        } else if (_gameCtrl.seating.getMyPosition() == 0 && !_endedGame) {
+        } else if (_gameCtrl.game.seating.getMyPosition() == 0 && !_endedGame) {
             endGame();
             _endedGame = true;
         }
@@ -531,7 +530,7 @@ public class Board
             scores[ii] = int(Math.max(0, sub.getPoints()));
         }
 
-        _gameCtrl.endGameWithScores(ids, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
+        _gameCtrl.game.endGameWithScores(ids, scores, GameSubControl.TO_EACH_THEIR_OWN);
     }
 
     /**
