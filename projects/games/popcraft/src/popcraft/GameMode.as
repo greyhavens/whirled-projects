@@ -7,6 +7,7 @@ import popcraft.net.*;
 import popcraft.puzzle.*;
 import popcraft.battle.*;
 
+import com.threerings.util.RingBuffer;
 import com.threerings.util.Assert;
 import com.threerings.flash.DisablingButton;
 
