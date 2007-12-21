@@ -121,30 +121,33 @@ public class MainLoop
 
     protected function update (e :TimerEvent) :void
     {
+        // save 'this' for local functions
+        var thisMainLoop :MainLoop = this;
+
         var initialTopMode :AppMode = this.topMode;
 
         function doPopMode () :void {
-            var topMode :AppMode = this.topMode;
-            Assert.isNotNull(mode);
+            var topMode :AppMode = thisMainLoop.topMode;
+            Assert.isNotNull(topMode);
 
             _modeStack.pop();
             _applicationSprite.removeChild(topMode);
 
             // if the top mode is popped, make sure it's exited first
-            if (mode == initialTopMode) {
+            if (topMode == initialTopMode) {
                 initialTopMode.exit();
                 initialTopMode = null;
             }
 
-            mode.destroy();
+            topMode.destroy();
         }
 
-        function doPushMode (mode :AppMode) :void {
-            Assert.isNotNull(mode);
+        function doPushMode (newMode :AppMode) :void {
+            Assert.isNotNull(newMode);
 
-            _modeStack.push(mode);
-            _applicationSprite.addChild(mode);
-            mode.setup();
+            _modeStack.push(newMode);
+            _applicationSprite.addChild(newMode);
+            newMode.setup();
         }
 
         for each (var transition :* in _pendingModeTransitionQueue) {

@@ -22,6 +22,7 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.events.KeyboardEvent;
 import flash.ui.Keyboard;
+import com.threerings.util.HashSet;
 
 public class GameMode extends AppMode
 {
@@ -190,6 +191,24 @@ public class GameMode extends AppMode
             }
 
             ++_tickCount;
+
+            // end the game when all bases but one have been destroyed
+            var livingPlayers :HashSet = new HashSet();
+            for (var playerId :uint = 0; playerId < _playerBaseIds.length; ++playerId) {
+                if (null != getPlayerBase(playerId)) {
+                    livingPlayers.add(playerId);
+
+                    // if there's > 1 living player, the game can't be over
+                    if (livingPlayers.size() > 1) {
+                        break;
+                    }
+                }
+            }
+
+            if (livingPlayers.size() <= 1) {
+                var winningPlayer :int = (livingPlayers.size() == 1 ? livingPlayers.toArray()[0] : -1);
+                MainLoop.instance.changeMode(new GameOverMode(winningPlayer));
+            }
         }
 
         // update all non-net objects

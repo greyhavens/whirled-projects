@@ -52,14 +52,14 @@ public class UnitPurchaseButton extends DisablingButton
 
         face.addChild(icon);
 
-        var costText :TextField = new TextField();
+        /*var costText :TextField = new TextField();
         costText.text = costString;
         costText.textColor = 0;
         costText.height = costText.textHeight + 2;
         costText.width = costText.textWidth + 3;
         costText.y = icon.height + 5;
 
-        face.addChild(costText);
+        face.addChild(costText);*/
 
         var padding :int = 5;
         var w :Number = icon.width + 2 * padding;

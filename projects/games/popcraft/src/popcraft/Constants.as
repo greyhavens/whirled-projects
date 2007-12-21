@@ -10,6 +10,8 @@ import flash.geom.Point;
 
 public class Constants
 {
+    public static const SCREEN_DIMS :Vector2 = new Vector2(700, 500);
+
     public static const DEBUG_LEVEL :int = 1;
     public static const CHEATS_ENABLED :Boolean = true;
 
