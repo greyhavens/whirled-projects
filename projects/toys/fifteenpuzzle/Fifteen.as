@@ -10,6 +10,7 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.TextEvent;
 import flash.events.TimerEvent;
 
 import flash.geom.Point;
@@ -26,11 +27,13 @@ import fl.controls.Button;
 import fl.controls.ComboBox;
 import fl.controls.Label;
 import fl.controls.ScrollPolicy;
-import fl.controls.TextArea;
+import fl.controls.TextInput;
+
+import fl.events.ComponentEvent;
 
 import fl.skins.DefaultButtonSkins;
 import fl.skins.DefaultComboBoxSkins;
-import fl.skins.DefaultTextAreaSkins;
+import fl.skins.DefaultTextInputSkins;
 
 import caurina.transitions.Tweener;
 
@@ -41,6 +44,8 @@ import com.threerings.util.Util;
 
 import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
+
+import com.whirled.contrib.PreferredCamera;
 
 [SWF(width="220", height="250")]
 public class Fifteen extends Sprite
@@ -82,17 +87,24 @@ public class Fifteen extends Sprite
         return new Point((position % SIZE) * TILE_WIDTH, int(position / SIZE) * TILE_HEIGHT);
     }
 
+    public function setLabel (text :String) :void
+    {
+        _label.text = text;
+    }
+
     private static function refSkins () :void
     {
         DefaultButtonSkins;
         DefaultComboBoxSkins;
+        DefaultTextInputSkins;
     }
 
     protected function initUI () :void
     {
         var mask :Sprite = new Sprite();
         mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, 0, 220, 250);
+        // 75 extra pixels tall so we don't mask when we slide _content
+        mask.graphics.drawRect(0, 0, 220, 250 + 75);
         mask.graphics.endFill();
         addChild(mask);
         this.mask = mask;
@@ -147,10 +159,7 @@ public class Fifteen extends Sprite
         _controls = new Sprite();
         _palette.addChild(_controls);
 
-        var config :Button = new Button();
-        config.label = "Config";
-        config.validateNow();
-        config.setSize(config.textField.textWidth + 15, 22);
+        var config :Button = createButton("Config");
         config.x = 220 - config.width;
         config.addEventListener(MouseEvent.CLICK, handleOpenConfig);
         _controls.addChild(config);
@@ -160,6 +169,18 @@ public class Fifteen extends Sprite
             _skinData = _ctrl.lookupMemory("skin") as Array;
         }
         updateTileProvider();
+    }
+
+    /**
+     * Convenience method for creating a button.
+     */
+    protected function createButton (label :String) :Button
+    {
+        var button :Button = new Button();
+        button.label = label;
+        button.validateNow();
+        button.setSize(button.textField.textWidth + 15, 22);
+        return button;
     }
 
     protected function handleOpenConfig (event :MouseEvent) :void
@@ -174,40 +195,42 @@ public class Fifteen extends Sprite
         _sourceBox.addItem({ label: "Mona Lisa",
             data: [ SOURCE_URL,
                     "http://media.whirled.com/16ee8aa22ff39ee61a245c28d0b183d0c1b972dd.jpg" ] });
-        _sourceBox.addItem({ label: "Bogologo",
-            data: [ SOURCE_URL, "http://bogocorp.com/bogologo.gif" ] });
-        _sourceBox.addItem({ label: "Dude",
-            data: [ SOURCE_URL, "http://media.whirled.com/c95c59abc8da0ac99628fbc4c68799b93c129716.swf" ]});
-        _sourceBox.addItem({ label: "URL", data: [ SOURCE_URL, null ] });
-        var names :Array = Camera.names;
-        if (names != null && names.length > 0) {
-// TODO: real camera selection?
-//            for (var ii :int = 0; ii < names.length; ii++) {
-//                _sourceBox.addItem({ label: "Camera: " + names[ii],
-//                    data: [ SOURCE_CAMERA, String(ii) ] });
-//            }
-            _sourceBox.addItem({ label: "Camera (local)", data: [ SOURCE_CAMERA ] });
+        _sourceBox.addItem({ label: "Tofu",
+            data: [ SOURCE_URL,
+                    "http://media.whirled.com/c95c59abc8da0ac99628fbc4c68799b93c129716.swf" ]});
+        _sourceBox.addItem({ label: "Enter a URL...", data: [ SOURCE_URL, null ] });
+        var camNames :Array = Camera.names;
+        var camName :String;
+        for each (camName in camNames) {
+            _sourceBox.addItem({ label: "Camera: " + camName, data: [ SOURCE_CAMERA, camName ] });
         }
 
         // select the right source
         var found :Boolean = false;
+        var skinData :Array = (_skinData == null) ? null : _skinData.concat(); // make a copy
+        if (skinData != null && skinData[0] == SOURCE_CAMERA) {
+            // try to find the right camera to match up
+            camName = PreferredCamera.getPreferredCameraName();
+            if (camNames.indexOf(camName) == -1) {
+                // if not present, default to first
+                camName = camNames[0];
+            }
+            skinData[1] = camName;
+        }
         for (var ii :int = 0; ii < _sourceBox.length; ii++) {
-            if (Util.equals(_skinData, _sourceBox.getItemAt(ii).data)) {
+            if (Util.equals(skinData, _sourceBox.getItemAt(ii).data)) {
                 found = true;
                 _sourceBox.selectedIndex = ii;
                 break;
             }
         }
-        if (!found && _skinData[0] == SOURCE_URL) {
+        if (!found && skinData != null && skinData[0] == SOURCE_URL) {
             var item :Object = { label: _skinData[1], data: _skinData };
             _sourceBox.addItem(item);
             _sourceBox.selectedItem = item;
         }
 
-        var close :Button = new Button();
-        close.label = "Close";
-        close.validateNow();
-        close.setSize(close.textField.textWidth + 15, 22);
+        var close :Button = createButton("Close");
         close.x = 220 + (220 - close.width);;
         close.addEventListener(MouseEvent.CLICK, handleCloseConfig)
         _controls.addChild(close);
@@ -220,25 +243,19 @@ public class Fifteen extends Sprite
         _controls.addChild(_sourceBox);
 
         if (!_ctrl.isConnected() || _ctrl.canEditRoom()) {
-            var reset :Button = new Button();
-            reset.label = "Reset";
-            reset.validateNow();
-            reset.setSize(reset.textField.textWidth + 15, 22);
+            var reset :Button = createButton("Reset");
             reset.y = 25;
             reset.x = 220;
             reset.addEventListener(MouseEvent.CLICK, resetState);
             reset.addEventListener(MouseEvent.CLICK, resetCloseTimer);
             _controls.addChild(reset);
 
-            var scramble :Button = new Button();
-            scramble.label = "Scramble";
-            scramble.validateNow();
-            scramble.setSize(scramble.textField.textWidth + 15, 22);
-            scramble.y = 25;
-            scramble.x = 440 - scramble.width;
-            scramble.addEventListener(MouseEvent.CLICK, shuffleState);
-            scramble.addEventListener(MouseEvent.CLICK, resetCloseTimer);
-            _controls.addChild(scramble);
+//            var scramble :Button = createButton("Scramble");
+//            scramble.y = 25;
+//            scramble.x = 440 - scramble.width;
+//            scramble.addEventListener(MouseEvent.CLICK, shuffleState);
+//            scramble.addEventListener(MouseEvent.CLICK, resetCloseTimer);
+//            _controls.addChild(scramble);
         }
 
         _closeTimer = new Timer(20000, 1);
@@ -246,10 +263,10 @@ public class Fifteen extends Sprite
         _closeTimer.start();
 
         // then, actually open it
-        Tweener.addTween(_palette, {time: 1, transition: "easeinoutcubic", x: -220});
+        Tweener.addTween(_palette, {time: 1, transition: TRANS, x: -220});
 
         if (!_ctrl.isConnected() || _ctrl.canEditRoom()) {
-            Tweener.addTween(_content, {time: 1, transition: "easeinoutcubic", y: 25});
+            Tweener.addTween(_content, {time: 1, transition: TRANS, y: 25});
         }
     }
 
@@ -258,7 +275,42 @@ public class Fifteen extends Sprite
         var skinData :Array = _sourceBox.selectedItem.data as Array;
 
         if (skinData != null && skinData[0] == SOURCE_URL && skinData[1] == null) {
-            // TODO
+            if (_controls.y != 0) {
+                // we've already got the URL entry field showing...
+                return;
+            }
+
+            // add a URL entry field above the other controls
+            var label :Label = new Label();
+            label.setSize(220, 22);
+            label.text = "Enter a URL:";
+            label.x = 220;
+            label.y = -50;
+            _controls.addChild(label);
+
+            var url :TextInput = new TextInput();
+
+            var submitURL :Function = function (event :Event) :void {
+                setSkin( [ SOURCE_URL, url.text ] );
+            };
+
+            var ok :Button = createButton("OK");
+            ok.y = -25;
+            ok.x = 440 - ok.width;
+            ok.addEventListener(MouseEvent.CLICK, submitURL);
+            ok.addEventListener(MouseEvent.CLICK, resetCloseTimer);
+            _controls.addChild(ok);
+
+            url.setSize(220 - ok.width, 22);
+            url.x = 220;
+            url.y = -25;
+            url.addEventListener(ComponentEvent.ENTER, submitURL);
+            url.addEventListener(TextEvent.TEXT_INPUT, resetCloseTimer);
+            _controls.addChild(url);
+
+            Tweener.addTween(_palette, {time: .5, transition: TRANS, y: 50});
+            var newContentY :Number = (!_ctrl.isConnected() || _ctrl.canEditRoom()) ? 75 : 50;
+            Tweener.addTween(_content, {time: .5, transition: TRANS, y: newContentY}); 
 
         } else {
             setSkin(skinData);
@@ -283,10 +335,11 @@ public class Fifteen extends Sprite
         _skinData = skinData;
         _setOwnSkin = true;
 
-        if (_ctrl.isConnected() && _ctrl.canEditRoom()) {
-            _ctrl.updateMemory("skin", skinData);
-        }
+        setLabel(""); // clear any old error?
         updateTileProvider();
+        if (_ctrl.isConnected() && _ctrl.canEditRoom()) {
+            _ctrl.updateMemory("skin", _skinData);
+        }
     }
 
     protected function updateTileProvider () :void
@@ -313,11 +366,14 @@ public class Fifteen extends Sprite
             break;
 
         case SOURCE_CAMERA:
-            // make sure this user HAS cameras
-            var camNames :Array = Camera.names;
-            if (camNames != null && camNames.length > 0) {
-                //_tileProvider = new CameraTileProvider(_ctrl.getCamera(arg));
-                _tileProvider = new CameraTileProvider(_ctrl.getCamera());
+            if (arg != null) {
+                PreferredCamera.setPreferredCamera(arg);
+                // now, erase the camera-specific info..
+                _skinData.length = 1;
+            }
+            var cam :Camera = PreferredCamera.getPreferredCamera(_ctrl);
+            if (cam != null) {
+                _tileProvider = new CameraTileProvider(cam);
                 break;
             }
             // else, fall through...
@@ -345,7 +401,7 @@ public class Fifteen extends Sprite
         _sourceBox.removeEventListener(Event.CLOSE, resetCloseTimer);
 
         Tweener.addTween([ _content, _palette ],
-            { time: 1, transition: "easeinoutcubic", onComplete: configWasClosed, x: 0, y: 0 });
+            { time: 1, transition: TRANS, onComplete: configWasClosed, x: 0, y: 0 });
     }
 
     protected function configWasClosed () :void
@@ -608,6 +664,8 @@ public class Fifteen extends Sprite
         return state;
     }
 
+    protected static const TRANS :String = "easeinoutcubic";
+
     protected static const BLANK_TILE :int = (SIZE * SIZE) - 1; 
 
     protected var _ctrl :FurniControl;
@@ -650,12 +708,15 @@ import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.Sprite;
 
+import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.ProgressEvent;
+import flash.events.SecurityErrorEvent;
 
 import flash.geom.Matrix;
 import flash.geom.Point;
 
+import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
 
 import flash.media.Camera;
@@ -788,28 +849,6 @@ class NumberTileProvider extends TileProvider
     }
 }
 
-class ChoppingTileProvider extends TileProvider
-{
-    /**
-     * Utility method for printing a bitmap into the tiles.
-     * This assumes that the bitmap is the correct size.
-     */
-    protected function bitmapToTiles (bitmap :BitmapData) :void
-    {
-        for (var ii :int = 0; ii < _tiles.length - 1; ii++) {
-            var tile :Sprite = _tiles[ii] as Sprite;
-            // get the "natural" position of this tile, not it's current position
-            var p :Point = _fifteen.computeTilePosition(ii);
-            var matrix :Matrix = new Matrix();
-            matrix.translate(-p.x, -p.y);
-            tile.graphics.clear();
-            tile.graphics.beginBitmapFill(bitmap, matrix);
-            tile.graphics.drawRect(0, 0, Fifteen.TILE_WIDTH, Fifteen.TILE_HEIGHT);
-            tile.graphics.endFill();
-        }
-    }
-}
-
 class UrlTileProvider extends TileProvider
 {
     public function UrlTileProvider (url :String)
@@ -848,14 +887,23 @@ class UrlTileProvider extends TileProvider
 
             // put the loader at the right location..
             var loader :Loader = new Loader();
+            loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR,
+                handleError);
             loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleComplete);
-            // load it into our own security domain so we get clicks on loaded SWFs
-            try {
-                loader.load(_req, new LoaderContext(false, new ApplicationDomain(null),
-                    SecurityDomain.currentDomain));
-            } catch (err :SecurityError) {
-                // if we're running locally, we can't specify a SecurityDomain
-                loader.load(_req, new LoaderContext(false, new ApplicationDomain(null)));
+            loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleError);
+            var swfRegExp :RegExp = /\.swf$/i;
+            if (swfRegExp.test(_req.url)) {
+                try {
+                    loader.load(_req, new LoaderContext(false, new ApplicationDomain(null),
+                        SecurityDomain.currentDomain));
+                } catch (err :SecurityError) {
+                    // if we're running locally, we can't specify a SecurityDomain
+                    loader.load(_req, new LoaderContext(false, new ApplicationDomain(null)));
+                }
+
+            } else {
+                // just load it plain
+                loader.load(_req);
             }
             var p :Point = _fifteen.computeTilePosition(ii);
             loader.x = -p.x;
@@ -888,13 +936,44 @@ class UrlTileProvider extends TileProvider
         var loaderInfo :LoaderInfo = event.target as LoaderInfo;
 
         // scale the loader so that the content fits within the puzzle bounds
-        loaderInfo.loader.scaleX = Fifteen.BOARD_WIDTH / loaderInfo.width;
-        loaderInfo.loader.scaleY = Fifteen.BOARD_HEIGHT / loaderInfo.height;
+        try {
+            loaderInfo.loader.scaleX = Fifteen.BOARD_WIDTH / loaderInfo.width;
+            loaderInfo.loader.scaleY = Fifteen.BOARD_HEIGHT / loaderInfo.height;
+        } catch (err :SecurityError) {
+            // cope.
+        }
+    }
+
+    protected function handleError (event :ErrorEvent) :void
+    {
+        _fifteen.setLabel("Error loading: " + event.text);
     }
 
     protected var _req :URLRequest;
 
     protected var _loaders :Array = [];
+}
+
+class ChoppingTileProvider extends TileProvider
+{
+    /**
+     * Utility method for printing a bitmap into the tiles.
+     * This assumes that the bitmap is the correct size.
+     */
+    protected function bitmapToTiles (bitmap :BitmapData) :void
+    {
+        for (var ii :int = 0; ii < _tiles.length - 1; ii++) {
+            var tile :Sprite = _tiles[ii] as Sprite;
+            // get the "natural" position of this tile, not it's current position
+            var p :Point = _fifteen.computeTilePosition(ii);
+            var matrix :Matrix = new Matrix();
+            matrix.translate(-p.x, -p.y);
+            tile.graphics.clear();
+            tile.graphics.beginBitmapFill(bitmap, matrix);
+            tile.graphics.drawRect(0, 0, Fifteen.TILE_WIDTH, Fifteen.TILE_HEIGHT);
+            tile.graphics.endFill();
+        }
+    }
 }
 
 class CameraTileProvider extends ChoppingTileProvider
