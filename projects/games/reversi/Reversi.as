@@ -21,28 +21,23 @@ public class Reversi extends Sprite
         _gameCtrl.net.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
 
         var config :Object = _gameCtrl.game.getConfig();
-        if ("boardSize" in config) {
-            _boardSize = int(config["boardSize"]);
-
-        } else {
-            _boardSize = 4;
-        }
+        var boardSize :int = ("boardSize" in config) ? int(config["boardSize"]) : 8;
 
         _gameCtrl.local.setPlayerScores([ "white", "black" ], [ 1, 0 ]);
 
         // configure the board
-        _board = new Board(_gameCtrl, _boardSize);
-        setUpPieces();
+        _board = new Board(_gameCtrl, boardSize);
+        setUpPieces(boardSize);
     }
 
     /**
      * Called to initialize the piece sprites and start the game.
      */
-    protected function setUpPieces () :void
+    protected function setUpPieces (boardSize :int) :void
     {
         _pieces = new Array();
         var ii :int;
-        for (ii = 0; ii < _boardSize * _boardSize; ii++) {
+        for (ii = 0; ii < boardSize * boardSize; ii++) {
             var piece :Piece = new Piece(this, ii);
             piece.x = Piece.SIZE * _board.idxToX(ii);
             piece.y = Piece.SIZE * _board.idxToY(ii);
@@ -51,14 +46,14 @@ public class Reversi extends Sprite
         }
 
         // draw the board
-        var max :int = _boardSize * Piece.SIZE;
+        var max :int = boardSize * Piece.SIZE;
         graphics.clear();
         graphics.beginFill(0x77FF77);
         graphics.drawRect(0, 0, max, max);
         graphics.endFill();
 
         graphics.lineStyle(1.2);
-        for (ii = 0; ii <= _boardSize; ii++) {
+        for (ii = 0; ii <= boardSize; ii++) {
             var d :int = (ii * Piece.SIZE);
             graphics.moveTo(0, d);
             graphics.lineTo(max, d);
@@ -168,8 +163,6 @@ public class Reversi extends Sprite
     }
 
     protected var _pieces :Array;
-
-    protected var _boardSize :int;
 
     protected var _board :Board;
 
