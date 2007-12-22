@@ -25,10 +25,14 @@ public class Reversi extends Sprite
             _boardSize = int(config["boardSize"]);
 
         } else {
-            _boardSize = 8;
+            _boardSize = 4;
         }
 
         _gameCtrl.local.setPlayerScores([ "white", "black" ], [ 1, 0 ]);
+
+        // configure the board
+        _board = new Board(_gameCtrl, _boardSize);
+        setUpPieces();
     }
 
     /**
@@ -62,8 +66,6 @@ public class Reversi extends Sprite
             graphics.moveTo(d, 0);
             graphics.lineTo(d, max);
         }
-
-        showMoves();
     }
 
     public function pieceClicked (pieceIndex :int) :void
@@ -137,10 +139,9 @@ public class Reversi extends Sprite
     {
         _gameCtrl.local.feedback("Reversi superchallenge: go!");
 
-        // configure the board
-        _board = new Board(_gameCtrl, _boardSize);
         if (_gameCtrl.game.amInControl()) {
             // start the first turn
+            _board.initialize();
             _gameCtrl.game.startNextTurn();
         }
     }
@@ -152,18 +153,7 @@ public class Reversi extends Sprite
 
     protected function handleTurnChanged (event :StateChangedEvent) :void
     {
-        if (_pieces == null) {
-            // if we're the first player, we take care of setting up the
-            // board
-            if (_gameCtrl.game.isMyTurn()) {
-                _board.initialize();
-                _gameCtrl.net.set("startGame", true);
-                setUpPieces();
-            }
-
-        } else {
-            showMoves();
-        }
+        showMoves();
     }
 
     protected function handlePropertyChanged (event :PropertyChangedEvent) :void
@@ -173,10 +163,6 @@ public class Reversi extends Sprite
             if (event.index != -1) {
                 // read the change
                 readBoard();
-
-            } else if (_pieces == null) {
-                // the other player has initialized the game
-                setUpPieces();
             }
         }
     }
