@@ -55,7 +55,7 @@ public class PuzzleBoard extends AppObject
         }
 
         // create the board cursor
-        var cursor :PuzzleCursor = new PuzzleCursor(this);
+        var cursor :PuzzlePopCursor = new PuzzlePopCursor(this);
         MainLoop.instance.topMode.addObject(cursor, _sprite);
     }
 

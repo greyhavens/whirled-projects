@@ -15,9 +15,9 @@ import flash.events.MouseEvent;
 
 import core.tasks.*;
 
-public class PuzzleCursor extends AppObject
+public class PuzzlePopCursor extends AppObject
 {
-    public function PuzzleCursor (board :PuzzleBoard)
+    public function PuzzlePopCursor (board :PuzzleBoard)
     {
         Assert.isNotNull(board);
         _board = board;
@@ -28,7 +28,7 @@ public class PuzzleCursor extends AppObject
         _sprite.graphics.drawRoundRect(
             0,
             0,
-            Constants.PUZZLE_TILE_SIZE * 2,
+            Constants.PUZZLE_TILE_SIZE,
             Constants.PUZZLE_TILE_SIZE,
             Constants.PUZZLE_TILE_SIZE / 2,
             Constants.PUZZLE_TILE_SIZE / 2);
@@ -42,21 +42,12 @@ public class PuzzleCursor extends AppObject
     protected function rollOut (evt :MouseEvent) :void
     {
         _sprite.visible = false;
-
-        _mouseIsDown = false;
-        _noSwapOnNextClick = true;
-        this.removeClearTimer();
-
     }
 
     protected function rollOver (evt :MouseEvent) :void
     {
         _sprite.visible = true;
         repositionOnBoard(evt.localX, evt.localY);
-
-        _mouseIsDown = false;
-        _noSwapOnNextClick = true;
-        this.removeClearTimer();
     }
 
     protected function mouseMove (evt :MouseEvent) :void
@@ -65,60 +56,13 @@ public class PuzzleCursor extends AppObject
         var originalIndexY :int = _mouseIndexY;
 
         repositionOnBoard(evt.localX, evt.localY);
-
-        if (_mouseIsDown && (originalIndexX != _mouseIndexX || originalIndexY != _mouseIndexY)) {
-            this.removeClearTimer();
-            _noSwapOnNextClick = true;
-        }
-    }
-
-    protected function mouseDown (evt :MouseEvent) :void
-    {
-        // don't affect the board if it's animating
-        if (!_board.resolvingClears) {
-            // install the pieceClearTimer. If it expires before the next mouseUp, the pieces will be cleared.
-            this.installClearTimer();
-
-            _mouseIsDown = true;
-            _noSwapOnNextClick = false;
-        }
     }
 
     protected function mouseClick (evt :MouseEvent) :void
     {
-        if (!_noSwapOnNextClick && !_board.resolvingClears) {
-            _board.swapPieces(_swapIndexX, _swapIndexY, _swapIndexX + 1, _swapIndexY);
-            _mouseIsDown = false;
-
-            this.removeClearTimer();
+        if (!_board.resolvingClears) {
+            _board.clearPieceGroup(_mouseIndexX, _mouseIndexY);
         }
-
-        _noSwapOnNextClick = false;
-    }
-
-    protected function installClearTimer () :void
-    {
-        this.addNamedTask(PIECE_CLEAR_TIMER_NAME,
-            new SerialTask(
-                new TimedTask(Constants.PIECE_CLEAR_TIMER_LENGTH),
-                new FunctionTask(clearTimerExpired)));
-
-        this.addNamedTask(PIECE_CLEAR_TIMER_NAME,
-            new AlphaTask(0, Constants.PIECE_CLEAR_TIMER_LENGTH));
-    }
-
-    protected function removeClearTimer () :void
-    {
-        this.removeNamedTasks(PIECE_CLEAR_TIMER_NAME);
-        this.displayObject.alpha = 1;
-    }
-
-    protected function clearTimerExpired () :void
-    {
-        //trace("clearTimerExpired");
-        _board.clearPieceGroup(_mouseIndexX, _mouseIndexY);
-        _noSwapOnNextClick = true;
-        this.removeClearTimer();
     }
 
     protected function repositionOnBoard (localX :Number, localY :Number) :void
@@ -133,14 +77,8 @@ public class PuzzleCursor extends AppObject
         _mouseIndexY = Math.max(_mouseIndexY, 0);
         _mouseIndexY = Math.min(_mouseIndexY, Constants.PUZZLE_ROWS - 1);
 
-        // the swapIndex is the index of the left-most piece that will be swapped
-        // when the mouse is clicked. If the mouse is over a piece in the
-        // right-most column, swapIndex != mouseIndex
-        _swapIndexX = Math.min(_mouseIndexX, Constants.PUZZLE_COLS - 2);
-        _swapIndexY = _mouseIndexY;
-
-        _sprite.x = _swapIndexX * Constants.PUZZLE_TILE_SIZE;
-        _sprite.y = _swapIndexY * Constants.PUZZLE_TILE_SIZE;
+        _sprite.x = _mouseIndexX * Constants.PUZZLE_TILE_SIZE;
+        _sprite.y = _mouseIndexY * Constants.PUZZLE_TILE_SIZE;
     }
 
     override protected function addedToMode (mode :AppMode) :void
@@ -153,7 +91,6 @@ public class PuzzleCursor extends AppObject
         // the cursor positions itself when the mouse moves around the board
         _board.interactiveObject.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove, false, 0, true);
 
-        _board.interactiveObject.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown, false, 0, true);
         _board.interactiveObject.addEventListener(MouseEvent.CLICK, mouseClick, false, 0, true);
     }
 
@@ -162,7 +99,6 @@ public class PuzzleCursor extends AppObject
         _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OUT, rollOut);
         _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OVER, rollOver);
         _board.interactiveObject.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
-        _board.interactiveObject.removeEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
         _board.interactiveObject.removeEventListener(MouseEvent.CLICK, mouseClick);
     }
 
@@ -171,13 +107,6 @@ public class PuzzleCursor extends AppObject
 
     protected var _mouseIndexX :int;
     protected var _mouseIndexY :int;
-    protected var _swapIndexX :int;
-    protected var _swapIndexY :int;
-
-    protected var _mouseIsDown :Boolean;
-    protected var _noSwapOnNextClick :Boolean;
-
-    protected static const PIECE_CLEAR_TIMER_NAME :String = "pieceClearTimer";
 }
 
 }
