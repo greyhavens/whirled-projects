@@ -32,26 +32,22 @@ public class PopCraft extends Sprite
         Assert.isTrue(null == g_instance);
         g_instance = this;
 
-        _gameCtrl = new WhirledGameControl(this, true);
-        _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
-
         var mainLoop :MainLoop = new MainLoop(this);
         mainLoop.run();
+
+        _gameCtrl = new WhirledGameControl(this, false);
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
+        _gameCtrl.game.playerReady();
     }
 
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
-        MainLoop.instance.pushMode(new GameMode());
+        MainLoop.instance.changeMode(new GameMode());
     }
 
     public function get gameControl () :WhirledGameControl
     {
         return _gameCtrl;
-    }
-
-    public function get config () :Object
-    {
-        return _gameCtrl.getConfig();
     }
 
     protected static var g_instance :PopCraft;

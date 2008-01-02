@@ -6,6 +6,8 @@ import com.threerings.util.HashMap;
 import com.threerings.util.Assert;
 import com.whirled.WhirledGameControl;
 import com.threerings.ezgame.MessageReceivedEvent;
+import com.threerings.ezgame.EZServicesSubControl;
+import com.threerings.ezgame.EZNetSubControl;
 
 import flash.utils.getTimer;
 
@@ -29,20 +31,20 @@ public class TickedMessageManager
 
     public function setup (isFirstPlayer :Boolean, tickIntervalMS :int) :void
     {
-        _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
 
         _isFirstPlayer = isFirstPlayer;
         _tickIntervalMS = tickIntervalMS;
 
         if (isFirstPlayer) {
-            _gameCtrl.sendMessage("randSeed", uint(Math.random() * uint.MAX_VALUE));
+            _gameCtrl.net.sendMessage("randSeed", uint(Math.random() * uint.MAX_VALUE));
         }
     }
 
     public function shutdown () :void
     {
-        _gameCtrl.stopTicker("tick");
-        _gameCtrl.removeEventListener(MessageReceivedEvent.TYPE, msgReceived);
+        _gameCtrl.services.stopTicker("tick");
+        _gameCtrl.net.removeEventListener(MessageReceivedEvent.TYPE, msgReceived);
         _receivedRandomSeed = false;
     }
 
@@ -71,7 +73,7 @@ public class TickedMessageManager
             _receivedRandomSeed = true;
 
             if (_isFirstPlayer) {
-                _gameCtrl.startTicker("tick", _tickIntervalMS);
+                _gameCtrl.services.startTicker("tick", _tickIntervalMS);
             }
 
         } else {
@@ -175,7 +177,7 @@ public class TickedMessageManager
             return;
         }
 
-        _gameCtrl.sendMessage(msg.name, serialized);
+        _gameCtrl.net.sendMessage(msg.name, serialized);
         _lastSendTime = getTimer();
     }
 

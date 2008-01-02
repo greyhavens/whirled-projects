@@ -43,9 +43,9 @@ public class GameMode extends AppMode
     // from core.AppMode
     override public function setup () :void
     {
-        var myPosition :int = PopCraft.instance.gameControl.seating.getMyPosition();
+        var myPosition :int = PopCraft.instance.gameControl.game.seating.getMyPosition();
         var isAPlayer :Boolean = (myPosition >= 0);
-        var numPlayers :int = PopCraft.instance.gameControl.seating.getPlayerIds().length;
+        var numPlayers :int = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
 
         // everyone gets to see the BattleBoard
         _battleBoard = new BattleBoard(
@@ -128,13 +128,13 @@ public class GameMode extends AppMode
         // Listen for all keydowns.
         // The suggested way to do this is to attach an event listener to the stage,
         // but that's a security violation. The GameControl re-dispatches global key events for us instead.
-        PopCraft.instance.gameControl.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 0, true);
+        PopCraft.instance.gameControl.local.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 0, false);
     }
 
     // from core.AppMode
     override public function destroy () :void
     {
-        PopCraft.instance.gameControl.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false);
+        PopCraft.instance.gameControl.local.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false);
 
         if (null != _messageMgr) {
             _messageMgr.shutdown();

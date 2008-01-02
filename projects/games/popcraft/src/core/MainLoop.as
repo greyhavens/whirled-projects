@@ -165,7 +165,9 @@ public class MainLoop
 
             case TRANSITION_CHANGE:
                 // a pop followed by a push
-                doPopMode();
+                if (null != this.topMode) {
+                    doPopMode();
+                }
                 doPushMode(mode);
                 break;
 
