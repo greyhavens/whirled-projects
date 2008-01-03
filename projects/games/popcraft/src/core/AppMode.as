@@ -78,7 +78,7 @@ public class AppMode extends Sprite
     }
 
     /** Removes an AppObject from the mode. */
-    public function removeObject (id :uint) :void
+    public function destroyObject (id :uint) :void
     {
         var obj :AppObject = getObject(id);
 
@@ -119,7 +119,7 @@ public class AppMode extends Sprite
             obj.displayObject.parent.removeChild(obj.displayObject);
         }
 
-        obj.removedFromModeInternal(this);
+        obj.destroyedInternal(this);
 
         --_objectCount;
     }

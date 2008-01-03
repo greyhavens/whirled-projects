@@ -94,7 +94,7 @@ public class PuzzlePopCursor extends AppObject
         _board.interactiveObject.addEventListener(MouseEvent.CLICK, mouseClick, false, 0, true);
     }
 
-    override protected function removedFromMode (mode :AppMode) :void
+    override protected function destroyed (mode :AppMode) :void
     {
         _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OUT, rollOut);
         _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OVER, rollOver);

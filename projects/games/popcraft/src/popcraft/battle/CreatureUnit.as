@@ -66,7 +66,7 @@ public class CreatureUnit extends Unit
             createEnemyDetectLoopSlashAttackEnemyBaseTask()));
     }
 
-    override protected function removedFromMode (mode :AppMode) :void
+    override protected function destroyed (mode :AppMode) :void
     {
         _healthMeter.destroySelf();
     }

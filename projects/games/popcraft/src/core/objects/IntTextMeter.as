@@ -5,7 +5,7 @@ import core.components.MeterComponent;
 import flash.display.DisplayObject;
 import flash.text.TextField;
 
-public class RectMeter extends AppObject
+public class IntTextMeter extends AppObject
     implements MeterComponent
 {
     public function IntTextMeter ()
@@ -95,8 +95,8 @@ public class RectMeter extends AppObject
     {
         var textString :String = Math.floor(_value) + "/" + Math.floor(_maxValue);
         _display.text = textString;
-        _display.width = _display.textWidth + 2;
-        _display.height = _display.textHeight + 2;
+        _display.width = _display.textWidth + 3;
+        _display.height = _display.textHeight + 3;
     }
 
     protected var _dirty :Boolean;

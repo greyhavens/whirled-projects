@@ -76,7 +76,7 @@ public class AppObject
     /** Removes the AppObject from its parent mode. */
     public function destroySelf() :void
     {
-        _parentMode.removeObject(_objectId);
+        _parentMode.destroyObject(_objectId);
     }
 
     /** Adds an unnamed task to this AppObject. */
@@ -158,7 +158,7 @@ public class AppObject
      * Called immediately after the AppObject has been removed from an AppMode.
      * (Subclasses can override this to do something useful.)
      */
-    protected function removedFromMode (mode :AppMode) :void
+    protected function destroyed (mode :AppMode) :void
     {
     }
 
@@ -167,9 +167,9 @@ public class AppObject
         addedToMode(mode);
     }
 
-    internal function removedFromModeInternal (mode :AppMode) :void
+    internal function destroyedInternal (mode :AppMode) :void
     {
-        removedFromMode(mode);
+        destroyed(mode);
     }
 
     internal function updateInternal(dt :Number) :void

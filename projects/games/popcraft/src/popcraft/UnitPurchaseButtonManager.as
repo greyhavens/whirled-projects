@@ -5,6 +5,7 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import popcraft.battle.UnitData;
+import flash.display.Shape;
 
 public class UnitPurchaseButtonManager extends AppObject
 {
@@ -23,6 +24,11 @@ public class UnitPurchaseButtonManager extends AppObject
             GameMode.instance.addChild(button);
 
             _buttons.push(button);
+
+            var meter :UnitPurchaseMeter = new UnitPurchaseMeter(unitType);
+            meter.displayObject.x = buttonLoc.x;
+            meter.displayObject.y = buttonLoc.y + button.height + 2;
+            GameMode.instance.addObject(meter, GameMode.instance);
         }
     }
 

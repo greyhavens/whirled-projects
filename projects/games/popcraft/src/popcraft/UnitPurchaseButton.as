@@ -15,27 +15,10 @@ public class UnitPurchaseButton extends DisablingButton
     {
         var data :UnitData = Constants.UNIT_DATA[unitType];
 
-        // how much does it cost?
-        var costString :String = new String();
-        for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
-            var resData :ResourceType = Constants.getResource(resType);
-            var resCost :int = data.getResourceCost(resType);
-
-            if (resCost == 0) {
-                continue;
-            }
-
-            if (costString.length > 0) {
-                costString += " ";
-            }
-
-            costString += (resData.name + " (" + data.getResourceCost(resType) + ")");
-        }
-
-        upState         = makeButtonFace(data.imageClass, costString, COLOR_OUTLINE, COLOR_BG_UP);
-        overState       = makeButtonFace(data.imageClass, costString, COLOR_OUTLINE, COLOR_BG_OVER);
-        downState       = makeButtonFace(data.imageClass, costString, COLOR_OUTLINE, COLOR_BG_DOWN);
-        disabledState   = makeButtonFace(data.imageClass, costString, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
+        upState         = makeButtonFace(data.imageClass, COLOR_OUTLINE, COLOR_BG_UP);
+        overState       = makeButtonFace(data.imageClass, COLOR_OUTLINE, COLOR_BG_OVER);
+        downState       = makeButtonFace(data.imageClass, COLOR_OUTLINE, COLOR_BG_DOWN);
+        disabledState   = makeButtonFace(data.imageClass, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
 
         hitTestState = upState;
 
@@ -43,7 +26,7 @@ public class UnitPurchaseButton extends DisablingButton
         downState.y = -1;
     }
 
-    protected static function makeButtonFace (iconClass :Class, costString :String, foreground :uint, background :uint, iconAlpha :Number = 1.0) :Sprite
+    protected static function makeButtonFace (iconClass :Class, foreground :uint, background :uint, iconAlpha :Number = 1.0) :Sprite
     {
         var face :Sprite = new Sprite();
 
@@ -51,15 +34,6 @@ public class UnitPurchaseButton extends DisablingButton
         icon.alpha = iconAlpha;
 
         face.addChild(icon);
-
-        /*var costText :TextField = new TextField();
-        costText.text = costString;
-        costText.textColor = 0;
-        costText.height = costText.textHeight + 2;
-        costText.width = costText.textWidth + 3;
-        costText.y = icon.height + 5;
-
-        face.addChild(costText);*/
 
         var padding :int = 5;
         var w :Number = icon.width + 2 * padding;
