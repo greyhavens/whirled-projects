@@ -255,8 +255,8 @@ public class Board extends Sprite
 
     protected function turnTimeout () :void
     {
-        if (_wgc != null && _wgc.isMyTurn()) {
-            _wgc.startNextTurn();
+        if (_wgc != null && _wgc.game.isMyTurn()) {
+            _wgc.game.startNextTurn();
         }
     }
 

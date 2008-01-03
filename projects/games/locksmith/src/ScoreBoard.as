@@ -48,12 +48,12 @@ public class ScoreBoard extends Sprite
         _rightFrame.y = -233;
         addChild(_rightFrame);
 
-        var playerIds :Array = wgc.seating.getPlayerIds();
-        var playerNames :Array = wgc.seating.getPlayerNames();
-        wgc.getHeadShot(playerIds[MOON_PLAYER], applyHeadshot(MOON_PLAYER));
+        var playerIds :Array = wgc.game.seating.getPlayerIds();
+        var playerNames :Array = wgc.game.seating.getPlayerNames();
+        wgc.local.getHeadShot(playerIds[MOON_PLAYER], applyHeadshot(MOON_PLAYER));
         addLabel(MOON_PLAYER, playerNames[MOON_PLAYER]);
         if (playerIds.length > 1) {
-            wgc.getHeadShot(playerIds[SUN_PLAYER], applyHeadshot(SUN_PLAYER));
+            wgc.local.getHeadShot(playerIds[SUN_PLAYER], applyHeadshot(SUN_PLAYER));
             addLabel(SUN_PLAYER, playerNames[SUN_PLAYER]);
         }
 

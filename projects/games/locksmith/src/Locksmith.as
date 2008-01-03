@@ -19,6 +19,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 
 import com.whirled.FlowAwardedEvent;
+import com.whirled.GameSubControl;
 import com.whirled.WhirledGameControl;
 
 import com.whirled.contrib.EventHandlers;
@@ -44,32 +45,33 @@ public class Locksmith extends Sprite
         _board.x = DISPLAY_WIDTH / 2;
         _board.y = DISPLAY_HEIGHT / 2;
         _wgc = new WhirledGameControl(this);
-        if (_wgc.isConnected()) {
+        if (_wgc.game.isConnected()) {
             EventHandlers.registerEventListener(
-                _wgc, StateChangedEvent.GAME_STARTED, gameStarted);
+                _wgc.game, StateChangedEvent.GAME_STARTED, gameStarted);
             EventHandlers.registerEventListener(
-                _wgc, StateChangedEvent.GAME_ENDED, gameEnded);
+                _wgc.game, StateChangedEvent.GAME_ENDED, gameEnded);
             EventHandlers.registerEventListener(
-                _wgc, StateChangedEvent.TURN_CHANGED, turnChanged);
+                _wgc.game, StateChangedEvent.TURN_CHANGED, turnChanged);
             EventHandlers.registerEventListener(
-                _wgc, MessageReceivedEvent.TYPE, messageReceived);
+                _wgc.net, MessageReceivedEvent.TYPE, messageReceived);
             EventHandlers.registerEventListener(
-                _wgc, PropertyChangedEvent.TYPE, propertyChanged);
-            EventHandlers.registerEventListener(_wgc, KeyboardEvent.KEY_DOWN, keyDownHandler);
-            EventHandlers.registerEventListener(_wgc, FlowAwardedEvent.FLOW_AWARDED, 
+                _wgc.net, PropertyChangedEvent.TYPE, propertyChanged);
+            EventHandlers.registerEventListener(_wgc.local, KeyboardEvent.KEY_DOWN, keyDownHandler);
+            EventHandlers.registerEventListener(_wgc.player, FlowAwardedEvent.FLOW_AWARDED, 
                 function (event :FlowAwardedEvent) :void {
                     log.debug("flow award [" + event.amount + "]");
-                    _wgc.set(FLOW_AWARD, event.amount, _wgc.seating.getMyPosition());
+                    _wgc.net.set(FLOW_AWARD, event.amount, _wgc.game.seating.getMyPosition());
                 });
             _board.control = _wgc;
 
             addChildAt(_leftBackground = new BACKGROUND() as Sprite, 0);
             addChildAt(_rightBackground = new BACKGROUND() as Sprite, 0);
-            _leftBackground.width = Math.max(0, (_wgc.getSize().x - DISPLAY_WIDTH) / 2) + 1;
+            _leftBackground.width = Math.max(0, (_wgc.local.getSize().x - DISPLAY_WIDTH) / 2) + 1;
             _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width - 0.5;
             _rightBackground.width = _leftBackground.width;
             _rightBackground.x = _leftBackground.width + DISPLAY_WIDTH - 1;
-            EventHandlers.registerEventListener(_wgc, SizeChangedEvent.TYPE, updateBackgrounds);
+            EventHandlers.registerEventListener(
+                _wgc.local, SizeChangedEvent.TYPE, updateBackgrounds);
         } else {
             // show some rings so there is something visible when the game is not connected
             var ringData: Array = createRings();
@@ -98,10 +100,10 @@ public class Locksmith extends Sprite
             _board.clock.reinit();
             DoLater.instance.flush();
         }
-        if (_wgc.amInControl()) {
-            _wgc.sendMessage(NEW_RINGS, createRings());
-            _wgc.startNextTurn();
-            _wgc.set(FLOW_AWARD, [-1, -1]);
+        if (_wgc.game.amInControl()) {
+            _wgc.net.sendMessage(NEW_RINGS, createRings());
+            _wgc.game.startNextTurn();
+            _wgc.net.set(FLOW_AWARD, [-1, -1]);
         }
     }
 
@@ -112,7 +114,7 @@ public class Locksmith extends Sprite
 
     public function turnChanged (event :StateChangedEvent) :void
     {
-        if (_wgc.getTurnHolder() == 0) {
+        if (_wgc.game.getTurnHolder() == 0) {
             // spurious event at the beginning of the game
             return;
         }
@@ -125,10 +127,11 @@ public class Locksmith extends Sprite
             var newTurn :Function = function (...ignored) :void {
                 _board.setActiveRing(-1);
                 _board.clock.newTurn();
-                if (_wgc.isMyTurn()) {
+                if (_wgc.game.isMyTurn()) {
                     _board.setActiveRing(_currentRing.num);
                 }
-                _board.updateTurnIndicator(_wgc.seating.getPlayerPosition(_wgc.getTurnHolder()));
+                _board.updateTurnIndicator(_wgc.game.seating.getPlayerPosition(
+                    _wgc.game.getTurnHolder()));
                 _board.loadNextLauncher();
             }
             if (!_gotRotation || DoLater.instance.mostRecentStage != DoLater.ROTATION_AFTER_END) {
@@ -147,10 +150,11 @@ public class Locksmith extends Sprite
             // this is the first turn
             _gameStarted = true;
             _board.clock.newTurn();
-            if (_wgc.isMyTurn()) {
+            if (_wgc.game.isMyTurn()) {
                 _board.setActiveRing(_currentRing.num);
             }
-            _board.updateTurnIndicator(_wgc.seating.getPlayerPosition(_wgc.getTurnHolder()));
+            _board.updateTurnIndicator(_wgc.game.seating.getPlayerPosition(
+                _wgc.game.getTurnHolder()));
             _board.loadNextLauncher();
         }
     }
@@ -173,8 +177,8 @@ public class Locksmith extends Sprite
             _board.clock.turnOver();
             _board.setActiveRing(-1);
             DoLater.instance.registerAt(DoLater.ROTATION_AFTER_END, function (...ignored) :void {
-                if (_wgc.isMyTurn() && _gotRotation) {
-                    _wgc.startNextTurn();
+                if (_wgc.game.isMyTurn() && _gotRotation) {
+                    _wgc.game.startNextTurn();
                 }
             });
             ring = _currentRing.smallest;
@@ -185,9 +189,9 @@ public class Locksmith extends Sprite
         } else if (event.name == WINNER) {
             var winner :int = event.value as int;
             if (winner == -1) {
-                _wgc.localChat("Game over - the game is a tie!");
+                _wgc.local.feedback("Game over - the game is a tie!");
             } else {
-                _wgc.localChat("Game over - " + _wgc.seating.getPlayerNames()[winner] + 
+                _wgc.local.feedback("Game over - " + _wgc.game.seating.getPlayerNames()[winner] + 
                     " is the Winner!");
                 _scoreBoard.displayVictory(winner);
             }
@@ -202,8 +206,8 @@ public class Locksmith extends Sprite
 
         switch (event.name) {
         case FLOW_AWARD:
-            var moonFlow :int = _wgc.get(FLOW_AWARD, ScoreBoard.MOON_PLAYER) as int;
-            var sunFlow :int = _wgc.get(FLOW_AWARD, ScoreBoard.SUN_PLAYER) as int;
+            var moonFlow :int = _wgc.net.get(FLOW_AWARD, ScoreBoard.MOON_PLAYER) as int;
+            var sunFlow :int = _wgc.net.get(FLOW_AWARD, ScoreBoard.SUN_PLAYER) as int;
             if (moonFlow == -1 || sunFlow == -1) {
                 break;
             }
@@ -220,7 +224,7 @@ public class Locksmith extends Sprite
 
     protected function updateBackgrounds (event :SizeChangedEvent) :void
     {
-        _leftBackground.width = Math.max(0, (_wgc.getSize().x - DISPLAY_WIDTH) / 2) + 1;
+        _leftBackground.width = Math.max(0, (_wgc.local.getSize().x - DISPLAY_WIDTH) / 2) + 1;
         _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width - 0.5;
         if (_scoreBoard != null) {
             _scoreBoard.x = _board.x;
@@ -233,33 +237,33 @@ public class Locksmith extends Sprite
     {
         DoLater.instance.finishAndCall(function () :void {
             _board.stopRotation();
-            if (_wgc.amInControl()) {
+            if (_wgc.game.amInControl()) {
                 var scores :Array = [];
                 scores[ScoreBoard.MOON_PLAYER] = 
                     Math.round((_scoreBoard.moonScore / WIN_SCORE) * 100);
                 scores[ScoreBoard.SUN_PLAYER] =
                     Math.round((_scoreBoard.sunScore / WIN_SCORE) * 100);
-                _wgc.endGameWithScores(_wgc.seating.getPlayerIds(), scores,
-                    WhirledGameControl.TO_EACH_THEIR_OWN);
+                _wgc.game.endGameWithScores(_wgc.game.seating.getPlayerIds(), scores,
+                    GameSubControl.TO_EACH_THEIR_OWN);
                 var winner :int = scores[0] == scores[1] ? -1 : 
                     (scores[0] > scores[1] ? ScoreBoard.MOON_PLAYER : ScoreBoard.SUN_PLAYER);
-                _wgc.sendMessage(WINNER, winner);
+                _wgc.net.sendMessage(WINNER, winner);
             }
         });
     }
 
     protected function keyDownHandler (event :KeyboardEvent) :void
     {
-        if (_wgc.isMyTurn() && !_gotRotation && !_gameEnded) {
+        if (_wgc.game.isMyTurn() && !_gotRotation && !_gameEnded) {
             switch(event.keyCode) {
             case Keyboard.LEFT:
                 _gotRotation = true;
-                _wgc.sendMessage(RING_ROTATION, { ring: _currentRing.num, direction: 
+                _wgc.net.sendMessage(RING_ROTATION, { ring: _currentRing.num, direction: 
                     Ring.COUNTER_CLOCKWISE });
                 break;
             case Keyboard.RIGHT:
                 _gotRotation = true;
-                _wgc.sendMessage(RING_ROTATION, { ring: _currentRing.num, direction:
+                _wgc.net.sendMessage(RING_ROTATION, { ring: _currentRing.num, direction:
                     Ring.CLOCKWISE });
                 break;
             case Keyboard.UP:
