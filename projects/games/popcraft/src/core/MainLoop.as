@@ -78,6 +78,15 @@ public class MainLoop
 
         _lastTime = this.elapsedSeconds;
     }
+    
+    public function shutdown () :void
+    {
+        // Most games won't need to call shutdown because the MainLoop will be running as long as the game is.
+        // This method is only necessary for games that use multiple MainLoops in their lifetimes.
+        
+        _mainTimer.removeEventListener(TimerEvent.TIMER, update);
+        _mainTimer.stop();
+    }
 
     public function pushMode (mode :AppMode) :void
     {
