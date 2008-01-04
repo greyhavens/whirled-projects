@@ -17,13 +17,13 @@ public class MainLoop
         return g_instance;
     }
 
-    public function MainLoop (applicationSprite :Sprite)
+    public function MainLoop (hostSprite :Sprite)
     {
         Assert.isNull(g_instance);
         g_instance = this;
 
-        Assert.isNotNull(applicationSprite);
-        _applicationSprite = applicationSprite;
+        Assert.isNotNull(hostSprite);
+        _hostSprite = hostSprite;
     }
 
     public function addUpdatable (obj :Updatable) :void
@@ -140,7 +140,7 @@ public class MainLoop
             Assert.isNotNull(topMode);
 
             _modeStack.pop();
-            _applicationSprite.removeChild(topMode);
+            _hostSprite.removeChild(topMode);
 
             // if the top mode is popped, make sure it's exited first
             if (topMode == initialTopMode) {
@@ -155,7 +155,7 @@ public class MainLoop
             Assert.isNotNull(newMode);
 
             _modeStack.push(newMode);
-            _applicationSprite.addChild(newMode);
+            _hostSprite.addChild(newMode);
             newMode.setup();
         }
 
@@ -235,7 +235,7 @@ public class MainLoop
 
     protected var _defaultAppSettings :CoreAppSettings;
 
-    protected var _applicationSprite :Sprite;
+    protected var _hostSprite :Sprite;
     protected var _hasSetup :Boolean = false;
     protected var _running :Boolean = false;
     protected var _mainTimer :Timer;
