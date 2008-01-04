@@ -91,7 +91,7 @@ public class Reversi extends Sprite
     {
         readBoard();
 
-        var turnHolderId :int = _gameCtrl.game.getTurnHolder();
+        var turnHolderId :int = _gameCtrl.game.getTurnHolderId();
         var turnHolder :int = _gameCtrl.game.seating.getPlayerPosition(turnHolderId);
         var myTurn :Boolean = _gameCtrl.game.isMyTurn();
 
