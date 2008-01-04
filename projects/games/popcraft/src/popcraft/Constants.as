@@ -1,18 +1,19 @@
 package popcraft {
 
-import popcraft.battle.*;
+import com.threerings.util.Assert;
 
 import core.*;
 import core.util.*;
 
-import com.threerings.util.Assert;
 import flash.geom.Point;
+
+import popcraft.battle.*;
 
 public class Constants
 {
     public static const SCREEN_DIMS :Vector2 = new Vector2(700, 500);
 
-    public static const DEBUG_LEVEL :int = 1;
+    public static const DEBUG_LEVEL :int = 0;
     public static const CHEATS_ENABLED :Boolean = true;
 
     public static const PLAYER_COLORS :Array = [
@@ -161,15 +162,36 @@ public class Constants
 
     public static function getPlayerBaseLocations (numPlayers :uint) :Array // of Vector2s
     {
+        // return an array of Vector2 pairs - for each player, a base loc and an initial waypoint loc
+        
         switch (numPlayers) {
         case 2:
             return [
-                new Vector2(28, 240), new Vector2(75, 240),     // base loc, waypoint loc
-                new Vector2(452, 240), new Vector2(405, 240)
+                new Vector2(28, 250), new Vector2(75, 250),     // middle left
+                new Vector2(452, 250), new Vector2(405, 250)    // middle right
              ];
+             break;
+             
+        case 3:
+            return [
+                new Vector2(48, 68), new Vector2(75, 115),       // top left
+                new Vector2(28, 452), new Vector2(75, 405),     // bottom left
+                new Vector2(452, 250), new Vector2(405, 250)    // middle right
+            ];
+            break;
+            
+        case 4:
+            return [
+                new Vector2(48, 68), new Vector2(75, 115),       // top left
+                new Vector2(48, 452), new Vector2(75, 405),     // bottom left
+                new Vector2(452, 68), new Vector2(405, 115),     // top right
+                new Vector2(452, 452), new Vector2(405, 405),   // bottom right
+            ];
+            break;
 
         default:
             return [];
+            break;
         }
     }
 }

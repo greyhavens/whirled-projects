@@ -1,29 +1,18 @@
 package popcraft {
 
+import com.threerings.util.Assert;
+import com.threerings.util.HashSet;
+import com.threerings.util.RingBuffer;
+
 import core.*;
 import core.util.*;
 
+import flash.events.KeyboardEvent;
+import flash.geom.Point;
+
+import popcraft.battle.*;
 import popcraft.net.*;
 import popcraft.puzzle.*;
-import popcraft.battle.*;
-
-import com.threerings.util.RingBuffer;
-import com.threerings.util.Assert;
-import com.threerings.flash.DisablingButton;
-
-import flash.display.SimpleButton;
-import flash.display.DisplayObjectContainer;
-import flash.events.MouseEvent;
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-import flash.display.Sprite;
-import flash.text.TextField;
-import flash.display.DisplayObject;
-import flash.events.Event;
-import flash.geom.Point;
-import flash.events.KeyboardEvent;
-import flash.ui.Keyboard;
-import com.threerings.util.HashSet;
 
 public class GameMode extends AppMode
 {
@@ -214,6 +203,17 @@ public class GameMode extends AppMode
 
         // update all non-net objects
         super.update(dt);
+    }
+    
+    public function getRandomEnemyPlayerId (myId :uint) :uint
+    {
+        var numPlayers :int = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
+        var playerId :int = Rand.nextIntRange(0, numPlayers - 1, Rand.STREAM_GAME);
+        if (playerId == myId) {
+            playerId = numPlayers - 1;
+        }
+        
+        return uint(playerId);
     }
 
     public function getPlayerBase (player :uint) :PlayerBaseUnit

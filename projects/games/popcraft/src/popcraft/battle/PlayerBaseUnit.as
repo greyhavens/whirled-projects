@@ -27,7 +27,7 @@ public class PlayerBaseUnit extends Unit
 
         var baseImage :Bitmap = new Constants.IMAGE_BASE();
         baseImage.x = -(baseImage.width / 2);
-        baseImage.y = -baseImage.height;
+        baseImage.y = -(baseImage.height / 2);
 
         _sprite.addChild(baseImage);
         _sprite.addChild(this.createOwningPlayerGlowForBitmap(baseImage));
