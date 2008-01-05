@@ -1,17 +1,24 @@
 package ghostbusters.fight.ouija {
     
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import ghostbusters.fight.core.*;
 
-[SWF(width="280", height="222", frameRate="30")]
-public class Board extends Sprite
+public class Board extends AppObject
 {
     public function Board()
     {
+        _sprite.addChild(new IMAGE_BOARD());
     }
     
-    /* Images */
+    override public function get displayObject () :DisplayObject
+    {
+        return _sprite;
+    }
+    
+    protected var _sprite :Sprite = new Sprite();
+    
     [Embed(source="../../../../rsrc/ouijaboard.png")]
     protected static const IMAGE_BOARD :Class;
     
