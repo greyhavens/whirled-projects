@@ -21,8 +21,6 @@ import ghostbusters.fight.core.tasks.TimedTask;
 public class Cursor extends AppObject
     implements IEventDispatcher
 {
-    public static const EVENT_SELECTION_CHANGED :String = "SelectionChanged";
-    
     public function Cursor (board :Board)
     {
         _ed = new EventDispatcher(this);
@@ -75,10 +73,11 @@ public class Cursor extends AppObject
     protected function selectionTimerExpired () :void
     {
         // determine our selection
-        var newSelection :int = _board.getSelectionIndexAt(new Vector2(_sprite.x, _sprite.y), SELECTION_EPSILON);
+        var newSelection :int = Board.getSelectionIndexAt(new Vector2(_sprite.x, _sprite.y), SELECTION_EPSILON);
         if (newSelection != _currentSelectionIndex && newSelection >= 0) {
             _currentSelectionIndex = newSelection;
-            trace("new selection :" + _board.selectionIndexToString(_currentSelectionIndex));
+            _ed.dispatchEvent(new BoardSelectionEvent(_currentSelectionIndex));
+            trace("new selection :" + Board.selectionIndexToString(_currentSelectionIndex));
         }
     }
     

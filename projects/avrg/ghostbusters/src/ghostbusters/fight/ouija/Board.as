@@ -17,7 +17,7 @@ public class Board extends AppObject
         return _sprite;
     }
     
-    public function getSelectionIndexAt (loc :Vector2, epsilon :int) :int
+    public static function getSelectionIndexAt (loc :Vector2, epsilon :int) :int
     {
         var epsilonSquared :int = epsilon * epsilon;
         
@@ -33,7 +33,7 @@ public class Board extends AppObject
         return -1;
     }
     
-    public function selectionIndexToString (index :int) :String
+    public static function selectionIndexToString (index :int) :String
     {
         index *= 2;
         if (index >= 0 && index < SELECTIONS.length) {
