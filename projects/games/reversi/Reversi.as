@@ -148,7 +148,9 @@ public class Reversi extends Sprite
 
     protected function handleTurnChanged (event :StateChangedEvent) :void
     {
-        showMoves();
+        if (_gameCtrl.game.getTurnHolderId() != 0) {
+            showMoves();
+        }
     }
 
     protected function handlePropertyChanged (event :PropertyChangedEvent) :void
