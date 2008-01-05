@@ -3,19 +3,30 @@ package ghostbusters.fight.ouija {
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.events.Event;
+import flash.events.EventDispatcher;
+import flash.events.IEventDispatcher;
 import flash.events.MouseEvent;
 
 import ghostbusters.fight.core.AppMode;
 import ghostbusters.fight.core.AppObject;
 import ghostbusters.fight.core.Vector2;
+import ghostbusters.fight.core.tasks.FunctionTask;
+import ghostbusters.fight.core.tasks.SerialTask;
+import ghostbusters.fight.core.tasks.TimedTask;
 
 /**
  * This should almost certainly be called "Planchette" instead of "Cursor", but who wants to type that word a million times?
  */
 public class Cursor extends AppObject
+    implements IEventDispatcher
 {
+    public static const EVENT_SELECTION_CHANGED :String = "SelectionChanged";
+    
     public function Cursor (board :Board)
     {
+        _ed = new EventDispatcher(this);
+        
         _board = board;
         
         // add the image, aligned by the center of its viewier
@@ -45,12 +56,74 @@ public class Cursor extends AppObject
     {
         _sprite.x = localX;
         _sprite.y = localY;
+        
+        // do we need to reset the selection timer?
+        var newLoc :Vector2 = new Vector2(localX, localY);
+        var delta :Vector2 = new Vector2(localX, localY);
+        delta.subtract(_lastSettledLocation);
+        
+        if (delta.lengthSquared > ALLOWED_MOVE_DISTANCE) {
+            this.removeNamedTasks("SelectionTimer");
+            this.addNamedTask("SelectionTimer", new SerialTask(
+                new TimedTask(SELECTION_TIMER_DURATION),
+                new FunctionTask(selectionTimerExpired)));
+                    
+            _lastSettledLocation = delta;
+        }
+    }
+    
+    protected function selectionTimerExpired () :void
+    {
+        // determine our selection
+        var newSelection :int = _board.getSelectionIndexAt(new Vector2(_sprite.x, _sprite.y), SELECTION_EPSILON);
+        if (newSelection != _currentSelectionIndex && newSelection >= 0) {
+            _currentSelectionIndex = newSelection;
+            trace("new selection :" + _board.selectionIndexToString(_currentSelectionIndex));
+        }
+    }
+    
+    // from IEventDispatcher
+    public function addEventListener (type :String, listener :Function, useCapture :Boolean = false, priority :int = 0, useWeakReference :Boolean = false) :void
+    {
+        _ed.addEventListener(type, listener, useCapture, priority, useWeakReference);
+    }
+    
+    // from IEventDispatcher
+    public function dispatchEvent (event :Event) :Boolean
+    {
+        return _ed.dispatchEvent(event);
+    }
+    
+    // from IEventDispatcher
+    public function hasEventListener (type :String) :Boolean
+    {
+        return _ed.hasEventListener(type);
+    }
+    
+    // from IEventDispatcher
+    public function removeEventListener (type :String, listener :Function, useCapture :Boolean = false) :void
+    {
+        _ed.removeEventListener(type, listener, useCapture);
+    }
+    
+    // from IEventDispatcher
+    public function willTrigger (type :String) :Boolean
+    {
+        return _ed.willTrigger(type);
     }
     
     protected var _board :Board;
     protected var _sprite :Sprite = new Sprite();
+    protected var _ed :EventDispatcher;
+
+    protected var _lastSettledLocation :Vector2 = new Vector2();    
+    protected var _currentSelectionIndex :int = -1;
     
     protected static const CENTER :Vector2 = new Vector2(26, 25);
+    
+    protected static const ALLOWED_MOVE_DISTANCE :int = 2; // distance that the cursor can move without resetting selection timer
+    protected static const SELECTION_EPSILON :int = 6; // allowed distance from center of selection
+    protected static const SELECTION_TIMER_DURATION :Number = 0.25;
     
     [Embed(source="../../../../rsrc/ouijaplanchette.png")]
     protected static const IMAGE_PLANCHETTE :Class;
