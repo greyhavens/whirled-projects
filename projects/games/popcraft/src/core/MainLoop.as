@@ -86,6 +86,8 @@ public class MainLoop
         
         _mainTimer.removeEventListener(TimerEvent.TIMER, update);
         _mainTimer.stop();
+        
+        g_instance = null;
     }
 
     public function pushMode (mode :AppMode) :void
