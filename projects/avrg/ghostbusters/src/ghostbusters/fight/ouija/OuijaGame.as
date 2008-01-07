@@ -18,7 +18,7 @@ public class OuijaGame extends Sprite
         trace("Ouija word: " + word);
         
         mainLoop.pushMode(new OuijaGameMode(word));
-        //mainLoop.pushMode(new OuijaIntroMode(word));
+        mainLoop.pushMode(new OuijaIntroMode(word));
     }
     
     protected static const WORDS :Array = [
@@ -33,8 +33,14 @@ public class OuijaGame extends Sprite
 
 }
 
-import ghostbusters.fight.core.AppMode;
+import ghostbusters.fight.core.*;
+import ghostbusters.fight.core.tasks.*;
 import ghostbusters.fight.ouija.*;
+
+import flash.display.Sprite;
+import flash.display.Shape;
+import flash.display.DisplayObject;
+import flash.text.TextField;
 
 class OuijaGameMode extends AppMode
 {
@@ -52,12 +58,24 @@ class OuijaGameMode extends AppMode
         
         this.addObject(_board, this);
         this.addObject(_cursor, _board.displayObjectContainer);
+        
+        _progressText.textColor = 0xFF0000;
+        _progressText.defaultTextFormat.size = 20;
+        this.addChild(_progressText);
     }
     
     protected function boardSelectionChanged (e :BoardSelectionEvent) :void
     {
         if (_nextWordIndex < _word.length && e.selectionString == _word.charAt(_nextWordIndex)) {
             trace("saw " + _word.charAt(_nextWordIndex));
+            
+            // update the text
+            _progressText.text = _word.substr(0, _nextWordIndex + 1).toLocaleUpperCase();
+            _progressText.width = _progressText.textWidth + 5;
+            _progressText.height = _progressText.textHeight + 3;
+            _progressText.x = (this.width / 2) - (_progressText.width / 2);
+            _progressText.y = 8;
+            
             if (++_nextWordIndex >= _word.length) {
                 // we're done!
                 trace("success!");
@@ -69,14 +87,59 @@ class OuijaGameMode extends AppMode
     protected var _nextWordIndex :int;
     protected var _board :Board;
     protected var _cursor :Cursor;
+    
+    protected var _progressText :TextField = new TextField();
+}
+
+class IntroObject extends AppObject
+{
+    public function IntroObject (word :String)
+    {
+        // create a rectangle
+        var rect :Shape = new Shape();
+        rect.graphics.beginFill(0x000000);
+        rect.graphics.drawRect(0, 0, 280, 222);
+        rect.graphics.endFill();
+        
+        _sprite.addChild(rect);
+        
+        // create the "Spell 'xyz'" text
+        var textField :TextField = new TextField();
+        textField.textColor = 0xFFFFFF;
+        textField.defaultTextFormat.size = 20;
+        textField.text = "Spell '" + word.toLocaleUpperCase() + "'";
+        textField.width = textField.textWidth + 5;
+        textField.height = textField.textHeight + 3;
+        
+        // center it
+        textField.x = (rect.width / 2) - (textField.width / 2);
+        textField.y = (rect.height / 2) - (textField.height / 2);
+        
+        _sprite.addChild(textField);
+        
+        // fade the object and pop the mode
+        var task :SerialTask = new SerialTask();
+        task.addTask(new TimedTask(SHOW_WORD_TIME));
+        task.addTask(new AlphaTask(0, FADE_TIME));
+        task.addTask(new FunctionTask(MainLoop.instance.popMode));
+        this.addTask(task);
+    }
+    
+    override public function get displayObject () :DisplayObject
+    {
+        return _sprite;
+    }
+    
+    protected var _sprite :Sprite = new Sprite();
+    
+    protected static const SHOW_WORD_TIME :Number = 2;
+    protected static const FADE_TIME :Number = 0.25;
 }
 
 class OuijaIntroMode extends AppMode
 {
     public function OuijaIntroMode (word :String)
     {
-        _word = word;
+        this.addObject(new IntroObject(word), this);
     }
-    
-    protected var _word :String;
 }
