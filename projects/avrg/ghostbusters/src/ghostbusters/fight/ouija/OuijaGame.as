@@ -62,6 +62,16 @@ class OuijaGameMode extends AppMode
         _progressText.textColor = 0xFF0000;
         _progressText.defaultTextFormat.size = 20;
         this.addChild(_progressText);
+        
+        // install a failure timer
+        var timerObj :AppObject = new AppObject();
+        timerObj.addTask(new SerialTask(
+            new TimedTask(GAME_TIME),
+            new FunctionTask(
+                function () :void { MainLoop.instance.changeMode(new OuijaOutroMode(false)); }
+            )));
+            
+        this.addObject(timerObj);
     }
     
     protected function boardSelectionChanged (e :BoardSelectionEvent) :void
@@ -79,6 +89,7 @@ class OuijaGameMode extends AppMode
             if (++_nextWordIndex >= _word.length) {
                 // we're done!
                 trace("success!");
+                MainLoop.instance.changeMode(new OuijaOutroMode(true));
             }
         }
     }
@@ -89,6 +100,8 @@ class OuijaGameMode extends AppMode
     protected var _cursor :Cursor;
     
     protected var _progressText :TextField = new TextField();
+    
+    protected static const GAME_TIME :Number = 12; // @TODO - this should be controlled by game difficulty
 }
 
 class IntroObject extends AppObject
@@ -141,5 +154,48 @@ class OuijaIntroMode extends AppMode
     public function OuijaIntroMode (word :String)
     {
         this.addObject(new IntroObject(word), this);
+    }
+}
+
+class OutroObject extends AppObject
+{
+    public function OutroObject (success :Boolean)
+    {
+        // create a rectangle
+        var rect :Shape = new Shape();
+        rect.graphics.beginFill(0x000000);
+        rect.graphics.drawRect(0, 0, 280, 222);
+        rect.graphics.endFill();
+        
+        _sprite.addChild(rect);
+        
+        // create the text
+        var textField :TextField = new TextField();
+        textField.textColor = 0xFFFFFF;
+        textField.defaultTextFormat.size = 20;
+        textField.text = (success ? "SUCCESS!" : "FAILURE!");
+        textField.width = textField.textWidth + 5;
+        textField.height = textField.textHeight + 3;
+        
+        // center it
+        textField.x = (rect.width / 2) - (textField.width / 2);
+        textField.y = (rect.height / 2) - (textField.height / 2);
+        
+        _sprite.addChild(textField);
+    }
+    
+    override public function get displayObject () :DisplayObject
+    {
+        return _sprite;
+    }
+    
+    protected var _sprite :Sprite = new Sprite();
+}
+
+class OuijaOutroMode extends AppMode
+{
+    public function OuijaOutroMode (success :Boolean)
+    {
+        this.addObject(new OutroObject(success), this);
     }
 }
