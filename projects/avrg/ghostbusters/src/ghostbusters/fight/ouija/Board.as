@@ -84,6 +84,6 @@ public class Board extends AppObject
     protected static const YES_INDEX :uint = 26;
     protected static const NO_INDEX :uint = 27;
     
-    }
+}
 
 }

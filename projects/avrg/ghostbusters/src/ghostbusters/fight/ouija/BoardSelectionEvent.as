@@ -26,4 +26,5 @@ public class BoardSelectionEvent extends Event
     protected var _selectionIndex :int;
     
 }
+
 }
