@@ -61,6 +61,7 @@ class OuijaGameMode extends AppMode
         
         _progressText.textColor = 0xFF0000;
         _progressText.defaultTextFormat.size = 20;
+        _progressText.mouseEnabled = false;
         this.addChild(_progressText);
         
         // install a failure timer

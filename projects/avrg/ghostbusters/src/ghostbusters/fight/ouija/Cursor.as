@@ -32,6 +32,9 @@ public class Cursor extends AppObject
         image.x = -CENTER.x;
         image.y = -CENTER.y;
         _sprite.addChild(image);
+        
+        _sprite.mouseEnabled = false;
+        _sprite.mouseChildren = false;
     }
     
     override public function get displayObject () :DisplayObject
