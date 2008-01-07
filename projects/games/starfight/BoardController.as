@@ -7,7 +7,6 @@ import flash.media.Sound;
 import flash.utils.ByteArray;
 
 import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.util.HashMap;
 
@@ -17,7 +16,6 @@ import com.whirled.WhirledGameControl;
  * Manages the board data and display sprite.
  */
 public class BoardController
-    implements PropertyChangedListener
 {
     /** Board size in tiles. */
     public var width :int;
@@ -31,7 +29,7 @@ public class BoardController
     public function BoardController (gameCtrl :WhirledGameControl, sf :StarFight)
     {
         _gameCtrl = gameCtrl;
-        _gameCtrl.registerListener(this);
+        _gameCtrl.net.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
         _sf = sf;
     }
 
@@ -44,11 +42,11 @@ public class BoardController
             return;
         }
 
-        var boardBytes :ByteArray = ByteArray(_gameCtrl.get("board"));
+        var boardBytes :ByteArray = ByteArray(_gameCtrl.net.get("board"));
         if (boardBytes != null) {
             boardBytes.position = 0;
             readBoard(boardBytes);
-        } else if (_gameCtrl.amInControl()) {
+        } else if (_gameCtrl.game.amInControl()) {
             create();
         }
     }
@@ -59,12 +57,12 @@ public class BoardController
         _powerups = null;
         _mines = null;
         _board = null;
-        if (_gameCtrl.amInControl()) {
+        if (_gameCtrl.game.amInControl()) {
             _gameCtrl.doBatch(function () :void {
-                _gameCtrl.setImmediate("obstacles", null);
-                _gameCtrl.setImmediate("powerup", null);
-                _gameCtrl.setImmediate("mines", null);
-                _gameCtrl.setImmediate("board", null);
+                _gameCtrl.net.setImmediate("obstacles", null);
+                _gameCtrl.net.setImmediate("powerup", null);
+                _gameCtrl.net.setImmediate("mines", null);
+                _gameCtrl.net.setImmediate("board", null);
             });
         }
     }
@@ -72,7 +70,7 @@ public class BoardController
     protected function readBoard (boardBytes :ByteArray) :void
     {
         readFrom(boardBytes);
-        var obs :Array = (_gameCtrl.get("obstacles") as Array);
+        var obs :Array = (_gameCtrl.net.get("obstacles") as Array);
         _obstacles = new Array(obs.length);
         for (var ii :int; ii < _obstacles.length; ii++) {
             if (obs[ii] == null) {
@@ -83,7 +81,7 @@ public class BoardController
             _obstacles[ii] = Obstacle.readObstacle(ByteArray(obs[ii]));
             _obstacles[ii].index = ii;
         }
-        var pups :Array = (_gameCtrl.get("powerup") as Array);
+        var pups :Array = (_gameCtrl.net.get("powerup") as Array);
         _powerups = new Array(pups.length);
         for (ii = 0; ii < pups.length; ii++) {
             if (pups[ii] == null) {
@@ -93,7 +91,7 @@ public class BoardController
             pups[ii].position = 0;
             _powerups[ii] = Powerup.readPowerup(ByteArray(pups[ii]));
         }
-        var mines :Array = (_gameCtrl.get("mines") as Array);
+        var mines :Array = (_gameCtrl.net.get("mines") as Array);
         _mines = new Array(mines.length);
         for (ii = 0; ii < mines.length; ii++) {
             if (mines[ii] == null) {
@@ -119,14 +117,14 @@ public class BoardController
 
         if (_gameCtrl.isConnected()) {
             _gameCtrl.doBatch(function () :void {
-                _gameCtrl.setImmediate("obstacles", new Array(_obstacles.length));
+                _gameCtrl.net.setImmediate("obstacles", new Array(_obstacles.length));
                 for (var ii :int; ii < _obstacles.length; ii++) {
-                    _gameCtrl.setImmediate("obstacles",
+                    _gameCtrl.net.setImmediate("obstacles",
                             _obstacles[ii].writeTo(new ByteArray()), ii);
                 }
-                _gameCtrl.setImmediate("powerup", new Array(_powerups.length));
-                _gameCtrl.setImmediate("mines", new Array(1));
-                _gameCtrl.setImmediate("board", writeTo(new ByteArray()));
+                _gameCtrl.net.setImmediate("powerup", new Array(_powerups.length));
+                _gameCtrl.net.setImmediate("mines", new Array(1));
+                _gameCtrl.net.setImmediate("board", writeTo(new ByteArray()));
             });
         }
         _callback();
@@ -149,7 +147,7 @@ public class BoardController
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
         if (event.name == "board" && (_board == null)) {
-            var bytes :ByteArray = ByteArray(_gameCtrl.get("board"));
+            var bytes :ByteArray = ByteArray(_gameCtrl.net.get("board"));
             if (bytes != null) {
                 readBoard(bytes);
             }
@@ -259,7 +257,7 @@ public class BoardController
 
                 _powerups[ii] = new Powerup(Math.random()*Powerup.COUNT, x, y);
 
-                _gameCtrl.setImmediate("powerup", _powerups[ii].writeTo(new ByteArray()), ii);
+                _gameCtrl.net.setImmediate("powerup", _powerups[ii].writeTo(new ByteArray()), ii);
                 powerupLayer.addChild(_powerups[ii]);
                 _status.addPowerup(ii);
                 return;
@@ -273,7 +271,7 @@ public class BoardController
             if (_powerups[ii] == null) {
                 _powerups[ii] = new Powerup(Powerup.HEALTH, x, y);
 
-                _gameCtrl.setImmediate("powerup", _powerups[ii].writeTo(new ByteArray()), ii);
+                _gameCtrl.net.setImmediate("powerup", _powerups[ii].writeTo(new ByteArray()), ii);
                 powerupLayer.addChild(_powerups[ii]);
                 _status.addPowerup(ii);
                 return;
@@ -286,7 +284,7 @@ public class BoardController
      */
     public function removePowerup (idx :int) :void
     {
-        _gameCtrl.setImmediate("powerup", null, idx);
+        _gameCtrl.net.setImmediate("powerup", null, idx);
         powerupLayer.removeChild(_powerups[idx]);
         _powerups[idx] = null;
         _status.removePowerup(idx);
@@ -305,8 +303,8 @@ public class BoardController
         }
         _mines[index] = mine;
         powerupLayer.addChild(mine);
-        if (_gameCtrl.amInControl()) {
-            _gameCtrl.setImmediate("mines", mine.writeTo(new ByteArray()), index);
+        if (_gameCtrl.game.amInControl()) {
+            _gameCtrl.net.setImmediate("mines", mine.writeTo(new ByteArray()), index);
         }
     }
 
@@ -315,7 +313,7 @@ public class BoardController
      */
     public function removeMine (idx :int) :void
     {
-        _gameCtrl.setImmediate("mines", null, idx);
+        _gameCtrl.net.setImmediate("mines", null, idx);
         var mine :Mine = _mines[idx];
         _mines[idx] = null;
         mine.explode(_sf, function () :void {
@@ -498,10 +496,10 @@ public class BoardController
                 }
             }
         }
-        if (indices.length > 0 && _gameCtrl.amInControl()) {
+        if (indices.length > 0 && _gameCtrl.game.amInControl()) {
             _gameCtrl.doBatch(function () :void {
                 for each (var idx :int in indices) {
-                    _gameCtrl.setImmediate("mines", null, idx);
+                    _gameCtrl.net.setImmediate("mines", null, idx);
                 }
             });
         }
@@ -525,7 +523,7 @@ public class BoardController
             }
             _explosions.push(exp);
         }
-        if (!isSmall && _gameCtrl.amInControl()) {
+        if (!isSmall && _gameCtrl.game.amInControl()) {
             addHealth(x, y);
         }
     }
@@ -543,7 +541,7 @@ public class BoardController
         explode(x, y, 0, true, 0);
         if (owner) {
             if (_sf.gameState == Codes.IN_ROUND && obj.damage(damage)) {
-                _gameCtrl.setImmediate(obj.arrayName(), null, obj.index);
+                _gameCtrl.net.setImmediate(obj.arrayName(), null, obj.index);
             }
         }
 
@@ -690,8 +688,8 @@ public class BoardController
 
     public function hostChanged (event :StateChangedEvent, gameState :int) :void
     {
-        if (_gameCtrl.amInControl() && gameState != Codes.POST_ROUND) {
-            if (_gameCtrl.get("board") == null) {
+        if (_gameCtrl.game.amInControl() && gameState != Codes.POST_ROUND) {
+            if (_gameCtrl.net.get("board") == null) {
                 create();
             }
         }
