@@ -36,7 +36,7 @@ public class TagWidget extends Sprite
     {
         _ctrl = ctrl;
         _searchPhotoService = searchPhotoService;
-        _ctrl.net.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
+        _ctrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, handlePropertyChanged);
 
         _tagFormat = new TextFormat();
         _tagFormat.color = 0xFFFFFF;

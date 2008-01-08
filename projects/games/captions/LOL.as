@@ -89,7 +89,7 @@ public class LOL extends Sprite
         _formatter.addEventListener(
             TextFieldFormatter.ENTER_PRESSED_EVENT, handleEnterPressedOnInput);
 
-        _ctrl.local.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
+        _ctrl.local.addEventListener(SizeChangedEvent.SIZE_CHANGED, handleSizeChanged);
 
         _content = new Sprite();
         addChild(_content);

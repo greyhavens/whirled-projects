@@ -346,8 +346,8 @@ public class CaptionGame extends EventDispatcher
         _ctrl.local.setOccupantsLabel("Votes received in last " + _scoreRounds + " rounds");
 
         _ctrl.addEventListener(Event.UNLOAD, handleUnload);
-        _ctrl.net.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
-        _ctrl.net.addEventListener(MessageReceivedEvent.TYPE, handleMessageReceived);
+        _ctrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, handlePropertyChanged);
+        _ctrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
         _ctrl.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
         _ctrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
         _ctrl.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, checkControl);
@@ -1306,6 +1306,7 @@ public class CaptionGame extends EventDispatcher
      */
     protected function handleOccupantLeft (event :OccupantChangedEvent) :void
     {
+        trace("Occupant left: " + event.occupantId);
         if (_inControl) {
             // clear out their participating flag, if any
             _ctrl.net.set("part:" + event.occupantId, null);
