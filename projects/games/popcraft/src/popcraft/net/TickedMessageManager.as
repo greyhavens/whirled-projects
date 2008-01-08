@@ -31,7 +31,7 @@ public class TickedMessageManager
 
     public function setup (isFirstPlayer :Boolean, tickIntervalMS :int) :void
     {
-        _gameCtrl.net.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, msgReceived);
 
         _isFirstPlayer = isFirstPlayer;
         _tickIntervalMS = tickIntervalMS;
@@ -44,7 +44,7 @@ public class TickedMessageManager
     public function shutdown () :void
     {
         _gameCtrl.services.stopTicker("tick");
-        _gameCtrl.net.removeEventListener(MessageReceivedEvent.TYPE, msgReceived);
+        _gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, msgReceived);
         _receivedRandomSeed = false;
     }
 
