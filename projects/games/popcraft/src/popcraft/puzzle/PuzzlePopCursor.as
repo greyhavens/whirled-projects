@@ -2,8 +2,8 @@ package popcraft.puzzle {
 
 import popcraft.*;
 
-import com.whirled.contrib.core.AppObject;
-import com.whirled.contrib.core.AppMode;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.tasks.*;
 
 import com.threerings.util.Assert;
 
@@ -12,8 +12,6 @@ import flash.display.InteractiveObject;
 import flash.display.Shape;
 import flash.events.Event;
 import flash.events.MouseEvent;
-
-import com.whirled.contrib.core.tasks.*;
 
 public class PuzzlePopCursor extends AppObject
 {
@@ -81,7 +79,7 @@ public class PuzzlePopCursor extends AppObject
         _sprite.y = _mouseIndexY * Constants.PUZZLE_TILE_SIZE;
     }
 
-    override protected function addedToMode (mode :AppMode) :void
+    override protected function addedToDB (db :ObjectDB) :void
     {
         // the cursor is only visible when the mouse is over the mode
         // @TSC - does it make any difference that I'm using weak refs here?
@@ -94,7 +92,7 @@ public class PuzzlePopCursor extends AppObject
         _board.interactiveObject.addEventListener(MouseEvent.CLICK, mouseClick, false, 0, true);
     }
 
-    override protected function destroyed (mode :AppMode) :void
+    override protected function removedFromDB (db :ObjectDB) :void
     {
         _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OUT, rollOut);
         _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OVER, rollOver);

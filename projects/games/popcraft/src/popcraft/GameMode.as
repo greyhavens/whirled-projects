@@ -30,7 +30,7 @@ public class GameMode extends AppMode
     }
 
     // from com.whirled.contrib.core.AppMode
-    override public function setup () :void
+    override protected function setup () :void
     {
         var myPosition :int = PopCraft.instance.gameControl.game.seating.getMyPosition();
         var isAPlayer :Boolean = (myPosition >= 0);
@@ -45,7 +45,7 @@ public class GameMode extends AppMode
         _battleBoard.displayObject.x = Constants.BATTLE_BOARD_LOC.x;
         _battleBoard.displayObject.y = Constants.BATTLE_BOARD_LOC.y;
 
-        this.addObject(_battleBoard, this);
+        this.addObject(_battleBoard, this.modeSprite);
 
         // only players get puzzles
         if (isAPlayer) {
@@ -55,7 +55,7 @@ public class GameMode extends AppMode
             resourceDisplay.displayObject.x = Constants.RESOURCE_DISPLAY_LOC.x;
             resourceDisplay.displayObject.y = Constants.RESOURCE_DISPLAY_LOC.y;
 
-            this.addObject(resourceDisplay, this);
+            this.addObject(resourceDisplay, this.modeSprite);
 
             _puzzleBoard = new PuzzleBoard(
                 Constants.PUZZLE_COLS,
@@ -65,7 +65,7 @@ public class GameMode extends AppMode
             _puzzleBoard.displayObject.x = Constants.PUZZLE_BOARD_LOC.x;
             _puzzleBoard.displayObject.y = Constants.PUZZLE_BOARD_LOC.y;
 
-            this.addObject(_puzzleBoard, this);
+            this.addObject(_puzzleBoard, this.modeSprite);
 
             // create the unit purchase buttons
             this.addObject(new UnitPurchaseButtonManager());
@@ -121,7 +121,7 @@ public class GameMode extends AppMode
     }
 
     // from com.whirled.contrib.core.AppMode
-    override public function destroy () :void
+    override protected function destroy () :void
     {
         PopCraft.instance.gameControl.local.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false);
 
@@ -414,7 +414,7 @@ public class GameMode extends AppMode
         return _playerData;
     }
 
-    public function get netObjects () :AppMode
+    public function get netObjects () :ObjectDB
     {
         return _netObjects;
     }
@@ -431,7 +431,7 @@ public class GameMode extends AppMode
     protected var _battleBoard :BattleBoard;
     protected var _playerData :PlayerData;
 
-    protected var _netObjects :AppMode;
+    protected var _netObjects :ObjectDB;
 
     protected var _playerBaseIds :Array = new Array();
     protected var _playerWaypoints :Array = new Array();

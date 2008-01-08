@@ -11,14 +11,14 @@ public class GameOverMode extends AppMode
         _winningPlayer = winningPlayer;
     }
 
-    override public function setup () :void
+    override protected function setup () :void
     {
         var rect :Shape = new Shape();
         rect.graphics.beginFill(0xFFFFFF);
         rect.graphics.drawRect(0, 0, Constants.SCREEN_DIMS.x, Constants.SCREEN_DIMS.y);
         rect.graphics.endFill();
 
-        this.addChild(rect);
+        this.modeSprite.addChild(rect);
 
         var gameOverText :String;
         if (_winningPlayer < 0) {
@@ -37,7 +37,7 @@ public class GameOverMode extends AppMode
         text.x = (Constants.SCREEN_DIMS.x / 2) - (text.width / 2);
         text.y = (Constants.SCREEN_DIMS.y / 2) - (text.height / 2);
 
-        this.addChild(text);
+        this.modeSprite.addChild(text);
     }
 
     protected var _winningPlayer :int;

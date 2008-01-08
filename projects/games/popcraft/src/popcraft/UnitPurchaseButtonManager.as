@@ -21,14 +21,14 @@ public class UnitPurchaseButtonManager extends AppObject
             button.x = buttonLoc.x;
             button.y = buttonLoc.y;
 
-            GameMode.instance.addChild(button);
+            GameMode.instance.modeSprite.addChild(button);
 
             _buttons.push(button);
 
             var meter :UnitPurchaseMeter = new UnitPurchaseMeter(unitType);
             meter.displayObject.x = buttonLoc.x;
             meter.displayObject.y = buttonLoc.y + button.height + 2;
-            GameMode.instance.addObject(meter, GameMode.instance);
+            GameMode.instance.addObject(meter, GameMode.instance.modeSprite);
         }
     }
 

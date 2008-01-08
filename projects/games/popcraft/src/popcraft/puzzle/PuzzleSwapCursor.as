@@ -143,7 +143,7 @@ public class PuzzleSwapCursor extends AppObject
         _sprite.y = _swapIndexY * Constants.PUZZLE_TILE_SIZE;
     }
 
-    override protected function addedToMode (mode :AppMode) :void
+    override protected function addedToDB (db :ObjectDB) :void
     {
         // the cursor is only visible when the mouse is over the mode
         // @TSC - does it make any difference that I'm using weak refs here?

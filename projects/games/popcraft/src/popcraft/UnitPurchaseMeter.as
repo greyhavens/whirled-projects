@@ -58,7 +58,7 @@ public class UnitPurchaseMeter extends AppObject
         updateDisplay();
     }
 
-    override protected function destroyed (mode :AppMode) :void
+    override protected function removedFromDB (db :ObjectDB) :void
     {
         for each (var meter :AppObject in _meters) {
             meter.destroySelf();
