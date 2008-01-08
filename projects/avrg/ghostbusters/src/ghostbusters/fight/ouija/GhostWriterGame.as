@@ -1,5 +1,5 @@
 package ghostbusters.fight.ouija {
-    
+
 import flash.display.Sprite;
 
 import ghostbusters.fight.core.*;
@@ -12,7 +12,7 @@ public class GhostWriterGame extends Sprite
     {
         var mainLoop :MainLoop = new MainLoop(this);
         mainLoop.run();
-        
+
         GameMode.beginGame();
     }
 }
@@ -36,38 +36,36 @@ class GameMode extends AppMode
         // choose a word randomly
         var word :String = (WORDS[Rand.nextIntRange(0, WORDS.length, Rand.STREAM_GAME)] as String);
         trace("Ouija word: " + word);
-        
+
         MainLoop.instance.pushMode(new GameMode(word));
         MainLoop.instance.pushMode(new IntroMode("Spell '" + word.toLocaleUpperCase() + "'"));
         MainLoop.instance.pushMode(new SplashMode("Ghost Writer"));
     }
-    
+
     protected function endGame (success :Boolean) :void
     {
         GameMode.beginGame(); // start a new game
         MainLoop.instance.pushMode(new OutroMode(success)); // but put the game over screen up in front
     }
-    
+
     public function GameMode (word :String)
     {
         _word = word;
     }
-    
+
     override public function setup () :void
     {
         var board :Board = new Board();
-        var cursor :Cursor = new Cursor(board);
-        
-        cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
-        
+        _cursor = new Cursor(board);
+
         this.addObject(board, this);
-        this.addObject(cursor, board.displayObjectContainer);
-        
+        this.addObject(_cursor, board.displayObjectContainer);
+
         _progressText.textColor = 0xFF0000;
         _progressText.defaultTextFormat.size = 20;
         _progressText.mouseEnabled = false;
         this.addChild(_progressText);
-        
+
         // install a failure timer
         var timerObj :AppObject = new AppObject();
         timerObj.addTask(new SerialTask(
@@ -75,22 +73,32 @@ class GameMode extends AppMode
             new FunctionTask(
                 function () :void { endGame(false); }
             )));
-            
+
         this.addObject(timerObj);
     }
-    
+
+    override public function enter () :void
+    {
+        _cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
+    }
+
+    override public function exit () :void
+    {
+        _cursor.removeEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false);
+    }
+
     protected function boardSelectionChanged (e :BoardSelectionEvent) :void
     {
         if (_nextWordIndex < _word.length && e.selectionString == _word.charAt(_nextWordIndex)) {
             trace("saw " + _word.charAt(_nextWordIndex));
-            
+
             // update the text
             _progressText.text = _word.substr(0, _nextWordIndex + 1).toLocaleUpperCase();
             _progressText.width = _progressText.textWidth + 5;
             _progressText.height = _progressText.textHeight + 3;
             _progressText.x = (this.width / 2) - (_progressText.width / 2);
             _progressText.y = 8;
-            
+
             if (++_nextWordIndex >= _word.length) {
                 // we're done!
                 trace("success!");
@@ -98,14 +106,15 @@ class GameMode extends AppMode
             }
         }
     }
-    
+
     protected var _word :String;
     protected var _nextWordIndex :int;
-    
+    protected var _cursor :Cursor;
+
     protected var _progressText :TextField = new TextField();
-    
+
     protected static const GAME_TIME :Number = 12; // @TODO - this should be controlled by game difficulty
-    
+
     protected static const WORDS :Array = [
         "ghost",
         "ghoul",
