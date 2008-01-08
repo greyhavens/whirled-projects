@@ -6,9 +6,9 @@ import ghostbusters.fight.core.*;
 import ghostbusters.fight.core.util.*;
 
 [SWF(width="280", height="222", frameRate="30")]
-public class GhostWriter extends Sprite
+public class GhostWriterGame extends Sprite
 {
-    public function GhostWriter()
+    public function GhostWriterGame ()
     {
         var mainLoop :MainLoop = new MainLoop(this);
         mainLoop.run();
@@ -55,13 +55,13 @@ class GameMode extends AppMode
     
     override public function setup () :void
     {
-        _board = new Board();
-        _cursor = new Cursor(_board);
+        var board :Board = new Board();
+        var cursor :Cursor = new Cursor(board);
         
-        _cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
+        cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
         
-        this.addObject(_board, this);
-        this.addObject(_cursor, _board.displayObjectContainer);
+        this.addObject(board, this);
+        this.addObject(cursor, board.displayObjectContainer);
         
         _progressText.textColor = 0xFF0000;
         _progressText.defaultTextFormat.size = 20;
@@ -101,8 +101,6 @@ class GameMode extends AppMode
     
     protected var _word :String;
     protected var _nextWordIndex :int;
-    protected var _board :Board;
-    protected var _cursor :Cursor;
     
     protected var _progressText :TextField = new TextField();
     

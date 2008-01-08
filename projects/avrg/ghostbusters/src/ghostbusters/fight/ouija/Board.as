@@ -4,6 +4,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import ghostbusters.fight.core.*;
+import ghostbusters.fight.core.util.Rand;
 
 public class Board extends AppObject
 {
@@ -43,6 +44,12 @@ public class Board extends AppObject
         return "";
     }
     
+    public static function getRandomSelectionString () :String
+    {
+        var index :int = Rand.nextIntRange(0, SELECTIONS.length / 2, Rand.STREAM_COSMETIC);
+        return SELECTIONS[(index * 2) + 1];
+    }
+    
     protected var _sprite :Sprite = new Sprite();
     
     [Embed(source="../../../../rsrc/ouijaboard.png")]
@@ -79,10 +86,6 @@ public class Board extends AppObject
         new Vector2(63, 54),  "yes",
         new Vector2(217, 55), "no",
     ];
-    
-    protected static const A_INDEX :uint = 0;
-    protected static const YES_INDEX :uint = 26;
-    protected static const NO_INDEX :uint = 27;
     
 }
 

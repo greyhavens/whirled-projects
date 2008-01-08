@@ -45,7 +45,8 @@ public class Cursor extends AppObject
     override protected function addedToMode (mode :AppMode) :void
     {
         _board.interactiveObject.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
-        this.updateLocation(_board.displayObject.mouseX, _board.displayObject.mouseY);
+        _sprite.x = _board.displayObject.mouseX;
+        _sprite.y = _board.displayObject.mouseY;
     }
     
     protected function mouseMoved (e :MouseEvent) :void
