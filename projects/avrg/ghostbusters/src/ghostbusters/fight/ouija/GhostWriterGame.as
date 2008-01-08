@@ -53,18 +53,18 @@ class GameMode extends AppMode
         _word = word;
     }
 
-    override public function setup () :void
+    override protected function setup () :void
     {
         var board :Board = new Board();
         _cursor = new Cursor(board);
 
-        this.addObject(board, this);
+        this.addObject(board, this.modeSprite);
         this.addObject(_cursor, board.displayObjectContainer);
 
         _progressText.textColor = 0xFF0000;
         _progressText.defaultTextFormat.size = 20;
         _progressText.mouseEnabled = false;
-        this.addChild(_progressText);
+        this.modeSprite.addChild(_progressText);
 
         // install a failure timer
         var timerObj :AppObject = new AppObject();
@@ -77,12 +77,12 @@ class GameMode extends AppMode
         this.addObject(timerObj);
     }
 
-    override public function enter () :void
+    override protected function enter () :void
     {
         _cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
     }
 
-    override public function exit () :void
+    override protected function exit () :void
     {
         _cursor.removeEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false);
     }
@@ -96,7 +96,7 @@ class GameMode extends AppMode
             _progressText.text = _word.substr(0, _nextWordIndex + 1).toLocaleUpperCase();
             _progressText.width = _progressText.textWidth + 5;
             _progressText.height = _progressText.textHeight + 3;
-            _progressText.x = (this.width / 2) - (_progressText.width / 2);
+            _progressText.x = (this.modeSprite.width / 2) - (_progressText.width / 2);
             _progressText.y = 8;
 
             if (++_nextWordIndex >= _word.length) {

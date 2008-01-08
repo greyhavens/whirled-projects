@@ -55,14 +55,14 @@ class GameMode extends AppMode
         _selection = selection;
     }
 
-    override public function setup () :void
+    override protected function setup () :void
     {
         var mouseTransform :Matrix = (MOUSE_TRANSFORMS[Rand.nextIntRange(0, MOUSE_TRANSFORMS.length, Rand.STREAM_GAME)] as Matrix);
 
         var board :Board = new Board();
         _cursor = new SpiritCursor(board, mouseTransform);
 
-        this.addObject(board, this);
+        this.addObject(board, this.modeSprite);
         this.addObject(_cursor, board.displayObjectContainer);
 
         // install a failure timer
@@ -76,12 +76,12 @@ class GameMode extends AppMode
         this.addObject(timerObj);
     }
 
-    override public function enter () :void
+    override protected function enter () :void
     {
         _cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
     }
 
-    override public function exit () :void
+    override protected function exit () :void
     {
         _cursor.removeEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false);
     }
