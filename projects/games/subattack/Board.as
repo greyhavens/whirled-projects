@@ -131,7 +131,7 @@ public class Board
 
         _seaDisplay.addEventListener(Event.ENTER_FRAME, enterFrame);
 
-        _gameCtrl.net.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, msgReceived);
         if (gameCtrl.game.isInPlay()) {
             // this may happen if we're rematching
             gameDidStart(null);
@@ -148,7 +148,7 @@ public class Board
     public function shutdown (... ignored) :void
     {
         _seaDisplay.removeEventListener(Event.ENTER_FRAME, enterFrame);
-        _gameCtrl.net.removeEventListener(MessageReceivedEvent.TYPE, msgReceived);
+        _gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, msgReceived);
         _gameCtrl.game.removeEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _gameCtrl.game.removeEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
     }

@@ -116,11 +116,11 @@ public class SubAttack extends Sprite
             addEventListener(Event.ENTER_FRAME, enterFrame);
         }
 
-        _gameCtrl.local.addEventListener(SizeChangedEvent.TYPE, handleSizeChanged);
+        _gameCtrl.local.addEventListener(SizeChangedEvent.SIZE_CHANGED, handleSizeChanged);
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
-        _gameCtrl.net.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
-        _gameCtrl.net.addEventListener(MessageReceivedEvent.TYPE, handleMessageReceived);
+        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, handlePropertyChanged);
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
         _gameCtrl.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
 
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
@@ -213,7 +213,7 @@ public class SubAttack extends Sprite
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
         // stop listening for ready events
-        _gameCtrl.net.removeEventListener(PropertyChangedEvent.TYPE, recheckReadyness);
+        _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, recheckReadyness);
 
         _gameOver = false;
         _seaDisplay.clearStatus();
