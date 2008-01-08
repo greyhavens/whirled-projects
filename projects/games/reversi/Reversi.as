@@ -18,7 +18,8 @@ public class Reversi extends Sprite
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
         _gameCtrl.game.addEventListener(StateChangedEvent.TURN_CHANGED, handleTurnChanged);
-        _gameCtrl.net.addEventListener(PropertyChangedEvent.TYPE, handlePropertyChanged);
+        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED,
+            handlePropertyChanged);
 
         var config :Object = _gameCtrl.game.getConfig();
         var boardSize :int = ("boardSize" in config) ? int(config["boardSize"]) : 8;
