@@ -1,27 +1,28 @@
 package ghostbusters.fight.ouija {
-    
+
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.util.Rand;
 
-public class Board extends AppObject
+public class Board extends SceneObject
 {
     public function Board()
     {
         _sprite.addChild(new IMAGE_BOARD());
     }
-    
+
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
     }
-    
+
     public static function getSelectionIndexAt (loc :Vector2, epsilon :int) :int
     {
         var epsilonSquared :int = epsilon * epsilon;
-        
+
         for (var i :int = 0; i < SELECTIONS.length / 2; ++i) {
             var selectionLoc :Vector2 = (SELECTIONS[i * 2] as Vector2);
             var delta :Vector2 = loc.clone();
@@ -30,31 +31,31 @@ public class Board extends AppObject
                 return i;
             }
         }
-        
+
         return -1;
     }
-    
+
     public static function selectionIndexToString (index :int) :String
     {
         index *= 2;
         if (index >= 0 && index < SELECTIONS.length) {
             return SELECTIONS[index + 1] as String;
         }
-        
+
         return "";
     }
-    
+
     public static function getRandomSelectionString () :String
     {
         var index :int = Rand.nextIntRange(0, SELECTIONS.length / 2, Rand.STREAM_COSMETIC);
         return SELECTIONS[(index * 2) + 1];
     }
-    
+
     protected var _sprite :Sprite = new Sprite();
-    
+
     [Embed(source="../../../../rsrc/ouijaboard.png")]
     protected static const IMAGE_BOARD :Class;
-    
+
     protected static const SELECTIONS :Array = [
         new Vector2(47, 117), "a",
         new Vector2(62, 107), "b",
@@ -82,11 +83,11 @@ public class Board extends AppObject
         new Vector2(203, 125), "x",
         new Vector2(216, 132), "y",
         new Vector2(228, 141), "z",
-        
+
         new Vector2(63, 54),  "yes",
         new Vector2(217, 55), "no",
     ];
-    
+
 }
 
 }

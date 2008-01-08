@@ -9,12 +9,13 @@ import flash.events.IEventDispatcher;
 import flash.events.MouseEvent;
 
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.tasks.*;
 
 /**
  * This should almost certainly be called "Planchette" instead of "Cursor", but who wants to type that word a million times?
  */
-public class Cursor extends AppObject
+public class Cursor extends SceneObject
     implements IEventDispatcher
 {
     public function Cursor (board :Board)

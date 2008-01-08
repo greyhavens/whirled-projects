@@ -13,6 +13,7 @@ public class IntroMode extends AppMode
 }
 
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.tasks.*;
 import ghostbusters.fight.ouija.*;
 
@@ -21,7 +22,7 @@ import flash.display.Shape;
 import flash.display.DisplayObject;
 import flash.text.TextField;
 
-class IntroObject extends AppObject
+class IntroObject extends SceneObject
 {
     public function IntroObject (introText :String)
     {
