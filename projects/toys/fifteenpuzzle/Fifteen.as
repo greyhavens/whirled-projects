@@ -45,6 +45,7 @@ import com.threerings.util.Util;
 import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
 
+import com.whirled.contrib.ForkingToyState;
 import com.whirled.contrib.PreferredCamera;
 
 [SWF(width="220", height="250")]
@@ -70,8 +71,8 @@ public class Fifteen extends Sprite
     public function Fifteen ()
     {
         _ctrl = new FurniControl(this);
-        _toy = new ToyState(_ctrl, true, 15);
-        _toy.addEventListener(ToyState.STATE_UPDATED, handleStateUpdated);
+        _toy = new ForkingToyState(_ctrl, true, 15);
+        _toy.addEventListener(ForkingToyState.STATE_UPDATED, handleStateUpdated);
 
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
 
@@ -670,7 +671,7 @@ public class Fifteen extends Sprite
 
     protected var _ctrl :FurniControl;
 
-    protected var _toy :ToyState;
+    protected var _toy :ForkingToyState;
 
     protected var _content :Sprite;
 
