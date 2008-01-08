@@ -1,6 +1,6 @@
 package popcraft {
 
-import com.whirled.contrib.core.AppObject;
+import com.whirled.contrib.core.objects.SceneObject;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -10,7 +10,7 @@ import flash.text.TextFormat;
 import flash.text.GridFitType;
 import flash.text.AntiAliasType;
 
-public class ResourceDisplay extends AppObject
+public class ResourceDisplay extends SceneObject
 {
     public function ResourceDisplay ()
     {
@@ -58,6 +58,7 @@ public class ResourceDisplay extends AppObject
         updateText();
     }
 
+    // from SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _parent;

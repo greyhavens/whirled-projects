@@ -8,7 +8,7 @@ import popcraft.battle.*;
 import flash.display.*;
 import mx.controls.Text;
 
-public class UnitPurchaseMeter extends AppObject
+public class UnitPurchaseMeter extends SceneObject
 {
     public function UnitPurchaseMeter (unitType :uint)
     {

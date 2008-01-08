@@ -3,6 +3,7 @@ package popcraft.puzzle {
 import popcraft.*;
 
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.tasks.*;
 
 import com.threerings.util.Assert;
@@ -13,7 +14,7 @@ import flash.display.Shape;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
-public class PuzzlePopCursor extends AppObject
+public class PuzzlePopCursor extends SceneObject
 {
     public function PuzzlePopCursor (board :PuzzleBoard)
     {

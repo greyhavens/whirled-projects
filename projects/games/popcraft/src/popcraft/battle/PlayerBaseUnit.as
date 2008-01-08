@@ -54,7 +54,7 @@ public class PlayerBaseUnit extends Unit
         _healthMeter.destroySelf();
     }
 
-    // from AppObject
+    // from SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;

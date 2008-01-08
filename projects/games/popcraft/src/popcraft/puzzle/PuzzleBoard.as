@@ -4,13 +4,10 @@ import com.threerings.util.Assert;
 
 import popcraft.*;
 
-import com.whirled.contrib.core.MainLoop;
-import com.whirled.contrib.core.AppObject;
-import com.whirled.contrib.core.tasks.TaskContainer;
-import com.whirled.contrib.core.util.Rand;
-import com.whirled.contrib.core.tasks.LocationTask;
-import com.whirled.contrib.core.tasks.ScaleTask;
-import com.whirled.contrib.core.util.ObjectSet;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.core.util.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -19,7 +16,7 @@ import flash.geom.Point;
 import com.whirled.contrib.core.tasks.*;
 import mx.effects.easing.Bounce;
 
-public class PuzzleBoard extends AppObject
+public class PuzzleBoard extends SceneObject
 {
     public function PuzzleBoard (columns :int, rows :int, tileSize :int)
     {
@@ -59,6 +56,7 @@ public class PuzzleBoard extends AppObject
         MainLoop.instance.topMode.addObject(cursor, _sprite);
     }
 
+    // from SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;

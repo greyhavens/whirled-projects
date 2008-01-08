@@ -150,7 +150,7 @@ public class CreatureUnit extends Unit
         _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));
     }
 
-    // from AppObject
+    // from SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;

@@ -1,18 +1,19 @@
 package popcraft.battle {
 
 import popcraft.*;
+import popcraft.net.*;
 
-import com.whirled.contrib.core.AppObject;
+import com.whirled.contrib.core.objects.*;
+
 import flash.display.Shape;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
-import popcraft.net.PlaceWaypointMessage;
 import flash.geom.Point;
 import flash.display.Bitmap;
 import flash.display.DisplayObjectContainer;
 
-public class BattleBoard extends AppObject
+public class BattleBoard extends SceneObject
 {
     public static const TILE_GROUND :uint = 0;
     public static const TILE_TREE :uint = 1;

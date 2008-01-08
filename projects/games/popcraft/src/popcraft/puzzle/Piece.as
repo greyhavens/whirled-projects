@@ -2,11 +2,12 @@ package popcraft.puzzle {
 
 import popcraft.*;
 
-import com.whirled.contrib.core.AppObject;
+import com.whirled.contrib.core.objects.SceneObject;
+
 import flash.display.DisplayObject;
 import flash.display.Shape;
 
-public class Piece extends AppObject
+public class Piece extends SceneObject
 {
     public function Piece (resourceType :uint, boardIndex :int)
     {
@@ -16,7 +17,7 @@ public class Piece extends AppObject
         _boardIndex = boardIndex;
     }
 
-    // from AppObject
+    // from SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _pieceSprite;

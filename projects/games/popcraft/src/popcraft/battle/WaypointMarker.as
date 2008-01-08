@@ -12,7 +12,7 @@ import flash.display.DisplayObject;
 import flash.filters.ColorMatrixFilter;
 import flash.display.Bitmap;
 
-public class WaypointMarker extends AppObject
+public class WaypointMarker extends SceneObject
 {
     public function WaypointMarker (owningPlayerId :uint)
     {
@@ -31,7 +31,7 @@ public class WaypointMarker extends AppObject
         //_sprite.alpha = 0.3;
     }
 
-    // from AppObject
+    // from SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;

@@ -3,6 +3,7 @@ package popcraft.battle {
 import popcraft.*;
 
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.util.*;
 import com.whirled.contrib.core.tasks.*;
 
@@ -12,7 +13,7 @@ import flash.display.Bitmap;
  * If ActionScript allowed the creation of abstract classes or private constructors, I would do that here.
  * Alas, it doesn't. But Unit is not intended to be instantiated directly.
  */
-public class Unit extends AppObject
+public class Unit extends SceneObject
 {
     public static const GROUP_NAME :String = "Unit";
 
