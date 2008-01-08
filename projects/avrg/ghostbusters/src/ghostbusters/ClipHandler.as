@@ -5,7 +5,12 @@ package ghostbusters {
 
 import flash.display.MovieClip;
 import flash.display.Scene;
+
 import flash.events.Event;
+
+import flash.utils.ByteArray;
+
+import com.threerings.util.EmbeddedSwfLoader;
 
 /**
  * A simple utility class that binds to a MovieClip and then plays scenes of that clip on request,
@@ -15,16 +20,30 @@ public class ClipHandler
 {
     public var scenes :Object;
 
-    public function ClipHandler (clip :MovieClip)
+    public function ClipHandler (data :ByteArray, loaded :Function)
     {
-        _clip = clip;
+        _loaded = loaded;
+
+        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
+        loader.addEventListener(Event.COMPLETE, clipLoaded);
+        loader.load(data);
+    }
+
+    protected function clipLoaded (evt :Event) :void
+    {
+        _clip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
 
         scenes = new Object();
-        for (var ii :int = 0; ii < clip.scenes.length; ii ++) {
+
+        for (var ii :int = 0; ii < _clip.scenes.length; ii ++) {
             var scene :Scene = _clip.scenes[ii];
             Game.log.debug("Indexing [scene=" + scene.name + ", frames=" + scene.numFrames +
                            ", labels=" + scene.labels + "]");
             scenes[scene.name] = scene;
+        }
+
+        if (_loaded != null) {
+            _loaded(_clip);
         }
     }
 
@@ -33,25 +52,33 @@ public class ClipHandler
         disengage();
     }
 
-    public function gotoScene (sceneName :String, done :Function = null) :int
+    public function stop () :void
     {
-        _scene = scenes[sceneName];
-        if (_scene) {
-            _callback = done;
-            _clip.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
-            _clip.gotoAndPlay(1, sceneName);
-            return _scene.numFrames;
-        }
-        return 0;
+        _clip.stop();
     }
 
-    public function gotoSceneNumber (sceneNum: int, done :Function = null) :int
+    public function gotoScene (scene :Object, done :Function = null, toFrame :int = -1,
+                               play :Boolean = true) :int
     {
-        _scene = _clip.scenes[sceneNum];
-        _callback = done;
-        _clip.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
-        _clip.gotoAndPlay(1);
-        return _scene.numFrames;
+        if (scene is String) {
+            _scene = scenes[String(scene)];
+        } else if (scene is Number) {
+            _scene = _clip.scenes[Number(scene)];
+        } else {
+            throw new Error("Argument #1 to gotoScene() must be a String or a Number.");
+        }
+        if (_scene) {
+            _callback = done;
+            _lastFrame = toFrame >= 0 ? toFrame : _scene.numFrames;
+            _clip.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+            if (_scene.name) {
+                _clip.gotoAndPlay(1, _scene.name);
+            } else {
+                _clip.gotoAndPlay(1);
+            }
+            return _lastFrame;
+        }
+        return 0;
     }
 
     public function disengage () :void
@@ -63,27 +90,26 @@ public class ClipHandler
 
     protected function handleEnterFrame (event :Event) :void
     {
-        // if the clip was manipuulated from elsewhere, let's lose interest
-        if (_clip.currentScene.name != _scene.name) {
-            disengage();
-            return;
-        }
-
-        // otherwise perhaps we're done?
-        if (_clip.currentFrame == _scene.numFrames) {
-            Game.log.debug("Clip done, ending [numFrames=" + _scene.numFrames + "]");
-            // if so trigger the callback (if any)
+        if (_clip.currentFrame == _lastFrame) {
             if (_callback != null) {
-                _callback();
+                var next :String = _callback();
+                if (next != null) {
+                    _scene = scenes[next];
+                    if (_scene != null) {
+                        _clip.gotoAndPlay(1, next);
+                        return;
+                    }
+                }
             }
-            // and stop paying attention
             disengage();
             return;
         }
     }
 
     protected var _clip :MovieClip;
+    protected var _loaded :Function;
     protected var _scene :Scene;
     protected var _callback :Function;
+    protected var _lastFrame :int;
 }
 }

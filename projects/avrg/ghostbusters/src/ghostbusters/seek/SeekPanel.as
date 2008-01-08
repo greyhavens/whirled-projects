@@ -78,9 +78,14 @@ public class SeekPanel extends Sprite
         updateLantern(playerId, pos);
     }
 
-    public function ghostSpeedUpdated () :void
+    public function ghostZestUpdated () :void
     {
-//        _ghost.setSpeed(_model.getGhostSpeed());
+        _ghost.setSpeed(_model.getGhostZest());
+
+        var lantern :Lantern = _lanterns[_model.getMyId()];
+        if (lantern != null) {
+            lantern.setGhostZest(_model.getGhostZestFraction());
+        }
     }
 
     public function ghostZapped () :void
@@ -118,7 +123,7 @@ public class SeekPanel extends Sprite
         var lantern :Lantern = _lanterns[playerId];
         if (lantern == null) {
             // a new lantern just appears, no splines involved
-            lantern = new Lantern(playerId, pos);
+            lantern = new Lantern(playerId, pos, playerId == _model.getMyId());
             _lanterns[playerId] = lantern;
 
             _maskLayer.addChild(lantern.mask);
@@ -216,7 +221,7 @@ public class SeekPanel extends Sprite
         _maskLayer = new Sprite();
         this.addChild(_maskLayer);
 
-        _ghost = new HidingGhost(_model.getGhostSpeed());
+        _ghost = new HidingGhost(_model.calculateGhostSpeed());
         this.addChild(_ghost);
         _ghost.mask = _maskLayer;
     }

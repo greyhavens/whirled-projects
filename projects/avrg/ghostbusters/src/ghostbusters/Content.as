@@ -9,23 +9,20 @@ public class Content
     [Embed(source="../../rsrc/HUD_visual.swf", mimeType="application/octet-stream")]
     public static const HUD_VISUAL :Class;
 
-    [Embed(source="../../rsrc/Ghost.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/Ghost_3.swf", mimeType="application/octet-stream")]
     public static const GHOST :Class;
 
-    [Embed(source="../../rsrc/text_box.swf#textbox_appear")]
-    public static const TEXT_BOX_APPEAR :Class;
-
-    [Embed(source="../../rsrc/text_box.swf#textbox")]
+    [Embed(source="../../rsrc/text_box.swf")]
     public static const TEXT_BOX :Class;
-
-    [Embed(source="../../rsrc/text_box.swf#textbox_disappear")]
-    public static const TEXT_BOX_DISAPPEAR :Class;
 
     [Embed(source="../../rsrc/splash01.swf")]
     public static const SPLASH :Class;
 
     [Embed(source="../../rsrc/minigame_border.swf", mimeType="application/octet-stream")]
     public static const FRAME :Class;
+
+    [Embed(source="../../rsrc/capturebar.swf", mimeType="application/octet-stream")]
+    public static const CAPTURE_BAR :Class;
 
     // fonts
     [Embed(source="../../rsrc/SunnySide.ttf", fontName="SunnySide",

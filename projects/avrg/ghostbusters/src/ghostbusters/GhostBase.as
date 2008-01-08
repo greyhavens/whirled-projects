@@ -18,11 +18,12 @@ import ghostbusters.Content;
 
 public class GhostBase extends Sprite
 {
+    public var handler :ClipHandler;
+    public var clip :MovieClip;
+
     public function GhostBase ()
     {
-        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
-        loader.addEventListener(Event.COMPLETE, handleGhostLoaded);
-        loader.load(ByteArray(new Content.GHOST()));
+        handler = new ClipHandler(new Content.GHOST(), setupUI);
     }
 
     public function getGhostBounds () :Rectangle
@@ -34,21 +35,19 @@ public class GhostBase extends Sprite
     {
     }
 
-    protected function handleGhostLoaded (evt :Event) :void
+    protected function setupUI (ghost :MovieClip) :void
     {
-        _clip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
-        _clip.gotoAndStop(1, STATE_WALKING);
-        this.addChild(_clip);
-        _bounds = _clip.getBounds(this);
+        clip = ghost;
+        clip.gotoAndStop(1, STATE_HIDDEN);
+        this.addChild(clip);
+        _bounds = clip.getBounds(this);
 
         // register the sprite
-        _clip.x = - (_bounds.left + _bounds.width/2);
-        _clip.y = - _bounds.top;
+        clip.x = - (_bounds.left + _bounds.width/2);
+        clip.y = - _bounds.top;
 
         // refigure the bounds
-        _bounds = _clip.getBounds(this);
-
-        _handler = new ClipHandler(_clip);
+        _bounds = clip.getBounds(this);
 
         Game.log.debug("Ghost finished loading [bounds=" + _bounds + "]");
 
@@ -58,11 +57,12 @@ public class GhostBase extends Sprite
 
     protected var _bounds :Rectangle;
 
-    protected var _clip :MovieClip;
-    protected var _handler :ClipHandler;
-
-    protected static const STATE_WALKING :String = "state_Default_walking";
-    protected static const STATE_APPEAR :String = "state_Appear";
-    protected static const STATE_FIGHT :String = "state_Fightstance";
+    protected static const STATE_HIDDEN :String = "hidden";
+    protected static const STATE_APPEAR :String = "appear_to_fighting";
+    protected static const STATE_FIGHT :String = "fighting";
+    protected static const STATE_REEL :String = "reel";
+    protected static const STATE_RETALIATE :String = "retaliate";
+    protected static const STATE_DEFEAT :String = "defeat_disappear";
+    protected static const STATE_TRIUMPH :String = "triumph_chase";
 }
 }

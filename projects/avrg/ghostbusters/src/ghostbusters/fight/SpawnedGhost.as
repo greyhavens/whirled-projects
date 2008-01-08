@@ -27,7 +27,9 @@ public class SpawnedGhost extends GhostBase
 
     override protected function mediaReady () :void
     {
-        _clip.gotoAndStop(1, STATE_FIGHT);
+        handler.gotoScene(STATE_FIGHT, function () :String {
+            return STATE_FIGHT;
+        });
 
         _control.setHotSpot((_bounds.left + _bounds.right)/2, _bounds.bottom, _bounds.height);
 

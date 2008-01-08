@@ -15,6 +15,7 @@ import com.threerings.util.Log;
 
 import ghostbusters.fight.FightController;
 
+import ghostbusters.seek.HidingGhost;
 import ghostbusters.seek.SeekController;
 
 [SWF(width="700", height="500")]
@@ -48,6 +49,8 @@ public class Game extends Sprite
 
     protected function handleUnload (event :Event) :void
     {
+        Game.log.info("Removed from stage - Unloading...");
+
         gameController.shutdown();
         fightController.shutdown();
         seekController.shutdown();
@@ -55,6 +58,8 @@ public class Game extends Sprite
 
     protected function handleAdded (event :Event) :void
     {
+        Game.log.info("Added to stage: Initializing...");
+
         gameController.enterState(GameModel.STATE_INTRO);
     }
 

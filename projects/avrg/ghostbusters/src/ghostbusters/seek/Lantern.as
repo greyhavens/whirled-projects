@@ -5,7 +5,9 @@ package ghostbusters.seek {
 
 import flash.display.BlendMode;
 import flash.display.Graphics;
+import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.utils.ByteArray;
 
 import flash.filters.GlowFilter;
 
@@ -14,6 +16,8 @@ import flash.geom.Point;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 
+import ghostbusters.ClipHandler;
+import ghostbusters.Content;
 import ghostbusters.Game;
 import ghostbusters.SplinePather;
 
@@ -25,7 +29,7 @@ public class Lantern extends SplinePather
     public var hole :Sprite;
     public var mask :Sprite;
 
-    public function Lantern (playerId :int, p :Point)
+    public function Lantern (playerId :int, p :Point, zesty :Boolean)
     {
         super();
 
@@ -62,6 +66,10 @@ public class Lantern extends SplinePather
         mask = getLanternMask();
         mask.x = p.x;
         mask.y = p.y;
+
+        if (zesty) {
+            _barHandler = new ClipHandler(ByteArray(new Content.CAPTURE_BAR()), gotBar);
+        }
     }
 
     override public function nextFrame () :void
@@ -70,6 +78,19 @@ public class Lantern extends SplinePather
 
         light.x = hole.x = mask.x = this.x;
         light.y = hole.y = mask.y = this.y;
+    }
+
+    public function setGhostZest (zest :Number) :void
+    {
+        if (_barHandler) {
+            _barHandler.gotoScene(0, null, zest * 100, false);
+        }
+    }
+
+    protected function gotBar (clip :MovieClip) :void
+    {
+        light.addChild(clip);
+        clip.x = 100;
     }
 
     protected function getLanternHole () :Sprite
@@ -112,5 +133,6 @@ public class Lantern extends SplinePather
     }
 
     protected var _random :Random;
+    protected var _barHandler :ClipHandler;
 }
 }

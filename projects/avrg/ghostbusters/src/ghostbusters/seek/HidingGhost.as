@@ -61,19 +61,24 @@ public class HidingGhost extends GhostBase
 
     public function appear (callback :Function) :int
     {
-        return _handler.gotoScene(STATE_APPEAR, function () :void {
-            _clip.stop();
+        return handler.gotoScene(STATE_APPEAR, function () :String {
             callback();
+            return STATE_FIGHT;
+        });
+    }
+
+    public function hidden () :void
+    {
+        handler.gotoScene(STATE_HIDDEN, function () :String {
+            return STATE_HIDDEN;
         });
     }
 
     override protected function mediaReady () :void
     {
         super.mediaReady();
-
-        // not sure why gotoAndPlay doesn't work here, it loops through all the damn scenes
-        _clip.gotoAndStop(1, STATE_WALKING);
-    }
+        hidden();
+     }
 
     protected var _pather :SplinePather;
     protected var _random :Random;

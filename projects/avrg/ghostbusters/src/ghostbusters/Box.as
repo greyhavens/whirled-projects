@@ -18,40 +18,41 @@ public class Box extends Sprite
 {
     public function Box (innards :DisplayObject)
     {
-        _clipHolder = new Sprite();
-        _clipHolder.addChild(_boxAppearClip);
-        _clipHolder.addChild(_boxClip);
-        _clipHolder.addChild(_boxDisappearClip);
+        _innards = innards;
+        _boxHandler = new ClipHandler(new Content.TEXT_BOX(), initUI);
+    }
 
-        _boxAppearHandler = new ClipHandler(_boxAppearClip);
-        _boxDisappearHandler = new ClipHandler(_boxDisappearClip);
-        setVisibleClip(null);
+    protected function initUI (clip :MovieClip) :void
+    {
+        _boxClip = clip;
 
-        _clipHolder.x = _boxClip.width / 2;
-        _clipHolder.y = _boxClip.height / 2;
+        _boxHandler.gotoScene(SCN_BOX);
 
         _backdrop = new Sprite();
-        _backdrop.addChild(_clipHolder);
+        _backdrop.addChild(_boxClip);
+        _boxClip.x = _boxClip.width / 2;
+        _boxClip.y = _boxClip.height / 2;
+
         this.addChild(_backdrop);
 
         _foreground = new Sprite();
-        _foreground.addChild(innards);
+        _foreground.addChild(_innards);
         this.addChild(_foreground);
 
-        innards.y = BOX_PADDING;
-        innards.x = BOX_PADDING;
+        _innards.y = BOX_PADDING;
+        _innards.x = BOX_PADDING;
 
-        _backdrop.scaleX = innards.width / _boxClip.width;
-        _backdrop.scaleY = innards.height / _boxClip.height;
+        _backdrop.scaleX = _innards.width / _boxClip.width;
+        _backdrop.scaleY = _innards.height / _boxClip.height;
 
         Game.log.debug("Scaled to: (" + _backdrop.scaleX + ", " + _backdrop.scaleY + ")");
 
         _fadeIn = new AlphaFade(_foreground, 0, 1, 300);
         _fadeOut = new AlphaFade(_foreground, 1, 0, 300, function () :void {
             _foreground.visible = false;
-            setVisibleClip(_boxDisappearClip);
-            _boxDisappearHandler.gotoSceneNumber(0, function() :void {
-                setVisibleClip(null);
+            _boxHandler.gotoScene(SCN_BOX_DISAPPEAR, function() :void {
+                _boxHandler.stop();
+                _backdrop.visible = false;
             });
         });
     }
@@ -72,36 +73,29 @@ public class Box extends Sprite
             _fadeOut.stopAnimation();
         }
 
-        setVisibleClip(_boxAppearClip);
-        _boxAppearHandler.gotoSceneNumber(0, function () :void {
+        _boxHandler.gotoScene(SCN_BOX_APPEAR, function () :void {
             _fadeIn.startAnimation();
-            setVisibleClip(_boxClip);
+            _boxHandler.gotoScene(SCN_BOX);
             _foreground.visible = true;
         });
 
         _backdrop.visible = this.visible = true;
     }
 
-    protected function setVisibleClip (box :MovieClip) :void
-    {
-        _boxAppearClip.visible = (box == _boxAppearClip);
-        _boxClip.visible = (box == _boxClip);
-        _boxDisappearClip.visible = (box == _boxDisappearClip);
-    }
-
-    protected var _clipHolder :Sprite;
+    protected var _innards :DisplayObject;
+    protected var _boxClip :Sprite;
     protected var _backdrop :Sprite;
     protected var _foreground :Sprite;
 
     protected var _fadeOut :AlphaFade;
     protected var _fadeIn :AlphaFade;
 
-    protected var _boxClip :MovieClip = MovieClip(new Content.TEXT_BOX());
-    protected var _boxAppearClip :MovieClip = MovieClip(new Content.TEXT_BOX_APPEAR());
-    protected var _boxAppearHandler :ClipHandler;
-    protected var _boxDisappearClip :MovieClip = MovieClip(new Content.TEXT_BOX_DISAPPEAR());
-    protected var _boxDisappearHandler :ClipHandler;
+    protected var _boxHandler :ClipHandler;
 
     protected static const BOX_PADDING :int = 10;
+
+    protected static const SCN_BOX :String = "textbox";
+    protected static const SCN_BOX_APPEAR :String = "textbox_appear";
+    protected static const SCN_BOX_DISAPPEAR :String = "textbox_disappear";
 }
 }

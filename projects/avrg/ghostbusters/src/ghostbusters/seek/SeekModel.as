@@ -58,7 +58,7 @@ public class SeekModel extends Sprite
         _random = new Random();
 
         _ghostRandom = new Random(_roomId);
-        _ghostSpeed = 150 + 100 * _ghostRandom.nextNumber();
+        _ghostZest = _ghostMaxZest = 150 + 100 * _ghostRandom.nextNumber();
     }
 
     public function init (panel :SeekPanel) :void
@@ -78,13 +78,29 @@ public class SeekModel extends Sprite
 
     public function ghostZapped () :void
     {
-        _ghostSpeed = _ghostSpeed * 0.8 - 20;
-        _panel.ghostSpeedUpdated();
+        _ghostZest = _ghostZest * 0.8 - 20;
+        _panel.ghostZestUpdated();
     }
 
-    public function getGhostSpeed () :Number
+    public function getGhostZestFraction () :Number
     {
-        return _ghostSpeed;
+        return _ghostZest / _ghostMaxZest;
+    }
+
+    public function getGhostZest () :Number
+    {
+        return _ghostZest;
+    }
+
+    public function getMaxGhostZest () :Number
+    {
+        return _ghostMaxZest;
+    }
+
+    public function calculateGhostSpeed () :Number
+    {
+        // I still don't know what function this should be of zest, if any.
+        return 200;
     }
 
     public function transmitLanternPosition (pos :Point) :void
@@ -177,6 +193,7 @@ public class SeekModel extends Sprite
     protected var _random :Random;
 
     protected var _ghostRandom :Random;
-    protected var _ghostSpeed :Number;
+    protected var _ghostZest :Number;
+    protected var _ghostMaxZest :Number;
 }
 }

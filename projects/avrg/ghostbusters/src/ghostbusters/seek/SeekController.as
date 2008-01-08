@@ -41,7 +41,7 @@ public class SeekController extends Controller
     public function handleZapGhost () :void
     {
         // TODO: test state and whatnot
-        if (model.getGhostSpeed() < 10) {
+        if (model.getGhostZest() < 0.05) {
             panel.appearGhost();
 
         } else {
