@@ -2,7 +2,7 @@ package popcraft.puzzle {
 
 import popcraft.*;
 
-import core.AppObject;
+import com.whirled.contrib.core.AppObject;
 import flash.display.DisplayObject;
 import flash.display.Shape;
 

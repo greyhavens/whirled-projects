@@ -5,11 +5,11 @@ package {
 
 import popcraft.*;
 import popcraft.net.*;
-import core.*;
+import com.whirled.contrib.core.*;
 
 import com.threerings.util.Assert;
 import com.whirled.WhirledGameControl;
-import core.MainLoop;
+import com.whirled.contrib.core.MainLoop;
 
 import flash.display.Sprite;
 

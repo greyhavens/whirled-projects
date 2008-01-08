@@ -2,15 +2,15 @@ package popcraft.battle {
 
 import popcraft.*;
 
-import core.*;
-import core.tasks.*;
-import core.objects.*;
-import core.util.*;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.util.*;
 
 import flash.display.Sprite;
 import flash.display.DisplayObject;
 import flash.display.Bitmap;
-import core.tasks.MeterValueTask;
+import com.whirled.contrib.core.tasks.MeterValueTask;
 import flash.geom.Point;
 
 public class PlayerBaseUnit extends Unit

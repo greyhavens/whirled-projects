@@ -2,9 +2,9 @@ package popcraft.battle {
 
 import popcraft.*;
 
-import core.*;
-import core.util.*;
-import core.tasks.*;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.util.*;
+import com.whirled.contrib.core.tasks.*;
 
 import flash.display.Bitmap;
 

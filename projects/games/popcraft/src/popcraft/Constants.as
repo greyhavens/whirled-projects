@@ -2,8 +2,8 @@ package popcraft {
 
 import com.threerings.util.Assert;
 
-import core.*;
-import core.util.*;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.util.*;
 
 import flash.geom.Point;
 

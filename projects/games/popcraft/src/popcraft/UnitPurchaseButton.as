@@ -2,7 +2,7 @@ package popcraft {
 
 import popcraft.battle.*;
 
-import core.AppObject;
+import com.whirled.contrib.core.AppObject;
 import com.threerings.flash.DisablingButton;
 
 import flash.display.DisplayObject;

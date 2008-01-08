@@ -2,10 +2,10 @@ package popcraft.battle {
 
 import popcraft.*;
 
-import core.*;
-import core.tasks.*;
-import core.objects.*;
-import core.util.*;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.util.*;
 
 import flash.display.Sprite;
 import flash.display.DisplayObject;

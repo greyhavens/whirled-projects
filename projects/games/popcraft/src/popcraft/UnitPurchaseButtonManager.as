@@ -1,6 +1,6 @@
 package popcraft {
 
-import core.AppObject;
+import com.whirled.contrib.core.AppObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;

@@ -1,6 +1,6 @@
 package popcraft.net {
 
-import core.Updatable;
+import com.whirled.contrib.core.Updatable;
 
 import com.threerings.util.HashMap;
 import com.threerings.util.Assert;

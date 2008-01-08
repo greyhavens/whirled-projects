@@ -2,7 +2,7 @@ package popcraft.battle {
 
 import popcraft.*;
 
-import core.AppObject;
+import com.whirled.contrib.core.AppObject;
 import flash.display.Shape;
 import flash.display.DisplayObject;
 import flash.display.Sprite;

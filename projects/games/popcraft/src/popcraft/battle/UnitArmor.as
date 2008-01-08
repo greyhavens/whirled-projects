@@ -3,7 +3,7 @@ package popcraft.battle {
 import com.threerings.util.HashMap;
 import com.threerings.util.Assert;
 
-import core.util.Rand;
+import com.whirled.contrib.core.util.Rand;
 
 /**
  * UnitArmor is a damage filter that modifies the effects of an attack before it's applied to a unit.

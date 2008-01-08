@@ -1,7 +1,7 @@
 package popcraft {
 
-import core.*;
-import core.objects.*;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.objects.*;
 
 import popcraft.battle.*;
 

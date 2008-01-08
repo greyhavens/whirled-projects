@@ -4,19 +4,19 @@ import com.threerings.util.Assert;
 
 import popcraft.*;
 
-import core.MainLoop;
-import core.AppObject;
-import core.tasks.TaskContainer;
-import core.util.Rand;
-import core.tasks.LocationTask;
-import core.tasks.ScaleTask;
-import core.util.ObjectSet;
+import com.whirled.contrib.core.MainLoop;
+import com.whirled.contrib.core.AppObject;
+import com.whirled.contrib.core.tasks.TaskContainer;
+import com.whirled.contrib.core.util.Rand;
+import com.whirled.contrib.core.tasks.LocationTask;
+import com.whirled.contrib.core.tasks.ScaleTask;
+import com.whirled.contrib.core.util.ObjectSet;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 
-import core.tasks.*;
+import com.whirled.contrib.core.tasks.*;
 import mx.effects.easing.Bounce;
 
 public class PuzzleBoard extends AppObject

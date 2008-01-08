@@ -1,6 +1,6 @@
 package popcraft {
 
-import core.AppMode;
+import com.whirled.contrib.core.AppMode;
 import flash.display.Shape;
 import flash.text.TextField;
 

@@ -2,15 +2,15 @@ package popcraft.battle {
 
 import popcraft.*;
 
-import core.*;
-import core.tasks.*;
-import core.objects.*;
-import core.util.*;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.util.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.Bitmap;
-import core.tasks.FunctionTask;
+import com.whirled.contrib.core.tasks.FunctionTask;
 import flash.geom.Point;
 import flash.filters.GlowFilter;
 import flash.geom.Rectangle;
@@ -216,8 +216,8 @@ public class CreatureUnit extends Unit
 
 }
 
-import core.*;
-import core.util.*;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.util.*;
 import flash.geom.Point;
 import popcraft.*;
 import popcraft.battle.PlayerBaseUnit;

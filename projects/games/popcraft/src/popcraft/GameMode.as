@@ -4,8 +4,8 @@ import com.threerings.util.Assert;
 import com.threerings.util.HashSet;
 import com.threerings.util.RingBuffer;
 
-import core.*;
-import core.util.*;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.util.*;
 
 import flash.events.KeyboardEvent;
 import flash.geom.Point;
@@ -29,7 +29,7 @@ public class GameMode extends AppMode
     {
     }
 
-    // from core.AppMode
+    // from com.whirled.contrib.core.AppMode
     override public function setup () :void
     {
         var myPosition :int = PopCraft.instance.gameControl.game.seating.getMyPosition();
@@ -120,7 +120,7 @@ public class GameMode extends AppMode
         PopCraft.instance.gameControl.local.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 0, false);
     }
 
-    // from core.AppMode
+    // from com.whirled.contrib.core.AppMode
     override public function destroy () :void
     {
         PopCraft.instance.gameControl.local.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false);
@@ -204,7 +204,7 @@ public class GameMode extends AppMode
         // update all non-net objects
         super.update(dt);
     }
-    
+
     public function getRandomEnemyPlayerId (myId :uint) :uint
     {
         var numPlayers :int = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
@@ -212,7 +212,7 @@ public class GameMode extends AppMode
         if (playerId == myId) {
             playerId = numPlayers - 1;
         }
-        
+
         return uint(playerId);
     }
 

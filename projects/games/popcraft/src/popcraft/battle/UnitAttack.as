@@ -1,6 +1,6 @@
 package popcraft.battle {
 
-import core.util.NumRange;
+import com.whirled.contrib.core.util.NumRange;
 
 public class UnitAttack
 {
