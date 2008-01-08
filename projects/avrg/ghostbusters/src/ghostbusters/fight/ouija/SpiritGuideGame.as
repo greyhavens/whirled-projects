@@ -2,8 +2,8 @@ package ghostbusters.fight.ouija {
 
 import flash.display.Sprite;
 
-import ghostbusters.fight.core.*;
-import ghostbusters.fight.core.util.*;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.util.*;
 
 [SWF(width="280", height="222", frameRate="30")]
 public class SpiritGuideGame extends Sprite
@@ -19,9 +19,9 @@ public class SpiritGuideGame extends Sprite
 
 }
 
-import ghostbusters.fight.core.*;
-import ghostbusters.fight.core.tasks.*;
-import ghostbusters.fight.core.util.*;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.core.util.*;
 import ghostbusters.fight.ouija.*;
 
 import flash.display.Sprite;

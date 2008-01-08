@@ -1,7 +1,7 @@
 package ghostbusters.fight.ouija
 {
 
-import ghostbusters.fight.core.AppMode;
+import com.whirled.contrib.core.AppMode;
 
 public class IntroMode extends AppMode
 {
@@ -13,8 +13,8 @@ public class IntroMode extends AppMode
 
 }
 
-import ghostbusters.fight.core.*;
-import ghostbusters.fight.core.tasks.*;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.tasks.*;
 import ghostbusters.fight.ouija.*;
 
 import flash.display.Sprite;

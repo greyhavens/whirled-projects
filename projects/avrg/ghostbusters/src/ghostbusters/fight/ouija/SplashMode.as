@@ -5,7 +5,7 @@ import flash.display.Shape;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 
-import ghostbusters.fight.core.*;
+import com.whirled.contrib.core.*;
 
 public class SplashMode extends AppMode
 {

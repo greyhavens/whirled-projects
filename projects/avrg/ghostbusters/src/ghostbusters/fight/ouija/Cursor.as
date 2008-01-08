@@ -8,12 +8,12 @@ import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
 import flash.events.MouseEvent;
 
-import ghostbusters.fight.core.AppMode;
-import ghostbusters.fight.core.AppObject;
-import ghostbusters.fight.core.Vector2;
-import ghostbusters.fight.core.tasks.FunctionTask;
-import ghostbusters.fight.core.tasks.SerialTask;
-import ghostbusters.fight.core.tasks.TimedTask;
+import com.whirled.contrib.core.AppMode;
+import com.whirled.contrib.core.AppObject;
+import com.whirled.contrib.core.Vector2;
+import com.whirled.contrib.core.tasks.FunctionTask;
+import com.whirled.contrib.core.tasks.SerialTask;
+import com.whirled.contrib.core.tasks.TimedTask;
 
 /**
  * This should almost certainly be called "Planchette" instead of "Cursor", but who wants to type that word a million times?

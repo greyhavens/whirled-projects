@@ -3,8 +3,8 @@ package ghostbusters.fight.ouija {
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
-import ghostbusters.fight.core.*;
-import ghostbusters.fight.core.util.Rand;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.util.Rand;
 
 public class Board extends AppObject
 {
