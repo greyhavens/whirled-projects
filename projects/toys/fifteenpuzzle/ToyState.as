@@ -14,7 +14,7 @@ import com.whirled.FurniControl;
 import com.threerings.util.ValueEvent;
 
 /**
- * The state updated event. Dispatched
+ * The state updated event. Dispatched when a new state is set by another client.
  * @eventType ToyState.STATE_UPDATED
  */
 [Event(name="stateUpdated", type="flash.events.Event")]
@@ -27,10 +27,6 @@ public class ToyState extends EventDispatcher
     /**
      * ToyState constructor.
      * 
-     // TODO
-     * @param prefKey to persist the state on the client browser between instances, so that
-     *                the toy starts with the last set state when viewed in inventory
-     *                for any particular user.
      * @param deleteCount how many personalized states to save before some are deleted.
      */
     public function ToyState (ctrl :FurniControl,
@@ -43,8 +39,7 @@ public class ToyState extends EventDispatcher
             _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
 
             _myKey = STATE_PREFIX + _ctrl.getInstanceId();
-            _deleteCount = deleteCount;
-            findFollowState();
+            findFollowState(deleteCount);
         }
 
         _idleDelay = idleOutTimer * 1000;
@@ -160,7 +155,7 @@ public class ToyState extends EventDispatcher
         dispatchEvent(new Event(STATE_UPDATED));
     }
 
-    protected function findFollowState () :void
+    protected function findFollowState (deleteCount :int) :void
     {
         var highId :int = int.MIN_VALUE;
         var lowId :int = int.MAX_VALUE;
@@ -173,11 +168,6 @@ public class ToyState extends EventDispatcher
             if (STATE_KEY.test(key)) {
                 count++;
                 var mem :Array = memories[key] as Array;
-                // TEMP: work around a current bug in whirled where null mems are returned
-                // TODO: remove
-                if (mem == null) {
-                    continue;
-                }
                 var seqId :int = int(mem[0]);
                 if (seqId > highId) {
                     if (highId == int.MIN_VALUE) {
@@ -195,7 +185,7 @@ public class ToyState extends EventDispatcher
             }
         }
 
-        if (count >= _deleteCount) {
+        if (count >= deleteCount) {
             _ctrl.updateMemory(lowKey, null);
         }
 
@@ -226,7 +216,5 @@ public class ToyState extends EventDispatcher
     protected var _followKey :String;
 
     protected var _myKey :String;
-
-    protected var _deleteCount :int;
 }
 }
