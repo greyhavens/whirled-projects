@@ -88,7 +88,7 @@ public class Constants
 
     /* Units */
 
-    public static const UNIT_TYPE_MELEE :uint = 0;
+    public static const UNIT_TYPE_GRUNT :uint = 0;
     public static const UNIT_TYPE_RANGED :uint = 1;
 
     public static const UNIT_TYPE__CREATURE_LIMIT :uint = 2;

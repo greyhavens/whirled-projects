@@ -2,7 +2,7 @@ package popcraft.battle {
 
 import com.whirled.contrib.core.util.*;
 
-/** Encapsulates immutable data about a particular type of Creature. */
+/** Encapsulates immutable data about a particular type of Unit. */
 public class UnitData
 {
     public var name :String;

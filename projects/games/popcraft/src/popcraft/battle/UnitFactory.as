@@ -9,8 +9,8 @@ public class UnitFactory
         /*var unit :Unit;
 
         switch (unitType) {
-        case Constants.UNIT_TYPE_MELEE:
-            unit = new Unit(owningPlayerId);
+        case Constants.UNIT_TYPE_GRUNT:
+            unit = new GruntCreatureUnit(owningPlayerId);
         }
 
         return unit;*/
