@@ -44,7 +44,7 @@ public class BattleBoard extends SceneObject
         _view.addChild(_unitDisplayParent);
         _view.addChild(fg);
 
-        _view.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown, false);
+        //_view.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown, false);
     }
 
     override public function get displayObject () :DisplayObject
@@ -59,6 +59,8 @@ public class BattleBoard extends SceneObject
 
     protected function handleMouseDown (e :MouseEvent) :void
     {
+        // Currently unused. Waypoints are being removed for now.
+
         // translate the mouse coordinates to local coordinates
         // (the click may have originated on a display descendent)
         var loc :Point = _view.globalToLocal(new Point(e.stageX, e.stageY));

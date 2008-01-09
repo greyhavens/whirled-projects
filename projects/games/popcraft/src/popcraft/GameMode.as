@@ -102,14 +102,15 @@ public class GameMode extends AppMode
             _playerWaypoints.push(waypointLoc.toPoint());
 
             // create a visual representation of the waypoint
+            // we're not currently using waypoints
             // if it belongs to us
-            if (playerId == _playerData.playerId) {
+            /*if (playerId == _playerData.playerId) {
                 _waypointMarker = new WaypointMarker(playerId);
                 _waypointMarker.displayObject.x = waypointLoc.x;
                 _waypointMarker.displayObject.y = waypointLoc.y;
 
                 this.addObject(_waypointMarker, _battleBoard.unitDisplayParent);
-            }
+            }*/
 
             ++playerId;
         }
