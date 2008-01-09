@@ -13,6 +13,9 @@ public interface AITask extends ObjectTask
     function getStateString (depth :uint = 0) :String;
 
     function get name () :String;
+
+    function get parentTask () :AITask;
+    function set parentTask (parent :AITask) :void;
 }
 
 }

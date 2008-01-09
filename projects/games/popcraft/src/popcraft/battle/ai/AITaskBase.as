@@ -20,18 +20,6 @@ public class AITaskBase
     }
 
     /** Subclasses should implement this. */
-    public function aiUpdate (dt :Number, unit :CreatureUnit) :Boolean
-    {
-        return true;
-    }
-
-    /** Subclasses should implement this. */
-    public function aiReceiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
-    }
-
-    /** Subclasses should implement this. */
     public function clone () :ObjectTask
     {
         return null;
@@ -39,18 +27,17 @@ public class AITaskBase
 
     public function receiveMessage (msg :ObjectMessage) :Boolean
     {
-        _subtasks.receiveMessage(msg);
-        return this.aiReceiveMessage(msg);
+        return _subtasks.receiveMessage(msg);
     }
 
     public function update (dt :Number, obj :AppObject) :Boolean
     {
-        _subtasks.update(dt, obj);
-        return this.aiUpdate(dt, (obj as CreatureUnit));
+        return _subtasks.update(dt, obj);
     }
 
     public function addSubtask (task :AITask) :void
     {
+        task.parentTask = this;
         _subtasks.addTask(task);
     }
 
@@ -104,6 +91,17 @@ public class AITaskBase
         return stateString;
     }
 
+    public function get parentTask () :AITask
+    {
+        return _parentTask;
+    }
+
+    public function set parentTask (parentTask :AITask) :void
+    {
+        _parentTask = parentTask;
+    }
+
+    protected var _parentTask :AITask;
     protected var _subtasks :SubtaskContainer = new SubtaskContainer();
 }
 

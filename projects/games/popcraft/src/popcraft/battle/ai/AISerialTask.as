@@ -58,6 +58,22 @@ public class AISerialTask extends SerialTask
         return (null != topTask ? topTask.name : "[empty sequence]");
     }
 
+    public function get parentTask () :AITask
+    {
+        return _parentTask;
+    }
+
+    public function set parentTask (parentTask :AITask) :void
+    {
+        _parentTask = parentTask;
+
+        for each (var task :AITask in _tasks) {
+            if (null != task) {
+                task.parentTask = _parentTask;
+            }
+        }
+    }
+
     protected function get topTask () :AITask
     {
         for each (var task :AITask in _tasks) {
@@ -68,6 +84,8 @@ public class AISerialTask extends SerialTask
 
         return null;
     }
+
+    protected var _parentTask :AITask;
 
 }
 
