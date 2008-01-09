@@ -9,7 +9,7 @@ public class Fps extends Sprite
 {
     public function Fps ()
     {
-        addChild(new FPSDisplay());
+        addChild(new FPSDisplay(40));
     }
 }
 }
