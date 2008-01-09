@@ -16,6 +16,7 @@ import flash.filters.GlowFilter;
 import flash.geom.Rectangle;
 import flash.display.BitmapData;
 import mx.effects.Move;
+import popcraft.battle.ai.AITaskBase;
 
 public class CreatureUnit extends Unit
 {
@@ -204,6 +205,8 @@ public class CreatureUnit extends Unit
     protected var _sprite :Sprite;
     protected var _healthMeter :RectMeter;
 
+    protected var _aiRoot :AITaskBase = new AITaskBase();
+
     protected static var g_groups :Array;
 
     protected static const ENEMY_DETECT_LOOP_TIME :Number = 1;
@@ -222,10 +225,11 @@ import flash.geom.Point;
 import popcraft.*;
 import popcraft.battle.PlayerBaseUnit;
 import popcraft.battle.CreatureUnit;
+import popcraft.battle.ai.AITask;
 
-class EnemyDetectTask extends ObjectTask
+class EnemyDetectTask implements ObjectTask
 {
-    override public function update (dt :Number, obj :AppObject) :Boolean
+    public function update (dt :Number, obj :AppObject) :Boolean
     {
         var unit :CreatureUnit = (obj as CreatureUnit);
 
@@ -242,20 +246,26 @@ class EnemyDetectTask extends ObjectTask
         return true;
     }
 
-    override public function clone () :ObjectTask
+    public function clone () :ObjectTask
     {
         return new EnemyDetectTask();
     }
+
+    public function receiveMessage (msg :ObjectMessage) :Boolean
+    {
+        return false;
+    }
 }
 
-class EnemyAttackTask extends ObjectTask
+class EnemyAttackTask
+    implements ObjectTask
 {
     public function EnemyAttackTask (enemyId :uint)
     {
         _enemyId = enemyId;
     }
 
-    override public function update (dt :Number, obj :AppObject) :Boolean
+    public function update (dt :Number, obj :AppObject) :Boolean
     {
         var unit :CreatureUnit = (obj as CreatureUnit);
 
@@ -284,12 +294,23 @@ class EnemyAttackTask extends ObjectTask
         return false;
     }
 
+    public function clone () :ObjectTask
+    {
+        return new EnemyAttackTask(_enemyId);
+    }
+
+    public function receiveMessage (msg :ObjectMessage) :Boolean
+    {
+        return false;
+    }
+
     protected var _enemyId :uint;
 }
 
-class MoveToWaypointTask extends ObjectTask
+class MoveToWaypointTask
+    implements ObjectTask
 {
-    override public function update (dt :Number, obj :AppObject) :Boolean
+    public function update (dt :Number, obj :AppObject) :Boolean
     {
         var unit :CreatureUnit = (obj as CreatureUnit);
 
@@ -307,17 +328,28 @@ class MoveToWaypointTask extends ObjectTask
         return (!unit.isMoving());
     }
 
+    public function clone () :ObjectTask
+    {
+        return new MoveToWaypointTask();
+    }
+
+    public function receiveMessage (msg :ObjectMessage) :Boolean
+    {
+        return false;
+    }
+
     protected var _inited :Boolean;
 }
 
-class AttackBaseTask extends ObjectTask
+class AttackBaseTask
+    implements ObjectTask
 {
     public function AttackBaseTask (targetBaseId :uint)
     {
         _targetBaseId = targetBaseId;
     }
 
-    override public function update (dt :Number, obj :AppObject) :Boolean
+    public function update (dt :Number, obj :AppObject) :Boolean
     {
         var unit :CreatureUnit = (obj as CreatureUnit);
 
@@ -336,6 +368,16 @@ class AttackBaseTask extends ObjectTask
         }
 
         return (STATE_COMPLETE == _state);
+    }
+
+    public function clone () :ObjectTask
+    {
+        return new AttackBaseTask(_targetBaseId);
+    }
+
+    public function receiveMessage (msg :ObjectMessage) :Boolean
+    {
+        return false;
     }
 
     protected function handleInit (unit :CreatureUnit) :void
@@ -366,7 +408,6 @@ class AttackBaseTask extends ObjectTask
             unit.sendAttack(target, unit.unitData.attack);
         }
     }
-
 
     protected var _targetBaseId :uint;
     protected var _state :int = STATE_INIT;

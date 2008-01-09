@@ -1,5 +1,7 @@
 package popcraft.net {
 
+import com.whirled.contrib.core.net.*;
+
 public class ChecksumMessage
     implements Message
 {
@@ -44,8 +46,7 @@ public class ChecksumMessage
 
 }
 
-import popcraft.net.MessageFactory;
-import popcraft.net.Message;
+import com.whirled.contrib.core.net.*;
 import popcraft.net.ChecksumMessage;
 
 class ChecksumMessageFactory

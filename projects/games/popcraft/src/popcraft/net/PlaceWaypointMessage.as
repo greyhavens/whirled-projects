@@ -1,5 +1,7 @@
 package popcraft.net {
 
+import com.whirled.contrib.core.net.*;
+
 public class PlaceWaypointMessage
     implements Message
 {
@@ -42,8 +44,7 @@ public class PlaceWaypointMessage
 
 import com.threerings.util.Assert;
 
-import popcraft.net.MessageFactory;
-import popcraft.net.Message;
+import com.whirled.contrib.core.net.*;
 import popcraft.net.PlaceWaypointMessage;
 
 /*

@@ -1,5 +1,7 @@
 package popcraft.net {
 
+import com.whirled.contrib.core.net.*;
+
 public class CreateUnitMessage
     implements Message
 {
@@ -38,8 +40,7 @@ public class CreateUnitMessage
 
 }
 
-import popcraft.net.MessageFactory;
-import popcraft.net.Message;
+import com.whirled.contrib.core.net.*;
 import popcraft.net.CreateUnitMessage;
 
 class CreateUnitMessageFactory

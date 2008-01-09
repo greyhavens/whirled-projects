@@ -6,6 +6,7 @@ import com.threerings.util.RingBuffer;
 
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.util.*;
+import com.whirled.contrib.core.net.*;
 
 import flash.events.KeyboardEvent;
 import flash.geom.Point;
