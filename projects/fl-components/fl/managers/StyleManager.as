@@ -158,8 +158,10 @@ package fl.managers {
 				}
 				// add this class's default styles:
 				inst.classToDefaultStylesDict[classDef] = defaultStyles;
-				// set up the override styles table:
-				inst.classToStylesDict[classDef] = {};
+                                if (inst.classToStylesDict[classDef] == null) {
+                                    // set up the override styles table:
+                                    inst.classToStylesDict[classDef] = {};
+                                }
 			}
 			inst.classToInstancesDict[classDef][instance] = true;
 			setSharedStyles(instance);
