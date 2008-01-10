@@ -5,6 +5,7 @@ package {
 
 import flash.display.Sprite;
 
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.TextEvent;
 
@@ -38,6 +39,9 @@ public class TagWidget extends Sprite
         _searchPhotoService = searchPhotoService;
         _ctrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, handlePropertyChanged);
 
+        addEventListener(Event.ADDED_TO_STAGE, handleAdded);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
+
         _tagFormat = new TextFormat();
         _tagFormat.color = 0xFFFFFF;
 
@@ -60,11 +64,6 @@ public class TagWidget extends Sprite
         _tagPane.source = _tagSprite;
         _tagPane.y = 50;
         addChild(_tagPane);
-
-        // add all the tags
-        for each (var tag :String in _ctrl.net.getPropertyNames("tag:")) {
-            addTag(tag.substring(4));
-        }
 
         updateSearchTags();
     }
@@ -117,7 +116,7 @@ public class TagWidget extends Sprite
         var tag :String = StringUtil.trim(_tagInput.text);
         if (!StringUtil.isBlank(tag)) {
             // go ahead and just add it
-            _ctrl.net.set("tag:" + tag.toLowerCase(), 1);
+            _ctrl.net.set("tag:" + tag.toLowerCase(), true);
         }
         _tagInput.text = "";
     }
@@ -157,6 +156,20 @@ public class TagWidget extends Sprite
 
 //        trace("Updated tag search to: '" + tags + "'.");
         _searchPhotoService.setKeywords(tags, true);
+    }
+
+    protected function handleAdded (event :Event) :void
+    {
+        for each (var tag :String in _ctrl.net.getPropertyNames("tag:")) {
+            addTag(tag.substring(4));
+        }
+    }
+
+    protected function handleRemoved (event :Event) :void
+    {
+        while (_tagSprite.numChildren > 0) {
+            _tagSprite.removeChildAt(0);
+        }
     }
 
     [Embed(source="rsrc/x_up.png")]
