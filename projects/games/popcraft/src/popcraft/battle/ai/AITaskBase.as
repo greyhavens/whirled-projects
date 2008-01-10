@@ -16,12 +16,13 @@ public class AITaskBase
     /** Subclasses should implement this. */
     public function get name () :String
     {
-        return "[unnamed task]";
+        return (null == _parentTask ? "[root]" : "[unnamed task]");
     }
 
     /** Subclasses should implement this. */
     public function clone () :ObjectTask
     {
+        Assert.fail("This task does not implement clone()");
         return null;
     }
 
@@ -44,12 +45,6 @@ public class AITaskBase
     public function clearSubtasks () :void
     {
         _subtasks.removeAllTasks();
-    }
-
-    public function setSubtask (task :AITask) :void
-    {
-        this.clearSubtasks();
-        this.addSubtask(task);
     }
 
     public function hasSubtaskNamed (name :String) :Boolean
@@ -121,7 +116,7 @@ class SubtaskContainer extends ParallelTask
     public function getSubtaskNamed (name :String) :AITask
     {
         for each (var task :AITask in _tasks) {
-            if (task.name == name) {
+            if (null != task && task.name == name) {
                 return task;
             }
         }

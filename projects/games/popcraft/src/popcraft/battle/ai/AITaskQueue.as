@@ -1,13 +1,36 @@
 package popcraft.battle.ai {
 
+import com.threerings.util.Assert;
+
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.core.tasks.TaskContainer.addTask;
 
-public class AISerialTask extends SerialTask
+public class AITaskQueue extends TaskContainer
     implements AITask
 {
-    public function AISerialTask ()
+    public function AITaskQueue (repeating :Boolean)
     {
+        super(repeating ? TaskContainer.TYPE_REPEATING : TaskContainer.TYPE_SERIAL);
+        _repeating = repeating;
+    }
+
+    override public function clone () :ObjectTask
+    {
+        var tc :TaskContainer = super.clone();
+        var clone :AITaskQueue = new AITaskQueue(_repeating);
+        clone._tasks = tc._tasks; // ouch
+
+        return clone;
+    }
+
+    override public function addTask (task :ObjectTask) :void
+    {
+        var aiTask :AITask = (task as AITask);
+        Assert.isNotNull(aiTask);
+
+        super.addTask(aiTask);
+        aiTask.parentTask = _parentTask;
     }
 
     public function addSubtask (task :AITask) :void
@@ -23,14 +46,6 @@ public class AISerialTask extends SerialTask
         var topTask :AITask = this.topTask;
         if (null != topTask) {
             topTask.clearSubtasks();
-        }
-    }
-
-    public function setSubtask (task :AITask) :void
-    {
-        var topTask :AITask = this.topTask;
-        if (null != topTask) {
-            topTask.setSubtask(task);
         }
     }
 
@@ -85,6 +100,8 @@ public class AISerialTask extends SerialTask
         return null;
     }
 
+    protected var _repeating :Boolean;
+    protected var _container :TaskContainer;
     protected var _parentTask :AITask;
 
 }

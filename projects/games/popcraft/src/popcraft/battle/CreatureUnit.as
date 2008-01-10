@@ -1,6 +1,7 @@
 package popcraft.battle {
 
 import popcraft.*;
+import popcraft.battle.ai.*;
 
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.tasks.*;
@@ -200,6 +201,11 @@ public class CreatureUnit extends Unit
     public function isMoving () :Boolean
     {
         return this.hasTasksNamed("move");
+    }
+
+    public function get aiRoot () :AITask
+    {
+        return aiRoot;
     }
 
     protected var _sprite :Sprite;
