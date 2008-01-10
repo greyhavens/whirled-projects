@@ -7,10 +7,10 @@ public class DetectEnemyTask extends AITaskBase
 {
     public static const MSG_DETECTED_ENEMY = "DetectedEnemy";
 
-    public function update (dt :Number, obj :AppObject) :Boolean
+    override public function update (dt :Number, obj :AppObject) :Boolean
     {
-    	super.update(dt, obj);
-    	
+        super.update(dt, obj);
+
         var unit :CreatureUnit = (obj as CreatureUnit);
 
         // check to see if there are any enemies nearby
@@ -24,7 +24,7 @@ public class DetectEnemyTask extends AITaskBase
         }
     }
 
-    public function clone () :ObjectTask
+    override public function clone () :ObjectTask
     {
         return new DetectEnemyTask();
     }

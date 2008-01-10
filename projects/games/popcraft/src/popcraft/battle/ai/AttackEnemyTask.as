@@ -7,7 +7,7 @@ public class AttackEnemyTask extends AITaskBase
         _enemyId = enemyId;
     }
 
-    public function update (dt :Number, obj :AppObject) :Boolean
+    override public function update (dt :Number, obj :AppObject) :Boolean
     {
         super.update(dt, obj);
 
@@ -34,7 +34,7 @@ public class AttackEnemyTask extends AITaskBase
         return false;
     }
 
-    public function clone () :ObjectTask
+    override public function clone () :ObjectTask
     {
         return new EnemyAttackTask(_enemyId);
     }
