@@ -12,7 +12,7 @@ public class Content
     [Embed(source="../../rsrc/Ghost_3.swf", mimeType="application/octet-stream")]
     public static const GHOST :Class;
 
-    [Embed(source="../../rsrc/text_box.swf")]
+    [Embed(source="../../rsrc/text_box.swf", mimeType="application/octet-stream")]
     public static const TEXT_BOX :Class;
 
     [Embed(source="../../rsrc/splash01.swf")]

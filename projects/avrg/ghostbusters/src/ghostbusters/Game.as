@@ -5,6 +5,7 @@ package ghostbusters {
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.geom.Rectangle;
 
 import flash.events.Event;
 
@@ -24,6 +25,10 @@ public class Game extends Sprite
     public static const DEBUG :Boolean = false;
 
     public static var log :Log = Log.getLog(Game);
+
+    public static var control :AVRGameControl;
+
+    public static var stageSize :Rectangle;
 
     public static var gameController :GameController;
     public static var seekController :SeekController;
@@ -49,7 +54,7 @@ public class Game extends Sprite
 
     protected function handleUnload (event :Event) :void
     {
-        Game.log.info("Removed from stage - Unloading...");
+        log.info("Removed from stage - Unloading...");
 
         gameController.shutdown();
         fightController.shutdown();
@@ -58,7 +63,13 @@ public class Game extends Sprite
 
     protected function handleAdded (event :Event) :void
     {
-        Game.log.info("Added to stage: Initializing...");
+        log.info("Added to stage: Initializing...");
+
+        stageSize = control.getStageSize();
+        if (stageSize == null) {
+            log.debug("Eek! Could not find room size!");
+            stageSize = new Rectangle(0, 0, 700, 500);
+        }
 
         gameController.enterState(GameModel.STATE_INTRO);
     }
@@ -68,11 +79,8 @@ public class Game extends Sprite
         if (id == Codes.MOB_ID_GHOST) {
             return Game.fightController.panel.getGhostSprite(ctrl);
         }
-        Game.log.warning("Unknown MOB requested [id=" + id + "]");
+        log.warning("Unknown MOB requested [id=" + id + "]");
         return null;
     }
-
-
-    protected var control :AVRGameControl;
 }
 }

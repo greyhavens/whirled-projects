@@ -63,7 +63,8 @@ public class GamePanel extends Sprite
     public function enterState (state :String) :void
     {
         if (state == GameModel.STATE_INTRO) {
-            showSplash();
+//            showSplash();
+            showHelp();
 
         } else if (state == GameModel.STATE_IDLE) {
             showPanels(hud);
@@ -103,7 +104,6 @@ public class GamePanel extends Sprite
         _box.y = 100;
         _box.scaleX = _box.scaleY = 0.5;
         this.addChild(_box);
-        _box.show();
     }
 
     protected function showSplash () :void
@@ -116,7 +116,6 @@ public class GamePanel extends Sprite
         _box.y = 100;
         _box.scaleX = _box.scaleY = 0.5;
         this.addChild(_box);
-        _box.show();
     }
 
     protected function handleClick (evt :MouseEvent) :void

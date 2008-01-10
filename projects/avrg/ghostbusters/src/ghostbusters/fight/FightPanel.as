@@ -3,7 +3,9 @@
 
 package ghostbusters.fight {
 
+import flash.display.BlendMode;
 import flash.display.DisplayObject;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -14,14 +16,16 @@ import flash.media.SoundChannel;
 
 import flash.utils.setTimeout;
 
+import com.threerings.flash.FrameSprite;
 import com.threerings.util.CommandEvent;
 import com.whirled.MobControl;
 
 import ghostbusters.Content;
 import ghostbusters.Dimness;
+import ghostbusters.Game;
 import ghostbusters.fight.FightController;
 
-public class FightPanel extends Sprite
+public class FightPanel extends FrameSprite
 {
     public function FightPanel (model :FightModel)
     {
@@ -30,9 +34,6 @@ public class FightPanel extends Sprite
         buildUI();
 
         _frame = new GameFrame();
-
-        this.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
-        this.addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
     }
 
     override public function hitTestPoint (
@@ -80,20 +81,53 @@ public class FightPanel extends Sprite
         }
     }
 
-    protected function handleAdded (evt :Event) :void
+    override protected function handleAdded (... ignored) :void
     {
+        super.handleAdded();
         _battleLoop = Sound(new Content.BATTLE_LOOP_AUDIO()).play();
     }
 
-    protected function handleRemoved (evt :Event) :void
+    override protected function handleRemoved (... ignored) :void
     {
+        super.handleRemoved();
         _battleLoop.stop();
     }
 
     protected function buildUI () :void
     {
-        _dimness = new Dimness(0.6, true);
+        _dimness = new Dimness(0.8, true);
         this.addChild(_dimness);
+
+        
+    }
+
+    override protected function handleFrame (... ignored) :void
+    {
+        var newIx :int = -1;
+
+        for (var ii :int = 0; ii < _stars.length; ii ++) {
+            var star :Object = _stars[ii];
+            star.sprite.y += star.speed;
+            if (star.sprite.y > Game.stageSize.height) {
+                _dimness.removeChild(star.sprite);
+                newIx = ii;
+            }
+        }
+        if (newIx > 0 || _stars.length < STARS) {
+            var shape :Shape = new Shape();
+            shape.graphics.beginFill(0xFF4500);
+            shape.graphics.drawCircle(0, 0, 4);
+            shape.graphics.endFill();
+            shape.blendMode = BlendMode.ERASE;
+            _dimness.addChild(shape);
+
+            var newStar :Object = { sprite :shape, speed: 1 };
+            if (newIx > 0) {
+                _stars[newIx] = newStar;
+            } else {
+                _stars.push(newStar);
+            }
+        }
     }
 
     protected function gamePerformance (score :Number, style :Number = 0) :void
@@ -112,5 +146,8 @@ public class FightPanel extends Sprite
     protected var _frame :GameFrame;
     protected var _minigame: DisplayObject;
 
+    protected var _stars :Array = [];
+
+    protected static const STARS :int = 400;
 }
 }

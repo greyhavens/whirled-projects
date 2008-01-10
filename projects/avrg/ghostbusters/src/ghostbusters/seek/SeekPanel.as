@@ -24,6 +24,7 @@ import flash.utils.setTimeout;
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 
+import com.threerings.flash.FrameSprite;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Random;
 
@@ -32,23 +33,13 @@ import ghostbusters.Dimness;
 import ghostbusters.GameController;
 import ghostbusters.Game;
 
-public class SeekPanel extends Sprite
+public class SeekPanel extends FrameSprite
 {
     public function SeekPanel (model :SeekModel)
     {
         _model = model;
 
         buildUI();
-
-        _roomSize = model.getRoomSize();
-        if (_roomSize == null) {
-            Game.log.warning("Can't get room size! Aii!");
-            _roomSize = new Rectangle(0, 0, 700, 500);
-        }
-        Game.log.debug("Room size: " + _roomSize);
-
-        this.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
-        this.addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
     }
 
     override public function hitTestPoint (
@@ -97,7 +88,7 @@ public class SeekPanel extends Sprite
     {
         _alphaFrames = _ghost.appear(spawnGhost);
         // TODO: this should instead match the true spawn point of the MOB
-        _ghost.newTarget(new Point(_roomSize.width/2, 200));
+        _ghost.newTarget(new Point(Game.stageSize.width/2, 200));
         _ghost.mask = null;
     }
 
@@ -106,16 +97,16 @@ public class SeekPanel extends Sprite
         CommandEvent.dispatch(this, GameController.SPAWN_GHOST);
     }
 
-    protected function handleRemoved (evt :Event) :void
+    override protected function handleAdded (... ignored) :void
     {
-        removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
-        _lanternLoop.stop();
+        super.handleAdded();
+        _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
     }
 
-    protected function handleAdded (evt :Event) :void
+    override protected function handleRemoved (... ignored) :void
     {
-        _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
-        addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+        super.handleRemoved();
+        _lanternLoop.stop();
     }
 
     protected function updateLantern (playerId :int, pos :Point) :void
@@ -136,12 +127,12 @@ public class SeekPanel extends Sprite
         }
     }
 
-    protected function handleEnterFrame (evt :Event) :void
+    override protected function handleFrame (... ignored) :void
     {
         animateLanterns();
 
-        var p :Point = new Point(Math.max(0, Math.min(_roomSize.width, this.mouseX)),
-                                 Math.max(0, Math.min(_roomSize.height, this.mouseY)));
+        var p :Point = new Point(Math.max(0, Math.min(Game.stageSize.width, this.mouseX)),
+                                 Math.max(0, Math.min(Game.stageSize.height, this.mouseY)));
         p = this.localToGlobal(p);
 
         // bow to reality: nobody wants to watch roundtrip lag in action
@@ -152,7 +143,7 @@ public class SeekPanel extends Sprite
         if (_alphaFrames > 1) {
             // transition dimness factor slowly
             var alpha :Number = _dimness.getAlpha();
-            _dimness.setAlpha(alpha + (0.6 - alpha)/_alphaFrames);
+            _dimness.setAlpha(alpha + (0.8 - alpha)/_alphaFrames);
             _alphaFrames -= 1;
         }
 
@@ -227,8 +218,6 @@ public class SeekPanel extends Sprite
     }
 
     protected var _model :SeekModel;
-
-    protected var _roomSize :Rectangle;
 
     protected var _lanterns :Dictionary = new Dictionary();
 
