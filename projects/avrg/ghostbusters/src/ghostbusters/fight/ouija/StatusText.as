@@ -29,7 +29,7 @@ public class StatusText extends TextField
         this.y = TEXT_LOC.y;
     }
 
-    protected static const TEXT_LOC :Point = new Point(140, 0);
+    protected static const TEXT_LOC :Point = new Point(148, 0);
     protected static const TEXT_COLOR :uint = 0xE58F2F;
     protected static const TEXT_SIZE :int = 20;
 

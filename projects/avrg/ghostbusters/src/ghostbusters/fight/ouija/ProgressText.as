@@ -67,7 +67,7 @@ public class ProgressText extends TextField
     protected var _targetText :String;
     protected var _progress :int;
 
-    protected static const TEXT_LOC :Point = new Point(140, 0);
+    protected static const TEXT_LOC :Point = new Point(148, 0);
 
     protected static const PROGRESS_COLOR :uint = 0xE58F2F;
     protected static const REMAINING_COLOR :uint = 0xDEDEDE;

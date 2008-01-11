@@ -5,7 +5,7 @@ import flash.display.Sprite;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.util.*;
 
-[SWF(width="280", height="222", frameRate="30")]
+[SWF(width="296", height="223", frameRate="30")]
 public class SpiritGuideGame extends Sprite
 {
     public function SpiritGuideGame ()
@@ -67,7 +67,7 @@ class GameMode extends AppMode
         // status text
         var statusText :StatusText = new StatusText();
         statusText.text = "Move to '" + _selection.toLocaleUpperCase() + "'";
-        this.modeSprite.addChild(statusText);
+        _board.displayObjectContainer.addChild(statusText);
 
         // install a failure timer
         var timerObj :AppObject = new AppObject();

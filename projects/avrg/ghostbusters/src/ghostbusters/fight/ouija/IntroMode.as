@@ -29,7 +29,7 @@ class IntroObject extends SceneObject
         // create a rectangle
         var rect :Shape = new Shape();
         rect.graphics.beginFill(0x000000);
-        rect.graphics.drawRect(0, 0, 280, 222);
+        rect.graphics.drawRect(0, 0, 296, 223);
         rect.graphics.endFill();
 
         _sprite.addChild(rect);

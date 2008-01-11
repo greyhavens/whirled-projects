@@ -5,7 +5,7 @@ import flash.display.Sprite;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.util.*;
 
-[SWF(width="280", height="222", frameRate="30")]
+[SWF(width="296", height="223", frameRate="30")]
 public class GhostWriterGame extends Sprite
 {
     public function GhostWriterGame ()
@@ -64,7 +64,7 @@ class GameMode extends AppMode
 
         // progress text
         _progressText = new ProgressText(_word.toLocaleUpperCase());
-        this.modeSprite.addChild(_progressText);
+        _board.displayObjectContainer.addChild(_progressText);
 
         // install a failure timer
         var timerObj :AppObject = new AppObject();
