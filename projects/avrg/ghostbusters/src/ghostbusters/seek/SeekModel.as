@@ -26,7 +26,6 @@ import flash.utils.Dictionary;
 import mx.controls.Button;
 import mx.events.FlexEvent;
 
-import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 
 import com.threerings.flash.DisplayUtil;
@@ -34,30 +33,22 @@ import com.threerings.flash.path.HermiteFunc;
 
 import com.threerings.util.CommandEvent;
 import com.threerings.util.EmbeddedSwfLoader;
-import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
+import com.threerings.util.Random;
 
 import ghostbusters.Codes;
 import ghostbusters.Game;
 
 public class SeekModel extends Sprite
 {
-    public function SeekModel (control :AVRGameControl)
+    public function SeekModel ()
     {
-        _control = control;
+        Game.control.state.addEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
+        Game.control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
+        Game.control.state.addEventListener(AVRGameControlEvent.LEFT_ROOM, leftRoom);
+        Game.control.state.addEventListener(AVRGameControlEvent.ENTERED_ROOM, enteredRoom);
 
-        _control.state.addEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
-        _control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
-        _control.state.addEventListener(AVRGameControlEvent.LEFT_ROOM, leftRoom);
-        _control.state.addEventListener(AVRGameControlEvent.ENTERED_ROOM, enteredRoom);
-
-        _myId = _control.getPlayerId();
-        _roomId = _control.getRoomId();
-        _room = _control.getRoomBounds();
-
-        _random = new Random();
-
-        _ghostRandom = new Random(_roomId);
+        _ghostRandom = new Random(Game.ourRoomId);
         _ghostZest = _ghostMaxZest = 150 + 100 * _ghostRandom.nextNumber();
     }
 
@@ -99,28 +90,21 @@ public class SeekModel extends Sprite
 
     public function transmitLanternPosition (pos :Point) :void
     {
-        pos = _control.stageToRoom(pos);
+        pos = Game.control.stageToRoom(pos);
         if (pos != null) {
-            _control.state.setProperty(Codes.PROP_LANTERN_POS, [ _myId, pos.x, pos.y ], false);
+            Game.control.state.setProperty(
+                Codes.PROP_LANTERN_POS, [ Game.ourPlayerId, pos.x, pos.y ], false);
         }
     }
 
     public function constructNewGhostPosition (ghostBounds :Rectangle) :void
     {
         // it's our job to send the ghost to a new position, figure out where
-        var x :int = _random.nextNumber() * (_room.width - ghostBounds.width) - ghostBounds.left;
-        var y :int = _random.nextNumber() * (_room.height - ghostBounds.height) - ghostBounds.top;
-        _control.state.sendMessage(Codes.MSG_GHOST_POS, [ _roomId, x, y ]);
-    }
-
-    public function getRoomId () :int
-    {
-        return _roomId;
-    }
-
-    public function getMyId () :int
-    {
-        return _myId;
+        var x :int = Game.random.nextNumber() *
+            (Game.roomBounds.width - ghostBounds.width) - ghostBounds.left;
+        var y :int = Game.random.nextNumber() *
+            (Game.roomBounds.height - ghostBounds.height) - ghostBounds.top;
+        Game.control.state.sendMessage(Codes.MSG_GHOST_POS, [ Game.ourRoomId, x, y ]);
     }
 
     protected function messageReceived (event: AVRGameControlEvent) :void
@@ -129,8 +113,8 @@ public class SeekModel extends Sprite
             var bits :Array = event.value as Array;
             if (bits != null) {
                 var roomId :int = int(bits[0]);
-                if (roomId == _roomId) {
-                    var pos :Point = _control.roomToStage(new Point(bits[1], bits[2]));
+                if (roomId == Game.ourRoomId) {
+                    var pos :Point = Game.control.roomToStage(new Point(bits[1], bits[2]));
                     if (pos != null) {
                         _panel.ghostPositionUpdate(pos);
                     }
@@ -148,10 +132,10 @@ public class SeekModel extends Sprite
                 var playerId :int = int(bits[0]);
 
                 // ignore our own update, unless we're debugging
-                if (playerId == _myId && !Game.DEBUG) {
+                if (playerId == Game.ourPlayerId && !Game.DEBUG) {
                     return;
                 }
-                if (_control.isPlayerHere(playerId)) {
+                if (Game.control.isPlayerHere(playerId)) {
                     // lantern update from a local player
                     if (bits.length == 1) {
                         // someone turned theirs off
@@ -160,7 +144,7 @@ public class SeekModel extends Sprite
                     } else {
                         // someone turned theirs on or moved it
                         _panel.playerLanternMoved(
-                            playerId, _control.roomToStage(new Point(bits[1], bits[2])));
+                            playerId, Game.control.roomToStage(new Point(bits[1], bits[2])));
                     }
                 }
             }
@@ -177,14 +161,7 @@ public class SeekModel extends Sprite
         // TODO
     }
 
-    protected var _control :AVRGameControl;
     protected var _panel :SeekPanel;
-
-    protected var _myId :int;
-    protected var _roomId :int;
-    protected var _room :Rectangle;
-
-    protected var _random :Random;
 
     protected var _ghostRandom :Random;
     protected var _ghostZest :Number;

@@ -8,9 +8,9 @@ import flash.events.MouseEvent;
 
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
-import com.whirled.AVRGameControl;
 
 import ghostbusters.Codes;
+import ghostbusters.Game;
 import ghostbusters.GameController;
 
 public class FightController extends Controller
@@ -20,11 +20,9 @@ public class FightController extends Controller
     public var panel :FightPanel;
     public var model :FightModel;
 
-    public function FightController (control :AVRGameControl)
+    public function FightController ()
     {
-        _control = control;
-
-        model = new FightModel(control);
+        model = new FightModel();
         panel = new FightPanel(model);
         model.init(panel);
 
@@ -38,19 +36,19 @@ public class FightController extends Controller
     public function doSpawnGhost () :void
     {
         model.newGhost(100);
-        _control.spawnMob(Codes.MOB_ID_GHOST, "Duchess Von Bobbleton");
+        Game.control.spawnMob(Codes.MOB_ID_GHOST, "Duchess Von Bobbleton");
     }
 
     public function doDespawnGhost () :void
     {
-        _control.despawnMob(Codes.MOB_ID_GHOST);
+        Game.control.despawnMob(Codes.MOB_ID_GHOST);
     }
 
     public function handleGhostMelee (score :Number) :void
     {
         if (model.damageGhost((int) (score * 10))) {
             // TODO: something a little more impressive than just a despawn
-            _control.despawnMob(Codes.MOB_ID_GHOST);
+            Game.control.despawnMob(Codes.MOB_ID_GHOST);
 
             // TODO: the panel should probably respond to the state change instead
             panel.endFight();
@@ -58,7 +56,5 @@ public class FightController extends Controller
             CommandEvent.dispatch(panel, GameController.END_FIGHT);
         }
     }
-
-    protected var _control :AVRGameControl;
 }
 }

@@ -73,7 +73,7 @@ public class SeekPanel extends FrameSprite
     {
         _ghost.setSpeed(_model.getGhostZest());
 
-        var lantern :Lantern = _lanterns[_model.getMyId()];
+        var lantern :Lantern = _lanterns[Game.ourPlayerId];
         if (lantern != null) {
             lantern.setGhostZest(_model.getGhostZestFraction());
         }
@@ -114,7 +114,7 @@ public class SeekPanel extends FrameSprite
         var lantern :Lantern = _lanterns[playerId];
         if (lantern == null) {
             // a new lantern just appears, no splines involved
-            lantern = new Lantern(playerId, pos, playerId == _model.getMyId());
+            lantern = new Lantern(playerId, pos, playerId == Game.ourPlayerId);
             _lanterns[playerId] = lantern;
 
             _maskLayer.addChild(lantern.mask);
@@ -137,7 +137,7 @@ public class SeekPanel extends FrameSprite
 
         // bow to reality: nobody wants to watch roundtrip lag in action
         if (!Game.DEBUG) {
-            updateLantern(_model.getMyId(), p);
+            updateLantern(Game.ourPlayerId, p);
         }
 
         if (_alphaFrames > 1) {

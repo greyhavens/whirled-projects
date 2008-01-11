@@ -7,14 +7,13 @@ import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 
 import ghostbusters.Codes;
+import ghostbusters.Game;
 
 public class FightModel
 {
-    public function FightModel (control :AVRGameControl)
+    public function FightModel ()
     {
-        _control = control;
-
-        _control.state.addEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
+        Game.control.state.addEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
     }
 
     public function init (panel :FightPanel) :void
@@ -28,7 +27,7 @@ public class FightModel
 
     public function newGhost (health :int) :void
     {
-        _control.state.setProperty(Codes.PROP_GHOST_HEALTH, [ health, health ], false);
+        Game.control.state.setProperty(Codes.PROP_GHOST_HEALTH, [ health, health ], false);
     }
 
     public function damageGhost (damage :int) :Boolean
@@ -37,20 +36,20 @@ public class FightModel
         if (damage > health) {
             return true;
         }
-        _control.state.setProperty(
+        Game.control.state.setProperty(
             Codes.PROP_GHOST_HEALTH, [ health-damage, getGhostMaxHealth() ], false);
         return false;
     }
 
     public function getGhostHealth () :int
     {
-        var gh :Object = _control.state.getProperty(Codes.PROP_GHOST_HEALTH);
+        var gh :Object = Game.control.state.getProperty(Codes.PROP_GHOST_HEALTH);
         return gh != null ? gh[0] : 1;
     }
 
     public function getGhostMaxHealth () :Number
     {
-        var gh :Object = _control.state.getProperty(Codes.PROP_GHOST_HEALTH);
+        var gh :Object = Game.control.state.getProperty(Codes.PROP_GHOST_HEALTH);
         return gh != null ? gh[1] : 1;
     }
 
@@ -61,7 +60,6 @@ public class FightModel
         }
     }
 
-    protected var _control :AVRGameControl;
     protected var _panel :FightPanel;
 }
 }

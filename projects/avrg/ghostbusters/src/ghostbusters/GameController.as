@@ -4,7 +4,6 @@
 package ghostbusters {
 
 import com.threerings.util.Controller;
-import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.MobControl;
 
@@ -23,16 +22,14 @@ public class GameController extends Controller
     public var panel :GamePanel;
     public var model :GameModel;
 
-    public function GameController (control :AVRGameControl)
+    public function GameController ()
     {
-        _control = control;
-
-        model = new GameModel(control);
+        model = new GameModel();
         panel = new GamePanel(model);
         model.init(panel);
         setControlledPanel(panel);
 
-        _control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
+        Game.control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
     public function shutdown () :void
@@ -44,7 +41,7 @@ public class GameController extends Controller
     public function handleEndGame () :void
     {
         Game.fightController.doDespawnGhost();
-        _control.deactivateGame();
+        Game.control.deactivateGame();
     }
 
     public function handleHelp () :void
@@ -76,7 +73,7 @@ public class GameController extends Controller
     public function handleSpawnGhost () :void
     {
         enterState(GameModel.STATE_FIGHTING);
-        _control.state.sendMessage(Codes.MSG_GHOST_SPAWN, null);
+        Game.control.state.sendMessage(Codes.MSG_GHOST_SPAWN, null);
         Game.fightController.doSpawnGhost();
     }
 
@@ -138,7 +135,5 @@ public class GameController extends Controller
             enterState(GameModel.STATE_FIGHTING);
         }
     }
-
-    protected var _control :AVRGameControl;
 }
 }

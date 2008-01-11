@@ -8,7 +8,6 @@ import flash.events.MouseEvent;
 
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
-import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 
 import ghostbusters.Codes;
@@ -22,12 +21,11 @@ public class SeekController extends Controller
     public var panel :SeekPanel;
     public var model :SeekModel;
 
-    public function SeekController (control :AVRGameControl)
+    public function SeekController ()
     {
-        _control = control;
-        _control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
+        Game.control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
 
-        model = new SeekModel(control);
+        model = new SeekModel();
         panel = new SeekPanel(model);
         model.init(panel);
 
@@ -45,7 +43,7 @@ public class SeekController extends Controller
             panel.appearGhost();
 
         } else {
-            _control.state.sendMessage(Codes.MSG_GHOST_ZAP, model.getMyId());
+            Game.control.state.sendMessage(Codes.MSG_GHOST_ZAP, Game.ourPlayerId);
         }
     }
 
@@ -56,7 +54,5 @@ public class SeekController extends Controller
             model.ghostZapped();
         }
     }
-
-    protected var _control :AVRGameControl;
 }
 }

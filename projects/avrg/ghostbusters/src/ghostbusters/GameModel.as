@@ -3,9 +3,6 @@
 
 package ghostbusters {
 
-import com.whirled.AVRGameControl;
-import com.whirled.AVRGameControlEvent;
-
 public class GameModel
 {
     public static const STATE_NONE :String = "none";
@@ -14,9 +11,8 @@ public class GameModel
     public static const STATE_SEEKING :String = "seeking";
     public static const STATE_FIGHTING :String = "fighting";
 
-    public function GameModel (control :AVRGameControl)
+    public function GameModel ()
     {
-        _control = control;
     }
 
     public function init (panel :GamePanel) :void
@@ -39,7 +35,6 @@ public class GameModel
         _state = state;
     }
 
-    protected var _control :AVRGameControl;
     protected var _panel :GamePanel;
     protected var _state :String = STATE_NONE;
 }
