@@ -11,7 +11,8 @@ public class Board extends SceneObject
 {
     public function Board()
     {
-        _sprite.addChild(new IMAGE_BOARD());
+        _sprite.addChild(new SWF_BOARD());
+        _sprite.mouseChildren = false;
     }
 
     override public function get displayObject () :DisplayObject
@@ -21,18 +22,27 @@ public class Board extends SceneObject
 
     public static function getSelectionIndexAt (loc :Vector2, epsilon :int) :int
     {
-        var epsilonSquared :int = epsilon * epsilon;
-
-        for (var i :int = 0; i < SELECTIONS.length / 2; ++i) {
-            var selectionLoc :Vector2 = (SELECTIONS[i * 2] as Vector2);
-            var delta :Vector2 = loc.clone();
-            delta.subtract(selectionLoc);
-            if (delta.lengthSquared <= epsilonSquared) {
+        for (var i :uint = 0; i < SELECTIONS.length / 2; ++i) {
+            if (pointIntersectsSelection(loc, epsilon, i)) {
                 return i;
             }
         }
 
         return -1;
+    }
+
+    public static function pointIntersectsSelection (loc :Vector2, epsilon :int, selectionIndex :uint) :Boolean
+    {
+        if (selectionIndex >= 0 && selectionIndex < SELECTIONS.length / 2) {
+            var selectionLoc :Vector2 = (SELECTIONS[selectionIndex * 2] as Vector2);
+            var delta :Vector2 = loc.clone();
+            delta.subtract(selectionLoc);
+            if (delta.lengthSquared <= (epsilon * epsilon)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static function selectionIndexToString (index :int) :String
@@ -45,6 +55,17 @@ public class Board extends SceneObject
         return "";
     }
 
+    public static function stringToSelectionIndex (string :String) :int
+    {
+        for (var i :uint = 0; i < SELECTIONS.length / 2; ++i) {
+            if ((SELECTIONS[(i * 2) + 1] as String) == string) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     public static function getRandomSelectionString () :String
     {
         var index :int = Rand.nextIntRange(0, SELECTIONS.length / 2, Rand.STREAM_COSMETIC);
@@ -53,9 +74,44 @@ public class Board extends SceneObject
 
     protected var _sprite :Sprite = new Sprite();
 
+    [Embed(source="../../../../rsrc/Ouija_animated_notimer.swf")]
+    protected static const SWF_BOARD :Class;
+
+    protected static const SELECTIONS :Array = [
+        new Vector2(62, 108), "a",
+        new Vector2(78, 96), "b",
+        new Vector2(95, 93), "c",
+        new Vector2(112, 85),  "d",
+        new Vector2(126, 84), "e",
+        new Vector2(142, 84), "f",
+        new Vector2(157, 83), "g",
+        new Vector2(170, 86), "h",
+        new Vector2(183, 87), "i",
+        new Vector2(194, 90), "j",
+        new Vector2(204, 93), "k",
+        new Vector2(217, 100), "l",
+        new Vector2(230, 104), "m",
+        new Vector2(67, 133), "n",
+        new Vector2(81, 129), "o",
+        new Vector2(94, 123), "p",
+        new Vector2(106, 119), "q",
+        new Vector2(119, 115), "r",
+        new Vector2(135, 114), "s",
+        new Vector2(148, 111), "t",
+        new Vector2(159, 116), "u",
+        new Vector2(173, 114), "v",
+        new Vector2(186, 120), "w",
+        new Vector2(201, 128), "x",
+        new Vector2(216, 132), "y",
+        new Vector2(224, 141), "z",
+
+        new Vector2(78, 59),  "yes",
+        new Vector2(219, 59), "no",
+    ];
+
+    /*
     [Embed(source="../../../../rsrc/ouijaboard.png")]
     protected static const IMAGE_BOARD :Class;
-
     protected static const SELECTIONS :Array = [
         new Vector2(47, 117), "a",
         new Vector2(62, 107), "b",
@@ -87,6 +143,7 @@ public class Board extends SceneObject
         new Vector2(63, 54),  "yes",
         new Vector2(217, 55), "no",
     ];
+    */
 
 }
 

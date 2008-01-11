@@ -57,13 +57,9 @@ class GameMode extends AppMode
 
     override protected function setup () :void
     {
-        var mouseTransform :Matrix = (MOUSE_TRANSFORMS[Rand.nextIntRange(0, MOUSE_TRANSFORMS.length, Rand.STREAM_GAME)] as Matrix);
+        _board = new Board();
 
-        var board :Board = new Board();
-        _cursor = new SpiritCursor(board, mouseTransform);
-
-        this.addObject(board, this.modeSprite);
-        this.addObject(_cursor, board.displayObjectContainer);
+        this.addObject(_board, this.modeSprite);
 
         // install a failure timer
         var timerObj :AppObject = new AppObject();
@@ -78,12 +74,21 @@ class GameMode extends AppMode
 
     override protected function enter () :void
     {
+        var mouseTransform :Matrix = (MOUSE_TRANSFORMS[Rand.nextIntRange(0, MOUSE_TRANSFORMS.length, Rand.STREAM_GAME)] as Matrix);
+        _cursor = new SpiritCursor(_board, mouseTransform);
+
+        this.addObject(_cursor, _board.displayObjectContainer);
+
         _cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
+
+        _cursor.selectionTargetIndex = Board.stringToSelectionIndex(_selection);
     }
 
     override protected function exit () :void
     {
         _cursor.removeEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false);
+        this.destroyObject(_cursor.id);
+        _cursor = null;
     }
 
     protected function boardSelectionChanged (e :BoardSelectionEvent) :void
@@ -95,6 +100,7 @@ class GameMode extends AppMode
 
     protected var _selection :String;
     protected var _cursor :Cursor;
+    protected var _board :Board;
 
     protected static const GAME_TIME :Number = 8; // @TODO - this should be controlled by game difficulty
 

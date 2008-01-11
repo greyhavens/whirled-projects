@@ -55,11 +55,9 @@ class GameMode extends AppMode
 
     override protected function setup () :void
     {
-        var board :Board = new Board();
-        _cursor = new Cursor(board);
+        _board = new Board();
 
-        this.addObject(board, this.modeSprite);
-        this.addObject(_cursor, board.displayObjectContainer);
+        this.addObject(_board, this.modeSprite);
 
         _progressText.textColor = 0xFF0000;
         _progressText.defaultTextFormat.size = 20;
@@ -79,12 +77,18 @@ class GameMode extends AppMode
 
     override protected function enter () :void
     {
+        _cursor = new Cursor(_board);
+        this.addObject(_cursor, _board.displayObjectContainer);
         _cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
+
+        _cursor.selectionTargetIndex = Board.stringToSelectionIndex(_word.charAt(_nextWordIndex));
     }
 
     override protected function exit () :void
     {
         _cursor.removeEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false);
+        this.destroyObject(_cursor.id);
+        _cursor = null;
     }
 
     protected function boardSelectionChanged (e :BoardSelectionEvent) :void
@@ -103,6 +107,8 @@ class GameMode extends AppMode
                 // we're done!
                 trace("success!");
                 this.endGame(true);
+            } else {
+                _cursor.selectionTargetIndex = Board.stringToSelectionIndex(_word.charAt(_nextWordIndex));
             }
         }
     }
@@ -110,6 +116,7 @@ class GameMode extends AppMode
     protected var _word :String;
     protected var _nextWordIndex :int;
     protected var _cursor :Cursor;
+    protected var _board :Board;
 
     protected var _progressText :TextField = new TextField();
 
