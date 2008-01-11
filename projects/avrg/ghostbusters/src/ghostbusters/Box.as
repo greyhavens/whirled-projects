@@ -81,14 +81,11 @@ public class Box extends Sprite
     {
         _foreground.visible = false;
 
-        Game.log.debug("WHAT THE FUCK");
-
         if (_fadeOut.isPlaying()) {
             _fadeOut.stopAnimation();
         }
 
         _boxHandler.gotoScene(SCN_BOX_APPEAR, function () :void {
-                Game.log.debug("DONEEEE");
             _fadeIn.startAnimation();
             _boxHandler.gotoScene(SCN_BOX);
             _foreground.visible = true;
