@@ -64,8 +64,9 @@ class GameMode extends AppMode
         this.addObject(boardTimer, _board.displayObjectContainer);
 
         // progress text
-        _progressText = new ProgressText(_word.toLocaleUpperCase());
-        _board.displayObjectContainer.addChild(_progressText);
+        //_progressText = new ProgressText(_word.toLocaleUpperCase());
+        //_board.displayObjectContainer.addChild(_progressText);
+        _board.displayObjectContainer.addChild(_statusText);
 
         // install a failure timer
         var timerObj :AppObject = new AppObject();
@@ -100,8 +101,8 @@ class GameMode extends AppMode
             trace("saw " + _word.charAt(_nextWordIndex));
 
             // update the text
-            //_progressText.text = _word.substr(0, _nextWordIndex + 1).toLocaleUpperCase();
-            _progressText.advanceProgress();
+            _statusText.text = _word.substr(0, _nextWordIndex + 1).toLocaleUpperCase();
+            //_progressText.advanceProgress();
 
             if (++_nextWordIndex >= _word.length) {
                 endGame(true);
@@ -116,7 +117,8 @@ class GameMode extends AppMode
     protected var _cursor :Cursor;
     protected var _board :Board;
 
-    protected var _progressText :ProgressText;
+    //protected var _progressText :ProgressText;
+    protected var _statusText :StatusText = new StatusText();
 
     protected static const GAME_TIME :Number = 12; // @TODO - this should be controlled by game difficulty
 
