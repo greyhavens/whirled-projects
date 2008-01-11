@@ -58,8 +58,11 @@ class GameMode extends AppMode
     override protected function setup () :void
     {
         _board = new Board();
-
         this.addObject(_board, this.modeSprite);
+
+        // create the visual timer
+        var boardTimer :BoardTimer = new BoardTimer(GAME_TIME);
+        this.addObject(boardTimer, _board.displayObjectContainer);
 
         // install a failure timer
         var timerObj :AppObject = new AppObject();

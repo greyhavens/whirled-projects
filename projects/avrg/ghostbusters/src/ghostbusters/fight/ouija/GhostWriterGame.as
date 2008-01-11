@@ -55,10 +55,15 @@ class GameMode extends AppMode
 
     override protected function setup () :void
     {
+        // create the board
         _board = new Board();
-
         this.addObject(_board, this.modeSprite);
 
+        // create the visual timer
+        var boardTimer :BoardTimer = new BoardTimer(GAME_TIME);
+        this.addObject(boardTimer, _board.displayObjectContainer);
+
+        // create the progress text display
         _progressText.textColor = 0xFF0000;
         _progressText.defaultTextFormat.size = 20;
         _progressText.mouseEnabled = false;
