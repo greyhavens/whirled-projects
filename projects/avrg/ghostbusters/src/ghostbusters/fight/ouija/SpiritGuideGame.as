@@ -38,7 +38,6 @@ class GameMode extends AppMode
         var selection :String = Board.getRandomSelectionString();
 
         MainLoop.instance.pushMode(new GameMode(selection));
-        MainLoop.instance.pushMode(new IntroMode("Move to '" + String(selection.toLocaleUpperCase()) + "'"));
         MainLoop.instance.pushMode(new SplashMode("Spirit Guide"));
 
         trace("Spirit Guide selection: " + selection);

@@ -55,12 +55,16 @@ class GameMode extends AppMode
 
     override protected function setup () :void
     {
+        var gameTime :Number = GAME_TIMER_PER_LETTER * _word.length;
+
+        trace("Game time: " + gameTime);
+
         // create the board
         _board = new Board();
         this.addObject(_board, this.modeSprite);
 
         // create the visual timer
-        var boardTimer :BoardTimer = new BoardTimer(GAME_TIME);
+        var boardTimer :BoardTimer = new BoardTimer(gameTime);
         this.addObject(boardTimer, _board.displayObjectContainer);
 
         // progress text
@@ -71,7 +75,7 @@ class GameMode extends AppMode
         // install a failure timer
         var timerObj :AppObject = new AppObject();
         timerObj.addTask(new SerialTask(
-            new TimedTask(GAME_TIME),
+            new TimedTask(gameTime),
             new FunctionTask(
                 function () :void { endGame(false); }
             )));
@@ -120,14 +124,25 @@ class GameMode extends AppMode
     //protected var _progressText :ProgressText;
     protected var _statusText :StatusText = new StatusText();
 
-    protected static const GAME_TIME :Number = 12; // @TODO - this should be controlled by game difficulty
+    protected static const GAME_TIMER_PER_LETTER :Number = 2.5;
 
     protected static const WORDS :Array = [
-        "ghost",
-        "ghoul",
-        "scream",
-        "frog",
+
         "bogey",
-        "evil",
+        "abracadabra",
+        "antediluvian",
+        "astral",
+        "beastly",
+        "chthonic",
+        "eldritch",
+        "ethereal",
+        "gnosis",
+        "macabre",
+        "medieval",
+        "trance",
+        "transcendent",
+        "umbra",
+        "weird",
+
     ];
 }

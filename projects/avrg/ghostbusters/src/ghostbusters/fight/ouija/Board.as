@@ -31,6 +31,11 @@ public class Board extends SceneObject
         return -1;
     }
 
+    public static function getSelectionStringAt (loc :Vector2, epsilon :int) :String
+    {
+        return Board.selectionIndexToString(Board.getSelectionIndexAt(loc, epsilon));
+    }
+
     public static function pointIntersectsSelection (loc :Vector2, epsilon :int, selectionIndex :uint) :Boolean
     {
         if (selectionIndex >= 0 && selectionIndex < SELECTIONS.length / 2) {
@@ -75,35 +80,35 @@ public class Board extends SceneObject
     protected var _sprite :Sprite = new Sprite();
 
     protected static const SELECTIONS :Array = [
-        new Vector2(62, 108), "a",
-        new Vector2(78, 96), "b",
-        new Vector2(95, 93), "c",
-        new Vector2(112, 85),  "d",
-        new Vector2(126, 84), "e",
-        new Vector2(142, 84), "f",
-        new Vector2(157, 83), "g",
-        new Vector2(170, 86), "h",
-        new Vector2(183, 87), "i",
-        new Vector2(194, 90), "j",
-        new Vector2(204, 93), "k",
-        new Vector2(217, 100), "l",
-        new Vector2(230, 104), "m",
-        new Vector2(67, 133), "n",
-        new Vector2(81, 129), "o",
-        new Vector2(94, 123), "p",
-        new Vector2(106, 119), "q",
-        new Vector2(119, 115), "r",
-        new Vector2(135, 114), "s",
-        new Vector2(148, 111), "t",
-        new Vector2(159, 116), "u",
-        new Vector2(173, 114), "v",
-        new Vector2(186, 120), "w",
-        new Vector2(201, 128), "x",
-        new Vector2(216, 132), "y",
-        new Vector2(224, 141), "z",
+        new Vector2(64, 110), "a",
+        new Vector2(79, 97), "b",
+        new Vector2(97, 92), "c",
+        new Vector2(112, 88),  "d",
+        new Vector2(127, 86), "e",
+        new Vector2(144, 85), "f",
+        new Vector2(160, 85), "g",
+        new Vector2(172, 87), "h",
+        new Vector2(185, 88), "i",
+        new Vector2(195, 91), "j",
+        new Vector2(208, 96), "k",
+        new Vector2(219, 102), "l",
+        new Vector2(233, 106), "m",
+        new Vector2(68, 134), "n",
+        new Vector2(82, 132), "o",
+        new Vector2(96, 126), "p",
+        new Vector2(108, 121), "q",
+        new Vector2(123, 118), "r",
+        new Vector2(137, 117), "s",
+        new Vector2(151, 113), "t",
+        new Vector2(161, 118), "u",
+        new Vector2(175, 116), "v",
+        new Vector2(190, 122), "w",
+        new Vector2(203, 130), "x",
+        new Vector2(218, 133), "y",
+        new Vector2(228, 143), "z",
 
-        new Vector2(78, 59),  "yes",
-        new Vector2(219, 59), "no",
+        new Vector2(80, 60),  "yes",
+        new Vector2(222, 60), "no",
     ];
 
     /*

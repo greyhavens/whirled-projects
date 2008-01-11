@@ -20,7 +20,7 @@ public class SplashMode extends AppMode
         // create a rectangle
         var rect :Shape = new Shape();
         rect.graphics.beginFill(0x000000);
-        rect.graphics.drawRect(0, 0, 280, 222);
+        rect.graphics.drawRect(0, 0, 296, 223);
         rect.graphics.endFill();
 
         this.modeSprite.addChild(rect);
