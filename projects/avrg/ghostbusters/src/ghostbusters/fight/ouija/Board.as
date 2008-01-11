@@ -11,7 +11,7 @@ public class Board extends SceneObject
 {
     public function Board()
     {
-        _sprite.addChild(new SWF_BOARD());
+        _sprite.addChild(new Content.SWF_BOARD());
         _sprite.mouseChildren = false;
     }
 
@@ -73,9 +73,6 @@ public class Board extends SceneObject
     }
 
     protected var _sprite :Sprite = new Sprite();
-
-    [Embed(source="../../../../rsrc/Ouija_animated_notimer.swf")]
-    protected static const SWF_BOARD :Class;
 
     protected static const SELECTIONS :Array = [
         new Vector2(62, 108), "a",

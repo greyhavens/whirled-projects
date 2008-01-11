@@ -64,6 +64,11 @@ class GameMode extends AppMode
         var boardTimer :BoardTimer = new BoardTimer(GAME_TIME);
         this.addObject(boardTimer, _board.displayObjectContainer);
 
+        // status text
+        var statusText :StatusText = new StatusText();
+        statusText.text = "Move to '" + _selection.toLocaleUpperCase() + "'";
+        this.modeSprite.addChild(statusText);
+
         // install a failure timer
         var timerObj :AppObject = new AppObject();
         timerObj.addTask(new SerialTask(

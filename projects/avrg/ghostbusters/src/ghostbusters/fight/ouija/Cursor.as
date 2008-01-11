@@ -29,7 +29,7 @@ public class Cursor extends SceneObject
         _board = board;
 
         // add the image, aligned by the center of its viewier
-        var image :Bitmap = new IMAGE_PLANCHETTE();
+        var image :Bitmap = new Content.IMAGE_PLANCHETTE();
         image.x = -CENTER.x;
         image.y = -CENTER.y;
         _sprite.addChild(image);
@@ -197,9 +197,6 @@ public class Cursor extends SceneObject
 
     protected static const GLOW_BUFFER :int = 7;
     protected static const GLOW_COLOR :uint = 0x5BFFFF;
-
-    [Embed(source="../../../../rsrc/ouijaplanchette.png")]
-    protected static const IMAGE_PLANCHETTE :Class;
 }
 
 }

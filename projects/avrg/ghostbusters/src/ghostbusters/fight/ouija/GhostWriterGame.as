@@ -27,7 +27,6 @@ import ghostbusters.fight.ouija.*;
 import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.DisplayObject;
-import flash.text.TextField;
 
 class GameMode extends AppMode
 {
@@ -63,10 +62,8 @@ class GameMode extends AppMode
         var boardTimer :BoardTimer = new BoardTimer(GAME_TIME);
         this.addObject(boardTimer, _board.displayObjectContainer);
 
-        // create the progress text display
-        _progressText.textColor = 0xFF0000;
-        _progressText.defaultTextFormat.size = 20;
-        _progressText.mouseEnabled = false;
+        // progress text
+        _progressText = new ProgressText(_word.toLocaleUpperCase());
         this.modeSprite.addChild(_progressText);
 
         // install a failure timer
@@ -102,16 +99,11 @@ class GameMode extends AppMode
             trace("saw " + _word.charAt(_nextWordIndex));
 
             // update the text
-            _progressText.text = _word.substr(0, _nextWordIndex + 1).toLocaleUpperCase();
-            _progressText.width = _progressText.textWidth + 5;
-            _progressText.height = _progressText.textHeight + 3;
-            _progressText.x = (this.modeSprite.width / 2) - (_progressText.width / 2);
-            _progressText.y = 8;
+            //_progressText.text = _word.substr(0, _nextWordIndex + 1).toLocaleUpperCase();
+            _progressText.advanceProgress();
 
             if (++_nextWordIndex >= _word.length) {
-                // we're done!
-                trace("success!");
-                this.endGame(true);
+                endGame(true);
             } else {
                 _cursor.selectionTargetIndex = Board.stringToSelectionIndex(_word.charAt(_nextWordIndex));
             }
@@ -123,7 +115,7 @@ class GameMode extends AppMode
     protected var _cursor :Cursor;
     protected var _board :Board;
 
-    protected var _progressText :TextField = new TextField();
+    protected var _progressText :ProgressText;
 
     protected static const GAME_TIME :Number = 12; // @TODO - this should be controlled by game difficulty
 

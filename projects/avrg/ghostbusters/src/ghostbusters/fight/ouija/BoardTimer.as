@@ -18,7 +18,7 @@ public class BoardTimer extends SceneObject
     {
         _totalTime = totalTime;
 
-        _swf = new SWF_TIMER();
+        _swf = new Content.SWF_TIMER();
         _swf.mouseEnabled = false;
         _swf.x = TIMER_LOC.x;
         _swf.y = TIMER_LOC.y;
@@ -56,9 +56,6 @@ public class BoardTimer extends SceneObject
     protected var _inited :Boolean;
 
     protected static const TIMER_LOC :Point = new Point(125, 180);
-
-    [Embed(source="../../../../rsrc/Ouija_timer_10f.swf")]
-    protected static const SWF_TIMER :Class;
 
 }
 
