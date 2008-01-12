@@ -76,6 +76,21 @@ class GameMode extends AppMode
     protected function createPicture () :DisplayObject
     {
         var pic :Shape = new Shape();
+
+        // create start and end indicators
+        pic.graphics.lineStyle(0, 0, 0);
+
+        point = _picture[0];
+        pic.graphics.beginFill(0x00FF00);
+        pic.graphics.drawCircle(point.x, point.y, 6);
+        pic.graphics.endFill();
+
+        point = _picture[_picture.length - 1];
+        pic.graphics.beginFill(0xFF0000);
+        pic.graphics.drawCircle(point.x, point.y, 6);
+        pic.graphics.endFill();
+
+        // draw the lines
         pic.graphics.lineStyle(4, 0x000000);
 
         var point :Vector2 = _picture[0];
@@ -91,7 +106,7 @@ class GameMode extends AppMode
 
     override protected function enter () :void
     {
-        this.modeSprite.addChild(new DrawingCursor(this.modeSprite, _picture[0]));
+        this.modeSprite.addChild(new DrawingCursor(this.modeSprite, _picture[0], _picture[_picture.length - 1]));
     }
 
     override protected function exit () :void
@@ -106,10 +121,10 @@ class GameMode extends AppMode
     protected static const PICTURES :Array = [
 
         // straight line
-        [
+        /*[
             new Vector2(70, 130),
             new Vector2(220, 130),
-        ],
+        ],*/
 
         // box
         [
