@@ -5,16 +5,18 @@ import com.whirled.contrib.core.*;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.display.InteractiveObject;
+import flash.display.Shape;
 
-public class DrawingCursor extends Sprite
+public class DrawingCursor extends BasicCursor
 {
     public function DrawingCursor (board :InteractiveObject, startTarget :Vector2, endTarget :Vector2)
     {
-        _board = board;
+        super(board);
+
         _startTarget = startTarget;
         _endTarget = endTarget;
 
-        this.graphics.lineStyle(3, 0x0000FF);
+        _drawing.graphics.lineStyle(3, 0x0000FF);
 
         _board.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoved, false, 0, true);
     }
@@ -55,7 +57,7 @@ public class DrawingCursor extends Sprite
        _points.push(loc);
     }
 
-    protected var _board :InteractiveObject;
+    protected var _drawing :Shape = new Shape();
 
     protected var _startTarget :Vector2;
     protected var _endTarget :Vector2;

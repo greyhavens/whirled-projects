@@ -121,10 +121,10 @@ class GameMode extends AppMode
     protected static const PICTURES :Array = [
 
         // straight line
-        /*[
+        [
             new Vector2(70, 130),
             new Vector2(220, 130),
-        ],*/
+        ],
 
         // box
         [

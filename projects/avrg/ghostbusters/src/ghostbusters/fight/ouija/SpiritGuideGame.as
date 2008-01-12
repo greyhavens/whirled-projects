@@ -83,7 +83,7 @@ class GameMode extends AppMode
     override protected function enter () :void
     {
         var mouseTransform :Matrix = (MOUSE_TRANSFORMS[Rand.nextIntRange(0, MOUSE_TRANSFORMS.length, Rand.STREAM_GAME)] as Matrix);
-        _cursor = new SpiritCursor(_board, mouseTransform);
+        _cursor = new SpiritCursor(_board.interactiveObject, mouseTransform);
 
         this.addObject(_cursor, _board.displayObjectContainer);
 

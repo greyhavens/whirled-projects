@@ -15,31 +15,21 @@ import flash.events.MouseEvent;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.tasks.*;
+import flash.display.InteractiveObject;
 
 /**
  * This should almost certainly be called "Planchette" instead of "Cursor", but who wants to type that word a million times?
  */
-public class Cursor extends SceneObject
+public class Cursor extends BasicCursor
     implements IEventDispatcher
 {
-    public function Cursor (board :Board)
+    public function Cursor (board :InteractiveObject)
     {
-        _ed = new EventDispatcher(this);
-
-        _board = board;
-
-        // add the image, aligned by the center of its viewier
-        var image :Bitmap = new Content.IMAGE_PLANCHETTE();
-        image.x = -CENTER.x;
-        image.y = -CENTER.y;
-        _sprite.addChild(image);
+        super(board);
 
         // create a glow for the image
-        _glowObject = new SimpleSceneObject(this.createGlowBitmap(image));
+        _glowObject = new SimpleSceneObject(this.createGlowBitmap(_cursorImage));
         _glowObject.alpha = 0;
-
-        _sprite.mouseEnabled = false;
-        _sprite.mouseChildren = false;
     }
 
     override public function get displayObject () :DisplayObject
@@ -49,27 +39,21 @@ public class Cursor extends SceneObject
 
     override protected function addedToDB (db :ObjectDB) :void
     {
-        db.addObject(_glowObject, _sprite);
+        super.addedToDB(db);
 
-        _board.interactiveObject.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
-        _sprite.x = _board.displayObject.mouseX;
-        _sprite.y = _board.displayObject.mouseY;
+        db.addObject(_glowObject, _sprite);
     }
 
     override protected function removedFromDB (db:ObjectDB) :void
     {
+        super.removedFromDB(db);
+
         db.destroyObject(_glowObject.id);
     }
 
-    protected function mouseMoved (e :MouseEvent) :void
+    override protected function updateLocation (localX :Number, localY :Number) :void
     {
-        this.updateLocation(_board.displayObject.mouseX, _board.displayObject.mouseY);
-    }
-
-    protected function updateLocation (localX :Number, localY :Number) :void
-    {
-        _sprite.x = localX;
-        _sprite.y = localY;
+        super.updateLocation(localX, localY);
 
         // do we need to reset the selection timer?
         var newLoc :Vector2 = new Vector2(localX, localY);
@@ -111,36 +95,6 @@ public class Cursor extends SceneObject
         _selectionTargetIndex = val;
     }
 
-    // from IEventDispatcher
-    public function addEventListener (type :String, listener :Function, useCapture :Boolean = false, priority :int = 0, useWeakReference :Boolean = false) :void
-    {
-        _ed.addEventListener(type, listener, useCapture, priority, useWeakReference);
-    }
-
-    // from IEventDispatcher
-    public function dispatchEvent (event :Event) :Boolean
-    {
-        return _ed.dispatchEvent(event);
-    }
-
-    // from IEventDispatcher
-    public function hasEventListener (type :String) :Boolean
-    {
-        return _ed.hasEventListener(type);
-    }
-
-    // from IEventDispatcher
-    public function removeEventListener (type :String, listener :Function, useCapture :Boolean = false) :void
-    {
-        _ed.removeEventListener(type, listener, useCapture);
-    }
-
-    // from IEventDispatcher
-    public function willTrigger (type :String) :Boolean
-    {
-        return _ed.willTrigger(type);
-    }
-
     protected function createGlowBitmap (srcBitmap :Bitmap) :Bitmap
     {
         // add a glow around the image
@@ -169,10 +123,7 @@ public class Cursor extends SceneObject
         return glowBitmap;
     }
 
-    protected var _board :Board;
-    protected var _sprite :Sprite = new Sprite();
     protected var _glowObject :SceneObject;
-    protected var _ed :EventDispatcher;
 
     protected var _lastSettledLocation :Vector2 = new Vector2();
     protected var _currentSelectionIndex :int = -1;

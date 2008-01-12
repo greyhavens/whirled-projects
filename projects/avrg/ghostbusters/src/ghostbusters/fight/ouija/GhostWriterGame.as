@@ -85,7 +85,7 @@ class GameMode extends AppMode
 
     override protected function enter () :void
     {
-        _cursor = new Cursor(_board);
+        _cursor = new Cursor(_board.interactiveObject);
         this.addObject(_cursor, _board.displayObjectContainer);
         _cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
 
