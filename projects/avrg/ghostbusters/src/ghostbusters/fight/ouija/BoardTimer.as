@@ -20,6 +20,7 @@ public class BoardTimer extends SceneObject
 
         _swf = new Content.SWF_TIMER();
         _swf.mouseEnabled = false;
+        _swf.mouseChildren = false;
         _swf.x = TIMER_LOC.x;
         _swf.y = TIMER_LOC.y;
     }

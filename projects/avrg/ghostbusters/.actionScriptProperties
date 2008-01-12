@@ -32,6 +32,7 @@
 <applications>
   <application path="ghostbusters/fight/ouija/GhostWriterGame.as"/>
   <application path="ghostbusters/fight/ouija/SpiritGuideGame.as"/>
+  <application path="ghostbusters/fight/ouija/PictoGeistGame.as"/>
 </applications>
 <modules/>
 <buildCSSFiles/>

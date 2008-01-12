@@ -98,15 +98,6 @@ public class Cursor extends SceneObject
 
     protected function selectionTimerExpired () :void
     {
-        // determine our selection
-        /*var newSelection :int = Board.getSelectionIndexAt(new Vector2(_sprite.x, _sprite.y), SELECTION_EPSILON);
-        if (newSelection != _currentSelectionIndex && newSelection >= 0) {
-            _currentSelectionIndex = newSelection;
-            _ed.dispatchEvent(new BoardSelectionEvent(_currentSelectionIndex));
-            trace("new selection :" + Board.selectionIndexToString(_currentSelectionIndex));
-        }*/
-
-
         _ed.dispatchEvent(new BoardSelectionEvent(_selectionTargetIndex));
     }
 

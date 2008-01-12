@@ -15,6 +15,9 @@ public class Content
 
     [Embed(source="../../../../rsrc/Ouija_timer_10f.swf")]
     public static const SWF_TIMER :Class;
+
+    [Embed(source="../../../../rsrc/pictogeistboard.png")]
+    public static const IMAGE_PICTOBOARD :Class;
 }
 
 }
