@@ -41,12 +41,17 @@ public class WeightedTable
 
     public function nextEntry (randStreamId :int = -1) :*
     {
+        if (_table.length == 0) {
+            return undefined;
+        }
+
         var val :Number = Rand.nextNumberRange(0, _maxVal, (randStreamId >= 0 ? randStreamId : _defaultRandStreamId));
         return this.findEntry(val).data;
     }
 
     protected function findEntry (val :Number) :TableEntry
     {
+        Assert.isTrue(_table.length > 0);
         Assert.isTrue(val >= 0 && val < _maxVal);
 
         var lo :uint = 0;
