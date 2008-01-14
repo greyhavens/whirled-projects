@@ -5,6 +5,8 @@ package {
 
 import popcraft.*;
 import popcraft.net.*;
+import popcraft.util.*;
+
 import com.whirled.contrib.core.*;
 
 import com.threerings.util.Assert;
