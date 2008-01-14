@@ -28,7 +28,9 @@ public class PlayerData
     public function setResourceAmount (resourceType :uint, newAmount :int) :void
     {
         Assert.isTrue(resourceType < _resources.length);
-        _resources[resourceType] = Math.max(newAmount, 0);
+
+        // resources can now go below 0
+        _resources[resourceType] = newAmount; //Math.max(newAmount, 0);
     }
 
     public function offsetResourceAmount (resourceType :uint, offset :int) :void
