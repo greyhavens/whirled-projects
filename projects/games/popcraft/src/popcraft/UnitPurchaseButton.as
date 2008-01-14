@@ -31,13 +31,15 @@ public class UnitPurchaseButton extends DisablingButton
         var face :Sprite = new Sprite();
 
         var icon :DisplayObject = new iconClass();
+        var scale :Number = (WIDTH / icon.width);
+        icon.scaleX = scale;
+        icon.scaleY = scale;
         icon.alpha = iconAlpha;
 
         face.addChild(icon);
 
-        var padding :int = 5;
-        var w :Number = icon.width + 2 * padding;
-        var h :Number = icon.height + 2 * padding;
+        var w :Number = icon.width;
+        var h :Number = icon.height;
 
         // draw our button background (and outline)
         face.graphics.beginFill(background);
@@ -45,11 +47,13 @@ public class UnitPurchaseButton extends DisablingButton
         face.graphics.drawRect(0, 0, w, h);
         face.graphics.endFill();
 
-        icon.x = padding;
-        icon.y = padding;
+        icon.x = 0;
+        icon.y = 0;
 
         return face;
     }
+
+    protected static const WIDTH :uint = 40;
 
     protected static const COLOR_OUTLINE :uint = 0x000000;
     protected static const COLOR_BG_UP :uint = 0xFFD800;

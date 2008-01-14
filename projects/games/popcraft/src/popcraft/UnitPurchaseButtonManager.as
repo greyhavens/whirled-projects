@@ -11,24 +11,27 @@ public class UnitPurchaseButtonManager extends AppObject
 {
     public function UnitPurchaseButtonManager ()
     {
+        var loc :Point = Constants.FIRST_UNIT_BUTTON_LOC.clone();
+
         for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
 
             var button :UnitPurchaseButton = new UnitPurchaseButton(unitType);
 
             button.addEventListener(MouseEvent.CLICK, createButtonListener(unitType));
 
-            var buttonLoc :Point = (Constants.UNIT_BUTTON_LOCS[unitType] as Point);
-            button.x = buttonLoc.x;
-            button.y = buttonLoc.y;
+            button.x = loc.x;
+            button.y = loc.y;
 
             GameMode.instance.modeSprite.addChild(button);
 
             _buttons.push(button);
 
             var meter :UnitPurchaseMeter = new UnitPurchaseMeter(unitType);
-            meter.displayObject.x = buttonLoc.x;
-            meter.displayObject.y = buttonLoc.y + button.height + 2;
+            meter.displayObject.x = button.x;
+            meter.displayObject.y = button.y + button.height + 2;
             GameMode.instance.addObject(meter, GameMode.instance.modeSprite);
+
+            loc.x += button.width + 2;
         }
     }
 

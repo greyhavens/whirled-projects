@@ -363,7 +363,8 @@ public class GameMode extends AppMode
     {
         var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
         for (var resourceType:uint = 0; resourceType < creatureCosts.length; ++resourceType) {
-            if (_playerData.getResourceAmount(resourceType) < creatureCosts[resourceType]) {
+            var cost :int = creatureCosts[resourceType];
+            if (cost > 0 && cost > playerData.getResourceAmount(resourceType)) {
                 return false;
             }
         }

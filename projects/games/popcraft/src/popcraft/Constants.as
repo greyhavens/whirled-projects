@@ -25,11 +25,14 @@ public class Constants
     ];
 
     /* Images */
-    [Embed(source="../../rsrc/melee.png")]
-    public static const IMAGE_MELEE :Class;
+    [Embed(source="../../rsrc/char_grunt.png")]
+    public static const IMAGE_GRUNT :Class;
 
-    [Embed(source="../../rsrc/ranged.png")]
-    public static const IMAGE_RANGED :Class;
+    [Embed(source="../../rsrc/char_heavy.png")]
+    public static const IMAGE_HEAVY :Class;
+
+    [Embed(source="../../rsrc/char_sapper.png")]
+    public static const IMAGE_SAPPER :Class;
 
     [Embed(source="../../rsrc/base.png")]
     public static const IMAGE_BASE :Class;
@@ -90,9 +93,10 @@ public class Constants
     /* Units */
 
     public static const UNIT_TYPE_GRUNT :uint = 0;
-    public static const UNIT_TYPE_RANGED :uint = 1;
+    public static const UNIT_TYPE_HEAVY :uint = 1;
+    public static const UNIT_TYPE_SAPPER :uint = 2;
 
-    public static const UNIT_TYPE__CREATURE_LIMIT :uint = 2;
+    public static const UNIT_TYPE__CREATURE_LIMIT :uint = 3;
 
     public static const UNIT_TYPE_BASE :uint = 2;
 
@@ -103,11 +107,11 @@ public class Constants
     public static const UNIT_DATA :Array = [
 
             new UnitData (
-                "melee"                     // name
+                "grunt"                     // name
                 , [25,   25,  0,   0]        // resource costs (brown, gold, blue, pink)
-                , IMAGE_MELEE               // image
+                , IMAGE_GRUNT               // image
                 , -1, new IntRange(0, 0)   // wanderEvery, wanderRange
-                , 64                        // move speed (pixels/second)
+                , 25                        // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_MELEE, 0.8, DAMAGE_TYPE_PROJECTILE, 0.7, DAMAGE_TYPE_BASE, 0.8] )   // armor
                 , new UnitAttack(DAMAGE_TYPE_MELEE, new NumRange(10, 10), UNIT_CLASS_GROUND, 1, 35) // attack
@@ -119,9 +123,25 @@ public class Constants
             ,
 
             new UnitData (
-                "ranged"                    // name
+                "heavy"                     // name
                 , [0,   0,  25,   25]        // resource costs (brown, gold, blue, pink)
-                , IMAGE_RANGED              // image
+                , IMAGE_HEAVY               // image
+                , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
+                , 25                        // move speed (pixels/second)
+                , 100                       // health
+                , new UnitArmor( [DAMAGE_TYPE_MELEE, 1, DAMAGE_TYPE_PROJECTILE, 1, DAMAGE_TYPE_BASE, 1] )   // armor
+                , new UnitAttack(DAMAGE_TYPE_PROJECTILE, new NumRange(10, 10), UNIT_CLASS__ALL, 1, 50) // attack
+                , 30                        // collision radius
+                , 90                        // detect radius
+                , 180                       // lose interest radius
+            )
+
+            ,
+
+            new UnitData (
+                "sapper"                     // name
+                , [0,   15,  0,   15]        // resource costs (brown, gold, blue, pink)
+                , IMAGE_SAPPER               // image
                 , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
                 , 40                        // move speed (pixels/second)
                 , 100                       // health
@@ -156,10 +176,7 @@ public class Constants
     public static const PUZZLE_BOARD_LOC :Point = new Point(20, 50);
     public static const BATTLE_BOARD_LOC :Point = new Point(200, 0);
 
-    public static const UNIT_BUTTON_LOCS :Array = [
-        new Point(0, 400),
-        new Point(50, 400)
-    ];
+    public static const FIRST_UNIT_BUTTON_LOC :Point = new Point(12, 400);
 
     public static function getPlayerBaseLocations (numPlayers :uint) :Array // of Vector2s
     {
