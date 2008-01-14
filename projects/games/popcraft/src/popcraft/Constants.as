@@ -76,10 +76,10 @@ public class Constants
     public static const RESOURCE__LIMIT :uint = 4;
 
     public static const RESOURCE_TYPES :Array = [
-        new ResourceType("brown", 0xCF7A00),
-        new ResourceType("gold", 0xF8F500),
-        new ResourceType("blue", 0x00F8EF),
-        new ResourceType("pink", 0xFF77BA)
+        new ResourceType("brown", 0xCF7A00, 1),
+        new ResourceType("gold", 0xF8F500, 0.5),
+        new ResourceType("blue", 0x00F8EF, 1),
+        new ResourceType("pink", 0xFF77BA, 0.5)
     ];
 
     public static function getResource (type :uint) :ResourceType {

@@ -24,6 +24,10 @@ public class WeightedTable
             var data :* = dataTable[i * 2];
             var weight :Number = dataTable[(i * 2) + 1];
 
+            if (weight <= 0) {
+                continue;
+            }
+
             var entry :TableEntry = new TableEntry();
             entry.min = _maxVal;
             entry.max = _maxVal + weight;

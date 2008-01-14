@@ -3,6 +3,7 @@ package popcraft.puzzle {
 import com.threerings.util.Assert;
 
 import popcraft.*;
+import popcraft.util.*;
 
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
@@ -28,6 +29,15 @@ public class PuzzleBoard extends SceneObject
         _rows = rows;
         _tileSize = tileSize;
 
+        // create the resource generator
+        var table :Array = new Array();
+        for (var resType: uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
+            table.push(resType);
+            table.push(Constants.getResource(resType).relativeWeight);
+        }
+
+        _resourceGenerator = new WeightedTable(table, Rand.STREAM_COSMETIC);
+
         // create the visual representation of the board
         _sprite = new Sprite();
         _sprite.graphics.clear();
@@ -36,9 +46,12 @@ public class PuzzleBoard extends SceneObject
         _sprite.graphics.endFill();
         _sprite.mouseEnabled = true;
 
+
+        // wow, i sure wish flash would allow scoped variable declarations...
+        var i :int;
+
         // create the board, and populate it with a random distribution of resources
         _board = new Array(_cols * _rows);
-        var i:int;
         for (i = 0; i < _cols * _rows; ++i) {
             var piece :Piece = createNewPieceOnBoard(i);
 
@@ -67,7 +80,7 @@ public class PuzzleBoard extends SceneObject
         Assert.isTrue(boardIndex >= 0 && boardIndex < _board.length);
         Assert.isNull(_board[boardIndex]);
 
-        var resourceType :uint = Rand.nextIntRange(0, Constants.RESOURCE_TYPES.length, Rand.STREAM_COSMETIC);
+        var resourceType :uint = _resourceGenerator.nextEntry();
         var piece :Piece = new Piece(resourceType, boardIndex);
 
         piece.displayObject.x = getPieceXLoc(idxToX(boardIndex));
@@ -369,6 +382,8 @@ public class PuzzleBoard extends SceneObject
     protected var _board :Array;
 
     protected var _resolvingClears :Boolean;
+
+    protected var _resourceGenerator :WeightedTable;
 }
 
 }
