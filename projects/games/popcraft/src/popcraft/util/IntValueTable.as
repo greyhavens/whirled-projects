@@ -1,5 +1,4 @@
-package popcraft
-{
+package popcraft.util {
 
 import com.threerings.util.Assert;
 

@@ -7,6 +7,7 @@ import com.whirled.contrib.core.util.*;
 
 import flash.geom.Point;
 
+import popcraft.util.*;
 import popcraft.battle.*;
 
 public class Constants
@@ -163,7 +164,7 @@ public class Constants
     public static function getPlayerBaseLocations (numPlayers :uint) :Array // of Vector2s
     {
         // return an array of Vector2 pairs - for each player, a base loc and an initial waypoint loc
-        
+
         switch (numPlayers) {
         case 2:
             return [
@@ -171,7 +172,7 @@ public class Constants
                 new Vector2(452, 250), new Vector2(405, 250)    // middle right
              ];
              break;
-             
+
         case 3:
             return [
                 new Vector2(48, 68), new Vector2(75, 115),       // top left
@@ -179,7 +180,7 @@ public class Constants
                 new Vector2(452, 250), new Vector2(405, 250)    // middle right
             ];
             break;
-            
+
         case 4:
             return [
                 new Vector2(48, 68), new Vector2(75, 115),       // top left

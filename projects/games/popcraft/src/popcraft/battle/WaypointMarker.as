@@ -1,6 +1,7 @@
 package popcraft.battle {
 
 import popcraft.*;
+import popcraft.util.*;
 
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.tasks.*;

@@ -1,4 +1,4 @@
-package popcraft {
+package popcraft.util {
 
 import flash.display.BitmapData
 import flash.display.Bitmap;
