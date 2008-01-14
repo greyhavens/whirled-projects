@@ -22,7 +22,7 @@ public class WaypointMarker extends SceneObject
         _sprite = new Sprite();
 
          // add a tinted flag image
-        var image :Bitmap = Util.createTintedBitmap(
+        var image :Bitmap = ImageUtil.createTintedBitmap(
             new Constants.IMAGE_WAYPOINT(),
             Constants.PLAYER_COLORS[owningPlayerId]);
 

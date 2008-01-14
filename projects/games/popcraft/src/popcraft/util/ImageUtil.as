@@ -7,7 +7,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.filters.ColorMatrixFilter;
 
-public class Util
+public class ImageUtil
 {
     public static function createGlowBitmap (srcBitmap :Bitmap, color :uint) :Bitmap
     {

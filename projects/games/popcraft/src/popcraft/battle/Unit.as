@@ -40,7 +40,7 @@ public class Unit extends SceneObject
 
     protected function createOwningPlayerGlowForBitmap (bitmap :Bitmap) :Bitmap
     {
-        return Util.createGlowBitmap(bitmap, Constants.PLAYER_COLORS[_owningPlayerId] as uint);
+        return ImageUtil.createGlowBitmap(bitmap, Constants.PLAYER_COLORS[_owningPlayerId] as uint);
     }
 
     public function isUnitInDetectRange (unit :Unit) :Boolean

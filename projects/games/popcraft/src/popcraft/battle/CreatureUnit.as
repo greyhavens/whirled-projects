@@ -38,7 +38,7 @@ public class CreatureUnit extends Unit
         _sprite.addChild(image);
 
         // add a glow around the image
-        _sprite.addChild(Util.createGlowBitmap(image, Constants.PLAYER_COLORS[_owningPlayerId] as uint));
+        _sprite.addChild(ImageUtil.createGlowBitmap(image, Constants.PLAYER_COLORS[_owningPlayerId] as uint));
 
         // health meter
         _healthMeter = new RectMeter();
