@@ -1,10 +1,12 @@
 package popcraft.battle.ai {
+    import popcraft.battle.Unit;
 
-public class AttackEnemyTask extends AITaskBase
+
+public class AttackUnitTask extends AITaskBase
 {
-    public function AttackEnemyTask (enemyId :uint)
+    public function AttackUnitTask (unitId :uint)
     {
-        _enemyId = enemyId;
+        _unitId = unitId;
     }
 
     override public function update (dt :Number, obj :AppObject) :Boolean
@@ -12,11 +14,9 @@ public class AttackEnemyTask extends AITaskBase
         super.update(dt, obj);
 
         var unit :CreatureUnit = (obj as CreatureUnit);
-        var enemy :CreatureUnit = (GameMode.instance.netObjects.getObject(_enemyId) as CreatureUnit);
+        var enemy :Unit = (GameMode.instance.netObjects.getObject(_unitId) as Unit);
 
-        // if the enemy is dead, or no longer holds our interest,
-        // we'll start wandering towards the opponent's base,
-        // keeping our eyes out for enemies on the way
+        // is the enemy dead? does it still hold our interest?
         if (null == enemy || !unit.isUnitInInterestRange(enemy)) {
             return true;
         }
@@ -36,10 +36,10 @@ public class AttackEnemyTask extends AITaskBase
 
     override public function clone () :ObjectTask
     {
-        return new EnemyAttackTask(_enemyId);
+        return new AttackUnitTask(_unitId);
     }
 
-    protected var _enemyId :uint;
+    protected var _unitId :uint;
 
 }
 
