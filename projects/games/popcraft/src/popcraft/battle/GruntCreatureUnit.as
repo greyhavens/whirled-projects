@@ -23,7 +23,23 @@ public class GruntCreatureUnit extends CreatureUnit
         return _gruntAI;
     }
 
+    public function set escort (heavy :HeavyCreatureUnit) :void
+    {
+        _escortId = heavy.id;
+    }
+
+    public function get escort () :HeavyCreatureUnit
+    {
+        return GameMode.instance.netObjects.getObject(_escortId) as HeavyCreatureUnit;
+    }
+
+    public function get hasEscort () :Boolean
+    {
+        return (null != this.escort);
+    }
+
     protected var _gruntAI :GruntAI;
+    protected var _escortId :uint;
 }
 
 }

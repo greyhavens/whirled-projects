@@ -12,6 +12,9 @@ public class UnitFactory
         case Constants.UNIT_TYPE_GRUNT:
             return new GruntCreatureUnit(owningPlayerId);
 
+        case Constants.UNIT_TYPE_HEAVY:
+            return new HeavyCreatureUnit(owningPlayerId);
+
         default:
             return new CreatureUnit(unitType, owningPlayerId);
         }
