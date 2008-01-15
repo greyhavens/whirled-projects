@@ -12,13 +12,10 @@ import com.whirled.contrib.core.util.*;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.Bitmap;
-import com.whirled.contrib.core.tasks.FunctionTask;
-import flash.geom.Point;
-import flash.filters.GlowFilter;
-import flash.geom.Rectangle;
 import flash.display.BitmapData;
-import mx.effects.Move;
-import popcraft.battle.ai.AITaskBase;
+
+import flash.geom.Point;
+import flash.geom.Rectangle;
 
 public class CreatureUnit extends Unit
 {
@@ -65,32 +62,11 @@ public class CreatureUnit extends Unit
         _sprite.x = spawnLoc.x;
         _sprite.y = spawnLoc.y;
 
-        // kick off our AI!
-        // we'll start by moving directly to our waypoint.
-        // once we get there, we'll move towards an enemy base, and keep our eyes out for enemies
-        /*this.addNamedTask("ai", new SerialTask(
-            new MoveToWaypointTask(),
-            createEnemyDetectLoopSlashAttackEnemyBaseTask()));*/
     }
 
     override protected function removedFromDB (db :ObjectDB) :void
     {
         _healthMeter.destroySelf();
-    }
-
-    // this is a hugely descriptive name because I don't want to forget what it does
-    public function createEnemyDetectLoopSlashAttackEnemyBaseTask () :ObjectTask
-    {
-        var task :ParallelTask = new ParallelTask();
-        task.addTask(new AttackBaseTask(this.findEnemyBaseToAttack()));
-
-        var detectLoop :RepeatingTask = new RepeatingTask();
-        detectLoop.addTask(new EnemyDetectTask());
-        detectLoop.addTask(new TimedTask(ENEMY_DETECT_LOOP_TIME));
-
-        task.addTask(detectLoop);
-
-        return task;
     }
 
     public function moveTo (x :int, y :int) :void
@@ -179,22 +155,6 @@ public class CreatureUnit extends Unit
         return g_groups;
     }
 
-    // returns an enemy within our detect radius, or null if no enemy was found
-    public function findEnemyToAttack () :CreatureUnit
-    {
-        var allCreatures :Array = GameMode.instance.netObjects.getObjectsInGroup(CreatureUnit.GROUP_NAME);
-
-        // find the first creature that satisifies our requirements
-        // this function is probably horribly slow
-        for each (var creature :CreatureUnit in allCreatures) {
-            if ((creature.owningPlayerId != this.owningPlayerId) && this.isUnitInDetectRange(creature)) {
-                return creature;
-            }
-        }
-
-        return null;
-    }
-
     // returns an enemy base.
     // @TODO: make this work with multiple bases and destroyed bases
     public function findEnemyBaseToAttack () :uint
@@ -227,212 +187,6 @@ public class CreatureUnit extends Unit
     protected var _aiRoot :AITask;
 
     protected static var g_groups :Array;
-
-    protected static const ENEMY_DETECT_LOOP_TIME :Number = 1;
-
-    // AI state machine
-    protected static const STATE_ATTACKBASE :uint = 0;
-    protected static const STATE_ATTACKBASE_MOVE :uint = 1;
-    protected static const STATE_ATTACKBASE_ATTACK :uint = 2;
 }
 
-}
-
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.util.*;
-import flash.geom.Point;
-import popcraft.*;
-import popcraft.battle.PlayerBaseUnit;
-import popcraft.battle.CreatureUnit;
-import popcraft.battle.ai.AITask;
-
-class EnemyDetectTask implements ObjectTask
-{
-    public function update (dt :Number, obj :AppObject) :Boolean
-    {
-        var unit :CreatureUnit = (obj as CreatureUnit);
-
-        // check to see if there are any enemies nearby
-        var enemy :CreatureUnit = unit.findEnemyToAttack();
-
-        if (null != enemy) {
-            // we found an enemy! stop doing whatever we were doing before, and attack
-            unit.removeNamedTasks("ai");
-            unit.addNamedTask("ai", new EnemyAttackTask(enemy.id));
-        }
-
-        // this task always completes immediately
-        return true;
-    }
-
-    public function clone () :ObjectTask
-    {
-        return new EnemyDetectTask();
-    }
-
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
-    }
-}
-
-class EnemyAttackTask
-    implements ObjectTask
-{
-    public function EnemyAttackTask (enemyId :uint)
-    {
-        _enemyId = enemyId;
-    }
-
-    public function update (dt :Number, obj :AppObject) :Boolean
-    {
-        var unit :CreatureUnit = (obj as CreatureUnit);
-
-        var enemy :CreatureUnit = (GameMode.instance.netObjects.getObject(_enemyId) as CreatureUnit);
-
-        // if the enemy is dead, or no longer holds our interest,
-        // we'll start wandering towards the opponent's base,
-        // keeping our eyes out for enemies on the way
-        if (null == enemy || !unit.isUnitInInterestRange(enemy)) {
-            unit.removeNamedTasks("ai");
-            unit.addNamedTask("ai", unit.createEnemyDetectLoopSlashAttackEnemyBaseTask());
-
-            return true;
-        }
-
-        // the enemy is still alive. Can we attack?
-        if (unit.canAttackUnit(enemy, unit.unitData.attack)) {
-            unit.removeNamedTasks("move");
-            unit.sendAttack(enemy, unit.unitData.attack);
-        } else {
-            // should we try to get closer to the enemy?
-            var attackLoc :Vector2 = unit.findNearestAttackLocation(enemy, unit.unitData.attack);
-            unit.moveTo(attackLoc.x, attackLoc.y);
-        }
-
-        return false;
-    }
-
-    public function clone () :ObjectTask
-    {
-        return new EnemyAttackTask(_enemyId);
-    }
-
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
-    }
-
-    protected var _enemyId :uint;
-}
-
-class MoveToWaypointTask
-    implements ObjectTask
-{
-    public function update (dt :Number, obj :AppObject) :Boolean
-    {
-        var unit :CreatureUnit = (obj as CreatureUnit);
-
-        if (!_inited) {
-
-            // find our waypoint
-            var waypointLoc :Point = GameMode.instance.getWaypointLoc(unit.owningPlayerId);
-
-            // move there
-            unit.moveTo(waypointLoc.x, waypointLoc.y);
-
-            _inited = true;
-        }
-
-        return (!unit.isMoving());
-    }
-
-    public function clone () :ObjectTask
-    {
-        return new MoveToWaypointTask();
-    }
-
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
-    }
-
-    protected var _inited :Boolean;
-}
-
-class AttackBaseTask
-    implements ObjectTask
-{
-    public function AttackBaseTask (targetBaseId :uint)
-    {
-        _targetBaseId = targetBaseId;
-    }
-
-    public function update (dt :Number, obj :AppObject) :Boolean
-    {
-        var unit :CreatureUnit = (obj as CreatureUnit);
-
-        switch (_state) {
-        case STATE_INIT:
-            handleInit(unit);
-            break;
-
-        case STATE_MOVING:
-            handleMoving(unit);
-            break;
-
-        case STATE_ATTACKING:
-            handleAttacking(unit);
-            break;
-        }
-
-        return (STATE_COMPLETE == _state);
-    }
-
-    public function clone () :ObjectTask
-    {
-        return new AttackBaseTask(_targetBaseId);
-    }
-
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
-    }
-
-    protected function handleInit (unit :CreatureUnit) :void
-    {
-        // pick a location to attack at
-        var base :PlayerBaseUnit = (GameMode.instance.netObjects.getObject(_targetBaseId) as PlayerBaseUnit);
-
-        var moveLoc :Vector2 = unit.findNearestAttackLocation(base, unit.unitData.attack);
-        unit.moveTo(moveLoc.x, moveLoc.y);
-
-        _state = STATE_MOVING;
-    }
-
-    protected function handleMoving (unit :CreatureUnit) :void
-    {
-        // just wait till we're done moving
-        if (!unit.isMoving()) {
-            _state = STATE_ATTACKING;
-        }
-    }
-
-    protected function handleAttacking (unit :CreatureUnit) :void
-    {
-        // attack the base
-        var target :PlayerBaseUnit = (GameMode.instance.netObjects.getObject(_targetBaseId) as PlayerBaseUnit);
-
-        if (null != target && unit.canAttackUnit(target, unit.unitData.attack)) {
-            unit.sendAttack(target, unit.unitData.attack);
-        }
-    }
-
-    protected var _targetBaseId :uint;
-    protected var _state :int = STATE_INIT;
-
-    protected static const STATE_INIT :int = -1;
-    protected static const STATE_MOVING :int = 0;
-    protected static const STATE_ATTACKING :int = 1;
-    protected static const STATE_COMPLETE :int = 2;
 }
