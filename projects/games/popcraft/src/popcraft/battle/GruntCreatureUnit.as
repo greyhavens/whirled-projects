@@ -2,6 +2,7 @@ package popcraft.battle {
 
 import popcraft.*;
 import popcraft.battle.*;
+import popcraft.battle.ai.*;
 
 /**
  * Grunts are the meat-and-potatoes offensive unit of the game.
@@ -11,41 +12,18 @@ import popcraft.battle.*;
  */
 public class GruntCreatureUnit extends CreatureUnit
 {
-    public function GruntCreatureUnit(unitType:uint, owningPlayerId:uint)
+    public function GruntCreatureUnit(owningPlayerId:uint)
     {
         super(Constants.UNIT_TYPE_GRUNT, owningPlayerId);
-
-        // start by moving towards an enemy base to attack it
-        this.beginAttackBaseAI();
+        _gruntAI = new GruntAI(this);
     }
 
-    protected function beginAttackBaseAI () :void
+    override protected function get aiRoot () :AITask
     {
-        this.removeNamedTasks("ai");
-        this.addNamedTask("ai", new AttackBaseTask(this.findEnemyBaseToAttack()));
-        _state = STATE_ATTACKBASE;
+        return _gruntAI;
     }
 
-    protected function beginAttackEnemyAI (enemyId :uint) :void
-    {
-        this.removeNamedTasks("ai");
-    }
-
-    override public function receiveAttack (sourceId :uint, attack :UnitAttack) :void
-    {
-        super.receiveAttack(sourceId, attack);
-
-        // if we're attacked, and we were trying to attack a player base, retaliate
-        if (STATE_ATTACKBASE == _state) {
-            this.beginAttackEnemyAI(sourceId);
-        }
-
-    }
-
-    protected var _state :uint;
-
-    protected static const STATE_ATTACKBASE :uint = 0;
-    protected static const STATE_ATTACKENEMY :uint = 1;
+    protected var _gruntAI :GruntAI;
 }
 
 }
@@ -53,112 +31,57 @@ public class GruntCreatureUnit extends CreatureUnit
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.util.*;
 import flash.geom.Point;
+
 import popcraft.*;
-import popcraft.battle.PlayerBaseUnit;
-import popcraft.battle.CreatureUnit;
+import popcraft.battle.*;
+import popcraft.battle.ai.*;
 
-class AttackBaseTask extends ObjectTask
+/**
+ * Goals:
+ * (Priority 1) Attack enemy base
+ * (Priority 2) Attack enemy aggressors (responds to attacks, but doesn't initiate fights with other units)
+ */
+class GruntAI extends AITaskBase
 {
-    public function AttackBaseTask (targetBaseId :uint)
+    public function GruntAI (unit :GruntCreatureUnit)
     {
-        _targetBaseId = targetBaseId;
+        _unit = unit;
+
+        this.beginAttackBase();
     }
 
-    override public function update (dt :Number, obj :AppObject) :Boolean
+    protected function beginAttackBase () :void
     {
-        var unit :CreatureUnit = (obj as CreatureUnit);
+        this.clearSubtasks();
+        this.addSubtask(new AttackBaseTask(_unit.findEnemyBaseToAttack()));
+    }
 
-        switch (_state) {
-        case STATE_INIT:
-            handleInit(unit);
-            break;
+    protected function beginAttackCreature (creatureId :uint) :void
+    {
+        this.clearSubtasks();
 
-        case STATE_MOVING:
-            handleMoving(unit);
-            break;
+        var taskQueue :AITaskQueue = new AITaskQueue(false);
+        taskQueue.addTask(new AttackCreatureTask(creatureId));
+        taskQueue.addTask(new AttackBaseTask(_unit.findEnemyBaseToAttack()));
 
-        case STATE_ATTACKING:
-            handleAttacking(unit);
-            break;
+        this.addSubtask(taskQueue);
+    }
+
+    override public function receiveMessage (msg :ObjectMessage) :Boolean
+    {
+        if (this.hasSubtaskNamed(AttackBaseTask.NAME) && msg.name == CreatureUnit.MSG_ATTACKED) {
+            this.beginAttackCreature(msg.data);
+            return false;
         }
 
-        return (STATE_COMPLETE == _state);
+        return super.receiveMessage(msg);
     }
 
-    protected function handleInit (unit :CreatureUnit) :void
+    override public function get name () :String
     {
-        // pick a location to attack at
-        var base :PlayerBaseUnit = (GameMode.instance.netObjects.getObject(_targetBaseId) as PlayerBaseUnit);
-
-        var moveLoc :Vector2 = unit.findNearestAttackLocation(base, unit.unitData.attack);
-        unit.moveTo(moveLoc.x, moveLoc.y);
-
-        _state = STATE_MOVING;
+        return "GruntAI";
     }
 
-    protected function handleMoving (unit :CreatureUnit) :void
-    {
-        // just wait till we're done moving
-        if (!unit.isMoving()) {
-            _state = STATE_ATTACKING;
-        }
-    }
-
-    protected function handleAttacking (unit :CreatureUnit) :void
-    {
-        // attack the base
-        var target :PlayerBaseUnit = (GameMode.instance.netObjects.getObject(_targetBaseId) as PlayerBaseUnit);
-
-        if (null != target && unit.canAttackUnit(target, unit.unitData.attack)) {
-            unit.sendAttack(target, unit.unitData.attack);
-        }
-    }
-
-
-    protected var _targetBaseId :uint;
-    protected var _state :int = STATE_INIT;
-
-    protected static const STATE_INIT :int = -1;
-    protected static const STATE_MOVING :int = 0;
-    protected static const STATE_ATTACKING :int = 1;
-    protected static const STATE_COMPLETE :int = 2;
-}
-
-class EnemyAttackTask extends ObjectTask
-{
-    public function EnemyAttackTask (enemyId :uint)
-    {
-        _enemyId = enemyId;
-    }
-
-    override public function update (dt :Number, obj :AppObject) :Boolean
-    {
-        var unit :CreatureUnit = (obj as CreatureUnit);
-
-        var enemy :CreatureUnit = (GameMode.instance.netObjects.getObject(_enemyId) as CreatureUnit);
-
-        // if the enemy is dead, or no longer holds our interest,
-        // we'll start wandering towards the opponent's base,
-        // keeping our eyes out for enemies on the way
-        if (null == enemy || !unit.isUnitInInterestRange(enemy)) {
-            unit.removeNamedTasks("ai");
-            unit.addNamedTask("ai", unit.createEnemyDetectLoopSlashAttackEnemyBaseTask());
-
-            return true;
-        }
-
-        // the enemy is still alive. Can we attack?
-        if (unit.canAttackUnit(enemy, unit.unitData.attack)) {
-            unit.removeNamedTasks("move");
-            unit.sendAttack(enemy, unit.unitData.attack);
-        } else {
-            // should we try to get closer to the enemy?
-            var attackLoc :Vector2 = unit.findNearestAttackLocation(enemy, unit.unitData.attack);
-            unit.moveTo(attackLoc.x, attackLoc.y);
-        }
-
-        return false;
-    }
-
-    protected var _enemyId :uint;
+    protected var _unit :GruntCreatureUnit;
+    protected var _state :uint;
 }

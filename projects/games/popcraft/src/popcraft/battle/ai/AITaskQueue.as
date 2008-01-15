@@ -4,7 +4,6 @@ import com.threerings.util.Assert;
 
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.tasks.*;
-import com.whirled.contrib.core.tasks.TaskContainer.addTask;
 
 public class AITaskQueue extends TaskContainer
     implements AITask
@@ -17,9 +16,8 @@ public class AITaskQueue extends TaskContainer
 
     override public function clone () :ObjectTask
     {
-        var tc :TaskContainer = super.clone();
         var clone :AITaskQueue = new AITaskQueue(_repeating);
-        clone._tasks = tc._tasks; // ouch
+        clone._tasks = this.cloneSubtasks();
 
         return clone;
     }
@@ -55,16 +53,16 @@ public class AITaskQueue extends TaskContainer
         return (null != topTask ? topTask.hasSubtaskNamed(name) : false);
     }
 
-    public function hasSubtasksNamed (names :Array) :Boolean
+    public function hasSubtasksNamed (names :Array, index :uint = 0) :Boolean
     {
         var topTask :AITask = this.topTask;
-        return (null != topTask ? topTask.hasSubtasksNamed(names) : false);
+        return (null != topTask ? topTask.hasSubtasksNamed(names, index) : false);
     }
 
-    public function getStateString () :String
+    public function getStateString (depth :uint = 0) :String
     {
         var topTask :AITask = this.topTask;
-        return (null != topTask ? topTask.getStateString() : "[empty sequence]");
+        return (null != topTask ? topTask.getStateString(depth) : "[empty sequence]");
     }
 
     public function get name () :String

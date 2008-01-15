@@ -23,10 +23,14 @@ import popcraft.battle.ai.AITaskBase;
 public class CreatureUnit extends Unit
 {
     public static const GROUP_NAME :String = "CreatureUnit";
+    public static const MSG_ATTACKED :String = "CreatureUnit_Attacked";
 
     public function CreatureUnit (unitType :uint, owningPlayerId :uint)
     {
         super(unitType, owningPlayerId);
+
+        // @TMP
+        _aiRoot = new AITaskBase();
 
         // create the visual representation
         _sprite = new Sprite();
@@ -64,9 +68,9 @@ public class CreatureUnit extends Unit
         // kick off our AI!
         // we'll start by moving directly to our waypoint.
         // once we get there, we'll move towards an enemy base, and keep our eyes out for enemies
-        this.addNamedTask("ai", new SerialTask(
+        /*this.addNamedTask("ai", new SerialTask(
             new MoveToWaypointTask(),
-            createEnemyDetectLoopSlashAttackEnemyBaseTask()));
+            createEnemyDetectLoopSlashAttackEnemyBaseTask()));*/
     }
 
     override protected function removedFromDB (db :ObjectDB) :void
@@ -151,6 +155,8 @@ public class CreatureUnit extends Unit
     {
         super.receiveAttack(sourceId, attack);
         _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));
+
+        this.aiRoot.receiveMessage(new ObjectMessage(CreatureUnit.MSG_ATTACKED, sourceId));
     }
 
     // from SceneObject
@@ -204,15 +210,21 @@ public class CreatureUnit extends Unit
         return this.hasTasksNamed("move");
     }
 
-    public function get aiRoot () :AITask
+    protected function get aiRoot () :AITask
     {
-        return aiRoot;
+        return _aiRoot;
+    }
+
+    override protected function update (dt :Number) :void
+    {
+        this.aiRoot.update(dt, this);
+        super.update(dt);
     }
 
     protected var _sprite :Sprite;
     protected var _healthMeter :RectMeter;
 
-    protected var _aiRoot :AITaskBase = new AITaskBase();
+    protected var _aiRoot :AITask;
 
     protected static var g_groups :Array;
 

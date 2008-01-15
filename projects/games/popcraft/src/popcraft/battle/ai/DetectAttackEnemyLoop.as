@@ -3,9 +3,12 @@ package popcraft.battle.ai {
 import com.whirled.contrib.core.ObjectMessage;
 import com.whirled.contrib.core.ObjectTask;
 import popcraft.battle.ai.AITaskBase.clone;
+import popcraft.battle.ai.AITaskBase.name;
 
 public class DetectAttackEnemyLoop extends AITaskBase
 {
+    public static const NAME :String = "DetectAttackEnemyLoop";
+
     public function DetectAttackEnemyLoop()
     {
         this.addSubtask(new DetectEnemyTask());
@@ -32,6 +35,11 @@ public class DetectAttackEnemyLoop extends AITaskBase
     override public function clone() :ObjectTask
     {
         return new DetectAttackEnemyLoop();
+    }
+
+    override public function get name () :String
+    {
+        return NAME;
     }
 
 }

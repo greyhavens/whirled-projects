@@ -5,7 +5,8 @@ import com.whirled.contrib.core.ObjectMessage;
 
 public class DetectEnemyTask extends AITaskBase
 {
-    public static const MSG_DETECTED_ENEMY = "DetectedEnemy";
+    public static const NAME :String = "DetectEnemyTask";
+    public static const MSG_DETECTED_ENEMY = "DetectEnemyTask_DetectedEnemy";
 
     override public function update (dt :Number, obj :AppObject) :Boolean
     {
@@ -27,6 +28,11 @@ public class DetectEnemyTask extends AITaskBase
     override public function clone () :ObjectTask
     {
         return new DetectEnemyTask();
+    }
+
+    override public function get name () :String
+    {
+        return NAME;
     }
 
 }

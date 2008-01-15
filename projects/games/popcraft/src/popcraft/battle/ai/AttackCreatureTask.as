@@ -1,10 +1,15 @@
 package popcraft.battle.ai {
-    import popcraft.battle.Unit;
 
+import com.whirled.contrib.core.*;
 
-public class AttackUnitTask extends AITaskBase
+import popcraft.*;
+import popcraft.battle.*;
+
+public class AttackCreatureTask extends AITaskBase
 {
-    public function AttackUnitTask (unitId :uint)
+    public static const NAME :String = "AttackCreatureTask";
+
+    public function AttackCreatureTask (unitId :uint)
     {
         _unitId = unitId;
     }
@@ -36,7 +41,12 @@ public class AttackUnitTask extends AITaskBase
 
     override public function clone () :ObjectTask
     {
-        return new AttackUnitTask(_unitId);
+        return new AttackCreatureTask(_unitId);
+    }
+
+    override public function get name () :String
+    {
+        return NAME;
     }
 
     protected var _unitId :uint;
