@@ -26,7 +26,7 @@ public class EndGameMulti extends Dialog
 
         // determine the winner
         var widx :int = 0;
-        var scores :Array = (_ctx.control.get(Model.SCORES) as Array);
+        var scores :Array = (_ctx.control.net.get(Model.SCORES) as Array);
         for (var pidx :int = 0; pidx < scores.length; pidx++) {
             if (scores[pidx] >= _ctx.model.getWinningScore()) {
                 widx = pidx;
@@ -37,8 +37,8 @@ public class EndGameMulti extends Dialog
         var shotMarker :DisplayObject = view.getChildByName("avatar");
         view.removeChild(shotMarker);
         setText(view, "winner_name", _ctx.model.getPlayerName(widx, MAX_NAME_LENGTH));
-        var winnerId :int = _ctx.control.seating.getPlayerIds()[widx];
-        _ctx.control.getHeadShot(winnerId, function (sprite :Sprite, success :Boolean) :void {
+        var winnerId :int = _ctx.control.game.seating.getPlayerIds()[widx];
+        _ctx.control.local.getHeadShot(winnerId, function (sprite :Sprite, success :Boolean) :void {
             if (success) {
                 sprite.x = shotMarker.x - sprite.width/2;
                 sprite.y = shotMarker.y - sprite.height/2;
@@ -47,11 +47,11 @@ public class EndGameMulti extends Dialog
         });
         setContent(view);
 
-        if (_ctx.control.seating.getMyPosition() >= 0) {
+        if (_ctx.control.game.seating.getMyPosition() >= 0) {
             var restart :SimpleButton = _ctx.content.makeButton("Rematch");
             restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
                     _ctx.view.clearOverView();
-                    _ctx.control.playerReady();
+                    _ctx.control.game.playerReady();
                 });
             addButton(restart, LEFT);
         }
@@ -59,7 +59,7 @@ public class EndGameMulti extends Dialog
         var leave :SimpleButton = _ctx.content.makeButton("To Whirled");
         leave.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             _ctx.view.clearOverView();
-            _ctx.control.backToWhirled();
+            _ctx.control.local.backToWhirled();
         });
         addButton(leave, RIGHT);
     }

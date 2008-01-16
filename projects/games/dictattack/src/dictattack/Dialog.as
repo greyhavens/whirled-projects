@@ -70,7 +70,7 @@ public class Dialog extends Sprite
         if (fromTop) {
             LinePath.move(this, dx, -height, dx, dy, 500).start();
         } else {
-            LinePath.move(this, dx, _ctx.control.getSize().y + height, dx, dy, 500).start();
+            LinePath.move(this, dx, _ctx.control.local.getSize().y + height, dx, dy, 500).start();
         }
     }
 

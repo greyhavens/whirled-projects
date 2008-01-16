@@ -49,8 +49,8 @@ public class GameView extends Sprite
         _input.restrict = "[A-Za-z]"; // only allow letters to be typed; TODO: i18n?
 
         // listen for property changed and message events
-        _ctx.control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
-        _ctx.control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
+        _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        _ctx.control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
     public function init (playerCount :int) :void
@@ -61,7 +61,7 @@ public class GameView extends Sprite
         addChild(_board);
 
         var isMulti :Boolean = _ctx.control.isConnected() ? _ctx.model.isMultiPlayer() : true;
-        var mypidx :int = _ctx.control.isConnected() ? _ctx.control.seating.getMyPosition() : 0;
+        var mypidx :int = _ctx.control.isConnected() ? _ctx.control.game.seating.getMyPosition() : 0;
         var psize :int = Content.BOARD_BORDER * 2 + _board.getPixelSize();
         for (var pidx :int = 0; pidx < playerCount; pidx++) {
             // the board is rotated so that our position is always at the bottom (if we're a
@@ -133,13 +133,13 @@ public class GameView extends Sprite
         if (!seenHelp) {
             showHelp();
             cookie["seen_help"] = true;
-            _ctx.control.setUserCookie(cookie)
+            _ctx.control.player.setUserCookie(cookie)
         }
     }
 
     public function gameDidStart () :void
     {
-        var names :Array = _ctx.control.seating.getPlayerNames();
+        var names :Array = _ctx.control.game.seating.getPlayerNames();
         for (var ii :int = 0; ii < names.length; ii++) {
             _shooters[ii].setName(names[ii]);
         }
@@ -183,7 +183,7 @@ public class GameView extends Sprite
             _inputBox.addChild(go);
 
             _inputBox.x = _ctx.content.inputRect.x - tip.width - 5;
-            _inputBox.y = _ctx.control.getSize().y - _input.height -
+            _inputBox.y = _ctx.control.local.getSize().y - _input.height -
                 (INPUT_HEIGHT - _input.height)/2;
         }
         addChild(_inputBox);
@@ -298,7 +298,7 @@ public class GameView extends Sprite
 
     protected function showBetweenRound () :void
     {
-        var tweenRound :MovieClip = _ctx.content.createBetweenRound(_ctx.control.getRound());
+        var tweenRound :MovieClip = _ctx.content.createBetweenRound(_ctx.control.game.getRound());
         tweenRound.x = 219;
         tweenRound.y = 258;
         tweenRound.addEventListener(Event.ENTER_FRAME, function (event :Event) :void {
@@ -389,7 +389,7 @@ public class GameView extends Sprite
 
     protected function handleWordPlay (play :WordPlay) :void
     {
-        var scorer :String = _ctx.control.seating.getPlayerNames()[play.pidx];
+        var scorer :String = _ctx.control.game.seating.getPlayerNames()[play.pidx];
         var mult :int = play.getMultiplier();
         var points :int = play.getPoints(_ctx.model);
 
@@ -411,10 +411,10 @@ public class GameView extends Sprite
 
     protected function handleLetterChange (data :Array) :void
     {
-        if (_ctx.control.seating.getMyPosition() < 0) {
+        if (_ctx.control.game.seating.getMyPosition() < 0) {
             return; // do nothing if we're an observer
         }
-        var pidx :int = _ctx.control.seating.getPlayerPosition(int(data[0]));
+        var pidx :int = _ctx.control.game.seating.getPlayerPosition(int(data[0]));
         var xx :int = _ctx.model.getReverseX(int(data[1]));
         var yy :int = _ctx.model.getReverseY(int(data[1]));
         _shooters[pidx].flySaucer(_board, xx, yy);

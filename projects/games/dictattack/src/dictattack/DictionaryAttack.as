@@ -38,16 +38,16 @@ public class DictionaryAttack extends Sprite
 
         // create and wire ourselves into our multiplayer game control (and create our content)
         _ctx = new Context(new WhirledGameControl(this, false), new Content(maybeFinishInit));
-        _ctx.control.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
-        _ctx.control.addEventListener(StateChangedEvent.ROUND_STARTED, roundDidStart);
-        _ctx.control.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);
-        _ctx.control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
-        _ctx.control.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+        _ctx.control.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
+        _ctx.control.game.addEventListener(StateChangedEvent.ROUND_STARTED, roundDidStart);
+        _ctx.control.game.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);
+        _ctx.control.game.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+        _ctx.control.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
 
         // make our background totally black
         opaqueBackground = 0x000000;
         var size :Point = _ctx.control.isConnected() ?
-            _ctx.control.getSize() : new Point(1000, 550);
+            _ctx.control.local.getSize() : new Point(1000, 550);
         graphics.drawRect(0, 0, size.x, size.y);
 
         // show our splash screen
@@ -61,7 +61,7 @@ public class DictionaryAttack extends Sprite
     protected function finishInit () :void
     {
         var pcount :int = _ctx.control.isConnected() ?
-            _ctx.control.seating.getPlayerIds().length : 4;
+            _ctx.control.game.seating.getPlayerIds().length : 4;
 
         // create our model and our view, and initialize them
         _ctx.init(new Model(Content.BOARD_SIZE, _ctx), new GameView(_ctx));
@@ -70,9 +70,9 @@ public class DictionaryAttack extends Sprite
 
         // now that we're actually ready, go ahead and request that the game start
         if (_ctx.control.isConnected()) {
-            _ctx.control.playerReady();
+            _ctx.control.game.playerReady();
             // also load up our user cookie
-            _ctx.control.getUserCookie(_ctx.control.getMyId(), gotUserCookie);
+            _ctx.control.player.getUserCookie(_ctx.control.game.getMyId(), gotUserCookie);
         } else {
             _ctx.view.attractMode();
         }
@@ -85,9 +85,10 @@ public class DictionaryAttack extends Sprite
         _ctx.model.gameDidStart();
 
         // zero out the scores
-        var pcount :int = _ctx.control.seating.getPlayerIds().length;
-        if (_ctx.control.amInControl()) {
-            _ctx.control.set(Model.SCORES, new Array(pcount).map(function (): int { return 0; }));
+        var pcount :int = _ctx.control.game.seating.getPlayerIds().length;
+        if (_ctx.control.game.amInControl()) {
+            _ctx.control.net.
+                set(Model.SCORES, new Array(pcount).map(function (): int { return 0; }));
         }
     }
 
@@ -117,14 +118,14 @@ public class DictionaryAttack extends Sprite
         _ctx.view.gameDidEnd(_flowAward);
 
         // if we were not a player, stop here
-        var myidx :int = _ctx.control.seating.getMyPosition();
+        var myidx :int = _ctx.control.game.seating.getMyPosition();
         if (myidx < 0) {
             return;
         }
 
         // check for multiplayer trophies
         if (_ctx.model.isMultiPlayer()) {
-            var scores :Array = (_ctx.control.get(Model.SCORES) as Array);
+            var scores :Array = (_ctx.control.net.get(Model.SCORES) as Array);
             var myscore :int = scores[myidx], oscores :int = 0;
             for (var pidx :int = 0; pidx < scores.length; pidx++) {
                 if (pidx != myidx) {
@@ -134,13 +135,13 @@ public class DictionaryAttack extends Sprite
 
             // if we swept the game (no one else scored and we scored at least once)
             if (oscores == 0 && myscore > 0) {
-                _ctx.control.awardTrophy("multi_sweep_" + scores.length);
+                _ctx.control.player.awardTrophy("multi_sweep_" + scores.length);
             }
             return;
         }
 
         // in single player games we update high scores and award trophies
-        var points :Array = (_ctx.control.get(Model.POINTS) as Array);
+        var points :Array = (_ctx.control.net.get(Model.POINTS) as Array);
         var mypoints :int = points[myidx];
 
         // update our personal high scores
@@ -159,15 +160,15 @@ public class DictionaryAttack extends Sprite
 
             // update our highscore display and save our high score
             _ctx.view.gotUserCookie(_cookie);
-            if (!_ctx.control.setUserCookie(_cookie)) {
+            if (!_ctx.control.player.setUserCookie(_cookie)) {
                 Log.getLog(this).warning("Failed to save cookie " + _cookie + ".");
             }
         }
 
         // check for total score related trophies
         for each (var score :int in SCORE_AWARDS) {
-            if (mypoints > score && !_ctx.control.holdsTrophy("score_over_" + score)) {
-                _ctx.control.awardTrophy("score_over_" + score);
+            if (mypoints > score && !_ctx.control.player.holdsTrophy("score_over_" + score)) {
+                _ctx.control.player.awardTrophy("score_over_" + score);
                 break;
             }
         }
@@ -175,7 +176,7 @@ public class DictionaryAttack extends Sprite
         // check for consecutive score related trophies
         for each (var cdata :Array in CONSECUTIVE_POINTS) {
             if (_ctx.model.checkConsecutivePoints(int(cdata[0]), int(cdata[1]))) {
-                _ctx.control.awardTrophy("consec_points_" + cdata[0] + "_" + cdata[1]);
+                _ctx.control.player.awardTrophy("consec_points_" + cdata[0] + "_" + cdata[1]);
                 break;
             }
         }
@@ -187,8 +188,8 @@ public class DictionaryAttack extends Sprite
                 var aseconds :int = int(adata[1]);
                 var tname :String = ascore + "_in_" + aseconds;
                 if (int(_ctx.model.getGameDuration() / 1000) <= aseconds &&
-                    mypoints > ascore && !_ctx.control.holdsTrophy(tname)) {
-                    _ctx.control.awardTrophy(tname);
+                    mypoints > ascore && !_ctx.control.player.holdsTrophy(tname)) {
+                    _ctx.control.player.awardTrophy(tname);
                     break;
                 }
             }
@@ -197,10 +198,10 @@ public class DictionaryAttack extends Sprite
         // check for perfect clear trophies
         switch (_ctx.model.unusedLetters()) {
         case 0:
-            _ctx.control.awardTrophy("perfect_vacuum");
+            _ctx.control.player.awardTrophy("perfect_vacuum");
             break;
         case 1:
-            _ctx.control.awardTrophy("near_vacuum");
+            _ctx.control.player.awardTrophy("near_vacuum");
             break;
         }
 
@@ -210,7 +211,7 @@ public class DictionaryAttack extends Sprite
             var wcount :int = 0;
             for (var ll :int = _ctx.model.getMinWordLength(); ll <= MAX_BYLENGTH_LENGTH; ll++) {
                 if (ll >= MIN_BYLENGTH_LENGTH && wcount == 0) {
-                    _ctx.control.awardTrophy("all_length_" + ll);
+                    _ctx.control.player.awardTrophy("all_length_" + ll);
                 }
                 wcount += int(wlengths[ll]);
             }
@@ -219,16 +220,16 @@ public class DictionaryAttack extends Sprite
         // check for special trophies
         var perfectClear :Boolean = (_ctx.model.nonEmptyColumns() == 0);
         if (perfectClear && _ctx.model.getNotOnBoardPlays() == 0) {
-            _ctx.control.awardTrophy("no_not_on_board");
+            _ctx.control.player.awardTrophy("no_not_on_board");
         }
         if (perfectClear && _ctx.model.getNotInDictPlays() == 0) {
-            _ctx.control.awardTrophy("no_not_in_dict");
+            _ctx.control.player.awardTrophy("no_not_in_dict");
         }
         if (_ctx.model.playedWord("dictionary") && _ctx.model.playedWord("attack")) {
-            _ctx.control.awardTrophy("dictionary_attack");
+            _ctx.control.player.awardTrophy("dictionary_attack");
         }
         if (_ctx.model.playedWord("three") && _ctx.model.playedWord("rings")) {
-            _ctx.control.awardTrophy("three_rings");
+            _ctx.control.player.awardTrophy("three_rings");
         }
     }
 

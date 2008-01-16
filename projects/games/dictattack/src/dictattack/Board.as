@@ -35,15 +35,15 @@ public class Board extends Sprite
         }
 
         // scale our tiles to fit the board
-        var size :Point = _ctx.control.getSize();
+        var size :Point = _ctx.control.local.getSize();
         var havail :int = size.y - Content.BOARD_BORDER*2 - GameView.INPUT_HEIGHT;
         Content.TILE_SIZE = (havail / _size) - 2;
 
         // listen for property changed events
-        _ctx.control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
+        _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
 
         // if we're already in play, start displaying the board immediately
-        if (_ctx.control.isInPlay()) {
+        if (_ctx.control.game.isInPlay()) {
             _gotBoard = true;
             _roundStarted = true;
             maybeStartRound();

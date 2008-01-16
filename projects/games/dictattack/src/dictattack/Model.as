@@ -11,7 +11,7 @@ import com.threerings.util.Random;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.PropertyChangedEvent;
 
-import com.whirled.WhirledGameControl;
+import com.whirled.GameSubControl;
 
 /**
  * Models and manages the (distributed) state of the board. We model the state of the board as a
@@ -44,11 +44,11 @@ public class Model
     {
         _size = size;
         _ctx = ctx;
-        _ctx.control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
-        _ctx.control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
+        _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        _ctx.control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
 
         // if we're already in play, load up the board immediately
-        if (_ctx.control.isConnected() && _ctx.control.isInPlay()) {
+        if (_ctx.control.isConnected() && _ctx.control.game.isInPlay()) {
             gotBoard();
             gameDidStart();
             roundDidStart();
@@ -109,7 +109,7 @@ public class Model
      */
     public function getPlayerName (pidx :int, maxLength :int) :String
     {
-        var name :String = _ctx.control.seating.getPlayerNames()[pidx];
+        var name :String = _ctx.control.game.seating.getPlayerNames()[pidx];
         if (name.length > maxLength) {
             name = name.substring(0, maxLength);
         }
@@ -129,7 +129,7 @@ public class Model
      */
     public function isMultiPlayer () :Boolean
     {
-        return (_ctx.control.seating.getPlayerNames().length > 1);
+        return (_ctx.control.game.seating.getPlayerNames().length > 1);
     }
 
     /**
@@ -137,7 +137,7 @@ public class Model
      */
     public function getInterRoundDelay () :int
     {
-        var pcount :int = _ctx.control.seating.getPlayerIds().length;
+        var pcount :int = _ctx.control.game.seating.getPlayerIds().length;
         return INTER_ROUND_DELAY * pcount;
     }
 
@@ -299,12 +299,13 @@ public class Model
      */
     public function roundDidStart () :void
     {
-        var pcount :int = _ctx.control.seating.getPlayerIds().length;
+        var pcount :int = _ctx.control.game.seating.getPlayerIds().length;
 
         // if we are in control, zero out the points, create a board and publish it
-        if (_ctx.control.amInControl()) {
-            _ctx.control.set(POINTS, new Array(pcount).map(function (): int { return 0; }));
-            _ctx.control.getDictionaryLetterSet(Content.LOCALE, null, _size*_size, gotLetterSet);
+        if (_ctx.control.game.amInControl()) {
+            _ctx.control.net.set(POINTS, new Array(pcount).map(function (): int { return 0; }));
+            _ctx.control.services.getDictionaryLetterSet(
+                Content.LOCALE, null, _size*_size, gotLetterSet);
         }
 
         // create our play history (TODO: we should probably store this in the game object)
@@ -336,9 +337,9 @@ public class Model
     public function gameDidEnd () :void
     {
         // if this is a single player game, append our points to the recent points list
-        var myidx :int = _ctx.control.seating.getMyPosition();
+        var myidx :int = _ctx.control.game.seating.getMyPosition();
         if (!isMultiPlayer() && myidx >= 0) {
-            var points :Array = (_ctx.control.get(POINTS) as Array);
+            var points :Array = (_ctx.control.net.get(POINTS) as Array);
             _recentPoints.push(int(points[myidx]));
         }
     }
@@ -399,7 +400,7 @@ public class Model
         }
 
         // submit the word to the server to see if it is valid
-        _ctx.control.checkDictionaryWord(
+        _ctx.control.services.checkDictionaryWord(
             Content.LOCALE, null, word, function (word :String, isValid :Boolean) : void {
             if (!isValid) {
                 // TODO: play a sound indicating the mismatch
@@ -413,7 +414,7 @@ public class Model
             // watchers coming into a game half way through will see valid state), while we're at
             // it, compute our points
             var play :WordPlay = new WordPlay();
-            play.pidx = _ctx.control.seating.getMyPosition();
+            play.pidx = _ctx.control.game.seating.getMyPosition();
             play.word = word;
             for (var ii :int = 0; ii < used.length; ii++) {
                 // map our local coordinates back to a global position coordinates
@@ -421,7 +422,7 @@ public class Model
                 var yy :int = int(used[ii] / _size);
                 play.mults[ii] = TYPE_MULTIPLIER[getType(xx, yy)];
                 var pos :int = getPosition(xx, yy);
-                _ctx.control.setImmediate(BOARD_DATA, BLANK, pos);
+                _ctx.control.net.setImmediate(BOARD_DATA, BLANK, pos);
                 play.positions[ii] = pos;
                 // if this was a wildcard, it scores no point
                 if (board.getLetter(used[ii]).getText() == WILDCARD) {
@@ -430,45 +431,45 @@ public class Model
             }
 
             // broadcast our our played word as a message
-            _ctx.control.sendMessage(WORD_PLAY, play.flatten());
+            _ctx.control.net.sendMessage(WORD_PLAY, play.flatten());
 
             // update our points
-            var points :Array = (_ctx.control.get(POINTS) as Array);
+            var points :Array = (_ctx.control.net.get(POINTS) as Array);
             var ppoints :int = play.getPoints(_ctx.model);
             var newpoints :int = points[play.pidx] + ppoints;
             if (ppoints > 0) {
-                _ctx.control.set(POINTS, newpoints, play.pidx);
+                _ctx.control.net.set(POINTS, newpoints, play.pidx);
             }
 
             // if they earned a trophy due to the length of this word, award it
             if (used.length >= 8 && !play.usedWild()) {
-                if (!_ctx.control.holdsTrophy("word_length_" + used.length)) {
-                    _ctx.control.awardTrophy("word_length_" + used.length);
+                if (!_ctx.control.player.holdsTrophy("word_length_" + used.length)) {
+                    _ctx.control.player.awardTrophy("word_length_" + used.length);
                 }
             }
 
             // if this is a single player game, they go until the board is clear
             if (!isMultiPlayer()) {
                 if (nonEmptyColumns() < getMinWordLength()) {
-                    _ctx.control.endGameWithScore(newpoints);
+                    _ctx.control.game.endGameWithScore(newpoints);
                 }
 
             // if it's a multiplayer game, see if we have exceeded the winning points
             } else if (newpoints >= getWinningPoints()) {
                 // if so, score a point and end the round 
-                var scores :Array = (_ctx.control.get(SCORES) as Array);
+                var scores :Array = (_ctx.control.net.get(SCORES) as Array);
                 scores[play.pidx] = scores[play.pidx] + 1;
-                _ctx.control.set(SCORES, scores[play.pidx], play.pidx);
+                _ctx.control.net.set(SCORES, scores[play.pidx], play.pidx);
                 if (scores[play.pidx] >= getWinningScore()) {
-                    var winners :Array = [ _ctx.control.getMyId() ];
-                    var losers :Array = _ctx.control.seating.getPlayerIds().filter(
+                    var winners :Array = [ _ctx.control.game.getMyId() ];
+                    var losers :Array = _ctx.control.game.seating.getPlayerIds().filter(
                         function (o :*, i :int, a :Array) :Boolean {
-                            return (int(o) != _ctx.control.getMyId());
+                            return (int(o) != _ctx.control.game.getMyId());
                         });
-                    _ctx.control.endGameWithWinners(
-                        winners, losers, WhirledGameControl.CASCADING_PAYOUT);
+                    _ctx.control.game.endGameWithWinners(
+                        winners, losers, GameSubControl.CASCADING_PAYOUT);
                 } else {
-                    _ctx.control.endRound(getInterRoundDelay());
+                    _ctx.control.game.endRound(getInterRoundDelay());
                 }
             }
         });
@@ -560,21 +561,21 @@ public class Model
         // select the letter to change and issue the change notification
         var rpos :int = int(set[_rando.nextInt(set.length)]);
 //         var nlet :String = chars.substr(_rando.nextInt(chars.length), 1);
-        _ctx.control.set(BOARD_DATA, WILDCARD, rpos);
+        _ctx.control.net.set(BOARD_DATA, WILDCARD, rpos);
 
 //         // penalize our score
-//         var points :Array = (_ctx.control.get(POINTS) as Array);
-//         var myidx : int = _ctx.control.seating.getMyPosition();
-//         _ctx.control.set(POINTS, points[myidx] - getChangePenalty(), myidx);
+//         var points :Array = (_ctx.control.net.get(POINTS) as Array);
+//         var myidx : int = _ctx.control.game.seating.getMyPosition();
+//         _ctx.control.net.set(POINTS, points[myidx] - getChangePenalty(), myidx);
 
         // finally send a message indicating what we've done so that the UI can react
-        _ctx.control.sendMessage(LETTER_CHANGE, [ _ctx.control.getMyId(), rpos ]);
+        _ctx.control.net.sendMessage(LETTER_CHANGE, [ _ctx.control.game.getMyId(), rpos ]);
     }
 
     public function endGameEarly () :void
     {
-        var myidx :int = _ctx.control.seating.getMyPosition();
-        _ctx.control.endGameWithScore((_ctx.control.get(POINTS) as Array)[myidx]);
+        var myidx :int = _ctx.control.game.seating.getMyPosition();
+        _ctx.control.game.endGameWithScore((_ctx.control.net.get(POINTS) as Array)[myidx]);
         _endedEarly = true;
     }
 
@@ -587,7 +588,7 @@ public class Model
 
     public function updateColumnPlayable (board :Board, xx :int) :void
     {
-        if (!_ctx.control.isConnected() || !_ctx.control.isInPlay()) {
+        if (!_ctx.control.isConnected() || !_ctx.control.game.isInPlay()) {
             return;
         }
 
@@ -603,7 +604,7 @@ public class Model
 
     public function getPosition (xx :int, yy :int) :int
     {
-        switch (_ctx.control.seating.getMyPosition()) {
+        switch (_ctx.control.game.seating.getMyPosition()) {
         default:
         case 0: return yy * _size + xx;
         case 1: return (_size-1 - yy) * _size + (_size-1 - xx);
@@ -614,7 +615,7 @@ public class Model
 
     public function getReverseX (pos :int) :int
     {
-        switch (_ctx.control.seating.getMyPosition()) {
+        switch (_ctx.control.game.seating.getMyPosition()) {
         default:
         case 0: return pos % _size;
         case 1: return _size-1 - pos % _size;
@@ -625,7 +626,7 @@ public class Model
 
     public function getReverseY (pos :int) :int
     {
-        switch (_ctx.control.seating.getMyPosition()) {
+        switch (_ctx.control.game.seating.getMyPosition()) {
         default:
         case 0: return int(pos / _size);
         case 1: return _size-1 - int(pos / _size);
@@ -636,13 +637,13 @@ public class Model
 
     public function getLetter (xx :int, yy :int) :String
     {
-        var data :Array = (_ctx.control.get(BOARD_DATA) as Array);
+        var data :Array = (_ctx.control.net.get(BOARD_DATA) as Array);
         return data[getPosition(xx, yy)];
     }
 
     public function dumpCurrentBoard () :void
     {
-        dumpBoard(_ctx.control.get(BOARD_DATA) as Array);
+        dumpBoard(_ctx.control.net.get(BOARD_DATA) as Array);
     }
 
     public function dumpBoard (data :Array) :void
@@ -666,7 +667,7 @@ public class Model
                 letters[ii] = " ";
             }
         }
-        _ctx.control.set(BOARD_DATA, letters);
+        _ctx.control.net.set(BOARD_DATA, letters);
     }
 
     /**
@@ -676,7 +677,7 @@ public class Model
     {
         if (event.name == Model.LETTER_CHANGE) {
             var data :Array = (event.value as Array);
-            if (int(data[0]) == _ctx.control.getMyId()) {
+            if (int(data[0]) == _ctx.control.game.getMyId()) {
                 _changePending = false;
             }
 
@@ -699,7 +700,7 @@ public class Model
 
     protected function gotBoard () :void
     {
-        var data :Array = (_ctx.control.get(BOARD_DATA) as Array);
+        var data :Array = (_ctx.control.net.get(BOARD_DATA) as Array);
         _letterCount = 0;
         for each (var letter :String in data) {
             if (letter != BLANK) {
@@ -748,7 +749,8 @@ public class Model
 
     protected function getConfig (key :String, defval :int) :int
     {
-        return (key in _ctx.control.getConfig()) ? int(_ctx.control.getConfig()[key]) : defval;
+        return (key in _ctx.control.game.getConfig()) ?
+            int(_ctx.control.game.getConfig()[key]) : defval;
     }
 
     protected var _size :int;

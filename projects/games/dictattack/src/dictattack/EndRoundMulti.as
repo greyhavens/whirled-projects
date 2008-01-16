@@ -24,7 +24,7 @@ public class EndRoundMulti extends Dialog
         var view :MovieClip = _ctx.content.createRoundOverMulti();
         setText(view, "duration", Util.millisToMinSec(_ctx.model.getRoundDuration()));
 
-        var points :Array = (_ctx.control.get(Model.POINTS) as Array);
+        var points :Array = (_ctx.control.net.get(Model.POINTS) as Array);
         var precs :Array = [];
         for (var pidx :int = 0; pidx < points.length; pidx++) {
             precs.push([pidx, points[pidx]]);
@@ -53,7 +53,7 @@ public class EndRoundMulti extends Dialog
             removeViewChild(view, "highest_score" + ii);
         }
 
-        if (_ctx.control.isInPlay()) {
+        if (_ctx.control.game.isInPlay()) {
             // if the game is not over, count down to the next round
             _nextSecs = _ctx.model.getInterRoundDelay();
             _nextField = setText(view, "next_round", Util.millisToMinSec(_nextSecs*1000));
@@ -66,7 +66,7 @@ public class EndRoundMulti extends Dialog
         setContent(view);
 
         // these have to happen after we've set our content
-        if (_ctx.control.isInPlay()) {
+        if (_ctx.control.game.isInPlay()) {
             var timer :Timer = new Timer(1000, _nextSecs);
             timer.addEventListener(TimerEvent.TIMER, function () :void {
                     _nextField.text = Util.millisToMinSec(--_nextSecs*1000);
