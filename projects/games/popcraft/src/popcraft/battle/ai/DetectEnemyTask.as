@@ -1,55 +1,23 @@
 package popcraft.battle.ai {
 
-import popcraft.battle.*;
 import com.whirled.contrib.core.ObjectMessage;
 
-public class DetectEnemyTask extends AITaskBase
+import popcraft.battle.*;
+
+public class DetectEnemyTask extends FindCreatureTask
 {
     public static const NAME :String = "DetectEnemyTask";
     public static const MSG_DETECTED_ENEMY = "DetectEnemyTask_DetectedEnemy";
-
-    override public function update (dt :Number, obj :AppObject) :Boolean
+    
+    public function DetectEnemyTask ()
     {
-        super.update(dt, obj);
-
-        var unit :CreatureUnit = (obj as CreatureUnit);
-
-        // check to see if there are any enemies nearby
-        var enemy :CreatureUnit = this.findValidEnemy();
-
-        if (null != enemy) {
-            this.parentTask.receiveMessage(new ObjectMessage(MSG_DETECTED_ENEMY, enemy.id));
-            return true;
-        } else {
-            return false;
-        }
+        super(NAME, MSG_DETECTED_ENEMY, DetectEnemyTask.isEnemyPredicate);
     }
-
-    protected function findValidEnemy (unit :CreatureUnit) :CreatureUnit
+    
+    static protected function isEnemyPredicate (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean
     {
-        var allCreatures :Array = GameMode.instance.netObjects.getObjectsInGroup(CreatureUnit.GROUP_NAME);
-
-        // find the first creature that satisifies our requirements
-        // this function is probably horribly slow
-        for each (var creature :CreatureUnit in allCreatures) {
-            if ((creature.owningPlayerId != unit.owningPlayerId) && unit.isUnitInDetectRange(creature)) {
-                return creature;
-            }
-        }
-
-        return null;
+        return (thisCreature.owningPlayerId != thatCreature.owningPlayerId && thisCreature.isUnitInDetectRange(thatCreature));
     }
-
-    override public function clone () :ObjectTask
-    {
-        return new DetectEnemyTask();
-    }
-
-    override public function get name () :String
-    {
-        return NAME;
-    }
-
 }
 
 }
