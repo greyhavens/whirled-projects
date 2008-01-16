@@ -1,7 +1,8 @@
 package popcraft.battle.ai {
 
-import com.whirled.contrib.core.ObjectMessage;
+import com.whirled.contrib.core.*;
 
+import popcraft.*;
 import popcraft.battle.*;
 
 public class FindCreatureTask extends AITaskBase
@@ -29,7 +30,7 @@ public class FindCreatureTask extends AITaskBase
         }
         
         if (null != detectedCreature) {
-            this.parentTask.receiveMessage(new ObjectMessage(_messageName, detectedCreature.id));
+            this.parentTask.receiveMessage(new ObjectMessage(_messageName, detectedCreature));
             return true;
         }
         

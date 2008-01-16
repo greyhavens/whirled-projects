@@ -3,19 +3,16 @@
 
 package {
 
-import popcraft.*;
-import popcraft.net.*;
-import popcraft.util.*;
-
-import com.whirled.contrib.core.*;
-
+import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.util.Assert;
 import com.whirled.WhirledGameControl;
-import com.whirled.contrib.core.MainLoop;
+import com.whirled.contrib.core.*;
 
 import flash.display.Sprite;
 
-import com.threerings.ezgame.StateChangedEvent;
+import popcraft.*;
+import popcraft.net.*;
+import popcraft.util.*;
 
 [SWF(width="700", height="500", frameRate="30")]
 public class PopCraft extends Sprite

@@ -1,13 +1,11 @@
 package popcraft.battle.ai {
 
-import com.whirled.contrib.core.ObjectMessage;
-
 import popcraft.battle.*;
 
 public class DetectFriendlyTask extends FindCreatureTask
 {
     public static const NAME :String = "DetectFriendlyTask";
-    public static const MSG_DETECTED_ENEMY = "DetectFriendlyTask_DetectedFriendly";
+    public static const MSG_DETECTED_ENEMY :String = "DetectFriendlyTask_DetectedFriendly";
     
     public function DetectFriendlyTask ()
     {

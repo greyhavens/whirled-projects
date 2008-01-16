@@ -3,10 +3,9 @@ package popcraft {
 import com.threerings.util.Assert;
 import com.threerings.util.HashSet;
 import com.threerings.util.RingBuffer;
-
 import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.util.*;
 import com.whirled.contrib.core.net.*;
+import com.whirled.contrib.core.util.*;
 
 import flash.events.KeyboardEvent;
 import flash.geom.Point;
@@ -24,6 +23,11 @@ public class GameMode extends AppMode
         Assert.isNotNull(instance);
 
         return instance;
+    }
+    
+    public static function getNetObject (objectId :uint) :AppObject
+    {
+        return GameMode.instance.netObjects.getObject(objectId);
     }
 
     public function GameMode ()

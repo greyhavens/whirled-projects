@@ -3,7 +3,6 @@ package popcraft.battle {
 import com.threerings.util.Assert;
 
 import popcraft.*;
-import popcraft.battle.*;
 import popcraft.battle.ai.*;
 
 /**
@@ -23,6 +22,11 @@ public class HeavyCreatureUnit extends CreatureUnit
     override protected function get aiRoot () :AITask
     {
         return _ai;
+    }
+    
+    public function get isEscortingUnit () :Boolean
+    {
+        return (null != this.escortingUnit);
     }
 
     public function set escortingUnit (unit :GruntCreatureUnit) :void
@@ -62,6 +66,26 @@ class HeavyAI extends AITaskBase
     public function HeavyAI (unit :HeavyCreatureUnit)
     {
         _unit = unit;
+        
+        this.scanForGruntToEscort();
+    }
+    
+    protected function scanForGruntToEscort () :void
+    {
+        this.addSubtask(new DetectEscortlessGruntTask());
+    }
+    
+    override public function receiveMessage (msg :ObjectMessage) :Boolean
+    {
+        if (msg.name == DetectEscortlessGruntTask.MSG_DETECTED_GRUNT) {
+            trace("detected grunt!");
+            var grunt :GruntCreatureUnit = msg.data;
+            _unit.escortingUnit = grunt;
+        } else {
+            super.receiveMessage(msg);
+        }
+        
+        return false;
     }
 
     override public function get name () :String
@@ -71,4 +95,32 @@ class HeavyAI extends AITaskBase
 
     protected var _unit :HeavyCreatureUnit;
     protected var _state :uint;
+}
+
+class DetectEscortlessGruntTask extends FindCreatureTask
+{
+    public static const NAME :String = "DetectEscortlessGrunt";
+    public static const MSG_DETECTED_GRUNT :String = "DetectedGrunt";
+    
+    public function DetectEscortlessGruntTask ()
+    {
+        super(NAME, MSG_DETECTED_GRUNT, isValidGrunt);
+    }
+    
+    static protected function isValidGrunt (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean
+    {
+        if (thisCreature.owningPlayerId != thatCreature.owningPlayerId) {
+            return false;
+        } else if (thatCreature.unitType != Constants.UNIT_TYPE_GRUNT) {
+            return false;
+        }
+        
+        var grunt :GruntCreatureUnit = (thatCreature as GruntCreatureUnit);
+        
+        if (grunt.hasEscort) {
+            return false;
+        }
+        
+        return thisCreature.isUnitInDetectRange(grunt);
+    }
 }
