@@ -106,7 +106,7 @@ class GameMode extends AppMode
 
     override protected function enter () :void
     {
-        this.modeSprite.addChild(new DrawingCursor(this.modeSprite, _picture[0], _picture[_picture.length - 1]));
+        //this.modeSprite.addChild(new DrawingCursor(this.modeSprite, _picture[0], _picture[_picture.length - 1]));
     }
 
     override protected function exit () :void
