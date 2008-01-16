@@ -29,6 +29,16 @@ public class GameMode extends AppMode
     {
         return GameMode.instance.netObjects.getObject(objectId);
     }
+    
+    public static function getNetObjectNamed (objectName :String) :AppObject
+    {
+        return GameMode.instance.netObjects.getObjectNamed(objectName);
+    }
+    
+    public static function getNetObjectsInGroup (groupName :String) :Array
+    {
+        return GameMode.instance.netObjects.getObjectsInGroup(groupName);
+    }
 
     public function GameMode ()
     {

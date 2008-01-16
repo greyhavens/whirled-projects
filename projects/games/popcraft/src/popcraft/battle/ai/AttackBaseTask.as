@@ -19,7 +19,7 @@ public class AttackBaseTask extends AITaskBase
         super.update(dt, obj);
 
         var unit :CreatureUnit = (obj as CreatureUnit);
-        var base :Unit = (GameMode.instance.netObjects.getObject(_unitId) as Unit);
+        var base :Unit = (GameMode.getNetObject(_unitId) as Unit);
 
         // is the base dead?
         if (null == base) {

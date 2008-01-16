@@ -1,21 +1,17 @@
 package popcraft.battle {
 
-import popcraft.*;
-import popcraft.util.*;
-import popcraft.battle.ai.*;
-
 import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
+import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
-import flash.display.Bitmap;
-import flash.display.BitmapData;
 
-import flash.geom.Point;
-import flash.geom.Rectangle;
+import popcraft.*;
+import popcraft.battle.ai.*;
+import popcraft.util.*;
 
 public class CreatureUnit extends Unit
 {
@@ -25,9 +21,6 @@ public class CreatureUnit extends Unit
     public function CreatureUnit (unitType :uint, owningPlayerId :uint)
     {
         super(unitType, owningPlayerId);
-
-        // @TMP
-        _aiRoot = new AITaskBase();
 
         // create the visual representation
         _sprite = new Sprite();
@@ -172,19 +165,21 @@ public class CreatureUnit extends Unit
 
     protected function get aiRoot () :AITask
     {
-        return _aiRoot;
+        return null;
     }
 
     override protected function update (dt :Number) :void
     {
-        this.aiRoot.update(dt, this);
+        var aiRoot :AITask = this.aiRoot;
+        if (null != aiRoot) {
+            aiRoot.update(dt, this);
+        }
+        
         super.update(dt);
     }
 
     protected var _sprite :Sprite;
     protected var _healthMeter :RectMeter;
-
-    protected var _aiRoot :AITask;
 
     protected static var g_groups :Array;
 }

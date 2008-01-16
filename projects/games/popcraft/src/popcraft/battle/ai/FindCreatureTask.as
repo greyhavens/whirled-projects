@@ -19,7 +19,7 @@ public class FindCreatureTask extends AITaskBase
         super.update(dt, obj);
 
         var thisCreature :CreatureUnit = (obj as CreatureUnit);
-        var allCreatures :Array = GameMode.instance.netObjects.getObjectsInGroup(CreatureUnit.GROUP_NAME);
+        var allCreatures :Array = GameMode.getNetObjectsInGroup(CreatureUnit.GROUP_NAME);
         var detectedCreature :CreatureUnit;
         
         for each (var creature :CreatureUnit in allCreatures) {

@@ -72,7 +72,7 @@ public class PlayerBaseUnit extends Unit
         _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));
 
         // when the player base is attacked, it deals damage back to the attacker
-        //var source :Unit = (GameMode.instance.netObjects.getObject(sourceId) as Unit);
+        //var source :Unit = (GameMode.getNetObject(sourceId) as Unit);
         //if (null != source) {
         //    this.sendAttack(source, this.unitData.attack);
         //}

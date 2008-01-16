@@ -19,7 +19,7 @@ public class AttackCreatureTask extends AITaskBase
         super.update(dt, obj);
 
         var unit :CreatureUnit = (obj as CreatureUnit);
-        var enemy :Unit = (GameMode.instance.netObjects.getObject(_unitId) as Unit);
+        var enemy :Unit = (GameMode.getNetObject(_unitId) as Unit);
 
         // is the enemy dead? does it still hold our interest?
         if (null == enemy || !unit.isUnitInInterestRange(enemy)) {

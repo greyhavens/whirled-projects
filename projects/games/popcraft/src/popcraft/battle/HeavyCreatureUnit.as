@@ -39,7 +39,7 @@ public class HeavyCreatureUnit extends CreatureUnit
 
     public function get escortingUnit () :GruntCreatureUnit
     {
-        return GameMode.instance.netObjects.getObject(_escortingUnitId) as GruntCreatureUnit;
+        return GameMode.getNetObject(_escortingUnitId) as GruntCreatureUnit;
     }
 
     protected var _ai :HeavyAI;
@@ -67,12 +67,16 @@ class HeavyAI extends AITaskBase
     {
         _unit = unit;
         
-        this.scanForGruntToEscort();
+        beginGruntEscortLoop();
     }
     
-    protected function scanForGruntToEscort () :void
+    protected function beginGruntEscortLoop () :void
     {
-        this.addSubtask(new DetectEscortlessGruntTask());
+        var loop :AITaskQueue = new AITaskQueue(true);
+        loop.addTask(new DetectEscortlessGruntTask());
+        loop.addTask(new EscortGruntTask(_unit));
+        
+        this.addSubtask(loop);
     }
     
     override public function receiveMessage (msg :ObjectMessage) :Boolean
@@ -124,3 +128,40 @@ class DetectEscortlessGruntTask extends FindCreatureTask
         return thisCreature.isUnitInDetectRange(grunt);
     }
 }
+
+class EscortGruntTask extends FollowCreatureTask
+{
+    public static const NAME :String = "EscortGruntTask";
+    
+    public function EscortGruntTask (unit :HeavyCreatureUnit)
+    {
+        super(unit.escortingUnit.id, ESCORT_DISTANCE);
+        _unit = unit;
+    }
+    
+    override public function update (dt :Number, obj :AppObject) :Boolean
+    {
+        var grunt :GruntCreatureUnit = _unit.escortingUnit;
+        if (null == grunt) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    override public function get name() :String
+    {
+        return NAME;
+    }
+    
+    override public function clone () :ObjectTask
+    {
+        return new EscortGruntTask(_unit);
+    }
+    
+    protected var _unit :HeavyCreatureUnit;
+    
+    protected static const ESCORT_DISTANCE :Number = 20;
+}
+
+

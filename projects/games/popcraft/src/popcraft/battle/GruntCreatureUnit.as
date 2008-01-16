@@ -30,7 +30,7 @@ public class GruntCreatureUnit extends CreatureUnit
 
     public function get escort () :HeavyCreatureUnit
     {
-        return GameMode.instance.netObjects.getObject(_escortId) as HeavyCreatureUnit;
+        return GameMode.getNetObject(_escortId) as HeavyCreatureUnit;
     }
 
     public function get hasEscort () :Boolean
