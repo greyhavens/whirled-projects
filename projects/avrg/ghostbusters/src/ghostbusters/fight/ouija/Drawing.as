@@ -51,6 +51,7 @@ public class Drawing extends SceneObject
         delta = Vector2.subtract(_endTarget, loc);
         if (delta.lengthSquared <= (MAX_TARGET_DIST * MAX_TARGET_DIST)) {
             _board.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoved);
+            _doneDrawing = true;
             return;
         }
 

@@ -54,8 +54,6 @@ class GameMode extends AppMode
     {
         // choose a picture to draw
         _picture = PICTURES[Rand.nextIntRange(0, PICTURES.length, Rand.STREAM_COSMETIC)];
-        _picture = this.chopLines(_picture, 4);
-        trace("picture length: " + _picture.length);
     }
 
     override protected function setup () :void
@@ -99,15 +97,55 @@ class GameMode extends AppMode
     
     protected function calculateScoreAndEndGame () :void
     {
+        // for each point in the drawing, calculate the distance between
+        // it and the target line in the picture
         
+        var linePt1 :Vector2 = _picture[0];
+        var linePt2 :Vector2 = _picture[1];
+        var pictureIdx :int = 1;
+        var nextLinePt :Vector2 = getNextLinePt();
+        
+        var sumDistances :Number = 0;
+        
+        for each (var pt :Vector2 in _drawing.points) {
+            var dist :Number = Collision.minDistanceFromPointToLineSegment(pt, linePt1, linePt2);
+            
+            if (null != nextLinePt) {
+                // if there are more lines in the picture, compare pt
+                // to the next line, to see if it's closer
+                var distNext :Number = Collision.minDistanceFromPointToLineSegment(pt, linePt2, nextLinePt);
+                
+                if (distNext < dist) {
+                    dist = distNext;
+                    
+                    // start comparing against the next line
+                    linePt1 = linePt2;
+                    linePt2 = nextLinePt;
+                    nextLinePt = getNextLinePt();
+                }
+            }
+            
+            sumDistances += dist;
+        }
+        
+        trace("total distance: " + sumDistances);
+        trace("avg distance: " + (sumDistances / _drawing.points.length));
+        
+        this.endGame(true);
+        
+        function getNextLinePt () :Vector2
+        {
+            pictureIdx += 1;
+            return (_picture.length > pictureIdx ? _picture[pictureIdx] : null);
+        }
     }
     
-    protected function chopLines (points :Array, maxDistance :Number) :Array
+    protected static function chopLines (points :Array, maxDistance :Number) :Array
     {
         // chop up an array of points so that the distance between two consecutive points is no more than maxDistance
         
-        if (points.length <= 1) {
-            return new Array(); // need at least 2 points
+        if (points.length < 1) {
+            return new Array();
         }
         
         var out :Array = new Array();
@@ -172,6 +210,7 @@ class GameMode extends AppMode
     protected var _drawing :Drawing;
 
     protected static const GAME_TIME :Number = 20000;
+    protected static const CHOPPED_MAX_DISTANCE :Number = 4;
 
     protected static const PICTURES :Array = [
 
