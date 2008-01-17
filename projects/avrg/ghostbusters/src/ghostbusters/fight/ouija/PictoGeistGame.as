@@ -118,9 +118,9 @@ class GameMode extends AppMode
             var thisPoint :Vector2 = points[i];
             var lastPoint :Vector2 = points[i - 1];
             
-            var direction :Vector2 = lastPoint.getSubtract(thisPoint);
+            var direction :Vector2 = thisPoint.getSubtract(lastPoint);
             var distance :Number = (direction.length);
-            direction.length = 1;
+            direction.scale(1 / distance);
             
             var numChops :int = Math.floor(distance / maxDistance);
             for (var j :uint = 1; j <= numChops; ++j) {
