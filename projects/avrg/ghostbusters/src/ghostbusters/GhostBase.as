@@ -19,11 +19,11 @@ import ghostbusters.Content;
 public class GhostBase extends Sprite
 {
     public var handler :ClipHandler;
-    public var clip :MovieClip;
 
     public function GhostBase ()
     {
         handler = new ClipHandler(new Content.GHOST(), setupUI);
+        this.addChild(handler);
     }
 
     public function getGhostBounds () :Rectangle
@@ -37,17 +37,15 @@ public class GhostBase extends Sprite
 
     protected function setupUI (ghost :MovieClip) :void
     {
-        clip = ghost;
-        clip.gotoAndStop(1, STATE_HIDDEN);
-        this.addChild(clip);
-        _bounds = clip.getBounds(this);
+        ghost.gotoAndStop(1, STATE_HIDDEN);
+        _bounds = ghost.getBounds(this);
 
         // register the sprite
-        clip.x = - (_bounds.left + _bounds.width/2);
-        clip.y = - _bounds.top;
+        ghost.x = - (_bounds.left + _bounds.width/2);
+        ghost.y = - _bounds.top;
 
         // refigure the bounds
-        _bounds = clip.getBounds(this);
+        _bounds = ghost.getBounds(this);
 
         Game.log.debug("Ghost finished loading [bounds=" + _bounds + "]");
 

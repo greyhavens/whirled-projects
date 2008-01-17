@@ -63,8 +63,8 @@ public class GamePanel extends Sprite
     public function enterState (state :String) :void
     {
         if (state == GameModel.STATE_INTRO) {
-//            showSplash();
-            showHelp();
+            showSplash();
+//            showHelp();
 
         } else if (state == GameModel.STATE_IDLE) {
             showPanels(hud);
@@ -85,6 +85,7 @@ public class GamePanel extends Sprite
         while (this.numChildren > 0) {
             this.removeChildAt(0);
         }
+        _box = null;
         for (var ii :int = 0; ii < panels.length; ii ++) {
             this.addChild(panels[ii]);
         }

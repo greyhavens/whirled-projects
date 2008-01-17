@@ -7,6 +7,7 @@ import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.geom.Point;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -14,10 +15,12 @@ import flash.events.MouseEvent;
 import flash.media.Sound;
 import flash.media.SoundChannel;
 
+import flash.utils.Dictionary;
 import flash.utils.setTimeout;
 
 import com.threerings.flash.FrameSprite;
 import com.threerings.util.CommandEvent;
+import com.whirled.AVRGameAvatar;
 import com.whirled.MobControl;
 
 import ghostbusters.Content;
@@ -45,7 +48,7 @@ public class FightPanel extends FrameSprite
     public function getGhostSprite (ctrl :MobControl) :SpawnedGhost
     {
         _ghost = new SpawnedGhost(ctrl, _model.getGhostHealth(), _model.getGhostMaxHealth());
-        setTimeout(startGame, 1000);
+//        setTimeout(startGame, 1000);
         return _ghost;
     }
 
@@ -85,48 +88,51 @@ public class FightPanel extends FrameSprite
     {
         super.handleAdded();
         _battleLoop = Sound(new Content.BATTLE_LOOP_AUDIO()).play();
+
+//        Game.control.addEventListener(AVRGameControlEvent.PLAYER_CHANGED, playerChanged);
     }
 
     override protected function handleRemoved (... ignored) :void
     {
         super.handleRemoved();
         _battleLoop.stop();
+//        Game.control.removeEventListener(AVRGameControlEvent.PLAYER_CHANGED, playerChanged);
     }
 
     protected function buildUI () :void
     {
         _dimness = new Dimness(0.8, true);
         this.addChild(_dimness);
-
-        
     }
 
     override protected function handleFrame (... ignored) :void
     {
-        var newIx :int = -1;
+        var players :Array = Game.control.getPlayerIds();
+        for (var ii :int = 0; ii < players.length; ii ++) {
+            var playerId :int = players[ii] as int;
 
-        for (var ii :int = 0; ii < _stars.length; ii ++) {
-            var star :Object = _stars[ii];
-            star.sprite.y += star.speed;
-            if (star.sprite.y > Game.stageSize.height) {
-                _dimness.removeChild(star.sprite);
-                newIx = ii;
+            var info :AVRGameAvatar = Game.control.getAvatarInfo(playerId);
+            if (info == null) {
+                Game.log.warning("Can't get avatar info [player=" + playerId + "]");
+                continue;
             }
-        }
-        if (newIx > 0 || _stars.length < STARS) {
-            var shape :Shape = new Shape();
-            shape.graphics.beginFill(0xFF4500);
-            shape.graphics.drawCircle(0, 0, 4);
-            shape.graphics.endFill();
-            shape.blendMode = BlendMode.ERASE;
-            _dimness.addChild(shape);
+            var topLeft :Point = this.globalToLocal(info.stageBounds.topLeft);
+            var bottomRight :Point = this.globalToLocal(info.stageBounds.bottomRight);
 
-            var newStar :Object = { sprite :shape, speed: 1 };
-            if (newIx > 0) {
-                _stars[newIx] = newStar;
-            } else {
-                _stars.push(newStar);
+            var height :Number = bottomRight.y - topLeft.y;
+            var width :Number = bottomRight.x - topLeft.x;
+
+            var spotlight :Spotlight = _spotlights[playerId];
+            if (spotlight == null) {
+                // a new spotlight just appears, no splines involved
+                spotlight = new Spotlight(playerId);
+                _spotlights[playerId] = spotlight;
+
+//                _maskLayer.addChild(spotlight.mask);
+//                _lightLayer.addChild(spotlight.light);
+                _dimness.addChild(spotlight.hole);
             }
+            spotlight.redraw(topLeft.x + width/2, topLeft.y + height/2, width, height);
         }
     }
 
@@ -139,9 +145,11 @@ public class FightPanel extends FrameSprite
 
     protected var _ghost :SpawnedGhost;
 
-    protected var _dimness :Sprite;
+    protected var _dimness :Dimness;
 
     protected var _battleLoop :SoundChannel;
+
+    protected var _spotlights :Dictionary = new Dictionary();
 
     protected var _frame :GameFrame;
     protected var _minigame: DisplayObject;

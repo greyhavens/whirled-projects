@@ -20,7 +20,12 @@ public class Box extends Sprite
     public function Box (innards :DisplayObject)
     {
         _innards = innards;
+
+        _backdrop = new Sprite();
+        this.addChild(_backdrop);
+
         _boxHandler = new ClipHandler(new Content.TEXT_BOX(), initUI);
+        _backdrop.addChild(_boxHandler);
     }
 
     protected function initUI (clip :MovieClip) :void
@@ -31,16 +36,11 @@ public class Box extends Sprite
         _boxHandler.gotoScene(SCN_BOX);
         Game.log.debug("Box clip dimensions: " + _boxClip.getBounds(_boxClip));
 
-        _backdrop = new Sprite();
-        _backdrop.addChild(_boxClip);
-
         var bounds :Rectangle = _boxClip.getBounds(_backdrop);
 
 //        _boxClip.x = -_boxClip.width / 2;
 //        _boxClip.y = -_boxClip.height / 2;
         Game.log.debug("Backdrop dimensions: " + _backdrop.getBounds(_backdrop));
-
-        this.addChild(_backdrop);
 
         _foreground = new Sprite();
         _foreground.addChild(_innards);

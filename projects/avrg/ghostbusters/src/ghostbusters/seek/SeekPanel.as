@@ -106,6 +106,9 @@ public class SeekPanel extends FrameSprite
     override protected function handleRemoved (... ignored) :void
     {
         super.handleRemoved();
+        if (_ghost != null) {
+            _ghost.handler.stop();
+        }
         _lanternLoop.stop();
     }
 

@@ -10,13 +10,14 @@ import flash.events.Event;
 
 import flash.utils.ByteArray;
 
+import com.threerings.flash.FrameSprite;
 import com.threerings.util.EmbeddedSwfLoader;
 
 /**
  * A simple utility class that binds to a MovieClip and then plays scenes of that clip on request,
  * executing a callback method when the scene is finished.
  */
-public class ClipHandler
+public class ClipHandler extends FrameSprite
 {
     public var scenes :Object;
 
@@ -32,6 +33,7 @@ public class ClipHandler
     protected function clipLoaded (evt :Event) :void
     {
         _clip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        addChild(_clip);
 
         scenes = new Object();
 
@@ -45,11 +47,6 @@ public class ClipHandler
         if (_loaded != null) {
             _loaded(_clip);
         }
-    }
-
-    public function unload () :void
-    {
-        disengage();
     }
 
     public function stop () :void
@@ -70,26 +67,27 @@ public class ClipHandler
         if (_scene) {
             _callback = done;
             _lastFrame = toFrame >= 0 ? toFrame : _scene.numFrames;
-            _clip.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
-            if (_scene.name) {
+            if (_scene.name) {  
+                if (_scene.name == "appear_to_fighting") {
+                    Game.log.debug("playing: " + _scene);
+                }
                 _clip.gotoAndPlay(1, _scene.name);
             } else {
                 _clip.gotoAndPlay(1);
             }
             return _lastFrame;
         }
-        return 0;
+        throw new Error("Can't goto scene [scene=" + scene + "]");
     }
 
-    public function disengage () :void
+    override protected function handleFrame (... ignored) :void
     {
-        _callback = null;
-        _scene = null;
-        _clip.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
-    }
-
-    protected function handleEnterFrame (event :Event) :void
-    {
+        if (_clip == null || _lastFrame < 0) {
+            return;
+        }
+        if (_lastFrame == 391) {
+            Game.log.debug("current: " + _clip.currentFrame);
+        }
         if (_clip.currentFrame == _lastFrame) {
             if (_callback != null) {
                 var next :String = _callback();
@@ -100,8 +98,10 @@ public class ClipHandler
                         return;
                     }
                 }
-            }
-            disengage();
+            } 
+            _callback = null;
+            _scene = null;
+            _clip.stop();
             return;
         }
     }
