@@ -1,9 +1,9 @@
 package ghostbusters.fight.ouija {
 
-import flash.display.Sprite;
-
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.util.*;
+
+import flash.display.Sprite;
 
 [SWF(width="296", height="223", frameRate="30")]
 public class PictoGeistGame extends Sprite
@@ -107,14 +107,24 @@ class GameMode extends AppMode
     override protected function enter () :void
     {
         //this.modeSprite.addChild(new DrawingCursor(this.modeSprite, _picture[0], _picture[_picture.length - 1]));
+        _drawing = new Drawing(this.modeSprite, _picture[0], _picture[_picture.length - 1]);
+        this.addObject(_drawing, this.modeSprite);
+        
+        _cursor = new BasicCursor(this.modeSprite);
+        this.addObject(_cursor, this.modeSprite);
     }
 
     override protected function exit () :void
     {
-
+        this.destroyObject(_cursor.id);
+        this.destroyObject(_drawing.id);
+        _cursor = null;
+        _drawing = null;
     }
 
     protected var _picture :Array;
+    protected var _cursor :BasicCursor;
+    protected var _drawing :Drawing;
 
     protected static const GAME_TIME :Number = 20000;
 

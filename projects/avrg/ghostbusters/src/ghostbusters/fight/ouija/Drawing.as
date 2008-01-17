@@ -1,24 +1,34 @@
 package ghostbusters.fight.ouija {
 
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.objects.SceneObject;
 
-import flash.display.Sprite;
-import flash.events.MouseEvent;
+import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.Shape;
+import flash.events.MouseEvent;
 
-public class DrawingCursor extends BasicCursor
+public class Drawing extends SceneObject
 {
-    public function DrawingCursor (board :InteractiveObject, startTarget :Vector2, endTarget :Vector2)
+    public function Drawing (board :InteractiveObject, startTarget :Vector2, endTarget :Vector2)
     {
-        super(board);
-
+        _board = board;
         _startTarget = startTarget;
         _endTarget = endTarget;
-
+        
         _drawing.graphics.lineStyle(3, 0x0000FF);
+    }
+    
+    override protected function addedToDB (db :ObjectDB) :void
+    {
+        super.addedToDB(db);
 
         _board.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoved, false, 0, true);
+    }
+    
+    override protected function removedFromDB (db :ObjectDB) :void
+    {
+        _board.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoved);
     }
 
     protected function handleMouseMoved (e :MouseEvent) :void
@@ -31,7 +41,7 @@ public class DrawingCursor extends BasicCursor
             delta = Vector2.subtract(loc, _startTarget);
             if (delta.lengthSquared <= (MAX_TARGET_DIST * MAX_TARGET_DIST)) {
                 _points.push(loc);
-                this.graphics.moveTo(loc.x, loc.y);
+                _drawing.graphics.moveTo(loc.x, loc.y);
             }
 
             return;
@@ -53,10 +63,16 @@ public class DrawingCursor extends BasicCursor
         }
 
        // draw and store the new point
-       this.graphics.lineTo(loc.x, loc.y);
+       _drawing.graphics.lineTo(loc.x, loc.y);
        _points.push(loc);
     }
+    
+    override public function get displayObject () :DisplayObject
+    {
+        return _drawing;
+    }
 
+    protected var _board :InteractiveObject;
     protected var _drawing :Shape = new Shape();
 
     protected var _startTarget :Vector2;
