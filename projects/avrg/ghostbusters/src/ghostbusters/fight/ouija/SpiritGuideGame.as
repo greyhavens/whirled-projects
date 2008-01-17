@@ -1,9 +1,9 @@
 package ghostbusters.fight.ouija {
 
-import flash.display.Sprite;
-
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.util.*;
+
+import flash.display.Sprite;
 
 [SWF(width="296", height="223", frameRate="30")]
 public class SpiritGuideGame extends Sprite
@@ -57,17 +57,17 @@ class GameMode extends AppMode
 
     override protected function setup () :void
     {
-        _board = new Board();
-        this.addObject(_board, this.modeSprite);
+        var board :Board = new Board();
+        this.addObject(board, this.modeSprite);
 
         // create the visual timer
         var boardTimer :BoardTimer = new BoardTimer(GAME_TIME);
-        this.addObject(boardTimer, _board.displayObjectContainer);
+        this.addObject(boardTimer, board.displayObjectContainer);
 
         // status text
         var statusText :StatusText = new StatusText();
         statusText.text = "Move to '" + _selection.toLocaleUpperCase() + "'";
-        _board.displayObjectContainer.addChild(statusText);
+        board.displayObjectContainer.addChild(statusText);
 
         // install a failure timer
         var timerObj :AppObject = new AppObject();
@@ -78,25 +78,15 @@ class GameMode extends AppMode
             )));
 
         this.addObject(timerObj);
-    }
-
-    override protected function enter () :void
-    {
+        
+        // create the cursor
         var mouseTransform :Matrix = (MOUSE_TRANSFORMS[Rand.nextIntRange(0, MOUSE_TRANSFORMS.length, Rand.STREAM_GAME)] as Matrix);
-        _cursor = new SpiritCursor(_board.interactiveObject, mouseTransform);
+        var cursor :SpiritCursor = new SpiritCursor(board.interactiveObject, mouseTransform);
 
-        this.addObject(_cursor, _board.displayObjectContainer);
+        cursor.selectionTargetIndex = Board.stringToSelectionIndex(_selection);
+        cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
 
-        _cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
-
-        _cursor.selectionTargetIndex = Board.stringToSelectionIndex(_selection);
-    }
-
-    override protected function exit () :void
-    {
-        _cursor.removeEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false);
-        this.destroyObject(_cursor.id);
-        _cursor = null;
+        this.addObject(cursor, board.displayObjectContainer);
     }
 
     protected function boardSelectionChanged (e :BoardSelectionEvent) :void
@@ -107,8 +97,6 @@ class GameMode extends AppMode
     }
 
     protected var _selection :String;
-    protected var _cursor :Cursor;
-    protected var _board :Board;
 
     protected static const GAME_TIME :Number = 8; // @TODO - this should be controlled by game difficulty
 

@@ -1,21 +1,17 @@
 package ghostbusters.fight.ouija {
 
-import flash.display.DisplayObject;
-import flash.display.Sprite;
-import flash.display.BitmapData
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.tasks.*;
+
 import flash.display.Bitmap;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-import flash.filters.GlowFilter;
+import flash.display.DisplayObject;
+import flash.display.InteractiveObject;
+import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
 import flash.events.MouseEvent;
-
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.objects.*;
-import com.whirled.contrib.core.tasks.*;
-import flash.display.InteractiveObject;
 
 /**
  * This should almost certainly be called "Planchette" instead of "Cursor", but who wants to type that word a million times?
@@ -45,7 +41,7 @@ public class BasicCursor extends SceneObject
 
     override protected function addedToDB (db :ObjectDB) :void
     {
-        _board.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
+        _board.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved, false, 0, true);
         _sprite.x = _board.mouseX;
         _sprite.y = _board.mouseY;
     }

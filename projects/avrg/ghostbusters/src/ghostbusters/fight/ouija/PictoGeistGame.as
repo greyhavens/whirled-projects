@@ -4,6 +4,8 @@ import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.util.*;
 
 import flash.display.Sprite;
+import flash.events.Event;
+import flash.events.MouseEvent;
 
 [SWF(width="296", height="223", frameRate="30")]
 public class PictoGeistGame extends Sprite
@@ -27,6 +29,9 @@ import ghostbusters.fight.ouija.*;
 import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.DisplayObject;
+import flash.display.InteractiveObject;
+import flash.events.MouseEvent;
+import flash.events.Event;
 
 class GameMode extends AppMode
 {
@@ -71,6 +76,13 @@ class GameMode extends AppMode
             )));
 
         this.addObject(timerObj);
+        
+        // create the drawing and cursor
+        _drawing = new Drawing(this.modeSprite, _picture[0], _picture[_picture.length - 1]);
+        this.addObject(_drawing, this.modeSprite);
+        
+        _cursor = new BasicCursor(this.modeSprite);
+        this.addObject(_cursor, this.modeSprite);
     }
 
     protected function createPicture () :DisplayObject
@@ -102,24 +114,6 @@ class GameMode extends AppMode
         }
 
         return pic;
-    }
-
-    override protected function enter () :void
-    {
-        //this.modeSprite.addChild(new DrawingCursor(this.modeSprite, _picture[0], _picture[_picture.length - 1]));
-        _drawing = new Drawing(this.modeSprite, _picture[0], _picture[_picture.length - 1]);
-        this.addObject(_drawing, this.modeSprite);
-        
-        _cursor = new BasicCursor(this.modeSprite);
-        this.addObject(_cursor, this.modeSprite);
-    }
-
-    override protected function exit () :void
-    {
-        this.destroyObject(_cursor.id);
-        this.destroyObject(_drawing.id);
-        _cursor = null;
-        _drawing = null;
     }
 
     protected var _picture :Array;

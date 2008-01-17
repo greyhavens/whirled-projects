@@ -81,22 +81,13 @@ class GameMode extends AppMode
             )));
 
         this.addObject(timerObj);
-    }
-
-    override protected function enter () :void
-    {
+        
+        // create the cursor
         _cursor = new Cursor(_board.interactiveObject);
         this.addObject(_cursor, _board.displayObjectContainer);
         _cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
 
         _cursor.selectionTargetIndex = Board.stringToSelectionIndex(_word.charAt(_nextWordIndex));
-    }
-
-    override protected function exit () :void
-    {
-        _cursor.removeEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false);
-        this.destroyObject(_cursor.id);
-        _cursor = null;
     }
 
     protected function boardSelectionChanged (e :BoardSelectionEvent) :void
