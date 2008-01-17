@@ -32,6 +32,7 @@ import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.events.MouseEvent;
 import flash.events.Event;
+import flash.geom.Point;
 
 class GameMode extends AppMode
 {
@@ -53,6 +54,8 @@ class GameMode extends AppMode
     {
         // choose a picture to draw
         _picture = PICTURES[Rand.nextIntRange(0, PICTURES.length, Rand.STREAM_COSMETIC)];
+        _picture = this.chopLines(_picture, 4);
+        trace("picture length: " + _picture.length);
     }
 
     override protected function setup () :void
@@ -83,6 +86,54 @@ class GameMode extends AppMode
         
         _cursor = new BasicCursor(this.modeSprite);
         this.addObject(_cursor, this.modeSprite);
+    }
+    
+    override public function update (dt :Number) :void
+    {
+        super.update(dt);
+        
+        if (_drawing.isDone) {
+            this.calculateScoreAndEndGame();
+        }
+    }
+    
+    protected function calculateScoreAndEndGame () :void
+    {
+        
+    }
+    
+    protected function chopLines (points :Array, maxDistance :Number) :Array
+    {
+        // chop up an array of points so that the distance between two consecutive points is no more than maxDistance
+        
+        if (points.length <= 1) {
+            return new Array(); // need at least 2 points
+        }
+        
+        var out :Array = new Array();
+        
+        out.push(points[0]);
+        
+        for (var i :uint = 1; i < points.length; ++i) {
+            var thisPoint :Vector2 = points[i];
+            var lastPoint :Vector2 = points[i - 1];
+            
+            var direction :Vector2 = lastPoint.getSubtract(thisPoint);
+            var distance :Number = (direction.length);
+            direction.length = 1;
+            
+            var numChops :int = Math.floor(distance / maxDistance);
+            for (var j :uint = 1; j <= numChops; ++j) {
+                var newPoint :Vector2 = direction.getScale(maxDistance * j);
+                newPoint.add(lastPoint);
+                
+                out.push(newPoint);
+            }
+            
+            out.push(thisPoint);
+        }
+        
+        return out;
     }
 
     protected function createPicture () :DisplayObject

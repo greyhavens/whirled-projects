@@ -71,6 +71,16 @@ public class Drawing extends SceneObject
     {
         return _drawing;
     }
+    
+    public function get isDone () :Boolean
+    {
+        return _doneDrawing;
+    }
+    
+    public function get points () :Array
+    {
+        return _points;
+    }
 
     protected var _board :InteractiveObject;
     protected var _drawing :Shape = new Shape();
