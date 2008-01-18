@@ -218,40 +218,6 @@ class GameMode extends AppMode
     {
         this.endGame(this.pictureSuccessful(true) || this.pictureSuccessful(false));
     }
-    
-    protected static function chopLines (points :Array, maxDistance :Number) :Array
-    {
-        // chop up an array of points so that the distance between two consecutive points is no more than maxDistance
-        
-        if (points.length < 1) {
-            return new Array();
-        }
-        
-        var out :Array = new Array();
-        
-        out.push(points[0]);
-        
-        for (var i :uint = 1; i < points.length; ++i) {
-            var thisPoint :Vector2 = points[i];
-            var lastPoint :Vector2 = points[i - 1];
-            
-            var direction :Vector2 = thisPoint.getSubtract(lastPoint);
-            var distance :Number = (direction.length);
-            direction.scale(1 / distance);
-            
-            var numChops :int = Math.floor(distance / maxDistance);
-            for (var j :uint = 1; j <= numChops; ++j) {
-                var newPoint :Vector2 = direction.getScale(maxDistance * j);
-                newPoint.add(lastPoint);
-                
-                out.push(newPoint);
-            }
-            
-            out.push(thisPoint);
-        }
-        
-        return out;
-    }
 
     protected function createPicture () :DisplayObject
     {
