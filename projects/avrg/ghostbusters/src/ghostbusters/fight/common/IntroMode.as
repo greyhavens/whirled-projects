@@ -1,4 +1,4 @@
-package ghostbusters.fight.ouija {
+package ghostbusters.fight.common {
 
 import com.whirled.contrib.core.AppMode;
 

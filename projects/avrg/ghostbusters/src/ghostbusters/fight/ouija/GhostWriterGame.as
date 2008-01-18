@@ -23,6 +23,7 @@ import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 import ghostbusters.fight.ouija.*;
+import ghostbusters.fight.common.*;
 
 import flash.display.Sprite;
 import flash.display.Shape;

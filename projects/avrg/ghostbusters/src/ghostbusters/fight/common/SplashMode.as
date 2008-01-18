@@ -1,5 +1,4 @@
-package ghostbusters.fight.ouija
-{
+package ghostbusters.fight.common {
 
 import flash.display.Shape;
 import flash.events.MouseEvent;
