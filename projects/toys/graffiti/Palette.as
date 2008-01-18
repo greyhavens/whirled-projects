@@ -43,7 +43,7 @@ public class Palette extends Sprite
     {
         var p :Point = this.globalToLocal(new Point(evt.stageX, evt.stageY));
 
-        var rr :int = int(p.x % (TOTAL_SIZE*6)) + 3 * int(p.y / (TOTAL_SIZE*6));
+        var rr :int = int(p.x / (TOTAL_SIZE*6)) + 3 * int(p.y / (TOTAL_SIZE*6));
         var gg :int = (p.x % (TOTAL_SIZE*6)) / TOTAL_SIZE;
         var bb :int = (p.y % (TOTAL_SIZE*6)) / TOTAL_SIZE;
 

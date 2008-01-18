@@ -36,18 +36,18 @@ public class Board extends Sprite
         _controlPoints.visible = false;
         this.addChild(_controlPoints);
 
+        _strokes = new Array();
+
         _control = new FurniControl(this);
         if (_control.isConnected()) {
             _control.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
             initStrokes();
         }
 
-        _canvas.graphics.beginFill(0xDDDDDD);
-        _canvas.graphics.drawRect(0, 0, 256, 256);
-        _canvas.graphics.endFill();
-
         _canvas.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
         _canvas.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+        
+        redraw();
     }
 
     public function pickColour (colour :int) :void
@@ -89,18 +89,20 @@ public class Board extends Sprite
             return;
         }
 
-//        log.debug("Adding stroke: " + p);
         var stroke :Array;
         if (_newStroke) {
             stroke = [ p.x, p.y, _lastStrokePoint.x, _lastStrokePoint.y, _colour ];
         } else {
             stroke = [ p.x, p.y ];
         }
+        _lastKey ++;
         if (_control.isConnected()) {
-            _lastKey ++;
             _control.updateMemory(String(_lastKey), stroke);
         } else {
-            paintStroke(stroke);
+            _strokes.push({ "key": String(_lastKey), "stroke": stroke });
+//            paintStroke(stroke);
+            log.debug("Stroke array: " + _strokes);
+            redraw();
         }
         _lastStrokePoint = p;
         _newStroke = false;
@@ -108,13 +110,22 @@ public class Board extends Sprite
 
     protected function initStrokes () :void
     {
-        _strokes = new Array();
-
         var memories :Object = _control.getMemories();
         for (var key :String in memories) {
             _strokes.push({ "key": key, "stroke": memories[key] });
         }
         _strokes.sortOn("key", Array.NUMERIC);
+
+        redraw();
+    }
+
+    protected function redraw () :void
+    {
+        _canvas.graphics.clear();
+
+        _canvas.graphics.beginFill(0x444444);
+        _canvas.graphics.drawRect(0, 0, 256, 256);
+        _canvas.graphics.endFill();
 
         var lastKey :String = "0";
         for (var ii :int = 0; ii < _strokes.length; ii ++) {
