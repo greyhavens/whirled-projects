@@ -29,6 +29,13 @@ public class Board extends Sprite
         _canvas = new Sprite();
         this.addChild(_canvas);
 
+        _palette = new Palette(this);
+        this.addChild(_palette);
+
+        _controlPoints = new Sprite();
+        _controlPoints.visible = false;
+        this.addChild(_controlPoints);
+
         _control = new FurniControl(this);
         if (_control.isConnected()) {
             _control.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
@@ -41,6 +48,11 @@ public class Board extends Sprite
 
         _canvas.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
         _canvas.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+    }
+
+    public function pickColour (colour :int) :void
+    {
+        _colour = colour;
     }
 
     protected function mouseDown (evt :MouseEvent) :void
@@ -73,14 +85,14 @@ public class Board extends Sprite
         }
         var dx :Number = p.x - _lastStrokePoint.x;
         var dy :Number = p.y - _lastStrokePoint.y;
-        if (dx*dx + dy*dy < 8) {
+        if (dx*dx + dy*dy < 9) {
             return;
         }
 
 //        log.debug("Adding stroke: " + p);
         var stroke :Array;
         if (_newStroke) {
-            stroke = [ p.x, p.y, _lastStrokePoint.x, _lastStrokePoint.y ];
+            stroke = [ p.x, p.y, _lastStrokePoint.x, _lastStrokePoint.y, _colour ];
         } else {
             stroke = [ p.x, p.y ];
         }
@@ -123,43 +135,28 @@ public class Board extends Sprite
     {
         log.debug("Painting stroke: " + stroke);
 
-        if (stroke.length == 4) {
+        if (stroke.length == 5) {
             _canvas.graphics.moveTo(stroke[2], stroke[3]);
-            _canvas.graphics.lineStyle(4, 0, 0.7);
+            _canvas.graphics.lineStyle(4, stroke[4], 0.7);
 
             _lastX = stroke[2];
             _lastY = stroke[3];
-            _tanX = _tanY = 0;
-            trace("YYYYYYYYYYY");
+            _oldDeltaX = _oldDeltaY = 0;
         }
         var dX :Number = stroke[0] - _lastX;
         var dY :Number = stroke[1] - _lastY;
 
-        var dot :Number;
-        if (_tanX == 0 && _tanY == 0) {
-            // handle this as a special case
-            dot = 0;
+        // the new spline is continuous with the old, but not aggressively so
+        var controlX :Number = _lastX + _oldDeltaX * 0.4;
+        var controlY :Number = _lastY + _oldDeltaY * 0.4;
 
-        } else {
-            // find the dot product between previous tangent & new vector
-            dot = _tanX * dX + _tanY * dY;
-            if (dot < 0.3) {
-                log.debug("Eek, reversal [dot=" + dot + "]; truncating at 0.1");
-                dot = 0.3;
-            }
-        }
-
-        // choose a controlpoint that's halway there
-        var controlX :Number = _lastX + _tanX * dot/2;
-        var controlY :Number = _lastY + _tanY * dot/2;
-
-        var foo :Shape = new Shape();
-        this.addChild(foo);
-        foo.x = controlX;
-        foo.y = controlY;
-        foo.graphics.beginFill(0xFF0000);
-        foo.graphics.drawCircle(0, 0, 3);
-        foo.graphics.endFill();
+        var controlPoint :Shape = new Shape();
+        _controlPoints.addChild(controlPoint);
+        controlPoint.x = controlX;
+        controlPoint.y = controlY;
+        controlPoint.graphics.beginFill(0xFF0000);
+        controlPoint.graphics.drawCircle(0, 0, 1);
+        controlPoint.graphics.endFill();
 
         log.debug("delta = (" + dX + "/" + dY + "); control = (" + controlX + ", " + controlY + ")");
         _canvas.graphics.curveTo(controlX, controlY, stroke[0], stroke[1]);
@@ -167,23 +164,17 @@ public class Board extends Sprite
         _lastX = stroke[0];
         _lastY = stroke[1];
 
-        // now figure out what the tangent ended as
-        dX = stroke[0] - controlX;
-        dY = stroke[1] - controlY;
-        var dLen :Number = Math.sqrt(dX*dX + dY*dY);
-
-        if (dLen > 0) {
-            _tanX = dX / dLen;
-            _tanY = dY / dLen;
-
-        } else {
-            trace("XXXXXXXXX");
-            _tanX = _tanY = 0;
-        }
+        _oldDeltaX = stroke[0] - controlX;
+        _oldDeltaY = stroke[1] - controlY;
     }
 
     protected var _control :FurniControl;
     protected var _canvas :Sprite;
+    protected var _controlPoints :Sprite;
+    protected var _palette :Palette;
+
+    protected var _colour :int;
+
     protected var _strokes :Array;
     protected var _lastKey :int;
 
@@ -194,8 +185,8 @@ public class Board extends Sprite
     protected var _lastX :Number;
     protected var _lastY :Number;
 
-    protected var _tanX :Number;
-    protected var _tanY :Number;
+    protected var _oldDeltaX :Number;
+    protected var _oldDeltaY :Number;
 
     protected const log :Log = Log.getLog(Board);
 }
