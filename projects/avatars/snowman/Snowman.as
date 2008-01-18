@@ -10,10 +10,12 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
+import flash.utils.ByteArray;
 import flash.utils.getTimer;
 
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
+import com.whirled.DataPack;
 
 import org.papervision3d.Papervision3D;
 import org.papervision3d.cameras.Camera3D;
@@ -28,7 +30,6 @@ import org.papervision3d.objects.Sphere;
 import org.papervision3d.scenes.MovieScene3D;
 import org.papervision3d.scenes.Scene3D;
 
-
 [SWF(width="150", height="250")]
 public class Snowman extends Sprite
 {
@@ -41,9 +42,6 @@ public class Snowman extends Sprite
 
         _control.setMoveSpeed(200);
 
-        // Uncomment this to be notified when your avatar changes orientation
-        _control.addEventListener(ControlEvent.APPEARANCE_CHANGED, appearanceChanged);
-
         // Uncomment this to be notified when the player speaks
         // _control.addEventListener(ControlEvent.AVATAR_SPOKE, avatarSpoke);
 
@@ -51,11 +49,24 @@ public class Snowman extends Sprite
         // _control.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
         // _control.setActions("Test action");
 
-        createScene();
-        appearanceChanged();
+        var ba :ByteArray = _control.getDefaultDataPack();
+        if (ba != null) {
+            _pack = new DataPack(ba);
+            trace("Yep, pack is complete: " + _pack.isComplete());
+            _pack.getDisplayObjects([ "texture" ], gotTexture);
+
+        } else {
+            createScene((new SNOW_TEXTURE()) as Bitmap);
+        }
     }
 
-    protected function createScene () :void
+    protected function gotTexture (results :Object) :void
+    {
+        createScene(results["texture"] as Bitmap);
+        _pack = null; // no longer needed
+    }
+
+    protected function createScene (texture :Bitmap) :void
     {
         var sprite :Sprite = new Sprite();
         sprite.x = 75;
@@ -68,7 +79,7 @@ public class Snowman extends Sprite
 
         var material :MaterialObject3D;
         //material = new ColorMaterial(0xDDDDFF);
-        material = new BitmapMaterial(Bitmap(new SNOW_TEXTURE()).bitmapData);
+        material = new BitmapMaterial(texture.bitmapData);
         var buttSphere :Sphere = new Sphere(material, 150, 16, 10);
         buttSphere.y = 150;
 
@@ -121,6 +132,11 @@ public class Snowman extends Sprite
         _camera.y = 600;
 
         _scene.renderCamera(_camera);
+
+        // start listening for appearance changed
+        _control.addEventListener(ControlEvent.APPEARANCE_CHANGED, appearanceChanged);
+        // and do one now
+        appearanceChanged();
     }
 
     /**
@@ -263,5 +279,7 @@ public class Snowman extends Sprite
     protected var _scene :Scene3D;
 
     protected var _camera :Camera3D;
+
+    protected var _pack :DataPack;
 }
 }
