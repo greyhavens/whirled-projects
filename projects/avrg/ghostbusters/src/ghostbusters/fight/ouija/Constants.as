@@ -7,7 +7,8 @@ public class Constants
     public static const PICTO_MINLINELENGTH :Number = 6;
     public static const PICTO_LINEWIDTH :Number = 8;
     public static const PICTO_TARGETRADIUS :Number = 8;
-    public static const PICTO_MAXAVGDISTANCE :Number = 4.5;
+    public static const PICTO_MAXAVGDISTANCE :Number = 5;
+    public static const PICTO_GAMETIME :Number = 7;
     
     public static const PICTO_PICTURES :Array = [
     

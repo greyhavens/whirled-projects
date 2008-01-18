@@ -128,13 +128,13 @@ class GameMode extends AppMode
         this.modeSprite.addChild(this.createPicture());
 
         // create the visual timer
-        var boardTimer :BoardTimer = new BoardTimer(GAME_TIME);
+        var boardTimer :BoardTimer = new BoardTimer(Constants.PICTO_GAMETIME);
         this.addObject(boardTimer, this.modeSprite);
 
         // install a failure timer
         var timerObj :AppObject = new AppObject();
         timerObj.addTask(new SerialTask(
-            new TimedTask(GAME_TIME),
+            new TimedTask(Constants.PICTO_GAMETIME),
             new FunctionTask(
                 function () :void { endGame(false); }
             )));
@@ -255,6 +255,4 @@ class GameMode extends AppMode
     protected var _picture :Array;
     protected var _cursor :BasicCursor;
     protected var _drawing :Drawing;
-
-    protected static const GAME_TIME :Number = 12;
 }
