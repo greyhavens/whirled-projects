@@ -29,12 +29,12 @@ public class Board extends Sprite
         _canvas = new Sprite();
         this.addChild(_canvas);
 
-        _palette = new Palette(this);
+        _palette = new Palette(this, 0);
         this.addChild(_palette);
 
-        _controlPoints = new Sprite();
-        _controlPoints.visible = false;
-        this.addChild(_controlPoints);
+        _points = new Sprite();
+        _points.visible = false;
+        this.addChild(_points);
 
         _strokes = new Array();
 
@@ -60,7 +60,6 @@ public class Board extends Sprite
         _lastStrokePoint = _canvas.globalToLocal(new Point(evt.stageX, evt.stageY));
         _newStroke = true;
         _timer = setInterval(tick, 200);
-        log.debug("Started a stroke: " + _lastStrokePoint);
     }
 
     protected function tick () :void
@@ -70,7 +69,6 @@ public class Board extends Sprite
 
     protected function mouseUp (evt :MouseEvent) :void
     {
-        log.debug("mouseUp(" + evt + ")");
         maybeAddStroke(_canvas.globalToLocal(new Point(evt.stageX, evt.stageY)));
         if (_timer > 0) {
             clearInterval(_timer);
@@ -97,16 +95,25 @@ public class Board extends Sprite
         }
         _lastKey ++;
         if (_control.isConnected()) {
+            // TODO: use sendMessage instead, include our instance id
             _control.updateMemory(String(_lastKey), stroke);
+
         } else {
             _strokes.push({ "key": String(_lastKey), "stroke": stroke });
-//            paintStroke(stroke);
-            log.debug("Stroke array: " + _strokes);
-            redraw();
+            paintStroke(stroke);
         }
         _lastStrokePoint = p;
         _newStroke = false;
     }
+
+// TODO: reintegrate control points
+//         var point :Shape = new Shape();
+//         _points.addChild(point);
+//         point.x = stroke[0];
+//         point.y = stroke[1];
+//         point.graphics.beginFill(0xFF0000);
+//         point.graphics.drawCircle(0, 0, 1);
+//         point.graphics.endFill();
 
     protected function initStrokes () :void
     {
@@ -144,8 +151,6 @@ public class Board extends Sprite
 
     protected function paintStroke (stroke :Array) :void
     {
-        log.debug("Painting stroke: " + stroke);
-
         if (stroke.length == 5) {
             _canvas.graphics.moveTo(stroke[2], stroke[3]);
             _canvas.graphics.lineStyle(4, stroke[4], 0.7);
@@ -161,15 +166,6 @@ public class Board extends Sprite
         var controlX :Number = _lastX + _oldDeltaX * 0.4;
         var controlY :Number = _lastY + _oldDeltaY * 0.4;
 
-        var controlPoint :Shape = new Shape();
-        _controlPoints.addChild(controlPoint);
-        controlPoint.x = controlX;
-        controlPoint.y = controlY;
-        controlPoint.graphics.beginFill(0xFF0000);
-        controlPoint.graphics.drawCircle(0, 0, 1);
-        controlPoint.graphics.endFill();
-
-        log.debug("delta = (" + dX + "/" + dY + "); control = (" + controlX + ", " + controlY + ")");
         _canvas.graphics.curveTo(controlX, controlY, stroke[0], stroke[1]);
 
         _lastX = stroke[0];
@@ -181,7 +177,7 @@ public class Board extends Sprite
 
     protected var _control :FurniControl;
     protected var _canvas :Sprite;
-    protected var _controlPoints :Sprite;
+    protected var _points :Sprite;
     protected var _palette :Palette;
 
     protected var _colour :int;

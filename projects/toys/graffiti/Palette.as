@@ -12,11 +12,14 @@ import flash.geom.Point;
 
 public class Palette extends Sprite
 {
-    public function Palette (board :Board)
+    public function Palette (board :Board, initialColour :int)
     {
         _board = board;
-        this.opaqueBackground = 0x000000;
         var g :Graphics = this.graphics;
+
+        g.beginFill(0x000000);
+        g.drawRect(0, 0, 18*TOTAL_SIZE + 1, 12*TOTAL_SIZE + 1);
+        g.endFill();
 
         for (var rr :int = 0; rr < 6; rr ++) {
             var rX :int = TOTAL_SIZE*6 * int(rr % 3);
@@ -36,7 +39,18 @@ public class Palette extends Sprite
             }
         }
 
+        updateCurrentColour(initialColour);
+
         this.addEventListener(MouseEvent.CLICK, handleClick);
+    }
+
+    protected function updateCurrentColour (colour :int) :void
+    {
+        var g :Graphics = this.graphics;
+
+        g.beginFill(colour);
+        g.drawRoundRect(18*TOTAL_SIZE + 1, 1, 2*TOTAL_SIZE, 6*TOTAL_SIZE-1, SQUARE_SIZE);
+        g.endFill();
     }
 
     protected function handleClick (evt :MouseEvent) :void
@@ -47,7 +61,10 @@ public class Palette extends Sprite
         var gg :int = (p.x % (TOTAL_SIZE*6)) / TOTAL_SIZE;
         var bb :int = (p.y % (TOTAL_SIZE*6)) / TOTAL_SIZE;
 
-        _board.pickColour(rr*0x330000 + gg * 0x003300 + bb * 0x000033);
+        var colour :int = rr*0x330000 + gg * 0x003300 + bb * 0x000033;
+
+        updateCurrentColour(colour);
+        _board.pickColour(colour);
     }
 
     protected var _board :Board;
