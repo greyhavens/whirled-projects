@@ -43,7 +43,7 @@ class ImageRecordMode extends AppMode
 {
     override protected function setup () :void
     {
-        _drawing.graphics.lineStyle(4, 0xFFFFFF, 1);
+        _drawing.graphics.lineStyle(Constants.PICTO_LINEWIDTH, 0xFFFFFF, 1);
         
         this.modeSprite.addChild(new Content.IMAGE_PICTOBOARD);
         this.modeSprite.addChild(_drawing);
@@ -75,7 +75,7 @@ class ImageRecordMode extends AppMode
             var lastPoint :Vector2 = _points[_points.length - 1];
             
             _linePreview.graphics.clear();
-            _linePreview.graphics.lineStyle(4, 0xFF0000, 1);
+            _linePreview.graphics.lineStyle(Constants.PICTO_LINEWIDTH, 0xFF0000, 1);
             _linePreview.graphics.moveTo(lastPoint.x, lastPoint.y);
             _linePreview.graphics.lineTo(e.localX, e.localY);
         }
@@ -116,7 +116,7 @@ class GameMode extends AppMode
     public function GameMode ()
     {
         // choose a picture to draw
-        _picture = PICTURES[Rand.nextIntRange(0, PICTURES.length, Rand.STREAM_COSMETIC)];
+        _picture = Constants.PICTO_PICTURES[Rand.nextIntRange(0, Constants.PICTO_PICTURES.length, Rand.STREAM_COSMETIC)];
     }
 
     override protected function setup () :void
@@ -205,7 +205,7 @@ class GameMode extends AppMode
         trace("total distance: " + sumDistances);
         trace("avg distance: " + avgDistance);
         
-        return (avgDistance <= MAX_AVG_DISTANCE);
+        return (avgDistance <= Constants.PICTO_MAXAVGDISTANCE);
         
         function getNextLinePt () :Vector2
         {
@@ -228,18 +228,18 @@ class GameMode extends AppMode
 
         var start :Vector2 = _picture[0];
         pic.graphics.beginFill(0x00FF00);
-        pic.graphics.drawCircle(start.x, start.y, 6);
+        pic.graphics.drawCircle(start.x, start.y, Constants.PICTO_TARGETRADIUS);
         pic.graphics.endFill();
 
         var end :Vector2 = _picture[_picture.length - 1];
         if (!end.equals(start)) {
             pic.graphics.beginFill(0x00FF00);
-            pic.graphics.drawCircle(end.x, end.y, 6);
+            pic.graphics.drawCircle(end.x, end.y, Constants.PICTO_TARGETRADIUS);
             pic.graphics.endFill();
         }
 
         // draw the lines
-        pic.graphics.lineStyle(4, 0xFFFFFF);
+        pic.graphics.lineStyle(Constants.PICTO_LINEWIDTH, 0xFFFFFF);
 
         var point :Vector2 = _picture[0];
         pic.graphics.moveTo(point.x, point.y);
@@ -256,85 +256,5 @@ class GameMode extends AppMode
     protected var _cursor :BasicCursor;
     protected var _drawing :Drawing;
 
-    protected static const GAME_TIME :Number = 20;
-    protected static const MAX_AVG_DISTANCE :Number = 2;
-
-    protected static const PICTURES :Array = [
-        
-        // star
-        [
-            new Vector2(104, 165),
-            new Vector2(138, 94),
-            new Vector2(174, 165),
-            new Vector2(84, 120),
-            new Vector2(185, 111),
-            new Vector2(104, 165),
-        ],
-        
-        // pacman ghost
-        [
-            new Vector2(88, 175),
-            new Vector2(91, 144),
-            new Vector2(100, 112),
-            new Vector2(115, 91),
-            new Vector2(133, 90),
-            new Vector2(162, 92),
-            new Vector2(176, 97),
-            new Vector2(183, 115),
-            new Vector2(185, 132),
-            new Vector2(185, 155),
-            new Vector2(185, 176),
-            new Vector2(167, 149),
-            new Vector2(152, 173),
-            new Vector2(140, 147),
-            new Vector2(125, 174),
-            new Vector2(113, 148),
-            new Vector2(88, 175),
-        ],
-        
-        // spiral
-        [
-            new Vector2(147, 137),
-            new Vector2(136, 131),
-            new Vector2(144, 112),
-            new Vector2(167, 120),
-            new Vector2(173, 144),
-            new Vector2(154, 162),
-            new Vector2(124, 152),
-            new Vector2(114, 128),
-            new Vector2(126, 95),
-            new Vector2(155, 86),
-            new Vector2(190, 101),
-            new Vector2(201, 120),
-            new Vector2(203, 141),
-            new Vector2(178, 170),
-            new Vector2(150, 181),
-            new Vector2(110, 171),
-            new Vector2(94, 134),
-        ],
-        
-        // skull
-        [
-            new Vector2(126, 172),
-            new Vector2(126, 153),
-            new Vector2(111, 152),
-            new Vector2(104, 136),
-            new Vector2(104, 113),
-            new Vector2(120, 98),
-            new Vector2(147, 91),
-            new Vector2(171, 92),
-            new Vector2(190, 102),
-            new Vector2(194, 120),
-            new Vector2(195, 138),
-            new Vector2(183, 146),
-            new Vector2(172, 151),
-            new Vector2(165, 151),
-            new Vector2(158, 153),
-            new Vector2(158, 170),
-            new Vector2(126, 172),
-        ],
-        
-        
-
-    ];
+    protected static const GAME_TIME :Number = 12;
 }

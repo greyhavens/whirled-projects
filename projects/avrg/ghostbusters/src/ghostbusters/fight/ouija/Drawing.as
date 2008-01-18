@@ -21,7 +21,7 @@ public class Drawing extends SceneObject
         // from his starting position
         _canEndDrawing = !(_target1.equals(_target2));
         
-        _drawing.graphics.lineStyle(3, 0x0000FF);
+        _drawing.graphics.lineStyle(Constants.PICTO_LINEWIDTH, 0x0000FF);
     }
     
     override protected function addedToDB (db :ObjectDB) :void
@@ -46,11 +46,11 @@ public class Drawing extends SceneObject
             var delta1 :Vector2 = Vector2.subtract(loc, _target1);
             var delta2 :Vector2 = Vector2.subtract(loc, _target2);
             
-            if (delta1.lengthSquared <= (MAX_TARGET_DIST * MAX_TARGET_DIST)) {
+            if (delta1.lengthSquared <= (Constants.PICTO_TARGETRADIUS * Constants.PICTO_TARGETRADIUS)) {
                 _points.push(loc);
                 _drawing.graphics.moveTo(loc.x, loc.y);
                 _endTarget = _target2;
-            } else if (delta2.lengthSquared <= (MAX_TARGET_DIST * MAX_TARGET_DIST)) {
+            } else if (delta2.lengthSquared <= (Constants.PICTO_TARGETRADIUS * Constants.PICTO_TARGETRADIUS)) {
                 _points.push(loc);
                 _drawing.graphics.moveTo(loc.x, loc.y);
                 _endTarget = _target1;
@@ -68,7 +68,7 @@ public class Drawing extends SceneObject
         if (_canEndDrawing) {
             // did we hit the end target?
             delta = Vector2.subtract(_endTarget, loc);
-            if (delta.lengthSquared <= (MAX_TARGET_DIST * MAX_TARGET_DIST)) {
+            if (delta.lengthSquared <= (Constants.PICTO_TARGETRADIUS * Constants.PICTO_TARGETRADIUS)) {
                 _board.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoved);
                 _doneDrawing = true;
                 return;
@@ -79,7 +79,7 @@ public class Drawing extends SceneObject
 
         // have we moved far enough?
         delta = Vector2.subtract(loc, lastLoc);
-        if (delta.lengthSquared < (MIN_MOVE_DIST * MIN_MOVE_DIST)) {
+        if (delta.lengthSquared < (Constants.PICTO_MINLINELENGTH * Constants.PICTO_MINLINELENGTH)) {
             return;
         }
 
@@ -115,9 +115,6 @@ public class Drawing extends SceneObject
     protected var _doneDrawing :Boolean;
 
     protected var _points :Array = new Array();
-    
-    protected static const MAX_TARGET_DIST :int = 3;
-    protected static const MIN_MOVE_DIST :int = 1;
 
 }
 
