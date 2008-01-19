@@ -65,6 +65,8 @@ class GameMode extends AppMode
         
         // draw the beaker bottom
         _beakerBottom = new Content.IMAGE_BEAKERBOTTOM();
+        _beakerBottom.x = BEAKERBOTTOM_LOC.x;
+        _beakerBottom.y = BEAKERBOTTOM_LOC.y;
         this.setBeakerColor(_initialColor);
         this.modeSprite.addChild(_beakerBottom);
         
@@ -99,5 +101,6 @@ class GameMode extends AppMode
     protected var _beakerBottom :Bitmap;
     
     protected static const GAME_TIME :Number = 5;
+    protected static const BEAKERBOTTOM_LOC :Vector2 = new Vector2(99, 146);
     
 }
