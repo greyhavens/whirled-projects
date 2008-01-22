@@ -6,8 +6,12 @@ public class Colors
 {
     public static function getMixedColor (a :uint, b :uint) :uint
     {
-        // mixing a color with itself doesn't do anything
-        if (a == b) {
+        if (a == COLOR_WHITE) {
+            return b;
+        } else if (b == COLOR_WHITE) {
+            return a;
+        } else if (a == b) {
+            // mixing a color with itself doesn't do anything
             return a;
         } else if (hasColor(COLOR_RED)) {
             if (hasColor(COLOR_YELLOW)) {

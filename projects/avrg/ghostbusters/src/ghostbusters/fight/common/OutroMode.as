@@ -1,13 +1,37 @@
 package ghostbusters.fight.common {
 
-import com.whirled.contrib.core.AppMode;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.tasks.*;
 
 public class OutroMode extends AppMode
 {
-    public function OutroMode (success :Boolean)
+    public function OutroMode (success :Boolean, beginNextGameCallback :Function)
     {
-        this.addObject(new OutroObject(success), this.modeSprite);
+        var outro :OutroObject = new OutroObject(success);
+        outro.alpha = 0;
+        
+        var outroTask :SerialTask = new SerialTask();
+        outroTask.addTask(new TimedTask(TIME_PAUSEIN));
+        outroTask.addTask(new AlphaTask(1, TIME_FADEIN));
+        outroTask.addTask(new TimedTask(TIME_PAUSEOUT));
+        outroTask.addTask(new FunctionTask(
+            function () :void {
+                MainLoop.instance.popMode(); // pop outro mode
+                MainLoop.instance.popMode(); // pop game mode
+                if (null != beginNextGameCallback) {
+                    beginNextGameCallback(); // begin the next game
+                }
+            }
+        ));
+        
+        outro.addTask(outroTask);
+        
+        this.addObject(outro, this.modeSprite);
     }
+    
+    protected static const TIME_PAUSEIN :Number = 1;
+    protected static const TIME_FADEIN :Number = 0.5;
+    protected static const TIME_PAUSEOUT :Number = 1;
 }
 
 }
@@ -47,12 +71,6 @@ class OutroObject extends SceneObject
         textField.y = (rect.height / 2) - (textField.height / 2);
 
         _sprite.addChild(textField);
-
-        // create a timer to pop the mode
-        var task :SerialTask = new SerialTask();
-        task.addTask(new TimedTask(MODE_TIMER));
-        task.addTask(new FunctionTask(MainLoop.instance.popMode));
-        this.addTask(task);
     }
 
     override public function get displayObject () :DisplayObject

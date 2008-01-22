@@ -33,7 +33,10 @@ import flash.display.Shape;
 import flash.display.DisplayObject;
 import flash.display.Bitmap;
 
+import flash.events.MouseEvent;
+
 import ghostbusters.fight.ouija.BoardTimer;
+import com.whirled.contrib.GameMode;
 
 class GameMode extends AppMode
 {
@@ -48,9 +51,7 @@ class GameMode extends AppMode
 
     protected function endGame (success :Boolean) :void
     {
-        MainLoop.instance.popMode(); // pop this mode
-        GameMode.beginGame(); // start a new game
-        MainLoop.instance.pushMode(new OutroMode(success)); // but put the game over screen up in front
+        MainLoop.instance.pushMode(new OutroMode(success, beginGame));
     }
 
     public function GameMode (targetColor :uint)
@@ -66,32 +67,29 @@ class GameMode extends AppMode
         // beaker's initial color?
         var validBeakerColors :Array;
         switch (_targetColor) {
-        case Colors.COLOR_RED:
-        case Colors.COLOR_YELLOW:
-        case Colors.COLOR_BLUE:
-            validBeakerColors = [ Colors.COLOR_WHITE ];
-            break;
-            
         case Colors.COLOR_ORANGE:
-            validBeakerColors = [ Colors.COLOR_WHITE, Colors.COLOR_RED, Colors.COLOR_YELLOW ];
+            validBeakerColors = [ Colors.COLOR_RED, Colors.COLOR_YELLOW ];
             break;
             
         case Colors.COLOR_PURPLE:
-            validBeakerColors = [ Colors.COLOR_WHITE, Colors.COLOR_RED, Colors.COLOR_BLUE ];
+            validBeakerColors = [ Colors.COLOR_RED, Colors.COLOR_BLUE ];
             break;
             
         case Colors.COLOR_GREEN:
-            validBeakerColors = [ Colors.COLOR_WHITE, Colors.COLOR_YELLOW, Colors.COLOR_BLUE ];
+            validBeakerColors = [ Colors.COLOR_YELLOW, Colors.COLOR_BLUE ];
             break;
         }
         
-        var beakerColor :uint = validBeakerColors[Rand.nextIntRange(0, validBeakerColors.length, Rand.STREAM_COSMETIC)];
+        var initialColor :uint = Colors.COLOR_WHITE;
+        if (validBeakerColors.length > 0 && Rand.nextBoolean(Rand.STREAM_COSMETIC)) {
+            initialColor = validBeakerColors[Rand.nextIntRange(0, validBeakerColors.length, Rand.STREAM_COSMETIC)];
+        }
         
         // draw the beaker bottom
         _beakerBottom = new Content.IMAGE_BEAKERBOTTOM();
         _beakerBottom.x = BEAKERBOTTOM_LOC.x;
         _beakerBottom.y = BEAKERBOTTOM_LOC.y;
-        this.setBeakerColor(beakerColor);
+        this.setBeakerColor(initialColor);
         this.modeSprite.addChild(_beakerBottom);
         
         // create the droppers
@@ -114,6 +112,8 @@ class GameMode extends AppMode
             this.modeSprite.addChild(alignSprite);
             alignSprite.addChild(dropper.displayObject);
             
+            dropper.interactiveObject.addEventListener(MouseEvent.MOUSE_DOWN, this.createDropperClickHandler(dropper));
+            
             this.addObject(dropper);
         }
 
@@ -132,10 +132,29 @@ class GameMode extends AppMode
         this.addObject(timerObj);
     }
     
+    protected function createDropperClickHandler (dropper :Dropper) :Function
+    {
+        var localThis :GameMode = this;
+        return function (e :MouseEvent) :void {
+            localThis.addColorToBeaker(dropper.color);
+        }
+    }
+    
+    protected function addColorToBeaker (color :uint) :void
+    {
+        this.setBeakerColor(Colors.getMixedColor(_beakerColor, color));
+    }
+    
     protected function setBeakerColor (newColor :uint) :void
     {
         _beakerColor = newColor;
         _beakerBottom.filters = [ ImageTool.createTintFilter(Colors.getScreenColor(_beakerColor)) ];
+        
+        if (_beakerColor == _targetColor) {
+            this.endGame(true);
+        } else if (_beakerColor == Colors.COLOR_BROWN) {
+            this.endGame(false);
+        }
     }
     
     protected var _targetColor :uint;
@@ -143,7 +162,7 @@ class GameMode extends AppMode
     protected var _beakerColor :uint;
     protected var _beakerBottom :Bitmap;
     
-    protected static const GAME_TIME :Number = 5;
+    protected static const GAME_TIME :Number = 4;
     protected static const BEAKERBOTTOM_LOC :Vector2 = new Vector2(99, 146);
     
     protected static const DROPPER_DATA :Array = [

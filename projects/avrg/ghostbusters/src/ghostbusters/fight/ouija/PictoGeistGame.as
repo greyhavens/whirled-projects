@@ -109,9 +109,7 @@ class GameMode extends AppMode
 
     protected function endGame (success :Boolean) :void
     {
-        MainLoop.instance.popMode(); // pop this mode
-        GameMode.beginGame(); // start a new game
-        MainLoop.instance.pushMode(new OutroMode(success)); // but put the game over screen up in front
+        MainLoop.instance.pushMode(new OutroMode(success, beginGame));
     }
 
     public function GameMode ()
