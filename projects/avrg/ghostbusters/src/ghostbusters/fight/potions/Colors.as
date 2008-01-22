@@ -1,4 +1,6 @@
 package ghostbusters.fight.potions {
+    
+import com.whirled.contrib.core.util.Rand;
         
 public class Colors
 {
@@ -42,6 +44,20 @@ public class Colors
     public static const COLOR_BROWN :uint = 7;
     
     public static const COLOR__LIMIT :uint = 8;
+    public static const COLOR__PRIMARY_FIRST :uint = COLOR_RED;
+    public static const COLOR__PRIMARY_LIMIT :uint = COLOR_BLUE + 1;
+    public static const COLOR__SECONDARY_FIRST :uint = COLOR_GREEN;
+    public static const COLOR__SECONDARY_LIMIT :uint = COLOR_ORANGE + 1;
+    
+    public static function getRandomPrimary () :uint
+    {
+        return Rand.nextIntRange(COLOR__PRIMARY_FIRST, COLOR__PRIMARY_LIMIT, Rand.STREAM_COSMETIC);
+    }
+    
+    public static function getRandomSecondary () :uint
+    {
+        return Rand.nextIntRange(COLOR__SECONDARY_FIRST, COLOR__SECONDARY_LIMIT, Rand.STREAM_COSMETIC);
+    }
     
     public static function getScreenColor (color :uint) :uint
     {
