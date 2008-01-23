@@ -80,7 +80,7 @@ class GameMode extends AppMode
             break;
         }
         
-        var initialColor :uint = Colors.COLOR_WHITE;
+        var initialColor :uint = Colors.COLOR_TRANSPARENT;
         if (validBeakerColors.length > 0 && Rand.nextBoolean(Rand.STREAM_COSMETIC)) {
             initialColor = validBeakerColors[Rand.nextIntRange(0, validBeakerColors.length, Rand.STREAM_COSMETIC)];
         }
