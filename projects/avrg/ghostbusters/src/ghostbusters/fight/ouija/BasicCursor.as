@@ -39,7 +39,7 @@ public class BasicCursor extends SceneObject
         return _sprite;
     }
 
-    override protected function addedToDB (db :ObjectDB) :void
+    override protected function addedToDB () :void
     {
         _board.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved, false, 0, true);
         _sprite.x = _board.mouseX;

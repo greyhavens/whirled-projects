@@ -24,14 +24,14 @@ public class Drawing extends SceneObject
         _drawing.graphics.lineStyle(Constants.PICTO_LINEWIDTH, 0x0000FF);
     }
     
-    override protected function addedToDB (db :ObjectDB) :void
+    override protected function addedToDB () :void
     {
-        super.addedToDB(db);
+        super.addedToDB();
 
         _board.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoved, false, 0, true);
     }
     
-    override protected function removedFromDB (db :ObjectDB) :void
+    override protected function destroyed () :void
     {
         _board.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoved);
     }

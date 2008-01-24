@@ -37,18 +37,18 @@ public class Cursor extends BasicCursor
         return _sprite;
     }
 
-    override protected function addedToDB (db :ObjectDB) :void
+    override protected function addedToDB () :void
     {
-        super.addedToDB(db);
+        super.addedToDB();
 
-        db.addObject(_glowObject, _sprite);
+        this.db.addObject(_glowObject, _sprite);
     }
 
-    override protected function removedFromDB (db:ObjectDB) :void
+    override protected function destroyed () :void
     {
-        super.removedFromDB(db);
+        super.destroyed();
 
-        db.destroyObject(_glowObject.id);
+        this.db.destroyObject(_glowObject.id);
     }
 
     override protected function updateLocation (localX :Number, localY :Number) :void
