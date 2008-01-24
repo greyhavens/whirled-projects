@@ -55,7 +55,10 @@ class GameMode extends AppMode
 
     protected function endGame (success :Boolean) :void
     {
-        MainLoop.instance.pushMode(new OutroMode(success, beginGame));
+        if (_done) {
+            MainLoop.instance.pushMode(new OutroMode(success, beginGame));
+            _done = true;
+        }
     }
 
     public function GameMode (difficulty :uint)
@@ -239,6 +242,7 @@ class GameMode extends AppMode
         }
     }
     
+    protected var _done :Boolean = false;
     protected var _hasSetup :Boolean = false;
     protected var _settings :SpiritShellSettings;
     

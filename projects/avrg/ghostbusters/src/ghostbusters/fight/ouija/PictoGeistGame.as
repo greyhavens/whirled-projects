@@ -109,7 +109,10 @@ class GameMode extends AppMode
 
     protected function endGame (success :Boolean) :void
     {
-        MainLoop.instance.pushMode(new OutroMode(success, beginGame));
+        if (_done) {
+            MainLoop.instance.pushMode(new OutroMode(success, beginGame));
+            _done = true;
+        }
     }
 
     public function GameMode ()
@@ -251,6 +254,7 @@ class GameMode extends AppMode
         return pic;
     }
 
+    protected var _done :Boolean;
     protected var _picture :Array;
     protected var _cursor :BasicCursor;
     protected var _drawing :Drawing;

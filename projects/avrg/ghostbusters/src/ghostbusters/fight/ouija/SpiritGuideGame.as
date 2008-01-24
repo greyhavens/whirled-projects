@@ -46,7 +46,10 @@ class GameMode extends AppMode
 
     protected function endGame (success :Boolean) :void
     {
-        MainLoop.instance.pushMode(new OutroMode(success, beginGame));
+        if (_done) {
+            MainLoop.instance.pushMode(new OutroMode(success, beginGame));
+            _done = true;
+        }
     }
 
     public function GameMode (selection :String)
@@ -95,6 +98,7 @@ class GameMode extends AppMode
         }
     }
 
+    protected var _done :Boolean;
     protected var _selection :String;
 
     protected static const GAME_TIME :Number = 8; // @TODO - this should be controlled by game difficulty
