@@ -79,6 +79,33 @@ class GameMode extends AppMode
             
             this.addObject(ecto, ghost.displayObjectContainer);
         }
+        
+        var plasmaHose :AppObject = new AppObject();
+        plasmaHose.addTask(new RepeatingTask(
+            new TimedTask(PLASMA_FIRE_DELAY),
+            new FunctionTask(createNewPlasma)));
+            
+        this.addObject(plasmaHose);
+    }
+    
+    protected function createNewPlasma () :void
+    {
+        var plasma :PlasmaBullet = new PlasmaBullet();
+        plasma.x = PLASMA_LAUNCH_LOC.x;
+        plasma.y = PLASMA_LAUNCH_LOC.y;
+        
+        // shoot the plasma in the direction of the cursor
+        var cursorLoc :Vector2 = new Vector2(this.modeSprite.mouseX, this.modeSprite.mouseY);
+        
+        var launchVector :Vector2 = cursorLoc.getSubtract(PLASMA_LAUNCH_LOC);
+        launchVector.length = 300;
+        launchVector.add(PLASMA_LAUNCH_LOC);
+        
+        var totalTime :Number = (300 / PLASMA_SPEED);
+        
+        plasma.addTask(LocationTask.CreateEaseOut(launchVector.x, launchVector.y, totalTime));
+        
+        this.addObject(plasma, this.modeSprite);
     }
     
     override public function update (dt :Number) :void
@@ -89,10 +116,44 @@ class GameMode extends AppMode
         }
         
         super.update(dt);
+        
+        var ectos :Array = this.getObjectsInGroup(Ectoplasm.GROUP_NAME);
+        
+        // handle plasmas
+        var plasmas :Array = this.getObjectsInGroup(PlasmaBullet.GROUP_NAME);
+        for each (var plasma :PlasmaBullet in plasmas) {
+            if (plasma.x < -PlasmaBullet.RADIUS || 
+                plasma.x > 296 + PlasmaBullet.RADIUS ||
+                plasma.y < -PlasmaBullet.RADIUS ||
+                plasma.y > 223 + PlasmaBullet.RADIUS) {
+                    plasma.destroySelf();
+                    continue;
+            }
+            
+            var ecto :Ectoplasm = getEctoCollision(plasma);
+            if (null != ecto) {
+                plasma.destroySelf();
+                ecto.destroySelf();
+            }
+        }
+        
+        function getEctoCollision (p :PlasmaBullet) :Ectoplasm
+        {
+            for each (var e :Ectoplasm in ectos) {
+                if (Collision.circlesIntersect(new Vector2(p.x, p.y), PlasmaBullet.RADIUS, new Vector2(e.x, e.y), Ectoplasm.RADIUS)) {
+                    return e;
+                }
+            }
+            
+            return null;
+        }
     }
     
     protected var _hasSetup :Boolean = false;
     
     protected static const ECTOPLASM_COUNT :uint = 60;
+    protected static const PLASMA_FIRE_DELAY :Number = 0.1;
+    protected static const PLASMA_LAUNCH_LOC :Vector2 = new Vector2(148, 215);
+    protected static const PLASMA_SPEED :Number = 150; // pixels-per-second
     
 }

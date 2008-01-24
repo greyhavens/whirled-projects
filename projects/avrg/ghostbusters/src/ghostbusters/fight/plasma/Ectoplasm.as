@@ -11,11 +11,12 @@ import flash.display.Sprite;
 
 public class Ectoplasm extends SceneObject
 {
-    public static const RADIUS :int = 20
+    public static const RADIUS :int = 10;
+    public static const GROUP_NAME :String = "Ectoplasm";
     
     public function Ectoplasm ()
     {
-        var bitmap :Bitmap = ResourceManager.instance.getImage("image_ectoplasm");
+        var bitmap :Bitmap = new Bitmap(ResourceManager.instance.getImage("image_ectoplasm"));
         bitmap.x = -(bitmap.width / 2);
         bitmap.y = -(bitmap.height / 2);
         _sprite.addChild(bitmap);
@@ -36,6 +37,11 @@ public class Ectoplasm extends SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
+    }
+    
+    override public function get objectGroups () :Array
+    {
+        return [ GROUP_NAME ];
     }
     
     protected var _sprite :Sprite = new Sprite();
