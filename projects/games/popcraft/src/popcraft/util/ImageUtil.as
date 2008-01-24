@@ -5,7 +5,6 @@ import flash.display.Bitmap;
 import flash.filters.GlowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flash.filters.ColorMatrixFilter;
 
 public class ImageUtil
 {

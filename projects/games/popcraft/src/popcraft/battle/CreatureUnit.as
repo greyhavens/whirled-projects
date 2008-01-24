@@ -57,7 +57,7 @@ public class CreatureUnit extends Unit
 
     }
 
-    override protected function removedFromDB (db :ObjectDB) :void
+    override protected function destroyed () :void
     {
         _healthMeter.destroySelf();
     }

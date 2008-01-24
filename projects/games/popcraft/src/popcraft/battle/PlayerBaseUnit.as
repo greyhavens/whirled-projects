@@ -49,7 +49,7 @@ public class PlayerBaseUnit extends Unit
         GameMode.instance.addObject(_healthMeter, _sprite);
     }
 
-    override protected function removedFromDB (db :ObjectDB) :void
+    override protected function destroyed () :void
     {
         _healthMeter.destroySelf();
     }

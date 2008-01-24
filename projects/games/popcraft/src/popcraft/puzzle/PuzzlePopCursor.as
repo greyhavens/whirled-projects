@@ -80,7 +80,7 @@ public class PuzzlePopCursor extends SceneObject
         _sprite.y = _mouseIndexY * Constants.PUZZLE_TILE_SIZE;
     }
 
-    override protected function addedToDB (db :ObjectDB) :void
+    override protected function addedToDB () :void
     {
         // the cursor is only visible when the mouse is over the mode
         // @TSC - does it make any difference that I'm using weak refs here?
@@ -93,7 +93,7 @@ public class PuzzlePopCursor extends SceneObject
         _board.interactiveObject.addEventListener(MouseEvent.CLICK, mouseClick, false, 0, true);
     }
 
-    override protected function removedFromDB (db :ObjectDB) :void
+    override protected function destroyed () :void
     {
         _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OUT, rollOut);
         _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OVER, rollOver);
