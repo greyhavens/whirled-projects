@@ -16,6 +16,7 @@ import flash.events.MouseEvent;
 import flash.utils.setInterval;
 import flash.utils.clearInterval;
 
+import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 
 import com.whirled.ControlEvent;
@@ -34,11 +35,9 @@ public class Board extends Sprite
         _palette = new Palette(this, 0);
         this.addChild(_palette);
 
-        _points = new Sprite();
-        _points.visible = false;
-        this.addChild(_points);
-
-        _strokes = new Array();
+//        _points = new Sprite();
+//        _points.visible = false;
+//        this.addChild(_points);
 
         var control :FurniControl = new FurniControl(this);
 
@@ -55,10 +54,47 @@ public class Board extends Sprite
         _colour = colour;
     }
 
+    public function strokeBegun (id :String, from :Point, to :Point, colour :int) :void
+    {
+        _outputKey = id;
+
+        _canvas.graphics.moveTo(from.x, from.y);
+        _canvas.graphics.lineStyle(4, colour, 0.7);
+
+        _lastX = from.x;
+        _lastY = from.y;
+        _oldDeltaX = _oldDeltaY = 0;
+
+        strokeExtended(id, to);
+    }
+
+    public function strokeExtended (id :String, to :Point) :void
+    {
+        if (id != _outputKey) {
+            redraw(id);
+            return;
+        }
+        var dX :Number = to.x - _lastX;
+        var dY :Number = to.y - _lastY;
+
+        // the new spline is continuous with the old, but not aggressively so
+        var controlX :Number = _lastX + _oldDeltaX * 0.4;
+        var controlY :Number = _lastY + _oldDeltaY * 0.4;
+
+        _canvas.graphics.curveTo(controlX, controlY, to.x, to.y);
+
+        _lastX = to.x;
+        _lastY = to.y;
+
+        _oldDeltaX = to.x - controlX;
+        _oldDeltaY = to.y - controlY;
+    }
+
     protected function mouseDown (evt :MouseEvent) :void
     {
         _lastStrokePoint = _canvas.globalToLocal(new Point(evt.stageX, evt.stageY));
         _newStroke = true;
+        _inputKey = _model.getKey();
         _timer = setInterval(tick, 200);
     }
 
@@ -74,6 +110,7 @@ public class Board extends Sprite
             clearInterval(_timer);
             _timer = 0;
         }
+        _inputKey = null;
     }
 
     protected function maybeAddStroke (p :Point) :void
@@ -88,11 +125,10 @@ public class Board extends Sprite
         }
 
         if (_newStroke) {
-            _model.beginStroke(String(_lastKey), _lastStrokePoint, p, _colour);
-            _lastKey ++;
+            _model.beginStroke(_inputKey, _lastStrokePoint, p, _colour);
 
         } else {
-            _model.extendStroke(String(_lastKey), p);
+            _model.extendStroke(_inputKey, p);
         }
 
         _lastStrokePoint = p;
@@ -108,7 +144,7 @@ public class Board extends Sprite
 //         point.graphics.drawCircle(0, 0, 1);
 //         point.graphics.endFill();
 
-    protected function redraw () :void
+    protected function redraw (lastId :String = null) :void
     {
         _canvas.graphics.clear();
 
@@ -116,54 +152,47 @@ public class Board extends Sprite
         _canvas.graphics.drawRect(0, 0, 256, 256);
         _canvas.graphics.endFill();
 
-        var lastKey :String = "0";
-        for (var ii :int = 0; ii < _strokes.length; ii ++) {
-            paintStroke(_strokes[ii]["stroke"] as Array);
-            lastKey = _strokes[ii]["key"];
+        var strokes :HashMap = _model.getStrokes();
+        var keys :Array = strokes.keys();
+        for (var ii :int = 0; ii < keys.length; ii ++) {
+            if (keys[ii] == lastId) {
+                continue;
+            }
+            drawStroke(keys[ii], strokes.get(keys[ii]));
         }
-        _lastKey = Number(lastKey);
+        if (lastId != null) {
+            drawStroke(lastId, strokes.get(lastId));
+        }
     }
 
-    protected function paintStroke (stroke :Array) :void
+    protected function drawStroke (key :String, stroke :Array) :void
     {
-        if (stroke.length == 5) {
-            _canvas.graphics.moveTo(stroke[2], stroke[3]);
-            _canvas.graphics.lineStyle(4, stroke[4], 0.7);
-
-            _lastX = stroke[2];
-            _lastY = stroke[3];
-            _oldDeltaX = _oldDeltaY = 0;
+        var first :Array = stroke[0] as Array;
+        strokeBegun(key, first[0], first[1], first[2]);
+        for (var jj :int = 1; jj < stroke.length; jj ++) {
+            strokeExtended(key, stroke[jj]);
         }
-        var dX :Number = stroke[0] - _lastX;
-        var dY :Number = stroke[1] - _lastY;
-
-        // the new spline is continuous with the old, but not aggressively so
-        var controlX :Number = _lastX + _oldDeltaX * 0.4;
-        var controlY :Number = _lastY + _oldDeltaY * 0.4;
-
-        _canvas.graphics.curveTo(controlX, controlY, stroke[0], stroke[1]);
-
-        _lastX = stroke[0];
-        _lastY = stroke[1];
-
-        _oldDeltaX = stroke[0] - controlX;
-        _oldDeltaY = stroke[1] - controlY;
     }
 
     protected var _model :Model;
 
     protected var _canvas :Sprite;
-    protected var _points :Sprite;
+
+//    protected var _points :Sprite;
+
+    // variables for user input
+    protected var _inputKey :String;
+
     protected var _palette :Palette;
 
     protected var _colour :int;
 
-    protected var _strokes :Array;
-    protected var _lastKey :int;
-
     protected var _timer :int;
     protected var _lastStrokePoint :Point;
     protected var _newStroke :Boolean;
+
+    // variables for canvas output
+    protected var _outputKey :String;
 
     protected var _lastX :Number;
     protected var _lastY :Number;

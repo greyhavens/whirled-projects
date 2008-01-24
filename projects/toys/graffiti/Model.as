@@ -4,9 +4,9 @@
 package {
 
 import flash.geom.Point;
-import flash.utils.Dictionary;
 
 import com.threerings.util.HashMap;
+import com.threerings.util.Random;
 
 public class Model
 {
@@ -25,6 +25,23 @@ public class Model
     public function extendStroke (id :String, to :Point) :void
     {
         strokeExtended(id, to);
+    }
+
+    public function getStrokes () :HashMap
+    {
+        return _strokes;
+    }
+
+    public function getKey () :String
+    {
+        var key :String;
+        do {
+            key = KEY_BITS[_rnd.nextInt(KEY_BITS.length)] +
+                KEY_BITS[_rnd.nextInt(KEY_BITS.length)] +
+                KEY_BITS[_rnd.nextInt(KEY_BITS.length)];
+        } while (_strokes.get(key) != null);
+
+        return key;
     }
 
     protected function strokeBegun (id :String, from :Point, to :Point, colour :int) :void
@@ -60,5 +77,15 @@ public class Model
 
     protected var _board :Board;
     protected var _strokes :HashMap;
+
+    protected var _rnd :Random = new Random();
+ 
+    protected const KEY_BITS :Array = [
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+        "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+    ];
 }
 }

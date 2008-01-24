@@ -18,7 +18,7 @@ public class OnlineModel extends Model
 
         var memories :Object = _control.getMemories();
         for (var key :String in memories) {
-            addWholeStroke(key, memories[key]);
+            putStroke(key, memories[key]);
         }
 
         _control.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessage);
@@ -58,5 +58,7 @@ public class OnlineModel extends Model
             _control.updateMemory(id, stroke);
         }
     }
+
+    protected var _control :EntityControl;
 }
 }
