@@ -12,6 +12,10 @@ public class SpiritShellGame extends Sprite
     {
         var mainLoop :MainLoop = new MainLoop(this);
         mainLoop.run();
+        
+        ResourceManager.instance.loadFromClass("image_ghost", Content.IMAGE_GHOST);
+        ResourceManager.instance.loadFromClass("image_ectoplasm", Content.IMAGE_ECTOPLASM);
+        ResourceManager.instance.loadFromClass("image_plasma", Content.IMAGE_PLASMA);
 
         GameMode.beginGame();
     }
@@ -57,21 +61,37 @@ class GameMode extends AppMode
     {
     }
 
-    override protected function setup () :void
+    //override protected function setup () :void
+    protected function doSetup () :void
     {
         // create the ghost
         var ghost :Ghost = new Ghost();
         this.addObject(ghost, this.modeSprite);
         
+        var ghostWidth :int = ghost.width;
+        var ghostHeight :int = ghost.height;
+        
         // create the ectoplasm
         for (var i :uint = 0; i < ECTOPLASM_COUNT; ++i) {
             var ecto :Ectoplasm = new Ectoplasm();
-            ecto.x = Rand.nextIntRange(0, ghost.width, Rand.STREAM_COSMETIC);
-            ecto.y = Rand.nextIntRange(0, ghost.height, Rand.STREAM_COSMETIC);
+            ecto.x = Rand.nextIntRange(0, ghostWidth, Rand.STREAM_COSMETIC);
+            ecto.y = Rand.nextIntRange(0, ghostHeight, Rand.STREAM_COSMETIC);
             
             this.addObject(ecto, ghost.displayObjectContainer);
         }
     }
+    
+    override public function update (dt :Number) :void
+    {
+        if (!_hasSetup && !ResourceManager.instance.hasPendingResources) {
+            this.doSetup();
+            _hasSetup = true;
+        }
+        
+        super.update(dt);
+    }
+    
+    protected var _hasSetup :Boolean = false;
     
     protected static const ECTOPLASM_COUNT :uint = 60;
     
