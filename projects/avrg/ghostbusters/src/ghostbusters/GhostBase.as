@@ -14,6 +14,7 @@ import flash.geom.Rectangle;
 import com.threerings.util.EmbeddedSwfLoader;
 
 import ghostbusters.ClipHandler;
+import ghostbusters.Codes;
 import ghostbusters.Content;
 
 public class GhostBase extends Sprite
@@ -37,7 +38,7 @@ public class GhostBase extends Sprite
 
     protected function setupUI (ghost :MovieClip) :void
     {
-        ghost.gotoAndStop(1, STATE_HIDDEN);
+        ghost.gotoAndStop(1, Codes.ST_GHOST_HIDDEN);
         _bounds = ghost.getBounds(this);
 
         // register the sprite
@@ -54,13 +55,5 @@ public class GhostBase extends Sprite
     }
 
     protected var _bounds :Rectangle;
-
-    protected static const STATE_HIDDEN :String = "hidden";
-    protected static const STATE_APPEAR :String = "appear_to_fighting";
-    protected static const STATE_FIGHT :String = "fighting";
-    protected static const STATE_REEL :String = "reel";
-    protected static const STATE_RETALIATE :String = "retaliate";
-    protected static const STATE_DEFEAT :String = "defeat_disappear";
-    protected static const STATE_TRIUMPH :String = "triumph_chase";
 }
 }

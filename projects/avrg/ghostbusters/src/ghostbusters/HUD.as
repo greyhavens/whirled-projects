@@ -40,55 +40,42 @@ public class HUD extends Sprite
         return _hud != null && _hud.hitTestPoint(x, y, shapeFlag);
     }
 
-    public function showArcs (show :Boolean) :void
+    public function resized () :void
     {
-        if (_arcs == null) {
-            return;
+        if (_hud != null) {
+            placeHud();
         }
-        _arcs.graphics.clear();
-
-        if (!show) {
-            return;
-        }
-
-        _arcs.graphics.lineStyle(5, 0xFFFFFF);
-	recursiveLightning(new Point(120, 40), new Point(120, 120), 50);
-	recursiveLightning(new Point(150, 40), new Point(150, 120), 50);
-	recursiveLightning(new Point(180, 40), new Point(180, 120), 50);
-    }
-
-    // this is a basic midpoint displacement algorithm, see e.g.
-    // http://www.lotn.org/~calkinsc/graphics/mid.html
-    protected function recursiveLightning (from :Point, to :Point, deviation :Number) :void
-    {
-        if (Point.distance(from, to) < 1) {
-            _arcs.graphics.moveTo(from.x, from.y);
-            _arcs.graphics.lineTo(to.x, to.y);
-            return;
-        }
-        var midPoint :Point = new Point(
-            (from.x + to.x)/2 + (Math.random() - 0.5) * deviation, (from.y + to.y)/2);
-        recursiveLightning(from, midPoint, deviation/2);
-        recursiveLightning(midPoint, to, deviation/2);
     }
 
     protected function handleHUDLoaded (evt :Event) :void
     {
         _hud = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
-        _hud.x = 20; // damn scrollbar
-        _hud.y = 5;
-
-        var button :DisplayObject;
 
         safelyAdd(LANTERN, lanternClick);
         safelyAdd(HELP, helpClick);
-        safelyAdd(LOOT, lootClick);
         safelyAdd(CLOSE, closeClick);
 
         this.addChild(_hud);
 
-        _arcs = new Sprite();
-        this.addChild(_arcs);
+        if (Game.scrollSize != null && Game.stageSize != null) {
+            placeHud();
+        }
+    }
+
+    protected function placeHud () :void
+    {
+        // put the HUD to the right of the visible screen, or flush with the stage edge
+        _hud.x = Math.min(Game.scrollSize.right - MARGIN_LEFT,
+                          Game.stageSize.right - _hud.width);
+        _hud.y = 0;
+
+        var width :int = Game.stageSize.right - Game.scrollSize.right;
+        if (width > 0) {
+            this.graphics.beginFill(0);
+            this.graphics.drawRect(Game.scrollSize.right + 1, 1,
+                                   width, Game.scrollSize.height);
+            this.graphics.endFill();
+        }
     }
 
     protected function safelyAdd (name :String, callback :Function) :void
@@ -116,19 +103,19 @@ public class HUD extends Sprite
         CommandEvent.dispatch(this, GameController.HELP);
     }
 
-    protected function lootClick (evt :Event) :void
-    {
-        CommandEvent.dispatch(this, GameController.TOGGLE_LOOT);
-    }
+//    protected function lootClick (evt :Event) :void
+//    {
+//        CommandEvent.dispatch(this, GameController.TOGGLE_LOOT);
+//    }
 
     protected var _hud :MovieClip;
-    protected var _arcs :Sprite;
 
-    protected static const LANTERN :String = "button_lantern";
-    protected static const HELP :String = "button_help";
-    protected static const LOOT :String = "button_loot";
-    protected static const CLOSE :String = "button_close";
+    protected static const LANTERN :String = "weaponbutton";
+    protected static const HELP :String = "helpbutton";
+    protected static const CLOSE :String = "closeButton";
 
     protected static const DEBUG :Boolean = false;
+
+    protected static const MARGIN_LEFT :int = 47;
 }
 }

@@ -156,10 +156,7 @@ public class SeekPanel extends FrameSprite
             if (_zapping > 0) {
                 _zapping -= 1;
                 if (_zapping == 0) {
-                    Game.gameController.panel.hud.showArcs(false);
                     zapStop();
-                } else {
-                    Game.gameController.panel.hud.showArcs(true);
                 }
             }
 

@@ -107,6 +107,7 @@ public class FightPanel extends FrameSprite
 
     override protected function handleFrame (... ignored) :void
     {
+        // TODO: maintain our own list, calling this 30 times a second is rather silly
         var players :Array = Game.control.getPlayerIds();
         for (var ii :int = 0; ii < players.length; ii ++) {
             var playerId :int = players[ii] as int;

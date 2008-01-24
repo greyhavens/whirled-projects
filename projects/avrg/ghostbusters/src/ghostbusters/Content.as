@@ -6,7 +6,7 @@ package ghostbusters {
 public class Content
 {
     // clips
-    [Embed(source="../../rsrc/HUD_visual.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/HUD_vertical.swf", mimeType="application/octet-stream")]
     public static const HUD_VISUAL :Class;
 
     [Embed(source="../../rsrc/Ghost_3.swf", mimeType="application/octet-stream")]

@@ -18,6 +18,7 @@ import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 
+import ghostbusters.Codes;
 import ghostbusters.GhostBase;
 import ghostbusters.SplinePather;
 
@@ -61,16 +62,17 @@ public class HidingGhost extends GhostBase
 
     public function appear (callback :Function) :int
     {
-        return handler.gotoScene(STATE_APPEAR, function () :String {
+        return handler.gotoScene(Codes.ST_GHOST_APPEAR, function () :String {
             callback();
-            return STATE_FIGHT;
+            // stay in FIGHT state for the brief period until the entire SeekPanel disappears
+            return Codes.ST_GHOST_FIGHT;
         });
     }
 
     public function hidden () :void
     {
-        handler.gotoScene(STATE_HIDDEN, function () :String {
-            return STATE_HIDDEN;
+        handler.gotoScene(Codes.ST_GHOST_HIDDEN, function () :String {
+            return Codes.ST_GHOST_HIDDEN;
         });
     }
 

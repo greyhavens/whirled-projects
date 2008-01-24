@@ -35,7 +35,11 @@ public class FightController extends Controller
 
     public function doSpawnGhost () :void
     {
+        Game.control.setAvatarState(Codes.ST_PLAYER_FIGHT);
+
         model.newGhost(100);
+
+        // TODO: this should obviously only be done by one instance
         Game.control.spawnMob(Codes.MOB_ID_GHOST, "Duchess Von Bobbleton");
     }
 

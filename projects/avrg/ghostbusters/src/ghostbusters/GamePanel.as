@@ -80,6 +80,11 @@ public class GamePanel extends Sprite
         }
     }
 
+    public function resized () :void
+    {
+        hud.resized();
+    }
+
     protected function showPanels (... panels) :void
     {
         while (this.numChildren > 0) {

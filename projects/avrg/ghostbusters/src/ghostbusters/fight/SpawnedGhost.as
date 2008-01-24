@@ -5,6 +5,7 @@ package ghostbusters.fight {
 
 import com.whirled.MobControl;
 
+import ghostbusters.Codes;
 import ghostbusters.GhostBase;
 
 public class SpawnedGhost extends GhostBase
@@ -27,8 +28,8 @@ public class SpawnedGhost extends GhostBase
 
     override protected function mediaReady () :void
     {
-        handler.gotoScene(STATE_FIGHT, function () :String {
-            return STATE_FIGHT;
+        handler.gotoScene(Codes.ST_GHOST_FIGHT, function () :String {
+            return Codes.ST_GHOST_FIGHT;
         });
 
         _control.setHotSpot((_bounds.left + _bounds.right)/2, _bounds.bottom, _bounds.height);

@@ -35,6 +35,7 @@ public class Game extends Sprite
     public static var fightController :FightController;
 
     public static var stageSize :Rectangle;
+    public static var scrollSize :Rectangle;
     public static var roomBounds :Rectangle;
 
     public static var ourRoomId :int;
@@ -61,7 +62,7 @@ public class Game extends Sprite
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
-        addEventListener(AVRGameControlEvent.PLAYER_MOVED, playerMoved);
+        addEventListener(AVRGameControlEvent.ENTERED_ROOM, enteredRoom);
         addEventListener(AVRGameControlEvent.SIZE_CHANGED, sizeChanged);
     }
 
@@ -78,28 +79,61 @@ public class Game extends Sprite
     {
         log.info("Added to stage: Initializing...");
         sizeChanged();
-        playerMoved();
+        enteredRoom();
         gameController.enterState(GameModel.STATE_INTRO);
     }
 
     protected function sizeChanged (... ignored) :void
     {
-        stageSize = control.getStageSize();
-        if (stageSize == null) {
-            log.debug("Eek! Could not find stage size!");
+        var newSize :Rectangle = control.getStageSize();
+        if (newSize != null) {
+            stageSize = newSize;
+            log.debug("Setting stage size: " + stageSize);
+
+            gameController.panel.resized();
+
+        } else if (stageSize != null) {
+            log.warning("Eek - null stage size -- keeping old data.");
+
+        } else {
+            log.warning("Eek - null stage size -- hard coding at 700x500");
             stageSize = new Rectangle(0, 0, 700, 500);
         }
+
+        newSize = control.getStageSize(false);
+        if (newSize != null) {
+            scrollSize = newSize;
+            log.debug("Setting scroll size: " + scrollSize);
+
+        } else if (scrollSize != null) {
+            log.warning("Eek - null scroll size -- keeping old data.");
+
+        } else {
+            log.warning("Eek - null scroll size -- hard coding at 700x500");
+            scrollSize = new Rectangle(0, 0, 700, 500);
+        }
+
+        gameController.panel.resized();
     }
 
-    protected function playerMoved (... ignored) :void
+    protected function enteredRoom (... ignored) :void
     {
         ourRoomId = control.getRoomId();
 
-        roomBounds = control.getRoomBounds();
-        if (roomBounds == null) {
-            log.debug("Eek! Could not find room size!");
+        var newBounds :Rectangle = control.getRoomBounds();
+        if (newBounds != null) {
+            roomBounds = newBounds;
+            log.debug("Setting room bounds: " + roomBounds);
+
+        } else if (roomBounds != null) {
+            log.warning("Eek - null room bounds -- keeping old data.");
+
+        } else {
+            log.warning("Eek - null room bounds -- hard coding at 700x500");
             roomBounds = new Rectangle(0, 0, 700, 500);
         }
+
+        gameController.panel.resized();
     }
 
     public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
