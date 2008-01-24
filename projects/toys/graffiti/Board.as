@@ -24,6 +24,8 @@ import com.whirled.FurniControl;
 [SWF(width="256", height="256")]
 public class Board extends Sprite
 {
+    public static const log :Log = Log.getLog(Board);
+
     public function Board ()
     {
         _canvas = new Sprite();
@@ -38,15 +40,13 @@ public class Board extends Sprite
 
         _strokes = new Array();
 
-        _control = new FurniControl(this);
-        if (_control.isConnected()) {
-            _control.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
-            initStrokes();
-        }
+        var control :FurniControl = new FurniControl(this);
+
+        _model = control.isConnected() ? new OnlineModel(this, control) : new OfflineModel(this);
 
         _canvas.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
         _canvas.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-        
+
         redraw();
     }
 
@@ -87,21 +87,14 @@ public class Board extends Sprite
             return;
         }
 
-        var stroke :Array;
         if (_newStroke) {
-            stroke = [ p.x, p.y, _lastStrokePoint.x, _lastStrokePoint.y, _colour ];
-        } else {
-            stroke = [ p.x, p.y ];
-        }
-        _lastKey ++;
-        if (_control.isConnected()) {
-            // TODO: use sendMessage instead, include our instance id
-            _control.updateMemory(String(_lastKey), stroke);
+            _model.beginStroke(String(_lastKey), _lastStrokePoint, p, _colour);
+            _lastKey ++;
 
         } else {
-            _strokes.push({ "key": String(_lastKey), "stroke": stroke });
-            paintStroke(stroke);
+            _model.extendStroke(String(_lastKey), p);
         }
+
         _lastStrokePoint = p;
         _newStroke = false;
     }
@@ -114,17 +107,6 @@ public class Board extends Sprite
 //         point.graphics.beginFill(0xFF0000);
 //         point.graphics.drawCircle(0, 0, 1);
 //         point.graphics.endFill();
-
-    protected function initStrokes () :void
-    {
-        var memories :Object = _control.getMemories();
-        for (var key :String in memories) {
-            _strokes.push({ "key": key, "stroke": memories[key] });
-        }
-        _strokes.sortOn("key", Array.NUMERIC);
-
-        redraw();
-    }
 
     protected function redraw () :void
     {
@@ -140,13 +122,6 @@ public class Board extends Sprite
             lastKey = _strokes[ii]["key"];
         }
         _lastKey = Number(lastKey);
-    }
-
-    protected function memoryChanged (evt :ControlEvent) :void
-    {
-        _strokes.push({ "key": evt.name, "stroke": evt.value });
-        paintStroke(evt.value as Array);
-        _lastKey = Number(evt.name);
     }
 
     protected function paintStroke (stroke :Array) :void
@@ -175,7 +150,8 @@ public class Board extends Sprite
         _oldDeltaY = stroke[1] - controlY;
     }
 
-    protected var _control :FurniControl;
+    protected var _model :Model;
+
     protected var _canvas :Sprite;
     protected var _points :Sprite;
     protected var _palette :Palette;
@@ -194,7 +170,5 @@ public class Board extends Sprite
 
     protected var _oldDeltaX :Number;
     protected var _oldDeltaY :Number;
-
-    protected const log :Log = Log.getLog(Board);
 }
 }

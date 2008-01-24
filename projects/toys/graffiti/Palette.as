@@ -12,10 +12,29 @@ import flash.geom.Point;
 
 public class Palette extends Sprite
 {
+    protected var _small :Sprite = new Sprite();
+    protected var _large :Sprite = new Sprite();
+
     public function Palette (board :Board, initialColour :int)
     {
         _board = board;
-        var g :Graphics = this.graphics;
+
+        buildLarge();
+        buildSmall(initialColour);
+        show(_small);
+    }
+
+    protected function show (s :Sprite) :void
+    {
+        if (this.numChildren > 0) {
+            this.removeChildAt(0);
+        }
+        this.addChild(s);
+    }
+
+    protected function buildLarge() :void
+    {
+        var g :Graphics = _large.graphics;
 
         g.beginFill(0x000000);
         g.drawRect(0, 0, 18*TOTAL_SIZE + 1, 12*TOTAL_SIZE + 1);
@@ -39,32 +58,44 @@ public class Palette extends Sprite
             }
         }
 
-        updateCurrentColour(initialColour);
+        _large.addEventListener(MouseEvent.ROLL_OUT, function (evt :MouseEvent) :void {
+            show(_small);
+        });
 
-        this.addEventListener(MouseEvent.CLICK, handleClick);
+        _large.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+            var p :Point = _large.globalToLocal(new Point(evt.stageX, evt.stageY));
+
+            var rr :int = int(p.x / (TOTAL_SIZE*6)) + 3 * int(p.y / (TOTAL_SIZE*6));
+            var gg :int = (p.x % (TOTAL_SIZE*6)) / TOTAL_SIZE;
+            var bb :int = (p.y % (TOTAL_SIZE*6)) / TOTAL_SIZE;
+
+            var colour :int = rr*0x330000 + gg * 0x003300 + bb * 0x000033;
+
+            updateSmall(colour);
+            show(_small);
+            _board.pickColour(colour);
+        });
     }
 
-    protected function updateCurrentColour (colour :int) :void
+    protected function buildSmall (colour :int) :void
     {
-        var g :Graphics = this.graphics;
+        _small.addEventListener(MouseEvent.ROLL_OVER, function (evt :MouseEvent) :void {
+            show(_large);
+        });
+        updateSmall(colour);
+    }
+
+    protected function updateSmall (colour :int) :void
+    {
+        var g :Graphics = _small.graphics;
 
         g.beginFill(colour);
-        g.drawRoundRect(18*TOTAL_SIZE + 1, 1, 2*TOTAL_SIZE, 6*TOTAL_SIZE-1, SQUARE_SIZE);
+        g.drawCircle(4 + SQUARE_SIZE, 4 + SQUARE_SIZE, SQUARE_SIZE);
         g.endFill();
     }
 
     protected function handleClick (evt :MouseEvent) :void
     {
-        var p :Point = this.globalToLocal(new Point(evt.stageX, evt.stageY));
-
-        var rr :int = int(p.x / (TOTAL_SIZE*6)) + 3 * int(p.y / (TOTAL_SIZE*6));
-        var gg :int = (p.x % (TOTAL_SIZE*6)) / TOTAL_SIZE;
-        var bb :int = (p.y % (TOTAL_SIZE*6)) / TOTAL_SIZE;
-
-        var colour :int = rr*0x330000 + gg * 0x003300 + bb * 0x000033;
-
-        updateCurrentColour(colour);
-        _board.pickColour(colour);
     }
 
     protected var _board :Board;
