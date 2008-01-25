@@ -12,12 +12,8 @@ public class SpiritShellGame extends Sprite
     {
         var mainLoop :MainLoop = new MainLoop(this);
         mainLoop.run();
-        
-        ResourceManager.instance.loadFromClass("image_ghost", Content.IMAGE_GHOST);
-        ResourceManager.instance.loadFromClass("image_ectoplasm", Content.IMAGE_ECTOPLASM);
-        ResourceManager.instance.loadFromClass("image_plasma", Content.IMAGE_PLASMA);
 
-        GameMode.beginGame();
+        mainLoop.pushMode(new LoadingMode());
     }
 }
 
@@ -43,6 +39,32 @@ import ghostbusters.fight.ouija.BoardTimer;
 import com.whirled.contrib.GameMode;
 import flash.geom.Point;
 
+class LoadingMode extends AppMode
+{
+    public function LoadingMode ()
+    {
+    }
+    
+    override protected function setup () :void
+    {
+        ResourceManager.instance.pendLoadFromClass("image_ghost", Content.IMAGE_GHOST);
+        ResourceManager.instance.pendLoadFromClass("image_ectoplasm", Content.IMAGE_ECTOPLASM);
+        ResourceManager.instance.pendLoadFromClass("image_plasma", Content.IMAGE_PLASMA);
+        
+        ResourceManager.instance.load();
+    }
+    
+    override public function update (dt:Number) :void
+    {
+        super.update(dt);
+        
+        if (!ResourceManager.instance.isLoading) {
+            MainLoop.instance.popMode();
+            GameMode.beginGame();
+        }
+    }
+}
+
 class GameMode extends AppMode
 {
     public static function beginGame () :void
@@ -66,42 +88,8 @@ class GameMode extends AppMode
         difficulty = Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1);
         _settings = DIFFICULTY_SETTINGS[difficulty];
     }
-    
-    protected function moveGhost (ghost :Ghost) :void
-    {
-        // only move the ghost if it is capable of moving
-        if (_settings.ghostSpeed <= 0) {
-            return;
-        }
-        
-        var distance :Number = _settings.ghostWanderDist.next();
-        var direction :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_COSMETIC);
-        
-        var start :Vector2 = new Vector2(ghost.x, ghost.y);
-        var dest :Vector2 = Vector2.fromAngleRadians(direction, distance);
-        dest.add(start);
-        
-        // clamp dest
-        dest.x = Math.max(dest.x, 0);
-        dest.x = Math.min(dest.x, 300 - ghost.width); // board width - ghost width
-        dest.y = Math.max(dest.y, 0);
-        dest.y = Math.min(dest.y, 226 - ghost.height); // board height - ghost height
-        
-        // what's the actual distance we're moving?
-        distance = dest.getSubtract(start).length;
-        
-        var totalTime :Number = distance / _settings.ghostSpeed;
-        
-        var moveTask :SerialTask = new SerialTask();
-        moveTask.addTask(LocationTask.CreateSmooth(dest.x, dest.y, totalTime));
-        moveTask.addTask(new TimedTask(_settings.ghostWanderDelay.next()));
-        moveTask.addTask(new FunctionTask(function () :void { moveGhost(ghost); }));
-        
-        ghost.addTask(moveTask);
-    }
 
-    //override protected function setup () :void
-    protected function doSetup () :void
+    override protected function setup () :void
     {
         // create the ghost
         var ghost :Ghost = new Ghost();
@@ -156,6 +144,39 @@ class GameMode extends AppMode
         this.addObject(timerObj);
     }
     
+    protected function moveGhost (ghost :Ghost) :void
+    {
+        // only move the ghost if it is capable of moving
+        if (_settings.ghostSpeed <= 0) {
+            return;
+        }
+        
+        var distance :Number = _settings.ghostWanderDist.next();
+        var direction :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_COSMETIC);
+        
+        var start :Vector2 = new Vector2(ghost.x, ghost.y);
+        var dest :Vector2 = Vector2.fromAngleRadians(direction, distance);
+        dest.add(start);
+        
+        // clamp dest
+        dest.x = Math.max(dest.x, 0);
+        dest.x = Math.min(dest.x, 300 - ghost.width); // board width - ghost width
+        dest.y = Math.max(dest.y, 0);
+        dest.y = Math.min(dest.y, 226 - ghost.height); // board height - ghost height
+        
+        // what's the actual distance we're moving?
+        distance = dest.getSubtract(start).length;
+        
+        var totalTime :Number = distance / _settings.ghostSpeed;
+        
+        var moveTask :SerialTask = new SerialTask();
+        moveTask.addTask(LocationTask.CreateSmooth(dest.x, dest.y, totalTime));
+        moveTask.addTask(new TimedTask(_settings.ghostWanderDelay.next()));
+        moveTask.addTask(new FunctionTask(function () :void { moveGhost(ghost); }));
+        
+        ghost.addTask(moveTask);
+    }
+    
     protected function createNewPlasma () :void
     {
         var plasma :PlasmaBullet = new PlasmaBullet();
@@ -178,14 +199,9 @@ class GameMode extends AppMode
     
     override public function update (dt :Number) :void
     {
-        var thisGameMode :GameMode = this; // store this for getEctoCollision() local function
-        
-        if (!_hasSetup && !ResourceManager.instance.hasPendingResources) {
-            this.doSetup();
-            _hasSetup = true;
-        }
-        
         super.update(dt);
+        
+        var thisGameMode :GameMode = this; // store this for getEctoCollision() local function
         
         var ectos :Array = this.getObjectsInGroup(Ectoplasm.GROUP_NAME);
         
@@ -243,7 +259,6 @@ class GameMode extends AppMode
     }
     
     protected var _done :Boolean = false;
-    protected var _hasSetup :Boolean = false;
     protected var _settings :SpiritShellSettings;
     
     protected static const DIFFICULTY_SETTINGS :Array = [
