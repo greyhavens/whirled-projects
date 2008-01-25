@@ -46,7 +46,7 @@ class GameMode extends AppMode
 
     protected function endGame (success :Boolean) :void
     {
-        if (_done) {
+        if (!_done) {
             MainLoop.instance.pushMode(new OutroMode(success, beginGame));
             _done = true;
         }
