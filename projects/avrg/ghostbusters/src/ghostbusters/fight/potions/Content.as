@@ -2,7 +2,6 @@ package ghostbusters.fight.potions {
     
 public class Content
 {
-    
     [Embed(source="../../../../rsrc/Microgames/HueAndCryBoard.png")]
     public static const IMAGE_HUEANDCRYBOARD :Class;
     
@@ -14,6 +13,9 @@ public class Content
     
     [Embed(source="../../../../rsrc/Microgames/dropperBottom.png")]
     public static const IMAGE_DROPPERBOTTOM :Class;
+    
+    [Embed(source="../../../../rsrc/Microgames/ectopotions_code_no_opening.swf", mimeType="application/octet-stream")]
+    public static const SWF_HUEANDCRYBOARD :Class;
 }
     
 }

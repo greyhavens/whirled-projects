@@ -79,7 +79,7 @@ public class Colors
         
         new ColorData(0xFF0000, "red"),
         new ColorData(0xFFFF00, "yellow"),
-        new ColorData(0x0000FF, "blue"),
+        new ColorData(0x004DFF, "blue"),
         
         new ColorData(0x00FF00, "green"),
         new ColorData(0xAD00AD, "purple"),

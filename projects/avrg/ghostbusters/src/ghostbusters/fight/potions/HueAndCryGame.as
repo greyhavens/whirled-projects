@@ -13,7 +13,7 @@ public class HueAndCryGame extends Sprite
         var mainLoop :MainLoop = new MainLoop(this);
         mainLoop.run();
 
-        GameMode.beginGame();
+        mainLoop.pushMode(new LoadingMode());
     }
 }
 
@@ -22,6 +22,7 @@ public class HueAndCryGame extends Sprite
 import com.threerings.util.ArrayUtil;
 
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
@@ -37,6 +38,32 @@ import flash.events.MouseEvent;
 
 import ghostbusters.fight.ouija.BoardTimer;
 import com.whirled.contrib.GameMode;
+import flash.display.MovieClip;
+import com.threerings.util.EmbeddedSwfLoader;
+import com.threerings.flash.DisplayUtil;
+
+class LoadingMode extends AppMode
+{
+    public function LoadingMode ()
+    {
+    }
+    
+    override protected function setup () :void
+    {
+        ResourceManager.instance.pendResourceLoad("swf", "gameSwf", { embeddedClass: Content.SWF_HUEANDCRYBOARD });
+        ResourceManager.instance.load();
+    }
+    
+    override public function update (dt:Number) :void
+    {
+        super.update(dt);
+        
+        if (!ResourceManager.instance.isLoading) {
+            MainLoop.instance.popMode();
+            GameMode.beginGame();
+        }
+    }
+}
 
 class GameMode extends AppMode
 {
@@ -65,7 +92,8 @@ class GameMode extends AppMode
     override protected function setup () :void
     {
         // draw the board
-        this.modeSprite.addChild(new Content.IMAGE_HUEANDCRYBOARD());
+        var swfResource :SwfResourceLoader = ResourceManager.instance.getResource("gameSwf") as SwfResourceLoader;
+        this.modeSprite.addChild(swfResource.displayRoot);
         
         // beaker's initial color?
         var validBeakerColors :Array;
@@ -96,6 +124,11 @@ class GameMode extends AppMode
         this.modeSprite.addChild(_beakerBottom);
         
         // create the droppers
+        var root :MovieClip = swfResource.displayRoot as MovieClip;
+        trace(DisplayUtil.dumpHierarchy(root));
+        
+        var droppers :Array = [ root.dropper_1, root.dropper_2, root.dropper_3 ];
+        
         var dropperColors :Array = [ Colors.COLOR_RED, Colors.COLOR_YELLOW, Colors.COLOR_BLUE ];
         ArrayUtil.shuffle(dropperColors);
         
@@ -103,17 +136,17 @@ class GameMode extends AppMode
             var loc :Vector2 = (DROPPER_DATA[i * 2] as Vector2);
             var rot :Number = (DROPPER_DATA[(i * 2) + 1] as Number);
             
-            var alignSprite :Sprite = new Sprite();
+            /*var alignSprite :Sprite = new Sprite();
             alignSprite.x = loc.x;
             alignSprite.y = loc.y;
-            alignSprite.rotation = rot;
+            alignSprite.rotation = rot;*/
             
-            var dropper :Dropper = new Dropper(dropperColors[i]);
-            dropper.x = dropper.width / 2;
+            var dropper :Dropper = new Dropper(dropperColors[i], droppers[i]);
+            /*dropper.x = dropper.width / 2;
             dropper.y = -dropper.height;
             
             this.modeSprite.addChild(alignSprite);
-            alignSprite.addChild(dropper.displayObject);
+            alignSprite.addChild(dropper.displayObject);*/
             
             dropper.interactiveObject.addEventListener(MouseEvent.MOUSE_DOWN, this.createDropperClickHandler(dropper));
             
@@ -166,7 +199,9 @@ class GameMode extends AppMode
     protected var _beakerColor :uint;
     protected var _beakerBottom :Bitmap;
     
-    protected static const GAME_TIME :Number = 4;
+    protected var _swf :MovieClip;
+    
+    protected static const GAME_TIME :Number = 40;
     protected static const BEAKERBOTTOM_LOC :Vector2 = new Vector2(99, 146);
     
     protected static const DROPPER_DATA :Array = [
