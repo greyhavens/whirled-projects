@@ -2,6 +2,7 @@ package ghostbusters.fight.plasma {
 
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.SceneObject;
+import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
@@ -16,7 +17,9 @@ public class Ectoplasm extends SceneObject
     
     public function Ectoplasm ()
     {
-        var bitmap :Bitmap = new Bitmap(ResourceManager.instance.getImage("image_ectoplasm"));
+        var image :ImageResourceLoader = ResourceManager.instance.getResource("ectoplasm") as ImageResourceLoader;
+        var bitmap :Bitmap = image.createBitmap();
+        
         bitmap.x = -(bitmap.width / 2);
         bitmap.y = -(bitmap.height / 2);
         _sprite.addChild(bitmap);

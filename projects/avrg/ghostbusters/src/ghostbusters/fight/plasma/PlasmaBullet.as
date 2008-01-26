@@ -2,6 +2,7 @@ package ghostbusters.fight.plasma {
 
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.SceneObject;
+import com.whirled.contrib.core.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -14,11 +15,13 @@ public class PlasmaBullet extends SceneObject
     
     public function PlasmaBullet ()
     {
-        var image :Bitmap = new Bitmap(ResourceManager.instance.getImage("image_plasma"));
-        image.x = -(image.width / 2);
-        image.y = -(image.height / 2);
+        var image :ImageResourceLoader = ResourceManager.instance.getResource("plasma") as ImageResourceLoader;
         
-        _sprite.addChild(image);
+        var bitmap :Bitmap = image.createBitmap();
+        bitmap.x = -(bitmap.width / 2);
+        bitmap.y = -(bitmap.height / 2);
+        
+        _sprite.addChild(bitmap);
     }
     
     override public function get displayObject () :DisplayObject

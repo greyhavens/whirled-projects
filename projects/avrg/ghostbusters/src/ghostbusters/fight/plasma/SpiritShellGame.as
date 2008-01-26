@@ -22,6 +22,7 @@ public class SpiritShellGame extends Sprite
 import com.threerings.util.ArrayUtil;
 
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
@@ -47,9 +48,9 @@ class LoadingMode extends AppMode
     
     override protected function setup () :void
     {
-        ResourceManager.instance.pendLoadFromClass("image_ghost", Content.IMAGE_GHOST);
-        ResourceManager.instance.pendLoadFromClass("image_ectoplasm", Content.IMAGE_ECTOPLASM);
-        ResourceManager.instance.pendLoadFromClass("image_plasma", Content.IMAGE_PLASMA);
+        ResourceManager.instance.pendResourceLoad("image", "ghost", { embeddedClass: Content.IMAGE_GHOST });
+        ResourceManager.instance.pendResourceLoad("image", "ectoplasm", { embeddedClass: Content.IMAGE_ECTOPLASM });
+        ResourceManager.instance.pendResourceLoad("image", "plasma", { embeddedClass: Content.IMAGE_PLASMA });
         
         ResourceManager.instance.load();
     }
