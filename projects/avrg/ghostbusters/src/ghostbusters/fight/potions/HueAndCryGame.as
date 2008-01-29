@@ -114,7 +114,7 @@ class GameMode extends AppMode
             break;
         }
         
-        var initialColor :uint = Colors.COLOR_WHITE;
+        var initialColor :uint = Colors.COLOR_CLEAR;
         if (validBeakerColors.length > 0 && Rand.nextBoolean(Rand.STREAM_COSMETIC)) {
             initialColor = validBeakerColors[Rand.nextIntRange(0, validBeakerColors.length, Rand.STREAM_COSMETIC)];
         }
@@ -132,6 +132,7 @@ class GameMode extends AppMode
         
         // create the droppers
         var droppers :Array = [ displayRoot.dropper_1, displayRoot.dropper_2, displayRoot.dropper_3 ];
+        var drops :Array = [ displayRoot.drop_1, displayRoot.drop_2, displayRoot.drop_3 ];
         
         var dropperColors :Array = [ Colors.COLOR_RED, Colors.COLOR_YELLOW, Colors.COLOR_BLUE ];
         ArrayUtil.shuffle(dropperColors);
@@ -140,6 +141,12 @@ class GameMode extends AppMode
             var dropper :Dropper = new Dropper(dropperColors[i], droppers[i]);
             dropper.interactiveObject.addEventListener(MouseEvent.MOUSE_DOWN, this.createDropperClickHandler(dropper));
             this.addObject(dropper);
+            
+            // tint the drop
+            var colorMatrix :ColorMatrix = new ColorMatrix();
+            colorMatrix.colorize(Colors.getScreenColor(dropperColors[i]));
+            var drop :MovieClip = drops[i];
+            drop.filters = [ colorMatrix.createFilter() ];
         }
 
         // create the visual timer
@@ -174,15 +181,21 @@ class GameMode extends AppMode
     {
         _beakerColor = newColor;
         
-        var tintMatrix :ColorMatrix = new ColorMatrix();
-        tintMatrix.colorize(Colors.getScreenColor(_beakerColor));
+        if (_beakerColor == Colors.COLOR_CLEAR) {
+            _mixture.visible = false;
+        } else {
+            _mixture.visible = true;
         
-        _mixture.filters = [ tintMatrix.createFilter() ];
-        
-        if (_beakerColor == _targetColor) {
-            this.endGame(true);
-        } else if (_beakerColor == Colors.COLOR_BROWN) {
-            this.endGame(false);
+            var tintMatrix :ColorMatrix = new ColorMatrix();
+            tintMatrix.colorize(Colors.getScreenColor(_beakerColor));
+            
+            _mixture.filters = [ tintMatrix.createFilter() ];
+            
+            if (_beakerColor == _targetColor) {
+                this.endGame(true);
+            } else if (_beakerColor == Colors.COLOR_BROWN) {
+                this.endGame(false);
+            }
         }
     }
     

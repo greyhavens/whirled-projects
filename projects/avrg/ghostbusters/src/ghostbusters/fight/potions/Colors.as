@@ -6,9 +6,9 @@ public class Colors
 {
     public static function getMixedColor (a :uint, b :uint) :uint
     {
-        if (a == COLOR_WHITE) {
+        if (a == COLOR_CLEAR) {
             return b;
-        } else if (b == COLOR_WHITE) {
+        } else if (b == COLOR_CLEAR) {
             return a;
         } else if (a == b) {
             // mixing a color with itself doesn't do anything
@@ -33,7 +33,7 @@ public class Colors
         }
     }
     
-    public static const COLOR_WHITE :uint = 0;
+    public static const COLOR_CLEAR :uint = 0;
     
     // primaries
     public static const COLOR_RED :uint = 1;
@@ -81,7 +81,7 @@ public class Colors
         new ColorData(0xFFFF00, "yellow"),
         new ColorData(0x004DFF, "blue"),
         
-        new ColorData(0x00FF00, "green"),
+        new ColorData(0x1BE41B, "green"),
         new ColorData(0xAD00AD, "purple"),
         new ColorData(0xFF9D00, "orange"),
         
@@ -98,7 +98,7 @@ public class Colors
     public static const COLOR_TRANSPARENT :uint = 0;
     
     // primaries
-    public static const COLOR_WHITE :uint = 1;
+    public static const COLOR_CLEAR :uint = 1;
     public static const COLOR_BLACK :uint = 2;
     public static const COLOR_RED :uint = 3;
     public static const COLOR_YELLOW :uint = 4;
@@ -128,7 +128,7 @@ public class Colors
     
     public static const COLOR__LIMIT :uint = 22;
     
-    public static const COLOR__PRIMARY_FIRST :uint = COLOR_WHITE;
+    public static const COLOR__PRIMARY_FIRST :uint = COLOR_CLEAR;
     public static const COLOR__PRIMARY_LIMIT :uint = COLOR_BLUE + 1;
     public static const COLOR__SECONDARY_FIRST :uint = COLOR_GREEN;
     public static const COLOR__SECONDARY_LIMIT :uint = COLOR_DKORANGE + 1;
@@ -137,7 +137,7 @@ public class Colors
     
         [],  // transparent
         
-        [ COLOR_WHITE ],    // white
+        [ COLOR_CLEAR ],    // white
         [ COLOR_BLACK ],    // black
         
         [ COLOR_RED ],      // red
@@ -148,18 +148,18 @@ public class Colors
         [ COLOR_RED, COLOR_BLUE ], // purple
         [ COLOR_RED, COLOR_YELLOW ], // orange
         
-        [ COLOR_WHITE, COLOR_RED ], // light red
+        [ COLOR_CLEAR, COLOR_RED ], // light red
         [ COLOR_BLACK, COLOR_RED ], // dark red
-        [ COLOR_WHITE, COLOR_YELLOW ], // light yellow
+        [ COLOR_CLEAR, COLOR_YELLOW ], // light yellow
         [ COLOR_BLACK, COLOR_YELLOW ], // dark yellow
-        [ COLOR_WHITE, COLOR_BLUE ], // light blue
+        [ COLOR_CLEAR, COLOR_BLUE ], // light blue
         [ COLOR_BLACK, COLOR_BLUE ], // dark blue
         
-        [ COLOR_WHITE, COLOR_YELLOW, COLOR_BLUE ], // light green
+        [ COLOR_CLEAR, COLOR_YELLOW, COLOR_BLUE ], // light green
         [ COLOR_BLACK, COLOR_YELLOW, COLOR_BLUE ], // dark green
-        [ COLOR_WHITE, COLOR_RED, COLOR_BLUE ], // light purple
+        [ COLOR_CLEAR, COLOR_RED, COLOR_BLUE ], // light purple
         [ COLOR_BLACK, COLOR_RED, COLOR_BLUE ], // dark purple
-        [ COLOR_WHITE, COLOR_RED, COLOR_YELLOW ], // light orange
+        [ COLOR_CLEAR, COLOR_RED, COLOR_YELLOW ], // light orange
         [ COLOR_BLACK, COLOR_RED, COLOR_YELLOW ], // dark orange
         
     ];
