@@ -5,13 +5,13 @@ import flash.display.Sprite;
 public interface Microgame
 {
     /** 
-     * Returns the total duration, in seconds, of microgame.
+     * Returns the total duration, in milliseconds, of microgame.
      * Returns -1 if the microgame doesn't have an explicit duration associated with it. 
      */
     function get duration () :Number;
     
     /** 
-     * Returns the number of seconds remaining in the game.
+     * Returns the number of milliseconds remaining in the game.
      * For games that have a non-explicit duration, returns some arbitrary non-zero number
      * until the game is over.
      */
