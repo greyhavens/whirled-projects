@@ -49,6 +49,7 @@ public class BasicCursor extends SceneObject
     protected function mouseMoved (e :MouseEvent) :void
     {
         this.updateLocation(_board.mouseX, _board.mouseY);
+        //trace(_board.mouseX, _board.mouseY);
     }
 
     protected function updateLocation (localX :Number, localY :Number) :void
