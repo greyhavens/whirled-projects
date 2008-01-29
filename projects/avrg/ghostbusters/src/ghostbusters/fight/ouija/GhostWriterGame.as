@@ -139,6 +139,16 @@ class GameMode extends AppMode
         "transcendent",
         "umbra",
         "weird",
+        "necronomicon",
+        "putrefaction",
+        "noxious",
+        "ectoplasm",
+        "impure",
+        "exorcise",
+        "nemesis",
+        "phantasmagoric",
+        "petrify",
+        "ghastly"
 
     ];
 }
