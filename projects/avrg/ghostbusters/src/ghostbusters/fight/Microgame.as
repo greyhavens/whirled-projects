@@ -20,6 +20,9 @@ public interface Microgame
     /** Begins the microgame. */
     function begin () :void;
     
+    /** Cleans up resources allocated by the microgame. */
+    function cleanup () :void;
+    
     /** Returns the result of a completed microgame. */
     function get microgameResult () :MicrogameResult;
     
