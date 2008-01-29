@@ -1,11 +1,11 @@
 package ghostbusters.fight.ouija {
-
-import flash.display.Sprite;
-
-import ghostbusters.fight.Microgame;
+    
+import ghostbusters.fight.MicrogameConfig;
 
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.util.*;
+
+import flash.display.Sprite;
 
 [SWF(width="296", height="223", frameRate="30")]
 public class GhostWriterGame extends Sprite
@@ -14,7 +14,8 @@ public class GhostWriterGame extends Sprite
     {
         var mainLoop :MainLoop = new MainLoop(this);
         mainLoop.run();
-
+        
+        GameMode.microgameConfig = new MicrogameConfig(2);
         GameMode.beginGame();
     }
 }
@@ -26,20 +27,25 @@ import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 import ghostbusters.fight.ouija.*;
 import ghostbusters.fight.common.*;
+import ghostbusters.fight.MicrogameConfig;
 
 import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.DisplayObject;
+import com.whirled.contrib.GameMode;
 
 class GameMode extends AppMode
 {
+    public static var microgameConfig :MicrogameConfig;
+    
     public static function beginGame () :void
     {
         // choose a word randomly
-        var word :String = (WORDS[Rand.nextIntRange(0, WORDS.length, Rand.STREAM_GAME)] as String);
-        trace("Ouija word: " + word);
+        var gameMode :GameMode = new GameMode();
+        
+        var word :String = gameMode.word;
 
-        MainLoop.instance.pushMode(new GameMode(word));
+        MainLoop.instance.pushMode(gameMode);
         MainLoop.instance.pushMode(new IntroMode("Spell '" + word.toLocaleUpperCase() + "'"));
         MainLoop.instance.pushMode(new SplashMode("Ghost Writer"));
     }
@@ -52,14 +58,22 @@ class GameMode extends AppMode
         }
     }
 
-    public function GameMode (word :String)
+    public function GameMode ()
     {
-        _word = word;
+        _settings = DIFFICULTY_SETTINGS[Math.min(microgameConfig.difficulty, DIFFICULTY_SETTINGS.length - 1)];
+        
+        // choose a word
+        var validWords :Array = WORDS.filter(
+            function (word :String, index :int, array :Array) :Boolean {
+                return (word.length >= _settings.minWordLength && word.length <= _settings.maxWordLength);
+            });
+            
+        _word = validWords[Rand.nextIntRange(0, validWords.length, Rand.STREAM_COSMETIC)] as String;
     }
 
     override protected function setup () :void
     {
-        var gameTime :Number = GAME_TIMER_PER_LETTER * _word.length;
+        var gameTime :Number = _settings.timePerLetter * _word.length;
 
         trace("Game time: " + gameTime);
 
@@ -110,17 +124,20 @@ class GameMode extends AppMode
             }
         }
     }
+    
+    public function get word () :String
+    {
+        return _word;
+    }
 
     protected var _done :Boolean;
     protected var _word :String;
     protected var _nextWordIndex :int;
     protected var _cursor :Cursor;
     protected var _board :Board;
+    protected var _settings :GhostWriterSettings;
 
-    //protected var _progressText :ProgressText;
     protected var _statusText :StatusText = new StatusText();
-
-    protected static const GAME_TIMER_PER_LETTER :Number = 2.5;
 
     protected static const WORDS :Array = [
 
@@ -150,5 +167,12 @@ class GameMode extends AppMode
         "petrify",
         "ghastly"
 
+    ];
+    
+    protected static const DIFFICULTY_SETTINGS :Array = [
+         new GhostWriterSettings(1, 7, 3, 0.25),
+         new GhostWriterSettings(7, 9, 2.2, 0.25),
+         new GhostWriterSettings(8, 999, 1.8, 0.15),
+         new GhostWriterSettings(8, 999, 1.4, 0.15),
     ];
 }
