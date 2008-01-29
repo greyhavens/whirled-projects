@@ -21,6 +21,7 @@ public class HueAndCryGame extends Sprite
 
 import com.threerings.util.ArrayUtil;
 
+import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
@@ -33,12 +34,12 @@ import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.DisplayObject;
 import flash.display.Bitmap;
+import flash.display.MovieClip;
 
 import flash.events.MouseEvent;
 
 import ghostbusters.fight.ouija.BoardTimer;
 import com.whirled.contrib.GameMode;
-import flash.display.MovieClip;
 import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.flash.DisplayUtil;
 
@@ -72,7 +73,7 @@ class GameMode extends AppMode
         var targetColor :uint = Colors.getRandomSecondary();
         MainLoop.instance.pushMode(new GameMode(targetColor));
         
-        MainLoop.instance.pushMode(new IntroMode("Mix " + Colors.getColorName(targetColor) + "!"));
+        //MainLoop.instance.pushMode(new IntroMode("Mix " + Colors.getColorName(targetColor) + "!"));
         MainLoop.instance.pushMode(new SplashMode("Hue And Cry"));
     }
 
@@ -93,7 +94,9 @@ class GameMode extends AppMode
     {
         // draw the board
         var swfResource :SwfResourceLoader = ResourceManager.instance.getResource("gameSwf") as SwfResourceLoader;
-        this.modeSprite.addChild(swfResource.displayRoot);
+        
+        var displayRoot :MovieClip = swfResource.displayRoot as MovieClip;
+        this.modeSprite.addChild(displayRoot);
         
         // beaker's initial color?
         var validBeakerColors :Array;
@@ -116,40 +119,26 @@ class GameMode extends AppMode
             initialColor = validBeakerColors[Rand.nextIntRange(0, validBeakerColors.length, Rand.STREAM_COSMETIC)];
         }
         
-        // draw the beaker bottom
-        _beakerBottom = new Content.IMAGE_BEAKERBOTTOM();
-        _beakerBottom.x = BEAKERBOTTOM_LOC.x;
-        _beakerBottom.y = BEAKERBOTTOM_LOC.y;
+        // target color
+        var targetColorObj :MovieClip = displayRoot.target_card.card.target_color;
+        var targetColorMatrix :ColorMatrix = new ColorMatrix();
+        targetColorMatrix.colorize(Colors.getScreenColor(_targetColor));
+        targetColorObj.filters = [ targetColorMatrix.createFilter() ];
+        
+        // beaker bottom
+        _mixture = DisplayUtil.findInHierarchy(displayRoot, "liquid") as MovieClip;
+        
         this.setBeakerColor(initialColor);
-        this.modeSprite.addChild(_beakerBottom);
         
         // create the droppers
-        var root :MovieClip = swfResource.displayRoot as MovieClip;
-        trace(DisplayUtil.dumpHierarchy(root));
-        
-        var droppers :Array = [ root.dropper_1, root.dropper_2, root.dropper_3 ];
+        var droppers :Array = [ displayRoot.dropper_1, displayRoot.dropper_2, displayRoot.dropper_3 ];
         
         var dropperColors :Array = [ Colors.COLOR_RED, Colors.COLOR_YELLOW, Colors.COLOR_BLUE ];
         ArrayUtil.shuffle(dropperColors);
         
-        for (var i :uint = 0; i < DROPPER_DATA.length / 2; ++i) {
-            var loc :Vector2 = (DROPPER_DATA[i * 2] as Vector2);
-            var rot :Number = (DROPPER_DATA[(i * 2) + 1] as Number);
-            
-            /*var alignSprite :Sprite = new Sprite();
-            alignSprite.x = loc.x;
-            alignSprite.y = loc.y;
-            alignSprite.rotation = rot;*/
-            
+        for (var i :uint = 0; i < 3; ++i) {
             var dropper :Dropper = new Dropper(dropperColors[i], droppers[i]);
-            /*dropper.x = dropper.width / 2;
-            dropper.y = -dropper.height;
-            
-            this.modeSprite.addChild(alignSprite);
-            alignSprite.addChild(dropper.displayObject);*/
-            
             dropper.interactiveObject.addEventListener(MouseEvent.MOUSE_DOWN, this.createDropperClickHandler(dropper));
-            
             this.addObject(dropper);
         }
 
@@ -184,7 +173,11 @@ class GameMode extends AppMode
     protected function setBeakerColor (newColor :uint) :void
     {
         _beakerColor = newColor;
-        _beakerBottom.filters = [ ImageTool.createTintFilter(Colors.getScreenColor(_beakerColor)) ];
+        
+        var tintMatrix :ColorMatrix = new ColorMatrix();
+        tintMatrix.colorize(Colors.getScreenColor(_beakerColor));
+        
+        _mixture.filters = [ tintMatrix.createFilter() ];
         
         if (_beakerColor == _targetColor) {
             this.endGame(true);
@@ -197,17 +190,10 @@ class GameMode extends AppMode
     protected var _targetColor :uint;
     
     protected var _beakerColor :uint;
-    protected var _beakerBottom :Bitmap;
+    protected var _mixture :MovieClip;
     
     protected var _swf :MovieClip;
     
-    protected static const GAME_TIME :Number = 40;
-    protected static const BEAKERBOTTOM_LOC :Vector2 = new Vector2(99, 146);
-    
-    protected static const DROPPER_DATA :Array = [
-        new Vector2(108, 87), -30,   // location, rotation
-        new Vector2(120, 75), 0,
-        new Vector2(135, 63), 30,
-    ];
+    protected static const GAME_TIME :Number = 6;
     
 }

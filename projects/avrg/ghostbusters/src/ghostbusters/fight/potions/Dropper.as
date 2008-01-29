@@ -1,5 +1,6 @@
 package ghostbusters.fight.potions {
 
+import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.util.*;
@@ -17,8 +18,15 @@ public class Dropper extends SceneObject
         _movie = movie;
         
         // apply tint
-        _movie.liquid.filters = [ ImageTool.createTintFilter(Colors.getScreenColor(_color)) ];
-        _movie.squeezer.filters = [ ImageTool.createTintFilter(Colors.getScreenColor(_color)) ];
+        var colorMatrix :ColorMatrix = new ColorMatrix();
+        
+        colorMatrix.colorize(Colors.getScreenColor(_color));
+        _movie.liquid.filters = [ colorMatrix.createFilter() ];
+        
+        colorMatrix.reset();
+        colorMatrix.colorize(Colors.getScreenColor(_color), 0.5);
+        
+        _movie.squeezer.filters = [ colorMatrix.createFilter() ];
         
         // show a glow when the dropper is rolled over
         _glow = new GlowFilter();
