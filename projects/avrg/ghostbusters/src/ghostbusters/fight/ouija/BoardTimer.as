@@ -1,16 +1,13 @@
 package ghostbusters.fight.ouija {
 
 import com.whirled.contrib.core.objects.SceneObject;
-import flash.display.MovieClip;
-import flash.display.DisplayObject;
-import com.whirled.contrib.core.tasks.RepeatingTask;
-import com.whirled.contrib.core.tasks.TimedTask;
-import com.whirled.contrib.core.tasks.FunctionTask;
 
-import flash.display.Scene;
+import flash.display.DisplayObject;
 import flash.display.Loader;
-import mx.core.MovieClipLoaderAsset;
+import flash.display.MovieClip;
 import flash.geom.Point;
+
+import mx.core.MovieClipLoaderAsset;
 
 public class BoardTimer extends SceneObject
 {
@@ -27,23 +24,17 @@ public class BoardTimer extends SceneObject
 
     override protected function update (dt :Number) :void
     {
+       _elapsedTime += dt;
+       
         // @TODO - fix this mess
-        if (!_inited) {
-            var swf :MovieClip = (((_swf.getChildAt(0) as Loader).content) as MovieClip);
-
-            if (null != swf) {
-                swf = (swf.getChildAt(0) as MovieClip);
-                swf.gotoAndStop(0);
-
-                this.addTask(new RepeatingTask(
-                    new TimedTask(_totalTime / swf.totalFrames),
-                    new FunctionTask(
-                        function () :void {
-                            swf.nextFrame(); }
-                    )));
-
-                _inited = true;
-           }
+        var swf :MovieClip = (((_swf.getChildAt(0) as Loader).content) as MovieClip);
+        if (null != swf) {
+             swf = (swf.getChildAt(0) as MovieClip);
+            
+            var curFrame :Number = Math.floor((_elapsedTime / _totalTime) * Number(swf.totalFrames));
+            curFrame = Math.min(curFrame, swf.totalFrames - 1);
+            
+            swf.gotoAndStop(curFrame);
         }
     }
 
@@ -54,9 +45,9 @@ public class BoardTimer extends SceneObject
 
     protected var _swf :MovieClipLoaderAsset;
     protected var _totalTime :Number;
-    protected var _inited :Boolean;
+    protected var _elapsedTime :Number = 0;
 
-    protected static const TIMER_LOC :Point = new Point(125, 180);
+    protected static const TIMER_LOC :Point = new Point(140, 174);
 
 }
 
