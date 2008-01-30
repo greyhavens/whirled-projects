@@ -8,9 +8,9 @@ import ghostbusters.fight.common.MicrogameConstants;
 import ghostbusters.fight.common.MicrogameMode;
 import ghostbusters.fight.ouija.GhostWriterGame;
     
-public class MicrogameFactory extends Sprite
+public class MicrogamePlayer extends Sprite
 {
-    public function MicrogameFactory (playerData :Object)
+    public function MicrogamePlayer (playerData :Object)
     {
         _playerData = playerData;
         
