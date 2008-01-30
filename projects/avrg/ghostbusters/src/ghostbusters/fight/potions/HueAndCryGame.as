@@ -1,93 +1,59 @@
 package ghostbusters.fight.potions {
 
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.util.*;
-
-import flash.display.Sprite;
-
-[SWF(width="296", height="223", frameRate="30")]
-public class HueAndCryGame extends Sprite
-{
-    public function HueAndCryGame ()
-    {
-        var mainLoop :MainLoop = new MainLoop(this);
-        mainLoop.run();
-
-        mainLoop.pushMode(new LoadingMode());
-    }
-}
-
-}
-
+import com.threerings.flash.DisplayUtil;
 import com.threerings.util.ArrayUtil;
-
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
-import ghostbusters.fight.potions.*;
-import ghostbusters.fight.common.*;
-
-import flash.display.Sprite;
-import flash.display.Shape;
-import flash.display.DisplayObject;
-import flash.display.Bitmap;
 import flash.display.MovieClip;
-
 import flash.events.MouseEvent;
 
+import ghostbusters.fight.common.*;
 import ghostbusters.fight.ouija.BoardTimer;
-import com.whirled.contrib.GameMode;
-import com.threerings.util.EmbeddedSwfLoader;
-import com.threerings.flash.DisplayUtil;
 
-class LoadingMode extends AppMode
+public class HueAndCryGame extends MicrogameMode
 {
-    public function LoadingMode ()
+    public function HueAndCryGame (difficulty :int, playerData :Object)
     {
-    }
-    
-    override protected function setup () :void
-    {
-        ResourceManager.instance.pendResourceLoad("swf", "gameSwf", { embeddedClass: Content.SWF_HUEANDCRYBOARD });
-        ResourceManager.instance.load();
-    }
-    
-    override public function update (dt:Number) :void
-    {
-        super.update(dt);
+        super(difficulty, playerData);
         
-        if (!ResourceManager.instance.isLoading) {
-            MainLoop.instance.popMode();
-            GameMode.beginGame();
+        _targetColor = Colors.getRandomSecondary();
+         
+        _timeRemaining = { value: this.duration };
+    }
+    
+    override public function begin () :void
+    {
+        MainLoop.instance.pushMode(this);
+        
+        if (!g_assetsLoaded) {
+            MainLoop.instance.pushMode(new LoadingMode());
+            g_assetsLoaded = true;
         }
-    }
-}
-
-class GameMode extends AppMode
-{
-    public static function beginGame () :void
-    {
-        var targetColor :uint = Colors.getRandomSecondary();
-        MainLoop.instance.pushMode(new GameMode(targetColor));
         
-        //MainLoop.instance.pushMode(new IntroMode("Mix " + Colors.getColorName(targetColor) + "!"));
-        MainLoop.instance.pushMode(new SplashMode("Hue And Cry"));
+        MainLoop.instance.pushMode(new IntroMode("Mix " + Colors.getColorName(_targetColor) + "!"));
     }
-
-    protected function endGame (success :Boolean) :void
+    
+    override protected function get duration () :Number
+    {
+        return GAME_TIME;
+    }
+    
+    override protected function get timeRemaining () :Number
+    {
+        return (_done ? 0 : _timeRemaining.value);
+    }
+    
+    protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
-            MainLoop.instance.pushMode(new OutroMode(success, beginGame));
+            
+            //MainLoop.instance.pushMode(new OutroMode(success));
             _done = true;
         }
-    }
-
-    public function GameMode (targetColor :uint)
-    {
-        _targetColor = targetColor;
     }
 
     override protected function setup () :void
@@ -150,23 +116,23 @@ class GameMode extends AppMode
         }
 
         // create the visual timer
-        var boardTimer :BoardTimer = new BoardTimer(GAME_TIME);
+        var boardTimer :BoardTimer = new BoardTimer(this.duration);
         this.addObject(boardTimer, this.modeSprite);
 
         // install a failure timer
         var timerObj :AppObject = new AppObject();
         timerObj.addTask(new SerialTask(
-            new TimedTask(GAME_TIME),
+            new AnimateValueTask(_timeRemaining, 0, this.duration),
             new FunctionTask(
-                function () :void { endGame(false); }
+                function () :void { gameOver(false); }
             )));
 
-        this.addObject(timerObj);
+        this.addObject(timerObj)
     }
     
     protected function createDropperClickHandler (dropper :Dropper) :Function
     {
-        var localThis :GameMode = this;
+        var localThis :HueAndCryGame = this;
         return function (e :MouseEvent) :void {
             localThis.addColorToBeaker(dropper.color);
         }
@@ -192,14 +158,15 @@ class GameMode extends AppMode
             _mixture.filters = [ tintMatrix.createFilter() ];
             
             if (_beakerColor == _targetColor) {
-                this.endGame(true);
+                this.gameOver(true);
             } else if (_beakerColor == Colors.COLOR_BROWN) {
-                this.endGame(false);
+                this.gameOver(false);
             }
         }
     }
     
     protected var _done :Boolean;
+    protected var _timeRemaining :Object;
     protected var _targetColor :uint;
     
     protected var _beakerColor :uint;
@@ -207,6 +174,39 @@ class GameMode extends AppMode
     
     protected var _swf :MovieClip;
     
+    protected static var g_assetsLoaded :Boolean;
+    
     protected static const GAME_TIME :Number = 6;
     
+}
+
+}
+
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.resource.*;
+import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.core.util.*;
+
+import ghostbusters.fight.potions.*;
+
+class LoadingMode extends AppMode
+{
+    public function LoadingMode ()
+    {
+    }
+    
+    override protected function setup () :void
+    {
+        ResourceManager.instance.pendResourceLoad("swf", "gameSwf", { embeddedClass: Content.SWF_HUEANDCRYBOARD });
+        ResourceManager.instance.load();
+    }
+    
+    override public function update (dt:Number) :void
+    {
+        super.update(dt);
+        
+        if (!ResourceManager.instance.isLoading) {
+            MainLoop.instance.popMode();
+        }
+    }
 }
