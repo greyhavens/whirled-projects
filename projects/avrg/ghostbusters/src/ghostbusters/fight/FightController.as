@@ -48,6 +48,11 @@ public class FightController extends Controller
         Game.control.despawnMob(Codes.MOB_ID_GHOST);
     }
 
+    public function lanternClicked () :void
+    {
+        
+    }
+
     public function handleGhostMelee (score :Number) :void
     {
         if (model.damageGhost((int) (score * 10))) {

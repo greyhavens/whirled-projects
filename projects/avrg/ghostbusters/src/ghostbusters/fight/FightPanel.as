@@ -19,14 +19,15 @@ import flash.utils.Dictionary;
 import flash.utils.setTimeout;
 
 import com.threerings.flash.FrameSprite;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
+
 import com.whirled.AVRGameAvatar;
 import com.whirled.MobControl;
 
 import ghostbusters.Content;
 import ghostbusters.Dimness;
 import ghostbusters.Game;
-import ghostbusters.fight.FightController;
 
 public class FightPanel extends FrameSprite
 {
@@ -107,8 +108,18 @@ public class FightPanel extends FrameSprite
 
     override protected function handleFrame (... ignored) :void
     {
-        // TODO: maintain our own list, calling this 30 times a second is rather silly
+        // TODO: when we have real teams, we have a fixed order of players, but for now we
+        // TODO: just grab the first six in the order the client exports them
+
         var players :Array = Game.control.getPlayerIds();
+
+        updateSpotlights(players);
+//        updateMinigame();
+    }
+
+    protected function updateSpotlights (players :Array) :void
+    {
+        // TODO: maintain our own list, calling this 30 times a second is rather silly
         for (var ii :int = 0; ii < players.length; ii ++) {
             var playerId :int = players[ii] as int;
 
@@ -125,16 +136,15 @@ public class FightPanel extends FrameSprite
 
             var spotlight :Spotlight = _spotlights[playerId];
             if (spotlight == null) {
-                // a new spotlight just appears, no splines involved
                 spotlight = new Spotlight(playerId);
                 _spotlights[playerId] = spotlight;
 
-//                _maskLayer.addChild(spotlight.mask);
-//                _lightLayer.addChild(spotlight.light);
                 _dimness.addChild(spotlight.hole);
             }
             spotlight.redraw(topLeft.x + width/2, topLeft.y + height/2, width, height);
         }
+
+        // TODO: remove spotlights when people leave
     }
 
     protected function gamePerformance (score :Number, style :Number = 0) :void

@@ -6,6 +6,7 @@ package ghostbusters {
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.text.TextField;
 import flash.geom.Point;
 
 import flash.events.Event;
@@ -15,13 +16,14 @@ import flash.utils.ByteArray;
 import flash.utils.setTimeout;
 
 import com.threerings.flash.DisplayUtil;
+import com.threerings.flash.FrameSprite;
 import com.threerings.util.CommandEvent;
 
 import ghostbusters.GameController;
 
 import com.threerings.util.EmbeddedSwfLoader;
 
-public class HUD extends Sprite
+public class HUD extends FrameSprite
 {
     public function HUD ()
     {
@@ -54,6 +56,26 @@ public class HUD extends Sprite
         safelyAdd(LANTERN, lanternClick);
         safelyAdd(HELP, helpClick);
         safelyAdd(CLOSE, closeClick);
+
+        _playerHealthBars = new Array();
+        _playerNamePanels = new Array();
+        for (var ii :int = 1; ii <= 6; ii ++) {
+            var bar :DisplayObject = DisplayUtil.findInHierarchy(_hud, PLAYER_HEALTH_BAR + ii);
+            if (bar == null) {
+                Game.log.warning("Failed to find player health bar #" + ii);
+                continue;
+            }
+            Game.log.debug("bar: " + bar);
+            _playerHealthBars.push(bar);
+
+            var panel :DisplayObject = DisplayUtil.findInHierarchy(_hud, PLAYER_NAME_PANEL + ii);
+            if (panel == null) {
+                Game.log.warning("Failed to find player name panel #" + ii);
+                continue;
+            }
+            Game.log.debug("panel: " + panel);
+            _playerNamePanels.push(panel);
+        }
 
         this.addChild(_hud);
 
@@ -88,6 +110,29 @@ public class HUD extends Sprite
         button.addEventListener(MouseEvent.CLICK, callback);
     }
 
+    override protected function handleFrame (... ignored) :void
+    {
+        var players :Array = Game.control.getPlayerIds();
+        var teamIx :int = 0;
+        var barIx :int = 0;
+        while (barIx < 6) {
+            var bar :MovieClip = MovieClip(_playerHealthBars[barIx]);
+            if (teamIx >= players.length) {
+                bar.visible = false;
+                barIx ++;
+                continue;
+            }
+            if (players[teamIx] == Game.ourPlayerId) {
+                teamIx ++;
+                continue;
+            }
+            bar.visible = true;
+            bar.gotoAndStop(100 * Game.gameController.model.getRelativeHealth(players[teamIx]));
+            teamIx ++;
+            barIx ++;
+        }
+    }
+
     protected function lanternClick (evt :Event) :void
     {
         CommandEvent.dispatch(this, GameController.TOGGLE_LANTERN);
@@ -110,9 +155,15 @@ public class HUD extends Sprite
 
     protected var _hud :MovieClip;
 
+    protected var _playerHealthBars :Array;
+    protected var _playerNamePanels :Array;
+
     protected static const LANTERN :String = "weaponbutton";
     protected static const HELP :String = "helpbutton";
     protected static const CLOSE :String = "closeButton";
+
+    protected static const PLAYER_NAME_PANEL :String = "PlayerName";
+    protected static const PLAYER_HEALTH_BAR :String = "PlayerHealth";
 
     protected static const DEBUG :Boolean = false;
 

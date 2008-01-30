@@ -13,6 +13,7 @@ import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.MobControl;
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 
@@ -41,6 +42,8 @@ public class Game extends Sprite
     public static var ourRoomId :int;
     public static var ourPlayerId :int;
 
+    public static var team :Array;
+
     public static var random :Random;
 
     public function Game ()
@@ -64,6 +67,9 @@ public class Game extends Sprite
 
         addEventListener(AVRGameControlEvent.ENTERED_ROOM, enteredRoom);
         addEventListener(AVRGameControlEvent.SIZE_CHANGED, sizeChanged);
+
+        addEventListener(AVRGameControlEvent.PLAYER_ENTERED, playerEntered);
+        addEventListener(AVRGameControlEvent.PLAYER_LEFT, playerLeft);
     }
 
     protected function handleUnload (event :Event) :void
@@ -120,6 +126,8 @@ public class Game extends Sprite
     {
         ourRoomId = control.getRoomId();
 
+        team = control.getPlayerIds();
+
         var newBounds :Rectangle = control.getRoomBounds();
         if (newBounds != null) {
             roomBounds = newBounds;
@@ -134,6 +142,16 @@ public class Game extends Sprite
         }
 
         gameController.panel.resized();
+    }
+
+    protected function playerEntered (evt :AVRGameControlEvent) :void
+    {
+        team.push(evt.value);
+    }
+
+    protected function playerLeft (evt :AVRGameControlEvent) :void
+    {
+        ArrayUtil.removeFirst(team, evt.value);
     }
 
     public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject

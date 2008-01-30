@@ -35,6 +35,25 @@ public class GameModel
         _state = state;
     }
 
+    public function getCurrentHealth (playerId :int) :Number
+    {
+        return Number(Game.control.state.getProperty("curHealth:" + playerId));
+    }
+
+    public function getMaxHealth (playerId :int) :Number
+    {
+        return Number(Game.control.state.getProperty("maxHealth:" + playerId));
+    }
+
+    public function getRelativeHealth (playerId :int) :Number
+    {
+        var max :Number = getMaxHealth(playerId);
+        if (max > 0) {
+            return getCurrentHealth(playerId) / max;
+        }
+        return 0;
+    }
+
     protected var _panel :GamePanel;
     protected var _state :String = STATE_NONE;
 }

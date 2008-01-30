@@ -66,6 +66,10 @@ public class GameController extends Controller
 
         } else if (model.getState() == GameModel.STATE_SEEKING) {
             enterState(GameModel.STATE_IDLE);
+
+        } else if (model.getState() == GameModel.STATE_FIGHTING) {
+            Game.fightController.lanternClicked();
+
         }
         // else no effect
     }
