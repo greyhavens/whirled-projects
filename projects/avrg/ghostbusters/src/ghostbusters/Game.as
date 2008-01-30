@@ -42,8 +42,6 @@ public class Game extends Sprite
     public static var ourRoomId :int;
     public static var ourPlayerId :int;
 
-    public static var team :Array;
-
     public static var random :Random;
 
     public function Game ()
@@ -62,14 +60,14 @@ public class Game extends Sprite
         control.setMobSpriteExporter(exportMobSprite);
         control.setHitPointTester(gameController.panel.hitTestPoint);
 
-        addEventListener(Event.ADDED_TO_STAGE, handleAdded);
-        addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
+        control.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
+        control.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
-        addEventListener(AVRGameControlEvent.ENTERED_ROOM, enteredRoom);
-        addEventListener(AVRGameControlEvent.SIZE_CHANGED, sizeChanged);
+        control.addEventListener(AVRGameControlEvent.ENTERED_ROOM, enteredRoom);
+        control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, sizeChanged);
 
-        addEventListener(AVRGameControlEvent.PLAYER_ENTERED, playerEntered);
-        addEventListener(AVRGameControlEvent.PLAYER_LEFT, playerLeft);
+        control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, playerEntered);
+        control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, playerLeft);
     }
 
     protected function handleUnload (event :Event) :void
@@ -91,12 +89,13 @@ public class Game extends Sprite
 
     protected function sizeChanged (... ignored) :void
     {
+        var resized :Boolean = false;
+
         var newSize :Rectangle = control.getStageSize();
         if (newSize != null) {
             stageSize = newSize;
             log.debug("Setting stage size: " + stageSize);
-
-            gameController.panel.resized();
+            resized = true;
 
         } else if (stageSize != null) {
             log.warning("Eek - null stage size -- keeping old data.");
@@ -110,6 +109,7 @@ public class Game extends Sprite
         if (newSize != null) {
             scrollSize = newSize;
             log.debug("Setting scroll size: " + scrollSize);
+            resized = true;
 
         } else if (scrollSize != null) {
             log.warning("Eek - null scroll size -- keeping old data.");
@@ -119,14 +119,14 @@ public class Game extends Sprite
             scrollSize = new Rectangle(0, 0, 700, 500);
         }
 
-        gameController.panel.resized();
+        if (resized) {
+            gameController.panel.resized();
+        }
     }
 
     protected function enteredRoom (... ignored) :void
     {
         ourRoomId = control.getRoomId();
-
-        team = control.getPlayerIds();
 
         var newBounds :Rectangle = control.getRoomBounds();
         if (newBounds != null) {
@@ -146,12 +146,10 @@ public class Game extends Sprite
 
     protected function playerEntered (evt :AVRGameControlEvent) :void
     {
-        team.push(evt.value);
     }
 
     protected function playerLeft (evt :AVRGameControlEvent) :void
     {
-        ArrayUtil.removeFirst(team, evt.value);
     }
 
     public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject

@@ -17,6 +17,7 @@ import flash.utils.setTimeout;
 
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.FrameSprite;
+import com.whirled.AVRGameAvatar;
 import com.threerings.util.CommandEvent;
 
 import ghostbusters.GameController;
@@ -87,17 +88,19 @@ public class HUD extends FrameSprite
     protected function placeHud () :void
     {
         // put the HUD to the right of the visible screen, or flush with the stage edge
-        _hud.x = Math.min(Game.scrollSize.right - MARGIN_LEFT,
-                          Game.stageSize.right - _hud.width);
+        _hud.x = Math.max(0, Math.min(Game.scrollSize.right - MARGIN_LEFT,
+                                      Game.stageSize.right - _hud.width);
         _hud.y = 0;
 
-        var width :int = Game.stageSize.right - Game.scrollSize.right;
-        if (width > 0) {
-            this.graphics.beginFill(0);
-            this.graphics.drawRect(Game.scrollSize.right + 1, 1,
-                                   width, Game.scrollSize.height);
-            this.graphics.endFill();
-        }
+        Game.log.debug("Placing hud at (" + _hud.x + ", " + _hud.y + ")...");
+
+//        var width :int = Game.stageSize.right - Game.scrollSize.right;
+//        if (width > 0) {
+//            this.graphics.beginFill(0);
+//            this.graphics.drawRect(Game.scrollSize.right + 1, 1,
+//                                   width, Game.scrollSize.height);
+//            this.graphics.endFill();
+//        }
     }
 
     protected function safelyAdd (name :String, callback :Function) :void
@@ -113,23 +116,30 @@ public class HUD extends FrameSprite
     override protected function handleFrame (... ignored) :void
     {
         var players :Array = Game.control.getPlayerIds();
+        if (players == null) {
+            // offline mode -- don't flip out
+            return;
+        }
         var teamIx :int = 0;
-        var barIx :int = 0;
-        while (barIx < 6) {
-            var bar :MovieClip = MovieClip(_playerHealthBars[barIx]);
+        var hudIx :int = 0;
+        while (hudIx < 6) {
+            var bar :MovieClip = MovieClip(_playerHealthBars[hudIx]);
+            var name :TextField = TextField(_playerNamePanels[hudIx]);
             if (teamIx >= players.length) {
-                bar.visible = false;
-                barIx ++;
+                bar.visible = name.visible = false;
+                hudIx ++;
                 continue;
             }
             if (players[teamIx] == Game.ourPlayerId) {
                 teamIx ++;
                 continue;
             }
-            bar.visible = true;
+            var info :AVRGameAvatar = Game.control.getAvatarInfo(players[teamIx]);
+            bar.visible = name.visible = true;
             bar.gotoAndStop(100 * Game.gameController.model.getRelativeHealth(players[teamIx]));
+            name.text = info.name;
             teamIx ++;
-            barIx ++;
+            hudIx ++;
         }
     }
 
@@ -162,7 +172,7 @@ public class HUD extends FrameSprite
     protected static const HELP :String = "helpbutton";
     protected static const CLOSE :String = "closeButton";
 
-    protected static const PLAYER_NAME_PANEL :String = "PlayerName";
+    protected static const PLAYER_NAME_PANEL :String = "PlayerPanel";
     protected static const PLAYER_HEALTH_BAR :String = "PlayerHealth";
 
     protected static const DEBUG :Boolean = false;
