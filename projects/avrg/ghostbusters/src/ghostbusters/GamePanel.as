@@ -126,16 +126,10 @@ public class GamePanel extends Sprite
 
     protected function handleClick (evt :MouseEvent) :void
     {
-        if (evt.target.name == "close") {
-            _box.hide();
-            // TODO: only do this when box finishes hiding
-            CommandEvent.dispatch(this, GameController.END_GAME);
-//            _control.deactivateGame();
-
-        } else if (evt.target.name == "help") {
+        if (evt.target.name == "help") {
             CommandEvent.dispatch(this, GameController.HELP);
 
-        } else if (evt.target.name == "playnow") {
+        } else if (evt.target.name == "playNow") {
             _box.hide();
             CommandEvent.dispatch(this, GameController.PLAY);
             hud.visible = true;
