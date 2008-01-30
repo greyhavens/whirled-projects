@@ -5,7 +5,7 @@ import com.whirled.contrib.core.tasks.*;
 
 public class OutroMode extends AppMode
 {
-    public function OutroMode (success :Boolean, beginNextGameCallback :Function)
+    public function OutroMode (success :Boolean, beginNextGameCallback :Function = null)
     {
         var outro :OutroObject = new OutroObject(success);
         outro.alpha = 0;
@@ -13,16 +13,19 @@ public class OutroMode extends AppMode
         var outroTask :SerialTask = new SerialTask();
         outroTask.addTask(new TimedTask(TIME_PAUSEIN));
         outroTask.addTask(new AlphaTask(1, TIME_FADEIN));
-        outroTask.addTask(new TimedTask(TIME_PAUSEOUT));
-        outroTask.addTask(new FunctionTask(
-            function () :void {
-                MainLoop.instance.popMode(); // pop outro mode
-                MainLoop.instance.popMode(); // pop game mode
-                if (null != beginNextGameCallback) {
-                    beginNextGameCallback(); // begin the next game
+        
+        if (null != beginNextGameCallback) {
+            outroTask.addTask(new TimedTask(TIME_PAUSEOUT));
+            outroTask.addTask(new FunctionTask(
+                function () :void {
+                    MainLoop.instance.popMode(); // pop outro mode
+                    MainLoop.instance.popMode(); // pop game mode
+                    if (null != beginNextGameCallback) {
+                        beginNextGameCallback(); // begin the next game
+                    }
                 }
-            }
-        ));
+            ));
+        }
         
         outro.addTask(outroTask);
         
