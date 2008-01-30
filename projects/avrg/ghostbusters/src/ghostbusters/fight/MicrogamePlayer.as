@@ -7,7 +7,9 @@ import flash.display.Sprite;
 import ghostbusters.fight.common.MicrogameConstants;
 import ghostbusters.fight.common.MicrogameMode;
 
-import ghostbusters.fight.ouija.GhostWriterGame;
+import ghostbusters.fight.ouija.*;
+import ghostbusters.fight.plasma.*;
+import ghostbusters.fight.potions.*;
     
 public class MicrogamePlayer extends Sprite
 {
@@ -49,7 +51,7 @@ public class MicrogamePlayer extends Sprite
         
         // generate a new game
         // @TODO: do something real here
-        _currentGame = new GhostWriterGame(_weaponType.level, _playerData);
+        _currentGame = new HueAndCryGame(_weaponType.level, _playerData);
         _currentGame.begin(); // games push themselves onto the mode stack
         
         return _currentGame;

@@ -33,14 +33,12 @@ public class SpiritGuideGame extends MicrogameMode
     
     override protected function get timeRemaining () :Number
     {
-        return _timeRemaining.value;
+        return (_done ? 0 : _timeRemaining.value);
     }
     
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
-            _timeRemaining.value = 0;
-            
             MainLoop.instance.pushMode(new OutroMode(success));
             _done = true;
         }

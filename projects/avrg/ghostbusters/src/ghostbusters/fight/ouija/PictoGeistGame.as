@@ -34,7 +34,7 @@ public class PictoGeistGame extends MicrogameMode
     
     override protected function get timeRemaining () :Number
     {
-        return _timeRemaining.value;
+        return (_done ? 0 : _timeRemaining.value);
     }
 
     override protected function setup () :void
@@ -71,8 +71,6 @@ public class PictoGeistGame extends MicrogameMode
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
-            _timeRemaining.value = 0;
-            
             MainLoop.instance.pushMode(new OutroMode(success));
             _done = true;
         }

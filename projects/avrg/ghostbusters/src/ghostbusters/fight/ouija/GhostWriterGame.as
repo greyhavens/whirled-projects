@@ -21,7 +21,6 @@ public class GhostWriterGame extends MicrogameMode
             });
             
         _word = validWords[Rand.nextIntRange(0, validWords.length, Rand.STREAM_COSMETIC)] as String;
-        
          
         _timeRemaining = { value: this.duration };
     }
@@ -39,7 +38,15 @@ public class GhostWriterGame extends MicrogameMode
     
     override protected function get timeRemaining () :Number
     {
-        return _timeRemaining.value;
+        return (_done ? 0 : _timeRemaining.value);
+    }
+    
+    protected function gameOver (success :Boolean) :void
+    {
+        if (!_done) {
+            MainLoop.instance.pushMode(new OutroMode(success));
+            _done = true;
+        }
     }
 
     override protected function setup () :void
@@ -73,16 +80,6 @@ public class GhostWriterGame extends MicrogameMode
         _cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
 
         _cursor.selectionTargetIndex = Board.stringToSelectionIndex(_word.charAt(_nextWordIndex));
-    }
-    
-    protected function gameOver (success :Boolean) :void
-    {
-        if (!_done) {
-            _timeRemaining.value = 0;
-            
-            MainLoop.instance.pushMode(new OutroMode(success));
-            _done = true;
-        }
     }
     
     override public function update (dt :Number) :void
