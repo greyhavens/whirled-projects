@@ -14,6 +14,8 @@ public class SpiritGuideGame extends MicrogameMode
     {
         super(difficulty, playerData);
         
+        _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
+        
         // randomly generate a selection to move to
         _selection = Board.getRandomSelectionString();
          
@@ -28,7 +30,7 @@ public class SpiritGuideGame extends MicrogameMode
     
     override protected function get duration () :Number
     {
-        return GAME_TIME;
+        return _settings.gameTime;
     }
     
     override protected function get timeRemaining () :Number
@@ -74,7 +76,8 @@ public class SpiritGuideGame extends MicrogameMode
         this.addObject(timerObj)
         
         // create the cursor
-        var mouseTransform :Matrix = (MOUSE_TRANSFORMS[Rand.nextIntRange(0, MOUSE_TRANSFORMS.length, Rand.STREAM_GAME)] as Matrix);
+        var validTransforms :Array = MOUSE_TRANSFORMS[_settings.transformDifficulty];
+        var mouseTransform :Matrix = validTransforms[Rand.nextIntRange(0, validTransforms.length, Rand.STREAM_COSMETIC)];
         var cursor :SpiritCursor = new SpiritCursor(board.interactiveObject, mouseTransform);
 
         cursor.selectionTargetIndex = Board.stringToSelectionIndex(_selection);
@@ -93,19 +96,39 @@ public class SpiritGuideGame extends MicrogameMode
     protected var _done :Boolean;
     protected var _selection :String;
     protected var _timeRemaining :Object;
-
-    protected static const GAME_TIME :Number = 8; // @TODO - this should be controlled by game difficulty
-
+    protected var _settings :SpiritGuideSettings;
+    
     protected static const MOUSE_TRANSFORMS :Array = [
-        new Matrix(-1, 0, 0, 1),
-        new Matrix(1, 0, 0, -1),
-        new Matrix(-1, 0, 0, -1),
-
-        // these transforms break my brain. they should go in hard difficulty
-        new Matrix(0, 1, 1, 0),
-        new Matrix(0, -1, 1, 0),
-        new Matrix(0, 1, -1, 0),
-        new Matrix(0, -1, -1, 0),
+    
+        // easy (inverted x/y/both)
+        [
+            new Matrix(-1, 0, 0, 1),
+            new Matrix(1, 0, 0, -1),
+            new Matrix(-1, 0, 0, -1),
+        ],
+        
+        // hard (inverted and/or swapped x/y)
+        [
+            new Matrix(0, 1, 1, 0),
+            new Matrix(0, -1, 1, 0),
+            new Matrix(0, 1, -1, 0),
+            new Matrix(0, -1, -1, 0),
+        ],
+        
+        // expert (rotated)
+        [
+            new Matrix(0.5253219888177297, 0.8509035245341184, -0.8509035245341184, 0.5253219888177297),
+            new Matrix(-0.9960878351411849, 0.08836868610400143, -0.08836868610400143, -0.9960878351411849),
+            new Matrix(0.36731936773024515, -0.9300948780045254, 0.9300948780045254, 0.36731936773024515),
+            new Matrix(0.6669156003948422, 0.7451332645574127, -0.7451332645574127, 0.6669156003948422),
+        ],
+    ];
+    
+    protected static const DIFFICULTY_SETTINGS :Array = [
+        new SpiritGuideSettings(8, 0),
+        new SpiritGuideSettings(6, 1),
+        new SpiritGuideSettings(6, 2),
+        new SpiritGuideSettings(4, 2),
     ];
 }
 
