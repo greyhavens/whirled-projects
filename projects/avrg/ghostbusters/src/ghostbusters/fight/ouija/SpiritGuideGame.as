@@ -1,60 +1,49 @@
 package ghostbusters.fight.ouija {
 
 import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.util.*;
-
-import flash.display.Sprite;
-
-[SWF(width="296", height="223", frameRate="30")]
-public class SpiritGuideGame extends Sprite
-{
-    public function SpiritGuideGame ()
-    {
-        var mainLoop :MainLoop = new MainLoop(this);
-        mainLoop.run();
-
-        GameMode.beginGame();
-    }
-}
-
-}
-
-import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
-import ghostbusters.fight.ouija.*;
-import ghostbusters.fight.common.*;
 
-import flash.display.Sprite;
-import flash.display.Shape;
-import flash.display.DisplayObject;
-import flash.text.TextField;
 import flash.geom.Matrix;
 
-class GameMode extends AppMode
+import ghostbusters.fight.common.*;
+
+public class SpiritGuideGame extends MicrogameMode
 {
-    public static function beginGame () :void
+    public function SpiritGuideGame (difficulty :int, playerData :Object)
     {
+        super(difficulty, playerData);
+        
         // randomly generate a selection to move to
-        var selection :String = Board.getRandomSelectionString();
-
-        MainLoop.instance.pushMode(new GameMode(selection));
-        MainLoop.instance.pushMode(new SplashMode("Spirit Guide"));
-
-        trace("Spirit Guide selection: " + selection);
+        _selection = Board.getRandomSelectionString();
+         
+        _timeRemaining = { value: this.duration };
     }
-
-    protected function endGame (success :Boolean) :void
+    
+    override public function begin () :void
+    {
+        MainLoop.instance.pushMode(this);
+        MainLoop.instance.pushMode(new IntroMode("Move to '" + _selection.toLocaleUpperCase() + "'!"));
+    }
+    
+    override protected function get duration () :Number
+    {
+        return GAME_TIME;
+    }
+    
+    override protected function get timeRemaining () :Number
+    {
+        return _timeRemaining.value;
+    }
+    
+    protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
-            MainLoop.instance.pushMode(new OutroMode(success, beginGame));
+            _timeRemaining.value = 0;
+            
+            MainLoop.instance.pushMode(new OutroMode(success));
             _done = true;
         }
-    }
-
-    public function GameMode (selection :String)
-    {
-        _selection = selection;
     }
 
     override protected function setup () :void
@@ -63,7 +52,7 @@ class GameMode extends AppMode
         this.addObject(board, this.modeSprite);
 
         // create the visual timer
-        var boardTimer :BoardTimer = new BoardTimer(GAME_TIME);
+        var boardTimer :BoardTimer = new BoardTimer(this.duration);
         this.addObject(boardTimer, board.displayObjectContainer);
 
         // status text
@@ -74,12 +63,12 @@ class GameMode extends AppMode
         // install a failure timer
         var timerObj :AppObject = new AppObject();
         timerObj.addTask(new SerialTask(
-            new TimedTask(GAME_TIME),
+            new AnimateValueTask(_timeRemaining, 0, this.duration),
             new FunctionTask(
-                function () :void { endGame(false); }
+                function () :void { gameOver(false); }
             )));
 
-        this.addObject(timerObj);
+        this.addObject(timerObj)
         
         // create the cursor
         var mouseTransform :Matrix = (MOUSE_TRANSFORMS[Rand.nextIntRange(0, MOUSE_TRANSFORMS.length, Rand.STREAM_GAME)] as Matrix);
@@ -94,12 +83,13 @@ class GameMode extends AppMode
     protected function boardSelectionChanged (e :BoardSelectionEvent) :void
     {
         if (e.selectionString == _selection) {
-            this.endGame(true);
+            this.gameOver(true);
         }
     }
 
     protected var _done :Boolean;
     protected var _selection :String;
+    protected var _timeRemaining :Object;
 
     protected static const GAME_TIME :Number = 8; // @TODO - this should be controlled by game difficulty
 
@@ -114,4 +104,6 @@ class GameMode extends AppMode
         new Matrix(0, 1, -1, 0),
         new Matrix(0, -1, -1, 0),
     ];
+}
+
 }
