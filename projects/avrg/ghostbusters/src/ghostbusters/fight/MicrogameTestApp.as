@@ -8,7 +8,9 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
-[SWF(width="300", height="350", frameRate="30")]
+import fl.controls.ComboBox;
+
+[SWF(width="305", height="350", frameRate="30")]
 public class MicrogameTestApp extends Sprite
 {
     public function MicrogameTestApp ()

@@ -31,6 +31,11 @@
 			<location>/export/whirled/libraries/narya/src/as</location>
 		</link>
 		<link>
+			<name>[source path] fl-components</name>
+			<type>2</type>
+			<location>/export/whirled/projects/fl-components</location>
+		</link>
+		<link>
 			<name>[source path] contrib-src-as</name>
 			<type>2</type>
 			<location>/export/whirled/contrib/src/as</location>
