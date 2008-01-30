@@ -89,7 +89,7 @@ public class HUD extends FrameSprite
     {
         // put the HUD to the right of the visible screen, or flush with the stage edge
         _hud.x = Math.max(0, Math.min(Game.scrollSize.right - MARGIN_LEFT,
-                                      Game.stageSize.right - _hud.width);
+                                      Game.stageSize.right - _hud.width));
         _hud.y = 0;
 
         Game.log.debug("Placing hud at (" + _hud.x + ", " + _hud.y + ")...");

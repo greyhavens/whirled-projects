@@ -60,8 +60,8 @@ public class Game extends Sprite
         control.setMobSpriteExporter(exportMobSprite);
         control.setHitPointTester(gameController.panel.hitTestPoint);
 
-        control.addEventListener(Event.ADDED_TO_STAGE, handleAdded);
-        control.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
+        addEventListener(Event.ADDED_TO_STAGE, handleAdded);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
         control.addEventListener(AVRGameControlEvent.ENTERED_ROOM, enteredRoom);
         control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, sizeChanged);
