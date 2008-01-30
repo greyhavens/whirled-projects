@@ -10,7 +10,7 @@ public class WeaponType
     public var name :String;
     public var level :int;
     
-    public function WeaponType (name :String, difficulty :int)
+    public function WeaponType (name :String, level :int)
     {
         this.name = name;
         this.level = level;
