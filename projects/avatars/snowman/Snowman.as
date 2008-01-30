@@ -52,7 +52,6 @@ public class Snowman extends Sprite
         var ba :ByteArray = _control.getDefaultDataPack();
         if (ba != null) {
             _pack = new DataPack(ba);
-            trace("Yep, pack is complete: " + _pack.isComplete());
             _pack.getDisplayObjects([ "texture" ], gotTexture);
 
         } else {
@@ -62,11 +61,13 @@ public class Snowman extends Sprite
 
     protected function gotTexture (results :Object) :void
     {
-        createScene(results["texture"] as Bitmap);
+        createScene(results["texture"] as Bitmap, _pack.getData("eyeColor"), _pack.getData("noseColor"), _pack.getData("hatColor"));
         _pack = null; // no longer needed
     }
 
-    protected function createScene (texture :Bitmap) :void
+    protected function createScene (
+        texture :Bitmap, eyeColor :uint = 0x000033, noseColor :uint = 0xFFa900,
+        hatColor :* = undefined) :void
     {
         var sprite :Sprite = new Sprite();
         sprite.x = 75;
@@ -89,7 +90,7 @@ public class Snowman extends Sprite
         var headSphere :Sphere = new Sphere(material, 50, 16, 10);
         headSphere.y = 550;
 
-        material = new ColorMaterial(0x000033);
+        material = new ColorMaterial(eyeColor);
         var leftEye :Sphere = new Sphere(material, 8);
         leftEye.x = -10;
         leftEye.y = 575;
@@ -100,18 +101,8 @@ public class Snowman extends Sprite
         rightEye.y = 575;
         rightEye.z = 40;
 
-//        material = new ColorMaterial(0x777700);
-//        var brim :Cylinder = new Cylinder(material, 80, 5, 16);
-//        brim.pitch(-20);
-//        brim.y = 595;
-//        brim.z = -10;
-//
-//        var hat :Cylinder = new Cylinder(material, 30, 30, 16);
-//        hat.pitch(-20);
-//        hat.y = 615;
-
         //material = new BitmapMaterial(Bitmap(new TEXTURE()).bitmapData);
-        material = new ColorMaterial(0xFFa900);
+        material = new ColorMaterial(noseColor);
         // Cone is broken, it always makes a cylinder, so just use cylinder directly
         var nose :Cylinder = new Cylinder(material, 10, 100, 16, 10, .01);
         nose.rotationX = 270;
@@ -124,8 +115,21 @@ public class Snowman extends Sprite
         rootNode.addChild(nose);
         rootNode.addChild(leftEye);
         rootNode.addChild(rightEye);
-//        rootNode.addChild(brim);
-//        rootNode.addChild(hat);
+
+        // possibly add the optional hat
+        if (undefined !== hatColor) {
+            material = new ColorMaterial(uint(hatColor));
+            var brim :Cylinder = new Cylinder(material, 80, 5, 16);
+            brim.pitch(-20);
+            brim.y = 595;
+            brim.z = -10;
+
+            var hat :Cylinder = new Cylinder(material, 30, 30, 16);
+            hat.pitch(-20);
+            hat.y = 615;
+            rootNode.addChild(brim);
+            rootNode.addChild(hat);
+        }
 
         _camera = new Camera3D(buttSphere);
         // put the camera at the same height as the head..
