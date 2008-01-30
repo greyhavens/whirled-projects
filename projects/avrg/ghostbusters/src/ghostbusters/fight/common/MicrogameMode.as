@@ -34,11 +34,6 @@ public class MicrogameMode extends AppMode
         return (this.timeRemaining * 1000);
     }
     
-    public function get gameResult () :MicrogameResult
-    {
-        return null;
-    }
-    
     public function begin () :void
     {
         MainLoop.instance.pushMode(this);
@@ -57,6 +52,16 @@ public class MicrogameMode extends AppMode
     protected function get timeRemaining () :Number
     {
         throw new Error("timeRemaining() is not implemented!");
+    }
+    
+    public function get gameResult () :MicrogameResult
+    {
+        throw new Error("gameResult() is not implemented!");
+    }
+    
+    public function get isDone () :Boolean
+    {
+        throw new Error("isDone() is not implemented!");
     }
     
     protected var _difficulty :int;

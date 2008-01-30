@@ -58,7 +58,7 @@ public class MicrogameTestApp extends Sprite
     
     protected function onEnterFrame (e :Event) :void
     {
-        if (_player.currentGame.timeRemainingMS == 0) {
+        if (_player.currentGame.isDone) {
             _player.beginNextGame();
         }
     }

@@ -5,6 +5,7 @@ import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
+import ghostbusters.fight.*;
 import ghostbusters.fight.common.*;
 import ghostbusters.fight.ouija.BoardTimer;
 
@@ -39,6 +40,11 @@ public class SpiritShellGame extends MicrogameMode
     override protected function get timeRemaining () :Number
     {
         return (_done ? 0 : _timeRemaining.value);
+    }
+    
+    override public function get isDone () :Boolean
+    {
+        return _done;
     }
     
     protected function gameOver (success :Boolean) :void

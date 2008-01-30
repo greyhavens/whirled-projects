@@ -36,6 +36,11 @@ public class SpiritGuideGame extends MicrogameMode
         return (_done ? 0 : _timeRemaining.value);
     }
     
+    override public function get isDone () :Boolean
+    {
+        return _done;
+    }
+    
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {

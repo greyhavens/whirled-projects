@@ -36,6 +36,11 @@ public class PictoGeistGame extends MicrogameMode
     {
         return (_done ? 0 : _timeRemaining.value);
     }
+    
+    override public function get isDone () :Boolean
+    {
+        return _done;
+    }
 
     override protected function setup () :void
     {
