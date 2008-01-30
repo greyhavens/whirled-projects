@@ -1,93 +1,54 @@
 package ghostbusters.fight.plasma {
 
 import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.util.*;
-
-import flash.display.Sprite;
-
-[SWF(width="300", height="226", frameRate="30")]
-public class SpiritShellGame extends Sprite
-{
-    public function SpiritShellGame ()
-    {
-        var mainLoop :MainLoop = new MainLoop(this);
-        mainLoop.run();
-
-        mainLoop.pushMode(new LoadingMode());
-    }
-}
-
-}
-
-import com.threerings.util.ArrayUtil;
-
-import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
-import ghostbusters.fight.plasma.*;
 import ghostbusters.fight.common.*;
-
-import flash.display.Sprite;
-import flash.display.Shape;
-import flash.display.DisplayObject;
-import flash.display.Bitmap;
-
-import flash.events.MouseEvent;
-
 import ghostbusters.fight.ouija.BoardTimer;
-import com.whirled.contrib.GameMode;
-import flash.geom.Point;
 
-class LoadingMode extends AppMode
+public class SpiritShellGame extends MicrogameMode
 {
-    public function LoadingMode ()
+    public function SpiritShellGame (difficulty :int, playerData :Object)
     {
+        super(difficulty, playerData);
+        
+        _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
+         
+        _timeRemaining = { value: this.duration };
     }
     
-    override protected function setup () :void
+    override public function begin () :void
     {
-        ResourceManager.instance.pendResourceLoad("image", "ghost", { embeddedClass: Content.IMAGE_GHOST });
-        ResourceManager.instance.pendResourceLoad("image", "ectoplasm", { embeddedClass: Content.IMAGE_ECTOPLASM });
-        ResourceManager.instance.pendResourceLoad("image", "plasma", { embeddedClass: Content.IMAGE_PLASMA });
+        MainLoop.instance.pushMode(this);
         
-        ResourceManager.instance.load();
-    }
-    
-    override public function update (dt:Number) :void
-    {
-        super.update(dt);
-        
-        if (!ResourceManager.instance.isLoading) {
-            MainLoop.instance.popMode();
-            GameMode.beginGame();
+        if (!g_assetsLoaded) {
+            MainLoop.instance.pushMode(new LoadingMode());
+            g_assetsLoaded = true;
         }
-    }
-}
-
-class GameMode extends AppMode
-{
-    public static function beginGame () :void
-    {
-        MainLoop.instance.pushMode(new GameMode(Rand.nextIntRange(0, DIFFICULTY_SETTINGS.length, Rand.STREAM_COSMETIC)));
         
         MainLoop.instance.pushMode(new IntroMode("Clear the ectoplasm!"));
-        MainLoop.instance.pushMode(new SplashMode("Spirit Shell"));
     }
-
-    protected function endGame (success :Boolean) :void
+    
+    override protected function get duration () :Number
+    {
+        return (_settings.gameTime);
+    }
+    
+    override protected function get timeRemaining () :Number
+    {
+        return _timeRemaining.value;
+    }
+    
+    protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
-            MainLoop.instance.pushMode(new OutroMode(success, beginGame));
+            _timeRemaining.value = 0;
+            
+            //MainLoop.instance.pushMode(new OutroMode(success));
             _done = true;
         }
-    }
-
-    public function GameMode (difficulty :uint)
-    {
-        difficulty = Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1);
-        _settings = DIFFICULTY_SETTINGS[difficulty];
     }
 
     override protected function setup () :void
@@ -131,18 +92,18 @@ class GameMode extends AppMode
         this.addObject(plasmaHose);
 
         // create the visual timer
-        var boardTimer :BoardTimer = new BoardTimer(_settings.gameTime);
+        var boardTimer :BoardTimer = new BoardTimer(this.duration);
         this.addObject(boardTimer, this.modeSprite);
 
         // install a failure timer
         var timerObj :AppObject = new AppObject();
         timerObj.addTask(new SerialTask(
-            new TimedTask(_settings.gameTime),
+            new AnimateValueTask(_timeRemaining, 0, this.duration),
             new FunctionTask(
-                function () :void { endGame(false); }
+                function () :void { gameOver(false); }
             )));
 
-        this.addObject(timerObj);
+        this.addObject(timerObj)
     }
     
     protected function moveGhost (ghost :Ghost) :void
@@ -202,12 +163,12 @@ class GameMode extends AppMode
     {
         super.update(dt);
         
-        var thisGameMode :GameMode = this; // store this for getEctoCollision() local function
+        var thisGameMode :SpiritShellGame = this; // store this for getEctoCollision() local function
         
         var ectos :Array = this.getObjectsInGroup(Ectoplasm.GROUP_NAME);
         
         if (ectos.length == 0) {
-            this.endGame(true);
+            this.gameOver(true);
         }
         
         // handle plasma-ectoplasm collision detection.
@@ -260,7 +221,10 @@ class GameMode extends AppMode
     }
     
     protected var _done :Boolean = false;
+    protected var _timeRemaining :Object;
     protected var _settings :SpiritShellSettings;
+    
+    protected static var g_assetsLoaded :Boolean;
     
     protected static const DIFFICULTY_SETTINGS :Array = [
     
@@ -302,4 +266,38 @@ class GameMode extends AppMode
     protected static const PLASMA_LAUNCH_LOC :Vector2 = new Vector2(148, 215);
     protected static const GHOST_START_LOC :Vector2 = new Vector2(148, 12);
     
+}
+
+}
+
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.resource.*;
+import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.core.util.*;
+
+import ghostbusters.fight.plasma.*;
+
+class LoadingMode extends AppMode
+{
+    public function LoadingMode ()
+    {
+    }
+    
+    override protected function setup () :void
+    {
+        ResourceManager.instance.pendResourceLoad("image", "ghost", { embeddedClass: Content.IMAGE_GHOST });
+        ResourceManager.instance.pendResourceLoad("image", "ectoplasm", { embeddedClass: Content.IMAGE_ECTOPLASM });
+        ResourceManager.instance.pendResourceLoad("image", "plasma", { embeddedClass: Content.IMAGE_PLASMA });
+        
+        ResourceManager.instance.load();
+    }
+    
+    override public function update (dt:Number) :void
+    {
+        super.update(dt);
+        
+        if (!ResourceManager.instance.isLoading) {
+            MainLoop.instance.popMode();
+        }
+    }
 }
