@@ -1,66 +1,19 @@
 package ghostbusters.fight.ouija {
     
-import ghostbusters.fight.MicrogameConfig;
-
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.util.*;
-
-import flash.display.Sprite;
-
-[SWF(width="296", height="223", frameRate="30")]
-public class GhostWriterGame extends Sprite
-{
-    public function GhostWriterGame ()
-    {
-        var mainLoop :MainLoop = new MainLoop(this);
-        mainLoop.run();
-        
-        GameMode.microgameConfig = new MicrogameConfig(2);
-        GameMode.beginGame();
-    }
-}
-
-}
-
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
-import ghostbusters.fight.ouija.*;
+
 import ghostbusters.fight.common.*;
-import ghostbusters.fight.MicrogameConfig;
 
-import flash.display.Sprite;
-import flash.display.Shape;
-import flash.display.DisplayObject;
-import com.whirled.contrib.GameMode;
-
-class GameMode extends AppMode
+public class GhostWriterGame extends MicrogameMode
 {
-    public static var microgameConfig :MicrogameConfig;
-    
-    public static function beginGame () :void
+    public function GhostWriterGame (difficulty :int, playerData :Object)
     {
-        // choose a word randomly
-        var gameMode :GameMode = new GameMode();
+        super(difficulty, playerData);
         
-        var word :String = gameMode.word;
-
-        MainLoop.instance.pushMode(gameMode);
-        MainLoop.instance.pushMode(new IntroMode("Spell '" + word.toLocaleUpperCase() + "'"));
-        MainLoop.instance.pushMode(new SplashMode("Ghost Writer"));
-    }
-
-    protected function endGame (success :Boolean) :void
-    {
-        if (!_done) {
-            MainLoop.instance.pushMode(new OutroMode(success, beginGame));
-            _done = true;
-        }
-    }
-
-    public function GameMode ()
-    {
-        _settings = DIFFICULTY_SETTINGS[Math.min(microgameConfig.difficulty, DIFFICULTY_SETTINGS.length - 1)];
+        _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];        
+        _timeRemaining = { value: this.duration };
         
         // choose a word
         var validWords :Array = WORDS.filter(
@@ -70,19 +23,31 @@ class GameMode extends AppMode
             
         _word = validWords[Rand.nextIntRange(0, validWords.length, Rand.STREAM_COSMETIC)] as String;
     }
+    
+    override public function begin () :void
+    {
+        MainLoop.instance.pushMode(new IntroMode("Spell '" + _word.toLocaleUpperCase() + "'"));
+        MainLoop.instance.pushMode(this);
+    }
+    
+    override protected function get duration () :Number
+    {
+        return (_settings.timePerLetter * _word.length);
+    }
+    
+    override protected function get timeRemaining () :Number
+    {
+        return _timeRemaining.value;
+    }
 
     override protected function setup () :void
     {
-        var gameTime :Number = _settings.timePerLetter * _word.length;
-
-        trace("Game time: " + gameTime);
-
         // create the board
         _board = new Board();
         this.addObject(_board, this.modeSprite);
 
         // create the visual timer
-        var boardTimer :BoardTimer = new BoardTimer(gameTime);
+        var boardTimer :BoardTimer = new BoardTimer(this.duration);
         this.addObject(boardTimer, _board.displayObjectContainer);
 
         // progress text
@@ -93,12 +58,12 @@ class GameMode extends AppMode
         // install a failure timer
         var timerObj :AppObject = new AppObject();
         timerObj.addTask(new SerialTask(
-            new TimedTask(gameTime),
+            new AnimateValueTask(_timeRemaining, 0, this.duration),
             new FunctionTask(
-                function () :void { endGame(false); }
+                function () :void { gameOver(false); }
             )));
 
-        this.addObject(timerObj);
+        this.addObject(timerObj)
         
         // create the cursor
         _cursor = new Cursor(_board.interactiveObject);
@@ -106,6 +71,19 @@ class GameMode extends AppMode
         _cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
 
         _cursor.selectionTargetIndex = Board.stringToSelectionIndex(_word.charAt(_nextWordIndex));
+    }
+    
+    protected function gameOver (success :Boolean) :void
+    {
+        if (!_done) {
+            MainLoop.instance.pushMode(new OutroMode(success));
+            _done = true;
+        }
+    }
+    
+    override public function update (dt :Number) :void
+    {
+        super.update(dt);
     }
 
     protected function boardSelectionChanged (e :BoardSelectionEvent) :void
@@ -118,7 +96,7 @@ class GameMode extends AppMode
             //_progressText.advanceProgress();
 
             if (++_nextWordIndex >= _word.length) {
-                endGame(true);
+                this.gameOver(true);
             } else {
                 _cursor.selectionTargetIndex = Board.stringToSelectionIndex(_word.charAt(_nextWordIndex));
             }
@@ -136,6 +114,7 @@ class GameMode extends AppMode
     protected var _cursor :Cursor;
     protected var _board :Board;
     protected var _settings :GhostWriterSettings;
+    protected var _timeRemaining :Object;
 
     protected var _statusText :StatusText = new StatusText();
 
@@ -175,4 +154,6 @@ class GameMode extends AppMode
          new GhostWriterSettings(8, 999, 1.8, 0.15),
          new GhostWriterSettings(8, 999, 1.4, 0.15),
     ];
+}
+
 }

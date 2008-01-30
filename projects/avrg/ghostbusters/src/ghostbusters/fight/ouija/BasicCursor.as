@@ -44,12 +44,32 @@ public class BasicCursor extends SceneObject
         _board.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved, false, 0, true);
         _sprite.x = _board.mouseX;
         _sprite.y = _board.mouseY;
+        
+        
+        /*_board.addEventListener(MouseEvent.ROLL_OUT, mouseOut, false, 0, true);
+        _board.addEventListener(MouseEvent.ROLL_OVER, mouseOver, false, 0, true);
+        
+        if (_board.hitTestPoint(_board.mouseX, _board.mouseY)) {
+            CursorManager.hideCursor();
+        } else {
+            CursorManager.showCursor();
+        }*/
     }
 
     protected function mouseMoved (e :MouseEvent) :void
     {
         this.updateLocation(_board.mouseX, _board.mouseY);
         //trace(_board.mouseX, _board.mouseY);
+    }
+    
+    protected function mouseOut (e :MouseEvent) :void
+    {
+        //CursorManager.showCursor();
+    }
+    
+    protected function mouseOver (e :MouseEvent) :void
+    {
+        //CursorManager.hideCursor();
     }
 
     protected function updateLocation (localX :Number, localY :Number) :void
