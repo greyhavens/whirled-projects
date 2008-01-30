@@ -46,7 +46,7 @@ public class MicrogameMode extends AppMode
     
     public function end () :void
     {
-        MainLoop.instance.popMode();
+        MainLoop.instance.popAllModes();
     }
     
     protected function get duration () :Number

@@ -1,12 +1,11 @@
 package ghostbusters.fight {
     
-import com.whirled.contrib.core.MainLoop;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.util.*;
 
 import flash.display.Sprite;
 
-import ghostbusters.fight.common.MicrogameConstants;
 import ghostbusters.fight.common.MicrogameMode;
-
 import ghostbusters.fight.ouija.*;
 import ghostbusters.fight.plasma.*;
 import ghostbusters.fight.potions.*;
@@ -49,10 +48,8 @@ public class MicrogamePlayer extends Sprite
             _currentGame = null;
         }
         
-        // generate a new game
-        // @TODO: do something real here
-        _currentGame = new HueAndCryGame(_weaponType.level, _playerData);
-        _currentGame.begin(); // games push themselves onto the mode stack
+        _currentGame = this.generateGame();
+        _currentGame.begin();
         
         return _currentGame;
     }
@@ -60,6 +57,23 @@ public class MicrogamePlayer extends Sprite
     public function get currentGame () :Microgame
     {
         return _currentGame;
+    }
+    
+    protected function generateGame () :MicrogameMode
+    {
+        var validDescriptors :Array = GAME_DESCRIPTORS.filter(isValidDescriptor);
+        
+        if (validDescriptors.length == 0) {
+            throw new Error("No valid games for " + _weaponType);
+        }
+        
+        var desc :MicrogameDescriptor = validDescriptors[Rand.nextIntRange(0, validDescriptors.length, Rand.STREAM_COSMETIC)];
+        return desc.instantiateGame(_weaponType.level, _playerData);
+        
+        function isValidDescriptor(desc :MicrogameDescriptor, index :int, array :Array) :Boolean 
+        {
+            return (desc.weaponTypeName == _weaponType.name && desc.baseDifficulty <= _weaponType.level);
+        }
     }
     
     protected function cancelCurrentGame () :void
@@ -72,6 +86,18 @@ public class MicrogamePlayer extends Sprite
     protected var _weaponType :WeaponType;
     protected var _running :Boolean;
     protected var _currentGame :MicrogameMode;
+    
+    protected static const GAME_DESCRIPTORS :Array = [
+    
+        new MicrogameDescriptor(WeaponType.NAME_OUIJA,      0, GhostWriterGame),
+        new MicrogameDescriptor(WeaponType.NAME_OUIJA,      0, PictoGeistGame),
+        new MicrogameDescriptor(WeaponType.NAME_OUIJA,      1, SpiritGuideGame),
+        
+        new MicrogameDescriptor(WeaponType.NAME_PLASMA,     0, SpiritShellGame),
+        
+        new MicrogameDescriptor(WeaponType.NAME_POTIONS,    0, HueAndCryGame),
+        
+    ];
 }
 
 }
