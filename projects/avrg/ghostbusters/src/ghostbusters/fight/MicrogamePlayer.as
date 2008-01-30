@@ -6,6 +6,7 @@ import flash.display.Sprite;
 
 import ghostbusters.fight.common.MicrogameConstants;
 import ghostbusters.fight.common.MicrogameMode;
+
 import ghostbusters.fight.ouija.GhostWriterGame;
     
 public class MicrogamePlayer extends Sprite
@@ -31,7 +32,7 @@ public class MicrogamePlayer extends Sprite
     
     public function set weaponType (type :WeaponType) :void
     {
-        if (!_weaponType.equals(type))
+        if (!_weaponType.equals(type)) {
             _weaponType = type;
             this.cancelCurrentGame();
         }
@@ -44,13 +45,13 @@ public class MicrogamePlayer extends Sprite
         }
         
         if (null != _currentGame) {
-            _currentGame.gameEndTransition();
+            _currentGame.end();
             _currentGame = null;
         }
         
         // generate a new game
         // @TODO: do something real here
-        _currentGame = new GhostWriterGame();
+        _currentGame = new GhostWriterGame(_weaponType.level, _playerData);
         _currentGame.begin(); // games push themselves onto the mode stack
         
         return _currentGame;

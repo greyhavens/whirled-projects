@@ -26,7 +26,7 @@ public class WeaponType
             return true;
         }
         
-        return (name == rhs.name && difficulty == rhs.difficulty);
+        return (name == rhs.name && level == rhs.level);
     }
     
     public function toString () :String
