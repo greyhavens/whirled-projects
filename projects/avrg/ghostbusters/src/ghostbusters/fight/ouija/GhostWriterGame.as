@@ -12,8 +12,7 @@ public class GhostWriterGame extends MicrogameMode
     {
         super(difficulty, playerData);
         
-        _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];        
-        _timeRemaining = { value: this.duration };
+        _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];   
         
         // choose a word
         var validWords :Array = WORDS.filter(
@@ -22,12 +21,15 @@ public class GhostWriterGame extends MicrogameMode
             });
             
         _word = validWords[Rand.nextIntRange(0, validWords.length, Rand.STREAM_COSMETIC)] as String;
+        
+         
+        _timeRemaining = { value: this.duration };
     }
     
     override public function begin () :void
     {
-        MainLoop.instance.pushMode(new IntroMode("Spell '" + _word.toLocaleUpperCase() + "'"));
         MainLoop.instance.pushMode(this);
+        MainLoop.instance.pushMode(new IntroMode("Spell '" + _word.toLocaleUpperCase() + "'"));
     }
     
     override protected function get duration () :Number
@@ -76,6 +78,8 @@ public class GhostWriterGame extends MicrogameMode
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
+            _timeRemaining.value = 0;
+            
             MainLoop.instance.pushMode(new OutroMode(success));
             _done = true;
         }

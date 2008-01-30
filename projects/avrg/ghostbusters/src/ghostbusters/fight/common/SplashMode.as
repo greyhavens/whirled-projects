@@ -19,7 +19,7 @@ public class SplashMode extends AppMode
         // create a rectangle
         var rect :Shape = new Shape();
         rect.graphics.beginFill(0x000000);
-        rect.graphics.drawRect(0, 0, 296, 223);
+        rect.graphics.drawRect(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
         rect.graphics.endFill();
 
         this.modeSprite.addChild(rect);

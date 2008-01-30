@@ -15,14 +15,12 @@ public class MicrogamePlayer extends Sprite
     {
         _playerData = playerData;
         
-        this.width = MicrogameConstants.GAME_WIDTH;
-        this.height = MicrogameConstants.GAME_HEIGHT;
-        
         if (null != MainLoop.instance) {
             MainLoop.instance.shutdown();
         }
         
         new MainLoop(this);
+        MainLoop.instance.run();
     }
     
     public function get weaponType () :WeaponType
@@ -32,7 +30,7 @@ public class MicrogamePlayer extends Sprite
     
     public function set weaponType (type :WeaponType) :void
     {
-        if (!_weaponType.equals(type)) {
+        if (!type.equals(_weaponType)) {
             _weaponType = type;
             this.cancelCurrentGame();
         }

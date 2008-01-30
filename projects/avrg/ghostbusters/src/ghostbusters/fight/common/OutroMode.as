@@ -13,19 +13,17 @@ public class OutroMode extends AppMode
         var outroTask :SerialTask = new SerialTask();
         outroTask.addTask(new TimedTask(TIME_PAUSEIN));
         outroTask.addTask(new AlphaTask(1, TIME_FADEIN));
+        outroTask.addTask(new TimedTask(TIME_PAUSEOUT));
         
-        if (null != beginNextGameCallback) {
-            outroTask.addTask(new TimedTask(TIME_PAUSEOUT));
-            outroTask.addTask(new FunctionTask(
-                function () :void {
-                    MainLoop.instance.popMode(); // pop outro mode
-                    MainLoop.instance.popMode(); // pop game mode
-                    if (null != beginNextGameCallback) {
-                        beginNextGameCallback(); // begin the next game
-                    }
+        outroTask.addTask(new FunctionTask(
+            function () :void {
+                MainLoop.instance.popMode(); // pop outro mode
+                MainLoop.instance.popMode(); // pop game mode
+                if (null != beginNextGameCallback) {
+                    beginNextGameCallback(); // begin the next game
                 }
-            ));
-        }
+            }
+        ));
         
         outro.addTask(outroTask);
         
@@ -42,7 +40,8 @@ public class OutroMode extends AppMode
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.tasks.*;
-import ghostbusters.fight.ouija.*;
+
+import ghostbusters.fight.common.*;
 
 import flash.display.Sprite;
 import flash.display.Shape;
@@ -56,7 +55,7 @@ class OutroObject extends SceneObject
         // create a rectangle
         var rect :Shape = new Shape();
         rect.graphics.beginFill(0x000000);
-        rect.graphics.drawRect(0, 0, 296, 223);
+        rect.graphics.drawRect(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
         rect.graphics.endFill();
 
         _sprite.addChild(rect);

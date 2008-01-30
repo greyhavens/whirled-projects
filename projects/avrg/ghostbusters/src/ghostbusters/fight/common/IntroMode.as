@@ -15,7 +15,8 @@ public class IntroMode extends AppMode
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.tasks.*;
-import ghostbusters.fight.ouija.*;
+
+import ghostbusters.fight.common.*;
 
 import flash.display.Sprite;
 import flash.display.Shape;
@@ -29,7 +30,7 @@ class IntroObject extends SceneObject
         // create a rectangle
         var rect :Shape = new Shape();
         rect.graphics.beginFill(0x000000);
-        rect.graphics.drawRect(0, 0, 296, 223);
+        rect.graphics.drawRect(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
         rect.graphics.endFill();
 
         _sprite.addChild(rect);
