@@ -30,22 +30,21 @@ public class LanternBeam extends SceneObject
     protected function drawAt (x :Number, y :Number) :void
     {
         _sprite.graphics.clear();
+        _sprite.graphics.lineStyle(0, 0, 0, true);
         
-        _sprite.graphics.beginFill(COLOR);
-        
-        // draw the circle
-        _sprite.graphics.drawCircle(x, y, _radius);
-        
-        // discover the two tangents to the circle that pass through our point
-        
-        // c: vector from light source to circle center
-        var c :Vector2 = new Vector2(x - _lightSource.x, y - _lightSource.y);
+        var c :Vector2 = new Vector2(x - _lightSource.x, y - _lightSource.y); // c: vector from light source to circle center
         var cLen :Number = c.length;
         
+        // draw the beam, unless the light source is contained
+        // within the circle
         if (cLen > _radius) {
+            _sprite.graphics.beginFill(COLOR, 0.5);
+            
             var tangentLength :Number = Math.sqrt((cLen * cLen) - (_radius * _radius));
             var angle :Number = Math.asin(_radius / cLen);
             
+            // create the two tangents to the circle that pass through our point
+        
             var p1 :Vector2 = c.getRotate(angle);
             p1.length = tangentLength;
             p1.add(_lightSource);
@@ -59,8 +58,13 @@ public class LanternBeam extends SceneObject
             _sprite.graphics.lineTo(p1.x, p1.y);
             _sprite.graphics.lineTo(p2.x, p2.y);
             _sprite.graphics.lineTo(_lightSource.x, _lightSource.y);
+        
+            _sprite.graphics.endFill();
         }
         
+        // draw the circle
+        _sprite.graphics.beginFill(COLOR);
+        _sprite.graphics.drawCircle(x, y, _radius);
         _sprite.graphics.endFill();
     }
     
