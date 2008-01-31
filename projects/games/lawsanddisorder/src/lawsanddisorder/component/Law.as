@@ -128,7 +128,7 @@ public class Law extends CardContainer
         // get the player who gets/loses/gives
         var fromPlayer :Player = _ctx.board.deck.getPlayerByJobId(cards[0].type);
         if (fromPlayer == null) {
-            _ctx.control.sendMessage(Laws.ENACT_LAW_DONE, id);
+            _ctx.sendMessage(Laws.ENACT_LAW_DONE, id);
             return;
         }
         
@@ -227,7 +227,7 @@ public class Law extends CardContainer
         
         _ctx.state.deselectCards();
         _ctx.state.deselectOpponent();
-        _ctx.control.sendMessage(Laws.ENACT_LAW_DONE, id);
+        _ctx.sendMessage(Laws.ENACT_LAW_DONE, id);
     }
     
     /**
@@ -264,7 +264,7 @@ public class Law extends CardContainer
      */
     override public function setDistributedData () :void
     {
-        _ctx.control.set(Laws.LAWS_DATA, getSerializedCards(), _id);
+        _ctx.set(Laws.LAWS_DATA, getSerializedCards(), _id);
     }
     
     /**

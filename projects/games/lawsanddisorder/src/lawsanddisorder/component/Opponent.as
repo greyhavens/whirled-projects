@@ -54,7 +54,7 @@ public class Opponent extends Player
      */
     override protected function updateDisplay () :void
     {
-        title.text = serverId + "\nJob: " + job + "\nMonies: " + monies + "\nCards: " + hand.numCards;
+        title.text = playerName + "\nJob: " + job + "\nMonies: " + monies + "\nCards: " + hand.numCards;
         
         // draw a border, highlighted or not
         if (_highlighted) {

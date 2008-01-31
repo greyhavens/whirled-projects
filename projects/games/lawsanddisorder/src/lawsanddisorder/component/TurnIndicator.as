@@ -19,7 +19,7 @@ public class TurnIndicator extends Component
     public function TurnIndicator (ctx :Context)
     {
         super(ctx);
-        _ctx.control.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
+        _ctx.control.game.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
     }
     
     /**
@@ -71,7 +71,7 @@ public class TurnIndicator extends Component
      */
     protected function endTurnButtonClicked (event :MouseEvent) :void
     {
-        if (!_ctx.control.isMyTurn()) {
+        if (!_ctx.control.game.isMyTurn()) {
             _ctx.log("WTF not my turn to end turn.");
             return;
         }
@@ -94,7 +94,7 @@ public class TurnIndicator extends Component
      */
     protected function discardDownComplete () :void
     {
-    	_ctx.control.startNextTurn();
+    	_ctx.control.game.startNextTurn();
     }
     
     /**

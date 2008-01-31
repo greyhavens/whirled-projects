@@ -165,7 +165,7 @@ public class Player extends Component
     		_ctx.log("WTF Player " + this + " would end up with negative monies!");
     		moniesNum = 0;
     	}
-        _ctx.control.set(MONIES_DATA, monies + moniesNum, id);
+        _ctx.set(MONIES_DATA, monies + moniesNum, id);
     }
     
     /**

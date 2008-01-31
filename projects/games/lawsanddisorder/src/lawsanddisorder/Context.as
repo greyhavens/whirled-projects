@@ -2,9 +2,11 @@ package lawsanddisorder {
 
 import com.whirled.WhirledGameControl;
 import lawsanddisorder.component.*;
+import com.threerings.ezgame.UserChatEvent;
 
 /**
  * Contains references to the various bits used in the game.
+ * TODO move notices, get, sendMessage, etc to EventHandler
  */
 public class Context
 {
@@ -46,9 +48,8 @@ public class Context
      */
     public function log (message :String) :void
     {
-        var myId :int = _control.getMyId();
-        _control.localChat(message + "\n");
-        //_control.sendChat("\n[p " +  myId + "] " + message);
+        var myId :int = _control.game.getMyId();
+        _control.local.feedback(message + "\n");
     }
     
     /**
@@ -65,7 +66,39 @@ public class Context
      */
     public function broadcast (message :String) :void
     {
-    	_control.sendMessage(Notices.BROADCAST, message);
+    	_control.net.sendMessage(Notices.BROADCAST, message);
+    }
+    
+    /**
+     * Wrapper for sending messages through the WhirledGameControl     */
+    public function sendMessage (type :String, value :*) :void
+    {
+    	_control.net.sendMessage(type, value);
+    }
+    
+    /**
+     * Wrapper for retrieving data values from the WhirledGameControl     */
+    public function get (id :String, index :int = -1) :*
+    {
+    	if (index != -1) {
+    	   return _control.net.get(id, index);
+    	}
+    	else {
+    		return _control.net.get(id);
+    	}
+    }
+    
+    /**
+     * Wrapper for setting data values with the WhirledGameControl
+     * TODO are these the right types?  what about index default?     */
+    public function set (id :String, value :*, index :int = -1) :void
+    {
+    	if (index != -1) {
+    	   _control.net.set(id, value, index);
+    	}
+    	else {
+    		_control.net.set(id, value);
+    	}
     }
     
     protected var _control :WhirledGameControl;

@@ -8,11 +8,8 @@ import com.whirled.FlowAwardedEvent;
 import com.whirled.WhirledGameControl;
 
 import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.ezgame.StateChangedListener;
 
 import lawsanddisorder.component.*
 
@@ -28,6 +25,7 @@ import lawsanddisorder.component.*
  * handle watchers
  * handle premature game ending
  * unloader?
+ * move all mentions of _ctx.control out of components
  * 
  * TODO inerface:
  * make buttons look like buttons
@@ -43,7 +41,6 @@ import lawsanddisorder.component.*
  *  */
 [SWF(width="1000", height="550")]
 public class LawsAndDisorder extends Sprite
-    implements PropertyChangedListener
 {
 	/** How much money does every player start with? */
     public static const STARTING_MONIES :int = 5;
@@ -59,19 +56,20 @@ public class LawsAndDisorder extends Sprite
         // create context and game controller
         var control :WhirledGameControl = new WhirledGameControl(this, false);
         _ctx = new Context(control);
-        _ctx.control.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
-        _ctx.control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
-        _ctx.control.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+        _ctx.control.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
+        _ctx.control.game.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+        _ctx.control.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
         
         // first player sets up distributed data and waits to hear about it from the server
         // before continuing to fill properties with actual data
-        if (_ctx.control.amInControl()) {
-            _ctx.control.registerListener(this);
-            var playerCount :int = _ctx.control.seating.getPlayerIds().length;
-            _ctx.control.set(Player.MONIES_DATA, new Array(playerCount).map(function (): int { return STARTING_MONIES; }));
-            _ctx.control.set(Hand.HAND_DATA, new Array(playerCount).map(function (): Array { return new Array(); }));
-            _ctx.control.set(Deck.JOBS_DATA, new Array(playerCount).map(function (): int { return -1; }));
-            _ctx.control.set(Laws.LAWS_DATA, new Array());
+        if (_ctx.control.game.amInControl()) {
+            _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, initPropertyChanged);
+            _ctx.control.net.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+            var playerCount :int = _ctx.control.game.seating.getPlayerIds().length;
+            _ctx.control.net.set(Player.MONIES_DATA, new Array(playerCount).map(function (): int { return STARTING_MONIES; }));
+            _ctx.control.net.set(Hand.HAND_DATA, new Array(playerCount).map(function (): Array { return new Array(); }));
+            _ctx.control.net.set(Deck.JOBS_DATA, new Array(playerCount).map(function (): int { return -1; }));
+            _ctx.control.net.set(Laws.LAWS_DATA, new Array());
         }
         // other players just set up the board now and wait to receive the actual data
         else {
@@ -82,9 +80,8 @@ public class LawsAndDisorder extends Sprite
     /**
      * Implementation of PropertyChangedListener method; fires when a property changes on
      * the server.  Only the control player will perform this.
-     * TODO do this with addControlListener
      */
-    public function propertyChanged (event :PropertyChangedEvent) :void
+    public function initPropertyChanged (event :PropertyChangedEvent) :void
     {
         if ((event.name == Hand.HAND_DATA && event.index == -1)
             || (event.name == Deck.JOBS_DATA && event.index == -1)
@@ -93,7 +90,7 @@ public class LawsAndDisorder extends Sprite
                             
                // one step closer to being done initialization
                if (++_initComplete == INIT_GOAL) {
-                _ctx.control.unregisterListener(this);
+                _ctx.control.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, initPropertyChanged);
                 finishInit();
              }
         }
@@ -118,7 +115,7 @@ public class LawsAndDisorder extends Sprite
         addChild(_ctx.board);
 
         // notify the game that we're ready to start
-        _ctx.control.playerReady();
+        _ctx.control.game.playerReady();
     }
     
     /** 
@@ -130,10 +127,10 @@ public class LawsAndDisorder extends Sprite
     protected function gameDidStart (event :StateChangedEvent) :void
     {
         _ctx.notice("Welcome to Laws & Disorder!");
-        if (_ctx.control.amInControl()) {
+        if (_ctx.control.game.amInControl()) {
             _ctx.board.setup();
             // start the first turn
-            _ctx.control.startNextTurn();
+            _ctx.control.game.startNextTurn();
         }
     }
 

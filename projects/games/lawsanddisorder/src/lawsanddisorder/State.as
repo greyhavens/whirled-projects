@@ -8,6 +8,7 @@ import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.util.HashMap;
 import com.whirled.WhirledGameControl;
+import com.whirled.GameSubControl;
 import lawsanddisorder.component.*;
 
 /**
@@ -613,7 +614,7 @@ public class State
         if (_performingAction) {
             _ctx.notice("You can't interact with the board while performing an action.");
         }
-        if (mode == MODE_DEFAULT && _ctx.control.isMyTurn() && !_performingAction) {
+        if (mode == MODE_DEFAULT && _ctx.control.game.isMyTurn() && !_performingAction) {
             return true;
         }
         return false;
@@ -663,10 +664,10 @@ public class State
     		_ctx.log("score for player " + player.id + " (server id: " + player.serverId + ") is " + player.monies);
     	}
     	if (playerIds.length < 3) {
-    		_ctx.control.endGameWithScores(playerIds, playerScores, WhirledGameControl.WINNERS_TAKE_ALL);
+    		_ctx.control.game.endGameWithScores(playerIds, playerScores, GameSubControl.WINNERS_TAKE_ALL);
     	}
     	else {
-    	   _ctx.control.endGameWithScores(playerIds, playerScores, WhirledGameControl.CASCADING_PAYOUT);
+    	   _ctx.control.game.endGameWithScores(playerIds, playerScores, GameSubControl.CASCADING_PAYOUT);
     	}
     }
     

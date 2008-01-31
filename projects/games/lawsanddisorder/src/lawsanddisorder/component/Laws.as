@@ -40,7 +40,7 @@ public class Laws extends Component
             _ctx.log("WTF new law id: " + law.id + " is not equals to laws.length.");
         }
         _ctx.eventHandler.addPropertyListener(LAWS_DATA, newLawAdded);
-        _ctx.control.set(Laws.LAWS_DATA, law.getSerializedCards(), law.id);
+        _ctx.set(Laws.LAWS_DATA, law.getSerializedCards(), law.id);
     }
 
     /**
@@ -67,7 +67,7 @@ public class Laws extends Component
             // to avoid multiple laws enacting at once, wait until this one is done before
             // searching for laws that trigger on CREATE_LAW.
             _ctx.eventHandler.addMessageListener(ENACT_LAW_DONE, newLawEnacted);
-           _ctx.control.sendMessage(ENACT_LAW, event.index);
+           _ctx.sendMessage(ENACT_LAW, event.index);
         }
         else {
             _ctx.board.laws.triggerWhen(Card.CREATE_LAW);
@@ -130,7 +130,7 @@ public class Laws extends Component
     protected function updateLawData (lawId :int, cards :Object = null) :void
     {
         if (cards == null) {
-            cards = _ctx.control.get(LAWS_DATA, lawId);
+            cards = _ctx.get(LAWS_DATA, lawId);
         }
         
         if (laws.length == lawId) {
@@ -193,7 +193,7 @@ public class Laws extends Component
             if (law.when == triggerWhenType) {
                 if (triggerSubjectType == -1 || law.subject == triggerSubjectType) {
                     _ctx.eventHandler.addMessageListener(ENACT_LAW_DONE, triggeringWhen);
-                    _ctx.control.sendMessage(Laws.ENACT_LAW, law.id);
+                    _ctx.sendMessage(Laws.ENACT_LAW, law.id);
                     return;
                 }
             }

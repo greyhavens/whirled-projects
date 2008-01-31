@@ -6,9 +6,6 @@ import flash.text.TextField;
 import flash.events.MouseEvent;
 import lawsanddisorder.Context;
 
-import com.threerings.ezgame.PropertyChangedListener;
-import com.threerings.ezgame.PropertyChangedEvent;
-
 /**
  * Primary class that all sprites extend
  */
@@ -20,7 +17,6 @@ public class Component extends Sprite
     public function Component (ctx :Context)
     {
         _ctx = ctx;
-        _ctx.control.registerListener(this);
         
         // title displays number of cards
         title = new TextField();

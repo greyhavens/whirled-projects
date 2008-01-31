@@ -32,7 +32,8 @@ public class Deck extends Component
         _ctx.eventHandler.addPropertyListener(DECK_DATA, deckChanged);
         _ctx.eventHandler.addPropertyListener(JOBS_DATA, jobsChanged);
         
-        var playerCount :int = _ctx.control.seating.getPlayerIds().length;
+        // TODO get this from somewhere else - board?
+        var playerCount :int = _ctx.control.game.seating.getPlayerIds().length;
         playerJobs = new Array(playerCount).map(function (): int { return -1; });
         
         // create the jobs
@@ -87,7 +88,7 @@ public class Deck extends Component
     public function setup () :void
     {
         shuffle();
-        _ctx.control.set(DECK_DATA, cards);
+        _ctx.set(DECK_DATA, cards);
     }
     
     /** 
@@ -97,7 +98,7 @@ public class Deck extends Component
     {
         var cardIndex :int = cards.pop();
         updateDisplay();
-        _ctx.control.set(DECK_DATA, cards);
+        _ctx.set(DECK_DATA, cards);
         if (cards.length == 5) {
         	_ctx.broadcast("Only 5 cards left in the deck!");
         }
@@ -137,7 +138,7 @@ public class Deck extends Component
      */
     protected function deckChanged (event :PropertyChangedEvent) :void
     {
-        cards = _ctx.control.get(DECK_DATA) as Array;
+        cards = _ctx.get(DECK_DATA) as Array;
         updateDisplay();
     }
     
@@ -147,7 +148,7 @@ public class Deck extends Component
     protected function jobsChanged (event :PropertyChangedEvent) :void
     {
         // TODO what about when index != -1?
-        playerJobs = _ctx.control.get(JOBS_DATA) as Array;
+        playerJobs = _ctx.get(JOBS_DATA) as Array;
     }
     
     /**
@@ -244,7 +245,7 @@ public class Deck extends Component
         }
 
         // assign new job to player
-        playerJobs = _ctx.control.get(JOBS_DATA) as Array;
+        playerJobs = _ctx.get(JOBS_DATA) as Array;
         if (playerJobs == null) {
             _ctx.log("WTF playerjobs is null when swapping jobs?");
             return;
@@ -252,14 +253,14 @@ public class Deck extends Component
         playerJobs[player.id] = job.id;
         job.player = player;
         player.job = job;
-        _ctx.control.set(JOBS_DATA, job.id, player.id);
+        _ctx.set(JOBS_DATA, job.id, player.id);
         
         // job was on another player; assign old job to other player
         if (oldJob != null && oldPlayer != null) {
             playerJobs[oldPlayer.id] = oldJob.id;
             oldJob.player = oldPlayer;
             oldPlayer.job = oldJob;
-            _ctx.control.set(JOBS_DATA, oldJob.id, oldPlayer.id);
+            _ctx.set(JOBS_DATA, oldJob.id, oldPlayer.id);
             _ctx.broadcast(player.playerName + " swapped jobs with " + oldPlayer.playerName);
         }
         else if (oldPlayer == null) {

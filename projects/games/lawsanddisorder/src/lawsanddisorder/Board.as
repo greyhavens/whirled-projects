@@ -51,11 +51,11 @@ public class Board extends Sprite
         
         // create the players
         // lists player ids and names by seating position
-        var playerIds :Array = _ctx.control.seating.getPlayerIds();
-        var playerNames :Array = _ctx.control.seating.getPlayerNames();
+        var playerIds :Array = _ctx.control.game.seating.getPlayerIds();
+        var playerNames :Array = _ctx.control.game.seating.getPlayerNames();
         for (var i :int = 0; i < playerIds.length; i++) {
             var player :Player;
-            if (_ctx.control.seating.getMyPosition() == i) {
+            if (_ctx.control.game.seating.getMyPosition() == i) {
                 player = new Player(_ctx, i, playerIds[i], playerNames[i]);
                 player.x = 0;
                 player.y = 0;
@@ -149,7 +149,7 @@ public class Board extends Sprite
     public function getTurnHolder () :Player
     {
     	// getTurnHolder returns a serverId, not their seating position
-    	var serverId :int = _ctx.control.getTurnHolder();
+    	var serverId :int = _ctx.control.game.getTurnHolderId();
     	for (var i :int = 0; i < playerObjects.length; i++) {
     		var player :Player = playerObjects[i];
     		if (player.serverId == serverId) {

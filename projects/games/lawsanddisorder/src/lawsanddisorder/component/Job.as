@@ -94,11 +94,6 @@ public class Job extends Component
      */
     protected function usePowerButtonClicked (event :MouseEvent) :void
     {
-        if (!_ctx.control.isMyTurn()) {
-            _ctx.log("WTF not my turn to use my power.");
-            return;
-        }
-        
         // TODO includes isMyTurn so remove check above
         if (!_ctx.state.interactMode) {
             _ctx.notice("You can't use your power right now.");
@@ -212,7 +207,7 @@ public class Job extends Component
         _ctx.broadcast("Judge ("+ _ctx.board.player.playerName + ") enacting law: " + law.id);
         _ctx.state.deselectLaw();
         _ctx.eventHandler.addMessageListener(Laws.ENACT_LAW_DONE, judgeLawEnacted);
-        _ctx.control.sendMessage(Laws.ENACT_LAW, law.id);
+        _ctx.sendMessage(Laws.ENACT_LAW, law.id);
     }
     
     /**

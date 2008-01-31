@@ -22,8 +22,8 @@ public class EventHandler
     public function EventHandler (ctx :Context)
     {
         _ctx = ctx;
-        _ctx.control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
-        _ctx.control.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
+        _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        _ctx.control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
     }
     
     /**

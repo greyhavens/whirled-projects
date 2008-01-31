@@ -110,7 +110,7 @@ public class Hand extends CardContainer
      */
     override public function setDistributedData () :void
     {
-        _ctx.control.set(HAND_DATA, getSerializedCards(), player.id);
+        _ctx.set(HAND_DATA, getSerializedCards(), player.id);
     }
     
     /**
