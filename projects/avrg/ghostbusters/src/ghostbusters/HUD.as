@@ -20,17 +20,14 @@ import com.threerings.flash.FrameSprite;
 import com.whirled.AVRGameAvatar;
 import com.threerings.util.CommandEvent;
 
+import ghostbusters.ClipHandler;
 import ghostbusters.GameController;
-
-import com.threerings.util.EmbeddedSwfLoader;
 
 public class HUD extends FrameSprite
 {
     public function HUD ()
     {
-        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
-        loader.addEventListener(Event.COMPLETE, handleHUDLoaded);
-        loader.load(ByteArray(new Content.HUD_VISUAL()));
+        _hud = new ClipHandler(ByteArray(new Content.HUD_VISUAL()), handleHUDLoaded);
     }
 
     public function shutdown () :void
@@ -45,14 +42,15 @@ public class HUD extends FrameSprite
 
     public function resized () :void
     {
-        if (_hud != null) {
+        if (_hud != null && _hud.parent != null) {
             placeHud();
         }
     }
 
-    protected function handleHUDLoaded (evt :Event) :void
+    protected function handleHUDLoaded (... ignored) :void
     {
-        _hud = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        _hud.gotoScene("Scene 1");
+        _hud.stop();
 
         safelyAdd(LANTERN, lanternClick);
         safelyAdd(HELP, helpClick);
@@ -78,21 +76,28 @@ public class HUD extends FrameSprite
             _playerNamePanels.push(panel);
         }
 
-        this.addChild(_hud);
+        _yourHealthBar = MovieClip(DisplayUtil.findInHierarchy(_hud, YOUR_HEALTH_BAR));
+        _ghostHealthBar = MovieClip(DisplayUtil.findInHierarchy(_hud, GHOST_HEALTH_BAR));
 
-        if (Game.scrollSize != null && Game.stageSize != null) {
-            placeHud();
-        }
+        // hide the bits that we want to keep in the hierarchy solely for swapin/out purposes 
+        DisplayUtil.findInHierarchy(_hud, JUNK_BOX).visible = false;
+
+        _visualHud = MovieClip(DisplayUtil.findInHierarchy(_hud, VISUAL_BOX));
     }
 
     protected function placeHud () :void
     {
+        Game.log.debug("Looks like HUD's width is: " + _hud.width);
+        Game.log.debug("Looks like Visual HUD's width is: " + _visualHud.width);
+
         // put the HUD to the right of the visible screen, or flush with the stage edge
-        _hud.x = Math.max(0, Math.min(Game.scrollSize.right - MARGIN_LEFT,
-                                      Game.stageSize.right - _hud.width));
+        var x :int = Math.max(0, Math.min(Game.scrollSize.width - MARGIN_LEFT - BORDER_LEFT,
+                                          Game.stageSize.right - _visualHud.width - MARGIN_LEFT));
+
+        _hud.x = x;
         _hud.y = 0;
 
-        Game.log.debug("Placing hud at (" + _hud.x + ", " + _hud.y + ")...");
+        Game.log.debug("Placing hud at (" + x + ", 0)...");
 
 //        var width :int = Game.stageSize.right - Game.scrollSize.right;
 //        if (width > 0) {
@@ -115,6 +120,11 @@ public class HUD extends FrameSprite
 
     override protected function handleFrame (... ignored) :void
     {
+        if (_hud.parent == null && _visualHud != null) {
+            this.addChild(_hud);
+            placeHud();
+        }
+
         var players :Array = Game.control.getPlayerIds();
         if (players == null) {
             // offline mode -- don't flip out
@@ -130,17 +140,28 @@ public class HUD extends FrameSprite
                 hudIx ++;
                 continue;
             }
-            if (players[teamIx] == Game.ourPlayerId) {
+//            if (players[teamIx] == Game.ourPlayerId) {
+//                teamIx ++;
+//                continue;
+//            }
+            var info :AVRGameAvatar = Game.control.getAvatarInfo(players[teamIx]);
+            if (info == null) {
+                // most likely explanation: they are not in our room
                 teamIx ++;
                 continue;
             }
-            var info :AVRGameAvatar = Game.control.getAvatarInfo(players[teamIx]);
             bar.visible = name.visible = true;
             bar.gotoAndStop(100 * Game.gameController.model.getRelativeHealth(players[teamIx]));
             name.text = info.name;
             teamIx ++;
             hudIx ++;
         }
+
+        _yourHealthBar.gotoAndStop(
+            100 * Game.gameController.model.getRelativeHealth(Game.ourPlayerId));
+
+        // TODO
+        _ghostHealthBar.gotoAndStop(30);
     }
 
     protected function lanternClick (evt :Event) :void
@@ -163,10 +184,14 @@ public class HUD extends FrameSprite
 //        CommandEvent.dispatch(this, GameController.TOGGLE_LOOT);
 //    }
 
-    protected var _hud :MovieClip;
+    protected var _hud :ClipHandler;
+    protected var _visualHud :MovieClip;
 
     protected var _playerHealthBars :Array;
     protected var _playerNamePanels :Array;
+
+    protected var _ghostHealthBar :MovieClip;
+    protected var _yourHealthBar :MovieClip;
 
     protected static const LANTERN :String = "weaponbutton";
     protected static const HELP :String = "helpbutton";
@@ -174,9 +199,18 @@ public class HUD extends FrameSprite
 
     protected static const PLAYER_NAME_PANEL :String = "PlayerPanel";
     protected static const PLAYER_HEALTH_BAR :String = "PlayerHealth";
+    protected static const YOUR_HEALTH_BAR :String = "YourHealth";
+    protected static const GHOST_HEALTH_BAR :String = "GhostHealthBar";
 
-    protected static const DEBUG :Boolean = false;
+    protected static const VISUAL_BOX :String = "HUDmain";
+    protected static const JUNK_BOX :String = "HUDtopbox";
 
-    protected static const MARGIN_LEFT :int = 47;
+    protected static const LOOT_BLASTER :String = "equipped_blaster";
+    protected static const LOOT_OUIJA :String = "equipped_ouija";
+    protected static const LOOT_HEALING :String = "equipped_healing";
+    protected static const LOOT :Array = [ LOOT_BLASTER, LOOT_OUIJA, LOOT_HEALING ];
+
+    protected static const MARGIN_LEFT :int = 22;
+    protected static const BORDER_LEFT :int = 25;
 }
 }
