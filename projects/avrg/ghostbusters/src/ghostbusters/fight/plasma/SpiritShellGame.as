@@ -57,6 +57,10 @@ public class SpiritShellGame extends MicrogameMode
 
     override protected function setup () :void
     {
+        this.modeSprite.graphics.beginFill(0);
+        this.modeSprite.graphics.drawRect(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
+        this.modeSprite.graphics.endFill();
+        
         // create the ghost
         var ghost :Ghost = new Ghost();
         ghost.x = Rand.nextIntRange(0, 300 - ghost.width, Rand.STREAM_COSMETIC);
@@ -289,9 +293,9 @@ class LoadingMode extends AppMode
     
     override protected function setup () :void
     {
-        ResourceManager.instance.pendResourceLoad("image", "ghost", { embeddedClass: Content.IMAGE_GHOST });
-        ResourceManager.instance.pendResourceLoad("image", "ectoplasm", { embeddedClass: Content.IMAGE_ECTOPLASM });
-        ResourceManager.instance.pendResourceLoad("image", "plasma", { embeddedClass: Content.IMAGE_PLASMA });
+        ResourceManager.instance.pendResourceLoad("image", "ss_ghost", { embeddedClass: Content.IMAGE_GHOST });
+        ResourceManager.instance.pendResourceLoad("image", "ss_ectoplasm", { embeddedClass: Content.IMAGE_ECTOPLASM });
+        ResourceManager.instance.pendResourceLoad("image", "ss_plasma", { embeddedClass: Content.IMAGE_PLASMA });
         
         ResourceManager.instance.load();
     }

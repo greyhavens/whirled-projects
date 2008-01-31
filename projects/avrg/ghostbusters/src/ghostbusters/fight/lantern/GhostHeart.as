@@ -14,7 +14,7 @@ public class GhostHeart extends SceneObject
     {
         _radius = radius;
         
-        var heart :DisplayObject = (ResourceManager.instance.getResource("heart") as ImageResourceLoader).createBitmap();
+        var heart :DisplayObject = (ResourceManager.instance.getResource("hod_heart") as ImageResourceLoader).createBitmap();
         heart.scaleX = (_radius * 2) / heart.width;
         heart.scaleY = (_radius * 2) / heart.height;
         

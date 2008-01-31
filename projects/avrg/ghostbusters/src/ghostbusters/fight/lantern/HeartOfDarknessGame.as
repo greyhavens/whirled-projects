@@ -74,14 +74,8 @@ public class HeartOfDarknessGame extends MicrogameMode
         
         // create the ghost
         _ghost = new Sprite();
-        /*var ghostImage :ImageResourceLoader = ResourceManager.instance.getResource("ghost") as ImageResourceLoader;
-        var ghostBitmap :Bitmap = ghostImage.createBitmap();
-        ghostBitmap.scaleX = _settings.ghostScale;
-        ghostBitmap.scaleY = _settings.ghostScale;
         
-        _ghost.addChild(ghostBitmap);*/
-        
-        var ghostSwf :SwfResourceLoader = ResourceManager.instance.getResource("ghost") as SwfResourceLoader;
+        var ghostSwf :SwfResourceLoader = ResourceManager.instance.getResource("hod_ghost") as SwfResourceLoader;
         var ghostInstance :MovieClip = ghostSwf.displayRoot as MovieClip;
         ghostInstance.gotoAndStop(1, Codes.ST_GHOST_FIGHT);
         
@@ -196,9 +190,8 @@ class LoadingMode extends AppMode
     
     override protected function setup () :void
     {
-        ResourceManager.instance.pendResourceLoad("image", "heart", { embeddedClass: Content.IMAGE_HEART });
-        //ResourceManager.instance.pendResourceLoad("image", "ghost", { embeddedClass: Content.IMAGE_GHOST });
-        ResourceManager.instance.pendResourceLoad("swf", "ghost", { embeddedClass: ghostbusters.Content.GHOST });
+        ResourceManager.instance.pendResourceLoad("image", "hod_heart", { embeddedClass: Content.IMAGE_HEART });
+        ResourceManager.instance.pendResourceLoad("swf", "hod_ghost", { embeddedClass: ghostbusters.Content.GHOST });
         
         ResourceManager.instance.load();
     }

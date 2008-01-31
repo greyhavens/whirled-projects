@@ -11,7 +11,7 @@ public class Ghost extends SceneObject
 {
     public function Ghost ()
     {
-        var image :ImageResourceLoader = ResourceManager.instance.getResource("ghost") as ImageResourceLoader;
+        var image :ImageResourceLoader = ResourceManager.instance.getResource("ss_ghost") as ImageResourceLoader;
         _sprite.addChild(image.createBitmap());
     }
     

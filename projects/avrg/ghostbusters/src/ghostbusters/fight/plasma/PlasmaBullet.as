@@ -15,7 +15,7 @@ public class PlasmaBullet extends SceneObject
     
     public function PlasmaBullet ()
     {
-        var image :ImageResourceLoader = ResourceManager.instance.getResource("plasma") as ImageResourceLoader;
+        var image :ImageResourceLoader = ResourceManager.instance.getResource("ss_plasma") as ImageResourceLoader;
         
         var bitmap :Bitmap = image.createBitmap();
         bitmap.x = -(bitmap.width / 2);
