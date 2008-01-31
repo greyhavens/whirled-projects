@@ -101,6 +101,7 @@ public class SeekPanel extends FrameSprite
     {
         super.handleAdded();
         _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
+        _ghost.hidden();
     }
 
     override protected function handleRemoved (... ignored) :void
@@ -117,7 +118,7 @@ public class SeekPanel extends FrameSprite
         var lantern :Lantern = _lanterns[playerId];
         if (lantern == null) {
             // a new lantern just appears, no splines involved
-            lantern = new Lantern(playerId, pos, playerId == Game.ourPlayerId);
+            lantern = new Lantern(playerId, pos, false);
             _lanterns[playerId] = lantern;
 
             _maskLayer.addChild(lantern.mask);

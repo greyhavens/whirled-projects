@@ -48,6 +48,45 @@ public class HUD extends FrameSprite
         }
     }
 
+    public function teamUpdated () :void
+    {
+        if (_hud.parent == null || _visualHud == null) {
+            // not ready yet
+            return;
+        }
+        var players :Array = Game.control.getPlayerIds();
+        if (players == null) {
+            // offline mode -- don't flip out
+            return;
+        }
+        var teamIx :int = 0;
+        var hudIx :int = 0;
+        while (hudIx < 6) {
+            var bar :MovieClip = MovieClip(_playerHealthBars[hudIx]);
+            var name :TextField = TextField(_playerNamePanels[hudIx]);
+            if (teamIx >= players.length) {
+                bar.visible = name.visible = false;
+                hudIx ++;
+                continue;
+            }
+//            if (players[teamIx] == Game.ourPlayerId) {
+//                teamIx ++;
+//                continue;
+//            }
+            var info :AVRGameAvatar = Game.control.getAvatarInfo(players[teamIx]);
+            if (info == null) {
+                // most likely explanation: they are not in our room
+                teamIx ++;
+                continue;
+            }
+            bar.visible = name.visible = true;
+            bar.gotoAndStop(100 * Game.gameController.model.getRelativeHealth(players[teamIx]));
+            name.text = info.name;
+            teamIx ++;
+            hudIx ++;
+        }
+    }
+
     protected function handleHUDLoaded (... ignored) :void
     {
         _hud.gotoScene("Scene 1");
@@ -80,6 +119,8 @@ public class HUD extends FrameSprite
         _ghostHealthBar = MovieClip(findSafely(GHOST_HEALTH_BAR));
 
         _lanternLoot = SimpleButton(findSafely(LOOT_LANTERN));
+        _lanternLoot.addEventListener(MouseEvent.CLICK, lanternClick);
+
         _blasterLoot = SimpleButton(findSafely(LOOT_BLASTER));
         _ouijaLoot = SimpleButton(findSafely(LOOT_OUIJA));
         _healLoot = SimpleButton(findSafely(LOOT_HEAL));
@@ -93,21 +134,13 @@ public class HUD extends FrameSprite
         _ghostInfo = MovieClip(findSafely(GHOST_INFO));
         _ghostInfo.visible = false; 
 
-        _weaponDisplay = MovieClip(findSafely(WEAPON_DISPLAY));
-        _weaponDisplay.visible = false; 
+//        _weaponDisplay = MovieClip(findSafely(WEAPON_DISPLAY));
+//        _weaponDisplay.visible = false; 
 
         safelyAdd(CHOOSE_LANTERN, function (evt :Event) :void { _lootIx = 0; });
         safelyAdd(CHOOSE_BLASTER, function (evt :Event) :void { _lootIx = 1; });
         safelyAdd(CHOOSE_OUIJA, function (evt :Event) :void { _lootIx = 2; });
         safelyAdd(CHOOSE_HEAL, function (evt :Event) :void { _lootIx = 3; });
-
-        // hide the bits that we want to keep in the hierarchy solely for swapin/out purposes 
-        findSafely(JUNK_BOX).visible = false;
-        // TODO: hack until Bill rearranges stuff tomorrow
-        findSafely(JUNK_BOX).visible = true;
-        findSafely("weapon_lantern_icon").visible = false;
-        findSafely("weapon_healing_icon").visible = false;
-        findSafely("weapon_blaster_icon").visible = false;
 
         _visualHud = MovieClip(findSafely(VISUAL_BOX));
     }
@@ -154,38 +187,7 @@ public class HUD extends FrameSprite
         if (_hud.parent == null && _visualHud != null) {
             this.addChild(_hud);
             placeHud();
-        }
-
-        var players :Array = Game.control.getPlayerIds();
-        if (players == null) {
-            // offline mode -- don't flip out
-            return;
-        }
-        var teamIx :int = 0;
-        var hudIx :int = 0;
-        while (hudIx < 6) {
-            var bar :MovieClip = MovieClip(_playerHealthBars[hudIx]);
-            var name :TextField = TextField(_playerNamePanels[hudIx]);
-            if (teamIx >= players.length) {
-                bar.visible = name.visible = false;
-                hudIx ++;
-                continue;
-            }
-//            if (players[teamIx] == Game.ourPlayerId) {
-//                teamIx ++;
-//                continue;
-//            }
-            var info :AVRGameAvatar = Game.control.getAvatarInfo(players[teamIx]);
-            if (info == null) {
-                // most likely explanation: they are not in our room
-                teamIx ++;
-                continue;
-            }
-            bar.visible = name.visible = true;
-            bar.gotoAndStop(100 * Game.gameController.model.getRelativeHealth(players[teamIx]));
-            name.text = info.name;
-            teamIx ++;
-            hudIx ++;
+            teamUpdated();
         }
 
         _yourHealthBar.gotoAndStop(
@@ -237,7 +239,7 @@ public class HUD extends FrameSprite
 
     protected var _inventory :MovieClip;
     protected var _ghostInfo :MovieClip;
-    protected var _weaponDisplay :MovieClip;
+//    protected var _weaponDisplay :MovieClip;
 
     protected static const HELP :String = "helpbutton";
     protected static const CLOSE :String = "closeButton";
@@ -257,7 +259,7 @@ public class HUD extends FrameSprite
 
     protected static const INVENTORY :String = "inventory1";
     protected static const GHOST_INFO :String = "GhostInfoBox";
-    protected static const WEAPON_DISPLAY :String = "WeaponDisplay";
+//    protected static const WEAPON_DISPLAY :String = "WeaponDisplay";
 
     protected static const CHOOSE_LANTERN :String = "choose_lantern";
     protected static const CHOOSE_BLASTER :String = "choose_blaster";

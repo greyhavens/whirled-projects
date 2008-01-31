@@ -79,7 +79,6 @@ public class HidingGhost extends GhostBase
     override protected function mediaReady () :void
     {
         super.mediaReady();
-        hidden();
      }
 
     protected var _pather :SplinePather;

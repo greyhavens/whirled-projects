@@ -142,20 +142,23 @@ public class Game extends Sprite
         }
 
         gameController.panel.resized();
+        gameController.panel.hud.teamUpdated();
     }
 
     protected function playerEntered (evt :AVRGameControlEvent) :void
     {
+        gameController.panel.hud.teamUpdated();
     }
 
     protected function playerLeft (evt :AVRGameControlEvent) :void
     {
+        gameController.panel.hud.teamUpdated();
     }
 
     public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
     {
         if (id == Codes.MOB_ID_GHOST) {
-            return Game.fightController.panel.getGhostSprite(ctrl);
+            return fightController.panel.getGhostSprite(ctrl);
         }
         log.warning("Unknown MOB requested [id=" + id + "]");
         return null;

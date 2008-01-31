@@ -68,9 +68,8 @@ public class ClipHandler extends FrameSprite
             _callback = done;
             _lastFrame = toFrame >= 0 ? toFrame : _scene.numFrames;
             if (_scene.name) {  
-                if (_scene.name == "appear_to_fighting") {
-                    Game.log.debug("playing: " + _scene);
-                }
+                Game.log.debug("Playing [scene=" + _scene.name + ", frames=" + _scene.numFrames +
+                               ", labels=" + _scene.labels + "]");
                 _clip.gotoAndPlay(1, _scene.name);
             } else {
                 _clip.gotoAndPlay(1);
@@ -90,10 +89,12 @@ public class ClipHandler extends FrameSprite
         }
         if (_clip.currentFrame == _lastFrame) {
             if (_callback != null) {
+                Game.log.debug("Executing callback for: " + _scene.name);
                 var next :String = _callback();
                 if (next != null) {
                     _scene = scenes[next];
                     if (_scene != null) {
+                        Game.log.debug("Repeating scene: " + next);
                         _clip.gotoAndPlay(1, next);
                         return;
                     }
