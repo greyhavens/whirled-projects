@@ -79,16 +79,35 @@ public class HUD extends FrameSprite
         _yourHealthBar = MovieClip(findSafely(YOUR_HEALTH_BAR));
         _ghostHealthBar = MovieClip(findSafely(GHOST_HEALTH_BAR));
 
+        _lanternLoot = SimpleButton(findSafely(LOOT_LANTERN));
         _blasterLoot = SimpleButton(findSafely(LOOT_BLASTER));
         _ouijaLoot = SimpleButton(findSafely(LOOT_OUIJA));
         _healLoot = SimpleButton(findSafely(LOOT_HEAL));
-        _lanternLoot = SimpleButton(findSafely(LOOT_LANTERN));
 
         _loots = [ _lanternLoot, _blasterLoot, _ouijaLoot, _healLoot ];
         _lootIx = 0;
 
+        _inventory = MovieClip(findSafely(INVENTORY));
+        _inventory.visible = true;
+
+        _ghostInfo = MovieClip(findSafely(GHOST_INFO));
+        _ghostInfo.visible = false; 
+
+        _weaponDisplay = MovieClip(findSafely(WEAPON_DISPLAY));
+        _weaponDisplay.visible = false; 
+
+        safelyAdd(CHOOSE_LANTERN, function (evt :Event) :void { _lootIx = 0; });
+        safelyAdd(CHOOSE_BLASTER, function (evt :Event) :void { _lootIx = 1; });
+        safelyAdd(CHOOSE_OUIJA, function (evt :Event) :void { _lootIx = 2; });
+        safelyAdd(CHOOSE_HEAL, function (evt :Event) :void { _lootIx = 3; });
+
         // hide the bits that we want to keep in the hierarchy solely for swapin/out purposes 
         findSafely(JUNK_BOX).visible = false;
+        // TODO: hack until Bill rearranges stuff tomorrow
+        findSafely(JUNK_BOX).visible = true;
+        findSafely("weapon_lantern_icon").visible = false;
+        findSafely("weapon_healing_icon").visible = false;
+        findSafely("weapon_blaster_icon").visible = false;
 
         _visualHud = MovieClip(findSafely(VISUAL_BOX));
     }
@@ -216,6 +235,10 @@ public class HUD extends FrameSprite
     protected var _loots :Array;
     protected var _lootIx :int;
 
+    protected var _inventory :MovieClip;
+    protected var _ghostInfo :MovieClip;
+    protected var _weaponDisplay :MovieClip;
+
     protected static const HELP :String = "helpbutton";
     protected static const CLOSE :String = "closeButton";
 
@@ -231,6 +254,15 @@ public class HUD extends FrameSprite
     protected static const LOOT_BLASTER :String = "equipped_blaster";
     protected static const LOOT_OUIJA :String = "equipped_ouija";
     protected static const LOOT_HEAL :String = "equipped_heal";
+
+    protected static const INVENTORY :String = "inventory1";
+    protected static const GHOST_INFO :String = "GhostInfoBox";
+    protected static const WEAPON_DISPLAY :String = "WeaponDisplay";
+
+    protected static const CHOOSE_LANTERN :String = "choose_lantern";
+    protected static const CHOOSE_BLASTER :String = "choose_blaster";
+    protected static const CHOOSE_OUIJA :String = "choose_ouija";
+    protected static const CHOOSE_HEAL :String = "choose_heal";
 
     protected static const MARGIN_LEFT :int = 22;
     protected static const BORDER_LEFT :int = 25;
