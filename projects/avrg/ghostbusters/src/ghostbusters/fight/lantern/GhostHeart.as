@@ -26,8 +26,9 @@ public class GhostHeart extends SceneObject
         
         this.setHeartbeatDelay(BASE_DELAY);
     }
+
     
-    public function setHeartbeatDelay (delay :Number) :void
+    protected function setHeartbeatDelay (delay :Number) :void
     {
         this.scaleX = 1;
         this.scaleY = 1;

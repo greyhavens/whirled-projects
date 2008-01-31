@@ -1,15 +1,18 @@
 package ghostbusters.fight.lantern {
-
+    
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
-import flash.display.Bitmap;
 import flash.display.BlendMode;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.geom.Rectangle;
 
+import ghostbusters.Codes;
+import ghostbusters.Content;
 import ghostbusters.fight.*;
 import ghostbusters.fight.common.*;
 import ghostbusters.fight.ouija.BoardTimer;
@@ -71,19 +74,39 @@ public class HeartOfDarknessGame extends MicrogameMode
         
         // create the ghost
         _ghost = new Sprite();
-        var ghostImage :ImageResourceLoader = ResourceManager.instance.getResource("ghost") as ImageResourceLoader;
+        /*var ghostImage :ImageResourceLoader = ResourceManager.instance.getResource("ghost") as ImageResourceLoader;
         var ghostBitmap :Bitmap = ghostImage.createBitmap();
         ghostBitmap.scaleX = _settings.ghostScale;
         ghostBitmap.scaleY = _settings.ghostScale;
         
-        _ghost.addChild(ghostBitmap);
+        _ghost.addChild(ghostBitmap);*/
+        
+        var ghostSwf :SwfResourceLoader = ResourceManager.instance.getResource("ghost") as SwfResourceLoader;
+        var ghostInstance :MovieClip = ghostSwf.displayRoot as MovieClip;
+        ghostInstance.gotoAndStop(1, Codes.ST_GHOST_FIGHT);
+        
+        ghostInstance.scaleX = _settings.ghostScale;
+        ghostInstance.scaleY = _settings.ghostScale;
+        ghostInstance.x = 0;
+        ghostInstance.y = 0;
+        
+        _ghost.addChild(ghostInstance);
+        
+        // align the ghost properly
+        var ghostBounds :Rectangle = ghostInstance.getBounds(_ghost);
+        ghostInstance.x = -ghostBounds.x;
+        ghostInstance.y = -ghostBounds.y;
+        
+        // center on the screen
+        _ghost.x = (MicrogameConstants.GAME_WIDTH / 2) - (_ghost.width / 2);
+        _ghost.y = (MicrogameConstants.GAME_HEIGHT / 2) - (_ghost.height / 2);
         
         this.modeSprite.addChild(_ghost);
         
         // create the ghost heart
         _heart = new GhostHeart(_settings.heartRadius);
-        _heart.x = Rand.nextIntRange(_heart.width, _ghost.width - _heart.width, Rand.STREAM_COSMETIC);
-        _heart.y = Rand.nextIntRange(_heart.height, _ghost.height - _heart.height, Rand.STREAM_COSMETIC);
+        _heart.x = Rand.nextIntRange(_heart.width + 20, _ghost.width - _heart.width - 20, Rand.STREAM_COSMETIC);
+        _heart.y = Rand.nextIntRange(_heart.height + 20, _ghost.height - _heart.height - 20, Rand.STREAM_COSMETIC);
         this.addObject(_heart, _ghost);
         
         // draw the darkness that the lantern will cut through
@@ -116,8 +139,20 @@ public class HeartOfDarknessGame extends MicrogameMode
     
     protected function onMouseMove (e :MouseEvent) :void
     {
-        _ghost.x = (-e.localX * (_ghost.width - MicrogameConstants.GAME_WIDTH)) / MicrogameConstants.GAME_WIDTH;
-        _ghost.y = (-e.localY * (_ghost.height - MicrogameConstants.GAME_HEIGHT)) / MicrogameConstants.GAME_HEIGHT;
+        if (_ghost.width > MicrogameConstants.GAME_WIDTH) {
+            _ghost.x = (-e.localX * (_ghost.width - MicrogameConstants.GAME_WIDTH)) / MicrogameConstants.GAME_WIDTH;
+        }
+        
+        if (_ghost.height > MicrogameConstants.GAME_HEIGHT) {
+            _ghost.y = (-e.localY * (_ghost.height - MicrogameConstants.GAME_HEIGHT)) / MicrogameConstants.GAME_HEIGHT;
+        }
+    }
+    
+    override public function update (dt :Number) :void
+    {
+        super.update(dt);
+        
+        // does the 
     }
     
     protected var _settings :HeartOfDarknessSettings;
@@ -133,10 +168,11 @@ public class HeartOfDarknessGame extends MicrogameMode
     
     protected static const DIFFICULTY_SETTINGS :Array = [
         new HeartOfDarknessSettings(
-            60,     // game time
+            1000,     // game time
+            1,      // heart shine time
             50,     // lantern radius
             10,     // heart radius
-            4),     // ghost scale
+            3),     // ghost scale
     ];
     
     protected static const LIGHT_SOURCE :Vector2 = new Vector2(MicrogameConstants.GAME_WIDTH / 2, MicrogameConstants.GAME_HEIGHT - 10);
@@ -161,7 +197,8 @@ class LoadingMode extends AppMode
     override protected function setup () :void
     {
         ResourceManager.instance.pendResourceLoad("image", "heart", { embeddedClass: Content.IMAGE_HEART });
-        ResourceManager.instance.pendResourceLoad("image", "ghost", { embeddedClass: Content.IMAGE_GHOST });
+        //ResourceManager.instance.pendResourceLoad("image", "ghost", { embeddedClass: Content.IMAGE_GHOST });
+        ResourceManager.instance.pendResourceLoad("swf", "ghost", { embeddedClass: ghostbusters.Content.GHOST });
         
         ResourceManager.instance.load();
     }
