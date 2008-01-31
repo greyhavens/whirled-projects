@@ -7,6 +7,7 @@ import com.whirled.contrib.core.util.*;
 import flash.display.DisplayObject;
 import flash.display.Shape;
 
+import ghostbusters.fight.*;
 import ghostbusters.fight.common.*;
 
 public class PictoGeistGame extends MicrogameMode
@@ -40,6 +41,11 @@ public class PictoGeistGame extends MicrogameMode
     override public function get isDone () :Boolean
     {
         return _done;
+    }
+    
+    override public function get gameResult () :MicrogameResult
+    {
+        return _gameResult;
     }
 
     override protected function setup () :void
@@ -76,7 +82,9 @@ public class PictoGeistGame extends MicrogameMode
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
-            MainLoop.instance.pushMode(new OutroMode(success));
+            _gameResult = new MicrogameResult();
+            _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
+            
             _done = true;
         }
     }
@@ -184,6 +192,7 @@ public class PictoGeistGame extends MicrogameMode
     }
 
     protected var _done :Boolean;
+    protected var _gameResult :MicrogameResult;
     protected var _picture :Array;
     protected var _cursor :BasicCursor;
     protected var _drawing :Drawing;

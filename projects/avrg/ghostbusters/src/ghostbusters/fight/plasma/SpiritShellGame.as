@@ -47,10 +47,17 @@ public class SpiritShellGame extends MicrogameMode
         return _done;
     }
     
+    override public function get gameResult () :MicrogameResult
+    {
+        return _gameResult;
+    }
+    
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
-            //MainLoop.instance.pushMode(new OutroMode(success));
+            _gameResult = new MicrogameResult();
+            _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
+            
             _done = true;
         }
     }
@@ -229,6 +236,7 @@ public class SpiritShellGame extends MicrogameMode
     }
     
     protected var _done :Boolean = false;
+    protected var _gameResult :MicrogameResult;
     protected var _timeRemaining :Object;
     protected var _settings :SpiritShellSettings;
     

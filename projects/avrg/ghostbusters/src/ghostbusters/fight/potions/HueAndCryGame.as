@@ -11,6 +11,7 @@ import com.whirled.contrib.core.util.*;
 import flash.display.MovieClip;
 import flash.events.MouseEvent;
 
+import ghostbusters.fight.*;
 import ghostbusters.fight.common.*;
 import ghostbusters.fight.ouija.BoardTimer;
 
@@ -52,11 +53,17 @@ public class HueAndCryGame extends MicrogameMode
         return _done;
     }
     
+    override public function get gameResult () :MicrogameResult
+    {
+        return _gameResult;
+    }
+    
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
+            _gameResult = new MicrogameResult();
+            _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
             
-            //MainLoop.instance.pushMode(new OutroMode(success));
             _done = true;
         }
     }
@@ -171,6 +178,7 @@ public class HueAndCryGame extends MicrogameMode
     }
     
     protected var _done :Boolean;
+    protected var _gameResult :MicrogameResult;
     protected var _timeRemaining :Object;
     protected var _targetColor :uint;
     

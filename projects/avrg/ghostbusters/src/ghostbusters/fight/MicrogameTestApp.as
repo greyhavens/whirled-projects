@@ -93,6 +93,9 @@ public class MicrogameTestApp extends Sprite
     protected function onEnterFrame (e :Event) :void
     {
         if (_player.currentGame.isDone) {
+            var result :MicrogameResult = _player.currentGame.gameResult;
+            // @TODO - do something with result
+            
             _player.beginNextGame();
         }
     }

@@ -6,6 +6,7 @@ import com.whirled.contrib.core.util.*;
 
 import flash.geom.Matrix;
 
+import ghostbusters.fight.*;
 import ghostbusters.fight.common.*;
 
 public class SpiritGuideGame extends MicrogameMode
@@ -43,10 +44,17 @@ public class SpiritGuideGame extends MicrogameMode
         return _done;
     }
     
+    override public function get gameResult () :MicrogameResult
+    {
+        return _gameResult;
+    }
+    
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
-            MainLoop.instance.pushMode(new OutroMode(success));
+            _gameResult = new MicrogameResult();
+            _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
+            
             _done = true;
         }
     }
@@ -94,6 +102,7 @@ public class SpiritGuideGame extends MicrogameMode
     }
 
     protected var _done :Boolean;
+    protected var _gameResult :MicrogameResult;
     protected var _selection :String;
     protected var _timeRemaining :Object;
     protected var _settings :SpiritGuideSettings;

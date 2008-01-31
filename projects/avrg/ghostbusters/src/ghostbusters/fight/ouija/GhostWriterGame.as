@@ -4,6 +4,7 @@ import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
+import ghostbusters.fight.*;
 import ghostbusters.fight.common.*;
 
 public class GhostWriterGame extends MicrogameMode
@@ -46,10 +47,17 @@ public class GhostWriterGame extends MicrogameMode
         return _done;
     }
     
+    override public function get gameResult () :MicrogameResult
+    {
+        return _gameResult;
+    }
+    
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
-            MainLoop.instance.pushMode(new OutroMode(success));
+            _gameResult = new MicrogameResult();
+            _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
+            
             _done = true;
         }
     }
@@ -115,6 +123,7 @@ public class GhostWriterGame extends MicrogameMode
     }
 
     protected var _done :Boolean;
+    protected var _gameResult :MicrogameResult;
     protected var _word :String;
     protected var _nextWordIndex :int;
     protected var _cursor :Cursor;

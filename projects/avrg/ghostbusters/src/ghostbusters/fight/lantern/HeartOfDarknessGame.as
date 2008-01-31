@@ -56,10 +56,17 @@ public class HeartOfDarknessGame extends MicrogameMode
         return _done;
     }
     
+    override public function get gameResult () :MicrogameResult
+    {
+        return _gameResult;
+    }
+    
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
-            //MainLoop.instance.pushMode(new OutroMode(success));
+            _gameResult = new MicrogameResult();
+            _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
+            
             _done = true;
         }
     }
@@ -164,7 +171,8 @@ public class HeartOfDarknessGame extends MicrogameMode
     
     protected var _settings :HeartOfDarknessSettings;
     
-    protected var _done :Boolean = false;
+    protected var _done :Boolean;
+    protected var _gameResult :MicrogameResult;
     protected var _timeRemaining :Object;
     
     protected var _beam :LanternBeam;
@@ -175,11 +183,11 @@ public class HeartOfDarknessGame extends MicrogameMode
     
     protected static const DIFFICULTY_SETTINGS :Array = [
         new HeartOfDarknessSettings(
-            1000,     // game time
-            1,      // heart shine time
+            12,     // game time
+            3,      // heart shine time
             50,     // lantern radius
             10,     // heart radius
-            3),     // ghost scale
+            2),     // ghost scale
     ];
     
     protected static const LIGHT_SOURCE :Vector2 = new Vector2(MicrogameConstants.GAME_WIDTH / 2, MicrogameConstants.GAME_HEIGHT - 10);
