@@ -5,9 +5,11 @@ import com.whirled.contrib.core.objects.SceneObject;
 
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
+import flash.display.GradientType;
 import flash.display.InteractiveObject;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.geom.Matrix;
 
 public class LanternBeam extends SceneObject
 {
@@ -38,7 +40,12 @@ public class LanternBeam extends SceneObject
         // draw the beam, unless the light source is contained
         // within the circle
         if (cLen > _radius) {
-            _sprite.graphics.beginFill(COLOR, 0.5);
+            
+            // @TSC - Flash strangeness: using a gradient fill here prevents weird
+            // artifacts at the edges of the shape
+            
+            //_sprite.graphics.beginFill(1, 0.5);
+            _sprite.graphics.beginGradientFill(GradientType.LINEAR, [ 1 ], [ 0.5 ], [ 0 ]);
             
             var tangentLength :Number = Math.sqrt((cLen * cLen) - (_radius * _radius));
             var angle :Number = Math.asin(_radius / cLen);
@@ -63,7 +70,9 @@ public class LanternBeam extends SceneObject
         }
         
         // draw the circle
-        _sprite.graphics.beginFill(COLOR);
+        //_sprite.graphics.beginFill(1);
+        _sprite.graphics.beginGradientFill(GradientType.LINEAR, [ 1 ], [ 1 ], [ 0 ]);
+            
         _sprite.graphics.drawCircle(x, y, _radius);
         _sprite.graphics.endFill();
     }
@@ -76,8 +85,6 @@ public class LanternBeam extends SceneObject
     protected var _sprite :Sprite;
     protected var _radius :Number;
     protected var _lightSource :Vector2;
-    
-    protected static const COLOR :uint = 0xFFFF00;
     
 }
 
