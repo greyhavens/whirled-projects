@@ -5,6 +5,7 @@ package ghostbusters {
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.geom.Point;
@@ -52,14 +53,13 @@ public class HUD extends FrameSprite
         _hud.gotoScene("Scene 1");
         _hud.stop();
 
-        safelyAdd(LANTERN, lanternClick);
         safelyAdd(HELP, helpClick);
         safelyAdd(CLOSE, closeClick);
 
         _playerHealthBars = new Array();
         _playerNamePanels = new Array();
         for (var ii :int = 1; ii <= 6; ii ++) {
-            var bar :DisplayObject = DisplayUtil.findInHierarchy(_hud, PLAYER_HEALTH_BAR + ii);
+            var bar :DisplayObject = findSafely(PLAYER_HEALTH_BAR + ii);
             if (bar == null) {
                 Game.log.warning("Failed to find player health bar #" + ii);
                 continue;
@@ -67,7 +67,7 @@ public class HUD extends FrameSprite
             Game.log.debug("bar: " + bar);
             _playerHealthBars.push(bar);
 
-            var panel :DisplayObject = DisplayUtil.findInHierarchy(_hud, PLAYER_NAME_PANEL + ii);
+            var panel :DisplayObject = findSafely(PLAYER_NAME_PANEL + ii);
             if (panel == null) {
                 Game.log.warning("Failed to find player name panel #" + ii);
                 continue;
@@ -76,13 +76,21 @@ public class HUD extends FrameSprite
             _playerNamePanels.push(panel);
         }
 
-        _yourHealthBar = MovieClip(DisplayUtil.findInHierarchy(_hud, YOUR_HEALTH_BAR));
-        _ghostHealthBar = MovieClip(DisplayUtil.findInHierarchy(_hud, GHOST_HEALTH_BAR));
+        _yourHealthBar = MovieClip(findSafely(YOUR_HEALTH_BAR));
+        _ghostHealthBar = MovieClip(findSafely(GHOST_HEALTH_BAR));
+
+        _blasterLoot = SimpleButton(findSafely(LOOT_BLASTER));
+        _ouijaLoot = SimpleButton(findSafely(LOOT_OUIJA));
+        _healLoot = SimpleButton(findSafely(LOOT_HEAL));
+        _lanternLoot = SimpleButton(findSafely(LOOT_LANTERN));
+
+        _loots = [ _lanternLoot, _blasterLoot, _ouijaLoot, _healLoot ];
+        _lootIx = 0;
 
         // hide the bits that we want to keep in the hierarchy solely for swapin/out purposes 
-        DisplayUtil.findInHierarchy(_hud, JUNK_BOX).visible = false;
+        findSafely(JUNK_BOX).visible = false;
 
-        _visualHud = MovieClip(DisplayUtil.findInHierarchy(_hud, VISUAL_BOX));
+        _visualHud = MovieClip(findSafely(VISUAL_BOX));
     }
 
     protected function placeHud () :void
@@ -108,14 +116,18 @@ public class HUD extends FrameSprite
 //        }
     }
 
+    protected function findSafely (name :String) :DisplayObject
+    {
+        var o :DisplayObject = DisplayUtil.findInHierarchy(_hud, name);
+        if (o == null) {
+            throw new Error("Cannot find object: " + name);
+        }
+        return o;
+    }
+
     protected function safelyAdd (name :String, callback :Function) :void
     {
-        var button :DisplayObject = DisplayUtil.findInHierarchy(_hud, name);
-        if (button == null) {
-            Game.log.warning("Could not find button: " + name);
-            return;
-        }
-        button.addEventListener(MouseEvent.CLICK, callback);
+        findSafely(name).addEventListener(MouseEvent.CLICK, callback);
     }
 
     override protected function handleFrame (... ignored) :void
@@ -162,6 +174,10 @@ public class HUD extends FrameSprite
 
         // TODO
         _ghostHealthBar.gotoAndStop(30);
+
+        for (var ii :int = 0; ii < _loots.length; ii ++) {
+            SimpleButton(_loots[ii]).visible = (ii == _lootIx);
+        }
     }
 
     protected function lanternClick (evt :Event) :void
@@ -193,7 +209,13 @@ public class HUD extends FrameSprite
     protected var _ghostHealthBar :MovieClip;
     protected var _yourHealthBar :MovieClip;
 
-    protected static const LANTERN :String = "weaponbutton";
+    protected var _lanternLoot :SimpleButton;
+    protected var _blasterLoot :SimpleButton;
+    protected var _ouijaLoot :SimpleButton;
+    protected var _healLoot :SimpleButton;
+    protected var _loots :Array;
+    protected var _lootIx :int;
+
     protected static const HELP :String = "helpbutton";
     protected static const CLOSE :String = "closeButton";
 
@@ -205,10 +227,10 @@ public class HUD extends FrameSprite
     protected static const VISUAL_BOX :String = "HUDmain";
     protected static const JUNK_BOX :String = "HUDtopbox";
 
+    protected static const LOOT_LANTERN :String = "equipped_lantern";
     protected static const LOOT_BLASTER :String = "equipped_blaster";
     protected static const LOOT_OUIJA :String = "equipped_ouija";
-    protected static const LOOT_HEALING :String = "equipped_healing";
-    protected static const LOOT :Array = [ LOOT_BLASTER, LOOT_OUIJA, LOOT_HEALING ];
+    protected static const LOOT_HEAL :String = "equipped_heal";
 
     protected static const MARGIN_LEFT :int = 22;
     protected static const BORDER_LEFT :int = 25;
