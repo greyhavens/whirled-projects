@@ -9,6 +9,7 @@ import flash.display.BlendMode;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import ghostbusters.Codes;
@@ -98,7 +99,7 @@ public class HeartOfDarknessGame extends MicrogameMode
         this.modeSprite.addChild(_ghost);
         
         // create the ghost heart
-        _heart = new GhostHeart(_settings.heartRadius);
+        _heart = new GhostHeart(_settings.heartRadius, _settings.heartShineTime);
         _heart.x = Rand.nextIntRange(_heart.width + 20, _ghost.width - _heart.width - 20, Rand.STREAM_COSMETIC);
         _heart.y = Rand.nextIntRange(_heart.height + 20, _ghost.height - _heart.height - 20, Rand.STREAM_COSMETIC);
         this.addObject(_heart, _ghost);
@@ -146,7 +147,19 @@ public class HeartOfDarknessGame extends MicrogameMode
     {
         super.update(dt);
         
-        // does the 
+        // is the lantern beam over the heart?
+        var heartLoc :Vector2 = Vector2.fromPoint(_heart.displayObject.localToGlobal(new Point(0, 0)));
+        
+        if (Collision.circlesIntersect(heartLoc, _settings.heartRadius, _beam.beamCenter, _settings.lanternBeamRadius)) {
+            _heart.fastHeartbeat = true;
+            _heart.offsetHealth(-dt);
+            
+            if (_heart.health <= 0) {
+                this.gameOver(true);
+            }
+        } else {
+            _heart.fastHeartbeat = false;
+        }
     }
     
     protected var _settings :HeartOfDarknessSettings;

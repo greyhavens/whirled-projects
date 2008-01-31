@@ -78,6 +78,11 @@ public class LanternBeam extends SceneObject
         _sprite.graphics.endFill();
     }
     
+    public function get beamCenter () :Vector2
+    {
+        return _beamCenter;
+    }
+    
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
