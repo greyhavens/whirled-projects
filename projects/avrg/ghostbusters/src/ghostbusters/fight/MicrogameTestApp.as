@@ -22,7 +22,7 @@ public class MicrogameTestApp extends Sprite
         _player = new MicrogamePlayer(new Object());
         this.addChild(_player);
         
-        _curWeaponTypeName = WeaponType.NAME_OUIJA;
+        _curWeaponTypeName = WeaponType.NAME_LANTERN;
         _curWeaponDifficulty = 0;
         
         _player.weaponType = new WeaponType(_curWeaponTypeName, _curWeaponDifficulty);

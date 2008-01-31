@@ -5,6 +5,9 @@ import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
+import flash.display.BlendMode;
+import flash.display.Sprite;
+
 import ghostbusters.fight.*;
 import ghostbusters.fight.common.*;
 import ghostbusters.fight.ouija.BoardTimer;
@@ -60,6 +63,18 @@ public class HeartOfDarknessGame extends MicrogameMode
         // draw the background
         var image :ImageResourceLoader = ResourceManager.instance.getResource("bg") as ImageResourceLoader;
         this.modeSprite.addChild(image.createBitmap());
+        
+        // draw the darkness that the lantern will cut through
+        var darkness :Sprite = new Sprite();
+        darkness.graphics.beginFill(0);
+        darkness.graphics.drawRect(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
+        darkness.graphics.endFill();
+        darkness.blendMode = BlendMode.LAYER;
+        this.modeSprite.addChild(darkness);
+        
+        // lantern beam
+        _beam = new LanternBeam(_settings.lanternBeamRadius, LIGHT_SOURCE, darkness);
+        this.addObject(_beam, darkness);
 
         // create the visual timer
         var boardTimer :BoardTimer = new BoardTimer(this.duration);
@@ -80,12 +95,15 @@ public class HeartOfDarknessGame extends MicrogameMode
     protected var _done :Boolean = false;
     protected var _timeRemaining :Object;
     protected var _settings :HeartOfDarknessSettings;
+    protected var _beam :LanternBeam;
     
     protected static var g_assetsLoaded :Boolean;
     
     protected static const DIFFICULTY_SETTINGS :Array = [
-        new HeartOfDarknessSettings(60),
+        new HeartOfDarknessSettings(60, 50),
     ];
+    
+    protected static const LIGHT_SOURCE :Vector2 = new Vector2(MicrogameConstants.GAME_WIDTH / 2, MicrogameConstants.GAME_HEIGHT - 10);
     
 }
 
