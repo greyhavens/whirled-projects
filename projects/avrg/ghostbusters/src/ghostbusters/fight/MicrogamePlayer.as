@@ -4,8 +4,9 @@ import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.util.*;
 
 import flash.display.Sprite;
+import flash.geom.Rectangle;
 
-import ghostbusters.fight.common.MicrogameMode;
+import ghostbusters.fight.common.*;
 import ghostbusters.fight.lantern.*;
 import ghostbusters.fight.ouija.*;
 import ghostbusters.fight.plasma.*;
@@ -20,6 +21,9 @@ public class MicrogamePlayer extends Sprite
         if (null != MainLoop.instance) {
             MainLoop.instance.shutdown();
         }
+        
+        // clip games to the bounds of the player
+        this.scrollRect = new Rectangle(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
         
         new MainLoop(this);
         MainLoop.instance.run();
