@@ -50,7 +50,7 @@ public class FightController extends Controller
 
     public function lanternClicked () :void
     {
-        
+        panel.startGame();
     }
 
     public function handleGhostMelee (score :Number) :void

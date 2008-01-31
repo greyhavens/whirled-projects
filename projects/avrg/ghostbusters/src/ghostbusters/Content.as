@@ -10,7 +10,16 @@ public class Content
     public static const HUD_VISUAL :Class;
 
     [Embed(source="../../rsrc/Ghosts/Ghost_5.swf", mimeType="application/octet-stream")]
-    public static const GHOST :Class;
+    public static const GHOST_NOBLE_LADY :Class;
+
+    [Embed(source="../../rsrc/Ghosts/Ghost_Widow.swf", mimeType="application/octet-stream")]
+    public static const GHOST_WIDOW :Class;
+
+    [Embed(source="../../rsrc/Ghosts/Ghost_2_Pincher.swf", mimeType="application/octet-stream")]
+    public static const GHOST_PINCHER :Class;
+
+    [Embed(source="../../rsrc/Ghosts/Ghost_Incubus.swf", mimeType="application/octet-stream")]
+    public static const GHOST_INCUBUS :Class;
 
     [Embed(source="../../rsrc/UI/text_box.swf", mimeType="application/octet-stream")]
     public static const TEXT_BOX :Class;
@@ -18,7 +27,7 @@ public class Content
     [Embed(source="../../rsrc/UI/splash_screen.swf")]
     public static const SPLASH :Class;
 
-    [Embed(source="../../rsrc/UI/minigame_border.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/UI/minigame_frame.swf", mimeType="application/octet-stream")]
     public static const FRAME :Class;
 
     [Embed(source="../../rsrc/UI/capturebar.swf", mimeType="application/octet-stream")]

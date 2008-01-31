@@ -53,10 +53,20 @@ public class FightModel
         return gh != null ? gh[1] : 1;
     }
 
+    public function getRelativeGhostHealth () :Number
+    {
+        var max :Number = getGhostMaxHealth();
+        if (max > 0) {
+            return getGhostHealth() / max;
+        }
+        return 0;
+    }
+
     protected function propertyChanged (evt :AVRGameControlEvent) :void
     {
         if (evt.name == Codes.PROP_GHOST_HEALTH) {
-            _panel.ghostHealthUpdated();
+            // this is u-g-l-y
+            Game.gameController.panel.hud.ghostHealthUpdated();
         }
     }
 

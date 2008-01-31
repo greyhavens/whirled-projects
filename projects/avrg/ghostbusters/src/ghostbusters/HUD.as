@@ -48,6 +48,12 @@ public class HUD extends FrameSprite
         }
     }
 
+    public function ghostHealthUpdated () :void
+    {
+        _ghostHealthBar.gotoAndStop(
+            100 - 100 * Game.fightController.model.getRelativeGhostHealth());
+    }
+
     public function teamUpdated () :void
     {
         if (_hud.parent == null || _visualHud == null) {
@@ -193,8 +199,7 @@ public class HUD extends FrameSprite
         _yourHealthBar.gotoAndStop(
             100 * Game.gameController.model.getRelativeHealth(Game.ourPlayerId));
 
-        // TODO
-        _ghostHealthBar.gotoAndStop(30);
+        _ghostHealthBar.gotoAndStop(100);
 
         for (var ii :int = 0; ii < _loots.length; ii ++) {
             SimpleButton(_loots[ii]).visible = (ii == _lootIx);

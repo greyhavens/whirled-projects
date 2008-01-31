@@ -43,36 +43,23 @@ public class FightPanel extends FrameSprite
     override public function hitTestPoint (
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
-        return _minigame && _minigame.hitTestPoint(x, y, shapeFlag);
-    }
-
-    public function getGhostSprite (ctrl :MobControl) :SpawnedGhost
-    {
-        _ghost = new SpawnedGhost(ctrl, _model.getGhostHealth(), _model.getGhostMaxHealth());
-//        setTimeout(startGame, 1000);
-        return _ghost;
-    }
-
-    public function ghostHealthUpdated () :void
-    {
-        if (_ghost) {
-            _ghost.updateHealth(_model.getGhostHealth(), _model.getGhostMaxHealth());
-        }
+        return (_minigame && _minigame.hitTestPoint(x, y, shapeFlag)) ||
+            (_ghost && _ghost.hitTestPoint(x, y, shapeFlag));
+            
     }
 
     public function startGame () :void
     {
         if (_minigame == null) {
-            var gameHolder :Sprite = new Sprite();
+            _minigame = new MicrogamePlayer( { } );
+            _frame.frameContent(_minigame);
 
-            _minigame = new Match3(gamePerformance);
-            gameHolder.addChild(_minigame);
-
-            _frame.frameContent(gameHolder);
+            _minigame.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 0);
+            _minigame.beginNextGame();
 
             this.addChild(_frame);
-            _frame.x = 100;
-            _frame.y = 350;
+            _frame.x = (Game.stageSize.width - _frame.width) / 2;
+            _frame.y = (Game.stageSize.height - _frame.height) / 2;
         }
     }
 
@@ -90,12 +77,20 @@ public class FightPanel extends FrameSprite
         super.handleAdded();
         _battleLoop = Sound(new Content.BATTLE_LOOP_AUDIO()).play();
 
+        _ghost.x = Game.stageSize.width / 2;
+        _ghost.y = 100;
+        this.addChild(_ghost);
+
+        _ghost.fighting();        
 //        Game.control.addEventListener(AVRGameControlEvent.PLAYER_CHANGED, playerChanged);
     }
 
     override protected function handleRemoved (... ignored) :void
     {
         super.handleRemoved();
+        if (_ghost != null) {
+            _ghost.handler.stop();
+        }
         _battleLoop.stop();
 //        Game.control.removeEventListener(AVRGameControlEvent.PLAYER_CHANGED, playerChanged);
     }
@@ -104,6 +99,8 @@ public class FightPanel extends FrameSprite
     {
         _dimness = new Dimness(0.8, true);
         this.addChild(_dimness);
+
+        _ghost = new SpawnedGhost();
     }
 
     override protected function handleFrame (... ignored) :void
@@ -112,9 +109,9 @@ public class FightPanel extends FrameSprite
         // TODO: just grab the first six in the order the client exports them
 
         var players :Array = Game.control.getPlayerIds();
-
-        updateSpotlights(players);
-//        updateMinigame();
+        if (players != null) {
+            updateSpotlights(players);
+        }
     }
 
     protected function updateSpotlights (players :Array) :void
@@ -163,7 +160,7 @@ public class FightPanel extends FrameSprite
     protected var _spotlights :Dictionary = new Dictionary();
 
     protected var _frame :GameFrame;
-    protected var _minigame: DisplayObject;
+    protected var _minigame: MicrogamePlayer;
 
     protected var _stars :Array = [];
 

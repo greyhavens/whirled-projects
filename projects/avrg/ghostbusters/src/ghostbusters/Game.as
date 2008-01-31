@@ -57,7 +57,7 @@ public class Game extends Sprite
 
         addChild(gameController.panel);
 
-        control.setMobSpriteExporter(exportMobSprite);
+//        control.setMobSpriteExporter(exportMobSprite);
         control.setHitPointTester(gameController.panel.hitTestPoint);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
@@ -155,13 +155,13 @@ public class Game extends Sprite
         gameController.panel.hud.teamUpdated();
     }
 
-    public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
-    {
-        if (id == Codes.MOB_ID_GHOST) {
-            return fightController.panel.getGhostSprite(ctrl);
-        }
-        log.warning("Unknown MOB requested [id=" + id + "]");
-        return null;
-    }
+//    public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
+//    {
+//        if (id == Codes.MOB_ID_GHOST) {
+//            return fightController.panel.getGhostSprite(ctrl);
+//        }
+//        log.warning("Unknown MOB requested [id=" + id + "]");
+//        return null;
+//    }
 }
 }

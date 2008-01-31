@@ -71,7 +71,7 @@ public class SeekPanel extends FrameSprite
 
     public function ghostZestUpdated () :void
     {
-        _ghost.setSpeed(_model.getGhostZest());
+//        _ghost.setSpeed(_model.getGhostZest());
 
         var lantern :Lantern = _lanterns[Game.ourPlayerId];
         if (lantern != null) {
@@ -88,7 +88,7 @@ public class SeekPanel extends FrameSprite
     {
         _alphaFrames = _ghost.appear(spawnGhost);
         // TODO: this should instead match the true spawn point of the MOB
-        _ghost.newTarget(new Point(Game.stageSize.width/2, 200));
+        _ghost.newTarget(new Point(Game.stageSize.width/2, 100));
         _ghost.mask = null;
     }
 
@@ -149,9 +149,8 @@ public class SeekPanel extends FrameSprite
             var alpha :Number = _dimness.getAlpha();
             _dimness.setAlpha(alpha + (0.8 - alpha)/_alphaFrames);
             _alphaFrames -= 1;
-        }
 
-        if (_ghost != null) {
+        } else if (_ghost != null) {
             _ghost.nextFrame();
 
             if (_zapping > 0) {
