@@ -1,0 +1,165 @@
+﻿package lawsanddisorder {
+
+import flash.display.Sprite;
+import flash.display.MovieClip;
+import flash.events.Event;
+
+import com.whirled.FlowAwardedEvent;
+import com.whirled.WhirledGameControl;
+
+import com.threerings.ezgame.MessageReceivedEvent;
+import com.threerings.ezgame.MessageReceivedListener;
+import com.threerings.ezgame.PropertyChangedEvent;
+import com.threerings.ezgame.PropertyChangedListener;
+import com.threerings.ezgame.StateChangedEvent;
+import com.threerings.ezgame.StateChangedListener;
+
+import lawsanddisorder.component.*
+
+/**
+ * Handles game setup / game start / game end logic.
+ *
+ * TODO gameplay:
+ * ai to fill games up to 6 players?
+ * timers for reminders
+ * timers for auto-selection for afk players (?)
+ * detecting afk players
+ * handling players leaving
+ * handle watchers
+ * handle premature game ending
+ * unloader?
+ * 
+ * TODO inerface:
+ * make buttons look like buttons
+ * use image files instead of ugly boxes
+ * improve highlighting with delays/events for unhighlighting
+ * scrolling laws area
+ * bring law to front on mouseover
+ * display old notices on mouseover
+ * bigger cards (?)
+ * improve notice & broadcast messages esp when waiting for opponent
+ * animations when drawing cards, stealing cards, playing law, gain/lose/give monies
+ * card mouseover tooltips, esp job powers?
+ *  */
+[SWF(width="1000", height="550")]
+public class LawsAndDisorder extends Sprite
+    implements PropertyChangedListener
+{
+	/** How much money does every player start with? */
+    public static const STARTING_MONIES :int = 5;
+    
+    /** Message that game is ending */
+    public static const GAME_ENDING :String = "gameEnding";
+
+    /**
+     * Constructor
+     */
+    public function LawsAndDisorder ()
+    {
+        // create context and game controller
+        var control :WhirledGameControl = new WhirledGameControl(this, false);
+        _ctx = new Context(control);
+        _ctx.control.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
+        _ctx.control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
+        _ctx.control.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+        
+        // first player sets up distributed data and waits to hear about it from the server
+        // before continuing to fill properties with actual data
+        if (_ctx.control.amInControl()) {
+            _ctx.control.registerListener(this);
+            var playerCount :int = _ctx.control.seating.getPlayerIds().length;
+            _ctx.control.set(Player.MONIES_DATA, new Array(playerCount).map(function (): int { return STARTING_MONIES; }));
+            _ctx.control.set(Hand.HAND_DATA, new Array(playerCount).map(function (): Array { return new Array(); }));
+            _ctx.control.set(Deck.JOBS_DATA, new Array(playerCount).map(function (): int { return -1; }));
+            _ctx.control.set(Laws.LAWS_DATA, new Array());
+        }
+        // other players just set up the board now and wait to receive the actual data
+        else {
+            finishInit();
+        }
+    }
+    
+    /**
+     * Implementation of PropertyChangedListener method; fires when a property changes on
+     * the server.  Only the control player will perform this.
+     * TODO do this with addControlListener
+     */
+    public function propertyChanged (event :PropertyChangedEvent) :void
+    {
+        if ((event.name == Hand.HAND_DATA && event.index == -1)
+            || (event.name == Deck.JOBS_DATA && event.index == -1)
+            || (event.name == Laws.LAWS_DATA && event.index == -1)
+            || (event.name == Player.MONIES_DATA && event.index == -1)) {
+                            
+               // one step closer to being done initialization
+               if (++_initComplete == INIT_GOAL) {
+                _ctx.control.unregisterListener(this);
+                finishInit();
+             }
+        }
+    }
+    
+    /**
+     * Verify that all the init pieces are complete, then setup and start the game
+     */
+    protected function finishInit () :void
+    {
+        if (!_ctx.control.isConnected()) {
+            _ctx.log("WTF not connected??!?");
+            return;
+        }
+
+        // create our state and our board, and initialize them
+        var state :State = new State(_ctx)
+        var board :Board = new Board(_ctx)
+        var eventHandler :EventHandler = new EventHandler(_ctx);
+        _ctx.init(state, board, eventHandler);
+        _ctx.board.init();
+        addChild(_ctx.board);
+
+        // notify the game that we're ready to start
+        _ctx.control.playerReady();
+    }
+    
+    /** 
+     * Fires when all players have called playerReady().  Have the control player set
+     * up the board data then start the first turn.
+     * 
+     * TODO listen for the board data before starting the first turn?
+     */     
+    protected function gameDidStart (event :StateChangedEvent) :void
+    {
+        _ctx.notice("Welcome to Laws & Disorder!");
+        if (_ctx.control.amInControl()) {
+            _ctx.board.setup();
+            // start the first turn
+            _ctx.control.startNextTurn();
+        }
+    }
+
+    /**
+     * Handler for receiving flow awarded events
+     * TODO move to Notices?     */
+    protected function flowAwarded (event :FlowAwardedEvent) :void
+    {
+        _ctx.notice("You got: " + event.amount + " flow for playing.  That's " + event.percentile + "%");
+    }
+    
+    /**
+     * Handler for recieving game end events
+     * TODO move to Notices?     */
+    protected function gameDidEnd (event :StateChangedEvent) :void
+    {
+        _ctx.notice("Game over - thanks for playing!");
+    }
+    
+    /** Context */
+    protected var _ctx :Context;
+    
+    /** How far are we towards INIT_GOAL? */
+    protected var _initComplete :int = 0;
+    
+    /** How many things must be done before init is complete? */
+    protected static const INIT_GOAL :int = 4;
+}
+}

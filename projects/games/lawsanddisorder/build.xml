@@ -1,0 +1,12 @@
+<!-- build configuration -->
+<project name="lawsanddisorder" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="LawsAndDisorder"/>
+  <property name="app.source-dir" value="src"/>
+	<property name="app.package-dir" value="lawsanddisorder"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>

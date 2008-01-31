@@ -1,0 +1,200 @@
+===============================================
+COPYRIGHT
+===============================================
+
+Created and owned by Sarah Collins.  Legalese snippet from rights agreement:
+
+As sole designer and owner of the rules relating to the game Laws and Disorder (The Game), I 
+hereby delegate in perpetuity and for now charge or other remuneration the following rights 
+to Three Rings Design, Inc.
+
+-An non-exclusive license to develop and deploy The Game solely as part of the Whirled online 
+environment
+-The right to market The Game as part of promotion for the Whirled online environment
+-The right to embellish and modify the rules governing The Game as needed to make them a 
+functioning part of the Whirled online offering
+
+The agreement provides Three Rings no other rights with respect to the ownership of The 
+Game's intellectual property or any right with respect to the publication of the game in 
+paper or other "real world" form.
+
+===============================================
+ABOUT
+===============================================
+
+Laws and Disorder is played with 2-6 players and a deck of custom cards including: 
+    Job cards such as Judge, Banker, Priest
+    Verb cards such as gains, loses, gives
+    Object cards such as 1 card, 2 monies, 3 monies
+The objective is to earn monies by creating sentences (laws) using these cards, such as:
+    The Judge loses 2 monies
+Every player is dealt a job.  When the above law is made, the player who is currently
+the judge will lose 2 of their monies.  Players can change jobs during their turn
+by using the appropriate job card.  Every job also has an ability that can be used once per
+turn, for example:
+    The Priest can exchange a Job card from their hand with one already in a law
+    The Thief can look at another player's hand and steal a card from it
+The game gets more dynamic with the addition of When cards to laws, which cause laws to 
+trigger repeatedly when certain conditions are met, such as:
+    When a law is created
+Players draw two cards at the start of their turn and can make one law, change jobs once, and
+use one ability during their turn.  When the deck of cards runs out, the game is over and
+the players are ranked according to how many monies they have.
+
+===============================================
+RULES
+===============================================
+
+The following rules and cardlist have been simplified for the flash version of this game.
+
+===============================================
+CARDLIST
+===============================================
+
+jobs x 5 per position
+1 card x 4
+2 card x 4
+1 monies x 2
+2 monies x 2
+3 monies x 2
+4 monies x 2
+5 monies x 2
+gains x 8
+loses x 6
+gives x 6
+
+any position x 4
+at the start of their turn x 2
+when a law is made x 2
+when they use their ability x 2
+
+===============================================
+SETTING UP
+===============================================
+
+Players start with 7 cards and 3 monies
+All 6 positions are randomly delt out
+
+===============================================
+GAMEPLAY
+===============================================
+
+[start of turn]
+
+in any order you may:
+- make one law
+- play one BLUE card from your hand to change positions
+- use one ability
+
+[ end of turn]
+
+- draw two cards
+
+[play passes to next player; players may only do things during their turn]
+
+===============================================
+MAKING A LAW
+===============================================
+
+- when you create a law, you get $1 for every card in the law
+
+examples:
+
+THE JUDGE   GIVES   1 CARD
+  when this law is made, the current JUDGE selects one card from their had and passes it
+  hidden to a player of their choice
+  
+THE THEIF   LOOSES   1 CARD    WHEN THEY USE THEIR ABILITY
+  Nothing happens when the law is made.  As long as it is on the board, if someone playing 
+  THE THIEF steals a card from someone, they must chose and discard a card immediately after.
+  
+THE SCIENTIST   GIVES    THE BANKER   3 MONIES    WHEN A LAW IS MADE
+  Nothting happens when the law is made.  As long as it is on the board, if anyone makes a law,
+  the player playing as THE SCIENTIST at the time must give THE BANKER 3 monies.  If nobody is
+  playing at THE SCIENTIST, nothing happens.  If nobody is playing as THE BANKER, the scientist
+  simply loses the monies.
+
+THE SCIENTIST GETS 3 MONIES
+  If a scientist uses their ability to add WHEN THEY USE THEIR ABILITY to the end of this law,
+  they will get the 3 monies because the old law is checked after it has been changed.
+
+===============================================
+TRIGGERING LAWS
+===============================================
+
+- If there is no PURPLE card in a new law, it triggers right away
+- If there is a PURPLE card in a law, it does not trigger when created
+- Ammending laws does not trigger them
+- When a card is played, an ability is used or a law is made, any laws on the table that 
+    are going to trigger do so in order of their original creation, and only after the ability 
+    or new law takes effect.
+
+THE THEIF   LOOSES   1 CARD    WHEN THEY USE THEIR ABILITY
+If thief steals while this is in play, first they take a card, then have to discard one.
+
+THE SCIENTIST   GIVES    THE BANKER   3 MONIES    WHEN A LAW IS MADE
+If a new law THE BANKER GIVES THE THIEF 1 MONIES is created while this is in play, first
+the player who created the law gets X monies where X is the length of the new law.  Then
+the new law triggers and the banker must give the thief 1 monie.  Finally the old law triggers
+and the banker must give the scientist 3 monies.
+
+===============================================
+GAME END
+===============================================
+
+- When the last card is drawn, each player gets one more full turn, then the game ends.
+- The player with the most monies wins.
+
+===============================================
+POSITIONS [BLUE CARDS]
+===============================================
+
+Blue cards can be used as part of a law, or played to change positions
+There are 6 positions with special abilities.
+
+JUDGE
+  - pay $2: trigger one law immediatly (regardless of PURPLE cards in that law)
+  - pay $2: destroy a law
+
+BANKER
+  - recieve double the money from one law being made (free & passive)
+
+THEIF
+  - pay $2: look at a players hand and steal one card
+
+SCIENTIST
+  - pay $2: add one PURPLE card to a law or take one PURPLE card from a law
+
+MERCHANT
+  - pay 2$: exchange a PINK card in a law with one from your hand
+  - pay 2$: draw 2 cards then discard 2 cards
+
+PRIEST
+  - pay 2$: exchange a BLUE card in a law with one from your hand
+
+===============================================
+POINTS AND CARDS [YELLOW]
+===============================================
+
+Can be used as part of a law, eg:
+SCIENTIST   GAINS   1 MONIE
+
+===============================================
+GIVES/LOSES/GAINS [PINK]
+===============================================
+
+Can be used as part of a law.
+If a GIVES does not specify to which player, they may choose a player, eg:
+BANKER   GIVES   1 CARD
+When a player loses cards or gives cards, they get to choose the card.
+If "giving" to a player not on the board, the giving player just loses the item.
+
+===============================================
+WHENEVER [PURPLE]
+===============================================
+
+Can be used as part of a law.
+Determines when the law takes effect, eg:
+AT THE BEGINNING OF THEIR TURN or WHENEVER A GREEN CARD IS PLAYED
+Laws with PURPLE cards don't take effect when they are played.
+If a law has no PURPLE card, it is assumed to take effect WHEN THIS LAW IS CREATED
