@@ -9,7 +9,6 @@ import flash.display.GradientType;
 import flash.display.InteractiveObject;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.geom.Matrix;
 
 public class LanternBeam extends SceneObject
 {
@@ -26,11 +25,13 @@ public class LanternBeam extends SceneObject
     
     protected function onMouseMoved (e :MouseEvent) :void
     {
-        this.drawAt(e.localX, e.localY);
+        this.setLocation(e.localX, e.localY);
     }
     
-    protected function drawAt (x :Number, y :Number) :void
+    protected function setLocation (x :Number, y :Number) :void
     {
+        _beamCenter.set(x, y);
+        
         _sprite.graphics.clear();
         _sprite.graphics.lineStyle(0, 0, 0, true);
         
@@ -85,6 +86,7 @@ public class LanternBeam extends SceneObject
     protected var _sprite :Sprite;
     protected var _radius :Number;
     protected var _lightSource :Vector2;
+    protected var _beamCenter :Vector2 = new Vector2();
     
 }
 

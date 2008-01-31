@@ -5,8 +5,10 @@ import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
+import flash.display.Bitmap;
 import flash.display.BlendMode;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 
 import ghostbusters.fight.*;
 import ghostbusters.fight.common.*;
@@ -61,8 +63,27 @@ public class HeartOfDarknessGame extends MicrogameMode
     override protected function setup () :void
     {
         // draw the background
-        var image :ImageResourceLoader = ResourceManager.instance.getResource("bg") as ImageResourceLoader;
-        this.modeSprite.addChild(image.createBitmap());
+        //var image :ImageResourceLoader = ResourceManager.instance.getResource("ghost") as ImageResourceLoader;
+        ///this.modeSprite.addChild(image.createBitmap());
+        
+        this.modeSprite.graphics.beginFill(0x00FF00);
+        this.modeSprite.graphics.drawRect(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
+        this.modeSprite.graphics.endFill();
+        
+        this.modeSprite.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove, false, 0, true);
+        
+        // create the ghost
+        _ghost = new Sprite();
+        var ghostImage :ImageResourceLoader = ResourceManager.instance.getResource("ghost") as ImageResourceLoader;
+        var ghostBitmap :Bitmap = ghostImage.createBitmap();
+        ghostBitmap.scaleX = _settings.ghostScale;
+        ghostBitmap.scaleY = _settings.ghostScale;
+        //ghostBitmap.x = -(ghostBitmap.width / 2);
+        //ghostBitmap.y = -(ghostBitmap.height / 2);
+        
+        _ghost.addChild(ghostBitmap);
+        
+        this.modeSprite.addChild(_ghost);
         
         // draw the darkness that the lantern will cut through
         var darkness :Sprite = new Sprite();
@@ -92,15 +113,24 @@ public class HeartOfDarknessGame extends MicrogameMode
         
     }
     
+    protected function onMouseMove (e :MouseEvent) :void
+    {
+        _ghost.x = (-e.localX * (_ghost.width - MicrogameConstants.GAME_WIDTH)) / MicrogameConstants.GAME_WIDTH;
+        _ghost.y = (-e.localY * (_ghost.height - MicrogameConstants.GAME_HEIGHT)) / MicrogameConstants.GAME_HEIGHT;
+    }
+    
+    protected var _settings :HeartOfDarknessSettings;
+    
     protected var _done :Boolean = false;
     protected var _timeRemaining :Object;
-    protected var _settings :HeartOfDarknessSettings;
+    
     protected var _beam :LanternBeam;
+    protected var _ghost :Sprite;
     
     protected static var g_assetsLoaded :Boolean;
     
     protected static const DIFFICULTY_SETTINGS :Array = [
-        new HeartOfDarknessSettings(60, 50),
+        new HeartOfDarknessSettings(60, 50, 4),
     ];
     
     protected static const LIGHT_SOURCE :Vector2 = new Vector2(MicrogameConstants.GAME_WIDTH / 2, MicrogameConstants.GAME_HEIGHT - 10);
@@ -125,7 +155,7 @@ class LoadingMode extends AppMode
     override protected function setup () :void
     {
         ResourceManager.instance.pendResourceLoad("image", "heart", { embeddedClass: Content.IMAGE_HEART });
-        ResourceManager.instance.pendResourceLoad("image", "bg", { embeddedClass: Content.IMAGE_BG });
+        ResourceManager.instance.pendResourceLoad("image", "ghost", { embeddedClass: Content.IMAGE_GHOST });
         
         ResourceManager.instance.load();
     }
