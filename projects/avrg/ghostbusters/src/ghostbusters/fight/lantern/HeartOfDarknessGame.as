@@ -7,6 +7,7 @@ import com.whirled.contrib.core.util.*;
 
 import ghostbusters.fight.*;
 import ghostbusters.fight.common.*;
+import ghostbusters.fight.ouija.BoardTimer;
 
 public class HeartOfDarknessGame extends MicrogameMode
 {
@@ -56,6 +57,23 @@ public class HeartOfDarknessGame extends MicrogameMode
 
     override protected function setup () :void
     {
+        // draw the background
+        var image :ImageResourceLoader = ResourceManager.instance.getResource("bg") as ImageResourceLoader;
+        this.modeSprite.addChild(image.createBitmap());
+
+        // create the visual timer
+        var boardTimer :BoardTimer = new BoardTimer(this.duration);
+        this.addObject(boardTimer, this.modeSprite);
+
+        // install a failure timer
+        var timerObj :AppObject = new AppObject();
+        timerObj.addTask(new SerialTask(
+            new AnimateValueTask(_timeRemaining, 0, this.duration),
+            new FunctionTask(
+                function () :void { gameOver(false); }
+            )));
+
+        this.addObject(timerObj)
         
     }
     
@@ -78,7 +96,7 @@ import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
-import ghostbusters.fight.plasma.*;
+import ghostbusters.fight.lantern.*;
 
 class LoadingMode extends AppMode
 {

@@ -108,7 +108,12 @@ public class MicrogameTestApp extends Sprite
     protected var _curWeaponTypeName :String;
     protected var _curWeaponDifficulty :int;
     
-    protected static const WEAPON_TYPES :Array = [ WeaponType.NAME_OUIJA, WeaponType.NAME_PLASMA, WeaponType.NAME_POTIONS ];
+    protected static const WEAPON_TYPES :Array = [ 
+        WeaponType.NAME_LANTERN, 
+        WeaponType.NAME_OUIJA, 
+        WeaponType.NAME_PLASMA, 
+        WeaponType.NAME_POTIONS,
+    ];
     
 }
 

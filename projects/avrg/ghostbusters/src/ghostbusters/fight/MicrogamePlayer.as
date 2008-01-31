@@ -6,6 +6,7 @@ import com.whirled.contrib.core.util.*;
 import flash.display.Sprite;
 
 import ghostbusters.fight.common.MicrogameMode;
+import ghostbusters.fight.lantern.*;
 import ghostbusters.fight.ouija.*;
 import ghostbusters.fight.plasma.*;
 import ghostbusters.fight.potions.*;
@@ -89,6 +90,8 @@ public class MicrogamePlayer extends Sprite
     
     protected static const GAME_DESCRIPTORS :Array = [
     
+        new MicrogameDescriptor(WeaponType.NAME_LANTERN,    0, HeartOfDarknessGame),
+        
         new MicrogameDescriptor(WeaponType.NAME_OUIJA,      0, GhostWriterGame),
         new MicrogameDescriptor(WeaponType.NAME_OUIJA,      0, PictoGeistGame),
         new MicrogameDescriptor(WeaponType.NAME_OUIJA,      1, SpiritGuideGame),
