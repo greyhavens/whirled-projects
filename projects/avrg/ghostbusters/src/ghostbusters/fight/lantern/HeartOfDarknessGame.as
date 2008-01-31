@@ -63,10 +63,7 @@ public class HeartOfDarknessGame extends MicrogameMode
     override protected function setup () :void
     {
         // draw the background
-        //var image :ImageResourceLoader = ResourceManager.instance.getResource("ghost") as ImageResourceLoader;
-        ///this.modeSprite.addChild(image.createBitmap());
-        
-        this.modeSprite.graphics.beginFill(0x00FF00);
+        this.modeSprite.graphics.beginFill(0);
         this.modeSprite.graphics.drawRect(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
         this.modeSprite.graphics.endFill();
         
@@ -78,16 +75,20 @@ public class HeartOfDarknessGame extends MicrogameMode
         var ghostBitmap :Bitmap = ghostImage.createBitmap();
         ghostBitmap.scaleX = _settings.ghostScale;
         ghostBitmap.scaleY = _settings.ghostScale;
-        //ghostBitmap.x = -(ghostBitmap.width / 2);
-        //ghostBitmap.y = -(ghostBitmap.height / 2);
         
         _ghost.addChild(ghostBitmap);
         
         this.modeSprite.addChild(_ghost);
         
+        // create the ghost heart
+        _heart = new GhostHeart(_settings.heartRadius);
+        _heart.x = Rand.nextIntRange(_heart.width, _ghost.width - _heart.width, Rand.STREAM_COSMETIC);
+        _heart.y = Rand.nextIntRange(_heart.height, _ghost.height - _heart.height, Rand.STREAM_COSMETIC);
+        this.addObject(_heart, _ghost);
+        
         // draw the darkness that the lantern will cut through
         var darkness :Sprite = new Sprite();
-        darkness.graphics.beginFill(0);
+        darkness.graphics.beginFill(0, 0.9);
         darkness.graphics.drawRect(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
         darkness.graphics.endFill();
         darkness.blendMode = BlendMode.LAYER;
@@ -125,12 +126,17 @@ public class HeartOfDarknessGame extends MicrogameMode
     protected var _timeRemaining :Object;
     
     protected var _beam :LanternBeam;
+    protected var _heart :GhostHeart;
     protected var _ghost :Sprite;
     
     protected static var g_assetsLoaded :Boolean;
     
     protected static const DIFFICULTY_SETTINGS :Array = [
-        new HeartOfDarknessSettings(60, 50, 4),
+        new HeartOfDarknessSettings(
+            60,     // game time
+            50,     // lantern radius
+            10,     // heart radius
+            4),     // ghost scale
     ];
     
     protected static const LIGHT_SOURCE :Vector2 = new Vector2(MicrogameConstants.GAME_WIDTH / 2, MicrogameConstants.GAME_HEIGHT - 10);
