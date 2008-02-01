@@ -157,7 +157,9 @@ public class FightPanel extends FrameSprite
                 if (_minigame.currentGame.gameResult.success == MicrogameResult.SUCCESS) {
                     CommandEvent.dispatch(this, FightController.GHOST_MELEE);
                 }
-                _minigame.beginNextGame();
+                if (_minigame != null) {
+                    _minigame.beginNextGame();
+                }
             }
         }
     }
