@@ -1,5 +1,6 @@
 package ghostbusters.fight.lantern {
 
+import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.core.objects.SceneObject;
 import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
@@ -24,6 +25,7 @@ public class GhostHeart extends SceneObject
         heart.x = -(heart.width / 2);
         heart.y = -(heart.height / 2);
         _sprite = new Sprite();
+        
         _sprite.addChild(heart);
     }
     
@@ -32,25 +34,16 @@ public class GhostHeart extends SceneObject
         _health += offset;
         _health = Math.max(_health, 0);
         _health = Math.min(_health, _maxHealth);
+        
+        var cm :ColorMatrix = new ColorMatrix();
+        cm.colorize(0x0000FF, 1 - (_health / _maxHealth));
+        
+        _sprite.filters = [ cm.createFilter() ];
     }
     
     public function get health () :Number
     {
         return _health;
-    }
-    
-    protected function startHeartbeat () :void
-    {
-        this.scaleX = 1;
-        this.scaleY = 1;
-        
-        var task :RepeatingTask = new RepeatingTask();
-        task.addTask(ScaleTask.CreateEaseIn(BEAT_SCALE, BEAT_SCALE, 0.15));
-        task.addTask(ScaleTask.CreateEaseOut(1, 1, 0.15));
-        task.addTask(new TimedTask(BEAT_DELAY));
-        
-        this.removeAllTasks();
-        this.addTask(task);
     }
     
     override public function get displayObject () :DisplayObject
