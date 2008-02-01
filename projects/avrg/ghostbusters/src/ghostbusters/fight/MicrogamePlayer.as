@@ -81,7 +81,7 @@ public class MicrogamePlayer extends Sprite
         }
     }
     
-    protected function cancelCurrentGame () :void
+    public function cancelCurrentGame () :void
     {
         MainLoop.instance.popAllModes();
         _currentGame = null;

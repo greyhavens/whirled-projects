@@ -24,8 +24,6 @@ public class GhostHeart extends SceneObject
         
         _sprite = new Sprite();
         _sprite.addChild(heart);
-        
-        this.setHeartbeatDelay(SLOW_DELAY);
     }
     
     public function offsetHealth (offset :Number) :void
@@ -40,23 +38,15 @@ public class GhostHeart extends SceneObject
         return _health;
     }
     
-    public function set fastHeartbeat (val :Boolean) :void
-    {
-        if (val != _fastHeartbeat) {
-            _fastHeartbeat = val;
-            this.setHeartbeatDelay(_fastHeartbeat ? FAST_DELAY : SLOW_DELAY);
-        }
-    }
-    
-    protected function setHeartbeatDelay (delay :Number) :void
+    protected function startHeartbeat () :void
     {
         this.scaleX = 1;
         this.scaleY = 1;
         
         var task :RepeatingTask = new RepeatingTask();
-        task.addTask(ScaleTask.CreateEaseIn(BEAT_SCALE, BEAT_SCALE, 0.25));
-        task.addTask(ScaleTask.CreateEaseOut(1, 1, 0.25));
-        task.addTask(new TimedTask(delay));
+        task.addTask(ScaleTask.CreateEaseIn(BEAT_SCALE, BEAT_SCALE, 0.15));
+        task.addTask(ScaleTask.CreateEaseOut(1, 1, 0.15));
+        task.addTask(new TimedTask(BEAT_DELAY));
         
         this.removeAllTasks();
         this.addTask(task);
@@ -72,11 +62,8 @@ public class GhostHeart extends SceneObject
     protected var _maxHealth :Number;
     protected var _health :Number;
     
-    protected var _fastHeartbeat :Boolean;
-    
     protected static const BEAT_SCALE :Number = 1.2;
-    protected static const SLOW_DELAY :Number = 1;
-    protected static const FAST_DELAY :Number = 0.25;
+    protected static const BEAT_DELAY :Number = 0.05;
 }
 
 }

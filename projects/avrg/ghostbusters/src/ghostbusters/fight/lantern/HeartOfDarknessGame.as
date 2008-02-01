@@ -85,7 +85,7 @@ public class HeartOfDarknessGame extends MicrogameMode
         
         var ghostSwf :SwfResourceLoader = ResourceManager.instance.getResource("hod_ghost") as SwfResourceLoader;
         var ghostInstance :MovieClip = ghostSwf.displayRoot as MovieClip;
-        ghostInstance.gotoAndStop(1, Codes.ST_GHOST_FIGHT);
+        ghostInstance.gotoAndStop(1, "heartofdarkness");
         
         ghostInstance.scaleX = _settings.ghostScale;
         ghostInstance.scaleY = _settings.ghostScale;
@@ -158,14 +158,11 @@ public class HeartOfDarknessGame extends MicrogameMode
         var heartLoc :Vector2 = Vector2.fromPoint(_heart.displayObject.localToGlobal(new Point(0, 0)));
         
         if (Collision.circlesIntersect(heartLoc, _settings.heartRadius, _beam.beamCenter, _settings.lanternBeamRadius)) {
-            _heart.fastHeartbeat = true;
             _heart.offsetHealth(-dt);
             
             if (_heart.health <= 0) {
                 this.gameOver(true);
             }
-        } else {
-            _heart.fastHeartbeat = false;
         }
     }
     
@@ -182,12 +179,28 @@ public class HeartOfDarknessGame extends MicrogameMode
     protected static var g_assetsLoaded :Boolean;
     
     protected static const DIFFICULTY_SETTINGS :Array = [
+    
+        new HeartOfDarknessSettings(
+            8,     // game time
+            1,      // heart shine time
+            50,     // lantern beam radius
+            18,     // heart radius
+            1.5),     // ghost scale
+            
         new HeartOfDarknessSettings(
             12,     // game time
-            3,      // heart shine time
-            50,     // lantern radius
+            1,      // heart shine time
+            40,     // lantern beam radius
             10,     // heart radius
-            2),     // ghost scale
+            2.5),     // ghost scale
+            
+        new HeartOfDarknessSettings(
+            15,     // game time
+            1,      // heart shine time
+            35,     // lantern beam radius
+            8,     // heart radius
+            3.5),     // ghost scale
+            
     ];
     
     protected static const LIGHT_SOURCE :Vector2 = new Vector2(MicrogameConstants.GAME_WIDTH / 2, MicrogameConstants.GAME_HEIGHT - 10);
@@ -212,7 +225,7 @@ class LoadingMode extends AppMode
     override protected function setup () :void
     {
         ResourceManager.instance.pendResourceLoad("image", "hod_heart", { embeddedClass: Content.IMAGE_HEART });
-        ResourceManager.instance.pendResourceLoad("swf", "hod_ghost", { embeddedClass: ghostbusters.Content.GHOST });
+        ResourceManager.instance.pendResourceLoad("swf", "hod_ghost", { embeddedClass: Content.SWF_GHOST });
         
         ResourceManager.instance.load();
     }

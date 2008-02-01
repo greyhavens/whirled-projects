@@ -11,24 +11,42 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
 import ghostbusters.fight.common.*;
 
-[SWF(width="305", height="300", frameRate="30")]
+[SWF(width="305", height="330", frameRate="30")]
 public class MicrogameTestApp extends Sprite
 {
     public function MicrogameTestApp ()
     {
-        _player = new MicrogamePlayer(new Object());
-        this.addChild(_player);
+        // bg
+        this.graphics.beginFill(0xFFFFFF);
+        this.graphics.drawRect(0, 0, 305, 330);
+        this.graphics.endFill();
         
-        _curWeaponTypeName = WeaponType.NAME_LANTERN;
-        _curWeaponDifficulty = 0;
+        // instructions
+        var label :TextField = new TextField();
+        label.text = "Press GO! to start playing";
+        label.textColor = 0;;
+        label.autoSize = TextFieldAutoSize.LEFT;
+        label.x = (MicrogameConstants.GAME_WIDTH / 2) - (label.width / 2);
+        label.y = (MicrogameConstants.GAME_HEIGHT / 2) - (label.height / 2);
+        this.addChild(label);
         
-        _player.weaponType = new WeaponType(_curWeaponTypeName, _curWeaponDifficulty);
-        _player.beginNextGame();
+        // start/stop buttons
+        var startButton :SimpleButton = new SimpleTextButton("Go!");
+        startButton.x = 0;
+        startButton.y = MicrogameConstants.GAME_HEIGHT + 70;
+        startButton.addEventListener(MouseEvent.CLICK, start);
+        this.addChild(startButton);
         
-        this.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
+        var stopButton :SimpleButton = new SimpleTextButton("Stop!");
+        stopButton.x = startButton.width + 2;
+        stopButton.y = MicrogameConstants.GAME_HEIGHT + 70;
+        stopButton.addEventListener(MouseEvent.CLICK, stop);
+        this.addChild(stopButton);
         
         // create weapon buttons
         var loc :Point = new Point(0, MicrogameConstants.GAME_HEIGHT + 5);
@@ -43,7 +61,7 @@ public class MicrogameTestApp extends Sprite
             
             this.addChild(button);
             
-            loc.x += button.width;
+            loc.x += button.width + 2;
         }
         
         // difficulty combo box
@@ -60,6 +78,15 @@ public class MicrogameTestApp extends Sprite
         difficultySelect.addEventListener(Event.CHANGE, onDifficultyChanged, false, 0, true);
         
         this.addChild(difficultySelect);
+        
+        // init player
+        _player = new MicrogamePlayer(new Object());
+        this.addChild(_player);
+        _curWeaponTypeName = WeaponType.NAME_LANTERN;
+        _curWeaponDifficulty = 0;
+        _player.weaponType = new WeaponType(_curWeaponTypeName, _curWeaponDifficulty);
+        
+        this.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
     }
     
     protected function createButtonHandler (weaponTypeName :String) :Function
@@ -67,12 +94,31 @@ public class MicrogameTestApp extends Sprite
         return function (e :Event) :void { changeWeaponTypeName(weaponTypeName); };
     }
     
+    protected function stop (e :Event) :void
+    {
+        if (this.isPlaying) {
+            _player.cancelCurrentGame();
+        }
+    }
+    
+    protected function start (e :Event) :void
+    {
+        if (!this.isPlaying) {
+            _player.beginNextGame();
+        }
+    }
+    
     protected function changeWeaponTypeName (weaponTypeName :String) :void
     {
         if (weaponTypeName != _curWeaponTypeName) {
+            var wasPlaying :Boolean = this.isPlaying;
+            
             _curWeaponTypeName = weaponTypeName;
             _player.weaponType = new WeaponType(_curWeaponTypeName, _curWeaponDifficulty);
-            _player.beginNextGame();
+            
+            if (wasPlaying) {
+                _player.beginNextGame();
+            }
         }
     }
     
@@ -83,16 +129,21 @@ public class MicrogameTestApp extends Sprite
         var newDifficulty :int = difficultySelect.selectedIndex;
         
         if (newDifficulty != _curWeaponDifficulty) {
+            var wasPlaying :Boolean = this.isPlaying;
+            
             _curWeaponDifficulty = newDifficulty;
             _player.weaponType = new WeaponType(_curWeaponTypeName, _curWeaponDifficulty);
-            _player.beginNextGame();
+            
+            if (wasPlaying) {
+                _player.beginNextGame();
+            }
         }
         
     }
     
     protected function onEnterFrame (e :Event) :void
     {
-        if (_player.currentGame.isDone) {
+        if (this.isPlaying && _player.currentGame.isDone) {
             var result :MicrogameResult = _player.currentGame.gameResult;
             // @TODO - do something with result
             
@@ -105,6 +156,11 @@ public class MicrogameTestApp extends Sprite
         // @TSC - apparently this is required to get the skins for the combobox
         // to get compiled in
         DefaultComboBoxSkins;
+    }
+    
+    protected function get isPlaying () :Boolean
+    {
+        return (null != _player.currentGame);
     }
     
     protected var _player :MicrogamePlayer;
