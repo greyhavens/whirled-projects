@@ -55,7 +55,7 @@ public class Snowman extends Sprite
             _pack.getDisplayObjects([ "texture" ], gotTexture);
 
         } else {
-            createScene((new SNOW_TEXTURE()) as Bitmap);
+            createScene();
         }
     }
 
@@ -66,9 +66,12 @@ public class Snowman extends Sprite
     }
 
     protected function createScene (
-        texture :Bitmap, eyeColor :uint = 0x000033, noseColor :uint = 0xFFa900,
+        texture :Bitmap = null, eyeColor :uint = 0x000033, noseColor :uint = 0xFFa900,
         hatColor :* = undefined) :void
     {
+        if (texture == null) {
+            texture = (new SNOW_TEXTURE()) as Bitmap;
+        }
         var sprite :Sprite = new Sprite();
         sprite.x = 75;
         sprite.y = 200;
