@@ -28,6 +28,7 @@ import com.whirled.MobControl;
 import ghostbusters.Content;
 import ghostbusters.Dimness;
 import ghostbusters.Game;
+import ghostbusters.GameController;
 import ghostbusters.HUD;
 
 public class FightPanel extends FrameSprite
@@ -90,6 +91,16 @@ public class FightPanel extends FrameSprite
         }
     }
 
+    public function showGhostDeath () :void
+    {
+        // cancel minigame
+        endFight();
+
+        _ghost.die(function () :void {
+            CommandEvent.dispatch(this, GameController.END_FIGHT);
+        });
+    }
+
     public function showGhostDamage () :void
     {
         if (_ghost != null && _ghost.parent != null) {
@@ -141,6 +152,7 @@ public class FightPanel extends FrameSprite
         if (_minigame != null) {
             if (_minigame.currentGame == null) {
                 _minigame.beginNextGame();
+
             } else if (_minigame.currentGame.isDone) {
                 if (_minigame.currentGame.gameResult.success == MicrogameResult.SUCCESS) {
                     CommandEvent.dispatch(this, FightController.GHOST_MELEE);

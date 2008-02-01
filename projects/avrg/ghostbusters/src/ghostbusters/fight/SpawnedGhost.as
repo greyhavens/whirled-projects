@@ -27,6 +27,11 @@ public class SpawnedGhost extends GhostBase
         });
     }
 
+    public function die (callback :Function) :void
+    {
+        handler.gotoScene(Codes.ST_GHOST_DEFEAT, callback);
+    }
+
     override protected function mediaReady () :void
     {
         // TODO: switch to battle music? :)

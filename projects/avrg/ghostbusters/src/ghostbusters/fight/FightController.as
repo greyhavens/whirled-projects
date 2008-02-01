@@ -42,9 +42,7 @@ public class FightController extends Controller
     {
         panel.showGhostDamage();
         if (model.damageGhost(10)) {
-            panel.endFight();
-
-            CommandEvent.dispatch(panel, GameController.END_FIGHT);
+            panel.showGhostDeath();
         }
     }
 }
