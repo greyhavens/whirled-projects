@@ -57,6 +57,9 @@ public class WinLoseNotification extends SceneObject
         
         _sprite = new Sprite();
         _sprite.addChild(rect);
+        
+        _sprite.mouseEnabled = false;
+        _sprite.mouseChildren = false;
     }
     
     public function animate () :void
@@ -64,7 +67,6 @@ public class WinLoseNotification extends SceneObject
         var anim :SerialTask = new SerialTask();
         anim.addTask(ScaleTask.CreateEaseIn(0.8, 0.8, 1));
         anim.addTask(ScaleTask.CreateEaseOut(3, 3, 2));
-        anim.addTask(new TimedTask(2));
         anim.addTask(new SelfDestructTask());
         
         this.addTask(anim);
