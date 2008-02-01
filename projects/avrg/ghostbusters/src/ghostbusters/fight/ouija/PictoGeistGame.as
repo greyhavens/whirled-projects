@@ -16,6 +16,8 @@ public class PictoGeistGame extends MicrogameMode
     {
         super(difficulty, playerData);
         
+        _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
+        
         // choose a picture to draw
         _picture = Constants.PICTO_PICTURES[Rand.nextIntRange(0, Constants.PICTO_PICTURES.length, Rand.STREAM_COSMETIC)];
     }
@@ -28,7 +30,7 @@ public class PictoGeistGame extends MicrogameMode
     
     override protected function get duration () :Number
     {
-        return Constants.PICTO_GAMETIME;
+        return _settings.gameTime;
     }
     
     override protected function get timeRemaining () :Number
@@ -55,7 +57,7 @@ public class PictoGeistGame extends MicrogameMode
         this.modeSprite.addChild(this.createPicture());
 
         // create the visual timer
-        var boardTimer :BoardTimer = new BoardTimer(Constants.PICTO_GAMETIME);
+        var boardTimer :BoardTimer = new BoardTimer(this.duration);
         this.addObject(boardTimer, this.modeSprite);
 
         // install a failure timer
@@ -78,6 +80,7 @@ public class PictoGeistGame extends MicrogameMode
             
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
+            _gameResult.damageOutput = (success ? _settings.damageOutput : 0);
             
             _done = true;
         }
@@ -194,6 +197,13 @@ public class PictoGeistGame extends MicrogameMode
     protected var _picture :Array;
     protected var _cursor :BasicCursor;
     protected var _drawing :Drawing;
+    protected var _settings :PictoGeistSettings;
+    
+    protected static const DIFFICULTY_SETTINGS :Array = [
+    
+        new PictoGeistSettings(7, 5),
+        
+    ];
 }
 
 }
