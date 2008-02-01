@@ -58,12 +58,6 @@ public class SpawnedGhost extends GhostBase
         _next = ST_DIE;
     }
 
-    override protected function mediaReady () :void
-    {
-        // TODO: switch to battle music? :)
-        super.mediaReady();
-    }
-
     protected var _next :int;
     protected var _callback :Function;
 
