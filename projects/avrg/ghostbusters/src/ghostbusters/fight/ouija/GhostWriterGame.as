@@ -58,6 +58,7 @@ public class GhostWriterGame extends MicrogameMode
             
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
+            _gameResult.damageOutput = (success ? _settings.damageOutput : 0);
             
             _done = true;
         }
@@ -157,10 +158,10 @@ public class GhostWriterGame extends MicrogameMode
     ];
     
     protected static const DIFFICULTY_SETTINGS :Array = [
-         new GhostWriterSettings(1, 7, 3, 0.25),
-         new GhostWriterSettings(7, 9, 2.2, 0.25),
-         new GhostWriterSettings(8, 999, 1.8, 0.15),
-         new GhostWriterSettings(8, 999, 1.4, 0.15),
+         new GhostWriterSettings(1, 7, 3, 0.25, 5),
+         new GhostWriterSettings(7, 9, 2.2, 0.25, 10),
+         new GhostWriterSettings(8, 999, 1.8, 0.15, 15),
+         new GhostWriterSettings(8, 999, 1.4, 0.15, 20),
     ];
 }
 
