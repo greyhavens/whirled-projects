@@ -56,7 +56,6 @@ public class HUD extends FrameSprite
     public function ghostHealthUpdated () :void
     {
         if (_ghostHealthBar == null || _ghostCaptureBar == null) {
-            Game.log.debug("Returning cause: " + _ghostHealthBar + ", " + _ghostCaptureBar);
             return;
         }
         _ghostCaptureBar.visible = false;
@@ -70,7 +69,6 @@ public class HUD extends FrameSprite
     public function ghostZestUpdated () :void
     {
         if (_ghostHealthBar == null || _ghostCaptureBar == null) {
-            Game.log.debug("Returning cause: " + _ghostHealthBar + ", " + _ghostCaptureBar);
             return;
         }
         _ghostHealthBar.visible = false;
