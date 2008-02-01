@@ -81,7 +81,8 @@ public class SeekPanel extends FrameSprite
 
     public function appearGhost () :void
     {
-        _alphaFrames = _ghost.appear(spawnGhost);
+        _appearing = true;
+        _ghost.appear(spawnGhost);
         _ghost.newTarget(new Point(Game.stageSize.width - 300, 100));
         _ghost.mask = null;
     }
@@ -139,14 +140,6 @@ public class SeekPanel extends FrameSprite
             updateLantern(Game.ourPlayerId, p);
         }
 
-        if (_alphaFrames > 1) {
-            // transition dimness factor slowly
-            var alpha :Number = _dimness.getAlpha();
-            _dimness.setAlpha(alpha + (0.8 - alpha)/_alphaFrames);
-            _alphaFrames -= 1;
-
-        }
-
         if (_ghost != null) {
             _ghost.nextFrame();
 
@@ -157,7 +150,7 @@ public class SeekPanel extends FrameSprite
                 }
             }
 
-            if (_alphaFrames == 0 && _zapping == 0 && _ghost.hitTestPoint(p.x, p.y, true)) {
+            if (_appearing == false && _zapping == 0 && _ghost.hitTestPoint(p.x, p.y, true)) {
                 // the player is hovering right over the ghost!
                 CommandEvent.dispatch(this, SeekController.ZAP_GHOST);
             }
@@ -172,7 +165,7 @@ public class SeekPanel extends FrameSprite
 
         _model.transmitLanternPosition(p);
 
-        if (_ghost != null && _alphaFrames == 0 && _ghost.isIdle()) {
+        if (_appearing == false && _ghost != null && _ghost.isIdle()) {
             _model.constructNewGhostPosition(_ghost.getGhostBounds());
         }
     }
@@ -222,8 +215,9 @@ public class SeekPanel extends FrameSprite
 
     protected var _zapping :int;
 
+    protected var _appearing :Boolean;
+
     protected var _ticker :int;
-    protected var _alphaFrames :int = 0;
 
     protected var _dimness :Dimness;
 

@@ -33,6 +33,7 @@ public class FightModel
     public function damageGhost (damage :int) :Boolean
     {
         var health :int = getGhostHealth();
+        Game.log.debug("Doing " + damage + " damage to a ghost with health " + health);
         if (damage > health) {
             return true;
         }

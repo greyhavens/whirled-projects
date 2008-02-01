@@ -45,8 +45,6 @@ public class SeekModel extends Sprite
     {
         Game.control.state.addEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
         Game.control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
-        Game.control.state.addEventListener(AVRGameControlEvent.LEFT_ROOM, leftRoom);
-        Game.control.state.addEventListener(AVRGameControlEvent.ENTERED_ROOM, enteredRoom);
 
         _ghostRandom = new Random(Game.ourRoomId);
         _ghostZest = _ghostMaxZest = 150 + 100 * _ghostRandom.nextNumber();
@@ -126,7 +124,6 @@ public class SeekModel extends Sprite
     protected function propertyChanged (event: AVRGameControlEvent) :void
     {
         if (event.name == Codes.PROP_LANTERN_POS) {
-
             var bits :Array = event.value as Array;
             if (bits != null) {
                 var playerId :int = int(bits[0]);
@@ -149,16 +146,6 @@ public class SeekModel extends Sprite
                 }
             }
         }
-    }
-
-    protected function enteredRoom (event :AVRGameControlEvent) :void
-    {
-        // TODO
-    }
-
-    protected function leftRoom (event :AVRGameControlEvent) :void
-    {
-        // TODO
     }
 
     protected var _panel :SeekPanel;
