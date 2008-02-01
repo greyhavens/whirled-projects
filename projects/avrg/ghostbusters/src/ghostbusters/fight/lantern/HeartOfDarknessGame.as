@@ -110,8 +110,27 @@ public class HeartOfDarknessGame extends MicrogameMode
         
         // create the ghost heart
         _heart = new GhostHeart(_settings.heartRadius, _settings.heartShineTime);
-        _heart.x = Rand.nextIntRange(20, _ghost.width - 20, Rand.STREAM_COSMETIC);
-        _heart.y = Rand.nextIntRange(20, _ghost.width - 20, Rand.STREAM_COSMETIC);
+        
+        // find a suitable location for the heart
+        // randomly generate points on the sprite until we actually
+        // intersect with it. This is a potential infinite loop,
+        // so limit our searches to something reasonable
+        var heartX :Number;
+        var heartY :Number;
+        for (var i :uint = 0; i < 20; ++i) {
+            heartX = Rand.nextIntRange(20, _ghostWidth - 20, Rand.STREAM_COSMETIC);
+            heartY = Rand.nextIntRange(20, _ghostHeight - 20, Rand.STREAM_COSMETIC);
+            
+            var p :Point = _ghost.localToGlobal(new Point(heartX, heartY));
+            
+            if (_ghost.hitTestPoint(p.x, p.y, true)) {
+                break;
+            }
+        }
+        
+        _heart.x = heartX;
+        _heart.y = heartY;
+        
         this.addObject(_heart, _ghost);
         
         // draw the darkness that the lantern will cut through
@@ -194,17 +213,17 @@ public class HeartOfDarknessGame extends MicrogameMode
             1.5),     // ghost scale
             
         new HeartOfDarknessSettings(
-            12,     // game time
+            10,     // game time
             1,      // heart shine time
             40,     // lantern beam radius
             8,     // heart radius
             2.5),     // ghost scale
             
         new HeartOfDarknessSettings(
-            15,     // game time
+            10,     // game time
             1,      // heart shine time
             35,     // lantern beam radius
-            4,     // heart radius
+            8,     // heart radius
             3.5),     // ghost scale
             
     ];
