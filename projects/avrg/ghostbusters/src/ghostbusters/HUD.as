@@ -26,6 +26,11 @@ import ghostbusters.GameController;
 
 public class HUD extends FrameSprite
 {
+    public static const LOOT_LANTERN :int = 0;
+    public static const LOOT_BLASTER :int = 1;
+    public static const LOOT_OUIJA :int = 2;
+    public static const LOOT_POTIONS :int = 3;
+
     public function HUD ()
     {
         _hud = new ClipHandler(ByteArray(new Content.HUD_VISUAL()), handleHUDLoaded);
@@ -52,6 +57,11 @@ public class HUD extends FrameSprite
     {
         _ghostHealthBar.gotoAndStop(
             100 - 100 * Game.fightController.model.getRelativeGhostHealth());
+    }
+
+    public function getWeaponType () :int
+    {
+        return _lootIx;
     }
 
     public function teamUpdated () :void
@@ -124,14 +134,14 @@ public class HUD extends FrameSprite
         _yourHealthBar = MovieClip(findSafely(YOUR_HEALTH_BAR));
         _ghostHealthBar = MovieClip(findSafely(GHOST_HEALTH_BAR));
 
-        _lanternLoot = SimpleButton(findSafely(LOOT_LANTERN));
+        _lanternLoot = SimpleButton(findSafely(EQP_LANTERN));
         _lanternLoot.addEventListener(MouseEvent.CLICK, lanternClick);
 
-        _blasterLoot = SimpleButton(findSafely(LOOT_BLASTER));
-        _ouijaLoot = SimpleButton(findSafely(LOOT_OUIJA));
-        _healLoot = SimpleButton(findSafely(LOOT_HEAL));
+        _blasterLoot = SimpleButton(findSafely(EQP_BLASTER));
+        _ouijaLoot = SimpleButton(findSafely(EQP_OUIJA));
+        _potionsLoot = SimpleButton(findSafely(EQP_POTIONS));
 
-        _loots = [ _lanternLoot, _blasterLoot, _ouijaLoot, _healLoot ];
+        _loots = [ _lanternLoot, _blasterLoot, _ouijaLoot, _potionsLoot ];
         _lootIx = 0;
 
         _inventory = MovieClip(findSafely(INVENTORY));
@@ -146,7 +156,7 @@ public class HUD extends FrameSprite
         safelyAdd(CHOOSE_LANTERN, function (evt :Event) :void { _lootIx = 0; });
         safelyAdd(CHOOSE_BLASTER, function (evt :Event) :void { _lootIx = 1; });
         safelyAdd(CHOOSE_OUIJA, function (evt :Event) :void { _lootIx = 2; });
-        safelyAdd(CHOOSE_HEAL, function (evt :Event) :void { _lootIx = 3; });
+        safelyAdd(CHOOSE_POTIONS, function (evt :Event) :void { _lootIx = 3; });
 
         _visualHud = MovieClip(findSafely(VISUAL_BOX));
     }
@@ -238,7 +248,7 @@ public class HUD extends FrameSprite
     protected var _lanternLoot :SimpleButton;
     protected var _blasterLoot :SimpleButton;
     protected var _ouijaLoot :SimpleButton;
-    protected var _healLoot :SimpleButton;
+    protected var _potionsLoot :SimpleButton;
     protected var _loots :Array;
     protected var _lootIx :int;
 
@@ -257,10 +267,10 @@ public class HUD extends FrameSprite
     protected static const VISUAL_BOX :String = "HUDmain";
     protected static const JUNK_BOX :String = "HUDtopbox";
 
-    protected static const LOOT_LANTERN :String = "equipped_lantern";
-    protected static const LOOT_BLASTER :String = "equipped_blaster";
-    protected static const LOOT_OUIJA :String = "equipped_ouija";
-    protected static const LOOT_HEAL :String = "equipped_heal";
+    protected static const EQP_LANTERN :String = "equipped_lantern";
+    protected static const EQP_BLASTER :String = "equipped_blaster";
+    protected static const EQP_OUIJA :String = "equipped_ouija";
+    protected static const EQP_POTIONS :String = "equipped_potions";
 
     protected static const INVENTORY :String = "inventory1";
     protected static const GHOST_INFO :String = "GhostInfoBox";
@@ -269,7 +279,7 @@ public class HUD extends FrameSprite
     protected static const CHOOSE_LANTERN :String = "choose_lantern";
     protected static const CHOOSE_BLASTER :String = "choose_blaster";
     protected static const CHOOSE_OUIJA :String = "choose_ouija";
-    protected static const CHOOSE_HEAL :String = "choose_heal";
+    protected static const CHOOSE_POTIONS :String = "choose_potions";
 
     protected static const MARGIN_LEFT :int = 22;
     protected static const BORDER_LEFT :int = 25;

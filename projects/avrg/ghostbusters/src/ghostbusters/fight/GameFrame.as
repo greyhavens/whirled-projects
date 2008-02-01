@@ -34,7 +34,7 @@ public class GameFrame extends ClipHandler
         if (_content != null) {
             this.addChild(_content);
             _content.x = INSIDE.left;
-            _content.y = INSIDE.right;
+            _content.y = INSIDE.top;
         }
     }
 

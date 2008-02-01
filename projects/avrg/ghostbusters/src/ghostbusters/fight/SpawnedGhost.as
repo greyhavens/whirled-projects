@@ -18,7 +18,13 @@ public class SpawnedGhost extends GhostBase
         handler.gotoScene(Codes.ST_GHOST_FIGHT, function () :String {
             return Codes.ST_GHOST_FIGHT;
         });
+    }
 
+    public function damaged () :void
+    {
+        handler.gotoScene(Codes.ST_GHOST_REEL, function () :String {
+            return Codes.ST_GHOST_FIGHT;
+        });
     }
 
     override protected function mediaReady () :void

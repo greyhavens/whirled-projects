@@ -33,33 +33,15 @@ public class FightController extends Controller
     {
     }
 
-    public function doSpawnGhost () :void
-    {
-        Game.control.setAvatarState(Codes.ST_PLAYER_FIGHT);
-
-        model.newGhost(100);
-
-        // TODO: this should obviously only be done by one instance
-        Game.control.spawnMob(Codes.MOB_ID_GHOST, "Duchess Von Bobbleton");
-    }
-
-    public function doDespawnGhost () :void
-    {
-        Game.control.despawnMob(Codes.MOB_ID_GHOST);
-    }
-
     public function lanternClicked () :void
     {
         panel.startGame();
     }
 
-    public function handleGhostMelee (score :Number) :void
+    public function handleGhostMelee () :void
     {
-        if (model.damageGhost((int) (score * 10))) {
-            // TODO: something a little more impressive than just a despawn
-            Game.control.despawnMob(Codes.MOB_ID_GHOST);
-
-            // TODO: the panel should probably respond to the state change instead
+        panel.showGhostDamage();
+        if (model.damageGhost(10)) {
             panel.endFight();
 
             CommandEvent.dispatch(panel, GameController.END_FIGHT);

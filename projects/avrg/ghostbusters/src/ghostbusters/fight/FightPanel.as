@@ -28,6 +28,7 @@ import com.whirled.MobControl;
 import ghostbusters.Content;
 import ghostbusters.Dimness;
 import ghostbusters.Game;
+import ghostbusters.HUD;
 
 public class FightPanel extends FrameSprite
 {
@@ -45,7 +46,6 @@ public class FightPanel extends FrameSprite
     {
         return (_minigame && _minigame.hitTestPoint(x, y, shapeFlag)) ||
             (_ghost && _ghost.hitTestPoint(x, y, shapeFlag));
-            
     }
 
     public function startGame () :void
@@ -54,12 +54,30 @@ public class FightPanel extends FrameSprite
             _minigame = new MicrogamePlayer( { } );
             _frame.frameContent(_minigame);
 
-            _minigame.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 0);
-            _minigame.beginNextGame();
+            var selectedWeapon :int = Game.gameController.panel.hud.getWeaponType();
+
+            if (selectedWeapon == HUD.LOOT_LANTERN) {
+                _minigame.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 0);
+
+            } else if (selectedWeapon == HUD.LOOT_BLASTER) {
+                _minigame.weaponType = new WeaponType(WeaponType.NAME_PLASMA, 0);
+
+            } else if (selectedWeapon == HUD.LOOT_OUIJA) {
+                _minigame.weaponType = new WeaponType(WeaponType.NAME_OUIJA, 0);
+
+            } else if (selectedWeapon == HUD.LOOT_POTIONS) {
+                _minigame.weaponType = new WeaponType(WeaponType.NAME_POTIONS, 0);
+
+            } else {
+                Game.log.warning("Eek, unknown weapon: " + selectedWeapon);
+                return;
+            }
 
             this.addChild(_frame);
             _frame.x = (Game.stageSize.width - _frame.width) / 2;
-            _frame.y = (Game.stageSize.height - _frame.height) / 2;
+            _frame.y = (Game.stageSize.height - _frame.height) / 2 - FRAME_DISPLACEMENT_Y;
+
+            _minigame.beginNextGame();
         }
     }
 
@@ -72,12 +90,19 @@ public class FightPanel extends FrameSprite
         }
     }
 
+    public function showGhostDamage () :void
+    {
+        if (_ghost != null && _ghost.parent != null) {
+            _ghost.damaged();
+        }
+    }
+
     override protected function handleAdded (... ignored) :void
     {
         super.handleAdded();
         _battleLoop = Sound(new Content.BATTLE_LOOP_AUDIO()).play();
 
-        _ghost.x = Game.stageSize.width / 2;
+        _ghost.x = Game.stageSize.width - 300;
         _ghost.y = 100;
         this.addChild(_ghost);
 
@@ -111,6 +136,17 @@ public class FightPanel extends FrameSprite
         var players :Array = Game.control.getPlayerIds();
         if (players != null) {
             updateSpotlights(players);
+        }
+
+        if (_minigame != null) {
+            if (_minigame.currentGame == null) {
+                _minigame.beginNextGame();
+            } else if (_minigame.currentGame.isDone) {
+                if (_minigame.currentGame.gameResult.success == MicrogameResult.SUCCESS) {
+                    CommandEvent.dispatch(this, FightController.GHOST_MELEE);
+                }
+                _minigame.beginNextGame();
+            }
         }
     }
 
@@ -165,5 +201,7 @@ public class FightPanel extends FrameSprite
     protected var _stars :Array = [];
 
     protected static const STARS :int = 400;
+
+    protected static const FRAME_DISPLACEMENT_Y :int = 20;
 }
 }

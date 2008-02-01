@@ -9,8 +9,8 @@ public class Content
     [Embed(source="../../rsrc/UI/hud_vertical.swf", mimeType="application/octet-stream")]
     public static const HUD_VISUAL :Class;
 
-    [Embed(source="../../rsrc/Ghosts/Ghost_5.swf", mimeType="application/octet-stream")]
-    public static const GHOST_NOBLE_LADY :Class;
+    [Embed(source="../../rsrc/Ghosts/Ghost_Duchess.swf", mimeType="application/octet-stream")]
+    public static const GHOST_DUCHESS :Class;
 
     [Embed(source="../../rsrc/Ghosts/Ghost_Widow.swf", mimeType="application/octet-stream")]
     public static const GHOST_WIDOW :Class;

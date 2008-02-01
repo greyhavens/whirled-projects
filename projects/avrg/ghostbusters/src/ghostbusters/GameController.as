@@ -40,7 +40,6 @@ public class GameController extends Controller
 
     public function handleEndGame () :void
     {
-        Game.fightController.doDespawnGhost();
         Game.control.deactivateGame();
     }
 
@@ -78,7 +77,7 @@ public class GameController extends Controller
     {
         enterState(GameModel.STATE_FIGHTING);
         Game.control.state.sendMessage(Codes.MSG_GHOST_SPAWN, null);
-        Game.fightController.doSpawnGhost();
+//        Game.fightController.doSpawnGhost();
     }
 
     public function handleEndFight () :void

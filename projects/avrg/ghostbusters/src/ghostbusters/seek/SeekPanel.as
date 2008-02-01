@@ -87,8 +87,7 @@ public class SeekPanel extends FrameSprite
     public function appearGhost () :void
     {
         _alphaFrames = _ghost.appear(spawnGhost);
-        // TODO: this should instead match the true spawn point of the MOB
-        _ghost.newTarget(new Point(Game.stageSize.width/2, 100));
+        _ghost.newTarget(new Point(Game.stageSize.width - 300, 100));
         _ghost.mask = null;
     }
 
@@ -150,7 +149,9 @@ public class SeekPanel extends FrameSprite
             _dimness.setAlpha(alpha + (0.8 - alpha)/_alphaFrames);
             _alphaFrames -= 1;
 
-        } else if (_ghost != null) {
+        }
+
+        if (_ghost != null) {
             _ghost.nextFrame();
 
             if (_zapping > 0) {
@@ -160,7 +161,7 @@ public class SeekPanel extends FrameSprite
                 }
             }
 
-            if (_zapping == 0 && _ghost.hitTestPoint(p.x, p.y, true)) {
+            if (_alphaFrames == 0 && _zapping == 0 && _ghost.hitTestPoint(p.x, p.y, true)) {
                 // the player is hovering right over the ghost!
                 CommandEvent.dispatch(this, SeekController.ZAP_GHOST);
             }
