@@ -84,9 +84,6 @@ public class ClipHandler extends FrameSprite
         if (_clip == null || _lastFrame < 0) {
             return;
         }
-        if (_lastFrame == 391) {
-            Game.log.debug("current: " + _clip.currentFrame);
-        }
         if (_clip.currentFrame == _lastFrame) {
             if (_callback != null) {
                 Game.log.debug("Executing callback for: " + _scene.name);

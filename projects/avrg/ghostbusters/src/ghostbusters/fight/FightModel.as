@@ -19,6 +19,7 @@ public class FightModel
     public function init (panel :FightPanel) :void
     {
         _panel = panel;
+        newGhost(100);
     }
 
     public function shutdown () :void

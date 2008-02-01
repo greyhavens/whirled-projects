@@ -55,6 +55,9 @@ public class HUD extends FrameSprite
 
     public function ghostHealthUpdated () :void
     {
+        if (_ghostHealthBar == null || _ghostCaptureBar == null) {
+            return;
+        }
         _ghostCaptureBar.visible = false;
         _ghostHealthBar.visible = true;
         _ghostHealthBar.gotoAndStop(
@@ -63,6 +66,9 @@ public class HUD extends FrameSprite
 
     public function ghostZestUpdated () :void
     {
+        if (_ghostHealthBar == null || _ghostCaptureBar == null) {
+            return;
+        }
         _ghostHealthBar.visible = false;
         _ghostCaptureBar.visible = true;
         _ghostCaptureBar.gotoAndStop(
