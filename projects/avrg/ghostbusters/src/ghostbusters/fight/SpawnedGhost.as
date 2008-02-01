@@ -4,6 +4,7 @@
 package ghostbusters.fight {
 
 import ghostbusters.Codes;
+import ghostbusters.Game;
 import ghostbusters.GhostBase;
 
 public class SpawnedGhost extends GhostBase
@@ -35,6 +36,9 @@ public class SpawnedGhost extends GhostBase
         } else if (_next == ST_DIE) {
             handler.gotoScene(Codes.ST_GHOST_DEFEAT, _callback);
 
+        } else {
+            Game.log.debug("unknown state: " + _next);
+            handler.gotoScene(Codes.ST_GHOST_FIGHT, play);
         }
     }
 

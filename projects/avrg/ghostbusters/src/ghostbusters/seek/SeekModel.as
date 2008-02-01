@@ -67,6 +67,7 @@ public class SeekModel extends Sprite
 
     public function getRelativeGhostZest () :Number
     {
+        Game.log.debug("Zest returning: " + _ghostZest / _ghostMaxZest);
         return _ghostZest / _ghostMaxZest;
     }
 

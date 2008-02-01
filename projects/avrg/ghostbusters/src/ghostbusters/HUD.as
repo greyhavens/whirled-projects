@@ -155,8 +155,13 @@ public class HUD extends FrameSprite
         _lanternLoot.addEventListener(MouseEvent.CLICK, lanternClick);
 
         _blasterLoot = SimpleButton(findSafely(EQP_BLASTER));
+        _blasterLoot.addEventListener(MouseEvent.CLICK, lanternClick);
+
         _ouijaLoot = SimpleButton(findSafely(EQP_OUIJA));
+        _ouijaLoot.addEventListener(MouseEvent.CLICK, lanternClick);
+
         _potionsLoot = SimpleButton(findSafely(EQP_POTIONS));
+        _potionsLoot.addEventListener(MouseEvent.CLICK, lanternClick);
 
         _loots = [ _lanternLoot, _blasterLoot, _ouijaLoot, _potionsLoot ];
         _lootIx = 0;
