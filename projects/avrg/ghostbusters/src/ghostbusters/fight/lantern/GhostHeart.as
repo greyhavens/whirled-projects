@@ -15,13 +15,14 @@ public class GhostHeart extends SceneObject
         _maxHealth = maxHealth;
         _health = maxHealth;
         
-        var heart :DisplayObject = (ResourceManager.instance.getResource("hod_heart") as ImageResourceLoader).createBitmap();
-        heart.scaleX = (_radius * 2) / heart.width;
-        heart.scaleY = (_radius * 2) / heart.height;
+        var heart :DisplayObject = (ResourceManager.instance.getResource("hod_heart") as SwfResourceLoader).displayRoot;
+        
+        var scale :Number = _radius / HEART_RADIUS_BASE;
+        heart.scaleX = scale;
+        heart.scaleY = scale;
         
         heart.x = -(heart.width / 2);
         heart.y = -(heart.height / 2);
-        
         _sprite = new Sprite();
         _sprite.addChild(heart);
     }
@@ -64,6 +65,8 @@ public class GhostHeart extends SceneObject
     
     protected static const BEAT_SCALE :Number = 1.2;
     protected static const BEAT_DELAY :Number = 0.05;
+    
+    protected static const HEART_RADIUS_BASE :Number = 41;
 }
 
 }
