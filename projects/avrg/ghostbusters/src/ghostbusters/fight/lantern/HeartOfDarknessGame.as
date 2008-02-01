@@ -137,7 +137,7 @@ public class HeartOfDarknessGame extends MicrogameMode
         
         // draw the darkness that the lantern will cut through
         var darkness :Sprite = new Sprite();
-        darkness.graphics.beginFill(0, 0.9);
+        darkness.graphics.beginFill(0, 1);
         darkness.graphics.drawRect(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
         darkness.graphics.endFill();
         darkness.blendMode = BlendMode.LAYER;
@@ -180,7 +180,7 @@ public class HeartOfDarknessGame extends MicrogameMode
         var beamLoc :Vector2 = Vector2.fromPoint(_beam.displayObject.localToGlobal(new Point(_beam.beamCenter.x, _beam.beamCenter.y)));
         
         if (Collision.circlesIntersect(heartLoc, _settings.heartRadius, beamLoc, _settings.lanternBeamRadius)) {
-            trace("collision");
+            //trace("collision");
             
             _heart.offsetHealth(-dt);
             
