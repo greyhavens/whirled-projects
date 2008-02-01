@@ -87,7 +87,6 @@ public class ClickFest extends Sprite
         _ctrl.net.set(key, myIdx);
 
         _myScore += points;
-        _ctrl.net.set("score:" + myIdx
         if (_myScore >= SCORE_TO_WIN) {
             var myId :int = _ctrl.game.getMyId();
             var losers :Array = _ctrl.game.seating.getPlayerIds();
