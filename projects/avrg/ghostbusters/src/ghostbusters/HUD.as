@@ -56,23 +56,29 @@ public class HUD extends FrameSprite
     public function ghostHealthUpdated () :void
     {
         if (_ghostHealthBar == null || _ghostCaptureBar == null) {
+            Game.log.debug("Returning cause: " + _ghostHealthBar + ", " + _ghostCaptureBar);
             return;
         }
         _ghostCaptureBar.visible = false;
         _ghostHealthBar.visible = true;
         _ghostHealthBar.gotoAndStop(
             100 - 100 * Game.fightController.model.getRelativeGhostHealth());
+        Game.log.debug("Moved health bar to: " +
+                       (100 - 100 * Game.fightController.model.getRelativeGhostHealth()));
     }
 
     public function ghostZestUpdated () :void
     {
         if (_ghostHealthBar == null || _ghostCaptureBar == null) {
+            Game.log.debug("Returning cause: " + _ghostHealthBar + ", " + _ghostCaptureBar);
             return;
         }
         _ghostHealthBar.visible = false;
         _ghostCaptureBar.visible = true;
         _ghostCaptureBar.gotoAndStop(
             100 - 100 * Game.seekController.model.getRelativeGhostZest());
+        Game.log.debug("Moved capture bar to: " +
+                       (100 - 100 * Game.seekController.model.getRelativeGhostZest()));
     }
 
     public function getWeaponType () :int
@@ -229,14 +235,14 @@ public class HUD extends FrameSprite
             this.addChild(_hud);
             placeHud();
             teamUpdated();
+
+            _ghostHealthBar.visible = false;
+            _ghostCaptureBar.gotoAndStop(100);
+            _ghostCaptureBar.visible = true;
         }
 
         _yourHealthBar.gotoAndStop(
             100 * Game.gameController.model.getRelativeHealth(Game.ourPlayerId));
-
-        _ghostHealthBar.visible = false;
-        _ghostCaptureBar.gotoAndStop(100);
-        _ghostCaptureBar.visible = true;
 
         for (var ii :int = 0; ii < _loots.length; ii ++) {
             SimpleButton(_loots[ii]).visible = (ii == _lootIx);

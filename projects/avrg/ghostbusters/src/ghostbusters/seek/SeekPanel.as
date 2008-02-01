@@ -83,7 +83,7 @@ public class SeekPanel extends FrameSprite
     {
         _appearing = true;
         _ghost.appear(spawnGhost);
-        _ghost.newTarget(new Point(Game.stageSize.width - 300, 100));
+        _ghost.newTarget(new Point(Game.stageSize.width - 250, 100));
         _ghost.mask = null;
         this.removeChild(_maskLayer);
     }

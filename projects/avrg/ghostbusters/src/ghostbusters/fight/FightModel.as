@@ -59,7 +59,7 @@ public class FightModel
     {
         var max :Number = getGhostMaxHealth();
         if (max > 0) {
-            return getGhostHealth() / max;
+            return Math.max(0, Math.min(1, getGhostHealth() / max);
         }
         return 0;
     }

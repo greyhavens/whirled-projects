@@ -55,31 +55,31 @@ public class FightPanel extends FrameSprite
             _minigame = new MicrogamePlayer( { } );
             _frame.frameContent(_minigame);
 
-            var selectedWeapon :int = Game.gameController.panel.hud.getWeaponType();
-
-            if (selectedWeapon == HUD.LOOT_LANTERN) {
-                _minigame.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 0);
-
-            } else if (selectedWeapon == HUD.LOOT_BLASTER) {
-                _minigame.weaponType = new WeaponType(WeaponType.NAME_PLASMA, 0);
-
-            } else if (selectedWeapon == HUD.LOOT_OUIJA) {
-                _minigame.weaponType = new WeaponType(WeaponType.NAME_OUIJA, 0);
-
-            } else if (selectedWeapon == HUD.LOOT_POTIONS) {
-                _minigame.weaponType = new WeaponType(WeaponType.NAME_POTIONS, 0);
-
-            } else {
-                Game.log.warning("Eek, unknown weapon: " + selectedWeapon);
-                return;
-            }
-
             this.addChild(_frame);
             _frame.x = (Game.stageSize.width - _frame.width) / 2;
             _frame.y = (Game.stageSize.height - _frame.height) / 2 - FRAME_DISPLACEMENT_Y;
-
-            _minigame.beginNextGame();
         }
+
+        var selectedWeapon :int = Game.gameController.panel.hud.getWeaponType();
+
+        if (selectedWeapon == HUD.LOOT_LANTERN) {
+            _minigame.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 0);
+
+        } else if (selectedWeapon == HUD.LOOT_BLASTER) {
+            _minigame.weaponType = new WeaponType(WeaponType.NAME_PLASMA, 0);
+
+        } else if (selectedWeapon == HUD.LOOT_OUIJA) {
+            _minigame.weaponType = new WeaponType(WeaponType.NAME_OUIJA, 0);
+
+        } else if (selectedWeapon == HUD.LOOT_POTIONS) {
+            _minigame.weaponType = new WeaponType(WeaponType.NAME_POTIONS, 0);
+
+        } else {
+            Game.log.warning("Eek, unknown weapon: " + selectedWeapon);
+            return;
+        }
+
+        _minigame.beginNextGame();
     }
 
     public function endFight () :void
@@ -113,7 +113,7 @@ public class FightPanel extends FrameSprite
         super.handleAdded();
         _battleLoop = Sound(new Content.BATTLE_LOOP_AUDIO()).play();
 
-        _ghost.x = Game.stageSize.width - 300;
+        _ghost.x = Game.stageSize.width - 250;
         _ghost.y = 100;
         this.addChild(_ghost);
 
