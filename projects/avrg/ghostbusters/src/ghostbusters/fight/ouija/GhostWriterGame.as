@@ -22,8 +22,6 @@ public class GhostWriterGame extends MicrogameMode
             });
             
         _word = validWords[Rand.nextIntRange(0, validWords.length, Rand.STREAM_COSMETIC)] as String;
-         
-        _timeRemaining = { value: this.duration };
     }
     
     override public function begin () :void
@@ -39,12 +37,12 @@ public class GhostWriterGame extends MicrogameMode
     
     override protected function get timeRemaining () :Number
     {
-        return (_done ? 0 : _timeRemaining.value);
+        return (_done ? 0 : GameTimer.timeRemaining);
     }
     
     override public function get isDone () :Boolean
     {
-        return _done;
+        return (_done && !WinLoseNotification.isPlaying);
     }
     
     override public function get gameResult () :MicrogameResult
@@ -55,6 +53,9 @@ public class GhostWriterGame extends MicrogameMode
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
+            GameTimer.uninstall();
+            WinLoseNotification.create(success, this.modeSprite);
+            
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
             
@@ -68,24 +69,10 @@ public class GhostWriterGame extends MicrogameMode
         _board = new Board();
         this.addObject(_board, this.modeSprite);
 
-        // create the visual timer
-        var boardTimer :BoardTimer = new BoardTimer(this.duration);
-        this.addObject(boardTimer, _board.displayObjectContainer);
-
         // progress text
         //_progressText = new ProgressText(_word.toLocaleUpperCase());
         //_board.displayObjectContainer.addChild(_progressText);
         _board.displayObjectContainer.addChild(_statusText);
-
-        // install a failure timer
-        var timerObj :AppObject = new AppObject();
-        timerObj.addTask(new SerialTask(
-            new AnimateValueTask(_timeRemaining, 0, this.duration),
-            new FunctionTask(
-                function () :void { gameOver(false); }
-            )));
-
-        this.addObject(timerObj)
         
         // create the cursor
         _cursor = new Cursor(_board.interactiveObject);
@@ -93,6 +80,13 @@ public class GhostWriterGame extends MicrogameMode
         _cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
 
         _cursor.selectionTargetIndex = Board.stringToSelectionIndex(_word.charAt(_nextWordIndex));
+
+        // create the visual timer
+        var boardTimer :BoardTimer = new BoardTimer(this.duration);
+        this.addObject(boardTimer, _board.displayObjectContainer);
+
+        // install a failure timer
+        GameTimer.install(this.duration, function () :void { gameOver(false) });
     }
     
     override public function update (dt :Number) :void
@@ -129,7 +123,6 @@ public class GhostWriterGame extends MicrogameMode
     protected var _cursor :Cursor;
     protected var _board :Board;
     protected var _settings :GhostWriterSettings;
-    protected var _timeRemaining :Object;
 
     protected var _statusText :StatusText = new StatusText();
 

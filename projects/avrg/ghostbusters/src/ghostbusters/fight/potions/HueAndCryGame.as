@@ -22,8 +22,6 @@ public class HueAndCryGame extends MicrogameMode
         super(difficulty, playerData);
         
         _targetColor = Colors.getRandomSecondary();
-         
-        _timeRemaining = { value: this.duration };
     }
     
     override public function begin () :void
@@ -45,12 +43,12 @@ public class HueAndCryGame extends MicrogameMode
     
     override protected function get timeRemaining () :Number
     {
-        return (_done ? 0 : _timeRemaining.value);
+        return (_done ? 0 : GameTimer.timeRemaining);
     }
     
     override public function get isDone () :Boolean
     {
-        return _done;
+        return (_done && !WinLoseNotification.isPlaying);
     }
     
     override public function get gameResult () :MicrogameResult
@@ -61,6 +59,9 @@ public class HueAndCryGame extends MicrogameMode
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
+            GameTimer.uninstall();
+            WinLoseNotification.create(success, this.modeSprite);
+            
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
             
@@ -132,14 +133,7 @@ public class HueAndCryGame extends MicrogameMode
         this.addObject(boardTimer, this.modeSprite);
 
         // install a failure timer
-        var timerObj :AppObject = new AppObject();
-        timerObj.addTask(new SerialTask(
-            new AnimateValueTask(_timeRemaining, 0, this.duration),
-            new FunctionTask(
-                function () :void { gameOver(false); }
-            )));
-
-        this.addObject(timerObj)
+        GameTimer.install(this.duration, function () :void { gameOver(false) });
     }
     
     protected function createDropperClickHandler (dropper :Dropper) :Function
@@ -179,7 +173,6 @@ public class HueAndCryGame extends MicrogameMode
     
     protected var _done :Boolean;
     protected var _gameResult :MicrogameResult;
-    protected var _timeRemaining :Object;
     protected var _targetColor :uint;
     
     protected var _beakerColor :uint;

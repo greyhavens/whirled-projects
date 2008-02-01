@@ -36,12 +36,12 @@ public class WinLoseNotification extends SceneObject
         _success = success;
         
         var label :TextField = new TextField();
-        label.text = (success ? "Success!" : "Failure!");
+        label.text = (success ? "You Win!" : "You Lose!");
         label.textColor = (success ? 0x0000FF : 0xFF0000);
         label.autoSize = TextFieldAutoSize.CENTER;
         
         var rect :Sprite = new Sprite();
-        rect.graphics.beginFill(success ? 0xFFFFFF : 0x000000);
+        rect.graphics.beginFill(success ? 0xFFFFFF : 0xFFFF00);
         rect.graphics.drawRect(0, 0, label.width + 2, label.height + 2);
         rect.graphics.endFill();
         

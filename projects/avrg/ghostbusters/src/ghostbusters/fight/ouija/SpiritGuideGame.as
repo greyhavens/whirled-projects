@@ -19,8 +19,6 @@ public class SpiritGuideGame extends MicrogameMode
         
         // randomly generate a selection to move to
         _selection = Board.getRandomSelectionString();
-         
-        _timeRemaining = { value: this.duration };
     }
     
     override public function begin () :void
@@ -36,12 +34,12 @@ public class SpiritGuideGame extends MicrogameMode
     
     override protected function get timeRemaining () :Number
     {
-        return (_done ? 0 : _timeRemaining.value);
+        return (_done ? 0 : GameTimer.timeRemaining);
     }
     
     override public function get isDone () :Boolean
     {
-        return _done;
+        return (_done && !WinLoseNotification.isPlaying);
     }
     
     override public function get gameResult () :MicrogameResult
@@ -52,6 +50,9 @@ public class SpiritGuideGame extends MicrogameMode
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
+            GameTimer.uninstall();
+            WinLoseNotification.create(success, this.modeSprite);
+            
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
             
@@ -74,14 +75,7 @@ public class SpiritGuideGame extends MicrogameMode
         board.displayObjectContainer.addChild(statusText);
 
         // install a failure timer
-        var timerObj :AppObject = new AppObject();
-        timerObj.addTask(new SerialTask(
-            new AnimateValueTask(_timeRemaining, 0, this.duration),
-            new FunctionTask(
-                function () :void { gameOver(false); }
-            )));
-
-        this.addObject(timerObj)
+        GameTimer.install(this.duration, function () :void { gameOver(false) });
         
         // create the cursor
         var validTransforms :Array = MOUSE_TRANSFORMS[_settings.transformDifficulty];
@@ -104,7 +98,6 @@ public class SpiritGuideGame extends MicrogameMode
     protected var _done :Boolean;
     protected var _gameResult :MicrogameResult;
     protected var _selection :String;
-    protected var _timeRemaining :Object;
     protected var _settings :SpiritGuideSettings;
     
     protected static const MOUSE_TRANSFORMS :Array = [

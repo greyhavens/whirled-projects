@@ -23,8 +23,6 @@ public class HeartOfDarknessGame extends MicrogameMode
         super(difficulty, playerData);
         
         _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
-         
-        _timeRemaining = { value: this.duration };
     }
     
     override public function begin () :void
@@ -46,12 +44,12 @@ public class HeartOfDarknessGame extends MicrogameMode
     
     override protected function get timeRemaining () :Number
     {
-        return (_done ? 0 : _timeRemaining.value);
+        return GameTimer.timeRemaining;
     }
     
     override public function get isDone () :Boolean
     {
-        return _done;
+        return (_done && !WinLoseNotification.isPlaying);
     }
     
     override public function get gameResult () :MicrogameResult
@@ -62,6 +60,9 @@ public class HeartOfDarknessGame extends MicrogameMode
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
+            GameTimer.uninstall();
+            WinLoseNotification.create(success, this.modeSprite);
+            
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
             
@@ -150,14 +151,7 @@ public class HeartOfDarknessGame extends MicrogameMode
         this.addObject(boardTimer, this.modeSprite);
 
         // install a failure timer
-        var timerObj :AppObject = new AppObject();
-        timerObj.addTask(new SerialTask(
-            new AnimateValueTask(_timeRemaining, 0, this.duration),
-            new FunctionTask(
-                function () :void { gameOver(false); }
-            )));
-
-        this.addObject(timerObj)
+        GameTimer.install(this.duration, function () :void { gameOver(false) });
         
     }
     
@@ -176,11 +170,17 @@ public class HeartOfDarknessGame extends MicrogameMode
     {
         super.update(dt);
         
+        if (_done) {
+            return;
+        }
+        
         // is the lantern beam over the heart?
         var heartLoc :Vector2 = Vector2.fromPoint(_heart.displayObject.localToGlobal(new Point(0, 0)));
         var beamLoc :Vector2 = Vector2.fromPoint(_beam.displayObject.localToGlobal(new Point(_beam.beamCenter.x, _beam.beamCenter.y)));
         
         if (Collision.circlesIntersect(heartLoc, _settings.heartRadius, beamLoc, _settings.lanternBeamRadius)) {
+            trace("collision");
+            
             _heart.offsetHealth(-dt);
             
             if (_heart.health <= 0) {
@@ -193,7 +193,6 @@ public class HeartOfDarknessGame extends MicrogameMode
     
     protected var _done :Boolean;
     protected var _gameResult :MicrogameResult;
-    protected var _timeRemaining :Object;
     
     protected var _beam :LanternBeam;
     protected var _heart :GhostHeart;

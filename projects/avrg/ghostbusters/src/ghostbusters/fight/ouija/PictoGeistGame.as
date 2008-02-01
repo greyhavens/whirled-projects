@@ -18,8 +18,6 @@ public class PictoGeistGame extends MicrogameMode
         
         // choose a picture to draw
         _picture = Constants.PICTO_PICTURES[Rand.nextIntRange(0, Constants.PICTO_PICTURES.length, Rand.STREAM_COSMETIC)];
-         
-        _timeRemaining = { value: this.duration };
     }
     
     override public function begin () :void
@@ -35,12 +33,12 @@ public class PictoGeistGame extends MicrogameMode
     
     override protected function get timeRemaining () :Number
     {
-        return (_done ? 0 : _timeRemaining.value);
+        return (_done ? 0 : GameTimer.timeRemaining);
     }
     
     override public function get isDone () :Boolean
     {
-        return _done;
+        return (_done && !WinLoseNotification.isPlaying);
     }
     
     override public function get gameResult () :MicrogameResult
@@ -61,14 +59,7 @@ public class PictoGeistGame extends MicrogameMode
         this.addObject(boardTimer, this.modeSprite);
 
         // install a failure timer
-        var timerObj :AppObject = new AppObject();
-        timerObj.addTask(new SerialTask(
-            new AnimateValueTask(_timeRemaining, 0, this.duration),
-            new FunctionTask(
-                function () :void { gameOver(false); }
-            )));
-
-        this.addObject(timerObj);
+        GameTimer.install(this.duration, function () :void { gameOver(false) });
         
         // create the drawing and cursor
         _drawing = new Drawing(this.modeSprite, _picture[0], _picture[_picture.length - 1]);
@@ -82,6 +73,9 @@ public class PictoGeistGame extends MicrogameMode
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
+            GameTimer.uninstall();
+            WinLoseNotification.create(success, this.modeSprite);
+            
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
             
@@ -92,6 +86,10 @@ public class PictoGeistGame extends MicrogameMode
     override public function update (dt :Number) :void
     {
         super.update(dt);
+        
+        if (_done) {
+            return;
+        }
         
         if (_drawing.isDone) {
             this.calculateScoreAndEndGame();
@@ -196,7 +194,6 @@ public class PictoGeistGame extends MicrogameMode
     protected var _picture :Array;
     protected var _cursor :BasicCursor;
     protected var _drawing :Drawing;
-    protected var _timeRemaining :Object;
 }
 
 }

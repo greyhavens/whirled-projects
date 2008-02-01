@@ -16,8 +16,6 @@ public class SpiritShellGame extends MicrogameMode
         super(difficulty, playerData);
         
         _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
-         
-        _timeRemaining = { value: this.duration };
     }
     
     override public function begin () :void
@@ -39,12 +37,12 @@ public class SpiritShellGame extends MicrogameMode
     
     override protected function get timeRemaining () :Number
     {
-        return (_done ? 0 : _timeRemaining.value);
+        return (_done ? 0 : GameTimer.timeRemaining);
     }
     
     override public function get isDone () :Boolean
     {
-        return _done;
+        return (_done && !WinLoseNotification.isPlaying);
     }
     
     override public function get gameResult () :MicrogameResult
@@ -55,6 +53,9 @@ public class SpiritShellGame extends MicrogameMode
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
+            GameTimer.uninstall();
+            WinLoseNotification.create(success, this.modeSprite);
+            
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
             
@@ -111,14 +112,7 @@ public class SpiritShellGame extends MicrogameMode
         this.addObject(boardTimer, this.modeSprite);
 
         // install a failure timer
-        var timerObj :AppObject = new AppObject();
-        timerObj.addTask(new SerialTask(
-            new AnimateValueTask(_timeRemaining, 0, this.duration),
-            new FunctionTask(
-                function () :void { gameOver(false); }
-            )));
-
-        this.addObject(timerObj)
+        GameTimer.install(this.duration, function () :void { gameOver(false) });
     }
     
     protected function moveGhost (ghost :Ghost) :void
@@ -177,6 +171,10 @@ public class SpiritShellGame extends MicrogameMode
     override public function update (dt :Number) :void
     {
         super.update(dt);
+        
+        if (_done) {
+            return;
+        }
         
         var thisGameMode :SpiritShellGame = this; // store this for getEctoCollision() local function
         
@@ -237,7 +235,6 @@ public class SpiritShellGame extends MicrogameMode
     
     protected var _done :Boolean = false;
     protected var _gameResult :MicrogameResult;
-    protected var _timeRemaining :Object;
     protected var _settings :SpiritShellSettings;
     
     protected static var g_assetsLoaded :Boolean;

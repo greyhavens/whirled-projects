@@ -7,6 +7,7 @@ import com.whirled.contrib.core.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.geom.Rectangle;
 
 public class GhostHeart extends SceneObject
 {
@@ -22,11 +23,15 @@ public class GhostHeart extends SceneObject
         heart.scaleX = scale;
         heart.scaleY = scale;
         
-        heart.x = -(heart.width / 2);
-        heart.y = -(heart.height / 2);
-        _sprite = new Sprite();
+        heart.x = -(heart.width);
+        heart.y = -(heart.height);
         
+        _sprite = new Sprite();
         _sprite.addChild(heart);
+        
+        //var heartBounds :Rectangle = heart.getBounds(_sprite);
+        //heart.x = -heartBounds.x - heart.width / 2;
+        //heart.y = -heartBounds.y - heart.height / 2;
     }
     
     public function offsetHealth (offset :Number) :void
