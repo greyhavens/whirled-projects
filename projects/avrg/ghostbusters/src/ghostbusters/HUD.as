@@ -55,8 +55,18 @@ public class HUD extends FrameSprite
 
     public function ghostHealthUpdated () :void
     {
+        _ghostCaptureBar.visible = false;
+        _ghostHealthBar.visible = true;
         _ghostHealthBar.gotoAndStop(
             100 - 100 * Game.fightController.model.getRelativeGhostHealth());
+    }
+
+    public function ghostZestUpdated () :void
+    {
+        _ghostHealthBar.visible = false;
+        _ghostCaptureBar.visible = true;
+        _ghostCaptureBar.gotoAndStop(
+            100 - 100 * Game.seekController.model.getRelativeGhostZest());
     }
 
     public function getWeaponType () :int
@@ -133,6 +143,7 @@ public class HUD extends FrameSprite
 
         _yourHealthBar = MovieClip(findSafely(YOUR_HEALTH_BAR));
         _ghostHealthBar = MovieClip(findSafely(GHOST_HEALTH_BAR));
+        _ghostCaptureBar = MovieClip(findSafely(GHOST_CAPTURE_BAR));
 
         _lanternLoot = SimpleButton(findSafely(EQP_LANTERN));
         _lanternLoot.addEventListener(MouseEvent.CLICK, lanternClick);
@@ -200,7 +211,10 @@ public class HUD extends FrameSprite
 
     override protected function handleFrame (... ignored) :void
     {
-        if (_hud.parent == null && _visualHud != null) {
+        if (_visualHud == null) {
+            return;
+        }
+        if (_hud.parent == null) {
             this.addChild(_hud);
             placeHud();
             teamUpdated();
@@ -209,7 +223,9 @@ public class HUD extends FrameSprite
         _yourHealthBar.gotoAndStop(
             100 * Game.gameController.model.getRelativeHealth(Game.ourPlayerId));
 
-        _ghostHealthBar.gotoAndStop(100);
+        _ghostHealthBar.visible = false;
+        _ghostCaptureBar.gotoAndStop(100);
+        _ghostCaptureBar.visible = true;
 
         for (var ii :int = 0; ii < _loots.length; ii ++) {
             SimpleButton(_loots[ii]).visible = (ii == _lootIx);
@@ -243,6 +259,7 @@ public class HUD extends FrameSprite
     protected var _playerNamePanels :Array;
 
     protected var _ghostHealthBar :MovieClip;
+    protected var _ghostCaptureBar :MovieClip;
     protected var _yourHealthBar :MovieClip;
 
     protected var _lanternLoot :SimpleButton;
@@ -262,7 +279,9 @@ public class HUD extends FrameSprite
     protected static const PLAYER_NAME_PANEL :String = "PlayerPanel";
     protected static const PLAYER_HEALTH_BAR :String = "PlayerHealth";
     protected static const YOUR_HEALTH_BAR :String = "YourHealth";
+
     protected static const GHOST_HEALTH_BAR :String = "GhostHealthBar";
+    protected static const GHOST_CAPTURE_BAR :String = "GhostCaptureBar";
 
     protected static const VISUAL_BOX :String = "HUDmain";
     protected static const JUNK_BOX :String = "HUDtopbox";
@@ -270,7 +289,7 @@ public class HUD extends FrameSprite
     protected static const EQP_LANTERN :String = "equipped_lantern";
     protected static const EQP_BLASTER :String = "equipped_blaster";
     protected static const EQP_OUIJA :String = "equipped_ouija";
-    protected static const EQP_POTIONS :String = "equipped_potions";
+    protected static const EQP_POTIONS :String = "equipped_heal";
 
     protected static const INVENTORY :String = "inventory1";
     protected static const GHOST_INFO :String = "GhostInfoBox";
@@ -279,7 +298,7 @@ public class HUD extends FrameSprite
     protected static const CHOOSE_LANTERN :String = "choose_lantern";
     protected static const CHOOSE_BLASTER :String = "choose_blaster";
     protected static const CHOOSE_OUIJA :String = "choose_ouija";
-    protected static const CHOOSE_POTIONS :String = "choose_potions";
+    protected static const CHOOSE_POTIONS :String = "choose_heal";
 
     protected static const MARGIN_LEFT :int = 22;
     protected static const BORDER_LEFT :int = 25;

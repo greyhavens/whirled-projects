@@ -71,12 +71,7 @@ public class SeekPanel extends FrameSprite
 
     public function ghostZestUpdated () :void
     {
-//        _ghost.setSpeed(_model.getGhostZest());
-
-        var lantern :Lantern = _lanterns[Game.ourPlayerId];
-        if (lantern != null) {
-            lantern.setGhostZest(_model.getGhostZestFraction());
-        }
+        Game.gameController.panel.hud.ghostZestUpdated();
     }
 
     public function ghostZapped () :void
@@ -101,6 +96,7 @@ public class SeekPanel extends FrameSprite
         super.handleAdded();
         _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
         _ghost.hidden();
+        Game.gameController.panel.hud.ghostZestUpdated();
     }
 
     override protected function handleRemoved (... ignored) :void

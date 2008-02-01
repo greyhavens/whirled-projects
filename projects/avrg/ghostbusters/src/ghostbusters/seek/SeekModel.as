@@ -67,7 +67,7 @@ public class SeekModel extends Sprite
         _panel.ghostZestUpdated();
     }
 
-    public function getGhostZestFraction () :Number
+    public function getRelativeGhostZest () :Number
     {
         return _ghostZest / _ghostMaxZest;
     }
