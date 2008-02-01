@@ -222,7 +222,7 @@ public class HeartOfDarknessGame extends MicrogameMode
         new HeartOfDarknessSettings(
             10,     // game time
             1,      // heart shine time
-            35,     // lantern beam radius
+            30,     // lantern beam radius
             8,     // heart radius
             3.5),     // ghost scale
             
