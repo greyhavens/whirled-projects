@@ -65,6 +65,7 @@ public class HeartOfDarknessGame extends MicrogameMode
             
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
+            _gameResult.damageOutput = (success ? _settings.damageOutput : 0);
             
             _done = true;
         }
@@ -210,21 +211,27 @@ public class HeartOfDarknessGame extends MicrogameMode
             1,      // heart shine time
             50,     // lantern beam radius
             15,     // heart radius
-            1.5),     // ghost scale
+            1.5,     // ghost scale
+            5      // damage output
+        ),     
             
         new HeartOfDarknessSettings(
             10,     // game time
             1,      // heart shine time
             40,     // lantern beam radius
             8,     // heart radius
-            2.5),     // ghost scale
+            2.5,     // ghost scale
+            10    // damage output
+        ),
             
         new HeartOfDarknessSettings(
             9,     // game time
             1,      // heart shine time
             30,     // lantern beam radius
             6,     // heart radius
-            3.5),     // ghost scale
+            3.5,     // ghost scale
+            15     // damage output
+        ),
             
     ];
     
