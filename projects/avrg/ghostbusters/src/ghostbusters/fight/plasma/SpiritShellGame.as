@@ -58,6 +58,7 @@ public class SpiritShellGame extends MicrogameMode
             
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
+            _gameResult.damageOutput = (success ? _settings.damageOutput : 0);
             
             _done = true;
         }
@@ -249,7 +250,8 @@ public class SpiritShellGame extends MicrogameMode
             new NumRange(0, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
             false,  // ghostBlink
             150,    // plasmaSpeed
-            0.1     // plasmaFireDelay
+            0.1,     // plasmaFireDelay
+            5       // damage output
         ),
         
         new SpiritShellSettings(
@@ -260,7 +262,8 @@ public class SpiritShellGame extends MicrogameMode
             new NumRange(0.3, 1, Rand.STREAM_COSMETIC),   // ghostWanderDelay
             false,  // ghostBlink
             150,    // plasmaSpeed
-            0.1     // plasmaFireDelay
+            0.1,     // plasmaFireDelay
+            10       // damage output
         ),
         
         new SpiritShellSettings(
@@ -271,7 +274,8 @@ public class SpiritShellGame extends MicrogameMode
             new NumRange(0.1, 0.1, Rand.STREAM_COSMETIC),   // ghostWanderDelay
             true,  // ghostBlink
             150,    // plasmaSpeed
-            0.1     // plasmaFireDelay
+            0.1,     // plasmaFireDelay
+            15       // damage output
         ),
         
     ];

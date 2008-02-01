@@ -55,6 +55,7 @@ public class SpiritGuideGame extends MicrogameMode
             
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
+            _gameResult.damageOutput = (success ? _settings.damageOutput : 0);
             
             _done = true;
         }
@@ -127,10 +128,10 @@ public class SpiritGuideGame extends MicrogameMode
     ];
     
     protected static const DIFFICULTY_SETTINGS :Array = [
-        new SpiritGuideSettings(8, 0),
-        new SpiritGuideSettings(6, 1),
-        new SpiritGuideSettings(6, 2),
-        new SpiritGuideSettings(4, 2),
+        new SpiritGuideSettings(8, 0, 10),
+        new SpiritGuideSettings(6, 1, 15),
+        new SpiritGuideSettings(6, 2, 20),
+        new SpiritGuideSettings(4, 2, 25),
     ];
 }
 

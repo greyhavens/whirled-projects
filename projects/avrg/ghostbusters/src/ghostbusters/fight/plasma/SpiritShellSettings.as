@@ -4,6 +4,16 @@ import com.whirled.contrib.core.util.NumRange;
     
 public class SpiritShellSettings
 {
+    public var gameTime :Number;
+    public var ectoplasmCount :uint;
+    public var ghostSpeed :Number;
+    public var ghostWanderDist :NumRange;
+    public var ghostWanderDelay :NumRange;
+    public var ghostBlink :Boolean;
+    public var plasmaSpeed :Number;
+    public var plasmaFireDelay :Number;
+    public var damageOutput :Number;
+    
     public function SpiritShellSettings (
         gameTime :Number, 
         ectoplasmCount :uint, 
@@ -12,7 +22,8 @@ public class SpiritShellSettings
         ghostWanderDelay :NumRange,
         ghostBlink :Boolean,
         plasmaSpeed :Number, 
-        plasmaFireDelay :Number)
+        plasmaFireDelay :Number,
+        damageOutput :Number)
     {
         this.gameTime = gameTime;
         this.ectoplasmCount = ectoplasmCount;
@@ -22,16 +33,8 @@ public class SpiritShellSettings
         this.ghostBlink = ghostBlink;
         this.plasmaSpeed = plasmaSpeed;
         this.plasmaFireDelay = plasmaFireDelay;
+        this.damageOutput = damageOutput;
     }
-    
-    public var gameTime :Number;
-    public var ectoplasmCount :uint;
-    public var ghostSpeed :Number;
-    public var ghostWanderDist :NumRange;
-    public var ghostWanderDelay :NumRange;
-    public var ghostBlink :Boolean;
-    public var plasmaSpeed :Number;
-    public var plasmaFireDelay :Number;
 
 }
 

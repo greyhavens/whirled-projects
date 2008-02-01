@@ -21,6 +21,8 @@ public class HueAndCryGame extends MicrogameMode
     {
         super(difficulty, playerData);
         
+        _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length)];
+        
         _targetColor = Colors.getRandomSecondary();
     }
     
@@ -38,7 +40,7 @@ public class HueAndCryGame extends MicrogameMode
     
     override protected function get duration () :Number
     {
-        return GAME_TIME;
+        return _settings.gameTime;
     }
     
     override protected function get timeRemaining () :Number
@@ -64,6 +66,7 @@ public class HueAndCryGame extends MicrogameMode
             
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
+            _gameResult.healthOutput = (success ? _settings.healthOutput : 0);
             
             _done = true;
         }
@@ -172,6 +175,7 @@ public class HueAndCryGame extends MicrogameMode
     }
     
     protected var _done :Boolean;
+    protected var _settings :HueAndCrySettings;
     protected var _gameResult :MicrogameResult;
     protected var _targetColor :uint;
     
@@ -182,7 +186,11 @@ public class HueAndCryGame extends MicrogameMode
     
     protected static var g_assetsLoaded :Boolean;
     
-    protected static const GAME_TIME :Number = 6;
+    protected static const DIFFICULTY_SETTINGS :Array = [
+    
+        new HueAndCrySettings(6, 5),
+        
+    ];
     
 }
 
