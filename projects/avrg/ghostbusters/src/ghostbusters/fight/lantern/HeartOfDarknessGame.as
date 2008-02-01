@@ -178,8 +178,9 @@ public class HeartOfDarknessGame extends MicrogameMode
         
         // is the lantern beam over the heart?
         var heartLoc :Vector2 = Vector2.fromPoint(_heart.displayObject.localToGlobal(new Point(0, 0)));
+        var beamLoc :Vector2 = Vector2.fromPoint(_beam.displayObject.localToGlobal(new Point(_beam.beamCenter.x, _beam.beamCenter.y)));
         
-        if (Collision.circlesIntersect(heartLoc, _settings.heartRadius, _beam.beamCenter, _settings.lanternBeamRadius)) {
+        if (Collision.circlesIntersect(heartLoc, _settings.heartRadius, beamLoc, _settings.lanternBeamRadius)) {
             _heart.offsetHealth(-dt);
             
             if (_heart.health <= 0) {
