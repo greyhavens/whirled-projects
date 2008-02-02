@@ -21,7 +21,7 @@ public class HueAndCryGame extends MicrogameMode
     {
         super(difficulty, playerData);
         
-        _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length)];
+        _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
         
         _targetColor = Colors.getRandomSecondary();
     }
