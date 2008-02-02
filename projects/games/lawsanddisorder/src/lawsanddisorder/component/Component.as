@@ -63,6 +63,18 @@ public class Component extends Sprite
         // abstract method
     }
     
+    /**
+     * Bring a child component above other siblings.     */
+    public function bringToFront (child :DisplayObject) :void
+    {
+    	if (!contains(child)) {
+    		_ctx.log("WTF component doesn't contain child in bringToFrong");
+    		return;
+    	}
+    	var topChild :DisplayObject = getChildAt(numChildren-1);
+    	swapChildren(child, topChild);
+    }
+    
     /** Main game logic */
     protected var _ctx :Context;
     

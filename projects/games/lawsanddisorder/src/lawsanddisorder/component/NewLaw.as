@@ -24,7 +24,7 @@ public class NewLaw extends CardContainer
      */
     override protected function initDisplay () :void
     {
-        // end turn button
+        // make law button
         makeLawButton = new TextField();
         makeLawButton.text = "create";
         makeLawButton.x = 350;
@@ -47,12 +47,7 @@ public class NewLaw extends CardContainer
      */
     override protected function updateDisplay () :void
     {
-        // position the cards horizontally and display each
-        for (var i :int = 0; i < cards.length; i++) {
-            var card :Card = cards[i];
-            card.x = i * CARD_SPACING_X;
-            card.y = 20;
-        }
+    	arrangeCards();
     }
     
     /**
@@ -143,19 +138,16 @@ public class NewLaw extends CardContainer
         for (var i :int = 0; i < cards.length; i++) {
             cardArray[i] = cards[i];
         }
-        removeCards(cardArray);
+        
+        // do not distribute this data to other players
+        removeCards(cardArray, false);
+        
+        // tell the other players that this player's hand is smaller now.
+        _ctx.board.player.hand.setDistributedHandData();
         
         var law :Law = new Law(_ctx, _ctx.board.laws.numLaws);
         law.addCards(cardArray);
         return law;
-    }
-    
-    /**
-     * Do nothing when the new law contents changed; tell opponents only when the new law is done.
-     */
-    override public function setDistributedData () :void
-    {
-        // do nothing
     }
     
     /**
@@ -172,14 +164,27 @@ public class NewLaw extends CardContainer
     /**
      * Shift cards out of the way as another card is being dragged over them.
      */
-    override public function shiftCards (point :Point) :void
+    override public function arrangeCards (point :Point = null) :void
     {
+    	var i :int;
+    	var card :Card;
+    	
+    	// if point is not supplied, just arrange cards normally
+    	if (point == null) {
+	        for (i = 0; i < cards.length; i++) {
+	            card = cards[i];
+	            card.x = i * CARD_SPACING_X;
+	            card.y = 20;
+	        }
+	        return;
+    	}
+        
         // localize the point to our coordinate map
         var localPoint :Point = globalToLocal(point);
         
         // position the cards horizontally and display each
-        for (var i :int = 0; i < cards.length; i++) {
-            var card :Card = cards[i];
+        for (i = 0; i < cards.length; i++) {
+            card = cards[i];
             // if the card would overlap the point or be to its right, shift it right
             if ((i+1) * CARD_SPACING_X > localPoint.x) {
                 card.x = (i+1) * CARD_SPACING_X;
@@ -227,9 +232,9 @@ public class NewLaw extends CardContainer
         for (var i :int = 0; i < cards.length; i++) {
             cardArray[i] = cards[i];
         }
-        // remove them from here, add them to hand
-        removeCards(cardArray);        
-        _ctx.board.player.hand.addCards(cardArray);
+        // remove them from here, add them to hand - do not tell other players
+        removeCards(cardArray, false);
+        _ctx.board.player.hand.addCards(cardArray, false);
     }
     
     /** Can the player make a new law right now? 

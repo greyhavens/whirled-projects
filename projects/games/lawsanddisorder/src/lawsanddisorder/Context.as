@@ -76,31 +76,6 @@ public class Context
     	_control.net.sendMessage(type, value);
     }
     
-    /**
-     * Wrapper for retrieving data values from the WhirledGameControl     */
-    public function get (id :String, index :int = -1) :*
-    {
-    	if (index != -1) {
-    	   return _control.net.get(id, index);
-    	}
-    	else {
-    		return _control.net.get(id);
-    	}
-    }
-    
-    /**
-     * Wrapper for setting data values with the WhirledGameControl
-     * TODO are these the right types?  what about index default?     */
-    public function set (id :String, value :*, index :int = -1) :void
-    {
-    	if (index != -1) {
-    	   _control.net.set(id, value, index);
-    	}
-    	else {
-    		_control.net.set(id, value);
-    	}
-    }
-    
     protected var _control :WhirledGameControl;
     protected var _state :State;
     protected var _board :Board;

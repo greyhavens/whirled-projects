@@ -58,7 +58,7 @@ public class Deck extends Component
         }
         
         // create the deck of cards
-        // 18 subjects 10 verbs 10 objects 6 whens
+        // 18 subjects 9 verbs 11 objects 5 whens
         for (var i :int = 0; i < deckMultiplyer; i++) {
 	        addNewCards(3, Card.SUBJECT, Job.JUDGE);
 	        addNewCards(3, Card.SUBJECT, Job.THIEF);
@@ -68,16 +68,16 @@ public class Deck extends Component
 	        addNewCards(3, Card.SUBJECT, Job.SCIENTIST);
 	        addNewCards(3, Card.VERB, Card.GIVES);
 	        addNewCards(3, Card.VERB, Card.LOSES);
-	        addNewCards(4, Card.VERB, Card.GETS);
+	        addNewCards(3, Card.VERB, Card.GETS);
 	        addNewCards(2, Card.OBJECT, Card.CARD, 1);
 	        addNewCards(2, Card.OBJECT, Card.CARD, 2);
 	        addNewCards(2, Card.OBJECT, Card.MONIE, 1);
 	        addNewCards(2, Card.OBJECT, Card.MONIE, 2);
-	        addNewCards(1, Card.OBJECT, Card.MONIE, 3);
+	        addNewCards(2, Card.OBJECT, Card.MONIE, 3);
 	        addNewCards(1, Card.OBJECT, Card.MONIE, 4);
 	        addNewCards(2, Card.WHEN, Card.START_TURN);
-	        addNewCards(2, Card.WHEN, Card.CREATE_LAW);
 	        addNewCards(2, Card.WHEN, Card.USE_ABILITY);
+            addNewCards(1, Card.WHEN, Card.CREATE_LAW);
         }
     }
     
@@ -88,7 +88,7 @@ public class Deck extends Component
     public function setup () :void
     {
         shuffle();
-        _ctx.set(DECK_DATA, cards);
+        _ctx.eventHandler.setData(DECK_DATA, cards);
     }
     
     /** 
@@ -98,7 +98,7 @@ public class Deck extends Component
     {
         var cardIndex :int = cards.pop();
         updateDisplay();
-        _ctx.set(DECK_DATA, cards);
+        _ctx.eventHandler.setData(DECK_DATA, cards);
         if (cards.length == 5) {
         	_ctx.broadcast("Only 5 cards left in the deck!");
         }
@@ -135,10 +135,11 @@ public class Deck extends Component
 
     /**
      * Called when the deck contents change on the server.
+     * TODO can one assume, after the first turn, that a card was drawn?
      */
     protected function deckChanged (event :PropertyChangedEvent) :void
     {
-        cards = _ctx.get(DECK_DATA) as Array;
+        cards = _ctx.eventHandler.getData(DECK_DATA) as Array;
         updateDisplay();
     }
     
@@ -147,8 +148,12 @@ public class Deck extends Component
      */
     protected function jobsChanged (event :PropertyChangedEvent) :void
     {
-        // TODO what about when index != -1?
-        playerJobs = _ctx.get(JOBS_DATA) as Array;
+        if (event.index != -1) {
+        	playerJobs[event.index] = event.newValue;
+        }
+        else {
+            playerJobs = _ctx.eventHandler.getData(JOBS_DATA) as Array;
+        }
     }
     
     /**
@@ -245,7 +250,7 @@ public class Deck extends Component
         }
 
         // assign new job to player
-        playerJobs = _ctx.get(JOBS_DATA) as Array;
+        playerJobs = _ctx.eventHandler.getData(JOBS_DATA) as Array;
         if (playerJobs == null) {
             _ctx.log("WTF playerjobs is null when swapping jobs?");
             return;
@@ -253,14 +258,14 @@ public class Deck extends Component
         playerJobs[player.id] = job.id;
         job.player = player;
         player.job = job;
-        _ctx.set(JOBS_DATA, job.id, player.id);
+        _ctx.eventHandler.setData(JOBS_DATA, job.id, player.id);
         
         // job was on another player; assign old job to other player
         if (oldJob != null && oldPlayer != null) {
             playerJobs[oldPlayer.id] = oldJob.id;
             oldJob.player = oldPlayer;
             oldPlayer.job = oldJob;
-            _ctx.set(JOBS_DATA, oldJob.id, oldPlayer.id);
+            _ctx.eventHandler.setData(JOBS_DATA, oldJob.id, oldPlayer.id);
             _ctx.broadcast(player.playerName + " swapped jobs with " + oldPlayer.playerName);
         }
         else if (oldPlayer == null) {

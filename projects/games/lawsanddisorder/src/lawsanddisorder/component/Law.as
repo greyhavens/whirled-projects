@@ -30,14 +30,17 @@ public class Law extends CardContainer
         // draw the bg
         graphics.clear();
         graphics.beginFill(0x999955);
-        graphics.drawRect(0, 0, 380, 30);
+        graphics.drawRect(0, 0, 380, 25);
         graphics.endFill();
         
-        title.width = 400;
+        lawText = new TextField();
+        lawText.width = 400;
+        lawText.height = 25;
+        addChild(lawText);
         
         cardDisplayArea = new Sprite();
         cardDisplayArea.graphics.beginFill(0x999955);
-        cardDisplayArea.graphics.drawRect(0, 0, 400, 80);
+        cardDisplayArea.graphics.drawRect(0, 0, 380, 80);
         cardDisplayArea.y = -25;
         addEventListener(MouseEvent.ROLL_OVER, rollOver);
         cardDisplayArea.addEventListener(MouseEvent.ROLL_OUT, rollOut);
@@ -60,7 +63,7 @@ public class Law extends CardContainer
             card.x = i * CARD_SPACING_X;
             card.y = 10;
         }
-        title.text = text;
+        lawText.text = text;
         
         // draw a border, highlighted or not
         if (_highlighted) {
@@ -69,7 +72,7 @@ public class Law extends CardContainer
         else {
             graphics.lineStyle(5, 0x999955);
         }
-        graphics.drawRect(2.5, 2.5, 375, 25);
+        graphics.drawRect(2.5, 2.5, 375, 20);
     }
     
     /**
@@ -262,18 +265,21 @@ public class Law extends CardContainer
     /**
      * Called when the law contents change; tell the server about the new card set
      */
-    override public function setDistributedData () :void
+    override protected function setDistributedData () :void
     {
-        _ctx.set(Laws.LAWS_DATA, getSerializedCards(), _id);
+        _ctx.eventHandler.setData(Laws.LAWS_DATA, getSerializedCards(), _id);
     }
     
     /**
-     * Display or hide the cards area.
+     * Display or hide the cards area.  If displaying, automatically hide it again after a
+     * delay.
      */
     public function set showCards (value :Boolean) :void
     {
         if (value && !contains(cardDisplayArea)) {
+        	_ctx.board.laws.bringToFront(this);
             addChild(cardDisplayArea);
+            EventHandler.invokeLater(3, function () :void {showCards = false;});
         }
         else if (!value && contains(cardDisplayArea)) {
             removeChild(cardDisplayArea);
@@ -339,5 +345,8 @@ public class Law extends CardContainer
     
     /** Index of this law in the list of laws */
     private var _id :int;
+    
+    /** Contains the compacted text version of the law */
+    protected var lawText :TextField
 }
 }

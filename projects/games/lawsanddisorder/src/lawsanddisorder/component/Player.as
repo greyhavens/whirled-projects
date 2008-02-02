@@ -165,7 +165,7 @@ public class Player extends Component
     		_ctx.log("WTF Player " + this + " would end up with negative monies!");
     		moniesNum = 0;
     	}
-        _ctx.set(MONIES_DATA, monies + moniesNum, id);
+        _ctx.eventHandler.setData(MONIES_DATA, monies + moniesNum, id);
     }
     
     /**
@@ -210,7 +210,6 @@ public class Player extends Component
     
     /**
      * Remove cards from this player and give them to another
-     * TODO: animations!
      */
     public function giveCardsTo (cardsToGive :Array, toPlayer :Player) :void
     {

@@ -8,12 +8,12 @@ import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.util.HashMap;
 import com.whirled.WhirledGameControl;
-import com.whirled.GameSubControl;
 import lawsanddisorder.component.*;
 
 /**
  * Manages modes and ui logic, eg dragging cards & selecting opponents.
  * TODO this class is overgrown; can some of it be moved?
+ * TODO use MODE_MYTURN or MODE_NOTTURN instead of _ctx.control.game.isMyTurn()
  */
 public class State
 {
@@ -88,19 +88,16 @@ public class State
      */
     public function cardMouseDown (event :MouseEvent) :void
     {
-        if (!event.target is Card) {
-            _ctx.log("WTF Did not mousedown on a card.");
-            return;
-        }
         var card :Card = Card(event.target);
         
         if (card.cardContainer != _ctx.board.player.hand && card.cardContainer != _ctx.board.newLaw) {
             return;
+            _ctx.log("card not on hand or newlaw");
         }
 
         // on your turn by default you can drag cards in hand or newlaw around
         if (mode == MODE_DEFAULT) {
-        	if (!interactMode) {
+        	if (_performingAction) {
                 return;
             }
             startDragging(card);
@@ -142,10 +139,97 @@ public class State
         card.startDrag(true);
         card.addEventListener(MouseEvent.MOUSE_MOVE, draggingCard);
         
-        card.cardContainer.removeCards(new Array(card));
+        card.cardContainer.removeCards(new Array(card), false);
         card.x = _ctx.board.mouseX - 25;
         card.y = _ctx.board.mouseY - 10;
         _ctx.board.addChild(card);
+    }
+    
+    /**
+     * Called while dragging card.
+     * // TODO highlight verbs in verb exchange mode
+     */
+    protected function draggingCard (event :MouseEvent) :void
+    {
+        var card :Card = Card(event.target);
+        
+        // Shift cards around in hand and new law
+        if (mode == MODE_DEFAULT) {
+            var targetContainer :CardContainer = CardContainer(getParent(card.dropTarget, CardContainer));
+            if (targetContainer == null) {
+                return;
+            }
+            if (targetContainer != _ctx.board.player.hand && targetContainer != _ctx.board.newLaw) {
+                return;
+            }
+            // don't rearrange new law if it isn't your turn
+            if (!_ctx.control.game.isMyTurn() && targetContainer == _ctx.board.newLaw) {
+            	return;
+            }
+            
+            // arrange cards to make room for the new card
+            var mousePosition :Point = new Point(event.stageX, event.stageY);
+            targetContainer.arrangeCards(mousePosition);
+            EventHandler.invokeLater(3, function () :void {targetContainer.arrangeCards();});
+            return;
+        }
+        
+        if (mode == MODE_EXCHANGE_SUBJECT || mode == MODE_EXCHANGE_VERB || MODE_MOVE_WHEN) {
+            var targetLaw :Law = Law(getParent(card.dropTarget, Law));
+            
+            if (targetLaw == null) {
+                return;
+            }
+            if (mode == MODE_EXCHANGE_VERB && targetLaw.hasGivesTarget()) {
+                return;
+            }
+            if (mode == MODE_MOVE_WHEN && targetLaw.when != -1) {
+                return;
+            }
+            targetLaw.showCards = true;
+        }
+        
+        
+        if (mode == MODE_EXCHANGE_SUBJECT) {
+            // get card this is hovering over
+            var targetSubjectCard :Card = Card(getParent(card.dropTarget, Card));
+            if (targetSubjectCard == null || !(targetSubjectCard.cardContainer is Law) 
+                || targetSubjectCard.group != Card.SUBJECT) {
+                return;
+            }
+            // if it's a verb/subject in a law, highlight it
+            targetSubjectCard.highlighted = true;
+            EventHandler.invokeLater(3, function () :void {targetSubjectCard.highlighted = false});
+        }
+        
+        else if (mode == MODE_EXCHANGE_VERB) {
+            // get card this is hovering over
+            var targetVerbCard :Card = Card(getParent(card.dropTarget, Card));
+            if (targetVerbCard == null || !(targetVerbCard.cardContainer is Law) 
+                || targetVerbCard.group != Card.VERB) {
+                return;
+            }
+            
+            // is the verb a gives followed by a subject?
+            var targetVerbLaw :Law = Law(targetVerbCard.cardContainer);
+            if (targetVerbLaw.hasGivesTarget()) {
+                return;
+            }
+            
+            // if it's a verb/subject in a law, highlight it
+            targetVerbCard.highlighted = true;
+            EventHandler.invokeLater(3, function () :void {targetVerbCard.highlighted = false});
+        }
+        
+        else if (mode == MODE_MOVE_WHEN) {
+            // get the law this is hovering over
+            var whenlessLaw :Law = Law(getParent(card.dropTarget, Law));
+            if (whenlessLaw == null || whenlessLaw.when != -1) {
+                return;
+            }
+            // if it's a valid law to drop on, highlight it
+            whenlessLaw.highlighted = true;
+        }
     }
     
     /**
@@ -153,23 +237,19 @@ public class State
      */
     public function cardMouseUp (event :MouseEvent) :void
     {
-        if (!event.target is Card) {
-            _ctx.log("WTF Did not click on a card.");
-            return;
-        }
         var card :Card = Card(event.target);
-            
         if (!card.dragging) {
             return;
         }
-    
+
         card.stopDrag();
         card.removeEventListener(MouseEvent.MOUSE_MOVE, draggingCard);
     
         // normally you can drag cards onto new laws, onto job, or rearrange in your hand.
         if (mode == MODE_DEFAULT) {
             
-            if (!interactMode) {
+            if (_performingAction) {
+            	_ctx.log("WTF dropping card while performing an action");
                 returnCard(card);
                 return;
             }
@@ -184,6 +264,11 @@ public class State
             
             // drop card in a new law
             if (_ctx.board.newLaw.isTarget(dropTarget)) {
+                if (!_ctx.control.game.isMyTurn()) {
+                    _ctx.notice("It's not your turn.");
+                    returnCard(card);
+                    return;
+                }
                 if (!_ctx.board.newLaw.enabled) {
                     _ctx.notice("You've already made a law this turn.");
                     returnCard(card);
@@ -191,7 +276,15 @@ public class State
                 }
                 _ctx.board.removeCard(card);
                 var newLawCardIndex :int = _ctx.board.newLaw.getCardIndexByPoint(mousePosition);
-                _ctx.board.newLaw.addCards(new Array(card), newLawCardIndex);
+                if (card.cardContainer == _ctx.board.newLaw) {
+                	// moved card around inside newlaw, do not distribute
+                	_ctx.board.newLaw.addCards(new Array(card), false, newLawCardIndex);
+                }
+                else {
+                	// added card from hand to newlaw, do not distribute
+                    card.cardContainer.removeCards(new Array(card), false);
+                    _ctx.board.newLaw.addCards(new Array(card), false, newLawCardIndex);
+                }
                 return;
             }
             
@@ -199,7 +292,15 @@ public class State
             else if (_ctx.board.player.hand.isTarget(dropTarget)) {
                 _ctx.board.removeCard(card);
                 var handCardIndex :int = _ctx.board.player.hand.getCardIndexByPoint(mousePosition);
-                _ctx.board.player.hand.addCards(new Array(card), handCardIndex);
+                if (card.cardContainer == _ctx.board.player.hand) {
+                	// moved card around inside hand, do not distribute
+                    _ctx.board.player.hand.addCards(new Array(card), false, handCardIndex);
+                }
+                else {
+                	// moved card from newlaw to hand, do not distribute
+                    card.cardContainer.removeCards(new Array(card), false);
+                    _ctx.board.player.hand.addCards(new Array(card), false, handCardIndex);
+                }
                 return;
             }
             
@@ -208,6 +309,11 @@ public class State
             // TODO can this logic be moved to job?
             else if (_ctx.board.player.job.isTarget(dropTarget)) {
                 if (card.group == Card.SUBJECT) {
+	                if (!_ctx.control.game.isMyTurn()) {
+	                    _ctx.notice("It's not your turn.");
+	                    returnCard(card);
+	                    return;
+	                }
                     if (!_ctx.board.player.jobEnabled) {
                         _ctx.notice("You already changed jobs once this turn.");
                         returnCard(card);
@@ -215,7 +321,8 @@ public class State
                     }
                     _ctx.board.player.jobEnabled = false;
                     _ctx.board.removeCard(card);
-                    _ctx.board.deck.discardPile.addCards(new Array(card));
+                    // TODO distribute or remove discard pile
+                    _ctx.board.deck.discardPile.addCards(new Array(card), false);
                     var job :Job = _ctx.board.deck.getJob(card.type);
                     _ctx.board.deck.switchJobs(job, _ctx.board.player);
                     return;
@@ -254,7 +361,7 @@ public class State
             }
             _ctx.board.removeCard(card);
             targetLaw.removeCards(new Array(targetCard));
-            targetLaw.addCards(new Array(card), targetIndex);
+            targetLaw.addCards(new Array(card), true, targetIndex);
             _ctx.board.player.hand.addCards(new Array(targetCard));
             mode = MODE_DEFAULT;
             modeListener();
@@ -278,99 +385,17 @@ public class State
     }
     
     /**
-     * Return card to its card container when failing to drag it to a new object.
+     * Return card to its card container when failing to drag it to a new object.  No need
+     * to redistribute data as the card never really left.
      */
     protected function returnCard (card :Card) :void
     {
         if (card.cardContainer == null) {
-            _ctx.log("WTF null parent when returning card.");
+            _ctx.log("WTF null parent when returning card - going to hand instead.");
             card.cardContainer = _ctx.board.player.hand;
         }
         _ctx.board.removeCard(card);
-        card.cardContainer.addCards(new Array(card));
-    }
-    
-    /**
-     * Called while dragging card.
-     * // TODO highlight verbs in verb exchange mode
-     */
-    protected function draggingCard (event :MouseEvent) :void
-    {
-        var card :Card = Card(event.target);
-        
-        // Shift cards around in hand and new law
-        if (mode == MODE_DEFAULT) {
-            var targetContainer :CardContainer = CardContainer(getParent(card.dropTarget, CardContainer));
-            if (targetContainer == null) {
-                return;
-            }
-            if (targetContainer != _ctx.board.player.hand && targetContainer != _ctx.board.newLaw) {
-                return;
-            }
-            
-            var mousePosition :Point = new Point(event.stageX, event.stageY);
-            // TODO reset this shift when exiting targetContainer
-            targetContainer.shiftCards(mousePosition);
-            return;
-        }
-        
-        if (mode == MODE_EXCHANGE_SUBJECT || mode == MODE_EXCHANGE_VERB || MODE_MOVE_WHEN) {
-            var targetLaw :Law = Law(getParent(card.dropTarget, Law));
-            
-            if (targetLaw == null) {
-                return;
-            }
-            if (mode == MODE_EXCHANGE_VERB && targetLaw.hasGivesTarget()) {
-                return;
-            }
-            if (mode == MODE_MOVE_WHEN && targetLaw.when != -1) {
-                return;
-            }
-            // TODO hide other law cards here.
-            targetLaw.showCards = true;
-        }
-        
-        
-        if (mode == MODE_EXCHANGE_SUBJECT) {
-            // get card this is hovering over
-            var targetSubjectCard :Card = Card(getParent(card.dropTarget, Card));
-            if (targetSubjectCard == null || !(targetSubjectCard.cardContainer is Law) 
-                || targetSubjectCard.group != Card.SUBJECT) {
-                return;
-            }
-            // if it's a verb/subject in a law, highlight it
-            // TODO set a timer to unhighlight
-            targetSubjectCard.highlighted = true;
-        }
-        
-        else if (mode == MODE_EXCHANGE_VERB) {
-            // get card this is hovering over
-            var targetVerbCard :Card = Card(getParent(card.dropTarget, Card));
-            if (targetVerbCard == null || !(targetVerbCard.cardContainer is Law) 
-                || targetVerbCard.group != Card.VERB) {
-                return;
-            }
-            
-            // is the verb a gives followed by a subject?
-            var targetVerbLaw :Law = Law(targetVerbCard.cardContainer);
-            if (targetVerbLaw.hasGivesTarget()) {
-                return;
-            }
-            
-            // if it's a verb/subject in a law, highlight it
-            // TODO set a timer to unhighlight
-            targetVerbCard.highlighted = true;
-        }
-        
-        else if (mode == MODE_MOVE_WHEN) {
-            // get the law this is hovering over
-            var whenlessLaw :Law = Law(getParent(card.dropTarget, Law));
-            if (whenlessLaw == null || whenlessLaw.when != -1) {
-                return;
-            }
-            // if it's a valid law to drop on, highlight it
-            whenlessLaw.highlighted = true;
-        }
+        card.cardContainer.addCards(new Array(card), false);
     }
     
     /**
@@ -428,25 +453,18 @@ public class State
     
     /**
      * Setup to wait for the player to select an opponent.  Listener function will be called 
-     * when an opponent is selected. 
-     * TODO fire some delayed reminder message or forced random selection using Util.invokeLater
-     *      or Timer
+     * when an opponent is selected.  Fire a delayed reminder message after some time.
      */
     public function selectOpponent (listener :Function) :void
     {
-    	//Util.invokeLater(2000, function () :void {
-        //    remind or force random selection
-        //});
-        //var timer :Timer = new Timer(longestDelay + 1500, 1);
-        //timer.addEventListener(TimerEvent.TIMER, boardAnimationComplete);
-        //timer.start();
-        
         _ctx.notice("Please select an opponent.");
         if (mode != MODE_DEFAULT) {
             _ctx.log("WTF mode is not default when selecting opponent.  Continuing...");
         }
         modeListener = listener;
         mode = MODE_SELECT_OPPONENT;
+        
+        EventHandler.invokeLater(10, function () :void {_ctx.notice("We're waiting for you!  Please select an opponent.");});
     }
     
     /**
@@ -643,32 +661,6 @@ public class State
         deselectCards();
         deselectOpponent();
         deselectLaw();
-    }
-    
-    /**
-     * Game is over; calculate the scores and send a message to everyone.
-     * Assumes player seats may have changed during the game and rebuilds playerIds array.
-     * TODO go one more round after the deck is empty?
-     * TODO payout isn't working as expected - CASCADING PAYOUT in a 3p game with scores (12, 6, 8)
-     *      awards 10 flow to each player and reports 49% players did worse in FlowAwardedEvent.
-     * TODO move to another class
-     */
-    public function endGame () :void
-    {
-    	var playerIds :Array = new Array;
-    	var playerScores :Array = new Array;
-    	
-    	for each (var player :Player in _ctx.board.players) {
-    		playerIds.push(player.serverId);
-    		playerScores.push(player.monies);
-    		_ctx.log("score for player " + player.id + " (server id: " + player.serverId + ") is " + player.monies);
-    	}
-    	if (playerIds.length < 3) {
-    		_ctx.control.game.endGameWithScores(playerIds, playerScores, GameSubControl.WINNERS_TAKE_ALL);
-    	}
-    	else {
-    	   _ctx.control.game.endGameWithScores(playerIds, playerScores, GameSubControl.CASCADING_PAYOUT);
-    	}
     }
     
     /** Array of currently selected cards */

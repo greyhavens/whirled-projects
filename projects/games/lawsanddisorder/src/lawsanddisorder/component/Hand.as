@@ -65,20 +65,10 @@ public class Hand extends CardContainer
     
     /**
      * Rearrange hand when cards are added or subtracted
-     * TODO what if there are too many cards to fit?
      */
     override protected function updateDisplay () :void
     {
-        // position the cards horizontally and display each
-        for (var i :int = 0; i < cards.length; i++) {
-            var card :Card = cards[i];
-            if (card == null) {
-                _ctx.log("WTF card null in update display!:" + i);
-                return;
-            }
-            card.x = i * CARD_SPACING_X;
-            card.y = 10;
-        }
+    	arrangeCards();
     }
     
     /**
@@ -98,19 +88,26 @@ public class Hand extends CardContainer
         addCards(cardArray);
         
         // if the deck is ever empty after drawing from it, game ends
+        // TODO move this to deck and go one more round
         if (_ctx.board.deck.numCards == 0) {
-        	_ctx.state.endGame();
+        	_ctx.eventHandler.endGame();
         }
     }
     
     /**
      * Called whenever distributed card data needs updating
-     * TODO can this be protected?
-     * TODO should we be telling opponents when a card leaves hand because player is dragging it?
      */
-    override public function setDistributedData () :void
+    override protected function setDistributedData () :void
     {
-        _ctx.set(HAND_DATA, getSerializedCards(), player.id);
+        _ctx.eventHandler.setData(HAND_DATA, getSerializedCards(), player.id);
+    }
+    
+    /**
+     * Public function to allow setting distributed hand data
+     * TODO make setDistributedData public or find another solution     */
+    public function setDistributedHandData () :void
+    {
+    	setDistributedData();
     }
     
     /**
@@ -126,15 +123,29 @@ public class Hand extends CardContainer
     
     /**
      * Shift cards out of the way as another card is being dragged over them.
+     * TODO what if there are too many cards to fit?
      */
-    override public function shiftCards (point :Point) :void
+    override public function arrangeCards (point :Point = null) :void
     {
+    	var i :int;
+    	var card :Card;
+    	
+    	// if no point is supplied, arrange as normal.
+    	if (point == null) {
+	        for (i = 0; i < cards.length; i++) {
+	            card = cards[i];
+	            card.x = i * CARD_SPACING_X;
+	            card.y = 10;
+	        }
+	        return;
+    	}
+    	
         // localize the point to our coordinate map
         var localPoint :Point = globalToLocal(point);
         
         // position the cards horizontally and display each
-        for (var i :int = 0; i < cards.length; i++) {
-            var card :Card = cards[i];
+        for (i = 0; i < cards.length; i++) {
+            card = cards[i];
             // if the card would overlap the point or be to its right, shift it right
             if ((i+1) * CARD_SPACING_X > localPoint.x) {
                 card.x = (i+1) * CARD_SPACING_X;

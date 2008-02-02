@@ -20,8 +20,27 @@ public class CardContainer extends Component
     }
     
     /**
-     * Add a card to the hand and rearrange cards
-     * TODO make public? There are too many addCards(new Array(card)) around.
+     * Add each card present in the array to this container, then update the display
+     * and synchronize the distributed data.  If insertIndex is provided, add them to a specific
+     * point in the array.
+     */
+    public function addCards (cardArray :Array, distribute :Boolean = true, insertIndex :int = -1) :void
+    {
+        if (insertIndex < 0 || insertIndex > cards.length) {
+            insertIndex = cards.length;
+        }
+        for (var i :int = 0; i < cardArray.length; i++) {
+            var card :Card = cardArray[i];
+            addCard(card, insertIndex + i);
+        }
+        if (distribute) {
+            setDistributedData();
+        }
+        updateDisplay();
+    }
+    
+    /**
+     * Add a card to the hand, but do not set distributed data or update the display.
      */
     protected function addCard (card :Card, insertIndex :int = -1) :void
     {
@@ -35,30 +54,7 @@ public class CardContainer extends Component
             cardIds.splice(insertIndex, 0, card.id);
             cards.splice(insertIndex, 0, card);
             card.cardContainer = this;
-        }
-    }
-    
-    /**
-     * Add each card present in the array to this container, then update the display
-     * and synchronize the distributed data.  If insertIndex is provided, add them to a specific
-     * point in the array.
-     * TODO test insertIndex for multiple cards
-     */
-    public function addCards (cardArray :Array, insertIndex :int = -1) :void
-    {
-        if (cardArray == null) {
-            _ctx.log("WTF card array null in addCards");
-            return;
-        }
-        if (insertIndex < 0 || insertIndex > cards.length) {
-            insertIndex = cards.length;
-        }
-        for (var i :int = 0; i < cardArray.length; i++) {
-            var card :Card = cardArray[i];
-            addCard(card, insertIndex + i);
-        }
-        updateDisplay();
-        setDistributedData();
+        }     
     }
     
     /**
@@ -70,7 +66,23 @@ public class CardContainer extends Component
     }
     
     /**
-     * Remove a card and rearrange the display
+     * Remove each card present in the array from this container, then update the display
+     * and synchronize the distributed data.
+     */
+    public function removeCards (cardArray :Array, distribute :Boolean = true) :void
+    {
+        for (var i :int = 0; i < cardArray.length; i++) {
+            var card :Card = cardArray[i];
+            removeCard(card);
+        }
+        if (distribute) {
+            setDistributedData();
+        }
+        updateDisplay();
+    }
+    
+    /**
+     * Remove a card, but do not set distributed data or update the display
      */
     protected function removeCard (card :Card) :void
     {
@@ -85,36 +97,19 @@ public class CardContainer extends Component
     }
     
     /**
-     * Remove each card present in the array from this container, then update the display
-     * and synchronize the distributed data.
+     * Abstract method for telling other players about a change to the distributed data. 
+     * Called after adding/removing cards.
      */
-    public function removeCards (cardArray :Array) :void
-    {
-        if (cardArray == null) {
-            _ctx.log("WTF card array null in removeCards");
-            return;
-        }
-        for (var i :int = 0; i < cardArray.length; i++) {
-            var card :Card = cardArray[i];
-            removeCard(card);
-        }
-        updateDisplay();
-        setDistributedData();
-    }
-    
-    /**
-     * Abstract method for setting distributed data.  Called after adding/removing cards.
-     */
-    public function setDistributedData () :void
+    protected function setDistributedData () :void
     {
         // do nothing
     }
     
     /**
-     * Abstract method for visually shifting cards around a global point when a card is dragged 
-     * over them.
+     * Abstract method for visually shifting cards.  If a (global) point is provided, shift
+     * the cards around the point to make room for the card being dragged over them.
      */
-    public function shiftCards (point :Point) :void
+    public function arrangeCards (point :Point = null) :void
     {
         // do nothing
     }
@@ -128,27 +123,46 @@ public class CardContainer extends Component
     }
     
     /**
-     * Set cards from a serialized list from other players
-     * TODO make this MUCH more efficient
+     * Set cards from a serialized list from other players, then update the card display
+     * TODO don't set serialized cards if this is the player who changed them
      */
     public function setSerializedCards (serializedCards :Object) :void
     {
-        if (serializedCards == null) {
-            _ctx.log("WTF serialized cards are null!");
-            return;
-        }
-        // remove all cards then readd them
-        // won't trigger redisplay or synchronize
-        var oldLength :int = cards.length;
-        for (var oldIndex :int = 0; oldIndex < oldLength; oldIndex++) {
-            removeCard(cards[0]);
+    	var newCardIds :Array = serializedCards as Array;
+        for (var i :int = 0; i < newCardIds.length; i++) {
+        	
+        	// add card to the end of the arrays
+        	if (i >= cardIds.length) {
+        		var newCard :Card = _ctx.board.deck.getCard(newCardIds[i]);
+        		cardIds.push(newCardIds[i]);
+        		cards.push(newCard);
+        		if (!contains(newCard)) {
+        			addChild(newCard);
+        		}
+        		newCard.cardContainer = this;
+        	}
+        	
+            // replace card at index i
+        	else if (cardIds[i] != newCardIds[i]) {
+        	    if (contains(cards[i])) {
+        	    	removeChild(cards[i]);
+        	    }
+        	    var card :Card = _ctx.board.deck.getCard(newCardIds[i]);
+        	    cardIds[i] = newCardIds[i];
+        	    cards[i] = card;
+                if (!contains(card)) {
+                    addChild(card);
+                }
+                card.cardContainer = this;
+        	}
         }
         
-        var newCardIds :Array = serializedCards as Array;
-        for (var i :int = 0; i < newCardIds.length; i++) {
-            var card :Card = _ctx.board.deck.getCard(newCardIds[i]);
-            addCard(card);
+        // truncate the cards arrays if required
+        if (cardIds.length > serializedCards.length) {
+        	cardIds.length = serializedCards.length;
+        	cards.length = serializedCards.length;
         }
+        
         updateDisplay();
     }
     

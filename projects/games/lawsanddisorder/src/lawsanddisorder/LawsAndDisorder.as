@@ -26,6 +26,7 @@ import lawsanddisorder.component.*
  * handle premature game ending
  * unloader?
  * move all mentions of _ctx.control out of components
+ * refactor cardContainer to simplify temporarily removing cards (eg hand -> new law)
  * 
  * TODO inerface:
  * make buttons look like buttons
@@ -33,7 +34,6 @@ import lawsanddisorder.component.*
  * improve highlighting with delays/events for unhighlighting
  * scrolling laws area
  * bring law to front on mouseover
- * display old notices on mouseover
  * bigger cards (?)
  * improve notice & broadcast messages esp when waiting for opponent
  * animations when drawing cards, stealing cards, playing law, gain/lose/give monies

@@ -1,6 +1,7 @@
 package lawsanddisorder {
 
-import flash.utils.getTimer;
+import flash.utils.Timer;
+import flash.events.TimerEvent;
 import flash.events.MouseEvent;
 
 import com.threerings.ezgame.MessageReceivedEvent;
@@ -8,6 +9,8 @@ import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.util.HashMap;
 
 import com.whirled.WhirledGameControl;
+import com.whirled.GameSubControl;
+
 import lawsanddisorder.component.*;
 
 /**
@@ -17,6 +20,15 @@ import lawsanddisorder.component.*;
  */
 public class EventHandler
 {
+	/**
+	 * Invoke the given function in delay milliseconds.	 */
+    public static function invokeLater (delaySeconds :int, func :Function) :void
+    {
+        var timer :Timer = new Timer(delaySeconds*1000, 1);
+        timer.addEventListener(TimerEvent.TIMER, func);
+        timer.start();
+    }
+    
     /**
      * Constructor - add event listeners and maybe get the board if it's setup */
     public function EventHandler (ctx :Context)
@@ -137,6 +149,41 @@ public class EventHandler
         if (listeners.length == 0) {
             _messageListeners.remove(message);
         }
+    }
+    
+    
+    /**
+     * Wrapper for retrieving data values from the WhirledGameControl
+     */
+    public function getData (propName :String, index :int = -1) :*
+    {
+        return _ctx.control.net.get(propName, index);
+    }
+    
+    /**
+     * Wrapper for setting data values with the WhirledGameControl
+     */
+    public function setData (propName :String, value :Object, index :int = -1) :void
+    {
+        _ctx.control.net.set(propName, value, index);
+    }
+        
+    /**
+     * Game is over; calculate the scores and send a message to everyone.
+     * Assumes player seats may have changed during the game and rebuilds playerIds array.
+     * TODO go one more round after the deck is empty?
+     */
+    public function endGame () :void
+    {
+        var playerIds :Array = new Array;
+        var playerScores :Array = new Array;
+        
+        for each (var player :Player in _ctx.board.players) {
+            playerIds.push(player.serverId);
+            playerScores.push(player.monies);
+            _ctx.log("score for player " + player.id + " (server id: " + player.serverId + ") is " + player.monies);
+        }
+           _ctx.control.game.endGameWithScores(playerIds, playerScores, GameSubControl.TO_EACH_THEIR_OWN);
     }
     
     /** Context */

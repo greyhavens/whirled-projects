@@ -40,7 +40,7 @@ public class Laws extends Component
             _ctx.log("WTF new law id: " + law.id + " is not equals to laws.length.");
         }
         _ctx.eventHandler.addPropertyListener(LAWS_DATA, newLawAdded);
-        _ctx.set(Laws.LAWS_DATA, law.getSerializedCards(), law.id);
+        _ctx.eventHandler.setData(Laws.LAWS_DATA, law.getSerializedCards(), law.id);
     }
 
     /**
@@ -130,7 +130,7 @@ public class Laws extends Component
     protected function updateLawData (lawId :int, cards :Object = null) :void
     {
         if (cards == null) {
-            cards = _ctx.get(LAWS_DATA, lawId);
+            cards = _ctx.eventHandler.getData(LAWS_DATA, lawId);
         }
         
         if (laws.length == lawId) {
