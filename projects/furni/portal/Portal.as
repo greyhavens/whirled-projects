@@ -5,6 +5,7 @@ import flash.display.Graphics;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 
 import flash.utils.getTimer; // function import
 
@@ -21,12 +22,14 @@ public class Portal extends Sprite
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
 
+        addEventListener(MouseEvent.MOUSE_OVER, handleMouseOver);
+        addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
+        addEventListener(MouseEvent.ROLL_OVER, handleRollOver);
+        addEventListener(MouseEvent.ROLL_OUT, handleRollOut);
+
         var base :Sprite = new Sprite();
-        var g :Graphics = base.graphics;
-        g.beginFill(0x33CC99);
-        g.lineStyle(2, 0x333333);
-        g.drawEllipse(-16, -8, 32, 16);
-        g.endFill();
+        _baseGraphics = base.graphics;
+        drawBase();
 
         base.x = 150;
         base.y = 434;
@@ -40,14 +43,43 @@ public class Portal extends Sprite
         addChild(_ray);
     }
 
+    protected function drawBase (color :uint = 0x33CC99) :void
+    {
+        _baseGraphics.clear();
+        _baseGraphics.beginFill(color);
+        _baseGraphics.lineStyle(2, 0x333333);
+        _baseGraphics.drawEllipse(-16, -8, 32, 16);
+        _baseGraphics.endFill();
+    }
+
+    protected function handleMouseOver (event :MouseEvent) :void
+    {
+        drawBase(0xFF0000);
+    }
+
+    protected function handleMouseOut (event :MouseEvent) :void
+    {
+        drawBase();
+    }
+
+    protected function handleRollOver (event :MouseEvent) :void
+    {
+        drawBase(0x0000FF);
+    }
+
+    protected function handleRollOut (event :MouseEvent) :void
+    {
+        drawBase();
+    }
+
     protected function handleAction (event :ControlEvent) :void
     {
         switch (event.name) {
-        case "bodyEntered":
+        case FurniControl.BODY_ENTERED:
             triggerAnim(true);
             break;
 
-        case "bodyLeft":
+        case FurniControl.BODY_LEFT:
             triggerAnim(false);
             break;
 
@@ -114,6 +146,8 @@ public class Portal extends Sprite
     }
 
     protected var _ctrl :FurniControl;
+
+    protected var _baseGraphics :Graphics;
 
     protected var _ray :Sprite;
 
