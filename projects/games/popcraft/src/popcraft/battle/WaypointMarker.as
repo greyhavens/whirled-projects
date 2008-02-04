@@ -1,17 +1,21 @@
 package popcraft.battle {
 
-import popcraft.*;
-import popcraft.util.*;
-
+import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
-import flash.display.Sprite;
-import flash.display.DisplayObject;
-import flash.filters.ColorMatrixFilter;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.filters.ColorMatrixFilter;
+
+import popcraft.*;
+import popcraft.util.*;
 
 public class WaypointMarker extends SceneObject
 {
@@ -22,7 +26,7 @@ public class WaypointMarker extends SceneObject
         _sprite = new Sprite();
 
          // add a tinted flag image
-        var image :Bitmap = ImageTool.createTintedBitmap(
+        var image :Bitmap = createTintedBitmap(
             new Constants.IMAGE_WAYPOINT(),
             Constants.PLAYER_COLORS[owningPlayerId]);
 
@@ -36,6 +40,23 @@ public class WaypointMarker extends SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
+    }
+    
+    protected static function createTintedBitmap (srcBitmap :Bitmap, rgbTint :uint, amount :Number = 1.0) :Bitmap
+    {
+        var colorMatrix :ColorMatrix = new ColorMatrix();
+        colorMatrix.colorize(rgbTint);
+        var tintFilter :ColorMatrixFilter = colorMatrix.createFilter();
+
+        var tintData :BitmapData = new BitmapData(srcBitmap.width, srcBitmap.height, true, 0);
+        
+        tintData.applyFilter(
+            srcBitmap.bitmapData,
+            new Rectangle(0, 0, srcBitmap.width, srcBitmap.height),
+            new Point(0, 0),
+            tintFilter);
+
+        return new Bitmap(tintData);
     }
 
     public var _sprite :Sprite;
