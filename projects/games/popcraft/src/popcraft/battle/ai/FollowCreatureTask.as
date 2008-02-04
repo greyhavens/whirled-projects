@@ -1,5 +1,7 @@
 package popcraft.battle.ai {
 
+import com.threerings.util.Assert;
+
 import com.whirled.contrib.core.*;
 
 import popcraft.*;
@@ -9,10 +11,14 @@ public class FollowCreatureTask extends AITaskBase
 {
     public static const NAME :String = "FollowCreatureTask";
 
-    public function FollowCreatureTask (unitId :uint, followDistance :Number)
+    public function FollowCreatureTask (unitId :uint, minFollowDistance :Number, maxFollowDistance :Number)
     {
+        Assert.isTrue(minFollowDistance >= 0);
+        Assert.isTrue(maxFollowDistance >= minFollowDistance);
+        
         _unitId = unitId;
-        _followDistance = followDistance;
+        _minFollowDistance = minFollowDistance;
+        _maxFollowDistance = maxFollowDistance;
     }
 
     override public function update (dt :Number, obj :AppObject) :Boolean
@@ -26,23 +32,22 @@ public class FollowCreatureTask extends AITaskBase
         if (null == followCreature) {
             return true;
         }
-
-        // the followCreature is still alive. Can we attack?
-        if (unit.canAttackUnit(followCreature, unit.unitData.attack)) {
-            unit.removeNamedTasks("move");
-            unit.sendAttack(followCreature, unit.unitData.attack);
-        } else {
-            // should we try to get closer to the followCreature?
-            var attackLoc :Vector2 = unit.findNearestAttackLocation(followCreature, unit.unitData.attack);
-            unit.moveTo(attackLoc.x, attackLoc.y);
+        
+        // should we move closer to the follow creature?
+        var v :Vector2 = followCreature.unitLoc.getSubtract(unit.unitLoc);
+        if (v.lengthSquared > (_maxFollowDistance * _maxFollowDistance)) {
+            v.length = _minFollowDistance;
+            v.add(unit.unitLoc);
+            
+            unit.moveTo(v.x, v.y);
         }
-
+        
         return false;
     }
 
     override public function clone () :ObjectTask
     {
-        return new FollowCreatureTask(_unitId, _followDistance);
+        return new FollowCreatureTask(_unitId, _minFollowDistance, _maxFollowDistance);
     }
 
     override public function get name () :String
@@ -51,7 +56,8 @@ public class FollowCreatureTask extends AITaskBase
     }
 
     protected var _unitId :uint;
-    protected var _followDistance :Number;
+    protected var _maxFollowDistance :Number;
+    protected var _minFollowDistance :Number;
 
 }
 

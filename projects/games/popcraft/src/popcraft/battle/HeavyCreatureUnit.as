@@ -6,10 +6,9 @@ import popcraft.*;
 import popcraft.battle.ai.*;
 
 /**
- * Heavys are the meat-and-potatoes offensive unit of the game.
- * Dual-purpose defensive unit
- * Deals both ranged and melee damage
- * Can escort Grunt to enemy base
+ * The Heavy is a dual-purpose defensive unit
+ * - Deals both ranged and melee damage
+ * - Can escort Grunt to enemy base
  */
 public class HeavyCreatureUnit extends CreatureUnit
 {
@@ -40,6 +39,11 @@ public class HeavyCreatureUnit extends CreatureUnit
     public function get escortingUnit () :GruntCreatureUnit
     {
         return GameMode.getNetObject(_escortingUnitId) as GruntCreatureUnit;
+    }
+    
+    public function get escortingUnitId () :uint
+    {
+        return _escortingUnitId;
     }
 
     protected var _ai :HeavyAI;
@@ -72,11 +76,12 @@ class HeavyAI extends AITaskBase
     
     protected function beginGruntEscortLoop () :void
     {
-        var loop :AITaskQueue = new AITaskQueue(true);
+        /*var loop :AITaskQueue = new AITaskQueue(true);
         loop.addTask(new DetectEscortlessGruntTask());
         loop.addTask(new EscortGruntTask(_unit));
         
-        this.addSubtask(loop);
+        this.addSubtask(loop);*/
+        this.addSubtask(new DetectEscortlessGruntTask());
     }
     
     override public function receiveMessage (msg :ObjectMessage) :Boolean
@@ -85,6 +90,7 @@ class HeavyAI extends AITaskBase
             trace("detected grunt!");
             var grunt :GruntCreatureUnit = msg.data;
             _unit.escortingUnit = grunt;
+            this.addSubtask(new EscortGruntTask(_unit));
         } else {
             super.receiveMessage(msg);
         }
@@ -135,12 +141,16 @@ class EscortGruntTask extends FollowCreatureTask
     
     public function EscortGruntTask (unit :HeavyCreatureUnit)
     {
-        super(unit.escortingUnit.id, ESCORT_DISTANCE);
+        super(unit.escortingUnit.id, ESCORT_DISTANCE_MIN, ESCORT_DISTANCE_MAX);
         _unit = unit;
     }
     
     override public function update (dt :Number, obj :AppObject) :Boolean
     {
+        if(super.update(dt, obj)) {
+            return true;
+        }
+        
         var grunt :GruntCreatureUnit = _unit.escortingUnit;
         if (null == grunt) {
             return true;
@@ -161,7 +171,8 @@ class EscortGruntTask extends FollowCreatureTask
     
     protected var _unit :HeavyCreatureUnit;
     
-    protected static const ESCORT_DISTANCE :Number = 20;
+    protected static const ESCORT_DISTANCE_MIN :Number = 30;
+    protected static const ESCORT_DISTANCE_MAX :Number = 35;
 }
 
 

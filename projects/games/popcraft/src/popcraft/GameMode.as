@@ -35,6 +35,11 @@ public class GameMode extends AppMode
         return GameMode.instance.netObjects.getObjectNamed(objectName);
     }
     
+    public static function getNetObjectIdsInGroup (groupName :String) :Array
+    {
+        return GameMode.instance.netObjects.getObjectIdsInGroup(groupName);
+    }
+    
     public static function getNetObjectsInGroup (groupName :String) :Array
     {
         return GameMode.instance.netObjects.getObjectsInGroup(groupName);
@@ -290,16 +295,16 @@ public class GameMode extends AppMode
         }
 
         // units
-        var units :Array = _netObjects.getObjectsInGroup(Unit.GROUP_NAME);
-        add(units.length, "units.length");
-        for (i = 0; i < units.length; ++i) {
-            var unit :Unit = (units[i] as Unit);
+        /*var unitIds :Array = _netObjects.getObjectIdsInGroup(Unit.GROUP_NAME);
+        add(unitIds.length, "units.length");
+        for (i = 0; i < unitIds.length; ++i) {
+            var unit :Unit = _netObjects.get(units[i] as Unit);
             add(unit.owningPlayerId, "unit.owningPlayerId - " + i);
             add(unit.unitType, "unit.unitType - " + i);
             add(unit.displayObject.x, "unit.displayObject.x - " + i);
             add(unit.displayObject.y, "unit.displayObject.y - " + i);
             add(unit.health, "unit.health - " + i);
-        }
+        }*/
 
         msg.playerId = _playerData.playerId;
         msg.tick = _tickCount;
