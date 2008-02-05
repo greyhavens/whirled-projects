@@ -18,7 +18,7 @@ public class HeavyCreatureUnit extends CreatureUnit
         _ai = new HeavyAI(this);
     }
 
-    override protected function get aiRoot () :AITask
+    override protected function get aiRoot () :AIState
     {
         return _ai;
     }
@@ -65,7 +65,7 @@ import popcraft.battle.ai.*;
  * (Priority 1) Escort friendly Grunts (max 1 escort/Grunt)
  * (Priority 1) Defend friendly base
  */
-class HeavyAI extends AITaskBase
+class HeavyAI extends AIStateTree
 {
     public function HeavyAI (unit :HeavyCreatureUnit)
     {
@@ -99,6 +99,19 @@ class HeavyAI extends AITaskBase
     }
 
     protected var _unit :HeavyCreatureUnit;
+}
+
+// The heavy waits at the base for 
+class WaitAtBaseTask extends AIStateTree
+{
+    public function WaitAtBaseTask ()
+    {
+    }
+    
+    override public function get name () :String
+    {
+        return "WaitAtBase";
+    }
 }
 
 class DetectEscortlessGruntTask extends FindCreatureTask

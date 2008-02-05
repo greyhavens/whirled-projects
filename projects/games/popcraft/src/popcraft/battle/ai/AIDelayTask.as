@@ -3,7 +3,7 @@ package popcraft.battle.ai {
 import com.whirled.contrib.core.AppObject;
 import com.whirled.contrib.core.ObjectTask;    
     
-public class AIDelayTask extends AITaskBase
+public class AIDelayTask extends AIStateTree
 {
     public function AIDelayTask (delayTime :Number)
     {

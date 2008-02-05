@@ -19,7 +19,7 @@ public class GruntCreatureUnit extends CreatureUnit
         _gruntAI = new GruntAI(this);
     }
 
-    override protected function get aiRoot () :AITask
+    override protected function get aiRoot () :AIState
     {
         return _gruntAI;
     }
@@ -67,7 +67,7 @@ import popcraft.battle.ai.*;
  * (Priority 1) Attack enemy base
  * (Priority 2) Attack enemy aggressors (responds to attacks, but doesn't initiate fights with other units)
  */
-class GruntAI extends AITaskBase
+class GruntAI extends AIStateTree
 {
     public function GruntAI (unit :GruntCreatureUnit)
     {

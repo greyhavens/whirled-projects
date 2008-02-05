@@ -2,10 +2,10 @@ package popcraft.battle.ai {
 
 import com.whirled.contrib.core.ObjectMessage;
 import com.whirled.contrib.core.ObjectTask;
-import popcraft.battle.ai.AITaskBase.clone;
-import popcraft.battle.ai.AITaskBase.name;
+import popcraft.battle.ai.AIStateTree.clone;
+import popcraft.battle.ai.AIStateTree.name;
 
-public class DetectAttackEnemyLoop extends AITaskBase
+public class DetectAttackEnemyLoop extends AIStateTree
 {
     public static const NAME :String = "DetectAttackEnemyLoop";
 

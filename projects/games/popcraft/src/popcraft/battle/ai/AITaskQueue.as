@@ -1,12 +1,11 @@
 package popcraft.battle.ai {
 
 import com.threerings.util.Assert;
-
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.tasks.*;
 
 public class AITaskQueue extends TaskContainer
-    implements AITask
+    implements AIState
 {
     public function AITaskQueue (repeating :Boolean)
     {
@@ -24,72 +23,38 @@ public class AITaskQueue extends TaskContainer
 
     override public function addTask (task :ObjectTask) :void
     {
-        var aiTask :AITask = (task as AITask);
-        Assert.isNotNull(aiTask);
+        var aiState :AIState = (task as AIState);
+        Assert.isNotNull(aiState);
 
-        super.addTask(aiTask);
-        aiTask.parentTask = _parentTask;
-    }
-
-    /*public function addSubtask (task :AITask) :void
-    {
-        var topTask :AITask = this.topTask;
-        if (null != topTask) {
-            topTask.addSubtask(task);
-        }
-    }
-
-    public function clearSubtasks () :void
-    {
-        var topTask :AITask = this.topTask;
-        if (null != topTask) {
-            topTask.clearSubtasks();
-        }
-    }
-
-    public function hasSubtaskNamed (name :String) :Boolean
-    {
-        var topTask :AITask = this.topTask;
-        return (null != topTask ? topTask.hasSubtaskNamed(name) : false);
-    }
-
-    public function hasSubtasksNamed (names :Array, index :uint = 0) :Boolean
-    {
-        var topTask :AITask = this.topTask;
-        return (null != topTask ? topTask.hasSubtasksNamed(names, index) : false);
-    }*/
-
-    public function getStateString (depth :uint = 0) :String
-    {
-        var topTask :AITask = this.topTask;
-        return (null != topTask ? topTask.getStateString(depth) : "[empty sequence]");
+        super.addTask(aiState);
+        aiState.parentState = _parentState;
     }
 
     public function get name () :String
     {
-        var topTask :AITask = this.topTask;
+        var topTask :AIState = this.topTask;
         return (null != topTask ? topTask.name : "[empty sequence]");
     }
 
-    public function get parentTask () :AITask
+    public function get parentState () :AIStateTree
     {
-        return _parentTask;
+        return _parentState;
     }
 
-    public function set parentTask (parentTask :AITask) :void
+    public function set parentState (parentState :AIStateTree) :void
     {
-        _parentTask = parentTask;
+        _parentState = parentState;
 
-        for each (var task :AITask in _tasks) {
+        for each (var task :AIState in _tasks) {
             if (null != task) {
-                task.parentTask = _parentTask;
+                task.parentState = _parentState;
             }
         }
     }
 
-    protected function get topTask () :AITask
+    protected function get topTask () :AIState
     {
-        for each (var task :AITask in _tasks) {
+        for each (var task :AIState in _tasks) {
             if (null != task) {
                 return task;
             }
@@ -100,7 +65,7 @@ public class AITaskQueue extends TaskContainer
 
     protected var _repeating :Boolean;
     protected var _container :TaskContainer;
-    protected var _parentTask :AITask;
+    protected var _parentState :AIStateTree;
 
 }
 

@@ -7,7 +7,7 @@ import com.whirled.contrib.core.*;
 import popcraft.*;
 import popcraft.battle.*;
 
-public class FollowCreatureTask extends AITaskBase
+public class FollowCreatureTask extends AIStateTree
 {
     public static const NAME :String = "FollowCreatureTask";
 

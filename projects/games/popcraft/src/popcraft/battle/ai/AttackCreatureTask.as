@@ -5,7 +5,7 @@ import com.whirled.contrib.core.*;
 import popcraft.*;
 import popcraft.battle.*;
 
-public class AttackCreatureTask extends AITaskBase
+public class AttackCreatureTask extends AIStateTree
 {
     public static const NAME :String = "AttackCreatureTask";
 

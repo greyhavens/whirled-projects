@@ -5,7 +5,7 @@ import com.whirled.contrib.core.*;
 import popcraft.*;
 import popcraft.battle.*;
 
-public class FindCreatureTask extends AITaskBase
+public class FindCreatureTask extends AIStateTree
 {
     public function FindCreatureTask (taskName :String, messageName :String, detectPredicate :Function)
     {
@@ -31,7 +31,7 @@ public class FindCreatureTask extends AITaskBase
         }
         
         if (null != detectedCreature) {
-            this.parentTask.receiveMessage(new ObjectMessage(_messageName, detectedCreature));
+            this.parentState.receiveMessage(new ObjectMessage(_messageName, detectedCreature));
             return true;
         }
         
