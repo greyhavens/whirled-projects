@@ -1,17 +1,15 @@
 package popcraft.battle {
 
-import popcraft.*;
-
 import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
-import flash.display.Sprite;
-import flash.display.DisplayObject;
 import flash.display.Bitmap;
-import com.whirled.contrib.core.tasks.MeterValueTask;
-import flash.geom.Point;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+
+import popcraft.*;
 
 public class PlayerBaseUnit extends Unit
 {
@@ -66,9 +64,9 @@ public class PlayerBaseUnit extends Unit
     }
 
     // from Unit
-    override public function receiveAttack (sourceId :uint, attack :UnitWeapon) :void
+    override public function receiveAttack (attack :UnitAttack) :void
     {
-        super.receiveAttack(sourceId, attack);
+        super.receiveAttack(attack);
         _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));
 
         // when the player base is attacked, it deals damage back to the attacker

@@ -1,7 +1,6 @@
 package popcraft.battle {
     
 import com.threerings.util.Assert;
-
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.tasks.*;
@@ -121,7 +120,7 @@ public class Unit extends SceneObject
 
         switch(weapon.weaponType) {
         case UnitWeapon.TYPE_MELEE:
-            targetUnit.receiveAttack(this.id, weapon);
+            targetUnit.receiveAttack(new UnitAttack(this.id, weapon));
             break;
             
         case UnitWeapon.TYPE_MISSILE:
@@ -139,10 +138,10 @@ public class Unit extends SceneObject
         }
     }
 
-    public function receiveAttack (sourceUnitId :uint, weapon :UnitWeapon) :void
+    public function receiveAttack (attack :UnitAttack) :void
     {
         // calculate damage
-        var damage :uint = uint(_unitData.armor.getWeaponDamage(weapon));
+        var damage :uint = uint(_unitData.armor.getWeaponDamage(attack.weapon));
         damage = Math.min(damage, _health);
         _health -= damage;
 

@@ -7,11 +7,11 @@ import popcraft.GameMode;
 
 public class Missile extends AppObject
 {
-    public function Missile (srcUnitId :uint, targetUnitId :uint, payload :UnitWeapon, travelTime :Number)
+    public function Missile (srcUnitId :uint, targetUnitId :uint, weapon :UnitWeapon, travelTime :Number)
     {
         _srcUnitId = srcUnitId;
         _targetUnitId = targetUnitId;
-        _payload = payload;
+        _weapon = weapon;
         
         this.addTask(After(travelTime, new FunctionTask(deliverPayload)));
     }
@@ -20,13 +20,13 @@ public class Missile extends AppObject
     {
         var targetUnit :Unit = (GameMode.getNetObject(_targetUnitId) as Unit);
         if (null != targetUnit) {
-            targetUnit.receiveAttack(_srcUnitId, _payload);
+            targetUnit.receiveAttack(new UnitAttack(_srcUnitId, _weapon));
         }
     }
     
     protected var _srcUnitId :uint;
     protected var _targetUnitId :uint;
-    protected var _payload :UnitWeapon;
+    protected var _weapon :UnitWeapon;
     
 }
 

@@ -120,12 +120,12 @@ public class CreatureUnit extends Unit
     }
 
     // from Unit
-    override public function receiveAttack (sourceId :uint, attack :UnitWeapon) :void
+    override public function receiveAttack (attack :UnitAttack) :void
     {
-        super.receiveAttack(sourceId, attack);
+        super.receiveAttack(attack);
         _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));
 
-        this.aiRoot.receiveMessage(new ObjectMessage(CreatureUnit.MSG_ATTACKED, sourceId));
+        this.aiRoot.receiveMessage(new ObjectMessage(CreatureUnit.MSG_ATTACKED, attack));
     }
 
     // from SceneObject
