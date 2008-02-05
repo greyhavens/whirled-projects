@@ -1,7 +1,8 @@
 package popcraft.battle {
+    
+import com.whirled.contrib.core.*;
 
 import popcraft.*;
-import popcraft.battle.*;
 import popcraft.battle.ai.*;
 
 /**
@@ -36,6 +37,15 @@ public class GruntCreatureUnit extends CreatureUnit
     public function get hasEscort () :Boolean
     {
         return (null != this.escort);
+    }
+    
+    override protected function receiveMessage (msg :ObjectMessage) :void
+    {
+        super.receiveMessage(msg);
+        
+        if(msg.name == GameMessage.MSG_UNITATTACKED) {
+            this.db.sendMessageTo(msg, _escortId);
+        }
     }
 
     protected var _gruntAI :GruntAI;
@@ -85,7 +95,7 @@ class GruntAI extends AITaskBase
 
     override public function receiveMessage (msg :ObjectMessage) :Boolean
     {
-        if (this.hasSubtaskNamed(AttackBaseTask.NAME) && msg.name == CreatureUnit.MSG_ATTACKED) {
+        if (this.hasSubtaskNamed(AttackBaseTask.NAME) && msg.name == GameMessage.MSG_UNITATTACKED) {
             this.beginAttackCreature(msg.data);
             return false;
         }

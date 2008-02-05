@@ -16,7 +16,6 @@ import popcraft.util.*;
 public class CreatureUnit extends Unit
 {
     public static const GROUP_NAME :String = "CreatureUnit";
-    public static const MSG_ATTACKED :String = "CreatureUnit_Attacked";
 
     public function CreatureUnit (unitType :uint, owningPlayerId :uint)
     {
@@ -118,14 +117,11 @@ public class CreatureUnit extends Unit
 
         this.addNamedTask("move", moveTask);
     }
-
-    // from Unit
-    override public function receiveAttack (attack :UnitAttack) :void
+    
+    override protected function receiveMessage (msg :ObjectMessage) :void
     {
-        super.receiveAttack(attack);
-        _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));
-
-        this.aiRoot.receiveMessage(new ObjectMessage(CreatureUnit.MSG_ATTACKED, attack));
+        super.receiveMessage(msg);
+        this.aiRoot.receiveMessage(msg);
     }
 
     // from SceneObject
@@ -176,6 +172,8 @@ public class CreatureUnit extends Unit
         }
         
         super.update(dt);
+        
+        _healthMeter.value = _health;
     }
 
     protected var _sprite :Sprite;

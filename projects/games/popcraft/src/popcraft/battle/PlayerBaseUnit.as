@@ -62,18 +62,10 @@ public class PlayerBaseUnit extends Unit
     {
         return _unitSpawnLoc;
     }
-
-    // from Unit
-    override public function receiveAttack (attack :UnitAttack) :void
+    
+    override protected function update (dt :Number) :void
     {
-        super.receiveAttack(attack);
-        _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));
-
-        // when the player base is attacked, it deals damage back to the attacker
-        //var source :Unit = (GameMode.getNetObject(sourceId) as Unit);
-        //if (null != source) {
-        //    this.sendAttack(source, this.unitData.attack);
-        //}
+        _healthMeter.value = _health;
     }
 
     protected var _unitSpawnLoc :Vector2 = new Vector2();

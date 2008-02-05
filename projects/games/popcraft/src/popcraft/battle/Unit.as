@@ -120,11 +120,11 @@ public class Unit extends SceneObject
 
         switch(weapon.weaponType) {
         case UnitWeapon.TYPE_MELEE:
-            targetUnit.receiveAttack(new UnitAttack(this.id, weapon));
+            this.db.sendMessageTo(new ObjectMessage(GameMessage.MSG_UNITATTACKED, new UnitAttack(targetUnit.id, this.id, weapon)), targetUnit.id);
             break;
             
         case UnitWeapon.TYPE_MISSILE:
-            MissileFactory.createMissile(this, targetUnit, weapon);
+            MissileFactory.createMissile(targetUnit, this, weapon);
             break;
             
         default:
@@ -137,16 +137,19 @@ public class Unit extends SceneObject
             this.addNamedTask("attackCooldown", new TimedTask(weapon.cooldown));
         }
     }
-
-    public function receiveAttack (attack :UnitAttack) :void
+    
+    override protected function receiveMessage (msg :ObjectMessage) :void
     {
-        // calculate damage
-        var damage :uint = uint(_unitData.armor.getWeaponDamage(attack.weapon));
-        damage = Math.min(damage, _health);
-        _health -= damage;
-
-        if (_health == 0) {
-            this.destroySelf();
+        if (msg.name == GameMessage.MSG_UNITATTACKED) {
+            var attack :UnitAttack = (msg.data as UnitAttack);
+            if (attack.targetUnitId == this.id) {
+                var damage :uint = uint(_unitData.armor.getWeaponDamage(attack.weapon));
+                _health -= damage;
+                
+                if (_health == 0) {
+                    this.destroySelf();
+                }
+            }
         }
     }
 

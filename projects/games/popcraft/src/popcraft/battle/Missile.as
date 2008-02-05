@@ -1,32 +1,26 @@
 package popcraft.battle {
     
 import com.whirled.contrib.core.AppObject;
+import com.whirled.contrib.core.ObjectMessage;
 import com.whirled.contrib.core.tasks.*;
 
 import popcraft.GameMode;
 
 public class Missile extends AppObject
 {
-    public function Missile (srcUnitId :uint, targetUnitId :uint, weapon :UnitWeapon, travelTime :Number)
+    public function Missile (attack :UnitAttack, travelTime :Number)
     {
-        _srcUnitId = srcUnitId;
-        _targetUnitId = targetUnitId;
-        _weapon = weapon;
+        _attack = attack;
         
         this.addTask(After(travelTime, new FunctionTask(deliverPayload)));
     }
     
     protected function deliverPayload () :void
     {
-        var targetUnit :Unit = (GameMode.getNetObject(_targetUnitId) as Unit);
-        if (null != targetUnit) {
-            targetUnit.receiveAttack(new UnitAttack(_srcUnitId, _weapon));
-        }
+        this.db.sendMessageTo(new ObjectMessage(GameMessage.MSG_UNITATTACKED, _attack), _attack.targetUnitId);
     }
     
-    protected var _srcUnitId :uint;
-    protected var _targetUnitId :uint;
-    protected var _weapon :UnitWeapon;
+    protected var _attack :UnitAttack;
     
 }
 

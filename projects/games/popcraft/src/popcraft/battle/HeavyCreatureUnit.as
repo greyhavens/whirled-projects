@@ -99,7 +99,6 @@ class HeavyAI extends AITaskBase
     }
 
     protected var _unit :HeavyCreatureUnit;
-    protected var _state :uint;
 }
 
 class DetectEscortlessGruntTask extends FindCreatureTask
