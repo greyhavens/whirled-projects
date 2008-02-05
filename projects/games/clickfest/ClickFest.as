@@ -14,18 +14,23 @@ import com.threerings.ezgame.MessageReceivedEvent;
 
 import com.threerings.util.StringUtil;
 
+/**
+ * Clickfest: sample game.
+ */
 [SWF(width="400", height="400")]
 public class ClickFest extends Sprite
 {
     public function ClickFest ()
     {
+        // turn off mouse handling, we'll turn it on again later just for players
         mouseChildren = false;
+        // create a sub-sprite for receiving mouse events and drawing the game board..
         var spr :Sprite = new Sprite();
         spr.addEventListener(MouseEvent.CLICK, handleMouseClick);
         addChild(spr);
-
         _drawArea = spr.graphics;
 
+        // create the game control
         _ctrl = new WhirledGameControl(this);
 
         // set up our listeners
@@ -42,16 +47,20 @@ public class ClickFest extends Sprite
             POINTS_OVER_SELF + " points for clicking on your own point.\n\n" +
             "The first player to " + SCORE_TO_WIN + " points wins.");
 
+        // see what our index is. If -1, we're not a player, just a watcher.
         _myIndex = _ctrl.game.seating.getMyPosition();
 
+        // if the game is being played right now, we
         if (_ctrl.game.isInPlay()) {
             clearDrawArea();
+            updateScores();
 
             // fill in any already-marked spots
             for (var key :String in _ctrl.net.getPropertyNames("p")) {
                 drawClick(key, _ctrl.net.get(key));
             }
 
+            // if we're a real player, start listening for clicks!
             if (_myIndex != -1) {
                 mouseChildren = true;
             }
@@ -73,10 +82,10 @@ public class ClickFest extends Sprite
         _ctrl.local.feedback("GO!!!!");
 
         if (_myIndex != -1) {
-            // start processing!
-            mouseChildren = true;
+            mouseChildren = true; // start listening for clicks
         }
 
+        // use amInControl() to coordinate something so that only one player does it
         if (_ctrl.game.amInControl()) {
             _ctrl.net.set(SCORES_PROP, [ 0, 0 ]);
         }
@@ -84,26 +93,33 @@ public class ClickFest extends Sprite
 
     protected function handleMouseClick (event :MouseEvent) :void
     {
+        // we create a property name that incorporates the click location
         var key :String = "p" + event.localX + ":" + event.localY;
 
+        // see what was previously stored with that property name
         var prev :Object = _ctrl.net.get(key);
         var points :int;
         if (prev == null) {
-            points = POINTS_NEW;
+            points = POINTS_NEW; // we're the first person to click there
 
         } else if (prev === _myIndex) {
-            points = POINTS_OVER_SELF;
+            points = POINTS_OVER_SELF; // oops, we clicked on our own dot!
 
         } else {
-            points = POINTS_OVER_OTHER;
+            points = POINTS_OVER_OTHER; // yay! We clicked on our opponent's dot.
         }
 
+        // add the points
         _myScore += points;
 
+        // doBatch ensures that any net events we generate go out together, it's
+        // not necessary but should make our game a little more efficient.
         _ctrl.doBatch(function () :void {
+            // update the point to contain our index
             _ctrl.net.set(key, _myIndex);
-            trace("Set scores: " + _myScore + ", " + _myIndex);
+            // update our score- here we're just updating our own element in the score array
             _ctrl.net.set(SCORES_PROP, _myScore, _myIndex);
+            // did we just win? End the game with us as the winner..
             if (_myScore >= SCORE_TO_WIN) {
                 var myId :int = _ctrl.game.getMyId();
                 var losers :Array = _ctrl.game.seating.getPlayerIds();
@@ -117,10 +133,11 @@ public class ClickFest extends Sprite
     protected function propChanged (event :PropertyChangedEvent) :void
     {
         if (event.name.charAt(0) == "p") {
+            // a new click value
             drawClick(event.name, event.newValue);
 
         } else if (event.name == SCORES_PROP) {
-            _ctrl.local.setPlayerScores(_ctrl.net.get(SCORES_PROP) as Array);
+            updateScores();
         }
     }
 
@@ -137,8 +154,15 @@ public class ClickFest extends Sprite
         _drawArea.drawRect(x, y, 1, 1);
     }
 
+    protected function updateScores () :void
+    {
+        // we store the scores as an array, perfect for passing directly
+        _ctrl.local.setPlayerScores(_ctrl.net.get(SCORES_PROP) as Array);
+    }
+
     protected function gameEnded (event :StateChangedEvent) :void
     {
+        // stop listening for clicks
         mouseChildren = false;
     }
 
