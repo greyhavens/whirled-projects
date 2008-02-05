@@ -3,9 +3,9 @@
 
 package {
 
-import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.util.Assert;
 import com.whirled.WhirledGameControl;
+
 import com.whirled.contrib.core.*;
 
 import flash.display.Sprite;
@@ -35,13 +35,9 @@ public class PopCraft extends Sprite
         mainLoop.run();
 
         _gameCtrl = new WhirledGameControl(this, false);
-        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
-        _gameCtrl.game.playerReady();
-    }
-
-    protected function handleGameStarted (event :StateChangedEvent) :void
-    {
-        MainLoop.instance.changeMode(new GameMode());
+        
+        // LoadingMode will start the game when loading is complete
+        mainLoop.pushMode(new LoadingMode(_gameCtrl));
     }
 
     public function get gameControl () :WhirledGameControl

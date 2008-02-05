@@ -2,6 +2,7 @@ package popcraft.battle {
 
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
@@ -25,7 +26,7 @@ public class CreatureUnit extends Unit
         _sprite = new Sprite();
 
         // add the image, aligned by its foot position
-        var image :Bitmap = new _unitData.imageClass();
+        var image :Bitmap = (ResourceManager.instance.getResource(_unitData.name) as ImageResourceLoader).createBitmap();
         image.x = -(image.width / 2);
         image.y = -image.height;
         _sprite.addChild(image);

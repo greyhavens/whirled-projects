@@ -3,16 +3,17 @@ package popcraft.battle {
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
-import flash.geom.Point;
-import flash.geom.Rectangle;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.filters.ColorMatrixFilter;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import popcraft.*;
 import popcraft.util.*;
@@ -25,10 +26,10 @@ public class WaypointMarker extends SceneObject
 
         _sprite = new Sprite();
 
-         // add a tinted flag image
-        var image :Bitmap = createTintedBitmap(
-            new Constants.IMAGE_WAYPOINT(),
-            Constants.PLAYER_COLORS[owningPlayerId]);
+        // add a tinted flag image
+        var waypointBMD :BitmapData = (ResourceManager.instance.getResource("waypoint") as ImageResourceLoader).bitmapData;
+        
+        var image :Bitmap = createTintedBitmap(waypointBMD, Constants.PLAYER_COLORS[owningPlayerId]);
 
         image.y = -image.height;
         _sprite.addChild(image);
@@ -42,17 +43,17 @@ public class WaypointMarker extends SceneObject
         return _sprite;
     }
     
-    protected static function createTintedBitmap (srcBitmap :Bitmap, rgbTint :uint, amount :Number = 1.0) :Bitmap
+    protected static function createTintedBitmap (srcData :BitmapData, rgbTint :uint, amount :Number = 1.0) :Bitmap
     {
         var colorMatrix :ColorMatrix = new ColorMatrix();
         colorMatrix.colorize(rgbTint);
         var tintFilter :ColorMatrixFilter = colorMatrix.createFilter();
 
-        var tintData :BitmapData = new BitmapData(srcBitmap.width, srcBitmap.height, true, 0);
+        var tintData :BitmapData = new BitmapData(srcData.width, srcData.height, true, 0);
         
         tintData.applyFilter(
-            srcBitmap.bitmapData,
-            new Rectangle(0, 0, srcBitmap.width, srcBitmap.height),
+            srcData,
+            new Rectangle(0, 0, srcData.width, srcData.height),
             new Point(0, 0),
             tintFilter);
 

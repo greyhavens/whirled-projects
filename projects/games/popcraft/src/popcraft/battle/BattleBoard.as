@@ -1,17 +1,17 @@
 package popcraft.battle {
 
-import popcraft.*;
-import popcraft.net.*;
-
 import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.resource.*;
 
-import flash.display.Shape;
+import flash.display.Bitmap;
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
-import flash.display.Bitmap;
-import flash.display.DisplayObjectContainer;
+
+import popcraft.*;
+import popcraft.net.*;
 
 public class BattleBoard extends SceneObject
 {
@@ -36,8 +36,8 @@ public class BattleBoard extends SceneObject
         // the background and below the foreground
         _unitDisplayParent = new Sprite();
 
-        var bg :Bitmap = new Constants.IMAGE_BATTLE_BG();
-        var fg :Bitmap = new Constants.IMAGE_BATTLE_FG();
+        var bg :Bitmap = (ResourceManager.instance.getResource("battle_bg") as ImageResourceLoader).createBitmap();
+        var fg :Bitmap = (ResourceManager.instance.getResource("battle_fg") as ImageResourceLoader).createBitmap();
         fg.y = bg.height - fg.height; // fg is aligned to the bottom of the board
 
         _view.addChild(bg);

@@ -1,6 +1,7 @@
 package popcraft.battle {
 
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
@@ -23,7 +24,7 @@ public class PlayerBaseUnit extends Unit
         _sprite.x = loc.x;
         _sprite.y = loc.y;
 
-        var baseImage :Bitmap = new Constants.IMAGE_BASE();
+        var baseImage :Bitmap = (ResourceManager.instance.getResource("base") as ImageResourceLoader).createBitmap();
         baseImage.x = -(baseImage.width / 2);
         baseImage.y = -(baseImage.height / 2);
 

@@ -168,7 +168,7 @@ public class GameMode extends AppMode
     }
 
     // from AppMode
-    override public function update(dt :Number) :void
+    override public function update (dt :Number) :void
     {
         // don't start doing anything until the messageMgr is ready
         if (!_gameIsRunning && _messageMgr.isReady) {

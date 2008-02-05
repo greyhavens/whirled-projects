@@ -24,28 +24,6 @@ public class Constants
        uint(0xFFFFE75F)
     ];
 
-    /* Images */
-    [Embed(source="../../rsrc/char_grunt.png")]
-    public static const IMAGE_GRUNT :Class;
-
-    [Embed(source="../../rsrc/char_heavy.png")]
-    public static const IMAGE_HEAVY :Class;
-
-    [Embed(source="../../rsrc/char_sapper.png")]
-    public static const IMAGE_SAPPER :Class;
-
-    [Embed(source="../../rsrc/base.png")]
-    public static const IMAGE_BASE :Class;
-
-    [Embed(source="../../rsrc/waypoint.png")]
-    public static const IMAGE_WAYPOINT :Class;
-
-    [Embed(source="../../rsrc/city_bg.png")]
-    public static const IMAGE_BATTLE_BG :Class;
-
-    [Embed(source="../../rsrc/city_forefront.png")]
-    public static const IMAGE_BATTLE_FG :Class;
-
     /* Puzzle stuff */
     public static const PIECE_CLEAR_TIMER_LENGTH :Number = 0.75;
 
@@ -109,7 +87,6 @@ public class Constants
             new UnitData (
                 "grunt"                     // name
                 , [25,   25,  0,   0]        // resource costs (brown, gold, blue, pink)
-                , IMAGE_GRUNT               // image
                 , -1, new IntRange(0, 0)   // wanderEvery, wanderRange
                 , 25                        // move speed (pixels/second)
                 , 100                       // health
@@ -125,7 +102,6 @@ public class Constants
             new UnitData (
                 "heavy"                     // name
                 , [0,   0,  25,   25]        // resource costs (brown, gold, blue, pink)
-                , IMAGE_HEAVY               // image
                 , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
                 , 25                        // move speed (pixels/second)
                 , 100                       // health
@@ -141,7 +117,6 @@ public class Constants
             new UnitData (
                 "sapper"                     // name
                 , [0,   15,  0,   15]        // resource costs (brown, gold, blue, pink)
-                , IMAGE_SAPPER               // image
                 , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
                 , 40                        // move speed (pixels/second)
                 , 100                       // health
@@ -159,7 +134,6 @@ public class Constants
             new UnitData (
                 "base"                      // name
                 , [0,   0,  0,    0]        // resource costs (brown, gold, blue, pink)
-                , IMAGE_BASE                // image
                 , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
                 , 0                         // move speed (pixels/second)
                 , 100                       // health

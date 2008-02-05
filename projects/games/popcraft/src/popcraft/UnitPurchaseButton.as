@@ -1,24 +1,26 @@
 package popcraft {
 
-import popcraft.battle.*;
-
-import com.whirled.contrib.core.AppObject;
 import com.threerings.flash.DisablingButton;
+import com.whirled.contrib.core.resource.*;
 
-import flash.display.DisplayObject;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
 import flash.display.Sprite;
-import flash.text.TextField;
+
+import popcraft.battle.*;
 
 public class UnitPurchaseButton extends DisablingButton
 {
     public function UnitPurchaseButton (unitType :uint)
     {
         var data :UnitData = Constants.UNIT_DATA[unitType];
+        
+        var bitmapData :BitmapData = (ResourceManager.instance.getResource(data.name) as ImageResourceLoader).bitmapData;
 
-        upState         = makeButtonFace(data.imageClass, COLOR_OUTLINE, COLOR_BG_UP);
-        overState       = makeButtonFace(data.imageClass, COLOR_OUTLINE, COLOR_BG_OVER);
-        downState       = makeButtonFace(data.imageClass, COLOR_OUTLINE, COLOR_BG_DOWN);
-        disabledState   = makeButtonFace(data.imageClass, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
+        upState         = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP);
+        overState       = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_OVER);
+        downState       = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DOWN);
+        disabledState   = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
 
         hitTestState = upState;
 
@@ -26,11 +28,11 @@ public class UnitPurchaseButton extends DisablingButton
         downState.y = -1;
     }
 
-    protected static function makeButtonFace (iconClass :Class, foreground :uint, background :uint, iconAlpha :Number = 1.0) :Sprite
+    protected static function makeButtonFace (bitmapData :BitmapData, foreground :uint, background :uint, iconAlpha :Number = 1.0) :Sprite
     {
         var face :Sprite = new Sprite();
 
-        var icon :DisplayObject = new iconClass();
+        var icon :Bitmap = new Bitmap(bitmapData);
         var scale :Number = (WIDTH / icon.width);
         icon.scaleX = scale;
         icon.scaleY = scale;

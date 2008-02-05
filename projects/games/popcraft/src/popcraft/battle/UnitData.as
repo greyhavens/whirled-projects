@@ -7,7 +7,6 @@ public class UnitData
 {
     public var name :String;
     public var resourceCosts :Array;
-    public var imageClass :Class;
 
     // movement variables
     public var wanderEvery :Number;
@@ -25,7 +24,6 @@ public class UnitData
     public function UnitData (
         name :String,
         resourceCosts :Array,
-        imageClass :Class,
         wanderEvery :Number,
         wanderRange :IntRange,
         movePixelsPerSecond :Number,
@@ -38,7 +36,6 @@ public class UnitData
     {
         this.name = name;
         this.resourceCosts = resourceCosts;
-        this.imageClass = imageClass;
 
         this.wanderEvery = wanderEvery;
         this.wanderRange = wanderRange;
