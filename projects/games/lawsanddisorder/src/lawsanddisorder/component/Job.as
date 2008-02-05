@@ -65,6 +65,12 @@ public class Job extends Component
      */
     override protected function updateDisplay () :void
     {
+    	// during setup, not attached to a player yet anyway
+    	if (_ctx.board == null || _ctx.board.deck == null) {
+    		return;
+    	}
+    	var player :Player = _ctx.board.deck.getPlayerByJob(this);
+    	
         // don't display unless on the active player
         if (player == null || player != _ctx.board.player) {
             return;
@@ -100,10 +106,10 @@ public class Job extends Component
             return;
         }
         
-        if (!player.powerEnabled) {
-            _ctx.log("WTF clicked use power button when disabled.");
-            return;
-        }
+        //if (!player.powerEnabled) {
+        //    _ctx.log("WTF clicked use power button when disabled.");
+        //    return;
+        //}
         
         usePower();
     }
@@ -120,7 +126,7 @@ public class Job extends Component
                     _ctx.notice("There are no laws to modify.");
                     return;
                 }            
-                if (player.monies < 2) {
+                if (_ctx.board.player.monies < 2) {
 		            _ctx.notice("Your ability costs 2 monies to use.");
 		            return;
 		        }
@@ -129,7 +135,7 @@ public class Job extends Component
                 return;
                 
             case THIEF:
-                if (player.monies < 2) {
+                if (_ctx.board.player.monies < 2) {
                     _ctx.notice("Your ability costs 2 monies to use.");
                     return;
                 }
@@ -151,13 +157,13 @@ public class Job extends Component
                 return;
                 
             case TRADER:
-                if (player.monies < 2) {
+                if (_ctx.board.player.monies < 2) {
                     _ctx.notice("Your ability costs 2 monies to use.");
                     return;
                 }
                 startUsingAbility();
                 removeChild(cancelButton);
-                player.loseMonies(2);
+                _ctx.board.player.loseMonies(2);
                 _ctx.board.player.hand.drawCard(2);
                 _ctx.state.selectCards(1, traderCardSelected);
                 return;
@@ -192,7 +198,7 @@ public class Job extends Component
     protected function startUsingAbility () :void
     {
     	addChild(cancelButton);
-        player.powerEnabled = false;
+        _ctx.board.player.powerEnabled = false;
         _ctx.state.performingAction = true;
     }
     
@@ -202,7 +208,7 @@ public class Job extends Component
     protected function judgeLawSelected () :void
     {
         removeChild(cancelButton);
-    	player.loseMonies(2);
+    	_ctx.board.player.loseMonies(2);
         var law :Law = _ctx.state.selectedLaw;
         _ctx.broadcast("Judge ("+ _ctx.board.player.playerName + ") enacting law: " + law.id);
         _ctx.state.deselectLaw();
@@ -225,7 +231,7 @@ public class Job extends Component
     protected function thiefOpponentSelected () :void
     {
         removeChild(cancelButton);
-        player.loseMonies(2);
+        _ctx.board.player.loseMonies(2);
         var opponent :Opponent = _ctx.state.selectedOpponent;
         _ctx.broadcast("Thief (" + _ctx.board.player.playerName + ") stealing from " + opponent.playerName);
         // display opponent's hand then select a card from it
@@ -245,7 +251,7 @@ public class Job extends Component
         }
         var selectedCards :Array = _ctx.state.selectedCards;
         opponent.showHand = false;
-        opponent.giveCardsTo(selectedCards, player);
+        opponent.giveCardsTo(selectedCards, _ctx.board.player);
         _ctx.state.deselectOpponent();
         _ctx.state.deselectCards();
         doneUsingAbility();
@@ -331,17 +337,17 @@ public class Job extends Component
     {
         switch (id) {
             case JUDGE:
-                return "Judge"
+                return "The Judge"
             case Job.THIEF:
-                return "Thief";
+                return "The Thief";
             case Job.BANKER:
-                return "Banker";
+                return "The Banker";
             case Job.TRADER:
-                return "Trader";
+                return "The Trader";
             case Job.PRIEST:
-                return "Priest";
+                return "The Priest";
             case Job.SCIENTIST:
-                return "Scientist";
+                return "The Scientist";
         }
         _ctx.log("WTF Unknown job in job get name.");
         return "UNKNOWN";
@@ -355,14 +361,11 @@ public class Job extends Component
         switch (id) {
             case JUDGE:
                 return "pay $2: trigger a law immediately, ignoring any WHEN cards";
-                // immune to thief?
             case Job.THIEF:
                 return "pay $2: look at a players hand and steal one card";
             case Job.BANKER:
-                //return "recieve double the money from one law being made (free & passive)";
                 return "exchange a VERB card in a law with one from your hand";
             case Job.TRADER:
-                //return "pay 2$: exchange a VERB card in a law with one from your hand";
                 return "pay 2$: draw two cards then discard one";
             case Job.PRIEST:
                 return "exchange a SUBJECT card in a law with one from your hand";
@@ -373,21 +376,21 @@ public class Job extends Component
         return "UNKNOWN";
     }
 
-    /**
-     * Retrieve the player that currently has this job
-     */
-    public function get player () :Player
-    {
-        return _player;
-    }
-    
-    /**
-     * Set the player that currently has this job
-     */
-    public function set player (player :Player) :void
-    {
-        _player = player;
-    }
+    ///**
+    // * Retrieve the player that currently has this job
+    // */
+    //public function get player () :Player
+    //{
+    //    return _player;
+    //}
+    //
+    ///**
+    // * Set the player that currently has this job
+    // */
+    //public function set player (player :Player) :void
+    //{
+    //    _player = player;
+    //}
 
     /**
      * Retrieve the id for this job (eg JUDGE).
@@ -424,7 +427,7 @@ public class Job extends Component
      */
     protected var cancelButton :TextField;
     
-    /** Player who currently has this job, or null */
-    protected var _player :Player;
+    ///** Player who currently has this job, or null */
+    //protected var _player :Player;
 }
 }

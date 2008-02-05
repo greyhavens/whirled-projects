@@ -31,6 +31,17 @@ public class Player extends Component
     }
      
     /**
+     * Called by first user during game start.  Deal the player a hand and give them
+     * a random job.
+     */
+    public function setup () :void
+    {
+        var job :Job = _ctx.board.deck.drawRandomJob(this);
+        _ctx.board.deck.switchJobs(job, this, true);
+        hand.setup();
+    }
+    
+    /**
      * Retrieve the player's current job
      */   
     public function get job () :Job
@@ -54,25 +65,13 @@ public class Player extends Component
         }
         
         _job = job;
-        _job.player = this;
+        //_job.player = this;
         _job.x = 20;
         _job.y = 50;
         _job.updateEnabled();
         addChild(_job);
         
         updateDisplay();
-    }
-    
-    /**
-     * Called by first user during game start.  Deal the player a hand and give them
-     * a random job.
-     */
-    public function setup () :void
-    {
-        var job :Job = _ctx.board.deck.drawRandomJob(this);
-        _ctx.board.deck.switchJobs(job, this);
-        
-        hand.setup();
     }
         
     public function set showHand (value :Boolean) :void
@@ -126,6 +125,7 @@ public class Player extends Component
                 return;
             }
             job = tmpJob;
+            //job.player = this;
         }
     }
     

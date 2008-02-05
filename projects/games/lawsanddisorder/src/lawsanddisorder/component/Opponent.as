@@ -27,7 +27,7 @@ public class Opponent extends Player
     override public function set job (job :Job) :void
     {
         _job = job;
-        _job.player = this;
+        //_job.player = this;
         updateDisplay();
     }
     

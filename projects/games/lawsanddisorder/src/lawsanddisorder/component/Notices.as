@@ -67,7 +67,7 @@ public class Notices extends Component
         history.y = -350;
         historyText = new TextField();
         historyText.x = 30;
-        historyText.autoSize = TextFieldAutoSize.CENTER;
+        historyText.autoSize = TextFieldAutoSize.LEFT;
         history.addChild(historyText);
         addEventListener(MouseEvent.ROLL_OUT, historyRollOut);
         history.addEventListener(MouseEvent.ROLL_OUT, historyRollOut);
@@ -79,7 +79,12 @@ public class Notices extends Component
     override protected function updateDisplay () :void
     {
     	if (notices != null && notices.length > 0) {
-        	currentNotice.text = notices[notices.length-1];
+    		var noticeText :String = notices[notices.length-1];
+    		if (noticeText == null) {
+    			_ctx.log("WTF tried to display null notice text.");
+    			return;
+    		}
+        	currentNotice.text = noticeText; 
         	
         	// position text at the bottom of the history area
         	if (contains(history)) {

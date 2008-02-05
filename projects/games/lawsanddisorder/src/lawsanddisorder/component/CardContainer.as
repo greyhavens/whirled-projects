@@ -133,27 +133,30 @@ public class CardContainer extends Component
         	
         	// add card to the end of the arrays
         	if (i >= cardIds.length) {
-        		var newCard :Card = _ctx.board.deck.getCard(newCardIds[i]);
+        		var addCard :Card = _ctx.board.deck.getCard(newCardIds[i]);
         		cardIds.push(newCardIds[i]);
-        		cards.push(newCard);
-        		if (!contains(newCard)) {
-        			addChild(newCard);
+        		cards.push(addCard);
+        		if (!contains(addCard)) {
+        			addChild(addCard);
         		}
-        		newCard.cardContainer = this;
+        		addCard.cardContainer = this;
         	}
         	
             // replace card at index i
         	else if (cardIds[i] != newCardIds[i]) {
-        	    if (contains(cards[i])) {
-        	    	removeChild(cards[i]);
-        	    }
-        	    var card :Card = _ctx.board.deck.getCard(newCardIds[i]);
+        		var oldCard :Card = cards[i];
+        	    var newCard :Card = _ctx.board.deck.getCard(newCardIds[i]);
         	    cardIds[i] = newCardIds[i];
-        	    cards[i] = card;
-                if (!contains(card)) {
-                    addChild(card);
+        	    cards[i] = newCard;
+                if (!contains(newCard)) {
+                    addChild(newCard);
                 }
-                card.cardContainer = this;
+                newCard.cardContainer = this;
+                        	    
+        	    // remove old card as child only if array doesn't contain it anymore
+                if (contains(oldCard) && cardIds.indexOf(oldCard) >= 0) {
+                    removeChild(oldCard);
+                }
         	}
         }
         

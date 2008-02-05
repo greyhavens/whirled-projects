@@ -3,6 +3,8 @@ package lawsanddisorder {
 import flash.events.MouseEvent;
 import flash.display.DisplayObject;
 import flash.geom.Point;
+import flash.utils.Timer;
+import flash.events.TimerEvent;
 
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -50,7 +52,6 @@ public class State
             }
             
             if (selectedCards.indexOf(card) >= 0) {
-            	_ctx.log("card already selected; toggling card.");
 	            var index :int = selectedCards.indexOf(card);
 	            selectedCards.splice(index, 1);
 	            card.highlighted = false;
@@ -60,8 +61,7 @@ public class State
             card.highlighted = true;
             // # of selected cards goal reached; reset mode then call listener
             if (selectedCards.length == selectedGoal) {
-                mode = MODE_DEFAULT;
-                modeListener();
+            	doneMode();
             }
         }
         
@@ -77,58 +77,55 @@ public class State
             }
             card.cardContainer.removeCards(new Array(card));
             _ctx.board.player.hand.addCards(new Array(card));
-            mode = MODE_DEFAULT;
-            modeListener();
+            doneMode();
         }
     }
     
     /**
-     * When a card is pressed
-     * TODO allow card reshuffling during opponent's turn
+     * When a card is pressed, determine if we should start dragging it
      */
     public function cardMouseDown (event :MouseEvent) :void
     {
         var card :Card = Card(event.target);
         
+        // you can only drag cards in your hand or in new law
         if (card.cardContainer != _ctx.board.player.hand && card.cardContainer != _ctx.board.newLaw) {
             return;
-            _ctx.log("card not on hand or newlaw");
         }
 
-        // on your turn by default you can drag cards in hand or newlaw around
+        // by default you can drag cards in hand or newlaw around
         if (mode == MODE_DEFAULT) {
         	if (_performingAction) {
                 return;
             }
-            startDragging(card);
         }
-
         // when exchanging a verb
         else if (mode == MODE_EXCHANGE_VERB) {
             if (card.group != Card.VERB) {
                 _ctx.notice("That card is not a verb.");
                 return;
             }
-            startDragging(card);
         }
-        
         // when exchanging a subject
         else if (mode == MODE_EXCHANGE_SUBJECT) {
             if (card.group != Card.SUBJECT) {
                 _ctx.notice("Card is not a subject.");
                 return;
             }
-            startDragging(card);
         }
-        
         // when dragging a when from your hand to a law
         else if (mode == MODE_MOVE_WHEN) {
             if (card.group != Card.WHEN) {
                 _ctx.notice("Card is not a when card");
                 return;
             }
-            startDragging(card);
         }
+        // all other modes
+        else {
+        	return;
+        }
+        
+        startDragging(card);
     }
     
     /**
@@ -146,8 +143,7 @@ public class State
     }
     
     /**
-     * Called while dragging card.
-     * // TODO highlight verbs in verb exchange mode
+     * Called while dragging card.  Indicate if the card is being dragged over a legal drop zone.
      */
     protected function draggingCard (event :MouseEvent) :void
     {
@@ -189,7 +185,6 @@ public class State
             targetLaw.showCards = true;
         }
         
-        
         if (mode == MODE_EXCHANGE_SUBJECT) {
             // get card this is hovering over
             var targetSubjectCard :Card = Card(getParent(card.dropTarget, Card));
@@ -229,6 +224,7 @@ public class State
             }
             // if it's a valid law to drop on, highlight it
             whenlessLaw.highlighted = true;
+            EventHandler.invokeLater(3, function () :void {whenlessLaw.highlighted = false});
         }
     }
     
@@ -319,6 +315,11 @@ public class State
                         returnCard(card);
                         return;
                     }
+                    if (card.type == _ctx.board.player.job.id) {
+                    	_ctx.notice("You're already " + _ctx.board.player.job.name);
+                    	returnCard(card);
+                    	return;
+                    }
                     _ctx.board.player.jobEnabled = false;
                     _ctx.board.removeCard(card);
                     // TODO distribute or remove discard pile
@@ -363,8 +364,9 @@ public class State
             targetLaw.removeCards(new Array(targetCard));
             targetLaw.addCards(new Array(card), true, targetIndex);
             _ctx.board.player.hand.addCards(new Array(targetCard));
-            mode = MODE_DEFAULT;
-            modeListener();
+            doneMode();
+            //mode = MODE_DEFAULT;
+            //modeListener();
         }
         
         else if (mode == MODE_MOVE_WHEN) {
@@ -379,8 +381,9 @@ public class State
             // add when to the end of the law
             _ctx.board.removeCard(card);
             whenlessLaw.addCards(new Array(card));
-            mode = MODE_DEFAULT;
-            modeListener();
+            doneMode();
+            //mode = MODE_DEFAULT;
+            //modeListener();
         }
     }
     
@@ -416,8 +419,9 @@ public class State
             // select opponent, reset mode then call listener
             opponent.highlighted = true;
             selectedOpponent = opponent;
-            mode = MODE_DEFAULT;
-            modeListener();
+            doneMode();
+            //mode = MODE_DEFAULT;
+            //modeListener();
         }
     }
     
@@ -445,9 +449,8 @@ public class State
                 _ctx.log("WTF target didn't have a parent Law?");
                 return;
             }
-            // law selected; reset mode then call listener
-            mode = MODE_DEFAULT;
-            modeListener();
+
+            doneMode();
         }
     }
     
@@ -457,14 +460,15 @@ public class State
      */
     public function selectOpponent (listener :Function) :void
     {
-        _ctx.notice("Please select an opponent.");
         if (mode != MODE_DEFAULT) {
             _ctx.log("WTF mode is not default when selecting opponent.  Continuing...");
         }
+
+        var message :String = "Please select an opponent.";
+        _ctx.notice(message);
+        setModeReminder(message);
         modeListener = listener;
         mode = MODE_SELECT_OPPONENT;
-        
-        EventHandler.invokeLater(10, function () :void {_ctx.notice("We're waiting for you!  Please select an opponent.");});
     }
     
     /**
@@ -474,12 +478,16 @@ public class State
      */
     public function selectCards (numCards :int, listener :Function, targetPlayer :Player = null) :void
     {
+        if (mode != MODE_DEFAULT) {
+            _ctx.log("WTF mode is not default when selecting cards.  Continuing...");
+        }
+        
     	// default to the current player
     	if (targetPlayer == null) {
     		targetPlayer = _ctx.board.player;
     	}
     	
-        // player has no cards to lose, return now.
+        // target player has no cards to lose, return now.
         if (targetPlayer.hand.numCards == 0) {
             _ctx.notice("You had to select " + numCards + " cards, but there are none to select.");
             selectedCards = new Array();
@@ -491,16 +499,17 @@ public class State
         if (numCards > targetPlayer.hand.numCards) {
             numCards = targetPlayer.hand.numCards;
         }
+        
+        var message :String;
         if (targetPlayer == _ctx.board.player) {
-            _ctx.notice("Please select " + numCards + " cards from your hand.");
+            message = "Please select " + numCards + " cards from your hand.";
         }
         else {
-        	_ctx.notice("Please select " + numCards + " cards from " + targetPlayer.playerName + "'s hand.");
+        	message = "Please select " + numCards + " cards from " + targetPlayer.playerName + "'s hand.";
         }
+        _ctx.notice(message);
+        setModeReminder(message);
         
-        if (mode != MODE_DEFAULT) {
-            _ctx.log("WTF mode is not default when selecting cards.  Continuing...");
-        }
         modeListener = listener;
         mode = MODE_SELECT_HAND_CARDS;
         selectedGoal = numCards;
@@ -514,10 +523,12 @@ public class State
      */
     public function selectLaw (listener :Function) :void
     {
-        _ctx.notice("Please select a law.");
         if (mode != MODE_DEFAULT) {
             _ctx.log("WTF mode is not default when selecting law.  Continuing...");
         }
+        var message :String = "Please select a law.";
+        _ctx.notice(message);
+        setModeReminder(message);
         modeListener = listener;
         mode = MODE_SELECT_LAW;
     }
@@ -527,7 +538,9 @@ public class State
      */
     public function exchangeVerb (listener :Function) :void
     {
-        _ctx.notice("Please select a verb from your hand and drag it over a verb in a law");
+        var message :String = "Please drag a verb from your hand drop it over a verb in a law"; 
+        _ctx.notice(message);
+        setModeReminder(message);
         modeListener = listener;
         mode = MODE_EXCHANGE_VERB;
     }
@@ -537,7 +550,9 @@ public class State
      */
     public function exchangeSubject (listener :Function) :void
     {
-        _ctx.notice("Please select a subject from your hand and drag it over a subject in a law");
+        var message :String = "Please drag a subject from your hand and drop it over a subject in a law";
+        _ctx.notice(message);
+        setModeReminder(message);
         modeListener = listener;
         mode = MODE_EXCHANGE_SUBJECT;
     }
@@ -548,7 +563,9 @@ public class State
      */
     public function moveWhen (listener :Function) :void
     {
-        _ctx.notice("Please drag a 'when' card from your hand to a law, or select a when card in a law to take");
+    	var message :String = "Please drag a when card from your hand to a law, or select a when card in a law to take"; 
+        _ctx.notice(message);
+        setModeReminder(message);
         modeListener = listener;
         mode = MODE_MOVE_WHEN;
     }
@@ -657,13 +674,60 @@ public class State
      */
     public function cancelMode () :void
     {
+    	setModeReminder(null);
         mode = MODE_DEFAULT;
         deselectCards();
         deselectOpponent();
         deselectLaw();
     }
     
-    /** Array of currently selected cards */
+    /**
+     * Finished getting user input; reset to default mode but keep selected cards/opponents/laws,
+     * then call the listener function that is waiting for the mode to complete.     */
+    public function doneMode () :void
+    {
+        setModeReminder(null);
+        mode = MODE_DEFAULT;
+        if (modeListener != null) {
+            modeListener();
+        }
+    }
+    
+    /**
+     * Set a timer to display a reminder notice after every 10 seconds in the mode.  If message
+     * is null, instead cancel the notice timer.
+     * TODO add listener for 4th reminder, eg pick a random card or opponent     */
+    protected function setModeReminder (message :String, reminderNum :int = 1) :void
+    {
+    	if (message == null && modeReminderTimer != null) {
+    		modeReminderTimer.stop();
+    		modeReminderTimer = null;
+    		return;
+    	}
+    	var reminderText :String;
+    	if (reminderNum == 1) {
+    		reminderText = "We're waiting for you.  ";
+    		if (modeReminderTimer != null) {
+                _ctx.log("WTF mode reminder timer is not null - continuing");
+            }
+    	}
+    	else if (reminderNum == 2) {
+    		reminderText = "Come on, just eenie meenie minie moe.  ";
+    	}
+    	else if (reminderNum == 3) {
+    		reminderText = "Just take all day why doncha!  ";
+    	}
+    	else {
+    		reminderText = "Heloooooo!  ";
+    	}
+    	modeReminderTimer = new Timer(10000, 1);
+        modeReminderTimer.addEventListener(TimerEvent.TIMER, 
+            function () :void {_ctx.notice(reminderText + message); setModeReminder(message, reminderNum+1) });
+        modeReminderTimer.start();
+    }
+    
+    /** Array of currently selected cards 
+     * TODO use getters */
     public var selectedCards :Array = null;
     
     /** Currently selected opponents */
@@ -671,6 +735,9 @@ public class State
     
     /** Currently selected law */
     public var selectedLaw :Law = null;
+    
+    /** Timer for reminder notices when waiting for user input */
+    protected var modeReminderTimer :Timer = null;
     
     /** Context */
     protected var _ctx :Context;

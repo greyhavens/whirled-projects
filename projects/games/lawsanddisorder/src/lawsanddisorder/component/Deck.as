@@ -46,6 +46,7 @@ public class Deck extends Component
         
         // Change the size of the deck based on the number of players
         // TODO reevaluate these multiplyers - 3p is too small
+        /*
         var deckMultiplyer :int;
         if (playerCount < 4) {
         	deckMultiplyer = 1;
@@ -56,10 +57,65 @@ public class Deck extends Component
         else {
         	deckMultiplyer = 3;
         }
+        */
         
         // create the deck of cards
-        // 18 subjects 9 verbs 11 objects 5 whens
-        for (var i :int = 0; i < deckMultiplyer; i++) {
+        for (var i :int = 0; i < playerCount; i++) {
+        	// 12 subjects, 7 verbs, 7 objects, 3 whens = 29
+            addNewCards(2, Card.SUBJECT, Job.JUDGE);
+            addNewCards(2, Card.SUBJECT, Job.THIEF);
+            addNewCards(2, Card.SUBJECT, Job.BANKER);
+            addNewCards(2, Card.SUBJECT, Job.TRADER);
+            addNewCards(2, Card.SUBJECT, Job.PRIEST);
+            addNewCards(2, Card.SUBJECT, Job.SCIENTIST);
+            
+            // take out gives for 2 player games
+            // TODO put this back in, out for testing
+            /*
+            if (playerCount == 2) {
+                addNewCards(4, Card.VERB, Card.LOSES);
+                addNewCards(3, Card.VERB, Card.GETS);
+            }
+            else {
+            */
+                addNewCards(2, Card.VERB, Card.GIVES);
+                addNewCards(3, Card.VERB, Card.LOSES);
+                addNewCards(2, Card.VERB, Card.GETS);
+            //}
+            addNewCards(2, Card.OBJECT, Card.CARD, 1);
+            addNewCards(1, Card.OBJECT, Card.CARD, 2);
+            addNewCards(1, Card.OBJECT, Card.MONIE, 1);
+            addNewCards(1, Card.OBJECT, Card.MONIE, 2);
+            addNewCards(1, Card.OBJECT, Card.MONIE, 3);
+            addNewCards(1, Card.OBJECT, Card.MONIE, 4);
+            addNewCards(1, Card.WHEN, Card.START_TURN);
+            addNewCards(1, Card.WHEN, Card.USE_ABILITY);
+            addNewCards(1, Card.WHEN, Card.CREATE_LAW);
+        	/*
+            // 24 subjects 14 verbs 14 objects 6 whens, total = 58
+            // 41% subjects, 24% verbs, 24% objects, 10% when
+            addNewCards(4, Card.SUBJECT, Job.JUDGE);
+            addNewCards(4, Card.SUBJECT, Job.THIEF);
+            addNewCards(4, Card.SUBJECT, Job.BANKER);
+            addNewCards(4, Card.SUBJECT, Job.TRADER);
+            addNewCards(4, Card.SUBJECT, Job.PRIEST);
+            addNewCards(4, Card.SUBJECT, Job.SCIENTIST);
+            addNewCards(4, Card.VERB, Card.GIVES);
+            addNewCards(6, Card.VERB, Card.LOSES);
+            addNewCards(4, Card.VERB, Card.GETS);
+            addNewCards(4, Card.OBJECT, Card.CARD, 1);
+            addNewCards(2, Card.OBJECT, Card.CARD, 2);
+            addNewCards(2, Card.OBJECT, Card.MONIE, 1);
+            addNewCards(2, Card.OBJECT, Card.MONIE, 2);
+            addNewCards(2, Card.OBJECT, Card.MONIE, 3);
+            addNewCards(2, Card.OBJECT, Card.MONIE, 4);
+            addNewCards(2, Card.WHEN, Card.START_TURN);
+            addNewCards(2, Card.WHEN, Card.USE_ABILITY);
+            addNewCards(2, Card.WHEN, Card.CREATE_LAW);
+            */
+        	/*
+        	// 18 subjects 9 verbs 11 objects 5 whens = 43
+        	// 41% subjects, 20% verbs, 25% objects, 11% when
 	        addNewCards(3, Card.SUBJECT, Job.JUDGE);
 	        addNewCards(3, Card.SUBJECT, Job.THIEF);
 	        addNewCards(3, Card.SUBJECT, Job.BANKER);
@@ -78,6 +134,7 @@ public class Deck extends Component
 	        addNewCards(2, Card.WHEN, Card.START_TURN);
 	        addNewCards(2, Card.WHEN, Card.USE_ABILITY);
             addNewCards(1, Card.WHEN, Card.CREATE_LAW);
+            */
         }
     }
     
@@ -149,7 +206,7 @@ public class Deck extends Component
     protected function jobsChanged (event :PropertyChangedEvent) :void
     {
         if (event.index != -1) {
-        	playerJobs[event.index] = event.newValue;
+            playerJobs[event.index] = event.newValue;
         }
         else {
             playerJobs = _ctx.eventHandler.getData(JOBS_DATA) as Array;
@@ -194,6 +251,7 @@ public class Deck extends Component
     
     /**
      * Remove a random job from the pool of available jobs and return it
+     * TODO inefficient even for setup, should setup all jobs and send data
      */
     public function drawRandomJob (player :Player) :Job
     {
@@ -201,7 +259,8 @@ public class Deck extends Component
         var availableJobs :Array = new Array();
         for (var i :int = 0; i < jobObjects.length; i++) {
             var tempJob :Job = jobObjects[i];
-            if (tempJob.player == null) {
+            if (playerJobs.indexOf(tempJob.id) == -1) {
+            //if (tempJob.player == null) {
                 availableJobs.push(tempJob);
             }
         }
@@ -210,7 +269,7 @@ public class Deck extends Component
         var randomIndex :int = Math.round(Math.random() * (availableJobs.length-1));
         var job :Job = availableJobs[randomIndex];
         
-        updateDisplay();
+        //updateDisplay();
         return job;
     }
     
@@ -233,16 +292,16 @@ public class Deck extends Component
     /**
      * Assign the job to the player, swapping with another player if applicable
      */
-    public function switchJobs (job :Job, player :Player) :void
+    public function switchJobs (job :Job, player :Player, duringSetup :Boolean = false) :void
     {
         if (job == null || player == null) {
             _ctx.log("WTF null job or player? " + job + ", " + player);
             return;
         } 
         
-        // grab player's old job
+        // grab player's old job, and job's old player
         var oldJob :Job = player.job;
-        var oldPlayer :Player = job.player;
+        var oldPlayer :Player = getPlayerByJob(job);
         
         if (oldJob == null && oldPlayer != null) {
             _ctx.log("WTF Trying to steal a player's job with no existing job!");
@@ -256,26 +315,32 @@ public class Deck extends Component
             return;
         }
         playerJobs[player.id] = job.id;
-        job.player = player;
+        //job.player = player;
         player.job = job;
         _ctx.eventHandler.setData(JOBS_DATA, job.id, player.id);
         
         // job was on another player; assign old job to other player
         if (oldJob != null && oldPlayer != null) {
             playerJobs[oldPlayer.id] = oldJob.id;
-            oldJob.player = oldPlayer;
+            //oldJob.player = oldPlayer;
             oldPlayer.job = oldJob;
             _ctx.eventHandler.setData(JOBS_DATA, oldJob.id, oldPlayer.id);
             _ctx.broadcast(player.playerName + " swapped jobs with " + oldPlayer.playerName);
         }
         else if (oldPlayer == null) {
-        	_ctx.broadcast(player.playerName + " became " + player.job);
+        	if (duringSetup) {
+        		_ctx.broadcast(player.playerName + " drew " + player.job);
+        	}
+        	else {
+        	   _ctx.broadcast(player.playerName + " became " + player.job);
+        	}
         }
         
         // nobody to give the old job; clear this player from it
-        if (oldJob != null && oldPlayer == null) {
-            oldJob.player = null;
-        }
+        //if (oldJob != null && oldPlayer == null) {
+//_ctx.log("clearing player from old job");
+        //    oldJob.player = null;
+        //}
     }
     
     /**
@@ -296,6 +361,21 @@ public class Deck extends Component
     public function get numCards () :int
     {
     	return cards.length;
+    }
+    
+    /**
+     * Given a job, return the player who has that job, or null if nobody does     */
+    public function getPlayerByJob (job :Job) :Player
+    {
+    	if (job == null) {
+    		_ctx.log("WTF null job in getPlayerByJob");
+    		return null;
+    	}
+    	var playerId :int = playerJobs.indexOf(job.id);
+    	if (playerId == -1) {
+    		return null;
+    	}
+    	return _ctx.board.getPlayer(playerId);
     }
     
     /** Cards are added to here when they leave the board. 
