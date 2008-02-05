@@ -31,7 +31,7 @@ public class AITaskQueue extends TaskContainer
         aiTask.parentTask = _parentTask;
     }
 
-    public function addSubtask (task :AITask) :void
+    /*public function addSubtask (task :AITask) :void
     {
         var topTask :AITask = this.topTask;
         if (null != topTask) {
@@ -57,7 +57,7 @@ public class AITaskQueue extends TaskContainer
     {
         var topTask :AITask = this.topTask;
         return (null != topTask ? topTask.hasSubtasksNamed(names, index) : false);
-    }
+    }*/
 
     public function getStateString (depth :uint = 0) :String
     {

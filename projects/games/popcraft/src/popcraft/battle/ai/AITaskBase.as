@@ -61,7 +61,7 @@ public class AITaskBase
         } else if (index == names.length - 1) {
             return true;
         } else {
-            return subtask.hasSubtasksNamed(names, index + 1);
+            //return subtask.hasSubtasksNamed(names, index + 1);
         }
     }
 
