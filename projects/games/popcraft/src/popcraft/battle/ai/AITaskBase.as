@@ -1,10 +1,7 @@
 package popcraft.battle.ai {
 
 import com.threerings.util.Assert;
-
 import com.whirled.contrib.core.*;
-
-import popcraft.battle.CreatureUnit;
 
 public class AITaskBase
     implements AITask
@@ -94,6 +91,11 @@ public class AITaskBase
     public function set parentTask (parentTask :AITask) :void
     {
         _parentTask = parentTask;
+    }
+    
+    protected function get subtasksComplete () :Boolean
+    {
+        return (_subtasks.tasks.length == 0);
     }
 
     protected var _parentTask :AITask;
