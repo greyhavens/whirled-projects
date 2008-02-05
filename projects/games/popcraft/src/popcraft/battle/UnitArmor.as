@@ -31,7 +31,7 @@ public class UnitArmor
         }
     }
 
-    public function getAttackDamage (attack :UnitAttack) :Number
+    public function getAttackDamage (attack :UnitWeapon) :Number
     {
         var value :* = _armor.get(attack.damageType);
         var damageMultiplier :Number = (undefined !== value ? value : 1);

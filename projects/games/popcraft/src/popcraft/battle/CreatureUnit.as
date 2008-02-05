@@ -120,7 +120,7 @@ public class CreatureUnit extends Unit
     }
 
     // from Unit
-    override public function receiveAttack (sourceId :uint, attack :UnitAttack) :void
+    override public function receiveAttack (sourceId :uint, attack :UnitWeapon) :void
     {
         super.receiveAttack(sourceId, attack);
         _healthMeter.addTask(MeterValueTask.CreateSmooth(_health, 0.25));

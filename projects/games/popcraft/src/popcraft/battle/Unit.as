@@ -66,7 +66,7 @@ public class Unit extends SceneObject
         return this.hasTasksNamed("attackCooldown");
     }
 
-    public function isUnitInAttackRange (targetUnit :Unit, attack :UnitAttack) :Boolean
+    public function isUnitInAttackRange (targetUnit :Unit, attack :UnitWeapon) :Boolean
     {
         return Collision.circlesIntersect(
             new Vector2(this.displayObject.x, this.displayObject.y),
@@ -75,14 +75,14 @@ public class Unit extends SceneObject
             targetUnit.unitData.collisionRadius);
     }
 
-    public function canAttackUnit (targetUnit :Unit, attack :UnitAttack) :Boolean
+    public function canAttackUnit (targetUnit :Unit, attack :UnitWeapon) :Boolean
     {
         // we can attack the unit if we're not already attacking, and if the unit
         // is within range of the attack
         return (!isAttacking() && isUnitInAttackRange(targetUnit, attack));
     }
 
-    public function findNearestAttackLocation (targetUnit :Unit, attack :UnitAttack) :Vector2
+    public function findNearestAttackLocation (targetUnit :Unit, attack :UnitWeapon) :Vector2
     {
         // given this unit's current location, find the nearest location
         // that an attack on the given target can be launched from
@@ -105,7 +105,7 @@ public class Unit extends SceneObject
         }
     }
 
-    public function sendAttack (targetUnit :Unit, attack :UnitAttack) :void
+    public function sendAttack (targetUnit :Unit, attack :UnitWeapon) :void
     {
         // don't attack if we're already attacking
         if (!canAttackUnit(targetUnit, attack)) {
@@ -126,7 +126,7 @@ public class Unit extends SceneObject
         }
     }
 
-    public function receiveAttack (sourceId :uint, attack :UnitAttack) :void
+    public function receiveAttack (sourceId :uint, attack :UnitWeapon) :void
     {
         // calculate damage
         var damage :uint = uint(_unitData.armor.getAttackDamage(attack));

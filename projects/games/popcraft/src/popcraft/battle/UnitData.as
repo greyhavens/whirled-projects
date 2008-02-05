@@ -16,7 +16,7 @@ public class UnitData
 
     public var maxHealth :int;
     public var armor :UnitArmor;
-    public var attack :UnitAttack;
+    public var attack :UnitWeapon;
 
     public var collisionRadius :Number;
     public var detectRadius :Number;
@@ -31,7 +31,7 @@ public class UnitData
         movePixelsPerSecond :Number,
         maxHealth :int,
         armor :UnitArmor,
-        attack :UnitAttack,
+        attack :UnitWeapon,
         collisionRadius :Number,
         detectRadius :Number,
         loseInterestRadius :Number )

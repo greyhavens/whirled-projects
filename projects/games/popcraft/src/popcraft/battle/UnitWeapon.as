@@ -2,7 +2,7 @@ package popcraft.battle {
 
 import com.whirled.contrib.core.util.NumRange;
 
-public class UnitAttack
+public class UnitWeapon
 {
     public var damageType :uint;
     public var damageRange :NumRange;
@@ -10,7 +10,7 @@ public class UnitAttack
     public var cooldown :Number;
     public var attackRadius :Number;
 
-    public function UnitAttack (
+    public function UnitWeapon (
         damageType :uint,
         damageRange :NumRange,
         targetClassMask :uint,

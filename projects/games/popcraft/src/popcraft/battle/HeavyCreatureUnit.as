@@ -76,11 +76,6 @@ class HeavyAI extends AITaskBase
     
     protected function beginGruntEscortLoop () :void
     {
-        /*var loop :AITaskQueue = new AITaskQueue(true);
-        loop.addTask(new DetectEscortlessGruntTask());
-        loop.addTask(new EscortGruntTask(_unit));
-        
-        this.addSubtask(loop);*/
         this.addSubtask(new DetectEscortlessGruntTask());
     }
     
