@@ -1,14 +1,16 @@
 package popcraft.battle {
-
-import popcraft.*;
-import popcraft.util.*;
+    
+import com.threerings.util.Assert;
 
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
-import com.whirled.contrib.core.util.*;
 import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.core.util.*;
 
 import flash.display.Bitmap;
+
+import popcraft.*;
+import popcraft.util.*;
 
 /**
  * If ActionScript allowed the creation of abstract classes or private constructors, I would do that here.
@@ -70,7 +72,7 @@ public class Unit extends SceneObject
     {
         return Collision.circlesIntersect(
             new Vector2(this.displayObject.x, this.displayObject.y),
-            attack.attackRadius,
+            attack.maxAttackDistance,
             new Vector2(targetUnit.displayObject.x, targetUnit.displayObject.y),
             targetUnit.unitData.collisionRadius);
     }
@@ -96,7 +98,7 @@ public class Unit extends SceneObject
             moveLoc.subtract(targetUnit.unitLoc);
 
             // scale it by the appropriate amount
-            moveLoc.length = (targetUnit.unitData.collisionRadius + attack.attackRadius - 1);
+            moveLoc.length = (targetUnit.unitData.collisionRadius + attack.maxAttackDistance - 1);
 
             // add it to the base's location
             moveLoc.add(targetUnit.unitLoc);
@@ -105,31 +107,42 @@ public class Unit extends SceneObject
         }
     }
 
-    public function sendAttack (targetUnit :Unit, attack :UnitWeapon) :void
+    public function sendTargetedAttack (targetUnit :Unit, weapon :UnitWeapon) :void
     {
         // don't attack if we're already attacking
-        if (!canAttackUnit(targetUnit, attack)) {
-            trace(
+        if (!this.canAttackUnit(targetUnit, weapon)) {
+            /*trace(
                 "discarding attack from "
                 + this.id + " to " + targetUnit.id +
-                " (target out of range, or we're already attacking)");
+                " (target out of range, or we're already attacking)");*/
 
             return;
         }
 
-        // send the attack
-        targetUnit.receiveAttack(this.id, attack);
+        switch(weapon.weaponType) {
+        case UnitWeapon.TYPE_MELEE:
+            targetUnit.receiveAttack(this.id, weapon);
+            break;
+            
+        case UnitWeapon.TYPE_MISSILE:
+            MissileFactory.createMissile(this, targetUnit, weapon);
+            break;
+            
+        default:
+            Assert.fail("Unrecognized weaponType: " + weapon.weaponType);
+            break;
+        }
 
         // install a cooldown timer
-        if (attack.cooldown > 0) {
-            this.addNamedTask("attackCooldown", new TimedTask(attack.cooldown));
+        if (weapon.cooldown > 0) {
+            this.addNamedTask("attackCooldown", new TimedTask(weapon.cooldown));
         }
     }
 
-    public function receiveAttack (sourceId :uint, attack :UnitWeapon) :void
+    public function receiveAttack (sourceUnitId :uint, weapon :UnitWeapon) :void
     {
         // calculate damage
-        var damage :uint = uint(_unitData.armor.getAttackDamage(attack));
+        var damage :uint = uint(_unitData.armor.getWeaponDamage(weapon));
         damage = Math.min(damage, _health);
         _health -= damage;
 

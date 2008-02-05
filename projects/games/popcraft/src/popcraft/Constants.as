@@ -65,8 +65,8 @@ public class Constants
     public static const BATTLE_TILE_SIZE :int = 32;
 
     /* Damage types */
-    public static const DAMAGE_TYPE_MELEE :uint = 0;
-    public static const DAMAGE_TYPE_PROJECTILE :uint = 1;
+    public static const DAMAGE_TYPE_CRUSHING :uint = 0;
+    public static const DAMAGE_TYPE_PIERCING :uint = 1;
     public static const DAMAGE_TYPE_BASE :uint = 2; // bases damage units that attack them
 
     /* Resource types */
@@ -113,8 +113,8 @@ public class Constants
                 , -1, new IntRange(0, 0)   // wanderEvery, wanderRange
                 , 25                        // move speed (pixels/second)
                 , 100                       // health
-                , new UnitArmor( [DAMAGE_TYPE_MELEE, 0.8, DAMAGE_TYPE_PROJECTILE, 0.7, DAMAGE_TYPE_BASE, 0.8] )   // armor
-                , new UnitWeapon(DAMAGE_TYPE_MELEE, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS_GROUND, 1, 35) // attack
+                , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.8, DAMAGE_TYPE_PIERCING, 0.7, DAMAGE_TYPE_BASE, 0.8] )   // armor
+                , new UnitWeapon(UnitWeapon.TYPE_MELEE, DAMAGE_TYPE_CRUSHING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS_GROUND, 1, 35, 0) // attack
                 , 30                        // collision radius
                 , 90                        // detect radius
                 , 180                       // lose interest radius
@@ -129,8 +129,8 @@ public class Constants
                 , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
                 , 25                        // move speed (pixels/second)
                 , 100                       // health
-                , new UnitArmor( [DAMAGE_TYPE_MELEE, 1, DAMAGE_TYPE_PROJECTILE, 1, DAMAGE_TYPE_BASE, 1] )   // armor
-                , new UnitWeapon(DAMAGE_TYPE_PROJECTILE, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 50) // attack
+                , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] )   // armor
+                , new UnitWeapon(UnitWeapon.TYPE_MELEE, DAMAGE_TYPE_CRUSHING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 50, 0) // attack
                 , 30                        // collision radius
                 , 90                        // detect radius
                 , 180                       // lose interest radius
@@ -145,8 +145,8 @@ public class Constants
                 , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
                 , 40                        // move speed (pixels/second)
                 , 100                       // health
-                , new UnitArmor( [DAMAGE_TYPE_MELEE, 1, DAMAGE_TYPE_PROJECTILE, 1, DAMAGE_TYPE_BASE, 1] )   // armor
-                , new UnitWeapon(DAMAGE_TYPE_PROJECTILE, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 50) // attack
+                , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] )   // armor
+                , new UnitWeapon(UnitWeapon.TYPE_MELEE, DAMAGE_TYPE_CRUSHING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 50, 0) // attack
                 , 30                        // collision radius
                 , 90                        // detect radius
                 , 180                       // lose interest radius
@@ -163,8 +163,8 @@ public class Constants
                 , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
                 , 0                         // move speed (pixels/second)
                 , 100                       // health
-                , new UnitArmor( [DAMAGE_TYPE_MELEE, 0.1, DAMAGE_TYPE_PROJECTILE, 0.1] )   // armor
-                , new UnitWeapon(DAMAGE_TYPE_BASE, new NumRange(20, 20, Rand.STREAM_GAME), UNIT_CLASS__ALL, 0, 1000) // attack
+                , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.1, DAMAGE_TYPE_PIERCING, 0.1] )   // armor
+                , new UnitWeapon(UnitWeapon.TYPE_MELEE, DAMAGE_TYPE_BASE, new NumRange(20, 20, Rand.STREAM_GAME), UNIT_CLASS__ALL, 0, 1000, 0) // attack
                 , 60                        // collision radius
                 , 90                        // detect radius
                 , 180                       // lose interest radius

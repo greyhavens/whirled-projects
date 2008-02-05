@@ -29,7 +29,7 @@ public class AttackBaseTask extends AITaskBase
         // the enemy is still alive. Can we attack?
         if (unit.canAttackUnit(base, unit.unitData.attack)) {
             unit.removeNamedTasks("move");
-            unit.sendAttack(base, unit.unitData.attack);
+            unit.sendTargetedAttack(base, unit.unitData.attack);
         } else {
             // should we try to get closer to the enemy?
             var attackLoc :Vector2 = unit.findNearestAttackLocation(base, unit.unitData.attack);

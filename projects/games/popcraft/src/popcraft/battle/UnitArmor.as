@@ -12,7 +12,7 @@ import com.whirled.contrib.core.util.Rand;
 public class UnitArmor
 {
     /**
-     * Construct a new new UnitArmor.
+     * Construct a new UnitArmor.
      * armorArray is an array of pairs of uints and Numbers - damage types and damage modifiers.
      */
     public function UnitArmor (armorArray :Array = null)
@@ -31,12 +31,12 @@ public class UnitArmor
         }
     }
 
-    public function getAttackDamage (attack :UnitWeapon) :Number
+    public function getWeaponDamage (weapon :UnitWeapon) :Number
     {
-        var value :* = _armor.get(attack.damageType);
+        var value :* = _armor.get(weapon.damageType);
         var damageMultiplier :Number = (undefined !== value ? value : 1);
 
-        return (attack.damageRange.next() * damageMultiplier);
+        return (weapon.damageRange.next() * damageMultiplier);
     }
 
     protected var _armor :HashMap = new HashMap();
