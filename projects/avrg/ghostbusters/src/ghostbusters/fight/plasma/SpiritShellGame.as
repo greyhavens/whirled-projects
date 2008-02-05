@@ -179,7 +179,7 @@ public class SpiritShellGame extends MicrogameMode
         
         var thisGameMode :SpiritShellGame = this; // store this for getEctoCollision() local function
         
-        var ectos :Array = this.getObjectsInGroup(Ectoplasm.GROUP_NAME);
+        var ectos :Array = this.getObjectIdsInGroup(Ectoplasm.GROUP_NAME);
         
         if (ectos.length == 0) {
             this.gameOver(true);
@@ -187,7 +187,7 @@ public class SpiritShellGame extends MicrogameMode
         
         // handle plasma-ectoplasm collision detection.
         // we inefficiently check every plasma against every ectoplasm.
-        var plasmas :Array = this.getObjectsInGroup(PlasmaBullet.GROUP_NAME);
+        var plasmas :Array = this.getObjectIdsInGroup(PlasmaBullet.GROUP_NAME);
         for each (var plasmaId :uint in plasmas) {
             
             var plasma :PlasmaBullet = this.getObject(plasmaId) as PlasmaBullet;
