@@ -51,6 +51,12 @@ public class AITaskQueue extends TaskContainer
             }
         }
     }
+    
+    public function transitionTo (nextState :AIState) :void
+    {
+        Assert.isNotNull(_parentState, "root AIStates cannot transition");
+        _parentState.handleTransition(this, nextState);
+    }
 
     protected function get topTask () :AIState
     {

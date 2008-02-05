@@ -8,6 +8,8 @@ public interface AIState extends ObjectTask
 
     function get parentState () :AIStateTree;
     function set parentState (parent :AIStateTree) :void;
+    
+    function transitionTo (newState :AIState) :void;
 }
 
 }

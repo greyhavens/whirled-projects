@@ -5,11 +5,11 @@ import com.whirled.contrib.core.*;
 import popcraft.*;
 import popcraft.battle.*;
 
-public class AttackCreatureTask extends AIStateTree
+public class AttackUnitState extends AIStateBase
 {
-    public static const NAME :String = "AttackCreatureTask";
+    public static const NAME :String = "AttackUnit";
 
-    public function AttackCreatureTask (unitId :uint)
+    public function AttackUnitState (unitId :uint)
     {
         _unitId = unitId;
     }
@@ -41,12 +41,17 @@ public class AttackCreatureTask extends AIStateTree
 
     override public function clone () :ObjectTask
     {
-        return new AttackCreatureTask(_unitId);
+        return new AttackUnitState(_unitId);
     }
 
     override public function get name () :String
     {
         return NAME;
+    }
+    
+    override public function receiveMessage (msg :ObjectMessage) :Boolean
+    {
+        return false;
     }
 
     protected var _unitId :uint;

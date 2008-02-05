@@ -1,34 +1,24 @@
 package popcraft.battle.ai {
 
-import com.threerings.util.Assert;
 import com.whirled.contrib.core.*;
 
-public class AIStateTree
-    implements AIState
+public class AIStateTree extends AIStateBase
 {
     public function AIStateTree ()
     {
     }
-
-    /** Subclasses should implement this. */
-    public function get name () :String
+    
+    public function handleTransition (fromState :AIState, toState :AIState) :void
     {
-        return (null == _parentState ? "[root]" : "[unnamed state]");
+        _substates.handleTransition(fromState, toState);
     }
 
-    /** Subclasses should implement this. */
-    public function clone () :ObjectTask
-    {
-        Assert.fail("This AIState does not implement clone()");
-        return null;
-    }
-
-    public function receiveMessage (msg :ObjectMessage) :Boolean
+    override public function receiveMessage (msg :ObjectMessage) :Boolean
     {
         return _substates.receiveMessage(msg);
     }
 
-    public function update (dt :Number, obj :AppObject) :Boolean
+    override public function update (dt :Number, obj :AppObject) :Boolean
     {
         _substates.update(dt, obj);
         return false;
@@ -76,23 +66,12 @@ public class AIStateTree
 
         return stateString;
     }
-
-    public function get parentState () :AIStateTree
-    {
-        return _parentState;
-    }
-
-    public function set parentState (state :AIStateTree) :void
-    {
-        _parentState = state;
-    }
     
     protected function get subtasksComplete () :Boolean
     {
         return (_substates.tasks.length == 0);
     }
 
-    protected var _parentState :AIStateTree;
     protected var _substates :SubstateContainer = new SubstateContainer();
 }
 
@@ -118,5 +97,16 @@ class SubstateContainer extends ParallelTask
         }
 
         return null;
+    }
+    
+    public function handleTransition (fromState :AIState, toState :AIState) :void
+    {
+        for (var i :uint = 0; i < _tasks.length; ++i) {
+            if (_tasks[i] === fromState) {
+                _tasks[i] = toState;
+            }
+        }
+        
+        
     }
 }

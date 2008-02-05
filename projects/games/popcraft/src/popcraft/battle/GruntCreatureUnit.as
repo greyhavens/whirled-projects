@@ -79,7 +79,7 @@ class GruntAI extends AIStateTree
     protected function beginAttackBase () :void
     {
         this.clearSubtasks();
-        this.addSubtask(new AttackBaseTask(_unit.findEnemyBaseToAttack()));
+        this.addSubtask(new AttackUnitState(_unit.findEnemyBaseToAttack()));
     }
 
     protected function beginAttackCreature (creatureId :uint) :void
@@ -87,8 +87,8 @@ class GruntAI extends AIStateTree
         this.clearSubtasks();
 
         var taskQueue :AITaskQueue = new AITaskQueue(false);
-        taskQueue.addTask(new AttackCreatureTask(creatureId));
-        taskQueue.addTask(new AttackBaseTask(_unit.findEnemyBaseToAttack()));
+        taskQueue.addTask(new AttackUnitState(creatureId));
+        taskQueue.addTask(new AttackUnitState(_unit.findEnemyBaseToAttack()));
 
         this.addSubtask(taskQueue);
     }
