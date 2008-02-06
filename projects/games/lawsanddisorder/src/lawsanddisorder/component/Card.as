@@ -2,8 +2,11 @@
 
 import flash.display.Sprite;
 import flash.text.TextField;
+import flash.text.TextFormat;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
+import flash.geom.ColorTransform;
+
 import lawsanddisorder.Context;
 
 /**
@@ -34,6 +37,114 @@ public class Card extends Component
         super(ctx);
     }
     
+    /**
+     * Draw the card sprite
+     */
+    override protected function initDisplay () :void
+    {
+        graphics.clear();
+        graphics.beginFill(0x4499EE);
+        graphics.drawRect(0, 0, 50, 65);
+        graphics.endFill();
+        
+        //title.text = text + " [" + id + "]";
+        cardText = new TextField();
+        var format :TextFormat = new TextFormat();
+        format.align = "center";        
+        cardText.defaultTextFormat = format;        
+        cardText.text = text;
+        cardText.width = 50;
+        cardText.height = 60;
+        cardText.mouseEnabled = false;
+        cardText.wordWrap = true;
+        addChild(cardText);
+        
+        var color :uint = getColor();
+        graphics.lineStyle(2, color, 0.5);
+        graphics.drawRect(0, 0, 50, 65);
+        
+        var symbol :Sprite = getSymbol();
+        if (symbol != null) {
+            symbol.width = symbol.width / 4;
+            symbol.height = symbol.height / 4;
+            symbol.x = 25;
+            symbol.y = 40;
+            var colorTransform :ColorTransform = new ColorTransform();
+            colorTransform.color = color;
+            symbol.transform.colorTransform = colorTransform;
+            symbol.alpha = 0.6;
+            addChild(symbol);
+        }
+    }
+    
+    /**
+     * Draw a border in one of two colours.
+     */
+    override protected function updateDisplay () :void
+    {
+        if (_highlighted) {
+            graphics.lineStyle(5, 0xFFFF00);
+        }
+        else {
+            graphics.lineStyle(5, 0x4499EE);
+        }
+        graphics.drawRect(5, 5, 40, 55);
+    }
+    
+    /**
+     * Return the rgb hex color (eg 0xFF0000) for this card type
+     */
+    protected function getColor () :uint
+    {
+        if (_group == SUBJECT) {
+            return 0x0000FF;
+        }
+        else if (_group == VERB) {
+            return 0xFF0000;
+        }
+        else if (_group == OBJECT) {
+            return 0xFFFF00;
+        }
+        else {
+            return 0xFF00FF;
+        }
+    }
+    
+    /**
+     * Generate and return a new sprite containing the symbol for this card, or null
+     * if there is no symbol for this card.
+     * TODO make these MovieClips instead?     */
+	protected function getSymbol () :Sprite
+	{
+	    switch (group) {
+	        case SUBJECT:
+	            switch (type) {
+	                case Job.JUDGE:
+	                    return new Job.SYMBOL_JUDGE();
+	                case Job.THIEF:
+	                    return new Job.SYMBOL_THIEF();
+	                case Job.BANKER:
+	                    return new Job.SYMBOL_BANKER();
+	                case Job.TRADER:
+	                    return new Job.SYMBOL_TRADER();
+	                case Job.PRIEST:
+	                    return new Job.SYMBOL_PRIEST();
+	                case Job.SCIENTIST:
+	                    return new Job.SYMBOL_SCIENTIST();
+	            }
+                break;
+	        case OBJECT:
+	            switch (type) {
+	                case CARD:
+	                    return new SYMBOL_CARD();
+	                case MONIE:
+	                    return new SYMBOL_MONIE();
+	            }
+                break;
+	    }
+	    return null;
+	}
+
     /**
      * Return the text for the card face
      */
@@ -96,49 +207,6 @@ public class Card extends Component
                 break;
         }
         return "UNKNOWN";
-    }
-    
-    /**
-     * Draw the card sprite
-     */
-    override protected function initDisplay () :void
-    {
-        graphics.clear();
-        graphics.beginFill(0x4499EE);
-        graphics.drawRect(0, 0, 40, 60);
-        graphics.endFill();
-        
-        title.text = text + " [" + id + "]";
-        title.width = 40;
-        title.height = 60;
-        
-        if (_group == SUBJECT) {
-            graphics.lineStyle(2, 0x0000FF, 0.5);
-        }
-        else if (_group == VERB) {
-            graphics.lineStyle(2, 0xFF0000, 0.5);
-        }
-        else if (_group == OBJECT) {
-        	graphics.lineStyle(2, 0xFFFF00, 0.5);
-        }
-        else {
-        	graphics.lineStyle(2, 0xFF00FF, 0.5);
-        }
-        graphics.drawRect(0, 0, 40, 60);
-    }
-    
-    /**
-     * Draw a border in one of two colours.
-     */
-    override protected function updateDisplay () :void
-    {
-        if (_highlighted) {
-            graphics.lineStyle(5, 0xFFFF00);
-        }
-        else {
-            graphics.lineStyle(5, 0x4499EE);
-        }
-        graphics.drawRect(5, 5, 30, 50);
     }
     
     /**
@@ -207,26 +275,29 @@ public class Card extends Component
         updateDisplay();
     }
     
+    /** Text on the card */
+    protected var cardText :TextField;
+    
     /** Is the card highlighted? */
-    private var _highlighted :Boolean = false;
+    protected var _highlighted :Boolean = false;
     
     /** Is this card being dragged? */
-    private var _dragging :Boolean = false;
+    protected var _dragging :Boolean = false;
 
     /** Parent CardContainer object */
-    private var _cardContainer :CardContainer;
+    protected var _cardContainer :CardContainer;
     
     /** Identifier for this card in the sorted global deck */
-    private var _id :int;
+    protected var _id :int;
     
     /** Supergroup of card SUBJECT/VERB/OBJECT/WHEN */
-    private var _group :int; 
+    protected var _group :int; 
     
     /** Subtype JUDGE/PRIEST/GETS/GIVES/CARD/MONIE/START_TURN etc */
-    private var _type :int; 
+    protected var _type :int; 
     
     /** 0/1/2 etc for card types with values eg CARD, MONIE */
-    private var _value :int;
+    protected var _value :int;
     
     /** card groups */
     public static const SUBJECT :int = 0;
@@ -249,6 +320,11 @@ public class Card extends Component
     public static const START_TURN :int = 0;
     public static const CREATE_LAW :int = 1;
     public static const USE_ABILITY :int = 2;
-    
+	
+	[Embed(source="../../../rsrc/symbols.swf#card")]
+	protected static const SYMBOL_CARD :Class;
+	
+	[Embed(source="../../../rsrc/symbols.swf#monie")]
+	protected static const SYMBOL_MONIE :Class;
 }
 }

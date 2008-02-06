@@ -45,7 +45,23 @@ public class CardContainer extends Component
     protected function addCard (card :Card, insertIndex :int = -1) :void
     {
         if (!contains(card)) {
-            addChild(card);
+        	if (insertIndex == -1) {
+                addChild(card);
+        	}
+        	else {
+        		_ctx.log("adding child card at " + insertIndex);
+        		addChildAt(card, insertIndex);
+        		var childrens :String = "";
+        		for (var i :int = 0; i < numChildren; i++) {
+        			if (getChildAt(i) is Card) {
+        			    childrens += Card(getChildAt(i)) + ", ";
+        			}
+        			else {
+        				childrens += getChildAt(i) + "[not card], ";
+        			}
+        		}
+        		_ctx.log("childrens: " + childrens);
+        	}
         }
         if (cards.indexOf(card) < 0) {
             if (insertIndex < 0 || insertIndex > cards.length) {
@@ -243,6 +259,6 @@ public class CardContainer extends Component
     protected var cardIds :Array = new Array();
     
     /** distance between the left edges of cards */
-    protected static const CARD_SPACING_X :int = 45;
+    protected static const CARD_SPACING_X :int = 55;
 }
 }

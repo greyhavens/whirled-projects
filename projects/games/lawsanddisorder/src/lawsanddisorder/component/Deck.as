@@ -44,23 +44,24 @@ public class Deck extends Component
         createJob(Job.PRIEST);
         createJob(Job.SCIENTIST);
         
-        // Change the size of the deck based on the number of players
-        // TODO reevaluate these multiplyers - 3p is too small
-        /*
-        var deckMultiplyer :int;
-        if (playerCount < 4) {
-        	deckMultiplyer = 1;
+        var numDecks :int;
+        // 2 players 2 decks 10 laws 5 laws each
+        if (playerCount == 2) {
+        	numDecks = 2;
         }
-        else if (playerCount < 6) {
-        	deckMultiplyer = 2;
+        // 3 players 3 decks 15 laws 5 laws each
+        // 4 players 3 decks 15 laws 4 laws each 
+        else if (playerCount < 5) {
+        	numDecks = 3;
         }
+        // 5 players 4 decks 20 laws 4 laws each
+        // 6 players 4 decks 20 laws 3 laws each
         else {
-        	deckMultiplyer = 3;
+        	numDecks = 4;
         }
-        */
         
-        // create the deck of cards
-        for (var i :int = 0; i < playerCount; i++) {
+        // Change the size of the deck based on the number of players
+        for (var i :int = 0; i < numDecks; i++) {
         	// 12 subjects, 7 verbs, 7 objects, 3 whens = 29
             addNewCards(2, Card.SUBJECT, Job.JUDGE);
             addNewCards(2, Card.SUBJECT, Job.THIEF);
@@ -328,10 +329,11 @@ public class Deck extends Component
             _ctx.broadcast(player.playerName + " swapped jobs with " + oldPlayer.playerName);
         }
         else if (oldPlayer == null) {
-        	if (duringSetup) {
-        		_ctx.broadcast(player.playerName + " drew " + player.job);
-        	}
-        	else {
+        	//if (duringSetup) {
+        	//	_ctx.broadcast(player.playerName + " drew " + player.job);
+        	//}
+        	//else {
+        	if (!duringSetup) {
         	   _ctx.broadcast(player.playerName + " became " + player.job);
         	}
         }

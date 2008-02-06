@@ -53,6 +53,8 @@ public class Hand extends CardContainer
         graphics.drawRect(-10, 0, 680, 80);
         graphics.endFill();
         
+        removeChild(title);
+        
         // TODO use a hitmap so graphics can be one big image in Board
         //var hitmap :Sprite = new Sprite();
         // draw the hand bg
@@ -70,6 +72,29 @@ public class Hand extends CardContainer
     {
     	arrangeCards();
     }
+    
+    /*
+     * TODO fix issues with this and use it?
+     * Override addCards to force discard first if too many cards in hand     *
+    override public function addCards (cardArray :Array, distribute :Boolean = true, insertIndex :int = -1) :void
+    {
+    	var discardNum :int = cards.length + cardArray.length - MAX_HAND_SIZE;
+    	if (discardNum > 0) {
+            _ctx.notice("You may not have more than " + MAX_HAND_SIZE + " cards.  Please choose and discard " + discardNum);
+            //discardDownListener = listener;
+            var cardsSelectedListener :Function = function () :void {
+                player.loseCards(_ctx.state.selectedCards);
+                _ctx.state.deselectCards();
+                addCards(cardArray, distribute, insertIndex);
+            };
+            _ctx.state.selectCards(discardNum, cardsSelectedListener);
+    	}
+    	else {
+    		_ctx.log("yer cards are fine");
+    	   super.addCards(cardArray, distribute, insertIndex);
+    	}
+    }
+    */
     
     /**
      * Draw a card (or X cards, if numCards is provided) from the deck.
@@ -130,11 +155,17 @@ public class Hand extends CardContainer
     	var i :int;
     	var card :Card;
     	
+    	// adjust the spacing depeding on the number of cards
+    	var cardSpacingX :int = CARD_SPACING_X;
+    	if (cards.length > MAX_HAND_SIZE) {
+    		cardSpacingX = (MAX_HAND_SIZE * CARD_SPACING_X) / cards.length;
+    	}
+    	
     	// if no point is supplied, arrange as normal.
     	if (point == null) {
 	        for (i = 0; i < cards.length; i++) {
 	            card = cards[i];
-	            card.x = i * CARD_SPACING_X;
+	            card.x = i * cardSpacingX;
 	            card.y = 10;
 	        }
 	        return;
@@ -147,11 +178,11 @@ public class Hand extends CardContainer
         for (i = 0; i < cards.length; i++) {
             card = cards[i];
             // if the card would overlap the point or be to its right, shift it right
-            if ((i+1) * CARD_SPACING_X > localPoint.x) {
-                card.x = (i+1) * CARD_SPACING_X;
+            if ((i+1) * cardSpacingX > localPoint.x) {
+                card.x = (i+1) * cardSpacingX;
             }
             else {
-                card.x = i * CARD_SPACING_X;
+                card.x = i * cardSpacingX;
             }
         }
     }
@@ -199,7 +230,7 @@ public class Hand extends CardContainer
     protected var player :Player;
     
     /** Player must go down to this many cards at end of turn */
-    protected var MAX_HAND_SIZE :int = 12;
+    protected var MAX_HAND_SIZE :int = 11;
     
     /** Draw this number of cards at the start of the game */
     protected var DEFAULT_HAND_SIZE :int = 7;

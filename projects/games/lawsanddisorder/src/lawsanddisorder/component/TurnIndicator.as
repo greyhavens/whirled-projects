@@ -85,6 +85,8 @@ public class TurnIndicator extends Component
         _ctx.board.newLaw.enabled = false;
         _ctx.board.player.jobEnabled = false;
         _ctx.board.player.powerEnabled = false;
+        //_ctx.control.game.startNextTurn();
+        // TODO not required
         _ctx.board.player.hand.discardDown(discardDownComplete);
     }
     
@@ -96,6 +98,7 @@ public class TurnIndicator extends Component
     {
     	_ctx.control.game.startNextTurn();
     }
+    
     
     /**
      * Turn changed.  Draw 2 cards then trigger any START_TURN laws for this player's job.

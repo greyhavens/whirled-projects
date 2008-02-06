@@ -116,7 +116,7 @@ public class NewLaw extends CardContainer
             return;
          }
  
- 		_ctx.broadcast(_ctx.board.player.playerName + " created a new law.");
+ 		_ctx.broadcast(_ctx.board.player.playerName + " got " + cards.length + " monies for making a new law.");
         _ctx.board.player.getMonies(cards.length);
         
         var law :Law = createLaw();

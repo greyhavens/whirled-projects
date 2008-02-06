@@ -62,11 +62,16 @@ public class Context
     }
 
     /**
-     * Display an in-game notice message to all players
+     * Display an in-game notice message to all players or to one specific player
      */
-    public function broadcast (message :String) :void
+    public function broadcast (message :String, player :Player = null) :void
     {
-    	_control.net.sendMessage(Notices.BROADCAST, message);
+    	if (player != null) {
+    	   _control.net.sendMessage(Notices.BROADCAST, message, player.serverId);
+    	}
+    	else {
+    		_control.net.sendMessage(Notices.BROADCAST, message);
+    	}
     }
     
     /**

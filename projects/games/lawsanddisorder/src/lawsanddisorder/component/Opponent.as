@@ -3,6 +3,7 @@
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.events.MouseEvent;
+import flash.geom.ColorTransform;
 
 import lawsanddisorder.Context;
 
@@ -64,11 +65,27 @@ public class Opponent extends Player
             graphics.lineStyle(5, 0x8888FF);
         }
         graphics.drawRect(5, 5, 110, 50);
+        
+        if (job != null) {
+	        var symbol :Sprite = job.getSymbol();
+	        symbol.width = symbol.width / 3;
+	        symbol.height = symbol.height / 3;
+	        symbol.x = 90;
+	        symbol.y = 30;
+	        var colorTransform :ColorTransform = new ColorTransform();
+	        colorTransform.color = 0x000066;
+	        symbol.transform.colorTransform = colorTransform;
+	        symbol.alpha = 0.15;
+	        addChild(symbol);
+        }
     }
     
+    /** Is this opponent selected? */
     public function get highlighted () :Boolean {
         return _highlighted;
     }
+    
+    /** Indicate that the opponent is selected */
     public function set highlighted (value :Boolean) :void {
         _highlighted = value;
         updateDisplay();

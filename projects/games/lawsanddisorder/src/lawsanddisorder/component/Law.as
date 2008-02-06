@@ -30,7 +30,7 @@ public class Law extends CardContainer
         // draw the bg
         graphics.clear();
         graphics.beginFill(0x999955);
-        graphics.drawRect(0, 0, 380, 25);
+        graphics.drawRect(0, 0, 380, 20);
         graphics.endFill();
         
         lawText = new TextField();
@@ -40,9 +40,11 @@ public class Law extends CardContainer
         
         cardDisplayArea = new Sprite();
         cardDisplayArea.graphics.beginFill(0x999955);
-        cardDisplayArea.graphics.drawRect(0, 0, 380, 80);
+        cardDisplayArea.graphics.drawRect(0, 0, 340, 80);
         cardDisplayArea.y = -25;
+        cardDisplayArea.x = 40;
         addEventListener(MouseEvent.ROLL_OVER, rollOver);
+        addEventListener(MouseEvent.ROLL_OUT, rollOut);
         cardDisplayArea.addEventListener(MouseEvent.ROLL_OUT, rollOut);
     }
     
@@ -72,7 +74,7 @@ public class Law extends CardContainer
         else {
             graphics.lineStyle(5, 0x999955);
         }
-        graphics.drawRect(2.5, 2.5, 375, 20);
+        graphics.drawRect(2.5, 2.5, 375, 15);
     }
     
     /**

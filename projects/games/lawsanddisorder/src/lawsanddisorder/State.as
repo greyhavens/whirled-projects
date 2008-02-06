@@ -32,11 +32,12 @@ public class State
      */
     public function cardClick (event :MouseEvent) :void
     {
-        if (!event.target is Card) {
-            _ctx.log("WTF Did not click on a card.");
-            return;
-        }            
-        var card :Card = Card(event.target);
+        //if (!event.target is Card) {
+        //    _ctx.log("WTF Did not click on a card.");
+        //    return;
+        //} 
+        var card :Card = Card(getParent(DisplayObject(event.target), Card));           
+        //var card :Card = Card(event.target);
     
         if (mode == MODE_SELECT_HAND_CARDS) {
             if (modeListener == null || selectedCards == null) {
@@ -75,8 +76,12 @@ public class State
                 _ctx.notice("That card isn't a when card.");
                 return;
             }
-            card.cardContainer.removeCards(new Array(card));
-            _ctx.board.player.hand.addCards(new Array(card));
+            
+            // select card and law so listener function knows what happened
+            selectedCards = new Array(card);
+            selectedLaw = Law(card.cardContainer);
+            card.cardContainer.removeCards(selectedCards);
+            _ctx.board.player.hand.addCards(selectedCards);
             doneMode();
         }
     }
@@ -86,7 +91,8 @@ public class State
      */
     public function cardMouseDown (event :MouseEvent) :void
     {
-        var card :Card = Card(event.target);
+        //var card :Card = Card(event.target);
+        var card :Card = Card(getParent(DisplayObject(event.target), Card));
         
         // you can only drag cards in your hand or in new law
         if (card.cardContainer != _ctx.board.player.hand && card.cardContainer != _ctx.board.newLaw) {
@@ -170,7 +176,7 @@ public class State
             return;
         }
         
-        if (mode == MODE_EXCHANGE_SUBJECT || mode == MODE_EXCHANGE_VERB || MODE_MOVE_WHEN) {
+        if (mode == MODE_EXCHANGE_SUBJECT || mode == MODE_EXCHANGE_VERB || mode == MODE_MOVE_WHEN) {
             var targetLaw :Law = Law(getParent(card.dropTarget, Law));
             
             if (targetLaw == null) {
@@ -233,7 +239,8 @@ public class State
      */
     public function cardMouseUp (event :MouseEvent) :void
     {
-        var card :Card = Card(event.target);
+    	var card :Card = Card(getParent(DisplayObject(event.target), Card));
+        //var card :Card = Card(event.target);
         if (!card.dragging) {
             return;
         }
@@ -324,6 +331,8 @@ public class State
                     _ctx.board.removeCard(card);
                     // TODO distribute or remove discard pile
                     _ctx.board.deck.discardPile.addCards(new Array(card), false);
+                    // now tell other players that card was removed from hand
+                    _ctx.board.player.hand.setDistributedHandData();
                     var job :Job = _ctx.board.deck.getJob(card.type);
                     _ctx.board.deck.switchJobs(job, _ctx.board.player);
                     return;
@@ -364,9 +373,11 @@ public class State
             targetLaw.removeCards(new Array(targetCard));
             targetLaw.addCards(new Array(card), true, targetIndex);
             _ctx.board.player.hand.addCards(new Array(targetCard));
+            
+            // select card and law so listener function knows what happened
+            selectedCards = new Array(card);
+            selectedLaw = targetLaw;
             doneMode();
-            //mode = MODE_DEFAULT;
-            //modeListener();
         }
         
         else if (mode == MODE_MOVE_WHEN) {
@@ -381,9 +392,11 @@ public class State
             // add when to the end of the law
             _ctx.board.removeCard(card);
             whenlessLaw.addCards(new Array(card));
+            
+            // select card and law so listener function knows what happened
+            selectedCards = new Array(card);
+            selectedLaw = whenlessLaw;            
             doneMode();
-            //mode = MODE_DEFAULT;
-            //modeListener();
         }
     }
     
@@ -718,7 +731,7 @@ public class State
     		reminderText = "Just take all day why doncha!  ";
     	}
     	else {
-    		reminderText = "Heloooooo!  ";
+    		reminderText = "Helloooooo!  ";
     	}
     	modeReminderTimer = new Timer(10000, 1);
         modeReminderTimer.addEventListener(TimerEvent.TIMER, 

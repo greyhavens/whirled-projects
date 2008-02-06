@@ -11,6 +11,9 @@ import lawsanddisorder.*;
  */
 public class Player extends Component
 {
+    /** How much money does every player start with? */
+    public static const STARTING_MONIES :int = 5;
+    
     /** The current game monies for each player. */
     public static const MONIES_DATA :String = "moniesData";
 
@@ -134,7 +137,7 @@ public class Player extends Component
     protected function moniesChanged (event :PropertyChangedEvent) :void
     {
         if (event.index == id) {
-            monies = event.newValue as int;
+            _monies = event.newValue as int;
             updateDisplay();
         }
     }
@@ -165,7 +168,8 @@ public class Player extends Component
     		_ctx.log("WTF Player " + this + " would end up with negative monies!");
     		moniesNum = 0;
     	}
-        _ctx.eventHandler.setData(MONIES_DATA, monies + moniesNum, id);
+    	_ctx.eventHandler.setData(MONIES_DATA, monies + moniesNum, id);
+    	_monies = monies + moniesNum;
     }
     
     /**
@@ -176,10 +180,13 @@ public class Player extends Component
     }
     
     /**
-     * Remove X monies from this player, then give X monies to another player
-     * TODO handle asyncronous adjustments ie the thief gives the thief 3 monies     */
+     * Remove X monies from this player, then give X monies to another player     */
     public function giveMoniesTo(moniesNum :int, toPlayer :Player) :void
     {
+    	// giving money to oneself, no net change
+    	if (toPlayer == this) {
+    		return;
+    	}
         loseMonies(moniesNum);
         if (toPlayer != null) {
             toPlayer.getMonies(moniesNum);
@@ -213,10 +220,14 @@ public class Player extends Component
      */
     public function giveCardsTo (cardsToGive :Array, toPlayer :Player) :void
     {
+    	// giving cards to self, no net change
+    	if (toPlayer == this) {
+    		return;
+    	}
         loseCards(cardsToGive);
         if (toPlayer != null) {
             toPlayer.hand.addCards(cardsToGive);
-           }
+        }
     }
     
     /** Can the player change jobs right now? */
@@ -250,6 +261,13 @@ public class Player extends Component
     	return _name;
     }
     
+    /**
+     * Return the player's current monies     */
+    public function get monies () :int {
+    	return _monies;
+    }
+    
+    
     /** Can the player change jobs right now? */
     protected var _jobEnabled :Boolean;
     
@@ -268,9 +286,8 @@ public class Player extends Component
     /** The player's hand */
     protected var _hand :Hand;
     
-    /** Number of monies the player has 
-     * TODO use public getters */
-    public var monies :int = LawsAndDisorder.STARTING_MONIES;
+    /** Number of monies the player has  */
+    protected var _monies :int = STARTING_MONIES;
     
     /** The player's current job; may change through the game */
     protected var _job :Job;

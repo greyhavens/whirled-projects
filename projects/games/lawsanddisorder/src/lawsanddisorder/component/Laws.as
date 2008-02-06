@@ -1,5 +1,7 @@
 ﻿package lawsanddisorder.component {
 
+//import fl.controls.ScrollBar;
+//import fl.events.ScrollEvent;
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.events.MouseEvent;
@@ -28,6 +30,25 @@ public class Laws extends Component
         ctx.eventHandler.addMessageListener(ENACT_LAW, lawEnacted);
         super(ctx);
     }
+    
+    /**
+     * Draw the law area
+     */
+    override protected function initDisplay () :void
+    {
+        // init the scrollbar
+        //scrollBar = new ScrollBar();
+        //scrollBar.addEventListener(ScrollEvent.SCROLL, scrolled);
+        //addChild(scrollBar);
+    }
+    
+    /*
+     * Called when the player scrolls     *
+    public function scrolled (event :ScrollEvent) :void
+    {
+    	_ctx.log("scrolled!");
+    }
+    */
     
     /**
      * Player just created this law; distribute it to everyone.  Connect a temporary listener
@@ -96,7 +117,7 @@ public class Laws extends Component
              laws.push(law);
         }
         law.x = 0;
-        law.y = (laws.length - 1) * 35;
+        law.y = (laws.length - 1) * 25;
     }
     
     /** 
@@ -147,7 +168,6 @@ public class Laws extends Component
             existingLaw.setSerializedCards(cards);
         }
         else {
-            // TODO make sure this can never happen or we can deal with it
             _ctx.log("WTF it's a TOO new law. laws.length:" + laws.length + " , lawId:" + lawId);
         }
     }
@@ -206,6 +226,9 @@ public class Laws extends Component
         // action complete; return focus to the player if it is their turn
         _ctx.state.performingAction = false;
     }
+    
+    ///** Scrollbar appears when there are too many laws to fit */
+    //protected var scrollBar :ScrollBar;
     
     /** If in the middle of triggering laws, this is the when type */
     protected var triggerWhenType :int;

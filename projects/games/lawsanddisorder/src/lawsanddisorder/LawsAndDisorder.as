@@ -27,6 +27,10 @@ import lawsanddisorder.component.*
  * unloader?
  * move all mentions of _ctx.control out of components
  * refactor cardContainer to simplify temporarily removing cards (eg hand -> new law)
+ * grab fresh job data before using it on opponent's turn eg during enact law after switch job
+ * same with hand data eg after being stolen from, before losing card
+ * can the above cases happen, eg can a message get lost?
+ * don't send change data events to turn holder, or use set immediate?
  * 
  * TODO inerface:
  * make buttons look like buttons
@@ -42,9 +46,6 @@ import lawsanddisorder.component.*
 [SWF(width="1000", height="550")]
 public class LawsAndDisorder extends Sprite
 {
-	/** How much money does every player start with? */
-    public static const STARTING_MONIES :int = 5;
-    
     /** Message that game is ending */
     public static const GAME_ENDING :String = "gameEnding";
 
@@ -66,7 +67,7 @@ public class LawsAndDisorder extends Sprite
             _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, initPropertyChanged);
             _ctx.control.net.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
             var playerCount :int = _ctx.control.game.seating.getPlayerIds().length;
-            _ctx.control.net.set(Player.MONIES_DATA, new Array(playerCount).map(function (): int { return STARTING_MONIES; }));
+            _ctx.control.net.set(Player.MONIES_DATA, new Array(playerCount).map(function (): int { return Player.STARTING_MONIES; }));
             _ctx.control.net.set(Hand.HAND_DATA, new Array(playerCount).map(function (): Array { return new Array(); }));
             _ctx.control.net.set(Deck.JOBS_DATA, new Array(playerCount).map(function (): int { return -1; }));
             _ctx.control.net.set(Laws.LAWS_DATA, new Array());
