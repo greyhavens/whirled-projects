@@ -78,24 +78,20 @@ class HeavyAI extends AITaskTree
     {
         this.addSubtask(new DetectEscortlessGruntTask());
     }
-    
-    override public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        if (msg.name == DetectEscortlessGruntTask.MSG_DETECTED_GRUNT) {
-            trace("detected grunt!");
-            var grunt :GruntCreatureUnit = msg.data;
-            _unit.escortingUnit = grunt;
-            this.addSubtask(new EscortGruntTask(_unit));
-        } else {
-            super.receiveMessage(msg);
-        }
-        
-        return false;
-    }
 
     override public function get name () :String
     {
         return "HeavyAI";
+    }
+    
+    override protected function childTaskCompletedWithResult (result :AITaskResult) :void
+    {
+        if (result.name == DetectEscortlessGruntTask.MSG_DETECTED_GRUNT) {
+            trace("detected grunt!");
+            var grunt :GruntCreatureUnit = result.data;
+            _unit.escortingUnit = grunt;
+            this.addSubtask(new EscortGruntTask(_unit));
+        }
     }
 
     protected var _unit :HeavyCreatureUnit;
@@ -138,7 +134,7 @@ class DetectEscortlessGruntTask extends DetectCreatureTask
             return false;
         }
         
-        return thisCreature.isUnitInDetectRange(grunt);
+        return thisCreature.isUnitInRange(grunt, thisCreature.unitData.detectRadius);
     }
 }
 
@@ -150,20 +146,6 @@ class EscortGruntTask extends FollowCreatureTask
     {
         super(unit.escortingUnit.id, ESCORT_DISTANCE_MIN, ESCORT_DISTANCE_MAX);
         _unit = unit;
-    }
-    
-    override public function update (dt :Number, unit :CreatureUnit) :Boolean
-    {
-        if(super.update(dt, unit)) {
-            return true;
-        }
-        
-        var grunt :GruntCreatureUnit = _unit.escortingUnit;
-        if (null == grunt) {
-            return true;
-        }
-        
-        return false;
     }
     
     override public function get name() :String

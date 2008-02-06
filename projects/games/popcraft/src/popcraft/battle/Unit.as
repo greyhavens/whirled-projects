@@ -43,22 +43,17 @@ public class Unit extends SceneObject
     {
         return ImageUtil.createGlowBitmap(bitmap, Constants.PLAYER_COLORS[_owningPlayerId] as uint);
     }
-
-    public function isUnitInDetectRange (unit :Unit) :Boolean
+    
+    public function isUnitInRange (unit :Unit, range :Number) :Boolean
     {
+        if (range < 0) {
+            return false;
+        }
+        
         return Collision.circlesIntersect(
-            new Vector2(this.displayObject.x, this.displayObject.y),
-            this.unitData.detectRadius,
-            new Vector2(unit.displayObject.x, unit.displayObject.y),
-            unit.unitData.collisionRadius);
-    }
-
-    public function isUnitInInterestRange (unit :Unit) :Boolean
-    {
-        return Collision.circlesIntersect(
-            new Vector2(this.displayObject.x, this.displayObject.y),
-            this.unitData.loseInterestRadius,
-            new Vector2(unit.displayObject.x, unit.displayObject.y),
+            new Vector2(this.x, this.y),
+            range,
+            new Vector2(unit.x, unit.y),
             unit.unitData.collisionRadius);
     }
 

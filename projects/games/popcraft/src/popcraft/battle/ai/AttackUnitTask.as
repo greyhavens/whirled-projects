@@ -12,6 +12,7 @@ public class AttackUnitTask extends AITaskBase
     public function AttackUnitTask (unitId :uint, loseInterestRange :Number = -1)
     {
         _unitId = unitId;
+        _loseInterestRange = loseInterestRange;
     }
 
     override public function update (dt :Number, unit :CreatureUnit) :uint
@@ -19,7 +20,7 @@ public class AttackUnitTask extends AITaskBase
         var enemy :Unit = (GameMode.getNetObject(_unitId) as Unit);
 
         // is the enemy dead? does it still hold our interest?
-        if (null == enemy || !unit.isUnitInInterestRange(enemy)) {
+        if (null == enemy || (_loseInterestRange >= 0 && !unit.isUnitInRange(enemy, _loseInterestRange))) {
             return AITaskStatus.COMPLETE;
         }
 
@@ -42,6 +43,7 @@ public class AttackUnitTask extends AITaskBase
     }
 
     protected var _unitId :uint;
+    protected var _loseInterestRange :Number;
 
 }
 
