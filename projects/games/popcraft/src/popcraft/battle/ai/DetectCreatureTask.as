@@ -7,14 +7,14 @@ import popcraft.battle.*;
 
 public class DetectCreatureTask extends AITaskBase
 {
-    public function DetectCreatureTask (taskName :String, messageName :String, detectPredicate :Function)
+    public function DetectCreatureTask (taskName :String, resultName :String, detectPredicate :Function)
     {
         _taskName = taskName;
-        _messageName = messageName;
+        _resultName = resultName;
         _detectPredicate = detectPredicate;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :Boolean
+    override public function update (dt :Number, unit :CreatureUnit) :uint
     {
         var creatureIds :Array = GameMode.getNetObjectIdsInGroup(CreatureUnit.GROUP_NAME);
         var detectedCreature :CreatureUnit;
@@ -28,11 +28,11 @@ public class DetectCreatureTask extends AITaskBase
         }
         
         if (null != detectedCreature) {
-            this.parentTask.receiveMessage(new ObjectMessage(_messageName, detectedCreature));
-            return true;
+            _result = new AITaskResult(_resultName, detectedCreature);
+            return AITaskStatus.COMPLETE;
         }
         
-        return false;
+        return AITaskStatus.ACTIVE;
     }
 
     override public function get name () :String
@@ -40,9 +40,16 @@ public class DetectCreatureTask extends AITaskBase
         return _taskName;
     }
     
+    override public function get taskResult () :AITaskResult
+    {
+        return _result;
+    }
+    
     protected var _taskName :String;
-    protected var _messageName :String;
+    protected var _resultName :String;
     protected var _detectPredicate :Function;
+    
+    protected var _result :AITaskResult;
 
 }
 

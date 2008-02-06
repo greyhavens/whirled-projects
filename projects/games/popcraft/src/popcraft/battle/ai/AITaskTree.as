@@ -1,5 +1,6 @@
 package popcraft.battle.ai {
-
+    
+import com.threerings.util.Assert;
 import com.whirled.contrib.core.*;
 
 import popcraft.battle.CreatureUnit;
@@ -10,44 +11,74 @@ public class AITaskTree extends AITaskBase
     {
     }
 
-    override public function receiveMessage (msg :ObjectMessage) :Boolean
+    override public function receiveMessage (msg :ObjectMessage) :uint
     {
-        this.forEachSubtask(function (state :AITask) :Boolean { return state.receiveMessage(msg); } );
-        return (_subtasks.length == 0);
+        this.forEachSubtask(function (task :AITask) :uint { return task.receiveMessage(msg); } );
+        
+        return AITaskStatus.ACTIVE;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :Boolean
+    override public function update (dt :Number, unit :CreatureUnit) :uint
     {
-        this.forEachSubtask(function (state :AITask) :Boolean { return state.update(dt, unit); } );
-        return (_subtasks.length == 0);
+        this.forEachSubtask(function (task :AITask) :uint { return task.update(dt, unit); } );
+        
+        return AITaskStatus.ACTIVE;
     }
     
     protected function forEachSubtask (fn :Function) :void
     {
-        if (_subtasks.length == 0) {
-            return;
-        }
+        _stopProcessingSubtasks = false;
         
-        var nextSubtasks :Array = new Array();
-        for each (var state :AITask in _subtasks) {
-            var complete :Boolean = fn(state);
-            if (!complete) {
-                nextSubtasks.push(state);
+        var n :int = _subtasks.length;
+        for (var i :int = 0; i < n; ++i) {
+            
+            // if _stopProcessingSubtasks is true,
+            // our _subtasks Array has become invalidated
+            // during iteration and we need to stop processing it.
+            if (_stopProcessingSubtasks) {
+                break;
+            }
+            
+            var task :AITask = _subtasks[i];
+            
+            // we can have holes in the array
+            if (null != task) {
+                var status :uint = fn(task);
+                
+                if (AITaskStatus.COMPLETE == status) {
+                    _subtasks[i] = null;
+                    _freeIndices.push(i);
+                    
+                    var result :AITaskResult = task.taskResult;
+                    if (null != result) {
+                        this.childTaskCompletedWithResult(result);
+                    }
+                }
             }
         }
-        
-        _subtasks = nextSubtasks;
     }
 
     public function addSubtask (task :AITask) :void
     {
         task.parentTask = this;
-        _subtasks.push(task);
+        
+        if (_freeIndices.length == 0) {
+            _subtasks.push(task);
+        } else {
+            var i :int = _freeIndices.pop();
+            
+            Assert.isTrue(i >= 0 && i < _subtasks.length && _subtasks[i] == null);
+            
+            _subtasks[i] = task;
+        }
     }
 
     public function clearSubtasks () :void
     {
         _subtasks = new Array();
+        _freeIndices = new Array();
+        
+        _stopProcessingSubtasks = true;
     }
 
     public function getStateString (depth :uint = 0) :String
@@ -75,8 +106,15 @@ public class AITaskTree extends AITaskBase
 
         return stateString;
     }
+    
+    /** Subclasses can override this to do something interesting. */
+    protected function childTaskCompletedWithResult (result :AITaskResult) :void
+    {
+    }
 
     protected var _subtasks :Array = new Array();
+    protected var _freeIndices :Array = new Array();
+    protected var _stopProcessingSubtasks :Boolean;
 }
 
 }

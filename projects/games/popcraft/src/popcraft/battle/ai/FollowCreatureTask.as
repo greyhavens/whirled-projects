@@ -20,13 +20,13 @@ public class FollowCreatureTask extends AITaskBase
         _maxFollowDistance = maxFollowDistance;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :Boolean
+    override public function update (dt :Number, unit :CreatureUnit) :uint
     {
         var followCreature :Unit = (GameMode.getNetObject(_unitId) as Unit);
 
         // is the followCreature dead? does it still hold our interest?
         if (null == followCreature) {
-            return true;
+            return AITaskStatus.COMPLETE;
         }
         
         // should we move closer to the follow creature?
@@ -38,7 +38,7 @@ public class FollowCreatureTask extends AITaskBase
             unit.moveTo(v.x, v.y);
         }
         
-        return false;
+        return AITaskStatus.ACTIVE;
     }
 
     override public function get name () :String

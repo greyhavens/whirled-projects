@@ -19,27 +19,32 @@ public class AITaskBase
         return null;
     }
 
-    public function receiveMessage (msg :ObjectMessage) :Boolean
+    public function receiveMessage (msg :ObjectMessage) :uint
     {
-        return false;
+        return AITaskStatus.ACTIVE;
     }
 
-    public function update (dt :Number, unit :CreatureUnit) :Boolean
+    public function update (dt :Number, unit :CreatureUnit) :uint
     {
-        return false;
+        return AITaskStatus.ACTIVE;
     }
 
     public function get parentTask () :AITaskTree
     {
-        return _parentState;
+        return _parentTask;
     }
 
-    public function set parentTask (state :AITaskTree) :void
+    public function set parentTask (task :AITaskTree) :void
     {
-        _parentState = state;
+        _parentTask = task;
     }
     
-    protected var _parentState :AITaskTree;
+    public function get taskResult () :AITaskResult
+    {
+        return null;
+    }
+    
+    protected var _parentTask :AITaskTree;
 
 }
 
