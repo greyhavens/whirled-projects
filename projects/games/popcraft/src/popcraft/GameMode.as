@@ -109,9 +109,10 @@ public class GameMode extends AppMode
         // create the player bases & waypoints
         var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
         var playerId :uint = 0;
-        for (var i :int = 0; i < baseLocs.length; i += 2) {
+        var n :int = baseLocs.length;
+        for (var i :int = 0; i < n; i += 2) {
             var baseLoc :Vector2 = (baseLocs[i] as Vector2);
-            var waypointLoc :Vector2 = (baseLocs[i + 1] as Vector2);
+            var waypointLoc :Vector2 = (baseLocs[int(i + 1)] as Vector2);
 
             var base :PlayerBaseUnit = new PlayerBaseUnit(playerId, baseLoc);
             var baseId :uint = _netObjects.addObject(base, _battleBoard.unitDisplayParent);
@@ -205,7 +206,8 @@ public class GameMode extends AppMode
 
             // end the game when all bases but one have been destroyed
             var livingPlayers :HashSet = new HashSet();
-            for (var playerId :uint = 0; playerId < _playerBaseIds.length; ++playerId) {
+            var n :uint = _playerBaseIds.length;
+            for (var playerId :uint = 0; playerId < n; ++playerId) {
                 if (null != getPlayerBase(playerId)) {
                     livingPlayers.add(playerId);
 
@@ -381,7 +383,8 @@ public class GameMode extends AppMode
     public function canPurchaseUnit (unitType :uint) :Boolean
     {
         var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
-        for (var resourceType:uint = 0; resourceType < creatureCosts.length; ++resourceType) {
+        var n :uint = creatureCosts.length;
+        for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
             var cost :int = creatureCosts[resourceType];
             if (cost > 0 && cost > playerData.getResourceAmount(resourceType)) {
                 return false;
@@ -399,7 +402,8 @@ public class GameMode extends AppMode
 
         // deduct the cost of the unit from the player's holdings
         var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
-        for (var resourceType:uint = 0; resourceType < creatureCosts.length; ++resourceType) {
+        var n :int = creatureCosts.length;
+        for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
             _playerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
         }
 

@@ -1,7 +1,6 @@
 package popcraft.util {
 
 import com.threerings.util.Assert;
-
 import com.whirled.contrib.core.util.Rand;
 
 public class WeightedTable
@@ -20,9 +19,10 @@ public class WeightedTable
 
         // populate the table
         _maxVal = 0;
-        for (var i :uint = 0; i < dataTable.length / 2; ++i) {
+        var n :uint = dataTable.length / 2;
+        for (var i :uint = 0; i < n; ++i) {
             var data :* = dataTable[i * 2];
-            var weight :Number = dataTable[(i * 2) + 1];
+            var weight :Number = dataTable[int((i * 2) + 1)];
 
             if (weight <= 0) {
                 continue;

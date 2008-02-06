@@ -1,9 +1,7 @@
 package popcraft.battle {
 
-import com.threerings.util.HashMap;
 import com.threerings.util.Assert;
-
-import com.whirled.contrib.core.util.Rand;
+import com.threerings.util.HashMap;
 
 /**
  * UnitArmor is a damage filter that modifies the effects of an attack before it's applied to a unit.
@@ -22,9 +20,10 @@ public class UnitArmor
             // array length must be divisible by 2
             Assert.isTrue((armorArray.length % 2) == 0);
 
-            for (var i :int = 0; i < armorArray.length; i += 2) {
+            var n :int = armorArray.length;
+            for (var i :int = 0; i < n; i += 2) {
                 var damageType :uint = armorArray[i];
-                var damageMultiplier :Number = armorArray[i + 1];
+                var damageMultiplier :Number = armorArray[int(i + 1)];
 
                 _armor.put(damageType, damageMultiplier);
             }
