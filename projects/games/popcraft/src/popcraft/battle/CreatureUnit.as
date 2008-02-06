@@ -160,14 +160,14 @@ public class CreatureUnit extends Unit
         return this.hasTasksNamed("move");
     }
 
-    protected function get aiRoot () :AIState
+    protected function get aiRoot () :AITask
     {
         return null;
     }
 
     override protected function update (dt :Number) :void
     {
-        var aiRoot :AIState = this.aiRoot;
+        var aiRoot :AITask = this.aiRoot;
         if (null != aiRoot) {
             aiRoot.update(dt, this);
         }

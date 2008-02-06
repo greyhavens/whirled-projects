@@ -5,22 +5,22 @@ import com.whirled.contrib.core.*;
 import popcraft.*;
 import popcraft.battle.*;
 
-public class AttackUnitState extends AIStateBase
+public class AttackUnitTask extends AITaskBase
 {
     public static const NAME :String = "AttackUnit";
 
-    public function AttackUnitState (unitId :uint)
+    public function AttackUnitTask (unitId :uint)
     {
         _unitId = unitId;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :AIState
+    override public function update (dt :Number, unit :CreatureUnit) :Boolean
     {
         var enemy :Unit = (GameMode.getNetObject(_unitId) as Unit);
 
         // is the enemy dead? does it still hold our interest?
         if (null == enemy || !unit.isUnitInInterestRange(enemy)) {
-            return null;
+            return true;
         }
 
         // the enemy is still alive. Can we attack?
@@ -33,7 +33,7 @@ public class AttackUnitState extends AIStateBase
             unit.moveTo(attackLoc.x, attackLoc.y);
         }
 
-        return this;
+        return false;
     }
 
     override public function get name () :String

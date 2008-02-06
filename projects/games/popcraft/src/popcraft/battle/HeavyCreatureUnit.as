@@ -18,7 +18,7 @@ public class HeavyCreatureUnit extends CreatureUnit
         _ai = new HeavyAI(this);
     }
 
-    override protected function get aiRoot () :AIState
+    override protected function get aiRoot () :AITask
     {
         return _ai;
     }
@@ -65,7 +65,7 @@ import popcraft.battle.ai.*;
  * (Priority 1) Escort friendly Grunts (max 1 escort/Grunt)
  * (Priority 1) Defend friendly base
  */
-class HeavyAI extends AIStateTree
+class HeavyAI extends AITaskTree
 {
     public function HeavyAI (unit :HeavyCreatureUnit)
     {
@@ -102,7 +102,7 @@ class HeavyAI extends AIStateTree
 }
 
 // The heavy waits at the base for 
-class WaitAtBaseTask extends AIStateTree
+class WaitAtBaseTask extends AITaskTree
 {
     public function WaitAtBaseTask ()
     {
@@ -114,7 +114,7 @@ class WaitAtBaseTask extends AIStateTree
     }
 }
 
-class DetectEscortlessGruntTask extends FindCreatureTask
+class DetectEscortlessGruntTask extends DetectCreatureTask
 {
     public static const NAME :String = "DetectEscortlessGrunt";
     public static const MSG_DETECTED_GRUNT :String = "DetectedGrunt";
@@ -152,9 +152,9 @@ class EscortGruntTask extends FollowCreatureTask
         _unit = unit;
     }
     
-    override public function update (dt :Number, obj :AppObject) :Boolean
+    override public function update (dt :Number, unit :CreatureUnit) :Boolean
     {
-        if(super.update(dt, obj)) {
+        if(super.update(dt, unit)) {
             return true;
         }
         
@@ -169,11 +169,6 @@ class EscortGruntTask extends FollowCreatureTask
     override public function get name() :String
     {
         return NAME;
-    }
-    
-    override public function clone () :ObjectTask
-    {
-        return new EscortGruntTask(_unit);
     }
     
     protected var _unit :HeavyCreatureUnit;

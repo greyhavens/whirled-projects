@@ -16,6 +16,11 @@ public class DetectEnemyTask extends DetectCreatureTask
     {
         return (thisCreature.owningPlayerId != thatCreature.owningPlayerId && thisCreature.isUnitInDetectRange(thatCreature));
     }
+    
+    override public function get name () :String
+    {
+        return NAME;
+    }
 }
 
 }

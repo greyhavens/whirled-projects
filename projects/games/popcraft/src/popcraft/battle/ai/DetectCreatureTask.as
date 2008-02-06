@@ -5,7 +5,7 @@ import com.whirled.contrib.core.*;
 import popcraft.*;
 import popcraft.battle.*;
 
-public class DetectCreatureTask extends AIStateBase
+public class DetectCreatureTask extends AITaskBase
 {
     public function DetectCreatureTask (taskName :String, messageName :String, detectPredicate :Function)
     {
@@ -14,21 +14,21 @@ public class DetectCreatureTask extends AIStateBase
         _detectPredicate = detectPredicate;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :AIState
+    override public function update (dt :Number, unit :CreatureUnit) :Boolean
     {
         var creatureIds :Array = GameMode.getNetObjectIdsInGroup(CreatureUnit.GROUP_NAME);
         var detectedCreature :CreatureUnit;
         
         for each (var creatureId :uint in creatureIds) {
             var creature :CreatureUnit = (GameMode.getNetObject(creatureId) as CreatureUnit);
-            if (null != creature && thisCreature != creature && _detectPredicate(thisCreature, creature)) {
+            if (null != creature && unit != creature && _detectPredicate(unit, creature)) {
                 detectedCreature = creature;
                 break;
             }
         }
         
         if (null != detectedCreature) {
-            this.parentState.receiveMessage(new ObjectMessage(_messageName, detectedCreature));
+            this.parentTask.receiveMessage(new ObjectMessage(_messageName, detectedCreature));
             return true;
         }
         

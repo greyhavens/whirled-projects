@@ -1,13 +1,12 @@
 package popcraft.battle.ai {
 
 import com.threerings.util.Assert;
-
 import com.whirled.contrib.core.*;
 
 import popcraft.*;
 import popcraft.battle.*;
 
-public class FollowCreatureTask extends AIStateTree
+public class FollowCreatureTask extends AITaskBase
 {
     public static const NAME :String = "FollowCreatureTask";
 
@@ -21,11 +20,8 @@ public class FollowCreatureTask extends AIStateTree
         _maxFollowDistance = maxFollowDistance;
     }
 
-    override public function update (dt :Number, obj :AppObject) :Boolean
+    override public function update (dt :Number, unit :CreatureUnit) :Boolean
     {
-        super.update(dt, obj);
-
-        var unit :CreatureUnit = (obj as CreatureUnit);
         var followCreature :Unit = (GameMode.getNetObject(_unitId) as Unit);
 
         // is the followCreature dead? does it still hold our interest?
@@ -43,11 +39,6 @@ public class FollowCreatureTask extends AIStateTree
         }
         
         return false;
-    }
-
-    override public function clone () :ObjectTask
-    {
-        return new FollowCreatureTask(_unitId, _minFollowDistance, _maxFollowDistance);
     }
 
     override public function get name () :String

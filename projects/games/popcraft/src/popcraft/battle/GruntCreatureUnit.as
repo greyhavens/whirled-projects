@@ -19,7 +19,7 @@ public class GruntCreatureUnit extends CreatureUnit
         _gruntAI = new GruntAI(this);
     }
 
-    override protected function get aiRoot () :AIState
+    override protected function get aiRoot () :AITask
     {
         return _gruntAI;
     }
@@ -31,7 +31,7 @@ public class GruntCreatureUnit extends CreatureUnit
 
     public function get escort () :HeavyCreatureUnit
     {
-        return GameMode.getNetObject(_escortId) as HeavyCreatureUnit;
+        return this.db.getObject(_escortId) as HeavyCreatureUnit;
     }
 
     public function get hasEscort () :Boolean
@@ -67,7 +67,7 @@ import popcraft.battle.ai.*;
  * (Priority 1) Attack enemy base
  * (Priority 2) Attack enemy aggressors (responds to attacks, but doesn't initiate fights with other units)
  */
-class GruntAI extends AIStateTree
+class GruntAI extends AITaskTree
 {
     public function GruntAI (unit :GruntCreatureUnit)
     {
@@ -79,28 +79,7 @@ class GruntAI extends AIStateTree
     protected function beginAttackBase () :void
     {
         this.clearSubtasks();
-        this.addSubtask(new AttackUnitState(_unit.findEnemyBaseToAttack()));
-    }
-
-    protected function beginAttackCreature (creatureId :uint) :void
-    {
-        this.clearSubtasks();
-
-        var taskQueue :AITaskQueue = new AITaskQueue(false);
-        taskQueue.addTask(new AttackUnitState(creatureId));
-        taskQueue.addTask(new AttackUnitState(_unit.findEnemyBaseToAttack()));
-
-        this.addSubtask(taskQueue);
-    }
-
-    override public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        if (this.hasSubtaskNamed(AttackBaseTask.NAME) && msg.name == GameMessage.MSG_UNITATTACKED) {
-            this.beginAttackCreature(msg.data);
-            return false;
-        }
-
-        return super.receiveMessage(msg);
+        this.addSubtask(new AttackUnitTask(_unit.findEnemyBaseToAttack()));
     }
 
     override public function get name () :String

@@ -5,10 +5,10 @@ import com.whirled.contrib.core.*;
 
 import popcraft.battle.CreatureUnit;
     
-public class AIStateBase
-    implements AIState
+public class AITaskBase
+    implements AITask
 {
-    public function AIStateBase ()
+    public function AITaskBase ()
     {
     }
     
@@ -19,27 +19,27 @@ public class AIStateBase
         return null;
     }
 
-    public function receiveMessage (msg :ObjectMessage) :AIState
+    public function receiveMessage (msg :ObjectMessage) :Boolean
     {
-        return this;
+        return false;
     }
 
-    public function update (dt :Number, unit :CreatureUnit) :AIState
+    public function update (dt :Number, unit :CreatureUnit) :Boolean
     {
-        return this;
+        return false;
     }
 
-    public function get parentState () :AIStateTree
+    public function get parentTask () :AITaskTree
     {
         return _parentState;
     }
 
-    public function set parentState (state :AIStateTree) :void
+    public function set parentTask (state :AITaskTree) :void
     {
         _parentState = state;
     }
     
-    protected var _parentState :AIStateTree;
+    protected var _parentState :AITaskTree;
 
 }
 
