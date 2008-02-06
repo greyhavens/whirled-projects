@@ -2,62 +2,82 @@ package popcraft.battle.ai {
 
 import com.whirled.contrib.core.*;
 
+import popcraft.battle.CreatureUnit;
+
 public class AIStateTree extends AIStateBase
 {
     public function AIStateTree ()
     {
     }
+
+    override public function receiveMessage (msg :ObjectMessage) :AIState
+    {
+        this.forEachSubstate(function (state :AIState) :AIState { return state.receiveMessage(msg); } );
+        return this;
+    }
+
+    override public function update (dt :Number, unit :CreatureUnit) :AIState
+    {
+        this.forEachSubstate(function (state :AIState) :AIState { return state.update(dt, unit); } );
+        return this;
+    }
     
-    public function handleTransition (fromState :AIState, toState :AIState) :void
+    protected function forEachSubstate (fn :Function) :void
     {
-        _substates.handleTransition(fromState, toState);
+        if (_substates.length == 0) {
+            return;
+        }
+        
+        var nextSubstates :Array = new Array();
+        for each (var state :AIState in _substates) {
+            var nextState :AIState = fn(state);
+            if (null != nextState) {
+                nextSubstates.push(nextState);
+            }
+        }
+        
+        _substates = nextSubstates;
     }
 
-    override public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return _substates.receiveMessage(msg);
-    }
-
-    override public function update (dt :Number, obj :AppObject) :Boolean
-    {
-        _substates.update(dt, obj);
-        return false;
-    }
-
-    public function addSubtask (state :AIState) :void
+    public function addSubstate (state :AIState) :void
     {
         state.parentState = this;
-        _substates.addTask(state);
+        _substates.push(state);
     }
 
-    public function clearSubtasks () :void
+    public function clearSubstates () :void
     {
-        _substates.removeAllTasks();
+        _substates = new Array();
     }
 
-    public function hasSubtaskNamed (name :String) :Boolean
+    public function hasSubstate (name :String) :Boolean
     {
-        return (null != _substates.getSubstateNamed(name));
+        for each (var state :AIState in _substates) {
+            if (state.name == name) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public function getStateString (depth :uint = 0) :String
     {
         var stateString :String = "";
         for (var i :int = 0; i < depth; ++i) {
-            stateString += "- ";
+            stateString += "-";
         }
 
         stateString += this.name;
 
-        var subtaskArray :Array = _substates.tasks;
-        for each (var substate :AIState in subtaskArray) {
+        for each (var substate :AIState in _substates) {
             stateString += "\n";
             
             if (substate is AIStateTree) {
                 stateString += (substate as AIStateTree).getStateString(depth + 1);
             } else {
                 for (var j :uint = 0; j < depth + 1; ++j) {
-                    stateString += "- ";
+                    stateString += "-";
                 }
                 
                 stateString += substate.name;
@@ -66,47 +86,8 @@ public class AIStateTree extends AIStateBase
 
         return stateString;
     }
-    
-    protected function get subtasksComplete () :Boolean
-    {
-        return (_substates.tasks.length == 0);
-    }
 
-    protected var _substates :SubstateContainer = new SubstateContainer();
+    protected var _substates :Array = new Array();
 }
 
-}
-
-import popcraft.battle.ai.AIState;
-import com.whirled.contrib.core.tasks.ParallelTask;
-import com.whirled.contrib.core.ObjectMessage;
-
-class SubstateContainer extends ParallelTask
-{
-    public function get tasks () :Array
-    {
-        return _tasks;
-    }
-
-    public function getSubstateNamed (name :String) :AIState
-    {
-        for each (var state :AIState in _tasks) {
-            if (null != state && state.name == name) {
-                return state;
-            }
-        }
-
-        return null;
-    }
-    
-    public function handleTransition (fromState :AIState, toState :AIState) :void
-    {
-        for (var i :uint = 0; i < _tasks.length; ++i) {
-            if (_tasks[i] === fromState) {
-                _tasks[i] = toState;
-            }
-        }
-        
-        
-    }
 }

@@ -4,10 +4,10 @@ import com.threerings.util.Assert;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.tasks.*;
 
-public class AITaskQueue extends TaskContainer
+public class AIStateQueue extends TaskContainer
     implements AIState
 {
-    public function AITaskQueue (repeating :Boolean)
+    public function AIStateQueue (repeating :Boolean)
     {
         super(repeating ? TaskContainer.TYPE_REPEATING : TaskContainer.TYPE_SERIAL);
         _repeating = repeating;
@@ -15,7 +15,7 @@ public class AITaskQueue extends TaskContainer
 
     override public function clone () :ObjectTask
     {
-        var clone :AITaskQueue = new AITaskQueue(_repeating);
+        var clone :AIStateQueue = new AIStateQueue(_repeating);
         clone._tasks = this.cloneSubtasks();
 
         return clone;

@@ -1,15 +1,18 @@
 package popcraft.battle.ai {
 
-import com.whirled.contrib.core.ObjectTask;
+import com.whirled.contrib.core.ObjectMessage;
 
-public interface AIState extends ObjectTask
+import popcraft.battle.CreatureUnit;
+
+public interface AIState
 {
     function get name () :String;
 
     function get parentState () :AIStateTree;
     function set parentState (parent :AIStateTree) :void;
     
-    function transitionTo (newState :AIState) :void;
+    function update (dt :Number, creature :CreatureUnit) :AIState;
+    function receiveMessage (msg :ObjectMessage) :AIState;
 }
 
 }

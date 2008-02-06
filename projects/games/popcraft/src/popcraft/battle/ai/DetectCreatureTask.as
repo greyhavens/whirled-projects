@@ -5,20 +5,17 @@ import com.whirled.contrib.core.*;
 import popcraft.*;
 import popcraft.battle.*;
 
-public class FindCreatureTask extends AIStateTree
+public class DetectCreatureTask extends AIStateBase
 {
-    public function FindCreatureTask (taskName :String, messageName :String, detectPredicate :Function)
+    public function DetectCreatureTask (taskName :String, messageName :String, detectPredicate :Function)
     {
         _taskName = taskName;
         _messageName = messageName;
         _detectPredicate = detectPredicate;
     }
 
-    override public function update (dt :Number, obj :AppObject) :Boolean
+    override public function update (dt :Number, unit :CreatureUnit) :AIState
     {
-        super.update(dt, obj);
-
-        var thisCreature :CreatureUnit = (obj as CreatureUnit);
         var creatureIds :Array = GameMode.getNetObjectIdsInGroup(CreatureUnit.GROUP_NAME);
         var detectedCreature :CreatureUnit;
         
@@ -36,11 +33,6 @@ public class FindCreatureTask extends AIStateTree
         }
         
         return false;
-    }
-
-    override public function clone () :ObjectTask
-    {
-        return new FindCreatureTask(_taskName, _messageName, _detectPredicate);
     }
 
     override public function get name () :String

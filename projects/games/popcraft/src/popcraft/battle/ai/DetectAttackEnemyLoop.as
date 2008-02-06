@@ -21,7 +21,7 @@ public class DetectAttackEnemyLoop extends AIStateTree
             // when we detect an enemy, attack it, then immediately revert
             // back to detecting when attack sequence is over.
 
-            var attackDetectQueue :AITaskQueue = new AITaskQueue(false);
+            var attackDetectQueue :AIStateQueue = new AIStateQueue(false);
             attackDetectQueue.addTask(new AttackEnemyTask(msg.data as uint));
             attackDetectQueue.addTask(new DetectEnemyTask());
 

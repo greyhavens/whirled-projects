@@ -1,8 +1,9 @@
 package popcraft.battle.ai {
     
 import com.threerings.util.Assert;
-
 import com.whirled.contrib.core.*;
+
+import popcraft.battle.CreatureUnit;
     
 public class AIStateBase
     implements AIState
@@ -18,21 +19,14 @@ public class AIStateBase
         return null;
     }
 
-    /** Subclasses must implement this if they will be cloned. */
-    public function clone () :ObjectTask
+    public function receiveMessage (msg :ObjectMessage) :AIState
     {
-        Assert.fail("clone() is not implemented");
-        return null;
+        return this;
     }
 
-    public function receiveMessage (msg :ObjectMessage) :Boolean
+    public function update (dt :Number, unit :CreatureUnit) :AIState
     {
-        return false;
-    }
-
-    public function update (dt :Number, obj :AppObject) :Boolean
-    {
-        return false;
+        return this;
     }
 
     public function get parentState () :AIStateTree
@@ -43,12 +37,6 @@ public class AIStateBase
     public function set parentState (state :AIStateTree) :void
     {
         _parentState = state;
-    }
-    
-    public function transitionTo (nextState :AIState) :void
-    {
-        Assert.isNotNull(_parentState, "root AIStates cannot transition");
-        _parentState.handleTransition(this, nextState);
     }
     
     protected var _parentState :AIStateTree;

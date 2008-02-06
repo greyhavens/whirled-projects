@@ -14,16 +14,13 @@ public class AttackUnitState extends AIStateBase
         _unitId = unitId;
     }
 
-    override public function update (dt :Number, obj :AppObject) :Boolean
+    override public function update (dt :Number, unit :CreatureUnit) :AIState
     {
-        super.update(dt, obj);
-
-        var unit :CreatureUnit = (obj as CreatureUnit);
         var enemy :Unit = (GameMode.getNetObject(_unitId) as Unit);
 
         // is the enemy dead? does it still hold our interest?
         if (null == enemy || !unit.isUnitInInterestRange(enemy)) {
-            return true;
+            return null;
         }
 
         // the enemy is still alive. Can we attack?
@@ -36,22 +33,12 @@ public class AttackUnitState extends AIStateBase
             unit.moveTo(attackLoc.x, attackLoc.y);
         }
 
-        return false;
-    }
-
-    override public function clone () :ObjectTask
-    {
-        return new AttackUnitState(_unitId);
+        return this;
     }
 
     override public function get name () :String
     {
         return NAME;
-    }
-    
-    override public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
     }
 
     protected var _unitId :uint;

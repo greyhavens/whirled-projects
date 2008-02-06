@@ -2,7 +2,7 @@ package popcraft.battle.ai {
 
 import popcraft.battle.*;
 
-public class DetectFriendlyTask extends FindCreatureTask
+public class DetectFriendlyTask extends DetectCreatureTask
 {
     public static const NAME :String = "DetectFriendlyTask";
     public static const MSG_DETECTED_ENEMY :String = "DetectFriendlyTask_DetectedFriendly";
