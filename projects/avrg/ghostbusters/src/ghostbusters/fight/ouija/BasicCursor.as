@@ -17,11 +17,9 @@ import flash.events.MouseEvent;
  * This should almost certainly be called "Planchette" instead of "Cursor", but who wants to type that word a million times?
  */
 public class BasicCursor extends SceneObject
-    implements IEventDispatcher
 {
     public function BasicCursor (board :InteractiveObject)
     {
-        _ed = new EventDispatcher(this);
         _board = board;
 
         // add the image, aligned by the center of its viewier
@@ -78,40 +76,9 @@ public class BasicCursor extends SceneObject
         _sprite.y = localY;
     }
 
-    // from IEventDispatcher
-    public function addEventListener (type :String, listener :Function, useCapture :Boolean = false, priority :int = 0, useWeakReference :Boolean = false) :void
-    {
-        _ed.addEventListener(type, listener, useCapture, priority, useWeakReference);
-    }
-
-    // from IEventDispatcher
-    public function dispatchEvent (event :Event) :Boolean
-    {
-        return _ed.dispatchEvent(event);
-    }
-
-    // from IEventDispatcher
-    public function hasEventListener (type :String) :Boolean
-    {
-        return _ed.hasEventListener(type);
-    }
-
-    // from IEventDispatcher
-    public function removeEventListener (type :String, listener :Function, useCapture :Boolean = false) :void
-    {
-        _ed.removeEventListener(type, listener, useCapture);
-    }
-
-    // from IEventDispatcher
-    public function willTrigger (type :String) :Boolean
-    {
-        return _ed.willTrigger(type);
-    }
-
     protected var _board :InteractiveObject;
     protected var _sprite :Sprite = new Sprite();
     protected var _cursorImage :Bitmap;
-    protected var _ed :EventDispatcher;
 
     protected static const CENTER :Vector2 = new Vector2(26, 25);
 }

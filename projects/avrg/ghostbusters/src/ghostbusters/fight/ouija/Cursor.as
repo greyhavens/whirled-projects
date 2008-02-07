@@ -82,7 +82,7 @@ public class Cursor extends BasicCursor
 
     protected function selectionTimerExpired () :void
     {
-        _ed.dispatchEvent(new BoardSelectionEvent(_selectionTargetIndex));
+        this.dispatchEvent(new BoardSelectionEvent(_selectionTargetIndex));
     }
 
     public function set glowOnSelection (val :Boolean) :void
