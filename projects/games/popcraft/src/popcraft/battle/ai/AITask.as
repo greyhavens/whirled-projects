@@ -29,12 +29,6 @@ public interface AITask
      * Returns the status of the AITask (see AITaskStatus). 
      */
     function receiveMessage (msg :ObjectMessage) :uint;
-    
-    /**
-     * Once the AITask is COMPLETE, this returns the result - if any -
-     * of the task. Can return null.
-     */
-    function get taskResult ()  :AITaskResult;
 }
 
 }

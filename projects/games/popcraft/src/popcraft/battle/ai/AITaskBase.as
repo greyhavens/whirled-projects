@@ -39,11 +39,6 @@ public class AITaskBase
         _parentTask = task;
     }
     
-    public function get taskResult () :AITaskResult
-    {
-        return null;
-    }
-    
     protected var _parentTask :AITaskTree;
 
 }

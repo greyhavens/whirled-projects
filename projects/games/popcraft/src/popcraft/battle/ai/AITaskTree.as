@@ -49,10 +49,7 @@ public class AITaskTree extends AITaskBase
                     _subtasks[i] = null;
                     _freeIndices.push(i);
                     
-                    var result :AITaskResult = task.taskResult;
-                    if (null != result) {
-                        this.childTaskCompletedWithResult(result);
-                    }
+                    this.childTaskCompleted(task);
                 }
             }
         }
@@ -108,7 +105,7 @@ public class AITaskTree extends AITaskBase
     }
     
     /** Subclasses can override this to do something interesting. */
-    protected function childTaskCompletedWithResult (result :AITaskResult) :void
+    protected function childTaskCompleted (task :AITask) :void
     {
     }
 
