@@ -3,10 +3,13 @@ package popcraft.battle {
 import com.threerings.util.Assert;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
 import flash.display.Bitmap;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
 
 import popcraft.*;
 import popcraft.util.*;
@@ -26,6 +29,59 @@ public class Unit extends SceneObject
 
         _unitData = (Constants.UNIT_DATA[unitType] as UnitData);
         _health = _unitData.maxHealth;
+
+        // create the visual representation
+        _sprite = new Sprite();
+
+        // add the image, aligned by its foot position
+        var image :Bitmap = (ResourceManager.instance.getResource(_unitData.name) as ImageResourceLoader).createBitmap();
+        image.x = -(image.width / 2);
+        image.y = -image.height;
+        _sprite.addChild(image);
+
+        // add a glow around the image
+        _sprite.addChild(ImageUtil.createGlowBitmap(image, Constants.PLAYER_COLORS[_owningPlayerId] as uint));
+        
+        // draw some debugging circles
+        if (Constants.DRAW_UNIT_DATA_CIRCLES) {
+            
+            // unit-detect circle
+            if (_unitData.detectRadius != _unitData.collisionRadius) {
+                _sprite.graphics.lineStyle(1, 0x00FF00);
+                _sprite.graphics.drawCircle(0, 0, _unitData.detectRadius);
+            }
+            
+            // collision circle
+            _sprite.graphics.lineStyle(1, 0xFF0000);
+            _sprite.graphics.drawCircle(0, 0, _unitData.collisionRadius);
+        }
+
+        // health meter
+        _healthMeter = new RectMeter();
+        _healthMeter.minValue = 0;
+        _healthMeter.maxValue = _unitData.maxHealth;
+        _healthMeter.value = _health;
+        _healthMeter.foregroundColor = 0xFF0000;
+        _healthMeter.backgroundColor = 0x888888;
+        _healthMeter.outlineColor = 0x000000;
+        _healthMeter.width = 30;
+        _healthMeter.height = 3;
+        _healthMeter.displayObject.x = image.x;
+        _healthMeter.displayObject.y = image.y - _healthMeter.height;
+
+        // @TODO - this is probably bad practice right here.
+        GameMode.instance.addObject(_healthMeter, _sprite);
+    }
+
+    override protected function destroyed () :void
+    {
+        _healthMeter.destroySelf();
+    }
+
+    // from SceneObject
+    override public function get displayObject () :DisplayObject
+    {
+        return _sprite;
     }
 
     override public function get objectGroups () :Array
@@ -170,6 +226,9 @@ public class Unit extends SceneObject
     protected var _unitType :uint;
     protected var _unitData :UnitData;
     protected var _health :uint;
+
+    protected var _sprite :Sprite;
+    protected var _healthMeter :RectMeter;
 
     protected static var g_groups :Array;
 }

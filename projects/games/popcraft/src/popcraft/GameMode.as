@@ -115,6 +115,9 @@ public class GameMode extends AppMode
             var waypointLoc :Vector2 = (baseLocs[int(i + 1)] as Vector2);
 
             var base :PlayerBaseUnit = new PlayerBaseUnit(playerId, baseLoc);
+            base.x = baseLoc.x;
+            base.y = baseLoc.y;
+            
             var baseId :uint = _netObjects.addObject(base, _battleBoard.unitDisplayParent);
 
             _playerBaseIds.push(baseId);

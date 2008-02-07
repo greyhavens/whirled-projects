@@ -13,7 +13,10 @@ public class DetectFriendlyTask extends DetectCreatureTask
     
     static protected function isFriendlyPredicate (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean
     {
-        return (thisCreature.owningPlayerId == thatCreature.owningPlayerId && thisCreature.isUnitInDetectRange(thatCreature));
+        return (
+                (thisCreature.owningPlayerId == thatCreature.owningPlayerId) && 
+                (thisCreature.isUnitInRange(thatCreature, thisCreature.unitData.detectRadius))
+               );
     }
 }
 

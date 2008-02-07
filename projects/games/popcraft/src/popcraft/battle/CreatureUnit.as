@@ -22,44 +22,11 @@ public class CreatureUnit extends Unit
     {
         super(unitType, owningPlayerId);
 
-        // create the visual representation
-        _sprite = new Sprite();
-
-        // add the image, aligned by its foot position
-        var image :Bitmap = (ResourceManager.instance.getResource(_unitData.name) as ImageResourceLoader).createBitmap();
-        image.x = -(image.width / 2);
-        image.y = -image.height;
-        _sprite.addChild(image);
-
-        // add a glow around the image
-        _sprite.addChild(ImageUtil.createGlowBitmap(image, Constants.PLAYER_COLORS[_owningPlayerId] as uint));
-
-        // health meter
-        _healthMeter = new RectMeter();
-        _healthMeter.minValue = 0;
-        _healthMeter.maxValue = _unitData.maxHealth;
-        _healthMeter.value = _health;
-        _healthMeter.foregroundColor = 0xFF0000;
-        _healthMeter.backgroundColor = 0x888888;
-        _healthMeter.outlineColor = 0x000000;
-        _healthMeter.width = 30;
-        _healthMeter.height = 3;
-        _healthMeter.displayObject.x = image.x;
-        _healthMeter.displayObject.y = image.y - _healthMeter.height;
-
-        // @TODO - this is probably bad practice right here.
-        GameMode.instance.addObject(_healthMeter, _sprite);
-
         // start at our owning player's base's spawn loc
         var spawnLoc :Vector2 = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
         _sprite.x = spawnLoc.x;
         _sprite.y = spawnLoc.y;
 
-    }
-
-    override protected function destroyed () :void
-    {
-        _healthMeter.destroySelf();
     }
 
     public function moveTo (x :int, y :int) :void
@@ -119,12 +86,6 @@ public class CreatureUnit extends Unit
         this.addNamedTask("move", moveTask);
     }
 
-    // from SceneObject
-    override public function get displayObject () :DisplayObject
-    {
-        return _sprite;
-    }
-
     // from AppObject
     override public function get objectGroups () :Array
     {
@@ -170,9 +131,6 @@ public class CreatureUnit extends Unit
         
         _healthMeter.value = _health;
     }
-
-    protected var _sprite :Sprite;
-    protected var _healthMeter :RectMeter;
 
     protected static var g_groups :Array;
 }

@@ -56,7 +56,7 @@ class HeavyAI extends AITaskTree
     protected function findGruntOrBecomeTower () :void
     {
         this.addSubtask(new DetectCreatureTask(TASK_DETECTESCORTLESSGRUNT, isEscortlessGrunt));
-        this.addSubtask(new AIDelayTask(DELAY_BECOMETOWER, TASK_BECOMETOWER)); 
+        this.addSubtask(new AITimerTask(DELAY_BECOMETOWER, TASK_BECOMETOWER)); 
     }
     
     override protected function childTaskCompleted (task :AITask) :void
@@ -81,7 +81,7 @@ class HeavyAI extends AITaskTree
             // it's time to convert to tower-mode
             trace("HeavyAI: becoming a tower");
             this.clearSubtasks();
-            //this.addSubtask(new AttackApproachingEnemiesTask());
+            this.addSubtask(new AttackApproachingEnemiesTask()); // this task will never complete.
             break;
             
         }

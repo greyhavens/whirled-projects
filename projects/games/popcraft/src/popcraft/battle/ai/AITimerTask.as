@@ -2,12 +2,12 @@ package popcraft.battle.ai {
     
 import popcraft.battle.CreatureUnit;
     
-public class AIDelayTask
+public class AITimerTask
     implements AITask
 {
-    public static const DEFAULT_NAME :String = "Delay";
+    public static const DEFAULT_NAME :String = "Timer";
     
-    public function AIDelayTask (time :Number, taskName :String = DEFAULT_NAME)
+    public function AITimerTask (time :Number, taskName :String = DEFAULT_NAME)
     {
         _totalTime = time;
         

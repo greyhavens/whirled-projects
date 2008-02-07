@@ -1,14 +1,13 @@
 package popcraft {
 
 import com.threerings.util.Assert;
-
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.util.*;
 
 import flash.geom.Point;
 
-import popcraft.util.*;
 import popcraft.battle.*;
+import popcraft.util.*;
 
 public class Constants
 {
@@ -16,6 +15,7 @@ public class Constants
 
     public static const DEBUG_LEVEL :int = 0;
     public static const CHEATS_ENABLED :Boolean = true;
+    public static const DRAW_UNIT_DATA_CIRCLES :Boolean = true;
 
     public static const PLAYER_COLORS :Array = [
        uint(0xFFFF0000),

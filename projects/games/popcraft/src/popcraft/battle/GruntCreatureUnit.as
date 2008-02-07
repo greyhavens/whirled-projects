@@ -39,15 +39,6 @@ public class GruntCreatureUnit extends CreatureUnit
     {
         return (null != this.escort);
     }
-    
-    override protected function receiveMessage (msg :ObjectMessage) :void
-    {
-        super.receiveMessage(msg);
-        
-        if(msg.name == GameMessage.MSG_UNITATTACKED) {
-            this.db.sendMessageTo(msg, _escortId);
-        }
-    }
 
     protected var _gruntAI :GruntAI;
     protected var _escortId :uint;
