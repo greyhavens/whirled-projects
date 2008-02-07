@@ -29,18 +29,6 @@ public class AITaskBase
         return AITaskStatus.ACTIVE;
     }
 
-    public function get parentTask () :AITaskTree
-    {
-        return _parentTask;
-    }
-
-    public function set parentTask (task :AITaskTree) :void
-    {
-        _parentTask = task;
-    }
-    
-    protected var _parentTask :AITaskTree;
-
 }
 
 }
