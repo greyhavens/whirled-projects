@@ -76,7 +76,7 @@ public class Constants
 
     public static const UNIT_TYPE__CREATURE_LIMIT :uint = 3;
 
-    public static const UNIT_TYPE_BASE :uint = 2;
+    public static const UNIT_TYPE_BASE :uint = 3;
 
     public static const UNIT_CLASS_GROUND :uint = (1 << 0);
     public static const UNIT_CLASS_AIR :uint = (1 << 1);

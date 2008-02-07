@@ -1,8 +1,8 @@
 package popcraft.battle {
 
 import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
