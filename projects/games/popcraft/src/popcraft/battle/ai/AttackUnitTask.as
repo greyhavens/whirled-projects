@@ -21,22 +21,42 @@ public class AttackUnitTask
     {
         var enemy :Unit = (GameMode.getNetObject(_unitId) as Unit);
 
-        // is the enemy dead? does it still hold our interest?
-        if (null == enemy || (_loseInterestRange >= 0 && !unit.isUnitInRange(enemy, _loseInterestRange))) {
+        // is the enemy dead?
+        if (null == enemy) {
             return AITaskStatus.COMPLETE;
         }
-
-        // the enemy is still alive. Can we attack?
-        if (unit.canAttackUnit(enemy, unit.unitData.attack)) {
-            unit.removeNamedTasks("move");
-            unit.sendTargetedAttack(enemy, unit.unitData.attack);
-        } else {
-            // should we try to get closer to the enemy?
-            var attackLoc :Vector2 = unit.findNearestAttackLocation(enemy, unit.unitData.attack);
+        
+        var weapon :UnitWeapon = this.findBestWeapon(unit, enemy);
+        
+        if (null != weapon) {
+            // attack!
+            unit.sendTargetedAttack(enemy, weapon);
+            
+            return AITaskStatus.ACTIVE;
+            
+        } else if (_followUnit && (_loseInterestRange < 0 || unit.isUnitInRange(enemy, _loseInterestRange))) {
+            // get closer to the enemy
+            var attackLoc :Vector2 = unit.findNearestAttackLocation(enemy, unit.unitData.weapons[0]);
             unit.moveTo(attackLoc.x, attackLoc.y);
+            
+            return AITaskStatus.ACTIVE;
         }
-
-        return AITaskStatus.ACTIVE;
+        
+        return AITaskStatus.COMPLETE;
+    }
+    
+    protected function findBestWeapon (unit :CreatureUnit, enemy :Unit) :UnitWeapon
+    {
+        // discover the best weapon we can use to attack this enemy
+        // (weapons are organized by priority, so the first weapon
+        // we find that we can use is the best)
+        for each (var weapon :UnitWeapon in unit.unitData.weapons) {
+            if (unit.canAttackWithWeapon(enemy, weapon)) {
+                return weapon;
+            }
+        }
+        
+        return null;
     }
 
     public function get name () :String

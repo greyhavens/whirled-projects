@@ -15,7 +15,7 @@ public class UnitData
 
     public var maxHealth :int;
     public var armor :UnitArmor;
-    public var attack :UnitWeapon;
+    public var weapons :Array;
 
     public var collisionRadius :Number;
     public var detectRadius :Number;
@@ -29,7 +29,7 @@ public class UnitData
         movePixelsPerSecond :Number,
         maxHealth :int,
         armor :UnitArmor,
-        attack :UnitWeapon,
+        weapons :Array,
         collisionRadius :Number,
         detectRadius :Number,
         loseInterestRadius :Number )
@@ -43,7 +43,7 @@ public class UnitData
 
         this.maxHealth = maxHealth;
         this.armor = armor;
-        this.attack = attack;
+        this.weapons = weapons;
 
         this.collisionRadius = collisionRadius;
         this.detectRadius = detectRadius;

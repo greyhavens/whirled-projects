@@ -57,34 +57,25 @@ public class Unit extends SceneObject
             unit.unitData.collisionRadius);
     }
 
-    public function isAttacking () :Boolean
+    public function get isAttacking () :Boolean
     {
         return this.hasTasksNamed("attackCooldown");
     }
 
-    public function isUnitInAttackRange (targetUnit :Unit, attack :UnitWeapon) :Boolean
-    {
-        return Collision.circlesIntersect(
-            new Vector2(this.displayObject.x, this.displayObject.y),
-            attack.maxAttackDistance,
-            new Vector2(targetUnit.displayObject.x, targetUnit.displayObject.y),
-            targetUnit.unitData.collisionRadius);
-    }
-
-    public function canAttackUnit (targetUnit :Unit, attack :UnitWeapon) :Boolean
+    public function canAttackWithWeapon (targetUnit :Unit, weapon :UnitWeapon) :Boolean
     {
         // we can attack the unit if we're not already attacking, and if the unit
         // is within range of the attack
-        return (!isAttacking() && isUnitInAttackRange(targetUnit, attack));
+        return (this.isUnitInRange(targetUnit, weapon.maxAttackDistance));
     }
 
-    public function findNearestAttackLocation (targetUnit :Unit, attack :UnitWeapon) :Vector2
+    public function findNearestAttackLocation (targetUnit :Unit, weapon :UnitWeapon) :Vector2
     {
         // given this unit's current location, find the nearest location
         // that an attack on the given target can be launched from
         var myLoc :Vector2 = this.unitLoc;
 
-        if (isUnitInAttackRange(targetUnit, attack)) {
+        if (this.isUnitInRange(targetUnit, weapon.maxAttackDistance)) {
             return myLoc; // we don't need to move
         } else {
             // create a vector that points from the target to us
@@ -92,7 +83,7 @@ public class Unit extends SceneObject
             moveLoc.subtract(targetUnit.unitLoc);
 
             // scale it by the appropriate amount
-            moveLoc.length = (targetUnit.unitData.collisionRadius + attack.maxAttackDistance - 1);
+            moveLoc.length = (targetUnit.unitData.collisionRadius + weapon.maxAttackDistance - 1);
 
             // add it to the base's location
             moveLoc.add(targetUnit.unitLoc);
@@ -103,17 +94,17 @@ public class Unit extends SceneObject
 
     public function sendTargetedAttack (targetUnit :Unit, weapon :UnitWeapon) :void
     {
-        // don't attack if we're already attacking
-        if (!this.canAttackUnit(targetUnit, weapon)) {
+        if (this.isAttacking || !this.canAttackWithWeapon(targetUnit, weapon)) {
             /*trace(
                 "discarding attack from "
                 + this.id + " to " + targetUnit.id +
                 " (target out of range, or we're already attacking)");*/
-
+                
             return;
         }
 
         switch(weapon.weaponType) {
+            
         case UnitWeapon.TYPE_MELEE:
             this.db.sendMessageTo(new ObjectMessage(GameMessage.MSG_UNITATTACKED, new UnitAttack(targetUnit.id, this.id, weapon)), targetUnit.id);
             break;
