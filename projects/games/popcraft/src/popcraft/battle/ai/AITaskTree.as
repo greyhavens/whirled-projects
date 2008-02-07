@@ -57,8 +57,6 @@ public class AITaskTree extends AITaskBase
 
     public function addSubtask (task :AITask) :void
     {
-        task.parentTask = this;
-        
         if (_freeIndices.length == 0) {
             _subtasks.push(task);
         } else {

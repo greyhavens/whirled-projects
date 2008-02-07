@@ -9,14 +9,8 @@ import popcraft.battle.CreatureUnit;
  */
 public interface AITask
 {
-    /** The name of this AITask, used for debugging purposes. */
+    /** Returns the name of this AITask. */
     function get name () :String;
-
-    /** Returns the parent of this AITask. */
-    function get parentTask () :AITaskTree;
-    
-    /** Sets the parent of this AITask. */
-    function set parentTask (parent :AITaskTree) :void;
     
     /** 
      * Advances the logic of the AITask. 
