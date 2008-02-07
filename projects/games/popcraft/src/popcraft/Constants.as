@@ -92,8 +92,8 @@ public class Constants
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.8, DAMAGE_TYPE_PIERCING, 0.7, DAMAGE_TYPE_BASE, 0.8] )   // armor
                 , [ new UnitWeapon(UnitWeapon.TYPE_MELEE, DAMAGE_TYPE_CRUSHING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS_GROUND, 1, 35, 0) ] // weapons
-                , 30                        // collision radius
-                , 90                        // detect radius
+                , 15                        // collision radius
+                , 40                        // detect radius
                 , 180                       // lose interest radius
             )
 
@@ -108,10 +108,10 @@ public class Constants
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] )   // armor
                 , [ 
                     new UnitWeapon(UnitWeapon.TYPE_MELEE, DAMAGE_TYPE_CRUSHING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 50, 0),
-                    new UnitWeapon(UnitWeapon.TYPE_MISSILE, DAMAGE_TYPE_PIERCING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 50, 0),
+                    new UnitWeapon(UnitWeapon.TYPE_MISSILE, DAMAGE_TYPE_PIERCING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 200, 0),
                   ]
-                , 30                        // collision radius
-                , 90                        // detect radius
+                , 14                        // collision radius
+                , 200                        // detect radius
                 , 180                       // lose interest radius
             )
 
@@ -125,8 +125,8 @@ public class Constants
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] )   // armor
                 , [ new UnitWeapon(UnitWeapon.TYPE_MELEE, DAMAGE_TYPE_CRUSHING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 50, 0) ] // weapons
-                , 30                        // collision radius
-                , 90                        // detect radius
+                , 15                        // collision radius
+                , 15                        // detect radius
                 , 180                       // lose interest radius
             )
 
@@ -142,8 +142,8 @@ public class Constants
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.1, DAMAGE_TYPE_PIERCING, 0.1] )   // armor
                 , [ new UnitWeapon(UnitWeapon.TYPE_MELEE, DAMAGE_TYPE_BASE, new NumRange(20, 20, Rand.STREAM_GAME), UNIT_CLASS__ALL, 0, 1000, 0) ] // weapons
-                , 60                        // collision radius
-                , 90                        // detect radius
+                , 40                        // collision radius
+                , 40                        // detect radius
                 , 180                       // lose interest radius
             )
     ];
