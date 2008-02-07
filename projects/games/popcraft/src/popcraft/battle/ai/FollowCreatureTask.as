@@ -6,7 +6,8 @@ import com.whirled.contrib.core.*;
 import popcraft.*;
 import popcraft.battle.*;
 
-public class FollowCreatureTask extends AITaskBase
+public class FollowCreatureTask
+    implements AITask
 {
     public static const NAME :String = "FollowCreatureTask";
 
@@ -20,7 +21,7 @@ public class FollowCreatureTask extends AITaskBase
         _maxFollowDistance = maxFollowDistance;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :uint
+    public function update (dt :Number, unit :CreatureUnit) :uint
     {
         var followCreature :Unit = (GameMode.getNetObject(_unitId) as Unit);
 
@@ -41,7 +42,7 @@ public class FollowCreatureTask extends AITaskBase
         return AITaskStatus.ACTIVE;
     }
 
-    override public function get name () :String
+    public function get name () :String
     {
         return NAME;
     }

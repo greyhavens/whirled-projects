@@ -5,7 +5,8 @@ import com.whirled.contrib.core.*;
 import popcraft.*;
 import popcraft.battle.*;
 
-public class AttackUnitTask extends AITaskBase
+public class AttackUnitTask
+    implements AITask
 {
     public static const NAME :String = "AttackUnit";
 
@@ -15,7 +16,7 @@ public class AttackUnitTask extends AITaskBase
         _loseInterestRange = loseInterestRange;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :uint
+    public function update (dt :Number, unit :CreatureUnit) :uint
     {
         var enemy :Unit = (GameMode.getNetObject(_unitId) as Unit);
 
@@ -37,7 +38,7 @@ public class AttackUnitTask extends AITaskBase
         return AITaskStatus.ACTIVE;
     }
 
-    override public function get name () :String
+    public function get name () :String
     {
         return NAME;
     }

@@ -5,27 +5,19 @@ import com.whirled.contrib.core.*;
 
 import popcraft.battle.CreatureUnit;
 
-public class AITaskTree extends AITaskBase
+public class AITaskTree
+    implements AITask
 {
     public function AITaskTree ()
     {
     }
-
-    override public function receiveMessage (msg :ObjectMessage) :uint
-    {
-        this.forEachSubtask(function (task :AITask) :uint { return task.receiveMessage(msg); } );
-        
-        return AITaskStatus.ACTIVE;
-    }
-
-    override public function update (dt :Number, unit :CreatureUnit) :uint
-    {
-        this.forEachSubtask(function (task :AITask) :uint { return task.update(dt, unit); } );
-        
-        return AITaskStatus.ACTIVE;
-    }
     
-    protected function forEachSubtask (fn :Function) :void
+    public function get name () :String
+    {
+        return "[unnamed task]";
+    }
+
+    public function update (dt :Number, unit :CreatureUnit) :uint
     {
         _stopProcessingSubtasks = false;
         
@@ -43,7 +35,7 @@ public class AITaskTree extends AITaskBase
             
             // we can have holes in the array
             if (null != task) {
-                var status :uint = fn(task);
+                var status :uint = task.update(dt, unit);
                 
                 if (AITaskStatus.COMPLETE == status) {
                     _subtasks[i] = null;
@@ -53,6 +45,8 @@ public class AITaskTree extends AITaskBase
                 }
             }
         }
+        
+        return AITaskStatus.ACTIVE;
     }
 
     public function addSubtask (task :AITask) :void
@@ -73,6 +67,8 @@ public class AITaskTree extends AITaskBase
         _subtasks = new Array();
         _freeIndices = new Array();
         
+        // if an update() is taking place on this AITaskTree when clearSubtasks() is called, 
+        // it should stop updating its subtasks immediately.
         _stopProcessingSubtasks = true;
     }
 

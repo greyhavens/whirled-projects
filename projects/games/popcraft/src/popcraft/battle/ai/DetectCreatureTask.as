@@ -5,7 +5,8 @@ import com.whirled.contrib.core.*;
 import popcraft.*;
 import popcraft.battle.*;
 
-public class DetectCreatureTask extends AITaskBase
+public class DetectCreatureTask
+    implements AITask
 {
     public function DetectCreatureTask (taskName :String, detectPredicate :Function)
     {
@@ -13,7 +14,7 @@ public class DetectCreatureTask extends AITaskBase
         _detectPredicate = detectPredicate;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :uint
+    public function update (dt :Number, unit :CreatureUnit) :uint
     {
         var creatureIds :Array = GameMode.getNetObjectIdsInGroup(CreatureUnit.GROUP_NAME);
         var detectedCreature :CreatureUnit;
@@ -34,7 +35,7 @@ public class DetectCreatureTask extends AITaskBase
         return AITaskStatus.ACTIVE;
     }
 
-    override public function get name () :String
+    public function get name () :String
     {
         return _taskName;
     }

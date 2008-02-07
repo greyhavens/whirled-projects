@@ -118,12 +118,6 @@ public class CreatureUnit extends Unit
 
         this.addNamedTask("move", moveTask);
     }
-    
-    override protected function receiveMessage (msg :ObjectMessage) :void
-    {
-        super.receiveMessage(msg);
-        this.aiRoot.receiveMessage(msg);
-    }
 
     // from SceneObject
     override public function get displayObject () :DisplayObject

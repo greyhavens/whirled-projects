@@ -1,8 +1,11 @@
 package popcraft.battle.ai {
     
+import com.whirled.contrib.core.ObjectMessage;
+
 import popcraft.battle.*;
     
-public class DetectAttacksOnUnitTask extends AITaskBase
+public class DetectAttacksOnUnitTask
+    implements AITask
 {
     public static const NAME :String = "DetectAttacksOnUnit";
     
@@ -11,7 +14,7 @@ public class DetectAttacksOnUnitTask extends AITaskBase
         unit.addEventListener(UnitAttackedEvent.TYPE, onUnitAttacked);
     }
     
-    override public function get name () :String
+    public function get name () :String
     {
         return NAME;
     }
@@ -21,9 +24,14 @@ public class DetectAttacksOnUnitTask extends AITaskBase
         _attack = e.attack;
     }
     
-    override public function update (dt :Number, unit :CreatureUnit) :uint
+    public function update (dt :Number, unit :CreatureUnit) :uint
     {
         return (null == _attack ? AITaskStatus.ACTIVE : AITaskStatus.COMPLETE);
+    }
+    
+    public function receiveMessage (msg :ObjectMessage) :uint
+    {
+        return AITaskStatus.ACTIVE;
     }
     
     public function get attack () :UnitAttack
