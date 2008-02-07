@@ -141,6 +141,8 @@ public class Unit extends SceneObject
                 var damage :uint = uint(_unitData.armor.getWeaponDamage(attack.weapon));
                 _health -= damage;
                 
+                this.dispatchEvent(new UnitAttackedEvent(attack));
+                
                 if (_health == 0) {
                     this.destroySelf();
                 }

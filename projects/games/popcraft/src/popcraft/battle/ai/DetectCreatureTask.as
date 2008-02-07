@@ -7,10 +7,9 @@ import popcraft.battle.*;
 
 public class DetectCreatureTask extends AITaskBase
 {
-    public function DetectCreatureTask (taskName :String, resultName :String, detectPredicate :Function)
+    public function DetectCreatureTask (taskName :String, detectPredicate :Function)
     {
         _taskName = taskName;
-        _resultName = resultName;
         _detectPredicate = detectPredicate;
     }
 
@@ -28,7 +27,7 @@ public class DetectCreatureTask extends AITaskBase
         }
         
         if (null != detectedCreature) {
-            _result = new AITaskResult(_resultName, detectedCreature);
+            _detectedCreature = detectedCreature;
             return AITaskStatus.COMPLETE;
         }
         
@@ -40,16 +39,15 @@ public class DetectCreatureTask extends AITaskBase
         return _taskName;
     }
     
-    override public function get taskResult () :AITaskResult
+    public function get detectedCreature () :CreatureUnit
     {
-        return _result;
+        return _detectedCreature;
     }
     
     protected var _taskName :String;
-    protected var _resultName :String;
     protected var _detectPredicate :Function;
     
-    protected var _result :AITaskResult;
+    protected var _detectedCreature :CreatureUnit;
 
 }
 

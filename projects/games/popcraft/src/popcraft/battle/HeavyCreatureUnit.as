@@ -71,12 +71,7 @@ class HeavyAI extends AITaskTree
     {
         _unit = unit;
         
-        beginGruntEscortLoop();
-    }
-    
-    protected function beginGruntEscortLoop () :void
-    {
-        this.addSubtask(new DetectEscortlessGruntTask());
+       this.addSubtask(new DetectEscortlessGruntTask());
     }
 
     override public function get name () :String
@@ -84,13 +79,16 @@ class HeavyAI extends AITaskTree
         return "HeavyAI";
     }
     
-    override protected function childTaskCompletedWithResult (result :AITaskResult) :void
+    override protected function childTaskCompleted (task :AITask) :void
     {
-        if (result.name == DetectEscortlessGruntTask.MSG_DETECTED_GRUNT) {
-            trace("detected grunt!");
-            var grunt :GruntCreatureUnit = result.data;
+        if (task.name == DetectEscortlessGruntTask.NAME) {
+            // we found a grunt - escort it
+            var grunt :GruntCreatureUnit = ((task as DetectEscortlessGruntTask).detectedCreature as GruntCreatureUnit);
             _unit.escortingUnit = grunt;
             this.addSubtask(new EscortGruntTask(_unit));
+        } else if (task.name == EscortGruntTask.NAME) {
+            // our grunt died - find a new one
+            this.addSubtask(new DetectEscortlessGruntTask());
         }
     }
 
@@ -113,11 +111,10 @@ class WaitAtBaseTask extends AITaskTree
 class DetectEscortlessGruntTask extends DetectCreatureTask
 {
     public static const NAME :String = "DetectEscortlessGrunt";
-    public static const MSG_DETECTED_GRUNT :String = "DetectedGrunt";
     
     public function DetectEscortlessGruntTask ()
     {
-        super(NAME, MSG_DETECTED_GRUNT, isValidGrunt);
+        super(NAME, isValidGrunt);
     }
     
     static protected function isValidGrunt (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean
@@ -138,22 +135,53 @@ class DetectEscortlessGruntTask extends DetectCreatureTask
     }
 }
 
-class EscortGruntTask extends FollowCreatureTask
+class EscortGruntTask extends AITaskTree
 {
     public static const NAME :String = "EscortGruntTask";
     
     public function EscortGruntTask (unit :HeavyCreatureUnit)
     {
-        super(unit.escortingUnit.id, ESCORT_DISTANCE_MIN, ESCORT_DISTANCE_MAX);
         _unit = unit;
+        
+        this.protectGrunt();
     }
     
-    override public function get name() :String
+    protected function protectGrunt () :void
+    {
+        this.addSubtask(new FollowCreatureTask(_unit.escortingUnitId, ESCORT_DISTANCE_MIN, ESCORT_DISTANCE_MAX));
+        this.addSubtask(new DetectAttacksOnUnitTask(_unit.escortingUnit));
+    }
+    
+    override public function get name () :String
     {
         return NAME;
     }
     
+    override protected function childTaskCompleted (task :AITask) :void
+    {
+        if (task.name == FollowCreatureTask.NAME) {
+            // our grunt has died!
+            // @TODO: do something interesting when this happens
+        } else if (task.name == DetectAttacksOnUnitTask.NAME) {
+            // our grunt has been attacked! attack the aggressor!
+            var attack :UnitAttack = (task as DetectAttacksOnUnitTask).attack;
+            var aggressor :Unit = attack.sourceUnit;
+            
+            if (null != aggressor) {
+                trace("HeavyCreatureUnit: attacking escort's aggressor!");
+                
+                this.clearSubtasks();
+                this.addSubtask(new AttackUnitTask(aggressor.id, -1));
+            }
+        } else if (task.name == AttackUnitTask.NAME) {
+            // we've finished attacking our grunt's aggressor.
+            // resume bodyguard status
+            this.protectGrunt();
+        }
+    }
+    
     protected var _unit :HeavyCreatureUnit;
+    protected var _attackingBaddie :Boolean;
     
     protected static const ESCORT_DISTANCE_MIN :Number = 30;
     protected static const ESCORT_DISTANCE_MAX :Number = 35;
