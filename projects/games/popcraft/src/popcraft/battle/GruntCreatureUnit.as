@@ -16,7 +16,8 @@ public class GruntCreatureUnit extends CreatureUnit
     public function GruntCreatureUnit(owningPlayerId:uint)
     {
         super(Constants.UNIT_TYPE_GRUNT, owningPlayerId);
-        _gruntAI = new GruntAI(this);
+        
+        _gruntAI = new GruntAI(this, this.findEnemyBaseToAttack());
     }
 
     override protected function get aiRoot () :AITask
@@ -69,9 +70,10 @@ import popcraft.battle.ai.*;
  */
 class GruntAI extends AITaskTree
 {
-    public function GruntAI (unit :GruntCreatureUnit)
+    public function GruntAI (unit :GruntCreatureUnit, targetBase :uint)
     {
         _unit = unit;
+        _targetBase = targetBase;
 
         this.beginAttackBase();
     }
@@ -79,7 +81,28 @@ class GruntAI extends AITaskTree
     protected function beginAttackBase () :void
     {
         this.clearSubtasks();
-        this.addSubtask(new AttackUnitTask(_unit.findEnemyBaseToAttack()));
+        this.addSubtask(new AttackUnitTask(_targetBase));
+        this.addSubtask(new DetectAttacksOnUnitTask(_unit));
+    }
+    
+    override protected function childTaskCompleted (task :AITask) :void
+    {
+        if (task.name == DetectAttacksOnUnitTask.NAME) {
+            // we've been attacked!
+            var attack :UnitAttack = (task as DetectAttacksOnUnitTask).attack;
+            var aggressor :Unit = attack.sourceUnit;
+            
+            if (null != aggressor) {
+                trace("GruntAI: attacking aggressor!");
+                
+                this.clearSubtasks();
+                this.addSubtask(new AttackUnitTask(aggressor.id, _unit.unitData.loseInterestRadius));
+            } 
+        } else if (task.name == AttackUnitTask.NAME) {
+            // resume attacking base
+            trace("GruntAI: resuming attack on base");
+            this.beginAttackBase();
+        }
     }
 
     override public function get name () :String
@@ -89,4 +112,5 @@ class GruntAI extends AITaskTree
 
     protected var _unit :GruntCreatureUnit;
     protected var _state :uint;
+    protected var _targetBase :uint;
 }
