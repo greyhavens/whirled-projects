@@ -6,12 +6,12 @@ import com.whirled.contrib.core.*;
 import popcraft.*;
 import popcraft.battle.*;
 
-public class FollowCreatureTask
+public class FollowUnitTask
     implements AITask
 {
-    public static const NAME :String = "FollowCreatureTask";
+    public static const NAME :String = "FollowUnitTask";
 
-    public function FollowCreatureTask (unitId :uint, minFollowDistance :Number, maxFollowDistance :Number)
+    public function FollowUnitTask (unitId :uint, minFollowDistance :Number, maxFollowDistance :Number)
     {
         Assert.isTrue(minFollowDistance >= 0);
         Assert.isTrue(maxFollowDistance >= minFollowDistance);
@@ -23,15 +23,15 @@ public class FollowCreatureTask
 
     public function update (dt :Number, unit :CreatureUnit) :uint
     {
-        var followCreature :Unit = (GameMode.getNetObject(_unitId) as Unit);
+        var followUnit :Unit = (GameMode.getNetObject(_unitId) as Unit);
 
-        // is the followCreature dead? does it still hold our interest?
-        if (null == followCreature) {
+        // is the followUnit dead? does it still hold our interest?
+        if (null == followUnit) {
             return AITaskStatus.COMPLETE;
         }
         
-        // should we move closer to the follow creature?
-        var v :Vector2 = followCreature.unitLoc.getSubtract(unit.unitLoc);
+        // should we move closer to the unit?
+        var v :Vector2 = followUnit.unitLoc.getSubtract(unit.unitLoc);
         if (v.lengthSquared > (_maxFollowDistance * _maxFollowDistance)) {
             v.length = _minFollowDistance;
             v.add(unit.unitLoc);

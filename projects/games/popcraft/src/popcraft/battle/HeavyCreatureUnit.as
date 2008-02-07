@@ -124,7 +124,7 @@ class EscortGruntTask extends AITaskTree
     
     protected function protectGrunt () :void
     {
-        this.addSubtask(new FollowCreatureTask(_gruntId, ESCORT_DISTANCE_MIN, ESCORT_DISTANCE_MAX));
+        this.addSubtask(new FollowUnitTask(_gruntId, ESCORT_DISTANCE_MIN, ESCORT_DISTANCE_MAX));
         
         var grunt :Unit = GameMode.getNetObject(_gruntId) as Unit;
         this.addSubtask(new DetectAttacksOnUnitTask(grunt));
@@ -144,7 +144,7 @@ class EscortGruntTask extends AITaskTree
     
     override protected function childTaskCompleted (task :AITask) :void
     {
-        if (task.name == FollowCreatureTask.NAME) {
+        if (task.name == FollowUnitTask.NAME) {
             trace("EscortGruntTask: our grunt died!");
             // our grunt has died! we're done being an escort.
             _gruntDied = true;
