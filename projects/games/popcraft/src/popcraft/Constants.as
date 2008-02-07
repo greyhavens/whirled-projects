@@ -108,7 +108,7 @@ public class Constants
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] )   // armor
                 , [ 
                     new UnitWeapon(UnitWeapon.TYPE_MELEE, DAMAGE_TYPE_CRUSHING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 50, 0),
-                    new UnitWeapon(UnitWeapon.TYPE_MISSILE, DAMAGE_TYPE_PIERCING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 200, 0),
+                    new UnitWeapon(UnitWeapon.TYPE_MISSILE, DAMAGE_TYPE_PIERCING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 200, 300),
                   ]
                 , 14                        // collision radius
                 , 200                        // detect radius
