@@ -67,11 +67,13 @@ import popcraft.battle.ai.*;
  */
 class HeavyAI extends AITaskTree
 {
+    public static const NAME_DETECTESCORTLESSGRUNT :String = "DetectEscortlessGrunt";
+    
     public function HeavyAI (unit :HeavyCreatureUnit)
     {
         _unit = unit;
         
-       this.addSubtask(new DetectEscortlessGruntTask());
+        this.protectEscortlessGrunt();
     }
 
     override public function get name () :String
@@ -79,17 +81,41 @@ class HeavyAI extends AITaskTree
         return "HeavyAI";
     }
     
+    protected function protectEscortlessGrunt () :void
+    {
+        this.addSubtask(new DetectCreatureTask(NAME_DETECTESCORTLESSGRUNT, isEscortlessGrunt));
+    }
+    
     override protected function childTaskCompleted (task :AITask) :void
     {
-        if (task.name == DetectEscortlessGruntTask.NAME) {
+        if (task.name == NAME_DETECTESCORTLESSGRUNT) {
             // we found a grunt - escort it
-            var grunt :GruntCreatureUnit = ((task as DetectEscortlessGruntTask).detectedCreature as GruntCreatureUnit);
+            trace("HeavyAI: found grunt to escort");
+            var grunt :GruntCreatureUnit = ((task as DetectCreatureTask).detectedCreature as GruntCreatureUnit);
             _unit.escortingUnit = grunt;
             this.addSubtask(new EscortGruntTask(_unit));
         } else if (task.name == EscortGruntTask.NAME) {
+            trace("HeavyAI: grunt died - looking for a new one");
             // our grunt died - find a new one
-            this.addSubtask(new DetectEscortlessGruntTask());
+            this.protectEscortlessGrunt();
         }
+    }
+    
+    static protected function isEscortlessGrunt (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean
+    {
+        if (thisCreature.owningPlayerId != thatCreature.owningPlayerId) {
+            return false;
+        } else if (thatCreature.unitType != Constants.UNIT_TYPE_GRUNT) {
+            return false;
+        }
+        
+        var grunt :GruntCreatureUnit = (thatCreature as GruntCreatureUnit);
+        
+        if (grunt.hasEscort) {
+            return false;
+        }
+        
+        return thisCreature.isUnitInRange(grunt, thisCreature.unitData.detectRadius);
     }
 
     protected var _unit :HeavyCreatureUnit;
@@ -105,33 +131,6 @@ class WaitAtBaseTask extends AITaskTree
     override public function get name () :String
     {
         return "WaitAtBase";
-    }
-}
-
-class DetectEscortlessGruntTask extends DetectCreatureTask
-{
-    public static const NAME :String = "DetectEscortlessGrunt";
-    
-    public function DetectEscortlessGruntTask ()
-    {
-        super(NAME, isValidGrunt);
-    }
-    
-    static protected function isValidGrunt (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean
-    {
-        if (thisCreature.owningPlayerId != thatCreature.owningPlayerId) {
-            return false;
-        } else if (thatCreature.unitType != Constants.UNIT_TYPE_GRUNT) {
-            return false;
-        }
-        
-        var grunt :GruntCreatureUnit = (thatCreature as GruntCreatureUnit);
-        
-        if (grunt.hasEscort) {
-            return false;
-        }
-        
-        return thisCreature.isUnitInRange(grunt, thisCreature.unitData.detectRadius);
     }
 }
 
@@ -157,23 +156,33 @@ class EscortGruntTask extends AITaskTree
         return NAME;
     }
     
+    override public function update (dt :Number, unit :CreatureUnit) :uint
+    {
+        super.update(dt, unit);
+        
+        return (_gruntDied ? AITaskStatus.COMPLETE : AITaskStatus.ACTIVE);
+    }
+    
     override protected function childTaskCompleted (task :AITask) :void
     {
         if (task.name == FollowCreatureTask.NAME) {
-            // our grunt has died!
-            // @TODO: do something interesting when this happens
+            trace("EscortGruntTask: our grunt died!");
+            // our grunt has died! we're done being an escort.
+            _gruntDied = true;
         } else if (task.name == DetectAttacksOnUnitTask.NAME) {
             // our grunt has been attacked! attack the aggressor!
             var attack :UnitAttack = (task as DetectAttacksOnUnitTask).attack;
             var aggressor :Unit = attack.sourceUnit;
             
             if (null != aggressor) {
-                trace("HeavyCreatureUnit: attacking escort's aggressor!");
+                trace("EscortGruntTask: attacking escort's aggressor!");
                 
                 this.clearSubtasks();
                 this.addSubtask(new AttackUnitTask(aggressor.id, -1));
             }
         } else if (task.name == AttackUnitTask.NAME) {
+            trace("EscortGruntTask: finished attacking aggressor.");
+            
             // we've finished attacking our grunt's aggressor.
             // resume bodyguard status
             this.protectGrunt();
@@ -181,7 +190,7 @@ class EscortGruntTask extends AITaskTree
     }
     
     protected var _unit :HeavyCreatureUnit;
-    protected var _attackingBaddie :Boolean;
+    protected var _gruntDied :Boolean;
     
     protected static const ESCORT_DISTANCE_MIN :Number = 30;
     protected static const ESCORT_DISTANCE_MAX :Number = 35;
