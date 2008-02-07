@@ -5,11 +5,13 @@ import popcraft.battle.CreatureUnit;
 public class AIDelayTask
     implements AITask
 {
-    public static const NAME :String = "Delay";
+    public static const DEFAULT_NAME :String = "Delay";
     
-    public function AIDelayTask (time :Number)
+    public function AIDelayTask (time :Number, taskName :String = DEFAULT_NAME)
     {
         _totalTime = time;
+        
+        _name = taskName;
     }
     
     public function update (dt :Number, unit :CreatureUnit) :uint
@@ -19,13 +21,15 @@ public class AIDelayTask
         return (_elapsedTime >= _totalTime ? AITaskStatus.COMPLETE : AITaskStatus.ACTIVE);
     }
     
-    function get name () :String
+    public function get name () :String
     {
-        return NAME;
+        return _name;
     }
     
     protected var _totalTime :Number = 0;
     protected var _elapsedTime :Number = 0;
+    
+    protected var _name :String;
     
 }
 

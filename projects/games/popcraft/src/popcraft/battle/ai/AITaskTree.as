@@ -64,12 +64,19 @@ public class AITaskTree
 
     public function clearSubtasks () :void
     {
-        _subtasks = new Array();
-        _freeIndices = new Array();
-        
-        // if an update() is taking place on this AITaskTree when clearSubtasks() is called, 
-        // it should stop updating its subtasks immediately.
-        _stopProcessingSubtasks = true;
+        if (this.hasSubtasks) {
+            _subtasks = new Array();
+            _freeIndices = new Array();
+            
+            // if an update() is taking place on this AITaskTree when clearSubtasks() is called, 
+            // it should stop updating its subtasks immediately.
+            _stopProcessingSubtasks = true;
+        }
+    }
+    
+    protected function get hasSubtasks () :Boolean
+    {
+        return (_subtasks.length - _freeIndices.length) > 0;
     }
 
     public function getStateString (depth :uint = 0) :String

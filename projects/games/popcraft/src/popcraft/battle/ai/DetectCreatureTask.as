@@ -28,7 +28,7 @@ public class DetectCreatureTask
         }
         
         if (null != detectedCreature) {
-            _detectedCreature = detectedCreature;
+            _detectedCreatureId = detectedCreature.id;
             return AITaskStatus.COMPLETE;
         }
         
@@ -40,15 +40,15 @@ public class DetectCreatureTask
         return _taskName;
     }
     
-    public function get detectedCreature () :CreatureUnit
+    public function get detectedCreatureId () :uint
     {
-        return _detectedCreature;
+        return _detectedCreatureId;
     }
     
     protected var _taskName :String;
     protected var _detectPredicate :Function;
     
-    protected var _detectedCreature :CreatureUnit;
+    protected var _detectedCreatureId :uint;
 
 }
 

@@ -81,13 +81,15 @@ class GruntAI extends AITaskTree
     protected function beginAttackBase () :void
     {
         this.clearSubtasks();
-        this.addSubtask(new AttackUnitTask(_targetBase));
+        this.addSubtask(new AttackUnitTask(_targetBase, true, -1));
         this.addSubtask(new DetectAttacksOnUnitTask(_unit));
     }
     
     override protected function childTaskCompleted (task :AITask) :void
     {
-        if (task.name == DetectAttacksOnUnitTask.NAME) {
+        switch (task.name) {
+            
+        case DetectAttacksOnUnitTask.NAME:
             // we've been attacked!
             var attack :UnitAttack = (task as DetectAttacksOnUnitTask).attack;
             var aggressor :Unit = attack.sourceUnit;
@@ -96,12 +98,15 @@ class GruntAI extends AITaskTree
                 trace("GruntAI: attacking aggressor!");
                 
                 this.clearSubtasks();
-                this.addSubtask(new AttackUnitTask(aggressor.id, _unit.unitData.loseInterestRadius));
-            } 
-        } else if (task.name == AttackUnitTask.NAME) {
+                this.addSubtask(new AttackUnitTask(aggressor.id, true, _unit.unitData.loseInterestRadius));
+            }
+            break;
+            
+        case AttackUnitTask.NAME:
             // resume attacking base
             trace("GruntAI: resuming attack on base");
             this.beginAttackBase();
+            break;
         }
     }
 

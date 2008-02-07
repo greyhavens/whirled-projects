@@ -1,7 +1,5 @@
 package popcraft.battle {
 
-import com.threerings.util.Assert;
-
 import popcraft.*;
 import popcraft.battle.ai.*;
 
@@ -22,32 +20,8 @@ public class HeavyCreatureUnit extends CreatureUnit
     {
         return _ai;
     }
-    
-    public function get isEscortingUnit () :Boolean
-    {
-        return (null != this.escortingUnit);
-    }
-
-    public function set escortingUnit (unit :GruntCreatureUnit) :void
-    {
-        Assert.isFalse(unit.hasEscort);
-
-        _escortingUnitId = unit.id;
-        unit.escort = this;
-    }
-
-    public function get escortingUnit () :GruntCreatureUnit
-    {
-        return GameMode.getNetObject(_escortingUnitId) as GruntCreatureUnit;
-    }
-    
-    public function get escortingUnitId () :uint
-    {
-        return _escortingUnitId;
-    }
 
     protected var _ai :HeavyAI;
-    protected var _escortingUnitId :uint;
 }
 
 }
@@ -67,13 +41,11 @@ import popcraft.battle.ai.*;
  */
 class HeavyAI extends AITaskTree
 {
-    public static const NAME_DETECTESCORTLESSGRUNT :String = "DetectEscortlessGrunt";
-    
     public function HeavyAI (unit :HeavyCreatureUnit)
     {
         _unit = unit;
         
-        this.protectEscortlessGrunt();
+        this.findGruntOrBecomeTower();
     }
 
     override public function get name () :String
@@ -81,23 +53,37 @@ class HeavyAI extends AITaskTree
         return "HeavyAI";
     }
     
-    protected function protectEscortlessGrunt () :void
+    protected function findGruntOrBecomeTower () :void
     {
-        this.addSubtask(new DetectCreatureTask(NAME_DETECTESCORTLESSGRUNT, isEscortlessGrunt));
+        this.addSubtask(new DetectCreatureTask(TASK_DETECTESCORTLESSGRUNT, isEscortlessGrunt));
+        this.addSubtask(new AIDelayTask(DELAY_BECOMETOWER, TASK_BECOMETOWER)); 
     }
     
     override protected function childTaskCompleted (task :AITask) :void
     {
-        if (task.name == NAME_DETECTESCORTLESSGRUNT) {
+        switch (task.name) {
+            
+        case TASK_DETECTESCORTLESSGRUNT:
             // we found a grunt - escort it
             trace("HeavyAI: found grunt to escort");
-            var grunt :GruntCreatureUnit = ((task as DetectCreatureTask).detectedCreature as GruntCreatureUnit);
-            _unit.escortingUnit = grunt;
-            this.addSubtask(new EscortGruntTask(_unit));
-        } else if (task.name == EscortGruntTask.NAME) {
-            trace("HeavyAI: grunt died - looking for a new one");
+            this.clearSubtasks();
+            var gruntId :uint = (task as DetectCreatureTask).detectedCreatureId;
+            this.addSubtask(new EscortGruntTask(gruntId));
+            break;
+            
+        case EscortGruntTask.NAME:
             // our grunt died - find a new one
-            this.protectEscortlessGrunt();
+            trace("HeavyAI: grunt died - looking for a new one");
+            this.findGruntOrBecomeTower();
+            break;
+            
+        case TASK_BECOMETOWER:
+            // it's time to convert to tower-mode
+            trace("HeavyAI: becoming a tower");
+            this.clearSubtasks();
+            //this.addSubtask(new AttackApproachingEnemiesTask());
+            break;
+            
         }
     }
     
@@ -119,36 +105,29 @@ class HeavyAI extends AITaskTree
     }
 
     protected var _unit :HeavyCreatureUnit;
-}
-
-// The heavy waits at the base for 
-class WaitAtBaseTask extends AITaskTree
-{
-    public function WaitAtBaseTask ()
-    {
-    }
     
-    override public function get name () :String
-    {
-        return "WaitAtBase";
-    }
+    protected static const TASK_DETECTESCORTLESSGRUNT :String = "DetectEscortlessGrunt";
+    protected static const TASK_BECOMETOWER :String = "BecomeTower";
+    protected static const DELAY_BECOMETOWER :Number = 10;
 }
 
 class EscortGruntTask extends AITaskTree
 {
     public static const NAME :String = "EscortGruntTask";
     
-    public function EscortGruntTask (unit :HeavyCreatureUnit)
+    public function EscortGruntTask (gruntId :uint)
     {
-        _unit = unit;
+        _gruntId = gruntId;
         
         this.protectGrunt();
     }
     
     protected function protectGrunt () :void
     {
-        this.addSubtask(new FollowCreatureTask(_unit.escortingUnitId, ESCORT_DISTANCE_MIN, ESCORT_DISTANCE_MAX));
-        this.addSubtask(new DetectAttacksOnUnitTask(_unit.escortingUnit));
+        this.addSubtask(new FollowCreatureTask(_gruntId, ESCORT_DISTANCE_MIN, ESCORT_DISTANCE_MAX));
+        
+        var grunt :Unit = GameMode.getNetObject(_gruntId) as Unit;
+        this.addSubtask(new DetectAttacksOnUnitTask(grunt));
     }
     
     override public function get name () :String
@@ -178,7 +157,7 @@ class EscortGruntTask extends AITaskTree
                 trace("EscortGruntTask: attacking escort's aggressor!");
                 
                 this.clearSubtasks();
-                this.addSubtask(new AttackUnitTask(aggressor.id, -1));
+                this.addSubtask(new AttackUnitTask(aggressor.id, true, -1));
             }
         } else if (task.name == AttackUnitTask.NAME) {
             trace("EscortGruntTask: finished attacking aggressor.");
@@ -189,7 +168,7 @@ class EscortGruntTask extends AITaskTree
         }
     }
     
-    protected var _unit :HeavyCreatureUnit;
+    protected var _gruntId :uint;
     protected var _gruntDied :Boolean;
     
     protected static const ESCORT_DISTANCE_MIN :Number = 30;

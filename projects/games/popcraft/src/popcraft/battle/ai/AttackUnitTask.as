@@ -10,9 +10,10 @@ public class AttackUnitTask
 {
     public static const NAME :String = "AttackUnit";
 
-    public function AttackUnitTask (unitId :uint, loseInterestRange :Number = -1)
+    public function AttackUnitTask (unitId :uint, followUnit :Boolean, loseInterestRange :Number)
     {
         _unitId = unitId;
+        _followUnit = followUnit;
         _loseInterestRange = loseInterestRange;
     }
 
@@ -44,6 +45,7 @@ public class AttackUnitTask
     }
 
     protected var _unitId :uint;
+    protected var _followUnit :Boolean;
     protected var _loseInterestRange :Number;
 
 }

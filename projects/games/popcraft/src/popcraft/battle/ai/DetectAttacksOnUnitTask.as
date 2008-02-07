@@ -11,7 +11,7 @@ public class DetectAttacksOnUnitTask
     
     public function DetectAttacksOnUnitTask (unit :Unit)
     {
-        unit.addEventListener(UnitAttackedEvent.TYPE, onUnitAttacked);
+        unit.addEventListener(UnitAttackedEvent.TYPE, onUnitAttacked, false, 0, true);
     }
     
     public function get name () :String
@@ -27,11 +27,6 @@ public class DetectAttacksOnUnitTask
     public function update (dt :Number, unit :CreatureUnit) :uint
     {
         return (null == _attack ? AITaskStatus.ACTIVE : AITaskStatus.COMPLETE);
-    }
-    
-    public function receiveMessage (msg :ObjectMessage) :uint
-    {
-        return AITaskStatus.ACTIVE;
     }
     
     public function get attack () :UnitAttack
