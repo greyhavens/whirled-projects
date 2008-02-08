@@ -1,13 +1,68 @@
 package ghostbusters.fight.common {
+    
+import com.threerings.flash.DisplayUtil;
 
-import com.whirled.contrib.core.AppMode;
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.resource.*;
+import com.whirled.contrib.core.tasks.*;
+
+import flash.display.MovieClip;
+import flash.events.Event;
+import flash.text.TextField;
 
 public class IntroMode extends AppMode
 {
-    public function IntroMode (word :String)
+    public function IntroMode (gameName :String, text :String)
     {
-        this.addObject(new IntroObject(word), this.modeSprite);
+        _gameName = gameName;
+        _text = text;
+        
+        if (g_resourcesLoaded) {
+            this.createScreen();
+        } else {
+            ResourceManager.instance.pendResourceLoad("swf", "introOutroScreen", { embeddedClass: CommonContent.SWF_INTROOUTROSCREEN });
+            ResourceManager.instance.addEventListener(ResourceLoadEvent.LOADED, onResourcesLoaded, false, 0, true);
+            
+            ResourceManager.instance.load();
+            
+            g_resourcesLoaded = true;
+        }
     }
+    
+    protected function onResourcesLoaded (e :Event) :void
+    {
+        this.createScreen();
+    }
+    
+    protected function createScreen () :void
+    {
+        var swf :SwfResourceLoader = (ResourceManager.instance.getResource("introOutroScreen") as SwfResourceLoader);
+        var movieRoot :MovieClip = swf.displayRoot as MovieClip;
+        
+        this.modeSprite.addChild(movieRoot);
+        
+        // fill in the text
+        //var directions :MovieClip = movieRoot.gameDirections;
+        
+        //trace(DisplayUtil.dumpHierarchy(directions));
+        
+        // automatically dismiss the screen after a short while
+        
+        var timerObj :AppObject = new AppObject();
+        timerObj.addTask(new SerialTask(
+            new TimedTask(SCREEN_TIME),
+            new FunctionTask(MainLoop.instance.popMode)));
+            
+        this.addObject(timerObj);
+    }
+    
+    protected var _gameName :String;
+    protected var _text :String;
+    
+    protected static var g_resourcesLoaded :Boolean;
+    
+    protected static const SCREEN_TIME :Number = 1;
 }
 
 }

@@ -27,7 +27,7 @@ public class GhostWriterGame extends MicrogameMode
     override public function begin () :void
     {
         MainLoop.instance.pushMode(this);
-        MainLoop.instance.pushMode(new IntroMode("Spell '" + _word.toLocaleUpperCase() + "'"));
+        MainLoop.instance.pushMode(new IntroMode("Ghost Writer", "Spell '" + _word.toLocaleUpperCase() + "'!"));
     }
     
     override protected function get duration () :Number

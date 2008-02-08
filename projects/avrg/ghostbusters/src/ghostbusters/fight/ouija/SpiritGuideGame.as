@@ -24,7 +24,7 @@ public class SpiritGuideGame extends MicrogameMode
     override public function begin () :void
     {
         MainLoop.instance.pushMode(this);
-        MainLoop.instance.pushMode(new IntroMode("Move to '" + _selection.toLocaleUpperCase() + "'!"));
+        MainLoop.instance.pushMode(new IntroMode("Spirit Guide", "Move to '" + _selection.toLocaleUpperCase() + "'!"));
     }
     
     override protected function get duration () :Number

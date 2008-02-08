@@ -35,7 +35,7 @@ public class HueAndCryGame extends MicrogameMode
             g_assetsLoaded = true;
         }
         
-        MainLoop.instance.pushMode(new IntroMode("Mix " + Colors.getColorName(_targetColor) + "!"));
+        MainLoop.instance.pushMode(new IntroMode("Hue and Cry", "Mix " + Colors.getColorName(_targetColor) + "!"));
     }
     
     override protected function get duration () :Number

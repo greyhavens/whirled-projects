@@ -34,7 +34,7 @@ public class HeartOfDarknessGame extends MicrogameMode
             g_assetsLoaded = true;
         }
         
-        MainLoop.instance.pushMode(new IntroMode("Find the heart!"));
+        MainLoop.instance.pushMode(new IntroMode("Heart of Darkness", "Find the heart!"));
     }
     
     override protected function get duration () :Number

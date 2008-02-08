@@ -27,7 +27,7 @@ public class SpiritShellGame extends MicrogameMode
             g_assetsLoaded = true;
         }
         
-        MainLoop.instance.pushMode(new IntroMode("Clear the ectoplasm!"));
+        MainLoop.instance.pushMode(new IntroMode("Spirit Shell", "Clear the ectoplasm!"));
     }
     
     override protected function get duration () :Number

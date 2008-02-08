@@ -25,7 +25,7 @@ public class PictoGeistGame extends MicrogameMode
     override public function begin () :void
     {
         MainLoop.instance.pushMode(this);
-        MainLoop.instance.pushMode(new IntroMode("Draw!"));
+        MainLoop.instance.pushMode(new IntroMode("Picto Geist", "Draw!"));
     }
     
     override protected function get duration () :Number
