@@ -1,7 +1,5 @@
 package ghostbusters.fight.common {
     
-import com.threerings.flash.DisplayUtil;
-
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.resource.*;
@@ -43,7 +41,11 @@ public class IntroMode extends AppMode
         this.modeSprite.addChild(movieRoot);
         
         // fill in the text
-        //var directions :MovieClip = movieRoot.gameDirections;
+        var directions :MovieClip = movieRoot.directions;
+        var gameName :MovieClip = movieRoot.gamename;
+        
+        (directions.getChildByName("text") as TextField).text = _text;
+        (gameName.getChildByName("text") as TextField).text = _gameName;
         
         //trace(DisplayUtil.dumpHierarchy(directions));
         
