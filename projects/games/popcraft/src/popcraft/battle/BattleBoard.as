@@ -36,8 +36,8 @@ public class BattleBoard extends SceneObject
         // the background and below the foreground
         _unitDisplayParent = new Sprite();
 
-        var bg :Bitmap = (ResourceManager.instance.getResource("battle_bg") as ImageResourceLoader).createBitmap();
-        var fg :Bitmap = (ResourceManager.instance.getResource("battle_fg") as ImageResourceLoader).createBitmap();
+        var bg :Bitmap = (PopCraft.resourceManager.getResource("battle_bg") as ImageResourceLoader).createBitmap();
+        var fg :Bitmap = (PopCraft.resourceManager.getResource("battle_fg") as ImageResourceLoader).createBitmap();
         fg.y = bg.height - fg.height; // fg is aligned to the bottom of the board
 
         _view.addChild(bg);

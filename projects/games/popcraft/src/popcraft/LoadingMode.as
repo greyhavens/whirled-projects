@@ -17,22 +17,22 @@ public class LoadingMode extends AppMode
     
     override protected function setup () :void
     {
-        ResourceManager.instance.pendResourceLoad("image", "grunt",     { embeddedClass: Content.IMAGE_GRUNT });
-        ResourceManager.instance.pendResourceLoad("image", "heavy",     { embeddedClass: Content.IMAGE_HEAVY });
-        ResourceManager.instance.pendResourceLoad("image", "sapper",    { embeddedClass: Content.IMAGE_SAPPER });
-        ResourceManager.instance.pendResourceLoad("image", "base",      { embeddedClass: Content.IMAGE_BASE });
-        ResourceManager.instance.pendResourceLoad("image", "waypoint",  { embeddedClass: Content.IMAGE_WAYPOINT });
-        ResourceManager.instance.pendResourceLoad("image", "battle_bg", { embeddedClass: Content.IMAGE_BATTLE_BG });
-        ResourceManager.instance.pendResourceLoad("image", "battle_fg", { embeddedClass: Content.IMAGE_BATTLE_FG });
+        PopCraft.resourceManager.pendResourceLoad("image", "grunt",     { embeddedClass: Content.IMAGE_GRUNT });
+        PopCraft.resourceManager.pendResourceLoad("image", "heavy",     { embeddedClass: Content.IMAGE_HEAVY });
+        PopCraft.resourceManager.pendResourceLoad("image", "sapper",    { embeddedClass: Content.IMAGE_SAPPER });
+        PopCraft.resourceManager.pendResourceLoad("image", "base",      { embeddedClass: Content.IMAGE_BASE });
+        PopCraft.resourceManager.pendResourceLoad("image", "waypoint",  { embeddedClass: Content.IMAGE_WAYPOINT });
+        PopCraft.resourceManager.pendResourceLoad("image", "battle_bg", { embeddedClass: Content.IMAGE_BATTLE_BG });
+        PopCraft.resourceManager.pendResourceLoad("image", "battle_fg", { embeddedClass: Content.IMAGE_BATTLE_FG });
         
-        ResourceManager.instance.load();
+        PopCraft.resourceManager.load();
         
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
     }
     
     override public function update (dt :Number) :void
     {
-        if (!ResourceManager.instance.isLoading) {
+        if (!PopCraft.resourceManager.isLoading) {
             // Once we're done loading resources, we're ready for the game to begin.
             // Wait for the WhirledGameControl to fire the event.
             _gameCtrl.game.playerReady();

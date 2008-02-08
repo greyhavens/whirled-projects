@@ -27,7 +27,7 @@ public class WaypointMarker extends SceneObject
         _sprite = new Sprite();
 
         // add a tinted flag image
-        var waypointBMD :BitmapData = (ResourceManager.instance.getResource("waypoint") as ImageResourceLoader).bitmapData;
+        var waypointBMD :BitmapData = (PopCraft.resourceManager.getResource("waypoint") as ImageResourceLoader).bitmapData;
         
         var image :Bitmap = createTintedBitmap(waypointBMD, Constants.PLAYER_COLORS[owningPlayerId]);
 

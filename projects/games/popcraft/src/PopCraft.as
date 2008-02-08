@@ -5,8 +5,8 @@ package {
 
 import com.threerings.util.Assert;
 import com.whirled.WhirledGameControl;
-
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.resource.ResourceManager;
 
 import flash.display.Sprite;
 
@@ -24,6 +24,11 @@ public class PopCraft extends Sprite
     {
         Assert.isTrue(null != g_instance);
         return g_instance;
+    }
+    
+    public static function get resourceManager () :ResourceManager
+    {
+        return g_instance._rsrcMgr;
     }
 
     public function PopCraft ()
@@ -48,6 +53,7 @@ public class PopCraft extends Sprite
     protected static var g_instance :PopCraft;
 
     protected var _gameCtrl :WhirledGameControl;
+    protected var _rsrcMgr :ResourceManager = new ResourceManager();
 }
 
 }

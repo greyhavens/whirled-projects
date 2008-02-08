@@ -34,7 +34,7 @@ public class Unit extends SceneObject
         _sprite = new Sprite();
 
         // add the image, aligned by its foot position
-        var image :Bitmap = (ResourceManager.instance.getResource(_unitData.name) as ImageResourceLoader).createBitmap();
+        var image :Bitmap = (PopCraft.resourceManager.getResource(_unitData.name) as ImageResourceLoader).createBitmap();
         image.x = -(image.width / 2);
         image.y = -image.height;
         _sprite.addChild(image);
