@@ -7,6 +7,7 @@ import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.net.*;
 import com.whirled.contrib.core.util.*;
 
+import flash.display.DisplayObjectContainer;
 import flash.events.KeyboardEvent;
 import flash.geom.Point;
 
@@ -451,6 +452,11 @@ public class GameMode extends AppMode
     public function get messageManager () :TickedMessageManager
     {
         return _messageMgr;
+    }
+    
+    public function get battleUnitDisplayParent () :DisplayObjectContainer
+    {
+        return _battleBoard.unitDisplayParent;
     }
 
     protected var _gameIsRunning :Boolean;
