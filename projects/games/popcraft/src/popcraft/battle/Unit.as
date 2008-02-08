@@ -185,8 +185,11 @@ public class Unit extends SceneObject
         if (msg.name == GameMessage.MSG_UNITATTACKED) {
             var attack :UnitAttack = (msg.data as UnitAttack);
             if (attack.targetUnitId == this.id) {
-                var damage :uint = uint(_unitData.armor.getWeaponDamage(attack.weapon));
-                _health -= damage;
+                
+                _health -= int(_unitData.armor.getWeaponDamage(attack.weapon));
+                _health = Math.max(_health, 0);
+                
+                _healthMeter.value = _health;
                 
                 this.dispatchEvent(new UnitAttackedEvent(attack));
                 
@@ -225,7 +228,7 @@ public class Unit extends SceneObject
     protected var _owningPlayerId :uint;
     protected var _unitType :uint;
     protected var _unitData :UnitData;
-    protected var _health :uint;
+    protected var _health :int;
 
     protected var _sprite :Sprite;
     protected var _healthMeter :RectMeter;

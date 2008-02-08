@@ -128,8 +128,6 @@ public class CreatureUnit extends Unit
         }
         
         super.update(dt);
-        
-        _healthMeter.value = _health;
     }
 
     protected static var g_groups :Array;
