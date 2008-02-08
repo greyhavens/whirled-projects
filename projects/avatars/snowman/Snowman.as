@@ -121,17 +121,19 @@ public class Snowman extends Sprite
 
         // possibly add the optional hat
         if (undefined !== hatColor) {
+            var hatNode :DisplayObject3D = new DisplayObject3D();
+
             material = new ColorMaterial(uint(hatColor));
             var brim :Cylinder = new Cylinder(material, 80, 5, 16);
-            brim.pitch(-20);
-            brim.y = 595;
-            brim.z = -10;
+            var hat :Cylinder = new Cylinder(material, 40, 50, 16);
+            hat.y = 20;
+            hatNode.addChild(brim);
+            hatNode.addChild(hat);
 
-            var hat :Cylinder = new Cylinder(material, 30, 30, 16);
-            hat.pitch(-20);
-            hat.y = 615;
-            rootNode.addChild(brim);
-            rootNode.addChild(hat);
+            hatNode.y = 590;
+            hatNode.z = -10;
+            hatNode.pitch(-20);
+            rootNode.addChild(hatNode);
         }
 
         _camera = new Camera3D(buttSphere);
