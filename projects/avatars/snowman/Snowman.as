@@ -6,6 +6,8 @@
 package {
 
 import flash.display.Bitmap;
+import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -23,6 +25,7 @@ import org.papervision3d.components.as3.flash9.PV3DScene3D;
 import org.papervision3d.core.proto.MaterialObject3D;
 import org.papervision3d.materials.BitmapMaterial;
 import org.papervision3d.materials.ColorMaterial;
+import org.papervision3d.materials.MovieMaterial;
 import org.papervision3d.objects.DisplayObject3D;
 import org.papervision3d.objects.Cone;
 import org.papervision3d.objects.Cylinder;
@@ -61,13 +64,13 @@ public class Snowman extends Sprite
 
     protected function gotTexture (results :Object) :void
     {
-        createScene(results["texture"] as Bitmap, _pack.getData("eyeColor"),
+        createScene(results["texture"], _pack.getData("eyeColor"),
             _pack.getData("noseColor"), _pack.getData("noseLength"), _pack.getData("hatColor"));
         _pack = null; // no longer needed
     }
 
     protected function createScene (
-        texture :Bitmap = null, eyeColor :uint = 0x000033, noseColor :uint = 0xFFa900,
+        texture :DisplayObject = null, eyeColor :uint = 0x000033, noseColor :uint = 0xFFa900,
         noseLength :Number = 100, hatColor :* = undefined) :void
     {
         if (texture == null) {
@@ -84,7 +87,20 @@ public class Snowman extends Sprite
 
         var material :MaterialObject3D;
         //material = new ColorMaterial(0xDDDDFF);
-        material = new BitmapMaterial(texture.bitmapData);
+        if (texture is Bitmap) {
+            material = new BitmapMaterial(Bitmap(texture).bitmapData);
+        } else {
+            var movie :MovieClip;
+            if (texture is MovieClip) {
+                movie = MovieClip(texture);
+            } else {
+                movie = new MovieClip();
+                movie.addChild(texture);
+            }
+            material = new MovieMaterial(movie, true);
+            MovieMaterial(material).animated = true;
+            _animated = true;
+        }
         var buttSphere :Sphere = new Sphere(material, 150, 16, 10);
         buttSphere.y = 150;
 
@@ -157,7 +173,7 @@ public class Snowman extends Sprite
     {
         var needRender :Boolean = updateOrientation();
 
-        if (needRender) {
+        if (needRender || _animated) {
             _scene.renderCamera(_camera);
         }
     }
@@ -219,7 +235,7 @@ public class Snowman extends Sprite
             _camera.z = CAMERA_DISTANCE * Math.cos(radians);
         }
 
-        if (_orient != targetOrient) {
+        if (_animated || _orient != targetOrient) {
             if (!_enterFrame) {
                 addEventListener(Event.ENTER_FRAME, handleFrame);
                 _enterFrame = true;
@@ -276,6 +292,8 @@ public class Snowman extends Sprite
 
     /** The maximum amount we re-orient, in degrees, per second. */
     protected static const REORIENT_RATE :Number = 125;
+
+    protected var _animated :Boolean = false;
 
     protected var _control :AvatarControl;
 
