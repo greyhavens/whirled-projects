@@ -30,7 +30,7 @@ import org.papervision3d.objects.Sphere;
 import org.papervision3d.scenes.MovieScene3D;
 import org.papervision3d.scenes.Scene3D;
 
-[SWF(width="150", height="250")]
+[SWF(width="600", height="250")]
 public class Snowman extends Sprite
 {
     public function Snowman ()
@@ -61,19 +61,20 @@ public class Snowman extends Sprite
 
     protected function gotTexture (results :Object) :void
     {
-        createScene(results["texture"] as Bitmap, _pack.getData("eyeColor"), _pack.getData("noseColor"), _pack.getData("hatColor"));
+        createScene(results["texture"] as Bitmap, _pack.getData("eyeColor"),
+            _pack.getData("noseColor"), _pack.getData("noseLength"), _pack.getData("hatColor"));
         _pack = null; // no longer needed
     }
 
     protected function createScene (
         texture :Bitmap = null, eyeColor :uint = 0x000033, noseColor :uint = 0xFFa900,
-        hatColor :* = undefined) :void
+        noseLength :Number = 100, hatColor :* = undefined) :void
     {
         if (texture == null) {
             texture = (new SNOW_TEXTURE()) as Bitmap;
         }
         var sprite :Sprite = new Sprite();
-        sprite.x = 75;
+        sprite.x = 300;
         sprite.y = 200;
         addChild(sprite);
 
@@ -107,9 +108,9 @@ public class Snowman extends Sprite
         //material = new BitmapMaterial(Bitmap(new TEXTURE()).bitmapData);
         material = new ColorMaterial(noseColor);
         // Cone is broken, it always makes a cylinder, so just use cylinder directly
-        var nose :Cylinder = new Cylinder(material, 10, 100, 16, 10, .01);
+        var nose :Cylinder = new Cylinder(material, 10, noseLength, 16, 10, .01);
         nose.rotationX = 270;
-        nose.z = 90;
+        nose.z = 40 + (noseLength / 2);
         nose.y = 550;
 
         rootNode.addChild(buttSphere);
