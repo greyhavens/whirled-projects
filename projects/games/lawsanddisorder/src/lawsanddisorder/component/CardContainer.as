@@ -23,6 +23,8 @@ public class CardContainer extends Component
      * Add each card present in the array to this container, then update the display
      * and synchronize the distributed data.  If insertIndex is provided, add them to a specific
      * point in the array.
+     * TODO setting insertIndex = cards.length when too big or small seems hacky but needed
+     *      when creating a new law and inserting 3-5 cards at insertIndex -1. fix
      */
     public function addCards (cardArray :Array, distribute :Boolean = true, insertIndex :int = -1) :void
     {
@@ -43,25 +45,23 @@ public class CardContainer extends Component
      * Add a card to the hand, but do not set distributed data or update the display.
      */
     protected function addCard (card :Card, insertIndex :int = -1) :void
-    {
+    {   	
         if (!contains(card)) {
         	if (insertIndex == -1) {
                 addChild(card);
         	}
         	else {
-        		_ctx.log("adding child card at " + insertIndex);
-        		addChildAt(card, insertIndex);
-        		var childrens :String = "";
-        		for (var i :int = 0; i < numChildren; i++) {
-        			if (getChildAt(i) is Card) {
-        			    childrens += Card(getChildAt(i)) + ", ";
-        			}
-        			else {
-        				childrens += getChildAt(i) + "[not card], ";
-        			}
+        		if (numChildren < insertIndex) {
+        			_ctx.log("WTF Card insert at " + insertIndex + " with " + numChildren + " children.");
+        			addChild(card);
         		}
-        		_ctx.log("childrens: " + childrens);
+        		else {
+        		    addChildAt(card, insertIndex);
+        		}
         	}
+        }
+        else {
+        	_ctx.log("WTF already contains child card: " + card);
         }
         if (cards.indexOf(card) < 0) {
             if (insertIndex < 0 || insertIndex > cards.length) {

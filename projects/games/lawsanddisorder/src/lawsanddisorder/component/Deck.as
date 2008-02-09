@@ -145,7 +145,7 @@ public class Deck extends Component
      */
     public function setup () :void
     {
-        shuffle();
+        shuffle(cards);
         _ctx.eventHandler.setData(DECK_DATA, cards);
     }
     
@@ -162,6 +162,71 @@ public class Deck extends Component
         }
         
         return cardObjects[cardIndex];
+    }
+    
+    /**
+     * Fetch an array of numCards cards for a starting hand.  Massage it so that it contains
+     * at least two subjects, one object and one verb.     */
+    public function drawStartingHand (numCards :int) :Array
+    {
+    	var numSubjects :int = 0;
+    	var numObjects :int = 0;
+    	var numVerbs :int = 0;
+    	
+    	var cardArray :Array = new Array();
+    	for (var cardPos :int = 0; cardPos < cards.length; cardPos++) {
+    		var cardId :int = cards[cardPos];
+    		var card :Card = cardObjects[cardId];
+            switch (card.group) {
+                case Card.SUBJECT:
+                    if (numSubjects < 2 || (numObjects >= 1 && numVerbs >= 1)) {
+                        cards.splice(cardPos, 1);
+                        cardArray.push(card);
+                        numSubjects++;
+                    }
+                    break;
+                case Card.OBJECT:
+                    if (numObjects < 1 || (numSubjects >= 2 && numVerbs >= 1)) {
+                        cards.splice(cardPos, 1);
+                        cardArray.push(card);
+                        numObjects++;
+                    }
+                    break;
+                case Card.VERB:
+                    if (numVerbs < 1 || (numSubjects >= 2 && numObjects >= 1)) {
+                        cards.splice(cardPos, 1);
+                        cardArray.push(card);
+                        numVerbs++;
+                    }
+                    break;
+                default:
+                    if (numSubjects >= 2 && numObjects >= 1 && numVerbs >= 1) {
+                        cards.splice(cardPos, 1);
+                        cardArray.push(card);
+                    }
+                    break;
+            }   
+    		if (cardArray.length == numCards) {
+    			break;
+    		}
+    	}
+    	
+    	
+    	// tough luck, there weren't enough subjects/objects/verbs left in the deck
+    	var missingCardsNum :int = numCards - cardArray.length;
+    	if (missingCardsNum > 0) {
+    		for (var i :int = 0; i < missingCardsNum; i++) {
+    			cardArray.push(Card(cardObjects[cards.pop() as int]));
+    		}
+    	}
+    	
+    	// shuffle the hand and deck again afterwards
+    	shuffle(cardArray);
+    	shuffle(cards);
+        updateDisplay();
+        _ctx.eventHandler.setData(DECK_DATA, cards);
+        
+        return cardArray;
     }
     
     /**
@@ -229,15 +294,18 @@ public class Deck extends Component
     }
     
     /**
-     * Randomize the order of the cards in deck
+     * Randomize the order of the objects in a given array
      */
-    protected function shuffle () :void
+    protected function shuffle (array :Array) :void
     {
-        for (var i :int = 0; i < cards.length; i++) {
-            var cardId :int = cards[i];
-            var randomNum :int = Math.round(Math.random() * (cards.length-1));
-            cards[i] = cards[randomNum];
-            cards[randomNum] = cardId;
+    	if (array == null || array.length == 0) {
+    		return;
+    	}
+        for (var i :int = 0; i < array.length; i++) {
+            var valueAtI :* = array[i];
+            var randomNum :int = Math.round(Math.random() * (array.length-1));
+            array[i] = array[randomNum];
+            array[randomNum] = valueAtI;
         }
     }
         

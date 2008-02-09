@@ -35,17 +35,8 @@ public class Opponents extends Component
     }
     
     /**
-     * Draw the job area
-     * TODO does nothing - remove
-     */
-    override protected function initDisplay () :void
-    {
-        // do nothing
-    }
-    
-    /**
      * Rearrange opponents when one is added
-     * TODO will opponents be changing a lot?  Or just added during init?
+     * TODO will opponents be changing during the game?  Or just added during init?
      */
     override protected function updateDisplay () :void
     {

@@ -53,19 +53,18 @@ public class Law extends CardContainer
      * TODO do the highlighting elsewhere to avoid rewriting text every time
      */
     override protected function updateDisplay () :void
-    {
-        var text :String = "Law " + _id + ":   ";
-        for (var i :int = 0; i < cards.length; i++) {
-            
+    {   
+        _text = "Law " + _id + ":   ";
+        for (var i :int = 0; i < cards.length; i++) {          
             // update text version of the law
             var card :Card = cards[i];
-            text += card.text + "   ";
+            _text += card.text + "   ";
             
             // position the card horizontally in the card display area
             card.x = i * CARD_SPACING_X;
             card.y = 10;
         }
-        lawText.text = text;
+        lawText.text = _text;
         
         // draw a border, highlighted or not
         if (_highlighted) {
@@ -80,11 +79,26 @@ public class Law extends CardContainer
     /**
      * When child cards are added via the CardContainer class, instead add them to
      * a separate display object that can be displayed and hidden at will.
+     * TODO kind of hacky, better solution?
      */
     override public function addChild (child :DisplayObject) :DisplayObject
     {
+    	return addChildAt(child, -1);
+    }
+    
+    /**
+     * When child cards are added via the CardContainer class, instead add them to
+     * a separate display object that can be displayed and hidden at will.
+     */
+    override public function addChildAt (child :DisplayObject, insertIndex :int) :DisplayObject
+    {
         if (child is Card) {
-            return cardDisplayArea.addChild(child);
+        	if (insertIndex == -1) {
+        		return cardDisplayArea.addChild(child);
+        	}
+        	else {
+                return cardDisplayArea.addChildAt(child, insertIndex);
+        	}
         }
         else {
             return super.addChild(child);
@@ -338,6 +352,19 @@ public class Law extends CardContainer
         _highlighted = value;
         updateDisplay();
     }
+    
+    /** Return the text version of this law */
+    public function get text () :String {
+    	return _text;
+    }
+    
+    /** For testing, return this law as a string */
+    override public function toString () :String {
+    	return "Law " + _id + " [" + _text + "]";
+    }
+    
+    /** Text version of the law */
+    protected var _text :String
     
     /** Cards are shown here */
     protected var cardDisplayArea :Sprite;

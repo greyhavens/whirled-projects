@@ -5,6 +5,7 @@ import flash.display.Bitmap;
 import lawsanddisorder.component.*;
 import com.threerings.ezgame.EZGameControl;
 import com.threerings.util.HashMap;
+import com.threerings.ezgame.StateChangedEvent;
 
 /**
  * Layout of the game board.  Components such as Player can be publicly accessed through here.
@@ -17,6 +18,7 @@ public class Board extends Sprite
     public function Board (ctx :Context)
     {
         _ctx = ctx;
+        _ctx.control.game.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
     }
 
     /**
@@ -144,7 +146,8 @@ public class Board extends Sprite
     
     /**
      * Return the player whose turn it is.
-     * TODO could be more efficient?  Does turn changed event include turnholder id?
+     * TODO could be more efficient?  Listen for turn changed event?  Does turn changed event 
+     *      include turnholder id?  Should be here?  Should player array be moved?
      */
     public function getTurnHolder () :Player
     {
@@ -161,9 +164,23 @@ public class Board extends Sprite
     
     /**
      * Return the array of players in order of seating.     */
-    public function get players () :Array
-    {
+    public function get players () :Array {
     	return playerObjects;
+    }
+    
+    /**
+     * The turn just changed.  Indicate if it is the player's turn
+     */
+    protected function turnChanged (event :StateChangedEvent) :void
+    {
+        var turnHolder :Player = _ctx.board.getTurnHolder();
+        if (turnHolder == player) {
+            graphics.lineStyle(5, 0xFFFF00);
+        }
+        else {
+            graphics.lineStyle(5, 0x77FF77);
+        }
+        graphics.drawRect(2, 2, 695, 495);
     }
     
     /** Game context */

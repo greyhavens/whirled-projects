@@ -27,18 +27,10 @@ public class Hand extends CardContainer
     
     /**
      * Called by first user during game start.  Draw a fresh hand.
-     * TODO Use splice instead of a for loop to grab top X cards from deck
      */
     public function setup () :void
     {
-        var cardArray :Array = new Array();
-        for (var i :int = 1; i <= DEFAULT_HAND_SIZE; i++) {
-            var card :Card = _ctx.board.deck.drawCard();
-            if (card == null) {
-            	_ctx.log("WTF couldn't draw cards from deck when creating hand.");
-            }
-            cardArray.push(card);
-        }
+    	var cardArray :Array = _ctx.board.deck.drawStartingHand(DEFAULT_HAND_SIZE);
         addCards(cardArray);
     }
     
@@ -74,7 +66,8 @@ public class Hand extends CardContainer
     }
     
     /*
-     * TODO fix issues with this and use it?
+     * TODO fix issue with this and use it instead of discard down?
+     *      Issue is this function doesn't block other players from doing things that interfere
      * Override addCards to force discard first if too many cards in hand     *
     override public function addCards (cardArray :Array, distribute :Boolean = true, insertIndex :int = -1) :void
     {
@@ -143,12 +136,17 @@ public class Hand extends CardContainer
         var localPoint :Point = globalToLocal(point);
         // cards are spaced CARD_SPACING_X apart starting at 0
         var index :int = Math.floor(localPoint.x / CARD_SPACING_X);
+        if (index < 0) {
+        	index = 0;
+        }
+        if (index > cards.length) {
+        	index = cards.length;
+        }
         return index;
     }
     
     /**
      * Shift cards out of the way as another card is being dragged over them.
-     * TODO what if there are too many cards to fit?
      */
     override public function arrangeCards (point :Point = null) :void
     {
@@ -174,7 +172,7 @@ public class Hand extends CardContainer
         // localize the point to our coordinate map
         var localPoint :Point = globalToLocal(point);
         
-        // position the cards horizontally and display each
+        // position the cards horizontally
         for (i = 0; i < cards.length; i++) {
             card = cards[i];
             // if the card would overlap the point or be to its right, shift it right

@@ -154,17 +154,17 @@ public class Card extends Component
             case SUBJECT:
                 switch (type) {
                     case Job.JUDGE:
-                        return "Judge";
+                        return "The Judge";
                     case Job.THIEF:
-                        return "Thief";
+                        return "The Thief";
                     case Job.BANKER:
-                        return "Banker";
+                        return "The Banker";
                     case Job.TRADER:
-                        return "Trader";
+                        return "The Trader";
                     case Job.PRIEST:
-                        return "Priest";
+                        return "The Priest";
                     case Job.SCIENTIST:
-                        return "Scientist";
+                        return "The Scientist";
                 }
                 break;
             case VERB:

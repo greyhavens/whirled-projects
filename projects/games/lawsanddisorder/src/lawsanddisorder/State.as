@@ -32,12 +32,7 @@ public class State
      */
     public function cardClick (event :MouseEvent) :void
     {
-        //if (!event.target is Card) {
-        //    _ctx.log("WTF Did not click on a card.");
-        //    return;
-        //} 
-        var card :Card = Card(getParent(DisplayObject(event.target), Card));           
-        //var card :Card = Card(event.target);
+        var card :Card = Card(getParent(DisplayObject(event.target), Card));
     
         if (mode == MODE_SELECT_HAND_CARDS) {
             if (modeListener == null || selectedCards == null) {
@@ -67,7 +62,6 @@ public class State
         }
         
         // clicking on a when card in a law to move it into the hand
-        // TODO drag into hand instead?
         else if (mode == MODE_MOVE_WHEN) {
             if (!(card.cardContainer is Law)) {
                 return;
@@ -91,7 +85,6 @@ public class State
      */
     public function cardMouseDown (event :MouseEvent) :void
     {
-        //var card :Card = Card(event.target);
         var card :Card = Card(getParent(DisplayObject(event.target), Card));
         
         // you can only drag cards in your hand or in new law
@@ -141,6 +134,7 @@ public class State
     {
         card.startDrag(true);
         card.addEventListener(MouseEvent.MOUSE_MOVE, draggingCard);
+        activeCard = card;
         
         card.cardContainer.removeCards(new Array(card), false);
         card.x = _ctx.board.mouseX - 25;
@@ -240,7 +234,6 @@ public class State
     public function cardMouseUp (event :MouseEvent) :void
     {
     	var card :Card = Card(getParent(DisplayObject(event.target), Card));
-        //var card :Card = Card(event.target);
         if (!card.dragging) {
             return;
         }
@@ -375,7 +368,7 @@ public class State
             _ctx.board.player.hand.addCards(new Array(targetCard));
             
             // select card and law so listener function knows what happened
-            selectedCards = new Array(card);
+            selectedCards = new Array(targetCard);
             selectedLaw = targetLaw;
             doneMode();
         }
@@ -393,9 +386,8 @@ public class State
             _ctx.board.removeCard(card);
             whenlessLaw.addCards(new Array(card));
             
-            // select card and law so listener function knows what happened
-            selectedCards = new Array(card);
-            selectedLaw = whenlessLaw;            
+            // select law so listener function knows what happened
+            selectedLaw = whenlessLaw;
             doneMode();
         }
     }
@@ -420,7 +412,7 @@ public class State
     public function opponentClick (event :MouseEvent) :void
     {
         if (mode == MODE_SELECT_OPPONENT) {
-            var opponent :Opponent = Opponent(event.target);
+        	var opponent :Opponent = Opponent(getParent(DisplayObject(event.target), Opponent));
             if (modeListener == null) {
                 _ctx.log("WTF selected listener is null when selecting opponent");
                 return;
@@ -433,8 +425,6 @@ public class State
             opponent.highlighted = true;
             selectedOpponent = opponent;
             doneMode();
-            //mode = MODE_DEFAULT;
-            //modeListener();
         }
     }
     
@@ -738,6 +728,9 @@ public class State
             function () :void {_ctx.notice(reminderText + message); setModeReminder(message, reminderNum+1) });
         modeReminderTimer.start();
     }
+    
+    /** The card being actively dragged, for notification purposes */
+    public var activeCard :Card = null;
     
     /** Array of currently selected cards 
      * TODO use getters */

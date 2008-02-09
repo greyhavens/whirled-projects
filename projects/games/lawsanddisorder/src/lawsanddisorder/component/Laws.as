@@ -1,7 +1,5 @@
 ﻿package lawsanddisorder.component {
 
-//import fl.controls.ScrollBar;
-//import fl.events.ScrollEvent;
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.events.MouseEvent;
@@ -16,7 +14,6 @@ import com.threerings.ezgame.MessageReceivedEvent;
 public class Laws extends Component
 {
     /** The name of the hand data distributed value. */
-    // TODO use more unique names incl class name?
     public static const LAWS_DATA :String = "lawsData";
     public static const ENACT_LAW :String = "enactLaw";
     public static const ENACT_LAW_DONE :String = "enactLawDone";
@@ -30,25 +27,6 @@ public class Laws extends Component
         ctx.eventHandler.addMessageListener(ENACT_LAW, lawEnacted);
         super(ctx);
     }
-    
-    /**
-     * Draw the law area
-     */
-    override protected function initDisplay () :void
-    {
-        // init the scrollbar
-        //scrollBar = new ScrollBar();
-        //scrollBar.addEventListener(ScrollEvent.SCROLL, scrolled);
-        //addChild(scrollBar);
-    }
-    
-    /*
-     * Called when the player scrolls     *
-    public function scrolled (event :ScrollEvent) :void
-    {
-    	_ctx.log("scrolled!");
-    }
-    */
     
     /**
      * Player just created this law; distribute it to everyone.  Connect a temporary listener
@@ -116,8 +94,29 @@ public class Laws extends Component
         if (laws.indexOf(law) < 0) {
              laws.push(law);
         }
-        law.x = 0;
-        law.y = (laws.length - 1) * 25;
+        if (laws.length > MAX_LAWS) {
+        	//var oldestLawId :int = laws.length - MAX_LAWS - 1;
+        	var oldestLaw :Law = laws[oldestLawId];
+        	_ctx.notice("There are too many laws - removing the oldest: " + oldestLaw.text);
+        	removeChild(oldestLaw);
+        	oldestLawId++;
+        	arrangeLaws();
+        }
+        else {
+            law.y = (laws.length - 1) * 25;
+        }
+    }
+    
+    /**
+     * Rearrange the laws vertically
+     */
+    protected function arrangeLaws () :void
+    {
+        // position the laws vertically
+        for (var i :int = oldestLawId; i < laws.length; i++) {
+            var law :Law = laws[i];
+            law.y = (i - oldestLawId) * 25;
+        }
     }
     
     /** 
@@ -153,12 +152,13 @@ public class Laws extends Component
         if (cards == null) {
             cards = _ctx.eventHandler.getData(LAWS_DATA, lawId);
         }
-        
+        // add a new law
         if (laws.length == lawId) {
             var law :Law = new Law(_ctx, laws.length);
             law.setSerializedCards(cards);
             addLaw(law);
         }
+        // update an existing law
         else if (laws.length > lawId) {
             var existingLaw :Law = laws[lawId];
             if (existingLaw == null) {
@@ -193,8 +193,8 @@ public class Laws extends Component
         triggerSubjectType = subjectType;
         _ctx.eventHandler.addMessageListener(ENACT_LAW_DONE, triggeringWhen);
         
-        // kick off the loop through laws with a dummy event (-1 is the last law enacted).
-        var dummyEvent :MessageReceivedEvent = new MessageReceivedEvent(null, ENACT_LAW_DONE, -1);
+        // kick off the loop through laws with a dummy event (oldestLawId-1 is the last law enacted).
+        var dummyEvent :MessageReceivedEvent = new MessageReceivedEvent(null, ENACT_LAW_DONE, oldestLawId-1);
         triggeringWhen(dummyEvent);
     }
     
@@ -219,16 +219,12 @@ public class Laws extends Component
             }
         }
         
-        // TOOD is there a reason to clear these?
-        triggerWhenType = -1;
-        triggerSubjectType = -1;
-        
         // action complete; return focus to the player if it is their turn
         _ctx.state.performingAction = false;
     }
     
-    ///** Scrollbar appears when there are too many laws to fit */
-    //protected var scrollBar :ScrollBar;
+    /** The position of the oldest still-visible law */
+    protected var oldestLawId :int = 0;
     
     /** If in the middle of triggering laws, this is the when type */
     protected var triggerWhenType :int;
@@ -238,5 +234,8 @@ public class Laws extends Component
     
     /** Array of laws */
     protected var laws :Array = new Array();
+    
+    /** Maximum number of laws; if another is added the first one will disappear */
+    protected var MAX_LAWS :int = 10;
 }
 }

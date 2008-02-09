@@ -158,6 +158,12 @@ public class NewLaw extends CardContainer
         var localPoint :Point = globalToLocal(point);
         // cards are spaced CARD_SPACING_X apart starting at 0
         var index :int = Math.floor(localPoint.x / CARD_SPACING_X);
+        if (index < 0) {
+            index = 0;
+        }
+        if (index > cards.length) {
+            index = cards.length;
+        }
         return index;
     }
     

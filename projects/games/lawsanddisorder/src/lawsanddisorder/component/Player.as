@@ -19,6 +19,8 @@ public class Player extends Component
 
     /**
      * Constructor
+     * @param id Identifier for this player according to their position on the board
+     * @param serverId Identifier for this player according to the game server
      */
     public function Player (ctx :Context, id :int, serverId :int, name :String)
     {
@@ -266,7 +268,6 @@ public class Player extends Component
     public function get monies () :int {
     	return _monies;
     }
-    
     
     /** Can the player change jobs right now? */
     protected var _jobEnabled :Boolean;

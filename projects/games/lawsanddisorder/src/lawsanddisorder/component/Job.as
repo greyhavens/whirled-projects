@@ -28,6 +28,17 @@ public class Job extends Component
      */
     override protected function initDisplay () :void
     {
+        var symbol :Sprite = getSymbol();
+        symbol.width = symbol.width / 1.5;
+        symbol.height = symbol.height / 1.5;
+        symbol.x = 60;
+        symbol.y = 80;
+        var colorTransform :ColorTransform = new ColorTransform();
+        colorTransform.color = 0x660033;
+        symbol.transform.colorTransform = colorTransform;
+        symbol.alpha = 0.3;
+        addChild(symbol);
+        
         // draw the job bg
         graphics.clear();
         graphics.beginFill(0xEE5599);
@@ -51,17 +62,6 @@ public class Job extends Component
         cancelButton.addEventListener(MouseEvent.CLICK, cancelButtonClicked);
         
         title.height = 150;
-        
-        var symbol :Sprite = getSymbol();
-        symbol.width = symbol.width / 1.5;
-        symbol.height = symbol.height / 1.5;
-        symbol.x = 60;
-        symbol.y = 80;
-        var colorTransform :ColorTransform = new ColorTransform();
-        colorTransform.color = 0x660033;
-        symbol.transform.colorTransform = colorTransform;
-        symbol.alpha = 0.3;
-        addChild(symbol);
     }
     
     /**
@@ -171,11 +171,7 @@ public class Job extends Component
                 removeChild(cancelButton);
                 _ctx.board.player.loseMonies(2);
                 _ctx.board.player.hand.drawCard(2);
-                //_ctx.state.selectCards(1, traderCardSelected);
-                //var selectedCards :Array = _ctx.state.selectedCards;
                 _ctx.broadcast(_ctx.board.player.playerName + " (The Trader) used their ability to draw two cards");
-                //_ctx.state.deselectCards();
-                //_ctx.board.player.loseCards(selectedCards);
                 doneUsingAbility();
                 return;
                 
@@ -244,7 +240,6 @@ public class Job extends Component
         removeChild(cancelButton);
         _ctx.board.player.loseMonies(2);
         var opponent :Opponent = _ctx.state.selectedOpponent;
-        //_ctx.broadcast(_ctx.board.player.playerName + "(The Thief) is stealing from " + opponent.playerName);
         // display opponent's hand then select a card from it
         opponent.showHand = true;
         _ctx.state.selectCards(1, thiefCardSelected, opponent);
@@ -279,26 +274,15 @@ public class Job extends Component
      */
     protected function bankerVerbExchanged () :void
     {
-    	var card :Card = _ctx.state.selectedCards[0];
-    	var law :Law = _ctx.state.selectedLaw;
-    	_ctx.broadcast(_ctx.board.player.playerName + " (The Banker) added '" + card.text + "' to Law " + law.id);
+    	var card :Card = _ctx.state.activeCard;
+    	var targetCard :Card = _ctx.state.selectedCards[0];
+    	var law :Law = _ctx.state.selectedLaw;    	
+    	_ctx.broadcast(_ctx.board.player.playerName + " (The Banker) swapped '" + 
+    	   targetCard.text + "' with '" + card.text + "' in Law " + law.id);
         _ctx.state.deselectLaw();
         _ctx.state.deselectCards();    	
         doneUsingAbility();
     }
-    
-    /*
-     * Called after trader draws two cards and selects one to discard.  Discard the card.
-     *
-    protected function traderCardSelected () :void
-    {
-        var selectedCards :Array = _ctx.state.selectedCards;
-        _ctx.broadcast(_ctx.board.player.playerName + " (The Trader) drew two cards");
-        _ctx.state.deselectCards();
-        _ctx.board.player.loseCards(selectedCards);
-        doneUsingAbility();
-    }
-    */
     
     /**
      * Called when using priest power and a subject card from hand was just exchanged with one
@@ -306,9 +290,11 @@ public class Job extends Component
      */
     protected function priestSubjectExchanged () :void
     {
-        var card :Card = _ctx.state.selectedCards[0];
+        var card :Card = _ctx.state.activeCard;
+        var targetCard :Card = _ctx.state.selectedCards[0];
         var law :Law = _ctx.state.selectedLaw;
-        _ctx.broadcast(_ctx.board.player.playerName + " (The Banker) added '" + card.text + "' to Law " + law.id);
+        _ctx.broadcast(_ctx.board.player.playerName + " (The Priest) swapped '" + 
+           targetCard.text + "' with '" + card.text + "' in Law " + law.id);
         _ctx.state.deselectLaw();
         _ctx.state.deselectCards();    	
         doneUsingAbility();
@@ -319,14 +305,17 @@ public class Job extends Component
      */
     protected function scientistWhenMoved () :void
     {
-        var card :Card = _ctx.state.selectedCards[0];
         var law :Law = _ctx.state.selectedLaw;
         // if the when card is in the law, it was just added to it
         if (card.cardContainer == law) {
-        	_ctx.broadcast(_ctx.board.player.playerName + " (The Scientist) added '" + card.text + "' to Law " + law.id);
+        	var card :Card = _ctx.state.activeCard;
+        	_ctx.broadcast(_ctx.board.player.playerName + " (The Scientist) added '" + 
+        	   card.text + "' to Law " + law.id);
         }
         else {
-        	_ctx.broadcast(_ctx.board.player.playerName + " (The Scientist) removed '" + card.text + "' from Law " + law.id);
+        	var targetCard :Card = _ctx.state.selectedCards[0];
+        	_ctx.broadcast(_ctx.board.player.playerName + " (The Scientist) removed '" + 
+        	   targetCard.text + "' from Law " + law.id);
         }
         _ctx.state.deselectLaw();
         _ctx.state.deselectCards();
@@ -391,17 +380,17 @@ public class Job extends Component
     {
         switch (id) {
             case JUDGE:
-                return "Pay $2: trigger a law immediately, ignoring any WHEN cards";
+                return "Pay $2: Trigger a law immediately, ignoring any WHEN cards";
             case Job.THIEF:
-                return "Pay $2: look at a players hand and steal one card";
+                return "Pay $2: Look at a players hand and steal one card";
             case Job.BANKER:
                 return "Exchange a VERB card in a law with one from your hand";
             case Job.TRADER:
-                return "Draw two cards then discard one";
+                return "Pay $2: Draw two cards";
             case Job.PRIEST:
-                return "Eexchange a SUBJECT card in a law with one from your hand";
+                return "Exchange a SUBJECT card in a law with one from your hand";
             case Job.SCIENTIST:
-                return "Aadd one WHEN card to a law or take one WHEN card from a law";
+                return "Add one WHEN card to a law or take one WHEN card from a law";
         }
         _ctx.log("WTF Unknown job in job get description.");
         return "UNKNOWN";
