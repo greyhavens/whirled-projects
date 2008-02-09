@@ -7,7 +7,8 @@ import com.whirled.contrib.core.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
-import flash.geom.Rectangle;
+
+import ghostbusters.fight.common.*;
 
 public class GhostHeart extends SceneObject
 {
@@ -17,14 +18,14 @@ public class GhostHeart extends SceneObject
         _maxHealth = maxHealth;
         _health = maxHealth;
         
-        var heart :DisplayObject = (ResourceManager.instance.getResource("hod_heart") as SwfResourceLoader).displayRoot;
+        var heart :DisplayObject = Resources.instance.getSwfLoader("lantern.heart").displayRoot;
         
         var scale :Number = _radius / HEART_RADIUS_BASE;
         heart.scaleX = scale;
         heart.scaleY = scale;
         
-        heart.x = -(heart.width);
-        heart.y = -(heart.height);
+        heart.x = -(heart.width * 0.5);
+        heart.y = -(heart.height * 0.5);
         
         _sprite = new Sprite();
         _sprite.addChild(heart);

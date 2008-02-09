@@ -3,6 +3,8 @@ package ghostbusters.fight.ouija {
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
+import ghostbusters.fight.common.*;
+
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.util.Rand;
@@ -11,7 +13,7 @@ public class Board extends SceneObject
 {
     public function Board ()
     {
-        _sprite.addChild(new Content.SWF_BOARD());
+        _sprite.addChild(Resources.instance.getSwfLoader("ouija.board").displayRoot);
         _sprite.mouseChildren = false;
     }
 

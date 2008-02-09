@@ -12,6 +12,9 @@ import ghostbusters.fight.common.*;
 
 public class PictoGeistGame extends MicrogameMode
 {
+    public static const GAME_NAME :String = "Picto Geist";
+    public static const GAME_DIRECTIONS :String = "Draw!";
+    
     public function PictoGeistGame (difficulty :int, playerData :Object)
     {
         super(difficulty, playerData);
@@ -25,7 +28,7 @@ public class PictoGeistGame extends MicrogameMode
     override public function begin () :void
     {
         MainLoop.instance.pushMode(this);
-        MainLoop.instance.pushMode(new IntroMode("Picto Geist", "Draw!"));
+        MainLoop.instance.pushMode(new IntroMode(GAME_NAME, GAME_DIRECTIONS));
     }
     
     override protected function get duration () :Number
@@ -51,7 +54,7 @@ public class PictoGeistGame extends MicrogameMode
     override protected function setup () :void
     {
         // draw the board
-        this.modeSprite.addChild(new Content.IMAGE_PICTOBOARD);
+        this.modeSprite.addChild(Resources.instance.getImageLoader("ouija.pictoboard").createBitmap());
 
         // draw the picture on the board
         this.modeSprite.addChild(this.createPicture());

@@ -6,6 +6,8 @@ import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
+import ghostbusters.fight.common.*;
+
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -17,7 +19,7 @@ public class Ectoplasm extends SceneObject
     
     public function Ectoplasm ()
     {
-        var image :ImageResourceLoader = ResourceManager.instance.getResource("ss_ectoplasm") as ImageResourceLoader;
+        var image :ImageResourceLoader = Resources.instance.getImageLoader("plasma.ectoplasm");
         var bitmap :Bitmap = image.createBitmap();
         
         bitmap.x = -(bitmap.width / 2);

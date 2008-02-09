@@ -4,6 +4,8 @@ import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.tasks.*;
 
+import ghostbusters.fight.common.*;
+
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
@@ -23,7 +25,7 @@ public class BasicCursor extends SceneObject
         _board = board;
 
         // add the image, aligned by the center of its viewier
-        _cursorImage = new Content.IMAGE_PLANCHETTE();
+        _cursorImage = Resources.instance.getImageLoader("ouija.planchette").createBitmap();
         _cursorImage.x = -CENTER.x;
         _cursorImage.y = -CENTER.y;
         _sprite.addChild(_cursorImage);

@@ -7,11 +7,13 @@ import com.whirled.contrib.core.resource.*;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
+import ghostbusters.fight.common.*;
+
 public class Ghost extends SceneObject
 {
     public function Ghost ()
     {
-        var image :ImageResourceLoader = ResourceManager.instance.getResource("ss_ghost") as ImageResourceLoader;
+        var image :ImageResourceLoader = Resources.instance.getImageLoader("plasma.ghost");
         _sprite.addChild(image.createBitmap());
     }
     

@@ -1,6 +1,7 @@
 package ghostbusters.fight {
     
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.util.*;
 
 import flash.display.Sprite;
@@ -27,6 +28,8 @@ public class MicrogamePlayer extends Sprite
         
         new MainLoop(this);
         MainLoop.instance.run();
+        
+        Resources.instance.loadAll();
     }
     
     public function get weaponType () :WeaponType
@@ -54,9 +57,23 @@ public class MicrogamePlayer extends Sprite
         }
         
         _currentGame = this.generateGame();
-        _currentGame.begin();
+        
+        if (!Resources.instance.isLoading) {
+            _currentGame.begin();
+        } else {
+            // postpone the game beginning until loading has completed
+            trace("pending game start until resources have completed loading");
+            
+            Resources.instance.resourceManager.addEventListener(ResourceLoadEvent.LOADED, beginPendingGame, false, 0, true);
+        }
         
         return _currentGame;
+    }
+    
+    protected function beginPendingGame (e :ResourceLoadEvent) :void
+    {
+        Resources.instance.resourceManager.removeEventListener(ResourceLoadEvent.LOADED, beginPendingGame);
+        _currentGame.begin();
     }
     
     public function get currentGame () :Microgame

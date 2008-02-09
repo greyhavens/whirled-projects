@@ -18,6 +18,9 @@ import ghostbusters.fight.ouija.BoardTimer;
 
 public class HeartOfDarknessGame extends MicrogameMode
 {
+    public static const GAME_NAME :String = "Heart of Darkness";
+    public static const GAME_DIRECTIONS :String = "Find the heart!";
+    
     public function HeartOfDarknessGame (difficulty :int, playerData :Object)
     {
         super(difficulty, playerData);
@@ -28,13 +31,7 @@ public class HeartOfDarknessGame extends MicrogameMode
     override public function begin () :void
     {
         MainLoop.instance.pushMode(this);
-        
-        if (!g_assetsLoaded) {
-            MainLoop.instance.pushMode(new LoadingMode());
-            g_assetsLoaded = true;
-        }
-        
-        MainLoop.instance.pushMode(new IntroMode("Heart of Darkness", "Find the heart!"));
+        MainLoop.instance.pushMode(new IntroMode(GAME_NAME, GAME_DIRECTIONS));
     }
     
     override protected function get duration () :Number
@@ -83,7 +80,7 @@ public class HeartOfDarknessGame extends MicrogameMode
         // create the ghost
         _ghost = new Sprite();
         
-        var ghostSwf :SwfResourceLoader = ResourceManager.instance.getResource("hod_ghost") as SwfResourceLoader;
+        var ghostSwf :SwfResourceLoader = Resources.instance.getSwfLoader("lantern.ghost");
         var ghostInstance :MovieClip = ghostSwf.displayRoot as MovieClip;
         ghostInstance.gotoAndStop(1, "heartofdarkness");
         
@@ -239,35 +236,4 @@ public class HeartOfDarknessGame extends MicrogameMode
     
 }
 
-}
-
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.resource.*;
-import com.whirled.contrib.core.tasks.*;
-import com.whirled.contrib.core.util.*;
-
-import ghostbusters.fight.lantern.*;
-
-class LoadingMode extends AppMode
-{
-    public function LoadingMode ()
-    {
-    }
-    
-    override protected function setup () :void
-    {
-        ResourceManager.instance.pendResourceLoad("swf", "hod_heart", { embeddedClass: Content.SWF_HEART });
-        ResourceManager.instance.pendResourceLoad("swf", "hod_ghost", { embeddedClass: Content.SWF_GHOST });
-        
-        ResourceManager.instance.load();
-    }
-    
-    override public function update (dt:Number) :void
-    {
-        super.update(dt);
-        
-        if (!ResourceManager.instance.isLoading) {
-            MainLoop.instance.popMode();
-        }
-    }
 }

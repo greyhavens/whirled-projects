@@ -3,6 +3,8 @@ package ghostbusters.fight.ouija {
 import flash.text.*;
 import flash.geom.Point;
 
+import ghostbusters.fight.common.*;
+
 public class StatusText extends TextField
 {
     public function StatusText ()
@@ -12,7 +14,7 @@ public class StatusText extends TextField
         this.mouseEnabled = false;
 
         var format :TextFormat = new TextFormat();
-        format.font = Content.FONT_GAME_NAME;
+        format.font = Resources.OUIJA_FONT_NAME;
         format.size = TEXT_SIZE;
         format.color = TEXT_COLOR;
         format.align = TextFormatAlign.CENTER;

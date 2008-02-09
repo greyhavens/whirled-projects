@@ -17,6 +17,8 @@ import ghostbusters.fight.ouija.BoardTimer;
 
 public class HueAndCryGame extends MicrogameMode
 {
+    public static const GAME_NAME :String = "Hue and Cry";
+    
     public function HueAndCryGame (difficulty :int, playerData :Object)
     {
         super(difficulty, playerData);
@@ -29,13 +31,7 @@ public class HueAndCryGame extends MicrogameMode
     override public function begin () :void
     {
         MainLoop.instance.pushMode(this);
-        
-        if (!g_assetsLoaded) {
-            MainLoop.instance.pushMode(new LoadingMode());
-            g_assetsLoaded = true;
-        }
-        
-        MainLoop.instance.pushMode(new IntroMode("Hue and Cry", "Mix " + Colors.getColorName(_targetColor) + "!"));
+        MainLoop.instance.pushMode(new IntroMode(GAME_NAME, "Mix " + Colors.getColorName(_targetColor) + "!"));
     }
     
     override protected function get duration () :Number
@@ -75,7 +71,7 @@ public class HueAndCryGame extends MicrogameMode
     override protected function setup () :void
     {
         // draw the board
-        var swfResource :SwfResourceLoader = ResourceManager.instance.getResource("gameSwf") as SwfResourceLoader;
+        var swfResource :SwfResourceLoader = Resources.instance.getSwfLoader("potions.board");
         
         var displayRoot :MovieClip = swfResource.displayRoot as MovieClip;
         this.modeSprite.addChild(displayRoot);
@@ -184,8 +180,6 @@ public class HueAndCryGame extends MicrogameMode
     
     protected var _swf :MovieClip;
     
-    protected static var g_assetsLoaded :Boolean;
-    
     protected static const DIFFICULTY_SETTINGS :Array = [
     
         new HueAndCrySettings(6, 5),
@@ -194,33 +188,4 @@ public class HueAndCryGame extends MicrogameMode
     
 }
 
-}
-
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.resource.*;
-import com.whirled.contrib.core.tasks.*;
-import com.whirled.contrib.core.util.*;
-
-import ghostbusters.fight.potions.*;
-
-class LoadingMode extends AppMode
-{
-    public function LoadingMode ()
-    {
-    }
-    
-    override protected function setup () :void
-    {
-        ResourceManager.instance.pendResourceLoad("swf", "gameSwf", { embeddedClass: Content.SWF_HUEANDCRYBOARD });
-        ResourceManager.instance.load();
-    }
-    
-    override public function update (dt:Number) :void
-    {
-        super.update(dt);
-        
-        if (!ResourceManager.instance.isLoading) {
-            MainLoop.instance.popMode();
-        }
-    }
 }

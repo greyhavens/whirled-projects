@@ -3,11 +3,10 @@ package ghostbusters.fight.ouija {
 import com.whirled.contrib.core.objects.SceneObject;
 
 import flash.display.DisplayObject;
-import flash.display.Loader;
 import flash.display.MovieClip;
 import flash.geom.Point;
 
-import mx.core.MovieClipLoaderAsset;
+import ghostbusters.fight.common.*;
 
 public class BoardTimer extends SceneObject
 {
@@ -15,7 +14,7 @@ public class BoardTimer extends SceneObject
     {
         _totalTime = totalTime;
 
-        _swf = new Content.SWF_TIMER();
+        _swf = (Resources.instance.getSwfLoader("ouija.timer").displayRoot as MovieClip);
         _swf.mouseEnabled = false;
         _swf.mouseChildren = false;
         _swf.x = TIMER_LOC.x;
@@ -27,15 +26,12 @@ public class BoardTimer extends SceneObject
        _elapsedTime += dt;
        
         // @TODO - fix this mess
-        var swf :MovieClip = (((_swf.getChildAt(0) as Loader).content) as MovieClip);
-        if (null != swf) {
-             swf = (swf.getChildAt(0) as MovieClip);
-            
-            var curFrame :Number = Math.floor((_elapsedTime / _totalTime) * Number(swf.totalFrames));
-            curFrame = Math.min(curFrame, swf.totalFrames - 1);
-            
-            swf.gotoAndStop(curFrame);
-        }
+        var swf :MovieClip = (_swf.getChildAt(0) as MovieClip);
+        
+        var curFrame :Number = Math.floor((_elapsedTime / _totalTime) * Number(swf.totalFrames));
+        curFrame = Math.min(curFrame, swf.totalFrames - 1);
+        
+        swf.gotoAndStop(curFrame);
     }
 
     override public function get displayObject () :DisplayObject
@@ -43,7 +39,7 @@ public class BoardTimer extends SceneObject
         return _swf;
     }
 
-    protected var _swf :MovieClipLoaderAsset;
+    protected var _swf :MovieClip;
     protected var _totalTime :Number;
     protected var _elapsedTime :Number = 0;
 

@@ -8,6 +8,8 @@ import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
+import ghostbusters.fight.common.*;
+
 public class PlasmaBullet extends SceneObject
 {
     public static const RADIUS :Number = 6;
@@ -15,7 +17,7 @@ public class PlasmaBullet extends SceneObject
     
     public function PlasmaBullet ()
     {
-        var image :ImageResourceLoader = ResourceManager.instance.getResource("ss_plasma") as ImageResourceLoader;
+        var image :ImageResourceLoader = Resources.instance.getImageLoader("plasma.plasma");
         
         var bitmap :Bitmap = image.createBitmap();
         bitmap.x = -(bitmap.width / 2);

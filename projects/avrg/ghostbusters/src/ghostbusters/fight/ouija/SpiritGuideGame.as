@@ -11,6 +11,8 @@ import ghostbusters.fight.common.*;
 
 public class SpiritGuideGame extends MicrogameMode
 {
+    public static const GAME_NAME :String = "Spirit Guide";
+    
     public function SpiritGuideGame (difficulty :int, playerData :Object)
     {
         super(difficulty, playerData);
@@ -24,7 +26,7 @@ public class SpiritGuideGame extends MicrogameMode
     override public function begin () :void
     {
         MainLoop.instance.pushMode(this);
-        MainLoop.instance.pushMode(new IntroMode("Spirit Guide", "Move to '" + _selection.toLocaleUpperCase() + "'!"));
+        MainLoop.instance.pushMode(new IntroMode(GAME_NAME, "Move to '" + _selection.toLocaleUpperCase() + "'!"));
     }
     
     override protected function get duration () :Number

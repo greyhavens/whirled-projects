@@ -11,6 +11,9 @@ import ghostbusters.fight.ouija.BoardTimer;
 
 public class SpiritShellGame extends MicrogameMode
 {
+    public static const GAME_NAME :String = "Spirit Shell";
+    public static const GAME_DIRECTIONS :String = "Clear the ectoplasm!";
+    
     public function SpiritShellGame (difficulty :int, playerData :Object)
     {
         super(difficulty, playerData);
@@ -21,13 +24,7 @@ public class SpiritShellGame extends MicrogameMode
     override public function begin () :void
     {
         MainLoop.instance.pushMode(this);
-        
-        if (!g_assetsLoaded) {
-            MainLoop.instance.pushMode(new LoadingMode());
-            g_assetsLoaded = true;
-        }
-        
-        MainLoop.instance.pushMode(new IntroMode("Spirit Shell", "Clear the ectoplasm!"));
+        MainLoop.instance.pushMode(new IntroMode(GAME_NAME, GAME_DIRECTIONS));
     }
     
     override protected function get duration () :Number
@@ -238,8 +235,6 @@ public class SpiritShellGame extends MicrogameMode
     protected var _gameResult :MicrogameResult;
     protected var _settings :SpiritShellSettings;
     
-    protected static var g_assetsLoaded :Boolean;
-    
     protected static const DIFFICULTY_SETTINGS :Array = [
     
         new SpiritShellSettings(
@@ -285,36 +280,4 @@ public class SpiritShellGame extends MicrogameMode
     
 }
 
-}
-
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.resource.*;
-import com.whirled.contrib.core.tasks.*;
-import com.whirled.contrib.core.util.*;
-
-import ghostbusters.fight.plasma.*;
-
-class LoadingMode extends AppMode
-{
-    public function LoadingMode ()
-    {
-    }
-    
-    override protected function setup () :void
-    {
-        ResourceManager.instance.pendResourceLoad("image", "ss_ghost", { embeddedClass: Content.IMAGE_GHOST });
-        ResourceManager.instance.pendResourceLoad("image", "ss_ectoplasm", { embeddedClass: Content.IMAGE_ECTOPLASM });
-        ResourceManager.instance.pendResourceLoad("image", "ss_plasma", { embeddedClass: Content.IMAGE_PLASMA });
-        
-        ResourceManager.instance.load();
-    }
-    
-    override public function update (dt:Number) :void
-    {
-        super.update(dt);
-        
-        if (!ResourceManager.instance.isLoading) {
-            MainLoop.instance.popMode();
-        }
-    }
 }
