@@ -29,18 +29,17 @@ public class Constants
 
     public static const MIN_GROUP_SIZE :int = 1; // no min group size right now
 
-    public static const PUZZLE_COLS :int = 4;
-    public static const PUZZLE_ROWS :int = 8;
-    public static const PUZZLE_TILE_SIZE :int = 40;
+    public static const PUZZLE_COLS :int = 8;
+    public static const PUZZLE_ROWS :int = 4;
+    public static const PUZZLE_TILE_SIZE :int = 32;
 
     public static const CLEAR_VALUE_TABLE :IntValueTable =
         new IntValueTable( [-20, -10, 10, 20, 30, 20] );
              // group size:   1,   2,  3,  4,  5,  6+ = 50, 70, 90, ...
 
     /* Battle stuff */
-    public static const BATTLE_COLS :int = 15;
-    public static const BATTLE_ROWS :int = 15;
-    public static const BATTLE_TILE_SIZE :int = 32;
+    public static const BATTLE_WIDTH :int = 700;
+    public static const BATTLE_HEIGHT :int = 372;
 
     /* Damage types */
     public static const DAMAGE_TYPE_CRUSHING :uint = 0;
@@ -150,10 +149,10 @@ public class Constants
 
     /* Screen layout */
     public static const RESOURCE_DISPLAY_LOC :Point = new Point(0, 0);
-    public static const PUZZLE_BOARD_LOC :Point = new Point(20, 50);
-    public static const BATTLE_BOARD_LOC :Point = new Point(200, 0);
+    public static const PUZZLE_BOARD_LOC :Point = new Point(20, 372);
+    public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
 
-    public static const FIRST_UNIT_BUTTON_LOC :Point = new Point(12, 400);
+    public static const FIRST_UNIT_BUTTON_LOC :Point = new Point(286, 400);
 
     public static function getPlayerBaseLocations (numPlayers :uint) :Array // of Vector2s
     {
@@ -162,8 +161,8 @@ public class Constants
         switch (numPlayers) {
         case 2:
             return [
-                new Vector2(28, 250), new Vector2(75, 250),     // middle left
-                new Vector2(452, 250), new Vector2(405, 250)    // middle right
+                new Vector2(40, 325), new Vector2(75, 325),     // middle left
+                new Vector2(652, 50), new Vector2(605, 50)    // middle right
              ];
              break;
 

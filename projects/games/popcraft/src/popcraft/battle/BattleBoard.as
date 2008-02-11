@@ -19,16 +19,10 @@ public class BattleBoard extends SceneObject
     public static const TILE_TREE :uint = 1;
     public static const TILE_BASE :uint = 2;
 
-    public function BattleBoard (cols: int, rows :int, tileSize :int)
+    public function BattleBoard (width :int, height :int)
     {
-        _cols = cols;
-        _rows = rows;
-        _tileSize = tileSize;
-
-        _tileGrid = new Array(_cols * _rows);
-        for (var i :int = 0; i < _tileGrid.length; ++i) {
-            _tileGrid[i] = TILE_GROUND;
-        }
+        _width = width;
+        _height = height;
 
         _view = new Sprite();
 
@@ -37,14 +31,16 @@ public class BattleBoard extends SceneObject
         _unitDisplayParent = new Sprite();
 
         var bg :Bitmap = (PopCraft.resourceManager.getResource("battle_bg") as ImageResourceLoader).createBitmap();
+        bg.scaleX = (_width / bg.width);
+        bg.scaleY = (_height / bg.height);
+        
         var fg :Bitmap = (PopCraft.resourceManager.getResource("battle_fg") as ImageResourceLoader).createBitmap();
+        fg.scaleX = (_width / fg.width);
         fg.y = bg.height - fg.height; // fg is aligned to the bottom of the board
 
         _view.addChild(bg);
         _view.addChild(_unitDisplayParent);
         _view.addChild(fg);
-
-        //_view.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown, false);
     }
 
     override public function get displayObject () :DisplayObject
@@ -57,23 +53,10 @@ public class BattleBoard extends SceneObject
         return _unitDisplayParent;
     }
 
-    protected function handleMouseDown (e :MouseEvent) :void
-    {
-        // Currently unused. Waypoints are being removed for now.
-
-        // translate the mouse coordinates to local coordinates
-        // (the click may have originated on a display descendent)
-        var loc :Point = _view.globalToLocal(new Point(e.stageX, e.stageY));
-
-        GameMode.instance.placeWaypoint(loc.x, loc.y);
-    }
-
-    protected var _tileGrid :Array;
+    protected var _width :int;
+    protected var _height :int;
     protected var _view :Sprite;
     protected var _unitDisplayParent :Sprite;
-    protected var _cols :int;
-    protected var _rows :int;
-    protected var _tileSize :int;
 }
 
 }

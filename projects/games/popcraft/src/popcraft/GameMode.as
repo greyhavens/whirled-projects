@@ -58,10 +58,7 @@ public class GameMode extends AppMode
         var numPlayers :int = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
 
         // everyone gets to see the BattleBoard
-        _battleBoard = new BattleBoard(
-            Constants.BATTLE_COLS,
-            Constants.BATTLE_ROWS,
-            Constants.BATTLE_TILE_SIZE);
+        _battleBoard = new BattleBoard(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
 
         _battleBoard.displayObject.x = Constants.BATTLE_BOARD_LOC.x;
         _battleBoard.displayObject.y = Constants.BATTLE_BOARD_LOC.y;
