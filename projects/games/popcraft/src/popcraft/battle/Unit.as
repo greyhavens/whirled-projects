@@ -35,7 +35,7 @@ public class Unit extends SceneObject
 
         // add the image, aligned by its foot position
         var image :Bitmap = (PopCraft.resourceManager.getResource(_unitData.name) as ImageResourceLoader).createBitmap();
-        image.x = -(image.width / 2);
+        image.x = -(image.width * 0.5);
         image.y = -image.height;
         _sprite.addChild(image);
 
@@ -66,8 +66,8 @@ public class Unit extends SceneObject
         _healthMeter.outlineColor = 0x000000;
         _healthMeter.width = 30;
         _healthMeter.height = 3;
-        _healthMeter.displayObject.x = image.x;
-        _healthMeter.displayObject.y = image.y - _healthMeter.height;
+        _healthMeter.x = -(_healthMeter.width * 0.5);
+        _healthMeter.y = image.y - _healthMeter.height;
 
         // @TODO - this is probably bad practice right here.
         GameMode.instance.addObject(_healthMeter, _sprite);
