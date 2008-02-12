@@ -1,5 +1,11 @@
 package popcraft.battle.geom {
     
+import com.threerings.util.Assert;
+import com.whirled.contrib.core.Vector2;
+import com.whirled.contrib.core.util.Collision;
+
+import flash.geom.Rectangle;
+
 import popcraft.battle.Unit;
     
 public class UnitGeometry
@@ -7,9 +13,20 @@ public class UnitGeometry
     public function UnitGeometry (unit :Unit, grid :CollisionGrid)
     {
         _unit = unit;
-        _unitCollisionRadius = unit.unitData.collisionRadius;
+        _radius = unit.unitData.collisionRadius;
         
-        _numColsRows = Math.ceil((_unitCollisionRadius * 2) * CollisionGrid.GRID_TILE_SIZE_INV);
+        Assert.isTrue(_radius > 0);
+        
+        // unit collision geometry is a circle. we map that to a square for the purposes
+        // of insertion into the CollisionGrid
+        
+        var widthHeight :Number = Math.ceil((_radius * 2) * CollisionGrid.GRID_TILE_SIZE_INV);
+        Assert.isTrue(widthHeight > 0);
+        
+        _gridRect.width = widthHeight;
+        _gridRect.height = widthHeight;
+        _gridRect.x = Number.MAX_VALUE;
+        _gridRect.y = Number.MAX_VALUE;
     }
     
     public function get unit () :Unit
@@ -17,51 +34,60 @@ public class UnitGeometry
         return _unit;
     }
     
-    public function locationChanged () :void
+    public function setLocation () :void
     {
-        // units that have no collision geometry don't go in the collision grid
-        if (_numColsRows <= 0) {
-            return;
-        }
+        _center.x = _unit.x;
+        _center.y = _unit.y;
         
-        var newCol :int = (unit.x - (_unitCollisionRadius * 0.5)) * CollisionGrid.GRID_TILE_SIZE_INV;
-        var newRow :int = (unit.y - (_unitCollisionRadius * 0.5)) * CollisionGrid.GRID_TILE_SIZE_INV;
+        var newCol :Number = Math.floor((_center.x - (_radius * 0.5)) * CollisionGrid.GRID_TILE_SIZE_INV);
+        var newRow :Number = Math.floor((_center.y - (_radius * 0.5)) * CollisionGrid.GRID_TILE_SIZE_INV);
+        
+        // if the unit hasn't changed its location in the collision grid,
+        // don't move it.
         
         if (newCol != _gridCol || newRow != _gridRow || !_inCollisionGrid) {
             
             if (!_inCollisionGrid) {
-                _grid.removeUnitAt(this, _gridCol, _gridRow, _numColsRows, _numColsRows);
+                _grid.removeUnit(this);
                 _inCollisionGrid = true;
             }
             
-            _gridCol = newCol;
-            _gridRow = newRow;
-            _grid.addUnitAt(this, _gridCol, _gridRow, _numColsRows, _numColsRows); 
+            _gridRect.x = newCol;
+            _gridRect.y = newRow;
+            
+            _grid.addUnit(this); 
         }
     }
     
     public function unitDestroyed () :void
     {
-        if (_numColsRows <= 0) {
-            return;
-        }
-        
         if (_inCollisionGrid) {
-            _grid.removeUnitAt(this, _gridCol, _gridRow, _numColsRows, _numColsRows);
+            _grid.removeUnit(this);
         }
     }
     
+    public function get collisionGridRect () :Rectangle
+    {
+        return _gridRect;
+    }
+    
+    public function collidesWith (other :UnitGeometry) :Boolean
+    {
+        return Collision.circlesIntersect(_center, _radius, other._center, other._radius);
+    }
+    
     protected var _grid :CollisionGrid;
+    protected var _gridRect :Rectangle = new Rectangle();
+    
     protected var _unit :Unit;
     protected var _gridCol :int;
     protected var _gridRow :int;
     
     protected var _inCollisionGrid :Boolean;
     
-    // We can cache these values because unit collision radii
-    // never change.
-    protected var _unitCollisionRadius :Number;
-    protected var _numColsRows :int;
+    // cached values
+    protected var _radius :Number;
+    protected var _center :Vector2;
 }
 
 }

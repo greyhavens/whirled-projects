@@ -2,6 +2,8 @@ package popcraft.battle.geom {
     
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
+
+import flash.geom.Rectangle;
     
 public class CollisionGrid
 {
@@ -22,17 +24,19 @@ public class CollisionGrid
         }
     }
     
-    public function addUnitAt (ug :UnitGeometry, col :int, row :int, numCols :int, numRows :int) :void
+    public function addUnit (ug :UnitGeometry) :void
     {
-        if (col >= _numCols || (col + numCols <= 0) || row >= _numRows || (row + numRows <= 0)) {
+        var gridRect :Rectangle = ug.collisionGridRect;
+        
+        if (gridRect.x >= _numCols || (gridRect.x + gridRect.width <= 0) || gridRect.y >= _numRows || (gridRect.y + gridRect.height <= 0)) {
             return;
         }
         
-        var xStart :int = clamp(col, 0, _numCols - 1);
-        var yStart :int = clamp(row, 0, _numRows - 1);
+        var xStart :int = clamp(gridRect.x, 0, _numCols - 1);
+        var yStart :int = clamp(gridRect.y, 0, _numRows - 1);
         
-        var xMax :int = clamp(col + numCols - 1, 0, _numCols - 1);
-        var yMax :int = clamp(row + numRows - 1, 0, _numRows - 1);
+        var xMax :int = clamp(gridRect.x + gridRect.width, 0, _numCols - 1);
+        var yMax :int = clamp(gridRect.y + gridRect.height, 0, _numRows - 1);
         
         for (var y :int = yStart; y <= yMax; ++y) {
             for (var x :int = xStart; x <= xMax; ++x) {
@@ -42,17 +46,19 @@ public class CollisionGrid
         }
     }
     
-    public function removeUnitAt (ug :UnitGeometry, col :int, row :int, numCols :int, numRows :int) :void
+    public function removeUnit (ug :UnitGeometry) :void
     {
-        if (col >= _numCols || (col + numCols <= 0) || row >= _numRows || (row + numRows <= 0)) {
+        var gridRect :Rectangle = ug.collisionGridRect;
+        
+        if (gridRect.x >= _numCols || (gridRect.x + gridRect.width <= 0) || gridRect.y >= _numRows || (gridRect.y + gridRect.height <= 0)) {
             return;
         }
         
-        var xStart :int = clamp(col, 0, _numCols - 1);
-        var yStart :int = clamp(row, 0, _numRows - 1);
+        var xStart :int = clamp(gridRect.x, 0, _numCols - 1);
+        var yStart :int = clamp(gridRect.y, 0, _numRows - 1);
         
-        var xMax :int = clamp(col + numCols - 1, 0, _numCols - 1);
-        var yMax :int = clamp(row + numRows - 1, 0, _numRows - 1);
+        var xMax :int = clamp(gridRect.x + gridRect.width, 0, _numCols - 1);
+        var yMax :int = clamp(gridRect.y + gridRect.height, 0, _numRows - 1);
         
         for (var y :int = yStart; y <= yMax; ++y) {
             for (var x :int = xStart; x <= xMax; ++x) {
@@ -68,6 +74,8 @@ public class CollisionGrid
             }
         }
     }
+    
+    //public function getCollisions
     
     protected static function clamp (val :Number, min :Number, max :Number) :Number
     {
