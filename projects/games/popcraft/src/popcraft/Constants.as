@@ -159,6 +159,10 @@ public class Constants
         // return an array of Vector2 pairs - for each player, a base loc and an initial waypoint loc
 
         switch (numPlayers) {
+        case 1: 
+            return [ new Vector2(50, 315) ]; // we don't have 1-player games except during development
+            break;
+            
         case 2:
             return [
                 new Vector2(50, 315),   // bottom left

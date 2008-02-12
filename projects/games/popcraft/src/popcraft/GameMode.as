@@ -9,7 +9,6 @@ import com.whirled.contrib.core.util.*;
 
 import flash.display.DisplayObjectContainer;
 import flash.events.KeyboardEvent;
-import flash.geom.Point;
 
 import popcraft.battle.*;
 import popcraft.net.*;
@@ -53,9 +52,11 @@ public class GameMode extends AppMode
     // from com.whirled.contrib.core.AppMode
     override protected function setup () :void
     {
+        _numPlayers = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
+        
         var myPosition :int = PopCraft.instance.gameControl.game.seating.getMyPosition();
         var isAPlayer :Boolean = (myPosition >= 0);
-        var numPlayers :int = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
+        
 
         // everyone gets to see the BattleBoard
         _battleBoard = new BattleBoard(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
@@ -189,23 +190,28 @@ public class GameMode extends AppMode
 
             ++_tickCount;
 
-            // end the game when all bases but one have been destroyed
-            var livingPlayers :HashSet = new HashSet();
-            var n :uint = _playerBaseIds.length;
-            for (var playerId :uint = 0; playerId < n; ++playerId) {
-                if (null != getPlayerBase(playerId)) {
-                    livingPlayers.add(playerId);
-
-                    // if there's > 1 living player, the game can't be over
-                    if (livingPlayers.size() > 1) {
-                        break;
+            // @TODO - remove this temporary hack that allows a single player
+            // to play the game for testing purposes
+            if (_numPlayers > 1) {
+                
+                // end the game when all bases but one have been destroyed
+                var livingPlayers :HashSet = new HashSet();
+                var n :uint = _playerBaseIds.length;
+                for (var playerId :uint = 0; playerId < n; ++playerId) {
+                    if (null != getPlayerBase(playerId)) {
+                        livingPlayers.add(playerId);
+    
+                        // if there's > 1 living player, the game can't be over
+                        if (livingPlayers.size() > 1) {
+                            break;
+                        }
                     }
                 }
-            }
-
-            if (livingPlayers.size() <= 1) {
-                var winningPlayer :int = (livingPlayers.size() == 1 ? livingPlayers.toArray()[0] : -1);
-                MainLoop.instance.changeMode(new GameOverMode(winningPlayer));
+    
+                if (livingPlayers.size() <= 1) {
+                    var winningPlayer :int = (livingPlayers.size() == 1 ? livingPlayers.toArray()[0] : -1);
+                    MainLoop.instance.changeMode(new GameOverMode(winningPlayer));
+                }
             }
         }
 
@@ -400,6 +406,11 @@ public class GameMode extends AppMode
     {
         return _battleBoard.unitDisplayParent;
     }
+    
+    public function get numPlayers () :int
+    {
+        return _numPlayers;
+    }
 
     protected var _gameIsRunning :Boolean;
 
@@ -411,6 +422,7 @@ public class GameMode extends AppMode
     protected var _netObjects :ObjectDB;
 
     protected var _playerBaseIds :Array = new Array();
+    protected var _numPlayers :int;
 
     protected var _tickCount :uint;
     protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);

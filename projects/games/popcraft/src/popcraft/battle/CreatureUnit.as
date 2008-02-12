@@ -101,8 +101,14 @@ public class CreatureUnit extends Unit
     // @TODO: make this work with multiple bases and destroyed bases
     public function findEnemyBaseToAttack () :uint
     {
-        var enemyPlayerId :uint = GameMode.instance.getRandomEnemyPlayerId(_owningPlayerId);
-        var enemyBaseId :uint = GameMode.instance.getPlayerBase(enemyPlayerId).id;
+        var game :GameMode = GameMode.instance;
+        
+        var enemyBaseId :uint = 0;
+        
+        if (game.numPlayers > 1) {
+            var enemyPlayerId :uint = game.getRandomEnemyPlayerId(_owningPlayerId);
+            enemyBaseId = game.getPlayerBase(enemyPlayerId).id;
+        }
 
         return enemyBaseId;
     }
