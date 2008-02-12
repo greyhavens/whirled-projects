@@ -161,25 +161,25 @@ public class Constants
         switch (numPlayers) {
         case 2:
             return [
-                new Vector2(50, 315), new Vector2(75, 315),     // middle left
-                new Vector2(652, 70), new Vector2(605, 70)    // middle right
+                new Vector2(50, 315),   // bottom left
+                new Vector2(652, 70),   // top right
              ];
              break;
 
         case 3:
             return [
-                new Vector2(48, 68), new Vector2(75, 115),       // top left
-                new Vector2(28, 452), new Vector2(75, 405),     // bottom left
-                new Vector2(452, 250), new Vector2(405, 250)    // middle right
+                new Vector2(48, 68),       // top left
+                new Vector2(28, 452),     // bottom left
+                new Vector2(452, 250),    // middle right
             ];
             break;
 
         case 4:
             return [
-                new Vector2(48, 68), new Vector2(75, 115),       // top left
-                new Vector2(48, 452), new Vector2(75, 405),     // bottom left
-                new Vector2(452, 68), new Vector2(405, 115),     // top right
-                new Vector2(452, 452), new Vector2(405, 405),   // bottom right
+                new Vector2(48, 68),    // top left
+                new Vector2(48, 452),   // bottom left
+                new Vector2(452, 68),   // top right
+                new Vector2(452, 452),  // bottom right
             ];
             break;
 

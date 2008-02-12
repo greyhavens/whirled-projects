@@ -92,7 +92,6 @@ public class GameMode extends AppMode
         // set up some network stuff
         _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
-        _messageMgr.addMessageFactory(PlaceWaypointMessage.messageName, PlaceWaypointMessage.createFactory());
 
         if (Constants.DEBUG_LEVEL >= 1) {
             _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
@@ -108,9 +107,8 @@ public class GameMode extends AppMode
         var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
         var playerId :uint = 0;
         var n :int = baseLocs.length;
-        for (var i :int = 0; i < n; i += 2) {
+        for (var i :int = 0; i < n; ++i) {
             var baseLoc :Vector2 = (baseLocs[i] as Vector2);
-            var waypointLoc :Vector2 = (baseLocs[int(i + 1)] as Vector2);
 
             var base :PlayerBaseUnit = new PlayerBaseUnit(playerId, baseLoc, _battleBoard.collisionGrid);
             base.x = baseLoc.x;
@@ -119,20 +117,6 @@ public class GameMode extends AppMode
             var baseId :uint = _netObjects.addObject(base, _battleBoard.unitDisplayParent);
 
             _playerBaseIds.push(baseId);
-
-            // waypoint
-            _playerWaypoints.push(waypointLoc.toPoint());
-
-            // create a visual representation of the waypoint
-            // we're not currently using waypoints
-            // if it belongs to us
-            /*if (playerId == _playerData.playerId) {
-                _waypointMarker = new WaypointMarker(playerId);
-                _waypointMarker.displayObject.x = waypointLoc.x;
-                _waypointMarker.displayObject.y = waypointLoc.y;
-
-                this.addObject(_waypointMarker, _battleBoard.unitDisplayParent);
-            }*/
 
             ++playerId;
         }
@@ -289,14 +273,6 @@ public class GameMode extends AppMode
         // random state
         add(Rand.nextInt(Rand.STREAM_GAME), "Rand state");
 
-        // waypoints
-        add(_playerWaypoints.length, "_playerWaypoints.length");
-        for (i = 0; i < _playerWaypoints.length; ++i) {
-            var waypoint :Point = (_playerWaypoints[i] as Point);
-            add(waypoint.x, "waypoint.x - " + i);
-            add(waypoint.y, "waypoint.x - " + i);
-        }
-
         // units
         /*var unitIds :Array = _netObjects.getObjectIdsInGroup(Unit.GROUP_NAME);
         add(unitIds.length, "units.length");
@@ -340,13 +316,6 @@ public class GameMode extends AppMode
             _netObjects.addObject(
                 UnitFactory.createUnit(createUnitMsg.unitType, createUnitMsg.owningPlayer, _battleBoard.collisionGrid),
                 _battleBoard.unitDisplayParent);
-            break;
-
-        case PlaceWaypointMessage.messageName:
-            var placeWaypointMsg :PlaceWaypointMessage = (msg as PlaceWaypointMessage);
-            var loc :Point = (_playerWaypoints[placeWaypointMsg.owningPlayerId] as Point);
-            loc.x = placeWaypointMsg.xLoc;
-            loc.y = placeWaypointMsg.yLoc;
             break;
 
         case ChecksumMessage.messageName:
@@ -412,30 +381,6 @@ public class GameMode extends AppMode
         _messageMgr.sendMessage(new CreateUnitMessage(unitType, _playerData.playerId));
     }
 
-    public function placeWaypoint (x :uint, y :uint) :void
-    {
-        // drop redundant clicks
-        if (_waypointMarker.displayObject.x == x && _waypointMarker.displayObject.y == y) {
-            trace("dropping redundant waypoint placement message");
-            return;
-        }
-
-        // move our waypoint marker immediately.
-        // This causes our visual state to be slightly out of sync with the network state,
-        // but hopefully not for too long. By the time the player buys a new unit, everything should
-        // be caught up. (the visual state is not used for
-        _waypointMarker.displayObject.x = x;
-        _waypointMarker.displayObject.y = y;
-
-        // send a message!
-        _messageMgr.sendMessage(new PlaceWaypointMessage(_playerData.playerId, x, y));
-    }
-
-    public function getWaypointLoc (playerId :uint) :Point
-    {
-        return (_playerWaypoints[playerId] as Point);
-    }
-
     public function get playerData () :PlayerData
     {
         return _playerData;
@@ -466,8 +411,6 @@ public class GameMode extends AppMode
     protected var _netObjects :ObjectDB;
 
     protected var _playerBaseIds :Array = new Array();
-    protected var _playerWaypoints :Array = new Array();
-    protected var _waypointMarker :WaypointMarker;
 
     protected var _tickCount :uint;
     protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);
