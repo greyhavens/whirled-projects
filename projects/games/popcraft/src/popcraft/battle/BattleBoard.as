@@ -7,10 +7,9 @@ import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
-import flash.events.MouseEvent;
-import flash.geom.Point;
 
 import popcraft.*;
+import popcraft.battle.geom.CollisionGrid;
 import popcraft.net.*;
 
 public class BattleBoard extends SceneObject
@@ -23,6 +22,8 @@ public class BattleBoard extends SceneObject
     {
         _width = width;
         _height = height;
+        
+        _collisionGrid = new CollisionGrid(_width, _height);
 
         _view = new Sprite();
 
@@ -52,11 +53,17 @@ public class BattleBoard extends SceneObject
     {
         return _unitDisplayParent;
     }
+    
+    public function get collisionGrid () :CollisionGrid
+    {
+        return _collisionGrid;
+    }
 
     protected var _width :int;
     protected var _height :int;
     protected var _view :Sprite;
     protected var _unitDisplayParent :Sprite;
+    protected var _collisionGrid :CollisionGrid;
 }
 
 }

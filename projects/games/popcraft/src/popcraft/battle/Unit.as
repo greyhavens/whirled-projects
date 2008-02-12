@@ -12,6 +12,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import popcraft.*;
+import popcraft.battle.geom.*;
 import popcraft.util.*;
 
 /**
@@ -22,7 +23,7 @@ public class Unit extends SceneObject
 {
     public static const GROUP_NAME :String = "Unit";
 
-    public function Unit (unitType :uint, owningPlayerId :uint)
+    public function Unit (unitType :uint, owningPlayerId :uint, collisionGrid :CollisionGrid)
     {
         _unitType = unitType;
         _owningPlayerId = owningPlayerId;
@@ -71,11 +72,15 @@ public class Unit extends SceneObject
 
         // @TODO - this is probably bad practice right here.
         GameMode.instance.addObject(_healthMeter, _sprite);
+        
+        // collision geometry
+        _geom = new UnitGeometry(this, collisionGrid);
     }
 
     override protected function destroyed () :void
     {
         _healthMeter.destroySelf();
+        _geom.unitDestroyed();
     }
 
     // from SceneObject
@@ -232,6 +237,8 @@ public class Unit extends SceneObject
 
     protected var _sprite :Sprite;
     protected var _healthMeter :RectMeter;
+    
+    protected var _geom :UnitGeometry;
 
     protected static var g_groups :Array;
 }

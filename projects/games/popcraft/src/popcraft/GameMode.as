@@ -112,7 +112,7 @@ public class GameMode extends AppMode
             var baseLoc :Vector2 = (baseLocs[i] as Vector2);
             var waypointLoc :Vector2 = (baseLocs[int(i + 1)] as Vector2);
 
-            var base :PlayerBaseUnit = new PlayerBaseUnit(playerId, baseLoc);
+            var base :PlayerBaseUnit = new PlayerBaseUnit(playerId, baseLoc, _battleBoard.collisionGrid);
             base.x = baseLoc.x;
             base.y = baseLoc.y;
             
@@ -338,7 +338,7 @@ public class GameMode extends AppMode
         case CreateUnitMessage.messageName:
             var createUnitMsg :CreateUnitMessage = (msg as CreateUnitMessage);
             _netObjects.addObject(
-                UnitFactory.createUnit(createUnitMsg.unitType, createUnitMsg.owningPlayer),
+                UnitFactory.createUnit(createUnitMsg.unitType, createUnitMsg.owningPlayer, _battleBoard.collisionGrid),
                 _battleBoard.unitDisplayParent);
             break;
 

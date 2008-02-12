@@ -6,21 +6,18 @@ import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
-import flash.display.Bitmap;
-import flash.display.DisplayObject;
-import flash.display.Sprite;
-
 import popcraft.*;
 import popcraft.battle.ai.*;
+import popcraft.battle.geom.CollisionGrid;
 import popcraft.util.*;
 
 public class CreatureUnit extends Unit
 {
     public static const GROUP_NAME :String = "CreatureUnit";
 
-    public function CreatureUnit (unitType :uint, owningPlayerId :uint)
+    public function CreatureUnit (unitType :uint, owningPlayerId :uint, collisionGrid :CollisionGrid)
     {
-        super(unitType, owningPlayerId);
+        super(unitType, owningPlayerId, collisionGrid);
 
         // start at our owning player's base's spawn loc
         var spawnLoc :Vector2 = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;

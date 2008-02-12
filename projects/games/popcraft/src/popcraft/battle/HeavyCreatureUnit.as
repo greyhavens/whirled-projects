@@ -2,6 +2,7 @@ package popcraft.battle {
 
 import popcraft.*;
 import popcraft.battle.ai.*;
+import popcraft.battle.geom.CollisionGrid;
 
 /**
  * The Heavy is a dual-purpose defensive unit
@@ -10,9 +11,9 @@ import popcraft.battle.ai.*;
  */
 public class HeavyCreatureUnit extends CreatureUnit
 {
-    public function HeavyCreatureUnit(owningPlayerId:uint)
+    public function HeavyCreatureUnit (owningPlayerId:uint, collisionGrid :CollisionGrid)
     {
-        super(Constants.UNIT_TYPE_HEAVY, owningPlayerId);
+        super(Constants.UNIT_TYPE_HEAVY, owningPlayerId, collisionGrid);
         _ai = new HeavyAI(this);
     }
 

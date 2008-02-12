@@ -4,6 +4,7 @@ import com.whirled.contrib.core.*;
 
 import popcraft.*;
 import popcraft.battle.ai.*;
+import popcraft.battle.geom.CollisionGrid;
 
 /**
  * Grunts are the meat-and-potatoes offensive unit of the game.
@@ -13,9 +14,9 @@ import popcraft.battle.ai.*;
  */
 public class GruntCreatureUnit extends CreatureUnit
 {
-    public function GruntCreatureUnit(owningPlayerId:uint)
+    public function GruntCreatureUnit (owningPlayerId:uint, collisionGrid :CollisionGrid)
     {
-        super(Constants.UNIT_TYPE_GRUNT, owningPlayerId);
+        super(Constants.UNIT_TYPE_GRUNT, owningPlayerId, collisionGrid);
         
         _gruntAI = new GruntAI(this, this.findEnemyBaseToAttack());
     }

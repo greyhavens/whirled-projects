@@ -6,17 +6,14 @@ import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
-import flash.display.Bitmap;
-import flash.display.DisplayObject;
-import flash.display.Sprite;
-
 import popcraft.*;
+import popcraft.battle.geom.CollisionGrid;
 
 public class PlayerBaseUnit extends Unit
 {
-    public function PlayerBaseUnit (owningPlayerId :uint, loc :Vector2)
+    public function PlayerBaseUnit (owningPlayerId :uint, loc :Vector2, collisionGrid :CollisionGrid)
     {
-        super(Constants.UNIT_TYPE_BASE, owningPlayerId);
+        super(Constants.UNIT_TYPE_BASE, owningPlayerId, collisionGrid);
 
         _unitSpawnLoc = loc;
     }
