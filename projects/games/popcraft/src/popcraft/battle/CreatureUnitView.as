@@ -2,7 +2,6 @@ package popcraft.battle {
     
 import com.threerings.util.Assert;
 import com.whirled.contrib.ColorMatrix;
-
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.resource.*;
 
@@ -136,7 +135,7 @@ public class CreatureUnitView extends SceneObject
     
     protected var _unit :CreatureUnit;
     protected var _lastViewState :ViewState = new ViewState();
-    protected var _sprite = new Sprite();
+    protected var _sprite :Sprite = new Sprite();
     
     protected var _animStanding :Array = [];
     protected var _animAttacking :Array = [];
