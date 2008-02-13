@@ -25,62 +25,48 @@ public class CreatureUnit extends Unit
         _sprite.y = spawnLoc.y;
 
     }
-
-    public function moveTo (x :int, y :int) :void
+    
+    public function setMovementDestination (dest :Vector2) :void
     {
-        // cancel any existing move
-        this.removeNamedTasks("move");
-
-        // don't move if we're already at the specified location
-        if (_sprite.x == x && _sprite.y == y) {
-            return;
+        _destination = dest.clone();
+    }
+    
+    public function stopMoving () :void
+    {
+        _destination = null;
+    }
+    
+    public function get isMoving () :Boolean
+    {
+        return (_destination != null);
+    }
+    
+    protected function handleMove (dt :Number) :void
+    {
+        if (this.isMoving) {
+            var curLoc :Vector2 = new Vector2(this.x, this.y);
+        
+            // are we there yet?
+            if (curLoc.similar(_destination, MOVEMENT_EPSILON)) {
+                this.stopMoving();
+            }
+            
+            var nextLoc :Vector2 = _destination.getSubtract(curLoc);
+            
+            var remainingDistance :Number = nextLoc.normalizeAndGetLength();
+            
+            // don't overshoot the destination
+            var distance :Number = Math.min(this.unitData.baseMoveSpeed * dt, remainingDistance);
+            
+            // calculate our next location
+            nextLoc.scale(distance);
+            nextLoc.add(curLoc);
+            
+            // @TODO - collision checking goes here
+            
+            this.x = nextLoc.x;
+            this.y = nextLoc.y;
         }
-
-        // units wander drunkenly from point to point.
-
-        var start :Vector2 = new Vector2(_sprite.x, _sprite.y);
-        var end :Vector2 = new Vector2(x, y);
-        var direction :Vector2 = Vector2.subtract(end, start);
-        var distanceBetween :Number = direction.length;
-
-        // direction is a unit vector
-        direction.normalize();
-
-        // two unit vectors, both perpendicular to our direction vector
-        var perp1 :Vector2 = direction.getPerp(true);
-        var perp2 :Vector2 = direction.getPerp(false);
-
-        // how many times will we wander from our path?
-        var numWanders :int = distanceBetween / _unitData.wanderEvery;
-
-        var moveTask :SerialTask = new SerialTask();
-
-        var curLoc :Vector2 = start;
-
-        for (var i :int = 0; i < numWanders; ++i) {
-            // where are we actually trying to get to?
-            var newLoc :Vector2 = Vector2.scale(direction, _unitData.wanderEvery * i);
-            newLoc.add(start);
-
-            // wander off our path a bit
-            var perp :Vector2 = (Rand.nextBoolean(Rand.STREAM_GAME) ? perp1.clone() : perp2.clone());
-            perp.scale(_unitData.wanderRange.next(Rand.STREAM_GAME));
-            newLoc.add(perp);
-
-            // move!
-            var wanderDist :Number = Math.abs(Vector2.subtract(newLoc, curLoc).length);
-            moveTask.addTask(new LocationTask(newLoc.x, newLoc.y, wanderDist / _unitData.movePixelsPerSecond));
-
-            curLoc = newLoc;
-        }
-
-        // @TODO: smooth these points?
-
-        // move to the destination
-        var moveDist :Number = Math.abs(Vector2.subtract(end, curLoc).length);
-        moveTask.addTask(new LocationTask(end.x, end.y, moveDist / _unitData.movePixelsPerSecond));
-
-        this.addNamedTask("move", moveTask);
     }
 
     // from AppObject
@@ -113,11 +99,6 @@ public class CreatureUnit extends Unit
         return enemyBaseId;
     }
 
-    public function isMoving () :Boolean
-    {
-        return this.hasTasksNamed("move");
-    }
-
     protected function get aiRoot () :AITask
     {
         return null;
@@ -125,13 +106,21 @@ public class CreatureUnit extends Unit
 
     override protected function update (dt :Number) :void
     {
+        this.stopMoving();
+        
         var aiRoot :AITask = this.aiRoot;
         if (null != aiRoot) {
             aiRoot.update(dt, this);
         }
         
+        this.handleMove(dt);
+        
         super.update(dt);
     }
+    
+    protected var _destination :Vector2 = null;
+    
+    protected static const MOVEMENT_EPSILON :Number = 0.01;
 
     protected static var g_groups :Array;
 }

@@ -86,7 +86,6 @@ public class Constants
             new UnitData (
                 "grunt"                     // name
                 , [25,   25,  0,   0]        // resource costs (brown, gold, blue, pink)
-                , -1, new IntRange(0, 0)   // wanderEvery, wanderRange
                 , 25                        // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.8, DAMAGE_TYPE_PIERCING, 0.7, DAMAGE_TYPE_BASE, 0.8] )   // armor
@@ -101,7 +100,6 @@ public class Constants
             new UnitData (
                 "heavy"                     // name
                 , [0,   0,  25,   25]        // resource costs (brown, gold, blue, pink)
-                , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
                 , 25                        // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] )   // armor
@@ -119,7 +117,6 @@ public class Constants
             new UnitData (
                 "sapper"                     // name
                 , [0,   15,  0,   15]        // resource costs (brown, gold, blue, pink)
-                , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
                 , 40                        // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] )   // armor
@@ -136,7 +133,6 @@ public class Constants
             new UnitData (
                 "base"                      // name
                 , [0,   0,  0,    0]        // resource costs (brown, gold, blue, pink)
-                , -1, new IntRange(0, 0)    // wanderEvery, wanderRange
                 , 0                         // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.1, DAMAGE_TYPE_PIERCING, 0.1] )   // armor

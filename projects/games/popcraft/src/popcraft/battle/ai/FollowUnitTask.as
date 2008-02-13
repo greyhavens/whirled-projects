@@ -36,7 +36,7 @@ public class FollowUnitTask
             v.length = _minFollowDistance;
             v.add(unit.unitLoc);
             
-            unit.moveTo(v.x, v.y);
+            unit.setMovementDestination(v);
         }
         
         return AITaskStatus.ACTIVE;

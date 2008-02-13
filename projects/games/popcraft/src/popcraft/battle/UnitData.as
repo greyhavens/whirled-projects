@@ -9,9 +9,7 @@ public class UnitData
     public var resourceCosts :Array;
 
     // movement variables
-    public var wanderEvery :Number;
-    public var wanderRange :IntRange;
-    public var movePixelsPerSecond :Number;
+    public var baseMoveSpeed :Number;
 
     public var maxHealth :int;
     public var armor :UnitArmor;
@@ -24,9 +22,7 @@ public class UnitData
     public function UnitData (
         name :String,
         resourceCosts :Array,
-        wanderEvery :Number,
-        wanderRange :IntRange,
-        movePixelsPerSecond :Number,
+        baseMoveSpeed :Number,
         maxHealth :int,
         armor :UnitArmor,
         weapons :Array,
@@ -37,9 +33,7 @@ public class UnitData
         this.name = name;
         this.resourceCosts = resourceCosts;
 
-        this.wanderEvery = wanderEvery;
-        this.wanderRange = wanderRange;
-        this.movePixelsPerSecond = movePixelsPerSecond;
+        this.baseMoveSpeed = baseMoveSpeed;
 
         this.maxHealth = maxHealth;
         this.armor = armor;

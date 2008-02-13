@@ -37,7 +37,7 @@ public class AttackUnitTask
         } else if (_followUnit && (_loseInterestRange < 0 || unit.isUnitInRange(enemy, _loseInterestRange))) {
             // get closer to the enemy
             var attackLoc :Vector2 = unit.findNearestAttackLocation(enemy, unit.unitData.weapons[0]);
-            unit.moveTo(attackLoc.x, attackLoc.y);
+            unit.setMovementDestination(attackLoc);
             
             return AITaskStatus.ACTIVE;
         }
