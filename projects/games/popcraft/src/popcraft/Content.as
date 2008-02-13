@@ -22,6 +22,9 @@ public class Content
 
     [Embed(source="../../rsrc/city_forefront.png", mimeType="application/octet-stream")]
     public static const IMAGE_BATTLE_FG :Class;
+    
+    [Embed(source="../../rsrc/streetwalker.swf", mimeType="application/octet-stream")]
+    public static const SWF_STREETWALKER :Class;
 
 }
 }

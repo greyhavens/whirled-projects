@@ -24,6 +24,7 @@ public class LoadingMode extends AppMode
         PopCraft.resourceManager.pendResourceLoad("image", "waypoint",  { embeddedClass: Content.IMAGE_WAYPOINT });
         PopCraft.resourceManager.pendResourceLoad("image", "battle_bg", { embeddedClass: Content.IMAGE_BATTLE_BG });
         PopCraft.resourceManager.pendResourceLoad("image", "battle_fg", { embeddedClass: Content.IMAGE_BATTLE_FG });
+        PopCraft.resourceManager.pendResourceLoad("swf", "streetwalker", { embeddedClass: Content.SWF_STREETWALKER });
         
         PopCraft.resourceManager.load();
         

@@ -1,15 +1,17 @@
 package popcraft.battle {
     
 import com.threerings.util.Assert;
+    
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
+import flash.display.MovieClip;
+import flash.display.Sprite;
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
-import flash.display.Sprite;
 
 import popcraft.*;
 import popcraft.battle.geom.*;
@@ -34,14 +36,24 @@ public class Unit extends SceneObject
         // create the visual representation
         _sprite = new Sprite();
 
-        // add the image, aligned by its foot position
-        var image :Bitmap = (PopCraft.resourceManager.getResource(_unitData.name) as ImageResourceLoader).createBitmap();
-        image.x = -(image.width * 0.5);
-        image.y = -image.height;
-        _sprite.addChild(image);
+        // @TEMP
+        if (unitType == Constants.UNIT_TYPE_GRUNT) {
+            var swf :SwfResourceLoader = (PopCraft.resourceManager.getResource("streetwalker") as SwfResourceLoader);
+            var theClass :Class = swf.getClass("streetwalker_S");
+            var movie :MovieClip = new theClass();
+            
+            _sprite.addChild(movie);
+            
+        } else {
+            // add the image, aligned by its foot position
+            var image :Bitmap = (PopCraft.resourceManager.getResource(_unitData.name) as ImageResourceLoader).createBitmap();
+            image.x = -(image.width * 0.5);
+            image.y = -image.height;
+            _sprite.addChild(image);
 
-        // add a glow around the image
-        _sprite.addChild(ImageUtil.createGlowBitmap(image, Constants.PLAYER_COLORS[_owningPlayerId] as uint));
+            // add a glow around the image
+            _sprite.addChild(ImageUtil.createGlowBitmap(image, Constants.PLAYER_COLORS[_owningPlayerId] as uint));
+        }
         
         // draw some debugging circles
         if (Constants.DRAW_UNIT_DATA_CIRCLES) {
@@ -68,7 +80,7 @@ public class Unit extends SceneObject
         _healthMeter.width = 30;
         _healthMeter.height = 3;
         _healthMeter.x = -(_healthMeter.width * 0.5);
-        _healthMeter.y = image.y - _healthMeter.height;
+        _healthMeter.y = -_sprite.height - _healthMeter.height;
 
         // @TODO - this is probably bad practice right here.
         GameMode.instance.addObject(_healthMeter, _sprite);

@@ -43,29 +43,34 @@ public class CreatureUnit extends Unit
     
     protected function handleMove (dt :Number) :void
     {
+        _movedThisFrame = false;
+        
         if (this.isMoving) {
             var curLoc :Vector2 = new Vector2(this.x, this.y);
         
             // are we there yet?
             if (curLoc.similar(_destination, MOVEMENT_EPSILON)) {
                 this.stopMoving();
+            } else {
+            
+                _movementDirection = _destination.getSubtract(curLoc);
+                
+                var remainingDistance :Number = _movementDirection.normalizeAndGetLength();
+                
+                // don't overshoot the destination
+                var distance :Number = Math.min(this.unitData.baseMoveSpeed * dt, remainingDistance);
+                
+                // calculate our next location
+                var nextLoc :Vector2 = _movementDirection.getScale(distance);
+                nextLoc.add(curLoc);
+                
+                // @TODO - collision checking goes here
+                
+                this.x = nextLoc.x;
+                this.y = nextLoc.y;
+                
+                _movedThisFrame = true;
             }
-            
-            var nextLoc :Vector2 = _destination.getSubtract(curLoc);
-            
-            var remainingDistance :Number = nextLoc.normalizeAndGetLength();
-            
-            // don't overshoot the destination
-            var distance :Number = Math.min(this.unitData.baseMoveSpeed * dt, remainingDistance);
-            
-            // calculate our next location
-            nextLoc.scale(distance);
-            nextLoc.add(curLoc);
-            
-            // @TODO - collision checking goes here
-            
-            this.x = nextLoc.x;
-            this.y = nextLoc.y;
         }
     }
 
@@ -118,7 +123,10 @@ public class CreatureUnit extends Unit
         super.update(dt);
     }
     
-    protected var _destination :Vector2 = null;
+    protected var _destination :Vector2;
+    
+    protected var _movedThisFrame :Boolean;
+    protected var _movementDirection :Vector2;
     
     protected static const MOVEMENT_EPSILON :Number = 0.01;
 

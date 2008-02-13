@@ -107,7 +107,7 @@ public class Constants
                     new UnitWeapon(UnitWeapon.TYPE_MELEE, DAMAGE_TYPE_CRUSHING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 50, 0),
                     new UnitWeapon(UnitWeapon.TYPE_MISSILE, DAMAGE_TYPE_PIERCING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 200, 300),
                   ]
-                , 14                        // collision radius
+                , 15                        // collision radius
                 , 200                        // detect radius
                 , 180                       // lose interest radius
             )
