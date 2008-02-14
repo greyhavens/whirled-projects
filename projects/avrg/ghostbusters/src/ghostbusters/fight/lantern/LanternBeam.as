@@ -53,13 +53,13 @@ public class LanternBeam extends SceneObject
             
             // create the two tangents to the circle that pass through our point
         
-            var p1 :Vector2 = c.getRotate(angle);
+            var p1 :Vector2 = c.rotate(angle);
             p1.length = tangentLength;
-            p1.add(_lightSource);
+            p1.addLocal(_lightSource);
             
-            var p2 :Vector2 = c.getRotate(-angle);
+            var p2 :Vector2 = c.rotate(-angle);
             p2.length = tangentLength;
-            p2.add(_lightSource);
+            p2.addLocal(_lightSource);
             
             // draw the beam
             _sprite.graphics.moveTo(_lightSource.x, _lightSource.y);

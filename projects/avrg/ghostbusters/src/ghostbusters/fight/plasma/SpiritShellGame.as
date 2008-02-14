@@ -124,8 +124,7 @@ public class SpiritShellGame extends MicrogameMode
         var direction :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_COSMETIC);
         
         var start :Vector2 = new Vector2(ghost.x, ghost.y);
-        var dest :Vector2 = Vector2.fromAngleRadians(direction, distance);
-        dest.add(start);
+        var dest :Vector2 = Vector2.fromAngle(direction, distance).addLocal(start);
         
         // clamp dest
         dest.x = Math.max(dest.x, 0);
@@ -134,7 +133,7 @@ public class SpiritShellGame extends MicrogameMode
         dest.y = Math.min(dest.y, 226 - ghost.height); // board height - ghost height
         
         // what's the actual distance we're moving?
-        distance = dest.getSubtract(start).length;
+        distance = dest.subtract(start).length;
         
         var totalTime :Number = distance / _settings.ghostSpeed;
         
@@ -155,9 +154,9 @@ public class SpiritShellGame extends MicrogameMode
         // shoot the plasma in the direction of the cursor
         var cursorLoc :Vector2 = new Vector2(this.modeSprite.mouseX, this.modeSprite.mouseY);
         
-        var launchVector :Vector2 = cursorLoc.getSubtract(PLASMA_LAUNCH_LOC);
+        var launchVector :Vector2 = cursorLoc.subtract(PLASMA_LAUNCH_LOC);
         launchVector.length = 300;
-        launchVector.add(PLASMA_LAUNCH_LOC);
+        launchVector.addLocal(PLASMA_LAUNCH_LOC);
         
         var totalTime :Number = (300 / _settings.plasmaSpeed);
         

@@ -43,8 +43,8 @@ public class Drawing extends SceneObject
 
         // can we start drawing yet?
         if (null == _endTarget) {
-            var delta1 :Vector2 = Vector2.subtract(loc, _target1);
-            var delta2 :Vector2 = Vector2.subtract(loc, _target2);
+            var delta1 :Vector2 = loc.subtract(_target1);
+            var delta2 :Vector2 = loc.subtract(_target2);
             
             if (delta1.lengthSquared <= (Constants.PICTO_TARGETRADIUS * Constants.PICTO_TARGETRADIUS)) {
                 _points.push(loc);
@@ -61,13 +61,13 @@ public class Drawing extends SceneObject
         
         // can we end the drawing?
         if (!_canEndDrawing) {
-            delta = Vector2.subtract(_endTarget, loc);
+            delta = _endTarget.subtract(loc);
             _canEndDrawing = (delta.lengthSquared >= (10 * 10));
         }
 
         if (_canEndDrawing) {
             // did we hit the end target?
-            delta = Vector2.subtract(_endTarget, loc);
+            delta = _endTarget.subtract(loc);
             if (delta.lengthSquared <= (Constants.PICTO_TARGETRADIUS * Constants.PICTO_TARGETRADIUS)) {
                 _board.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoved);
                 _doneDrawing = true;
@@ -78,7 +78,7 @@ public class Drawing extends SceneObject
         var lastLoc :Vector2 = _points[_points.length - 1];
 
         // have we moved far enough?
-        delta = Vector2.subtract(loc, lastLoc);
+        delta = loc.subtract(lastLoc);
         if (delta.lengthSquared < (Constants.PICTO_MINLINELENGTH * Constants.PICTO_MINLINELENGTH)) {
             return;
         }

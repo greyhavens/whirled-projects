@@ -1,13 +1,13 @@
 package ghostbusters.fight.ouija {
 
+import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.util.Rand;
+
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import ghostbusters.fight.common.*;
-
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.objects.*;
-import com.whirled.contrib.core.util.Rand;
 
 public class Board extends SceneObject
 {
@@ -42,8 +42,7 @@ public class Board extends SceneObject
     {
         if (selectionIndex >= 0 && selectionIndex < SELECTIONS.length / 2) {
             var selectionLoc :Vector2 = (SELECTIONS[selectionIndex * 2] as Vector2);
-            var delta :Vector2 = loc.clone();
-            delta.subtract(selectionLoc);
+            var delta :Vector2 = loc.subtract(selectionLoc);
             if (delta.lengthSquared <= (epsilon * epsilon)) {
                 return true;
             }

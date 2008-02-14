@@ -58,7 +58,7 @@ public class Cursor extends BasicCursor
         // do we need to reset the selection timer?
         var newLoc :Vector2 = new Vector2(localX, localY);
         var delta :Vector2 = new Vector2(localX, localY);
-        delta.subtract(_lastSettledLocation);
+        delta.subtractLocal(_lastSettledLocation);
 
         if (delta.lengthSquared > ALLOWED_MOVE_DISTANCE) {
 
