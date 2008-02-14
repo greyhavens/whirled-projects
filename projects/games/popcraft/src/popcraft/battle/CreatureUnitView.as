@@ -114,7 +114,7 @@ public class CreatureUnitView extends SceneObject
         var newViewState :ViewState = new ViewState();
         
         newViewState.moving = _unit.isMoving;
-        newViewState.attacking = false; // @TODO
+        newViewState.attacking = _unit.isAttacking;
         
         if (newViewState.moving) {
             newViewState.facing = getFacingDirectionFromAngle(_unit.movementDirection.angleRadians);
