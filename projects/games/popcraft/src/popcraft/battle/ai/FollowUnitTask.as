@@ -31,10 +31,10 @@ public class FollowUnitTask
         }
         
         // should we move closer to the unit?
-        var v :Vector2 = followUnit.unitLoc.getSubtract(unit.unitLoc);
+        var v :Vector2 = followUnit.unitLoc.subtract(unit.unitLoc);
         if (v.lengthSquared > (_maxFollowDistance * _maxFollowDistance)) {
             v.length = _minFollowDistance;
-            v.add(unit.unitLoc);
+            v.addLocal(unit.unitLoc);
             
             unit.setMovementDestination(v);
         }

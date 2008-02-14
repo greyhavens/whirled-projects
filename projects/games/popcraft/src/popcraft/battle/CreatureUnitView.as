@@ -117,7 +117,7 @@ public class CreatureUnitView extends SceneObject
         newViewState.attacking = _unit.isAttacking;
         
         if (newViewState.moving) {
-            newViewState.facing = getFacingDirectionFromAngle(_unit.movementDirection.angleRadians);
+            newViewState.facing = getFacingDirectionFromAngle(_unit.movementDirection.angle);
         } else {
             newViewState.facing = _lastViewState.facing;
         }

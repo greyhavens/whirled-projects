@@ -58,16 +58,15 @@ public class CreatureUnit extends Unit
                 this.stopMoving();
             } else {
             
-                _movementDirection = _destination.getSubtract(curLoc);
+                _movementDirection = _destination.subtract(curLoc);
                 
-                var remainingDistance :Number = _movementDirection.normalizeAndGetLength();
+                var remainingDistance :Number = _movementDirection.normalizeLocalAndGetLength();
                 
                 // don't overshoot the destination
                 var distance :Number = Math.min(this.unitData.baseMoveSpeed * dt, remainingDistance);
                 
                 // calculate our next location
-                var nextLoc :Vector2 = _movementDirection.getScale(distance);
-                nextLoc.add(curLoc);
+                var nextLoc :Vector2 = _movementDirection.scale(distance).addLocal(curLoc);
                 
                 // @TODO - collision checking goes here
                 

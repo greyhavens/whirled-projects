@@ -88,14 +88,13 @@ public class Unit extends AppObject
             return myLoc; // we don't need to move
         } else {
             // create a vector that points from the target to us
-            var moveLoc :Vector2 = myLoc;
-            moveLoc.subtract(targetUnit.unitLoc);
+            var moveLoc :Vector2 = myLoc.subtract(targetUnit.unitLoc);
 
             // scale it by the appropriate amount
             moveLoc.length = (targetUnit.unitData.collisionRadius + weapon.maxAttackDistance - 1);
 
             // add it to the base's location
-            moveLoc.add(targetUnit.unitLoc);
+            moveLoc.addLocal(targetUnit.unitLoc);
 
             return moveLoc;
         }

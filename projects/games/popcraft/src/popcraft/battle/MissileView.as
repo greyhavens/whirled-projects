@@ -13,7 +13,7 @@ public class MissileView extends SceneObject
     {
         _startLoc = startLoc.clone();
         
-        _direction = endLoc.getSubtract(_startLoc);
+        _direction = endLoc.subtract(_startLoc);
         
         _totalDistance = _direction.length;
         
@@ -40,9 +40,7 @@ public class MissileView extends SceneObject
         
         var distance :Number = _totalDistance * (_elapsedTime / _travelTime);
             
-        var drawTo :Vector2 = _direction.clone();
-        drawTo.scale(distance);
-        drawTo.add(_startLoc);
+        var drawTo :Vector2 = _direction.scale(distance).addLocal(_startLoc);
         
         _shape.graphics.clear();
         _shape.graphics.lineStyle(1, COLOR);
