@@ -1,7 +1,6 @@
 package popcraft.battle.geom {
     
 import com.threerings.flash.Vector2;
-
 import com.threerings.util.Assert;
 import com.whirled.contrib.core.util.Collision;
 
@@ -65,6 +64,15 @@ public class UnitGeometry
         if (_inCollisionGrid) {
             _grid.removeUnit(this);
         }
+    }
+    
+    public function getCollisionGridRectForLoc (loc :Vector2, rect :Rectangle) :void
+    {
+        rect.width = _gridRect.width;
+        rect.height = _gridRect.height;
+        
+        rect.x = Math.floor((loc.x - (_radius * 0.5)) * CollisionGrid.GRID_TILE_SIZE_INV);
+        rect.y = Math.floor((loc.y - (_radius * 0.5)) * CollisionGrid.GRID_TILE_SIZE_INV);
     }
     
     public function get collisionGridRect () :Rectangle
