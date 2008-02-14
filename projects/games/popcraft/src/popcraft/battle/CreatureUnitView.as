@@ -192,18 +192,21 @@ public class CreatureUnitView extends SceneObject
     {
         Assert.isTrue(angleRadians >= 0 && angleRadians < (Math.PI * 2));
         
+        // where does the angle land on the unit circle?
+        // since we're dealing with screen coordinates, south is "up" on the unit circle
+        
         if (angleRadians < Math.PI * (3/8)) {
-            return FACING_NE;
-        } else if (angleRadians < Math.PI * (5/8)) {
-            return FACING_N;
-        } else if (angleRadians < Math.PI) {
-            return FACING_NW;
-        } else if (angleRadians < Math.PI * (11/8)) {
-            return FACING_SW;
-        } else if (angleRadians < Math.PI * (13/8)) {
-            return FACING_S;
-        } else {
             return FACING_SE;
+        } else if (angleRadians < Math.PI * (5/8)) {
+            return FACING_S;
+        } else if (angleRadians < Math.PI) {
+            return FACING_SW;
+        } else if (angleRadians < Math.PI * (11/8)) {
+            return FACING_NW;
+        } else if (angleRadians < Math.PI * (13/8)) {
+            return FACING_N;
+        } else {
+            return FACING_NE;
         }
     }
     
