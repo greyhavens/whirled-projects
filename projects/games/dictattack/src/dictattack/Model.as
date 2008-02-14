@@ -84,7 +84,7 @@ public class Model
      */
     public function getWinningPoints () :int
     {
-        return isMultiPlayer() ? getConfig("pp_round", 30) : -1;
+        return isMultiPlayer() ? getConfig("pp_round", 20) : -1;
     }
 
     /**
