@@ -68,6 +68,8 @@ public class Game extends Sprite
 
         control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, playerEntered);
         control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, playerLeft);
+
+        control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
     }
 
     protected function handleUnload (event :Event) :void
@@ -143,6 +145,16 @@ public class Game extends Sprite
 
         gameController.panel.resized();
         gameController.panel.hud.teamUpdated();
+
+        if (!control.hasControl()) {
+            // ensure that in every room we visit, someone has control
+            control.requestControl();
+        }
+    }
+
+    protected function gotControl (evt :AVRGameControlEvent) :void
+    {
+        log.debug("gotControl(): " + evt);
     }
 
     protected function playerEntered (evt :AVRGameControlEvent) :void
