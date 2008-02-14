@@ -11,6 +11,7 @@ import flash.display.DisplayObjectContainer;
 import flash.events.KeyboardEvent;
 
 import popcraft.battle.*;
+import popcraft.battle.geom.CollisionGrid;
 import popcraft.net.*;
 import popcraft.puzzle.*;
 
@@ -110,14 +111,13 @@ public class GameMode extends AppMode
         var n :int = baseLocs.length;
         for (var i :int = 0; i < n; ++i) {
             var baseLoc :Vector2 = (baseLocs[i] as Vector2);
-
-            var base :PlayerBaseUnit = new PlayerBaseUnit(playerId, baseLoc, _battleBoard.collisionGrid);
+            
+            var base :PlayerBaseUnit = (UnitFactory.createUnit(Constants.UNIT_TYPE_BASE, playerId) as PlayerBaseUnit);
+            base.unitSpawnLoc = baseLoc;
             base.x = baseLoc.x;
             base.y = baseLoc.y;
             
-            var baseId :uint = _netObjects.addObject(base, _battleBoard.unitDisplayParent);
-
-            _playerBaseIds.push(baseId);
+            _playerBaseIds.push(base.id);
 
             ++playerId;
         }
@@ -319,9 +319,7 @@ public class GameMode extends AppMode
         switch (msg.name) {
         case CreateUnitMessage.messageName:
             var createUnitMsg :CreateUnitMessage = (msg as CreateUnitMessage);
-            _netObjects.addObject(
-                UnitFactory.createUnit(createUnitMsg.unitType, createUnitMsg.owningPlayer, _battleBoard.collisionGrid),
-                _battleBoard.unitDisplayParent);
+            UnitFactory.createUnit(createUnitMsg.unitType, createUnitMsg.owningPlayer);
             break;
 
         case ChecksumMessage.messageName:
@@ -405,6 +403,11 @@ public class GameMode extends AppMode
     public function get battleUnitDisplayParent () :DisplayObjectContainer
     {
         return _battleBoard.unitDisplayParent;
+    }
+    
+    public function get battleCollisionGrid () :CollisionGrid
+    {
+        return _battleBoard.collisionGrid;
     }
     
     public function get numPlayers () :int

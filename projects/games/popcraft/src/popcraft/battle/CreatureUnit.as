@@ -8,22 +8,22 @@ import com.whirled.contrib.core.util.*;
 
 import popcraft.*;
 import popcraft.battle.ai.*;
-import popcraft.battle.geom.CollisionGrid;
 import popcraft.util.*;
 
 public class CreatureUnit extends Unit
 {
     public static const GROUP_NAME :String = "CreatureUnit";
 
-    public function CreatureUnit (unitType :uint, owningPlayerId :uint, collisionGrid :CollisionGrid)
+    public function CreatureUnit (unitType :uint, owningPlayerId :uint)
     {
-        super(unitType, owningPlayerId, collisionGrid);
+        super(unitType, owningPlayerId);
 
         // start at our owning player's base's spawn loc
         var spawnLoc :Vector2 = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
-        _sprite.x = spawnLoc.x;
-        _sprite.y = spawnLoc.y;
-
+        
+        // @TODO - move this out of here
+        this.x = spawnLoc.x;
+        this.y = spawnLoc.y;
     }
     
     public function setMovementDestination (dest :Vector2) :void
@@ -41,14 +41,19 @@ public class CreatureUnit extends Unit
         return (_destination != null);
     }
     
+    public function get movementDirection () :Vector2
+    {
+        return _movementDirection;
+    }
+    
     protected function handleMove (dt :Number) :void
     {
         _movedThisFrame = false;
         
         if (this.isMoving) {
-            var curLoc :Vector2 = new Vector2(this.x, this.y);
-        
             // are we there yet?
+            var curLoc :Vector2 = this.unitLoc;
+            
             if (curLoc.similar(_destination, MOVEMENT_EPSILON)) {
                 this.stopMoving();
             } else {

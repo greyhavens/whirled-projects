@@ -1,17 +1,16 @@
 package popcraft.battle {
     
 import com.threerings.util.Assert;
-    
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.components.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
+import flash.display.Bitmap;
 import flash.display.MovieClip;
 import flash.display.Sprite;
-import flash.display.Bitmap;
-import flash.display.DisplayObject;
 
 import popcraft.*;
 import popcraft.battle.geom.*;
@@ -21,84 +20,21 @@ import popcraft.util.*;
  * If ActionScript allowed the creation of abstract classes or private constructors, I would do that here.
  * Alas, it doesn't. But Unit is not intended to be instantiated directly.
  */
-public class Unit extends SceneObject
+public class Unit extends AppObject
+    implements LocationComponent
 {
     public static const GROUP_NAME :String = "Unit";
 
-    public function Unit (unitType :uint, owningPlayerId :uint, collisionGrid :CollisionGrid)
+    public function Unit (unitType :uint, owningPlayerId :uint)
     {
         _unitType = unitType;
         _owningPlayerId = owningPlayerId;
 
         _unitData = (Constants.UNIT_DATA[unitType] as UnitData);
         _health = _unitData.maxHealth;
-
-        // create the visual representation
-        _sprite = new Sprite();
-
-        // @TEMP
-        if (unitType == Constants.UNIT_TYPE_GRUNT) {
-            var swf :SwfResourceLoader = (PopCraft.resourceManager.getResource("streetwalker") as SwfResourceLoader);
-            var theClass :Class = swf.getClass("streetwalker_S");
-            var movie :MovieClip = new theClass();
-            
-            _sprite.addChild(movie);
-            
-        } else {
-            // add the image, aligned by its foot position
-            var image :Bitmap = (PopCraft.resourceManager.getResource(_unitData.name) as ImageResourceLoader).createBitmap();
-            image.x = -(image.width * 0.5);
-            image.y = -image.height;
-            _sprite.addChild(image);
-
-            // add a glow around the image
-            _sprite.addChild(ImageUtil.createGlowBitmap(image, Constants.PLAYER_COLORS[_owningPlayerId] as uint));
-        }
-        
-        // draw some debugging circles
-        if (Constants.DRAW_UNIT_DATA_CIRCLES) {
-            
-            // unit-detect circle
-            if (_unitData.detectRadius != _unitData.collisionRadius) {
-                _sprite.graphics.lineStyle(1, 0x00FF00);
-                _sprite.graphics.drawCircle(0, 0, _unitData.detectRadius);
-            }
-            
-            // collision circle
-            _sprite.graphics.lineStyle(1, 0xFF0000);
-            _sprite.graphics.drawCircle(0, 0, _unitData.collisionRadius);
-        }
-
-        // health meter
-        _healthMeter = new RectMeter();
-        _healthMeter.minValue = 0;
-        _healthMeter.maxValue = _unitData.maxHealth;
-        _healthMeter.value = _health;
-        _healthMeter.foregroundColor = 0xFF0000;
-        _healthMeter.backgroundColor = 0x888888;
-        _healthMeter.outlineColor = 0x000000;
-        _healthMeter.width = 30;
-        _healthMeter.height = 3;
-        _healthMeter.x = -(_healthMeter.width * 0.5);
-        _healthMeter.y = -_sprite.height - _healthMeter.height;
-
-        // @TODO - this is probably bad practice right here.
-        GameMode.instance.addObject(_healthMeter, _sprite);
         
         // collision geometry
-        _geom = new UnitGeometry(this, collisionGrid);
-    }
-
-    override protected function destroyed () :void
-    {
-        _healthMeter.destroySelf();
-        _geom.unitDestroyed();
-    }
-
-    // from SceneObject
-    override public function get displayObject () :DisplayObject
-    {
-        return _sprite;
+        _geom = new UnitGeometry(this, GameMode.instance.battleCollisionGrid);
     }
 
     override public function get objectGroups () :Array
@@ -206,8 +142,6 @@ public class Unit extends SceneObject
                 _health -= int(_unitData.armor.getWeaponDamage(attack.weapon));
                 _health = Math.max(_health, 0);
                 
-                _healthMeter.value = _health;
-                
                 this.dispatchEvent(new UnitAttackedEvent(attack));
                 
                 if (_health == 0) {
@@ -237,18 +171,37 @@ public class Unit extends SceneObject
         return _unitData;
     }
 
+    public function get x () :Number
+    {
+        return _loc.x;
+    }
+
+    public function set x (val :Number) :void
+    {
+        _loc.x = val;
+    }
+
+    public function get y () :Number
+    {
+        return _loc.y;
+    }
+
+    public function set y (val :Number) :void
+    {
+        _loc.y = val;
+    }
+
     public function get unitLoc () :Vector2
     {
-        return new Vector2(this.displayObject.x, this.displayObject.y);
+        return _loc.clone();
     }
 
     protected var _owningPlayerId :uint;
     protected var _unitType :uint;
     protected var _unitData :UnitData;
     protected var _health :int;
-
-    protected var _sprite :Sprite;
-    protected var _healthMeter :RectMeter;
+    
+    protected var _loc :Vector2 = new Vector2();
     
     protected var _geom :UnitGeometry;
 

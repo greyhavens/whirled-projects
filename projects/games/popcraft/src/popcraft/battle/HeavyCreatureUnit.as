@@ -11,9 +11,9 @@ import popcraft.battle.geom.CollisionGrid;
  */
 public class HeavyCreatureUnit extends CreatureUnit
 {
-    public function HeavyCreatureUnit (owningPlayerId:uint, collisionGrid :CollisionGrid)
+    public function HeavyCreatureUnit (owningPlayerId:uint)
     {
-        super(Constants.UNIT_TYPE_HEAVY, owningPlayerId, collisionGrid);
+        super(Constants.UNIT_TYPE_HEAVY, owningPlayerId);
         _ai = new HeavyAI(this);
     }
 

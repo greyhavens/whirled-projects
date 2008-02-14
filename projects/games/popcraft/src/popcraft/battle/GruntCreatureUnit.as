@@ -14,9 +14,9 @@ import popcraft.battle.geom.CollisionGrid;
  */
 public class GruntCreatureUnit extends CreatureUnit
 {
-    public function GruntCreatureUnit (owningPlayerId:uint, collisionGrid :CollisionGrid)
+    public function GruntCreatureUnit (owningPlayerId:uint)
     {
-        super(Constants.UNIT_TYPE_GRUNT, owningPlayerId, collisionGrid);
+        super(Constants.UNIT_TYPE_GRUNT, owningPlayerId);
         
         _gruntAI = new GruntAI(this, this.findEnemyBaseToAttack());
     }

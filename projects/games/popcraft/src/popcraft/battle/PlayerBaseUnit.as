@@ -7,14 +7,16 @@ import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
 import popcraft.*;
-import popcraft.battle.geom.CollisionGrid;
 
 public class PlayerBaseUnit extends Unit
 {
-    public function PlayerBaseUnit (owningPlayerId :uint, loc :Vector2, collisionGrid :CollisionGrid)
+    public function PlayerBaseUnit (owningPlayerId :uint)
     {
-        super(Constants.UNIT_TYPE_BASE, owningPlayerId, collisionGrid);
-
+        super(Constants.UNIT_TYPE_BASE, owningPlayerId);
+    }
+    
+    public function set unitSpawnLoc (loc :Vector2) :void
+    {
         _unitSpawnLoc = loc;
     }
 

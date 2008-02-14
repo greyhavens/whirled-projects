@@ -15,7 +15,7 @@ public class UnitPurchaseButton extends DisablingButton
     {
         var data :UnitData = Constants.UNIT_DATA[unitType];
         
-        var bitmapData :BitmapData = (PopCraft.resourceManager.getResource(data.name) as ImageResourceLoader).bitmapData;
+        var bitmapData :BitmapData = (PopCraft.resourceManager.getResource(data.name + "_icon") as ImageResourceLoader).bitmapData;
 
         upState         = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP);
         overState       = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_OVER);

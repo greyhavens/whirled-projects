@@ -17,14 +17,16 @@ public class LoadingMode extends AppMode
     
     override protected function setup () :void
     {
-        PopCraft.resourceManager.pendResourceLoad("image", "grunt",     { embeddedClass: Content.IMAGE_GRUNT });
-        PopCraft.resourceManager.pendResourceLoad("image", "heavy",     { embeddedClass: Content.IMAGE_HEAVY });
-        PopCraft.resourceManager.pendResourceLoad("image", "sapper",    { embeddedClass: Content.IMAGE_SAPPER });
+        PopCraft.resourceManager.pendResourceLoad("image", "grunt_icon",     { embeddedClass: Content.IMAGE_GRUNTICON });
+        PopCraft.resourceManager.pendResourceLoad("image", "heavy_icon",     { embeddedClass: Content.IMAGE_HEAVYICON });
+        PopCraft.resourceManager.pendResourceLoad("image", "sapper_icon",    { embeddedClass: Content.IMAGE_SAPPERICON });
+        
         PopCraft.resourceManager.pendResourceLoad("image", "base",      { embeddedClass: Content.IMAGE_BASE });
         PopCraft.resourceManager.pendResourceLoad("image", "waypoint",  { embeddedClass: Content.IMAGE_WAYPOINT });
         PopCraft.resourceManager.pendResourceLoad("image", "battle_bg", { embeddedClass: Content.IMAGE_BATTLE_BG });
         PopCraft.resourceManager.pendResourceLoad("image", "battle_fg", { embeddedClass: Content.IMAGE_BATTLE_FG });
-        PopCraft.resourceManager.pendResourceLoad("swf", "streetwalker", { embeddedClass: Content.SWF_STREETWALKER });
+        
+        PopCraft.resourceManager.pendResourceLoad("swf", "grunt", { embeddedClass: Content.SWF_GRUNT });
         
         PopCraft.resourceManager.load();
         
