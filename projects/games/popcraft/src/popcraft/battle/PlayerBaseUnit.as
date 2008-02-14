@@ -1,5 +1,7 @@
 package popcraft.battle {
 
+import com.threerings.flash.Vector2;
+
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.resource.*;

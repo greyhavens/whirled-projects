@@ -1,5 +1,7 @@
 package popcraft.battle.ai {
 
+import com.threerings.flash.Vector2;
+
 import com.whirled.contrib.core.*;
 
 import popcraft.*;

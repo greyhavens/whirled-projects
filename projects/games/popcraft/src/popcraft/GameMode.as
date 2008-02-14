@@ -1,5 +1,7 @@
 package popcraft {
 
+import com.threerings.flash.Vector2;
+
 import com.threerings.util.Assert;
 import com.threerings.util.HashSet;
 import com.threerings.util.RingBuffer;

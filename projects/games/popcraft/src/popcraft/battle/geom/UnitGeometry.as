@@ -1,7 +1,8 @@
 package popcraft.battle.geom {
     
+import com.threerings.flash.Vector2;
+
 import com.threerings.util.Assert;
-import com.whirled.contrib.core.Vector2;
 import com.whirled.contrib.core.util.Collision;
 
 import flash.geom.Rectangle;
