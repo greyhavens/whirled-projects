@@ -11,6 +11,6 @@
 <data name="thing5" info="Thing 5" type="Point" value="5,6.6"/>
 <data name="thing6" info="Thing 6" type="Rectangle" value="5,6.6,100,100"/>
 -->
-<file name="texture" type="DisplayObject" info="The texture to use for the snowballs" optional="true" value="loading.swf"/>
+<file name="texture" type="DisplayObject" info="The texture to use for the snowballs" optional="true"width="100" height="100"/>
 <file name="_CONTENT" type="Blob" value="Snowman.swf"/>
 </datapack>

@@ -21,17 +21,15 @@ import com.whirled.DataPack;
 
 import org.papervision3d.Papervision3D;
 import org.papervision3d.cameras.Camera3D;
-import org.papervision3d.components.as3.flash9.PV3DScene3D;
 import org.papervision3d.core.proto.MaterialObject3D;
 import org.papervision3d.materials.BitmapMaterial;
 import org.papervision3d.materials.ColorMaterial;
 import org.papervision3d.materials.MovieMaterial;
 import org.papervision3d.objects.DisplayObject3D;
-import org.papervision3d.objects.Cone;
-import org.papervision3d.objects.Cylinder;
-import org.papervision3d.objects.Sphere;
-import org.papervision3d.scenes.MovieScene3D;
-import org.papervision3d.scenes.Scene3D;
+import org.papervision3d.objects.primitives.Cone;
+import org.papervision3d.objects.primitives.Cylinder;
+import org.papervision3d.objects.primitives.Sphere;
+import org.papervision3d.view.BasicView;
 
 [SWF(width="600", height="250")]
 public class Snowman extends Sprite
@@ -55,14 +53,14 @@ public class Snowman extends Sprite
         var ba :ByteArray = _control.getDefaultDataPack();
         if (ba != null) {
             _pack = new DataPack(ba);
-            _pack.getDisplayObjects([ "texture" ], gotTexture);
+            _pack.getDisplayObjects([ "texture" ], gotPackObjects);
 
         } else {
             createScene();
         }
     }
 
-    protected function gotTexture (results :Object) :void
+    protected function gotPackObjects (results :Object) :void
     {
         createScene(results["texture"], _pack.getData("eyeColor"),
             _pack.getData("noseColor"), _pack.getData("noseLength"), _pack.getData("hatColor"));
@@ -76,17 +74,13 @@ public class Snowman extends Sprite
         if (texture == null) {
             texture = (new SNOW_TEXTURE()) as Bitmap;
         }
-        var sprite :Sprite = new Sprite();
-        sprite.x = 300;
-        sprite.y = 200;
-        addChild(sprite);
+        _view = new BasicView(600, 450, false);
+        addChild(_view);
 
-        _scene = new Scene3D(sprite);
         var rootNode :DisplayObject3D = new DisplayObject3D("rootNode");
-        _scene.addChild(rootNode);
+        _view.scene.addChild(rootNode);
 
         var material :MaterialObject3D;
-        //material = new ColorMaterial(0xDDDDFF);
         if (texture is Bitmap) {
             material = new BitmapMaterial(Bitmap(texture).bitmapData);
         } else {
@@ -101,10 +95,10 @@ public class Snowman extends Sprite
             MovieMaterial(material).animated = true;
             _animated = true;
         }
-        var buttSphere :Sphere = new Sphere(material, 150, 16, 10);
+        var buttSphere :Sphere = new Sphere(material, 150, 32, 20);
         buttSphere.y = 150;
 
-        var midSphere :Sphere = new Sphere(material, 100, 16, 10);
+        var midSphere :Sphere = new Sphere(material, 100, 24, 15);
         midSphere.y = 400;
 
         var headSphere :Sphere = new Sphere(material, 50, 16, 10);
@@ -121,10 +115,9 @@ public class Snowman extends Sprite
         rightEye.y = 575;
         rightEye.z = 40;
 
-        //material = new BitmapMaterial(Bitmap(new TEXTURE()).bitmapData);
         material = new ColorMaterial(noseColor);
         // Cone is broken, it always makes a cylinder, so just use cylinder directly
-        var nose :Cylinder = new Cylinder(material, 10, noseLength, 16, 10, .01);
+        var nose :Cone = new Cone(material, 10, noseLength, 16, 10);
         nose.rotationX = 270;
         nose.z = 40 + (noseLength / 2);
         nose.y = 550;
@@ -153,11 +146,12 @@ public class Snowman extends Sprite
             rootNode.addChild(hatNode);
         }
 
-        _camera = new Camera3D(buttSphere);
+        _camera = _view.cameraAsCamera3D;
+        _camera.lookAt(buttSphere);
         // put the camera at the same height as the head..
         _camera.y = 600;
 
-        _scene.renderCamera(_camera);
+        _view.singleRender();
 
         // start listening for appearance changed
         _control.addEventListener(ControlEvent.APPEARANCE_CHANGED, appearanceChanged);
@@ -174,7 +168,7 @@ public class Snowman extends Sprite
         var needRender :Boolean = updateOrientation();
 
         if (needRender || _animated) {
-            _scene.renderCamera(_camera);
+            _view.singleRender();
         }
     }
 
@@ -304,7 +298,7 @@ public class Snowman extends Sprite
     /** Are we listening on ENTER_FRAME? */
     protected var _enterFrame :Boolean = false;
 
-    protected var _scene :Scene3D;
+    protected var _view :BasicView;
 
     protected var _camera :Camera3D;
 
