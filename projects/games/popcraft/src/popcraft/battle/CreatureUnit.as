@@ -132,10 +132,10 @@ public class CreatureUnit extends Unit
     
     protected var _movedThisFrame :Boolean;
     protected var _movementDirection :Vector2;
-    
-    protected static const MOVEMENT_EPSILON :Number = 0.01;
 
     protected static var g_groups :Array;
+    
+    protected static const MOVEMENT_EPSILON :Number = 0.01;
 }
 
 }
