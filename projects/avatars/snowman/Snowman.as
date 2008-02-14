@@ -31,7 +31,7 @@ import org.papervision3d.objects.primitives.Cylinder;
 import org.papervision3d.objects.primitives.Sphere;
 import org.papervision3d.view.BasicView;
 
-[SWF(width="600", height="250")]
+[SWF(width="600", height="300")]
 public class Snowman extends Sprite
 {
     public function Snowman ()
@@ -74,7 +74,7 @@ public class Snowman extends Sprite
         if (texture == null) {
             texture = (new SNOW_TEXTURE()) as Bitmap;
         }
-        _view = new BasicView(600, 450, false);
+        _view = new BasicView(600, 550, false);
         addChild(_view);
 
         var rootNode :DisplayObject3D = new DisplayObject3D("rootNode");
