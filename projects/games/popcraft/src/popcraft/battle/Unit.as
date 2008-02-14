@@ -1,7 +1,6 @@
 package popcraft.battle {
     
 import com.threerings.flash.Vector2;
-
 import com.threerings.util.Assert;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.components.*;
@@ -11,8 +10,6 @@ import com.whirled.contrib.core.tasks.*;
 import com.whirled.contrib.core.util.*;
 
 import flash.display.Bitmap;
-import flash.display.MovieClip;
-import flash.display.Sprite;
 
 import popcraft.*;
 import popcraft.battle.geom.*;
@@ -36,7 +33,15 @@ public class Unit extends AppObject
         _health = _unitData.maxHealth;
         
         // collision geometry
-        _geom = new UnitGeometry(this, GameMode.instance.battleCollisionGrid);
+        _collisionObj = new CollisionObject(this);
+        _collisionGrid = GameMode.instance.battleCollisionGrid; // there's only one collision grid
+    }
+    
+    override protected function update (dt :Number) :void
+    {
+        super.update(dt);
+        
+        _collisionObj.addToGrid(_collisionGrid);
     }
 
     override public function get objectGroups () :Array
@@ -204,7 +209,8 @@ public class Unit extends AppObject
     
     protected var _loc :Vector2 = new Vector2();
     
-    protected var _geom :UnitGeometry;
+    protected var _collisionObj :CollisionObject;
+    protected var _collisionGrid :CollisionGrid;
 
     protected static var g_groups :Array;
 }
