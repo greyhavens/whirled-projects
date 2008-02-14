@@ -18,6 +18,7 @@ import flash.utils.setTimeout;
 
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.FrameSprite;
+import com.threerings.flash.MathUtil;
 import com.whirled.AVRGameAvatar;
 import com.threerings.util.CommandEvent;
 
@@ -55,28 +56,12 @@ public class HUD extends FrameSprite
 
     public function ghostHealthUpdated () :void
     {
-        if (_ghostHealthBar == null || _ghostCaptureBar == null) {
-            return;
-        }
-        _ghostCaptureBar.visible = false;
-        _ghostHealthBar.visible = true;
-        _ghostHealthBar.gotoAndStop(
-            100 - 100 * Game.fightController.model.getRelativeGhostHealth());
-        Game.log.debug("Moved health bar to: " +
-                       (100 - 100 * Game.fightController.model.getRelativeGhostHealth()));
+        setHealth(Game.fightController.model.getRelativeGhostHealth(), false);
     }
 
     public function ghostZestUpdated () :void
     {
-        if (_ghostHealthBar == null || _ghostCaptureBar == null) {
-            return;
-        }
-        _ghostHealthBar.visible = false;
-        _ghostCaptureBar.visible = true;
-        _ghostCaptureBar.gotoAndStop(
-            100 - 100 * Game.seekController.model.getRelativeGhostZest());
-        Game.log.debug("Moved capture bar to: " +
-                       (100 - 100 * Game.seekController.model.getRelativeGhostZest()));
+        setHealth(Game.seekController.model.getRelativeGhostZest(), true);
     }
 
     public function getWeaponType () :int
@@ -262,10 +247,34 @@ public class HUD extends FrameSprite
         CommandEvent.dispatch(this, GameController.HELP);
     }
 
-//    protected function lootClick (evt :Event) :void
-//    {
-//        CommandEvent.dispatch(this, GameController.TOGGLE_LOOT);
-//    }
+    protected function setHealth (health :Number, isCapture :Boolean) :void
+    {
+        if (_ghostHealthBar == null || _ghostCaptureBar == null) {
+            return;
+        }
+        var bar :MovieClip;
+        var other :MovieClip;
+
+        if (isCapture) {
+            bar = _ghostCaptureBar;
+            other = _ghostHealthBar;
+        } else {
+            bar = _ghostHealthBar;
+            other = _ghostCaptureBar;
+        }
+        bar.visible = true;
+        other.visible = false;
+
+        var frame :int = 100 - 100 * MathUtil.clamp(health, 0, 100);
+        bar.gotoAndStop(frame);
+        Game.log.debug("Moved " + bar + " to frame #" + frame);
+
+        DisplayUtil.applyToHierarchy(bar, function (disp :DisplayObject) :void {
+            if (disp is MovieClip) {
+                MovieClip(disp).stop();
+            }
+        });
+    }
 
     protected var _hud :ClipHandler;
     protected var _visualHud :MovieClip;

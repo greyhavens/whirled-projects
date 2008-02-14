@@ -40,6 +40,7 @@ public class FightController extends Controller
 
     public function handleGhostMelee () :void
     {
+        Game.control.playAvatarAction("Retaliate");
         panel.showGhostDamage();
         if (model.damageGhost(10)) {
             panel.showGhostDeath();
