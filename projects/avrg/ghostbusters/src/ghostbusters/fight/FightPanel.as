@@ -63,16 +63,16 @@ public class FightPanel extends FrameSprite
         var selectedWeapon :int = Game.gameController.panel.hud.getWeaponType();
 
         if (selectedWeapon == HUD.LOOT_LANTERN) {
-            _minigame.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 2);
+            _minigame.weaponType = new WeaponType(WeaponType.NAME_LANTERN, );
 
         } else if (selectedWeapon == HUD.LOOT_BLASTER) {
             _minigame.weaponType = new WeaponType(WeaponType.NAME_PLASMA, 2);
 
         } else if (selectedWeapon == HUD.LOOT_OUIJA) {
-            _minigame.weaponType = new WeaponType(WeaponType.NAME_OUIJA, 2);
+            _minigame.weaponType = new WeaponType(WeaponType.NAME_OUIJA, 1);
 
         } else if (selectedWeapon == HUD.LOOT_POTIONS) {
-            _minigame.weaponType = new WeaponType(WeaponType.NAME_POTIONS, 2);
+            _minigame.weaponType = new WeaponType(WeaponType.NAME_POTIONS, 0);
 
         } else {
             Game.log.warning("Eek, unknown weapon: " + selectedWeapon);
