@@ -8,20 +8,20 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
+import com.threerings.util.Assert;
+
 import com.threerings.flash.FrameSprite;
 
 import org.papervision3d.Papervision3D;
 import org.papervision3d.cameras.Camera3D;
-import org.papervision3d.components.as3.flash9.PV3DScene3D;
 import org.papervision3d.core.proto.MaterialObject3D;
 import org.papervision3d.materials.BitmapMaterial;
 import org.papervision3d.materials.ColorMaterial;
-import org.papervision3d.materials.CompositeMaterial;
+import org.papervision3d.materials.special.CompositeMaterial;
 import org.papervision3d.objects.DisplayObject3D;
-import org.papervision3d.objects.Cube;
-import org.papervision3d.objects.Plane;
-import org.papervision3d.scenes.MovieScene3D;
-import org.papervision3d.scenes.Scene3D;
+import org.papervision3d.objects.primitives.Cube;
+import org.papervision3d.objects.primitives.Plane;
+import org.papervision3d.view.BasicView;
 
 /**
  * A 3D Magic Cube (Rubik's Cube) toy.
@@ -31,14 +31,11 @@ public class MagicCube extends FrameSprite
 {
     public function MagicCube ()
     {
-        var sprite :Sprite = new Sprite();
-        sprite.x = 200;
-        sprite.y = 200;
-        addChild(sprite);
+        _view = new BasicView(400, 400, false);
+        addChild(_view);
 
-        _scene = new Scene3D(sprite);
         _root = new DisplayObject3D("rootNode");
-        _scene.addChild(_root);
+        _view.scene.addChild(_root);
 
         var material :MaterialObject3D;
 
@@ -98,7 +95,10 @@ public class MagicCube extends FrameSprite
 
         _root.rotationX = 180;
 
-        _camera = new Camera3D(_root, 30000, 1);
+        _view.cameraAsCamera3D.lookAt(_root);
+        _view.cameraAsCamera3D.zoom = 30000;
+        _view.cameraAsCamera3D.focus = 1;
+        //_camera = new Camera3D(_root, 30000, 1);
     }
 
     protected function addCube (materials :Array, initObject :Object) :void
@@ -164,14 +164,12 @@ public class MagicCube extends FrameSprite
         _root.rotationX += Math.random();
         _root.rotationY += Math.random();
         _root.rotationZ += Math.random() * 2;
-        _scene.renderCamera(_camera);
+        _view.singleRender();
     }
 
     protected var _root :DisplayObject3D;
 
-    protected var _scene :Scene3D;
-
-    protected var _camera :Camera3D;
+    protected var _view :BasicView;
 
     [Embed(source="face.png")]
     protected static const FACE_TEXTURE :Class;
