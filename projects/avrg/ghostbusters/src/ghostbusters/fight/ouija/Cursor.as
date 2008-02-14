@@ -1,9 +1,12 @@
 package ghostbusters.fight.ouija {
 
+import com.threerings.flash.Vector2;
+
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.BitmapData
 import flash.display.Bitmap;
+import flash.display.InteractiveObject;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.filters.GlowFilter;
@@ -15,7 +18,6 @@ import flash.events.MouseEvent;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.tasks.*;
-import flash.display.InteractiveObject;
 
 /**
  * This should almost certainly be called "Planchette" instead of "Cursor", but who wants to type that word a million times?

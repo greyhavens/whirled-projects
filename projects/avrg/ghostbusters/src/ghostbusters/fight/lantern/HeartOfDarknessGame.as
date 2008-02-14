@@ -1,5 +1,7 @@
 package ghostbusters.fight.lantern {
     
+import com.threerings.flash.Vector2;
+
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;

@@ -1,5 +1,7 @@
 package ghostbusters.fight.potions {
 
+import com.threerings.flash.Vector2;
+
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;

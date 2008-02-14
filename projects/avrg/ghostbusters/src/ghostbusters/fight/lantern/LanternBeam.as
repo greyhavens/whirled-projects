@@ -1,6 +1,7 @@
 package ghostbusters.fight.lantern {
     
-import com.whirled.contrib.core.Vector2;
+import com.threerings.flash.Vector2;
+
 import com.whirled.contrib.core.objects.SceneObject;
 
 import flash.display.BlendMode;

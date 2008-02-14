@@ -1,7 +1,7 @@
 package ghostbusters.fight.ouija {
     
-import com.whirled.contrib.core.Vector2;
-    
+import com.threerings.flash.Vector2;
+
 public class Constants
 {
     public static const PICTO_MINLINELENGTH :Number = 6;
