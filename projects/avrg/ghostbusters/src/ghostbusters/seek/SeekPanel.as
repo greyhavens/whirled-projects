@@ -187,7 +187,7 @@ public class SeekPanel extends FrameSprite
 
     protected function zapStart () :void
     {
-        _zapping = 60;
+        _zapping = 30;
         Sound(new Content.LANTERN_GHOST_SCREECH()).play();
 
         // as a temporary visual effect, brighten the ghost by 50%

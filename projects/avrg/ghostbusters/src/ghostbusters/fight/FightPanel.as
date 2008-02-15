@@ -109,8 +109,9 @@ public class FightPanel extends FrameSprite
         // cancel minigame
         endFight();
 
+        Game.gameController.setAvatarState("Defeat");
         var panel :DisplayObject = this;
-        _ghost.die(function () :void {
+        _ghost.triumph(function () :void {
             CommandEvent.dispatch(panel, GameController.END_FIGHT);
         });
     }
@@ -172,7 +173,7 @@ public class FightPanel extends FrameSprite
             Game.log.debug("Frame handler running: " + this);
         }
 
-        if (Game.random.nextInt(300) == 0) {
+        if (Game.random.nextInt(200) == 0) {
             CommandEvent.dispatch(this, FightController.PLAYER_ATTACKED);
         }
 

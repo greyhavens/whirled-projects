@@ -46,9 +46,17 @@ public class Game extends Sprite
 
     public static var random :Random;
 
+    public static var ghost :Object;
+
     public function Game ()
     {
         random = new Random();
+
+        // TODO: vary by room
+        var len :int = Content.GHOSTS.length;
+        var ix :int = random.nextInt(len);
+        log.debug("Choosing ghost [ix=" + ix + ", len=" + len + "]");
+        ghost = Content.GHOSTS[ix];
 
         control = new AVRGameControl(this);
         ourPlayerId = control.getPlayerId();

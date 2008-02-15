@@ -273,7 +273,8 @@ public class HUD extends FrameSprite
         bar.visible = true;
         other.visible = false;
 
-        var frame :int = 99 - 98 * MathUtil.clamp(health, 0, 1);
+        // TODO: make use of all 100 frames!
+        var frame :int = 99 - 75 * MathUtil.clamp(health, 0, 1);
         bar.gotoAndStop(frame);
         Game.log.debug("Moved " + bar + " to frame #" + frame);
 
@@ -297,7 +298,8 @@ public class HUD extends FrameSprite
         var bar :MovieClip = _playerHealthBars[0];
         bar.visible = true;
 
-        var frame :int = 99 - 98 * MathUtil.clamp(health, 0, 1);
+        // TODO: make use of all 100 frames!
+        var frame :int = 99 - 75 * MathUtil.clamp(health, 0, 1);
         bar.gotoAndStop(frame);
         Game.log.debug("Moved " + bar + " to frame #" + frame);
 
@@ -357,6 +359,6 @@ public class HUD extends FrameSprite
     protected static const CHOOSE_POTIONS :String = "choose_heal";
 
     protected static const MARGIN_LEFT :int = 22;
-    protected static const BORDER_LEFT :int = 32;
+    protected static const BORDER_LEFT :int = 33;
 }
 }

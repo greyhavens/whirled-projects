@@ -22,10 +22,10 @@ public class Content
     public static const GHOST_DEMON :Class;
 
     public static const GHOSTS :Array = [
+        { clip: GHOST_PINCHER, name: "Mr. Pinchy" },
         { clip: GHOST_DUCHESS, name: "The Duchess" },
         { clip: GHOST_WIDOW, name: "The Widow" },
-        { clip: GHOST_PINCHER, name: "Mr. Pinchy" },
-        { clip: GHOST_DEMON, name: "Soul Crusher" }
+        { clip: GHOST_DEMON, name: "Soul Crusher" },
     ];
 
     [Embed(source="../../rsrc/UI/text_box.swf", mimeType="application/octet-stream")]

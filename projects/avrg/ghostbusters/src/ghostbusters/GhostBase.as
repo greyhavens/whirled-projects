@@ -23,7 +23,7 @@ public class GhostBase extends Sprite
 
     public function GhostBase ()
     {
-        handler = new ClipHandler(new Content.GHOST_DUCHESS(), setupUI);
+        handler = new ClipHandler(new (Game.ghost.clip)(), setupUI);
         this.addChild(handler);
     }
 
