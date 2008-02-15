@@ -13,12 +13,11 @@ import flash.text.TextFieldAutoSize;
 
 public class WinLoseNotification extends SceneObject
 {
-    public static const NAME :String = "WinLoseNotification";
+    public static const TIMER_NAME :String = "WinLoseNotification";
     
     public static function create (success :Boolean, parent :DisplayObjectContainer) :void
     {
         var notification :WinLoseNotification = new WinLoseNotification(success);
-        notification.animate();
         
         // center on game
         notification.x = (MicrogameConstants.GAME_WIDTH / 2) - (notification.width / 2);
@@ -27,13 +26,13 @@ public class WinLoseNotification extends SceneObject
         MainLoop.instance.topMode.addObject(notification, parent);
         
         // create a timer object
-        MainLoop.instance.topMode.addObject(new WinLoseTimer(NAME, 1.5));
+        MainLoop.instance.topMode.addObject(new WinLoseTimer(TIMER_NAME, 1.5));
         
     }
     
     public static function get isPlaying () :Boolean
     {
-        return (null != MainLoop.instance.topMode.getObjectNamed(NAME));
+        return (null != MainLoop.instance.topMode.getObjectNamed(TIMER_NAME));
     }
     
     public function WinLoseNotification (success :Boolean)
@@ -63,18 +62,6 @@ public class WinLoseNotification extends SceneObject
         
         _sprite.mouseEnabled = false;
         _sprite.mouseChildren = false;
-    }
-    
-    public function animate () :void
-    {
-        /*var anim :SerialTask = new SerialTask();
-        anim.addTask(ScaleTask.CreateEaseIn(0.8, 0.8, 1));
-        anim.addTask(ScaleTask.CreateEaseOut(3, 3, 2));
-        anim.addTask(new SelfDestructTask());
-        
-        this.addTask(anim);*/
-        
-        //this.addTask(After(1.5, new SelfDestructTask()));
     }
     
     override public function get displayObject () :DisplayObject
