@@ -110,9 +110,6 @@ public class HUD extends FrameSprite
 
     protected function handleHUDLoaded (... ignored) :void
     {
-        _hud.gotoScene("Scene 1");
-        _hud.stop();
-
         safelyAdd(HELP, helpClick);
         safelyAdd(CLOSE, closeClick);
 
@@ -271,13 +268,17 @@ public class HUD extends FrameSprite
         bar.visible = true;
         other.visible = false;
 
-        var frame :int = 100 - 99 * MathUtil.clamp(health, 0, 1);
+        var frame :int = 99 - 98 * MathUtil.clamp(health, 0, 1);
         bar.gotoAndStop(frame);
         Game.log.debug("Moved " + bar + " to frame #" + frame);
 
         DisplayUtil.applyToHierarchy(bar, function (disp :DisplayObject) :void {
             if (disp is MovieClip) {
-                Game.log.debug("Brutally stopping clip: " + disp);
+                MovieClip(disp).stop();
+            }
+        });
+        DisplayUtil.applyToHierarchy(other, function (disp :DisplayObject) :void {
+            if (disp is MovieClip) {
                 MovieClip(disp).stop();
             }
         });
@@ -332,6 +333,6 @@ public class HUD extends FrameSprite
     protected static const CHOOSE_POTIONS :String = "choose_heal";
 
     protected static const MARGIN_LEFT :int = 22;
-    protected static const BORDER_LEFT :int = 25;
+    protected static const BORDER_LEFT :int = 32;
 }
 }
