@@ -13,7 +13,7 @@ public class MissileFactory
         
         GameMode.instance.netObjects.addObject(missile);
         
-        var missileView :MissileView = new MissileView(srcUnit.unitLoc, targetUnit.unitLoc, travelTime);
+        var missileView :MissileView = new MissileView(srcUnit.unitLoc, targetUnit.id, travelTime);
         
         GameMode.instance.netObjects.addObject(missileView, GameMode.instance.battleUnitDisplayParent);
         
