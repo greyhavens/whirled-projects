@@ -17,7 +17,9 @@ public class Missile extends SimObject
     
     protected function deliverPayload () :void
     {
-        this.db.sendMessageTo(new ObjectMessage(GameMessage.MSG_UNITATTACKED, _attack), _attack.targetUnitRef);
+        if (!_attack.targetUnitRef.isNull) {
+            _attack.targetUnit.receiveAttack(_attack);
+        }
     }
     
     protected var _attack :UnitAttack;

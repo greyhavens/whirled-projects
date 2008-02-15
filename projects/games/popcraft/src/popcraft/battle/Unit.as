@@ -110,7 +110,7 @@ public class Unit extends SimObject
         switch(weapon.weaponType) {
             
         case UnitWeapon.TYPE_MELEE:
-            this.db.sendMessageTo(new ObjectMessage(GameMessage.MSG_UNITATTACKED, new UnitAttack(targetUnit.ref, this.ref, weapon)), targetUnit.ref);
+            targetUnit.receiveAttack(new UnitAttack(targetUnit.ref, this.ref, weapon));
             break;
             
         case UnitWeapon.TYPE_MISSILE:
@@ -128,22 +128,21 @@ public class Unit extends SimObject
         }
     }
     
-    override protected function receiveMessage (msg :ObjectMessage) :void
+    public function receiveAttack (attack :UnitAttack) :void
     {
-        if (msg.name == GameMessage.MSG_UNITATTACKED) {
-            var attack :UnitAttack = (msg.data as UnitAttack);
-            if (attack.targetUnitRef == this.ref) {
-                
-                _health -= int(_unitData.armor.getWeaponDamage(attack.weapon));
-                _health = Math.max(_health, 0);
-                
-                this.dispatchEvent(new UnitAttackedEvent(attack));
-                
-                if (_health == 0) {
-                    this.destroySelf();
-                }
-            }
+        _health -= int(_unitData.armor.getWeaponDamage(attack.weapon));
+        _health = Math.max(_health, 0);
+        
+        this.dispatchEvent(new UnitAttackedEvent(attack));
+        
+        if (_health == 0) {
+            this.destroySelf();
         }
+    }
+    
+    public function isEnemyUnit (unit :Unit) :Boolean
+    {
+        return (this.owningPlayerId != unit.owningPlayerId);
     }
 
     public function get owningPlayerId () :uint
