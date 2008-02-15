@@ -12,7 +12,7 @@ public class FollowUnitTask
 {
     public static const NAME :String = "FollowUnitTask";
 
-    public function FollowUnitTask (unitRef :AppObjectRef, minFollowDistance :Number, maxFollowDistance :Number)
+    public function FollowUnitTask (unitRef :SimObjectRef, minFollowDistance :Number, maxFollowDistance :Number)
     {
         Assert.isTrue(minFollowDistance >= 0);
         Assert.isTrue(maxFollowDistance >= minFollowDistance);
@@ -48,7 +48,7 @@ public class FollowUnitTask
         return NAME;
     }
 
-    protected var _unitRef :AppObjectRef;
+    protected var _unitRef :SimObjectRef;
     protected var _maxFollowDistance :Number;
     protected var _minFollowDistance :Number;
 

@@ -11,7 +11,7 @@ public class AttackUnitTask
 {
     public static const NAME :String = "AttackUnit";
 
-    public function AttackUnitTask (unitRef :AppObjectRef, followUnit :Boolean, loseInterestRange :Number)
+    public function AttackUnitTask (unitRef :SimObjectRef, followUnit :Boolean, loseInterestRange :Number)
     {
         _unitRef = unitRef;
         _followUnit = followUnit;
@@ -65,7 +65,7 @@ public class AttackUnitTask
         return NAME;
     }
 
-    protected var _unitRef :AppObjectRef;
+    protected var _unitRef :SimObjectRef;
     protected var _followUnit :Boolean;
     protected var _loseInterestRange :Number;
 

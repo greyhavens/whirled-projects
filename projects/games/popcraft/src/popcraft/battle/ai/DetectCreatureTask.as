@@ -21,7 +21,7 @@ public class DetectCreatureTask
         var creatureRefs :Array = GameMode.getNetObjectRefsInGroup(CreatureUnit.GROUP_NAME);
         var detectedCreature :CreatureUnit;
         
-        for each (var ref :AppObjectRef in creatureRefs) {
+        for each (var ref :SimObjectRef in creatureRefs) {
             var creature :CreatureUnit = ref.object as CreatureUnit;
             if (null != creature && unit != creature && _detectPredicate(unit, creature)) {
                 detectedCreature = creature;
@@ -42,7 +42,7 @@ public class DetectCreatureTask
         return _taskName;
     }
     
-    public function get detectedCreatureRef () :AppObjectRef
+    public function get detectedCreatureRef () :SimObjectRef
     {
         return _detectedCreatureRef;
     }
@@ -50,7 +50,7 @@ public class DetectCreatureTask
     protected var _taskName :String;
     protected var _detectPredicate :Function;
     
-    protected var _detectedCreatureRef :AppObjectRef;
+    protected var _detectedCreatureRef :SimObjectRef;
 
 }
 

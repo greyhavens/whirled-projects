@@ -27,7 +27,7 @@ public class GameMode extends AppMode
         return instance;
     }
     
-    public static function getNetObjectNamed (objectName :String) :AppObject
+    public static function getNetObjectNamed (objectName :String) :SimObject
     {
         return GameMode.instance.netObjects.getObjectNamed(objectName);
     }
@@ -223,7 +223,7 @@ public class GameMode extends AppMode
 
     public function getPlayerBase (player :uint) :PlayerBaseUnit
     {
-        return (_playerBaseRefs[player] as AppObjectRef).object as PlayerBaseUnit;
+        return (_playerBaseRefs[player] as SimObjectRef).object as PlayerBaseUnit;
     }
 
     protected function debugNetwork (messageArray :Array) :void

@@ -1,6 +1,6 @@
 package popcraft.battle.ai {
     
-import com.whirled.contrib.core.AppObjectRef;
+import com.whirled.contrib.core.SimObjectRef;
     
 public class AttackApproachingEnemiesTask extends AITaskTree
 {
@@ -15,7 +15,7 @@ public class AttackApproachingEnemiesTask extends AITaskTree
             
         case DetectEnemyTask.NAME:
             // unit detected. start attacking
-            var enemyRef :AppObjectRef = (task as DetectEnemyTask).detectedCreatureRef;
+            var enemyRef :SimObjectRef = (task as DetectEnemyTask).detectedCreatureRef;
             
             this.clearSubtasks();
             this.addSubtask(new AttackUnitTask(enemyRef, false, -1));

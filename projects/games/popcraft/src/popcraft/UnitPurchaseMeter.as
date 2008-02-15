@@ -60,7 +60,7 @@ public class UnitPurchaseMeter extends SceneObject
 
     override protected function destroyed () :void
     {
-        for each (var meter :AppObject in _meters) {
+        for each (var meter :SimObject in _meters) {
             meter.destroySelf();
         }
     }

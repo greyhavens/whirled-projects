@@ -19,7 +19,7 @@ import popcraft.util.*;
  * If ActionScript allowed the creation of abstract classes or private constructors, I would do that here.
  * Alas, it doesn't. But Unit is not intended to be instantiated directly.
  */
-public class Unit extends AppObject
+public class Unit extends SimObject
     implements LocationComponent
 {
     public static const GROUP_NAME :String = "Unit";

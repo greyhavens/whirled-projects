@@ -1,12 +1,12 @@
 package popcraft.battle {
     
-import com.whirled.contrib.core.AppObject;
+import com.whirled.contrib.core.SimObject;
 import com.whirled.contrib.core.ObjectMessage;
 import com.whirled.contrib.core.tasks.*;
 
 import popcraft.GameMode;
 
-public class Missile extends AppObject
+public class Missile extends SimObject
 {
     public function Missile (attack :UnitAttack, travelTime :Number)
     {

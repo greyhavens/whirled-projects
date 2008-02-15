@@ -67,7 +67,7 @@ class HeavyAI extends AITaskTree
             // we found a grunt - escort it
             trace("HeavyAI: found grunt to escort");
             this.clearSubtasks();
-            var gruntRef :AppObjectRef = (task as DetectCreatureTask).detectedCreatureRef;
+            var gruntRef :SimObjectRef = (task as DetectCreatureTask).detectedCreatureRef;
             this.addSubtask(new EscortGruntTask(gruntRef));
             break;
             
@@ -115,7 +115,7 @@ class EscortGruntTask extends AITaskTree
 {
     public static const NAME :String = "EscortGruntTask";
     
-    public function EscortGruntTask (gruntRef :AppObjectRef)
+    public function EscortGruntTask (gruntRef :SimObjectRef)
     {
         _gruntRef = gruntRef;
         
@@ -168,7 +168,7 @@ class EscortGruntTask extends AITaskTree
         }
     }
     
-    protected var _gruntRef :AppObjectRef;
+    protected var _gruntRef :SimObjectRef;
     protected var _gruntDied :Boolean;
     
     protected static const ESCORT_DISTANCE_MIN :Number = 30;

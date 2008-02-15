@@ -89,7 +89,7 @@ public class CreatureUnit extends Unit
         }
     }
 
-    // from AppObject
+    // from SimObject
     override public function get objectGroups () :Array
     {
         // every CreatureUnit is in the CreatureUnit.GROUP_NAME group
@@ -105,11 +105,11 @@ public class CreatureUnit extends Unit
 
     // returns an enemy base.
     // @TODO: make this work with multiple bases and destroyed bases
-    public function findEnemyBaseToAttack () :AppObjectRef
+    public function findEnemyBaseToAttack () :SimObjectRef
     {
         var game :GameMode = GameMode.instance;
         
-        var enemyBaseRef :AppObjectRef;
+        var enemyBaseRef :SimObjectRef;
         
         if (game.numPlayers > 1) {
             var enemyPlayerId :uint = game.getRandomEnemyPlayerId(_owningPlayerId);

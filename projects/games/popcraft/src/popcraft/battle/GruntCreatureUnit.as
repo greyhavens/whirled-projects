@@ -41,7 +41,7 @@ public class GruntCreatureUnit extends CreatureUnit
     }
 
     protected var _gruntAI :GruntAI;
-    protected var _escortRef :AppObjectRef;
+    protected var _escortRef :SimObjectRef;
 }
 
 }
@@ -61,7 +61,7 @@ import popcraft.battle.ai.*;
  */
 class GruntAI extends AITaskTree
 {
-    public function GruntAI (unit :GruntCreatureUnit, targetBaseRef :AppObjectRef)
+    public function GruntAI (unit :GruntCreatureUnit, targetBaseRef :SimObjectRef)
     {
         _unit = unit;
         _targetBaseRef = targetBaseRef;
@@ -108,5 +108,5 @@ class GruntAI extends AITaskTree
 
     protected var _unit :GruntCreatureUnit;
     protected var _state :uint;
-    protected var _targetBaseRef :AppObjectRef;
+    protected var _targetBaseRef :SimObjectRef;
 }

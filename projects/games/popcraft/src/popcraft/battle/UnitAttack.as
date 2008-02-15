@@ -4,14 +4,14 @@ import com.whirled.contrib.core.*;
     
 public class UnitAttack
 {
-    public function UnitAttack (targetUnitRef :AppObjectRef, sourceUnitRef :AppObjectRef, weapon :UnitWeapon)
+    public function UnitAttack (targetUnitRef :SimObjectRef, sourceUnitRef :SimObjectRef, weapon :UnitWeapon)
     {
         _targetUnitRef = targetUnitRef;
         _sourceUnitRef = sourceUnitRef;
         _weapon = weapon;
     }
     
-    public function get targetUnitRef () :AppObjectRef
+    public function get targetUnitRef () :SimObjectRef
     {
         return _targetUnitRef;
     }
@@ -21,7 +21,7 @@ public class UnitAttack
         return _targetUnitRef.object as Unit;
     }
     
-    public function get sourceUnitRef () :AppObjectRef
+    public function get sourceUnitRef () :SimObjectRef
     {
         return _sourceUnitRef;
     }
@@ -36,8 +36,8 @@ public class UnitAttack
         return _weapon;
     }
     
-    protected var _targetUnitRef :AppObjectRef;
-    protected var _sourceUnitRef :AppObjectRef;
+    protected var _targetUnitRef :SimObjectRef;
+    protected var _sourceUnitRef :SimObjectRef;
     protected var _weapon :UnitWeapon;
 
 }

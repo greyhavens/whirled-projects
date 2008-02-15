@@ -1,13 +1,13 @@
 package popcraft {
 
-import com.whirled.contrib.core.AppObject;
+import com.whirled.contrib.core.SimObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import popcraft.battle.UnitData;
 import flash.display.Shape;
 
-public class UnitPurchaseButtonManager extends AppObject
+public class UnitPurchaseButtonManager extends SimObject
 {
     public function UnitPurchaseButtonManager ()
     {
