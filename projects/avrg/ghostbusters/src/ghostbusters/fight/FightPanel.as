@@ -96,8 +96,9 @@ public class FightPanel extends FrameSprite
         // cancel minigame
         endFight();
 
+        var panel :DisplayObject = this;
         _ghost.die(function () :void {
-            CommandEvent.dispatch(this, GameController.END_FIGHT);
+            CommandEvent.dispatch(panel, GameController.END_FIGHT);
         });
     }
 

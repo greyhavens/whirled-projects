@@ -45,17 +45,15 @@ public class SpawnedGhost extends GhostBase
     public function damaged () :void
     {
         Game.log.debug("Ghost damaged [_next=" + _next + "]");
-        if (_next == ST_FIGHT) {
-            _next = ST_REEL;
-        }
+        _next = ST_FIGHT;
+        handler.gotoScene(Codes.ST_GHOST_REEL, play);
     }
 
     public function attack () :void
     {
         Game.log.debug("Ghost attacking [_next=" + _next + "]");
-        if (_next == ST_FIGHT || _next == ST_REEL) {
-            _next = ST_ATTACK;
-        }
+        _next = ST_FIGHT;
+        handler.gotoScene(Codes.ST_GHOST_RETALIATE, play);
     }
 
     public function die (callback :Function) :void

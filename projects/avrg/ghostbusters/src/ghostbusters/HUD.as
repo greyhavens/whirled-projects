@@ -226,8 +226,8 @@ public class HUD extends FrameSprite
             placeHud();
             teamUpdated();
 
-            setHealth(100, false);
-            setHealth(100, true);
+            setHealth(1, false);
+            setHealth(1, true);
         }
 
         _yourHealthBar.gotoAndStop(

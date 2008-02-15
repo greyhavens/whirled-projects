@@ -57,9 +57,7 @@ public class SeekPanel extends FrameSprite
     {
         var lantern :Lantern = _lanterns[playerId];
         if (lantern) {
-            _dimness.removeChild(lantern.hole);
-            _lightLayer.removeChild(lantern.light);
-            _maskLayer.removeChild(lantern.mask);
+            lanternOff(lantern);
             delete _lanterns[playerId];
         }
     }
@@ -76,12 +74,20 @@ public class SeekPanel extends FrameSprite
 
     public function appearGhost () :void
     {
-        this.removeChild(_lightLayer);
-        this.removeChild(_maskLayer);
-        _appearing = true;
+        for each (var lantern :Lantern in _lanterns) {
+            lanternOff(lantern);
+        }
+        _lanterns = null;
         _ghost.appear(spawnGhost);
         _ghost.newTarget(new Point(Game.stageSize.width - 250, 100));
-        _ghost.mask = null;
+        this.removeChild(_maskLayer);
+    }
+
+    protected function lanternOff (lantern :Lantern) :void
+    {
+        _dimness.removeChild(lantern.hole);
+        _lightLayer.removeChild(lantern.light);
+        _maskLayer.removeChild(lantern.mask);
     }
 
     protected function spawnGhost () :void
@@ -133,16 +139,9 @@ public class SeekPanel extends FrameSprite
             Game.log.debug("Frame handler running: " + this);
         }
 
-        animateLanterns();
-
         var p :Point = new Point(Math.max(0, Math.min(Game.stageSize.width, this.mouseX)),
                                  Math.max(0, Math.min(Game.stageSize.height, this.mouseY)));
         p = this.localToGlobal(p);
-
-        // bow to reality: nobody wants to watch roundtrip lag in action
-        if (!Game.DEBUG) {
-            updateLantern(Game.ourPlayerId, p);
-        }
 
         if (_ghost != null) {
             _ghost.nextFrame();
@@ -154,10 +153,21 @@ public class SeekPanel extends FrameSprite
                 }
             }
 
-            if (_appearing == false && _zapping == 0 && _ghost.hitTestPoint(p.x, p.y, true)) {
+            if (_lanterns != null && _zapping == 0 && _ghost.hitTestPoint(p.x, p.y, true)) {
                 // the player is hovering right over the ghost!
                 CommandEvent.dispatch(this, SeekController.ZAP_GHOST);
             }
+        }
+
+        if (_lanterns == null) {
+            return;
+        }
+
+        animateLanterns();
+
+        // bow to reality: nobody wants to watch roundtrip lag in action
+        if (!Game.DEBUG) {
+            updateLantern(Game.ourPlayerId, p);
         }
 
         // see if it's time to send an update on our own position
@@ -169,7 +179,7 @@ public class SeekPanel extends FrameSprite
 
         _model.transmitLanternPosition(p);
 
-        if (_appearing == false && _ghost != null && _ghost.isIdle()) {
+        if (_ghost != null && _ghost.isIdle()) {
             _model.constructNewGhostPosition(_ghost.getGhostBounds());
         }
     }

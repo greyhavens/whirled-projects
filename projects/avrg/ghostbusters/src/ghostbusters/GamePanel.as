@@ -76,6 +76,7 @@ public class GamePanel extends Sprite
 
         } else if (state == GameModel.STATE_FIGHTING) {
             showPanels(Game.fightController.panel, hud);
+            hud.ghostHealthUpdated();
             avatarState = Codes.ST_PLAYER_FIGHT;
 
         } else {
