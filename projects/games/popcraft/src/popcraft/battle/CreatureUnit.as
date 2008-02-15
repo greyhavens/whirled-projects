@@ -145,6 +145,11 @@ public class CreatureUnit extends Unit
         _collisionObj.detectCollisions();
     }
     
+    public function removeFromCollisionGrid () :void
+    {
+        _collisionObj.removeFromGrid();
+    }
+    
     protected var _destination :Vector2;
     
     protected var _lastLoc :Vector2 = new Vector2();

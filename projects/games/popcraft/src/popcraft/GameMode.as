@@ -93,8 +93,7 @@ public class GameMode extends AppMode
         _messageMgr.setup((0 == _playerData.playerId), TICK_INTERVAL_MS);
 
         // create a special ObjectDB for all objects that are synchronized over the network.
-        // we will manage this mode ourselves.
-        _netObjects = new ObjectDB();
+        _netObjects = new NetObjectDB();
 
         // create the player bases & waypoints
         var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
