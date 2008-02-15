@@ -25,6 +25,10 @@ public class WinLoseNotification extends SceneObject
         notification.y = (MicrogameConstants.GAME_HEIGHT / 2) - (notification.height / 2);
         
         MainLoop.instance.topMode.addObject(notification, parent);
+        
+        // create a timer object
+        MainLoop.instance.topMode.addObject(new WinLoseTimer(NAME, 1.5));
+        
     }
     
     public static function get isPlaying () :Boolean
@@ -70,12 +74,7 @@ public class WinLoseNotification extends SceneObject
         
         this.addTask(anim);*/
         
-        this.addTask(After(1.5, new SelfDestructTask()));
-    }
-    
-    override public function get objectName () :String
-    {
-        return NAME;
+        //this.addTask(After(1.5, new SelfDestructTask()));
     }
     
     override public function get displayObject () :DisplayObject
@@ -102,4 +101,21 @@ public class WinLoseNotification extends SceneObject
     
 }
 
+}
+
+import com.whirled.contrib.core.SimObject;
+import com.whirled.contrib.core.tasks.*;
+
+class WinLoseTimer extends SimObject
+{
+    public function WinLoseTimer (name :String, time :Number)
+    {
+        _name = name;
+        
+        this.addTask(After(time, new SelfDestructTask()));
+    }
+    
+    override public function get objectName () :String { return _name; }
+    
+    protected var _name :String;
 }
