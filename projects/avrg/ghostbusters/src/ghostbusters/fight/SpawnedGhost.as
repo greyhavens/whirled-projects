@@ -63,6 +63,12 @@ public class SpawnedGhost extends GhostBase
         _next = ST_DIE;
     }
 
+    public function triumph (callback :Function) :void
+    {
+        Game.log.debug("Ghost triumphant [_next=" + _next + "]");
+        handler.gotoScene(Codes.ST_GHOST_TRIUMPH, callback);
+    }
+
     protected var _next :int;
     protected var _callback :Function;
 

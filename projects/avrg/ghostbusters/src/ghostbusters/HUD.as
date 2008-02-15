@@ -54,14 +54,19 @@ public class HUD extends FrameSprite
         }
     }
 
+    public function playerHealthUpdated () :void
+    {
+        setPlayerHealth(Game.fightController.model.getRelativePlayerHealth());
+    }
+
     public function ghostHealthUpdated () :void
     {
-        setHealth(Game.fightController.model.getRelativeGhostHealth(), false);
+        setGhostHealth(Game.fightController.model.getRelativeGhostHealth(), false);
     }
 
     public function ghostZestUpdated () :void
     {
-        setHealth(Game.seekController.model.getRelativeGhostZest(), true);
+        setGhostHealth(Game.seekController.model.getRelativeGhostZest(), true);
     }
 
     public function getWeaponType () :int
@@ -223,8 +228,8 @@ public class HUD extends FrameSprite
             placeHud();
             teamUpdated();
 
-            setHealth(1, false);
-            setHealth(1, true);
+            setGhostHealth(1, false);
+            setGhostHealth(1, true);
         }
 
         _yourHealthBar.gotoAndStop(
@@ -250,7 +255,7 @@ public class HUD extends FrameSprite
         CommandEvent.dispatch(this, GameController.HELP);
     }
 
-    protected function setHealth (health :Number, isCapture :Boolean) :void
+    protected function setGhostHealth (health :Number, isCapture :Boolean) :void
     {
         if (_ghostHealthBar == null || _ghostCaptureBar == null) {
             return;
@@ -278,6 +283,25 @@ public class HUD extends FrameSprite
             }
         });
         DisplayUtil.applyToHierarchy(other, function (disp :DisplayObject) :void {
+            if (disp is MovieClip) {
+                MovieClip(disp).stop();
+            }
+        });
+    }
+
+    protected function setPlayerHealth (health :Number) :void
+    {
+        if (_playerHealthBars == null) {
+            return;
+        }
+        var bar :MovieClip = _playerHealthBars[0];
+        bar.visible = true;
+
+        var frame :int = 99 - 98 * MathUtil.clamp(health, 0, 1);
+        bar.gotoAndStop(frame);
+        Game.log.debug("Moved " + bar + " to frame #" + frame);
+
+        DisplayUtil.applyToHierarchy(bar, function (disp :DisplayObject) :void {
             if (disp is MovieClip) {
                 MovieClip(disp).stop();
             }

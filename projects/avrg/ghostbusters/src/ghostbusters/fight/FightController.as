@@ -15,7 +15,8 @@ import ghostbusters.GameController;
 
 public class FightController extends Controller
 {
-    public static const GHOST_MELEE :String = "GhostMelee";
+    public static const GHOST_ATTACKED :String = "GhostAttacked";
+    public static const PLAYER_ATTACKED :String = "PlayerAttacked";
 
     public var panel :FightPanel;
     public var model :FightModel;
@@ -38,12 +39,21 @@ public class FightController extends Controller
         panel.startGame();
     }
 
-    public function handleGhostMelee () :void
+    public function handleGhostAttacked () :void
     {
         Game.control.playAvatarAction("Retaliate");
         panel.showGhostDamage();
         if (model.damageGhost(10)) {
             panel.showGhostDeath();
+        }
+    }
+
+    public function handlePlayerAttacked () :void
+    {
+        Game.control.playAvatarAction("Reel");
+        panel.showGhostAttack();
+        if (model.damagePlayer(10)) {
+            panel.showPlayerDeath();
         }
     }
 }

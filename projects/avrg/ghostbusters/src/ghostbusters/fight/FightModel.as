@@ -19,16 +19,14 @@ public class FightModel
     public function init (panel :FightPanel) :void
     {
         _panel = panel;
-        newGhost(100);
+
+        var health :int = 100;
+        Game.control.state.setProperty(Codes.PROP_GHOST_HEALTH, [ health, health ], false);
+        Game.control.state.setProperty(Codes.PROP_PLAYER_HEALTH, [ health, health ], false);
     }
 
     public function shutdown () :void
     {
-    }
-
-    public function newGhost (health :int) :void
-    {
-        Game.control.state.setProperty(Codes.PROP_GHOST_HEALTH, [ health, health ], false);
     }
 
     public function damageGhost (damage :int) :Boolean
@@ -40,6 +38,19 @@ public class FightModel
         }
         Game.control.state.setProperty(
             Codes.PROP_GHOST_HEALTH, [ health-damage, getGhostMaxHealth() ], false);
+        return false;
+    }
+
+    // TODO: this should obviously not be single-player :)
+    public function damagePlayer (damage :int) :Boolean
+    {
+        var health :int = getPlayerHealth();
+        Game.log.debug("Doing " + damage + " damage to a player with health " + health);
+        if (damage > health) {
+            return true;
+        }
+        Game.control.state.setProperty(
+            Codes.PROP_PLAYER_HEALTH, [ health-damage, getPlayerMaxHealth() ], false);
         return false;
     }
 
@@ -64,11 +75,36 @@ public class FightModel
         return 0;
     }
 
+    public function getPlayerHealth () :int
+    {
+        var gh :Object = Game.control.state.getProperty(Codes.PROP_PLAYER_HEALTH);
+        return gh != null ? gh[0] : 1;
+    }
+
+    public function getPlayerMaxHealth () :Number
+    {
+        var gh :Object = Game.control.state.getProperty(Codes.PROP_PLAYER_HEALTH);
+        return gh != null ? gh[1] : 1;
+    }
+
+    public function getRelativePlayerHealth () :Number
+    {
+        var max :Number = getPlayerMaxHealth();
+        if (max > 0) {
+            return Math.max(0, Math.min(1, getPlayerHealth() / max));
+        }
+        return 0;
+    }
+
     protected function propertyChanged (evt :AVRGameControlEvent) :void
     {
         if (evt.name == Codes.PROP_GHOST_HEALTH) {
             // this is u-g-l-y
             Game.gameController.panel.hud.ghostHealthUpdated();
+
+        } else if (evt.name == Codes.PROP_PLAYER_HEALTH) {
+            // this is u-g-l-y
+            Game.gameController.panel.hud.playerHealthUpdated();
         }
     }
 

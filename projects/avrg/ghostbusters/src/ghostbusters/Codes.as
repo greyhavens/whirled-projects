@@ -11,6 +11,7 @@ public class Codes
 
     public static const PROP_LANTERN_POS :String = "lp";
     public static const PROP_GHOST_HEALTH :String = "gh";
+    public static const PROP_PLAYER_HEALTH :String = "ph";
 
     public static const MOB_ID_GHOST :String = "ghost"
 

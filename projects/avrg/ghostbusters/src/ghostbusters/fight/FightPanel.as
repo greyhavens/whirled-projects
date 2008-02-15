@@ -102,10 +102,30 @@ public class FightPanel extends FrameSprite
         });
     }
 
+    public function showPlayerDeath () :void
+    {
+        // TODO: make not single player
+
+        // cancel minigame
+        endFight();
+
+        var panel :DisplayObject = this;
+        _ghost.die(function () :void {
+            CommandEvent.dispatch(panel, GameController.END_FIGHT);
+        });
+    }
+
     public function showGhostDamage () :void
     {
         if (_ghost != null && _ghost.parent != null) {
             _ghost.damaged();
+        }
+    }
+
+    public function showGhostAttack () :void
+    {
+        if (_ghost != null && _ghost.parent != null) {
+            _ghost.attack();
         }
     }
 
@@ -152,6 +172,10 @@ public class FightPanel extends FrameSprite
             Game.log.debug("Frame handler running: " + this);
         }
 
+        if (Game.random.nextInt(300) == 0) {
+            CommandEvent.dispatch(this, FightController.PLAYER_ATTACKED);
+        }
+
         var players :Array = Game.control.getPlayerIds();
         if (players != null) {
             updateSpotlights(players);
@@ -163,7 +187,7 @@ public class FightPanel extends FrameSprite
 
             } else if (_minigame.currentGame.isDone) {
                 if (_minigame.currentGame.gameResult.success == MicrogameResult.SUCCESS) {
-                    CommandEvent.dispatch(this, FightController.GHOST_MELEE);
+                    CommandEvent.dispatch(this, FightController.GHOST_ATTACKED);
                 }
                 if (_minigame != null) {
                     _minigame.beginNextGame();
@@ -200,11 +224,6 @@ public class FightPanel extends FrameSprite
         }
 
         // TODO: remove spotlights when people leave
-    }
-
-    protected function gamePerformance (score :Number, style :Number = 0) :void
-    {
-        CommandEvent.dispatch(this, FightController.GHOST_MELEE, score);
     }
 
     protected var _model :FightModel;
