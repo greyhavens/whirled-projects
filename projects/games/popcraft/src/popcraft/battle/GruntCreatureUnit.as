@@ -41,7 +41,7 @@ public class GruntCreatureUnit extends CreatureUnit
     }
 
     protected var _gruntAI :GruntAI;
-    protected var _escortRef :SimObjectRef;
+    protected var _escortRef :SimObjectRef = new SimObjectRef();
 }
 
 }
