@@ -15,6 +15,8 @@ public class CollisionObject
     
     public function addToGrid (grid :CollisionGrid) :void
     {
+        Assert.isFalse(grid.isDetectingCollisions, "CollisionGrid cannot be modified during collision detection");
+        
         if (null != _grid) {
             this.removeFromGrid();
         }
@@ -46,6 +48,8 @@ public class CollisionObject
             return;
         }
         
+        Assert.isFalse(_grid.isDetectingCollisions, "CollisionGrid cannot be modified during collision detection");
+        
         // remove this object from the cell's object list
         
         if (null != _prev) {
@@ -70,6 +74,8 @@ public class CollisionObject
         if (null == _grid) {
             return;
         }
+        
+        Assert.isTrue(_grid.isDetectingCollisions, "CollisionGrid.beginDetectCollisions() must be called before collision detection happens");
         
         // we need to check for collisions against all objects
         // after us in our cell's object list, and with all objects

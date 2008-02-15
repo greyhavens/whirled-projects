@@ -1,7 +1,6 @@
 package popcraft.battle {
 
 import com.threerings.flash.Vector2;
-
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.resource.*;
@@ -10,6 +9,7 @@ import com.whirled.contrib.core.util.*;
 
 import popcraft.*;
 import popcraft.battle.ai.*;
+import popcraft.battle.geom.*;
 import popcraft.util.*;
 
 public class CreatureUnit extends Unit
@@ -26,6 +26,10 @@ public class CreatureUnit extends Unit
         // @TODO - move this out of here
         this.x = spawnLoc.x;
         this.y = spawnLoc.y;
+        
+        // collision geometry
+        _collisionObj = new CollisionObject(this);
+        _collisionGrid = GameMode.instance.battleCollisionGrid; // there's only one collision grid
     }
     
     public function setMovementDestination (dest :Vector2) :void
@@ -60,6 +64,10 @@ public class CreatureUnit extends Unit
                 this.stopMoving();
             } else {
             
+                // remember where we were at the beginning of the frame, for
+                // collision response
+                _lastLoc = curLoc.clone();
+            
                 _movementDirection = _destination.subtract(curLoc);
                 
                 var remainingDistance :Number = _movementDirection.normalizeLocalAndGetLength();
@@ -70,10 +78,11 @@ public class CreatureUnit extends Unit
                 // calculate our next location
                 var nextLoc :Vector2 = _movementDirection.scale(distance).addLocal(curLoc);
                 
-                // @TODO - collision checking goes here
-                
                 this.x = nextLoc.x;
                 this.y = nextLoc.y;
+                
+                // update our location in the collision grid
+                _collisionObj.addToGrid(_collisionGrid);
                 
                 _movedThisFrame = true;
             }
@@ -129,7 +138,18 @@ public class CreatureUnit extends Unit
         super.update(dt);
     }
     
+    public function detectCollisions () :void
+    {
+        // called on every CreatureUnit, once per frame,
+        // to detect any collisions that have occurred
+        _collisionObj.detectCollisions();
+    }
+    
     protected var _destination :Vector2;
+    
+    protected var _lastLoc :Vector2 = new Vector2();
+    protected var _collisionObj :CollisionObject;
+    protected var _collisionGrid :CollisionGrid;
     
     protected var _movedThisFrame :Boolean;
     protected var _movementDirection :Vector2;

@@ -31,17 +31,6 @@ public class Unit extends AppObject
 
         _unitData = (Constants.UNIT_DATA[unitType] as UnitData);
         _health = _unitData.maxHealth;
-        
-        // collision geometry
-        _collisionObj = new CollisionObject(this);
-        _collisionGrid = GameMode.instance.battleCollisionGrid; // there's only one collision grid
-    }
-    
-    override protected function update (dt :Number) :void
-    {
-        super.update(dt);
-        
-        _collisionObj.addToGrid(_collisionGrid);
     }
 
     override public function get objectGroups () :Array
@@ -208,9 +197,6 @@ public class Unit extends AppObject
     protected var _health :int;
     
     protected var _loc :Vector2 = new Vector2();
-    
-    protected var _collisionObj :CollisionObject;
-    protected var _collisionGrid :CollisionGrid;
 
     protected static var g_groups :Array;
 }

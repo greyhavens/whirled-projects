@@ -1,10 +1,7 @@
 package popcraft.battle.geom {
     
 import com.threerings.flash.Vector2;
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
-
-import flash.geom.Rectangle;
 
 /**
  * A simple grid-based spatial database for storing dynmaic game objects
@@ -52,9 +49,30 @@ public class CollisionGrid
         return GRID_CELL_SIZE;
     }
     
+    public function beginDetectCollisions () :void
+    {
+        Assert.isFalse(_isDetectingCollisions);
+        
+        _isDetectingCollisions = true;
+    }
+    
+    public function endDetectCollisions () :void
+    {
+        Assert.isTrue(_isDetectingCollisions);
+        
+        _isDetectingCollisions = false;
+    }
+    
+    public function get isDetectingCollisions () :Boolean
+    {
+        return _isDetectingCollisions;
+    }
+    
     protected var _cells :Array;
     protected var _numCols :int;
     protected var _numRows :int;
+    
+    protected var _isDetectingCollisions :Boolean;
     
     protected static const GRID_CELL_SIZE :int = 40;
     protected static const GRID_CELL_SIZE_INV :Number = 1 / GRID_CELL_SIZE;
