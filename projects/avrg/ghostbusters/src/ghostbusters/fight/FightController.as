@@ -52,7 +52,7 @@ public class FightController extends Controller
     {
         Game.control.playAvatarAction("Reel");
         panel.showGhostAttack();
-        if (model.damagePlayer(10)) {
+        if (model.damagePlayer(5)) {
             panel.showPlayerDeath();
         }
     }

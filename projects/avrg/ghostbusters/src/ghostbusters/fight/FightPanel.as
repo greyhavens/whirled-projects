@@ -56,7 +56,7 @@ public class FightPanel extends FrameSprite
             _frame.frameContent(_minigame);
 
             this.addChild(_frame);
-            _frame.x = (Game.stageSize.width - _frame.width) / 2;
+            _frame.x = (Game.stageSize.width - 100 - _frame.width) / 2;
             _frame.y = (Game.stageSize.height - _frame.height) / 2 - FRAME_DISPLACEMENT_Y;
         }
 
@@ -173,7 +173,7 @@ public class FightPanel extends FrameSprite
             Game.log.debug("Frame handler running: " + this);
         }
 
-        if (Game.random.nextInt(200) == 0) {
+        if (Game.random.nextInt(100) == 0) {
             CommandEvent.dispatch(this, FightController.PLAYER_ATTACKED);
         }
 

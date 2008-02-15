@@ -274,7 +274,7 @@ public class HUD extends FrameSprite
         other.visible = false;
 
         // TODO: make use of all 100 frames!
-        var frame :int = 99 - 75 * MathUtil.clamp(health, 0, 1);
+        var frame :int = 76 - 75 * MathUtil.clamp(health, 0, 1);
         bar.gotoAndStop(frame);
         Game.log.debug("Moved " + bar + " to frame #" + frame);
 
@@ -299,7 +299,7 @@ public class HUD extends FrameSprite
         bar.visible = true;
 
         // TODO: make use of all 100 frames!
-        var frame :int = 99 - 75 * MathUtil.clamp(health, 0, 1);
+        var frame :int = 76 - 75 * MathUtil.clamp(health, 0, 1);
         bar.gotoAndStop(frame);
         Game.log.debug("Moved " + bar + " to frame #" + frame);
 
