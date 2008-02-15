@@ -105,18 +105,18 @@ public class CreatureUnit extends Unit
 
     // returns an enemy base.
     // @TODO: make this work with multiple bases and destroyed bases
-    public function findEnemyBaseToAttack () :uint
+    public function findEnemyBaseToAttack () :AppObjectRef
     {
         var game :GameMode = GameMode.instance;
         
-        var enemyBaseId :uint = 0;
+        var enemyBaseRef :AppObjectRef;
         
         if (game.numPlayers > 1) {
             var enemyPlayerId :uint = game.getRandomEnemyPlayerId(_owningPlayerId);
-            enemyBaseId = game.getPlayerBase(enemyPlayerId).id;
+            enemyBaseRef = game.getPlayerBase(enemyPlayerId).ref;
         }
 
-        return enemyBaseId;
+        return enemyBaseRef;
     }
 
     protected function get aiRoot () :AITask

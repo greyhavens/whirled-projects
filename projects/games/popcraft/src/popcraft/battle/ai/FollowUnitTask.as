@@ -1,7 +1,6 @@
 package popcraft.battle.ai {
 
 import com.threerings.flash.Vector2;
-
 import com.threerings.util.Assert;
 import com.whirled.contrib.core.*;
 
@@ -13,19 +12,19 @@ public class FollowUnitTask
 {
     public static const NAME :String = "FollowUnitTask";
 
-    public function FollowUnitTask (unitId :uint, minFollowDistance :Number, maxFollowDistance :Number)
+    public function FollowUnitTask (unitRef :AppObjectRef, minFollowDistance :Number, maxFollowDistance :Number)
     {
         Assert.isTrue(minFollowDistance >= 0);
         Assert.isTrue(maxFollowDistance >= minFollowDistance);
         
-        _unitId = unitId;
+        _unitRef = unitRef;
         _minFollowDistance = minFollowDistance;
         _maxFollowDistance = maxFollowDistance;
     }
 
     public function update (dt :Number, unit :CreatureUnit) :uint
     {
-        var followUnit :Unit = (GameMode.getNetObject(_unitId) as Unit);
+        var followUnit :Unit = _unitRef.object as Unit;
 
         // is the followUnit dead? does it still hold our interest?
         if (null == followUnit) {
@@ -49,7 +48,7 @@ public class FollowUnitTask
         return NAME;
     }
 
-    protected var _unitId :uint;
+    protected var _unitRef :AppObjectRef;
     protected var _maxFollowDistance :Number;
     protected var _minFollowDistance :Number;
 

@@ -1,34 +1,34 @@
 package popcraft.battle {
-
-import popcraft.GameMode;
+    
+import com.whirled.contrib.core.*;
     
 public class UnitAttack
 {
-    public function UnitAttack (targetUnitId :uint, sourceUnitId :uint, weapon :UnitWeapon)
+    public function UnitAttack (targetUnitRef :AppObjectRef, sourceUnitRef :AppObjectRef, weapon :UnitWeapon)
     {
-        _targetUnitId = targetUnitId;
-        _sourceUnitId = sourceUnitId;
+        _targetUnitRef = targetUnitRef;
+        _sourceUnitRef = sourceUnitRef;
         _weapon = weapon;
     }
     
-    public function get targetUnitId () :uint
+    public function get targetUnitRef () :AppObjectRef
     {
-        return _targetUnitId;
+        return _targetUnitRef;
     }
     
     public function get targetUnit () :Unit
     {
-        return (GameMode.getNetObject(_targetUnitId) as Unit);
+        return _targetUnitRef.object as Unit;
     }
     
-    public function get sourceUnitId () :uint
+    public function get sourceUnitRef () :AppObjectRef
     {
-        return _sourceUnitId;
+        return _sourceUnitRef;
     }
     
     public function get sourceUnit () :Unit
     {
-        return (GameMode.getNetObject(_sourceUnitId) as Unit);
+        return _targetUnitRef.object as Unit;
     }
     
     public function get weapon () :UnitWeapon
@@ -36,8 +36,8 @@ public class UnitAttack
         return _weapon;
     }
     
-    protected var _targetUnitId :uint;
-    protected var _sourceUnitId :uint;
+    protected var _targetUnitRef :AppObjectRef;
+    protected var _sourceUnitRef :AppObjectRef;
     protected var _weapon :UnitWeapon;
 
 }

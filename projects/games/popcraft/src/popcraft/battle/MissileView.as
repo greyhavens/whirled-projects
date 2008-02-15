@@ -1,6 +1,7 @@
 package popcraft.battle {
     
 import com.threerings.flash.Vector2;
+import com.whirled.contrib.core.AppObjectRef;
 import com.whirled.contrib.core.objects.SceneObject;
 import com.whirled.contrib.core.tasks.*;
 
@@ -11,10 +12,10 @@ import popcraft.*;
 
 public class MissileView extends SceneObject
 {
-    public function MissileView (startLoc :Vector2, targetUnitId :uint, travelTime :Number)
+    public function MissileView (startLoc :Vector2, targetUnitRef :AppObjectRef, travelTime :Number)
     {
         _startLoc = startLoc.clone();
-        _targetUnitId = targetUnitId;
+        _targetUnitRef = targetUnitRef;
         _travelTime = travelTime;
     }
     
@@ -29,7 +30,7 @@ public class MissileView extends SceneObject
             return;
         }
         
-        var targetUnit :Unit = (GameMode.getNetObject(_targetUnitId) as Unit);
+        var targetUnit :Unit = (_targetUnitRef.object as Unit);
         
         if (null == targetUnit) {
             // our target's gone. die.
@@ -61,7 +62,7 @@ public class MissileView extends SceneObject
     }
     
     protected var _startLoc :Vector2;
-    protected var _targetUnitId :uint;
+    protected var _targetUnitRef :AppObjectRef;
     
     protected var _direction :Vector2; // unit vector
     

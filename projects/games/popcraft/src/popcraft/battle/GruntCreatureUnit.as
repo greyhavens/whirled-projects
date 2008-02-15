@@ -4,7 +4,6 @@ import com.whirled.contrib.core.*;
 
 import popcraft.*;
 import popcraft.battle.ai.*;
-import popcraft.battle.geom.CollisionGrid;
 
 /**
  * Grunts are the meat-and-potatoes offensive unit of the game.
@@ -14,7 +13,7 @@ import popcraft.battle.geom.CollisionGrid;
  */
 public class GruntCreatureUnit extends CreatureUnit
 {
-    public function GruntCreatureUnit (owningPlayerId:uint)
+    public function GruntCreatureUnit (owningPlayerId :uint)
     {
         super(Constants.UNIT_TYPE_GRUNT, owningPlayerId);
         
@@ -28,12 +27,12 @@ public class GruntCreatureUnit extends CreatureUnit
 
     public function set escort (heavy :HeavyCreatureUnit) :void
     {
-        _escortId = heavy.id;
+        _escortRef = heavy.ref;
     }
 
     public function get escort () :HeavyCreatureUnit
     {
-        return this.db.getObject(_escortId) as HeavyCreatureUnit;
+        return _escortRef.object as HeavyCreatureUnit;
     }
 
     public function get hasEscort () :Boolean
@@ -42,7 +41,7 @@ public class GruntCreatureUnit extends CreatureUnit
     }
 
     protected var _gruntAI :GruntAI;
-    protected var _escortId :uint;
+    protected var _escortRef :AppObjectRef;
 }
 
 }
@@ -62,10 +61,10 @@ import popcraft.battle.ai.*;
  */
 class GruntAI extends AITaskTree
 {
-    public function GruntAI (unit :GruntCreatureUnit, targetBase :uint)
+    public function GruntAI (unit :GruntCreatureUnit, targetBaseRef :AppObjectRef)
     {
         _unit = unit;
-        _targetBase = targetBase;
+        _targetBaseRef = targetBaseRef;
 
         this.beginAttackBase();
     }
@@ -73,7 +72,7 @@ class GruntAI extends AITaskTree
     protected function beginAttackBase () :void
     {
         this.clearSubtasks();
-        this.addSubtask(new AttackUnitTask(_targetBase, true, -1));
+        this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
         this.addSubtask(new DetectAttacksOnUnitTask(_unit));
     }
     
@@ -90,7 +89,7 @@ class GruntAI extends AITaskTree
                 trace("GruntAI: attacking aggressor!");
                 
                 this.clearSubtasks();
-                this.addSubtask(new AttackUnitTask(aggressor.id, true, _unit.unitData.loseInterestRadius));
+                this.addSubtask(new AttackUnitTask(aggressor.ref, true, _unit.unitData.loseInterestRadius));
             }
             break;
             
@@ -109,5 +108,5 @@ class GruntAI extends AITaskTree
 
     protected var _unit :GruntCreatureUnit;
     protected var _state :uint;
-    protected var _targetBase :uint;
+    protected var _targetBaseRef :AppObjectRef;
 }

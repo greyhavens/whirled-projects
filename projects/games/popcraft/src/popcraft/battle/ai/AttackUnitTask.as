@@ -1,7 +1,6 @@
 package popcraft.battle.ai {
 
 import com.threerings.flash.Vector2;
-
 import com.whirled.contrib.core.*;
 
 import popcraft.*;
@@ -12,16 +11,16 @@ public class AttackUnitTask
 {
     public static const NAME :String = "AttackUnit";
 
-    public function AttackUnitTask (unitId :uint, followUnit :Boolean, loseInterestRange :Number)
+    public function AttackUnitTask (unitRef :AppObjectRef, followUnit :Boolean, loseInterestRange :Number)
     {
-        _unitId = unitId;
+        _unitRef = unitRef;
         _followUnit = followUnit;
         _loseInterestRange = loseInterestRange;
     }
 
     public function update (dt :Number, unit :CreatureUnit) :uint
     {
-        var enemy :Unit = (GameMode.getNetObject(_unitId) as Unit);
+        var enemy :Unit = _unitRef.object as Unit;
 
         // is the enemy dead?
         if (null == enemy) {
@@ -66,7 +65,7 @@ public class AttackUnitTask
         return NAME;
     }
 
-    protected var _unitId :uint;
+    protected var _unitRef :AppObjectRef;
     protected var _followUnit :Boolean;
     protected var _loseInterestRange :Number;
 

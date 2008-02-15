@@ -110,7 +110,7 @@ public class Unit extends AppObject
         switch(weapon.weaponType) {
             
         case UnitWeapon.TYPE_MELEE:
-            this.db.sendMessageTo(new ObjectMessage(GameMessage.MSG_UNITATTACKED, new UnitAttack(targetUnit.id, this.id, weapon)), targetUnit.id);
+            this.db.sendMessageTo(new ObjectMessage(GameMessage.MSG_UNITATTACKED, new UnitAttack(targetUnit.ref, this.ref, weapon)), targetUnit.ref);
             break;
             
         case UnitWeapon.TYPE_MISSILE:
@@ -132,7 +132,7 @@ public class Unit extends AppObject
     {
         if (msg.name == GameMessage.MSG_UNITATTACKED) {
             var attack :UnitAttack = (msg.data as UnitAttack);
-            if (attack.targetUnitId == this.id) {
+            if (attack.targetUnitRef == this.ref) {
                 
                 _health -= int(_unitData.armor.getWeaponDamage(attack.weapon));
                 _health = Math.max(_health, 0);

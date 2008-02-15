@@ -17,7 +17,7 @@ public class Missile extends AppObject
     
     protected function deliverPayload () :void
     {
-        this.db.sendMessageTo(new ObjectMessage(GameMessage.MSG_UNITATTACKED, _attack), _attack.targetUnitId);
+        this.db.sendMessageTo(new ObjectMessage(GameMessage.MSG_UNITATTACKED, _attack), _attack.targetUnitRef);
     }
     
     protected var _attack :UnitAttack;

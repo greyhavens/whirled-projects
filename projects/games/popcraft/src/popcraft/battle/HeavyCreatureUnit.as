@@ -2,7 +2,6 @@ package popcraft.battle {
 
 import popcraft.*;
 import popcraft.battle.ai.*;
-import popcraft.battle.geom.CollisionGrid;
 
 /**
  * The Heavy is a dual-purpose defensive unit
@@ -68,8 +67,8 @@ class HeavyAI extends AITaskTree
             // we found a grunt - escort it
             trace("HeavyAI: found grunt to escort");
             this.clearSubtasks();
-            var gruntId :uint = (task as DetectCreatureTask).detectedCreatureId;
-            this.addSubtask(new EscortGruntTask(gruntId));
+            var gruntRef :AppObjectRef = (task as DetectCreatureTask).detectedCreatureRef;
+            this.addSubtask(new EscortGruntTask(gruntRef));
             break;
             
         case EscortGruntTask.NAME:
@@ -116,18 +115,18 @@ class EscortGruntTask extends AITaskTree
 {
     public static const NAME :String = "EscortGruntTask";
     
-    public function EscortGruntTask (gruntId :uint)
+    public function EscortGruntTask (gruntRef :AppObjectRef)
     {
-        _gruntId = gruntId;
+        _gruntRef = gruntRef;
         
         this.protectGrunt();
     }
     
     protected function protectGrunt () :void
     {
-        this.addSubtask(new FollowUnitTask(_gruntId, ESCORT_DISTANCE_MIN, ESCORT_DISTANCE_MAX));
+        this.addSubtask(new FollowUnitTask(_gruntRef, ESCORT_DISTANCE_MIN, ESCORT_DISTANCE_MAX));
         
-        var grunt :Unit = GameMode.getNetObject(_gruntId) as Unit;
+        var grunt :Unit = _gruntRef.object as Unit;
         this.addSubtask(new DetectAttacksOnUnitTask(grunt));
     }
     
@@ -158,7 +157,7 @@ class EscortGruntTask extends AITaskTree
                 trace("EscortGruntTask: attacking escort's aggressor!");
                 
                 this.clearSubtasks();
-                this.addSubtask(new AttackUnitTask(aggressor.id, true, -1));
+                this.addSubtask(new AttackUnitTask(aggressor.ref, true, -1));
             }
         } else if (task.name == AttackUnitTask.NAME) {
             trace("EscortGruntTask: finished attacking aggressor.");
@@ -169,7 +168,7 @@ class EscortGruntTask extends AITaskTree
         }
     }
     
-    protected var _gruntId :uint;
+    protected var _gruntRef :AppObjectRef;
     protected var _gruntDied :Boolean;
     
     protected static const ESCORT_DISTANCE_MIN :Number = 30;

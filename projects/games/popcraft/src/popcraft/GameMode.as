@@ -1,7 +1,6 @@
 package popcraft {
 
 import com.threerings.flash.Vector2;
-
 import com.threerings.util.Assert;
 import com.threerings.util.HashSet;
 import com.threerings.util.RingBuffer;
@@ -28,24 +27,14 @@ public class GameMode extends AppMode
         return instance;
     }
     
-    public static function getNetObject (objectId :uint) :AppObject
-    {
-        return GameMode.instance.netObjects.getObject(objectId);
-    }
-    
     public static function getNetObjectNamed (objectName :String) :AppObject
     {
         return GameMode.instance.netObjects.getObjectNamed(objectName);
     }
     
-    public static function getNetObjectIdsInGroup (groupName :String) :Array
+    public static function getNetObjectRefsInGroup (groupName :String) :Array
     {
-        return GameMode.instance.netObjects.getObjectIdsInGroup(groupName);
-    }
-    
-    public static function getNetObjectsInGroup (groupName :String) :Array
-    {
-        return GameMode.instance.netObjects.getObjectsInGroup(groupName);
+        return GameMode.instance.netObjects.getObjectRefsInGroup(groupName);
     }
 
     public function GameMode ()
@@ -119,7 +108,7 @@ public class GameMode extends AppMode
             base.x = baseLoc.x;
             base.y = baseLoc.y;
             
-            _playerBaseIds.push(base.id);
+            _playerBaseRefs.push(base.ref);
 
             ++playerId;
         }
@@ -198,7 +187,7 @@ public class GameMode extends AppMode
                 
                 // end the game when all bases but one have been destroyed
                 var livingPlayers :HashSet = new HashSet();
-                var n :uint = _playerBaseIds.length;
+                var n :uint = _playerBaseRefs.length;
                 for (var playerId :uint = 0; playerId < n; ++playerId) {
                     if (null != getPlayerBase(playerId)) {
                         livingPlayers.add(playerId);
@@ -234,7 +223,7 @@ public class GameMode extends AppMode
 
     public function getPlayerBase (player :uint) :PlayerBaseUnit
     {
-        return (_netObjects.getObject(_playerBaseIds[player]) as PlayerBaseUnit);
+        return (_playerBaseRefs[player] as AppObjectRef).object as PlayerBaseUnit;
     }
 
     protected function debugNetwork (messageArray :Array) :void
@@ -426,7 +415,7 @@ public class GameMode extends AppMode
 
     protected var _netObjects :ObjectDB;
 
-    protected var _playerBaseIds :Array = new Array();
+    protected var _playerBaseRefs :Array = new Array();
     protected var _numPlayers :int;
 
     protected var _tickCount :uint;

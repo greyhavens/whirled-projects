@@ -16,11 +16,13 @@ public class DetectCreatureTask
 
     public function update (dt :Number, unit :CreatureUnit) :uint
     {
-        var creatureIds :Array = GameMode.getNetObjectIdsInGroup(CreatureUnit.GROUP_NAME);
+        // @TODO - use CollisionGrid!
+        
+        var creatureRefs :Array = GameMode.getNetObjectRefsInGroup(CreatureUnit.GROUP_NAME);
         var detectedCreature :CreatureUnit;
         
-        for each (var creatureId :uint in creatureIds) {
-            var creature :CreatureUnit = (GameMode.getNetObject(creatureId) as CreatureUnit);
+        for each (var ref :AppObjectRef in creatureRefs) {
+            var creature :CreatureUnit = ref.object as CreatureUnit;
             if (null != creature && unit != creature && _detectPredicate(unit, creature)) {
                 detectedCreature = creature;
                 break;
@@ -28,7 +30,7 @@ public class DetectCreatureTask
         }
         
         if (null != detectedCreature) {
-            _detectedCreatureId = detectedCreature.id;
+            _detectedCreatureRef = detectedCreature.ref;
             return AITaskStatus.COMPLETE;
         }
         
@@ -40,15 +42,15 @@ public class DetectCreatureTask
         return _taskName;
     }
     
-    public function get detectedCreatureId () :uint
+    public function get detectedCreatureRef () :AppObjectRef
     {
-        return _detectedCreatureId;
+        return _detectedCreatureRef;
     }
     
     protected var _taskName :String;
     protected var _detectPredicate :Function;
     
-    protected var _detectedCreatureId :uint;
+    protected var _detectedCreatureRef :AppObjectRef;
 
 }
 
