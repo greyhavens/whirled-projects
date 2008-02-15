@@ -1,30 +1,33 @@
 package popcraft.battle.geom {
     
 import com.threerings.util.Assert;
-
+import com.whirled.contrib.core.SimObjectRef;
 import com.whirled.contrib.core.util.Collision;
 
-import popcraft.battle.Unit;
+import popcraft.battle.CreatureUnit;
     
 public class CollisionObject
 {
-    public function CollisionObject (unit :Unit)
+    public function CollisionObject (unit :CreatureUnit)
     {
-        _unit = unit;
+        _unitRef = unit.ref;
     }
     
     public function addToGrid (grid :CollisionGrid) :void
     {
         Assert.isFalse(grid.isDetectingCollisions, "CollisionGrid cannot be modified during collision detection");
+        Assert.isFalse(_unitRef.isNull);
         
         if (null != _grid) {
             this.removeFromGrid();
         }
         
-        // units must be able to fit into a single grid cell
-        Assert.isTrue(_unit.unitData.collisionRadius * 2 <= grid.cellSize);
+        var unit :CreatureUnit = _unitRef.object as CreatureUnit;
         
-        var cell :CollisionGridCell = grid.getCellAt(_unit.unitLoc);
+        // units must be able to fit into a single grid cell
+        Assert.isTrue(unit.unitData.collisionRadius * 2 <= grid.cellSize);
+        
+        var cell :CollisionGridCell = grid.getCellAt(unit.unitLoc);
         
         Assert.isNotNull(cell, "units should not leave the battlefield bounds");
         
@@ -77,6 +80,13 @@ public class CollisionObject
         
         Assert.isTrue(_grid.isDetectingCollisions, "CollisionGrid.beginDetectCollisions() must be called before collision detection happens");
         
+        var thisUnit :CreatureUnit = _unitRef.object as CreatureUnit;
+        
+        // has the unit already died?
+        if (null == thisUnit) {
+            return;
+        }
+        
         // we need to check for collisions against all objects
         // after us in our cell's object list, and with all objects
         // in the four neighboring cells E, SE, S, SW
@@ -106,21 +116,35 @@ public class CollisionObject
     
     protected function detectCollisionsInList (obj :CollisionObject) :void
     {
-        while (null != obj) {
+        var thisUnit :CreatureUnit = _unitRef.object as CreatureUnit;
+        
+        while (null != obj && null != thisUnit) {
             
-            var otherUnit :Unit = obj._unit;
+            var otherUnit :CreatureUnit = obj._unitRef.object as CreatureUnit;
             
-            if (Collision.circlesIntersect(_unit.unitLoc, _unit.unitData.collisionRadius, otherUnit.unitLoc, otherUnit.unitData.collisionRadius)) {
+            if (null == otherUnit) {
+                continue;
+            }
+            
+            if (Collision.circlesIntersect(
+                    thisUnit.unitLoc, 
+                    thisUnit.unitData.collisionRadius, 
+                    otherUnit.unitLoc, 
+                    otherUnit.unitData.collisionRadius)) {
+                        
                 // generate a collision event for the objects involved
-                // @TODO
-                trace("collision!");
+                
+                thisUnit.handleCollision(otherUnit);
+                otherUnit.handleCollision(thisUnit);
+                
             }
             
             obj = obj._next;
+            thisUnit = _unitRef.object as CreatureUnit; // make sure we haven't died
         }
     }
     
-    protected var _unit :Unit;
+    protected var _unitRef :SimObjectRef;
     
     protected var _grid :CollisionGrid;
     protected var _cell :CollisionGridCell;

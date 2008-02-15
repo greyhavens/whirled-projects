@@ -26,7 +26,10 @@ public class CreatureUnit extends Unit
         // @TODO - move this out of here
         this.x = spawnLoc.x;
         this.y = spawnLoc.y;
-        
+    }
+    
+    override protected function addedToDB () :void
+    {
         // collision geometry
         _collisionObj = new CollisionObject(this);
         _collisionGrid = GameMode.instance.battleCollisionGrid; // there's only one collision grid
@@ -136,6 +139,11 @@ public class CreatureUnit extends Unit
         this.handleMove(dt);
         
         super.update(dt);
+    }
+    
+    public function handleCollision (otherUnit :CreatureUnit) :void
+    {
+        this.stopMoving();
     }
     
     public function detectCollisions () :void
