@@ -209,8 +209,15 @@ public class HUD extends FrameSprite
         findSafely(name).addEventListener(MouseEvent.CLICK, callback);
     }
 
+    protected var counter :int;
+
     override protected function handleFrame (... ignored) :void
     {
+        if (--counter < 0) {
+            counter = Game.FRAMES_PER_REPORT;
+            Game.log.debug("Frame handler running: " + this);
+        }
+
         if (_visualHud == null) {
             return;
         }
@@ -219,9 +226,8 @@ public class HUD extends FrameSprite
             placeHud();
             teamUpdated();
 
-            _ghostHealthBar.visible = false;
-            _ghostCaptureBar.gotoAndStop(100);
-            _ghostCaptureBar.visible = true;
+            setHealth(100, false);
+            setHealth(100, true);
         }
 
         _yourHealthBar.gotoAndStop(
@@ -265,12 +271,13 @@ public class HUD extends FrameSprite
         bar.visible = true;
         other.visible = false;
 
-        var frame :int = 100 - 100 * MathUtil.clamp(health, 0, 100);
+        var frame :int = 100 - 99 * MathUtil.clamp(health, 0, 1);
         bar.gotoAndStop(frame);
         Game.log.debug("Moved " + bar + " to frame #" + frame);
 
         DisplayUtil.applyToHierarchy(bar, function (disp :DisplayObject) :void {
             if (disp is MovieClip) {
+                Game.log.debug("Brutally stopping clip: " + disp);
                 MovieClip(disp).stop();
             }
         });

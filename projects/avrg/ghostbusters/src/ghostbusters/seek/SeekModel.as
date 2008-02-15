@@ -29,6 +29,7 @@ import mx.events.FlexEvent;
 import com.whirled.AVRGameControlEvent;
 
 import com.threerings.flash.DisplayUtil;
+import com.threerings.flash.MathUtil;
 import com.threerings.flash.path.HermiteFunc;
 
 import com.threerings.util.CommandEvent;
@@ -61,8 +62,8 @@ public class SeekModel extends Sprite
 
     public function ghostZapped () :void
     {
-        _ghostZest = _ghostZest * 0.8 - 20;
-        _panel.ghostZestUpdated();
+        _ghostZest = Math.max(0, _ghostZest * 0.9 - 15);
+        Game.gameController.panel.hud.ghostZestUpdated();
     }
 
     public function getRelativeGhostZest () :Number

@@ -69,11 +69,6 @@ public class SeekPanel extends FrameSprite
         updateLantern(playerId, pos);
     }
 
-    public function ghostZestUpdated () :void
-    {
-        Game.gameController.panel.hud.ghostZestUpdated();
-    }
-
     public function ghostZapped () :void
     {
         zapStart();
@@ -81,11 +76,12 @@ public class SeekPanel extends FrameSprite
 
     public function appearGhost () :void
     {
+        this.removeChild(_lightLayer);
+        this.removeChild(_maskLayer);
         _appearing = true;
         _ghost.appear(spawnGhost);
         _ghost.newTarget(new Point(Game.stageSize.width - 250, 100));
         _ghost.mask = null;
-        this.removeChild(_maskLayer);
     }
 
     protected function spawnGhost () :void
@@ -115,7 +111,7 @@ public class SeekPanel extends FrameSprite
         var lantern :Lantern = _lanterns[playerId];
         if (lantern == null) {
             // a new lantern just appears, no splines involved
-            lantern = new Lantern(playerId, pos, false);
+            lantern = new Lantern(playerId, pos);
             _lanterns[playerId] = lantern;
 
             _maskLayer.addChild(lantern.mask);
@@ -128,8 +124,15 @@ public class SeekPanel extends FrameSprite
         }
     }
 
+    protected var counter :int;
+
     override protected function handleFrame (... ignored) :void
     {
+        if (--counter < 0) {
+            counter = Game.FRAMES_PER_REPORT;
+            Game.log.debug("Frame handler running: " + this);
+        }
+
         animateLanterns();
 
         var p :Point = new Point(Math.max(0, Math.min(Game.stageSize.width, this.mouseX)),
@@ -183,6 +186,9 @@ public class SeekPanel extends FrameSprite
     protected function zapStop () :void
     {
         _ghost.transform.colorTransform = new ColorTransform();
+        if (_model.getGhostZest() == 0) {
+            appearGhost();
+        }            
     }
 
     protected function animateLanterns () :void

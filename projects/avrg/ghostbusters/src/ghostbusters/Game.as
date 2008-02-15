@@ -9,6 +9,7 @@ import flash.geom.Rectangle;
 
 import flash.events.Event;
 
+import com.whirled.AVRGameAvatar;
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.MobControl;
@@ -26,6 +27,7 @@ import ghostbusters.seek.SeekController;
 public class Game extends Sprite
 {
     public static const DEBUG :Boolean = false;
+    public static const FRAMES_PER_REPORT :int = 300;
 
     public static var log :Log = Log.getLog(Game);
 
@@ -166,14 +168,5 @@ public class Game extends Sprite
     {
         gameController.panel.hud.teamUpdated();
     }
-
-//    public function exportMobSprite (id :String, ctrl :MobControl) :DisplayObject
-//    {
-//        if (id == Codes.MOB_ID_GHOST) {
-//            return fightController.panel.getGhostSprite(ctrl);
-//        }
-//        log.warning("Unknown MOB requested [id=" + id + "]");
-//        return null;
-//    }
 }
 }

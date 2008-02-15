@@ -24,6 +24,6 @@ public class Codes
 
     public static const ST_PLAYER_DEFAULT :String = "Default";
     public static const ST_PLAYER_FIGHT :String = "Fight";
-    public static const ST_PLAYER_RUN :String = "Run";
+    public static const ST_PLAYER_DEFEAT :String = "Defeat";
 }
 }

@@ -3,13 +3,16 @@
 
 package ghostbusters {
 
+import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Scene;
 
 import flash.events.Event;
 
 import flash.utils.ByteArray;
+import flash.utils.getTimer;
 
+import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.FrameSprite;
 import com.threerings.util.EmbeddedSwfLoader;
 
@@ -51,7 +54,16 @@ public class ClipHandler extends FrameSprite
 
     public function stop () :void
     {
-        _clip.stop();
+        var t :uint = getTimer();
+
+        // do the brutal recursive stop
+        DisplayUtil.applyToHierarchy(_clip, function (disp :DisplayObject) :void {
+            if (disp is MovieClip) {
+                MovieClip(disp).stop();
+            }
+        });
+
+        Game.log.debug("It took " + (getTimer() - t) + " ms to stop the clip: " + _clip);
     }
 
     public function gotoScene (scene :Object, done :Function = null, toFrame :int = -1,
@@ -79,28 +91,43 @@ public class ClipHandler extends FrameSprite
         throw new Error("Can't goto scene [scene=" + scene + "]");
     }
 
+    protected var counter :int;
+
     override protected function handleFrame (... ignored) :void
     {
+        if (--counter < 0) {
+            counter = Game.FRAMES_PER_REPORT;
+            Game.log.debug("Frame handler running: " + this);
+        }
+
         if (_clip == null || _lastFrame < 0) {
             return;
         }
         if (_clip.currentFrame == _lastFrame) {
-            if (_callback != null) {
-                Game.log.debug("Executing callback for: " + _scene.name);
-                var next :String = _callback();
+            // now preserve the callback
+            var cb :Function = _callback;
+            _callback = null;
+
+            // and the name while we're debugging
+            var name :String = _scene != null ? _scene.name : "N/A";
+            _scene = null;
+
+            // call back if needed
+            if (cb != null) {
+                Game.log.debug("Executing callback for: " + name);
+
+                // keep in mind this may change _callback and _scene
+                var next :String = cb();
                 if (next != null) {
                     _scene = scenes[next];
                     if (_scene != null) {
                         Game.log.debug("Repeating scene: " + next);
+                        // if a string was returned, restore the callback (this is a bit ugly)
+                        _callback = cb;
                         _clip.gotoAndPlay(1, next);
-                        return;
                     }
                 }
-            } 
-            _callback = null;
-            _scene = null;
-            _clip.stop();
-            return;
+            }
         }
     }
 

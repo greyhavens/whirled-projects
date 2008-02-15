@@ -29,7 +29,7 @@ public class Lantern extends SplinePather
     public var hole :Sprite;
     public var mask :Sprite;
 
-    public function Lantern (playerId :int, p :Point, zesty :Boolean)
+    public function Lantern (playerId :int, p :Point)
     {
         super();
 
@@ -66,10 +66,6 @@ public class Lantern extends SplinePather
         mask = getLanternMask();
         mask.x = p.x;
         mask.y = p.y;
-
-        if (zesty) {
-            _barHandler = new ClipHandler(ByteArray(new Content.CAPTURE_BAR()), gotBar);
-        }
     }
 
     override public function nextFrame () :void
@@ -78,19 +74,6 @@ public class Lantern extends SplinePather
 
         light.x = hole.x = mask.x = this.x;
         light.y = hole.y = mask.y = this.y;
-    }
-
-    public function setGhostZest (zest :Number) :void
-    {
-        if (_barHandler) {
-            _barHandler.gotoScene(0, null, zest * 100, false);
-        }
-    }
-
-    protected function gotBar (clip :MovieClip) :void
-    {
-        light.addChild(clip);
-        clip.x = 100;
     }
 
     protected function getLanternHole () :Sprite
@@ -133,6 +116,5 @@ public class Lantern extends SplinePather
     }
 
     protected var _random :Random;
-    protected var _barHandler :ClipHandler;
 }
 }

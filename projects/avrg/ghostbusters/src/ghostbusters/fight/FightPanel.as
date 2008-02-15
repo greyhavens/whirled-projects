@@ -63,7 +63,7 @@ public class FightPanel extends FrameSprite
         var selectedWeapon :int = Game.gameController.panel.hud.getWeaponType();
 
         if (selectedWeapon == HUD.LOOT_LANTERN) {
-            _minigame.weaponType = new WeaponType(WeaponType.NAME_LANTERN, );
+            _minigame.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 1);
 
         } else if (selectedWeapon == HUD.LOOT_BLASTER) {
             _minigame.weaponType = new WeaponType(WeaponType.NAME_PLASMA, 2);
@@ -139,10 +139,17 @@ public class FightPanel extends FrameSprite
         _ghost = new SpawnedGhost();
     }
 
+    protected var counter :int;
+
     override protected function handleFrame (... ignored) :void
     {
         // TODO: when we have real teams, we have a fixed order of players, but for now we
         // TODO: just grab the first six in the order the client exports them
+
+        if (--counter < 0) {
+            counter = Game.FRAMES_PER_REPORT;
+            Game.log.debug("Frame handler running: " + this);
+        }
 
         var players :Array = Game.control.getPlayerIds();
         if (players != null) {

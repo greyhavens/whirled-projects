@@ -4,6 +4,7 @@
 package ghostbusters {
 
 import com.threerings.util.Controller;
+import com.whirled.AVRGameAvatar;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.MobControl;
 
@@ -117,6 +118,14 @@ public class GameController extends Controller
 
         model.enterState(state);
         panel.enterState(state);
+    }
+
+    public function setAvatarState (state :String) :void
+    {
+        var info :AVRGameAvatar = Game.control.getAvatarInfo(Game.ourPlayerId);
+        if (info != null && info.state != state) {
+            Game.control.setAvatarState(state);
+        }
     }
 
     protected function checkTransition(requested :String, ... allowed) :Boolean

@@ -62,6 +62,8 @@ public class GamePanel extends Sprite
 
     public function enterState (state :String) :void
     {
+        var avatarState :String = Codes.ST_PLAYER_DEFAULT;
+
         if (state == GameModel.STATE_INTRO) {
             showSplash();
 //            showHelp();
@@ -74,10 +76,13 @@ public class GamePanel extends Sprite
 
         } else if (state == GameModel.STATE_FIGHTING) {
             showPanels(Game.fightController.panel, hud);
+            avatarState = Codes.ST_PLAYER_FIGHT;
 
         } else {
             Game.log.warning("Unknown state requested [state=" + state + "]");
         }
+
+        Game.gameController.setAvatarState(avatarState);
     }
 
     public function resized () :void
