@@ -1,8 +1,9 @@
 package ghostbusters.fight.common {
 
 import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.objects.SceneObject;
+import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.core.util.*;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -35,28 +36,26 @@ public class WinLoseNotification extends SceneObject
     {
         _success = success;
         
+        var textArray :Array = (success ? WIN_TEXT : LOSE_TEXT);
+        var text :String = textArray[Rand.nextIntRange(0, textArray.length, Rand.STREAM_COSMETIC)];
+        
         var label :TextField = new TextField();
-        label.text = (success ? "You Win!" : "You Lose!");
-        label.textColor = (success ? 0x0000FF : 0xFF0000);
+        label.text = text;
+        label.textColor = (success ? 0xFFFFFF : 0xFF0000);
         label.autoSize = TextFieldAutoSize.CENTER;
-        
-        var rect :Sprite = new Sprite();
-        rect.graphics.beginFill(success ? 0xFFFFFF : 0xFFFF00);
-        rect.graphics.drawRect(0, 0, label.width + 2, label.height + 2);
-        rect.graphics.endFill();
-        
-        // center the label on the rect
-        label.x = (rect.width / 2) - (label.width / 2);
-        label.y = (rect.height / 2) - (label.height / 2);
-        
-        rect.addChild(label);
-        
-        // center the rect on the sprite
-        rect.x = -(rect.width / 2);
-        rect.y = -(rect.height / 2);
+        label.scaleX = 4;
+        label.scaleY = 4;
         
         _sprite = new Sprite();
-        _sprite.addChild(rect);
+        _sprite.graphics.beginFill(success ? 0x000000 : 0xFFFF00);
+        _sprite.graphics.drawRect(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
+        _sprite.graphics.endFill();
+        
+        // center the label on the rect
+        label.x = (_sprite.width / 2) - (label.width / 2);
+        label.y = (_sprite.height / 2) - (label.height / 2);
+        
+        _sprite.addChild(label);
         
         _sprite.mouseEnabled = false;
         _sprite.mouseChildren = false;
@@ -64,12 +63,14 @@ public class WinLoseNotification extends SceneObject
     
     public function animate () :void
     {
-        var anim :SerialTask = new SerialTask();
+        /*var anim :SerialTask = new SerialTask();
         anim.addTask(ScaleTask.CreateEaseIn(0.8, 0.8, 1));
         anim.addTask(ScaleTask.CreateEaseOut(3, 3, 2));
         anim.addTask(new SelfDestructTask());
         
-        this.addTask(anim);
+        this.addTask(anim);*/
+        
+        this.addTask(After(1.5, new SelfDestructTask()));
     }
     
     override public function get objectName () :String
@@ -84,6 +85,20 @@ public class WinLoseNotification extends SceneObject
     
     protected var _success :Boolean;
     protected var _sprite :Sprite;
+    
+    protected static const WIN_TEXT :Array = [
+        "*POW*!",
+        "*BIFF*!",
+        "*ZAP*!",
+        "*SMACK*!",
+    ];
+    
+    protected static const LOSE_TEXT :Array = [
+        "oof",
+        "ouch",
+        "argh",
+        "agh",
+    ];
     
 }
 
