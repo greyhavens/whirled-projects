@@ -28,7 +28,7 @@ public class UnitAttack
     
     public function get sourceUnit () :Unit
     {
-        return _targetUnitRef.object as Unit;
+        return _sourceUnitRef.object as Unit;
     }
     
     public function get weapon () :UnitWeapon
