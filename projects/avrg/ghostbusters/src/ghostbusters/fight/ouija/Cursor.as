@@ -49,8 +49,8 @@ public class Cursor extends BasicCursor
     override protected function destroyed () :void
     {
         super.destroyed();
-
-        this.db.destroyObject(_glowObject.id);
+        
+        _glowObject.destroySelf();
     }
 
     override protected function updateLocation (localX :Number, localY :Number) :void

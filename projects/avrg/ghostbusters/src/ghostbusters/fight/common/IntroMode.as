@@ -58,7 +58,7 @@ import com.whirled.contrib.core.tasks.SerialTask;
 import com.whirled.contrib.core.tasks.TimedTask;
 import com.whirled.contrib.core.tasks.SelfDestructTask;    
 
-class TimerObj extends AppObject
+class TimerObj extends SimObject
 {
     public static const NAME :String = "TimerObj";
     

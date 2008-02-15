@@ -3,7 +3,7 @@ package ghostbusters.fight.common {
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.tasks.*;
 
-public class GameTimer extends AppObject
+public class GameTimer extends SimObject
 {
     public static const NAME :String = "GameTimer";
     

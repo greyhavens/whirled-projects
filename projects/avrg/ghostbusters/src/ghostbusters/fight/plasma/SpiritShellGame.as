@@ -1,7 +1,6 @@
 package ghostbusters.fight.plasma {
 
 import com.threerings.flash.Vector2;
-
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.resource.*;
 import com.whirled.contrib.core.tasks.*;
@@ -100,7 +99,7 @@ public class SpiritShellGame extends MicrogameMode
             ghost.addTask(blinkTask);
         }
         
-        var plasmaHose :AppObject = new AppObject();
+        var plasmaHose :SimObject = new SimObject();
         plasmaHose.addTask(new RepeatingTask(
             new TimedTask(_settings.plasmaFireDelay),
             new FunctionTask(createNewPlasma)));
@@ -177,7 +176,7 @@ public class SpiritShellGame extends MicrogameMode
         
         var thisGameMode :SpiritShellGame = this; // store this for getEctoCollision() local function
         
-        var ectos :Array = this.getObjectIdsInGroup(Ectoplasm.GROUP_NAME);
+        var ectos :Array = this.getObjectRefsInGroup(Ectoplasm.GROUP_NAME);
         
         if (ectos.length == 0) {
             this.gameOver(true);
@@ -185,10 +184,10 @@ public class SpiritShellGame extends MicrogameMode
         
         // handle plasma-ectoplasm collision detection.
         // we inefficiently check every plasma against every ectoplasm.
-        var plasmas :Array = this.getObjectIdsInGroup(PlasmaBullet.GROUP_NAME);
-        for each (var plasmaId :uint in plasmas) {
+        var plasmas :Array = this.getObjectRefsInGroup(PlasmaBullet.GROUP_NAME);
+        for each (var plasmaRef :SimObjectRef in plasmas) {
             
-            var plasma :PlasmaBullet = this.getObject(plasmaId) as PlasmaBullet;
+            var plasma :PlasmaBullet = plasmaRef.object as PlasmaBullet;
             if (null == plasma) {
                 continue;
             }
@@ -210,8 +209,8 @@ public class SpiritShellGame extends MicrogameMode
         
         function getEctoCollision (p :PlasmaBullet) :Ectoplasm
         {
-            for each (var ectoId :uint in ectos) {
-                var e :Ectoplasm = thisGameMode.getObject(ectoId) as Ectoplasm;
+            for each (var ectoRef :SimObjectRef in ectos) {
+                var e :Ectoplasm = ectoRef.object as Ectoplasm;
                 
                 if (null == e) {
                     continue;
