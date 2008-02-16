@@ -68,6 +68,10 @@ class HeavyAI extends AITaskTree
             trace("HeavyAI: found grunt to escort");
             this.clearSubtasks();
             var gruntRef :SimObjectRef = (task as DetectCreatureTask).detectedCreatureRef;
+            
+            var grunt :GruntCreatureUnit = (gruntRef.object as GruntCreatureUnit);
+            grunt.escort = _unit;
+            
             this.addSubtask(new EscortGruntTask(gruntRef));
             break;
             
@@ -108,7 +112,7 @@ class HeavyAI extends AITaskTree
     
     protected static const TASK_DETECTESCORTLESSGRUNT :String = "DetectEscortlessGrunt";
     protected static const TASK_BECOMETOWER :String = "BecomeTower";
-    protected static const DELAY_BECOMETOWER :Number = 10;
+    protected static const DELAY_BECOMETOWER :Number = 1.5;
 }
 
 class EscortGruntTask extends AITaskTree
@@ -124,10 +128,14 @@ class EscortGruntTask extends AITaskTree
     
     protected function protectGrunt () :void
     {
-        this.addSubtask(new FollowUnitTask(_gruntRef, ESCORT_DISTANCE_MIN, ESCORT_DISTANCE_MAX));
-        
         var grunt :Unit = _gruntRef.object as Unit;
-        this.addSubtask(new DetectAttacksOnUnitTask(grunt));
+        
+        if (null == grunt) {
+            _gruntDied = true;
+        } else {
+            this.addSubtask(new FollowUnitTask(_gruntRef, ESCORT_DISTANCE_MIN, ESCORT_DISTANCE_MAX));
+            this.addSubtask(new DetectAttacksOnUnitTask(grunt));
+        }
     }
     
     override public function get name () :String

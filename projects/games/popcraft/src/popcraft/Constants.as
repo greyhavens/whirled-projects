@@ -2,7 +2,6 @@ package popcraft {
 
 import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
-
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.util.*;
 
@@ -17,7 +16,7 @@ public class Constants
 
     public static const DEBUG_LEVEL :int = 0;
     public static const CHEATS_ENABLED :Boolean = true;
-    public static const DRAW_UNIT_DATA_CIRCLES :Boolean = true;
+    public static const DRAW_UNIT_DATA_CIRCLES :Boolean = false;
 
     public static const PLAYER_COLORS :Array = [
        uint(0xFFFF0000),
@@ -70,6 +69,8 @@ public class Constants
     }
 
     /* Units */
+    
+    public static const UNIT_GRID_CELL_SIZE :int = 40;
 
     public static const UNIT_TYPE_GRUNT :uint = 0;
     public static const UNIT_TYPE_HEAVY :uint = 1;

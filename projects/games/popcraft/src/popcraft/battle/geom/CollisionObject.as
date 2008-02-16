@@ -122,11 +122,7 @@ public class CollisionObject
             
             var otherUnit :CreatureUnit = obj._unitRef.object as CreatureUnit;
             
-            if (null == otherUnit) {
-                continue;
-            }
-            
-            if (Collision.circlesIntersect(
+            if (null != otherUnit && Collision.circlesIntersect(
                     thisUnit.unitLoc, 
                     thisUnit.unitData.collisionRadius, 
                     otherUnit.unitLoc, 

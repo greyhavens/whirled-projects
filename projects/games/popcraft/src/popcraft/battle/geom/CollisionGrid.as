@@ -4,17 +4,20 @@ import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
 
 /**
- * A simple grid-based spatial database for storing dynmaic game objects
+ * A simple grid-based spatial database for storing dynamic game objects
  * that generate collisions.
  * 
  * Objects on the grid must be no larger than the size of a cell in the grid.
  */
 public class CollisionGrid
 {
-    public function CollisionGrid (boardWidth :int, boardHeight :int)
+    public function CollisionGrid (boardWidth :int, boardHeight :int, cellSize :int)
     {
-        _numCols = Math.ceil(boardWidth / GRID_CELL_SIZE);
-        _numRows = Math.ceil(boardHeight / GRID_CELL_SIZE);
+        _cellSize = cellSize;
+        _cellSizeInv = 1 / _cellSize;
+        
+        _numCols = Math.ceil(boardWidth * _cellSizeInv);
+        _numRows = Math.ceil(boardHeight * _cellSizeInv);
         
         _cells = new Array(_numCols * _numRows);
         
@@ -29,8 +32,8 @@ public class CollisionGrid
     
     public function getCellAt (loc :Vector2) :CollisionGridCell
     {
-        var x :int = loc.x * GRID_CELL_SIZE_INV;
-        var y :int = loc.y * GRID_CELL_SIZE_INV;
+        var x :int = loc.x * _cellSizeInv;
+        var y :int = loc.y * _cellSizeInv;
         
         return this.getCell(x, y);
     }
@@ -46,7 +49,7 @@ public class CollisionGrid
     
     public function get cellSize () :int
     {
-        return GRID_CELL_SIZE;
+        return _cellSize;
     }
     
     public function beginDetectCollisions () :void
@@ -72,10 +75,10 @@ public class CollisionGrid
     protected var _numCols :int;
     protected var _numRows :int;
     
-    protected var _isDetectingCollisions :Boolean;
+    protected var _cellSize :int;
+    protected var _cellSizeInv :Number;
     
-    protected static const GRID_CELL_SIZE :int = 40;
-    protected static const GRID_CELL_SIZE_INV :Number = 1 / GRID_CELL_SIZE;
+    protected var _isDetectingCollisions :Boolean;
 }
 
 }

@@ -23,7 +23,7 @@ public class BattleBoard extends SceneObject
         _width = width;
         _height = height;
         
-        _collisionGrid = new CollisionGrid(_width, _height);
+        _collisionGrid = new CollisionGrid(_width, _height, Constants.UNIT_GRID_CELL_SIZE);
 
         _view = new Sprite();
 
