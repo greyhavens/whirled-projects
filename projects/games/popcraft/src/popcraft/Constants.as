@@ -119,7 +119,7 @@ public class Constants
 
             new UnitData (
                 "sapper"                     // name
-                , [0,   15,  0,   15]        // resource costs (brown, gold, blue, pink)
+                , [0,   999,  0,   999]        // resource costs (brown, gold, blue, pink)
                 , 40                        // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] )   // armor
