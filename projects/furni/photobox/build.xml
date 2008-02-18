@@ -5,6 +5,8 @@
   <property name="app.name" value="AlbumViewer"/>
   <property name="flex.use-network" value="true"/>
 
+  <property name="app.lib-extras" value="../../../lib/corelib.swc"/>
+
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
 
