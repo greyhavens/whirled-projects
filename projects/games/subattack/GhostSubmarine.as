@@ -11,7 +11,7 @@ import flash.utils.getTimer; // function import
 
 import com.threerings.util.Log;
 
-import com.whirled.WhirledGameControl;
+import com.whirled.game.GameControl;
 
 public class GhostSubmarine extends Submarine
 {
@@ -19,7 +19,7 @@ public class GhostSubmarine extends Submarine
 
     public function GhostSubmarine (
         playerId :int, playerIdx :int, playerName :String, startx :int, starty :int,
-        board :Board, gameCtrl :WhirledGameControl)
+        board :Board, gameCtrl :GameControl)
     {
         super(playerId, playerIdx, playerName, startx, starty, board, gameCtrl);
 

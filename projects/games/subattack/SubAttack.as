@@ -30,13 +30,7 @@ import com.threerings.util.StringUtil;
 import com.threerings.flash.KeyRepeatLimiter;
 import com.threerings.flash.FPSDisplay;
 
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.SizeChangedEvent;
-
-import com.whirled.WhirledGameControl;
-import com.whirled.FlowAwardedEvent;
+import com.whirled.game.*;
 
 /**
  * Beware all ye who enter here. This code is pretty much a mess. The game's been changed
@@ -87,7 +81,7 @@ public class SubAttack extends Sprite
         _seaHolder.addChild(masker); // the mask must be added to the display
         // set up a fake starting sea
 
-        _gameCtrl = new WhirledGameControl(this, false);
+        _gameCtrl = new GameControl(this, false);
         if (!_gameCtrl.isConnected()) {
             _seaDisplay.setupSea(VIEW_TILES, VIEW_TILES);
             // just show a demo-mode display
@@ -357,7 +351,7 @@ public class SubAttack extends Sprite
     protected var _content :Sprite;
 
     /** The game control. */
-    protected var _gameCtrl :WhirledGameControl;
+    protected var _gameCtrl :GameControl;
 
     /** Represents our board. */
     protected var _board :Board;

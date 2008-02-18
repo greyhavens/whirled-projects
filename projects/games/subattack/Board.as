@@ -8,15 +8,11 @@ import flash.media.Sound;
 
 import flash.utils.Dictionary;
 
-import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.ezgame.MessageReceivedEvent;
-
-import com.whirled.WhirledGameControl;
-import com.whirled.GameSubControl;
-
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
+
+import com.whirled.game.*;
 
 public class Board
 {
@@ -31,7 +27,7 @@ public class Board
     public static const UNICORN :int = 103;
     public static const NUM_ANIMALS :int = 4;
 
-    public function Board (gameCtrl :WhirledGameControl, seaDisplay :SeaDisplay)
+    public function Board (gameCtrl :GameControl, seaDisplay :SeaDisplay)
     {
         _gameCtrl = gameCtrl;
         _gameCtrl.addEventListener(Event.UNLOAD, shutdown);
@@ -666,7 +662,7 @@ public class Board
     }
 
     /** The game Control. */
-    protected var _gameCtrl :WhirledGameControl;
+    protected var _gameCtrl :GameControl;
 
     /** The 'sea' where everything lives. */
     protected var _seaDisplay :SeaDisplay;

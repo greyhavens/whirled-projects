@@ -15,7 +15,7 @@ import com.threerings.util.Log;
 
 import com.threerings.flash.FilterUtil;
 
-import com.whirled.WhirledGameControl;
+import com.whirled.game.GameControl;
 
 public class Submarine extends BaseSprite
 {
@@ -39,7 +39,7 @@ public class Submarine extends BaseSprite
 
     public function Submarine (
         playerId :int, playerIdx :int, playerName :String, startx :int, starty :int,
-        board :Board, gameCtrl :WhirledGameControl)
+        board :Board, gameCtrl :GameControl)
     {
         super(playerIdx, board);
 
@@ -462,7 +462,7 @@ public class Submarine extends BaseSprite
     protected var _dead :Boolean;
 
     /** The game control. */
-    protected var _gameCtrl :WhirledGameControl;
+    protected var _gameCtrl :GameControl;
 
     /** Is this submarine ours? */
     protected var _isMe :Boolean;
