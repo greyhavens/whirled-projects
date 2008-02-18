@@ -5,10 +5,10 @@ import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.resource.*;
 
+import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
-import flash.display.Bitmap;
 
 import popcraft.*;
 import popcraft.util.*;
@@ -19,9 +19,11 @@ public class CreatureUnitView extends SceneObject
     {
         _unit = unit;
         
+        var playerColor :uint = Constants.PLAYER_COLORS[_unit.owningPlayerId];
+        
         // @TODO - remove this when all units have animations
         if (Constants.UNIT_TYPE_GRUNT == _unit.unitType) {
-            this.setupAnimations();
+            this.setupAnimations(playerColor);
             _hasAnimations = true;
         } else {
             // add the image, aligned by its foot position
@@ -31,7 +33,7 @@ public class CreatureUnitView extends SceneObject
             _sprite.addChild(image);
 
             // add a glow around the image
-            _sprite.addChild(ImageUtil.createGlowBitmap(image, Constants.PLAYER_COLORS[_unit.owningPlayerId] as uint));
+            _sprite.addChild(ImageUtil.createGlowBitmap(image, playerColor));
         }
         
         // health meter
@@ -39,7 +41,7 @@ public class CreatureUnitView extends SceneObject
         _healthMeter.minValue = 0;
         _healthMeter.maxValue = _unit.unitData.maxHealth;
         _healthMeter.value = _unit.health;
-        _healthMeter.foregroundColor = 0xFF0000;
+        _healthMeter.foregroundColor = playerColor;
         _healthMeter.backgroundColor = 0x888888;
         _healthMeter.outlineColor = 0x000000;
         _healthMeter.width = 30;
@@ -62,10 +64,10 @@ public class CreatureUnitView extends SceneObject
         }
     }
     
-    protected function setupAnimations () :void
+    protected function setupAnimations (playerColor :uint) :void
     {
         var tintFilterMatrix :ColorMatrix = new ColorMatrix();
-        tintFilterMatrix.colorize(0xFF0000);
+        tintFilterMatrix.colorize(playerColor);
         
         // load our animations
         var swf :SwfResourceLoader = (PopCraft.resourceManager.getResource(_unit.unitData.name) as SwfResourceLoader);

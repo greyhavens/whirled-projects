@@ -16,6 +16,8 @@ public class PlayerBaseUnitView extends SceneObject
     {
         _unit = unit;
         
+        var playerColor :uint = Constants.PLAYER_COLORS[_unit.owningPlayerId];
+        
         // add the image, aligned by its foot position
         var image :Bitmap = (PopCraft.resourceManager.getResource(_unit.unitData.name) as ImageResourceLoader).createBitmap();
         image.x = -(image.width * 0.5);
@@ -23,14 +25,14 @@ public class PlayerBaseUnitView extends SceneObject
         _sprite.addChild(image);
 
         // add a glow around the image
-        _sprite.addChild(ImageUtil.createGlowBitmap(image, Constants.PLAYER_COLORS[_unit.owningPlayerId] as uint));
+        _sprite.addChild(ImageUtil.createGlowBitmap(image, playerColor));
         
         // health meter
         _healthMeter = new RectMeter();
         _healthMeter.minValue = 0;
         _healthMeter.maxValue = _unit.unitData.maxHealth;
         _healthMeter.value = _unit.health;
-        _healthMeter.foregroundColor = 0xFF0000;
+        _healthMeter.foregroundColor = playerColor;
         _healthMeter.backgroundColor = 0x888888;
         _healthMeter.outlineColor = 0x000000;
         _healthMeter.width = 30;
