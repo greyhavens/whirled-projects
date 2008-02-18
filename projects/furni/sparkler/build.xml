@@ -5,7 +5,7 @@
   <property name="app.name" value="Sparkler"/>
   <property name="app.type" value="furni"/>
 
-  <property name="app.lib-extras" value="../../../lib"/>
+  <property name="app.lib-extras" value="../../../lib/fl-components.swc"/>
   
 
   <!-- if you wish to put your source in a subdirectory, uncomment this line -->
