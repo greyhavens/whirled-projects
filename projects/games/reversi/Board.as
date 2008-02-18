@@ -1,6 +1,6 @@
 package {
 
-import com.whirled.WhirledGameControl;
+import com.whirled.game.GameControl;
 
 public class Board
 {
@@ -8,7 +8,7 @@ public class Board
     public static const WHITE_IDX :int = 0;
     public static const BLACK_IDX :int = 1;
 
-    public function Board (gameCtrl :WhirledGameControl, lengthOfSide :int = 8)
+    public function Board (gameCtrl :GameControl, lengthOfSide :int = 8)
     {
         _gameCtrl = gameCtrl;
         _lengthOfSide = lengthOfSide;
@@ -273,6 +273,6 @@ public class Board
     /** The length of one side of the board. */
     protected var _lengthOfSide :int;
 
-    protected var _gameCtrl :WhirledGameControl;
+    protected var _gameCtrl :GameControl;
 }
 }

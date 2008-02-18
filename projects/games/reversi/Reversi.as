@@ -3,18 +3,14 @@ package {
 import flash.display.Sprite;
 import flash.display.MovieClip;
 
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.StateChangedEvent;
-
-import com.whirled.WhirledGameControl;
+import com.whirled.game.*;
 
 [SWF(width="400", height="400")]
 public class Reversi extends Sprite
 {
     public function Reversi ()
     {
-        _gameCtrl = new WhirledGameControl(this);
+        _gameCtrl = new GameControl(this);
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
         _gameCtrl.game.addEventListener(StateChangedEvent.TURN_CHANGED, handleTurnChanged);
@@ -106,21 +102,24 @@ public class Reversi extends Sprite
             // we cannot move, so we'll pass back to the other player
             if (_board.getMoves(1 - turnHolder).length == 0) {
                 // ah, but they can't move either, so the game is over
+                var playerIds :Array = _gameCtrl.game.seating.getPlayerIds();
                 var winnerIndex :int = _board.getWinner();
-                var winnerId :int = 0;
-                for each (var playerId :int in _gameCtrl.game.seating.getPlayerIds()) {
-                    if (_gameCtrl.game.seating.getPlayerPosition(playerId) == winnerIndex) {
-                        winnerId = playerId;
-                        break;
-                    }
-                }
-                _gameCtrl.game.endGame([winnerId]);
-                if (winnerId == 0) {
+                var winnerIds :Array;
+                var loserIds :Array;
+                if (winnerIndex == -1) {
                     _gameCtrl.game.systemMessage("The game was a tie!");
+                    winnerIds = playerIds;
+                    loserIds = [];
+
                 } else {
                     _gameCtrl.game.systemMessage(
-                        _gameCtrl.game.getOccupantName(winnerId) + " has won!");
+                        _gameCtrl.game.getOccupantName(playerIds[winnerIndex]) + " has won!");
+                    loserIds = playerIds;
+                    winnerIds = loserIds.splice(winnerIndex, 1);
                 }
+                // and end the game
+                _gameCtrl.game.endGameWithWinners(
+                    winnerIds, loserIds, GameSubControl.WINNERS_TAKE_ALL);
 
             } else {
                 _gameCtrl.game.systemMessage(
@@ -170,6 +169,6 @@ public class Reversi extends Sprite
     protected var _board :Board;
 
     /** Our game control object. */
-    protected var _gameCtrl :WhirledGameControl;
+    protected var _gameCtrl :GameControl;
 }
 }
