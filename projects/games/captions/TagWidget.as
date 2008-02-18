@@ -23,9 +23,7 @@ import fl.events.ComponentEvent;
 
 import com.threerings.util.StringUtil;
 
-import com.threerings.ezgame.PropertyChangedEvent;
-
-import com.whirled.WhirledGameControl;
+import com.whirled.game.*;
 
 /**
  * Allows users to view/add/remove the tags used for LOLcaptions.
@@ -33,7 +31,7 @@ import com.whirled.WhirledGameControl;
 public class TagWidget extends Sprite
 {
     public function TagWidget (
-        ctrl :WhirledGameControl, searchPhotoService :SearchFlickrPhotoService) :void
+        ctrl :GameControl, searchPhotoService :SearchFlickrPhotoService) :void
     {
         _ctrl = ctrl;
         _searchPhotoService = searchPhotoService;
@@ -181,7 +179,7 @@ public class TagWidget extends Sprite
     [Embed(source="rsrc/x_down.png")]
     protected static const X_DOWN_SKIN :Class;
 
-    protected var _ctrl :WhirledGameControl;
+    protected var _ctrl :GameControl;
 
     protected var _tagFormat :TextFormat;
 

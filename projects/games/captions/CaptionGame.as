@@ -28,14 +28,7 @@ import com.threerings.util.HashMap;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.OccupantChangedEvent;
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.StateChangedEvent;
-
-import com.whirled.FlowAwardedEvent;
-import com.whirled.WhirledGameControl;
-import com.whirled.GameSubControl;
+import com.whirled.game.*;
 
 /**
  * Back-end logic for running a caption game!
@@ -72,7 +65,7 @@ public class CaptionGame extends EventDispatcher
      * trophy).
      */
     public function CaptionGame (
-        gameCtrl :WhirledGameControl, photoService :PhotoService = null,
+        gameCtrl :GameControl, photoService :PhotoService = null,
         previewCount :int = 4, scoreRounds :int = 10,
         captioningDuration :int = 45, votingDuration :int = 20, resultsDuration :int = 30,
 //        captioningDuration :int = 45, votingDuration :int = 10, resultsDuration :int = 10,
@@ -1347,7 +1340,7 @@ public class CaptionGame extends EventDispatcher
 
     protected static const PHASE_COUNT :int = 3;
 
-    protected var _ctrl :WhirledGameControl;
+    protected var _ctrl :GameControl;
     
     /** The photo service we use for retrieving photos. */
     protected var _photoService :PhotoService;

@@ -55,9 +55,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.DisplayUtil;
 
-import com.threerings.ezgame.SizeChangedEvent;
-
-import com.whirled.WhirledGameControl;
+import com.whirled.game.*;
 
 /**
  * TODO:
@@ -71,7 +69,7 @@ public class LOL extends Sprite
     public function LOL () 
     {
 //        trace("Started up LOLcaptions, build ID: reload10");
-        _ctrl = new WhirledGameControl(this);
+        _ctrl = new GameControl(this);
         if (!_ctrl.isConnected()) {
             var oops :TextField = new TextField();
             oops.width = IDEAL_WIDTH;
@@ -1058,7 +1056,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 //    protected static const THEMES :Array = [ LOL_THEME ];
 //    protected static const THEMES :Array = [ SILENT_THEME ];
 
-    protected var _ctrl :WhirledGameControl;
+    protected var _ctrl :GameControl;
 
     protected var _game :CaptionGame;
 

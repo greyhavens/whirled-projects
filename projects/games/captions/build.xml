@@ -7,6 +7,9 @@
   <property name="app.source-suffix" value="mxml"/>
   -->
   <property name="app.name"   value="LOL"/>
+  <property name="app.type" value="game"/>
+
+  <property name="app.lib-extras" value="../../../lib"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
