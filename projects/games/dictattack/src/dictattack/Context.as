@@ -3,14 +3,14 @@
 
 package dictattack {
 
-import com.whirled.WhirledGameControl;
+import com.whirled.game.GameControl;
 
 /**
  * Contains references to the various bits used in the game.
  */
 public class Context
 {
-    public function get control () :WhirledGameControl
+    public function get control () :GameControl
     {
         return _control;
     }
@@ -19,11 +19,6 @@ public class Context
     {
         return _model;
     }
-
-//     public function get board () :Board
-//     {
-//         return _board;
-//     }
 
     public function get content () :Content
     {
@@ -35,24 +30,22 @@ public class Context
         return _view;
     }
 
-    public function Context (control :WhirledGameControl, content :Content)
+    public function Context (control :GameControl, content :Content)
     {
         _control = control;
         _content = content;
     }
 
-    public function init (model :Model /*, board :Board */, view :GameView) :void
+    public function init (model :Model, view :GameView) :void
     {
         _model = model;
-//         _board = board;
         _view = view;
     }
 
-    protected var _control :WhirledGameControl;
+    protected var _control :GameControl;
     protected var _content :Content;
 
     protected var _model :Model;
-//     protected var _board :Board;
     protected var _view :GameView;
 }
 }

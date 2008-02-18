@@ -12,10 +12,9 @@ import flash.events.Event;
 
 import com.threerings.util.Log;
 
-import com.threerings.ezgame.StateChangedEvent;
-
-import com.whirled.FlowAwardedEvent;
-import com.whirled.WhirledGameControl;
+import com.whirled.game.FlowAwardedEvent;
+import com.whirled.game.GameControl;
+import com.whirled.game.StateChangedEvent;
 
 [SWF(width="1000", height="550")]
 public class DictionaryAttack extends Sprite
@@ -37,7 +36,7 @@ public class DictionaryAttack extends Sprite
         };
 
         // create and wire ourselves into our multiplayer game control (and create our content)
-        _ctx = new Context(new WhirledGameControl(this, false), new Content(maybeFinishInit));
+        _ctx = new Context(new GameControl(this, false), new Content(maybeFinishInit));
         _ctx.control.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _ctx.control.game.addEventListener(StateChangedEvent.ROUND_STARTED, roundDidStart);
         _ctx.control.game.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);

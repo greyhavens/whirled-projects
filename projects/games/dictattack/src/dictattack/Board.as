@@ -13,8 +13,7 @@ import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.whirled.WhirledGameControl;
+import com.whirled.game.PropertyChangedEvent;
 
 /**
  * Displays the letters on the board.

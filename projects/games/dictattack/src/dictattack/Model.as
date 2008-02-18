@@ -8,10 +8,9 @@ import flash.utils.getTimer;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.PropertyChangedEvent;
-
-import com.whirled.GameSubControl;
+import com.whirled.game.GameSubControl;
+import com.whirled.game.MessageReceivedEvent;
+import com.whirled.game.PropertyChangedEvent;
 
 /**
  * Models and manages the (distributed) state of the board. We model the state of the board as a

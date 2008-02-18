@@ -16,10 +16,9 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.PropertyChangedEvent;
-
-import com.whirled.WhirledGameControl;
+import com.whirled.game.GameControl;
+import com.whirled.game.MessageReceivedEvent;
+import com.whirled.game.PropertyChangedEvent;
 
 /**
  * Manages the whole game view and user input.
