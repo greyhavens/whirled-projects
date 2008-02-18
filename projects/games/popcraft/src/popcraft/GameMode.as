@@ -12,7 +12,7 @@ import flash.display.DisplayObjectContainer;
 import flash.events.KeyboardEvent;
 
 import popcraft.battle.*;
-import popcraft.battle.geom.CollisionGrid;
+import popcraft.battle.geom.AttractRepulseGrid;
 import popcraft.net.*;
 import popcraft.puzzle.*;
 
@@ -395,7 +395,7 @@ public class GameMode extends AppMode
         return _battleBoard.unitDisplayParent;
     }
     
-    public function get battleCollisionGrid () :CollisionGrid
+    public function get battleCollisionGrid () :AttractRepulseGrid
     {
         return _battleBoard.collisionGrid;
     }

@@ -66,17 +66,19 @@ public class CreatureUnit extends Unit
             if (curLoc.similar(_destination, MOVEMENT_EPSILON)) {
                 this.stopMoving();
             } else {
-            
-                // remember where we were at the beginning of the frame, for
-                // collision response
-                _lastLoc = curLoc.clone();
-            
-                _movementDirection = _destination.subtract(curLoc);
                 
-                var remainingDistance :Number = _movementDirection.normalizeLocalAndGetLength();
+                // the unit is attracted to its destination
+                var attractForce :Vector2 = _destination.subtract(curLoc);
+                var remainingDistance :Number = attractForce.normalizeLocalAndGetLength();
+                
+                // and repulsed by other units around it
+                var repulseForce :Vector2 = _collisionGrid.getForceForLoc(curLoc, 60, _collisionObj).scale(2);
+                
+                // add forces
+                _movementDirection = attractForce.add(repulseForce).normalizeLocal();
                 
                 // don't overshoot the destination
-                var distance :Number = Math.min(this.unitData.baseMoveSpeed * dt, remainingDistance);
+                var distance :Number = this.unitData.baseMoveSpeed * dt;
                 
                 // calculate our next location
                 var nextLoc :Vector2 = _movementDirection.scale(distance).addLocal(curLoc);
@@ -85,7 +87,7 @@ public class CreatureUnit extends Unit
                 this.y = nextLoc.y;
                 
                 // update our location in the collision grid
-                _collisionObj.addToGrid(_collisionGrid);
+                //_collisionObj.addToGrid(_collisionGrid);
                 
                 _movedThisFrame = true;
             }
@@ -158,11 +160,15 @@ public class CreatureUnit extends Unit
         _collisionObj.removeFromGrid();
     }
     
+    public function get collisionObj () :CollisionObject
+    {
+        return _collisionObj;
+    }
+    
     protected var _destination :Vector2;
     
-    protected var _lastLoc :Vector2 = new Vector2();
     protected var _collisionObj :CollisionObject;
-    protected var _collisionGrid :CollisionGrid;
+    protected var _collisionGrid :AttractRepulseGrid;
     
     protected var _movedThisFrame :Boolean;
     protected var _movementDirection :Vector2;

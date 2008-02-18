@@ -9,6 +9,7 @@ import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 
 import popcraft.*;
+import popcraft.battle.geom.AttractRepulseGrid;
 import popcraft.battle.geom.CollisionGrid;
 import popcraft.net.*;
 
@@ -23,7 +24,7 @@ public class BattleBoard extends SceneObject
         _width = width;
         _height = height;
         
-        _collisionGrid = new CollisionGrid(_width, _height, Constants.UNIT_GRID_CELL_SIZE);
+        _collisionGrid = new AttractRepulseGrid(_width, _height, Constants.UNIT_GRID_CELL_SIZE);
 
         _view = new Sprite();
 
@@ -54,7 +55,7 @@ public class BattleBoard extends SceneObject
         return _unitDisplayParent;
     }
     
-    public function get collisionGrid () :CollisionGrid
+    public function get collisionGrid () :AttractRepulseGrid
     {
         return _collisionGrid;
     }
@@ -63,7 +64,7 @@ public class BattleBoard extends SceneObject
     protected var _height :int;
     protected var _view :Sprite;
     protected var _unitDisplayParent :Sprite;
-    protected var _collisionGrid :CollisionGrid;
+    protected var _collisionGrid :AttractRepulseGrid;
 }
 
 }

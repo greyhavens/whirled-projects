@@ -1,16 +1,15 @@
 package popcraft {
     
-import com.threerings.ezgame.StateChangedEvent;
-
-import com.whirled.WhirledGameControl;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.resource.*;
+import com.whirled.game.GameControl;
+import com.whirled.game.StateChangedEvent;
 
 import flash.events.Event;
 
 public class LoadingMode extends AppMode
 {
-    public function LoadingMode (gameCtrl :WhirledGameControl)
+    public function LoadingMode (gameCtrl :GameControl)
     {
         _gameCtrl = gameCtrl;
     }
@@ -34,10 +33,11 @@ public class LoadingMode extends AppMode
     
     override public function update (dt :Number) :void
     {
-        if (!PopCraft.resourceManager.isLoading) {
+        if (!_firedPlayerReady && !PopCraft.resourceManager.isLoading) {
             // Once we're done loading resources, we're ready for the game to begin.
             // Wait for the WhirledGameControl to fire the event.
             _gameCtrl.game.playerReady();
+            _firedPlayerReady = true;
         }
     }
     
@@ -46,7 +46,8 @@ public class LoadingMode extends AppMode
         MainLoop.instance.changeMode(new GameMode());
     }
     
-    protected var _gameCtrl :WhirledGameControl;
+    protected var _gameCtrl :GameControl;
+    protected var _firedPlayerReady :Boolean;
     
     [Embed(source="../../rsrc/char_grunt.png", mimeType="application/octet-stream")]
     protected static const IMAGE_GRUNTICON :Class;

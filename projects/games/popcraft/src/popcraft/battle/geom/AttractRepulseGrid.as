@@ -1,10 +1,14 @@
 package popcraft.battle.geom {
     
 import com.threerings.flash.Vector2;
+import com.whirled.contrib.core.SimObjectRef;
+
+import popcraft.*;
+import popcraft.battle.*;
     
 public class AttractRepulseGrid extends CollisionGrid
 {
-    public function AttractRepulseGrid (boardWidth :int, boardHeight :int, cellSize :int, forceQueryRadius :Number)
+    public function AttractRepulseGrid (boardWidth :int, boardHeight :int, cellSize :int)
     {
         super(boardWidth, boardHeight, cellSize);
     }
@@ -12,6 +16,32 @@ public class AttractRepulseGrid extends CollisionGrid
     /** Discover all the forces that apply to an object centered at the given location. */
     public function getForceForLoc (loc :Vector2, forceQueryRadius :Number, ignoreObj :CollisionObject) :Vector2
     {
+        var forceQueryRadiusInv :Number = 1 / forceQueryRadius;
+        
+        var force :Vector2 = new Vector2();
+        
+        var refs :Array = GameMode.getNetObjectRefsInGroup(CreatureUnit.GROUP_NAME);
+        for each (var ref :SimObjectRef in refs) {
+            var creature :CreatureUnit = ref.object as CreatureUnit;
+            if (null == creature || ignoreObj == creature.collisionObj) {
+                continue;
+            }
+            
+            var vec :Vector2 = loc.subtract(creature.unitLoc);
+            var distance :Number = vec.normalizeLocalAndGetLength();
+            if (distance < forceQueryRadius) {
+                
+                // normalize the strength of each vector
+                var strength :Number = (forceQueryRadius - distance) * forceQueryRadiusInv;
+                vec.scaleLocal(strength);
+                
+                force.addLocal(vec);
+            }
+        }
+        
+        return force;
+    }
+    /*{
         // cache some easy-to-compute values, just 'cause ActionScript is so slow
         
         var halfRadius :Number = forceQueryRadius * 0.5;
@@ -59,9 +89,9 @@ public class AttractRepulseGrid extends CollisionGrid
         }
         
         return totalForce;
-    }
+    }*/
     
-    public static function clamp (val :Number, min :Number, max :Number) :Number
+    protected static function clamp (val :Number, min :Number, max :Number) :Number
     {
         val = Math.max(val, min);
         return Math.min(val, max);

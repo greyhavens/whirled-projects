@@ -4,9 +4,9 @@
 package {
 
 import com.threerings.util.Assert;
-import com.whirled.WhirledGameControl;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.resource.ResourceManager;
+import com.whirled.game.GameControl;
 
 import flash.display.Sprite;
 
@@ -39,20 +39,20 @@ public class PopCraft extends Sprite
         var mainLoop :MainLoop = new MainLoop(this);
         mainLoop.run();
 
-        _gameCtrl = new WhirledGameControl(this, false);
+        _gameCtrl = new GameControl(this, false);
         
         // LoadingMode will start the game when loading is complete
         mainLoop.pushMode(new LoadingMode(_gameCtrl));
     }
 
-    public function get gameControl () :WhirledGameControl
+    public function get gameControl () :GameControl
     {
         return _gameCtrl;
     }
 
     protected static var g_instance :PopCraft;
 
-    protected var _gameCtrl :WhirledGameControl;
+    protected var _gameCtrl :GameControl;
     protected var _rsrcMgr :ResourceManager = new ResourceManager();
 }
 

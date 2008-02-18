@@ -11,7 +11,7 @@ public class NetObjectDB extends ObjectDB
     {
     }
     
-    override protected function beginUpdate (dt :Number) :void
+    /*override protected function beginUpdate (dt :Number) :void
     {
         // update the simulation (objects will move)
         super.beginUpdate(dt);
@@ -41,7 +41,7 @@ public class NetObjectDB extends ObjectDB
         }
         
         super.finalizeObjectDestruction(obj);
-    }
+    }*/
 }
 
 }
