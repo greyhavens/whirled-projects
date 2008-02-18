@@ -5,14 +5,9 @@ import flash.display.Sprite;
 
 import flash.events.MouseEvent;
 
-import com.whirled.GameSubControl;
-import com.whirled.WhirledGameControl;
-
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.ezgame.MessageReceivedEvent;
-
 import com.threerings.util.StringUtil;
+
+import com.whirled.game.*;
 
 /**
  * Clickfest: sample game.
@@ -31,7 +26,7 @@ public class ClickFest extends Sprite
         _drawArea = spr.graphics;
 
         // create the game control
-        _ctrl = new WhirledGameControl(this);
+        _ctrl = new GameControl(this);
 
         // set up our listeners
         _ctrl.game.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
@@ -166,7 +161,7 @@ public class ClickFest extends Sprite
         mouseChildren = false;
     }
 
-    protected var _ctrl :WhirledGameControl;
+    protected var _ctrl :GameControl;
 
     protected var _myIndex :int;
 
