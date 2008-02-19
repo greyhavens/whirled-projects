@@ -23,7 +23,7 @@
 		<link>
 			<name>[source path] whirled-src-as</name>
 			<type>2</type>
-			<location>/export/whirled/src/as</location>
+			<location>/export/whirled/libraries/whirled/src/as</location>
 		</link>
 		<link>
 			<name>[source path] narya-src-as</name>
@@ -33,17 +33,17 @@
 		<link>
 			<name>[source path] contrib-src-as</name>
 			<type>2</type>
-			<location>/export/whirled/contrib/src/as</location>
-		</link>
-		<link>
-			<name>[source path] toybox-src-as</name>
-			<type>2</type>
-			<location>/export/whirled/libraries/toybox/src/as</location>
+			<location>/export/whirled/libraries/whirled/contrib/src/as</location>
 		</link>
 		<link>
 			<name>[source path] nenya-src-as</name>
 			<type>2</type>
 			<location>/export/whirled/libraries/nenya/src/as</location>
+		</link>
+		<link>
+			<name>[source path] toybox-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/toybox/src/as</location>
 		</link>
 		<link>
 			<name>[source path] vilya-src-as</name>

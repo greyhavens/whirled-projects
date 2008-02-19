@@ -1,9 +1,13 @@
 package popcraft {
     
+import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.components.*;
+import com.whirled.contrib.core.objects.*;
 
-import popcraft.battle.CreatureUnit;
-import popcraft.battle.geom.CollisionGrid;
+import flash.display.DisplayObject;
+
+import popcraft.battle.*;
 
 public class NetObjectDB extends ObjectDB
 {
@@ -11,12 +15,12 @@ public class NetObjectDB extends ObjectDB
     {
     }
     
-    /*override protected function beginUpdate (dt :Number) :void
+    override protected function beginUpdate (dt :Number) :void
     {
         // update the simulation (objects will move)
         super.beginUpdate(dt);
         
-        var collisionGrid :CollisionGrid = GameMode.instance.battleCollisionGrid;
+        /*var collisionGrid :CollisionGrid = GameMode.instance.battleCollisionGrid;
         
         collisionGrid.beginDetectCollisions();
         
@@ -29,10 +33,27 @@ public class NetObjectDB extends ObjectDB
             }
         }
         
-        collisionGrid.endDetectCollisions();
+        collisionGrid.endDetectCollisions();*/
+        
+        // depth-sort all the units
+        DisplayUtil.sortDisplayChildren(GameMode.instance.battleUnitDisplayParent, displayObjectYSort);
     }
     
-    override protected function finalizeObjectDestruction (obj :SimObject) :void
+    protected static function displayObjectYSort (a :DisplayObject, b :DisplayObject) :int
+    {
+        var ay :Number = a.y;
+        var by :Number = b.y;
+        
+        if (ay < by) {
+            return -1;
+        } else if (ay > by) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    
+    /*override protected function finalizeObjectDestruction (obj :SimObject) :void
     {
         // remove dead creatures from the collision grid
         if (obj is CreatureUnit) {

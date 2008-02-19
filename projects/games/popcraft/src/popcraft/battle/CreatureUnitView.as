@@ -15,6 +15,8 @@ import popcraft.util.*;
 
 public class CreatureUnitView extends SceneObject
 {
+    public static const GROUP_NAME :String = "CreatureUnitView";
+    
     public function CreatureUnitView (unit :CreatureUnit)
     {
         _unit = unit;
@@ -62,6 +64,16 @@ public class CreatureUnitView extends SceneObject
             _sprite.graphics.lineStyle(1, 0xFF0000);
             _sprite.graphics.drawCircle(0, 0, _unit.unitData.collisionRadius);
         }
+    }
+
+    // from SimObject
+    override public function get objectGroups () :Array
+    {
+        if (null == g_groups) {
+            g_groups = [ GROUP_NAME ];
+        }
+
+        return g_groups;
     }
     
     protected function setupAnimations (playerColor :uint) :void
@@ -228,6 +240,8 @@ public class CreatureUnitView extends SceneObject
     
     // @TODO - remove this when all units have animations
     protected var _hasAnimations :Boolean;
+
+    protected static var g_groups :Array;
     
     protected static const FACING_N :int = 0;
     protected static const FACING_NW :int = 1;

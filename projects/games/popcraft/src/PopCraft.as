@@ -5,7 +5,7 @@ package {
 
 import com.threerings.util.Assert;
 import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.resource.ResourceManager;
+import com.whirled.contrib.core.resource.*;
 import com.whirled.game.GameControl;
 
 import flash.display.Sprite;
