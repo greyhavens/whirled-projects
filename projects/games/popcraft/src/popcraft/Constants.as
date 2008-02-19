@@ -29,10 +29,13 @@ public class Constants
     public static const PIECE_CLEAR_TIMER_LENGTH :Number = 0.75;
 
     public static const MIN_GROUP_SIZE :int = 1; // no min group size right now
+    
+    public static const PUZZLE_HEIGHT :int = 110;
 
     public static const PUZZLE_COLS :int = 8;
     public static const PUZZLE_ROWS :int = 4;
-    public static const PUZZLE_TILE_SIZE :int = 28;
+    
+    public static const PUZZLE_TILE_SIZE :int = int(PUZZLE_HEIGHT / PUZZLE_ROWS);
 
     public static const CLEAR_VALUE_TABLE :IntValueTable =
         new IntValueTable( [-20, -10, 10, 20, 30, 20] );
@@ -147,11 +150,12 @@ public class Constants
     ];
 
     /* Screen layout */
-    public static const RESOURCE_DISPLAY_LOC :Point = new Point(286, 5);
-    public static const PUZZLE_BOARD_LOC :Point = new Point(10, 3);
-    public static const BATTLE_BOARD_LOC :Point = new Point(0, 115);
+    public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
+    
+    public static const RESOURCE_DISPLAY_LOC :Point = new Point(350, 380);
+    public static const PUZZLE_BOARD_LOC :Point = new Point(10, 378);
 
-    public static const FIRST_UNIT_BUTTON_LOC :Point = new Point(286, 25);
+    public static const FIRST_UNIT_BUTTON_LOC :Point = new Point(350, 400);
 
     public static function getPlayerBaseLocations (numPlayers :uint) :Array // of Vector2s
     {
