@@ -28,6 +28,14 @@ public class AttractRepulseGrid extends CollisionGrid
             }
             
             var vec :Vector2 = loc.subtract(creature.unitLoc);
+            
+            // if this unit is directly on top of the other unit,
+            // we'll get a zero vector, which we can't normalize.
+            if (vec.x == 0 && vec.y == 0) {
+                // make a small non-zero vector
+                vec.x = 0.001;
+            }
+            
             var distance :Number = vec.normalizeLocalAndGetLength();
             if (distance < forceQueryRadius) {
                 

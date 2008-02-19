@@ -204,7 +204,7 @@ public class CreatureUnitView extends SceneObject
     
     protected static function getFacingDirectionFromAngle (angleRadians :Number) :int
     {
-        Assert.isTrue(angleRadians >= 0 && angleRadians < (Math.PI * 2));
+        Assert.isTrue(angleRadians >= 0 && angleRadians < (Math.PI * 2), "bad angle: " + angleRadians);
         
         // where does the angle land on the unit circle?
         // since we're dealing with screen coordinates, south is "up" on the unit circle
