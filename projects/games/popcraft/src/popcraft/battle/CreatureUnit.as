@@ -72,7 +72,8 @@ public class CreatureUnit extends Unit
                 var remainingDistance :Number = attractForce.normalizeLocalAndGetLength();
                 
                 // and repulsed by other units around it
-                var repulseForce :Vector2 = _collisionGrid.getForceForLoc(curLoc, 30, _collisionObj).scale(2);
+                // @TODO - these numbers are a total kludge right now. some testing needs to be done to determine optimal values.
+                var repulseForce :Vector2 = _collisionGrid.getForceForLoc(curLoc, 30, _collisionObj);
                 
                 // add forces
                 _movementDirection = attractForce.add(repulseForce).normalizeLocal();
