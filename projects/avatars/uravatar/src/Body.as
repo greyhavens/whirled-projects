@@ -140,7 +140,14 @@ public class Body
             _ctrl.registerStates(states);
         }
 
-        switchToState("default");
+        var startState :String = null;
+        if (_ctrl.isConnected()) {
+            startState = _ctrl.getState();
+        }
+        if (startState == null) {
+            startState = "default";
+        }
+        switchToState(startState);
     }
 
     /**
