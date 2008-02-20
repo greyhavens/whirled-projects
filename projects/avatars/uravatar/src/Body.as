@@ -352,7 +352,6 @@ public class Body
     protected var _mediaHeight :int;
 
     protected var _scenes :HashMap = new HashMap();
-    protected var _rando :Random = new Random();
 
     protected var _state :String;
     protected var _mode :String = "";
