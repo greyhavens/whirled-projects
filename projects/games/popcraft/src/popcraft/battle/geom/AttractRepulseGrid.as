@@ -43,6 +43,9 @@ public class AttractRepulseGrid extends CollisionGrid
                 var strength :Number = (forceQueryRadius - distance) * forceQueryRadiusInv;
                 vec.scaleLocal(strength);
                 
+                // rotate the vector a bit
+                vec.rotateLocal(strength * MAX_ROTATION);
+                
                 force.addLocal(vec);
             }
         }
@@ -104,6 +107,8 @@ public class AttractRepulseGrid extends CollisionGrid
         val = Math.max(val, min);
         return Math.min(val, max);
     }
+    
+    protected static const MAX_ROTATION :Number = Math.PI / 4;
     
 }
 
