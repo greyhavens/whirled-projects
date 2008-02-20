@@ -14,9 +14,10 @@ public class Constants
 {
     public static const SCREEN_DIMS :Vector2 = new Vector2(700, 500);
 
-    public static const DEBUG_LEVEL :int = 0;
-    public static const CHEATS_ENABLED :Boolean = true;
-    public static const DRAW_UNIT_DATA_CIRCLES :Boolean = false;
+    public static const DEBUG_DRAW_STATS :Boolean = true;
+    public static const DEBUG_CHECKSUM_STATE :int = 0;
+    public static const DEBUG_ALLOW_CHEATS :Boolean = true;
+    public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
 
     public static const PLAYER_COLORS :Array = [
        uint(0xFFFF0000),

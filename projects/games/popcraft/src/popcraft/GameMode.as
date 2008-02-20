@@ -86,7 +86,7 @@ public class GameMode extends AppMode
         _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
 
-        if (Constants.DEBUG_LEVEL >= 1) {
+        if (Constants.DEBUG_CHECKSUM_STATE >= 1) {
             _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
         }
 
@@ -116,6 +116,11 @@ public class GameMode extends AppMode
         // The suggested way to do this is to attach an event listener to the stage,
         // but that's a security violation. The GameControl re-dispatches global key events for us instead.
         PopCraft.instance.gameControl.local.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 0, false);
+        
+        if (Constants.DEBUG_DRAW_STATS) {
+            _debugDataView = new DebugDataView();
+            this.addObject(_debugDataView, this.modeSprite);
+        }
     }
 
     // from com.whirled.contrib.core.AppMode
@@ -131,16 +136,23 @@ public class GameMode extends AppMode
 
     // there has to be a better way to figure out charCodes
     protected static const KEY_4 :uint = "4".charCodeAt(0);
+    protected static const KEY_5 :uint = "5".charCodeAt(0);
     protected function onKeyDown (e :KeyboardEvent) :void
     {
-        if (Constants.CHEATS_ENABLED) {
-            switch (e.charCode) {
-            case KEY_4:
+        switch (e.charCode) {
+        case KEY_4:
+            if (Constants.DEBUG_ALLOW_CHEATS) {
                 for (var i :uint = 0; i < Constants.RESOURCE__LIMIT; ++i) {
                     _playerData.offsetResourceAmount(i, 100);
                 }
-                break;
             }
+            break;
+            
+        case KEY_5:
+            if (null != _debugDataView) {
+                _debugDataView.visible = !(_debugDataView.visible);
+            }
+            break;
         }
     }
 
@@ -174,7 +186,7 @@ public class GameMode extends AppMode
             // network timeslices are always the same distance apart)
             _netObjects.update(TICK_INTERVAL_S);
 
-            if (Constants.DEBUG_LEVEL >= 1) {
+            if (Constants.DEBUG_CHECKSUM_STATE >= 1) {
                 debugNetwork(messageArray);
             }
 
@@ -293,7 +305,7 @@ public class GameMode extends AppMode
         {
             csum.add(val);
 
-            if (Constants.DEBUG_LEVEL >= 2) {
+            if (Constants.DEBUG_CHECKSUM_STATE >= 2) {
                 if (needsLinebreak) {
                     msg.details += "\n";
                 }
@@ -411,6 +423,7 @@ public class GameMode extends AppMode
     protected var _puzzleBoard :PuzzleBoard;
     protected var _battleBoard :BattleBoard;
     protected var _playerData :PlayerData;
+    protected var _debugDataView :DebugDataView;
 
     protected var _netObjects :ObjectDB;
 

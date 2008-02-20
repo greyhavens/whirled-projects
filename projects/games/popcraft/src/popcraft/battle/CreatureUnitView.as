@@ -52,7 +52,7 @@ public class CreatureUnitView extends SceneObject
         _healthMeter.y = -_sprite.height - _healthMeter.height;
         
         // draw some debugging circles
-        if (Constants.DRAW_UNIT_DATA_CIRCLES) {
+        if (Constants.DEBUG_DRAW_UNIT_DATA_CIRCLES) {
             
             // unit-detect circle
             if (_unit.unitData.detectRadius != _unit.unitData.collisionRadius) {
