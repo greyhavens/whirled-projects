@@ -58,8 +58,6 @@ class SapperAI extends AITaskTree
     
     override protected function childTaskCompleted (task :AITask) :void
     {
-        switch (task.name) {
-        }
     }
 
     override public function get name () :String
