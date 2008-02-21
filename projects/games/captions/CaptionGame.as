@@ -131,7 +131,7 @@ public class CaptionGame extends EventDispatcher
             submitCaption(null);
         }
         // set the value last, so it doesn't block clearing our caption
-        _ctrl.net.setImmediate("part:" + _myId, participating ? null : false);
+        _ctrl.net.set("part:" + _myId, participating ? null : false, true);
     }
 
     /**
@@ -207,7 +207,7 @@ public class CaptionGame extends EventDispatcher
             // submitted which caption...
             _ctrl.net.set("caption:" + _myId, _myCaption);
             if ((_myCaption != null) && ((_ctrl.net.get("name:" + _myId) != _myName))) {
-                _ctrl.net.setImmediate("name:" + _myId, _myName);
+                _ctrl.net.set("name:" + _myId, _myName, true);
             }
         }
     }
@@ -505,7 +505,7 @@ public class CaptionGame extends EventDispatcher
      */
     protected function setCtrlPhase (phase :int) :void
     {
-        _ctrl.net.setImmediate("cphase", phase);
+        _ctrl.net.set("cphase", phase, true);
     }
 
     /**
@@ -1006,7 +1006,7 @@ public class CaptionGame extends EventDispatcher
                         _ctrl.game.systemMessage("" + skipVotes +
                             " players have voted to skip the picture.");
                     }
-                    _ctrl.net.setImmediate("skipping", true);
+                    _ctrl.net.set("skipping", true, true);
                     _ctrl.services.stopTicker("tick");
                     setPhase(-1);
                     setCtrlPhase(GET_PHOTO_CTRL_PHASE);
