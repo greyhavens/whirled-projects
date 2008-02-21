@@ -56,8 +56,8 @@ public class PuzzleBoard extends SceneObject
             var piece :Piece = createNewPieceOnBoard(i);
 
             // show a clever scale effect
-            piece.displayObject.scaleX = 0;
-            piece.displayObject.scaleY = 0;
+            piece.scaleX = 0;
+            piece.scaleY = 0;
 
             piece.addTask(new SerialTask(
                 new TimedTask(Rand.nextNumberRange(0.25, 1, Rand.STREAM_COSMETIC)),
@@ -83,8 +83,8 @@ public class PuzzleBoard extends SceneObject
         var resourceType :uint = _resourceGenerator.nextEntry();
         var piece :Piece = new Piece(resourceType, boardIndex);
 
-        piece.displayObject.x = getPieceXLoc(idxToX(boardIndex));
-        piece.displayObject.y = getPieceYLoc(idxToY(boardIndex));
+        piece.x = getPieceXLoc(idxToX(boardIndex));
+        piece.y = getPieceYLoc(idxToY(boardIndex));
 
         _board[boardIndex] = piece;
 
@@ -216,8 +216,8 @@ public class PuzzleBoard extends SceneObject
         swapPiecesInternal(fromIndex, toIndex);
 
         // make sure the piece is in its correct location
-        piece.displayObject.x = getPieceXLoc(col);
-        piece.displayObject.y = getPieceYLoc(fromRow);
+        piece.x = getPieceXLoc(col);
+        piece.y = getPieceYLoc(fromRow);
 
         // animate the piece to its new location
         piece.removeNamedTasks("move");
@@ -243,8 +243,8 @@ public class PuzzleBoard extends SceneObject
                 var piece :Piece = createNewPieceOnBoard(i);
 
                 // show a clever scale effect
-                piece.displayObject.scaleX = 0;
-                piece.displayObject.scaleY = 0;
+                piece.scaleX = 0;
+                piece.scaleY = 0;
 
                 piece.addTask(ScaleTask.CreateSmooth(1, 1, 0.25));
             }
@@ -296,10 +296,10 @@ public class PuzzleBoard extends SceneObject
         var px2 :int = getPieceXLoc(x2);
         var py2 :int = getPieceYLoc(y2);
 
-        piece1.displayObject.x = px1;
-        piece1.displayObject.y = py1;
-        piece2.displayObject.x = px2;
-        piece2.displayObject.y = py2;
+        piece1.x = px1;
+        piece1.y = py1;
+        piece2.x = px2;
+        piece2.y = py2;
 
         // animate them to their new locations
         piece1.removeNamedTasks("move");

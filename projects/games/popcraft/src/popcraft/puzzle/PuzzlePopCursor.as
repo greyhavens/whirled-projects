@@ -83,7 +83,6 @@ public class PuzzlePopCursor extends SceneObject
     override protected function addedToDB () :void
     {
         // the cursor is only visible when the mouse is over the mode
-        // @TSC - does it make any difference that I'm using weak refs here?
         _board.interactiveObject.addEventListener(MouseEvent.ROLL_OUT, rollOut, false, 0, true);
         _board.interactiveObject.addEventListener(MouseEvent.ROLL_OVER, rollOver, false, 0, true);
 
