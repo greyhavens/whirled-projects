@@ -1,8 +1,12 @@
 package popcraft.puzzle {
     
 import com.whirled.contrib.core.*;
+import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.tasks.*;
 
 import flash.events.MouseEvent;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
 
@@ -11,6 +15,26 @@ public class ComboHiliteCursor extends SimObject
     public function ComboHiliteCursor (board :PuzzleBoard)
     {
         _board = board;
+        
+        _text = new TextField();
+        
+        _text.background = true;
+        _text.backgroundColor = 0xFFFFFF;
+        _text.border = true;
+        _text.borderColor = 0x000000;
+        
+        _text.autoSize = TextFieldAutoSize.LEFT;
+        _text.multiline = false;
+        _text.wordWrap = false;
+        _text.selectable = false;
+        
+        _textObj = new SimpleSceneObject(_text);
+        _textObj.visible = false;
+        _textObj.scaleX = 3;
+        _textObj.scaleY = 3;
+        
+        _textObj.x = Constants.RESOURCE_POPUP_LOC.x;
+        _textObj.y = Constants.RESOURCE_POPUP_LOC.y;
     }
 
     override protected function addedToDB () :void
@@ -18,6 +42,8 @@ public class ComboHiliteCursor extends SimObject
         _board.interactiveObject.addEventListener(MouseEvent.ROLL_OUT, rollOut, false, 0, true);
         _board.interactiveObject.addEventListener(MouseEvent.ROLL_OVER, rollOver, false, 0, true);
         _board.interactiveObject.addEventListener(MouseEvent.CLICK, mouseClick, false, 0, true);
+        
+        this.db.addObject(_textObj, GameMode.instance.modeSprite);
     }
 
     override protected function destroyed () :void
@@ -30,6 +56,27 @@ public class ComboHiliteCursor extends SimObject
     protected function showHilites (show :Boolean) :void
     {
         _hilitedPieces.forEach(function (piece :Piece, index :int, array :Array) :void { piece.showHilite(show); });
+        
+        if (!show || _hilitedPieces.length == 0) {
+            _textObj.visible = false;
+            _textObj.removeAllTasks();
+        } else {
+            var resourceValue :int = Constants.CLEAR_VALUE_TABLE.getValueAt(_hilitedPieces.length - 1);
+            
+            //_text.backgroundColor = Constants.getResource((_hilitedPieces[0] as Piece).resourceType).color;
+            
+            if (resourceValue >= 0) {
+                _text.textColor = 0xFFFFFF;
+                _text.backgroundColor = 0x000000;
+                _text.text = "+" + resourceValue.toString();
+            } else {
+                _text.textColor = 0x000000;
+                _text.backgroundColor = 0xFF0000;
+                _text.text = resourceValue.toString();
+            }
+            
+            _textObj.visible = true;
+        }
     }
     
     protected function hilitesContainsPiece (x :int, y :int) :Boolean
@@ -118,6 +165,9 @@ public class ComboHiliteCursor extends SimObject
     protected var _hilitedPieces :Array = [];
     
     protected var _over :Boolean;
+    
+    protected var _text :TextField;
+    protected var _textObj :SimpleSceneObject;
     
 }
 

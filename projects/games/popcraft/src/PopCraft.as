@@ -14,7 +14,7 @@ import popcraft.*;
 import popcraft.net.*;
 import popcraft.util.*;
 
-[SWF(width="700", height="500", frameRate="60")]
+[SWF(width="700", height="500", frameRate="30")]
 public class PopCraft extends Sprite
 {
     /**

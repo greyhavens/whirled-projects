@@ -40,14 +40,14 @@ public class PuzzleBoard extends SceneObject
         _sprite.graphics.drawRect(0, 0, _cols * tileSize, _rows * tileSize);
         _sprite.graphics.endFill();
         _sprite.mouseEnabled = true;
-
-
-        // wow, i sure wish flash would allow scoped variable declarations...
-        var i :int;
-
+    }
+    
+    override protected function addedToDB () :void
+    {
         // create the board, and populate it with a random distribution of resources
         _board = new Array(_cols * _rows);
-        for (i = 0; i < _cols * _rows; ++i) {
+        
+        for (var i :int = 0; i < _cols * _rows; ++i) {
             var piece :Piece = createNewPieceOnBoard(i);
 
             // show a clever scale effect
@@ -58,10 +58,7 @@ public class PuzzleBoard extends SceneObject
                 new TimedTask(Rand.nextNumberRange(0.25, 1, Rand.STREAM_COSMETIC)),
                 ScaleTask.CreateSmooth(1, 1, 0.25)));
         }
-    }
-    
-    override protected function addedToDB () :void
-    {
+        
         // create cursors
         this.db.addObject(new ComboHiliteCursor(this));
     }
@@ -86,7 +83,7 @@ public class PuzzleBoard extends SceneObject
         _board[boardIndex] = piece;
 
         // add the Piece to the mode, as a child of the board sprite
-        MainLoop.instance.topMode.addObject(piece, _sprite);
+        this.db.addObject(piece, _sprite);
 
         return piece;
     }
@@ -373,6 +370,7 @@ public class PuzzleBoard extends SceneObject
     }
 
     protected var _sprite :Sprite;
+    
     protected var _cols :int;
     protected var _rows :int;
     protected var _tileSize :int;
