@@ -130,7 +130,7 @@ public class Unit extends SimObject
     
     public function receiveAttack (attack :UnitAttack) :void
     {
-        _health -= int(_unitData.armor.getWeaponDamage(attack.weapon));
+        _health -= _unitData.armor.getWeaponDamage(attack.weapon);
         _health = Math.max(_health, 0);
         
         this.dispatchEvent(new UnitAttackedEvent(attack));
@@ -193,7 +193,7 @@ public class Unit extends SimObject
     protected var _owningPlayerId :uint;
     protected var _unitType :uint;
     protected var _unitData :UnitData;
-    protected var _health :int;
+    protected var _health :Number;
     
     protected var _loc :Vector2 = new Vector2();
 
