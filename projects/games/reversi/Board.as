@@ -32,7 +32,7 @@ public class Board
         data[coordsToIdx(half + 1, half + 1)] = WHITE_IDX;
 
         // assign it to the game object
-        _gameCtrl.net.setImmediate("board", data);
+        _gameCtrl.net.set("board", data, true);
     }
 
     /**
@@ -89,7 +89,7 @@ public class Board
 
         // finally, place the new piece
         setPiece(x, y, playerIdx);
-        _gameCtrl.net.setImmediate("lastMove", index);
+        _gameCtrl.net.set("lastMove", index, true);
     }
 
     /**
@@ -155,7 +155,7 @@ public class Board
 
     protected function setPiece (x :int, y :int, playerIdx :int) :void
     {
-        _gameCtrl.net.setImmediate("board", playerIdx, coordsToIdx(x, y));
+        _gameCtrl.net.setAt("board", coordsToIdx(x, y), playerIdx, true);
     }
 
     /**

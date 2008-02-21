@@ -14,8 +14,8 @@ public class Reversi extends Sprite
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
         _gameCtrl.game.addEventListener(StateChangedEvent.TURN_CHANGED, handleTurnChanged);
-        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED,
-            handlePropertyChanged);
+        _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED,
+            handleElementChanged);
 
         var config :Object = _gameCtrl.game.getConfig();
         var boardSize :int = ("boardSize" in config) ? int(config["boardSize"]) : 8;
@@ -75,10 +75,11 @@ public class Reversi extends Sprite
     protected function readBoard () :void
     {
         // re-read the whole thing
+        var lastMove :Object = _gameCtrl.net.get("lastMove");
         for (var ii :int = 0; ii < _pieces.length; ii++) {
             var piece :Piece = (_pieces[ii] as Piece);
             piece.setDisplay(_board.getPiece(ii));
-            if (_gameCtrl.net.get("lastMove") === ii) {
+            if (lastMove === ii) {
                 piece.showLast(true);
             }
         }
@@ -153,14 +154,10 @@ public class Reversi extends Sprite
         }
     }
 
-    protected function handlePropertyChanged (event :PropertyChangedEvent) :void
+    protected function handleElementChanged (event :ElementChangedEvent) :void
     {
-        var name :String = event.name;
-        if (name == "board") {
-            if (event.index != -1) {
-                // read the change
-                readBoard();
-            }
+        if (event.name == "board") {
+            readBoard();
         }
     }
 
