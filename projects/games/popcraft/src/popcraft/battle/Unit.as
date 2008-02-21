@@ -1,7 +1,6 @@
 package popcraft.battle {
     
 import com.threerings.flash.Vector2;
-import com.threerings.util.Assert;
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.components.*;
 import com.whirled.contrib.core.objects.*;
@@ -64,7 +63,7 @@ public class Unit extends SimObject
 
     public function get isAttacking () :Boolean
     {
-        return this.hasTasksNamed("attackCooldown");
+        return this.hasTasksNamed(ATTACK_COOLDOWN_TASK_NAME);
     }
 
     public function canAttackWithWeapon (targetUnit :Unit, weapon :UnitWeapon) :Boolean
@@ -115,7 +114,7 @@ public class Unit extends SimObject
         
         // install a cooldown timer
         if (weapon.cooldown > 0) {
-            this.addNamedTask("attackCooldown", new TimedTask(weapon.cooldown));
+            this.addNamedTask(ATTACK_COOLDOWN_TASK_NAME, new TimedTask(weapon.cooldown));
         }
     }
     
@@ -189,6 +188,8 @@ public class Unit extends SimObject
     protected var _loc :Vector2 = new Vector2();
 
     protected static var g_groups :Array;
+    
+    protected static const ATTACK_COOLDOWN_TASK_NAME :String = "attackCooldown";
 }
 
 }
