@@ -59,7 +59,6 @@ public class ComboHiliteCursor extends SimObject
         
         if (!show || _hilitedPieces.length == 0) {
             _textObj.visible = false;
-            _textObj.removeAllTasks();
         } else {
             var resourceValue :int = Constants.CLEAR_VALUE_TABLE.getValueAt(_hilitedPieces.length - 1);
             
