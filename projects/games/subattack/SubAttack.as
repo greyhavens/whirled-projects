@@ -113,7 +113,7 @@ public class SubAttack extends Sprite
         _gameCtrl.local.addEventListener(SizeChangedEvent.SIZE_CHANGED, handleSizeChanged);
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
-        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, handlePropertyChanged);
+        _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
         _gameCtrl.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
 
@@ -140,9 +140,10 @@ public class SubAttack extends Sprite
      */
     protected function recheckReadyness () :void
     {
+        var readyness :Object = _gameCtrl.net.get("ready") || {};
         _gameCtrl.local.setPlayerScores(
             _gameCtrl.game.seating.getPlayerIds().map(function (id :int, ... ig) :String {
-                return (null == _gameCtrl.net.get("ready:" + id)) ? "Waiting..." : "Ready!";
+                return Boolean(readyness[id]) ? "Ready!" : "Waiting...";
             }));
     }
 
@@ -152,7 +153,7 @@ public class SubAttack extends Sprite
         _content.removeChild(_splash);
         _splashTimer.stop();
         _splashTimer = null;
-        _gameCtrl.net.set("ready:" + _gameCtrl.game.getMyId(), true);
+        _gameCtrl.net.setIn("ready", _gameCtrl.game.getMyId(), true);
         _seaDisplay.displayWaiting();
         _gameCtrl.game.playerReady();
         _content.addChild(new SIDEBAR() as DisplayObject);
@@ -185,9 +186,9 @@ public class SubAttack extends Sprite
 
     /**
      */
-    protected function handlePropertyChanged (event :PropertyChangedEvent) :void
+    protected function handleElementChanged (event :ElementChangedEvent) :void
     {
-        if (StringUtil.startsWith(event.name, "ready:")) {
+        if (event.name == "ready") {
             recheckReadyness();
         }
     }
@@ -207,7 +208,7 @@ public class SubAttack extends Sprite
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
         // stop listening for ready events
-        _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, recheckReadyness);
+        _gameCtrl.net.removeEventListener(ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 
         _gameOver = false;
         _seaDisplay.clearStatus();
