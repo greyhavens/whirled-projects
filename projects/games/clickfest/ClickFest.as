@@ -5,6 +5,8 @@ import flash.display.Sprite;
 
 import flash.events.MouseEvent;
 
+import flash.utils.Dictionary;
+
 import com.threerings.util.StringUtil;
 
 import com.whirled.game.*;
@@ -12,9 +14,14 @@ import com.whirled.game.*;
 /**
  * Clickfest: sample game.
  */
-[SWF(width="400", height="400")]
+[SWF(width="700", height="500")]
 public class ClickFest extends Sprite
 {
+    public static const WIDTH :int = 700;
+    public static const HEIGHT :int = 500;
+
+    public static const GRANUL :int = 2;
+
     public function ClickFest ()
     {
         // turn off mouse handling, we'll turn it on again later just for players
@@ -32,6 +39,7 @@ public class ClickFest extends Sprite
         _ctrl.game.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
         _ctrl.game.addEventListener(StateChangedEvent.GAME_ENDED, gameEnded);
         _ctrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propChanged);
+        _ctrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elemChanged);
 
         // do some other fun stuff
         _ctrl.local.feedback("Welcome to ClickFest!\n\n" +
@@ -43,22 +51,27 @@ public class ClickFest extends Sprite
             "The first player to " + SCORE_TO_WIN + " points wins.");
 
         // see what our index is. If -1, we're not a player, just a watcher.
-        _myIndex = _ctrl.game.seating.getMyPosition();
+        _myId = _ctrl.game.getMyId();
+
+        // pick a color and insert it for ourselves
+        var myColor :uint = (int(256 * Math.random()) << 16) | (int(256 * Math.random()) << 8) |
+            int(256 * Math.random());
+        _ctrl.net.setIn(COLORS, _myId, myColor);
+
+        updateScores(_ctrl.net.get(SCORES) as Dictionary);
 
         // if the game is being played right now, we
         if (_ctrl.game.isInPlay()) {
             clearDrawArea();
-            updateScores();
 
             // fill in any already-marked spots
-            for (var key :String in _ctrl.net.getPropertyNames("p")) {
-                drawClick(key, _ctrl.net.get(key));
+            var dots :Dictionary = _ctrl.net.get(DOTS) as Dictionary;
+            for (var key :Object in dots) {
+                drawDot(int(key), dots[key]);
             }
 
             // if we're a real player, start listening for clicks!
-            if (_myIndex != -1) {
-                mouseChildren = true;
-            }
+            mouseChildren = true;
         }
     }
 
@@ -67,92 +80,99 @@ public class ClickFest extends Sprite
         _drawArea.clear();
         // must fill with black so that we get clicks
         _drawArea.beginFill(0x330000);
-        _drawArea.drawRect(0, 0, 400, 400);
+        _drawArea.drawRect(0, 0, WIDTH, HEIGHT);
     }
 
     protected function gameStarted (event :StateChangedEvent) :void
     {
         clearDrawArea();
-        _myScore = 0;
+        mouseChildren = true;
         _ctrl.local.feedback("GO!!!!");
-
-        if (_myIndex != -1) {
-            mouseChildren = true; // start listening for clicks
-        }
 
         // use amInControl() to coordinate something so that only one player does it
         if (_ctrl.game.amInControl()) {
-            _ctrl.net.set(SCORES_PROP, [ 0, 0 ]);
+            _localScores = new Dictionary();
+            _ctrl.net.set(SCORES, null);
         }
     }
 
     protected function handleMouseClick (event :MouseEvent) :void
     {
-        // we create a property name that incorporates the click location
-        var key :String = "p" + event.localX + ":" + event.localY;
-
-        // see what was previously stored with that property name
-        var prev :Object = _ctrl.net.get(key);
-        var points :int;
-        if (prev == null) {
-            points = POINTS_NEW; // we're the first person to click there
-
-        } else if (prev === _myIndex) {
-            points = POINTS_OVER_SELF; // oops, we clicked on our own dot!
-
-        } else {
-            points = POINTS_OVER_OTHER; // yay! We clicked on our opponent's dot.
-        }
-
-        // add the points
-        _myScore += points;
-
-        // doBatch ensures that any net events we generate go out together, it's
-        // not necessary but should make our game a little more efficient.
-        _ctrl.doBatch(function () :void {
-            // update the point to contain our index
-            _ctrl.net.set(key, _myIndex);
-            // update our score- here we're just updating our own element in the score array
-            _ctrl.net.set(SCORES_PROP, _myScore, _myIndex);
-            // did we just win? End the game with us as the winner..
-            if (_myScore >= SCORE_TO_WIN) {
-                var myId :int = _ctrl.game.getMyId();
-                var losers :Array = _ctrl.game.seating.getPlayerIds();
-                losers.splice(losers.indexOf(myId), 1);
-
-                _ctrl.game.endGameWithWinners([ myId ], losers, GameSubControl.WINNERS_TAKE_ALL);
-            }
-        });
+        var key :int = int(event.localY / GRANUL) * WID + int(event.localX / GRANUL);
+        _ctrl.net.setIn(DOTS, key, _myId);
     }
 
     protected function propChanged (event :PropertyChangedEvent) :void
     {
-        if (event.name.charAt(0) == "p") {
-            // a new click value
-            drawClick(event.name, event.newValue);
-
-        } else if (event.name == SCORES_PROP) {
-            updateScores();
+        if (event.name == SCORES) {
+            // the entire scores array changed
+            updateScores(event.newValue as Dictionary);
         }
     }
 
-    protected function drawClick (propName :String, value :Object) :void
+    protected function elemChanged (event :ElementChangedEvent) :void
     {
-        var player :int = int(value);
+        if (event.name == SCORES) {
+            var obj :Object = {};
+            obj[event.key] = event.newValue;
+            _ctrl.local.setMappedScores(obj);
+            return;
+        }
 
-        var coords :Array =
-            propName.substr(1, propName.length - 1).split(":");
-        var x :Number = parseInt(coords[0]);
-        var y :Number = parseInt(coords[1]);
+        if (event.name != DOTS) {
+            return;
+        }
 
-        _drawArea.beginFill(uint(COLORS[player]));
-        _drawArea.drawRect(x, y, 1, 1);
+        var key :int = event.key;
+        var playerId :int = int(event.newValue);
+
+        // go ahead and draw the click
+        drawDot(key, playerId);
+
+        // if we're in control, figure out the new number of points
+        if (_ctrl.game.amInControl()) {
+            var prev :Object = event.oldValue;
+            var points :int;
+            if (prev == null) {
+                points = POINTS_NEW; // we're the first person to click there
+            } else if (prev === playerId) {
+                points = POINTS_OVER_SELF; // oops, we clicked on our own dot!
+            } else {
+                points = POINTS_OVER_OTHER; // yay! We clicked on our opponent's dot.
+            }
+
+            var newScore :int = int(_localScores[playerId]) + points;
+            _localScores[playerId] = newScore;
+
+            // update the score- here we're just updating our own element in the score array
+            _ctrl.net.setIn(SCORES, playerId, newScore);
+
+            // did we just win? End the game with us as the winner..
+            if (newScore >= SCORE_TO_WIN) {
+                var losers :Array = _ctrl.game.seating.getPlayerIds();
+                losers.splice(losers.indexOf(playerId), 1);
+                _ctrl.game.endGameWithWinners([ playerId ], losers,
+                    GameSubControl.WINNERS_TAKE_ALL);
+            }
+        }
     }
 
-    protected function updateScores () :void
+    protected function drawDot (key :int, player :int) :void
     {
-        // we store the scores as an array, perfect for passing directly
-        _ctrl.local.setPlayerScores(_ctrl.net.get(SCORES_PROP) as Array);
+        var y :int = int(key / WID) * GRANUL;
+        var x :int = int(key % WID) * GRANUL;
+
+        _drawArea.beginFill(uint(_ctrl.net.get(COLORS)[player]));
+        _drawArea.drawRect(x, y, GRANUL, GRANUL);
+    }
+
+    protected function updateScores (scores :Dictionary) :void
+    {
+        if (scores == null) {
+            _ctrl.local.clearScores(0);
+        } else {
+            _ctrl.local.setMappedScores(scores);
+        }
     }
 
     protected function gameEnded (event :StateChangedEvent) :void
@@ -163,17 +183,21 @@ public class ClickFest extends Sprite
 
     protected var _ctrl :GameControl;
 
-    protected var _myIndex :int;
-
-    protected var _myScore :int;
+    protected var _myId :int;
 
     protected var _drawArea :Graphics;
 
-    protected static const COLORS :Array = [ 0x66FF00 , 0x6600FF ];
+    protected var _localScores :Dictionary = new Dictionary();
 
-    protected static const SCORES_PROP :String = "scores";
+    protected static const SCORES :String = "scores";
 
-    protected static const POINTS_NEW :int = 1;
+    protected static const DOTS :String = "p";
+
+    protected static const COLORS :String = "color";
+
+    protected static const WID :int = int(WIDTH / GRANUL);
+
+    protected static const POINTS_NEW :int = 10;
     protected static const POINTS_OVER_OTHER :int = 5;
     protected static const POINTS_OVER_SELF :int = -10;
     protected static const SCORE_TO_WIN :int = 100;
