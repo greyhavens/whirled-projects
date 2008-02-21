@@ -106,22 +106,13 @@ public class Unit extends SimObject
                 
             return;
         }
-
-        switch(weapon.weaponType) {
-            
-        case UnitWeapon.TYPE_MELEE:
-            targetUnit.receiveAttack(new UnitAttack(targetUnit.ref, this.ref, weapon));
-            break;
-            
-        case UnitWeapon.TYPE_MISSILE:
+        
+        if (weapon.isRanged) {
             MissileFactory.createMissile(targetUnit, this, weapon);
-            break;
-            
-        default:
-            Assert.fail("Unrecognized weaponType: " + weapon.weaponType);
-            break;
+        } else {
+            targetUnit.receiveAttack(new UnitAttack(targetUnit.ref, this.ref, weapon));
         }
-
+        
         // install a cooldown timer
         if (weapon.cooldown > 0) {
             this.addNamedTask("attackCooldown", new TimedTask(weapon.cooldown));
