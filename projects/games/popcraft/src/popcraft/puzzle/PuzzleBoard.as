@@ -1,10 +1,6 @@
 package popcraft.puzzle {
 
 import com.threerings.util.Assert;
-
-import popcraft.*;
-import popcraft.util.*;
-
 import com.whirled.contrib.core.*;
 import com.whirled.contrib.core.objects.*;
 import com.whirled.contrib.core.tasks.*;
@@ -12,10 +8,9 @@ import com.whirled.contrib.core.util.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
-import flash.geom.Point;
 
-import com.whirled.contrib.core.tasks.*;
-import mx.effects.easing.Bounce;
+import popcraft.*;
+import popcraft.util.*;
 
 public class PuzzleBoard extends SceneObject
 {
@@ -220,9 +215,9 @@ public class PuzzleBoard extends SceneObject
         piece.y = getPieceYLoc(fromRow);
 
         // animate the piece to its new location
-        piece.removeNamedTasks("move");
+        piece.removeNamedTasks(MOVE_TASK_NAME);
 
-        piece.addNamedTask("move",
+        piece.addNamedTask(MOVE_TASK_NAME,
             new SerialTask(
                 new TimedTask(initialDelay),
                 LocationTask.CreateEaseIn(
@@ -302,11 +297,11 @@ public class PuzzleBoard extends SceneObject
         piece2.y = py2;
 
         // animate them to their new locations
-        piece1.removeNamedTasks("move");
-        piece2.removeNamedTasks("move");
+        piece1.removeNamedTasks(MOVE_TASK_NAME);
+        piece2.removeNamedTasks(MOVE_TASK_NAME);
 
-        piece1.addNamedTask("move", LocationTask.CreateSmooth(px2, py2, 0.25));
-        piece2.addNamedTask("move", LocationTask.CreateSmooth(px1, py1, 0.25));
+        piece1.addNamedTask(MOVE_TASK_NAME, LocationTask.CreateSmooth(px2, py2, 0.25));
+        piece2.addNamedTask(MOVE_TASK_NAME, LocationTask.CreateSmooth(px1, py1, 0.25));
     }
 
     protected function findConnectedSimilarPiecesInternal (x :int, y :int, resourceType :uint, pieces :ObjectSet) :void
@@ -384,6 +379,8 @@ public class PuzzleBoard extends SceneObject
     protected var _resolvingClears :Boolean;
 
     protected var _resourceGenerator :WeightedTable;
+    
+    protected static const MOVE_TASK_NAME :String = "move";
 }
 
 }
