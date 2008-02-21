@@ -58,10 +58,12 @@ public class PuzzleBoard extends SceneObject
                 new TimedTask(Rand.nextNumberRange(0.25, 1, Rand.STREAM_COSMETIC)),
                 ScaleTask.CreateSmooth(1, 1, 0.25)));
         }
-
-        // create the board cursor
-        var cursor :PuzzlePopCursor = new PuzzlePopCursor(this);
-        MainLoop.instance.topMode.addObject(cursor, _sprite);
+    }
+    
+    override protected function addedToDB () :void
+    {
+        // create cursors
+        this.db.addObject(new ComboHiliteCursor(this));
     }
 
     // from SceneObject
