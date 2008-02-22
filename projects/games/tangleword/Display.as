@@ -18,10 +18,10 @@ import flash.text.TextField;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
-import com.threerings.ezgame.EZGameControl;
+import com.threerings.util.Assert;
 import com.threerings.util.StringUtil;
 
-import com.whirled.WhirledGameControl;
+import com.whirled.game.GameControl;
 
 /**
  * The Display class represents the game visualization, including UI
@@ -33,7 +33,7 @@ public class Display extends Sprite
     // PUBLIC FUNCTIONS
 
     /** Initializes the board and everything on it */
-    public function Display (gameCtrl :WhirledGameControl, controller :Controller,
+    public function Display (gameCtrl :GameControl, controller :Controller,
                              version :String) :void
     {
         // Copy parameters
@@ -42,7 +42,7 @@ public class Display extends Sprite
 
         // Initialize the background bitmap
         _background = new Resources.background();
-        Assert.NotNull(_background, "Background bitmap failed to initialize!");
+        Assert.isNotNull(_background, "Background bitmap failed to initialize!");
         addChild(_background);
 
         // Initialize empty letters
@@ -52,7 +52,6 @@ public class Display extends Sprite
         initializeUI(version);
 
         // Register for events
-        _gameCtrl.registerListener(this);
         addEventListener(MouseEvent.CLICK, clickHandler);
         addEventListener(MouseEvent.MOUSE_MOVE, mouseHandler);
         addEventListener(KeyboardEvent.KEY_UP, typingHandler);
@@ -66,7 +65,6 @@ public class Display extends Sprite
         removeEventListener(MouseEvent.CLICK, clickHandler);
         removeEventListener(MouseEvent.MOUSE_MOVE, mouseHandler);
         removeEventListener(KeyboardEvent.KEY_UP, typingHandler);
-        _gameCtrl.unregisterListener(this);
     }
 
     /** Called when the round starts - enables display. */
@@ -88,7 +86,7 @@ public class Display extends Sprite
         for one letter at specified board /position/. */
     public function setLetter (position :Point, text :String) :void
     {
-        Assert.True(isValidBoardPosition(position),
+        Assert.isTrue(isValidBoardPosition(position),
                      "Bad position received in Display:setText");
         _letters[position.x][position.y].setText(text);
     }
@@ -96,7 +94,7 @@ public class Display extends Sprite
     /** Retrieves the text label from one letter at specified board /position/. */
     public function getLetter (position :Point) :String
     {
-        Assert.True(isValidBoardPosition(position),
+        Assert.isTrue(isValidBoardPosition(position),
                      "Bad position received in Display:getText");
         return _letters[position.x][position.y].getText();
     }
@@ -106,7 +104,7 @@ public class Display extends Sprite
         and updates the text box. */
     public function updateLetterSelection (points :Array) :void
     {
-        Assert.NotNull(points, "Invalid points array!");
+        Assert.isNotNull(points, "Invalid points array!");
 
         // First, deselect everything
         for (var x :int = 0; x < _letters.length; x++)
@@ -174,8 +172,8 @@ public class Display extends Sprite
     /** Sets scores based on the scoreboard. */
     public function updateScores (board :Scoreboard) :void
     {
-        _gameCtrl.clearScores();
-        _gameCtrl.setMappedScores(board.getScores());
+        _gameCtrl.local.clearScores();
+        _gameCtrl.local.setMappedScores(board.getScores());
     }
 
     /** Sets timer based on specified number. */
@@ -432,7 +430,7 @@ public class Display extends Sprite
     // PRIVATE VARIABLES
 
     /** Whirled controller */
-    private var _gameCtrl :WhirledGameControl;
+    private var _gameCtrl :GameControl;
 
     /** Game logic */
     private var _controller :Controller;

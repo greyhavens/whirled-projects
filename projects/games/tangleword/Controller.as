@@ -1,7 +1,7 @@
 package
 {
 
-import com.whirled.WhirledGameControl;
+import com.whirled.game.GameControl;
 
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -18,7 +18,7 @@ public class Controller
     
     // PUBLIC METHODS
     
-    public function Controller (gameCtrl :WhirledGameControl, model :Model) :void
+    public function Controller (gameCtrl :GameControl, model :Model) :void
     {
         _gameCtrl = gameCtrl;
         _model = model;
@@ -125,7 +125,7 @@ public class Controller
         word = word.toLowerCase ();
 
         // Now check if it's an actual word.
-        _gameCtrl.checkDictionaryWord (Properties.LOCALE, null, word, success);
+        _gameCtrl.services.checkDictionaryWord (Properties.LOCALE, null, word, success);
 
     }
             
@@ -159,13 +159,13 @@ public class Controller
     /** If this client is the host, initializes a new letter set. */
     private function initializeLetterSet () :void
     {
-        if (_gameCtrl.amInControl ())
+        if (_gameCtrl.game.amInControl ())
         {
             var success :Function = function (a :Array) :void
             {
                 _model.sendNewLetterSet (a);
             }
-            _gameCtrl.getDictionaryLetterSet (
+            _gameCtrl.services.getDictionaryLetterSet (
                 Properties.LOCALE, null, Properties.LETTER_COUNT, success);
         }
     }
@@ -175,7 +175,7 @@ public class Controller
     // PRIVATE VARIABLES
 
     /** Game helper */
-    private var _gameCtrl :WhirledGameControl;
+    private var _gameCtrl :GameControl;
     
     /** Game data interface */
     private var _model :Model;

@@ -1,17 +1,18 @@
-package
-{
+package {
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.Shape;
 import flash.events.Event;
 import flash.text.TextField;
+
 import mx.core.BitmapAsset;
 
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.StateChangedEvent;
+import com.threerings.util.Assert;
+import com.whirled.game.GameControl;
+import com.whirled.game.StateChangedEvent;
+import com.whirled.game.MessageReceivedEvent;
 
-import com.whirled.WhirledGameControl;
 
 /**
  * Main game takes care of initializing network connections,
@@ -33,13 +34,13 @@ public class TangleWord extends Sprite
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         // Initialize game data
-        _gameCtrl = new WhirledGameControl (this);
-        _gameCtrl.registerListener (this);
-        if (!_gameCtrl.isConnected())
+        _gameCtrl = new GameControl(this);
+        
+        if (!_gameCtrl.net.isConnected())
         {
             // Initialize the background bitmap
             var background :DisplayObject = new Resources.logo();
-            Assert.NotNull (background, "Background bitmap failed to initialize!");
+            Assert.isNotNull (background, "Background bitmap failed to initialize!");
             addChild (background);
             // Error message
             var label :TextField = new TextField();
@@ -54,9 +55,9 @@ public class TangleWord extends Sprite
             return;
         }
 
-        _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
-        _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
-        _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
 
         // Create MVC elements
         _controller = new Controller (_gameCtrl, null); // we'll set the model later...
@@ -66,14 +67,14 @@ public class TangleWord extends Sprite
         addChild (_display);
 
         // If I'm in control, initialize the scoreboard
-        if (_gameCtrl.amInControl()) {
+        if (_gameCtrl.game.amInControl()) {
             initializeScoreboard ();
         }
 
         // If the game's already going, do what you have to do to catch up
-        if (_gameCtrl.isInPlay()) {
+        if (_gameCtrl.game.isInPlay()) {
             gameDidStart(null);
-            if (! _gameCtrl.amInControl()) {
+            if (! _gameCtrl.game.amInControl()) {
                 _model.updateFromExistingGame();
             }
         }
@@ -82,14 +83,15 @@ public class TangleWord extends Sprite
     /** Clean up and shut down. */
     public function handleUnload (event :Event) :void
     {
-        _display.handleUnload (event);
+        _display.handleUnload(event);
+        _model.handleUnload(event);
     }
 
     protected function gameDidStart (event :StateChangedEvent) :void
     {
         // start up our game ticker if we're the one in control, and call every second
-        if (_gameCtrl.amInControl()) {
-            _gameCtrl.startTicker("countdown", 1000);
+        if (_gameCtrl.game.amInControl()) {
+            _gameCtrl.services.startTicker("countdown", 1000);
         }
         _model.roundStarted();
         _controller.roundStarted();
@@ -112,12 +114,9 @@ public class TangleWord extends Sprite
             elapsed = int(event.value);
             _display.setTimer(Properties.PAUSE_LENGTH - elapsed);
             if (elapsed >= Properties.PAUSE_LENGTH) {
-                if (_gameCtrl.amInControl()) {
-                    // note: this doesn't work on the test server right now
-                    _gameCtrl.restartGameIn(1);
-                    // to work around the bug, use this when on test server:
-                    // _gameCtrl.playerReady();
-                    _gameCtrl.stopTicker("restart");
+                if (_gameCtrl.game.amInControl()) {
+                    _gameCtrl.game.restartGameIn(1);
+                    _gameCtrl.services.stopTicker("restart");
                 }
             }
         }
@@ -129,9 +128,9 @@ public class TangleWord extends Sprite
         _controller.roundEnded();
         _model.roundEnded();
 
-        if (_gameCtrl.amInControl()) {
-            _gameCtrl.stopTicker("countdown");
-            _gameCtrl.startTicker("restart", 1000);
+        if (_gameCtrl.game.amInControl()) {
+            _gameCtrl.services.stopTicker("countdown");
+            _gameCtrl.services.startTicker("restart", 1000);
         }
     }
 
@@ -148,18 +147,18 @@ public class TangleWord extends Sprite
     {
         // Create a new instance, and fill in the names
         var board :Scoreboard = new Scoreboard (_gameCtrl);
-        var occupants :Array = _gameCtrl.getOccupantIds();
+        var occupants :Array = _gameCtrl.game.getOccupantIds();
         for each (var id :int in occupants)
         {
             board.addPlayerId(id);
         }
 
         // Finally, share it!
-        _gameCtrl.set(SHARED_SCOREBOARD, board.internalScoreObject);
+        _gameCtrl.net.set(SHARED_SCOREBOARD, board.internalScoreObject);
     }
 
     /** Game control object */
-    private var _gameCtrl :WhirledGameControl;
+    private var _gameCtrl :GameControl;
 
     /** Data interface */
     private var _model :Model;

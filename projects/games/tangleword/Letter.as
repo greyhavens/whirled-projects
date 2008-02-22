@@ -10,6 +10,8 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
 
+import com.threerings.util.Assert;
+
 
 
 /**
@@ -41,7 +43,7 @@ public class Letter extends Sprite
     /** Set the letter on this label. We set its position based on text height. */
     public function setText (str :String) :void
     {
-        Assert.True (_background != null && _label != null,
+        Assert.isTrue (_background != null && _label != null,
                      "I expected background and text to be initialized by now.");
                     
         _label.text = str.toUpperCase();
@@ -67,7 +69,7 @@ public class Letter extends Sprite
     /** Sets or clears cursor highlight value */
     public function set isCursorEnabled (newValue :Boolean) :void
     {
-        Assert.NotNull (_cursorFilter, "Letter filters failed to initialize");
+        Assert.isNotNull (_cursorFilter, "Letter filters failed to initialize");
         if (newValue != _cursorEnabled)
         {
             // do visual updates!

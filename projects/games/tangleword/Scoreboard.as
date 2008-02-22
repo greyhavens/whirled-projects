@@ -1,7 +1,6 @@
-package
-{
+package {
 
-import com.whirled.WhirledGameControl;
+import com.whirled.game.GameControl;
 
 /**
  * This class is a wrapper around a simple TangleWord score storage object:
@@ -11,7 +10,7 @@ import com.whirled.WhirledGameControl;
 public class Scoreboard
 {
     /** Constructor */
-    public function Scoreboard (gameCtrl :WhirledGameControl)
+    public function Scoreboard (gameCtrl :GameControl)
     {
         // these are just plain objects, so that we don't have to perform explicit
         // serialization/deserialization steps. as a down side, all keys are strings.
@@ -149,11 +148,11 @@ public class Scoreboard
         _data = data;
     }
 
-    /** Converts player id to name (so that we don't have to pass a WhirledGameControl
+    /** Converts player id to name (so that we don't have to pass a GameControl
      *  reference everywhere. */
     public function getName (playerId :int, ... etc) :String
     {
-        return _gameCtrl.getOccupantName(playerId);
+        return _gameCtrl.game.getOccupantName(playerId);
     }
 
     // IMPLEMENTATION DETAILS
@@ -162,7 +161,7 @@ public class Scoreboard
     private var _data :Object;
 
     /** Game controller. */
-    private var _gameCtrl :WhirledGameControl;
+    private var _gameCtrl :GameControl;
 }
 
 

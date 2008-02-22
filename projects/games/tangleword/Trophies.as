@@ -1,6 +1,7 @@
 package {
 
-import com.whirled.WhirledGameControl;
+import com.whirled.game.GameControl;
+import com.whirled.game.PlayerSubControl;
 
 /** Handles trophy awards. */
 public class Trophies {
@@ -22,11 +23,12 @@ public class Trophies {
     public static const multiplayerWinsTrophyPrefix :String = "multi_";
 
     
-    public function Trophies (gameCtrl :WhirledGameControl)
+    public function Trophies (gameCtrl :GameControl)
     {
         _gameCtrl = gameCtrl;
+        _player = gameCtrl.player;
 
-        _gameCtrl.getUserCookie(_gameCtrl.getMyId(), function (cookie :Object) :void {
+        _player.getUserCookie(_gameCtrl.game.getMyId(), function (cookie :Object) :void {
                 _cookie = cookie;
                 if (_cookie == null) {
                     _cookie = { totalRounds: 0 };
@@ -40,47 +42,47 @@ public class Trophies {
         if (word.length >= pointTrophyMin) {
             var len :int = Math.min(word.length, pointTrophyMax); // clamp, just in case
             var trophy :String = String(len) + pointTrophySuffix; // make award name
-            if (! _gameCtrl.holdsTrophy(trophy)) {
-                _gameCtrl.awardTrophy(trophy);
+            if (! _player.holdsTrophy(trophy)) {
+                _player.awardTrophy(trophy);
             }
         }
 
         // how about a score-based trophy?
-        var oldscore :int = scoreboard.getRoundScore(_gameCtrl.getMyId());
+        var oldscore :int = scoreboard.getRoundScore(_gameCtrl.game.getMyId());
         var newscore :int = oldscore + wordscore;
         for each (var boundary :int in pointsBoundaries) {
                 trophy = String(boundary) + pointsTrophySuffix;
                 if (oldscore < boundary && newscore >= boundary && // check if score is high enough
-                    ! _gameCtrl.holdsTrophy(trophy))               // ...and if it's a new award
+                    ! _player.holdsTrophy(trophy))               // ...and if it's a new award
                 {
-                    _gameCtrl.awardTrophy(trophy);
+                    _player.awardTrophy(trophy);
                 }
             }                    
     }
 
     public function handleRoundEnded (scoreboard :Scoreboard) :void
     {
-        var score :int = scoreboard.getRoundScore(_gameCtrl.getMyId());
+        var score :int = scoreboard.getRoundScore(_gameCtrl.game.getMyId());
         if (score > 0) { // only count rounds where the player was doing something
 
             // see if we need to grant a per-session round award
             _sessionRoundsEnded++;
             for each (var round :int in roundsBoundaries) {
                     var trophy :String = roundsTrophyPrefix + String(round);
-                    if (_sessionRoundsEnded == round && ! _gameCtrl.holdsTrophy(trophy)) {
-                        _gameCtrl.awardTrophy(trophy);
+                    if (_sessionRoundsEnded == round && ! _player.holdsTrophy(trophy)) {
+                        _player.awardTrophy(trophy);
                     }
                 }
 
             // if the player won this round, count those up as well, but only for multiplayer
             if (scoreboard.getPlayerIds().length > 1) {
                 var winners :Array = scoreboard.getTopPlayerIds();
-                if (winners.indexOf(_gameCtrl.getMyId()) != -1) {
+                if (winners.indexOf(_gameCtrl.game.getMyId()) != -1) {
                     _multiplayerWins++;
                     for each (var boundary :int in multiplayerWinsBoundaries) {
                             trophy = multiplayerWinsTrophyPrefix + String(boundary);
-                            if (_multiplayerWins == boundary && ! _gameCtrl.holdsTrophy(trophy)) {
-                                _gameCtrl.awardTrophy(trophy);
+                            if (_multiplayerWins == boundary && ! _player.holdsTrophy(trophy)) {
+                                _player.awardTrophy(trophy);
                             }
                         }
                 }
@@ -89,11 +91,11 @@ public class Trophies {
             // now check the total number of rounds played
             if (_cookie != null) {
                 _cookie.totalRounds++;
-                _gameCtrl.setUserCookie(_cookie);
+                _player.setUserCookie(_cookie);
                 for each (round in totalRoundsBoundaries) {
                         trophy = totalRoundsTrophyPrefix + String(round);
-                        if (_cookie.totalRounds == round && ! _gameCtrl.holdsTrophy(trophy)) {
-                            _gameCtrl.awardTrophy(trophy);
+                        if (_cookie.totalRounds == round && ! _player.holdsTrophy(trophy)) {
+                            _player.awardTrophy(trophy);
                         }
                     }
             }
@@ -103,7 +105,9 @@ public class Trophies {
     private var _sessionRoundsEnded :int = 0; // round count for this instance of the game
     private var _multiplayerWins :int = 0;    // multiplayer win count for this instance as well
     
-    private var _gameCtrl :WhirledGameControl;
+    private var _gameCtrl :GameControl;
+    private var _player :PlayerSubControl;
+    
     private var _cookie :Object;
 }
 

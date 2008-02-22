@@ -3,13 +3,12 @@ package
 
 import flash.events.Event;
 
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.MessageReceivedListener;
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.PropertyChangedListener;
-
-import com.whirled.FlowAwardedEvent;
-import com.whirled.WhirledGameControl;
+import com.threerings.util.Assert;
+import com.whirled.game.FlowAwardedEvent;
+import com.whirled.game.GameControl;
+import com.whirled.game.GameSubControl;
+import com.whirled.game.PropertyChangedEvent;
+import com.whirled.game.MessageReceivedEvent;
 
 import flash.geom.Point;
 
@@ -19,28 +18,35 @@ import flash.geom.Point;
 */
 
 public class Model
-    implements MessageReceivedListener, PropertyChangedListener
 {
     //
     //
     // PUBLIC METHODS
 
-    public function Model (gameCtrl :WhirledGameControl, display :Display) :void
+    public function Model (gameCtrl :GameControl, display :Display) :void
     {
         // Squirrel the pointers away
         _gameCtrl = gameCtrl;
         _display = display;
 
         // Register for updates
-        _gameCtrl.registerListener (this);
-        _gameCtrl.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
-
+        _gameCtrl.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        
         // Initialize game data storage
         initializeStorage ();
 
         _trophies = new Trophies(_gameCtrl);
     }
 
+    public function handleUnload (event :Event) :void
+    {
+        _gameCtrl.player.removeEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
+        _gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+    }        
+    
     public function get scoreboard () :Scoreboard
     {
         return _scoreboard;
@@ -49,10 +55,10 @@ public class Model
     /** Called at the beginning of a round - push my scoreboard on everyone. */
     public function roundStarted () :void
     {
-        if (_gameCtrl.amInControl ())
+        if (_gameCtrl.game.amInControl())
         {
             // Share the scoreboard
-            _gameCtrl.sendMessage (SCOREBOARD_UPDATE_MSG, _scoreboard.internalScoreObject);
+            _gameCtrl.net.sendMessage (SCOREBOARD_UPDATE_MSG, _scoreboard.internalScoreObject);
         }
     }
 
@@ -60,13 +66,13 @@ public class Model
     {
         _trophies.handleRoundEnded(_scoreboard);
 
-        if (!_gameCtrl.amInControl()) {
+        if (!_gameCtrl.game.amInControl()) {
             return;
         }
 
         var playerIds :Array = [];
         var scores :Array = [];
-        for each (var playerId :int in _gameCtrl.getOccupantIds()) {
+        for each (var playerId :int in _gameCtrl.game.getOccupantIds()) {
             var score :int = _scoreboard.getRoundScore(playerId);
             if (score > 0) {
                 playerIds.push(playerId);
@@ -74,7 +80,7 @@ public class Model
             }
         }
 
-        _gameCtrl.endGameWithScores(playerIds, scores, WhirledGameControl.TO_EACH_THEIR_OWN);
+        _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
     }
 
     /** Called when the round ends - cleans up data, and awards flow! */
@@ -94,10 +100,10 @@ public class Model
         var pointMatches :Function =
             function (item :Point, index :int, array :Array) :Boolean
             {
-                return (item.equals (position));
+                return (item.equals(position));
             };
 
-        return _word.some (pointMatches);
+        return _word.some(pointMatches);
     }
 
     /** Returns coordinates of the most recently added word, or null. */
@@ -124,7 +130,7 @@ public class Model
         if (_word.length > 0)
         {
             _word.pop ();
-            _display.updateLetterSelection (_word);
+            _display.updateLetterSelection(_word);
         }
     }
 
@@ -132,7 +138,7 @@ public class Model
     public function removeAllSelectedLetters () :void
     {
         _word = new Array ();
-        _display.updateLetterSelection (_word);
+        _display.updateLetterSelection(_word);
     }
 
     /** Checks if the word exists on the board, by doing an exhaustive
@@ -146,7 +152,7 @@ public class Model
 
         for (var x :int = 0; x < Properties.LETTERS; x++) {
             for (var y :int = 0; y < Properties.LETTERS; y++) {
-                if (wordExists (word, 0, x, y, new Array ()))
+                if (wordExists (word, 0, x, y, new Array()))
                     return true;
             }
         }
@@ -198,7 +204,7 @@ public class Model
     public function addScore (word :String, score :Number, isvalid :Boolean) :void
     {
         var obj :Object = new Object ();
-        obj.playerId = _gameCtrl.getMyId(); 
+        obj.playerId = _gameCtrl.game.getMyId(); 
         obj.word = word;
         obj.score = score;
         obj.isvalid = isvalid;
@@ -209,7 +215,7 @@ public class Model
         }
 
         // now tell everyone about the new score
-        _gameCtrl.sendMessage (ADD_SCORE_MSG, obj);
+        _gameCtrl.net.sendMessage (ADD_SCORE_MSG, obj);
 
         // reset selection
         removeAllSelectedLetters ();
@@ -219,7 +225,7 @@ public class Model
      *  The array contains strings corresponding to the individual letters. */
     public function sendNewLetterSet (a :Array) :void
     {
-        _gameCtrl.set (LETTER_SET, a);
+        _gameCtrl.net.set (LETTER_SET, a);
     }
 
     /** Called only when joining an existing game, tells the model to update itself
@@ -227,7 +233,7 @@ public class Model
     public function updateFromExistingGame () :void
     {
         updateLettersOnBoard();
-        _gameCtrl.sendMessage (SCOREBOARD_REQUEST_MSG, _scoreboard.internalScoreObject);
+        _gameCtrl.net.sendMessage (SCOREBOARD_REQUEST_MSG, _scoreboard.internalScoreObject);
     }
 
     
@@ -239,15 +245,11 @@ public class Model
         game data updates. */
     public function messageReceived (event :MessageReceivedEvent) :void
     {
-//        _gameCtrl.localChat (_gameCtrl.amInControl () ?
-//                           "Model: I AM THE HOST! :)" :
-//                           "Model: I'm not the host. :(");
-
         switch (event.name)
         {
         case ADD_SCORE_MSG:
             // Store the score in a local data structure
-            addWordToScoreboard (
+            addWordToScoreboard(
                 event.value.playerId, event.value.word, event.value.score, event.value.isvalid);
             updateScoreDisplay ();
             break;
@@ -261,10 +263,10 @@ public class Model
 
         case SCOREBOARD_REQUEST_MSG:
             // Someone requested my current scoreboard - if i'm in control, i should send it
-            if (_gameCtrl.amInControl ())
+            if (_gameCtrl.game.amInControl ())
             {
                 var playerId :int = int(event.value);
-                _gameCtrl.sendMessage (
+                _gameCtrl.net.sendMessage(
                     SCOREBOARD_UPDATE_MSG, _scoreboard.internalScoreObject, playerId);
             }
             break;
@@ -291,7 +293,7 @@ public class Model
     /** Re-reads letters from the shared object, and displays them on board. */
     private function updateLettersOnBoard () :void
     {
-        var letters :Array = _gameCtrl.get(LETTER_SET) as Array;
+        var letters :Array = _gameCtrl.net.get(LETTER_SET) as Array;
         if (letters != null) {
             setGameBoard(letters);
         }
@@ -300,7 +302,7 @@ public class Model
     /** Called when flow is awarded at the end of the round. */
     protected function flowAwarded (event :FlowAwardedEvent) :void
     {
-        var roundScore :int = _scoreboard.getRoundScore(_gameCtrl.getMyId());
+        var roundScore :int = _scoreboard.getRoundScore(_gameCtrl.game.getMyId());
         if (roundScore > 0) {
             _display.logRoundEnded(roundScore, event.amount);
         }
@@ -337,7 +339,7 @@ public class Model
         // Copy them over to the data set
         for (var x :int = 0; x < Properties.LETTERS; x++) {
             for (var y :int = 0; y < Properties.LETTERS; y++) {
-                updateBoardLetter (new Point (x, y), s [x * Properties.LETTERS + y]);
+                updateBoardLetter(new Point (x, y), s [x * Properties.LETTERS + y]);
             }
         }
     }
@@ -352,27 +354,27 @@ public class Model
         var playerName :String = _scoreboard.getName(playerId);
         
         // if this message came in after the end of the round, just ignore it
-        if (!_gameCtrl.isInPlay()) {
+        if (!_gameCtrl.game.isInPlay()) {
             return;
         }
 
         // if the word is invalid, display who tried to claim it
         if (! isvalid) {
-            _display.logInvalidWord (playerName, word);
+            _display.logInvalidWord(playerName, word);
             return;
         }
 
         // if the word is valid and not claimed, score!
         if (! _scoreboard.isWordClaimed (word)) {
-            _scoreboard.addWord (playerId, word, score);
-            _display.logSuccess (playerName, word, score);
+            _scoreboard.addWord(playerId, word, score);
+            _display.logSuccess(playerName, word, score);
             return;
         }
 
         // by this point, the word is valid and already claimed.
         // if this was my word, let me know.
-        if (_gameCtrl.getMyId() == playerId) {
-            _display.logAlreadyClaimed (playerName, word);
+        if (_gameCtrl.game.getMyId() == playerId) {
+            _display.logAlreadyClaimed(playerName, word);
             return;
         }
 
@@ -383,15 +385,15 @@ public class Model
     /** Updates a single letter at specified /position/ to display a new /text/.  */
     private function updateBoardLetter (position :Point, text :String) :void
     {
-        Assert.NotNull (_board, "Board needs to be initialized first.");
+        Assert.isNotNull(_board, "Board needs to be initialized first.");
         _board[position.x][position.y] = text;
-        _display.setLetter (position, text);
+        _display.setLetter(position, text);
     }
 
     /** Updates the total scores displayed on the board */
     private function updateScoreDisplay () :void
     {
-        _display.updateScores (_scoreboard);
+        _display.updateScores(_scoreboard);
     }
 
     //
@@ -409,7 +411,7 @@ public class Model
     // PRIVATE VARIABLES
 
     /** Main game control structure */
-    private var _gameCtrl :WhirledGameControl;
+    private var _gameCtrl :GameControl;
 
     /** Cache the player's name */
     private var _playerName :String;
