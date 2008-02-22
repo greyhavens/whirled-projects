@@ -15,7 +15,6 @@ public class Scoreboard
         // these are just plain objects, so that we don't have to perform explicit
         // serialization/deserialization steps. as a down side, all keys are strings.
         _data = new Object();
-        _data.totalScores = new Object(); // maps player id => total score
         _data.roundScores = new Object(); // maps player id => round score
         _data.claimed = new Object();     // maps word => player id
         _data.scored = new Object();      // maps word => word score
@@ -26,8 +25,7 @@ public class Scoreboard
     /** Defines a player with the given /id/, with zero score. */
     public function addPlayerId (id :int) :void
     {
-        getTotalScore(id);  // this will auto-initialize the player's score
-        getRoundScore(id);  // ... and the round score
+        getRoundScore(id);  // auto-init
     }
 
     /** Retrieves the list of player ids, as an array of ints. */
@@ -74,16 +72,6 @@ public class Scoreboard
         return topplayers;
     }
 
-    /** Retrieves player's total score, potentially zero. If the scoring
-     *  object doesn't have the player's score, it's initialized on first access. */
-    public function getTotalScore (playerId :int) :Number
-    {
-        if (! _data.totalScores.hasOwnProperty(playerId)) {
-            _data.totalScores[playerId] = 0;
-        }
-        return _data.totalScores[playerId];
-    }
-
     /** Retrieves player's round score, potentially zero. If the scoring
      *  object doesn't have the player's score, it's initialized on first access. */
     public function getRoundScore (playerId :int) :Number
@@ -116,7 +104,6 @@ public class Scoreboard
         _data.claimed[word] = playerId;
         _data.scored[word] = score;
         _data.roundScores[playerId] = getRoundScore(playerId) + score;
-        _data.totalScores[playerId] = getTotalScore(playerId) + score;
     }
 
     /** If this word was already claimed, returns true; otherwise false. */
