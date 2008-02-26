@@ -4,14 +4,16 @@ package com.threerings.graffiti {
 
 import flash.geom.Point;
 
+import com.threerings.util.Log;
+
 import com.whirled.EntityControl;
 import com.whirled.ControlEvent;
 
 public class OnlineModel extends Model
 {
-    public function OnlineModel (board :Board, control :EntityControl) 
+    public function OnlineModel (canvas :Canvas, control :EntityControl) 
     {
-        super(board);
+        super(canvas);
 
         _control = control;
 
@@ -39,7 +41,7 @@ public class OnlineModel extends Model
     {
         var arr :Array = (evt.value as Array);
         if (!arr) {
-            Board.log.debug("Eek, non-array value in evt: " + evt);
+            log.debug("Eek, non-array value in evt: " + evt);
             return;
         }
         if (arr.length == 5) {
@@ -57,6 +59,8 @@ public class OnlineModel extends Model
             _control.updateMemory(id, stroke);
         }
     }
+
+    private static const log :Log = Log.getLog(OnlineModel);
 
     protected var _control :EntityControl;
 }

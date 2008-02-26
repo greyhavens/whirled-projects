@@ -4,9 +4,9 @@ package com.threerings.graffiti {
 
 public class OfflineModel extends Model
 {
-    public function OfflineModel (board :Board)
+    public function OfflineModel (canvas :Canvas)
     {
-        super(board);
+        super(canvas);
     }
 }
 }

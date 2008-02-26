@@ -14,9 +14,9 @@ public class Palette extends Sprite
     protected var _small :Sprite = new Sprite();
     protected var _large :Sprite = new Sprite();
 
-    public function Palette (board :Board, initialColour :int)
+    public function Palette (canvas :Canvas, initialColour :int)
     {
-        _board = board;
+        _canvas = canvas;
 
         buildLarge();
         buildSmall(initialColour);
@@ -72,7 +72,7 @@ public class Palette extends Sprite
 
             updateSmall(colour);
             show(_small);
-            _board.pickColour(colour);
+            _canvas.pickColour(colour);
         });
     }
 
@@ -93,11 +93,7 @@ public class Palette extends Sprite
         g.endFill();
     }
 
-    protected function handleClick (evt :MouseEvent) :void
-    {
-    }
-
-    protected var _board :Board;
+    protected var _canvas :Canvas;
 
     protected static const SQUARE_SIZE :int = 4;
     protected static const BORDER_WIDTH :int = 1;

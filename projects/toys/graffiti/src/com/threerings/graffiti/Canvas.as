@@ -16,27 +16,31 @@ import com.threerings.util.Log;
 
 import com.whirled.FurniControl;
 
-[SWF(width="600", height="500")]
-public class Board extends Sprite
+public class Canvas extends Sprite
 {
-    public static const log :Log = Log.getLog(Board);
+    public static const CANVAS_WIDTH :int = 400;
+    public static const CANVAS_HEIGHT :int = 400;
 
-    public function Board ()
+    public static function createCanvas (control :FurniControl) :Canvas
+    {
+        var canvas :Canvas = new Canvas();
+        var model :Model = 
+            control.isConnected() ? new OnlineModel(canvas, control) : new OfflineModel(canvas);
+        canvas.setModel(model);
+        return canvas;
+    }
+
+    /**
+     * This function should not be called directly.  Instead, call createCanvas() with the 
+     * FurniControl.
+     */
+    public function Canvas ()
     {
         _canvas = new Sprite();
-        this.addChild(_canvas);
-
-        _palette = new Palette(this, 0);
-        this.addChild(_palette);
-
-        var control :FurniControl = new FurniControl(this);
-
-        _model = control.isConnected() ? new OnlineModel(this, control) : new OfflineModel(this);
+        addChild(_canvas);
 
         _canvas.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
         _canvas.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-
-        redraw();
     }
 
     public function pickColour (colour :int) :void
@@ -78,6 +82,12 @@ public class Board extends Sprite
 
         _oldDeltaX = to.x - controlX;
         _oldDeltaY = to.y - controlY;
+    }
+
+    protected function setModel (model :Model) :void
+    {
+        _model = model;
+        redraw();
     }
 
     protected function mouseDown (evt :MouseEvent) :void
@@ -155,8 +165,7 @@ public class Board extends Sprite
         }
     }
 
-    protected static const CANVAS_WIDTH :int = 500;
-    protected static const CANVAS_HEIGHT :int = 500;
+    private static const log :Log = Log.getLog(Canvas);
 
     protected var _model :Model;
 
@@ -164,8 +173,6 @@ public class Board extends Sprite
 
     // variables for user input
     protected var _inputKey :String;
-
-    protected var _palette :Palette;
 
     protected var _colour :int;
 

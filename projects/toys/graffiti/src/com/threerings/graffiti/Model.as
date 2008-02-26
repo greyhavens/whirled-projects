@@ -7,11 +7,13 @@ import flash.geom.Point;
 import com.threerings.util.HashMap;
 import com.threerings.util.Random;
 
+import com.whirled.FurniControl;
+
 public class Model
 {
-    public function Model (board :Board)
+    public function Model (canvas :Canvas)
     {
-        _board = board;
+        _canvas = canvas;
 
         _strokes = new HashMap();
     }
@@ -46,13 +48,13 @@ public class Model
     protected function strokeBegun (id :String, from :Point, to :Point, colour :int) :void
     {
         pushBub(id, [ to, from, colour ]);
-        _board.strokeBegun(id, from, to, colour);
+        _canvas.strokeBegun(id, from, to, colour);
     }
 
     protected function strokeExtended (id :String, to :Point) :void
     {
         pushBub(id, to);
-        _board.strokeExtended(id, to);
+        _canvas.strokeExtended(id, to);
     }
 
     protected function pushBub (id :String, bub :Object) :Array
@@ -74,7 +76,7 @@ public class Model
         _strokes.put(id, stroke);
     }
 
-    protected var _board :Board;
+    protected var _canvas :Canvas;
     protected var _strokes :HashMap;
 
     protected var _rnd :Random = new Random();
