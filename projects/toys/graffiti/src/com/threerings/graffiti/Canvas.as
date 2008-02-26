@@ -24,9 +24,11 @@ public class Canvas extends Sprite
     public static function createCanvas (control :FurniControl) :Canvas
     {
         var canvas :Canvas = new Canvas();
-        var model :Model = 
-            control.isConnected() ? new OnlineModel(canvas, control) : new OfflineModel(canvas);
-        canvas.setModel(model);
+//        var model :Model = 
+//            control.isConnected() ? new OnlineModel(canvas, control) : new OfflineModel(canvas);
+//        canvas.setModel(model);
+        // TODO: temporarily just staying offline while we get the tools sorted out.
+        canvas.setModel(new OfflineModel(canvas));
         return canvas;
     }
 
