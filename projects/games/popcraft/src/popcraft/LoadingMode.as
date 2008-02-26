@@ -26,6 +26,8 @@ public class LoadingMode extends AppMode
         
         PopCraft.resourceManager.pendResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });
         
+        PopCraft.resourceManager.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: SWF_PUZZLEPIECES });
+        
         PopCraft.resourceManager.load();
         
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
@@ -69,6 +71,9 @@ public class LoadingMode extends AppMode
     
     [Embed(source="../../rsrc/streetwalker.swf", mimeType="application/octet-stream")]
     protected static const SWF_GRUNT :Class;
+    
+    [Embed(source="../../rsrc/pieces.swf", mimeType="application/octet-stream")]
+    protected static const SWF_PUZZLEPIECES :Class;
     
 }
 

@@ -1,12 +1,15 @@
 package popcraft.puzzle {
 
 import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.core.resource.SwfResourceLoader;
 import com.whirled.contrib.core.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
+import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.filters.GlowFilter;
 
 import popcraft.*;
 import popcraft.util.*;
@@ -15,29 +18,20 @@ public class Piece extends SceneObject
 {
     public function Piece (resourceType :uint, boardIndex :int)
     {
-        _pieceSprite = new Sprite();
-        _pieceHilite = new Shape();
-        
-        _pieceHiliteObj = new SimpleSceneObject(_pieceHilite);
-        _pieceHiliteObj.visible = false;
-        
-        _pieceSprite.mouseEnabled = false;
-        _pieceSprite.mouseChildren = false;
-        
         this.resourceType = resourceType;
 
         _boardIndex = boardIndex;
     }
     
-    override protected function addedToDB () :void
+    /*override protected function addedToDB () :void
     {
-        this.db.addObject(_pieceHiliteObj, _pieceSprite);
-    }
+        this.db.addObject(_pieceHiliteObj, _sprite);
+    }*/
 
     // from SceneObject
     override public function get displayObject () :DisplayObject
     {
-        return _pieceSprite;
+        return _sprite;
     }
 
     public function get boardIndex () :int
@@ -59,21 +53,37 @@ public class Piece extends SceneObject
     {
         _resourceType = newType;
         
-        var radius :Number = Constants.PUZZLE_TILE_SIZE * 0.5;
-
-        // draw a circle centered on (0, 0)
-        this.drawPiece(_pieceSprite.graphics, true, radius);
+        var swf :SwfResourceLoader = (PopCraft.resourceManager.getResource("puzzlePieces") as SwfResourceLoader);
+        var pieceClass :Class = swf.getClass(SWF_CLASS_NAMES[newType]);
+        var pieceMovie :MovieClip = new pieceClass();
         
-        // draw another hilited circle
-        this.drawPiece(_pieceHilite.graphics, false, radius * 1.3);
+        var scaleX :Number = Constants.PUZZLE_TILE_SIZE / pieceMovie.width;
+        var scaleY :Number = Constants.PUZZLE_TILE_SIZE / pieceMovie.height;
         
-        /*var glowFilter :GlowFilter = new GlowFilter();
+        pieceMovie.scaleX = scaleX;
+        pieceMovie.scaleY = scaleY;
+        
+        pieceMovie.x = -(pieceMovie.width * 0.5);
+        pieceMovie.y = -(pieceMovie.height * 0.5);
+        
+        /*var pieceHilite :Shape = new Shape();
+        
+        _pieceHiliteObj = new SimpleSceneObject(pieceHilite);
+        _pieceHiliteObj.visible = false;
+        
+        var glowFilter :GlowFilter = new GlowFilter();
         glowFilter.color = Constants.getResource(_resourceType).color;
         glowFilter.alpha = 1;
         glowFilter.strength = 16;
         glowFilter.knockout = false;
         
-        _pieceHilite.filters = [ glowFilter ];*/
+        pieceHilite.filters = [ glowFilter ]; */
+        
+        _sprite = new Sprite();
+        _sprite.mouseChildren = false;
+        _sprite.mouseEnabled = false;
+        
+        _sprite.addChild(pieceMovie);
     }
     
     protected function drawPiece (g :Graphics, drawOutline :Boolean, radius :Number) :void
@@ -92,7 +102,7 @@ public class Piece extends SceneObject
     
     public function showHilite (show :Boolean) :void
     {
-        if (show != _showHilite) {
+        /*if (show != _showHilite) {
             
             if (!show) {
                 _pieceHiliteObj.removeAllTasks();
@@ -107,17 +117,18 @@ public class Piece extends SceneObject
             }
             
             _showHilite = show;
-        }
+        }*/
     }
 
     protected var _boardIndex :int;
 
     protected var _resourceType :uint;
-    protected var _pieceSprite :Sprite;
-    protected var _pieceHilite :Shape;
-    protected var _pieceHiliteObj :SimpleSceneObject;
+    protected var _sprite :Sprite;
+   // protected var _pieceHiliteObj :SimpleSceneObject;
     
     protected var _showHilite :Boolean;
+    
+    protected static const SWF_CLASS_NAMES :Array = [ "A", "B", "C", "D" ];
 }
 
 }

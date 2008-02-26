@@ -37,15 +37,20 @@ public class UnitPurchaseMeter extends SceneObject
             rectMeter.foregroundColor = resData.color;
             rectMeter.backgroundColor = 0xFFFFFF;
             rectMeter.outlineColor = 0x000000;
-            rectMeter.displayObject.y = yOffset;
+            rectMeter.y = yOffset;
+            
+            rectMeter.updateDisplay();
 
             var textMeter :IntTextMeter = new IntTextMeter();
             textMeter.minValue = 0;
             textMeter.maxValue = resCost;
             textMeter.value = 0;
             textMeter.textColor = 0x000000;
-            textMeter.displayObject.x = 2;
-            textMeter.displayObject.y = yOffset - 8; // @TODO - why isn't this lining up?
+            
+            textMeter.updateDisplay();
+            
+            textMeter.x = rectMeter.x + (rectMeter.width * 0.5) - (textMeter.width * 0.5);
+            textMeter.y = rectMeter.y + (rectMeter.height * 0.5) - (textMeter.height * 0.5);
 
             yOffset += METER_HEIGHT + METER_YOFFSET;
 
@@ -103,8 +108,8 @@ public class UnitPurchaseMeter extends SceneObject
     protected var _meters :Array = new Array();
     protected var _unitType :uint;
 
-    protected static const METER_WIDTH :int = 30;
-    protected static const METER_HEIGHT :int = 9;
+    protected static const METER_WIDTH :int = 38;
+    protected static const METER_HEIGHT :int = 14;
     protected static const METER_YOFFSET :int = 4;
 }
 

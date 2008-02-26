@@ -54,17 +54,17 @@ public class Constants
     /* Resource types */
 
     // wow, I miss enums
-    public static const RESOURCE_BROWN :uint = 0;
-    public static const RESOURCE_GOLD :uint = 1;
+    public static const RESOURCE_WHITE :uint = 0;
+    public static const RESOURCE_RED :uint = 1;
     public static const RESOURCE_BLUE :uint = 2;
-    public static const RESOURCE_PINK :uint = 3;
+    public static const RESOURCE_YELLOW :uint = 3;
     public static const RESOURCE__LIMIT :uint = 4;
 
     public static const RESOURCE_TYPES :Array = [
-        new ResourceType("brown", 0xCF7A00, 1),
-        new ResourceType("gold", 0xF8F500, 0.5),
-        new ResourceType("blue", 0x00F8EF, 1),
-        new ResourceType("pink", 0xFF77BA, 0.5)
+        new ResourceType("flesh", 0xE8E7E5, 1),
+        new ResourceType("blood", 0xCC0000, 1),
+        new ResourceType("energy", 0x3D7078, 0.5),
+        new ResourceType("magick", 0xFFD858, 0.5)
     ];
 
     public static function getResource (type :uint) :ResourceType {
@@ -92,7 +92,7 @@ public class Constants
 
             new UnitData (
                 "grunt"                     // name
-                , [25,   25,  0,   0]        // resource costs (brown, gold, blue, pink)
+                , [25,   0,  25,   0]        // resource costs (brown, gold, blue, pink)
                 , 25                        // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.8, DAMAGE_TYPE_PIERCING, 0.7, DAMAGE_TYPE_BASE, 0.8] )   // armor
@@ -106,7 +106,7 @@ public class Constants
 
             new UnitData (
                 "heavy"                     // name
-                , [0,   0,  25,   25]        // resource costs (brown, gold, blue, pink)
+                , [0,   25,  0,   25]        // resource costs (brown, gold, blue, pink)
                 , 25                        // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] )   // armor
