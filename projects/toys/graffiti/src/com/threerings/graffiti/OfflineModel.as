@@ -1,7 +1,6 @@
-//
 // $Id$
 
-package {
+package com.threerings.graffiti {
 
 public class OfflineModel extends Model
 {

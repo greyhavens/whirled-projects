@@ -1,6 +1,6 @@
-// // $Id$
+// $Id$
 
-package {
+package com.threerings.graffiti {
 
 import flash.display.Shape;
 import flash.display.Sprite;
@@ -16,7 +16,7 @@ import com.threerings.util.Log;
 
 import com.whirled.FurniControl;
 
-[SWF(width="356", height="256")]
+[SWF(width="600", height="500")]
 public class Board extends Sprite
 {
     public static const log :Log = Log.getLog(Board);
@@ -130,7 +130,7 @@ public class Board extends Sprite
         _canvas.graphics.clear();
 
         _canvas.graphics.beginFill(0x444444);
-        _canvas.graphics.drawRect(0, 0, 256, 256);
+        _canvas.graphics.drawRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         _canvas.graphics.endFill();
 
         var strokes :HashMap = _model.getStrokes();
@@ -154,6 +154,9 @@ public class Board extends Sprite
             strokeExtended(key, stroke[jj]);
         }
     }
+
+    protected static const CANVAS_WIDTH :int = 500;
+    protected static const CANVAS_HEIGHT :int = 500;
 
     protected var _model :Model;
 
