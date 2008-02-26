@@ -24,8 +24,8 @@ public class LoadingMode extends AppMode
         PopCraft.resourceManager.pendResourceLoad("image", "battle_bg", { embeddedClass: IMAGE_BATTLE_BG });
         PopCraft.resourceManager.pendResourceLoad("image", "battle_fg", { embeddedClass: IMAGE_BATTLE_FG });
         
-        PopCraft.resourceManager.pendResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });
-        PopCraft.resourceManager.pendResourceLoad("swf", "sapper", { embeddedClass: SWF_SAPPER });
+        PopCraft.resourceManager.pendResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT, useSubDomain: true });
+        PopCraft.resourceManager.pendResourceLoad("swf", "sapper", { embeddedClass: SWF_SAPPER, useSubDomain: true });
         
         PopCraft.resourceManager.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: SWF_PUZZLEPIECES });
         

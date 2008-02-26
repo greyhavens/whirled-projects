@@ -107,8 +107,14 @@ public class CreatureUnitView extends SceneObject
                 var anim :MovieClip = new animClass();
                 
                 // colorize
-                var color :MovieClip = anim.recolor.recolor;
-                color.filters = [ tintFilterMatrix.createFilter() ];
+                var color :MovieClip = anim.recolor;
+                if (null != color && null != color.recolor) {
+                    color = color.recolor;
+                }
+                
+                if (null != color) {
+                    color.filters = [ tintFilterMatrix.createFilter() ];
+                }
                 
                 animArray.push(anim);
             }
