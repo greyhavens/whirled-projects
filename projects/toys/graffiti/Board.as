@@ -1,16 +1,11 @@
-//
-// $Id$
+// // $Id$
 
 package {
 
-import flash.display.BlendMode;
-import flash.display.CapsStyle;
-import flash.display.LineScaleMode;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.geom.Point;
 
-import flash.events.Event;
 import flash.events.MouseEvent;
 
 import flash.utils.setInterval;
@@ -19,10 +14,9 @@ import flash.utils.clearInterval;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 
-import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
 
-[SWF(width="256", height="256")]
+[SWF(width="356", height="256")]
 public class Board extends Sprite
 {
     public static const log :Log = Log.getLog(Board);
@@ -34,10 +28,6 @@ public class Board extends Sprite
 
         _palette = new Palette(this, 0);
         this.addChild(_palette);
-
-//        _points = new Sprite();
-//        _points.visible = false;
-//        this.addChild(_points);
 
         var control :FurniControl = new FurniControl(this);
 
@@ -135,15 +125,6 @@ public class Board extends Sprite
         _newStroke = false;
     }
 
-// TODO: reintegrate control points
-//         var point :Shape = new Shape();
-//         _points.addChild(point);
-//         point.x = stroke[0];
-//         point.y = stroke[1];
-//         point.graphics.beginFill(0xFF0000);
-//         point.graphics.drawCircle(0, 0, 1);
-//         point.graphics.endFill();
-
     protected function redraw (lastId :String = null) :void
     {
         _canvas.graphics.clear();
@@ -177,8 +158,6 @@ public class Board extends Sprite
     protected var _model :Model;
 
     protected var _canvas :Sprite;
-
-//    protected var _points :Sprite;
 
     // variables for user input
     protected var _inputKey :String;
