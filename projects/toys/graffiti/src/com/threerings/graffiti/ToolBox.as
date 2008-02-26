@@ -11,6 +11,8 @@ public class ToolBox extends Sprite
         _canvas = canvas;
 
         addChild(_palette = new Palette(_canvas, 0));
+        _palette.x += 50;
+        _palette.y += 50;
     }
 
     protected var _canvas :Canvas;

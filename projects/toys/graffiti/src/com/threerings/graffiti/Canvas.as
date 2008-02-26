@@ -45,17 +45,17 @@ public class Canvas extends Sprite
         _canvas.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
     }
 
-    public function pickColour (colour :int) :void
+    public function pickColor (color :int) :void
     {
-        _colour = colour;
+        _color = color;
     }
 
-    public function strokeBegun (id :String, from :Point, to :Point, colour :int) :void
+    public function strokeBegun (id :String, from :Point, to :Point, color :int) :void
     {
         _outputKey = id;
 
         _canvas.graphics.moveTo(from.x, from.y);
-        _canvas.graphics.lineStyle(4, colour, 0.7);
+        _canvas.graphics.lineStyle(4, color, 0.7);
 
         _lastX = from.x;
         _lastY = from.y;
@@ -127,7 +127,7 @@ public class Canvas extends Sprite
         }
 
         if (_newStroke) {
-            _model.beginStroke(_inputKey, _lastStrokePoint, p, _colour);
+            _model.beginStroke(_inputKey, _lastStrokePoint, p, _color);
 
         } else {
             _model.extendStroke(_inputKey, p);
@@ -176,7 +176,7 @@ public class Canvas extends Sprite
     // variables for user input
     protected var _inputKey :String;
 
-    protected var _colour :int;
+    protected var _color :int;
 
     protected var _timer :int;
     protected var _lastStrokePoint :Point;

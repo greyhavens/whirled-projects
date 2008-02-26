@@ -9,11 +9,10 @@ import flash.events.MouseEvent;
 
 import flash.geom.Point;
 
+import com.threerings.util.Log;
+
 public class Palette extends Sprite
 {
-    protected var _small :Sprite = new Sprite();
-    protected var _large :Sprite = new Sprite();
-
     public function Palette (canvas :Canvas, initialColour :int)
     {
         _canvas = canvas;
@@ -35,26 +34,12 @@ public class Palette extends Sprite
     {
         var g :Graphics = _large.graphics;
 
-        g.beginFill(0x000000);
-        g.drawRect(0, 0, 18*TOTAL_SIZE + 1, 12*TOTAL_SIZE + 1);
-        g.endFill();
-
-        for (var rr :int = 0; rr < 6; rr ++) {
-            var rX :int = TOTAL_SIZE*6 * int(rr % 3);
-            var rY :int = TOTAL_SIZE*6 * int(rr / 3);
-
-            for (var gg :int = 0; gg < 6; gg ++) {
-                var gX :int = rX + BORDER_WIDTH*(gg+1) + SQUARE_SIZE*gg;
-
-                for (var bb :int = 0; bb < 6; bb ++) {
-                    var colour :uint = rr*0x330000 + gg * 0x003300 + bb * 0x000033;
-                    var bY :int = rY + BORDER_WIDTH*(bb+1) + SQUARE_SIZE*bb;
-
-                    g.beginFill(colour);
-                    g.drawRect(gX, bY, SQUARE_SIZE, SQUARE_SIZE);
-                    g.endFill();
-                }
-            }
+        // start by drawing a color wheel...
+        for (var ii :int = 0; ii < 360; ii++) {
+            g.lineStyle(1, colorForAngle(ii));
+            g.moveTo(0, 0);
+            var end :Point = Point.polar(50, ii * Math.PI / 180);
+            g.lineTo(-end.x, end.y);
         }
 
         _large.addEventListener(MouseEvent.ROLL_OUT, function (evt :MouseEvent) :void {
@@ -63,17 +48,33 @@ public class Palette extends Sprite
 
         _large.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
             var p :Point = _large.globalToLocal(new Point(evt.stageX, evt.stageY));
+            var angle :int = Math.round(Math.atan2(p.y, -p.x) * 180 / Math.PI);
+            var color :int = colorForAngle(angle);
 
-            var rr :int = int(p.x / (TOTAL_SIZE*6)) + 3 * int(p.y / (TOTAL_SIZE*6));
-            var gg :int = (p.x % (TOTAL_SIZE*6)) / TOTAL_SIZE;
-            var bb :int = (p.y % (TOTAL_SIZE*6)) / TOTAL_SIZE;
-
-            var colour :int = rr*0x330000 + gg * 0x003300 + bb * 0x000033;
-
-            updateSmall(colour);
+            updateSmall(color);
             show(_small);
-            _canvas.pickColour(colour);
+            _canvas.pickColor(color);
         });
+    }
+
+    protected function colorForAngle (angle :int) :int
+    {
+        var color :int = 0;
+        var shifts :Array = [0, -120, -240];
+        for (var colors :int = 0; colors < 3; colors++) {
+            color = color << 8;
+            var adjustedAngle :int = ((angle + shifts[colors] + 360) % 360) - 180;
+            if (adjustedAngle > -60 && adjustedAngle < 60) {
+                // 120 degrees surrounding the base area for this color, paint the full color value
+                color += 0xFF;
+            } else if (adjustedAngle > -120 && adjustedAngle < 120) {
+                // for the area -60 - -120 and 60 - 120 degrees away from the base area, gradually
+                // reduce the value for this color 
+                var percent :Number = 1 - (Math.abs(adjustedAngle) - 60) / 60;
+                color += percent * 0xFF;
+            }
+        }
+        return color;
     }
 
     protected function buildSmall (colour :int) :void
@@ -93,10 +94,15 @@ public class Palette extends Sprite
         g.endFill();
     }
 
-    protected var _canvas :Canvas;
+    private static const log :Log = Log.getLog(Palette);
 
     protected static const SQUARE_SIZE :int = 4;
     protected static const BORDER_WIDTH :int = 1;
     protected static const TOTAL_SIZE :int = SQUARE_SIZE + BORDER_WIDTH;
+
+    protected var _canvas :Canvas;
+
+    protected var _small :Sprite = new Sprite();
+    protected var _large :Sprite = new Sprite();
 }
 }
