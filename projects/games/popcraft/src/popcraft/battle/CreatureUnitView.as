@@ -24,7 +24,7 @@ public class CreatureUnitView extends SceneObject
         var playerColor :uint = Constants.PLAYER_COLORS[_unit.owningPlayerId];
         
         // @TODO - remove this when all units have animations
-        if (Constants.UNIT_TYPE_GRUNT == _unit.unitType) {
+        if (Constants.UNIT_TYPE_GRUNT == _unit.unitType || Constants.UNIT_TYPE_SAPPER == _unit.unitType) {
             this.setupAnimations(playerColor);
             _hasAnimations = true;
         } else {

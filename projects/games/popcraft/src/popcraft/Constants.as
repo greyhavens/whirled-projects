@@ -92,7 +92,7 @@ public class Constants
 
             new UnitData (
                 "grunt"                     // name
-                , [25,   0,  25,   0]        // resource costs (brown, gold, blue, pink)
+                , [10,   0,  5,   0]        // resource costs (brown, gold, blue, pink)
                 , 25                        // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.8, DAMAGE_TYPE_PIERCING, 0.7, DAMAGE_TYPE_BASE, 0.8] )   // armor
@@ -106,7 +106,7 @@ public class Constants
 
             new UnitData (
                 "heavy"                     // name
-                , [0,   25,  0,   25]        // resource costs (brown, gold, blue, pink)
+                , [0,   10,  0,   10]        // resource costs (brown, gold, blue, pink)
                 , 25                        // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] )   // armor
@@ -123,7 +123,7 @@ public class Constants
 
             new UnitData (
                 "sapper"                     // name
-                , [0,   999,  0,   999]        // resource costs (brown, gold, blue, pink)
+                , [0,   0,  15,   15]        // resource costs (brown, gold, blue, pink)
                 , 40                        // move speed (pixels/second)
                 , 100                       // health
                 , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] )   // armor
