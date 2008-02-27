@@ -98,7 +98,9 @@ public class CreatureUnitView extends SceneObject
             // we don't have separate animations for NE and SE facing directions,
             // instead, we use the NW and SW animations and flip them.
             for (var facing :int = FACING_N; facing <= FACING_S; ++facing) {
-                var animClass :Class = swf.getClass(animNamePrefix + FACING_STRINGS[facing]);
+                var animName :String = animNamePrefix + FACING_STRINGS[facing];
+                
+                var animClass :Class = swf.getClass(animName);
                 
                 if (null == animClass) {
                     break;
@@ -114,6 +116,8 @@ public class CreatureUnitView extends SceneObject
                 
                 if (null != color) {
                     color.filters = [ tintFilterMatrix.createFilter() ];
+                } else {
+                    trace("Missing recolor symbol for " + _unit.unitData.name + "." + animName);
                 }
                 
                 animArray.push(anim);
