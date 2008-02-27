@@ -10,7 +10,7 @@ public class ToolBox extends Sprite
     {
         _canvas = canvas;
 
-        addChild(_palette = new Palette(this, 0));
+        addChild(_palette = new Palette(this, 0xFF0000));
     }
 
     public function pickColor (color :int) :void

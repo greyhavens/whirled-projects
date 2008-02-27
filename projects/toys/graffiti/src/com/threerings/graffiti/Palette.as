@@ -2,6 +2,7 @@
 
 package com.threerings.graffiti {
 
+import flash.display.BitmapData;
 import flash.display.GradientType;
 import flash.display.Graphics;
 import flash.display.Sprite;
@@ -25,7 +26,9 @@ public class Palette extends Sprite
 
         buildIndicator(initialColor);
         buildWheel();
+        buildGradientBox();
         displayManipulator(initialColor);
+        pickCurrentColor();
     }
 
     protected function buildIndicator (initialColor :int) :void
@@ -47,22 +50,23 @@ public class Palette extends Sprite
         g.drawRoundRect(0, 0, INDICATOR_WIDTH, INDICATOR_HEIGHT, 2, 2);
     }
 
-    protected function pickColor (color :int) :void
+    protected function pickCurrentColor () :void
     {
-        _selectedColor = color;
-        _toolbox.pickColor(color);
+        _selectedColor = getManipulatorColor(_manipulatorPoint);
+        _toolbox.pickColor(_selectedColor);
 
         // the right half of the indicator is for the currently selected color
         var g :Graphics = _indicator.graphics;
-        g.lineStyle(0, color);
-        g.beginFill(color);
+        g.lineStyle(0, _selectedColor);
+        g.beginFill(_selectedColor);
         g.drawRect(INDICATOR_WIDTH / 2, 1, INDICATOR_WIDTH / 2 - 2, INDICATOR_HEIGHT - 1);
         g.endFill();
         drawIndicatorBorder();
     }
 
-    protected function hoverColor (color :int) :void
+    protected function updateHoverColor () :void
     {
+        var color :uint = getManipulatorColor(_hoverPoint);
         // the left half of the indicator is for the hover color
         var g :Graphics = _indicator.graphics;
         g.lineStyle(0, color);
@@ -70,7 +74,6 @@ public class Palette extends Sprite
         g.drawRect(1, 1, INDICATOR_WIDTH / 2, INDICATOR_HEIGHT - 1);
         g.endFill();
         drawIndicatorBorder();
-        displayManipulator(color);
     }
 
     protected function buildWheel () :void
@@ -89,21 +92,21 @@ public class Palette extends Sprite
         }
 
         _wheel.addEventListener(MouseEvent.MOUSE_OUT, function (event :MouseEvent) :void {
-            hoverColor(_selectedColor);
+            displayManipulator(_selectedColor);
+            updateHoverColor();
         });
         _wheel.addEventListener(MouseEvent.MOUSE_MOVE, function (event :MouseEvent) :void {
-            giveColorAtMouse(event, hoverColor);
+            var p :Point = _wheel.globalToLocal(new Point(event.stageX, event.stageY));
+            var angle :int = Math.round(Math.atan2(p.y, -p.x) * 180 / Math.PI);
+            displayManipulator(colorForAngle(angle));
+            updateHoverColor();
         });
         _wheel.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            giveColorAtMouse(event, pickColor);
+            var p :Point = _wheel.globalToLocal(new Point(event.stageX, event.stageY));
+            var angle :int = Math.round(Math.atan2(p.y, -p.x) * 180 / Math.PI);
+            displayManipulator(colorForAngle(angle));
+            pickCurrentColor();
         });
-    }
-
-    protected function giveColorAtMouse (event :MouseEvent, func :Function) :void
-    {
-        var p :Point = _wheel.globalToLocal(new Point(event.stageX, event.stageY));
-        var angle :int = Math.round(Math.atan2(p.y, -p.x) * 180 / Math.PI); 
-        func(colorForAngle(angle));
     }
 
     protected function colorForAngle (angle :int) :int
@@ -126,32 +129,61 @@ public class Palette extends Sprite
         return color;
     }
 
-    protected function displayManipulator (color :uint) :void
+    protected function buildGradientBox () :void
     {
+        _gradientBox = new Sprite();
+        var g :Graphics = _gradientBox.graphics;
+
+        g.lineStyle(1);
+        var m :Matrix = new Matrix();
+        m.createGradientBox(1, MANIPULATOR_HEIGHT, Math.PI / 2);
+        for (var ii :int = 0; ii < MANIPULATOR_WIDTH; ii++) {
+            var percent :Number = 1 - Math.min(ii / (MANIPULATOR_WIDTH * 0.75), 1);
+            g.lineGradientStyle(
+                GradientType.LINEAR, [0xFFFFFF, 0x888888, 0x888888, 0], [1, percent, percent, 1], 
+                [0, 100, 155, 255], m); 
+            g.moveTo(ii, 0);
+            g.lineTo(ii, MANIPULATOR_HEIGHT);
+        }
+
         addChild(_manipulator = new Sprite());
         _manipulator.x = (PALETTE_WIDTH - MANIPULATOR_WIDTH) / 2;
         _manipulator.y = PADDING * 3 + INDICATOR_HEIGHT + WHEEL_RADIUS * 2;
+        _manipulator.addChild(_gradientBox);
 
+        _manipulator.addEventListener(MouseEvent.MOUSE_OUT, function (event :MouseEvent) :void {
+            _hoverPoint = _manipulatorPoint;
+            updateHoverColor();
+        });
+        _manipulator.addEventListener(MouseEvent.MOUSE_MOVE, function (event :MouseEvent) :void {
+            _hoverPoint = _manipulator.globalToLocal(new Point(event.stageX, event.stageY));
+            updateHoverColor(); 
+        });
+        _manipulator.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            _manipulatorPoint = _manipulator.globalToLocal(new Point(event.stageX, event.stageY));
+            pickCurrentColor();
+        });
+
+        _hoverPoint = _manipulatorPoint = new Point(MANIPULATOR_WIDTH, MANIPULATOR_HEIGHT / 2);
+    }
+
+    protected function displayManipulator (color :uint) :void
+    {
         var g :Graphics = _manipulator.graphics;
         g.clear();
-        g.lineStyle(1);
+
+        g.beginFill(color);
+        g.drawRect(0, 0, MANIPULATOR_WIDTH, MANIPULATOR_HEIGHT);
+        g.endFill();
+    }
+
+    protected function getManipulatorColor (location :Point) :uint
+    {
         var m :Matrix = new Matrix();
-        m.createGradientBox(MANIPULATOR_WIDTH, 1);
-        for (var ii :int = 0; ii < MANIPULATOR_HEIGHT; ii++) {
-            var rr :int = (color & 0xFF0000) >> 16;
-            var gg :int = (color & 0x00FF00) >> 8;
-            var bb :int = (color & 0x0000FF);
-            var percent :Number = 1 - (ii / MANIPULATOR_HEIGHT);
-            // find the color heading towards black for this row;
-            var gradedColor :uint = (Math.round(rr * percent) << 16) + 
-                                    (Math.round(gg * percent) << 8) + Math.round(bb * percent);
-            var channel :int = Math.round(percent * 0xFF);
-            var gradedBlack :uint = (channel << 16) + (channel << 8) + channel;
-            g.lineGradientStyle(
-                GradientType.LINEAR, [gradedBlack, gradedColor], [1, 1], [0, 255], m);
-            g.moveTo(0, ii);
-            g.lineTo(MANIPULATOR_WIDTH, ii);
-        }
+        m.translate(-location.x, -location.y);
+        var data :BitmapData = new BitmapData(1, 1);
+        data.draw(_manipulator, m);
+        return data.getPixel(0, 0);
     }
 
     private static const log :Log = Log.getLog(Palette);
@@ -160,14 +192,17 @@ public class Palette extends Sprite
     protected static const INDICATOR_HEIGHT :int = 30;
     protected static const INDICATOR_WIDTH :int = 60;
     protected static const COMPONENT_BORDER_COLOR :int = 0;
-    protected static const MANIPULATOR_WIDTH :int = 60;
-    protected static const MANIPULATOR_HEIGHT :int = 60;
+    protected static const MANIPULATOR_WIDTH :int = 50;
+    protected static const MANIPULATOR_HEIGHT :int = 50;
     protected static const PADDING :int = 5;
 
     protected var _toolbox :ToolBox;
     protected var _indicator :Sprite;
     protected var _wheel :Sprite;
+    protected var _gradientBox :Sprite;
     protected var _manipulator :Sprite;
+    protected var _hoverPoint :Point;
+    protected var _manipulatorPoint :Point;
     protected var _selectedColor :int;
 }
 }
