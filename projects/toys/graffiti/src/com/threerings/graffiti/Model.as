@@ -20,7 +20,7 @@ public class Model
         _strokes = new HashMap();
     }
 
-    public function beginStroke (id :String, from :Point, to :Point, color :int, brush) :void
+    public function beginStroke (id :String, from :Point, to :Point, color :int, brush :Brush) :void
     {
         strokeBegun(id, from, to, color, brush);
     }
