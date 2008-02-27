@@ -27,7 +27,7 @@ public class Palette extends Sprite
         buildIndicator(initialColor);
         buildWheel();
         buildGradientBox();
-        displayManipulator(initialColor);
+        displayManipulator(_selectedBaseColor = initialColor);
         pickCurrentColor();
     }
 
@@ -92,7 +92,7 @@ public class Palette extends Sprite
         }
 
         _wheel.addEventListener(MouseEvent.MOUSE_OUT, function (event :MouseEvent) :void {
-            displayManipulator(_selectedColor);
+            displayManipulator(_selectedBaseColor);
             updateHoverColor();
         });
         _wheel.addEventListener(MouseEvent.MOUSE_MOVE, function (event :MouseEvent) :void {
@@ -104,7 +104,7 @@ public class Palette extends Sprite
         _wheel.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             var p :Point = _wheel.globalToLocal(new Point(event.stageX, event.stageY));
             var angle :int = Math.round(Math.atan2(p.y, -p.x) * 180 / Math.PI);
-            displayManipulator(colorForAngle(angle));
+            displayManipulator(_selectedBaseColor = colorForAngle(angle));
             pickCurrentColor();
         });
     }
@@ -164,7 +164,7 @@ public class Palette extends Sprite
             pickCurrentColor();
         });
 
-        _hoverPoint = _manipulatorPoint = new Point(MANIPULATOR_WIDTH, MANIPULATOR_HEIGHT / 2);
+        _hoverPoint = _manipulatorPoint = new Point(MANIPULATOR_WIDTH - 1, MANIPULATOR_HEIGHT / 2);
     }
 
     protected function displayManipulator (color :uint) :void
@@ -204,5 +204,6 @@ public class Palette extends Sprite
     protected var _hoverPoint :Point;
     protected var _manipulatorPoint :Point;
     protected var _selectedColor :int;
+    protected var _selectedBaseColor :int;
 }
 }
