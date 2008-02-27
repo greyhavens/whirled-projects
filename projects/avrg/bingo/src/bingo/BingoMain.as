@@ -3,18 +3,12 @@
 
 package bingo {
 
-import flash.display.DisplayObject;
-import flash.display.Sprite;
-import flash.geom.Rectangle;
-
-import flash.events.Event;
-
+import com.threerings.util.Log;
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.Log;
-import com.threerings.util.Random;
+import flash.display.Sprite;
+import flash.events.Event;
 
 [SWF(width="700", height="500")]
 public class BingoMain extends Sprite
@@ -25,19 +19,14 @@ public class BingoMain extends Sprite
     public static var log :Log = Log.getLog(BingoMain);
 
     public static var control :AVRGameControl;
-
-    //public static var gameController :GameController;
+    public static var model :BingoModel;
+    public static var view :BingoViewManager;
 
     public function BingoMain ()
     {
         control = new AVRGameControl(this);
-        /*ourPlayerId = control.getPlayerId();
-
-        gameController = new GameController();
-
-        addChild(gameController.panel);
         
-        control.setHitPointTester(gameController.panel.hitTestPoint);*/
+        new BingoItemManager(); // init singleton
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
@@ -50,24 +39,27 @@ public class BingoMain extends Sprite
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
     }
 
-    protected function handleUnload (event :Event) :void
-    {
-        log.info("Removed from stage - Unloading...");
-
-        //gameController.shutdown();
-    }
-
     protected function handleAdded (event :Event) :void
     {
         log.info("Added to stage: Initializing...");
         
-        /*enteredRoom();
-        gameController.enterState(GameModel.STATE_INTRO);*/
+        model = new BingoModel();
+        view = new BingoViewManager(this, model);
+        
+        this.enteredRoom();
+    }
+
+    protected function handleUnload (event :Event) :void
+    {
+        log.info("Removed from stage - Unloading...");
+        
+        view.destroy();
+        model.destroy();
     }
 
     protected function enteredRoom (... ignored) :void
     {
-        if (!control.hasControl()) {
+        if (control.isConnected() && !control.hasControl()) {
             // ensure that in every room we visit, someone has control
             control.requestControl();
         }
