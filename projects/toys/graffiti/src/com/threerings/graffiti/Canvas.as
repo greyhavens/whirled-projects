@@ -58,13 +58,12 @@ public class Canvas extends Sprite
         _brush = event.value as Brush;
     }
 
-    public function strokeBegun (id :String, from :Point, to :Point, color :int) :void
+    public function strokeBegun (id :String, from :Point, to :Point, color :int, brush :Brush) :void
     {
         _outputKey = id;
 
         _canvas.graphics.moveTo(from.x, from.y);
-        // TODO: get the brush from the Model
-        _canvas.graphics.lineStyle(_brush.thickness, color, _brush.alpha);
+        _canvas.graphics.lineStyle(brush.thickness, color, brush.alpha);
 
         _lastX = from.x;
         _lastY = from.y;
@@ -136,7 +135,7 @@ public class Canvas extends Sprite
         }
 
         if (_newStroke) {
-            _model.beginStroke(_inputKey, _lastStrokePoint, p, _color);
+            _model.beginStroke(_inputKey, _lastStrokePoint, p, _color, _brush);
 
         } else {
             _model.extendStroke(_inputKey, p);
@@ -170,7 +169,7 @@ public class Canvas extends Sprite
     protected function drawStroke (key :String, stroke :Array) :void
     {
         var first :Array = stroke[0] as Array;
-        strokeBegun(key, first[0], first[1], first[2]);
+        strokeBegun(key, first[0], first[1], first[2], first[3]);
         for (var jj :int = 1; jj < stroke.length; jj ++) {
             strokeExtended(key, stroke[jj]);
         }

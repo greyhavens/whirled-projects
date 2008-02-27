@@ -9,6 +9,8 @@ import com.threerings.util.Random;
 
 import com.whirled.FurniControl;
 
+import com.threerings.graffiti.tools.Brush;
+
 public class Model
 {
     public function Model (canvas :Canvas)
@@ -18,9 +20,9 @@ public class Model
         _strokes = new HashMap();
     }
 
-    public function beginStroke (id :String, from :Point, to :Point, color :int) :void
+    public function beginStroke (id :String, from :Point, to :Point, color :int, brush) :void
     {
-        strokeBegun(id, from, to, color);
+        strokeBegun(id, from, to, color, brush);
     }
 
     public function extendStroke (id :String, to :Point) :void
@@ -45,10 +47,11 @@ public class Model
         return key;
     }
 
-    protected function strokeBegun (id :String, from :Point, to :Point, color :int) :void
+    protected function strokeBegun (id :String, from :Point, to :Point, color :int,     
+        brush :Brush) :void
     {
-        pushBub(id, [ to, from, color ]);
-        _canvas.strokeBegun(id, from, to, color);
+        pushBub(id, [ to, from, color, brush ]);
+        _canvas.strokeBegun(id, from, to, color, brush);
     }
 
     protected function strokeExtended (id :String, to :Point) :void

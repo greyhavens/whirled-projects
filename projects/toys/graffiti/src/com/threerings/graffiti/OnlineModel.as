@@ -9,6 +9,8 @@ import com.threerings.util.Log;
 import com.whirled.EntityControl;
 import com.whirled.ControlEvent;
 
+import com.threerings.graffiti.tools.Brush;
+
 public class OnlineModel extends Model
 {
     public function OnlineModel (canvas :Canvas, control :EntityControl) 
@@ -25,10 +27,12 @@ public class OnlineModel extends Model
         _control.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessage);
     }
 
-    override public function beginStroke (id :String, from :Point, to :Point, colour :int) :void
+    override public function beginStroke (id :String, from :Point, to :Point, color :int, 
+        brush :Brush) :void
     {
-        super.beginStroke(id, from, to, colour);
-        _control.sendMessage(id, [ from.x, from.y, to.x, to.y, colour ]);
+        super.beginStroke(id, from, to, color, brush);
+        _control.sendMessage(id, 
+            [ from.x, from.y, to.x, to.y, color, brush.thickness, brush.alpha]);
     }
 
     override public function extendStroke (id :String, to :Point) :void
@@ -44,8 +48,9 @@ public class OnlineModel extends Model
             log.debug("Eek, non-array value in evt: " + evt);
             return;
         }
-        if (arr.length == 5) {
-            beginStroke(evt.name, new Point(arr[0], arr[1]), new Point(arr[2], arr[3]), arr[4]);
+        if (arr.length == 7) {
+            beginStroke(evt.name, new Point(arr[0], arr[1]), new Point(arr[2], arr[3]), arr[4],
+                new Brush(arr[5], arr[6]));
 
         } else {
             extendStroke(evt.name, new Point(arr[0], arr[1]));
