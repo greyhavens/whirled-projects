@@ -13,57 +13,101 @@ import com.threerings.util.Log;
 
 public class Palette extends Sprite
 {
-    public function Palette (canvas :Canvas, initialColour :int)
-    {
-        _canvas = canvas;
+    public static const PALETTE_WIDTH :int = 100;
+    public static const PALETTE_HEIGHT :int = PADDING * 3 + INDICATOR_HEIGHT + WHEEL_RADIUS * 2;
 
-        buildLarge();
-        buildSmall(initialColour);
-        show(_small);
+    public function Palette (toolbox :ToolBox, initialColor :int)
+    {
+        _toolbox = toolbox;
+
+        buildIndicator(initialColor);
+        buildWheel();
     }
 
-    protected function show (s :Sprite) :void
+    protected function buildIndicator (initialColor :int) :void
     {
-        if (this.numChildren > 0) {
-            this.removeChildAt(0);
-        }
-        this.addChild(s);
+        _selectedColor = initialColor;
+        addChild(_indicator = new Sprite());
+        _indicator.x = (PALETTE_WIDTH - INDICATOR_WIDTH) / 2;
+        _indicator.y = PADDING;
+        var g :Graphics = _indicator.graphics;
+        g.beginFill(initialColor);
+        drawIndicatorBorder();
+        g.endFill();
     }
 
-    protected function buildLarge() :void
+    protected function drawIndicatorBorder () :void
     {
-        var g :Graphics = _large.graphics;
+        var g :Graphics = _indicator.graphics;
+        g.lineStyle(3, INDICATOR_BORDER_COLOR);
+        g.drawRoundRect(0, 0, INDICATOR_WIDTH, INDICATOR_HEIGHT, 2, 2);
+    }
+
+    protected function pickColor (color :int) :void
+    {
+        _selectedColor = color;
+        _toolbox.pickColor(color);
+
+        // the right half of the indicator is for the currently selected color
+        var g :Graphics = _indicator.graphics;
+        g.lineStyle(0, color);
+        g.beginFill(color);
+        g.drawRect(INDICATOR_WIDTH / 2, 1, INDICATOR_WIDTH / 2 - 2, INDICATOR_HEIGHT - 1);
+        g.endFill();
+        drawIndicatorBorder();
+    }
+
+    protected function hoverColor (color :int) :void
+    {
+        // the left half of the indicator is for the hover color
+        var g :Graphics = _indicator.graphics;
+        g.lineStyle(0, color);
+        g.beginFill(color);
+        g.drawRect(1, 1, INDICATOR_WIDTH / 2, INDICATOR_HEIGHT - 1);
+        g.endFill();
+        drawIndicatorBorder();
+    }
+
+    protected function buildWheel () :void
+    {
+        addChild(_wheel = new Sprite());
+        _wheel.x = WHEEL_RADIUS + (PALETTE_WIDTH - WHEEL_RADIUS * 2) / 2;
+        _wheel.y = WHEEL_RADIUS + PADDING * 2 + INDICATOR_HEIGHT;
+        var g :Graphics = _wheel.graphics;
 
         // start by drawing a color wheel...
         for (var ii :int = 0; ii < 360; ii++) {
             g.lineStyle(1, colorForAngle(ii));
             g.moveTo(0, 0);
-            var end :Point = Point.polar(50, ii * Math.PI / 180);
+            var end :Point = Point.polar(WHEEL_RADIUS, ii * Math.PI / 180);
             g.lineTo(-end.x, end.y);
         }
 
-        _large.addEventListener(MouseEvent.ROLL_OUT, function (evt :MouseEvent) :void {
-            show(_small);
+        _wheel.addEventListener(MouseEvent.MOUSE_OUT, function (event :MouseEvent) :void {
+            hoverColor(_selectedColor);
         });
-
-        _large.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
-            var p :Point = _large.globalToLocal(new Point(evt.stageX, evt.stageY));
-            var angle :int = Math.round(Math.atan2(p.y, -p.x) * 180 / Math.PI);
-            var color :int = colorForAngle(angle);
-
-            updateSmall(color);
-            show(_small);
-            _canvas.pickColor(color);
+        _wheel.addEventListener(MouseEvent.MOUSE_MOVE, function (event :MouseEvent) :void {
+            giveColorAtMouse(event, hoverColor);
         });
+        _wheel.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            giveColorAtMouse(event, pickColor);
+        });
+    }
+
+    protected function giveColorAtMouse (event :MouseEvent, func :Function) :void
+    {
+        var p :Point = _wheel.globalToLocal(new Point(event.stageX, event.stageY));
+        var angle :int = Math.round(Math.atan2(p.y, -p.x) * 180 / Math.PI); 
+        func(colorForAngle(angle));
     }
 
     protected function colorForAngle (angle :int) :int
     {
         var color :int = 0;
         var shifts :Array = [0, -120, -240];
-        for (var colors :int = 0; colors < 3; colors++) {
+        for (var ii :int = 0; ii < 3; ii++) {
             color = color << 8;
-            var adjustedAngle :int = ((angle + shifts[colors] + 360) % 360) - 180;
+            var adjustedAngle :int = ((angle + shifts[ii] + 360) % 360) - 180;
             if (adjustedAngle > -60 && adjustedAngle < 60) {
                 // 120 degrees surrounding the base area for this color, paint the full color value
                 color += 0xFF;
@@ -77,32 +121,17 @@ public class Palette extends Sprite
         return color;
     }
 
-    protected function buildSmall (colour :int) :void
-    {
-        _small.addEventListener(MouseEvent.ROLL_OVER, function (evt :MouseEvent) :void {
-            show(_large);
-        });
-        updateSmall(colour);
-    }
-
-    protected function updateSmall (colour :int) :void
-    {
-        var g :Graphics = _small.graphics;
-
-        g.beginFill(colour);
-        g.drawCircle(4 + SQUARE_SIZE, 4 + SQUARE_SIZE, SQUARE_SIZE);
-        g.endFill();
-    }
-
     private static const log :Log = Log.getLog(Palette);
 
-    protected static const SQUARE_SIZE :int = 4;
-    protected static const BORDER_WIDTH :int = 1;
-    protected static const TOTAL_SIZE :int = SQUARE_SIZE + BORDER_WIDTH;
+    protected static const WHEEL_RADIUS :int = 40;
+    protected static const INDICATOR_HEIGHT :int = 30;
+    protected static const INDICATOR_WIDTH :int = 60;
+    protected static const INDICATOR_BORDER_COLOR :int = 0;
+    protected static const PADDING :int = 5;
 
-    protected var _canvas :Canvas;
-
-    protected var _small :Sprite = new Sprite();
-    protected var _large :Sprite = new Sprite();
+    protected var _toolbox :ToolBox;
+    protected var _indicator :Sprite;
+    protected var _wheel :Sprite;
+    protected var _selectedColor :int;
 }
 }
