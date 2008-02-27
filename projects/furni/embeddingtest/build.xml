@@ -2,7 +2,7 @@
 <project name="embeddingtest" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name" value="EmbedTest"/>
+  <property name="app.name" value="ScriptTest"/>
   <property name="app.type" value="furni"/>
 
   <!-- include the standard build script -->
