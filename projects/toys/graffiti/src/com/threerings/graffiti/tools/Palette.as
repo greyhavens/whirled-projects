@@ -23,7 +23,9 @@ public class Palette extends Tool
         buildIndicator(initialColor);
         buildWheel();
         buildGradientBox();
+        buildBorder();
         displayManipulator(_selectedBaseColor = initialColor);
+        pickCurrentColor();
     }
 
     // from Tool
@@ -75,7 +77,7 @@ public class Palette extends Tool
         g.drawRect(INDICATOR_WIDTH / 2, 1, INDICATOR_WIDTH / 2 - 2, INDICATOR_HEIGHT - 1);
         g.endFill();
 
-        g.lineStyle(3, COMPONENT_BORDER_COLOR);
+        g.lineStyle(2, COMPONENT_BORDER_COLOR);
         g.drawRoundRect(0, 0, INDICATOR_WIDTH, INDICATOR_HEIGHT, 2, 2);
     }
 
@@ -83,16 +85,25 @@ public class Palette extends Tool
     {
         addChild(_wheel = new Sprite());
         _wheel.x = WHEEL_RADIUS + (PALETTE_WIDTH - WHEEL_RADIUS * 2) / 2;
-        _wheel.y = WHEEL_RADIUS + PADDING * 2 + INDICATOR_HEIGHT;
-        var g :Graphics = _wheel.graphics;
+        _wheel.y = PADDING * 2 + INDICATOR_HEIGHT + 
+            WHEEL_RADIUS + (WHEEL_BORDER_SIZE - WHEEL_RADIUS * 2) / 2;
 
-        // start by drawing a color wheel...
+        var g :Graphics = _wheel.graphics;
         for (var ii :int = 0; ii < 360; ii++) {
             g.lineStyle(1, colorForAngle(ii));
             g.moveTo(0, 0);
             var end :Point = Point.polar(WHEEL_RADIUS, ii * Math.PI / 180);
             g.lineTo(-end.x, end.y);
         }
+
+        var masker :Sprite = new Sprite();
+        g = masker.graphics;
+        var corner :Point = Point.polar(WHEEL_RADIUS, -Math.PI / 4);
+        g.beginFill(0);
+        g.drawRect(-corner.x, -corner.y, corner.x * 2, corner.y * 2);
+        g.endFill();
+        _wheel.addChild(masker);
+        _wheel.mask = masker;
 
         _wheel.addEventListener(MouseEvent.MOUSE_OUT, function (event :MouseEvent) :void {
             displayManipulator(_selectedBaseColor);
@@ -139,20 +150,21 @@ public class Palette extends Tool
 
         g.lineStyle(1);
         var m :Matrix = new Matrix();
-        m.createGradientBox(1, MANIPULATOR_HEIGHT, Math.PI / 2);
-        for (var ii :int = 0; ii < MANIPULATOR_WIDTH; ii++) {
+        m.createGradientBox(1, MANIPULATOR_SIZE, Math.PI / 2);
+        for (var ii :int = 0; ii < MANIPULATOR_SIZE; ii++) {
             var percent :Number = 
-                1 - Math.max(Math.min((ii - 5) / (MANIPULATOR_WIDTH * 0.75), 1), 0);
+                1 - Math.max(Math.min((ii - 5) / (MANIPULATOR_SIZE * 0.75), 1), 0);
             g.lineGradientStyle(
                 GradientType.LINEAR, [0xFFFFFF, 0x888888, 0x888888, 0], [1, percent, percent, 1], 
                 [0, 100, 155, 255], m); 
             g.moveTo(ii, 0);
-            g.lineTo(ii, MANIPULATOR_HEIGHT);
+            g.lineTo(ii, MANIPULATOR_SIZE);
         }
 
         addChild(_manipulator = new Sprite());
-        _manipulator.x = (PALETTE_WIDTH - MANIPULATOR_WIDTH) / 2;
-        _manipulator.y = PADDING * 3 + INDICATOR_HEIGHT + WHEEL_RADIUS * 2;
+        _manipulator.x = (PALETTE_WIDTH - MANIPULATOR_SIZE) / 2;
+        _manipulator.y = PADDING * 2 + INDICATOR_HEIGHT + 
+            (WHEEL_BORDER_SIZE - MANIPULATOR_SIZE) / 2;
         _manipulator.addChild(_gradientBox);
 
         _manipulator.addEventListener(MouseEvent.MOUSE_OUT, function (event :MouseEvent) :void {
@@ -168,7 +180,20 @@ public class Palette extends Tool
             pickCurrentColor();
         });
 
-        _hoverPoint = _manipulatorPoint = new Point(MANIPULATOR_WIDTH - 1, MANIPULATOR_HEIGHT / 2);
+        _hoverPoint = _manipulatorPoint = new Point(MANIPULATOR_SIZE - 1, MANIPULATOR_SIZE / 2);
+    }
+
+    protected function buildBorder () :void
+    {
+        var wheelBorder :Sprite = new Sprite();
+        wheelBorder.x = (PALETTE_WIDTH - WHEEL_BORDER_SIZE) / 2;
+        wheelBorder.y = PADDING * 2 + INDICATOR_HEIGHT;
+        addChild(wheelBorder);
+        var g :Graphics = wheelBorder.graphics;
+        g.lineStyle(2, COMPONENT_BORDER_COLOR);
+        g.drawRect(0, 0, WHEEL_BORDER_SIZE, WHEEL_BORDER_SIZE);
+        var manipCorner :Number = (WHEEL_BORDER_SIZE - MANIPULATOR_SIZE) / 2;
+        g.drawRect(manipCorner, manipCorner, MANIPULATOR_SIZE, MANIPULATOR_SIZE);
     }
 
     protected function displayManipulator (color :uint) :void
@@ -177,7 +202,7 @@ public class Palette extends Tool
         g.clear();
 
         g.beginFill(color);
-        g.drawRect(0, 0, MANIPULATOR_WIDTH, MANIPULATOR_HEIGHT);
+        g.drawRect(0, 0, MANIPULATOR_SIZE, MANIPULATOR_SIZE);
         g.endFill();
     }
 
@@ -192,16 +217,16 @@ public class Palette extends Tool
 
     private static const log :Log = Log.getLog(Palette);
 
-    protected static const WHEEL_RADIUS :int = 40;
+    protected static const WHEEL_RADIUS :int = 50;
     protected static const INDICATOR_HEIGHT :int = 30;
     protected static const INDICATOR_WIDTH :int = 60;
     protected static const COMPONENT_BORDER_COLOR :int = 0;
-    protected static const MANIPULATOR_WIDTH :int = 50;
-    protected static const MANIPULATOR_HEIGHT :int = 50;
+    protected static const MANIPULATOR_SIZE :int = 40;
     protected static const PADDING :int = 5;
+    protected static const WHEEL_BORDER_SIZE :int = 
+        Math.round(Point.polar(WHEEL_RADIUS, -Math.PI / 4).x * 2);
     protected static const PALETTE_WIDTH :int = 100;
-    protected static const PALETTE_HEIGHT :int = 
-            PADDING * 4 + INDICATOR_HEIGHT + WHEEL_RADIUS * 2 + MANIPULATOR_HEIGHT;
+    protected static const PALETTE_HEIGHT :int = PADDING * 3 + INDICATOR_HEIGHT + WHEEL_BORDER_SIZE;
 
 
     protected var _toolbox :ToolBox;
