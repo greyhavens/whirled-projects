@@ -141,7 +141,8 @@ public class Palette extends Tool
         var m :Matrix = new Matrix();
         m.createGradientBox(1, MANIPULATOR_HEIGHT, Math.PI / 2);
         for (var ii :int = 0; ii < MANIPULATOR_WIDTH; ii++) {
-            var percent :Number = 1 - Math.min(ii / (MANIPULATOR_WIDTH * 0.75), 1);
+            var percent :Number = 
+                1 - Math.max(Math.min((ii - 5) / (MANIPULATOR_WIDTH * 0.75), 1), 0);
             g.lineGradientStyle(
                 GradientType.LINEAR, [0xFFFFFF, 0x888888, 0x888888, 0], [1, percent, percent, 1], 
                 [0, 100, 155, 255], m); 
