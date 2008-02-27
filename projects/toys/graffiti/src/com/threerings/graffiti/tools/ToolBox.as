@@ -4,9 +4,13 @@ package com.threerings.graffiti.tools {
 
 import flash.display.Sprite;
 
+import flash.events.Event;
+
 import com.threerings.util.Log;
 
 import com.threerings.graffiti.Canvas;
+
+[Event(name="colorPicked", type="ToolEvent")];
 
 public class ToolBox extends Sprite 
 {
@@ -27,7 +31,7 @@ public class ToolBox extends Sprite
 
     public function pickColor (color :int) :void
     {
-        _canvas.pickColor(color);
+        dispatch(new ToolEvent(ToolEvent.COLOR_PICKED, color));
     }
 
     protected function layout () :void
@@ -36,7 +40,7 @@ public class ToolBox extends Sprite
         var curY :int = 0;
         for each (var tool :Tool in _tools) {
             tool.x = (TOOLBOX_WIDTH - tool.requestedWidth) / 2;
-            tool.y = curY;
+            tool.y = curY + PADDING;
             curY += tool.requestedHeight;
         }
     }
@@ -44,6 +48,7 @@ public class ToolBox extends Sprite
     private static const log :Log = Log.getLog(ToolBox);
 
     protected static const TOOLBOX_WIDTH :int = 100;
+    protected static const PADDING :int = 10;
 
     protected var _canvas :Canvas;
     protected var _tools :Array = [];

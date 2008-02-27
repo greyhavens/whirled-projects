@@ -16,6 +16,8 @@ import com.threerings.util.Log;
 
 import com.whirled.FurniControl;
 
+import com.threerings.graffiti.toolbox.ToolEvent;
+
 public class Canvas extends Sprite
 {
     public static const CANVAS_WIDTH :int = 400;
@@ -45,9 +47,9 @@ public class Canvas extends Sprite
         _canvas.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
     }
 
-    public function pickColor (color :int) :void
+    public function colorPicked (event :ToolEvent) :void
     {
-        _color = color;
+        _color = event.value as uint;
     }
 
     public function strokeBegun (id :String, from :Point, to :Point, color :int) :void
@@ -176,7 +178,7 @@ public class Canvas extends Sprite
     // variables for user input
     protected var _inputKey :String;
 
-    protected var _color :int;
+    protected var _color :uint;
 
     protected var _timer :int;
     protected var _lastStrokePoint :Point;
