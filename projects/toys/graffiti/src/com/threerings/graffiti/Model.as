@@ -18,9 +18,9 @@ public class Model
         _strokes = new HashMap();
     }
 
-    public function beginStroke (id :String, from :Point, to :Point, colour :int) :void
+    public function beginStroke (id :String, from :Point, to :Point, color :int) :void
     {
-        strokeBegun(id, from, to, colour);
+        strokeBegun(id, from, to, color);
     }
 
     public function extendStroke (id :String, to :Point) :void
@@ -45,10 +45,10 @@ public class Model
         return key;
     }
 
-    protected function strokeBegun (id :String, from :Point, to :Point, colour :int) :void
+    protected function strokeBegun (id :String, from :Point, to :Point, color :int) :void
     {
-        pushBub(id, [ to, from, colour ]);
-        _canvas.strokeBegun(id, from, to, colour);
+        pushBub(id, [ to, from, color ]);
+        _canvas.strokeBegun(id, from, to, color);
     }
 
     protected function strokeExtended (id :String, to :Point) :void

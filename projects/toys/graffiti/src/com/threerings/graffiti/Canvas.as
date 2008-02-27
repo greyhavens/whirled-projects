@@ -16,6 +16,7 @@ import com.threerings.util.Log;
 
 import com.whirled.FurniControl;
 
+import com.threerings.graffiti.tools.Brush;
 import com.threerings.graffiti.tools.ToolEvent;
 
 public class Canvas extends Sprite
@@ -52,12 +53,18 @@ public class Canvas extends Sprite
         _color = event.value as uint;
     }
 
+    public function brushPicked (event :ToolEvent) :void
+    {
+        _brush = event.value as Brush;
+    }
+
     public function strokeBegun (id :String, from :Point, to :Point, color :int) :void
     {
         _outputKey = id;
 
         _canvas.graphics.moveTo(from.x, from.y);
-        _canvas.graphics.lineStyle(4, color, 0.7);
+        // TODO: get the brush from the Model
+        _canvas.graphics.lineStyle(_brush.thickness, color, _brush.alpha);
 
         _lastX = from.x;
         _lastY = from.y;
@@ -143,7 +150,7 @@ public class Canvas extends Sprite
     {
         _canvas.graphics.clear();
 
-        _canvas.graphics.beginFill(0x444444);
+        _canvas.graphics.beginFill(0xFFFFFF);
         _canvas.graphics.drawRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         _canvas.graphics.endFill();
 
@@ -179,6 +186,7 @@ public class Canvas extends Sprite
     protected var _inputKey :String;
 
     protected var _color :uint;
+    protected var _brush :Brush;
 
     protected var _timer :int;
     protected var _lastStrokePoint :Point;

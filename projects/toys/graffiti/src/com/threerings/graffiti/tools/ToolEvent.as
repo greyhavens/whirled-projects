@@ -7,6 +7,7 @@ import flash.events.Event;
 public class ToolEvent extends Event
 {
     public static const COLOR_PICKED :String = "colorPicked";
+    public static const BRUSH_PICKED :String = "brushPicked";
 
     public function ToolEvent (event :String, value :*) :void
     {

@@ -7,6 +7,7 @@ import flash.display.GradientType;
 import flash.display.Graphics;
 import flash.display.Sprite;
 
+import flash.events.Event;
 import flash.events.MouseEvent;
 
 import flash.geom.Matrix;
@@ -25,7 +26,10 @@ public class Palette extends Tool
         buildGradientBox();
         buildBorder();
         displayManipulator(_selectedBaseColor = initialColor);
-        pickCurrentColor();
+
+        addEventListener(Event.ADDED_TO_STAGE, function (event :Event) :void {
+            pickCurrentColor();
+        });
     }
 
     // from Tool

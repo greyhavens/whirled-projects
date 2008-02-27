@@ -11,6 +11,7 @@ import com.threerings.util.Log;
 import com.threerings.graffiti.Canvas;
 
 [Event(name="colorPicked", type="ToolEvent")];
+[Event(name="brushPicked", type="ToolEvent")];
 
 public class ToolBox extends Sprite 
 {
@@ -20,11 +21,9 @@ public class ToolBox extends Sprite
 
         var palette :Palette = new Palette(this, 0xFF0000);
         addChild(palette);
-        _tools.push(palette);
-
         var brushTool :BrushTool = new BrushTool(this);
         addChild(brushTool);
-        _tools.push(brushTool);
+        _tools.concat([ palette, brushTool ]);
 
         layout();
     }
@@ -32,6 +31,11 @@ public class ToolBox extends Sprite
     public function pickColor (color :int) :void
     {
         dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKED, color));
+    }
+
+    public function brushPicked (brush :Brush) :void
+    {
+        dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, brush.clone()));
     }
 
     protected function layout () :void

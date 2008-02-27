@@ -18,11 +18,12 @@ public class Graffiti extends Sprite
         var canvas :Canvas = Canvas.createCanvas(control);
         addChild(canvas);
         var toolBox :ToolBox = new ToolBox(canvas);
+        // wire up canvas notification of tool changes - must be done before the toolbox is added
+        // to the stage.
+        toolBox.addEventListener(ToolEvent.COLOR_PICKED, canvas.colorPicked);
+        toolBox.addEventListener(ToolEvent.BRUSH_PICKED, canvas.brushPicked);
         toolBox.x = Canvas.CANVAS_WIDTH;
         addChild(toolBox);
-
-        // wire up canvas notification of tool changes
-        toolBox.addEventListener(ToolEvent.COLOR_PICKED, canvas.colorPicked);
     }
 }
 }
