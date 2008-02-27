@@ -31,7 +31,7 @@ public class ToolBox extends Sprite
 
     public function pickColor (color :int) :void
     {
-        dispatch(new ToolEvent(ToolEvent.COLOR_PICKED, color));
+        dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKED, color));
     }
 
     protected function layout () :void

@@ -16,7 +16,7 @@ import com.threerings.util.Log;
 
 import com.whirled.FurniControl;
 
-import com.threerings.graffiti.toolbox.ToolEvent;
+import com.threerings.graffiti.tools.ToolEvent;
 
 public class Canvas extends Sprite
 {

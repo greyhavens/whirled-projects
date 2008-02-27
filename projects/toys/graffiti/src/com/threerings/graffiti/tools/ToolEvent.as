@@ -8,7 +8,7 @@ public class ToolEvent extends Event
 {
     public static const COLOR_PICKED :String = "colorPicked";
 
-    public function ToolboxEvent (event :String, value :*) :void
+    public function ToolEvent (event :String, value :*) :void
     {
         super(event);
         _value = value;
