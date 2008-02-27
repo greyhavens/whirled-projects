@@ -28,52 +28,47 @@ public class Palette extends Sprite
         buildWheel();
         buildGradientBox();
         displayManipulator(_selectedBaseColor = initialColor);
-        pickCurrentColor();
     }
 
     protected function buildIndicator (initialColor :int) :void
     {
-        _selectedColor = initialColor;
+        _selectedColor = _hoverColor = initialColor;
         addChild(_indicator = new Sprite());
         _indicator.x = (PALETTE_WIDTH - INDICATOR_WIDTH) / 2;
         _indicator.y = PADDING;
-        var g :Graphics = _indicator.graphics;
-        g.beginFill(initialColor);
-        drawIndicatorBorder();
-        g.endFill();
-    }
-
-    protected function drawIndicatorBorder () :void
-    {
-        var g :Graphics = _indicator.graphics;
-        g.lineStyle(3, COMPONENT_BORDER_COLOR);
-        g.drawRoundRect(0, 0, INDICATOR_WIDTH, INDICATOR_HEIGHT, 2, 2);
+        updateIndicator();
     }
 
     protected function pickCurrentColor () :void
     {
         _selectedColor = getManipulatorColor(_manipulatorPoint);
         _toolbox.pickColor(_selectedColor);
-
-        // the right half of the indicator is for the currently selected color
-        var g :Graphics = _indicator.graphics;
-        g.lineStyle(0, _selectedColor);
-        g.beginFill(_selectedColor);
-        g.drawRect(INDICATOR_WIDTH / 2, 1, INDICATOR_WIDTH / 2 - 2, INDICATOR_HEIGHT - 1);
-        g.endFill();
-        drawIndicatorBorder();
+        updateIndicator();
     }
 
     protected function updateHoverColor () :void
     {
-        var color :uint = getManipulatorColor(_hoverPoint);
-        // the left half of the indicator is for the hover color
+        _hoverColor = getManipulatorColor(_hoverPoint);
+        updateIndicator();
+    }
+
+    protected function updateIndicator () :void
+    {
         var g :Graphics = _indicator.graphics;
-        g.lineStyle(0, color);
-        g.beginFill(color);
+        g.clear();
+
+        g.lineStyle(0, _hoverColor);
+        g.beginFill(_hoverColor);
         g.drawRect(1, 1, INDICATOR_WIDTH / 2, INDICATOR_HEIGHT - 1);
         g.endFill();
-        drawIndicatorBorder();
+
+        g.lineStyle(0, _selectedColor);
+        g.beginFill(_selectedColor);
+        g.drawRect(INDICATOR_WIDTH / 2, 1, INDICATOR_WIDTH / 2 - 2, INDICATOR_HEIGHT - 1);
+        g.endFill();
+
+        g.lineStyle(3, COMPONENT_BORDER_COLOR);
+        g.drawRoundRect(0, 0, INDICATOR_WIDTH, INDICATOR_HEIGHT, 2, 2);
     }
 
     protected function buildWheel () :void
@@ -204,6 +199,7 @@ public class Palette extends Sprite
     protected var _hoverPoint :Point;
     protected var _manipulatorPoint :Point;
     protected var _selectedColor :int;
+    protected var _hoverColor :int;
     protected var _selectedBaseColor :int;
 }
 }
