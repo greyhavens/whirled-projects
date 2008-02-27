@@ -4,6 +4,8 @@ package com.threerings.graffiti.tools {
 
 import flash.display.Sprite;
 
+import com.threerings.util.Log;
+
 import com.threerings.graffiti.Canvas;
 
 public class ToolBox extends Sprite 
@@ -14,7 +16,7 @@ public class ToolBox extends Sprite
 
         var palette :Palette = new Palette(this, 0xFF0000);
         addChild(palette);
-        _tools.push(Palette);
+        _tools.push(palette);
 
         var brushTool :BrushTool = new BrushTool(this);
         addChild(brushTool);
@@ -38,6 +40,8 @@ public class ToolBox extends Sprite
             curY += tool.requestedHeight;
         }
     }
+
+    private static const log :Log = Log.getLog(ToolBox);
 
     protected static const TOOLBOX_WIDTH :int = 100;
 
