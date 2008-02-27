@@ -1,6 +1,6 @@
 // $Id$
 
-package com.threerings.graffiti {
+package com.threerings.graffiti.tools {
 
 import flash.display.BitmapData;
 import flash.display.GradientType;
@@ -14,12 +14,8 @@ import flash.geom.Point;
 
 import com.threerings.util.Log;
 
-public class Palette extends Sprite
+public class Palette extends Tool
 {
-    public static const PALETTE_WIDTH :int = 100;
-    public static const PALETTE_HEIGHT :int = 
-        PADDING * 4 + INDICATOR_HEIGHT + WHEEL_RADIUS * 2 + MANIPULATOR_HEIGHT;
-
     public function Palette (toolbox :ToolBox, initialColor :uint)
     {
         _toolbox = toolbox;
@@ -28,6 +24,18 @@ public class Palette extends Sprite
         buildWheel();
         buildGradientBox();
         displayManipulator(_selectedBaseColor = initialColor);
+    }
+
+    // from Tool
+    public override function get requestedWidth () :Number
+    {
+        return PALETTE_WIDTH;
+    }
+
+    // from Tool
+    public override function get requestedHeight () :Number
+    {
+        return PALETTE_HEIGHT;
     }
 
     protected function buildIndicator (initialColor :int) :void
@@ -190,6 +198,10 @@ public class Palette extends Sprite
     protected static const MANIPULATOR_WIDTH :int = 50;
     protected static const MANIPULATOR_HEIGHT :int = 50;
     protected static const PADDING :int = 5;
+    protected static const PALETTE_WIDTH :int = 100;
+    protected static const PALETTE_HEIGHT :int = 
+            PADDING * 4 + INDICATOR_HEIGHT + WHEEL_RADIUS * 2 + MANIPULATOR_HEIGHT;
+
 
     protected var _toolbox :ToolBox;
     protected var _indicator :Sprite;
