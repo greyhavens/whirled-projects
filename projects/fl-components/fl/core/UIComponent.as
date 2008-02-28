@@ -452,6 +452,7 @@ package fl.core {
 
         public static var stageAlias :DisplayObjectContainer;
 
+        protected static var frameDummy :Sprite = new Sprite();
 
         /**
          * Creates a new UIComponent component instance.
@@ -1379,8 +1380,7 @@ package fl.core {
 			
 			callLaterMethods[fn] = true;
 			if (stage != null) {
-				stageAlias.addEventListener(Event.RENDER,callLaterDispatcher,false,0,true);
-                                stage.invalidate();
+                                frameDummy.addEventListener(Event.ENTER_FRAME, callLaterDispatcher, false, 0, true);
 			} else {
 				addEventListener(Event.ADDED_TO_STAGE,callLaterDispatcher,false,0,true);
 			}
@@ -1397,11 +1397,11 @@ package fl.core {
 				removeEventListener(Event.ADDED_TO_STAGE,callLaterDispatcher);
 				// now we can listen for render event:
                                 initStageAlias();
-				stageAlias.addEventListener(Event.RENDER,callLaterDispatcher,false,0,true);
-                                stage.invalidate();
+                                frameDummy.addEventListener(Event.ENTER_FRAME, callLaterDispatcher, false, 0, true);
 				return;
 			} else {
-				event.target.removeEventListener(Event.RENDER,callLaterDispatcher);
+                                frameDummy.removeEventListener(Event.ENTER_FRAME, callLaterDispatcher);
+
 				if (stage == null) {
 					// received render, but the stage is not available, so we will listen for addedToStage again:
 					addEventListener(Event.ADDED_TO_STAGE,callLaterDispatcher,false,0,true);
