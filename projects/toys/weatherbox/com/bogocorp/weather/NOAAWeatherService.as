@@ -8,7 +8,7 @@ import flash.net.URLRequest;
 
 import flash.utils.Dictionary;
 
-import com.adobe.webapis.URLLoaderBase;
+//import com.adobe.webapis.URLLoaderBase;
 
 public class NOAAWeatherService // extends URLLoaderBase
 {

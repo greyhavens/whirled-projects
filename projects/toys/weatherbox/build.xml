@@ -4,7 +4,7 @@
   <!-- defines our project name -->
   <property name="app.name" value="WeatherBox"/>
   <property name="app.type" value="toy"/>
-  <property name="app.lib-extras" value="../../../lib/fl-components.swc,../../../lib/corelib.swc"/>
+  <property name="app.lib-extras" value="../../../lib/fl-components.swc"/>
 
   <!-- if you wish to put your source in a subdirectory, uncomment this line -->
   <!--<property name="app.source-dir" value="src"/>-->
