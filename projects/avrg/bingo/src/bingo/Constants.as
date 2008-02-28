@@ -7,12 +7,11 @@ public class Constants
     public static const CARD_LOC :Point = new Point(10, 10);
     public static const BALL_LOC :Point = new Point(400, 150);
     
-    public static const CARD_WIDTH :int = 5;
-    public static const CARD_HEIGHT :int = 5;
+    public static const CARD_WIDTH :int = 4;
+    public static const CARD_HEIGHT :int = 4;
+    public static const FREE_SPACE :Point = new Point(-1, -1);
     
     public static const SECONDS_BETWEEN_BINGO_BALLS :Number = 5;
-    
-    public static const FREE_SPACE :Point = new Point(2, 2);
     
     public static const ITEMS :Array = [
     

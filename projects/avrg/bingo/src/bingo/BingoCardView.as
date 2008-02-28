@@ -2,7 +2,9 @@ package bingo {
     
 import flash.display.DisplayObject;
 import flash.display.Graphics;
+import flash.display.Shape;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
@@ -51,6 +53,8 @@ public class BingoCardView extends Sprite
                 this.addChild(itemView);
             }
         }
+        
+        this.addEventListener(MouseEvent.MOUSE_DOWN, handleClick);
     }
     
     public function createItemView (item :BingoItem) :DisplayObject
@@ -67,14 +71,50 @@ public class BingoCardView extends Sprite
         text.y = -(text.height * 0.5);
         
         var sprite :Sprite = new Sprite();
+        sprite.mouseEnabled = false;
+        sprite.mouseChildren = false;
         sprite.addChild(text);
         
         return sprite;
     }
     
+    protected function handleClick (e :MouseEvent) :void
+    {
+        var col :int = (e.localX / SQUARE_SIZE);
+        var row :int = (e.localY / SQUARE_SIZE);
+        
+        if (!(col >= 0 && col < _card.width && row >= 0 && row < _card.height)) {
+            return;
+        }
+        
+        if (!_card.isFilledAt(col, row)) {
+        
+            var item :BingoItem = _card.getItemAt(col, row);
+            
+            if (item.containsTag(BingoMain.model.bingoBallInPlay)) {
+                _card.setFilledAt(col, row);
+                
+                // draw a little stamp
+                var stamp :Shape = new Shape();
+                var g :Graphics = stamp.graphics;
+                
+                g.beginFill(0x00FFFF, 0.7);
+                g.drawCircle(0, 0, STAMP_RADIUS);
+                g.endFill();
+                
+                stamp.x = e.localX;
+                stamp.y = e.localY;
+                
+                this.addChild(stamp);
+            }
+        }
+       
+    }
+    
     protected var _card :BingoCard;
     
     protected static const SQUARE_SIZE :Number = 60;
+    protected static const STAMP_RADIUS :Number = 20;
     
 }
 
