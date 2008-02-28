@@ -232,7 +232,6 @@ public class Palette extends Tool
     protected static const PALETTE_WIDTH :int = 100;
     protected static const PALETTE_HEIGHT :int = PADDING * 3 + INDICATOR_HEIGHT + WHEEL_BORDER_SIZE;
 
-
     protected var _toolbox :ToolBox;
     protected var _indicator :Sprite;
     protected var _wheel :Sprite;
