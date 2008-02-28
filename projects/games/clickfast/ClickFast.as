@@ -13,7 +13,8 @@ import flash.utils.Timer;
 import com.whirled.game.*;
 
 /**
- * ClickFast: sample single-player game.
+ * ClickFast: A sample single-player game that demonstrates the right way to do things
+ * and flow awarding.
  */
 [SWF(width="700", height="500")]
 public class ClickFast extends Sprite
@@ -23,11 +24,13 @@ public class ClickFast extends Sprite
 
     public static const GAME_DURATION :int = 15000; // 15 seconds
 
-    public static const NUM_PHASES :int = 3;
+    public static const EXPLOSION_FREQUENCY :int = 200; // every 200 ms
 
     public static const MAX_RADIUS :int = 50;
+    public static const MIN_RADIUS :int = 20;
 
     public static const MAX_LIFETIME :int = 2000;
+    public static const MIN_LIFETIME :int = 1000;
 
     public function ClickFast ()
     {
@@ -40,8 +43,9 @@ public class ClickFast extends Sprite
         _ctrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
         _ctrl.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
 
-        _timer = new Timer(1000);
+        _timer = new Timer(EXPLOSION_FREQUENCY, 1 + (GAME_DURATION / EXPLOSION_FREQUENCY));
         _timer.addEventListener(TimerEvent.TIMER, handleTimer);
+        _timer.addEventListener(TimerEvent.TIMER_COMPLETE, handleTimerComplete);
 
         // give some feedback
         _ctrl.local.feedback("Welcome to ClickFast!\n\n" +
@@ -50,10 +54,46 @@ public class ClickFast extends Sprite
             "you'll get for it.");
     }
 
-    public function addScore (score :int) :void
+    public function addScore (delta :int) :void
     {
-        _score += score;
+        _score += delta;
+        // and display it in the player list next to the player's name.
         _ctrl.local.setPlayerScores([ _score ]);
+    }
+
+    protected function handleGameStarted (event :StateChangedEvent) :void
+    {
+        _ctrl.local.feedback("GO!");
+
+        _score = 0;
+        addScore(0); // update the display...
+        _timer.start();
+    }
+
+    protected function handleTimer (event :TimerEvent) :void
+    {
+        // add an explosion somewhere
+        var xx :Number = random(0, WIDTH);
+        var yy :Number = random(0, HEIGHT);
+        var radius :Number = random(MIN_RADIUS, MAX_RADIUS);
+        var lifetime :Number = random(MIN_LIFETIME, MAX_LIFETIME);
+        addChild(new Explosion(this, xx, yy, radius, lifetime));
+    }
+
+    protected function handleTimerComplete (event :TimerEvent) :void
+    {
+        _timer.reset();
+        // remove all unclicked explosions
+        while (numChildren > 0) {
+            removeChildAt(0);
+        }
+        // tell the server to end the game
+        _ctrl.game.endGameWithScore(_score);
+    }
+
+    protected function handleGameEnded (event :StateChangedEvent) :void
+    {
+        _ctrl.local.feedback("Good game!");
     }
 
     protected function handleFlowAwarded (event :FlowAwardedEvent) :void
@@ -61,50 +101,12 @@ public class ClickFast extends Sprite
         _ctrl.local.feedback("You earned " + event.amount + " flow!");
     }
 
-    protected function handleGameStarted (event :StateChangedEvent) :void
+    /**
+     * Utility method to return a random number between min and max.
+     */
+    protected static function random (min :Number, max :Number) :Number
     {
-        _ctrl.local.feedback("GO!");
-        _startTime = getTimer();
-
-        _phase = 0;
-        _score = 0;
-        addScore(0);
-        _timer.delay = 200;
-        _timer.start();
-    }
-
-    protected function handleGameEnded (event :StateChangedEvent) :void
-    {
-        _ctrl.local.feedback("Good game!");
-        // TODO
-    }
-
-    protected function handleTimer (event :TimerEvent) :void
-    {
-        var now :Number = getTimer();
-        var elapsed :Number = now - _startTime;
-        if (elapsed > (GAME_DURATION / NUM_PHASES)) {
-            _timer.reset();
-            _phase++;
-            if (_phase == NUM_PHASES) {
-                while (numChildren > 0) {
-                    removeChildAt(0);
-                }
-                _ctrl.game.endGameWithScore(_score);
-                return;
-            }
-
-            _timer.delay /= 2;
-            _timer.start();
-            _startTime = now;
-        }
-
-        // then, add an explosion somewhere
-        var xx :Number = Math.random() * WIDTH;
-        var yy :Number = Math.random() * HEIGHT;
-        var radius :Number = Math.random() * MAX_RADIUS;
-        var lifetime :Number = Math.random() * MAX_LIFETIME;
-        addChild(new Explosion(this, xx, yy, radius, lifetime));
+        return min + (Math.random() * (max - min));
     }
 
     protected var _ctrl :GameControl;
@@ -112,10 +114,6 @@ public class ClickFast extends Sprite
     protected var _timer :Timer;
 
     protected var _score :int;
-
-    protected var _phase :int;
-
-    protected var _startTime :Number;
 }
 }
 
