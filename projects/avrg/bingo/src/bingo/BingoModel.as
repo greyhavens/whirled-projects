@@ -13,6 +13,12 @@ public class BingoModel extends EventDispatcher
     {
     }
     
+    public function setup () :void
+    {
+        _card = new BingoCard();
+        this.trySetBingoBallInPlay(BingoItemManager.instance.getRandomTag());
+    }
+    
     public function destroy () :void
     {
     }

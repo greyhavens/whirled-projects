@@ -20,7 +20,7 @@ public class BingoMain extends Sprite
 
     public static var control :AVRGameControl;
     public static var model :BingoModel;
-    public static var view :BingoViewManager;
+    public static var controller :BingoController;
 
     public function BingoMain ()
     {
@@ -43,8 +43,11 @@ public class BingoMain extends Sprite
     {
         log.info("Added to stage: Initializing...");
         
-        model = new BingoModel();
-        view = new BingoViewManager(this, model);
+        model = (control.isConnected() ? new BingoNetModel() : new BingoModel());
+        controller = new BingoController(this, model);
+        
+        model.setup();
+        controller.setup();
         
         this.enteredRoom();
     }
@@ -53,7 +56,7 @@ public class BingoMain extends Sprite
     {
         log.info("Removed from stage - Unloading...");
         
-        view.destroy();
+        controller.destroy();
         model.destroy();
     }
 

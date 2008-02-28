@@ -1,6 +1,7 @@
 package bingo {
-    import com.whirled.StateControl;
     
+import com.whirled.StateControl;
+import com.whirled.AVRGameControlEvent;
     
 public class BingoNetModel extends BingoModel
 {
@@ -27,11 +28,11 @@ public class BingoNetModel extends BingoModel
     {
         switch (e.name) {
         case Constants.PROP_ROUNDID:
-            this.roundId = e.value as int;
+            this.setRoundId(e.value as int);
             break;
             
         case Constants.PROP_BALLINPLAY:
-            this.bingoBallInPlay = e.value as String;
+            this.setBingoBallInPlay(e.value as String);
             break;
             
         default:
@@ -40,10 +41,17 @@ public class BingoNetModel extends BingoModel
         }
     }
     
-    override protected function trySetRoundId (newRoundId :int) :void
+    override public function trySetRoundId (newRoundId :int) :void
     {
         if (BingoMain.control.hasControl()) {
-            _stateControl.setProperty(
+            _stateControl.setProperty(Constants.PROP_ROUNDID, newRoundId, false);
+        }
+    }
+    
+    override public function trySetBingoBallInPlay (newBall :String) :void
+    {
+        if (BingoMain.control.hasControl()) {
+            _stateControl.setProperty(Constants.PROP_BALLINPLAY, newBall, false);
         }
     }
     
