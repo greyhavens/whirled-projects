@@ -4,7 +4,6 @@ package com.threerings.graffiti {
 
 import flash.display.Sprite;
 
-import fl.skins.DefaultButtonSkins;
 import fl.skins.DefaultSliderSkins;
 
 import com.whirled.FurniControl;
