@@ -36,6 +36,13 @@ public class Canvas extends Sprite
         _canvas.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
         _canvas.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
 
+        var masker :Shape = new Shape();
+        masker.graphics.beginFill(0);
+        masker.graphics.drawRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        masker.graphics.endFill();
+        addChild(masker);
+        mask = masker;
+
         // TODO: temporarily just staying offline while we get the tools sorted out.
         _model = new OfflineModel(this);
         redraw();
