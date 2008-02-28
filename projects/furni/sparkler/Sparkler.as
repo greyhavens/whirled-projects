@@ -139,6 +139,6 @@ public class Sparkler extends FrameSprite
     protected var _lastX :Number = NaN;
     protected var _lastY :Number = NaN;
 
-    protected static const LIFETIMES :Array = [ 10, 100, 500, 1000, 1500, 2000, 3000, 5000, 10000 ];
+    protected static const LIFETIMES :Array = [ 100, 500, 1000, 1500, 2000, 3000, 5000, 10000 ];
 }
 }
