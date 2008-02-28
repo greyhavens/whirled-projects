@@ -4,6 +4,9 @@ package com.threerings.graffiti {
 
 import flash.display.Sprite;
 
+import fl.skins.DefaultButtonSkins;
+import fl.skins.DefaultSliderSkins;
+
 import com.whirled.FurniControl;
 
 import com.threerings.graffiti.tools.ToolBox;
@@ -24,6 +27,12 @@ public class Graffiti extends Sprite
         toolBox.addEventListener(ToolEvent.BRUSH_PICKED, canvas.brushPicked);
         toolBox.x = Canvas.CANVAS_WIDTH;
         addChild(toolBox);
+    }
+
+    private static function referenceSkins () :void
+    {
+        // make sure the skins we use in this app get included by the compiler
+        DefaultSliderSkins;
     }
 }
 }
