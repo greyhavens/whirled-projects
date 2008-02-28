@@ -77,7 +77,7 @@ public class ClickFast extends Sprite
         var yy :Number = random(0, HEIGHT);
         var radius :Number = random(MIN_RADIUS, MAX_RADIUS);
         var lifetime :Number = random(MIN_LIFETIME, MAX_LIFETIME);
-        addChild(new Explosion(this, xx, yy, radius, lifetime));
+        addChildAt(new Explosion(this, xx, yy, radius, lifetime), 0);
     }
 
     protected function handleTimerComplete (event :TimerEvent) :void
@@ -128,7 +128,7 @@ class Explosion extends FrameSprite
     public function Explosion (
         parent :ClickFast, xx :int, yy :int, maxRadius :Number, lifetime :Number)
     {
-        super(false);
+        super();
 
         this.x = xx;
         this.y = yy;
@@ -142,7 +142,13 @@ class Explosion extends FrameSprite
     protected function handleClick (event :MouseEvent) :void
     {
         _parent.addScore(int(_maxRadius - _curRadius));
-        this.parent.removeChild(this);
+        // turn off clicking and paint ourselves as dead
+        mouseEnabled = false;
+        paint(0x330000);
+
+        // and set us up to only display for 250 ms more.
+        _startStamp = NaN;
+        _lifetime = 250;
     }
 
     override protected function handleFrame (... ignored) :void
@@ -158,10 +164,17 @@ class Explosion extends FrameSprite
             return;
         }
 
-        _curRadius = _maxRadius * (elapsed / _lifetime);
+        // only continue to grow if we're not disabled
+        if (mouseEnabled) {
+            _curRadius = _maxRadius * (elapsed / _lifetime);
+            paint(0x006600);
+        }
+    }
 
+    protected function paint (color :uint) :void
+    {
         graphics.clear();
-        graphics.beginFill(0x660000);
+        graphics.beginFill(color);
         graphics.drawCircle(0, 0, _curRadius);
     }
 
