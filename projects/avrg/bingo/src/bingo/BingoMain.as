@@ -21,6 +21,8 @@ public class BingoMain extends Sprite
     public static var control :AVRGameControl;
     public static var model :BingoModel;
     public static var controller :BingoController;
+    
+    public static var ourPlayerId :int = -1;
 
     public function BingoMain ()
     {
@@ -45,6 +47,8 @@ public class BingoMain extends Sprite
         
         model = (control.isConnected() ? new BingoNetModel() : new BingoModel());
         controller = new BingoController(this, model);
+        
+        ourPlayerId = (control.isConnected() ? control.getPlayerId() : 0);
         
         model.setup();
         controller.setup();

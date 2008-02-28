@@ -1,7 +1,7 @@
 package bingo {
     
-import com.whirled.StateControl;
 import com.whirled.AVRGameControlEvent;
+import com.whirled.StateControl;
     
 public class BingoNetModel extends BingoModel
 {
@@ -21,7 +21,18 @@ public class BingoNetModel extends BingoModel
     
     protected function messageReceived (e :AVRGameControlEvent) :void
     {
-        
+        // @TODO
+        switch (e.name) {
+        case Constants.MSG_PLAYERGOTBINGO:
+            break;
+            
+        case Constants.MSG_PLAYERWONROUND:
+            break;
+            
+        default:
+            g_log.warning("unrecognized message: " + e.name);
+            break;
+        }
     }
     
     protected function propChanged (e :AVRGameControlEvent) :void
@@ -41,11 +52,26 @@ public class BingoNetModel extends BingoModel
         }
     }
     
+    override public function callBingo () :void
+    {
+        // in a network game, calling bingo doesn't necessarily
+        // mean we've won the round. someone might get in before
+        // we do.
+        
+        _stateControl.sendMessage(Constants.MSG_PLAYERGOTBINGO, BingoMain.ourPlayerId);
+    }
+    
     override public function trySetRoundId (newRoundId :int) :void
     {
         if (BingoMain.control.hasControl()) {
             _stateControl.setProperty(Constants.PROP_ROUNDID, newRoundId, false);
         }
+    }
+    
+    override protected function setRoundId (newRoundId :int) :void
+    {
+        super.setRoundId(newRoundId);
+        _bingoCalledThisRound = false;
     }
     
     override public function trySetBingoBallInPlay (newBall :String) :void
@@ -56,6 +82,7 @@ public class BingoNetModel extends BingoModel
     }
     
     protected var _stateControl :StateControl;
+    protected var _bingoCalledThisRound :Boolean;
     
 }
 

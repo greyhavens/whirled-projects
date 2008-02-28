@@ -6,6 +6,7 @@ import flash.events.EventDispatcher;
 
 [Event(name="newRound", type="bingo.BingoStateChangedEvent")]
 [Event(name="newBall", type="bingo.BingoStateChangedEvent")]
+[Event(name="playerWon", type="bingo.BingoStateChangedEvent")]
     
 public class BingoModel extends EventDispatcher
 {
@@ -21,6 +22,16 @@ public class BingoModel extends EventDispatcher
     
     public function destroy () :void
     {
+    }
+    
+    public function callBingo () :void
+    {
+        this.playerWonRound(BingoMain.ourPlayerId);
+    }
+    
+    protected function playerWonRound (playerId :int) :void
+    {
+        this.dispatchEvent(new BingoStateChangedEvent(BingoStateChangedEvent.PLAYER_WON_ROUND, playerId));
     }
     
     public function get roundId () :int

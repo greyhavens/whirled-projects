@@ -4,9 +4,11 @@ import flash.geom.Point;
     
 public class Constants
 {
+    // cosmetic bits
     public static const CARD_LOC :Point = new Point(10, 10);
     public static const BALL_LOC :Point = new Point(400, 150);
     
+    // gameplay bits
     public static const CARD_WIDTH :int = 4;
     public static const CARD_HEIGHT :int = 4;
     public static const FREE_SPACE :Point = new Point(-1, -1);
@@ -29,7 +31,7 @@ public class Constants
         
         new BingoItem("goldfish", [ "goldfish", "fish", "aquarium", "domestic", "small" ]),
         
-        new BingoItem("albacore", [ "albacore", "tuna", "fish", "ocean", "large", "human food" ]),
+        new BingoItem("albacore", [ "albacore", "tuna", "fish", "ocean", "large", "tasty" ]),
         new BingoItem("blackfin", [ "blackfin", "tuna", "fish", "ocean", "small" ]),
         
         new BingoItem("bottlenose", [ "bottlenose", "dolphin", "mammal", "ocean", "large" ]),
@@ -37,8 +39,12 @@ public class Constants
         
     ];
     
+    // network bits
     public static const PROP_ROUNDID :String = "roundId";
     public static const PROP_BALLINPLAY :String = "ballInPlay";
+    
+    public static const MSG_PLAYERGOTBINGO :String = "bingo";
+    public static const MSG_PLAYERWONROUND :String = "playerWon";
 
 }
 
