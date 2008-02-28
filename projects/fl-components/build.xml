@@ -6,6 +6,7 @@
     <java jar="${flex.path}/lib/compc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="${etc.dir}/whirled-config.xml"/>
+      <arg value="-verbose-stacktraces=false"/>
       <arg value="-library-path+=lib/v3components.swc"/>
       <arg value="-include-sources=."/>
       <arg value="-output"/>
