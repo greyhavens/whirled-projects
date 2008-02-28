@@ -92,7 +92,10 @@ public class Canvas extends Sprite
         _lastStrokePoint = _canvas.globalToLocal(new Point(evt.stageX, evt.stageY));
         _newStroke = true;
         _inputKey = _model.getKey();
-        _timer = setInterval(tick, 200);
+        // TODO: a timer set this short is pointless - it should just be an enter frame listener...
+        // I'll probably switch to that and throttle the network traffic by bundling up a bunch of
+        // updates and sending them all at once.
+        _timer = setInterval(tick, 50);
     }
 
     protected function tick () :void
@@ -112,7 +115,7 @@ public class Canvas extends Sprite
 
     protected function maybeAddStroke (p :Point) :void
     {
-        if (p.x < 0 || p.x > 255 || p.y < 0 || p.y > 255) {
+        if (p.x < 0 || p.x > CANVAS_WIDTH || p.y < 0 || p.y > CANVAS_HEIGHT) {
             return;
         }
         var dx :Number = p.x - _lastStrokePoint.x;
