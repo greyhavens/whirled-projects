@@ -24,28 +24,21 @@ public class Canvas extends Sprite
     public static const CANVAS_WIDTH :int = 400;
     public static const CANVAS_HEIGHT :int = 400;
 
-    public static function createCanvas (control :FurniControl) :Canvas
-    {
-        var canvas :Canvas = new Canvas();
-//        var model :Model = 
-//            control.isConnected() ? new OnlineModel(canvas, control) : new OfflineModel(canvas);
-//        canvas.setModel(model);
-        // TODO: temporarily just staying offline while we get the tools sorted out.
-        canvas.setModel(new OfflineModel(canvas));
-        return canvas;
-    }
-
     /**
      * This function should not be called directly.  Instead, call createCanvas() with the 
      * FurniControl.
      */
-    public function Canvas ()
+    public function Canvas (control :FurniControl)
     {
         _canvas = new Sprite();
         addChild(_canvas);
 
         _canvas.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
         _canvas.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+
+        // TODO: temporarily just staying offline while we get the tools sorted out.
+        _model = new OfflineModel(this);
+        redraw();
     }
 
     public function colorPicked (event :ToolEvent) :void
@@ -92,12 +85,6 @@ public class Canvas extends Sprite
 
         _oldDeltaX = to.x - controlX;
         _oldDeltaY = to.y - controlY;
-    }
-
-    protected function setModel (model :Model) :void
-    {
-        _model = model;
-        redraw();
     }
 
     protected function mouseDown (evt :MouseEvent) :void

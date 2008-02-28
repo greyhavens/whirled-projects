@@ -16,8 +16,7 @@ public class Graffiti extends Sprite
 {
     public function Graffiti () 
     {
-        var control :FurniControl = new FurniControl(this);
-        var canvas :Canvas = Canvas.createCanvas(control);
+        var canvas :Canvas = new Canvas(new FurniControl(this));
         addChild(canvas);
         var toolBox :ToolBox = new ToolBox(canvas);
         // wire up canvas notification of tool changes - must be done before the toolbox is added

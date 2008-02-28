@@ -78,7 +78,7 @@ public class Palette extends Tool
 
         g.lineStyle(0, _selectedColor);
         g.beginFill(_selectedColor);
-        g.drawRect(INDICATOR_WIDTH / 2, 1, INDICATOR_WIDTH / 2 - 2, INDICATOR_HEIGHT - 1);
+        g.drawRect(INDICATOR_WIDTH / 2, 1, INDICATOR_WIDTH / 2 - 1, INDICATOR_HEIGHT - 1);
         g.endFill();
 
         g.lineStyle(2, COMPONENT_BORDER_COLOR);
@@ -93,7 +93,7 @@ public class Palette extends Tool
             WHEEL_RADIUS + (WHEEL_BORDER_SIZE - WHEEL_RADIUS * 2) / 2;
 
         var g :Graphics = _wheel.graphics;
-        for (var ii :int = 0; ii < 360; ii++) {
+        for (var ii :Number = 0; ii < 360; ii += 0.5) {
             g.lineStyle(1, colorForAngle(ii));
             g.moveTo(0, 0);
             var end :Point = Point.polar(WHEEL_RADIUS, ii * Math.PI / 180);
@@ -127,13 +127,13 @@ public class Palette extends Tool
         });
     }
 
-    protected function colorForAngle (angle :int) :int
+    protected function colorForAngle (angle :Number) :int
     {
         var color :int = 0;
         var shifts :Array = [0, -120, -240];
         for (var ii :int = 0; ii < 3; ii++) {
             color = color << 8;
-            var adjustedAngle :int = ((angle + shifts[ii] + 360) % 360) - 180;
+            var adjustedAngle :Number = ((angle + shifts[ii] + 360) % 360) - 180;
             if (adjustedAngle > -60 && adjustedAngle < 60) {
                 // 120 degrees surrounding the base area for this color, paint the full color value
                 color += 0xFF;
