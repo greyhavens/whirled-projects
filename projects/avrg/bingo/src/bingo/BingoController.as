@@ -14,6 +14,7 @@ public class BingoController
     {
         _model.addEventListener(BingoStateChangedEvent.NEW_ROUND, handleNewRound);
         _model.addEventListener(BingoStateChangedEvent.NEW_BALL, handleNewBall);
+        _model.addEventListener(BingoStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
         
         if (null != _model.card) {
             this.createCardView()
@@ -28,6 +29,7 @@ public class BingoController
     {
         _model.removeEventListener(BingoStateChangedEvent.NEW_ROUND, handleNewRound);
         _model.removeEventListener(BingoStateChangedEvent.NEW_BALL, handleNewBall);
+        _model.removeEventListener(BingoStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
     }
     
     protected function createCardView () :void
@@ -64,6 +66,11 @@ public class BingoController
         }
         
         this.createBallView();
+    }
+    
+    protected function handlePlayerWonRound (e :BingoStateChangedEvent) :void
+    {
+        
     }
     
     protected var _mainSprite :Sprite;

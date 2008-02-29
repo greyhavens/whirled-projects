@@ -6,7 +6,7 @@ import flash.events.EventDispatcher;
 
 [Event(name="newRound", type="bingo.BingoStateChangedEvent")]
 [Event(name="newBall", type="bingo.BingoStateChangedEvent")]
-[Event(name="playerWon", type="bingo.BingoStateChangedEvent")]
+[Event(name="playerWonRound", type="bingo.BingoStateChangedEvent")]
     
 public class BingoModel extends EventDispatcher
 {

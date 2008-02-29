@@ -93,8 +93,8 @@ public class Constants
     public static const PROP_ROUNDID :String = "roundId";
     public static const PROP_BALLINPLAY :String = "ballInPlay";
     
-    public static const MSG_PLAYERGOTBINGO :String = "bingo";
-    public static const MSG_PLAYERWONROUND :String = "playerWon";
+    public static const MSG_REQUEST_BINGO :String = "r_bingo";
+    public static const MSG_CONFIRM_BINGO :String = "c_bingo";
 
 }
 
