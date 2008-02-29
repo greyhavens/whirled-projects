@@ -1,8 +1,8 @@
 <!-- build configuration -->
-<project name="clickfast" default="compile" basedir=".">
+<project name="quickclick" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name" value="ClickFast"/>
+  <property name="app.name" value="QuickClick"/>
   <property name="app.type" value="game"/>
 
   <!-- include the standard build script -->

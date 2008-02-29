@@ -13,11 +13,11 @@ import flash.utils.Timer;
 import com.whirled.game.*;
 
 /**
- * ClickFast: A sample single-player game that demonstrates the right way to do things
+ * QuickClick: A sample single-player game that demonstrates the right way to do things
  * and flow awarding.
  */
 [SWF(width="700", height="500")]
-public class ClickFast extends Sprite
+public class QuickClick extends Sprite
 {
     public static const WIDTH :int = 700;
     public static const HEIGHT :int = 500;
@@ -32,7 +32,7 @@ public class ClickFast extends Sprite
     public static const MAX_LIFETIME :int = 2000;
     public static const MIN_LIFETIME :int = 1000;
 
-    public function ClickFast ()
+    public function QuickClick ()
     {
         graphics.beginFill(0x000000);
         graphics.drawRect(0, 0, WIDTH, HEIGHT);
@@ -48,7 +48,7 @@ public class ClickFast extends Sprite
         _timer.addEventListener(TimerEvent.TIMER_COMPLETE, handleTimerComplete);
 
         // give some feedback
-        _ctrl.local.feedback("Welcome to ClickFast!\n\n" +
+        _ctrl.local.feedback("Welcome to QuickClick!\n\n" +
             "The object of the game is simple: When you see an explosion start to grow, " +
             "click it as soon as possible. The quicker you click something, the more points " +
             "you'll get for it.");
@@ -126,7 +126,7 @@ import com.threerings.flash.FrameSprite;
 class Explosion extends FrameSprite
 {
     public function Explosion (
-        parent :ClickFast, xx :int, yy :int, maxRadius :Number, lifetime :Number)
+        parent :QuickClick, xx :int, yy :int, maxRadius :Number, lifetime :Number)
     {
         super();
 
@@ -178,7 +178,7 @@ class Explosion extends FrameSprite
         graphics.drawCircle(0, 0, _curRadius);
     }
 
-    protected var _parent :ClickFast;
+    protected var _parent :QuickClick;
 
     protected var _maxRadius :Number;
 
