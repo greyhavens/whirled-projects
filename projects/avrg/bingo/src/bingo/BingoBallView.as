@@ -18,7 +18,7 @@ public class BingoBallView extends Sprite
         
         var textField :TextField = new TextField();
         textField.autoSize = TextFieldAutoSize.LEFT;
-        textField.text = text;
+        textField.text = (null != text ? text : "?");
         
         textField.scaleX = 2;
         textField.scaleY = 2;
