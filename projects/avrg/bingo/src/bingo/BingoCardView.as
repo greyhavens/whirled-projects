@@ -60,7 +60,8 @@ public class BingoCardView extends Sprite
     public function createItemView (item :BingoItem) :DisplayObject
     {
         var text :TextField = new TextField();
-        text.text = (null == item ? "**FREE**" : item.name);
+        text.text = (null == item ? "FREE!" : item.name);
+        text.textColor = (null == item ? 0xFF0000 : 0x000000);
         text.autoSize = TextFieldAutoSize.LEFT;
         text.selectable = false;
         

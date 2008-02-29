@@ -7,13 +7,15 @@ public class Constants
     // cosmetic bits
     public static const CARD_LOC :Point = new Point(10, 10);
     public static const BALL_LOC :Point = new Point(400, 150);
+    public static const BINGO_BUTTON_LOC :Point = new Point(400, 300);
     
     // gameplay bits
     public static const CARD_WIDTH :int = 5;
     public static const CARD_HEIGHT :int = 5;
     public static const FREE_SPACE :Point = new Point(2, 2);
     
-    public static const SECONDS_BETWEEN_BINGO_BALLS :Number = 1;
+    public static const NEW_BALL_DELAY_S :Number = 5;
+    public static const NEW_ROUND_DELAY_S :Number = 2;
     
     public static const ITEMS :Array = [
     
@@ -62,7 +64,7 @@ public class Constants
         new BingoItem("bee", [ "bee", "insect", "forest" ]),
         new BingoItem("woodpecker", [ "woodpecker", "bird", "forest" ]),
         new BingoItem("rat", [ "rat", "mammal", "domestic" ]),
-        new BingoItem("sea Turtle", [ "sea turtle", "reptile", "ocean" ]),
+        new BingoItem("sea turtle", [ "sea turtle", "reptile", "ocean" ]),
         new BingoItem("jellyfish", [ "jellyfish", "invertebrate", "ocean" ]),
         new BingoItem("squid", [ "squid", "cephalopod", "ocean" ]),
         new BingoItem("octopus", [ "octopus", "cephalopod", "ocean" ]),

@@ -15,8 +15,13 @@ public class BingoCard
         for (var i :int = 0; i < size; ++i) {
             
             var item :BingoItem = (i == freeSpaceIndex ? null : BingoItemManager.instance.getRandomItem());
+            var square :Square = new Square(item);
             
-            _squares[i] = new Square(item);
+            if (i == freeSpaceIndex) {
+                square.isFilled = true;
+            }
+            
+            _squares[i] = square;
         }
     }
     
