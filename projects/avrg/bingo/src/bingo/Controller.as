@@ -1,10 +1,11 @@
 package bingo {
     
 import flash.display.Sprite;
+import flash.events.Event;
     
-public class BingoController
+public class Controller
 {
-    public function BingoController (mainSprite :Sprite, model :BingoModel)
+    public function Controller (mainSprite :Sprite, model :Model)
     {
         _mainSprite = mainSprite;
         _model = model;
@@ -16,13 +17,20 @@ public class BingoController
         _model.addEventListener(BingoStateChangedEvent.NEW_BALL, handleNewBall);
         _model.addEventListener(BingoStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
         
-        if (null != _model.card) {
-            this.createCardView()
-        }
+        _mainSprite.addEventListener(Event.ENTER_FRAME, update);
         
-        if (null != _model.bingoBallInPlay) {
+        this.createNewCard();
+        
+        // each client maintains the concept of an expected state,
+        // so that it is prepared to take over as the
+        // authoritative client at any time.
+        _expectedState = null;
+        
+        if (null != _model.curState.ballInPlay) {
             this.createBallView();
         }
+        
+        this.update(null);
     }
     
     public function destroy () :void
@@ -30,10 +38,27 @@ public class BingoController
         _model.removeEventListener(BingoStateChangedEvent.NEW_ROUND, handleNewRound);
         _model.removeEventListener(BingoStateChangedEvent.NEW_BALL, handleNewBall);
         _model.removeEventListener(BingoStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
+        
+        _mainSprite.removeEventListener(Event.ENTER_FRAME, update);
     }
     
-    protected function createCardView () :void
+    public function update (e :Event) :void
     {
+        if (null != _expectedState) {
+            
+            // trySetNewState is idempotent in the sense that
+            // we can keep calling it until the state changes.
+            // The state change we see will not necessarily
+            // be what was requested (this client may not be in control)
+            
+            _model.trySetNewState(_expectedState);
+        }
+    }
+    
+    protected function createNewCard () :void
+    {
+        _model.createNewCard();
+        
         _cardView = new BingoCardView(_model.card);
         _cardView.x = Constants.CARD_LOC.x;
         _cardView.y = Constants.CARD_LOC.y;
@@ -43,7 +68,7 @@ public class BingoController
     
     protected function createBallView () :void
     {
-        _ballView = new BingoBallView(_model.bingoBallInPlay);
+        _ballView = new BingoBallView(_model.curState.ballInPlay);
         _ballView.x = Constants.BALL_LOC.x;
         _ballView.y = Constants.BALL_LOC.y;
         
@@ -56,7 +81,7 @@ public class BingoController
             _mainSprite.removeChild(_cardView);
         }
         
-        this.createCardView();
+        this.createNewCard();
     }
     
     protected function handleNewBall (e :BingoStateChangedEvent) :void
@@ -73,8 +98,10 @@ public class BingoController
         
     }
     
+    protected var _expectedState :SharedState;
+    
     protected var _mainSprite :Sprite;
-    protected var _model :BingoModel;
+    protected var _model :Model;
     protected var _cardView :BingoCardView;
     protected var _ballView :BingoBallView;
 

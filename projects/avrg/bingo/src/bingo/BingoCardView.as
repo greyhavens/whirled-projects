@@ -91,7 +91,7 @@ public class BingoCardView extends Sprite
         
             var item :BingoItem = _card.getItemAt(col, row);
             
-            if (item.containsTag(BingoMain.model.bingoBallInPlay)) {
+            if (item.containsTag(BingoMain.model.curState.ballInPlay)) {
                 _card.setFilledAt(col, row);
                 
                 // draw a little stamp

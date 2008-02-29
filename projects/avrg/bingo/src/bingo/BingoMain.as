@@ -19,8 +19,8 @@ public class BingoMain extends Sprite
     public static var log :Log = Log.getLog(BingoMain);
 
     public static var control :AVRGameControl;
-    public static var model :BingoModel;
-    public static var controller :BingoController;
+    public static var model :Model;
+    public static var controller :Controller;
     
     public static var ourPlayerId :int = -1;
 
@@ -45,8 +45,8 @@ public class BingoMain extends Sprite
     {
         log.info("Added to stage: Initializing...");
         
-        model = (control.isConnected() ? new BingoNetModel() : new BingoModel());
-        controller = new BingoController(this, model);
+        model = (control.isConnected() ? new OnlineModel() : new OfflineModel());
+        controller = new Controller(this, model);
         
         ourPlayerId = (control.isConnected() ? control.getPlayerId() : 0);
         

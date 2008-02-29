@@ -3,9 +3,13 @@ package bingo {
 import com.whirled.AVRGameControlEvent;
 import com.whirled.StateControl;
     
-public class BingoNetModel extends BingoModel
+public class OnlineModel extends Model
 {
-    public function BingoNetModel ()
+    public function OnlineModel ()
+    {
+    }
+    
+    override public function setup () :void
     {
         _stateControl = BingoMain.control.state;
         
@@ -19,11 +23,49 @@ public class BingoNetModel extends BingoModel
         _stateControl.removeEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propChanged);
     }
     
+    override public function callBingo () :void
+    {
+        // in a network game, calling bingo doesn't necessarily
+        // mean we've won the round. someone might get in before
+        // we do.
+        
+        _stateControl.sendMessage(Constants.MSG_REQUEST_BINGO, [ _curState.roundId, BingoMain.ourPlayerId ]);
+    }
+    
+    override public function trySetNewState (newState :SharedState) :void
+    {
+        // ignore state changes from non-authoritative clients
+        if (!BingoMain.control.hasControl()) {
+            return;
+        }
+        
+        // have we already seen this state change request?
+        // (controllers are allowed to keep calling this function until
+        // something happens, so ignore duplicate requests)
+        if (null != _lastStateRequest && _lastStateRequest.isEqual(newState)) {
+            return;
+        }
+        
+        if (newState.roundId != _curState.roundId) {
+            _stateControl.setProperty(Constants.PROP_ROUNDID, newState.roundId, false);
+        }
+        
+        if (newState.ballInPlay != _curState.ballInPlay) {
+            _stateControl.setProperty(Constants.PROP_BALLINPLAY, newState.ballInPlay, false);
+        }
+        
+        if (newState.roundWinningPlayerId != _curState.roundWinningPlayerId) {
+            _stateControl.setProperty(Constants.PROP_ROUNDWINNINGPLAYERID, newState.roundWinningPlayerId, false);
+        }
+        
+        _lastStateRequest = newState.clone();
+    }
+    
     protected function messageReceived (e :AVRGameControlEvent) :void
     {
         // messages are split into two categories: "requests" and "confirmations"
         // - any client can make a request
-        // - only the client in control can turn requests into confirmations
+        // - only the client in control can turn requests into actual state changes
         // - all clients need to store all requests, because at any point, they could
         //   become the client in control, at which point they must process
         //   requests that have not yet been confirmed
@@ -31,17 +73,7 @@ public class BingoNetModel extends BingoModel
         switch (e.name) {
         case Constants.MSG_REQUEST_BINGO:
             _requestMessageQueue.push(e);
-            this.processRequestMessageQueue();
-            break;
-        
-        case Constants.MSG_CONFIRM_BINGO:
-            this.filterOldBingoRequests();
-            
-            var bits :Array = e.value as Array;
-            var roundId :int = bits[0];
-            var playerId :int = bits[1];
-            
-            this.playerWonRound(playerId);
+            this.processRequestMessageQueue(); // only the authoritative client will do any processing in here
             break;
             
         default:
@@ -63,8 +95,8 @@ public class BingoNetModel extends BingoModel
             var bits :Array = e.value as Array;
             var roundId :int = bits[0];
             
-            // is this bingo request out of date?
-            if (roundId <= this.roundId) {
+            // return false if this bingo request is out of date
+            if (roundId < _curState.roundId) {
                 return false;
             }
         }
@@ -95,12 +127,14 @@ public class BingoNetModel extends BingoModel
                 // validate the data
                 // - the player must still be in the game
                 // - the roundId must be correct
-                if (!BingoMain.control.isPlayerHere(playerId) || roundId != _roundId) {
+                if (!BingoMain.control.isPlayerHere(playerId) || roundId != _curState.roundId) {
                     continue;
                 }
                 
-                // send the confirmation message to everyone
-                _stateControl.sendMessage(Constants.MSG_CONFIRM_BINGO, [ _roundId, playerId ]);
+                // make the state change
+                var newState :SharedState = _curState.clone();
+                newState.roundWinningPlayerId = playerId;
+                this.trySetNewState(newState);
                 break;
                 
             default:
@@ -118,7 +152,11 @@ public class BingoNetModel extends BingoModel
             break;
             
         case Constants.PROP_BALLINPLAY:
-            this.setBingoBallInPlay(e.value as String);
+            this.setBallInPlay(e.value as String);
+            break;
+            
+        case Constants.PROP_ROUNDWINNINGPLAYERID:
+            this.setRoundWinningPlayerId(e.value as int);
             break;
             
         default:
@@ -127,36 +165,8 @@ public class BingoNetModel extends BingoModel
         }
     }
     
-    override public function callBingo () :void
-    {
-        // in a network game, calling bingo doesn't necessarily
-        // mean we've won the round. someone might get in before
-        // we do.
-        
-        _stateControl.sendMessage(Constants.MSG_REQUEST_BINGO, [ _roundId, BingoMain.ourPlayerId ]);
-    }
-    
-    override public function trySetRoundId (newRoundId :int) :void
-    {
-        if (BingoMain.control.hasControl()) {
-            _stateControl.setProperty(Constants.PROP_ROUNDID, newRoundId, false);
-        }
-    }
-    
-    override protected function setRoundId (newRoundId :int) :void
-    {
-        super.setRoundId(newRoundId);
-        _bingoCalledThisRound = false;
-    }
-    
-    override public function trySetBingoBallInPlay (newBall :String) :void
-    {
-        if (BingoMain.control.hasControl()) {
-            _stateControl.setProperty(Constants.PROP_BALLINPLAY, newBall, false);
-        }
-    }
-    
     protected var _stateControl :StateControl;
+    protected var _lastStateRequest :SharedState;
     protected var _bingoCalledThisRound :Boolean;
     
     protected var _requestMessageQueue :Array = [];
