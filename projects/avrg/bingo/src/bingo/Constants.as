@@ -13,7 +13,7 @@ public class Constants
     public static const CARD_HEIGHT :int = 4;
     public static const FREE_SPACE :Point = new Point(-1, -1);
     
-    public static const SECONDS_BETWEEN_BINGO_BALLS :Number = 5;
+    public static const SECONDS_BETWEEN_BINGO_BALLS :Number = 1;
     
     public static const ITEMS :Array = [
     

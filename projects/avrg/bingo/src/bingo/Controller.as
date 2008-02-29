@@ -145,7 +145,12 @@ public class Controller
             _expectedState = _model.curState.clone();
         }
         
-        _expectedState.ballInPlay = BingoItemManager.instance.getRandomTag();
+        var nextBall :String;
+        do {
+            nextBall = BingoItemManager.instance.getRandomTag();
+        } while (nextBall == _model.curState.ballInPlay);
+        
+        _expectedState.ballInPlay = nextBall;
         this.update();
     }
     

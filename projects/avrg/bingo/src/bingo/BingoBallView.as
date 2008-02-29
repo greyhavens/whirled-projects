@@ -20,8 +20,10 @@ public class BingoBallView extends Sprite
         textField.autoSize = TextFieldAutoSize.LEFT;
         textField.text = (null != text ? text : "?");
         
-        textField.scaleX = 2;
-        textField.scaleY = 2;
+        var scale :Number = TARGET_TEXT_WIDTH / textField.width;
+        
+        textField.scaleX = scale;
+        textField.scaleY = scale;
         
         textField.x = -(textField.width * 0.5);
         textField.y = -(textField.height * 0.5);
@@ -30,6 +32,7 @@ public class BingoBallView extends Sprite
     }
     
     protected static const RADIUS :Number = 50;
+    protected static const TARGET_TEXT_WIDTH :Number = 96;
 }
 
 }
