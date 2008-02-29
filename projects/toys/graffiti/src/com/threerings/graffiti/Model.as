@@ -81,7 +81,7 @@ public class Model
         for each (var stroke :Array in _strokes.values()) {
             total += stroke.length;
         }
-        var size :int = (7 * _strokes.size() + (total - _strokes.size()) * 2) * 2;
+        var size :int = (7 * _strokes.size() + (total - _strokes.size()) * 2) * 4;
         log.debug("total size [" + size + "]");
     }
 
