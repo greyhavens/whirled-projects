@@ -64,8 +64,10 @@ public class BingoCardView extends Sprite
         text.autoSize = TextFieldAutoSize.LEFT;
         text.selectable = false;
         
-        text.scaleX = 1;
-        text.scaleY = 1;
+        var scale :Number = TARGET_TEXT_WIDTH / text.width;
+        
+        text.scaleX = scale;
+        text.scaleY = scale;
         
         text.x = -(text.width * 0.5);
         text.y = -(text.height * 0.5);
@@ -114,6 +116,7 @@ public class BingoCardView extends Sprite
     protected var _card :BingoCard;
     
     protected static const SQUARE_SIZE :Number = 60;
+    protected static const TARGET_TEXT_WIDTH :Number = 56;
     protected static const STAMP_RADIUS :Number = 20;
     
 }

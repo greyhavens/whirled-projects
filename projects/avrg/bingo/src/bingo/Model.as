@@ -51,32 +51,27 @@ public class Model extends EventDispatcher
     }
     
     /* private state mutators */
-    protected function setRoundId (newRoundId :int) :void
+    protected function setState (newState :SharedState) :void
     {
-        if (newRoundId != _curState.roundId) {
+        var lastState :SharedState = _curState;
+        _curState = newState.clone();
+        
+        // if a new round began, only dispatch the NEW_ROUND event.
+        // new rounds always have new "ball in play" and "round winner id" values
+        if (_curState.roundId != newState.roundId) {
+            if (_curState.roundId != lastState.roundId + 1) {
+                g_log.warning("got unexpected roundId (expected " + lastState.roundId + 1 + ", got " + _curState.roundId + ")");
+            }
+            this.dispatchEvent(new BingoStateChangedEvent(BingoStateChangedEvent.NEW_ROUND));
+        } else {
             
-            if (newRoundId != _curState.roundId + 1) {
-                g_log.warning("got unexpected roundId (expected " + _curState.roundId + 1 + ", got " + newRoundId + ")");
+            if (_curState.ballInPlay != lastState.ballInPlay) {
+                this.dispatchEvent(new BingoStateChangedEvent(BingoStateChangedEvent.NEW_BALL));
             }
             
-            _curState.roundId = newRoundId;
-            this.dispatchEvent(new BingoStateChangedEvent(BingoStateChangedEvent.NEW_ROUND));
-        }
-    }
-    
-    protected function setBallInPlay (newBall :String) :void
-    {
-        if (newBall != _curState.ballInPlay) {
-            _curState.ballInPlay = newBall;
-            this.dispatchEvent(new BingoStateChangedEvent(BingoStateChangedEvent.NEW_BALL));
-        }
-    }
-    
-    protected function setRoundWinningPlayerId (playerId :int) :void
-    {
-        if (playerId != _curState.roundWinningPlayerId) {
-            _curState.roundWinningPlayerId = playerId;
-            this.dispatchEvent(new BingoStateChangedEvent(BingoStateChangedEvent.PLAYER_WON_ROUND, playerId));
+            if (_curState.roundWinningPlayerId != lastState.roundWinningPlayerId) {
+                this.dispatchEvent(new BingoStateChangedEvent(BingoStateChangedEvent.NEW_BALL));
+            }
         }
     }
     

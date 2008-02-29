@@ -7,14 +7,15 @@ public class OfflineModel extends Model
         // in offline mode, we can convert state change requests
         // directly into state changes
         
-        this.setRoundId(newState.roundId);
-        this.setBallInPlay(newState.ballInPlay);
-        this.setRoundWinningPlayerId(newState.roundWinningPlayerId);
+        this.setState(newState);
     }
     
     override public function callBingo () :void
     {
-        this.setRoundWinningPlayerId(BingoMain.ourPlayerId);
+        var newState :SharedState = _curState.clone();
+        newState.roundWinningPlayerId = BingoMain.ourPlayerId;
+        
+        this.setState(newState);
     }
 }
 

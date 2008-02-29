@@ -2,6 +2,8 @@ package bingo {
     
 import com.whirled.AVRGameControlEvent;
 import com.whirled.StateControl;
+
+import flash.utils.ByteArray;
     
 public class OnlineModel extends Model
 {
@@ -46,17 +48,12 @@ public class OnlineModel extends Model
             return;
         }
         
-        if (newState.roundId != _curState.roundId) {
-            _stateControl.setProperty(Constants.PROP_ROUNDID, newState.roundId, false);
+        // is the state actually being changed?
+        if (newState.isEqual(_curState)) {
+            return;
         }
         
-        if (newState.ballInPlay != _curState.ballInPlay) {
-            _stateControl.setProperty(Constants.PROP_BALLINPLAY, newState.ballInPlay, false);
-        }
-        
-        if (newState.roundWinningPlayerId != _curState.roundWinningPlayerId) {
-            _stateControl.setProperty(Constants.PROP_ROUNDWINNINGPLAYERID, newState.roundWinningPlayerId, false);
-        }
+        _stateControl.setProperty(Constants.PROP_STATE, newState.toBytes(), false);
         
         _lastStateRequest = newState.clone();
     }
@@ -147,16 +144,9 @@ public class OnlineModel extends Model
     protected function propChanged (e :AVRGameControlEvent) :void
     {
         switch (e.name) {
-        case Constants.PROP_ROUNDID:
-            this.setRoundId(e.value as int);
-            break;
-            
-        case Constants.PROP_BALLINPLAY:
-            this.setBallInPlay(e.value as String);
-            break;
-            
-        case Constants.PROP_ROUNDWINNINGPLAYERID:
-            this.setRoundWinningPlayerId(e.value as int);
+        case Constants.PROP_STATE:
+            var newState :SharedState = SharedState.fromBytes(e.value as ByteArray);
+            this.setState(newState);
             break;
             
         default:

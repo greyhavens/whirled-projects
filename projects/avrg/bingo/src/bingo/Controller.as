@@ -17,7 +17,7 @@ public class Controller
         _model.addEventListener(BingoStateChangedEvent.NEW_BALL, handleNewBall);
         _model.addEventListener(BingoStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
         
-        _mainSprite.addEventListener(Event.ENTER_FRAME, update);
+        _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         
         this.createNewCard();
         
@@ -30,7 +30,7 @@ public class Controller
             this.createBallView();
         }
         
-        this.update(null);
+        this.update();
     }
     
     public function destroy () :void
@@ -39,10 +39,15 @@ public class Controller
         _model.removeEventListener(BingoStateChangedEvent.NEW_BALL, handleNewBall);
         _model.removeEventListener(BingoStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
         
-        _mainSprite.removeEventListener(Event.ENTER_FRAME, update);
+        _mainSprite.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
     
-    public function update (e :Event) :void
+    protected function handleEnterFrame (e :Event) :void
+    {
+        this.update();
+    }
+    
+    protected function update () :void
     {
         if (null != _expectedState) {
             
@@ -82,6 +87,9 @@ public class Controller
         }
         
         this.createNewCard();
+        
+        // reset the expected state when the state changes
+        _expectedState = null;
     }
     
     protected function handleNewBall (e :BingoStateChangedEvent) :void
@@ -91,11 +99,17 @@ public class Controller
         }
         
         this.createBallView();
+        
+        // reset the expected state when the state changes
+        _expectedState = null;
     }
     
     protected function handlePlayerWonRound (e :BingoStateChangedEvent) :void
     {
+        // @TODO - kick off some animation
         
+        // reset the expected state when the state changes
+        _expectedState = null;
     }
     
     protected var _expectedState :SharedState;

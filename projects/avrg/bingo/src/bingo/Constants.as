@@ -90,10 +90,7 @@ public class Constants
     ];
     
     // network bits
-    public static const PROP_ROUNDID :String = "roundId";
-    public static const PROP_BALLINPLAY :String = "ballInPlay";
-    public static const PROP_ROUNDWINNINGPLAYERID :String = "winner";
-    
+    public static const PROP_STATE :String = "state";
     public static const MSG_REQUEST_BINGO :String = "r_bingo";
 
 }
