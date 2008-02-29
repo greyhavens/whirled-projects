@@ -99,10 +99,7 @@ public class Canvas extends Sprite
         _lastStrokePoint = _canvas.globalToLocal(new Point(evt.stageX, evt.stageY));
         _newStroke = true;
         _inputKey = _model.getKey();
-        // TODO: a timer set this short is pointless - it should just be an enter frame listener...
-        // I'll probably switch to that and throttle the network traffic by bundling up a bunch of
-        // updates and sending them all at once.
-        _timer = setInterval(tick, 50);
+        _timer = setInterval(tick, 200);
     }
 
     protected function tick () :void

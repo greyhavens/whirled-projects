@@ -5,6 +5,7 @@ package com.threerings.graffiti {
 import flash.geom.Point;
 
 import com.threerings.util.HashMap;
+import com.threerings.util.Log;
 import com.threerings.util.Random;
 
 import com.whirled.FurniControl;
@@ -70,14 +71,21 @@ public class Model
         }
         stroke.push(bub);
         putStroke(id, stroke);
-        _strokes.put(id, stroke);
         return stroke;
     }
 
     protected function putStroke (id :String, stroke :Array) :void
     {
         _strokes.put(id, stroke);
+        var total :int;
+        for each (var stroke :Array in _strokes.values()) {
+            total += stroke.length;
+        }
+        var size :int = (7 * _strokes.size() + (total - _strokes.size()) * 2) * 2;
+        log.debug("total size [" + size + "]");
     }
+
+    private static const log :Log = Log.getLog(Model);
 
     protected var _canvas :Canvas;
     protected var _strokes :HashMap;
