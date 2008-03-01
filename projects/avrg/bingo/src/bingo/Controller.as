@@ -158,6 +158,7 @@ public class Controller
         
         // does a ball exist?
         if (null != _model.curState.ballInPlay) {
+            this.createBallView();
             this.startNewBallTimer();
         } else {
             // create a ball immediately
@@ -206,20 +207,25 @@ public class Controller
         this.createNewBall();
     }
     
-    protected function createNewBall () :void
+    protected function getNextBall () :String
     {
-        if (null == _expectedState) {
-            _expectedState = _model.curState.clone();
-        }
-        
         var nextBall :String;
         do {
             nextBall = BingoItemManager.instance.getRandomTag();
         } 
         while (nextBall == _model.curState.ballInPlay);
         
+        return nextBall;
+    }
+    
+    protected function createNewBall () :void
+    {
+        if (null == _expectedState) {
+            _expectedState = _model.curState.clone();
+        }
+        
         // push a new ball update out
-        _expectedState.ballInPlay = nextBall;
+        _expectedState.ballInPlay = this.getNextBall();
         this.update();
     }
     
@@ -242,6 +248,8 @@ public class Controller
         
         // push a new round update out
         _expectedState.roundId += 1;
+        _expectedState.roundWinningPlayerId = -1;
+        _expectedState.ballInPlay = this.getNextBall();
         this.update();
     }
     

@@ -9,7 +9,7 @@ public class SharedState
 {
     public var roundId :int;
     public var ballInPlay :String;
-    public var roundWinningPlayerId :int;
+    public var roundWinningPlayerId :int = -1;
     
     public function clone () :SharedState
     {

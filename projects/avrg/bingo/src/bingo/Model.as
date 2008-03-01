@@ -58,7 +58,7 @@ public class Model extends EventDispatcher
         
         // if a new round began, only dispatch the NEW_ROUND event.
         // new rounds always have new "ball in play" and "round winner id" values
-        if (_curState.roundId != newState.roundId) {
+        if (_curState.roundId != lastState.roundId) {
             if (_curState.roundId != lastState.roundId + 1) {
                 g_log.warning("got unexpected roundId (expected " + lastState.roundId + 1 + ", got " + _curState.roundId + ")");
             }
@@ -70,7 +70,7 @@ public class Model extends EventDispatcher
             }
             
             if (_curState.roundWinningPlayerId != lastState.roundWinningPlayerId) {
-                this.dispatchEvent(new BingoStateChangedEvent(BingoStateChangedEvent.NEW_BALL));
+                this.dispatchEvent(new BingoStateChangedEvent(BingoStateChangedEvent.PLAYER_WON_ROUND));
             }
         }
     }
