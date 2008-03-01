@@ -116,6 +116,8 @@ public class BingoCardView extends Sprite
                 stamp.y = y;
                 
                 this.addChild(stamp);
+                
+                BingoMain.controller.updateBingoButton();
             }
         }
        

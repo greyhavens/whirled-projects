@@ -4,9 +4,9 @@ import com.threerings.util.Log;
 
 import flash.events.EventDispatcher;
 
-[Event(name="newRound", type="bingo.BingoStateChangedEvent")]
-[Event(name="newBall", type="bingo.BingoStateChangedEvent")]
-[Event(name="playerWonRound", type="bingo.BingoStateChangedEvent")]
+[Event(name="newRound", type="bingo.SharedStateChangedEvent")]
+[Event(name="newBall", type="bingo.SharedStateChangedEvent")]
+[Event(name="playerWonRound", type="bingo.SharedStateChangedEvent")]
     
 public class Model extends EventDispatcher
 {
@@ -62,15 +62,15 @@ public class Model extends EventDispatcher
             if (_curState.roundId != lastState.roundId + 1) {
                 g_log.warning("got unexpected roundId (expected " + lastState.roundId + 1 + ", got " + _curState.roundId + ")");
             }
-            this.dispatchEvent(new BingoStateChangedEvent(BingoStateChangedEvent.NEW_ROUND));
+            this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_ROUND));
         } else {
             
             if (_curState.ballInPlay != lastState.ballInPlay) {
-                this.dispatchEvent(new BingoStateChangedEvent(BingoStateChangedEvent.NEW_BALL));
+                this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_BALL));
             }
             
             if (_curState.roundWinningPlayerId != lastState.roundWinningPlayerId) {
-                this.dispatchEvent(new BingoStateChangedEvent(BingoStateChangedEvent.PLAYER_WON_ROUND));
+                this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.PLAYER_WON_ROUND));
             }
         }
     }

@@ -28,9 +28,9 @@ public class Controller
     
     public function setup () :void
     {
-        _model.addEventListener(BingoStateChangedEvent.NEW_ROUND, handleNewRound);
-        _model.addEventListener(BingoStateChangedEvent.NEW_BALL, handleNewBall);
-        _model.addEventListener(BingoStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
+        _model.addEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
+        _model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
+        _model.addEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
         
         _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         
@@ -38,7 +38,7 @@ public class Controller
         var overState :DisplayObject = createButtonFace(200, 50, "Bingo!", 0x000000, 0xDDDDDD);
         var downState :DisplayObject = createButtonFace(200, 50, "Bingo!", 0xFFFFFF, 0x000000);
         var hitTestState :DisplayObject = upState;
-        var disabledState :DisplayObject = null;
+        var disabledState :DisplayObject = overState;
         
         _bingoButton = new DisablingButton(upState, overState, downState, hitTestState, disabledState);
         _bingoButton.addEventListener(MouseEvent.CLICK, handleBingoButtonClick);
@@ -85,9 +85,9 @@ public class Controller
     
     public function destroy () :void
     {
-        _model.removeEventListener(BingoStateChangedEvent.NEW_ROUND, handleNewRound);
-        _model.removeEventListener(BingoStateChangedEvent.NEW_BALL, handleNewBall);
-        _model.removeEventListener(BingoStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
+        _model.removeEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
+        _model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
+        _model.removeEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
         
         _mainSprite.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
         
@@ -105,6 +105,7 @@ public class Controller
         if (!_calledBingoThisRound && _model.card.isComplete) {
             _model.callBingo();
             _calledBingoThisRound = true;
+            this.updateBingoButton();
         }
     }
     
@@ -149,7 +150,7 @@ public class Controller
         _mainSprite.addChild(_ballView);
     }
     
-    protected function handleNewRound (e :BingoStateChangedEvent) :void
+    protected function handleNewRound (e :SharedStateChangedEvent) :void
     {
         this.createNewCard();
         
@@ -166,11 +167,13 @@ public class Controller
         }
         
         _calledBingoThisRound = false;
+        _roundIsOver = false;
+        this.updateBingoButton();
         
         this.stopNewRoundTimer();
     }
     
-    protected function handleNewBall (e :BingoStateChangedEvent) :void
+    protected function handleNewBall (e :SharedStateChangedEvent) :void
     {
         this.createBallView();
         
@@ -180,7 +183,7 @@ public class Controller
         this.startNewBallTimer();
     }
     
-    protected function handlePlayerWonRound (e :BingoStateChangedEvent) :void
+    protected function handlePlayerWonRound (e :SharedStateChangedEvent) :void
     {
         // @TODO - kick off some animation
         
@@ -189,6 +192,9 @@ public class Controller
         
         this.stopNewBallTimer();
         this.startNewRoundTimer(); // a new round should start shortly
+        
+        _roundIsOver = true;
+        this.updateBingoButton();
     }
     
     protected function startNewBallTimer () :void
@@ -253,10 +259,15 @@ public class Controller
         this.update();
     }
     
+    public function updateBingoButton () :void
+    {
+        _bingoButton.enabled = (!_calledBingoThisRound && !_roundIsOver && _model.card.isComplete);
+    }
+    
+    protected var _model :Model;
     protected var _expectedState :SharedState;
     
     protected var _mainSprite :Sprite;
-    protected var _model :Model;
     protected var _cardView :BingoCardView;
     protected var _ballView :BingoBallView;
     protected var _bingoButton :DisablingButton;
@@ -265,6 +276,7 @@ public class Controller
     protected var _newRoundTimer :Timer;
     
     protected var _calledBingoThisRound :Boolean;
+    protected var _roundIsOver :Boolean;
 
 }
 
