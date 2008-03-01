@@ -6,6 +6,7 @@ package bingo {
 import com.threerings.util.Log;
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
+import com.whirled.AVRGameAvatar;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -39,6 +40,18 @@ public class BingoMain extends Sprite
         control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, playerLeft);
 
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
+    }
+    
+    public static function getPlayerName (playerId :int) :String
+    {
+        if (control.isConnected()) {
+            var avatar :AVRGameAvatar = control.getAvatarInfo(playerId);
+            if (null != avatar) {
+                return avatar.name;
+            }
+        }
+        
+        return "player " + playerId.toString();
     }
 
     protected function handleAdded (event :Event) :void

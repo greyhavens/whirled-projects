@@ -209,7 +209,7 @@ public class Controller
         _roundIsOver = true;
         this.updateBingoButton();
         
-        _winnerText.text = "player " + _model.curState.roundWinningPlayerId + " wins the round!";
+        _winnerText.text = BingoMain.getPlayerName(_model.curState.roundWinningPlayerId) + " wins the round!";
     }
     
     protected function startNewBallTimer () :void
