@@ -198,8 +198,6 @@ public class Controller
     
     protected function handlePlayerWonRound (e :SharedStateChangedEvent) :void
     {
-        // @TODO - kick off some animation
-        
         // reset the expected state when the state changes
         _expectedState = null;
         

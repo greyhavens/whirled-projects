@@ -4,9 +4,9 @@
 package bingo {
 
 import com.threerings.util.Log;
+import com.whirled.AVRGameAvatar;
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
-import com.whirled.AVRGameAvatar;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -35,11 +35,26 @@ public class BingoMain extends Sprite
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
         control.addEventListener(AVRGameControlEvent.ENTERED_ROOM, enteredRoom);
+        control.addEventListener(AVRGameControlEvent.LEFT_ROOM, leftRoom);
 
         control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, playerEntered);
         control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, playerLeft);
 
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
+        
+        control.setHitPointTester(hitTestPoint);
+    }
+    
+    override public function hitTestPoint (x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
+    {
+        var numChildren :int = this.numChildren;
+        
+        for (var i :int = 0; i < numChildren; ++i) {
+            if (this.getChildAt(i).hitTestPoint(x, y, shapeFlag)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public static function getPlayerName (playerId :int) :String
@@ -82,6 +97,13 @@ public class BingoMain extends Sprite
         if (control.isConnected() && !control.hasControl()) {
             // ensure that in every room we visit, someone has control
             control.requestControl();
+        }
+    }
+    
+    protected function leftRoom (e :Event) :void
+    {
+        if (control.isConnected()) {
+            control.deactivateGame();
         }
     }
 
