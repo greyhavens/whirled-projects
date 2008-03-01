@@ -22,7 +22,7 @@ public class BingoMain extends Sprite
     public static var model :Model;
     public static var controller :Controller;
     
-    public static var ourPlayerId :int = -1;
+    public static var ourPlayerId :int;
 
     public function BingoMain ()
     {
@@ -48,7 +48,7 @@ public class BingoMain extends Sprite
         model = (control.isConnected() ? new OnlineModel() : new OfflineModel());
         controller = new Controller(this, model);
         
-        ourPlayerId = (control.isConnected() ? control.getPlayerId() : 0);
+        ourPlayerId = (control.isConnected() ? control.getPlayerId() : 666);
         
         model.setup();
         controller.setup();

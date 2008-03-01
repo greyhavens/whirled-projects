@@ -47,6 +47,17 @@ public class Controller
         _bingoButton.y = Constants.BINGO_BUTTON_LOC.y;
         _mainSprite.addChild(_bingoButton);
         
+        _winnerText = new TextField();
+        _winnerText.autoSize = TextFieldAutoSize.LEFT;
+        _winnerText.textColor = 0x0000FF; 
+        _winnerText.scaleX = 3;
+        _winnerText.scaleY = 3;
+        _winnerText.x = Constants.WINNER_TEXT_LOC.x;
+        _winnerText.y = Constants.WINNER_TEXT_LOC.y;
+        
+        _mainSprite.addChild(_winnerText);
+        
+        
         // each client maintains the concept of an expected state,
         // so that it is prepared to take over as the
         // authoritative client at any time.
@@ -170,6 +181,8 @@ public class Controller
         _roundIsOver = false;
         this.updateBingoButton();
         
+        _winnerText.text = "";
+        
         this.stopNewRoundTimer();
     }
     
@@ -195,6 +208,8 @@ public class Controller
         
         _roundIsOver = true;
         this.updateBingoButton();
+        
+        _winnerText.text = "player " + _model.curState.roundWinningPlayerId + " wins the round!";
     }
     
     protected function startNewBallTimer () :void
@@ -254,7 +269,7 @@ public class Controller
         
         // push a new round update out
         _expectedState.roundId += 1;
-        _expectedState.roundWinningPlayerId = -1;
+        _expectedState.roundWinningPlayerId = 0;
         _expectedState.ballInPlay = this.getNextBall();
         this.update();
     }
@@ -271,6 +286,7 @@ public class Controller
     protected var _cardView :BingoCardView;
     protected var _ballView :BingoBallView;
     protected var _bingoButton :DisablingButton;
+    protected var _winnerText :TextField;
     
     protected var _newBallTimer :Timer;
     protected var _newRoundTimer :Timer;

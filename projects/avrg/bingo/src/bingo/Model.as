@@ -22,7 +22,7 @@ public class Model extends EventDispatcher
     {
     }
     
-    /* public state accessors */
+    /* state accessors */
     public function get curState () :SharedState
     {
         return _curState;
@@ -33,13 +33,13 @@ public class Model extends EventDispatcher
         return _card;
     }
     
-    /* public state mutators */
+    /* local state mutators */
     public function createNewCard () :void
     {
         _card = new BingoCard();
     }
     
-    /* functions that deal with shared game state must be overridden */
+    /* shared state mutators (must be overridden) */
     public function trySetNewState (newState :SharedState) :void
     {
         throw new Error("subclasses must override trySetNewState()");
