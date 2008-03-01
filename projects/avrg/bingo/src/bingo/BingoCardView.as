@@ -94,7 +94,7 @@ public class BingoCardView extends Sprite
         
             var item :BingoItem = _card.getItemAt(col, row);
             
-            if (null != item && item.containsTag(BingoMain.model.curState.ballInPlay)) {
+            if (null != item && (Constants.ALLOW_CHEATS || item.containsTag(BingoMain.model.curState.ballInPlay))) {
                 _card.setFilledAt(col, row);
                 
                 // draw a little stamp
@@ -105,8 +105,15 @@ public class BingoCardView extends Sprite
                 g.drawCircle(0, 0, STAMP_RADIUS);
                 g.endFill();
                 
-                stamp.x = e.localX;
-                stamp.y = e.localY;
+                // make sure the stamp doesn't extend too far outside the square it's marking
+                var x :Number = Math.max(e.localX, (col * SQUARE_SIZE) + STAMP_RADIUS - ALLOWED_STAMP_BLEED);
+                x = Math.min(x, ((col + 1) * SQUARE_SIZE) - STAMP_RADIUS + ALLOWED_STAMP_BLEED);
+                
+                var y :Number = Math.max(e.localY, (row * SQUARE_SIZE) + STAMP_RADIUS - ALLOWED_STAMP_BLEED);
+                y = Math.min(y, ((row + 1) * SQUARE_SIZE) - STAMP_RADIUS + ALLOWED_STAMP_BLEED);
+                
+                stamp.x = x;
+                stamp.y = y;
                 
                 this.addChild(stamp);
             }
@@ -119,6 +126,8 @@ public class BingoCardView extends Sprite
     protected static const SQUARE_SIZE :Number = 60;
     protected static const TARGET_TEXT_WIDTH :Number = 56;
     protected static const STAMP_RADIUS :Number = 20;
+    
+    protected static const ALLOWED_STAMP_BLEED :Number = 0;
     
 }
 
