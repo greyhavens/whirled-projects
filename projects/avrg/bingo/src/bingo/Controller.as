@@ -34,18 +34,17 @@ public class Controller
         
         _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         
-        var upState :DisplayObject = createButtonFace(200, 50, "Bingo!", 0x000000, 0xFFFFFF);
-        var overState :DisplayObject = createButtonFace(200, 50, "Bingo!", 0x000000, 0xDDDDDD);
-        var downState :DisplayObject = createButtonFace(200, 50, "Bingo!", 0xFFFFFF, 0x000000);
-        var hitTestState :DisplayObject = upState;
-        var disabledState :DisplayObject = overState;
-        
-        _bingoButton = new DisablingButton(upState, overState, downState, hitTestState, disabledState);
-        _bingoButton.addEventListener(MouseEvent.CLICK, handleBingoButtonClick);
-        
+        _bingoButton = createButton(200, 50, "Bingo!");
         _bingoButton.x = Constants.BINGO_BUTTON_LOC.x;
         _bingoButton.y = Constants.BINGO_BUTTON_LOC.y;
+        _bingoButton.addEventListener(MouseEvent.CLICK, handleBingoButtonClick);
         _mainSprite.addChild(_bingoButton);
+        
+        var quitButton :DisablingButton = createButton(100, 25, "Quit");
+        quitButton.x = Constants.QUIT_BUTTON_LOC.x;
+        quitButton.y = Constants.QUIT_BUTTON_LOC.y;
+        quitButton.addEventListener(MouseEvent.CLICK, handleQuitButtonClick);
+        _mainSprite.addChild(quitButton);
         
         _winnerText = new TextField();
         _winnerText.autoSize = TextFieldAutoSize.LEFT;
@@ -64,6 +63,17 @@ public class Controller
         _expectedState = null;
         
         this.handleNewRound(null);
+    }
+    
+    protected static function createButton (width :int, height :int, text :String) :DisablingButton
+    {
+        var upState :DisplayObject = createButtonFace(width, height, text, 0x000000, 0xFFFFFF);
+        var overState :DisplayObject = createButtonFace(width, height, text, 0x000000, 0xDDDDDD);
+        var downState :DisplayObject = createButtonFace(width, height, text, 0xFFFFFF, 0x000000);
+        var hitTestState :DisplayObject = upState;
+        var disabledState :DisplayObject = overState;
+        
+        return new DisablingButton(upState, overState, downState, hitTestState, disabledState);
     }
     
     protected static function createButtonFace (width :int, height :int, text :String, textColor :uint, bgColor :uint) :DisplayObject
@@ -117,6 +127,13 @@ public class Controller
             _model.callBingo();
             _calledBingoThisRound = true;
             this.updateBingoButton();
+        }
+    }
+    
+    protected function handleQuitButtonClick (e :MouseEvent) :void
+    {
+        if (BingoMain.control.isConnected()) {
+            BingoMain.control.deactivateGame();
         }
     }
     
