@@ -41,20 +41,6 @@ public class BingoMain extends Sprite
         control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, playerLeft);
 
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
-        
-        control.setHitPointTester(hitTestPoint);
-    }
-    
-    override public function hitTestPoint (x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
-    {
-        var numChildren :int = this.numChildren;
-        
-        for (var i :int = 0; i < numChildren; ++i) {
-            if (this.getChildAt(i).hitTestPoint(x, y, shapeFlag)) {
-                return true;
-            }
-        }
-        return false;
     }
     
     public static function getPlayerName (playerId :int) :String
