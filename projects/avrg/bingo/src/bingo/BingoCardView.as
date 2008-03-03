@@ -64,6 +64,7 @@ public class BingoCardView extends Sprite
         text.textColor = (null == item ? 0xFF0000 : 0x000000);
         text.autoSize = TextFieldAutoSize.LEFT;
         text.selectable = false;
+        text.mouseEnabled = false;
         
         var scale :Number = TARGET_TEXT_WIDTH / text.width;
         

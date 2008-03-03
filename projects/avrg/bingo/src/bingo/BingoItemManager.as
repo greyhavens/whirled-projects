@@ -27,6 +27,11 @@ public class BingoItemManager
         var tagSet :HashSet = new HashSet();
         
         for each (var item :BingoItem in Constants.ITEMS) {
+            
+            if (Constants.USE_ITEM_NAMES_AS_TAGS) {
+                tagSet.add(item.name);
+            }
+            
             for each (var tag :String in item.tags) {
                 tagSet.add(tag);
             }

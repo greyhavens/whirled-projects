@@ -17,6 +17,8 @@ public class BingoBallView extends Sprite
         g.endFill();
         
         var textField :TextField = new TextField();
+        textField.selectable = false;
+        textField.mouseEnabled = false;
         textField.autoSize = TextFieldAutoSize.LEFT;
         textField.text = (null != text ? text : "?");
         
