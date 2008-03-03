@@ -17,6 +17,12 @@ public class OnlineModel extends Model
         
         _stateControl.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
         _stateControl.addEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propChanged);
+        
+        // read the current state
+        var stateBytes :ByteArray = (_stateControl.getProperty(Constants.PROP_STATE) as ByteArray);
+        if (null != stateBytes) {
+            _curState = SharedState.fromBytes(stateBytes);
+        }
     }
     
     override public function destroy () :void
@@ -38,6 +44,7 @@ public class OnlineModel extends Model
     {
         // ignore state changes from non-authoritative clients
         if (!BingoMain.control.hasControl()) {
+            BingoMain.log.info("ignoring state change request from non-authoritative client: " + newState);
             return;
         }
         
@@ -45,13 +52,17 @@ public class OnlineModel extends Model
         // (controllers are allowed to keep calling this function until
         // something happens, so ignore duplicate requests)
         if (null != _lastStateRequest && _lastStateRequest.isEqual(newState)) {
+            BingoMain.log.info("ignoring duplicate state change request: " + newState);
             return;
         }
         
         // is the state actually being changed?
         if (newState.isEqual(_curState)) {
+            BingoMain.log.info("ignoring redundant state change request: " + newState);
             return;
         }
+        
+        BingoMain.log.info("accepting state change request: " + newState);
         
         _stateControl.setProperty(Constants.PROP_STATE, newState.toBytes(), false);
         
@@ -74,7 +85,7 @@ public class OnlineModel extends Model
             break;
             
         default:
-            g_log.warning("received unrecognized message: " + e.name);
+            BingoMain.log.warning("received unrecognized message: " + e.name);
             break;
         }
     }
@@ -135,7 +146,7 @@ public class OnlineModel extends Model
                 break;
                 
             default:
-                g_log.warning("unrecognized message in requestMessageQueue: " + e.name);
+                BingoMain.log.warning("unrecognized message in requestMessageQueue: " + e.name);
                 break;
             }
         }
@@ -150,7 +161,7 @@ public class OnlineModel extends Model
             break;
             
         default:
-            g_log.warning("unrecognized property: " + e.name);
+            BingoMain.log.warning("unrecognized property: " + e.name);
             break;
         }
     }

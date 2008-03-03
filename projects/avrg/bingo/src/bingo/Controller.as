@@ -18,22 +18,25 @@ public class Controller
     {
         _mainSprite = mainSprite;
         _model = model;
-        
+    }
+    
+    public function setup () :void
+    {
+        // timers
         _newBallTimer = new Timer(Constants.NEW_BALL_DELAY_S * 1000, 1);
         _newBallTimer.addEventListener(TimerEvent.TIMER, handleNewBallTimerExpired);
         
         _newRoundTimer = new Timer(Constants.NEW_ROUND_DELAY_S * 1000, 1);
         _newRoundTimer.addEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
-    }
-    
-    public function setup () :void
-    {
+        
+        // state change events
         _model.addEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
         _model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
         _model.addEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
         
         _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         
+        // visuals
         _bingoButton = createButton(200, 50, "Bingo!");
         _bingoButton.x = Constants.BINGO_BUTTON_LOC.x;
         _bingoButton.y = Constants.BINGO_BUTTON_LOC.y;

@@ -49,6 +49,11 @@ public class SharedState
         
         return state;
     }
+    
+    public function toString () :String
+    {
+        return "roundId: " + roundId + " ballInPlay: " + ballInPlay + " roundWinningPlayerId: " + roundWinningPlayerId;
+    }
 }
 
 }

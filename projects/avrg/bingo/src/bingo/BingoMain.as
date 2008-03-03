@@ -14,9 +14,8 @@ import flash.events.Event;
 [SWF(width="700", height="500")]
 public class BingoMain extends Sprite
 {
-    public static const DEBUG :Boolean = false;
-    public static const FRAMES_PER_REPORT :int = 300;
-
+    public static const VERSION :Number = 1.9;
+    
     public static var log :Log = Log.getLog(BingoMain);
 
     public static var control :AVRGameControl;
@@ -27,12 +26,12 @@ public class BingoMain extends Sprite
 
     public function BingoMain ()
     {
-        control = new AVRGameControl(this);
-        
-        new BingoItemManager(); // init singleton
+        log.info("Bingo version " + VERSION);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
+        
+        control = new AVRGameControl(this);
 
         control.addEventListener(AVRGameControlEvent.ENTERED_ROOM, enteredRoom);
         control.addEventListener(AVRGameControlEvent.LEFT_ROOM, leftRoom);
@@ -59,11 +58,14 @@ public class BingoMain extends Sprite
     {
         log.info("Added to stage: Initializing...");
         
+        log.info(control.isConnected() ? "playing online game" : "playing offline game");
+        
         model = (control.isConnected() ? new OnlineModel() : new OfflineModel());
         controller = new Controller(this, model);
         
         ourPlayerId = (control.isConnected() ? control.getPlayerId() : 666);
         
+        new BingoItemManager(); // init singleton
         model.setup();
         controller.setup();
         
@@ -88,7 +90,9 @@ public class BingoMain extends Sprite
     
     protected function leftRoom (e :Event) :void
     {
+        log.debug("leftRoom");
         if (control.isConnected()) {
+            log.debug("deactivating game");
             control.deactivateGame();
         }
     }
@@ -104,6 +108,9 @@ public class BingoMain extends Sprite
 
     protected function playerLeft (evt :AVRGameControlEvent) :void
     {
+        if (control.isConnected() && !control.hasControl()) {
+            control.requestControl();
+        }
     }
 }
 }
