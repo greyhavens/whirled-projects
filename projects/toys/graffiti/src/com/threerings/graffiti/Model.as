@@ -50,7 +50,12 @@ public class Model
 
     public function setBackgroundColor (color :uint) :void
     {
-        _canvas.paintBackground(color);
+        _canvas.paintBackground(_backgroundColor = color);
+    }
+
+    public function getBackgroundColor () :uint
+    {
+        return _backgroundColor;
     }
 
     protected function strokeBegun (id :String, from :Point, to :Point, color :int,     
@@ -94,6 +99,7 @@ public class Model
 
     protected var _canvas :Canvas;
     protected var _strokes :HashMap;
+    protected var _backgroundColor :uint = 0xFFFFFF;
 
     protected var _rnd :Random = new Random();
  

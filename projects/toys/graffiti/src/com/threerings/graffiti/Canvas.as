@@ -51,7 +51,6 @@ public class Canvas extends Sprite
 
         // TODO: temporarily just staying offline while we get the tools sorted out.
         _model = new OfflineModel(this);
-        _model.setBackgroundColor(0xFFFFFF);
         redraw();
     }
 
@@ -166,6 +165,7 @@ public class Canvas extends Sprite
 
     protected function redraw (lastId :String = null) :void
     {
+        paintBackground(_model.getBackgroundColor());
         _canvas.graphics.clear();
         var strokes :HashMap = _model.getStrokes();
         var keys :Array = strokes.keys();
