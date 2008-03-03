@@ -121,7 +121,6 @@ public class Canvas extends Sprite
 
     protected function mouseDown (evt :MouseEvent) :void
     {
-        log.debug("mouseDown");
         _lastStrokePoint = _canvas.globalToLocal(new Point(evt.stageX, evt.stageY));
         _newStroke = true;
         _inputKey = _model.getKey();
@@ -135,7 +134,6 @@ public class Canvas extends Sprite
 
     protected function mouseUp (evt :MouseEvent) :void
     {
-        log.debug("mouseUp");
         maybeAddStroke(_canvas.globalToLocal(new Point(evt.stageX, evt.stageY)));
         if (_timer > 0) {
             clearInterval(_timer);
