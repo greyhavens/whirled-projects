@@ -21,8 +21,7 @@ public class Controls extends Tool
     // from Tool
     public override function get requestedWidth () :Number 
     {
-        // temp until this gets fleshed out some more
-        return 100;
+        return BUTTON_WIDTH;
     }
 
     // from Tool
@@ -34,16 +33,17 @@ public class Controls extends Tool
     protected function createBackgroundButton () :void
     {
         var background :Button = new Button(); 
-        background.width = 100;
+        background.setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
         background.label = "background";
         background.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             _toolBox.setBackgroundColor(_currentColor);
         });
-        background.y = PADDING + BUTTON_HEIGHT / 2;
+        background.y = PADDING;
         addChild(background);
     }
 
     protected static const PADDING :int = 5;
+    protected static const BUTTON_WIDTH :int = 80;
     protected static const BUTTON_HEIGHT :int = 20;
 
     protected var _toolBox :ToolBox;
