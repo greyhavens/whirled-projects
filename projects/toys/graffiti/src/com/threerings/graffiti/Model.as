@@ -48,6 +48,11 @@ public class Model
         return key;
     }
 
+    public function setBackgroundColor (color :uint) :void
+    {
+        _canvas.paintBackground(color);
+    }
+
     protected function strokeBegun (id :String, from :Point, to :Point, color :int,     
         brush :Brush) :void
     {

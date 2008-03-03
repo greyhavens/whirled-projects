@@ -4,6 +4,7 @@ package com.threerings.graffiti {
 
 import flash.display.Sprite;
 
+import fl.skins.DefaultButtonSkins;
 import fl.skins.DefaultSliderSkins;
 
 import com.whirled.FurniControl;
@@ -18,11 +19,7 @@ public class Graffiti extends Sprite
     {
         var canvas :Canvas = new Canvas(new FurniControl(this));
         addChild(canvas);
-        var toolBox :ToolBox = new ToolBox(canvas);
-        // wire up canvas notification of tool changes - must be done before the toolbox is added
-        // to the stage.
-        toolBox.addEventListener(ToolEvent.COLOR_PICKED, canvas.colorPicked);
-        toolBox.addEventListener(ToolEvent.BRUSH_PICKED, canvas.brushPicked);
+        var toolBox :ToolBox = canvas.createToolbox();
         toolBox.x = Canvas.CANVAS_WIDTH;
         addChild(toolBox);
     }
@@ -30,6 +27,7 @@ public class Graffiti extends Sprite
     private static function referenceSkins () :void
     {
         // make sure the skins we use in this app get included by the compiler
+        DefaultButtonSkins;
         DefaultSliderSkins;
     }
 }

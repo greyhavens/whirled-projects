@@ -2,6 +2,7 @@
 
 package com.threerings.graffiti {
 
+import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.geom.Point;
@@ -17,6 +18,7 @@ import com.threerings.util.Log;
 import com.whirled.FurniControl;
 
 import com.threerings.graffiti.tools.Brush;
+import com.threerings.graffiti.tools.ToolBox;
 import com.threerings.graffiti.tools.ToolEvent;
 
 public class Canvas extends Sprite
@@ -30,10 +32,14 @@ public class Canvas extends Sprite
      */
     public function Canvas (control :FurniControl)
     {
+        _background = new Sprite();
+        addChild(_background);
         _canvas = new Sprite();
         addChild(_canvas);
 
+        _background.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
         _canvas.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+        _background.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
         _canvas.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
 
         var masker :Shape = new Shape();
@@ -45,17 +51,36 @@ public class Canvas extends Sprite
 
         // TODO: temporarily just staying offline while we get the tools sorted out.
         _model = new OfflineModel(this);
+        _model.setBackgroundColor(0xFFFFFF);
         redraw();
     }
 
-    public function colorPicked (event :ToolEvent) :void
+    /**
+     * Creates a ToolBox and attaches listeners to the events this Canvas cares about.  The caller
+     * is responsible for displaying the ToolBox.
+     */
+    public function createToolbox () :ToolBox
     {
-        _color = event.value as uint;
+        var toolBox :ToolBox = new ToolBox(this);
+        toolBox.addEventListener(ToolEvent.COLOR_PICKED, function (event :ToolEvent) :void {
+            _color = event.value as uint;
+        });
+        toolBox.addEventListener(ToolEvent.BRUSH_PICKED, function (event :ToolEvent) :void {
+            _brush = event.value as Brush;
+        });
+        toolBox.addEventListener(ToolEvent.BACKGROUND_COLOR, function (event :ToolEvent) :void {
+            _model.setBackgroundColor(event.value as uint);
+        });
+        return toolBox;
     }
 
-    public function brushPicked (event :ToolEvent) :void
+    public function paintBackground (color :uint) :void
     {
-        _brush = event.value as Brush;
+        var g :Graphics = _background.graphics;
+        g.clear();
+        g.beginFill(_backgroundColor = color);
+        g.drawRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        g.endFill();
     }
 
     public function strokeBegun (id :String, from :Point, to :Point, color :int, brush :Brush) :void
@@ -96,6 +121,7 @@ public class Canvas extends Sprite
 
     protected function mouseDown (evt :MouseEvent) :void
     {
+        log.debug("mouseDown");
         _lastStrokePoint = _canvas.globalToLocal(new Point(evt.stageX, evt.stageY));
         _newStroke = true;
         _inputKey = _model.getKey();
@@ -109,6 +135,7 @@ public class Canvas extends Sprite
 
     protected function mouseUp (evt :MouseEvent) :void
     {
+        log.debug("mouseUp");
         maybeAddStroke(_canvas.globalToLocal(new Point(evt.stageX, evt.stageY)));
         if (_timer > 0) {
             clearInterval(_timer);
@@ -142,11 +169,6 @@ public class Canvas extends Sprite
     protected function redraw (lastId :String = null) :void
     {
         _canvas.graphics.clear();
-
-        _canvas.graphics.beginFill(0xFFFFFF);
-        _canvas.graphics.drawRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        _canvas.graphics.endFill();
-
         var strokes :HashMap = _model.getStrokes();
         var keys :Array = strokes.keys();
         for (var ii :int = 0; ii < keys.length; ii ++) {
@@ -173,11 +195,13 @@ public class Canvas extends Sprite
 
     protected var _model :Model;
 
+    protected var _background :Sprite;
     protected var _canvas :Sprite;
 
     // variables for user input
     protected var _inputKey :String;
 
+    protected var _backgroundColor :uint;
     protected var _color :uint;
     protected var _brush :Brush;
 
