@@ -21,6 +21,10 @@ import com.threerings.graffiti.tools.Brush;
 import com.threerings.graffiti.tools.ToolBox;
 import com.threerings.graffiti.tools.ToolEvent;
 
+import com.threerings.graffiti.model.Model;
+import com.threerings.graffiti.model.OfflineModel;
+import com.threerings.graffiti.model.OnlineModel;
+
 public class Canvas extends Sprite
 {
     public static const CANVAS_WIDTH :int = 400;

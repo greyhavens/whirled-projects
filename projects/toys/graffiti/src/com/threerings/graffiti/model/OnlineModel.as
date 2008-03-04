@@ -1,6 +1,6 @@
 // $Id$
 
-package com.threerings.graffiti {
+package com.threerings.graffiti.model {
 
 import flash.geom.Point;
 
@@ -8,6 +8,8 @@ import com.threerings.util.Log;
 
 import com.whirled.EntityControl;
 import com.whirled.ControlEvent;
+
+import com.threerings.graffiti.Canvas;
 
 import com.threerings.graffiti.tools.Brush;
 
