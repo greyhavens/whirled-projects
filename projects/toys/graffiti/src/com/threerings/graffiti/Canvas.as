@@ -132,7 +132,7 @@ public class Canvas extends Sprite
         _lastStrokePoint = _canvas.globalToLocal(new Point(evt.stageX, evt.stageY));
         _newStroke = true;
         _inputKey = _model.getKey();
-        _timer = setInterval(tick, 50);
+        _timer = setInterval(tick, TICK_INTERVAL);
     }
 
     protected function tick () :void
@@ -233,6 +233,11 @@ public class Canvas extends Sprite
     }
 
     private static const log :Log = Log.getLog(Canvas);
+
+    /** The number of milliseconds between mouse samples.  The lower the number, the higher the 
+     * drawing resolution, but the faster it fills up the available memory.  We may want to make
+     * this configurable in a slider control. Reasonable values are between 50 and 200ish. */
+    protected static const TICK_INTERVAL :int = 50;
 
     protected var _model :Model;
 
