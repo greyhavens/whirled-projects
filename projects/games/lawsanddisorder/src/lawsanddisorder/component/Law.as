@@ -4,8 +4,9 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
 import flash.events.MouseEvent;
-import lawsanddisorder.*;
 import flash.display.DisplayObject;
+
+import lawsanddisorder.*;
 
 /**
  * Area containing cards for a law
@@ -19,6 +20,7 @@ public class Law extends CardContainer
     {
         _id = id;
         addEventListener(MouseEvent.CLICK, ctx.state.lawClick);
+        //ctx.eventHandler.addDataListener(Laws.LAWS_DATA, lawChanged, _id);
         super(ctx);
     }
     
@@ -283,8 +285,29 @@ public class Law extends CardContainer
      */
     override protected function setDistributedData () :void
     {
-        _ctx.eventHandler.setData(Laws.LAWS_DATA, getSerializedCards(), _id);
+//_ctx.log("SETting data for law " + _id);    	
+        _ctx.eventHandler.setData(Laws.LAWS_DATA, getSerializedCards(), _id, true);
     }
+    
+    /**
+     * Public function to allow setting distributed hand data
+     * TODO make setDistributedData public or find another solution
+     */
+    public function setDistributedLawData () :void
+    {
+        setDistributedData();
+    }
+    
+    /*
+     * Handles when laws data changes.. kind of circular to account for adding new laws
+     * TODO don't reference laws except when creating a new law, and fix that.
+     *
+    protected function lawChanged (event :DataChangedEvent) :void
+    {
+_ctx.log("got laws data for " + this.id + ":" + event.newValue);    	
+        _ctx.board.laws.updateLawData(this.id, event.newValue);
+    }
+    */
     
     /**
      * Display or hide the cards area.  If displaying, automatically hide it again after a

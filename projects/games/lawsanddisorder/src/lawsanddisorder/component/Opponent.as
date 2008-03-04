@@ -5,8 +5,10 @@ import flash.text.TextField;
 import flash.events.MouseEvent;
 import flash.geom.ColorTransform;
 
+import com.whirled.game.StateChangedEvent;
+
 import lawsanddisorder.Context;
-import com.threerings.ezgame.StateChangedEvent;
+import lawsanddisorder.Content;
 
 /**
  * Area containing details on a single player
@@ -28,30 +30,33 @@ public class Opponent extends Player
     /**
      * Opponent jobs are not displayed; override and instead of making job a child, make
      * a new symbol child.
+     * TODO use event to trigger this
      */
     override public function set job (job :Job) :void
     {
         _job = job;
 
-        if (symbol != null && contains(symbol)) {
-            removeChild(symbol);
+        if (jobSymbol != null && contains(jobSymbol)) {
+            removeChild(jobSymbol);
         }
-        symbol = job.getSymbol();
-        symbol.width = symbol.width / 3;
-        symbol.height = symbol.height / 3;
-        symbol.x = 90;
-        symbol.y = 30;
+        jobSymbol = job.getSymbol();
+        jobSymbol.width = jobSymbol.width / 3.5;
+        jobSymbol.height = jobSymbol.height / 3.5;
+        jobSymbol.x = 65;
+        jobSymbol.y = 30;
+        //jobSymbol.alpha = 0.1;
         var colorTransform :ColorTransform = new ColorTransform();
-        colorTransform.color = 0x000066;
-        symbol.transform.colorTransform = colorTransform;
-        symbol.alpha = 0.3;
-        addChild(symbol);
+        colorTransform.color = 0x660033;
+        jobSymbol.transform.colorTransform = colorTransform;
+        jobSymbol.alpha = 0.15;
+        addChild(jobSymbol);
         
         updateDisplay();
     }
     
     /**
      * Initialize the static display
+     * TODO cleaner way to instanciate/position all these display elements?
      */
     override protected function initDisplay () :void
     {
@@ -59,13 +64,50 @@ public class Opponent extends Player
         _hand.x = -550;
         _hand.y = 0;
         
-        // draw the bg
-        graphics.clear();
-        graphics.beginFill(0x8888FF);
-        graphics.drawRect(0, 0, 120, 60);
-        graphics.endFill();
+        var background :Sprite = new OPPONENT_BACKGROUND();
+        addChild(background);
         
-        title.height = 80;
+        infoText = Content.defaultTextField(1.2, "left");
+        infoText.x = 8;
+        infoText.y = 5;
+        infoText.height = 80;
+        addChild(infoText);
+        
+        numMoniesText = Content.defaultTextField(1, "right");
+        numMoniesText.x = 2;
+        numMoniesText.y = 40;
+		numMoniesText.width = 25;
+        addChild(numMoniesText);
+
+        //var monieIcon :Sprite = new Card.SYMBOL_MONIE();
+        var monieIcon :Sprite = new Content.MONIE_BACK();
+        monieIcon.width = monieIcon.width / 3.5;
+        monieIcon.height = monieIcon.height / 3.5;
+        monieIcon.x = 32;
+        monieIcon.y = 42;
+        addChild(monieIcon);
+        
+        numCardsText = Content.defaultTextField(1, "right");
+        numCardsText.x = 37;
+        numCardsText.y = 40;
+		numCardsText.width = 25;
+        addChild(numCardsText);
+        
+        //var cardIcon :Sprite = new Card.SYMBOL_CARD();
+		var cardIcon :Sprite = new Content.CARD_BACK();
+        cardIcon.width = cardIcon.width / 4;
+        cardIcon.height = cardIcon.height / 4;
+        cardIcon.x = 68;
+        cardIcon.y = 40;
+        addChild(cardIcon);
+        
+        // little icon will be displayed during this opponent's turn
+        turnIndicator = new Sprite();
+        turnIndicator.graphics.beginFill(0xFFFF00);
+        turnIndicator.graphics.drawCircle(0, 0, 8);
+        turnIndicator.graphics.endFill();
+        turnIndicator.x = 90;
+        turnIndicator.y = 20;
     }
 
     /**
@@ -73,20 +115,25 @@ public class Opponent extends Player
      */
     override protected function updateDisplay () :void
     {
-        title.text = playerName + "\nJob: " + job + "\nMonies: " + monies + "\nCards: " + hand.numCards;
+        //title.text = playerName + "\nJob: " + job + "\nMonies: " + monies + "\nCards: " + hand.numCards;
+        infoText.text = playerName + "\n" + job;
+        numMoniesText.text = String(monies);
+        numCardsText.text = String(hand.numCards);
     }
     
     /** Is this opponent selected? 
-     * TODO rename to selected, find out where this is called that state can't be polled     */
+     * TODO rename to selected, find out where this is called that state can't be polled
+     */
     public function get highlighted () :Boolean {
         return _highlighted;
     }
     
     /** Indicate that the opponent is selected 
-     * TODO does state need to be stored?     */
+     * TODO does state need to be stored?
+     */
     public function set highlighted (value :Boolean) :void {
         _highlighted = value;
-                
+        /*
         // draw a border, highlighted or not
         if (value) {
             graphics.lineStyle(5, 0xFFFF00);
@@ -95,6 +142,7 @@ public class Opponent extends Player
             graphics.lineStyle(5, 0x8888FF);
         }
         graphics.drawRect(5, 5, 110, 50);
+		*/
     }
     
     /**
@@ -104,18 +152,42 @@ public class Opponent extends Player
     {
         var turnHolder :Player = _ctx.board.getTurnHolder();
         if (turnHolder == this) {
-        	graphics.lineStyle(5, 0xFFFF00);
+        	if (!contains(turnIndicator)) {
+        		addChild(turnIndicator);
+        	}
+        	//graphics.lineStyle(5, 0xFFFF00);
         }
         else {
-        	graphics.lineStyle(5, 0x8888FF);
+            if (contains(turnIndicator)) {
+                removeChild(turnIndicator);
+            }
+        	//graphics.lineStyle(5, 0x8888FF);
         }
-        graphics.drawRect(0, 0, 120, 60);
+        //graphics.drawRect(0, 0, 120, 60);
     }
+    
+    /** Indicates if it is the opponent's turn 
+     * TODO better name that doesn't conflict with TurnIndicator class
+     */
+    protected var turnIndicator :Sprite;
+    
+    /** Displays the number of monies */
+    protected var numMoniesText :TextField;
+    
+    /** Displays the number of cards */
+    protected var numCardsText :TextField;
+    
+    /** Displays opponent's name, job, etc */
+    protected var infoText :TextField;
     
     /** Is the opponent highlighted? */
     protected var _highlighted :Boolean = false;
     
     /** Symbol for the current job */
-    protected var symbol :Sprite;
+    protected var jobSymbol :Sprite;
+    
+    /** Background image for an opponent */
+    [Embed(source="../../../rsrc/components.swf#opponent")]
+    protected static const OPPONENT_BACKGROUND :Class;
 }
 }

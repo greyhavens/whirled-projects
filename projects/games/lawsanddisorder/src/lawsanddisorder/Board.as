@@ -1,11 +1,16 @@
 ﻿package lawsanddisorder {
 
 import flash.display.Sprite;
-import flash.display.Bitmap;
-import lawsanddisorder.component.*;
-import com.threerings.ezgame.EZGameControl;
+import flash.text.TextField;
+import flash.text.TextFormat;
+import flash.text.TextFieldAutoSize;
+import flash.events.MouseEvent;
+import flash.events.Event;
+
 import com.threerings.util.HashMap;
-import com.threerings.ezgame.StateChangedEvent;
+import com.whirled.game.StateChangedEvent;
+
+import lawsanddisorder.component.*;
 
 /**
  * Layout of the game board.  Components such as Player can be publicly accessed through here.
@@ -18,7 +23,6 @@ public class Board extends Sprite
     public function Board (ctx :Context)
     {
         _ctx = ctx;
-        _ctx.control.game.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
     }
 
     /**
@@ -29,23 +33,31 @@ public class Board extends Sprite
         // display background
         initDisplay();
         
-        turnIndicator = new TurnIndicator(_ctx);
-        turnIndicator.x = 20;
-        turnIndicator.y = 210;
-        addChild(turnIndicator);
+        _ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_ENDED, turnEnded);
+        _ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, turnStarted);
+                        
+        // create law button
+        createLawButton = new CreateLawButton(_ctx);
+        createLawButton.x = 12;
+        createLawButton.y = 250;
+        addChild(createLawButton);
+        
+        endTurnButton = new EndTurnButton(_ctx);
+        endTurnButton.x = 12;
+        endTurnButton.y = 290;
+        addChild(endTurnButton);
         
         deck = new Deck(_ctx);
-        deck.x = 20;
-        deck.y = 300;
+        deck.x = 15;
+        deck.y = 330;
         addChild(deck);
         
         newLaw = new NewLaw(_ctx);
-        newLaw.x = 160;
-        newLaw.y = 290;
-        addChild(newLaw);
+        newLaw.x = 170;
+        newLaw.y = 200;
         
         laws = new Laws(_ctx);
-        laws.x = 160;
+        laws.x = 170;
         laws.y = 30;
         addChild(laws);
                 
@@ -72,15 +84,20 @@ public class Board extends Sprite
         }
         
         // add opponents as child after player so they'll be displayed over top
-        opponents.x = 560;
-        opponents.y = 20;
+        opponents.x = 590;
+        opponents.y = 10;
         addChild(opponents);
         
         // notices display above everything else
         notices = new Notices(_ctx);
         notices.x = 0;
         notices.y = 380;
-        addChild(notices);
+        //addChild(notices);
+        
+        // displayed during the player's turn
+        turnHighlight = new Sprite();
+        turnHighlight.graphics.lineStyle(5, 0xFFFF00);
+        turnHighlight.graphics.drawRect(2, 2, 695, 495);
     }
     
     /**
@@ -102,19 +119,15 @@ public class Board extends Sprite
      */
     protected function initDisplay () :void
     {
-    	// TODO increases compile/launch time - reinstate later
-    	//var background :Bitmap = new BOARD_BACKGROUND();
-    	//addChild(background);
-		
-        // fill the background color
-        graphics.clear();
-        graphics.beginFill(0x77FF77);
-        graphics.drawRect(0, 0, 700, 500);
-        graphics.endFill();
-        
-        // add a box for laws area
-        graphics.lineStyle(2, 0x4499EE);
-        graphics.drawRect(150, 10, 400, 380);
+    	var background :Sprite = new BOARD_BACKGROUND();
+		// TODO this mask seems to have a shorter y in whirled - fix or adjust
+    	var bgMask :Sprite = new Sprite();
+    	bgMask.graphics.beginFill(0x000000);
+    	bgMask.graphics.drawRect(0, 0, 700, 500);
+    	bgMask.graphics.endFill();
+    	background.mask = bgMask;
+		background.mouseEnabled = false;
+        addChild(background);
     }
     
     /**
@@ -163,7 +176,20 @@ public class Board extends Sprite
     }
     
     /**
-     * Return the array of players in order of seating.     */
+     * Return true if it is this player's turn
+     * TODO not the place for this either     */
+    public function isMyTurn () :Boolean
+    {
+    	var turnHolder :Player = getTurnHolder();
+    	if (turnHolder != null && turnHolder == player) {
+        	return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Return the array of players in order of seating.
+     */
     public function get players () :Array {
     	return playerObjects;
     }
@@ -171,16 +197,24 @@ public class Board extends Sprite
     /**
      * The turn just changed.  Indicate if it is the player's turn
      */
-    protected function turnChanged (event :StateChangedEvent) :void
+    protected function turnStarted (event :Event) :void
     {
-        var turnHolder :Player = _ctx.board.getTurnHolder();
-        if (turnHolder == player) {
-            graphics.lineStyle(5, 0xFFFF00);
+    	if (!contains(turnHighlight)){
+    		addChild(turnHighlight);
+    	}
+    }
+    
+    /**
+     * Handler for end turn event - remove newlaw and turn highlight
+     */
+    protected function turnEnded (event :Event) :void
+    {
+        if (contains(newLaw)) {
+            removeChild(newLaw);
         }
-        else {
-            graphics.lineStyle(5, 0x77FF77);
+        if (contains(turnHighlight)){
+            removeChild(turnHighlight);
         }
-        graphics.drawRect(2, 2, 695, 495);
     }
     
     /** Game context */
@@ -191,8 +225,11 @@ public class Board extends Sprite
     /** Displays in-game messages to the player */
     public var notices :Notices;
     
-    /** Display of turn and end turn button */
-    public var turnIndicator :TurnIndicator;
+    /** Press this to show the create law box */
+    public var createLawButton :CreateLawButton;
+    
+    /** Press this to end the turn */
+    public var endTurnButton :EndTurnButton;
     
     /** Deck of cards */
     public var deck :Deck;
@@ -212,8 +249,11 @@ public class Board extends Sprite
     /** All player objects in the game, indexed by id */
     protected var playerObjects :Array = new Array();
     
-    ///** Background image for the game board */
-    //[Embed(source="../../rsrc/images/board.png")]
-    //protected var BOARD_BACKGROUND :Class;
+    /** Displays to indicate it is the player's turn */
+    protected var turnHighlight :Sprite;
+    
+    /** Background image for the entire board */
+    [Embed(source="../../rsrc/components.swf#bg")]
+    protected static const BOARD_BACKGROUND :Class;
 }
 }

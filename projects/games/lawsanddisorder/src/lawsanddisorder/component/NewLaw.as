@@ -4,7 +4,9 @@ import flash.display.Sprite;
 import flash.text.TextField;
 import flash.geom.Point;
 import flash.events.MouseEvent;
-import lawsanddisorder.Context;
+import flash.events.Event;
+
+import lawsanddisorder.*;
 
 /**
  * Area for creating a new law
@@ -29,6 +31,7 @@ public class NewLaw extends CardContainer
         makeLawButton.text = "create";
         makeLawButton.x = 350;
         makeLawButton.y = 60;
+		makeLawButton.height = 30;
         addChild(makeLawButton);
         enabled = false;
         
@@ -38,8 +41,8 @@ public class NewLaw extends CardContainer
         graphics.drawRect(0, 0, 380, 80);
         graphics.endFill();
         
-        title.text = "Drag cards here then press 'create' to make a new law"
-        title.width = 400;
+        //title.text = "Drag cards here then press 'create' to make a new law"
+        //title.width = 400;
     }
     
     /**
@@ -115,19 +118,32 @@ public class NewLaw extends CardContainer
             _ctx.notice("That is not a legal law.");
             return;
          }
- 
+		
  		_ctx.broadcast(_ctx.board.player.playerName + " got " + cards.length + " monies for making a new law.");
         _ctx.board.player.getMonies(cards.length);
+        enabled = false;
+        _ctx.state.performingAction = true;
         
-        var law :Law = createLaw();
-        _ctx.board.laws.addNewLaw(law);
+        // tell other players and ourself about the new law
+        var newLawData :Object = this.getSerializedCards();
+//_ctx.log("NEW law sending serialized: " + newLawData);
+//_ctx.log("cardids: "  + cardIds);
+//_ctx.log("cards: " + cards);
+        _ctx.sendMessage(Laws.NEW_LAW, newLawData);
+        
+        // clear cards from new law and remove them from hand
+        clear(false);
+        _ctx.board.createLawButton.newLawCreated();
+        
+        // tell the other players that this player's hand is smaller now.
+        //_ctx.board.player.hand.setDistributedHandData();
     }
     
-    /**
+    /*
      * Move the cards from this law into a new law and return it.  Also disable the create new 
      * law function because players can only create one law in a turn.
      * TODO make removing cards more efficient
-     */
+     *
     protected function createLaw () :Law
     {
         enabled = false;
@@ -141,14 +157,18 @@ public class NewLaw extends CardContainer
         
         // do not distribute this data to other players
         removeCards(cardArray, false);
+
+        
+        var law :Law = new Law(_ctx, _ctx.board.laws.numLaws);
+        
+        // don't set law distributed data here, we'll do that in Laws
+        law.addCards(cardArray, false);
+        return law;
         
         // tell the other players that this player's hand is smaller now.
         _ctx.board.player.hand.setDistributedHandData();
-        
-        var law :Law = new Law(_ctx, _ctx.board.laws.numLaws);
-        law.addCards(cardArray);
-        return law;
     }
+    */
     
     /**
      * Returns the index of the card at a given global point, or -1 for none.
@@ -228,7 +248,7 @@ public class NewLaw extends CardContainer
      * Return all cards in new law to the player's hand.
      * TODO like createLaw this method of moving cards should be improved
      */
-    public function clear () :void
+    protected function clear (backToHand :Boolean = true) :void
     {
         if (cards.length == 0) {
             return;
@@ -240,8 +260,35 @@ public class NewLaw extends CardContainer
         }
         // remove them from here, add them to hand - do not tell other players
         removeCards(cardArray, false);
-        _ctx.board.player.hand.addCards(cardArray, false);
+        
+        if (backToHand) {
+            _ctx.board.player.hand.addCards(cardArray, false);
+        }
+        else {
+        	_ctx.board.player.hand.removeCards(cardArray, true);
+        }
     }
+	
+	/**
+	 * Begin displaying the new law area
+	 */
+	public function show () :void
+	{
+		if (!_ctx.board.contains(this)) {
+			_ctx.board.addChild(this);
+		}
+	}
+	
+	/**
+	 * Return cards and hide the new law area
+	 */
+	public function hide () :void
+	{
+		clear();
+		if (_ctx.board.contains(this)) {
+			_ctx.board.removeChild(this);
+		}
+	}
     
     /** Can the player make a new law right now? 
      * TODO better to have lawAlreadyCreatedThisTurn? */

@@ -44,7 +44,7 @@ public class Opponents extends Component
         for (var i :int = 0; i < opponents.length; i++) {
             var opponent :Opponent = opponents[i];
             opponent.x = 0;
-            opponent.y = i*65;
+            opponent.y = i*72;
         }
     }
     

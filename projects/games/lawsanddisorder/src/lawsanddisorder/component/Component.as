@@ -4,6 +4,7 @@ import flash.display.Sprite;
 import flash.display.DisplayObject;
 import flash.text.TextField;
 import flash.events.MouseEvent;
+
 import lawsanddisorder.Context;
 
 /**
@@ -17,17 +18,6 @@ public class Component extends Sprite
     public function Component (ctx :Context)
     {
         _ctx = ctx;
-        
-        // title displays number of cards
-        title = new TextField();
-        title.height = 30;
-        title.x = 0;
-        title.y = 0;
-        title.mouseEnabled = false;
-        title.wordWrap = true;
-        addChild(title);
-        
-        // display static and dynamic
         initDisplay();
         updateDisplay();
     }
@@ -64,7 +54,8 @@ public class Component extends Sprite
     }
     
     /**
-     * Bring a child component above other siblings.     */
+     * Bring a child component above other siblings.
+     */
     public function bringToFront (child :DisplayObject) :void
     {
     	if (!contains(child)) {
@@ -77,9 +68,5 @@ public class Component extends Sprite
     
     /** Main game logic */
     protected var _ctx :Context;
-    
-    /** Title for debugging 
-     * TODO for testing purposes - remove later */
-    protected var title :TextField;
 }
 }

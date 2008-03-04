@@ -4,12 +4,11 @@ import flash.display.Sprite;
 import flash.display.MovieClip;
 import flash.events.Event;
 
-import com.whirled.FlowAwardedEvent;
-import com.whirled.WhirledGameControl;
-
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.StateChangedEvent;
+import com.whirled.game.GameControl;
+import com.whirled.game.FlowAwardedEvent;
+import com.whirled.game.MessageReceivedEvent;
+import com.whirled.game.PropertyChangedEvent;
+import com.whirled.game.StateChangedEvent;
 
 import lawsanddisorder.component.*
 
@@ -18,31 +17,31 @@ import lawsanddisorder.component.*
  *
  * TODO gameplay:
  * ai to fill games up to 6 players?
- * timers for reminders
  * timers for auto-selection for afk players (?)
  * detecting afk players
  * handling players leaving
  * handle watchers
  * handle premature game ending
+ * handle rematch
  * unloader?
- * move all mentions of _ctx.control out of components
- * refactor cardContainer to simplify temporarily removing cards (eg hand -> new law)
  * grab fresh job data before using it on opponent's turn eg during enact law after switch job
  * same with hand data eg after being stolen from, before losing card
  * can the above cases happen, eg can a message get lost?
  * don't send change data events to turn holder, or use set immediate?
+ * propagate events for end turn, other events?
+ * 
  * 
  * TODO inerface:
- * make buttons look like buttons
- * use image files instead of ugly boxes
  * improve highlighting with delays/events for unhighlighting
- * scrolling laws area
  * bring law to front on mouseover
- * bigger cards (?)
  * improve notice & broadcast messages esp when waiting for opponent
  * animations when drawing cards, stealing cards, playing law, gain/lose/give monies
  * card mouseover tooltips, esp job powers?
- *  */
+ * figure out wtf to do with laws
+ * figure out whether/how to display notices
+ * get a better font
+ * 
+ */
 [SWF(width="1000", height="550")]
 public class LawsAndDisorder extends Sprite
 {
@@ -55,8 +54,14 @@ public class LawsAndDisorder extends Sprite
     public function LawsAndDisorder ()
     {
         // create context and game controller
-        var control :WhirledGameControl = new WhirledGameControl(this, false);
+        var control :GameControl = new GameControl(this, false);
         _ctx = new Context(control);
+		
+		// if we're not connected, stop here
+        if (!_ctx.control.isConnected()) {
+            return;
+        }
+		
         _ctx.control.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _ctx.control.game.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
         _ctx.control.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
@@ -70,7 +75,8 @@ public class LawsAndDisorder extends Sprite
             _ctx.control.net.set(Player.MONIES_DATA, new Array(playerCount).map(function (): int { return Player.STARTING_MONIES; }));
             _ctx.control.net.set(Hand.HAND_DATA, new Array(playerCount).map(function (): Array { return new Array(); }));
             _ctx.control.net.set(Deck.JOBS_DATA, new Array(playerCount).map(function (): int { return -1; }));
-            _ctx.control.net.set(Laws.LAWS_DATA, new Array());
+            //_ctx.control.net.set(Laws.LAWS_DATA, new Array());
+            _ctx.control.net.set(Laws.LAWS_DATA, null);
         }
         // other players just set up the board now and wait to receive the actual data
         else {
@@ -84,11 +90,11 @@ public class LawsAndDisorder extends Sprite
      */
     public function initPropertyChanged (event :PropertyChangedEvent) :void
     {
-        if ((event.name == Hand.HAND_DATA && event.index == -1)
-            || (event.name == Deck.JOBS_DATA && event.index == -1)
-            || (event.name == Laws.LAWS_DATA && event.index == -1)
-            || (event.name == Player.MONIES_DATA && event.index == -1)) {
-                            
+        if ((event.name == Hand.HAND_DATA)
+            || (event.name == Deck.JOBS_DATA)
+            || (event.name == Laws.LAWS_DATA)
+            || (event.name == Player.MONIES_DATA)) {
+
                // one step closer to being done initialization
                if (++_initComplete == INIT_GOAL) {
                 _ctx.control.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, initPropertyChanged);
@@ -137,7 +143,8 @@ public class LawsAndDisorder extends Sprite
 
     /**
      * Handler for receiving flow awarded events
-     * TODO move to Notices?     */
+     * TODO move to Notices?
+     */
     protected function flowAwarded (event :FlowAwardedEvent) :void
     {
         _ctx.notice("You got: " + event.amount + " flow for playing.  That's " + event.percentile + "%");
@@ -145,7 +152,8 @@ public class LawsAndDisorder extends Sprite
     
     /**
      * Handler for recieving game end events
-     * TODO move to Notices?     */
+     * TODO move to Notices?
+     */
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
         _ctx.notice("Game over - thanks for playing!");

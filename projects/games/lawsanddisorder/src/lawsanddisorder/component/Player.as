@@ -3,7 +3,7 @@
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.events.MouseEvent;
-import com.threerings.ezgame.PropertyChangedEvent;
+
 import lawsanddisorder.*;
 
 /**
@@ -28,9 +28,9 @@ public class Player extends Component
         this.serverId = serverId;
         this._name = name;
         _hand = new Hand(ctx, this);
-        ctx.eventHandler.addPropertyListener(Deck.JOBS_DATA, jobsChanged);
-        ctx.eventHandler.addPropertyListener(Hand.HAND_DATA, handsChanged);
-        ctx.eventHandler.addPropertyListener(MONIES_DATA, moniesChanged);
+        ctx.eventHandler.addDataListener(Deck.JOBS_DATA, jobChanged, id);
+        ctx.eventHandler.addDataListener(Hand.HAND_DATA, handChanged, id);
+        ctx.eventHandler.addDataListener(MONIES_DATA, moniesChanged, id);
         
         super(ctx);
     }
@@ -70,15 +70,18 @@ public class Player extends Component
         }
         
         _job = job;
-        //_job.player = this;
-        _job.x = 20;
+        _job.x = 12;
         _job.y = 50;
         _job.updateEnabled();
         addChild(_job);
         
         updateDisplay();
     }
-        
+    
+	/**
+	 * Display the player's / opponent's hand
+	 * TODO only used in opponent - move there?
+	 */
     public function set showHand (value :Boolean) :void
     {
         if (value && !contains(hand)) {
@@ -95,15 +98,28 @@ public class Player extends Component
     override protected function initDisplay () :void
     {
         // hand will be created, maybe not populated
-        _hand.x = 20;
-        _hand.y = 415;
+        _hand.x = 30;
+        _hand.y = 407;
         addChild(_hand);
+		
+		var moniesBg :Sprite = new MONIES_BG();
+		moniesBg.x = 10;
+		moniesBg.y = 5;
+		addChild(moniesBg);
         
-        _moniesText = new TextField();
+		var monieIcon :Sprite = new Content.MONIE_BACK();
+        monieIcon.width = monieIcon.width / 2;
+        monieIcon.height = monieIcon.height / 2;
+        monieIcon.x = 97;
+        monieIcon.y = 10;
+        addChild(monieIcon);
+        
+		// TODO align right my ass - what is this doing?
+        _moniesText = Content.defaultTextField(1.2, "right");
         _moniesText.height = 30;
-        _moniesText.mouseEnabled = false;
-        _moniesText.x = 20;
-        _moniesText.y = 10;
+		_moniesText.width = 80;
+        _moniesText.x = 10;
+        _moniesText.y = 15;
         addChild(_moniesText);
     }
 
@@ -112,50 +128,45 @@ public class Player extends Component
      */
     override protected function updateDisplay () :void
     {
-        _moniesText.text = "MONIES: " + monies;
+        _moniesText.text = "Monies: " + monies;
     }
     
     /**
      * Player's job just changed somehow.
      */
-    protected function jobsChanged (event :PropertyChangedEvent) :void
+    protected function jobChanged (event :DataChangedEvent) :void
     {
-        if (event.index == id) {
-            var jobId :int = event.newValue as int;
+        var jobId :int = event.newValue as int;
 
-            // fetch the job instance and make it our own
-            var tmpJob :Job = _ctx.board.deck.getJob(jobId);
-            if (tmpJob == null) {
-                _ctx.log("WTF job null in property change. JOB ID is: " + jobId);
-                return;
-            }
-            job = tmpJob;
-            //job.player = this;
+        // fetch the job instance and make it our own
+        var tmpJob :Job = _ctx.board.deck.getJob(jobId);
+        if (tmpJob == null) {
+            _ctx.log("WTF job null in property change. JOB ID is: " + jobId);
+            return;
         }
+        job = tmpJob;
     }
     
     /**
-     * The player's monies has changed; update the value.     */
-    protected function moniesChanged (event :PropertyChangedEvent) :void
+     * The player's monies has changed; update the value.
+     */
+    protected function moniesChanged (event :DataChangedEvent) :void
     {
-        if (event.index == id) {
-            _monies = event.newValue as int;
-            updateDisplay();
-        }
+        _monies = event.newValue as int;
+        updateDisplay();
     }
     
     /**
      * Handles when cards in hands changes (display shows # of cards for opponents)
      */
-    protected function handsChanged (event :PropertyChangedEvent) :void
+    protected function handChanged (event :DataChangedEvent) :void
     {
-        if (event.index == id) {
-            updateDisplay();
-        }
+        updateDisplay();
     }
     
     /**
-     * Display the player as a string for testing.     */
+     * Display the player as a string for testing.
+     */
     override public function toString () :String
     {
         return "Player " + id + ": " + _name;
@@ -175,14 +186,16 @@ public class Player extends Component
     }
     
     /**
-     * Remove X monies from this player     */
+     * Remove X monies from this player
+     */
     public function loseMonies (moniesNum :int) :void
     {
         getMonies(moniesNum * -1);
     }
     
     /**
-     * Remove X monies from this player, then give X monies to another player     */
+     * Remove X monies from this player, then give X monies to another player
+     */
     public function giveMoniesTo(moniesNum :int, toPlayer :Player) :void
     {
     	// giving money to oneself, no net change
@@ -264,7 +277,8 @@ public class Player extends Component
     }
     
     /**
-     * Return the player's current monies     */
+     * Return the player's current monies
+     */
     public function get monies () :int {
     	return _monies;
     }
@@ -295,5 +309,8 @@ public class Player extends Component
     
     /** Textfield for displaying the player's current monies */
     protected var _moniesText :TextField;
+    
+    [Embed(source="../../../rsrc/components.swf#monies")]
+    protected static const MONIES_BG :Class;
 }
 }

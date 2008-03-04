@@ -6,8 +6,10 @@ import flash.text.TextFormat;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.geom.ColorTransform;
+import flash.filters.ColorMatrixFilter;
 
 import lawsanddisorder.Context;
+import lawsanddisorder.Content;
 
 /**
  * A single card element
@@ -36,59 +38,52 @@ public class Card extends Component
         
         super(ctx);
     }
-    
+	
     /**
      * Draw the card sprite
      */
     override protected function initDisplay () :void
     {
-        graphics.clear();
-        graphics.beginFill(0x4499EE);
-        graphics.drawRect(0, 0, 50, 65);
-        graphics.endFill();
-        
-        //title.text = text + " [" + id + "]";
-        cardText = new TextField();
-        var format :TextFormat = new TextFormat();
-        format.align = "center";        
-        cardText.defaultTextFormat = format;        
-        cardText.text = text;
-        cardText.width = 50;
-        cardText.height = 60;
-        cardText.mouseEnabled = false;
-        cardText.wordWrap = true;
-        addChild(cardText);
-        
         var color :uint = getColor();
-        graphics.lineStyle(2, color, 0.5);
-        graphics.drawRect(0, 0, 50, 65);
-        
+        var red :int = (color >> 16) & 0xFF;
+        var green :int = (color >> 8) & 0xFF;
+        var blue :int = (color >> 0) & 0xFF;
+		
+        var background :Sprite = new CARD_BACKGROUND();
+        background.mouseEnabled = false;
+		var resultColorTransform:ColorTransform = new ColorTransform();
+		resultColorTransform.redOffset = red;
+		resultColorTransform.greenOffset = green;
+		resultColorTransform.blueOffset = blue;
+		background.transform.colorTransform = resultColorTransform;
+        addChild(background);
+
         var symbol :Sprite = getSymbol();
         if (symbol != null) {
             symbol.width = symbol.width / 4;
             symbol.height = symbol.height / 4;
-            symbol.x = 25;
+            symbol.x = 26;
             symbol.y = 40;
             var colorTransform :ColorTransform = new ColorTransform();
             colorTransform.color = color;
             symbol.transform.colorTransform = colorTransform;
-            symbol.alpha = 0.6;
+            symbol.alpha = 0.5;
+            symbol.mouseEnabled = false;
             addChild(symbol);
         }
-    }
-    
-    /**
-     * Draw a border in one of two colours.
-     */
-    override protected function updateDisplay () :void
-    {
-        if (_highlighted) {
-            graphics.lineStyle(5, 0xFFFF00);
-        }
-        else {
-            graphics.lineStyle(5, 0x4499EE);
-        }
-        graphics.drawRect(5, 5, 40, 55);
+		
+        cardText = Content.defaultTextField();
+        cardText.text = text;
+        cardText.width = 45;
+        cardText.height = 60;
+        cardText.y = 5;
+        cardText.x = 3;
+        addChild(cardText);
+		
+		// create the highlight object but do not add it as a child
+		highlightSprite = new Sprite();
+		highlightSprite.graphics.lineStyle(5, 0xFFFF00);
+		highlightSprite.graphics.drawRect(5, 5, 40, 55);
     }
     
     /**
@@ -97,23 +92,28 @@ public class Card extends Component
     protected function getColor () :uint
     {
         if (_group == SUBJECT) {
-            return 0x0000FF;
+            //return 0x0000FF;
+			return 0x004080;
         }
         else if (_group == VERB) {
-            return 0xFF0000;
+			return 0xFF3333;
+            //return 0xFF0000;
         }
         else if (_group == OBJECT) {
-            return 0xFFFF00;
+			return 0xFFC600;
+            //return 0xFFFF00;
         }
         else {
-            return 0xFF00FF;
+            //return 0xFF00FF;
+			return 0xA800A8;
         }
     }
     
     /**
      * Generate and return a new sprite containing the symbol for this card, or null
      * if there is no symbol for this card.
-     * TODO make these MovieClips instead?     */
+     * TODO make these MovieClips instead?
+     */
 	protected function getSymbol () :Sprite
 	{
 	    switch (group) {
@@ -132,6 +132,16 @@ public class Card extends Component
 	                case Job.SCIENTIST:
 	                    return new Job.SYMBOL_SCIENTIST();
 	            }
+                break;
+            case VERB:
+                switch (type) {
+                    case GETS:
+                        return new SYMBOL_GETS();
+                    case GIVES:
+                        return new SYMBOL_GIVES();
+                    case LOSES:
+                        return new SYMBOL_LOSES();
+                }
                 break;
 	        case OBJECT:
 	            switch (type) {
@@ -237,25 +247,6 @@ public class Card extends Component
     }
     
     /**
-     * Override the startDrag function to record that we are dragging.
-     * TODO isn't there some better way to determine if a DisplayObject is being dragged?
-     */
-    override public function startDrag (lockCenter :Boolean = false, bounds: Rectangle = null) :void
-    {
-        super.startDrag(lockCenter, bounds);
-        _dragging = true;
-    }
-    
-    /**
-     * Override the stopDrag function to record that we are no longer dragging.
-     */
-    override public function stopDrag () :void
-    {
-        super.stopDrag();
-        _dragging = false;
-    }
-    
-    /**
      * Return whether this card is currently being dragged.
      */
     public function get dragging () :Boolean {
@@ -263,18 +254,43 @@ public class Card extends Component
     }
     
     /**
-     * Is the card displaying that it is selected?     */
+     * Return whether this card is currently being dragged.
+     */
+    public function set dragging (value :Boolean) :void {
+        _dragging = value;
+    }
+    
+    /**
+     * Is the card displaying that it is selected?
+     */
     public function get highlighted () :Boolean {
         return _highlighted;
     }
     
     /**
-     * Change whether the card appears selected     */
+     * Change whether the card appears selected
+     */
     public function set highlighted (value :Boolean) :void {
         _highlighted = value;
-        updateDisplay();
+        //updateDisplay();
+		//graphics.clear();
+        if (_highlighted) {
+			if (!contains(highlightSprite)) {
+				addChild(highlightSprite);
+			}
+        //    graphics.lineStyle(5, 0xFFFF00);
+        //    graphics.drawRect(5, 5, 40, 55);
+        }
+		else {
+			if (contains(highlightSprite)) {
+				removeChild(highlightSprite);
+			}
+		}
     }
     
+	/** Display a box around the card when highlighted */
+	protected var highlightSprite :Sprite;
+	
     /** Text on the card */
     protected var cardText :TextField;
     
@@ -322,9 +338,21 @@ public class Card extends Component
     public static const USE_ABILITY :int = 2;
 	
 	[Embed(source="../../../rsrc/symbols.swf#card")]
-	protected static const SYMBOL_CARD :Class;
+	public static const SYMBOL_CARD :Class;
 	
 	[Embed(source="../../../rsrc/symbols.swf#monie")]
-	protected static const SYMBOL_MONIE :Class;
+	public static const SYMBOL_MONIE :Class;
+    
+    [Embed(source="../../../rsrc/symbols.swf#gets")]
+    protected static const SYMBOL_GETS :Class;
+    
+    [Embed(source="../../../rsrc/symbols.swf#gives")]
+    protected static const SYMBOL_GIVES :Class;
+    
+    [Embed(source="../../../rsrc/symbols.swf#loses")]
+    protected static const SYMBOL_LOSES :Class;
+    
+    [Embed(source="../../../rsrc/components.swf#card")]
+    protected static const CARD_BACKGROUND :Class;
 }
 }

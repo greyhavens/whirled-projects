@@ -1,8 +1,8 @@
-package lawsanddisorder {
+﻿package lawsanddisorder {
 
-import com.whirled.WhirledGameControl;
+import com.whirled.game.GameControl;
+
 import lawsanddisorder.component.*;
-import com.threerings.ezgame.UserChatEvent;
 
 /**
  * Contains references to the various bits used in the game.
@@ -10,7 +10,12 @@ import com.threerings.ezgame.UserChatEvent;
  */
 public class Context
 {
-    public function get control () :WhirledGameControl
+    public function Context (control :GameControl)
+    {
+        _control = control;
+    }
+    
+    public function get control () :GameControl
     {
         return _control;
     }
@@ -29,11 +34,6 @@ public class Context
     {
         return _eventHandler;
     }
-    
-    public function Context (control :WhirledGameControl)
-    {
-        _control = control;
-    }
 
     public function init (state :State, board :Board, eventHandler :EventHandler) :void
     {
@@ -48,7 +48,6 @@ public class Context
      */
     public function log (message :String) :void
     {
-        var myId :int = _control.game.getMyId();
         _control.local.feedback(message + "\n");
     }
     
@@ -75,13 +74,14 @@ public class Context
     }
     
     /**
-     * Wrapper for sending messages through the WhirledGameControl     */
+     * Wrapper for sending messages through the WhirledGameControl
+     */
     public function sendMessage (type :String, value :*) :void
     {
     	_control.net.sendMessage(type, value);
     }
     
-    protected var _control :WhirledGameControl;
+    protected var _control :GameControl;
     protected var _state :State;
     protected var _board :Board;
     protected var _eventHandler :EventHandler;

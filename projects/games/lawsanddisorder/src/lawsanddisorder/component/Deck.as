@@ -2,15 +2,16 @@
 
 import flash.display.Sprite;
 import flash.text.TextField;
-import lawsanddisorder.*;
-
+import flash.text.TextFormat;
 import flash.events.MouseEvent;
-import com.threerings.ezgame.PropertyChangedEvent;
+
 import com.threerings.util.HashMap;
+import com.threerings.util.ArrayUtil; 
+
+import lawsanddisorder.*;
 
 /**
  * Content class describing all possible cards
- * TODO look into extending ezgame.CardDeck
  */
 public class Deck extends Component 
 {
@@ -29,8 +30,8 @@ public class Deck extends Component
         discardPile = new CardContainer(ctx);
         super(ctx);
         
-        _ctx.eventHandler.addPropertyListener(DECK_DATA, deckChanged);
-        _ctx.eventHandler.addPropertyListener(JOBS_DATA, jobsChanged);
+        _ctx.eventHandler.addDataListener(DECK_DATA, deckChanged);
+        _ctx.eventHandler.addDataListener(JOBS_DATA, jobsChanged);
         
         // TODO get this from somewhere else - board?
         var playerCount :int = _ctx.control.game.seating.getPlayerIds().length;
@@ -71,18 +72,16 @@ public class Deck extends Component
             addNewCards(2, Card.SUBJECT, Job.SCIENTIST);
             
             // take out gives for 2 player games
-            // TODO put this back in, out for testing
-            /*
             if (playerCount == 2) {
                 addNewCards(4, Card.VERB, Card.LOSES);
                 addNewCards(3, Card.VERB, Card.GETS);
             }
             else {
-            */
                 addNewCards(2, Card.VERB, Card.GIVES);
                 addNewCards(3, Card.VERB, Card.LOSES);
                 addNewCards(2, Card.VERB, Card.GETS);
-            //}
+            }
+			
             addNewCards(2, Card.OBJECT, Card.CARD, 1);
             addNewCards(1, Card.OBJECT, Card.CARD, 2);
             addNewCards(1, Card.OBJECT, Card.MONIE, 1);
@@ -92,50 +91,6 @@ public class Deck extends Component
             addNewCards(1, Card.WHEN, Card.START_TURN);
             addNewCards(1, Card.WHEN, Card.USE_ABILITY);
             addNewCards(1, Card.WHEN, Card.CREATE_LAW);
-        	/*
-            // 24 subjects 14 verbs 14 objects 6 whens, total = 58
-            // 41% subjects, 24% verbs, 24% objects, 10% when
-            addNewCards(4, Card.SUBJECT, Job.JUDGE);
-            addNewCards(4, Card.SUBJECT, Job.THIEF);
-            addNewCards(4, Card.SUBJECT, Job.BANKER);
-            addNewCards(4, Card.SUBJECT, Job.TRADER);
-            addNewCards(4, Card.SUBJECT, Job.PRIEST);
-            addNewCards(4, Card.SUBJECT, Job.SCIENTIST);
-            addNewCards(4, Card.VERB, Card.GIVES);
-            addNewCards(6, Card.VERB, Card.LOSES);
-            addNewCards(4, Card.VERB, Card.GETS);
-            addNewCards(4, Card.OBJECT, Card.CARD, 1);
-            addNewCards(2, Card.OBJECT, Card.CARD, 2);
-            addNewCards(2, Card.OBJECT, Card.MONIE, 1);
-            addNewCards(2, Card.OBJECT, Card.MONIE, 2);
-            addNewCards(2, Card.OBJECT, Card.MONIE, 3);
-            addNewCards(2, Card.OBJECT, Card.MONIE, 4);
-            addNewCards(2, Card.WHEN, Card.START_TURN);
-            addNewCards(2, Card.WHEN, Card.USE_ABILITY);
-            addNewCards(2, Card.WHEN, Card.CREATE_LAW);
-            */
-        	/*
-        	// 18 subjects 9 verbs 11 objects 5 whens = 43
-        	// 41% subjects, 20% verbs, 25% objects, 11% when
-	        addNewCards(3, Card.SUBJECT, Job.JUDGE);
-	        addNewCards(3, Card.SUBJECT, Job.THIEF);
-	        addNewCards(3, Card.SUBJECT, Job.BANKER);
-	        addNewCards(3, Card.SUBJECT, Job.TRADER);
-	        addNewCards(3, Card.SUBJECT, Job.PRIEST);
-	        addNewCards(3, Card.SUBJECT, Job.SCIENTIST);
-	        addNewCards(3, Card.VERB, Card.GIVES);
-	        addNewCards(3, Card.VERB, Card.LOSES);
-	        addNewCards(3, Card.VERB, Card.GETS);
-	        addNewCards(2, Card.OBJECT, Card.CARD, 1);
-	        addNewCards(2, Card.OBJECT, Card.CARD, 2);
-	        addNewCards(2, Card.OBJECT, Card.MONIE, 1);
-	        addNewCards(2, Card.OBJECT, Card.MONIE, 2);
-	        addNewCards(2, Card.OBJECT, Card.MONIE, 3);
-	        addNewCards(1, Card.OBJECT, Card.MONIE, 4);
-	        addNewCards(2, Card.WHEN, Card.START_TURN);
-	        addNewCards(2, Card.WHEN, Card.USE_ABILITY);
-            addNewCards(1, Card.WHEN, Card.CREATE_LAW);
-            */
         }
     }
     
@@ -145,7 +100,7 @@ public class Deck extends Component
      */
     public function setup () :void
     {
-        shuffle(cards);
+        ArrayUtil.shuffle(cards);
         _ctx.eventHandler.setData(DECK_DATA, cards);
     }
     
@@ -166,7 +121,8 @@ public class Deck extends Component
     
     /**
      * Fetch an array of numCards cards for a starting hand.  Massage it so that it contains
-     * at least two subjects, one object and one verb.     */
+     * at least two subjects, one object and one verb.
+     */
     public function drawStartingHand (numCards :int) :Array
     {
     	var numSubjects :int = 0;
@@ -211,7 +167,6 @@ public class Deck extends Component
     		}
     	}
     	
-    	
     	// tough luck, there weren't enough subjects/objects/verbs left in the deck
     	var missingCardsNum :int = numCards - cardArray.length;
     	if (missingCardsNum > 0) {
@@ -221,8 +176,8 @@ public class Deck extends Component
     	}
     	
     	// shuffle the hand and deck again afterwards
-    	shuffle(cardArray);
-    	shuffle(cards);
+    	ArrayUtil.shuffle(cardArray);
+    	ArrayUtil.shuffle(cards);
         updateDisplay();
         _ctx.eventHandler.setData(DECK_DATA, cards);
         
@@ -234,10 +189,18 @@ public class Deck extends Component
      */
     override protected function initDisplay () :void
     {
-        graphics.clear();
-        graphics.beginFill(0xFF55EE);
-        graphics.drawRect(0, 0, 40, 60);
-        graphics.endFill();
+		var bground :Sprite = new Content.CARD_BACK();
+		addChild(bground);
+		
+		numCardText = Content.defaultTextField(1.5);
+		numCardText.width = 60;
+		numCardText.height = 30;
+		numCardText.x = 8;
+		numCardText.y = 3;
+		var format :TextFormat = numCardText.defaultTextFormat;
+		format.color = 0xFFFFFF;
+		numCardText.defaultTextFormat = format;
+		addChild(numCardText);
     }
     
     /**
@@ -245,7 +208,7 @@ public class Deck extends Component
      */
     override protected function updateDisplay () :void
     {
-    	title.text = "Deck[" + cards.length + "]";
+    	numCardText.text = cards.length + "";
     }
     
     /**
@@ -260,7 +223,7 @@ public class Deck extends Component
      * Called when the deck contents change on the server.
      * TODO can one assume, after the first turn, that a card was drawn?
      */
-    protected function deckChanged (event :PropertyChangedEvent) :void
+    protected function deckChanged (event :DataChangedEvent) :void
     {
         cards = _ctx.eventHandler.getData(DECK_DATA) as Array;
         updateDisplay();
@@ -269,14 +232,15 @@ public class Deck extends Component
     /**
      * Called when the player jobs array changes on the server.
      */
-    protected function jobsChanged (event :PropertyChangedEvent) :void
+    protected function jobsChanged (event :DataChangedEvent) :void
     {
-        if (event.index != -1) {
-            playerJobs[event.index] = event.newValue;
-        }
-        else {
+    	if (event.index > -1) {
+    		playerJobs[event.index] = event.newValue;
+    	}
+    	else {
             playerJobs = _ctx.eventHandler.getData(JOBS_DATA) as Array;
-        }
+    	}
+            
     }
     
     /**
@@ -290,22 +254,6 @@ public class Deck extends Component
             var card :Card = new Card(_ctx, cardId, cardGroup, cardType, cardValue);
             cardObjects.push(card);
             cards.push(cardId);
-        }
-    }
-    
-    /**
-     * Randomize the order of the objects in a given array
-     */
-    protected function shuffle (array :Array) :void
-    {
-    	if (array == null || array.length == 0) {
-    		return;
-    	}
-        for (var i :int = 0; i < array.length; i++) {
-            var valueAtI :* = array[i];
-            var randomNum :int = Math.round(Math.random() * (array.length-1));
-            array[i] = array[randomNum];
-            array[randomNum] = valueAtI;
         }
     }
         
@@ -384,33 +332,21 @@ public class Deck extends Component
             return;
         }
         playerJobs[player.id] = job.id;
-        //job.player = player;
         player.job = job;
         _ctx.eventHandler.setData(JOBS_DATA, job.id, player.id);
         
         // job was on another player; assign old job to other player
         if (oldJob != null && oldPlayer != null) {
             playerJobs[oldPlayer.id] = oldJob.id;
-            //oldJob.player = oldPlayer;
             oldPlayer.job = oldJob;
             _ctx.eventHandler.setData(JOBS_DATA, oldJob.id, oldPlayer.id);
             _ctx.broadcast(player.playerName + " swapped jobs with " + oldPlayer.playerName);
         }
         else if (oldPlayer == null) {
-        	//if (duringSetup) {
-        	//	_ctx.broadcast(player.playerName + " drew " + player.job);
-        	//}
-        	//else {
         	if (!duringSetup) {
         	   _ctx.broadcast(player.playerName + " became " + player.job);
         	}
         }
-        
-        // nobody to give the old job; clear this player from it
-        //if (oldJob != null && oldPlayer == null) {
-//_ctx.log("clearing player from old job");
-        //    oldJob.player = null;
-        //}
     }
     
     /**
@@ -434,7 +370,8 @@ public class Deck extends Component
     }
     
     /**
-     * Given a job, return the player who has that job, or null if nobody does     */
+     * Given a job, return the player who has that job, or null if nobody does
+     */
     public function getPlayerByJob (job :Job) :Player
     {
     	if (job == null) {
@@ -452,6 +389,9 @@ public class Deck extends Component
      * TODO synchronize this or remove it - do we need to track this?
      */
     public var discardPile :CardContainer;
+	
+	/** Displays the number of cards in the deck */
+	protected var numCardText :TextField;
     
     /** Array of card indexes still in the deck */
     protected var cards :Array = new Array();

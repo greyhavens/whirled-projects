@@ -4,6 +4,7 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
 import flash.events.MouseEvent;
+
 import lawsanddisorder.Context;
 
 /**
@@ -52,7 +53,8 @@ public class CardContainer extends Component
         	}
         	else {
         		if (numChildren < insertIndex) {
-        			_ctx.log("WTF Card insert at " + insertIndex + " with " + numChildren + " children.");
+					// TODO how does this happen and can it be prevented?
+        			//_ctx.log("WTF Card insert at " + insertIndex + " with " + numChildren + " children.");
         			addChild(card);
         		}
         		else {
@@ -135,15 +137,45 @@ public class CardContainer extends Component
      */
     public function getSerializedCards () :Object
     {
-        return cardIds;
+    	return cardIds;
+/*
+        if (cardIds == null) {
+        	_ctx.log("WTF cardIds is null in CardContainer.getSerializedCards");
+        	return "";
+        }
+    	if (cardIds.length == 0) {
+_ctx.log("no cards in getSerializedCards");    		
+    		return "";
+    	}
+        
+        var serializedCards :String = cardIds[0];
+        for (var i :int = 1; i < cardIds.length; i++) {
+        	serializedCards += "," + cardIds[i];
+        }
+_ctx.log("get serialized cards: " + serializedCards);        
+        return serializedCards;
+*/
     }
     
     /**
      * Set cards from a serialized list from other players, then update the card display
      * TODO don't set serialized cards if this is the player who changed them
+     * TODO inefficient but simple - fix?
      */
     public function setSerializedCards (serializedCards :Object) :void
     {
+    	if (serializedCards == null) {
+    		_ctx.log("WTF serializedCards is null in CardContainer.setSerializedCards");
+    		return;
+    	}
+//_ctx.log("set serialized cards: " + (serializedCards as String));
+//    	var newCardIds :Array = serializedCards.split(",");
+//_ctx.log("set serialized len: " + newCardIds.length);
+/*
+_ctx.log("\n\nSET serialized cards : " + serializedCards);
+_ctx.log("old cardsids: " + cardIds);
+_ctx.log("old cards: " + cards);
+
     	var newCardIds :Array = serializedCards as Array;
         for (var i :int = 0; i < newCardIds.length; i++) {
         	
@@ -170,16 +202,40 @@ public class CardContainer extends Component
                 newCard.cardContainer = this;
                         	    
         	    // remove old card as child only if array doesn't contain it anymore
-                if (contains(oldCard) && cardIds.indexOf(oldCard) >= 0) {
+                if (contains(oldCard) && cardIds.indexOf(oldCard.id) < 0) {
                     removeChild(oldCard);
                 }
         	}
         }
         
         // truncate the cards arrays if required
-        if (cardIds.length > serializedCards.length) {
-        	cardIds.length = serializedCards.length;
-        	cards.length = serializedCards.length;
+        if (cardIds.length > newCardIds.length) {
+        	_ctx.log("cardIds longer: " + cardIds.length + " than: " + newCardIds.length);
+        	for (var j :int = newCardIds.length; j < cardIds.length; j++) {
+        		
+        		var extraOldCard :Card = cards[j];
+        		_ctx.log("removing card : " + extraOldCard);
+                if (contains(extraOldCard) && cardIds.indexOf(extraOldCard.id) < 0) {
+                	_ctx.log("removing child extra old card");
+                    removeChild(extraOldCard);
+                }
+        	}
+        	cardIds.length = newCardIds.length;
+        	cards.length = newCardIds.length;
+        }
+        */
+        
+        // remove all cards then readd them
+        // won't trigger redisplay or synchronize
+        var oldLength :int = cards.length;
+        for (var oldIndex :int = 0; oldIndex < oldLength; oldIndex++) {
+            removeCard(cards[0]);
+        }
+        
+        var newCardIds :Array = serializedCards as Array;
+        for (var i :int = 0; i < newCardIds.length; i++) {
+            var card :Card = _ctx.board.deck.getCard(newCardIds[i]);
+            addCard(card);
         }
         
         updateDisplay();
@@ -259,6 +315,6 @@ public class CardContainer extends Component
     protected var cardIds :Array = new Array();
     
     /** distance between the left edges of cards */
-    protected static const CARD_SPACING_X :int = 55;
+    protected static const CARD_SPACING_X :int = 57;
 }
 }

@@ -5,9 +5,11 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
 import flash.events.MouseEvent;
+
+import com.whirled.game.MessageReceivedEvent;
+import com.whirled.game.StateChangedEvent;
+
 import lawsanddisorder.Context;
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.StateChangedEvent;
 
 /**
  * Displays in-game messages to the player

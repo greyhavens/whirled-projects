@@ -3,9 +3,11 @@
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.events.MouseEvent;
-import lawsanddisorder.Context;
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.MessageReceivedEvent;
+import flash.utils.Dictionary;
+
+import com.whirled.game.MessageReceivedEvent;
+
+import lawsanddisorder.*;
 
 /**
  * Area filled with laws
@@ -18,42 +20,75 @@ public class Laws extends Component
     public static const ENACT_LAW :String = "enactLaw";
     public static const ENACT_LAW_DONE :String = "enactLawDone";
     
+    /** Message sent when new law added, value is list of cards */
+    public static const NEW_LAW :String = "newLaw";
+    
     /**
      * Constructor
      */
     public function Laws (ctx :Context)
     {
-        ctx.eventHandler.addPropertyListener(LAWS_DATA, lawsChanged);
-        ctx.eventHandler.addMessageListener(ENACT_LAW, lawEnacted);
+        ctx.eventHandler.addDataListener(LAWS_DATA, lawsChanged);
+        ctx.eventHandler.addMessageListener(ENACT_LAW, enactLaw);
+        ctx.eventHandler.addMessageListener(NEW_LAW, addNewLaw);
         super(ctx);
     }
     
     /**
+     * Some player just created a new law.  Create a new law component with the event value
+     * as its cards, and add it to our array.  Next enact the law if applicable, then begin
+     * triggering laws that have "when a new law is created".     */
+    public function addNewLaw (event :MessageReceivedEvent) :void
+    {
+    	var law :Law = new Law(_ctx, numLaws);
+    	//_ctx.log("NEW law got serialized: " + event.value);
+    	law.setSerializedCards(event.value);
+    	addLaw(law);
+    	law.setDistributedLawData();
+    	
+    	// player whose turn it is starts law triggering
+        if (_ctx.board.isMyTurn()) {
+	    	if (law.when == -1) {
+	            // to avoid multiple laws enacting at once, wait until this one is done before
+	            // searching for laws that trigger on CREATE_LAW.
+	            _ctx.eventHandler.addMessageListener(ENACT_LAW_DONE, newLawEnacted);
+	            _ctx.sendMessage(ENACT_LAW, law.id);
+	        }
+	        else {
+	            triggerWhen(Card.CREATE_LAW);
+	        }
+        }
+    }
+    
+    /*
      * Player just created this law; distribute it to everyone.  Connect a temporary listener
      * so we will know when the data has been recieved by the server and we can send the 
      * command to enact the new law.
-     */
+     *
     public function addNewLaw (law :Law) :void
     {
         if (law.id != laws.length) {
             _ctx.log("WTF new law id: " + law.id + " is not equals to laws.length.");
         }
-        _ctx.eventHandler.addPropertyListener(LAWS_DATA, newLawAdded);
-        _ctx.eventHandler.setData(Laws.LAWS_DATA, law.getSerializedCards(), law.id);
+        _ctx.eventHandler.addDataListener(LAWS_DATA, newLawAdded, law.id);
+        
+        // TODO this is the second time we set the law data - what to do..
+        // TODO is this law thrown out here?
+        law.setDistributedLawData();
     }
+    */
 
-    /**
+    /*
      * Called when the data for a new law we created comes back.  Now that the server has the
      * card data for it, send a message to every player to enact the law.
-     * 
-     * TODO what about the case of create a law then modify a law; if modify message gets there
-     * first we're going to disconnect the handler prematurely??
-     * 
-     * TODO cards are being set twice - prevent this?
-     */
-    protected function newLawAdded (event :PropertyChangedEvent) :void
+     *
+     *
+    protected function newLawAdded (event :DataChangedEvent) :void
     {
-        _ctx.eventHandler.removePropertyListener(LAWS_DATA, newLawAdded);
+        _ctx.eventHandler.removeDataListener(LAWS_DATA, newLawAdded, event.index);
+        
+        // TODO this is also called by the law when it catches this event - fix?
+        updateLawData(event.index, event.newValue);
         
         // enact the new law only if it contains no WHEN card
         // law already exists because we know this is the player who created it
@@ -66,12 +101,13 @@ public class Laws extends Component
             // to avoid multiple laws enacting at once, wait until this one is done before
             // searching for laws that trigger on CREATE_LAW.
             _ctx.eventHandler.addMessageListener(ENACT_LAW_DONE, newLawEnacted);
-           _ctx.sendMessage(ENACT_LAW, event.index);
+            _ctx.sendMessage(ENACT_LAW, event.index);
         }
         else {
             _ctx.board.laws.triggerWhen(Card.CREATE_LAW);
         }
     }
+    */
     
     /**
      * Called when a new law is successfully enacted.  Now scroll through all the laws and
@@ -80,7 +116,7 @@ public class Laws extends Component
     protected function newLawEnacted (event :MessageReceivedEvent) :void
     {
         _ctx.eventHandler.removeMessageListener(ENACT_LAW_DONE, newLawEnacted);
-        _ctx.board.laws.triggerWhen(Card.CREATE_LAW);
+        triggerWhen(Card.CREATE_LAW);
     }
     
     /**
@@ -103,7 +139,7 @@ public class Laws extends Component
         	arrangeLaws();
         }
         else {
-            law.y = (laws.length - 1) * 25;
+            law.y = (laws.length - 1) * LAW_SPACING_Y;
         }
     }
     
@@ -115,7 +151,7 @@ public class Laws extends Component
         // position the laws vertically
         for (var i :int = oldestLawId; i < laws.length; i++) {
             var law :Law = laws[i];
-            law.y = (i - oldestLawId) * 25;
+            law.y = (i - oldestLawId) * LAW_SPACING_Y;
         }
     }
     
@@ -131,7 +167,7 @@ public class Laws extends Component
      * Called when a law is triggered.  Event value is the index of the triggered law.
      * Get the law card set from the server to make sure we have the newest version first.
      */
-    protected function lawEnacted (event :MessageReceivedEvent) :void
+    protected function enactLaw (event :MessageReceivedEvent) :void
     {
         var lawId :int = event.value as int;
         updateLawData(lawId);
@@ -175,7 +211,7 @@ public class Laws extends Component
     /**
      * Handles when laws data changes
      */
-    protected function lawsChanged (event :PropertyChangedEvent) :void
+    protected function lawsChanged (event :DataChangedEvent) :void
     {
         if (event.index != -1) {
             updateLawData(event.index, event.newValue);
@@ -194,7 +230,7 @@ public class Laws extends Component
         _ctx.eventHandler.addMessageListener(ENACT_LAW_DONE, triggeringWhen);
         
         // kick off the loop through laws with a dummy event (oldestLawId-1 is the last law enacted).
-        var dummyEvent :MessageReceivedEvent = new MessageReceivedEvent(null, ENACT_LAW_DONE, oldestLawId-1);
+        var dummyEvent :MessageReceivedEvent = new MessageReceivedEvent(ENACT_LAW_DONE, oldestLawId-1);
         triggeringWhen(dummyEvent);
     }
     
@@ -234,8 +270,12 @@ public class Laws extends Component
     
     /** Array of laws */
     protected var laws :Array = new Array();
+    //protected var laws :Dictionary = new Dictionary();
     
     /** Maximum number of laws; if another is added the first one will disappear */
     protected var MAX_LAWS :int = 10;
+    
+    /** Number of pixels between laws */
+    protected var LAW_SPACING_Y :int = 32;
 }
 }

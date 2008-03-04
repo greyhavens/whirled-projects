@@ -1,4 +1,4 @@
-package lawsanddisorder {
+﻿package lawsanddisorder {
 
 import flash.events.MouseEvent;
 import flash.display.DisplayObject;
@@ -6,10 +6,10 @@ import flash.geom.Point;
 import flash.utils.Timer;
 import flash.events.TimerEvent;
 
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.PropertyChangedEvent;
+import com.whirled.game.MessageReceivedEvent;
+import com.whirled.game.PropertyChangedEvent;
 import com.threerings.util.HashMap;
-import com.whirled.WhirledGameControl;
+
 import lawsanddisorder.component.*;
 
 /**
@@ -132,7 +132,9 @@ public class State
      */
     private function startDragging (card :Card) :void
     {
-        card.startDrag(true);
+        //card.startDrag(true);
+        card.startDrag(false);
+        card.dragging = true;
         card.addEventListener(MouseEvent.MOUSE_MOVE, draggingCard);
         activeCard = card;
         
@@ -147,7 +149,7 @@ public class State
      */
     protected function draggingCard (event :MouseEvent) :void
     {
-        var card :Card = Card(event.target);
+    	var card :Card = Card(getParent(DisplayObject(event.target), Card));
         
         // Shift cards around in hand and new law
         if (mode == MODE_DEFAULT) {
@@ -235,15 +237,16 @@ public class State
     {
     	var card :Card = Card(getParent(DisplayObject(event.target), Card));
         if (!card.dragging) {
+			// When releasing over a card we weren't dragging
+        	//_ctx.log("WTF not dragging that card.");
             return;
         }
-
         card.stopDrag();
+        card.dragging = false;
         card.removeEventListener(MouseEvent.MOUSE_MOVE, draggingCard);
     
         // normally you can drag cards onto new laws, onto job, or rearrange in your hand.
-        if (mode == MODE_DEFAULT) {
-            
+        if (mode == MODE_DEFAULT) {            
             if (_performingAction) {
             	_ctx.log("WTF dropping card while performing an action");
                 returnCard(card);
@@ -252,14 +255,56 @@ public class State
             
             var dropTarget :DisplayObject = DisplayObject(getParent(card.dropTarget, DisplayObject));
             if (dropTarget == null) {
+//_ctx.log("no drop target.");
                 returnCard(card);
                 return;
             }
-
+//_ctx.log("dropping card on " + dropTarget);
             var mousePosition :Point = new Point(event.stageX, event.stageY);
+			
+			//if (_ctx.board.player.hand.hitTestPoint(event.stageX, event.stageY)) {
+//_ctx.log("hit test on hand");				
+			//}
+            
+			//if (_ctx.board.newLaw.hitTestPoint(event.stageX, event.stageY)) {
+//_ctx.log("hit test on new law");				
+			//}
+			/*
+            if (event.target == _ctx.board.player.hand) {
+				_ctx.log("event is hand");
+			}
+			if (_ctx.board.player.hand.isTarget(event.target)) {
+				_ctx.log("hand istarget.");
+			}
+			*/
+            
+            // drop card in hand
+            //if (_ctx.board.player.hand.isTarget(dropTarget)) {
+			// TODO dropTarget doesn't work with hidden hitArea, but hitTestPoint does - why?
+			if (_ctx.board.player.hand.hitTestPoint(event.stageX, event.stageY)) {
+			//if (_ctx.board.player.hand.hitTestPoint(mousePosition)) {
+//_ctx.log("dropping card in hand.");
+                _ctx.board.removeCard(card);
+                var handCardIndex :int = _ctx.board.player.hand.getCardIndexByPoint(mousePosition);				
+//_ctx.log("dropping card at point " + handCardIndex);				
+                if (card.cardContainer == _ctx.board.player.hand) {
+                	// moved card around inside hand, do not distribute
+                    _ctx.board.player.hand.addCards(new Array(card), false, handCardIndex);
+                }
+                else {
+                	// moved card from newlaw to hand, do not distribute
+                    card.cardContainer.removeCards(new Array(card), false);
+                    _ctx.board.player.hand.addCards(new Array(card), false, handCardIndex);
+                }
+                return;
+            }
             
             // drop card in a new law
             if (_ctx.board.newLaw.isTarget(dropTarget)) {
+			//else if (_ctx.board.newLaw.hitTestPoint(event.stageX, event.stageY)) {
+				if (!_ctx.board.contains(_ctx.board.newLaw)) {
+					return;
+				}
                 if (!_ctx.control.game.isMyTurn()) {
                     _ctx.notice("It's not your turn.");
                     returnCard(card);
@@ -283,27 +328,12 @@ public class State
                 }
                 return;
             }
-            
-            // drop card in hand
-            else if (_ctx.board.player.hand.isTarget(dropTarget)) {
-                _ctx.board.removeCard(card);
-                var handCardIndex :int = _ctx.board.player.hand.getCardIndexByPoint(mousePosition);
-                if (card.cardContainer == _ctx.board.player.hand) {
-                	// moved card around inside hand, do not distribute
-                    _ctx.board.player.hand.addCards(new Array(card), false, handCardIndex);
-                }
-                else {
-                	// moved card from newlaw to hand, do not distribute
-                    card.cardContainer.removeCards(new Array(card), false);
-                    _ctx.board.player.hand.addCards(new Array(card), false, handCardIndex);
-                }
-                return;
-            }
-            
+			
             // change job by dragging a subject onto the job area
             // TODO job gets disabled twice: inefficient
             // TODO can this logic be moved to job?
             else if (_ctx.board.player.job.isTarget(dropTarget)) {
+			//else if (_ctx.board.player.job.hitTestPoint(event.stageX, event.stageY)) {
                 if (card.group == Card.SUBJECT) {
 	                if (!_ctx.control.game.isMyTurn()) {
 	                    _ctx.notice("It's not your turn.");
@@ -363,7 +393,7 @@ public class State
                 _ctx.log("WTF target index is -1 when exchanging cards");
             }
             _ctx.board.removeCard(card);
-            targetLaw.removeCards(new Array(targetCard));
+            targetLaw.removeCards(new Array(targetCard), false);
             targetLaw.addCards(new Array(card), true, targetIndex);
             _ctx.board.player.hand.addCards(new Array(targetCard));
             
@@ -384,6 +414,7 @@ public class State
             }
             // add when to the end of the law
             _ctx.board.removeCard(card);
+            card.cardContainer.removeCards(new Array(card));
             whenlessLaw.addCards(new Array(card));
             
             // select law so listener function knows what happened
@@ -496,6 +527,7 @@ public class State
             selectedCards = new Array();
             selectedGoal = 0;
             listener();
+			return;
         }
         
         // force player to select all cards in hand.
@@ -686,7 +718,8 @@ public class State
     
     /**
      * Finished getting user input; reset to default mode but keep selected cards/opponents/laws,
-     * then call the listener function that is waiting for the mode to complete.     */
+     * then call the listener function that is waiting for the mode to complete.
+     */
     public function doneMode () :void
     {
         setModeReminder(null);
@@ -699,7 +732,8 @@ public class State
     /**
      * Set a timer to display a reminder notice after every 10 seconds in the mode.  If message
      * is null, instead cancel the notice timer.
-     * TODO add listener for 4th reminder, eg pick a random card or opponent     */
+     * TODO add listener for 4th reminder, eg pick a random card or opponent
+     */
     protected function setModeReminder (message :String, reminderNum :int = 1) :void
     {
     	if (message == null && modeReminderTimer != null) {
@@ -712,6 +746,7 @@ public class State
     		reminderText = "We're waiting for you.  ";
     		if (modeReminderTimer != null) {
                 _ctx.log("WTF mode reminder timer is not null - continuing");
+                modeReminderTimer.stop();
             }
     	}
     	else if (reminderNum == 2) {

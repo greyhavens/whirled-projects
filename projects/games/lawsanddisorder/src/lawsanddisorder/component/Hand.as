@@ -4,8 +4,8 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
 import flash.events.MouseEvent;
-import lawsanddisorder.Context;
-import com.threerings.ezgame.PropertyChangedEvent;
+
+import lawsanddisorder.*;
 
 /**
  * Container for a player's cards.
@@ -21,7 +21,7 @@ public class Hand extends CardContainer
     public function Hand (ctx :Context, player :Player)
     {
         this.player = player;
-        ctx.eventHandler.addPropertyListener(HAND_DATA, handsChanged);
+        ctx.eventHandler.addDataListener(HAND_DATA, handChanged, player.id);
         super(ctx);
     }
     
@@ -35,29 +35,6 @@ public class Hand extends CardContainer
     }
     
     /**
-     * Draw the hand area and cards
-     */
-    override protected function initDisplay () :void
-    {
-        // background doesn't recieve onclick, etc mouse messages
-        mouseEnabled = false;
-        graphics.beginFill(0x55FFEE);
-        graphics.drawRect(-10, 0, 680, 80);
-        graphics.endFill();
-        
-        removeChild(title);
-        
-        // TODO use a hitmap so graphics can be one big image in Board
-        //var hitmap :Sprite = new Sprite();
-        // draw the hand bg
-        //graphics.clear();
-        //hitmap.graphics.beginFill(0x55FFEE);
-        //hitmap.graphics.drawRect(-10, 0, 680, 80);
-        //hitmap.graphics.endFill();
-        //this.hitArea = hitmap;
-    }
-    
-    /**
      * Rearrange hand when cards are added or subtracted
      */
     override protected function updateDisplay () :void
@@ -68,7 +45,8 @@ public class Hand extends CardContainer
     /*
      * TODO fix issue with this and use it instead of discard down?
      *      Issue is this function doesn't block other players from doing things that interfere
-     * Override addCards to force discard first if too many cards in hand     *
+     * Override addCards to force discard first if too many cards in hand
+     *
     override public function addCards (cardArray :Array, distribute :Boolean = true, insertIndex :int = -1) :void
     {
     	var discardNum :int = cards.length + cardArray.length - MAX_HAND_SIZE;
@@ -111,6 +89,20 @@ public class Hand extends CardContainer
         	_ctx.eventHandler.endGame();
         }
     }
+	
+	/**
+	 * Return true if the global coordinates are within the area of the hand.
+	 */
+	override public function hitTestPoint(x:Number, y:Number, shapeFlag:Boolean = false) :Boolean
+	{
+		// Bounding region is 0, 0, 690, 90
+		var globalPoint :Point = new Point(x, y);
+		var localPoint :Point = globalToLocal(globalPoint);
+		if (localPoint.x >= 0 && localPoint.y >= 0 && localPoint.x <= 690 &&  localPoint.y <= 90) {
+			return true;
+		}
+		return false;
+	}
     
     /**
      * Called whenever distributed card data needs updating
@@ -122,7 +114,8 @@ public class Hand extends CardContainer
     
     /**
      * Public function to allow setting distributed hand data
-     * TODO make setDistributedData public or find another solution     */
+     * TODO make setDistributedData public or find another solution
+     */
     public function setDistributedHandData () :void
     {
     	setDistributedData();
@@ -135,7 +128,12 @@ public class Hand extends CardContainer
     {
         var localPoint :Point = globalToLocal(point);
         // cards are spaced CARD_SPACING_X apart starting at 0
-        var index :int = Math.floor(localPoint.x / CARD_SPACING_X);
+    	var cardSpacingX :int = CARD_SPACING_X;
+		var numCards :int = (point == null) ? cards.length : cards.length + 1;
+    	if (numCards > (MAX_HAND_SIZE)) {
+    		cardSpacingX = ((MAX_HAND_SIZE) * CARD_SPACING_X) / numCards;
+    	}
+        var index :int = Math.floor(localPoint.x / cardSpacingX);
         if (index < 0) {
         	index = 0;
         }
@@ -147,6 +145,7 @@ public class Hand extends CardContainer
     
     /**
      * Shift cards out of the way as another card is being dragged over them.
+	 * TODO move this to CardContainer for both Hand and NewLaw
      */
     override public function arrangeCards (point :Point = null) :void
     {
@@ -155,8 +154,9 @@ public class Hand extends CardContainer
     	
     	// adjust the spacing depeding on the number of cards
     	var cardSpacingX :int = CARD_SPACING_X;
-    	if (cards.length > MAX_HAND_SIZE) {
-    		cardSpacingX = (MAX_HAND_SIZE * CARD_SPACING_X) / cards.length;
+		var numCards :int = (point == null) ? cards.length : cards.length + 1;
+    	if (numCards > (MAX_HAND_SIZE)) {
+    		cardSpacingX = ((MAX_HAND_SIZE) * CARD_SPACING_X) / numCards;
     	}
     	
     	// if no point is supplied, arrange as normal.
@@ -189,11 +189,9 @@ public class Hand extends CardContainer
      * Handler for changes to distributed hand data.  If it's data for this hand,
      * update the hand display.
      */
-    protected function handsChanged (event :PropertyChangedEvent) :void
+    protected function handChanged (event :DataChangedEvent) :void
     {
-        if (event.index == player.id) {
-            setSerializedCards(event.newValue);
-        }
+        setSerializedCards(event.newValue);
     }
     
     /**
