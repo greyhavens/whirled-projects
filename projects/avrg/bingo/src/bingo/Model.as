@@ -7,6 +7,7 @@ import flash.events.EventDispatcher;
 [Event(name="newRound", type="bingo.SharedStateChangedEvent")]
 [Event(name="newBall", type="bingo.SharedStateChangedEvent")]
 [Event(name="playerWonRound", type="bingo.SharedStateChangedEvent")]
+[Event(name="newScores", type="bingo.SharedStateChangedEvent")]
     
 public class Model extends EventDispatcher
 {
@@ -28,6 +29,11 @@ public class Model extends EventDispatcher
         return _curState;
     }
     
+    public function get curScores () :Scoreboard
+    {
+        return _curScores;
+    }
+    
     public function get card () :BingoCard
     {
         return _card;
@@ -45,9 +51,14 @@ public class Model extends EventDispatcher
         throw new Error("subclasses must override trySetNewState()");
     }
     
-    public function callBingo () :void
+    public function trySetNewScores (newScores :Scoreboard) :void
     {
-        throw new Error("subclasses must override callBingo()");
+        throw new Error("subclasses must override trySetNewScores()");
+    }
+    
+    public function tryCallBingo () :void
+    {
+        throw new Error("subclasses must override tryCallBingo()");
     }
     
     /* private state mutators */
@@ -75,8 +86,15 @@ public class Model extends EventDispatcher
         }
     }
     
+    protected function setScores (newScores :Scoreboard) :void
+    {
+        _curScores = newScores;
+        this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_SCORES));
+    }
+    
     // shared state
     protected var _curState :SharedState = new SharedState();
+    protected var _curScores :Scoreboard = new Scoreboard();
     
     // local state
     protected var _card :BingoCard;

@@ -4,13 +4,13 @@ import flash.geom.Point;
     
 public class Constants
 {
-    public static const ALLOW_CHEATS :Boolean = false;
+    public static const ALLOW_CHEATS :Boolean = true;
     
     // cosmetic bits
     public static const CARD_LOC :Point = new Point(10, 10);
     public static const BALL_LOC :Point = new Point(400, 150);
     public static const BINGO_BUTTON_LOC :Point = new Point(400, 300);
-    public static const QUIT_BUTTON_LOC :Point = new Point(400, 400);
+    public static const QUIT_BUTTON_LOC :Point = new Point(400, 360);
     public static const WINNER_TEXT_LOC :Point = new Point(50, 400);
     public static const SCOREBOARD_LOC :Point = new Point(500, 10);
     
@@ -139,6 +139,7 @@ public class Constants
     
     // network bits
     public static const PROP_STATE :String = "state";
+    public static const PROP_SCORES :String = "scores";
     public static const MSG_REQUEST_BINGO :String = "r_bingo";
 
 }

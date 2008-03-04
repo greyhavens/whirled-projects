@@ -23,6 +23,12 @@ public class OnlineModel extends Model
         if (null != stateBytes) {
             _curState = SharedState.fromBytes(stateBytes);
         }
+        
+        // read current scores
+        var scoreBytes :ByteArray = (_stateControl.getProperty(Constants.PROP_SCORES) as ByteArray);
+        if (null != scoreBytes) {
+            _curScores = Scoreboard.fromBytes(scoreBytes);
+        }
     }
     
     override public function destroy () :void
@@ -31,7 +37,7 @@ public class OnlineModel extends Model
         _stateControl.removeEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propChanged);
     }
     
-    override public function callBingo () :void
+    override public function tryCallBingo () :void
     {
         // in a network game, calling bingo doesn't necessarily
         // mean we've won the round. someone might get in before
@@ -67,6 +73,35 @@ public class OnlineModel extends Model
         _stateControl.setProperty(Constants.PROP_STATE, newState.toBytes(), false);
         
         _lastStateRequest = newState.clone();
+    }
+    
+    override public function trySetNewScores (newScores :Scoreboard) :void
+    {
+        // ignore state changes from non-authoritative clients
+        if (!BingoMain.control.hasControl()) {
+            BingoMain.log.info("ignoring scores change request from non-authoritative client");
+            return;
+        }
+        
+        // have we already seen this state change request?
+        // (controllers are allowed to keep calling this function until
+        // something happens, so ignore duplicate requests)
+        if (null != _lastScoresRequest && _lastScoresRequest.isEqual(newScores)) {
+            BingoMain.log.info("ignoring duplicate score change request");
+            return;
+        }
+        
+        // is the state actually being changed?
+        if (newScores.isEqual(_curScores)) {
+            BingoMain.log.info("ignoring redundant score change request");
+            return;
+        }
+        
+        BingoMain.log.info("accepting score change request");
+        
+        _stateControl.setProperty(Constants.PROP_SCORES, newScores.toBytes(), false);
+        
+        _lastScoresRequest = newScores.clone();
     }
     
     protected function messageReceived (e :AVRGameControlEvent) :void
@@ -126,6 +161,9 @@ public class OnlineModel extends Model
             switch (e.name) {
                 
             case Constants.MSG_REQUEST_BINGO:
+                // @TODO - this logic should be moved out of
+                // OnlineModel and into Controller
+                
                 // turn the first bingo request we see
                 // into a confirmation
                 var bits :Array = e.value as Array;
@@ -160,6 +198,11 @@ public class OnlineModel extends Model
             this.setState(newState);
             break;
             
+        case Constants.PROP_SCORES:
+            var newScores :Scoreboard = Scoreboard.fromBytes(e.value as ByteArray);
+            this.setScores(newScores);
+            break;
+            
         default:
             BingoMain.log.warning("unrecognized property: " + e.name);
             break;
@@ -168,6 +211,7 @@ public class OnlineModel extends Model
     
     protected var _stateControl :StateControl;
     protected var _lastStateRequest :SharedState;
+    protected var _lastScoresRequest :Scoreboard;
     protected var _bingoCalledThisRound :Boolean;
     
     protected var _requestMessageQueue :Array = [];

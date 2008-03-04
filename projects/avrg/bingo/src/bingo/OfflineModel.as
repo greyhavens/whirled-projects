@@ -10,7 +10,12 @@ public class OfflineModel extends Model
         this.setState(newState);
     }
     
-    override public function callBingo () :void
+    override public function trySetNewScores (newScores :Scoreboard) :void
+    {
+        this.setScores(newScores);
+    }
+    
+    override public function tryCallBingo () :void
     {
         var newState :SharedState = _curState.clone();
         newState.roundWinningPlayerId = BingoMain.ourPlayerId;

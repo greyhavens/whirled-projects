@@ -1,7 +1,5 @@
 package bingo {
     
-import com.threerings.util.ArrayUtil;
-
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.text.TextField;
@@ -9,35 +7,19 @@ import flash.text.TextFieldAutoSize;
 
 public class ScoreboardView extends Sprite
 {
-    public function ScoreboardView ()
+    public function ScoreboardView (scoreboard :Scoreboard)
     {
+        _scoreboard = scoreboard;
+        
         this.mouseEnabled = false;
         this.mouseChildren = false;
         
         this.updateView();
     }
     
-    public function setScore (name :String, score :int, date :Date) :void
+    public function set scoreboard (newScoreboard :Scoreboard) :void
     {
-        // does this name already have an entry?
-        var index :int = ArrayUtil.indexIf(_scores, function (score :Score) :Boolean { return score.name == name });
-        
-        if (index >= 0) {
-            var scoreObj :Score = _scores[index];
-            scoreObj.score = score;
-            scoreObj.date = date;
-        } else {
-            _scores.push(new Score(name, score, date));
-        }
-        
-        // sort on score, highest to lowest
-        _scores.sort(Score.compare);
-        
-        // trim to size
-        while (_scores.length > Constants.NUM_SCOREBOARD_NAMES) {
-            _scores.pop();
-        }
-        
+        _scoreboard = newScoreboard;
         this.updateView();
     }
     
@@ -50,7 +32,9 @@ public class ScoreboardView extends Sprite
         _childSprite = new Sprite();
         this.addChild(_childSprite);
         
-        var numRows :int = _scores.length + 1;
+        var scores :Array = (_scoreboard == null ? [] : _scoreboard.scores);
+        
+        var numRows :int = scores.length + 1;
         var height :int = (ROW_HEIGHT * numRows);
         
         var g :Graphics = _childSprite.graphics;
@@ -81,8 +65,8 @@ public class ScoreboardView extends Sprite
         _childSprite.addChild(title);
         
         // draw the scores
-        for (i = 0; i < _scores.length; ++i) {
-            var score :Score = _scores[i];
+        for (i = 0; i < scores.length; ++i) {
+            var score :Score = scores[i];
             
             var nameText :TextField = createTextField(score.name, ROW_WIDTH - SCORE_WIDTH, ROW_HEIGHT);
             var scoreText :TextField = createTextField(score.score.toString(), SCORE_WIDTH, ROW_HEIGHT);
@@ -120,7 +104,7 @@ public class ScoreboardView extends Sprite
         return textField;
     }
     
-    protected var _scores :Array = [];
+    protected var _scoreboard :Scoreboard;
     protected var _childSprite :Sprite;
     
     protected static const ROW_HEIGHT :int = 30;
@@ -128,41 +112,4 @@ public class ScoreboardView extends Sprite
     protected static const SCORE_WIDTH :int = 25;
 }
 
-}
-
-class Score
-{
-    public var name :String;
-    public var score :int;
-    public var date :Date;
-    
-    public function Score (name :String, score :int, date :Date)
-    {
-        this.name = name;
-        this.score = score;
-        this.date = date;
-    }
-    
-    public static function compare (a :Score, b :Score) :int
-    {
-        // compare scores. higher scores come before lower
-        if (a.score > b.score) {
-            return -1;
-        } else if (a.score < b.score) {
-            return 1;
-        } else {
-            
-            // compare dates. newer dates come before older
-            var aTime :Number = a.date.time;
-            var bTime :Number = b.date.time;
-
-            if (aTime < bTime) {
-                return -1;
-            } else if (aTime > bTime) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-    }
 }

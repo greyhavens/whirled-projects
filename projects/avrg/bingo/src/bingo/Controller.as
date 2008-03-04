@@ -33,6 +33,7 @@ public class Controller
         _model.addEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
         _model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
         _model.addEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
+        _model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
         
         _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
         
@@ -58,7 +59,7 @@ public class Controller
         _winnerText.y = Constants.WINNER_TEXT_LOC.y;
         _mainSprite.addChild(_winnerText);
         
-        _scoreboardView = new ScoreboardView();
+        _scoreboardView = new ScoreboardView(_model.curScores);
         _scoreboardView.x = Constants.SCOREBOARD_LOC.x;
         _scoreboardView.y = Constants.SCOREBOARD_LOC.y;
         _mainSprite.addChild(_scoreboardView);
@@ -130,7 +131,7 @@ public class Controller
     protected function handleBingoButtonClick (e :MouseEvent) :void
     {
         if (!_calledBingoThisRound && _model.card.isComplete) {
-            _model.callBingo();
+            _model.tryCallBingo();
             _calledBingoThisRound = true;
             this.updateBingoButton();
         }
@@ -153,6 +154,13 @@ public class Controller
             // be what was requested (this client may not be in control)
             
             _model.trySetNewState(_expectedState);
+        }
+        
+        if (null != _expectedScores) {
+            
+            // see above
+            
+            _model.trySetNewScores(_expectedScores);
         }
     }
     
@@ -230,7 +238,22 @@ public class Controller
         _roundIsOver = true;
         this.updateBingoButton();
         
-        _winnerText.text = BingoMain.getPlayerName(_model.curState.roundWinningPlayerId) + " wins the round!";
+        var playerName :String = BingoMain.getPlayerName(_model.curState.roundWinningPlayerId);
+        
+        _winnerText.text = playerName + " wins the round!";
+        
+        // update scores
+        if (null == _expectedScores) {
+            _expectedScores = _model.curScores.clone();
+        }
+        
+        _expectedScores.incrementScore(playerName, new Date());
+    }
+    
+    protected function handleNewScores (e :SharedStateChangedEvent) :void
+    {
+        _expectedScores = null;
+        _scoreboardView.scoreboard = _model.curScores;
     }
     
     protected function startNewBallTimer () :void
@@ -302,6 +325,7 @@ public class Controller
     
     protected var _model :Model;
     protected var _expectedState :SharedState;
+    protected var _expectedScores :Scoreboard;
     
     protected var _mainSprite :Sprite;
     protected var _cardView :BingoCardView;
