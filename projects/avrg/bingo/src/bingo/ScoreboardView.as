@@ -33,8 +33,9 @@ public class ScoreboardView extends Sprite
         this.addChild(_childSprite);
         
         var scores :Array = (_scoreboard == null ? [] : _scoreboard.scores);
+        var numScores :int = Math.min(scores.length, Constants.NUM_SCOREBOARD_NAMES);
         
-        var numRows :int = scores.length + 1;
+        var numRows :int = numScores + 1;
         var height :int = (ROW_HEIGHT * numRows);
         
         var g :Graphics = _childSprite.graphics;
@@ -65,7 +66,7 @@ public class ScoreboardView extends Sprite
         _childSprite.addChild(title);
         
         // draw the scores
-        for (i = 0; i < scores.length; ++i) {
+        for (i = 0; i < numScores; ++i) {
             var score :Score = scores[i];
             
             var nameText :TextField = createTextField(score.name, ROW_WIDTH - SCORE_WIDTH, ROW_HEIGHT);
