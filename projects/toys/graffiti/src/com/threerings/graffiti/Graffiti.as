@@ -19,9 +19,8 @@ public class Graffiti extends Sprite
     {
         var canvas :Canvas = new Canvas(new FurniControl(this));
         addChild(canvas);
-        var toolBox :ToolBox = canvas.createToolbox();
-        toolBox.x = Canvas.CANVAS_WIDTH;
-        addChild(toolBox);
+        canvas.toolBox.x = Canvas.CANVAS_WIDTH;
+        addChild(canvas.toolBox);
     }
 
     private static function referenceSkins () :void

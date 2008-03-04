@@ -42,7 +42,6 @@ public class Controls extends Tool
         addChild(background);
     }
 
-    protected static const PADDING :int = 5;
     protected static const BUTTON_WIDTH :int = 80;
     protected static const BUTTON_HEIGHT :int = 20;
 

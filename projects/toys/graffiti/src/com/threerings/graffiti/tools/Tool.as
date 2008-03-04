@@ -16,5 +16,7 @@ public class Tool extends Sprite
     {
         return 0;
     }
+
+    protected static const PADDING :int = 5;
 }
 }

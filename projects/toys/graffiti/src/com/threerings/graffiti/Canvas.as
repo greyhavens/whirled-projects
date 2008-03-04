@@ -52,25 +52,22 @@ public class Canvas extends Sprite
         // TODO: temporarily just staying offline while we get the tools sorted out.
         _model = new OfflineModel(this);
         redraw();
-    }
 
-    /**
-     * Creates a ToolBox and attaches listeners to the events this Canvas cares about.  The caller
-     * is responsible for displaying the ToolBox.
-     */
-    public function createToolbox () :ToolBox
-    {
-        var toolBox :ToolBox = new ToolBox(this);
-        toolBox.addEventListener(ToolEvent.COLOR_PICKED, function (event :ToolEvent) :void {
+        _toolBox = new ToolBox(this);
+        _toolBox.addEventListener(ToolEvent.COLOR_PICKED, function (event :ToolEvent) :void {
             _color = event.value as uint;
         });
-        toolBox.addEventListener(ToolEvent.BRUSH_PICKED, function (event :ToolEvent) :void {
+        _toolBox.addEventListener(ToolEvent.BRUSH_PICKED, function (event :ToolEvent) :void {
             _brush = event.value as Brush;
         });
-        toolBox.addEventListener(ToolEvent.BACKGROUND_COLOR, function (event :ToolEvent) :void {
+        _toolBox.addEventListener(ToolEvent.BACKGROUND_COLOR, function (event :ToolEvent) :void {
             _model.setBackgroundColor(event.value as uint);
         });
-        return toolBox;
+    }
+
+    public function get toolBox () :ToolBox
+    {
+        return _toolBox;
     }
 
     public function paintBackground (color :uint) :void
@@ -116,6 +113,11 @@ public class Canvas extends Sprite
 
         _oldDeltaX = to.x - controlX;
         _oldDeltaY = to.y - controlY;
+    }
+
+    public function reportFillPercent (percent :Number) :void
+    {
+        _toolBox.displayFillPercent(percent);
     }
 
     protected function mouseDown (evt :MouseEvent) :void
@@ -195,6 +197,7 @@ public class Canvas extends Sprite
 
     protected var _background :Sprite;
     protected var _canvas :Sprite;
+    protected var _toolBox :ToolBox;
 
     // variables for user input
     protected var _inputKey :String;

@@ -32,6 +32,10 @@ public class ToolBox extends Sprite
         addChild(controls);
         _tools.push(controls);
 
+        _fullDisplay = new FullDisplay();
+        addChild(_fullDisplay);
+        _tools.push(_fullDisplay);
+
         layout();
     }
 
@@ -48,6 +52,11 @@ public class ToolBox extends Sprite
     public function setBackgroundColor (color :uint) :void
     {
         dispatchEvent(new ToolEvent(ToolEvent.BACKGROUND_COLOR, color));
+    }
+
+    public function displayFillPercent (percent :Number) :void
+    {
+        _fullDisplay.fullPercent = percent;
     }
 
     protected function layout () :void
@@ -71,5 +80,6 @@ public class ToolBox extends Sprite
 
     protected var _canvas :Canvas;
     protected var _tools :Array = [];
+    protected var _fullDisplay :FullDisplay;
 }
 }

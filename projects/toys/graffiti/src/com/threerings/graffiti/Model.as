@@ -92,7 +92,8 @@ public class Model
         // a real object for strokes, since we're implementing custom serialization anyway.
         _strokes.put(id, stroke);
 
-        log.debug("current size [" + serialize().length + "]");
+        var bytes :int = serialize().length;
+        _canvas.reportFillPercent((bytes / MAX_STORAGE_SIZE) * 100);
     }
 
     protected function serialize () :ByteArray 
@@ -155,7 +156,6 @@ public class Model
             // stroke extensions
             for (var ii :int = 1; ii < stroke.length; ii++) {
                 var extension :Point = stroke[ii] as Point;
-                log.debug("extension [" + ii + ", " + stroke[ii] + "]");
                 var extX :int = Math.round(extension.x);
                 var extY :int = Math.round(extension.y);
                 bytes.writeInt(extX - currentX);
@@ -170,6 +170,8 @@ public class Model
     }
 
     private static const log :Log = Log.getLog(Model);
+
+    protected static const MAX_STORAGE_SIZE :int = 4 * 1024; // in bytes
 
     protected var _canvas :Canvas;
     protected var _strokes :HashMap;

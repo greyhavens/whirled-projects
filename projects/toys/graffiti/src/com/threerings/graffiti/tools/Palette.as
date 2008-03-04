@@ -226,7 +226,6 @@ public class Palette extends Tool
     protected static const INDICATOR_WIDTH :int = 60;
     protected static const COMPONENT_BORDER_COLOR :int = 0;
     protected static const MANIPULATOR_SIZE :int = 40;
-    protected static const PADDING :int = 5;
     protected static const WHEEL_BORDER_SIZE :int = 
         Math.round(Point.polar(WHEEL_RADIUS, -Math.PI / 4).x * 2);
     protected static const PALETTE_WIDTH :int = 100;

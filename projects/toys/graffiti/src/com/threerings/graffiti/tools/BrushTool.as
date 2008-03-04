@@ -122,7 +122,6 @@ public class BrushTool extends Tool
 
     private static const log :Log = Log.getLog(BrushTool);
 
-    protected var PADDING :int = 5;
     protected var MIN_BRUSH_SIZE :int = 2;
     protected var MAX_BRUSH_SIZE :int = 60;
     protected var BRUSH_TOOL_WIDTH :int = 100;
