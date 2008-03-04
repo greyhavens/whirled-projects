@@ -4,6 +4,8 @@ package com.threerings.graffiti {
 
 import flash.geom.Point;
 
+import flash.utils.ByteArray;
+
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
@@ -86,13 +88,85 @@ public class Model
 
     protected function putStroke (id :String, stroke :Array) :void
     {
+        // TODO: bump strokes into an Array so they can retain their creation order.  Also, use
+        // a real object for strokes, since we're implementing custom serialization anyway.
         _strokes.put(id, stroke);
-        var total :int;
-        for each (var stroke :Array in _strokes.values()) {
-            total += stroke.length;
+
+        log.debug("current size [" + serialize().length + "]");
+    }
+
+    protected function serialize () :ByteArray 
+    {
+        var colorLUT :HashMap = new HashMap();
+        var strokes :Array = _strokes.values();
+        for each (var stroke :Array in strokes) {
+            var color :uint = strokes[0][2];
+            if (!colorLUT.containsKey(color)) {
+                colorLUT.put(color, colorLUT.size() + 1);
+            }
         }
-        var size :int = (7 * _strokes.size() + (total - _strokes.size()) * 2) * 4;
-        log.debug("total size [" + size + "]");
+
+        // TODO: push the LUT to the end so that we only have to process the strokes once in 
+        // serialization, as its the more common operation.
+        var bytes :ByteArray = new ByteArray();
+        // serialized format:
+        //  - Background color (uint);
+        //  - LUT size (int)
+        //    - LUT entry: color (uint), key (int)
+        //  - Strokes: 
+        //    - stroke length (int);
+        //    - beginning stroke: from (int x, int y), to (int x, int y), color (int key into LUT),
+        //                        brush thickness (int), brush alpha (int percent)
+        //    - extension stroke: from (int offset from last x, int offset from last y)
+
+        // background color
+        bytes.writeUnsignedInt(_backgroundColor);
+
+        // write the LUT
+        bytes.writeInt(colorLUT.size());
+        for each (color in colorLUT.keys()) {
+            bytes.writeUnsignedInt(color);
+            bytes.writeInt(colorLUT.get(color));
+        }
+
+        // write the strokes
+        for each (stroke in strokes) {
+            // length
+            bytes.writeInt(stroke.length);
+
+            // from
+            bytes.writeInt(Math.round(stroke[0][1].x));
+            bytes.writeInt(Math.round(stroke[0][1].y));
+
+            // to
+            var currentX :int = Math.round(stroke[0][0].x);
+            bytes.writeInt(currentX);
+            var currentY :int = Math.round(stroke[0][0].y);
+            bytes.writeInt(currentY);
+
+            // color
+            bytes.writeInt(colorLUT.get(stroke[0][2]));
+            // brush thickness
+            var brush :Brush = stroke[0][3] as Brush;
+            bytes.writeInt(brush.thickness);
+            // brush alpha
+            bytes.writeInt(Math.round(brush.alpha * 100));
+
+            // stroke extensions
+            for (var ii :int = 1; ii < stroke.length; ii++) {
+                var extension :Point = stroke[ii] as Point;
+                log.debug("extension [" + ii + ", " + stroke[ii] + "]");
+                var extX :int = Math.round(extension.x);
+                var extY :int = Math.round(extension.y);
+                bytes.writeInt(extX - currentX);
+                bytes.writeInt(extY - currentY);
+                currentX = extX;
+                currentY = extX;
+            }
+        }
+
+        bytes.compress();
+        return bytes;
     }
 
     private static const log :Log = Log.getLog(Model);
