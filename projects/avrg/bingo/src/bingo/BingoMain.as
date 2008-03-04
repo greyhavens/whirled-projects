@@ -82,10 +82,6 @@ public class BingoMain extends Sprite
 
     protected function enteredRoom (... ignored) :void
     {
-        if (control.isConnected() && !control.hasControl()) {
-            // ensure that in every room we visit, someone has control
-            control.requestControl();
-        }
     }
     
     protected function leftRoom (e :Event) :void
@@ -108,9 +104,6 @@ public class BingoMain extends Sprite
 
     protected function playerLeft (evt :AVRGameControlEvent) :void
     {
-        if (control.isConnected() && !control.hasControl()) {
-            control.requestControl();
-        }
     }
 }
 }

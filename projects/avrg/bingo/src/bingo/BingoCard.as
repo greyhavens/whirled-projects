@@ -19,7 +19,6 @@ public class BingoCard
         var items :Array;
         
         // generate unique items to fill the card?
-        // this is dog slow, but who cares
         if (Constants.CARD_ITEMS_ARE_UNIQUE && numItems <= Constants.ITEMS.length) {
             items = Constants.ITEMS.slice();
             ArrayUtil.shuffle(items);

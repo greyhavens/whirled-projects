@@ -56,9 +56,12 @@ public class Controller
         _winnerText.scaleY = 3;
         _winnerText.x = Constants.WINNER_TEXT_LOC.x;
         _winnerText.y = Constants.WINNER_TEXT_LOC.y;
-        
         _mainSprite.addChild(_winnerText);
         
+        _scoreboardView = new ScoreboardView();
+        _scoreboardView.x = Constants.SCOREBOARD_LOC.x;
+        _scoreboardView.y = Constants.SCOREBOARD_LOC.y;
+        _mainSprite.addChild(_scoreboardView);
         
         // each client maintains the concept of an expected state,
         // so that it is prepared to take over as the
@@ -303,6 +306,7 @@ public class Controller
     protected var _mainSprite :Sprite;
     protected var _cardView :BingoCardView;
     protected var _ballView :BingoBallView;
+    protected var _scoreboardView :ScoreboardView;
     protected var _bingoButton :DisablingButton;
     protected var _winnerText :TextField;
     

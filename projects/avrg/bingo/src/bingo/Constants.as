@@ -12,6 +12,7 @@ public class Constants
     public static const BINGO_BUTTON_LOC :Point = new Point(400, 300);
     public static const QUIT_BUTTON_LOC :Point = new Point(400, 400);
     public static const WINNER_TEXT_LOC :Point = new Point(50, 400);
+    public static const SCOREBOARD_LOC :Point = new Point(500, 10);
     
     // gameplay bits
     public static const CARD_WIDTH :int = 5;
@@ -23,6 +24,8 @@ public class Constants
     
     public static const USE_ITEM_NAMES_AS_TAGS :Boolean = false;
     public static const CARD_ITEMS_ARE_UNIQUE :Boolean = true;
+    
+    public static const NUM_SCOREBOARD_NAMES :int = 5;
     
     public static const ITEMS :Array = [
     
@@ -50,7 +53,7 @@ public class Constants
         new BingoItem("bee",            [ "insect", "flying", /*"eggs",*/ /*"forest"*/ ]),
         new BingoItem("cicada",         [ "insect", "flying", /*"eggs"*/ ]),
         new BingoItem("earwig",         [ "insect", "flying", "nocturnal", /*"eggs",*/ /*"soil"*/ ]),
-        new BingoItem("moth",           [ "insect", "flying", /*"eggs",*/ /*"forest"*/ "migratory", ]),
+        new BingoItem("moth",           [ "insect", "flying", "nocturnal", /*"eggs",*/ /*"forest"*/ "migratory", ]),
         new BingoItem("butterfly",      [ "insect", "flying", /*"eggs",*/ /*"forest"*/ "migratory", ]),
         
         new BingoItem("praying mantis", [ "insect", "flying", /*"eggs",*/ "predator", /*"forest"*/ ]),
@@ -94,7 +97,7 @@ public class Constants
         new BingoItem("otter",          [ "mammal", /*"river"*/ ]),
         new BingoItem("possum",         [ "mammal", "nocturnal", /*"forest"*/ ]),
         new BingoItem("stallion",       [ "mammal", /*"plain"*/ ]),
-        new BingoItem("unicorn",        [ "mammal", "imaginary" ]),
+        //new BingoItem("unicorn",        [ "mammal", "imaginary" ]),
         new BingoItem("kangaroo",       [ "mammal", /*"outback"*/ ]),
         new BingoItem("racoon",         [ "mammal", "nocturnal", /*"suburban"*/ ]),
         new BingoItem("koala",          [ "mammal", /*"bamboo forest"*/ ]),
