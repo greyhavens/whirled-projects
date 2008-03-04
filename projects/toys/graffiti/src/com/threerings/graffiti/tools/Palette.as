@@ -2,9 +2,11 @@
 
 package com.threerings.graffiti.tools {
 
+import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.GradientType;
 import flash.display.Graphics;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -149,9 +151,8 @@ public class Palette extends Tool
 
     protected function buildGradientBox () :void
     {
-        _gradientBox = new Sprite();
-        var g :Graphics = _gradientBox.graphics;
-
+        var gradientGraphics :Shape = new Shape();
+        var g :Graphics = gradientGraphics.graphics;
         g.lineStyle(1);
         var m :Matrix = new Matrix();
         m.createGradientBox(1, MANIPULATOR_SIZE, Math.PI / 2);
@@ -164,6 +165,9 @@ public class Palette extends Tool
             g.moveTo(ii, 0);
             g.lineTo(ii, MANIPULATOR_SIZE);
         }
+        var bitmapData :BitmapData = new BitmapData(MANIPULATOR_SIZE, MANIPULATOR_SIZE, true, 0);
+        bitmapData.draw(gradientGraphics);
+        _gradientBox = new Bitmap(bitmapData, "auto", true);
 
         addChild(_manipulator = new Sprite());
         _manipulator.x = (PALETTE_WIDTH - MANIPULATOR_SIZE) / 2;
@@ -234,7 +238,7 @@ public class Palette extends Tool
     protected var _toolbox :ToolBox;
     protected var _indicator :Sprite;
     protected var _wheel :Sprite;
-    protected var _gradientBox :Sprite;
+    protected var _gradientBox :Bitmap;
     protected var _manipulator :Sprite;
     protected var _hoverPoint :Point;
     protected var _manipulatorPoint :Point;
