@@ -160,8 +160,10 @@ public class Palette extends Tool
             var percent :Number = 
                 1 - Math.max(Math.min((ii - 5) / (MANIPULATOR_SIZE * 0.75), 1), 0);
             g.lineGradientStyle(
-                GradientType.LINEAR, [0xFFFFFF, 0x888888, 0x888888, 0], [1, percent, percent, 1], 
-                [0, 100, 155, 255], m); 
+                GradientType.LINEAR, 
+                [0xFFFFFF, 0xFFFFFF, 0x888888, 0x888888, 0, 0], 
+                [1, 1, percent, percent, 1, 1], 
+                [0, 25, 100, 155, 230, 255], m); 
             g.moveTo(ii, 0);
             g.lineTo(ii, MANIPULATOR_SIZE);
         }
