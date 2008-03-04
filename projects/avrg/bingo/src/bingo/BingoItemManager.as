@@ -38,6 +38,8 @@ public class BingoItemManager
         }
         
         _tags = tagSet.toArray();
+        
+        BingoMain.log.info(Constants.ITEMS.length.toString() + " items, " + _tags.length + " tags");
     }
     
     public function get tags () :Array

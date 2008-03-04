@@ -1,5 +1,9 @@
 package bingo {
     
+import com.threerings.util.HashSet;
+import com.threerings.util.ArrayUtil;
+    
+    
 public class BingoCard
 {
     public function BingoCard ()
@@ -11,10 +15,27 @@ public class BingoCard
         
         var freeSpaceIndex :int = this.xyToIndex(Constants.FREE_SPACE.x, Constants.FREE_SPACE.y);
         
+        var numItems :int = (_width * _height) + (freeSpaceIndex >= 0 ? -1 : 0);
+        var items :Array;
+        
+        // generate unique items to fill the card?
+        // this is dog slow, but who cares
+        if (Constants.CARD_ITEMS_ARE_UNIQUE && numItems <= Constants.ITEMS.length) {
+            items = Constants.ITEMS.slice();
+            ArrayUtil.shuffle(items);
+        } else {
+            items = new Array(numItems);
+            for (var i :int = 0; i < numItems; ++i) {
+                items[i] = BingoItemManager.instance.getRandomItem();
+            }
+        }
+        
+        // create the card
         _squares = new Array(size);
-        for (var i :int = 0; i < size; ++i) {
+        var itemIndex :int = 0;
+        for (i = 0; i < size; ++i) {
             
-            var item :BingoItem = (i == freeSpaceIndex ? null : BingoItemManager.instance.getRandomItem());
+            var item :BingoItem = (i == freeSpaceIndex ? null : items[itemIndex++]);
             var square :Square = new Square(item);
             
             if (i == freeSpaceIndex) {
