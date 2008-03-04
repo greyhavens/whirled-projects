@@ -114,6 +114,8 @@ public class Model
             bytes.writeUnsignedInt(color);
             bytes.writeInt(colorLUT.get(color));
         }
+
+        bytes.compress();
         return bytes;
     }
 
