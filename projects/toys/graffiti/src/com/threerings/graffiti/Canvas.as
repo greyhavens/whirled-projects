@@ -46,6 +46,8 @@ public class Canvas extends Sprite
         _canvas.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
         _background.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
         _canvas.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+        _background.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+        _canvas.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
 
         var masker :Shape = new Shape();
         masker.graphics.beginFill(0);
@@ -130,7 +132,7 @@ public class Canvas extends Sprite
         _lastStrokePoint = _canvas.globalToLocal(new Point(evt.stageX, evt.stageY));
         _newStroke = true;
         _inputKey = _model.getKey();
-        _timer = setInterval(tick, 200);
+        _timer = setInterval(tick, 50);
     }
 
     protected function tick () :void
@@ -140,7 +142,12 @@ public class Canvas extends Sprite
 
     protected function mouseUp (evt :MouseEvent) :void
     {
-        maybeAddStroke(_canvas.globalToLocal(new Point(evt.stageX, evt.stageY)));
+        endStroke(_canvas.globalToLocal(new Point(evt.stageX, evt.stageY)));
+    }
+
+    protected function endStroke (localPoint :Point) :void 
+    {
+        maybeAddStroke(localPoint);
         if (_timer > 0) {
             clearInterval(_timer);
             _timer = 0;
@@ -148,14 +155,44 @@ public class Canvas extends Sprite
         _inputKey = null;
     }
 
+    protected function mouseOut (evt :MouseEvent) :void
+    {
+        var canvasPoint :Point = _canvas.globalToLocal(new Point(evt.stageX, evt.stageY));
+        var breakLine :Boolean = false;
+        if (canvasPoint.x < 0) {
+            breakLine = true;
+            canvasPoint.x = 0;
+        } else if (canvasPoint.x >= CANVAS_WIDTH) {
+            breakLine = true;
+            canvasPoint.x = CANVAS_WIDTH - 1;
+        }
+        
+        if (canvasPoint.y < 0) {
+            breakLine = true;
+            canvasPoint.y = 0;
+        } else if (canvasPoint.y >= CANVAS_HEIGHT) {
+            breakLine = true;
+            canvasPoint.y = CANVAS_HEIGHT - 1;
+        }
+
+        if (breakLine) {
+            endStroke(canvasPoint);
+        }
+    }
+
     protected function maybeAddStroke (p :Point) :void
     {
         if (p.x < 0 || p.x > CANVAS_WIDTH || p.y < 0 || p.y > CANVAS_HEIGHT) {
             return;
         }
+
         var dx :Number = p.x - _lastStrokePoint.x;
         var dy :Number = p.y - _lastStrokePoint.y;
         if (dx*dx + dy*dy < 9) {
+            return;
+        }
+
+        if (_inputKey == null) {
             return;
         }
 
