@@ -186,6 +186,10 @@ public class Canvas extends Sprite
             return;
         }
 
+        if (_lastStrokePoint == null) {
+            return;
+        }
+
         var dx :Number = p.x - _lastStrokePoint.x;
         var dy :Number = p.y - _lastStrokePoint.y;
         if (dx*dx + dy*dy < 9) {
@@ -237,7 +241,7 @@ public class Canvas extends Sprite
     /** The number of milliseconds between mouse samples.  The lower the number, the higher the 
      * drawing resolution, but the faster it fills up the available memory.  We may want to make
      * this configurable in a slider control. Reasonable values are between 50 and 200ish. */
-    protected static const TICK_INTERVAL :int = 50;
+    protected static const TICK_INTERVAL :int = 100;
 
     protected var _model :Model;
 

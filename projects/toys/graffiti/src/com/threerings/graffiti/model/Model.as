@@ -73,7 +73,7 @@ public class Model
         _canvas.strokeBegun(id, stroke);
 
         var bytes :int = serialize().length;
-        _canvas.reportFillPercent((bytes / MAX_STORAGE_SIZE) * 100);
+        _canvas.reportFillPercent(bytes / MAX_STORAGE_SIZE);
     }
 
     protected function strokeExtended (id :String, to :Point) :void
@@ -88,7 +88,7 @@ public class Model
         _canvas.strokeExtended(id, to);
 
         var bytes :int = serialize().length;
-        _canvas.reportFillPercent((bytes / MAX_STORAGE_SIZE) * 100);
+        _canvas.reportFillPercent(bytes / MAX_STORAGE_SIZE);
     }
 
     protected function serialize () :ByteArray 
