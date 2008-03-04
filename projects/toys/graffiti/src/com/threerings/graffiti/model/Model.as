@@ -27,7 +27,7 @@ public class Model
 
     public function beginStroke (id :String, from :Point, to :Point, color :int, brush :Brush) :void
     {
-        strokeBegun(id, from, to, color, brush);
+        strokeBegun(id, new Stroke(from, to, color, brush));
     }
 
     public function extendStroke (id :String, to :Point) :void
@@ -62,37 +62,30 @@ public class Model
         return _backgroundColor;
     }
 
-    protected function strokeBegun (id :String, from :Point, to :Point, color :int,     
-        brush :Brush) :void
+    protected function strokeBegun (id :String, stroke :Stroke) :void
     {
-        pushBub(id, [ to, from, color, brush ]);
-        _canvas.strokeBegun(id, from, to, color, brush);
+        if (_strokes.get(id) != null) {
+            log.warning("Attempting to add a new stroke with existing id! [" + id + "]");
+            return;
+        }
+
+        _strokes.put(id, stroke);
+        _canvas.strokeBegun(id, stroke);
+
+        var bytes :int = serialize().length;
+        _canvas.reportFillPercent((bytes / MAX_STORAGE_SIZE) * 100);
     }
 
     protected function strokeExtended (id :String, to :Point) :void
     {
-        pushBub(id, to);
-        _canvas.strokeExtended(id, to);
-    }
-
-    protected function pushBub (id :String, bub :Object) :Array
-    {
-        var stroke :Array;
-
-        stroke = _strokes.get(id);
-        if (!stroke) {
-            stroke = new Array();
+        var stroke :Stroke = _strokes.get(id);
+        if (stroke == null) {
+            log.warning("attempted to extend an unknown stroke [" + id + "]");
+            return;
         }
-        stroke.push(bub);
-        putStroke(id, stroke);
-        return stroke;
-    }
 
-    protected function putStroke (id :String, stroke :Array) :void
-    {
-        // TODO: bump strokes into an Array so they can retain their creation order.  Also, use
-        // a real object for strokes, since we're implementing custom serialization anyway.
-        _strokes.put(id, stroke);
+        stroke.extend(to);
+        _canvas.strokeExtended(id, to);
 
         var bytes :int = serialize().length;
         _canvas.reportFillPercent((bytes / MAX_STORAGE_SIZE) * 100);
@@ -100,78 +93,33 @@ public class Model
 
     protected function serialize () :ByteArray 
     {
-        var colorLUT :HashMap = new HashMap();
-        var strokes :Array = _strokes.values();
-        for each (var stroke :Array in strokes) {
-            var color :uint = strokes[0][2];
-            if (!colorLUT.containsKey(color)) {
-                colorLUT.put(color, colorLUT.size() + 1);
-            }
-        }
-
-        // TODO: push the LUT to the end so that we only have to process the strokes once in 
-        // serialization, as its the more common operation.
         var bytes :ByteArray = new ByteArray();
-        // serialized format:
-        //  - Background color (uint);
-        //  - LUT size (int)
-        //    - LUT entry: color (uint), key (int)
-        //  - Strokes: 
-        //    - stroke length (int);
-        //    - beginning stroke: from (int x, int y), to (int x, int y), color (int key into LUT),
-        //                        brush thickness (int), brush alpha (int percent)
-        //    - extension stroke: from (int offset from last x, int offset from last y)
 
-        // background color
+        // write model version number.
+        bytes.writeInt(MODEL_VERSION_NUMBER);
+
+        // write the background color
         bytes.writeUnsignedInt(_backgroundColor);
 
-        // write the LUT
-        bytes.writeInt(colorLUT.size());
-        for each (color in colorLUT.keys()) {
+        // write the strokes
+        bytes.writeInt(_strokes.size()); // number of strokes
+        var colorLUT :HashMap = new HashMap();
+        for each (var stroke :Stroke in _strokes.values()) {
+            stroke.serialize(bytes, colorLUT);
+        }
+
+        // write the LUT - its the last thing in the data chunk, so we don't need to write the
+        // size
+        for each (var color :uint in colorLUT.keys()) {
             bytes.writeUnsignedInt(color);
             bytes.writeInt(colorLUT.get(color));
         }
-
-        // write the strokes
-        for each (stroke in strokes) {
-            // length
-            bytes.writeInt(stroke.length);
-
-            // from
-            bytes.writeInt(Math.round(stroke[0][1].x));
-            bytes.writeInt(Math.round(stroke[0][1].y));
-
-            // to
-            var currentX :int = Math.round(stroke[0][0].x);
-            bytes.writeInt(currentX);
-            var currentY :int = Math.round(stroke[0][0].y);
-            bytes.writeInt(currentY);
-
-            // color
-            bytes.writeInt(colorLUT.get(stroke[0][2]));
-            // brush thickness
-            var brush :Brush = stroke[0][3] as Brush;
-            bytes.writeInt(brush.thickness);
-            // brush alpha
-            bytes.writeInt(Math.round(brush.alpha * 100));
-
-            // stroke extensions
-            for (var ii :int = 1; ii < stroke.length; ii++) {
-                var extension :Point = stroke[ii] as Point;
-                var extX :int = Math.round(extension.x);
-                var extY :int = Math.round(extension.y);
-                bytes.writeInt(extX - currentX);
-                bytes.writeInt(extY - currentY);
-                currentX = extX;
-                currentY = extX;
-            }
-        }
-
-        bytes.compress();
         return bytes;
     }
 
     private static const log :Log = Log.getLog(Model);
+
+    protected static const MODEL_VERSION_NUMBER :int = 1;
 
     protected static const MAX_STORAGE_SIZE :int = 4 * 1024; // in bytes
 

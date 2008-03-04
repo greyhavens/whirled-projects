@@ -2,6 +2,8 @@
 
 package com.threerings.graffiti.tools {
 
+import flash.utils.ByteArray;
+
 public class Brush 
 {
     public var thickness :int;
@@ -21,6 +23,12 @@ public class Brush
     public function toString () :String
     {
         return "Brush [thickness=" + thickness + ", alpha=" + alpha + "]";
+    }
+
+    public function serialize (bytes :ByteArray) :void
+    {
+        bytes.writeInt(thickness);
+        bytes.writeInt(Math.round(alpha * 100));
     }
 }
 }

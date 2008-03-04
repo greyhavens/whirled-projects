@@ -24,6 +24,7 @@ import com.threerings.graffiti.tools.ToolEvent;
 import com.threerings.graffiti.model.Model;
 import com.threerings.graffiti.model.OfflineModel;
 import com.threerings.graffiti.model.OnlineModel;
+import com.threerings.graffiti.model.Stroke;
 
 public class Canvas extends Sprite
 {
@@ -83,18 +84,18 @@ public class Canvas extends Sprite
         g.endFill();
     }
 
-    public function strokeBegun (id :String, from :Point, to :Point, color :int, brush :Brush) :void
+    public function strokeBegun (id :String, stroke :Stroke) :void
     {
         _outputKey = id;
 
-        _canvas.graphics.moveTo(from.x, from.y);
-        _canvas.graphics.lineStyle(brush.thickness, color, brush.alpha);
+        _canvas.graphics.moveTo(stroke.start.x, stroke.start.y);
+        _canvas.graphics.lineStyle(stroke.brush.thickness, stroke.color, stroke.brush.alpha);
 
-        _lastX = from.x;
-        _lastY = from.y;
+        _lastX = stroke.start.x;
+        _lastY = stroke.start.y;
         _oldDeltaX = _oldDeltaY = 0;
 
-        strokeExtended(id, to);
+        strokeExtended(id, stroke.getPoint(0));
     }
 
     public function strokeExtended (id :String, to :Point) :void
@@ -186,12 +187,11 @@ public class Canvas extends Sprite
         }
     }
 
-    protected function drawStroke (key :String, stroke :Array) :void
+    protected function drawStroke (key :String, stroke :Stroke) :void
     {
-        var first :Array = stroke[0] as Array;
-        strokeBegun(key, first[0], first[1], first[2], first[3]);
-        for (var jj :int = 1; jj < stroke.length; jj ++) {
-            strokeExtended(key, stroke[jj]);
+        strokeBegun(key, stroke);
+        for (var ii :int = 1; ii < stroke.getSize(); ii++) {
+            strokeExtended(key, stroke.getPoint(ii));
         }
     }
 
