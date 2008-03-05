@@ -39,6 +39,11 @@ public class Model extends EventDispatcher
         return _card;
     }
     
+    public function get roundInPlay () :Boolean
+    {
+        return (0 == _curState.roundWinningPlayerId);
+    }
+    
     /* local state mutators */
     public function createNewCard () :void
     {

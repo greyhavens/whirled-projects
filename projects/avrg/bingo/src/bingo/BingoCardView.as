@@ -84,6 +84,11 @@ public class BingoCardView extends Sprite
     
     protected function handleClick (e :MouseEvent) :void
     {
+        // if the round is over, don't accept clicks
+        if (!BingoMain.model.roundInPlay) {
+            return;
+        }
+        
         var col :int = (e.localX / SQUARE_SIZE);
         var row :int = (e.localY / SQUARE_SIZE);
         

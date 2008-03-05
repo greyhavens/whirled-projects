@@ -50,7 +50,7 @@ public class OnlineModel extends Model
     {
         // ignore state changes from non-authoritative clients
         if (!BingoMain.control.hasControl()) {
-            //BingoMain.log.info("ignoring state change request from non-authoritative client: " + newState);
+            BingoMain.log.info("ignoring state change request from non-authoritative client: " + newState);
             return;
         }
         
@@ -58,17 +58,17 @@ public class OnlineModel extends Model
         // (controllers are allowed to keep calling this function until
         // something happens, so ignore duplicate requests)
         if (null != _lastStateRequest && _lastStateRequest.isEqual(newState)) {
-            //BingoMain.log.info("ignoring duplicate state change request: " + newState);
+            BingoMain.log.info("ignoring duplicate state change request: " + newState);
             return;
         }
         
         // is the state actually being changed?
         if (newState.isEqual(_curState)) {
-            //BingoMain.log.info("ignoring redundant state change request: " + newState);
+            BingoMain.log.info("ignoring redundant state change request: " + newState);
             return;
         }
         
-        //BingoMain.log.info("accepting state change request: " + newState);
+        BingoMain.log.info("accepting state change request: " + newState);
         
         _stateControl.setProperty(Constants.PROP_STATE, newState.toBytes(), false);
         

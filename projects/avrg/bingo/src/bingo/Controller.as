@@ -209,7 +209,6 @@ public class Controller
         }
         
         _calledBingoThisRound = false;
-        _roundIsOver = false;
         this.updateBingoButton();
         
         _winnerText.text = "";
@@ -235,7 +234,6 @@ public class Controller
         this.stopNewBallTimer();
         this.startNewRoundTimer(); // a new round should start shortly
         
-        _roundIsOver = true;
         this.updateBingoButton();
         
         var playerName :String = BingoMain.getPlayerName(_model.curState.roundWinningPlayerId);
@@ -320,7 +318,7 @@ public class Controller
     
     public function updateBingoButton () :void
     {
-        _bingoButton.enabled = (!_calledBingoThisRound && !_roundIsOver && _model.card.isComplete);
+        _bingoButton.enabled = (!_calledBingoThisRound && _model.roundInPlay && _model.card.isComplete);
     }
     
     protected var _model :Model;
@@ -338,7 +336,6 @@ public class Controller
     protected var _newRoundTimer :Timer;
     
     protected var _calledBingoThisRound :Boolean;
-    protected var _roundIsOver :Boolean;
 
 }
 
