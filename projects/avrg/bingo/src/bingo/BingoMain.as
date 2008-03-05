@@ -14,7 +14,7 @@ import flash.events.Event;
 [SWF(width="700", height="500")]
 public class BingoMain extends Sprite
 {
-    public static const VERSION :Number = 1.9;
+    public static const VERSION :Number = 1.92;
     
     public static var log :Log = Log.getLog(BingoMain);
 
