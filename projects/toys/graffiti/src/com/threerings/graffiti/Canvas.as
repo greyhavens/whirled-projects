@@ -59,21 +59,25 @@ public class Canvas extends Sprite
         // TODO: temporarily just staying offline while we get the tools sorted out.
         _model = new OfflineModel(this);
         redraw();
-
-        _toolBox = new ToolBox(this);
-        _toolBox.addEventListener(ToolEvent.COLOR_PICKED, function (event :ToolEvent) :void {
-            _color = event.value as uint;
-        });
-        _toolBox.addEventListener(ToolEvent.BRUSH_PICKED, function (event :ToolEvent) :void {
-            _brush = event.value as Brush;
-        });
-        _toolBox.addEventListener(ToolEvent.BACKGROUND_COLOR, function (event :ToolEvent) :void {
-            _model.setBackgroundColor(event.value as uint);
-        });
     }
 
-    public function get toolBox () :ToolBox
+    public function get toolbox () :ToolBox
     {
+        // toolbox creation is deferred so view-only canvases don't instantiate one.
+        if (_toolBox == null) {
+            _toolBox = new ToolBox(this);
+            _toolBox.addEventListener(ToolEvent.COLOR_PICKED, function (event :ToolEvent) :void {
+                _color = event.value as uint;
+            });
+            _toolBox.addEventListener(ToolEvent.BRUSH_PICKED, function (event :ToolEvent) :void {
+                _brush = event.value as Brush;
+            });
+            _toolBox.addEventListener(ToolEvent.BACKGROUND_COLOR, 
+                function (event :ToolEvent) :void {
+                    _model.setBackgroundColor(event.value as uint);
+                });
+        }
+
         return _toolBox;
     }
 
@@ -124,7 +128,9 @@ public class Canvas extends Sprite
 
     public function reportFillPercent (percent :Number) :void
     {
-        _toolBox.displayFillPercent(percent);
+        if (_toolBox != null) {
+            _toolBox.displayFillPercent(percent);
+        }
     }
 
     protected function mouseDown (evt :MouseEvent) :void

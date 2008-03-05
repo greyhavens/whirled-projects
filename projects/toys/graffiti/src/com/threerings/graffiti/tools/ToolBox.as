@@ -16,6 +16,8 @@ import com.threerings.graffiti.Canvas;
 
 public class ToolBox extends Sprite 
 {
+    public static const TOOLBOX_WIDTH :int = 100;
+
     public function ToolBox (canvas :Canvas) 
     {
         _canvas = canvas;
@@ -75,8 +77,6 @@ public class ToolBox extends Sprite
     }
 
     private static const log :Log = Log.getLog(ToolBox);
-
-    protected static const TOOLBOX_WIDTH :int = 100;
 
     protected var _canvas :Canvas;
     protected var _tools :Array = [];
