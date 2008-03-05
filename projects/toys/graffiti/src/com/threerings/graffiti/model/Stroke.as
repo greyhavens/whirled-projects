@@ -98,6 +98,6 @@ public class Stroke
     protected var _start :Point;
     protected var _points :Array = [];
     protected var _color :uint;
-    protected var _brush :Brush;
+    protected var _brush :Brush = new Brush();
 }
 }
