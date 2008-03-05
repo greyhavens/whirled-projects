@@ -60,7 +60,7 @@ public class BingoMain extends Sprite
         
         log.info(control.isConnected() ? "playing online game" : "playing offline game");
         
-        model = (control.isConnected() ? new OnlineModel() : new OfflineModel());
+        model = (control.isConnected() && !Constants.FORCE_SINGLEPLAYER ? new OnlineModel() : new OfflineModel());
         controller = new Controller(this, model);
         
         ourPlayerId = (control.isConnected() ? control.getPlayerId() : 666);
