@@ -26,9 +26,9 @@ public class Score
             var aTime :Number = a.date.time;
             var bTime :Number = b.date.time;
 
-            if (aTime < bTime) {
+            if (aTime > bTime) {
                 return -1;
-            } else if (aTime > bTime) {
+            } else if (aTime < bTime) {
                 return 1;
             } else {
                 return 0;
