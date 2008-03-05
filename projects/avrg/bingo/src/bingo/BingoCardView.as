@@ -4,6 +4,7 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -54,7 +55,15 @@ public class BingoCardView extends Sprite
             }
         }
         
+        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
+        
         this.addEventListener(MouseEvent.MOUSE_DOWN, handleClick);
+        this.addEventListener(Event.REMOVED, handleRemoved);
+    }
+    
+    protected function handleRemoved (e :Event) :void
+    {
+        BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
     }
     
     public function createItemView (item :BingoItem) :DisplayObject
@@ -84,8 +93,9 @@ public class BingoCardView extends Sprite
     
     protected function handleClick (e :MouseEvent) :void
     {
-        // if the round is over, don't accept clicks
-        if (!BingoMain.model.roundInPlay) {
+        // if the round is over, or we've already reached our
+        // max-clicks-per-ball limit, don't accept clicks
+        if (!BingoMain.model.roundInPlay || _numMatchesThisBall >= Constants.MAX_MATCHES_PER_BALL) {
             return;
         }
         
@@ -124,12 +134,20 @@ public class BingoCardView extends Sprite
                 this.addChild(stamp);
                 
                 BingoMain.controller.updateBingoButton();
+                
+                _numMatchesThisBall += 1;
             }
         }
        
     }
     
+    protected function handleNewBall (e :Event) :void
+    {
+        _numMatchesThisBall = 0;
+    }
+    
     protected var _card :BingoCard;
+    protected var _numMatchesThisBall :int;
     
     protected static const SQUARE_SIZE :Number = 60;
     protected static const TARGET_TEXT_WIDTH :Number = 56;
