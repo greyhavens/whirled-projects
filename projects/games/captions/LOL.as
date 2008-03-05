@@ -5,6 +5,7 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.InteractiveObject;
+import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.MovieClip;
 import flash.display.Shape;
@@ -47,8 +48,8 @@ import fl.controls.TextArea;
 import fl.controls.TextInput;
 
 import com.threerings.util.ClassUtil;
-import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.Log;
+import com.threerings.util.MultiLoader;
 import com.threerings.util.NetUtil;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
@@ -140,9 +141,6 @@ public class LOL extends Sprite
         _curImage = null;
         _theme = newTheme;
 
-        _loader = new EmbeddedSwfLoader();
-        _loader.addEventListener(Event.COMPLETE, handleUILoaded);
-
         var ui :Class;
         switch (_theme) {
         default:
@@ -155,12 +153,12 @@ public class LOL extends Sprite
             break;
         }
 
-        _loader.load(new ui() as ByteArray);
+        MultiLoader.getLoaders(ui, handleUILoaded, false, ApplicationDomain.currentDomain);
     }
 
-    protected function handleUILoaded (event :Event) :void
+    protected function handleUILoaded (loader :Loader) :void
     {
-        _ui = _loader.getContent() as MovieClip;
+        _ui = loader.content as MovieClip;
         _ui.mask = _mask;
         _content.addChild(_ui);
 
@@ -168,9 +166,9 @@ public class LOL extends Sprite
         if (_theme == LOL_THEME) {
             fontName += "2";
         }
-        var fontClass :Class = _loader.getSymbol(fontName) as Class;
+        var fontClass :Class =
+            loader.contentLoaderInfo.applicationDomain.getDefinition(fontName) as Class;
         _captionFont = new fontClass();
-        _loader = null;
 
 //        trace(DisplayUtil.dumpHierarchy(_ui));
 
@@ -1080,8 +1078,6 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected var _mask :Shape;
 
     protected var _formatter :TextFieldFormatter;
-
-    protected var _loader :EmbeddedSwfLoader;
 
     protected var _textFormat :TextFormat = new TextFormat(
         "_sans", 18, 0xFFFFFF, false, false, false, "", "", TextFormatAlign.LEFT, 0, 0, 0, 0);
