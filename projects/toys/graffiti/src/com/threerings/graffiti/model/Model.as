@@ -72,8 +72,7 @@ public class Model
         _strokes.put(id, stroke);
         _canvas.strokeBegun(id, stroke);
 
-        var bytes :int = serialize().length;
-        _canvas.reportFillPercent(bytes / MAX_STORAGE_SIZE);
+        serialize();
     }
 
     protected function strokeExtended (id :String, to :Point) :void
@@ -87,36 +86,35 @@ public class Model
         stroke.extend(to);
         _canvas.strokeExtended(id, to);
 
-        var bytes :int = serialize().length;
-        _canvas.reportFillPercent(bytes / MAX_STORAGE_SIZE);
+        serialize();
     }
 
-    protected function serialize () :ByteArray 
+    protected function serialize () :void 
     {
-        var bytes :ByteArray = new ByteArray();
+        _serializedStrokes = new ByteArray();
 
         // write model version number.
-        bytes.writeInt(MODEL_VERSION_NUMBER);
+        _serializedStrokes.writeInt(MODEL_VERSION_NUMBER);
 
         // write the background color
-        bytes.writeUnsignedInt(_backgroundColor);
+        _serializedStrokes.writeUnsignedInt(_backgroundColor);
 
         // write the strokes
-        bytes.writeInt(_strokes.size()); // number of strokes
+        _serializedStrokes.writeInt(_strokes.size()); // number of strokes
         var colorLUT :HashMap = new HashMap();
         for each (var stroke :Stroke in _strokes.values()) {
-            stroke.serialize(bytes, colorLUT);
+            stroke.serialize(_serializedStrokes, colorLUT);
         }
 
         // write the LUT - its the last thing in the data chunk, so we don't need to write the
         // size
         for each (var color :uint in colorLUT.keys()) {
-            bytes.writeUnsignedInt(color);
-            bytes.writeInt(colorLUT.get(color));
+            _serializedStrokes.writeUnsignedInt(color);
+            _serializedStrokes.writeInt(colorLUT.get(color));
         }
 
-        bytes.compress();
-        return bytes;
+        _serializedStrokes.compress();
+        _canvas.reportFillPercent(_serializedStrokes.length / MAX_STORAGE_SIZE);
     }
 
     private static const log :Log = Log.getLog(Model);
@@ -130,6 +128,8 @@ public class Model
     protected var _backgroundColor :uint = 0xFFFFFF;
 
     protected var _rnd :Random = new Random();
+
+    protected var _serializedStrokes :ByteArray;
  
     protected const KEY_BITS :Array = [
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",

@@ -9,8 +9,8 @@ import flash.geom.Point;
 
 import flash.events.MouseEvent;
 
-import flash.utils.setInterval;
-import flash.utils.clearInterval;
+import flash.utils.setInterval; // function import
+import flash.utils.clearInterval; // function import
 
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
@@ -49,8 +49,7 @@ public class Canvas extends Sprite
         addChild(masker);
         mask = masker;
 
-        // TODO: temporarily just staying offline while we get the tools sorted out.
-        _model = new OfflineModel(this);
+        _model = control.isConnected () ? new OnlineModel(this, control) : new OfflineModel(this);
         redraw();
     }
 

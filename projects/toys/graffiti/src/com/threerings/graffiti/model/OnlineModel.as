@@ -2,12 +2,17 @@
 
 package com.threerings.graffiti.model {
 
+import flash.events.Event;
+
 import flash.geom.Point;
+
+import flash.utils.setInterval; // function import
+import flash.utils.clearInterval; // function import
+import flash.utils.getTimer; // function import
 
 import com.threerings.util.Log;
 
-import com.whirled.EntityControl;
-import com.whirled.ControlEvent;
+import com.whirled.FurniControl;
 
 import com.threerings.graffiti.Canvas;
 
@@ -15,60 +20,58 @@ import com.threerings.graffiti.tools.Brush;
 
 public class OnlineModel extends Model
 {
-    public function OnlineModel (canvas :Canvas, control :EntityControl) 
+    public function OnlineModel (canvas :Canvas, control :FurniControl) 
     {
         super(canvas);
 
         _control = control;
 
-        var memories :Object = _control.getMemories();
-        for (var key :String in memories) {
-            putStroke(key, memories[key]);
-        }
-
-        _control.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessage);
+        _timer = setInterval(tick, TICK_INTERVAL);
+        canvas.addEventListener(Event.REMOVED_FROM_STAGE, function (event :Event) :void {
+            clearInterval(_timer);
+        });
     }
 
-    override public function beginStroke (id :String, from :Point, to :Point, color :int, 
-        brush :Brush) :void
+    public override function beginStroke (id :String, from :Point, to :Point, color :int, 
+                                          brush :Brush) :void
     {
         super.beginStroke(id, from, to, color, brush);
-        _control.sendMessage(id, 
-            [ from.x, from.y, to.x, to.y, color, brush.thickness, brush.alpha]);
+        _dirty = true;
     }
 
-    override public function extendStroke (id :String, to :Point) :void
+    public override function extendStroke (id :String, to :Point) :void
     {
         super.extendStroke(id, to);
-        _control.sendMessage(id, [ to.x, to.y ]);
+        _dirty = true;
     }
 
-    protected function handleMessage (evt :ControlEvent) :void
+    public override function setBackgroundColor (color :uint) :void
     {
-        var arr :Array = (evt.value as Array);
-        if (!arr) {
-            log.debug("Eek, non-array value in evt: " + evt);
-            return;
-        }
-        if (arr.length == 7) {
-            beginStroke(evt.name, new Point(arr[0], arr[1]), new Point(arr[2], arr[3]), arr[4],
-                new Brush(arr[5], arr[6]));
-
-        } else {
-            extendStroke(evt.name, new Point(arr[0], arr[1]));
-        }
+        super.setBackgroundColor(color);
+        _dirty = true;
     }
 
-    override protected function putStroke (id :String, stroke :Array) :void
+    protected function tick () :void
     {
-        super.putStroke(id, stroke);
-        if (_control.hasControl()) {
-            _control.updateMemory(id, stroke);
+        if (_dirty) {
+            var time :int = getTimer();
+            log.debug("updating memory [" + (time - _lastUpdate) + "]");
+            _lastUpdate = time;
+            // the serialized version of the strokes is kept up to date in Model
+            _control.updateMemory(STORED_MODEL, _serializedStrokes);
+            _dirty = false;
         }
     }
 
     private static const log :Log = Log.getLog(OnlineModel);
 
-    protected var _control :EntityControl;
+    protected static const STORED_MODEL :String = "storedModel";
+    /** The delay in ms between full memory updates with the serialized board art. */
+    protected static const TICK_INTERVAL :int = 1500;
+
+    protected var _control :FurniControl;
+    protected var _dirty :Boolean = false;
+    protected var _timer :uint = 0;
+    protected var _lastUpdate :int;
 }
 }
