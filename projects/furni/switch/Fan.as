@@ -7,7 +7,7 @@ import flash.display.Sprite;
 import flash.events.Event;
 
 import com.threerings.util.Log;
-import com.threerings.util.EmbeddedSwfLoader;
+import com.threerings.util.MultiLoader;
 
 import com.whirled.FurniControl;
 import com.whirled.ControlEvent;
@@ -18,14 +18,12 @@ public class Fan extends Sprite
 {
     public function Fan ()
     {
-        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
-        loader.addEventListener(Event.COMPLETE, loaded);
-        loader.load(new CLIP());
+        MultiLoader.getContents(CLIP, loaded);
     }
 
-    protected function loaded (evt :Event) :void
+    protected function loaded (clip :MovieClip) :void
     {
-        _clip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        _clip = clip;
         this.addChild(_clip);
         _clip.stop();
 

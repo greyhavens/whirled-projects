@@ -1,7 +1,6 @@
 <!-- build configuration -->
 <project name="Switch" default="bits" basedir=".">
-  <property name="app.source-extras" value="../../../contrib/src/as/"/>
-  <import file="../../../etc/project-include.xml"/>
+  <property name="app.source-extras" value="../../../libraries/whirled/contrib/src/as/"/>
 
   <target name="bits" depends="fan,switch"/>
 
@@ -13,4 +12,5 @@
     <antcall target="compile"><param name="app.name" value="Switch"/></antcall>
   </target>
 
+  <import file="../../../etc/project-include.xml"/>
 </project>
