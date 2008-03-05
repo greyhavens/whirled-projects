@@ -9,6 +9,7 @@ import flash.geom.Point;
 import flash.utils.setInterval; // function import
 import flash.utils.clearInterval; // function import
 import flash.utils.getTimer; // function import
+import flash.utils.ByteArray;
 
 import com.threerings.util.Log;
 

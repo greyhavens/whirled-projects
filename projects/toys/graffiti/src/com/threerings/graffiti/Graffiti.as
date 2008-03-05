@@ -57,8 +57,8 @@ public class Graffiti extends Sprite
         popup.addChild(canvas);
         canvas.toolbox.x = Canvas.CANVAS_WIDTH;
         popup.addChild(canvas.toolbox);
-        control.showPopup("Editing drawing...", popup, Canvas.CANVAS_WIDTH + ToolBox.TOOLBOX_WIDTH, 
-            Canvas.CANVAS_HEIGHT, 0, 0);
+        control.showPopup("Editing Graffiti...", popup, 
+            Canvas.CANVAS_WIDTH + ToolBox.TOOLBOX_WIDTH, Canvas.CANVAS_HEIGHT, 0, 0);
     }
 
     private static function referenceSkins () :void

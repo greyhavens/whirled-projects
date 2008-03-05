@@ -127,11 +127,10 @@ public class Model
 
     protected function deserialize (bytes :ByteArray) :void
     {
-        var bytes :ByteArray = event.value as ByteArray;
         bytes.uncompress();
 
         var version :int = bytes.readInt();
-        _backgroundColor :uint = bytes.readUnsignedInt();
+        _backgroundColor = bytes.readUnsignedInt();
         
         var colorLUTSize :int = bytes.readInt(); 
         var colors :Array = new Array(colorLUTSize);

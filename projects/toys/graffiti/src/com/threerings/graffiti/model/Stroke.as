@@ -12,17 +12,19 @@ import com.threerings.graffiti.tools.Brush;
 
 public class Stroke
 {
+    public static function createStokeFromBytes (bytes :ByteArray, colorLUT :Array) :Stroke
+    {
+        var stroke :Stroke = new Stroke(null, null, 0, null);
+        stroke.deserialize(bytes, colorLUT);
+        return stroke;
+    }
+
     public function Stroke (from :Point, to :Point, color :uint, brush :Brush)
     {
         _start = from;
         _color = color;
         _brush = brush;
         _points.push(to);
-    }
-
-    public function Stroke (bytes :ByteArray, colorLUT :Array) 
-    {
-        deserialize(bytes, colorLUT);
     }
 
     public function get start () :Point
@@ -98,14 +100,15 @@ public class Stroke
     protected function deserialize (bytes :ByteArray, colorLUT :Array) :void
     {
         var length :int = bytes.readInt();
-        _color = colurLUT[bytes.readInt()];
-        _brush = new Brush(bytes);
+        _color = colorLUT[bytes.readInt()];
+        _brush = Brush.createBrushFromBytes(bytes);
         _start = new Point();
         _start.x = bytes.readInt();
         _start.y = bytes.readInt();
 
         var curX :int = _start.x;
         var curY :int = _start.y;
+        _points = [];
         for (var ii :int = 0; ii < length; ii++) {
             var point :Point = new Point();
             point.x = _start.x + bytes.readInt();

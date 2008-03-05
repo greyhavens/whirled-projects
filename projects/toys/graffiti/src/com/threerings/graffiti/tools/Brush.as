@@ -9,15 +9,17 @@ public class Brush
     public var thickness :int;
     public var alpha :Number;
 
+    public static function createBrushFromBytes (bytes :ByteArray) :Brush
+    {
+        var brush :Brush = new Brush();
+        brush.deserialize(bytes);
+        return brush;
+    }
+
     public function Brush (thickness :int = 5, alpha :Number = 1.0)
     {
         this.thickness = thickness;
         this.alpha = alpha;
-    }
-
-    public function Burhs (bytes :ByteArray) 
-    {
-        deserialize(bytes);
     }
 
     public function clone () :Brush 
