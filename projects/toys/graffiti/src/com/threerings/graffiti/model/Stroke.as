@@ -20,6 +20,11 @@ public class Stroke
         _points.push(to);
     }
 
+    public function Stroke (bytes :ByteArray, colorLUT :Array) 
+    {
+        deserialize(bytes, colorLUT);
+    }
+
     public function get start () :Point
     {
         return _start;
@@ -57,11 +62,6 @@ public class Stroke
         _points.push(to);
     }
 
-    public function unserialize (bytes :ByteArray, colorLUT :Array, version :int) :void
-    {
-        // TODO
-    }
-
     public function serialize (bytes :ByteArray, colorLUT :HashMap) :void
     {
         var colorKey :int;
@@ -92,6 +92,27 @@ public class Stroke
             bytes.writeInt(thisY - curY);
             curX = thisX;
             curY = thisY;
+        }
+    }
+
+    protected function deserialize (bytes :ByteArray, colorLUT :Array) :void
+    {
+        var length :int = bytes.readInt();
+        _color = colurLUT[bytes.readInt()];
+        _brush = new Brush(bytes);
+        _start = new Point();
+        _start.x = bytes.readInt();
+        _start.y = bytes.readInt();
+
+        var curX :int = _start.x;
+        var curY :int = _start.y;
+        for (var ii :int = 0; ii < length; ii++) {
+            var point :Point = new Point();
+            point.x = _start.x + bytes.readInt();
+            point.y = _start.y + bytes.readInt();
+            _points.push(point);
+            curX = point.x;
+            curY = point.y;
         }
     }
 

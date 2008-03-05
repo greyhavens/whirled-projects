@@ -100,21 +100,49 @@ public class Model
         _serializedStrokes.writeUnsignedInt(_backgroundColor);
 
         // write the strokes
-        _serializedStrokes.writeInt(_strokes.size()); // number of strokes
+        var strokesBytes :ByteArray = new ByteArray();
+        strokesBytes.writeInt(_strokes.size()); // number of strokes
         var colorLUT :HashMap = new HashMap();
         for each (var stroke :Stroke in _strokes.values()) {
-            stroke.serialize(_serializedStrokes, colorLUT);
+            stroke.serialize(strokesBytes, colorLUT);
         }
 
-        // write the LUT - its the last thing in the data chunk, so we don't need to write the
-        // size
+        // write the LUT
+        _serializedStrokes.writeInt(colorLUT.size());
+        var colors :Array = new Array(colorLUT.size());
         for each (var color :uint in colorLUT.keys()) {
-            _serializedStrokes.writeUnsignedInt(color);
-            _serializedStrokes.writeInt(colorLUT.get(color));
+            colors[colorLUT.get(color)] = color;
         }
+        // now that we have the colors in key order, dump the array
+        for each (color in colors) {
+            _serializedStrokes.writeUnsignedInt(color);
+        }
+
+        // append the stroke data
+        _serializedStrokes.writeBytes(strokesBytes);
 
         _serializedStrokes.compress();
         _canvas.reportFillPercent(_serializedStrokes.length / MAX_STORAGE_SIZE);
+    }
+
+    protected function deserialize (bytes :ByteArray) :void
+    {
+        var bytes :ByteArray = event.value as ByteArray;
+        bytes.uncompress();
+
+        var version :int = bytes.readInt();
+        _backgroundColor :uint = bytes.readUnsignedInt();
+        
+        var colorLUTSize :int = bytes.readInt(); 
+        var colors :Array = new Array(colorLUTSize);
+        for (var ii :int = 0; ii < colorLUTSize; ii++) {
+            colors[ii] = bytes.readUnsignedInt();
+        }
+
+        _strokes.clear();
+        // TODO: strokes need to be stored in an ordered manner.  One instance needs to be 
+        // authoritative on that order.  Then the strokes can come out of the byte array in that
+        // order, and get painted in that order.  Yay.
     }
 
     private static const log :Log = Log.getLog(Model);

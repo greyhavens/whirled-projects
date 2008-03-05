@@ -12,6 +12,7 @@ import flash.utils.getTimer; // function import
 
 import com.threerings.util.Log;
 
+import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
 
 import com.threerings.graffiti.Canvas;
@@ -25,11 +26,19 @@ public class OnlineModel extends Model
         super(canvas);
 
         _control = control;
+        //_control.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
 
         _timer = setInterval(tick, TICK_INTERVAL);
         canvas.addEventListener(Event.REMOVED_FROM_STAGE, function (event :Event) :void {
             clearInterval(_timer);
         });
+    }
+
+    public function ignoreUpdates () :void
+    {
+        // TODO: TEMPORARY!  This is just for testing deserialization.  Eventaully, the toy will
+        // load from memory once at instantiation, then follow messages to update its canvas.
+        _control.removeEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
     }
 
     public override function beginStroke (id :String, from :Point, to :Point, color :int, 
@@ -49,6 +58,11 @@ public class OnlineModel extends Model
     {
         super.setBackgroundColor(color);
         _dirty = true;
+    }
+
+    protected function memoryChanged (event :ControlEvent) :void
+    {
+        deserialize(event.value as ByteArray);
     }
 
     protected function tick () :void

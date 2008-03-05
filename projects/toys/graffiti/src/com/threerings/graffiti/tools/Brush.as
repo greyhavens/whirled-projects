@@ -15,6 +15,11 @@ public class Brush
         this.alpha = alpha;
     }
 
+    public function Burhs (bytes :ByteArray) 
+    {
+        deserialize(bytes);
+    }
+
     public function clone () :Brush 
     {
         return new Brush(thickness, alpha);
@@ -29,6 +34,12 @@ public class Brush
     {
         bytes.writeInt(thickness);
         bytes.writeInt(Math.round(alpha * 100));
+    }
+
+    protected function deserialize (bytes :ByteArray) :void
+    {
+        thickness = bytes.readInt();
+        alpha = bytes.readInt() / 100;
     }
 }
 }
