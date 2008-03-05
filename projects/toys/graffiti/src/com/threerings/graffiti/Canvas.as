@@ -42,13 +42,6 @@ public class Canvas extends Sprite
         _canvas = new Sprite();
         addChild(_canvas);
 
-        _background.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-        _canvas.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-        _background.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-        _canvas.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-        _background.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-        _canvas.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-
         var masker :Shape = new Shape();
         masker.graphics.beginFill(0);
         masker.graphics.drawRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -65,6 +58,9 @@ public class Canvas extends Sprite
     {
         // toolbox creation is deferred so view-only canvases don't instantiate one.
         if (_toolBox == null) {
+            // defer adding the mouse listeners as well - we don't need them on a view-only canvas.
+            addMouseListeners();
+
             _toolBox = new ToolBox(this);
             _toolBox.addEventListener(ToolEvent.COLOR_PICKED, function (event :ToolEvent) :void {
                 _color = event.value as uint;
@@ -131,6 +127,16 @@ public class Canvas extends Sprite
         if (_toolBox != null) {
             _toolBox.displayFillPercent(percent);
         }
+    }
+
+    protected function addMouseListeners () :void
+    {
+        _background.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+        _canvas.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+        _background.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+        _canvas.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+        _background.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+        _canvas.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
     }
 
     protected function mouseDown (evt :MouseEvent) :void
