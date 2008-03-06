@@ -18,11 +18,19 @@ import com.threerings.graffiti.tools.Brush;
 
 public class Model
 {
-    public function Model (canvas :Canvas)
+    public function Model ()
     {
-        _canvas = canvas;
-
         _strokes = new HashMap();
+    }
+
+    public function registerCanvas (canvas :Canvas) :void
+    {
+        _canvases.addCanvas(canvas);
+    }
+
+    public function unregisterCanvas (canvas :Canvas) :void
+    {
+        _canvases.removeCanvas(canvas);
     }
 
     public function beginStroke (id :String, from :Point, to :Point, color :int, brush :Brush) :void
@@ -54,7 +62,7 @@ public class Model
 
     public function setBackgroundColor (color :uint) :void
     {
-        _canvas.paintBackground(_backgroundColor = color);
+        _canvases.paintBackground(_backgroundColor = color);
     }
 
     public function getBackgroundColor () :uint
@@ -70,7 +78,7 @@ public class Model
         }
 
         _strokes.put(id, stroke);
-        _canvas.strokeBegun(id, stroke);
+        _canvases.strokeBegun(id, stroke);
 
         serialize();
     }
@@ -84,7 +92,7 @@ public class Model
         }
 
         stroke.extend(to);
-        _canvas.strokeExtended(id, to);
+        _canvases.strokeExtended(id, to);
 
         serialize();
     }
@@ -122,7 +130,7 @@ public class Model
         _serializedStrokes.writeBytes(strokesBytes);
 
         _serializedStrokes.compress();
-        _canvas.reportFillPercent(_serializedStrokes.length / MAX_STORAGE_SIZE);
+        _canvases.reportFillPercent(_serializedStrokes.length / MAX_STORAGE_SIZE);
     }
 
     protected function deserialize (bytes :ByteArray) :void
@@ -150,7 +158,7 @@ public class Model
 
     protected static const MAX_STORAGE_SIZE :int = 4 * 1024; // in bytes
 
-    protected var _canvas :Canvas;
+    protected var _canvases :CanvasList = new CanvasList();
     protected var _strokes :HashMap;
     protected var _backgroundColor :uint = 0xFFFFFF;
 
@@ -166,4 +174,59 @@ public class Model
         "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
     ];
 }
+}
+
+import flash.geom.Point;
+
+import com.threerings.graffiti.Canvas;
+
+import com.threerings.graffiti.model.Stroke;
+
+class CanvasList 
+{
+    public function paintBackground (color :uint) :void
+    {
+        for each (var canvas :Canvas in _canvases) {
+            canvas.paintBackground(color);
+        }
+    }
+
+    public function strokeBegun (id :String, stroke :Stroke) :void
+    {
+        for each (var canvas :Canvas in _canvases) {
+            canvas.strokeBegun(id, stroke);
+        }
+    }
+
+    public function strokeExtended (id :String, to :Point) :void
+    {
+        for each (var canvas :Canvas in _canvases) {
+            canvas.strokeExtended(id, to);
+        }
+    }
+
+    public function reportFillPercent (percent :Number) :void
+    {
+        for each (var canvas :Canvas in _canvases) {
+            canvas.reportFillPercent(percent);
+        }
+    }
+
+    public function addCanvas (canvas :Canvas) :void
+    {
+        var ii :int = _canvases.indexOf(canvas);
+        if (ii == -1) {
+            _canvases.push(canvas);
+        }
+    }
+
+    public function removeCanvas (canvas :Canvas) :void
+    {
+        var ii :int = _canvases.indexOf(canvas);
+        if (ii != -1) {
+            _canvases.splice(ii, 1);
+        }
+    }
+
+    protected var _canvases :Array = [];
 }

@@ -7,6 +7,7 @@ import flash.display.Shape;
 import flash.display.Sprite;
 import flash.geom.Point;
 
+import flash.events.Event;
 import flash.events.MouseEvent;
 
 import flash.utils.setInterval; // function import
@@ -14,8 +15,6 @@ import flash.utils.clearInterval; // function import
 
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
-
-import com.whirled.FurniControl;
 
 import com.threerings.graffiti.tools.Brush;
 import com.threerings.graffiti.tools.ToolBox;
@@ -31,11 +30,7 @@ public class Canvas extends Sprite
     public static const CANVAS_WIDTH :int = 400;
     public static const CANVAS_HEIGHT :int = 400;
 
-    /**
-     * This function should not be called directly.  Instead, call createCanvas() with the 
-     * FurniControl.
-     */
-    public function Canvas (control :FurniControl)
+    public function Canvas (model :Model)
     {
         _background = new Sprite();
         addChild(_background);
@@ -49,7 +44,12 @@ public class Canvas extends Sprite
         addChild(masker);
         mask = masker;
 
-        _model = control.isConnected () ? new OnlineModel(this, control) : new OfflineModel(this);
+        _model = model;
+        var thisCanvas :Canvas = this;
+        _model.registerCanvas(thisCanvas);
+        addEventListener(Event.REMOVED_FROM_STAGE, function (event :Event) :void {
+            _model.unregisterCanvas(thisCanvas);
+        });
         redraw();
     }
 

@@ -16,21 +16,19 @@ import com.threerings.util.Log;
 import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
 
-import com.threerings.graffiti.Canvas;
-
 import com.threerings.graffiti.tools.Brush;
 
 public class OnlineModel extends Model
 {
-    public function OnlineModel (canvas :Canvas, control :FurniControl) 
+    public function OnlineModel (control :FurniControl) 
     {
-        super(canvas);
+        super();
 
         _control = control;
         //_control.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
 
         _timer = setInterval(tick, TICK_INTERVAL);
-        canvas.addEventListener(Event.REMOVED_FROM_STAGE, function (event :Event) :void {
+        control.addEventListener(Event.UNLOAD, function (event :Event) :void {
             clearInterval(_timer);
         });
     }

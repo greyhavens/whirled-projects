@@ -16,6 +16,10 @@ import com.threerings.util.Log;
 
 import com.whirled.FurniControl;
 
+import com.threerings.graffiti.model.Model;
+import com.threerings.graffiti.model.OfflineModel;
+import com.threerings.graffiti.model.OnlineModel;
+
 import com.threerings.graffiti.tools.ToolBox;
 
 [SWF(width="500", height="400")]
@@ -24,7 +28,8 @@ public class Graffiti extends Sprite
     public function Graffiti () 
     {
         var control :FurniControl = new FurniControl(this);
-        var canvas :Canvas = new Canvas(control);
+        _model = control.isConnected() ? new OnlineModel(control) : new OfflineModel();
+        var canvas :Canvas = new Canvas(_model);
         addChild(canvas);
 
         // crazy awesome temp programmer (and programmatic!) art button.
@@ -53,7 +58,7 @@ public class Graffiti extends Sprite
     protected function displayPopup (control :FurniControl) :void
     {
         var popup :Sprite = new Sprite();
-        var canvas :Canvas = new Canvas(control);
+        var canvas :Canvas = new Canvas(_model);
         popup.addChild(canvas);
         canvas.toolbox.x = Canvas.CANVAS_WIDTH;
         popup.addChild(canvas.toolbox);
@@ -69,5 +74,7 @@ public class Graffiti extends Sprite
     }
 
     private static const log :Log = Log.getLog(Graffiti);
+
+    protected var _model :Model;
 }
 }
