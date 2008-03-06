@@ -111,8 +111,8 @@ public class Stroke
         _points = [];
         for (var ii :int = 0; ii < length; ii++) {
             var point :Point = new Point();
-            point.x = _start.x + bytes.readInt();
-            point.y = _start.y + bytes.readInt();
+            point.x = curX + bytes.readInt();
+            point.y = curY + bytes.readInt();
             _points.push(point);
             curX = point.x;
             curY = point.y;
