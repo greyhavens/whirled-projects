@@ -197,7 +197,7 @@ public class ClickFest extends Sprite
 
     protected static const WID :int = int(WIDTH / GRANUL);
 
-    protected static const POINTS_NEW :int = 10;
+    protected static const POINTS_NEW :int = 1;
     protected static const POINTS_OVER_OTHER :int = 5;
     protected static const POINTS_OVER_SELF :int = -10;
     protected static const SCORE_TO_WIN :int = 100;
