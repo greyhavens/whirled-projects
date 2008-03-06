@@ -147,9 +147,11 @@ public class Model
         }
 
         _strokes.clear();
-        // TODO: strokes need to be stored in an ordered manner.  One instance needs to be 
-        // authoritative on that order.  Then the strokes can come out of the byte array in that
-        // order, and get painted in that order.  Yay.
+        var numStrokes :int = bytes.readInt();
+        for (ii = 0; ii < numStrokes; ii++) {
+            var stroke :Stroke = Stroke.createStrokeFromBytes(bytes, colors);
+            _strokes.put(getKey(), stroke);
+        }
     }
 
     private static const log :Log = Log.getLog(Model);

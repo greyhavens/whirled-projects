@@ -12,7 +12,7 @@ import com.threerings.graffiti.tools.Brush;
 
 public class Stroke
 {
-    public static function createStokeFromBytes (bytes :ByteArray, colorLUT :Array) :Stroke
+    public static function createStrokeFromBytes (bytes :ByteArray, colorLUT :Array) :Stroke
     {
         var stroke :Stroke = new Stroke(null, null, 0, null);
         stroke.deserialize(bytes, colorLUT);

@@ -25,19 +25,13 @@ public class OnlineModel extends Model
         super();
 
         _control = control;
-        //_control.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
 
         _timer = setInterval(tick, TICK_INTERVAL);
         control.addEventListener(Event.UNLOAD, function (event :Event) :void {
             clearInterval(_timer);
         });
-    }
 
-    public function ignoreUpdates () :void
-    {
-        // TODO: TEMPORARY!  This is just for testing deserialization.  Eventaully, the toy will
-        // load from memory once at instantiation, then follow messages to update its canvas.
-        _control.removeEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
+        deserialize(control.lookupMemory(STORED_MODEL) as ByteArray);
     }
 
     public override function beginStroke (id :String, from :Point, to :Point, color :int, 
@@ -57,11 +51,6 @@ public class OnlineModel extends Model
     {
         super.setBackgroundColor(color);
         _dirty = true;
-    }
-
-    protected function memoryChanged (event :ControlEvent) :void
-    {
-        deserialize(event.value as ByteArray);
     }
 
     protected function tick () :void
