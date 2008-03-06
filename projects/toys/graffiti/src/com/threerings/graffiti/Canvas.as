@@ -71,6 +71,9 @@ public class Canvas extends Sprite
                 function (event :ToolEvent) :void {
                     _model.setBackgroundColor(event.value as uint);
                 });
+            _toolBox.addEventListener(ToolEvent.CLEAR_CANVAS, function (event :ToolEvent) :void {
+                _model.clearCanvas();
+            });
         }
 
         return _toolBox;
@@ -222,7 +225,7 @@ public class Canvas extends Sprite
         _newStroke = false;
     }
 
-    protected function redraw (lastId :String = null) :void
+    public function redraw (lastId :String = null) :void
     {
         paintBackground(_model.getBackgroundColor());
         _canvas.graphics.clear();

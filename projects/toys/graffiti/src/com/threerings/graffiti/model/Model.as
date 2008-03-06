@@ -43,6 +43,13 @@ public class Model
         strokeExtended(id, to);
     }
 
+    public function clearCanvas () :void
+    {
+        _strokes.clear();
+        _backgroundColor = 0xFFFFFF;
+        _canvases.redraw();
+    }
+
     public function getStrokes () :HashMap
     {
         return _strokes;
@@ -135,6 +142,9 @@ public class Model
 
     protected function deserialize (bytes :ByteArray) :void
     {
+        if (bytes == null) {
+            return;
+        }
         bytes.uncompress();
 
         var version :int = bytes.readInt();
@@ -211,6 +221,13 @@ class CanvasList
     {
         for each (var canvas :Canvas in _canvases) {
             canvas.reportFillPercent(percent);
+        }
+    }
+
+    public function redraw () :void
+    {
+        for each (var canvas :Canvas in _canvases) {
+            canvas.redraw();
         }
     }
 

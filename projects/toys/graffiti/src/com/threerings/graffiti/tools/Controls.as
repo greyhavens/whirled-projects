@@ -16,6 +16,7 @@ public class Controls extends Tool
         });
 
         createBackgroundButton();
+        createEraseButton();
     }
     
     // from Tool
@@ -27,7 +28,7 @@ public class Controls extends Tool
     // from Tool
     public override function get requestedHeight () :Number
     {
-        return PADDING * 2 + BUTTON_HEIGHT;     
+        return PADDING * 3 + BUTTON_HEIGHT * 2;
     }
 
     protected function createBackgroundButton () :void
@@ -40,6 +41,18 @@ public class Controls extends Tool
         });
         background.y = PADDING;
         addChild(background);
+    }
+
+    protected function createEraseButton () :void
+    {
+        var erase :Button = new Button();
+        erase.setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
+        erase.label = "erase";
+        erase.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            _toolBox.clearCanvas();
+        });
+        erase.y = PADDING * 2 + BUTTON_HEIGHT;
+        addChild(erase);
     }
 
     protected static const BUTTON_WIDTH :int = 80;

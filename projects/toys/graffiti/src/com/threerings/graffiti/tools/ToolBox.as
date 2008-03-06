@@ -13,6 +13,7 @@ import com.threerings.graffiti.Canvas;
 [Event(name="colorPicked", type="ToolEvent")];
 [Event(name="brushPicked", type="ToolEvent")];
 [Event(name="backgroundColor", type="ToolEvent")];
+[Event(name="clearCanvas", type="ToolEvent")];
 
 public class ToolBox extends Sprite 
 {
@@ -56,11 +57,16 @@ public class ToolBox extends Sprite
         dispatchEvent(new ToolEvent(ToolEvent.BACKGROUND_COLOR, color));
     }
 
+    public function clearCanvas () :void
+    {
+        dispatchEvent(new ToolEvent(ToolEvent.CLEAR_CANVAS));
+    }
+
     public function displayFillPercent (percent :Number) :void
     {
         _fullDisplay.fullPercent = percent;
     }
-
+    
     protected function layout () :void
     {
         graphics.lineStyle(2, 0x005500);

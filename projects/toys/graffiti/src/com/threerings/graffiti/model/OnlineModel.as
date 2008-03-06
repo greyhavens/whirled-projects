@@ -53,6 +53,12 @@ public class OnlineModel extends Model
         _dirty = true;
     }
 
+    public override function clearCanvas () :void
+    {
+        super.clearCanvas();
+        _dirty = true;
+    }
+
     protected function tick () :void
     {
         if (_dirty) {
