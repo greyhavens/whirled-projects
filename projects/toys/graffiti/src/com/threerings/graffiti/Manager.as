@@ -16,11 +16,10 @@ public class Manager
     public function Manager (throttle :Throttle)
     {
         _throttle = throttle;
-        _throttle.addEventListener(ThrottleEvent.INBOUND_MESSAGE, messageReceived);
-        _throttle.control.requestControl();
+        _throttle.addEventListener(ThrottleEvent.TEMP_STROKE_MESSAGE, tempMessageReceived);
     }
 
-    public function messageReceived (event :ThrottleEvent) :void
+    public function tempMessageReceived (event :ThrottleEvent) :void
     {
         // TODO
     }

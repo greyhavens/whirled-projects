@@ -35,10 +35,7 @@ public class Model
             return;
         }
 
-        var stroke :Stroke = new Stroke(from, to, color, brush);
-        _tempStrokesMap.put(id, stroke);
-        _tempStrokes.push(id);
-        _canvases.tempStroke(id, stroke);
+        strokeBegun(id, new Stroke(from, to, color, brush));
     }
 
     public function extendStroke (id :String, to :Point, end :Boolean = false) :void
@@ -106,6 +103,13 @@ public class Model
     public function getBackgroundColor () :uint
     {
         return _backgroundColor;
+    }
+
+    protected function strokeBegun (id :String, stroke :Stroke) :void
+    {
+        _tempStrokesMap.put(id, stroke);
+        _tempStrokes.push(id);
+        _canvases.tempStroke(id, stroke);
     }
 
     protected function removeFromTempStrokes (id :String) :void

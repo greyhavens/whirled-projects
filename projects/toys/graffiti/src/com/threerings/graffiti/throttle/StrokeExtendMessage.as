@@ -6,12 +6,16 @@ import flash.geom.Point;
 
 import flash.utils.ByteArray;
 
-public class StrokeExtendMessage implements ThrottleMessage
+public class StrokeExtendMessage implements ThrottleStrokeMessage
 {
     public static function deserialize (bytes :ByteArray) :StrokeExtendMessage
     {
-        // TODO
-        return new StrokeExtendMessage(null, null);
+        var message :StrokeExtendMessage = new StrokeExtendMessage(null, null);
+        message._id = bytes.readObject() as String;
+        var x :int = bytes.readInt();
+        var y :int = bytes.readInt();
+        message._to = new Point(x, y);
+        return message;
     }
 
     public function StrokeExtendMessage (id :String, to :Point) 
@@ -20,7 +24,8 @@ public class StrokeExtendMessage implements ThrottleMessage
         _to = to;
     }
 
-    public function get id () :String
+    // from ThrottleStrokeMessage
+    public function get strokeId () :String
     {
         return _id;
     }
@@ -33,7 +38,9 @@ public class StrokeExtendMessage implements ThrottleMessage
     // from ThrottleMessage
     public function serialize (bytes :ByteArray) :void
     {
-        // TODO
+        bytes.writeObject(_id);
+        bytes.writeInt(Math.round(_to.x));
+        bytes.writeInt(Math.round(_to.y));
     }
     
     protected var _id :String;

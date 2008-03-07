@@ -12,7 +12,7 @@ import com.threerings.graffiti.tools.Brush;
 
 public class Stroke
 {
-    public static function createStrokeFromBytes (bytes :ByteArray, colorLUT :Array) :Stroke
+    public static function createStrokeFromBytes (bytes :ByteArray, colorLUT :Array = null) :Stroke
     {
         var stroke :Stroke = new Stroke(null, null, 0, null);
         stroke.deserialize(bytes, colorLUT);
@@ -65,22 +65,28 @@ public class Stroke
         _points.push(to);
     }
 
-    public function serialize (bytes :ByteArray, colorLUT :HashMap) :void
+    public function serialize (bytes :ByteArray, colorLUT :HashMap = null) :void
     {
-        var colorKey :int;
-        if (colorLUT.containsKey(_color)) {
-            colorKey = colorLUT.get(_color);
-        } else {
-            colorLUT.put(_color, colorKey = colorLUT.size());
-        }
-
         // serialize format:
+        //  - color key into LUT or colur uint if colorLUT is null
         //  - length (number of points including start)
-        //  - color key into LUT
         //  - brush
         //  - continuation points in offset x and y values
+
+        if (colorLUT != null) {
+            var colorKey :int;
+            if (colorLUT.containsKey(_color)) {
+                colorKey = colorLUT.get(_color);
+                bytes.writeInt(colorKey);
+            } else {
+                colorLUT.put(_color, colorKey = colorLUT.size());
+                bytes.writeInt(colorKey);
+            }
+        } else {
+            bytes.writeUnsignedInt(_color);
+        }
+
         bytes.writeInt(_points.length);
-        bytes.writeInt(colorKey);
         _brush.serialize(bytes);
 
         var curX :int = 0;
@@ -97,8 +103,12 @@ public class Stroke
 
     protected function deserialize (bytes :ByteArray, colorLUT :Array) :void
     {
+        if (colorLUT != null) {
+            _color = colorLUT[bytes.readInt()];
+        } else {
+            _color = bytes.readUnsignedInt();
+        }
         var length :int = bytes.readInt();
-        _color = colorLUT[bytes.readInt()];
         _brush = Brush.createBrushFromBytes(bytes);
 
         var curX :int = 0;

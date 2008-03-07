@@ -6,7 +6,8 @@ import flash.events.Event;
 
 public class ThrottleEvent extends Event
 {
-    public static const INBOUND_MESSAGE :String = "inboundMessage";
+    public static const TEMP_STROKE_MESSAGE :String = "tempStrokeMessage";
+    public static const MANAGER_STROKE_MESSAGE :String = "managerStrokeMessage";
 
     public function ThrottleEvent (name :String, message :ThrottleMessage) 
     {

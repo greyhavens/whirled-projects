@@ -6,12 +6,14 @@ import flash.utils.ByteArray;
 
 import com.threerings.graffiti.model.Stroke;
 
-public class StrokeEndMessage implements ThrottleMessage
+public class StrokeEndMessage implements ThrottleStrokeMessage
 {
     public static function deserialize (bytes :ByteArray) :StrokeEndMessage
     {
-        // TODO
-        return new StrokeEndMessage(null, null);
+        var message :StrokeEndMessage = new StrokeEndMessage(null, null);
+        message._id = bytes.readObject() as String;
+        message._stroke = Stroke.createStrokeFromBytes(bytes);
+        return message;
     }
 
     public function StrokeEndMessage (id :String, stroke :Stroke)
@@ -20,7 +22,8 @@ public class StrokeEndMessage implements ThrottleMessage
         _stroke = stroke;
     }
 
-    public function get id () :String
+    // from ThrottleStrokeMessage
+    public function get strokeId () :String
     {
         return _id;
     }
@@ -33,7 +36,8 @@ public class StrokeEndMessage implements ThrottleMessage
     // from ThrottleMessage
     public function serialize (bytes :ByteArray) :void
     {
-        // TODO
+        bytes.writeObject(_id);
+        _stroke.serialize(bytes);
     }
 
     protected var _id :String;
