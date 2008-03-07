@@ -16,70 +16,49 @@ import com.threerings.util.Log;
 import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
 
+import com.threerings.graffiti.throttle.Throttle;
+import com.threerings.graffiti.throttle.StrokeBeginMessage;
+import com.threerings.graffiti.throttle.StrokeExtendMessage;
+import com.threerings.graffiti.throttle.StrokeEndMessage;
+
 import com.threerings.graffiti.tools.Brush;
 
 public class OnlineModel extends Model
 {
-    public function OnlineModel (control :FurniControl) 
+    public function OnlineModel (throttle :Throttle)
     {
         super();
 
-        _control = control;
-
-        _timer = setInterval(tick, TICK_INTERVAL);
-        control.addEventListener(Event.UNLOAD, function (event :Event) :void {
-            clearInterval(_timer);
-        });
-
-        deserialize(control.lookupMemory(STORED_MODEL) as ByteArray);
+        _throttle = throttle;
     }
 
     public override function beginStroke (id :String, from :Point, to :Point, color :int, 
-                                          brush :Brush) :void
+        brush :Brush) :void
     {
         super.beginStroke(id, from, to, color, brush);
-        _dirty = true;
+        _throttle.pushMessage(new StrokeBeginMessage(id, _tempStrokes.get(id)));
     }
 
-    public override function extendStroke (id :String, to :Point) :void
+    public override function extendStroke (id :String, to :Point, end :Boolean = false) :void
     {
-        super.extendStroke(id, to);
-        _dirty = true;
+        super.extendStroke(id, to, end);
+        _throttle.pushMessage(new StrokeExtendMessage(id, to));
     }
 
-    public override function setBackgroundColor (color :uint) :void
+    public override function endStroke (id :String) :void
     {
-        super.setBackgroundColor(color);
-        _dirty = true;
+        super.endStroke(id);
+        _throttle.pushMessage(new StrokeEndMessage(id, _tempStrokes.get(id)));
     }
 
-    public override function clearCanvas () :void
+    public override function getKey () :String
     {
-        super.clearCanvas();
-        _dirty = true;
-    }
-
-    protected function tick () :void
-    {
-        if (_dirty) {
-            var time :int = getTimer();
-            log.debug("updating memory [" + (time - _lastUpdate) + "]");
-            _lastUpdate = time;
-            // the serialized version of the strokes is kept up to date in Model
-            _control.updateMemory(STORED_MODEL, _serializedStrokes);
-            _dirty = false;
-        }
+        // in the online model, keys are prepended with the instance id
+        return _throttle.control.getInstanceId() + ":" + super.getKey();
     }
 
     private static const log :Log = Log.getLog(OnlineModel);
 
-    protected static const STORED_MODEL :String = "storedModel";
-    /** The delay in ms between full memory updates with the serialized board art. */
-    protected static const TICK_INTERVAL :int = 1500;
-
-    protected var _control :FurniControl;
-    protected var _dirty :Boolean = false;
-    protected var _timer :uint = 0;
-    protected var _lastUpdate :int;
+    protected var _throttle :Throttle;
 }
 }

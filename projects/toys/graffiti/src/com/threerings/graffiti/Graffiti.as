@@ -20,6 +20,8 @@ import com.threerings.graffiti.model.Model;
 import com.threerings.graffiti.model.OfflineModel;
 import com.threerings.graffiti.model.OnlineModel;
 
+import com.threerings.graffiti.throttle.Throttle;
+
 import com.threerings.graffiti.tools.ToolBox;
 
 [SWF(width="500", height="400")]
@@ -28,10 +30,14 @@ public class Graffiti extends Sprite
     public function Graffiti () 
     {
         var control :FurniControl = new FurniControl(this);
-        // event instance maintains a Manager.  The inControl() instance's Manager is in effect.
-        //_manager = new Manager(control);
-        //_model = control.isConnected() ? new OnlineModel(control) : new OfflineModel();
-        _model = new OfflineModel();
+        if (control.isConnected()) {
+            var throttle :Throttle = new Throttle(control);
+            // each instance maintains a Manager.  The inControl() instance's Manager is in effect.
+            _manager = new Manager(throttle);
+            _model = new OnlineModel(throttle);
+        } else {
+            _model = new OfflineModel();
+        }
         var canvas :Canvas = new Canvas(_model);
         addChild(canvas);
 

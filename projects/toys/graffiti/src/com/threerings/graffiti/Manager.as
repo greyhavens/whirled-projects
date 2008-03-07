@@ -9,15 +9,16 @@ import flash.events.Event;
 import com.threerings.util.Log;
 
 import com.whirled.ControlEvent;
-import com.whirled.FurniControl;
+
+import com.threerings.graffiti.throttle.Throttle;
 
 public class Manager
 {
-    public function Manager (control :FurniControl)
+    public function Manager (throttle :Throttle)
     {
-        _control = control;
-        _control.requestControl();
-        _control.addEventListener(ControlEvent.MESSAGE_RECEIVED, messageReceived);
+        _throttle = throttle;
+        _throttle.control.requestControl();
+        _throttle.control.addEventListener(ControlEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
     protected function messageReceived (event :ControlEvent) :void
@@ -27,6 +28,6 @@ public class Manager
     
     private static const log :Log = Log.getLog(Manager);
 
-    protected var _control :FurniControl;
+    protected var _throttle :Throttle;
 }
 }
