@@ -2,12 +2,11 @@
 
 package com.threerings.graffiti {
 
+import flash.display.SimpleButton;
 import flash.display.Sprite;
-import flash.display.Graphics;
 
+import flash.events.Event;
 import flash.events.MouseEvent;
-
-import flash.text.TextField;
 
 import fl.skins.DefaultButtonSkins;
 import fl.skins.DefaultSliderSkins;
@@ -24,7 +23,7 @@ import com.threerings.graffiti.throttle.Throttle;
 
 import com.threerings.graffiti.tools.ToolBox;
 
-[SWF(width="500", height="400")]
+[SWF(width="400", height="450")]
 public class Graffiti extends Sprite
 {
     public function Graffiti () 
@@ -41,27 +40,17 @@ public class Graffiti extends Sprite
         var canvas :Canvas = new Canvas(_model);
         addChild(canvas);
 
-        // crazy awesome temp programmer (and programmatic!) art button.
-        var editBtn :Sprite = new Sprite();
-        var g :Graphics = editBtn.graphics;
-        g.lineStyle(2, 0);
-        g.beginFill(0xBBBBFF);
-        g.drawRect(0, 0, 40, 20);
-        g.endFill();
-        var label :TextField = new TextField();
-        label.text = "EDIT";
-        label.x = 5;
-        label.y = -3;
-        label.selectable = false;
-        label.mouseEnabled = false;
-        editBtn.addChild(label);
-        editBtn.x = Canvas.CANVAS_WIDTH + 10;
-        editBtn.y = 10;
-        editBtn.buttonMode = true;
-        editBtn.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+        _editBtn = new EDIT_BUTTON() as SimpleButton;
+        _editBtn.x = Canvas.CANVAS_WIDTH - _editBtn.width / 2;
+        _editBtn.y = Canvas.CANVAS_HEIGHT + _editBtn.height / 2 - 1;
+        _editBtn.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             displayPopup(control);
         });
-        addChild(editBtn);
+
+        addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
+        addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+        addEventListener(Event.ENTER_FRAME, enterFrame);
+        control.addEventListener(Event.UNLOAD, unload);
     }
 
     protected function displayPopup (control :FurniControl) :void
@@ -71,8 +60,41 @@ public class Graffiti extends Sprite
         popup.addChild(canvas);
         canvas.toolbox.x = Canvas.CANVAS_WIDTH;
         popup.addChild(canvas.toolbox);
-        control.showPopup("Editing Graffiti...", popup, 
+        control.showPopup("Editing Graffiti", popup, 
             Canvas.CANVAS_WIDTH + ToolBox.TOOLBOX_WIDTH, Canvas.CANVAS_HEIGHT, 0, 0);
+    }
+
+    protected function enterFrame (event :Event) :void
+    {
+        if (_mouseOver) {
+            if (_editBtn.parent != this) {
+                addChildAt(_editBtn, 0);
+                _editBtn.x = Canvas.CANVAS_WIDTH - _editBtn.width / 2 - 3;
+                _editBtn.y = Canvas.CANVAS_HEIGHT - _editBtn.height / 2;
+            }
+
+            _editBtn.y = Math.min(_editBtn.y + 5, Canvas.CANVAS_HEIGHT + _editBtn.height / 2 - 2);
+        } else if (_editBtn.parent == this) {
+            _editBtn.y -= 5;
+            if (_editBtn.y < Canvas.CANVAS_HEIGHT - _editBtn.height / 2) {
+                removeChild(_editBtn);
+            }
+        }
+    }
+
+    protected function mouseOver (event :MouseEvent) :void
+    {
+        _mouseOver = true;
+    }
+
+    protected function mouseOut (event :MouseEvent) :void
+    {
+        _mouseOver = false;
+    }
+
+    protected function unload (event :Event) :void
+    {
+        removeEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
     private static function referenceSkins () :void
@@ -84,7 +106,12 @@ public class Graffiti extends Sprite
 
     private static const log :Log = Log.getLog(Graffiti);
 
+    [Embed(source="../../../../rsrc/edit_manager_buttons.swf#editbutton")]
+    protected static const EDIT_BUTTON :Class;
+
     protected var _manager :Manager;
     protected var _model :Model;
+    protected var _editBtn :SimpleButton;
+    protected var _mouseOver :Boolean; 
 }
 }
