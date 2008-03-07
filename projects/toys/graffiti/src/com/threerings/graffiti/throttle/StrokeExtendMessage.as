@@ -6,8 +6,6 @@ import flash.geom.Point;
 
 import flash.utils.ByteArray;
 
-import com.threerings.graffiti.model.OnlineModel;
-
 public class StrokeExtendMessage implements ThrottleMessage
 {
     public static function deserialize (bytes :ByteArray) :StrokeExtendMessage
@@ -22,18 +20,22 @@ public class StrokeExtendMessage implements ThrottleMessage
         _to = to;
     }
 
+    public function get id () :String
+    {
+        return _id;
+    }
+
+    public function get to () :Point
+    {
+        return _to;
+    }
+
     // from ThrottleMessage
     public function serialize (bytes :ByteArray) :void
     {
         // TODO
     }
     
-    // from ThrottleMessage
-    public function apply (model :OnlineModel) :void
-    {
-        // TODO
-    }
-
     protected var _id :String;
     protected var _to :Point;
 }

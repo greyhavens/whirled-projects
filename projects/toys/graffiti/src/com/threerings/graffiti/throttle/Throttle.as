@@ -2,6 +2,8 @@
 
 package com.threerings.graffiti.throttle {
 
+import flash.events.EventDispatcher;
+
 import flash.utils.ByteArray;
 
 import com.threerings.util.Log;
@@ -11,7 +13,9 @@ import com.whirled.FurniControl;
 
 import com.threerings.graffiti.model.OnlineModel;
 
-public class Throttle 
+[Event(name="inboundMessage", type="ThrottleEvent")];
+
+public class Throttle extends EventDispatcher
 {
     public static const MESSAGE_TYPE_STROKE_BEGIN :int = 1;
     public static const MESSAGE_TYPE_STROKE_EXTEND :int = 2;
@@ -24,11 +28,6 @@ public class Throttle
     {
         this.control = control;
         control.addEventListener(ControlEvent.MESSAGE_RECEIVED, messageReceived);
-    }
-
-    public function set model (m :OnlineModel) :void
-    {
-        _model = m;
     }
 
     public function pushMessage (message :ThrottleMessage) :void
@@ -50,15 +49,16 @@ public class Throttle
 
     protected function applyMessage (type :int, bytes :ByteArray) :void
     {
-        if (_model == null) {
-            log.warning("null model!");
-            return;
-        }
-
         switch (type) {
-        case MESSAGE_TYPE_STROKE_BEGIN: StrokeBeginMessage.deserialize(bytes).apply(_model);
-        case MESSAGE_TYPE_STROKE_EXTEND: StrokeExtendMessage.deserialize(bytes).apply(_model);
-        case MESSAGE_TYPE_STROKE_END: StrokeEndMessage.deserialize(bytes).apply(_model);
+        case MESSAGE_TYPE_STROKE_BEGIN: 
+            dispatchEvent(new ThrottleEvent(ThrottleEvent.INBOUND_MESSAGE, 
+                          StrokeBeginMessage.deserialize(bytes)));
+        case MESSAGE_TYPE_STROKE_EXTEND: 
+            dispatchEvent(new ThrottleEvent(ThrottleEvent.INBOUND_MESSAGE,
+                          StrokeExtendMessage.deserialize(bytes)));
+        case MESSAGE_TYPE_STROKE_END: 
+            dispatchEvent(new ThrottleEvent(ThrottleEvent.INBOUND_MESSAGE,
+                          StrokeEndMessage.deserialize(bytes)));
 
         default:
             log.warning("unknown message type! [" + type + "]");
@@ -68,6 +68,5 @@ public class Throttle
     private static var log :Log = Log.getLog(Throttle);
 
     protected var _pendingMessages :Array = [];
-    protected var _model :OnlineModel;
 }
 }

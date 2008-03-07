@@ -8,24 +8,23 @@ import flash.events.Event;
 
 import com.threerings.util.Log;
 
-import com.whirled.ControlEvent;
-
 import com.threerings.graffiti.throttle.Throttle;
+import com.threerings.graffiti.throttle.ThrottleEvent;
 
 public class Manager
 {
     public function Manager (throttle :Throttle)
     {
         _throttle = throttle;
+        _throttle.addEventListener(ThrottleEvent.INBOUND_MESSAGE, messageReceived);
         _throttle.control.requestControl();
-        _throttle.control.addEventListener(ControlEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
-    protected function messageReceived (event :ControlEvent) :void
+    public function messageReceived (event :ThrottleEvent) :void
     {
         // TODO
     }
-    
+
     private static const log :Log = Log.getLog(Manager);
 
     protected var _throttle :Throttle;

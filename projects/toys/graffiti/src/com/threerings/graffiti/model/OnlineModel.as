@@ -17,6 +17,7 @@ import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
 
 import com.threerings.graffiti.throttle.Throttle;
+import com.threerings.graffiti.throttle.ThrottleEvent;
 import com.threerings.graffiti.throttle.StrokeBeginMessage;
 import com.threerings.graffiti.throttle.StrokeExtendMessage;
 import com.threerings.graffiti.throttle.StrokeEndMessage;
@@ -30,6 +31,7 @@ public class OnlineModel extends Model
         super();
 
         _throttle = throttle;
+        _throttle.addEventListener(ThrottleEvent.INBOUND_MESSAGE, messageReceived);
     }
 
     public override function beginStroke (id :String, from :Point, to :Point, color :int, 
@@ -55,6 +57,11 @@ public class OnlineModel extends Model
     {
         // in the online model, keys are prepended with the instance id
         return _throttle.control.getInstanceId() + ":" + super.getKey();
+    }
+
+    protected function messageReceived (event :ThrottleEvent) :void
+    {
+        // TODO
     }
 
     private static const log :Log = Log.getLog(OnlineModel);
