@@ -49,7 +49,10 @@ public class OnlineModel extends Model
     {
         super.endStroke(id);
         if (idFromMe(id)) {
-            _throttle.pushMessage(new StrokeEndMessage(id, _tempStrokesMap.get(id)));
+            var stroke :Stroke = _tempStrokesMap.get(id);
+            if (stroke != null) {
+                _throttle.pushMessage(new StrokeEndMessage(id, stroke));
+            }
         }
     }
 
