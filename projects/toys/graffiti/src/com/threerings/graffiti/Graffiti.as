@@ -28,7 +28,10 @@ public class Graffiti extends Sprite
     public function Graffiti () 
     {
         var control :FurniControl = new FurniControl(this);
-        _model = control.isConnected() ? new OnlineModel(control) : new OfflineModel();
+        // event instance maintains a Manager.  The inControl() instance's Manager is in effect.
+        //_manager = new Manager(control);
+        //_model = control.isConnected() ? new OnlineModel(control) : new OfflineModel();
+        _model = new OfflineModel();
         var canvas :Canvas = new Canvas(_model);
         addChild(canvas);
 
@@ -75,6 +78,7 @@ public class Graffiti extends Sprite
 
     private static const log :Log = Log.getLog(Graffiti);
 
+    protected var _manager :Manager;
     protected var _model :Model;
 }
 }

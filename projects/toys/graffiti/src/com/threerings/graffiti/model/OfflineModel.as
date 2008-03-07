@@ -4,9 +4,12 @@ package com.threerings.graffiti.model {
 
 public class OfflineModel extends Model
 {
-    public function OfflineModel () 
+    public override function endStroke (id :String) :void
     {
-        super();
+        // when offline we can move the finished stroke straight to the canvas
+        var stroke :Stroke = _tempStrokesMap.get(id);
+        removeFromTempStrokes(id);
+        pushToCanvas(stroke);
     }
 }
 }

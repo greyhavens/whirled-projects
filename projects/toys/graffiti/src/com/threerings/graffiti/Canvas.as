@@ -32,10 +32,9 @@ public class Canvas extends Sprite
 
     public function Canvas (model :Model)
     {
-        _background = new Sprite();
-        addChild(_background);
-        _canvas = new Sprite();
-        addChild(_canvas);
+        addChild(_background = new Sprite());
+        addChild(_canvas = new Sprite());
+        addChild(_tempSurface = new Sprite());
 
         var masker :Shape = new Shape();
         masker.graphics.beginFill(0);
@@ -88,40 +87,90 @@ public class Canvas extends Sprite
         g.endFill();
     }
 
-    public function strokeBegun (id :String, stroke :Stroke) :void
+    /**
+     * Draw a segment of a stroke on the drawing surface.  If this is an extension of the stroke
+     * that was previously being drawn, then it will simply extend.  Otherwise, it will draw this
+     * segment as if it were an independent stroke.
+     */
+    public function tempStroke (id :String, stroke :Stroke, startPoint :int = 0) :void
     {
-        _outputKey = id;
+        log.debug("temp stroke [" + this.name + ", " + id + ", " + stroke + ", " + startPoint + 
+            "]");
 
-        _canvas.graphics.moveTo(stroke.start.x, stroke.start.y);
-        _canvas.graphics.lineStyle(stroke.brush.thickness, stroke.color, stroke.brush.alpha);
-
-        _lastX = stroke.start.x;
-        _lastY = stroke.start.y;
-        _oldDeltaX = _oldDeltaY = 0;
-
-        strokeExtended(id, stroke.getPoint(0));
-    }
-
-    public function strokeExtended (id :String, to :Point) :void
-    {
-        if (id != _outputKey) {
-            redraw(id);
+        var start :Point = stroke.getPoint(startPoint);
+        if (start == null) {
+            log.warning("null start point [" + stroke + ", " + startPoint + "]");
             return;
         }
-        var dX :Number = to.x - _lastX;
-        var dY :Number = to.y - _lastY;
 
-        // the new spline is continuous with the old, but not aggressively so
-        var controlX :Number = _lastX + _oldDeltaX * 0.4;
-        var controlY :Number = _lastY + _oldDeltaY * 0.4;
+        if (id != _lastId || startPoint != _lastEndPoint) {
+            _tempSurface.graphics.moveTo(start.x, start.y);
+            _tempSurface.graphics.lineStyle(
+                stroke.brush.thickness, stroke.color, stroke.brush.alpha);    
+            _lastX = start.x;
+            _lastY = start.y;
+            _oldDeltaX = _oldDeltaY = 0;
+        }
 
-        _canvas.graphics.curveTo(controlX, controlY, to.x, to.y);
+        _lastId = id;
 
-        _lastX = to.x;
-        _lastY = to.y;
+        for (var ii :int = startPoint + 1; ii < stroke.getSize(); ii++) {
+            var to :Point = stroke.getPoint(ii);
+            var dX :Number = to.x - _lastX;
+            var dY :Number = to.y - _lastY;
 
-        _oldDeltaX = to.x - controlX;
-        _oldDeltaY = to.y - controlY;
+            // the new spline is continuous with the old, but not aggressively so.
+            var controlX :Number = _lastX + _oldDeltaX * 0.4;
+            var controlY :Number = _lastY + _oldDeltaY * 0.4;
+
+            _tempSurface.graphics.curveTo(controlX, controlY, to.x, to.y);
+            
+            _lastX = to.x;
+            _lastY = to.y;
+
+            _oldDeltaX = to.x - controlX;
+            _oldDeltaY = to.y - controlY;
+
+            _lastEndPoint = ii;
+        }
+    }
+
+    /** 
+     * Draws a full stroke on the canvas.
+     */
+    public function canvasStroke (stroke :Stroke) :void
+    {
+        log.debug("canvas stroke [" + this.name + ", " + stroke + "]");
+
+        if (stroke.getSize() < 2) {
+            log.warning("Asked to draw stroke with less than two points [" + stroke + "]");
+            return;
+        }
+
+        var start :Point = stroke.getPoint(0);
+        _canvas.graphics.moveTo(start.x, start.y);
+        _canvas.graphics.lineStyle(stroke.brush.thickness, stroke.color, stroke.brush.alpha);
+
+        var lastX :Number = start.x;
+        var lastY :Number = start.y;
+        var oldDeltaX :Number = 0;
+        var oldDeltaY :Number = 0; 
+
+        for (var ii :int = 1; ii < stroke.getSize(); ii++) {
+            var to :Point = stroke.getPoint(ii);
+            var dX :Number = to.x - lastX;
+            var dY :Number = to.y - lastY;
+
+            var controlX :Number = lastX + oldDeltaX * 0.4;
+            var controlY :Number = lastY + oldDeltaY * 0.4;
+
+            _canvas.graphics.curveTo(controlX, controlY, to.x, to.y);
+            lastX = to.x;
+            lastY = to.y;
+
+            oldDeltaX = to.x - controlX;
+            oldDeltaY = to.y - controlY;
+        }
     }
 
     public function reportFillPercent (percent :Number) :void
@@ -133,12 +182,12 @@ public class Canvas extends Sprite
 
     protected function addMouseListeners () :void
     {
-        _background.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-        _canvas.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-        _background.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-        _canvas.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-        _background.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-        _canvas.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+        var sprites :Array = [ _background, _canvas, _tempSurface ];
+        for each (var sprite :Sprite in sprites) {
+            sprite.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+            sprite.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+            sprite.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+        }
     }
 
     protected function mouseDown (evt :MouseEvent) :void
@@ -161,7 +210,7 @@ public class Canvas extends Sprite
 
     protected function endStroke (localPoint :Point) :void 
     {
-        maybeAddStroke(localPoint);
+        maybeAddStroke(localPoint, true);
         if (_timer > 0) {
             clearInterval(_timer);
             _timer = 0;
@@ -194,59 +243,59 @@ public class Canvas extends Sprite
         }
     }
 
-    protected function maybeAddStroke (p :Point) :void
+    protected function maybeAddStroke (p :Point, end :Boolean = false) :void
     {
         if (p.x < 0 || p.x > CANVAS_WIDTH || p.y < 0 || p.y > CANVAS_HEIGHT) {
             return;
         }
 
-        if (_lastStrokePoint == null) {
+        if (_lastStrokePoint == null || _inputKey == null) {
             return;
         }
 
         var dx :Number = p.x - _lastStrokePoint.x;
         var dy :Number = p.y - _lastStrokePoint.y;
         if (dx*dx + dy*dy < 9) {
+            if (end) {
+                _model.endStroke(_inputKey);
+            }
             return;
         }
 
-        if (_inputKey == null) {
-            return;
-        }
-
-        if (_newStroke) {
-            _model.beginStroke(_inputKey, _lastStrokePoint, p, _color, _brush);
-
+        if (_newStroke && end) {
+            log.warning("newStroke and end!");
         } else {
-            _model.extendStroke(_inputKey, p);
+            if (_newStroke) {
+                _model.beginStroke(_inputKey, _lastStrokePoint, p, _color, _brush);
+
+            } else {
+                _model.extendStroke(_inputKey, p, end);
+            }
         }
 
         _lastStrokePoint = p;
         _newStroke = false;
     }
 
-    public function redraw (lastId :String = null) :void
+    public function redraw () :void
     {
         paintBackground(_model.getBackgroundColor());
+
         _canvas.graphics.clear();
-        var strokes :HashMap = _model.getStrokes();
-        var keys :Array = strokes.keys();
-        for (var ii :int = 0; ii < keys.length; ii ++) {
-            if (keys[ii] == lastId) {
-                continue;
-            }
-            drawStroke(keys[ii], strokes.get(keys[ii]));
+        var strokes :Array = _model.getCanvasStrokes();
+        for each (var stroke :Stroke in strokes) {
+            canvasStroke(stroke);
         }
-        if (lastId != null) {
-            drawStroke(lastId, strokes.get(lastId));
-        }
+
+        redrawTemp();
     }
 
-    protected function drawStroke (key :String, stroke :Stroke) :void
+    public function redrawTemp () :void
     {
-        strokeBegun(key, stroke);
-        for (var ii :int = 1; ii < stroke.getSize(); ii++) {
-            strokeExtended(key, stroke.getPoint(ii));
+        _tempSurface.graphics.clear();
+        var ids :Array = _model.getTempStrokeIds();
+        for each (var id :String in ids) {
+            tempStroke(id, _model.getTempStroke(id));
         }
     }
 
@@ -261,6 +310,7 @@ public class Canvas extends Sprite
 
     protected var _background :Sprite;
     protected var _canvas :Sprite;
+    protected var _tempSurface :Sprite;
     protected var _toolBox :ToolBox;
 
     // variables for user input
@@ -282,5 +332,8 @@ public class Canvas extends Sprite
 
     protected var _oldDeltaX :Number;
     protected var _oldDeltaY :Number;
+
+    protected var _lastId :String;
+    protected var _lastEndPoint :int;
 }
 }

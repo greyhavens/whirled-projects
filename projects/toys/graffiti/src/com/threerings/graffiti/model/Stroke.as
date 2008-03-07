@@ -19,17 +19,18 @@ public class Stroke
         return stroke;
     }
 
-    public function Stroke (from :Point, to :Point, color :uint, brush :Brush)
+    public function toString () :String
     {
-        _start = from;
-        _color = color;
-        _brush = brush;
-        _points.push(to);
+        return "Stroke [" + _color + ", " + _points[0] + ", " + _points[_points.length - 1] + ", " +
+            _points.length + "]"
     }
 
-    public function get start () :Point
+    public function Stroke (from :Point, to :Point, color :uint, brush :Brush)
     {
-        return _start;
+        _color = color;
+        _brush = brush;
+        _points.push(from);
+        _points.push(to);
     }
 
     public function get brush () :Brush
@@ -52,7 +53,7 @@ public class Stroke
     }
 
     /**
-     * Get the number of points after the start point.
+     * Returns the number of points, including the start.
      */
     public function getSize () :int
     {
@@ -74,19 +75,16 @@ public class Stroke
         }
 
         // serialize format:
-        //  - length (number of points after start)
+        //  - length (number of points including start)
         //  - color key into LUT
         //  - brush
-        //  - starting point
         //  - continuation points in offset x and y values
         bytes.writeInt(_points.length);
         bytes.writeInt(colorKey);
         _brush.serialize(bytes);
-        bytes.writeInt(Math.round(_start.x));
-        bytes.writeInt(Math.round(_start.y));
 
-        var curX :int = Math.round(_start.x);
-        var curY :int = Math.round(_start.y);
+        var curX :int = 0;
+        var curY :int = 0;
         for each (var point :Point in _points) {
             var thisX :int = Math.round(point.x);
             var thisY :int = Math.round(point.y);
@@ -102,12 +100,9 @@ public class Stroke
         var length :int = bytes.readInt();
         _color = colorLUT[bytes.readInt()];
         _brush = Brush.createBrushFromBytes(bytes);
-        _start = new Point();
-        _start.x = bytes.readInt();
-        _start.y = bytes.readInt();
 
-        var curX :int = _start.x;
-        var curY :int = _start.y;
+        var curX :int = 0;
+        var curY :int = 0;
         _points = [];
         for (var ii :int = 0; ii < length; ii++) {
             var point :Point = new Point();
@@ -119,7 +114,6 @@ public class Stroke
         }
     }
 
-    protected var _start :Point;
     protected var _points :Array = [];
     protected var _color :uint;
     protected var _brush :Brush = new Brush();

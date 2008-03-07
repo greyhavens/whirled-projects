@@ -18,11 +18,6 @@ import com.threerings.graffiti.tools.Brush;
 
 public class Model
 {
-    public function Model ()
-    {
-        _strokes = new HashMap();
-    }
-
     public function registerCanvas (canvas :Canvas) :void
     {
         _canvases.addCanvas(canvas);
@@ -35,24 +30,60 @@ public class Model
 
     public function beginStroke (id :String, from :Point, to :Point, color :int, brush :Brush) :void
     {
-        strokeBegun(id, new Stroke(from, to, color, brush));
+        if (id == null || _tempStrokesMap.get(id) != null) {
+            log.warning("Attempting to add a new stroke with null or existing id! [" + id + "]");
+            return;
+        }
+
+        var stroke :Stroke = new Stroke(from, to, color, brush);
+        _tempStrokesMap.put(id, stroke);
+        _tempStrokes.push(id);
+        _canvases.tempStroke(id, stroke);
     }
 
-    public function extendStroke (id :String, to :Point) :void
+    public function extendStroke (id :String, to :Point, end :Boolean = false) :void
     {
-        strokeExtended(id, to);
+        var stroke :Stroke = _tempStrokesMap.get(id);
+        if (stroke == null) {
+            log.warning("attempted to extend an unknown stroke [" + id + "]");
+            return;
+        }
+
+        stroke.extend(to);
+        _canvases.tempStroke(id, stroke, stroke.getSize() - 2);
+
+        if (end) {
+            endStroke(id);
+        }
+    }
+
+    public function endStroke (id :String) :void
+    {
+        // ignored here - used by subclasses
     }
 
     public function clearCanvas () :void
     {
-        _strokes.clear();
+        _tempStrokes = [];
+        _canvasStrokes = [];
+        _tempStrokesMap.clear();
         _backgroundColor = 0xFFFFFF;
         _canvases.redraw();
     }
 
-    public function getStrokes () :HashMap
+    public function getCanvasStrokes () :Array
     {
-        return _strokes;
+        return _canvasStrokes;
+    }
+
+    public function getTempStrokeIds () :Array
+    {
+        return _tempStrokes;
+    }
+
+    public function getTempStroke (id :String) :Stroke
+    {
+        return _tempStrokesMap.get(id) as Stroke;
     }
 
     public function getKey () :String
@@ -62,7 +93,7 @@ public class Model
             key = KEY_BITS[_rnd.nextInt(KEY_BITS.length)] +
                 KEY_BITS[_rnd.nextInt(KEY_BITS.length)] +
                 KEY_BITS[_rnd.nextInt(KEY_BITS.length)];
-        } while (_strokes.get(key) != null);
+        } while (_tempStrokesMap.get(key) != null);
 
         return key;
     }
@@ -77,31 +108,19 @@ public class Model
         return _backgroundColor;
     }
 
-    protected function strokeBegun (id :String, stroke :Stroke) :void
+    protected function removeFromTempStrokes (id :String) :void
     {
-        if (_strokes.get(id) != null) {
-            log.warning("Attempting to add a new stroke with existing id! [" + id + "]");
-            return;
+        _tempStrokesMap.remove(id);
+        var ii :int = _tempStrokes.indexOf(id);
+        if (ii != -1) {
+            _tempStrokes.splice(ii, 1);
         }
-
-        _strokes.put(id, stroke);
-        _canvases.strokeBegun(id, stroke);
-
-        serialize();
     }
 
-    protected function strokeExtended (id :String, to :Point) :void
+    protected function pushToCanvas (stroke :Stroke) :void
     {
-        var stroke :Stroke = _strokes.get(id);
-        if (stroke == null) {
-            log.warning("attempted to extend an unknown stroke [" + id + "]");
-            return;
-        }
-
-        stroke.extend(to);
-        _canvases.strokeExtended(id, to);
-
-        serialize();
+        _canvasStrokes.push(stroke);
+        _canvases.canvasStroke(stroke);
     }
 
     protected function serialize () :void 
@@ -116,9 +135,9 @@ public class Model
 
         // write the strokes
         var strokesBytes :ByteArray = new ByteArray();
-        strokesBytes.writeInt(_strokes.size()); // number of strokes
+        strokesBytes.writeInt(_canvasStrokes.length); // number of strokes
         var colorLUT :HashMap = new HashMap();
-        for each (var stroke :Stroke in _strokes.values()) {
+        for each (var stroke :Stroke in _canvasStrokes) {
             stroke.serialize(strokesBytes, colorLUT);
         }
 
@@ -156,11 +175,10 @@ public class Model
             colors[ii] = bytes.readUnsignedInt();
         }
 
-        _strokes.clear();
+        _canvasStrokes = [];
         var numStrokes :int = bytes.readInt();
         for (ii = 0; ii < numStrokes; ii++) {
-            var stroke :Stroke = Stroke.createStrokeFromBytes(bytes, colors);
-            _strokes.put(getKey(), stroke);
+            _canvasStrokes.push(Stroke.createStrokeFromBytes(bytes, colors));
         }
     }
 
@@ -171,7 +189,9 @@ public class Model
     protected static const MAX_STORAGE_SIZE :int = 4 * 1024; // in bytes
 
     protected var _canvases :CanvasList = new CanvasList();
-    protected var _strokes :HashMap;
+    protected var _tempStrokesMap :HashMap = new HashMap;
+    protected var _tempStrokes :Array = [];
+    protected var _canvasStrokes :Array = [];
     protected var _backgroundColor :uint = 0xFFFFFF;
 
     protected var _rnd :Random = new Random();
@@ -203,17 +223,29 @@ class CanvasList
         }
     }
 
-    public function strokeBegun (id :String, stroke :Stroke) :void
+    public function tempStroke (id :String, stroke :Stroke, startPoint :int = -1) :void
     {
         for each (var canvas :Canvas in _canvases) {
-            canvas.strokeBegun(id, stroke);
+            if (startPoint == -1) {
+                // respect canvas' default
+                canvas.tempStroke(id, stroke);
+            } else {
+                canvas.tempStroke(id, stroke, startPoint);
+            }
         }
     }
 
-    public function strokeExtended (id :String, to :Point) :void
+    public function canvasStroke (stroke :Stroke) :void
     {
         for each (var canvas :Canvas in _canvases) {
-            canvas.strokeExtended(id, to);
+            canvas.canvasStroke(stroke);
+        }
+    }
+
+    public function redrawTemp () :void
+    {
+        for each (var canvas :Canvas in _canvases) {
+            canvas.redrawTemp();
         }
     }
 
