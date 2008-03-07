@@ -5,6 +5,7 @@ package com.threerings.graffiti.throttle {
 import flash.utils.ByteArray;
 
 import com.threerings.graffiti.model.Stroke;
+import com.threerings.graffiti.model.OnlineModel;
 
 public class StrokeEndMessage implements ThrottleMessage
 {
@@ -24,6 +25,11 @@ public class StrokeEndMessage implements ThrottleMessage
     public function serialize (bytes :ByteArray) :void
     {
         // TODO
+    }
+
+    // from ThrottleMessage
+    public function apply (model :OnlineModel) :void
+    {
     }
 
     protected var _id :String;
