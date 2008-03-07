@@ -2,11 +2,24 @@
 
 package com.threerings.graffiti.tools {
 
+import fl.core.UIComponent;
+
+import fl.controls.ComboBox;
+import fl.controls.Slider;
+
+import fl.skins.DefaultComboBoxSkins;
+import fl.skins.DefaultListSkins;
+
+import flash.display.Loader;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import flash.events.Event;
 
+import flash.system.ApplicationDomain;
+
 import com.threerings.util.Log;
+import com.threerings.util.MultiLoader;
 
 import com.threerings.graffiti.Canvas;
 
@@ -17,29 +30,13 @@ import com.threerings.graffiti.Canvas;
 
 public class ToolBox extends Sprite 
 {
-    public static const TOOLBOX_WIDTH :int = 100;
+    public static const POPUP_WIDTH :int = 485;
+    public static const POPUP_HEIGHT :int = 465;
 
     public function ToolBox (canvas :Canvas) 
     {
-        _canvas = canvas;
-
-        var palette :Palette = new Palette(this, 0xFF0000);
-        addChild(palette);
-        _tools.push(palette);
-
-        var brushTool :BrushTool = new BrushTool(this);
-        addChild(brushTool);
-        _tools.push(brushTool);
-
-        var controls :Controls = new Controls(this);
-        addChild(controls);
-        _tools.push(controls);
-
-        _fullDisplay = new FullDisplay();
-        addChild(_fullDisplay);
-        _tools.push(_fullDisplay);
-
-        layout();
+        addChild(_canvas = canvas);
+        MultiLoader.getLoaders(TOOLBOX_UI, handleUILoaded, false, ApplicationDomain.currentDomain); 
     }
 
     public function pickColor (color :uint) :void
@@ -64,28 +61,26 @@ public class ToolBox extends Sprite
 
     public function displayFillPercent (percent :Number) :void
     {
-        _fullDisplay.fullPercent = percent;
     }
     
-    protected function layout () :void
+    protected function handleUILoaded (loader :Loader) :void
     {
-        graphics.lineStyle(2, 0x005500);
-        graphics.beginFill(0xFFFFFF);
-        // for now, just lay them out centered hoirzontally and stacked on top of each other
-        var curY :int = 0;
-        for each (var tool :Tool in _tools) {
-            tool.x = (TOOLBOX_WIDTH - tool.requestedWidth) / 2;
-            tool.y = curY;
-            curY += tool.requestedHeight;
-            graphics.drawRoundRect(2, tool.y, TOOLBOX_WIDTH - 4, tool.requestedHeight, 5);
-        }
-        graphics.endFill();
+        var ui :MovieClip = loader.content as MovieClip;
+        addChild(ui);
+        var alphaSlider :Slider = ui.alpha_slider;
+        var fontSizeCombo :ComboBox = ui.font_size;
+
+        // force the compiler to include
+        DefaultComboBoxSkins;
+        DefaultListSkins;
+        UIComponent;
     }
+
+    [Embed(source="../../../../../rsrc/graffiti_UI.swf", mimeType="application/octet-stream")]
+    protected static const TOOLBOX_UI :Class;
 
     private static const log :Log = Log.getLog(ToolBox);
 
     protected var _canvas :Canvas;
-    protected var _tools :Array = [];
-    protected var _fullDisplay :FullDisplay;
 }
 }

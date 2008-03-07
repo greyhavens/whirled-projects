@@ -317,8 +317,8 @@ public class Canvas extends Sprite
     protected var _inputKey :String;
 
     protected var _backgroundColor :uint;
-    protected var _color :uint;
-    protected var _brush :Brush;
+    protected var _color :uint = 0xFF0000;
+    protected var _brush :Brush = new Brush;
 
     protected var _timer :int;
     protected var _lastStrokePoint :Point;

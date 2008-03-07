@@ -8,9 +8,6 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
-import fl.skins.DefaultButtonSkins;
-import fl.skins.DefaultSliderSkins;
-
 import com.threerings.util.Log;
 
 import com.whirled.FurniControl;
@@ -28,9 +25,9 @@ public class Graffiti extends Sprite
 {
     public function Graffiti () 
     {
-        var control :FurniControl = new FurniControl(this);
-        if (control.isConnected()) {
-            var throttle :Throttle = new Throttle(control);
+        _control = new FurniControl(this);
+        if (_control.isConnected()) {
+            var throttle :Throttle = new Throttle(_control);
             // each instance maintains a Manager.  The inControl() instance's Manager is in effect.
             _manager = new Manager(throttle);
             _model = new OnlineModel(throttle);
@@ -43,25 +40,19 @@ public class Graffiti extends Sprite
         _editBtn = new EDIT_BUTTON() as SimpleButton;
         _editBtn.x = Canvas.CANVAS_WIDTH - _editBtn.width / 2;
         _editBtn.y = Canvas.CANVAS_HEIGHT + _editBtn.height / 2 - 1;
-        _editBtn.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            displayPopup(control);
-        });
+        _editBtn.addEventListener(MouseEvent.CLICK, displayEditPopup);
 
         addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
         addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
         addEventListener(Event.ENTER_FRAME, enterFrame);
-        control.addEventListener(Event.UNLOAD, unload);
+        _control.addEventListener(Event.UNLOAD, unload);
     }
 
-    protected function displayPopup (control :FurniControl) :void
+    protected function displayEditPopup (event :MouseEvent) :void
     {
-        var popup :Sprite = new Sprite();
         var canvas :Canvas = new Canvas(_model);
-        popup.addChild(canvas);
-        canvas.toolbox.x = Canvas.CANVAS_WIDTH;
-        popup.addChild(canvas.toolbox);
-        control.showPopup("Editing Graffiti", popup, 
-            Canvas.CANVAS_WIDTH + ToolBox.TOOLBOX_WIDTH, Canvas.CANVAS_HEIGHT, 0, 0);
+        _control.showPopup(
+            "Editing Graffiti", canvas.toolbox, ToolBox.POPUP_WIDTH, ToolBox.POPUP_HEIGHT, 0, 0);
     }
 
     protected function enterFrame (event :Event) :void
@@ -97,18 +88,12 @@ public class Graffiti extends Sprite
         removeEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
-    private static function referenceSkins () :void
-    {
-        // make sure the skins we use in this app get included by the compiler
-        DefaultButtonSkins;
-        DefaultSliderSkins;
-    }
-
     private static const log :Log = Log.getLog(Graffiti);
 
     [Embed(source="../../../../rsrc/edit_manager_buttons.swf#editbutton")]
     protected static const EDIT_BUTTON :Class;
 
+    protected var _control :FurniControl;
     protected var _manager :Manager;
     protected var _model :Model;
     protected var _editBtn :SimpleButton;
