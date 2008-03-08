@@ -201,6 +201,9 @@ public class Embedder extends Sprite
                 return;
             }
 
+            // update displayed value
+            input.text = url;
+
             // yay! It works!
             _ctrl.updateMemory(MEM_KEY, url);
             if (embedder.contains(panel)) {
