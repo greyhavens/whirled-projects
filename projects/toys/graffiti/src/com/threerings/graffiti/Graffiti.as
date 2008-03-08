@@ -19,6 +19,7 @@ import com.threerings.graffiti.model.OnlineModel;
 import com.threerings.graffiti.throttle.Throttle;
 
 import com.threerings.graffiti.tools.ToolBox;
+import com.threerings.graffiti.tools.ToolEvent;
 
 [SWF(width="405", height="486")]
 public class Graffiti extends Sprite
@@ -51,6 +52,9 @@ public class Graffiti extends Sprite
     protected function displayEditPopup (event :MouseEvent) :void
     {
         var canvas :Canvas = new Canvas(_model);
+        canvas.toolbox.addEventListener(ToolEvent.DONE_EDITING, function (event :ToolEvent) :void {
+            _control.clearPopup();
+        });
         _control.showPopup(
             "Editing Graffiti", canvas.toolbox, ToolBox.POPUP_WIDTH, ToolBox.POPUP_HEIGHT, 0, 0);
     }

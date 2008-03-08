@@ -11,9 +11,11 @@ import fl.data.DataProvider;
 
 import flash.display.Loader;
 import flash.display.MovieClip;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 
 import flash.system.ApplicationDomain;
 
@@ -96,6 +98,11 @@ public class ToolBox extends Sprite
         alphaSlider.addEventListener(SliderEvent.CHANGE, function (event :SliderEvent) :void {
             _brush.alpha = alphaSlider.value;
             dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
+        });
+
+        var doneButton :SimpleButton = ui.done_button;
+        doneButton.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            dispatchEvent(new ToolEvent(ToolEvent.DONE_EDITING));
         });
     }
 
