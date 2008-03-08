@@ -18,6 +18,7 @@ import flash.text.TextFieldType;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
+import com.threerings.util.StringUtil;
 import com.threerings.util.Util;
 
 import com.threerings.flash.SimpleTextButton;
@@ -36,28 +37,78 @@ public class Embedder extends Sprite
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
         _ctrl.registerCustomConfig(createConfigPanel);
 
+        // add a little area for room editors to be able to draw
+        if (_ctrl.canEditRoom()) {
+            graphics.beginFill(0x00FF00, .3);
+            graphics.drawRect(0, 0, 32, 18);
+            graphics.endFill();
+        }
+
         var mem :String = _ctrl.lookupMemory(MEM_KEY) as String;
-        if (!parseXML(mem)) {
-            addChild(createConfigPanel());
+        if (mem != null) {
+            load(mem);
+        } else {
+            // Normal else
+            //addChild(createConfigPanel());
+
+            // TEMP: convert old key
+            mem = _ctrl.lookupMemory("xml") as String;
+            var fixed :String = null;
+            try {
+                fixed = parseValue(mem);
+            } catch (err :Error) {
+                addChild(createConfigPanel());
+            }
+            if (fixed != null) {
+                _ctrl.updateMemory("xml", null);
+                _ctrl.updateMemory(MEM_KEY, fixed);
+            }
         }
     }
 
     protected function handleMemoryChanged (event :ControlEvent) :void
     {
         if (event.name == MEM_KEY) {
-            parseXML(event.value as String);
+            load(event.value as String);
         }
     }
 
-    protected function parseXML (mem :String) :Boolean
+    /**
+     * Return the parsed URL, or throw an Error.
+     */
+    protected function parseValue (value :String) :String
     {
-        var xml :XML;
-        try {
-            // in case we only have an <embed>, we make it one-level-down...
-            xml = Util.newXML("<xml>" + mem + "</xml>");
-        } catch (err :Error) {
-            return false; // this should never happen
+        if (StringUtil.isBlank(value)) {
+            throw new Error("No value");
         }
+        value = StringUtil.trim(value);
+
+        var startEmbed :int = value.toLowerCase().indexOf("<embed ");
+
+        if (-1 == startEmbed) {
+            // treat the whole thing as a URL?
+            var bits :Array = StringUtil.parseURLs(value);
+            if ((bits.length != 2) || (bits[0] != "")) {
+                throw new Error("No <embed>, not a URL either");
+            }
+            // if that works, I think we're good...
+            load(value);
+            return value;
+        }
+
+        var endEmbed :int = value.indexOf(">", startEmbed);
+        if (endEmbed == -1) {
+            throw new Error("Malformed embed");
+        }
+
+        var embed :String = value.substring(startEmbed, endEmbed + 1);
+
+        if (embed.charAt(embed.length - 2) != "/") {
+            embed += "</embed>";
+        }
+
+        // in case we only have an <embed>, we make it one-level-down...
+        var xml :XML = Util.newXML("<xml>" + embed + "</xml>");
 
         // TODO: What I should do is find the first embed child as XML and then look in that
         // for "src" and "flashvars". The below code could find a different flashvars because
@@ -67,7 +118,7 @@ public class Embedder extends Sprite
 
         var src :XML = xml..embed.@src[0];
         if (src == null) {
-            return false;
+            throw new Error("Malformed embed");
         }
 
         var url :String = String(src);
@@ -77,7 +128,7 @@ public class Embedder extends Sprite
         }
 
         load(url);
-        return true;
+        return url;
     }
 
     protected function load (url :String) :void
@@ -121,7 +172,7 @@ public class Embedder extends Sprite
             });
         panel.addChild(input);
 
-        var status :TextField = TextFieldUtil.createField("Enter embed HTML",
+        var status :TextField = TextFieldUtil.createField("Enter embedding HTML code, or a URL:",
             {
                 height: 20,
                 width: 320
@@ -142,13 +193,20 @@ public class Embedder extends Sprite
                 return; // no change
             }
 
-            if (parseXML(txt)) {
-                _ctrl.updateMemory(MEM_KEY, txt);
-                if (embedder.contains(panel)) {
-                    embedder.removeChild(panel);
-                }
+            var url :String;
+            try {
+                url = parseValue(txt);
+            } catch (err :Error) {
+                status.text = "Unable to parse: " + err.message + ". Please try again.";
+                return;
+            }
+
+            // yay! It works!
+            _ctrl.updateMemory(MEM_KEY, url);
+            if (embedder.contains(panel)) {
+                embedder.removeChild(panel);
             } else {
-                status.text = "Unable to parse embed HTML. Please try again.";
+                _ctrl.clearPopup(); // in case this is up as a popup
             }
         });
 
@@ -159,6 +217,6 @@ public class Embedder extends Sprite
 
     protected var _loader :Loader;
 
-    private static const MEM_KEY :String = "xml";
+    private static const MEM_KEY :String = "url";
 }
 }
