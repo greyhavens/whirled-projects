@@ -19,6 +19,8 @@ import flash.events.MouseEvent;
 
 import flash.system.ApplicationDomain;
 
+import com.threerings.flash.DisplayUtil;
+
 import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
 
@@ -43,7 +45,14 @@ public class ToolBox extends Sprite
     public function pickColor (color :uint) :void
     {
         // TODO: pick color for currently selected color picker
-        _brush.color = color;
+        // commented out to prevent NPE
+//        var w :int = _brushSwatch.width;
+//        var h :int = _brushSwatch.height;
+//        _brushSwatch.graphics.clear();
+//        _brushSwatch.graphics.beginFill(color);
+//        _brushSwatch.graphics.drawRect(0, 0, w, h);
+//        _brushSwatch.graphics.endFill();
+//        _brush.color = color;
         dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
     }
     
@@ -70,8 +79,12 @@ public class ToolBox extends Sprite
     {
         var ui :MovieClip = loader.content as MovieClip;
         addChild(ui);
-        var fontSizeCombo :ComboBox = ui.font_size;
-        fontSizeCombo.dataProvider = new DataProvider(["TODO"]);
+
+        _brushSwatch = 
+            DisplayUtil.findInHierarchy(ui.brush_color, "brushcolor_swatch", false, 5) as Sprite;
+        log.debug("upState [" + DisplayUtil.dumpHierarchy(ui.brush_color.upState) + "]");
+        log.debug("overState [" + DisplayUtil.dumpHierarchy(ui.brush_color.overState) + "]");
+        log.debug("downState [" + DisplayUtil.dumpHierarchy(ui.brush_color.downState) + "]");
 
         var palette :Palette = new Palette(this, 0xFF0000);
         palette.x = 445;
@@ -100,6 +113,9 @@ public class ToolBox extends Sprite
             dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
         });
 
+        var fontSizeCombo :ComboBox = ui.font_size;
+        fontSizeCombo.dataProvider = new DataProvider(["TODO"]);
+
         var doneButton :SimpleButton = ui.done_button;
         doneButton.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             dispatchEvent(new ToolEvent(ToolEvent.DONE_EDITING));
@@ -116,5 +132,7 @@ public class ToolBox extends Sprite
 
     protected var _canvas :Canvas;
     protected var _brush :Brush = new Brush();
+
+    protected var _brushSwatch :Sprite;
 }
 }
