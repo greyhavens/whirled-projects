@@ -2,15 +2,12 @@
 
 package com.threerings.graffiti.tools {
 
-import fl.core.UIComponent;
-
 import fl.controls.ComboBox;
 import fl.controls.Slider;
 
 import fl.events.SliderEvent;
 
-import fl.skins.DefaultComboBoxSkins;
-import fl.skins.DefaultListSkins;
+import fl.data.DataProvider;
 
 import flash.display.Loader;
 import flash.display.MovieClip;
@@ -45,6 +42,11 @@ public class ToolBox extends Sprite
     {
         dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKED, color));
     }
+    
+    public function hoverColor (color :uint) :void
+    {
+        // TODO
+    }
 
     public function brushPicked (brush :Brush) :void
     {
@@ -70,6 +72,12 @@ public class ToolBox extends Sprite
         var ui :MovieClip = loader.content as MovieClip;
         addChild(ui);
         var fontSizeCombo :ComboBox = ui.font_size;
+        fontSizeCombo.dataProvider = new DataProvider(["TODO"]);
+
+        var palette :Palette = new Palette(this, 0xFF0000);
+        palette.x = 445;
+        palette.y = 65;
+        addChild(palette);
 
         var thicknessSlider :Slider = ui.size_slider;
         thicknessSlider.liveDragging = true;
@@ -92,11 +100,6 @@ public class ToolBox extends Sprite
             _brush.alpha = alphaSlider.value;
             dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
         });
-
-        // force the compiler to include
-        DefaultComboBoxSkins;
-        DefaultListSkins;
-        UIComponent;
     }
 
     [Embed(source="../../../../../rsrc/graffiti_UI.swf", mimeType="application/octet-stream")]

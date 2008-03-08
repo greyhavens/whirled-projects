@@ -17,13 +17,12 @@ import flash.geom.Point;
 
 import com.threerings.util.Log;
 
-public class Palette extends Tool
+public class Palette extends Sprite
 {
     public function Palette (toolbox :ToolBox, initialColor :uint)
     {
         _toolbox = toolbox;
 
-        buildIndicator(initialColor);
         buildWheel();
         buildGradientBox();
         buildBorder();
@@ -34,73 +33,34 @@ public class Palette extends Tool
         });
     }
 
-    // from Tool
-    public override function get requestedWidth () :Number
-    {
-        return PALETTE_WIDTH;
-    }
-
-    // from Tool
-    public override function get requestedHeight () :Number
-    {
-        return PALETTE_HEIGHT;
-    }
-
-    protected function buildIndicator (initialColor :int) :void
-    {
-        _selectedColor = _hoverColor = initialColor;
-        addChild(_indicator = new Sprite());
-        _indicator.x = (PALETTE_WIDTH - INDICATOR_WIDTH) / 2;
-        _indicator.y = PADDING;
-        updateIndicator();
-    }
-
     protected function pickCurrentColor () :void
     {
-        _selectedColor = getManipulatorColor(_manipulatorPoint);
-        _toolbox.pickColor(_selectedColor);
-        updateIndicator();
+        _toolbox.pickColor(_selectedColor = getManipulatorColor(_manipulatorPoint));
     }
 
     protected function updateHoverColor () :void
     {
-        _hoverColor = getManipulatorColor(_hoverPoint);
-        updateIndicator();
-    }
-
-    protected function updateIndicator () :void
-    {
-        var g :Graphics = _indicator.graphics;
-        g.clear();
-
-        g.lineStyle(0, _hoverColor);
-        g.beginFill(_hoverColor);
-        g.drawRect(1, 1, INDICATOR_WIDTH / 2, INDICATOR_HEIGHT - 1);
-        g.endFill();
-
-        g.lineStyle(0, _selectedColor);
-        g.beginFill(_selectedColor);
-        g.drawRect(INDICATOR_WIDTH / 2, 1, INDICATOR_WIDTH / 2 - 1, INDICATOR_HEIGHT - 1);
-        g.endFill();
-
-        g.lineStyle(2, COMPONENT_BORDER_COLOR);
-        g.drawRoundRect(0, 0, INDICATOR_WIDTH, INDICATOR_HEIGHT, 2, 2);
+        _toolbox.hoverColor(_hoverColor = getManipulatorColor(_hoverPoint));
     }
 
     protected function buildWheel () :void
     {
-        addChild(_wheel = new Sprite());
-        _wheel.x = WHEEL_RADIUS + (PALETTE_WIDTH - WHEEL_RADIUS * 2) / 2;
-        _wheel.y = PADDING * 2 + INDICATOR_HEIGHT + 
-            WHEEL_RADIUS + (WHEEL_BORDER_SIZE - WHEEL_RADIUS * 2) / 2;
-
-        var g :Graphics = _wheel.graphics;
+        var wheelGraphics :Shape = new Shape();
+        var g :Graphics = wheelGraphics.graphics;
         for (var ii :Number = 0; ii < 360; ii += 0.5) {
             g.lineStyle(1, colorForAngle(ii));
             g.moveTo(0, 0);
             var end :Point = Point.polar(WHEEL_RADIUS, ii * Math.PI / 180);
             g.lineTo(-end.x, end.y);
         }
+        var bitmapData :BitmapData = new BitmapData(WHEEL_RADIUS * 2, WHEEL_RADIUS * 2, true, 0);
+        var m :Matrix = new Matrix();
+        m.translate(WHEEL_RADIUS, WHEEL_RADIUS);
+        bitmapData.draw(wheelGraphics, m);
+        var bitmap :Bitmap = new Bitmap(bitmapData, "auto", true);
+        bitmap.x = bitmap.y = -WHEEL_RADIUS;
+        addChild(_wheel = new Sprite());
+        _wheel.addChild(bitmap);
 
         var masker :Sprite = new Sprite();
         g = masker.graphics;
@@ -172,9 +132,7 @@ public class Palette extends Tool
         _gradientBox = new Bitmap(bitmapData, "auto", true);
 
         addChild(_manipulator = new Sprite());
-        _manipulator.x = (PALETTE_WIDTH - MANIPULATOR_SIZE) / 2;
-        _manipulator.y = PADDING * 2 + INDICATOR_HEIGHT + 
-            (WHEEL_BORDER_SIZE - MANIPULATOR_SIZE) / 2;
+        _manipulator.x = _manipulator.y = -MANIPULATOR_SIZE / 2;
         _manipulator.addChild(_gradientBox);
 
         _manipulator.addEventListener(MouseEvent.MOUSE_OUT, function (event :MouseEvent) :void {
@@ -196,8 +154,7 @@ public class Palette extends Tool
     protected function buildBorder () :void
     {
         var wheelBorder :Sprite = new Sprite();
-        wheelBorder.x = (PALETTE_WIDTH - WHEEL_BORDER_SIZE) / 2;
-        wheelBorder.y = PADDING * 2 + INDICATOR_HEIGHT;
+        wheelBorder.x = wheelBorder.y = -WHEEL_BORDER_SIZE / 2;
         addChild(wheelBorder);
         var g :Graphics = wheelBorder.graphics;
         g.lineStyle(2, COMPONENT_BORDER_COLOR);
@@ -227,18 +184,13 @@ public class Palette extends Tool
 
     private static const log :Log = Log.getLog(Palette);
 
-    protected static const WHEEL_RADIUS :int = 50;
-    protected static const INDICATOR_HEIGHT :int = 30;
-    protected static const INDICATOR_WIDTH :int = 60;
-    protected static const COMPONENT_BORDER_COLOR :int = 0;
-    protected static const MANIPULATOR_SIZE :int = 40;
+    protected static const WHEEL_RADIUS :int = 40;
+    protected static const COMPONENT_BORDER_COLOR :int = 0xBBBBBB;
+    protected static const MANIPULATOR_SIZE :int = WHEEL_RADIUS * 4 / 5;
     protected static const WHEEL_BORDER_SIZE :int = 
         Math.round(Point.polar(WHEEL_RADIUS, -Math.PI / 4).x * 2);
-    protected static const PALETTE_WIDTH :int = 100;
-    protected static const PALETTE_HEIGHT :int = PADDING * 3 + INDICATOR_HEIGHT + WHEEL_BORDER_SIZE;
 
     protected var _toolbox :ToolBox;
-    protected var _indicator :Sprite;
     protected var _wheel :Sprite;
     protected var _gradientBox :Bitmap;
     protected var _manipulator :Sprite;
