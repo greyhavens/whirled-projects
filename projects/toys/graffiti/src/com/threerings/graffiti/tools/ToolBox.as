@@ -40,17 +40,14 @@ public class ToolBox extends Sprite
 
     public function pickColor (color :uint) :void
     {
-        dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKED, color));
+        // TODO: pick color for currently selected color picker
+        _brush.color = color;
+        dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
     }
     
     public function hoverColor (color :uint) :void
     {
         // TODO
-    }
-
-    public function brushPicked (brush :Brush) :void
-    {
-        dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, brush.clone()));
     }
 
     public function setBackgroundColor (color :uint) :void

@@ -60,9 +60,6 @@ public class Canvas extends Sprite
             addMouseListeners();
 
             _toolBox = new ToolBox(this);
-            _toolBox.addEventListener(ToolEvent.COLOR_PICKED, function (event :ToolEvent) :void {
-                _color = event.value as uint;
-            });
             _toolBox.addEventListener(ToolEvent.BRUSH_PICKED, function (event :ToolEvent) :void {
                 _brush = event.value as Brush;
             });
@@ -106,7 +103,7 @@ public class Canvas extends Sprite
         if (id != _lastId || startPoint != _lastEndPoint) {
             _tempSurface.graphics.moveTo(start.x, start.y);
             _tempSurface.graphics.lineStyle(
-                stroke.brush.thickness, stroke.color, stroke.brush.alpha);    
+                stroke.brush.thickness, stroke.brush.color, stroke.brush.alpha);    
             _lastX = start.x;
             _lastY = start.y;
             _oldDeltaX = _oldDeltaY = 0;
@@ -149,7 +146,7 @@ public class Canvas extends Sprite
 
         var start :Point = stroke.getPoint(0);
         _canvas.graphics.moveTo(start.x, start.y);
-        _canvas.graphics.lineStyle(stroke.brush.thickness, stroke.color, stroke.brush.alpha);
+        _canvas.graphics.lineStyle(stroke.brush.thickness, stroke.brush.color, stroke.brush.alpha);
 
         var lastX :Number = start.x;
         var lastY :Number = start.y;
@@ -266,7 +263,7 @@ public class Canvas extends Sprite
             log.warning("newStroke and end!");
         } else {
             if (_newStroke) {
-                _model.beginStroke(_inputKey, _lastStrokePoint, p, _color, _brush);
+                _model.beginStroke(_inputKey, _lastStrokePoint, p, _brush);
 
             } else {
                 _model.extendStroke(_inputKey, p, end);
@@ -317,8 +314,7 @@ public class Canvas extends Sprite
     protected var _inputKey :String;
 
     protected var _backgroundColor :uint;
-    protected var _color :uint = 0xFF0000;
-    protected var _brush :Brush = new Brush;
+    protected var _brush :Brush = new Brush();
 
     protected var _timer :int;
     protected var _lastStrokePoint :Point;

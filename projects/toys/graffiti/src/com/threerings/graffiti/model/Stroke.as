@@ -14,20 +14,19 @@ public class Stroke
 {
     public static function createStrokeFromBytes (bytes :ByteArray, colorLUT :Array = null) :Stroke
     {
-        var stroke :Stroke = new Stroke(null, null, 0, null);
+        var stroke :Stroke = new Stroke(null, null, null);
         stroke.deserialize(bytes, colorLUT);
         return stroke;
     }
 
     public function toString () :String
     {
-        return "Stroke [" + _color + ", " + _points[0] + ", " + _points[_points.length - 1] + ", " +
+        return "Stroke [" + _points[0] + ", " + _points[_points.length - 1] + ", " +
             _points.length + "]"
     }
 
-    public function Stroke (from :Point, to :Point, color :uint, brush :Brush)
+    public function Stroke (from :Point, to :Point, brush :Brush)
     {
-        _color = color;
         _brush = brush;
         _points.push(from);
         _points.push(to);
@@ -36,11 +35,6 @@ public class Stroke
     public function get brush () :Brush
     {
         return _brush;
-    }
-
-    public function get color () :uint
-    {
-        return _color;
     }
 
     public function getPoint (offset :int) :Point
@@ -68,27 +62,13 @@ public class Stroke
     public function serialize (bytes :ByteArray, colorLUT :HashMap = null) :void
     {
         // serialize format:
-        //  - color key into LUT or colur uint if colorLUT is null
-        //  - length (number of points including start)
         //  - brush
+        //  - length (number of points including start)
         //  - continuation points in offset x and y values
 
-        if (colorLUT != null) {
-            var colorKey :int;
-            if (colorLUT.containsKey(_color)) {
-                colorKey = colorLUT.get(_color);
-                bytes.writeInt(colorKey);
-            } else {
-                colorLUT.put(_color, colorKey = colorLUT.size());
-                bytes.writeInt(colorKey);
-            }
-        } else {
-            bytes.writeUnsignedInt(_color);
-        }
+        _brush.serialize(bytes, colorLUT);
 
         bytes.writeInt(_points.length);
-        _brush.serialize(bytes);
-
         var curX :int = 0;
         var curY :int = 0;
         for each (var point :Point in _points) {
@@ -103,14 +83,9 @@ public class Stroke
 
     protected function deserialize (bytes :ByteArray, colorLUT :Array) :void
     {
-        if (colorLUT != null) {
-            _color = colorLUT[bytes.readInt()];
-        } else {
-            _color = bytes.readUnsignedInt();
-        }
-        var length :int = bytes.readInt();
-        _brush = Brush.createBrushFromBytes(bytes);
+        _brush = Brush.createBrushFromBytes(bytes, colorLUT);
 
+        var length :int = bytes.readInt();
         var curX :int = 0;
         var curY :int = 0;
         _points = [];
@@ -125,7 +100,6 @@ public class Stroke
     }
 
     protected var _points :Array = [];
-    protected var _color :uint;
     protected var _brush :Brush = new Brush();
 }
 }

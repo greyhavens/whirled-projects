@@ -28,14 +28,14 @@ public class Model
         _canvases.removeCanvas(canvas);
     }
 
-    public function beginStroke (id :String, from :Point, to :Point, color :int, brush :Brush) :void
+    public function beginStroke (id :String, from :Point, to :Point, brush :Brush) :void
     {
         if (id == null || _tempStrokesMap.get(id) != null) {
             log.warning("Attempting to add a new stroke with null or existing id! [" + id + "]");
             return;
         }
 
-        strokeBegun(id, new Stroke(from, to, color, brush));
+        strokeBegun(id, new Stroke(from, to, brush));
     }
 
     public function extendStroke (id :String, to :Point, end :Boolean = false) :void
