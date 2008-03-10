@@ -24,22 +24,16 @@ import com.whirled.MobControl;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.EmbeddedSwfLoader;
 
-import ghostbusters.fight.FightPanel;
-import ghostbusters.fight.GameFrame;
-import ghostbusters.fight.SpawnedGhost;
-import ghostbusters.seek.SeekPanel;
-
-import ghostbusters.fight.Match3;
-
 public class GamePanel extends Sprite
 {
     public var hud :HUD;
 
-    public function GamePanel (model :GameModel)
+    public function GamePanel ()
     {
-        _model = model;
-
         hud = new HUD();
+
+        Game.control.state.addEventListener(
+            AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
 
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
     }
@@ -60,35 +54,50 @@ public class GamePanel extends Sprite
         return false;
     }
 
-    public function enterState (state :String) :void
+    public function get seeking () :Boolean
+    {
+        return _seeking;
+    }
+
+    public function set seeking (seeking :Boolean) :void
+    {
+        _seeking = seeking;
+        updateState();
+    }
+
+    public function reloadView () :void
+    {
+        hud.reloadView();
+        updateState();
+    }
+
+    protected function roomPropertyChanged (name :String, value :Object) :void
+    {
+        if (name == Codes.PROP_GHOST_HEALTH) {
+            // Huh?
+        }
+    }
+
+    protected function updateState () :void
     {
         var avatarState :String = Codes.ST_PLAYER_DEFAULT;
 
-        if (state == GameModel.STATE_INTRO) {
-            showSplash();
-//            showHelp();
+        if (Game.model.state == GameModel.STATE_SEEKING) {
+            if (_seeking) {
+                showPanels(Game.seekController.panel, hud);
+            } else {
+                showPanels(hud);
+            }
 
-        } else if (state == GameModel.STATE_IDLE) {
-            showPanels(hud);
-
-        } else if (state == GameModel.STATE_SEEKING) {
-            showPanels(Game.seekController.panel, hud);
-
-        } else if (state == GameModel.STATE_FIGHTING) {
+        } else if (Game.model.state == GameModel.STATE_FIGHTING) {
             showPanels(Game.fightController.panel, hud);
-            hud.ghostHealthUpdated();
             avatarState = Codes.ST_PLAYER_FIGHT;
 
         } else {
-            Game.log.warning("Unknown state requested [state=" + state + "]");
+            Game.log.warning("Unknown state requested [state=" + Game.model.state + "]");
         }
 
         Game.gameController.setAvatarState(avatarState);
-    }
-
-    public function resized () :void
-    {
-        hud.resized();
     }
 
     protected function showPanels (... panels) :void
@@ -145,13 +154,9 @@ public class GamePanel extends Sprite
         }
     }
 
-    protected var _model :GameModel;
-
+    protected var _seeking :Boolean = false;
     protected var _box :Box;
 
     protected var _splash :MovieClip = MovieClip(new Content.SPLASH());
-
-    protected var _seekPanel :SeekPanel;
-    protected var _fightPanel :FightPanel;
 }
 }

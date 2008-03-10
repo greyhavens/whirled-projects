@@ -8,6 +8,7 @@ import flash.events.MouseEvent;
 
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
+import com.whirled.AVRGameControlEvent;
 
 import ghostbusters.Codes;
 import ghostbusters.Game;
@@ -19,15 +20,15 @@ public class FightController extends Controller
     public static const PLAYER_ATTACKED :String = "PlayerAttacked";
 
     public var panel :FightPanel;
-    public var model :FightModel;
 
     public function FightController ()
     {
-        model = new FightModel();
-        panel = new FightPanel(model);
-        model.init(panel);
+        panel = new FightPanel();
 
         setControlledPanel(panel);
+
+        Game.control.state.addEventListener(
+            AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
     public function shutdown () :void
@@ -41,19 +42,35 @@ public class FightController extends Controller
 
     public function handleGhostAttacked () :void
     {
+        Game.control.state.sendMessage(Codes.MSG_GHOST_ATTACKED, Game.ourPlayerId);
         Game.control.playAvatarAction("Retaliate");
-        panel.showGhostDamage();
-        if (model.damageGhost(10)) {
-            panel.showGhostDeath();
-        }
     }
 
     public function handlePlayerAttacked () :void
     {
+        Game.control.state.sendMessage(Codes.MSG_PLAYER_ATTACKED, Game.ourPlayerId);
         Game.control.playAvatarAction("Reel");
-        panel.showGhostAttack();
-        if (model.damagePlayer(5)) {
-            panel.showPlayerDeath();
+    }
+
+    protected function messageReceived (event: AVRGameControlEvent) :void
+    {
+        if (!Game.control.hasControl()) {
+            return;
+        }
+        if (event.name == Codes.MSG_GHOST_ATTACKED) {
+            if (Game.model.damageGhost(20)) {
+                Game.control.state.sendMessage(Codes.MSG_GHOST_DEATH, null);
+            }
+
+        } else if (event.name == Codes.MSG_PLAYER_ATTACKED) {
+            if (event.value is Number) {
+                var playerId :int = event.value as int;
+                if (Game.model.damagePlayer(playerId, 10)) {
+                    Game.control.state.sendMessage(Codes.MSG_PLAYER_DEATH, playerId);
+                }
+            } else {
+                Game.log.debug("Eek, non-number argument to MSG_PLAYER_ATTACKED: " + event.value);
+            }
         }
     }
 }

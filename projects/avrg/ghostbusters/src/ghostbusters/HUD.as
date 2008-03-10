@@ -17,15 +17,16 @@ import flash.utils.ByteArray;
 import flash.utils.setTimeout;
 
 import com.threerings.flash.DisplayUtil;
-import com.threerings.flash.FrameSprite;
 import com.threerings.flash.MathUtil;
-import com.whirled.AVRGameAvatar;
 import com.threerings.util.CommandEvent;
 
 import ghostbusters.ClipHandler;
 import ghostbusters.GameController;
 
-public class HUD extends FrameSprite
+import com.whirled.AVRGameAvatar;
+import com.whirled.AVRGameControlEvent;
+
+public class HUD extends Sprite
 {
     public static const LOOT_LANTERN :int = 0;
     public static const LOOT_BLASTER :int = 1;
@@ -35,6 +36,11 @@ public class HUD extends FrameSprite
     public function HUD ()
     {
         _hud = new ClipHandler(ByteArray(new Content.HUD_VISUAL()), handleHUDLoaded);
+
+        Game.control.state.addEventListener(
+            AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
+
+        _listener = new PropertyListener(playerPropertyChanged);
     }
 
     public function shutdown () :void
@@ -47,26 +53,27 @@ public class HUD extends FrameSprite
         return _hud != null && _hud.hitTestPoint(x, y, shapeFlag);
     }
 
-    public function resized () :void
+    public function reloadView () :void
     {
-        if (_hud != null && _hud.parent != null) {
+        if (_hud.parent != null) {
             placeHud();
+            teamUpdated();
         }
     }
 
-    public function playerHealthUpdated () :void
+    public function playerHealthUpdated (id :int) :void
     {
-        setPlayerHealth(Game.fightController.model.getRelativePlayerHealth());
+        setPlayerHealth(Game.model.getRelativeHealth(id));
     }
 
     public function ghostHealthUpdated () :void
     {
-        setGhostHealth(Game.fightController.model.getRelativeGhostHealth(), false);
+        setGhostHealth(Game.model.getRelativeGhostHealth(), false);
     }
 
     public function ghostZestUpdated () :void
     {
-        setGhostHealth(Game.seekController.model.getRelativeGhostZest(), true);
+        setGhostHealth(Game.model.ghostRelativeZest, true);
     }
 
     public function getWeaponType () :int
@@ -106,7 +113,7 @@ public class HUD extends FrameSprite
                 continue;
             }
             bar.visible = name.visible = true;
-            bar.gotoAndStop(100 * Game.gameController.model.getRelativeHealth(players[teamIx]));
+            bar.gotoAndStop(100 * Game.model.getRelativeHealth(players[teamIx]));
             name.text = info.name;
             teamIx ++;
             hudIx ++;
@@ -172,6 +179,13 @@ public class HUD extends FrameSprite
         safelyAdd(CHOOSE_POTIONS, function (evt :Event) :void { _lootIx = 3; });
 
         _visualHud = MovieClip(findSafely(VISUAL_BOX));
+
+        this.addChild(_hud);
+        placeHud();
+        teamUpdated();
+
+        setGhostHealth(1, false);
+        setGhostHealth(1, true);
     }
 
     protected function placeHud () :void
@@ -211,34 +225,31 @@ public class HUD extends FrameSprite
         findSafely(name).addEventListener(MouseEvent.CLICK, callback);
     }
 
-    protected var counter :int;
-
-    override protected function handleFrame (... ignored) :void
+    protected function roomPropertyChanged (name :String, value :Object) :void
     {
-        if (--counter < 0) {
-            counter = Game.FRAMES_PER_REPORT;
-            Game.log.debug("Frame handler running: " + this);
-        }
+        if (name == Codes.PROP_GHOST_HEALTH) {
+            ghostHealthUpdated();
 
-        if (_visualHud == null) {
-            return;
-        }
-        if (_hud.parent == null) {
-            this.addChild(_hud);
-            placeHud();
-            teamUpdated();
-
-            setGhostHealth(1, false);
-            setGhostHealth(1, true);
-        }
-
-        _yourHealthBar.gotoAndStop(
-            100 * Game.gameController.model.getRelativeHealth(Game.ourPlayerId));
-
-        for (var ii :int = 0; ii < _loots.length; ii ++) {
-            SimpleButton(_loots[ii]).visible = (ii == _lootIx);
+        } else if (name == Codes.PROP_GHOST_CUR_ZEST) {
+            ghostZestUpdated();
         }
     }
+
+    protected function playerPropertyChanged(memberId :int, name :String, value :Object) :void
+    {
+        if (name == Codes.PROP_PLAYER_HEALTH) {
+            playerHealthUpdated(memberId);
+        }
+    }
+
+
+//        _yourHealthBar.gotoAndStop(
+//            100 * Game.gameController.model.getRelativeHealth(Game.ourPlayerId));
+
+//        for (var ii :int = 0; ii < _loots.length; ii ++) {
+//            SimpleButton(_loots[ii]).visible = (ii == _lootIx);
+//        }
+
 
     protected function lanternClick (evt :Event) :void
     {
@@ -299,7 +310,7 @@ public class HUD extends FrameSprite
         bar.visible = true;
 
         // TODO: make use of all 100 frames!
-        var frame :int = 76 - 75 * MathUtil.clamp(health, 0, 1);
+        var frame :int = 99 - 98 * MathUtil.clamp(health, 0, 1);
         bar.gotoAndStop(frame);
         Game.log.debug("Moved " + bar + " to frame #" + frame);
 
@@ -309,6 +320,8 @@ public class HUD extends FrameSprite
             }
         });
     }
+
+    protected var _listener :PropertyListener;
 
     protected var _hud :ClipHandler;
     protected var _visualHud :MovieClip;

@@ -28,6 +28,7 @@ import com.threerings.flash.FrameSprite;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Random;
 
+import ghostbusters.Codes;
 import ghostbusters.Content;
 import ghostbusters.Dimness;
 import ghostbusters.GameController;
@@ -35,9 +36,10 @@ import ghostbusters.Game;
 
 public class SeekPanel extends FrameSprite
 {
-    public function SeekPanel (model :SeekModel)
+    public function SeekPanel ()
     {
-        _model = model;
+        Game.control.state.addEventListener(
+            AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
 
         buildUI();
     }
@@ -178,10 +180,10 @@ public class SeekPanel extends FrameSprite
         }
         _ticker = 0;
 
-        _model.transmitLanternPosition(p);
+        transmitLanternPosition(p);
 
-        if (_ghost != null && _ghost.isIdle()) {
-            _model.constructNewGhostPosition(_ghost.getGhostBounds());
+        if (_ghost != null && _ghost.isIdle() && Game.control.hasControl()) {
+            constructNewGhostPosition(_ghost.getGhostBounds());
         }
     }
 
@@ -197,7 +199,7 @@ public class SeekPanel extends FrameSprite
     protected function zapStop () :void
     {
         _ghost.transform.colorTransform = new ColorTransform();
-        if (_model.getGhostZest() == 0) {
+        if (Game.model.ghostZest == 0) {
             appearGhost();
         }            
     }
@@ -220,12 +222,75 @@ public class SeekPanel extends FrameSprite
         _maskLayer = new Sprite();
         this.addChild(_maskLayer);
 
-        _ghost = new HidingGhost(_model.calculateGhostSpeed());
+        _ghost = new HidingGhost(200);
         this.addChild(_ghost);
         _ghost.mask = _maskLayer;
     }
 
-    protected var _model :SeekModel;
+    protected function transmitLanternPosition (pos :Point) :void
+    {
+        pos = Game.control.stageToRoom(pos);
+        if (pos != null) {
+            Game.control.state.setRoomProperty(
+                Codes.PROP_LANTERN_POS, [ Game.ourPlayerId, pos.x, pos.y ]);
+        }
+    }
+
+    protected function constructNewGhostPosition (ghostBounds :Rectangle) :void
+    {
+        // it's our job to send the ghost to a new position, figure out where
+        var x :int = Game.random.nextNumber() *
+            (Game.roomBounds.width - ghostBounds.width) - ghostBounds.left;
+        var y :int = Game.random.nextNumber() *
+            (Game.roomBounds.height - ghostBounds.height) - ghostBounds.top;
+        Game.control.state.setRoomProperty(Codes.PROP_GHOST_POS, [ x, y ]);
+    }
+
+    protected function roomPropertyChanged (name :String, value :Object) :void
+    {
+        var bits :Array;
+
+        if (name == Codes.PROP_GHOST_CUR_ZEST) { 
+            if (Game.model.ghostZest > 0) {
+                ghostZapped();
+
+            } else {
+                appearGhost();
+            }
+
+        } else if (name == Codes.PROP_GHOST_POS) {
+            bits = value as Array;
+            if (bits != null) {
+                var pos :Point = Game.control.roomToStage(new Point(bits[0], bits[1]));
+                if (pos != null) {
+                    ghostPositionUpdate(pos);
+                }
+            }
+
+        } else if (name == Codes.PROP_LANTERN_POS) {
+            bits = value as Array;
+            if (bits != null) {
+                var playerId :int = int(bits[0]);
+
+                // ignore our own update, unless we're debugging
+                if (playerId == Game.ourPlayerId && !Game.DEBUG) {
+                    return;
+                }
+                if (Game.control.isPlayerHere(playerId)) {
+                    // lantern update from a local player
+                    if (bits.length == 1) {
+                        // someone turned theirs off
+                        playerLanternOff(playerId);
+
+                    } else {
+                        // someone turned theirs on or moved it
+                        playerLanternMoved(
+                            playerId, Game.control.roomToStage(new Point(bits[1], bits[2])));
+                    }
+                }
+            }
+        }
+    }
 
     protected var _lanterns :Dictionary = new Dictionary();
 

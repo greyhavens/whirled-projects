@@ -23,8 +23,10 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 
 import com.whirled.AVRGameAvatar;
+import com.whirled.AVRGameControlEvent;
 import com.whirled.MobControl;
 
+import ghostbusters.Codes;
 import ghostbusters.Content;
 import ghostbusters.Dimness;
 import ghostbusters.Game;
@@ -33,13 +35,14 @@ import ghostbusters.HUD;
 
 public class FightPanel extends FrameSprite
 {
-    public function FightPanel (model :FightModel)
+    public function FightPanel ()
     {
-        _model = model;
-
         buildUI();
 
         _frame = new GameFrame();
+
+        Game.control.state.addEventListener(
+            AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
     override public function hitTestPoint (
@@ -227,7 +230,21 @@ public class FightPanel extends FrameSprite
         // TODO: remove spotlights when people leave
     }
 
-    protected var _model :FightModel;
+    protected function messageReceived (event: AVRGameControlEvent) :void
+    {
+        if (event.name == Codes.MSG_GHOST_ATTACKED) {
+            showGhostDamage();
+
+        } else if (event.name == Codes.MSG_PLAYER_ATTACKED) {
+            showGhostAttack();
+
+        } else if (event.name == Codes.MSG_GHOST_DEATH) {
+            showGhostDeath();
+
+        } else if (event.name == Codes.MSG_PLAYER_DEATH) {
+            showGhostDeath();
+        }
+    }
 
     protected var _ghost :SpawnedGhost;
 

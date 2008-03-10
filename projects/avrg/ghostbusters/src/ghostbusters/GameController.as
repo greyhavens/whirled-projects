@@ -21,22 +21,16 @@ public class GameController extends Controller
     public static const PLAY :String = "Play";
 
     public var panel :GamePanel;
-    public var model :GameModel;
 
     public function GameController ()
     {
-        model = new GameModel();
-        panel = new GamePanel(model);
-        model.init(panel);
+        panel = new GamePanel()
         setControlledPanel(panel);
-
-        Game.control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
     public function shutdown () :void
     {
         panel.shutdown();
-        model.shutdown();
     }
 
     public function handleEndGame () :void
@@ -56,18 +50,15 @@ public class GameController extends Controller
 
     public function handlePlay () :void
     {
-        enterState(GameModel.STATE_IDLE);
+        panel.seeking = false;
     }
 
     public function handleToggleLantern () :void
     {
-        if (model.getState() == GameModel.STATE_IDLE) {
-            enterState(GameModel.STATE_SEEKING);
+        if (Game.model.state == GameModel.STATE_SEEKING) {
+            panel.seeking = !panel.seeking;
 
-        } else if (model.getState() == GameModel.STATE_SEEKING) {
-            enterState(GameModel.STATE_IDLE);
-
-        } else if (model.getState() == GameModel.STATE_FIGHTING) {
+        } else if (Game.model.state == GameModel.STATE_FIGHTING) {
             Game.fightController.lanternClicked();
 
         }
@@ -76,48 +67,17 @@ public class GameController extends Controller
 
     public function handleSpawnGhost () :void
     {
-        enterState(GameModel.STATE_FIGHTING);
-        Game.control.state.sendMessage(Codes.MSG_GHOST_SPAWN, null);
-//        Game.fightController.doSpawnGhost();
+        if (Game.control.hasControl()) {
+            Game.model.state = GameModel.STATE_FIGHTING;
+        }
     }
 
     public function handleEndFight () :void
     {
-        enterState(GameModel.STATE_IDLE);
-    }
-
-    public function enterState (state :String) :void
-    {
-        var current :String = model.getState();
-
-        if (state == GameModel.STATE_NONE) {
-            // we should never transition to NONE
-            checkTransition(state);
-
-        } else if (state == GameModel.STATE_INTRO) {
-            // we should only go to intro once, from none
-            checkTransition(state, GameModel.STATE_NONE);
-
-        } else if (state == GameModel.STATE_IDLE) {
-            // forward from the intro or return from seeking or fighting
-            checkTransition(state, GameModel.STATE_INTRO, GameModel.STATE_SEEKING,
-                            GameModel.STATE_FIGHTING);
-
-        } else if (state == GameModel.STATE_SEEKING) {
-            // forward from idle
-            checkTransition(state, GameModel.STATE_IDLE);
-
-        } else if (state == GameModel.STATE_FIGHTING) {
-            // forward from idle or seeking
-            checkTransition(state, GameModel.STATE_IDLE, GameModel.STATE_SEEKING);
-
-        } else {
-            Game.log.warning("Unknown state requested; ignored [request=" + state + "]");
-            return;
+        // TODO: we probably want a delay before another ghost is available
+        if (Game.control.hasControl()) {
+            Game.model.state = GameModel.STATE_SEEKING;
         }
-
-        model.enterState(state);
-        panel.enterState(state);
     }
 
     public function setAvatarState (state :String) :void
@@ -125,26 +85,6 @@ public class GameController extends Controller
         var info :AVRGameAvatar = Game.control.getAvatarInfo(Game.ourPlayerId);
         if (info != null && info.state != state) {
             Game.control.setAvatarState(state);
-        }
-    }
-
-    protected function checkTransition(requested :String, ... allowed) :Boolean
-    {
-        var current :String = model.getState();
-        for (var ii :int = 0; ii < allowed.length; ii ++) {
-            if (allowed[ii] == current) {
-                return true;
-            }
-        }
-        Game.log.debug("Dubious state transition, but letting it pass [current=" + current +
-                       ", requested=" + requested);
-        return false;
-    }
-
-    protected function messageReceived (event: AVRGameControlEvent) :void
-    {
-        if (event.name == Codes.MSG_GHOST_SPAWN && model.getState() != GameModel.STATE_FIGHTING) {
-            enterState(GameModel.STATE_FIGHTING);
         }
     }
 }

@@ -17,6 +17,7 @@ import com.whirled.MobControl;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
+import com.threerings.util.StringUtil;
 
 import ghostbusters.fight.FightController;
 
@@ -36,6 +37,8 @@ public class Game extends Sprite
     public static var gameController :GameController;
     public static var seekController :SeekController;
     public static var fightController :FightController;
+
+    public static var model :GameModel;
 
     public static var stageSize :Rectangle;
     public static var scrollSize :Rectangle;
@@ -61,6 +64,8 @@ public class Game extends Sprite
         control = new AVRGameControl(this);
         ourPlayerId = control.getPlayerId();
 
+        model = new GameModel();
+
         gameController = new GameController();
         seekController = new SeekController();
         fightController = new FightController();
@@ -73,8 +78,13 @@ public class Game extends Sprite
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
-        control.addEventListener(AVRGameControlEvent.ENTERED_ROOM, enteredRoom);
-        control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, sizeChanged);
+        control.addEventListener(
+            AVRGameControlEvent.ENTERED_ROOM,
+            function (... ignored) :void { newRoom(); gameController.panel.reloadView(); });
+
+        control.addEventListener(
+            AVRGameControlEvent.SIZE_CHANGED,
+            function (... ignored) :void { newSize(); gameController.panel.reloadView(); });
 
         control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, playerEntered);
         control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, playerLeft);
@@ -89,17 +99,20 @@ public class Game extends Sprite
         gameController.shutdown();
         fightController.shutdown();
         seekController.shutdown();
+
+        model.shutdown();
     }
 
     protected function handleAdded (event :Event) :void
     {
         log.info("Added to stage: Initializing...");
-        sizeChanged();
-        enteredRoom();
-        gameController.enterState(GameModel.STATE_INTRO);
+        newSize();
+        newRoom();
+        gameController.panel.reloadView();
+//        gameController.panel.showSplash();
     }
 
-    protected function sizeChanged (... ignored) :void
+    protected function newSize () :void
     {
         var resized :Boolean = false;
 
@@ -130,13 +143,9 @@ public class Game extends Sprite
             log.warning("Eek - null scroll size -- hard coding at 700x500");
             scrollSize = new Rectangle(0, 0, 700, 500);
         }
-
-        if (resized) {
-            gameController.panel.resized();
-        }
     }
 
-    protected function enteredRoom (... ignored) :void
+    protected function newRoom () :void
     {
         ourRoomId = control.getRoomId();
 
@@ -151,14 +160,6 @@ public class Game extends Sprite
         } else {
             log.warning("Eek - null room bounds -- hard coding at 700x500");
             roomBounds = new Rectangle(0, 0, 700, 500);
-        }
-
-        gameController.panel.resized();
-        gameController.panel.hud.teamUpdated();
-
-        if (!control.hasControl()) {
-            // ensure that in every room we visit, someone has control
-            control.requestControl();
         }
     }
 

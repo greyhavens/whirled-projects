@@ -15,7 +15,7 @@ public class Content
     [Embed(source="../../rsrc/Ghosts/Ghost_Widow.swf", mimeType="application/octet-stream")]
     public static const GHOST_WIDOW :Class;
 
-    [Embed(source="../../rsrc/Ghosts/Ghost_2_Pincher.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/Ghosts/Ghost_Pincher.swf", mimeType="application/octet-stream")]
     public static const GHOST_PINCHER :Class;
 
     [Embed(source="../../rsrc/Ghosts/Ghost_Demon.swf", mimeType="application/octet-stream")]
