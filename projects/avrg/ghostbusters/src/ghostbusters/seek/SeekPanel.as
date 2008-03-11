@@ -103,7 +103,6 @@ public class SeekPanel extends FrameSprite
         super.handleAdded();
         _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
         _ghost.hidden();
-        Game.gameController.panel.hud.ghostZestUpdated();
     }
 
     override protected function handleRemoved (... ignored) :void

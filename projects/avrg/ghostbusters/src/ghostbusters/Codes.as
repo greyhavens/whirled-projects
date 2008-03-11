@@ -13,10 +13,12 @@ public class Codes
 
     public static const PROP_GHOST_POS :String = "gp";
     public static const PROP_LANTERN_POS :String = "lp";
-    public static const PROP_GHOST_HEALTH :String = "gh";
-    public static const PROP_PLAYER_HEALTH :String = "ph";
-    public static const PROP_GHOST_CUR_ZEST :String = "cz";
-    public static const PROP_GHOST_MAX_ZEST :String = "mz";
+    public static const PROP_PLAYER_CUR_HEALTH :String = "pch";
+    public static const PROP_PLAYER_MAX_HEALTH :String = "pmh";
+    public static const PROP_GHOST_CUR_HEALTH :String = "gch";
+    public static const PROP_GHOST_MAX_HEALTH :String = "gmh";
+    public static const PROP_GHOST_CUR_ZEST :String = "gcz";
+    public static const PROP_GHOST_MAX_ZEST :String = "gmz";
 
     public static const PROP_STATE :String = "st";
 

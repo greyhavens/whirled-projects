@@ -7,11 +7,23 @@ import com.whirled.AVRGameControlEvent;
 
 public class PropertyListener
 {
-    public function PropertyListener (playerPropertyUpdated :Function)
+    public function PropertyListener (playerPropertyUpdated :Function = null)
     {
         _pFun = playerPropertyUpdated;
+        if (_pFun != null) {
+            Game.control.state.addEventListener(
+                AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
+        }
+    }
 
-        Game.control.state.addEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
+    public function getProperty (playerId :int, property :String) :Object
+    {
+        return Game.control.state.getProperty("p" + playerId + ":" + property);
+    }
+
+    public function setProperty (playerId :int, property :String, value :Object) :void
+    {
+        Game.control.state.setProperty("p" + playerId + ":" + property, value, false);
     }
 
     protected function propertyChanged (evt :AVRGameControlEvent) :void

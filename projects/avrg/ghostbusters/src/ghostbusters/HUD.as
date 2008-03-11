@@ -37,6 +37,9 @@ public class HUD extends Sprite
     {
         _hud = new ClipHandler(ByteArray(new Content.HUD_VISUAL()), handleHUDLoaded);
 
+        Game.control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, teamUpdated);
+        Game.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, teamUpdated);
+
         Game.control.state.addEventListener(
             AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
 
@@ -59,21 +62,6 @@ public class HUD extends Sprite
             placeHud();
             teamUpdated();
         }
-    }
-
-    public function playerHealthUpdated (id :int) :void
-    {
-        setPlayerHealth(Game.model.getRelativeHealth(id));
-    }
-
-    public function ghostHealthUpdated () :void
-    {
-        setGhostHealth(Game.model.getRelativeGhostHealth(), false);
-    }
-
-    public function ghostZestUpdated () :void
-    {
-        setGhostHealth(Game.model.ghostRelativeZest, true);
     }
 
     public function getWeaponType () :int
@@ -113,7 +101,7 @@ public class HUD extends Sprite
                 continue;
             }
             bar.visible = name.visible = true;
-            bar.gotoAndStop(100 * Game.model.getRelativeHealth(players[teamIx]));
+            bar.gotoAndStop(100 * Game.model.getPlayerRelativeHealth(players[teamIx]));
             name.text = info.name;
             teamIx ++;
             hudIx ++;
@@ -173,10 +161,10 @@ public class HUD extends Sprite
 //        _weaponDisplay = MovieClip(findSafely(WEAPON_DISPLAY));
 //        _weaponDisplay.visible = false; 
 
-        safelyAdd(CHOOSE_LANTERN, function (evt :Event) :void { _lootIx = 0; });
-        safelyAdd(CHOOSE_BLASTER, function (evt :Event) :void { _lootIx = 1; });
-        safelyAdd(CHOOSE_OUIJA, function (evt :Event) :void { _lootIx = 2; });
-        safelyAdd(CHOOSE_POTIONS, function (evt :Event) :void { _lootIx = 3; });
+        safelyAdd(CHOOSE_LANTERN, function (evt :Event) :void { pickLoot(0); });
+        safelyAdd(CHOOSE_BLASTER, function (evt :Event) :void { pickLoot(1); });
+        safelyAdd(CHOOSE_OUIJA, function (evt :Event) :void { pickLoot(2); });
+        safelyAdd(CHOOSE_POTIONS, function (evt :Event) :void { pickLoot(3); });
 
         _visualHud = MovieClip(findSafely(VISUAL_BOX));
 
@@ -225,31 +213,48 @@ public class HUD extends Sprite
         findSafely(name).addEventListener(MouseEvent.CLICK, callback);
     }
 
+    protected function playerHealthUpdated (id :int) :void
+    {
+        setPlayerHealth(Game.model.getPlayerRelativeHealth(id));
+        if (id == Game.ourPlayerId) {
+            _yourHealthBar.gotoAndStop(100*Game..model.getPlayerRelativeHealth(Game.ourPlayerId));
+        }
+    }
+
+    protected function ghostHealthUpdated () :void
+    {
+        setGhostHealth(Game.model.ghostRelativeHealth, false);
+    }
+
+    protected function ghostZestUpdated () :void
+    {
+        setGhostHealth(Game.model.ghostRelativeZest, true);
+    }
+
     protected function roomPropertyChanged (name :String, value :Object) :void
     {
-        if (name == Codes.PROP_GHOST_HEALTH) {
+        if (name == Codes.PROP_GHOST_CUR_HEALTH || name == Codes.PROP_GHOST_MAX_HEALTH) {
             ghostHealthUpdated();
 
-        } else if (name == Codes.PROP_GHOST_CUR_ZEST) {
+        } else if (name == Codes.PROP_GHOST_CUR_ZEST || name == Codes.PROP_GHOST_MAX_ZEST) {
             ghostZestUpdated();
         }
     }
 
     protected function playerPropertyChanged(memberId :int, name :String, value :Object) :void
     {
-        if (name == Codes.PROP_PLAYER_HEALTH) {
+        if (name == Codes.PROP_PLAYER_CUR_HEALTH || name == Codes.PROP_PLAYER_MAX_HEALTH) {
             playerHealthUpdated(memberId);
         }
     }
 
-
-//        _yourHealthBar.gotoAndStop(
-//            100 * Game.gameController.model.getRelativeHealth(Game.ourPlayerId));
-
-//        for (var ii :int = 0; ii < _loots.length; ii ++) {
-//            SimpleButton(_loots[ii]).visible = (ii == _lootIx);
-//        }
-
+    protected function pickLoot (lootIx :int) :void
+    {
+        _lootIx = lootIx;
+        for (var ii :int = 0; ii < _loots.length; ii ++) {
+            SimpleButton(_loots[ii]).visible = (ii == _lootIx);
+        }
+    }
 
     protected function lanternClick (evt :Event) :void
     {

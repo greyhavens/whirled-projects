@@ -49,17 +49,9 @@ public class Game extends Sprite
 
     public static var random :Random;
 
-    public static var ghost :Object;
-
     public function Game ()
     {
         random = new Random();
-
-        // TODO: vary by room
-        var len :int = Content.GHOSTS.length;
-        var ix :int = random.nextInt(len);
-        log.debug("Choosing ghost [ix=" + ix + ", len=" + len + "]");
-        ghost = Content.GHOSTS[ix];
 
         control = new AVRGameControl(this);
         ourPlayerId = control.getPlayerId();
@@ -72,7 +64,6 @@ public class Game extends Sprite
 
         addChild(gameController.panel);
 
-//        control.setMobSpriteExporter(exportMobSprite);
         control.setHitPointTester(gameController.panel.hitTestPoint);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
@@ -161,6 +152,8 @@ public class Game extends Sprite
             log.warning("Eek - null room bounds -- hard coding at 700x500");
             roomBounds = new Rectangle(0, 0, 700, 500);
         }
+
+        model.newRoom();
     }
 
     protected function gotControl (evt :AVRGameControlEvent) :void
@@ -170,12 +163,10 @@ public class Game extends Sprite
 
     protected function playerEntered (evt :AVRGameControlEvent) :void
     {
-        gameController.panel.hud.teamUpdated();
     }
 
     protected function playerLeft (evt :AVRGameControlEvent) :void
     {
-        gameController.panel.hud.teamUpdated();
     }
 }
 }

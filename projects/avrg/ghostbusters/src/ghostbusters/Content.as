@@ -21,11 +21,11 @@ public class Content
     [Embed(source="../../rsrc/Ghosts/Ghost_Demon.swf", mimeType="application/octet-stream")]
     public static const GHOST_DEMON :Class;
 
-    public static const GHOSTS :Array = [
-        { clip: GHOST_PINCHER, name: "Mr. Pinchy" },
-        { clip: GHOST_DUCHESS, name: "The Duchess" },
-        { clip: GHOST_WIDOW, name: "The Widow" },
-        { clip: GHOST_DEMON, name: "Soul Crusher" },
+    public static const GHOSTS :Object = [
+        { id: "pinchy", clip: GHOST_PINCHER, name: "Mr. Pinchy" },
+        { id: "duchess", clip: GHOST_DUCHESS, name: "The Duchess" },
+        { id: "widow", clip: GHOST_WIDOW, name: "The Widow" },
+        { id: "demon", clip: GHOST_DEMON, name: "Soul Crusher" },
     ];
 
     [Embed(source="../../rsrc/UI/text_box.swf", mimeType="application/octet-stream")]
