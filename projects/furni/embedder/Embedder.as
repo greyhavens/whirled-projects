@@ -7,7 +7,9 @@ import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.Sprite;
 
+import flash.events.ErrorEvent;
 import flash.events.Event;
+import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
 
 import flash.net.URLRequest;
@@ -136,6 +138,7 @@ public class Embedder extends Sprite
         handleUnload(null);
 
         _loader = new Loader();
+        _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleError);
         addChild(_loader);
         _loader.load(new URLRequest(url), new LoaderContext(false, new ApplicationDomain(null)));
     }
@@ -151,6 +154,11 @@ public class Embedder extends Sprite
             removeChild(_loader);
             _loader = null;
         }
+    }
+
+    protected function handleError (evt :ErrorEvent) :void
+    {
+        trace("Error loading: " + evt.text);
     }
 
     protected function createConfigPanel () :DisplayObject
