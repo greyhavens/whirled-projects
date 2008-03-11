@@ -10,8 +10,11 @@ public class Codes
     public static const MSG_GHOST_DEATH :String = "gd";
     public static const MSG_PLAYER_ATTACKED :String = "pa";
     public static const MSG_PLAYER_DEATH :String = "pd";
+    public static const MSG_TICK :String = "tick";
 
+    public static const PROP_TICKER_RUNNING :String = "ticker";
     public static const PROP_GHOST_POS :String = "gp";
+    public static const PROP_GHOST_ID :String = "gi";
     public static const PROP_LANTERN_POS :String = "lp";
     public static const PROP_PLAYER_CUR_HEALTH :String = "pch";
     public static const PROP_PLAYER_MAX_HEALTH :String = "pmh";

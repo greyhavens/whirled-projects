@@ -81,6 +81,11 @@ public class Game extends Sprite
         control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, playerLeft);
 
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
+
+        if (control.hasControl() && !control.state.getProperty(Codes.PROP_TICKER_RUNNING)) {
+            control.state.setProperty(Codes.PROP_TICKER_RUNNING, true, false);
+            control.startTicker(Codes.MSG_TICK, 1000);
+        }
     }
 
     protected function handleUnload (event :Event) :void

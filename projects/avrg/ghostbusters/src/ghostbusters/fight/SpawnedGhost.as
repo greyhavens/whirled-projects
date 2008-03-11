@@ -7,17 +7,36 @@ import ghostbusters.Codes;
 import ghostbusters.Game;
 import ghostbusters.GhostBase;
 
+import com.threerings.util.CommandEvent;
+import com.whirled.AVRGameControlEvent;
+
 public class SpawnedGhost extends GhostBase
 {
     public function SpawnedGhost ()
     {
         super();
+
+        Game.control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
     public function fighting () :void
     {
         _next = ST_FIGHT;
         play();
+    }
+
+    protected function messageReceived (evt :AVRGameControlEvent) :void
+    {
+        if (!Game.control.hasControl()) {
+            return;
+        }
+        if (evt.name == Codes.MSG_TICK) {
+            Game.log.debug("Tick...");
+
+            if (Game.random.nextInt(5) == 0) {
+                CommandEvent.dispatch(this, FightController.PLAYER_ATTACKED);
+            }
+        }
     }
 
     protected function play () :void

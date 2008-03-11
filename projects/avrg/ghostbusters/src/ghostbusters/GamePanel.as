@@ -73,9 +73,6 @@ public class GamePanel extends Sprite
 
     protected function roomPropertyChanged (name :String, value :Object) :void
     {
-        if (name == Codes.PROP_GHOST_HEALTH) {
-            // Huh?
-        }
     }
 
     protected function updateState () :void

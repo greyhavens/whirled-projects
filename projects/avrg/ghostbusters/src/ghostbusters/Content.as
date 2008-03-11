@@ -21,7 +21,7 @@ public class Content
     [Embed(source="../../rsrc/Ghosts/Ghost_Demon.swf", mimeType="application/octet-stream")]
     public static const GHOST_DEMON :Class;
 
-    public static const GHOSTS :Object = [
+    public static const GHOSTS :Array = [
         { id: "pinchy", clip: GHOST_PINCHER, name: "Mr. Pinchy" },
         { id: "duchess", clip: GHOST_DUCHESS, name: "The Duchess" },
         { id: "widow", clip: GHOST_WIDOW, name: "The Widow" },

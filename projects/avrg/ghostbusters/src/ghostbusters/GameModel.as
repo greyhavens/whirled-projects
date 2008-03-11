@@ -25,21 +25,6 @@ public class GameModel
         maybeSpawnGhost();
     }
 
-    // TODO: this should be called on a timer, too
-    protected void maybeSpawnGhost () :void
-    {
-        if (!Game.control.hasControl() || ghostId != null) {
-            return;
-        }
-
-        // initialize the room with a ghost
-        _ghostId = Content.GHOSTS[Game.random.nextInt(Content.GHOSTS.length)].id;
-        log.debug("Choosing ghost [id=" + _ghostId = "]");
-
-        ghostZest = ghostMaxZest = 150 + 100 * Game.random.nextNumber();
-        ghostHealth = ghostMaxHealth = 100;
-    }
-
     public function init () :void
     {
     }
@@ -71,7 +56,8 @@ public class GameModel
 
     public function setPlayerHealth (playerId :int, health :int) :void
     {
-        _pp.setProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH, health);
+        _pp.setProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH,
+                        Math.min(health, getPlayerMaxHealth(playerId)));
     }
 
     public function getPlayerRelativeHealth (playerId :int) :Number
@@ -105,6 +91,16 @@ public class GameModel
         return false;
     }
 
+    public function get ghostId () :String
+    {
+        return String(Game.control.state.getProperty(Codes.PROP_GHOST_ID));
+    }
+
+    public function set ghostId (id :String) :void
+    {
+        Game.control.state.setProperty(Codes.PROP_GHOST_ID, id, false);
+    }
+
     public function get ghostHealth () :int
     {
         return int(Game.control.state.getProperty(Codes.PROP_GHOST_CUR_HEALTH));
@@ -112,7 +108,7 @@ public class GameModel
 
     public function set ghostHealth (health :int) :void
     {
-        Game.control.state.setProperty(Codes.PROP_GHOST_CUR_HEALTH, Math.max(0, health));
+        Game.control.state.setProperty(Codes.PROP_GHOST_CUR_HEALTH, Math.max(0, health), false);
     }
 
     public function get ghostMaxHealth () :int
@@ -122,7 +118,7 @@ public class GameModel
 
     public function set ghostMaxHealth (health :int) :void
     {
-        Game.control.state.setProperty(Codes.PROP_GHOST_MAX_HEALTH, Math.max(0, health));
+        Game.control.state.setProperty(Codes.PROP_GHOST_MAX_HEALTH, Math.max(0, health), false);
     }
 
     public function get ghostRelativeHealth () :Number
@@ -157,6 +153,33 @@ public class GameModel
     public function get ghostRelativeZest () :Number
     {
         return Math.max(0, Math.min(1, ghostZest / ghostMaxZest));
+    }
+
+    public function getGhostData () :Object
+    {
+        var id :String = ghostId;
+        var ghosts :Array = Content.GHOSTS;
+        for (var ii :int = 0; ii < ghosts.length; ii ++) {
+            if (ghosts[ii].id == id) {
+                return ghosts[ii];
+            }
+        }
+        throw new Error("Erk, ghost not found somehow.");
+    }
+
+    // TODO: this should be called on a timer, too
+    protected function maybeSpawnGhost () :void
+    {
+        if (!Game.control.hasControl() || ghostId != null) {
+            return;
+        }
+
+        // initialize the room with a ghost
+        ghostId = Content.GHOSTS[Game.random.nextInt(Content.GHOSTS.length)].id;
+        Game.log.debug("Choosing ghost [id=" + ghostId + "]");
+
+        ghostZest = ghostMaxZest = 150 + 100 * Game.random.nextNumber();
+        ghostHealth = ghostMaxHealth = 100;
     }
 
     protected var _pp :PropertyListener;

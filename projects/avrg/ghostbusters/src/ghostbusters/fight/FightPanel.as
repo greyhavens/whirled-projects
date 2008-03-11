@@ -176,10 +176,6 @@ public class FightPanel extends FrameSprite
             Game.log.debug("Frame handler running: " + this);
         }
 
-        if (Game.random.nextInt(100) == 0) {
-            CommandEvent.dispatch(this, FightController.PLAYER_ATTACKED);
-        }
-
         var players :Array = Game.control.getPlayerIds();
         if (players != null) {
             updateSpotlights(players);
@@ -191,7 +187,8 @@ public class FightPanel extends FrameSprite
 
             } else if (_minigame.currentGame.isDone) {
                 if (_minigame.currentGame.gameResult.success == MicrogameResult.SUCCESS) {
-                    CommandEvent.dispatch(this, FightController.GHOST_ATTACKED);
+                    CommandEvent.dispatch(this, FightController.GHOST_ATTACKED,
+                                          _minigame.currentGame.gameResult);
                 }
                 if (_minigame != null) {
                     _minigame.beginNextGame();
