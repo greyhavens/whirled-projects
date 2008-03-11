@@ -14,8 +14,6 @@ import flash.events.Event;
 [SWF(width="700", height="500")]
 public class BingoMain extends Sprite
 {
-    public static const VERSION :Number = 0.93;
-    
     public static var log :Log = Log.getLog(BingoMain);
 
     public static var control :AVRGameControl;
@@ -26,7 +24,7 @@ public class BingoMain extends Sprite
 
     public function BingoMain ()
     {
-        log.info("Bingo version " + VERSION);
+        log.info("Bingo version " + Constants.VERSION);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
