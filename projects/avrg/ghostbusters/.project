@@ -16,6 +16,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>[source path] msoy</name>
+			<type>2</type>
+			<location>/export/msoy/src/as/com/threerings/msoy</location>
+		</link>
+		<link>
 			<name>[source path] src</name>
 			<type>2</type>
 			<location>/Applications/Adobe Flex Builder 3/sdks/3.0.0/frameworks/projects/framework/src</location>
