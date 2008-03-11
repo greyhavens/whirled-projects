@@ -88,6 +88,23 @@ public class Game extends Sprite
         }
     }
 
+    public static function getTeam (excludeDead :Boolean = false) :Array
+    {
+        var players :Array = Game.control.getPlayerIds();
+        var team :Array = new Array(players.length);
+        var jj :int = 0;
+        for (var ii :int = 0; ii < players.length; ii ++) {
+            if (!Game.control.isPlayerHere(players[ii])) {
+                continue;
+            }
+            if (excludeDead && model.isPlayerDead(players[ii])) {
+                continue;
+            }
+            team[jj ++] = players[ii];
+        }
+        return team.slice(0, jj);
+    }
+
     protected function handleUnload (event :Event) :void
     {
         log.info("Removed from stage - Unloading...");

@@ -6,14 +6,15 @@ package ghostbusters.fight {
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
+
 import com.whirled.AVRGameControlEvent;
 
 import ghostbusters.Codes;
 import ghostbusters.Game;
 import ghostbusters.GameController;
-import ghostbusters.fight.MicrogameResult;
 
 public class FightController extends Controller
 {
@@ -43,13 +44,13 @@ public class FightController extends Controller
 
     public function handleGhostAttacked (result :MicrogameResult) :void
     {
-        if (result.damageDone > 0) {
+        if (result.damageOutput > 0) {
             Game.control.state.sendMessage(
-                Codes.MSG_GHOST_ATTACKED, [ Game.ourPlayerId, result.damageDone ]);
+                Codes.MSG_GHOST_ATTACKED, [ Game.ourPlayerId, result.damageOutput ]);
         }
-        if (result.healingDone > 0) {
+        if (result.healthOutput > 0) {
             Game.control.state.sendMessage(
-                Codes.MSG_PLAYERS_HEALED, [ Game.ourPlayerId, result.healingDone ]);
+                Codes.MSG_PLAYERS_HEALED, [ Game.ourPlayerId, result.healthOutput ]);
         }
         Game.control.playAvatarAction("Retaliate");
     }
@@ -66,40 +67,60 @@ public class FightController extends Controller
             return;
         }
         if (event.name == Codes.MSG_GHOST_ATTACKED) {
-            var dmg :int = event.value() as int;
+            var dmg :int = (event.value() as Array)[1];
             if (dmg > 0 && Game.model.damageGhost(dmg)) {
                 Game.control.state.sendMessage(Codes.MSG_GHOST_DEATH, null);
             }
 
         } else if (event.name == Codes.MSG_PLAYERS_HEALED) {
-            var totHeal :int = event.value() as int;
-            var players :Array = Game.control.getPlayerIds();
-
-            // 
-            var playerDmg :Array = new Array(players.length);
-            var totDmg :int = 0;
-            for (var ii :int = 0; ii < players.length; ii ++) {
-                playerDmg[ii] = (Game.model.getPlayerMaxHealth(players[ii]) -
-                                 Game.model.getPlayerHealth(players[ii]));
-                totDmg += playerDmg[ii];
-            }
-            For (var ii :int = 0; ii < players.length; ii ++) {
-                // give each player an amount of healing relative to how damaged they are
-                var heal :int = (totHeal * playerDmg[ii]) / totDmg;
-                var newHealth :int = heal + Game.model.getPlayerHealth(players[ii]);
-                Game.model.setPlayerHealth(players[ii], newHealth);
-            }
+            doHealPlayers(event.value as int);
 
         } else if (event.name == Codes.MSG_PLAYER_ATTACKED) {
-            if (event.value is Number) {
-                var playerId :int = event.value as int;
-                if (Game.model.damagePlayer(playerId, 10)) {
-                    Game.control.state.sendMessage(Codes.MSG_PLAYER_DEATH, playerId);
-                }
-            } else {
-                Game.log.debug("Eek, non-number argument to MSG_PLAYER_ATTACKED: " + event.value);
-            }
+            doAttackPlayer(event.value as int);
+
         }
     }
+
+    protected function doHealPlayers (totHeal :int) :void
+    {
+        var team :Array = Game.getTeam(true);
+
+        // figure out how hurt each party member is, and the total hurt
+        var playerDmg :Array = new Array(team.length);
+        var totDmg :int = 0;
+        for (var ii :int = 0; ii < team.length; ii ++) {
+            playerDmg[ii] = (Game.model.getPlayerMaxHealth(team[ii]) -
+                             Game.model.getPlayerHealth(team[ii]));
+            totDmg += playerDmg[ii];
+        }
+        // hand totHeal out proportionally to each player's relative hurtness
+        for (ii = 0; ii < team.length; ii ++) {
+            var heal :int = (totHeal * playerDmg[ii]) / totDmg;
+            var newHealth :int = heal + Game.model.getPlayerHealth(team[ii]);
+            Game.model.setPlayerHealth(team[ii], newHealth);
+        }
+    }
+
+    protected function doAttackPlayer (playerId :int) :void
+    {
+        if (Game.model.damagePlayer(playerId, 10)) {
+            Game.control.state.sendMessage(Codes.MSG_PLAYER_DEATH, playerId);
+ 
+            var team :Array = Game.getTeam(true);
+            ArrayUtil.removeFirst(team, Game.ourPlayerId);
+
+            for (var ii :int = 0; ii < team.length; ii ++) {
+                if (team[ii] == Game.ourPlayerId) {
+                    continue;
+                }
+                if (Game.model.isPlayerDead(team[ii])) {
+                    return;
+                }
+            }
+            // everybody is dead!
+            Game.control.state.sendMessage(Codes.MSG_GHOST_TRIUMPH, playerId);
+        }
+    }
+
 }
 }

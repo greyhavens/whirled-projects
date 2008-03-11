@@ -105,18 +105,25 @@ public class FightPanel extends FrameSprite
         });
     }
 
-    public function showPlayerDeath () :void
+    public function showPlayerDeath (playerId :int) :void
     {
-        // TODO: make not single player
+        // at the moment, there is no visible effect other than the avatar state change
+        if (playerId == Game.ourPlayerId) {
+            Game.gameController.setAvatarState("Defeat");
 
-        // cancel minigame
-        endFight();
+            // cancel minigame
+            endFight();
+        }
+    }
 
-        Game.gameController.setAvatarState("Defeat");
-        var panel :DisplayObject = this;
-        _ghost.triumph(function () :void {
-            CommandEvent.dispatch(panel, GameController.END_FIGHT);
-        });
+    public function showGhostTriumph () :void
+    {
+        if (_ghost != null && _ghost.parent != null) {
+            var panel :DisplayObject = this;
+            _ghost.triumph(function () :void {
+                CommandEvent.dispatch(panel, GameController.END_FIGHT);
+            });
+        }
     }
 
     public function showGhostDamage () :void
@@ -126,10 +133,13 @@ public class FightPanel extends FrameSprite
         }
     }
 
-    public function showGhostAttack () :void
+    public function showGhostAttack (playerId :int) :void
     {
         if (_ghost != null && _ghost.parent != null) {
             _ghost.attack();
+        }
+        if (playerId == Game.ourPlayerId) {
+            Game.gameController.setAvatarState("Reel");
         }
     }
 
@@ -176,10 +186,7 @@ public class FightPanel extends FrameSprite
             Game.log.debug("Frame handler running: " + this);
         }
 
-        var players :Array = Game.control.getPlayerIds();
-        if (players != null) {
-            updateSpotlights(players);
-        }
+        updateSpotlights(Game.getTeam());
 
         if (_minigame != null) {
             if (_minigame.currentGame == null) {
@@ -197,11 +204,11 @@ public class FightPanel extends FrameSprite
         }
     }
 
-    protected function updateSpotlights (players :Array) :void
+    protected function updateSpotlights (team :Array) :void
     {
         // TODO: maintain our own list, calling this 30 times a second is rather silly
-        for (var ii :int = 0; ii < players.length; ii ++) {
-            var playerId :int = players[ii] as int;
+        for (var ii :int = 0; ii < team.length; ii ++) {
+            var playerId :int = team[ii] as int;
 
             var info :AVRGameAvatar = Game.control.getAvatarInfo(playerId);
             if (info == null) {
@@ -233,13 +240,16 @@ public class FightPanel extends FrameSprite
             showGhostDamage();
 
         } else if (event.name == Codes.MSG_PLAYER_ATTACKED) {
-            showGhostAttack();
+            showGhostAttack(event.value as int);
 
         } else if (event.name == Codes.MSG_GHOST_DEATH) {
             showGhostDeath();
 
+        } else if (event.name == Codes.MSG_GHOST_TRIUMPH) {
+            showGhostTriumph();
+
         } else if (event.name == Codes.MSG_PLAYER_DEATH) {
-            showGhostDeath();
+            showPlayerDeath(event.value as int);
         }
     }
 
@@ -253,10 +263,6 @@ public class FightPanel extends FrameSprite
 
     protected var _frame :GameFrame;
     protected var _minigame: MicrogamePlayer;
-
-    protected var _stars :Array = [];
-
-    protected static const STARS :int = 400;
 
     protected static const FRAME_DISPLACEMENT_Y :int = 20;
 }

@@ -75,11 +75,7 @@ public class HUD extends Sprite
             // not ready yet
             return;
         }
-        var players :Array = Game.control.getPlayerIds();
-        if (players == null) {
-            // offline mode -- don't flip out
-            return;
-        }
+        var players :Array = Game.getTeam();
         var teamIx :int = 0;
         var hudIx :int = 0;
         while (hudIx < 6) {

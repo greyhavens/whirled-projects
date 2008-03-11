@@ -14,7 +14,7 @@ import flash.utils.getTimer;
 
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.FrameSprite;
-import com.threerings.util.EmbeddedSwfLoader;
+import com.threerings.util.MultiLoader;
 
 /**
  * A simple utility class that binds to a MovieClip and then plays scenes of that clip on request,
@@ -28,14 +28,12 @@ public class ClipHandler extends FrameSprite
     {
         _loaded = loaded;
 
-        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
-        loader.addEventListener(Event.COMPLETE, clipLoaded);
-        loader.load(data);
+        MultiLoader.getContents(data, clipLoaded);
     }
 
-    protected function clipLoaded (evt :Event) :void
+    protected function clipLoaded (disp :DisplayObject) :void
     {
-        _clip = MovieClip(EmbeddedSwfLoader(evt.target).getContent());
+        _clip = MovieClip(disp);
         addChild(_clip);
 
         scenes = new Object();

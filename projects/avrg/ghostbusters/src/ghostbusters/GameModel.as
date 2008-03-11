@@ -44,6 +44,11 @@ public class GameModel
         Game.control.state.setRoomProperty(Codes.PROP_STATE, state);
     }
 
+    public function isPlayerDead (playerId :int) :Boolean
+    {
+        return _pp.getProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH) === 0;
+    }
+
     public function getPlayerHealth (playerId :int) :int
     {
         return int(_pp.getProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH));
