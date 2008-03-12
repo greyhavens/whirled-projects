@@ -27,10 +27,9 @@ public class Controller
         _newRoundTimer.addEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
 
         // state change events
-        _model.addEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
-        _model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleNextPlayer);
-        _model.addEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
-        _model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
+        _model.addEventListener(SharedDataChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
+        _model.addEventListener(SharedDataChangedEvent.NEXT_PLAYER, handleNextPlayer);
+        _model.addEventListener(SharedDataChangedEvent.NEW_SCORES, handleNewScores);
 
         _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
@@ -60,7 +59,7 @@ public class Controller
         // authoritative client at any time.
         _expectedState = null;
 
-        this.handleNewRound(null);
+        this.handleGameStateChange(null);
     }
 
     protected static function createButton (width :int, height :int, text :String) :DisablingButton
@@ -104,10 +103,9 @@ public class Controller
 
     public function destroy () :void
     {
-        _model.removeEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
-        _model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleNextPlayer);
-        _model.removeEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
-        _model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
+        _model.addEventListener(SharedDataChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
+        _model.addEventListener(SharedDataChangedEvent.NEXT_PLAYER, handleNextPlayer);
+        _model.addEventListener(SharedDataChangedEvent.NEW_SCORES, handleNewScores);
 
         _mainSprite.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
@@ -146,42 +144,18 @@ public class Controller
         }
     }
 
-    protected function handleNewRound (e :SharedStateChangedEvent) :void
+    protected function handleGameStateChange (e :SharedDataChangedEvent) :void
     {
-        // reset the expected state when the state changes
-        _expectedState = null;
-
-        _winnerText.text = "";
-
-        this.stopNewRoundTimer();
+        //switch (_model.gameState
     }
 
-    protected function handleNextPlayer (e :SharedStateChangedEvent) :void
+    protected function handleNextPlayer (e :SharedDataChangedEvent) :void
     {
         // reset the expected state when the state changes
         _expectedState = null;
     }
 
-    protected function handlePlayerWonRound (e :SharedStateChangedEvent) :void
-    {
-        // reset the expected state when the state changes
-        _expectedState = null;
-
-        this.startNewRoundTimer(); // a new round should start shortly
-
-        var playerName :String = SimonMain.getPlayerName(_model.curState.roundWinnerId);
-
-        _winnerText.text = playerName + " wins the round!";
-
-        // update scores
-        if (null == _expectedScores) {
-            _expectedScores = _model.curScores.clone();
-        }
-
-        _expectedScores.incrementScore(playerName, new Date());
-    }
-
-    protected function handleNewScores (e :SharedStateChangedEvent) :void
+    protected function handleNewScores (e :SharedDataChangedEvent) :void
     {
         _expectedScores = null;
         _scoreboardView.scoreboard = _model.curScores;
@@ -211,7 +185,7 @@ public class Controller
     }
 
     protected var _model :Model;
-    protected var _expectedState :SharedState;
+    protected var _expectedState :SharedData;
     protected var _expectedScores :Scoreboard;
 
     protected var _mainSprite :Sprite;

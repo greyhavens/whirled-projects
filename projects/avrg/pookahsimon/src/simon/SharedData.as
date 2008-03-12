@@ -5,18 +5,26 @@ import flash.utils.ByteArray;
 /**
  * Encapsulates data that is shared across all game clients.
  */
-public class SharedState
+public class SharedData
 {
-    public var roundId :int;        // int
-    public var curPlayerIdx :int;   // byte
-    public var roundWinnerId :int;  // int
-    public var players :Array = [];   // array of ints
-    public var pattern :Array = []; // array of bytes
+    public static const INVALID_STATE :int              = -1;
+    public static const WAITING_FOR_GAME_START :int     = 0;
+    public static const PLAYING_GAME :int               = 1;
+    public static const SHOWING_WINNER_ANIMATION :int   = 2;
 
-    public function clone () :SharedState
+    public var gameState :int = INVALID_STATE;        // byte
+
+    public var roundId :int;                        // int
+    public var curPlayerIdx :int;                   // byte
+    public var roundWinnerId :int;                  // int
+    public var players :Array = [];                 // array of ints
+    public var pattern :Array = [];                 // array of bytes
+
+    public function clone () :SharedData
     {
-        var clone :SharedState = new SharedState();
+        var clone :SharedData = new SharedData();
 
+        clone.gameState = gameState;
         clone.roundId = roundId;
         clone.curPlayerIdx = curPlayerIdx;
         clone.roundWinnerId = roundWinnerId;
@@ -26,9 +34,10 @@ public class SharedState
         return clone;
     }
 
-    public function isEqual (rhs :SharedState) :Boolean
+    public function isEqual (rhs :SharedData) :Boolean
     {
         return (
+            gameState == rhs.gameState &&
             roundId == rhs.roundId &&
             curPlayerIdx == rhs.curPlayerIdx &&
             roundWinnerId == rhs.roundWinnerId &&
@@ -55,6 +64,8 @@ public class SharedState
     {
         var ba :ByteArray = new ByteArray();
 
+        ba.writeByte(gameState);
+
         ba.writeInt(roundId);
 
         ba.writeByte(curPlayerIdx);
@@ -76,11 +87,13 @@ public class SharedState
         return ba;
     }
 
-    public static function fromBytes (ba :ByteArray) :SharedState
+    public static function fromBytes (ba :ByteArray) :SharedData
     {
         ba.position = 0;
 
         ba.uncompress();
+
+        state.gameState = ba.readByte();
 
         state.roundId = ba.readInt();
 
@@ -88,7 +101,7 @@ public class SharedState
 
         state.roundWinnerId = ba.readInt();
 
-        var state :SharedState = new SharedState();
+        var state :SharedData = new SharedData();
 
         var playersLen :int = ba.readByte();
         for (var i :int = 0; i < playersLen; ++i) {

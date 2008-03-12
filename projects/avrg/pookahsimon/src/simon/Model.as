@@ -4,9 +4,8 @@ import com.threerings.util.Log;
 
 import flash.events.EventDispatcher;
 
-[Event(name="newRound", type="simon.SharedStateChangedEvent")]
+[Event(name="gameState", type="simon.SharedDataChangedEvent")]
 [Event(name="nextPlayer", type="bingo.SharedStateChangedEvent")]
-[Event(name="playerWonRound", type="bingo.SharedStateChangedEvent")]
 [Event(name="newScores", type="bingo.SharedStateChangedEvent")]
 
 public class Model extends EventDispatcher
@@ -24,9 +23,9 @@ public class Model extends EventDispatcher
     }
 
     /* state accessors */
-    public function get curState () :SharedState
+    public function get curState () :SharedData
     {
-        return _curState;
+        return _sharedData;
     }
 
     public function get curScores () :Scoreboard
@@ -36,11 +35,11 @@ public class Model extends EventDispatcher
 
     public function get roundInPlay () :Boolean
     {
-        return (0 == _curState.roundWinnerId);
+        return (0 == _sharedData.roundWinnerId);
     }
 
     /* shared state mutators (must be overridden) */
-    public function trySetNewState (newState :SharedState) :void
+    public function trySetNewState (newState :SharedData) :void
     {
         throw new Error("subclasses must override trySetNewState()");
     }
@@ -56,38 +55,26 @@ public class Model extends EventDispatcher
     }
 
     /* private state mutators */
-    protected function setState (newState :SharedState) :void
+    protected function setState (newState :SharedData) :void
     {
-        var lastState :SharedState = _curState;
-        _curState = newState.clone();
+        var lastState :SharedData = _sharedData;
+        _sharedData = newState.clone();
 
-        // if a new round began, only dispatch the NEW_ROUND event.
-        // new rounds always have new "ball in play" and "round winner id" values
-        if (_curState.roundId != lastState.roundId) {
-            if (_curState.roundId != lastState.roundId + 1) {
-                g_log.warning("got unexpected roundId (expected " + lastState.roundId + 1 + ", got " + _curState.roundId + ")");
-            }
-            this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_ROUND));
-        } else {
-
-            if (_curState.curPlayerIdx != lastState.curPlayerIdx) {
-                this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEXT_PLAYER));
-            }
-
-            if (_curState.roundWinnerId != lastState.roundWinnerId) {
-                this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.PLAYER_WON_ROUND));
-            }
+        if (_sharedData.gameState != lastState.gameState) {
+            this.dispatchEvent(new SharedDataChangedEvent(SharedDataChangedEvent.GAME_STATE_CHANGED));
+        } else if (_sharedData.curPlayerIdx != lastState.gameState) {
+            this.dispatchEvent(new SharedDataChangedEvent(SharedDataChangedEvent.NEXT_PLAYER));
         }
     }
 
     protected function setScores (newScores :Scoreboard) :void
     {
         _curScores = newScores;
-        this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_SCORES));
+        this.dispatchEvent(new SharedDataChangedEvent(SharedDataChangedEvent.NEW_SCORES));
     }
 
     // shared state
-    protected var _curState :SharedState = new SharedState();
+    protected var _sharedData :SharedData = new SharedData();
     protected var _curScores :Scoreboard = new Scoreboard();
 
     // local state
