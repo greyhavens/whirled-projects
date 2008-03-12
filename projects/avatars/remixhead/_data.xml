@@ -1,0 +1,4 @@
+<datapack>
+  <file name="head" type="DisplayObject" width="300" height="300" value="head.png"/>
+  <file name="_CONTENT" type="Blob" value="Body.swf"/>
+</datapack>
