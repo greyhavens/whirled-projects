@@ -2,8 +2,9 @@
 <project name="embeddingtest" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name" value="ScriptTest"/>
+  <property name="app.name" value="A"/>
   <property name="app.type" value="furni"/>
+  <property name="flex.use-network" value="true"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
