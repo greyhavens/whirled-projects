@@ -236,7 +236,7 @@ public class Controller
         
         this.updateBingoButton();
         
-        var playerName :String = BingoMain.getPlayerName(_model.curState.roundWinningPlayerId);
+        var playerName :String = BingoMain.getPlayerName(_model.curState.roundWinnerId);
         
         _winnerText.text = playerName + " wins the round!";
         
@@ -311,7 +311,7 @@ public class Controller
         
         // push a new round update out
         _expectedState.roundId += 1;
-        _expectedState.roundWinningPlayerId = 0;
+        _expectedState.roundWinnerId = 0;
         _expectedState.ballInPlay = this.getNextBall();
         this.update();
     }

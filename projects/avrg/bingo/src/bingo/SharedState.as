@@ -9,7 +9,7 @@ public class SharedState
 {
     public var roundId :int;
     public var ballInPlay :String;
-    public var roundWinningPlayerId :int;
+    public var roundWinnerId :int;
     
     public function clone () :SharedState
     {
@@ -17,14 +17,14 @@ public class SharedState
         
         clone.roundId = roundId;
         clone.ballInPlay = ballInPlay;
-        clone.roundWinningPlayerId = roundWinningPlayerId;
+        clone.roundWinnerId = roundWinnerId;
         
         return clone;
     }
     
     public function isEqual (rhs :SharedState) :Boolean
     {
-        return (roundId == rhs.roundId && ballInPlay == rhs.ballInPlay && roundWinningPlayerId == rhs.roundWinningPlayerId);
+        return (roundId == rhs.roundId && ballInPlay == rhs.ballInPlay && roundWinnerId == rhs.roundWinnerId);
     }
     
     public function toBytes () :ByteArray
@@ -32,7 +32,7 @@ public class SharedState
         var ba :ByteArray = new ByteArray();
         ba.writeInt(roundId);
         ba.writeUTF(ballInPlay);
-        ba.writeInt(roundWinningPlayerId);
+        ba.writeInt(roundWinnerId);
         
         return ba;
     }
@@ -45,14 +45,14 @@ public class SharedState
         
         state.roundId = ba.readInt();
         state.ballInPlay = ba.readUTF();
-        state.roundWinningPlayerId = ba.readInt();
+        state.roundWinnerId = ba.readInt();
         
         return state;
     }
     
     public function toString () :String
     {
-        return "roundId: " + roundId + " ballInPlay: " + ballInPlay + " roundWinningPlayerId: " + roundWinningPlayerId;
+        return "roundId: " + roundId + " ballInPlay: " + ballInPlay + " roundWinnerId: " + roundWinnerId;
     }
 }
 

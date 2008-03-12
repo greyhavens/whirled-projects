@@ -179,7 +179,7 @@ public class OnlineModel extends Model
 
                 // make the state change
                 var newState :SharedState = _curState.clone();
-                newState.roundWinningPlayerId = playerId;
+                newState.roundWinnerId = playerId;
                 this.trySetNewState(newState);
                 break;
 

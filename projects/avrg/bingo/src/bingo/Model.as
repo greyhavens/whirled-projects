@@ -41,7 +41,7 @@ public class Model extends EventDispatcher
     
     public function get roundInPlay () :Boolean
     {
-        return (0 == _curState.roundWinningPlayerId);
+        return (0 == _curState.roundWinnerId);
     }
     
     /* local state mutators */
@@ -85,7 +85,7 @@ public class Model extends EventDispatcher
                 this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_BALL));
             }
             
-            if (_curState.roundWinningPlayerId != lastState.roundWinningPlayerId) {
+            if (_curState.roundWinnerId != lastState.roundWinnerId) {
                 this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.PLAYER_WON_ROUND));
             }
         }
