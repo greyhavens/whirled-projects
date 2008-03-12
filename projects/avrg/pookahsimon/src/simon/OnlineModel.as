@@ -21,7 +21,7 @@ public class OnlineModel extends Model
         // read the current state
         var stateBytes :ByteArray = (_stateControl.getProperty(Constants.PROP_STATE) as ByteArray);
         if (null != stateBytes) {
-            _sharedData = SharedData.fromBytes(stateBytes);
+            _curState = SharedState.fromBytes(stateBytes);
         }
 
         // read current scores
@@ -37,7 +37,7 @@ public class OnlineModel extends Model
         _stateControl.removeEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propChanged);
     }
 
-    override public function trySetNewState (newState :SharedData) :void
+    override public function trySetNewState (newState :SharedState) :void
     {
         // ignore state changes from non-authoritative clients
         if (!SimonMain.control.hasControl()) {
@@ -54,7 +54,7 @@ public class OnlineModel extends Model
         }
 
         // is the state actually being changed?
-        if (newState.isEqual(_sharedData)) {
+        if (newState.isEqual(_curState)) {
             SimonMain.log.info("ignoring redundant state change request: " + newState);
             return;
         }
@@ -132,7 +132,7 @@ public class OnlineModel extends Model
     {
         switch (e.name) {
         case Constants.PROP_STATE:
-            var newState :SharedData = SharedData.fromBytes(e.value as ByteArray);
+            var newState :SharedState = SharedState.fromBytes(e.value as ByteArray);
             this.setState(newState);
             break;
 
@@ -148,7 +148,7 @@ public class OnlineModel extends Model
     }
 
     protected var _stateControl :StateControl;
-    protected var _lastStateRequest :SharedData;
+    protected var _lastStateRequest :SharedState;
     protected var _lastScoresRequest :Scoreboard;
 
     protected var _messageQueue :Array = [];

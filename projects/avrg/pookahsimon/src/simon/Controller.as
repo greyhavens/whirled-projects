@@ -27,9 +27,9 @@ public class Controller
         _newRoundTimer.addEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
 
         // state change events
-        _model.addEventListener(SharedDataChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
-        _model.addEventListener(SharedDataChangedEvent.NEXT_PLAYER, handleNextPlayer);
-        _model.addEventListener(SharedDataChangedEvent.NEW_SCORES, handleNewScores);
+        _model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
+        _model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleNextPlayer);
+        _model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
         _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
@@ -103,9 +103,9 @@ public class Controller
 
     public function destroy () :void
     {
-        _model.addEventListener(SharedDataChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
-        _model.addEventListener(SharedDataChangedEvent.NEXT_PLAYER, handleNextPlayer);
-        _model.addEventListener(SharedDataChangedEvent.NEW_SCORES, handleNewScores);
+        _model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
+        _model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleNextPlayer);
+        _model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
         _mainSprite.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
@@ -144,18 +144,18 @@ public class Controller
         }
     }
 
-    protected function handleGameStateChange (e :SharedDataChangedEvent) :void
+    protected function handleGameStateChange (e :SharedStateChangedEvent) :void
     {
         //switch (_model.gameState
     }
 
-    protected function handleNextPlayer (e :SharedDataChangedEvent) :void
+    protected function handleNextPlayer (e :SharedStateChangedEvent) :void
     {
         // reset the expected state when the state changes
         _expectedState = null;
     }
 
-    protected function handleNewScores (e :SharedDataChangedEvent) :void
+    protected function handleNewScores (e :SharedStateChangedEvent) :void
     {
         _expectedScores = null;
         _scoreboardView.scoreboard = _model.curScores;
@@ -185,7 +185,7 @@ public class Controller
     }
 
     protected var _model :Model;
-    protected var _expectedState :SharedData;
+    protected var _expectedState :SharedState;
     protected var _expectedScores :Scoreboard;
 
     protected var _mainSprite :Sprite;

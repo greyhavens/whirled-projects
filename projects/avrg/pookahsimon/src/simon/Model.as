@@ -4,7 +4,7 @@ import com.threerings.util.Log;
 
 import flash.events.EventDispatcher;
 
-[Event(name="gameState", type="simon.SharedDataChangedEvent")]
+[Event(name="gameState", type="simon.SharedStateChangedEvent")]
 [Event(name="nextPlayer", type="bingo.SharedStateChangedEvent")]
 [Event(name="newScores", type="bingo.SharedStateChangedEvent")]
 
@@ -23,9 +23,9 @@ public class Model extends EventDispatcher
     }
 
     /* state accessors */
-    public function get curState () :SharedData
+    public function get curState () :SharedState
     {
-        return _sharedData;
+        return _curState;
     }
 
     public function get curScores () :Scoreboard
@@ -35,11 +35,11 @@ public class Model extends EventDispatcher
 
     public function get roundInPlay () :Boolean
     {
-        return (0 == _sharedData.roundWinnerId);
+        return (0 == _curState.roundWinnerId);
     }
 
     /* shared state mutators (must be overridden) */
-    public function trySetNewState (newState :SharedData) :void
+    public function trySetNewState (newState :SharedState) :void
     {
         throw new Error("subclasses must override trySetNewState()");
     }
@@ -55,26 +55,26 @@ public class Model extends EventDispatcher
     }
 
     /* private state mutators */
-    protected function setState (newState :SharedData) :void
+    protected function setState (newState :SharedState) :void
     {
-        var lastState :SharedData = _sharedData;
-        _sharedData = newState.clone();
+        var lastState :SharedState = _curState;
+        _curState = newState.clone();
 
-        if (_sharedData.gameState != lastState.gameState) {
-            this.dispatchEvent(new SharedDataChangedEvent(SharedDataChangedEvent.GAME_STATE_CHANGED));
-        } else if (_sharedData.curPlayerIdx != lastState.gameState) {
-            this.dispatchEvent(new SharedDataChangedEvent(SharedDataChangedEvent.NEXT_PLAYER));
+        if (_curState.gameState != lastState.gameState) {
+            this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.GAME_STATE_CHANGED));
+        } else if (_curState.curPlayerIdx != lastState.gameState) {
+            this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEXT_PLAYER));
         }
     }
 
     protected function setScores (newScores :Scoreboard) :void
     {
         _curScores = newScores;
-        this.dispatchEvent(new SharedDataChangedEvent(SharedDataChangedEvent.NEW_SCORES));
+        this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_SCORES));
     }
 
     // shared state
-    protected var _sharedData :SharedData = new SharedData();
+    protected var _curState :SharedState = new SharedState();
     protected var _curScores :Scoreboard = new Scoreboard();
 
     // local state

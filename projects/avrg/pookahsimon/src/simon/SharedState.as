@@ -5,7 +5,7 @@ import flash.utils.ByteArray;
 /**
  * Encapsulates data that is shared across all game clients.
  */
-public class SharedData
+public class SharedState
 {
     public static const INVALID_STATE :int              = -1;
     public static const WAITING_FOR_GAME_START :int     = 0;
@@ -20,9 +20,9 @@ public class SharedData
     public var players :Array = [];                 // array of ints
     public var pattern :Array = [];                 // array of bytes
 
-    public function clone () :SharedData
+    public function clone () :SharedState
     {
-        var clone :SharedData = new SharedData();
+        var clone :SharedState = new SharedState();
 
         clone.gameState = gameState;
         clone.roundId = roundId;
@@ -34,7 +34,7 @@ public class SharedData
         return clone;
     }
 
-    public function isEqual (rhs :SharedData) :Boolean
+    public function isEqual (rhs :SharedState) :Boolean
     {
         return (
             gameState == rhs.gameState &&
@@ -87,7 +87,7 @@ public class SharedData
         return ba;
     }
 
-    public static function fromBytes (ba :ByteArray) :SharedData
+    public static function fromBytes (ba :ByteArray) :SharedState
     {
         ba.position = 0;
 
@@ -101,7 +101,7 @@ public class SharedData
 
         state.roundWinnerId = ba.readInt();
 
-        var state :SharedData = new SharedData();
+        var state :SharedState = new SharedState();
 
         var playersLen :int = ba.readByte();
         for (var i :int = 0; i < playersLen; ++i) {
