@@ -106,6 +106,7 @@ public class DictionaryAttack extends Sprite
     protected function flowAwarded (event :FlowAwardedEvent) :void
     {
         _flowAward = event.amount;
+        _ctx.control.local.feedback("You earned " + _flowAward + " flow!");
     }
 
     protected function gameDidEnd (event :StateChangedEvent) :void

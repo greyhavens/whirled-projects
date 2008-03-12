@@ -141,7 +141,7 @@ public class Board extends Sprite
      */
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (event.name == Model.BOARD_DATA && event.index == -1) {
+        if (event.name == Model.BOARD_DATA) {
             _gotBoard = true;
             maybeStartRound();
         }

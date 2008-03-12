@@ -421,7 +421,7 @@ public class Model
                 var yy :int = int(used[ii] / _size);
                 play.mults[ii] = TYPE_MULTIPLIER[getType(xx, yy)];
                 var pos :int = getPosition(xx, yy);
-                _ctx.control.net.setImmediate(BOARD_DATA, BLANK, pos);
+                _ctx.control.net.setAt(BOARD_DATA, pos, BLANK, true);
                 play.positions[ii] = pos;
                 // if this was a wildcard, it scores no point
                 if (board.getLetter(used[ii]).getText() == WILDCARD) {
@@ -437,7 +437,7 @@ public class Model
             var ppoints :int = play.getPoints(_ctx.model);
             var newpoints :int = points[play.pidx] + ppoints;
             if (ppoints > 0) {
-                _ctx.control.net.set(POINTS, newpoints, play.pidx);
+                _ctx.control.net.setAt(POINTS, play.pidx, newpoints);
             }
 
             // if they earned a trophy due to the length of this word, award it
@@ -458,7 +458,7 @@ public class Model
                 // if so, score a point and end the round 
                 var scores :Array = (_ctx.control.net.get(SCORES) as Array);
                 scores[play.pidx] = scores[play.pidx] + 1;
-                _ctx.control.net.set(SCORES, scores[play.pidx], play.pidx);
+                _ctx.control.net.setAt(SCORES, play.pidx, scores[play.pidx]);
                 if (scores[play.pidx] >= getWinningScore()) {
                     var winners :Array = [ _ctx.control.game.getMyId() ];
                     var losers :Array = _ctx.control.game.seating.getPlayerIds().filter(
@@ -560,12 +560,12 @@ public class Model
         // select the letter to change and issue the change notification
         var rpos :int = int(set[_rando.nextInt(set.length)]);
 //         var nlet :String = chars.substr(_rando.nextInt(chars.length), 1);
-        _ctx.control.net.set(BOARD_DATA, WILDCARD, rpos);
+        _ctx.control.net.setAt(BOARD_DATA, rpos, WILDCARD);
 
 //         // penalize our score
 //         var points :Array = (_ctx.control.net.get(POINTS) as Array);
 //         var myidx : int = _ctx.control.game.seating.getMyPosition();
-//         _ctx.control.net.set(POINTS, points[myidx] - getChangePenalty(), myidx);
+//         _ctx.control.net.setAt(POINTS, myidx, points[myidx] - getChangePenalty());
 
         // finally send a message indicating what we've done so that the UI can react
         _ctx.control.net.sendMessage(LETTER_CHANGE, [ _ctx.control.game.getMyId(), rpos ]);
@@ -692,7 +692,7 @@ public class Model
      */
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (event.name == Model.BOARD_DATA && event.index == -1) {
+        if (event.name == Model.BOARD_DATA) {
             gotBoard();
         }
     }

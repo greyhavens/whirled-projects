@@ -16,6 +16,7 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
+import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.MessageReceivedEvent;
 import com.whirled.game.PropertyChangedEvent;
@@ -49,6 +50,7 @@ public class GameView extends Sprite
 
         // listen for property changed and message events
         _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        _ctx.control.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         _ctx.control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
@@ -339,32 +341,36 @@ public class GameView extends Sprite
     }
 
     /**
-     * Called when our distributed game state changes.
+     * Called when a property in our distributed game state changes.
      */
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
         var ii :int; // fucking ActionScript
         if (event.name == Model.POINTS) {
-            if (event.index == -1) {
-                for (ii = 0; ii < _shooters.length; ii++) {
-                    _shooters[ii].setPoints(0, _ctx.model.getWinningPoints());
-                }
-            } else {
-                _shooters[event.index].setPoints(
-                    int(event.newValue), _ctx.model.getWinningPoints());
+            for (ii = 0; ii < _shooters.length; ii++) {
+                _shooters[ii].setPoints(0, _ctx.model.getWinningPoints());
             }
 
         } else if (event.name == Model.SCORES) {
-            if (event.index == -1) {
-                for (ii = 0; ii < _shooters.length; ii++) {
-                    _shooters[ii].setScore(0);
-                }
-            } else {
-                _shooters[event.index].setScore(int(event.newValue));
+            for (ii = 0; ii < _shooters.length; ii++) {
+                _shooters[ii].setScore(0);
             }
+        }
+    }
+
+    /**
+     * Called when an element of an array-valued property in our distributed game state changes.
+     */
+    protected function elementChanged (event :ElementChangedEvent) :void
+    {
+        if (event.name == Model.POINTS) {
+            _shooters[event.index].setPoints(int(event.newValue), _ctx.model.getWinningPoints());
+
+        } else if (event.name == Model.SCORES) {
+            _shooters[event.index].setScore(int(event.newValue));
 
         } else if (event.name == Model.BOARD_DATA) {
-            if (event.index != -1 && event.newValue != Model.BLANK) {
+            if (event.newValue != Model.BLANK) {
                 // map the global position into to our local coordinates
                 var xx :int = _ctx.model.getReverseX(event.index);
                 var yy :int = _ctx.model.getReverseY(event.index);

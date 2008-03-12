@@ -9,7 +9,7 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.utils.ByteArray;
 
-import com.threerings.util.EmbeddedSwfLoader;
+import com.threerings.util.MultiLoader;
 
 /**
  * Displays the splash screen.
@@ -21,16 +21,12 @@ public class SplashView extends Sprite
         _onClear = onClear;
         _parent = parent;
         _parent.addEventListener(MouseEvent.CLICK, onClick);
-
-        // nothing is ever simple in Flash
-        _loader = new EmbeddedSwfLoader();
-        _loader.addEventListener(Event.COMPLETE, splashLoaded);
-        _loader.load(ByteArray(new SPLASH()));
+        MultiLoader.getContents(SPLASH, addSplash);
     }
 
-    protected function splashLoaded (event :Event) :void
+    protected function addSplash (splash :MovieClip) :void
     {
-        _clip = (_loader.getContent() as MovieClip);
+        _clip = splash;
         _clip.addEventListener(Event.ENTER_FRAME, onEnterFrame);
         addChild(_clip);
     }
@@ -53,7 +49,6 @@ public class SplashView extends Sprite
 
     protected var _parent :Sprite;
     protected var _onClear :Function;
-    protected var _loader :EmbeddedSwfLoader;
     protected var _clip :MovieClip;
 
     [Embed(source="../../rsrc/splash.swf", mimeType="application/octet-stream")]

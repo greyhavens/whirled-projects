@@ -3,7 +3,7 @@
 
 package dictattack {
 
-import flash.events.Event;
+import flash.system.ApplicationDomain;
 import flash.media.Sound;
 import flash.text.GridFitType;
 import flash.text.TextField;
@@ -21,7 +21,7 @@ import flash.geom.ColorTransform;
 import flash.geom.Rectangle;
 
 import com.threerings.flash.TextFieldUtil;
-import com.threerings.util.EmbeddedSwfLoader;
+import com.threerings.util.MultiLoader;
 
 /**
  * Defines skinnable content. TODO: use the right format whenever Ray finally finalizes content
@@ -169,24 +169,9 @@ public class Content
 
     public function Content (onReady :Function)
     {
-        var packs :int = 0;
-        var packLoaded :Function = function (event :Event) :void {
-            if (++packs == 3) {
-                onReady();
-            }
-        };
-
-        _invaders = new EmbeddedSwfLoader();
-        _invaders.addEventListener(Event.COMPLETE, packLoaded);
-        _invaders.load(ByteArray(new INVADERS()));
-
-        _screens = new EmbeddedSwfLoader();
-        _screens.addEventListener(Event.COMPLETE, packLoaded);
-        _screens.load(ByteArray(new SCREENS()));
-
-        _between = new EmbeddedSwfLoader();
-        _between.addEventListener(Event.COMPLETE, packLoaded);
-        _between.load(ByteArray(new BETWEEN()));
+        MultiLoader.getLoaders([INVADERS, SCREENS, BETWEEN], function (result :Object) :void {
+            onReady();
+        }, false, _contentDomain);
     }
 
     public function getShootSound () :Sound
@@ -196,18 +181,18 @@ public class Content
 
     public function createInvader (type :int) :MovieClip
     {
-        var suff :String = (type == 0) ? "01" : "03"
-        return MovieClip(new (_invaders.getClass("space_invader_" + suff))());
+        var suff :String = (type == 0) ? "01" : "03";
+        return instantiateClip("space_invader_" + suff);
     }
 
     public function createShip () :MovieClip
     {
-        return MovieClip(new (_invaders.getClass("ship_color"))());
+        return instantiateClip("ship_color");
     }
 
     public function createSaucer () :MovieClip
     {
-        var saucer :MovieClip = MovieClip(new (_invaders.getClass("alienship"))());
+        var saucer :MovieClip = instantiateClip("alienship");
         saucer.scaleX = 0.3; // TODO: get Bill to redo source
         saucer.scaleY = 0.3;
         return saucer;
@@ -215,39 +200,39 @@ public class Content
 
     public function createExplosion () :Explosion
     {
-        return new Explosion(MovieClip(new (_invaders.getClass("explosion"))()));
+        return new Explosion(instantiateClip("explosion"));
     }
 
     public function createWordScoreDisplay () :MovieClip
     {
-        var score :MovieClip = MovieClip(new (_invaders.getClass("ProgressBar"))());
+        var score :MovieClip = instantiateClip("ProgressBar");
         score.scaleX = -1; // TODO: get Bill to redo source
         return score;
     }
 
     public function createRoundScoreIcon () :MovieClip
     {
-        return MovieClip(new (_invaders.getClass("ProgressIcon"))());
+        return instantiateClip("ProgressIcon");
     }
 
     public function createBetweenRound (round :int) :MovieClip
     {
-        return MovieClip(new (_between.getClass("Round_" + round))());
+        return instantiateClip("Round_" + round);
     }
 
     public function createGameOverSingle () :MovieClip
     {
-        return MovieClip(new (_screens.getClass("game_over_single"))());
+        return instantiateClip("game_over_single");
     }
 
     public function createRoundOverMulti () :MovieClip
     {
-        return MovieClip(new (_screens.getClass("round_over_multi"))());
+        return instantiateClip("round_over_multi");
     }
 
     public function createGameOverMulti () :MovieClip
     {
-        return MovieClip(new (_screens.getClass("game_over_multi"))());
+        return instantiateClip("game_over_multi");
     }
 
     public function makeInputFormat (color :uint, bold :Boolean = false) :TextFormat
@@ -321,9 +306,13 @@ public class Content
         return new ColorTransform(red/0xFF, green/0xFF, blue/0xFF, 1, 0, 0, 0, alphaOffset);
     }
 
-    protected var _invaders :EmbeddedSwfLoader;
-    protected var _screens :EmbeddedSwfLoader;
-    protected var _between :EmbeddedSwfLoader;
+    protected function instantiateClip (symbolName :String) :MovieClip
+    {
+        var symbolClass :Class = _contentDomain.getDefinition(symbolName) as Class;
+        return MovieClip(new symbolClass());
+    }
+
+    protected var _contentDomain :ApplicationDomain = new ApplicationDomain(null);
 
     [Embed(source="../../rsrc/name_font.ttf", fontName="Amiga Forever Pro2",
            mimeType="application/x-font-truetype")]
