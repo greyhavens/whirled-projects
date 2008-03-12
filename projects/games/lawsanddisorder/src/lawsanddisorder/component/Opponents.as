@@ -20,23 +20,27 @@ public class Opponents extends Component
     }
     
     /**
-     * Add a player to the array of players
+     * Add an opponent to the array of opponents
      */
     public function addOpponent (opponent :Opponent) :void
     {
-        if (opponents.indexOf(opponent) < 0) {
-             opponents.push(opponent);
-             addChild(opponent);
-        }
-        else {
-            _ctx.log("WTF opponents already contains player!");
-        }
+        opponents.push(opponent);
+        addChild(opponent);
         updateDisplay();
     }
     
     /**
-     * Rearrange opponents when one is added
-     * TODO will opponents be changing during the game?  Or just added during init?
+     * Remove an opponent and rearrange the rest.     */
+    public function removeOpponent (opponent :Opponent) :void
+    {
+        var index :int = opponents.indexOf(opponent);
+        opponents.splice(index, 1);
+    	removeChild(opponent);
+    	updateDisplay();
+    }
+    
+    /**
+     * Rearrange opponents when one is added or removed.
      */
     override protected function updateDisplay () :void
     {
@@ -48,7 +52,7 @@ public class Opponents extends Component
         }
     }
     
-    /** Array of players */
+    /** Array of opponent objects */
     protected var opponents :Array = new Array();
 }
 }

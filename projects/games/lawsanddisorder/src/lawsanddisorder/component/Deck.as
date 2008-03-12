@@ -27,23 +27,23 @@ public class Deck extends Component
      */
     public function Deck (ctx :Context)
     {        
-        discardPile = new CardContainer(ctx);
+        //discardPile = new CardContainer(ctx);
         super(ctx);
         
         _ctx.eventHandler.addDataListener(DECK_DATA, deckChanged);
         _ctx.eventHandler.addDataListener(JOBS_DATA, jobsChanged);
         
-        // TODO get this from somewhere else - board?
-        var playerCount :int = _ctx.control.game.seating.getPlayerIds().length;
-        playerJobs = new Array(playerCount).map(function (): int { return -1; });
-        
-        // create the jobs
+        // create the job objects
         createJob(Job.JUDGE);
         createJob(Job.THIEF);
         createJob(Job.BANKER);
         createJob(Job.TRADER);
         createJob(Job.PRIEST);
         createJob(Job.SCIENTIST);
+        
+        // TODO get this from somewhere else - board?
+        var playerCount :int = _ctx.control.game.seating.getPlayerIds().length;
+        playerJobs = new Array(playerCount).map(function (): int { return -1; });
         
         var numDecks :int;
         // 2 players 2 decks 10 laws 5 laws each
@@ -95,11 +95,29 @@ public class Deck extends Component
     }
     
     /**
-     * Called by first player during game start.
-     * First player fills the deck; other players get it from property change event.
+     * Create numCards new cards, add them to the array of card objects.  Does not fill the
+     * deck with cards - that is done by the control player in setup().
+     */
+    protected function addNewCards (numCards :int, cardGroup :int, cardType :int, cardValue :int = 0) :void
+    {
+        for (var i :int = 1; i <= numCards; i++) {
+            var cardId :int = cardObjects.length;
+            var card :Card = new Card(_ctx, cardId, cardGroup, cardType, cardValue);
+            cardObjects.push(card);
+        }
+    }
+    
+    /**
+     * Called by control player during game start.  Control player resets the job array and
+     * populates the deck; other players get these values from data change events.
      */
     public function setup () :void
     {
+        // populate the deck
+    	cards = new Array();
+    	for each (var card :Card in cardObjects) {
+    		cards.push(card.id);
+    	}
         ArrayUtil.shuffle(cards);
         _ctx.eventHandler.setData(DECK_DATA, cards);
     }
@@ -240,21 +258,6 @@ public class Deck extends Component
     	else {
             playerJobs = _ctx.eventHandler.getData(JOBS_DATA) as Array;
     	}
-            
-    }
-    
-    /**
-     * Create numCards new cards, add them to the global deck (cardObjects), then to the deck in 
-     * use (cards).  Does not trigger a deck changed event.
-     */
-    protected function addNewCards (numCards :int, cardGroup :int, cardType :int, cardValue :int = 0) :void
-    {
-        for (var i :int = 1; i <= numCards; i++) {
-            var cardId :int = cardObjects.length;
-            var card :Card = new Card(_ctx, cardId, cardGroup, cardType, cardValue);
-            cardObjects.push(card);
-            cards.push(cardId);
-        }
     }
         
     /**
@@ -385,10 +388,10 @@ public class Deck extends Component
     	return _ctx.board.getPlayer(playerId);
     }
     
-    /** Cards are added to here when they leave the board. 
-     * TODO synchronize this or remove it - do we need to track this?
-     */
-    public var discardPile :CardContainer;
+    ///** Cards are added to here when they leave the board. 
+    // * TODO synchronize this or remove it - do we need to track this?
+    // */
+    //public var discardPile :CardContainer;
 	
 	/** Displays the number of cards in the deck */
 	protected var numCardText :TextField;

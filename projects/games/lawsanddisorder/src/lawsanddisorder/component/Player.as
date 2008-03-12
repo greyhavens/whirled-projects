@@ -44,11 +44,12 @@ public class Player extends Component
         var job :Job = _ctx.board.deck.drawRandomJob(this);
         _ctx.board.deck.switchJobs(job, this, true);
         hand.setup();
+        _ctx.eventHandler.setData(MONIES_DATA, STARTING_MONIES, id);
     }
     
     /**
      * Retrieve the player's current job
-     */   
+     */
     public function get job () :Job
     {
         return _job;
@@ -245,6 +246,17 @@ public class Player extends Component
         }
     }
     
+    /**
+     * Called when this player has left the game; do unload cleanup.
+     */
+    public function unload () :void
+    {
+        _ctx.eventHandler.removeDataListener(Deck.JOBS_DATA, jobChanged, id);
+        _ctx.eventHandler.removeDataListener(Hand.HAND_DATA, handChanged, id);
+        _ctx.eventHandler.removeDataListener(MONIES_DATA, moniesChanged, id);
+        hand.unload();
+    }
+    
     /** Can the player change jobs right now? */
     public function get jobEnabled () :Boolean {
         return _jobEnabled;
@@ -302,7 +314,7 @@ public class Player extends Component
     protected var _hand :Hand;
     
     /** Number of monies the player has  */
-    protected var _monies :int = STARTING_MONIES;
+    protected var _monies :int;
     
     /** The player's current job; may change through the game */
     protected var _job :Job;

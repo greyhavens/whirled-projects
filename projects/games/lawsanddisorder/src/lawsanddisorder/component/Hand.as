@@ -26,10 +26,11 @@ public class Hand extends CardContainer
     }
     
     /**
-     * Called by first user during game start.  Draw a fresh hand.
+     * Called by first user during game start.  Remove any cards and draw a fresh hand.
      */
     public function setup () :void
     {
+    	clearCards();
     	var cardArray :Array = _ctx.board.deck.drawStartingHand(DEFAULT_HAND_SIZE);
         addCards(cardArray);
     }
@@ -217,6 +218,14 @@ public class Hand extends CardContainer
     	player.loseCards(_ctx.state.selectedCards);
     	_ctx.state.deselectCards();
     	discardDownListener();
+    }
+        
+    /**
+     * Called when the player leaves the game; remove listeners
+     */
+    public function unload () :void
+    {
+        _ctx.eventHandler.removeDataListener(HAND_DATA, handChanged, player.id);
     }
     
     /** Record the listener function while selecting cards to discard. */

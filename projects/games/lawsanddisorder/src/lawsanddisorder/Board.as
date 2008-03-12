@@ -18,25 +18,26 @@ import lawsanddisorder.component.*;
 public class Board extends Sprite
 {
     /**
-     * Constructor
+     * Constructor.  Create board components and display them, but don't fill them with
+     * distributed data (eg cards in hands) just yet.
      */
     public function Board (ctx :Context)
     {
         _ctx = ctx;
-    }
-
-    /**
-     * Create the board components and initialize them 
-     */
-    public function init () :void
-    {
-        // display background
-        initDisplay();
-        
         _ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_ENDED, turnEnded);
         _ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, turnStarted);
-                        
-        // create law button
+        
+        // display background
+        // TODO this mask seems to have a shorter y in whirled - fix or adjust
+        var background :Sprite = new BOARD_BACKGROUND();
+        var bgMask :Sprite = new Sprite();
+        bgMask.graphics.beginFill(0x000000);
+        bgMask.graphics.drawRect(0, 0, 700, 500);
+        bgMask.graphics.endFill();
+        background.mask = bgMask;
+        background.mouseEnabled = false;
+        addChild(background);
+
         createLawButton = new CreateLawButton(_ctx);
         createLawButton.x = 12;
         createLawButton.y = 250;
@@ -65,19 +66,19 @@ public class Board extends Sprite
         
         // create the players
         // lists player ids and names by seating position
-        var playerIds :Array = _ctx.control.game.seating.getPlayerIds();
+        var playerServerIds :Array = _ctx.control.game.seating.getPlayerIds();
         var playerNames :Array = _ctx.control.game.seating.getPlayerNames();
-        for (var i :int = 0; i < playerIds.length; i++) {
+        for (var i :int = 0; i < playerServerIds.length; i++) {
             var player :Player;
             if (_ctx.control.game.seating.getMyPosition() == i) {
-                player = new Player(_ctx, i, playerIds[i], playerNames[i]);
+                player = new Player(_ctx, i, playerServerIds[i], playerNames[i]);
                 player.x = 0;
                 player.y = 0;
                 addChild(player);
                 this.player = player;
             }
             else {
-                player = new Opponent(_ctx, i, playerIds[i], playerNames[i]);
+                player = new Opponent(_ctx, i, playerServerIds[i], playerNames[i]);
                 opponents.addOpponent(Opponent(player));
             }
             playerObjects[i] = player;
@@ -98,6 +99,14 @@ public class Board extends Sprite
         turnHighlight = new Sprite();
         turnHighlight.graphics.lineStyle(5, 0xFFFF00);
         turnHighlight.graphics.drawRect(2, 2, 695, 495);
+        
+        // show the splash screen over the entire board
+        var splashScreen :Sprite = new Sprite();
+        splashScreen.graphics.beginFill(0x000000, 0.5);
+        splashScreen.graphics.drawRect(0, 0, 700, 500);
+        splashScreen.graphics.endFill();
+        addChild(splashScreen);
+        splashScreen.addEventListener(MouseEvent.CLICK, splashScreenClicked);
     }
     
     /**
@@ -107,27 +116,24 @@ public class Board extends Sprite
     public function setup () :void
     {
     	deck.setup();
+    	laws.setup();
     	// setup the player hands and jobs
         for (var i :int = 0; i < playerObjects.length; i++) {
             var player :Player = playerObjects[i];
             player.setup();
         }
+        _setupComplete = true;
     }
     
     /**
-     * Initialize the table; draw the background
-     */
-    protected function initDisplay () :void
+     * Player clicked the splash screen; remove it and signal game start     */
+    protected function splashScreenClicked (event :MouseEvent) :void
     {
-    	var background :Sprite = new BOARD_BACKGROUND();
-		// TODO this mask seems to have a shorter y in whirled - fix or adjust
-    	var bgMask :Sprite = new Sprite();
-    	bgMask.graphics.beginFill(0x000000);
-    	bgMask.graphics.drawRect(0, 0, 700, 500);
-    	bgMask.graphics.endFill();
-    	background.mask = bgMask;
-		background.mouseEnabled = false;
-        addChild(background);
+    	if (_ctx.control.game.amInControl() && !_setupComplete) {
+    		return;
+    	}
+    	removeChild(event.target as Sprite);
+    	_ctx.control.game.playerReady();
     }
     
     /**
@@ -217,8 +223,52 @@ public class Board extends Sprite
         }
     }
     
-    /** Game context */
-    protected var _ctx :Context;
+    /**
+     * Called when a player leaves the game.  Remove them from the visible opponents and
+     * the list of player objects, and make their job available, but don't change player.ids or
+     * remove them from distributed data arrays.     */
+    public function playerLeft (playerServerId :int) :void
+    {
+        if (playerServerId == player.serverId) {
+            _ctx.log("WTF I'm the player who left?");
+            return;
+        }
+        
+        // find and unload the opponent object
+    	var opponent :Opponent;
+    	for each (var tempPlayer :Player in playerObjects) {
+    		if (tempPlayer.serverId == playerServerId) {
+    			opponent = tempPlayer as Opponent;
+    			break;
+    		}
+    	}
+        opponent.unload();
+        
+        // return the player's job to the pile
+        _ctx.eventHandler.setData(Deck.JOBS_DATA, -1, opponent.id);
+        
+        // if anything was happening with any player, stop it now
+        // TODO only stop things that were waiting on the player who left
+        _ctx.notice("Cancelling all events and actions because a player left.");
+        _ctx.state.cancelMode();
+        laws.cancelTriggering();
+        if (_ctx.state.performingAction) {
+            _ctx.state.performingAction = false;
+        }
+        
+        // if it was their turn, end turn (controlling player only)
+	    if (_ctx.control.game.amInControl()) {
+	        if (getTurnHolder() == null) {
+	        	_ctx.broadcast("Moving on to next player's turn.");
+	        	_ctx.control.game.startNextTurn();
+	        }
+	    }
+        
+        // remove the player object
+        opponents.removeOpponent(opponent);
+        var index :int = playerObjects.indexOf(opponent);
+        playerObjects.splice(index, 1);
+    }
     
     /** TODO make components readonly using getters */
     
@@ -245,6 +295,12 @@ public class Board extends Sprite
     
     /** Current player */
     public var player :Player;
+    
+    /** Indicates that the game may start */
+    protected var _setupComplete :Boolean = false;
+    
+    /** Game context */
+    protected var _ctx :Context;
     
     /** All player objects in the game, indexed by id */
     protected var playerObjects :Array = new Array();

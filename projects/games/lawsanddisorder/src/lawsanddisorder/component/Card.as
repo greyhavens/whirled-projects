@@ -74,10 +74,10 @@ public class Card extends Component
 		
         cardText = Content.defaultTextField();
         cardText.text = text;
-        cardText.width = 45;
-        cardText.height = 60;
+        cardText.width = 50;
+        cardText.height = 50;
         cardText.y = 5;
-        cardText.x = 3;
+        cardText.x = 0;
         addChild(cardText);
 		
 		// create the highlight object but do not add it as a child
@@ -174,7 +174,7 @@ public class Card extends Component
                     case Job.PRIEST:
                         return "The Priest";
                     case Job.SCIENTIST:
-                        return "The Scientist";
+                        return "The Doctor";
                 }
                 break;
             case VERB:
@@ -190,19 +190,9 @@ public class Card extends Component
             case OBJECT:
                 switch (type) {
                     case CARD:
-                        if (value == 1) {
-                            return "1 Card";
-                        }
-                        else {
-                            return value + " Cards";
-                        }
+                        return getEnglishValue(value, "Card");
                     case MONIE:
-                        if (value == 1) {
-                            return "1 Monie";
-                        }
-                        else {
-                            return value + " Monies";
-                        }
+                        return getEnglishValue(value, "Monie");
                 }
                 break;
             case WHEN:
@@ -220,9 +210,36 @@ public class Card extends Component
     }
     
     /**
+     * Writes the value out in english, and appends an "s" to the name when
+     * plural.  Returns a string such as "One Card" or "Three Monies".
+     */
+    protected function getEnglishValue (value :int, name :String) :String
+    {
+        if (value == 1) {
+            return "One " + name;
+        }
+        else if (value == 2) {
+            return "Two " + name + "s";
+        }
+        else if (value == 3) {
+            return "Three " + name + "s";
+        }
+        else if (value == 4) {
+            return "Four " + name + "s";
+        }
+        else if (value == 5) {
+            return "Five " + name + "s";
+        }
+        else {
+            return value + name + "s";
+        }
+
+    }
+    
+    /**
      * Display contents of card for debugging purposes
      */
-    override public function toString() :String
+    override public function toString () :String
     {
         return "card[" + text + " id:"+ id +"]";
     }
@@ -272,14 +289,10 @@ public class Card extends Component
      */
     public function set highlighted (value :Boolean) :void {
         _highlighted = value;
-        //updateDisplay();
-		//graphics.clear();
         if (_highlighted) {
 			if (!contains(highlightSprite)) {
 				addChild(highlightSprite);
 			}
-        //    graphics.lineStyle(5, 0xFFFF00);
-        //    graphics.drawRect(5, 5, 40, 55);
         }
 		else {
 			if (contains(highlightSprite)) {

@@ -115,6 +115,16 @@ public class CardContainer extends Component
     }
     
     /**
+     * Remove all cards. Does not trigger a distributed data event or update display.     */
+    protected function clearCards () :void
+    {
+    	while (cards.length > 0) {
+            var card :Card = cards[0];
+            removeCard(card);
+        }
+    }
+    
+    /**
      * Abstract method for telling other players about a change to the distributed data. 
      * Called after adding/removing cards.
      */

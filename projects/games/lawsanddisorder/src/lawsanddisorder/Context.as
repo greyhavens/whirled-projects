@@ -20,28 +20,6 @@ public class Context
         return _control;
     }
 
-    public function get state () :State
-    {
-        return _state;
-    }
-    
-    public function get board () :Board
-    {
-        return _board;
-    }
-
-    public function get eventHandler () :EventHandler
-    {
-        return _eventHandler;
-    }
-
-    public function init (state :State, board :Board, eventHandler :EventHandler) :void
-    {
-        _state = state;
-        _board = board;
-        _eventHandler = eventHandler;
-    }
-
     /**
      * Log this debugging message
      * TODO combine log, notice, broadcast into one method?
@@ -56,7 +34,7 @@ public class Context
      */
     public function notice (notice :String) :void
     {
-		_board.notices.addNotice(notice);
+		board.notices.addNotice(notice);
 		log("[notice] " + notice);
     }
 
@@ -81,9 +59,16 @@ public class Context
     	_control.net.sendMessage(type, value);
     }
     
+    /** Connection to the game server */
     protected var _control :GameControl;
-    protected var _state :State;
-    protected var _board :Board;
-    protected var _eventHandler :EventHandler;
+    
+    /** Controls the user interface and player actions */
+    public var state :State;
+    
+    /** Contains game components such as players, deck, laws */
+    public var board :Board;
+    
+    /** Wraps incoming data and message events from the server */
+    public var eventHandler :EventHandler;
 }
 }

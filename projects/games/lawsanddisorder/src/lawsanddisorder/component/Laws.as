@@ -35,13 +35,19 @@ public class Laws extends Component
     }
     
     /**
+     * Clear the laws in preparation for a new game.  This is called only by the controller.     */
+    public function setup () :void
+    {
+    	_ctx.eventHandler.setData(LAWS_DATA, null);
+    }
+    
+    /**
      * Some player just created a new law.  Create a new law component with the event value
      * as its cards, and add it to our array.  Next enact the law if applicable, then begin
      * triggering laws that have "when a new law is created".     */
     public function addNewLaw (event :MessageReceivedEvent) :void
     {
     	var law :Law = new Law(_ctx, numLaws);
-    	//_ctx.log("NEW law got serialized: " + event.value);
     	law.setSerializedCards(event.value);
     	addLaw(law);
     	law.setDistributedLawData();
@@ -59,56 +65,7 @@ public class Laws extends Component
 	        }
         }
     }
-    
-    /*
-     * Player just created this law; distribute it to everyone.  Connect a temporary listener
-     * so we will know when the data has been recieved by the server and we can send the 
-     * command to enact the new law.
-     *
-    public function addNewLaw (law :Law) :void
-    {
-        if (law.id != laws.length) {
-            _ctx.log("WTF new law id: " + law.id + " is not equals to laws.length.");
-        }
-        _ctx.eventHandler.addDataListener(LAWS_DATA, newLawAdded, law.id);
-        
-        // TODO this is the second time we set the law data - what to do..
-        // TODO is this law thrown out here?
-        law.setDistributedLawData();
-    }
-    */
 
-    /*
-     * Called when the data for a new law we created comes back.  Now that the server has the
-     * card data for it, send a message to every player to enact the law.
-     *
-     *
-    protected function newLawAdded (event :DataChangedEvent) :void
-    {
-        _ctx.eventHandler.removeDataListener(LAWS_DATA, newLawAdded, event.index);
-        
-        // TODO this is also called by the law when it catches this event - fix?
-        updateLawData(event.index, event.newValue);
-        
-        // enact the new law only if it contains no WHEN card
-        // law already exists because we know this is the player who created it
-        var law :Law = laws[event.index];
-        if (law == null) {
-            _ctx.log("WTF law " + event.index + " is null when newLawAdded message recieved.");
-            return;
-        }
-        if (law.when == -1) {
-            // to avoid multiple laws enacting at once, wait until this one is done before
-            // searching for laws that trigger on CREATE_LAW.
-            _ctx.eventHandler.addMessageListener(ENACT_LAW_DONE, newLawEnacted);
-            _ctx.sendMessage(ENACT_LAW, event.index);
-        }
-        else {
-            _ctx.board.laws.triggerWhen(Card.CREATE_LAW);
-        }
-    }
-    */
-    
     /**
      * Called when a new law is successfully enacted.  Now scroll through all the laws and
      * enact any that trigger on CREATE_LAW.
@@ -131,7 +88,6 @@ public class Laws extends Component
              laws.push(law);
         }
         if (laws.length > MAX_LAWS) {
-        	//var oldestLawId :int = laws.length - MAX_LAWS - 1;
         	var oldestLaw :Law = laws[oldestLawId];
         	_ctx.notice("There are too many laws - removing the oldest: " + oldestLaw.text);
         	removeChild(oldestLaw);
@@ -213,9 +169,18 @@ public class Laws extends Component
      */
     protected function lawsChanged (event :DataChangedEvent) :void
     {
+        // a single law changed; update it
         if (event.index != -1) {
             updateLawData(event.index, event.newValue);
         }
+
+        // got a law resetting event; clear the laws
+        else if (event.newValue == null) {
+    		while (laws.length > 0) {
+	            var law :Law = laws.pop();
+	            removeChild(law);
+	        }
+    	}
     }
     
     /**
@@ -259,6 +224,14 @@ public class Laws extends Component
         _ctx.state.performingAction = false;
     }
     
+    /**
+     * Called if something disastrous happens, such as a player leaving the game.  If we
+     * were in the middle of triggering an effects chain, remove listeners for it now.     */
+    public function cancelTriggering () :void
+    {
+    	_ctx.eventHandler.removeMessageListener(ENACT_LAW_DONE, triggeringWhen);
+    }
+    
     /** The position of the oldest still-visible law */
     protected var oldestLawId :int = 0;
     
@@ -270,7 +243,6 @@ public class Laws extends Component
     
     /** Array of laws */
     protected var laws :Array = new Array();
-    //protected var laws :Dictionary = new Dictionary();
     
     /** Maximum number of laws; if another is added the first one will disappear */
     protected var MAX_LAWS :int = 10;

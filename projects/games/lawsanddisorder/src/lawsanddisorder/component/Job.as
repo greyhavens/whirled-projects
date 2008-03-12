@@ -67,6 +67,7 @@ public class Job extends Component
         
         /** Job name text */
         jobTitle = Content.defaultTextField(1.5);
+        jobTitle.text = name;
         jobTitle.width = bground.width;
         jobTitle.height = 50;
         jobTitle.y = 15;
@@ -74,6 +75,7 @@ public class Job extends Component
     
         /** Text of abilities */
         jobDescription = Content.defaultTextField();
+        jobDescription.text = description;
         jobDescription.width = 105;
         jobDescription.height = 150;
         jobDescription.y = 40;
@@ -97,8 +99,6 @@ public class Job extends Component
             return;
         }
         
-        jobTitle.text = name;
-        
         // display description with/without instructions for changing jobs
         if (player.jobEnabled) {
             jobDescription.text = description + "\n\n (Drag a subject here to change jobs)";
@@ -110,13 +110,9 @@ public class Job extends Component
         // enable/disable use power button
         if (player.powerEnabled) {
         	useAbilityButton.enabled = true;
-            //useAbilityButton.addEventListener(MouseEvent.CLICK, useAbilityButtonClicked);
-            //useAbilityButton.textColor = 0x000000;
         }
         else {
         	useAbilityButton.enabled = false;
-            //useAbilityButton.removeEventListener(MouseEvent.CLICK, useAbilityButtonClicked);
-            //useAbilityButton.textColor = 0x999999;
         }
     }
     
@@ -393,7 +389,7 @@ public class Job extends Component
             case Job.PRIEST:
                 return "The Priest";
             case Job.SCIENTIST:
-                return "The Scientist";
+                return "The Doctor";
         }
         _ctx.log("WTF Unknown job in job get name.");
         return "UNKNOWN";

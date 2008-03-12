@@ -34,7 +34,7 @@ public class Content
 		var format :TextFormat = new TextFormat();
         format.align = align;
 		format.font = "lawsfont";
-		format.size = Math.round(11.5 * percentSize);
+		format.size = Math.round(10 * percentSize);
 		format.bold = true;
 		
 		return format;
@@ -42,7 +42,8 @@ public class Content
 	
 	/** Embed the font used for everything */
     //[Embed(source="../../rsrc/Dustismo_windows.ttf", fontFamily="lawsfont")]
-    [Embed(source="../../rsrc/arial.ttf", fontFamily="lawsfont")]
+    //[Embed(source="../../rsrc/arial.ttf", fontFamily="lawsfont")]
+    [Embed(source="../../rsrc/TrajanDark.ttf", fontFamily="lawsfont")]
 	//[Embed(source="C:/WINDOWS/Fonts/arial.ttf", fontFamily="lawsfont")]
 	//[Embed(source="C:/WINDOWS/Fonts/BellGothicStd-Black.otf", fontFamily="lawsfont", 
 	//	   mimeType="application/x-font-truetype")]

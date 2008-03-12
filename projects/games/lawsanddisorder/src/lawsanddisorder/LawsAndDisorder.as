@@ -3,12 +3,15 @@
 import flash.display.Sprite;
 import flash.display.MovieClip;
 import flash.events.Event;
+import flash.events.MouseEvent;
+import flash.text.TextField;
 
 import com.whirled.game.GameControl;
 import com.whirled.game.FlowAwardedEvent;
 import com.whirled.game.MessageReceivedEvent;
 import com.whirled.game.PropertyChangedEvent;
 import com.whirled.game.StateChangedEvent;
+import com.whirled.game.OccupantChangedEvent;
 
 import lawsanddisorder.component.*
 
@@ -16,13 +19,13 @@ import lawsanddisorder.component.*
  * Handles game setup / game start / game end logic.
  *
  * TODO gameplay:
- * ai to fill games up to 6 players?
  * timers for auto-selection for afk players (?)
  * detecting afk players
  * handling players leaving
  * handle watchers
  * handle premature game ending
  * handle rematch
+ * handle control changed at inopportune moments
  * unloader?
  * grab fresh job data before using it on opponent's turn eg during enact law after switch job
  * same with hand data eg after being stolen from, before losing card
@@ -49,7 +52,8 @@ public class LawsAndDisorder extends Sprite
     public static const GAME_ENDING :String = "gameEnding";
 
     /**
-     * Constructor
+     * Constructor.  Set up game control, context, and board.  Add listeners for game events,
+     * and begin data initilization.
      */
     public function LawsAndDisorder ()
     {
@@ -61,84 +65,113 @@ public class LawsAndDisorder extends Sprite
         if (!_ctx.control.isConnected()) {
             return;
         }
-		
-        _ctx.control.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
-        _ctx.control.game.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
-        _ctx.control.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
         
-        // first player sets up distributed data and waits to hear about it from the server
-        // before continuing to fill properties with actual data
+        // connect game state listeners
+        _ctx.control.game.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
+        _ctx.control.game.addEventListener(StateChangedEvent.GAME_ENDED, gameEnded);
+        _ctx.control.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
+        _ctx.control.game.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED, occupantEntered);
+        _ctx.control.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
+        _ctx.control.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, controlChanged);
+        
+        // create our state and our board, and initialize them
+        _ctx.state = new State(_ctx);
+        _ctx.eventHandler = new EventHandler(_ctx);
+        _ctx.board = new Board(_ctx);
+        //_ctx.board.init();
+        addChild(_ctx.board);
+        
+        //var endGame :TextField = new TextField();
+        //endGame.text = "RESTART GAME";
+        //endGame.addEventListener(MouseEvent.CLICK, restartGame);
+        //addChild(endGame);
+
+        // set up distributed data
+        beginInit();
+    }
+    
+    /**
+     * Have the control player set the distributed data objects to blank arrays.  
+     * Control player will then wait to hear about it 
+     * from the server before contiinuing to fill properties with actual data.
+     * Also reset deck, hands, and scores for all players.
+     * 
+     * TODO could a player recieve a deck data change event before doing Deck()?     */
+    protected function beginInit () :void
+    {
         if (_ctx.control.game.amInControl()) {
             _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, initPropertyChanged);
-            _ctx.control.net.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
             var playerCount :int = _ctx.control.game.seating.getPlayerIds().length;
-            _ctx.control.net.set(Player.MONIES_DATA, new Array(playerCount).map(function (): int { return Player.STARTING_MONIES; }));
-            _ctx.control.net.set(Hand.HAND_DATA, new Array(playerCount).map(function (): Array { return new Array(); }));
-            _ctx.control.net.set(Deck.JOBS_DATA, new Array(playerCount).map(function (): int { return -1; }));
-            //_ctx.control.net.set(Laws.LAWS_DATA, new Array());
-            _ctx.control.net.set(Laws.LAWS_DATA, null);
-        }
-        // other players just set up the board now and wait to receive the actual data
-        else {
-            finishInit();
+            
+            _ctx.eventHandler.setData(Player.MONIES_DATA, new Array(playerCount).map(function (): int { return Player.STARTING_MONIES; }));
+            _ctx.eventHandler.setData(Hand.HAND_DATA, new Array(playerCount).map(function (): Array { return new Array(); }));
+            _ctx.eventHandler.setData(Deck.JOBS_DATA, new Array(playerCount).map(function (): int { return -1; }));
         }
     }
     
     /**
-     * Implementation of PropertyChangedListener method; fires when a property changes on
-     * the server.  Only the control player will perform this.
+     * Fires when a data event occurs during control player init.  Control player must receive
+     * these data initialization messages before they can send the player, hand and deck data
+     * in Board.setup().  Other players skip this step.
      */
-    public function initPropertyChanged (event :PropertyChangedEvent) :void
+    protected function initPropertyChanged (event :PropertyChangedEvent) :void
     {
-        if ((event.name == Hand.HAND_DATA)
-            || (event.name == Deck.JOBS_DATA)
-            || (event.name == Laws.LAWS_DATA)
-            || (event.name == Player.MONIES_DATA)) {
+    	if (event.name == Player.MONIES_DATA) {
+    		_initMoniesData = true;
+    	}
+    	else if (event.name == Hand.HAND_DATA) {
+    		_initHandsData = true;
+    	}
+    	else if (event.name == Deck.JOBS_DATA) {
+    		_initJobsData = true;
+    	}
 
-               // one step closer to being done initialization
-               if (++_initComplete == INIT_GOAL) {
-                _ctx.control.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, initPropertyChanged);
-                finishInit();
-             }
+        // once all data messages are recieved, disconnect this listener and finish setup
+        if (_initMoniesData && _initHandsData && _initJobsData) {
+            _ctx.control.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, initPropertyChanged);
+            _ctx.board.setup();
         }
     }
     
-    /**
-     * Verify that all the init pieces are complete, then setup and start the game
-     */
-    protected function finishInit () :void
+    /*
+    protected function restartGame (event :Event) :void
     {
-        if (!_ctx.control.isConnected()) {
-            _ctx.log("WTF not connected??!?");
-            return;
-        }
-
-        // create our state and our board, and initialize them
-        var state :State = new State(_ctx)
-        var board :Board = new Board(_ctx)
-        var eventHandler :EventHandler = new EventHandler(_ctx);
-        _ctx.init(state, board, eventHandler);
-        _ctx.board.init();
-        addChild(_ctx.board);
-
-        // notify the game that we're ready to start
-        _ctx.control.game.playerReady();
+    	_ctx.log("Restarting game");
+    	_ctx.eventHandler.endGame();
+    	//gameStarted(null);
     }
+    */
     
     /** 
      * Fires when all players have called playerReady().  Have the control player set
      * up the board data then start the first turn.
-     * 
-     * TODO listen for the board data before starting the first turn?
-     */     
-    protected function gameDidStart (event :StateChangedEvent) :void
+     */
+    protected function gameStarted (event :StateChangedEvent) :void
     {
+    	// this is a rematch; reset everything
+    	if (_gameStarted) {
+    		if (_ctx.control.game.amInControl()) {
+    			_ctx.board.setup();
+    		}
+    	}
+    	
         _ctx.notice("Welcome to Laws & Disorder!");
         if (_ctx.control.game.amInControl()) {
-            _ctx.board.setup();
-            // start the first turn
+            // control player starts the first turn
             _ctx.control.game.startNextTurn();
         }
+        _gameStarted = true;
+    }
+    
+    /**
+     * Handler for recieving game end events
+     * TODO move to Notices?
+     */
+    protected function gameEnded (event :StateChangedEvent) :void
+    {
+        _ctx.notice("Game over - thanks for playing!");
+        // TODO for testing, start over
+        //_ctx.control.game.playerReady();
     }
 
     /**
@@ -149,23 +182,56 @@ public class LawsAndDisorder extends Sprite
     {
         _ctx.notice("You got: " + event.amount + " flow for playing.  That's " + event.percentile + "%");
     }
+
+    /**
+     * Handler for dealing with players / watchers joining.
+     * Players can't join this game on the fly, sorry
+     */
+    protected function occupantEntered (event :OccupantChangedEvent) :void
+    {
+        if (event.player) {
+        	if (_ctx != null) {
+        		_ctx.log("WTF player joined the game partway through - impossible!");
+        	}
+        }
+    }
     
     /**
-     * Handler for recieving game end events
-     * TODO move to Notices?
+     * Handler for dealing with players / watchers leaving
+     * TODO what if we're waiting for that player?
      */
-    protected function gameDidEnd (event :StateChangedEvent) :void
+    protected function occupantLeft (event :OccupantChangedEvent) :void
     {
-        _ctx.notice("Game over - thanks for playing!");
+        // player left before game started; start game over and hope that works
+        // TODO it won't though, because player objects are already created.
+        if (!_gameStarted && event.player) {
+        	if (_ctx != null) {
+        		_ctx.notice("Player left before the game started");
+        	}
+            beginInit();
+        }
+        else if (event.player) {
+            _ctx.log("Player " + event.occupantId + " left.");
+        	_ctx.board.playerLeft(event.occupantId);
+        }
+    }
+    
+    /**
+     * Handler for dealing with control switching to another player
+     */
+    protected function controlChanged (event :StateChangedEvent) :void
+    {
     }
     
     /** Context */
     protected var _ctx :Context;
     
-    /** How far are we towards INIT_GOAL? */
-    protected var _initComplete :int = 0;
+    /** Indicates data objects have been setup on the server */
+    protected var _initMoniesData :Boolean = false;
+    protected var _initHandsData :Boolean = false;
+    protected var _initJobsData :Boolean = false;
     
-    /** How many things must be done before init is complete? */
-    protected static const INIT_GOAL :int = 4;
+    /** Has the game started */
+    protected var _gameStarted :Boolean = false;
 }
 }

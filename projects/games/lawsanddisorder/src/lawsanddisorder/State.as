@@ -353,7 +353,7 @@ public class State
                     _ctx.board.player.jobEnabled = false;
                     _ctx.board.removeCard(card);
                     // TODO distribute or remove discard pile
-                    _ctx.board.deck.discardPile.addCards(new Array(card), false);
+                    //_ctx.board.deck.discardPile.addCards(new Array(card), false);
                     // now tell other players that card was removed from hand
                     _ctx.board.player.hand.setDistributedHandData();
                     var job :Job = _ctx.board.deck.getJob(card.type);
@@ -705,6 +705,14 @@ public class State
     }
     
     /**
+     * Return whether this player is waiting for an action to be performed during
+     * law enacting, or using their power.  Might be waiting for another player.     */
+    public function get performingAction () :Boolean
+    {
+    	return _performingAction;
+    }
+    
+    /**
      * Reset the mode to MODE_DEFAULT and deselect all items.
      */
     public function cancelMode () :void
@@ -736,9 +744,11 @@ public class State
      */
     protected function setModeReminder (message :String, reminderNum :int = 1) :void
     {
-    	if (message == null && modeReminderTimer != null) {
-    		modeReminderTimer.stop();
-    		modeReminderTimer = null;
+        if (message == null) {
+    	    if (modeReminderTimer != null) {
+                modeReminderTimer.stop();
+                modeReminderTimer = null;
+    		}
     		return;
     	}
     	var reminderText :String;
