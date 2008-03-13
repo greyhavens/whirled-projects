@@ -37,6 +37,11 @@ public class OnlineModel extends Model
         _stateControl.removeEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propChanged);
     }
 
+    override public function getPlayerOids () :Array
+    {
+        return SimonMain.control.getPlayerIds();
+    }
+
     override public function trySetNewState (newState :SharedState) :void
     {
         // ignore state changes from non-authoritative clients

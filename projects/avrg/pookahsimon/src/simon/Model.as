@@ -38,6 +38,11 @@ public class Model extends EventDispatcher
         return (0 == _curState.roundWinnerId);
     }
 
+    public function getPlayerOids () :Array
+    {
+        throw new Error("subclasses must override getPlayerOids()");
+    }
+
     /* shared state mutators (must be overridden) */
     public function trySetNewState (newState :SharedState) :void
     {
@@ -47,11 +52,6 @@ public class Model extends EventDispatcher
     public function trySetNewScores (newScores :Scoreboard) :void
     {
         throw new Error("subclasses must override trySetNewScores()");
-    }
-
-    public function tryCallBingo () :void
-    {
-        throw new Error("subclasses must override tryCallBingo()");
     }
 
     /* private state mutators */

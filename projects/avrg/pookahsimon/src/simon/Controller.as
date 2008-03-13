@@ -1,6 +1,8 @@
 package simon {
 
 import com.threerings.flash.DisablingButton;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.Log;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -126,6 +128,24 @@ public class Controller
 
     protected function update () :void
     {
+
+        switch (SimonMain.model.curState.gameState) {
+        case SharedState.WAITING_FOR_GAME_START:
+            if (this.canStartGame) {
+                this.startNextGame();
+            }
+            break;
+
+        default:
+            // do nothing;
+            break;
+        }
+
+        this.applyStateChanges();
+    }
+
+    protected function applyStateChanges () :void
+    {
         if (null != _expectedState) {
 
             // trySetNewState is idempotent in the sense that
@@ -146,13 +166,72 @@ public class Controller
 
     protected function handleGameStateChange (e :SharedStateChangedEvent) :void
     {
-        //switch (_model.gameState
+        // reset the expected state when the state changes
+        _expectedState = null;
+
+        switch (_model.curState.gameState) {
+        case SharedState.INVALID_STATE:
+            // no game in progress. kick a new one off.
+            break;
+
+        case SharedState.WAITING_FOR_GAME_START:
+            // in the "lobby", waiting for enough players to join
+            if (this.canStartGame) {
+                this.startNextGame();
+            }
+            break;
+
+        case SharedState.PLAYING_GAME:
+            // the game has started -- it's the first player's turn
+            this.handleNextPlayer(null);
+            break;
+
+        case SharedState.SHOWING_WINNER_ANIMATION:
+            // show the winner animation, then start a new game
+            break;
+
+        default:
+            log.info("unrecognized gameState: " + _model.curState.gameState);
+            break;
+        }
+    }
+
+    protected function setupFirstGame () :void
+    {
+        _expectedState = new SharedState();
+        _expectedState.gameState = SharedState.WAITING_FOR_GAME_START;
+        this.applyStateChanges();
+    }
+
+    protected function get canStartGame () :Boolean
+    {
+        return (SimonMain.control.getPlayerIds().length >= Constants.MIN_PLAYERS_TO_START);
+    }
+
+    protected function startNextGame () :void
+    {
+        // set up for the next game state if we haven't already
+        if (null == _expectedState || _expectedState.gameState != SharedState.PLAYING_GAME) {
+            _expectedState = new SharedState();
+
+            _expectedState.gameState = SharedState.PLAYING_GAME;
+            _expectedState.curPlayerIdx = 0;
+
+            // shuffle the player list
+            var playerOids :Array = SimonMain.control.getPlayerIds();
+            ArrayUtil.shuffle(playerOids, null);
+            _expectedState.players = playerOids;
+        }
+
+        this.applyStateChanges();
     }
 
     protected function handleNextPlayer (e :SharedStateChangedEvent) :void
     {
         // reset the expected state when the state changes
         _expectedState = null;
+
+        // show the rainbow on the correct player
     }
 
     protected function handleNewScores (e :SharedStateChangedEvent) :void
@@ -181,7 +260,8 @@ public class Controller
         // push a new round update out
         _expectedState.roundId += 1;
         _expectedState.roundWinnerId = 0;
-        this.update();
+
+        this.applyStateChanges();
     }
 
     protected var _model :Model;
@@ -193,6 +273,8 @@ public class Controller
     protected var _winnerText :TextField;
 
     protected var _newRoundTimer :Timer;
+
+    protected var log :Log = Log.getLog(this);
 
 }
 

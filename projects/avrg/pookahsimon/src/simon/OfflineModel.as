@@ -2,6 +2,11 @@ package simon {
 
 public class OfflineModel extends Model
 {
+    override public function getPlayerOids () :Array
+    {
+        return [ SimonMain.ourPlayerId ];
+    }
+
     override public function trySetNewState (newState :SharedState) :void
     {
         // in offline mode, we can convert state change requests

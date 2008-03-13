@@ -17,6 +17,7 @@ public class Constants
     // gameplay bits
     public static const NEW_ROUND_DELAY_S :Number = 5;
     public static const NUM_SCOREBOARD_NAMES :int = 5;
+    public static const MIN_PLAYERS_TO_START :int = 1;
 
     // network bits
     public static const PROP_STATE :String = "state";
