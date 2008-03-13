@@ -98,7 +98,7 @@ public class GameModel
 
     public function get ghostId () :String
     {
-        return String(Game.control.state.getProperty(Codes.PROP_GHOST_ID));
+        return Game.control.state.getProperty(Codes.PROP_GHOST_ID) as String;
     }
 
     public function set ghostId (id :String) :void
@@ -163,13 +163,17 @@ public class GameModel
     public function getGhostData () :Object
     {
         var id :String = ghostId;
+        if (id == null) {
+            Game.log.warning("getGhostData() called with ghostId=" + id);
+            return null;
+        }
         var ghosts :Array = Content.GHOSTS;
         for (var ii :int = 0; ii < ghosts.length; ii ++) {
             if (ghosts[ii].id == id) {
                 return ghosts[ii];
             }
         }
-        throw new Error("Erk, ghost not found somehow.");
+        throw new Error("Erk, ghost not found somehow [id=" + id + "]");
     }
 
     // TODO: this should be called on a timer, too
@@ -180,11 +184,13 @@ public class GameModel
         }
 
         // initialize the room with a ghost
-        ghostId = Content.GHOSTS[Game.random.nextInt(Content.GHOSTS.length)].id;
-        Game.log.debug("Choosing ghost [id=" + ghostId + "]");
+        var id :String = Content.GHOSTS[Game.random.nextInt(Content.GHOSTS.length)].id;
+        Game.log.debug("Choosing ghost [id=" + id + "]");
 
         ghostZest = ghostMaxZest = 150 + 100 * Game.random.nextNumber();
         ghostHealth = ghostMaxHealth = 100;
+        // set the ghostId last of all, since that triggers loading
+        ghostId = id;
     }
 
     protected var _pp :PropertyListener;

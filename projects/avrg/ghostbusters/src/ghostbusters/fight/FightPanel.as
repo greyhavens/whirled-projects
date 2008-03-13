@@ -43,6 +43,9 @@ public class FightPanel extends FrameSprite
 
         Game.control.state.addEventListener(
             AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
+
+        Game.control.state.addEventListener(
+            AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
     }
 
     override public function hitTestPoint (
@@ -143,16 +146,15 @@ public class FightPanel extends FrameSprite
         }
     }
 
+    public function newRoom () :void
+    {
+        _battleLoop = Sound(new Content.BATTLE_LOOP_AUDIO()).play();
+        maybeNewGhost();
+    }
+
     override protected function handleAdded (... ignored) :void
     {
         super.handleAdded();
-        _battleLoop = Sound(new Content.BATTLE_LOOP_AUDIO()).play();
-
-        _ghost.x = Game.stageSize.width - 250;
-        _ghost.y = 100;
-        this.addChild(_ghost);
-
-        _ghost.fighting();        
 //        Game.control.addEventListener(AVRGameControlEvent.PLAYER_CHANGED, playerChanged);
     }
 
@@ -170,8 +172,6 @@ public class FightPanel extends FrameSprite
     {
         _dimness = new Dimness(0.8, true);
         this.addChild(_dimness);
-
-        _ghost = new SpawnedGhost();
     }
 
     protected var counter :int;
@@ -234,6 +234,21 @@ public class FightPanel extends FrameSprite
         // TODO: remove spotlights when people leave
     }
 
+    protected function maybeNewGhost () :void
+    {
+        if (_ghost != null) {
+            this.removeChild(_ghost);
+            _ghost = null;
+        }
+        if (Game.model.ghostId != null) {
+            _ghost = new SpawnedGhost();
+            _ghost.x = Game.stageSize.width - 250;
+            _ghost.y = 100;
+            this.addChild(_ghost);
+            _ghost.fighting();        
+        }
+    }
+
     protected function messageReceived (event: AVRGameControlEvent) :void
     {
         if (event.name == Codes.MSG_GHOST_ATTACKED) {
@@ -250,6 +265,13 @@ public class FightPanel extends FrameSprite
 
         } else if (event.name == Codes.MSG_PLAYER_DEATH) {
             showPlayerDeath(event.value as int);
+        }
+    }
+
+    protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
+    {
+        if (evt.name == Codes.PROP_GHOST_ID) {
+            maybeNewGhost();
         }
     }
 

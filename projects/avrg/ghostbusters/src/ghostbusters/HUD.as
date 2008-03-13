@@ -227,8 +227,9 @@ public class HUD extends Sprite
         setGhostHealth(Game.model.ghostRelativeZest, true);
     }
 
-    protected function roomPropertyChanged (name :String, value :Object) :void
+    protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
+        var name :String = evt.name;
         if (name == Codes.PROP_GHOST_CUR_HEALTH || name == Codes.PROP_GHOST_MAX_HEALTH) {
             ghostHealthUpdated();
 

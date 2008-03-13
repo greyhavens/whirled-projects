@@ -54,6 +54,9 @@ public class Game extends Sprite
         random = new Random();
 
         control = new AVRGameControl(this);
+        if (!control.isConnected()) {
+            return;
+        }
         ourPlayerId = control.getPlayerId();
 
         model = new GameModel();
@@ -91,6 +94,10 @@ public class Game extends Sprite
     public static function getTeam (excludeDead :Boolean = false) :Array
     {
         var players :Array = Game.control.getPlayerIds();
+        if (players == null) {
+            // disconnected
+            return [ ];
+        }
         var team :Array = new Array(players.length);
         var jj :int = 0;
         for (var ii :int = 0; ii < players.length; ii ++) {
@@ -176,6 +183,8 @@ public class Game extends Sprite
         }
 
         model.newRoom();
+        seekController.panel.newRoom();
+        fightController.panel.newRoom();
     }
 
     protected function gotControl (evt :AVRGameControlEvent) :void

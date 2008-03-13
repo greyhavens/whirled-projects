@@ -50,6 +50,24 @@ public class SeekPanel extends FrameSprite
         return _ghost && _ghost.hitTestPoint(x, y, shapeFlag);
     }
 
+    public function newRoom () :void
+    {
+        maybeNewGhost();
+    }
+
+    protected function maybeNewGhost () :void
+    {
+        if (_ghost != null) {
+            _ghost.mask = null;
+            this.removeChild(_ghost);
+        }
+        if (Game.model.ghostId != null) {
+            _ghost = new HidingGhost(200);
+            this.addChild(_ghost);
+            _ghost.mask = _maskLayer;
+        }
+    }
+
     public function ghostPositionUpdate (pos :Point) :void
     {
         _ghost.newTarget(this.globalToLocal(pos));
@@ -220,10 +238,6 @@ public class SeekPanel extends FrameSprite
 
         _maskLayer = new Sprite();
         this.addChild(_maskLayer);
-
-        _ghost = new HidingGhost(200);
-        this.addChild(_ghost);
-        _ghost.mask = _maskLayer;
     }
 
     protected function transmitLanternPosition (pos :Point) :void
@@ -245,11 +259,14 @@ public class SeekPanel extends FrameSprite
         Game.control.state.setRoomProperty(Codes.PROP_GHOST_POS, [ x, y ]);
     }
 
-    protected function roomPropertyChanged (name :String, value :Object) :void
+    protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
         var bits :Array;
 
-        if (name == Codes.PROP_GHOST_CUR_ZEST) { 
+        if (evt.name == Codes.PROP_GHOST_ID) {
+            maybeNewGhost();
+
+        } else if (evt.name == Codes.PROP_GHOST_CUR_ZEST) { 
             if (Game.model.ghostZest > 0) {
                 ghostZapped();
 
@@ -257,8 +274,8 @@ public class SeekPanel extends FrameSprite
                 appearGhost();
             }
 
-        } else if (name == Codes.PROP_GHOST_POS) {
-            bits = value as Array;
+        } else if (evt.name == Codes.PROP_GHOST_POS) {
+            bits = evt.value as Array;
             if (bits != null) {
                 var pos :Point = Game.control.roomToStage(new Point(bits[0], bits[1]));
                 if (pos != null) {
@@ -266,8 +283,8 @@ public class SeekPanel extends FrameSprite
                 }
             }
 
-        } else if (name == Codes.PROP_LANTERN_POS) {
-            bits = value as Array;
+        } else if (evt.name == Codes.PROP_LANTERN_POS) {
+            bits = evt.value as Array;
             if (bits != null) {
                 var playerId :int = int(bits[0]);
 
