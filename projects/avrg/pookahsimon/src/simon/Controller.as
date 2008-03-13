@@ -172,6 +172,7 @@ public class Controller
         switch (_model.curState.gameState) {
         case SharedState.INVALID_STATE:
             // no game in progress. kick a new one off.
+            this.setupFirstGame();
             break;
 
         case SharedState.WAITING_FOR_GAME_START:
@@ -205,7 +206,7 @@ public class Controller
 
     protected function get canStartGame () :Boolean
     {
-        return (SimonMain.control.getPlayerIds().length >= Constants.MIN_PLAYERS_TO_START);
+        return (SimonMain.model.getPlayerOids().length >= Constants.MIN_PLAYERS_TO_START);
     }
 
     protected function startNextGame () :void
@@ -218,7 +219,7 @@ public class Controller
             _expectedState.curPlayerIdx = 0;
 
             // shuffle the player list
-            var playerOids :Array = SimonMain.control.getPlayerIds();
+            var playerOids :Array = SimonMain.model.getPlayerOids();
             ArrayUtil.shuffle(playerOids, null);
             _expectedState.players = playerOids;
         }
