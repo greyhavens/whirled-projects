@@ -233,6 +233,7 @@ public class Controller
         _expectedState = null;
 
         // show the rainbow on the correct player
+        _currentRainbow = new RainbowController(SimonMain.model.curState.curPlayerOid);
     }
 
     protected function handleNewScores (e :SharedStateChangedEvent) :void
@@ -254,15 +255,19 @@ public class Controller
 
     protected function handleNewRoundTimerExpired (e :TimerEvent) :void
     {
-        if (null == _expectedState) {
-            _expectedState = _model.curState.clone();
-        }
+        var nextSharedState :SharedState = this.createNextSharedState();
 
         // push a new round update out
-        _expectedState.roundId += 1;
-        _expectedState.roundWinnerId = 0;
+        nextSharedState.roundId += 1;
+        nextSharedState.roundWinnerId = 0;
 
         this.applyStateChanges();
+    }
+
+    public function createNextSharedState () :SharedState
+    {
+        _expectedState = SimonMain.model.curState.clone();
+        return _expectedState;
     }
 
     protected var _model :Model;
@@ -274,6 +279,8 @@ public class Controller
     protected var _winnerText :TextField;
 
     protected var _newRoundTimer :Timer;
+
+    protected var _currentRainbow :RainbowController;
 
     protected var log :Log = Log.getLog(this);
 

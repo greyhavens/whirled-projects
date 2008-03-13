@@ -20,6 +20,11 @@ public class SharedState
     public var players :Array = [];                 // array of ints
     public var pattern :Array = [];                 // array of bytes
 
+    public function get curPlayerOid () :int
+    {
+        return (curPlayerIdx >= 0 && curPlayerIdx < players.length ? players[curPlayerIdx] : 0);
+    }
+
     public function clone () :SharedState
     {
         var clone :SharedState = new SharedState();

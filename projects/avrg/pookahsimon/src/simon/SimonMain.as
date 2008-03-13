@@ -4,12 +4,14 @@
 package simon {
 
 import com.threerings.util.Log;
+import com.threerings.util.MultiLoader;
 import com.whirled.AVRGameAvatar;
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.system.ApplicationDomain;
 
 [SWF(width="700", height="500")]
 public class SimonMain extends Sprite
@@ -19,11 +21,15 @@ public class SimonMain extends Sprite
     public static var control :AVRGameControl;
     public static var model :Model;
     public static var controller :Controller;
+    public static var resourcesDomain :ApplicationDomain;
+    public static var sprite :Sprite;
 
-    public static var ourPlayerId :int;
+    public static var localPlayerId :int;
 
     public function SimonMain ()
     {
+        sprite = this;
+
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
@@ -35,6 +41,23 @@ public class SimonMain extends Sprite
         control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, playerLeft);
 
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
+
+        resourcesDomain = new ApplicationDomain();
+        MultiLoader.getLoaders(SWF_RAINBOW, handleResourcesLoaded, false, resourcesDomain);
+    }
+
+    protected function handleResourcesLoaded (results :Object) :void
+    {
+        _resourcesLoaded = true;
+        this.maybeBeginGame();
+    }
+
+    protected function maybeBeginGame () :void
+    {
+        if (_addedToStage && _resourcesLoaded) {
+            model.setup();
+            controller.setup();
+        }
     }
 
     public static function getPlayerName (playerId :int) :String
@@ -58,10 +81,11 @@ public class SimonMain extends Sprite
         model = (control.isConnected() && !Constants.FORCE_SINGLEPLAYER ? new OnlineModel() : new OfflineModel());
         controller = new Controller(this, model);
 
-        ourPlayerId = (control.isConnected() ? control.getPlayerId() : 666);
+        localPlayerId = (control.isConnected() ? control.getPlayerId() : 666);
 
-        model.setup();
-        controller.setup();
+        _addedToStage = true;
+
+        this.maybeBeginGame();
     }
 
     protected function handleUnload (event :Event) :void
@@ -93,6 +117,12 @@ public class SimonMain extends Sprite
     protected function playerLeft (evt :AVRGameControlEvent) :void
     {
     }
+
+    protected var _addedToStage :Boolean;
+    protected var _resourcesLoaded :Boolean;
+
+    [Embed(source="../../rsrc/pookah_rainbow.swf", mimeType="application/octet-stream")]
+    protected static const SWF_RAINBOW :Class;
 }
 
 }

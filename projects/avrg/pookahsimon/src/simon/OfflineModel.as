@@ -4,7 +4,7 @@ public class OfflineModel extends Model
 {
     override public function getPlayerOids () :Array
     {
-        return [ SimonMain.ourPlayerId ];
+        return [ SimonMain.localPlayerId ];
     }
 
     override public function trySetNewState (newState :SharedState) :void
