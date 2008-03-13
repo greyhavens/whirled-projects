@@ -10,6 +10,7 @@ import fl.events.SliderEvent;
 import fl.data.DataProvider;
 
 import flash.display.Loader;
+import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
@@ -23,6 +24,8 @@ import com.threerings.flash.DisplayUtil;
 
 import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
+
+import com.whirled.contrib.DelayUtil;
 
 import com.threerings.graffiti.Canvas;
 
@@ -80,11 +83,15 @@ public class ToolBox extends Sprite
         var ui :MovieClip = loader.content as MovieClip;
         addChild(ui);
 
-        _brushSwatch = 
-            DisplayUtil.findInHierarchy(ui.brush_color, "brushcolor_swatch", false, 5) as Sprite;
-        log.debug("upState [" + DisplayUtil.dumpHierarchy(ui.brush_color.upState) + "]");
-        log.debug("overState [" + DisplayUtil.dumpHierarchy(ui.brush_color.overState) + "]");
-        log.debug("downState [" + DisplayUtil.dumpHierarchy(ui.brush_color.downState) + "]");
+        DelayUtil.init(this);
+        DelayUtil.delay(DelayUtil.FRAMES, 10, function () :void {
+            _brushSwatch = 
+                DisplayUtil.findInHierarchy(ui.bg_color, "bfcolor_swatch", false, 5) as Sprite;
+            log.debug("find [" + _brushSwatch + "]");
+            log.debug("upState [" + DisplayUtil.dumpHierarchy(ui.bg_color.upState) + "]");
+            log.debug("overState [" + DisplayUtil.dumpHierarchy(ui.bg_color.overState) + "]");
+            log.debug("downState [" + DisplayUtil.dumpHierarchy(ui.bg_color.downState) + "]");
+        });
 
         var palette :Palette = new Palette(this, 0xFF0000);
         palette.x = 445;

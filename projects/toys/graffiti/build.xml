@@ -6,9 +6,15 @@
   <property name="app.type" value="toy"/>
   <property name="app.source-dir" value="src"/>
   <property name="app.package-dir" value="com/threerings/graffiti"/>
+  <property name="app.source-extras" value="../../../libraries/whirled/contrib/src/as/"/>
   <property name="app.lib-extras" value="../../../lib/fl-components.swc"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
+
+  <target name="dist" depends="compile">
+    <copy file="Graffiti.swf" 
+        tofile="/export/msoy/pages/media/5ec191be625800623b2496a859e0892c25bd6c19.swf"/>
+  </target>
 
 </project>
