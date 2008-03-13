@@ -9,7 +9,6 @@ import fl.events.SliderEvent;
 
 import fl.data.DataProvider;
 
-import flash.display.Loader;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.SimpleButton;
@@ -40,7 +39,7 @@ public class ToolBox extends Sprite
     public function ToolBox (canvas :Canvas) 
     {
         addChild(_canvas = canvas);
-        MultiLoader.getLoaders(TOOLBOX_UI, handleUILoaded, false, ApplicationDomain.currentDomain); 
+        MultiLoader.getContents(TOOLBOX_UI, handleUILoaded, false, ApplicationDomain.currentDomain); 
     }
 
     public function pickColor (color :uint) :void
@@ -75,9 +74,8 @@ public class ToolBox extends Sprite
     {
     }
     
-    protected function handleUILoaded (loader :Loader) :void
+    protected function handleUILoaded (ui :MovieClip) :void
     {
-        var ui :MovieClip = loader.content as MovieClip;
         addChild(ui);
         
         // initialize the swatches
