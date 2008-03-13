@@ -10,8 +10,8 @@ import fl.events.SliderEvent;
 import fl.data.DataProvider;
 
 import flash.display.Loader;
-import flash.display.DisplayObject;
 import flash.display.MovieClip;
+import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 
@@ -24,8 +24,6 @@ import com.threerings.flash.DisplayUtil;
 
 import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
-
-import com.whirled.contrib.DelayUtil;
 
 import com.threerings.graffiti.Canvas;
 
@@ -48,14 +46,13 @@ public class ToolBox extends Sprite
     public function pickColor (color :uint) :void
     {
         // TODO: pick color for currently selected color picker
-        // commented out to prevent NPE
-//        var w :int = _brushSwatch.width;
-//        var h :int = _brushSwatch.height;
-//        _brushSwatch.graphics.clear();
-//        _brushSwatch.graphics.beginFill(color);
-//        _brushSwatch.graphics.drawRect(0, 0, w, h);
-//        _brushSwatch.graphics.endFill();
-//        _brush.color = color;
+        var w :int = _brushSwatch.width;
+        var h :int = _brushSwatch.height;
+        _brushSwatch.graphics.clear();
+        _brushSwatch.graphics.beginFill(color);
+        _brushSwatch.graphics.drawRect(-w/2, -h/2, w, h);
+        _brushSwatch.graphics.endFill();
+        _brush.color = color;
         dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
     }
     
@@ -82,16 +79,9 @@ public class ToolBox extends Sprite
     {
         var ui :MovieClip = loader.content as MovieClip;
         addChild(ui);
-
-        DelayUtil.init(this);
-        DelayUtil.delay(DelayUtil.FRAMES, 10, function () :void {
-            _brushSwatch = 
-                DisplayUtil.findInHierarchy(ui.bg_color, "bfcolor_swatch", false, 5) as Sprite;
-            log.debug("find [" + _brushSwatch + "]");
-            log.debug("upState [" + DisplayUtil.dumpHierarchy(ui.bg_color.upState) + "]");
-            log.debug("overState [" + DisplayUtil.dumpHierarchy(ui.bg_color.overState) + "]");
-            log.debug("downState [" + DisplayUtil.dumpHierarchy(ui.bg_color.downState) + "]");
-        });
+        
+        // initialize the swatches
+        _brushSwatch = ui.brushcolor_swatch.getChildAt(0) as Shape;
 
         var palette :Palette = new Palette(this, 0xFF0000);
         palette.x = 445;
@@ -140,6 +130,6 @@ public class ToolBox extends Sprite
     protected var _canvas :Canvas;
     protected var _brush :Brush = new Brush();
 
-    protected var _brushSwatch :Sprite;
+    protected var _brushSwatch :Shape;
 }
 }
