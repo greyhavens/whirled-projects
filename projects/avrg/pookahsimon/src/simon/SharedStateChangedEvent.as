@@ -7,10 +7,14 @@ public class SharedStateChangedEvent extends Event
     public static const GAME_STATE_CHANGED :String = "gameState";
     public static const NEXT_PLAYER :String = "nextPlayer";
     public static const NEW_SCORES :String = "newScores";
+    public static const NEXT_RAINBOW_SELECTION :String = "nextRainbowSelection";
 
-    public function SharedStateChangedEvent (type :String)
+    public var data :Object;
+
+    public function SharedStateChangedEvent (type :String, data :Object = null)
     {
         super(type, false, false);
+        this.data = data;
     }
 
 }

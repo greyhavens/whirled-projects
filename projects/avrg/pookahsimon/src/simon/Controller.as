@@ -105,9 +105,9 @@ public class Controller
 
     public function destroy () :void
     {
-        _model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
-        _model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleNextPlayer);
-        _model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
+        _model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
+        _model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleNextPlayer);
+        _model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
         _mainSprite.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
@@ -128,7 +128,6 @@ public class Controller
 
     protected function update () :void
     {
-
         switch (SimonMain.model.curState.gameState) {
         case SharedState.WAITING_FOR_GAME_START:
             if (this.canStartGame) {

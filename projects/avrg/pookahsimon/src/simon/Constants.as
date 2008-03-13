@@ -20,10 +20,11 @@ public class Constants
     public static const MIN_PLAYERS_TO_START :int = 1;
 
     // network bits
-    public static const PROP_STATE :String = "state";
-    public static const PROP_SCORES :String = "scores";
-    public static const MSG_SIMONSUCCEED :String = "s_succeed";
-    public static const MSG_SIMONFAIL :String = "s_fail";
+    public static const PROP_STATE :String = "p_state";
+    public static const PROP_SCORES :String = "p_scores";
+    public static const MSG_SIMONSUCCEED :String = "m_succeed";
+    public static const MSG_SIMONFAIL :String = "m_fail";
+    public static const MSG_NEXTNOTE :String = "m_nextNote";
 
 }
 

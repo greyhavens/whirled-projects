@@ -7,6 +7,7 @@ import flash.events.EventDispatcher;
 [Event(name="gameState", type="simon.SharedStateChangedEvent")]
 [Event(name="nextPlayer", type="bingo.SharedStateChangedEvent")]
 [Event(name="newScores", type="bingo.SharedStateChangedEvent")]
+[Event(name="nextRainbowSelection", type="bingo.SharedStateChangedEvent")]
 
 public class Model extends EventDispatcher
 {
@@ -44,6 +45,11 @@ public class Model extends EventDispatcher
     }
 
     /* shared state mutators (must be overridden) */
+    public function sendRainbowClickedMessage (clickedIndex :int) :void
+    {
+        throw new Error("subclasses must override sendRainbowClickedMessage()");
+    }
+
     public function trySetNewState (newState :SharedState) :void
     {
         throw new Error("subclasses must override trySetNewState()");
@@ -71,6 +77,11 @@ public class Model extends EventDispatcher
     {
         _curScores = newScores;
         this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_SCORES));
+    }
+
+    protected function rainbowClicked (clickedIndex :int) :void
+    {
+        this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, clickedIndex));
     }
 
     // shared state

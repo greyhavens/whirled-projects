@@ -7,6 +7,11 @@ public class OfflineModel extends Model
         return [ SimonMain.localPlayerId ];
     }
 
+    override public function sendRainbowClickedMessage (clickedIndex :int) :void
+    {
+        this.rainbowClicked(clickedIndex);
+    }
+
     override public function trySetNewState (newState :SharedState) :void
     {
         // in offline mode, we can convert state change requests

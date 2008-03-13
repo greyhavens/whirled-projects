@@ -42,6 +42,13 @@ public class OnlineModel extends Model
         return SimonMain.control.getPlayerIds();
     }
 
+    override public function sendRainbowClickedMessage (clickedIndex :int) :void
+    {
+        // TODO - should there be more data sent with this message, so that it can be validated better?
+        // (playerId, round number, etc)?
+        _stateControl.sendMessage(Constants.MSG_NEXTNOTE, clickedIndex);
+    }
+
     override public function trySetNewState (newState :SharedState) :void
     {
         // ignore state changes from non-authoritative clients
@@ -102,15 +109,22 @@ public class OnlineModel extends Model
 
     protected function messageReceived (e :AVRGameControlEvent) :void
     {
-        // messages are really "requests for state changes"
+        switch (e.name) {
+        case Constants.MSG_NEXTNOTE:
+            this.rainbowClicked(e.value as int);
+            break;
+
+
+        // certain messages are "requests for state changes"
         // - any client can make a request
         // - only the client in control can turn requests into actual state changes
         // - all clients need to store all requests, because at any point, they could
         //   become the client in control, at which point they must process
         //   requests that have not yet been confirmed
+        }
 
-        _messageQueue.push(e);
-        this.processMessageQueue();
+        //_messageQueue.push(e);
+        //this.processMessageQueue();
     }
 
     protected function processMessageQueue () :void
