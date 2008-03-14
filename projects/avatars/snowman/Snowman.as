@@ -53,7 +53,7 @@ public class Snowman extends Sprite
         var ba :ByteArray = _control.getDefaultDataPack();
         if (ba != null) {
             _pack = new DataPack(ba);
-            _pack.getDisplayObjects([ "texture" ], gotPackObjects);
+            _pack.getDisplayObjects({ texture: "texture" }, gotPackObjects);
 
         } else {
             createScene();
@@ -62,7 +62,7 @@ public class Snowman extends Sprite
 
     protected function gotPackObjects (results :Object) :void
     {
-        createScene(results["texture"], _pack.getData("eyeColor"),
+        createScene(results["texture"] as DisplayObject, _pack.getData("eyeColor"),
             _pack.getData("noseColor"), _pack.getData("noseLength"), _pack.getData("hatColor"));
         _pack = null; // no longer needed
     }
