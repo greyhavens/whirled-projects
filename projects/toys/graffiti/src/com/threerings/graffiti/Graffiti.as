@@ -21,7 +21,7 @@ import com.threerings.graffiti.throttle.Throttle;
 import com.threerings.graffiti.tools.ToolBox;
 import com.threerings.graffiti.tools.ToolEvent;
 
-[SWF(width="405", height="486")]
+[SWF(width="600", height="486")]
 public class Graffiti extends Sprite
 {
     public function Graffiti () 

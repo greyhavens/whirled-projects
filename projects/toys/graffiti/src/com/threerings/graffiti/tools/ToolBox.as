@@ -33,13 +33,13 @@ import com.threerings.graffiti.Canvas;
 
 public class ToolBox extends Sprite 
 {
-    public static const POPUP_WIDTH :int = 485;
+    public static const POPUP_WIDTH :int = Canvas.CANVAS_WIDTH + TOOLBAR_WIDTH;
     public static const POPUP_HEIGHT :int = 465;
 
     public function ToolBox (canvas :Canvas) 
     {
         addChild(_canvas = canvas);
-        MultiLoader.getContents(TOOLBOX_UI, handleUILoaded, false, ApplicationDomain.currentDomain); 
+        MultiLoader.getContents(TOOLBOX_UI, handleUILoaded, false, ApplicationDomain.currentDomain);
     }
 
     public function pickColor (color :uint) :void
@@ -76,14 +76,16 @@ public class ToolBox extends Sprite
     
     protected function handleUILoaded (ui :MovieClip) :void
     {
+        ui.x = POPUP_WIDTH - FLA_WIDTH;
         addChild(ui);
         
         // initialize the swatches
+        ui.brushcolor_swatch.mouseEnabled = false;
         _brushSwatch = ui.brushcolor_swatch.getChildAt(0) as Shape;
 
         var palette :Palette = new Palette(this, 0xFF0000);
-        palette.x = 445;
-        palette.y = 65;
+        palette.x = ui.x + PALETTE_X_OFFSET;
+        palette.y = ui.y + PALETTE_Y_OFFSET;
         addChild(palette);
 
         var thicknessSlider :Slider = ui.size_slider;
@@ -119,6 +121,11 @@ public class ToolBox extends Sprite
 
     [Embed(source="../../../../../rsrc/graffiti_UI.swf", mimeType="application/octet-stream")]
     protected static const TOOLBOX_UI :Class;
+
+    protected static const TOOLBAR_WIDTH :int = 80;
+    protected static const FLA_WIDTH :int = 485;
+    protected static const PALETTE_X_OFFSET :int = 445;
+    protected static const PALETTE_Y_OFFSET :int = 65;
 
     protected var MIN_BRUSH_SIZE :int = 2;
     protected var MAX_BRUSH_SIZE :int = 60;

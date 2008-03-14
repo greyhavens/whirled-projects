@@ -27,7 +27,7 @@ import com.threerings.graffiti.model.Stroke;
 
 public class Canvas extends Sprite
 {
-    public static const CANVAS_WIDTH :int = 405;
+    public static const CANVAS_WIDTH :int = 600;
     public static const CANVAS_HEIGHT :int = 436;
 
     public function Canvas (model :Model)
