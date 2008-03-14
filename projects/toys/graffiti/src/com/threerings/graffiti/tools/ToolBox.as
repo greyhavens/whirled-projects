@@ -9,6 +9,7 @@ import fl.events.SliderEvent;
 
 import fl.data.DataProvider;
 
+import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.SimpleButton;
@@ -44,15 +45,22 @@ public class ToolBox extends Sprite
 
     public function pickColor (color :uint) :void
     {
-        // TODO: pick color for currently selected color picker
-        var w :int = _brushSwatch.width;
-        var h :int = _brushSwatch.height;
-        _brushSwatch.graphics.clear();
-        _brushSwatch.graphics.beginFill(color);
-        _brushSwatch.graphics.drawRect(-w/2, -h/2, w, h);
-        _brushSwatch.graphics.endFill();
-        _brush.color = color;
-        dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
+        var w :int = _currentSwatch.swatchShape.width;
+        var h :int = _currentSwatch.swatchShape.height;
+        var g :Graphics = _currentSwatch.swatchShape.graphics;
+        g.clear();
+        g.beginFill(color);
+        g.drawRect(-w/2, -h/2, w, h);
+        g.endFill();
+
+        if (_currentSwatch.type == Swatch.BRUSH) {
+            _brush.color = color;
+            dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
+        } else if (_currentSwatch.type == Swatch.BACKGROUND) {
+            dispatchEvent(new ToolEvent(ToolEvent.BACKGROUND_COLOR, color));
+        } else {
+            log.debug("Unknown swatch type [" + _currentSwatch.type + "]");
+        }
     }
     
     public function hoverColor (color :uint) :void
@@ -73,6 +81,11 @@ public class ToolBox extends Sprite
     public function displayFillPercent (percent :Number) :void
     {
     }
+
+    protected function swatchSelected (event :RadioEvent) :void
+    {
+        _currentSwatch = event.value as Swatch;
+    }
     
     protected function handleUILoaded (ui :MovieClip) :void
     {
@@ -80,8 +93,21 @@ public class ToolBox extends Sprite
         addChild(ui);
         
         // initialize the swatches
+        var buttonSet :RadioButtonSet = new RadioButtonSet();
+        buttonSet.addEventListener(RadioEvent.BUTTON_SELECTED, swatchSelected);
         ui.brushcolor_swatch.mouseEnabled = false;
-        _brushSwatch = ui.brushcolor_swatch.getChildAt(0) as Shape;
+        var swatch :Swatch = 
+            new Swatch(ui.brushcolor_swatch.getChildAt(0) as Shape, Swatch.BRUSH);
+        buttonSet.addButton(new RadioButton(ui.brush_color as SimpleButton, swatch), true);
+        ui.bgcolor_swatch.mouseEnabled = false;
+        swatch = new Swatch(ui.bgcolor_swatch.getChildAt(0) as Shape, Swatch.BACKGROUND);
+        buttonSet.addButton(new RadioButton(ui.bg_color as SimpleButton, swatch));
+        ui.fillcolor_swatch.mouseEnabled = false;
+        swatch = new Swatch(ui.fillcolor_swatch.getChildAt(0) as Shape, Swatch.FILL);
+        buttonSet.addButton(new RadioButton(ui.fill_color as SimpleButton, swatch));
+        ui.linecolor_swatch.mouseEnabled = false;
+        swatch = new Swatch(ui.linecolor_swatch.getChildAt(0) as Shape, Swatch.LINE);
+        buttonSet.addButton(new RadioButton(ui.line_color as SimpleButton, swatch));
 
         var palette :Palette = new Palette(this, 0xFF0000);
         palette.x = ui.x + PALETTE_X_OFFSET;
@@ -134,7 +160,25 @@ public class ToolBox extends Sprite
 
     protected var _canvas :Canvas;
     protected var _brush :Brush = new Brush();
-
-    protected var _brushSwatch :Shape;
+    protected var _currentSwatch :Swatch;
 }
+}
+
+import flash.display.Shape;
+
+class Swatch 
+{
+    public static const BRUSH :int = 1;
+    public static const BACKGROUND :int = 2;
+    public static const LINE :int = 3;
+    public static const FILL :int = 4;
+
+    public var swatchShape :Shape;
+    public var type :int;
+
+    public function Swatch (swatchShape :Shape, type :int) 
+    {
+        this.swatchShape = swatchShape;
+        this.type = type;
+    }
 }
