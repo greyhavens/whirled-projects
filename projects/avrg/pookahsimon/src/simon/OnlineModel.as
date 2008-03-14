@@ -1,5 +1,6 @@
 package simon {
 
+import com.threerings.util.Log;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.StateControl;
 
@@ -21,6 +22,7 @@ public class OnlineModel extends Model
         // read the current state
         var stateBytes :ByteArray = (_stateControl.getProperty(Constants.PROP_STATE) as ByteArray);
         if (null != stateBytes) {
+            log.info("OnlineModel.setup() - reading PROP_STATE from bytes");
             _curState = SharedState.fromBytes(stateBytes);
         }
 
@@ -173,6 +175,8 @@ public class OnlineModel extends Model
     protected var _lastScoresRequest :Scoreboard;
 
     protected var _messageQueue :Array = [];
+
+    protected static var log :Log = Log.getLog(OnlineModel);
 
 }
 

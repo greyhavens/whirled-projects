@@ -25,8 +25,8 @@ public class Controller
     public function setup () :void
     {
         // timers
-        //_newRoundTimer = new Timer(Constants.NEW_ROUND_DELAY_S * 1000, 1);
-        //_newRoundTimer.addEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
+        _newRoundTimer = new Timer(Constants.NEW_ROUND_DELAY_S * 1000, 1);
+        _newRoundTimer.addEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
 
         // state change events
         _model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
@@ -55,6 +55,11 @@ public class Controller
         _scoreboardView.x = Constants.SCOREBOARD_LOC.x;
         _scoreboardView.y = Constants.SCOREBOARD_LOC.y;
         _mainSprite.addChild(_scoreboardView);
+
+        _playerListView = new PlayerListViewController();
+        _playerListView.x = Constants.PLAYER_LIST_LOC.x;
+        _playerListView.y = Constants.PLAYER_LIST_LOC.y;
+        _mainSprite.addChild(_playerListView);
 
         // each client maintains the concept of an expected state,
         // so that it is prepared to take over as the
@@ -189,7 +194,7 @@ public class Controller
             break;
 
         case SharedState.SHOWING_WINNER_ANIMATION:
-            // show the winner animation, then start a new game
+            this.showWinnerAnimation();
             break;
 
         default:
@@ -198,6 +203,12 @@ public class Controller
         }
 
         this.updateStatusText();
+    }
+
+    protected function showWinnerAnimation () :void
+    {
+        // @TODO - show the winner animation, then start a new game
+        this.startNewRoundTimer();
     }
 
     protected function updateStatusText () :void
@@ -217,7 +228,7 @@ public class Controller
             break;
 
         case SharedState.SHOWING_WINNER_ANIMATION:
-            _statusText.text = "Showing winner animation";
+            _statusText.text = SimonMain.getPlayerName(_model.curState.roundWinnerId) + " is the winner!";
             break;
 
         default:
@@ -291,6 +302,9 @@ public class Controller
         var nextSharedState :SharedState = this.createNextSharedState();
 
         // push a new round update out
+        nextSharedState.gameState = SharedState.WAITING_FOR_GAME_START;
+        nextSharedState.players = [];
+        nextSharedState.pattern = [];
         nextSharedState.roundId += 1;
         nextSharedState.roundWinnerId = 0;
 
@@ -328,8 +342,9 @@ public class Controller
         nextSharedState.players.splice(nextSharedState.curPlayerIdx, 1);
 
         // if there are two players left, the last man standing is the winner
-        if (nextSharedState.players.length == 1) {
+        if (nextSharedState.players.length <= 1) {
             nextSharedState.gameState = SharedState.SHOWING_WINNER_ANIMATION;
+            nextSharedState.roundWinnerId = (nextSharedState.players.length > 0 ? nextSharedState.players[0] : 0);
         } else {
             // just move to the next player
             if (nextSharedState.curPlayerIdx >= nextSharedState.players.length - 1) {
@@ -347,6 +362,7 @@ public class Controller
     protected var _mainSprite :Sprite;
     protected var _scoreboardView :ScoreboardView;
     protected var _statusText :TextField;
+    protected var _playerListView :PlayerListViewController;
 
     protected var _newRoundTimer :Timer;
 

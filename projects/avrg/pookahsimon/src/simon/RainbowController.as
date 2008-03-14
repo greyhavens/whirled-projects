@@ -34,7 +34,7 @@ public class RainbowController
         var animClass :Class = SimonMain.resourcesDomain.getDefinition(animName) as Class;
         _curAnim = new animClass();
 
-        var loc :Point = this.getLoc();
+        var loc :Point = this.getScreenLoc();
         _curAnim.x = loc.x;
         _curAnim.y = loc.y;
 
@@ -43,6 +43,8 @@ public class RainbowController
         if (null != completionCallback) {
             _animHandler = new AnimationHandler(_curAnim, "end", completionCallback);
         }
+
+        //log.info("Playing animation " + animName + " at " + loc);
     }
 
     protected function stopAnimation () :void
@@ -147,11 +149,16 @@ public class RainbowController
 
     }
 
-    protected function getLoc () :Point
+    protected function getScreenLoc () :Point
     {
-        var avatarInfo :AVRGameAvatar = (SimonMain.control.isConnected() ? SimonMain.control.getAvatarInfo(_playerId) : null);
+        var p :Point;
 
-        return (null != avatarInfo ? new Point(avatarInfo.x, avatarInfo.y) : new Point(150, 500));
+        var avatarInfo :AVRGameAvatar = (SimonMain.control.isConnected() ? SimonMain.control.getAvatarInfo(_playerId) : null);
+        if (null != avatarInfo) {
+            p = SimonMain.control.locationToStage(avatarInfo.x, avatarInfo.y, avatarInfo.z - 0.1);
+        }
+
+        return (null != p ? p : new Point(150, 500));
     }
 
     public function get isControlledLocally () :Boolean
