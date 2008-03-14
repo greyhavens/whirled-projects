@@ -2,6 +2,7 @@ package simon {
 
 import com.threerings.util.Log;
 
+import flash.errors.EOFError;
 import flash.utils.ByteArray;
 
 /**
@@ -98,29 +99,41 @@ public class SharedState
     {
         log.info("SharedState fromBytes: " + ba);
 
-        ba.position = 0;
-
-        state.gameState = ba.readByte();
-
-        state.roundId = ba.readInt();
-
-        state.curPlayerIdx = ba.readByte();
-
-        state.roundWinnerId = ba.readInt();
-
-        var state :SharedState = new SharedState();
-
-        var playersLen :int = ba.readByte();
-        for (var i :int = 0; i < playersLen; ++i) {
-            state.players.push(ba.readInt());
+        if (null == ba) {
+            return null;
         }
 
-        var patternLen :int = ba.readByte();
-        for (i = 0; i < patternLen; ++i) {
-            state.pattern.push(ba.readByte());
+        try {
+            ba.position = 0;
+
+            var state :SharedState = new SharedState();
+
+            state.gameState = ba.readByte();
+
+            state.roundId = ba.readInt();
+
+            state.curPlayerIdx = ba.readByte();
+
+            state.roundWinnerId = ba.readInt();
+
+            var playersLen :int = ba.readByte();
+            for (var i :int = 0; i < playersLen; ++i) {
+                state.players.push(ba.readInt());
+            }
+
+            var patternLen :int = ba.readByte();
+            for (i = 0; i < patternLen; ++i) {
+                state.pattern.push(ba.readByte());
+            }
+
+            return state;
+
+        } catch (err :EOFError) {
+            log.warning("error deserializing SharedState: " + err);
+            return null;
         }
 
-        return state;
+        return null;
     }
 
     protected static var log :Log = Log.getLog(SharedState);
