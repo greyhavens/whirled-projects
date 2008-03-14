@@ -59,7 +59,7 @@ public class Canvas extends Sprite
             // defer adding the mouse listeners as well - we don't need them on a view-only canvas.
             addMouseListeners();
 
-            _toolBox = new ToolBox(this);
+            _toolBox = new ToolBox(this, _model.getBackgroundColor());
             _toolBox.addEventListener(ToolEvent.BRUSH_PICKED, function (event :ToolEvent) :void {
                 _brush = event.value as Brush;
             });
