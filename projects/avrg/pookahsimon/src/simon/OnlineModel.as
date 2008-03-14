@@ -71,7 +71,7 @@ public class OnlineModel extends Model
             return;
         }
 
-        //SimonMain.log.info("accepting state change request: " + newState);
+        SimonMain.log.info("accepting state change request: " + newState);
 
         _stateControl.setProperty(Constants.PROP_STATE, newState.toBytes(), false);
 
@@ -151,8 +151,10 @@ public class OnlineModel extends Model
     {
         switch (e.name) {
         case Constants.PROP_STATE:
-            var newState :SharedState = SharedState.fromBytes(e.value as ByteArray);
-            this.setState(newState);
+            if (e.value is ByteArray) {
+                var newState :SharedState = SharedState.fromBytes(e.value as ByteArray);
+                this.setState(newState);
+            }
             break;
 
         case Constants.PROP_SCORES:

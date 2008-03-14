@@ -25,8 +25,8 @@ public class Controller
     public function setup () :void
     {
         // timers
-        _newRoundTimer = new Timer(Constants.NEW_ROUND_DELAY_S * 1000, 1);
-        _newRoundTimer.addEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
+        //_newRoundTimer = new Timer(Constants.NEW_ROUND_DELAY_S * 1000, 1);
+        //_newRoundTimer.addEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
 
         // state change events
         _model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
@@ -42,14 +42,14 @@ public class Controller
         quitButton.addEventListener(MouseEvent.CLICK, handleQuitButtonClick);
         _mainSprite.addChild(quitButton);
 
-        _winnerText = new TextField();
-        _winnerText.autoSize = TextFieldAutoSize.LEFT;
-        _winnerText.textColor = 0x0000FF;
-        _winnerText.scaleX = 3;
-        _winnerText.scaleY = 3;
-        _winnerText.x = Constants.WINNER_TEXT_LOC.x;
-        _winnerText.y = Constants.WINNER_TEXT_LOC.y;
-        _mainSprite.addChild(_winnerText);
+        _statusText = new TextField();
+        _statusText.autoSize = TextFieldAutoSize.LEFT;
+        _statusText.textColor = 0x0000FF;
+        _statusText.scaleX = 3;
+        _statusText.scaleY = 3;
+        _statusText.x = Constants.STATUS_TEXT_LOC.x;
+        _statusText.y = Constants.STATUS_TEXT_LOC.y;
+        _mainSprite.addChild(_statusText);
 
         _scoreboardView = new ScoreboardView(_model.curScores);
         _scoreboardView.x = Constants.SCOREBOARD_LOC.x;
@@ -111,7 +111,7 @@ public class Controller
 
         _mainSprite.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
-        _newRoundTimer.removeEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
+        //_newRoundTimer.removeEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
     }
 
     protected function handleEnterFrame (e :Event) :void
@@ -141,6 +141,8 @@ public class Controller
         }
 
         this.applyStateChanges();
+
+        this.updateStatusText();
     }
 
     protected function applyStateChanges () :void
@@ -194,12 +196,42 @@ public class Controller
             log.info("unrecognized gameState: " + _model.curState.gameState);
             break;
         }
+
+        this.updateStatusText();
+    }
+
+    protected function updateStatusText () :void
+    {
+        switch (_model.curState.gameState) {
+        case SharedState.INVALID_STATE:
+            _statusText.text = "INVALID_STATE";
+            break;
+
+        case SharedState.WAITING_FOR_GAME_START:
+            _statusText.text = "Waiting to start (players: " + SimonMain.model.getPlayerOids().length + "/" + Constants.MIN_PLAYERS_TO_START + ")";
+            break;
+
+        case SharedState.PLAYING_GAME:
+            var curPlayerName :String = SimonMain.getPlayerName(_model.curState.curPlayerOid);
+            _statusText.text = "Playing game. " + curPlayerName + "'s turn.";
+            break;
+
+        case SharedState.SHOWING_WINNER_ANIMATION:
+            _statusText.text = "Showing winner animation";
+            break;
+
+        default:
+            log.info("unrecognized gameState: " + _model.curState.gameState);
+            break;
+        }
     }
 
     protected function setupFirstGame () :void
     {
-        _expectedState = new SharedState();
-        _expectedState.gameState = SharedState.WAITING_FOR_GAME_START;
+        log.info("setupFirstGame()");
+
+        var nextSharedState :SharedState = this.createNextSharedState();
+        nextSharedState.gameState = SharedState.WAITING_FOR_GAME_START;
         this.applyStateChanges();
     }
 
@@ -210,6 +242,8 @@ public class Controller
 
     protected function startNextGame () :void
     {
+        log.info("startNextGame()");
+
         // set up for the next game state if we haven't already
         if (null == _expectedState || _expectedState.gameState != SharedState.PLAYING_GAME) {
             _expectedState = new SharedState();
@@ -269,13 +303,50 @@ public class Controller
         return _expectedState;
     }
 
+    public function currentPlayerTurnSuccess (newNote :int) :void
+    {
+        _currentRainbow.destroy();
+        _currentRainbow = null;
+
+        var nextSharedState :SharedState = this.createNextSharedState();
+        nextSharedState.pattern.push(newNote);
+
+        nextSharedState.curPlayerIdx =
+            (nextSharedState.curPlayerIdx < nextSharedState.players.length - 1 ? nextSharedState.curPlayerIdx + 1 : 0);
+
+        this.applyStateChanges();
+    }
+
+    public function currentPlayerTurnFailure () :void
+    {
+        _currentRainbow.destroy();
+        _currentRainbow = null;
+
+        var nextSharedState :SharedState = this.createNextSharedState();
+
+        // the current player is out of the round
+        nextSharedState.players.splice(nextSharedState.curPlayerIdx, 1);
+
+        // if there are two players left, the last man standing is the winner
+        if (nextSharedState.players.length == 1) {
+            nextSharedState.gameState = SharedState.SHOWING_WINNER_ANIMATION;
+        } else {
+            // just move to the next player
+            if (nextSharedState.curPlayerIdx >= nextSharedState.players.length - 1) {
+                nextSharedState.curPlayerIdx = 0;
+            }
+        }
+
+        this.applyStateChanges();
+    }
+
     protected var _model :Model;
     protected var _expectedState :SharedState;
     protected var _expectedScores :Scoreboard;
 
     protected var _mainSprite :Sprite;
     protected var _scoreboardView :ScoreboardView;
-    protected var _winnerText :TextField;
+    protected var _statusText :TextField;
 
     protected var _newRoundTimer :Timer;
 

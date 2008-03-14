@@ -1,5 +1,7 @@
 package simon {
 
+import com.threerings.util.Log;
+
 import flash.utils.ByteArray;
 
 /**
@@ -87,16 +89,16 @@ public class SharedState
             ba.writeByte(note);
         }
 
-        ba.compress();
+        log.info("SharedState toBytes: " + ba);
 
         return ba;
     }
 
     public static function fromBytes (ba :ByteArray) :SharedState
     {
-        ba.position = 0;
+        log.info("SharedState fromBytes: " + ba);
 
-        ba.uncompress();
+        ba.position = 0;
 
         state.gameState = ba.readByte();
 
@@ -120,6 +122,8 @@ public class SharedState
 
         return state;
     }
+
+    protected static var log :Log = Log.getLog(SharedState);
 }
 
 }

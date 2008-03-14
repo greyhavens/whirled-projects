@@ -21,17 +21,15 @@ public class RainbowController
         this.playAnimation("rainbow_in", playRainbowLoop);
     }
 
+    public function destroy () :void
+    {
+        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleNextSelectionEvent);
+        this.stopAnimation();
+    }
+
     protected function playAnimation (animName :String, completionCallback :Function) :void
     {
-        if (null != _curAnim) {
-            SimonMain.sprite.removeChild(_curAnim);
-            _curAnim = null;
-        }
-
-        if (null != _animHandler) {
-            _animHandler.destroy();
-            _animHandler = null;
-        }
+        this.stopAnimation();
 
         var animClass :Class = SimonMain.resourcesDomain.getDefinition(animName) as Class;
         _curAnim = new animClass();
@@ -44,6 +42,19 @@ public class RainbowController
 
         if (null != completionCallback) {
             _animHandler = new AnimationHandler(_curAnim, "end", completionCallback);
+        }
+    }
+
+    protected function stopAnimation () :void
+    {
+        if (null != _curAnim) {
+            SimonMain.sprite.removeChild(_curAnim);
+            _curAnim = null;
+        }
+
+        if (null != _animHandler) {
+            _animHandler.destroy();
+            _animHandler = null;
         }
     }
 
@@ -71,73 +82,69 @@ public class RainbowController
         // if this rainbow is controlled locally, ignore "next selection" events,
         // as the associated animation will have already been played
 
-        if (this.isControlledLocally)  {
-            return;
+        if (!this.isControlledLocally)  {
+            var noteIndex :int = e.data as int;
+            this.nextNoteSelected(noteIndex, false);
         }
-
-        var bandIndex :int = e.data as int;
-
-        var success :Boolean;
-
-        if (0 == _remainingPattern.length) {
-            // the player successfully completed the pattern, and has added
-            // a new note to the end
-            success = true;
-
-        } else if (bandIndex == _remainingPattern[0]) {
-            // the player clicked correctly
-            success = true;
-            _remainingPattern.shift();
-
-        } else {
-            // failure!
-            success = false;
-            log.info(bandIndex + " fail!");
-
-        }
-
-        this.playClickAnim(bandIndex, success);
     }
 
-    protected function createBandClickHandler (band :MovieClip, bandIndex :int) :void
+    protected function createBandClickHandler (band :MovieClip, noteIndex :int) :void
     {
         // this function is only called if the rainbow belongs to the local player
 
         band.addEventListener(MouseEvent.MOUSE_DOWN, clickHandler);
 
         var thisObject :RainbowController = this;
-
-        function clickHandler (e :MouseEvent) :void
-        {
-            var success :Boolean;
-
-            if (0 == _remainingPattern.length) {
-                // the player successfully completed the pattern, and has added
-                // a new note to the end
-                success = true;
-
-            } else if (bandIndex == _remainingPattern[0]) {
-                // the player clicked correctly
-                success = true;
-                _remainingPattern.shift();
-
-            } else {
-                // failure!
-                success = false;
-                log.info(bandIndex + " fail!");
-
-            }
-
-            thisObject.playClickAnim(bandIndex, success);
-
-            // send a message to everyone else
-            SimonMain.model.sendRainbowClickedMessage(bandIndex);
+        function clickHandler (e :MouseEvent) :void {
+            thisObject.nextNoteSelected(noteIndex, true);
         }
     }
 
-    protected function playClickAnim (bandIndex :int, successful :Boolean) :void
+    protected function nextNoteSelected (noteIndex :int, sendNextNoteMessage :Boolean) :void
     {
-        log.info(bandIndex + (successful ? " success" : " fail"));
+        var success :Boolean;
+        var playerTurnOver :Boolean;
+
+        if (0 == _remainingPattern.length) {
+            // the player successfully completed the pattern, and has added
+            // a new note to the end
+            success = true;
+            playerTurnOver = true;
+
+        } else if (noteIndex == _remainingPattern[0]) {
+            // the player clicked correctly
+            success = true;
+            playerTurnOver = false;
+
+            _remainingPattern.shift();
+
+        } else {
+            // failure!
+            success = false;
+            playerTurnOver = true;
+
+        }
+
+        if (sendNextNoteMessage) {
+            // send a message to everyone else
+            SimonMain.model.sendRainbowClickedMessage(noteIndex);
+        }
+
+        if (playerTurnOver) {
+            // tell the controller we need a state change
+            if (success) {
+                SimonMain.controller.currentPlayerTurnSuccess(noteIndex);
+            } else {
+                SimonMain.controller.currentPlayerTurnFailure();
+            }
+        }
+
+        // @TODO - play some animation here
+        log.info("note " + noteIndex + " played. " + (success ? "success!" : "fail!"));
+        if (playerTurnOver) {
+            log.info("end of turn");
+        }
+
     }
 
     protected function getLoc () :Point

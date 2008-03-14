@@ -7,11 +7,11 @@ public class Constants
     public static const VERSION :Number = 0.002;
 
     public static const ALLOW_CHEATS :Boolean = true;
-    public static const FORCE_SINGLEPLAYER :Boolean = false;
+    public static const FORCE_SINGLEPLAYER :Boolean = true;
 
     // cosmetic bits
     public static const QUIT_BUTTON_LOC :Point = new Point(400, 360);
-    public static const WINNER_TEXT_LOC :Point = new Point(50, 400);
+    public static const STATUS_TEXT_LOC :Point = new Point(50, 400);
     public static const SCOREBOARD_LOC :Point = new Point(500, 10);
 
     // gameplay bits
@@ -22,8 +22,6 @@ public class Constants
     // network bits
     public static const PROP_STATE :String = "p_state";
     public static const PROP_SCORES :String = "p_scores";
-    public static const MSG_SIMONSUCCEED :String = "m_succeed";
-    public static const MSG_SIMONFAIL :String = "m_fail";
     public static const MSG_NEXTNOTE :String = "m_nextNote";
 
 }
