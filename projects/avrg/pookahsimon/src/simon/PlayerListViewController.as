@@ -65,7 +65,6 @@ public class PlayerListViewController extends Sprite
         _childSprite.addChild(title);
 
         // draw the scores
-        i = 0;
         for (i = 0; i < players.length; ++i) {
 
             var playerId :int = players[i];
@@ -82,8 +81,6 @@ public class PlayerListViewController extends Sprite
             nameText.y = rowY - (nameText.height * 0.5);
 
             _childSprite.addChild(nameText);
-
-            ++i;
         }
 
     }

@@ -68,9 +68,14 @@ public class Controller
         // so that it is prepared to take over as the
         // authoritative client at any time.
 
-        _expectedState = null;
-
-        this.handleGameStateChange(null);
+        if (SimonMain.model.curState.gameState != SharedState.INVALID_STATE) {
+            // try to reset the state when we first enter a game, in case
+            // there's a current game in progress that isn't controlled by anybody
+            _expectedState = new SharedState();
+        } else {
+            _expectedState = null;
+            this.handleGameStateChange(null);
+        }
     }
 
     public function destroy () :void
@@ -242,7 +247,7 @@ public class Controller
         var index :int = SimonMain.model.curState.players.indexOf(playerId);
         if (index >= 0) {
 
-            if (null != _expectedState) {
+            if (null == _expectedState) {
                 this.createNextSharedState();
             }
 
