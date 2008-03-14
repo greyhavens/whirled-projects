@@ -46,6 +46,8 @@ public class Controller
         _mainSprite.addChild(quitButton);
 
         _statusText = new TextField();
+        _statusText.selectable = false;
+        _statusText.mouseEnabled = false;
         _statusText.autoSize = TextFieldAutoSize.LEFT;
         _statusText.textColor = 0x0000FF;
         _statusText.scaleX = 3;
@@ -80,6 +82,11 @@ public class Controller
 
     public function destroy () :void
     {
+        if (null != _currentRainbow) {
+            _currentRainbow.destroy();
+            _currentRainbow = null;
+        }
+
         _model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
         _model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerIndexChanged);
         _model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
@@ -186,6 +193,11 @@ public class Controller
         // reset the expected state when the state changes
         _expectedState = null;
 
+        if (null != _currentRainbow) {
+            _currentRainbow.destroy();
+            _currentRainbow = null;
+        }
+
         switch (_model.curState.gameState) {
         case SharedState.INVALID_STATE:
             // no game in progress. kick a new one off.
@@ -227,10 +239,15 @@ public class Controller
         }
 
         // if there are two players left, the last man standing is the winner
-        if (SimonMain.model.curState.players.length <= 1) {
-            var nextSharedState :SharedState = this.createNextSharedState();
-            nextSharedState.gameState = SharedState.SHOWING_WINNER_ANIMATION;
-            nextSharedState.roundWinnerId = (nextSharedState.players.length > 0 ? nextSharedState.players[0] : 0);
+        if (SimonMain.model.curState.players.length == 0) {
+            _expectedState = SimonMain.model.curState.clone();
+            _expectedState.gameState = SharedState.WAITING_FOR_GAME_START;
+
+            this.applyStateChanges();
+        } else if (SimonMain.model.curState.players.length == 1 && Constants.MIN_PLAYERS_TO_START > 1) {
+            _expectedState = SimonMain.model.curState.clone();
+            _expectedState.gameState = SharedState.SHOWING_WINNER_ANIMATION;
+            _expectedState.roundWinnerId = (_expectedState.players.length > 0 ? _expectedState.players[0] : 0);
 
             this.applyStateChanges();
         } else {
@@ -248,7 +265,7 @@ public class Controller
         if (index >= 0) {
 
             if (null == _expectedState) {
-                this.createNextSharedState();
+                _expectedState = SimonMain.model.curState.clone();
             }
 
             _expectedState.players = SimonMain.model.curState.players.slice();
@@ -304,8 +321,9 @@ public class Controller
     {
         log.info("setupFirstGame()");
 
-        var nextSharedState :SharedState = this.createNextSharedState();
-        nextSharedState.gameState = SharedState.WAITING_FOR_GAME_START;
+        _expectedState = new SharedState();
+        _expectedState.gameState = SharedState.WAITING_FOR_GAME_START;
+
         this.applyStateChanges();
     }
 
@@ -347,22 +365,16 @@ public class Controller
 
     protected function handleNewRoundTimerExpired (e :TimerEvent) :void
     {
-        var nextSharedState :SharedState = this.createNextSharedState();
+        _expectedState = SimonMain.model.curState.clone();
 
         // push a new round update out
-        nextSharedState.gameState = SharedState.WAITING_FOR_GAME_START;
-        nextSharedState.players = [];
-        nextSharedState.pattern = [];
-        nextSharedState.roundId += 1;
-        nextSharedState.roundWinnerId = 0;
+        _expectedState.gameState = SharedState.WAITING_FOR_GAME_START;
+        _expectedState.players = [];
+        _expectedState.pattern = [];
+        _expectedState.roundId += 1;
+        _expectedState.roundWinnerId = 0;
 
         this.applyStateChanges();
-    }
-
-    public function createNextSharedState () :SharedState
-    {
-        _expectedState = SimonMain.model.curState.clone();
-        return _expectedState;
     }
 
     public function currentPlayerTurnSuccess (newNote :int) :void
@@ -370,11 +382,11 @@ public class Controller
         _currentRainbow.destroy();
         _currentRainbow = null;
 
-        var nextSharedState :SharedState = this.createNextSharedState();
-        nextSharedState.pattern.push(newNote);
+        _expectedState = SimonMain.model.curState.clone();
+        _expectedState.pattern.push(newNote);
 
-        nextSharedState.curPlayerIdx =
-            (nextSharedState.curPlayerIdx < nextSharedState.players.length - 1 ? nextSharedState.curPlayerIdx + 1 : 0);
+        _expectedState.curPlayerIdx =
+            (_expectedState.curPlayerIdx < _expectedState.players.length - 1 ? _expectedState.curPlayerIdx + 1 : 0);
 
         this.applyStateChanges();
     }
@@ -384,14 +396,14 @@ public class Controller
         _currentRainbow.destroy();
         _currentRainbow = null;
 
-        var nextSharedState :SharedState = this.createNextSharedState();
+        _expectedState = SimonMain.model.curState.clone();
 
         // the current player is out of the round
-        nextSharedState.players.splice(nextSharedState.curPlayerIdx, 1);
+        _expectedState.players.splice(_expectedState.curPlayerIdx, 1);
 
         // move to the next player
-        if (nextSharedState.curPlayerIdx >= nextSharedState.players.length - 1) {
-            nextSharedState.curPlayerIdx = 0;
+        if (_expectedState.curPlayerIdx >= _expectedState.players.length - 1) {
+            _expectedState.curPlayerIdx = 0;
         }
 
         this.applyStateChanges();

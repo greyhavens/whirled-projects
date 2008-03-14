@@ -90,15 +90,11 @@ public class SharedState
             ba.writeByte(note);
         }
 
-        log.info("SharedState toBytes: " + ba);
-
         return ba;
     }
 
     public static function fromBytes (ba :ByteArray) :SharedState
     {
-        log.info("SharedState fromBytes: " + ba);
-
         if (null == ba) {
             return null;
         }

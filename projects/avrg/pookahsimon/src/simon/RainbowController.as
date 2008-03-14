@@ -13,6 +13,8 @@ public class RainbowController
 {
     public function RainbowController (playerId :int)
     {
+        log.info("Creating RainbowController for player " + playerId + " (on client " + SimonMain.localPlayerId + ")");
+
         _playerId = playerId;
         _remainingPattern = SimonMain.model.curState.pattern.slice();
 
