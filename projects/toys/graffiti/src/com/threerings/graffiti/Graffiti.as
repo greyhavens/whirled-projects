@@ -2,6 +2,7 @@
 
 package com.threerings.graffiti {
 
+import flash.display.DisplayObject;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 
@@ -39,9 +40,13 @@ public class Graffiti extends Sprite
         addChild(canvas);
 
         _editBtn = new EDIT_BUTTON() as SimpleButton;
-        _editBtn.x = Canvas.CANVAS_WIDTH - _editBtn.width / 2;
-        _editBtn.y = Canvas.CANVAS_HEIGHT + _editBtn.height / 2 - 1;
+        _editBtn.x = Canvas.CANVAS_WIDTH - _editBtn.width / 2 - 1;
         _editBtn.addEventListener(MouseEvent.CLICK, displayEditPopup);
+
+        _managerBtn = new MANAGER_BUTTON() as Sprite;
+        _managerBtn.x = _managerBtn.width / 2 + 5;
+        (_managerBtn as Object).reset_button.addEventListener(MouseEvent.CLICK, resetCanvas);
+        (_managerBtn as Object).lockbutton.addEventListener(MouseEvent.CLICK, toggleLock);
 
         addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
         addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
@@ -59,21 +64,46 @@ public class Graffiti extends Sprite
             "Editing Graffiti", canvas.toolbox, ToolBox.POPUP_WIDTH, ToolBox.POPUP_HEIGHT, 0, 0);
     }
 
+    protected function resetCanvas (event :MouseEvent) :void
+    {
+        // TODO
+        log.debug("reset canvas");
+    }
+
+    protected function toggleLock (event :MouseEvent) :void
+    {
+        // TODO
+        log.debug("lock toggled");
+    }
+
     protected function enterFrame (event :Event) :void
     {
         if (_mouseOver) {
-            if (_editBtn.parent != this) {
-                addChildAt(_editBtn, 0);
-                _editBtn.x = Canvas.CANVAS_WIDTH - _editBtn.width / 2 - 3;
-                _editBtn.y = Canvas.CANVAS_HEIGHT - _editBtn.height / 2;
+            animateDown(_editBtn);
+            if (_control.canEditRoom()) {
+                animateDown(_managerBtn);
             }
+        } else {
+            animateUp(_editBtn);
+            animateUp(_managerBtn);
+        }
+    }
 
-            _editBtn.y = Math.min(_editBtn.y + 5, Canvas.CANVAS_HEIGHT + _editBtn.height / 2 - 2);
-        } else if (_editBtn.parent == this) {
-            _editBtn.y -= 5;
-            if (_editBtn.y < Canvas.CANVAS_HEIGHT - _editBtn.height / 2) {
-                removeChild(_editBtn);
-            }
+    protected function animateDown (button :DisplayObject) :void
+    {
+        if (button.parent != this) {
+            addChildAt(button, 0);
+            button.y = Canvas.CANVAS_HEIGHT - button.height / 2;
+        }
+
+        button.y = Math.min(_editBtn.y + 5, Canvas.CANVAS_HEIGHT + button.height / 2 - 2);
+    }
+
+    protected function animateUp (button :DisplayObject) :void
+    {
+        button.y -= 5;
+        if (button.y < Canvas.CANVAS_HEIGHT - button.height / 2 && button.parent == this) {
+            removeChild(button);
         }
     }
 
@@ -96,11 +126,14 @@ public class Graffiti extends Sprite
 
     [Embed(source="../../../../rsrc/edit_manager_buttons.swf#editbutton")]
     protected static const EDIT_BUTTON :Class;
+    [Embed(source="../../../../rsrc/edit_manager_buttons.swf#manager")]
+    protected static const MANAGER_BUTTON :Class;
 
     protected var _control :FurniControl;
     protected var _manager :Manager;
     protected var _model :Model;
     protected var _editBtn :SimpleButton;
+    protected var _managerBtn :Sprite;
     protected var _mouseOver :Boolean; 
 }
 }
