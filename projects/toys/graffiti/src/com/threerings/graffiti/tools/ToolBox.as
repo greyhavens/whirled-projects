@@ -53,12 +53,17 @@ public class ToolBox extends Sprite
         g.drawRect(-w/2, -h/2, w, h);
         g.endFill();
 
-        if (_currentSwatch.type == Swatch.BRUSH) {
+        switch (_currentSwatch.type) {
+        case Swatch.BRUSH:
             _brush.color = color;
             dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
-        } else if (_currentSwatch.type == Swatch.BACKGROUND) {
+            break;
+
+        case Swatch.BACKGROUND:
             dispatchEvent(new ToolEvent(ToolEvent.BACKGROUND_COLOR, color));
-        } else {
+            break;
+
+        default:
             log.debug("Unknown swatch type [" + _currentSwatch.type + "]");
         }
     }
