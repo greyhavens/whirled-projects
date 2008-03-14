@@ -3,6 +3,7 @@ package simon {
 import com.threerings.flash.DisablingButton;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
+import com.whirled.AVRGameControlEvent;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -30,8 +31,10 @@ public class Controller
 
         // state change events
         _model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
-        _model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleNextPlayer);
+        _model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerIndexChanged);
         _model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
+
+        SimonMain.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, handlePlayerLeft);
 
         _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
@@ -64,9 +67,23 @@ public class Controller
         // each client maintains the concept of an expected state,
         // so that it is prepared to take over as the
         // authoritative client at any time.
+
         _expectedState = null;
 
         this.handleGameStateChange(null);
+    }
+
+    public function destroy () :void
+    {
+        _model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
+        _model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerIndexChanged);
+        _model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
+
+        SimonMain.control.removeEventListener(AVRGameControlEvent.PLAYER_LEFT, handlePlayerLeft);
+
+        _mainSprite.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
+
+        _newRoundTimer.removeEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
     }
 
     protected static function createButton (width :int, height :int, text :String) :DisablingButton
@@ -106,17 +123,6 @@ public class Controller
         sprite.addChild(textField);
 
         return sprite;
-    }
-
-    public function destroy () :void
-    {
-        _model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
-        _model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleNextPlayer);
-        _model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
-
-        _mainSprite.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
-
-        //_newRoundTimer.removeEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
     }
 
     protected function handleEnterFrame (e :Event) :void
@@ -190,7 +196,7 @@ public class Controller
 
         case SharedState.PLAYING_GAME:
             // the game has started -- it's the first player's turn
-            this.handleNextPlayer(null);
+            this.handleCurPlayerIndexChanged(null);
             break;
 
         case SharedState.SHOWING_WINNER_ANIMATION:
@@ -203,6 +209,58 @@ public class Controller
         }
 
         this.updateStatusText();
+    }
+
+    protected function handleCurPlayerIndexChanged (e :SharedStateChangedEvent) :void
+    {
+        // reset the expected state when the state changes
+        _expectedState = null;
+
+        if (null != _currentRainbow) {
+            _currentRainbow.destroy();
+            _currentRainbow = null;
+        }
+
+        // if there are two players left, the last man standing is the winner
+        if (SimonMain.model.curState.players.length <= 1) {
+            var nextSharedState :SharedState = this.createNextSharedState();
+            nextSharedState.gameState = SharedState.SHOWING_WINNER_ANIMATION;
+            nextSharedState.roundWinnerId = (nextSharedState.players.length > 0 ? nextSharedState.players[0] : 0);
+
+            this.applyStateChanges();
+        } else {
+            // show the rainbow on the correct player
+            _currentRainbow = new RainbowController(SimonMain.model.curState.curPlayerOid);
+        }
+    }
+
+    protected function handlePlayerLeft (e :AVRGameControlEvent) :void
+    {
+        // handle players who leave while playing the game
+
+        var playerId :int = e.value as int;
+        var index :int = SimonMain.model.curState.players.indexOf(playerId);
+        if (index >= 0) {
+
+            if (null != _expectedState) {
+                this.createNextSharedState();
+            }
+
+            _expectedState.players = SimonMain.model.curState.players.slice();
+            _expectedState.players.splice(index, 1);
+
+            // was it this player's turn?
+            if (index == _expectedState.curPlayerIdx) {
+                _expectedState.curPlayerIdx = (_expectedState.curPlayerIdx >= _expectedState.players.length - 1 ? _expectedState.curPlayerIdx + 1 : 0);
+            }
+
+        }
+    }
+
+    protected function handleNewScores (e :SharedStateChangedEvent) :void
+    {
+        _expectedScores = null;
+        _scoreboardView.scoreboard = _model.curScores;
     }
 
     protected function showWinnerAnimation () :void
@@ -271,21 +329,6 @@ public class Controller
         this.applyStateChanges();
     }
 
-    protected function handleNextPlayer (e :SharedStateChangedEvent) :void
-    {
-        // reset the expected state when the state changes
-        _expectedState = null;
-
-        // show the rainbow on the correct player
-        _currentRainbow = new RainbowController(SimonMain.model.curState.curPlayerOid);
-    }
-
-    protected function handleNewScores (e :SharedStateChangedEvent) :void
-    {
-        _expectedScores = null;
-        _scoreboardView.scoreboard = _model.curScores;
-    }
-
     protected function startNewRoundTimer () :void
     {
         _newRoundTimer.reset();
@@ -341,15 +384,9 @@ public class Controller
         // the current player is out of the round
         nextSharedState.players.splice(nextSharedState.curPlayerIdx, 1);
 
-        // if there are two players left, the last man standing is the winner
-        if (nextSharedState.players.length <= 1) {
-            nextSharedState.gameState = SharedState.SHOWING_WINNER_ANIMATION;
-            nextSharedState.roundWinnerId = (nextSharedState.players.length > 0 ? nextSharedState.players[0] : 0);
-        } else {
-            // just move to the next player
-            if (nextSharedState.curPlayerIdx >= nextSharedState.players.length - 1) {
-                nextSharedState.curPlayerIdx = 0;
-            }
+        // move to the next player
+        if (nextSharedState.curPlayerIdx >= nextSharedState.players.length - 1) {
+            nextSharedState.curPlayerIdx = 0;
         }
 
         this.applyStateChanges();

@@ -23,7 +23,10 @@ public class OnlineModel extends Model
         var stateBytes :ByteArray = (_stateControl.getProperty(Constants.PROP_STATE) as ByteArray);
         if (null != stateBytes) {
             log.info("OnlineModel.setup() - reading PROP_STATE from bytes");
-            _curState = SharedState.fromBytes(stateBytes);
+            var curState :SharedState = SharedState.fromBytes(stateBytes);
+            if (null != curState) {
+                _curState = curState;
+            }
         }
 
         // read current scores
