@@ -13,23 +13,13 @@ public class PlayerListViewController extends Sprite
         this.mouseEnabled = false;
         this.mouseChildren = false;
 
-        SimonMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
-        SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleNextPlayer);
+        //SimonMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
+        //SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleNextPlayer);
 
         this.updateView();
     }
 
-    protected function handleGameStateChange (e :Event) :void
-    {
-        this.updateView();
-    }
-
-    protected function handleNextPlayer (e :Event) :void
-    {
-        this.updateView();
-    }
-
-    protected function updateView () :void
+    public function updateView () :void
     {
         if (null != _childSprite) {
             this.removeChild(_childSprite);

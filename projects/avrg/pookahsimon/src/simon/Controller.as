@@ -70,10 +70,11 @@ public class Controller
         // so that it is prepared to take over as the
         // authoritative client at any time.
 
-        if (SimonMain.model.curState.gameState != SharedState.INVALID_STATE) {
+        if (SimonMain.control.isConnected() && SimonMain.control.hasControl()) {
             // try to reset the state when we first enter a game, in case
             // there's a current game in progress that isn't controlled by anybody
             _expectedState = new SharedState();
+            this.applyStateChanges();
         } else {
             _expectedState = null;
             this.handleGameStateChange(null);
@@ -166,6 +167,8 @@ public class Controller
         this.applyStateChanges();
 
         this.updateStatusText();
+
+        _playerListView.updateView();
     }
 
     protected function applyStateChanges () :void
@@ -216,8 +219,8 @@ public class Controller
             this.handleCurPlayerIndexChanged(null);
             break;
 
-        case SharedState.SHOWING_WINNER_ANIMATION:
-            this.showWinnerAnimation();
+        case SharedState.WE_HAVE_A_WINNER:
+            this.handleGameOver();
             break;
 
         default:
@@ -246,7 +249,7 @@ public class Controller
             this.applyStateChanges();
         } else if (SimonMain.model.curState.players.length == 1 && Constants.MIN_PLAYERS_TO_START > 1) {
             _expectedState = SimonMain.model.curState.clone();
-            _expectedState.gameState = SharedState.SHOWING_WINNER_ANIMATION;
+            _expectedState.gameState = SharedState.WE_HAVE_A_WINNER;
             _expectedState.roundWinnerId = (_expectedState.players.length > 0 ? _expectedState.players[0] : 0);
 
             this.applyStateChanges();
@@ -272,8 +275,8 @@ public class Controller
             _expectedState.players.splice(index, 1);
 
             // was it this player's turn?
-            if (index == _expectedState.curPlayerIdx) {
-                _expectedState.curPlayerIdx = (_expectedState.curPlayerIdx >= _expectedState.players.length - 1 ? _expectedState.curPlayerIdx + 1 : 0);
+            if (_expectedState.curPlayerIdx >= _expectedState.players.length) {
+                _expectedState.curPlayerIdx = 0;
             }
 
         }
@@ -285,9 +288,18 @@ public class Controller
         _scoreboardView.scoreboard = _model.curScores;
     }
 
-    protected function showWinnerAnimation () :void
+    protected function handleGameOver () :void
     {
-        // @TODO - show the winner animation, then start a new game
+        // @TODO - show the winner animation
+
+        // update scores
+        if (_model.curState.roundWinnerId != 0) {
+            _expectedScores = _model.curScores.clone();
+            _expectedScores.incrementScore(SimonMain.getPlayerName(_model.curState.roundWinnerId));
+            this.applyStateChanges();
+        }
+
+        // start a new round soon
         this.startNewRoundTimer();
     }
 
@@ -307,7 +319,7 @@ public class Controller
             _statusText.text = "Playing game. " + curPlayerName + "'s turn.";
             break;
 
-        case SharedState.SHOWING_WINNER_ANIMATION:
+        case SharedState.WE_HAVE_A_WINNER:
             _statusText.text = SimonMain.getPlayerName(_model.curState.roundWinnerId) + " is the winner!";
             break;
 

@@ -13,7 +13,7 @@ public class SharedState
     public static const INVALID_STATE :int              = -1;
     public static const WAITING_FOR_GAME_START :int     = 0;
     public static const PLAYING_GAME :int               = 1;
-    public static const SHOWING_WINNER_ANIMATION :int   = 2;
+    public static const WE_HAVE_A_WINNER :int   = 2;
 
     public var gameState :int = INVALID_STATE;        // byte
 

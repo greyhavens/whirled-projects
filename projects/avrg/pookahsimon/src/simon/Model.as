@@ -68,7 +68,7 @@ public class Model extends EventDispatcher
 
         if (_curState.gameState != lastState.gameState) {
             this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.GAME_STATE_CHANGED));
-        } else if (_curState.curPlayerIdx != lastState.curPlayerIdx) {
+        } else if (_curState.curPlayerOid != lastState.curPlayerOid) {
             this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEXT_PLAYER));
         }
     }

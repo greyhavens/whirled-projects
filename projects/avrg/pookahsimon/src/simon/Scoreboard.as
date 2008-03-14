@@ -10,8 +10,12 @@ public class Scoreboard
     {
     }
 
-    public function addScore (name :String, score :int, date :Date) :void
+    public function addScore (name :String, score :int, date :Date = null) :void
     {
+        if (null == date) {
+            date = new Date();
+        }
+
         var scoreObj :Score = this.createOrGetScore(name);
         scoreObj.score = score;
         scoreObj.date = date;
@@ -20,8 +24,12 @@ public class Scoreboard
         _scores.sort(Score.compare);
     }
 
-    public function incrementScore (name :String, date :Date) :void
+    public function incrementScore (name :String, date :Date = null) :void
     {
+        if (null == date) {
+            date = new Date();
+        }
+
         var scoreObj :Score = this.createOrGetScore(name);
         scoreObj.score += 1;
         scoreObj.date = date;

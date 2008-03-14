@@ -26,8 +26,15 @@ public class SimonMain extends Sprite
 
     public static var localPlayerId :int;
 
+    public static function get localPlayerName () :String
+    {
+        return SimonMain.getPlayerName(localPlayerId);
+    }
+
     public function SimonMain ()
     {
+        log.info("Simon verson " + Constants.VERSION);
+
         sprite = this;
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
