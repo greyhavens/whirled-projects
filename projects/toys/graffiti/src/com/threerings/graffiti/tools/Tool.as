@@ -18,11 +18,6 @@ public class Tool
     public static const ELLIPSE :int = 3;
     public static const RECTANGLE :int = 4;
 
-    // properties common to all tools
-    public var thickness :int;
-    public var alpha :Number;
-    public var color :uint;
-
     public static function createToolFromBytes (bytes :ByteArray, colorLUT :Array = null) :Tool
     {
         var type :int = bytes.readInt();
@@ -43,9 +38,9 @@ public class Tool
 
     public function Tool (thickness :int, alpha :Number, color :uint)
     {
-        this.thickness = thickness;
-        this.alpha = alpha;
-        this.color = color;
+        _thickness = thickness;
+        _alpha = alpha;
+        _color = color;
     }
 
     public function mouseDown (graphics :Graphics, point :Point) :void
@@ -62,16 +57,16 @@ public class Tool
     {
         bytes.writeInt(typeForTool(this));
 
-        bytes.writeInt(thickness);
-        bytes.writeInt(Math.round(alpha * 100));
-        writeColor(color, bytes, colorLUT);
+        bytes.writeInt(_thickness);
+        bytes.writeInt(Math.round(_alpha * 100));
+        writeColor(_color, bytes, colorLUT);
     }
 
     protected function deserialize (bytes :ByteArray, colorLUT :Array) :void
     {
-        thickness = bytes.readInt();
-        alpha = bytes.readInt() / 100;
-        color = readColor(bytes, colorLUT);
+        _thickness = bytes.readInt();
+        _alpha = bytes.readInt() / 100;
+        _color = readColor(bytes, colorLUT);
     }
 
     protected function typeForTool (tool :Tool) :int
@@ -115,5 +110,10 @@ public class Tool
     }
 
     private static const log :Log = Log.getLog(Tool);
+
+    // properties common to all tools
+    protected var _thickness :int;
+    protected var _alpha :Number;
+    protected var _color :uint;
 }
 }

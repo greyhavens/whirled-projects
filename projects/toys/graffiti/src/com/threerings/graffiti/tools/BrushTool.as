@@ -15,11 +15,6 @@ public class BrushTool extends Tool
         super(thickness, alpha, color);
     }
 
-    public function toString () :String
-    {
-        return "BrushTool [thickness=" + thickness + ", alpha=" + alpha + ", color=" + color + "]";
-    }
-
     override public function mouseDown (graphics :Graphics, point :Point) :void
     {
         var ci :ContinuationInfo = getContinuationInfo(graphics);
@@ -34,7 +29,7 @@ public class BrushTool extends Tool
         ci.lastY = point.y;
 
         graphics.moveTo(point.x, point.y);
-        graphics.lineStyle(thickness, color, alpha);    
+        graphics.lineStyle(_thickness, _color, _alpha);    
     }
 
     override public function dragTo (graphics :Graphics, point :Point) :void

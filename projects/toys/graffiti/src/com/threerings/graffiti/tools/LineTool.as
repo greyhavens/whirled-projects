@@ -13,16 +13,6 @@ public class LineTool extends Tool
         super(thickness, alpha, color);
     }
 
-    public function clone () :LineTool
-    {
-        return new LineTool(thickness, alpha, color);
-    }
-
-    public function toString () :String
-    {
-        return "LineTool [thickness=" + thickness + ", alpha=" + alpha + ", color=" + color + "]";
-    }
-
     override public function mouseDown (graphics :Graphics, point :Point) :void
     {
         _startPoint = point;
@@ -31,7 +21,7 @@ public class LineTool extends Tool
     override public function dragTo (graphics :Graphics, point :Point) :void
     {
         graphics.clear();
-        graphics.lineStyle(thickness, color, alpha);
+        graphics.lineStyle(_thickness, _color, _alpha);
         graphics.moveTo(_startPoint.x, _startPoint.y);
         graphics.lineTo(point.x, point.y);
     }
