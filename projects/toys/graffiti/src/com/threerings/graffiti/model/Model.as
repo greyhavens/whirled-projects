@@ -65,7 +65,7 @@ public class Model
         _canvasStrokes = [];
         _tempStrokesMap.clear();
         _backgroundColor = 0xFFFFFF;
-        _canvases.redraw();
+        _canvases.clear();
     }
 
     public function getCanvasStrokes () :Array
@@ -267,13 +267,6 @@ class CanvasList
         }
     }
 
-    public function redrawTemp () :void
-    {
-        for each (var canvas :Canvas in _canvases) {
-            canvas.redrawTemp();
-        }
-    }
-
     public function reportFillPercent (percent :Number) :void
     {
         for each (var canvas :Canvas in _canvases) {
@@ -281,10 +274,10 @@ class CanvasList
         }
     }
 
-    public function redraw () :void
+    public function clear () :void
     {
         for each (var canvas :Canvas in _canvases) {
-            canvas.redraw();
+            canvas.clear();
         }
     }
 

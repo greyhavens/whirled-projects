@@ -36,8 +36,6 @@ public class Canvas extends Sprite
     public function Canvas (model :Model)
     {
         addChild(_background = new Sprite());
-        addChild(_canvas = new Sprite());
-        addChild(_tempSurface = new Sprite());
 
         var masker :Shape = new Shape();
         masker.graphics.beginFill(0);
@@ -52,7 +50,7 @@ public class Canvas extends Sprite
         addEventListener(Event.REMOVED_FROM_STAGE, function (event :Event) :void {
             _model.unregisterCanvas(thisCanvas);
         });
-        redraw();
+        paintBackground(_model.getBackgroundColor());
     }
 
     public function get toolbox () :ToolBox
@@ -110,11 +108,6 @@ public class Canvas extends Sprite
         g.endFill();
     }
 
-    /**
-     * Draw a segment of a stroke on the drawing surface.  If this is an extension of the stroke
-     * that was previously being drawn, then it will simply extend.  Otherwise, it will draw this
-     * segment as if it were an independent stroke.
-     */
     public function tempStroke (id :String, stroke :Stroke, startPoint :int = 0) :void
     {
         log.debug("temp stroke [" + this.name + ", " + id + ", " + stroke + ", " + startPoint + 
@@ -126,15 +119,16 @@ public class Canvas extends Sprite
             return;
         }
 
-        if (id != _lastId || startPoint != _lastEndPoint) {
-            stroke.tool.mouseDown(_tempSurface.graphics, start);
+        var strokeLayer :Shape = _layers.get(id);
+        if (strokeLayer == null) {
+            strokeLayer = new Shape();
+            _layers.put(id, strokeLayer);
+            addChild(strokeLayer);
+            stroke.tool.mouseDown(strokeLayer.graphics, start);
         }
 
-        _lastId = id;
-
         for (var ii :int = startPoint + 1; ii < stroke.getSize(); ii++) {
-            stroke.tool.dragTo(_tempSurface.graphics, stroke.getPoint(ii));
-            _lastEndPoint = ii;
+            stroke.tool.dragTo(strokeLayer.graphics, stroke.getPoint(ii));
         }
     }
 
@@ -145,16 +139,7 @@ public class Canvas extends Sprite
     {
         log.debug("canvas stroke [" + this.name + ", " + stroke + "]");
 
-        if (stroke.getSize() < 2) {
-            log.warning("Asked to draw stroke with less than two points [" + stroke + "]");
-            return;
-        }
-
-        stroke.tool.mouseDown(_canvas.graphics, stroke.getPoint(0));
-
-        for (var ii :int = 1; ii < stroke.getSize(); ii++) {
-            stroke.tool.dragTo(_canvas.graphics, stroke.getPoint(ii));
-        }
+        // TODO
     }
 
     public function reportFillPercent (percent :Number) :void
@@ -166,17 +151,14 @@ public class Canvas extends Sprite
 
     protected function addMouseListeners () :void
     {
-        var sprites :Array = [ _background, _canvas, _tempSurface ];
-        for each (var sprite :Sprite in sprites) {
-            sprite.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-            sprite.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-            sprite.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-        }
+        _background.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+        _background.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+        _background.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
     }
 
     protected function mouseDown (evt :MouseEvent) :void
     {
-        _lastStrokePoint = _canvas.globalToLocal(new Point(evt.stageX, evt.stageY));
+        _lastStrokePoint = _background.globalToLocal(new Point(evt.stageX, evt.stageY));
         _newStroke = true;
         _inputKey = _model.getKey();
         _timer = setInterval(tick, TICK_INTERVAL);
@@ -184,12 +166,12 @@ public class Canvas extends Sprite
 
     protected function tick () :void
     {
-        maybeAddStroke(new Point(_canvas.mouseX, _canvas.mouseY));
+        maybeAddStroke(new Point(_background.mouseX, _background.mouseY));
     }
 
     protected function mouseUp (evt :MouseEvent) :void
     {
-        endStroke(_canvas.globalToLocal(new Point(evt.stageX, evt.stageY)));
+        endStroke(_background.globalToLocal(new Point(evt.stageX, evt.stageY)));
     }
 
     protected function endStroke (localPoint :Point) :void 
@@ -204,7 +186,7 @@ public class Canvas extends Sprite
 
     protected function mouseOut (evt :MouseEvent) :void
     {
-        var canvasPoint :Point = _canvas.globalToLocal(new Point(evt.stageX, evt.stageY));
+        var canvasPoint :Point = _background.globalToLocal(new Point(evt.stageX, evt.stageY));
         var breakLine :Boolean = false;
         if (canvasPoint.x < 0) {
             breakLine = true;
@@ -261,26 +243,9 @@ public class Canvas extends Sprite
         _newStroke = false;
     }
 
-    public function redraw () :void
+    public function clear () :void
     {
-        paintBackground(_model.getBackgroundColor());
-
-        _canvas.graphics.clear();
-        var strokes :Array = _model.getCanvasStrokes();
-        for each (var stroke :Stroke in strokes) {
-            canvasStroke(stroke);
-        }
-
-        redrawTemp();
-    }
-
-    public function redrawTemp () :void
-    {
-        _tempSurface.graphics.clear();
-        var ids :Array = _model.getTempStrokeIds();
-        for each (var id :String in ids) {
-            tempStroke(id, _model.getTempStroke(id));
-        }
+        // TODO
     }
 
     private static const log :Log = Log.getLog(Canvas);
@@ -293,8 +258,6 @@ public class Canvas extends Sprite
     protected var _model :Model;
 
     protected var _background :Sprite;
-    protected var _canvas :Sprite;
-    protected var _tempSurface :Sprite;
     protected var _toolBox :ToolBox;
 
     // variables for user input
@@ -310,7 +273,6 @@ public class Canvas extends Sprite
     // variables for canvas output
     protected var _outputKey :String;
 
-    protected var _lastId :String;
-    protected var _lastEndPoint :int;
+    protected var _layers :HashMap = new HashMap();
 }
 }
