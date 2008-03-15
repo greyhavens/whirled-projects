@@ -6,9 +6,9 @@ import flash.display.Graphics;
 
 import flash.geom.Point;
 
-public class RectangleTool extends ShapeTool
+public class EllipseTool extends ShapeTool
 {
-    public function RectangleTool (thickness :int = 5, alpha :Number = 1.0,
+    public function EllipseTool (thickness :int = 5, alpha :Number = 1.0, 
         borderColor :uint = 0xFF0000, borderOn :Boolean = true,
         fillColor :uint = 0xFF0000, fillOn :Boolean = false)
     {
@@ -32,7 +32,10 @@ public class RectangleTool extends ShapeTool
             graphics.beginFill(fillColor, alpha);
         } 
 
-        graphics.drawRect(
+        // The docs for this function are blatantly wrong.  The values actually required are 
+        // a registration corner, and width and height from that point, which can be negative. 
+        // Not the center of the ellipse and the width and height as the docs claim.
+        graphics.drawEllipse(
             _startPoint.x, _startPoint.y, point.x - _startPoint.x, point.y - _startPoint.y);
 
         if (fillOn) {

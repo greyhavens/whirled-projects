@@ -109,12 +109,16 @@ public class ToolBox extends Sprite
                 new LineTool(_thickness, _alpha, _brushColor)));
             break;
 
-        case Tool.ELIPSE:
-            // TODO: need to wire up fill/outline toggles
+        case Tool.ELLIPSE:
+            dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED,
+                new EllipseTool(_thickness, _alpha, _outlineColor, _outlineButton.selected, 
+                               _fillColor, _fillButton.selected)));
             break;
 
         case Tool.RECTANGLE:
-            // TODO: need to wire up fill/outline toggles
+            dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED,
+                new RectangleTool(_thickness, _alpha, _outlineColor, _outlineButton.selected,
+                                  _fillColor, _fillButton.selected)));
             break;
 
         default:
@@ -145,6 +149,8 @@ public class ToolBox extends Sprite
                 log.warning("unknown button [" + button + "]");
             }
         }
+
+        toolSettingsChanged();
     }
     
     protected function handleUILoaded (ui :MovieClip) :void
@@ -183,7 +189,7 @@ public class ToolBox extends Sprite
             toolSettingsChanged();
         });
         buttons = [ ui.brushtool, ui.linetool, ui.ellipsetool, ui.recttool ];
-        types = [ Tool.BRUSH, Tool.LINE, Tool.ELIPSE, Tool.RECTANGLE ];
+        types = [ Tool.BRUSH, Tool.LINE, Tool.ELLIPSE, Tool.RECTANGLE ];
         for (ii = 0; ii < buttons.length; ii++) {
             buttonSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, types[ii]), ii == 0);
         }

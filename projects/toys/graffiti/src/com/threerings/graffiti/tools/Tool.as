@@ -15,7 +15,7 @@ public class Tool
 {
     public static const BRUSH :int = 1;
     public static const LINE :int = 2;
-    public static const ELIPSE :int = 3;
+    public static const ELLIPSE :int = 3;
     public static const RECTANGLE :int = 4;
 
     // properties common to all tools
@@ -30,7 +30,7 @@ public class Tool
         switch (type) {
         case BRUSH: tool = new BrushTool(); break;
         case LINE: tool = new LineTool(); break;
-        case ELIPSE: tool = new ElipseTool(); break;
+        case ELLIPSE: tool = new EllipseTool(); break;
         case RECTANGLE: tool = new RectangleTool(); break;
         default:
             log.warning("Unknown tool [" + type + "]");
@@ -80,8 +80,8 @@ public class Tool
             return BRUSH;
         } else if (tool is LineTool) {
             return LINE;
-        } else if (tool is ElipseTool) {
-            return ELIPSE;
+        } else if (tool is EllipseTool) {
+            return ELLIPSE;
         } else if (tool is RectangleTool) {
             return RECTANGLE;
         }
