@@ -142,9 +142,6 @@ public class ToolBox extends Sprite
             dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
         });
 
-        var fontSizeCombo :ComboBox = ui.font_size;
-        fontSizeCombo.dataProvider = new DataProvider(["TODO"]);
-
         var doneButton :SimpleButton = ui.done_button;
         doneButton.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             dispatchEvent(new ToolEvent(ToolEvent.DONE_EDITING));
