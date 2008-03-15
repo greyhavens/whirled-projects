@@ -9,7 +9,8 @@ import flash.geom.Point;
 public class EllipseTool extends ShapeTool
 {
     public function EllipseTool (thickness :int = 5, alpha :Number = 1.0, 
-        borderColor :uint = 0xFF0000, borderOn :Boolean = true, fillColor :uint = 0xFF0000, fillOn :Boolean = false)
+        borderColor :uint = 0xFF0000, borderOn :Boolean = true, 
+        fillColor :uint = 0xFF0000, fillOn :Boolean = false)
     {
         super(thickness, alpha, borderColor, borderOn, fillColor, fillOn);
     }
