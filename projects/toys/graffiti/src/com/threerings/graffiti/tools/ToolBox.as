@@ -98,7 +98,28 @@ public class ToolBox extends Sprite
             return;
         }
 
-        log.debug("current tool [" + _currentToolType + "]");
+        switch(_currentToolType) {
+        case Tool.BRUSH:
+            dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED, 
+                new BrushTool(_thickness, _alpha, _brushColor)));
+            break;
+        
+        case Tool.LINE:
+            dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED,
+                new LineTool(_thickness, _alpha, _lineColor)));
+            break;
+
+        case Tool.ELIPSE:
+            // TODO: need to wire up fill/outline toggles
+            break;
+
+        case Tool.RECTANGLE:
+            // TODO: need to wire up fill/outline toggles
+            break;
+
+        default:
+            log.warning("unknown tool [" + _currentToolType + "]");
+        }
     }
 
     protected function fillSwatch (shape :Shape, color :uint) :void
