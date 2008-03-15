@@ -14,7 +14,7 @@ import com.whirled.FurniControl;
 
 import com.threerings.graffiti.Canvas;
 
-import com.threerings.graffiti.tools.Brush;
+import com.threerings.graffiti.tools.Tool;
 
 public class Model
 {
@@ -28,14 +28,14 @@ public class Model
         _canvases.removeCanvas(canvas);
     }
 
-    public function beginStroke (id :String, from :Point, to :Point, brush :Brush) :void
+    public function beginStroke (id :String, from :Point, to :Point, tool :Tool) :void
     {
         if (id == null || _tempStrokesMap.get(id) != null) {
             log.warning("Attempting to add a new stroke with null or existing id! [" + id + "]");
             return;
         }
 
-        strokeBegun(id, new Stroke(from, to, brush));
+        strokeBegun(id, new Stroke(from, to, tool));
     }
 
     public function extendStroke (id :String, to :Point, end :Boolean = false) :void

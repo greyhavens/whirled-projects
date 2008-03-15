@@ -26,7 +26,7 @@ import com.threerings.util.MultiLoader;
 import com.threerings.graffiti.Canvas;
 
 [Event(name="colorPicked", type="ToolEvent")];
-[Event(name="brushPicked", type="ToolEvent")];
+[Event(name="toolPicked", type="ToolEvent")];
 [Event(name="backgroundColor", type="ToolEvent")];
 [Event(name="backgroundTransparency", type="ToolEvent")];
 [Event(name="clearCanvas", type="ToolEvent")];
@@ -50,8 +50,18 @@ public class ToolBox extends Sprite
 
         switch (_currentSwatch.type) {
         case Swatch.BRUSH:
-            _brush.color = color;
-            dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
+            _brushColor = color;
+            toolSettingsChanged();
+            break;
+
+        case Swatch.LINE:
+            _lineColor = color
+            toolSettingsChanged();
+            break;
+
+        case Swatch.FILL:
+            _fillColor = color
+            toolSettingsChanged();
             break;
 
         case Swatch.BACKGROUND:
@@ -80,6 +90,15 @@ public class ToolBox extends Sprite
 
     public function displayFillPercent (percent :Number) :void
     {
+    }
+
+    protected function toolSettingsChanged () :void
+    {
+        if (_currentToolType == 0) {
+            return;
+        }
+
+        log.debug("current tool [" + _currentToolType + "]");
     }
 
     protected function fillSwatch (shape :Shape, color :uint) :void
@@ -115,10 +134,23 @@ public class ToolBox extends Sprite
         // fill in the current background color on the background swatch
         fillSwatch(ui.bgcolor_swatch.getChildAt(0) as Shape, _initialBackgroundColor);
 
+        // add color palette
         var palette :Palette = new Palette(this, 0xFF0000);
         palette.x = ui.x + PALETTE_X_OFFSET;
         palette.y = ui.y + PALETTE_Y_OFFSET;
         addChild(palette);
+
+        // set up tool radio
+        buttonSet = new RadioButtonSet();
+        buttonSet.addEventListener(RadioEvent.BUTTON_SELECTED, function (event :RadioEvent) :void {
+            _currentToolType = event.value as int;
+            toolSettingsChanged();
+        });
+        buttons = [ ui.brushtool, ui.linetool, ui.ellipsetool, ui.recttool ];
+        types = [ Tool.BRUSH, Tool.LINE, Tool.ELIPSE, Tool.RECTANGLE ];
+        for (ii = 0; ii < buttons.length; ii++) {
+            buttonSet.addButton(new RadioButton(buttons[ii] as SimpleButton, types[ii]), ii == 0);
+        }
 
         // transparent background checkbox
         ui.nobg_checkbox.selected = _initialBackgroundTransparent;
@@ -132,11 +164,11 @@ public class ToolBox extends Sprite
         thicknessSlider.liveDragging = true;
         thicknessSlider.minimum = MIN_BRUSH_SIZE;
         thicknessSlider.maximum = MAX_BRUSH_SIZE;
-        thicknessSlider.value = _brush.thickness;
+        thicknessSlider.value = _thickness;
         thicknessSlider.snapInterval = 1;
         thicknessSlider.addEventListener(SliderEvent.CHANGE, function (event :SliderEvent) :void {
-            _brush.thickness = thicknessSlider.value;
-            dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
+            _thickness = thicknessSlider.value;
+            toolSettingsChanged();
         });
 
         // brush alpha slider
@@ -144,11 +176,11 @@ public class ToolBox extends Sprite
         alphaSlider.liveDragging = true;
         alphaSlider.maximum = 1;
         alphaSlider.minimum = 0;
-        alphaSlider.value = _brush.alpha;
+        alphaSlider.value = _alpha;
         alphaSlider.snapInterval = 0.05;
         alphaSlider.addEventListener(SliderEvent.CHANGE, function (event :SliderEvent) :void {
-            _brush.alpha = alphaSlider.value;
-            dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
+            _alpha = alphaSlider.value;
+            toolSettingsChanged();
         });
 
         // done button
@@ -172,10 +204,15 @@ public class ToolBox extends Sprite
     private static const log :Log = Log.getLog(ToolBox);
 
     protected var _canvas :Canvas;
-    protected var _brush :Brush = new Brush();
     protected var _currentSwatch :Swatch;
     protected var _initialBackgroundColor :uint;
     protected var _initialBackgroundTransparent :Boolean;
+    protected var _currentToolType :int = 0;
+    protected var _brushColor :uint;
+    protected var _lineColor :uint;
+    protected var _fillColor :uint;
+    protected var _thickness :int = 2;
+    protected var _alpha :Number = 1.0;
 }
 }
 

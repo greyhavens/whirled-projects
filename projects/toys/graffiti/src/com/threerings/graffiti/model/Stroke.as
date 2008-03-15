@@ -8,7 +8,8 @@ import flash.utils.ByteArray;
 
 import com.threerings.util.HashMap;
 
-import com.threerings.graffiti.tools.Brush;
+import com.threerings.graffiti.tools.BrushTool;
+import com.threerings.graffiti.tools.Tool;
 
 public class Stroke
 {
@@ -25,16 +26,16 @@ public class Stroke
             _points.length + "]"
     }
 
-    public function Stroke (from :Point, to :Point, brush :Brush)
+    public function Stroke (from :Point, to :Point, tool :Tool)
     {
-        _brush = brush;
+        _tool = tool;
         _points.push(from);
         _points.push(to);
     }
 
-    public function get brush () :Brush
+    public function get tool () :Tool
     {
-        return _brush;
+        return _tool;
     }
 
     public function getPoint (offset :int) :Point
@@ -62,11 +63,11 @@ public class Stroke
     public function serialize (bytes :ByteArray, colorLUT :HashMap = null) :void
     {
         // serialize format:
-        //  - brush
+        //  - tool
         //  - length (number of points including start)
         //  - continuation points in offset x and y values
 
-        _brush.serialize(bytes, colorLUT);
+        _tool.serialize(bytes, colorLUT);
 
         bytes.writeInt(_points.length);
         var curX :int = 0;
@@ -83,7 +84,7 @@ public class Stroke
 
     protected function deserialize (bytes :ByteArray, colorLUT :Array) :void
     {
-        _brush = Brush.createBrushFromBytes(bytes, colorLUT);
+        _tool = Tool.createToolFromBytes(bytes, colorLUT);
 
         var length :int = bytes.readInt();
         var curX :int = 0;
@@ -100,6 +101,6 @@ public class Stroke
     }
 
     protected var _points :Array = [];
-    protected var _brush :Brush = new Brush();
+    protected var _tool :Tool = new BrushTool();
 }
 }

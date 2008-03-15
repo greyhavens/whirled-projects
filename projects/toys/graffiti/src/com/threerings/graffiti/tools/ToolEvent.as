@@ -6,7 +6,7 @@ import flash.events.Event;
 
 public class ToolEvent extends Event
 {
-    public static const BRUSH_PICKED :String = "brushPicked";
+    public static const TOOL_PICKED :String = "toolPicked";
     public static const BACKGROUND_COLOR :String = "backgroundColor";
     public static const BACKGROUND_TRANSPARENCY :String = "backgroundTransparency";
     public static const CLEAR_CANVAS :String = "clearCanvas";

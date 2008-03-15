@@ -18,7 +18,8 @@ import flash.utils.clearInterval; // function import
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 
-import com.threerings.graffiti.tools.Brush;
+import com.threerings.graffiti.tools.BrushTool;
+import com.threerings.graffiti.tools.Tool;
 import com.threerings.graffiti.tools.ToolBox;
 import com.threerings.graffiti.tools.ToolEvent;
 
@@ -63,8 +64,8 @@ public class Canvas extends Sprite
 
             _toolBox = new ToolBox(this, _model.getBackgroundColor(), 
                                    _model.getBackgroundTransparent());
-            _toolBox.addEventListener(ToolEvent.BRUSH_PICKED, function (event :ToolEvent) :void {
-                _brush = event.value as Brush;
+            _toolBox.addEventListener(ToolEvent.TOOL_PICKED, function (event :ToolEvent) :void {
+                _tool = event.value as Tool;
             });
             _toolBox.addEventListener(ToolEvent.BACKGROUND_COLOR, 
                 function (event :ToolEvent) :void {
@@ -126,33 +127,13 @@ public class Canvas extends Sprite
         }
 
         if (id != _lastId || startPoint != _lastEndPoint) {
-            _tempSurface.graphics.moveTo(start.x, start.y);
-            _tempSurface.graphics.lineStyle(
-                stroke.brush.thickness, stroke.brush.color, stroke.brush.alpha);    
-            _lastX = start.x;
-            _lastY = start.y;
-            _oldDeltaX = _oldDeltaY = 0;
+            stroke.tool.mouseDown(_tempSurface.graphics, start);
         }
 
         _lastId = id;
 
         for (var ii :int = startPoint + 1; ii < stroke.getSize(); ii++) {
-            var to :Point = stroke.getPoint(ii);
-            var dX :Number = to.x - _lastX;
-            var dY :Number = to.y - _lastY;
-
-            // the new spline is continuous with the old, but not aggressively so.
-            var controlX :Number = _lastX + _oldDeltaX * 0.4;
-            var controlY :Number = _lastY + _oldDeltaY * 0.4;
-
-            _tempSurface.graphics.curveTo(controlX, controlY, to.x, to.y);
-            
-            _lastX = to.x;
-            _lastY = to.y;
-
-            _oldDeltaX = to.x - controlX;
-            _oldDeltaY = to.y - controlY;
-
+            stroke.tool.dragTo(_tempSurface.graphics, stroke.getPoint(ii));
             _lastEndPoint = ii;
         }
     }
@@ -169,29 +150,10 @@ public class Canvas extends Sprite
             return;
         }
 
-        var start :Point = stroke.getPoint(0);
-        _canvas.graphics.moveTo(start.x, start.y);
-        _canvas.graphics.lineStyle(stroke.brush.thickness, stroke.brush.color, stroke.brush.alpha);
-
-        var lastX :Number = start.x;
-        var lastY :Number = start.y;
-        var oldDeltaX :Number = 0;
-        var oldDeltaY :Number = 0; 
+        stroke.tool.mouseDown(_canvas.graphics, stroke.getPoint(0));
 
         for (var ii :int = 1; ii < stroke.getSize(); ii++) {
-            var to :Point = stroke.getPoint(ii);
-            var dX :Number = to.x - lastX;
-            var dY :Number = to.y - lastY;
-
-            var controlX :Number = lastX + oldDeltaX * 0.4;
-            var controlY :Number = lastY + oldDeltaY * 0.4;
-
-            _canvas.graphics.curveTo(controlX, controlY, to.x, to.y);
-            lastX = to.x;
-            lastY = to.y;
-
-            oldDeltaX = to.x - controlX;
-            oldDeltaY = to.y - controlY;
+            stroke.tool.dragTo(_canvas.graphics, stroke.getPoint(ii));
         }
     }
 
@@ -288,7 +250,7 @@ public class Canvas extends Sprite
             log.warning("newStroke and end!");
         } else {
             if (_newStroke) {
-                _model.beginStroke(_inputKey, _lastStrokePoint, p, _brush);
+                _model.beginStroke(_inputKey, _lastStrokePoint, p, _tool);
 
             } else {
                 _model.extendStroke(_inputKey, p, end);
@@ -339,7 +301,7 @@ public class Canvas extends Sprite
     protected var _inputKey :String;
 
     protected var _backgroundColor :uint;
-    protected var _brush :Brush = new Brush();
+    protected var _tool :Tool = new BrushTool();
 
     protected var _timer :int;
     protected var _lastStrokePoint :Point;
@@ -347,12 +309,6 @@ public class Canvas extends Sprite
 
     // variables for canvas output
     protected var _outputKey :String;
-
-    protected var _lastX :Number;
-    protected var _lastY :Number;
-
-    protected var _oldDeltaX :Number;
-    protected var _oldDeltaY :Number;
 
     protected var _lastId :String;
     protected var _lastEndPoint :int;

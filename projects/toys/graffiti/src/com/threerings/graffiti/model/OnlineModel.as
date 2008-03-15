@@ -2,19 +2,9 @@
 
 package com.threerings.graffiti.model {
 
-import flash.events.Event;
-
 import flash.geom.Point;
 
-import flash.utils.setInterval; // function import
-import flash.utils.clearInterval; // function import
-import flash.utils.getTimer; // function import
-import flash.utils.ByteArray;
-
 import com.threerings.util.Log;
-
-import com.whirled.ControlEvent;
-import com.whirled.FurniControl;
 
 import com.threerings.graffiti.throttle.Throttle;
 import com.threerings.graffiti.throttle.ThrottleEvent;
@@ -23,8 +13,6 @@ import com.threerings.graffiti.throttle.ThrottleStrokeMessage;
 import com.threerings.graffiti.throttle.StrokeBeginMessage;
 import com.threerings.graffiti.throttle.StrokeExtendMessage;
 import com.threerings.graffiti.throttle.StrokeEndMessage;
-
-import com.threerings.graffiti.tools.Brush;
 
 public class OnlineModel extends Model
 {
