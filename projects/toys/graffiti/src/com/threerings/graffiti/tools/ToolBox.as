@@ -54,8 +54,8 @@ public class ToolBox extends Sprite
             toolSettingsChanged();
             break;
 
-        case Swatch.LINE:
-            _lineColor = color
+        case Swatch.OUTLINE:
+            _outlineColor = color
             toolSettingsChanged();
             break;
 
@@ -106,7 +106,7 @@ public class ToolBox extends Sprite
         
         case Tool.LINE:
             dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED,
-                new LineTool(_thickness, _alpha, _lineColor)));
+                new LineTool(_thickness, _alpha, _brushColor)));
             break;
 
         case Tool.ELIPSE:
@@ -145,7 +145,7 @@ public class ToolBox extends Sprite
         var swatches :Array = 
             [ ui.brushcolor_swatch, ui.bgcolor_swatch, ui.fillcolor_swatch, ui.linecolor_swatch ];
         var buttons :Array = [ ui.brush_color, ui.bg_color, ui.fill_color, ui.line_color ];
-        var types :Array = [ Swatch.BRUSH, Swatch.BACKGROUND, Swatch.FILL, Swatch.LINE ];
+        var types :Array = [ Swatch.BRUSH, Swatch.BACKGROUND, Swatch.FILL, Swatch.OUTLINE ];
         for (var ii :int = 0; ii < swatches.length; ii++) {
             swatches[ii].mouseEnabled = false;
             var swatch :Swatch = new Swatch(swatches[ii].getChildAt(0) as Shape, types[ii]);
@@ -230,7 +230,7 @@ public class ToolBox extends Sprite
     protected var _initialBackgroundTransparent :Boolean;
     protected var _currentToolType :int = 0;
     protected var _brushColor :uint;
-    protected var _lineColor :uint;
+    protected var _outlineColor :uint;
     protected var _fillColor :uint;
     protected var _thickness :int = 2;
     protected var _alpha :Number = 1.0;
@@ -243,7 +243,7 @@ class Swatch
 {
     public static const BRUSH :int = 1;
     public static const BACKGROUND :int = 2;
-    public static const LINE :int = 3;
+    public static const OUTLINE :int = 3;
     public static const FILL :int = 4;
 
     public var swatchShape :Shape;
