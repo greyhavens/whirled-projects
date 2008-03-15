@@ -21,10 +21,6 @@ import com.threerings.graffiti.model.OnlineModel;
 
 public class Throttle extends EventDispatcher
 {
-    public static const MESSAGE_TYPE_STROKE_BEGIN :int = 1;
-    public static const MESSAGE_TYPE_STROKE_EXTEND :int = 2;
-    public static const MESSAGE_TYPE_STROKE_END :int = 3;
-
     /** Only access the control to retrieve information.  Let Throttle handle all sends! */
     public var control :FurniControl;
 
@@ -66,18 +62,28 @@ public class Throttle extends EventDispatcher
     {
         switch (type) {
         case MESSAGE_TYPE_STROKE_BEGIN: 
-            dispatchEvent(new ThrottleEvent(ThrottleEvent.TEMP_STROKE_MESSAGE,
+            dispatchEvent(new ThrottleEvent(ThrottleEvent.TEMP_MESSAGE,
                           StrokeBeginMessage.deserialize(bytes)));
             break;
 
         case MESSAGE_TYPE_STROKE_EXTEND: 
-            dispatchEvent(new ThrottleEvent(ThrottleEvent.TEMP_STROKE_MESSAGE,
+            dispatchEvent(new ThrottleEvent(ThrottleEvent.TEMP_MESSAGE,
                           StrokeExtendMessage.deserialize(bytes)));
             break;
 
         case MESSAGE_TYPE_STROKE_END: 
-            dispatchEvent(new ThrottleEvent(ThrottleEvent.TEMP_STROKE_MESSAGE,
+            dispatchEvent(new ThrottleEvent(ThrottleEvent.TEMP_MESSAGE,
                           StrokeEndMessage.deserialize(bytes)));
+            break;
+
+        case MESSAGE_TYPE_ALTER_BACKGROUND:
+            dispatchEvent(new ThrottleEvent(ThrottleEvent.TEMP_MESSAGE,
+                          AlterBackgroundMessage.deserialize(bytes)));
+            break;
+            
+        case MESSAGE_TYPE_ALTER_BACKGROUND_MANAGER:
+            dispatchEvent(new ThrottleEvent(ThrottleEvent.MANAGER_MESSAGE,
+                          AlterBackgroundMessage.deserialize(bytes)));
             break;
 
         default:
@@ -110,6 +116,10 @@ public class Throttle extends EventDispatcher
             return MESSAGE_TYPE_STROKE_EXTEND;
         } else if (message is StrokeEndMessage) {
             return MESSAGE_TYPE_STROKE_END;
+        } else if (message is ManagerAlterBackgroundMessage) {
+            return MESSAGE_TYPE_ALTER_BACKGROUND_MANAGER;
+        } else if (message is AlterBackgroundMessage) {
+            return MESSAGE_TYPE_ALTER_BACKGROUND;
         } else {
             log.warning("Unknown message for type encoding! [" + message + "]");
             return -1;
@@ -125,6 +135,12 @@ public class Throttle extends EventDispatcher
 
     protected static const THROTTLE_MESSAGE :String = "throttleMessage";
     protected static const THROTTLE_TIMING :int = 250; // in ms
+
+    protected static const MESSAGE_TYPE_STROKE_BEGIN :int = 1;
+    protected static const MESSAGE_TYPE_STROKE_EXTEND :int = 2;
+    protected static const MESSAGE_TYPE_STROKE_END :int = 3;
+    protected static const MESSAGE_TYPE_ALTER_BACKGROUND :int = 4;
+    protected static const MESSAGE_TYPE_ALTER_BACKGROUND_MANAGER :int = 5;
 
     protected var _pendingMessages :Array = [];
     protected var _timer :Timer;

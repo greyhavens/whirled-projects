@@ -6,6 +6,7 @@ import flash.geom.Point;
 
 import com.threerings.util.Log;
 
+import com.threerings.graffiti.throttle.AlterBackgroundMessage;
 import com.threerings.graffiti.throttle.Throttle;
 import com.threerings.graffiti.throttle.ThrottleEvent;
 import com.threerings.graffiti.throttle.ThrottleMessage;
@@ -21,11 +22,11 @@ public class OnlineModel extends Model
         super();
 
         _throttle = throttle;
-        _throttle.addEventListener(ThrottleEvent.TEMP_STROKE_MESSAGE, tempMessageReceived);
-        _throttle.addEventListener(ThrottleEvent.MANAGER_STROKE_MESSAGE, managerMessageReceived);
+        _throttle.addEventListener(ThrottleEvent.TEMP_MESSAGE, tempMessageReceived);
+        _throttle.addEventListener(ThrottleEvent.MANAGER_MESSAGE, managerMessageReceived);
     }
 
-    public override function extendStroke (id :String, to :Point, end :Boolean = false) :void
+    override public function extendStroke (id :String, to :Point, end :Boolean = false) :void
     {
         super.extendStroke(id, to, end);
         if (idFromMe(id)) {
@@ -33,7 +34,7 @@ public class OnlineModel extends Model
         }
     }
 
-    public override function endStroke (id :String) :void
+    override public function endStroke (id :String) :void
     {
         super.endStroke(id);
         if (idFromMe(id)) {
@@ -44,13 +45,24 @@ public class OnlineModel extends Model
         }
     }
 
-    public override function getKey () :String
+    override public function getKey () :String
     {
         // in the online model, keys are prepended with the instance id
         return _throttle.control.getInstanceId() + ":" + super.getKey();
     }
 
-    protected override function strokeBegun (id :String, stroke :Stroke) :void
+    override public function setBackgroundColor (color :uint) :void
+    {
+        _throttle.pushMessage(new AlterBackgroundMessage(AlterBackgroundMessage.COLOR, color));
+    }
+
+    override public function setBackgroundTransparent (transparent :Boolean) :void
+    {
+        _throttle.pushMessage(
+            new AlterBackgroundMessage(AlterBackgroundMessage.TRANSPARENCY, transparent));
+    }
+
+    override protected function strokeBegun (id :String, stroke :Stroke) :void
     {
         super.strokeBegun(id, stroke);
         if (idFromMe(id)) {
@@ -66,13 +78,11 @@ public class OnlineModel extends Model
     {
         var message :ThrottleMessage = event.message;
         if (!(message is ThrottleStrokeMessage)) {
-            log.debug("unknown temp message type [" + message + "]");
             return;
         }
 
         var strokeMessage :ThrottleStrokeMessage = message as ThrottleStrokeMessage;
         if (idFromMe(strokeMessage.strokeId)) {
-            log.debug("received a message sent by me");
             return;
         }
 
@@ -90,7 +100,16 @@ public class OnlineModel extends Model
 
     protected function managerMessageReceived (event :ThrottleEvent) :void
     {
-        // TODO
+        var message :ThrottleMessage = event.message;
+        if (message is AlterBackgroundMessage) {
+            var backgroundMessage :AlterBackgroundMessage = message as AlterBackgroundMessage;
+            if (backgroundMessage.type == AlterBackgroundMessage.COLOR) {
+                _canvases.paintBackground(_backgroundColor = backgroundMessage.value as uint);
+            } else if (backgroundMessage.type == AlterBackgroundMessage.TRANSPARENCY) {
+                _canvases.setBackgroundTransparent(
+                    _backgroundTransparent = backgroundMessage.value as Boolean);
+            }
+        }
     }
 
     private static const log :Log = Log.getLog(OnlineModel);
