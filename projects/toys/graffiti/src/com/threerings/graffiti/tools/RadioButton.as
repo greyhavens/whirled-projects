@@ -36,6 +36,11 @@ public class RadioButton
         }
     }
 
+    public function get selected () :Boolean
+    {
+        return _button.overState == _button.downState;
+    }
+
     protected var _button :SimpleButton;
     protected var _upState :DisplayObject;
     protected var _overState :DisplayObject;

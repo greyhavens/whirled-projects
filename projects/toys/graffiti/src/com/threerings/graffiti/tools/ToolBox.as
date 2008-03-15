@@ -131,6 +131,21 @@ public class ToolBox extends Sprite
         shape.graphics.drawRect(-w/2, -h/2, w, h);
         shape.graphics.endFill();
     }
+
+    protected function checkFillOutline (button :RadioButton) :void
+    {
+        button.selected = !button.selected;
+
+        if (!_fillButton.selected && !_outlineButton.selected) {
+            if (button == _fillButton) {
+                _outlineButton.selected = true;
+            } else if (button == _outlineButton) {
+                _fillButton.selected = true;
+            } else {
+                log.warning("unknown button [" + button + "]");
+            }
+        }
+    }
     
     protected function handleUILoaded (ui :MovieClip) :void
     {
@@ -173,6 +188,22 @@ public class ToolBox extends Sprite
             buttonSet.addButton(new RadioButton(buttons[ii] as SimpleButton, types[ii]), ii == 0);
         }
 
+        // fill and outline buttons
+        ui.FillOnOff.overState = ui.FillOnOff.upState;
+        _fillButton = new RadioButton(ui.FillOnOff, null);
+        _fillButton.button.addEventListener(MouseEvent.MOUSE_DOWN, 
+            function (event :MouseEvent) :void {
+                checkFillOutline(_fillButton);
+            });
+        _fillButton.selected = true;
+        ui.LineOnOff.overState = ui.LineOnOff.upState;
+        _outlineButton = new RadioButton(ui.LineOnOff, null);
+        _outlineButton.button.addEventListener(MouseEvent.MOUSE_DOWN, 
+            function (event :MouseEvent) :void {
+                checkFillOutline(_outlineButton);
+            });
+        _outlineButton.selected = false;
+
         // transparent background checkbox
         ui.nobg_checkbox.selected = _initialBackgroundTransparent;
         ui.nobg_checkbox.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
@@ -211,6 +242,8 @@ public class ToolBox extends Sprite
         });
     }
 
+    private static const log :Log = Log.getLog(ToolBox);
+
     [Embed(source="../../../../../rsrc/graffiti_UI.swf", mimeType="application/octet-stream")]
     protected static const TOOLBOX_UI :Class;
 
@@ -222,8 +255,6 @@ public class ToolBox extends Sprite
     protected var MIN_BRUSH_SIZE :int = 2;
     protected var MAX_BRUSH_SIZE :int = 60;
 
-    private static const log :Log = Log.getLog(ToolBox);
-
     protected var _canvas :Canvas;
     protected var _currentSwatch :Swatch;
     protected var _initialBackgroundColor :uint;
@@ -234,6 +265,8 @@ public class ToolBox extends Sprite
     protected var _fillColor :uint;
     protected var _thickness :int = 2;
     protected var _alpha :Number = 1.0;
+    protected var _fillButton :RadioButton;
+    protected var _outlineButton :RadioButton;
 }
 }
 
