@@ -7,31 +7,45 @@ import com.whirled.contrib.ColorMatrix;
 import flash.display.MovieClip;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.TimerEvent;
 import flash.geom.Point;
+import flash.media.SoundChannel;
+import flash.utils.Timer;
 
 public class RainbowController
 {
     public function RainbowController (playerId :int)
     {
-        log.info("Creating RainbowController for " + SimonMain.getPlayerName(playerId) + " (client: " + SimonMain.localPlayerName + ")");
+        //log.info("Creating RainbowController for " + SimonMain.getPlayerName(playerId) + " (client: " + SimonMain.localPlayerName + ")");
+
+        if (null == g_tintMatrix) {
+            g_tintMatrix = new ColorMatrix();
+            g_tintMatrix.adjustBrightness(100, 100, 100);
+        }
 
         _playerId = playerId;
         _remainingPattern = SimonMain.model.curState.pattern.slice();
 
+        _noteAnimationTimer = new Timer(NOTE_TIMER_LENGTH_MS, 1);
+        _noteAnimationTimer.addEventListener(TimerEvent.TIMER, noteAnimationTimerExpired);
+
         SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleNextSelectionEvent);
 
-        this.playAnimation("rainbow_in", playRainbowLoop);
+        this.playRainbowAnimation("rainbow_in", playRainbowLoop);
     }
 
     public function destroy () :void
     {
         SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleNextSelectionEvent);
-        this.stopAnimation();
+        _noteAnimationTimer.removeEventListener(TimerEvent.TIMER, noteAnimationTimerExpired);
+
+        this.stopRainbowAnimation();
+        this.stopNoteAnimation();
     }
 
-    protected function playAnimation (animName :String, completionCallback :Function) :void
+    protected function playRainbowAnimation (animName :String, completionCallback :Function) :void
     {
-        this.stopAnimation();
+        this.stopRainbowAnimation();
 
         var animClass :Class = SimonMain.resourcesDomain.getDefinition(animName) as Class;
         _curAnim = new animClass();
@@ -49,7 +63,7 @@ public class RainbowController
         //log.info("Playing animation " + animName + " at " + loc);
     }
 
-    protected function stopAnimation () :void
+    protected function stopRainbowAnimation () :void
     {
         if (null != _curAnim) {
             SimonMain.sprite.removeChild(_curAnim);
@@ -64,19 +78,19 @@ public class RainbowController
 
     protected function playRainbowLoop () :void
     {
-        this.playAnimation("rainbow_loop", null);
-
-        var tintMatrix :ColorMatrix = new ColorMatrix(); // @TODO - do something here
+        this.playRainbowAnimation("rainbow_loop", null);
 
         // setup
         var i :int = 0;
-        for each (var bandName :String in RAINBOW_BANDS) {
+        for each (var bandName :String in RAINBOW_BAND_NAMES) {
             var band :MovieClip = (_curAnim["inst_rainbow"])[bandName];
-            band.filters = [ tintMatrix.createFilter() ];
+            band.filters = [ g_tintMatrix.createFilter() ];
 
             if (this.isControlledLocally) {
                 this.createBandClickHandler(band, i++);
             }
+
+            _rainbowBands.push(band);
         }
 
     }
@@ -144,11 +158,46 @@ public class RainbowController
         }
 
         // @TODO - play some animation here
+        this.playNoteAnimation(noteIndex);
+
         log.info("note " + noteIndex + " played. " + (success ? "success!" : "fail!"));
         if (playerTurnOver) {
             log.info("end of turn");
         }
 
+    }
+
+    protected function noteAnimationTimerExpired (e :Event) :void
+    {
+        this.stopNoteAnimation();
+    }
+
+    protected function playNoteAnimation (noteIndex :int) :void
+    {
+        this.stopNoteAnimation();
+
+        if (noteIndex >= 0 && noteIndex < _rainbowBands.length) {
+            _noteAnimationIndex = noteIndex;
+            (_rainbowBands[_noteAnimationIndex] as MovieClip).filters = [];
+
+            _noteAnimationTimer.reset();
+            _noteAnimationTimer.start();
+        }
+    }
+
+    protected function stopNoteAnimation () :void
+    {
+        _noteAnimationTimer.stop();
+
+        if (null != _noteAnimationSoundChannel) {
+            _noteAnimationSoundChannel.stop();
+            _noteAnimationSoundChannel = null;
+        }
+
+        if (_noteAnimationIndex >= 0) {
+            (_rainbowBands[_noteAnimationIndex] as MovieClip).filters = [ g_tintMatrix.createFilter() ];
+            _noteAnimationIndex = -1;
+        }
     }
 
     protected function getScreenLoc () :Point
@@ -173,9 +222,15 @@ public class RainbowController
     protected var _curAnim :MovieClip;
     protected var _remainingPattern :Array;
 
+    protected var _noteAnimationTimer :Timer;
+    protected var _noteAnimationSoundChannel :SoundChannel;
+    protected var _noteAnimationIndex :int = -1;
+
+    protected var _rainbowBands :Array = [];
+
     protected var log :Log = Log.getLog(this);
 
-    protected static const RAINBOW_BANDS :Array = [
+    protected static const RAINBOW_BAND_NAMES :Array = [
         "inst_r",
         "inst_o",
         "inst_y",
@@ -185,8 +240,9 @@ public class RainbowController
         "inst_v",
     ];
 
-    protected static const TINT_COLOR :uint = 0xFFFFFF;
-    protected static const TINT_AMOUNT :Number = 0.33;
+    protected static var g_tintMatrix :ColorMatrix = null;
+
+    protected static const NOTE_TIMER_LENGTH_MS :Number = 2 * 1000;
 }
 
 }
