@@ -11,6 +11,7 @@ import flash.events.MouseEvent;
 
 import com.threerings.util.Log;
 
+import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
 
 import com.threerings.graffiti.model.Model;
@@ -22,6 +23,7 @@ import com.threerings.graffiti.throttle.ThrottleEvent;
 
 import com.threerings.graffiti.tools.ToolBox;
 import com.threerings.graffiti.tools.ToolEvent;
+import com.threerings.graffiti.tools.ToggleButton;
 
 [SWF(width="600", height="486")]
 public class Graffiti extends Sprite
@@ -34,6 +36,7 @@ public class Graffiti extends Sprite
             // each instance maintains a Manager.  The inControl() instance's Manager is in effect.
             _manager = new Manager(_throttle);
             _model = new OnlineModel(_throttle);
+            _control.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
         } else {
             _model = new OfflineModel();
         }
@@ -48,6 +51,9 @@ public class Graffiti extends Sprite
         _managerBtn.x = _managerBtn.width / 2 + 5;
         (_managerBtn as Object).reset_button.addEventListener(MouseEvent.CLICK, resetCanvas);
         (_managerBtn as Object).lockbutton.addEventListener(MouseEvent.CLICK, toggleLock);
+        _lockBtn = new ToggleButton((_managerBtn as Object).lockbutton, null);
+        _lockBtn.selected = _control.isConnected() && 
+            _control.lookupMemory(CANVAS_LOCK, false) as Boolean;
 
         addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
         addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
@@ -57,6 +63,10 @@ public class Graffiti extends Sprite
 
     protected function displayEditPopup (event :MouseEvent) :void
     {
+        if (_control.isConnected() && _control.lookupMemory(CANVAS_LOCK, false) as Boolean) {
+            return;
+        }
+
         var canvas :Canvas = new Canvas(_model);
         canvas.toolbox.addEventListener(ToolEvent.DONE_EDITING, function (event :ToolEvent) :void {
             _control.clearPopup();
@@ -71,6 +81,15 @@ public class Graffiti extends Sprite
                                    canvas.toolbox.managerMessageReceived);
 
     }
+    
+    protected function memoryChanged (event :ControlEvent) :void
+    {
+        if (event.name == CANVAS_LOCK) {
+            if (_lockBtn != null) {
+                _lockBtn.selected = event.value as Boolean;
+            }
+        }
+    }
 
     protected function resetCanvas (event :MouseEvent) :void
     {
@@ -80,14 +99,21 @@ public class Graffiti extends Sprite
 
     protected function toggleLock (event :MouseEvent) :void
     {
-        // TODO
-        log.debug("lock toggled");
+        _lockBtn.selected = !_lockBtn.selected;
+        if (_control.isConnected() && _control.canEditRoom()) {
+            _control.updateMemory(CANVAS_LOCK, _lockBtn.selected);
+        }
     }
 
     protected function enterFrame (event :Event) :void
     {
         if (_mouseOver) {
-            animateDown(_editBtn);
+            if (_control.isConnected() && (_control.lookupMemory(CANVAS_LOCK, false) as Boolean)) {
+                animateUp(_editBtn);
+            } else {
+                animateDown(_editBtn);
+            }
+
             if (_control.canEditRoom()) {
                 animateDown(_managerBtn);
             }
@@ -104,13 +130,17 @@ public class Graffiti extends Sprite
             button.y = Canvas.CANVAS_HEIGHT - button.height / 2;
         }
 
-        button.y = Math.min(_editBtn.y + 5, Canvas.CANVAS_HEIGHT + button.height / 2 - 2);
+        button.y = Math.min(button.y + 5, Canvas.CANVAS_HEIGHT + button.height / 2 - 2);
     }
 
     protected function animateUp (button :DisplayObject) :void
     {
+        if (button.parent != this) {
+            return;
+        }
+
         button.y -= 5;
-        if (button.y < Canvas.CANVAS_HEIGHT - button.height / 2 && button.parent == this) {
+        if (button.y < Canvas.CANVAS_HEIGHT - button.height / 2) {
             removeChild(button);
         }
     }
@@ -137,6 +167,8 @@ public class Graffiti extends Sprite
     [Embed(source="../../../../rsrc/edit_manager_buttons.swf#manager")]
     protected static const MANAGER_BUTTON :Class;
 
+    protected static const CANVAS_LOCK :String = "canvasLock";
+
     protected var _control :FurniControl;
     protected var _manager :Manager;
     protected var _model :Model;
@@ -144,5 +176,6 @@ public class Graffiti extends Sprite
     protected var _editBtn :SimpleButton;
     protected var _managerBtn :Sprite;
     protected var _mouseOver :Boolean; 
+    protected var _lockBtn :ToggleButton;
 }
 }

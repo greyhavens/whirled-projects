@@ -33,7 +33,6 @@ import com.threerings.graffiti.throttle.ThrottleEvent;
 [Event(name="toolPicked", type="ToolEvent")];
 [Event(name="backgroundColor", type="ToolEvent")];
 [Event(name="backgroundTransparency", type="ToolEvent")];
-[Event(name="clearCanvas", type="ToolEvent")];
 
 public class ToolBox extends Sprite 
 {
@@ -85,11 +84,6 @@ public class ToolBox extends Sprite
     public function setBackgroundColor (color :uint) :void
     {
         dispatchEvent(new ToolEvent(ToolEvent.BACKGROUND_COLOR, color));
-    }
-
-    public function clearCanvas () :void
-    {
-        dispatchEvent(new ToolEvent(ToolEvent.CLEAR_CANVAS));
     }
 
     public function displayFillPercent (percent :Number) :void

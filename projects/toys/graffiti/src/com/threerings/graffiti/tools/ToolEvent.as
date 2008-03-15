@@ -9,7 +9,6 @@ public class ToolEvent extends Event
     public static const TOOL_PICKED :String = "toolPicked";
     public static const BACKGROUND_COLOR :String = "backgroundColor";
     public static const BACKGROUND_TRANSPARENCY :String = "backgroundTransparency";
-    public static const CLEAR_CANVAS :String = "clearCanvas";
     public static const DONE_EDITING :String = "doneEditing";
 
     public function ToolEvent (event :String, value :* = undefined) :void

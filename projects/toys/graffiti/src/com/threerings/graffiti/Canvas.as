@@ -69,9 +69,6 @@ public class Canvas extends Sprite
                 function (event :ToolEvent) :void {
                     _model.setBackgroundColor(event.value as uint);
                 });
-            _toolBox.addEventListener(ToolEvent.CLEAR_CANVAS, function (event :ToolEvent) :void {
-                _model.clearCanvas();
-            });
             _toolBox.addEventListener(ToolEvent.BACKGROUND_TRANSPARENCY, 
                 function (event :ToolEvent) :void {
                     _model.setBackgroundTransparent(event.value as Boolean);
