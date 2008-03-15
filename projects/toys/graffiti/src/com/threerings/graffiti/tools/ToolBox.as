@@ -98,6 +98,8 @@ public class ToolBox extends Sprite
             return;
         }
 
+        updateBrushPreview();
+
         switch(_currentToolType) {
         case Tool.BRUSH:
             dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED, 
@@ -112,7 +114,7 @@ public class ToolBox extends Sprite
         case Tool.ELLIPSE:
             dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED,
                 new EllipseTool(_thickness, _alpha, _outlineColor, _outlineButton.selected, 
-                               _fillColor, _fillButton.selected)));
+                                _fillColor, _fillButton.selected)));
             break;
 
         case Tool.RECTANGLE:
@@ -124,6 +126,18 @@ public class ToolBox extends Sprite
         default:
             log.warning("unknown tool [" + _currentToolType + "]");
         }
+    }
+
+    protected function updateBrushPreview () :void
+    {
+        if (_brushPreview == null) {
+            return;
+        }
+
+        var g :Graphics = _brushPreview.graphics;
+        g.clear();
+        g.beginFill(_brushColor, _alpha);
+        g.drawCircle(MAX_BRUSH_SIZE / 2, MAX_BRUSH_SIZE / 2, _thickness / 2);
     }
 
     protected function fillSwatch (shape :Shape, color :uint) :void
@@ -241,6 +255,12 @@ public class ToolBox extends Sprite
             toolSettingsChanged();
         });
 
+        // brush preview
+        addChild(_brushPreview = new Shape());
+        _brushPreview.x = ui.x + BRUSH_PREVIEW_X_OFFSET;
+        _brushPreview.y = ui.y + BRUSH_PREVIEW_Y_OFFSET;
+        updateBrushPreview();
+
         // done button
         var doneButton :SimpleButton = ui.done_button;
         doneButton.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
@@ -257,9 +277,11 @@ public class ToolBox extends Sprite
     protected static const FLA_WIDTH :int = 485;
     protected static const PALETTE_X_OFFSET :int = 445;
     protected static const PALETTE_Y_OFFSET :int = 65;
+    protected static const BRUSH_PREVIEW_X_OFFSET :int = 430;
+    protected static const BRUSH_PREVIEW_Y_OFFSET :int = 122;
 
     protected var MIN_BRUSH_SIZE :int = 2;
-    protected var MAX_BRUSH_SIZE :int = 60;
+    protected var MAX_BRUSH_SIZE :int = 40;
 
     protected var _canvas :Canvas;
     protected var _currentSwatch :Swatch;
@@ -273,6 +295,7 @@ public class ToolBox extends Sprite
     protected var _alpha :Number = 1.0;
     protected var _fillButton :ToggleButton;
     protected var _outlineButton :ToggleButton;
+    protected var _brushPreview :Shape;
 }
 }
 
