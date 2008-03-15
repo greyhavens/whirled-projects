@@ -105,6 +105,16 @@ public class Model
         return _backgroundColor;
     }
 
+    public function setBackgroundTransparent (transparent :Boolean) :void
+    {
+        _canvases.setBackgroundTransparent(_backgroundTransparent = transparent);
+    }
+
+    public function getBackgroundTransparent () :Boolean
+    {
+        return _backgroundTransparent;
+    }
+
     protected function strokeBegun (id :String, stroke :Stroke) :void
     {
         _tempStrokesMap.put(id, stroke);
@@ -129,6 +139,9 @@ public class Model
 
     protected function serialize () :void 
     {
+        // TODO: new values to add to serialize/deserialize:
+        // - _backgroundTransparent
+
         _serializedStrokes = new ByteArray();
 
         // write model version number.
@@ -197,6 +210,7 @@ public class Model
     protected var _tempStrokes :Array = [];
     protected var _canvasStrokes :Array = [];
     protected var _backgroundColor :uint = 0xFFFFFF;
+    protected var _backgroundTransparent :Boolean = false;
 
     protected var _rnd :Random = new Random();
 
@@ -220,6 +234,13 @@ import com.threerings.graffiti.model.Stroke;
 
 class CanvasList 
 {
+    public function setBackgroundTransparent (transparent :Boolean) :void
+    {
+        for each (var canvas :Canvas in _canvases) {
+            canvas.setBackgroundTransparent(transparent);
+        }
+    }
+
     public function paintBackground (color :uint) :void
     {
         for each (var canvas :Canvas in _canvases) {

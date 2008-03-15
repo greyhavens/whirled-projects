@@ -7,8 +7,6 @@ import fl.controls.Slider;
 
 import fl.events.SliderEvent;
 
-import fl.data.DataProvider;
-
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
@@ -30,6 +28,7 @@ import com.threerings.graffiti.Canvas;
 [Event(name="colorPicked", type="ToolEvent")];
 [Event(name="brushPicked", type="ToolEvent")];
 [Event(name="backgroundColor", type="ToolEvent")];
+[Event(name="backgroundTransparency", type="ToolEvent")];
 [Event(name="clearCanvas", type="ToolEvent")];
 
 public class ToolBox extends Sprite 
@@ -37,10 +36,11 @@ public class ToolBox extends Sprite
     public static const POPUP_WIDTH :int = Canvas.CANVAS_WIDTH + TOOLBAR_WIDTH;
     public static const POPUP_HEIGHT :int = 465;
 
-    public function ToolBox (canvas :Canvas, backgroundColor :uint) 
+    public function ToolBox (canvas :Canvas, backgroundColor :uint, backgroundTransparent :Boolean) 
     {
         addChild(_canvas = canvas);
         _initialBackgroundColor = backgroundColor;
+        _initialBackgroundTransparent = backgroundTransparent;
         MultiLoader.getContents(TOOLBOX_UI, handleUILoaded, false, ApplicationDomain.currentDomain);
     }
 
@@ -120,6 +120,14 @@ public class ToolBox extends Sprite
         palette.y = ui.y + PALETTE_Y_OFFSET;
         addChild(palette);
 
+        // transparent background checkbox
+        ui.nobg_checkbox.selected = _initialBackgroundTransparent;
+        ui.nobg_checkbox.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            dispatchEvent(
+                new ToolEvent(ToolEvent.BACKGROUND_TRANSPARENCY, ui.nobg_checkbox.selected));
+        });
+
+        // brush thickness slider
         var thicknessSlider :Slider = ui.size_slider;
         thicknessSlider.liveDragging = true;
         thicknessSlider.minimum = MIN_BRUSH_SIZE;
@@ -131,6 +139,7 @@ public class ToolBox extends Sprite
             dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
         });
 
+        // brush alpha slider
         var alphaSlider :Slider = ui.alpha_slider;
         alphaSlider.liveDragging = true;
         alphaSlider.maximum = 1;
@@ -142,6 +151,7 @@ public class ToolBox extends Sprite
             dispatchEvent(new ToolEvent(ToolEvent.BRUSH_PICKED, _brush.clone()));
         });
 
+        // done button
         var doneButton :SimpleButton = ui.done_button;
         doneButton.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             dispatchEvent(new ToolEvent(ToolEvent.DONE_EDITING));
@@ -165,6 +175,7 @@ public class ToolBox extends Sprite
     protected var _brush :Brush = new Brush();
     protected var _currentSwatch :Swatch;
     protected var _initialBackgroundColor :uint;
+    protected var _initialBackgroundTransparent :Boolean;
 }
 }
 

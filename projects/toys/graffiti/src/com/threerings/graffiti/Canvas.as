@@ -2,9 +2,11 @@
 
 package com.threerings.graffiti {
 
+import flash.display.BlendMode;
 import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
+
 import flash.geom.Point;
 
 import flash.events.Event;
@@ -59,7 +61,8 @@ public class Canvas extends Sprite
             // defer adding the mouse listeners as well - we don't need them on a view-only canvas.
             addMouseListeners();
 
-            _toolBox = new ToolBox(this, _model.getBackgroundColor());
+            _toolBox = new ToolBox(this, _model.getBackgroundColor(), 
+                                   _model.getBackgroundTransparent());
             _toolBox.addEventListener(ToolEvent.BRUSH_PICKED, function (event :ToolEvent) :void {
                 _brush = event.value as Brush;
             });
@@ -70,13 +73,35 @@ public class Canvas extends Sprite
             _toolBox.addEventListener(ToolEvent.CLEAR_CANVAS, function (event :ToolEvent) :void {
                 _model.clearCanvas();
             });
+            _toolBox.addEventListener(ToolEvent.BACKGROUND_TRANSPARENCY, 
+                function (event :ToolEvent) :void {
+                    _model.setBackgroundTransparent(event.value as Boolean);
+                });
         }
 
         return _toolBox;
     }
 
+    public function setBackgroundTransparent (transparent :Boolean) :void
+    {
+        var color :uint = transparent ? 0 : _model.getBackgroundColor();
+        var g :Graphics = _background.graphics;
+        g.clear();
+        g.beginFill(color);
+        g.drawRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        g.endFill();
+        _background.blendMode = transparent ? BlendMode.SCREEN : BlendMode.NORMAL;
+    }
+
+    /**
+     * @param color if this isNaN(), the background will be made transparent.
+     */
     public function paintBackground (color :uint) :void
     {
+        if (_model.getBackgroundTransparent()) {
+            return;
+        }
+
         var g :Graphics = _background.graphics;
         g.clear();
         g.beginFill(_backgroundColor = color);
