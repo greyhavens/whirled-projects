@@ -18,6 +18,7 @@ import com.threerings.graffiti.model.OfflineModel;
 import com.threerings.graffiti.model.OnlineModel;
 
 import com.threerings.graffiti.throttle.Throttle;
+import com.threerings.graffiti.throttle.ThrottleEvent;
 
 import com.threerings.graffiti.tools.ToolBox;
 import com.threerings.graffiti.tools.ToolEvent;
@@ -29,10 +30,10 @@ public class Graffiti extends Sprite
     {
         _control = new FurniControl(this);
         if (_control.isConnected()) {
-            var throttle :Throttle = new Throttle(_control);
+            _throttle = new Throttle(_control);
             // each instance maintains a Manager.  The inControl() instance's Manager is in effect.
-            _manager = new Manager(throttle);
-            _model = new OnlineModel(throttle);
+            _manager = new Manager(_throttle);
+            _model = new OnlineModel(_throttle);
         } else {
             _model = new OfflineModel();
         }
@@ -60,8 +61,15 @@ public class Graffiti extends Sprite
         canvas.toolbox.addEventListener(ToolEvent.DONE_EDITING, function (event :ToolEvent) :void {
             _control.clearPopup();
         });
+        canvas.toolbox.addEventListener(Event.REMOVED_FROM_STAGE, function (event :Event) :void {
+            _throttle.removeEventListener(ThrottleEvent.MANAGER_MESSAGE, 
+                                          canvas.toolbox.managerMessageReceived);
+        });
         _control.showPopup(
             "Editing Graffiti", canvas.toolbox, ToolBox.POPUP_WIDTH, ToolBox.POPUP_HEIGHT, 0, 0);
+        _throttle.addEventListener(ThrottleEvent.MANAGER_MESSAGE,
+                                   canvas.toolbox.managerMessageReceived);
+
     }
 
     protected function resetCanvas (event :MouseEvent) :void
@@ -132,6 +140,7 @@ public class Graffiti extends Sprite
     protected var _control :FurniControl;
     protected var _manager :Manager;
     protected var _model :Model;
+    protected var _throttle :Throttle;
     protected var _editBtn :SimpleButton;
     protected var _managerBtn :Sprite;
     protected var _mouseOver :Boolean; 

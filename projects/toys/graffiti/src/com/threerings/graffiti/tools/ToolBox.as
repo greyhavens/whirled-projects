@@ -2,6 +2,7 @@
 
 package com.threerings.graffiti.tools {
 
+import fl.controls.CheckBox;
 import fl.controls.ComboBox;
 import fl.controls.Slider;
 
@@ -24,6 +25,9 @@ import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
 
 import com.threerings.graffiti.Canvas;
+
+import com.threerings.graffiti.throttle.AlterBackgroundMessage;
+import com.threerings.graffiti.throttle.ThrottleEvent;
 
 [Event(name="colorPicked", type="ToolEvent")];
 [Event(name="toolPicked", type="ToolEvent")];
@@ -90,6 +94,18 @@ public class ToolBox extends Sprite
 
     public function displayFillPercent (percent :Number) :void
     {
+    }
+
+    public function managerMessageReceived (event :ThrottleEvent) :void
+    {
+        if (event.message is AlterBackgroundMessage) {
+            var backgroundMessage :AlterBackgroundMessage = event.message as AlterBackgroundMessage;
+            if (backgroundMessage.type == AlterBackgroundMessage.COLOR) {
+                fillSwatch(_backgroundColorSwatch.swatchShape, backgroundMessage.value as uint);
+            } else if (backgroundMessage.type == AlterBackgroundMessage.TRANSPARENCY) {
+                _noBackgroundCheckbox.selected = backgroundMessage.value as Boolean;
+            }
+        }
     }
 
     protected function toolSettingsChanged () :void
@@ -185,6 +201,9 @@ public class ToolBox extends Sprite
             swatches[ii].mouseEnabled = false;
             var swatch :Swatch = new Swatch(swatches[ii].getChildAt(0) as Shape, types[ii]);
             buttonSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, swatch), ii == 0);
+            if (types[ii] == Swatch.BACKGROUND) {
+                _backgroundColorSwatch = swatch;
+            }
         }
         
         // fill in the current background color on the background swatch
@@ -225,11 +244,13 @@ public class ToolBox extends Sprite
         _outlineButton.selected = false;
 
         // transparent background checkbox
-        ui.nobg_checkbox.selected = _initialBackgroundTransparent;
-        ui.nobg_checkbox.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            dispatchEvent(
-                new ToolEvent(ToolEvent.BACKGROUND_TRANSPARENCY, ui.nobg_checkbox.selected));
-        });
+        _noBackgroundCheckbox = ui.nobg_checkbox;
+        _noBackgroundCheckbox.selected = _initialBackgroundTransparent;
+        _noBackgroundCheckbox.addEventListener(MouseEvent.CLICK, 
+            function (event :MouseEvent) :void {
+                dispatchEvent(new ToolEvent(
+                    ToolEvent.BACKGROUND_TRANSPARENCY, _noBackgroundCheckbox.selected));
+            });
 
         // brush thickness slider
         var thicknessSlider :Slider = ui.size_slider;
@@ -285,6 +306,7 @@ public class ToolBox extends Sprite
 
     protected var _canvas :Canvas;
     protected var _currentSwatch :Swatch;
+    protected var _backgroundColorSwatch :Swatch;
     protected var _initialBackgroundColor :uint;
     protected var _initialBackgroundTransparent :Boolean;
     protected var _currentToolType :int = 0;
@@ -296,6 +318,7 @@ public class ToolBox extends Sprite
     protected var _fillButton :ToggleButton;
     protected var _outlineButton :ToggleButton;
     protected var _brushPreview :Shape;
+    protected var _noBackgroundCheckbox :CheckBox;
 }
 }
 
