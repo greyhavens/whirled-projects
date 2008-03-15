@@ -132,7 +132,7 @@ public class ToolBox extends Sprite
         shape.graphics.endFill();
     }
 
-    protected function checkFillOutline (button :RadioButton) :void
+    protected function checkFillOutline (button :ToggleButton) :void
     {
         button.selected = !button.selected;
 
@@ -164,7 +164,7 @@ public class ToolBox extends Sprite
         for (var ii :int = 0; ii < swatches.length; ii++) {
             swatches[ii].mouseEnabled = false;
             var swatch :Swatch = new Swatch(swatches[ii].getChildAt(0) as Shape, types[ii]);
-            buttonSet.addButton(new RadioButton(buttons[ii] as SimpleButton, swatch), ii == 0);
+            buttonSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, swatch), ii == 0);
         }
         
         // fill in the current background color on the background swatch
@@ -185,19 +185,19 @@ public class ToolBox extends Sprite
         buttons = [ ui.brushtool, ui.linetool, ui.ellipsetool, ui.recttool ];
         types = [ Tool.BRUSH, Tool.LINE, Tool.ELIPSE, Tool.RECTANGLE ];
         for (ii = 0; ii < buttons.length; ii++) {
-            buttonSet.addButton(new RadioButton(buttons[ii] as SimpleButton, types[ii]), ii == 0);
+            buttonSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, types[ii]), ii == 0);
         }
 
         // fill and outline buttons
         ui.FillOnOff.overState = ui.FillOnOff.upState;
-        _fillButton = new RadioButton(ui.FillOnOff, null);
+        _fillButton = new ToggleButton(ui.FillOnOff, null);
         _fillButton.button.addEventListener(MouseEvent.MOUSE_DOWN, 
             function (event :MouseEvent) :void {
                 checkFillOutline(_fillButton);
             });
         _fillButton.selected = true;
         ui.LineOnOff.overState = ui.LineOnOff.upState;
-        _outlineButton = new RadioButton(ui.LineOnOff, null);
+        _outlineButton = new ToggleButton(ui.LineOnOff, null);
         _outlineButton.button.addEventListener(MouseEvent.MOUSE_DOWN, 
             function (event :MouseEvent) :void {
                 checkFillOutline(_outlineButton);
@@ -265,8 +265,8 @@ public class ToolBox extends Sprite
     protected var _fillColor :uint;
     protected var _thickness :int = 2;
     protected var _alpha :Number = 1.0;
-    protected var _fillButton :RadioButton;
-    protected var _outlineButton :RadioButton;
+    protected var _fillButton :ToggleButton;
+    protected var _outlineButton :ToggleButton;
 }
 }
 

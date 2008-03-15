@@ -5,9 +5,9 @@ package com.threerings.graffiti.tools {
 import flash.display.DisplayObject;
 import flash.display.SimpleButton;
 
-public class RadioButton
+public class ToggleButton
 {
-    public function RadioButton (button :SimpleButton, value :*)
+    public function ToggleButton (button :SimpleButton, value :*)
     {
         _button = button;
         _overState = _button.overState;

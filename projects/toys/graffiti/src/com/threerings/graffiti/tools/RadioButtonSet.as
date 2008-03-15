@@ -9,7 +9,7 @@ import flash.events.MouseEvent;
 
 public class RadioButtonSet extends EventDispatcher
 {
-    public function addButton (button :RadioButton, select :Boolean = false) :void
+    public function addButton (button :ToggleButton, select :Boolean = false) :void
     {
         var index :int = _buttons.length;
         _buttons.push(button);
