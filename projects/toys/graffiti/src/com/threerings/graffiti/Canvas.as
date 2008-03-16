@@ -50,7 +50,6 @@ public class Canvas extends Sprite
         addEventListener(Event.REMOVED_FROM_STAGE, function (event :Event) :void {
             _model.unregisterCanvas(thisCanvas);
         });
-        paintBackground(_model.getBackgroundColor());
     }
 
     public function get toolbox () :ToolBox
@@ -136,7 +135,13 @@ public class Canvas extends Sprite
     {
         log.debug("canvas stroke [" + this.name + ", " + stroke + "]");
 
-        // TODO
+        // this stroke is finalized, so we don't need to remember the layer it is drawn on.
+        var layer :Shape = new Shape();
+        addChild(layer);
+        stroke.tool.mouseDown(layer.graphics, stroke.getPoint(0));
+        for (var ii :int = 1; ii < stroke.getSize(); ii++) {
+            stroke.tool.dragTo(layer.graphics, stroke.getPoint(ii));
+        }
     }
 
     public function reportFillPercent (percent :Number) :void
@@ -242,7 +247,10 @@ public class Canvas extends Sprite
 
     public function clear () :void
     {
-        // TODO
+        while (numChildren > 0) {
+            removeChildAt(0);
+        }
+        addChild(_background);
     }
 
     private static const log :Log = Log.getLog(Canvas);

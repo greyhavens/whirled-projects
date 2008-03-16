@@ -4,7 +4,12 @@ package com.threerings.graffiti.model {
 
 import flash.geom.Point;
 
+import flash.utils.ByteArray;
+
 import com.threerings.util.Log;
+
+import com.threerings.graffiti.Canvas;
+import com.threerings.graffiti.Manager;
 
 import com.threerings.graffiti.throttle.AlterBackgroundMessage;
 import com.threerings.graffiti.throttle.Throttle;
@@ -24,6 +29,18 @@ public class OnlineModel extends Model
         _throttle = throttle;
         _throttle.addEventListener(ThrottleEvent.TEMP_MESSAGE, tempMessageReceived);
         _throttle.addEventListener(ThrottleEvent.MANAGER_MESSAGE, managerMessageReceived);
+
+        var bytes :ByteArray = 
+            _throttle.control.lookupMemory(Manager.MEMORY_MODEL, null) as ByteArray;
+        if (bytes != null && bytes.length != 0) {
+            deserialize(bytes);
+        }
+    }
+
+    override public function registerCanvas (canvas :Canvas) :void
+    {
+        super.registerCanvas(canvas);
+        paintCanvas(canvas);
     }
 
     override public function extendStroke (id :String, to :Point, end :Boolean = false) :void
@@ -67,6 +84,20 @@ public class OnlineModel extends Model
         super.strokeBegun(id, stroke);
         if (idFromMe(id)) {
             _throttle.pushMessage(new StrokeBeginMessage(id, stroke));
+        }
+    }
+
+    protected function paintCanvas (canvas :Canvas) :void
+    {
+        canvas.clear();
+        if (_backgroundTransparent) {
+            canvas.setBackgroundTransparent(true);
+        } else {
+            canvas.paintBackground(_backgroundColor);
+        }
+
+        for each (var stroke :Stroke in _canvasStrokes) {
+            canvas.canvasStroke(stroke);
         }
     }
 

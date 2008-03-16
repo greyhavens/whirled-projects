@@ -115,40 +115,16 @@ public class Model
         return _backgroundTransparent;
     }
 
-    protected function strokeBegun (id :String, stroke :Stroke) :void
+    public function serialize () :ByteArray 
     {
-        _tempStrokesMap.put(id, stroke);
-        _tempStrokes.push(id);
-        _canvases.tempStroke(id, stroke);
-    }
-
-    protected function removeFromTempStrokes (id :String) :void
-    {
-        _tempStrokesMap.remove(id);
-        var ii :int = _tempStrokes.indexOf(id);
-        if (ii != -1) {
-            _tempStrokes.splice(ii, 1);
-        }
-    }
-
-    protected function pushToCanvas (stroke :Stroke) :void
-    {
-        _canvasStrokes.push(stroke);
-        _canvases.canvasStroke(stroke);
-    }
-
-    protected function serialize () :void 
-    {
-        // TODO: new values to add to serialize/deserialize:
-        // - _backgroundTransparent
-
         _serializedStrokes = new ByteArray();
 
         // write model version number.
         _serializedStrokes.writeInt(MODEL_VERSION_NUMBER);
 
-        // write the background color
+        // write the background color and transparency
         _serializedStrokes.writeUnsignedInt(_backgroundColor);
+        _serializedStrokes.writeBoolean(_backgroundTransparent);
 
         // write the strokes
         var strokesBytes :ByteArray = new ByteArray();
@@ -174,9 +150,10 @@ public class Model
 
         _serializedStrokes.compress();
         _canvases.reportFillPercent(_serializedStrokes.length / MAX_STORAGE_SIZE);
+        return _serializedStrokes;
     }
 
-    protected function deserialize (bytes :ByteArray) :void
+    public function deserialize (bytes :ByteArray) :void
     {
         if (bytes == null) {
             return;
@@ -185,6 +162,7 @@ public class Model
 
         var version :int = bytes.readInt();
         _backgroundColor = bytes.readUnsignedInt();
+        _backgroundTransparent = bytes.readBoolean();
         
         var colorLUTSize :int = bytes.readInt(); 
         var colors :Array = new Array(colorLUTSize);
@@ -197,6 +175,28 @@ public class Model
         for (ii = 0; ii < numStrokes; ii++) {
             _canvasStrokes.push(Stroke.createStrokeFromBytes(bytes, colors));
         }
+    }
+
+    protected function strokeBegun (id :String, stroke :Stroke) :void
+    {
+        _tempStrokesMap.put(id, stroke);
+        _tempStrokes.push(id);
+        _canvases.tempStroke(id, stroke);
+    }
+
+    protected function removeFromTempStrokes (id :String) :void
+    {
+        _tempStrokesMap.remove(id);
+        var ii :int = _tempStrokes.indexOf(id);
+        if (ii != -1) {
+            _tempStrokes.splice(ii, 1);
+        }
+    }
+
+    protected function pushToCanvas (stroke :Stroke) :void
+    {
+        _canvasStrokes.push(stroke);
+        _canvases.canvasStroke(stroke);
     }
 
     private static const log :Log = Log.getLog(Model);
