@@ -19,6 +19,8 @@ import com.threerings.graffiti.throttle.ThrottleMessage;
 
 public class Manager
 {
+    public static const MEMORY_MODEL :String = "memoryModel";
+
     public function Manager (throttle :Throttle)
     {
         _throttle = throttle;

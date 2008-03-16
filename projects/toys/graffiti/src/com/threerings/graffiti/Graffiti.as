@@ -93,8 +93,9 @@ public class Graffiti extends Sprite
 
     protected function resetCanvas (event :MouseEvent) :void
     {
-        // TODO
-        log.debug("reset canvas");
+        if (_control.isConnected() && _control.canEditRoom()) {
+            _control.updateMemory(Manager.MEMORY_MODEL, null);
+        }
     }
 
     protected function toggleLock (event :MouseEvent) :void
