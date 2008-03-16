@@ -88,6 +88,9 @@ public class Graffiti extends Sprite
             if (_lockBtn != null) {
                 _lockBtn.selected = event.value as Boolean;
             }
+            if (event.value as Boolean) {
+                _control.clearPopup();
+            }
         }
     }
 
