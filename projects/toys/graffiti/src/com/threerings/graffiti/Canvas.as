@@ -250,6 +250,7 @@ public class Canvas extends Sprite
         while (numChildren > 0) {
             removeChildAt(0);
         }
+        addChild(mask);
         addChild(_background);
     }
 
