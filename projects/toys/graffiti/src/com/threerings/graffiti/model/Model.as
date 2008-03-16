@@ -203,7 +203,7 @@ public class Model
 
     protected static const MODEL_VERSION_NUMBER :int = 1;
 
-    protected static const MAX_STORAGE_SIZE :int = 4 * 1024; // in bytes
+    protected static const MAX_STORAGE_SIZE :int = 4080; // in bytes
 
     protected var _canvases :CanvasList = new CanvasList();
     protected var _tempStrokesMap :HashMap = new HashMap;

@@ -7,9 +7,12 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.TimerEvent;
 
+import flash.utils.ByteArray;
 import flash.utils.Timer;
 
 import com.threerings.util.Log;
+
+import com.whirled.ControlEvent;
 
 import com.threerings.graffiti.model.Model;
 import com.threerings.graffiti.model.OfflineModel;
@@ -38,6 +41,7 @@ public class Manager
         _timer.addEventListener(TimerEvent.TIMER, tick);
         _timer.start();
         _throttle.control.addEventListener(Event.UNLOAD, unload);
+        _throttle.control.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
     }
 
     public function tempMessageReceived (event :ThrottleEvent) :void
@@ -74,9 +78,21 @@ public class Manager
         }
     }
 
+    protected function memoryChanged (event :ControlEvent) :void
+    {
+        if (event.name == MEMORY_MODEL) {
+            if (event.value == null) {
+                _memoryDirty = false;
+                _model = new OfflineModel();
+            } else if (!_throttle.control.hasControl()) {
+                _model.deserialize(event.value as ByteArray);
+            }
+        }
+    }
+
     protected function tick (event :TimerEvent) :void
     {
-        if (!_memoryDirty) {
+        if (!_memoryDirty || !_throttle.control.hasControl()) {
             return;
         }
 

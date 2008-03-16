@@ -8,6 +8,8 @@ import flash.utils.ByteArray;
 
 import com.threerings.util.Log;
 
+import com.whirled.ControlEvent;
+
 import com.threerings.graffiti.Canvas;
 import com.threerings.graffiti.Manager;
 
@@ -29,6 +31,7 @@ public class OnlineModel extends Model
         _throttle = throttle;
         _throttle.addEventListener(ThrottleEvent.TEMP_MESSAGE, tempMessageReceived);
         _throttle.addEventListener(ThrottleEvent.MANAGER_MESSAGE, managerMessageReceived);
+        _throttle.control.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
 
         var bytes :ByteArray = 
             _throttle.control.lookupMemory(Manager.MEMORY_MODEL, null) as ByteArray;
@@ -84,6 +87,16 @@ public class OnlineModel extends Model
         super.strokeBegun(id, stroke);
         if (idFromMe(id)) {
             _throttle.pushMessage(new StrokeBeginMessage(id, stroke));
+        }
+    }
+
+    protected function memoryChanged (event :ControlEvent) :void
+    {
+        if (event.name == Manager.MEMORY_MODEL && event.value == null) {
+            _backgroundColor = 0xFFFFFF;
+            _backgroundTransparent = false;
+            _canvasStrokes = [];
+            _canvases.clear();
         }
     }
 

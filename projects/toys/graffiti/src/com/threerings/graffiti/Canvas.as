@@ -252,6 +252,7 @@ public class Canvas extends Sprite
         }
         addChild(mask);
         addChild(_background);
+        _layers.clear();
     }
 
     private static const log :Log = Log.getLog(Canvas);
