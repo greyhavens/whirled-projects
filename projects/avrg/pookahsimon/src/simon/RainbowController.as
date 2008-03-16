@@ -20,7 +20,7 @@ public class RainbowController
 
         if (null == g_tintMatrix) {
             g_tintMatrix = new ColorMatrix();
-            g_tintMatrix.adjustBrightness(100, 100, 100);
+            g_tintMatrix.tint(0xFFFFFF, 0.33);
         }
 
         _playerId = playerId;
