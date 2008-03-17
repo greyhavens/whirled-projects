@@ -52,6 +52,8 @@ public class OnlineModel extends Model
         if (idFromMe(id)) {
             _throttle.pushMessage(new StrokeExtendMessage(id, to));
         }
+
+        updateSizeLimit();
     }
 
     override public function endStroke (id :String) :void
@@ -63,6 +65,8 @@ public class OnlineModel extends Model
                 _throttle.pushMessage(new StrokeEndMessage(id, stroke));
             }
         }
+
+        updateSizeLimit();
     }
 
     override public function getKey () :String
@@ -98,6 +102,11 @@ public class OnlineModel extends Model
             _canvasStrokes = [];
             _canvases.clear();
         }
+    }
+
+    protected function updateSizeLimit () :void
+    {
+        _canvases.reportFillPercent(serialize(true).length / MAX_STORAGE_SIZE);
     }
 
     protected function paintCanvas (canvas :Canvas) :void

@@ -115,42 +115,53 @@ public class Model
         return _backgroundTransparent;
     }
 
-    public function serialize () :ByteArray 
+    public function serialize (includeTempStrokes :Boolean = false) :ByteArray 
     {
-        _serializedStrokes = new ByteArray();
+        var canvasBytes :ByteArray = new ByteArray();
 
         // write model version number.
-        _serializedStrokes.writeInt(MODEL_VERSION_NUMBER);
+        canvasBytes.writeInt(MODEL_VERSION_NUMBER);
 
         // write the background color and transparency
-        _serializedStrokes.writeUnsignedInt(_backgroundColor);
-        _serializedStrokes.writeBoolean(_backgroundTransparent);
+        canvasBytes.writeUnsignedInt(_backgroundColor);
+        canvasBytes.writeBoolean(_backgroundTransparent);
 
         // write the strokes
         var strokesBytes :ByteArray = new ByteArray();
-        strokesBytes.writeInt(_canvasStrokes.length); // number of strokes
+        if (includeTempStrokes) {
+            strokesBytes.writeInt(_canvasStrokes.length + _tempStrokes.length);
+        } else {
+            strokesBytes.writeInt(_canvasStrokes.length);
+        }
         var colorLUT :HashMap = new HashMap();
         for each (var stroke :Stroke in _canvasStrokes) {
             stroke.serialize(strokesBytes, colorLUT);
         }
 
+        // temp strokes
+        if (includeTempStrokes) {
+            for each (var strokeId :String in _tempStrokes) {
+                (_tempStrokesMap.get(strokeId) as Stroke).serialize(strokesBytes, colorLUT);
+            }
+        }
+
         // write the LUT
-        _serializedStrokes.writeInt(colorLUT.size());
+        canvasBytes.writeInt(colorLUT.size());
         var colors :Array = new Array(colorLUT.size());
         for each (var color :uint in colorLUT.keys()) {
             colors[colorLUT.get(color)] = color;
         }
         // now that we have the colors in key order, dump the array
         for each (color in colors) {
-            _serializedStrokes.writeUnsignedInt(color);
+            canvasBytes.writeUnsignedInt(color);
         }
 
         // append the stroke data
-        _serializedStrokes.writeBytes(strokesBytes);
+        canvasBytes.writeBytes(strokesBytes);
 
-        _serializedStrokes.compress();
-        _canvases.reportFillPercent(_serializedStrokes.length / MAX_STORAGE_SIZE);
-        return _serializedStrokes;
+        canvasBytes.compress();
+        _canvases.reportFillPercent(canvasBytes.length / MAX_STORAGE_SIZE);
+        return canvasBytes;
     }
 
     public function deserialize (bytes :ByteArray) :void
@@ -214,8 +225,6 @@ public class Model
 
     protected var _rnd :Random = new Random();
 
-    protected var _serializedStrokes :ByteArray;
- 
     protected const KEY_BITS :Array = [
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
         "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",

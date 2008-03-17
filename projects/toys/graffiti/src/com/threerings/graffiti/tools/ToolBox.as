@@ -88,6 +88,8 @@ public class ToolBox extends Sprite
 
     public function displayFillPercent (percent :Number) :void
     {
+        log.debug("displayFillPercent [" + percent + "]");
+        _sizeLimit.gotoAndStop(Math.ceil(percent * 100));
     }
 
     public function managerMessageReceived (event :ThrottleEvent) :void
@@ -276,6 +278,10 @@ public class ToolBox extends Sprite
         _brushPreview.y = ui.y + BRUSH_PREVIEW_Y_OFFSET;
         updateBrushPreview();
 
+        // size limit indicator
+        _sizeLimit = ui.sizelimit;
+        _sizeLimit.gotoAndStop(1);
+
         // done button
         var doneButton :SimpleButton = ui.done_button;
         doneButton.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
@@ -313,6 +319,7 @@ public class ToolBox extends Sprite
     protected var _outlineButton :ToggleButton;
     protected var _brushPreview :Shape;
     protected var _noBackgroundCheckbox :CheckBox;
+    protected var _sizeLimit :MovieClip;
 }
 }
 
