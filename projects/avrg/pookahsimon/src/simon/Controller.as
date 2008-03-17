@@ -297,6 +297,11 @@ public class Controller
             _expectedScores = _model.curScores.clone();
             _expectedScores.incrementScore(SimonMain.getPlayerName(_model.curState.roundWinnerId));
             this.applyStateChanges();
+
+            // are you TEH WINNAR?
+            if (_model.curState.roundWinnerId == SimonMain.localPlayerId && SimonMain.control.isConnected()) {
+                SimonMain.control.quests.completeQuest("dummyString", null, 1);
+            }
         }
 
         // start a new round soon
