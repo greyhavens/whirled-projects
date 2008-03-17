@@ -30,13 +30,12 @@ public class PropertyListener
     {
         var ix :int = evt.name.indexOf(":");
         if (ix <= 0) {
-            Game.log.debug("Couldn't find colon in property: " + evt.name);
             return;
         }
 
         var num :Number = parseInt(evt.name.slice(1, ix));
         if (isNaN(num)) {
-            Game.log.debug("Couldn't find room/player number in property: " + evt.name);
+            Game.log.debug("Couldn't find player number in property: " + evt.name);
             return;
         }
 

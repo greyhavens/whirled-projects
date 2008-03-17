@@ -69,8 +69,10 @@ public class ClipHandler extends FrameSprite
     {
         if (scene is String) {
             _scene = scenes[String(scene)];
+
         } else if (scene is Number) {
             _scene = _clip.scenes[Number(scene)];
+
         } else {
             throw new Error("Argument #1 to gotoScene() must be a String or a Number.");
         }

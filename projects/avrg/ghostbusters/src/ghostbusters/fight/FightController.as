@@ -15,9 +15,13 @@ import com.whirled.AVRGameControlEvent;
 import ghostbusters.Codes;
 import ghostbusters.Game;
 import ghostbusters.GameController;
+import ghostbusters.GameModel;
 
 public class FightController extends Controller
 {
+    /* Finishing a minigame pays 1/20th of the most we could ever want to pay for anything. */
+    public static const PAYOUT_MINIGAME :Number = 1.0/20;
+
     public static const GHOST_ATTACKED :String = "GhostAttacked";
     public static const PLAYER_ATTACKED :String = "PlayerAttacked";
 
@@ -52,6 +56,7 @@ public class FightController extends Controller
             Game.control.state.sendMessage(
                 Codes.MSG_PLAYERS_HEALED, [ Game.ourPlayerId, result.healthOutput ]);
         }
+        Game.control.quests.completeQuest("minigame", null, PAYOUT_MINIGAME);
         Game.control.playAvatarAction("Retaliate");
     }
 

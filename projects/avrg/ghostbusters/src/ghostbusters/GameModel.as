@@ -18,6 +18,12 @@ public class GameModel
     public function GameModel ()
     {
         _pp = new PropertyListener();
+
+        // TODO: fix resurrection
+        if (getPlayerHealth(Game.ourPlayerId) == 0) {
+            _pp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_MAX_HEALTH, 100);
+            _pp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_CUR_HEALTH, 100);
+        }
     }
 
     public function newRoom () :void
@@ -62,7 +68,7 @@ public class GameModel
     public function setPlayerHealth (playerId :int, health :int) :void
     {
         _pp.setProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH,
-                        Math.min(health, getPlayerMaxHealth(playerId)));
+                        Math.max(0, Math.min(health, getPlayerMaxHealth(playerId))));
     }
 
     public function getPlayerRelativeHealth (playerId :int) :Number
@@ -147,7 +153,7 @@ public class GameModel
 
     public function get ghostMaxZest () :Number
     {
-        return Number(Game.control.state.getRoomProperty(Codes.PROP_GHOST_CUR_ZEST));
+        return Number(Game.control.state.getRoomProperty(Codes.PROP_GHOST_MAX_ZEST));
     }
 
     public function set ghostMaxZest (zest :Number) :void

@@ -19,6 +19,11 @@ public class SpawnedGhost extends GhostBase
         Game.control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
+    override protected function mediaReady () :void
+    {
+        fighting();
+    }
+
     public function fighting () :void
     {
         _next = ST_FIGHT;
@@ -31,7 +36,7 @@ public class SpawnedGhost extends GhostBase
             return;
         }
         if (evt.name == Codes.MSG_TICK) {
-            Game.log.debug("Tick...");
+//            Game.log.debug("Tick...");
 
             if (Game.random.nextInt(5) == 0) {
                 var players :Array = Game.getTeam(true);

@@ -37,8 +37,10 @@ public class HUD extends Sprite
     {
         _hud = new ClipHandler(ByteArray(new Content.HUD_VISUAL()), handleHUDLoaded);
 
-        Game.control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, teamUpdated);
-        Game.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, teamUpdated);
+        Game.control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED,
+                                      function (... ignored) :void { teamUpdated(); });
+        Game.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT,
+                                      function (... ignored) :void { teamUpdated(); });
 
         Game.control.state.addEventListener(
             AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
@@ -170,6 +172,7 @@ public class HUD extends Sprite
 
         setGhostHealth(1, false);
         setGhostHealth(1, true);
+        pickLoot(0);
     }
 
     protected function placeHud () :void
@@ -238,8 +241,9 @@ public class HUD extends Sprite
         }
     }
 
-    protected function playerPropertyChanged(memberId :int, name :String, value :Object) :void
+    protected function playerPropertyChanged (memberId :int, name :String, value :Object) :void
     {
+        Game.log.debug("ppc(" + memberId + ", " + name + ", " + value + ")");
         if (name == Codes.PROP_PLAYER_CUR_HEALTH || name == Codes.PROP_PLAYER_MAX_HEALTH) {
             playerHealthUpdated(memberId);
         }

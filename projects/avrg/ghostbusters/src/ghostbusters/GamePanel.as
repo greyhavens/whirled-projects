@@ -33,6 +33,9 @@ public class GamePanel extends Sprite
         hud = new HUD();
 
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
+
+        Game.control.state.addEventListener(
+            AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
     }
 
     public function shutdown () :void
@@ -66,6 +69,13 @@ public class GamePanel extends Sprite
     {
         hud.reloadView();
         updateState();
+    }
+
+    protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
+    {
+        if (evt.name == Codes.PROP_STATE) {
+            updateState();
+        }
     }
 
     protected function updateState () :void

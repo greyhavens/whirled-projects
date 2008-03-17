@@ -38,12 +38,13 @@ public class SeekPanel extends FrameSprite
 {
     public function SeekPanel ()
     {
+        buildUI();
+
+        Game.control.state.addEventListener(
+            AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
         Game.control.state.addEventListener(
             AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
-
-        buildUI();
     }
-
     override public function hitTestPoint (
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
@@ -52,20 +53,7 @@ public class SeekPanel extends FrameSprite
 
     public function newRoom () :void
     {
-        maybeNewGhost();
-    }
-
-    protected function maybeNewGhost () :void
-    {
-        if (_ghost != null) {
-            _ghost.mask = null;
-            this.removeChild(_ghost);
-        }
-        if (Game.model.ghostId != null) {
-            _ghost = new HidingGhost(200);
-            this.addChild(_ghost);
-            _ghost.mask = _maskLayer;
-        }
+        updateGhost();
     }
 
     public function ghostPositionUpdate (pos :Point) :void
@@ -101,7 +89,24 @@ public class SeekPanel extends FrameSprite
         _ghost.appear(spawnGhost);
         _ghost.newTarget(new Point(Game.stageSize.width - 250, 100));
         _ghost.mask = null;
-        this.removeChild(_maskLayer);
+    }
+
+    // we've been added or removed or entered a new room or the ghost has changed,
+    // either way it's fine to just reset the ghost, since it's pretty much stateless
+    protected function updateGhost () :void
+    {
+        if (_ghost != null) {
+            _ghost.mask = null;
+            if (_ghost.parent == this) {
+                this.removeChild(_ghost);
+            }
+        }
+
+        if (this.parent != null && Game.model.ghostId != null) {
+            _ghost = new HidingGhost(200);
+            this.addChild(_ghost);
+            _ghost.mask = _maskLayer;
+        }
     }
 
     protected function lanternOff (lantern :Lantern) :void
@@ -120,15 +125,13 @@ public class SeekPanel extends FrameSprite
     {
         super.handleAdded();
         _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
-        _ghost.hidden();
+        updateGhost();
     }
 
     override protected function handleRemoved (... ignored) :void
     {
         super.handleRemoved();
-        if (_ghost != null) {
-            _ghost.handler.stop();
-        }
+        updateGhost();
         _lanternLoop.stop();
     }
 
@@ -259,20 +262,19 @@ public class SeekPanel extends FrameSprite
         Game.control.state.setRoomProperty(Codes.PROP_GHOST_POS, [ x, y ]);
     }
 
+    protected function messageReceived (event: AVRGameControlEvent) :void
+    {
+        if (event.name == Codes.MSG_GHOST_ZAP) {
+            ghostZapped();
+
+        }
+    }
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
         var bits :Array;
 
         if (evt.name == Codes.PROP_GHOST_ID) {
-            maybeNewGhost();
-
-        } else if (evt.name == Codes.PROP_GHOST_CUR_ZEST) { 
-            if (Game.model.ghostZest > 0) {
-                ghostZapped();
-
-            } else {
-                appearGhost();
-            }
+            updateGhost();
 
         } else if (evt.name == Codes.PROP_GHOST_POS) {
             bits = evt.value as Array;

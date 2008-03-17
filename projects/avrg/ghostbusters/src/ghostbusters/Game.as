@@ -5,9 +5,12 @@ package ghostbusters {
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
-import flash.geom.Rectangle;
 
 import flash.events.Event;
+
+import flash.geom.Rectangle;
+
+import flash.utils.getTimer;
 
 import com.whirled.AVRGameAvatar;
 import com.whirled.AVRGameControl;
@@ -89,6 +92,13 @@ public class Game extends Sprite
             control.state.setProperty(Codes.PROP_TICKER_RUNNING, true, false);
             control.startTicker(Codes.MSG_TICK, 1000);
         }
+    }
+
+    public static function profile (f :Function) :void
+    {
+        var t :Number = getTimer();
+        f();
+        log.debug("Profiling(" + f + ") = " + (getTimer() - t));
     }
 
     public static function getTeam (excludeDead :Boolean = false) :Array

@@ -124,6 +124,7 @@ public class FightPanel extends FrameSprite
         if (_ghost != null && _ghost.parent != null) {
             var panel :DisplayObject = this;
             _ghost.triumph(function () :void {
+                Game.log.debug("Executing END_FIGHT...");
                 CommandEvent.dispatch(panel, GameController.END_FIGHT);
             });
         }
@@ -149,21 +150,20 @@ public class FightPanel extends FrameSprite
     public function newRoom () :void
     {
         _battleLoop = Sound(new Content.BATTLE_LOOP_AUDIO()).play();
-        maybeNewGhost();
+        updateGhost();
     }
 
     override protected function handleAdded (... ignored) :void
     {
         super.handleAdded();
+        updateGhost();
 //        Game.control.addEventListener(AVRGameControlEvent.PLAYER_CHANGED, playerChanged);
     }
 
     override protected function handleRemoved (... ignored) :void
     {
         super.handleRemoved();
-        if (_ghost != null) {
-            _ghost.handler.stop();
-        }
+        updateGhost();
         _battleLoop.stop();
 //        Game.control.removeEventListener(AVRGameControlEvent.PLAYER_CHANGED, playerChanged);
     }
@@ -186,7 +186,8 @@ public class FightPanel extends FrameSprite
             Game.log.debug("Frame handler running: " + this);
         }
 
-        updateSpotlights(Game.getTeam());
+//        Game.profile(updateSpotlights);
+        updateSpotlights();
 
         if (_minigame != null) {
             if (_minigame.currentGame == null) {
@@ -204,8 +205,10 @@ public class FightPanel extends FrameSprite
         }
     }
 
-    protected function updateSpotlights (team :Array) :void
+    protected function updateSpotlights () :void
     {
+        var team :Array = Game.getTeam(false);
+
         // TODO: maintain our own list, calling this 30 times a second is rather silly
         for (var ii :int = 0; ii < team.length; ii ++) {
             var playerId :int = team[ii] as int;
@@ -234,18 +237,22 @@ public class FightPanel extends FrameSprite
         // TODO: remove spotlights when people leave
     }
 
-    protected function maybeNewGhost () :void
+    // we've been added or removed or entered a new room or the ghost has changed,
+    // either way it's fine to just reset the ghost, since it's pretty much stateless
+    protected function updateGhost () :void
     {
         if (_ghost != null) {
-            this.removeChild(_ghost);
-            _ghost = null;
+            _ghost.handler.stop();
+            if (_ghost.parent == this) {
+                this.removeChild(_ghost);
+            }
         }
-        if (Game.model.ghostId != null) {
+
+        if (this.parent != null && Game.model.ghostId != null) {
             _ghost = new SpawnedGhost();
             _ghost.x = Game.stageSize.width - 250;
             _ghost.y = 100;
             this.addChild(_ghost);
-            _ghost.fighting();        
         }
     }
 
@@ -271,7 +278,7 @@ public class FightPanel extends FrameSprite
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
         if (evt.name == Codes.PROP_GHOST_ID) {
-            maybeNewGhost();
+            updateGhost();
         }
     }
 

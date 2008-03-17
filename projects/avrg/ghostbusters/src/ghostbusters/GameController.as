@@ -74,8 +74,10 @@ public class GameController extends Controller
 
     public function handleEndFight () :void
     {
+        Game.log.debug("handleEndFight(" + Game.control.hasControl() + ")");
         // TODO: we probably want a delay before another ghost is available
         if (Game.control.hasControl()) {
+            Game.model.ghostId = null;
             Game.model.state = GameModel.STATE_SEEKING;
         }
     }
