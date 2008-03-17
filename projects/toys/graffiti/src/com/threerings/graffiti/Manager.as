@@ -36,6 +36,10 @@ public class Manager
 
         // the manager maintains an offline model that is what gets serialized into the item memory
         _model = new OfflineModel();
+        var bytes :ByteArray = _throttle.control.lookupMemory(MEMORY_MODEL, null) as ByteArray;
+        if (bytes != null) {
+            _model.deserialize(bytes);
+        }
 
         _timer = new Timer(MEMORY_UPDATE_TIMING);
         _timer.addEventListener(TimerEvent.TIMER, tick);
