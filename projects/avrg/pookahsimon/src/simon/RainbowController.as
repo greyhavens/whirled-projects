@@ -9,6 +9,7 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 import flash.geom.Point;
+import flash.media.Sound;
 import flash.media.SoundChannel;
 import flash.utils.Timer;
 
@@ -154,7 +155,7 @@ public class RainbowController
             _finalNoteIndex = noteIndex;
         }
 
-        this.playNoteAnimation(noteIndex);
+        this.playNoteAnimation(noteIndex, success);
 
         log.info("note " + noteIndex + " played. " + (success ? "success!" : "fail!"));
         if (playerTurnOver) {
@@ -183,9 +184,11 @@ public class RainbowController
         }
     }
 
-    protected function playNoteAnimation (noteIndex :int) :void
+    protected function playNoteAnimation (noteIndex :int, success :Boolean) :void
     {
         this.stopNoteAnimation();
+
+        Sound(success ? new RAINBOW_SOUNDS[noteIndex] : new Resources.SFX_FAIL).play();
 
         if (noteIndex >= 0 && noteIndex < _rainbowBands.length) {
             _noteAnimationIndex = noteIndex;
@@ -263,6 +266,16 @@ public class RainbowController
         "inst_b",
         "inst_i",
         "inst_v",
+    ];
+
+    protected static const RAINBOW_SOUNDS :Array = [
+        Resources.SFX_RED,
+        Resources.SFX_ORANGE,
+        Resources.SFX_YELLOW,
+        Resources.SFX_GREEN,
+        Resources.SFX_BLUE,
+        Resources.SFX_INDIGO,
+        Resources.SFX_VIOLET,
     ];
 
     protected static var g_tintMatrix :ColorMatrix = null;

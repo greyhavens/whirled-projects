@@ -55,7 +55,7 @@ public class SimonMain extends Sprite
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
 
         resourcesDomain = new ApplicationDomain();
-        MultiLoader.getLoaders(SWF_RAINBOW, handleResourcesLoaded, false, resourcesDomain);
+        MultiLoader.getLoaders(Resources.SWF_RAINBOW, handleResourcesLoaded, false, resourcesDomain);
     }
 
     protected function handleResourcesLoaded (results :Object) :void
@@ -132,9 +132,6 @@ public class SimonMain extends Sprite
 
     protected var _addedToStage :Boolean;
     protected var _resourcesLoaded :Boolean;
-
-    [Embed(source="../../rsrc/pookah_rainbow.swf", mimeType="application/octet-stream")]
-    protected static const SWF_RAINBOW :Class;
 }
 
 }
