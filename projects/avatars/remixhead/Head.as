@@ -50,6 +50,7 @@ public class Head extends Sprite
             var spr :Sprite = new Sprite();
             spr.graphics.beginFill(0xFF0000);
             spr.graphics.drawEllipse(0, 0, WIDTH, HEIGHT);
+            spr.graphics.endFill();
             actualWidth = WIDTH;
             actualHeight = HEIGHT;
             head = spr;
