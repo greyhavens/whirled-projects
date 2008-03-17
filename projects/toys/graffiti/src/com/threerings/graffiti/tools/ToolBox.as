@@ -39,11 +39,13 @@ public class ToolBox extends Sprite
     public static const POPUP_WIDTH :int = Canvas.CANVAS_WIDTH + TOOLBAR_WIDTH;
     public static const POPUP_HEIGHT :int = 465;
 
-    public function ToolBox (canvas :Canvas, backgroundColor :uint, backgroundTransparent :Boolean) 
+    public function ToolBox (canvas :Canvas, backgroundColor :uint, backgroundTransparent :Boolean,
+        fillPercent :Number) 
     {
         addChild(_canvas = canvas);
         _initialBackgroundColor = backgroundColor;
         _initialBackgroundTransparent = backgroundTransparent;
+        _initialFillPercent = fillPercent;
         MultiLoader.getContents(TOOLBOX_UI, handleUILoaded, false, ApplicationDomain.currentDomain);
     }
 
@@ -96,7 +98,6 @@ public class ToolBox extends Sprite
 
     public function displayFillPercent (percent :Number) :void
     {
-        log.debug("displayFillPercent [" + percent + "]");
         _sizeLimit.gotoAndStop(Math.ceil(percent * 100));
     }
 
@@ -289,7 +290,7 @@ public class ToolBox extends Sprite
 
         // size limit indicator
         _sizeLimit = ui.sizelimit;
-        _sizeLimit.gotoAndStop(1);
+        _sizeLimit.gotoAndStop(Math.ceil(_initialFillPercent * 100));
 
         // done button
         var doneButton :SimpleButton = ui.done_button;
@@ -318,11 +319,12 @@ public class ToolBox extends Sprite
     protected var _backgroundColorSwatch :Swatch;
     protected var _initialBackgroundColor :uint;
     protected var _initialBackgroundTransparent :Boolean;
+    protected var _initialFillPercent :Number;
     protected var _currentToolType :int = 0;
     protected var _brushColor :uint;
     protected var _outlineColor :uint;
     protected var _fillColor :uint;
-    protected var _thickness :int = 2;
+    protected var _thickness :int = 10;
     protected var _alpha :Number = 1.0;
     protected var _fillButton :ToggleButton;
     protected var _outlineButton :ToggleButton;

@@ -63,7 +63,8 @@ public class Canvas extends Sprite
             addMouseListeners();
 
             _toolBox = new ToolBox(this, _model.getBackgroundColor(), 
-                                   _model.getBackgroundTransparent());
+                                   _model.getBackgroundTransparent(), 
+                                   _model.calculateFullPercent());
             _toolBox.addEventListener(ToolEvent.TOOL_PICKED, function (event :ToolEvent) :void {
                 _tool = event.value as Tool;
             });

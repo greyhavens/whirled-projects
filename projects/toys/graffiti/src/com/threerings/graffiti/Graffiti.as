@@ -79,7 +79,6 @@ public class Graffiti extends Sprite
             "Editing Graffiti", canvas.toolbox, ToolBox.POPUP_WIDTH, ToolBox.POPUP_HEIGHT, 0, 0);
         _throttle.addEventListener(ThrottleEvent.MANAGER_MESSAGE,
                                    canvas.toolbox.managerMessageReceived);
-
     }
     
     protected function memoryChanged (event :ControlEvent) :void

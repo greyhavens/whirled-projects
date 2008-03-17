@@ -188,6 +188,11 @@ public class Model
         }
     }
 
+    public function calculateFullPercent () :Number
+    {
+        return serialize().length / MAX_STORAGE_SIZE;
+    }
+
     protected function strokeBegun (id :String, stroke :Stroke) :void
     {
         _tempStrokesMap.put(id, stroke);
