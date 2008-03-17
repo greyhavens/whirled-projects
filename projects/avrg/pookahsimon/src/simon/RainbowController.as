@@ -208,11 +208,6 @@ public class RainbowController
     {
         _noteAnimationTimer.stop();
 
-        if (null != _noteAnimationSoundChannel) {
-            _noteAnimationSoundChannel.stop();
-            _noteAnimationSoundChannel = null;
-        }
-
         if (_noteAnimationIndex >= 0) {
             (_rainbowBands[_noteAnimationIndex] as MovieClip).filters = [ g_tintMatrix.createFilter() ];
             _noteAnimationIndex = -1;
@@ -251,7 +246,6 @@ public class RainbowController
     protected var _remainingPattern :Array;
 
     protected var _noteAnimationTimer :Timer;
-    protected var _noteAnimationSoundChannel :SoundChannel;
     protected var _noteAnimationIndex :int = -1;
 
     protected var _rainbowBands :Array = [];
