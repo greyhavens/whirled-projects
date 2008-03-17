@@ -93,6 +93,11 @@ public class SharedState
         return ba;
     }
 
+    public function toString () :String
+    {
+        return "[gameState: " + gameState + ", curPlayerIdx: " + curPlayerIdx + "]";
+    }
+
     public static function fromBytes (ba :ByteArray) :SharedState
     {
         if (null == ba) {

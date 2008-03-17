@@ -70,7 +70,7 @@ public class Controller
         // so that it is prepared to take over as the
         // authoritative client at any time.
 
-        if (SimonMain.control.isConnected() && SimonMain.control.hasControl()) {
+        if (SimonMain.control.isConnected() && SimonMain.control.hasControl() && SimonMain.model.curState.gameState != SharedState.INVALID_STATE) {
             // try to reset the state when we first enter a game, in case
             // there's a current game in progress that isn't controlled by anybody
             _expectedState = new SharedState();
