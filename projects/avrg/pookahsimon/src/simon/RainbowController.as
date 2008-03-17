@@ -157,10 +157,10 @@ public class RainbowController
 
         this.playNoteAnimation(noteIndex, success);
 
-        log.info("note " + noteIndex + " played. " + (success ? "success!" : "fail!"));
+        /*log.info("note " + noteIndex + " played. " + (success ? "success!" : "fail!"));
         if (playerTurnOver) {
             log.info("end of turn");
-        }
+        }*/
 
     }
 
