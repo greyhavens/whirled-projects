@@ -10,7 +10,7 @@ public class Constants
     public static const FORCE_SINGLEPLAYER :Boolean = false;
 
     // cosmetic bits
-    public static const QUIT_BUTTON_LOC :Point = new Point(400, 360);
+    public static const QUIT_BUTTON_LOC :Point = new Point(0, 0);
     public static const STATUS_TEXT_LOC :Point = new Point(50, 400);
     public static const SCOREBOARD_LOC :Point = new Point(500, 10);
     public static const PLAYER_LIST_LOC :Point = new Point(500, 200);
@@ -18,7 +18,7 @@ public class Constants
     // gameplay bits
     public static const NEW_ROUND_DELAY_S :Number = 5;
     public static const NUM_SCOREBOARD_NAMES :int = 5;
-    public static const MIN_PLAYERS_TO_START :int = 2;
+    public static const MIN_MP_PLAYERS_TO_START :int = 2;
 
     // network bits
     public static const PROP_STATE :String = "p_state";

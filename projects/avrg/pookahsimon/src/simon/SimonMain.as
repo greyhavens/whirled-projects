@@ -31,6 +31,11 @@ public class SimonMain extends Sprite
         return SimonMain.getPlayerName(localPlayerId);
     }
 
+    public static function get minPlayersToStart () :int
+    {
+        return (Constants.FORCE_SINGLEPLAYER || !control.isConnected() ? 1 : Constants.MIN_MP_PLAYERS_TO_START);
+    }
+
     public function SimonMain ()
     {
         log.info("Simon verson " + Constants.VERSION);

@@ -247,7 +247,7 @@ public class Controller
             _expectedState.gameState = SharedState.WAITING_FOR_GAME_START;
 
             this.applyStateChanges();
-        } else if (SimonMain.model.curState.players.length == 1 && Constants.MIN_PLAYERS_TO_START > 1) {
+        } else if (SimonMain.model.curState.players.length == 1 && SimonMain.minPlayersToStart > 1) {
             _expectedState = SimonMain.model.curState.clone();
             _expectedState.gameState = SharedState.WE_HAVE_A_WINNER;
             _expectedState.roundWinnerId = (_expectedState.players.length > 0 ? _expectedState.players[0] : 0);
@@ -311,7 +311,7 @@ public class Controller
             break;
 
         case SharedState.WAITING_FOR_GAME_START:
-            _statusText.text = "Waiting to start (players: " + SimonMain.model.getPlayerOids().length + "/" + Constants.MIN_PLAYERS_TO_START + ")";
+            _statusText.text = "Waiting to start (players: " + SimonMain.model.getPlayerOids().length + "/" + SimonMain.minPlayersToStart + ")";
             break;
 
         case SharedState.PLAYING_GAME:
@@ -341,7 +341,7 @@ public class Controller
 
     protected function get canStartGame () :Boolean
     {
-        return (SimonMain.model.getPlayerOids().length >= Constants.MIN_PLAYERS_TO_START);
+        return (SimonMain.model.getPlayerOids().length >= SimonMain.minPlayersToStart);
     }
 
     protected function startNextGame () :void

@@ -149,15 +149,11 @@ public class RainbowController
         }
 
         if (playerTurnOver) {
-            // tell the controller we need a state change
-            if (success) {
-                SimonMain.controller.currentPlayerTurnSuccess(noteIndex);
-            } else {
-                SimonMain.controller.currentPlayerTurnFailure();
-            }
+            _finalNotePlayed = true;
+            _success = success;
+            _finalNoteIndex = noteIndex;
         }
 
-        // @TODO - play some animation here
         this.playNoteAnimation(noteIndex);
 
         log.info("note " + noteIndex + " played. " + (success ? "success!" : "fail!"));
@@ -167,9 +163,24 @@ public class RainbowController
 
     }
 
+    protected function reportSuccessOrFailure () :void
+    {
+        // tell the controller we need a state change
+        if (_success) {
+            SimonMain.controller.currentPlayerTurnSuccess(_finalNoteIndex);
+        } else {
+            SimonMain.controller.currentPlayerTurnFailure();
+        }
+    }
+
     protected function noteAnimationTimerExpired (e :Event) :void
     {
         this.stopNoteAnimation();
+
+        // if the final note was just played, play the outro animation and report success or failure
+        if (_finalNotePlayed) {
+            this.playRainbowAnimation("rainbow_out", reportSuccessOrFailure);
+        }
     }
 
     protected function playNoteAnimation (noteIndex :int) :void
@@ -182,6 +193,11 @@ public class RainbowController
 
             _noteAnimationTimer.reset();
             _noteAnimationTimer.start();
+        }
+
+        // disable mouse events while the note animation is playing
+        if (null != _curAnim) {
+            _curAnim.mouseChildren = false;
         }
     }
 
@@ -197,6 +213,11 @@ public class RainbowController
         if (_noteAnimationIndex >= 0) {
             (_rainbowBands[_noteAnimationIndex] as MovieClip).filters = [ g_tintMatrix.createFilter() ];
             _noteAnimationIndex = -1;
+        }
+
+        // re-enable mouse events at note animation completion
+        if (null != _curAnim) {
+            _curAnim.mouseChildren = true;
         }
     }
 
@@ -216,6 +237,10 @@ public class RainbowController
     {
         return (_playerId == SimonMain.localPlayerId);
     }
+
+    protected var _finalNotePlayed :Boolean;
+    protected var _success :Boolean;
+    protected var _finalNoteIndex :int;
 
     protected var _playerId :int;
     protected var _animHandler :AnimationHandler;
@@ -242,7 +267,7 @@ public class RainbowController
 
     protected static var g_tintMatrix :ColorMatrix = null;
 
-    protected static const NOTE_TIMER_LENGTH_MS :Number = 2 * 1000;
+    protected static const NOTE_TIMER_LENGTH_MS :Number = 1 * 1000;
 }
 
 }
