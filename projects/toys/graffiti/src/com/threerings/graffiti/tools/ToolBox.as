@@ -29,7 +29,7 @@ import com.threerings.graffiti.Canvas;
 import com.threerings.graffiti.throttle.AlterBackgroundMessage;
 import com.threerings.graffiti.throttle.ThrottleEvent;
 
-[Event(name="colorPicked", type="ToolEvent")];
+[Event(name="colorPicking", type="ToolEvent")];
 [Event(name="toolPicked", type="ToolEvent")];
 [Event(name="backgroundColor", type="ToolEvent")];
 [Event(name="backgroundTransparency", type="ToolEvent")];
@@ -49,6 +49,12 @@ public class ToolBox extends Sprite
 
     public function pickColor (color :uint) :void
     {
+        dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKING, false));
+        _swatchSet.deactivateCurrentSelection();
+        if (_currentSwatch == null) {
+            return;
+        }
+
         fillSwatch(_currentSwatch.swatchShape, color);
 
         switch (_currentSwatch.type) {
@@ -74,6 +80,8 @@ public class ToolBox extends Sprite
         default:
             log.debug("Unknown swatch type [" + _currentSwatch.type + "]");
         }
+
+        _currentSwatch = null;
     }
     
     public function hoverColor (color :uint) :void
@@ -185,9 +193,10 @@ public class ToolBox extends Sprite
         addChild(ui);
         
         // initialize the swatches
-        var buttonSet :RadioButtonSet = new RadioButtonSet();
-        buttonSet.addEventListener(RadioEvent.BUTTON_SELECTED, function (event :RadioEvent) :void {
+        _swatchSet = new RadioButtonSet();
+        _swatchSet.addEventListener(RadioEvent.BUTTON_SELECTED, function (event :RadioEvent) :void {
             _currentSwatch = event.value as Swatch;
+            dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKING, true));
         });
         var swatches :Array = 
             [ ui.brushcolor_swatch, ui.bgcolor_swatch, ui.fillcolor_swatch, ui.linecolor_swatch ];
@@ -196,7 +205,7 @@ public class ToolBox extends Sprite
         for (var ii :int = 0; ii < swatches.length; ii++) {
             swatches[ii].mouseEnabled = false;
             var swatch :Swatch = new Swatch(swatches[ii].getChildAt(0) as Shape, types[ii]);
-            buttonSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, swatch), ii == 0);
+            _swatchSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, swatch), ii == 0);
             if (types[ii] == Swatch.BACKGROUND) {
                 _backgroundColorSwatch = swatch;
             }
@@ -212,7 +221,7 @@ public class ToolBox extends Sprite
         addChild(palette);
 
         // set up tool radio
-        buttonSet = new RadioButtonSet();
+        var buttonSet :RadioButtonSet = new RadioButtonSet();
         buttonSet.addEventListener(RadioEvent.BUTTON_SELECTED, function (event :RadioEvent) :void {
             _currentToolType = event.value as int;
             toolSettingsChanged();
@@ -320,6 +329,7 @@ public class ToolBox extends Sprite
     protected var _brushPreview :Shape;
     protected var _noBackgroundCheckbox :CheckBox;
     protected var _sizeLimit :MovieClip;
+    protected var _swatchSet :RadioButtonSet;
 }
 }
 

@@ -21,6 +21,16 @@ public class RadioButtonSet extends EventDispatcher
         }
     }
 
+    public function deactivateCurrentSelection () :void
+    {
+        if (_selected == -1) {
+            return;
+        }
+
+        _buttons[_selected].selected = false;
+        _selected = -1;
+    }
+
     protected function buttonClicked (index :int) :void
     {
         if (index == _selected) {
