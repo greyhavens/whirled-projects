@@ -7,6 +7,7 @@ import flash.geom.Point;
 import flash.utils.ByteArray;
 
 import com.threerings.util.HashMap;
+import com.threerings.util.Log;
 
 import com.threerings.graffiti.tools.BrushTool;
 import com.threerings.graffiti.tools.Tool;
@@ -22,15 +23,21 @@ public class Stroke
 
     public function toString () :String
     {
-        return "Stroke [" + _points[0] + ", " + _points[_points.length - 1] + ", " +
+        return "Stroke [" + _id + ", " + _points[0] + ", " + _points[_points.length - 1] + ", " +
             _points.length + "]"
     }
 
-    public function Stroke (from :Point, to :Point, tool :Tool)
+    public function Stroke (from :Point, to :Point, tool :Tool, id :String = null)
     {
+        _id = id;
         _tool = tool;
         _points.push(from);
         _points.push(to);
+    }
+
+    public function get id () :String
+    {
+        return _id;
     }
 
     public function get tool () :Tool
@@ -63,9 +70,19 @@ public class Stroke
     public function serialize (bytes :ByteArray, colorLUT :HashMap = null) :void
     {
         // serialize format:
+        //  - boolean idExists
+        //    - if idExists, 4 UTF-8 bytes for the key
         //  - tool
         //  - length (number of points including start)
         //  - continuation points in offset x and y values
+
+        bytes.writeBoolean(_id != null);
+        if (_id != null) {
+            if (_id.length != 4) {
+                log.warning("Encoding id with length != 4. Danger! [" + _id + "]");
+            }
+            bytes.writeUTFBytes(_id);
+        }
 
         _tool.serialize(bytes, colorLUT);
 
@@ -84,6 +101,8 @@ public class Stroke
 
     protected function deserialize (bytes :ByteArray, colorLUT :Array) :void
     {
+        _id = bytes.readBoolean() ? bytes.readUTFBytes(4) : null;
+
         _tool = Tool.createToolFromBytes(bytes, colorLUT);
 
         var length :int = bytes.readInt();
@@ -100,6 +119,9 @@ public class Stroke
         }
     }
 
+    private static const log :Log = Log.getLog(Stroke);
+
+    protected var _id :String;
     protected var _points :Array = [];
     protected var _tool :Tool = new BrushTool();
 }

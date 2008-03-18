@@ -62,7 +62,7 @@ public class OnlineModel extends Model
         if (idFromMe(id)) {
             var stroke :Stroke = _tempStrokesMap.get(id);
             if (stroke != null) {
-                _throttle.pushMessage(new StrokeEndMessage(id, stroke));
+                _throttle.pushMessage(new StrokeEndMessage(stroke));
             }
         }
 
@@ -71,8 +71,13 @@ public class OnlineModel extends Model
 
     override public function getKey () :String
     {
-        // in the online model, keys are prepended with the instance id
-        return _throttle.control.getInstanceId() + ":" + super.getKey();
+        // In the online model, keys are prepended with the instance id.  We want to limit keys
+        // to a length of 4 characters for encoding reasons, so we're limiting the prepended 
+        // encoded instanceId space to KEY_BITS.length ^ 2, which is 3844.  If two instances
+        // are active that have the same instance id mod 3844, strange things could happen during
+        // undo.  That's not very likely, so we'll punt on it for now.
+        var instanceId :int = _throttle.control.getInstanceId() % Math.pow(KEY_BITS.length, 2);
+        return getKeyString(instanceId) + super.getKey();
     }
 
     override public function setBackgroundColor (color :uint) :void
@@ -86,11 +91,11 @@ public class OnlineModel extends Model
             new AlterBackgroundMessage(AlterBackgroundMessage.TRANSPARENCY, transparent));
     }
 
-    override protected function strokeBegun (id :String, stroke :Stroke) :void
+    override protected function strokeBegun (stroke :Stroke) :void
     {
-        super.strokeBegun(id, stroke);
-        if (idFromMe(id)) {
-            _throttle.pushMessage(new StrokeBeginMessage(id, stroke));
+        super.strokeBegun(stroke);
+        if (idFromMe(stroke.id)) {
+            _throttle.pushMessage(new StrokeBeginMessage(stroke));
         }
     }
 
@@ -123,8 +128,10 @@ public class OnlineModel extends Model
         }
     }
 
-    protected function idFromMe (id :String) :Boolean {
-        return id.indexOf(_throttle.control.getInstanceId() + ":") != -1;
+    protected function idFromMe (id :String) :Boolean 
+    {
+        var instanceId :int = _throttle.control.getInstanceId() % Math.pow(KEY_BITS.length, 2);
+        return id.indexOf(getKeyString(instanceId)) == 0;
     }
 
     protected function tempMessageReceived (event :ThrottleEvent) :void
@@ -141,7 +148,7 @@ public class OnlineModel extends Model
 
         log.debug("processing message [" + message + "]");
         if (strokeMessage is StrokeBeginMessage) {
-            strokeBegun(strokeMessage.strokeId, (strokeMessage as StrokeBeginMessage).stroke);
+            strokeBegun((strokeMessage as StrokeBeginMessage).stroke);
         } else if (strokeMessage is StrokeExtendMessage) {
             extendStroke(strokeMessage.strokeId, (strokeMessage as StrokeExtendMessage).to);
         } else if (strokeMessage is StrokeEndMessage) {

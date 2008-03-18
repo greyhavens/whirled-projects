@@ -10,22 +10,20 @@ public class StrokeEndMessage implements ThrottleStrokeMessage
 {
     public static function deserialize (bytes :ByteArray) :StrokeEndMessage
     {
-        var message :StrokeEndMessage = new StrokeEndMessage(null, null);
-        message._id = bytes.readObject() as String;
+        var message :StrokeEndMessage = new StrokeEndMessage(null);
         message._stroke = Stroke.createStrokeFromBytes(bytes);
         return message;
     }
 
-    public function StrokeEndMessage (id :String, stroke :Stroke)
+    public function StrokeEndMessage (stroke :Stroke)
     {
-        _id = id;
         _stroke = stroke;
     }
 
     // from ThrottleStrokeMessage
     public function get strokeId () :String
     {
-        return _id;
+        return _stroke.id;
     }
 
     public function get stroke () :Stroke 
@@ -36,11 +34,9 @@ public class StrokeEndMessage implements ThrottleStrokeMessage
     // from ThrottleMessage
     public function serialize (bytes :ByteArray) :void
     {
-        bytes.writeObject(_id);
         _stroke.serialize(bytes);
     }
 
-    protected var _id :String;
     protected var _stroke :Stroke;
 }
 }

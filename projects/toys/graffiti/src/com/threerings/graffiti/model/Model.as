@@ -35,7 +35,7 @@ public class Model
             return;
         }
 
-        strokeBegun(id, new Stroke(from, to, tool));
+        strokeBegun(new Stroke(from, to, tool, id));
     }
 
     public function extendStroke (id :String, to :Point, end :Boolean = false) :void
@@ -85,14 +85,11 @@ public class Model
 
     public function getKey () :String
     {
-        var key :String;
-        do {
-            key = KEY_BITS[_rnd.nextInt(KEY_BITS.length)] +
-                KEY_BITS[_rnd.nextInt(KEY_BITS.length)] +
-                KEY_BITS[_rnd.nextInt(KEY_BITS.length)];
-        } while (_tempStrokesMap.get(key) != null);
-
-        return key;
+        // this assumes we'll never give out more keys than KEY_BITS.length ^ 2, which is
+        // 3844.  Since our current space is limited to 4k, this is a safe assumption.  If in the
+        // future we're given more space, then we won't have to be so anal about key encoding
+        // length and we can extend the length of the key to deal with more stroke storage space.
+        return getKeyString(_keys++);
     }
 
     public function setBackgroundColor (color :uint) :void
@@ -171,20 +168,25 @@ public class Model
         }
         bytes.uncompress();
 
-        var version :int = bytes.readInt();
-        _backgroundColor = bytes.readUnsignedInt();
-        _backgroundTransparent = bytes.readBoolean();
-        
-        var colorLUTSize :int = bytes.readInt(); 
-        var colors :Array = new Array(colorLUTSize);
-        for (var ii :int = 0; ii < colorLUTSize; ii++) {
-            colors[ii] = bytes.readUnsignedInt();
-        }
+        try {
+            var version :int = bytes.readInt();
+            _backgroundColor = bytes.readUnsignedInt();
+            _backgroundTransparent = bytes.readBoolean();
+            
+            var colorLUTSize :int = bytes.readInt(); 
+            var colors :Array = new Array(colorLUTSize);
+            for (var ii :int = 0; ii < colorLUTSize; ii++) {
+                colors[ii] = bytes.readUnsignedInt();
+            }
 
-        _canvasStrokes = [];
-        var numStrokes :int = bytes.readInt();
-        for (ii = 0; ii < numStrokes; ii++) {
-            _canvasStrokes.push(Stroke.createStrokeFromBytes(bytes, colors));
+            _canvasStrokes = [];
+            var numStrokes :int = bytes.readInt();
+            for (ii = 0; ii < numStrokes; ii++) {
+                _canvasStrokes.push(Stroke.createStrokeFromBytes(bytes, colors));
+            }
+        } catch (err :Error) {
+            log.warning("Unrecoverable error in deserialization!  This Model is not valid! [" +
+                err + "]");
         }
     }
 
@@ -193,11 +195,11 @@ public class Model
         return serialize().length / MAX_STORAGE_SIZE;
     }
 
-    protected function strokeBegun (id :String, stroke :Stroke) :void
+    protected function strokeBegun (stroke :Stroke) :void
     {
-        _tempStrokesMap.put(id, stroke);
-        _tempStrokes.push(id);
-        _canvases.tempStroke(id, stroke);
+        _tempStrokesMap.put(stroke.id, stroke);
+        _tempStrokes.push(stroke.id);
+        _canvases.tempStroke(stroke.id, stroke);
     }
 
     protected function removeFromTempStrokes (id :String) :void
@@ -215,11 +217,27 @@ public class Model
         _canvases.canvasStroke(stroke);
     }
 
+    protected function getKeyString (keyValue :int) :String
+    {
+        var keyBit0 :int = keyValue % KEY_BITS.length;
+        var keyBit1 :int = Math.floor(keyValue / KEY_BITS.length);
+        var key :String = KEY_BITS[keyBit1] + KEY_BITS[keyBit0];
+        return key;
+    }
+
     private static const log :Log = Log.getLog(Model);
 
     protected static const MODEL_VERSION_NUMBER :int = 1;
 
     protected static const MAX_STORAGE_SIZE :int = 4080; // in bytes
+
+    protected static const KEY_BITS :Array = [
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+        "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+    ];
 
     protected var _canvases :CanvasList = new CanvasList();
     protected var _tempStrokesMap :HashMap = new HashMap;
@@ -227,16 +245,7 @@ public class Model
     protected var _canvasStrokes :Array = [];
     protected var _backgroundColor :uint = 0xFFFFFF;
     protected var _backgroundTransparent :Boolean = false;
-
-    protected var _rnd :Random = new Random();
-
-    protected const KEY_BITS :Array = [
-        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-        "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-    ];
+    protected var _keys :int = 0;
 }
 }
 
