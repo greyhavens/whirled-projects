@@ -25,6 +25,6 @@ for filename in files:
 			continue;
 			
 		print '[Embed(source="../../rsrc/items/' + filename + '", mimeType="application/octet-stream")]'
-		print "public static const " + prefix + removeChars(root, "_").upper() + " :Class;\n"
+		print "public static const " + prefix + removeChars(root, " _-").upper() + " :Class;\n"
 
 

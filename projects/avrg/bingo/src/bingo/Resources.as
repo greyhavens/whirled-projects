@@ -58,9 +58,6 @@ public class Resources
     [Embed(source="../../rsrc/items/Bow_clips_pattern02.png", mimeType="application/octet-stream")]
     public static const IMG_BOWCLIPSPATTERN02 :Class;
 
-    [Embed(source="../../rsrc/items/Bow_clips_pattern03-1.png", mimeType="application/octet-stream")]
-    public static const IMG_BOWCLIPSPATTERN03-1 :Class;
-
     [Embed(source="../../rsrc/items/Bow_clips_pattern03.png", mimeType="application/octet-stream")]
     public static const IMG_BOWCLIPSPATTERN03 :Class;
 
