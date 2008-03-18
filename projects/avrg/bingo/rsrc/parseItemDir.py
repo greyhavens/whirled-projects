@@ -24,7 +24,8 @@ for filename in files:
 		else:
 			continue;
 			
-		print '[Embed(source="../../rsrc/items/' + filename + '", mimeType="application/octet-stream")]'
-		print "public static const " + prefix + removeChars(root, " _-").upper() + " :Class;\n"
+		#print '[Embed(source="../../rsrc/items/' + filename + '", mimeType="application/octet-stream")]'
+		print '\t[Embed(source="../../rsrc/items/' + filename + '")]'
+		print "\tpublic static const " + prefix + removeChars(root, " _-").upper() + " :Class;\n"
 
 
