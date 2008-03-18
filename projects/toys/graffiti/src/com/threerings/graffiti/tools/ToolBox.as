@@ -8,6 +8,8 @@ import fl.controls.Slider;
 
 import fl.events.SliderEvent;
 
+import flash.display.BitmapData;
+import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
@@ -16,6 +18,9 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
+
+import flash.geom.Point;
+import flash.geom.Matrix;
 
 import flash.system.ApplicationDomain;
 
@@ -84,11 +89,16 @@ public class ToolBox extends Sprite
         }
 
         _currentSwatch = null;
+        _eyeDropper.alpha = 0;
     }
     
     public function hoverColor (color :uint) :void
     {
-        // TODO
+        if (_currentSwatch == null) {
+            return;
+        }
+
+        fillSwatch(_currentSwatch.swatchShape, color);
     }
 
     public function setBackgroundColor (color :uint) :void
@@ -187,6 +197,52 @@ public class ToolBox extends Sprite
 
         toolSettingsChanged();
     }
+
+    protected function colorMouseMove (event :MouseEvent) :void
+    {
+        if (_currentSwatch == null) {
+            return;
+        }
+
+        _eyeDropper.alpha = 1;
+        var local :Point = localToGlobal(new Point(event.stageX, event.stageY));
+        _eyeDropper.x = local.x;
+        _eyeDropper.y = local.y - _eyeDropper.height;
+        if (event.buttonDown && _currentSwatch != null) {
+            hoverColor(_hoverColor = colorFromGlobalPoint(new Point(event.stageX, event.stageY)));
+        }
+    }
+
+    protected function colorMouseUp (event :MouseEvent) :void
+    {
+        if (_currentSwatch != null) {
+            pickColor(_hoverColor);
+        }
+    }
+
+    protected function colorMouseOut (event :MouseEvent) :void
+    {
+        if (event.buttonDown && _currentSwatch != null) {
+            pickColor(_hoverColor);
+        }
+        _eyeDropper.alpha = 0;
+    }
+
+    protected function colorFromGlobalPoint (global :Point) :uint
+    {
+        var location :Point = _colorPicker.globalToLocal(global);
+        var m :Matrix = new Matrix();
+        m.translate(-location.x, -location.y);
+        var data :BitmapData = new BitmapData(1, 1);
+        data.draw(_colorPicker, m);
+        return data.getPixel(0, 0);
+    }
+
+    protected function swatchSelected (event :RadioEvent) :void
+    {
+        _currentSwatch = event.value as Swatch;
+        dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKING, true));
+    }
     
     protected function handleUILoaded (ui :MovieClip) :void
     {
@@ -195,10 +251,7 @@ public class ToolBox extends Sprite
         
         // initialize the swatches
         _swatchSet = new RadioButtonSet();
-        _swatchSet.addEventListener(RadioEvent.BUTTON_SELECTED, function (event :RadioEvent) :void {
-            _currentSwatch = event.value as Swatch;
-            dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKING, true));
-        });
+        _swatchSet.addEventListener(RadioEvent.BUTTON_SELECTED, swatchSelected);
         var swatches :Array = 
             [ ui.brushcolor_swatch, ui.bgcolor_swatch, ui.fillcolor_swatch, ui.linecolor_swatch ];
         var buttons :Array = [ ui.brush_color, ui.bg_color, ui.fill_color, ui.line_color ];
@@ -206,7 +259,7 @@ public class ToolBox extends Sprite
         for (var ii :int = 0; ii < swatches.length; ii++) {
             swatches[ii].mouseEnabled = false;
             var swatch :Swatch = new Swatch(swatches[ii].getChildAt(0) as Shape, types[ii]);
-            _swatchSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, swatch), ii == 0);
+            _swatchSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, swatch));
             if (types[ii] == Swatch.BACKGROUND) {
                 _backgroundColorSwatch = swatch;
             }
@@ -215,11 +268,14 @@ public class ToolBox extends Sprite
         // fill in the current background color on the background swatch
         fillSwatch(ui.bgcolor_swatch.getChildAt(0) as Shape, _initialBackgroundColor);
 
-        // add color palette
-        var palette :Palette = new Palette(this, 0xFF0000);
-        palette.x = ui.x + PALETTE_X_OFFSET;
-        palette.y = ui.y + PALETTE_Y_OFFSET;
-        addChild(palette);
+        // add color picker
+        _colorPicker = ui.picker as Sprite;
+        _colorPicker.addEventListener(MouseEvent.MOUSE_MOVE, colorMouseMove);
+        _colorPicker.addEventListener(MouseEvent.MOUSE_DOWN, colorMouseMove);
+        _colorPicker.addEventListener(MouseEvent.MOUSE_UP, colorMouseUp);
+        _colorPicker.addEventListener(MouseEvent.MOUSE_OUT, colorMouseOut);
+        addChild(_eyeDropper = new EYEDROPPER() as DisplayObject);
+        _eyeDropper.alpha = 0;
 
         // set up tool radio
         var buttonSet :RadioButtonSet = new RadioButtonSet();
@@ -304,6 +360,9 @@ public class ToolBox extends Sprite
     [Embed(source="../../../../../rsrc/graffiti_UI.swf", mimeType="application/octet-stream")]
     protected static const TOOLBOX_UI :Class;
 
+    [Embed(source="../../../../../rsrc/eyedropper.png")]
+    protected static const EYEDROPPER :Class;
+
     protected static const TOOLBAR_WIDTH :int = 80;
     protected static const FLA_WIDTH :int = 485;
     protected static const PALETTE_X_OFFSET :int = 445;
@@ -332,6 +391,9 @@ public class ToolBox extends Sprite
     protected var _noBackgroundCheckbox :CheckBox;
     protected var _sizeLimit :MovieClip;
     protected var _swatchSet :RadioButtonSet;
+    protected var _colorPicker :Sprite;
+    protected var _hoverColor :uint;
+    protected var _eyeDropper :DisplayObject;
 }
 }
 
