@@ -38,6 +38,7 @@ import com.threerings.graffiti.throttle.ThrottleEvent;
 [Event(name="toolPicked", type="ToolEvent")];
 [Event(name="backgroundColor", type="ToolEvent")];
 [Event(name="backgroundTransparency", type="ToolEvent")];
+[Event(name="hideFurni", type="ToolEvent")];
 
 public class ToolBox extends Sprite 
 {
@@ -343,6 +344,13 @@ public class ToolBox extends Sprite
         _brushPreview.x = ui.x + BRUSH_PREVIEW_X_OFFSET;
         _brushPreview.y = ui.y + BRUSH_PREVIEW_Y_OFFSET;
         updateBrushPreview();
+
+        // hide furni checkbox
+        ui.hidefurni.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            dispatchEvent(new ToolEvent(ToolEvent.HIDE_FURNI, ui.hidefurni.selected));
+        });
+        // the furni is hidden by default.
+        ui.hidefurni.selected = true;
 
         // size limit indicator
         _sizeLimit = ui.sizelimit;

@@ -40,8 +40,7 @@ public class Graffiti extends Sprite
         } else {
             _model = new OfflineModel();
         }
-        var canvas :Canvas = new Canvas(_model);
-        addChild(canvas);
+        addChild(_displayCanvas = new Canvas(_model));
 
         _editBtn = new EDIT_BUTTON() as SimpleButton;
         _editBtn.x = Canvas.CANVAS_WIDTH - _editBtn.width / 2 - 1;
@@ -71,14 +70,25 @@ public class Graffiti extends Sprite
         canvas.toolbox.addEventListener(ToolEvent.DONE_EDITING, function (event :ToolEvent) :void {
             _control.clearPopup();
         });
+        canvas.toolbox.addEventListener(ToolEvent.HIDE_FURNI, function(event :ToolEvent) :void {
+            hideFurni(event.value as Boolean);
+        });
         canvas.toolbox.addEventListener(Event.REMOVED_FROM_STAGE, function (event :Event) :void {
             _throttle.removeEventListener(ThrottleEvent.MANAGER_MESSAGE, 
                                           canvas.toolbox.managerMessageReceived);
+            hideFurni(false);
         });
+        // the furni is hidden by default
+        hideFurni(true);
         _control.showPopup(
             "Editing Graffiti", canvas.toolbox, ToolBox.POPUP_WIDTH, ToolBox.POPUP_HEIGHT, 0, 0);
         _throttle.addEventListener(ThrottleEvent.MANAGER_MESSAGE,
                                    canvas.toolbox.managerMessageReceived);
+    }
+
+    protected function hideFurni (hide :Boolean) :void
+    {
+        _displayCanvas.visible = !hide;
     }
     
     protected function memoryChanged (event :ControlEvent) :void
@@ -180,5 +190,6 @@ public class Graffiti extends Sprite
     protected var _managerBtn :Sprite;
     protected var _mouseOver :Boolean; 
     protected var _lockBtn :ToggleButton;
+    protected var _displayCanvas :Canvas;
 }
 }
