@@ -125,11 +125,6 @@ public class Canvas extends Sprite
         log.debug("temp stroke [" + this.name + ", " + id + ", " + stroke + ", " + startPoint + 
             "]");
 
-        // TEMP for testing
-        if (_toolBox != null) {
-            _toolBox.setUndoEnabled(true);
-        }
-
         var start :Point = stroke.getPoint(startPoint);
         if (start == null) {
             log.warning("null start point [" + stroke + ", " + startPoint + "]");

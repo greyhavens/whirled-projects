@@ -89,7 +89,6 @@ public class MovieClipButton
     {
         _mc.gotoAndStop(state);
         _mc.buttonMode = state != DISABLED_STATE;
-        log.debug("setting state [" + state + "]");
     }
     
     private static const log :Log = Log.getLog(MovieClipButton);
