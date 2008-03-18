@@ -113,6 +113,7 @@ public class Canvas extends Sprite
             return;
         }
 
+        _background.blendMode = BlendMode.NORMAL;
         var g :Graphics = _background.graphics;
         g.clear();
         g.beginFill(_backgroundColor = color);
