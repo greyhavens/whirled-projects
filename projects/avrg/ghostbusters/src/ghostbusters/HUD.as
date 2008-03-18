@@ -81,10 +81,11 @@ public class HUD extends Sprite
         var teamIx :int = 0;
         var hudIx :int = 0;
         while (hudIx < 6) {
-            var bar :MovieClip = MovieClip(_playerHealthBars[hudIx]);
-            var name :TextField = TextField(_playerNamePanels[hudIx]);
+            var panel :PlayerPanel = _playerPanels[hudIx] as PlayerPanel;
+
             if (teamIx >= players.length) {
-                bar.visible = name.visible = false;
+                panel.healthBar.visible = panel.namePlate.visible = false;
+                panel.id = 0;
                 hudIx ++;
                 continue;
             }
@@ -98,9 +99,10 @@ public class HUD extends Sprite
                 teamIx ++;
                 continue;
             }
-            bar.visible = name.visible = true;
-            bar.gotoAndStop(100 * Game.model.getPlayerRelativeHealth(players[teamIx]));
-            name.text = info.name;
+            panel.healthBar.visible = panel.namePlate.visible = true;
+            panel.healthBar.gotoAndStop(100 * Game.model.getPlayerRelativeHealth(players[teamIx]));
+            panel.namePlate.text = info.name;
+            panel.id = players[teamIx];
             teamIx ++;
             hudIx ++;
         }
@@ -111,24 +113,26 @@ public class HUD extends Sprite
         safelyAdd(HELP, helpClick);
         safelyAdd(CLOSE, closeClick);
 
-        _playerHealthBars = new Array();
-        _playerNamePanels = new Array();
+        _playerPanels = new Array();
+
         for (var ii :int = 1; ii <= 6; ii ++) {
-            var bar :DisplayObject = findSafely(PLAYER_HEALTH_BAR + ii);
+            var panel :PlayerPanel = new PlayerPanel();
+
+            var bar :MovieClip = findSafely(PLAYER_HEALTH_BAR + ii) as MovieClip;
             if (bar == null) {
                 Game.log.warning("Failed to find player health bar #" + ii);
                 continue;
             }
-            Game.log.debug("bar: " + bar);
-            _playerHealthBars.push(bar);
+            panel.healthBar = bar;
 
-            var panel :DisplayObject = findSafely(PLAYER_NAME_PANEL + ii);
-            if (panel == null) {
-                Game.log.warning("Failed to find player name panel #" + ii);
+            var plate :TextField = findSafely(PLAYER_NAME_PLATE + ii) as TextField;
+            if (plate == null) {
+                Game.log.warning("Failed to find player name plate #" + ii);
                 continue;
             }
-            Game.log.debug("panel: " + panel);
-            _playerNamePanels.push(panel);
+            panel.namePlate = plate;
+
+            _playerPanels.push(panel);
         }
 
         _yourHealthBar = MovieClip(findSafely(YOUR_HEALTH_BAR));
@@ -170,8 +174,7 @@ public class HUD extends Sprite
         placeHud();
         teamUpdated();
 
-        setGhostHealth(1, false);
-        setGhostHealth(1, true);
+        updateGhostHealth();
         pickLoot(0);
     }
 
@@ -188,14 +191,6 @@ public class HUD extends Sprite
         _hud.y = 0;
 
         Game.log.debug("Placing hud at (" + x + ", 0)...");
-
-//        var width :int = Game.stageSize.right - Game.scrollSize.right;
-//        if (width > 0) {
-//            this.graphics.beginFill(0);
-//            this.graphics.drawRect(Game.scrollSize.right + 1, 1,
-//                                   width, Game.scrollSize.height);
-//            this.graphics.endFill();
-//        }
     }
 
     protected function findSafely (name :String) :DisplayObject
@@ -214,30 +209,16 @@ public class HUD extends Sprite
 
     protected function playerHealthUpdated (id :int) :void
     {
-        setPlayerHealth(Game.model.getPlayerRelativeHealth(id));
-        if (id == Game.ourPlayerId) {
-            _yourHealthBar.gotoAndStop(100*Game..model.getPlayerRelativeHealth(Game.ourPlayerId));
-        }
-    }
-
-    protected function ghostHealthUpdated () :void
-    {
-        setGhostHealth(Game.model.ghostRelativeHealth, false);
-    }
-
-    protected function ghostZestUpdated () :void
-    {
-        setGhostHealth(Game.model.ghostRelativeZest, true);
+        setPlayerHealth(id, Game.model.getPlayerRelativeHealth(id), id == Game.ourPlayerId);
     }
 
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
         var name :String = evt.name;
-        if (name == Codes.PROP_GHOST_CUR_HEALTH || name == Codes.PROP_GHOST_MAX_HEALTH) {
-            ghostHealthUpdated();
-
-        } else if (name == Codes.PROP_GHOST_CUR_ZEST || name == Codes.PROP_GHOST_MAX_ZEST) {
-            ghostZestUpdated();
+        if (name == Codes.PROP_GHOST_CUR_HEALTH || name == Codes.PROP_GHOST_MAX_HEALTH ||
+            name == Codes.PROP_GHOST_CUR_ZEST || name == Codes.PROP_GHOST_MAX_ZEST ||
+            name == Codes.PROP_STATE) {
+            updateGhostHealth();
         }
     }
 
@@ -272,18 +253,22 @@ public class HUD extends Sprite
         CommandEvent.dispatch(this, GameController.HELP);
     }
 
-    protected function setGhostHealth (health :Number, isCapture :Boolean) :void
+    protected function updateGhostHealth () :void
     {
         if (_ghostHealthBar == null || _ghostCaptureBar == null) {
             return;
         }
+
         var bar :MovieClip;
         var other :MovieClip;
+        var health :Number;
 
-        if (isCapture) {
+        if (Game.model.state == GameModel.STATE_SEEKING) {
+            health = Game.model.ghostRelativeZest;
             bar = _ghostCaptureBar;
             other = _ghostHealthBar;
         } else {
+            health = Game.model.ghostRelativeHealth;
             bar = _ghostHealthBar;
             other = _ghostCaptureBar;
         }
@@ -293,47 +278,54 @@ public class HUD extends Sprite
         // TODO: make use of all 100 frames!
         var frame :int = 76 - 75 * MathUtil.clamp(health, 0, 1);
         bar.gotoAndStop(frame);
-        Game.log.debug("Moved " + bar + " to frame #" + frame);
+        Game.log.debug("Moved " + bar.name + " to frame #" + frame);
 
-        DisplayUtil.applyToHierarchy(bar, function (disp :DisplayObject) :void {
-            if (disp is MovieClip) {
-                MovieClip(disp).stop();
-            }
-        });
-        DisplayUtil.applyToHierarchy(other, function (disp :DisplayObject) :void {
-            if (disp is MovieClip) {
-                MovieClip(disp).stop();
-            }
-        });
+        reallyStop(bar);
+        reallyStop(other);
     }
 
-    protected function setPlayerHealth (health :Number) :void
+    protected function setPlayerHealth (id :int, health :Number, us :Boolean) :void
     {
-        if (_playerHealthBars == null) {
+        if (_playerPanels == null) {
             return;
         }
-        var bar :MovieClip = _playerHealthBars[0];
-        bar.visible = true;
-
         // TODO: make use of all 100 frames!
         var frame :int = 99 - 98 * MathUtil.clamp(health, 0, 1);
-        bar.gotoAndStop(frame);
-        Game.log.debug("Moved " + bar + " to frame #" + frame);
 
-        DisplayUtil.applyToHierarchy(bar, function (disp :DisplayObject) :void {
+        if (us) {
+            bar = _yourHealthBar;
+            bar.gotoAndStop(frame);
+            Game.log.debug("Moved " + bar.name + " to frame #" + frame);
+            reallyStop(bar);
+        }
+        for (var ii :int = 0; ii < 6; ii ++) {
+            if (_playerPanels[ii].id == id) {
+                var bar :MovieClip = _playerPanels[ii].healthBar;
+                bar.visible = true;
+                bar.gotoAndStop(frame);
+                Game.log.debug("Moved " + bar.name + " to frame #" + frame);
+                reallyStop(bar);
+                return;
+            }
+        }
+    }
+
+    protected function reallyStop (obj :DisplayObject) :void
+    {
+        DisplayUtil.applyToHierarchy(obj, function (disp :DisplayObject) :void {
             if (disp is MovieClip) {
                 MovieClip(disp).stop();
             }
         });
     }
+
 
     protected var _listener :PropertyListener;
 
     protected var _hud :ClipHandler;
     protected var _visualHud :MovieClip;
 
-    protected var _playerHealthBars :Array;
-    protected var _playerNamePanels :Array;
+    protected var _playerPanels :Array;
 
     protected var _ghostHealthBar :MovieClip;
     protected var _ghostCaptureBar :MovieClip;
@@ -353,7 +345,7 @@ public class HUD extends Sprite
     protected static const HELP :String = "helpbutton";
     protected static const CLOSE :String = "closeButton";
 
-    protected static const PLAYER_NAME_PANEL :String = "PlayerPanel";
+    protected static const PLAYER_NAME_PLATE :String = "PlayerPanel";
     protected static const PLAYER_HEALTH_BAR :String = "PlayerHealth";
     protected static const YOUR_HEALTH_BAR :String = "YourHealth";
 
@@ -379,5 +371,16 @@ public class HUD extends Sprite
 
     protected static const MARGIN_LEFT :int = 22;
     protected static const BORDER_LEFT :int = 33;
+
 }
+}
+
+import flash.display.MovieClip;
+import flash.text.TextField;
+
+class PlayerPanel
+{
+    public var id :int;
+    public var healthBar :MovieClip;
+    public var namePlate :TextField;
 }

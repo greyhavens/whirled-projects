@@ -72,13 +72,14 @@ public class FightController extends Controller
             return;
         }
         if (event.name == Codes.MSG_GHOST_ATTACKED) {
-            var dmg :int = (event.value() as Array)[1];
+            var dmg :int = (event.value as Array)[1];
             if (dmg > 0 && Game.model.damageGhost(dmg)) {
                 Game.control.state.sendMessage(Codes.MSG_GHOST_DEATH, null);
             }
 
         } else if (event.name == Codes.MSG_PLAYERS_HEALED) {
-            doHealPlayers(event.value as int);
+            var heal :int = (event.value as Array)[1];
+            doHealPlayers(heal);
 
         } else if (event.name == Codes.MSG_PLAYER_ATTACKED) {
             doAttackPlayer(event.value as int);
@@ -98,10 +99,12 @@ public class FightController extends Controller
                              Game.model.getPlayerHealth(team[ii]));
             totDmg += playerDmg[ii];
         }
+        Game.log.debug("HEAL :: Total heal = " + totheal + "; Total team damage = " + totDmg);
         // hand totHeal out proportionally to each player's relative hurtness
         for (ii = 0; ii < team.length; ii ++) {
             var heal :int = (totHeal * playerDmg[ii]) / totDmg;
             var newHealth :int = heal + Game.model.getPlayerHealth(team[ii]);
+            Game.log.debug("HEAL :: Awarding " + heal + " pts to player #" + team[ii]);
             Game.model.setPlayerHealth(team[ii], newHealth);
         }
     }
