@@ -81,7 +81,7 @@ public class Graffiti extends Sprite
         // the furni is hidden by default
         hideFurni(true);
         _control.showPopup(
-            "Editing Graffiti", canvas.toolbox, ToolBox.POPUP_WIDTH, ToolBox.POPUP_HEIGHT, 0, 0);
+            "Sketching", canvas.toolbox, ToolBox.POPUP_WIDTH, ToolBox.POPUP_HEIGHT, 0, 0);
         _throttle.addEventListener(ThrottleEvent.MANAGER_MESSAGE,
                                    canvas.toolbox.managerMessageReceived);
     }
@@ -106,7 +106,20 @@ public class Graffiti extends Sprite
     protected function resetCanvas (event :MouseEvent) :void
     {
         if (_control.isConnected() && _control.canEditRoom()) {
-            _control.updateMemory(Manager.MEMORY_MODEL, null);
+            _control.showPopup(
+                "Clear Canvas Confirmation", 
+                new ClearCanvasDialog(
+                    function () :void {
+                        _control.updateMemory(Manager.MEMORY_MODEL, null);
+                        _control.clearPopup();
+                    },
+                    function () :void {
+                        _control.clearPopup();
+                    }), 
+                ClearCanvasDialog.POPUP_WIDTH, 
+                ClearCanvasDialog.POPUP_HEIGHT, 
+                0, 
+                0);
         }
     }
 
