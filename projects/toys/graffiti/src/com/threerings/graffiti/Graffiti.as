@@ -107,7 +107,7 @@ public class Graffiti extends Sprite
     {
         if (_control.isConnected() && _control.canEditRoom()) {
             _control.showPopup(
-                "Clear Canvas Confirmation", 
+                "Clear Canvas?",
                 new ClearCanvasDialog(
                     function () :void {
                         _control.updateMemory(Manager.MEMORY_MODEL, null);
