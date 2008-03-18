@@ -80,6 +80,14 @@ public class Canvas extends Sprite
                 _colorPicking = event.value as Boolean;
                 _eyeDropper.alpha = _colorPicking ? 1 : 0;
             });
+            _toolBox.addEventListener(ToolEvent.UNDO_ONCE, function (event :ToolEvent) :void {
+                log.debug("undo once");
+                // TODO
+            });
+            _toolBox.addEventListener(ToolEvent.UNDO_ALL, function (event :ToolEvent) :void {
+                log.debug("undo all");
+                // TODO
+            });
         }
 
         return _toolBox;
@@ -116,6 +124,11 @@ public class Canvas extends Sprite
     {
         log.debug("temp stroke [" + this.name + ", " + id + ", " + stroke + ", " + startPoint + 
             "]");
+
+        // TEMP for testing
+        if (_toolBox != null) {
+            _toolBox.setUndoEnabled(true);
+        }
 
         var start :Point = stroke.getPoint(startPoint);
         if (start == null) {

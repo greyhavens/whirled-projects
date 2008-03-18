@@ -39,6 +39,8 @@ import com.threerings.graffiti.throttle.ThrottleEvent;
 [Event(name="backgroundColor", type="ToolEvent")];
 [Event(name="backgroundTransparency", type="ToolEvent")];
 [Event(name="hideFurni", type="ToolEvent")];
+[Event(name="undoOnce", type="ToolEvent")];
+[Event(name="undoAll", type="ToolEvent")];
 
 public class ToolBox extends Sprite 
 {
@@ -110,6 +112,12 @@ public class ToolBox extends Sprite
     public function displayFillPercent (percent :Number) :void
     {
         _sizeLimit.gotoAndStop(Math.ceil(percent * 100));
+    }
+
+    public function setUndoEnabled (enabled :Boolean) :void
+    {
+        _undoButton.enabled = enabled;
+        _undoAllButton.enabled = enabled;
     }
 
     public function managerMessageReceived (event :ThrottleEvent) :void
@@ -244,6 +252,24 @@ public class ToolBox extends Sprite
         _currentSwatch = event.value as Swatch;
         dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKING, true));
     }
+
+    protected function undoOnce (event :MouseEvent) :void
+    {
+        if (!_undoButton.enabled) {
+            return;
+        }
+
+        dispatchEvent(new ToolEvent(ToolEvent.UNDO_ONCE));
+    }
+
+    protected function undoAll (event :MouseEvent) :void
+    {
+        if (!_undoAllButton.enabled) {
+            return;
+        }
+
+        dispatchEvent(new ToolEvent(ToolEvent.UNDO_ALL));
+    }
     
     protected function handleUILoaded (ui :MovieClip) :void
     {
@@ -270,7 +296,7 @@ public class ToolBox extends Sprite
         fillSwatch(ui.bgcolor_swatch.getChildAt(0) as Shape, _initialBackgroundColor);
 
         // add color picker
-        _colorPicker = ui.picker as Sprite;
+        _colorPicker = ui.rainbow as Sprite;
         _colorPicker.addEventListener(MouseEvent.MOUSE_MOVE, colorMouseMove);
         _colorPicker.addEventListener(MouseEvent.MOUSE_DOWN, colorMouseMove);
         _colorPicker.addEventListener(MouseEvent.MOUSE_UP, colorMouseUp);
@@ -345,6 +371,14 @@ public class ToolBox extends Sprite
         _brushPreview.y = ui.y + BRUSH_PREVIEW_Y_OFFSET;
         updateBrushPreview();
 
+        // undo buttons - disabled by default because we have nothing to undo yet
+        _undoButton = new MovieClipButton(ui.undo);
+        _undoButton.enabled = false;
+        ui.undo.addEventListener(MouseEvent.CLICK, undoOnce);
+        _undoAllButton = new MovieClipButton(ui.undoEverything);
+        _undoAllButton.enabled = false;
+        ui.undoEverything.addEventListener(MouseEvent.CLICK, undoAll);
+
         // hide furni checkbox
         ui.hidefurni.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             dispatchEvent(new ToolEvent(ToolEvent.HIDE_FURNI, ui.hidefurni.selected));
@@ -402,6 +436,8 @@ public class ToolBox extends Sprite
     protected var _colorPicker :Sprite;
     protected var _hoverColor :uint;
     protected var _eyeDropper :DisplayObject;
+    protected var _undoButton :MovieClipButton;
+    protected var _undoAllButton :MovieClipButton;
 }
 }
 
