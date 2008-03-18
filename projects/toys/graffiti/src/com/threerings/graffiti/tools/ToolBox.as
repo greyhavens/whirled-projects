@@ -205,7 +205,7 @@ public class ToolBox extends Sprite
         }
 
         _eyeDropper.alpha = 1;
-        var local :Point = localToGlobal(new Point(event.stageX, event.stageY));
+        var local :Point = globalToLocal(new Point(event.stageX, event.stageY));
         _eyeDropper.x = local.x;
         _eyeDropper.y = local.y - _eyeDropper.height;
         if (event.buttonDown && _currentSwatch != null) {
