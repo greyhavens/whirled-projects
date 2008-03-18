@@ -78,7 +78,7 @@ public class OnlineModel extends Model
 
         SimonMain.log.info("accepting state change request: " + newState);
 
-        _stateControl.setProperty(Constants.PROP_STATE, newState.toBytes(), false);
+        _stateControl.setRoomProperty(Constants.PROP_STATE, newState.toBytes());
 
         _lastStateRequest = newState.clone();
     }
@@ -107,7 +107,7 @@ public class OnlineModel extends Model
 
         //SimonMain.log.info("accepting score change request");
 
-        _stateControl.setProperty(Constants.PROP_SCORES, newScores.toBytes(), false);
+        _stateControl.setRoomProperty(Constants.PROP_SCORES, newScores.toBytes());
 
         _lastScoresRequest = newScores.clone();
     }
