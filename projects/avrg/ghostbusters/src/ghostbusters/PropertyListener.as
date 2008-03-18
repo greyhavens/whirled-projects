@@ -13,6 +13,8 @@ public class PropertyListener
         if (_pFun != null) {
             Game.control.state.addEventListener(
                 AVRGameControlEvent.PROPERTY_CHANGED, propertyChanged);
+            Game.control.state.addEventListener(
+                AVRGameControlEvent.ROOM_PROPERTY_CHANGED, propertyChanged);
         }
     }
 
@@ -24,6 +26,16 @@ public class PropertyListener
     public function setProperty (playerId :int, property :String, value :Object) :void
     {
         Game.control.state.setProperty("p" + playerId + ":" + property, value, false);
+    }
+
+    public function getRoomProperty (playerId :int, property :String) :Object
+    {
+        return Game.control.state.getRoomProperty("p" + playerId + ":" + property);
+    }
+
+    public function setRoomProperty (playerId :int, property :String, value :Object) :void
+    {
+        Game.control.state.setRoomProperty("p" + playerId + ":" + property, value);
     }
 
     protected function propertyChanged (evt :AVRGameControlEvent) :void
