@@ -249,8 +249,14 @@ public class ToolBox extends Sprite
 
     protected function swatchSelected (event :RadioEvent) :void
     {
-        _currentSwatch = event.value as Swatch;
-        dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKING, true));
+        if (_currentSwatch == event.value as Swatch) {
+            _currentSwatch = null;
+            _swatchSet.deactivateCurrentSelection();
+            dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKING, false));
+        } else {
+            _currentSwatch = event.value as Swatch;
+            dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKING, true));
+        }
     }
 
     protected function undoOnce (event :MouseEvent) :void

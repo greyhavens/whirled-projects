@@ -33,10 +33,6 @@ public class RadioButtonSet extends EventDispatcher
 
     protected function buttonClicked (index :int) :void
     {
-        if (index == _selected) {
-            return;
-        }
-
         if (_selected != -1) {
             _buttons[_selected].selected = false;
         }
