@@ -99,7 +99,7 @@ public class FightController extends Controller
                              Game.model.getPlayerHealth(team[ii]));
             totDmg += playerDmg[ii];
         }
-        Game.log.debug("HEAL :: Total heal = " + totheal + "; Total team damage = " + totDmg);
+        Game.log.debug("HEAL :: Total heal = " + totHeal + "; Total team damage = " + totDmg);
         // hand totHeal out proportionally to each player's relative hurtness
         for (ii = 0; ii < team.length; ii ++) {
             var heal :int = (totHeal * playerDmg[ii]) / totDmg;

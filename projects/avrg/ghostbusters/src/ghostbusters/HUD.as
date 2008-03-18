@@ -45,7 +45,7 @@ public class HUD extends Sprite
         Game.control.state.addEventListener(
             AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
 
-        _listener = new PropertyListener(playerPropertyChanged);
+        _ppp = new PerPlayerProperties(playerPropertyChanged);
     }
 
     public function shutdown () :void
@@ -320,7 +320,7 @@ public class HUD extends Sprite
     }
 
 
-    protected var _listener :PropertyListener;
+    protected var _ppp :PerPlayerProperties;
 
     protected var _hud :ClipHandler;
     protected var _visualHud :MovieClip;

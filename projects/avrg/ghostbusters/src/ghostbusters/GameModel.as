@@ -17,12 +17,12 @@ public class GameModel
 
     public function GameModel ()
     {
-        _pp = new PropertyListener();
+        _ppp = new PerPlayerProperties();
 
         // TODO: fix resurrection
         if (getPlayerHealth(Game.ourPlayerId) == 0) {
-            _pp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_MAX_HEALTH, 100);
-            _pp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_CUR_HEALTH, 100);
+            _ppp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_MAX_HEALTH, 100);
+            _ppp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_CUR_HEALTH, 100);
         }
     }
 
@@ -52,22 +52,22 @@ public class GameModel
 
     public function isPlayerDead (playerId :int) :Boolean
     {
-        return _pp.getProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH) === 0;
+        return _ppp.getProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH) === 0;
     }
 
     public function getPlayerHealth (playerId :int) :int
     {
-        return int(_pp.getProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH));
+        return int(_ppp.getProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH));
     }
 
     public function getPlayerMaxHealth (playerId :int) :int
     {
-        return int(_pp.getProperty(playerId, Codes.PROP_PLAYER_MAX_HEALTH));
+        return int(_ppp.getProperty(playerId, Codes.PROP_PLAYER_MAX_HEALTH));
     }
 
     public function setPlayerHealth (playerId :int, health :int) :void
     {
-        _pp.setProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH,
+        _ppp.setProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH,
                         Math.max(0, Math.min(health, getPlayerMaxHealth(playerId))));
     }
 
@@ -201,6 +201,6 @@ public class GameModel
         ghostId = id;
     }
 
-    protected var _pp :PropertyListener;
+    protected var _ppp :PerPlayerProperties;
 }
 }

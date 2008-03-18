@@ -5,9 +5,9 @@ package ghostbusters {
 
 import com.whirled.AVRGameControlEvent;
 
-public class PropertyListener
+public class PerPlayerProperties
 {
-    public function PropertyListener (playerPropertyUpdated :Function = null)
+    public function PerPlayerProperties (playerPropertyUpdated :Function = null)
     {
         _pFun = playerPropertyUpdated;
         if (_pFun != null) {
