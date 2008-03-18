@@ -88,6 +88,11 @@ public class Canvas extends Sprite
                 log.debug("undo all");
                 // TODO
             });
+
+            // if we're forced closed, make sure we do some cleanup
+            addEventListener(Event.REMOVED_FROM_STAGE, function (event :Event) :void {
+                cleanup();
+            });
         }
 
         return _toolBox;
@@ -166,6 +171,21 @@ public class Canvas extends Sprite
         if (_toolBox != null) {
             _toolBox.displayFillPercent(percent);
         }
+    }
+
+    public function clear () :void
+    {
+        while (numChildren > 0) {
+            removeChildAt(0);
+        }
+        addChild(mask);
+        addChild(_background);
+        _layers.clear();
+    }
+
+    protected function cleanup () :void
+    {
+        endStroke(new Point(_background.mouseX, _background.mouseY));
     }
 
     protected function addMouseListeners () :void
@@ -281,16 +301,6 @@ public class Canvas extends Sprite
 
         _lastStrokePoint = p;
         _newStroke = false;
-    }
-
-    public function clear () :void
-    {
-        while (numChildren > 0) {
-            removeChildAt(0);
-        }
-        addChild(mask);
-        addChild(_background);
-        _layers.clear();
     }
 
     private static const log :Log = Log.getLog(Canvas);
