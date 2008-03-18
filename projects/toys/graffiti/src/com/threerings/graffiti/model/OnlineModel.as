@@ -97,10 +97,10 @@ public class OnlineModel extends Model
     protected function memoryChanged (event :ControlEvent) :void
     {
         if (event.name == Manager.MEMORY_MODEL && event.value == null) {
-            _backgroundColor = 0xFFFFFF;
-            _backgroundTransparent = false;
             _canvasStrokes = [];
             _canvases.clear();
+            _backgroundTransparent = false;
+            _canvases.paintBackground(_backgroundColor = 0xFFFFFF);
         }
     }
 
