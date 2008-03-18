@@ -17,10 +17,10 @@ public class OnlineModel extends Model
         _stateControl = SimonMain.control.state;
 
         _stateControl.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
-        _stateControl.addEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propChanged);
+        _stateControl.addEventListener(AVRGameControlEvent.ROOM_PROPERTY_CHANGED, propChanged);
 
         // read the current state
-        var stateBytes :ByteArray = (_stateControl.getProperty(Constants.PROP_STATE) as ByteArray);
+        var stateBytes :ByteArray = (_stateControl.getRoomProperty(Constants.PROP_STATE) as ByteArray);
         if (null != stateBytes) {
             log.info("OnlineModel.setup() - reading PROP_STATE from bytes");
             var curState :SharedState = SharedState.fromBytes(stateBytes);
@@ -30,7 +30,7 @@ public class OnlineModel extends Model
         }
 
         // read current scores
-        var scoreBytes :ByteArray = (_stateControl.getProperty(Constants.PROP_SCORES) as ByteArray);
+        var scoreBytes :ByteArray = (_stateControl.getRoomProperty(Constants.PROP_SCORES) as ByteArray);
         if (null != scoreBytes) {
             _curScores = Scoreboard.fromBytes(scoreBytes);
         }
@@ -39,7 +39,7 @@ public class OnlineModel extends Model
     override public function destroy () :void
     {
         _stateControl.removeEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
-        _stateControl.removeEventListener(AVRGameControlEvent.PROPERTY_CHANGED, propChanged);
+        _stateControl.removeEventListener(AVRGameControlEvent.ROOM_PROPERTY_CHANGED, propChanged);
     }
 
     override public function getPlayerOids () :Array
