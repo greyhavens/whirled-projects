@@ -25,6 +25,7 @@ public class Lantern extends SplinePather
 {
     public static const FRAMES_PER_SPLINE :int = 8;
 
+    public var playerId :int;
     public var light :Sprite;
     public var hole :Sprite;
     public var mask :Sprite;
@@ -32,6 +33,8 @@ public class Lantern extends SplinePather
     public function Lantern (playerId :int, p :Point)
     {
         super();
+
+        this.playerId = playerId;
 
         _random = new Random(playerId);
 

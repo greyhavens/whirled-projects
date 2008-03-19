@@ -46,6 +46,8 @@ public class SeekPanel extends FrameSprite
         Game.control.state.addEventListener(
             AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
 
+        Game.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, playerLeft);
+
         _ppp = new PerPlayerProperties(playerPropertyUpdate);
     }
 
@@ -230,7 +232,13 @@ public class SeekPanel extends FrameSprite
     protected function animateLanterns () :void
     {
         for each (var lantern :Lantern in _lanterns) {
-            lantern.nextFrame();
+            if (Game.control.isPlayerHere(lantern.playerId)) {
+                lantern.nextFrame();
+
+            } else {
+                // this should only happen briefly until the server catches up
+                playerLanternOff(lantern.playerId);
+            }
         }
     }
 
@@ -301,6 +309,14 @@ public class SeekPanel extends FrameSprite
                     ghostPositionUpdate(pos);
                 }
             }
+        }
+    }
+
+    // if another player leaves, it may be our job to clear them out
+    protected function playerLeft (evt :AVRGameControlEvent) :void
+    {
+        if (Game.control.hasControl()) {
+            _ppp.setRoomProperty(Game.ourPlayerId, Codes.PROP_LANTERN_POS, null);            
         }
     }
 
