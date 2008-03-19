@@ -33,6 +33,7 @@ import ghostbusters.Content;
 import ghostbusters.Dimness;
 import ghostbusters.GameController;
 import ghostbusters.Game;
+import ghostbusters.PerPlayerProperties;
 
 public class SeekPanel extends FrameSprite
 {
@@ -44,7 +45,10 @@ public class SeekPanel extends FrameSprite
             AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
         Game.control.state.addEventListener(
             AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
+
+        _ppp = new PerPlayerProperties(playerPropertyUpdate);
     }
+
     override public function hitTestPoint (
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
@@ -246,8 +250,7 @@ public class SeekPanel extends FrameSprite
     {
         pos = Game.control.stageToRoom(pos);
         if (pos != null) {
-            Game.control.state.setRoomProperty(
-                Codes.PROP_LANTERN_POS, [ Game.ourPlayerId, pos.x, pos.y ]);
+            _ppp.setRoomProperty(Game.ourPlayerId, Codes.PROP_LANTERN_POS, pos);
         }
     }
 
@@ -258,56 +261,50 @@ public class SeekPanel extends FrameSprite
             (Game.roomBounds.width - ghostBounds.width) - ghostBounds.left;
         var y :int = Game.random.nextNumber() *
             (Game.roomBounds.height - ghostBounds.height) - ghostBounds.top;
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_POS, [ x, y ]);
+        Game.control.state.setRoomProperty(Codes.PROP_GHOST_POS, new Point(x, y));
     }
 
     protected function messageReceived (event: AVRGameControlEvent) :void
     {
         if (event.name == Codes.MSG_GHOST_ZAP) {
             ghostZapped();
-
         }
     }
+
+    protected function playerPropertyUpdate (playerId :int, prop :String, value :Object) :void
+    {
+        if (prop == Codes.PROP_LANTERN_POS) {
+            if (playerId == Game.ourPlayerId && !Game.DEBUG) {
+                return;
+            }
+            if (value == null) {
+                // someone turned theirs off
+                playerLanternOff(playerId);
+
+            } else {
+                // someone turned theirs on or moved it
+                playerLanternMoved(playerId, Game.control.roomToStage(value as Point));
+            }
+        }
+    }
+
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
-        var bits :Array;
-
         if (evt.name == Codes.PROP_GHOST_ID) {
             updateGhost();
 
         } else if (evt.name == Codes.PROP_GHOST_POS) {
-            bits = evt.value as Array;
-            if (bits != null) {
-                var pos :Point = Game.control.roomToStage(new Point(bits[0], bits[1]));
+            var pos :Point = (evt.value as Point);
+            if (pos != null) {
+                pos = Game.control.roomToStage(pos);
                 if (pos != null) {
                     ghostPositionUpdate(pos);
                 }
             }
-
-        } else if (evt.name == Codes.PROP_LANTERN_POS) {
-            bits = evt.value as Array;
-            if (bits != null) {
-                var playerId :int = int(bits[0]);
-
-                // ignore our own update, unless we're debugging
-                if (playerId == Game.ourPlayerId && !Game.DEBUG) {
-                    return;
-                }
-                if (Game.control.isPlayerHere(playerId)) {
-                    // lantern update from a local player
-                    if (bits.length == 1) {
-                        // someone turned theirs off
-                        playerLanternOff(playerId);
-
-                    } else {
-                        // someone turned theirs on or moved it
-                        playerLanternMoved(
-                            playerId, Game.control.roomToStage(new Point(bits[1], bits[2])));
-                    }
-                }
-            }
         }
     }
+
+    protected var _ppp :PerPlayerProperties;
 
     protected var _lanterns :Dictionary = new Dictionary();
 
