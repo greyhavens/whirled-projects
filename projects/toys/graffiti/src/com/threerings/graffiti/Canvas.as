@@ -50,9 +50,7 @@ public class Canvas extends Sprite
         _model = model;
         var thisCanvas :Canvas = this;
         _model.registerCanvas(thisCanvas);
-        addEventListener(Event.REMOVED_FROM_STAGE, function (event :Event) :void {
-            _model.unregisterCanvas(thisCanvas);
-        });
+        addEventListener(Event.REMOVED_FROM_STAGE, cleanup);
     }
 
     public function get toolbox () :ToolBox
@@ -82,11 +80,6 @@ public class Canvas extends Sprite
             });
             _toolBox.addEventListener(ToolEvent.UNDO_ONCE, function (event :ToolEvent) :void {
                 _model.undo();
-            });
-
-            // if we're forced closed, make sure we do some cleanup
-            addEventListener(Event.REMOVED_FROM_STAGE, function (event :Event) :void {
-                cleanup();
             });
         }
 
@@ -214,9 +207,12 @@ public class Canvas extends Sprite
         _layers.remove(id);
     }
 
-    protected function cleanup () :void
+    protected function cleanup (...ignored) :void
     {
-        endStroke(new Point(_background.mouseX, _background.mouseY));
+        if (_toolBox != null) {
+            endStroke(new Point(_background.mouseX, _background.mouseY));
+        }
+        _model.unregisterCanvas(this, _toolBox != null);
     }
 
     protected function addMouseListeners () :void

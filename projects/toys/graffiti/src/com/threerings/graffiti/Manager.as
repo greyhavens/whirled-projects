@@ -19,6 +19,7 @@ import com.threerings.graffiti.model.OfflineModel;
 import com.threerings.graffiti.model.Stroke;
 
 import com.threerings.graffiti.throttle.AlterBackgroundMessage;
+import com.threerings.graffiti.throttle.EditorClosedMessage;
 import com.threerings.graffiti.throttle.ManagerAlterBackgroundMessage;
 import com.threerings.graffiti.throttle.RemoveStrokeMessage;
 import com.threerings.graffiti.throttle.StripIdMessage;
@@ -61,9 +62,9 @@ public class Manager
             } else if (backgroundMessage.type == AlterBackgroundMessage.TRANSPARENCY) {
                 _model.setBackgroundTransparent(backgroundMessage.value as Boolean);
             }
-            _memoryDirty = true;
 
             _throttle.pushMessage(new ManagerAlterBackgroundMessage(backgroundMessage));
+
         } else if (message is StrokeEndMessage) {
             var strokeMessage :StrokeEndMessage = message as StrokeEndMessage;
             var id :String = strokeMessage.strokeId;
@@ -79,21 +80,28 @@ public class Manager
                 _model.extendStroke(id, stroke.getPoint(ii));
             }
             _model.endStroke(id);
-            _memoryDirty = true;
-
             // TODO: send on as the official version of this stroke
+
         } else if (message is StripIdMessage) {
             stroke = _model.getStroke((message as StripIdMessage).strokeId);
             if (stroke != null) {
                 stroke.id = null;
             }
-            _memoryDirty = true;
+
         } else if (message is RemoveStrokeMessage) {
             // will eventually need to check ownership on this message, but we can punt on that
             // for now.
             _model.removeStroke((message as RemoveStrokeMessage).strokeId);
-            _memoryDirty = true;
+
+        } else if (message is EditorClosedMessage) {
+            _model.stripAllIds((message as EditorClosedMessage).editorId);
+
+        } else {
+            return;
         }
+        
+        // if this was a message we cared about, we got here, and the memory needs to be reset
+        _memoryDirty = true;
     }
 
     protected function memoryChanged (event :ControlEvent) :void

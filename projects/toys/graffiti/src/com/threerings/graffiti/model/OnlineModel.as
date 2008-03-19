@@ -14,6 +14,7 @@ import com.threerings.graffiti.Canvas;
 import com.threerings.graffiti.Manager;
 
 import com.threerings.graffiti.throttle.AlterBackgroundMessage;
+import com.threerings.graffiti.throttle.EditorClosedMessage;
 import com.threerings.graffiti.throttle.Throttle;
 import com.threerings.graffiti.throttle.ThrottleEvent;
 import com.threerings.graffiti.throttle.ThrottleMessage;
@@ -46,6 +47,15 @@ public class OnlineModel extends Model
     {
         super.registerCanvas(canvas);
         paintCanvas(canvas);
+    }
+
+    override public function unregisterCanvas (canvas :Canvas, editingCanvas :Boolean) :void
+    {
+        super.unregisterCanvas(canvas, editingCanvas);
+        if (editingCanvas) {
+            var instanceId :int = _throttle.control.getInstanceId() % Math.pow(KEY_BITS.length, 2);
+            _throttle.pushMessage(new EditorClosedMessage(getKeyString(instanceId)));
+        }
     }
 
     override public function extendStroke (id :String, to :Point, end :Boolean = false) :void
@@ -161,7 +171,11 @@ public class OnlineModel extends Model
     protected function tempMessageReceived (event :ThrottleEvent) :void
     {
         var message :ThrottleMessage = event.message;
-        if (!(message is ThrottleStrokeMessage)) {
+        if (message is EditorClosedMessage) {
+            stripAllIds((message as EditorClosedMessage).editorId);
+            updateSizeLimit();
+            return;
+        } else if (!(message is ThrottleStrokeMessage)) {
             return;
         }
 
@@ -178,11 +192,7 @@ public class OnlineModel extends Model
         } else if (strokeMessage is StrokeEndMessage) {
             // NOOP - ending the stroke puts it on the undo stack, which we don't want here.
         } else if (strokeMessage is StripIdMessage) {
-            var stroke :Stroke = _strokesMap.remove(strokeMessage.strokeId);
-            if (stroke != null) {
-                _canvases.idStripped(stroke.id);
-                stroke.id = null;
-            }
+            stripId(strokeMessage.strokeId);
         } else if (strokeMessage is RemoveStrokeMessage) {
             removeStroke(strokeMessage.strokeId);
         } else {

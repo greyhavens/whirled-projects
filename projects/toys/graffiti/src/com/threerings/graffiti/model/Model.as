@@ -23,7 +23,7 @@ public class Model
         _canvases.addCanvas(canvas);
     }
 
-    public function unregisterCanvas (canvas :Canvas) :void
+    public function unregisterCanvas (canvas :Canvas, editingCanvas :Boolean) :void
     {
         _canvases.removeCanvas(canvas);
     }
@@ -215,6 +215,25 @@ public class Model
     public function getStroke (id :String) :Stroke
     {
         return _strokesMap.get(id);
+    }
+
+    public function stripAllIds (prefix :String) :void
+    {
+        var keys :Array = _strokesMap.keys();
+        for each (var key :String in keys) {
+            if (key.indexOf(prefix) == 0) {
+                stripId(key);
+            }
+        }
+    }
+
+    public function stripId (id :String) :void
+    {
+        var stroke :Stroke = _strokesMap.remove(id);
+        if (stroke != null) {
+            _canvases.idStripped(stroke.id);
+            stroke.id = null;
+        }
     }
 
     protected function strokeBegun (stroke :Stroke) :void
