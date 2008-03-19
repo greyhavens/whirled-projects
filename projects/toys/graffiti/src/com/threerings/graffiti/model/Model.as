@@ -56,7 +56,18 @@ public class Model
 
     public function endStroke (id :String) :void
     {
-        // ignored here - used by subclasses
+        var stroke :Stroke = _strokesMap.get(id);
+        if (stroke == null) {
+            log.warning("strokes map missing newly ended stroke [" + id + "]");
+            return;
+        }
+
+        _undoStack.push(stroke);
+        if (_undoStack.length > UNDO_STACK_SIZE) {
+            undoStrokeForgotten(_undoStack.shift()); 
+        }
+
+        _canvases.reportUndoStackSize(_undoStack.length);
     }
 
     public function getKey () :String
@@ -164,6 +175,11 @@ public class Model
         return serialize().length / MAX_STORAGE_SIZE;
     }
 
+    public function undo () :void
+    {
+        // TODO
+    }
+
     protected function strokeBegun (stroke :Stroke) :void
     {
         _strokesList.push(stroke);
@@ -171,6 +187,11 @@ public class Model
             _strokesMap.put(stroke.id, stroke);
         }
         _canvases.drawStroke(stroke);
+    }
+
+    protected function undoStrokeForgotten (stroke :Stroke) :void
+    {
+        // NOOP
     }
 
     protected function getKeyString (keyValue :int) :String
@@ -184,8 +205,8 @@ public class Model
     private static const log :Log = Log.getLog(Model);
 
     protected static const MODEL_VERSION_NUMBER :int = 1;
-
     protected static const MAX_STORAGE_SIZE :int = 4080; // in bytes
+    protected static const UNDO_STACK_SIZE :int = 10;
 
     protected static const KEY_BITS :Array = [
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -204,6 +225,7 @@ public class Model
     protected var _backgroundColor :uint = 0xFFFFFF;
     protected var _backgroundTransparent :Boolean = false;
     protected var _localKeys :int = 0;
+    protected var _undoStack :Array = [];
 }
 }
 
@@ -266,6 +288,13 @@ class CanvasList
     {
         for each (var canvas :Canvas in _canvases) {
             canvas.clear();
+        }
+    }
+
+    public function reportUndoStackSize (size :int) :void
+    {
+        for each (var canvas :Canvas in _canvases) {
+            canvas.reportUndoStackSize(size);
         }
     }
 

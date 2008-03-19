@@ -40,7 +40,6 @@ import com.threerings.graffiti.throttle.ThrottleEvent;
 [Event(name="backgroundTransparency", type="ToolEvent")];
 [Event(name="hideFurni", type="ToolEvent")];
 [Event(name="undoOnce", type="ToolEvent")];
-[Event(name="undoAll", type="ToolEvent")];
 
 public class ToolBox extends Sprite 
 {
@@ -117,7 +116,6 @@ public class ToolBox extends Sprite
     public function setUndoEnabled (enabled :Boolean) :void
     {
         _undoButton.enabled = enabled;
-        _undoAllButton.enabled = enabled;
     }
 
     public function managerMessageReceived (event :ThrottleEvent) :void
@@ -268,15 +266,6 @@ public class ToolBox extends Sprite
         dispatchEvent(new ToolEvent(ToolEvent.UNDO_ONCE));
     }
 
-    protected function undoAll (event :MouseEvent) :void
-    {
-        if (!_undoAllButton.enabled) {
-            return;
-        }
-
-        dispatchEvent(new ToolEvent(ToolEvent.UNDO_ALL));
-    }
-    
     protected function handleUILoaded (ui :MovieClip) :void
     {
         ui.x = POPUP_WIDTH - FLA_WIDTH;
@@ -381,9 +370,6 @@ public class ToolBox extends Sprite
         _undoButton = new MovieClipButton(ui.undo);
         _undoButton.enabled = false;
         ui.undo.addEventListener(MouseEvent.CLICK, undoOnce);
-        _undoAllButton = new MovieClipButton(ui.undoEverything);
-        _undoAllButton.enabled = false;
-        ui.undoEverything.addEventListener(MouseEvent.CLICK, undoAll);
 
         // hide furni checkbox
         ui.hidefurni.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
@@ -443,7 +429,6 @@ public class ToolBox extends Sprite
     protected var _hoverColor :uint;
     protected var _eyeDropper :DisplayObject;
     protected var _undoButton :MovieClipButton;
-    protected var _undoAllButton :MovieClipButton;
 }
 }
 

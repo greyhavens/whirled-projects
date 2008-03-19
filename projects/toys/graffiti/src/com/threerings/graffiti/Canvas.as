@@ -81,12 +81,7 @@ public class Canvas extends Sprite
                 _eyeDropper.alpha = _colorPicking ? 1 : 0;
             });
             _toolBox.addEventListener(ToolEvent.UNDO_ONCE, function (event :ToolEvent) :void {
-                log.debug("undo once");
-                // TODO
-            });
-            _toolBox.addEventListener(ToolEvent.UNDO_ALL, function (event :ToolEvent) :void {
-                log.debug("undo all");
-                // TODO
+                _model.undo();
             });
 
             // if we're forced closed, make sure we do some cleanup
@@ -194,6 +189,13 @@ public class Canvas extends Sprite
     {
         if (_toolBox != null) {
             _toolBox.displayFillPercent(percent);
+        }
+    }
+
+    public function reportUndoStackSize (size :int) :void
+    {
+        if (_toolBox != null) {
+            _toolBox.setUndoEnabled(size != 0);
         }
     }
 
