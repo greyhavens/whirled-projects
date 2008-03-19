@@ -33,6 +33,8 @@ public class Codes
     public static const PROP_PLAYER_CUR_HEALTH :String = "pch";
     public static const PROP_PLAYER_MAX_HEALTH :String = "pmh";
 
+    public static const PROP_LAST_GHOST_ATTACK :String = "lga";
+
     // ghost states
     public static const ST_GHOST_HIDDEN :String = "hidden";
     public static const ST_GHOST_APPEAR :String = "appear_to_fighting";

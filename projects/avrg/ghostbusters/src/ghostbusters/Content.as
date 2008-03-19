@@ -3,6 +3,8 @@
 
 package ghostbusters {
 
+import ghostbusters.fight.BasicBrain;
+
 public class Content
 {
     // clips
@@ -22,10 +24,10 @@ public class Content
     public static const GHOST_DEMON :Class;
 
     public static const GHOSTS :Array = [
-        { id: "pinchy", clip: GHOST_PINCHER, name: "Mr. Pinchy" },
-        { id: "duchess", clip: GHOST_DUCHESS, name: "The Duchess" },
-        { id: "widow", clip: GHOST_WIDOW, name: "The Widow" },
-        { id: "demon", clip: GHOST_DEMON, name: "Soul Crusher" },
+        { id: "pinchy", clip: GHOST_PINCHER, name: "Mr. Pinchy", brain: BasicBrain.tick },
+        { id: "duchess", clip: GHOST_DUCHESS, name: "The Duchess", brain: BasicBrain.tick },
+        { id: "widow", clip: GHOST_WIDOW, name: "The Widow", brain: BasicBrain.tick },
+        { id: "demon", clip: GHOST_DEMON, name: "Soul Crusher", brain: BasicBrain.tick },
     ];
 
     [Embed(source="../../rsrc/UI/text_box.swf", mimeType="application/octet-stream")]

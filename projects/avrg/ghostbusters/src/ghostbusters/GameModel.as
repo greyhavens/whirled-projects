@@ -50,6 +50,18 @@ public class GameModel
         Game.control.state.setRoomProperty(Codes.PROP_STATE, state);
     }
 
+    public function isEverybodyDead () :Boolean
+    {
+        var team :Array = Game.getTeam(true);
+
+        for (var ii :int = 0; ii < team.length; ii ++) {
+            if (!isPlayerDead(team[ii])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public function isPlayerDead (playerId :int) :Boolean
     {
         return _ppp.getProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH) === 0;

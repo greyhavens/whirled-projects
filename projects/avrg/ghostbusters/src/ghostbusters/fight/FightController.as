@@ -46,6 +46,30 @@ public class FightController extends Controller
         panel.startGame();
     }
 
+    // server method
+    public function doDamagePlayer (playerId :int, damage :int) :Boolean
+    {
+        if (!Game.control.hasControl()) {
+            throw new Error("this method should only be called when in control");
+        }
+        // perform the attack
+        var died :Boolean = Game.model.damagePlayer(playerId, damage);
+
+        // let all clients know of the attack
+        Game.control.state.sendMessage(Codes.MSG_PLAYER_ATTACKED, playerId);
+
+        if (died) {
+            // the blow killed the player: let all the clients know that too
+            Game.control.state.sendMessage(Codes.MSG_PLAYER_DEATH, playerId);
+
+            // then check to see if we're perhaps done
+            if (Game.model.isEverybodyDead()) {
+                Game.control.state.sendMessage(Codes.MSG_GHOST_TRIUMPH, playerId);
+            }
+        }
+        return died;
+    }
+
     public function handleGhostAttacked (result :MicrogameResult) :void
     {
         if (result.damageOutput > 0) {
@@ -58,12 +82,6 @@ public class FightController extends Controller
         }
         Game.control.quests.completeQuest("minigame", null, PAYOUT_MINIGAME);
         Game.control.playAvatarAction("Retaliate");
-    }
-
-    public function handlePlayerAttacked () :void
-    {
-        Game.control.state.sendMessage(Codes.MSG_PLAYER_ATTACKED, Game.ourPlayerId);
-        Game.control.playAvatarAction("Reel");
     }
 
     protected function messageReceived (event: AVRGameControlEvent) :void
@@ -80,10 +98,6 @@ public class FightController extends Controller
         } else if (event.name == Codes.MSG_PLAYERS_HEALED) {
             var heal :int = (event.value as Array)[1];
             doHealPlayers(heal);
-
-        } else if (event.name == Codes.MSG_PLAYER_ATTACKED) {
-            doAttackPlayer(event.value as int);
-
         }
     }
 
@@ -108,27 +122,5 @@ public class FightController extends Controller
             Game.model.setPlayerHealth(team[ii], newHealth);
         }
     }
-
-    protected function doAttackPlayer (playerId :int) :void
-    {
-        if (Game.model.damagePlayer(playerId, 10)) {
-            Game.control.state.sendMessage(Codes.MSG_PLAYER_DEATH, playerId);
- 
-            var team :Array = Game.getTeam(true);
-            ArrayUtil.removeFirst(team, Game.ourPlayerId);
-
-            for (var ii :int = 0; ii < team.length; ii ++) {
-                if (team[ii] == Game.ourPlayerId) {
-                    continue;
-                }
-                if (Game.model.isPlayerDead(team[ii])) {
-                    return;
-                }
-            }
-            // everybody is dead!
-            Game.control.state.sendMessage(Codes.MSG_GHOST_TRIUMPH, playerId);
-        }
-    }
-
 }
 }

@@ -32,20 +32,8 @@ public class SpawnedGhost extends GhostBase
 
     protected function messageReceived (evt :AVRGameControlEvent) :void
     {
-        if (!Game.control.hasControl()) {
-            return;
-        }
-        if (evt.name == Codes.MSG_TICK) {
-//            Game.log.debug("Tick...");
-
-            if (Game.random.nextInt(5) == 0) {
-                var players :Array = Game.getTeam(true);
-                if (players.length > 0) {
-                    // start with idiot AI: attack a completely random player each turn
-                    var ix :int = Game.random.nextInt(players.length);
-                    Game.control.state.sendMessage(Codes.MSG_PLAYER_ATTACKED, players[ix]);
-                }
-            }
+        if (evt.name == Codes.MSG_TICK && Game.control.hasControl()) {
+            _brainTick(evt.value as int);
         }
     }
 
