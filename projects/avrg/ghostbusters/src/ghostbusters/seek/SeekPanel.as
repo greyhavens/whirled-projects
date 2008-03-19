@@ -25,6 +25,7 @@ import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 
 import com.threerings.flash.FrameSprite;
+import com.threerings.util.ClassUtil;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Random;
 
@@ -64,6 +65,7 @@ public class SeekPanel extends FrameSprite
 
     public function ghostPositionUpdate (pos :Point) :void
     {
+        Game.log.debug("Whee new target: " + pos);
         _ghost.newTarget(this.globalToLocal(pos));
     }
 
@@ -258,7 +260,7 @@ public class SeekPanel extends FrameSprite
     {
         pos = Game.control.stageToRoom(pos);
         if (pos != null) {
-            _ppp.setRoomProperty(Game.ourPlayerId, Codes.PROP_LANTERN_POS, pos);
+            _ppp.setRoomProperty(Game.ourPlayerId, Codes.PROP_LANTERN_POS, [ pos.x, pos.y ]);
         }
     }
 
@@ -269,7 +271,7 @@ public class SeekPanel extends FrameSprite
             (Game.roomBounds.width - ghostBounds.width) - ghostBounds.left;
         var y :int = Game.random.nextNumber() *
             (Game.roomBounds.height - ghostBounds.height) - ghostBounds.top;
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_POS, new Point(x, y));
+        Game.control.state.setRoomProperty(Codes.PROP_GHOST_POS, [ x, y ]);
     }
 
     protected function messageReceived (event: AVRGameControlEvent) :void
@@ -290,8 +292,12 @@ public class SeekPanel extends FrameSprite
                 playerLanternOff(playerId);
 
             } else {
-                // someone turned theirs on or moved it
-                playerLanternMoved(playerId, Game.control.roomToStage(value as Point));
+                var bits :Array = (value as Array);
+                if (bits != null) {
+                    // someone turned theirs on or moved it
+                    playerLanternMoved(
+                        playerId, Game.control.roomToStage(new Point(bits[0], bits[1])));
+                }
             }
         }
     }
@@ -302,9 +308,9 @@ public class SeekPanel extends FrameSprite
             updateGhost();
 
         } else if (evt.name == Codes.PROP_GHOST_POS) {
-            var pos :Point = (evt.value as Point);
-            if (pos != null) {
-                pos = Game.control.roomToStage(pos);
+            var bits :Array = (evt.value as Array);
+            if (bits != null) {
+                var pos :Point = Game.control.roomToStage(new Point(bits[0], bits[1]));
                 if (pos != null) {
                     ghostPositionUpdate(pos);
                 }
