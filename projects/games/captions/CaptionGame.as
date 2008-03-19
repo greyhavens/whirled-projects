@@ -341,7 +341,7 @@ public class CaptionGame extends EventDispatcher
         _ctrl.addEventListener(Event.UNLOAD, handleUnload);
         _ctrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, handlePropertyChanged);
         _ctrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
-        _ctrl.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
+        _ctrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleCoinsAwarded);
         _ctrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
         _ctrl.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, checkControl);
         _ctrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED, handleOccupantEntered);
@@ -1259,17 +1259,17 @@ public class CaptionGame extends EventDispatcher
     }
 
     /**
-     * Handle the result of flow being awarded to us.
+     * Handle the result of coins being awarded to us.
      */
-    protected function handleFlowAwarded (event :FlowAwardedEvent) :void
+    protected function handleCoinsAwarded (event :CoinsAwardedEvent) :void
     {
         // TODO: move? Keep?
         var amount :int = event.amount;
         if (amount > 0) {
-            _ctrl.local.feedback("You earned " + amount + " flow for your " +
+            _ctrl.local.feedback("You earned " + amount + " coins for your " +
                 "participation in this round.");
         } else {
-            _ctrl.local.feedback("You did not receive any flow this round.");
+            _ctrl.local.feedback("You did not receive any coins this round.");
         }
     }
 

@@ -115,7 +115,7 @@ public class SubAttack extends Sprite
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
         _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
-        _gameCtrl.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
+        _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleCoinsAwarded);
 
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
@@ -217,13 +217,13 @@ public class SubAttack extends Sprite
         _board = new Board(_gameCtrl, _seaDisplay);
     }
 
-    protected function handleFlowAwarded (event :FlowAwardedEvent) :void
+    protected function handleCoinsAwarded (event :CoinsAwardedEvent) :void
     {
         var amount :int = event.amount;
         if (amount > 0) {
-            _gameCtrl.local.feedback("You earned " + amount + " flow.");
+            _gameCtrl.local.feedback("You earned " + amount + " coins.");
         } else {
-            _gameCtrl.local.feedback("You did not earn any flow. Too bad!");
+            _gameCtrl.local.feedback("You did not earn any coins. Too bad!");
         }
     }
 
