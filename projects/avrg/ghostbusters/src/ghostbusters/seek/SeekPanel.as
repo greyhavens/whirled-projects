@@ -316,7 +316,7 @@ public class SeekPanel extends FrameSprite
     protected function playerLeft (evt :AVRGameControlEvent) :void
     {
         if (Game.control.hasControl()) {
-            _ppp.setRoomProperty(Game.ourPlayerId, Codes.PROP_LANTERN_POS, null);            
+            _ppp.setRoomProperty(evt.value as int, Codes.PROP_LANTERN_POS, null);            
         }
     }
 
