@@ -10,6 +10,12 @@ public class Scoreboard
     {
     }
 
+    public function getPlayerScore (name :String) :int
+    {
+        var index :int = ArrayUtil.indexIf(_scores, function (score :Score) :Boolean { return score.name == name });
+        return (index >= 0 ? (_scores[index] as Score).score : 0);
+    }
+
     public function addScore (name :String, score :int, date :Date = null) :void
     {
         if (null == date) {

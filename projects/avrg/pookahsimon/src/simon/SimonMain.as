@@ -13,7 +13,7 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.system.ApplicationDomain;
 
-[SWF(width="700", height="500")]
+[SWF(width="700", height="600")]
 public class SimonMain extends Sprite
 {
     public static var log :Log = Log.getLog(SimonMain);
@@ -34,6 +34,13 @@ public class SimonMain extends Sprite
     public static function get minPlayersToStart () :int
     {
         return (Constants.FORCE_SINGLEPLAYER || !control.isConnected() ? 1 : Constants.MIN_MP_PLAYERS_TO_START);
+    }
+
+    public static function quit () :void
+    {
+        if (control.isConnected()) {
+            control.deactivateGame();
+        }
     }
 
     public function SimonMain ()

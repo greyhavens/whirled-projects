@@ -39,32 +39,7 @@ public class Controller
         _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
         // visuals
-        var quitButton :DisablingButton = createButton(100, 25, "Quit");
-        quitButton.x = Constants.QUIT_BUTTON_LOC.x;
-        quitButton.y = Constants.QUIT_BUTTON_LOC.y;
-        quitButton.addEventListener(MouseEvent.CLICK, handleQuitButtonClick);
-        _mainSprite.addChild(quitButton);
-
-        _statusText = new TextField();
-        _statusText.selectable = false;
-        _statusText.mouseEnabled = false;
-        _statusText.autoSize = TextFieldAutoSize.LEFT;
-        _statusText.textColor = 0x0000FF;
-        _statusText.scaleX = 3;
-        _statusText.scaleY = 3;
-        _statusText.x = Constants.STATUS_TEXT_LOC.x;
-        _statusText.y = Constants.STATUS_TEXT_LOC.y;
-        _mainSprite.addChild(_statusText);
-
-        _scoreboardView = new ScoreboardView(_model.curScores);
-        _scoreboardView.x = Constants.SCOREBOARD_LOC.x;
-        _scoreboardView.y = Constants.SCOREBOARD_LOC.y;
-        _mainSprite.addChild(_scoreboardView);
-
-        _playerListView = new PlayerListViewController();
-        _playerListView.x = Constants.PLAYER_LIST_LOC.x;
-        _playerListView.y = Constants.PLAYER_LIST_LOC.y;
-        _mainSprite.addChild(_playerListView);
+        _cloudView = new CloudViewController();
 
         // each client maintains the concept of an expected state,
         // so that it is prepared to take over as the
@@ -87,6 +62,8 @@ public class Controller
             _currentRainbow.destroy();
             _currentRainbow = null;
         }
+
+        _cloudView.destroy();
 
         _model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
         _model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerIndexChanged);
@@ -167,8 +144,6 @@ public class Controller
         this.applyStateChanges();
 
         this.updateStatusText();
-
-        _playerListView.updateView();
     }
 
     protected function applyStateChanges () :void
@@ -285,7 +260,6 @@ public class Controller
     protected function handleNewScores (e :SharedStateChangedEvent) :void
     {
         _expectedScores = null;
-        _scoreboardView.scoreboard = _model.curScores;
     }
 
     protected function handleGameOver () :void
@@ -310,27 +284,34 @@ public class Controller
 
     protected function updateStatusText () :void
     {
+        var newStatusText :String;
+
         switch (_model.curState.gameState) {
         case SharedState.INVALID_STATE:
-            _statusText.text = "INVALID_STATE";
+            newStatusText = "INVALID_STATE";
             break;
 
         case SharedState.WAITING_FOR_GAME_START:
-            _statusText.text = "Waiting to start (players: " + SimonMain.model.getPlayerOids().length + "/" + SimonMain.minPlayersToStart + ")";
+            newStatusText = "Waiting to start (players: " + SimonMain.model.getPlayerOids().length + "/" + SimonMain.minPlayersToStart + ")";
             break;
 
         case SharedState.PLAYING_GAME:
             var curPlayerName :String = SimonMain.getPlayerName(_model.curState.curPlayerOid);
-            _statusText.text = "Playing game. " + curPlayerName + "'s turn.";
+            newStatusText = "Playing game. " + curPlayerName + "'s turn.";
             break;
 
         case SharedState.WE_HAVE_A_WINNER:
-            _statusText.text = SimonMain.getPlayerName(_model.curState.roundWinnerId) + " is the winner!";
+            newStatusText = SimonMain.getPlayerName(_model.curState.roundWinnerId) + " is the winner!";
             break;
 
         default:
             log.info("unrecognized gameState: " + _model.curState.gameState);
             break;
+        }
+
+        if (newStatusText != _statusText) {
+            log.info("** STATUS: " + newStatusText);
+            _statusText = newStatusText;
         }
     }
 
@@ -431,9 +412,8 @@ public class Controller
     protected var _expectedScores :Scoreboard;
 
     protected var _mainSprite :Sprite;
-    protected var _scoreboardView :ScoreboardView;
-    protected var _statusText :TextField;
-    protected var _playerListView :PlayerListViewController;
+    protected var _cloudView :CloudViewController;
+    protected var _statusText :String;
 
     protected var _newRoundTimer :Timer;
 
