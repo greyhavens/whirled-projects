@@ -28,7 +28,7 @@ public class Constants
     public static const USE_ITEM_NAMES_AS_TAGS :Boolean = false;
     public static const CARD_ITEMS_ARE_UNIQUE :Boolean = true;
 
-    public static const MAX_MATCHES_PER_BALL :int = 3;
+    public static const MAX_MATCHES_PER_BALL :int = 1;
 
     public static const NUM_SCOREBOARD_NAMES :int = 5;
 
