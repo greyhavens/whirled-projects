@@ -177,7 +177,20 @@ public class Model
 
     public function undo () :void
     {
-        // TODO
+        if (_undoStack.length == 0) {
+            log.warning("attempting to undo from an empty undo stack");
+            return;
+        }
+
+        var stroke :Stroke = _undoStack.pop();
+        if (stroke.id == null) {
+            log.warning("attempting to remove stroke with null id! [" + stroke + "]");
+            return;
+        }
+
+        _strokesMap.remove(stroke.id);
+        _canvases.removeStroke(stroke.id);
+        _canvases.reportUndoStackSize(_undoStack.length);
     }
 
     protected function strokeBegun (stroke :Stroke) :void
