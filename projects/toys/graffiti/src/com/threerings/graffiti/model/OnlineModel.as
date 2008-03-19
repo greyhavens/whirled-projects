@@ -60,7 +60,7 @@ public class OnlineModel extends Model
     {
         super.endStroke(id);
         if (idFromMe(id)) {
-            var stroke :Stroke = _tempStrokesMap.get(id);
+            var stroke :Stroke = _strokesMap.get(id);
             if (stroke != null) {
                 _throttle.pushMessage(new StrokeEndMessage(stroke));
             }
@@ -82,11 +82,13 @@ public class OnlineModel extends Model
 
     override public function setBackgroundColor (color :uint) :void
     {
+        // wait to hear from the manager before changing it locally
         _throttle.pushMessage(new AlterBackgroundMessage(AlterBackgroundMessage.COLOR, color));
     }
 
     override public function setBackgroundTransparent (transparent :Boolean) :void
     {
+        // wait to hear from the manager before changing it locally
         _throttle.pushMessage(
             new AlterBackgroundMessage(AlterBackgroundMessage.TRANSPARENCY, transparent));
     }
@@ -102,7 +104,8 @@ public class OnlineModel extends Model
     protected function memoryChanged (event :ControlEvent) :void
     {
         if (event.name == Manager.MEMORY_MODEL && event.value == null) {
-            _canvasStrokes = [];
+            _strokesList = [];
+            _strokesMap.clear();
             _canvases.clear();
             _backgroundTransparent = false;
             _canvases.paintBackground(_backgroundColor = 0xFFFFFF);
@@ -111,7 +114,7 @@ public class OnlineModel extends Model
 
     protected function updateSizeLimit () :void
     {
-        _canvases.reportFillPercent(serialize(true).length / MAX_STORAGE_SIZE);
+        _canvases.reportFillPercent(serialize().length / MAX_STORAGE_SIZE);
     }
 
     protected function paintCanvas (canvas :Canvas) :void
@@ -123,8 +126,8 @@ public class OnlineModel extends Model
             canvas.paintBackground(_backgroundColor);
         }
 
-        for each (var stroke :Stroke in _canvasStrokes) {
-            canvas.canvasStroke(stroke);
+        for each (var stroke :Stroke in _strokesList) {
+            canvas.drawStroke(stroke);
         }
     }
 
@@ -152,7 +155,7 @@ public class OnlineModel extends Model
         } else if (strokeMessage is StrokeExtendMessage) {
             extendStroke(strokeMessage.strokeId, (strokeMessage as StrokeExtendMessage).to);
         } else if (strokeMessage is StrokeEndMessage) {
-            // NOOP - managers care about this.
+            // NOOP
         } else {
             log.debug("unkown temp stroke message type [" + message + "]");
         }

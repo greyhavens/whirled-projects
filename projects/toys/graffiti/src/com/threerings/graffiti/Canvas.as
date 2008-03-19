@@ -126,10 +126,10 @@ public class Canvas extends Sprite
         g.endFill();
     }
 
-    public function tempStroke (id :String, stroke :Stroke, startPoint :int = 0) :void
+    public function drawStroke (stroke :Stroke, startPoint :int = 0) :void
     {
-        log.debug("temp stroke [" + this.name + ", " + id + ", " + stroke + ", " + startPoint + 
-            "]");
+        log.debug("draw stroke [" + this.name + ", " + stroke.id + ", " + stroke + ", " + 
+            startPoint + "]");
 
         var start :Point = stroke.getPoint(startPoint);
         if (start == null) {
@@ -137,12 +137,22 @@ public class Canvas extends Sprite
             return;
         }
 
-        var strokeLayer :Shape = _layers.get(id);
-        if (strokeLayer == null) {
-            strokeLayer = new Shape();
-            _layers.put(id, strokeLayer);
+        var strokeLayer :Shape;
+        if (stroke.id == null) {
+            // This stroke is finalized and the artist has closed their editor, we won't need to 
+            // remember it anymore.  Also, we'll only receive strokes like this when we first
+            // start up, and they'll come in order, so we can just plunk it down on top
+            strokeLayer = new Shape(); 
             addChild(strokeLayer);
             stroke.tool.mouseDown(strokeLayer.graphics, start);
+        } else {
+            strokeLayer = _layers.get(stroke.id);
+            if (strokeLayer == null) {
+                strokeLayer = new Shape();
+                _layers.put(stroke.id, strokeLayer);
+                addChild(strokeLayer);
+                stroke.tool.mouseDown(strokeLayer.graphics, start);
+            }
         }
 
         for (var ii :int = startPoint + 1; ii < stroke.getSize(); ii++) {
@@ -150,19 +160,33 @@ public class Canvas extends Sprite
         }
     }
 
-    /** 
-     * Draws a full stroke on the canvas.
-     */
-    public function canvasStroke (stroke :Stroke) :void
+    public function removeStroke (id :String) :void
     {
-        log.debug("canvas stroke [" + this.name + ", " + stroke + "]");
+        var layer :Shape = _layers.remove(id);
+        if (layer != null) {
+            removeChild(layer);
+        }
+    }
 
-        // this stroke is finalized, so we don't need to remember the layer it is drawn on.
-        var layer :Shape = new Shape();
-        addChild(layer);
-        stroke.tool.mouseDown(layer.graphics, stroke.getPoint(0));
+    public function replaceStroke (stroke :Stroke, layer :int, oldId :String) :void
+    {
+        var oldLayer :Shape = oldId != null ? _layers.remove(oldId) : null;
+        if (oldLayer != null) {
+            removeChild(oldLayer);
+        }
+
+        var strokeLayer :Shape = new Shape();
+        // add 2: one for the mask, one for the background;
+        layer += 2;
+        if (layer >= numChildren) {
+            addChild(strokeLayer);
+        } else {
+            addChildAt(strokeLayer, layer);
+        }
+        stroke.tool.mouseDown(strokeLayer.graphics, stroke.getPoint(0));
+
         for (var ii :int = 1; ii < stroke.getSize(); ii++) {
-            stroke.tool.dragTo(layer.graphics, stroke.getPoint(ii));
+            stroke.tool.dragTo(strokeLayer.graphics, stroke.getPoint(ii));
         }
     }
 

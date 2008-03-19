@@ -30,7 +30,7 @@ public class Model
 
     public function beginStroke (id :String, from :Point, to :Point, tool :Tool) :void
     {
-        if (id == null || _tempStrokesMap.get(id) != null) {
+        if (id == null || _strokesMap.containsKey(id)) {
             log.warning("Attempting to add a new stroke with null or existing id! [" + id + "]");
             return;
         }
@@ -40,14 +40,14 @@ public class Model
 
     public function extendStroke (id :String, to :Point, end :Boolean = false) :void
     {
-        var stroke :Stroke = _tempStrokesMap.get(id);
+        var stroke :Stroke = _strokesMap.get(id);
         if (stroke == null) {
             log.warning("attempted to extend an unknown stroke [" + id + "]");
             return;
         }
 
         stroke.extend(to);
-        _canvases.tempStroke(id, stroke, stroke.getSize() - 2);
+        _canvases.drawStroke(stroke, stroke.getSize() - 2);
 
         if (end) {
             endStroke(id);
@@ -59,37 +59,13 @@ public class Model
         // ignored here - used by subclasses
     }
 
-    public function clearCanvas () :void
-    {
-        _tempStrokes = [];
-        _canvasStrokes = [];
-        _tempStrokesMap.clear();
-        _backgroundColor = 0xFFFFFF;
-        _canvases.clear();
-    }
-
-    public function getCanvasStrokes () :Array
-    {
-        return _canvasStrokes;
-    }
-
-    public function getTempStrokeIds () :Array
-    {
-        return _tempStrokes;
-    }
-
-    public function getTempStroke (id :String) :Stroke
-    {
-        return _tempStrokesMap.get(id) as Stroke;
-    }
-
     public function getKey () :String
     {
         // this assumes we'll never give out more keys than KEY_BITS.length ^ 2, which is
         // 3844.  Since our current space is limited to 4k, this is a safe assumption.  If in the
         // future we're given more space, then we won't have to be so anal about key encoding
         // length and we can extend the length of the key to deal with more stroke storage space.
-        return getKeyString(_keys++);
+        return getKeyString(_localKeys++);
     }
 
     public function setBackgroundColor (color :uint) :void
@@ -112,53 +88,41 @@ public class Model
         return _backgroundTransparent;
     }
 
-    public function serialize (includeTempStrokes :Boolean = false) :ByteArray 
+    public function serialize () :ByteArray
     {
-        var canvasBytes :ByteArray = new ByteArray();
+        var bytes :ByteArray = new ByteArray();
 
         // write model version number.
-        canvasBytes.writeInt(MODEL_VERSION_NUMBER);
+        bytes.writeInt(MODEL_VERSION_NUMBER);
 
         // write the background color and transparency
-        canvasBytes.writeUnsignedInt(_backgroundColor);
-        canvasBytes.writeBoolean(_backgroundTransparent);
+        bytes.writeUnsignedInt(_backgroundColor);
+        bytes.writeBoolean(_backgroundTransparent);
 
         // write the strokes
         var strokesBytes :ByteArray = new ByteArray();
-        if (includeTempStrokes) {
-            strokesBytes.writeInt(_canvasStrokes.length + _tempStrokes.length);
-        } else {
-            strokesBytes.writeInt(_canvasStrokes.length);
-        }
+        strokesBytes.writeInt(_strokesList.length);
         var colorLUT :HashMap = new HashMap();
-        for each (var stroke :Stroke in _canvasStrokes) {
+        for each (var stroke :Stroke in _strokesList) {
             stroke.serialize(strokesBytes, colorLUT);
         }
 
-        // temp strokes
-        if (includeTempStrokes) {
-            for each (var strokeId :String in _tempStrokes) {
-                (_tempStrokesMap.get(strokeId) as Stroke).serialize(strokesBytes, colorLUT);
-            }
-        }
-
         // write the LUT
-        canvasBytes.writeInt(colorLUT.size());
+        bytes.writeInt(colorLUT.size());
         var colors :Array = new Array(colorLUT.size());
         for each (var color :uint in colorLUT.keys()) {
             colors[colorLUT.get(color)] = color;
         }
         // now that we have the colors in key order, dump the array
         for each (color in colors) {
-            canvasBytes.writeUnsignedInt(color);
+            bytes.writeUnsignedInt(color);
         }
 
         // append the stroke data
-        canvasBytes.writeBytes(strokesBytes);
+        bytes.writeBytes(strokesBytes);
 
-        canvasBytes.compress();
-        _canvases.reportFillPercent(canvasBytes.length / MAX_STORAGE_SIZE);
-        return canvasBytes;
+        bytes.compress();
+        return bytes;
     }
 
     public function deserialize (bytes :ByteArray) :void
@@ -179,10 +143,15 @@ public class Model
                 colors[ii] = bytes.readUnsignedInt();
             }
 
-            _canvasStrokes = [];
+            _strokesList = [];
+            _strokesMap.clear();
             var numStrokes :int = bytes.readInt();
             for (ii = 0; ii < numStrokes; ii++) {
-                _canvasStrokes.push(Stroke.createStrokeFromBytes(bytes, colors));
+                var stroke :Stroke = Stroke.createStrokeFromBytes(bytes, colors);
+                _strokesList.push(stroke);
+                if (stroke.id != null) {
+                    _strokesMap.put(stroke.id, stroke);
+                }
             }
         } catch (err :Error) {
             log.warning("Unrecoverable error in deserialization!  This Model is not valid! [" +
@@ -197,24 +166,11 @@ public class Model
 
     protected function strokeBegun (stroke :Stroke) :void
     {
-        _tempStrokesMap.put(stroke.id, stroke);
-        _tempStrokes.push(stroke.id);
-        _canvases.tempStroke(stroke.id, stroke);
-    }
-
-    protected function removeFromTempStrokes (id :String) :void
-    {
-        _tempStrokesMap.remove(id);
-        var ii :int = _tempStrokes.indexOf(id);
-        if (ii != -1) {
-            _tempStrokes.splice(ii, 1);
+        _strokesList.push(stroke);
+        if (stroke.id != null) {
+            _strokesMap.put(stroke.id, stroke);
         }
-    }
-
-    protected function pushToCanvas (stroke :Stroke) :void
-    {
-        _canvasStrokes.push(stroke);
-        _canvases.canvasStroke(stroke);
+        _canvases.drawStroke(stroke);
     }
 
     protected function getKeyString (keyValue :int) :String
@@ -240,12 +196,14 @@ public class Model
     ];
 
     protected var _canvases :CanvasList = new CanvasList();
-    protected var _tempStrokesMap :HashMap = new HashMap;
-    protected var _tempStrokes :Array = [];
-    protected var _canvasStrokes :Array = [];
+    // contains all strokes, in the order in which they should be drawn
+    protected var _strokesList :Array = [];
+    // contains only the strokes that have a valid id - which are the strokes that may be extended
+    // or undone
+    protected var _strokesMap :HashMap = new HashMap();
     protected var _backgroundColor :uint = 0xFFFFFF;
     protected var _backgroundTransparent :Boolean = false;
-    protected var _keys :int = 0;
+    protected var _localKeys :int = 0;
 }
 }
 
@@ -271,22 +229,29 @@ class CanvasList
         }
     }
 
-    public function tempStroke (id :String, stroke :Stroke, startPoint :int = -1) :void
+    public function drawStroke (stroke :Stroke, startPoint :int = -1) :void
     {
         for each (var canvas :Canvas in _canvases) {
             if (startPoint == -1) {
-                // respect canvas' default
-                canvas.tempStroke(id, stroke);
+                // respect the canvas' default
+                canvas.drawStroke(stroke);
             } else {
-                canvas.tempStroke(id, stroke, startPoint);
+                canvas.drawStroke(stroke, startPoint);
             }
         }
     }
 
-    public function canvasStroke (stroke :Stroke) :void
+    public function removeStroke (id :String) :void
     {
         for each (var canvas :Canvas in _canvases) {
-            canvas.canvasStroke(stroke);
+            canvas.removeStroke(id);
+        }
+    }
+
+    public function replaceStroke (stroke :Stroke, layer :int, oldId :String) :void
+    {
+        for each (var canvas :Canvas in _canvases) {
+            canvas.replaceStroke(stroke, layer, oldId);
         }
     }
 
