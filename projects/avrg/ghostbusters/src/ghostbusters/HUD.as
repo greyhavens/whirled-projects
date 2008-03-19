@@ -160,13 +160,10 @@ public class HUD extends Sprite
         _ghostInfo = MovieClip(findSafely(GHOST_INFO));
         _ghostInfo.visible = false; 
 
-//        _weaponDisplay = MovieClip(findSafely(WEAPON_DISPLAY));
-//        _weaponDisplay.visible = false; 
-
-        safelyAdd(CHOOSE_LANTERN, function (evt :Event) :void { pickLoot(0); });
-        safelyAdd(CHOOSE_BLASTER, function (evt :Event) :void { pickLoot(1); });
-        safelyAdd(CHOOSE_OUIJA, function (evt :Event) :void { pickLoot(2); });
-        safelyAdd(CHOOSE_POTIONS, function (evt :Event) :void { pickLoot(3); });
+        safelyAdd(CHOOSE_LANTERN, pickLoot);
+        safelyAdd(CHOOSE_BLASTER, pickLoot);
+        safelyAdd(CHOOSE_OUIJA, pickLoot);
+        safelyAdd(CHOOSE_POTIONS, pickLoot);
 
         _visualHud = MovieClip(findSafely(VISUAL_BOX));
 
@@ -175,7 +172,38 @@ public class HUD extends Sprite
         teamUpdated();
 
         updateGhostHealth();
-        pickLoot(0);
+        updateLootState();
+    }
+
+    protected function pickLoot (evt :MouseEvent) :void
+    {
+        var button :SimpleButton = evt.target as SimpleButton;
+        if (button == null) {
+            Game.log.debug("Clicky is not SimpleButton: " + evt.target);
+            return;
+        }
+
+        if (button.name == CHOOSE_LANTERN) {
+            _lootIx = 0;
+        } else if (button.name == CHOOSE_BLASTER) {
+            _lootIx = 1;
+        } else if (button.name == CHOOSE_OUIJA) {
+            _lootIx = 2;
+        } else if (button.name == CHOOSE_POTIONS) {
+            _lootIx = 3;
+        } else {
+            Game.log.debug("Eeek, unknown target: " + button.name);
+            return;
+        }
+
+        updateLootState();
+    }
+
+    protected function updateLootState () :void
+    {
+        for (var ii :int = 0; ii < _loots.length; ii ++) {
+            SimpleButton(_loots[ii]).visible = (ii == _lootIx);
+        }
     }
 
     protected function placeHud () :void
@@ -224,17 +252,8 @@ public class HUD extends Sprite
 
     protected function playerPropertyChanged (memberId :int, name :String, value :Object) :void
     {
-        Game.log.debug("ppc(" + memberId + ", " + name + ", " + value + ")");
         if (name == Codes.PROP_PLAYER_CUR_HEALTH || name == Codes.PROP_PLAYER_MAX_HEALTH) {
             playerHealthUpdated(memberId);
-        }
-    }
-
-    protected function pickLoot (lootIx :int) :void
-    {
-        _lootIx = lootIx;
-        for (var ii :int = 0; ii < _loots.length; ii ++) {
-            SimpleButton(_loots[ii]).visible = (ii == _lootIx);
         }
     }
 
