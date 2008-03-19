@@ -332,7 +332,7 @@
 |-
 | [[Image:newsboy_hat.png]] ||newsboy hat|| head,hat,blue || no ||
 |-
-| [[Image:newsboy hat_pattern.png]] ||patterned newsboy hat|| head,hat,orange,pink,purple,patterned || no ||
+| [[Image:newsboy hat_pattern.png]] ||patterned newsboy hat|| head,hat,orange,pink,purple,pattern || no ||
 |-
 | [[Image:snow_cap_blue.png]] ||blue snow cap|| head,hat,winter,blue || no ||
 |-

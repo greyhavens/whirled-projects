@@ -6,7 +6,7 @@ public class Constants
 {
     public static const VERSION :Number = 0.002;
 
-    public static const ALLOW_CHEATS :Boolean = true;
+    public static const ALLOW_CHEATS :Boolean = false;
     public static const FORCE_SINGLEPLAYER :Boolean = false;
 
     // cosmetic bits
@@ -51,14 +51,9 @@ public class Constants
         new BingoItem("white pendant", ["neck", "jewelry", "necklace", "pendant", "white", "gold", ], Resources.IMG_GOLDPENDANTWHITE),
         new BingoItem("black pendant", ["neck", "jewelry", "necklace", "pendant", "black", "gold", ], Resources.IMG_GOLDPENDANTBLACK),
         new BingoItem("pearl earrings", ["head", "jewelry", "earrings", "beaded", "white", ], Resources.IMG_PEARLEARRINGS),
-        new BingoItem("gemstone earrings", ["head", "jewelry", "earrings", "gem", "color", ], Resources.IMG_GEMEARRINGS),
-        new BingoItem("hoop earrings", ["head", "jewelry", "earrings", "hoop", "color", ], Resources.IMG_HOOPEARRINGS),
-        new BingoItem("thick hoop earrings", ["head", "jewelry", "earrings", "hoop", "color", ], Resources.IMG_THICKHOOPEARRINGS),
-        new BingoItem("bubble earrings", ["head", "jewelry", "earrings", "hoop", "color", ], Resources.IMG_BUBBLEEARRINGS),
         new BingoItem("dangly earrings", ["head", "jewelry", "earrings", "dangly", "pink", ], Resources.IMG_DANGLYEARRINGSPINK),
         new BingoItem("dangly earrings", ["head", "jewelry", "earrings", "dangly", "green", ], Resources.IMG_DANGLYEARRINGSGREEN),
         new BingoItem("chandalier earrings", ["head", "jewelry", "earrings", "dangly", "pink", "gold", ], Resources.IMG_CHANDALIEREARRINGS),
-        new BingoItem("basic ring", ["hands", "jewelry", "ring", "color", ], Resources.IMG_BASICRING),
         new BingoItem("gold diamond ring", ["hands", "jewelry", "ring", "gold", "gem", ], Resources.IMG_GOLDRINGDIAMOND),
         new BingoItem("gold ruby ring", ["hands", "jewelry", "ring", "gold", "gem", "red", ], Resources.IMG_GOLDRINGRUBY),
         new BingoItem("gold sapphire ring", ["hands", "jewelry", "ring", "gold", "gem", "blue", ], Resources.IMG_GOLDRINGSAPPHIRE),
@@ -76,7 +71,6 @@ public class Constants
         new BingoItem("purple/silver class ring", ["hands", "jewelry", "ring", "silver", "gem", "purple", ], Resources.IMG_CLASSRINGSILVERPURPLE),
         new BingoItem("blue/silver class ring", ["hands", "jewelry", "ring", "silver", "gem", "blue", ], Resources.IMG_CLASSRINGSILVERBLUE),
         new BingoItem("green/silver class ring", ["hands", "jewelry", "ring", "silver", "gem", "green", ], Resources.IMG_CLASSRINGSILVERGREEN),
-        new BingoItem("solid heel", ["feet", "shoes", "heel", "color", ], Resources.IMG_HEELSOLID),
         new BingoItem("patterned heel 1", ["feet", "shoes", "heel", "pattern", ], Resources.IMG_HEELPATTERN01),
         new BingoItem("patterned heel 2", ["feet", "shoes", "heel", "pattern", ], Resources.IMG_HEELPATTERN02),
         new BingoItem("patterned heel 3", ["feet", "shoes", "heel", "pattern", ], Resources.IMG_HEELPATTERN03),
@@ -201,7 +195,7 @@ public class Constants
         new BingoItem("fedora", ["head", "hat", "white", ], Resources.IMG_FEDORA),
         new BingoItem("patterned fedora", ["head", "hat", "white", "black", ], Resources.IMG_FEDORAPATTERN),
         new BingoItem("newsboy hat", ["head", "hat", "blue", ], Resources.IMG_NEWSBOYHAT),
-        new BingoItem("patterned newsboy hat", ["head", "hat", "orange", "pink", "purple", "patterned", ], Resources.IMG_NEWSBOYHATPATTERN),
+        new BingoItem("patterned newsboy hat", ["head", "hat", "orange", "pink", "purple", "pattern", ], Resources.IMG_NEWSBOYHATPATTERN),
         new BingoItem("blue snow cap", ["head", "hat", "winter", "blue", ], Resources.IMG_SNOWCAPBLUE),
         new BingoItem("snow cap", ["head", "hat", "winter", "pink", ], Resources.IMG_SNOWCAP),
         new BingoItem("straw/sun hat", ["head", "hat", "summer", "red", ], Resources.IMG_STRAWHAT),
@@ -239,8 +233,42 @@ public class Constants
         new BingoItem("patterned purse 3", ["bag", "pattern", "brown", ], Resources.IMG_PURSEPATTERN03),
         new BingoItem("patterned purse 4", ["bag", "pattern", "red", ], Resources.IMG_PURSEPATTERN04),
 
+        // recolored items
+        new BingoItem("garnet gemstone earrings", ["head", "jewelry", "earrings", "gem", "red", ], Resources.IMG_GEMEARRINGS,       true, 0xCC0000, 0.51 ),
+        new BingoItem("purple gemstone earrings", ["head", "jewelry", "earrings", "gem", "purple", ], Resources.IMG_GEMEARRINGS,    true, 0x660066, 0.51),
+        new BingoItem("teal gemstone earrings", ["head", "jewelry", "earrings", "gem", "blue", ], Resources.IMG_GEMEARRINGS,        true, 0x99FFFF, 0.51),
+        new BingoItem("silver gemstone earrings", ["head", "jewelry", "earrings", "gem", "silver", ], Resources.IMG_GEMEARRINGS,    true, 0xFFFFFF, 0.51),
+        new BingoItem("green gemstone earrings", ["head", "jewelry", "earrings", "gem", "green", ], Resources.IMG_GEMEARRINGS,      true, 0x006600, 0.51),
+        new BingoItem("ruby gemstone earrings", ["head", "jewelry", "earrings", "gem", "red", ], Resources.IMG_GEMEARRINGS,         true, 0xFF0000, 0.51),
+        new BingoItem("light green gemstone earrings", ["head", "jewelry", "earrings", "gem", "green", ], Resources.IMG_GEMEARRINGS, true, 0x99FF66, 0.51),
+        new BingoItem("blue gemstone earrings", ["head", "jewelry", "earrings", "gem", "blue", ], Resources.IMG_GEMEARRINGS,        true, 0x0000FF, 0.51),
+        new BingoItem("pink gemstone earrings", ["head", "jewelry", "earrings", "gem", "pink", ], Resources.IMG_GEMEARRINGS,        true, 0xFF0066, 0.51),
+        new BingoItem("yellow gemstone earrings", ["head", "jewelry", "earrings", "gem", "yellow", ], Resources.IMG_GEMEARRINGS,    true, 0xFFFF66, 0.51),
+        new BingoItem("light blue gemstone earrings", ["head", "jewelry", "earrings", "gem", "blue", ], Resources.IMG_GEMEARRINGS,  true, 0x0099FF, 0.51),
+
+        new BingoItem("silver hoop earrings", ["head", "jewelry", "earrings", "hoop", "silver", ], Resources.IMG_HOOPEARRINGS, true, 0xCCCCCC, 0.51),
+        new BingoItem("gold hoop earrings", ["head", "jewelry", "earrings", "hoop", "gold", ], Resources.IMG_HOOPEARRINGS, true, 0xCC9900, 0.51),
+
+        new BingoItem("silver thick hoop earrings", ["head", "jewelry", "earrings", "hoop", "silver", ], Resources.IMG_THICKHOOPEARRINGS, true, 0xCCCCCC, 0.51),
+        new BingoItem("gold thick hoop earrings", ["head", "jewelry", "earrings", "hoop", "gold", ], Resources.IMG_THICKHOOPEARRINGS, true, 0xCC9900, 0.51),
+
+        new BingoItem("silver bubble earrings", ["head", "jewelry", "earrings", "hoop", "silver", ], Resources.IMG_BUBBLEEARRINGS, true, 0xCCCCCC, 0.51),
+        new BingoItem("gold bubble earrings", ["head", "jewelry", "earrings", "hoop", "gold", ], Resources.IMG_BUBBLEEARRINGS, true, 0xCC9900, 0.51),
+
+        new BingoItem("silver basic ring", ["hands", "jewelry", "ring", "silver", ], Resources.IMG_BASICRING, true, 0xCCCCCC, 0.51),
+        new BingoItem("gold basic ring", ["hands", "jewelry", "ring", "gold", ], Resources.IMG_BASICRING, true, 0xCC9900, 0.51),
+
+        new BingoItem("red solid heel", ["feet", "shoes", "heel", "red", ], Resources.IMG_HEELSOLID, true, 0xFF0000, 0.51),
+        new BingoItem("pink solid heel", ["feet", "shoes", "heel", "pink", ], Resources.IMG_HEELSOLID, true, 0xFF3366, 0.51),
+        new BingoItem("purple solid heel", ["feet", "shoes", "heel", "purple", ], Resources.IMG_HEELSOLID, true, 0x660066, 0.51),
+        new BingoItem("blue solid heel", ["feet", "shoes", "heel", "blue", ], Resources.IMG_HEELSOLID, true, 0x003399, 0.51),
+        new BingoItem("orange solid heel", ["feet", "shoes", "heel", "orange", ], Resources.IMG_HEELSOLID, true, 0xFF6600, 0.51),
+        new BingoItem("green solid heel", ["feet", "shoes", "heel", "green", ], Resources.IMG_HEELSOLID, true, 0x006633, 0.51),
+        new BingoItem("yellow solid heel", ["feet", "shoes", "heel", "yellow", ], Resources.IMG_HEELSOLID, true, 0xFFCC00, 0.51),
+        new BingoItem("black solid heel", ["feet", "shoes", "heel", "black", ], Resources.IMG_HEELSOLID, true, 0x000000, 0.56),
 
     ];
+
 
 
 

@@ -1,5 +1,7 @@
 package bingo {
 
+import com.whirled.contrib.ColorMatrix;
+
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -98,6 +100,13 @@ public class BingoCardView extends Sprite
             var bitmap :Bitmap = new item.itemClass();
             bitmap.x = -(bitmap.width * 0.5);
             bitmap.y = -(bitmap.height * 0.5);
+
+            // does the item require recoloring?
+            if (item.requiresTint) {
+                var cm :ColorMatrix = new ColorMatrix();
+                cm.tint(item.tintColor, item.tintAmount);
+                bitmap.filters = [ cm.createFilter() ];
+            }
 
             sprite.addChild(bitmap);
         }
