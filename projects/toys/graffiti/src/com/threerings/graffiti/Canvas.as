@@ -231,6 +231,7 @@ public class Canvas extends Sprite
         var localPoint :Point = _background.globalToLocal(new Point(evt.stageX, evt.stageY));
         _eyeDropper.x = localPoint.x;
         _eyeDropper.y = localPoint.y - _eyeDropper.height;
+        setChildIndex(_eyeDropper, numChildren - 1);
     }
 
     protected function mouseDown (evt :MouseEvent) :void
