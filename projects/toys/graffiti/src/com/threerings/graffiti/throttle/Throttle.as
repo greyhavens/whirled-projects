@@ -58,33 +58,39 @@ public class Throttle extends EventDispatcher
         }
     }
 
+    protected function dispatchTemp (message :ThrottleMessage) :void
+    {
+        dispatchEvent(new ThrottleEvent(ThrottleEvent.TEMP_MESSAGE, message));
+    }
+
+    protected function dispatchManager (message :ThrottleMessage) :void
+    {
+        dispatchEvent(new ThrottleEvent(ThrottleEvent.MANAGER_MESSAGE, message));
+    }
+
     protected function applyMessage (type :int, bytes :ByteArray) :void
     {
         switch (type) {
         case MESSAGE_TYPE_STROKE_BEGIN: 
-            dispatchEvent(new ThrottleEvent(ThrottleEvent.TEMP_MESSAGE,
-                          StrokeBeginMessage.deserialize(bytes)));
-            break;
+            dispatchTemp(StrokeBeginMessage.deserialize(bytes)); break;
 
         case MESSAGE_TYPE_STROKE_EXTEND: 
-            dispatchEvent(new ThrottleEvent(ThrottleEvent.TEMP_MESSAGE,
-                          StrokeExtendMessage.deserialize(bytes)));
-            break;
+            dispatchTemp(StrokeExtendMessage.deserialize(bytes)); break;
 
         case MESSAGE_TYPE_STROKE_END: 
-            dispatchEvent(new ThrottleEvent(ThrottleEvent.TEMP_MESSAGE,
-                          StrokeEndMessage.deserialize(bytes)));
-            break;
+            dispatchTemp(StrokeEndMessage.deserialize(bytes)); break;
 
         case MESSAGE_TYPE_ALTER_BACKGROUND:
-            dispatchEvent(new ThrottleEvent(ThrottleEvent.TEMP_MESSAGE,
-                          AlterBackgroundMessage.deserialize(bytes)));
-            break;
+            dispatchTemp(AlterBackgroundMessage.deserialize(bytes)); break;
             
         case MESSAGE_TYPE_ALTER_BACKGROUND_MANAGER:
-            dispatchEvent(new ThrottleEvent(ThrottleEvent.MANAGER_MESSAGE,
-                          AlterBackgroundMessage.deserialize(bytes)));
-            break;
+            dispatchManager(AlterBackgroundMessage.deserialize(bytes)); break
+
+        case MESSAGE_TYPE_STRIP_ID:
+            dispatchTemp(StripIdMessage.deserialize(bytes)); break;
+
+        case MESSAGE_TYPE_REMOVE_STROKE:
+            dispatchTemp(RemoveStrokeMessage.deserialize(bytes)); break;
 
         default:
             log.warning("unknown message type! [" + type + "]");
@@ -120,6 +126,10 @@ public class Throttle extends EventDispatcher
             return MESSAGE_TYPE_ALTER_BACKGROUND_MANAGER;
         } else if (message is AlterBackgroundMessage) {
             return MESSAGE_TYPE_ALTER_BACKGROUND;
+        } else if (message is StripIdMessage) {
+            return MESSAGE_TYPE_STRIP_ID;
+        } else if (message is RemoveStrokeMessage) {
+            return MESSAGE_TYPE_REMOVE_STROKE;
         } else {
             log.warning("Unknown message for type encoding! [" + message + "]");
             return -1;
@@ -141,6 +151,8 @@ public class Throttle extends EventDispatcher
     protected static const MESSAGE_TYPE_STROKE_END :int = 3;
     protected static const MESSAGE_TYPE_ALTER_BACKGROUND :int = 4;
     protected static const MESSAGE_TYPE_ALTER_BACKGROUND_MANAGER :int = 5;
+    protected static const MESSAGE_TYPE_STRIP_ID :int = 6;
+    protected static const MESSAGE_TYPE_REMOVE_STROKE :int = 7;
 
     protected var _pendingMessages :Array = [];
     protected var _timer :Timer;

@@ -40,6 +40,11 @@ public class Stroke
         return _id;
     }
 
+    public function set id (id :String) :void
+    {
+        _id = id;
+    }
+
     public function get tool () :Tool
     {
         return _tool;

@@ -20,6 +20,8 @@ import com.threerings.graffiti.model.Stroke;
 
 import com.threerings.graffiti.throttle.AlterBackgroundMessage;
 import com.threerings.graffiti.throttle.ManagerAlterBackgroundMessage;
+import com.threerings.graffiti.throttle.RemoveStrokeMessage;
+import com.threerings.graffiti.throttle.StripIdMessage;
 import com.threerings.graffiti.throttle.StrokeEndMessage;
 import com.threerings.graffiti.throttle.Throttle;
 import com.threerings.graffiti.throttle.ThrottleEvent;
@@ -80,6 +82,17 @@ public class Manager
             _memoryDirty = true;
 
             // TODO: send on as the official version of this stroke
+        } else if (message is StripIdMessage) {
+            stroke = _model.getStroke((message as StripIdMessage).strokeId);
+            if (stroke != null) {
+                stroke.id = null;
+            }
+            _memoryDirty = true;
+        } else if (message is RemoveStrokeMessage) {
+            // will eventually need to check ownership on this message, but we can punt on that
+            // for now.
+            _model.removeStroke((message as RemoveStrokeMessage).strokeId);
+            _memoryDirty = true;
         }
     }
 

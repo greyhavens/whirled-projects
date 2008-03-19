@@ -209,6 +209,11 @@ public class Canvas extends Sprite
         _layers.clear();
     }
 
+    public function idStripped (id :String) :void
+    {
+        _layers.remove(id);
+    }
+
     protected function cleanup () :void
     {
         endStroke(new Point(_background.mouseX, _background.mouseY));

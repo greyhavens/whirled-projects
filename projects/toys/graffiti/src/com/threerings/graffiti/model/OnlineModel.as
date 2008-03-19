@@ -18,6 +18,8 @@ import com.threerings.graffiti.throttle.Throttle;
 import com.threerings.graffiti.throttle.ThrottleEvent;
 import com.threerings.graffiti.throttle.ThrottleMessage;
 import com.threerings.graffiti.throttle.ThrottleStrokeMessage;
+import com.threerings.graffiti.throttle.RemoveStrokeMessage;
+import com.threerings.graffiti.throttle.StripIdMessage;
 import com.threerings.graffiti.throttle.StrokeBeginMessage;
 import com.threerings.graffiti.throttle.StrokeExtendMessage;
 import com.threerings.graffiti.throttle.StrokeEndMessage;
@@ -101,6 +103,25 @@ public class OnlineModel extends Model
         }
     }
 
+    override protected function forgetUndoStroke (stroke :Stroke) :void
+    {
+        super.forgetUndoStroke(stroke);
+        if (idFromMe(stroke.id)) {
+            _throttle.pushMessage(new StripIdMessage(stroke.id));
+            _canvases.idStripped(stroke.id);
+            stroke.id = null;
+        }
+    }
+
+    override protected function strokeRemoved (stroke :Stroke) :void
+    {
+        super.strokeRemoved(stroke);
+        if (idFromMe(stroke.id)) {
+            _throttle.pushMessage(new RemoveStrokeMessage(stroke.id));
+        }
+        stroke.id = null;
+    }
+
     protected function memoryChanged (event :ControlEvent) :void
     {
         if (event.name == Manager.MEMORY_MODEL && event.value == null) {
@@ -155,7 +176,15 @@ public class OnlineModel extends Model
         } else if (strokeMessage is StrokeExtendMessage) {
             extendStroke(strokeMessage.strokeId, (strokeMessage as StrokeExtendMessage).to);
         } else if (strokeMessage is StrokeEndMessage) {
-            // NOOP
+            // NOOP - ending the stroke puts it on the undo stack, which we don't want here.
+        } else if (strokeMessage is StripIdMessage) {
+            var stroke :Stroke = _strokesMap.remove(strokeMessage.strokeId);
+            if (stroke != null) {
+                _canvases.idStripped(stroke.id);
+                stroke.id = null;
+            }
+        } else if (strokeMessage is RemoveStrokeMessage) {
+            removeStroke(strokeMessage.strokeId);
         } else {
             log.debug("unkown temp stroke message type [" + message + "]");
         }

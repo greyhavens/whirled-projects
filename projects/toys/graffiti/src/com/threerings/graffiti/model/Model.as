@@ -64,7 +64,7 @@ public class Model
 
         _undoStack.push(stroke);
         if (_undoStack.length > UNDO_STACK_SIZE) {
-            undoStrokeForgotten(_undoStack.shift()); 
+            forgetUndoStroke(_undoStack.shift());
         }
 
         _canvases.reportUndoStackSize(_undoStack.length);
@@ -188,9 +188,33 @@ public class Model
             return;
         }
 
-        _strokesMap.remove(stroke.id);
-        _canvases.removeStroke(stroke.id);
+        removeStroke(stroke.id);
         _canvases.reportUndoStackSize(_undoStack.length);
+    }
+
+    public function removeStroke (id :String) :void
+    {
+        var stroke :Stroke = _strokesMap.remove(id) as Stroke;
+        _canvases.removeStroke(id);
+
+        if (stroke == null) {
+            log.warning("removed null stroke! [" + id + "]");
+            return;
+        }
+
+        var index :int = _strokesList.indexOf(stroke);
+        if (index < 0) {
+            log.warning("undone stroke not found! [" + stroke + "]");
+            return;
+        }
+        _strokesList.splice(index, 1);
+
+        strokeRemoved(stroke);
+    }
+
+    public function getStroke (id :String) :Stroke
+    {
+        return _strokesMap.get(id);
     }
 
     protected function strokeBegun (stroke :Stroke) :void
@@ -202,7 +226,12 @@ public class Model
         _canvases.drawStroke(stroke);
     }
 
-    protected function undoStrokeForgotten (stroke :Stroke) :void
+    protected function forgetUndoStroke (stroke :Stroke) :void
+    {
+        _strokesMap.remove(stroke.id);
+    }
+
+    protected function strokeRemoved (stroke :Stroke) :void
     {
         // NOOP
     }
@@ -308,6 +337,13 @@ class CanvasList
     {
         for each (var canvas :Canvas in _canvases) {
             canvas.reportUndoStackSize(size);
+        }
+    }
+
+    public function idStripped (id :String) :void
+    {
+        for each (var canvas :Canvas in _canvases) {
+            canvas.idStripped(id);
         }
     }
 
