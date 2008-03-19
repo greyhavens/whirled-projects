@@ -128,7 +128,7 @@ public class RainbowController
         }
 
         function rolloverHandler (e :MouseEvent) :void {
-            if (band != thisObject._hilitedBand) {
+            if (!_finalNotePlayed && band != _hilitedBand) {
 
                 if (null != _hilitedBand) {
                     _hilitedBand.filters = [ g_lightenMatrix.createFilter() ];
@@ -140,7 +140,7 @@ public class RainbowController
         }
 
         function rolloutHandler (e :MouseEvent) :void {
-            if (band == thisObject._hilitedBand) {
+            if (!_finalNotePlayed && band == _hilitedBand) {
                 _hilitedBand.filters = [ g_lightenMatrix.createFilter() ];
                 _hilitedBand = null;
             }
@@ -150,25 +150,23 @@ public class RainbowController
     protected function nextNoteSelected (noteIndex :int, clickLoc :Point, sendNextNoteMessage :Boolean) :void
     {
         var success :Boolean;
-        var playerTurnOver :Boolean;
 
         if (0 == _remainingPattern.length) {
             // the player successfully completed the pattern, and has added
             // a new note to the end
             success = true;
-            playerTurnOver = true;
+            _finalNotePlayed = true;
 
         } else if (noteIndex == _remainingPattern[0]) {
             // the player clicked correctly
             success = true;
-            playerTurnOver = false;
 
             _remainingPattern.shift();
 
         } else {
             // failure!
             success = false;
-            playerTurnOver = true;
+            _finalNotePlayed = true;
 
         }
 
@@ -177,8 +175,7 @@ public class RainbowController
             SimonMain.model.sendRainbowClickedMessage(noteIndex);
         }
 
-        if (playerTurnOver) {
-            _finalNotePlayed = true;
+        if (_finalNotePlayed) {
             _success = success;
             _finalNoteIndex = noteIndex;
         }
