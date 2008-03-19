@@ -26,6 +26,9 @@ public class Model
     public function unregisterCanvas (canvas :Canvas, editingCanvas :Boolean) :void
     {
         _canvases.removeCanvas(canvas);
+        if (editingCanvas) {
+            _localKeys = 0;
+        }
     }
 
     public function beginStroke (id :String, from :Point, to :Point, tool :Tool) :void
@@ -190,6 +193,7 @@ public class Model
 
         removeStroke(stroke.id);
         _canvases.reportUndoStackSize(_undoStack.length);
+        _localKeys = Math.max(_localKeys - 1, 0);
     }
 
     public function removeStroke (id :String) :void
