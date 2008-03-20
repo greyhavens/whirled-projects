@@ -9,9 +9,9 @@ import com.threerings.util.Log;
 /**
  * The user interface for bidding. This is pretty much placeholder code, so is not documented in 
  * detail.
- * @TODO Rewrite with embedded flashy stuff.
- * @TODO Decide how to reuse with other trick-taking card games.
- * @TODO Design timer functionality (or maybe caller does it generically).
+ * XXTODO Rewrite with embedded flashy stuff.
+ * XXTODO Decide how to reuse with other trick-taking card games.
+ * XXTODO Design timer functionality (or maybe caller does it generically).
  */
 public class BidSlider extends Sprite
 {

@@ -79,7 +79,7 @@ public class CardArray
         _cards.push(card);
     }
     
-    /** @inheritDocs */
+    /** @inheritDoc */
     public function toString () :String
     {
         var s :String = "";

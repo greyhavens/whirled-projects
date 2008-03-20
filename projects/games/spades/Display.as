@@ -4,8 +4,8 @@ import flash.display.DisplayObject;
 
 /**
  * Represents a rectangular display of fixed width and height.
- * @TODO Allow the width and height to vary based on browser changes.
- * @TODO Integrate more tightly with the "main" sprite.
+ * XXTODO Allow the width and height to vary based on browser changes.
+ * XXTODO Integrate more tightly with the "main" sprite.
  */
 public class Display
 {

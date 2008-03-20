@@ -6,7 +6,7 @@ import flash.display.DisplayObject;
  * Represents a card for use with game logic, rendering and UI. Has suit, rank and an optional 
  * display component. Also provides translation to and from "ordinal" cards for use in 
  * serialization.
- * @TODO Are jokers needed?
+ * XXTODO Are jokers needed?
  */
 public class Card
 {
@@ -71,11 +71,11 @@ public class Card
     public static const NUM_ORDINALS :int = NUM_SUITS * NUM_RANKS;
 
     /** Placeholder value for the width of a card sprite. 
-     *  @TODO use card.display.width instead? */
+     *  XXTODO use card.display.width instead? */
     public static const SPRITE_WIDTH :int = 70;
 
     /** Placeholder value for the height of a card sprite.
-     *  @TODO use card.display.height instead? */
+     *  XXTODO use card.display.height instead? */
     public static const SPRITE_HEIGHT :int = 105;
 
     /** Create a new Card object from an ordinal.
@@ -129,7 +129,7 @@ public class Card
     }
 
     /** Return a long string for a SUIT_* constant. E.g. "hearts".
-     *  @TODO this is probably not useful, remove */
+     *  XXTODO this is probably not useful, remove */
     static public function longSuitString (suit :int) :String
     {
         switch (suit) {
@@ -142,7 +142,7 @@ public class Card
     }
     
     /** Return a long string for a RANK_* constant. E.g. "queen".
-     *  @TODO this is probably not useful, remove */
+     *  XXTODO this is probably not useful, remove */
     static public function longRankString (rank :int) :String
     {
         switch (rank)
@@ -212,7 +212,7 @@ public class Card
     }
     
     /** Compare for eqaulity to another card.
-     *  @returns true if the this is equal to the other card */
+     *  @return true if the this is equal to the other card */
     public function equals (rhs :Card) :Boolean
     {
         if (rhs == null) {
@@ -230,13 +230,13 @@ public class Card
     }
     
     /** Return a long string representing the card. E.g. "two of hearts". 
-     *  @TODO this is probably not useful, remove. */
+     *  XXTODO this is probably not useful, remove. */
     public function toLongString () :String
     {
         return longRankString(_rank) + " of " + suitString(_suit);
     }
 
-    /** @inheritDocs */
+    /** @inheritDoc */
     public function toString () :String
     {
         return string;
@@ -257,7 +257,7 @@ public class Card
 import flash.text.TextField;
 
 /** File-private placeholder for card graphics.
- *  @TODO embed flashy stuff */
+ *  XXTODO embed flashy stuff */
 class CardText extends TextField
 {
     public function CardText (card :Card) {

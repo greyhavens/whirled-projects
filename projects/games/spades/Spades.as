@@ -10,9 +10,9 @@ import com.whirled.game.*;
 
 /**
  * The main sprite for the spades game.
- * @TODO Factor certain things into CardGame and/or TrickTakingCardGame.
- * @TODO Strip out excessive debug logging.\
- * @TODO Use localized feeedback.
+ * XXTODO Factor certain things into CardGame and/or TrickTakingCardGame.
+ * XXTODO Strip out excessive debug logging.\
+ * XXTODO Use localized feeedback.
  */
 [SWF(width="800", height="800")]
 public class Spades extends Sprite
@@ -100,7 +100,7 @@ public class Spades extends Sprite
     }
 
     /** Boot up the game.
-     *  @TODO Decide who is going to deal rather than use controller. */
+     *  XXTODO Decide who is going to deal rather than use controller. */
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
         _gameCtrl.local.feedback("Spades superchallenge: go!\n");
@@ -150,7 +150,7 @@ public class Spades extends Sprite
     }
 
     /** End the game.
-     *  @TODO award points. */
+     *  XXTODO award points. */
     protected function handleGameEnded (event :StateChangedEvent) :void
     {
         _gameCtrl.local.feedback("Thank you for playing Spades!");
@@ -232,7 +232,7 @@ public class Spades extends Sprite
         _gameCtrl.game.startNextTurn();
     }
 
-    /** @TODO Highlight the cards that may now be played. */
+    /** XXTODO Highlight the cards that may now be played. */
     protected function updateMoves () :void
     {
     }
