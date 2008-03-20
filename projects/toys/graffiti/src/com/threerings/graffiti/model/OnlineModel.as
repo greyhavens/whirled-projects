@@ -130,6 +130,7 @@ public class OnlineModel extends Model
             _throttle.pushMessage(new RemoveStrokeMessage(stroke.id));
         }
         stroke.id = null;
+        updateSizeLimit();
     }
 
     protected function memoryChanged (event :ControlEvent) :void
