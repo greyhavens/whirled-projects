@@ -129,7 +129,20 @@ public class ToolBox extends Sprite
         _swatchButtonSet.addButton(
             new ToggleButton(_ui.secondary_color as SimpleButton, SECONDARY_COLOR));
 
-        // tool buttons
+        // show furni checkbox - I know this logic looks backwards, but the instance name never
+        // got changed...
+        _ui.hidefurni.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            dispatchEvent(new ToolEvent(ToolEvent.HIDE_FURNI, !_ui.hidefurni.selected));
+        });
+        _ui.hidefurni.selected = false;
+
+        // done button
+        _ui.done_button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            dispatchEvent(new ToolEvent(ToolEvent.DONE_EDITING));
+        });
+
+        // tool buttons - set this up last, as it initiates a general UI setup for the brush tool, 
+        // and all the member variables need to be initialized.
         var toolSet :RadioButtonSet = new RadioButtonSet();
         toolSet.addEventListener(RadioEvent.BUTTON_SELECTED, function (event :RadioEvent) :void {
             if (event.value != PICKER_TOOL) {
