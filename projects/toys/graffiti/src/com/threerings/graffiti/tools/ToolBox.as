@@ -65,6 +65,26 @@ public class ToolBox extends Sprite
 
     public function managerMessageReceived (event :ThrottleEvent) :void
     {
+        if (event.message is AlterBackgroundMessage) {
+            var backgroundMessage :AlterBackgroundMessage = event.message as AlterBackgroundMessage;
+            if (backgroundMessage.type == AlterBackgroundMessage.COLOR) {
+                _colors[PRIMARY_COLOR][toolsetForTool(CANVAS_TOOL)] = 
+                    backgroundMessage.value as int;
+                _colorEnableds[PRIMARY_COLOR][toolsetForTool(CANVAS_TOOL)] = true;
+            } else if (backgroundMessage.type == AlterBackgroundMessage.TRANSPARENCY) {
+                _colorEnableds[PRIMARY_COLOR][toolsetForTool(CANVAS_TOOL)] = 
+                    !(backgroundMessage.value as Boolean);
+            }
+
+            if (_currentDrawingTool == CANVAS_TOOL) {
+                if (_colorEnableds[PRIMARY_COLOR][toolsetForTool(CANVAS_TOOL)]) {
+                    fillSwatch(_swatches[PRIMARY_COLOR], 
+                        _colors[PRIMARY_COLOR][toolsetForTool(CANVAS_TOOL)]);
+                } else {
+                    clearSwatch(_swatches[PRIMARY_COLOR]);
+                }
+            }
+        }
     }
 
     public function setUndoEnabled (enabled :Boolean) :void
@@ -121,6 +141,8 @@ public class ToolBox extends Sprite
 
         _sizeSlider.value = _sizes[toolset];
         _alphaSlider.value = _alphas[toolset];
+
+        toolUpdate();
     }
 
     protected function fillSwatch (shape :Shape, color :uint) :void
@@ -167,6 +189,76 @@ public class ToolBox extends Sprite
         dispatchEvent(new ToolEvent(ToolEvent.UNDO_ONCE));
     }
 
+    protected function clearCurrentSwatch (event :MouseEvent) :void
+    {
+        var toolset :int = toolsetForTool(_currentDrawingTool);
+        _colorEnableds[_currentSwatch][toolset] = false;
+        clearSwatch(_swatches[_currentSwatch]);
+
+        if (toolset == FULL_TOOLSET) {
+            // since we just turned off one of the two color swatches, make sure the other
+            // one is on.
+            _colorEnableds[(_currentSwatch + 1) % 2][toolset] = true;
+            fillSwatch(_swatches[(_currentSwatch + 1) % 2], 
+                _colors[(_currentSwatch + 1) % 2][toolset]);
+        }
+
+        if (_currentDrawingTool == CANVAS_TOOL) {
+            dispatchEvent(new ToolEvent(ToolEvent.BACKGROUND_TRANSPARENCY, true));
+        } else {
+            toolUpdate();
+        }
+    }
+
+    protected function pickClickedColor (event :MouseEvent) :void
+    {
+        var toolset :int = toolsetForTool(_currentDrawingTool);
+        _colors[_currentSwatch][toolset] = 
+            colorFromGlobalPoint(new Point(event.stageX, event.stageY));
+        _colorEnableds[_currentSwatch][toolset] = true;
+        fillSwatch(_swatches[_currentSwatch], _colors[_currentSwatch][toolset]);
+
+        if (_currentDrawingTool == CANVAS_TOOL) {
+            dispatchEvent(new ToolEvent(ToolEvent.BACKGROUND_TRANSPARENCY, false));
+            dispatchEvent(
+                new ToolEvent(ToolEvent.BACKGROUND_COLOR, _colors[_currentSwatch][toolset]));
+        } else {
+            toolUpdate();
+        }
+    }
+
+    protected function showHoveredColor (event :MouseEvent) :void
+    {
+        _eyeDropper.visible = true;
+        var local :Point = globalToLocal(new Point(event.stageX, event.stageY));
+        _eyeDropper.x = local.x;
+        _eyeDropper.y = local.y - _eyeDropper.height;
+        fillSwatch(_swatches[_currentSwatch], 
+            colorFromGlobalPoint(new Point(event.stageX, event.stageY)));
+    }
+
+    protected function colorPickerMouseOut (event :MouseEvent) :void
+    {
+        var toolset :int = toolsetForTool(_currentDrawingTool);
+        if (_colorEnableds[_currentSwatch][toolset]) {
+            fillSwatch(_swatches[_currentSwatch], _colors[_currentSwatch][toolset]);
+        } else {
+            clearSwatch(_swatches[_currentSwatch]);
+        }
+
+        _eyeDropper.visible = false;
+    }
+
+    protected function colorFromGlobalPoint (point :Point) :uint
+    {
+        var location :Point = globalToLocal(point);
+        var m :Matrix = new Matrix();
+        m.translate(-location.x, -location.y);
+        var data :BitmapData = new BitmapData(1, 1);
+        data.draw(this, m);
+        return data.getPixel(0, 0);
+    }
+
     protected function handleUILoaded (ui :MovieClip) :void
     {
         _ui = ui;
@@ -204,6 +296,15 @@ public class ToolBox extends Sprite
         _swatchButtonSet.addButton(
             new ToggleButton(_ui.secondary_color as SimpleButton, SECONDARY_COLOR));
 
+        // color picker
+        ui.rainbow.addEventListener(MouseEvent.CLICK, pickClickedColor);
+        ui.rainbow.addEventListener(MouseEvent.MOUSE_MOVE, showHoveredColor);
+        ui.rainbow.addEventListener(MouseEvent.MOUSE_OUT, colorPickerMouseOut);
+        ui.nocolor.addEventListener(MouseEvent.CLICK, clearCurrentSwatch);
+        addChild(_eyeDropper = new EYEDROPPER() as DisplayObject);
+        _eyeDropper.visible = false;
+        
+
         // undo button - disabled by default because we have nothing to undo yet
         _undoButton = new MovieClipButton(_ui.undo);
         _undoButton.enabled = false;
@@ -221,6 +322,10 @@ public class ToolBox extends Sprite
             dispatchEvent(new ToolEvent(ToolEvent.DONE_EDITING));
         });
 
+        // setup init values
+        _colorEnableds[PRIMARY_COLOR][toolsetForTool(CANVAS_TOOL)] = !_initialBackgroundTransparent;
+        _colors[PRIMARY_COLOR][toolsetForTool(CANVAS_TOOL)] = _initialBackgroundColor;
+
         // tool buttons - set this up last, as it initiates a general UI setup for the brush tool, 
         // and all the member variables need to be initialized.
         var toolSet :RadioButtonSet = new RadioButtonSet();
@@ -234,8 +339,6 @@ public class ToolBox extends Sprite
         for (var ii :int = 0; ii < buttons.length; ii++) {
             toolSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, tools[ii]), ii == 0);
         }
-
-        _showFurniture = _ui.hidefurni;
     }
 
     private static const log :Log = Log.getLog(ToolBox);
@@ -278,12 +381,12 @@ public class ToolBox extends Sprite
     protected var _initialFillPercent :Number;
     protected var _sizeSlider :Slider;
     protected var _alphaSlider :Slider;
-    protected var _showFurniture :CheckBox;
     protected var _swatches :Array = [];
     protected var _currentSwatch :int;
     protected var _swatchButtonSet :RadioButtonSet;
     protected var _undoButton :MovieClipButton;
     protected var _currentDrawingTool :int;
+    protected var _eyeDropper :DisplayObject;
 
     // settings for each tool set - arranged in the order of the tool set constants above
     protected var _sizes :Array = [ 2, 10, 5];

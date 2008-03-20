@@ -63,7 +63,9 @@ public class Manager
                 _model.setBackgroundTransparent(backgroundMessage.value as Boolean);
             }
 
-            _throttle.pushMessage(new ManagerAlterBackgroundMessage(backgroundMessage));
+            if (_throttle.control.hasControl()) {
+                _throttle.pushMessage(new ManagerAlterBackgroundMessage(backgroundMessage));
+            }
 
         } else if (message is StrokeEndMessage) {
             var strokeMessage :StrokeEndMessage = message as StrokeEndMessage;

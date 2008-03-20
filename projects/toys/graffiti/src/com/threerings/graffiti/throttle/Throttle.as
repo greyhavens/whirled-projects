@@ -60,11 +60,13 @@ public class Throttle extends EventDispatcher
 
     protected function dispatchTemp (message :ThrottleMessage) :void
     {
+        log.debug("dispatchTemp [" + message + "]");
         dispatchEvent(new ThrottleEvent(ThrottleEvent.TEMP_MESSAGE, message));
     }
 
     protected function dispatchManager (message :ThrottleMessage) :void
     {
+        log.debug("dispatchManger [" + message + "]");
         dispatchEvent(new ThrottleEvent(ThrottleEvent.MANAGER_MESSAGE, message));
     }
 
