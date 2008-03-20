@@ -394,6 +394,67 @@ public class ToolBox extends Sprite
         for (var ii :int = 0; ii < buttons.length; ii++) {
             toolSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, tools[ii]), ii == 0);
         }
+
+        _canvas.addEventListener(MouseEvent.MOUSE_MOVE, canvasMouseMove);
+        _canvas.addEventListener(MouseEvent.MOUSE_OUT, canvasMouseOut);
+        _canvas.addEventListener(MouseEvent.CLICK, canvasClick);
+    }
+
+    protected function indicatorForTool (tool :int) :DisplayObject
+    {
+        switch (tool) {
+        case BRUSH_TOOL:
+            // TODO
+            return null;
+
+        case LINE_TOOL:
+            return new LINETOOL();
+
+        case PICKER_TOOL:
+            return new EYEDROPPER();
+            
+        case ELIPSE_TOOL: 
+            return new ELIPSETOOL();
+
+        case RECTANGLE_TOOL:
+            return new RECTANGLETOOL();
+
+        case CANVAS_TOOL:
+            // nothing to show
+            return null;
+
+        default:
+            log.warning("asked for indicator for unknown tool! [" + tool + "]");
+            return null;
+        }
+    }
+
+    protected function canvasMouseMove (event :MouseEvent) :void
+    {
+        // the player must mouse out to change tool settings at which point the indicator is set
+        // to null, so we don't need to do anything fancy to get updates for tool changes.
+        if (_toolIndicator == null || _toolIndicator.parent != this) {
+            _toolIndicator = indicatorForTool(_currentTool);
+            if (_toolIndicator == null) {
+                return;
+            }
+            addChild(_toolIndicator);
+        }
+
+        var local :Point = globalToLocal(new Point(event.stageX, event.stageY));
+        _toolIndicator.x = local.x;
+        _toolIndicator.y = local.y - _toolIndicator.height;
+    }
+
+    protected function canvasMouseOut (event :MouseEvent) :void
+    {
+        if (_toolIndicator != null && _toolIndicator.parent == this) {
+            removeChild(_toolIndicator);
+        }
+    }
+
+    protected function canvasClick (event :MouseEvent) :void
+    {
     }
 
     private static const log :Log = Log.getLog(ToolBox);
@@ -403,6 +464,12 @@ public class ToolBox extends Sprite
 
     [Embed(source="../../../../../rsrc/eyedropper.png")]
     protected static const EYEDROPPER :Class;
+    [Embed(source="../../../../../rsrc/elipsetool.png")]
+    protected static const ELIPSETOOL :Class;
+    [Embed(source="../../../../../rsrc/linetool.png")]
+    protected static const LINETOOL :Class;
+    [Embed(source="../../../../../rsrc/rectangletool.png")]
+    protected static const RECTANGLETOOL :Class;
 
     // values for the tools RadioButtonSet
     protected static const BRUSH_TOOL :int = 1;
@@ -445,6 +512,7 @@ public class ToolBox extends Sprite
     protected var _eyeDropper :DisplayObject;
     protected var _sizeLimit :MovieClip;
     protected var _brushPreview :Shape;
+    protected var _toolIndicator :DisplayObject;
 
     // settings for each tool set - arranged in the order of the tool set constants above
     protected var _sizes :Array = [ 2, 10, 5];
