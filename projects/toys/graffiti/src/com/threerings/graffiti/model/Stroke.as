@@ -69,6 +69,11 @@ public class Stroke
 
     public function extend (to :Point) :void
     {
+        if (!_tool.storeAllPoints()) {
+            // if the tool doesn't require the intermediate points to draw its full shape 
+            // (line tool, rect tool, etc), only store the first and last point.
+            _points.length = 1;
+        }
         _points.push(to);
     }
 

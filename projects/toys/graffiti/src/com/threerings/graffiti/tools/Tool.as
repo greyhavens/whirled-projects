@@ -53,6 +53,11 @@ public class Tool
         // handled by subclasses
     }
 
+    public function storeAllPoints () :Boolean
+    {
+        return true;
+    }
+
     public function serialize (bytes :ByteArray, colorLUT :HashMap) :void
     {
         bytes.writeInt(typeForTool(this));

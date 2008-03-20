@@ -26,6 +26,11 @@ public class LineTool extends Tool
         graphics.lineTo(point.x, point.y);
     }
 
+    override public function storeAllPoints () :Boolean
+    {
+        return false;
+    }
+
     protected var _startPoint :Point = new Point();
 }
 }

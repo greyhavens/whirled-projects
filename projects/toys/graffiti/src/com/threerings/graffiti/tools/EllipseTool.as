@@ -43,6 +43,11 @@ public class EllipseTool extends ShapeTool
         }
     }
 
+    override public function storeAllPoints () :Boolean
+    {
+        return false;
+    }
+
     protected var _startPoint :Point;
 }
 }
