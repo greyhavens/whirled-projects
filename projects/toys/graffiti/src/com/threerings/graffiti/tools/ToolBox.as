@@ -272,6 +272,10 @@ public class ToolBox extends Sprite
         } else {
             toolUpdate();
         }
+
+        if (_currentTool == PICKER_TOOL) {
+            _toolButtonSet.buttonClicked(_currentDrawingTool - 1);
+        }
     }
 
     protected function pickerHover (event :MouseEvent) :void
@@ -480,7 +484,6 @@ public class ToolBox extends Sprite
             // this is the one case where the tool changes out from under us, so grab a new one.
             canvasMouseOut(event);
             pickClickedColor(event);
-            _toolButtonSet.buttonClicked(_currentDrawingTool - 1);
             canvasMouseMove(event);
         }
     }
