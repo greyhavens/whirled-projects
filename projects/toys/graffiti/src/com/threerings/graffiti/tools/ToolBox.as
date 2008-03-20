@@ -94,6 +94,8 @@ public class ToolBox extends Sprite
 
     protected function toolUpdate () :void
     {
+        updateBrushPreview();
+
         var toolset :int = toolsetForTool(_currentTool);
         var tool :Tool = null;
         if (_currentTool == BRUSH_TOOL) {
@@ -112,6 +114,36 @@ public class ToolBox extends Sprite
                 _colors[PRIMARY_COLOR][toolset], _colorEnableds[PRIMARY_COLOR][toolset]);
         }
         dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED, tool));
+    }
+
+    protected function updateBrushPreview () :void
+    {
+        var toolset :int = toolsetForTool(_currentTool);
+        if (toolset < MEDIUM_TOOLSET) {
+            _brushPreview.visible = false;
+            return;
+        }
+
+        _brushPreview.visible = true;
+        var g :Graphics = _brushPreview.graphics;
+        g.clear();
+        var color :uint;
+        if (toolset == FULL_TOOLSET) {
+            if (_colorEnableds[SECONDARY_COLOR][toolset]) {
+                color = _colors[SECONDARY_COLOR][toolset];
+            } else {
+                // leave clear
+                return;
+            }
+        } else if (_colorEnableds[PRIMARY_COLOR][toolset]) {
+            color = _colors[PRIMARY_COLOR][toolset];
+        } else {
+            // leave clear
+            return;
+        }
+        g.beginFill(color, _alphas[toolset]);
+        g.drawCircle(0, 0, _sizes[toolset] / 2);
+        g.endFill();
     }
 
     protected function toolsetForTool (tool :int) :int 
@@ -322,8 +354,12 @@ public class ToolBox extends Sprite
         ui.nocolor.addEventListener(MouseEvent.CLICK, clearCurrentSwatch);
         addChild(_eyeDropper = new EYEDROPPER() as DisplayObject);
         _eyeDropper.visible = false;
-        
 
+        // brush preview
+        addChild(_brushPreview = new Shape());
+        _brushPreview.x = ui.x + BRUSH_PREVIEW_X_OFFSET;
+        _brushPreview.y = ui.y + BRUSH_PREVIEW_Y_OFFSET;
+        
         // undo button - disabled by default because we have nothing to undo yet
         _undoButton = new MovieClipButton(_ui.undo);
         _undoButton.enabled = false;
@@ -391,8 +427,8 @@ public class ToolBox extends Sprite
 
     protected static const TOOLBAR_WIDTH :int = 80;
     protected static const FLA_WIDTH :int = 485;
-    protected static const BRUSH_PREVIEW_X_OFFSET :int = 430;
-    protected static const BRUSH_PREVIEW_Y_OFFSET :int = 122;
+    protected static const BRUSH_PREVIEW_X_OFFSET :int = 445;
+    protected static const BRUSH_PREVIEW_Y_OFFSET :int = 154;
 
     protected static const MIN_BRUSH_SIZE :int = 2;
     protected static const MAX_BRUSH_SIZE :int = 40;
@@ -412,6 +448,7 @@ public class ToolBox extends Sprite
     protected var _currentDrawingTool :int;
     protected var _eyeDropper :DisplayObject;
     protected var _sizeLimit :MovieClip;
+    protected var _brushPreview :Shape;
 
     // settings for each tool set - arranged in the order of the tool set constants above
     protected var _sizes :Array = [ 2, 10, 5];
