@@ -72,23 +72,90 @@ public class ToolBox extends Sprite
         _undoButton.enabled = enabled;
     }
 
+    protected function toolUpdate () :void
+    {
+    }
+
+    protected function toolsetForTool (tool :int) :int 
+    {
+        if (tool == CANVAS_TOOL) {
+            return BASIC_TOOLSET;
+        } 
+        
+        if (tool == BRUSH_TOOL || tool == LINE_TOOL) {
+            return MEDIUM_TOOLSET;
+        } 
+        
+        if (tool == RECTANGLE_TOOL || tool == ELIPSE_TOOL) {
+            return FULL_TOOLSET;
+        }
+        
+        return NO_TOOLSET;
+    }
+
     protected function setupUi (tool :int) :void
     {
-        _ui.gotoAndStop(tool);
-        _sizeSlider.alpha = _alphaSlider.alpha = tool == CANVAS_TOOL ? 0 : 1;
+        var toolset :int = toolsetForTool(tool);
+        if (toolset == NO_TOOLSET) {
+            return;
+        }
 
-        if (tool == BRUSH_TOOL || tool == CANVAS_TOOL || tool == LINE_TOOL) {
-            // only primary color is shown for these tools
+        // stupid flash and it's non-zero-based indexing of frames
+        _ui.gotoAndStop(_currentDrawingTool = tool);
+
+        // sliders visibility
+        _sizeSlider.alpha = _alphaSlider.alpha = toolset == BASIC_TOOLSET ? 0 : 1;
+
+        if (toolset < FULL_TOOLSET) {
+            // only primary color is shown for these tools, so make sure it's selected
             _swatchButtonSet.buttonClicked(PRIMARY_COLOR);
         }
+
+        for each (var color :int in [ PRIMARY_COLOR, SECONDARY_COLOR ]) {
+            if (_colorEnableds[color][toolset]) {
+                fillSwatch(_swatches[color], _colors[color][toolset]);
+            } else {
+                clearSwatch(_swatches[color]);
+            }
+        }
+
+        _sizeSlider.value = _sizes[toolset];
+        _alphaSlider.value = _alphas[toolset];
+    }
+
+    protected function fillSwatch (shape :Shape, color :uint) :void
+    {
+        var w :int = shape.width;
+        var h :int = shape.height;
+        shape.graphics.clear();
+        shape.graphics.beginFill(color);
+        shape.graphics.drawRect(-w/2, -h/2, w, h);
+        shape.graphics.endFill();
+    }
+
+    protected function clearSwatch (shape :Shape) :void
+    {
+        var w :int = shape.width;
+        var h :int = shape.height;
+        shape.graphics.clear();
+        shape.graphics.beginFill(0xFFFFFF);
+        shape.graphics.drawRect(-w/2, -h/2, w, h);
+        shape.graphics.endFill();
+        shape.graphics.lineStyle(3, 0xFF0000);
+        shape.graphics.moveTo(w/2 - 2, -h/2 + 2);
+        shape.graphics.lineTo(-w/2 + 2, h/2 - 2);
     }
 
     protected function sizeSliderUpdate (event :SliderEvent) :void 
     {
+        _sizes[toolsetForTool(_currentDrawingTool)] = event.value;
+        toolUpdate();
     }
 
     protected function alphaSliderUpdate (event :SliderEvent) :void
     {
+        _alphas[toolsetForTool(_currentDrawingTool)] = event.value;
+        toolUpdate();
     }
 
     protected function undo (event :MouseEvent) :void
@@ -111,7 +178,6 @@ public class ToolBox extends Sprite
         _sizeSlider.liveDragging = true;
         _sizeSlider.minimum = MIN_BRUSH_SIZE;
         _sizeSlider.maximum = MAX_BRUSH_SIZE;
-        _sizeSlider.value = DEFAULT_BRUSH_SIZE;
         _sizeSlider.snapInterval = 1;
         _sizeSlider.addEventListener(SliderEvent.CHANGE, sizeSliderUpdate);
 
@@ -120,7 +186,6 @@ public class ToolBox extends Sprite
         _alphaSlider.liveDragging = true;
         _alphaSlider.minimum = 0;
         _alphaSlider.maximum = 1;
-        _alphaSlider.value = 1;
         _alphaSlider.snapInterval = 0.05;
         _alphaSlider.addEventListener(SliderEvent.CHANGE, alphaSliderUpdate);
 
@@ -160,9 +225,7 @@ public class ToolBox extends Sprite
         // and all the member variables need to be initialized.
         var toolSet :RadioButtonSet = new RadioButtonSet();
         toolSet.addEventListener(RadioEvent.BUTTON_SELECTED, function (event :RadioEvent) :void {
-            if (event.value != PICKER_TOOL) {
-                setupUi(event.value);
-            }
+            setupUi(event.value);
         });
         var buttons :Array = [ _ui.brushtool, _ui.linetool, _ui.rectangletool, _ui.elipsetool, 
                                _ui.canvastool, _ui.pickertool ]
@@ -191,6 +254,11 @@ public class ToolBox extends Sprite
     protected static const CANVAS_TOOL :int = 5;
     protected static const PICKER_TOOL :int = 10;
 
+    protected static const NO_TOOLSET :int = -1;
+    protected static const BASIC_TOOLSET :int = 0;
+    protected static const MEDIUM_TOOLSET :int = 1;
+    protected static const FULL_TOOLSET :int = 2;
+
     // values for the swatches RadioButtonSet
     protected static const PRIMARY_COLOR :int = 0;
     protected static const SECONDARY_COLOR :int = 1;
@@ -202,7 +270,6 @@ public class ToolBox extends Sprite
 
     protected static const MIN_BRUSH_SIZE :int = 2;
     protected static const MAX_BRUSH_SIZE :int = 40;
-    protected static const DEFAULT_BRUSH_SIZE :int = 10;
 
     protected var _canvas :Canvas;
     protected var _ui :MovieClip;
@@ -216,5 +283,20 @@ public class ToolBox extends Sprite
     protected var _currentSwatch :int;
     protected var _swatchButtonSet :RadioButtonSet;
     protected var _undoButton :MovieClipButton;
+    protected var _currentDrawingTool :int;
+
+    // settings for each tool set - arranged in the order of the tool set constants above
+    protected var _sizes :Array = [ 2, 10, 5];
+    protected var _alphas :Array = [ 0, 1, 1 ];
+    protected var _colorEnableds :Array = [
+        // primary
+        [ true, true, true],
+        // secondary
+        [ false, false, false] ];
+    protected var _colors :Array = [
+        // primary
+        [ 0, 0, 0 ],
+        // secondary
+        [ 0, 0, 0 ] ];
 }
 }
