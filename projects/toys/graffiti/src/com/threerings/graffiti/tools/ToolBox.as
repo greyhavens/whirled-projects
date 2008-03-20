@@ -409,22 +409,21 @@ public class ToolBox extends Sprite
 
     protected function indicatorForTool (tool :int) :DisplayObject
     {
+        var toolset :int = toolsetForTool(tool);
+        var imageTool :DisplayObject;
         switch (tool) {
         case BRUSH_TOOL:
-            // TODO
-            return null;
+            var brushPreview :Shape = new Shape();
+            var g :Graphics = brushPreview.graphics;
+            g.beginFill(_colors[PRIMARY_COLOR][toolset], _alphas[toolset]);
+            g.drawCircle(0, 0, _sizes[toolset] / 2);
+            g.endFill();
+            return brushPreview;
 
-        case LINE_TOOL:
-            return new LINETOOL();
-
-        case PICKER_TOOL:
-            return new EYEDROPPER();
-            
-        case ELIPSE_TOOL: 
-            return new ELIPSETOOL();
-
-        case RECTANGLE_TOOL:
-            return new RECTANGLETOOL();
+        case LINE_TOOL: imageTool = new LINETOOL(); break;
+        case PICKER_TOOL: imageTool = new EYEDROPPER(); break;
+        case ELIPSE_TOOL: imageTool = new ELIPSETOOL(); break;
+        case RECTANGLE_TOOL: imageTool = new RECTANGLETOOL(); break;
 
         case CANVAS_TOOL:
             // nothing to show
@@ -434,6 +433,16 @@ public class ToolBox extends Sprite
             log.warning("asked for indicator for unknown tool! [" + tool + "]");
             return null;
         }
+
+        if (imageTool == null) {
+            return null;
+        }
+
+        var anchoredImage :Sprite = new Sprite();
+        anchoredImage.addChild(imageTool);
+        imageTool.y = -imageTool.height;
+        anchoredImage.mouseEnabled = false;
+        return anchoredImage;
     }
 
     protected function canvasMouseMove (event :MouseEvent) :void
@@ -450,7 +459,7 @@ public class ToolBox extends Sprite
 
         var local :Point = globalToLocal(new Point(event.stageX, event.stageY));
         _toolIndicator.x = local.x;
-        _toolIndicator.y = local.y - _toolIndicator.height;
+        _toolIndicator.y = local.y;
 
         if (_currentTool == PICKER_TOOL) {
             showHoveredColor(event);
