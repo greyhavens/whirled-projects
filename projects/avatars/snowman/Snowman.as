@@ -53,7 +53,9 @@ public class Snowman extends Sprite
         var ba :ByteArray = _control.getDefaultDataPack();
         if (ba != null) {
             _pack = new DataPack(ba);
-            _pack.getDisplayObjects({ texture: "texture" }, gotPackObjects);
+            _pack.getDisplayObjects(
+                {headTexture: "headTexture", midTexture: "midTexture", buttTexture: "buttTexture"},
+                gotPackObjects);
 
         } else {
             createScene();
@@ -62,17 +64,21 @@ public class Snowman extends Sprite
 
     protected function gotPackObjects (results :Object) :void
     {
-        createScene(results["texture"] as DisplayObject, _pack.getData("eyeColor"),
-            _pack.getData("noseColor"), _pack.getData("noseLength"), _pack.getData("hatColor"));
+        createScene(results["headTexture"] as DisplayObject,
+            results["midTexture"] as DisplayObject, results["buttTexture"] as DisplayObject,
+            _pack.getData("eyeColor"), _pack.getData("noseColor"), _pack.getData("noseLength"),
+            _pack.getData("hatColor"));
         _pack = null; // no longer needed
     }
 
     protected function createScene (
-        texture :DisplayObject = null, eyeColor :uint = 0x000033, noseColor :uint = 0xFFa900,
+        headTexture :DisplayObject = null, midTexture :DisplayObject = null,
+        buttTexture :DisplayObject = null, eyeColor :uint = 0x000033, noseColor :uint = 0xFFa900,
         noseLength :Number = 100, hatColor :* = undefined) :void
     {
-        if (texture == null) {
-            texture = (new SNOW_TEXTURE()) as Bitmap;
+        var fallbackMaterial :MaterialObject3D;
+        if (headTexture == null || midTexture == null || buttTexture == null) {
+            fallbackMaterial = new BitmapMaterial(((new SNOW_TEXTURE()) as Bitmap).bitmapData);
         }
         _view = new BasicView(600, 550, false);
         addChild(_view);
@@ -80,31 +86,19 @@ public class Snowman extends Sprite
         var rootNode :DisplayObject3D = new DisplayObject3D("rootNode");
         _view.scene.addChild(rootNode);
 
-        var material :MaterialObject3D;
-        if (texture is Bitmap) {
-            material = new BitmapMaterial(Bitmap(texture).bitmapData);
-        } else {
-            var movie :MovieClip;
-            if (texture is MovieClip) {
-                movie = MovieClip(texture);
-            } else {
-                movie = new MovieClip();
-                movie.addChild(texture);
-            }
-            material = new MovieMaterial(movie, true);
-            MovieMaterial(material).animated = true;
-            _animated = true;
-        }
-        var buttSphere :Sphere = new Sphere(material, 150, 32, 20);
+        var buttSphere :Sphere = new Sphere(makeMaterial(buttTexture, fallbackMaterial),
+            150, 32, 20);
         buttSphere.y = 150;
 
-        var midSphere :Sphere = new Sphere(material, 100, 24, 15);
+        var midSphere :Sphere = new Sphere(makeMaterial(midTexture, fallbackMaterial),
+            100, 24, 15);
         midSphere.y = 400;
 
-        var headSphere :Sphere = new Sphere(material, 50, 16, 10);
+        var headSphere :Sphere = new Sphere(makeMaterial(headTexture, fallbackMaterial),
+            50, 16, 10);
         headSphere.y = 550;
 
-        material = new ColorMaterial(eyeColor);
+        var material :MaterialObject3D = new ColorMaterial(eyeColor);
         var leftEye :Sphere = new Sphere(material, 8);
         leftEye.x = -10;
         leftEye.y = 575;
@@ -157,6 +151,30 @@ public class Snowman extends Sprite
         _control.addEventListener(ControlEvent.APPEARANCE_CHANGED, appearanceChanged);
         // and do one now
         appearanceChanged();
+    }
+
+    protected function makeMaterial (
+        texture :DisplayObject, fallback :MaterialObject3D) :MaterialObject3D
+    {
+        if (texture == null) {
+            return fallback;
+
+        } else if (texture is Bitmap) {
+            return new BitmapMaterial(Bitmap(texture).bitmapData);
+
+        } else {
+            var movie :MovieClip;
+            if (texture is MovieClip) {
+                movie = MovieClip(texture);
+            } else {
+                movie = new MovieClip();
+                movie.addChild(texture);
+            }
+            var material :MovieMaterial = new MovieMaterial(movie, true);
+            material.animated = true;
+            _animated = true;
+            return material;
+        }
     }
 
     /**

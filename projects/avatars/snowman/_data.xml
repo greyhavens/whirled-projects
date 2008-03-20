@@ -2,8 +2,9 @@
 <data name="eyeColor" info="The color of the eyes" type="Color" value="000033" defaultValue="000033"/>
 <data name="noseColor" info="The color of the nose" type="Color" value="ffa900"/>
 <data name="hatColor" info="The color of the hat, or omitted for no hat" type="Color" optional="true"/>
-<data name="noseLength" info="The length of the nose" type="Number" value="100" min="20" max="350"/>
+<data name="noseLength" info="The length of the nose" type="Number" value="100"/>
 <!--
+<data name="noseLength" info="The length of the nose" type="Number" value="100" min="20" max="350"/>
 <data name="thing1" info="Thing 1" type="String" value="This string is unused." optional="true"/>
 <data name="thing2" info="Thing 2" type="Number" value="2.2"/>
 <data name="thing3" info="Thing 3" type="Boolean" value="true"/>
@@ -11,6 +12,11 @@
 <data name="thing5" info="Thing 5" type="Point" value="5,6.6"/>
 <data name="thing6" info="Thing 6" type="Rectangle" value="5,6.6,100,100"/>
 -->
-<file name="texture" type="DisplayObject" info="The texture to use for the snowballs" optional="true"width="100" height="100"/>
+<file name="headTexture" type="DisplayObject" info="The texture to use for the head sphere. This one is forced to be 100x100" optional="true" width="100" height="100"/>
+<file name="midTexture" type="DisplayObject" info="The texture to use for the mid sphere. This one has no forced size." optional="true" value="loading.swf"/>
+<file name="buttTexture" type="DisplayObject" info="The texture to use for the butt sphere. This one is forced to be 500x500, which is bigger than the image manipper interface!" optional="true" width="500" height="500"/>
+<!--
+<file name="flexture" type="DisplayObject" value="snow.jpg"/>
+-->
 <file name="_CONTENT" type="Blob" value="Snowman.swf"/>
 </datapack>
