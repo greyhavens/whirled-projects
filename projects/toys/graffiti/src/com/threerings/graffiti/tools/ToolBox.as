@@ -71,18 +71,15 @@ public class ToolBox extends Sprite
     {
     }
 
-    protected function toolSelected (event :RadioEvent) :void
-    {
-        var tool :int = event.value as int;
-        if (tool != PICKER_TOOL) {
-            setupUi(tool);
-        }
-    }
-
     protected function setupUi (tool :int) :void
     {
         _ui.gotoAndStop(tool);
         _sizeSlider.alpha = _alphaSlider.alpha = tool == CANVAS_TOOL ? 0 : 1;
+
+        if (tool == BRUSH_TOOL || tool == CANVAS_TOOL || tool == LINE_TOOL) {
+            // only primary color is shown for these tools
+            _swatchButtonSet.buttonClicked(PRIMARY_COLOR);
+        }
     }
 
     protected function sizeSliderUpdate (event :SliderEvent) :void 
@@ -117,9 +114,28 @@ public class ToolBox extends Sprite
         _alphaSlider.snapInterval = 0.05;
         _alphaSlider.addEventListener(SliderEvent.CHANGE, alphaSliderUpdate);
 
+        // color swatches
+        _ui.primarycolor_swatch.mouseEnabled = false;
+        _swatches[PRIMARY_COLOR] = _ui.primarycolor_swatch.getChildAt(0) as Shape;
+        _ui.secondarycolor_swatch.mouseEnabled = false;
+        _swatches[SECONDARY_COLOR] = _ui.secondarycolor_swatch.getChildAt(0) as Shape;
+        _swatchButtonSet = new RadioButtonSet();
+        _swatchButtonSet.addEventListener(RadioEvent.BUTTON_SELECTED, 
+            function (event :RadioEvent) :void {
+                _currentSwatch = event.value;
+            });
+        _swatchButtonSet.addButton(
+            new ToggleButton(_ui.primary_color as SimpleButton, PRIMARY_COLOR), true);
+        _swatchButtonSet.addButton(
+            new ToggleButton(_ui.secondary_color as SimpleButton, SECONDARY_COLOR));
+
         // tool buttons
         var toolSet :RadioButtonSet = new RadioButtonSet();
-        toolSet.addEventListener(RadioEvent.BUTTON_SELECTED, toolSelected);
+        toolSet.addEventListener(RadioEvent.BUTTON_SELECTED, function (event :RadioEvent) :void {
+            if (event.value != PICKER_TOOL) {
+                setupUi(event.value);
+            }
+        });
         var buttons :Array = [ _ui.brushtool, _ui.linetool, _ui.rectangletool, _ui.elipsetool, 
                                _ui.canvastool, _ui.pickertool ]
         var tools :Array = [ BRUSH_TOOL, LINE_TOOL, RECTANGLE_TOOL, ELIPSE_TOOL, CANVAS_TOOL,
@@ -139,12 +155,17 @@ public class ToolBox extends Sprite
     [Embed(source="../../../../../rsrc/eyedropper.png")]
     protected static const EYEDROPPER :Class;
 
+    // values for the tools RadioButtonSet
     protected static const BRUSH_TOOL :int = 1;
     protected static const LINE_TOOL :int = 2;
     protected static const RECTANGLE_TOOL :int = 3;
     protected static const ELIPSE_TOOL :int = 4;
     protected static const CANVAS_TOOL :int = 5;
     protected static const PICKER_TOOL :int = 10;
+
+    // values for the swatches RadioButtonSet
+    protected static const PRIMARY_COLOR :int = 0;
+    protected static const SECONDARY_COLOR :int = 1;
 
     protected static const TOOLBAR_WIDTH :int = 80;
     protected static const FLA_WIDTH :int = 485;
@@ -163,24 +184,8 @@ public class ToolBox extends Sprite
     protected var _sizeSlider :Slider;
     protected var _alphaSlider :Slider;
     protected var _showFurniture :CheckBox;
+    protected var _swatches :Array = [];
+    protected var _currentSwatch :int;
+    protected var _swatchButtonSet :RadioButtonSet;
 }
-}
-
-import flash.display.Shape;
-
-class Swatch 
-{
-    public static const BRUSH :int = 1;
-    public static const BACKGROUND :int = 2;
-    public static const OUTLINE :int = 3;
-    public static const FILL :int = 4;
-
-    public var swatchShape :Shape;
-    public var type :int;
-
-    public function Swatch (swatchShape :Shape, type :int) 
-    {
-        this.swatchShape = swatchShape;
-        this.type = type;
-    }
 }
