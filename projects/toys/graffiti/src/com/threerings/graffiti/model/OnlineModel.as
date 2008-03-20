@@ -165,6 +165,9 @@ public class OnlineModel extends Model
 
     protected function idFromMe (id :String) :Boolean 
     {
+        if (id == null) {
+            return false;
+        }
         var instanceId :int = _throttle.control.getInstanceId() % Math.pow(KEY_BITS.length, 2);
         return id.indexOf(getKeyString(instanceId)) == 0;
     }

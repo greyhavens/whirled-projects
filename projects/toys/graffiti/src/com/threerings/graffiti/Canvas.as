@@ -65,6 +65,9 @@ public class Canvas extends Sprite
                                    _model.calculateFullPercent());
             _toolBox.addEventListener(ToolEvent.TOOL_PICKED, function (event :ToolEvent) :void {
                 _tool = event.value as Tool;
+                if (_tool == null) {
+                    endStroke();
+                }
             });
             _toolBox.addEventListener(ToolEvent.BACKGROUND_COLOR, 
                 function (event :ToolEvent) :void {
@@ -206,7 +209,7 @@ public class Canvas extends Sprite
     protected function cleanup (...ignored) :void
     {
         if (_toolBox != null) {
-            endStroke(new Point(_background.mouseX, _background.mouseY));
+            endStroke();
         }
         _model.unregisterCanvas(this, _toolBox != null);
     }
@@ -237,12 +240,15 @@ public class Canvas extends Sprite
 
     protected function mouseUp (evt :MouseEvent) :void
     {
-        endStroke(_background.globalToLocal(new Point(evt.stageX, evt.stageY)));
+        maybeAddStroke(_background.globalToLocal(new Point(evt.stageX, evt.stageY)));
+        endStroke();
     }
 
-    protected function endStroke (localPoint :Point) :void 
+    protected function endStroke () :void
     {
-        maybeAddStroke(localPoint, true);
+        if (_inputKey != null) {
+            _model.endStroke(_inputKey);
+        }
         if (_timer > 0) {
             clearInterval(_timer);
             _timer = 0;
@@ -275,11 +281,12 @@ public class Canvas extends Sprite
         }
 
         if (breakLine) {
-            endStroke(canvasPoint);
+            maybeAddStroke(canvasPoint);
+            endStroke();
         }
     }
 
-    protected function maybeAddStroke (p :Point, end :Boolean = false) :void
+    protected function maybeAddStroke (p :Point) :void
     {
         if (p.x < 0 || p.x > CANVAS_WIDTH || p.y < 0 || p.y > CANVAS_HEIGHT) {
             return;
@@ -292,21 +299,14 @@ public class Canvas extends Sprite
         var dx :Number = p.x - _lastStrokePoint.x;
         var dy :Number = p.y - _lastStrokePoint.y;
         if (dx*dx + dy*dy < 9) {
-            if (end) {
-                _model.endStroke(_inputKey);
-            }
             return;
         }
 
-        if (_newStroke && end) {
-            log.warning("newStroke and end!");
-        } else {
-            if (_newStroke) {
-                _model.beginStroke(_inputKey, _lastStrokePoint, p, _tool);
+        if (_newStroke) {
+            _model.beginStroke(_inputKey, _lastStrokePoint, p, _tool);
 
-            } else {
-                _model.extendStroke(_inputKey, p, end);
-            }
+        } else {
+            _model.extendStroke(_inputKey, p);
         }
 
         _lastStrokePoint = p;

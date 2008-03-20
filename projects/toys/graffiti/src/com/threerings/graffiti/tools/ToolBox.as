@@ -56,7 +56,11 @@ public class ToolBox extends Sprite
 
     public function displayFillPercent (percent :Number) :void
     {
-        _sizeLimit.gotoAndStop(Math.ceil(percent * 100));
+        var frame :int = Math.ceil(percent * 100);
+        if (frame != _sizeLimit.currentFrame) {
+            _sizeLimit.gotoAndStop(Math.ceil(percent * 100));
+            toolUpdate();
+        }
     }
 
     public function managerMessageReceived (event :ThrottleEvent) :void
@@ -91,6 +95,12 @@ public class ToolBox extends Sprite
     protected function toolUpdate () :void
     {
         updateBrushPreview();
+
+        if (isFull()) {
+            canvasMouseOut();
+            dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED, tool));
+            return;
+        }
 
         var toolset :int = toolsetForTool(_currentTool);
         var tool :Tool = null;
@@ -427,27 +437,31 @@ public class ToolBox extends Sprite
     {
         var toolset :int = toolsetForTool(tool);
         var imageTool :DisplayObject;
-        switch (tool) {
-        case BRUSH_TOOL:
-            var brushPreview :Shape = new Shape();
-            var g :Graphics = brushPreview.graphics;
-            g.beginFill(_colors[PRIMARY_COLOR][toolset], _alphas[toolset]);
-            g.drawCircle(0, 0, _sizes[toolset] / 2);
-            g.endFill();
-            return brushPreview;
+        if (isFull()) {
+            imageTool = new SIZELIMIT();
+        } else {
+            switch (tool) {
+            case BRUSH_TOOL:
+                var brushPreview :Shape = new Shape();
+                var g :Graphics = brushPreview.graphics;
+                g.beginFill(_colors[PRIMARY_COLOR][toolset], _alphas[toolset]);
+                g.drawCircle(0, 0, _sizes[toolset] / 2);
+                g.endFill();
+                return brushPreview;
 
-        case LINE_TOOL: imageTool = new LINETOOL(); break;
-        case PICKER_TOOL: imageTool = new EYEDROPPER(); break;
-        case ELIPSE_TOOL: imageTool = new ELIPSETOOL(); break;
-        case RECTANGLE_TOOL: imageTool = new RECTANGLETOOL(); break;
+            case LINE_TOOL: imageTool = new LINETOOL(); break;
+            case PICKER_TOOL: imageTool = new EYEDROPPER(); break;
+            case ELIPSE_TOOL: imageTool = new ELIPSETOOL(); break;
+            case RECTANGLE_TOOL: imageTool = new RECTANGLETOOL(); break;
 
-        case CANVAS_TOOL:
-            // nothing to show
-            return null;
+            case CANVAS_TOOL:
+                // nothing to show
+                return null;
 
-        default:
-            log.warning("asked for indicator for unknown tool! [" + tool + "]");
-            return null;
+            default:
+                log.warning("asked for indicator for unknown tool! [" + tool + "]");
+                return null;
+            }
         }
 
         if (imageTool == null) {
@@ -482,7 +496,7 @@ public class ToolBox extends Sprite
         }
     }
 
-    protected function canvasMouseOut (event :MouseEvent) :void
+    protected function canvasMouseOut (...ignored) :void
     {
         if (_toolIndicator != null && _toolIndicator.parent == this) {
             removeChild(_toolIndicator);
@@ -500,6 +514,11 @@ public class ToolBox extends Sprite
         }
     }
 
+    protected function isFull () :Boolean 
+    {
+        return _sizeLimit.currentFrame > 98;
+    }
+
     private static const log :Log = Log.getLog(ToolBox);
 
     [Embed(source="../../../../../rsrc/graffiti_UI.swf", mimeType="application/octet-stream")]
@@ -513,6 +532,8 @@ public class ToolBox extends Sprite
     protected static const LINETOOL :Class;
     [Embed(source="../../../../../rsrc/rectangletool.png")]
     protected static const RECTANGLETOOL :Class;
+    [Embed(source="../../../../../rsrc/sizelimit.png")]
+    protected static const SIZELIMIT :Class;
 
     // values for the tools RadioButtonSet
     protected static const BRUSH_TOOL :int = 1;
