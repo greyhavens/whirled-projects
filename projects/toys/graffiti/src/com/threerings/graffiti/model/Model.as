@@ -270,7 +270,7 @@ public class Model
     private static const log :Log = Log.getLog(Model);
 
     protected static const MODEL_VERSION_NUMBER :int = 1;
-    protected static const MAX_STORAGE_SIZE :int = 500; //4080; // in bytes
+    protected static const MAX_STORAGE_SIZE :int = 4080; // in bytes
     protected static const UNDO_STACK_SIZE :int = 10;
 
     protected static const KEY_BITS :Array = [
