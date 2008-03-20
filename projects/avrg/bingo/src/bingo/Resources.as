@@ -2,10 +2,42 @@ package bingo {
 
 public class Resources
 {
-    public static function load () :void
-    {
+    // UI
+    [Embed(source="../../rsrc/bingo_ball.swf", mimeType="application/octet-stream")]
+    public static const SWF_BALL :Class;
 
-    }
+    [Embed(source="../../rsrc/bingo_board.png")]
+    public static const IMG_BOARD :Class;
+
+    [Embed(source="../../rsrc/bingo_disabled.png")]
+    public static const IMG_BINGODISABLED :Class;
+
+    [Embed(source="../../rsrc/bingo_down.png")]
+    public static const IMG_BINGODOWN :Class;
+
+    [Embed(source="../../rsrc/bingo_enabled.png")]
+    public static const IMG_BINGOENABLED :Class;
+
+    [Embed(source="../../rsrc/bingo_over.png")]
+    public static const IMG_BINGOOVER :Class;
+
+    [Embed(source="../../rsrc/help_down.png")]
+    public static const IMG_HELPDOWN :Class;
+
+    [Embed(source="../../rsrc/help_default.png")]
+    public static const IMG_HELPENABLED :Class;
+
+    [Embed(source="../../rsrc/help_over.png")]
+    public static const IMG_HELPOVER :Class;
+
+    [Embed(source="../../rsrc/quit_down.png")]
+    public static const IMG_QUITDOWN :Class;
+
+    [Embed(source="../../rsrc/quit_default.png")]
+    public static const IMG_QUITENABLED :Class;
+
+    [Embed(source="../../rsrc/quit_over.png")]
+    public static const IMG_QUITOVER :Class;
 
     // items
 

@@ -2,8 +2,6 @@ package bingo {
 
 import com.threerings.flash.DisablingButton;
 
-import flash.display.DisplayObject;
-import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -38,13 +36,26 @@ public class Controller
         _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
         // visuals
-        _bingoButton = createButton(200, 50, "Bingo!");
+        _ballView = new BingoBallViewController();
+
+        _bingoButton = new DisablingButton(
+            new Resources.IMG_BINGOENABLED(),
+            new Resources.IMG_BINGOOVER(),
+            new Resources.IMG_BINGODOWN(),
+            new Resources.IMG_BINGOENABLED(),
+            new Resources.IMG_BINGODISABLED());
+
         _bingoButton.x = Constants.BINGO_BUTTON_LOC.x;
         _bingoButton.y = Constants.BINGO_BUTTON_LOC.y;
         _bingoButton.addEventListener(MouseEvent.CLICK, handleBingoButtonClick);
         _mainSprite.addChild(_bingoButton);
 
-        var quitButton :DisablingButton = createButton(100, 25, "Quit");
+        var quitButton :DisablingButton = new DisablingButton(
+            new Resources.IMG_QUITENABLED(),
+            new Resources.IMG_QUITOVER(),
+            new Resources.IMG_QUITENABLED(),
+            new Resources.IMG_QUITDOWN());
+
         quitButton.x = Constants.QUIT_BUTTON_LOC.x;
         quitButton.y = Constants.QUIT_BUTTON_LOC.y;
         quitButton.addEventListener(MouseEvent.CLICK, handleQuitButtonClick);
@@ -72,45 +83,6 @@ public class Controller
         this.handleNewRound(null);
     }
 
-    protected static function createButton (width :int, height :int, text :String) :DisablingButton
-    {
-        var upState :DisplayObject = createButtonFace(width, height, text, 0x000000, 0xFFFFFF);
-        var overState :DisplayObject = createButtonFace(width, height, text, 0x000000, 0xDDDDDD);
-        var downState :DisplayObject = createButtonFace(width, height, text, 0xFFFFFF, 0x000000);
-        var hitTestState :DisplayObject = upState;
-        var disabledState :DisplayObject = overState;
-
-        return new DisablingButton(upState, overState, downState, hitTestState, disabledState);
-    }
-
-    protected static function createButtonFace (width :int, height :int, text :String, textColor :uint, bgColor :uint) :DisplayObject
-    {
-        var sprite :Sprite = new Sprite();
-        var g :Graphics = sprite.graphics;
-
-        g.lineStyle(1, 0x000000);
-
-        g.beginFill(bgColor);
-        g.drawRect(0, 0, width, height);
-        g.endFill();
-
-        var textField :TextField = new TextField();
-        textField.autoSize = TextFieldAutoSize.LEFT;
-        textField.textColor = textColor;
-        textField.text = text;
-
-        var scale :Number = Math.min((width - 2) / textField.width, (height - 2) / textField.height);
-        textField.scaleX = scale;
-        textField.scaleY = scale;
-
-        textField.x = (width * 0.5) - (textField.width * 0.5);
-        textField.y = (height * 0.5) - (textField.height * 0.5);
-
-        sprite.addChild(textField);
-
-        return sprite;
-    }
-
     public function destroy () :void
     {
         _model.removeEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
@@ -121,6 +93,8 @@ public class Controller
 
         _newBallTimer.removeEventListener(TimerEvent.TIMER, handleNewBallTimerExpired);
         _newRoundTimer.removeEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
+
+        _ballView.destroy();
     }
 
     protected function handleEnterFrame (e :Event) :void
@@ -179,19 +153,6 @@ public class Controller
         _mainSprite.addChild(_cardView);
     }
 
-    protected function createBallView () :void
-    {
-        if (null != _ballView) {
-            _mainSprite.removeChild(_ballView);
-        }
-
-        _ballView = new BingoBallView(_model.curState.ballInPlay);
-        _ballView.x = Constants.BALL_LOC.x;
-        _ballView.y = Constants.BALL_LOC.y;
-
-        _mainSprite.addChild(_ballView);
-    }
-
     protected function handleNewRound (e :SharedStateChangedEvent) :void
     {
         this.createNewCard();
@@ -201,7 +162,6 @@ public class Controller
 
         // does a ball exist?
         if (null != _model.curState.ballInPlay) {
-            this.createBallView();
             this.startNewBallTimer();
         } else {
             // create a ball immediately
@@ -218,8 +178,6 @@ public class Controller
 
     protected function handleNewBall (e :SharedStateChangedEvent) :void
     {
-        this.createBallView();
-
         // reset the expected state when the state changes
         _expectedState = null;
 
@@ -332,7 +290,7 @@ public class Controller
 
     protected var _mainSprite :Sprite;
     protected var _cardView :BingoCardView;
-    protected var _ballView :BingoBallView;
+    protected var _ballView :BingoBallViewController;
     protected var _scoreboardView :ScoreboardView;
     protected var _bingoButton :DisablingButton;
     protected var _winnerText :TextField;

@@ -9,6 +9,7 @@ import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 
 public class BingoCardView extends Sprite
 {
@@ -16,41 +17,17 @@ public class BingoCardView extends Sprite
     {
         _card = card;
 
-        var cols :int = card.width;
-        var rows :int = card.height;
-
-        var width :Number = cols * SQUARE_SIZE;
-        var height :Number = rows * SQUARE_SIZE;
-
-        // draw a grid
-
-        var g :Graphics = this.graphics;
-
-        g.lineStyle(1, 0x000000);
-
-        g.beginFill(0xFFFFFF);
-        g.drawRect(0, 0, width, height);
-        g.endFill();
-
-        for (var col :int = 1; col < cols; ++col) {
-            g.moveTo(col * SQUARE_SIZE, 0);
-            g.lineTo(col * SQUARE_SIZE, height);
-        }
-
-        for (var row :int = 1; row < rows; ++row) {
-            g.moveTo(0, row * SQUARE_SIZE);
-            g.lineTo(width, row * SQUARE_SIZE);
-        }
+        // draw the board background
+        this.addChild(new Resources.IMG_BOARD());
 
         // draw the items
+        for (var row :int = 0; row < card.height; ++row) {
 
-        for (row = 0; row < rows; ++row) {
-
-            for (col = 0; col < cols; ++col) {
+            for (var col :int = 0; col < card.width; ++col) {
 
                 var itemView :DisplayObject = this.createItemView(_card.getItemAt(col, row));
-                itemView.x = (col + 0.5) * SQUARE_SIZE;
-                itemView.y = (row + 0.5) * SQUARE_SIZE;
+                itemView.x = UL_OFFSET.x + ((col + 0.5) * SQUARE_SIZE);
+                itemView.y = UL_OFFSET.y + ((row + 0.5) * SQUARE_SIZE);
 
                 this.addChild(itemView);
             }
@@ -69,28 +46,6 @@ public class BingoCardView extends Sprite
 
     public function createItemView (item :BingoItem) :DisplayObject
     {
-        /*var text :TextField = new TextField();
-        text.text = (null == item ? "FREE!" : item.name);
-        text.textColor = (null == item ? 0xFF0000 : 0x000000);
-        text.autoSize = TextFieldAutoSize.LEFT;
-        text.selectable = false;
-        text.mouseEnabled = false;
-
-        var scale :Number = TARGET_TEXT_WIDTH / text.width;
-
-        text.scaleX = scale;
-        text.scaleY = scale;
-
-        text.x = -(text.width * 0.5);
-        text.y = -(text.height * 0.5);
-
-        var sprite :Sprite = new Sprite();
-        sprite.mouseEnabled = false;
-        sprite.mouseChildren = false;
-        sprite.addChild(text);
-
-        return sprite;*/
-
         var sprite :Sprite = new Sprite();
         sprite.mouseChildren = false;
         sprite.mouseEnabled = false;
@@ -118,12 +73,12 @@ public class BingoCardView extends Sprite
     {
         // if the round is over, or we've already reached our
         // max-clicks-per-ball limit, don't accept clicks
-        if (!BingoMain.model.roundInPlay || _numMatchesThisBall >= Constants.MAX_MATCHES_PER_BALL) {
+        if (!BingoMain.model.roundInPlay || (!Constants.ALLOW_CHEATS && _numMatchesThisBall >= Constants.MAX_MATCHES_PER_BALL)) {
             return;
         }
 
-        var col :int = (this.mouseX / SQUARE_SIZE);
-        var row :int = (this.mouseY / SQUARE_SIZE);
+        var col :int = (this.mouseX - UL_OFFSET.x) / SQUARE_SIZE;
+        var row :int = (this.mouseY - UL_OFFSET.y) / SQUARE_SIZE;
 
         if (!(col >= 0 && col < _card.width && row >= 0 && row < _card.height)) {
             return;
@@ -144,15 +99,8 @@ public class BingoCardView extends Sprite
                 g.drawCircle(0, 0, STAMP_RADIUS);
                 g.endFill();
 
-                // make sure the stamp doesn't extend too far outside the square it's marking
-                var x :Number = Math.max(this.mouseX, (col * SQUARE_SIZE) + STAMP_RADIUS - ALLOWED_STAMP_BLEED);
-                x = Math.min(x, ((col + 1) * SQUARE_SIZE) - STAMP_RADIUS + ALLOWED_STAMP_BLEED);
-
-                var y :Number = Math.max(this.mouseY, (row * SQUARE_SIZE) + STAMP_RADIUS - ALLOWED_STAMP_BLEED);
-                y = Math.min(y, ((row + 1) * SQUARE_SIZE) - STAMP_RADIUS + ALLOWED_STAMP_BLEED);
-
-                stamp.x = x;
-                stamp.y = y;
+                stamp.x = UL_OFFSET.x + ((col + 0.5) * SQUARE_SIZE);
+                stamp.y = UL_OFFSET.y + ((row + 0.5) * SQUARE_SIZE);
 
                 this.addChild(stamp);
 
@@ -172,11 +120,13 @@ public class BingoCardView extends Sprite
     protected var _card :BingoCard;
     protected var _numMatchesThisBall :int;
 
-    protected static const SQUARE_SIZE :Number = 60;
+    protected static const SQUARE_SIZE :Number = 62;
     protected static const TARGET_TEXT_WIDTH :Number = 56;
     protected static const STAMP_RADIUS :Number = 20;
 
     protected static const ALLOWED_STAMP_BLEED :Number = 0;
+
+    protected static const UL_OFFSET :Point = new Point(14, 28);
 
 }
 

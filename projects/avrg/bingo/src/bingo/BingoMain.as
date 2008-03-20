@@ -4,12 +4,14 @@
 package bingo {
 
 import com.threerings.util.Log;
+import com.threerings.util.MultiLoader;
 import com.whirled.AVRGameAvatar;
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.system.ApplicationDomain;
 
 [SWF(width="700", height="500")]
 public class BingoMain extends Sprite
@@ -19,12 +21,17 @@ public class BingoMain extends Sprite
     public static var control :AVRGameControl;
     public static var model :Model;
     public static var controller :Controller;
+    public static var resourcesDomain :ApplicationDomain;
 
     public static var ourPlayerId :int;
+
+    public static var sprite :Sprite;
 
     public function BingoMain ()
     {
         log.info("Bingo version " + Constants.VERSION);
+
+        sprite = this;
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
@@ -34,6 +41,9 @@ public class BingoMain extends Sprite
         control.addEventListener(AVRGameControlEvent.LEFT_ROOM, leftRoom);
 
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
+
+        resourcesDomain = new ApplicationDomain();
+        MultiLoader.getLoaders(Resources.SWF_BALL, handleResourcesLoaded, false, resourcesDomain);
     }
 
     public static function getPlayerName (playerId :int) :String
@@ -48,6 +58,21 @@ public class BingoMain extends Sprite
         return "player " + playerId.toString();
     }
 
+    protected function maybeBeginGame () :void
+    {
+        if (_addedToStage && _resourcesLoaded) {
+            new BingoItemManager(); // init singleton
+            model.setup();
+            controller.setup();
+        }
+    }
+
+    protected function handleResourcesLoaded (results :Object) :void
+    {
+        _resourcesLoaded = true;
+        this.maybeBeginGame();
+    }
+
     protected function handleAdded (event :Event) :void
     {
         log.info("Added to stage: Initializing...");
@@ -59,9 +84,9 @@ public class BingoMain extends Sprite
 
         ourPlayerId = (control.isConnected() ? control.getPlayerId() : 666);
 
-        new BingoItemManager(); // init singleton
-        model.setup();
-        controller.setup();
+        _addedToStage = true;
+
+        this.maybeBeginGame();
     }
 
     protected function handleUnload (event :Event) :void
@@ -85,5 +110,8 @@ public class BingoMain extends Sprite
     {
         log.debug("gotControl(): " + evt);
     }
+
+    protected var _addedToStage :Boolean;
+    protected var _resourcesLoaded :Boolean;
 }
 }
