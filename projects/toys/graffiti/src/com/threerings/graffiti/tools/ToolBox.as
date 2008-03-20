@@ -61,6 +61,7 @@ public class ToolBox extends Sprite
 
     public function displayFillPercent (percent :Number) :void
     {
+        _sizeLimit.gotoAndStop(Math.ceil(percent * 100));
     }
 
     public function managerMessageReceived (event :ThrottleEvent) :void
@@ -322,9 +323,13 @@ public class ToolBox extends Sprite
             dispatchEvent(new ToolEvent(ToolEvent.DONE_EDITING));
         });
 
+        // size limit indicator
+        _sizeLimit = ui.sizelimit;
+
         // setup init values
         _colorEnableds[PRIMARY_COLOR][toolsetForTool(CANVAS_TOOL)] = !_initialBackgroundTransparent;
         _colors[PRIMARY_COLOR][toolsetForTool(CANVAS_TOOL)] = _initialBackgroundColor;
+        _sizeLimit.gotoAndStop(Math.ceil(_initialFillPercent * 100));
 
         // tool buttons - set this up last, as it initiates a general UI setup for the brush tool, 
         // and all the member variables need to be initialized.
@@ -387,6 +392,7 @@ public class ToolBox extends Sprite
     protected var _undoButton :MovieClipButton;
     protected var _currentDrawingTool :int;
     protected var _eyeDropper :DisplayObject;
+    protected var _sizeLimit :MovieClip;
 
     // settings for each tool set - arranged in the order of the tool set constants above
     protected var _sizes :Array = [ 2, 10, 5];
