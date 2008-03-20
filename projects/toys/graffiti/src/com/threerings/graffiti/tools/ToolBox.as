@@ -69,6 +69,7 @@ public class ToolBox extends Sprite
 
     public function setUndoEnabled (enabled :Boolean) :void
     {
+        _undoButton.enabled = enabled;
     }
 
     protected function setupUi (tool :int) :void
@@ -88,6 +89,15 @@ public class ToolBox extends Sprite
 
     protected function alphaSliderUpdate (event :SliderEvent) :void
     {
+    }
+
+    protected function undo (event :MouseEvent) :void
+    {
+        if (!_undoButton.enabled) {
+            return;
+        }
+
+        dispatchEvent(new ToolEvent(ToolEvent.UNDO_ONCE));
     }
 
     protected function handleUILoaded (ui :MovieClip) :void
@@ -128,6 +138,11 @@ public class ToolBox extends Sprite
             new ToggleButton(_ui.primary_color as SimpleButton, PRIMARY_COLOR), true);
         _swatchButtonSet.addButton(
             new ToggleButton(_ui.secondary_color as SimpleButton, SECONDARY_COLOR));
+
+        // undo button - disabled by default because we have nothing to undo yet
+        _undoButton = new MovieClipButton(_ui.undo);
+        _undoButton.enabled = false;
+        _ui.undo.addEventListener(MouseEvent.CLICK, undo);
 
         // show furni checkbox - I know this logic looks backwards, but the instance name never
         // got changed...
@@ -200,5 +215,6 @@ public class ToolBox extends Sprite
     protected var _swatches :Array = [];
     protected var _currentSwatch :int;
     protected var _swatchButtonSet :RadioButtonSet;
+    protected var _undoButton :MovieClipButton;
 }
 }
