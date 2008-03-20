@@ -11,13 +11,13 @@ import flash.display.DisplayObject;
 public class CardArray
 {
     /** A full deck of cards. Users promise not to modify the deck. */
-    public static const FULL_DECK:CardArray = makeDeck();
+    public static const FULL_DECK :CardArray = makeDeck();
 
     /** Create a new full deck. Users may modify the result. */
-    public static function makeDeck ():CardArray
+    public static function makeDeck () :CardArray
     {
-        var ordinals:Array = new Array(Card.NUM_ORDINALS);
-        for (var i:int = 0; i < ordinals.length; ++i) {
+        var ordinals :Array = new Array(Card.NUM_ORDINALS);
+        for (var i :int = 0; i < ordinals.length; ++i) {
             ordinals[i] = i;
         }
 
@@ -29,10 +29,10 @@ public class CardArray
      * @param ordinals optional array or ordinal values for initial contents
      * @throws CardException if any contents are not valid.
      */
-    public function CardArray (ordinals:Array=null)
+    public function CardArray (ordinals :Array=null)
     {
         if (ordinals != null) {
-            for (var i:int = 0; i < ordinals.length; ++i) {
+            for (var i :int = 0; i < ordinals.length; ++i) {
                 if (!(ordinals[i] is int)) {
                     throw new CardException(
                         "Expected integral array, " + 
@@ -45,7 +45,7 @@ public class CardArray
     }
 
     /** Access the object to display the container. Created on demand. */
-    public function get display ():DisplayObject
+    public function get display () :DisplayObject
     {
         if (_display == null) {
             _display = new CardArraySprite(this);
@@ -55,36 +55,36 @@ public class CardArray
     }
 
     /** Access the underlying array of ordinal values. */
-    public function get ordinals ():Array
+    public function get ordinals () :Array
     {
         return _ordinals;
     }
     
     /** Access the underlying array of card objects. */
-    public function get cards ():Array
+    public function get cards () :Array
     {
         return _cards;
     }
     
     /** Add a new card to the end by ordinal value. */
-    public function pushOrdinal (ordinal:int):void
+    public function pushOrdinal (ordinal :int) :void
     {
         pushCard(Card.createCard(ordinal));
     }
 
     /** Add a new card to the end. */
-    public function pushCard (card:Card):void
+    public function pushCard (card :Card) :void
     {
         _ordinals.push(card.ordinal);
         _cards.push(card);
     }
     
     /** @inheritDocs */
-    public function toString ():String
+    public function toString () :String
     {
-        var s:String = "";
-        var first:Boolean = true;
-        for (var i:int = 0; i < _cards.length; ++i)
+        var s :String = "";
+        var first :Boolean = true;
+        for (var i :int = 0; i < _cards.length; ++i)
         {
             if (!first) s += ", ";
             s += _cards[i].toString();
@@ -94,13 +94,13 @@ public class CardArray
     }
 
     /** The ordinals. */
-    protected var _ordinals:Array = new Array();
+    protected var _ordinals :Array = new Array();
 
     /** The Card objects. */
-    protected var _cards:Array = new Array();
+    protected var _cards :Array = new Array();
 
     /** The display object (may be null). */
-    protected var _display:DisplayObject;
+    protected var _display :DisplayObject;
 }
 
 }
@@ -111,12 +111,12 @@ import flash.display.Sprite;
  *  array and lays them out trivially. */
 class CardArraySprite extends Sprite
 {
-    public function CardArraySprite (array:CardArray) {
-        var cards:Array = array.cards;
-        for (var i:int = 0; i < cards.length; ++i) {
-            var card:Card = cards[i] as Card;
+    public function CardArraySprite (array :CardArray) {
+        var cards :Array = array.cards;
+        for (var i :int = 0; i < cards.length; ++i) {
+            var card :Card = cards[i] as Card;
             addChild(card.display);
-            var x:int = i * Card.SPRITE_WIDTH / 2;
+            var x :int = i * Card.SPRITE_WIDTH / 2;
             card.display.x = x;
             card.display.y = 0;
             width = x + card.display.width;

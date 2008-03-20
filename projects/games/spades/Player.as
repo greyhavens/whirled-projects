@@ -11,10 +11,10 @@ import flash.text.TextFieldAutoSize;
 public class Player extends Sprite
 {
     /** Create a new player. */
-    public function Player (name:String)
+    public function Player (name :String)
     {
         // setup name in top third of player box
-        var nameField:TextField = new TextField();
+        var nameField :TextField = new TextField();
         nameField.width = WIDTH;
         nameField.height = HEIGHT * 1 / 3;
         nameField.text = name;
@@ -33,7 +33,7 @@ public class Player extends Sprite
 
     /** Update to reflect the turn status.
      *  @param turn indicates whether it is this player's turn */
-    public function setTurn (turn:Boolean):void
+    public function setTurn (turn :Boolean) :void
     {
         graphics.clear();
         graphics.beginFill(turn ? 0x00FF00 : 0x808080);
@@ -42,29 +42,29 @@ public class Player extends Sprite
     }
 
     /** Update to reflect the player's bid. */
-    public function setBid (bid:int):void
+    public function setBid (bid :int) :void
     {
         _bid = bid;
         updateStatus();
     }
 
     /** Update to reflect the player's lack of a bid. */
-    public function clearBid ():void
+    public function clearBid () :void
     {
         _bid = NO_BID;
         updateStatus();
     }
 
     /** Update to reflect the player's number of tricks. */
-    public function setTricks (tricks:int):void
+    public function setTricks (tricks :int) :void
     {
         _tricks = tricks;
         updateStatus();
     }
 
-    protected function updateStatus ():void
+    protected function updateStatus () :void
     {
-        var s:String = "" + _tricks + "/";
+        var s :String = "" + _tricks + "/";
 
         if (_bid == NO_BID)
         {
@@ -78,13 +78,13 @@ public class Player extends Sprite
         _status.text = s;
     }
 
-    protected var _status:TextField;
-    protected var _tricks:int = 0;
-    protected var _bid:int = -1;
+    protected var _status :TextField;
+    protected var _tricks :int = 0;
+    protected var _bid :int = -1;
 
-    protected static const WIDTH:int = 100;
-    protected static const HEIGHT:int = 60;
-    protected static const NO_BID:int = -1;
+    protected static const WIDTH :int = 100;
+    protected static const HEIGHT :int = 60;
+    protected static const NO_BID :int = -1;
 }
 
 }

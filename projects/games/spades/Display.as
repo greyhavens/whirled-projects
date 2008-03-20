@@ -10,38 +10,38 @@ import flash.display.DisplayObject;
 public class Display
 {
     /** Create a new display of a fixed width and height. */
-    public function Display (width:int, height:int)
+    public function Display (width :int, height :int)
     {
         _width = width;
         _height = height;
     }
 
     /** Access the width of the display. */
-    public function get width ():int
+    public function get width () :int
     {
         return _width;
     }
 
     /** Access the height of the display. */
-    public function get height ():int
+    public function get height () :int
     {
         return _height;
     }
 
     /** Move an object to a given position. */
-    public function move (obj:DisplayObject, pos:Position):void
+    public function move (obj :DisplayObject, pos :Position) :void
     {
-        var centerx:int = _width * pos.hfraction;
-        var centery:int = _height * pos.vfraction;
+        var centerx :int = _width * pos.hfraction;
+        var centery :int = _height * pos.vfraction;
         obj.x = centerx - obj.width / 2;
         obj.y = centery - obj.height / 2;
     }
 
     /** Width of the display. */
-    protected var _width:int;
+    protected var _width :int;
 
     /** Height of the display */
-    protected var _height:int;
+    protected var _height :int;
 }
 
 }

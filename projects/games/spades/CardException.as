@@ -7,7 +7,7 @@ package {
 public class CardException extends Error
 {
     /** Create a new error with a description */
-    public function CardException (problem:String)
+    public function CardException (problem :String)
     {
         super(problem);
     }
