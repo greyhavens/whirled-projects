@@ -38,24 +38,26 @@ public class CloudViewController
         quitButton.addEventListener(MouseEvent.CLICK, quit, false, 0, true);
 
         // other events
-        SimonMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores, false, 0, true);
-        SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleNextPlayer, false, 0, true);
+        SimonMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, updateText, false, 0, true);
+        SimonMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, updateText, false, 0, true);
+        SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, updateText, false, 0, true);
 
         SimonMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
 
         // setup initial state
         _collapsed = true;
         this.toggleCollapse();
-
-        this.updateNamesAndScores();
+        this.handleSizeChanged();
+        this.updateText();
     }
 
     public function destroy () :void
     {
         SimonMain.sprite.removeChild(_cloud);
 
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleNextPlayer);
+        SimonMain.model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, updateText);
+        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, updateText);
+        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, updateText);
 
         SimonMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
     }
@@ -83,7 +85,47 @@ public class CloudViewController
         SimonMain.quit();
     }
 
-    protected function updateNamesAndScores () :void
+    protected function updateText (...ignored) :void
+    {
+        switch (SimonMain.model.curState.gameState) {
+
+        case SharedState.WAITING_FOR_GAME_START:
+            this.drawWaitingForGameStartText();
+            break;
+
+        case SharedState.WE_HAVE_A_WINNER:
+            this.drawWinnerText();
+            break;
+
+        default:
+            this.drawNamesAndScores();
+            break;
+        }
+    }
+
+    protected function drawWaitingForGameStartText () :void
+    {
+        this.canScrollUp = false;
+        this.canScrollDown = false;
+
+        var waitingForPlayers :int = Constants.MIN_MP_PLAYERS_TO_START - SimonMain.model.getPlayerOids().length;
+
+        this.playersTextField.text = String(waitingForPlayers) + " more " + (waitingForPlayers == 1 ? "player" : "players") + "\nneeded";
+        this.scoresTextField.text = "";
+    }
+
+    protected function drawWinnerText () :void
+    {
+        this.canScrollUp = false;
+        this.canScrollDown = false;
+
+        var winnerName :String = SimonMain.getPlayerName(SimonMain.model.curState.roundWinnerId);
+
+        this.playersTextField.text = winnerName + "\nwins!";
+        this.scoresTextField.text = "";
+    }
+
+    protected function drawNamesAndScores () :void
     {
         var currentPlayers :Array = SimonMain.model.curState.players;   // players currently playing
         var allPlayers :Array = SimonMain.model.getPlayerOids();        // all the players, playing or not
@@ -104,17 +146,8 @@ public class CloudViewController
         _firstVisibleRow = Math.min(_firstVisibleRow, playerList.length - NUM_ROWS);
         _firstVisibleRow = Math.max(_firstVisibleRow, 0);
 
-        var canScrollUp :Boolean = _firstVisibleRow > 0;
-        var canScrollDown :Boolean = playerList.length > (_firstVisibleRow + NUM_ROWS);
-
-        var scrollUpButton :InteractiveObject = _cloud[SCROLL_UP_BUTTON_NAME];
-        var scrollDownButton :InteractiveObject = _cloud[SCROLL_DOWN_BUTTON_NAME];
-
-        scrollUpButton.visible = canScrollUp;
-        scrollUpButton.mouseEnabled = canScrollUp;
-
-        scrollDownButton.visible = canScrollDown;
-        scrollDownButton.mouseEnabled = canScrollDown;
+        this.canScrollUp = _firstVisibleRow > 0;
+        this.canScrollDown = playerList.length > (_firstVisibleRow + NUM_ROWS);
 
         // draw the names and scores
         var playerString :String = "";
@@ -129,38 +162,44 @@ public class CloudViewController
             var playerName :String = SimonMain.getPlayerName(playerId);
             var playerScore :int = SimonMain.model.curScores.getPlayerScore(playerName);
 
-            playerString += playerName + "\n";
-            scoreString += (playerScore > 0 ? playerScore + "\n" : "\n");
+            var playerIsIn :Boolean = (i < currentPlayers.length);
+            var playerIsActive :Boolean = (playerIsIn && SimonMain.model.curState.curPlayerOid == playerId);
+
+            var colorString :String;
+            var boldText :Boolean;
+
+            if (playerIsActive) {
+                colorString = ACTIVE_PLAYER_COLOR;
+                boldText = true;
+            } else if (playerIsIn) {
+                colorString = IN_PLAYER_COLOR;
+                boldText = false;
+            } else {
+                colorString = OUT_PLAYER_COLOR;
+                boldText = false;
+            }
+
+            var textPrefix :String = (boldText ? "<b>" : "") + "<font color='" + colorString + "'>";
+            var textSuffix :String = "</font>" + (boldText ? "</b>" : "");
+
+            playerString += textPrefix + playerName + textSuffix + "\n";
+            scoreString += textPrefix + (playerScore > 0 ? String(playerScore) : "") + textSuffix + "\n";
         }
 
-        var playerText :TextField = _cloud[PLAYER_LIST_NAME];
-        playerText.text = playerString;
-
-        var scoreText :TextField = _cloud[SCORE_LIST_NAME];
-        scoreText.text = scoreString;
-
-    }
-
-    protected function handleNewScores (...ignored) :void
-    {
-        this.updateNamesAndScores();
-    }
-
-    protected function handleNextPlayer (...ignored) :void
-    {
-        this.updateNamesAndScores();
+        this.playersTextField.htmlText = playerString;
+        this.scoresTextField.htmlText = scoreString;
     }
 
     protected function handleScrollUp (...ignored) :void
     {
         _firstVisibleRow -= 1;
-        this.updateNamesAndScores();
+        this.updateText();
     }
 
     protected function handleScrollDown (...ignored) :void
     {
         _firstVisibleRow += 1;
-        this.updateNamesAndScores();
+        this.updateText();
     }
 
     protected function handleSizeChanged (...ignored) :void
@@ -191,6 +230,30 @@ public class CloudViewController
         return loc;
     }
 
+    protected function set canScrollUp (val :Boolean) :void
+    {
+        var scrollUpButton :InteractiveObject = _cloud[SCROLL_UP_BUTTON_NAME];
+        scrollUpButton.visible = val;
+        scrollUpButton.mouseEnabled = val;
+    }
+
+    protected function set canScrollDown (val :Boolean) :void
+    {
+        var scrollDownButton :InteractiveObject = _cloud[SCROLL_DOWN_BUTTON_NAME];
+        scrollDownButton.visible = val;
+        scrollDownButton.mouseEnabled = val;
+    }
+
+    protected function get playersTextField () :TextField
+    {
+        return _cloud[PLAYER_LIST_NAME];
+    }
+
+    protected function get scoresTextField () :TextField
+    {
+        return _cloud[SCORE_LIST_NAME];
+    }
+
     protected var _cloud :MovieClip;
     protected var _collapsed :Boolean;
     protected var _firstVisibleRow :int;
@@ -198,7 +261,11 @@ public class CloudViewController
     protected static const COLLAPSED_OFFSET :Point = new Point(0, 0);
     protected static const EXPANDED_OFFSET :Point = new Point(-220, 0);
 
-    protected static const NUM_ROWS :int = 14;
+    protected static const NUM_ROWS :int = 10;
+
+    protected static const ACTIVE_PLAYER_COLOR :String = "#000000";
+    protected static const IN_PLAYER_COLOR :String = "#818181";
+    protected static const OUT_PLAYER_COLOR :String = "#CDCDCD";
 
     protected static const COLLAPSE_BUTTON_NAME :String = "collapse";
     protected static const EXPAND_BUTTON_NAME :String = "expand";

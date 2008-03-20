@@ -283,6 +283,7 @@ public class RainbowController
         var avatarInfo :AVRGameAvatar = (SimonMain.control.isConnected() ? SimonMain.control.getAvatarInfo(_playerId) : null);
         if (null != avatarInfo) {
             p = SimonMain.control.locationToStage(avatarInfo.x, avatarInfo.y, avatarInfo.z - 0.1);
+            p.y -= avatarInfo.stageBounds.height;
         }
 
         return (null != p ? p : new Point(150, 500));

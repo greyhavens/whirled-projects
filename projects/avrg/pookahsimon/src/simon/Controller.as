@@ -275,6 +275,7 @@ public class Controller
             // are you TEH WINNAR?
             if (_model.curState.roundWinnerId == SimonMain.localPlayerId && SimonMain.control.isConnected()) {
                 SimonMain.control.quests.completeQuest("dummyString", null, 1);
+                SimonMain.control.setAvatarState("Dance");
             }
         }
 

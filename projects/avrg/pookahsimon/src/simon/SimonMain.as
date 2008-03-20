@@ -13,7 +13,7 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.system.ApplicationDomain;
 
-[SWF(width="700", height="600")]
+[SWF(width="700", height="500")]
 public class SimonMain extends Sprite
 {
     public static var log :Log = Log.getLog(SimonMain);
