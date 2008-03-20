@@ -74,10 +74,6 @@ public class Canvas extends Sprite
                 function (event :ToolEvent) :void {
                     _model.setBackgroundTransparent(event.value as Boolean);
                 });
-            _toolBox.addEventListener(ToolEvent.COLOR_PICKING, function (event :ToolEvent) :void {
-                _colorPicking = event.value as Boolean;
-                _eyeDropper.alpha = _colorPicking ? 1 : 0;
-            });
             _toolBox.addEventListener(ToolEvent.UNDO_ONCE, function (event :ToolEvent) :void {
                 _model.undo();
             });
@@ -217,39 +213,21 @@ public class Canvas extends Sprite
 
     protected function addMouseListeners () :void
     {
-        addChild(_eyeDropper = new EYEDROPPER() as DisplayObject);
-        _eyeDropper.alpha = _colorPicking ? 1 : 0;
-
-        _background.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
         _background.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
         _background.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
         _background.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
     }
 
-    protected function mouseMove (evt :MouseEvent) :void
-    {
-        var localPoint :Point = _background.globalToLocal(new Point(evt.stageX, evt.stageY));
-        _eyeDropper.x = localPoint.x;
-        _eyeDropper.y = localPoint.y - _eyeDropper.height;
-        setChildIndex(_eyeDropper, numChildren - 1);
-    }
-
     protected function mouseDown (evt :MouseEvent) :void
     {
-        if (_colorPicking) {
-            _eyeDropper.alpha = 0;
-            var location :Point = _background.globalToLocal(new Point(evt.stageX, evt.stageY));
-            var m :Matrix = new Matrix();
-            m.translate(-location.x, -location.y);
-            var data :BitmapData = new BitmapData(1, 1);
-            data.draw(this, m);
-            _toolBox.pickColor(data.getPixel(0, 0));
-        } else if (_tool != null) {
-            _lastStrokePoint = _background.globalToLocal(new Point(evt.stageX, evt.stageY));
-            _newStroke = true;
-            _inputKey = _model.getKey();
-            _timer = setInterval(tick, TICK_INTERVAL);
+        if (_tool == null) {
+            return;
         }
+            
+        _lastStrokePoint = _background.globalToLocal(new Point(evt.stageX, evt.stageY));
+        _newStroke = true;
+        _inputKey = _model.getKey();
+        _timer = setInterval(tick, TICK_INTERVAL);
     }
 
     protected function tick () :void
@@ -337,9 +315,6 @@ public class Canvas extends Sprite
 
     private static const log :Log = Log.getLog(Canvas);
 
-    [Embed(source="../../../../rsrc/eyedropper.png")]
-    protected static const EYEDROPPER :Class;
-
     /** The number of milliseconds between mouse samples.  The lower the number, the higher the 
      * drawing resolution, but the faster it fills up the available memory.  We may want to make
      * this configurable in a slider control. Reasonable values are between 50 and 200ish. */
@@ -364,8 +339,5 @@ public class Canvas extends Sprite
     protected var _outputKey :String;
 
     protected var _layers :HashMap = new HashMap();
-
-    protected var _eyeDropper :DisplayObject;
-    protected var _colorPicking :Boolean = false;
 }
 }

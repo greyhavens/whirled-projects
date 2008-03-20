@@ -33,7 +33,6 @@ import com.threerings.graffiti.Canvas;
 import com.threerings.graffiti.throttle.AlterBackgroundMessage;
 import com.threerings.graffiti.throttle.ThrottleEvent;
 
-[Event(name="colorPicking", type="ToolEvent")];
 [Event(name="toolPicked", type="ToolEvent")];
 [Event(name="backgroundColor", type="ToolEvent")];
 [Event(name="backgroundTransparency", type="ToolEvent")];
