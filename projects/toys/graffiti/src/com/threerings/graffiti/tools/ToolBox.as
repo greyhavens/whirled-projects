@@ -54,10 +54,6 @@ public class ToolBox extends Sprite
         MultiLoader.getContents(TOOLBOX_UI, handleUILoaded, false, ApplicationDomain.currentDomain);
     }
 
-    public function pickColor (color :uint, clear :Boolean = false) :void
-    {
-    }
-
     public function displayFillPercent (percent :Number) :void
     {
         _sizeLimit.gotoAndStop(Math.ceil(percent * 100));
