@@ -23,7 +23,7 @@ import com.threerings.util.Log;
 
 import com.threerings.graffiti.tools.BrushTool;
 import com.threerings.graffiti.tools.Tool;
-import com.threerings.graffiti.tools.ToolBox2;
+import com.threerings.graffiti.tools.ToolBox;
 import com.threerings.graffiti.tools.ToolEvent;
 
 import com.threerings.graffiti.model.Model;
@@ -53,14 +53,14 @@ public class Canvas extends Sprite
         addEventListener(Event.REMOVED_FROM_STAGE, cleanup);
     }
 
-    public function get toolbox () :ToolBox2
+    public function get toolbox () :ToolBox
     {
         // toolbox creation is deferred so view-only canvases don't instantiate one.
         if (_toolBox == null) {
             // defer adding the mouse listeners as well - we don't need them on a view-only canvas.
             addMouseListeners();
 
-            _toolBox = new ToolBox2(this, _model.getBackgroundColor(), 
+            _toolBox = new ToolBox(this, _model.getBackgroundColor(), 
                                    _model.getBackgroundTransparent(), 
                                    _model.calculateFullPercent());
             _toolBox.addEventListener(ToolEvent.TOOL_PICKED, function (event :ToolEvent) :void {
@@ -344,7 +344,7 @@ public class Canvas extends Sprite
     protected var _model :Model;
 
     protected var _background :Sprite;
-    protected var _toolBox :ToolBox2;
+    protected var _toolBox :ToolBox;
 
     // variables for user input
     protected var _inputKey :String;

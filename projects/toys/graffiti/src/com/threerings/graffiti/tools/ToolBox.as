@@ -3,7 +3,6 @@
 package com.threerings.graffiti.tools {
 
 import fl.controls.CheckBox;
-import fl.controls.ComboBox;
 import fl.controls.Slider;
 
 import fl.events.SliderEvent;
@@ -56,337 +55,55 @@ public class ToolBox extends Sprite
         MultiLoader.getContents(TOOLBOX_UI, handleUILoaded, false, ApplicationDomain.currentDomain);
     }
 
-    public function pickColor (color :uint) :void
+    public function pickColor (color :uint, clear :Boolean = false) :void
     {
-        dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKING, false));
-        _swatchSet.deactivateCurrentSelection();
-        if (_currentSwatch == null) {
-            return;
-        }
-
-        fillSwatch(_currentSwatch.swatchShape, color);
-
-        switch (_currentSwatch.type) {
-        case Swatch.BRUSH:
-            _brushColor = color;
-            toolSettingsChanged();
-            break;
-
-        case Swatch.OUTLINE:
-            _outlineColor = color
-            toolSettingsChanged();
-            break;
-
-        case Swatch.FILL:
-            _fillColor = color
-            toolSettingsChanged();
-            break;
-
-        case Swatch.BACKGROUND:
-            dispatchEvent(new ToolEvent(ToolEvent.BACKGROUND_COLOR, color));
-            break;
-
-        default:
-            log.debug("Unknown swatch type [" + _currentSwatch.type + "]");
-        }
-
-        _currentSwatch = null;
-        _eyeDropper.alpha = 0;
-    }
-    
-    public function hoverColor (color :uint) :void
-    {
-        if (_currentSwatch == null) {
-            return;
-        }
-
-        fillSwatch(_currentSwatch.swatchShape, color);
-    }
-
-    public function setBackgroundColor (color :uint) :void
-    {
-        dispatchEvent(new ToolEvent(ToolEvent.BACKGROUND_COLOR, color));
     }
 
     public function displayFillPercent (percent :Number) :void
     {
-        _sizeLimit.gotoAndStop(Math.ceil(percent * 100));
-    }
-
-    public function setUndoEnabled (enabled :Boolean) :void
-    {
-        _undoButton.enabled = enabled;
     }
 
     public function managerMessageReceived (event :ThrottleEvent) :void
     {
-        if (event.message is AlterBackgroundMessage) {
-            var backgroundMessage :AlterBackgroundMessage = event.message as AlterBackgroundMessage;
-            if (backgroundMessage.type == AlterBackgroundMessage.COLOR) {
-                fillSwatch(_backgroundColorSwatch.swatchShape, backgroundMessage.value as uint);
-            } else if (backgroundMessage.type == AlterBackgroundMessage.TRANSPARENCY) {
-                _noBackgroundCheckbox.selected = backgroundMessage.value as Boolean;
-            }
-        }
     }
 
-    protected function toolSettingsChanged () :void
+    public function setUndoEnabled (enabled :Boolean) :void
     {
-        if (_currentToolType == 0) {
-            return;
-        }
-
-        updateBrushPreview();
-
-        switch(_currentToolType) {
-        case Tool.BRUSH:
-            dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED, 
-                new BrushTool(_thickness, _alpha, _brushColor)));
-            break;
-        
-        case Tool.LINE:
-            dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED,
-                new LineTool(_thickness, _alpha, _brushColor)));
-            break;
-
-        case Tool.ELLIPSE:
-            dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED,
-                new EllipseTool(_thickness, _alpha, _outlineColor, _outlineButton.selected, 
-                                _fillColor, _fillButton.selected)));
-            break;
-
-        case Tool.RECTANGLE:
-            dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED,
-                new RectangleTool(_thickness, _alpha, _outlineColor, _outlineButton.selected,
-                                  _fillColor, _fillButton.selected)));
-            break;
-
-        default:
-            log.warning("unknown tool [" + _currentToolType + "]");
-        }
     }
 
-    protected function updateBrushPreview () :void
+    protected function selectUi (tool :int) :void
     {
-        if (_brushPreview == null) {
-            return;
-        }
-
-        var g :Graphics = _brushPreview.graphics;
-        g.clear();
-        g.beginFill(_brushColor, _alpha);
-        g.drawCircle(MAX_BRUSH_SIZE / 2, MAX_BRUSH_SIZE / 2, _thickness / 2);
-    }
-
-    protected function fillSwatch (shape :Shape, color :uint) :void
-    {
-        var w :int = shape.width;
-        var h :int = shape.height;
-        shape.graphics.clear();
-        shape.graphics.beginFill(color);
-        shape.graphics.drawRect(-w/2, -h/2, w, h);
-        shape.graphics.endFill();
-    }
-
-    protected function checkFillOutline (button :ToggleButton) :void
-    {
-        button.selected = !button.selected;
-
-        if (!_fillButton.selected && !_outlineButton.selected) {
-            if (button == _fillButton) {
-                _outlineButton.selected = true;
-            } else if (button == _outlineButton) {
-                _fillButton.selected = true;
-            } else {
-                log.warning("unknown button [" + button + "]");
-            }
-        }
-
-        toolSettingsChanged();
-    }
-
-    protected function colorMouseMove (event :MouseEvent) :void
-    {
-        if (_currentSwatch == null) {
-            return;
-        }
-
-        _eyeDropper.alpha = 1;
-        var local :Point = globalToLocal(new Point(event.stageX, event.stageY));
-        _eyeDropper.x = local.x;
-        _eyeDropper.y = local.y - _eyeDropper.height;
-        if (event.buttonDown && _currentSwatch != null) {
-            hoverColor(_hoverColor = colorFromGlobalPoint(new Point(event.stageX, event.stageY)));
-        }
-    }
-
-    protected function colorMouseUp (event :MouseEvent) :void
-    {
-        if (_currentSwatch != null) {
-            pickColor(_hoverColor);
-        }
-    }
-
-    protected function colorMouseOut (event :MouseEvent) :void
-    {
-        if (event.buttonDown && _currentSwatch != null) {
-            pickColor(_hoverColor);
-        }
-        _eyeDropper.alpha = 0;
-    }
-
-    protected function colorFromGlobalPoint (global :Point) :uint
-    {
-        var location :Point = _colorPicker.globalToLocal(global);
-        var m :Matrix = new Matrix();
-        m.translate(-location.x, -location.y);
-        var data :BitmapData = new BitmapData(1, 1);
-        data.draw(_colorPicker, m);
-        return data.getPixel(0, 0);
-    }
-
-    protected function swatchSelected (event :RadioEvent) :void
-    {
-        if (_currentSwatch == event.value as Swatch) {
-            _currentSwatch = null;
-            _swatchSet.deactivateCurrentSelection();
-            dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKING, false));
-        } else {
-            _currentSwatch = event.value as Swatch;
-            dispatchEvent(new ToolEvent(ToolEvent.COLOR_PICKING, true));
-        }
-    }
-
-    protected function undoOnce (event :MouseEvent) :void
-    {
-        if (!_undoButton.enabled) {
-            return;
-        }
-
-        dispatchEvent(new ToolEvent(ToolEvent.UNDO_ONCE));
+        _ui.gotoAndStop(tool);
+        _alphaSlider.alpha = _sizeSlider.alpha = tool == CANVAS_TOOL ? 0 : 1;
     }
 
     protected function handleUILoaded (ui :MovieClip) :void
     {
-        ui.x = POPUP_WIDTH - FLA_WIDTH;
-        addChild(ui);
-        
-        // initialize the swatches
-        _swatchSet = new RadioButtonSet();
-        _swatchSet.addEventListener(RadioEvent.BUTTON_SELECTED, swatchSelected);
-        var swatches :Array = 
-            [ ui.brushcolor_swatch, ui.bgcolor_swatch, ui.fillcolor_swatch, ui.linecolor_swatch ];
-        var buttons :Array = [ ui.brush_color, ui.bg_color, ui.fill_color, ui.line_color ];
-        var types :Array = [ Swatch.BRUSH, Swatch.BACKGROUND, Swatch.FILL, Swatch.OUTLINE ];
-        for (var ii :int = 0; ii < swatches.length; ii++) {
-            swatches[ii].mouseEnabled = false;
-            var swatch :Swatch = new Swatch(swatches[ii].getChildAt(0) as Shape, types[ii]);
-            _swatchSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, swatch));
-            if (types[ii] == Swatch.BACKGROUND) {
-                _backgroundColorSwatch = swatch;
-            }
-        }
-        
-        // fill in the current background color on the background swatch
-        fillSwatch(ui.bgcolor_swatch.getChildAt(0) as Shape, _initialBackgroundColor);
+        _ui = ui;
+        _ui.x = POPUP_WIDTH - FLA_WIDTH;
+        addChild(_ui);
 
-        // add color picker
-        _colorPicker = ui.rainbow as Sprite;
-        _colorPicker.addEventListener(MouseEvent.MOUSE_MOVE, colorMouseMove);
-        _colorPicker.addEventListener(MouseEvent.MOUSE_DOWN, colorMouseMove);
-        _colorPicker.addEventListener(MouseEvent.MOUSE_UP, colorMouseUp);
-        _colorPicker.addEventListener(MouseEvent.MOUSE_OUT, colorMouseOut);
-        addChild(_eyeDropper = new EYEDROPPER() as DisplayObject);
-        _eyeDropper.alpha = 0;
-
-        // set up tool radio
-        var buttonSet :RadioButtonSet = new RadioButtonSet();
-        buttonSet.addEventListener(RadioEvent.BUTTON_SELECTED, function (event :RadioEvent) :void {
-            _currentToolType = event.value as int;
-            toolSettingsChanged();
+        _ui.brushtool.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            selectUi(BRUSH_TOOL);
         });
-        buttons = [ ui.brushtool, ui.linetool, ui.ellipsetool, ui.recttool ];
-        types = [ Tool.BRUSH, Tool.LINE, Tool.ELLIPSE, Tool.RECTANGLE ];
-        for (ii = 0; ii < buttons.length; ii++) {
-            buttonSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, types[ii]), ii == 0);
-        }
-
-        // fill and outline buttons
-        ui.FillOnOff.overState = ui.FillOnOff.upState;
-        _fillButton = new ToggleButton(ui.FillOnOff, null);
-        _fillButton.button.addEventListener(MouseEvent.MOUSE_DOWN, 
-            function (event :MouseEvent) :void {
-                checkFillOutline(_fillButton);
-            });
-        _fillButton.selected = true;
-        ui.LineOnOff.overState = ui.LineOnOff.upState;
-        _outlineButton = new ToggleButton(ui.LineOnOff, null);
-        _outlineButton.button.addEventListener(MouseEvent.MOUSE_DOWN, 
-            function (event :MouseEvent) :void {
-                checkFillOutline(_outlineButton);
-            });
-        _outlineButton.selected = false;
-
-        // transparent background checkbox
-        _noBackgroundCheckbox = ui.nobg_checkbox;
-        _noBackgroundCheckbox.selected = _initialBackgroundTransparent;
-        _noBackgroundCheckbox.addEventListener(MouseEvent.CLICK, 
-            function (event :MouseEvent) :void {
-                dispatchEvent(new ToolEvent(
-                    ToolEvent.BACKGROUND_TRANSPARENCY, _noBackgroundCheckbox.selected));
-            });
-
-        // brush thickness slider
-        var thicknessSlider :Slider = ui.size_slider;
-        thicknessSlider.liveDragging = true;
-        thicknessSlider.minimum = MIN_BRUSH_SIZE;
-        thicknessSlider.maximum = MAX_BRUSH_SIZE;
-        thicknessSlider.value = _thickness;
-        thicknessSlider.snapInterval = 1;
-        thicknessSlider.addEventListener(SliderEvent.CHANGE, function (event :SliderEvent) :void {
-            _thickness = thicknessSlider.value;
-            toolSettingsChanged();
+        _ui.linetool.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            selectUi(LINE_TOOL);
+        });
+        _ui.rectangletool.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            selectUi(RECTANGLE_TOOL);
+        });
+        _ui.elipsetool.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            selectUi(ELIPSE_TOOL);
+        });
+        _ui.canvastool.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            selectUi(CANVAS_TOOL);
         });
 
-        // brush alpha slider
-        var alphaSlider :Slider = ui.alpha_slider;
-        alphaSlider.liveDragging = true;
-        alphaSlider.maximum = 1;
-        alphaSlider.minimum = 0;
-        alphaSlider.value = _alpha;
-        alphaSlider.snapInterval = 0.05;
-        alphaSlider.addEventListener(SliderEvent.CHANGE, function (event :SliderEvent) :void {
-            _alpha = alphaSlider.value;
-            toolSettingsChanged();
-        });
+        _sizeSlider = _ui.size_slider;
+        _alphaSlider = _ui.alpha_slider;
+        _showFurniture = _ui.hidefurni;
 
-        // brush preview
-        addChild(_brushPreview = new Shape());
-        _brushPreview.x = ui.x + BRUSH_PREVIEW_X_OFFSET;
-        _brushPreview.y = ui.y + BRUSH_PREVIEW_Y_OFFSET;
-        updateBrushPreview();
-
-        // undo buttons - disabled by default because we have nothing to undo yet
-        _undoButton = new MovieClipButton(ui.undo);
-        _undoButton.enabled = false;
-        ui.undo.addEventListener(MouseEvent.CLICK, undoOnce);
-
-        // hide furni checkbox
-        ui.hidefurni.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            dispatchEvent(new ToolEvent(ToolEvent.HIDE_FURNI, ui.hidefurni.selected));
-        });
-        // the furni is hidden by default.
-        ui.hidefurni.selected = true;
-
-        // size limit indicator
-        _sizeLimit = ui.sizelimit;
-        _sizeLimit.gotoAndStop(Math.ceil(_initialFillPercent * 100));
-
-        // done button
-        var doneButton :SimpleButton = ui.done_button;
-        doneButton.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            dispatchEvent(new ToolEvent(ToolEvent.DONE_EDITING));
-        });
+        selectUi(BRUSH_TOOL);
     }
 
     private static const log :Log = Log.getLog(ToolBox);
@@ -397,6 +114,12 @@ public class ToolBox extends Sprite
     [Embed(source="../../../../../rsrc/eyedropper.png")]
     protected static const EYEDROPPER :Class;
 
+    protected static const BRUSH_TOOL :int = 1;
+    protected static const LINE_TOOL :int = 2;
+    protected static const RECTANGLE_TOOL :int = 3;
+    protected static const ELIPSE_TOOL :int = 4;
+    protected static const CANVAS_TOOL :int = 5;
+
     protected static const TOOLBAR_WIDTH :int = 80;
     protected static const FLA_WIDTH :int = 485;
     protected static const PALETTE_X_OFFSET :int = 445;
@@ -404,31 +127,17 @@ public class ToolBox extends Sprite
     protected static const BRUSH_PREVIEW_X_OFFSET :int = 430;
     protected static const BRUSH_PREVIEW_Y_OFFSET :int = 122;
 
-    protected var MIN_BRUSH_SIZE :int = 2;
-    protected var MAX_BRUSH_SIZE :int = 40;
+    protected static const MIN_BRUSH_SIZE :int = 2;
+    protected static const MAX_BRUSH_SIZE :int = 40;
 
     protected var _canvas :Canvas;
-    protected var _currentSwatch :Swatch;
-    protected var _backgroundColorSwatch :Swatch;
+    protected var _ui :MovieClip;
     protected var _initialBackgroundColor :uint;
     protected var _initialBackgroundTransparent :Boolean;
     protected var _initialFillPercent :Number;
-    protected var _currentToolType :int = 0;
-    protected var _brushColor :uint;
-    protected var _outlineColor :uint;
-    protected var _fillColor :uint;
-    protected var _thickness :int = 10;
-    protected var _alpha :Number = 1.0;
-    protected var _fillButton :ToggleButton;
-    protected var _outlineButton :ToggleButton;
-    protected var _brushPreview :Shape;
-    protected var _noBackgroundCheckbox :CheckBox;
-    protected var _sizeLimit :MovieClip;
-    protected var _swatchSet :RadioButtonSet;
-    protected var _colorPicker :Sprite;
-    protected var _hoverColor :uint;
-    protected var _eyeDropper :DisplayObject;
-    protected var _undoButton :MovieClipButton;
+    protected var _sizeSlider :Slider;
+    protected var _alphaSlider :Slider;
+    protected var _showFurniture :CheckBox;
 }
 }
 
