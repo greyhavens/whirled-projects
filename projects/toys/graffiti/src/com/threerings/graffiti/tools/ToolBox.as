@@ -336,6 +336,18 @@ public class ToolBox extends Sprite
         _alphaSlider.maximum = 1;
         _alphaSlider.snapInterval = 0.05;
         _alphaSlider.addEventListener(SliderEvent.CHANGE, alphaSliderUpdate);
+        
+        // prevent some slider wackiness
+        _ui.addEventListener(MouseEvent.MOUSE_OUT, function (event :MouseEvent) :void {
+            var local :Point = globalToLocal(new Point(event.stageX, event.stageY));
+            var sliderX :int = globalToLocal(_sizeSlider.parent.localToGlobal(
+                new Point(_sizeSlider.x, _sizeSlider.y))).x;
+            if (local.x < sliderX - 5 || local.x > sliderX + _sizeSlider.width + 5) {
+                var newEvent :MouseEvent = new MouseEvent(MouseEvent.MOUSE_UP);
+                _sizeSlider.dispatchEvent(newEvent);
+                _alphaSlider.dispatchEvent(newEvent);
+            }
+        });
 
         // color swatches
         _ui.primarycolor_swatch.mouseEnabled = false;
