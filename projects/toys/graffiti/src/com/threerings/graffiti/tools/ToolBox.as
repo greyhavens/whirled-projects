@@ -274,12 +274,17 @@ public class ToolBox extends Sprite
         }
     }
 
-    protected function showHoveredColor (event :MouseEvent) :void
+    protected function pickerHover (event :MouseEvent) :void
     {
         _eyeDropper.visible = true;
         var local :Point = globalToLocal(new Point(event.stageX, event.stageY));
         _eyeDropper.x = local.x;
         _eyeDropper.y = local.y - _eyeDropper.height;
+        showHoveredColor(event);
+    }
+
+    protected function showHoveredColor (event :MouseEvent) :void
+    {
         fillSwatch(_swatches[_currentSwatch], 
             colorFromGlobalPoint(new Point(event.stageX, event.stageY)));
     }
@@ -345,7 +350,7 @@ public class ToolBox extends Sprite
 
         // color picker
         ui.rainbow.addEventListener(MouseEvent.CLICK, pickClickedColor);
-        ui.rainbow.addEventListener(MouseEvent.MOUSE_MOVE, showHoveredColor);
+        ui.rainbow.addEventListener(MouseEvent.MOUSE_MOVE, pickerHover);
         ui.rainbow.addEventListener(MouseEvent.MOUSE_OUT, colorPickerMouseOut);
         ui.nocolor.addEventListener(MouseEvent.CLICK, clearCurrentSwatch);
         addChild(_eyeDropper = new EYEDROPPER() as DisplayObject);
@@ -383,16 +388,18 @@ public class ToolBox extends Sprite
 
         // tool buttons - set this up last, as it initiates a general UI setup for the brush tool, 
         // and all the member variables need to be initialized.
-        var toolSet :RadioButtonSet = new RadioButtonSet();
-        toolSet.addEventListener(RadioEvent.BUTTON_SELECTED, function (event :RadioEvent) :void {
-            setupUi(event.value);
-        });
+        _toolButtonSet = new RadioButtonSet();
+        _toolButtonSet.addEventListener(RadioEvent.BUTTON_SELECTED, 
+            function (event :RadioEvent) :void {
+                setupUi(event.value);
+            });
         var buttons :Array = [ _ui.brushtool, _ui.linetool, _ui.rectangletool, _ui.elipsetool, 
                                _ui.canvastool, _ui.pickertool ]
         var tools :Array = [ BRUSH_TOOL, LINE_TOOL, RECTANGLE_TOOL, ELIPSE_TOOL, CANVAS_TOOL,
                              PICKER_TOOL ];
         for (var ii :int = 0; ii < buttons.length; ii++) {
-            toolSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, tools[ii]), ii == 0);
+            _toolButtonSet.addButton(
+                new ToggleButton(buttons[ii] as SimpleButton, tools[ii]), ii == 0);
         }
 
         _canvas.addEventListener(MouseEvent.MOUSE_MOVE, canvasMouseMove);
@@ -444,17 +451,29 @@ public class ToolBox extends Sprite
         var local :Point = globalToLocal(new Point(event.stageX, event.stageY));
         _toolIndicator.x = local.x;
         _toolIndicator.y = local.y - _toolIndicator.height;
+
+        if (_currentTool == PICKER_TOOL) {
+            showHoveredColor(event);
+        }
     }
 
     protected function canvasMouseOut (event :MouseEvent) :void
     {
         if (_toolIndicator != null && _toolIndicator.parent == this) {
             removeChild(_toolIndicator);
+            _toolIndicator = null;
         }
     }
 
     protected function canvasClick (event :MouseEvent) :void
     {
+        if (_currentTool == PICKER_TOOL) {
+            // this is the one case where the tool changes out from under us, so grab a new one.
+            canvasMouseOut(event);
+            pickClickedColor(event);
+            _toolButtonSet.buttonClicked(_currentDrawingTool - 1);
+            canvasMouseMove(event);
+        }
     }
 
     private static const log :Log = Log.getLog(ToolBox);
@@ -506,6 +525,7 @@ public class ToolBox extends Sprite
     protected var _swatches :Array = [];
     protected var _currentSwatch :int;
     protected var _swatchButtonSet :RadioButtonSet;
+    protected var _toolButtonSet :RadioButtonSet;
     protected var _undoButton :MovieClipButton;
     protected var _currentTool :int;
     protected var _currentDrawingTool :int;
