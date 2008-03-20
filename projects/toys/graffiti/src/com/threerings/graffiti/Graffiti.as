@@ -151,6 +151,11 @@ public class Graffiti extends Sprite
 
     protected function animateDown (button :DisplayObject) :void
     {
+        if (!_displayCanvas.visible) {
+            animateUp(button);
+            return;
+        }
+
         if (button.parent != this) {
             addChildAt(button, 0);
             button.y = Canvas.CANVAS_HEIGHT - button.height / 2;
