@@ -137,10 +137,12 @@ public class Embedder extends Sprite
     {
         handleUnload(null);
 
-        _loader = new Loader();
-        _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleError);
-        addChild(_loader);
-        _loader.load(new URLRequest(url), new LoaderContext(false, new ApplicationDomain(null)));
+        if (url != null) {
+            _loader = new Loader();
+            _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleError);
+            addChild(_loader);
+            _loader.load(new URLRequest(url), new LoaderContext(false, new ApplicationDomain(null)));
+        }
     }
 
     protected function handleUnload (event :Event) :void
@@ -174,7 +176,7 @@ public class Embedder extends Sprite
                 multiline: true,
                 type: TextFieldType.INPUT,
                 wordWrap: true,
-                width: 280,
+                width: 275,
                 height: 160,
                 y: 20
             });
@@ -188,29 +190,34 @@ public class Embedder extends Sprite
         panel.addChild(status);
 
 
-        var button :SimpleTextButton = new SimpleTextButton("OK", true, 0x000000,
+        var ok :SimpleTextButton = new SimpleTextButton("OK", true, 0x000000,
             0xFFFFFF, 0x000099);
-        button.x = 320 - button.width;
-        button.y = 20;
-        panel.addChild(button);
+        ok.x = 320 - ok.width;
+        ok.y = 20;
+        panel.addChild(ok);
 
         var embedder :Embedder = this;
-        button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+        ok.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             var txt :String = input.text;
+            if (StringUtil.isBlank(txt)) {
+                txt = null;
+            }
             if (txt == _ctrl.lookupMemory(MEM_KEY)) {
                 return; // no change
             }
 
             var url :String;
-            try {
-                url = parseValue(txt);
-            } catch (err :Error) {
-                status.text = "Unable to parse: " + err.message + ". Please try again.";
-                return;
-            }
+            if (txt != null) {
+                try {
+                    url = parseValue(txt);
+                } catch (err :Error) {
+                    status.text = "Unable to parse: " + err.message + ". Please try again.";
+                    return;
+                }
 
-            // update displayed value
-            input.text = url;
+                // update displayed value
+                input.text = url;
+            }
 
             // yay! It works!
             _ctrl.updateMemory(MEM_KEY, url);
@@ -219,6 +226,16 @@ public class Embedder extends Sprite
             } else {
                 _ctrl.clearPopup(); // in case this is up as a popup
             }
+        });
+
+        var clear :SimpleTextButton = new SimpleTextButton("Clear", true, 0x000000,
+            0xFFFFFF, 0x000099);
+        clear.x = 320 - clear.width;
+        clear.y = 50;
+        panel.addChild(clear);
+        clear.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            input.text = "";
+            status.text = "Press OK to save";
         });
 
         return panel;
