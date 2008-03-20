@@ -71,10 +71,26 @@ public class ToolBox extends Sprite
     {
     }
 
-    protected function selectUi (tool :int) :void
+    protected function toolSelected (event :RadioEvent) :void
+    {
+        var tool :int = event.value as int;
+        if (tool != PICKER_TOOL) {
+            setupUi(tool);
+        }
+    }
+
+    protected function setupUi (tool :int) :void
     {
         _ui.gotoAndStop(tool);
-        _alphaSlider.alpha = _sizeSlider.alpha = tool == CANVAS_TOOL ? 0 : 1;
+        _sizeSlider.alpha = _alphaSlider.alpha = tool == CANVAS_TOOL ? 0 : 1;
+    }
+
+    protected function sizeSliderUpdate (event :SliderEvent) :void 
+    {
+    }
+
+    protected function alphaSliderUpdate (event :SliderEvent) :void
+    {
     }
 
     protected function handleUILoaded (ui :MovieClip) :void
@@ -83,27 +99,36 @@ public class ToolBox extends Sprite
         _ui.x = POPUP_WIDTH - FLA_WIDTH;
         addChild(_ui);
 
-        _ui.brushtool.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            selectUi(BRUSH_TOOL);
-        });
-        _ui.linetool.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            selectUi(LINE_TOOL);
-        });
-        _ui.rectangletool.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            selectUi(RECTANGLE_TOOL);
-        });
-        _ui.elipsetool.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            selectUi(ELIPSE_TOOL);
-        });
-        _ui.canvastool.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            selectUi(CANVAS_TOOL);
-        });
-
+        // size slider
         _sizeSlider = _ui.size_slider;
-        _alphaSlider = _ui.alpha_slider;
-        _showFurniture = _ui.hidefurni;
+        _sizeSlider.liveDragging = true;
+        _sizeSlider.minimum = MIN_BRUSH_SIZE;
+        _sizeSlider.maximum = MAX_BRUSH_SIZE;
+        _sizeSlider.value = DEFAULT_BRUSH_SIZE;
+        _sizeSlider.snapInterval = 1;
+        _sizeSlider.addEventListener(SliderEvent.CHANGE, sizeSliderUpdate);
 
-        selectUi(BRUSH_TOOL);
+        // alpha slider
+        _alphaSlider = _ui.alpha_slider;
+        _alphaSlider.liveDragging = true;
+        _alphaSlider.minimum = 0;
+        _alphaSlider.maximum = 1;
+        _alphaSlider.value = 1;
+        _alphaSlider.snapInterval = 0.05;
+        _alphaSlider.addEventListener(SliderEvent.CHANGE, alphaSliderUpdate);
+
+        // tool buttons
+        var toolSet :RadioButtonSet = new RadioButtonSet();
+        toolSet.addEventListener(RadioEvent.BUTTON_SELECTED, toolSelected);
+        var buttons :Array = [ _ui.brushtool, _ui.linetool, _ui.rectangletool, _ui.elipsetool, 
+                               _ui.canvastool, _ui.pickertool ]
+        var tools :Array = [ BRUSH_TOOL, LINE_TOOL, RECTANGLE_TOOL, ELIPSE_TOOL, CANVAS_TOOL,
+                             PICKER_TOOL ];
+        for (var ii :int = 0; ii < buttons.length; ii++) {
+            toolSet.addButton(new ToggleButton(buttons[ii] as SimpleButton, tools[ii]), ii == 0);
+        }
+
+        _showFurniture = _ui.hidefurni;
     }
 
     private static const log :Log = Log.getLog(ToolBox);
@@ -119,16 +144,16 @@ public class ToolBox extends Sprite
     protected static const RECTANGLE_TOOL :int = 3;
     protected static const ELIPSE_TOOL :int = 4;
     protected static const CANVAS_TOOL :int = 5;
+    protected static const PICKER_TOOL :int = 10;
 
     protected static const TOOLBAR_WIDTH :int = 80;
     protected static const FLA_WIDTH :int = 485;
-    protected static const PALETTE_X_OFFSET :int = 445;
-    protected static const PALETTE_Y_OFFSET :int = 65;
     protected static const BRUSH_PREVIEW_X_OFFSET :int = 430;
     protected static const BRUSH_PREVIEW_Y_OFFSET :int = 122;
 
     protected static const MIN_BRUSH_SIZE :int = 2;
     protected static const MAX_BRUSH_SIZE :int = 40;
+    protected static const DEFAULT_BRUSH_SIZE :int = 10;
 
     protected var _canvas :Canvas;
     protected var _ui :MovieClip;
