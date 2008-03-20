@@ -95,6 +95,24 @@ public class ToolBox extends Sprite
 
     protected function toolUpdate () :void
     {
+        var toolset :int = toolsetForTool(_currentTool);
+        var tool :Tool = null;
+        if (_currentTool == BRUSH_TOOL) {
+            tool = new BrushTool(_sizes[toolset], _alphas[toolset], 
+                                 _colors[PRIMARY_COLOR][toolset]);
+        } else if (_currentTool == LINE_TOOL) {
+            tool = new LineTool(_sizes[toolset], _alphas[toolset],
+                                _colors[PRIMARY_COLOR][toolset]);
+        } else if (_currentTool == RECTANGLE_TOOL) {
+            tool = new RectangleTool(_sizes[toolset], _alphas[toolset],
+                _colors[SECONDARY_COLOR][toolset], _colorEnableds[SECONDARY_COLOR][toolset],
+                _colors[PRIMARY_COLOR][toolset], _colorEnableds[PRIMARY_COLOR][toolset]);
+        } else if (_currentTool == ELIPSE_TOOL) {
+            tool = new EllipseTool(_sizes[toolset], _alphas[toolset],
+                _colors[SECONDARY_COLOR][toolset], _colorEnableds[SECONDARY_COLOR][toolset],
+                _colors[PRIMARY_COLOR][toolset], _colorEnableds[PRIMARY_COLOR][toolset]);
+        }
+        dispatchEvent(new ToolEvent(ToolEvent.TOOL_PICKED, tool));
     }
 
     protected function toolsetForTool (tool :int) :int 
@@ -116,8 +134,9 @@ public class ToolBox extends Sprite
 
     protected function setupUi (tool :int) :void
     {
-        var toolset :int = toolsetForTool(tool);
+        var toolset :int = toolsetForTool(_currentTool = tool);
         if (toolset == NO_TOOLSET) {
+            toolUpdate();
             return;
         }
 
@@ -390,6 +409,7 @@ public class ToolBox extends Sprite
     protected var _currentSwatch :int;
     protected var _swatchButtonSet :RadioButtonSet;
     protected var _undoButton :MovieClipButton;
+    protected var _currentTool :int;
     protected var _currentDrawingTool :int;
     protected var _eyeDropper :DisplayObject;
     protected var _sizeLimit :MovieClip;

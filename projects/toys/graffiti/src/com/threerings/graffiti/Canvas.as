@@ -244,7 +244,7 @@ public class Canvas extends Sprite
             var data :BitmapData = new BitmapData(1, 1);
             data.draw(this, m);
             _toolBox.pickColor(data.getPixel(0, 0));
-        } else {
+        } else if (_tool != null) {
             _lastStrokePoint = _background.globalToLocal(new Point(evt.stageX, evt.stageY));
             _newStroke = true;
             _inputKey = _model.getKey();
@@ -274,6 +274,10 @@ public class Canvas extends Sprite
 
     protected function mouseOut (evt :MouseEvent) :void
     {
+        if (_inputKey == null) {
+            return;
+        }
+
         var canvasPoint :Point = _background.globalToLocal(new Point(evt.stageX, evt.stageY));
         var breakLine :Boolean = false;
         if (canvasPoint.x < 0) {
