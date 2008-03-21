@@ -54,6 +54,18 @@ public class Resources
     [Embed(source="../../rsrc/center_highlight.png")]
     public static const IMG_CENTERHIGHLIGHT :Class;
 
+    [Embed(source="../../rsrc/splash_screen_text.png")]
+    public static const IMG_SPLASHSCREEN :Class;
+
+    [Embed(source="../../rsrc/play_down.png")]
+    public static const IMG_PLAYDOWN :Class;
+
+    [Embed(source="../../rsrc/play_default.png")]
+    public static const IMG_PLAYENABLED :Class;
+
+    [Embed(source="../../rsrc/play_over.png")]
+    public static const IMG_PLAYOVER :Class;
+
     // items
 
     [Embed(source="../../rsrc/items/Baguette_green.png")]

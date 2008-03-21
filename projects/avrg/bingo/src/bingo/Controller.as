@@ -18,7 +18,7 @@ public class Controller
         _model = model;
     }
 
-    public function setup () :void
+    public function beginGame () :void
     {
         // timers
         _newBallTimer = new Timer(Constants.NEW_BALL_DELAY_S * 1000, 1);

@@ -11,6 +11,7 @@ import com.whirled.AVRGameControlEvent;
 
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.events.MouseEvent;
 import flash.system.ApplicationDomain;
 
 [SWF(width="700", height="500")]
@@ -62,9 +63,22 @@ public class BingoMain extends Sprite
     {
         if (_addedToStage && _resourcesLoaded) {
             new BingoItemManager(); // init singleton
+
+            _introView = new BingoIntroView();
+            _introView.addEventListener(MouseEvent.CLICK, play, false, 0, true);
+            this.addChild(_introView);
+
             model.setup();
-            controller.setup();
         }
+    }
+
+    protected function play (...ignored) :void
+    {
+        _introView.removeEventListener(MouseEvent.CLICK, play);
+        this.removeChild(_introView);
+        _introView = null;
+
+        controller.beginGame();
     }
 
     protected function handleResourcesLoaded (results :Object) :void
@@ -113,5 +127,6 @@ public class BingoMain extends Sprite
 
     protected var _addedToStage :Boolean;
     protected var _resourcesLoaded :Boolean;
+    protected var _introView :BingoIntroView;
 }
 }
