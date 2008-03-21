@@ -2,6 +2,7 @@ package bingo {
 
 import flash.display.MovieClip;
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
 public class BingoBallViewController
 {
@@ -12,6 +13,9 @@ public class BingoBallViewController
 
         _ball.x = Constants.BALL_LOC.x;
         _ball.y = Constants.BALL_LOC.y;
+
+        _textField = _ball["text"] as TextField;
+        _textField.autoSize = TextFieldAutoSize.LEFT;
 
         BingoMain.sprite.addChild(_ball);
 
@@ -29,17 +33,29 @@ public class BingoBallViewController
 
     protected function updateView (...ignored) :void
     {
-        var ballString :String = BingoMain.model.curState.ballInPlay;
+        _ball.removeChild(_textField);
 
-        var textField :TextField = _ball["text"] as TextField;
-        textField.scaleX = 1;
-        textField.scaleY = 1;
-        textField.text = (null != ballString ? ballString : "");
+        _textField.scaleX = 1;
+        _textField.scaleY = 1;
+
+        var ballString :String = BingoMain.model.curState.ballInPlay;
+        _textField.text = (null != ballString ? ballString : "");
+
+        var scale :Number = MAX_TEXT_WIDTH / _textField.textWidth;
+        _textField.scaleX = scale;
+        _textField.scaleY = scale;
+
+        // re-center the text field
+        _textField.x = (_ball.width * 0.5) - (_textField.width * 0.5);
+        _textField.y = ((_ball.height * 0.5) - (_textField.height * 0.5)) - 2;
+
+        _ball.addChild(_textField);
     }
 
     protected var _ball :MovieClip;
+    protected var _textField :TextField;
 
-    protected static const MAX_TEXT_WIDTH :Number = 68;
+    protected static const MAX_TEXT_WIDTH :Number = 62;
 }
 
 }
