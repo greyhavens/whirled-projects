@@ -13,7 +13,8 @@ def createItemString(itemName, tags, imageName):
 	itemString = '\t\tnew BingoItem("' + itemName + '", [';
 	
 	for tag in tags.split(','):
-		itemString += '"' + tag.strip() + '", ';
+		if len(tag) > 0:
+			itemString += '"' + tag.strip() + '", ';
 		
 	itemString += '], Resources.IMG_' + removeChars(imageName, " _").upper() + "),\n"
 	

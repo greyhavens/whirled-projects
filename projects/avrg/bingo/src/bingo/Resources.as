@@ -39,6 +39,21 @@ public class Resources
     [Embed(source="../../rsrc/quit_over.png")]
     public static const IMG_QUITOVER :Class;
 
+    [Embed(source="../../rsrc/bottom_left_highlight.png")]
+    public static const IMG_BOTTOMLEFTHIGHLIGHT :Class;
+
+    [Embed(source="../../rsrc/bottom_right_highlight.png")]
+    public static const IMG_BOTTOMRIGHTHIGHLIGHT :Class;
+
+    [Embed(source="../../rsrc/top_left_highlight.png")]
+    public static const IMG_TOPLEFTHIGHLIGHT :Class;
+
+    [Embed(source="../../rsrc/top_right_highlight.png")]
+    public static const IMG_TOPRIGHTHIGHLIGHT :Class;
+
+    [Embed(source="../../rsrc/center_highlight.png")]
+    public static const IMG_CENTERHIGHLIGHT :Class;
+
     // items
 
     [Embed(source="../../rsrc/items/Baguette_green.png")]

@@ -4,8 +4,6 @@ import com.whirled.contrib.ColorMatrix;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
-import flash.display.Graphics;
-import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -17,8 +15,14 @@ public class BingoCardView extends Sprite
     {
         _card = card;
 
+        _bgSprite = new Sprite();
+        _fgSprite = new Sprite();
+
+        this.addChild(_bgSprite);
+        this.addChild(_fgSprite);
+
         // draw the board background
-        this.addChild(new Resources.IMG_BOARD());
+        _bgSprite.addChild(new Resources.IMG_BOARD());
 
         // draw the items
         for (var row :int = 0; row < card.height; ++row) {
@@ -29,7 +33,7 @@ public class BingoCardView extends Sprite
                 itemView.x = UL_OFFSET.x + ((col + 0.5) * SQUARE_SIZE);
                 itemView.y = UL_OFFSET.y + ((row + 0.5) * SQUARE_SIZE);
 
-                this.addChild(itemView);
+                _fgSprite.addChild(itemView);
             }
         }
 
@@ -92,7 +96,7 @@ public class BingoCardView extends Sprite
                 _card.setFilledAt(col, row);
 
                 // draw a little stamp
-                var stamp :Shape = new Shape();
+                /*var stamp :Shape = new Shape();
                 var g :Graphics = stamp.graphics;
 
                 g.beginFill(0x00FFFF, 0.7);
@@ -102,7 +106,33 @@ public class BingoCardView extends Sprite
                 stamp.x = UL_OFFSET.x + ((col + 0.5) * SQUARE_SIZE);
                 stamp.y = UL_OFFSET.y + ((row + 0.5) * SQUARE_SIZE);
 
-                this.addChild(stamp);
+                this.addChild(stamp);*/
+
+                // highlight the space
+                var highlightClass :Class;
+                var offset :Point = new Point();
+
+                // ugh.
+                if (col == 0 && row == 0) {
+                    highlightClass = Resources.IMG_TOPLEFTHIGHLIGHT;
+                    //offset.x =
+                } else if (col == _card.width - 1 && row == 0) {
+                    highlightClass = Resources.IMG_TOPRIGHTHIGHLIGHT;
+                } else if (col == 0 && row == _card.height - 1) {
+                    highlightClass = Resources.IMG_BOTTOMLEFTHIGHLIGHT;
+                } else if (col == _card.width - 1 && row == _card.height - 1) {
+                    highlightClass = Resources.IMG_BOTTOMRIGHTHIGHLIGHT;
+                } else {
+                    highlightClass = Resources.IMG_CENTERHIGHLIGHT;
+                    offset.x = 1;
+                    offset.y = 1;
+                }
+
+                var hilite :Bitmap = new highlightClass();
+                hilite.x = UL_OFFSET.x + offset.x + (col * SQUARE_SIZE);
+                hilite.y = UL_OFFSET.y + offset.y + (row * SQUARE_SIZE);
+
+                _bgSprite.addChild(hilite);
 
                 BingoMain.controller.updateBingoButton();
 
@@ -117,6 +147,8 @@ public class BingoCardView extends Sprite
         _numMatchesThisBall = 0;
     }
 
+    protected var _bgSprite :Sprite;
+    protected var _fgSprite :Sprite;
     protected var _card :BingoCard;
     protected var _numMatchesThisBall :int;
 

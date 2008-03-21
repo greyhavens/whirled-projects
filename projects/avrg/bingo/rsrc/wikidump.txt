@@ -1,6 +1,6 @@
 | [[Image:Pearls.png]] ||Pearls|| neck,jewelry,necklace,beaded,white ||no ||
 |-
-| [[Image:choker.png]] ||choker|| neck,jewelry,necklace,gem,pink||no ||
+| [[Image:choker.png]] ||choker|| neck,jewelry,necklace,gem,pink,black||no ||
 |-
 | [[Image:diamond_necklace.png]] ||diamond necklace|| neck,jewelry,necklace,gem,blue? ||no ||
 |-
@@ -48,13 +48,13 @@
 |-
 | [[Image:basic_ring.png]] ||basic ring|| hands,jewelry,ring,color || yes || silver, gold
 |-
-| [[Image:gold_ring_diamond.png]] ||gold diamond ring|| hands,jewelry,ring,gold,gem || no ||
+| [[Image:gold_ring_diamond.png]] ||gold diamond ring|| hands,jewelry,ring,gold,gem || no || 
 |-
-| [[Image:gold_ring_ruby.png]] ||gold ruby ring|| hands,jewelry,ring,gold,gem,red || no ||
+| [[Image:gold_ring_ruby.png]] ||gold ruby ring|| hands,jewelry,ring,gold,gem,red || no || 
 |-
-| [[Image:gold_ring_sapphire.png]] ||gold sapphire ring|| hands,jewelry,ring,gold,gem,blue || no ||
+| [[Image:gold_ring_sapphire.png]] ||gold sapphire ring|| hands,jewelry,ring,gold,gem,blue || no || 
 |-
-| [[Image:gold_ring_emerald.png]] ||gold emerald ring|| hands,jewelry,ring,gold,gem,green || no ||
+| [[Image:gold_ring_emerald.png]] ||gold emerald ring|| hands,jewelry,ring,gold,gem,green || no || 
 |-
 | [[Image:gold_ring_peridot.png]] ||gold peridot ring|| hands,jewelry,ring,gold,gem,green || no ||
 |-
@@ -64,9 +64,9 @@
 |-
 | [[Image:silver_ring_pink.png]] ||silver zircon ring|| hands,jewelry,ring,silver,gem,pink || no ||
 |-
-| [[Image:silver_ring_orange.png]] ||silver garnet ring|| hands,jewelry,ring,silver,gem,orange || no ||
+| [[Image:silver_ring_orange.png]] ||silver garnet ring|| hands,jewelry,ring,silver,gem,orange || no ||  
 |-
-| [[Image:class_ring_red.png]] ||red/gold class ring|| hands,jewelry,ring,gold,gem,red || no ||
+| [[Image:class_ring_red.png]] ||red/gold class ring|| hands,jewelry,ring,gold,gem,red || no || 
 |-
 | [[Image:class_ring_purple.png]] ||purple/gold class ring|| hands,jewelry,ring,gold,gem,purple || no ||
 |-
@@ -84,15 +84,15 @@
 |-
 | [[Image:Heel_solid.png]] ||solid heel|| feet,shoes,heel,color || yes || black, red, pink, purple, blue, orange, green
 |-
-| [[Image:Heel_pattern_01.png]] ||patterned heel 1|| feet,shoes,heel,pattern || no ||
+| [[Image:Heel_pattern_01.png]] ||patterned heel 1|| feet,shoes,heel,pattern,brown,animal|| no || 
 |-
-| [[Image:Heel_pattern_02.png]] ||patterned heel 2|| feet,shoes,heel,pattern || no ||
+| [[Image:Heel_pattern_02.png]] ||patterned heel 2|| feet,shoes,heel,pattern,green,polka-dot || no ||
 |-
-| [[Image:Heel_pattern_03.png]] ||patterned heel 3|| feet,shoes,heel,pattern || no ||
+| [[Image:Heel_pattern_03.png]] ||patterned heel 3|| feet,shoes,heel,pattern,blue || no || 
 |-
-| [[Image:Heel_pattern_04.png]] ||patterned heel 4|| feet,shoes,heel,pattern || no ||
+| [[Image:Heel_pattern_04.png]] ||patterned heel 4|| feet,shoes,heel,pattern,white,polka-dot || no || 
 |-
-| [[Image:Heel_pattern_05.png]] ||patterned heel 5|| feet,shoes,heel,pattern || no ||
+| [[Image:Heel_pattern_05.png]] ||patterned heel 5|| feet,shoes,heel,pattern,pink,purple,orange || no ||  
 |-
 | [[Image:short_boot_brown.png]] ||short brown boot|| feet,shoes,boot,brown,winter,heel || no ||
 |-
@@ -102,19 +102,19 @@
 |-
 | [[Image:short_boot_black.png]] ||short black boot|| feet,shoes,boot,black,winter,heel || no ||
 |-
-| [[Image:tall_boot_red.png]] ||red boot|| feet,shoes,boot,red,winter || no ||
+| [[Image:tall_boot_red.png]] ||red boot|| feet,shoes,boot,red,winter,heel || no ||
 |-
-| [[Image:tall_boot_black.png]] ||black boot|| feet,shoes,boot,black,winter || no ||
+| [[Image:tall_boot_black.png]] ||black boot|| feet,shoes,boot,black,winter,heel || no ||
 |-
-| [[Image:tall_boot_brown.png]] ||brown boot|| feet,shoes,boot,brown,winter || no ||
+| [[Image:tall_boot_brown.png]] ||brown boot|| feet,shoes,boot,brown,winter,heel || no ||
 |-
-| [[Image:tall_boot_green.png]] ||green boot|| feet,shoes,boot,green,winter || no ||
+| [[Image:tall_boot_green.png]] ||green boot|| feet,shoes,boot,green,winter,heel || no ||
 |-
-| [[Image:tall_boot_purple.png]] ||purple boot|| feet,shoes,boot,purple,winter || no ||
+| [[Image:tall_boot_purple.png]] ||purple boot|| feet,shoes,boot,purple,winter,heel || no ||
 |-
-| [[Image:tall_boot_silver.png]] ||silver boot|| feet,shoes,boot,silver,winter || no ||
+| [[Image:tall_boot_silver.png]] ||silver boot|| feet,shoes,boot,silver,winter,heel || no ||
 |-
-| [[Image:fuzzy_slipper_pink.png]] ||pink fuzzy slipper|| feet,shoes,flat,pink || no ||
+| [[Image:fuzzy_slipper_pink.png]] ||pink fuzzy slipper|| feet,shoes,flat,pink || no || 
 |-
 | [[Image:fuzzy_slipper_blue.png]] ||blue fuzzy slipper|| feet,shoes,flat,blue || no ||
 |-
@@ -160,33 +160,33 @@
 |-
 | [[Image:flats_yellow.png]] ||yellow flat|| feet,shoes,flat,yellow,summer|| no ||
 |-
-| [[Image:flats_pattern_01.png]] ||patterned flat 1|| feet,shoes,flat,pattern,summer|| no ||
+| [[Image:flats_pattern_01.png]] ||patterned flat 1|| feet,shoes,flat,pattern,summer,green|| no ||
 |-
-| [[Image:flats_pattern_02.png]] ||patterned flat 2|| feet,shoes,flat,pattern,summer|| no ||
+| [[Image:flats_pattern_02.png]] ||patterned flat 2|| feet,shoes,flat,pattern,summer,red,orange|| no ||
 |-
-| [[Image:flats_pattern_03.png]] ||patterned flat 3|| feet,shoes,flat,pattern,summer|| no ||
+| [[Image:flats_pattern_03.png]] ||patterned flat 3|| feet,shoes,flat,pattern,summer,stripes,animal|| no ||
 |-
-| [[Image:flats_pattern_04.png]] ||patterned flat 4|| feet,shoes,flat,pattern,summer|| no ||
+| [[Image:flats_pattern_04.png]] ||patterned flat 4|| feet,shoes,flat,pattern,summer,plaid|| no ||
 |-
-| [[Image:flats_pattern_05.png]] ||patterned flat 5|| feet,shoes,flat,pattern,summer|| no ||
+| [[Image:flats_pattern_05.png]] ||patterned flat 5|| feet,shoes,flat,pattern,summer,white,polka-dot|| no ||
 |-
-| [[Image:flats_pattern_06.png]] ||patterned flat 6|| feet,shoes,flat,pattern,summer|| no ||
+| [[Image:flats_pattern_06.png]] ||patterned flat 6|| feet,shoes,flat,pattern,summer,red|| no ||
 |-
-| [[Image:flats_pattern_07.png]] ||patterned flat 7|| feet,shoes,flat,pattern,summer|| no ||
+| [[Image:flats_pattern_07.png]] ||patterned flat 7|| feet,shoes,flat,pattern,summer,brown,animal|| no ||
 |-
-| [[Image:sneakers_blue.png]] ||blue sneakers|| feet,shoes,flat,blue|| no ||
+| [[Image:sneakers_blue.png]] ||blue sneakers|| feet,shoes,flat,blue,stripes|| no ||
 |-
-| [[Image:sneakers_green.png]] ||green sneakers|| feet,shoes,flat,green|| no ||
+| [[Image:sneakers_green.png]] ||green sneakers|| feet,shoes,flat,green,stripes|| no ||
 |-
-| [[Image:sneakers_orange.png]] ||orange sneakers|| feet,shoes,flat,orange|| no ||
+| [[Image:sneakers_orange.png]] ||orange sneakers|| feet,shoes,flat,orange,stripes|| no ||
 |-
-| [[Image:sneakers_pink.png]] ||pink sneakers|| feet,shoes,flat,pink|| no ||
+| [[Image:sneakers_pink.png]] ||pink sneakers|| feet,shoes,flat,pink,stripes|| no ||
 |-
-| [[Image:sneakers_purple.png]] ||purple sneakers|| feet,shoes,flat,purple|| no ||
+| [[Image:sneakers_purple.png]] ||purple sneakers|| feet,shoes,flat,purple,stripes|| no ||
 |-
-| [[Image:sneakers_red.png]] ||red sneakers|| feet,shoes,flat,red|| no ||
+| [[Image:sneakers_red.png]] ||red sneakers|| feet,shoes,flat,red,stripes|| no ||
 |-
-| [[Image:sneakers_yellow.png]] ||yellow sneakers|| feet,shoes,flat,yellow|| no ||
+| [[Image:sneakers_yellow.png]] ||yellow sneakers|| feet,shoes,flat,yellow,stripes|| no ||
 |-
 | [[Image:bobby_pins.png]] ||bobby pins|| head,hair accessory,gem,beaded || no ||
 |-
@@ -228,39 +228,39 @@
 |-
 | [[Image:double_headband_black.png]] ||black double headband|| head,hair accessory,black || no ||
 |-
-| [[Image:fabric_headband_01.png]] ||fabric headband 1|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_01.png]] ||fabric headband 1|| head,hair accessory,pattern,green || no ||
 |-
-| [[Image:fabric_headband_02.png]] ||fabric headband 2|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_02.png]] ||fabric headband 2|| head,hair accessory,pattern,stripes,animal|| no ||
 |-
-| [[Image:fabric_headband_03.png]] ||fabric headband 3|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_03.png]] ||fabric headband 3|| head,hair accessory,pattern,green,plaid || no ||
 |-
-| [[Image:fabric_headband_04.png]] ||fabric headband 4|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_04.png]] ||fabric headband 4|| head,hair accessory,pattern,brown,polka-dot || no ||
 |-
 | [[Image:fabric_headband_05.png]] ||fabric headband 5|| head,hair accessory,pattern || no ||
 |-
-| [[Image:fabric_headband_06.png]] ||fabric headband 6|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_06.png]] ||fabric headband 6|| head,hair accessory,pattern,white,polka-dot || no ||
 |-
-| [[Image:fabric_headband_07.png]] ||fabric headband 7|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_07.png]] ||fabric headband 7|| head,hair accessory,pattern,red || no ||
 |-
-| [[Image:fabric_headband_08.png]] ||fabric headband 8|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_08.png]] ||fabric headband 8|| head,hair accessory,pattern,red,plaid || no ||
 |-
-| [[Image:fabric_headband_09.png]] ||fabric headband 9|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_09.png]] ||fabric headband 9|| head,hair accessory,pattern,blue || no ||
 |-
 | [[Image:fabric_headband_10.png]] ||fabric headband 10|| head,hair accessory,pattern || no ||
 |-
-| [[Image:fabric_headband_11.png]] ||fabric headband 11|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_11.png]] ||fabric headband 11|| head,hair accessory,pattern,brown,animal|| no ||
 |-
-| [[Image:fabric_headband_12.png]] ||fabric headband 12|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_12.png]] ||fabric headband 12|| head,hair accessory,pattern,pink || no ||
 |-
-| [[Image:fabric_headband_13.png]] ||fabric headband 13|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_13.png]] ||fabric headband 13|| head,hair accessory,pattern,green || no ||
 |-
-| [[Image:fabric_headband_14.png]] ||fabric headband 14|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_14.png]] ||fabric headband 14|| head,hair accessory,pattern,red,orange || no ||
 |-
-| [[Image:fabric_headband_15.png]] ||fabric headband 15|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_15.png]] ||fabric headband 15|| head,hair accessory,pattern,yellow,animal|| no ||
 |-
-| [[Image:fabric_headband_16.png]] ||fabric headband 16|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_16.png]] ||fabric headband 16|| head,hair accessory,pattern,white || no ||
 |-
-| [[Image:fabric_headband_17.png]] ||fabric headband 17|| head,hair accessory,pattern || no ||
+| [[Image:fabric_headband_17.png]] ||fabric headband 17|| head,hair accessory,pattern,green,polka-dot || no ||
 |-
 | [[Image:bow_clips_black.png]] ||black bow clips|| head,hair accessory,black,bow || no ||
 |-
@@ -280,15 +280,15 @@
 |-
 | [[Image:bow_clips_yellow.png]] ||yellow bow clips|| head,hair accessory,yellow,bow || no ||
 |-
-| [[Image:bow_clips_pattern01.png]] ||patterned bow clips 1|| head,hair accessory,pattern,bow || no ||
+| [[Image:bow_clips_pattern01.png]] ||patterned bow clips 1|| head,hair accessory,pattern,bow,pink || no ||
 |-
-| [[Image:bow_clips_pattern02.png]] ||patterned bow clips 2|| head,hair accessory,pattern,bow || no ||
+| [[Image:bow_clips_pattern02.png]] ||patterned bow clips 2|| head,hair accessory,pattern,bow,red || no ||
 |-
-| [[Image:bow_clips_pattern03.png]] ||patterned bow clips 3|| head,hair accessory,pattern,bow || no ||
+| [[Image:bow_clips_pattern03.png]] ||patterned bow clips 3|| head,hair accessory,pattern,bow,blue || no ||
 |-
-| [[Image:bow_clips_pattern04.png]] ||patterned bow clips 4|| head,hair accessory,pattern,bow || no ||
+| [[Image:bow_clips_pattern04.png]] ||patterned bow clips 4|| head,hair accessory,pattern,bow,green || no ||
 |-
-| [[Image:bow_clips_pattern05.png]] ||patterned bow clips 5|| head,hair accessory,pattern,bow || no ||
+| [[Image:bow_clips_pattern05.png]] ||patterned bow clips 5|| head,hair accessory,pattern,bow,animal|| no ||
 |-
 | [[Image:claw_brown.png]] ||brown claw|| head,hair accessory,brown || no ||
 |-
@@ -312,23 +312,23 @@
 |-
 | [[Image:baret_purple.png]] ||purple baret|| head,hat,purple || no ||
 |-
-| [[Image:baseball_cap.png]] ||orange baseball cap|| head,hat,orange || no ||
+| [[Image:baseball_cap.png]] ||orange baseball cap|| head,hat,orange || no || 
 |-
 | [[Image:baseball cap_blue.png]] ||blue baseball cap|| head,hat,blue || no ||
 |-
-| [[Image:baseball cap_green.png]] ||green baseball cap|| head,hat,green || no ||
+| [[Image:baseball cap_green.png]] ||green baseball cap|| head,hat,green || no ||  
 |-
-| [[Image:cowboy hat_black.png]] ||black cowboy hat|| head,hat,red,black || no ||
+| [[Image:cowboy hat_black.png]] ||black cowboy hat|| head,hat,red,black || no || 
 |-
-| [[Image:cowboy_hat.png]] ||cowboy hat|| head,hat,green,brown || no ||
+| [[Image:cowboy_hat.png]] ||cowboy hat|| head,hat,green,brown || no || 
 |-
 | [[Image:earflap_hat.png]] ||"earflap" hat|| head,hat,winter,blue || no ||
 |-
 | [[Image:earflap hat_brown.png]] ||brown "earflap" hat|| head,hat,winter,brown || no ||
 |-
-| [[Image:fedora.png]] ||fedora|| head,hat,white || no ||
+| [[Image:fedora.png]] ||fedora|| head,hat,white || no || 
 |-
-| [[Image:fedora_pattern.png]] ||patterned fedora|| head,hat,white, black || no ||
+| [[Image:fedora_pattern.png]] ||patterned fedora|| head,hat,white, black || no || 
 |-
 | [[Image:newsboy_hat.png]] ||newsboy hat|| head,hat,blue || no ||
 |-
@@ -336,41 +336,41 @@
 |-
 | [[Image:snow_cap_blue.png]] ||blue snow cap|| head,hat,winter,blue || no ||
 |-
-| [[Image:snow_cap.png]] ||snow cap|| head,hat,winter,pink || no ||
+| [[Image:snow_cap.png]] ||snow cap|| head,hat,winter,pink || no ||    
 |-
 | [[Image:straw_hat.png]] ||straw/sun hat|| head,hat,summer,red || no ||
 |-
 | [[Image:straw hat_pattern.png]] ||patterned straw/sun hat|| head,hat,summer,green, pattern || no ||
 |-
-| [[Image:tote_pattern01.png]] ||patterned tote 1|| bag,tote,pattern || no ||
+| [[Image:tote_pattern01.png]] ||patterned tote 1|| bag,tote,pattern,stripes,animal || no ||
 |-
-| [[Image:tote_pattern02.png]] ||patterned tote 2|| bag,tote,pattern || no ||
+| [[Image:tote_pattern02.png]] ||patterned tote 2|| bag,tote,pattern,brown || no ||
 |-
-| [[Image:tote_pattern03.png]] ||patterned tote 3|| bag,tote,pattern || no ||
+| [[Image:tote_pattern03.png]] ||patterned tote 3|| bag,tote,pattern,pink,white,polka-dot || no ||
 |-
-| [[Image:tote_pattern04.png]] ||patterned tote 4|| bag,tote,pattern || no ||
+| [[Image:tote_pattern04.png]] ||patterned tote 4|| bag,tote,pattern,red || no ||
 |-
-| [[Image:tote_pattern05.png]] ||patterned tote 5|| bag,tote,pattern || no ||
+| [[Image:tote_pattern05.png]] ||patterned tote 5|| bag,tote,pattern,blue || no ||
 |-
-| [[Image:tote_pattern06.png]] ||patterned tote 6|| bag,tote,pattern || no ||
+| [[Image:tote_pattern06.png]] ||patterned tote 6|| bag,tote,pattern,green || no ||
 |-
-| [[Image:tote_pattern07.png]] ||patterned tote 7|| bag,tote,pattern || no ||
+| [[Image:tote_pattern07.png]] ||patterned tote 7|| bag,tote,pattern,brown,animal || no ||
 |-
-| [[Image:tote_pattern08.png]] ||patterned tote 8|| bag,tote,pattern || no ||
+| [[Image:tote_pattern08.png]] ||patterned tote 8|| bag,tote,pattern,pink,stripes || no ||
 |-
-| [[Image:tote_pattern09.png]] ||patterned tote 9|| bag,tote,pattern || no ||
+| [[Image:tote_pattern09.png]] ||patterned tote 9|| bag,tote,pattern,pink,white || no ||
 |-
-| [[Image:tote_pattern10.png]] ||patterned tote 10|| bag,tote,pattern || no ||
+| [[Image:tote_pattern10.png]] ||patterned tote 10|| bag,tote,pattern,pink,purple,orange || no ||
 |-
-| [[Image:tote_pattern11.png]] ||patterned tote 11|| bag,tote,pattern || no ||
+| [[Image:tote_pattern11.png]] ||patterned tote 11|| bag,tote,pattern,yellow,animal || no ||
 |-
-| [[Image:tote_pattern12.png]] ||patterned tote 12|| bag,tote,pattern || no ||
+| [[Image:tote_pattern12.png]] ||patterned tote 12|| bag,tote,pattern,white || no ||
 |-
-| [[Image:tote_pattern13.png]] ||patterned tote 13|| bag,tote,pattern || no ||
+| [[Image:tote_pattern13.png]] ||patterned tote 13|| bag,tote,pattern,black,white || no ||
 |-
-| [[Image:tote_pattern14.png]] ||patterned tote 14|| bag,tote,pattern || no ||
+| [[Image:tote_pattern14.png]] ||patterned tote 14|| bag,tote,pattern,yellow || no ||
 |-
-| [[Image:tote_pattern15.png]] ||patterned tote 15|| bag,tote,pattern || no ||
+| [[Image:tote_pattern15.png]] ||patterned tote 15|| bag,tote,pattern,green || no ||
 |-
 | [[Image:woven_tote_brown.png]] ||brown woven tote|| bag,tote,brown || no ||
 |-
@@ -398,11 +398,11 @@
 |-
 | [[Image:baguette_purple.png]] ||purple baguette|| bag, purple || no ||
 |-
-| [[Image:purse_pattern01.png]] ||patterned purse 1|| bag,pattern,green || no ||
+| [[Image:purse_pattern01.png]] ||patterned purse 1|| bag,pattern,green,polka-dot || no ||
 |-
-| [[Image:purse_pattern02.png]] ||patterned purse 2|| bag,pattern,blue || no ||
+| [[Image:purse_pattern02.png]] ||patterned purse 2|| bag,pattern,blue,|| no ||
 |-
-| [[Image:purse_pattern03.png]] ||patterned purse 3|| bag,pattern,brown || no ||
+| [[Image:purse_pattern03.png]] ||patterned purse 3|| bag,pattern,brown,polka-dot|| no ||
 |-
 | [[Image:purse_pattern04.png]] ||patterned purse 4|| bag,pattern,red || no ||
 |}
