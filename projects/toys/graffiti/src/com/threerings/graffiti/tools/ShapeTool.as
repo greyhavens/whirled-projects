@@ -17,6 +17,18 @@ public class ShapeTool extends Tool
         _fillOn = fillOn;
     }
 
+    // from Equalable
+    override public function equals (other :Object) :Boolean
+    {
+        if (!(other is ShapeTool)) {
+            return false;
+        }
+
+        var otherShape :ShapeTool = other as ShapeTool;
+        return super.equals(other) && otherShape._borderOn == _borderOn &&
+            otherShape._fillColor == _fillColor && otherShape._fillOn == _fillOn;
+    }
+
     override public function serialize (bytes :ByteArray, colorLUT :HashMap) :void
     {
         super.serialize(bytes, colorLUT);

@@ -8,10 +8,11 @@ import flash.geom.Point;
 
 import flash.utils.ByteArray;
 
+import com.threerings.util.Equalable;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 
-public class Tool
+public class Tool implements Equalable
 {
     public static const BRUSH :int = 1;
     public static const LINE :int = 2;
@@ -43,12 +44,24 @@ public class Tool
         _color = color;
     }
 
+    // from Equalable
+    public function equals (other :Object) :Boolean
+    {
+        if (!(other is Tool)) {
+            return false;
+        }
+
+        var otherTool :Tool = other as Tool;
+        return otherTool._thickness == _thickness && otherTool._alpha == _alpha &&
+            otherTool._color == _color;
+    }
+
     public function mouseDown (graphics :Graphics, point :Point) :void
     {
         // handled by subclasses
     }
 
-    public function dragTo (graphics :Graphics, point :Point) :void
+    public function dragTo (graphics :Graphics, point :Point, smoothing :Boolean = true) :void
     {
         // handled by subclasses
     }

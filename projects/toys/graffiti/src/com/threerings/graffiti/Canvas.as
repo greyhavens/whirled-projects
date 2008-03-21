@@ -64,9 +64,11 @@ public class Canvas extends Sprite
                                    _model.getBackgroundTransparent(), 
                                    _model.calculateFullPercent());
             _toolBox.addEventListener(ToolEvent.TOOL_PICKED, function (event :ToolEvent) :void {
-                _tool = event.value as Tool;
-                if (_tool == null) {
+                var newTool :Tool = event.value as Tool;
+                if (newTool == null) {
                     endStroke();
+                } else if (!newTool.equals(_tool)) {
+                    _tool = newTool;
                 }
             });
             _toolBox.addEventListener(ToolEvent.BACKGROUND_COLOR, 
@@ -114,6 +116,10 @@ public class Canvas extends Sprite
     {
         log.debug("draw stroke [" + this.name + ", " + stroke.id + ", " + stroke + ", " + 
             startPoint + "]");
+
+        if (stroke.id != null && stroke.id == _inputKey) {
+            return;
+        }
 
         var start :Point = stroke.getPoint(startPoint);
         if (start == null) {
@@ -213,9 +219,22 @@ public class Canvas extends Sprite
 
     protected function addMouseListeners () :void
     {
+        _background.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
         _background.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
         _background.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
         _background.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+    }
+    
+    protected function mouseMove (evt :MouseEvent) :void
+    {
+        if (_inputKey != null && evt.buttonDown) {
+            var layer :Shape = _layers.get(_inputKey);
+            if (layer != null) {
+                _tool.dragTo(layer.graphics, 
+                             _background.globalToLocal(new Point(evt.stageX, evt.stageY)),
+                             false);
+            }
+        }
     }
 
     protected function mouseDown (evt :MouseEvent) :void
@@ -228,6 +247,10 @@ public class Canvas extends Sprite
         _newStroke = true;
         _inputKey = _model.getKey();
         _timer = setInterval(tick, TICK_INTERVAL);
+        var layer :Shape = new Shape();
+        _layers.put(_inputKey, layer);
+        addChild(layer);
+        _tool.mouseDown(layer.graphics, _lastStrokePoint);
     }
 
     protected function tick () :void

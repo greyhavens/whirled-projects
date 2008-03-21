@@ -15,12 +15,19 @@ public class EllipseTool extends ShapeTool
         super(thickness, alpha, borderColor, borderOn, fillColor, fillOn);
     }
 
+    // from Equalable
+    override public function equals (other :Object) :Boolean
+    {
+        return other is EllipseTool && super.equals(other);
+    }
+
     override public function mouseDown (graphics :Graphics, point :Point) :void
     {
         _startPoint = point;
     }
 
-    override public function dragTo (graphics :Graphics, point :Point) :void
+    override public function dragTo (graphics :Graphics, point :Point, 
+        smoothing :Boolean = true) :void
     {
         graphics.clear();
         if (_borderOn) {

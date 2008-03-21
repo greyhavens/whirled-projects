@@ -13,12 +13,19 @@ public class LineTool extends Tool
         super(thickness, alpha, color);
     }
 
+    // from Equalable
+    override public function equals (other :Object) :Boolean
+    {
+        return other is LineTool && super.equals(other);
+    }
+
     override public function mouseDown (graphics :Graphics, point :Point) :void
     {
         _startPoint = point;
     }
 
-    override public function dragTo (graphics :Graphics, point :Point) :void
+    override public function dragTo (graphics :Graphics, point :Point, 
+        smoothing :Boolean = true) :void
     {
         graphics.clear();
         graphics.lineStyle(_thickness, _color, _alpha);
