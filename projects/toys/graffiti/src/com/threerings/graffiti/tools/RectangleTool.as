@@ -52,6 +52,6 @@ public class RectangleTool extends ShapeTool
         return false;
     }
 
-    protected var _startPoint :Point;
+    protected var _startPoint :Point = new Point(0, 0);
 }
 }
