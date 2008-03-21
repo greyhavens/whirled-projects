@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
  * display component. Also provides translation to and from "ordinal" cards for use in 
  * serialization.
  * XXTODO Are jokers needed?
+ * XXTODO Display abstraction
  */
 public class Card
 {
@@ -60,12 +61,21 @@ public class Card
 
     /** Constant for the rank of king. */
     public static const RANK_KING :int = 12;
+
+    /** Constant for straight rank ordering. */
+    public static const RANK_ORDER_NORMAL :int = 0;
+
+    /** Constant for aces high rank ordering. */
+    public static const RANK_ORDER_ACES_HIGH :int = 1;
     
     /** Number of suits. */
     public static const NUM_SUITS :int = 4;
 
     /** Number of ranks. */
     public static const NUM_RANKS :int = 13;
+
+    /** Number of ranks. */
+    public static const NUM_RANK_ORDERS :int = 2;
 
     /** Number or ordinals (also the number of cards in a standard deck). */
     public static const NUM_ORDINALS :int = NUM_SUITS * NUM_RANKS;
@@ -164,6 +174,43 @@ public class Card
         }
     }
 
+    /** Compare two ranks in the given ordering.
+     *  @param rank1 the first rank to compare, one of the RANK_* constants
+     *  @param rank2 the second rank to compare, one of the RANK_* constants
+     *  @param ordering how to compare, one of the RANK_ORDER_* constants
+     *  @throws CardException if any constant is invalid
+     *  @return a negative number if rank1 < rank2, positive if rank1 > rank2 and zero 
+     *  if rank1 == rank2 */
+    public static function compareRanks(
+        rank1 :int, 
+        rank2 :int, 
+        ordering: int=RANK_ORDER_NORMAL) :int
+    {
+        validate("Rank", rank1, NUM_RANKS);
+        validate("Rank", rank2, NUM_RANKS);
+        validate("Rank order", ordering, NUM_RANK_ORDERS);
+
+        switch (ordering) {
+
+        case RANK_ORDER_NORMAL:
+            break;
+
+        case RANK_ORDER_ACES_HIGH:
+            if (rank1 == RANK_ACE) {
+                rank1 = RANK_KING + 1;
+            }
+            if (rank2 == RANK_ACE) {
+                rank2 = RANK_KING + 1;
+            }
+            break;
+
+        default:
+            throw new CardException("Ordering " + ordering + " not handled");
+        }
+
+        return rank1 - rank2;
+    }
+
     /**
      * Create a new card.
      * @param suit the suit of the card (one of the SUIT_* constants)
@@ -242,6 +289,64 @@ public class Card
         return string;
     }
 
+    /** Check if this card has a better rank than the other.
+     *  @param ordering how to compare, one of the RANK_ORDER_* constants 
+     *  @param rhs card to compare against */
+    public function isBetterRank (rhs :Card, ordering :int) :Boolean
+    {
+        var cmp :int = compareRanks(_rank, rhs._rank, ordering);
+        return cmp > 0;
+    }
+
+    /** Access the enabling of the card's display object. The enabled state indicates that the card 
+     *  can be clicked, but clicking itself is handled by the container. */
+    public function set enabled (on :Boolean) :void
+    {
+        if (_display != null) {
+            _display.enabled = on;
+        }
+    }
+
+    /** Access the enabling of the card's display object. The enabled state indicates that the card 
+     *  can be clicked, but clicking itself is handled by the container. */
+    public function get enabled () :Boolean
+    {
+        if (_display == null) {
+            return false;
+        }
+        return _display.enabled;
+    }
+
+    /** Access the highlight state of the card's display object. A highlighted card indicates that 
+     *  the user is hovering over the card, although mouse movement itself is handled by the 
+     *  container. */
+    public function get highlighted () :Boolean
+    {
+        if (_display == null) {
+            return false;
+        }
+        return _display.highlighted;
+    }
+
+    /** Access the highlight state of the card's display object. A highlighted card indicates that 
+     *  the user is hovering over the card, although mouse movement itself is handled by the 
+     *  container. */
+    public function set highlighted (on :Boolean) :void
+    {
+        if (_display != null) {
+            _display.highlighted = on;
+        }
+    }
+
+    /** Throw an exception if the value is less than zero or larger than max.
+     *  @param type the ordinal name of the value set */
+    protected static function validate(type :String, value :int, num :int) :void
+    {
+        if (value < 0 || value >= num) {
+            throw new CardException(type + value + " is not valid");
+        }
+    }
+
     /** The rank. */
     protected var _rank :int;
 
@@ -249,7 +354,7 @@ public class Card
     protected var _suit :int;
 
     /** The display component (may be null) */
-    protected var _display :DisplayObject;
+    protected var _display :CardText;
 }
 
 }
@@ -261,25 +366,53 @@ import flash.text.TextField;
 class CardText extends TextField
 {
     public function CardText (card :Card) {
-        // fixed size
         width = Card.SPRITE_WIDTH;
         height = Card.SPRITE_HEIGHT;
-
-        // background
         background = true;
-        backgroundColor = 0x77FF77;
-
-        // border
         border = true;
-        borderColor = 0x000000;
-
-        // disallow selection
         selectable = false;
-
-        // set multiline (rank then suit)
-        multiline = true;
-
-        // set text
+        multiline = true; // (needed for rank + CR + suit)
         text = card.string;
+        update();
     }
+
+    public function set enabled (on :Boolean) :void
+    {
+        _enabled = on;
+        update();
+    }
+
+    public function get enabled () :Boolean
+    {
+        return _enabled;
+    }
+
+    public function set highlighted (on :Boolean) :void
+    {
+        _highlighted = on;
+        update();
+    }
+
+    public function get highlighted () :Boolean
+    {
+        return _highlighted;
+    }
+
+    protected function update () :void
+    {
+        if (_enabled) {
+            if (_highlighted) {
+                backgroundColor = 0xFF8080;
+            }
+            else {
+                backgroundColor = 0x77FF77;
+            }
+        }
+        else {
+            backgroundColor = 0x888888;
+        }
+    }
+
+    protected var _enabled :Boolean = false;
+    protected var _highlighted :Boolean = false;
 }
