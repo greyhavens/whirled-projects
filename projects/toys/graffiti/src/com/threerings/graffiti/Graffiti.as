@@ -31,15 +31,16 @@ public class Graffiti extends Sprite
     public function Graffiti () 
     {
         _control = new FurniControl(this);
-        if (_control.isConnected()) {
-            _throttle = new Throttle(_control);
-            // each instance maintains a Manager.  The inControl() instance's Manager is in effect.
-            _manager = new Manager(_throttle);
-            _model = new OnlineModel(_throttle);
-            _control.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
-        } else {
-            _model = new OfflineModel();
+        if (!_control.isConnected()) {
+            displayPreviewImage();
+            return;
         }
+
+        _throttle = new Throttle(_control);
+        // each instance maintains a Manager.  The inControl() instance's Manager is in effect.
+        _manager = new Manager(_throttle);
+        _model = new OnlineModel(_throttle);
+        _control.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
         addChild(_displayCanvas = new Canvas(_model));
 
         _editBtn = new EDIT_BUTTON() as SimpleButton;
@@ -58,6 +59,13 @@ public class Graffiti extends Sprite
         addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
         addEventListener(Event.ENTER_FRAME, enterFrame);
         _control.addEventListener(Event.UNLOAD, unload);
+    }
+
+    protected function displayPreviewImage () :void
+    {
+        addChild(_previewImage = new PREVIEW_IMAGE() as DisplayObject);
+        _previewImage.x = (600 - _previewImage.width) / 2;
+        _previewImage.y = (486 - _previewImage.height) / 2;
     }
 
     protected function displayEditPopup (event :MouseEvent) :void
@@ -197,6 +205,8 @@ public class Graffiti extends Sprite
     protected static const EDIT_BUTTON :Class;
     [Embed(source="../../../../rsrc/edit_manager_buttons.swf#manager")]
     protected static const MANAGER_BUTTON :Class;
+    [Embed(source="../../../../rsrc/preview_image.png")]
+    protected static const PREVIEW_IMAGE :Class;
 
     protected static const CANVAS_LOCK :String = "canvasLock";
 
@@ -209,5 +219,6 @@ public class Graffiti extends Sprite
     protected var _mouseOver :Boolean; 
     protected var _lockBtn :ToggleButton;
     protected var _displayCanvas :Canvas;
+    protected var _previewImage :DisplayObject;
 }
 }
