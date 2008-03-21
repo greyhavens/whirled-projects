@@ -96,6 +96,7 @@ public class SeekPanel extends FrameSprite
         _lanterns = null;
         _ghost.appear(spawnGhost);
         _ghost.newTarget(new Point(Game.stageSize.width - 250, 100));
+        unmaskGhost();
     }
 
     // we've been added or removed or entered a new room or the ghost has changed,
@@ -103,8 +104,8 @@ public class SeekPanel extends FrameSprite
     protected function updateGhost () :void
     {
         if (_ghost != null) {
-            _ghost.mask = null;
-            if (_ghost.parent == this) {
+            unmaskGhost();
+            if (_ghost.parent != null) {
                 this.removeChild(_ghost);
             }
         }
@@ -112,7 +113,7 @@ public class SeekPanel extends FrameSprite
         if (this.parent != null && Game.model.ghostId != null) {
             _ghost = new HidingGhost(200);
             this.addChild(_ghost);
-            _ghost.mask = _maskLayer;
+            maskGhost();
         }
     }
 
@@ -253,7 +254,6 @@ public class SeekPanel extends FrameSprite
         this.addChild(_lightLayer);
 
         _maskLayer = new Sprite();
-        this.addChild(_maskLayer);
     }
 
     protected function transmitLanternPosition (pos :Point) :void
@@ -323,6 +323,26 @@ public class SeekPanel extends FrameSprite
     {
         if (Game.control.hasControl()) {
             _ppp.setRoomProperty(evt.value as int, Codes.PROP_LANTERN_POS, null);            
+        }
+    }
+
+    protected function maskGhost () :void
+    {
+        if (_ghost != null) {
+            if (_maskLayer.parent == null) {
+                this.addChild(_maskLayer);
+            }
+            _ghost.mask = _maskLayer;
+        }
+    }
+
+    protected function unmaskGhost () :void
+    {
+        if (_ghost != null) {
+            if (_maskLayer.parent != null) {
+                this.removeChild(_maskLayer);
+            }
+            _ghost.mask = null;
         }
     }
 
