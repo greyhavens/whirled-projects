@@ -21,6 +21,7 @@ import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.MobControl;
 
+import com.threerings.flash.AnimationManager;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.EmbeddedSwfLoader;
 
@@ -36,6 +37,8 @@ public class GamePanel extends Sprite
 
         Game.control.state.addEventListener(
             AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
+
+        Game.control.addEventListener(AVRGameControlEvent.COINS_AWARDED, coinsAwarded);
     }
 
     public function shutdown () :void
@@ -69,6 +72,21 @@ public class GamePanel extends Sprite
     {
         hud.reloadView();
         updateState();
+    }
+
+    protected function coinsAwarded (evt :AVRGameControlEvent) :void
+    {
+        var panel :GamePanel = this;
+        var flourish :CoinFlourish = new CoinFlourish(evt.value as int, function () :void {
+            Game.log.debug("Stopping Flourish!");
+            AnimationManager.stop(flourish);
+            panel.removeChild(flourish);
+        });
+        flourish.x = (Game.stageSize.width - flourish.width) / 2;
+        flourish.y = 20;
+        this.addChild(flourish);
+        AnimationManager.start(flourish);
+        Game.log.debug("Added and started flourish: " + flourish);
     }
 
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void

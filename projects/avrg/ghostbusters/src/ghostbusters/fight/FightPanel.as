@@ -143,7 +143,7 @@ public class FightPanel extends FrameSprite
             _ghost.attack();
         }
         if (playerId == Game.ourPlayerId) {
-            Game.gameController.setAvatarState("Reel");
+            Game.control.playAvatarAction("Reel");
         }
     }
 
