@@ -249,9 +249,13 @@ public class Canvas extends Sprite
             
         _lastStrokePoint = _background.globalToLocal(new Point(evt.stageX, evt.stageY));
         _newStroke = true;
-        _inputKey = _model.getKey();
+        _inputKey = _inputKey != null ? _inputKey : _model.getKey();
         _timer = setInterval(tick, TICK_INTERVAL);
-        var layer :Shape = new Shape();
+        var layer :Shape = _layers.get(_inputKey);
+        if (layer != null) {
+            removeChild(layer);
+        }
+        layer = new Shape();
         _layers.put(_inputKey, layer);
         addChild(layer);
         _tool.mouseDown(layer.graphics, _lastStrokePoint);
@@ -270,12 +274,19 @@ public class Canvas extends Sprite
 
     protected function endStroke () :void
     {
-        if (_inputKey != null) {
-            _model.endStroke(_inputKey);
-        }
         if (_timer > 0) {
             clearInterval(_timer);
             _timer = 0;
+        }
+
+        if (_newStroke) {
+            _lastStrokePoint = null;
+            _newStroke = false;
+            return;
+        }
+
+        if (_inputKey != null) {
+            _model.endStroke(_inputKey);
         }
         _inputKey = null;
     }

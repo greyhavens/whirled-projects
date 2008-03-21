@@ -75,6 +75,7 @@ public class Model
 
     public function getKey () :String
     {
+        log.debug("getKey [" + _localKeys + "]");
         // this assumes we'll never give out more keys than KEY_BITS.length ^ 2, which is
         // 3844.  Since our current space is limited to 4k, this is a safe assumption.  If in the
         // future we're given more space, then we won't have to be so anal about key encoding
