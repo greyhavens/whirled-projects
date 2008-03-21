@@ -178,6 +178,10 @@ public class Canvas extends Sprite
         for (var ii :int = 1; ii < stroke.getSize(); ii++) {
             stroke.tool.dragTo(strokeLayer.graphics, stroke.getPoint(ii));
         }
+
+        if (stroke.id != null) {
+            _layers.put(stroke.id, strokeLayer);
+        }
     }
 
     public function reportFillPercent (percent :Number) :void
