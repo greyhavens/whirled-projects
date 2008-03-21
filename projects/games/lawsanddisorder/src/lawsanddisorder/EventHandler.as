@@ -244,7 +244,7 @@ public class EventHandler extends EventDispatcher
         for each (var player :Player in _ctx.board.players) {
             playerIds.push(player.serverId);
             playerScores.push(player.monies);
-            _ctx.log("score for player " + player.id + " (server id: " + player.serverId + ") is " + player.monies);
+            //_ctx.log("score for player " + player.id + " (server id: " + player.serverId + ") is " + player.monies);
         }
 
 		_ctx.control.game.endGameWithScores(playerIds, playerScores, GameSubControl.CASCADING_PAYOUT);

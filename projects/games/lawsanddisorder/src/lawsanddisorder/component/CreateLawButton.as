@@ -42,12 +42,12 @@ public class CreateLawButton extends Button
             _ctx.notice("You can't create a law right now.");
             return;
         }
-		// Cancel law creation - hide law area
+		// Display the new law area
 		if (text == "create law") {
 			_ctx.board.newLaw.show();
 			text = "cancel";
 		}
-		// Display the new law area
+		// Cancel law creation - hide law area
 		else {
 			_ctx.board.newLaw.hide();
 			text = "create law";

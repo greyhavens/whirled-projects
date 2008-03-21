@@ -228,6 +228,28 @@ public class Hand extends CardContainer
         _ctx.eventHandler.removeDataListener(HAND_DATA, handChanged, player.id);
     }
     
+    /**
+     * Pick and return an array of random cards from this hand.     */
+    public function getRandomCards (numCards :int = 1) :Array
+    {
+    	// make a copy of the cards array
+        var availableCards :Array = new Array();
+        for each (var card :Card in cards) {
+            availableCards.push(card);
+        }
+        
+        var randomCards :Array = new Array();
+        for (var i :int = 0; i < numCards; i++) {
+	    	// pick a random card (from zero to length-1)
+	        var randomIndex :int = Math.round(Math.random() * (availableCards.length-1));
+	        var randomCard :Card = availableCards[randomIndex];
+	        availableCards.splice(randomIndex, 1);
+	        randomCards.push(randomCard);
+        }
+        
+	    return randomCards;
+    }
+    
     /** Record the listener function while selecting cards to discard. */
     protected var discardDownListener :Function;
     
@@ -239,5 +261,8 @@ public class Hand extends CardContainer
     
     /** Draw this number of cards at the start of the game */
     protected var DEFAULT_HAND_SIZE :int = 7;
+    
+    /** distance between the left edges of cards */
+    protected static const CARD_SPACING_X :int = 57;
 }
 }

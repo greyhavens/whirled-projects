@@ -21,11 +21,7 @@ import lawsanddisorder.component.*
  * TODO gameplay:
  * timers for auto-selection for afk players (?)
  * detecting afk players
- * handling players leaving
- * handle watchers
- * handle premature game ending
- * handle rematch
- * handle control changed at inopportune moments
+ * better handling of players leaving / control changing
  * unloader?
  * grab fresh job data before using it on opponent's turn eg during enact law after switch job
  * same with hand data eg after being stolen from, before losing card

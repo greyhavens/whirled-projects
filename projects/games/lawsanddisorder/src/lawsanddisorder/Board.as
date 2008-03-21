@@ -58,7 +58,7 @@ public class Board extends Sprite
         newLaw.y = 200;
         
         laws = new Laws(_ctx);
-        laws.x = 170;
+        laws.x = 160;
         laws.y = 30;
         addChild(laws);
                 
@@ -101,10 +101,13 @@ public class Board extends Sprite
         turnHighlight.graphics.drawRect(2, 2, 695, 495);
         
         // show the splash screen over the entire board
+        var splashScreen :Sprite = new SPLASH_SCREEN();
+        /*
         var splashScreen :Sprite = new Sprite();
         splashScreen.graphics.beginFill(0x000000, 0.5);
         splashScreen.graphics.drawRect(0, 0, 700, 500);
         splashScreen.graphics.endFill();
+        */
         addChild(splashScreen);
         splashScreen.addEventListener(MouseEvent.CLICK, splashScreenClicked);
     }
@@ -132,7 +135,9 @@ public class Board extends Sprite
     	if (_ctx.control.game.amInControl() && !_setupComplete) {
     		return;
     	}
-    	removeChild(event.target as Sprite);
+    	if (contains(event.target as Sprite)) {
+    	   removeChild(event.target as Sprite);
+    	}
     	_ctx.control.game.playerReady();
     }
     
@@ -311,5 +316,9 @@ public class Board extends Sprite
     /** Background image for the entire board */
     [Embed(source="../../rsrc/components.swf#bg")]
     protected static const BOARD_BACKGROUND :Class;
+    
+    /** Background image for the entire board */
+    [Embed(source="../../rsrc/components.swf#splash")]
+    protected static const SPLASH_SCREEN :Class;
 }
 }

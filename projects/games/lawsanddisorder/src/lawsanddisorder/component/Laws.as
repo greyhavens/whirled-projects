@@ -248,6 +248,6 @@ public class Laws extends Component
     protected var MAX_LAWS :int = 10;
     
     /** Number of pixels between laws */
-    protected var LAW_SPACING_Y :int = 32;
+    protected var LAW_SPACING_Y :int = 34;
 }
 }

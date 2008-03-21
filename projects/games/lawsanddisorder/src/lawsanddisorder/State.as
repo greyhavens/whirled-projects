@@ -14,7 +14,8 @@ import lawsanddisorder.component.*;
 
 /**
  * Manages modes and ui logic, eg dragging cards & selecting opponents.
- * TODO this class is overgrown; can some of it be moved?
+ * TODO this class is a mess; I'm not sure how people normally design ui handlers, 
+ *      but this probably isn't it.  Needs redesign.
  * TODO use MODE_MYTURN or MODE_NOTTURN instead of _ctx.control.game.isMyTurn()
  */
 public class State
@@ -149,6 +150,7 @@ public class State
      */
     protected function draggingCard (event :MouseEvent) :void
     {
+    	// get the card being dragged
     	var card :Card = Card(getParent(DisplayObject(event.target), Card));
         
         // Shift cards around in hand and new law
@@ -184,7 +186,7 @@ public class State
             if (mode == MODE_MOVE_WHEN && targetLaw.when != -1) {
                 return;
             }
-            targetLaw.showCards = true;
+            //targetLaw.showCards = true;
         }
         
         if (mode == MODE_EXCHANGE_SUBJECT) {
@@ -192,11 +194,14 @@ public class State
             var targetSubjectCard :Card = Card(getParent(card.dropTarget, Card));
             if (targetSubjectCard == null || !(targetSubjectCard.cardContainer is Law) 
                 || targetSubjectCard.group != Card.SUBJECT) {
+                setMouseOverCard(null);
                 return;
             }
             // if it's a verb/subject in a law, highlight it
-            targetSubjectCard.highlighted = true;
-            EventHandler.invokeLater(3, function () :void {targetSubjectCard.highlighted = false});
+            setMouseOverCard(targetSubjectCard);
+            //targetSubjectCard.highlighted = true;
+            //mouseOverCard = targetSubjectCard;
+            //EventHandler.invokeLater(3, function () :void {targetSubjectCard.highlighted = false});
         }
         
         else if (mode == MODE_EXCHANGE_VERB) {
@@ -204,29 +209,34 @@ public class State
             var targetVerbCard :Card = Card(getParent(card.dropTarget, Card));
             if (targetVerbCard == null || !(targetVerbCard.cardContainer is Law) 
                 || targetVerbCard.group != Card.VERB) {
+                setMouseOverCard(null);
                 return;
             }
             
             // is the verb a gives followed by a subject?
             var targetVerbLaw :Law = Law(targetVerbCard.cardContainer);
             if (targetVerbLaw.hasGivesTarget()) {
+            	setMouseOverCard(null);
                 return;
             }
             
             // if it's a verb/subject in a law, highlight it
-            targetVerbCard.highlighted = true;
-            EventHandler.invokeLater(3, function () :void {targetVerbCard.highlighted = false});
+            //targetVerbCard.highlighted = true;
+            //EventHandler.invokeLater(3, function () :void {targetVerbCard.highlighted = false});
+            setMouseOverCard(targetVerbCard);
         }
         
         else if (mode == MODE_MOVE_WHEN) {
             // get the law this is hovering over
             var whenlessLaw :Law = Law(getParent(card.dropTarget, Law));
             if (whenlessLaw == null || whenlessLaw.when != -1) {
+            	setMouseOverCard(null);
                 return;
             }
             // if it's a valid law to drop on, highlight it
-            whenlessLaw.highlighted = true;
-            EventHandler.invokeLater(3, function () :void {whenlessLaw.highlighted = false});
+            //whenlessLaw.highlighted = true;
+            //EventHandler.invokeLater(3, function () :void {whenlessLaw.highlighted = false});
+            setMouseOverCard(targetVerbCard);
         }
     }
     
@@ -237,8 +247,6 @@ public class State
     {
     	var card :Card = Card(getParent(DisplayObject(event.target), Card));
         if (!card.dragging) {
-			// When releasing over a card we weren't dragging
-        	//_ctx.log("WTF not dragging that card.");
             return;
         }
         card.stopDrag();
@@ -255,38 +263,16 @@ public class State
             
             var dropTarget :DisplayObject = DisplayObject(getParent(card.dropTarget, DisplayObject));
             if (dropTarget == null) {
-//_ctx.log("no drop target.");
                 returnCard(card);
                 return;
             }
-//_ctx.log("dropping card on " + dropTarget);
             var mousePosition :Point = new Point(event.stageX, event.stageY);
-			
-			//if (_ctx.board.player.hand.hitTestPoint(event.stageX, event.stageY)) {
-//_ctx.log("hit test on hand");				
-			//}
-            
-			//if (_ctx.board.newLaw.hitTestPoint(event.stageX, event.stageY)) {
-//_ctx.log("hit test on new law");				
-			//}
-			/*
-            if (event.target == _ctx.board.player.hand) {
-				_ctx.log("event is hand");
-			}
-			if (_ctx.board.player.hand.isTarget(event.target)) {
-				_ctx.log("hand istarget.");
-			}
-			*/
             
             // drop card in hand
-            //if (_ctx.board.player.hand.isTarget(dropTarget)) {
 			// TODO dropTarget doesn't work with hidden hitArea, but hitTestPoint does - why?
 			if (_ctx.board.player.hand.hitTestPoint(event.stageX, event.stageY)) {
-			//if (_ctx.board.player.hand.hitTestPoint(mousePosition)) {
-//_ctx.log("dropping card in hand.");
                 _ctx.board.removeCard(card);
                 var handCardIndex :int = _ctx.board.player.hand.getCardIndexByPoint(mousePosition);				
-//_ctx.log("dropping card at point " + handCardIndex);				
                 if (card.cardContainer == _ctx.board.player.hand) {
                 	// moved card around inside hand, do not distribute
                     _ctx.board.player.hand.addCards(new Array(card), false, handCardIndex);
@@ -301,7 +287,6 @@ public class State
             
             // drop card in a new law
             if (_ctx.board.newLaw.isTarget(dropTarget)) {
-			//else if (_ctx.board.newLaw.hitTestPoint(event.stageX, event.stageY)) {
 				if (!_ctx.board.contains(_ctx.board.newLaw)) {
 					return;
 				}
@@ -333,7 +318,6 @@ public class State
             // TODO job gets disabled twice: inefficient
             // TODO can this logic be moved to job?
             else if (_ctx.board.player.job.isTarget(dropTarget)) {
-			//else if (_ctx.board.player.job.hitTestPoint(event.stageX, event.stageY)) {
                 if (card.group == Card.SUBJECT) {
 	                if (!_ctx.control.game.isMyTurn()) {
 	                    _ctx.notice("It's not your turn.");
@@ -352,8 +336,6 @@ public class State
                     }
                     _ctx.board.player.jobEnabled = false;
                     _ctx.board.removeCard(card);
-                    // TODO distribute or remove discard pile
-                    //_ctx.board.deck.discardPile.addCards(new Array(card), false);
                     // now tell other players that card was removed from hand
                     _ctx.board.player.hand.setDistributedHandData();
                     var job :Job = _ctx.board.deck.getJob(card.type);
@@ -371,6 +353,9 @@ public class State
             
             // get card this was dropped on.
             var targetCard :Card = Card(getParent(card.dropTarget, Card));
+            
+            // stop highlighting the card we're over
+            setMouseOverCard(null);
             
             if (targetCard == null || !(targetCard.cardContainer is Law) ||
                 (mode == MODE_EXCHANGE_VERB && targetCard.group != Card.VERB) || 
@@ -404,6 +389,10 @@ public class State
         }
         
         else if (mode == MODE_MOVE_WHEN) {
+        	
+            // stop highlighting the card we're over
+            setMouseOverCard(null);
+            
             // get the law this was dropped on.
             var whenlessLaw :Law = Law(getParent(card.dropTarget, Law));
             
@@ -500,7 +489,7 @@ public class State
 
         var message :String = "Please select an opponent.";
         _ctx.notice(message);
-        setModeReminder(message);
+        setModeReminder(message, selectRandomOpponent);
         modeListener = listener;
         mode = MODE_SELECT_OPPONENT;
     }
@@ -523,7 +512,7 @@ public class State
     	
         // target player has no cards to lose, return now.
         if (targetPlayer.hand.numCards == 0) {
-            _ctx.notice("You had to select " + numCards + " cards, but there are none to select.");
+            _ctx.notice("You had to select " + numCards + " card(s), but there are none to select.");
             selectedCards = new Array();
             selectedGoal = 0;
             listener();
@@ -537,13 +526,13 @@ public class State
         
         var message :String;
         if (targetPlayer == _ctx.board.player) {
-            message = "Please select " + numCards + " cards from your hand.";
+            message = "Please select " + numCards + " card(s) from your hand.";
         }
         else {
-        	message = "Please select " + numCards + " cards from " + targetPlayer.playerName + "'s hand.";
+        	message = "Please select " + numCards + " card(s) from " + targetPlayer.playerName + "'s hand.";
         }
         _ctx.notice(message);
-        setModeReminder(message);
+        setModeReminder(message, selectRandomCards);
         
         modeListener = listener;
         mode = MODE_SELECT_HAND_CARDS;
@@ -573,7 +562,7 @@ public class State
      */
     public function exchangeVerb (listener :Function) :void
     {
-        var message :String = "Please drag a verb from your hand drop it over a verb in a law"; 
+        var message :String = "Please drag a red card from your hand drop it over a red card in a law"; 
         _ctx.notice(message);
         setModeReminder(message);
         modeListener = listener;
@@ -585,7 +574,7 @@ public class State
      */
     public function exchangeSubject (listener :Function) :void
     {
-        var message :String = "Please drag a subject from your hand and drop it over a subject in a law";
+        var message :String = "Please drag a blue card from your hand and drop it over a blue card in a law";
         _ctx.notice(message);
         setModeReminder(message);
         modeListener = listener;
@@ -598,7 +587,7 @@ public class State
      */
     public function moveWhen (listener :Function) :void
     {
-    	var message :String = "Please drag a when card from your hand to a law, or select a when card in a law to take"; 
+    	var message :String = "Please drag a purple card from your hand onto a law, or select a purple card in a law to take"; 
         _ctx.notice(message);
         setModeReminder(message);
         modeListener = listener;
@@ -648,6 +637,31 @@ public class State
     }
     
     /**
+     * Unhighlight the card we're currently over, and highlight the new one.  Also if
+     * we are dragging a card, highlight it to show that this is a good place to drop it.     */
+    protected function setMouseOverCard (card :Card) :void
+    {
+    	if (mouseOverCard == card) {
+    		return;
+    	}
+    	if (mouseOverCard != null) {
+            mouseOverCard.highlighted = false;
+        }
+        mouseOverCard = card;
+        if (card != null) {
+        	card.highlighted = true;
+        	if (activeCard != null) {
+                activeCard.highlighted = true;
+            }
+        }
+        else {
+            if (activeCard != null) {
+                activeCard.highlighted = false;
+            }        	
+        }
+    }
+    
+    /**
      * Returns the object if it's the right class type, or the first parent object that matches
      * the given class.  Stop if we hit the board then return null.
      */
@@ -678,6 +692,7 @@ public class State
     /**
      * Can the player interact with buttons, etc on their board?  If in default mode and
      * during the player's turn, return true.
+     * TODO should be canInteract() or not needed at all
      */
     public function get interactMode () :Boolean
     {
@@ -722,6 +737,7 @@ public class State
         deselectCards();
         deselectOpponent();
         deselectLaw();
+        setMouseOverCard(null);
     }
     
     /**
@@ -735,14 +751,15 @@ public class State
         if (modeListener != null) {
             modeListener();
         }
+        setMouseOverCard(null);
     }
     
     /**
      * Set a timer to display a reminder notice after every 10 seconds in the mode.  If message
-     * is null, instead cancel the notice timer.
-     * TODO add listener for 4th reminder, eg pick a random card or opponent
+     * is null, instead cancel the notice timer.  If a listener function is supplied, this will 
+     * be run in place of the 5th reminder message, after which the timer will be cancelled.
      */
-    protected function setModeReminder (message :String, reminderNum :int = 1) :void
+    protected function setModeReminder (message :String, listener :Function = null, reminderNum :int = 1) :void
     {
         if (message == null) {
     	    if (modeReminderTimer != null) {
@@ -760,25 +777,74 @@ public class State
             }
     	}
     	else if (reminderNum == 2) {
-    		reminderText = "Come on, just eenie meenie minie moe.  ";
+    		reminderText = "Just take all day why doncha.  ";
     	}
     	else if (reminderNum == 3) {
-    		reminderText = "Just take all day why doncha!  ";
+    		reminderText = "Come on, just eenie meenie minie moe.  ";
     	}
+    	else if (reminderNum == 4 && listener != null) {
+    		reminderText = "We're going to play on without you!  ";
+    	}
+    	// stop the timer and run the "time's up" listener
+    	else if (reminderNum == 5 && listener != null) {
+            setModeReminder(null);
+    		listener();
+    		return;
+    	}
+    	// display this indefinitely
     	else {
     		reminderText = "Helloooooo!  ";
     	}
     	modeReminderTimer = new Timer(10000, 1);
         modeReminderTimer.addEventListener(TimerEvent.TIMER, 
-            function () :void {_ctx.notice(reminderText + message); setModeReminder(message, reminderNum+1) });
+            function () :void {
+            	_ctx.notice(reminderText + message);
+                setModeReminder(message, listener, reminderNum+1) 
+            });
         modeReminderTimer.start();
     }
+    
+    /**
+     * Selects [selectedGoal] random cards from [selectCardsTargetPlayer]'s hand,
+     * as if the player was doing it themselves.
+     */
+    protected function selectRandomCards () :void
+    {
+    	_ctx.notice("Selecting " + selectedGoal + " random card(s) for you.");
+        if (selectCardsTargetPlayer == null)  {
+        	_ctx.log("WTF select cards target player is null when selecting random cards.");
+        	return;
+        }
+        if (selectCardsTargetPlayer.hand.numCards < selectedGoal) {
+        	_ctx.log("WTF not enough cards in hand to select.");
+        	return;
+        }
+        if (selectedCards == null) {
+        	_ctx.log("WTF selected cards is null when selecting random cards");
+        	return;
+        }
+        
+        selectedCards = selectCardsTargetPlayer.hand.getRandomCards(selectedGoal);
+        doneMode();
+    }
+    
+    /**
+     * Selects a random opponent, as if the player was doing it themselves.
+     */    
+    protected function selectRandomOpponent () :void
+    {
+    	_ctx.notice("Selecting a random opponent for you.");
+    	selectedOpponent = _ctx.board.opponents.getRandomOpponent();
+    	doneMode();
+    }
+    
+    /** Card that is temporarily highlighted because the mouse is over it */
+    public var mouseOverCard :Card = null;
     
     /** The card being actively dragged, for notification purposes */
     public var activeCard :Card = null;
     
-    /** Array of currently selected cards 
-     * TODO use getters */
+    /** Array of currently selected cards */
     public var selectedCards :Array = null;
     
     /** Currently selected opponents */

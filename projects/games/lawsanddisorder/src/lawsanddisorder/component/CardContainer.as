@@ -58,7 +58,7 @@ public class CardContainer extends Component
         			addChild(card);
         		}
         		else {
-        		    addChildAt(card, insertIndex);
+        		    addChildAt(card, insertIndex + getStartingChildIndex());
         		}
         	}
         }
@@ -318,13 +318,21 @@ _ctx.log("old cards: " + cards);
         return "Container [" + cards.length + " cards]";
     }
     
+    /**
+     * The cards will be added as children starting at this index
+     * TODO fugly     */
+    protected function getStartingChildIndex () :int
+    {
+    	return 0;
+    }
+    
     /** Card objects in the container */
     protected var cards :Array = new Array();
     
     /** Card ids in the container */
     protected var cardIds :Array = new Array();
     
-    /** distance between the left edges of cards */
-    protected static const CARD_SPACING_X :int = 57;
+    ///** distance between the left edges of cards */
+    //protected static const CARD_SPACING_X :int = 57;
 }
 }

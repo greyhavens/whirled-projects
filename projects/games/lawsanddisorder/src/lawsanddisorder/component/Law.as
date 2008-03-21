@@ -29,17 +29,39 @@ public class Law extends CardContainer
      */
     override protected function initDisplay () :void
     {
+    	var background :Sprite = new LAW_BACKGROUND();
+    	addChild(background);
+    	
+    	/*
         // draw the bg
         graphics.clear();
         graphics.beginFill(0x999955);
         graphics.drawRect(0, 0, 380, 20);
         graphics.endFill();
+        */
         
+        /*
         lawText = new TextField();
         lawText.width = 400;
         lawText.height = 25;
         addChild(lawText);
+        */
         
+        /*
+        lawText = new Sprite();
+        lawText.x = 15;
+        addChild(lawText);
+        */
+        
+        
+        var lawNum :TextField = Content.defaultTextField(1.0, "left");
+        lawNum.text = "Law " + displayId + ":";
+        lawNum.x = 5;
+        lawNum.y = 8;
+        addChild(lawNum);
+        
+        
+        /*
         cardDisplayArea = new Sprite();
         cardDisplayArea.graphics.beginFill(0x999955);
         cardDisplayArea.graphics.drawRect(0, 0, 340, 80);
@@ -48,6 +70,7 @@ public class Law extends CardContainer
         addEventListener(MouseEvent.ROLL_OVER, rollOver);
         addEventListener(MouseEvent.ROLL_OUT, rollOut);
         cardDisplayArea.addEventListener(MouseEvent.ROLL_OUT, rollOut);
+        */
     }
     
     /**
@@ -56,17 +79,29 @@ public class Law extends CardContainer
      */
     override protected function updateDisplay () :void
     {   
-        _text = "Law " + _id + ":   ";
+    	//var lawNum :
+        //_text = "Law " + _id + ":   ";
+        var cardX :Number = 45;
         for (var i :int = 0; i < cards.length; i++) {          
             // update text version of the law
             var card :Card = cards[i];
-            _text += card.text + "   ";
+            
+            //_text += card.text + "   ";
             
             // position the card horizontally in the card display area
-            card.x = i * CARD_SPACING_X;
-            card.y = 10;
+            //card.x = i * CARD_SPACING_X;
+            //card.x = i * 50;
+            card.x = cardX;
+            card.y = 8;
+            
+            //_ctx.log("pos " + card + " at " + cardX + " w: " + card.width);
+            
+            // increment the position of the next card by the width of this one
+            //var width :int = card.width;
+            //_ctx.log("width: " + width);
+            cardX += card.width + 5;
         }
-        lawText.text = _text;
+        //lawText.text = _text;
         
         // draw a border, highlighted or not
         if (_highlighted) {
@@ -78,22 +113,24 @@ public class Law extends CardContainer
         graphics.drawRect(2.5, 2.5, 375, 15);
     }
     
-    /**
+    /*
      * When child cards are added via the CardContainer class, instead add them to
      * a separate display object that can be displayed and hidden at will.
      * TODO kind of hacky, better solution?
-     */
+     *
     override public function addChild (child :DisplayObject) :DisplayObject
     {
     	return addChildAt(child, -1);
     }
+    */
     
-    /**
+    /*
      * When child cards are added via the CardContainer class, instead add them to
      * a separate display object that can be displayed and hidden at will.
-     */
+     *
     override public function addChildAt (child :DisplayObject, insertIndex :int) :DisplayObject
     {
+    	
         if (child is Card) {
         	if (insertIndex == -1) {
         		return cardDisplayArea.addChild(child);
@@ -105,12 +142,15 @@ public class Law extends CardContainer
         else {
             return super.addChild(child);
         }
+        
+        return super.addChild(child);
     }
+    */
     
-    /**
+    /*
      * When child cards are removed via the CardContainer class, instead removed them from
      * a separate display object that can be displayed and hidden at will.
-     */
+     *
     override public function removeChild (child :DisplayObject) :DisplayObject
     {
         if (child is Card) {
@@ -119,21 +159,24 @@ public class Law extends CardContainer
         else {
             return super.removeChild(child);
         }
-    }
+    }*/
     
-    /**
+    /*
      * When CardContainer class checks whether this contains a card, instead check the
      * card display object.
-     */
+     *
     override public function contains (child :DisplayObject) :Boolean
     {
+    	
         if (child is Card) {
             return cardDisplayArea.contains(child);
         }
         else {
             return super.contains(child);
         }
-    }
+        
+        return super.contains(child);
+    }*/
     
     /**
      * Called whenever a law is enacted.  Parse through it and perform any actions needed of 
@@ -309,10 +352,10 @@ _ctx.log("got laws data for " + this.id + ":" + event.newValue);
     }
     */
     
-    /**
+    /*
      * Display or hide the cards area.  If displaying, automatically hide it again after a
      * delay.
-     */
+     *
     public function set showCards (value :Boolean) :void
     {
         if (value && !contains(cardDisplayArea)) {
@@ -324,23 +367,33 @@ _ctx.log("got laws data for " + this.id + ":" + event.newValue);
             removeChild(cardDisplayArea);
         }
     }
+    */
     
-    /**
+    /*
      * Triggered by the mouse entering the compacted law area.  Display the card area containing
      * the cards.
-     */
+     *
     protected function rollOver (event :MouseEvent) :void
     {
         showCards = true;
     }
+    */
     
-    /**
+    /*
      * Triggered by the mouse exiting the card display area.  Hide the card display area and
      * return to the compact law display.
-     */
+     *
     protected function rollOut (event :MouseEvent) :void
     {
         showCards = false;
+    }
+    */
+    
+    /**
+     * First child is the background, second is the law # textfield     */
+    override protected function getStartingChildIndex () :int
+    {
+    	return 2;
     }
     
     /**
@@ -363,6 +416,12 @@ _ctx.log("got laws data for " + this.id + ":" + event.newValue);
     /** Fetch the index of the law in the list of laws */
     public function get id () :int {
         return _id;
+    }
+    
+    /**
+     * ID starts at zero, but when displaying we start from 1     */
+    public function get displayId () :int {
+        return (_id + 1);
     }
     
     /** Is the law highlighted because it's selected? */
@@ -389,8 +448,8 @@ _ctx.log("got laws data for " + this.id + ":" + event.newValue);
     /** Text version of the law */
     protected var _text :String
     
-    /** Cards are shown here */
-    protected var cardDisplayArea :Sprite;
+    ///** Cards are shown here */
+    //protected var cardDisplayArea :Sprite;
     
     /** Is the law highlighted? */
     private var _highlighted :Boolean = false;
@@ -399,6 +458,11 @@ _ctx.log("got laws data for " + this.id + ":" + event.newValue);
     private var _id :int;
     
     /** Contains the compacted text version of the law */
-    protected var lawText :TextField
+    protected var lawText :Sprite
+    //protected var lawText :TextField
+    
+    /** Background image for the entire board */
+    [Embed(source="../../../rsrc/components.swf#law")]
+    protected static const LAW_BACKGROUND :Class;
 }
 }

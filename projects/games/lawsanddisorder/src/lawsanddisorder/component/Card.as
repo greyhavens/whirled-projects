@@ -3,6 +3,7 @@
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.text.TextFormat;
+import flash.text.TextFieldAutoSize;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.geom.ColorTransform;
@@ -40,23 +41,41 @@ public class Card extends Component
     }
 	
     /**
-     * Draw the card sprite
+     * Build the card sprite, the text-only version of the card sprite, and the highlight sprite.
      */
     override protected function initDisplay () :void
     {
+    	// full version of the card
+    	cardDisplay = buildCardDisplay();
+        
+        // text version of the card for displaying in laws
+        textDisplay = buildTextDisplay();
+		
+		// create the highlight object but do not add it as a child
+		highlightSprite = new Sprite();
+		highlightSprite.graphics.lineStyle(5, 0xFFFF00);
+		highlightSprite.graphics.drawRect(5, 5, 40, 55);
+    }
+    
+    /**
+     * Create the sprite to display when this card is in a player's hand or in a new law.     */
+    protected function buildCardDisplay () :Sprite
+    {
+        var cardSprite :Sprite = new Sprite();
+        
         var color :uint = getColor();
         var red :int = (color >> 16) & 0xFF;
         var green :int = (color >> 8) & 0xFF;
         var blue :int = (color >> 0) & 0xFF;
-		
+        
         var background :Sprite = new CARD_BACKGROUND();
         background.mouseEnabled = false;
-		var resultColorTransform:ColorTransform = new ColorTransform();
-		resultColorTransform.redOffset = red;
-		resultColorTransform.greenOffset = green;
-		resultColorTransform.blueOffset = blue;
-		background.transform.colorTransform = resultColorTransform;
-        addChild(background);
+        var resultColorTransform:ColorTransform = new ColorTransform();
+        resultColorTransform.redOffset = red;
+        resultColorTransform.greenOffset = green;
+        resultColorTransform.blueOffset = blue;
+        background.transform.colorTransform = resultColorTransform;
+        cardSprite.addChild(background);
 
         var symbol :Sprite = getSymbol();
         if (symbol != null) {
@@ -69,21 +88,86 @@ public class Card extends Component
             symbol.transform.colorTransform = colorTransform;
             symbol.alpha = 0.5;
             symbol.mouseEnabled = false;
-            addChild(symbol);
+            cardSprite.addChild(symbol);
         }
-		
-        cardText = Content.defaultTextField();
+        
+        var cardText :TextField = Content.defaultTextField();
         cardText.text = text;
         cardText.width = 50;
-        cardText.height = 50;
+        cardText.height = 60;
         cardText.y = 5;
         cardText.x = 0;
-        addChild(cardText);
-		
-		// create the highlight object but do not add it as a child
-		highlightSprite = new Sprite();
-		highlightSprite.graphics.lineStyle(5, 0xFFFF00);
-		highlightSprite.graphics.drawRect(5, 5, 40, 55);
+        cardSprite.addChild(cardText);
+        
+        return cardSprite;
+    }
+    
+    /**
+     * Create and return the sprite to display when this card is in a law.     */
+    protected function buildTextDisplay () :Sprite
+    {
+    	var textSprite :Sprite = new Sprite();
+    	
+    	// set width to 300 to prevent wrapping, then back to textWidth + padding to fix hitmap
+    	// TODO seriously?  would setting nowrap or autosize work instead?
+        var cardText :TextField = Content.defaultTextField(1.0, "left");
+        cardText.width = 300;
+        cardText.text = text;
+        cardText.width = cardText.textWidth + 5;
+        cardText.height = 30;
+    	textSprite.addChild(cardText);
+    	textDisplayWidth = cardText.textWidth;
+        
+        // create the highlight text object but do not add it as a child
+        highlightSpriteText = new Sprite();
+        var cardTextHightlight :TextField = Content.defaultTextField(1.0, "left");
+        var cardTextFormat :TextFormat =  cardTextHightlight.defaultTextFormat;
+        cardTextFormat.color = 0xFFFF00;
+        cardTextHightlight.defaultTextFormat = cardTextFormat;
+        cardTextHightlight.width = 300;
+        cardTextHightlight.text = text;
+        cardTextHightlight.width = cardText.textWidth + 5;
+        cardTextHightlight.height = 30;
+        highlightSpriteText.addChild(cardTextHightlight);
+        //highlightSpriteText.graphics.lineStyle(5, 0xFFFF00);
+        //highlightSpriteText.graphics.drawRect(-5, -5, cardText.textWidth+10, cardText.textHeight+10);
+    	
+    	return textSprite;
+    }
+    
+    /**
+     * Width differs depending on the parent container     */
+    override public function get width () :Number
+    {
+        if (_cardContainer is Law) {
+        	return textDisplayWidth;
+        }
+        else {
+        	return super.width;
+        }
+    }
+    
+    /**
+     * Determine what to display based on our cardContainer.  In laws, display a text element.
+     * Anywhere else, display the card proper.     */
+    override protected function updateDisplay () :void
+    {
+    	if (_cardContainer is Law) {
+            if (contains(cardDisplay)) {
+            	removeChild(cardDisplay);
+            }
+            if (!contains(textDisplay)) {
+            	addChild(textDisplay);
+            }
+        }
+        else {
+        	if (contains(textDisplay)) {
+        		removeChild(textDisplay);
+        	}
+        	if (!contains(cardDisplay)) {
+        		addChild(cardDisplay);
+        	}
+        }
     }
     
     /**
@@ -92,19 +176,15 @@ public class Card extends Component
     protected function getColor () :uint
     {
         if (_group == SUBJECT) {
-            //return 0x0000FF;
 			return 0x004080;
         }
         else if (_group == VERB) {
 			return 0xFF3333;
-            //return 0xFF0000;
         }
         else if (_group == OBJECT) {
 			return 0xFFC600;
-            //return 0xFFFF00;
         }
         else {
-            //return 0xFF00FF;
 			return 0xA800A8;
         }
     }
@@ -244,12 +324,20 @@ public class Card extends Component
         return "card[" + text + " id:"+ id +"]";
     }
     
+    /**
+     * Return the parent container of this card.  May not be the display parent if card is
+     * being dragged on the board.     */
     public function get cardContainer () :CardContainer {
         return _cardContainer;
     }
+    
+    /**
+     * Also change the display mode depending on the type of card container     */
     public function set cardContainer (cardContainer :CardContainer) :void {
         _cardContainer = cardContainer;
+        updateDisplay();
     }
+    
     public function get id () :int {
         return _id;
     }
@@ -290,22 +378,38 @@ public class Card extends Component
     public function set highlighted (value :Boolean) :void {
         _highlighted = value;
         if (_highlighted) {
-			if (!contains(highlightSprite)) {
-				addChild(highlightSprite);
+			if (!cardDisplay.contains(highlightSprite)) {
+				cardDisplay.addChild(highlightSprite);
+			}
+			
+			if (!textDisplay.contains(highlightSpriteText)) {
+				textDisplay.addChild(highlightSpriteText)
 			}
         }
 		else {
-			if (contains(highlightSprite)) {
-				removeChild(highlightSprite);
+			if (cardDisplay.contains(highlightSprite)) {
+				cardDisplay.removeChild(highlightSprite);
 			}
+			if (textDisplay.contains(highlightSpriteText)) {
+                textDisplay.removeChild(highlightSpriteText);
+            }
 		}
     }
+    
+    /** Contains card back, symbol, text */
+    protected var cardDisplay :Sprite;
+    
+    /** Contains text-only version of this card */
+    protected var textDisplay :Sprite;
+    
+    /** Text width is different from the card display width, and different from textDisplay.width */
+    protected var textDisplayWidth :Number;
     
 	/** Display a box around the card when highlighted */
 	protected var highlightSprite :Sprite;
 	
-    /** Text on the card */
-    protected var cardText :TextField;
+    /** Display a box around the card when highlighted and in text form */
+    protected var highlightSpriteText :Sprite;
     
     /** Is the card highlighted? */
     protected var _highlighted :Boolean = false;

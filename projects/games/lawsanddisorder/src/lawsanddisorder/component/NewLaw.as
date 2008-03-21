@@ -26,6 +26,18 @@ public class NewLaw extends CardContainer
      */
     override protected function initDisplay () :void
     {
+        var background :Sprite = new NEWLAW_BACKGROUND();
+        addChild(background);
+        
+        makeLawButton = new Button(_ctx);
+        makeLawButton.text = "create";
+        makeLawButton.addEventListener(MouseEvent.CLICK, makeLawButtonClicked);
+        makeLawButton.enabled = false;
+        makeLawButton.x = 150;
+        makeLawButton.y = 90;
+        addChild(makeLawButton);
+                
+        /*
         // make law button
         makeLawButton = new TextField();
         makeLawButton.text = "create";
@@ -34,12 +46,15 @@ public class NewLaw extends CardContainer
 		makeLawButton.height = 30;
         addChild(makeLawButton);
         enabled = false;
+        */
         
+        /*
         // draw the bg
         graphics.clear();
         graphics.beginFill(0xFF5555);
         graphics.drawRect(0, 0, 380, 80);
         graphics.endFill();
+        */
         
         //title.text = "Drag cards here then press 'create' to make a new law"
         //title.width = 400;
@@ -199,8 +214,8 @@ public class NewLaw extends CardContainer
     	if (point == null) {
 	        for (i = 0; i < cards.length; i++) {
 	            card = cards[i];
-	            card.x = i * CARD_SPACING_X;
-	            card.y = 20;
+	            card.x = CARD_LEFT_START + i * CARD_SPACING_X;
+	            card.y = 17;
 	        }
 	        return;
     	}
@@ -213,10 +228,10 @@ public class NewLaw extends CardContainer
             card = cards[i];
             // if the card would overlap the point or be to its right, shift it right
             if ((i+1) * CARD_SPACING_X > localPoint.x) {
-                card.x = (i+1) * CARD_SPACING_X;
+                card.x = CARD_LEFT_START + (i+1) * CARD_SPACING_X;
             }
             else {
-                card.x = i * CARD_SPACING_X;
+                card.x = CARD_LEFT_START + i * CARD_SPACING_X;
             }
         }
     }
@@ -226,14 +241,16 @@ public class NewLaw extends CardContainer
      */
     public function set enabled (value :Boolean) :void
     {
-        if (value) {
-            makeLawButton.addEventListener(MouseEvent.CLICK, makeLawButtonClicked);
-            makeLawButton.textColor = 0x000000;
-        }
-        else {
-            makeLawButton.removeEventListener(MouseEvent.CLICK, makeLawButtonClicked);
-            makeLawButton.textColor = 0x999999;
-        }
+    	makeLawButton.enabled = value;
+        //if (value) {
+        	
+            //makeLawButton.addEventListener(MouseEvent.CLICK, makeLawButtonClicked);
+            //makeLawButton.textColor = 0x000000;
+        //}
+        //else {
+            //makeLawButton.removeEventListener(MouseEvent.CLICK, makeLawButtonClicked);
+            //makeLawButton.textColor = 0x999999;
+        //}
         _enabled = value;
     }
     
@@ -269,6 +286,14 @@ public class NewLaw extends CardContainer
         }
     }
 	
+    /**
+     * First child is the background, second is the create button
+     */
+    override protected function getStartingChildIndex () :int
+    {
+        return 2;
+    }
+    
 	/**
 	 * Begin displaying the new law area
 	 */
@@ -295,6 +320,17 @@ public class NewLaw extends CardContainer
     protected var _enabled :Boolean = false;
     
     /** Press this button to complete the new law */
-    protected var makeLawButton :TextField;
+    protected var makeLawButton :Button;
+    //protected var makeLawButton :TextField;
+    
+    /** Background image for the entire board */
+    [Embed(source="../../../rsrc/components.swf#newlaw")]
+    protected static const NEWLAW_BACKGROUND :Class;
+    
+    /** Cards are spaced further apart */
+    protected static const CARD_SPACING_X :int = 69;
+    
+    /** Cards start at this x value */
+    protected static const CARD_LEFT_START :int = 44;
 }
 }
