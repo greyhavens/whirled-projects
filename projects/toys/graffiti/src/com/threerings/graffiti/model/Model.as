@@ -216,6 +216,11 @@ public class Model
         strokeRemoved(stroke);
     }
 
+    public function getSize () :int
+    {
+        return _strokesList.length;
+    }
+
     public function getStroke (id :String) :Stroke
     {
         return _strokesMap.get(id);
@@ -335,10 +340,10 @@ class CanvasList
         }
     }
 
-    public function replaceStroke (stroke :Stroke, layer :int, oldId :String) :void
+    public function replaceStroke (stroke :Stroke, layer :int) :void
     {
         for each (var canvas :Canvas in _canvases) {
-            canvas.replaceStroke(stroke, layer, oldId);
+            canvas.replaceStroke(stroke, layer);
         }
     }
 

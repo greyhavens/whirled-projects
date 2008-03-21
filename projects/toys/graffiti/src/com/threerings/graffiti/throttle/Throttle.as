@@ -97,6 +97,9 @@ public class Throttle extends EventDispatcher
         case MESSAGE_TYPE_EDITOR_CLOSED:
             dispatchTemp(EditorClosedMessage.deserialize(bytes)); break;
 
+        case MESSAGE_TYPE_STROKE_REPLACEMENT:
+            dispatchManager(StrokeReplacementMessage.deserialize(bytes)); break;
+
         default:
             log.warning("unknown message type! [" + type + "]");
         }
@@ -137,6 +140,8 @@ public class Throttle extends EventDispatcher
             return MESSAGE_TYPE_REMOVE_STROKE;
         } else if (message is EditorClosedMessage) {
             return MESSAGE_TYPE_EDITOR_CLOSED;
+        } else if (message is StrokeReplacementMessage) {
+            return MESSAGE_TYPE_STROKE_REPLACEMENT;
         } else {
             log.warning("Unknown message for type encoding! [" + message + "]");
             return -1;
@@ -161,6 +166,7 @@ public class Throttle extends EventDispatcher
     protected static const MESSAGE_TYPE_STRIP_ID :int = 6;
     protected static const MESSAGE_TYPE_REMOVE_STROKE :int = 7;
     protected static const MESSAGE_TYPE_EDITOR_CLOSED :int = 8;
+    protected static const MESSAGE_TYPE_STROKE_REPLACEMENT :int = 9;
 
     protected var _pendingMessages :Array = [];
     protected var _timer :Timer;

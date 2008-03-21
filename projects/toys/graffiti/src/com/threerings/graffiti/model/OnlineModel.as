@@ -24,6 +24,7 @@ import com.threerings.graffiti.throttle.StripIdMessage;
 import com.threerings.graffiti.throttle.StrokeBeginMessage;
 import com.threerings.graffiti.throttle.StrokeExtendMessage;
 import com.threerings.graffiti.throttle.StrokeEndMessage;
+import com.threerings.graffiti.throttle.StrokeReplacementMessage;
 
 public class OnlineModel extends Model
 {
@@ -215,6 +216,9 @@ public class OnlineModel extends Model
                 _canvases.setBackgroundTransparent(
                     _backgroundTransparent = backgroundMessage.value as Boolean);
             }
+        } else if (message is StrokeReplacementMessage) {
+            var strokeReplacement :StrokeReplacementMessage = message as StrokeReplacementMessage;
+            _canvases.replaceStroke(strokeReplacement.stroke, strokeReplacement.layer);
         }
     }
 

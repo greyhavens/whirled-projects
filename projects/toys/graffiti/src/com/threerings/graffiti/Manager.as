@@ -24,6 +24,7 @@ import com.threerings.graffiti.throttle.ManagerAlterBackgroundMessage;
 import com.threerings.graffiti.throttle.RemoveStrokeMessage;
 import com.threerings.graffiti.throttle.StripIdMessage;
 import com.threerings.graffiti.throttle.StrokeEndMessage;
+import com.threerings.graffiti.throttle.StrokeReplacementMessage;
 import com.threerings.graffiti.throttle.Throttle;
 import com.threerings.graffiti.throttle.ThrottleEvent;
 import com.threerings.graffiti.throttle.ThrottleMessage;
@@ -82,7 +83,9 @@ public class Manager
                 _model.extendStroke(id, stroke.getPoint(ii));
             }
             _model.endStroke(id);
-            // TODO: send on as the official version of this stroke
+            if (_throttle.control.hasControl()) {
+                _throttle.pushMessage(new StrokeReplacementMessage(stroke, _model.getSize()));
+            }
 
         } else if (message is StripIdMessage) {
             stroke = _model.getStroke((message as StripIdMessage).strokeId);

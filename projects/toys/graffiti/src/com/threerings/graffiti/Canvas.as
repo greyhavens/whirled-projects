@@ -96,9 +96,6 @@ public class Canvas extends Sprite
         _background.blendMode = transparent ? BlendMode.SCREEN : BlendMode.NORMAL;
     }
 
-    /**
-     * @param color if this isNaN(), the background will be made transparent.
-     */
     public function paintBackground (color :uint) :void
     {
         if (_model.getBackgroundTransparent()) {
@@ -155,9 +152,9 @@ public class Canvas extends Sprite
         }
     }
 
-    public function replaceStroke (stroke :Stroke, layer :int, oldId :String) :void
+    public function replaceStroke (stroke :Stroke, layer :int) :void
     {
-        var oldLayer :Shape = oldId != null ? _layers.remove(oldId) : null;
+        var oldLayer :Shape = stroke.id != null ? _layers.remove(stroke.id) : null;
         if (oldLayer != null) {
             removeChild(oldLayer);
         }
