@@ -53,11 +53,6 @@ public class HUDController
         BingoMain.model.removeEventListener(LocalStateChangedEvent.CARD_COMPLETED, updateBingoButton);
     }
 
-    public function update () :void
-    {
-        this.updateBingoButton();
-    }
-
     protected function handleQuit (...ignored) :void
     {
         BingoMain.quit();
