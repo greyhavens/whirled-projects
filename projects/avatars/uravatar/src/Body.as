@@ -148,6 +148,7 @@ public class Body
             startState = "default";
         }
         switchToState(startState);
+        appearanceChanged(null);
     }
 
     /**
