@@ -4,6 +4,7 @@ import com.threerings.flash.DisablingButton;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.AVRGameControlEvent;
+import com.whirled.AvatarControl;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -38,8 +39,9 @@ public class Controller
 
         _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
-        // visuals
-        _cloudView = new CloudViewController();
+        // controllers
+        _cloudController = new CloudViewController();
+        _avatarController = new AvatarController();
 
         // each client maintains the concept of an expected state,
         // so that it is prepared to take over as the
@@ -58,12 +60,13 @@ public class Controller
 
     public function destroy () :void
     {
-        if (null != _currentRainbow) {
-            _currentRainbow.destroy();
-            _currentRainbow = null;
+        if (null != _rainbowController) {
+            _rainbowController.destroy();
+            _rainbowController = null;
         }
 
-        _cloudView.destroy();
+        _cloudController.destroy();
+        _avatarController.destroy();
 
         _model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
         _model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerIndexChanged);
@@ -171,9 +174,9 @@ public class Controller
         // reset the expected state when the state changes
         _expectedState = null;
 
-        if (null != _currentRainbow) {
-            _currentRainbow.destroy();
-            _currentRainbow = null;
+        if (null != _rainbowController) {
+            _rainbowController.destroy();
+            _rainbowController = null;
         }
 
         switch (_model.curState.gameState) {
@@ -211,9 +214,9 @@ public class Controller
         // reset the expected state when the state changes
         _expectedState = null;
 
-        if (null != _currentRainbow) {
-            _currentRainbow.destroy();
-            _currentRainbow = null;
+        if (null != _rainbowController) {
+            _rainbowController.destroy();
+            _rainbowController = null;
         }
 
         // if there are two players left, the last man standing is the winner
@@ -230,7 +233,7 @@ public class Controller
             this.applyStateChanges();
         } else {
             // show the rainbow on the correct player
-            _currentRainbow = new RainbowController(SimonMain.model.curState.curPlayerOid);
+            _rainbowController = new RainbowController(SimonMain.model.curState.curPlayerOid);
         }
     }
 
@@ -264,8 +267,6 @@ public class Controller
 
     protected function handleGameOver () :void
     {
-        // @TODO - show the winner animation
-
         // update scores
         if (_model.curState.roundWinnerId != 0) {
             _expectedScores = _model.curScores.clone();
@@ -275,7 +276,7 @@ public class Controller
             // are you TEH WINNAR?
             if (_model.curState.roundWinnerId == SimonMain.localPlayerId && SimonMain.control.isConnected()) {
                 SimonMain.control.quests.completeQuest("dummyString", null, 1);
-                SimonMain.control.setAvatarState("Dance");
+                _avatarController.setAvatarState("Dance", Constants.AVATAR_DANCE_TIME, "Default");
             }
         }
 
@@ -378,8 +379,8 @@ public class Controller
 
     public function currentPlayerTurnSuccess (newNote :int) :void
     {
-        _currentRainbow.destroy();
-        _currentRainbow = null;
+        _rainbowController.destroy();
+        _rainbowController = null;
 
         _expectedState = SimonMain.model.curState.clone();
         _expectedState.pattern.push(newNote);
@@ -392,8 +393,8 @@ public class Controller
 
     public function currentPlayerTurnFailure () :void
     {
-        _currentRainbow.destroy();
-        _currentRainbow = null;
+        _rainbowController.destroy();
+        _rainbowController = null;
 
         _expectedState = SimonMain.model.curState.clone();
 
@@ -413,12 +414,13 @@ public class Controller
     protected var _expectedScores :Scoreboard;
 
     protected var _mainSprite :Sprite;
-    protected var _cloudView :CloudViewController;
     protected var _statusText :String;
 
-    protected var _newRoundTimer :Timer;
+    protected var _cloudController :CloudViewController;
+    protected var _rainbowController :RainbowController;
+    protected var _avatarController :AvatarController;
 
-    protected var _currentRainbow :RainbowController;
+    protected var _newRoundTimer :Timer;
 
     protected var log :Log = Log.getLog(this);
 

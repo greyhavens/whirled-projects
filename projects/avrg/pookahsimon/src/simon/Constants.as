@@ -4,7 +4,7 @@ import flash.geom.Point;
 
 public class Constants
 {
-    public static const VERSION :Number = 4;
+    public static const VERSION :Number = 6;
 
     public static const ALLOW_CHEATS :Boolean = true;
     public static const FORCE_SINGLEPLAYER :Boolean = false;
@@ -19,6 +19,8 @@ public class Constants
     public static const NEW_ROUND_DELAY_S :Number = 5;
     public static const NUM_SCOREBOARD_NAMES :int = 5;
     public static const MIN_MP_PLAYERS_TO_START :int = 2;
+    public static const AVATAR_DANCE_TIME :Number = 4;
+    public static const AVATAR_TALK_TIME :Number = 1.5;
 
     // network bits
     public static const PROP_STATE :String = "p_state";

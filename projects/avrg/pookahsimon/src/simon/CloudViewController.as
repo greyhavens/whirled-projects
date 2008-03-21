@@ -258,8 +258,8 @@ public class CloudViewController
     protected var _collapsed :Boolean;
     protected var _firstVisibleRow :int;
 
-    protected static const COLLAPSED_OFFSET :Point = new Point(0, 0);
-    protected static const EXPANDED_OFFSET :Point = new Point(-220, 0);
+    protected static const COLLAPSED_OFFSET :Point = new Point(0, -20);
+    protected static const EXPANDED_OFFSET :Point = new Point(-220, -20);
 
     protected static const NUM_ROWS :int = 10;
 

@@ -40,6 +40,7 @@ public class SimonMain extends Sprite
     {
         if (control.isConnected()) {
             control.deactivateGame();
+            control.setAvatarState("Default");
         }
     }
 
@@ -117,9 +118,8 @@ public class SimonMain extends Sprite
 
     protected function leftRoom (e :Event) :void
     {
-        log.debug("leftRoom");
         if (control.isConnected()) {
-            log.debug("deactivating game");
+            control.setAvatarState("Default");
             control.deactivateGame();
         }
     }
