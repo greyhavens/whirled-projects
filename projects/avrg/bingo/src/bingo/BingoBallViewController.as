@@ -35,12 +35,6 @@ public class BingoBallViewController
         textField.scaleX = 1;
         textField.scaleY = 1;
         textField.text = (null != ballString ? ballString : "");
-
-        if (textField.textWidth > MAX_TEXT_WIDTH) {
-            var scale :Number = MAX_TEXT_WIDTH / textField.textWidth;
-            textField.scaleX = scale;
-            textField.scaleY = scale;
-        }
     }
 
     protected var _ball :MovieClip;

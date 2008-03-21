@@ -95,19 +95,6 @@ public class BingoCardView extends Sprite
             if (null != item && (Constants.ALLOW_CHEATS || item.containsTag(BingoMain.model.curState.ballInPlay))) {
                 _card.setFilledAt(col, row);
 
-                // draw a little stamp
-                /*var stamp :Shape = new Shape();
-                var g :Graphics = stamp.graphics;
-
-                g.beginFill(0x00FFFF, 0.7);
-                g.drawCircle(0, 0, STAMP_RADIUS);
-                g.endFill();
-
-                stamp.x = UL_OFFSET.x + ((col + 0.5) * SQUARE_SIZE);
-                stamp.y = UL_OFFSET.y + ((row + 0.5) * SQUARE_SIZE);
-
-                this.addChild(stamp);*/
-
                 // highlight the space
                 var highlightClass :Class;
                 var offset :Point = new Point();
