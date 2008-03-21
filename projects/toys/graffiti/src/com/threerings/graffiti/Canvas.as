@@ -67,6 +67,7 @@ public class Canvas extends Sprite
                 var newTool :Tool = event.value as Tool;
                 if (newTool == null) {
                     endStroke();
+                    _tool = newTool;
                 } else if (!newTool.equals(_tool)) {
                     _tool = newTool;
                 }
