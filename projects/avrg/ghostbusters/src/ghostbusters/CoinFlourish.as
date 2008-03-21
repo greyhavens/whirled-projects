@@ -4,6 +4,7 @@
 package ghostbusters {
 
 import flash.display.Sprite;
+import flash.text.AntiAliasType;
 import flash.text.TextFieldAutoSize;
 
 import com.threerings.flash.Animation;
@@ -19,6 +20,7 @@ public class CoinFlourish extends Sprite
         this.addChild(TextFieldUtil.createField(
             "You made " + coins + " coins!", {
                 outlineColor: 0xFFFFFF,
+                antiAliasType: AntiAliasType.ADVANCED,
                 autoSize: TextFieldAutoSize.CENTER,
                 defaultTextFormat: TextFieldUtil.createFormat({
                     font: "Arial", size: 48, color: 0xFF7733

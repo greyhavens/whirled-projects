@@ -65,7 +65,6 @@ public class SeekPanel extends FrameSprite
 
     public function ghostPositionUpdate (pos :Point) :void
     {
-        Game.log.debug("Whee new target: " + pos);
         _ghost.newTarget(this.globalToLocal(pos));
     }
 
@@ -76,16 +75,6 @@ public class SeekPanel extends FrameSprite
             lanternOff(lantern);
             delete _lanterns[playerId];
         }
-    }
-
-    public function playerLanternMoved (playerId :int, pos :Point) :void
-    {
-        updateLantern(playerId, pos);
-    }
-
-    public function ghostZapped () :void
-    {
-        zapStart();
     }
 
     public function appearGhost () :void
@@ -111,6 +100,8 @@ public class SeekPanel extends FrameSprite
         }
 
         if (this.parent != null && Game.model.ghostId != null) {
+            _lanterns = new Dictionary();
+
             _ghost = new HidingGhost(200);
             this.addChild(_ghost);
             maskGhost();
@@ -178,10 +169,11 @@ public class SeekPanel extends FrameSprite
             _ghost.nextFrame();
 
             if (_zapping > 0) {
-                _zapping -= 1;
-                if (_zapping == 0) {
-                    zapStop();
-                }
+                // brighten ghost up to 300% then down again
+                var alpha :Number = 1.0 + Math.abs(ZAP_FRAMES/2 - _zapping) * 2.0;
+                _ghost.transform.colorTransform = new ColorTransform(alpha, alpha, alpha);
+
+                _zapping --;
             }
 
             if (_lanterns != null && _zapping == 0 && _ghost.hitTestPoint(p.x, p.y, true)) {
@@ -213,23 +205,6 @@ public class SeekPanel extends FrameSprite
         if (_ghost != null && _ghost.isIdle() && Game.control.hasControl()) {
             constructNewGhostPosition(_ghost.getGhostBounds());
         }
-    }
-
-    protected function zapStart () :void
-    {
-        _zapping = 30;
-        Sound(new Content.LANTERN_GHOST_SCREECH()).play();
-
-        // as a temporary visual effect, brighten the ghost by 50%
-        _ghost.transform.colorTransform = new ColorTransform(1.5, 1.5, 1.5);
-    }
-
-    protected function zapStop () :void
-    {
-        _ghost.transform.colorTransform = new ColorTransform();
-        if (Game.model.ghostZest == 0) {
-            appearGhost();
-        }            
     }
 
     protected function animateLanterns () :void
@@ -277,16 +252,24 @@ public class SeekPanel extends FrameSprite
     protected function messageReceived (event: AVRGameControlEvent) :void
     {
         if (event.name == Codes.MSG_GHOST_ZAP) {
-            ghostZapped();
+            _zapping = ZAP_FRAMES;
+            Sound(new Content.LANTERN_GHOST_SCREECH()).play();
         }
     }
 
     protected function playerPropertyUpdate (playerId :int, prop :String, value :Object) :void
     {
+        // if the ghost is appearing, ignore network events
+        if (_lanterns == null) {
+            return;
+        }
+
         if (prop == Codes.PROP_LANTERN_POS) {
+            // ignore our own updates unless we're debugging
             if (playerId == Game.ourPlayerId && !Game.DEBUG) {
                 return;
             }
+
             if (value == null) {
                 // someone turned theirs off
                 playerLanternOff(playerId);
@@ -295,8 +278,7 @@ public class SeekPanel extends FrameSprite
                 var bits :Array = (value as Array);
                 if (bits != null) {
                     // someone turned theirs on or moved it
-                    playerLanternMoved(
-                        playerId, Game.control.roomToStage(new Point(bits[0], bits[1])));
+                    updateLantern(playerId, Game.control.roomToStage(new Point(bits[0], bits[1])));
                 }
             }
         }
@@ -306,6 +288,18 @@ public class SeekPanel extends FrameSprite
     {
         if (evt.name == Codes.PROP_GHOST_ID) {
             updateGhost();
+            return;
+        }
+
+        // if the ghost is appearing, ignore network events
+        if (_lanterns == null) {
+            return;
+        }
+
+        if (evt.name == Codes.PROP_GHOST_CUR_ZEST) {
+            if (evt.value == 0) {
+                appearGhost();
+            }
 
         } else if (evt.name == Codes.PROP_GHOST_POS) {
             var bits :Array = (evt.value as Array);
@@ -348,7 +342,7 @@ public class SeekPanel extends FrameSprite
 
     protected var _ppp :PerPlayerProperties;
 
-    protected var _lanterns :Dictionary = new Dictionary();
+    protected var _lanterns :Dictionary;
 
     protected var _ghost :HidingGhost;
 
@@ -366,5 +360,6 @@ public class SeekPanel extends FrameSprite
     protected var _lanternLoop :SoundChannel;
 
     protected static const FRAMES_PER_UPDATE :int = 6;
+    protected static const ZAP_FRAMES :int = 30;
 }
 }

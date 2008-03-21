@@ -99,8 +99,9 @@ public class HUD extends Sprite
                 teamIx ++;
                 continue;
             }
-            panel.healthBar.visible = panel.namePlate.visible = true;
-            panel.healthBar.gotoAndStop(100 * Game.model.getPlayerRelativeHealth(players[teamIx]));
+            setPlayerHealth(teamIx, Game.model.getPlayerRelativeHealth(players[teamIx]),
+                            players[teamIx] == Game.ourPlayerId);
+            panel.namePlate.visible = true;
             panel.namePlate.text = info.name;
             panel.id = players[teamIx];
             teamIx ++;
@@ -237,7 +238,9 @@ public class HUD extends Sprite
 
     protected function playerHealthUpdated (id :int) :void
     {
-        setPlayerHealth(id, Game.model.getPlayerRelativeHealth(id), id == Game.ourPlayerId);
+        setPlayerHealth(findPlayerIx(id),
+                        Game.model.getPlayerRelativeHealth(id),
+                        id == Game.ourPlayerId);
     }
 
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
@@ -303,9 +306,21 @@ public class HUD extends Sprite
         reallyStop(other);
     }
 
-    protected function setPlayerHealth (id :int, health :Number, us :Boolean) :void
+    protected function findPlayerIx (id :int) :int
     {
-        if (_playerPanels == null) {
+        if (_playerPanels != null) {
+            for (var ii :int = 0; ii < 6; ii ++) {
+                if (_playerPanels[ii].id == id) {
+                    return ii;
+                }
+            }
+        }
+        return -1;
+    }
+
+    protected function setPlayerHealth (ix :int, health :Number, us :Boolean) :void
+    {
+        if (ix < 0 || _playerPanels == null) {
             return;
         }
         // TODO: make use of all 100 frames!
@@ -317,16 +332,11 @@ public class HUD extends Sprite
             Game.log.debug("Moved " + bar.name + " to frame #" + frame);
             reallyStop(bar);
         }
-        for (var ii :int = 0; ii < 6; ii ++) {
-            if (_playerPanels[ii].id == id) {
-                var bar :MovieClip = _playerPanels[ii].healthBar;
-                bar.visible = true;
-                bar.gotoAndStop(frame);
-                Game.log.debug("Moved " + bar.name + " to frame #" + frame);
-                reallyStop(bar);
-                return;
-            }
-        }
+        var bar :MovieClip = _playerPanels[ix].healthBar;
+        bar.visible = true;
+        bar.gotoAndStop(frame);
+        Game.log.debug("Moved " + bar.name + " to frame #" + frame);
+        reallyStop(bar);
     }
 
     protected function reallyStop (obj :DisplayObject) :void
