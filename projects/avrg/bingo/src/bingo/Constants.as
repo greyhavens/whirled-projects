@@ -31,7 +31,7 @@ public class Constants
 
         new BingoItem("Pearls", ["neck", "jewelry", "necklace", "beaded", "white", ], Resources.IMG_PEARLS),
         new BingoItem("choker", ["neck", "jewelry", "necklace", "gem", "pink", "black", ], Resources.IMG_CHOKER),
-        new BingoItem("diamond necklace", ["neck", "jewelry", "necklace", "gem", "blue?", ], Resources.IMG_DIAMONDNECKLACE),
+        new BingoItem("diamond necklace", ["neck", "jewelry", "necklace", "gem", "blue", ], Resources.IMG_DIAMONDNECKLACE),
         new BingoItem("brown shell necklace", ["neck", "jewelry", "necklace", "shell", "brown", ], Resources.IMG_SHELLNECKLACEBROWN),
         new BingoItem("blue shell necklace", ["neck", "jewelry", "necklace", "shell", "blue", ], Resources.IMG_SHELLNECKLACEBLUE),
         new BingoItem("gold locket", ["neck", "jewelry", "necklace", "locket", "gold", ], Resources.IMG_LOCKETGOLD),
