@@ -182,7 +182,7 @@ public class HueAndCryGame extends MicrogameMode
     
     protected static const DIFFICULTY_SETTINGS :Array = [
     
-        new HueAndCrySettings(6, 5),
+        new HueAndCrySettings(6, 15),
         
     ];
     
