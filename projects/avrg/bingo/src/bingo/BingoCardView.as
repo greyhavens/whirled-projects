@@ -102,7 +102,6 @@ public class BingoCardView extends Sprite
                 // ugh.
                 if (col == 0 && row == 0) {
                     highlightClass = Resources.IMG_TOPLEFTHIGHLIGHT;
-                    //offset.x =
                 } else if (col == _card.width - 1 && row == 0) {
                     highlightClass = Resources.IMG_TOPRIGHTHIGHLIGHT;
                 } else if (col == 0 && row == _card.height - 1) {
@@ -120,8 +119,6 @@ public class BingoCardView extends Sprite
                 hilite.y = UL_OFFSET.y + offset.y + (row * SQUARE_SIZE);
 
                 _bgSprite.addChild(hilite);
-
-                BingoMain.controller.updateBingoButton();
 
                 _numMatchesThisBall += 1;
             }

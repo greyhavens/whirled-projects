@@ -8,6 +8,7 @@ import flash.events.EventDispatcher;
 [Event(name="newBall", type="bingo.SharedStateChangedEvent")]
 [Event(name="playerWonRound", type="bingo.SharedStateChangedEvent")]
 [Event(name="newScores", type="bingo.SharedStateChangedEvent")]
+[Event(name="cardCompleted", type="bingo.LocalStateChangedEvent")]
 
 public class Model extends EventDispatcher
 {

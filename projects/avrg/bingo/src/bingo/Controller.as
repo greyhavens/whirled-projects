@@ -36,32 +36,7 @@ public class Controller
         _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
         // visuals
-        _scoreboardViewController = new ScoreboardViewController();
-
-        _ballView = new BingoBallViewController();
-
-        _bingoButton = new DisablingButton(
-            new Resources.IMG_BINGOENABLED(),
-            new Resources.IMG_BINGOOVER(),
-            new Resources.IMG_BINGODOWN(),
-            new Resources.IMG_BINGOENABLED(),
-            new Resources.IMG_BINGODISABLED());
-
-        _bingoButton.x = Constants.BINGO_BUTTON_LOC.x;
-        _bingoButton.y = Constants.BINGO_BUTTON_LOC.y;
-        _bingoButton.addEventListener(MouseEvent.CLICK, handleBingoButtonClick);
-        _mainSprite.addChild(_bingoButton);
-
-        var quitButton :DisablingButton = new DisablingButton(
-            new Resources.IMG_QUITENABLED(),
-            new Resources.IMG_QUITOVER(),
-            new Resources.IMG_QUITENABLED(),
-            new Resources.IMG_QUITDOWN());
-
-        quitButton.x = Constants.QUIT_BUTTON_LOC.x;
-        quitButton.y = Constants.QUIT_BUTTON_LOC.y;
-        quitButton.addEventListener(MouseEvent.CLICK, handleQuitButtonClick);
-        _mainSprite.addChild(quitButton);
+        _hudController = new HUDController();
 
         _winnerText = new TextField();
         _winnerText.autoSize = TextFieldAutoSize.LEFT;
@@ -91,29 +66,12 @@ public class Controller
         _newBallTimer.removeEventListener(TimerEvent.TIMER, handleNewBallTimerExpired);
         _newRoundTimer.removeEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
 
-        _ballView.destroy();
-        _scoreboardViewController.destroy();
+        _hudController.destroy();
     }
 
     protected function handleEnterFrame (e :Event) :void
     {
         this.update();
-    }
-
-    protected function handleBingoButtonClick (e :MouseEvent) :void
-    {
-        if (!_calledBingoThisRound && _model.card.isComplete) {
-            _model.tryCallBingo();
-            _calledBingoThisRound = true;
-            this.updateBingoButton();
-        }
-    }
-
-    protected function handleQuitButtonClick (e :MouseEvent) :void
-    {
-        if (BingoMain.control.isConnected()) {
-            BingoMain.control.deactivateGame();
-        }
     }
 
     protected function update () :void
@@ -166,9 +124,6 @@ public class Controller
             this.createNewBall();
         }
 
-        _calledBingoThisRound = false;
-        this.updateBingoButton();
-
         _winnerText.text = "";
 
         this.stopNewRoundTimer();
@@ -189,8 +144,6 @@ public class Controller
 
         this.stopNewBallTimer();
         this.startNewRoundTimer(); // a new round should start shortly
-
-        this.updateBingoButton();
 
         var playerName :String = BingoMain.getPlayerName(_model.curState.roundWinnerId);
 
@@ -276,20 +229,13 @@ public class Controller
         this.update();
     }
 
-    public function updateBingoButton () :void
-    {
-        _bingoButton.enabled = (!_calledBingoThisRound && _model.roundInPlay && _model.card.isComplete);
-    }
-
     protected var _model :Model;
     protected var _expectedState :SharedState;
     protected var _expectedScores :Scoreboard;
 
     protected var _mainSprite :Sprite;
     protected var _cardView :BingoCardView;
-    protected var _ballView :BingoBallViewController;
-    protected var _scoreboardViewController :ScoreboardViewController;
-    protected var _bingoButton :DisablingButton;
+    protected var _hudController :HUDController;
     protected var _winnerText :TextField;
 
     protected var _newBallTimer :Timer;

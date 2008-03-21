@@ -6,16 +6,13 @@ public class Constants
 {
     public static const VERSION :Number = 1;
 
-    public static const ALLOW_CHEATS :Boolean = true;
+    public static const ALLOW_CHEATS :Boolean = false;
     public static const FORCE_SINGLEPLAYER :Boolean = false;
 
     // cosmetic bits
+    public static const HUD_LOC :Point = new Point(550, 220);
     public static const CARD_LOC :Point = new Point(10, 10);
-    public static const BALL_LOC :Point = new Point(522, 21);
-    public static const BINGO_BUTTON_LOC :Point = new Point(484, 279);
-    public static const QUIT_BUTTON_LOC :Point = new Point(400, 360);
     public static const WINNER_TEXT_LOC :Point = new Point(50, 400);
-    public static const SCOREBOARD_LOC :Point = new Point(550, 200);
 
     // gameplay bits
     public static const CARD_WIDTH :int = 5;

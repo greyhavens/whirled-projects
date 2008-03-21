@@ -44,7 +44,14 @@ public class BingoMain extends Sprite
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
 
         resourcesDomain = new ApplicationDomain();
-        MultiLoader.getLoaders([Resources.SWF_BALL, Resources.SWF_SCOREBOARD], handleResourcesLoaded, false, resourcesDomain);
+        MultiLoader.getLoaders(Resources.SWF_UI, handleResourcesLoaded, false, resourcesDomain);
+    }
+
+    public static function quit () :void
+    {
+        if (control.isConnected()) {
+            control.deactivateGame();
+        }
     }
 
     public static function getPlayerName (playerId :int) :String
