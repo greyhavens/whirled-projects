@@ -506,10 +506,10 @@ public class Resources
     [Embed(source="../../rsrc/items/Sandals_yellow.png")]
     public static const IMG_SANDALSYELLOW :Class;
 
-    [Embed(source="../../rsrc/items/Shell_necklace_blue.png")]
+    [Embed(source="../../rsrc/items/shell_necklace_blue.png")]
     public static const IMG_SHELLNECKLACEBLUE :Class;
 
-    [Embed(source="../../rsrc/items/Shell_necklace_brown.png")]
+    [Embed(source="../../rsrc/items/shell_necklace_brown.png")]
     public static const IMG_SHELLNECKLACEBROWN :Class;
 
     [Embed(source="../../rsrc/items/Short_boot_black.png")]
