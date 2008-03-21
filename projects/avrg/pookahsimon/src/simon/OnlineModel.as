@@ -72,11 +72,11 @@ public class OnlineModel extends Model
 
         // is the state actually being changed?
         if (newState.isEqual(_curState)) {
-            SimonMain.log.info("ignoring redundant state change request: " + newState);
+            log.info("ignoring redundant state change request: " + newState);
             return;
         }
 
-        SimonMain.log.info("accepting state change request: " + newState);
+        log.info("accepting state change request: " + newState);
 
         _stateControl.setRoomProperty(Constants.PROP_STATE, newState.toBytes());
 
@@ -146,7 +146,7 @@ public class OnlineModel extends Model
             switch (e.name) {
 
             default:
-                SimonMain.log.warning("unrecognized message in requestMessageQueue: " + e.name);
+                log.warning("unrecognized message in requestMessageQueue: " + e.name);
                 break;
             }
         }
@@ -168,7 +168,8 @@ public class OnlineModel extends Model
             break;
 
         default:
-            SimonMain.log.warning("unrecognized property: " + e.name);
+            //log.warning("unrecognized property: " + e.name);
+            // no need to warn about this
             break;
         }
     }

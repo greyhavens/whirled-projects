@@ -16,8 +16,6 @@ import flash.system.ApplicationDomain;
 [SWF(width="700", height="500")]
 public class SimonMain extends Sprite
 {
-    public static var log :Log = Log.getLog(SimonMain);
-
     public static var control :AVRGameControl;
     public static var model :Model;
     public static var controller :Controller;
@@ -139,6 +137,8 @@ public class SimonMain extends Sprite
 
     protected var _addedToStage :Boolean;
     protected var _resourcesLoaded :Boolean;
+
+    protected static var log :Log = Log.getLog(SimonMain);
 }
 
 }

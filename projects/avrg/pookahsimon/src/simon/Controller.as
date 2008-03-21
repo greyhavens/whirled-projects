@@ -32,7 +32,7 @@ public class Controller
 
         // state change events
         _model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
-        _model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerIndexChanged);
+        _model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerChanged);
         _model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
         SimonMain.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, handlePlayerLeft);
@@ -69,7 +69,7 @@ public class Controller
         _avatarController.destroy();
 
         _model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
-        _model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerIndexChanged);
+        _model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerChanged);
         _model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
         SimonMain.control.removeEventListener(AVRGameControlEvent.PLAYER_LEFT, handlePlayerLeft);
@@ -77,45 +77,6 @@ public class Controller
         _mainSprite.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
         _newRoundTimer.removeEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
-    }
-
-    protected static function createButton (width :int, height :int, text :String) :DisablingButton
-    {
-        var upState :DisplayObject = createButtonFace(width, height, text, 0x000000, 0xFFFFFF);
-        var overState :DisplayObject = createButtonFace(width, height, text, 0x000000, 0xDDDDDD);
-        var downState :DisplayObject = createButtonFace(width, height, text, 0xFFFFFF, 0x000000);
-        var hitTestState :DisplayObject = upState;
-        var disabledState :DisplayObject = overState;
-
-        return new DisablingButton(upState, overState, downState, hitTestState, disabledState);
-    }
-
-    protected static function createButtonFace (width :int, height :int, text :String, textColor :uint, bgColor :uint) :DisplayObject
-    {
-        var sprite :Sprite = new Sprite();
-        var g :Graphics = sprite.graphics;
-
-        g.lineStyle(1, 0x000000);
-
-        g.beginFill(bgColor);
-        g.drawRect(0, 0, width, height);
-        g.endFill();
-
-        var textField :TextField = new TextField();
-        textField.autoSize = TextFieldAutoSize.LEFT;
-        textField.textColor = textColor;
-        textField.text = text;
-
-        var scale :Number = Math.min((width - 2) / textField.width, (height - 2) / textField.height);
-        textField.scaleX = scale;
-        textField.scaleY = scale;
-
-        textField.x = (width * 0.5) - (textField.width * 0.5);
-        textField.y = (height * 0.5) - (textField.height * 0.5);
-
-        sprite.addChild(textField);
-
-        return sprite;
     }
 
     protected function handleEnterFrame (e :Event) :void
@@ -194,7 +155,7 @@ public class Controller
 
         case SharedState.PLAYING_GAME:
             // the game has started -- it's the first player's turn
-            this.handleCurPlayerIndexChanged(null);
+            this.handleCurPlayerChanged(null);
             break;
 
         case SharedState.WE_HAVE_A_WINNER:
@@ -209,7 +170,7 @@ public class Controller
         this.updateStatusText();
     }
 
-    protected function handleCurPlayerIndexChanged (e :SharedStateChangedEvent) :void
+    protected function handleCurPlayerChanged (e :SharedStateChangedEvent) :void
     {
         // reset the expected state when the state changes
         _expectedState = null;
@@ -219,7 +180,6 @@ public class Controller
             _rainbowController = null;
         }
 
-        // if there are two players left, the last man standing is the winner
         if (SimonMain.model.curState.players.length == 0) {
             _expectedState = SimonMain.model.curState.clone();
             _expectedState.gameState = SharedState.WAITING_FOR_GAME_START;
