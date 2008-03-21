@@ -44,7 +44,7 @@ public class BingoMain extends Sprite
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
 
         resourcesDomain = new ApplicationDomain();
-        MultiLoader.getLoaders(Resources.SWF_BALL, handleResourcesLoaded, false, resourcesDomain);
+        MultiLoader.getLoaders([Resources.SWF_BALL, Resources.SWF_SCOREBOARD], handleResourcesLoaded, false, resourcesDomain);
     }
 
     public static function getPlayerName (playerId :int) :String

@@ -36,6 +36,8 @@ public class Controller
         _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
         // visuals
+        _scoreboardViewController = new ScoreboardViewController();
+
         _ballView = new BingoBallViewController();
 
         _bingoButton = new DisablingButton(
@@ -70,11 +72,6 @@ public class Controller
         _winnerText.y = Constants.WINNER_TEXT_LOC.y;
         _mainSprite.addChild(_winnerText);
 
-        _scoreboardView = new ScoreboardView(_model.curScores);
-        _scoreboardView.x = Constants.SCOREBOARD_LOC.x;
-        _scoreboardView.y = Constants.SCOREBOARD_LOC.y;
-        _mainSprite.addChild(_scoreboardView);
-
         // each client maintains the concept of an expected state,
         // so that it is prepared to take over as the
         // authoritative client at any time.
@@ -95,6 +92,7 @@ public class Controller
         _newRoundTimer.removeEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
 
         _ballView.destroy();
+        _scoreboardViewController.destroy();
     }
 
     protected function handleEnterFrame (e :Event) :void
@@ -214,7 +212,6 @@ public class Controller
     protected function handleNewScores (e :SharedStateChangedEvent) :void
     {
         _expectedScores = null;
-        _scoreboardView.scoreboard = _model.curScores;
     }
 
     protected function startNewBallTimer () :void
@@ -291,7 +288,7 @@ public class Controller
     protected var _mainSprite :Sprite;
     protected var _cardView :BingoCardView;
     protected var _ballView :BingoBallViewController;
-    protected var _scoreboardView :ScoreboardView;
+    protected var _scoreboardViewController :ScoreboardViewController;
     protected var _bingoButton :DisablingButton;
     protected var _winnerText :TextField;
 

@@ -6,6 +6,9 @@ public class Resources
     [Embed(source="../../rsrc/bingo_ball.swf", mimeType="application/octet-stream")]
     public static const SWF_BALL :Class;
 
+    [Embed(source="../../rsrc/Scoreboard.swf", mimeType="application/octet-stream")]
+    public static const SWF_SCOREBOARD :Class;
+
     [Embed(source="../../rsrc/bingo_board.png")]
     public static const IMG_BOARD :Class;
 
