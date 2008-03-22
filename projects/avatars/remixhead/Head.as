@@ -57,7 +57,7 @@ public class Head extends Sprite
         }
 
         head.x = actualWidth * -X_ATTACHMENT;
-        head.y = actualWidth * -Y_ATTACHMENT;
+        head.y = actualHeight * -Y_ATTACHMENT;
         addChild(head);
     }
 }
