@@ -121,6 +121,7 @@ public class HUDController
     {
         _calledBingoThisRound = false;
         this.updateBingoButton();
+        this.updateBall();
     }
 
     protected var _hud :MovieClip;
