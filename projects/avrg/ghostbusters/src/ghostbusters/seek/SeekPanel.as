@@ -169,8 +169,8 @@ public class SeekPanel extends FrameSprite
             _ghost.nextFrame();
 
             if (_zapping > 0) {
-                // brighten ghost up to 300% then down again
-                var alpha :Number = 1.0 + Math.abs(ZAP_FRAMES/2 - _zapping) * 2.0;
+                // sawtooth from 1 to 4 down to 1 again
+                var alpha :Number = 1 + 3*(1 - Math.abs((2.0*_zapping)/ZAP_FRAMES - 1));
                 _ghost.transform.colorTransform = new ColorTransform(alpha, alpha, alpha);
 
                 _zapping --;
