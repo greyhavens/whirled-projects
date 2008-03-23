@@ -63,7 +63,7 @@ public class FightController extends Controller
             Game.control.state.sendMessage(Codes.MSG_PLAYER_DEATH, playerId);
 
             // then check to see if we're perhaps done
-            if (Game.model.isEverybodyDead()) {
+            if (!Game.model.isGhostDead() && Game.model.isEverybodyDead()) {
                 Game.control.state.sendMessage(Codes.MSG_GHOST_TRIUMPH, playerId);
             }
         }

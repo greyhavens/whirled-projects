@@ -32,7 +32,7 @@ public class SpawnedGhost extends GhostBase
 
     protected function messageReceived (evt :AVRGameControlEvent) :void
     {
-        if (evt.name == Codes.MSG_TICK && Game.control.hasControl()) {
+        if (evt.name == Codes.MSG_TICK && Game.control.hasControl() && !Game.model.isGhostDead()) {
             _brainTick(evt.value as int);
         }
     }

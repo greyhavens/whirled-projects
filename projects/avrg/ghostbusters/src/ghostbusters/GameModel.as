@@ -126,6 +126,11 @@ public class GameModel
         Game.control.state.setProperty(Codes.PROP_GHOST_ID, id, false);
     }
 
+    public function isGhostDead () :Boolean
+    {
+        return Game.control.state.getRoomProperty(Codes.PROP_GHOST_CUR_HEALTH) === 0;
+    }
+
     public function get ghostHealth () :int
     {
         return int(Game.control.state.getRoomProperty(Codes.PROP_GHOST_CUR_HEALTH));
