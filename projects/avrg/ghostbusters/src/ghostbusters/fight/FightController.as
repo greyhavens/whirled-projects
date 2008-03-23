@@ -43,7 +43,9 @@ public class FightController extends Controller
 
     public function lanternClicked () :void
     {
-        panel.startGame();
+        if (!Game.model.isPlayerDead(Game.ourPlayerId)) {
+            panel.startGame();
+        }
     }
 
     // server method

@@ -63,11 +63,6 @@ public class SeekPanel extends FrameSprite
         updateGhost();
     }
 
-    public function ghostPositionUpdate (pos :Point) :void
-    {
-        _ghost.newTarget(this.globalToLocal(pos));
-    }
-
     public function playerLanternOff (playerId :int) :void
     {
         var lantern :Lantern = _lanterns[playerId];
@@ -202,6 +197,7 @@ public class SeekPanel extends FrameSprite
 
         transmitLanternPosition(p);
 
+        // TODO: We can't make control decisions in a panel that may not even be on stage!
         if (_ghost != null && _ghost.isIdle() && Game.control.hasControl()) {
             constructNewGhostPosition(_ghost.getGhostBounds());
         }
@@ -306,7 +302,7 @@ public class SeekPanel extends FrameSprite
             if (bits != null) {
                 var pos :Point = Game.control.roomToStage(new Point(bits[0], bits[1]));
                 if (pos != null) {
-                    ghostPositionUpdate(pos);
+                    _ghost.newTarget(this.globalToLocal(pos));
                 }
             }
         }
@@ -347,8 +343,6 @@ public class SeekPanel extends FrameSprite
     protected var _ghost :HidingGhost;
 
     protected var _zapping :int;
-
-    protected var _appearing :Boolean;
 
     protected var _ticker :int;
 

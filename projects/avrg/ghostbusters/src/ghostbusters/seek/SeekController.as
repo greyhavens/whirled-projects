@@ -46,7 +46,6 @@ public class SeekController extends Controller
         }
         if (event.name == Codes.MSG_GHOST_ZAP) {
             Game.model.ghostZest = Game.model.ghostZest * 0.9 - 15;
-
         }
     }
 }
