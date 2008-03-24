@@ -52,6 +52,8 @@ public class SeekPanel extends FrameSprite
             AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
         Game.control.state.addEventListener(
             AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
+
+        _ppp = new PerPlayerProperties(playerPropertyUpdate);
     }
 
     override public function hitTestPoint (
