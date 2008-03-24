@@ -31,6 +31,7 @@ import ghostbusters.Content;
 import ghostbusters.Dimness;
 import ghostbusters.Game;
 import ghostbusters.GameController;
+import ghostbusters.GameModel;
 import ghostbusters.HUD;
 
 public class FightPanel extends FrameSprite
@@ -248,7 +249,7 @@ public class FightPanel extends FrameSprite
         }
 
         if (this.parent != null && Game.model.ghostId != null) {
-            _ghost = new SpawnedGhost();
+            _ghost = new SpawnedGhost(respondToState);
             _ghost.x = Game.stageSize.width - 250;
             _ghost.y = 100;
             this.addChild(_ghost);
@@ -263,12 +264,6 @@ public class FightPanel extends FrameSprite
         } else if (event.name == Codes.MSG_PLAYER_ATTACKED) {
             showGhostAttack(event.value as int);
 
-        } else if (event.name == Codes.MSG_GHOST_DEATH) {
-            showGhostDeath();
-
-        } else if (event.name == Codes.MSG_GHOST_TRIUMPH) {
-            showGhostTriumph();
-
         } else if (event.name == Codes.MSG_PLAYER_DEATH) {
             showPlayerDeath(event.value as int);
         }
@@ -276,9 +271,21 @@ public class FightPanel extends FrameSprite
 
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
-        // TODO: do we really not need to respond to a move to the FINALE state in any way?
-        if (evt.name == Codes.PROP_GHOST_ID) {
+        if (evt.name == Codes.PROP_STATE) {
+            respondToState();
+
+        } else if (evt.name == Codes.PROP_GHOST_ID) {
             updateGhost();
+        }
+    }
+
+    protected function respondToState () :void
+    {
+        if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH) {
+            showGhostTriumph();
+
+        } else if (Game.model.state == GameModel.STATE_GHOST_DEFEAT) {
+            showGhostDeath();
         }
     }
 

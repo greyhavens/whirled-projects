@@ -220,11 +220,16 @@ public class SeekPanel extends FrameSprite
         }
 
         if (this.parent != null && Game.model.ghostId != null) {
-            _lanterns = new Dictionary();
-
-            _ghost = new HidingGhost(200);
+            _ghost = new HidingGhost(200, function () :void {
+                if (Game.model.state == GameModel.STATE_APPEARING) {
+                    appearGhost();
+                }
+            });
             this.addChild(_ghost);
+
+            _lanterns = new Dictionary();
             maskGhost();
+
         }
     }
 

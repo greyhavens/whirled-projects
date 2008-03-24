@@ -65,7 +65,8 @@ public class GameController extends Controller
         } else if (state == GameModel.STATE_FIGHTING) {
             Game.fightController.lanternClicked();
 
-        } else if (state == GameModel.STATE_FINALE) {
+        } else if (state == GameModel.STATE_GHOST_TRIUMPH ||
+                   state == GameModel.STATE_GHOST_DEFEAT) {
             // no effect: you have to watch this bit
 
         } else {

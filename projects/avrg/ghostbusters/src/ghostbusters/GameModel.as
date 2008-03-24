@@ -15,7 +15,8 @@ public class GameModel
     public static const STATE_SEEKING :String = "seeking";
     public static const STATE_APPEARING :String = "appearing";
     public static const STATE_FIGHTING :String = "fighting";
-    public static const STATE_FINALE :String = "finale";
+    public static const STATE_GHOST_TRIUMPH :String = "triumph";
+    public static const STATE_GHOST_DEFEAT :String = "defeat";
 
     public function GameModel ()
     {

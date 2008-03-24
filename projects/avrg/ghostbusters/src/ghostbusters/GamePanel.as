@@ -22,8 +22,9 @@ import com.whirled.AVRGameControlEvent;
 import com.whirled.MobControl;
 
 import com.threerings.flash.AnimationManager;
+
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
-import com.threerings.util.EmbeddedSwfLoader;
 
 public class GamePanel extends Sprite
 {
@@ -116,9 +117,10 @@ public class GamePanel extends Sprite
             showPanels(Game.fightController.panel, hud);
             avatarState = Codes.ST_PLAYER_FIGHT;
 
-        } else if (Game.model.state == GameModel.STATE_FINALE) {
+        } else if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH ||
+                   Game.model.state == GameModel.STATE_GHOST_DEFEAT) {
             showPanels(Game.fightController.panel, hud);
-            // don't change the state here
+            // don't mess with the avatar's state here
 
         } else {
             Game.log.warning("Unknown state requested [state=" + Game.model.state + "]");
@@ -129,12 +131,22 @@ public class GamePanel extends Sprite
 
     protected function showPanels (... panels) :void
     {
-        while (this.numChildren > 0) {
-            this.removeChildAt(0);
+        var ii :int = 0;
+        // remove any undesired child
+        while (ii < this.numChildren) {
+            if (ArrayUtil.contains(panels, this.getChildAt(ii))) {
+                ii ++;
+                continue;
+            }
+            this.removeChildAt(ii);
         }
         _box = null;
-        for (var ii :int = 0; ii < panels.length; ii ++) {
-            this.addChild(panels[ii]);
+        // add any desired child that's not already ours
+        for (ii = 0; ii < panels.length; ii ++) {
+            if (panels[ii].parent != this) {
+                // TODO: add at 0 so we don't override HUD, this is kinda hacky!
+                this.addChildAt(panels[ii], 0);
+            }
         }
     }
 

@@ -3,9 +3,11 @@
 
 package ghostbusters {
 
+import flash.geom.Rectangle;
+
 import com.whirled.AVRGameControlEvent;
 
-import flash.geom.Rectangle;
+import com.threerings.util.ArrayUtil;
 
 public class Server
 {
@@ -45,7 +47,7 @@ public class Server
             return;
         }
 
-        if (checkState(GameModel.STATE_FINALE)) {
+        if (checkState(GameModel.STATE_GHOST_TRIUMPH, GameModel.STATE_GHOST_DEFEAT)) {
             Game.model.ghostId = null;
             Game.model.state = GameModel.STATE_SEEKING;
         }            
@@ -80,7 +82,8 @@ public class Server
         } else if (Game.model.state == GameModel.STATE_FIGHTING) {
             fightTick(tick);
 
-        } else if (Game.model.state == GameModel.STATE_FINALE) {
+        } else if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH ||
+                   Game.model.state == GameModel.STATE_GHOST_DEFEAT) {
             // do nothing
         }
     }
@@ -100,6 +103,9 @@ public class Server
         }
 
         var ghostBounds :Rectangle = ghost.getGhostBounds(); 
+        if (ghostBounds == null) {
+            return;
+        }
 
         var x :int = Game.random.nextNumber() *
             (Game.roomBounds.width - ghostBounds.width) - ghostBounds.left;
@@ -115,8 +121,7 @@ public class Server
         // TODO: if the animation-based state transition back to SEEK fails, we should
         // TODO: have a backup timeout using the ticker
         if (Game.model.isGhostDead()) {
-            Game.model.state = GameModel.STATE_FINALE;
-            Game.control.state.sendMessage(Codes.MSG_GHOST_DEATH, null);
+            Game.model.state = GameModel.STATE_GHOST_DEFEAT;
             return;
         }
 
@@ -124,8 +129,7 @@ public class Server
         // TODO: if the animation-based state transition back to SEEK fails, we should
         // TODO: have a backup timeout using the ticker
         if (Game.model.isEverybodyDead()) {
-            Game.model.state = GameModel.STATE_FINALE;
-            Game.control.state.sendMessage(Codes.MSG_GHOST_TRIUMPH, null);
+            Game.model.state = GameModel.STATE_GHOST_TRIUMPH;
             return;
         }
 
@@ -215,13 +219,13 @@ public class Server
         Game.model.ghostId = id;
     }
 
-    protected function checkState (expected :String) :Boolean
+    protected function checkState (... expected) :Boolean
     {
-        var state :String = Game.model.state;
-        if (expected == state) {
+        if (ArrayUtil.contains(expected, Game.model.state)) {
             return true;
         }
-        Game.log.debug("State mismatch [expected=" + expected + ", actual=" + state + "]");
+        Game.log.debug("State mismatch [expected=" + expected + ", actual=" +
+                       Game.model.state + "]");
         return false;
     }
 

@@ -12,14 +12,22 @@ import com.whirled.AVRGameControlEvent;
 
 public class SpawnedGhost extends GhostBase
 {
-    public function SpawnedGhost ()
+    public function SpawnedGhost (readyCallback :Function = null)
     {
+        _readyCallback = readyCallback;
+
         super();
     }
 
     override protected function mediaReady () :void
     {
+        super.mediaReady();
+
         fighting();
+
+        if (_readyCallback != null) {
+            _readyCallback();
+        }
     }
 
     public function fighting () :void
@@ -76,6 +84,8 @@ public class SpawnedGhost extends GhostBase
         Game.log.debug("Ghost triumphant [_next=" + _next + "]");
         handler.gotoScene(Codes.ST_GHOST_TRIUMPH, callback);
     }
+
+    protected var _readyCallback :Function;
 
     protected var _next :int;
     protected var _callback :Function;

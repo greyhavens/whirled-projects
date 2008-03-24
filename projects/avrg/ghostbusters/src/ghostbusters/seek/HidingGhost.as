@@ -24,11 +24,13 @@ import ghostbusters.SplinePather;
 
 public class HidingGhost extends GhostBase
 {
-    public function HidingGhost (speed :int)
+    public function HidingGhost (speed :int, readyCallback :Function = null)
     {
         super();
 
         _speed = speed;
+        _readyCallback = readyCallback;
+
         _pather = new SplinePather();
     }
 
@@ -79,11 +81,14 @@ public class HidingGhost extends GhostBase
     override protected function mediaReady () :void
     {
         super.mediaReady();
+        if (_readyCallback != null) {
+            _readyCallback();
+        }
      }
 
-    protected var _pather :SplinePather;
-    protected var _random :Random;
-
     protected var _speed :Number;
+    protected var _readyCallback :Function;
+
+    protected var _pather :SplinePather;
 }
 }
