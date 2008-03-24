@@ -50,15 +50,18 @@ public class Server
         if (checkState(GameModel.STATE_GHOST_TRIUMPH, GameModel.STATE_GHOST_DEFEAT)) {
             if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH) {
                 // heal ghost
-                Game.model.ghostHealth = Game.model.ghostMaxZest;
-                // TODO: popup saying sorry?
+                Game.model.ghostHealth = Game.model.ghostMaxHealth;
+                Game.model.ghostZest = Game.model.ghostMaxZest;
+
+                // TODO: popup saying sorry u lose?
 
             } else {
                 // delete ghost
                 Game.model.ghostId = null;
 
-                // TODO: popup saying grats?
+                // TODO: popup saying grats u win?
             }
+
             Game.model.state = GameModel.STATE_SEEKING;
         }
     }

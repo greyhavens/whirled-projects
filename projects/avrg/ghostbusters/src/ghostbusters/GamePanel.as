@@ -111,6 +111,7 @@ public class GamePanel extends Sprite
             if (_seeking) {
                 avatarState = Codes.ST_PLAYER_FIGHT;
                 seekPanel = true;
+
             } else {
                 avatarState = Codes.ST_PLAYER_DEFAULT;
             }
