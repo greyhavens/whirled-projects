@@ -94,6 +94,7 @@ public class GamePanel extends Sprite
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
         if (evt.name == Codes.PROP_STATE) {
+            _seeking = false;
             updateState();
         }
     }

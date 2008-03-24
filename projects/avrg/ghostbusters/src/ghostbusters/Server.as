@@ -48,9 +48,19 @@ public class Server
         }
 
         if (checkState(GameModel.STATE_GHOST_TRIUMPH, GameModel.STATE_GHOST_DEFEAT)) {
-            Game.model.ghostId = null;
+            if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH) {
+                // heal ghost
+                Game.model.ghostHealth = Game.model.ghostMaxZest;
+                // TODO: popup saying sorry?
+
+            } else {
+                // delete ghost
+                Game.model.ghostId = null;
+
+                // TODO: popup saying grats?
+            }
             Game.model.state = GameModel.STATE_SEEKING;
-        }            
+        }
     }
 
     public function doDamagePlayer (playerId :int, damage :int) :Boolean
@@ -90,6 +100,11 @@ public class Server
 
     protected function seekTick (tick :int) :void
     {
+        if (!Game.model.ghostId) {
+            // TODO: if the ghost has been defeated, it should eventually respawn
+            return;
+        }
+
         // if the ghost has been entirely unveiled, switch to appear phase
         if (Game.model.ghostZest == 0) {
             Game.model.state = GameModel.STATE_APPEARING;
@@ -117,6 +132,11 @@ public class Server
 
     protected function fightTick (tick :int) :void
     {
+        if (!Game.model.ghostId) {
+            // this should never happen, but let's be robust
+            return;
+        }
+
         // if the ghost died, leave fight state and show the ghost's death throes
         // TODO: if the animation-based state transition back to SEEK fails, we should
         // TODO: have a backup timeout using the ticker
