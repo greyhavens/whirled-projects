@@ -33,6 +33,7 @@ public class GameController extends Controller
 
     public function handleEndGame () :void
     {
+        setAvatarState(Codes.ST_PLAYER_DEFAULT);
         Game.control.deactivateGame();
     }
 

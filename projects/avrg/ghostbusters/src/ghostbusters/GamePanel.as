@@ -102,14 +102,23 @@ public class GamePanel extends Sprite
 
         if (Game.model.state == GameModel.STATE_SEEKING) {
             if (_seeking) {
+                avatarState = Codes.ST_PLAYER_FIGHT;
                 showPanels(Game.seekController.panel, hud);
             } else {
+                avatarState = Codes.ST_PLAYER_DEFAULT;
                 showPanels(hud);
             }
+
+        } else if (Game.model.state == GameModel.STATE_APPEARING) {
+            showPanels(Game.seekController.panel, hud);
 
         } else if (Game.model.state == GameModel.STATE_FIGHTING) {
             showPanels(Game.fightController.panel, hud);
             avatarState = Codes.ST_PLAYER_FIGHT;
+
+        } else if (Game.model.state == GameModel.STATE_FINALE) {
+            showPanels(Game.fightController.panel, hud);
+            // don't change the state here
 
         } else {
             Game.log.warning("Unknown state requested [state=" + Game.model.state + "]");
