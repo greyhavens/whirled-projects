@@ -13,6 +13,7 @@ import flash.geom.Point;
 import flash.media.Sound;
 import flash.media.SoundChannel;
 import flash.media.SoundTransform;
+import flash.text.TextField;
 import flash.utils.Timer;
 
 public class RainbowController
@@ -98,6 +99,9 @@ public class RainbowController
 
             _rainbowBands.push(band);
         }
+
+        var playerText :TextField = _curAnim["player"];
+        playerText.text = SimonMain.getPlayerName(_playerId);
 
     }
 
@@ -282,11 +286,11 @@ public class RainbowController
 
         var avatarInfo :AVRGameAvatar = (SimonMain.control.isConnected() ? SimonMain.control.getAvatarInfo(_playerId) : null);
         if (null != avatarInfo) {
-            p = SimonMain.control.locationToStage(avatarInfo.x, avatarInfo.y, avatarInfo.z - 0.1);
+            p = SimonMain.control.locationToStage(avatarInfo.x, avatarInfo.y, avatarInfo.z);
             p.y -= avatarInfo.stageBounds.height;
         }
 
-        return (null != p ? p : new Point(150, 500));
+        return (null != p ? p : new Point(150, 300));
     }
 
     public function get isControlledLocally () :Boolean
