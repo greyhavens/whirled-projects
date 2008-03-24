@@ -43,6 +43,8 @@ public class Game extends Sprite
 
     public static var model :GameModel;
 
+    public static var server :Server;
+
     public static var stageSize :Rectangle;
     public static var scrollSize :Rectangle;
     public static var roomBounds :Rectangle;
@@ -62,6 +64,7 @@ public class Game extends Sprite
         }
         ourPlayerId = control.getPlayerId();
 
+        server = new Server();
         model = new GameModel();
 
         gameController = new GameController();
@@ -192,7 +195,7 @@ public class Game extends Sprite
             roomBounds = new Rectangle(0, 0, 700, 500);
         }
 
-        model.newRoom();
+        server.newRoom();
         seekController.panel.newRoom();
         fightController.panel.newRoom();
     }

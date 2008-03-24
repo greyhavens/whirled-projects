@@ -104,7 +104,7 @@ public class FightPanel extends FrameSprite
 
         var panel :DisplayObject = this;
         _ghost.die(function () :void {
-            CommandEvent.dispatch(panel, GameController.END_FIGHT);
+            Game.server.ghostFullyGone();
         });
     }
 
@@ -124,8 +124,7 @@ public class FightPanel extends FrameSprite
         if (_ghost != null && _ghost.parent != null) {
             var panel :DisplayObject = this;
             _ghost.triumph(function () :void {
-                Game.log.debug("Executing END_FIGHT...");
-                CommandEvent.dispatch(panel, GameController.END_FIGHT);
+                Game.server.ghostFullyGone();
             });
         }
     }

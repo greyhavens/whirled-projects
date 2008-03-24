@@ -22,9 +22,6 @@ public class SeekController extends Controller
 
     public function SeekController ()
     {
-        Game.control.state.addEventListener(
-            AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
-
         panel = new SeekPanel();
 
         setControlledPanel(panel);
@@ -37,16 +34,6 @@ public class SeekController extends Controller
     public function handleZapGhost () :void
     {
         Game.control.state.sendMessage(Codes.MSG_GHOST_ZAP, Game.ourPlayerId);
-    }
-
-    protected function messageReceived (event: AVRGameControlEvent) :void
-    {
-        if (!Game.control.hasControl()) {
-            return;
-        }
-        if (event.name == Codes.MSG_GHOST_ZAP) {
-            Game.model.ghostZest = Game.model.ghostZest * 0.9 - 15;
-        }
     }
 }
 }

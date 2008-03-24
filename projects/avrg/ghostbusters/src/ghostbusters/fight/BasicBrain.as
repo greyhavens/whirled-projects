@@ -48,14 +48,14 @@ public class BasicBrain
     {
         // Moronic AI: attack a completely random player each turn
         var ix :int = Game.random.nextInt(team.length);
-        Game.fightController.doDamagePlayer(team[ix], 20);
+        Game.server.doDamagePlayer(team[ix], 20);
     }
 
     protected static function attackTeam (team :Array) :void
     {
         // Splash team with a fixed moderate amount of damage per player
         for (var ii :int = 0; ii < team.length; ii ++) {
-            if (Game.fightController.doDamagePlayer(team[ii], 5)) {
+            if (Game.server.doDamagePlayer(team[ii], 5)) {
                 // the player died; see if we're triumphant
                 if (Game.model.isEverybodyDead()) {
                     return;

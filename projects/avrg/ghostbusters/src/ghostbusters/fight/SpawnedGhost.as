@@ -15,8 +15,6 @@ public class SpawnedGhost extends GhostBase
     public function SpawnedGhost ()
     {
         super();
-
-        Game.control.state.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
     override protected function mediaReady () :void
@@ -28,13 +26,6 @@ public class SpawnedGhost extends GhostBase
     {
         _next = ST_FIGHT;
         play();
-    }
-
-    protected function messageReceived (evt :AVRGameControlEvent) :void
-    {
-        if (evt.name == Codes.MSG_TICK && Game.control.hasControl() && !Game.model.isGhostDead()) {
-            _brainTick(evt.value as int);
-        }
     }
 
     protected function play () :void

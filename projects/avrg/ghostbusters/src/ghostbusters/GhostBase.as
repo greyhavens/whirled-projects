@@ -24,8 +24,6 @@ public class GhostBase extends Sprite
     public function GhostBase ()
     {
         var data :Object = Game.model.getGhostData();
-        _brainTick = data.brain as Function;
-
         handler = new ClipHandler(new (data.clip)(), setupUI);
         this.addChild(handler);
     }
@@ -58,6 +56,5 @@ public class GhostBase extends Sprite
     }
 
     protected var _bounds :Rectangle;
-    protected var _brainTick :Function;
 }
 }

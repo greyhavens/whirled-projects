@@ -26,11 +26,6 @@ public class GameModel
         }
     }
 
-    public function newRoom () :void
-    {
-        maybeSpawnGhost();
-    }
-
     public function init () :void
     {
     }
@@ -199,23 +194,6 @@ public class GameModel
             }
         }
         throw new Error("Erk, ghost not found somehow [id=" + id + "]");
-    }
-
-    // TODO: this should be called on a timer, too
-    protected function maybeSpawnGhost () :void
-    {
-        if (!Game.control.hasControl() || ghostId != null) {
-            return;
-        }
-
-        // initialize the room with a ghost
-        var id :String = Content.GHOSTS[Game.random.nextInt(Content.GHOSTS.length)].id;
-        Game.log.debug("Choosing ghost [id=" + id + "]");
-
-        ghostZest = ghostMaxZest = 150 + 100 * Game.random.nextNumber();
-        ghostHealth = ghostMaxHealth = 100;
-        // set the ghostId last of all, since that triggers loading
-        ghostId = id;
     }
 
     protected var _ppp :PerPlayerProperties;

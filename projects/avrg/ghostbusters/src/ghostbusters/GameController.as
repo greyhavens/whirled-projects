@@ -12,8 +12,6 @@ import flash.display.DisplayObject;
 
 public class GameController extends Controller
 {
-    public static const END_FIGHT :String = "EndFight";
-    public static const SPAWN_GHOST :String = "SpawnGhost";
     public static const TOGGLE_LANTERN :String = "ToggleLantern";
     public static const TOGGLE_LOOT :String = "ToggleLoot";
     public static const END_GAME :String = "EndGame";
@@ -63,23 +61,6 @@ public class GameController extends Controller
 
         }
         // else no effect
-    }
-
-    public function handleSpawnGhost () :void
-    {
-        if (Game.control.hasControl()) {
-            Game.model.state = GameModel.STATE_FIGHTING;
-        }
-    }
-
-    public function handleEndFight () :void
-    {
-        Game.log.debug("handleEndFight(" + Game.control.hasControl() + ")");
-        // TODO: we probably want a delay before another ghost is available
-        if (Game.control.hasControl()) {
-            Game.model.ghostId = null;
-            Game.model.state = GameModel.STATE_SEEKING;
-        }
     }
 
     public function setAvatarState (state :String) :void
