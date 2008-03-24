@@ -33,6 +33,7 @@ public class GamePanel extends Sprite
     public function GamePanel ()
     {
         hud = new HUD();
+        this.addChild(hud);
 
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
 
@@ -100,53 +101,49 @@ public class GamePanel extends Sprite
     protected function updateState () :void
     {
         var avatarState :String = Codes.ST_PLAYER_DEFAULT;
+        var fightPanel :Boolean = false;
+        var seekPanel :Boolean = false;
+
+        Game.log.debug("Main Panel entering state: " + Game.model.state);
 
         if (Game.model.state == GameModel.STATE_SEEKING) {
             if (_seeking) {
                 avatarState = Codes.ST_PLAYER_FIGHT;
-                showPanels(Game.seekController.panel, hud);
+                seekPanel = true;
             } else {
                 avatarState = Codes.ST_PLAYER_DEFAULT;
-                showPanels(hud);
             }
 
         } else if (Game.model.state == GameModel.STATE_APPEARING) {
-            showPanels(Game.seekController.panel, hud);
+            seekPanel = true;
 
         } else if (Game.model.state == GameModel.STATE_FIGHTING) {
-            showPanels(Game.fightController.panel, hud);
+            fightPanel = true;
             avatarState = Codes.ST_PLAYER_FIGHT;
 
         } else if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH ||
                    Game.model.state == GameModel.STATE_GHOST_DEFEAT) {
-            showPanels(Game.fightController.panel, hud);
+            fightPanel = true;
             // don't mess with the avatar's state here
 
         } else {
             Game.log.warning("Unknown state requested [state=" + Game.model.state + "]");
         }
 
+        fixPanel(seekPanel, Game.seekController.panel);
+        fixPanel(fightPanel, Game.fightController.panel);
+
         Game.gameController.setAvatarState(avatarState);
     }
 
-    protected function showPanels (... panels) :void
+    protected function fixPanel (show :Boolean, panel :DisplayObject) :void
     {
-        var ii :int = 0;
-        // remove any undesired child
-        while (ii < this.numChildren) {
-            if (ArrayUtil.contains(panels, this.getChildAt(ii))) {
-                ii ++;
-                continue;
+        if (show) {
+            if (panel.parent != this) {
+                this.addChildAt(panel, 0);
             }
-            this.removeChildAt(ii);
-        }
-        _box = null;
-        // add any desired child that's not already ours
-        for (ii = 0; ii < panels.length; ii ++) {
-            if (panels[ii].parent != this) {
-                // TODO: add at 0 so we don't override HUD, this is kinda hacky!
-                this.addChildAt(panels[ii], 0);
-            }
+        } else if (panel.parent == this) {
+            this.removeChild(panel);
         }
     }
 

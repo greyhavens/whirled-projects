@@ -229,7 +229,6 @@ public class SeekPanel extends FrameSprite
 
             _lanterns = new Dictionary();
             maskGhost();
-
         }
     }
 
