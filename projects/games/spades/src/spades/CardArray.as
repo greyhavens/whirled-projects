@@ -1,4 +1,4 @@
-package {
+package spades {
 
 import flash.display.DisplayObject;
 import com.threerings.util.Log;
@@ -215,6 +215,7 @@ public class CardArray
 
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import spades.*;
 
 /** File-private placeholder class for displaying a CardArray. Adds the display of each card in the 
  *  array and lays them out trivially. */

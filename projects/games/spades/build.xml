@@ -3,6 +3,7 @@
 
   <!-- define some basic project parameters -->
   <property name="app.name" value="Spades"/>
+  <property name="app.source-dir" value="src"/>
   <property name="app.type" value="game"/>
 
   <!-- include the standard build script -->

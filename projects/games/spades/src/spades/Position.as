@@ -1,5 +1,4 @@
-package
-{
+package spades {
 
 /**
  * A position within a parent object, represented by percentages.

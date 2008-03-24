@@ -1,4 +1,4 @@
-package {
+package spades {
 
 import flash.display.Sprite;
 import flash.text.TextField;

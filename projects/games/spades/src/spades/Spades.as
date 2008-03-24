@@ -1,4 +1,4 @@
-package {
+package spades {
 
 import flash.display.Sprite;
 import flash.display.DisplayObject;
@@ -54,9 +54,9 @@ public class Spades extends Sprite
     public static const TRICK_POSITION :Position = new Position(50, 25);
 
     /** Main entry point. Start a new game of spades. */
-    public function Spades ()
+    public function Spades (gameCtrl :GameControl)
     {
-        _gameCtrl = new GameControl(this);
+        _gameCtrl = gameCtrl;
         _gameCtrl.game.addEventListener(
             StateChangedEvent.GAME_STARTED, 
             handleGameStarted);

@@ -1,4 +1,4 @@
-package {
+package spades {
 
 import flash.display.DisplayObject;
 
@@ -360,6 +360,7 @@ public class Card
 }
 
 import flash.text.TextField;
+import spades.*;
 
 /** File-private placeholder for card graphics.
  *  XXTODO embed flashy stuff */
