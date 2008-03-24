@@ -30,8 +30,6 @@ public class CoinFlourish extends Sprite
 
     public function updateAnimation (elapsed :Number) :void
     {
-        Game.log.debug("Spamming animation: " + elapsed);
-
         if (elapsed < 500) {
             this.alpha = elapsed / 500;
 

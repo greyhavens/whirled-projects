@@ -33,7 +33,7 @@ public class Server
         if (!Game.control.hasControl()) {
             return;
         }
-        if (checkState(GameModel.STATE_SEEKING)) {
+        if (checkState(GameModel.STATE_APPEARING)) {
             Game.model.state = GameModel.STATE_FIGHTING;
         }            
     }
@@ -45,7 +45,7 @@ public class Server
             return;
         }
 
-        if (checkState(GameModel.STATE_FIGHTING)) {
+        if (checkState(GameModel.STATE_FINALE)) {
             Game.model.ghostId = null;
             Game.model.state = GameModel.STATE_SEEKING;
         }            
@@ -65,38 +65,8 @@ public class Server
         if (died) {
             // the blow killed the player: let all the clients know that too
             Game.control.state.sendMessage(Codes.MSG_PLAYER_DEATH, playerId);
-
-            // then check to see if we're perhaps done
-            if (!Game.model.isGhostDead() && Game.model.isEverybodyDead()) {
-                Game.control.state.sendMessage(Codes.MSG_GHOST_TRIUMPH, playerId);
-            }
         }
         return died;
-    }
-
-    public function doHealPlayers (totHeal :int) :void
-    {
-        if (!Game.control.hasControl()) {
-            throw new Error("Internal server function.");
-        }
-        var team :Array = Game.getTeam(true);
-
-        // figure out how hurt each party member is, and the total hurt
-        var playerDmg :Array = new Array(team.length);
-        var totDmg :int = 0;
-        for (var ii :int = 0; ii < team.length; ii ++) {
-            playerDmg[ii] = (Game.model.getPlayerMaxHealth(team[ii]) -
-                             Game.model.getPlayerHealth(team[ii]));
-            totDmg += playerDmg[ii];
-        }
-        Game.log.debug("HEAL :: Total heal = " + totHeal + "; Total team damage = " + totDmg);
-        // hand totHeal out proportionally to each player's relative hurtness
-        for (ii = 0; ii < team.length; ii ++) {
-            var heal :int = (totHeal * playerDmg[ii]) / totDmg;
-            var newHealth :int = heal + Game.model.getPlayerHealth(team[ii]);
-            Game.log.debug("HEAL :: Awarding " + heal + " pts to player #" + team[ii]);
-            Game.model.setPlayerHealth(team[ii], newHealth);
-        }
     }
 
     protected function everySecondTick (tick :int) :void
@@ -104,13 +74,26 @@ public class Server
         if (Game.model.state == GameModel.STATE_SEEKING) {
             seekTick(tick);
 
-        } else {
+        } else if (Game.model.state == GameModel.STATE_APPEARING) {
+            // do nothing
+
+        } else if (Game.model.state == GameModel.STATE_FIGHTING) {
             fightTick(tick);
+
+        } else if (Game.model.state == GameModel.STATE_FINALE) {
+            // do nothing
         }
     }
 
     protected function seekTick (tick :int) :void
     {
+        // if the ghost has been entirely unveiled, switch to appear phase
+        if (Game.model.ghostZest == 0) {
+            Game.model.state = GameModel.STATE_APPEARING;
+            return;
+        }
+
+        // TODO: if the controlling instance toggles the lantern, this fails - FIX FIX FIX
         var ghost :GhostBase = Game.seekController.panel.ghost;
         if (ghost == null) {
             return;
@@ -128,11 +111,28 @@ public class Server
 
     protected function fightTick (tick :int) :void
     {
-        if (!Game.model.isGhostDead()) {
-            var brainTick :Function = Game.model.getGhostData().brain as Function;
-            if (brainTick != null) {
-                brainTick(tick);
-            }
+        // if the ghost died, leave fight state and show the ghost's death throes
+        // TODO: if the animation-based state transition back to SEEK fails, we should
+        // TODO: have a backup timeout using the ticker
+        if (Game.model.isGhostDead()) {
+            Game.model.state = GameModel.STATE_FINALE;
+            Game.control.state.sendMessage(Codes.MSG_GHOST_DEATH, null);
+            return;
+        }
+
+        // if the players all died, leave fight state and play the ghost's triumph scene
+        // TODO: if the animation-based state transition back to SEEK fails, we should
+        // TODO: have a backup timeout using the ticker
+        if (Game.model.isEverybodyDead()) {
+            Game.model.state = GameModel.STATE_FINALE;
+            Game.control.state.sendMessage(Codes.MSG_GHOST_TRIUMPH, null);
+            return;
+        }
+
+        // if ghost is alive and at least one player is still up, just do an normal AI tick
+        var brainTick :Function = Game.model.getGhostData().brain as Function;
+        if (brainTick != null) {
+            brainTick(tick);
         }
     }
 
@@ -163,16 +163,39 @@ public class Server
             }
 
         } else if (msg == Codes.MSG_GHOST_ATTACKED) {
-            var dmg :int = (event.value as Array)[1];
-            if (dmg > 0 && Game.model.damageGhost(dmg)) {
-                Game.control.state.sendMessage(Codes.MSG_GHOST_DEATH, null);
+            if (checkState(GameModel.STATE_FIGHTING)) {
+                var dmg :int = (event.value as Array)[1];
+                Game.model.damageGhost(dmg);
             }
 
         } else if (msg == Codes.MSG_PLAYERS_HEALED) {
-            var heal :int = (event.value as Array)[1];
-            doHealPlayers(heal);
+            if (checkState(GameModel.STATE_FIGHTING)) {
+                var heal :int = (event.value as Array)[1];
+                doHealPlayers(heal);
+            }
         }
+    }
 
+    protected function doHealPlayers (totHeal :int) :void
+    {
+        var team :Array = Game.getTeam(true);
+
+        // figure out how hurt each party member is, and the total hurt
+        var playerDmg :Array = new Array(team.length);
+        var totDmg :int = 0;
+        for (var ii :int = 0; ii < team.length; ii ++) {
+            playerDmg[ii] = (Game.model.getPlayerMaxHealth(team[ii]) -
+                             Game.model.getPlayerHealth(team[ii]));
+            totDmg += playerDmg[ii];
+        }
+        Game.log.debug("HEAL :: Total heal = " + totHeal + "; Total team damage = " + totDmg);
+        // hand totHeal out proportionally to each player's relative hurtness
+        for (ii = 0; ii < team.length; ii ++) {
+            var heal :int = (totHeal * playerDmg[ii]) / totDmg;
+            var newHealth :int = heal + Game.model.getPlayerHealth(team[ii]);
+            Game.log.debug("HEAL :: Awarding " + heal + " pts to player #" + team[ii]);
+            Game.model.setPlayerHealth(team[ii], newHealth);
+        }
     }
 
     // TODO: this should be called on a timer, too

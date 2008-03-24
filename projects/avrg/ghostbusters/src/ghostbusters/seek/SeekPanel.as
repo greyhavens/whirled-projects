@@ -34,6 +34,7 @@ import ghostbusters.Content;
 import ghostbusters.Dimness;
 import ghostbusters.GameController;
 import ghostbusters.Game;
+import ghostbusters.GameModel;
 import ghostbusters.PerPlayerProperties;
 
 public class SeekPanel extends FrameSprite
@@ -133,8 +134,8 @@ public class SeekPanel extends FrameSprite
             return;
         }
 
-        if (evt.name == Codes.PROP_GHOST_CUR_ZEST) {
-            if (evt.value == 0) {
+        if (evt.name == Codes.PROP_STATE) {
+            if (evt.value == GameModel.STATE_APPEARING) {
                 appearGhost();
             }
 
@@ -247,18 +248,15 @@ public class SeekPanel extends FrameSprite
         }
     }
 
-    protected function spawnGhost () :void
-    {
-        Game.server.ghostFullyAppeared();
-    }
-
     protected function appearGhost () :void
     {
         for each (var lantern :Lantern in _lanterns) {
             lanternOff(lantern);
         }
         _lanterns = null;
-        _ghost.appear(spawnGhost);
+        _ghost.appear(function () :void {
+            Game.server.ghostFullyAppeared();
+        });
         _ghost.newTarget(new Point(Game.stageSize.width - 250, 100));
         unmaskGhost();
     }

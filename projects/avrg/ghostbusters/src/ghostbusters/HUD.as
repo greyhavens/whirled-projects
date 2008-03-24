@@ -285,10 +285,12 @@ public class HUD extends Sprite
         var other :MovieClip;
         var health :Number;
 
-        if (Game.model.state == GameModel.STATE_SEEKING) {
+        if (Game.model.state == GameModel.STATE_SEEKING ||
+            Game.model.state == GameModel.STATE_APPEARING) {
             health = Game.model.ghostRelativeZest;
             bar = _ghostCaptureBar;
             other = _ghostHealthBar;
+
         } else {
             health = Game.model.ghostRelativeHealth;
             bar = _ghostHealthBar;

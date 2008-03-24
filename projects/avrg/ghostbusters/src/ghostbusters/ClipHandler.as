@@ -60,8 +60,6 @@ public class ClipHandler extends FrameSprite
                 MovieClip(disp).stop();
             }
         });
-
-        Game.log.debug("It took " + (getTimer() - t) + " ms to stop the clip: " + _clip);
     }
 
     public function gotoScene (scene :Object, done :Function = null, toFrame :int = -1,
@@ -91,15 +89,8 @@ public class ClipHandler extends FrameSprite
         throw new Error("Can't goto scene [scene=" + scene + "]");
     }
 
-    protected var counter :int;
-
     override protected function handleFrame (... ignored) :void
     {
-        if (--counter < 0) {
-            counter = Game.FRAMES_PER_REPORT;
-            Game.log.debug("Frame handler running: " + this);
-        }
-
         if (_clip == null || _lastFrame < 0) {
             return;
         }
@@ -114,14 +105,11 @@ public class ClipHandler extends FrameSprite
 
             // call back if needed
             if (cb != null) {
-                Game.log.debug("Executing callback for: " + name);
-
                 // keep in mind this may change _callback and _scene
                 var next :String = cb();
                 if (next != null) {
                     _scene = scenes[next];
                     if (_scene != null) {
-                        Game.log.debug("Repeating scene: " + next);
                         // if a string was returned, restore the callback (this is a bit ugly)
                         _callback = cb;
                         _clip.gotoAndPlay(1, next);

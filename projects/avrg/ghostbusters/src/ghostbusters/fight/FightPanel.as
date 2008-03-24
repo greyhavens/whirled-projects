@@ -276,6 +276,7 @@ public class FightPanel extends FrameSprite
 
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
+        // TODO: do we really not need to respond to a move to the FINALE state in any way?
         if (evt.name == Codes.PROP_GHOST_ID) {
             updateGhost();
         }

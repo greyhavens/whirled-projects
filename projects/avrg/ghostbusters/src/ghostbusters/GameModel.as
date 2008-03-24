@@ -13,7 +13,9 @@ import com.threerings.util.Random;
 public class GameModel
 {
     public static const STATE_SEEKING :String = "seeking";
+    public static const STATE_APPEARING :String = "appearing";
     public static const STATE_FIGHTING :String = "fighting";
+    public static const STATE_FINALE :String = "finale";
 
     public function GameModel ()
     {
