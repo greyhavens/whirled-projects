@@ -176,7 +176,7 @@ public class Body
         // transition from our current state to the action
         queueTransitions(_state, action);
         // play the action animation
-        queueScene(getScene("action_" + action));
+        queueScene(getScene("action_" + action), true);
         // then transition back to our current state
         queueTransitions(action, _state);
         // and queue our standing animation
@@ -290,15 +290,7 @@ public class Body
      */
     protected function queueTransitions (from :String, to :String) :void
     {
-        // queue our transition animation (direct if we have one, through 'default' if we don't)
-        var direct :SceneList = getScene(from + "_to_" + to);
-        if (direct != null) {
-            queueScene(direct);
-        } else {
-            // TODO: if we lack one or both of these, should we do anything special?
-            queueScene(getScene(from + "_to_default"));
-            queueScene(getScene("default_to_" + to));
-        }
+        queueScene(getScene(from + "_to_" + to));
     }
 
     /**
