@@ -2,25 +2,13 @@ package bingo {
 
 import com.whirled.contrib.simplegame.*;
 
-import flash.display.Sprite;
-import flash.events.Event;
-import flash.events.MouseEvent;
-import flash.events.TimerEvent;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
-import flash.utils.Timer;
 
 public class GameMode extends AppMode
 {
     override protected function setup () :void
     {
-        // timers
-        _newBallTimer = new Timer(Constants.NEW_BALL_DELAY_S * 1000, 1);
-        _newBallTimer.addEventListener(TimerEvent.TIMER, handleNewBallTimerExpired);
-
-        _newRoundTimer = new Timer(Constants.NEW_ROUND_DELAY_S * 1000, 1);
-        _newRoundTimer.addEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
-
         // state change events
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
@@ -54,14 +42,12 @@ public class GameMode extends AppMode
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
         BingoMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
 
-        _newBallTimer.removeEventListener(TimerEvent.TIMER, handleNewBallTimerExpired);
-        _newRoundTimer.removeEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
-
         _hudController.destroy();
     }
 
     override public function update (dt :Number) :void
     {
+        super.update(dt);
         this.sendStateChanges();
     }
 
@@ -161,16 +147,16 @@ public class GameMode extends AppMode
 
     protected function startNewBallTimer () :void
     {
-        _newBallTimer.reset();
-        _newBallTimer.start();
+        this.stopNewBallTimer();
+        this.createTimer(Constants.NEW_BALL_DELAY_S, handleNewBallTimerExpired, false, NEW_BALL_TIMER_NAME);
     }
 
     protected function stopNewBallTimer () :void
     {
-        _newBallTimer.stop();
+        this.destroyObjectNamed(NEW_BALL_TIMER_NAME);
     }
 
-    protected function handleNewBallTimerExpired (e :TimerEvent) :void
+    protected function handleNewBallTimerExpired () :void
     {
         this.createNewBall();
     }
@@ -199,16 +185,16 @@ public class GameMode extends AppMode
 
     protected function startNewRoundTimer () :void
     {
-        _newRoundTimer.reset();
-        _newRoundTimer.start();
+        this.stopNewRoundTimer();
+        this.createTimer(Constants.NEW_ROUND_DELAY_S, handleNewRoundTimerExpired, false, NEW_ROUND_TIMER_NAME);
     }
 
     protected function stopNewRoundTimer () :void
     {
-        _newRoundTimer.stop();
+        this.destroyObjectNamed(NEW_ROUND_TIMER_NAME);
     }
 
-    protected function handleNewRoundTimerExpired (e :TimerEvent) :void
+    protected function handleNewRoundTimerExpired () :void
     {
         if (null == _expectedState) {
             _expectedState = BingoMain.model.curState.clone();
@@ -228,10 +214,10 @@ public class GameMode extends AppMode
     protected var _hudController :HUDController;
     protected var _winnerText :TextField;
 
-    protected var _newBallTimer :Timer;
-    protected var _newRoundTimer :Timer;
-
     protected var _calledBingoThisRound :Boolean;
+
+    protected static const NEW_BALL_TIMER_NAME :String = "NewBallTimer";
+    protected static const NEW_ROUND_TIMER_NAME :String = "NewRoundTimer";
 
 }
 

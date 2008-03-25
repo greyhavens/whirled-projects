@@ -1,6 +1,7 @@
 package bingo {
 
 import com.whirled.AVRGameControlEvent;
+import com.whirled.contrib.simplegame.SimObject;
 
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
@@ -10,7 +11,7 @@ import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
-public class HUDController
+public class HUDController extends SimObject
 {
     public function HUDController ()
     {
@@ -46,6 +47,7 @@ public class HUDController
         this.updateBall();
         this.updateBingoButton();
         this.handleSizeChanged();
+        this.updateBallTimer(1);
     }
 
     public function destroy () :void
@@ -59,7 +61,7 @@ public class HUDController
         BingoMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
     }
 
-    public function update (percentTimeRemaining :Number) :void
+    protected function updateBallTimer (percentTimeRemaining :Number) :void
     {
         var timer :MovieClip = _hud["inst_timer"];
         var totalFrames :int = timer.totalFrames;
