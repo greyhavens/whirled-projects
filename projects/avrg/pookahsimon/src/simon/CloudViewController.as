@@ -125,9 +125,27 @@ public class CloudViewController
         this.scoresTextField.text = "";
     }
 
+    protected function drawWaitForNextRoundText () :void
+    {
+        this.canScrollUp = false;
+        this.canScrollDown = false;
+
+        this.playersTextField.text = "You will\nplay when\nthe next\nround\nbegins";
+        this.scoresTextField.text = "";
+    }
+
     protected function drawNamesAndScores () :void
     {
         var currentPlayers :Array = SimonMain.model.curState.players;   // players currently playing
+
+        // Has this player played a game yet? Tell them they will join at the beginning
+        // of the next round if not.
+        _hasPlayedGame = (_hasPlayedGame ||  ArrayUtil.contains(currentPlayers, SimonMain.localPlayerId));
+        if (!_hasPlayedGame) {
+            this.drawWaitForNextRoundText();
+            return;
+        }
+
         var allPlayers :Array = SimonMain.model.getPlayerOids();        // all the players, playing or not
 
         // remove current players from all players
@@ -257,6 +275,7 @@ public class CloudViewController
     protected var _cloud :MovieClip;
     protected var _collapsed :Boolean;
     protected var _firstVisibleRow :int;
+    protected var _hasPlayedGame :Boolean;
 
     protected static const COLLAPSED_OFFSET :Point = new Point(0, -20);
     protected static const EXPANDED_OFFSET :Point = new Point(-220, -20);
