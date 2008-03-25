@@ -32,13 +32,21 @@ import ghostbusters.Dimness;
 import ghostbusters.Game;
 import ghostbusters.GameController;
 import ghostbusters.GameModel;
+import ghostbusters.Ghost;
 import ghostbusters.HUD;
 
 public class FightPanel extends FrameSprite
 {
-    public function FightPanel ()
+    public function FightPanel (ghost :Ghost)
     {
-        buildUI();
+        _ghost = ghost;
+
+        this.addChild(_ghost);
+        _ghost.x = Game.stageSize.width - 250;
+        _ghost.y = 100;
+
+        _dimness = new Dimness(0.8, true);
+        this.addChild(_dimness);
 
         _frame = new GameFrame();
 
@@ -53,7 +61,7 @@ public class FightPanel extends FrameSprite
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
         return (_minigame && _minigame.hitTestPoint(x, y, shapeFlag)) ||
-            (_ghost && _ghost.hitTestPoint(x, y, shapeFlag));
+            _ghost.hitTestPoint(x, y, shapeFlag);
     }
 
     public function startGame () :void
@@ -67,7 +75,7 @@ public class FightPanel extends FrameSprite
             _frame.y = (Game.stageSize.height - _frame.height) / 2 - FRAME_DISPLACEMENT_Y;
         }
 
-        var selectedWeapon :int = Game.gameController.panel.hud.getWeaponType();
+        var selectedWeapon :int = Game.panel.hud.getWeaponType();
 
         if (selectedWeapon == HUD.LOOT_LANTERN) {
             _minigame.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 1);
@@ -113,7 +121,7 @@ public class FightPanel extends FrameSprite
     {
         // at the moment, there is no visible effect other than the avatar state change
         if (playerId == Game.ourPlayerId) {
-            Game.gameController.setAvatarState("Defeat");
+            Game.setAvatarState("Defeat");
 
             // cancel minigame
             endFight();
@@ -122,71 +130,42 @@ public class FightPanel extends FrameSprite
 
     public function showGhostTriumph () :void
     {
-        if (_ghost != null && _ghost.parent != null) {
-            var panel :DisplayObject = this;
-            _ghost.triumph(function () :void {
-                Game.server.ghostFullyGone();
-            });
-        }
+        var panel :DisplayObject = this;
+        _ghost.triumph(function () :void {
+            Game.server.ghostFullyGone();
+        });
     }
 
     public function showGhostDamage () :void
     {
-        if (_ghost != null && _ghost.parent != null) {
-            _ghost.damaged();
-        }
+        _ghost.damaged();
     }
 
     public function showGhostAttack (playerId :int) :void
     {
-        if (_ghost != null && _ghost.parent != null) {
-            _ghost.attack();
-        }
+        _ghost.attack();
         if (playerId == Game.ourPlayerId) {
             Game.control.playAvatarAction("Reel");
         }
     }
 
-    public function newRoom () :void
-    {
-        _battleLoop = Sound(new Content.BATTLE_LOOP_AUDIO()).play();
-        updateGhost();
-    }
-
     override protected function handleAdded (... ignored) :void
     {
         super.handleAdded();
-        updateGhost();
-//        Game.control.addEventListener(AVRGameControlEvent.PLAYER_CHANGED, playerChanged);
+        _battleLoop = Sound(new Content.BATTLE_LOOP_AUDIO()).play();
     }
 
     override protected function handleRemoved (... ignored) :void
     {
         super.handleRemoved();
-        updateGhost();
         _battleLoop.stop();
-//        Game.control.removeEventListener(AVRGameControlEvent.PLAYER_CHANGED, playerChanged);
     }
-
-    protected function buildUI () :void
-    {
-        _dimness = new Dimness(0.8, true);
-        this.addChild(_dimness);
-    }
-
-    protected var counter :int;
 
     override protected function handleFrame (... ignored) :void
     {
         // TODO: when we have real teams, we have a fixed order of players, but for now we
         // TODO: just grab the first six in the order the client exports them
 
-        if (--counter < 0) {
-            counter = Game.FRAMES_PER_REPORT;
-            Game.log.debug("Frame handler running: " + this);
-        }
-
-//        Game.profile(updateSpotlights);
         updateSpotlights();
 
         if (_minigame != null) {
@@ -195,7 +174,7 @@ public class FightPanel extends FrameSprite
 
             } else if (_minigame.currentGame.isDone) {
                 if (_minigame.currentGame.gameResult.success == MicrogameResult.SUCCESS) {
-                    CommandEvent.dispatch(this, FightController.GHOST_ATTACKED,
+                    CommandEvent.dispatch(this, GameController.GHOST_ATTACKED,
                                           _minigame.currentGame.gameResult);
                 }
                 if (_minigame != null) {
@@ -237,25 +216,6 @@ public class FightPanel extends FrameSprite
         // TODO: remove spotlights when people leave
     }
 
-    // we've been added or removed or entered a new room or the ghost has changed,
-    // either way it's fine to just reset the ghost, since it's pretty much stateless
-    protected function updateGhost () :void
-    {
-        if (_ghost != null) {
-            _ghost.handler.stop();
-            if (_ghost.parent == this) {
-                this.removeChild(_ghost);
-            }
-        }
-
-        if (this.parent != null && Game.model.ghostId != null) {
-            _ghost = new SpawnedGhost(respondToState);
-            _ghost.x = Game.stageSize.width - 250;
-            _ghost.y = 100;
-            this.addChild(_ghost);
-        }
-    }
-
     protected function messageReceived (event: AVRGameControlEvent) :void
     {
         if (event.name == Codes.MSG_GHOST_ATTACKED) {
@@ -272,24 +232,16 @@ public class FightPanel extends FrameSprite
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
         if (evt.name == Codes.PROP_STATE) {
-            respondToState();
+            if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH) {
+                showGhostTriumph();
 
-        } else if (evt.name == Codes.PROP_GHOST_ID) {
-            updateGhost();
+            } else if (Game.model.state == GameModel.STATE_GHOST_DEFEAT) {
+                showGhostDeath();
+            }
         }
     }
 
-    protected function respondToState () :void
-    {
-        if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH) {
-            showGhostTriumph();
-
-        } else if (Game.model.state == GameModel.STATE_GHOST_DEFEAT) {
-            showGhostDeath();
-        }
-    }
-
-    protected var _ghost :SpawnedGhost;
+    protected var _ghost :Ghost;
 
     protected var _dimness :Dimness;
 

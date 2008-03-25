@@ -29,18 +29,14 @@ import com.threerings.util.ClassUtil;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Random;
 
-import ghostbusters.Codes;
-import ghostbusters.Content;
-import ghostbusters.Dimness;
-import ghostbusters.GameController;
-import ghostbusters.Game;
-import ghostbusters.GameModel;
-import ghostbusters.PerPlayerProperties;
+import ghostbusters.*;
 
 public class SeekPanel extends FrameSprite
 {
-    public function SeekPanel ()
+    public function SeekPanel (ghost :Ghost)
     {
+        _ghost = ghost;
+
         _dimness = new Dimness(0.9, true);
         this.addChild(_dimness);
 
@@ -48,6 +44,13 @@ public class SeekPanel extends FrameSprite
         this.addChild(_lightLayer);
 
         _maskLayer = new Sprite();
+        if (_ghost != null) {
+            this.addChild(_ghost);
+            this.addChild(_maskLayer);
+            _ghost.mask = _maskLayer;
+        }
+
+        _lanterns = new Dictionary();
 
         Game.control.state.addEventListener(
             AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
@@ -60,31 +63,19 @@ public class SeekPanel extends FrameSprite
     override public function hitTestPoint (
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
-        return _ghost && _ghost.hitTestPoint(x, y, shapeFlag);
-    }
-
-    public function get ghost () :HidingGhost
-    {
-        return _ghost;
-    }
-
-    public function newRoom () :void
-    {
-        updateGhost();
+        return _ghost != null && _ghost.hitTestPoint(x, y, shapeFlag);
     }
 
     override protected function handleAdded (... ignored) :void
     {
         super.handleAdded();
         _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
-        updateGhost();
     }
 
     override protected function handleRemoved (... ignored) :void
     {
         super.handleRemoved();
         _lanternLoop.stop();
-        updateGhost();
     }
 
     protected function messageReceived (event: AVRGameControlEvent) :void
@@ -124,13 +115,8 @@ public class SeekPanel extends FrameSprite
 
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
-        if (evt.name == Codes.PROP_GHOST_ID) {
-            updateGhost();
-            return;
-        }
-
-        // if the ghost is appearing, ignore network events
-        if (_lanterns == null) {
+        // if there's no ghost or it's busy appearing, nothing here to do
+        if (_ghost == null || _lanterns == null) {
             return;
         }
 
@@ -171,7 +157,7 @@ public class SeekPanel extends FrameSprite
 
             if (_lanterns != null && _zapping == 0 && _ghost.hitTestPoint(p.x, p.y, true)) {
                 // the player is hovering right over the ghost!
-                CommandEvent.dispatch(this, SeekController.ZAP_GHOST);
+                CommandEvent.dispatch(this, GameController.ZAP_GHOST);
             }
         }
 
@@ -207,51 +193,6 @@ public class SeekPanel extends FrameSprite
     }
 
     // GHOST MANAGEMENT
-
-    // we've been added or removed or entered a new room or the ghost has changed,
-    // either way it's fine to just reset the ghost, since it's pretty much stateless
-    protected function updateGhost () :void
-    {
-        if (_ghost != null) {
-            unmaskGhost();
-            if (_ghost.parent != null) {
-                this.removeChild(_ghost);
-            }
-        }
-
-        if (this.parent != null && Game.model.ghostId != null) {
-            _ghost = new HidingGhost(200, function () :void {
-                if (Game.model.state == GameModel.STATE_APPEARING) {
-                    appearGhost();
-                }
-            });
-            this.addChild(_ghost);
-
-            _lanterns = new Dictionary();
-            maskGhost();
-        }
-    }
-
-    protected function maskGhost () :void
-    {
-        if (_ghost != null) {
-            if (_maskLayer.parent == null) {
-                this.addChild(_maskLayer);
-            }
-            _ghost.mask = _maskLayer;
-        }
-    }
-
-    protected function unmaskGhost () :void
-    {
-        if (_ghost != null) {
-            if (_maskLayer.parent != null) {
-                this.removeChild(_maskLayer);
-            }
-            _ghost.mask = null;
-        }
-    }
-
     protected function appearGhost () :void
     {
         for each (var lantern :Lantern in _lanterns) {
@@ -262,7 +203,9 @@ public class SeekPanel extends FrameSprite
             Game.server.ghostFullyAppeared();
         });
         _ghost.newTarget(new Point(Game.stageSize.width - 250, 100));
-        unmaskGhost();
+
+        _ghost.mask = null;
+        this.removeChild(_maskLayer);
     }
 
     // LANTERN MANAGEMENT
@@ -313,7 +256,7 @@ public class SeekPanel extends FrameSprite
 
     protected var _lanterns :Dictionary;
 
-    protected var _ghost :HidingGhost;
+    protected var _ghost :Ghost;
 
     protected var _zapping :int;
 

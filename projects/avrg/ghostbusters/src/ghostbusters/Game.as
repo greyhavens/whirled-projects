@@ -22,11 +22,6 @@ import com.threerings.util.Log;
 import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
 
-import ghostbusters.fight.FightController;
-
-import ghostbusters.seek.HidingGhost;
-import ghostbusters.seek.SeekController;
-
 [SWF(width="700", height="500")]
 public class Game extends Sprite
 {
@@ -37,13 +32,10 @@ public class Game extends Sprite
 
     public static var control :AVRGameControl;
 
-    public static var gameController :GameController;
-    public static var seekController :SeekController;
-    public static var fightController :FightController;
+    public static var server :Server;
 
     public static var model :GameModel;
-
-    public static var server :Server;
+    public static var panel :GamePanel;
 
     public static var stageSize :Rectangle;
     public static var scrollSize :Rectangle;
@@ -67,27 +59,22 @@ public class Game extends Sprite
         server = new Server();
         model = new GameModel();
 
-        gameController = new GameController();
-        seekController = new SeekController();
-        fightController = new FightController();
+        var gameController :GameController = new GameController();
 
-        addChild(gameController.panel);
+        addChild(panel = gameController.panel);
 
-        control.setHitPointTester(gameController.panel.hitTestPoint);
+        control.setHitPointTester(panel.hitTestPoint);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
         control.addEventListener(
             AVRGameControlEvent.ENTERED_ROOM,
-            function (... ignored) :void { newRoom(); gameController.panel.reloadView(); });
+            function (... ignored) :void { newRoom(); });
 
         control.addEventListener(
             AVRGameControlEvent.SIZE_CHANGED,
-            function (... ignored) :void { newSize(); gameController.panel.reloadView(); });
-
-        control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, playerEntered);
-        control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, playerLeft);
+            function (... ignored) :void { newSize(); reloadView(); });
 
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
 
@@ -102,6 +89,14 @@ public class Game extends Sprite
         var t :Number = getTimer();
         f();
         log.debug("Profiling(" + f + ") = " + (getTimer() - t));
+    }
+
+    public static function setAvatarState (state :String) :void
+    {
+        var info :AVRGameAvatar = control.getAvatarInfo(Game.ourPlayerId);
+        if (info != null && info.state != state) {
+            control.setAvatarState(state);
+        }
     }
 
     public static function getTeam (excludeDead :Boolean = false) :Array
@@ -128,12 +123,6 @@ public class Game extends Sprite
     protected function handleUnload (event :Event) :void
     {
         log.info("Removed from stage - Unloading...");
-
-        gameController.shutdown();
-        fightController.shutdown();
-        seekController.shutdown();
-
-        model.shutdown();
     }
 
     protected function handleAdded (event :Event) :void
@@ -141,7 +130,7 @@ public class Game extends Sprite
         log.info("Added to stage: Initializing...");
         newSize();
         newRoom();
-        gameController.panel.reloadView();
+        reloadView();
 //        gameController.panel.showSplash();
     }
 
@@ -196,21 +185,18 @@ public class Game extends Sprite
         }
 
         server.newRoom();
-        seekController.panel.newRoom();
-        fightController.panel.newRoom();
+
+        panel.newGhost();
+    }
+
+    protected function reloadView () :void
+    {
+        panel.reloadView();
     }
 
     protected function gotControl (evt :AVRGameControlEvent) :void
     {
         log.debug("gotControl(): " + evt);
-    }
-
-    protected function playerEntered (evt :AVRGameControlEvent) :void
-    {
-    }
-
-    protected function playerLeft (evt :AVRGameControlEvent) :void
-    {
     }
 }
 }

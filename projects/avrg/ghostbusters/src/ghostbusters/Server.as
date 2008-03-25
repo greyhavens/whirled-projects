@@ -115,12 +115,10 @@ public class Server
         }
 
         // TODO: if the controlling instance toggles the lantern, this fails - FIX FIX FIX
-        var ghost :GhostBase = Game.seekController.panel.ghost;
-        if (ghost == null) {
+        if (Game.panel.ghost == null) {
             return;
         }
-
-        var ghostBounds :Rectangle = ghost.getGhostBounds(); 
+        var ghostBounds :Rectangle = Game.panel.ghost.getGhostBounds();
         if (ghostBounds == null) {
             return;
         }

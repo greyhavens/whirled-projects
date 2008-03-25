@@ -26,6 +26,9 @@ import com.threerings.flash.AnimationManager;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 
+import ghostbusters.fight.FightPanel;
+import ghostbusters.seek.SeekPanel;
+
 public class GamePanel extends Sprite
 {
     public var hud :HUD;
@@ -59,6 +62,16 @@ public class GamePanel extends Sprite
         return false;
     }
 
+    public function get ghost () :Ghost
+    {
+        return _ghost;
+    }
+
+    public function get subPanel () :DisplayObject
+    {
+        return _panel;
+    }
+
     public function get seeking () :Boolean
     {
         return _seeking;
@@ -70,10 +83,21 @@ public class GamePanel extends Sprite
         updateState();
     }
 
+    public function newGhost () :void
+    {
+        if (Game.model.ghostId != null) {
+            _ghost = null;
+
+            new Ghost(function (g :Ghost) :void {
+                _ghost = g;
+                updateState();
+            });
+        }
+    }
+
     public function reloadView () :void
     {
         hud.reloadView();
-        updateState();
     }
 
     protected function coinsAwarded (evt :AVRGameControlEvent) :void
@@ -96,6 +120,9 @@ public class GamePanel extends Sprite
         if (evt.name == Codes.PROP_STATE) {
             _seeking = false;
             updateState();
+
+        } else if (evt.name == Codes.PROP_GHOST_ID) {
+            newGhost();
         }
     }
 
@@ -132,20 +159,22 @@ public class GamePanel extends Sprite
             Game.log.warning("Unknown state requested [state=" + Game.model.state + "]");
         }
 
-        fixPanel(seekPanel, Game.seekController.panel);
-        fixPanel(fightPanel, Game.fightController.panel);
+        setPanel(seekPanel ? SeekPanel : (fightPanel ? FightPanel : null));
 
-        Game.gameController.setAvatarState(avatarState);
+        Game.setAvatarState(avatarState);
     }
 
-    protected function fixPanel (show :Boolean, panel :DisplayObject) :void
+    protected function setPanel (pClass :Class) :void
     {
-        if (show) {
-            if (panel.parent != this) {
-                this.addChildAt(panel, 0);
-            }
-        } else if (panel.parent == this) {
-            this.removeChild(panel);
+        if (pClass != null && _panel is pClass) {
+            return;
+        }
+        if (_panel != null) {
+            this.removeChild(_panel);
+        }
+        if (pClass != null) {
+            _panel = new pClass(_ghost);
+            this.addChildAt(_panel, 0);
         }
     }
 
@@ -193,6 +222,11 @@ public class GamePanel extends Sprite
     }
 
     protected var _seeking :Boolean = false;
+
+    protected var _panel :DisplayObject;
+
+    protected var _ghost :Ghost;
+
     protected var _box :Box;
 
     protected var _splash :MovieClip = MovieClip(new Content.SPLASH());
