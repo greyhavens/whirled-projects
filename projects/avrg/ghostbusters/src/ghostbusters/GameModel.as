@@ -116,12 +116,12 @@ public class GameModel
 
     public function get ghostId () :String
     {
-        return Game.control.state.getProperty(Codes.PROP_GHOST_ID) as String;
+        return Game.control.state.getRoomProperty(Codes.PROP_GHOST_ID) as String;
     }
 
     public function set ghostId (id :String) :void
     {
-        Game.control.state.setProperty(Codes.PROP_GHOST_ID, id, false);
+        Game.control.state.setRoomProperty(Codes.PROP_GHOST_ID, id, false);
     }
 
     public function isGhostDead () :Boolean
