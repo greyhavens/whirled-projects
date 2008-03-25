@@ -1,7 +1,7 @@
 package ghostbusters.fight.common {
 
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 public class GameTimer extends SimObject
 {

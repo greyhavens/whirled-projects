@@ -1,7 +1,7 @@
 package ghostbusters.fight.common {
 
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 public class OutroMode extends AppMode
 {
@@ -37,9 +37,9 @@ public class OutroMode extends AppMode
 
 }
 
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.objects.*;
-import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import ghostbusters.fight.common.*;
 

@@ -3,10 +3,10 @@ package ghostbusters.fight.potions {
 import com.threerings.flash.DisplayUtil;
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.ColorMatrix;
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.resource.*;
-import com.whirled.contrib.core.tasks.*;
-import com.whirled.contrib.core.util.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.MovieClip;
 import flash.events.MouseEvent;

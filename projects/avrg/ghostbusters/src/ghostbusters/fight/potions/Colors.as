@@ -1,6 +1,6 @@
 package ghostbusters.fight.potions {
     
-import com.whirled.contrib.core.util.Rand;
+import com.whirled.contrib.simplegame.util.Rand;
         
 public class Colors
 {

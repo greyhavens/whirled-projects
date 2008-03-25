@@ -2,9 +2,9 @@ package ghostbusters.fight.ouija {
 
 import com.threerings.flash.Vector2;
 
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.objects.*;
-import com.whirled.contrib.core.util.Rand;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;

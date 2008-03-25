@@ -1,8 +1,8 @@
 package ghostbusters.fight.ouija {
     
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.tasks.*;
-import com.whirled.contrib.core.util.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.util.*;
 
 import ghostbusters.fight.*;
 import ghostbusters.fight.common.*;

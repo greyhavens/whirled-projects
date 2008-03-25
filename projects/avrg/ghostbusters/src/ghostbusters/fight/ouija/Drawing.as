@@ -2,8 +2,8 @@ package ghostbusters.fight.ouija {
 
 import com.threerings.flash.Vector2;
 
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.objects.SceneObject;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;

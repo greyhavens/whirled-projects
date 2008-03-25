@@ -1,6 +1,6 @@
 package ghostbusters.fight.common {
 
-import com.whirled.contrib.core.resource.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 public class Resources
 {

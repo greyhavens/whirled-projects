@@ -1,6 +1,6 @@
 package ghostbusters.fight.ouija {
 
-import com.whirled.contrib.core.objects.SceneObject;
+import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;

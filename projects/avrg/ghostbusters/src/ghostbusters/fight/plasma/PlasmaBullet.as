@@ -1,8 +1,8 @@
 package ghostbusters.fight.plasma {
 
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.objects.SceneObject;
-import com.whirled.contrib.core.resource.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.DisplayObject;
 

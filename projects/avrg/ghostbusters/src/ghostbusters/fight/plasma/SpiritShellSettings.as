@@ -1,6 +1,6 @@
 package ghostbusters.fight.plasma {
     
-import com.whirled.contrib.core.util.NumRange;
+import com.whirled.contrib.simplegame.util.NumRange;
     
 public class SpiritShellSettings
 {

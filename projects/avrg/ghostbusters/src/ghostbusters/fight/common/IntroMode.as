@@ -1,9 +1,9 @@
 package ghostbusters.fight.common {
     
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.objects.*;
-import com.whirled.contrib.core.resource.*;
-import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.MovieClip;
 import flash.text.TextField;
@@ -53,10 +53,10 @@ public class IntroMode extends AppMode
 
 }
 
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.tasks.SerialTask;
-import com.whirled.contrib.core.tasks.TimedTask;
-import com.whirled.contrib.core.tasks.SelfDestructTask;    
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.tasks.SerialTask;
+import com.whirled.contrib.simplegame.tasks.TimedTask;
+import com.whirled.contrib.simplegame.tasks.SelfDestructTask;    
 
 class TimerObj extends SimObject
 {

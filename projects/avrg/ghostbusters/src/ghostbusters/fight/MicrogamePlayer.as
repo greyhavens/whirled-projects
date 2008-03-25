@@ -1,8 +1,8 @@
 package ghostbusters.fight {
     
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.resource.*;
-import com.whirled.contrib.core.util.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.Sprite;
 import flash.geom.Rectangle;

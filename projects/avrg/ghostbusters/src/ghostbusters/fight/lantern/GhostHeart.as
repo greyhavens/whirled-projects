@@ -1,9 +1,9 @@
 package ghostbusters.fight.lantern {
 
 import com.whirled.contrib.ColorMatrix;
-import com.whirled.contrib.core.objects.SceneObject;
-import com.whirled.contrib.core.resource.*;
-import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;

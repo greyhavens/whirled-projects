@@ -4,7 +4,7 @@ import flash.display.Shape;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 
-import com.whirled.contrib.core.*;
+import com.whirled.contrib.simplegame.*;
 import flash.events.Event;
 
 public class SplashMode extends AppMode

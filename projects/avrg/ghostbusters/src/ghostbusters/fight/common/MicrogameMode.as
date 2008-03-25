@@ -1,6 +1,6 @@
 package ghostbusters.fight.common {
     
-import com.whirled.contrib.core.*;
+import com.whirled.contrib.simplegame.*;
 
 import ghostbusters.fight.Microgame;
 import ghostbusters.fight.MicrogameResult;

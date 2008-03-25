@@ -1,9 +1,9 @@
 package ghostbusters.fight.common {
 
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.objects.*;
-import com.whirled.contrib.core.tasks.*;
-import com.whirled.contrib.core.util.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -90,8 +90,8 @@ public class WinLoseNotification extends SceneObject
 
 }
 
-import com.whirled.contrib.core.SimObject;
-import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.tasks.*;
 
 class WinLoseTimer extends SimObject
 {
