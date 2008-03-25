@@ -185,7 +185,7 @@ public class GameMode extends AppMode
     protected function startNewRoundTimer () :void
     {
         this.stopNewRoundTimer();
-        this.addObject(new SimpleTimer(Constants.NEW_BALL_DELAY_S, handleNewBallTimerExpired, false, NEW_ROUND_TIMER_NAME));
+        this.addObject(new SimpleTimer(Constants.NEW_BALL_DELAY_S, handleNewRoundTimerExpired, false, NEW_ROUND_TIMER_NAME));
     }
 
     protected function stopNewRoundTimer () :void
