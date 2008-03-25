@@ -1,8 +1,9 @@
 package bingo {
 
 import com.whirled.AVRGameControlEvent;
-import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.objects.*;
 
+import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.events.MouseEvent;
@@ -11,15 +12,21 @@ import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
-public class HUDController extends SimObject
+public class HUDController extends SceneObject
 {
     public function HUDController ()
     {
         var hudClass :Class = BingoMain.resourcesDomain.getDefinition("HUD") as Class;
         _hud = new hudClass();
+    }
 
-        BingoMain.sprite.addChild(_hud);
+    override public function get displayObject () :DisplayObject
+    {
+        return _hud;
+    }
 
+    override protected function addedToDB () :void
+    {
         // fix the text on the ball
         // @TODO - is TextFieldAutoSize accessible in the FAT? where?
         var ball :MovieClip = _hud["bingo_ball_inst"];
@@ -47,10 +54,10 @@ public class HUDController extends SimObject
         this.updateBall();
         this.updateBingoButton();
         this.handleSizeChanged();
-        this.updateBallTimer(1);
+        this.updateBallTimer();
     }
 
-    public function destroy () :void
+    override protected function removedFromDB () :void
     {
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, updateScores);
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, updateBall);
@@ -61,14 +68,19 @@ public class HUDController extends SimObject
         BingoMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
     }
 
-    protected function updateBallTimer (percentTimeRemaining :Number) :void
+    override protected function update (dt :Number) :void
+    {
+        this.updateBallTimer();
+    }
+
+    protected function updateBallTimer () :void
     {
         var timer :MovieClip = _hud["inst_timer"];
         var totalFrames :int = timer.totalFrames;
 
         // 1.0 -> first frame; 0.0 -> last frame
 
-        var curFrame :int = 1 + (totalFrames * (1.0 - percentTimeRemaining)); // frames are indexed from 1
+        var curFrame :int = 1 + (totalFrames * (1.0 - this.gameMode.percentTimeTillNextBall)); // frames are indexed from 1
         curFrame = Math.min(curFrame, totalFrames);
         curFrame = Math.max(curFrame, 1);
 
@@ -170,6 +182,11 @@ public class HUDController extends SimObject
         _calledBingoThisRound = false;
         this.updateBingoButton();
         this.updateBall();
+    }
+
+    protected function get gameMode () :GameMode
+    {
+        return this.db as GameMode;
     }
 
     protected var _hud :MovieClip;

@@ -1,6 +1,7 @@
 package bingo {
 
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.*;
 
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -16,7 +17,7 @@ public class GameMode extends AppMode
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
         // visuals
-        _hudController = new HUDController();
+        this.addObject(new HUDController(), this.modeSprite);
 
         _winnerText = new TextField();
         _winnerText.autoSize = TextFieldAutoSize.LEFT;
@@ -41,8 +42,6 @@ public class GameMode extends AppMode
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
         BingoMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
-
-        _hudController.destroy();
     }
 
     override public function update (dt :Number) :void
@@ -148,7 +147,7 @@ public class GameMode extends AppMode
     protected function startNewBallTimer () :void
     {
         this.stopNewBallTimer();
-        this.createTimer(Constants.NEW_BALL_DELAY_S, handleNewBallTimerExpired, false, NEW_BALL_TIMER_NAME);
+        this.addObject(new SimpleTimer(Constants.NEW_BALL_DELAY_S, handleNewBallTimerExpired, false, NEW_BALL_TIMER_NAME));
     }
 
     protected function stopNewBallTimer () :void
@@ -186,7 +185,7 @@ public class GameMode extends AppMode
     protected function startNewRoundTimer () :void
     {
         this.stopNewRoundTimer();
-        this.createTimer(Constants.NEW_ROUND_DELAY_S, handleNewRoundTimerExpired, false, NEW_ROUND_TIMER_NAME);
+        this.addObject(new SimpleTimer(Constants.NEW_BALL_DELAY_S, handleNewBallTimerExpired, false, NEW_ROUND_TIMER_NAME));
     }
 
     protected function stopNewRoundTimer () :void
@@ -207,11 +206,24 @@ public class GameMode extends AppMode
         this.sendStateChanges();
     }
 
+    public function get percentTimeTillNextBall () :Number
+    {
+        var percentTime :Number = 1;
+
+        var timer :SimpleTimer = this.getObjectNamed(NEW_BALL_TIMER_NAME) as SimpleTimer;
+        if (null != timer) {
+            percentTime = timer.timeLeft / Constants.NEW_BALL_DELAY_S;
+            percentTime = Math.max(percentTime, 0);
+            percentTime = Math.min(percentTime, 1);
+        }
+
+        return percentTime;
+    }
+
     protected var _expectedState :SharedState;
     protected var _expectedScores :Scoreboard;
 
     protected var _cardView :BingoCardView;
-    protected var _hudController :HUDController;
     protected var _winnerText :TextField;
 
     protected var _calledBingoThisRound :Boolean;
