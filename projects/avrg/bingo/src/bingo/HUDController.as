@@ -59,6 +59,20 @@ public class HUDController
         BingoMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
     }
 
+    public function update (percentTimeRemaining :Number) :void
+    {
+        var timer :MovieClip = _hud["inst_timer"];
+        var totalFrames :int = timer.totalFrames;
+
+        // 1.0 -> first frame; 0.0 -> last frame
+
+        var curFrame :int = 1 + (totalFrames * (1.0 - percentTimeRemaining)); // frames are indexed from 1
+        curFrame = Math.min(curFrame, totalFrames);
+        curFrame = Math.max(curFrame, 1);
+
+        timer.gotoAndStop(curFrame);
+    }
+
     protected function handleSizeChanged (...ignored) :void
     {
         var loc :Point = this.properLocation;

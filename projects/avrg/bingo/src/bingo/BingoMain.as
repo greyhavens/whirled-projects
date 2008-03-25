@@ -17,8 +17,6 @@ import flash.system.ApplicationDomain;
 [SWF(width="700", height="500")]
 public class BingoMain extends Sprite
 {
-    public static var log :Log = Log.getLog(BingoMain);
-
     public static var control :AVRGameControl;
     public static var model :Model;
     public static var controller :Controller;
@@ -135,5 +133,7 @@ public class BingoMain extends Sprite
     protected var _addedToStage :Boolean;
     protected var _resourcesLoaded :Boolean;
     protected var _introView :BingoIntroView;
+
+    protected static var log :Log = Log.getLog(BingoMain);
 }
 }

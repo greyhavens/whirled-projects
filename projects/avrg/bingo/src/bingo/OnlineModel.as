@@ -1,5 +1,6 @@
 package bingo {
 
+import com.threerings.util.Log;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.StateControl;
 
@@ -64,7 +65,7 @@ public class OnlineModel extends Model
 
         // is the state actually being changed?
         if (newState.isEqual(_curState)) {
-            BingoMain.log.info("ignoring redundant state change request: " + newState);
+            log.info("ignoring redundant state change request: " + newState);
             return;
         }
 
@@ -120,7 +121,7 @@ public class OnlineModel extends Model
             break;
 
         default:
-            BingoMain.log.warning("received unrecognized message: " + e.name);
+            log.warning("received unrecognized message: " + e.name);
             break;
         }
     }
@@ -184,7 +185,7 @@ public class OnlineModel extends Model
                 break;
 
             default:
-                BingoMain.log.warning("unrecognized message in requestMessageQueue: " + e.name);
+                log.warning("unrecognized message in requestMessageQueue: " + e.name);
                 break;
             }
         }
@@ -204,7 +205,7 @@ public class OnlineModel extends Model
             break;
 
         default:
-            BingoMain.log.warning("unrecognized property: " + e.name);
+            log.warning("unrecognized property: " + e.name);
             break;
         }
     }
@@ -215,6 +216,8 @@ public class OnlineModel extends Model
     protected var _bingoCalledThisRound :Boolean;
 
     protected var _requestMessageQueue :Array = [];
+
+    protected static var log :Log = Log.getLog(OnlineModel);
 
 }
 
