@@ -2,8 +2,8 @@ package popcraft.puzzle {
 
 import popcraft.*;
 
-import com.whirled.contrib.core.SimObject;
-import com.whirled.contrib.core.AppMode;
+import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.AppMode;
 
 import com.threerings.util.Assert;
 
@@ -13,7 +13,7 @@ import flash.display.Shape;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
-import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 public class PuzzleSwapCursor extends SimObject
 {

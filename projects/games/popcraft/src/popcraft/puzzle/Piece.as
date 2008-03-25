@@ -1,8 +1,8 @@
 package popcraft.puzzle {
 
-import com.whirled.contrib.core.objects.*;
-import com.whirled.contrib.core.resource.SwfResourceLoader;
-import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.resource.SwfResourceLoader;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;

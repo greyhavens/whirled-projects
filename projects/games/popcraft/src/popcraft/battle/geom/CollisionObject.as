@@ -1,8 +1,8 @@
 package popcraft.battle.geom {
     
 import com.threerings.util.Assert;
-import com.whirled.contrib.core.SimObjectRef;
-import com.whirled.contrib.core.util.Collision;
+import com.whirled.contrib.simplegame.SimObjectRef;
+import com.whirled.contrib.simplegame.util.Collision;
 
 import popcraft.battle.CreatureUnit;
     

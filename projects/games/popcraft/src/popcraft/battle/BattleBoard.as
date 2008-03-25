@@ -1,7 +1,7 @@
 package popcraft.battle {
 
-import com.whirled.contrib.core.objects.*;
-import com.whirled.contrib.core.resource.*;
+import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;

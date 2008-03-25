@@ -1,8 +1,8 @@
 package popcraft.battle {
     
-import com.whirled.contrib.core.SimObject;
-import com.whirled.contrib.core.ObjectMessage;
-import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.ObjectMessage;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import popcraft.GameMode;
 

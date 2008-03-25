@@ -1,6 +1,6 @@
 package popcraft.battle {
     
-import com.whirled.contrib.core.*;
+import com.whirled.contrib.simplegame.*;
 
 import popcraft.*;
 import popcraft.battle.ai.*;
@@ -46,8 +46,8 @@ public class GruntCreatureUnit extends CreatureUnit
 
 }
 
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.util.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.util.*;
 import flash.geom.Point;
 
 import popcraft.*;

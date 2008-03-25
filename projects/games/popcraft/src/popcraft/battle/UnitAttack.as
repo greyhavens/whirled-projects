@@ -1,6 +1,6 @@
 package popcraft.battle {
     
-import com.whirled.contrib.core.*;
+import com.whirled.contrib.simplegame.*;
     
 public class UnitAttack
 {

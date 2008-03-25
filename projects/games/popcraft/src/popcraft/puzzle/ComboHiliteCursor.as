@@ -1,8 +1,8 @@
 package popcraft.puzzle {
     
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.objects.*;
-import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.events.MouseEvent;
 import flash.text.TextField;

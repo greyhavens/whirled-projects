@@ -1,8 +1,8 @@
 package popcraft {
     
 import com.threerings.util.RingBuffer;
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.*;
 
 import flash.display.DisplayObject;
 import flash.geom.Point;

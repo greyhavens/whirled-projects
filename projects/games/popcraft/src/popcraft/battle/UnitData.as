@@ -1,6 +1,6 @@
 package popcraft.battle {
 
-import com.whirled.contrib.core.util.*;
+import com.whirled.contrib.simplegame.util.*;
 
 /** Encapsulates immutable data about a particular type of Unit. */
 public class UnitData

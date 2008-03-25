@@ -1,7 +1,7 @@
 package popcraft {
 
 import com.threerings.flash.DisablingButton;
-import com.whirled.contrib.core.resource.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;

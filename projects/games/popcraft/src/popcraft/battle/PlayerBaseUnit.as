@@ -2,11 +2,11 @@ package popcraft.battle {
 
 import com.threerings.flash.Vector2;
 
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.objects.*;
-import com.whirled.contrib.core.resource.*;
-import com.whirled.contrib.core.tasks.*;
-import com.whirled.contrib.core.util.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.util.*;
 
 import popcraft.*;
 

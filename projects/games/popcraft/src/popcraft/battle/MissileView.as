@@ -1,9 +1,9 @@
 package popcraft.battle {
     
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.core.SimObjectRef;
-import com.whirled.contrib.core.objects.SceneObject;
-import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.simplegame.SimObjectRef;
+import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Shape;

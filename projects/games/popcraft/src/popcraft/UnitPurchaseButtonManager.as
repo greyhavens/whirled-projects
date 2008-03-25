@@ -1,6 +1,6 @@
 package popcraft {
 
-import com.whirled.contrib.core.SimObject;
+import com.whirled.contrib.simplegame.SimObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;

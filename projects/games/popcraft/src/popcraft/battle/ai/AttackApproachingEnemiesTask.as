@@ -1,6 +1,6 @@
 package popcraft.battle.ai {
     
-import com.whirled.contrib.core.SimObjectRef;
+import com.whirled.contrib.simplegame.SimObjectRef;
     
 public class AttackApproachingEnemiesTask extends AITaskTree
 {

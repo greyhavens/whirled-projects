@@ -1,6 +1,6 @@
 package popcraft.battle.ai {
     
-import com.whirled.contrib.core.ObjectMessage;
+import com.whirled.contrib.simplegame.ObjectMessage;
 
 import popcraft.battle.*;
     

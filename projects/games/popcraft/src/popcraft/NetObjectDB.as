@@ -1,9 +1,9 @@
 package popcraft {
     
 import com.threerings.flash.DisplayUtil;
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.components.*;
-import com.whirled.contrib.core.objects.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.components.*;
+import com.whirled.contrib.simplegame.objects.*;
 
 import flash.display.DisplayObject;
 

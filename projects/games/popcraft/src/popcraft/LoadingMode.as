@@ -1,7 +1,7 @@
 package popcraft {
     
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.resource.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
 

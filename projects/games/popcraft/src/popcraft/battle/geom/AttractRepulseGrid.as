@@ -1,7 +1,7 @@
 package popcraft.battle.geom {
     
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.core.SimObjectRef;
+import com.whirled.contrib.simplegame.SimObjectRef;
 
 import popcraft.*;
 import popcraft.battle.*;

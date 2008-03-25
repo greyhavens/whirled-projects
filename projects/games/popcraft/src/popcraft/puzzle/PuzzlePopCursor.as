@@ -2,9 +2,9 @@ package popcraft.puzzle {
 
 import popcraft.*;
 
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.objects.*;
-import com.whirled.contrib.core.tasks.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import com.threerings.util.Assert;
 

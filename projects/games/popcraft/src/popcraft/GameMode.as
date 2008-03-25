@@ -4,9 +4,9 @@ import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
 import com.threerings.util.HashSet;
 import com.threerings.util.RingBuffer;
-import com.whirled.contrib.core.*;
-import com.whirled.contrib.core.net.*;
-import com.whirled.contrib.core.util.*;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.net.*;
+import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.DisplayObjectContainer;
 import flash.events.KeyboardEvent;
@@ -41,7 +41,7 @@ public class GameMode extends AppMode
     {
     }
 
-    // from com.whirled.contrib.core.AppMode
+    // from com.whirled.contrib.simplegame.AppMode
     override protected function setup () :void
     {
         _numPlayers = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
@@ -123,7 +123,7 @@ public class GameMode extends AppMode
         }
     }
 
-    // from com.whirled.contrib.core.AppMode
+    // from com.whirled.contrib.simplegame.AppMode
     override protected function destroy () :void
     {
         PopCraft.instance.gameControl.local.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false);

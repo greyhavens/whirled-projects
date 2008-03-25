@@ -1,7 +1,7 @@
 package popcraft.battle.ai {
     
 import com.threerings.util.Assert;
-import com.whirled.contrib.core.*;
+import com.whirled.contrib.simplegame.*;
 
 import popcraft.battle.CreatureUnit;
 
