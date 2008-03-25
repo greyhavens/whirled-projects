@@ -77,6 +77,11 @@ public class HUD extends Sprite
             // not ready yet
             return;
         }
+        if (Game.control.getAvatarInfo(Game.ourPlayerId) == null) {
+            setTimeout(teamUpdated, 100);
+            return;
+        }
+
         var players :Array = Game.getTeam();
         var teamIx :int = 0;
         var hudIx :int = 0;
