@@ -66,6 +66,13 @@ public class HUD extends Sprite
         }
     }
 
+    public function getRightEdge () :int
+    {
+        // put the HUD to the right of the visible screen, or flush with the stage edge
+        return Math.max(0, Math.min(Game.scrollSize.width - MARGIN_LEFT - BORDER_LEFT,
+                                    Game.stageSize.right - _visualHud.width - MARGIN_LEFT));
+    }
+
     public function getWeaponType () :int
     {
         return _lootIx;
@@ -217,11 +224,7 @@ public class HUD extends Sprite
         Game.log.debug("Looks like HUD's width is: " + _hud.width);
         Game.log.debug("Looks like Visual HUD's width is: " + _visualHud.width);
 
-        // put the HUD to the right of the visible screen, or flush with the stage edge
-        var x :int = Math.max(0, Math.min(Game.scrollSize.width - MARGIN_LEFT - BORDER_LEFT,
-                                          Game.stageSize.right - _visualHud.width - MARGIN_LEFT));
-
-        _hud.x = x;
+        _hud.x = getRightEdge();
         _hud.y = 0;
 
         Game.log.debug("Placing hud at (" + x + ", 0)...");

@@ -206,7 +206,8 @@ public class SeekPanel extends FrameSprite
         _ghost.appear(function () :void {
             Game.server.ghostFullyAppeared();
         });
-        _ghost.newTarget(new Point(Game.stageSize.width - 250, 100));
+        var x :int = Game.panel.hud.getRightEdge() - _ghost.getGhostBounds().width/2;
+        _ghost.newTarget(new Point(x, 100));
 
         _ghost.mask = null;
         this.removeChild(_maskLayer);

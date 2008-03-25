@@ -45,7 +45,7 @@ public class FightPanel extends FrameSprite
         this.addChild(_dimness);
 
         this.addChild(_ghost);
-        _ghost.x = Game.stageSize.width - 250;
+        _ghost.x = Game.panel.hud.getRightEdge() - _ghost.getGhostBounds().width/2;
         _ghost.y = 100;
 
         _frame = new GameFrame();
