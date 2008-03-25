@@ -121,7 +121,7 @@ public class GameModel
 
     public function set ghostId (id :String) :void
     {
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_ID, id, false);
+        Game.control.state.setRoomProperty(Codes.PROP_GHOST_ID, id);
     }
 
     public function isGhostDead () :Boolean

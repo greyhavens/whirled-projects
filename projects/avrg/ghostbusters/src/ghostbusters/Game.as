@@ -1,5 +1,9 @@
 //
 // $Id$
+//
+// TODO: A dead player should not change state back to default/fight automatically.
+// TODO: Do something better when the players win and when they lose
+
 
 package ghostbusters {
 
@@ -75,8 +79,6 @@ public class Game extends Sprite
         control.addEventListener(
             AVRGameControlEvent.SIZE_CHANGED,
             function (... ignored) :void { newSize(); reloadView(); });
-
-        control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
 
         if (control.hasControl() && !control.state.getProperty(Codes.PROP_TICKER_RUNNING)) {
             control.state.setProperty(Codes.PROP_TICKER_RUNNING, true, false);
@@ -185,18 +187,12 @@ public class Game extends Sprite
         }
 
         server.newRoom();
-
         panel.newGhost();
     }
 
     protected function reloadView () :void
     {
         panel.reloadView();
-    }
-
-    protected function gotControl (evt :AVRGameControlEvent) :void
-    {
-        log.debug("gotControl(): " + evt);
     }
 }
 }

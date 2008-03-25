@@ -85,9 +85,8 @@ public class GamePanel extends Sprite
 
     public function newGhost () :void
     {
+        _ghost = null;
         if (Game.model.ghostId != null) {
-            _ghost = null;
-
             new Ghost(function (g :Ghost) :void {
                 _ghost = g;
                 updateState();
@@ -104,15 +103,15 @@ public class GamePanel extends Sprite
     {
         var panel :GamePanel = this;
         var flourish :CoinFlourish = new CoinFlourish(evt.value as int, function () :void {
-            Game.log.debug("Stopping Flourish!");
             AnimationManager.stop(flourish);
             panel.removeChild(flourish);
         });
+
         flourish.x = (Game.stageSize.width - flourish.width) / 2;
         flourish.y = 20;
         this.addChild(flourish);
+
         AnimationManager.start(flourish);
-        Game.log.debug("Added and started flourish: " + flourish);
     }
 
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
@@ -131,8 +130,6 @@ public class GamePanel extends Sprite
         var avatarState :String = Codes.ST_PLAYER_DEFAULT;
         var fightPanel :Boolean = false;
         var seekPanel :Boolean = false;
-
-        Game.log.debug("Main Panel entering state: " + Game.model.state);
 
         if (Game.model.state == GameModel.STATE_SEEKING) {
             if (_seeking) {
@@ -171,6 +168,7 @@ public class GamePanel extends Sprite
         }
         if (_panel != null) {
             this.removeChild(_panel);
+            _panel = null;
         }
         if (pClass != null) {
             _panel = new pClass(_ghost);

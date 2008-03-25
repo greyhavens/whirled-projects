@@ -24,6 +24,7 @@ public class Server
     public function newRoom () :void
     {
         if (!Game.control.hasControl()) {
+            Game.log.debug("I don't have control -- returning.");
             return;
         }
         maybeSpawnGhost();
@@ -232,7 +233,6 @@ public class Server
 
         // initialize the room with a ghost
         var id :String = Content.GHOSTS[Game.random.nextInt(Content.GHOSTS.length)].id;
-        Game.log.debug("Choosing ghost [id=" + id + "]");
 
         Game.model.ghostZest = Game.model.ghostMaxZest = 150 + 100 * Game.random.nextNumber();
         Game.model.ghostHealth = Game.model.ghostMaxHealth = 100;

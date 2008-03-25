@@ -58,6 +58,10 @@ public class SeekPanel extends FrameSprite
             AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
 
         _ppp = new PerPlayerProperties(playerPropertyUpdate);
+
+        if (Game.model.state == GameModel.STATE_APPEARING) {
+            appearGhost();
+        }
     }
 
     override public function hitTestPoint (

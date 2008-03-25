@@ -41,12 +41,12 @@ public class FightPanel extends FrameSprite
     {
         _ghost = ghost;
 
+        _dimness = new Dimness(0.8, true);
+        this.addChild(_dimness);
+
         this.addChild(_ghost);
         _ghost.x = Game.stageSize.width - 250;
         _ghost.y = 100;
-
-        _dimness = new Dimness(0.8, true);
-        this.addChild(_dimness);
 
         _frame = new GameFrame();
 
@@ -55,6 +55,10 @@ public class FightPanel extends FrameSprite
 
         Game.control.state.addEventListener(
             AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
+
+        _ghost.fighting();
+
+        checkForSpecialStates();
     }
 
     override public function hitTestPoint (
@@ -232,12 +236,17 @@ public class FightPanel extends FrameSprite
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
         if (evt.name == Codes.PROP_STATE) {
-            if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH) {
-                showGhostTriumph();
+            checkForSpecialStates();
+        }
+    }
 
-            } else if (Game.model.state == GameModel.STATE_GHOST_DEFEAT) {
-                showGhostDeath();
-            }
+    protected function checkForSpecialStates () :void
+    {
+        if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH) {
+            showGhostTriumph();
+
+        } else if (Game.model.state == GameModel.STATE_GHOST_DEFEAT) {
+            showGhostDeath();
         }
     }
 
