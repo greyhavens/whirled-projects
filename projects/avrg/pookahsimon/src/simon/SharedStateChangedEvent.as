@@ -8,6 +8,7 @@ public class SharedStateChangedEvent extends Event
     public static const NEXT_PLAYER :String = "nextPlayer";
     public static const NEW_SCORES :String = "newScores";
     public static const NEXT_RAINBOW_SELECTION :String = "nextRainbowSelection";
+    public static const PLAYER_TIMEOUT :String = "playerTimeout";
 
     public var data :Object;
 

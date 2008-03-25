@@ -54,6 +54,11 @@ public class OnlineModel extends Model
         _stateControl.sendMessage(Constants.MSG_NEXTNOTE, clickedIndex);
     }
 
+    override public function sendPlayerTimeoutMessage () :void
+    {
+        _stateControl.sendMessage(Constants.MSG_PLAYERTIMEOUT, null);
+    }
+
     override public function trySetNewState (newState :SharedState) :void
     {
         // ignore state changes from non-authoritative clients
@@ -117,6 +122,10 @@ public class OnlineModel extends Model
         switch (e.name) {
         case Constants.MSG_NEXTNOTE:
             this.rainbowClicked(e.value as int);
+            break;
+
+        case Constants.MSG_PLAYERTIMEOUT:
+            this.playerTimeout();
             break;
 
 

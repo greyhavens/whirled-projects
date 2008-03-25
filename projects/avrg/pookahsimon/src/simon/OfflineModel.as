@@ -12,6 +12,11 @@ public class OfflineModel extends Model
         this.rainbowClicked(clickedIndex);
     }
 
+    override public function sendPlayerTimeoutMessage () :void
+    {
+        this.playerTimeout();
+    }
+
     override public function trySetNewState (newState :SharedState) :void
     {
         // in offline mode, we can convert state change requests

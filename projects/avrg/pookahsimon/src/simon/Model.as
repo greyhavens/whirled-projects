@@ -8,6 +8,7 @@ import flash.events.EventDispatcher;
 [Event(name="nextPlayer", type="bingo.SharedStateChangedEvent")]
 [Event(name="newScores", type="bingo.SharedStateChangedEvent")]
 [Event(name="nextRainbowSelection", type="bingo.SharedStateChangedEvent")]
+[Event(name="playerTimeout", type="bingo.SharedStateChangedEvent")]
 
 public class Model extends EventDispatcher
 {
@@ -50,6 +51,11 @@ public class Model extends EventDispatcher
         throw new Error("subclasses must override sendRainbowClickedMessage()");
     }
 
+    public function sendPlayerTimeoutMessage () :void
+    {
+        throw new Error("subclasses must override sendPlayerTimeoutMessage()");
+    }
+
     public function trySetNewState (newState :SharedState) :void
     {
         throw new Error("subclasses must override trySetNewState()");
@@ -82,6 +88,11 @@ public class Model extends EventDispatcher
     protected function rainbowClicked (clickedIndex :int) :void
     {
         this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, clickedIndex));
+    }
+
+    protected function playerTimeout () :void
+    {
+        this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.PLAYER_TIMEOUT));
     }
 
     // shared state

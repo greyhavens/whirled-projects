@@ -37,6 +37,7 @@ public class RainbowController
         _noteAnimationTimer.addEventListener(TimerEvent.TIMER, noteAnimationTimerExpired);
 
         SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleNextSelectionEvent);
+        SimonMain.model.addEventListener(SharedStateChangedEvent.PLAYER_TIMEOUT, handlePlayerTimeout);
 
         this.playRainbowAnimation("rainbow_in", playRainbowLoop);
     }
@@ -44,10 +45,13 @@ public class RainbowController
     public function destroy () :void
     {
         SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleNextSelectionEvent);
+        SimonMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_TIMEOUT, handlePlayerTimeout);
+
         _noteAnimationTimer.removeEventListener(TimerEvent.TIMER, noteAnimationTimerExpired);
 
         this.stopRainbowAnimation();
         this.stopNoteAnimation();
+        this.destroyPlayerTimeoutHandler();
     }
 
     protected function playRainbowAnimation (animName :String, completionCallback :Function) :void
@@ -64,7 +68,7 @@ public class RainbowController
         SimonMain.sprite.addChild(_curAnim);
 
         if (null != completionCallback) {
-            _animHandler = new AnimationHandler(_curAnim, "end", completionCallback);
+            _rainbowAnimHandler = new AnimationHandler(_curAnim, "end", completionCallback);
         }
 
         //log.info("Playing animation " + animName + " at " + loc);
@@ -77,9 +81,9 @@ public class RainbowController
             _curAnim = null;
         }
 
-        if (null != _animHandler) {
-            _animHandler.destroy();
-            _animHandler = null;
+        if (null != _rainbowAnimHandler) {
+            _rainbowAnimHandler.destroy();
+            _rainbowAnimHandler = null;
         }
     }
 
@@ -87,7 +91,7 @@ public class RainbowController
     {
         this.playRainbowAnimation("rainbow_loop", null);
 
-        // setup
+        // setup click handlers
         var i :int = 0;
         for each (var bandName :String in RAINBOW_BAND_NAMES) {
             var band :MovieClip = (_curAnim["inst_rainbow"])[bandName];
@@ -100,9 +104,45 @@ public class RainbowController
             _rainbowBands.push(band);
         }
 
+        // show player name
         var playerText :TextField = _curAnim["player"];
         playerText.text = SimonMain.getPlayerName(_playerId);
 
+        // If the rainbow is controlled by this player, show a timer
+        // animation. If the player doesn't click a note before the
+        // animation completes, they lose. (Hide the animation
+        // if it's not our rainbow.)
+        if (this.isControlledLocally) {
+            this.resetPlayerTimeoutHandler();
+        } else {
+            var noteTimer :MovieClip = _curAnim["note_timer"];
+            noteTimer.visible = false;
+        }
+    }
+
+    protected function resetPlayerTimeoutHandler () :void
+    {
+        this.destroyPlayerTimeoutHandler();
+
+        // start the "note timer" - if it expires before the
+        // player clicks a note, they will lose
+        var noteTimer :MovieClip = _curAnim["note_timer"];
+        noteTimer.visible = true;
+        noteTimer.gotoAndPlay(1);
+
+        var thisObject :RainbowController = this;
+        _playerTimeoutAnimHandler = new AnimationHandler(noteTimer, "end",
+            function () :void {
+                SimonMain.model.sendPlayerTimeoutMessage();
+            });
+    }
+
+    protected function destroyPlayerTimeoutHandler () :void
+    {
+        if (null != _playerTimeoutAnimHandler) {
+            _playerTimeoutAnimHandler.destroy();
+            _playerTimeoutAnimHandler = null;
+        }
     }
 
     protected function handleNextSelectionEvent (e :SharedStateChangedEvent) :void
@@ -115,6 +155,12 @@ public class RainbowController
             var clickLoc :Point = DEFAULT_SPARKLE_LOCS[noteIndex];
             this.nextNoteSelected(noteIndex, clickLoc, false);
         }
+    }
+
+    protected function handlePlayerTimeout (e :SharedStateChangedEvent) :void
+    {
+        // called when the player has taken too long to click a note
+        SimonMain.controller.currentPlayerTurnFailure();
     }
 
     protected function createBandMouseHandlers (band :MovieClip, noteIndex :int) :void
@@ -186,6 +232,12 @@ public class RainbowController
 
         this.playNoteAnimation(noteIndex, clickLoc, success);
 
+        // reset the "note time expired" handler every time a new note is played
+        if (_finalNotePlayed) {
+            this.destroyPlayerTimeoutHandler();
+        } else if (this.isControlledLocally) {
+            this.resetPlayerTimeoutHandler();
+        }
     }
 
     protected function reportSuccessOrFailure () :void
@@ -303,9 +355,10 @@ public class RainbowController
     protected var _finalNoteIndex :int;
 
     protected var _playerId :int;
-    protected var _animHandler :AnimationHandler;
+    protected var _rainbowAnimHandler :AnimationHandler;
     protected var _curAnim :MovieClip;
     protected var _remainingPattern :Array;
+    protected var _playerTimeoutAnimHandler :AnimationHandler;
 
     protected var _hilitedBand :MovieClip;
 
