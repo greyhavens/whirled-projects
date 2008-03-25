@@ -110,6 +110,8 @@ public class Controller
     {
         this.createNewCard();
 
+        BingoItemManager.instance.resetRemainingTags();
+
         // reset the expected state when the state changes
         _expectedState = null;
 
@@ -130,6 +132,8 @@ public class Controller
     {
         // reset the expected state when the state changes
         _expectedState = null;
+
+        BingoItemManager.instance.removeFromRemainingTags(BingoMain.model.curState.ballInPlay);
 
         this.startNewBallTimer();
     }

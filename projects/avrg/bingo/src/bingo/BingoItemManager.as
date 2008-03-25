@@ -3,6 +3,7 @@ package bingo {
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
+import com.threerings.util.ArrayUtil;
 
 public class BingoItemManager
 {
@@ -39,8 +40,12 @@ public class BingoItemManager
         }
 
         _tags = tagSet.toArray();
+        this.resetRemainingTags();
 
         log.info(Constants.ITEMS.length.toString() + " items, " + _tags.length + " tags");
+        for each (tag in _tags) {
+            log.info(tag);
+        }
     }
 
     public function get tags () :Array
@@ -50,7 +55,21 @@ public class BingoItemManager
 
     public function getRandomTag () :String
     {
-        return _tags[_rand.nextInt(_tags.length)];
+        if (_remainingTags.length == 0) {
+            this.resetRemainingTags();
+        }
+
+        return _remainingTags[_rand.nextInt(_remainingTags.length)];
+    }
+
+    public function removeFromRemainingTags (tag :String) :void
+    {
+        ArrayUtil.removeFirst(_remainingTags, tag);
+    }
+
+    public function resetRemainingTags () :void
+    {
+        _remainingTags = _tags.slice();
     }
 
     public function getRandomItem () :BingoItem
@@ -62,6 +81,8 @@ public class BingoItemManager
 
     protected var _tags :Array;
     protected var _rand :Random = new Random();
+
+    protected var _remainingTags :Array;
 
     protected static var log :Log = Log.getLog(BingoItemManager);
 
