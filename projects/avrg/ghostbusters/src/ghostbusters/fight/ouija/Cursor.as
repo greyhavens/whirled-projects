@@ -46,10 +46,10 @@ public class Cursor extends BasicCursor
         this.db.addObject(_glowObject, _sprite);
     }
 
-    override protected function destroyed () :void
+    override protected function removedFromDB () :void
     {
-        super.destroyed();
-        
+        super.removedFromDB();
+
         _glowObject.destroySelf();
     }
 

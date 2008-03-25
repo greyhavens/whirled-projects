@@ -17,23 +17,23 @@ public class Drawing extends SceneObject
         _board = board;
         _target1 = startTarget;
         _target2 = endTarget;
-        
+
         // if the two target points are identical, we can't
         // end the drawing until the user gets far enough away
         // from his starting position
         _canEndDrawing = !(_target1.equals(_target2));
-        
+
         _drawing.graphics.lineStyle(Constants.PICTO_LINEWIDTH, 0x0000FF);
     }
-    
+
     override protected function addedToDB () :void
     {
         super.addedToDB();
 
         _board.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoved, false, 0, true);
     }
-    
-    override protected function destroyed () :void
+
+    override protected function removedFromDB () :void
     {
         _board.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoved);
     }
@@ -47,7 +47,7 @@ public class Drawing extends SceneObject
         if (null == _endTarget) {
             var delta1 :Vector2 = loc.subtract(_target1);
             var delta2 :Vector2 = loc.subtract(_target2);
-            
+
             if (delta1.lengthSquared <= (Constants.PICTO_TARGETRADIUS * Constants.PICTO_TARGETRADIUS)) {
                 _points.push(loc);
                 _drawing.graphics.moveTo(loc.x, loc.y);
@@ -60,7 +60,7 @@ public class Drawing extends SceneObject
 
             return;
         }
-        
+
         // can we end the drawing?
         if (!_canEndDrawing) {
             delta = _endTarget.subtract(loc);
@@ -89,22 +89,22 @@ public class Drawing extends SceneObject
        _drawing.graphics.lineTo(loc.x, loc.y);
        _points.push(loc);
     }
-    
+
     override public function get displayObject () :DisplayObject
     {
         return _drawing;
     }
-    
+
     public function get isDone () :Boolean
     {
         return _doneDrawing;
     }
-    
+
     public function get points () :Array
     {
         return _points;
     }
-    
+
     protected var _canEndDrawing :Boolean;
 
     protected var _board :InteractiveObject;
