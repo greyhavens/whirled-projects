@@ -1,6 +1,6 @@
 package bingo {
 
-import com.threerings.flash.DisablingButton;
+import com.whirled.contrib.simplegame.*;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -10,15 +10,9 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.utils.Timer;
 
-public class Controller
+public class GameMode extends AppMode
 {
-    public function Controller (mainSprite :Sprite, model :Model)
-    {
-        _mainSprite = mainSprite;
-        _model = model;
-    }
-
-    public function beginGame () :void
+    override protected function setup () :void
     {
         // timers
         _newBallTimer = new Timer(Constants.NEW_BALL_DELAY_S * 1000, 1);
@@ -28,12 +22,10 @@ public class Controller
         _newRoundTimer.addEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
 
         // state change events
-        _model.addEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
-        _model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        _model.addEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
-        _model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
-
-        _mainSprite.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
+        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
+        BingoMain.model.addEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
+        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
         // visuals
         _hudController = new HUDController();
@@ -45,7 +37,8 @@ public class Controller
         _winnerText.scaleY = 3;
         _winnerText.x = Constants.WINNER_TEXT_LOC.x;
         _winnerText.y = Constants.WINNER_TEXT_LOC.y;
-        _mainSprite.addChild(_winnerText);
+
+        this.modeSprite.addChild(_winnerText);
 
         // each client maintains the concept of an expected state,
         // so that it is prepared to take over as the
@@ -55,13 +48,11 @@ public class Controller
         this.handleNewRound(null);
     }
 
-    public function destroy () :void
+    override protected function destroy () :void
     {
-        _model.removeEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
-        _model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        _model.removeEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
-
-        _mainSprite.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
+        BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
+        BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
+        BingoMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
 
         _newBallTimer.removeEventListener(TimerEvent.TIMER, handleNewBallTimerExpired);
         _newRoundTimer.removeEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
@@ -69,12 +60,12 @@ public class Controller
         _hudController.destroy();
     }
 
-    protected function handleEnterFrame (e :Event) :void
+    override public function update (dt :Number) :void
     {
-        this.update();
+        this.sendStateChanges();
     }
 
-    protected function update () :void
+    protected function sendStateChanges () :void
     {
         if (null != _expectedState) {
 
@@ -83,27 +74,27 @@ public class Controller
             // The state change we see will not necessarily
             // be what was requested (this client may not be in control)
 
-            _model.trySetNewState(_expectedState);
+            BingoMain.model.trySetNewState(_expectedState);
         }
 
         if (null != _expectedScores) {
 
             // see above
 
-            _model.trySetNewScores(_expectedScores);
+            BingoMain.model.trySetNewScores(_expectedScores);
         }
     }
 
     protected function createNewCard () :void
     {
         if (null != _cardView) {
-            _mainSprite.removeChild(_cardView);
+            this.modeSprite.removeChild(_cardView);
         }
 
-        _model.createNewCard();
+        BingoMain.model.createNewCard();
 
-        _cardView = new BingoCardView(_model.card);
-        _mainSprite.addChild(_cardView);
+        _cardView = new BingoCardView(BingoMain.model.card);
+        this.modeSprite.addChild(_cardView);
     }
 
     protected function handleNewRound (e :SharedStateChangedEvent) :void
@@ -116,7 +107,7 @@ public class Controller
         _expectedState = null;
 
         // does a ball exist?
-        if (null != _model.curState.ballInPlay) {
+        if (null != BingoMain.model.curState.ballInPlay) {
             this.startNewBallTimer();
         } else {
             // create a ball immediately
@@ -146,19 +137,19 @@ public class Controller
         this.stopNewBallTimer();
         this.startNewRoundTimer(); // a new round should start shortly
 
-        var playerName :String = BingoMain.getPlayerName(_model.curState.roundWinnerId);
+        var playerName :String = BingoMain.getPlayerName(BingoMain.model.curState.roundWinnerId);
 
         _winnerText.text = playerName + " wins the round!";
 
         // update scores
         if (null == _expectedScores) {
-            _expectedScores = _model.curScores.clone();
+            _expectedScores = BingoMain.model.curScores.clone();
         }
 
         _expectedScores.incrementScore(playerName, new Date());
 
         // grant some flow to the winner
-        if (_model.curState.roundWinnerId == BingoMain.ourPlayerId && BingoMain.control.isConnected()) {
+        if (BingoMain.model.curState.roundWinnerId == BingoMain.ourPlayerId && BingoMain.control.isConnected()) {
             BingoMain.control.quests.completeQuest("dummyString", null, 1);
         }
     }
@@ -190,7 +181,7 @@ public class Controller
         do {
             nextBall = BingoItemManager.instance.getRandomTag();
         }
-        while (nextBall == _model.curState.ballInPlay);
+        while (nextBall == BingoMain.model.curState.ballInPlay);
 
         return nextBall;
     }
@@ -198,12 +189,12 @@ public class Controller
     protected function createNewBall () :void
     {
         if (null == _expectedState) {
-            _expectedState = _model.curState.clone();
+            _expectedState = BingoMain.model.curState.clone();
         }
 
         // push a new ball update out
         _expectedState.ballInPlay = this.getNextBall();
-        this.update();
+        this.sendStateChanges();
     }
 
     protected function startNewRoundTimer () :void
@@ -220,21 +211,19 @@ public class Controller
     protected function handleNewRoundTimerExpired (e :TimerEvent) :void
     {
         if (null == _expectedState) {
-            _expectedState = _model.curState.clone();
+            _expectedState = BingoMain.model.curState.clone();
         }
 
         // push a new round update out
         _expectedState.roundId += 1;
         _expectedState.roundWinnerId = 0;
         _expectedState.ballInPlay = this.getNextBall();
-        this.update();
+        this.sendStateChanges();
     }
 
-    protected var _model :Model;
     protected var _expectedState :SharedState;
     protected var _expectedScores :Scoreboard;
 
-    protected var _mainSprite :Sprite;
     protected var _cardView :BingoCardView;
     protected var _hudController :HUDController;
     protected var _winnerText :TextField;

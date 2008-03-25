@@ -8,6 +8,7 @@ import com.threerings.util.MultiLoader;
 import com.whirled.AVRGameAvatar;
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
+import com.whirled.contrib.simplegame.*;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -19,7 +20,6 @@ public class BingoMain extends Sprite
 {
     public static var control :AVRGameControl;
     public static var model :Model;
-    public static var controller :Controller;
     public static var resourcesDomain :ApplicationDomain;
 
     public static var ourPlayerId :int;
@@ -43,6 +43,9 @@ public class BingoMain extends Sprite
 
         resourcesDomain = new ApplicationDomain();
         MultiLoader.getLoaders(Resources.SWF_UI, handleResourcesLoaded, false, resourcesDomain);
+
+        // instantiate MainLoop singleton
+        new MainLoop(this);
     }
 
     public static function quit () :void
@@ -67,23 +70,14 @@ public class BingoMain extends Sprite
     protected function maybeBeginGame () :void
     {
         if (_addedToStage && _resourcesLoaded) {
+
             new BingoItemManager(); // init singleton
 
-            _introView = new BingoIntroView();
-            _introView.addEventListener(MouseEvent.CLICK, play, false, 0, true);
-            this.addChild(_introView);
-
             model.setup();
+
+            MainLoop.instance.pushMode(new IntroMode());
+            MainLoop.instance.run();
         }
-    }
-
-    protected function play (...ignored) :void
-    {
-        _introView.removeEventListener(MouseEvent.CLICK, play);
-        this.removeChild(_introView);
-        _introView = null;
-
-        controller.beginGame();
     }
 
     protected function handleResourcesLoaded (results :Object) :void
@@ -99,7 +93,6 @@ public class BingoMain extends Sprite
         log.info(control.isConnected() ? "playing online game" : "playing offline game");
 
         model = (control.isConnected() && !Constants.FORCE_SINGLEPLAYER ? new OnlineModel() : new OfflineModel());
-        controller = new Controller(this, model);
 
         ourPlayerId = (control.isConnected() ? control.getPlayerId() : 666);
 
@@ -112,7 +105,6 @@ public class BingoMain extends Sprite
     {
         log.info("Removed from stage - Unloading...");
 
-        controller.destroy();
         model.destroy();
     }
 
@@ -132,7 +124,6 @@ public class BingoMain extends Sprite
 
     protected var _addedToStage :Boolean;
     protected var _resourcesLoaded :Boolean;
-    protected var _introView :BingoIntroView;
 
     protected static var log :Log = Log.getLog(BingoMain);
 }
