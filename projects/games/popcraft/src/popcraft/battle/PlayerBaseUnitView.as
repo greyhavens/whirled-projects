@@ -1,5 +1,5 @@
 package popcraft.battle {
-    
+
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 
@@ -15,9 +15,9 @@ public class PlayerBaseUnitView extends SceneObject
     public function PlayerBaseUnitView (unit :PlayerBaseUnit)
     {
         _unit = unit;
-        
+
         var playerColor :uint = Constants.PLAYER_COLORS[_unit.owningPlayerId];
-        
+
         // add the image, aligned by its foot position
         var image :Bitmap = (PopCraft.resourceManager.getResource(_unit.unitData.name) as ImageResourceLoader).createBitmap();
         image.x = -(image.width * 0.5);
@@ -26,7 +26,7 @@ public class PlayerBaseUnitView extends SceneObject
 
         // add a glow around the image
         _sprite.addChild(ImageUtil.createGlowBitmap(image, playerColor));
-        
+
         // health meter
         _healthMeter = new RectMeter();
         _healthMeter.minValue = 0;
@@ -40,40 +40,40 @@ public class PlayerBaseUnitView extends SceneObject
         _healthMeter.x = -(_healthMeter.width * 0.5);
         _healthMeter.y = -_sprite.height - _healthMeter.height;
     }
-    
+
     override protected function addedToDB () :void
     {
         this.db.addObject(_healthMeter, _sprite);
     }
-    
-    override protected function destroyed () :void
+
+    override protected function removedFromDB () :void
     {
         _healthMeter.destroySelf();
     }
-    
+
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
     }
-    
+
     override protected function update (dt :Number) :void
     {
         this.x = _unit.x;
         this.y = _unit.y;
-        
+
         var health :Number = _unit.health;
-        
+
         _healthMeter.value = health;
-        
+
         if (health <= 0) {
             this.destroySelf();
         }
     }
-    
+
     protected var _sprite: Sprite = new Sprite();
     protected var _unit :PlayerBaseUnit;
     protected var _healthMeter :RectMeter;
-    
+
 }
 
 }

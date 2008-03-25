@@ -38,7 +38,7 @@ public class UnitPurchaseMeter extends SceneObject
             rectMeter.backgroundColor = 0xFFFFFF;
             rectMeter.outlineColor = 0x000000;
             rectMeter.y = yOffset;
-            
+
             rectMeter.updateDisplay();
 
             var textMeter :IntTextMeter = new IntTextMeter();
@@ -46,9 +46,9 @@ public class UnitPurchaseMeter extends SceneObject
             textMeter.maxValue = resCost;
             textMeter.value = 0;
             textMeter.textColor = 0x000000;
-            
+
             textMeter.updateDisplay();
-            
+
             textMeter.x = rectMeter.x + (rectMeter.width * 0.5) - (textMeter.width * 0.5);
             textMeter.y = rectMeter.y + (rectMeter.height * 0.5) - (textMeter.height * 0.5);
 
@@ -63,7 +63,7 @@ public class UnitPurchaseMeter extends SceneObject
         updateDisplay();
     }
 
-    override protected function destroyed () :void
+    override protected function removedFromDB () :void
     {
         for each (var meter :SimObject in _meters) {
             meter.destroySelf();
