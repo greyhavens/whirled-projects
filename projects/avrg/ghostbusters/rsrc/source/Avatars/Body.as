@@ -159,11 +159,11 @@ public class Body
         log.info("I'm transitioning to '" + state + "'.");
 
         // transtion from our current state to the new state
-        queueTransitions(_state, state);
+        var transition :Boolean = queueTransitions(_state, state, true);
         // update our internal state variable
         _state = state;
         // queue our new standing animation
-        queueScene(getScene("state_" + _state));
+        queueScene(getScene("state_" + _state), !transition);
     }
 
     /**
@@ -288,9 +288,14 @@ public class Body
      * Queues animations that transition between the specified states/actions. If a direct
      * transition is available, it will be used, otherwise we transition through "default".
      */
-    protected function queueTransitions (from :String, to :String) :void
+    protected function queueTransitions (from :String, to :String, force :Boolean = false) :Boolean
     {
-        queueScene(getScene(from + "_to_" + to));
+        var scene :SceneList = getScene(from + "_to_" + to);
+        if (scene != null) {
+            queueScene(scene, force);
+            return true;
+        }
+        return false;
     }
 
     /**
