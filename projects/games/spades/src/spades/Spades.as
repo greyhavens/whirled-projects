@@ -4,15 +4,23 @@ import flash.display.Sprite;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 
-import com.threerings.util.Log;
+import com.whirled.game.GameControl;
+import com.whirled.game.StateChangedEvent;
+import com.whirled.game.ElementChangedEvent;
+import com.whirled.game.PropertyChangedEvent;
+import com.whirled.game.MessageReceivedEvent;
 
-import com.whirled.game.*;
+import spades.card.Card;
+import spades.card.CardArray;
+
+import spades.graphics.TableSprite;
+
 
 /**
  * The main sprite for the spades game.
- * XXTODO Factor certain things into CardGame and/or TrickTakingCardGame.
- * XXTODO Strip out excessive debug logging.
- * XXTODO Use localized feeedback.
+ * TODO Factor certain things into CardGame and/or TrickTakingCardGame.
+ * TODO Strip out excessive debug logging.
+ * TODO Use localized feeedback.
  */
 [SWF(width="800", height="800")]
 public class Spades extends Sprite
@@ -28,30 +36,10 @@ public class Spades extends Sprite
     public static const NUM_TRICKS_PER_ROUND :int = NUM_CARDS_PER_PLAYER;
 
     /** Represents an undefined bid (player has not chosen yet) */
-    public static const NO_BID :int = -1;
+    public static const NO_BID :int = TableSprite.NO_BID;
 
     /** Maximum amount a player can bid */
     public static const MAX_BID :int = NUM_TRICKS_PER_ROUND;
-
-    /** Kludgy constant sized display (TODO: rely on browser area) */
-    public static const DISPLAY :Display = new Display(700, 550);
-
-    /** Positions of other players' on the table (relative to the local player). */
-    public static const PLAYER_POSITIONS :Array = [
-        new Position(50, 40),  // me
-        new Position(25, 25),  // my left
-        new Position(50, 10),  // opposite
-        new Position(75, 25)   // my right
-    ];
-
-    /** Position of the center of the local player's hand. */
-    public static const HAND_POSITION :Position = new Position(50, 75);
-
-    /** Position of the center of the bid slider */
-    public static const SLIDER_POSITION :Position = new Position(50, 60);
-
-    /** Position of the center of the trick pile */
-    public static const TRICK_POSITION :Position = new Position(50, 25);
 
     /** Main entry point. Start a new game of spades. */
     public function Spades (gameCtrl :GameControl)
@@ -90,34 +78,19 @@ public class Spades extends Sprite
         _gameCtrl.local.setPlayerScores([ 0, "", 0, "" ], [ 1, 1, 0, 0 ]);
 
         // configure the players
-        setUpPlayers();
+        _table = new TableSprite(
+            _gameCtrl.game.seating.getPlayerNames(), 
+            getMySeat(),
+            _trick,
+            _hand);
 
-        // setup the trick pile
-        resetTrick();
+        addChild(_table);
     }
 
     / ** For debugging, log a string prefixed with player name and seating position. */
     public function log (str :String) :void
     {
-        var myIdx :int = getMySeat();
-        var myName :String = _gameCtrl.game.seating.getPlayerNames()[myIdx];
-        Log.getLog(this).info("[" + myName + "@seat" + myIdx + "] " + str);
-    }
-
-    /** Create and position the player sprites. */
-    protected function setUpPlayers () :void
-    {
-        var names :Array = _gameCtrl.game.seating.getPlayerNames();
-        var mySeat :int = getMySeat();
-
-        // For each seat, create a sprite and position relative to local player
-        for (var seat :int = 0; seat < NUM_PLAYERS; ++seat) {
-            var p :Player = new Player(names[seat] as String);
-            var relative :int = (seat - mySeat + NUM_PLAYERS) % NUM_PLAYERS;
-            DISPLAY.move(p, PLAYER_POSITIONS[relative] as Position);
-            addChild(p);
-            _players[seat] = p;
-        }
+        Debug.debug(str);
     }
 
     /** Get the number of bids placed so far */
@@ -126,13 +99,17 @@ public class Spades extends Sprite
         var bids :Array = _gameCtrl.net.get(COMS_BIDS) as Array;
         var count :int = 0;
         if (bids != null) {
-            for (var i :int = 0; i < bids.length; ++i) {
-                if (bids[i] != NO_BID) {
-                    count = count + 1;
-                }
+            bids.forEach(countIfValid);
+        }
+
+        return count;
+
+        function countIfValid (bid :int, i :int, a :Array) :void
+        {
+            if (bid != NO_BID) {
+                count++;
             }
         }
-        return count;
     }
 
     /** Boot up the game. */
@@ -210,12 +187,11 @@ public class Spades extends Sprite
     protected function getPlayerSeat (id :int) :int
     {
         var ids :Array = _gameCtrl.game.seating.getPlayerIds();
-        for (var i :int = 0; i < ids.length; ++i) {
-            if (id == ids[i]) {
-                return i;
-            }
+        var seat :int = ids.indexOf(id);
+        if (seat == -1) {
+            throw Error("Id " + id + " not found");
         }
-        throw Error("Id " + id + " not found");
+        return seat;
     }
 
     /** Get the name of a player by id. */
@@ -227,7 +203,7 @@ public class Spades extends Sprite
     }
 
     /** End the game.
-     *  XXTODO award points. */
+     *  TODO: award points + flow? */
     protected function handleGameEnded (event :StateChangedEvent) :void
     {
         _gameCtrl.local.feedback("Thank you for playing Spades!");
@@ -240,10 +216,7 @@ public class Spades extends Sprite
         var turnHolder :int = _gameCtrl.game.getTurnHolderId();
         var hotSeat :int = _gameCtrl.game.seating.getPlayerPosition(turnHolder);
         log("Turn changed to " + turnHolder + " in seat " + hotSeat);
-        for (var i :int = 0; i < NUM_PLAYERS; ++i) {
-            var p :Player = _players[i] as Player;
-            p.setTurn(i == hotSeat);
-        }
+        _table.setPlayerTurn(hotSeat);
 
         updateBidding();
         updateMoves();
@@ -261,14 +234,11 @@ public class Spades extends Sprite
         log("Element changed:" + event.name);
 
         if (event.name == COMS_BIDS) {
-            // make sure that a player's bid is reflected in his sprite
-            var p :Player = _players[event.index] as Player;
+            // make sure that a player's bid is reflected in the view
             var bid :int = event.newValue as int;
-            if (bid == NO_BID) {
-                p.clearBid();
-            }
-            else {
-                p.setBid(bid);
+            _table.setPlayerBid(event.index, bid);
+
+            if (bid != NO_BID) {
                 var name :String = _gameCtrl.game.seating.getPlayerNames()[event.index];
                 _gameCtrl.local.feedback(name + " bid " + bid);
             }
@@ -320,17 +290,6 @@ public class Spades extends Sprite
         return winner;
     }
 
-    /** Restart the trick pile. */
-    protected function resetTrick () :void
-    {
-        if (_trick != null) {
-            removeChild(_trick.display);
-        }
-        _trick = new CardArray();
-        addChild(_trick.display);
-        DISPLAY.move(_trick.display, TRICK_POSITION);
-    }
-
     /** Calculate the winner of the trick, add it to their number of tricks, save to history and 
      *  give them their turn */
     protected function completeTrick () :void
@@ -346,13 +305,13 @@ public class Spades extends Sprite
         log("Winner is " + winner + " in seat " + winnerSeat + ", name " + getPlayerName(winner));
 
         _tricksTaken[winnerSeat] += 1;
-        _players[winnerSeat].setTricks(_tricksTaken[winnerSeat]);
+        _table.setPlayerTricks(winnerSeat, _tricksTaken[winnerSeat]);
 
         _gameCtrl.local.feedback(getPlayerName(winner) + " won the trick");
 
         // todo: add to score and save to history
 
-        resetTrick();
+        _trick.reset();
         
         if (_gameCtrl.game.amInControl()) {
             _gameCtrl.net.set(COMS_TRICK_SIZE, 0);
@@ -396,19 +355,7 @@ public class Spades extends Sprite
 
         log("Ready to bid: " + showSlider);
 
-        if (showSlider) {
-            if (_bidSlider == null) {
-                _bidSlider = new BidSlider(NUM_TRICKS_PER_ROUND, onBid);
-                DISPLAY.move(_bidSlider, SLIDER_POSITION);
-                addChild(_bidSlider);
-            }
-        }
-        else {
-            if (_bidSlider != null) {
-                removeChild(_bidSlider);
-                _bidSlider = null;
-            }
-        }
+        _table.showBidControl(showSlider, NUM_TRICKS_PER_ROUND, onBid);
     }
 
     /** Entry point for when the user selects their bid */
@@ -418,47 +365,47 @@ public class Spades extends Sprite
     }
 
     /** Check if spades can be played (part of current game state and/or config).
-     *  XXTODO implement. */
+     *  TODO: implement. */
     protected function canLeadSpades () :Boolean
     {
         return true;
     }
 
-    /** Check if the local player has a suit in his hand. */
+    /** Check how many cards of a suit the local player has in his hand. */
     protected function countSuit (suit :int) :int
     {
         var count :int = 0;
-        var cards :Array = _hand.cards;
-        for (var i :int = 0; i < cards.length; ++i) {
-            if (cards[i].suit == suit) {
+        _hand.cards.forEach(countIfSameSuit);
+        return count;
+
+        function countIfSameSuit (c :Card, i :int, a :Array) :void
+        {
+            if (c.suit == suit) {
                 ++count;
             }
         }
-        return count;
     }
 
     /** Get an array of cards from the players hand that either match or do not 
      *  match a given suit. */
     protected function filterCards (suit :int, match :Boolean) :CardArray
     {
-        var cards :Array = _hand.cards;
-        var result :CardArray = new CardArray();
-        for (var i :int = 0; i < cards.length; ++i) {
-            if ((match && cards[i].suit == suit) ||
-                (!match && cards[i].suit != suit)) {
-                result.pushCard(cards[i]);
+        return _hand.shortFilter(compare);
+
+        function compare (c :Card) :Boolean
+        {
+            if (match) {
+                return c.suit == suit;
+            }
+            else {
+                return c.suit != suit;
             }
         }
-        return result;
     }
 
     /** Highlight the cards that may now be played. */
     protected function updateMoves () :void
     {
-        if (_hand == null) {
-            return;
-        }
-
         var leader :Card = null;
 
         if (_trick.length > 0) {
@@ -467,37 +414,38 @@ public class Spades extends Sprite
 
         if (!_gameCtrl.game.isMyTurn()) {
             // not my turn, disable
-            _hand.disable();
+            _table.disableHand();
         }
         else if (_trick.length == NUM_PLAYERS) {
             // trick full, disable
-            _hand.disable();
+            _table.disableHand();
         }
         else if (countBidsPlaced() < NUM_PLAYERS) {
             // bidding not finished, disable
-            _hand.disable();
+            _table.disableHand();
         }
         else if (leader != null && countSuit(leader.suit) == 0) {
             // out of led suit, allow any
-            _hand.enable(onPlay);
+            _table.enableHand(onPlay);
         }
         else if (leader != null) {
             // allow only led suit
-            _hand.enableSome(filterCards(leader.suit, true), onPlay);
+            _table.enableHand(onPlay, filterCards(leader.suit, true));
         }
         else if (canLeadSpades()) {
             // leading and spades are available, allow any
-            _hand.enable(onPlay);
+            _table.enableHand(onPlay);
         }
         else if (countSuit(Card.SUIT_SPADES) == _hand.length) {
             // leading and no other suits available, allow any
-            _hand.enable(onPlay);
+            _table.enableHand(onPlay);
         }
         else {
             // leading, allow any non-spade suit
-            _hand.enableSome(filterCards(leader.suit, false), onPlay);
+            _table.enableHand(onPlay, filterCards(leader.suit, false));
         }
     }
+
     /** Entry point for when the user selects a card to play */
     protected function onPlay (card :Card) :void
     {
@@ -520,15 +468,9 @@ public class Spades extends Sprite
         log("Received message: " + event.name);
         
         if (event.name == COMS_HAND) {
-            // we have been given some cards, update our hand, removing first
-            if (_hand != null) {
-                removeChild(_hand.display);
-                _hand = null;
-            }
-            _hand = new CardArray(event.value as Array);
+            // we have been given some cards, repopulate our hand
+            _hand.reset(event.value as Array);
             log("My hand is " + _hand);
-            DISPLAY.move(_hand.display, HAND_POSITION);
-            addChild(_hand.display);
         }
     }
 
@@ -545,19 +487,16 @@ public class Spades extends Sprite
     protected var _gameCtrl :GameControl;
 
     /** Our hand. */
-    protected var _hand :CardArray;
+    protected var _hand :CardArray = new CardArray();
 
-    /** The slider for making a bid (null if not bidding). */
-    protected var _bidSlider :BidSlider;
-
-    /** Player instances in the game (indexed by seat). */
-    protected var _players :Array = new Array(NUM_PLAYERS);
+    /** The table. */
+    protected var _table :TableSprite;
 
     /** Tricks taken by each player (indexed by seat). */
     protected var _tricksTaken :Array = filledArray(NUM_PLAYERS, 0);
 
     /** The trick sprite in the middle of the table */
-    protected var _trick :CardArray;
+    protected var _trick :CardArray = new CardArray();
 
     /** Event message for getting cards. */
     protected static const COMS_HAND :String = "hand";

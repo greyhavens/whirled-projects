@@ -1,13 +1,11 @@
-package spades {
+package spades.card {
 
 import flash.display.DisplayObject;
 
 /**
- * Represents a card for use with game logic, rendering and UI. Has suit, rank and an optional 
- * display component. Also provides translation to and from "ordinal" cards for use in 
- * serialization.
- * XXTODO Are jokers needed?
- * XXTODO Display abstraction
+ * Represents a card for use with game logic, rendering and UI. Has suit, rank and all constants for 
+ * a normal deck. Also provides translation to and from "ordinal" cards for use in serialization.
+ * TODO: jokers
  */
 public class Card
 {
@@ -80,13 +78,11 @@ public class Card
     /** Number or ordinals (also the number of cards in a standard deck). */
     public static const NUM_ORDINALS :int = NUM_SUITS * NUM_RANKS;
 
-    /** Placeholder value for the width of a card sprite. 
-     *  XXTODO use card.display.width instead? */
+    /** Placeholder value for the width of a card sprite. */
     public static const SPRITE_WIDTH :int = 70;
 
-    /** Placeholder value for the height of a card sprite.
-     *  XXTODO use card.display.height instead? */
-    public static const SPRITE_HEIGHT :int = 105;
+    /** Placeholder value for the height of a card sprite. */
+    public static const SPRITE_HEIGHT :int = 100;
 
     /** Create a new Card object from an ordinal.
      *  @throws CardException if the ordinal is not valid. */
@@ -139,7 +135,7 @@ public class Card
     }
 
     /** Return a long string for a SUIT_* constant. E.g. "hearts".
-     *  XXTODO this is probably not useful, remove */
+     *  TODO: is this useful? */
     static public function longSuitString (suit :int) :String
     {
         switch (suit) {
@@ -152,7 +148,7 @@ public class Card
     }
     
     /** Return a long string for a RANK_* constant. E.g. "queen".
-     *  XXTODO this is probably not useful, remove */
+     *  TODO: is this useful? */
     static public function longRankString (rank :int) :String
     {
         switch (rank)
@@ -220,24 +216,15 @@ public class Card
     public function Card (suit :int, rank :int) :void
     {
         if (rank < 0 || rank >= NUM_RANKS) {
-            throw CardException("" + rank + " is not a valid rank");
+            throw new CardException("" + rank + " is not a valid rank");
         }
         
         if (suit < 0 || suit >= NUM_SUITS) {
-            throw CardException("" + suit + " is not a valid suit");
+            throw new CardException("" + suit + " is not a valid suit");
         }
 
         _rank = rank;
         _suit = suit;
-    }
-
-    /** Access the display component (created on demand). */
-    public function get display () :DisplayObject
-    {
-        if (_display == null) {
-            _display = new CardText(this);
-        }
-        return _display;
     }
 
     /** Access the rank. */
@@ -277,7 +264,7 @@ public class Card
     }
     
     /** Return a long string representing the card. E.g. "two of hearts". 
-     *  XXTODO this is probably not useful, remove. */
+     *  TODO: is this useful? */
     public function toLongString () :String
     {
         return longRankString(_rank) + " of " + suitString(_suit);
@@ -298,46 +285,6 @@ public class Card
         return cmp > 0;
     }
 
-    /** Access the enabling of the card's display object. The enabled state indicates that the card 
-     *  can be clicked, but clicking itself is handled by the container. */
-    public function set enabled (on :Boolean) :void
-    {
-        if (_display != null) {
-            _display.enabled = on;
-        }
-    }
-
-    /** Access the enabling of the card's display object. The enabled state indicates that the card 
-     *  can be clicked, but clicking itself is handled by the container. */
-    public function get enabled () :Boolean
-    {
-        if (_display == null) {
-            return false;
-        }
-        return _display.enabled;
-    }
-
-    /** Access the highlight state of the card's display object. A highlighted card indicates that 
-     *  the user is hovering over the card, although mouse movement itself is handled by the 
-     *  container. */
-    public function get highlighted () :Boolean
-    {
-        if (_display == null) {
-            return false;
-        }
-        return _display.highlighted;
-    }
-
-    /** Access the highlight state of the card's display object. A highlighted card indicates that 
-     *  the user is hovering over the card, although mouse movement itself is handled by the 
-     *  container. */
-    public function set highlighted (on :Boolean) :void
-    {
-        if (_display != null) {
-            _display.highlighted = on;
-        }
-    }
-
     /** Throw an exception if the value is less than zero or larger than max.
      *  @param type the ordinal name of the value set */
     protected static function validate(type :String, value :int, num :int) :void
@@ -352,68 +299,7 @@ public class Card
 
     /** The suit. */
     protected var _suit :int;
-
-    /** The display component (may be null) */
-    protected var _display :CardText;
 }
 
 }
 
-import flash.text.TextField;
-import spades.*;
-
-/** File-private placeholder for card graphics.
- *  XXTODO embed flashy stuff */
-class CardText extends TextField
-{
-    public function CardText (card :Card) {
-        width = Card.SPRITE_WIDTH;
-        height = Card.SPRITE_HEIGHT;
-        background = true;
-        border = true;
-        selectable = false;
-        multiline = true; // (needed for rank + CR + suit)
-        text = card.string;
-        update();
-    }
-
-    public function set enabled (on :Boolean) :void
-    {
-        _enabled = on;
-        update();
-    }
-
-    public function get enabled () :Boolean
-    {
-        return _enabled;
-    }
-
-    public function set highlighted (on :Boolean) :void
-    {
-        _highlighted = on;
-        update();
-    }
-
-    public function get highlighted () :Boolean
-    {
-        return _highlighted;
-    }
-
-    protected function update () :void
-    {
-        if (_enabled) {
-            if (_highlighted) {
-                backgroundColor = 0xFF8080;
-            }
-            else {
-                backgroundColor = 0x77FF77;
-            }
-        }
-        else {
-            backgroundColor = 0x888888;
-        }
-    }
-
-    protected var _enabled :Boolean = false;
-    protected var _highlighted :Boolean = false;
-}

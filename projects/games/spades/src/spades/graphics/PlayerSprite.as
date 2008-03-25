@@ -1,4 +1,4 @@
-package spades {
+package spades.graphics {
 
 import flash.display.Sprite;
 import flash.text.TextField;
@@ -8,24 +8,36 @@ import flash.text.TextFieldAutoSize;
  * Flash object for a player sitting at a trick-taking card game. This is a placeholder for 
  * something nicer, so only the interface is documented in detail.
  */
-public class Player extends Sprite
+public class PlayerSprite extends Sprite
 {
     /** Create a new player. */
-    public function Player (name :String)
+    public function PlayerSprite (name :String)
     {
+        var debug: Boolean = false;
+
         // setup name in top third of player box
         var nameField :TextField = new TextField();
+        nameField.autoSize = TextFieldAutoSize.CENTER;
         nameField.width = WIDTH;
-        nameField.height = HEIGHT * 1 / 3;
+        nameField.height = HEIGHT / 3;
+        nameField.x = 0;
+        nameField.y = -HEIGHT / 2;
         nameField.text = name;
         addChild(nameField);
 
         // setup trick count in bottom third of player box
         _status = new TextField();
+        _status.autoSize = TextFieldAutoSize.CENTER;
         _status.width = WIDTH;
-        _status.y = HEIGHT * 2 / 3;
-        _status.height = HEIGHT * 1 / 3;
+        _status.height = HEIGHT / 3;
+        _status.x = 0;
+        _status.y = HEIGHT / 6;
         addChild(_status);
+
+        if (debug) {
+            nameField.border = true;
+            _status.border = true;
+        }
 
         setTurn(false);
         updateStatus();
@@ -37,7 +49,7 @@ public class Player extends Sprite
     {
         graphics.clear();
         graphics.beginFill(turn ? 0x00FF00 : 0x808080);
-        graphics.drawRect(0, 0, WIDTH, HEIGHT);
+        graphics.drawRect(-WIDTH / 2, -HEIGHT / 2, WIDTH, HEIGHT);
         graphics.endFill();
     }
 
@@ -45,13 +57,6 @@ public class Player extends Sprite
     public function setBid (bid :int) :void
     {
         _bid = bid;
-        updateStatus();
-    }
-
-    /** Update to reflect the player's lack of a bid. */
-    public function clearBid () :void
-    {
-        _bid = NO_BID;
         updateStatus();
     }
 
@@ -66,12 +71,10 @@ public class Player extends Sprite
     {
         var s :String = "" + _tricks + "/";
 
-        if (_bid == NO_BID)
-        {
+        if (_bid == NO_BID) {
             s += "?";
         }
-        else
-        {
+        else {
             s += _bid;
         }
 
@@ -83,8 +86,8 @@ public class Player extends Sprite
     protected var _bid :int = -1;
 
     protected static const WIDTH :int = 100;
-    protected static const HEIGHT :int = 60;
-    protected static const NO_BID :int = -1;
+    protected static const HEIGHT :int = 72;
+    protected static const NO_BID :int = TableSprite.NO_BID;
 }
 
 }

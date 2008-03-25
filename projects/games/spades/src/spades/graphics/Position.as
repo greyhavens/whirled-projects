@@ -1,4 +1,4 @@
-package spades {
+package spades.graphics {
 
 /**
  * A position within a parent object, represented by percentages.
