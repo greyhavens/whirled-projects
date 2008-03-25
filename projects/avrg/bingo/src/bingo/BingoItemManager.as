@@ -39,7 +39,7 @@ public class BingoItemManager
             }
         }
 
-        _tags = tagSet.toArray();
+        _tags = tagSet.toArray().sort();
         this.resetRemainingTags();
 
         log.info(Constants.ITEMS.length.toString() + " items, " + _tags.length + " tags");
