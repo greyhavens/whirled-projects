@@ -1,5 +1,7 @@
 package bingo {
 
+import com.whirled.AVRGameControlEvent;
+
 import com.whirled.contrib.ColorMatrix;
 
 import flash.display.Bitmap;
@@ -8,6 +10,7 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 
 public class BingoCardView extends Sprite
 {
@@ -39,13 +42,44 @@ public class BingoCardView extends Sprite
 
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
 
+        BingoMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
+
         this.addEventListener(MouseEvent.MOUSE_DOWN, handleClick);
         this.addEventListener(Event.REMOVED, handleRemoved);
+
+        this.handleSizeChanged();
     }
 
     protected function handleRemoved (e :Event) :void
     {
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
+        BingoMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
+    }
+
+    protected function handleSizeChanged (...ignored) :void
+    {
+        var loc :Point = this.properLocation;
+
+        this.x = loc.x;
+        this.y = loc.y;
+    }
+
+    protected function get properLocation () :Point
+    {
+        var loc :Point;
+
+        if (BingoMain.control.isConnected()) {
+            var stageSize :Rectangle = BingoMain.control.getStageSize(true);
+
+            loc = (null != stageSize
+                    ? new Point(stageSize.right + SCREEN_EDGE_OFFSET.x, stageSize.top + SCREEN_EDGE_OFFSET.y)
+                    : new Point(0, 0));
+
+        } else {
+            loc = new Point(700 + SCREEN_EDGE_OFFSET.x, SCREEN_EDGE_OFFSET.y);
+        }
+
+        return loc;
     }
 
     public function createItemView (item :BingoItem) :DisplayObject
@@ -143,6 +177,7 @@ public class BingoCardView extends Sprite
     protected static const ALLOWED_STAMP_BLEED :Number = 0;
 
     protected static const UL_OFFSET :Point = new Point(14, 28);
+    protected static const SCREEN_EDGE_OFFSET :Point = new Point(-660, 30);
 
 }
 

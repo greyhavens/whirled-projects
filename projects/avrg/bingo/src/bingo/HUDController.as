@@ -1,8 +1,12 @@
 package bingo {
 
+import com.whirled.AVRGameControlEvent;
+
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.events.MouseEvent;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
@@ -12,9 +16,6 @@ public class HUDController
     {
         var hudClass :Class = BingoMain.resourcesDomain.getDefinition("HUD") as Class;
         _hud = new hudClass();
-
-        _hud.x = Constants.HUD_LOC.x;
-        _hud.y = Constants.HUD_LOC.y;
 
         BingoMain.sprite.addChild(_hud);
 
@@ -38,10 +39,13 @@ public class HUDController
         BingoMain.model.addEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, updateBingoButton, false, 0, true);
         BingoMain.model.addEventListener(LocalStateChangedEvent.CARD_COMPLETED, updateBingoButton, false, 0, true);
 
+        BingoMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
+
         // set initial state
         this.updateScores();
         this.updateBall();
         this.updateBingoButton();
+        this.handleSizeChanged();
     }
 
     public function destroy () :void
@@ -51,6 +55,34 @@ public class HUDController
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
         BingoMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, updateBingoButton);
         BingoMain.model.removeEventListener(LocalStateChangedEvent.CARD_COMPLETED, updateBingoButton);
+
+        BingoMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
+    }
+
+    protected function handleSizeChanged (...ignored) :void
+    {
+        var loc :Point = this.properLocation;
+
+        _hud.x = loc.x;
+        _hud.y = loc.y;
+    }
+
+    protected function get properLocation () :Point
+    {
+        var loc :Point;
+
+        if (BingoMain.control.isConnected()) {
+            var stageSize :Rectangle = BingoMain.control.getStageSize(true);
+
+            loc = (null != stageSize
+                    ? new Point(stageSize.right + SCREEN_EDGE_OFFSET.x, stageSize.top + SCREEN_EDGE_OFFSET.y)
+                    : new Point(0, 0));
+
+        } else {
+            loc = new Point(700 + SCREEN_EDGE_OFFSET.x, SCREEN_EDGE_OFFSET.y);
+        }
+
+        return loc;
     }
 
     protected function handleQuit (...ignored) :void
@@ -129,6 +161,7 @@ public class HUDController
 
     protected static const NUM_SCOREBOARD_ROWS :int = 7;
     protected static const MAX_BALL_TEXT_WIDTH :Number = 62;
+    protected static const SCREEN_EDGE_OFFSET :Point = new Point(-150, 230);
 
 }
 

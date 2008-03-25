@@ -103,9 +103,6 @@ public class Controller
         _model.createNewCard();
 
         _cardView = new BingoCardView(_model.card);
-        _cardView.x = Constants.CARD_LOC.x;
-        _cardView.y = Constants.CARD_LOC.y;
-
         _mainSprite.addChild(_cardView);
     }
 

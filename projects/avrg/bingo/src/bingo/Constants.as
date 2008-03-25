@@ -10,8 +10,6 @@ public class Constants
     public static const FORCE_SINGLEPLAYER :Boolean = false;
 
     // cosmetic bits
-    public static const HUD_LOC :Point = new Point(550, 220);
-    public static const CARD_LOC :Point = new Point(10, 10);
     public static const WINNER_TEXT_LOC :Point = new Point(50, 400);
 
     // gameplay bits
