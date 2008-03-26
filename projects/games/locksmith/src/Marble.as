@@ -91,6 +91,13 @@ public class Marble extends Sprite
         }
     }
 
+    // For debugging
+    public override function toString () :String
+    {
+        return "Marble [type=" + _type + ", moving=" + _moving + ", nextRing=" + _nextRing + 
+            ", pos=" + _pos + "]";
+    }
+
     protected function updateRotation () :void
     {
         var angle :int = Math.round(Math.atan2(y, x) * 180 / Math.PI) as int;
