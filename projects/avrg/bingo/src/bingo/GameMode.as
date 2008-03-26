@@ -20,15 +20,9 @@ public class GameMode extends AppMode
         _hudView = new HUDController();
         this.addObject(_hudView, this.modeSprite);
 
-        _winnerText = new TextField();
-        _winnerText.autoSize = TextFieldAutoSize.LEFT;
-        _winnerText.textColor = 0x0000FF;
-        _winnerText.scaleX = 3;
-        _winnerText.scaleY = 3;
-        _winnerText.x = Constants.WINNER_TEXT_LOC.x;
-        _winnerText.y = Constants.WINNER_TEXT_LOC.y;
-
-        this.modeSprite.addChild(_winnerText);
+        _winnerView = new WinnerAnimationController();
+        this.addObject(_winnerView, this.modeSprite);
+        _winnerView.visible = false;
 
         // each client maintains the concept of an expected state,
         // so that it is prepared to take over as the
@@ -111,7 +105,7 @@ public class GameMode extends AppMode
             this.createNewBall();
         }
 
-        _winnerText.text = "";
+        _winnerView.visible = false;
 
         this.stopNewRoundTimer();
     }
@@ -134,9 +128,16 @@ public class GameMode extends AppMode
         this.stopNewBallTimer();
         this.startNewRoundTimer(); // a new round should start shortly
 
+        // remove the bingo card
+        if (null != _cardView) {
+            _cardView.destroySelf();
+            _cardView = null;
+        }
+
         var playerName :String = BingoMain.getPlayerName(BingoMain.model.curState.roundWinnerId);
 
-        _winnerText.text = playerName + " wins the round!";
+        _winnerView.playerName = playerName;
+        _winnerView.visible = true;
 
         // update scores
         if (null == _expectedScores) {
@@ -237,7 +238,7 @@ public class GameMode extends AppMode
 
     protected var _cardView :BingoCardController;
     protected var _hudView :HUDController;
-    protected var _winnerText :TextField;
+    protected var _winnerView :WinnerAnimationController;
 
     protected var _calledBingoThisRound :Boolean;
 

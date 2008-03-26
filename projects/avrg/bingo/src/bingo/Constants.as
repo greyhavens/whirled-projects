@@ -6,11 +6,11 @@ public class Constants
 {
     public static const VERSION :Number = 1;
 
-    public static const ALLOW_CHEATS :Boolean = false;
+    public static const ALLOW_CHEATS :Boolean = true;
     public static const FORCE_SINGLEPLAYER :Boolean = false;
 
     // cosmetic bits
-    public static const WINNER_TEXT_LOC :Point = new Point(50, 400);
+    public static const CARD_SCREEN_EDGE_OFFSET :Point = new Point(-500, 220);
 
     // gameplay bits
     public static const CARD_WIDTH :int = 5;
