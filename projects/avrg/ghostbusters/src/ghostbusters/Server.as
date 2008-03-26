@@ -105,7 +105,8 @@ public class Server
     protected function seekTick (tick :int) :void
     {
         if (!Game.model.ghostId) {
-            // TODO: if the ghost has been defeated, it should eventually respawn
+            // maybe a delay here?
+            maybeSpawnGhost();
             return;
         }
 
@@ -224,7 +225,6 @@ public class Server
         }
     }
 
-    // TODO: this should be called on a timer, too
     protected function maybeSpawnGhost () :void
     {
         if (Game.model.ghostId != null) {
