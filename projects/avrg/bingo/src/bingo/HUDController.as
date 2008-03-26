@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.events.MouseEvent;
@@ -32,9 +33,7 @@ public class HUDController extends SceneObject
     {
         // fix the text on the ball
         // @TODO - is TextFieldAutoSize accessible in the FAT? where?
-        var ball :MovieClip = _hud["inst_bingo_ball"];
-        var ballText :TextField = ball["text"];
-        ballText.autoSize = TextFieldAutoSize.LEFT;
+        this.ballTextField.autoSize = TextFieldAutoSize.LEFT;
 
         // wire up buttons
         var quitButton :InteractiveObject = _hud["x_button"];
@@ -163,10 +162,17 @@ public class HUDController extends SceneObject
 
     protected function updateBall (...ignored) :void
     {
-        var ball :MovieClip = _hud["inst_bingo_ball"];
-        var textField :TextField = ball["text"];
+        // this is a hideous attempt to rescale the text in the ball
+        // without breaking the text alignment. there's gotta
+        // be a better way
 
-        ball.removeChild(textField);
+        var ball :MovieClip = _hud["inst_bingo_ball"];
+
+        var textField :TextField = this.ballTextField;
+
+        var oldParent :DisplayObjectContainer = textField.parent;
+
+        oldParent.removeChild(textField);
 
         textField.scaleX = 1;
         textField.scaleY = 1;
@@ -182,7 +188,7 @@ public class HUDController extends SceneObject
         textField.x = (ball.width * 0.5) - (textField.width * 0.5);
         textField.y = ((ball.height * 0.5) - (textField.height * 0.5)) - 2;
 
-        ball.addChild(textField);
+        oldParent.addChild(textField);
     }
 
     protected function updateBingoButton (...ignored) :void
@@ -213,6 +219,16 @@ public class HUDController extends SceneObject
     protected function get gameMode () :GameMode
     {
         return this.db as GameMode;
+    }
+
+    protected function get ballTextField () :TextField
+    {
+        // ugh
+        var ball :MovieClip = _hud["inst_bingo_ball"];
+        var ballTextParent :MovieClip = ball["inst_text_symbol"];
+        var ballText :TextField = ballTextParent["inst_text"];
+
+        return ballText;
     }
 
     protected var _hud :MovieClip;
