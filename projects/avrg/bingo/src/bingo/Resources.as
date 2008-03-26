@@ -9,17 +9,8 @@ public class Resources
     [Embed(source="../../rsrc/Bingo_Board.swf", mimeType="application/octet-stream")]
     public static const SWF_BOARD :Class;
 
-    [Embed(source="../../rsrc/splash_screen_text.png")]
-    public static const IMG_SPLASHSCREEN :Class;
-
-    [Embed(source="../../rsrc/play_down.png")]
-    public static const IMG_PLAYDOWN :Class;
-
-    [Embed(source="../../rsrc/play_default.png")]
-    public static const IMG_PLAYENABLED :Class;
-
-    [Embed(source="../../rsrc/play_over.png")]
-    public static const IMG_PLAYOVER :Class;
+    [Embed(source="../../rsrc/Bingo_Intro.swf", mimeType="application/octet-stream")]
+    public static const SWF_INTRO :Class;
 
     // items
 

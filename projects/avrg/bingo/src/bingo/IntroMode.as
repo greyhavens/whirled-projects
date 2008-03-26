@@ -1,53 +1,50 @@
 package bingo {
 
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.resource.*;
 
-import flash.display.Bitmap;
-import flash.display.SimpleButton;
+import flash.display.InteractiveObject;
+import flash.display.MovieClip;
 import flash.events.MouseEvent;
-import flash.geom.Point;
 import flash.geom.Rectangle;
 
 public class IntroMode extends AppMode
 {
     override protected function setup () :void
     {
-        var splashScreen :Bitmap = new Resources.IMG_SPLASHSCREEN();
+        var swf :SwfResourceLoader = BingoMain.resources.getResource("intro") as SwfResourceLoader;
+        var introClass :Class = swf.getClass("Bingo_intro_symbol");
+        _movie = new introClass();
 
-        // center the splash screen
-        var centerPt :Point = new Point();
+        // center on screen
+        var screenBounds :Rectangle = BingoMain.getScreenBounds();
+        _movie.x = screenBounds.width * 0.5;
+        _movie.y = screenBounds.height * 0.5;
 
-        if (BingoMain.control.isConnected()) {
-            var stageSize :Rectangle = BingoMain.control.getStageSize(true);
-            centerPt.x = stageSize.x + (stageSize.width * 0.5);
-            centerPt.y = stageSize.y + (stageSize.height * 0.5);
-        } else {
-            centerPt.x = 350;
-            centerPt.y = 250;
-        }
+        this.modeSprite.addChild(_movie);
 
-        splashScreen.x = centerPt.x - (splashScreen.width * 0.5);
-        splashScreen.y = centerPt.y - (splashScreen.height * 0.5) - 50;
+        // wire up the buttons
+        var playButton :InteractiveObject = _movie["inst_play_button"];
+        playButton.addEventListener(MouseEvent.CLICK, handlePlayClicked);
 
-        _playButton = new SimpleButton(
-            new Resources.IMG_PLAYENABLED(),
-            new Resources.IMG_PLAYOVER(),
-            new Resources.IMG_PLAYDOWN(),
-            new Resources.IMG_PLAYENABLED());
+        var quitButton :InteractiveObject = _movie["inst_quit_button"];
+        quitButton.addEventListener(MouseEvent.CLICK, handleQuitClicked);
 
-        // position the play button below the splash screen
-        _playButton.x = centerPt.x - (_playButton.width * 0.5);
-        _playButton.y = splashScreen.y + 250;
-
-        _playButton.addEventListener(MouseEvent.CLICK, handlePlayClicked, false, 0, true);
-
-        this.modeSprite.addChild(_playButton);
-        this.modeSprite.addChild(splashScreen);
+        var helpButton :InteractiveObject = _movie["inst_help_button"];
+        helpButton.addEventListener(MouseEvent.CLICK, handleHelpClicked);
     }
 
     override protected function destroy () :void
     {
-        _playButton.removeEventListener(MouseEvent.CLICK, handlePlayClicked);
+        // unwire the buttons
+        var playButton :InteractiveObject = _movie["inst_play_button"];
+        playButton.removeEventListener(MouseEvent.CLICK, handlePlayClicked);
+
+        var quitButton :InteractiveObject = _movie["inst_quit_button"];
+        quitButton.removeEventListener(MouseEvent.CLICK, handleQuitClicked);
+
+        var helpButton :InteractiveObject = _movie["inst_help_button"];
+        helpButton.removeEventListener(MouseEvent.CLICK, handleHelpClicked);
     }
 
     protected function handlePlayClicked (...ignored) :void
@@ -55,7 +52,16 @@ public class IntroMode extends AppMode
         MainLoop.instance.changeMode(new GameMode());
     }
 
-    protected var _playButton :SimpleButton;
+    protected function handleQuitClicked (...ignored) :void
+    {
+        BingoMain.quit();
+    }
+
+    protected function handleHelpClicked (...ignored) :void
+    {
+    }
+
+    protected var _movie :MovieClip;
 }
 
 }

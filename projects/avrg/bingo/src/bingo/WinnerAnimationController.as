@@ -1,14 +1,14 @@
 package bingo {
 
+import com.whirled.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.AVRGameControlEvent;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
-import flash.text.TextField;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.text.TextField;
 
 public class WinnerAnimationController extends SceneObject
 {
@@ -53,20 +53,11 @@ public class WinnerAnimationController extends SceneObject
 
     protected function get properLocation () :Point
     {
-        var loc :Point;
+        var screenBounds :Rectangle = BingoMain.getScreenBounds();
 
-        if (BingoMain.control.isConnected()) {
-            var stageSize :Rectangle = BingoMain.control.getStageSize(true);
-
-            loc = (null != stageSize
-                    ? new Point(stageSize.right + Constants.CARD_SCREEN_EDGE_OFFSET.x, stageSize.top + Constants.CARD_SCREEN_EDGE_OFFSET.y)
-                    : new Point(0, 0));
-
-        } else {
-            loc = new Point(700 + Constants.CARD_SCREEN_EDGE_OFFSET.x, Constants.CARD_SCREEN_EDGE_OFFSET.y);
-        }
-
-        return loc;
+        return new Point(
+            screenBounds.right + Constants.CARD_SCREEN_EDGE_OFFSET.x,
+            screenBounds.top + Constants.CARD_SCREEN_EDGE_OFFSET.y);
     }
 
     protected var _animView :MovieClip;

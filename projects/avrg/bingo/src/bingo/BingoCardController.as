@@ -110,20 +110,11 @@ public class BingoCardController extends SceneObject
 
     protected function get properLocation () :Point
     {
-        var loc :Point;
+        var screenBounds :Rectangle = BingoMain.getScreenBounds();
 
-        if (BingoMain.control.isConnected()) {
-            var stageSize :Rectangle = BingoMain.control.getStageSize(true);
-
-            loc = (null != stageSize
-                    ? new Point(stageSize.right + Constants.CARD_SCREEN_EDGE_OFFSET.x, stageSize.top + Constants.CARD_SCREEN_EDGE_OFFSET.y)
-                    : new Point(0, 0));
-
-        } else {
-            loc = new Point(700 + Constants.CARD_SCREEN_EDGE_OFFSET.x, Constants.CARD_SCREEN_EDGE_OFFSET.y);
-        }
-
-        return loc;
+        return new Point(
+            screenBounds.right + Constants.CARD_SCREEN_EDGE_OFFSET.x,
+            screenBounds.top + Constants.CARD_SCREEN_EDGE_OFFSET.y);
     }
 
     public function createItemView (item :BingoItem) :DisplayObject

@@ -111,20 +111,11 @@ public class HUDController extends SceneObject
 
     protected function get properLocation () :Point
     {
-        var loc :Point;
+        var screenBounds :Rectangle = BingoMain.getScreenBounds();
 
-        if (BingoMain.control.isConnected()) {
-            var stageSize :Rectangle = BingoMain.control.getStageSize(true);
-
-            loc = (null != stageSize
-                    ? new Point(stageSize.right + Constants.HUD_SCREEN_EDGE_OFFSET.x, stageSize.top + Constants.HUD_SCREEN_EDGE_OFFSET.y)
-                    : new Point(0, 0));
-
-        } else {
-            loc = new Point(700 + Constants.HUD_SCREEN_EDGE_OFFSET.x, Constants.HUD_SCREEN_EDGE_OFFSET.y);
-        }
-
-        return loc;
+        return new Point(
+            screenBounds.right + Constants.HUD_SCREEN_EDGE_OFFSET.x,
+            screenBounds.top + Constants.HUD_SCREEN_EDGE_OFFSET.y);
     }
 
     protected function handleQuit (...ignored) :void

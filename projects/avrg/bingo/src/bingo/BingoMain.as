@@ -12,6 +12,7 @@ import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.geom.Rectangle;
 
 [SWF(width="700", height="500")]
 public class BingoMain extends Sprite
@@ -38,6 +39,7 @@ public class BingoMain extends Sprite
 
         resources.pendResourceLoad("swf", "ui", { embeddedClass: Resources.SWF_UI });
         resources.pendResourceLoad("swf", "board", { embeddedClass: Resources.SWF_BOARD });
+        resources.pendResourceLoad("swf", "intro", { embeddedClass: Resources.SWF_INTRO });
 
         resources.load();
     }
@@ -46,6 +48,15 @@ public class BingoMain extends Sprite
     {
         if (control.isConnected()) {
             control.deactivateGame();
+        }
+    }
+
+    public static function getScreenBounds () :Rectangle
+    {
+        if (control.isConnected()) {
+            return control.getStageSize(true);
+        } else {
+            return new Rectangle(0, 0, 700, 500);
         }
     }
 
