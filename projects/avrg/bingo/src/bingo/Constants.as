@@ -4,7 +4,7 @@ import flash.geom.Point;
 
 public class Constants
 {
-    public static const VERSION :Number = 4;
+    public static const VERSION :Number = 5;
 
     public static const ALLOW_CHEATS :Boolean = false;
     public static const FORCE_SINGLEPLAYER :Boolean = false;
@@ -208,7 +208,7 @@ public class Constants
         new BingoItem("patterned tote 12", ["bag", "tote", "pattern", "white", "pink", "floral", ], Resources.IMG_TOTEPATTERN12),
         new BingoItem("patterned tote 13", ["bag", "tote", "pattern", "black", "white", "floral", ], Resources.IMG_TOTEPATTERN13),
         new BingoItem("patterned tote 14", ["bag", "tote", "pattern", "yellow", "floral", ], Resources.IMG_TOTEPATTERN14),
-        new BingoItem("patterned tote 15", ["bag", "tote", "pattern", "green", ], Resources.IMG_TOTEPATTERN15),
+        new BingoItem("patterned tote 15", ["bag", "tote", "pattern", "green", "stripes", ], Resources.IMG_TOTEPATTERN15),
         new BingoItem("brown woven tote", ["bag", "tote", "brown", ], Resources.IMG_WOVENTOTEBROWN),
         new BingoItem("orange woven tote", ["bag", "tote", "orange", ], Resources.IMG_WOVENTOTEORANGE),
         new BingoItem("yellow woven tote", ["bag", "tote", "yellow", ], Resources.IMG_WOVENTOTEYELLOW),
