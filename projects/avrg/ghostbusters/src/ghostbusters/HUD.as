@@ -68,9 +68,17 @@ public class HUD extends Sprite
 
     public function getRightEdge () :int
     {
-        // put the HUD to the right of the visible screen, or flush with the stage edge
-        return Math.max(0, Math.min(Game.scrollSize.width - MARGIN_LEFT - BORDER_LEFT,
-                                    Game.stageSize.right - _visualHud.width - MARGIN_LEFT));
+        if (Game.scrollSize == null) {
+            Game.log.debug("getRightEdge: scrollSize == null");
+        } else if (Game.stageSize == null) {
+            Game.log.debug("getRightEdge: stageSize == null");
+        } else if (_visualHud == null) {
+            Game.log.debug("getRightEdge: visualHud == null");
+        } else {
+            // put the HUD to the right of the visible screen, or flush with the stage edge
+            return Math.max(0, Math.min(Game.scrollSize.width - MARGIN_LEFT - BORDER_LEFT,
+                                        Game.stageSize.right - _visualHud.width - MARGIN_LEFT));
+        }
     }
 
     public function getWeaponType () :int
