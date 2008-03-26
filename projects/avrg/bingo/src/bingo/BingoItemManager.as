@@ -42,10 +42,10 @@ public class BingoItemManager
         _tags = tagSet.toArray().sort();
         this.resetRemainingTags();
 
-        log.info(Constants.ITEMS.length.toString() + " items, " + _tags.length + " tags");
+        /*log.info(Constants.ITEMS.length.toString() + " items, " + _tags.length + " tags");
         for each (tag in _tags) {
             log.info(tag);
-        }
+        }*/
     }
 
     public function get tags () :Array

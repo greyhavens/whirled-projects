@@ -22,10 +22,7 @@ public class OfflineModel extends Model
 
     override public function tryCallBingo () :void
     {
-        var newState :SharedState = _curState.clone();
-        newState.roundWinnerId = BingoMain.ourPlayerId;
-
-        this.setState(newState);
+        this.bingoCalled(BingoMain.ourPlayerId);
     }
 }
 

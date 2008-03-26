@@ -4,9 +4,10 @@ import com.threerings.util.Log;
 
 import flash.events.EventDispatcher;
 
-[Event(name="gameState", type="bingo.SharedStateChangedEvent")]
+[Event(name="gameStateChanged", type="bingo.SharedStateChangedEvent")]
 [Event(name="newBall", type="bingo.SharedStateChangedEvent")]
 [Event(name="newScores", type="bingo.SharedStateChangedEvent")]
+[Event(name="bingoCalled", type="bingo.SharedStateChangedEvent")]
 
 [Event(name="cardCompleted", type="bingo.LocalStateChangedEvent")]
 
@@ -97,6 +98,11 @@ public class Model extends EventDispatcher
     {
         _curScores = newScores;
         this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_SCORES));
+    }
+
+    protected function bingoCalled (playerId :int) :void
+    {
+        this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.BINGO_CALLED, playerId));
     }
 
     // shared state

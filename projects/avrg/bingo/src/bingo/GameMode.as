@@ -12,6 +12,7 @@ public class GameMode extends AppMode
         BingoMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
+        BingoMain.model.addEventListener(SharedStateChangedEvent.BINGO_CALLED, handleBingoCalled);
 
         // visuals
         _hudView = new HUDController();
@@ -31,6 +32,7 @@ public class GameMode extends AppMode
         BingoMain.model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
+        BingoMain.model.removeEventListener(SharedStateChangedEvent.BINGO_CALLED, handleBingoCalled);
 
         // @TODO - SimObjects should have "destructor" methods that always get
         // called when modes shutdown
@@ -168,6 +170,19 @@ public class GameMode extends AppMode
     {
         // reset expected scores when they're updated on the server
         _expectedScores = null;
+    }
+
+    protected function handleBingoCalled (e :SharedStateChangedEvent) :void
+    {
+        // when Bingo is called, update the state
+        var playerId :int = e.data as int;
+
+        _expectedState = BingoMain.model.curState.clone();
+
+        _expectedState.roundWinnerId = playerId;
+        _expectedState.gameState = SharedState.STATE_WEHAVEAWINNER;
+
+        this.sendStateChanges();
     }
 
     protected function startNewBallTimer () :void

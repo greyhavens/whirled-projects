@@ -56,7 +56,7 @@ public class OnlineModel extends Model
     {
         // ignore state changes from non-authoritative clients
         if (!BingoMain.control.hasControl()) {
-            //BingoMain.log.info("ignoring state change request from non-authoritative client: " + newState);
+            //log.info("ignoring state change request from non-authoritative client: " + newState);
             return;
         }
 
@@ -64,7 +64,7 @@ public class OnlineModel extends Model
         // (controllers are allowed to keep calling this function until
         // something happens, so ignore duplicate requests)
         if (null != _lastStateRequest && _lastStateRequest.isEqual(newState)) {
-            //BingoMain.log.info("ignoring duplicate state change request: " + newState);
+            //log.info("ignoring duplicate state change request: " + newState);
             return;
         }
 
@@ -74,7 +74,7 @@ public class OnlineModel extends Model
             return;
         }
 
-        //BingoMain.log.info("accepting state change request: " + newState);
+        //log.info("accepting state change request: " + newState);
 
         _stateControl.setRoomProperty(Constants.PROP_STATE, newState.toBytes());
 
@@ -85,7 +85,7 @@ public class OnlineModel extends Model
     {
         // ignore state changes from non-authoritative clients
         if (!BingoMain.control.hasControl()) {
-            //BingoMain.log.info("ignoring scores change request from non-authoritative client");
+            //log.info("ignoring scores change request from non-authoritative client");
             return;
         }
 
@@ -93,17 +93,17 @@ public class OnlineModel extends Model
         // (controllers are allowed to keep calling this function until
         // something happens, so ignore duplicate requests)
         if (null != _lastScoresRequest && _lastScoresRequest.isEqual(newScores)) {
-            //BingoMain.log.info("ignoring duplicate score change request");
+            //log.info("ignoring duplicate score change request");
             return;
         }
 
         // is the state actually being changed?
         if (newScores.isEqual(_curScores)) {
-            //BingoMain.log.info("ignoring redundant score change request");
+            //log.info("ignoring redundant score change request");
             return;
         }
 
-        //BingoMain.log.info("accepting score change request");
+        //log.info("accepting score change request");
 
         _stateControl.setRoomProperty(Constants.PROP_SCORES, newScores.toBytes());
 
@@ -131,28 +131,6 @@ public class OnlineModel extends Model
         }
     }
 
-    protected function filterOldBingoRequests () :void
-    {
-        // if "bingo" has been confirmed for this round, remove
-        // any invalid bingo requests from the queue
-        _requestMessageQueue = _requestMessageQueue.filter(isValidBingoRequestMessage);
-    }
-
-    protected function isValidBingoRequestMessage (e :AVRGameControlEvent, index :int, array :Array) :Boolean
-    {
-        if (Constants.MSG_REQUEST_BINGO == e.name) {
-            var bits :Array = e.value as Array;
-            var roundId :int = bits[0];
-
-            // return false if this bingo request is out of date
-            if (roundId < _curState.roundId) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     protected function processRequestMessageQueue () :void
     {
         // only the client in control can process
@@ -167,8 +145,6 @@ public class OnlineModel extends Model
             switch (e.name) {
 
             case Constants.MSG_REQUEST_BINGO:
-                // @TODO - this logic should be moved out of
-                // OnlineModel and into Controller
 
                 // turn the first bingo request we see
                 // into a confirmation
@@ -179,14 +155,17 @@ public class OnlineModel extends Model
                 // validate the data
                 // - the player must still be in the game
                 // - the roundId must be correct
-                if (!BingoMain.control.isPlayerHere(playerId) || roundId != _curState.roundId) {
+                // - the game state must be STATE_PLAYING
+                if (!BingoMain.control.isPlayerHere(playerId) ||
+                    roundId != _curState.roundId ||
+                    _curState.gameState != SharedState.STATE_PLAYING) {
+
                     continue;
                 }
 
-                // make the state change
-                var newState :SharedState = _curState.clone();
-                newState.roundWinnerId = playerId;
-                this.trySetNewState(newState);
+                // make the state change (an event will be fired that controllers can respond to)
+                this.bingoCalled(playerId);
+
                 break;
 
             default:
