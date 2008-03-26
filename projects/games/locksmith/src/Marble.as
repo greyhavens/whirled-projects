@@ -62,7 +62,7 @@ public class Marble extends Sprite
         return RING_MULTIPLIER * _nextRing.num + _nextRing.getHoleAt(_pos);
     }
 
-    public function launch (onlyOne :Boolean = false) :Boolean 
+    public function launch () :Boolean
     {
         var hole :int = _nextRing == null ? -1 : _nextRing.getHoleAt(_pos);
         if (hole != -1 && _nextRing.holeIsEmpty(hole) && 
@@ -71,7 +71,6 @@ public class Marble extends Sprite
             _destination = _nextRing.getHoleTargetLocation(hole);
             _moveStart = getTimer();
             setMoving(true);
-            _onlyOne = onlyOne;
             _board.marbleIsRoaming(this, true);
             return true;
         } else {
@@ -133,41 +132,56 @@ public class Marble extends Sprite
                 return;
             }
 
-            if (DoLater.instance.mostRecentStage >= DoLater.ROTATION_END) {
-                // fall as far as we can at the end of the rotation
-                _onlyOne = false;
-            }
             x = _destination.x;
             y = _destination.y;
+
+            // check if we're in the middle and should be removed from the board.
             if (_destination.equals(new Point(0, 0))) {
                 EventHandlers.unregisterEventListener(this, Event.ENTER_FRAME, enterFrame);
                 _board.removeChild(this);
                 _board.marbleIsRoaming(this, false);
+                return;
+            }
+
+            // if the target ring is rotating, we don't try to fall any further at the moment
+            if (_nextRing.isRotating()) {
+                setMoving(false);
+                _nextRing.putMarbleInHole(this, _nextRing.getHoleAt(_pos));
+                _board.marbleIsRoaming(this, false);
+
+            // otherwise we try to fall as far as we can.
             } else if (_nextRing.inner != null) {
+
+                // if the next ring down the line has an empty hole at our position, and nothing
+                // else is moving to it, start going there immediately
                 var hole :int = _nextRing.inner.getHoleAt(_pos);
-                if (!_onlyOne && hole != -1 && _nextRing.inner.holeIsEmpty(hole) && 
+                if (hole != -1 && _nextRing.inner.holeIsEmpty(hole) &&
                     _board.getMarbleGoingToHole(_nextRing.inner.num, hole) == null) {
                     _origin = _destination;
                     _destination = _nextRing.inner.getHoleTargetLocation(hole);
                     _moveStart = getTimer();
+
+                // otherwise, just sit where we are
                 } else {
                     setMoving(false);
-                    hole = _nextRing.getHoleAt(_pos);
-                    _nextRing.putMarbleInHole(this, hole);
+                    _nextRing.putMarbleInHole(this, _nextRing.getHoleAt(_pos));
                     _board.marbleIsRoaming(this, false);
                 }
+
+            // finally, if the ring we're on isn't rotating, and has no inner ring, then we're a
+            // goal candidate
             } else {
                 setMoving(false);
-                if (!_onlyOne && (_pos <= 2 || _pos >= 14)) {
+                if (_pos <= 2 || _pos >= 14) {
                     scorePoint(MOON);
-                } else if (!_onlyOne && (_pos >= 6 && _pos <= 10)) {
+                } else if (_pos >= 6 && _pos <= 10) {
                     scorePoint(SUN);
                 } else {
-                    hole = _nextRing.getHoleAt(_pos);
-                    _nextRing.putMarbleInHole(this, hole);
+                    _nextRing.putMarbleInHole(this, _nextRing.getHoleAt(_pos));
                     _board.marbleIsRoaming(this, false);
                 }
             }
+
             _nextRing = _nextRing != null ? _nextRing.inner : null;
         }
     }
@@ -181,7 +195,6 @@ public class Marble extends Sprite
     protected var _origin :Point;
     protected var _moveStart :int = 0;
     protected var _moving :Boolean = false;
-    protected var _onlyOne :Boolean = false;
     protected var _type :int;
     protected var _movie :MarbleMovie;
 }

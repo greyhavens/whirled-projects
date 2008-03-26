@@ -15,6 +15,7 @@ import mx.core.MovieClipAsset;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
+import com.threerings.util.Log;
 
 import com.whirled.contrib.EventHandlers;
 
@@ -90,6 +91,11 @@ public class Ring extends Sprite
         DoLater.instance.trigger(DoLater.ROTATION_BEGIN);
     }
 
+    public function isRotating () :Boolean
+    {
+        return _rotationDirection != STATIONARY;
+    }
+
     /** 
      * Called when the win condition has been met and the animation should stop
      */
@@ -114,6 +120,8 @@ public class Ring extends Sprite
 
     public function putMarbleInHole (marble :Marble, hole :int) :void
     {
+        log.debug("putMarbleInHole [" + marble + ", " + hole + ", " + _rotationDirection + ", " + 
+            num + "]");
         if (holeIsEmpty(hole)) {
             _marbles.put(hole, marble);
         } else {
@@ -198,7 +206,7 @@ public class Ring extends Sprite
         var hole :int = getHoleAt(pos);
         var marble :Marble = _marbles.get(hole) as Marble;
         if (marble != null) {
-            if (marble.launch(true)) {
+            if (marble.launch()) {
                 _marbles.remove(hole);
                 if (_outer != null && ArrayUtil.contains(_holes, hole)) {
                     _outer.launchFrom(pos);
@@ -245,6 +253,8 @@ public class Ring extends Sprite
             }
         }
     }
+
+    private static const log :Log = Log.getLog(Ring);
 
     /** Ring movies - There is no movie for Ring 3 */
     [Embed(source="../rsrc/locksmith_art.swf#ring_1")]
