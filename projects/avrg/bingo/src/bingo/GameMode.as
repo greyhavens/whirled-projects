@@ -1,19 +1,16 @@
 package bingo {
 
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
-
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 
 public class GameMode extends AppMode
 {
     override protected function setup () :void
     {
         // state change events
-        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
+        BingoMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        BingoMain.model.addEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
         // visuals
@@ -24,19 +21,16 @@ public class GameMode extends AppMode
         this.addObject(_winnerView, this.modeSprite);
         _winnerView.visible = false;
 
-        // each client maintains the concept of an expected state,
-        // so that it is prepared to take over as the
-        // authoritative client at any time.
-        _expectedState = null;
+        log.info("Initial state: " + BingoMain.model.curState.toString());
 
-        this.handleNewRound(null);
+        this.handleGameStateChange();
     }
 
     override protected function destroy () :void
     {
-        BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
+        BingoMain.model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        BingoMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
+        BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
         // @TODO - SimObjects should have "destructor" methods that always get
         // called when modes shutdown
@@ -74,57 +68,75 @@ public class GameMode extends AppMode
         }
     }
 
-    protected function createNewCard () :void
+    protected function handleGameStateChange (...ignored) :void
     {
+        // reset the expected state when the state changes
+        _expectedState = null;
+
+        switch (BingoMain.model.curState.gameState) {
+
+        case SharedState.STATE_INVALID:
+            this.setupNewRound();
+            break;
+
+        case SharedState.STATE_PLAYING:
+            this.handleNewRound();
+            break;
+
+        case SharedState.STATE_WEHAVEAWINNER:
+            this.showWinnerAnimation();
+            break;
+        }
+    }
+
+    protected function setupNewRound () :void
+    {
+        _expectedState = BingoMain.model.curState.clone();
+        _expectedState.roundId += 1;
+        _expectedState.roundWinnerId = 0;
+        _expectedState.ballInPlay = this.getNextBall();
+        _expectedState.gameState = SharedState.STATE_PLAYING;
+
+        this.sendStateChanges();
+    }
+
+    protected function handleNewRound () :void
+    {
+        // destroy the old card
         if (null != _cardView) {
             _cardView.destroySelf();
             _cardView = null;
         }
 
+        // create a new card
         BingoMain.model.createNewCard();
-
         _cardView = new BingoCardController(BingoMain.model.card);
-
         this.addObject(_cardView, this.modeSprite);
-    }
 
-    protected function handleNewRound (e :SharedStateChangedEvent) :void
-    {
-        this.createNewCard();
-
+        // reset tags
         BingoItemManager.instance.resetRemainingTags();
 
-        // reset the expected state when the state changes
-        _expectedState = null;
+        // start the new ball timer
+        BingoItemManager.instance.removeFromRemainingTags(BingoMain.model.curState.ballInPlay);
+        this.startNewBallTimer();
 
-        // does a ball exist?
-        if (null != BingoMain.model.curState.ballInPlay) {
-            this.startNewBallTimer();
-        } else {
-            // create a ball immediately
-            this.createNewBall();
-        }
-
+        // @TODO - remove this
         _winnerView.visible = false;
 
         this.stopNewRoundTimer();
     }
 
-    protected function handleNewBall (e :SharedStateChangedEvent) :void
+    protected function handleNewBall (...ignored) :void
     {
         // reset the expected state when the state changes
         _expectedState = null;
 
         BingoItemManager.instance.removeFromRemainingTags(BingoMain.model.curState.ballInPlay);
-
         this.startNewBallTimer();
     }
 
-    protected function handlePlayerWonRound (e :SharedStateChangedEvent) :void
+    protected function showWinnerAnimation () :void
     {
-        // reset the expected state when the state changes
-        _expectedState = null;
-
         this.stopNewBallTimer();
         this.startNewRoundTimer(); // a new round should start shortly
 
@@ -152,8 +164,9 @@ public class GameMode extends AppMode
         }
     }
 
-    protected function handleNewScores (e :SharedStateChangedEvent) :void
+    protected function handleNewScores (...ignored) :void
     {
+        // reset expected scores when they're updated on the server
         _expectedScores = null;
     }
 
@@ -170,7 +183,11 @@ public class GameMode extends AppMode
 
     protected function handleNewBallTimerExpired () :void
     {
-        this.createNewBall();
+        _expectedState = BingoMain.model.curState.clone();
+
+        // push a new ball update out
+        _expectedState.ballInPlay = this.getNextBall();
+        this.sendStateChanges();
     }
 
     protected function getNextBall () :String
@@ -182,17 +199,6 @@ public class GameMode extends AppMode
         while (nextBall == BingoMain.model.curState.ballInPlay);
 
         return nextBall;
-    }
-
-    protected function createNewBall () :void
-    {
-        if (null == _expectedState) {
-            _expectedState = BingoMain.model.curState.clone();
-        }
-
-        // push a new ball update out
-        _expectedState.ballInPlay = this.getNextBall();
-        this.sendStateChanges();
     }
 
     protected function startNewRoundTimer () :void
@@ -208,15 +214,7 @@ public class GameMode extends AppMode
 
     protected function handleNewRoundTimerExpired () :void
     {
-        if (null == _expectedState) {
-            _expectedState = BingoMain.model.curState.clone();
-        }
-
-        // push a new round update out
-        _expectedState.roundId += 1;
-        _expectedState.roundWinnerId = 0;
-        _expectedState.ballInPlay = this.getNextBall();
-        this.sendStateChanges();
+        this.setupNewRound();
     }
 
     public function get percentTimeTillNextBall () :Number
@@ -241,6 +239,8 @@ public class GameMode extends AppMode
     protected var _winnerView :WinnerAnimationController;
 
     protected var _calledBingoThisRound :Boolean;
+
+    protected static var log :Log = Log.getLog(GameMode);
 
     protected static const NEW_BALL_TIMER_NAME :String = "NewBallTimer";
     protected static const NEW_ROUND_TIMER_NAME :String = "NewRoundTimer";

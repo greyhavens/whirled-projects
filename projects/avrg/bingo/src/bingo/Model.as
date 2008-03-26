@@ -4,10 +4,10 @@ import com.threerings.util.Log;
 
 import flash.events.EventDispatcher;
 
-[Event(name="newRound", type="bingo.SharedStateChangedEvent")]
+[Event(name="gameState", type="bingo.SharedStateChangedEvent")]
 [Event(name="newBall", type="bingo.SharedStateChangedEvent")]
-[Event(name="playerWonRound", type="bingo.SharedStateChangedEvent")]
 [Event(name="newScores", type="bingo.SharedStateChangedEvent")]
+
 [Event(name="cardCompleted", type="bingo.LocalStateChangedEvent")]
 
 public class Model extends EventDispatcher
@@ -86,15 +86,8 @@ public class Model extends EventDispatcher
         var lastState :SharedState = _curState;
         _curState = newState.clone();
 
-        // if a new round began, only dispatch the NEW_ROUND event.
-        // new rounds always have new "ball in play" and "round winner id" values
-        if (_curState.roundId != lastState.roundId) {
-            if (_curState.roundId != lastState.roundId + 1) {
-                g_log.warning("got unexpected roundId (expected " + lastState.roundId + 1 + ", got " + _curState.roundId + ")");
-            }
-            this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_ROUND));
-        } else if (_curState.roundWinnerId != lastState.roundWinnerId && _curState.roundWinnerId != 0) {
-            this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.PLAYER_WON_ROUND));
+        if (_curState.gameState != lastState.gameState) {
+            this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.GAME_STATE_CHANGED));
         } else if (_curState.ballInPlay != lastState.ballInPlay) {
             this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_BALL));
         }

@@ -46,17 +46,16 @@ public class HUDController extends SceneObject
         helpButton.mouseEnabled = false;
         helpButton.visible = false;
 
-        BingoMain.control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, updateScores, false, 0, true);
-        BingoMain.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, updateScores, false, 0, true);
+        BingoMain.control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, updateScores);
+        BingoMain.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, updateScores);
 
         // listen for state events
-        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, updateScores, false, 0, true);
-        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, updateBall, false, 0, true);
-        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound, false, 0, true);
-        BingoMain.model.addEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, updateBingoButton, false, 0, true);
-        BingoMain.model.addEventListener(LocalStateChangedEvent.CARD_COMPLETED, updateBingoButton, false, 0, true);
+        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, updateScores);
+        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, updateBall);
+        BingoMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChanged);
+        BingoMain.model.addEventListener(LocalStateChangedEvent.CARD_COMPLETED, updateBingoButton);
 
-        BingoMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
+        BingoMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
 
         // set initial state
         this.updateScores();
@@ -75,8 +74,7 @@ public class HUDController extends SceneObject
 
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, updateScores);
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, updateBall);
-        BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
-        BingoMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, updateBingoButton);
+        BingoMain.model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChanged);
         BingoMain.model.removeEventListener(LocalStateChangedEvent.CARD_COMPLETED, updateBingoButton);
 
         BingoMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
@@ -117,11 +115,11 @@ public class HUDController extends SceneObject
             var stageSize :Rectangle = BingoMain.control.getStageSize(true);
 
             loc = (null != stageSize
-                    ? new Point(stageSize.right + SCREEN_EDGE_OFFSET.x, stageSize.top + SCREEN_EDGE_OFFSET.y)
+                    ? new Point(stageSize.right + Constants.HUD_SCREEN_EDGE_OFFSET.x, stageSize.top + Constants.HUD_SCREEN_EDGE_OFFSET.y)
                     : new Point(0, 0));
 
         } else {
-            loc = new Point(700 + SCREEN_EDGE_OFFSET.x, SCREEN_EDGE_OFFSET.y);
+            loc = new Point(700 + Constants.HUD_SCREEN_EDGE_OFFSET.x, Constants.HUD_SCREEN_EDGE_OFFSET.y);
         }
 
         return loc;
@@ -203,11 +201,20 @@ public class HUDController extends SceneObject
         bingoButton.mouseEnabled = enabled;
     }
 
-    protected function handleNewRound (...ignored) :void
+    protected function handleGameStateChanged (...ignored) :void
     {
-        _calledBingoThisRound = false;
-        this.updateBingoButton();
-        this.updateBall();
+        switch (BingoMain.model.curState.gameState) {
+
+        case SharedState.STATE_PLAYING:
+            _calledBingoThisRound = false;
+            this.updateBingoButton();
+            this.updateBall();
+            break;
+
+        case SharedState.STATE_WEHAVEAWINNER:
+            this.updateBingoButton();
+            break;
+        }
     }
 
     protected function get gameMode () :GameMode
@@ -222,7 +229,6 @@ public class HUDController extends SceneObject
 
     protected static const NUM_SCOREBOARD_ROWS :int = 7;
     protected static const MAX_BALL_TEXT_WIDTH :Number = 62;
-    protected static const SCREEN_EDGE_OFFSET :Point = new Point(-150, 160);
 
 }
 

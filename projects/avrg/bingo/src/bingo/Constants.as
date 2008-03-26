@@ -4,13 +4,14 @@ import flash.geom.Point;
 
 public class Constants
 {
-    public static const VERSION :Number = 1;
+    public static const VERSION :Number = 2;
 
-    public static const ALLOW_CHEATS :Boolean = false;
+    public static const ALLOW_CHEATS :Boolean = true;
     public static const FORCE_SINGLEPLAYER :Boolean = false;
 
     // cosmetic bits
-    public static const CARD_SCREEN_EDGE_OFFSET :Point = new Point(-460, 160);
+    public static const CARD_SCREEN_EDGE_OFFSET :Point = new Point(-460, 240);
+    public static const HUD_SCREEN_EDGE_OFFSET :Point = new Point(-150, 240);
 
     // gameplay bits
     public static const CARD_WIDTH :int = 5;

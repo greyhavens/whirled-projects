@@ -41,7 +41,7 @@ public class BingoMain extends Sprite
 
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
 
-        resourcesDomain = new ApplicationDomain();
+        resourcesDomain = new ApplicationDomain(ApplicationDomain.currentDomain);
         MultiLoader.getLoaders([ Resources.SWF_UI, Resources.SWF_BOARD ], handleResourcesLoaded, false, resourcesDomain);
 
         // instantiate MainLoop singleton
