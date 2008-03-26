@@ -38,6 +38,11 @@ public class GameFrame extends ClipHandler
         }
     }
 
+    public function getContentBounds () :Rectangle
+    {
+        return INSIDE;
+    }
+
     protected function mediaReady () :void
     {
     }
