@@ -3,12 +3,12 @@ package bingo {
 import com.whirled.AVRGameControlEvent;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
-import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -19,7 +19,9 @@ public class BingoCardController extends SceneObject
     {
         _card = card;
 
-        var cardViewClass :Class = BingoMain.resourcesDomain.getDefinition("Bingo_Board") as Class;
+        var swf :SwfResourceLoader = BingoMain.resources.getResource("board") as SwfResourceLoader;
+        var cardViewClass :Class = swf.getClass("Bingo_Board");
+
         _cardView = new cardViewClass();
 
         // draw the items

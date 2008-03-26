@@ -1,6 +1,7 @@
 package bingo {
 
 import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.AVRGameControlEvent;
 
 import flash.display.DisplayObject;
@@ -13,7 +14,9 @@ public class WinnerAnimationController extends SceneObject
 {
     public function WinnerAnimationController ()
     {
-        var animClass :Class = BingoMain.resourcesDomain.getDefinition("winner_symbol") as Class;
+        var swf :SwfResourceLoader = BingoMain.resources.getResource("board") as SwfResourceLoader;
+        var animClass :Class = swf.getClass("winner_symbol");
+
         _animView = new animClass();
     }
 

@@ -3,6 +3,7 @@ package bingo {
 import com.threerings.util.Log;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
@@ -17,7 +18,8 @@ public class HUDController extends SceneObject
 {
     public function HUDController ()
     {
-        var hudClass :Class = BingoMain.resourcesDomain.getDefinition("HUD") as Class;
+        var swf :SwfResourceLoader = BingoMain.resources.getResource("ui") as SwfResourceLoader;
+        var hudClass :Class = swf.getClass("HUD");
         _hud = new hudClass();
     }
 

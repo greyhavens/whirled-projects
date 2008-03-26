@@ -4,48 +4,42 @@
 package bingo {
 
 import com.threerings.util.Log;
-import com.threerings.util.MultiLoader;
 import com.whirled.AVRGameAvatar;
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Sprite;
 import flash.events.Event;
-import flash.events.MouseEvent;
-import flash.system.ApplicationDomain;
 
 [SWF(width="700", height="500")]
 public class BingoMain extends Sprite
 {
     public static var control :AVRGameControl;
     public static var model :Model;
-    public static var resourcesDomain :ApplicationDomain;
-
     public static var ourPlayerId :int;
-
-    public static var sprite :Sprite;
+    public static var resources :ResourceManager = new ResourceManager();
 
     public function BingoMain ()
     {
         log.info("Bingo version " + Constants.VERSION);
 
-        sprite = this;
-
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
-        control = new AVRGameControl(this);
-
-        control.addEventListener(AVRGameControlEvent.LEFT_ROOM, leftRoom);
-
-        control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
-
-        resourcesDomain = new ApplicationDomain(ApplicationDomain.currentDomain);
-        MultiLoader.getLoaders([ Resources.SWF_UI, Resources.SWF_BOARD ], handleResourcesLoaded, false, resourcesDomain);
-
         // instantiate MainLoop singleton
         new MainLoop(this);
+        MainLoop.instance.setup();
+
+        // load resources
+        resources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
+        resources.addEventListener(ResourceLoadEvent.ERROR, handleResourceLoadError);
+
+        resources.pendResourceLoad("swf", "ui", { embeddedClass: Resources.SWF_UI });
+        resources.pendResourceLoad("swf", "board", { embeddedClass: Resources.SWF_BOARD });
+
+        resources.load();
     }
 
     public static function quit () :void
@@ -71,8 +65,17 @@ public class BingoMain extends Sprite
     {
         if (_addedToStage && _resourcesLoaded) {
 
+            control = new AVRGameControl(this);
+            control.addEventListener(AVRGameControlEvent.LEFT_ROOM, leftRoom);
+            control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
+
+            log.info(control.isConnected() ? "playing online game" : "playing offline game");
+
+            ourPlayerId = (control.isConnected() ? control.getPlayerId() : 666);
+
             new BingoItemManager(); // init singleton
 
+            model = (control.isConnected() && !Constants.FORCE_SINGLEPLAYER ? new OnlineModel() : new OfflineModel());
             model.setup();
 
             MainLoop.instance.pushMode(new IntroMode());
@@ -80,24 +83,22 @@ public class BingoMain extends Sprite
         }
     }
 
-    protected function handleResourcesLoaded (results :Object) :void
+    protected function handleResourcesLoaded (...ignored) :void
     {
         _resourcesLoaded = true;
         this.maybeBeginGame();
+    }
+
+    protected function handleResourceLoadError (e :ResourceLoadEvent) :void
+    {
+        log.warning("Resource load error: " + e.data as String);
     }
 
     protected function handleAdded (event :Event) :void
     {
         log.info("Added to stage: Initializing...");
 
-        log.info(control.isConnected() ? "playing online game" : "playing offline game");
-
-        model = (control.isConnected() && !Constants.FORCE_SINGLEPLAYER ? new OnlineModel() : new OfflineModel());
-
-        ourPlayerId = (control.isConnected() ? control.getPlayerId() : 666);
-
         _addedToStage = true;
-
         this.maybeBeginGame();
     }
 
