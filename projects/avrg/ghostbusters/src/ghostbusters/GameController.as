@@ -72,6 +72,10 @@ public class GameController extends Controller
             // no effect: you have to watch this bit
 
         } else if (state == GameModel.STATE_FIGHTING) {
+            if (Game.model.isPlayerDead(Game.ourPlayerId)) {
+                // you can't start a game when you're dead
+                return;
+            }
             var subPanel :FightPanel = Game.panel.subPanel as FightPanel;
             if (subPanel != null) {
                 subPanel.startGame();
