@@ -85,7 +85,7 @@ public class GameMode extends AppMode
 
         switch (BingoMain.model.curState.gameState) {
 
-        case SharedState.STATE_INVALID:
+        case SharedState.STATE_INITIAL:
             this.setupNewRound();
             break;
 
