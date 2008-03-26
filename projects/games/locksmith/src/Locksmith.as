@@ -71,6 +71,9 @@ public class Locksmith extends Sprite
             _rightBackground.x = _leftBackground.width + DISPLAY_WIDTH - 1;
             EventHandlers.registerEventListener(
                 _wgc.local, SizeChangedEvent.SIZE_CHANGED, updateBackgrounds);
+
+            // TODO: fix rematching
+            _wgc.local.setShowButtons(false);
         } else {
             // show some rings so there is something visible when the game is not connected
             var ringData: Array = createRings();
