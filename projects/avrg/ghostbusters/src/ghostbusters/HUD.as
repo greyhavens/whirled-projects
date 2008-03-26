@@ -80,7 +80,7 @@ public class HUD extends Sprite
 
     public function teamUpdated () :void
     {
-        if (_hud.parent == null || _visualHud == null) {
+        if (this.stage == null || _hud.parent == null || _visualHud == null) {
             // not ready yet
             return;
         }
