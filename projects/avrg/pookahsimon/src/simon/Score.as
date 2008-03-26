@@ -20,20 +20,20 @@ public class Score
             return -1;
         } else if (a.score < b.score) {
             return 1;
-        } else {
-
-            // compare dates. newer dates come before older
-            var aTime :Number = a.date.time;
-            var bTime :Number = b.date.time;
-
-            if (aTime > bTime) {
-                return -1;
-            } else if (aTime < bTime) {
-                return 1;
-            } else {
-                return 0;
-            }
         }
+
+        // compare dates. newer dates come before older
+        var aTime :Number = a.date.time;
+        var bTime :Number = b.date.time;
+
+        if (aTime > bTime) {
+            return -1;
+        } else if (aTime < bTime) {
+            return 1;
+        }
+
+        // compare names. A comes before Z
+        return a.name.localeCompare(b.name);
     }
 
     public function isEqual (rhs :Score) :Boolean
