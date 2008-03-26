@@ -73,13 +73,15 @@ public class GameMode extends AppMode
     protected function createNewCard () :void
     {
         if (null != _cardView) {
-            this.modeSprite.removeChild(_cardView);
+            _cardView.destroySelf();
+            _cardView = null;
         }
 
         BingoMain.model.createNewCard();
 
-        _cardView = new BingoCardView(BingoMain.model.card);
-        this.modeSprite.addChild(_cardView);
+        _cardView = new BingoCardController(BingoMain.model.card);
+
+        this.addObject(_cardView, this.modeSprite);
     }
 
     protected function handleNewRound (e :SharedStateChangedEvent) :void
@@ -223,7 +225,7 @@ public class GameMode extends AppMode
     protected var _expectedState :SharedState;
     protected var _expectedScores :Scoreboard;
 
-    protected var _cardView :BingoCardView;
+    protected var _cardView :BingoCardController;
     protected var _winnerText :TextField;
 
     protected var _calledBingoThisRound :Boolean;

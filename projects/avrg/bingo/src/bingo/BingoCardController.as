@@ -1,56 +1,98 @@
 package bingo {
 
 import com.whirled.AVRGameControlEvent;
-
 import com.whirled.contrib.ColorMatrix;
+import com.whirled.contrib.simplegame.objects.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-public class BingoCardView extends Sprite
+public class BingoCardController extends SceneObject
 {
-    public function BingoCardView (card :BingoCard)
+    public function BingoCardController (card :BingoCard)
     {
         _card = card;
 
-        _bgSprite = new Sprite();
-        _fgSprite = new Sprite();
-
-        this.addChild(_bgSprite);
-        this.addChild(_fgSprite);
-
-        // draw the board background
-        _bgSprite.addChild(new Resources.IMG_BOARD());
+        var cardViewClass :Class = BingoMain.resourcesDomain.getDefinition("Bingo_Board") as Class;
+        _cardView = new cardViewClass();
 
         // draw the items
         for (var row :int = 0; row < card.height; ++row) {
 
             for (var col :int = 0; col < card.width; ++col) {
 
-                var itemView :DisplayObject = this.createItemView(_card.getItemAt(col, row));
-                itemView.x = UL_OFFSET.x + ((col + 0.5) * SQUARE_SIZE);
-                itemView.y = UL_OFFSET.y + ((row + 0.5) * SQUARE_SIZE);
+                var instanceName :String = "inst_r" + String(row + 1) + "c" + String(col + 1);
+                var gridSquare :MovieClip = _cardView[instanceName];
 
-                _fgSprite.addChild(itemView);
+                if (null != gridSquare) {
+
+                    gridSquare.gotoAndStop(1);
+
+                    var itemView :DisplayObject = this.createItemView(_card.getItemAt(col, row));
+                    itemView.x = gridSquare.width * 0.5;
+                    itemView.y = gridSquare.height * 0.5;
+
+                    gridSquare.mouseChildren = false;
+
+                    gridSquare.addEventListener(
+                        MouseEvent.MOUSE_DOWN,
+                        this.createGridSquareMouseHandler(gridSquare, col, row));
+
+                    gridSquare.addChild(itemView);
+                }
             }
         }
+    }
 
+    protected function createGridSquareMouseHandler (gridSquare :MovieClip, col :int, row :int) :Function
+    {
+        return function (...ignored) :void {
+            handleClick(gridSquare, col, row);
+        }
+    }
+
+    protected function handleClick (gridSquare :MovieClip, col :int, row :int) :void
+    {
+        // if the round is over, or we've already reached our
+        // max-clicks-per-ball limit, don't accept clicks
+        if (!BingoMain.model.roundInPlay || (!Constants.ALLOW_CHEATS && _numMatchesThisBall >= Constants.MAX_MATCHES_PER_BALL)) {
+            return;
+        }
+
+        if (!_card.isFilledAt(col, row)) {
+
+            var item :BingoItem = _card.getItemAt(col, row);
+
+            if (null != item && (Constants.ALLOW_CHEATS || item.containsTag(BingoMain.model.curState.ballInPlay))) {
+                _card.setFilledAt(col, row);
+
+                gridSquare.gotoAndStop(2);
+
+                _numMatchesThisBall += 1;
+            }
+        }
+    }
+
+    override public function get displayObject () :DisplayObject
+    {
+        return _cardView;
+    }
+
+    override protected function addedToDB () :void
+    {
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-
         BingoMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
-
-        this.addEventListener(MouseEvent.MOUSE_DOWN, handleClick);
-        this.addEventListener(Event.REMOVED, handleRemoved);
 
         this.handleSizeChanged();
     }
 
-    protected function handleRemoved (e :Event) :void
+    override protected function removedFromDB () :void
     {
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
         BingoMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
@@ -69,7 +111,7 @@ public class BingoCardView extends Sprite
         var loc :Point;
 
         if (BingoMain.control.isConnected()) {
-            var stageSize :Rectangle = BingoMain.control.getStageSize(true);
+            var stageSize :Rectangle = BingoMain.control.getStageSize(false);
 
             loc = (null != stageSize
                     ? new Point(stageSize.right + SCREEN_EDGE_OFFSET.x, stageSize.top + SCREEN_EDGE_OFFSET.y)
@@ -107,7 +149,7 @@ public class BingoCardView extends Sprite
         return sprite;
     }
 
-    protected function handleClick (e :MouseEvent) :void
+    /*protected function handleClick (e :MouseEvent) :void
     {
         // if the round is over, or we've already reached our
         // max-clicks-per-ball limit, don't accept clicks
@@ -158,26 +200,20 @@ public class BingoCardView extends Sprite
             }
         }
 
-    }
+    }*/
 
     protected function handleNewBall (e :Event) :void
     {
         _numMatchesThisBall = 0;
     }
 
-    protected var _bgSprite :Sprite;
-    protected var _fgSprite :Sprite;
+    protected var _cardView :MovieClip;
     protected var _card :BingoCard;
     protected var _numMatchesThisBall :int;
 
-    protected static const SQUARE_SIZE :Number = 62;
     protected static const TARGET_TEXT_WIDTH :Number = 56;
-    protected static const STAMP_RADIUS :Number = 20;
 
-    protected static const ALLOWED_STAMP_BLEED :Number = 0;
-
-    protected static const UL_OFFSET :Point = new Point(14, 28);
-    protected static const SCREEN_EDGE_OFFSET :Point = new Point(-660, 30);
+    protected static const SCREEN_EDGE_OFFSET :Point = new Point(-500, 220);
 
 }
 

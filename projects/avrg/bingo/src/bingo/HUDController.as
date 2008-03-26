@@ -29,7 +29,7 @@ public class HUDController extends SceneObject
     {
         // fix the text on the ball
         // @TODO - is TextFieldAutoSize accessible in the FAT? where?
-        var ball :MovieClip = _hud["bingo_ball_inst"];
+        var ball :MovieClip = _hud["inst_bingo_ball"];
         var ballText :TextField = ball["text"];
         ballText.autoSize = TextFieldAutoSize.LEFT;
 
@@ -39,6 +39,11 @@ public class HUDController extends SceneObject
 
         var bingoButton :InteractiveObject = _hud["bingo_button"];
         bingoButton.addEventListener(MouseEvent.CLICK, handleBingo, false, 0, true);
+
+        // @TODO - wire this up
+        var helpButton :InteractiveObject = _hud["help_button"];
+        helpButton.mouseEnabled = false;
+        helpButton.visible = false;
 
         // listen for state events
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, updateScores, false, 0, true);
@@ -100,7 +105,7 @@ public class HUDController extends SceneObject
         var loc :Point;
 
         if (BingoMain.control.isConnected()) {
-            var stageSize :Rectangle = BingoMain.control.getStageSize(true);
+            var stageSize :Rectangle = BingoMain.control.getStageSize(false);
 
             loc = (null != stageSize
                     ? new Point(stageSize.right + SCREEN_EDGE_OFFSET.x, stageSize.top + SCREEN_EDGE_OFFSET.y)
@@ -146,7 +151,7 @@ public class HUDController extends SceneObject
 
     protected function updateBall (...ignored) :void
     {
-        var ball :MovieClip = _hud["bingo_ball_inst"];
+        var ball :MovieClip = _hud["inst_bingo_ball"];
         var textField :TextField = ball["text"];
 
         ball.removeChild(textField);

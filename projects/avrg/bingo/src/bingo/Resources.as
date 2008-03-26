@@ -6,23 +6,8 @@ public class Resources
     [Embed(source="../../rsrc/Bingo_UI.swf", mimeType="application/octet-stream")]
     public static const SWF_UI :Class;
 
-    [Embed(source="../../rsrc/bingo_board.png")]
-    public static const IMG_BOARD :Class;
-
-    [Embed(source="../../rsrc/bottom_left_highlight.png")]
-    public static const IMG_BOTTOMLEFTHIGHLIGHT :Class;
-
-    [Embed(source="../../rsrc/bottom_right_highlight.png")]
-    public static const IMG_BOTTOMRIGHTHIGHLIGHT :Class;
-
-    [Embed(source="../../rsrc/top_left_highlight.png")]
-    public static const IMG_TOPLEFTHIGHLIGHT :Class;
-
-    [Embed(source="../../rsrc/top_right_highlight.png")]
-    public static const IMG_TOPRIGHTHIGHLIGHT :Class;
-
-    [Embed(source="../../rsrc/center_highlight.png")]
-    public static const IMG_CENTERHIGHLIGHT :Class;
+    [Embed(source="../../rsrc/Bingo_Board.swf", mimeType="application/octet-stream")]
+    public static const SWF_BOARD :Class;
 
     [Embed(source="../../rsrc/splash_screen_text.png")]
     public static const IMG_SPLASHSCREEN :Class;
