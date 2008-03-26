@@ -45,6 +45,19 @@ public class Model extends EventDispatcher
         return (0 == _curState.roundWinnerId);
     }
 
+    public function getPlayerOids () :Array
+    {
+        throw new Error("subclasses must override getPlayerOids()");
+    }
+
+    public function getPlayerNames () :Array
+    {
+        return this.getPlayerOids().map(
+            function (id :int, ...ignored) :String {
+                return BingoMain.getPlayerName(id);
+            });
+    }
+
     /* local state mutators */
     public function createNewCard () :void
     {

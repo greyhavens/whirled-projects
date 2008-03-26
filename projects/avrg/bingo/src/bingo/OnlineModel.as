@@ -38,6 +38,11 @@ public class OnlineModel extends Model
         _stateControl.removeEventListener(AVRGameControlEvent.ROOM_PROPERTY_CHANGED, propChanged);
     }
 
+    override public function getPlayerOids () :Array
+    {
+        return BingoMain.control.getPlayerIds();
+    }
+
     override public function tryCallBingo () :void
     {
         // in a network game, calling bingo doesn't necessarily

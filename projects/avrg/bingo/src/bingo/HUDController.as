@@ -45,6 +45,9 @@ public class HUDController extends SceneObject
         helpButton.mouseEnabled = false;
         helpButton.visible = false;
 
+        BingoMain.control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, updateScores, false, 0, true);
+        BingoMain.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, updateScores, false, 0, true);
+
         // listen for state events
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, updateScores, false, 0, true);
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, updateBall, false, 0, true);
@@ -64,6 +67,9 @@ public class HUDController extends SceneObject
 
     override protected function removedFromDB () :void
     {
+        BingoMain.control.removeEventListener(AVRGameControlEvent.PLAYER_ENTERED, updateScores);
+        BingoMain.control.removeEventListener(AVRGameControlEvent.PLAYER_LEFT, updateScores);
+
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, updateScores);
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, updateBall);
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
@@ -85,7 +91,7 @@ public class HUDController extends SceneObject
 
         // 1.0 -> first frame; 0.0 -> last frame
 
-        var curFrame :int = 1 + (totalFrames * (1.0 - this.gameMode.percentTimeTillNextBall)); // frames are indexed from 1
+        var curFrame :int = 1 + (totalFrames * (1.0 - this.gameMode.percentTimeTillNextBall));
         curFrame = Math.min(curFrame, totalFrames);
         curFrame = Math.max(curFrame, 1);
 
@@ -134,18 +140,30 @@ public class HUDController extends SceneObject
 
     protected function updateScores (...ignored) :void
     {
-        var scores :Array = BingoMain.model.curScores.scores;
+        var scores :Scoreboard = BingoMain.model.curScores;
         var scoreboardView :MovieClip = _hud["scoreboard"];
 
+        var dateNow :Date = new Date();
+
+        var namesAndScores :Array = BingoMain.model.getPlayerOids().map(
+            function (playerId :int, ...ignored) :Score {
+                var playerName :String = BingoMain.getPlayerName(playerId);
+                var existingScore :Score = scores.getPlayerScore(playerName);
+
+                return (null != existingScore ? existingScore : new Score(playerName, 0, dateNow));
+            });
+
+        namesAndScores.sort(Score.compare);
+
         for (var i :int = 0; i < NUM_SCOREBOARD_ROWS; ++i) {
+
+            var score :Score = (i < namesAndScores.length ? namesAndScores[i] : null);
 
             var nameField :TextField = scoreboardView["player_" + String(i + 1)];
             var scoreField :TextField = scoreboardView["score_" + String(i + 1)];
 
-            var score :Score = (i < scores.length ? scores[i] : null);
-
-            nameField.text = (score != null ? score.name : "");
-            scoreField.text = (score != null ? String(score.score) : "");
+            nameField.text = (null != score ? score.name : "");
+            scoreField.text = (null != score && score.score > 0 ? String(score.score) : "");
         }
     }
 
