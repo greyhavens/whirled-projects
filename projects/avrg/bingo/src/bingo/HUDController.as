@@ -114,7 +114,7 @@ public class HUDController extends SceneObject
         var loc :Point;
 
         if (BingoMain.control.isConnected()) {
-            var stageSize :Rectangle = BingoMain.control.getStageSize(false);
+            var stageSize :Rectangle = BingoMain.control.getStageSize(true);
 
             loc = (null != stageSize
                     ? new Point(stageSize.right + SCREEN_EDGE_OFFSET.x, stageSize.top + SCREEN_EDGE_OFFSET.y)
@@ -222,7 +222,7 @@ public class HUDController extends SceneObject
 
     protected static const NUM_SCOREBOARD_ROWS :int = 7;
     protected static const MAX_BALL_TEXT_WIDTH :Number = 62;
-    protected static const SCREEN_EDGE_OFFSET :Point = new Point(-150, 200);
+    protected static const SCREEN_EDGE_OFFSET :Point = new Point(-150, 160);
 
 }
 

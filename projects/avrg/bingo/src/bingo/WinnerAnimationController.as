@@ -53,7 +53,7 @@ public class WinnerAnimationController extends SceneObject
         var loc :Point;
 
         if (BingoMain.control.isConnected()) {
-            var stageSize :Rectangle = BingoMain.control.getStageSize(false);
+            var stageSize :Rectangle = BingoMain.control.getStageSize(true);
 
             loc = (null != stageSize
                     ? new Point(stageSize.right + Constants.CARD_SCREEN_EDGE_OFFSET.x, stageSize.top + Constants.CARD_SCREEN_EDGE_OFFSET.y)

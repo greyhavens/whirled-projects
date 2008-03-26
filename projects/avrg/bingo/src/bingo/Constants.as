@@ -10,7 +10,7 @@ public class Constants
     public static const FORCE_SINGLEPLAYER :Boolean = false;
 
     // cosmetic bits
-    public static const CARD_SCREEN_EDGE_OFFSET :Point = new Point(-460, 200);
+    public static const CARD_SCREEN_EDGE_OFFSET :Point = new Point(-460, 160);
 
     // gameplay bits
     public static const CARD_WIDTH :int = 5;
