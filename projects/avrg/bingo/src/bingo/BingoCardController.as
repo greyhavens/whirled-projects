@@ -50,6 +50,25 @@ public class BingoCardController extends SceneObject
         }
     }
 
+    override public function get displayObject () :DisplayObject
+    {
+        return _cardView;
+    }
+
+    override protected function addedToDB () :void
+    {
+        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
+        BingoMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
+
+        this.handleSizeChanged();
+    }
+
+    override protected function removedFromDB () :void
+    {
+        BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
+        BingoMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
+    }
+
     protected function createGridSquareMouseHandler (gridSquare :MovieClip, col :int, row :int) :Function
     {
         return function (...ignored) :void {
@@ -77,25 +96,6 @@ public class BingoCardController extends SceneObject
                 _numMatchesThisBall += 1;
             }
         }
-    }
-
-    override public function get displayObject () :DisplayObject
-    {
-        return _cardView;
-    }
-
-    override protected function addedToDB () :void
-    {
-        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        BingoMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
-
-        this.handleSizeChanged();
-    }
-
-    override protected function removedFromDB () :void
-    {
-        BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        BingoMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
     }
 
     protected function handleSizeChanged (...ignored) :void
@@ -149,60 +149,7 @@ public class BingoCardController extends SceneObject
         return sprite;
     }
 
-    /*protected function handleClick (e :MouseEvent) :void
-    {
-        // if the round is over, or we've already reached our
-        // max-clicks-per-ball limit, don't accept clicks
-        if (!BingoMain.model.roundInPlay || (!Constants.ALLOW_CHEATS && _numMatchesThisBall >= Constants.MAX_MATCHES_PER_BALL)) {
-            return;
-        }
-
-        var col :int = (this.mouseX - UL_OFFSET.x) / SQUARE_SIZE;
-        var row :int = (this.mouseY - UL_OFFSET.y) / SQUARE_SIZE;
-
-        if (!(col >= 0 && col < _card.width && row >= 0 && row < _card.height)) {
-            return;
-        }
-
-        if (!_card.isFilledAt(col, row)) {
-
-            var item :BingoItem = _card.getItemAt(col, row);
-
-            if (null != item && (Constants.ALLOW_CHEATS || item.containsTag(BingoMain.model.curState.ballInPlay))) {
-                _card.setFilledAt(col, row);
-
-                // highlight the space
-                var highlightClass :Class;
-                var offset :Point = new Point();
-
-                // ugh.
-                if (col == 0 && row == 0) {
-                    highlightClass = Resources.IMG_TOPLEFTHIGHLIGHT;
-                } else if (col == _card.width - 1 && row == 0) {
-                    highlightClass = Resources.IMG_TOPRIGHTHIGHLIGHT;
-                } else if (col == 0 && row == _card.height - 1) {
-                    highlightClass = Resources.IMG_BOTTOMLEFTHIGHLIGHT;
-                } else if (col == _card.width - 1 && row == _card.height - 1) {
-                    highlightClass = Resources.IMG_BOTTOMRIGHTHIGHLIGHT;
-                } else {
-                    highlightClass = Resources.IMG_CENTERHIGHLIGHT;
-                    offset.x = 1;
-                    offset.y = 1;
-                }
-
-                var hilite :Bitmap = new highlightClass();
-                hilite.x = UL_OFFSET.x + offset.x + (col * SQUARE_SIZE);
-                hilite.y = UL_OFFSET.y + offset.y + (row * SQUARE_SIZE);
-
-                _bgSprite.addChild(hilite);
-
-                _numMatchesThisBall += 1;
-            }
-        }
-
-    }*/
-
-    protected function handleNewBall (e :Event) :void
+    protected function handleNewBall (...ignored) :void
     {
         _numMatchesThisBall = 0;
     }

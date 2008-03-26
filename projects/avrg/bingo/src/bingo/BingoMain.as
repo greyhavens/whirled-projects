@@ -106,6 +106,8 @@ public class BingoMain extends Sprite
         log.info("Removed from stage - Unloading...");
 
         model.destroy();
+
+        MainLoop.instance.shutdown();
     }
 
     protected function leftRoom (e :Event) :void

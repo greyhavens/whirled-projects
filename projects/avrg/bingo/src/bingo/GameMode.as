@@ -17,7 +17,8 @@ public class GameMode extends AppMode
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
         // visuals
-        this.addObject(new HUDController(), this.modeSprite);
+        _hudView = new HUDController();
+        this.addObject(_hudView, this.modeSprite);
 
         _winnerText = new TextField();
         _winnerText.autoSize = TextFieldAutoSize.LEFT;
@@ -42,6 +43,15 @@ public class GameMode extends AppMode
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_ROUND, handleNewRound);
         BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
         BingoMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_WON_ROUND, handlePlayerWonRound);
+
+        // @TODO - SimObjects should have "destructor" methods that always get
+        // called when modes shutdown
+
+        if (null != _cardView) {
+            _cardView.destroySelf();
+        }
+
+        _hudView.destroySelf();
     }
 
     override public function update (dt :Number) :void
@@ -226,6 +236,7 @@ public class GameMode extends AppMode
     protected var _expectedScores :Scoreboard;
 
     protected var _cardView :BingoCardController;
+    protected var _hudView :HUDController;
     protected var _winnerText :TextField;
 
     protected var _calledBingoThisRound :Boolean;

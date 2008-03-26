@@ -1,5 +1,6 @@
 package bingo {
 
+import com.threerings.util.Log;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.objects.*;
 
@@ -67,6 +68,8 @@ public class HUDController extends SceneObject
 
     override protected function removedFromDB () :void
     {
+        log.info("removedFromDB()");
+
         BingoMain.control.removeEventListener(AVRGameControlEvent.PLAYER_ENTERED, updateScores);
         BingoMain.control.removeEventListener(AVRGameControlEvent.PLAYER_LEFT, updateScores);
 
@@ -214,6 +217,8 @@ public class HUDController extends SceneObject
 
     protected var _hud :MovieClip;
     protected var _calledBingoThisRound :Boolean;
+
+    protected static var log :Log = Log.getLog(HUDController);
 
     protected static const NUM_SCOREBOARD_ROWS :int = 7;
     protected static const MAX_BALL_TEXT_WIDTH :Number = 62;
