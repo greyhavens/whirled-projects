@@ -6,7 +6,12 @@ package ghostbusters.fight {
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.Shape;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.text.AntiAliasType;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
 import flash.geom.Point;
 
 import flash.events.Event;
@@ -19,6 +24,8 @@ import flash.utils.Dictionary;
 import flash.utils.setTimeout;
 
 import com.threerings.flash.FrameSprite;
+import com.threerings.flash.SimpleTextButton;
+import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 
@@ -48,8 +55,6 @@ public class FightPanel extends FrameSprite
         _ghost.x = Game.panel.hud.getRightEdge() - _ghost.getGhostBounds().width/2;
         _ghost.y = 100;
 
-        _frame = new GameFrame();
-
         Game.control.state.addEventListener(
             AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
 
@@ -72,11 +77,7 @@ public class FightPanel extends FrameSprite
     {
         if (_minigame == null) {
             _minigame = new MicrogamePlayer( { } );
-            _frame.frameContent(_minigame);
-
-            this.addChild(_frame);
-            _frame.x = (Game.stageSize.width - 100 - _frame.width) / 2;
-            _frame.y = (Game.stageSize.height - _frame.height) / 2 - FRAME_DISPLACEMENT_Y;
+            Game.panel.frameContent(_minigame);
         }
 
         var selectedWeapon :int = Game.panel.hud.getWeaponType();
@@ -101,26 +102,6 @@ public class FightPanel extends FrameSprite
         _minigame.beginNextGame();
     }
 
-    public function endFight () :void
-    {
-        if (_minigame != null) {
-            _frame.frameContent(null);
-            this.removeChild(_frame);
-            _minigame = null;
-        }
-    }
-
-    public function showGhostDeath () :void
-    {
-        // cancel minigame
-        endFight();
-
-        var panel :DisplayObject = this;
-        _ghost.die(function () :void {
-            Game.server.ghostFullyGone();
-        });
-    }
-
     public function showPlayerDeath (playerId :int) :void
     {
         // at the moment, there is no visible effect other than the avatar state change
@@ -129,27 +110,6 @@ public class FightPanel extends FrameSprite
 
             // cancel minigame
             endFight();
-        }
-    }
-
-    public function showGhostTriumph () :void
-    {
-        var panel :DisplayObject = this;
-        _ghost.triumph(function () :void {
-            Game.server.ghostFullyGone();
-        });
-    }
-
-    public function showGhostDamage () :void
-    {
-        _ghost.damaged();
-    }
-
-    public function showGhostAttack (playerId :int) :void
-    {
-        _ghost.attack();
-        if (playerId == Game.ourPlayerId) {
-            Game.control.playAvatarAction("Reel");
         }
     }
 
@@ -243,10 +203,48 @@ public class FightPanel extends FrameSprite
     protected function checkForSpecialStates () :void
     {
         if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH) {
-            showGhostTriumph();
+            handleGhostTrimph();
 
         } else if (Game.model.state == GameModel.STATE_GHOST_DEFEAT) {
             showGhostDeath();
+        }
+    }
+
+    protected function showGhostDeath () :void
+    {
+        // cancel minigame
+        endFight();
+
+        _ghost.die(function () :void {
+            Game.server.ghostFullyGone();
+        });
+    }
+
+    protected function handleGhostTrimph () :void
+    {
+        _ghost.triumph(function () :void {
+            Game.server.ghostFullyGone();
+        });
+    }
+
+    protected function showGhostDamage () :void
+    {
+        _ghost.damaged();
+    }
+
+    protected function showGhostAttack (playerId :int) :void
+    {
+        _ghost.attack();
+        if (playerId == Game.ourPlayerId) {
+            Game.control.playAvatarAction("Reel");
+        }
+    }
+
+    protected function endFight () :void
+    {
+        if (_minigame != null) {
+            Game.panel.unframeContent();
+            _minigame = null;
         }
     }
 
@@ -258,9 +256,6 @@ public class FightPanel extends FrameSprite
 
     protected var _spotlights :Dictionary = new Dictionary();
 
-    protected var _frame :GameFrame;
     protected var _minigame: MicrogamePlayer;
-
-    protected static const FRAME_DISPLACEMENT_Y :int = 20;
 }
 }

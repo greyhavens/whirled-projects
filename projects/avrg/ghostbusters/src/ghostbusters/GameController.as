@@ -26,6 +26,7 @@ public class GameController extends Controller
     public static const GHOST_ATTACKED :String = "GhostAttacked";
     public static const PLAYER_ATTACKED :String = "PlayerAttacked";
     public static const ZAP_GHOST :String = "ZapGhost";
+    public static const REVIVE :String = "Revive";
 
     public var panel :GamePanel;
 
@@ -63,8 +64,12 @@ public class GameController extends Controller
 
     public function handleToggleLantern () :void
     {
-        var state :String = Game.model.state;
+        if (Game.model.isPlayerDead(Game.ourPlayerId)) {
+            // the button is always disabled if you're dead -- revive first!
+            return;
+        }
 
+        var state :String = Game.model.state;
         if (state == GameModel.STATE_SEEKING) {
             panel.seeking = !panel.seeking;
 
@@ -72,10 +77,6 @@ public class GameController extends Controller
             // no effect: you have to watch this bit
 
         } else if (state == GameModel.STATE_FIGHTING) {
-            if (Game.model.isPlayerDead(Game.ourPlayerId)) {
-                // you can't start a game when you're dead
-                return;
-            }
             var subPanel :FightPanel = Game.panel.subPanel as FightPanel;
             if (subPanel != null) {
                 subPanel.startGame();
@@ -85,7 +86,7 @@ public class GameController extends Controller
                    state == GameModel.STATE_GHOST_DEFEAT) {
             // no effect: you have to watch this bit
 
-        } else {
+       } else {
             Game.log.debug("Unexpected state in toggleLantern: " + state);
         }
     }
@@ -108,5 +109,15 @@ public class GameController extends Controller
     {
         Game.control.state.sendMessage(Codes.MSG_GHOST_ZAP, Game.ourPlayerId);
     }
+
+    public function handleRevive () :void
+    {
+        if (Game.model.isPlayerDead(Game.ourPlayerId) &&
+            Game.model.state == GameModel.STATE_SEEKING) {
+            _ppp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_MAX_HEALTH, 100);
+        }
+    }
+
+    protected var _ppp :PerPlayerProperties;
 }
 }

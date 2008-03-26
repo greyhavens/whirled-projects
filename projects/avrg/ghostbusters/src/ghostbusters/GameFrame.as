@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package ghostbusters.fight {
+package ghostbusters {
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -57,6 +57,6 @@ public class GameFrame extends ClipHandler
     protected var _content :DisplayObject;
 
     // relative the frame's coordinate system, where can we place the framed material?
-    protected static const INSIDE :Rectangle = new Rectangle(22, 102, 305, 300);
+    protected static const INSIDE :Rectangle = new Rectangle(22, 102, 283, 198);
 }
 }

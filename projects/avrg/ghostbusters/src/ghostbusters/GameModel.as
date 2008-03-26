@@ -22,11 +22,7 @@ public class GameModel
     {
         _ppp = new PerPlayerProperties();
 
-        // TODO: fix resurrection
-        if (getPlayerHealth(Game.ourPlayerId) == 0) {
-            _ppp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_MAX_HEALTH, 100);
-            _ppp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_CUR_HEALTH, 100);
-        }
+        _ppp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_MAX_HEALTH, 100);
     }
 
     public function init () :void
@@ -50,14 +46,12 @@ public class GameModel
 
     public function isEverybodyDead () :Boolean
     {
-        var team :Array = Game.getTeam(true);
+        return checkTeam(true);
+    }
 
-        for (var ii :int = 0; ii < team.length; ii ++) {
-            if (!isPlayerDead(team[ii])) {
-                return false;
-            }
-        }
-        return true;
+    public function isEverybodyAlive () :Boolean
+    {
+        return checkTeam(false);
     }
 
     public function isPlayerDead (playerId :int) :Boolean
@@ -197,6 +191,18 @@ public class GameModel
             }
         }
         throw new Error("Erk, ghost not found somehow [id=" + id + "]");
+    }
+
+    protected function checkTeam (dead :Boolean) :Boolean
+    {
+        var team :Array = Game.getTeam(false);
+
+        for (var ii :int = 0; ii < team.length; ii ++) {
+            if (dead != isPlayerDead(team[ii])) {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected var _ppp :PerPlayerProperties;

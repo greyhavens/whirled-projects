@@ -79,6 +79,8 @@ public class HUD extends Sprite
             return Math.max(0, Math.min(Game.scrollSize.width - MARGIN_LEFT - BORDER_LEFT,
                                         Game.stageSize.right - _visualHud.width - MARGIN_LEFT));
         }
+        // wild guess while debugging
+        return 700;
     }
 
     public function getWeaponType () :int

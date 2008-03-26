@@ -7,7 +7,13 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.geom.Rectangle;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.AntiAliasType;
+import flash.text.TextFormat;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -19,9 +25,11 @@ import mx.events.FlexEvent;
 
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
+import com.threerings.flash.SimpleTextButton;
 import com.whirled.MobControl;
 
 import com.threerings.flash.AnimationManager;
+import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
@@ -38,12 +46,16 @@ public class GamePanel extends Sprite
         hud = new HUD();
         this.addChild(hud);
 
+        _frame = new GameFrame();
+
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
 
         Game.control.state.addEventListener(
             AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
 
         Game.control.addEventListener(AVRGameControlEvent.COINS_AWARDED, coinsAwarded);
+
+        _ppp = new PerPlayerProperties(handlePlayerPropertyUpdate);
     }
 
     public function shutdown () :void
@@ -83,6 +95,30 @@ public class GamePanel extends Sprite
         updateState();
     }
 
+    public function unframeContent () :void
+    {
+        _frame.frameContent(null);
+        this.removeChild(_frame);
+    }
+
+    public function frameContent (content :DisplayObject) :void
+    {
+        _frame.frameContent(content);
+
+        this.addChild(_frame);
+
+        _frame.x = (Game.stageSize.width - 100 - _frame.width) / 2;
+        _frame.y = (Game.stageSize.height - _frame.height) / 2 - FRAME_DISPLACEMENT_Y;
+    }
+
+    public function reloadView () :void
+    {
+        hud.reloadView();
+        if (Game.model.isPlayerDead(Game.ourPlayerId)) {
+            weAreDead();
+        }
+    }
+
     public function newGhost () :void
     {
         _ghost = null;
@@ -92,11 +128,6 @@ public class GamePanel extends Sprite
                 updateState();
             });
         }
-    }
-
-    public function reloadView () :void
-    {
-        hud.reloadView();
     }
 
     protected function coinsAwarded (evt :AVRGameControlEvent) :void
@@ -114,6 +145,36 @@ public class GamePanel extends Sprite
         AnimationManager.start(flourish);
     }
 
+    protected function handlePlayerPropertyUpdate (playerId :int, name :String, value :Object) :void
+    {
+        if (name == Codes.PROP_PLAYER_CUR_HEALTH) {
+            if (playerId == Game.ourPlayerId) {
+                if (Game.model.isPlayerDead(playerId)) {
+                    weAreDead();
+                }
+            }
+        }
+    }
+
+    protected function weAreDead () :void
+    {
+        if (_revivePopup != null) {
+            Game.log.debug("Hrm, _revivePopup != null");
+        }
+        // TODO: make the button enable/disable depending on phase
+        var panel :GamePanel = this;
+        _revivePopup = popup(
+            "Alas, you are dead. When you are out of combat, you can revive.",
+            "Revive me!", function (event :Event) :void {
+              Game.log.debug("like yo, I'm running");
+              CommandEvent.dispatch(panel, GameController.REVIVE)
+              unframeContent();
+              _revivePopup = null;
+            });
+
+        frameContent(_revivePopup);
+    }
+
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
         if (evt.name == Codes.PROP_STATE) {
@@ -124,6 +185,38 @@ public class GamePanel extends Sprite
             newGhost();
         }
     }
+
+    protected function popup (text :String, btnText :String, callback :Function) :Sprite
+    {
+        var frameBounds :Rectangle = _frame.getContentBounds();
+
+        var popup :Sprite = new Sprite();
+        popup.opaqueBackground = 0x000000;
+
+        var format :TextFormat = TextFieldUtil.createFormat({
+              font: "Arial", size: 16, color: 0xFFD700
+        });
+
+        var textField :TextField = TextFieldUtil.createField(
+            text, { antiAliasType: AntiAliasType.ADVANCED, autoSize: TextFieldAutoSize.NONE,
+                    defaultTextFormat: format });
+
+        popup.addChild(textField);
+        textField.width = frameBounds.width - 20;
+        textField.height = frameBounds.height - 20;
+        textField.x = textField.y = 10;
+
+        var button :SimpleButton = new SimpleTextButton(
+            btnText, true, 0x003366, 0x6699CC, 0x0066FF, 5, format);
+        button.addEventListener(MouseEvent.CLICK, callback);
+
+        popup.addChild(button);
+        button.x = frameBounds.width - button.width - 10;
+        button.y = frameBounds.height - button.height - 5;
+
+        return popup;
+    }
+
 
     protected function updateState () :void
     {
@@ -219,14 +312,22 @@ public class GamePanel extends Sprite
         }
     }
 
+    protected var _ppp :PerPlayerProperties;
+
     protected var _seeking :Boolean = false;
 
     protected var _panel :DisplayObject;
 
+    protected var _revivePopup :Sprite;
+
     protected var _ghost :Ghost;
+
+    protected var _frame :GameFrame;
 
     protected var _box :Box;
 
     protected var _splash :MovieClip = MovieClip(new Content.SPLASH());
+
+    protected static const FRAME_DISPLACEMENT_Y :int = 20;
 }
 }

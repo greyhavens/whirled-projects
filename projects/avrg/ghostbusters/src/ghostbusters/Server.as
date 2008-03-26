@@ -54,8 +54,6 @@ public class Server
                 Game.model.ghostHealth = Game.model.ghostMaxHealth;
                 Game.model.ghostZest = Game.model.ghostMaxZest;
 
-                // TODO: popup saying sorry u lose?
-
             } else {
                 // delete ghost
                 Game.model.ghostId = null;
