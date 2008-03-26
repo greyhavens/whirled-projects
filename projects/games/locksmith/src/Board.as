@@ -15,7 +15,7 @@ import mx.core.MovieClipAsset;
 
 import com.threerings.util.Log;
 
-import com.whirled.WhirledGameControl;
+import com.whirled.game.GameControl
 
 import com.whirled.contrib.EventHandlers;
 
@@ -66,7 +66,7 @@ public class Board extends Sprite
         return _clock;
     }
 
-    public function set control (wgc :WhirledGameControl) :void
+    public function set control (wgc :GameControl) :void
     {
         _wgc = wgc;
     }
@@ -312,7 +312,7 @@ public class Board extends Sprite
     protected static const LAUNCHER_HOLES :Array = [ { sun: 2, moon: 6 }, { sun: 0, moon: 8 },
                                                      { sun: 14, moon: 10 } ];
 
-    protected var _wgc :WhirledGameControl;
+    protected var _wgc :GameControl;
     protected var _loadedLauncher :int;
     protected var _ring :Ring;
     protected var _scoreBoard :ScoreBoard;

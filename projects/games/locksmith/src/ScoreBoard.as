@@ -19,17 +19,17 @@ import flash.text.TextFormatAlign;
 
 import com.threerings.util.Log;
 
-import com.whirled.WhirledGameControl;
+import com.whirled.game.GameControl;
 
 import com.whirled.contrib.EventHandlers;
 
 public class ScoreBoard extends Sprite 
 {
-    // these are used as indexes into WhirledGameControl.seating.getPlayerIds()
+    // these are used as indexes into GameControl.seating.getPlayerIds()
     public static const MOON_PLAYER :int = 0;
     public static const SUN_PLAYER :int = 1;
 
-    public function ScoreBoard (wgc :WhirledGameControl, gameEndedCallback :Function) 
+    public function ScoreBoard (wgc :GameControl, gameEndedCallback :Function) 
     {
         addChild(_marbleLayer = new Sprite());
         var trough :Sprite = new TROUGH_OVERLAY() as Sprite;
@@ -57,7 +57,7 @@ public class ScoreBoard extends Sprite
             addLabel(SUN_PLAYER, playerNames[SUN_PLAYER]);
         }
 
-        addChild(_flowLayer = new Sprite());
+        addChild(_coinsLayer = new Sprite());
     }
 
     public function get moonScore () :int
@@ -80,8 +80,8 @@ public class ScoreBoard extends Sprite
         }
         removeChild(_marbleLayer);
         addChildAt(_marbleLayer = new Sprite(), 0);
-        removeChild(_flowLayer);
-        addChild(_flowLayer = new Sprite());
+        removeChild(_coinsLayer);
+        addChild(_coinsLayer = new Sprite());
         _gameEnded = false;
     }
 
@@ -123,19 +123,19 @@ public class ScoreBoard extends Sprite
         _victory.scaleX = _victory.scaleY = 0.33;
     }
 
-    public function displayFlow (player :int, flow :int, digits :int) :void
+    public function displayCoins (player :int, coins :int, digits :int) :void
     {
-        var flowDisplay :FlowDisplay = new FlowDisplay(flow, digits);
+        var coinsDisplay :CoinsDisplay = new CoinsDisplay(coins, digits);
         if (player == MOON_PLAYER) {
-            flowDisplay.x = -316 + (5 - digits) * 13;
+            coinsDisplay.x = -316 + (5 - digits) * 13;
         } else if (player == SUN_PLAYER) {
-            flowDisplay.x = 265;
+            coinsDisplay.x = 265;
         } else {
-            log.debug("asked to display flow for unknown player [" + player + "]");
+            log.debug("asked to display coins for unknown player [" + player + "]");
             return;
         }
-        flowDisplay.y = -109;
-        _flowLayer.addChild(flowDisplay);
+        coinsDisplay.y = -109;
+        _coinsLayer.addChild(coinsDisplay);
     }
 
     protected function applyHeadshot (player :int) :Function 
@@ -258,7 +258,7 @@ public class ScoreBoard extends Sprite
     protected var _gameEndedCallback :Function;
     protected var _gameEnded :Boolean = false;
     protected var _marbleLayer :Sprite = new Sprite();
-    protected var _flowLayer :Sprite = new Sprite();
+    protected var _coinsLayer :Sprite = new Sprite();
 
     protected var _leftFrame :Sprite;
     protected var _rightFrame :Sprite;
@@ -403,21 +403,21 @@ class RampAnimation
     private static const log :Log = Log.getLog(RampAnimation);
 }
 
-class FlowDisplay extends Sprite
+class CoinsDisplay extends Sprite
 {
-    public function FlowDisplay (flow :int, digits :int) 
+    public function CoinsDisplay (coins :int, digits :int) 
     {
-        log.debug("displaying flow [" + flow + ", " + digits + "]");
+        log.debug("displaying coins [" + coins + ", " + digits + "]");
         for (var ii :int = 0; ii < digits; ii++) {
-            if (flow == 0 && ii != 0) {
+            if (coins == 0 && ii != 0) {
                 _digits.unshift(-1);
             } else {
-                _digits.unshift(flow - Math.floor(flow / 10) * 10);
-                flow = Math.floor(flow / 10);
+                _digits.unshift(coins - Math.floor(coins / 10) * 10);
+                coins = Math.floor(coins / 10);
             }
         }
-        if (flow > 0) {
-            log.debug("not giving enough digits to display flow value [" + flow + "]");
+        if (coins > 0) {
+            log.debug("not giving enough digits to display coins value [" + coins + "]");
         }
 
         EventHandlers.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
@@ -425,7 +425,7 @@ class FlowDisplay extends Sprite
 
     protected function enterFrame (event :Event) :void
     {
-        var digitSprite :FlowDigit = new FlowDigit(_digits.shift());
+        var digitSprite :CoinsDigit = new CoinsDigit(_digits.shift());
         digitSprite.x = width;
         addChild(digitSprite);
 
@@ -434,14 +434,14 @@ class FlowDisplay extends Sprite
         }
     }
 
-    private static const log :Log = Log.getLog(FlowDisplay);
+    private static const log :Log = Log.getLog(CoinsDisplay);
 
     protected var _digits :Array = [];
 }
 
-class FlowDigit extends Sprite
+class CoinsDigit extends Sprite
 {
-    public function FlowDigit (digit :int) 
+    public function CoinsDigit (digit :int) 
     {
         if (digit > 9 || digit < -1) {
             log.debug("digit is invalid [" + digit + "]");
@@ -469,7 +469,7 @@ class FlowDigit extends Sprite
         }
     }
 
-    private static const log :Log = Log.getLog(FlowDigit);
+    private static const log :Log = Log.getLog(CoinsDigit);
 
     [Embed(source="../rsrc/locksmith_art.swf#digit")]
     protected const FLOW_DIGIT :Class;

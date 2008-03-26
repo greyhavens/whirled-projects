@@ -10,17 +10,16 @@ import flash.events.IEventDispatcher;
 
 import flash.ui.Keyboard;
 
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.SizeChangedEvent;
-import com.threerings.ezgame.StateChangedEvent;
-
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 
-import com.whirled.FlowAwardedEvent;
-import com.whirled.GameSubControl;
-import com.whirled.WhirledGameControl;
+import com.whirled.game.CoinsAwardedEvent;
+import com.whirled.game.GameSubControl;
+import com.whirled.game.GameControl;
+import com.whirled.game.MessageReceivedEvent;
+import com.whirled.game.ElementChangedEvent;
+import com.whirled.game.SizeChangedEvent;
+import com.whirled.game.StateChangedEvent;
 
 import com.whirled.contrib.EventHandlers;
 
@@ -44,7 +43,7 @@ public class Locksmith extends Sprite
         // game
         _board.x = DISPLAY_WIDTH / 2;
         _board.y = DISPLAY_HEIGHT / 2;
-        _wgc = new WhirledGameControl(this);
+        _wgc = new GameControl(this);
         if (_wgc.game.isConnected()) {
             EventHandlers.registerEventListener(
                 _wgc.game, StateChangedEvent.GAME_STARTED, gameStarted);
@@ -53,14 +52,14 @@ public class Locksmith extends Sprite
             EventHandlers.registerEventListener(
                 _wgc.game, StateChangedEvent.TURN_CHANGED, turnChanged);
             EventHandlers.registerEventListener(
-                _wgc.net, MessageReceivedEvent.TYPE, messageReceived);
+                _wgc.net, MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
             EventHandlers.registerEventListener(
-                _wgc.net, PropertyChangedEvent.TYPE, propertyChanged);
+                _wgc.net, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
             EventHandlers.registerEventListener(_wgc.local, KeyboardEvent.KEY_DOWN, keyDownHandler);
-            EventHandlers.registerEventListener(_wgc.player, FlowAwardedEvent.FLOW_AWARDED, 
-                function (event :FlowAwardedEvent) :void {
-                    log.debug("flow award [" + event.amount + "]");
-                    _wgc.net.set(FLOW_AWARD, event.amount, _wgc.game.seating.getMyPosition());
+            EventHandlers.registerEventListener(_wgc.player, CoinsAwardedEvent.COINS_AWARDED, 
+                function (event :CoinsAwardedEvent) :void {
+                    log.debug("coins award [" + event.amount + "]");
+                    _wgc.net.setAt(COINS_AWARD, _wgc.game.seating.getMyPosition(), event.amount);
                 });
             _board.control = _wgc;
 
@@ -71,7 +70,7 @@ public class Locksmith extends Sprite
             _rightBackground.width = _leftBackground.width;
             _rightBackground.x = _leftBackground.width + DISPLAY_WIDTH - 1;
             EventHandlers.registerEventListener(
-                _wgc.local, SizeChangedEvent.TYPE, updateBackgrounds);
+                _wgc.local, SizeChangedEvent.SIZE_CHANGED, updateBackgrounds);
         } else {
             // show some rings so there is something visible when the game is not connected
             var ringData: Array = createRings();
@@ -103,7 +102,7 @@ public class Locksmith extends Sprite
         if (_wgc.game.amInControl()) {
             _wgc.net.sendMessage(NEW_RINGS, createRings());
             _wgc.game.startNextTurn();
-            _wgc.net.set(FLOW_AWARD, [-1, -1]);
+            _wgc.net.set(COINS_AWARD, [-1, -1]);
         }
     }
 
@@ -114,7 +113,7 @@ public class Locksmith extends Sprite
 
     public function turnChanged (event :StateChangedEvent) :void
     {
-        if (_wgc.game.getTurnHolder() == 0) {
+        if (_wgc.game.getTurnHolderId() == 0) {
             // spurious event at the beginning of the game
             return;
         }
@@ -131,7 +130,7 @@ public class Locksmith extends Sprite
                     _board.setActiveRing(_currentRing.num);
                 }
                 _board.updateTurnIndicator(_wgc.game.seating.getPlayerPosition(
-                    _wgc.game.getTurnHolder()));
+                    _wgc.game.getTurnHolderId()));
                 _board.loadNextLauncher();
             }
             if (!_gotRotation || DoLater.instance.mostRecentStage != DoLater.ROTATION_AFTER_END) {
@@ -154,7 +153,7 @@ public class Locksmith extends Sprite
                 _board.setActiveRing(_currentRing.num);
             }
             _board.updateTurnIndicator(_wgc.game.seating.getPlayerPosition(
-                _wgc.game.getTurnHolder()));
+                _wgc.game.getTurnHolderId()));
             _board.loadNextLauncher();
         }
     }
@@ -198,26 +197,22 @@ public class Locksmith extends Sprite
         }
     }
 
-    protected function propertyChanged (event :PropertyChangedEvent) :void
+    protected function elementChanged (event :ElementChangedEvent) :void
     {
-        if (event.index == -1) {
-            return;
-        }
-
         switch (event.name) {
-        case FLOW_AWARD:
-            var moonFlow :int = _wgc.net.get(FLOW_AWARD, ScoreBoard.MOON_PLAYER) as int;
-            var sunFlow :int = _wgc.net.get(FLOW_AWARD, ScoreBoard.SUN_PLAYER) as int;
-            if (moonFlow == -1 || sunFlow == -1) {
+        case COINS_AWARD:
+            var moonCoins :int = _wgc.net.get(COINS_AWARD)[ScoreBoard.MOON_PLAYER] as int;
+            var sunCoins :int = _wgc.net.get(COINS_AWARD)[ScoreBoard.SUN_PLAYER] as int;
+            if (moonCoins == -1 || sunCoins == -1) {
                 break;
             }
             
             var digits :int = 1;
-            while (Math.pow(10, digits) <= moonFlow || Math.pow(10, digits) <= sunFlow) {
+            while (Math.pow(10, digits) <= moonCoins || Math.pow(10, digits) <= sunCoins) {
                 digits++;
             }
-            _scoreBoard.displayFlow(ScoreBoard.MOON_PLAYER, moonFlow, digits);
-            _scoreBoard.displayFlow(ScoreBoard.SUN_PLAYER, sunFlow, digits);
+            _scoreBoard.displayCoins(ScoreBoard.MOON_PLAYER, moonCoins, digits);
+            _scoreBoard.displayCoins(ScoreBoard.SUN_PLAYER, sunCoins, digits);
             break;
         }
     }
@@ -308,9 +303,9 @@ public class Locksmith extends Sprite
     protected static const NEW_RINGS :String = "newRings";
     protected static const RING_ROTATION :String = "ringRotation";
     protected static const WINNER :String = "winner";
-    protected static const FLOW_AWARD :String = "flowAward";
+    protected static const COINS_AWARD :String = "coinsAward";
 
-    protected var _wgc :WhirledGameControl;
+    protected var _wgc :GameControl;
     protected var _board :Board;
     protected var _currentRing :Ring;
     protected var _scoreBoard :ScoreBoard;
