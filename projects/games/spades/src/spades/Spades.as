@@ -5,6 +5,7 @@ import flash.display.DisplayObject;
 import flash.display.MovieClip;
 
 import com.whirled.game.GameControl;
+import com.whirled.game.GameSubControl;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.PropertyChangedEvent;
@@ -28,18 +29,11 @@ public class Spades extends Sprite
     /** Players required for a game of spades */
     public static const NUM_PLAYERS :int = 4;
 
-    /** Number of cards in a player's hand at the start of a round */
-    public static const NUM_CARDS_PER_PLAYER :int = 
-        CardArray.FULL_DECK.ordinals.length / NUM_PLAYERS;
-
-    /** Number of "hands" played in a round (i.e. tricks to take) */
-    public static const NUM_TRICKS_PER_ROUND :int = NUM_CARDS_PER_PLAYER;
-
     /** Represents an undefined bid (player has not chosen yet) */
     public static const NO_BID :int = TableSprite.NO_BID;
 
-    /** Maximum amount a player can bid */
-    public static const MAX_BID :int = NUM_TRICKS_PER_ROUND;
+    /** Time between rounds (seconds). */
+    public static const DELAY_TO_NEXT_ROUND :int = 5;
 
     /** Main entry point. Start a new game of spades. */
     public function Spades (gameCtrl :GameControl)
@@ -70,12 +64,14 @@ public class Spades extends Sprite
             MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessage);
 
-        // todo: use the config
         var config :Object = _gameCtrl.game.getConfig();
 
-        // todo: clean up scoring paradigm (the idea here is that the score is 
-        // shown for each team).
-        _gameCtrl.local.setPlayerScores([ 0, "", 0, "" ], [ 1, 1, 0, 0 ]);
+        if ("playto" in config) {
+            _targetScore = parseInt(config["playto"] as String);
+        }
+        if ("minigame" in config) {
+            _miniGame = config["minigame"] as Boolean;
+        }
 
         // configure the players
         _table = new TableSprite(
@@ -115,7 +111,12 @@ public class Spades extends Sprite
     /** Boot up the game. */
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
-        _gameCtrl.local.feedback("Spades superchallenge: go!\n");
+        var mini :String = _miniGame ? " (mini game selected)" : "";
+        _gameCtrl.local.feedback(
+             "Welcome to Spades, first player to score " + _targetScore + 
+             " wins" + mini  + "\n");
+        _scores = filledArray(NUM_PLAYERS, 0);
+        _gameCtrl.local.setPlayerScores(_scores);
     }
 
     /** Start the round. */
@@ -129,13 +130,22 @@ public class Spades extends Sprite
             log("Dealing and setting up bids");
 
             // put all cards into a bag
-            var deck :Array = CardArray.FULL_DECK.ordinals;
-            _gameCtrl.services.bags.create(COMS_DECK, deck);
+            var deck :CardArray = CardArray.FULL_DECK;
+
+            if (_miniGame) {
+                var isHighCard :Function = function (c :Card) :Boolean {
+                    return Card.compareRanks(c.rank, Card.RANK_QUEEN, 
+                        Card.RANK_ORDER_ACES_HIGH) >= 0;
+                }
+                deck = deck.shortFilter(isHighCard);
+            }
+
+            _gameCtrl.services.bags.create(COMS_DECK, deck.ordinals);
             
             // deal to each player
             var playerIds :Array = _gameCtrl.game.seating.getPlayerIds();
             for (var seat :int = 0; seat < NUM_PLAYERS; ++seat) {
-                _gameCtrl.services.bags.deal(COMS_DECK, NUM_CARDS_PER_PLAYER, 
+                _gameCtrl.services.bags.deal(COMS_DECK, deck.length / NUM_PLAYERS, 
                     COMS_HAND, null, playerIds[seat]);
             }
 
@@ -149,17 +159,42 @@ public class Spades extends Sprite
             _gameCtrl.net.set(COMS_TRICK_CARDS, zeroes);
             _gameCtrl.net.set(COMS_TRICK_SIZE, 0);
 
-            // advance the current turn holder so that the leader is different 
-            // each time
-            _gameCtrl.game.startNextTurn();
+            // on the first round, set a random first player as leader. Otherwise, advance the 
+            // previous leader by one
+            if (_gameCtrl.game.getRound() == 1) {
+                _gameCtrl.game.startNextTurn();
+            }
+            else {
+                var lastId :int = _gameCtrl.net.get(COMS_LAST_LEADER) as int;
+                var nextIdx :int = (getPlayerSeat(lastId) + 1) % NUM_PLAYERS;
+                _gameCtrl.game.startNextTurn(getPlayerId(nextIdx));
+            }
         }
+
+        _tricksTaken = filledArray(NUM_PLAYERS, 0);
+    }
+
+    /** Process the total tricks taken for this set of hands played, add into the local scores
+     *  and display */
+    protected function updateScores () :void
+    {
+        var bids :Array = _gameCtrl.net.get(COMS_BIDS) as Array;
+
+        for (var seat :int = 0; seat < NUM_PLAYERS; ++seat) {
+            var over :int = _tricksTaken[seat] - bids[seat];
+            var base :int = bids[seat] * 10;
+            var score :int = over >= 0 ? (base + over) : (-base);
+            _scores[seat] += score;
+        }
+
+        _gameCtrl.local.setPlayerScores(_scores);
     }
 
     /** Entry point for when a round has ended. */
     protected function handleRoundEnded (event :StateChangedEvent) :void
     {
-        _gameCtrl.local.feedback("Round " + _gameCtrl.game.getRound() + " ended\n");
-
+        var round :int = -_gameCtrl.game.getRound();
+        _gameCtrl.local.feedback("Round " + round + " ended\n");
     }
 
     /** Get the id of the player in a particular seat. */
@@ -167,13 +202,6 @@ public class Spades extends Sprite
     {
         var id :int = _gameCtrl.game.seating.getPlayerIds()[seat];
         return id;
-    }
-
-    /** Get the id of the player on my left. */
-    protected function getNextPlayer () :int
-    {
-        var mySeat :int = getMySeat();
-        return getPlayerId((mySeat + 1) % 4);
     }
 
     /** Get my seat number. */
@@ -225,6 +253,10 @@ public class Spades extends Sprite
         if (turnHolder > 0 && countBidsPlaced() == 0) {
             var leader :String = _gameCtrl.game.seating.getPlayerNames()[hotSeat];
             _gameCtrl.local.feedback("Leader this round is " + leader);
+
+            if (_gameCtrl.game.amInControl()) {
+                _gameCtrl.net.set(COMS_LAST_LEADER, turnHolder);
+            }
         }
     }
 
@@ -302,7 +334,8 @@ public class Spades extends Sprite
         var winner :int = calculateTrickWinner();
         var winnerSeat :int = getPlayerSeat(winner);
 
-        log("Winner is " + winner + " in seat " + winnerSeat + ", name " + getPlayerName(winner));
+        log("Trick winner is " + winner + " in seat " + winnerSeat + ", name " + 
+            getPlayerName(winner));
 
         _tricksTaken[winnerSeat] += 1;
         _table.setPlayerTricks(winnerSeat, _tricksTaken[winnerSeat]);
@@ -315,7 +348,66 @@ public class Spades extends Sprite
         
         if (_gameCtrl.game.amInControl()) {
             _gameCtrl.net.set(COMS_TRICK_SIZE, 0);
-            _gameCtrl.game.startNextTurn(winner);
+
+            if (_hand.length > 0) {
+                _gameCtrl.game.startNextTurn(winner);
+            }
+        }
+
+        if (_hand.length == 0) {
+            completeRound();
+        }
+    }
+
+    protected function completeRound () :void
+    {
+        updateScores();
+
+        var playerIds :Array = _gameCtrl.game.seating.getPlayerIds();
+
+        // calculate the highest score that is at least target,
+        // as well as the number of players with that score and the
+        // player that achieved it
+        var highest :int = 0;
+        var count :int = 0;
+        var winnerId :int = 0;
+        for (var seat :int = 0; seat <= NUM_PLAYERS; ++seat) {
+            if (_scores[seat] >= _targetScore) {
+                if (_scores[seat] > highest) {
+                    highest = _scores[seat];
+                    count = 1;
+                    winnerId = playerIds[seat];
+                }
+                else if (_scores[seat] == highest) {
+                    count++;
+                }
+            }
+        }
+
+        // feedback
+        if (count == 1) {
+            _gameCtrl.local.feedback(getPlayerName(winnerId) + " wins the game!");
+        }
+        else if (count > 1) {
+            _gameCtrl.local.feedback("Tie game! Continuing...");
+        }
+        
+        // control
+        if (_gameCtrl.game.amInControl()) {
+            if (count != 1) {
+                _gameCtrl.game.endRound(DELAY_TO_NEXT_ROUND);
+            }
+            else {
+                var winners :Array = [winnerId];
+                var losers :Array = playerIds.filter(notWinner);
+                _gameCtrl.game.endGameWithWinners(
+                    winners, losers, GameSubControl.CASCADING_PAYOUT);
+            }
+        }
+
+        function notWinner (id :int, i :int, a :Array) :Boolean
+        {
+            return id != winnerId;
         }
     }
 
@@ -342,6 +434,14 @@ public class Spades extends Sprite
                 _gameCtrl.game.startNextTurn();
             }
         }
+        else if (event.name == COMS_BIDS) {
+            // make sure that a player's bid is reflected in the view
+            var bids :Array = event.newValue as Array;
+            for (var i :int = 0; i < NUM_PLAYERS; ++i) {
+                _table.setPlayerBid(i, bids[i]);
+                _table.setPlayerTricks(i, 0);
+            }
+        }
     }
 
     /** Show or hide the bidding interface. */
@@ -355,7 +455,7 @@ public class Spades extends Sprite
 
         log("Ready to bid: " + showSlider);
 
-        _table.showBidControl(showSlider, NUM_TRICKS_PER_ROUND, onBid);
+        _table.showBidControl(showSlider, _hand.length, onBid);
     }
 
     /** Entry point for when the user selects their bid */
@@ -498,6 +598,15 @@ public class Spades extends Sprite
     /** The trick sprite in the middle of the table */
     protected var _trick :CardArray = new CardArray();
 
+    /** The scores so far. */
+    protected var _scores :Array;
+
+    /** Target score for declaring the winner. */
+    protected var _targetScore :int = 300;
+
+    /** If we are running a "development minigame". */
+    protected var _miniGame :Boolean = false;
+
     /** Event message for getting cards. */
     protected static const COMS_HAND :String = "hand";
 
@@ -515,6 +624,10 @@ public class Spades extends Sprite
 
     /** Name of property for size of current trick. */
     protected static const COMS_TRICK_SIZE :String = "tricksize";
+
+    /** Name of property indicating the last player to lead the hand. */
+    protected static const COMS_LAST_LEADER :String = "lastleader";
+
 }
 }
 

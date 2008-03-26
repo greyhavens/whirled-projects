@@ -16,7 +16,8 @@ public class CardSprite extends Sprite
     /** Height of a card sprite. */
     public static const HEIGHT :int = 100;
 
-    public function CardSprite (card :Card) {
+    public function CardSprite (card :Card)
+    {
         _card = card;
         
         graphics.clear();
@@ -55,6 +56,9 @@ public class CardSprite extends Sprite
     public function set enabled (on :Boolean) :void
     {
         _enabled = on;
+        if (!on) {
+            _highlighted = false;
+        }
         update();
     }
 

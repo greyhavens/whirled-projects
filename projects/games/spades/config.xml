@@ -1,0 +1,8 @@
+<!-- a config file used when doing standalone testing -->
+<game>
+  <params>
+    <choice ident="playto" name="Winning Score" 
+      choices="200,300,400,500" start="300"/>
+    <!-- <toggle ident="minigame" name="12 Card Deck" start="false"/> -->
+  </params>
+</game>

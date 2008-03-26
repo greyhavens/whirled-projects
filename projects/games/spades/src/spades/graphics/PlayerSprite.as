@@ -13,31 +13,22 @@ public class PlayerSprite extends Sprite
     /** Create a new player. */
     public function PlayerSprite (name :String)
     {
-        var debug: Boolean = false;
-
         // setup name in top third of player box
         var nameField :TextField = new TextField();
         nameField.autoSize = TextFieldAutoSize.CENTER;
-        nameField.width = WIDTH;
-        nameField.height = HEIGHT / 3;
         nameField.x = 0;
         nameField.y = -HEIGHT / 2;
         nameField.text = name;
+        nameField.selectable = false;
         addChild(nameField);
 
         // setup trick count in bottom third of player box
         _status = new TextField();
         _status.autoSize = TextFieldAutoSize.CENTER;
-        _status.width = WIDTH;
-        _status.height = HEIGHT / 3;
         _status.x = 0;
         _status.y = HEIGHT / 6;
+        _status.selectable = false;
         addChild(_status);
-
-        if (debug) {
-            nameField.border = true;
-            _status.border = true;
-        }
 
         setTurn(false);
         updateStatus();
