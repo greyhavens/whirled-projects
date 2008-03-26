@@ -22,9 +22,17 @@ public class GameMode extends AppMode
         this.addObject(_winnerView, this.modeSprite);
         _winnerView.visible = false;
 
-        log.info("Initial state: " + BingoMain.model.curState.toString());
+        var curState :SharedState = BingoMain.model.curState;
+        var stateIsValid :Boolean = curState.isValid;
 
-        this.handleGameStateChange();
+        log.info("Initial state: " + curState.toString() + " (valid: " + String(stateIsValid) + ")");
+
+        if (stateIsValid) {
+            this.handleGameStateChange();
+        } else {
+            _expectedState = new SharedState();
+            this.sendStateChanges();
+        }
     }
 
     override protected function destroy () :void

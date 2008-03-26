@@ -36,6 +36,28 @@ public class SharedState
         return (roundId == rhs.roundId && ballInPlay == rhs.ballInPlay && roundWinnerId == rhs.roundWinnerId && gameState == rhs.gameState);
     }
 
+    public function get isValid () :Boolean
+    {
+        if (gameState < STATE_INVALID || gameState > STATE_WEHAVEAWINNER) {
+            return false;
+        }
+
+        if (roundId < 0) {
+            return false;
+        }
+
+        switch (gameState) {
+        case STATE_INVALID:
+        case STATE_PLAYING:
+            if (roundWinnerId != 0) {
+                return false;
+            }
+            break;
+        }
+
+        return true;
+    }
+
     public function toBytes () :ByteArray
     {
         var ba :ByteArray = new ByteArray();
