@@ -15,7 +15,6 @@ import lawsanddisorder.Content;
 /**
  * A single job.  Will move from player to player during play.
  * TODO animate moving between players
- * TODO different class for each job?
  */
 public class Job extends Component
 {
@@ -61,18 +60,8 @@ public class Job extends Component
         usePowerButton.x = 0;
         usePowerButton.y = 160;
         addChild(usePowerButton);
-
-        /*
-        usePowerButton = new Button(_ctx);
-        usePowerButton.text = "use power";
-        usePowerButton.x = 0;
-        usePowerButton.y = 160;
-        usePowerButton.addEventListener(MouseEvent.CLICK, usePowerButtonClicked);
-        usePowerButton.enabled = false;
-        addChild(usePowerButton);
-        */
         
-        /** Job name text */
+        // Job name text
         jobTitle = Content.defaultTextField(1.5);
         jobTitle.text = name;
         jobTitle.width = bground.width;
@@ -80,7 +69,7 @@ public class Job extends Component
         jobTitle.y = 15;
         addChild(jobTitle);
     
-        /** Text of abilities */
+        // Text of abilities
         jobDescription = Content.defaultTextField();
         jobDescription.text = description;
         jobDescription.width = 105;
@@ -122,19 +111,6 @@ public class Job extends Component
         	usePowerButton.enabled = false;
         }
     }
-    
-    /*
-     * Handler for user power button
-     *
-    protected function usePowerButtonClicked (event :MouseEvent) :void
-    {
-        if (!_ctx.state.interactMode) {
-            _ctx.notice("You can't use your power right now.");
-            return;
-        }
-        usePower();
-    }
-    */
     
     /**
      * TODO judge and thief have select handled in state, logic handled here, but banker has
@@ -186,7 +162,6 @@ public class Job extends Component
                 // the trader's ability happens immediately
                 startUsingAbility();
                 usePowerButton.enabled = false;
-                //removeChild(cancelButton);
                 _ctx.board.player.loseMonies(2);
                 _ctx.board.player.hand.drawCard(2);
                 _ctx.broadcast(_ctx.board.player.playerName + " (The Trader) used their ability to draw two cards");
@@ -206,13 +181,13 @@ public class Job extends Component
                 _ctx.state.exchangeSubject(priestSubjectExchanged);
                 return;
                 
-            case SCIENTIST:
+            case DOCTOR:
                 if (_ctx.board.laws.numLaws == 0) {
                     _ctx.notice("There are no laws to modify.");
                     return;
                 }
                 startUsingAbility();
-                _ctx.state.moveWhen(scientistWhenMoved);
+                _ctx.state.moveWhen(doctorWhenMoved);
                 return;
         }
     }
@@ -223,12 +198,6 @@ public class Job extends Component
      */
     protected function startUsingAbility () :void
     {
-    	//addChild(cancelButton);
-    	// switch usePowerButton to cancel button
-    	//usePowerButton.removeEventListener(MouseEvent.CLICK, usePowerButtonClicked);
-    	//usePowerButton.addEventListener(MouseEvent.CLICK, cancelButtonClicked);
-    	//usePowerButton.text = "cancel";
-    	
         _ctx.board.player.powerEnabled = false;
         _ctx.state.performingAction = true;
     }
@@ -327,9 +296,9 @@ public class Job extends Component
     }
     
     /**
-     * Called when a scientist finishes adding or removing a when card
+     * Called when a doctor finishes adding or removing a when card
      */
-    protected function scientistWhenMoved () :void
+    protected function doctorWhenMoved () :void
     {
         var law :Law = _ctx.state.selectedLaw;
 		var card :Card = _ctx.state.activeCard;
@@ -354,12 +323,7 @@ public class Job extends Component
      */
     protected function doneUsingPower () :void
     {
-    	usePowerButton.doneUsingPower();
-        // switch usePowerButton to use power
-        //usePowerButton.addEventListener(MouseEvent.CLICK, usePowerButtonClicked);
-        //usePowerButton.removeEventListener(MouseEvent.CLICK, cancelButtonClicked);
-        //usePowerButton.text = "use power";
-        
+    	usePowerButton.doneUsingPower();        
         _ctx.board.laws.triggerWhen(Card.USE_ABILITY, _ctx.board.player.job.id);
     }
     
@@ -371,11 +335,6 @@ public class Job extends Component
     //protected function cancelButtonClicked (event :MouseEvent) :void
     public function cancelUsePower () :void
     {
-        // switch usePowerButton to use power
-        //usePowerButton.addEventListener(MouseEvent.CLICK, usePowerButtonClicked);
-        //usePowerButton.removeEventListener(MouseEvent.CLICK, cancelButtonClicked);
-        //usePowerButton.text = "use power";
-        
         _ctx.state.cancelMode();
         _ctx.state.performingAction = false;
         _ctx.board.player.powerEnabled = true;
@@ -398,7 +357,7 @@ public class Job extends Component
                 return "The Trader";
             case Job.PRIEST:
                 return "The Priest";
-            case Job.SCIENTIST:
+            case Job.DOCTOR:
                 return "The Doctor";
         }
         _ctx.log("WTF Unknown job in job get name.");
@@ -421,7 +380,7 @@ public class Job extends Component
                 return "Pay $2 to draw two cards";
             case Job.PRIEST:
                 return "Switch a blue card in your hand with one in a law";
-            case Job.SCIENTIST:
+            case Job.DOCTOR:
                 return "Add a purple card to a law or take one from a law";
         }
         _ctx.log("WTF Unknown job in job get description.");
@@ -446,8 +405,8 @@ public class Job extends Component
                 return new SYMBOL_TRADER();
             case PRIEST:
                 return new SYMBOL_PRIEST();
-            case SCIENTIST:
-                return new SYMBOL_SCIENTIST();
+            case DOCTOR:
+                return new SYMBOL_DOCTOR();
         }
         _ctx.log("WTF Unknown job in job get symbol.");
         return new Sprite();
@@ -475,7 +434,7 @@ public class Job extends Component
     public static const BANKER :int = 2;
     public static const TRADER :int = 3;
     public static const PRIEST :int = 4;
-    public static const SCIENTIST :int = 5;
+    public static const DOCTOR :int = 5;
     
     /** JUDGE/THIEF/BANKER etc */
     protected var _id :int;
@@ -489,7 +448,6 @@ public class Job extends Component
     /** Text of abilities */
     protected var jobDescription :TextField;
     
-    // TODO move to content class (?)
     [Embed(source="../../../rsrc/symbols.swf#judge")]
     public static const SYMBOL_JUDGE :Class;
     
@@ -506,7 +464,7 @@ public class Job extends Component
     public static const SYMBOL_PRIEST :Class;
     
     [Embed(source="../../../rsrc/symbols.swf#scientist")]
-    public static const SYMBOL_SCIENTIST :Class;
+    public static const SYMBOL_DOCTOR :Class;
     
     /** Background image for a player job */
     [Embed(source="../../../rsrc/components.swf#job")]

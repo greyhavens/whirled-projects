@@ -232,7 +232,7 @@ public class EventHandler extends EventDispatcher
     }
         
     /**
-     * Game is over; calculate the scores and send a message to everyone.
+     * Game is over; calculate the scores and send a message to everyone, awarding flow.
      * Assumes player seats may have changed during the game and rebuilds playerIds array.
      * TODO go one more round after the deck is empty?
      */

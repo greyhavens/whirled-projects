@@ -31,8 +31,8 @@ public class Card extends Component
         _type = type;
         _value = value;
 
-        buttonMode = true;
-        mouseEnabled = true;
+//        buttonMode = true;
+//        mouseEnabled = true;
         addEventListener(MouseEvent.MOUSE_DOWN, ctx.state.cardMouseDown);
         addEventListener(MouseEvent.MOUSE_UP, ctx.state.cardMouseUp);
         addEventListener(MouseEvent.CLICK, ctx.state.cardClick);
@@ -129,8 +129,6 @@ public class Card extends Component
         cardTextHightlight.width = cardText.textWidth + 5;
         cardTextHightlight.height = 30;
         highlightSpriteText.addChild(cardTextHightlight);
-        //highlightSpriteText.graphics.lineStyle(5, 0xFFFF00);
-        //highlightSpriteText.graphics.drawRect(-5, -5, cardText.textWidth+10, cardText.textHeight+10);
     	
     	return textSprite;
     }
@@ -159,6 +157,7 @@ public class Card extends Component
             if (!contains(textDisplay)) {
             	addChild(textDisplay);
             }
+            buttonMode = false;
         }
         else {
         	if (contains(textDisplay)) {
@@ -167,6 +166,7 @@ public class Card extends Component
         	if (!contains(cardDisplay)) {
         		addChild(cardDisplay);
         	}
+        	buttonMode = true;
         }
     }
     
@@ -209,8 +209,8 @@ public class Card extends Component
 	                    return new Job.SYMBOL_TRADER();
 	                case Job.PRIEST:
 	                    return new Job.SYMBOL_PRIEST();
-	                case Job.SCIENTIST:
-	                    return new Job.SYMBOL_SCIENTIST();
+	                case Job.DOCTOR:
+	                    return new Job.SYMBOL_DOCTOR();
 	            }
                 break;
             case VERB:
@@ -253,7 +253,7 @@ public class Card extends Component
                         return "The Trader";
                     case Job.PRIEST:
                         return "The Priest";
-                    case Job.SCIENTIST:
+                    case Job.DOCTOR:
                         return "The Doctor";
                 }
                 break;

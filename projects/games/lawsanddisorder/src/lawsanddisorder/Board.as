@@ -138,7 +138,13 @@ public class Board extends Sprite
     	if (contains(event.target as Sprite)) {
     	   removeChild(event.target as Sprite);
     	}
-    	_ctx.control.game.playerReady();
+    	//_ctx.control.game.playerReady();
+    	
+        if (_ctx.control.game.amInControl()) {
+            // control player starts the first turn
+            _ctx.control.game.startNextTurn();
+        }
+        
     }
     
     /**

@@ -19,26 +19,28 @@ import lawsanddisorder.component.*
  * Handles game setup / game start / game end logic.
  *
  * TODO gameplay:
- * timers for auto-selection for afk players (?)
- * detecting afk players
- * better handling of players leaving / control changing
+ * skipping turns of afk players
  * unloader?
- * grab fresh job data before using it on opponent's turn eg during enact law after switch job
- * same with hand data eg after being stolen from, before losing card
- * can the above cases happen, eg can a message get lost?
- * don't send change data events to turn holder, or use set immediate?
- * propagate events for end turn, other events?
+ * 1-2-3 step process?  change positions, use power, create law, done
+ * ai!
  * 
- * 
- * TODO inerface:
- * improve highlighting with delays/events for unhighlighting
- * bring law to front on mouseover
- * improve notice & broadcast messages esp when waiting for opponent
+ * TODO interface:
+ * add highlighting and cursors to doctor's ability
+ * make splash screen a 3 screen click through
+ * animate opponent we are waiting for
+ * display important notices (eg pick a card) onscreen
  * animations when drawing cards, stealing cards, playing law, gain/lose/give monies
  * card mouseover tooltips, esp job powers?
- * figure out wtf to do with laws
- * figure out whether/how to display notices
- * get a better font
+ * display job power in use power button
+ * connect use power button to job
+ * highlight your job's name in laws
+ * 
+ * TODO graphics/flavor:
+ * talk to artists about improving graphics
+ * animate backgrounds (from robert: people milling about, something behind the columns)
+ * chisel animation
+ * sound - chisel, focus gain, card/money loss, card/money gain, background(?)
+ * why is the background cut off at the bottom in whirled but not the standalone?
  * 
  */
 [SWF(width="1000", height="550")]
@@ -83,7 +85,45 @@ public class LawsAndDisorder extends Sprite
         //addChild(endGame);
 
         // set up distributed data
-        beginInit();
+        //beginInit();
+        
+        _ctx.control.game.playerReady();
+    }
+    
+    /*
+    protected function restartGame (event :Event) :void
+    {
+    	_ctx.log("Restarting game");
+    	_ctx.eventHandler.endGame();
+    	//gameStarted(null);
+    }
+    */
+    
+    /** 
+     * Fires when all players have called playerReady().  Have the control player set
+     * up the board data then start the first turn.
+     */
+    protected function gameStarted (event :StateChangedEvent) :void
+    {
+    	if (_ctx.control.game.amInControl()) {
+    		beginInit();
+    	}
+    	
+    	// this is a rematch; reset everything
+    	//if (_gameStarted) {
+    	//	if (_ctx.control.game.amInControl()) {
+    	//		_ctx.board.setup();
+    	//	}
+    	//}
+    	
+        _ctx.notice("Welcome to Laws & Disorder!");
+        /*
+        if (_ctx.control.game.amInControl()) {
+            // control player starts the first turn
+            _ctx.control.game.startNextTurn();
+        }
+        */
+        _gameStarted = true;
     }
     
     /**
@@ -92,7 +132,8 @@ public class LawsAndDisorder extends Sprite
      * from the server before contiinuing to fill properties with actual data.
      * Also reset deck, hands, and scores for all players.
      * 
-     * TODO could a player recieve a deck data change event before doing Deck()?     */
+     * TODO could a player recieve a deck data change event before doing Deck()?
+     */
     protected function beginInit () :void
     {
         if (_ctx.control.game.amInControl()) {
@@ -112,51 +153,29 @@ public class LawsAndDisorder extends Sprite
      */
     protected function initPropertyChanged (event :PropertyChangedEvent) :void
     {
-    	if (event.name == Player.MONIES_DATA) {
-    		_initMoniesData = true;
-    	}
-    	else if (event.name == Hand.HAND_DATA) {
-    		_initHandsData = true;
-    	}
-    	else if (event.name == Deck.JOBS_DATA) {
-    		_initJobsData = true;
-    	}
+        if (event.name == Player.MONIES_DATA) {
+            _initMoniesData = true;
+        }
+        else if (event.name == Hand.HAND_DATA) {
+            _initHandsData = true;
+        }
+        else if (event.name == Deck.JOBS_DATA) {
+            _initJobsData = true;
+        }
 
         // once all data messages are recieved, disconnect this listener and finish setup
         if (_initMoniesData && _initHandsData && _initJobsData) {
             _ctx.control.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, initPropertyChanged);
             _ctx.board.setup();
+            
+            /* 
+            if (_ctx.control.game.amInControl()) {
+                // control player starts the first turn
+                _ctx.control.game.startNextTurn();
+            }
+            */
+            
         }
-    }
-    
-    /*
-    protected function restartGame (event :Event) :void
-    {
-    	_ctx.log("Restarting game");
-    	_ctx.eventHandler.endGame();
-    	//gameStarted(null);
-    }
-    */
-    
-    /** 
-     * Fires when all players have called playerReady().  Have the control player set
-     * up the board data then start the first turn.
-     */
-    protected function gameStarted (event :StateChangedEvent) :void
-    {
-    	// this is a rematch; reset everything
-    	if (_gameStarted) {
-    		if (_ctx.control.game.amInControl()) {
-    			_ctx.board.setup();
-    		}
-    	}
-    	
-        _ctx.notice("Welcome to Laws & Disorder!");
-        if (_ctx.control.game.amInControl()) {
-            // control player starts the first turn
-            _ctx.control.game.startNextTurn();
-        }
-        _gameStarted = true;
     }
     
     /**

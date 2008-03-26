@@ -39,7 +39,7 @@ public class Deck extends Component
         createJob(Job.BANKER);
         createJob(Job.TRADER);
         createJob(Job.PRIEST);
-        createJob(Job.SCIENTIST);
+        createJob(Job.DOCTOR);
         
         // TODO get this from somewhere else - board?
         var playerCount :int = _ctx.control.game.seating.getPlayerIds().length;
@@ -69,7 +69,7 @@ public class Deck extends Component
             addNewCards(2, Card.SUBJECT, Job.BANKER);
             addNewCards(2, Card.SUBJECT, Job.TRADER);
             addNewCards(2, Card.SUBJECT, Job.PRIEST);
-            addNewCards(2, Card.SUBJECT, Job.SCIENTIST);
+            addNewCards(2, Card.SUBJECT, Job.DOCTOR);
             
             // take out gives for 2 player games
             if (playerCount == 2) {
