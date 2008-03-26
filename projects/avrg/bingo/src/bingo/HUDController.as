@@ -222,7 +222,7 @@ public class HUDController extends SceneObject
 
     protected static const NUM_SCOREBOARD_ROWS :int = 7;
     protected static const MAX_BALL_TEXT_WIDTH :Number = 62;
-    protected static const SCREEN_EDGE_OFFSET :Point = new Point(-150, 230);
+    protected static const SCREEN_EDGE_OFFSET :Point = new Point(-150, 200);
 
 }
 

@@ -114,11 +114,11 @@ public class BingoCardController extends SceneObject
             var stageSize :Rectangle = BingoMain.control.getStageSize(false);
 
             loc = (null != stageSize
-                    ? new Point(stageSize.right + SCREEN_EDGE_OFFSET.x, stageSize.top + SCREEN_EDGE_OFFSET.y)
+                    ? new Point(stageSize.right + Constants.CARD_SCREEN_EDGE_OFFSET.x, stageSize.top + Constants.CARD_SCREEN_EDGE_OFFSET.y)
                     : new Point(0, 0));
 
         } else {
-            loc = new Point(700 + SCREEN_EDGE_OFFSET.x, SCREEN_EDGE_OFFSET.y);
+            loc = new Point(700 + Constants.CARD_SCREEN_EDGE_OFFSET.x, Constants.CARD_SCREEN_EDGE_OFFSET.y);
         }
 
         return loc;
@@ -159,8 +159,6 @@ public class BingoCardController extends SceneObject
     protected var _numMatchesThisBall :int;
 
     protected static const TARGET_TEXT_WIDTH :Number = 56;
-
-    protected static const SCREEN_EDGE_OFFSET :Point = new Point(-500, 220);
 
 }
 
