@@ -187,7 +187,7 @@ public class Constants
         new BingoItem("'earflap' hat", ["head", "hat", "winter", "blue", ], Resources.IMG_EARFLAPHAT),
         new BingoItem("brown 'earflap' hat", ["head", "hat", "winter", "brown", ], Resources.IMG_EARFLAPHATBROWN),
         new BingoItem("fedora", ["head", "hat", "white", "orange", "brown", ], Resources.IMG_FEDORA),
-        new BingoItem("patterned fedora", ["head", "hat", "white", "black", "floral", ], Resources.IMG_FEDORAPATTERN),
+        new BingoItem("patterned fedora", ["head", "hat", "white", "black", "floral", "pattern", ], Resources.IMG_FEDORAPATTERN),
         new BingoItem("newsboy hat", ["head", "hat", "blue", "floral", ], Resources.IMG_NEWSBOYHAT),
         new BingoItem("patterned newsboy hat", ["head", "hat", "orange", "pink", "purple", "pattern", "floral", ], Resources.IMG_NEWSBOYHATPATTERN),
         new BingoItem("blue snow cap", ["head", "hat", "winter", "blue", ], Resources.IMG_SNOWCAPBLUE),
