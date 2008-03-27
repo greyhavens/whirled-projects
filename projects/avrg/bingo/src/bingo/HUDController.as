@@ -4,9 +4,9 @@ import com.threerings.util.Log;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.events.MouseEvent;
@@ -162,17 +162,7 @@ public class HUDController extends SceneObject
 
     protected function updateBall (...ignored) :void
     {
-        // this is a hideous attempt to rescale the text in the ball
-        // without breaking the text alignment. there's gotta
-        // be a better way
-
-        var ball :MovieClip = _hud["inst_bingo_ball"];
-
         var textField :TextField = this.ballTextField;
-
-        var oldParent :DisplayObjectContainer = textField.parent;
-
-        oldParent.removeChild(textField);
 
         textField.scaleX = 1;
         textField.scaleY = 1;
@@ -184,11 +174,40 @@ public class HUDController extends SceneObject
         textField.scaleX = scale;
         textField.scaleY = scale;
 
-        // re-center the text field
-        textField.x = (ball.width * 0.5) - (textField.width * 0.5);
-        textField.y = ((ball.height * 0.5) - (textField.height * 0.5)) - 2;
+        textField.y = BALL_TEXT_Y_CENTER - (textField.height * 0.5);
 
-        oldParent.addChild(textField);
+        // play two animations in sequence: animate out the old ball, animate in the new one
+
+        // destroy any current animations
+        /*this.db.destroyObjectNamed(BALL_ANIMATE_OUT_OBJ_NAME);
+        this.db.destroyObjectNamed(BALL_ANIMATE_IN_OBJ_NAME);
+
+        var swf :SwfResourceLoader = BingoMain.resources.getResource("ui") as SwfResourceLoader;
+        var animateOutClass :Class = swf.getClass("bingoball_animate_out");
+        var animateInClass :Class = swf.getClass("bingoball_animate_in");
+
+        var animateOut :MovieClip = new animateOutClass();
+        var animateIn :MovieClip = new animateInClass();
+
+        animateIn.visible = false;
+
+        var animateOutObj :SimpleSceneObject = new SimpleSceneObject(animateOut, BALL_ANIMATE_OUT_OBJ_NAME);
+        var animateInObj :SimpleSceneObject = new SimpleSceneObject(animateIn, BALL_ANIMATE_IN_OBJ_NAME);
+
+        var animateOutTask :SerialTask = new SerialTask();
+        animateOutTask.addTask(new TimedTask(1.2));
+        animateOutTask.addTask(new SelfDestructTask());
+        animateOutObj.addTask(animateOutTask);
+
+        var animateInTask :SerialTask = new SerialTask();
+        animateInTask.addTask(new TimedTask(1.2));
+        animateInTask.addTask(new VisibleTask(true));
+        animateInTask.addTask(new TimedTask(1.2));
+        animateInTask.addTask(new SelfDestructTask());
+        animateInObj.addTask(animateInTask);
+
+        this.db.addObject(animateOutObj, _hud);
+        this.db.addObject(animateInObj, _hud);*/
     }
 
     protected function updateBingoButton (...ignored) :void
@@ -223,12 +242,7 @@ public class HUDController extends SceneObject
 
     protected function get ballTextField () :TextField
     {
-        // ugh
-        var ball :MovieClip = _hud["inst_bingo_ball"];
-        var ballTextParent :MovieClip = ball["inst_text_symbol"];
-        var ballText :TextField = ballTextParent["inst_text"];
-
-        return ballText;
+        return _hud["inst_text"];
     }
 
     protected var _hud :MovieClip;
@@ -238,6 +252,10 @@ public class HUDController extends SceneObject
 
     protected static const NUM_SCOREBOARD_ROWS :int = 7;
     protected static const MAX_BALL_TEXT_WIDTH :Number = 62;
+    protected static const BALL_TEXT_Y_CENTER :Number = -138;
+
+    protected static const BALL_ANIMATE_OUT_OBJ_NAME :String = "animateOut";
+    protected static const BALL_ANIMATE_IN_OBJ_NAME :String = "animateIn";
 
 }
 

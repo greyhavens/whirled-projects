@@ -161,17 +161,18 @@ public class GameMode extends AppMode
         _winnerView.playerName = playerName;
         _winnerView.visible = true;
 
+        // grant some flow to ourselves if we're the winner
+        if (BingoMain.model.curState.roundWinnerId == BingoMain.ourPlayerId && BingoMain.control.isConnected()) {
+            BingoMain.control.quests.completeQuest("dummyString", null, 1);
+        }
+
         // update scores
         if (null == _expectedScores) {
             _expectedScores = BingoMain.model.curScores.clone();
         }
 
         _expectedScores.incrementScore(playerName, new Date());
-
-        // grant some flow to the winner
-        if (BingoMain.model.curState.roundWinnerId == BingoMain.ourPlayerId && BingoMain.control.isConnected()) {
-            BingoMain.control.quests.completeQuest("dummyString", null, 1);
-        }
+        this.sendStateChanges();
     }
 
     protected function handleNewScores (...ignored) :void
