@@ -4,7 +4,7 @@ import flash.geom.Point;
 
 public class Constants
 {
-    public static const VERSION :Number = 5;
+    public static const VERSION :Number = 6;
 
     public static const ALLOW_CHEATS :Boolean = false;
     public static const FORCE_SINGLEPLAYER :Boolean = false;
@@ -14,6 +14,8 @@ public class Constants
     public static const HUD_SCREEN_EDGE_OFFSET :Point = new Point(-150, 240);
 
     // gameplay bits
+    public static const SCORETABLE_MAX_ENTRIES :int = 50;
+
     public static const CARD_WIDTH :int = 5;
     public static const CARD_HEIGHT :int = 5;
     public static const FREE_SPACE :Point = new Point(2, 2);
@@ -263,12 +265,9 @@ public class Constants
 
     ];
 
-
-
-
     // network bits
-    public static const PROP_STATE :String = "state";
-    public static const PROP_SCORES :String = "scores";
+    public static const PROP_STATE :String = "p_bingoState";
+    public static const PROP_SCORES :String = "p_bingoScores";
     public static const MSG_REQUEST_BINGO :String = "r_bingo";
 
 }

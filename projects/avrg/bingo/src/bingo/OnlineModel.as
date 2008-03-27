@@ -28,7 +28,7 @@ public class OnlineModel extends Model
         // read current scores
         var scoreBytes :ByteArray = (_stateControl.getRoomProperty(Constants.PROP_SCORES) as ByteArray);
         if (null != scoreBytes) {
-            _curScores = Scoreboard.fromBytes(scoreBytes);
+            _curScores = ScoreTable.fromBytes(scoreBytes, Constants.SCORETABLE_MAX_ENTRIES);
         }
     }
 
@@ -81,7 +81,7 @@ public class OnlineModel extends Model
         _lastStateRequest = newState.clone();
     }
 
-    override public function trySetNewScores (newScores :Scoreboard) :void
+    override public function trySetNewScores (newScores :ScoreTable) :void
     {
         // ignore state changes from non-authoritative clients
         if (!BingoMain.control.hasControl()) {
@@ -184,7 +184,7 @@ public class OnlineModel extends Model
             break;
 
         case Constants.PROP_SCORES:
-            var newScores :Scoreboard = Scoreboard.fromBytes(e.value as ByteArray);
+            var newScores :ScoreTable = ScoreTable.fromBytes(e.value as ByteArray, Constants.SCORETABLE_MAX_ENTRIES);
             this.setScores(newScores);
             break;
 
@@ -196,7 +196,7 @@ public class OnlineModel extends Model
 
     protected var _stateControl :StateControl;
     protected var _lastStateRequest :SharedState;
-    protected var _lastScoresRequest :Scoreboard;
+    protected var _lastScoresRequest :ScoreTable;
     protected var _bingoCalledThisRound :Boolean;
 
     protected var _requestMessageQueue :Array = [];

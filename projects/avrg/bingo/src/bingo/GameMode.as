@@ -156,7 +156,9 @@ public class GameMode extends AppMode
             _cardView = null;
         }
 
-        var playerName :String = BingoMain.getPlayerName(BingoMain.model.curState.roundWinnerId);
+        var winnerId :int = BingoMain.model.curState.roundWinnerId;
+
+        var playerName :String = BingoMain.getPlayerName(winnerId);
 
         _winnerView.playerName = playerName;
         _winnerView.visible = true;
@@ -171,7 +173,7 @@ public class GameMode extends AppMode
             _expectedScores = BingoMain.model.curScores.clone();
         }
 
-        _expectedScores.incrementScore(playerName, new Date());
+        _expectedScores.incrementScore(winnerId, new Date());
         this.sendStateChanges();
     }
 
@@ -256,7 +258,7 @@ public class GameMode extends AppMode
     }
 
     protected var _expectedState :SharedState;
-    protected var _expectedScores :Scoreboard;
+    protected var _expectedScores :ScoreTable;
 
     protected var _cardView :BingoCardController;
     protected var _hudView :HUDController;

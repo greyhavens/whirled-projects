@@ -133,20 +133,19 @@ public class HUDController extends SceneObject
 
     protected function updateScores (...ignored) :void
     {
-        var scores :Scoreboard = BingoMain.model.curScores;
+        var scores :ScoreTable = BingoMain.model.curScores;
         var scoreboardView :MovieClip = _hud["scoreboard"];
 
         var dateNow :Date = new Date();
 
         var namesAndScores :Array = BingoMain.model.getPlayerOids().map(
             function (playerId :int, ...ignored) :Score {
-                var playerName :String = BingoMain.getPlayerName(playerId);
-                var existingScore :Score = scores.getPlayerScore(playerName);
+                var existingScore :Score = scores.getScore(playerId);
 
-                return (null != existingScore ? existingScore : new Score(playerName, 0, dateNow));
+                return (null != existingScore ? existingScore : new Score(playerId, 0, dateNow));
             });
 
-        namesAndScores.sort(Score.compare);
+        namesAndScores.sort(Score.compareScores);
 
         for (var i :int = 0; i < NUM_SCOREBOARD_ROWS; ++i) {
 
@@ -155,7 +154,7 @@ public class HUDController extends SceneObject
             var nameField :TextField = scoreboardView["player_" + String(i + 1)];
             var scoreField :TextField = scoreboardView["score_" + String(i + 1)];
 
-            nameField.text = (null != score ? score.name : "");
+            nameField.text = (null != score ? BingoMain.getPlayerName(score.playerId) : "");
             scoreField.text = (null != score && score.score > 0 ? String(score.score) : "");
         }
     }
