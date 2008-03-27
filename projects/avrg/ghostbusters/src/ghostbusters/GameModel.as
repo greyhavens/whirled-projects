@@ -23,6 +23,10 @@ public class GameModel
         _ppp = new PerPlayerProperties();
 
         _ppp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_MAX_HEALTH, 100);
+        if (_ppp.getProperty(Game.ourPlayerId, Codes.PROP_PLAYER_CUR_HEALTH) == null) {
+            // the player is new, not dead, start at full health
+            setPlayerHealth(Game.ourPlayerId, 100);
+        }
     }
 
     public function init () :void

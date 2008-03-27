@@ -104,10 +104,8 @@ public class FightPanel extends FrameSprite
 
     public function showPlayerDeath (playerId :int) :void
     {
-        // at the moment, there is no visible effect other than the avatar state change
+        // TODO: we handle death in two separate ways now, pointless
         if (playerId == Game.ourPlayerId) {
-            Game.setAvatarState("Defeat");
-
             // cancel minigame
             endFight();
         }

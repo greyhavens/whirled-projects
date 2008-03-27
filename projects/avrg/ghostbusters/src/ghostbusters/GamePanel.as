@@ -46,7 +46,10 @@ public class GamePanel extends Sprite
         hud = new HUD();
         this.addChild(hud);
 
-        _frame = new GameFrame();
+        new GameFrame(function (frame :GameFrame) :void {
+            _frame = frame;
+            checkPlayerHealth();
+        });
 
         _splash.addEventListener(MouseEvent.CLICK, handleClick);
 
@@ -114,9 +117,7 @@ public class GamePanel extends Sprite
     public function reloadView () :void
     {
         hud.reloadView();
-        if (Game.model.isPlayerDead(Game.ourPlayerId)) {
-            weAreDead();
-        }
+        checkPlayerHealth();
     }
 
     public function newGhost () :void
@@ -149,15 +150,46 @@ public class GamePanel extends Sprite
     {
         if (name == Codes.PROP_PLAYER_CUR_HEALTH) {
             if (playerId == Game.ourPlayerId) {
-                if (Game.model.isPlayerDead(playerId)) {
-                    weAreDead();
-                }
+                checkPlayerHealth();
+                updateAvatarState();
             }
         }
     }
 
-    protected function weAreDead () :void
+    public function updateAvatarState () :void
     {
+        var avatarState :String;
+
+        if (Game.model.isPlayerDead(Game.ourPlayerId)) {
+            avatarState = Codes.ST_PLAYER_DEFEAT;
+
+        } else if (Game.model.state == GameModel.STATE_SEEKING ||
+                   Game.model.state == GameModel.STATE_APPEARING) {
+                avatarState = Codes.ST_PLAYER_DEFAULT;
+
+        } else {
+            avatarState = Codes.ST_PLAYER_FIGHT;
+
+        }
+
+        Game.setAvatarState(avatarState);
+    }
+
+    protected function checkPlayerHealth () :void
+    {
+        if (_frame == null) {
+            // still loading; there will be another callback when it's done
+            return;
+        }
+        if (!Game.model.isPlayerDead(Game.ourPlayerId)) {
+            // possibly we were just revive, let's see
+            if (_revivePopup != null) {
+                unframeContent();
+                _revivePopup = null;
+            }
+            // we're not dead
+            return;
+        }
         if (_revivePopup != null) {
             Game.log.debug("Hrm, _revivePopup != null");
         }
@@ -168,8 +200,6 @@ public class GamePanel extends Sprite
             "Revive me!", function (event :Event) :void {
               Game.log.debug("like yo, I'm running");
               CommandEvent.dispatch(panel, GameController.REVIVE)
-              unframeContent();
-              _revivePopup = null;
             });
 
         frameContent(_revivePopup);
@@ -191,20 +221,21 @@ public class GamePanel extends Sprite
         var frameBounds :Rectangle = _frame.getContentBounds();
 
         var popup :Sprite = new Sprite();
-        popup.opaqueBackground = 0x000000;
+        popup.graphics.beginFill(0);
+        popup.graphics.drawRect(0, 0, frameBounds.width, frameBounds.height);
+        popup.graphics.endFill();
 
         var format :TextFormat = TextFieldUtil.createFormat({
               font: "Arial", size: 16, color: 0xFFD700
         });
-
         var textField :TextField = TextFieldUtil.createField(
             text, { antiAliasType: AntiAliasType.ADVANCED, autoSize: TextFieldAutoSize.NONE,
-                    defaultTextFormat: format });
+                    wordWrap: true, defaultTextFormat: format });
 
         popup.addChild(textField);
-        textField.width = frameBounds.width - 20;
-        textField.height = frameBounds.height - 20;
-        textField.x = textField.y = 10;
+        textField.width = frameBounds.width - 10;
+        textField.height = frameBounds.height - 10;
+        textField.x = textField.y = 5;
 
         var button :SimpleButton = new SimpleTextButton(
             btnText, true, 0x003366, 0x6699CC, 0x0066FF, 5, format);
@@ -220,38 +251,18 @@ public class GamePanel extends Sprite
 
     protected function updateState () :void
     {
-        var avatarState :String = Codes.ST_PLAYER_DEFAULT;
-        var fightPanel :Boolean = false;
-        var seekPanel :Boolean = false;
+        var seekPanel :Boolean =
+            ((Game.model.state == GameModel.STATE_SEEKING && _seeking) ||
+             Game.model.state == GameModel.STATE_APPEARING);
 
-        if (Game.model.state == GameModel.STATE_SEEKING) {
-            if (_seeking) {
-                avatarState = Codes.ST_PLAYER_FIGHT;
-                seekPanel = true;
-
-            } else {
-                avatarState = Codes.ST_PLAYER_DEFAULT;
-            }
-
-        } else if (Game.model.state == GameModel.STATE_APPEARING) {
-            seekPanel = true;
-
-        } else if (Game.model.state == GameModel.STATE_FIGHTING) {
-            fightPanel = true;
-            avatarState = Codes.ST_PLAYER_FIGHT;
-
-        } else if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH ||
-                   Game.model.state == GameModel.STATE_GHOST_DEFEAT) {
-            fightPanel = true;
-            // don't mess with the avatar's state here
-
-        } else {
-            Game.log.warning("Unknown state requested [state=" + Game.model.state + "]");
-        }
+        var fightPanel :Boolean =
+            (Game.model.state == GameModel.STATE_FIGHTING ||
+             Game.model.state == GameModel.STATE_GHOST_TRIUMPH ||
+             Game.model.state == GameModel.STATE_GHOST_DEFEAT);
 
         setPanel(seekPanel ? SeekPanel : (fightPanel ? FightPanel : null));
 
-        Game.setAvatarState(avatarState);
+        updateAvatarState();
     }
 
     protected function setPanel (pClass :Class) :void

@@ -113,8 +113,9 @@ public class GameController extends Controller
     public function handleRevive () :void
     {
         if (Game.model.isPlayerDead(Game.ourPlayerId) &&
-            Game.model.state == GameModel.STATE_SEEKING) {
-            _ppp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_MAX_HEALTH, 100);
+            Game.model.state != GameModel.STATE_FIGHTING) {
+            Game.model.setPlayerHealth(Game.ourPlayerId,
+                                       Game.model.getPlayerMaxHealth(Game.ourPlayerId));
         }
     }
 

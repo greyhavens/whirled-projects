@@ -20,9 +20,12 @@ import ghostbusters.Game;
 
 public class GameFrame extends ClipHandler
 {
-    public function GameFrame ()
+    public function GameFrame (readyCallback :Function)
     {
-        super(ByteArray(new Content.FRAME()), handleLoaded);
+        var frame :GameFrame = this;
+        super(ByteArray(new Content.FRAME()), function (clip :MovieClip) :void {
+            readyCallback(frame);
+        });
     }
 
     public function frameContent (content :DisplayObject) :void
@@ -43,20 +46,10 @@ public class GameFrame extends ClipHandler
         return INSIDE;
     }
 
-    protected function mediaReady () :void
-    {
-    }
-
-    protected function handleLoaded (clip :MovieClip) :void
-    {
-        // let subclassers know we're done
-        mediaReady();
-    }
-
     protected var _clipHolder :Sprite;
     protected var _content :DisplayObject;
 
     // relative the frame's coordinate system, where can we place the framed material?
-    protected static const INSIDE :Rectangle = new Rectangle(22, 102, 283, 198);
+    protected static const INSIDE :Rectangle = new Rectangle(22, 102, 305, 230);
 }
 }
