@@ -25,7 +25,7 @@ public class OfflineModel extends Model
         this.setState(newState);
     }
 
-    override public function trySetNewScores (newScores :Scoreboard) :void
+    override public function trySetNewScores (newScores :ScoreTable) :void
     {
         this.setScores(newScores);
     }

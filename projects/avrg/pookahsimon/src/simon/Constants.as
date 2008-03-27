@@ -16,6 +16,7 @@ public class Constants
     public static const PLAYER_LIST_LOC :Point = new Point(500, 200);
 
     // gameplay bits
+    public static const SCORETABLE_MAX_ENTRIES :int = 20;
     public static const NEW_ROUND_DELAY_S :Number = 5;
     public static const NUM_SCOREBOARD_NAMES :int = 5;
     public static const MIN_MP_PLAYERS_TO_START :int = 2;

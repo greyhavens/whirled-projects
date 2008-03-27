@@ -30,7 +30,7 @@ public class Model extends EventDispatcher
         return _curState;
     }
 
-    public function get curScores () :Scoreboard
+    public function get curScores () :ScoreTable
     {
         return _curScores;
     }
@@ -61,7 +61,7 @@ public class Model extends EventDispatcher
         throw new Error("subclasses must override trySetNewState()");
     }
 
-    public function trySetNewScores (newScores :Scoreboard) :void
+    public function trySetNewScores (newScores :ScoreTable) :void
     {
         throw new Error("subclasses must override trySetNewScores()");
     }
@@ -79,7 +79,7 @@ public class Model extends EventDispatcher
         }
     }
 
-    protected function setScores (newScores :Scoreboard) :void
+    protected function setScores (newScores :ScoreTable) :void
     {
         _curScores = newScores;
         this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_SCORES));
@@ -97,7 +97,7 @@ public class Model extends EventDispatcher
 
     // shared state
     protected var _curState :SharedState = new SharedState();
-    protected var _curScores :Scoreboard = new Scoreboard();
+    protected var _curScores :ScoreTable = new ScoreTable(Constants.SCORETABLE_MAX_ENTRIES);
 
     // local state
 

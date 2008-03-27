@@ -1,19 +1,13 @@
 package simon {
 
-import com.threerings.flash.DisablingButton;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.AVRGameControlEvent;
-import com.whirled.AvatarControl;
 
-import flash.display.DisplayObject;
-import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 import flash.utils.Timer;
 
 public class Controller
@@ -230,7 +224,7 @@ public class Controller
         // update scores
         if (_model.curState.roundWinnerId != 0) {
             _expectedScores = _model.curScores.clone();
-            _expectedScores.incrementScore(SimonMain.getPlayerName(_model.curState.roundWinnerId));
+            _expectedScores.incrementScore(_model.curState.roundWinnerId, new Date());
             this.applyStateChanges();
 
             // are you TEH WINNAR?
@@ -371,7 +365,7 @@ public class Controller
 
     protected var _model :Model;
     protected var _expectedState :SharedState;
-    protected var _expectedScores :Scoreboard;
+    protected var _expectedScores :ScoreTable;
 
     protected var _mainSprite :Sprite;
     protected var _statusText :String;

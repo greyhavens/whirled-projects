@@ -178,7 +178,8 @@ public class CloudViewController
             playerId = playerList[i];
 
             var playerName :String = SimonMain.getPlayerName(playerId);
-            var playerScore :int = SimonMain.model.curScores.getPlayerScore(playerName);
+            var playerScoreObj :Score = SimonMain.model.curScores.getScore(playerId);
+            var playerScore :int = (null == playerScoreObj ? 0 : playerScoreObj.score);
 
             var playerIsIn :Boolean = (i < currentPlayers.length);
             var playerIsActive :Boolean = (playerIsIn && SimonMain.model.curState.curPlayerOid == playerId);
