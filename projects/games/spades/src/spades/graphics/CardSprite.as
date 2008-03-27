@@ -67,6 +67,17 @@ public class CardSprite extends Sprite
         return _enabled;
     }
 
+    public function set emphasis (on :Boolean) :void
+    {
+        _emphasis = on;
+        update();
+    }
+
+    public function get emphasis () :Boolean
+    {
+        return _emphasis;
+    }
+
     protected function update () :void
     {
         if (_enabled) {
@@ -76,6 +87,9 @@ public class CardSprite extends Sprite
             else {
                 _text.backgroundColor = 0x77FF77;
             }
+        }
+        else if (_emphasis) {
+            _text.backgroundColor = 0x0077ff;
         }
         else {
             _text.backgroundColor = 0x888888;
@@ -100,6 +114,7 @@ public class CardSprite extends Sprite
     protected var _text :TextField;
     protected var _enabled :Boolean = false;
     protected var _highlighted :Boolean = false;
+    protected var _emphasis :Boolean = false;
 }
 
 }

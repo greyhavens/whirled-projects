@@ -24,7 +24,7 @@ public class BidSprite extends Sprite
      */
     public function BidSprite (maxTricks :int, callback :Function)
     {
-        var wid :int = maxTricks * BUTTON_SIZE;
+        var wid :int = (maxTricks + 1) * BUTTON_SIZE;
         for (var i :int = 0; i <= maxTricks; ++i) {
             var t :TextField = new TextField();
             t.text = "" + i;

@@ -3,8 +3,12 @@ package spades.graphics {
 import flash.display.Sprite;
 import flash.display.DisplayObject;
 import flash.events.MouseEvent;
+import flash.events.Event;
+import flash.events.TimerEvent;
+import flash.utils.Timer;
 
 import spades.card.CardArray;
+import spades.card.CardArrayEvent;
 
 /**
  * Display object for drawing a spades game.
@@ -19,10 +23,10 @@ public class TableSprite extends Sprite
 
     /** Positions of other players' on the table (relative to the local player). */
     public static const PLAYER_POSITIONS :Array = [
-        new Position(50, 40),  // me
-        new Position(25, 25),  // my left
+        new Position(50, 50),  // me
+        new Position(25, 30),  // my left
         new Position(50, 10),  // opposite
-        new Position(75, 25)   // my right
+        new Position(75, 30)   // my right
     ];
 
     /** Position of the center of the local player's hand. */
@@ -32,7 +36,10 @@ public class TableSprite extends Sprite
     public static const SLIDER_POSITION :Position = new Position(50, 60);
 
     /** Position of the center of the trick pile */
-    public static const TRICK_POSITION :Position = new Position(50, 25);
+    public static const TRICK_POSITION :Position = new Position(50, 30);
+
+    /** Position of the center of the trick pile */
+    public static const LAST_TRICK_POSITION :Position = new Position(10, 10);
 
     /** Create a new table.
      *  @param playerNames the names of the players, in seat order
@@ -43,18 +50,34 @@ public class TableSprite extends Sprite
         trick :CardArray,
         hand :CardArray)
     {
+        _numPlayers = playerNames.length;
+        _localSeat = localSeat;
+
         _players = playerNames.map(createPlayer);
 
         _hand = new CardArraySprite(hand);
         Display.move(_hand, HAND_POSITION);
         addChild(_hand);
 
-        _trick = new CardArraySprite(trick);
+        _trick = new TrickSprite(trick, _numPlayers);
         Display.move(_trick, TRICK_POSITION);
         addChild(_trick);
 
+        _lastTrick = new TrickSprite(new CardArray(), _numPlayers);
+        Display.move(_lastTrick, LAST_TRICK_POSITION);
+        addChild(_lastTrick);
+
         // listen for clicks on cards
         _hand.addEventListener(MouseEvent.CLICK, clickListener);
+
+        // listen for the trick changing
+        trick.addEventListener(CardArrayEvent.CARD_ARRAY, trickListener);
+
+        // listen for our removal to prevent stranded listeners
+        addEventListener(Event.REMOVED, removedListener);
+
+        // listen for expiry of the last trick visibility
+        _lastTrickTimer.addEventListener(TimerEvent.TIMER, timerListener);
 
         function createPlayer (
             name :String, 
@@ -62,7 +85,7 @@ public class TableSprite extends Sprite
             names :Array) :PlayerSprite
         {
             var p :PlayerSprite = new PlayerSprite(name);
-            var relative :int = (seat + names.length - localSeat) % names.length;
+            var relative :int = getRelativeSeat(seat);
             Display.move(p, PLAYER_POSITIONS[relative] as Position);
             addChild(p);
             return p;
@@ -92,6 +115,19 @@ public class TableSprite extends Sprite
     public function setPlayerTricks (seat :int, tricks :int) :void
     {
         getPlayer(seat).setTricks(tricks);
+    }
+
+    /** Set the seating position that is kicking off the trick so that the cards in the trick will 
+     *  show up in front of the right seat. */
+    public function setTrickLeader (seat :int) :void
+    {
+        _trick.leader = getRelativeSeat(seat);
+    }
+
+    /** Set the seat that is currently winning the trick. */
+    public function setTrickWinner (seat :int) :void
+    {
+        _trick.setWinner(getRelativeSeat(seat));
     }
 
     /** Show the bid slider and call the given function when a bid is selected. The signature of 
@@ -140,7 +176,7 @@ public class TableSprite extends Sprite
         _hand.enable(subset);
         _handCallback = callback;
     }
-    
+
     protected function clickListener (event :MouseEvent) :void
     {
         var target :DisplayObject = event.target as DisplayObject;
@@ -157,16 +193,59 @@ public class TableSprite extends Sprite
         }
     }
 
+    protected function trickListener (event :CardArrayEvent) :void
+    {
+        if (event.action == CardArrayEvent.ACTION_PRERESET) {
+            if (event.target != _trick.target) {
+                throw new Error("Event target not the trick?!");
+            }
+            _lastTrick.leader = _trick.leader;
+            _lastTrick.target.reset(_trick.target.ordinals);
+            _lastTrick.winningCard = _trick.winningCard;
+            _lastTrickTimer.reset();
+            _lastTrickTimer.start();
+        }
+    }
+
+    protected function timerListener (event :TimerEvent) :void
+    {
+        _lastTrick.target.reset();
+        _lastTrickTimer.stop();
+    }
+
+    protected function removedListener (event :Event) :void
+    {
+        if (event.target == this) {
+            _trick.target.removeEventListener(
+                CardArrayEvent.CARD_ARRAY, trickListener);
+        }
+    }
+
     protected function getPlayer (seat :int) :PlayerSprite
     {
         return _players[seat] as PlayerSprite;
     }
 
+    /** Get the index of the seat relative to the local player. I.e. local player = 0, player to the 
+     *  left = 1, across = 2, right = 3. */
+    protected function getRelativeSeat (seat :int) :int
+    {
+        return (seat + _numPlayers - _localSeat) % _numPlayers;
+    }
+
+    protected var _numPlayers :int;
     protected var _players :Array;
+    protected var _localSeat :int;
     protected var _bid :BidSprite;
     protected var _hand :CardArraySprite;
-    protected var _trick :CardArraySprite;
+    protected var _trick :TrickSprite;
+    protected var _lastTrick :TrickSprite;
     protected var _handCallback :Function;
+    protected var _lastTrickTimer :Timer = 
+        new Timer(LAST_TRICK_VISIBILITY_DURATION * 1000, 1);
+
+    /** Seconds that the last trick is visible. */
+    protected const LAST_TRICK_VISIBILITY_DURATION :int = 5;
 }
 
 }

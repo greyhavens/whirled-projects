@@ -16,8 +16,11 @@ public class CardArrayEvent extends Event
     /** Action property when a card was removed. */
     public static const ACTION_REMOVED :int = 1;
 
+    /** Action property when the array is about to reset. */
+    public static const ACTION_PRERESET :int = 2;
+
     /** Action property when the array was reset. */
-    public static const ACTION_RESET :int = 2;
+    public static const ACTION_RESET :int = 3;
 
     /** Create a new event for a card that has been added. The index is the position within the 
      *  parent CardArray that the new card has been added to. */
@@ -37,6 +40,12 @@ public class CardArrayEvent extends Event
     public static function reset () :CardArrayEvent
     {
         return new CardArrayEvent(ACTION_RESET, null, -1);
+    }
+
+    /** Create a new event for when a card array has been completely emptied. */
+    public static function preReset () :CardArrayEvent
+    {
+        return new CardArrayEvent(ACTION_PRERESET, null, -1);
     }
 
     /** @inheritDoc */

@@ -42,6 +42,8 @@ public class CardArray extends EventDispatcher
      * @throws CardException if any ordinals are not valid. */
     public function reset (ordinals :Array=null) :void
     {
+        dispatchEvent(CardArrayEvent.preReset());
+
         _cards.splice(0, _cards.length);
         _ordinals.splice(0, _ordinals.length);
 
@@ -220,7 +222,7 @@ public class CardArray extends EventDispatcher
             if (i > 0) {
                 s += ", ";
             }
-            s += c.toString;
+            s += c.toString();
         }
     }
 

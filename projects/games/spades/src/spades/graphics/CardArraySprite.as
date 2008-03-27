@@ -136,6 +136,9 @@ public class CardArraySprite extends Sprite
             _cards.splice(event.index, 1);
             break;
 
+        case CardArrayEvent.ACTION_PRERESET:
+            return;
+
         default:
             // We should handle all events
             throw new Error("CardArrayEvent " + event + " not handled");

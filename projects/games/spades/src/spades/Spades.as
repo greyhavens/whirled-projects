@@ -195,6 +195,7 @@ public class Spades extends Sprite
     {
         var round :int = -_gameCtrl.game.getRound();
         _gameCtrl.local.feedback("Round " + round + " ended\n");
+        _table.setPlayerTurn(-1);
     }
 
     /** Get the id of the player in a particular seat. */
@@ -249,13 +250,19 @@ public class Spades extends Sprite
         updateBidding();
         updateMoves();
 
-        // This is the beginning of the round, so declare the leader.
-        if (turnHolder > 0 && countBidsPlaced() == 0) {
-            var leader :String = _gameCtrl.game.seating.getPlayerNames()[hotSeat];
-            _gameCtrl.local.feedback("Leader this round is " + leader);
+        if (turnHolder > 0) {
+            // This is the beginning of the round, so declare the leader.
+            if (countBidsPlaced() == 0) {
+                var leader :String = _gameCtrl.game.seating.getPlayerNames()[hotSeat];
+                _gameCtrl.local.feedback("Leader this round is " + leader);
+                _table.setTrickLeader(hotSeat);
 
-            if (_gameCtrl.game.amInControl()) {
-                _gameCtrl.net.set(COMS_LAST_LEADER, turnHolder);
+                if (_gameCtrl.game.amInControl()) {
+                    _gameCtrl.net.set(COMS_LAST_LEADER, turnHolder);
+                }
+            }
+            else if (_gameCtrl.net.get(COMS_TRICK_SIZE) == 0) {
+                _table.setTrickLeader(hotSeat);
             }
         }
     }
@@ -342,10 +349,6 @@ public class Spades extends Sprite
 
         _gameCtrl.local.feedback(getPlayerName(winner) + " won the trick");
 
-        // todo: add to score and save to history
-
-        _trick.reset();
-        
         if (_gameCtrl.game.amInControl()) {
             _gameCtrl.net.set(COMS_TRICK_SIZE, 0);
 
@@ -427,10 +430,17 @@ public class Spades extends Sprite
 
             log("Trick size is now " + value);
 
-            if (value == NUM_PLAYERS) {
+            if (value > 0) {
+                _table.setTrickWinner(getPlayerSeat(calculateTrickWinner()));
+            }
+
+            if (value == 0) {
+                _trick.reset();
+            }
+            else if (value == NUM_PLAYERS) {
                 completeTrick();
             }
-            else if (_gameCtrl.game.amInControl() && value > 0) {
+            else if (_gameCtrl.game.amInControl()) {
                 _gameCtrl.game.startNextTurn();
             }
         }
