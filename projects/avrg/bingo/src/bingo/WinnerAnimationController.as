@@ -21,11 +21,11 @@ public class WinnerAnimationController extends SceneObject
 
         // ugh - traverse the MovieClip's crazy display hierarchy
         // to fill in the player's name
-        /*var winAnimation :MovieClip = _animView["inst_win_animation"];
+        var winAnimation :MovieClip = _animView["inst_win_animation"];
         var playerTextFieldParent :MovieClip = winAnimation["textbox_symbol"];
-        var playerTextField :TextField = playerTextField["inst_textbox"];
+        var playerTextField :TextField = playerTextFieldParent["inst_textbox"];
 
-        playerTextField.text = playerName;*/
+        playerTextField.text = playerName;
     }
 
     override public function get displayObject () :DisplayObject
