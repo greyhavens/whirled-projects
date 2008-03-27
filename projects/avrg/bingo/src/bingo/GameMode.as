@@ -4,19 +4,31 @@ import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 
+import flash.display.Sprite;
+
 public class GameMode extends AppMode
 {
     override protected function setup () :void
     {
-        // state change events
+        // setup visuals
+        _gameUILayer = new Sprite();
+        _helpLayer = new Sprite();
+
+        this.modeSprite.addChild(_gameUILayer);
+        this.modeSprite.addChild(_helpLayer);
+
+        this.addObject(new HUDController(), _gameUILayer);
+        this.addObject(new InGameHelpController(), _helpLayer);
+
+        this.hideHelpScreen();
+
+        // wire up event handlers
         BingoMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
         BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
         BingoMain.model.addEventListener(SharedStateChangedEvent.BINGO_CALLED, handleBingoCalled);
 
-        // visuals
-        this.addObject(new HUDController(), this.modeSprite);
-
+        // get current game state
         var curState :SharedState = BingoMain.model.curState;
         var stateIsValid :Boolean = curState.isValid;
 
@@ -121,7 +133,7 @@ public class GameMode extends AppMode
 
         // create a new card
         BingoMain.model.createNewCard();
-        this.addObject(new BingoCardController(BingoMain.model.card), this.modeSprite);
+        this.addObject(new BingoCardController(BingoMain.model.card), _gameUILayer);
 
         // reset tags
         BingoItemManager.instance.resetRemainingTags();
@@ -153,7 +165,7 @@ public class GameMode extends AppMode
         // the WinnerAnimationController will destroy itself when the animation is complete.
         // We check for the presence of the controller in update(), and when it's gone, we
         // start the next round.
-        this.addObject(new WinnerAnimationController(winnerName), this.modeSprite);
+        this.addObject(new WinnerAnimationController(winnerName), _gameUILayer);
 
         // grant some flow to ourselves if we're the winner
         if (BingoMain.model.curState.roundWinnerId == BingoMain.ourPlayerId && BingoMain.control.isConnected()) {
@@ -232,6 +244,21 @@ public class GameMode extends AppMode
 
         return percentTime;
     }
+
+    public function showHelpScreen () :void
+    {
+        _helpLayer.visible = true;
+        _gameUILayer.visible = false;
+    }
+
+    public function hideHelpScreen () :void
+    {
+        _helpLayer.visible = false;
+        _gameUILayer.visible = true;
+    }
+
+    protected var _gameUILayer :Sprite;
+    protected var _helpLayer :Sprite;
 
     protected var _expectedState :SharedState;
     protected var _expectedScores :ScoreTable;

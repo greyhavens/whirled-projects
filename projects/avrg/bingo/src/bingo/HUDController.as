@@ -51,8 +51,6 @@ public class HUDController extends SceneObject
         bingoButton.addEventListener(MouseEvent.CLICK, handleBingo, false, 0, true);
 
         var helpButton :InteractiveObject = _hud["help_button"];
-        helpButton.visible = false;
-        helpButton.mouseEnabled = false;
         helpButton.addEventListener(MouseEvent.CLICK, handleHelp, false, 0, true);
 
         BingoMain.control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, updateScores);
@@ -141,8 +139,7 @@ public class HUDController extends SceneObject
 
     protected function handleHelp (...ignored) :void
     {
-        // @TODO - this probably can't be a new mode - we need the game to keep running while it's up
-        //MainLoop.instance.pushMode(new HelpMode());
+        this.gameMode.showHelpScreen();
     }
 
     protected function updateScores (...ignored) :void
