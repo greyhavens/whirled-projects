@@ -12,18 +12,20 @@ import flash.text.TextField;
 
 public class WinnerAnimationController extends SceneObject
 {
-    public function WinnerAnimationController ()
+    public function WinnerAnimationController (playerName :String)
     {
         var swf :SwfResourceLoader = BingoMain.resources.getResource("board") as SwfResourceLoader;
-        var animClass :Class = swf.getClass("winner_symbol");
+        var animClass :Class = swf.getClass("bingo_winner_animation");
 
         _animView = new animClass();
-    }
 
-    public function set playerName (name :String) :void
-    {
-        var playerText :TextField = _animView["inst_player_name"];
-        playerText.text = name;
+        // ugh - traverse the MovieClip's crazy display hierarchy
+        // to fill in the player's name
+        /*var winAnimation :MovieClip = _animView["inst_win_animation"];
+        var playerTextFieldParent :MovieClip = winAnimation["textbox_symbol"];
+        var playerTextField :TextField = playerTextField["inst_textbox"];
+
+        playerTextField.text = playerName;*/
     }
 
     override public function get displayObject () :DisplayObject

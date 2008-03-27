@@ -2,6 +2,7 @@ package bingo {
 
 import com.threerings.util.Log;
 import com.whirled.AVRGameControlEvent;
+import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -42,10 +43,10 @@ public class HUDController extends SceneObject
         var bingoButton :InteractiveObject = _hud["bingo_button"];
         bingoButton.addEventListener(MouseEvent.CLICK, handleBingo, false, 0, true);
 
-        // @TODO - wire this up
         var helpButton :InteractiveObject = _hud["help_button"];
-        helpButton.mouseEnabled = false;
         helpButton.visible = false;
+        helpButton.mouseEnabled = false;
+        helpButton.addEventListener(MouseEvent.CLICK, handleHelp, false, 0, true);
 
         BingoMain.control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, updateScores);
         BingoMain.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, updateScores);
@@ -129,6 +130,12 @@ public class HUDController extends SceneObject
             _calledBingoThisRound = true;
             this.updateBingoButton();
         }
+    }
+
+    protected function handleHelp (...ignored) :void
+    {
+        // @TODO - this probably can't be a new mode - we need the game to keep running while it's up
+        //MainLoop.instance.pushMode(new HelpMode());
     }
 
     protected function updateScores (...ignored) :void
