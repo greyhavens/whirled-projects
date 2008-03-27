@@ -85,6 +85,10 @@ public class Server
 
     protected function everySecondTick (tick :int) :void
     {
+        if ((tick % 10) == 0) {
+            cleanup();
+        }
+
         if (Game.model.state == GameModel.STATE_SEEKING) {
             seekTick(tick);
 
@@ -98,6 +102,20 @@ public class Server
                    Game.model.state == GameModel.STATE_GHOST_DEFEAT) {
             // do nothing
         }
+    }
+
+    // called every 10 seconds to do housekeeping stuff
+    protected function cleanup () :void
+    {
+        // delete any per-player room properties associaed with players who have left
+        _ppp.deleteRoomProperties(function (playerId :int, prop :String, value :Object) :Boolean {
+            if (!Game.control.isPlayerHere(playerId)) {
+                Game.log.debug("Cleaning: " + playerId + "/" + prop);
+                return true;
+            }
+            Game.log.debug("NOT cleaning: " + playerId + "/" + prop);
+            return false;
+        });
     }
 
     protected function seekTick (tick :int) :void

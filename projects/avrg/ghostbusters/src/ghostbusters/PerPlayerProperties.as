@@ -3,6 +3,7 @@
 
 package ghostbusters {
 
+import com.threerings.util.HashSet;
 import com.whirled.AVRGameControlEvent;
 
 public class PerPlayerProperties
@@ -38,28 +39,43 @@ public class PerPlayerProperties
         Game.control.state.setRoomProperty("p" + playerId + ":" + property, value);
     }
 
+    public function deleteRoomProperties (predicate :Function) :void
+    {
+        var set :HashSet = new HashSet();
+        var props :Object = Game.control.state.getRoomProperties();
+        for (var key :String in props) {
+            var slice :Array = parseProperty(key);
+            if (slice != null && predicate(slice[0], slice[1], props[key])) {
+                Game.control.state.setRoomProperty(key, null);
+            }
+        }
+    }
+
     protected function propertyChanged (evt :AVRGameControlEvent) :void
     {
-        var ix :int = evt.name.indexOf(":");
+        var slice :Array = parseProperty(evt.name);
+        if (slice != null) {
+            _pFun(slice[0], slice[1], evt.value);
+        }
+    }
+
+    protected function parseProperty (prop :String) :Array
+    {
+        if (prop.charAt(0) != 'p') {
+            return null;
+        }
+
+        var ix :int = prop.indexOf(":");
         if (ix <= 0) {
-            return;
+            return null;
         }
 
-        var num :Number = parseInt(evt.name.slice(1, ix));
+        var num :Number = parseInt(prop.slice(1, ix));
         if (isNaN(num)) {
-            Game.log.debug("Couldn't find player number in property: " + evt.name);
-            return;
+            return null;
         }
 
-        if (evt.name.charAt(0) == 'p') {
-            if (Game.control.isPlayerHere(num)) {
-                _pFun(num, evt.name.slice(ix+1), evt.value);
-            }
-            // else silently ignore
-
-        } else {
-            Game.log.debug("Unknown event type: " + evt.name);
-        }
+        return [ int(num), prop.slice(ix+1) ];
     }
 
     protected var _rFun :Function;
