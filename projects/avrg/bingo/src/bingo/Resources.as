@@ -12,6 +12,9 @@ public class Resources
     [Embed(source="../../rsrc/Bingo_Intro.swf", mimeType="application/octet-stream")]
     public static const SWF_INTRO :Class;
 
+    [Embed(source="../../rsrc/Bingo_help.swf", mimeType="application/octet-stream")]
+    public static const SWF_HELP :Class;
+
     // items
 
     [Embed(source="../../rsrc/items/Baguette_green.png")]

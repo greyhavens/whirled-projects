@@ -59,6 +59,7 @@ public class IntroMode extends AppMode
 
     protected function handleHelpClicked (...ignored) :void
     {
+        MainLoop.instance.pushMode(new HelpMode());
     }
 
     protected var _movie :MovieClip;

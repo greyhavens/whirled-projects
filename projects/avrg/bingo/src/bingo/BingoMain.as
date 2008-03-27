@@ -37,9 +37,10 @@ public class BingoMain extends Sprite
         resources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
         resources.addEventListener(ResourceLoadEvent.ERROR, handleResourceLoadError);
 
-        resources.pendResourceLoad("swf", "ui", { embeddedClass: Resources.SWF_UI });
-        resources.pendResourceLoad("swf", "board", { embeddedClass: Resources.SWF_BOARD });
-        resources.pendResourceLoad("swf", "intro", { embeddedClass: Resources.SWF_INTRO });
+        resources.pendResourceLoad("swf", "ui",     { embeddedClass: Resources.SWF_UI });
+        resources.pendResourceLoad("swf", "board",  { embeddedClass: Resources.SWF_BOARD });
+        resources.pendResourceLoad("swf", "intro",  { embeddedClass: Resources.SWF_INTRO });
+        resources.pendResourceLoad("swf", "help",   { embeddedClass: Resources.SWF_HELP });
 
         resources.load();
     }
