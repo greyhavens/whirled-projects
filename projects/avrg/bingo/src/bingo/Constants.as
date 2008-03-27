@@ -21,7 +21,7 @@ public class Constants
     public static const FREE_SPACE :Point = new Point(2, 2);
 
     public static const NEW_BALL_DELAY_S :Number = 7;
-    public static const NEW_ROUND_DELAY_S :Number = 5;
+    public static const NEW_ROUND_DELAY_S :Number = 15;
 
     public static const USE_ITEM_NAMES_AS_TAGS :Boolean = false;
     public static const CARD_ITEMS_ARE_UNIQUE :Boolean = true;

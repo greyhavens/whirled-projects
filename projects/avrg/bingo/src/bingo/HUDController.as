@@ -18,6 +18,8 @@ import flash.text.TextFieldAutoSize;
 
 public class HUDController extends SceneObject
 {
+    public static const NAME :String = "HUDController";
+
     public function HUDController ()
     {
         var swf :SwfResourceLoader = BingoMain.resources.getResource("ui") as SwfResourceLoader;
@@ -28,6 +30,11 @@ public class HUDController extends SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _hud;
+    }
+
+    override public function get objectName () :String
+    {
+        return NAME;
     }
 
     override protected function addedToDB () :void

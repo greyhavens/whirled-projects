@@ -15,6 +15,8 @@ import flash.geom.Rectangle;
 
 public class BingoCardController extends SceneObject
 {
+    public static const NAME :String = "BingoCardController";
+
     public function BingoCardController (card :BingoCard)
     {
         _card = card;
@@ -50,6 +52,11 @@ public class BingoCardController extends SceneObject
                 }
             }
         }
+    }
+
+    override public function get objectName () :String
+    {
+        return NAME;
     }
 
     override public function get displayObject () :DisplayObject

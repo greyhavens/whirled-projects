@@ -15,7 +15,7 @@ public class GameMode extends AppMode
         BingoMain.model.addEventListener(SharedStateChangedEvent.BINGO_CALLED, handleBingoCalled);
 
         // visuals
-        _hudControllerRef = this.addObject(new HUDController(), this.modeSprite);
+        this.addObject(new HUDController(), this.modeSprite);
 
         var curState :SharedState = BingoMain.model.curState;
         var stateIsValid :Boolean = curState.isValid;
@@ -40,14 +40,25 @@ public class GameMode extends AppMode
         // @TODO - SimObjects should have "destructor" methods that always get
         // called when modes shutdown
 
-        this.destroyObject(_cardControllerRef);
-        this.destroyObject(_winnerControllerRef);
-        this.destroyObject(_hudControllerRef);
+        this.destroyObjectNamed(BingoCardController.NAME);
+        this.destroyObjectNamed(WinnerAnimationController.NAME);
+        this.destroyObjectNamed(HUDController.NAME);
     }
 
     override public function update (dt :Number) :void
     {
         super.update(dt);
+
+        switch (BingoMain.model.curState.gameState) {
+
+        // if we're in the winner animation state, and the
+        // animation has completed, move to the next state
+        case SharedState.STATE_WEHAVEAWINNER:
+            if (null == this.getObjectNamed(WinnerAnimationController.NAME)) {
+                this.setupNewRound();
+            }
+        }
+
         this.sendStateChanges();
     }
 
@@ -105,13 +116,12 @@ public class GameMode extends AppMode
 
     protected function handleNewRound () :void
     {
-        this.destroyObject(_cardControllerRef);
-        this.destroyObject(_winnerControllerRef);
+        // destroy the winner animation if it exists
+        this.destroyObjectNamed(WinnerAnimationController.NAME);
 
         // create a new card
         BingoMain.model.createNewCard();
-        var cardController :BingoCardController = new BingoCardController(BingoMain.model.card);
-        _cardControllerRef = this.addObject(cardController, this.modeSprite);
+        this.addObject(new BingoCardController(BingoMain.model.card), this.modeSprite);
 
         // reset tags
         BingoItemManager.instance.resetRemainingTags();
@@ -119,8 +129,6 @@ public class GameMode extends AppMode
         // start the new ball timer
         BingoItemManager.instance.removeFromRemainingTags(BingoMain.model.curState.ballInPlay);
         this.startNewBallTimer();
-
-        this.stopNewRoundTimer();
     }
 
     protected function handleNewBall (...ignored) :void
@@ -135,16 +143,17 @@ public class GameMode extends AppMode
     protected function showWinnerAnimation () :void
     {
         this.stopNewBallTimer();
-        this.startNewRoundTimer(); // a new round should start shortly
 
-        this.destroyObject(_cardControllerRef);
-        this.destroyObject(_winnerControllerRef);
+        // destroy the bingo card view if it exists
+        this.destroyObjectNamed(BingoCardController.NAME);
 
         var winnerId :int = BingoMain.model.curState.roundWinnerId;
         var winnerName :String = BingoMain.getPlayerName(winnerId);
 
-        var winnerController :WinnerAnimationController = new WinnerAnimationController(winnerName);
-        _winnerControllerRef = this.addObject(winnerController, this.modeSprite);
+        // the WinnerAnimationController will destroy itself when the animation is complete.
+        // We check for the presence of the controller in update(), and when it's gone, we
+        // start the next round.
+        this.addObject(new WinnerAnimationController(winnerName), this.modeSprite);
 
         // grant some flow to ourselves if we're the winner
         if (BingoMain.model.curState.roundWinnerId == BingoMain.ourPlayerId && BingoMain.control.isConnected()) {
@@ -210,22 +219,6 @@ public class GameMode extends AppMode
         return nextBall;
     }
 
-    protected function startNewRoundTimer () :void
-    {
-        this.stopNewRoundTimer();
-        this.addObject(new SimpleTimer(Constants.NEW_BALL_DELAY_S, handleNewRoundTimerExpired, false, NEW_ROUND_TIMER_NAME));
-    }
-
-    protected function stopNewRoundTimer () :void
-    {
-        this.destroyObjectNamed(NEW_ROUND_TIMER_NAME);
-    }
-
-    protected function handleNewRoundTimerExpired () :void
-    {
-        this.setupNewRound();
-    }
-
     public function get percentTimeTillNextBall () :Number
     {
         var percentTime :Number = 1;
@@ -243,16 +236,11 @@ public class GameMode extends AppMode
     protected var _expectedState :SharedState;
     protected var _expectedScores :ScoreTable;
 
-    protected var _cardControllerRef :SimObjectRef;
-    protected var _winnerControllerRef :SimObjectRef;
-    protected var _hudControllerRef :SimObjectRef;
-
     protected var _calledBingoThisRound :Boolean;
 
     protected static var log :Log = Log.getLog(GameMode);
 
     protected static const NEW_BALL_TIMER_NAME :String = "NewBallTimer";
-    protected static const NEW_ROUND_TIMER_NAME :String = "NewRoundTimer";
 
 }
 
