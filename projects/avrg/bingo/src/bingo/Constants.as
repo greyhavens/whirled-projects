@@ -14,7 +14,7 @@ public class Constants
     public static const HUD_SCREEN_EDGE_OFFSET :Point = new Point(-150, 240);
 
     // gameplay bits
-    public static const SCORETABLE_MAX_ENTRIES :int = 50;
+    public static const SCORETABLE_MAX_ENTRIES :int = 20;
 
     public static const CARD_WIDTH :int = 5;
     public static const CARD_HEIGHT :int = 5;

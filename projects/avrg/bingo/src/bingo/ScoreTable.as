@@ -73,16 +73,19 @@ public class ScoreTable
             ba.writeDouble(score.date.time);
         }
 
+        ba.compress();
+
         return ba;
     }
 
     public static function fromBytes (ba :ByteArray, maxEntries :int) :ScoreTable
     {
-        ba.position = 0;
-
         var table :ScoreTable = new ScoreTable(maxEntries);
 
         try {
+            ba.uncompress();
+            ba.position = 0;
+
             while (ba.bytesAvailable > 0) {
                 var playerId :int = ba.readInt();
                 var score :int = ba.readInt();
