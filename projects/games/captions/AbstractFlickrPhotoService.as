@@ -61,7 +61,8 @@ public class AbstractFlickrPhotoService extends PhotoService
     protected function getUrlsAndDispatchToGame (photoArray :Array /* of Photo */) :void
     {
         for each (var photo :Photo in photoArray) {
-            _pageUrls[photo.id] = "http://www.flickr.com/photos/" + photo.ownerId + "/" + photo.id;
+// OLD WAY for page sources
+//            _pageUrls[photo.id] = "http://www.flickr.com/photos/" + photo.ownerId + "/" + photo.id;
             _flickr.photos.getSizes(photo.id);
         }
     }
@@ -131,8 +132,16 @@ public class AbstractFlickrPhotoService extends PhotoService
 
     protected function getPageUrl (photoSizes :Array) :String
     {
-        if (photoSizes.length > 0) {
-            var p :PhotoSize = photoSizes[0] as PhotoSize;
+        for each (var p :PhotoSize in photoSizes) {
+            var sizeUrl :String = p.url;
+            var dex :int = sizeUrl.indexOf("/sizes/");
+            if (dex != -1) {
+                return sizeUrl.substring(0, dex);
+            }
+        }
+
+        /* OLD WAY
+        for each (var p :PhotoSize in photoSizes) {
             var result :Object = (/id=(\d+)/).exec(p.url);
             if (result) {
                 var id :String = result[1] as String;
@@ -141,6 +150,7 @@ public class AbstractFlickrPhotoService extends PhotoService
                 return url;
             }
         }
+        */
 
         // NOTE: we may leave garbage in _pageUrls, but there's nothing we can do
         return null;
@@ -195,7 +205,5 @@ public class AbstractFlickrPhotoService extends PhotoService
     protected var _needPhoto :Boolean;
 
     protected var _pics :Array = [];
-
-    protected var _pageUrls :Dictionary = new Dictionary();
 }
 }
