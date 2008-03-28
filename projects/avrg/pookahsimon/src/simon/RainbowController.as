@@ -5,19 +5,18 @@ import com.threerings.util.Log;
 import com.whirled.AVRGameAvatar;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
-import flash.events.TimerEvent;
 import flash.geom.Point;
 import flash.media.Sound;
 import flash.media.SoundChannel;
 import flash.media.SoundTransform;
 import flash.text.TextField;
-import flash.utils.Timer;
 
 public class RainbowController extends SceneObject
 {
@@ -53,9 +52,6 @@ public class RainbowController extends SceneObject
             g_darkenMatrix.tint(0x000000, 0.33);
         }
 
-        _noteAnimationTimer = new Timer(NOTE_TIMER_LENGTH_MS, 1);
-        _noteAnimationTimer.addEventListener(TimerEvent.TIMER, noteAnimationTimerExpired);
-
         SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleNextSelectionEvent);
         SimonMain.model.addEventListener(SharedStateChangedEvent.PLAYER_TIMEOUT, handlePlayerTimeout);
 
@@ -66,8 +62,6 @@ public class RainbowController extends SceneObject
     {
         SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleNextSelectionEvent);
         SimonMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_TIMEOUT, handlePlayerTimeout);
-
-        _noteAnimationTimer.removeEventListener(TimerEvent.TIMER, noteAnimationTimerExpired);
 
         this.stopRainbowAnimation();
         this.stopNoteAnimation();
@@ -274,7 +268,7 @@ public class RainbowController extends SceneObject
         }
     }
 
-    protected function noteAnimationTimerExpired (e :Event) :void
+    protected function noteAnimationTimerExpired () :void
     {
         this.stopNoteAnimation();
 
@@ -319,8 +313,11 @@ public class RainbowController extends SceneObject
                 band.filters = [ g_darkenMatrix.createFilter() ];
             }
 
-            _noteAnimationTimer.reset();
-            _noteAnimationTimer.start();
+            this.removeNamedTasks(NOTE_ANIMATION_TASK_NAME);
+            this.addNamedTask(
+                NOTE_ANIMATION_TASK_NAME,
+                After(NOTE_ANIMATION_DURATION,
+                    new FunctionTask(noteAnimationTimerExpired)));
         }
 
         // disable mouse events while the note animation is playing
@@ -343,7 +340,7 @@ public class RainbowController extends SceneObject
 
     protected function stopNoteAnimation () :void
     {
-        _noteAnimationTimer.stop();
+        this.removeNamedTasks(NOTE_ANIMATION_TASK_NAME);
 
         if (_noteAnimationIndex >= 0) {
             _noteAnimationIndex = -1;
@@ -394,7 +391,6 @@ public class RainbowController extends SceneObject
 
     protected var _sparkleAnimHandlers :Array = [];
 
-    protected var _noteAnimationTimer :Timer;
     protected var _noteAnimationIndex :int = -1;
 
     protected var _rainbowBands :Array = [];
@@ -434,7 +430,8 @@ public class RainbowController extends SceneObject
     protected static var g_lightenMatrix :ColorMatrix;
     protected static var g_darkenMatrix :ColorMatrix;
 
-    protected static const NOTE_TIMER_LENGTH_MS :Number = 0.75 * 1000;
+    protected static const NOTE_ANIMATION_DURATION :Number = 0.75;
+    protected static const NOTE_ANIMATION_TASK_NAME :String = "NoteAnimationTask";
 }
 
 }

@@ -4,19 +4,15 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
-import flash.utils.Timer;
 
 public class GameMode extends AppMode
 {
     override protected function setup () :void
     {
-        // timers
-        _newRoundTimer = new Timer(Constants.NEW_ROUND_DELAY_S * 1000, 1);
-        _newRoundTimer.addEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
-
         // state change events
         SimonMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
         SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerChanged);
@@ -56,8 +52,6 @@ public class GameMode extends AppMode
         SimonMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
         SimonMain.control.removeEventListener(AVRGameControlEvent.PLAYER_LEFT, handlePlayerLeft);
-
-        _newRoundTimer.removeEventListener(TimerEvent.TIMER, handleNewRoundTimerExpired);
     }
 
     override public function update (dt :Number) :void
@@ -284,13 +278,12 @@ public class GameMode extends AppMode
 
     protected function startNewRoundTimer () :void
     {
-        _newRoundTimer.reset();
-        _newRoundTimer.start();
+        this.addObject(new SimpleTimer(Constants.NEW_ROUND_DELAY_S, handleNewRoundTimerExpired, false, NEW_ROUND_TIMER_NAME));
     }
 
     protected function stopNewRoundTimer () :void
     {
-        _newRoundTimer.stop();
+        this.destroyObjectNamed(NEW_ROUND_TIMER_NAME);
     }
 
     protected function handleNewRoundTimerExpired (e :TimerEvent) :void
@@ -342,9 +335,9 @@ public class GameMode extends AppMode
 
     protected var _statusText :String;
 
-    protected var _newRoundTimer :Timer;
-
     protected var log :Log = Log.getLog(this);
+
+    protected static const NEW_ROUND_TIMER_NAME :String = "NewRoundTimer";
 
 }
 
