@@ -22,11 +22,11 @@ public class GameMode extends AppMode
 
         this.hideHelpScreen();
 
-        // wire up event handlers
-        BingoMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
-        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
-        BingoMain.model.addEventListener(SharedStateChangedEvent.BINGO_CALLED, handleBingoCalled);
+        // wire up event handlers with priority 1 to get state updates before UI controllers
+        BingoMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange, false, 1);
+        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall, false, 1);
+        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores, false, 1);
+        BingoMain.model.addEventListener(SharedStateChangedEvent.BINGO_CALLED, handleBingoCalled, false, 1);
 
         // get current game state
         var curState :SharedState = BingoMain.model.curState;
