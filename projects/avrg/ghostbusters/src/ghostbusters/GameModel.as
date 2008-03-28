@@ -23,7 +23,8 @@ public class GameModel
         _ppp = new PerPlayerProperties();
 
         _ppp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_MAX_HEALTH, 100);
-        if (_ppp.getProperty(Game.ourPlayerId, Codes.PROP_PLAYER_CUR_HEALTH) == null) {
+
+        if (getPlayerHealth(Game.ourPlayerId) == 0 && !isPlayerDead(Game.ourPlayerId)) {
             // the player is new, not dead, start at full health
             setPlayerHealth(Game.ourPlayerId, 100);
         }
@@ -58,14 +59,19 @@ public class GameModel
         return checkTeam(false);
     }
 
+    public function killPlayer (playerId :int) :void
+    {
+        _ppp.setProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH, -1);
+    }
+
     public function isPlayerDead (playerId :int) :Boolean
     {
-        return _ppp.getProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH) === 0;
+        return _ppp.getProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH) == -1;
     }
 
     public function getPlayerHealth (playerId :int) :int
     {
-        return int(_ppp.getProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH));
+        return Math.max(0, int(_ppp.getProperty(playerId, Codes.PROP_PLAYER_CUR_HEALTH)));
     }
 
     public function getPlayerMaxHealth (playerId :int) :int
@@ -92,11 +98,11 @@ public class GameModel
     {
         var health :int = ghostHealth;
         Game.log.debug("Doing " + damage + " damage to a ghost with health " + health);
-        if (damage > health) {
+        if (damage >= health) {
             ghostHealth = 0;
             return true;
         }
-        ghostHealth -= damage;
+        ghostHealth = health - damage;
         return false;
     }
 
@@ -104,8 +110,8 @@ public class GameModel
     {
         var health :int = getPlayerHealth(playerId);
         Game.log.debug("Doing " + damage + " damage to a player with health " + health);
-        if (damage > health) {
-            setPlayerHealth(playerId, 0);
+        if (damage >= health) {
+            killPlayer(playerId);
             return true;
         }
         setPlayerHealth(playerId, health - damage);
