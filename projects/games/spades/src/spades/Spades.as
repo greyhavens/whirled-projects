@@ -4,6 +4,8 @@ import flash.display.Sprite;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 
+import com.threerings.flash.Vector2;
+
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.StateChangedEvent;
@@ -75,6 +77,7 @@ public class Spades extends Sprite
 
         // configure the players
         _table = new TableSprite(
+            new Vector2(700, 550),
             _gameCtrl.game.seating.getPlayerNames(), 
             getMySeat(),
             _trick,

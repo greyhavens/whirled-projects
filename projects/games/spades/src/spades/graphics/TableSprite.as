@@ -7,6 +7,8 @@ import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
+import com.threerings.flash.Vector2;
+
 import spades.card.CardArray;
 import spades.card.CardArrayEvent;
 
@@ -23,28 +25,29 @@ public class TableSprite extends Sprite
 
     /** Positions of other players' on the table (relative to the local player). */
     public static const PLAYER_POSITIONS :Array = [
-        new Position(50, 50),  // me
-        new Position(25, 30),  // my left
-        new Position(50, 10),  // opposite
-        new Position(75, 30)   // my right
+        new Vector2(.50, .50),  // me
+        new Vector2(.25, .30),  // my left
+        new Vector2(.50, .10),  // opposite
+        new Vector2(.75, .30)   // my right
     ];
 
     /** Position of the center of the local player's hand. */
-    public static const HAND_POSITION :Position = new Position(50, 75);
+    public static const HAND_POSITION :Vector2 = new Vector2(.50, .75);
 
     /** Position of the center of the bid slider */
-    public static const SLIDER_POSITION :Position = new Position(50, 60);
+    public static const SLIDER_POSITION :Vector2 = new Vector2(.50, .60);
 
     /** Position of the center of the trick pile */
-    public static const TRICK_POSITION :Position = new Position(50, 30);
+    public static const TRICK_POSITION :Vector2 = new Vector2(.50, .30);
 
     /** Position of the center of the trick pile */
-    public static const LAST_TRICK_POSITION :Position = new Position(10, 10);
+    public static const LAST_TRICK_POSITION :Vector2 = new Vector2(.10, .10);
 
     /** Create a new table.
      *  @param playerNames the names of the players, in seat order
      *  @param localSeat the seat that the local player is sitting in */
     public function TableSprite (
+        displaySize :Vector2,
         playerNames :Array, 
         localSeat :int,
         trick :CardArray,
@@ -52,19 +55,17 @@ public class TableSprite extends Sprite
     {
         _numPlayers = playerNames.length;
         _localSeat = localSeat;
+        _displaySize = displaySize;
 
         _players = playerNames.map(createPlayer);
 
         _hand = new HandSprite(hand);
-        Display.move(_hand, HAND_POSITION);
         addChild(_hand);
 
         _trick = new TrickSprite(trick, _numPlayers);
-        Display.move(_trick, TRICK_POSITION);
         addChild(_trick);
 
         _lastTrick = new TrickSprite(new CardArray(), _numPlayers);
-        Display.move(_lastTrick, LAST_TRICK_POSITION);
         addChild(_lastTrick);
 
         // listen for clicks on cards
@@ -79,14 +80,14 @@ public class TableSprite extends Sprite
         // listen for expiry of the last trick visibility
         _lastTrickTimer.addEventListener(TimerEvent.TIMER, timerListener);
 
+        layout();
+
         function createPlayer (
             name :String, 
             seat :int, 
             names :Array) :PlayerSprite
         {
             var p :PlayerSprite = new PlayerSprite(name);
-            var relative :int = getRelativeSeat(seat);
-            Display.move(p, PLAYER_POSITIONS[relative] as Position);
             addChild(p);
             return p;
         }
@@ -143,7 +144,7 @@ public class TableSprite extends Sprite
         if (show) {
             if (_bid == null) {
                 _bid = new BidSprite(max, callback);
-                Display.move(_bid, SLIDER_POSITION);
+                positionChild(_bid, SLIDER_POSITION);
                 addChild(_bid);
             }
         }
@@ -175,6 +176,26 @@ public class TableSprite extends Sprite
     {
         _hand.enable(subset);
         _handCallback = callback;
+    }
+
+    protected function positionChild (child :DisplayObject, pos :Vector2) :void
+    {
+        child.x = pos.x * _displaySize.x;
+        child.y = pos.y * _displaySize.y;
+    }
+
+    /** Position all the children. */
+    protected function layout () :void
+    {
+        positionChild(_hand, HAND_POSITION);
+        positionChild(_trick, TRICK_POSITION);
+        positionChild(_lastTrick, LAST_TRICK_POSITION);
+        _players.forEach(positionPlayer);
+
+        function positionPlayer (p :PlayerSprite, seat :int, a :Array) :void {
+            var relative :int = getRelativeSeat(seat);
+            positionChild(p, PLAYER_POSITIONS[relative] as Vector2);
+        }
     }
 
     protected function clickListener (event :MouseEvent) :void
@@ -227,6 +248,7 @@ public class TableSprite extends Sprite
         return (seat + _numPlayers - _localSeat) % _numPlayers;
     }
 
+    protected var _displaySize :Vector2;
     protected var _numPlayers :int;
     protected var _players :Array;
     protected var _localSeat :int;
