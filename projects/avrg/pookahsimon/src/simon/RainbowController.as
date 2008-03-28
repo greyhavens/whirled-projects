@@ -4,8 +4,11 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.AVRGameAvatar;
 import com.whirled.contrib.ColorMatrix;
+import com.whirled.contrib.simplegame.objects.*;
 
+import flash.display.DisplayObject;
 import flash.display.MovieClip;
+import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
@@ -16,9 +19,29 @@ import flash.media.SoundTransform;
 import flash.text.TextField;
 import flash.utils.Timer;
 
-public class RainbowController
+public class RainbowController extends SceneObject
 {
+    public static const NAME :String = "RainbowController";
+
     public function RainbowController (playerId :int)
+    {
+        _playerId = playerId;
+        _parentSprite = new Sprite();
+
+        _remainingPattern = SimonMain.model.curState.pattern.slice();
+    }
+
+    override public function get displayObject () :DisplayObject
+    {
+        return _parentSprite;
+    }
+
+    override public function get objectName () :String
+    {
+        return NAME;
+    }
+
+    override protected function addedToDB () :void
     {
         if (null == g_lightenMatrix) {
             g_lightenMatrix = new ColorMatrix();
@@ -30,9 +53,6 @@ public class RainbowController
             g_darkenMatrix.tint(0x000000, 0.33);
         }
 
-        _playerId = playerId;
-        _remainingPattern = SimonMain.model.curState.pattern.slice();
-
         _noteAnimationTimer = new Timer(NOTE_TIMER_LENGTH_MS, 1);
         _noteAnimationTimer.addEventListener(TimerEvent.TIMER, noteAnimationTimerExpired);
 
@@ -42,7 +62,7 @@ public class RainbowController
         this.playRainbowAnimation("rainbow_in", playRainbowLoop);
     }
 
-    public function destroy () :void
+    override protected function removedFromDB () :void
     {
         SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleNextSelectionEvent);
         SimonMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_TIMEOUT, handlePlayerTimeout);
@@ -58,21 +78,20 @@ public class RainbowController
     {
         this.stopRainbowAnimation();
 
-        var animClass :Class = SimonMain.resourcesDomain.getDefinition(animName) as Class;
-
         try {
-            _curAnim = new animClass();
+            _curAnim = Resources.instantiateMovieClip("ui", animName);
         } catch (err :Error) {
-            log.warning("Disconnecting - error instantiating " + animName + ": " + err.toString());
-            SimonMain.quit();
-            return;
+            log.warning("Failed to instantiate " + animName + ": " + err.toString() + "\n" + err.getStackTrace());
+
+            // @TODO - let's reload the SWF and try again
+
         }
 
         var loc :Point = this.getScreenLoc();
         _curAnim.x = loc.x;
         _curAnim.y = loc.y;
 
-        SimonMain.sprite.addChild(_curAnim);
+        _parentSprite.addChild(_curAnim);
 
         if (null != completionCallback) {
             _rainbowAnimHandler = new AnimationHandler(_curAnim, "end", completionCallback);
@@ -82,7 +101,7 @@ public class RainbowController
     protected function stopRainbowAnimation () :void
     {
         if (null != _curAnim) {
-            SimonMain.sprite.removeChild(_curAnim);
+            _parentSprite.removeChild(_curAnim);
             _curAnim = null;
         }
 
@@ -165,7 +184,7 @@ public class RainbowController
     protected function handlePlayerTimeout (e :SharedStateChangedEvent) :void
     {
         // called when the player has taken too long to click a note
-        SimonMain.controller.currentPlayerTurnFailure();
+        this.gameMode.currentPlayerTurnFailure();
     }
 
     protected function createBandMouseHandlers (band :MovieClip, noteIndex :int) :void
@@ -249,9 +268,9 @@ public class RainbowController
     {
         // tell the controller we need a state change
         if (_success) {
-            SimonMain.controller.currentPlayerTurnSuccess(_finalNoteIndex);
+            this.gameMode.currentPlayerTurnSuccess(_finalNoteIndex);
         } else {
-            SimonMain.controller.currentPlayerTurnFailure();
+            this.gameMode.currentPlayerTurnFailure();
         }
     }
 
@@ -282,8 +301,7 @@ public class RainbowController
                 band.play();
 
                 // create and play a sparkle animation
-                var sparkleClass :Class = SimonMain.resourcesDomain.getDefinition("sparkle") as Class;
-                var sparkle :MovieClip = new sparkleClass();
+                var sparkle :MovieClip = Resources.instantiateMovieClip("ui", "sparkle");
 
                 sparkle.x = clickLoc.x;
                 sparkle.y = clickLoc.y;
@@ -354,6 +372,13 @@ public class RainbowController
     {
         return (_playerId == SimonMain.localPlayerId);
     }
+
+    protected function get gameMode () :GameMode
+    {
+        return this.db as GameMode;
+    }
+
+    protected var _parentSprite :Sprite;
 
     protected var _finalNotePlayed :Boolean;
     protected var _success :Boolean;

@@ -2,7 +2,9 @@ package simon {
 
 import com.threerings.util.ArrayUtil;
 import com.whirled.AVRGameControlEvent;
+import com.whirled.contrib.simplegame.objects.*;
 
+import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.events.MouseEvent;
@@ -10,15 +12,27 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 
-public class CloudViewController
+public class CloudViewController extends SceneObject
 {
+    public static const NAME :String = "CloudViewController";
+
     public function CloudViewController ()
     {
-        var cloudClass :Class = SimonMain.resourcesDomain.getDefinition("cloud") as Class;
-        _cloud = new cloudClass();
+        _cloud = Resources.instantiateMovieClip("ui", "cloud");
+    }
 
-        SimonMain.sprite.addChild(_cloud);
+    override public function get displayObject () :DisplayObject
+    {
+        return _cloud;
+    }
 
+    override public function get objectName () :String
+    {
+        return NAME;
+    }
+
+    override protected function addedToDB () :void
+    {
         // collapse/expand buttons
         var collapseButton :InteractiveObject = _cloud[COLLAPSE_BUTTON_NAME];
         var expandButton :InteractiveObject = _cloud[EXPAND_BUTTON_NAME];
@@ -51,10 +65,8 @@ public class CloudViewController
         this.updateText();
     }
 
-    public function destroy () :void
+    override protected function removedFromDB () :void
     {
-        SimonMain.sprite.removeChild(_cloud);
-
         SimonMain.model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, updateText);
         SimonMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, updateText);
         SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, updateText);

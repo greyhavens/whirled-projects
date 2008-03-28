@@ -4,23 +4,20 @@
 package simon {
 
 import com.threerings.util.Log;
-import com.threerings.util.MultiLoader;
 import com.whirled.AVRGameAvatar;
 import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Sprite;
 import flash.events.Event;
-import flash.system.ApplicationDomain;
 
 [SWF(width="700", height="500")]
 public class SimonMain extends Sprite
 {
     public static var control :AVRGameControl;
     public static var model :Model;
-    public static var controller :Controller;
-    public static var resourcesDomain :ApplicationDomain;
-    public static var sprite :Sprite;
 
     public static var localPlayerId :int;
 
@@ -46,35 +43,42 @@ public class SimonMain extends Sprite
     {
         log.info("Simon verson " + Constants.VERSION);
 
-        sprite = this;
-
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
+        // instantiate MainLoop singleton
+        new MainLoop(this);
+        MainLoop.instance.setup();
+
+        // load resources
+        Resources.mgr.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
+        Resources.mgr.addEventListener(ResourceLoadEvent.ERROR, handleResourceLoadError);
+        Resources.load();
+
+        // hook up controller
         control = new AVRGameControl(this);
-
         control.addEventListener(AVRGameControlEvent.LEFT_ROOM, leftRoom);
-
-        control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, playerEntered);
-        control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, playerLeft);
-
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
-
-        resourcesDomain = new ApplicationDomain();
-        MultiLoader.getLoaders(Resources.SWF_RAINBOW, handleResourcesLoaded, false, resourcesDomain);
     }
 
-    protected function handleResourcesLoaded (results :Object) :void
+    protected function handleResourcesLoaded (...ignored) :void
     {
         _resourcesLoaded = true;
         this.maybeBeginGame();
+    }
+
+    protected function handleResourceLoadError (e :ResourceLoadEvent) :void
+    {
+        log.warning("Resource load error: " + e.data as String);
     }
 
     protected function maybeBeginGame () :void
     {
         if (_addedToStage && _resourcesLoaded) {
             model.setup();
-            controller.setup();
+
+            MainLoop.instance.pushMode(new GameMode());
+            MainLoop.instance.run();
         }
     }
 
@@ -97,7 +101,6 @@ public class SimonMain extends Sprite
         log.info(control.isConnected() ? "playing online game" : "playing offline game");
 
         model = (control.isConnected() && !Constants.FORCE_SINGLEPLAYER ? new OnlineModel() : new OfflineModel());
-        controller = new Controller(this, model);
 
         localPlayerId = (control.isConnected() ? control.getPlayerId() : 666);
 
@@ -110,8 +113,9 @@ public class SimonMain extends Sprite
     {
         log.info("Removed from stage - Unloading...");
 
-        controller.destroy();
         model.destroy();
+
+        MainLoop.instance.shutdown();
     }
 
     protected function leftRoom (e :Event) :void
@@ -125,14 +129,6 @@ public class SimonMain extends Sprite
     protected function gotControl (evt :AVRGameControlEvent) :void
     {
         log.debug("gotControl(): " + evt);
-    }
-
-    protected function playerEntered (evt :AVRGameControlEvent) :void
-    {
-    }
-
-    protected function playerLeft (evt :AVRGameControlEvent) :void
-    {
     }
 
     protected var _addedToStage :Boolean;

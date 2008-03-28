@@ -1,7 +1,35 @@
 package simon {
 
+import com.whirled.contrib.simplegame.resource.*;
+
+import flash.display.MovieClip;
+
 public class Resources
 {
+    public static var mgr :ResourceManager = new ResourceManager();
+
+    public static function load () :void
+    {
+        mgr.pendResourceLoad("swf", "ui", { embeddedClass: Resources.SWF_RAINBOW });
+        mgr.load();
+    }
+
+    public static function instantiateMovieClip (resourceName :String, symbolName :String) :MovieClip
+    {
+        var movie :MovieClip;
+
+        var swf :SwfResourceLoader = mgr.getResource(resourceName) as SwfResourceLoader;
+        if (null != swf) {
+            var theClass :Class = swf.getClass(symbolName);
+
+            if (null != theClass) {
+                movie = new theClass();
+            }
+        }
+
+        return movie;
+    }
+
     // gfx
 
     [Embed(source="../../rsrc/pookah_rainbow.swf", mimeType="application/octet-stream")]
