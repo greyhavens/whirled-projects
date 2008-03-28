@@ -7,6 +7,8 @@ import spades.card.CardArrayEvent;
 import spades.card.CardException;
 import spades.Debug;
 
+import caurina.transitions.Tweener;
+
 /** Display for a hand of cards */
 public class HandSprite extends CardArraySprite
 {
@@ -86,8 +88,13 @@ public class HandSprite extends CardArraySprite
                 var pos :Vector2 = new Vector2();
                 getStaticCardPosition(index, pos);
                 
-                pos.y += offset;
-                slide(card, pos, POPUP_DURATION);
+                var tween :Object = {
+                    y: pos.y + offset, 
+                    time: POPUP_DURATION};
+
+                Tweener.removeTweens(card, "y");
+                Tweener.addTween(card, tween);
+
                 _popupCard = card;
                 _popup = offset;
                 _popupCard.highlighted = true;
@@ -103,10 +110,16 @@ public class HandSprite extends CardArraySprite
             if (index >= 0) {
                 var pos :Vector2 = new Vector2();
                 getStaticCardPosition(_cards.indexOf(_popupCard), pos);
-                slide(_popupCard, pos, POPUP_DURATION);
+
+                var tween :Object = {
+                    y: pos.y, 
+                    time: POPUP_DURATION};
+
+                Tweener.removeTweens(_popupCard, "y");
+                Tweener.addTween(_popupCard, tween);
             }
             else {
-                endSlide(_popupCard, false);
+                Tweener.removeTweens(_popupCard, "y");
             }
             _popupCard.highlighted = false;
         }
@@ -151,7 +164,7 @@ public class HandSprite extends CardArraySprite
     protected var _popupCard :CardSprite;
 
     protected static const POPUP :Number = 20;
-    protected static const POPUP_DURATION :Number = 100;
+    protected static const POPUP_DURATION :Number = .2;
 }
 
 }

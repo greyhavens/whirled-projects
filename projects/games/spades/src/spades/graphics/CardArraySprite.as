@@ -13,10 +13,10 @@ import com.threerings.flash.AnimationManager;
 import com.threerings.flash.Vector2;
 import com.threerings.flash.Animation;
 
+import caurina.transitions.Tweener;
 
 /**
- * Superclass to display of an array of cards. Delegates layout to subclasses and supports 
- * animation.
+ * Superclass to display of an array of cards. Delegates layout and some animation to subclasses.
  */
 public class CardArraySprite extends Sprite
 {
@@ -82,7 +82,9 @@ public class CardArraySprite extends Sprite
         pos.y = 0;
     }
 
-    /** Positions all cards (that are not currently animating). */
+    /** Positions all cards (that are not currently animating).
+     *  TODO: now that Tweener is being used, it would make much more sense
+     *  to fly the cards in somehow rather that layout statically. */
     protected function positionCards () :void
     {
         var pos :Vector2 = new Vector2();
@@ -90,7 +92,7 @@ public class CardArraySprite extends Sprite
 
         function positionSprite(c :CardSprite, index :int, arr :Array) :void
         {
-            if (!isSliding(c)) {
+            if (!Tweener.isTweening(c)) {
                 getStaticCardPosition(index, pos);
                 c.x = pos.x;
                 c.y = pos.y;
@@ -98,8 +100,7 @@ public class CardArraySprite extends Sprite
         }
     }
 
-    /** When the card array changes, update our child sprites and re-layout
-     *  TODO: animate */
+    /** When the card array changes, update our child sprites and re-layout. */
     protected function cardArrayListener (event :CardArrayEvent) :void
     {
         Debug.debug("CardArrayEvent received " + event);
@@ -134,69 +135,6 @@ public class CardArraySprite extends Sprite
         positionCards();
     }
 
-    /** Detect if a card is currently sliding. This allows the layout function to exempt 
-     *  animating cards from the routine. */
-    protected function isSliding (card :CardSprite) :Boolean
-    {
-        return _animations.some(isTheOne);
-
-        function isTheOne (ani :Animation, i :int, a :Array) :Boolean {
-            if (ani is SlideAnim) {
-                return SlideAnim(ani).sprite == card;
-            }
-            return false;
-        }
-    }
-
-    /** Slide a card from its current position to a destination position over a time span. 
-     *  If the card is already sliding, the current slide will be stopped.
-     *  @param card the card to slide. Its current position is the starting position.
-     *  @param dest the final destination position
-     *  @param milliseconds the time span over which to do the move
-     *  @param callback optional function to call when the animation is complete
-     */
-    public function slide (
-        card :CardSprite, 
-        dest: Vector2, 
-        milliseconds :Number,
-        callback :Function = null) :void
-    {
-        endSlide(card, false);
-
-        var slide :SlideAnim = new SlideAnim(card, dest, milliseconds, removeIt);
-        _animations.push(slide);
-
-        AnimationManager.start(slide);
-
-        // chaining callback. first removes the animation, then calls the incoming
-        // callback
-        function removeIt () :void {
-            var index :int = _animations.indexOf(slide);
-            _animations.splice(index, 1);
-            if (callback != null) {
-                callback();
-            }
-        }
-    }
-
-    /** Terminate the sliding, if any, of a card.
-     *  @param card the card to stop sliding
-     *  @param moveToDest if true, move the card to the given destination of its slide. */
-    public function endSlide (card :CardSprite, moveToDest: Boolean) :void
-    {
-        _animations.some(finish);
-
-        function finish (ani :Animation, i :int, a :Array) :Boolean {
-            if (ani is SlideAnim) {
-                if (SlideAnim(ani).sprite == card) {
-                    SlideAnim(ani).finish(moveToDest);
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-    
     /** Animates the removal of a card. The _cards array will be taken care of, this function must 
      *  only guarantee that removeChild is called later. By default, just calls removeChild 
      *  immediately. */
@@ -216,10 +154,6 @@ public class CardArraySprite extends Sprite
         if (event.target == this) {
             // stop listening to array since we will no longer be displayed
             _target.removeEventListener(CardArrayEvent.CARD_ARRAY, cardArrayListener);
-        }
-        else if (event.target is CardSprite) {
-            // forcibly stop all animations on the target
-            endSlide(event.target as CardSprite, false);
         }
     }
 
