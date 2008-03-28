@@ -356,7 +356,7 @@ public class Controller
         _expectedState.players.splice(_expectedState.curPlayerIdx, 1);
 
         // move to the next player
-        if (_expectedState.curPlayerIdx >= _expectedState.players.length - 1) {
+        if (_expectedState.curPlayerIdx >= _expectedState.players.length) {
             _expectedState.curPlayerIdx = 0;
         }
 
