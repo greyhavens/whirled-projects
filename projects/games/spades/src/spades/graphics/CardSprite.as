@@ -1,9 +1,13 @@
 package spades.graphics {
 
 import flash.display.Sprite;
-import flash.text.TextField;
+import flash.display.Scene;
 import flash.events.MouseEvent;
 import spades.card.Card;
+import spades.Debug;
+import com.threerings.util.MultiLoader;
+import flash.display.MovieClip;
+
 
 /**
  * Represents a card graphic (placeholder).
@@ -11,39 +15,36 @@ import spades.card.Card;
 public class CardSprite extends Sprite
 {
     /** Width of a card sprite. */
-    public static const WIDTH :int = 70;
+    public static const WIDTH :int = 60;
 
     /** Height of a card sprite. */
-    public static const HEIGHT :int = 100;
+    public static const HEIGHT :int = 80;
+
+    public static var dump :Boolean = true;
 
     /** Create a new card sprite. */
     public function CardSprite (card :Card)
     {
         _card = card;
-        
-        graphics.clear();
-        graphics.beginFill(0x000000);
-        graphics.drawRect(-WIDTH / 2, -HEIGHT / 2, WIDTH, HEIGHT);
-        graphics.endFill();
 
-        //        width = WIDTH;
-        //        height = HEIGHT;
+        MultiLoader.getContents(DECK, gotDeck);
 
-        _text = new TextField();
-        _text.width = WIDTH;
-        _text.height = HEIGHT;
-        _text.background = true;
-        _text.border = true;
-        _text.selectable = false;
-        _text.multiline = true; // (needed for rank + CR + suit)
-        _text.text = 
-            Card.rankString(card.rank) + "\n" + 
-            Card.suitString(card.suit);
-        _text.x = -WIDTH / 2;
-        _text.y = -HEIGHT / 2;
-        addChild(_text);
+        function gotDeck (clip :MovieClip) :void
+        {
+            if (dump) {
+                Debug.debug("Got deck: " + clip.width + " x " + clip.height);
+                dump = false;
+            }
 
-        update();
+            _deck = clip;
+            _deck.gotoAndStop(card.string);
+            _deck.x = -WIDTH / 2;
+            _deck.y = -HEIGHT / 2;
+            _deck.scaleX = WIDTH / _deck.width;
+            _deck.scaleY = HEIGHT / _deck.height;
+            addChild(_deck);
+            update();
+        }
     }
 
     /** Access the underlying card object. */
@@ -99,27 +100,19 @@ public class CardSprite extends Sprite
 
     protected function update () :void
     {
-        if (_enabled) {
-            if (_highlighted) {
-                _text.backgroundColor = 0xFF8080;
-            }
-            else {
-                _text.backgroundColor = 0x77FF77;
-            }
-        }
-        else if (_emphasis) {
-            _text.backgroundColor = 0x0077ff;
-        }
-        else {
-            _text.backgroundColor = 0x888888;
+        if (_deck == null) {
+            return;
         }
     }
 
     protected var _card :Card;
-    protected var _text :TextField;
     protected var _enabled :Boolean = false;
     protected var _highlighted :Boolean = false;
     protected var _emphasis :Boolean = false;
+    protected var _deck :MovieClip;
+
+    [Embed(source="../../../rsrc/deck.swf", mimeType="application/octet-stream")]
+    protected static const DECK :Class;
 }
 
 }
