@@ -1,19 +1,42 @@
 package spades.graphics {
 
 import flash.display.Sprite;
+import flash.display.DisplayObject;
 import flash.events.Event;
 
 import spades.card.Card;
 import spades.card.CardArray;
 import spades.card.CardArrayEvent;
-import spades.card.CardException;
 import spades.Debug;
 
+import com.threerings.flash.AnimationManager;
+import com.threerings.flash.Vector2;
+import com.threerings.flash.Animation;
+
+
 /**
- * Display of an array of cards. 
+ * Superclass to display of an array of cards. Delegates layout to subclasses and supports 
+ * animation.
  */
 public class CardArraySprite extends Sprite
 {
+    /** Utility function to get the CardSprite ancestor from a display object. This is useful 
+     *  for event listeners that want to act on the card sprite even if the event occurred on a 
+     *  descendant of the card. */
+    public static function exposeCard (obj :Object) :CardSprite
+    {
+        if (obj is DisplayObject) {
+            var target :DisplayObject = DisplayObject(obj);
+            while (!(target is CardArraySprite)) {
+                if (target is CardSprite) {
+                    return target as CardSprite;
+                }
+                target = target.parent;
+            }
+        }
+        return null;
+    }
+
     /** Create a new sprite for a CardArray. The sprite will always listen for all changes on the 
      *  array events and unregister when removed from the display list. Re-adding to the display 
      *  list is not supported. */
@@ -27,43 +50,7 @@ public class CardArraySprite extends Sprite
 
         refresh();
 
-        layout();
-    }
-
-    /** Disable clicking on all cards. */
-    public function disable () :void
-    {
-        _cards.forEach(disableSprite);
-
-        function disableSprite (c :CardSprite, index :int, array :Array) :void
-        {
-            c.enabled = false;
-        }
-    }
-    
-    /** Enable clicking on specific cards. 
-     *  @param subset the cards to enable, or all if null (default)
-     *  @throws CardException is the resulting set of enabled cards is empty since otherwise
-     *  the game will be waiting forever. */
-    public function enable (subset :CardArray=null) :void
-    {
-        var count :int = 0;
-
-        // todo: make linear time N + M instead of quadratic N * M
-        _cards.forEach(enableSprite);
-
-        if (count == 0) {
-            throw new CardException("Enabling zero cards");
-        }
-
-        function enableSprite (c :CardSprite, index :int, array :Array) :void
-        {
-            var enable :Boolean = subset == null || subset.has(c.card);
-            c.enabled = enable;
-            if (enable) {
-                ++count;
-            }
-        }
+        positionCards();
     }
 
     /** Update our card sprites with the contents of the target card array. */
@@ -85,32 +72,29 @@ public class CardArraySprite extends Sprite
         }
     }
 
-    /** Layout the sprites in the _cards member and set the width and height. */
-    protected function layout () :void
+    /** Get the x, y position of a card in the array. If a card is currently moving, this 
+     *  should calculate the destination position. */
+    protected function getStaticCardPosition (i :int, pos :Vector2) :void
     {
-        // very basic layout
-        var left :int = 0;
-        var wid :int = 0;
+        var wid :Number = (_cards.length + 1) * CardSprite.WIDTH / 2;
+        var left :Number = -wid / 2;
+        pos.x = left + (i + 1) * CardSprite.WIDTH / 2;
+        pos.y = 0;
+    }
 
-        if (_cards.length > 0) {
-            wid = (_cards.length + 1) * CardSprite.WIDTH / 2;
-            left = -wid / 2;
-        }
+    /** Positions all cards (that are not currently animating). */
+    protected function positionCards () :void
+    {
+        var pos :Vector2 = new Vector2();
+        _cards.forEach(positionSprite);
 
-        graphics.clear();
-        graphics.beginFill(0x000000);
-        graphics.drawRect(
-            left, -CardSprite.HEIGHT / 2, 
-            wid, CardSprite.HEIGHT);
-        graphics.endFill();
-
-        _cards.forEach(layoutSprite);
-
-        function layoutSprite(c :CardSprite, index :int, arr :Array) :void
+        function positionSprite(c :CardSprite, index :int, arr :Array) :void
         {
-            var x :int = (index + 1) * CardSprite.WIDTH / 2;
-            c.x = left + x;
-            c.y = 0;
+            if (!isSliding(c)) {
+                getStaticCardPosition(index, pos);
+                c.x = pos.x;
+                c.y = pos.y;
+            }
         }
     }
 
@@ -129,11 +113,13 @@ public class CardArraySprite extends Sprite
         case CardArrayEvent.ACTION_ADDED:
             _cards.splice(event.index, 0, new CardSprite(event.card));
             addChild(_cards[event.index] as CardSprite);
+            animateAddition(_cards[event.index]);
             break;
 
         case CardArrayEvent.ACTION_REMOVED:
-            removeChild(_cards[event.index] as CardSprite);
+            var c: CardSprite = _cards[event.index] as CardSprite;
             _cards.splice(event.index, 1);
+            animateRemoval(c);
             break;
 
         case CardArrayEvent.ACTION_PRERESET:
@@ -145,7 +131,84 @@ public class CardArraySprite extends Sprite
 
         }
 
-        layout();
+        positionCards();
+    }
+
+    /** Detect if a card is currently sliding. This allows the layout function to exempt 
+     *  animating cards from the routine. */
+    protected function isSliding (card :CardSprite) :Boolean
+    {
+        return _animations.some(isTheOne);
+
+        function isTheOne (ani :Animation, i :int, a :Array) :Boolean {
+            if (ani is SlideAnim) {
+                return SlideAnim(ani).sprite == card;
+            }
+            return false;
+        }
+    }
+
+    /** Slide a card from its current position to a destination position over a time span. 
+     *  If the card is already sliding, the current slide will be stopped.
+     *  @param card the card to slide. Its current position is the starting position.
+     *  @param dest the final destination position
+     *  @param milliseconds the time span over which to do the move
+     *  @param callback optional function to call when the animation is complete
+     */
+    public function slide (
+        card :CardSprite, 
+        dest: Vector2, 
+        milliseconds :Number,
+        callback :Function = null) :void
+    {
+        endSlide(card, false);
+
+        var slide :SlideAnim = new SlideAnim(card, dest, milliseconds, removeIt);
+        _animations.push(slide);
+
+        AnimationManager.start(slide);
+
+        // chaining callback. first removes the animation, then calls the incoming
+        // callback
+        function removeIt () :void {
+            var index :int = _animations.indexOf(slide);
+            _animations.splice(index, 1);
+            if (callback != null) {
+                callback();
+            }
+        }
+    }
+
+    /** Terminate the sliding, if any, of a card.
+     *  @param card the card to stop sliding
+     *  @param moveToDest if true, move the card to the given destination of its slide. */
+    public function endSlide (card :CardSprite, moveToDest: Boolean) :void
+    {
+        _animations.some(finish);
+
+        function finish (ani :Animation, i :int, a :Array) :Boolean {
+            if (ani is SlideAnim) {
+                if (SlideAnim(ani).sprite == card) {
+                    SlideAnim(ani).finish(moveToDest);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    
+    /** Animates the removal of a card. The _cards array will be taken care of, this function must 
+     *  only guarantee that removeChild is called later. By default, just calls removeChild 
+     *  immediately. */
+    protected function animateRemoval (card :CardSprite) :void
+    {
+        removeChild(card);
+    }
+
+    /** Animates the addition of the card. Default does nothing. Subclasses should set the 
+     *  starting position of the card and use slide to move it into its static position. */
+    protected function animateAddition (card :CardSprite) :void
+    {
     }
 
     protected function removedListener (event :Event) :void
@@ -154,10 +217,15 @@ public class CardArraySprite extends Sprite
             // stop listening to array since we will no longer be displayed
             _target.removeEventListener(CardArrayEvent.CARD_ARRAY, cardArrayListener);
         }
+        else if (event.target is CardSprite) {
+            // forcibly stop all animations on the target
+            endSlide(event.target as CardSprite, false);
+        }
     }
 
     protected var _cards :Array = new Array();
     protected var _target :CardArray;
+    protected var _animations :Array = new Array();
 }
 
 }

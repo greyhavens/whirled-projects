@@ -55,7 +55,7 @@ public class TableSprite extends Sprite
 
         _players = playerNames.map(createPlayer);
 
-        _hand = new CardArraySprite(hand);
+        _hand = new HandSprite(hand);
         Display.move(_hand, HAND_POSITION);
         addChild(_hand);
 
@@ -179,17 +179,11 @@ public class TableSprite extends Sprite
 
     protected function clickListener (event :MouseEvent) :void
     {
-        var target :DisplayObject = event.target as DisplayObject;
-        while (!(target is CardArraySprite)) {
-            if (target is CardSprite) {
-                if (_handCallback != null) {
-                    var callback :Function = _handCallback;
-                    _handCallback = null;
-                    callback(CardSprite(target).card);
-                }
-                break;
-            }
-            target = target.parent;
+        var card :CardSprite = CardArraySprite.exposeCard(event.target);
+        if (card != null && _handCallback != null) {
+            var callback :Function = _handCallback;
+            _handCallback = null;
+            callback(card.card);
         }
     }
 
@@ -237,7 +231,7 @@ public class TableSprite extends Sprite
     protected var _players :Array;
     protected var _localSeat :int;
     protected var _bid :BidSprite;
-    protected var _hand :CardArraySprite;
+    protected var _hand :HandSprite;
     protected var _trick :TrickSprite;
     protected var _lastTrick :TrickSprite;
     protected var _handCallback :Function;

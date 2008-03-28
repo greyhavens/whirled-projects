@@ -4,6 +4,8 @@ import spades.card.CardArray;
 import spades.card.CardArrayEvent;
 import spades.Debug;
 
+import com.threerings.flash.Vector2;
+
 /** Graphics for the cards in the trick. */
 public class TrickSprite extends CardArraySprite
 {
@@ -69,27 +71,19 @@ public class TrickSprite extends CardArraySprite
         }
     }
 
-    override protected function layout () :void
+    override protected function getStaticCardPosition (index :int, pos :Vector2) :void
     {
-        for (var i :int = 0; i < _cards.length; ++i) {
-            if (i >= CARD_POSITIONS.length) {
-                continue;
-            }
-            var posIdx :int = (i + _leader) % CARD_POSITIONS.length;
-            var pos :Array = CARD_POSITIONS[posIdx] as Array;
-            var card :CardSprite = _cards[i] as CardSprite;
-            _cards[i].x = pos[0] as int;
-            _cards[i].y = pos[1] as int;
-            _cards[i].scaleX = SCALE;
-            _cards[i].scaleY = SCALE;
-        }
+        var posIdx :int = (index + _leader) % CARD_POSITIONS.length;
+        var posArray :Array = CARD_POSITIONS[posIdx] as Array;
+        pos.x = posArray[0] as int;
+        pos.y = posArray[1] as int;
     }
 
     protected var _numPlayers :int;
     protected var _leader :int;
     protected var _winningCard :int = -1;
 
-    protected static const SCALE :Number = 0.5;
+    //protected static const SCALE :Number = 0.5;
 
     // layout in a cross
     protected static const CARD_POSITIONS :Array = [

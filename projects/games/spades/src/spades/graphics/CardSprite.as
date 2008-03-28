@@ -16,6 +16,7 @@ public class CardSprite extends Sprite
     /** Height of a card sprite. */
     public static const HEIGHT :int = 100;
 
+    /** Create a new card sprite. */
     public function CardSprite (card :Card)
     {
         _card = card;
@@ -42,17 +43,17 @@ public class CardSprite extends Sprite
         _text.y = -HEIGHT / 2;
         addChild(_text);
 
-        addEventListener(MouseEvent.MOUSE_OVER, mouseOverListener);
-        addEventListener(MouseEvent.MOUSE_OUT, mouseOutListener);
-
         update();
     }
 
+    /** Access the underlying card object. */
     public function get card () :Card
     {
         return _card;
     }
 
+    /** Access the enabled flag. Enabling is intended to indicate that a click will cause an action 
+     *  to happen. Clearing the enabled flag also clears the highlighted flag. */
     public function set enabled (on :Boolean) :void
     {
         _enabled = on;
@@ -62,20 +63,38 @@ public class CardSprite extends Sprite
         update();
     }
 
+    /** Access the enabled flag. */
     public function get enabled () :Boolean
     {
         return _enabled;
     }
 
+    /** Access the emphasis flag. Emphasis is to make the card stand out for a game-specific 
+     *  reason. */
     public function set emphasis (on :Boolean) :void
     {
         _emphasis = on;
         update();
     }
 
+    /** Access the emphasis flag. */
     public function get emphasis () :Boolean
     {
         return _emphasis;
+    }
+
+    /** Access the highlighted flag. Highlighted is intended to indicate that the mouse is hovering 
+     *  over the card.*/
+    public function set highlighted (on :Boolean) :void
+    {
+        _highlighted = on;
+        update();
+    }
+
+    /** Access the highlighted flag. */
+    public function get highlighted () :Boolean
+    {
+        return _highlighted;
     }
 
     protected function update () :void
@@ -93,20 +112,6 @@ public class CardSprite extends Sprite
         }
         else {
             _text.backgroundColor = 0x888888;
-        }
-    }
-
-    protected function mouseOverListener (event :MouseEvent) :void {
-        if (_enabled) {
-            _highlighted = true;
-            update();
-        }
-    }
-
-    protected function mouseOutListener (event :MouseEvent) :void {
-        if (_enabled) {
-            _highlighted = false;
-            update();
         }
     }
 
