@@ -20,6 +20,7 @@ public class Codes
     public static const PROP_LANTERN_POS :String = "lp";
 
     // fight phase
+    public static const PROP_STATS :String = "s";
     public static const MSG_GHOST_ATTACKED :String = "ga";
     public static const MSG_PLAYERS_HEALED :String = "ph";
     public static const MSG_PLAYER_ATTACKED :String = "pa";

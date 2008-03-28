@@ -57,10 +57,14 @@ public class Server
             } else {
                 // delete ghost
                 setGhostId(null);
-
-                // TODO: popup saying grats u win?
+                payout();
+                healTeam();
             }
 
+            // whether the ghost died or the players wiped, clear accumulated fight stats
+            clearStats();
+
+            // and go back to seek state
             setState(GameModel.STATE_SEEKING);
         }
     }
@@ -197,6 +201,8 @@ public class Server
             return;
         }
         var msg :String = event.name;
+        var bits :Array;
+
         if (msg == Codes.MSG_TICK) {
             everySecondTick(event.value as int);
 
@@ -207,14 +213,18 @@ public class Server
 
         } else if (msg == Codes.MSG_GHOST_ATTACKED) {
             if (checkState(GameModel.STATE_FIGHTING)) {
-                var dmg :int = (event.value as Array)[1];
-                damageGhost(dmg);
+                bits = event.value as Array;
+                if (bits != null) {
+                    damageGhost(bits[1]);
+                    accumulateStats(bits[0], bits[1], 0);
+                }
             }
 
         } else if (msg == Codes.MSG_PLAYERS_HEALED) {
             if (checkState(GameModel.STATE_FIGHTING)) {
-                var heal :int = (event.value as Array)[1];
-                doHealPlayers(heal);
+                bits = event.value as Array;
+                doHealPlayers(bits[1]);
+                accumulateStats(bits[0], 0, bits[1]);
             }
         }
     }
@@ -235,9 +245,8 @@ public class Server
         // hand totHeal out proportionally to each player's relative hurtness
         for (ii = 0; ii < team.length; ii ++) {
             var heal :int = (totHeal * playerDmg[ii]) / totDmg;
-            var newHealth :int = heal + Game.model.getPlayerHealth(team[ii]);
             Game.log.debug("HEAL :: Awarding " + heal + " pts to player #" + team[ii]);
-            setPlayerHealth(team[ii], newHealth);
+            healPlayer(team[ii], heal);
         }
     }
 
@@ -272,6 +281,10 @@ public class Server
         return false;
     }
 
+    protected function payout () :void
+    {
+        
+    }
 
     // server-specific parts of the model moved here
     protected function damageGhost (damage :int) :Boolean
@@ -296,6 +309,26 @@ public class Server
         }
         setPlayerHealth(playerId, health - damage);
         return false;
+    }
+
+    protected function healTeam () :void
+    {
+        var team :Array = Game.getTeam(true);
+        for (var ii :int = 0; ii < team.length; ii ++) {
+            healPlayer(team[ii]);
+        }
+    }
+
+    protected function healPlayer (playerId :int, amount :int = -1) :void
+    {
+        var maxHealth :int = Game.model.getPlayerMaxHealth(playerId);
+        var newHealth :int;
+        if (amount < 0) {
+            newHealth = maxHealth;
+        } else {
+            newHealth = Math.min(maxHealth, amount + Game.model.getPlayerHealth(playerId));
+        }
+        setPlayerHealth(playerId, newHealth);
     }
 
     protected function killPlayer (playerId :int) :void
@@ -337,6 +370,28 @@ public class Server
     protected function setState (state :String) :void
     {
         Game.control.state.setRoomProperty(Codes.PROP_STATE, state);
+    }
+
+    protected function accumulateStats (playerId :int, damage :int, healing :int) :void
+    {
+        var stats :Object = Game.control.state.getRoomProperty(Codes.PROP_STATS) as Object;
+        if (stats == null) {
+            stats = { };
+        }
+
+        var bits :Array = stats[playerId];
+        if (bits != null) {
+            damage += stats[0];
+            healing += stats[1];
+        }
+
+        stats[playerId] = [ damage, healing ];
+        Game.control.state.setRoomProperty(Codes.PROP_STATS, stats);
+    }
+
+    protected function clearStats () :void
+    {
+        Game.control.state.setRoomProperty(Codes.PROP_STATS, null);
     }
 
     protected var _ppp :PerPlayerProperties;
