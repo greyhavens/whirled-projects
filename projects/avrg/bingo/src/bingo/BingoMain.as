@@ -73,7 +73,7 @@ public class BingoMain extends Sprite
         return "player " + playerId.toString();
     }
 
-    protected function maybeBeginGame () :void
+    protected function maybeShowIntro () :void
     {
         if (_addedToStage && _resourcesLoaded) {
 
@@ -98,7 +98,7 @@ public class BingoMain extends Sprite
     protected function handleResourcesLoaded (...ignored) :void
     {
         _resourcesLoaded = true;
-        this.maybeBeginGame();
+        this.maybeShowIntro();
     }
 
     protected function handleResourceLoadError (e :ResourceLoadEvent) :void
@@ -111,7 +111,7 @@ public class BingoMain extends Sprite
         log.info("Added to stage: Initializing...");
 
         _addedToStage = true;
-        this.maybeBeginGame();
+        this.maybeShowIntro();
     }
 
     protected function handleUnload (event :Event) :void
