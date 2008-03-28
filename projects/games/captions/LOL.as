@@ -51,6 +51,7 @@ import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
 import com.threerings.util.NetUtil;
+import com.threerings.util.RandomUtil;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
@@ -974,7 +975,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     protected function handleRoundWillStart (event :Event) :void
     {
         // pick a new theme
-        _ctrl.net.set("theme", THEMES[int(Math.random() * THEMES.length)]);
+        _ctrl.net.set("theme", THEMES[RandomUtil.getWeightedIndex(THEME_WEIGHTS)]);
     }
 
     protected function handleSizeChanged (event :SizeChangedEvent) :void
@@ -1051,6 +1052,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     /** The themes we're using. */
     protected static const THEMES :Array = [ LOL_THEME, SILENT_THEME ];
+    protected static const THEME_WEIGHTS :Array = [ 3, 1 ];
 //    protected static const THEMES :Array = [ LOL_THEME ];
 //    protected static const THEMES :Array = [ SILENT_THEME ];
 
