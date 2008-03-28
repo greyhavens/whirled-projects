@@ -63,6 +63,12 @@ public class TagWidget extends Sprite
         _tagPane.y = 50;
         addChild(_tagPane);
 
+        // initialize tags
+        if (_ctrl.net.get("tagsInit") == null) {
+            _ctrl.net.set("tagsInit", true, true);
+            _ctrl.net.set("tag:cat", true, true);
+        }
+
         updateSearchTags();
     }
 

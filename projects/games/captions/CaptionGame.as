@@ -641,7 +641,7 @@ public class CaptionGame extends EventDispatcher
 
         _results = [];
 
-        var flowScores :Object = {};
+        var coinScores :Object = {};
         var playerIdStr :String;
         var playerId :int;
         var winnerVal :int = -1;
@@ -654,7 +654,7 @@ public class CaptionGame extends EventDispatcher
             playerIdStr = String(playerId);
 
             if (_inControl) {
-                flowScores[playerIdStr] = CAPTION_SCORE;
+                coinScores[playerIdStr] = CAPTION_SCORE;
             }
 
             var record :Object = {};
@@ -672,7 +672,7 @@ public class CaptionGame extends EventDispatcher
                 winnerIds.push(playerId);
 
                 if (_inControl) {
-                    flowScores[playerIdStr] = WINNER_SCORE + int(flowScores[playerIdStr]);
+                    coinScores[playerIdStr] = WINNER_SCORE + int(coinScores[playerIdStr]);
                 }
                 record.winner = true;
 
@@ -693,15 +693,15 @@ public class CaptionGame extends EventDispatcher
             var props :Array = _ctrl.net.getPropertyNames("vote:");
             for each (var prop :String in props) {
                 playerIdStr = prop.substring(5);
-                flowScores[playerIdStr] = VOTE_SCORE + int(flowScores[playerIdStr]);
+                coinScores[playerIdStr] = VOTE_SCORE + int(coinScores[playerIdStr]);
             }
 
             // now turn it into two parallel arrays for reporting to the game
             var scoreIds :Array = [];
             var scores :Array = [];
-            for (playerIdStr in flowScores) {
+            for (playerIdStr in coinScores) {
                 scoreIds.push(parseInt(playerIdStr));
-                scores.push(int(flowScores[playerIdStr]));
+                scores.push(int(coinScores[playerIdStr]));
             }
 //            trace("ids    : " + scoreIds);
 //            trace("scores : " + scores);
