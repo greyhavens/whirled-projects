@@ -59,7 +59,14 @@ public class RainbowController
         this.stopRainbowAnimation();
 
         var animClass :Class = SimonMain.resourcesDomain.getDefinition(animName) as Class;
-        _curAnim = new animClass();
+
+        try {
+            _curAnim = new animClass();
+        } catch (err :Error) {
+            log.warning("Disconnecting - error instantiating " + animName + ": " + err.toString());
+            SimonMain.quit();
+            return;
+        }
 
         var loc :Point = this.getScreenLoc();
         _curAnim.x = loc.x;
@@ -70,8 +77,6 @@ public class RainbowController
         if (null != completionCallback) {
             _rainbowAnimHandler = new AnimationHandler(_curAnim, "end", completionCallback);
         }
-
-        //log.info("Playing animation " + animName + " at " + loc);
     }
 
     protected function stopRainbowAnimation () :void
