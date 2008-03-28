@@ -283,7 +283,42 @@ public class Server
 
     protected function payout () :void
     {
-        
+        var stats :Object = Game.control.state.getRoomProperty(Codes.PROP_STATS) as Object;
+        if (stats == null) {
+            stats = { };
+        }
+
+        var team :Array = Game.getTeam();
+        var dmgs :Array = new Array(team.length);
+        var heals :Array = new Array(team.length);
+
+        // initialize these at 1 for simplicity
+        var totDmg :int = 1;
+        var totHeal :int = 1;
+
+        for (var ii :int = 0; ii < team.length; ii ++) {
+            var bits :Array = stats[team[ii]];
+            if (bits != null) {
+                dmgs[ii] = bits[0];
+                totDmg += bits[0];
+
+                heals[ii] = bits[1];
+                totHeal += bits[1];
+
+            } else {
+                dmgs[ii] = heals[ii] = 0;
+            }
+        }
+
+        for (ii = 0; ii < team.length; ii ++) {
+            // we get a 20% contribution just for being present
+            // 40% is allocated to your portion of the damage done
+            // 40% is allocated to your portion of the healing done
+            var factor :Number = 0.2 + 0.4*(dmgs[ii] / totDmg) + 0.4*(heals[ii] / totHeal);
+
+            // TODO: nobody actually listens to this message yet
+            Game.control.state.sendMessage(Codes.MSG_PAYOUT_FACTOR, factor, team[ii]);
+        }
     }
 
     // server-specific parts of the model moved here

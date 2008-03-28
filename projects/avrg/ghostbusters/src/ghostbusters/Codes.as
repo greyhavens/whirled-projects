@@ -25,6 +25,7 @@ public class Codes
     public static const MSG_PLAYERS_HEALED :String = "ph";
     public static const MSG_PLAYER_ATTACKED :String = "pa";
     public static const MSG_PLAYER_DEATH :String = "pd";
+    public static const MSG_PAYOUT_FACTOR :String = "pof";
 
     // player data
     public static const PROP_PLAYER_CUR_HEALTH :String = "pch";
