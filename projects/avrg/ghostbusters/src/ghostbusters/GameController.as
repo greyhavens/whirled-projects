@@ -114,8 +114,7 @@ public class GameController extends Controller
     {
         if (Game.model.isPlayerDead(Game.ourPlayerId) &&
             Game.model.state != GameModel.STATE_FIGHTING) {
-            Game.model.setPlayerHealth(Game.ourPlayerId,
-                                       Game.model.getPlayerMaxHealth(Game.ourPlayerId));
+            Game.model.setOurHealth(Game.model.getPlayerMaxHealth(Game.ourPlayerId));
         }
     }
 

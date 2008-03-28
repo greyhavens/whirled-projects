@@ -10,7 +10,6 @@ public class Codes
 
     public static const PROP_STATE :String = "st";
     public static const PROP_TICKER_RUNNING :String = "ticker";
-    public static const PROP_GHOST_ID :String = "gi";
 
     // seek phase
     public static const MSG_GHOST_ZAP :String = "gz";
@@ -26,11 +25,14 @@ public class Codes
     public static const MSG_PLAYER_ATTACKED :String = "pa";
     public static const MSG_PLAYER_DEATH :String = "pd";
 
-    public static const PROP_GHOST_CUR_HEALTH :String = "gch";
-    public static const PROP_GHOST_MAX_HEALTH :String = "gmh";
+    // player data
     public static const PROP_PLAYER_CUR_HEALTH :String = "pch";
     public static const PROP_PLAYER_MAX_HEALTH :String = "pmh";
 
+    // ghost data
+    public static const PROP_GHOST_ID :String = "gi";
+    public static const PROP_GHOST_CUR_HEALTH :String = "gch";
+    public static const PROP_GHOST_MAX_HEALTH :String = "gmh";
     public static const PROP_LAST_GHOST_ATTACK :String = "lga";
 
     // ghost states
