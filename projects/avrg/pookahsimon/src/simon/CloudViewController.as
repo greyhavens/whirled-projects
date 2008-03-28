@@ -101,11 +101,11 @@ public class CloudViewController extends SceneObject
     {
         switch (SimonMain.model.curState.gameState) {
 
-        case SharedState.WAITING_FOR_GAME_START:
+        case SharedState.STATE_WAITINGFORPLAYERS:
             this.drawWaitingForGameStartText();
             break;
 
-        case SharedState.WE_HAVE_A_WINNER:
+        case SharedState.STATE_WEHAVEAWINNER:
             this.drawWinnerText();
             break;
 

@@ -28,14 +28,14 @@ public class GameMode extends AppMode
         // so that it is prepared to take over as the
         // authoritative client at any time.
 
-        if (SimonMain.control.isConnected() && SimonMain.control.hasControl() && SimonMain.model.curState.gameState != SharedState.INVALID_STATE) {
+        if (SimonMain.control.isConnected() && SimonMain.control.hasControl() && SimonMain.model.curState.gameState != SharedState.STATE_INITIAL) {
             // try to reset the state when we first enter a game, in case
             // there's a current game in progress that isn't controlled by anybody
             _expectedState = new SharedState();
             this.applyStateChanges();
         } else {
             _expectedState = null;
-            this.handleGameStateChange(null);
+            this.handleGameStateChange();
         }
     }
 
@@ -59,7 +59,7 @@ public class GameMode extends AppMode
         super.update(dt);
 
         switch (SimonMain.model.curState.gameState) {
-        case SharedState.WAITING_FOR_GAME_START:
+        case SharedState.STATE_WAITINGFORPLAYERS:
             if (this.canStartGame) {
                 this.startNextGame();
             }
@@ -95,12 +95,12 @@ public class GameMode extends AppMode
         }
     }
 
-    protected function handleQuitButtonClick (e :MouseEvent) :void
+    protected function handleQuitButtonClick (...ignored) :void
     {
         SimonMain.quit();
     }
 
-    protected function handleGameStateChange (e :SharedStateChangedEvent) :void
+    protected function handleGameStateChange (...ignored) :void
     {
         // reset the expected state when the state changes
         _expectedState = null;
@@ -108,24 +108,24 @@ public class GameMode extends AppMode
         this.destroyObjectNamed(RainbowController.NAME);
 
         switch (SimonMain.model.curState.gameState) {
-        case SharedState.INVALID_STATE:
+        case SharedState.STATE_INITIAL:
             // no game in progress. kick a new one off.
             this.setupFirstGame();
             break;
 
-        case SharedState.WAITING_FOR_GAME_START:
+        case SharedState.STATE_WAITINGFORPLAYERS:
             // in the "lobby", waiting for enough players to join
             if (this.canStartGame) {
                 this.startNextGame();
             }
             break;
 
-        case SharedState.PLAYING_GAME:
+        case SharedState.STATE_PLAYING:
             // the game has started -- it's the first player's turn
-            this.handleCurPlayerChanged(null);
+            this.handleCurPlayerChanged();
             break;
 
-        case SharedState.WE_HAVE_A_WINNER:
+        case SharedState.STATE_WEHAVEAWINNER:
             this.handleGameOver();
             break;
 
@@ -137,7 +137,7 @@ public class GameMode extends AppMode
         this.updateStatusText();
     }
 
-    protected function handleCurPlayerChanged (e :SharedStateChangedEvent) :void
+    protected function handleCurPlayerChanged (...ignored) :void
     {
         // reset the expected state when the state changes
         _expectedState = null;
@@ -146,12 +146,12 @@ public class GameMode extends AppMode
 
         if (SimonMain.model.curState.players.length == 0) {
             _expectedState = SimonMain.model.curState.clone();
-            _expectedState.gameState = SharedState.WAITING_FOR_GAME_START;
+            _expectedState.gameState = SharedState.STATE_WAITINGFORPLAYERS;
 
             this.applyStateChanges();
         } else if (SimonMain.model.curState.players.length == 1 && SimonMain.minPlayersToStart > 1) {
             _expectedState = SimonMain.model.curState.clone();
-            _expectedState.gameState = SharedState.WE_HAVE_A_WINNER;
+            _expectedState.gameState = SharedState.STATE_WEHAVEAWINNER;
             _expectedState.roundWinnerId = (_expectedState.players.length > 0 ? _expectedState.players[0] : 0);
 
             this.applyStateChanges();
@@ -184,7 +184,7 @@ public class GameMode extends AppMode
         }
     }
 
-    protected function handleNewScores (e :SharedStateChangedEvent) :void
+    protected function handleNewScores (...ignored) :void
     {
         _expectedScores = null;
     }
@@ -213,20 +213,20 @@ public class GameMode extends AppMode
         var newStatusText :String;
 
         switch (SimonMain.model.curState.gameState) {
-        case SharedState.INVALID_STATE:
-            newStatusText = "INVALID_STATE";
+        case SharedState.STATE_INITIAL:
+            newStatusText = "STATE_INITIAL";
             break;
 
-        case SharedState.WAITING_FOR_GAME_START:
+        case SharedState.STATE_WAITINGFORPLAYERS:
             newStatusText = "Waiting to start (players: " + SimonMain.model.getPlayerOids().length + "/" + SimonMain.minPlayersToStart + ")";
             break;
 
-        case SharedState.PLAYING_GAME:
+        case SharedState.STATE_PLAYING:
             var curPlayerName :String = SimonMain.getPlayerName(SimonMain.model.curState.curPlayerOid);
             newStatusText = "Playing game. " + curPlayerName + "'s turn.";
             break;
 
-        case SharedState.WE_HAVE_A_WINNER:
+        case SharedState.STATE_WEHAVEAWINNER:
             newStatusText = SimonMain.getPlayerName(SimonMain.model.curState.roundWinnerId) + " is the winner!";
             break;
 
@@ -246,7 +246,7 @@ public class GameMode extends AppMode
         log.info("setupFirstGame()");
 
         _expectedState = new SharedState();
-        _expectedState.gameState = SharedState.WAITING_FOR_GAME_START;
+        _expectedState.gameState = SharedState.STATE_WAITINGFORPLAYERS;
 
         this.applyStateChanges();
     }
@@ -261,10 +261,10 @@ public class GameMode extends AppMode
         log.info("startNextGame()");
 
         // set up for the next game state if we haven't already
-        if (null == _expectedState || _expectedState.gameState != SharedState.PLAYING_GAME) {
+        if (null == _expectedState || _expectedState.gameState != SharedState.STATE_PLAYING) {
             _expectedState = new SharedState();
 
-            _expectedState.gameState = SharedState.PLAYING_GAME;
+            _expectedState.gameState = SharedState.STATE_PLAYING;
             _expectedState.curPlayerIdx = 0;
 
             // shuffle the player list
@@ -291,7 +291,7 @@ public class GameMode extends AppMode
         _expectedState = SimonMain.model.curState.clone();
 
         // push a new round update out
-        _expectedState.gameState = SharedState.WAITING_FOR_GAME_START;
+        _expectedState.gameState = SharedState.STATE_WAITINGFORPLAYERS;
         _expectedState.players = [];
         _expectedState.pattern = [];
         _expectedState.roundId += 1;

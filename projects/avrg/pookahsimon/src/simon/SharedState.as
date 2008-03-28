@@ -10,12 +10,12 @@ import flash.utils.ByteArray;
  */
 public class SharedState
 {
-    public static const INVALID_STATE :int              = -1;
-    public static const WAITING_FOR_GAME_START :int     = 0;
-    public static const PLAYING_GAME :int               = 1;
-    public static const WE_HAVE_A_WINNER :int   = 2;
+    public static const STATE_INITIAL :int              = -1;
+    public static const STATE_WAITINGFORPLAYERS :int    = 0;
+    public static const STATE_PLAYING :int              = 1;
+    public static const STATE_WEHAVEAWINNER :int        = 2;
 
-    public var gameState :int = INVALID_STATE;        // byte
+    public var gameState :int = STATE_INITIAL;        // byte
 
     public var roundId :int;                        // int
     public var curPlayerIdx :int;                   // byte
