@@ -4,9 +4,9 @@ import flash.geom.Point;
 
 public class Constants
 {
-    public static const VERSION :Number = 6;
+    public static const VERSION :Number = 7;
 
-    public static const ALLOW_CHEATS :Boolean = true;
+    public static const ALLOW_CHEATS :Boolean = false;
     public static const FORCE_SINGLEPLAYER :Boolean = false;
 
     // cosmetic bits
@@ -20,7 +20,7 @@ public class Constants
     public static const CARD_HEIGHT :int = 5;
     public static const FREE_SPACE :Point = new Point(2, 2);
 
-    public static const NEW_BALL_DELAY_S :Number = 7;
+    public static const NEW_BALL_DELAY_S :Number = 9;
     public static const NEW_ROUND_DELAY_S :Number = 15;
 
     public static const USE_ITEM_NAMES_AS_TAGS :Boolean = false;
