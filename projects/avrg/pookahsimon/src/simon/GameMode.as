@@ -7,7 +7,6 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
 import flash.events.MouseEvent;
-import flash.events.TimerEvent;
 
 public class GameMode extends AppMode
 {
@@ -278,6 +277,7 @@ public class GameMode extends AppMode
 
     protected function startNewRoundTimer () :void
     {
+        this.stopNewRoundTimer();
         this.addObject(new SimpleTimer(Constants.NEW_ROUND_DELAY_S, handleNewRoundTimerExpired, false, NEW_ROUND_TIMER_NAME));
     }
 
@@ -286,7 +286,7 @@ public class GameMode extends AppMode
         this.destroyObjectNamed(NEW_ROUND_TIMER_NAME);
     }
 
-    protected function handleNewRoundTimerExpired (e :TimerEvent) :void
+    protected function handleNewRoundTimerExpired () :void
     {
         _expectedState = SimonMain.model.curState.clone();
 
