@@ -2,9 +2,7 @@ package simon {
 
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
-
-import flash.events.TimerEvent;
-import flash.utils.Timer;
+import com.whirled.contrib.simplegame.tasks.*;
 
 public class AvatarController extends SimObject
 {
@@ -13,11 +11,6 @@ public class AvatarController extends SimObject
     public static function get instance () :AvatarController
     {
         return MainLoop.instance.topMode.getObjectNamed(NAME) as AvatarController;
-    }
-
-    override protected function removedFromDB () :void
-    {
-        this.stopTimer();
     }
 
     override public function get objectName () :String
@@ -44,9 +37,9 @@ public class AvatarController extends SimObject
 
             _savedState = revertToState;
 
-            _timer = new Timer(revertAfterSeconds * 1000, 1);
-            _timer.addEventListener(TimerEvent.TIMER, revertToSavedState, false, 0, true);
-            _timer.start();
+            this.addNamedTask(
+                AVATAR_REVERT_TASK_NAME,
+                After(revertAfterSeconds, new FunctionTask(revertToSavedState)));
         }
 
         var infoString :String = "setting state to '" + newState + "'";
@@ -61,11 +54,7 @@ public class AvatarController extends SimObject
 
     protected function stopTimer () :void
     {
-        if (null != _timer) {
-            _timer.stop();
-            _timer = null;
-            _savedState = null;
-        }
+        this.removeNamedTasks(AVATAR_REVERT_TASK_NAME);
     }
 
     protected function revertToSavedState (...ignored) :void
@@ -76,10 +65,11 @@ public class AvatarController extends SimObject
         }
     }
 
-    protected var _timer :Timer;
     protected var _savedState :String;
 
     protected static var log :Log = Log.getLog(AvatarController);
+
+    protected static const AVATAR_REVERT_TASK_NAME :String = "AvatarRevert";
 
 }
 
