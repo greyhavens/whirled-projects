@@ -606,7 +606,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
             cb.setStyle("disabledTextFormat", _textFormat);
             cb.setStyle("textFormat", _textFormat);
             cb.textField.autoSize = TextFieldAutoSize.LEFT;
-            cb.label = deHTML(String(caps[ii]));
+            cb.label = String(caps[ii]);
 
             cb.addEventListener(Event.CHANGE, handleCaptionVote);
             if (ii == ourIdx) {
@@ -670,7 +670,7 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
             var lbl :Label = new Label();
             lbl.setStyle("textFormat", _textFormat);
-            lbl.text = deHTML(String(result.caption));
+            lbl.text = String(result.caption);
             lbl.textField.wordWrap = true;
             lbl.setSize(width - 36, 30);
             lbl.validateNow();
@@ -752,15 +752,6 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
         star.y = _winnerName.y;
         star.x = _winnerName.x + (IDEAL_WIDTH - _winnerName.textWidth) / 2 - star.width - PAD;
         _winnerName.parent.addChild(star);
-    }
-
-    protected function deHTML (s :String) :String
-    {
-        s = s.replace("&", "&amp;");
-        s = s.replace("<", "&lt;");
-        s = s.replace(">", "&gt;");
-
-        return s;
     }
 
     /**
