@@ -30,6 +30,8 @@ import com.whirled.game.*;
  */
 public class TagWidget extends Sprite
 {
+    public static const MAX_TAGS :int = 3;
+
     public function TagWidget (
         ctrl :GameControl, searchPhotoService :SearchFlickrPhotoService) :void
     {
@@ -91,6 +93,8 @@ public class TagWidget extends Sprite
         _tagSprite.addChild(tagBox);
 
         _tagPane.update();
+
+        _tagInput.enabled = (_tagSprite.numChildren < MAX_TAGS);
     }
 
     protected function removeTag (tag :String) :void
@@ -113,6 +117,8 @@ public class TagWidget extends Sprite
         if (removed) {
             _tagPane.update();
         }
+
+        _tagInput.enabled = (_tagSprite.numChildren < MAX_TAGS);
     }
 
     protected function handleTagInput (event :ComponentEvent) :void
@@ -121,6 +127,11 @@ public class TagWidget extends Sprite
         if (!StringUtil.isBlank(tag)) {
             // go ahead and just add it
             _ctrl.net.set("tag:" + tag.toLowerCase(), true);
+
+            // disable further entry if this new tag would put us over the max
+            if (_tagSprite.numChildren + 1 >= MAX_TAGS) {
+                _tagInput.enabled = false;
+            }
         }
         _tagInput.text = "";
     }
