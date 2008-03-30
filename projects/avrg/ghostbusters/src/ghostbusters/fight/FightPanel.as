@@ -135,10 +135,8 @@ public class FightPanel extends FrameSprite
                 _minigame.beginNextGame();
 
             } else if (_minigame.currentGame.isDone) {
-                if (_minigame.currentGame.gameResult.success == MicrogameResult.SUCCESS) {
-                    CommandEvent.dispatch(this, GameController.GHOST_ATTACKED,
-                                          _minigame.currentGame.gameResult);
-                }
+                CommandEvent.dispatch(this, GameController.GHOST_ATTACKED,
+                                      _minigame.currentGame.gameResult);
                 if (_minigame != null) {
                     _minigame.beginNextGame();
                 }
@@ -180,8 +178,11 @@ public class FightPanel extends FrameSprite
 
     protected function messageReceived (event: AVRGameControlEvent) :void
     {
-        if (event.name == Codes.MSG_GHOST_ATTACKED) {
-            showGhostDamage();
+        if (event.name == Codes.MSG_MINIGAME_RESULT) {
+            var bits :Array = (event.value as Array);
+            if (bits != null && bits[2] > 0) {
+                showGhostDamage();
+            }
 
         } else if (event.name == Codes.MSG_PLAYER_ATTACKED) {
             showGhostAttack(event.value as int);

@@ -21,8 +21,7 @@ public class Codes
 
     // fight phase
     public static const PROP_STATS :String = "s";
-    public static const MSG_GHOST_ATTACKED :String = "ga";
-    public static const MSG_PLAYERS_HEALED :String = "ph";
+    public static const MSG_MINIGAME_RESULT :String = "mgr";
     public static const MSG_PLAYER_ATTACKED :String = "pa";
     public static const MSG_PLAYER_DEATH :String = "pd";
     public static const MSG_PAYOUT_FACTOR :String = "pof";

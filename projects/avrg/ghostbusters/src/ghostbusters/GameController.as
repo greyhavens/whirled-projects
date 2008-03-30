@@ -15,9 +15,6 @@ import ghostbusters.fight.MicrogameResult;
 
 public class GameController extends Controller
 {
-    /* Finishing a minigame pays 1/20th of the most we could ever want to pay for anything. */
-    public static const PAYOUT_MINIGAME :Number = 1.0/20;
-
     public static const HELP :String = "Help";
     public static const PLAY :String = "Play";
     public static const TOGGLE_LANTERN :String = "ToggleLantern";
@@ -34,6 +31,9 @@ public class GameController extends Controller
     {
         panel = new GamePanel()
         setControlledPanel(panel);
+
+        Game.control.state.addEventListener(
+            AVRGameControlEvent.MESSAGE_RECEIVED, handleMessage);
     }
 
     public function shutdown () :void
@@ -93,16 +93,17 @@ public class GameController extends Controller
 
     public function handleGhostAttacked (result :MicrogameResult) :void
     {
-        if (result.damageOutput > 0) {
-            Game.control.state.sendMessage(
-                Codes.MSG_GHOST_ATTACKED, [ Game.ourPlayerId, result.damageOutput ]);
+        Game.control.state.sendMessage(
+            Codes.MSG_MINIGAME_RESULT, [
+                Game.ourPlayerId,
+                result.success == MicrogameResult.SUCCESS,
+                result.damageOutput,
+                result.healthOutput
+            ]);
+
+        if (result.success == MicrogameResult.SUCCESS) {
+            Game.control.playAvatarAction("Retaliate");
         }
-        if (result.healthOutput > 0) {
-            Game.control.state.sendMessage(
-                Codes.MSG_PLAYERS_HEALED, [ Game.ourPlayerId, result.healthOutput ]);
-        }
-        Game.control.quests.completeQuest("minigame", null, PAYOUT_MINIGAME);
-        Game.control.playAvatarAction("Retaliate");
     }
 
     public function handleZapGhost () :void
@@ -115,6 +116,13 @@ public class GameController extends Controller
         if (Game.model.isPlayerDead(Game.ourPlayerId) &&
             Game.model.state != GameModel.STATE_FIGHTING) {
             Game.model.setOurHealth(Game.model.getPlayerMaxHealth(Game.ourPlayerId));
+        }
+    }
+
+    protected function handleMessage (event :AVRGameControlEvent) :void
+    {
+        if (event.name == Codes.MSG_PAYOUT_FACTOR) {
+            Game.control.quests.completeQuest("ghost_defeated", null, event.value as int);
         }
     }
 
