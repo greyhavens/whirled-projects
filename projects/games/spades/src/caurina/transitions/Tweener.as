@@ -369,7 +369,17 @@ package caurina.transitions {
 				if (typeof(args[i]) == "string" && !AuxFunctions.isInArray(args[i], properties)) properties.push(args[i]);
 			}
 			// Call the affect function on the specified properties
-			return affectTweens(removeTweenByIndex, p_scope, properties);
+			if (affectTweens(removeTweenByIndex, p_scope, properties)) {
+				// cleanup null references
+				for (i = 0; i < _tweenList.length; i++) {
+					if (_tweenList[i] == null) {
+						removeTweenByIndex(i, true);
+						i--;
+					}
+				}
+				return true;
+			}
+			return false;
 		}
 
 
