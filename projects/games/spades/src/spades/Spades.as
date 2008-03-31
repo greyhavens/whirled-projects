@@ -582,7 +582,9 @@ public class Spades extends Sprite
         
         if (event.name == COMS_HAND) {
             // we have been given some cards, repopulate our hand
-            _hand.reset(event.value as Array);
+            var hand :CardArray = new CardArray(event.value as Array);
+            hand.standardSort(SUITS, Card.RANK_ORDER_ACES_HIGH);
+            _hand.reset(hand.ordinals);
             log("My hand is " + _hand);
         }
     }
@@ -641,6 +643,11 @@ public class Spades extends Sprite
     /** Name of property indicating the last player to lead the hand. */
     protected static const COMS_LAST_LEADER :String = "lastleader";
 
+    protected static const SUITS :Array = [
+        Card.SUIT_SPADES,
+        Card.SUIT_HEARTS,
+        Card.SUIT_CLUBS,
+        Card.SUIT_DIAMONDS];
 }
 }
 

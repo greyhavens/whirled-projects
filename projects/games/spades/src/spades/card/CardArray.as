@@ -209,6 +209,34 @@ public class CardArray extends EventDispatcher
             }
         }
     }
+    
+    /** Sort the array in place for player's ease of use. */
+    public function standardSort (suits :Array, ordering :int) :void
+    {
+        dispatchEvent(CardArrayEvent.preReset());
+
+        _cards.sort(cmpCards);
+
+        // restore the ordinals
+        _ordinals = _cards.map(getOrdinal);
+
+        dispatchEvent(CardArrayEvent.reset());
+
+        function getOrdinal (c :Card, i :int, a :Array) :int {
+            return c.ordinal;
+        }
+
+        function cmpSuits (a :int, b :int) :int {
+            return suits.indexOf(a) - suits.indexOf(b);
+        }
+
+        function cmpCards (a :Card, b :Card) :int {
+            if (a.suit != b.suit) {
+                return cmpSuits(a.suit, b.suit);
+            }
+            return Card.compareRanks(a.rank, b.rank, ordering);
+        }
+    }
 
     /** @inheritDoc */
     public override function toString () :String
