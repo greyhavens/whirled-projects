@@ -106,15 +106,6 @@ public class CloudViewController extends SceneObject
         SimonMain.quit();
     }
 
-    protected function drawWaitForNextRoundText () :void
-    {
-        this.canScrollUp = false;
-        this.canScrollDown = false;
-
-        this.playersTextField.text = "You will\nplay when\nthe next\nround\nbegins";
-        this.scoresTextField.text = "";
-    }
-
     protected function updateStatusText (...ignored) :void
     {
         // Has this player played a game yet? Tell them they will join at the beginning

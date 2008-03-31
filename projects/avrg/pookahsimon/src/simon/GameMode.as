@@ -159,6 +159,7 @@ public class GameMode extends AppMode
         // reset the expected state when the state changes
         _expectedState = null;
 
+        this.destroyObjectNamed(WinnerCloudController.NAME);
         this.destroyObjectNamed(RainbowController.NAME);
 
         if (SimonMain.model.curState.players.length == 0) {
@@ -208,14 +209,21 @@ public class GameMode extends AppMode
 
     protected function handleGameOver () :void
     {
-        // update scores
-        if (SimonMain.model.curState.roundWinnerId != 0) {
+        var roundWinnerId :int = SimonMain.model.curState.roundWinnerId;
+
+        if (roundWinnerId != 0) {
+
+            // update scores
             _expectedScores = SimonMain.model.curScores.clone();
-            _expectedScores.incrementScore(SimonMain.model.curState.roundWinnerId, new Date());
+            _expectedScores.incrementScore(roundWinnerId, new Date());
             this.applyStateChanges();
 
-            // are you TEH WINNAR?
-            if (SimonMain.model.curState.roundWinnerId == SimonMain.localPlayerId && SimonMain.control.isConnected()) {
+            // show the winner screen
+            this.destroyObjectNamed(WinnerCloudController.NAME);
+            this.addObject(new WinnerCloudController(roundWinnerId), _gameLayer);
+
+            // award us coins if we are the winner
+            if (roundWinnerId == SimonMain.localPlayerId && SimonMain.control.isConnected()) {
                 SimonMain.control.quests.completeQuest("dummyString", null, 1);
                 AvatarController.instance.setAvatarState("Dance", Constants.AVATAR_DANCE_TIME, "Default");
             }
