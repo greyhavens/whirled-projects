@@ -10,7 +10,7 @@ import flash.display.MovieClip;
 
 
 /**
- * Represents a card graphic (placeholder).
+ * Represents a card graphic with a few appearance flags.
  */
 public class CardSprite extends Sprite
 {
@@ -20,22 +20,33 @@ public class CardSprite extends Sprite
     /** Height of a card sprite. */
     public static const HEIGHT :int = 80;
 
-    public static var dump :Boolean = true;
+    /** Normal appearance */
+    public static const NORMAL :CardState = 
+        new CardState(0xffffff, 0.0);
+
+    /** Disabled appearance */
+    public static const DISABLED :CardState = 
+        new CardState(0x808080, 0.2);
+
+    /** Highlighted appearance */
+    public static const HIGHLIGHTED :CardState = 
+        new CardState(0xff7f7f, 0.3);
+
+    /** Emphasized appearance */
+    public static const EMPHASIZED :CardState = 
+        new CardState(0x7f7fff, 0.3);
 
     /** Create a new card sprite. */
     public function CardSprite (card :Card)
     {
         _card = card;
+        _cover = new Sprite();
+        _state = NORMAL;
 
         MultiLoader.getContents(DECK, gotDeck);
 
         function gotDeck (clip :MovieClip) :void
         {
-            if (dump) {
-                Debug.debug("Got deck: " + clip.width + " x " + clip.height);
-                dump = false;
-            }
-
             _deck = clip;
             _deck.gotoAndStop(card.string);
             _deck.x = -WIDTH / 2;
@@ -43,7 +54,7 @@ public class CardSprite extends Sprite
             _deck.scaleX = WIDTH / _deck.width;
             _deck.scaleY = HEIGHT / _deck.height;
             addChild(_deck);
-            update();
+            _deck.addChild(_cover);
         }
     }
 
@@ -53,66 +64,38 @@ public class CardSprite extends Sprite
         return _card;
     }
 
-    /** Access the enabled flag. Enabling is intended to indicate that a click will cause an action 
-     *  to happen. Clearing the enabled flag also clears the highlighted flag. */
-    public function set enabled (on :Boolean) :void
+    /** Access to the card's highlight state. */
+    public function get state () :CardState
     {
-        _enabled = on;
-        if (!on) {
-            _highlighted = false;
+        return _state;
+    }
+
+    /** Access to the card's highlight state. */
+    public function set state (state :CardState) :void
+    {
+        if (_state != state) {
+            _state = state;
+            update();
         }
-        update();
     }
-
-    /** Access the enabled flag. */
-    public function get enabled () :Boolean
-    {
-        return _enabled;
-    }
-
-    /** Access the emphasis flag. Emphasis is to make the card stand out for a game-specific 
-     *  reason. */
-    public function set emphasis (on :Boolean) :void
-    {
-        _emphasis = on;
-        update();
-    }
-
-    /** Access the emphasis flag. */
-    public function get emphasis () :Boolean
-    {
-        return _emphasis;
-    }
-
-    /** Access the highlighted flag. Highlighted is intended to indicate that the mouse is hovering 
-     *  over the card.*/
-    public function set highlighted (on :Boolean) :void
-    {
-        _highlighted = on;
-        update();
-    }
-
-    /** Access the highlighted flag. */
-    public function get highlighted () :Boolean
-    {
-        return _highlighted;
-    }
-
+    
     protected function update () :void
     {
-        if (_deck == null) {
-            return;
-        }
+        _cover.alpha = _state.alpha;
+        _cover.graphics.clear();
+        _cover.graphics.beginFill(_state.color);
+        _cover.graphics.drawRect(0, 0, WIDTH, HEIGHT);
+        _cover.graphics.endFill();
     }
 
     protected var _card :Card;
-    protected var _enabled :Boolean = false;
-    protected var _highlighted :Boolean = false;
-    protected var _emphasis :Boolean = false;
+    protected var _state :CardState;
     protected var _deck :MovieClip;
+    protected var _cover :Sprite;
 
     [Embed(source="../../../rsrc/deck.swf", mimeType="application/octet-stream")]
     protected static const DECK :Class;
 }
 
 }
+

@@ -51,7 +51,13 @@ public class TrickSprite extends CardArraySprite
         if (_winningCard != card) {
             _winningCard = card;
             for (var i :int = 0; i < _cards.length; ++i) {
-                _cards[i].emphasis = (i == _winningCard);
+                var c :CardSprite = _cards[i];
+                if (i == _winningCard) {
+                    c.state = CardSprite.EMPHASIZED;
+                }
+                else {
+                    c.state = CardSprite.NORMAL;
+                }
             }
         }
     }
@@ -65,6 +71,7 @@ public class TrickSprite extends CardArraySprite
     override protected function cardArrayListener (event :CardArrayEvent) :void
     {
         super.cardArrayListener(event);
+
         // make sure new trick does not inherit previous winning card
         if (event.action == CardArrayEvent.ACTION_RESET) {
             winningCard = -1;

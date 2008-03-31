@@ -31,7 +31,7 @@ public class HandSprite extends CardArraySprite
 
         function disableSprite (c :CardSprite, index :int, array :Array) :void
         {
-            c.enabled = false;
+            c.state = CardSprite.DISABLED;
         }
     }
     
@@ -55,9 +55,9 @@ public class HandSprite extends CardArraySprite
         function enableSprite (c :CardSprite, index :int, array :Array) :void
         {
             var enable :Boolean = subset == null || subset.has(c.card);
-            c.enabled = enable;
             if (enable) {
                 ++count;
+                c.state = CardSprite.NORMAL;
             }
         }
     }
@@ -97,7 +97,7 @@ public class HandSprite extends CardArraySprite
 
                 _popupCard = card;
                 _popup = offset;
-                _popupCard.highlighted = true;
+                _popupCard.state = CardSprite.HIGHLIGHTED;
             }
         }
     }
@@ -121,7 +121,9 @@ public class HandSprite extends CardArraySprite
             else {
                 Tweener.removeTweens(_popupCard, "y");
             }
-            _popupCard.highlighted = false;
+            if (_popupCard.state == CardSprite.HIGHLIGHTED) {
+                _popupCard.state = CardSprite.NORMAL;
+            }
         }
         _popupCard = null;
         _popup = -1;
@@ -131,13 +133,18 @@ public class HandSprite extends CardArraySprite
     override protected function cardArrayListener (event :CardArrayEvent) :void
     {
         super.cardArrayListener(event);
+
+        if (event.action == CardArrayEvent.ACTION_RESET) {
+            // game logic will do this soon, but call now to make sure there is no flashing
+            disable();
+        }
     }
 
     protected function mouseOverListener (event :MouseEvent) :void
     {
         // pop up the card if it is enabled
         var card :CardSprite = exposeCard(event.target);
-        if (card != null && card.enabled) {
+        if (card != null && card.state != CardSprite.DISABLED) {
             popUp(card, event.localY);
         }
     }
