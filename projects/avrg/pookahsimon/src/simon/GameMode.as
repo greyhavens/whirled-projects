@@ -123,6 +123,7 @@ public class GameMode extends AppMode
         _expectedState = null;
 
         this.destroyObjectNamed(RainbowController.NAME);
+        this.destroyObjectNamed(WinnerCloudController.NAME);
 
         switch (SimonMain.model.curState.gameState) {
         case SharedState.STATE_INITIAL:
@@ -159,7 +160,6 @@ public class GameMode extends AppMode
         // reset the expected state when the state changes
         _expectedState = null;
 
-        this.destroyObjectNamed(WinnerCloudController.NAME);
         this.destroyObjectNamed(RainbowController.NAME);
 
         if (SimonMain.model.curState.players.length == 0) {
@@ -219,7 +219,6 @@ public class GameMode extends AppMode
             this.applyStateChanges();
 
             // show the winner screen
-            this.destroyObjectNamed(WinnerCloudController.NAME);
             this.addObject(new WinnerCloudController(roundWinnerId), _gameLayer);
 
             // award us coins if we are the winner
