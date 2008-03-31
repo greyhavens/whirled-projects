@@ -22,19 +22,19 @@ public class CardSprite extends Sprite
 
     /** Normal appearance */
     public static const NORMAL :CardState = 
-        new CardState(0xffffff, 0.0);
+        new CardState(0xffffff, 0.0, "normal");
 
     /** Disabled appearance */
     public static const DISABLED :CardState = 
-        new CardState(0x808080, 0.2);
+        new CardState(0x808080, 0.2, "disabled");
 
     /** Highlighted appearance */
     public static const HIGHLIGHTED :CardState = 
-        new CardState(0xff7f7f, 0.3);
+        new CardState(0xff7f7f, 0.3, "highlighted");
 
     /** Emphasized appearance */
     public static const EMPHASIZED :CardState = 
-        new CardState(0x7f7fff, 0.3);
+        new CardState(0x7f7fff, 0.3, "emphasized");
 
     /** Create a new card sprite. */
     public function CardSprite (card :Card)
@@ -77,6 +77,17 @@ public class CardSprite extends Sprite
             _state = state;
             update();
         }
+    }
+
+    /** @inheritDoc */
+    // From Object
+    override public function toString () :String
+    {
+        var stateStr :String = _state.toString();
+        var superStr :String = super.toString();
+        var parentStr :String = parent == null ? "null" : parent.toString();
+        return "CardSprite " + _card.toString() + " (" + stateStr + ") " + 
+            superStr + " in " + parentStr;
     }
     
     protected function update () :void
