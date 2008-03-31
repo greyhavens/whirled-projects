@@ -299,11 +299,34 @@ public class Server
         if (totPoints == 0) {
             return;
         }
+
+        // The current payout factor for a player is linearly proportional to how many minigame
+        // points that player scored relative to the points scored by the whole team. A solo kill
+        // against a ghost the player's own level yields a factor of 0.5. Killing a higher level
+        // ghost yields a progressive bonus up to 100% and a lower level ghost shrinks the reward
+        // commensurately. Finally, the payout is reduced by the square root of the size of the
+        // team.
+        //
+        // The rationale behind the level and team size tweaks are not that strong players should
+        // get more flow, but rather to compensate for the fact that a strong player can kill
+        // weak ghosts at a very rapid rate and this is per-kill compensation.
+        //
+        // The rationale behind the square root is one seen in many MMO's: first, you divide the
+        // payout by the size of the team (because 4 people can kill much faster than 2), then
+        // you partially undo this penalty with a "team bonus" to encourage socializing and to
+        // provide a bit of slack in the group makeup. 
+        //
+        //   payoutFactor(player) = 0.5 *
+        //      levelAdjustment(level(ghost) - level(player)) *
+        //      (minigamePoints(player) / minigamePoints(team)) *
+        //      (1 / SQRT(size(team)))
+        //
+        // The precise definition of levelAdjustment() is up in the air, but I figure something
+        // along the lines of 1+atan(x/2) (http://www.mathsisfun.com/graph/function-grapher.php)
+
         for (ii = 0; ii < team.length; ii ++) {
-            // solo-killing a ghost of your same level = 0.5 factor
-            var factor :Number = 0.5 * points[ii]  / totPoints;
+            var factor :Number = 0.5 * (points[ii]  / totPoints) / Math.sqrt(team.length);
             if (factor > 0) {
-                Game.log.debug("Player #" + team[ii] + " payout factor: " + factor);
                 Game.control.state.sendMessage(Codes.MSG_PAYOUT_FACTOR, factor, team[ii]);
             }
         }
