@@ -122,7 +122,7 @@ public class GameController extends Controller
     protected function handleMessage (event :AVRGameControlEvent) :void
     {
         if (event.name == Codes.MSG_PAYOUT_FACTOR) {
-            Game.control.quests.completeQuest("ghost_defeated", null, event.value as int);
+            Game.control.quests.completeQuest("ghost_defeated", null, event.value as Number);
         }
     }
 

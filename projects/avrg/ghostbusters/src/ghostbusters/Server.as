@@ -56,9 +56,9 @@ public class Server
 
             } else {
                 // delete ghost
-                setGhostId(null);
                 payout();
                 healTeam();
+                setGhostId(null);
             }
 
             // whether the ghost died or the players wiped, clear accumulated fight stats
@@ -289,23 +289,21 @@ public class Server
         var team :Array = Game.getTeam();
         var points :Array = new Array(team.length);
 
-        // initialize these at 1 for simplicity
-        var totPoints :int = 1;
-
+        var totPoints :int = 0;
         for (var ii :int = 0; ii < team.length; ii ++) {
-            var bits :Array = stats[team[ii]];
-            if (bits != null) {
-                points[ii] = int(stats[team[ii]]);
-                totPoints += points[ii];
-
-            } else {
-                points[ii] = 0;
-            }
+            points[ii] = int(stats[team[ii]]);
+            totPoints += points[ii];
+            Game.log.debug("Player #" + team[ii] + " accrued " + points[ii] + " points...");
         }
 
+        if (totPoints == 0) {
+            return;
+        }
         for (ii = 0; ii < team.length; ii ++) {
-            var factor :Number = points[ii]  / totPoints;
+            // solo-killing a ghost of your same level = 0.5 factor
+            var factor :Number = 0.5 * points[ii]  / totPoints;
             if (factor > 0) {
+                Game.log.debug("Player #" + team[ii] + " payout factor: " + factor);
                 Game.control.state.sendMessage(Codes.MSG_PAYOUT_FACTOR, factor, team[ii]);
             }
         }
