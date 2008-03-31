@@ -65,21 +65,19 @@ public class RainbowController extends SceneObject
 
         this.stopRainbowAnimation();
         this.stopNoteAnimation();
-        this.destroyPlayerTimeoutHandler();
+    }
+
+    override protected function update (dt :Number) :void
+    {
+        super.update(dt);
+        this.updateTimeoutDisplay();
     }
 
     protected function playRainbowAnimation (animName :String, completionCallback :Function) :void
     {
         this.stopRainbowAnimation();
 
-        try {
-            _curAnim = Resources.instantiateMovieClip("ui", animName);
-        } catch (err :Error) {
-            log.warning("Failed to instantiate " + animName + ": " + err.toString() + "\n" + err.getStackTrace());
-
-            // @TODO - let's reload the SWF and try again
-
-        }
+        _curAnim = Resources.instantiateMovieClip("ui", animName);
 
         var loc :Point = this.getScreenLoc();
         _curAnim.x = loc.x;
@@ -132,34 +130,42 @@ public class RainbowController extends SceneObject
         // if it's not our rainbow.)
         if (this.isControlledLocally) {
             this.resetPlayerTimeoutHandler();
-        } else {
-            var noteTimer :MovieClip = _curAnim["note_timer"];
-            noteTimer.visible = false;
         }
     }
 
     protected function resetPlayerTimeoutHandler () :void
     {
-        this.destroyPlayerTimeoutHandler();
+        _playerTimeoutCountdown["value"] = Constants.PLAYER_TIMEOUT_S;
 
-        // start the "note timer" - if it expires before the
-        // player clicks a note, they will lose
-        var noteTimer :MovieClip = _curAnim["note_timer"];
-        noteTimer.visible = true;
-        noteTimer.gotoAndPlay(1);
+        this.stopPlayerTimeoutHandler();
 
-        var thisObject :RainbowController = this;
-        _playerTimeoutAnimHandler = new AnimationHandler(noteTimer, "end",
-            function () :void {
-                SimonMain.model.sendPlayerTimeoutMessage();
-            });
+        this.addNamedTask(
+            PLAYER_TIMEOUT_TASK_NAME,
+            new SerialTask(
+                new AnimateValueTask(_playerTimeoutCountdown, 0, Constants.PLAYER_TIMEOUT_S),
+                new FunctionTask(SimonMain.model.sendPlayerTimeoutMessage)));
     }
 
-    protected function destroyPlayerTimeoutHandler () :void
+    protected function stopPlayerTimeoutHandler () :void
     {
-        if (null != _playerTimeoutAnimHandler) {
-            _playerTimeoutAnimHandler.destroy();
-            _playerTimeoutAnimHandler = null;
+        this.removeNamedTasks(PLAYER_TIMEOUT_TASK_NAME);
+    }
+
+    protected function updateTimeoutDisplay () :void
+    {
+        var pieTimer :MovieClip = this.pieTimer;
+
+        if (null != pieTimer) {
+
+            var countdownValue :Number = _playerTimeoutCountdown["value"];
+
+            if (countdownValue <= 0) {
+                pieTimer.visible = false;
+            } else {
+                pieTimer.visible = true;
+                var frameNumber :Number = Math.ceil(pieTimer.totalFrames * ((Constants.PLAYER_TIMEOUT_S - countdownValue) / Constants.PLAYER_TIMEOUT_S));
+                pieTimer.gotoAndStop(frameNumber);
+            }
         }
     }
 
@@ -252,7 +258,7 @@ public class RainbowController extends SceneObject
 
         // reset the "note time expired" handler every time a new note is played
         if (_finalNotePlayed) {
-            this.destroyPlayerTimeoutHandler();
+            this.stopPlayerTimeoutHandler();
         } else if (this.isControlledLocally) {
             this.resetPlayerTimeoutHandler();
         }
@@ -360,6 +366,12 @@ public class RainbowController extends SceneObject
         if (null != avatarInfo) {
             p = SimonMain.control.locationToStage(avatarInfo.x, avatarInfo.y, avatarInfo.z);
             p.y -= avatarInfo.stageBounds.height;
+
+            log.info(
+                String(SimonMain.localPlayerId) +
+                " avatarInfo: (" + avatarInfo.x + "," + avatarInfo.y + "," + avatarInfo.z + ")" +
+                " stageLoc: (" + p.x + "," + p.y + ")");
+
         }
 
         return (null != p ? p : new Point(150, 300));
@@ -375,6 +387,18 @@ public class RainbowController extends SceneObject
         return this.db as GameMode;
     }
 
+    protected function get pieTimer () :MovieClip
+    {
+        if (null != _curAnim) {
+            var noteTimer :MovieClip = _curAnim["note_timer"];
+            if (null != noteTimer) {
+                return noteTimer["inst_timer_pie"];
+            }
+        }
+
+        return null;
+    }
+
     protected var _parentSprite :Sprite;
 
     protected var _finalNotePlayed :Boolean;
@@ -385,7 +409,6 @@ public class RainbowController extends SceneObject
     protected var _rainbowAnimHandler :AnimationHandler;
     protected var _curAnim :MovieClip;
     protected var _remainingPattern :Array;
-    protected var _playerTimeoutAnimHandler :AnimationHandler;
 
     protected var _hilitedBand :MovieClip;
 
@@ -394,6 +417,8 @@ public class RainbowController extends SceneObject
     protected var _noteAnimationIndex :int = -1;
 
     protected var _rainbowBands :Array = [];
+
+    protected var _playerTimeoutCountdown :Object = { value: 0 };
 
     protected var log :Log = Log.getLog(this);
 
@@ -432,6 +457,7 @@ public class RainbowController extends SceneObject
 
     protected static const NOTE_ANIMATION_DURATION :Number = 0.75;
     protected static const NOTE_ANIMATION_TASK_NAME :String = "NoteAnimationTask";
+    protected static const PLAYER_TIMEOUT_TASK_NAME :String = "PlayerTimeoutTask";
 }
 
 }

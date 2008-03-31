@@ -36,9 +36,11 @@ public class CloudViewController extends SceneObject
         // collapse/expand buttons
         var collapseButton :InteractiveObject = _cloud[COLLAPSE_BUTTON_NAME];
         var expandButton :InteractiveObject = _cloud[EXPAND_BUTTON_NAME];
+        var helpButton :InteractiveObject = _cloud[HELP_BUTTON_NAME];
 
         collapseButton.addEventListener(MouseEvent.CLICK, toggleCollapse, false, 0, true);
         expandButton.addEventListener(MouseEvent.CLICK, toggleCollapse, false, 0, true);
+        helpButton.addEventListener(MouseEvent.CLICK, toggleHelp, false, 0, true);
 
         // scroll buttons
         var scrollUpButton :InteractiveObject = _cloud[SCROLL_UP_BUTTON_NAME];
@@ -52,9 +54,9 @@ public class CloudViewController extends SceneObject
         quitButton.addEventListener(MouseEvent.CLICK, quit, false, 0, true);
 
         // other events
-        SimonMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, updateText, false, 0, true);
-        SimonMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, updateText, false, 0, true);
-        SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, updateText, false, 0, true);
+        SimonMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, updateStatusText, false, 0, true);
+        SimonMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, updateNamesAndScores, false, 0, true);
+        SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, updateNamesAndScores, false, 0, true);
 
         SimonMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
 
@@ -62,14 +64,15 @@ public class CloudViewController extends SceneObject
         _collapsed = true;
         this.toggleCollapse();
         this.handleSizeChanged();
-        this.updateText();
+        this.updateNamesAndScores();
+        this.updateStatusText();
     }
 
     override protected function removedFromDB () :void
     {
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, updateText);
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, updateText);
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, updateText);
+        SimonMain.model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, updateStatusText);
+        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, updateNamesAndScores);
+        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, updateNamesAndScores);
 
         SimonMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
     }
@@ -92,49 +95,15 @@ public class CloudViewController extends SceneObject
         expandButton.mouseEnabled = _collapsed;
     }
 
+    protected function toggleHelp (...ignored) :void
+    {
+        var gameMode :GameMode = this.db as GameMode;
+        gameMode.helpScreenVisible = !(gameMode.helpScreenVisible);
+    }
+
     protected function quit (...ignored) :void
     {
         SimonMain.quit();
-    }
-
-    protected function updateText (...ignored) :void
-    {
-        switch (SimonMain.model.curState.gameState) {
-
-        case SharedState.STATE_WAITINGFORPLAYERS:
-            this.drawWaitingForGameStartText();
-            break;
-
-        case SharedState.STATE_WEHAVEAWINNER:
-            this.drawWinnerText();
-            break;
-
-        default:
-            this.drawNamesAndScores();
-            break;
-        }
-    }
-
-    protected function drawWaitingForGameStartText () :void
-    {
-        this.canScrollUp = false;
-        this.canScrollDown = false;
-
-        var waitingForPlayers :int = Constants.MIN_MP_PLAYERS_TO_START - SimonMain.model.getPlayerOids().length;
-
-        this.playersTextField.text = String(waitingForPlayers) + " more " + (waitingForPlayers == 1 ? "player" : "players") + "\nneeded";
-        this.scoresTextField.text = "";
-    }
-
-    protected function drawWinnerText () :void
-    {
-        this.canScrollUp = false;
-        this.canScrollDown = false;
-
-        var winnerName :String = SimonMain.getPlayerName(SimonMain.model.curState.roundWinnerId);
-
-        this.playersTextField.text = winnerName + "\nwins!";
-        this.scoresTextField.text = "";
     }
 
     protected function drawWaitForNextRoundText () :void
@@ -146,18 +115,37 @@ public class CloudViewController extends SceneObject
         this.scoresTextField.text = "";
     }
 
-    protected function drawNamesAndScores () :void
+    protected function updateStatusText (...ignored) :void
     {
-        var currentPlayers :Array = SimonMain.model.curState.players;   // players currently playing
-
         // Has this player played a game yet? Tell them they will join at the beginning
         // of the next round if not.
-        _hasPlayedGame = (_hasPlayedGame ||  ArrayUtil.contains(currentPlayers, SimonMain.localPlayerId));
-        if (!_hasPlayedGame) {
-            this.drawWaitForNextRoundText();
-            return;
-        }
+        _hasPlayedGame = (_hasPlayedGame ||  ArrayUtil.contains(SimonMain.model.curState.players, SimonMain.localPlayerId));
 
+        switch (SimonMain.model.curState.gameState) {
+
+        case SharedState.STATE_WAITINGFORPLAYERS:
+            var numPlayersNeeded :int = Constants.MIN_MP_PLAYERS_TO_START - SimonMain.model.getPlayerOids().length;
+            this.statusTextField.text = "Get " + (numPlayersNeeded == 1 ? "a friend" : String(numPlayersNeeded) + " friends") + " to play!";
+            break;
+
+        case SharedState.STATE_WEHAVEAWINNER:
+            var winnerName :String = SimonMain.getPlayerName(SimonMain.model.curState.roundWinnerId);
+            this.statusTextField.text = winnerName + " wins!";
+            break;
+
+        default:
+            if (!_hasPlayedGame) {
+                this.statusTextField.text = "You're in the next round!";
+            } else {
+                this.statusTextField.text = "";
+            }
+            break;
+        }
+    }
+
+    protected function updateNamesAndScores (...ignored) :void
+    {
+        var currentPlayers :Array = SimonMain.model.curState.players;   // players currently playing
         var allPlayers :Array = SimonMain.model.getPlayerOids();        // all the players, playing or not
 
         // remove current players from all players
@@ -224,13 +212,13 @@ public class CloudViewController extends SceneObject
     protected function handleScrollUp (...ignored) :void
     {
         _firstVisibleRow -= 1;
-        this.updateText();
+        this.updateNamesAndScores();
     }
 
     protected function handleScrollDown (...ignored) :void
     {
         _firstVisibleRow += 1;
-        this.updateText();
+        this.updateNamesAndScores();
     }
 
     protected function handleSizeChanged (...ignored) :void
@@ -285,6 +273,11 @@ public class CloudViewController extends SceneObject
         return _cloud[SCORE_LIST_NAME];
     }
 
+    protected function get statusTextField () :TextField
+    {
+        return _cloud[STATUS_TEXT_NAME];
+    }
+
     protected var _cloud :MovieClip;
     protected var _collapsed :Boolean;
     protected var _firstVisibleRow :int;
@@ -301,11 +294,13 @@ public class CloudViewController extends SceneObject
 
     protected static const COLLAPSE_BUTTON_NAME :String = "collapse";
     protected static const EXPAND_BUTTON_NAME :String = "expand";
+    protected static const HELP_BUTTON_NAME :String = "help";
     protected static const QUIT_BUTTON_NAME :String = "quit";
     protected static const SCROLL_UP_BUTTON_NAME :String = "scroll_up";
     protected static const SCROLL_DOWN_BUTTON_NAME :String = "scroll_down";
     protected static const PLAYER_LIST_NAME :String = "players";
     protected static const SCORE_LIST_NAME :String = "scores";
+    protected static const STATUS_TEXT_NAME :String = "status";
 
 }
 

@@ -4,24 +4,42 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
+import com.whirled.contrib.simplegame.objects.*;
 
+import flash.display.InteractiveObject;
+import flash.display.MovieClip;
+import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 public class GameMode extends AppMode
 {
     override protected function setup () :void
     {
+        _gameLayer = new Sprite();
+        _helpLayer = new Sprite();
+
+        this.modeSprite.addChild(_gameLayer);
+        this.modeSprite.addChild(_helpLayer);
+
+        // controllers
+        this.addObject(new CloudViewController(), _gameLayer);
+        this.addObject(new AvatarController());
+
+        // wire up the help screen
+        var helpScreen :MovieClip = Resources.instantiateMovieClip("ui", "help_cloud");
+        var helpScreenCloseButton :InteractiveObject = helpScreen["close"];
+        helpScreenCloseButton.addEventListener(MouseEvent.CLICK, hideHelpScreen);
+
+        this.addObject(new SimpleSceneObject(helpScreen), _helpLayer);
+
+        this.hideHelpScreen();
+
         // state change events
         SimonMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
         SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerChanged);
         SimonMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
         SimonMain.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, handlePlayerLeft);
-
-        // controllers
-        this.addObject(new CloudViewController(), this.modeSprite);
-        this.addObject(new AvatarController());
 
         // each client maintains the concept of an expected state,
         // so that it is prepared to take over as the
@@ -156,7 +174,7 @@ public class GameMode extends AppMode
             this.applyStateChanges();
         } else {
             // show the rainbow on the correct player
-            this.addObject(new RainbowController(SimonMain.model.curState.curPlayerOid), this.modeSprite);
+            this.addObject(new RainbowController(SimonMain.model.curState.curPlayerOid), _gameLayer);
         }
     }
 
@@ -330,8 +348,25 @@ public class GameMode extends AppMode
         this.applyStateChanges();
     }
 
+    public function get helpScreenVisible () :Boolean
+    {
+        return _helpLayer.visible;
+    }
+
+    public function set helpScreenVisible (visible :Boolean) :void
+    {
+        _helpLayer.visible = visible;
+    }
+
+    protected function hideHelpScreen (...ignored) :void
+    {
+        this.helpScreenVisible = false;
+    }
+
     protected var _expectedState :SharedState;
     protected var _expectedScores :ScoreTable;
+    protected var _gameLayer :Sprite;
+    protected var _helpLayer :Sprite;
 
     protected var _statusText :String;
 
