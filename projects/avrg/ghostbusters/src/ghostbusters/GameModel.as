@@ -26,7 +26,7 @@ public class GameModel
 
         if (getPlayerHealth(Game.ourPlayerId) == 0 && !isPlayerDead(Game.ourPlayerId)) {
             // the player is new, not dead, start at full health
-            setOurHealth(100);
+            _ppp.setProperty(Game.ourPlayerId, Codes.PROP_PLAYER_CUR_HEALTH, 100);
         }
     }
 
