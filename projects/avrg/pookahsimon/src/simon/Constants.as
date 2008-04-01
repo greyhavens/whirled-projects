@@ -23,7 +23,7 @@ public class Constants
     public static const AVATAR_DANCE_TIME :Number = 4;
     public static const AVATAR_TALK_TIME :Number = 1.5;
     public static const PLAYER_TIMEOUT_S :int = 7;
-    public static const MAX_PLAYER_TIMEOUTS :int = 3;
+    public static const MAX_PLAYER_TIMEOUTS :int = 2;
 
     // network bits
     public static const PROP_STATE :String = "p_state";
