@@ -55,16 +55,16 @@ public class RainbowController extends SceneObject
             g_darkenFilter = darkenMatrix.createFilter();
         }
 
-        SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleNextSelectionEvent);
-        SimonMain.model.addEventListener(SharedStateChangedEvent.PLAYER_TIMEOUT, handlePlayerTimeout);
+        SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleStateChange_NextSelection);
+        SimonMain.model.addEventListener(SharedStateChangedEvent.PLAYER_TIMEOUT, handleStateChange_PlayerTimeout);
 
         this.playRainbowAnimation("rainbow_in", playRainbowLoop);
     }
 
     override protected function removedFromDB () :void
     {
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleNextSelectionEvent);
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_TIMEOUT, handlePlayerTimeout);
+        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleStateChange_NextSelection);
+        SimonMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_TIMEOUT, handleStateChange_PlayerTimeout);
 
         this.stopRainbowAnimation();
         this.stopNoteAnimation();
@@ -146,12 +146,18 @@ public class RainbowController extends SceneObject
             PLAYER_TIMEOUT_TASK_NAME,
             new SerialTask(
                 new AnimateValueTask(_playerTimeoutCountdown, 0, Constants.PLAYER_TIMEOUT_S),
-                new FunctionTask(SimonMain.model.sendPlayerTimeoutMessage)));
+                new FunctionTask(handleStateChange_PlayerTimeout)));
     }
 
     protected function stopPlayerTimeoutHandler () :void
     {
         this.removeNamedTasks(PLAYER_TIMEOUT_TASK_NAME);
+    }
+
+    protected function handleLocalPlayerTimeout () :void
+    {
+        SimonMain.model.sendPlayerTimeoutMessage();
+        this.gameMode.incrementPlayerTimeoutCount();
     }
 
     protected function updateTimeoutDisplay () :void
@@ -172,7 +178,7 @@ public class RainbowController extends SceneObject
         }
     }
 
-    protected function handleNextSelectionEvent (e :SharedStateChangedEvent) :void
+    protected function handleStateChange_NextSelection (e :SharedStateChangedEvent) :void
     {
         // if this rainbow is controlled locally, ignore "next selection" events,
         // as the associated animation will have already been played
@@ -184,11 +190,10 @@ public class RainbowController extends SceneObject
         }
     }
 
-    protected function handlePlayerTimeout (e :SharedStateChangedEvent) :void
+    protected function handleStateChange_PlayerTimeout (e :SharedStateChangedEvent) :void
     {
         // called when the player has taken too long to click a note
         this.gameMode.currentPlayerTurnFailure();
-        this.gameMode.incrementPlayerTimeoutCount();
     }
 
     protected function createBandMouseHandlers (band :MovieClip, noteIndex :int) :void
