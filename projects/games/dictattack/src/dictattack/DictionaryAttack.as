@@ -12,7 +12,7 @@ import flash.events.Event;
 
 import com.threerings.util.Log;
 
-import com.whirled.game.FlowAwardedEvent;
+import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
 
@@ -41,7 +41,7 @@ public class DictionaryAttack extends Sprite
         _ctx.control.game.addEventListener(StateChangedEvent.ROUND_STARTED, roundDidStart);
         _ctx.control.game.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);
         _ctx.control.game.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
-        _ctx.control.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
+        _ctx.control.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
 
         // make our background totally black
         opaqueBackground = 0x000000;
@@ -79,7 +79,7 @@ public class DictionaryAttack extends Sprite
 
     protected function gameDidStart (event :StateChangedEvent) :void
     {
-        _flowAward = 0;
+        _coinsAward = 0;
         _ctx.view.gameDidStart();
         _ctx.model.gameDidStart();
 
@@ -103,10 +103,10 @@ public class DictionaryAttack extends Sprite
         _ctx.view.roundDidEnd();
     }
 
-    protected function flowAwarded (event :FlowAwardedEvent) :void
+    protected function coinsAwarded (event :CoinsAwardedEvent) :void
     {
-        _flowAward = event.amount;
-        _ctx.control.local.feedback("You earned " + _flowAward + " flow!");
+        _coinsAward = event.amount;
+        _ctx.control.local.feedback("You earned " + _coinsAward + " coins!");
     }
 
     protected function gameDidEnd (event :StateChangedEvent) :void
@@ -114,8 +114,8 @@ public class DictionaryAttack extends Sprite
         roundDidEnd(event);
 
         _ctx.model.gameDidEnd();
-        // _flowAward is set via a FLOW_AWARDED event that precedes the GAME_ENDED event
-        _ctx.view.gameDidEnd(_flowAward);
+        // _coinsAward is set via a COINS_AWARDED event that precedes the GAME_ENDED event
+        _ctx.view.gameDidEnd(_coinsAward);
 
         // if we were not a player, stop here
         var myidx :int = _ctx.control.game.seating.getMyPosition();
@@ -246,7 +246,7 @@ public class DictionaryAttack extends Sprite
 
     protected var _ctx :Context;
     protected var _cookie :Object;
-    protected var _flowAward :int;
+    protected var _coinsAward :int;
 
     protected static const LONG_WORD :int = 8;
     protected static const MAX_HISCORES :int = 4;

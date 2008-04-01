@@ -16,13 +16,13 @@ import flash.events.MouseEvent;
  */
 public class EndGameMulti extends Dialog
 {
-    public function EndGameMulti (ctx :Context, flowAward :int)
+    public function EndGameMulti (ctx :Context, coinsAward :int)
     {
         super(ctx);
 
         var view :MovieClip = _ctx.content.createGameOverMulti();
         setText(view, "duration", Util.millisToMinSec(_ctx.model.getGameDuration()));
-        setText(view, "flow", flowAward + " flow");
+        setText(view, "flow", coinsAward + " coins");
 
         // determine the winner
         var widx :int = 0;

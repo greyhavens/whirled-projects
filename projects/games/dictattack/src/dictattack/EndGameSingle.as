@@ -13,7 +13,7 @@ import flash.events.MouseEvent;
  */
 public class EndGameSingle extends Dialog
 {
-    public function EndGameSingle (ctx :Context, flowAward :int)
+    public function EndGameSingle (ctx :Context, coinsAward :int)
     {
         super(ctx);
 
