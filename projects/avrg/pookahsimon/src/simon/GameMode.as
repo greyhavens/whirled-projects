@@ -6,10 +6,7 @@ import com.whirled.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 
-import flash.display.InteractiveObject;
-import flash.display.MovieClip;
 import flash.display.Sprite;
-import flash.events.MouseEvent;
 
 public class GameMode extends AppMode
 {
@@ -362,12 +359,21 @@ public class GameMode extends AppMode
         _helpLayer.visible = visible;
     }
 
+    public function incrementPlayerTimeoutCount () :void
+    {
+        if (++_playerTimeouts >= Constants.MAX_PLAYER_TIMEOUTS) {
+            SimonMain.quit();
+        }
+    }
+
     protected var _expectedState :SharedState;
     protected var _expectedScores :ScoreTable;
     protected var _gameLayer :Sprite;
     protected var _helpLayer :Sprite;
 
     protected var _statusText :String;
+
+    protected var _playerTimeouts :int;
 
     protected var log :Log = Log.getLog(this);
 

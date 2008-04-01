@@ -188,6 +188,7 @@ public class RainbowController extends SceneObject
     {
         // called when the player has taken too long to click a note
         this.gameMode.currentPlayerTurnFailure();
+        this.gameMode.incrementPlayerTimeoutCount();
     }
 
     protected function createBandMouseHandlers (band :MovieClip, noteIndex :int) :void
