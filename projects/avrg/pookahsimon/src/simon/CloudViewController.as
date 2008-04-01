@@ -120,8 +120,15 @@ public class CloudViewController extends SceneObject
             break;
 
         case SharedState.STATE_WEHAVEAWINNER:
-            var winnerName :String = SimonMain.getPlayerName(SimonMain.model.curState.roundWinnerId);
-            this.statusTextField.text = winnerName + " wins!";
+            var winnerId :int = SimonMain.model.curState.roundWinnerId;
+            var patternEmpty :Boolean = SimonMain.model.curState.pattern.length == 0;
+
+            if (winnerId != 0 && !patternEmpty) {
+                var winnerName :String = SimonMain.getPlayerName(SimonMain.model.curState.roundWinnerId);
+                this.statusTextField.text = winnerName + " wins!";
+            } else {
+                this.statusTextField.text = "No winner this round";
+            }
             break;
 
         default:
