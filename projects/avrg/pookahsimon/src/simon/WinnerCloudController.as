@@ -9,8 +9,6 @@ import flash.display.MovieClip;
 import flash.geom.Point;
 import flash.text.TextField;
 
-import simon.tasks.*;
-
 public class WinnerCloudController extends SceneObject
 {
     public static const NAME :String = "WinnerCloudController";
