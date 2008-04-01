@@ -1220,9 +1220,7 @@ public class CaptionGame extends EventDispatcher
 
         var previewVotes :Dictionary = _ctrl.net.get(PREVIEW_VOTES) as Dictionary;
         for each (var dexes :Array in previewVotes) {
-            trace("Checking some player's votes...");
             for each (var dex :int in dexes) {
-                trace("We have a vote for preview #" + dex);
                 votes[dex]++;
             }
         }
@@ -1267,7 +1265,7 @@ public class CaptionGame extends EventDispatcher
             if (secondPlaces != null && secondPlaces.length > 0) {
                 // remember a random picture from the 2nd places set to carry over to
                 // the next preview phase
-                pick = Math.round(Math.random() * secondPlaces.length);
+                pick = Math.random() * secondPlaces.length;
                 _carryOverPreview = secondPlaces[pick];
             }
 
