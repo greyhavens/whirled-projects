@@ -20,11 +20,9 @@ public class AvatarController extends SimObject
 
     public function playAvatarAction (action :String) :void
     {
-        if (!SimonMain.control.isConnected()) {
-            return;
+        if (SimonMain.control.isConnected()) {
+            SimonMain.control.playAvatarAction(action);
         }
-
-        SimonMain.control.playAvatarAction(action);
     }
 
     public function setAvatarState (newState :String, revertAfterSeconds :Number = 0, revertToState :String = null) :void
