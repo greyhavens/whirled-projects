@@ -241,8 +241,9 @@ public class Model
      */
     public function playedWord (word :String) :Boolean
     {
-        for (var pp :int = 0; pp < _plays.length; pp++) {
-            if (_plays[pp].word == word) {
+        var myidx : int = _ctx.control.game.seating.getMyPosition();
+        for (var pp :int = 0; pp < _plays[myidx].length; pp++) {
+            if (_plays[myidx][pp].word == word) {
                 return true;
             }
         }
