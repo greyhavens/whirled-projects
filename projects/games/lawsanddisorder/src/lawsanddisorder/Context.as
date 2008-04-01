@@ -35,7 +35,7 @@ public class Context
     public function notice (notice :String) :void
     {
 		board.notices.addNotice(notice);
-		log("[notice] " + notice);
+		//log("[notice] " + notice);
     }
 
     /**
@@ -57,6 +57,13 @@ public class Context
     public function sendMessage (type :String, value :*) :void
     {
     	_control.net.sendMessage(type, value);
+    }
+    
+    /**
+     * Kick this player from the game.     */
+    public function kickPlayer () :void
+    {
+        _control.local.backToWhirled();
     }
     
     /** Connection to the game server */

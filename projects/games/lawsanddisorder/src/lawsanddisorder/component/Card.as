@@ -33,9 +33,9 @@ public class Card extends Component
 
 //        buttonMode = true;
 //        mouseEnabled = true;
-        addEventListener(MouseEvent.MOUSE_DOWN, ctx.state.cardMouseDown);
-        addEventListener(MouseEvent.MOUSE_UP, ctx.state.cardMouseUp);
-        addEventListener(MouseEvent.CLICK, ctx.state.cardClick);
+        addEventListener(MouseEvent.MOUSE_DOWN, ctx.state.mouseEventHandler.cardMouseDown);
+        addEventListener(MouseEvent.MOUSE_UP, ctx.state.mouseEventHandler.cardMouseUp);
+        addEventListener(MouseEvent.CLICK, ctx.state.mouseEventHandler.cardClick);
         
         super(ctx);
     }

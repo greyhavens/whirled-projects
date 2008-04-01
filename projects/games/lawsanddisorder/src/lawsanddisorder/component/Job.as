@@ -55,12 +55,6 @@ public class Job extends Component
         symbol.alpha = 0.15;
         addChild(symbol);
         
-        // use power / cancel button
-        usePowerButton = new UsePowerButton(_ctx);
-        usePowerButton.x = 0;
-        usePowerButton.y = 160;
-        addChild(usePowerButton);
-        
         // Job name text
         jobTitle = Content.defaultTextField(1.5);
         jobTitle.text = name;
@@ -102,6 +96,7 @@ public class Job extends Component
         else {
             jobDescription.text = description;
         }
+        /*
         
         // enable/disable use power button
         if (player.powerEnabled) {
@@ -110,6 +105,7 @@ public class Job extends Component
         else {
         	usePowerButton.enabled = false;
         }
+        */
     }
     
     /**
@@ -118,6 +114,7 @@ public class Job extends Component
      */
     public function usePower () :void
     {
+    	//startUsingPower();
         switch (id) {
             case JUDGE:
                 if (_ctx.board.laws.numLaws == 0) {
@@ -126,42 +123,47 @@ public class Job extends Component
                 }            
                 if (_ctx.board.player.monies < 2) {
 		            _ctx.notice("You need at least 2 monies to use The Judge's ability.");
+		            cancelUsePower();
 		            return;
 		        }
-		        startUsingAbility();
+		        //startUsingPower();
                 _ctx.state.selectLaw(judgeLawSelected);
                 return;
                 
             case THIEF:
                 if (_ctx.board.player.monies < 2) {
                     _ctx.notice("Your need at least 2 monies to use The Thief's ability.");
+                    cancelUsePower();
                     return;
                 }
-                startUsingAbility();
+                //startUsingPower();
                 _ctx.state.selectOpponent(thiefOpponentSelected);
                 return;
                 
             case BANKER:
                 if (_ctx.board.laws.numLaws == 0) {
                     _ctx.notice("There are no laws to modify.");
+                    cancelUsePower();
                     return;
                 }
                 if (!_ctx.board.player.hand.containsVerb()) {
                     _ctx.notice("You don't have any verbs.");
+                    cancelUsePower();
                     return;
                 }
-                startUsingAbility();
+                //startUsingPower();
                 _ctx.state.exchangeVerb(bankerVerbExchanged);
                 return;
                 
             case TRADER:
                 if (_ctx.board.player.monies < 2) {
                     _ctx.notice("Your ability costs 2 monies to use.");
+                    cancelUsePower();
                     return;
                 }
                 // the trader's ability happens immediately
-                startUsingAbility();
-                usePowerButton.enabled = false;
+                //startUsingPower();
+                reachedPointOfNoReturn();
                 _ctx.board.player.loseMonies(2);
                 _ctx.board.player.hand.drawCard(2);
                 _ctx.broadcast(_ctx.board.player.playerName + " (The Trader) used their ability to draw two cards");
@@ -171,35 +173,47 @@ public class Job extends Component
             case PRIEST:
                 if (_ctx.board.laws.numLaws == 0) {
                     _ctx.notice("There are no laws to modify.");
+                    cancelUsePower();
                     return;
                 }
                 if (!_ctx.board.player.hand.containsSubject()) {
                     _ctx.notice("You don't have any subject cards.");
+                    cancelUsePower();
                     return;
                 }
-                startUsingAbility();
+                //startUsingPower();
                 _ctx.state.exchangeSubject(priestSubjectExchanged);
                 return;
                 
             case DOCTOR:
                 if (_ctx.board.laws.numLaws == 0) {
                     _ctx.notice("There are no laws to modify.");
+                    cancelUsePower();
                     return;
                 }
-                startUsingAbility();
+                //startUsingPower();
                 _ctx.state.moveWhen(doctorWhenMoved);
                 return;
         }
     }
     
-    /**
-     * Player has begun using their ability.  Add a cancel button and tell the state
+    /*
+     * Player has begun using their ability.  Switch to a cancel button and tell the state
      * that we're performing an action.
-     */
-    protected function startUsingAbility () :void
+     *
+    protected function startUsingPower () :void
     {
-        _ctx.board.player.powerEnabled = false;
-        _ctx.state.performingAction = true;
+        //_ctx.state.performingAction = true;
+    }
+    */
+    
+    /**
+     * Once this is called, power can't be cancelled because player has seen or done something
+     * that can't be undone.  May be called a second time for some powers.     */
+    protected function reachedPointOfNoReturn () :void
+    {
+        _ctx.board.usePowerButton.enabled = false;
+        //_ctx.board.player.powerEnabled = false;
     }
     
     /**
@@ -207,8 +221,7 @@ public class Job extends Component
      */
     protected function judgeLawSelected () :void
     {
-        //removeChild(cancelButton);
-        usePowerButton.enabled = false;
+        reachedPointOfNoReturn();
     	_ctx.board.player.loseMonies(2);
         var law :Law = _ctx.state.selectedLaw;
         _ctx.broadcast(_ctx.board.player.playerName + "(The Judge) is enacting law " + law.displayId);
@@ -231,8 +244,7 @@ public class Job extends Component
      */
     protected function thiefOpponentSelected () :void
     {
-        //removeChild(cancelButton);
-        usePowerButton.enabled = false;
+        reachedPointOfNoReturn();
         _ctx.board.player.loseMonies(2);
         var opponent :Opponent = _ctx.state.selectedOpponent;
         // display opponent's hand then select a card from it
@@ -258,8 +270,8 @@ public class Job extends Component
         _ctx.state.deselectCards();
         // TODO broadcast this only to players not involved
         _ctx.broadcast(_ctx.board.player.playerName + " (The Thief) stole a card from " + opponent.playerName);
-        _ctx.broadcast(_ctx.board.player.playerName + " (The Thief) stole '" + card.text + "' from you", opponent);
-        _ctx.notice("You stole '" + card.text + "' from " + opponent.playerName);
+        _ctx.broadcast(_ctx.board.player.playerName + " (The Thief) stole '" + card.text + "' card from you", opponent);
+        _ctx.notice("You stole '" + card.text + "' card from " + opponent.playerName);
         doneUsingPower();
     }
     
@@ -323,7 +335,11 @@ public class Job extends Component
      */
     protected function doneUsingPower () :void
     {
-    	usePowerButton.doneUsingPower();        
+        // this may have already been called for some powers    	
+        reachedPointOfNoReturn();
+    	_ctx.board.usePowerButton.doneUsingPower();
+    	
+    	// enact laws that trigger when this player uses their ability
         _ctx.board.laws.triggerWhen(Card.USE_ABILITY, _ctx.board.player.job.id);
     }
     
@@ -332,12 +348,12 @@ public class Job extends Component
      * Return monies paid to use ability.  Reset mode to a neutral state and allow the player 
      * to use their power again.
      */
-    //protected function cancelButtonClicked (event :MouseEvent) :void
     public function cancelUsePower () :void
     {
         _ctx.state.cancelMode();
-        _ctx.state.performingAction = false;
-        _ctx.board.player.powerEnabled = true;
+        //_ctx.state.performingAction = false;
+        //_ctx.board.player.powerEnabled = true;
+        _ctx.board.usePowerButton.cancelUsingPower();
         _ctx.notice("Power cancelled.");
     }
     
@@ -438,9 +454,6 @@ public class Job extends Component
     
     /** JUDGE/THIEF/BANKER etc */
     protected var _id :int;
-    
-    /** Button for using power */
-    protected var usePowerButton :UsePowerButton;
     
     /** Job name text */
     protected var jobTitle :TextField;

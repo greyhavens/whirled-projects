@@ -33,23 +33,24 @@ public class UsePowerButton extends Button
      * then start doing that.
      */
     protected function usePowerButtonClicked (event :MouseEvent) :void
-    {
+    {	
 		if (!enabled) {
 			return;
 		}
-        if (!_ctx.state.interactMode) {
-            _ctx.notice("You can't use your power right now.");
-            return;
-        }
         // Start using power; switch to cancel
         if (text == DEFAULT_TEXT) {
-            _ctx.board.player.job.usePower();
+        	// TODO should already be enabled if this is true
+            if (!_ctx.state.interactMode) {
+                _ctx.notice("You can't use your power right now.");
+                return;
+            }
             text = CANCEL_TEXT;
+            _ctx.board.player.job.usePower();
         }
         // Cancel using power
         else {
-            _ctx.board.player.job.cancelUsePower();
             text = DEFAULT_TEXT;
+            _ctx.board.player.job.cancelUsePower();
         }
     }
 	
@@ -61,9 +62,16 @@ public class UsePowerButton extends Button
     	text = DEFAULT_TEXT;
     	enabled = false;
     }
+    
+    /**
+     * Player cancelled using their power; set text back to the default but leave it enabled.     */
+    public function cancelUsingPower () :void
+    {
+        text = DEFAULT_TEXT;
+    }
 
     /**
-     * Handler for end turn event
+     * Handler for start turn event
      */
     protected function turnStarted (event :Event) :void
     {

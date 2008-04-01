@@ -137,7 +137,8 @@ public class NewLaw extends CardContainer
  		_ctx.broadcast(_ctx.board.player.playerName + " got " + cards.length + " monies for making a new law.");
         _ctx.board.player.getMonies(cards.length);
         enabled = false;
-        _ctx.state.performingAction = true;
+        //_ctx.state.performingAction = true;
+        _ctx.state.startEnactingLaws();
         
         // tell other players and ourself about the new law
         var newLawData :Object = this.getSerializedCards();

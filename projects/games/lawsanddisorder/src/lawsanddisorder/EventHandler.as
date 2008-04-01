@@ -52,7 +52,6 @@ public class EventHandler extends EventDispatcher
      */
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-//    	_ctx.log("GOT property event: " + event.name);
     	var key :String = event.name + "::" + "-1";
     	var dataEvent :DataChangedEvent = new DataChangedEvent(event.name, event.oldValue, event.newValue, -1);
         dispatchDataEvent(key, dataEvent);
@@ -63,7 +62,6 @@ public class EventHandler extends EventDispatcher
      */
     protected function elementChanged (event :ElementChangedEvent) :void
     {
-//    	_ctx.log("GOT element event: " + event.name + " index: " + event.index);
     	var key :String = event.name + "::" + event.index;
     	var dataEvent :DataChangedEvent = new DataChangedEvent(event.name, event.oldValue, event.newValue, event.index);
     	dispatchDataEvent(key, dataEvent);
@@ -78,10 +76,7 @@ public class EventHandler extends EventDispatcher
     protected function dispatchDataEvent (key :String, event :DataChangedEvent) :void
     {
         var listeners :Array = _dataListeners.get(key);
-//if (key != "deckData::-1")
-//_ctx.log("\n\nDISpatching data " + key + " value " + event.newValue + " to " + listeners);
         if (listeners != null) {
-//_ctx.log("found " + listeners.length + " listeners");
             // iterate through and perform each listener
             for (var i :int = 0; i < listeners.length; i++) {
                 var listener :Function = listeners[i];
@@ -111,7 +106,6 @@ public class EventHandler extends EventDispatcher
     public function addDataListener (name :String, listener :Function, index :int = -1) :void
     {    	
     	var key :String = name + "::" + index;
-//_ctx.log("ADDing data listener for key " + key);    	
         var listeners :Array = _dataListeners.get(key);
         // key already has a listener, add this one
         if (listeners != null) {
@@ -131,7 +125,6 @@ public class EventHandler extends EventDispatcher
     public function removeDataListener (name :String, listener :Function, index :int = -1) :void
     {
     	var key :String = name + "::" + index;
-//_ctx.log("REMoving data listener for key " + key);
         var listeners :Array = _dataListeners.get(key);
         // key has no listeners, oops!
         if (listeners == null) {
@@ -197,8 +190,6 @@ public class EventHandler extends EventDispatcher
     public function getData (propName :String, index :int = -1) :*
     {
     	var propertyValue :* = _ctx.control.net.get(propName);
-//if (propName != "deckData")
-//_ctx.log("GETting data " + propName + " index " + index + " value " + propertyValue);
     	if (index > -1) {
     		if (propertyValue == null) {
     			return null;
@@ -218,8 +209,6 @@ public class EventHandler extends EventDispatcher
      */
     public function setData (propName :String, value :Object, index :int = -1, isDictionary :Boolean = false) :void
     {
-//if (propName != "deckData")
-//_ctx.log("SETting data " + propName + " index " + index + " value " + value);
     	if (index > -1 && isDictionary) {
     		_ctx.control.net.setIn(propName, index, value);
     	}
@@ -238,17 +227,18 @@ public class EventHandler extends EventDispatcher
      */
     public function endGame () :void
     {
+    	// end every player's turn to lock the board.
+    	_ctx.eventHandler.dispatchEvent(new Event(EventHandler.PLAYER_TURN_ENDED));
+    	
         var playerIds :Array = new Array;
         var playerScores :Array = new Array;
         
         for each (var player :Player in _ctx.board.players) {
             playerIds.push(player.serverId);
             playerScores.push(player.monies);
-            //_ctx.log("score for player " + player.id + " (server id: " + player.serverId + ") is " + player.monies);
         }
 
 		_ctx.control.game.endGameWithScores(playerIds, playerScores, GameSubControl.CASCADING_PAYOUT);
-        //_ctx.control.game.endGameWithScores(playerIds, playerScores, GameSubControl.TO_EACH_THEIR_OWN);
     }
     
     /** Context */

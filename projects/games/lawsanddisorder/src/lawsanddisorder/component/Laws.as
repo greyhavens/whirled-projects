@@ -2,6 +2,7 @@
 
 import flash.display.Sprite;
 import flash.text.TextField;
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.utils.Dictionary;
 
@@ -31,6 +32,9 @@ public class Laws extends Component
         ctx.eventHandler.addDataListener(LAWS_DATA, lawsChanged);
         ctx.eventHandler.addMessageListener(ENACT_LAW, enactLaw);
         ctx.eventHandler.addMessageListener(NEW_LAW, addNewLaw);
+        
+        ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, turnStarted);
+        
         super(ctx);
     }
     
@@ -178,9 +182,20 @@ public class Laws extends Component
         else if (event.newValue == null) {
     		while (laws.length > 0) {
 	            var law :Law = laws.pop();
-	            removeChild(law);
+	            if (contains(law)) {
+	               removeChild(law);
+	            }
 	        }
     	}
+    }
+    
+    /**
+     * Handler for start turn event.  Enact any laws that trigger when this
+     * player's turn starts.
+     */
+    protected function turnStarted (event :Event) :void
+    {
+        _ctx.board.laws.triggerWhen(Card.START_TURN, _ctx.board.player.job.id);
     }
     
     /**
@@ -190,6 +205,9 @@ public class Laws extends Component
      */
     public function triggerWhen (whenType :int, subjectType :int = -1) :void
     {
+    	// tell the state that we're enacting laws; player can't do anything else.
+    	_ctx.state.startEnactingLaws();
+    	
         triggerWhenType = whenType;
         triggerSubjectType = subjectType;
         _ctx.eventHandler.addMessageListener(ENACT_LAW_DONE, triggeringWhen);
@@ -221,7 +239,8 @@ public class Laws extends Component
         }
         
         // action complete; return focus to the player if it is their turn
-        _ctx.state.performingAction = false;
+        //_ctx.state.performingAction = false;
+        _ctx.state.doneEnactingLaws();
     }
     
     /**
@@ -230,6 +249,7 @@ public class Laws extends Component
     public function cancelTriggering () :void
     {
     	_ctx.eventHandler.removeMessageListener(ENACT_LAW_DONE, triggeringWhen);
+    	_ctx.state.doneEnactingLaws();
     }
     
     /** The position of the oldest still-visible law */

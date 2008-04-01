@@ -38,12 +38,13 @@ public class CreateLawButton extends Button
 		if (!enabled) {
 			return;
 		}
-        if (!_ctx.state.interactMode) {
-            _ctx.notice("You can't create a law right now.");
-            return;
-        }
 		// Display the new law area
 		if (text == "create law") {
+            // TODO should already be enabled if this is true
+            if (!_ctx.state.interactMode) {
+                _ctx.notice("You can't create a law right now.");
+                return;
+            }
 			_ctx.board.newLaw.show();
 			text = "cancel";
 		}

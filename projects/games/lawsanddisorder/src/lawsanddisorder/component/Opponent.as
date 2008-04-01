@@ -22,7 +22,7 @@ public class Opponent extends Player
      */
     public function Opponent (ctx :Context, id :int, serverId :int, name :String)
     {
-        addEventListener(MouseEvent.CLICK, ctx.state.opponentClick);
+        addEventListener(MouseEvent.CLICK, ctx.state.mouseEventHandler.opponentClick);
         super(ctx, id, serverId, name);
         _ctx.control.game.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
     }

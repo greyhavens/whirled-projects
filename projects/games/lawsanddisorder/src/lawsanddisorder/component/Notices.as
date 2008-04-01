@@ -100,6 +100,7 @@ public class Notices extends Component
      */
     public function addNotice (notice :String) :void
     {
+    	/*
         notices.push(notice);
         if (contains(history)) {
         	historyText.appendText(notice + "\n");
@@ -109,6 +110,8 @@ public class Notices extends Component
             // TODO also update history if showing
         }
         updateDisplay();
+        */
+        _ctx.log(notice);
     }
     
     /**
@@ -116,8 +119,9 @@ public class Notices extends Component
      */ 
     protected function gotBroadcast (event :MessageReceivedEvent) :void
     {
-    	_ctx.log("[broadcast]: " + event.value);
-    	addNotice(event.value as String);
+    	//_ctx.log("[broadcast]: " + event.value);
+    	_ctx.log(event.value as String);
+    	//addNotice(event.value as String);
     }
     
     /**

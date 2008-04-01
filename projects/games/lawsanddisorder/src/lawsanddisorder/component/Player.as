@@ -267,15 +267,18 @@ public class Player extends Component
         _job.updateEnabled();
     }
     
-    /** Can the player use their power right now? */
+    /* Can the player use their power right now? *
     public function get powerEnabled () :Boolean {
         return _powerEnabled;
     }
-    /** Set whether the player can use their power right now */
+    /** Set whether the player can use their power right now *
     public function set powerEnabled (value :Boolean) :void {
         _powerEnabled = value;
         _job.updateEnabled();
+        // enable/disable use power button
+        _ctx.board.usePowerButton.enabled = value;
     }
+    */
     
     /** Public getter for the hand object */
     public function get hand () :Hand {
@@ -298,8 +301,8 @@ public class Player extends Component
     /** Can the player change jobs right now? */
     protected var _jobEnabled :Boolean;
     
-    /** Can the player use their power right now? */
-    protected var _powerEnabled :Boolean;
+    ///** Can the player use their power right now? */
+    //protected var _powerEnabled :Boolean;
     
     /** Player's id according to their place at the table */
     public var id :int;

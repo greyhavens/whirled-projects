@@ -28,25 +28,30 @@ public class Board extends Sprite
         _ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, turnStarted);
         
         // display background
-        // TODO this mask seems to have a shorter y in whirled - fix or adjust
         var background :Sprite = new BOARD_BACKGROUND();
         var bgMask :Sprite = new Sprite();
         bgMask.graphics.beginFill(0x000000);
-        bgMask.graphics.drawRect(0, 0, 700, 500);
+        bgMask.graphics.drawRect(0, 0, 700, 520);
         bgMask.graphics.endFill();
         background.mask = bgMask;
         background.mouseEnabled = false;
         addChild(background);
 
-        createLawButton = new CreateLawButton(_ctx);
-        createLawButton.x = 12;
-        createLawButton.y = 250;
-        addChild(createLawButton);
-        
-        endTurnButton = new EndTurnButton(_ctx);
-        endTurnButton.x = 12;
-        endTurnButton.y = 290;
-        addChild(endTurnButton);
+        // help button in bottom right corner displays help screen
+        var helpButton :Sprite = new Sprite();
+        var helpButtonText :TextField = Content.defaultTextField(2.0);
+        var helpButtonFormat :TextFormat =  helpButtonText.defaultTextFormat;
+        helpButtonFormat.color = 0xFFFFFF;
+        helpButtonText.defaultTextFormat = helpButtonFormat;
+        helpButtonText.width = 20;  
+        helpButtonText.height = 30;      
+        helpButtonText.text = "?";
+        helpButton.addChild(helpButtonText);
+        helpButton.x = 670;
+        helpButton.y = 465;
+        helpButton.buttonMode = true;
+        helpButton.addEventListener(MouseEvent.CLICK, helpButtonClicked);
+        addChild(helpButton);
         
         deck = new Deck(_ctx);
         deck.x = 15;
@@ -89,6 +94,22 @@ public class Board extends Sprite
         opponents.y = 10;
         addChild(opponents);
         
+        // use power / cancel button
+        usePowerButton = new UsePowerButton(_ctx);
+        usePowerButton.x = 12;
+        usePowerButton.y = 210;
+        addChild(usePowerButton);
+        
+        createLawButton = new CreateLawButton(_ctx);
+        createLawButton.x = 12;
+        createLawButton.y = 250;
+        addChild(createLawButton);
+        
+        endTurnButton = new EndTurnButton(_ctx, this);
+        endTurnButton.x = 12;
+        endTurnButton.y = 290;
+        addChild(endTurnButton);
+        
         // notices display above everything else
         notices = new Notices(_ctx);
         notices.x = 0;
@@ -101,15 +122,10 @@ public class Board extends Sprite
         turnHighlight.graphics.drawRect(2, 2, 695, 495);
         
         // show the splash screen over the entire board
-        var splashScreen :Sprite = new SPLASH_SCREEN();
-        /*
-        var splashScreen :Sprite = new Sprite();
-        splashScreen.graphics.beginFill(0x000000, 0.5);
-        splashScreen.graphics.drawRect(0, 0, 700, 500);
-        splashScreen.graphics.endFill();
-        */
-        addChild(splashScreen);
-        splashScreen.addEventListener(MouseEvent.CLICK, splashScreenClicked);
+        helpScreen = new SPLASH_SCREEN();
+        helpScreen.addEventListener(MouseEvent.CLICK, helpScreenClicked);
+        helpScreen.buttonMode = true;
+        addChild(helpScreen);
     }
     
     /**
@@ -130,21 +146,30 @@ public class Board extends Sprite
     
     /**
      * Player clicked the splash screen; remove it and signal game start     */
-    protected function splashScreenClicked (event :MouseEvent) :void
+    protected function helpScreenClicked (event :MouseEvent) :void
     {
-    	if (_ctx.control.game.amInControl() && !_setupComplete) {
-    		return;
-    	}
-    	if (contains(event.target as Sprite)) {
-    	   removeChild(event.target as Sprite);
+    	//if (_ctx.control.game.amInControl() && !_setupComplete) {
+    	//	return;
+    	//}
+    	if (contains(helpScreen)) {
+    	   removeChild(helpScreen);
     	}
     	//_ctx.control.game.playerReady();
     	
-        if (_ctx.control.game.amInControl()) {
+        //if (_ctx.control.game.amInControl()) {
             // control player starts the first turn
-            _ctx.control.game.startNextTurn();
-        }
+        //    _ctx.control.game.startNextTurn();
+        //}
         
+    }
+    /**
+     * Player clicked the help button, display the help screen     */
+    protected function helpButtonClicked (event :MouseEvent) :void
+    {
+        if (!contains(helpScreen)) {
+           addChild(helpScreen);
+           _ctx.notice("Displaying help.  Click on the board to continue.")
+        }
     }
     
     /**
@@ -253,19 +278,20 @@ public class Board extends Sprite
     			break;
     		}
     	}
-        opponent.unload();
         
         // return the player's job to the pile
-        _ctx.eventHandler.setData(Deck.JOBS_DATA, -1, opponent.id);
+        if (_ctx.control.game.amInControl()) {
+            _ctx.eventHandler.setData(Deck.JOBS_DATA, -1, opponent.id);
+        }
         
         // if anything was happening with any player, stop it now
         // TODO only stop things that were waiting on the player who left
         _ctx.notice("Cancelling all events and actions because a player left.");
         _ctx.state.cancelMode();
         laws.cancelTriggering();
-        if (_ctx.state.performingAction) {
-            _ctx.state.performingAction = false;
-        }
+        //if (_ctx.state.performingAction) {
+        //    _ctx.state.performingAction = false;
+        //}
         
         // if it was their turn, end turn (controlling player only)
 	    if (_ctx.control.game.amInControl()) {
@@ -279,12 +305,19 @@ public class Board extends Sprite
         opponents.removeOpponent(opponent);
         var index :int = playerObjects.indexOf(opponent);
         playerObjects.splice(index, 1);
+ 
+        // unload the opponent object       
+        opponent.unload();
     }
     
-    /** TODO make components readonly using getters */
+    /** Displays a help screen overlay */
+    protected var helpScreen :Sprite;
     
     /** Displays in-game messages to the player */
     public var notices :Notices;
+    
+    /** Button for using power */
+    public var usePowerButton :UsePowerButton;
     
     /** Press this to show the create law box */
     public var createLawButton :CreateLawButton;

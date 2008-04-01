@@ -19,10 +19,8 @@ import lawsanddisorder.component.*
  * Handles game setup / game start / game end logic.
  *
  * TODO gameplay:
- * skipping turns of afk players
- * unloader?
  * 1-2-3 step process?  change positions, use power, create law, done
- * ai!
+ * ai to play against & allow 1 player games?
  * 
  * TODO interface:
  * add highlighting and cursors to doctor's ability
@@ -34,13 +32,27 @@ import lawsanddisorder.component.*
  * display job power in use power button
  * connect use power button to job
  * highlight your job's name in laws
+ * better explanation of each ability (in help?  tooltips?  with pictures?)
+ * highlighting cues or better ui for doctor's ability
+ * displaying notices directly related to you in the game itself
+ * opponent list should start with the opponent whose turn comes after you
+ * end turn queuing when waiting for other players (great idea!)
+ * handling long names / special characters in names
+ * playing one more round after the last card is drawn
+ * color-code the law contents to match card colors
  * 
+ * TODO bugs:
+ * disappearing cards, appearing cards - ask server every time?
+ * issues with players leaving
+ * issues with rematches and data getting out of synch
+ * unload timers?
+ * theif can undo rearranging your hand; propagate hand rearranging data events?
+ *  
  * TODO graphics/flavor:
  * talk to artists about improving graphics
  * animate backgrounds (from robert: people milling about, something behind the columns)
  * chisel animation
  * sound - chisel, focus gain, card/money loss, card/money gain, background(?)
- * why is the background cut off at the bottom in whirled but not the standalone?
  * 
  */
 [SWF(width="1000", height="550")]
@@ -86,7 +98,7 @@ public class LawsAndDisorder extends Sprite
 
         // set up distributed data
         //beginInit();
-        
+        _ctx.notice("Your player id is " + _ctx.control.game.getMyId());
         _ctx.control.game.playerReady();
     }
     
@@ -116,7 +128,7 @@ public class LawsAndDisorder extends Sprite
     	//	}
     	//}
     	
-        _ctx.notice("Welcome to Laws & Disorder!");
+        _ctx.notice("Welcome to Laws & Disorder.  Click on the board to start!");
         /*
         if (_ctx.control.game.amInControl()) {
             // control player starts the first turn
@@ -168,12 +180,10 @@ public class LawsAndDisorder extends Sprite
             _ctx.control.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, initPropertyChanged);
             _ctx.board.setup();
             
-            /* 
             if (_ctx.control.game.amInControl()) {
                 // control player starts the first turn
                 _ctx.control.game.startNextTurn();
             }
-            */
             
         }
     }
@@ -221,9 +231,11 @@ public class LawsAndDisorder extends Sprite
         // TODO it won't though, because player objects are already created.
         if (!_gameStarted && event.player) {
         	if (_ctx != null) {
-        		_ctx.notice("Player left before the game started");
+        		_ctx.notice("Player left before the game started.  Attempting to start over.");
         	}
-            beginInit();
+            if (_ctx.control.game.amInControl()) {
+                beginInit();
+            }
         }
         else if (event.player) {
             _ctx.log("Player " + event.occupantId + " left.");
