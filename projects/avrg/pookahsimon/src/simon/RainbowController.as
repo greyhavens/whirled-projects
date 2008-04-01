@@ -146,7 +146,7 @@ public class RainbowController extends SceneObject
             PLAYER_TIMEOUT_TASK_NAME,
             new SerialTask(
                 new AnimateValueTask(_playerTimeoutCountdown, 0, Constants.PLAYER_TIMEOUT_S),
-                new FunctionTask(handleStateChange_PlayerTimeout)));
+                new FunctionTask(handleLocalPlayerTimeout)));
     }
 
     protected function stopPlayerTimeoutHandler () :void
