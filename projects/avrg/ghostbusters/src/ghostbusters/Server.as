@@ -307,25 +307,19 @@ public class Server
         // commensurately. Finally, the payout is reduced by the square root of the size of the
         // team.
         //
-        // The rationale behind the level and team size tweaks are not that strong players should
-        // get more flow, but rather to compensate for the fact that a strong player can kill
-        // weak ghosts at a very rapid rate and this is per-kill compensation.
-        //
-        // The rationale behind the square root is one seen in many MMO's: first, you divide the
-        // payout by the size of the team (because 4 people can kill much faster than 2), then
-        // you partially undo this penalty with a "team bonus" to encourage socializing and to
-        // provide a bit of slack in the group makeup. 
+        // The rationale behind the level tweak is not that strong players should get more coins,
+        // but rather to compensate for the fact that a strong player can kill weak ghosts at a
+        // more rapid rate and payouts are per-kill compensation.
         //
         //   payoutFactor(player) = 0.5 *
         //      levelAdjustment(level(ghost) - level(player)) *
-        //      (minigamePoints(player) / minigamePoints(team)) *
-        //      (1 / SQRT(size(team)))
+        //      (minigamePoints(player) / minigamePoints(team))
         //
         // The precise definition of levelAdjustment() is up in the air, but I figure something
         // along the lines of 1+atan(x/2) (http://www.mathsisfun.com/graph/function-grapher.php)
 
         for (ii = 0; ii < team.length; ii ++) {
-            var factor :Number = 0.5 * (points[ii]  / totPoints) / Math.sqrt(team.length);
+            var factor :Number = 0.5 * (points[ii]  / totPoints);
             if (factor > 0) {
                 Game.control.state.sendMessage(Codes.MSG_PAYOUT_FACTOR, factor, team[ii]);
             }
