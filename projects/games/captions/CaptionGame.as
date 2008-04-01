@@ -23,6 +23,8 @@ package {
 import flash.events.Event;
 import flash.events.EventDispatcher;
 
+import flash.utils.Dictionary;
+
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.StringUtil;
@@ -131,7 +133,7 @@ public class CaptionGame extends EventDispatcher
             submitCaption(null);
         }
         // set the value last, so it doesn't block clearing our caption
-        _ctrl.net.set("part:" + _myId, participating ? null : false, true);
+        _ctrl.net.setIn(NON_PARTICIPANTS, _myId, participating ? null : false, true);
     }
 
     /**
@@ -139,7 +141,8 @@ public class CaptionGame extends EventDispatcher
      */
     public function isParticipating () :Boolean
     {
-        return (_ctrl.net.get("part:" + _myId) == null);
+        var part :Dictionary = _ctrl.net.get(NON_PARTICIPANTS) as Dictionary;
+        return (part == null) || (part[_myId] == null);
     }
 
     /**
@@ -167,7 +170,7 @@ public class CaptionGame extends EventDispatcher
      */
     public function getPhoto () :String
     {
-        return _ctrl.net.get("photo") as String;
+        return _ctrl.net.get(PHOTO) as String;
     }
 
     /**
@@ -178,7 +181,7 @@ public class CaptionGame extends EventDispatcher
      */
     public function getPhotoPage () :String
     {
-        return _ctrl.net.get("photoPage") as String;
+        return _ctrl.net.get(PHOTO_PAGE) as String;
     }
 
     /**
@@ -205,9 +208,10 @@ public class CaptionGame extends EventDispatcher
             // data to private little collections, which are then combined and retrieved.
             // We could do that now, but currently don't have a way to verify which user
             // submitted which caption...
-            _ctrl.net.set("caption:" + _myId, _myCaption);
-            if ((_myCaption != null) && ((_ctrl.net.get("name:" + _myId) != _myName))) {
-                _ctrl.net.set("name:" + _myId, _myName, true);
+            _ctrl.net.setIn(CAPTIONS, _myId, _myCaption);
+            var names :Dictionary = _ctrl.net.get(NAMES) as Dictionary;
+            if ((_myCaption != null) && (names == null || names[_myId] != _myName)) {
+                _ctrl.net.setIn(NAMES, _myId, _myName, true);
             }
         }
     }
@@ -217,7 +221,7 @@ public class CaptionGame extends EventDispatcher
      */
     public function setDoneCaptioning (done :Boolean) :void
     {
-        _ctrl.net.set("done:" + _myId, done ? true : null);
+        _ctrl.net.setIn(DONE, _myId, done ? true : null);
     }
 
     /**
@@ -229,7 +233,7 @@ public class CaptionGame extends EventDispatcher
             return;
         }
 
-        _ctrl.net.set("skip:" + _myId, on ? true : null);
+        _ctrl.net.setIn(SKIPPERS, _myId, on ? true : null);
     }
 
     /**
@@ -268,11 +272,11 @@ public class CaptionGame extends EventDispatcher
         }
 
         // convert the index (which was randomized on this client) to the player id of the caption
-        var ids :Array = _ctrl.net.get("ids") as Array;
+        var ids :Array = _ctrl.net.get(VOTING_IDS) as Array;
         var captionId :int = int(ids[int(_indexes[captionIndex])]);
 
         _myVote = computeApprovalVote(_myVote, captionId, on);
-        _ctrl.net.set("vote:" + _myId, _myVote);
+        _ctrl.net.setIn(VOTES, _myId, _myVote);
     }
 
     /**
@@ -309,10 +313,13 @@ public class CaptionGame extends EventDispatcher
         }
 
         var previewURLS :Array = [];
-        for (var ii :int = 0; ii < _previewCount; ii++) {
-            var nexts :Array = _ctrl.net.get("next_" + ii) as Array;
-            if (nexts != null) {
-                previewURLS[ii] = nexts[0]; // preview info..
+        var previews :Dictionary = _ctrl.net.get(PREVIEWS) as Dictionary;
+        if (previews != null) {
+            for (var ii :int = 0; ii < _previewCount; ii++) {
+                var nexts :Array = previews[ii] as Array;
+                if (nexts != null) {
+                    previewURLS[ii] = nexts[0]; // preview info..
+                }
             }
         }
         return previewURLS;
@@ -324,7 +331,7 @@ public class CaptionGame extends EventDispatcher
     public function setPreviewVote (previewIndex :int, on :Boolean = true) :void
     {
         _myPreviewVote = computeApprovalVote(_myPreviewVote, previewIndex, on);
-        _ctrl.net.set("pvote:" + _myId, _myPreviewVote);
+        _ctrl.net.setIn(PREVIEW_VOTES, _myId, _myPreviewVote);
     }
 
     // End: public methods
@@ -340,6 +347,7 @@ public class CaptionGame extends EventDispatcher
 
         _ctrl.addEventListener(Event.UNLOAD, handleUnload);
         _ctrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, handlePropertyChanged);
+        _ctrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
         _ctrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
         _ctrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleCoinsAwarded);
         _ctrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
@@ -364,16 +372,19 @@ public class CaptionGame extends EventDispatcher
      */
     protected function updateScoreDisplay () :void
     {
-        var scores :Object = {};
-        for each (var prop :String in _ctrl.net.getPropertyNames("scores-")) {
-            var roundScores :Object = _ctrl.net.get(prop);
-            for (var playerId :String in roundScores) {
-                scores[playerId] = int(scores[playerId]) + int(roundScores[playerId]);
+        var totalScores :Dictionary = new Dictionary();
+        var scores :Dictionary = _ctrl.net.get(SCORES) as Dictionary;
+        if (scores != null) {
+            for each (var roundScores :Dictionary in scores) {
+                for (var key :* in roundScores) {
+                    var playerId :int = key as int;
+                    totalScores[playerId] = int(totalScores[playerId]) + int(roundScores[playerId]);
+                }
             }
         }
 
         _ctrl.local.clearScores(0);
-        _ctrl.local.setMappedScores(scores);
+        _ctrl.local.setMappedScores(totalScores);
     }
 
     /**
@@ -382,7 +393,7 @@ public class CaptionGame extends EventDispatcher
     protected function handlePropertyChanged (event :PropertyChangedEvent) :void
     {
         switch (event.name) {
-        case "phase":
+        case PHASE:
             if (checkPhase()) {
                 dispatchEvent(new Event(PHASE_CHANGED_EVENT));
             }
@@ -390,13 +401,21 @@ public class CaptionGame extends EventDispatcher
         }
 
         if (_inControl) {
-            if (event.name == "cphase") {
+            if (event.name == CONTROL_PHASE) {
                 checkControlPhase();
+            }
+        }
+    }
 
-            } else if (StringUtil.startsWith(event.name, "skip:") ||
-                    StringUtil.startsWith(event.name, "done:") ||
-                    StringUtil.startsWith(event.name, "part:")) {
+    protected function handleElementChanged (event :ElementChangedEvent) :void
+    {
+        if (_inControl) {
+            switch (event.name) {
+            case SKIPPERS:
+            case DONE:
+            case NON_PARTICIPANTS:
                 checkSkippingAndParticipating();
+                break;
             }
         }
     }
@@ -407,7 +426,7 @@ public class CaptionGame extends EventDispatcher
     protected function handleMessageReceived (event :MessageReceivedEvent) :void
     {
         switch (event.name) {
-        case "tick":
+        case TICKER:
             updateTick(event.value as int);
             break;
         }
@@ -473,7 +492,7 @@ public class CaptionGame extends EventDispatcher
      */
     protected function getRawPhase () :int
     {
-        return int(_ctrl.net.get("phase"));
+        return int(_ctrl.net.get(PHASE));
     }
 
     /**
@@ -489,7 +508,7 @@ public class CaptionGame extends EventDispatcher
      */
     protected function getCtrlPhase () :int
     {
-        return int(_ctrl.net.get("cphase"));
+        return int(_ctrl.net.get(CONTROL_PHASE));
     }
 
     /**
@@ -505,7 +524,7 @@ public class CaptionGame extends EventDispatcher
      */
     protected function setCtrlPhase (phase :int) :void
     {
-        _ctrl.net.set("cphase", phase, true);
+        _ctrl.net.set(CONTROL_PHASE, phase, true);
     }
 
     /**
@@ -513,9 +532,9 @@ public class CaptionGame extends EventDispatcher
      */
     protected function setPhase (phase :int) :void
     {
-        _ctrl.net.set("phase", phase);
+        _ctrl.net.set(PHASE, phase);
         if (phase >= CAPTIONING_PHASE) {
-            _ctrl.services.startTicker("tick", 1000);
+            _ctrl.services.startTicker(TICKER, 1000);
         }
     }
 
@@ -559,8 +578,8 @@ public class CaptionGame extends EventDispatcher
     protected function setupVoting () :void
     {
         var ii :int;
-        var caps :Array = _ctrl.net.get("captions") as Array;
-        var ids :Array = _ctrl.net.get("ids") as Array;
+        var caps :Array = _ctrl.net.get(VOTING_CAPTIONS) as Array;
+        var ids :Array = _ctrl.net.get(VOTING_IDS) as Array;
 
         // randomize the displayed order for each player..
         _indexes = [];
@@ -597,9 +616,11 @@ public class CaptionGame extends EventDispatcher
      */
     protected function setupResults () :void
     {
-        var results :Array = _ctrl.net.get("results") as Array;
-        var ids :Array = _ctrl.net.get("ids") as Array;
-        var caps :Array = _ctrl.net.get("captions") as Array;
+        _myPreviewVote = null;
+
+        var results :Array = _ctrl.net.get(RESULTS) as Array;
+        var ids :Array = _ctrl.net.get(VOTING_IDS) as Array;
+        var caps :Array = _ctrl.net.get(VOTING_CAPTIONS) as Array;
         var indexes :Array = [];
 
         var ii :int;
@@ -641,20 +662,20 @@ public class CaptionGame extends EventDispatcher
 
         _results = [];
 
-        var coinScores :Object = {};
+        var coinScores :Dictionary = new Dictionary();
         var playerIdStr :String;
         var playerId :int;
         var winnerVal :int = -1;
         var winnerIds :Array = [];
+        var names :Dictionary = _ctrl.net.get(NAMES) as Dictionary;
         for (ii = 0; ii < indexes.length; ii++) {
 
             var index :int = int(indexes[ii]);
             var result :int = int(results[index]);
             playerId = int(ids[index]);
-            playerIdStr = String(playerId);
 
             if (_inControl) {
-                coinScores[playerIdStr] = CAPTION_SCORE;
+                coinScores[playerId] = CAPTION_SCORE;
             }
 
             var record :Object = {};
@@ -662,7 +683,7 @@ public class CaptionGame extends EventDispatcher
             if (record.caption == null) {
                 record.caption = "(Filtered)";
             }
-            record.playerName = String(_ctrl.net.get("name:" + playerIdStr));
+            record.playerName = String(names[playerId]);
             record.votes = int(Math.abs(result));
             record.disqual = (result < 0);
 
@@ -672,7 +693,7 @@ public class CaptionGame extends EventDispatcher
                 winnerIds.push(playerId);
 
                 if (_inControl) {
-                    coinScores[playerIdStr] = WINNER_SCORE + int(coinScores[playerIdStr]);
+                    coinScores[playerId] = WINNER_SCORE + int(coinScores[playerId]);
                 }
                 record.winner = true;
 
@@ -689,19 +710,21 @@ public class CaptionGame extends EventDispatcher
 
         // if we're in control, do score awarding for all players (ending the "game" (round))
         if (_inControl) {
+            var key :*;
             // give points just for voting (people may have voted but not be in the other array)
-            var props :Array = _ctrl.net.getPropertyNames("vote:");
-            for each (var prop :String in props) {
-                playerIdStr = prop.substring(5);
-                coinScores[playerIdStr] = VOTE_SCORE + int(coinScores[playerIdStr]);
+            var votes :Dictionary = _ctrl.net.get(VOTES) as Dictionary;
+            for (key in votes) {
+                playerId = key as int;
+                coinScores[playerId] = VOTE_SCORE + int(coinScores[playerId]);
             }
 
             // now turn it into two parallel arrays for reporting to the game
             var scoreIds :Array = [];
             var scores :Array = [];
-            for (playerIdStr in coinScores) {
-                scoreIds.push(parseInt(playerIdStr));
-                scores.push(int(coinScores[playerIdStr]));
+            for (key in coinScores) {
+                playerId = key as int;
+                scoreIds.push(playerId);
+                scores.push(int(coinScores[playerId]));
             }
 //            trace("ids    : " + scoreIds);
 //            trace("scores : " + scores);
@@ -813,7 +836,7 @@ public class CaptionGame extends EventDispatcher
 
         var curWinners :Array = winnerIds.concat(); // make a copy
 
-        var winnerData :Array = _ctrl.net.get("winnerData") as Array;
+        var winnerData :Array = _ctrl.net.get(WINNER_DATA) as Array;
         if (winnerData == null) {
             winnerData = [];
         }
@@ -843,7 +866,7 @@ public class CaptionGame extends EventDispatcher
         // now add the new data to the front of the array
         winnerData.unshift(winnerIds);
         if (_inControl) {
-            _ctrl.net.set("winnerData", winnerData);
+            _ctrl.net.set(WINNER_DATA, winnerData);
         }
 
         // finally, check this data for consecutive win info..
@@ -884,7 +907,7 @@ public class CaptionGame extends EventDispatcher
     protected function checkControlPhase () :void
     {
         // special case: game startup
-        if (_ctrl.net.get("phase") == null) {
+        if (_ctrl.net.get(PHASE) == null) {
             loadNextPictures();
             return;
         }
@@ -925,32 +948,21 @@ public class CaptionGame extends EventDispatcher
             // notify our clients that we'll start a new round
             dispatchEvent(new Event(ROUND_WILL_START_EVENT));
 
-            _ctrl.net.set("skipping", null);
-            _ctrl.net.set("photo", photoUrl);
-            _ctrl.net.set("photoPage", pageUrl);
-            _ctrl.net.set("captions", null);
-            _ctrl.net.set("ids", null);
-            _ctrl.net.set("results", null);
-            clearProps("caption:");
-            clearProps("vote:");
-            clearProps("name:");
-            clearProps("skip:");
-            clearProps("done:");
-            clearProps("pvote:");
-            clearProps("next_");
+            _ctrl.net.set(SKIPPING, null);
+            _ctrl.net.set(PHOTO, photoUrl);
+            _ctrl.net.set(PHOTO_PAGE, pageUrl);
+            _ctrl.net.set(VOTING_CAPTIONS, null);
+            _ctrl.net.set(VOTING_IDS, null);
+            _ctrl.net.set(RESULTS, null);
+            _ctrl.net.set(CAPTIONS, null);
+            _ctrl.net.set(VOTES, null);
+            _ctrl.net.set(NAMES, null);
+            _ctrl.net.set(SKIPPERS, null);
+            _ctrl.net.set(DONE, null);
+            _ctrl.net.set(PREVIEW_VOTES, null);
+            _ctrl.net.set(PREVIEWS, null);
             setPhase(CAPTIONING_PHASE);
         });
-    }
-
-    /**
-     * Clear all the properties with the specified prefix. This should be called from
-     * within a doBatch().
-     */
-    protected function clearProps (prefix :String) :void
-    {
-        for each (var prop :String in _ctrl.net.getPropertyNames(prefix)) {
-            _ctrl.net.set(prop, null);
-        }
     }
 
     /**
@@ -958,7 +970,7 @@ public class CaptionGame extends EventDispatcher
      */
     protected function checkSkippingAndParticipating () :void
     {
-        if (!isPhase(CAPTIONING_PHASE) || (null != _ctrl.net.get("skipping"))) {
+        if (!isPhase(CAPTIONING_PHASE) || (null != _ctrl.net.get(SKIPPING))) {
             return;
         }
 
@@ -969,9 +981,12 @@ public class CaptionGame extends EventDispatcher
         }
 
         // then, remove the non-participants
-        for each (var nonPart :String in _ctrl.net.getPropertyNames("part:")) {
-            id = parseInt(nonPart.substring(5));
-            allOccs.remove(id);
+        var part :Dictionary = _ctrl.net.get(NON_PARTICIPANTS) as Dictionary;
+        if (part != null) {
+            for (var nonPart :* in part) {
+                id = nonPart as int;
+                allOccs.remove(id);
+            }
         }
 
         // if there are no participants left, then just proceed as normal...
@@ -980,37 +995,43 @@ public class CaptionGame extends EventDispatcher
         }
 
         // then, we check done-ness from all the participants
-        var allDone :Boolean = true;
-        for each (id in allOccs.keys()) {
-            if (null == _ctrl.net.get("done:" + id)) {
-                allDone = false;
-                break;
+        var done :Dictionary = _ctrl.net.get(DONE) as Dictionary;
+        if (done != null) {
+            var allDone :Boolean = true;
+            for each (id in allOccs.keys()) {
+                if (!Boolean(done[id])) {
+                    allDone = false;
+                    break;
+                }
+            }
+            if (allDone) {
+                // stop the ticker and move to the next round
+                endTickedPhase();
+                return;
             }
         }
 
-        if (allDone) {
-            // stop the ticker and move to the next round
-            endTickedPhase();
-            return;
-        }
-
         // then, check to see if we should skip if _more than half_ of the participants want to
-        var half :Number = allOccs.size() / 2;
-        var skipVotes :int = 0;
-        for each (id in allOccs.keys()) {
-            if (null != _ctrl.net.get("skip:" + id)) {
-                skipVotes++;
-                if (skipVotes > half) { // 2 players requires both to skip, 3 players requires 2,
-                                        // 4 players requires 3...
-                    if (skipVotes > 1) {
-                        _ctrl.game.systemMessage("" + skipVotes +
-                            " players have voted to skip the picture.");
+        var skip :Dictionary = _ctrl.net.get(SKIPPERS) as Dictionary;
+        if (skip != null) {
+            var half :Number = allOccs.size() / 2;
+            var skipVotes :int = 0;
+
+            for each (id in allOccs.keys()) { // only count people who are around
+                if (Boolean(skip[id])) {
+                    skipVotes++;
+                    if (skipVotes > half) { // 2 players requires both to skip, 3 players requires 2,
+                                            // 4 players requires 3...
+                        if (skipVotes > 1) {
+                            _ctrl.game.systemMessage("" + skipVotes +
+                                " players have voted to skip the picture.");
+                        }
+                        _ctrl.net.set(SKIPPING, true, true);
+                        _ctrl.services.stopTicker(TICKER);
+                        setPhase(-1);
+                        setCtrlPhase(GET_PHOTO_CTRL_PHASE);
+                        return;
                     }
-                    _ctrl.net.set("skipping", true, true);
-                    _ctrl.services.stopTicker("tick");
-                    setPhase(-1);
-                    setCtrlPhase(GET_PHOTO_CTRL_PHASE);
-                    return;
                 }
             }
         }
@@ -1021,7 +1042,7 @@ public class CaptionGame extends EventDispatcher
      */
     protected function endTickedPhase () :void
     {
-        _ctrl.services.stopTicker("tick");
+        _ctrl.services.stopTicker(TICKER);
 
         // if the phase and ctrlPhase are the same, proceed to the next ctrlPhase
         var phase :int = getCurrentPhase();
@@ -1036,18 +1057,17 @@ public class CaptionGame extends EventDispatcher
     protected function initVotingPhase () :void
     {
         // find ALL the captions, even for players that may have left.
-        var props :Array = _ctrl.net.getPropertyNames("caption:");
+        var captions :Dictionary = _ctrl.net.get(CAPTIONS) as Dictionary;
         var caps :Array = [];
         var ids :Array = [];
-        for each (var prop :String in props) {
-            var submitterId :int = parseInt(prop.substring(8));
+        for (var submitter :* in captions) {
+            var submitterId :int = submitter as int;
 
             ids.push(submitterId);
-            caps.push(_ctrl.net.get(prop));
-
-            // clear out the original prop
-            _ctrl.net.set(prop, null);
+            caps.push(captions[submitterId]);
         }
+        // clear out the original props
+        _ctrl.net.set(CAPTIONS, null);
 
         if (ids.length == 0) {
             // there were no submitted captions
@@ -1058,8 +1078,8 @@ public class CaptionGame extends EventDispatcher
         }
 
         // set the ids and captions and trigger the next phase
-        _ctrl.net.set("ids", ids);
-        _ctrl.net.set("captions", caps);
+        _ctrl.net.set(VOTING_IDS, ids);
+        _ctrl.net.set(VOTING_CAPTIONS, caps);
         setPhase(VOTING_PHASE);
 
         // and, in the background, load up our next previews
@@ -1075,33 +1095,35 @@ public class CaptionGame extends EventDispatcher
         var ii :int;
         var didVote :Array = [];
         var results :Array = [];
-        var ids :Array = _ctrl.net.get("ids") as Array;
+        var ids :Array = _ctrl.net.get(VOTING_IDS) as Array;
         for (ii = 0; ii < ids.length; ii++) {
             results[ii] = 0;
             didVote[ii] = false;
         }
-        var scores :Object = {};
+        var scores :Dictionary = new Dictionary();
         for each (var playerId :int in _ctrl.game.getOccupantIds()) {
             scores[playerId] = 0;
         }
-        var props :Array = _ctrl.net.getPropertyNames("vote:");
-        for each (var prop :String in props) {
-            var voterId :int = parseInt(prop.substring(5));
-            var voterIndex :int = ids.indexOf(voterId);
-            var votes :Array = _ctrl.net.get(prop) as Array;
-            for each (var voteeId :int in votes) {
-                var voteeIndex :int = ids.indexOf(voteeId);
+        var allVotes :Dictionary = _ctrl.net.get(VOTES) as Dictionary;
+        if (allVotes != null) {
+            for (var key :* in allVotes) {
+                var voterId :int = key as int;
+                var voterIndex :int = ids.indexOf(voterId);
+                var votes :Array = allVotes[voterId] as Array;
+                for each (var voteeId :int in votes) {
+                    var voteeIndex :int = ids.indexOf(voteeId);
 
-                if (voteeIndex == -1) {
-                    // this is a miscast vote?!
-                    continue;
-                }
-                results[voteeIndex]++;
-                if (voterIndex != -1) {
-                    didVote[voterIndex] = true;
-                }
+                    if (voteeIndex == -1) {
+                        // this is a miscast vote?!
+                        continue;
+                    }
+                    results[voteeIndex]++;
+                    if (voterIndex != -1) {
+                        didVote[voterIndex] = true;
+                    }
 
-                scores[voteeId] = int(scores[voteeId]) + 1;
+                    scores[voteeId] = int(scores[voteeId]) + 1;
+                }
             }
         }
 
@@ -1116,16 +1138,16 @@ public class CaptionGame extends EventDispatcher
         }
 
         // update the round and round info
-        var roundId :int = _ctrl.net.get("round") as int;
-        _ctrl.net.set("scores-" + roundId, scores);
+        var roundId :int = _ctrl.net.get(ROUND) as int;
+        _ctrl.net.setIn(SCORES, roundId, scores);
         var oldRoundId :int = roundId - _scoreRounds;
         if (oldRoundId > 0) {
-            _ctrl.net.set("scores-" + oldRoundId, null);
+            _ctrl.net.setIn(SCORES, oldRoundId, null);
         }
-        _ctrl.net.set("round", roundId + 1);
+        _ctrl.net.set(ROUND, roundId + 1);
 
         // and trigger the results
-        _ctrl.net.set("results", results);
+        _ctrl.net.set(RESULTS, results);
         setPhase(RESULTS_PHASE);
     }
 
@@ -1178,7 +1200,7 @@ public class CaptionGame extends EventDispatcher
         var toGet :int = _previewCount;
         if (_carryOverPreview != null) {
             toGet--;
-            _ctrl.net.set("next_" + toGet, _carryOverPreview);
+            _ctrl.net.setIn(PREVIEWS, toGet, _carryOverPreview);
             _carryOverPreview = null;
         }
 
@@ -1196,9 +1218,11 @@ public class CaptionGame extends EventDispatcher
             votes.push(0);
         }
 
-        for each (var prop :String in _ctrl.net.getPropertyNames("pvote:")) {
-            var dexes :Array = _ctrl.net.get(prop) as Array;
+        var previewVotes :Dictionary = _ctrl.net.get(PREVIEW_VOTES) as Dictionary;
+        for each (var dexes :Array in previewVotes) {
+            trace("Checking some player's votes...");
             for each (var dex :int in dexes) {
+                trace("We have a vote for preview #" + dex);
                 votes[dex]++;
             }
         }
@@ -1206,23 +1230,26 @@ public class CaptionGame extends EventDispatcher
         var secondPlaces :Array = null;
         var first :int = 0;
         var second :int = 0;
-        for (ii = 0; ii < votes.length; ii++) {
-            var sizes :Array = _ctrl.net.get("next_" + ii) as Array;
-            if (sizes == null) {
-                continue;
-            }
+        var previews :Dictionary = _ctrl.net.get(PREVIEWS) as Dictionary;
+        if (previews != null) {
+            for (ii = 0; ii < votes.length; ii++) {
+                var sizes :Array = previews[ii] as Array;
+                if (sizes == null) {
+                    continue;
+                }
 
-            if (votes[ii] > first) {
-                secondPlaces = firstPlaces;
-                second = first;
-                firstPlaces = [];
-                first = votes[ii];
-            }
-            if (votes[ii] == first) {
-                firstPlaces.push(sizes);
+                if (votes[ii] > first) {
+                    secondPlaces = firstPlaces;
+                    second = first;
+                    firstPlaces = [];
+                    first = votes[ii];
+                }
+                if (votes[ii] == first) {
+                    firstPlaces.push(sizes);
 
-            } else if (votes[ii] == second) {
-                secondPlaces.push(sizes);
+                } else if (votes[ii] == second) {
+                    secondPlaces.push(sizes);
+                }
             }
         }
 
@@ -1281,7 +1308,7 @@ public class CaptionGame extends EventDispatcher
     {
 //        trace("Game started : " + _myName + " : " + _inControl);
         if (_inControl && isCtrlPhase(INIT_RESULTS_CTRL_PHASE)) {
-            _ctrl.services.startTicker("tick", 1000);
+            _ctrl.services.startTicker(TICKER, 1000);
         }
     }
 
@@ -1299,10 +1326,9 @@ public class CaptionGame extends EventDispatcher
      */
     protected function handleOccupantLeft (event :OccupantChangedEvent) :void
     {
-        trace("Occupant left: " + event.occupantId);
         if (_inControl) {
             // clear out their participating flag, if any
-            _ctrl.net.set("part:" + event.occupantId, null);
+            _ctrl.net.setIn(NON_PARTICIPANTS, event.occupantId, null);
 
             // see if we now want to skip ahead, or anything
             checkSkippingAndParticipating();
@@ -1330,7 +1356,7 @@ public class CaptionGame extends EventDispatcher
     {
         var info :Array = event.value as Array;
         var id :int = int(info.shift());
-        _ctrl.net.set("next_" + id, info);
+        _ctrl.net.setIn(PREVIEWS, id, info);
     }
 
     /** Control phase constants, the phase that the control user is currently engaged in. */
@@ -1339,6 +1365,28 @@ public class CaptionGame extends EventDispatcher
     protected static const INIT_RESULTS_CTRL_PHASE :int = 2;
 
     protected static const PHASE_COUNT :int = 3;
+
+    /** Property name constants. */
+    protected static const PHASE :String = "phase";
+    protected static const CONTROL_PHASE :String = "cphase";
+    protected static const ROUND :String = "round";
+    protected static const NON_PARTICIPANTS :String = "part";
+    protected static const SKIPPING :String = "skipping";
+    protected static const SKIPPERS :String = "skip";
+    protected static const DONE :String = "done";
+    protected static const CAPTIONS :String = "caps";
+    protected static const NAMES :String = "names";
+    protected static const VOTING_IDS :String = "ids";
+    protected static const VOTING_CAPTIONS :String = "vcaps";
+    protected static const RESULTS :String = "results";
+    protected static const VOTES :String = "votes";
+    protected static const PHOTO :String = "photo";
+    protected static const PHOTO_PAGE :String = "photoPage";
+    protected static const PREVIEW_VOTES :String = "pvotes";
+    protected static const WINNER_DATA :String = "winnerData";
+    protected static const PREVIEWS :String = "next";
+    protected static const TICKER :String = "tick";
+    protected static const SCORES :String = "scores";
 
     protected var _ctrl :GameControl;
     
