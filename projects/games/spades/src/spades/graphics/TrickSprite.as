@@ -72,8 +72,8 @@ public class TrickSprite extends CardArraySprite
     {
         super.cardArrayListener(event);
 
-        // make sure new trick does not inherit previous winning card
         if (event.action == CardArrayEvent.ACTION_RESET) {
+            // make sure new trick does not inherit previous winning card
             winningCard = -1;
         }
     }
@@ -81,23 +81,22 @@ public class TrickSprite extends CardArraySprite
     override protected function getStaticCardPosition (index :int, pos :Vector2) :void
     {
         var posIdx :int = (index + _leader) % CARD_POSITIONS.length;
-        var posArray :Array = CARD_POSITIONS[posIdx] as Array;
-        pos.x = posArray[0] as int;
-        pos.y = posArray[1] as int;
+        var staticPos :Vector2 = CARD_POSITIONS[posIdx] as Vector2;
+        pos.x = staticPos.x;
+        pos.y = staticPos.y;
     }
 
     protected var _numPlayers :int;
     protected var _leader :int;
     protected var _winningCard :int = -1;
 
-    //protected static const SCALE :Number = 0.5;
-
     // layout in a cross
     protected static const CARD_POSITIONS :Array = [
-        [0, CardSprite.HEIGHT / 4],
-        [-CardSprite.WIDTH / 2, 0],
-        [0, -CardSprite.HEIGHT / 4],
-        [CardSprite.WIDTH / 2, 0]];
+        new Vector2(0, CardSprite.HEIGHT / 4),
+        new Vector2(-CardSprite.WIDTH / 2, 0),
+        new Vector2(0, -CardSprite.HEIGHT / 4),
+        new Vector2(CardSprite.WIDTH / 2, 0)];
 }
 
 }
+

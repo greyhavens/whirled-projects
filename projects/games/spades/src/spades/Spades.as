@@ -564,6 +564,7 @@ public class Spades extends Sprite
     {
         _gameCtrl.net.doBatch(batch);
         _hand.remove(card);
+        _table.disableHand();
 
         function batch () :void
         {

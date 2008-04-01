@@ -57,15 +57,16 @@ public class TableSprite extends Sprite
         _localSeat = localSeat;
         _displaySize = displaySize;
 
-        _players = playerNames.map(createPlayer);
+        _players = new Array(playerNames.length);
+        playerNames.forEach(createPlayer);
 
         _hand = new HandSprite(hand);
         addChild(_hand);
 
-        _trick = new TrickSprite(trick, _numPlayers);
+        _trick = new MainTrickSprite(trick, _players, _hand);
         addChild(_trick);
 
-        _lastTrick = new TrickSprite(new CardArray(), _numPlayers);
+        _lastTrick = new LastTrickSprite(_players.length);
         addChild(_lastTrick);
 
         // listen for clicks on cards
@@ -85,11 +86,11 @@ public class TableSprite extends Sprite
         function createPlayer (
             name :String, 
             seat :int, 
-            names :Array) :PlayerSprite
+            names :Array) :void
         {
             var p :PlayerSprite = new PlayerSprite(name);
             addChild(p);
-            return p;
+            _players[getRelativeSeat(seat)] = p;
         }
     }
 
@@ -97,6 +98,7 @@ public class TableSprite extends Sprite
      *  If NO_SEAT is given, then all players are unhighlighted. */
     public function setPlayerTurn (seat :int) :void
     {
+        seat = getRelativeSeat(seat);
         _players.forEach(setTurn);
 
         function setTurn (p :PlayerSprite, index :int, array :Array) :void
@@ -109,12 +111,14 @@ public class TableSprite extends Sprite
      *  as blank. */
     public function setPlayerBid (seat :int, bid :int) :void
     {
+        seat = getRelativeSeat(seat);
         getPlayer(seat).setBid(bid);
     }
 
     /** Set the number of tricks taken by a player. */
     public function setPlayerTricks (seat :int, tricks :int) :void
     {
+        seat = getRelativeSeat(seat);
         getPlayer(seat).setTricks(tricks);
     }
 
@@ -193,8 +197,7 @@ public class TableSprite extends Sprite
         _players.forEach(positionPlayer);
 
         function positionPlayer (p :PlayerSprite, seat :int, a :Array) :void {
-            var relative :int = getRelativeSeat(seat);
-            positionChild(p, PLAYER_POSITIONS[relative] as Vector2);
+            positionChild(p, PLAYER_POSITIONS[seat] as Vector2);
         }
     }
 

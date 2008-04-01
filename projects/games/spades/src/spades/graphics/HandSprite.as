@@ -12,7 +12,8 @@ import caurina.transitions.Tweener;
 /** Display for a hand of cards */
 public class HandSprite extends CardArraySprite
 {
-    /** Create a new hand sprite. */
+    /** Create a new hand sprite. 
+     *  @param target the card array this sprite represents */
     public function HandSprite (target :CardArray)
     {
         super(target);
@@ -60,6 +61,15 @@ public class HandSprite extends CardArraySprite
                 c.state = CardSprite.NORMAL;
             }
         }
+    }
+
+    public function finalizeMostRecentCardRemoval () :CardSprite
+    {
+        if (_mostRecentlyRemovedCard != null) {
+            Tweener.removeTweens(_mostRecentlyRemovedCard, ["x", "y"]);
+            removeChild(_mostRecentlyRemovedCard);
+        }
+        return _mostRecentlyRemovedCard;
     }
 
     /** Slide a card vertically to indicate that clicking it will play it. 
@@ -140,6 +150,39 @@ public class HandSprite extends CardArraySprite
         }
     }
 
+    override protected function animateRemoval (card :CardSprite) :void
+    {
+        if (_mostRecentlyRemovedCard != null) {
+            removeChild(_mostRecentlyRemovedCard);
+        }
+
+        popDown();
+        
+        _mostRecentlyRemovedCard = card;
+        card.state = CardSprite.NORMAL;
+        var tween :Object = {
+            x : 0,
+            y : -CardSprite.HEIGHT,
+            time: REMOVAL_DURATION
+        };
+        Tweener.addTween(card, tween);
+
+        var pos :Vector2 = new Vector2();
+        
+        _cards.forEach(squeeze);
+
+        function squeeze (c :CardSprite, i :int, a :Array) :void {
+            Tweener.removeTweens(c, ["x", "y"]);
+            getStaticCardPosition(i, pos);
+            var tween :Object = {
+                x : pos.x,
+                y : pos.y,
+                time: SQUEEZE_DURATION
+            };
+            Tweener.addTween(c, tween);
+        }
+    }
+
     protected function mouseOverListener (event :MouseEvent) :void
     {
         // pop up the card if it is enabled
@@ -169,9 +212,12 @@ public class HandSprite extends CardArraySprite
 
     protected var _popup :Number;
     protected var _popupCard :CardSprite;
+    protected var _mostRecentlyRemovedCard :CardSprite;
 
     protected static const POPUP :Number = 20;
     protected static const POPUP_DURATION :Number = .2;
+    protected static const REMOVAL_DURATION :Number = .75;
+    protected static const SQUEEZE_DURATION :Number = .75;
 }
 
 }
