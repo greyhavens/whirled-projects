@@ -8,9 +8,15 @@ import flash.display.MovieClip;
 
 public class WaitForFrameTask implements ObjectTask
 {
-    public function WaitForFrameTask (frameName :String)
+    public function WaitForFrameTask (frameLabelOrNumber :*)
     {
-        _frameName = frameName;
+        if (frameLabelOrNumber is int) {
+            _frameNumber = frameLabelOrNumber as int;
+        } else if (frameLabelOrNumber is String) {
+            _frameLabel = frameLabelOrNumber as String;
+        } else {
+            throw new Error("frameLabelOrNumber must be a String or an int");
+        }
     }
 
     public function update (dt :Number, obj :SimObject) :Boolean
@@ -22,12 +28,12 @@ public class WaitForFrameTask implements ObjectTask
             throw new Error("WaitForFrameTask can only operate on SceneComponents with MovieClip DisplayObjects");
         }
 
-        return (movieClip.currentLabel == _frameName);
+        return (null != _frameLabel ? movieClip.currentLabel == _frameLabel : movieClip.currentFrame == _frameNumber);
     }
 
     public function clone () :ObjectTask
     {
-        return new WaitForFrameTask(_frameName);
+        return new WaitForFrameTask(null != _frameLabel ? _frameLabel : _frameNumber);
     }
 
     public function receiveMessage (msg :ObjectMessage) :Boolean
@@ -35,7 +41,8 @@ public class WaitForFrameTask implements ObjectTask
         return false;
     }
 
-    protected var _frameName :String;
+    protected var _frameLabel :String;
+    protected var _frameNumber :int;
 
 }
 
