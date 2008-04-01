@@ -210,8 +210,11 @@ public class GameMode extends AppMode
     protected function handleGameOver () :void
     {
         var roundWinnerId :int = SimonMain.model.curState.roundWinnerId;
+        var patternEmpty :Boolean = SimonMain.model.curState.pattern.length == 0;
 
-        if (roundWinnerId != 0) {
+        // update scores and coins, but only if we had a winner, and only
+        // if at least one note was played this game
+        if (roundWinnerId != 0 && !patternEmpty) {
 
             // update scores
             _expectedScores = SimonMain.model.curScores.clone();
