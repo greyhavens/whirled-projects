@@ -12,6 +12,7 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.filters.ColorMatrixFilter;
 import flash.geom.Point;
 import flash.media.Sound;
 import flash.media.SoundChannel;
@@ -42,14 +43,16 @@ public class RainbowController extends SceneObject
 
     override protected function addedToDB () :void
     {
-        if (null == g_lightenMatrix) {
-            g_lightenMatrix = new ColorMatrix();
-            g_lightenMatrix.tint(0xFFFFFF, 0.33);
+        if (null == g_lightenFilter) {
+            var lightenMatrix :ColorMatrix = new ColorMatrix();
+            lightenMatrix.tint(0xFFFFFF, 0.33);
+            g_lightenFilter = lightenMatrix.createFilter();
         }
 
-        if (null == g_darkenMatrix) {
-            g_darkenMatrix = new ColorMatrix();
-            g_darkenMatrix.tint(0x000000, 0.33);
+        if (null == g_darkenFilter) {
+            var darkenMatrix :ColorMatrix = new ColorMatrix();
+            darkenMatrix.tint(0x000000, 0.33);
+            g_darkenFilter = darkenMatrix.createFilter();
         }
 
         SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleNextSelectionEvent);
@@ -111,7 +114,7 @@ public class RainbowController extends SceneObject
         var i :int = 0;
         for each (var bandName :String in RAINBOW_BAND_NAMES) {
             var band :MovieClip = (_curAnim["inst_rainbow"])[bandName];
-            band.filters = [ g_lightenMatrix.createFilter() ];
+            band.filters = [ g_lightenFilter ];
 
             if (this.isControlledLocally) {
                 this.createBandMouseHandlers(band, i++);
@@ -205,7 +208,7 @@ public class RainbowController extends SceneObject
             if (!_finalNotePlayed && band != _hilitedBand) {
 
                 if (null != _hilitedBand) {
-                    _hilitedBand.filters = [ g_lightenMatrix.createFilter() ];
+                    _hilitedBand.filters = [ g_lightenFilter ];
                 }
 
                 _hilitedBand = band;
@@ -215,7 +218,7 @@ public class RainbowController extends SceneObject
 
         function rolloutHandler (e :MouseEvent) :void {
             if (!_finalNotePlayed && band == _hilitedBand) {
-                _hilitedBand.filters = [ g_lightenMatrix.createFilter() ];
+                _hilitedBand.filters = [ g_lightenFilter ];
                 _hilitedBand = null;
             }
         }
@@ -316,7 +319,7 @@ public class RainbowController extends SceneObject
 
                 Sound(new RAINBOW_SOUNDS[noteIndex]).play();
 
-                band.filters = [ g_darkenMatrix.createFilter() ];
+                band.filters = [ g_darkenFilter ];
             }
 
             this.removeNamedTasks(NOTE_ANIMATION_TASK_NAME);
@@ -452,8 +455,8 @@ public class RainbowController extends SceneObject
         new Point(83, -208),
     ];
 
-    protected static var g_lightenMatrix :ColorMatrix;
-    protected static var g_darkenMatrix :ColorMatrix;
+    protected static var g_lightenFilter :ColorMatrixFilter;
+    protected static var g_darkenFilter :ColorMatrixFilter;
 
     protected static const NOTE_ANIMATION_DURATION :Number = 0.75;
     protected static const NOTE_ANIMATION_TASK_NAME :String = "NoteAnimationTask";
