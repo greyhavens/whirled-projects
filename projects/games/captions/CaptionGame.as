@@ -658,7 +658,7 @@ public class CaptionGame extends EventDispatcher
         });
 
         // check to see if this user qualifies for a trophy
-        checkUnanimousTrophies(indexes, results, ids);
+        checkUnanimousTrophies(results.length);
 
         _results = [];
 
@@ -785,39 +785,16 @@ public class CaptionGame extends EventDispatcher
     /**
      * Check to see if we should award any trophies for unanimous votes.
      */
-    protected function checkUnanimousTrophies (indexes :Array, results :Array, ids :Array) :void
+    protected function checkUnanimousTrophies (numCaptions :int) :void
     {
-        var winnerIndex :int = int(indexes[0]);
-        if (int(ids[winnerIndex]) != _myId) {
-            return; // if we didn't win, we certainly aren't unanimous
-        }
-        var numCaptions :int = results.length;
-        if (int(results[winnerIndex]) < numCaptions - 1) { // must not be disqualified!
-            return; // not enough votes
-        }
-        // now look through all the other results, we should find at most 1 other vote
-        // (the vote we cast for someone else)
-        // (We also count votes on disqualified entries)
-        var foundOne :Boolean = false;
-        for (var ii :int = 1; ii < indexes.length; ii++) {
-            var index :int = int(indexes[ii]);
-            var numVotes :int = Math.abs(int(results[index]));
-            if (numVotes == 1) {
-                if (foundOne) {
-                    return; // can't have two..
+        // this was set up by the instance in control
+        if (_myId == _ctrl.net.get(UNANIMOUS)) {
+            for (var trophyName :String in _trophiesUnanimous) {
+                var count :int = int(_trophiesUnanimous[trophyName]);
+                if (numCaptions >= count) {
+                    //trace("Awarding trophy to " + _myName + ": " + trophyName);
+                    _ctrl.player.awardTrophy(trophyName);
                 }
-                foundOne = true;
-            } else if (numVotes > 1) {
-                return;
-            }
-        }
-
-        // yay, you passed the gauntlet, now see if you actually qualify for any trophies
-        for (var trophyName :String in _trophiesUnanimous) {
-            var count :int = int(_trophiesUnanimous[trophyName]);
-            if (numCaptions >= count) {
-                trace("Awarding trophy to " + _myName + ": " + trophyName);
-                _ctrl.player.awardTrophy(trophyName);
             }
         }
     }
@@ -961,6 +938,7 @@ public class CaptionGame extends EventDispatcher
             _ctrl.net.set(DONE, null);
             _ctrl.net.set(PREVIEW_VOTES, null);
             _ctrl.net.set(PREVIEWS, null);
+            _ctrl.net.set(UNANIMOUS, null);
             setPhase(CAPTIONING_PHASE);
         });
     }
@@ -1123,6 +1101,27 @@ public class CaptionGame extends EventDispatcher
                     }
 
                     scores[voteeId] = int(scores[voteeId]) + 1;
+                }
+
+                // if this user did in fact vote, let's see if everyone else only voted for them
+                if (didVote[voterIndex]) {
+                    var unanimous :Boolean = true;
+                    CHECK_UNAN:
+                    for (var key2 :* in allVotes) {
+                        if (key2 == key) {
+                            continue;
+                        }
+                        votes = allVotes[key2] as Array;
+                        for each (voteeId in votes) {
+                            if (voteeId != voterId) {
+                                unanimous = false;
+                                break CHECK_UNAN;
+                            }
+                        }
+                    }
+                    if (unanimous) {
+                        _ctrl.net.set(UNANIMOUS, voterId);
+                    }
                 }
             }
         }
@@ -1385,6 +1384,7 @@ public class CaptionGame extends EventDispatcher
     protected static const PREVIEWS :String = "next";
     protected static const TICKER :String = "tick";
     protected static const SCORES :String = "scores";
+    protected static const UNANIMOUS :String = "unan";
 
     protected var _ctrl :GameControl;
     
