@@ -2,11 +2,14 @@ package simon {
 
 import com.whirled.AVRGameAvatar;
 import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.geom.Point;
 import flash.text.TextField;
+
+import simon.tasks.*;
 
 public class WinnerCloudController extends SceneObject
 {
@@ -23,8 +26,8 @@ public class WinnerCloudController extends SceneObject
         _movieClip.x = loc.x;
         _movieClip.y = loc.y;
 
-        var playerText :TextField = _movieClip["winner"];
-        playerText.text = SimonMain.getPlayerName(playerId);
+        // we can't set the player name until the "end" frame has been reached
+        this.addTask(new SerialTask(new WaitForFrameTask("end"), new FunctionTask(setPlayerName)));
     }
 
     override public function get objectName () :String
@@ -37,7 +40,13 @@ public class WinnerCloudController extends SceneObject
         return _movieClip;
     }
 
-    public function get screenLoc () :Point
+    protected function setPlayerName () :void
+    {
+        var playerText :TextField = _movieClip["winner"];
+        playerText.text = SimonMain.getPlayerName(_playerId);
+    }
+
+    protected function get screenLoc () :Point
     {
         var p :Point;
 
