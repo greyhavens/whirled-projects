@@ -24,8 +24,7 @@ public class WinnerCloudController extends SceneObject
         _movieClip.y = loc.y;
 
         var playerText :TextField = _movieClip["winner"];
-        // @TODO - uncomment when win_cloud is fixed
-        //playerText.text = SimonMain.getPlayerName(playerId);
+        playerText.text = SimonMain.getPlayerName(playerId);
     }
 
     override public function get objectName () :String
