@@ -73,7 +73,7 @@ public class HelpViewController extends SceneObject
 
     protected var _movieClip :MovieClip;
 
-    protected static const SCREEN_EDGE_OFFSET :Point = new Point(-150, 0);
+    protected static const SCREEN_EDGE_OFFSET :Point = new Point(-220, -20);
 }
 
 }
