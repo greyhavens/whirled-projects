@@ -311,6 +311,12 @@ public class RainbowController extends SceneObject
 
                 _curAnim.addChild(sparkle);
                 this.createSparkleCleanupHandler(sparkle);
+
+                // show an animation on the player avatar
+                if (_playerId == SimonMain.localPlayerId) {
+                    AvatarController.instance.playAvatarAction("Jump");
+                }
+
             } else {
                 // you screwed up
 
