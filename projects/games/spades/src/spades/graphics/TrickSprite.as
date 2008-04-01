@@ -92,9 +92,9 @@ public class TrickSprite extends CardArraySprite
 
     // layout in a cross
     protected static const CARD_POSITIONS :Array = [
-        new Vector2(0, CardSprite.HEIGHT / 4),
+        new Vector2(0, CardSprite.HEIGHT / 2),
         new Vector2(-CardSprite.WIDTH / 2, 0),
-        new Vector2(0, -CardSprite.HEIGHT / 4),
+        new Vector2(0, -CardSprite.HEIGHT / 2),
         new Vector2(CardSprite.WIDTH / 2, 0)];
 }
 

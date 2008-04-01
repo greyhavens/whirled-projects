@@ -76,8 +76,8 @@ public class PlayerSprite extends Sprite
     protected var _tricks :int = 0;
     protected var _bid :int = -1;
 
-    protected static const WIDTH :int = 100;
-    protected static const HEIGHT :int = 72;
+    protected static const WIDTH :int = 165;
+    protected static const HEIGHT :int = 115;
     protected static const NO_BID :int = TableSprite.NO_BID;
 }
 

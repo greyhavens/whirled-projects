@@ -25,29 +25,34 @@ public class TableSprite extends Sprite
 
     /** Positions of other players' on the table (relative to the local player). */
     public static const PLAYER_POSITIONS :Array = [
-        new Vector2(.50, .50),  // me
-        new Vector2(.25, .30),  // my left
-        new Vector2(.50, .10),  // opposite
-        new Vector2(.75, .30)   // my right
+        new Vector2(350, 350),  // me
+        new Vector2(145, 200),  // my left
+        new Vector2(350, 60),  // opposite
+        new Vector2(555, 200)   // my right
     ];
 
     /** Position of the center of the local player's hand. */
-    public static const HAND_POSITION :Vector2 = new Vector2(.50, .75);
+    public static const HAND_POSITION :Vector2 = new Vector2(350, 455);
 
     /** Position of the center of the bid slider */
-    public static const SLIDER_POSITION :Vector2 = new Vector2(.50, .60);
+    public static const SLIDER_POSITION :Vector2 = new Vector2(350, 255);
 
     /** Position of the center of the trick pile */
-    public static const TRICK_POSITION :Vector2 = new Vector2(.50, .30);
+    public static const TRICK_POSITION :Vector2 = new Vector2(350, 205);
 
-    /** Position of the center of the trick pile */
-    public static const LAST_TRICK_POSITION :Vector2 = new Vector2(.10, .10);
+    /** Position of the left-hand team */
+    public static const LEFT_TEAM_POSITION :Vector2 = new Vector2(95, 45);
+
+    /** Position of the right-hand team */
+    public static const RIGHT_TEAM_POSITION :Vector2 = new Vector2(605, 45);
+
+    /** Offset of the last trick, relative to the team. */
+    public static const LAST_TRICK_OFFSET :Number = 130;
 
     /** Create a new table.
      *  @param playerNames the names of the players, in seat order
      *  @param localSeat the seat that the local player is sitting in */
     public function TableSprite (
-        displaySize :Vector2,
         playerNames :Array, 
         localSeat :int,
         trick :CardArray,
@@ -55,7 +60,6 @@ public class TableSprite extends Sprite
     {
         _numPlayers = playerNames.length;
         _localSeat = localSeat;
-        _displaySize = displaySize;
 
         _players = new Array(playerNames.length);
         playerNames.forEach(createPlayer);
@@ -66,8 +70,17 @@ public class TableSprite extends Sprite
         _trick = new MainTrickSprite(trick, _players, _hand);
         addChild(_trick);
 
-        _lastTrick = new LastTrickSprite(_players.length);
-        addChild(_lastTrick);
+        _teams[0] = new TeamSprite(
+            playerNames[_localSeat], 
+            playerNames[(_localSeat + 2) % _numPlayers], 
+            TRICK_POSITION, new Vector2(LAST_TRICK_OFFSET, 0));
+        addChild(_teams[0] as TeamSprite);
+
+        _teams[1] = new TeamSprite(
+            playerNames[(_localSeat + 1) % _numPlayers], 
+            playerNames[(_localSeat + 3) % _numPlayers], 
+            TRICK_POSITION, new Vector2(-LAST_TRICK_OFFSET, 0));
+        addChild(_teams[1] as TeamSprite);
 
         // listen for clicks on cards
         _hand.addEventListener(MouseEvent.CLICK, clickListener);
@@ -77,9 +90,6 @@ public class TableSprite extends Sprite
 
         // listen for our removal to prevent stranded listeners
         addEventListener(Event.REMOVED, removedListener);
-
-        // listen for expiry of the last trick visibility
-        _lastTrickTimer.addEventListener(TimerEvent.TIMER, timerListener);
 
         layout();
 
@@ -132,7 +142,14 @@ public class TableSprite extends Sprite
     /** Set the seat that is currently winning the trick. */
     public function setTrickWinner (seat :int) :void
     {
-        _trick.setWinner(getRelativeSeat(seat));
+        seat = getRelativeSeat(seat);
+        _trick.setWinner(seat);
+        if (seat == 0 || seat == 2) {
+            _trickWinner = 0;
+        }
+        else {
+            _trickWinner = 1;
+        }
     }
 
     /** Show the bid slider and call the given function when a bid is selected. The signature of 
@@ -184,8 +201,8 @@ public class TableSprite extends Sprite
 
     protected function positionChild (child :DisplayObject, pos :Vector2) :void
     {
-        child.x = pos.x * _displaySize.x;
-        child.y = pos.y * _displaySize.y;
+        child.x = pos.x;
+        child.y = pos.y;
     }
 
     /** Position all the children. */
@@ -193,7 +210,8 @@ public class TableSprite extends Sprite
     {
         positionChild(_hand, HAND_POSITION);
         positionChild(_trick, TRICK_POSITION);
-        positionChild(_lastTrick, LAST_TRICK_POSITION);
+        positionChild(_teams[0] as TeamSprite, LEFT_TEAM_POSITION);
+        positionChild(_teams[1] as TeamSprite, RIGHT_TEAM_POSITION);
         _players.forEach(positionPlayer);
 
         function positionPlayer (p :PlayerSprite, seat :int, a :Array) :void {
@@ -214,21 +232,12 @@ public class TableSprite extends Sprite
     protected function trickListener (event :CardArrayEvent) :void
     {
         if (event.action == CardArrayEvent.ACTION_PRERESET) {
-            if (event.target != _trick.target) {
-                throw new Error("Event target not the trick?!");
+            if (_trickWinner != -1) {
+                TeamSprite(_teams[_trickWinner]).takeTrick(_trick.orphanCards());
+                TeamSprite(_teams[(_trickWinner + 1) % 2]).clearLastTrick();
             }
-            _lastTrick.leader = _trick.leader;
-            _lastTrick.target.reset(_trick.target.ordinals);
-            _lastTrick.winningCard = _trick.winningCard;
-            _lastTrickTimer.reset();
-            _lastTrickTimer.start();
+            _trickWinner = -1;
         }
-    }
-
-    protected function timerListener (event :TimerEvent) :void
-    {
-        _lastTrick.target.reset();
-        _lastTrickTimer.stop();
     }
 
     protected function removedListener (event :Event) :void
@@ -236,6 +245,10 @@ public class TableSprite extends Sprite
         if (event.target == this) {
             _trick.target.removeEventListener(
                 CardArrayEvent.CARD_ARRAY, trickListener);
+            removeChild(_trick);
+            removeChild(_hand);
+            removeChild(_teams[0] as TeamSprite);
+            removeChild(_teams[1] as TeamSprite);
         }
     }
 
@@ -251,17 +264,15 @@ public class TableSprite extends Sprite
         return (seat + _numPlayers - _localSeat) % _numPlayers;
     }
 
-    protected var _displaySize :Vector2;
     protected var _numPlayers :int;
     protected var _players :Array;
     protected var _localSeat :int;
     protected var _bid :BidSprite;
     protected var _hand :HandSprite;
-    protected var _trick :TrickSprite;
-    protected var _lastTrick :TrickSprite;
+    protected var _trick :MainTrickSprite;
     protected var _handCallback :Function;
-    protected var _lastTrickTimer :Timer = 
-        new Timer(LAST_TRICK_VISIBILITY_DURATION * 1000, 1);
+    protected var _teams :Array = [null, null];
+    protected var _trickWinner :int = -1;
 
     /** Seconds that the last trick is visible. */
     protected const LAST_TRICK_VISIBILITY_DURATION :int = 5;

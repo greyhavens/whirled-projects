@@ -77,7 +77,6 @@ public class Spades extends Sprite
 
         // configure the players
         _table = new TableSprite(
-            new Vector2(700, 550),
             _gameCtrl.game.seating.getPlayerNames(), 
             getMySeat(),
             _trick,

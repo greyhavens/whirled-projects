@@ -12,7 +12,11 @@ import flash.geom.Point;
 /** Graphics for the cards in the trick. */
 public class MainTrickSprite extends TrickSprite
 {
-    /** Create a new trick sprite */
+    /** Create a new trick sprite. Supports cross layout and animation from the local and remote 
+     *  players.
+     *  @param target The trick that this sprite represents
+     *  @param playerSprites An array of player sprite, relative to the local player
+     *  @param localHand The sprite representing the local player  */
     public function MainTrickSprite (
         target :CardArray, 
         playerSprites :Array, 
@@ -23,11 +27,19 @@ public class MainTrickSprite extends TrickSprite
         _localHand = localHand;
     }
 
-    override protected function cardArrayListener (event :CardArrayEvent) :void
+    /** Remove all the card sprites and return an array containing them. This should only be 
+     *  called if the underlying trick is about to be reset, i.e. on a CardArrayEvent.ACTION_PRERESET 
+     *  action. Otherwise a crash will occur.
+     *  TODO: handle this using internal listener so caveat is not needed. */
+    public function orphanCards () :Array
     {
-        super.cardArrayListener(event);
+        _cards.forEach(remove);
+        var cards :Array = _cards;
+        _cards = new Array();
+        return cards;
 
-        if (event.action == CardArrayEvent.ACTION_PRERESET) {
+        function remove (card :CardSprite, i :int, a :Array) :void {
+            removeChild(card);
         }
     }
 
