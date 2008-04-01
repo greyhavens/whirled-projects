@@ -65,11 +65,13 @@ public class HandSprite extends CardArraySprite
 
     public function finalizeMostRecentCardRemoval () :CardSprite
     {
-        if (_mostRecentlyRemovedCard != null) {
-            Tweener.removeTweens(_mostRecentlyRemovedCard, ["x", "y"]);
-            removeChild(_mostRecentlyRemovedCard);
+        var recent :CardSprite = _mostRecentlyRemovedCard;
+        _mostRecentlyRemovedCard = null;
+        if (recent != null) {
+            Tweener.removeTweens(recent, ["x", "y"]);
+            removeChild(recent);
         }
-        return _mostRecentlyRemovedCard;
+        return recent;
     }
 
     /** Slide a card vertically to indicate that clicking it will play it. 
