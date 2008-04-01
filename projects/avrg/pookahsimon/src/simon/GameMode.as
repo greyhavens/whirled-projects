@@ -24,15 +24,9 @@ public class GameMode extends AppMode
         // controllers
         this.addObject(new CloudViewController(), _gameLayer);
         this.addObject(new AvatarController());
+        this.addObject(new HelpViewController(), _helpLayer);
 
-        // wire up the help screen
-        var helpScreen :MovieClip = Resources.instantiateMovieClip("ui", "help_cloud");
-        var helpScreenCloseButton :InteractiveObject = helpScreen["close"];
-        helpScreenCloseButton.addEventListener(MouseEvent.CLICK, hideHelpScreen);
-
-        this.addObject(new SimpleSceneObject(helpScreen), _helpLayer);
-
-        this.hideHelpScreen();
+        this.helpScreenVisible = false;
 
         // state change events
         SimonMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
@@ -366,11 +360,6 @@ public class GameMode extends AppMode
     public function set helpScreenVisible (visible :Boolean) :void
     {
         _helpLayer.visible = visible;
-    }
-
-    protected function hideHelpScreen (...ignored) :void
-    {
-        this.helpScreenVisible = false;
     }
 
     protected var _expectedState :SharedState;
