@@ -33,10 +33,12 @@ public class TagWidget extends Sprite
     public static const MAX_TAGS :int = 3;
 
     public function TagWidget (
-        ctrl :GameControl, searchPhotoService :SearchFlickrPhotoService) :void
+        ctrl :GameControl, searchPhotoService :SearchFlickrPhotoService, cleanMode :Boolean = true)
+        :void
     {
         _ctrl = ctrl;
         _searchPhotoService = searchPhotoService;
+        _cleanMode = cleanMode;
         _ctrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, handlePropertyChanged);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
@@ -125,12 +127,17 @@ public class TagWidget extends Sprite
     {
         var tag :String = StringUtil.trim(_tagInput.text);
         if (!StringUtil.isBlank(tag)) {
-            // go ahead and just add it
-            _ctrl.net.set("tag:" + tag.toLowerCase(), true);
+            tag = tag.toLowerCase();
 
-            // disable further entry if this new tag would put us over the max
-            if (_tagSprite.numChildren + 1 >= MAX_TAGS) {
-                _tagInput.enabled = false;
+            // if it's clean enough, add it
+            if (!_cleanMode || (-1 == DIRTY_TAGS.indexOf(tag))) {
+
+                _ctrl.net.set("tag:" + tag, true);
+
+                // disable further entry if this new tag would put us over the max
+                if (_tagSprite.numChildren + 1 >= MAX_TAGS) {
+                    _tagInput.enabled = false;
+                }
             }
         }
         _tagInput.text = "";
@@ -196,11 +203,18 @@ public class TagWidget extends Sprite
     [Embed(source="rsrc/x_down.png")]
     protected static const X_DOWN_SKIN :Class;
 
+    /** Tags that can be used to find porny pictures on flickr. */
+    protected static const DIRTY_TAGS :Array = [
+        "nude", "naked", "boobs", "tits", "boobies", "ass"
+    ];
+
     protected var _ctrl :GameControl;
 
     protected var _tagFormat :TextFormat;
 
     protected var _searchPhotoService :SearchFlickrPhotoService;
+
+    protected var _cleanMode :Boolean;
 
     protected var _tagInput :TextInput;
 
