@@ -304,7 +304,8 @@ public class RainbowController extends SceneObject
 
             if (success) {
                 // play a happy sound
-                Sound(new RAINBOW_SOUNDS[noteIndex]).play();
+                var noteSoundChannel :SoundChannel = Sound(new RAINBOW_SOUNDS[noteIndex]).play();
+                noteSoundChannel.soundTransform = new SoundTransform(0.5);
 
                 // play an animation on the band
                 band.play();
@@ -327,9 +328,10 @@ public class RainbowController extends SceneObject
                 // you screwed up
 
                 var failSoundChannel :SoundChannel = Sound(new Resources.SFX_FAIL).play();
-                failSoundChannel.soundTransform = new SoundTransform(0.5); // this sound is unusually loud
+                failSoundChannel.soundTransform = new SoundTransform(0.5);
 
-                Sound(new RAINBOW_SOUNDS[noteIndex]).play();
+                noteSoundChannel = Sound(new RAINBOW_SOUNDS[noteIndex]).play();
+                noteSoundChannel.soundTransform = new SoundTransform(0.5);
 
                 band.filters = [ g_darkenFilter ];
             }
