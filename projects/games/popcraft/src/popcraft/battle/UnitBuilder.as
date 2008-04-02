@@ -17,7 +17,7 @@ public class UnitBuilder
 
     public function get unitData () :UnitData { return _unitData; }
 
-    protected var _unitData :UnitData;
+    protected var _unitData :UnitData = new UnitData();
 }
 
 }

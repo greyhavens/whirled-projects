@@ -19,7 +19,7 @@ public class UnitWeaponBuilder
 
     public function get weapon () :UnitWeapon { return _weapon; }
 
-    protected var _weapon :UnitWeapon;
+    protected var _weapon :UnitWeapon = new UnitWeapon();
 
 }
 
