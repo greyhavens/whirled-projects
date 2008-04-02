@@ -1,6 +1,5 @@
 package simon {
 
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.AVRGameAvatar;
 import com.whirled.contrib.ColorMatrix;
@@ -15,6 +14,7 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.filters.ColorMatrixFilter;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.media.Sound;
 import flash.media.SoundChannel;
 import flash.media.SoundTransform;
@@ -83,7 +83,7 @@ public class RainbowController extends SceneObject
 
         _curAnim = Resources.instantiateMovieClip("ui", animName);
 
-        var loc :Point = this.getScreenLoc();
+        var loc :Point = this.getScreenLocForRainbowAnimation();
         _curAnim.x = loc.x;
         _curAnim.y = loc.y;
 
@@ -367,15 +367,20 @@ public class RainbowController extends SceneObject
         }
     }
 
-    protected function getScreenLoc () :Point
+    protected function getScreenLocForRainbowAnimation () :Point
     {
         var p :Point;
 
         var avatarInfo :AVRGameAvatar = (SimonMain.control.isConnected() ? SimonMain.control.getAvatarInfo(_playerId) : null);
-        if (null != avatarInfo) {
+        var stageBounds :Rectangle = (SimonMain.control.isConnected() ? SimonMain.control.getStageSize(false) : null);
+
+        if (null != avatarInfo && null != stageBounds) {
             p = SimonMain.control.locationToStage(avatarInfo.x, avatarInfo.y, avatarInfo.z);
             p.y -= avatarInfo.stageBounds.height;
 
+            // clamp rainbow coordinates
+            p.x = Math.max(p.x, stageBounds.left + (RAINBOW_ANIMATION_WIDTH * 0.5));
+            p.y = Math.min(p.x, stageBounds.right - (RAINBOW_ANIMATION_WIDTH * 0.5));
             p.y = Math.max(p.y, MIN_RAINBOW_Y);
 
             log.info(
@@ -469,6 +474,7 @@ public class RainbowController extends SceneObject
     protected static const PLAYER_TIMEOUT_TASK_NAME :String = "PlayerTimeoutTask";
 
     protected static const MIN_RAINBOW_Y :Number = 50;
+    protected static const RAINBOW_ANIMATION_WIDTH :Number = 282;
 }
 
 }
