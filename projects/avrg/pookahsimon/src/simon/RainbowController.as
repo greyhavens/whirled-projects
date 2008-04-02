@@ -209,7 +209,6 @@ public class RainbowController extends SceneObject
 
         function clickHandler (e :MouseEvent) :void {
             thisObject.nextNoteSelected(noteIndex, new Point(_curAnim.mouseX, _curAnim.mouseY), true);
-            log.info("clickLoc: new Point(" + _curAnim.mouseX + ", " + _curAnim.mouseY + ")");
         }
 
         function rolloverHandler (e :MouseEvent) :void {
