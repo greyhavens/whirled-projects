@@ -55,11 +55,13 @@ public class TableSprite extends Sprite
     public function TableSprite (
         playerNames :Array, 
         localSeat :int,
+        winningScore :int,
         trick :CardArray,
         hand :CardArray)
     {
         _numPlayers = playerNames.length;
         _localSeat = localSeat;
+        _winningScore = winningScore;
 
         _players = new Array(playerNames.length);
         playerNames.forEach(createPlayer);
@@ -104,6 +106,23 @@ public class TableSprite extends Sprite
         }
     }
 
+    /** Retrieve a callback to set a player's head shot. */
+    public function getHeadShotCallback (seat :int) :Function
+    {
+        return getPlayer(getRelativeSeat(seat)).setHeadShot;
+    }
+
+    /** Set team scores. */
+    public function setTeamScores (scores :Array) :void
+    {
+        var offset :int = 0;
+        if (_localSeat == 1 || _localSeat == 3) {
+            offset = 1;
+        }
+        _teams[0].setScore(scores[offset], _winningScore); 
+        _teams[1].setScore(scores[(offset + 1) % 2], _winningScore); 
+    }
+
     /** Highlight a player to show it is his turn. Also unhighlights any previous.
      *  If NO_SEAT is given, then all players are unhighlighted. */
     public function setPlayerTurn (seat :int) :void
@@ -122,14 +141,14 @@ public class TableSprite extends Sprite
     public function setPlayerBid (seat :int, bid :int) :void
     {
         seat = getRelativeSeat(seat);
-        getPlayer(seat).setBid(bid);
+        getTeam(seat).setBid(getTeamPlayer(seat), bid);
     }
 
     /** Set the number of tricks taken by a player. */
     public function setPlayerTricks (seat :int, tricks :int) :void
     {
         seat = getRelativeSeat(seat);
-        getPlayer(seat).setTricks(tricks);
+        getTeam(seat).setTricks(getTeamPlayer(seat), tricks);
     }
 
     /** Set the seating position that is kicking off the trick so that the cards in the trick will 
@@ -144,12 +163,7 @@ public class TableSprite extends Sprite
     {
         seat = getRelativeSeat(seat);
         _trick.setWinner(seat);
-        if (seat == 0 || seat == 2) {
-            _trickWinner = 0;
-        }
-        else {
-            _trickWinner = 1;
-        }
+        _trickWinner = seat;
     }
 
     /** Show the bid slider and call the given function when a bid is selected. The signature of 
@@ -233,8 +247,8 @@ public class TableSprite extends Sprite
     {
         if (event.action == CardArrayEvent.ACTION_PRERESET) {
             if (_trickWinner != -1) {
-                TeamSprite(_teams[_trickWinner]).takeTrick(_trick.orphanCards());
-                TeamSprite(_teams[(_trickWinner + 1) % 2]).clearLastTrick();
+                getTeam(_trickWinner).takeTrick(_trick.orphanCards());
+                getTeam((_trickWinner + 1) % 2).clearLastTrick();
             }
             _trickWinner = -1;
         }
@@ -264,6 +278,28 @@ public class TableSprite extends Sprite
         return (seat + _numPlayers - _localSeat) % _numPlayers;
     }
 
+    /** Get the team sprite for a relative seating position. */
+    protected function getTeam (relativeSeat :int) :TeamSprite
+    {
+        if (relativeSeat == 0 || relativeSeat == 2) {
+            return _teams[0];
+        }
+        else {
+            return _teams[1];
+        }
+    }
+
+    /** Get the index of a player within his team for a relative seating position. */
+    protected function getTeamPlayer (relativeSeat :int) :int
+    {
+        if (relativeSeat == 0 || relativeSeat == 1) {
+            return 0;
+        }
+        else {
+            return 1;
+        }
+    }
+
     protected var _numPlayers :int;
     protected var _players :Array;
     protected var _localSeat :int;
@@ -273,6 +309,7 @@ public class TableSprite extends Sprite
     protected var _handCallback :Function;
     protected var _teams :Array = [null, null];
     protected var _trickWinner :int = -1;
+    protected var _winningScore :int;
 
     /** Seconds that the last trick is visible. */
     protected const LAST_TRICK_VISIBILITY_DURATION :int = 5;
