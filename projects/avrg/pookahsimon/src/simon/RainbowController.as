@@ -209,6 +209,7 @@ public class RainbowController extends SceneObject
 
         function clickHandler (e :MouseEvent) :void {
             thisObject.nextNoteSelected(noteIndex, new Point(_curAnim.mouseX, _curAnim.mouseY), true);
+            log.info("clickLoc: new Point(" + _curAnim.mouseX + ", " + _curAnim.mouseY + ")");
         }
 
         function rolloverHandler (e :MouseEvent) :void {
@@ -452,13 +453,13 @@ public class RainbowController extends SceneObject
     ];
 
     protected static const DEFAULT_SPARKLE_LOCS :Array = [
-        new Point(-54, -215),
-        new Point(-29, -214),
-        new Point(-5, -214),
-        new Point(14, -213),
-        new Point(35, -213),
-        new Point(65, -208),
-        new Point(83, -208),
+        new Point(-67, -64),
+        new Point(-40, -64),
+        new Point(-17, -64),
+        new Point(2, -64),
+        new Point(28, -64),
+        new Point(47, -64),
+        new Point(70, -64),
     ];
 
     protected static var g_lightenFilter :ColorMatrixFilter;
