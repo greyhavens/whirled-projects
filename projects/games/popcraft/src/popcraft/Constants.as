@@ -130,7 +130,7 @@ public class Constants
         .maxAttackDistance(1000)
         .weapon;
 
-    protected static const GRUNT_DATA :UnitData = UnitBuilder.create()
+    protected static const GRUNT_DATA :UnitData = UnitDataBuilder.create()
         .name("grunt")
         .resourceCosts([10, 0, 5, 0])
         .baseMoveSpeed(25)
@@ -142,7 +142,7 @@ public class Constants
         .loseInterestRadius(180)
         .unitData;
 
-    protected static const HEAVY_DATA :UnitData = UnitBuilder.create()
+    protected static const HEAVY_DATA :UnitData = UnitDataBuilder.create()
         .name("heavy")
         .resourceCosts([0, 10, 0, 10])
         .baseMoveSpeed(25)
@@ -153,7 +153,7 @@ public class Constants
         .loseInterestRadius(180)
         .unitData;
 
-    protected static const SAPPER_DATA :UnitData = UnitBuilder.create()
+    protected static const SAPPER_DATA :UnitData = UnitDataBuilder.create()
         .name("sapper")
         .resourceCosts([0, 0, 15, 15])
         .baseMoveSpeed(40)
@@ -165,7 +165,7 @@ public class Constants
         .loseInterestRadius(180)
         .unitData;
 
-    protected static const BASE_DATA :UnitData = UnitBuilder.create()
+    protected static const BASE_DATA :UnitData = UnitDataBuilder.create()
         .name("base")
         .maxHealth(100)
         .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.1, DAMAGE_TYPE_PIERCING, 0.1] ))
