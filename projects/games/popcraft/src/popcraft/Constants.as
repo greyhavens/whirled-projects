@@ -30,12 +30,12 @@ public class Constants
     public static const PIECE_CLEAR_TIMER_LENGTH :Number = 0.75;
 
     public static const MIN_GROUP_SIZE :int = 1; // no min group size right now
-    
+
     public static const PUZZLE_HEIGHT :int = 110;
 
     public static const PUZZLE_COLS :int = 8;
     public static const PUZZLE_ROWS :int = 4;
-    
+
     public static const PUZZLE_TILE_SIZE :int = int(PUZZLE_HEIGHT / PUZZLE_ROWS);
 
     public static const CLEAR_VALUE_TABLE :IntValueTable =
@@ -73,7 +73,7 @@ public class Constants
     }
 
     /* Units */
-    
+
     public static const UNIT_GRID_CELL_SIZE :int = 40;
 
     public static const UNIT_TYPE_GRUNT :uint = 0;
@@ -88,71 +88,97 @@ public class Constants
     public static const UNIT_CLASS_AIR :uint = (1 << 1);
     public static const UNIT_CLASS__ALL :uint = (0xFFFFFFFF);
 
-    public static const UNIT_DATA :Array = [
+    protected static const GRUNT_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
+        .damageType(DAMAGE_TYPE_CRUSHING)
+        .damageRange(10, 10)
+        .targetClassMask(UNIT_CLASS_GROUND)
+        .cooldown(1)
+        .maxAttackDistance(35)
+        .weapon;
 
-            new UnitData (
-                "grunt"                     // name
-                , [10,   0,  5,   0]        // resource costs (brown, gold, blue, pink)
-                , 25                        // move speed (pixels/second)
-                , 100                       // health
-                , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.8, DAMAGE_TYPE_PIERCING, 0.7, DAMAGE_TYPE_BASE, 0.8] )   // armor
-                , [ new UnitWeapon(false, false, DAMAGE_TYPE_CRUSHING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS_GROUND, 1, 35, 0, 0) ] // weapons
-                , 15                        // collision radius
-                , 40                        // detect radius
-                , 180                       // lose interest radius
-            )
+    protected static const HEAVY_MELEE_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
+        .damageType(DAMAGE_TYPE_CRUSHING)
+        .damageRange(10, 10)
+        .targetClassMask(UNIT_CLASS_GROUND)
+        .cooldown(1)
+        .maxAttackDistance(50)
+        .weapon;
 
-            ,
+    protected static const HEAVY_RANGED_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
+        .isRanged(true)
+        .damageType(DAMAGE_TYPE_PIERCING)
+        .damageRange(10, 10)
+        .targetClassMask(UNIT_CLASS__ALL)
+        .cooldown(1)
+        .maxAttackDistance(200)
+        .missileSpeed(300)
+        .weapon;
 
-            new UnitData (
-                "heavy"                     // name
-                , [0,   10,  0,   10]        // resource costs (brown, gold, blue, pink)
-                , 25                        // move speed (pixels/second)
-                , 100                       // health
-                , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] )   // armor
-                , [ 
-                    new UnitWeapon(false, false, DAMAGE_TYPE_CRUSHING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 50, 0, 0),
-                    new UnitWeapon(true, false, DAMAGE_TYPE_PIERCING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 200, 300, 0),
-                  ]
-                , 15                        // collision radius
-                , 200                        // detect radius
-                , 180                       // lose interest radius
-            )
+    protected static const SAPPER_EXPLODE_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
+        .isAOE(true)
+        .damageType(DAMAGE_TYPE_CRUSHING)
+        .damageRange(50, 50)
+        .targetClassMask(UNIT_CLASS_GROUND)
+        .aoeRadius(150)
+        .weapon;
 
-            ,
+    protected static const BASE_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
+        .damageType(DAMAGE_TYPE_BASE)
+        .damageRange(20, 20)
+        .targetClassMask(UNIT_CLASS__ALL)
+        .cooldown(0)
+        .maxAttackDistance(1000)
+        .weapon;
 
-            new UnitData (
-                "sapper"                     // name
-                , [0,   0,  15,   15]        // resource costs (brown, gold, blue, pink)
-                , 40                        // move speed (pixels/second)
-                , 100                       // health
-                , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] )   // armor
-                , [ new UnitWeapon(false, false, DAMAGE_TYPE_CRUSHING, new NumRange(10, 10, Rand.STREAM_GAME), UNIT_CLASS__ALL, 1, 50, 0, 0) ] // weapons
-                , 15                        // collision radius
-                , 15                        // detect radius
-                , 180                       // lose interest radius
-            )
+    protected static const GRUNT_DATA :UnitData = UnitBuilder.create()
+        .name("grunt")
+        .resourceCosts([10, 0, 5, 0])
+        .baseMoveSpeed(25)
+        .maxHealth(100)
+        .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.8, DAMAGE_TYPE_PIERCING, 0.7, DAMAGE_TYPE_BASE, 0.8] ))
+        .weapon(GRUNT_WEAPON)
+        .collisionRadius(15)
+        .detectRadius(40)
+        .loseInterestRadius(180)
+        .unitData;
 
-            ,
+    protected static const HEAVY_DATA :UnitData = UnitBuilder.create()
+        .name("heavy")
+        .resourceCosts([0, 10, 0, 10])
+        .baseMoveSpeed(25)
+        .armor(new UnitArmor([DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1]))
+        .weapons([HEAVY_MELEE_WEAPON, HEAVY_RANGED_WEAPON])
+        .collisionRadius(15)
+        .detectRadius(200)
+        .loseInterestRadius(180)
+        .unitData;
 
-            // non-creature units must come after creature units
+    protected static const SAPPER_DATA :UnitData = UnitBuilder.create()
+        .name("sapper")
+        .resourceCosts([0, 0, 15, 15])
+        .baseMoveSpeed(40)
+        .maxHealth(100)
+        .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] ))
+        .weapon(SAPPER_EXPLODE_WEAPON)
+        .collisionRadius(15)
+        .detectRadius(15)
+        .loseInterestRadius(180)
+        .unitData;
 
-            new UnitData (
-                "base"                      // name
-                , [0,   0,  0,    0]        // resource costs (brown, gold, blue, pink)
-                , 0                         // move speed (pixels/second)
-                , 100                       // health
-                , new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.1, DAMAGE_TYPE_PIERCING, 0.1] )   // armor
-                , [ new UnitWeapon(false, false, DAMAGE_TYPE_BASE, new NumRange(20, 20, Rand.STREAM_GAME), UNIT_CLASS__ALL, 0, 1000, 0, 0) ] // weapons
-                , 40                        // collision radius
-                , 40                        // detect radius
-                , 180                       // lose interest radius
-            )
-    ];
+    protected static const BASE_DATA :UnitData = UnitBuilder.create()
+        .name("base")
+        .maxHealth(100)
+        .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.1, DAMAGE_TYPE_PIERCING, 0.1] ))
+        .weapon(BASE_WEAPON)
+        .collisionRadius(40)
+        .unitData;
+
+    // non-creature units must come after creature units
+    public static const UNIT_DATA :Array = [ GRUNT_DATA, HEAVY_DATA, SAPPER_DATA, BASE_DATA ];
 
     /* Screen layout */
     public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
-    
+
     public static const RESOURCE_DISPLAY_LOC :Point = new Point(350, 380);
     public static const PUZZLE_BOARD_LOC :Point = new Point(10, 378);
     public static const RESOURCE_POPUP_LOC :Point = new Point(250, 425);
@@ -164,10 +190,10 @@ public class Constants
         // return an array of Vector2 pairs - for each player, a base loc and an initial waypoint loc
 
         switch (numPlayers) {
-        case 1: 
+        case 1:
             return [ new Vector2(50, 315) ]; // we don't have 1-player games except during development
             break;
-            
+
         case 2:
             return [
                 new Vector2(50, 315),   // bottom left
