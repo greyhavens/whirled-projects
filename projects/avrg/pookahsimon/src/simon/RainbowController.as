@@ -313,6 +313,9 @@ public class RainbowController extends SceneObject
                 // create and play a sparkle animation
                 var sparkle :MovieClip = Resources.instantiateMovieClip("ui", "sparkle");
 
+                sparkle.mouseEnabled = false;
+                sparkle.mouseChildren = false;
+
                 sparkle.x = clickLoc.x;
                 sparkle.y = clickLoc.y;
 
