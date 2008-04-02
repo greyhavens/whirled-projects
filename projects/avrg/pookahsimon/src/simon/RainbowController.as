@@ -4,6 +4,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.AVRGameAvatar;
 import com.whirled.contrib.ColorMatrix;
+import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
@@ -312,15 +313,15 @@ public class RainbowController extends SceneObject
 
                 // create and play a sparkle animation
                 var sparkle :MovieClip = Resources.instantiateMovieClip("ui", "sparkle");
-
                 sparkle.mouseEnabled = false;
                 sparkle.mouseChildren = false;
-
                 sparkle.x = clickLoc.x;
                 sparkle.y = clickLoc.y;
 
-                _curAnim.addChild(sparkle);
-                this.createSparkleCleanupHandler(sparkle);
+                // the sparkle object will destroy itself when it gets to the "end" frame
+                var sparkleObj :SimObject = new SimpleSceneObject(sparkle);
+                sparkleObj.addTask(new SerialTask(new WaitForFrameTask("end"), new SelfDestructTask()));
+                this.db.addObject(sparkleObj, _curAnim);
 
                 // show an animation on the player avatar
                 if (_playerId == SimonMain.localPlayerId) {
@@ -349,18 +350,6 @@ public class RainbowController extends SceneObject
         // disable mouse events while the note animation is playing
         if (null != _curAnim) {
             _curAnim.mouseChildren = false;
-        }
-    }
-
-    protected function createSparkleCleanupHandler (sparkle :MovieClip) :void
-    {
-        var animHandler :AnimationHandler = new AnimationHandler(sparkle, "end", cleanupSparkle);
-        _sparkleAnimHandlers.push(animHandler);
-
-        function cleanupSparkle () :void
-        {
-            sparkle.parent.removeChild(sparkle);
-            ArrayUtil.removeFirst(_sparkleAnimHandlers, animHandler);
         }
     }
 
@@ -433,8 +422,6 @@ public class RainbowController extends SceneObject
     protected var _remainingPattern :Array;
 
     protected var _hilitedBand :MovieClip;
-
-    protected var _sparkleAnimHandlers :Array = [];
 
     protected var _noteAnimationIndex :int = -1;
 
