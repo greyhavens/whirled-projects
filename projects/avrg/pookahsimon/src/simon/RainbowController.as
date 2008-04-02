@@ -384,6 +384,8 @@ public class RainbowController extends SceneObject
             p = SimonMain.control.locationToStage(avatarInfo.x, avatarInfo.y, avatarInfo.z);
             p.y -= avatarInfo.stageBounds.height;
 
+            p.y = Math.max(p.y, MIN_RAINBOW_HEIGHT);
+
             log.info(
                 String(SimonMain.localPlayerId) +
                 " avatarInfo: (" + avatarInfo.x + "," + avatarInfo.y + "," + avatarInfo.z + ")" +
@@ -475,6 +477,8 @@ public class RainbowController extends SceneObject
     protected static const NOTE_ANIMATION_DURATION :Number = 0.75;
     protected static const NOTE_ANIMATION_TASK_NAME :String = "NoteAnimationTask";
     protected static const PLAYER_TIMEOUT_TASK_NAME :String = "PlayerTimeoutTask";
+
+    protected static const MIN_RAINBOW_HEIGHT :Number = 50;
 }
 
 }
