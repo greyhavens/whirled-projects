@@ -71,6 +71,30 @@ public class CreatureUnitView extends SceneObject
         }
     }
 
+    override protected function addedToDB () :void
+    {
+        this.db.addObject(_healthMeter, _sprite);
+
+        _unit.addEventListener(UnitEvent.ATTACKING, handleUnitAttacking, false, 0, true);
+    }
+
+    override protected function removedFromDB () :void
+    {
+        _healthMeter.destroySelf();
+
+        _unit.removeEventListener(UnitEvent.ATTACKING, handleUnitAttacking);
+    }
+
+    protected function handleUnitAttacking (e :UnitEvent) :void
+    {
+        var weapon :UnitWeapon = e.data as UnitWeapon;
+
+        if (weapon.isAOE) {
+            // @TODO - duration is a temporary, arbitrary value
+            this.createAOEAttackAnimation(weapon, _unit.unitLoc, 0.5);
+        }
+    }
+
     protected function createAOEAttackAnimation (weapon :UnitWeapon, loc :Vector2, duration :Number) :void
     {
         if (null != weapon.aoeAnimationName) {
@@ -227,16 +251,6 @@ public class CreatureUnitView extends SceneObject
 
             _lastViewState = newViewState;
         }
-    }
-
-    override protected function addedToDB () :void
-    {
-        this.db.addObject(_healthMeter, _sprite);
-    }
-
-    override protected function removedFromDB () :void
-    {
-        _healthMeter.destroySelf();
     }
 
     override protected function update (dt :Number) :void

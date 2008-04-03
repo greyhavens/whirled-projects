@@ -121,6 +121,7 @@ public class Constants
         .damageRange(50, 50)
         .targetClassMask(UNIT_CLASS_GROUND)
         .aoeRadius(150)
+        .aoeAnimationName("attack_N")
         .weapon;
 
     protected static const BASE_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
