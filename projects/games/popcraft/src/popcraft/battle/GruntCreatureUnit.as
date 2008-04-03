@@ -1,5 +1,5 @@
 package popcraft.battle {
-    
+
 import com.whirled.contrib.simplegame.*;
 
 import popcraft.*;
@@ -16,7 +16,7 @@ public class GruntCreatureUnit extends CreatureUnit
     public function GruntCreatureUnit (owningPlayerId :uint)
     {
         super(Constants.UNIT_TYPE_GRUNT, owningPlayerId);
-        
+
         _gruntAI = new GruntAI(this, this.findEnemyBaseToAttack());
     }
 
@@ -53,6 +53,8 @@ import flash.geom.Point;
 import popcraft.*;
 import popcraft.battle.*;
 import popcraft.battle.ai.*;
+import flash.display.Loader;
+import com.threerings.util.Log;
 
 /**
  * Goals:
@@ -75,27 +77,27 @@ class GruntAI extends AITaskTree
         this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
         this.addSubtask(new DetectAttacksOnUnitTask(_unit));
     }
-    
+
     override protected function childTaskCompleted (task :AITask) :void
     {
         switch (task.name) {
-            
+
         case DetectAttacksOnUnitTask.NAME:
             // we've been attacked!
             var attack :UnitAttack = (task as DetectAttacksOnUnitTask).attack;
             var aggressor :Unit = attack.sourceUnit;
-            
+
             if (null != aggressor) {
-                trace("GruntAI: attacking aggressor!");
-                
+                log.info("attacking aggressor!");
+
                 this.clearSubtasks();
                 this.addSubtask(new AttackUnitTask(aggressor.ref, true, _unit.unitData.loseInterestRadius));
             }
             break;
-            
+
         case AttackUnitTask.NAME:
             // resume attacking base
-            trace("GruntAI: resuming attack on base");
+            log.info("resuming attack on base");
             this.beginAttackBase();
             break;
         }
@@ -109,4 +111,6 @@ class GruntAI extends AITaskTree
     protected var _unit :GruntCreatureUnit;
     protected var _state :uint;
     protected var _targetBaseRef :SimObjectRef;
+
+    protected static const log :Log = Log.getLog(GruntAI);
 }

@@ -115,7 +115,6 @@ public class PuzzleSwapCursor extends SimObject
 
     protected function clearTimerExpired () :void
     {
-        //trace("clearTimerExpired");
         _board.clearPieceGroup(_mouseIndexX, _mouseIndexY);
         _noSwapOnNextClick = true;
         this.removeClearTimer();

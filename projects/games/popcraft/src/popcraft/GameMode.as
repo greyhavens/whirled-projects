@@ -3,6 +3,7 @@ package popcraft {
 import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
 import com.threerings.util.HashSet;
+import com.threerings.util.Log;
 import com.threerings.util.RingBuffer;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
@@ -26,12 +27,12 @@ public class GameMode extends AppMode
 
         return instance;
     }
-    
+
     public static function getNetObjectNamed (objectName :String) :SimObject
     {
         return GameMode.instance.netObjects.getObjectNamed(objectName);
     }
-    
+
     public static function getNetObjectRefsInGroup (groupName :String) :Array
     {
         return GameMode.instance.netObjects.getObjectRefsInGroup(groupName);
@@ -45,10 +46,10 @@ public class GameMode extends AppMode
     override protected function setup () :void
     {
         _numPlayers = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
-        
+
         var myPosition :int = PopCraft.instance.gameControl.game.seating.getMyPosition();
         var isAPlayer :Boolean = (myPosition >= 0);
-        
+
 
         // everyone gets to see the BattleBoard
         _battleBoard = new BattleBoard(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
@@ -101,12 +102,12 @@ public class GameMode extends AppMode
         var n :int = baseLocs.length;
         for (var i :int = 0; i < n; ++i) {
             var baseLoc :Vector2 = (baseLocs[i] as Vector2);
-            
+
             var base :PlayerBaseUnit = (UnitFactory.createUnit(Constants.UNIT_TYPE_BASE, playerId) as PlayerBaseUnit);
             base.unitSpawnLoc = baseLoc;
             base.x = baseLoc.x;
             base.y = baseLoc.y;
-            
+
             _playerBaseRefs.push(base.ref);
 
             ++playerId;
@@ -116,7 +117,7 @@ public class GameMode extends AppMode
         // The suggested way to do this is to attach an event listener to the stage,
         // but that's a security violation. The GameControl re-dispatches global key events for us instead.
         PopCraft.instance.gameControl.local.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 0, false);
-        
+
         if (Constants.DEBUG_DRAW_STATS) {
             _debugDataView = new DebugDataView();
             this.addObject(_debugDataView, this.modeSprite);
@@ -147,7 +148,7 @@ public class GameMode extends AppMode
                 }
             }
             break;
-            
+
         case KEY_5:
             if (null != _debugDataView) {
                 _debugDataView.visible = !(_debugDataView.visible);
@@ -161,7 +162,7 @@ public class GameMode extends AppMode
     {
         // don't start doing anything until the messageMgr is ready
         if (!_gameIsRunning && _messageMgr.isReady) {
-            trace("Starting game. randomSeed: " + _messageMgr.randomSeed);
+            log.info("Starting game. randomSeed: " + _messageMgr.randomSeed);
             Rand.seedStream(Rand.STREAM_GAME, _messageMgr.randomSeed);
             _gameIsRunning = true;
         }
@@ -195,21 +196,21 @@ public class GameMode extends AppMode
             // @TODO - remove this temporary hack that allows a single player
             // to play the game for testing purposes
             if (_numPlayers > 1) {
-                
+
                 // end the game when all bases but one have been destroyed
                 var livingPlayers :HashSet = new HashSet();
                 var n :uint = _playerBaseRefs.length;
                 for (var playerId :uint = 0; playerId < n; ++playerId) {
                     if (null != getPlayerBase(playerId)) {
                         livingPlayers.add(playerId);
-    
+
                         // if there's > 1 living player, the game can't be over
                         if (livingPlayers.size() > 1) {
                             break;
                         }
                     }
                 }
-    
+
                 if (livingPlayers.size() <= 1) {
                     var winningPlayer :int = (livingPlayers.size() == 1 ? livingPlayers.toArray()[0] : -1);
                     MainLoop.instance.changeMode(new GameOverMode(winningPlayer));
@@ -253,7 +254,7 @@ public class GameMode extends AppMode
         }
 
         if (messageStatus.length > 0) {
-            trace("PLAYER: " + _playerData.playerId + " TICK: " + _tickCount + " MESSAGES: " + messageStatus);
+            log.debug("PLAYER: " + _playerData.playerId + " TICK: " + _tickCount + " MESSAGES: " + messageStatus);
         }
 
         // calculate a checksum for this frame
@@ -336,19 +337,19 @@ public class GameMode extends AppMode
         if (msg.playerId != _playerData.playerId) {
             // check this checksum against our checksum buffer
             if (msg.tick > _lastCachedChecksumTick || msg.tick <= (_lastCachedChecksumTick - _myChecksums.length)) {
-                trace("discarding checksum message (too old or too new)");
+                log.debug("discarding checksum message (too old or too new)");
             } else {
                 var index :uint = (_lastCachedChecksumTick - msg.tick);
                 var myChecksum :ChecksumMessage = (_myChecksums.at(index) as ChecksumMessage);
                 if (myChecksum.checksum != msg.checksum) {
-                    trace("** WARNING ** Mismatched checksums at tick " + msg.tick + "!");
+                    log.warning("** WARNING ** Mismatched checksums at tick " + msg.tick + "!");
 
                     // only dump the details once
                     if (!_syncError) {
-                        trace("-- PLAYER " + myChecksum.playerId + " --");
-                        trace(myChecksum.details);
-                        trace("-- PLAYER " + msg.playerId + " --");
-                        trace(msg.details);
+                        log.debug("-- PLAYER " + myChecksum.playerId + " --");
+                        log.debug(myChecksum.details);
+                        log.debug("-- PLAYER " + msg.playerId + " --");
+                        log.debug(msg.details);
                         _syncError = true;
                     }
                 }
@@ -401,17 +402,17 @@ public class GameMode extends AppMode
     {
         return _messageMgr;
     }
-    
+
     public function get battleUnitDisplayParent () :DisplayObjectContainer
     {
         return _battleBoard.unitDisplayParent;
     }
-    
+
     public function get battleCollisionGrid () :AttractRepulseGrid
     {
         return _battleBoard.collisionGrid;
     }
-    
+
     public function get numPlayers () :int
     {
         return _numPlayers;
@@ -439,6 +440,8 @@ public class GameMode extends AppMode
     protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));
 
     protected static const CHECKSUM_BUFFER_LENGTH :int = 10;
+
+    protected static const log :Log = Log.getLog(GameMode);
 }
 
 }

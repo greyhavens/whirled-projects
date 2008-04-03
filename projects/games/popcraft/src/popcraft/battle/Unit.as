@@ -102,7 +102,7 @@ public class Unit extends SimObject
     public function sendAttack (targetUnit :Unit, weapon :UnitWeapon) :void
     {
         if (this.isAttacking || !this.canAttackWithWeapon(targetUnit, weapon)) {
-            /*trace(
+            /*log.info(
                 "discarding attack from "
                 + this.id + " to " + targetUnit.id +
                 " (target out of range, or we're already attacking)");*/
