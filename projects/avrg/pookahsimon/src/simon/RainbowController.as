@@ -380,7 +380,7 @@ public class RainbowController extends SceneObject
 
             // clamp rainbow coordinates
             p.x = Math.max(p.x, stageBounds.left + (RAINBOW_ANIMATION_WIDTH * 0.5));
-            p.y = Math.min(p.x, stageBounds.right - (RAINBOW_ANIMATION_WIDTH * 0.5));
+            p.x = Math.min(p.x, stageBounds.right - (RAINBOW_ANIMATION_WIDTH * 0.5));
             p.y = Math.max(p.y, MIN_RAINBOW_Y);
 
             log.info(
@@ -473,7 +473,7 @@ public class RainbowController extends SceneObject
     protected static const NOTE_ANIMATION_TASK_NAME :String = "NoteAnimationTask";
     protected static const PLAYER_TIMEOUT_TASK_NAME :String = "PlayerTimeoutTask";
 
-    protected static const MIN_RAINBOW_Y :Number = 50;
+    protected static const MIN_RAINBOW_Y :Number = 100;
     protected static const RAINBOW_ANIMATION_WIDTH :Number = 282;
 }
 
