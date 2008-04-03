@@ -125,6 +125,7 @@ public class LocalRainbowController extends AbstractRainbowController
     {
         SimonMain.model.sendPlayerTimeoutMessage();
         this.gameMode.incrementPlayerTimeoutCount();
+        this.gameMode.currentPlayerTurnFailure();
     }
 
     override protected function nextNoteSelected (noteIndex :int, clickLoc :Point) :void

@@ -65,15 +65,11 @@ public class AbstractRainbowController extends SceneObject
             g_darkenFilter = darkenMatrix.createFilter();
         }
 
-        SimonMain.model.addEventListener(SharedStateChangedEvent.PLAYER_TIMEOUT, handleStateChange_PlayerTimeout);
-
         this.playRainbowAnimation("rainbow_in", playRainbowLoop);
     }
 
     override protected function removedFromDB () :void
     {
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_TIMEOUT, handleStateChange_PlayerTimeout);
-
         this.stopRainbowAnimation();
     }
 
@@ -121,12 +117,6 @@ public class AbstractRainbowController extends SceneObject
         // show player name
         var playerText :TextField = _curAnim["player"];
         playerText.text = SimonMain.getPlayerName(_playerId);
-    }
-
-    protected function handleStateChange_PlayerTimeout (e :SharedStateChangedEvent) :void
-    {
-        // called when the player has taken too long to click a note
-        this.gameMode.currentPlayerTurnFailure();
     }
 
     protected function nextNoteSelected (noteIndex :int, clickLoc :Point) :void
