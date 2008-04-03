@@ -9,6 +9,11 @@ import com.threerings.flash.Vector2;
 
 import caurina.transitions.Tweener;
 
+import spades.card.Bids;
+import spades.card.BidEvent;
+import spades.card.Table;
+
+
 /** Represents a team display. Includes a placeholder box and last trick display. 
  *  TODO: names, score and trick totals. */
 public class TeamSprite extends Sprite
@@ -16,17 +21,23 @@ public class TeamSprite extends Sprite
     public static const NO_BID :int = TableSprite.NO_BID;
 
     /** Create a new team sprite. Long names will be truncated with an ellipsis.
-     *  @param name1 the first name to appear in the label
-     *  @param name2 the second name to appear in the label
+     *  @param table the table we are sitting at
+     *  @param seats the relative seating positions of the players on this team
+     *  @param bids the bids object for the game 
      *  @param mainTrickPos the global coordinates of the main trick - used for animating the 
      *  taking of a trick.
-     *  @lastTrickPos the relative position of the scaled down last trick icon */
+     *  @param lastTrickPos the relative position of the scaled down last trick icon 
+     *  @param playerSeats the absolute seating positions of the players on this team */
     public function TeamSprite (
-        name1 :String, 
-        name2 :String, 
+        table :Table, 
+        seats :Array,
+        bids :Bids,
         mainTrickPos :Vector2,
         lastTrickPos :Vector2)
     {
+        _table = table;
+        _seats = seats;
+        _bids = bids;
         _mainTrickPos = mainTrickPos.clone();
         _lastTrickPos = lastTrickPos.clone();
 
@@ -37,7 +48,9 @@ public class TeamSprite extends Sprite
         nameField.autoSize = TextFieldAutoSize.CENTER;
         nameField.x = 0;
         nameField.y = -HEIGHT / 2;
-        nameField.text = makeNameString(name1, name2);
+        nameField.text = makeNameString(
+            _table.getNameFromRelative(_seats[0]), 
+            _table.getNameFromRelative(_seats[1]));
         nameField.selectable = false;
         addChild(nameField);
 
@@ -59,6 +72,9 @@ public class TeamSprite extends Sprite
         graphics.endFill();
 
         updateTricks();
+
+        bids.addEventListener(BidEvent.RESET, bidListener);
+        bids.addEventListener(BidEvent.PLACED, bidListener);
     }
 
     /** Take the array of card sprites and animate them to this team's last trick slot. The 
@@ -91,15 +107,6 @@ public class TeamSprite extends Sprite
         _lastTrick.clear();
     }
 
-    /** Set the bid for a player. If the bid of any player is NO_BID, then a "?" is shown, 
-     *  otherwise the sum of bids is shown.
-     *  @player the index of the player in the team (either 0 or 1) */
-    public function setBid (player :int, bid :int) :void
-    {
-        _bids[player] = bid;
-        updateTricks();
-    }
-
     /** Set the tricks a player has taken. */
     public function setTricks (player :int, tricks :int) :void
     {
@@ -119,16 +126,31 @@ public class TeamSprite extends Sprite
     {
         var totalTricks :int = _tricks[0] + _tricks[1];
         var text :String = "" + totalTricks + "/";
+        var seats :Array = [
+            _table.getAbsoluteFromRelative(_seats[0]),
+            _table.getAbsoluteFromRelative(_seats[1])];
 
-        if (_bids[0] == NO_BID || _bids[1] == NO_BID) {
+        if (!_bids.hasBid(seats[0]) || !_bids.hasBid(seats[1])) {
             text += "?";
         }
         else {
-            text += _bids[0] + _bids[1];
+            text += _bids.getBid(seats[0]) + _bids.getBid(seats[1]);
         }
 
         _tricksScore.text = text;
         _tricksScore.y = -_tricksScore.textHeight / 2;
+    }
+
+    protected function bidListener (event :BidEvent) :void
+    {
+        if (event.type == BidEvent.RESET) {
+            _tricks[0] = 0;
+            _tricks[1] = 1;
+            updateTricks();
+        }
+        else if (event.type == BidEvent.PLACED) {
+            updateTricks();
+        }
     }
 
     /** Utility function to truncate a name. */
@@ -150,6 +172,15 @@ public class TeamSprite extends Sprite
         return name1 + "/" + name2;
     }
 
+    /** The table we are sitting at */
+    protected var _table :Table;
+
+    /** The seats of our team members */
+    protected var _seats :Array;
+
+    /** The bids for the game */
+    protected var _bids :Bids;
+
     /** Sprite for the last trick display */
     protected var _lastTrick :LastTrickSprite;
 
@@ -158,9 +189,6 @@ public class TeamSprite extends Sprite
 
     /** Static position of our last trick display */
     protected var _lastTrickPos :Vector2;
-
-    /** Bids */
-    protected var _bids :Array = [NO_BID, NO_BID];
 
     /** Tricks */
     protected var _tricks :Array = [0, 0];

@@ -17,6 +17,8 @@ import spades.card.Card;
 import spades.card.CardArray;
 import spades.card.Trick;
 import spades.card.TrickEvent;
+import spades.card.Bids;
+import spades.card.BidEvent;
 import spades.card.Table;
 
 import spades.graphics.TableSprite;
@@ -45,6 +47,7 @@ public class Spades extends Sprite
     {
         _gameCtrl = gameCtrl;
         _trick = new Trick(_gameCtrl, trumps);
+        _bids = new Bids(_gameCtrl);
         _seating = new Table(
             _gameCtrl.game.seating.getPlayerNames(),
             _gameCtrl.game.seating.getPlayerIds(), 
@@ -66,18 +69,14 @@ public class Spades extends Sprite
             StateChangedEvent.TURN_CHANGED, 
             handleTurnChanged);
         _gameCtrl.net.addEventListener(
-            ElementChangedEvent.ELEMENT_CHANGED,
-            handleElementChanged);
-        _gameCtrl.net.addEventListener(
-            PropertyChangedEvent.PROPERTY_CHANGED,
-            handlePropertyChanged);
-        _gameCtrl.net.addEventListener(
             MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessage);
 
         _trick.addEventListener(TrickEvent.CARD_PLAYED, trickListener);
-        _trick.addEventListener(TrickEvent.RESET, trickListener);
         _trick.addEventListener(TrickEvent.COMPLETED, trickListener);
+
+        _bids.addEventListener(BidEvent.PLACED, bidListener);
+        _bids.addEventListener(BidEvent.COMPLETED, bidListener);
 
         var config :Object = _gameCtrl.game.getConfig();
 
@@ -92,6 +91,7 @@ public class Spades extends Sprite
         _table = new TableSprite(
             _seating,
             _targetScore,
+            _bids,
             _trick,
             _hand);
 
@@ -113,25 +113,6 @@ public class Spades extends Sprite
             var callback :Function = _table.getHeadShotCallback(i);
             log("Getting headshot for " + players[i]);
             _gameCtrl.local.getHeadShot(players[i], callback);
-        }
-    }
-
-    /** Get the number of bids placed so far */
-    protected function countBidsPlaced () :int
-    {
-        var bids :Array = _gameCtrl.net.get(COMS_BIDS) as Array;
-        var count :int = 0;
-        if (bids != null) {
-            bids.forEach(countIfValid);
-        }
-
-        return count;
-
-        function countIfValid (bid :int, i :int, a :Array) :void
-        {
-            if (bid != NO_BID) {
-                count++;
-            }
         }
     }
 
@@ -176,8 +157,7 @@ public class Spades extends Sprite
                     COMS_HAND, null, playerIds[seat]);
             }
 
-            // set up bids
-            _gameCtrl.net.set(COMS_BIDS, filledArray(NUM_PLAYERS, NO_BID));
+            _bids.reset();
 
             _trick.reset();
 
@@ -208,14 +188,13 @@ public class Spades extends Sprite
      *  and display */
     protected function updateScores () :void
     {
-        var bids :Array = _gameCtrl.net.get(COMS_BIDS) as Array;
         var teamBids :Array = filledArray(NUM_PLAYERS / 2, 0);
         var teamTricks :Array = filledArray(NUM_PLAYERS / 2, 0);
         var team :int;
 
         for (var seat :int = 0; seat < NUM_PLAYERS; ++seat) {
             team = getTeam(seat);
-            teamBids[team] += bids[seat];
+            teamBids[team] += _bids.getBid(seat);
             teamTricks[team] += _tricksTaken[seat];
         }
 
@@ -244,6 +223,23 @@ public class Spades extends Sprite
         _gameCtrl.local.feedback("Thank you for playing Spades!");
     }
 
+    protected function bidListener (event :BidEvent) :void
+    {
+        log("Received " + event);
+        if (event.type == BidEvent.PLACED) {
+
+            var name :String = _seating.getNameFromId(event.player);
+            _gameCtrl.local.feedback(name + " bid " + event.value);
+            
+            if (_gameCtrl.game.amInControl()) {
+                _gameCtrl.game.startNextTurn();
+            }
+        }
+        else if (event.type == BidEvent.COMPLETED) {
+            _gameCtrl.local.feedback("All bids are in, starting play");
+        }
+    }
+
     /** Update the UI after a turn change. */
     protected function handleTurnChanged (event :StateChangedEvent) :void
     {
@@ -258,7 +254,7 @@ public class Spades extends Sprite
 
         if (turnHolder > 0) {
             // This is the beginning of the round, so declare the leader.
-            if (countBidsPlaced() == 0) {
+            if (_bids.length == 0) {
                 var leader :String = _seating.getNameFromAbsolute(hotSeat);
                 _gameCtrl.local.feedback("Leader this round is " + leader);
 
@@ -269,32 +265,6 @@ public class Spades extends Sprite
         }
     }
 
-    /** Main entry point for element changes */
-    protected function handleElementChanged (event :ElementChangedEvent) :void
-    {
-        log("Element changed:" + event.name);
-
-        if (event.name == COMS_BIDS) {
-            // make sure that a player's bid is reflected in the view
-            var bid :int = event.newValue as int;
-            _table.setPlayerBid(event.index, bid);
-
-            if (bid != NO_BID) {
-                var name :String = _seating.getNameFromAbsolute(event.index);
-                _gameCtrl.local.feedback(name + " bid " + bid);
-            }
-
-            // all bids are complete, start play
-            if (countBidsPlaced() == NUM_PLAYERS) {
-                _gameCtrl.local.feedback("All bids are in, starting play");
-            }
-            
-            if (_gameCtrl.game.amInControl()) {
-                _gameCtrl.game.startNextTurn();
-            }
-        }
-    }
-    
     /** Calculate the winner of the trick, add it to their number of tricks, save to history and 
      *  give them their turn */
     protected function completeTrick () :void
@@ -392,10 +362,8 @@ public class Spades extends Sprite
 
     protected function trickListener (event :TrickEvent) :void
     {
-        log("Received event " + event);
-        if (event.type == TrickEvent.RESET) {
-        }
-        else if (event.type == TrickEvent.COMPLETED) {
+        log("Received " + event);
+        if (event.type == TrickEvent.COMPLETED) {
             completeTrick();
         }
         else if (event.type == TrickEvent.CARD_PLAYED) {
@@ -405,38 +373,23 @@ public class Spades extends Sprite
         }
     }
 
-    /** Main entry point for property changes. */
-    protected function handlePropertyChanged (event :PropertyChangedEvent) :void
-    {
-        log("Property changed:" + event.name);
-        if (event.name == COMS_BIDS) {
-            // make sure that a player's bid is reflected in the view
-            var bids :Array = event.newValue as Array;
-            for (var i :int = 0; i < NUM_PLAYERS; ++i) {
-                _table.setPlayerBid(i, bids[i]);
-                _table.setPlayerTricks(i, 0);
-            }
-        }
-    }
-
     /** Show or hide the bidding interface. */
     protected function updateBidding () :void
     {
-        var bids :Array = _gameCtrl.net.get(COMS_BIDS) as Array;
         var showSlider :Boolean = 
             _gameCtrl.game.isMyTurn() && 
-            bids != null && 
-            bids[_seating.getLocalSeat()] == NO_BID;
+            !_bids.hasBid(_seating.getLocalSeat());
 
         log("Ready to bid: " + showSlider);
-
+        
+        // TODO: subtract my partner's bid from the maximum bid 
         _table.showBidControl(showSlider, _hand.length, onBid);
     }
 
     /** Entry point for when the user selects their bid */
     protected function onBid (bid :int) :void
     {
-        _gameCtrl.net.setAt(COMS_BIDS, _seating.getLocalSeat(), bid);
+        _bids.placeBid(bid);
     }
 
     /** Check if spades can be played (part of current game state and/or config).
@@ -487,11 +440,11 @@ public class Spades extends Sprite
             // not my turn, disable
             _table.disableHand();
         }
-        else if (_trick.length == NUM_PLAYERS) {
+        else if (_trick.complete) {
             // trick full, disable
             _table.disableHand();
         }
-        else if (countBidsPlaced() < NUM_PLAYERS) {
+        else if (!_bids.complete) {
             // bidding not finished, disable
             _table.disableHand();
         }
@@ -574,8 +527,11 @@ public class Spades extends Sprite
     /** Tricks taken by each player (indexed by seat). */
     protected var _tricksTaken :Array = filledArray(NUM_PLAYERS, 0);
 
-    /** The trick sprite in the middle of the table */
+    /** The trick in the middle of the table */
     protected var _trick :Trick;
+
+    /** The bids */
+    protected var _bids :Bids;
 
     /** The scores so far. */
     protected var _scores :Array;
@@ -591,9 +547,6 @@ public class Spades extends Sprite
 
     /** Name of bag for the deck. */
     protected static const COMS_DECK :String = "deck";
-
-    /** Name of property for bids array. */
-    protected static const COMS_BIDS :String = "bids";
 
     /** Name of property indicating the last player to lead the hand. */
     protected static const COMS_LAST_LEADER :String = "lastleader";

@@ -14,6 +14,8 @@ import spades.card.CardArrayEvent;
 import spades.card.Trick;
 import spades.card.TrickEvent
 import spades.card.Table;
+import spades.card.Bids;
+import spades.card.BidEvent;
 
 /**
  * Display object for drawing a spades game.
@@ -58,6 +60,7 @@ public class TableSprite extends Sprite
     public function TableSprite (
         seating :Table,
         winningScore :int,
+        bids :Bids,
         trick :Trick,
         hand :CardArray)
     {
@@ -78,15 +81,11 @@ public class TableSprite extends Sprite
         _trick = new MainTrickSprite(trick, _seating, _players, _hand);
         addChild(_trick);
 
-        _teams[0] = new TeamSprite(
-            _seating.getNameFromRelative(0), 
-            _seating.getNameFromRelative(2), 
+        _teams[0] = new TeamSprite(_seating, [0, 2], bids,
             TRICK_POSITION, new Vector2(LAST_TRICK_OFFSET, 0));
         addChild(_teams[0] as TeamSprite);
 
-        _teams[1] = new TeamSprite(
-            _seating.getNameFromRelative(1), 
-            _seating.getNameFromRelative(3), 
+        _teams[1] = new TeamSprite(_seating, [1, 3], bids,
             TRICK_POSITION, new Vector2(-LAST_TRICK_OFFSET, 0));
         addChild(_teams[1] as TeamSprite);
 
@@ -130,14 +129,6 @@ public class TableSprite extends Sprite
         {
             p.setTurn(index == seat);
         }
-    }
-
-    /** Change a player's bid value. If NO_BID is given, then the value is shown
-     *  as blank. */
-    public function setPlayerBid (seat :int, bid :int) :void
-    {
-        seat = _seating.getRelativeFromAbsolute(seat);
-        getTeam(seat).setBid(getTeamPlayer(seat), bid);
     }
 
     /** Set the number of tricks taken by a player. */
@@ -217,7 +208,8 @@ public class TableSprite extends Sprite
     protected function clickListener (event :MouseEvent) :void
     {
         var card :CardSprite = CardArraySprite.exposeCard(event.target);
-        if (card != null && _handCallback != null) {
+        if (card != null && _handCallback != null && 
+            card.state != CardSprite.DISABLED) {
             var callback :Function = _handCallback;
             _handCallback = null;
             callback(card.card);
