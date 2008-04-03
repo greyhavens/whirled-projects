@@ -1,50 +1,29 @@
 package ghostbusters.fight.common {
 
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.tasks.*;
 
-public class GameTimer extends SimObject
+public class GameTimer
 {
-    public static const NAME :String = "GameTimer";
-    
     public static function install (totalTime :Number, callback :Function) :void
     {
-        var timer :GameTimer = new GameTimer(totalTime, callback);
-        MainLoop.instance.topMode.addObject(timer);
+        MainLoop.instance.topMode.addObject(new SimpleTimer(totalTime, callback, false, NAME));
     }
-    
+
     public static function uninstall () :void
     {
         MainLoop.instance.topMode.destroyObjectNamed(NAME);
     }
-    
+
     public static function get timeRemaining () :Number
     {
-        var timer :GameTimer = MainLoop.instance.topMode.getObjectNamed(NAME) as GameTimer;
-        return (null != timer ? timer.timeRemaining : 0);
+        var timer :SimpleTimer = MainLoop.instance.topMode.getObjectNamed(NAME) as SimpleTimer;
+        return (null != timer ? timer.timeLeft : 0);
     }
-    
-    public function GameTimer (totalTime :Number, callback :Function)
-    {
-        _timeRemaining = { value: totalTime };
-        
-        this.addTask(new SerialTask(
-            new AnimateValueTask(_timeRemaining, 0, totalTime),
-            new FunctionTask(callback)));
-    }
-    
-    public function get timeRemaining () :Number
-    {
-        return _timeRemaining.value;
-    }
-    
-    override public function get objectName () :String
-    {
-        return NAME;
-    }
-    
-    protected var _timeRemaining :Object;
-    
+
+    protected static const NAME :String = "GameTimer";
+
 }
 
 }
