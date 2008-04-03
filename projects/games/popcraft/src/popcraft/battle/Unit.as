@@ -1,5 +1,5 @@
 package popcraft.battle {
-    
+
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.components.*;
@@ -9,6 +9,8 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.Bitmap;
+import flash.display.Graphics;
+import flash.display.Shape;
 
 import popcraft.*;
 import popcraft.battle.geom.*;
@@ -47,13 +49,13 @@ public class Unit extends SimObject
     {
         return ImageUtil.createGlowBitmap(bitmap, Constants.PLAYER_COLORS[_owningPlayerId] as uint);
     }
-    
+
     public function isUnitInRange (unit :Unit, range :Number) :Boolean
     {
         if (range < 0) {
             return false;
         }
-        
+
         return Collision.circlesIntersect(
             new Vector2(this.x, this.y),
             range,
@@ -102,34 +104,91 @@ public class Unit extends SimObject
                 "discarding attack from "
                 + this.id + " to " + targetUnit.id +
                 " (target out of range, or we're already attacking)");*/
-                
+
             return;
         }
-        
+
         if (weapon.isRanged) {
             MissileFactory.createMissile(targetUnit, this, weapon);
+        } else if (weapon.isAOE) {
+            this.sendAOEAttack(this.unitLoc, weapon);
         } else {
             targetUnit.receiveAttack(new UnitAttack(targetUnit.ref, this.ref, weapon));
         }
-        
+
         // install a cooldown timer
         if (weapon.cooldown > 0) {
             this.addNamedTask(ATTACK_COOLDOWN_TASK_NAME, new TimedTask(weapon.cooldown));
         }
     }
-    
+
+    public function sendAOEAttack (targetLoc :Vector2, weapon :UnitWeapon) :void
+    {
+        if (this.isAttacking) {
+            return;
+        }
+
+        // @TODO - add support for ranged AOE attacks, if necessary
+
+        if (!weapon.isRanged) {
+
+            var radiusSquared :Number = weapon.aoeRadiusSquared;
+
+            // find all affected units
+            var refs :Array = GameMode.getNetObjectRefsInGroup(Unit.GROUP_NAME);
+
+            for each (var ref :SimObjectRef in refs) {
+                var unit :Unit = ref.object as Unit;
+                if (null == unit) {
+                    continue;
+                }
+
+                // is the unit in range?
+                var delta :Vector2 = targetLoc.subtract(unit._loc);
+                if (delta.lengthSquared > radiusSquared) {
+                    continue;
+                }
+
+                // send the attack
+                unit.receiveAttack(new UnitAttack(unit.ref, this.ref, weapon));
+            }
+
+            // visualize the attack
+            if (Constants.DEBUG_DRAW_AOE_ATTACKS) {
+                var aoeCircle :Shape = new Shape();
+                var g :Graphics = aoeCircle.graphics;
+                g.beginFill(0xFF0000, 0.5);
+                g.drawCircle(0, 0, weapon.aoeRadius);
+                g.endFill();
+
+                var aoeObj :SceneObject = new SimpleSceneObject(aoeCircle);
+                aoeObj.x = targetLoc.x;
+                aoeObj.y = targetLoc.y;
+
+                // fade out and die
+                aoeObj.addTask(After(0.3, new SerialTask(new AlphaTask(0, 0.3), new SelfDestructTask())));
+
+                GameMode.instance.addObject(aoeObj, GameMode.instance.battleUnitDisplayParent);
+            }
+        }
+
+        if (weapon.cooldown > 0) {
+            this.addNamedTask(ATTACK_COOLDOWN_TASK_NAME, new TimedTask(weapon.cooldown));
+        }
+    }
+
     public function receiveAttack (attack :UnitAttack) :void
     {
         _health -= _unitData.armor.getWeaponDamage(attack.weapon);
         _health = Math.max(_health, 0);
-        
+
         this.dispatchEvent(new UnitAttackedEvent(attack));
-        
+
         if (_health == 0) {
             this.destroySelf();
         }
     }
-    
+
     public function isEnemyUnit (unit :Unit) :Boolean
     {
         return (this.owningPlayerId != unit.owningPlayerId);
@@ -184,11 +243,11 @@ public class Unit extends SimObject
     protected var _unitType :uint;
     protected var _unitData :UnitData;
     protected var _health :Number;
-    
+
     protected var _loc :Vector2 = new Vector2();
 
     protected static var g_groups :Array;
-    
+
     protected static const ATTACK_COOLDOWN_TASK_NAME :String = "attackCooldown";
 }
 

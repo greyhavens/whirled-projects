@@ -14,6 +14,11 @@ public class UnitWeapon
     public var missileSpeed :Number = 0; // pixels/second - only meaningful for missiles
     public var aoeRadius :Number = 0; // only meaningful for AOE
 
+    public function get aoeRadiusSquared () :Number
+    {
+        return aoeRadius * aoeRadius;
+    }
+
     public function isValidTargetClass(targetClass :uint) :Boolean
     {
         return ((targetClassMask & targetClass) == targetClass);
