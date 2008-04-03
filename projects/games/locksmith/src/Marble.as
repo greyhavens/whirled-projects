@@ -11,6 +11,8 @@ import flash.geom.Point;
 
 import flash.utils.getTimer;
 
+import com.threerings.util.Log;
+
 import com.whirled.contrib.EventHandlers;
 
 public class Marble extends Sprite
@@ -158,7 +160,6 @@ public class Marble extends Sprite
 
             // otherwise we try to fall as far as we can.
             } else if (_nextRing.inner != null) {
-
                 // if the next ring down the line has an empty hole at our position, and nothing
                 // else is moving to it, start going there immediately
                 var hole :int = _nextRing.inner.getHoleAt(_pos);
@@ -192,6 +193,8 @@ public class Marble extends Sprite
             _nextRing = _nextRing != null ? _nextRing.inner : null;
         }
     }
+
+    private static const log :Log = Log.getLog(Marble);
 
     protected static const ROLL_TIME :int = ROLL_FRAMES * 20; // in ms
 

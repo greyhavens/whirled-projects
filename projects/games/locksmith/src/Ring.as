@@ -120,8 +120,6 @@ public class Ring extends Sprite
 
     public function putMarbleInHole (marble :Marble, hole :int) :void
     {
-        log.debug("putMarbleInHole [marble=" + marble + ", hole=" + hole + ", rotationDirection=" + 
-            _rotationDirection + ", ringNum=" + num + "]");
         if (holeIsEmpty(hole)) {
             _marbles.put(hole, marble);
         } else {

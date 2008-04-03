@@ -110,12 +110,12 @@ public class Board extends Sprite
     {
         var ii :int = _roamingMarbles.indexOf(marble);
         if (roaming) {
-            if (ii != -1) {
-                _roamingMarbles.splice(ii, 1);
-            }
-        } else {
             if (ii == -1) {
                 _roamingMarbles.push(marble);
+            }
+        } else {
+            if (ii != -1) {
+                _roamingMarbles.splice(ii, 1);
             }
         }
     }
