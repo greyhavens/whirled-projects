@@ -4,8 +4,8 @@ import com.threerings.flash.Vector2;
 
 import caurina.transitions.Tweener;
 
-import spades.card.CardArray;
-import spades.card.CardArrayEvent;
+import spades.card.Trick;
+import spades.card.Table;
 
 import flash.geom.Point;
 
@@ -18,11 +18,12 @@ public class MainTrickSprite extends TrickSprite
      *  @param playerSprites An array of player sprite, relative to the local player
      *  @param localHand The sprite representing the local player  */
     public function MainTrickSprite (
-        target :CardArray, 
+        target :Trick, 
+        seating :Table,
         playerSprites :Array, 
         localHand :HandSprite)
     {
-        super(target, playerSprites.length);
+        super(target, seating);
         _playerSprites = playerSprites;
         _localHand = localHand;
     }
@@ -48,7 +49,8 @@ public class MainTrickSprite extends TrickSprite
     override protected function animateAddition (card :CardSprite) :void
     {
         var idx :int = _cards.length - 1;
-        var seat :int = (idx + _leader) % CARD_POSITIONS.length;
+        var seat :int = _seating.getSeatAlong(
+            _seating.getRelativeFromId(_trick.leader), idx);
 
         var start :Vector2;
 

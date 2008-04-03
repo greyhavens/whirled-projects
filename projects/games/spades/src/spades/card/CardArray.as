@@ -116,12 +116,18 @@ public class CardArray extends EventDispatcher
     /** Test if a card (of the same value) is in the array */
     public function has (card :Card) :Boolean
     {
-        return _cards.some(equal);
+        return indexOf(card) >= 0;
+    }
 
-        function equal (c :Card, i :int, a :Array) :Boolean
-        {
-            return c.equals(card);
+    /** Get the index of a card in the array, or -1 if not present. */
+    public function indexOf (card :Card) :int
+    {
+        for (var i :int = 0; i < _cards.length; ++i) {
+            if (_cards[i].equals(card)) {
+                return i;
+            }
         }
+        return -1;
     }
 
     /** Remove a card from the array. 

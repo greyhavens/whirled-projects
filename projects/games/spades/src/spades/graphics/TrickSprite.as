@@ -1,7 +1,8 @@
 package spades.graphics {
 
-import spades.card.CardArray;
-import spades.card.CardArrayEvent;
+import spades.card.Trick;
+import spades.card.Table;
+import spades.card.TrickEvent;
 import spades.Debug;
 
 import com.threerings.flash.Vector2;
@@ -10,85 +11,59 @@ import com.threerings.flash.Vector2;
 public class TrickSprite extends CardArraySprite
 {
     /** Create a new trick sprite */
-    public function TrickSprite (target :CardArray, numPlayers :int)
+    public function TrickSprite (target :Trick, seating :Table)
     {
-        super(target);
-        _numPlayers = numPlayers;
-    }
+        super(target.cards);
+        _trick = target;
+        _seating = seating;
 
-    /** Set the seat (relative to local player) that is currently winning. The card in this slot 
-     *  will be emphasized. */
-    public function setWinner (seat :int) :void
-    {
-        var pos :int = (seat - _leader + _numPlayers) % _numPlayers;
-        winningCard = pos;
-    }
-
-    /** Access the underlying trick. */
-    public function get target () :CardArray
-    {
-        return _target;
-    }
-
-    /** Set the seat (relative to local player) that is leading this round. This means that when 
-     *  the first card is played, it will appear in front of this seat. For example, a leader of 1
-     *  will cause trick card 0 to show up in front of the seat to the left of the local player. */
-    public function set leader (seat :int) :void
-    {
-        _leader = seat;
-        Debug.debug("TrickSprite leader is " + _leader);
-    }
-
-    /** Access the leader of the current round. */
-    public function get leader () :int
-    {
-        return _leader;
+        _trick.addEventListener(TrickEvent.FRONTRUNNER_CHANGED, trickListener);
+        _trick.addEventListener(TrickEvent.RESET, trickListener);
     }
 
     /** Set the card that is currently winning, relative to the first card played this round. */
-    public function set winningCard (card :int) :void
+    protected function set winningCard (card :int) :void
     {
-        if (_winningCard != card) {
-            _winningCard = card;
-            for (var i :int = 0; i < _cards.length; ++i) {
-                var c :CardSprite = _cards[i];
-                if (i == _winningCard) {
-                    c.state = CardSprite.EMPHASIZED;
-                }
-                else {
-                    c.state = CardSprite.NORMAL;
-                }
+        _winningCard = card;
+        for (var i :int = 0; i < _cards.length; ++i) {
+            var c :CardSprite = _cards[i];
+            if (i == _winningCard) {
+                c.state = CardSprite.EMPHASIZED;
+            }
+            else {
+                c.state = CardSprite.NORMAL;
             }
         }
     }
 
     /** Access the card that is currently winning, relative to the first card played this round. */
-    public function get winningCard () :int
+    protected function get winningCard () :int
     {
         return _winningCard;
     }
 
-    override protected function cardArrayListener (event :CardArrayEvent) :void
+    protected function trickListener (event :TrickEvent) :void
     {
-        super.cardArrayListener(event);
-
-        if (event.action == CardArrayEvent.ACTION_RESET) {
-            // make sure new trick does not inherit previous winning card
+        if (event.type == TrickEvent.RESET) {
             winningCard = -1;
+        }
+        else if (event.type == TrickEvent.FRONTRUNNER_CHANGED) {
+            winningCard = _trick.cards.indexOf(event.card);
         }
     }
 
     override protected function getStaticCardPosition (index :int, pos :Vector2) :void
     {
-        var posIdx :int = (index + _leader) % CARD_POSITIONS.length;
+        var leader :int = _seating.getRelativeFromId(_trick.leader);
+        var posIdx :int = _seating.getSeatAlong(leader, index);
         var staticPos :Vector2 = CARD_POSITIONS[posIdx] as Vector2;
         pos.x = staticPos.x;
         pos.y = staticPos.y;
     }
 
-    protected var _numPlayers :int;
-    protected var _leader :int;
+    protected var _trick :Trick;
     protected var _winningCard :int = -1;
+    protected var _seating :Table;
 
     // layout in a cross
     protected static const CARD_POSITIONS :Array = [
