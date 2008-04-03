@@ -109,14 +109,10 @@ public class Board extends Sprite
     public function marbleIsRoaming (marble :Marble, roaming :Boolean) :void
     {
         var ii :int = _roamingMarbles.indexOf(marble);
-        if (roaming) {
-            if (ii == -1) {
-                _roamingMarbles.push(marble);
-            }
-        } else {
-            if (ii != -1) {
-                _roamingMarbles.splice(ii, 1);
-            }
+        if (roaming && ii == -1) {
+            _roamingMarbles.push(marble);
+        } else if (!roaming && ii != -1) {
+            _roamingMarbles.splice(ii, 1);
         }
     }
 
