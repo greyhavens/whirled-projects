@@ -111,16 +111,10 @@ public class RainbowController extends SceneObject
     {
         this.playRainbowAnimation("rainbow_loop", null);
 
-        // setup click handlers
-        var i :int = 0;
+        // "lighten" the rainbow bands
         for each (var bandName :String in RAINBOW_BAND_NAMES) {
             var band :MovieClip = (_curAnim["inst_rainbow"])[bandName];
             band.filters = [ g_lightenFilter ];
-
-            if (this.isControlledLocally) {
-                this.createBandMouseHandlers(band, i++);
-            }
-
             _rainbowBands.push(band);
         }
 
@@ -128,12 +122,35 @@ public class RainbowController extends SceneObject
         var playerText :TextField = _curAnim["player"];
         playerText.text = SimonMain.getPlayerName(_playerId);
 
-        // If the rainbow is controlled by this player, show a timer
-        // animation. If the player doesn't click a note before the
-        // animation completes, they lose. (Hide the animation
-        // if it's not our rainbow.)
+        // play the pattern so far
         if (this.isControlledLocally) {
-            this.resetPlayerTimeoutHandler();
+            var playPatternTask :SerialTask = new SerialTask();
+
+            for each (var noteIndex :int in SimonMain.model.curState.pattern) {
+                playPatternTask.addTask(new FunctionTask(this.createPlayNoteAnimationFunction(noteIndex)));
+                playPatternTask.addTask(new TimedTask(0.5));
+            }
+
+            playPatternTask.addTask(new FunctionTask(setupRainbowForPlayerInput));
+
+            this.addTask(playPatternTask);
+        }
+    }
+
+    protected function createPlayNoteAnimationFunction (noteIndex :int) :Function
+    {
+        return function () :void {
+            playNoteAnimation(noteIndex, DEFAULT_SPARKLE_LOCS[noteIndex], true);
+        }
+    }
+
+    protected function setupRainbowForPlayerInput () :void
+    {
+        this.resetPlayerTimeoutHandler();
+
+        var i :int = 0;
+        for each (var band :MovieClip in _rainbowBands) {
+            this.createBandMouseHandlers(band, i++);
         }
     }
 
