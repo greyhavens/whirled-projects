@@ -13,10 +13,13 @@ public class Bids extends EventDispatcher
 {
     /** Create a new set of player bids. 
      *  @param gameCtrl the game control object used to set up the storage and communicate with 
-     *  the server. */
-    public function Bids (gameCtrl :GameControl)
+     *  the server. 
+     *  @param maximum the maximum bid that the game rules will allow (the turn maximum is 
+     *  typically lower and set in the request method) */
+    public function Bids (gameCtrl :GameControl, maximum :int)
     {
         _gameCtrl = gameCtrl;
+        _maximum = maximum;
         _bids = new Array(players.length);
 
         _gameCtrl.net.addEventListener(
@@ -28,6 +31,22 @@ public class Bids extends EventDispatcher
 
 
         reset();
+    }
+
+    /** Request a bid from the local player up to a specified maximum amount. This is not a network 
+     *  event and immediately dispatches a BidEvent.REQUESTED event. */
+    public function request (max :int) :void
+    {
+        var playerId :int = _gameCtrl.game.getMyId();
+        dispatchEvent(new BidEvent(BidEvent.REQUESTED, playerId, max));
+    }
+
+    /** Select the given bid on behalf of the local player. This is not a network event and 
+     *  immediately sends a BidEvent.SELECTED event. */
+    public function select (value :int) :void
+    {
+        var playerId :int = _gameCtrl.game.getMyId();
+        dispatchEvent(new BidEvent(BidEvent.SELECTED, playerId, value));
     }
 
     /** Send a bid request to the server on behalf of the local player. When the reply is received,
@@ -56,6 +75,12 @@ public class Bids extends EventDispatcher
         }
 
         _gameCtrl.net.set(ARRAYNAME, noBids);
+    }
+
+    /** Access the maximum bid value. */
+    public function get maximum () :int
+    {
+        return _maximum;
     }
 
     /** Access the number of bids placed so far. */
@@ -123,6 +148,7 @@ public class Bids extends EventDispatcher
 
     protected var _gameCtrl :GameControl;
     protected var _bids :Array;
+    protected var _maximum :int;
 
     protected static const ARRAYNAME :String = "bids";
 

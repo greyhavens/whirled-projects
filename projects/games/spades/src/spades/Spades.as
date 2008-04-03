@@ -9,9 +9,6 @@ import com.threerings.flash.Vector2;
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.StateChangedEvent;
-import com.whirled.game.ElementChangedEvent;
-import com.whirled.game.PropertyChangedEvent;
-import com.whirled.game.MessageReceivedEvent;
 
 import spades.card.Card;
 import spades.card.CardArray;
@@ -20,6 +17,9 @@ import spades.card.TrickEvent;
 import spades.card.Bids;
 import spades.card.BidEvent;
 import spades.card.Table;
+import spades.card.Hand;
+import spades.card.HandEvent;
+import spades.card.Sorter;
 
 import spades.graphics.TableSprite;
 
@@ -47,7 +47,13 @@ public class Spades extends Sprite
     {
         _gameCtrl = gameCtrl;
         _trick = new Trick(_gameCtrl, trumps);
-        _bids = new Bids(_gameCtrl);
+        _bids = new Bids(_gameCtrl, CardArray.FULL_DECK.length / NUM_PLAYERS);
+        _hand = new Hand(_gameCtrl, new Sorter(
+            Card.RANK_ORDER_ACES_HIGH, [
+                Card.SUIT_SPADES,
+                Card.SUIT_HEARTS,
+                Card.SUIT_CLUBS,
+                Card.SUIT_DIAMONDS]));
         _seating = new Table(
             _gameCtrl.game.seating.getPlayerNames(),
             _gameCtrl.game.seating.getPlayerIds(), 
@@ -68,15 +74,15 @@ public class Spades extends Sprite
         _gameCtrl.game.addEventListener(
             StateChangedEvent.TURN_CHANGED, 
             handleTurnChanged);
-        _gameCtrl.net.addEventListener(
-            MessageReceivedEvent.MESSAGE_RECEIVED,
-            handleMessage);
 
         _trick.addEventListener(TrickEvent.CARD_PLAYED, trickListener);
         _trick.addEventListener(TrickEvent.COMPLETED, trickListener);
 
         _bids.addEventListener(BidEvent.PLACED, bidListener);
         _bids.addEventListener(BidEvent.COMPLETED, bidListener);
+        _bids.addEventListener(BidEvent.SELECTED, bidListener);
+
+        _hand.addEventListener(HandEvent.CARDS_SELECTED, handListener);
 
         var config :Object = _gameCtrl.game.getConfig();
 
@@ -148,17 +154,8 @@ public class Spades extends Sprite
                 deck = deck.shortFilter(isHighCard);
             }
 
-            _gameCtrl.services.bags.create(COMS_DECK, deck.ordinals);
-            
-            // deal to each player
-            var playerIds :Array = _gameCtrl.game.seating.getPlayerIds();
-            for (var seat :int = 0; seat < NUM_PLAYERS; ++seat) {
-                _gameCtrl.services.bags.deal(COMS_DECK, deck.length / NUM_PLAYERS, 
-                    COMS_HAND, null, playerIds[seat]);
-            }
-
+            _hand.deal(deck);
             _bids.reset();
-
             _trick.reset();
 
             // on the first round, set a random first player as leader. Otherwise, advance the 
@@ -238,6 +235,9 @@ public class Spades extends Sprite
         else if (event.type == BidEvent.COMPLETED) {
             _gameCtrl.local.feedback("All bids are in, starting play");
         }
+        else if (event.type == BidEvent.SELECTED) {
+            _bids.placeBid(event.value);
+        }
     }
 
     /** Update the UI after a turn change. */
@@ -249,8 +249,14 @@ public class Spades extends Sprite
         log("Turn changed to " + turnHolder + " in seat " + hotSeat);
         _table.setPlayerTurn(hotSeat);
 
-        updateBidding();
-        updateMoves();
+        if (_gameCtrl.game.isMyTurn()) {
+            if (_bids.complete) {
+                _hand.beginTurn(getLegalMoves());
+            }
+            else {
+                _bids.request(_hand.length);
+            }
+        }
 
         if (turnHolder > 0) {
             // This is the beginning of the round, so declare the leader.
@@ -373,19 +379,6 @@ public class Spades extends Sprite
         }
     }
 
-    /** Show or hide the bidding interface. */
-    protected function updateBidding () :void
-    {
-        var showSlider :Boolean = 
-            _gameCtrl.game.isMyTurn() && 
-            !_bids.hasBid(_seating.getLocalSeat());
-
-        log("Ready to bid: " + showSlider);
-        
-        // TODO: subtract my partner's bid from the maximum bid 
-        _table.showBidControl(showSlider, _hand.length, onBid);
-    }
-
     /** Entry point for when the user selects their bid */
     protected function onBid (bid :int) :void
     {
@@ -403,7 +396,7 @@ public class Spades extends Sprite
     protected function countSuit (suit :int) :int
     {
         var count :int = 0;
-        _hand.cards.forEach(countIfSameSuit);
+        _hand.cards.cards.forEach(countIfSameSuit);
         return count;
 
         function countIfSameSuit (c :Card, i :int, a :Array) :void
@@ -418,7 +411,7 @@ public class Spades extends Sprite
      *  match a given suit. */
     protected function filterCards (suit :int, match :Boolean) :CardArray
     {
-        return _hand.shortFilter(compare);
+        return _hand.cards.shortFilter(compare);
 
         function compare (c :Card) :Boolean
         {
@@ -431,64 +424,40 @@ public class Spades extends Sprite
         }
     }
 
-    /** Highlight the cards that may now be played. */
-    protected function updateMoves () :void
+    /** Get the cards that may now be played. */
+    protected function getLegalMoves () :CardArray
     {
         var leader :Card = _trick.ledCard;
 
-        if (!_gameCtrl.game.isMyTurn()) {
-            // not my turn, disable
-            _table.disableHand();
-        }
-        else if (_trick.complete) {
-            // trick full, disable
-            _table.disableHand();
-        }
-        else if (!_bids.complete) {
-            // bidding not finished, disable
-            _table.disableHand();
-        }
-        else if (leader != null && countSuit(leader.suit) == 0) {
+        if (leader != null && countSuit(leader.suit) == 0) {
             // out of led suit, allow any
-            _table.enableHand(onPlay);
+            return _hand.cards;
         }
         else if (leader != null) {
             // allow only led suit
-            _table.enableHand(onPlay, filterCards(leader.suit, true));
+            return filterCards(leader.suit, true);
         }
         else if (canLeadSpades()) {
             // leading and spades are available, allow any
-            _table.enableHand(onPlay);
+            return _hand.cards;
         }
         else if (countSuit(Card.SUIT_SPADES) == _hand.length) {
             // leading and no other suits available, allow any
-            _table.enableHand(onPlay);
+            return _hand.cards;
         }
         else {
             // leading, allow any non-spade suit
-            _table.enableHand(onPlay, filterCards(leader.suit, false));
+            return filterCards(Card.SUIT_SPADES, false);
         }
     }
 
     /** Entry point for when the user selects a card to play */
-    protected function onPlay (card :Card) :void
+    protected function handListener (event :HandEvent) :void
     {
-        _trick.playCard(card);
-        _hand.remove(card);
-        _table.disableHand();
-    }
-
-    /** Main entry point for messages. */
-    protected function handleMessage (event :MessageReceivedEvent) :void
-    {
-        log("Received message: " + event.name);
-        
-        if (event.name == COMS_HAND) {
-            // we have been given some cards, repopulate our hand
-            var hand :CardArray = new CardArray(event.value as Array);
-            hand.standardSort(SUITS, Card.RANK_ORDER_ACES_HIGH);
-            _hand.reset(hand.ordinals);
-            log("My hand is " + _hand);
+        if (event.type == HandEvent.CARDS_SELECTED) {
+            var card :Card = event.cards.cards[0];
+            _trick.playCard(card);
+            _hand.endTurn();
         }
     }
 
@@ -519,7 +488,7 @@ public class Spades extends Sprite
     protected var _seating :Table;
 
     /** Our hand. */
-    protected var _hand :CardArray = new CardArray();
+    protected var _hand :Hand;
 
     /** The table. */
     protected var _table :TableSprite;
@@ -542,20 +511,8 @@ public class Spades extends Sprite
     /** If we are running a "development minigame". */
     protected var _miniGame :Boolean = false;
 
-    /** Event message for getting cards. */
-    protected static const COMS_HAND :String = "hand";
-
-    /** Name of bag for the deck. */
-    protected static const COMS_DECK :String = "deck";
-
     /** Name of property indicating the last player to lead the hand. */
     protected static const COMS_LAST_LEADER :String = "lastleader";
-
-    protected static const SUITS :Array = [
-        Card.SUIT_SPADES,
-        Card.SUIT_HEARTS,
-        Card.SUIT_CLUBS,
-        Card.SUIT_DIAMONDS];
 }
 }
 

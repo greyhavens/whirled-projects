@@ -5,7 +5,10 @@ import com.threerings.flash.Vector2;
 import spades.card.CardArray;
 import spades.card.CardArrayEvent;
 import spades.card.CardException;
+import spades.card.Hand;
+import spades.card.HandEvent;
 import spades.Debug;
+
 
 import caurina.transitions.Tweener;
 
@@ -14,17 +17,46 @@ public class HandSprite extends CardArraySprite
 {
     /** Create a new hand sprite. 
      *  @param target the card array this sprite represents */
-    public function HandSprite (target :CardArray)
+    public function HandSprite (hand :Hand)
     {
-        super(target);
+        super(hand.cards);
+
+        _hand = hand;
 
         addEventListener(MouseEvent.MOUSE_OVER, mouseOverListener);
         addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveListener);
         addEventListener(MouseEvent.MOUSE_OUT, mouseOutListener);
+        addEventListener(MouseEvent.CLICK, clickListener);
+
+        _hand.addEventListener(HandEvent.BEGAN_TURN, handListener);
+        _hand.addEventListener(HandEvent.ENDED_TURN, handListener);
+    }
+
+    /** After a card is clicked and tweened towards the central spot, the TrickSprite
+     *  must call this prior to adding the card as its own child. */
+    public function finalizeMostRecentCardRemoval () :CardSprite
+    {
+        var recent :CardSprite = _mostRecentlyRemovedCard;
+        _mostRecentlyRemovedCard = null;
+        if (recent != null) {
+            Tweener.removeTweens(recent, ["x", "y"]);
+            removeChild(recent);
+        }
+        return recent;
+    }
+
+    protected function handListener (event :HandEvent) :void
+    {
+        if (event.type == HandEvent.BEGAN_TURN) {
+            enable(event.cards);
+        }
+        else if (event.type == HandEvent.ENDED_TURN) {
+            disable();
+        }
     }
 
     /** Disable clicking on all cards. */
-    public function disable () :void
+    protected function disable () :void
     {
         _cards.forEach(disableSprite);
 
@@ -40,7 +72,7 @@ public class HandSprite extends CardArraySprite
      *  @param subset the cards to enable, or all if null (default)
      *  @throws CardException is the resulting set of enabled cards is empty since otherwise
      *  the game will be waiting forever. */
-    public function enable (subset :CardArray=null) :void
+    protected function enable (subset :CardArray=null) :void
     {
         var count :int = 0;
 
@@ -61,17 +93,6 @@ public class HandSprite extends CardArraySprite
                 c.state = CardSprite.NORMAL;
             }
         }
-    }
-
-    public function finalizeMostRecentCardRemoval () :CardSprite
-    {
-        var recent :CardSprite = _mostRecentlyRemovedCard;
-        _mostRecentlyRemovedCard = null;
-        if (recent != null) {
-            Tweener.removeTweens(recent, ["x", "y"]);
-            removeChild(recent);
-        }
-        return recent;
     }
 
     /** Slide a card vertically to indicate that clicking it will play it. 
@@ -212,9 +233,18 @@ public class HandSprite extends CardArraySprite
         }
     }
 
+    protected function clickListener (event :MouseEvent) :void
+    {
+        var card :CardSprite = exposeCard(event.target);
+        if (card != null && card.state != CardSprite.DISABLED) {
+            _hand.playCard(card.card);
+        }
+    }
+
     protected var _popup :Number;
     protected var _popupCard :CardSprite;
     protected var _mostRecentlyRemovedCard :CardSprite;
+    protected var _hand :Hand;
 
     protected static const POPUP :Number = 20;
     protected static const POPUP_DURATION :Number = .2;

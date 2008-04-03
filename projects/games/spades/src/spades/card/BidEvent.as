@@ -9,13 +9,21 @@ public class BidEvent extends Event
      *  properties are not used. */
     public static const RESET :String = "bid.reset";
 
+    /** Event type for when a bid is requested. For this event type, the player is set to the id 
+     *  of the player who is requested to bid and the value is set to the maximum amount. */
+    public static const REQUESTED :String = "bid.requested";
+
+    /** Event type for when a bid is selected. For this event type, the value is set to the 
+     *  amount selected and the player is set to the id of the player who bid. */
+    public static const SELECTED :String = "bid.selected";
+
     /** Event type for when a bid is placed. For this event type, the value is set to the amount 
      *  bid and the player is set to the id of the player who bid. */
     public static const PLACED :String = "bid.placed";
 
     /** Event type for when all bids are in. For this event type, the player and value properties 
      *  are not used. */
-    public static const COMPLETED :String = "bid.complete";
+    public static const COMPLETED :String = "bid.completed";
 
     /** Create a new bid event. */
     public function BidEvent (type :String, player :int=0, value :int=-1)

@@ -5,6 +5,8 @@ import flash.text.TextField;
 import flash.events.MouseEvent;
 
 import spades.Debug;
+import spades.card.Bids;
+import spades.card.BidEvent;
 
 /**
  * The user interface for bidding. This is pretty much placeholder code, so is not documented in 
@@ -22,10 +24,12 @@ public class BidSprite extends Sprite
      *  @param callback function to call when the user selects their bid. Signature :
      *    function callback (bid :int) :void
      */
-    public function BidSprite (maxTricks :int, callback :Function)
+    public function BidSprite (bids :Bids)
     {
-        var wid :int = (maxTricks + 1) * BUTTON_SIZE;
-        for (var i :int = 0; i <= maxTricks; ++i) {
+        _bids = bids;
+
+        var wid :int = (_bids.maximum + 1) * BUTTON_SIZE;
+        for (var i :int = 0; i <= _bids.maximum; ++i) {
             var t :TextField = new TextField();
             t.text = "" + i;
             t.width = BUTTON_SIZE;
@@ -43,8 +47,6 @@ public class BidSprite extends Sprite
             _buttons.push(t);
         }
 
-        _maxBid = maxTricks;
-        _callback = callback;
 
         addEventListener(MouseEvent.CLICK, clickListener);
 
@@ -57,6 +59,11 @@ public class BidSprite extends Sprite
         {
             TextField(e.target).backgroundColor = ROLL_OFF;
         }
+
+        visible = false;
+
+        _bids.addEventListener(BidEvent.REQUESTED, bidListener);
+        _bids.addEventListener(BidEvent.PLACED, bidListener);
     }
 
     protected function clickListener (e :MouseEvent) :void
@@ -65,17 +72,25 @@ public class BidSprite extends Sprite
             var bid :int = _buttons.indexOf(e.target);
             if (bid >= 0 && bid <= _maxBid) {
                 Debug.debug("Bid selected: " + bid);
-                if (_callback != null) {
-                    _callback(bid);
-                    _callback = null;
-                }
+                _bids.select(bid);
             }
         }
     }
 
+    protected function bidListener (event :BidEvent) :void
+    {
+        if (event.type == BidEvent.REQUESTED) {
+            visible = true;
+            _maxBid = event.value;
+        }
+        else if (event.type == BidEvent.PLACED) {
+            visible = false;
+        }
+    }
+
     protected var _buttons :Array = new Array();
+    protected var _bids :Bids;
     protected var _maxBid :int;
-    protected var _callback :Function;
 
     protected static const ROLL_OFF :uint = 0x808080;
     protected static const ROLL_ON :uint = 0xFF8080;

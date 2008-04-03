@@ -145,7 +145,7 @@ public class TeamSprite extends Sprite
     {
         if (event.type == BidEvent.RESET) {
             _tricks[0] = 0;
-            _tricks[1] = 1;
+            _tricks[1] = 0;
             updateTricks();
         }
         else if (event.type == BidEvent.PLACED) {

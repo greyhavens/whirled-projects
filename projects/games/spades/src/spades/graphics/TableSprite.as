@@ -16,6 +16,7 @@ import spades.card.TrickEvent
 import spades.card.Table;
 import spades.card.Bids;
 import spades.card.BidEvent;
+import spades.card.Hand;
 
 /**
  * Display object for drawing a spades game.
@@ -62,7 +63,7 @@ public class TableSprite extends Sprite
         winningScore :int,
         bids :Bids,
         trick :Trick,
-        hand :CardArray)
+        hand :Hand)
     {
         _seating = seating;
         _winningScore = winningScore;
@@ -89,8 +90,8 @@ public class TableSprite extends Sprite
             TRICK_POSITION, new Vector2(-LAST_TRICK_OFFSET, 0));
         addChild(_teams[1] as TeamSprite);
 
-        // listen for clicks on cards
-        _hand.addEventListener(MouseEvent.CLICK, clickListener);
+        _bid = new BidSprite(bids);
+        addChild(_bid);
 
         // listen for the trick changing
         trick.addEventListener(TrickEvent.COMPLETED, trickListener);
@@ -138,53 +139,6 @@ public class TableSprite extends Sprite
         getTeam(seat).setTricks(getTeamPlayer(seat), tricks);
     }
 
-    /** Show the bid slider and call the given function when a bid is selected. The signature of 
-     *  the completion function should be:
-     *
-     *    function callback (bid :int) :void 
-     **/
-    public function showBidControl (
-        show :Boolean, 
-        max :int, 
-        callback :Function) :void
-    {
-        if (show) {
-            if (_bid == null) {
-                _bid = new BidSprite(max, callback);
-                positionChild(_bid, SLIDER_POSITION);
-                addChild(_bid);
-            }
-        }
-        else {
-            if (_bid != null) {
-                removeChild(_bid);
-                _bid = null;
-            }
-        }
-    }
-
-    /** Disable all the player's cards. Called for example before bidding completes or when it 
-     *  is someone else's turn. */
-    public function disableHand () :void
-    {
-        _hand.disable();
-    }
-
-    /** Enable some or all of the player's cards. Call a function when a card is selected. Called 
-     *  when it is the player's turn with the set of legal cards to play. The callback should have 
-     *  a signature compatible with:
-     *
-     *     function callback (card :Card) :void
-     *
-     *  To prevent spastic clicking from causing multiple network sends, the callback is reset as 
-     *  it is called.
-     *  @param subset the cards to enable. If null, all cards are enabled. */
-    public function enableHand (callback :Function, subset :CardArray=null) :void
-    {
-        _hand.enable(subset);
-        _handCallback = callback;
-    }
-
     protected function positionChild (child :DisplayObject, pos :Vector2) :void
     {
         child.x = pos.x;
@@ -198,21 +152,11 @@ public class TableSprite extends Sprite
         positionChild(_trick, TRICK_POSITION);
         positionChild(_teams[0] as TeamSprite, LEFT_TEAM_POSITION);
         positionChild(_teams[1] as TeamSprite, RIGHT_TEAM_POSITION);
+        positionChild(_bid, SLIDER_POSITION);
         _players.forEach(positionPlayer);
 
         function positionPlayer (p :PlayerSprite, seat :int, a :Array) :void {
             positionChild(p, PLAYER_POSITIONS[seat] as Vector2);
-        }
-    }
-
-    protected function clickListener (event :MouseEvent) :void
-    {
-        var card :CardSprite = CardArraySprite.exposeCard(event.target);
-        if (card != null && _handCallback != null && 
-            card.state != CardSprite.DISABLED) {
-            var callback :Function = _handCallback;
-            _handCallback = null;
-            callback(card.card);
         }
     }
 
@@ -268,7 +212,6 @@ public class TableSprite extends Sprite
     protected var _bid :BidSprite;
     protected var _hand :HandSprite;
     protected var _trick :MainTrickSprite;
-    protected var _handCallback :Function;
     protected var _teams :Array = [null, null];
     protected var _winningScore :int;
 
