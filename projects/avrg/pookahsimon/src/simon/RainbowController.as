@@ -283,6 +283,11 @@ public class RainbowController extends SceneObject
 
         this.playNoteAnimation(noteIndex, clickLoc, success);
 
+        // show an animation on the player avatar
+        if (success && _playerId == SimonMain.localPlayerId) {
+            AvatarController.instance.playAvatarAction("Jump");
+        }
+
         // reset the "note time expired" handler every time a new note is played
         if (_finalNotePlayed) {
             this.stopPlayerTimeoutHandler();
@@ -339,11 +344,6 @@ public class RainbowController extends SceneObject
                 var sparkleObj :SimObject = new SimpleSceneObject(sparkle);
                 sparkleObj.addTask(new SerialTask(new WaitForFrameTask("end"), new SelfDestructTask()));
                 this.db.addObject(sparkleObj, _curAnim);
-
-                // show an animation on the player avatar
-                if (_playerId == SimonMain.localPlayerId) {
-                    AvatarController.instance.playAvatarAction("Jump");
-                }
 
             } else {
                 // you screwed up
