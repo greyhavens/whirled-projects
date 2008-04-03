@@ -1,10 +1,9 @@
 package ghostbusters.fight.ouija {
 
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
-
-import flash.display.DisplayObjectContainer;
 
 import ghostbusters.fight.*;
 import ghostbusters.fight.common.*;
@@ -109,7 +108,11 @@ public class GhostWriterGame extends MicrogameMode
             //_progressText.advanceProgress();
 
             if (++_nextWordIndex >= _word.length) {
-                this.gameOver(true);
+
+                GameTimer.uninstall();
+                // delay for a moment before showing the game over screen
+                this.addObject(new SimpleTimer(0.5, function () :void { gameOver(true) }));
+
             } else {
                 _cursor.selectionTargetIndex = Board.stringToSelectionIndex(_word.charAt(_nextWordIndex));
             }
