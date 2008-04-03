@@ -12,7 +12,8 @@ public class UnitWeapon
     public var cooldown :Number = 0;
     public var maxAttackDistance :Number = 0;
     public var missileSpeed :Number = 0; // pixels/second - only meaningful for missiles
-    public var aoeRadius :Number = 0; // only meaningful for AOE
+    public var aoeRadius :Number = 0; // only meaningful for AOE attacks
+    public var aoeAnimationName :String; // only meaningful for AOE attacks
 
     public function get aoeRadiusSquared () :Number
     {

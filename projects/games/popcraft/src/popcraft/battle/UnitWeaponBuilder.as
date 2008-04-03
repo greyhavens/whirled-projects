@@ -16,6 +16,7 @@ public class UnitWeaponBuilder
     public function maxAttackDistance (val :Number) :UnitWeaponBuilder { _weapon.maxAttackDistance = val; return this; }
     public function missileSpeed (val :Number) :UnitWeaponBuilder { _weapon.missileSpeed = val; return this; }
     public function aoeRadius (val :Number) :UnitWeaponBuilder { _weapon.aoeRadius = val; return this; }
+    public function aoeAnimationName (val :String) :UnitWeaponBuilder { _weapon.aoeAnimationName = val; return this; }
 
     public function get weapon () :UnitWeapon { return _weapon; }
 

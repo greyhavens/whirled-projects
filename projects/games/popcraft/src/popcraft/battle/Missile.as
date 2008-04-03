@@ -1,12 +1,14 @@
 package popcraft.battle {
 
 import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.tasks.*;
 
 public class Missile extends SimObject
 {
-    public function Missile (attack :UnitAttack, travelTime :Number)
+    public function Missile (targetUnit :Unit, attack :UnitAttack, travelTime :Number)
     {
+        _targetUnitRef = targetUnit.ref;
         _attack = attack;
 
         var missileTask :SerialTask = new SerialTask();
@@ -19,12 +21,15 @@ public class Missile extends SimObject
 
     protected function deliverPayload () :void
     {
-        if (!_attack.targetUnitRef.isNull) {
-            _attack.targetUnit.receiveAttack(_attack);
+        var targetUnit :Unit = (_targetUnitRef.object as Unit);
+
+        if (null != targetUnit) {
+            targetUnit.receiveAttack(_attack);
         }
     }
 
     protected var _attack :UnitAttack;
+    protected var _targetUnitRef :SimObjectRef
 
 }
 

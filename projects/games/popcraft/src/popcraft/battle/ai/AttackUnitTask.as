@@ -26,26 +26,26 @@ public class AttackUnitTask
         if (null == enemy) {
             return AITaskStatus.COMPLETE;
         }
-        
+
         var weapon :UnitWeapon = this.findBestWeapon(unit, enemy);
-        
+
         if (null != weapon) {
             // attack!
-            unit.sendTargetedAttack(enemy, weapon);
-            
+            unit.sendAttack(enemy, weapon);
+
             return AITaskStatus.ACTIVE;
-            
+
         } else if (_followUnit && (_loseInterestRange < 0 || unit.isUnitInRange(enemy, _loseInterestRange))) {
             // get closer to the enemy
             var attackLoc :Vector2 = unit.findNearestAttackLocation(enemy, unit.unitData.weapons[0]);
             unit.setMovementDestination(attackLoc);
-            
+
             return AITaskStatus.ACTIVE;
         }
-        
+
         return AITaskStatus.COMPLETE;
     }
-    
+
     protected function findBestWeapon (unit :CreatureUnit, enemy :Unit) :UnitWeapon
     {
         // discover the best weapon we can use to attack this enemy
@@ -56,7 +56,7 @@ public class AttackUnitTask
                 return weapon;
             }
         }
-        
+
         return null;
     }
 

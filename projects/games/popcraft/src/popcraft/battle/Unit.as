@@ -1,6 +1,7 @@
 package popcraft.battle {
 
 import com.threerings.flash.Vector2;
+import com.threerings.util.Assert;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.components.*;
 import com.whirled.contrib.simplegame.objects.*;
@@ -9,12 +10,13 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.Bitmap;
-import flash.display.Graphics;
-import flash.display.Shape;
 
 import popcraft.*;
 import popcraft.battle.geom.*;
 import popcraft.util.*;
+
+[Event(name="Attacking", type="popcraft.battle.UnitEvent")]
+[Event(name="Attacked", type="popcraft.battle.UnitEvent")]
 
 /**
  * If ActionScript allowed the creation of abstract classes or private constructors, I would do that here.
@@ -97,7 +99,7 @@ public class Unit extends SimObject
         }
     }
 
-    public function sendTargetedAttack (targetUnit :Unit, weapon :UnitWeapon) :void
+    public function sendAttack (targetUnit :Unit, weapon :UnitWeapon) :void
     {
         if (this.isAttacking || !this.canAttackWithWeapon(targetUnit, weapon)) {
             /*trace(
@@ -108,12 +110,16 @@ public class Unit extends SimObject
             return;
         }
 
+        var attack :UnitAttack = new UnitAttack(this.ref, weapon);
+
+        this.dispatchEvent(new UnitEvent(UnitEvent.ATTACKING, weapon));
+
         if (weapon.isRanged) {
-            MissileFactory.createMissile(targetUnit, this, weapon);
+            MissileFactory.createMissile(targetUnit, attack);
         } else if (weapon.isAOE) {
-            this.sendAOEAttack(this.unitLoc, weapon);
+            this.sendAOEAttack(this.unitLoc, attack);
         } else {
-            targetUnit.receiveAttack(new UnitAttack(targetUnit.ref, this.ref, weapon));
+            targetUnit.receiveAttack(attack);
         }
 
         // install a cooldown timer
@@ -122,54 +128,36 @@ public class Unit extends SimObject
         }
     }
 
-    public function sendAOEAttack (targetLoc :Vector2, weapon :UnitWeapon) :void
+    protected function sendAOEAttack (targetLoc :Vector2, attack :UnitAttack) :void
     {
         if (this.isAttacking) {
             return;
         }
 
+        var weapon :UnitWeapon = attack.weapon;
+
         // @TODO - add support for ranged AOE attacks, if necessary
+        Assert.isFalse(weapon.isRanged);
 
-        if (!weapon.isRanged) {
+        var radiusSquared :Number = weapon.aoeRadiusSquared;
 
-            var radiusSquared :Number = weapon.aoeRadiusSquared;
+        // find all affected units
+        var refs :Array = GameMode.getNetObjectRefsInGroup(Unit.GROUP_NAME);
 
-            // find all affected units
-            var refs :Array = GameMode.getNetObjectRefsInGroup(Unit.GROUP_NAME);
-
-            for each (var ref :SimObjectRef in refs) {
-                var unit :Unit = ref.object as Unit;
-                if (null == unit) {
-                    continue;
-                }
-
-                // is the unit in range?
-                var delta :Vector2 = targetLoc.subtract(unit._loc);
-                if (delta.lengthSquared > radiusSquared) {
-                    continue;
-                }
-
-                // send the attack
-                unit.receiveAttack(new UnitAttack(unit.ref, this.ref, weapon));
+        for each (var ref :SimObjectRef in refs) {
+            var unit :Unit = ref.object as Unit;
+            if (null == unit) {
+                continue;
             }
 
-            // visualize the attack
-            if (Constants.DEBUG_DRAW_AOE_ATTACKS) {
-                var aoeCircle :Shape = new Shape();
-                var g :Graphics = aoeCircle.graphics;
-                g.beginFill(0xFF0000, 0.5);
-                g.drawCircle(0, 0, weapon.aoeRadius);
-                g.endFill();
-
-                var aoeObj :SceneObject = new SimpleSceneObject(aoeCircle);
-                aoeObj.x = targetLoc.x;
-                aoeObj.y = targetLoc.y;
-
-                // fade out and die
-                aoeObj.addTask(After(0.3, new SerialTask(new AlphaTask(0, 0.3), new SelfDestructTask())));
-
-                GameMode.instance.addObject(aoeObj, GameMode.instance.battleUnitDisplayParent);
+            // is the unit in range?
+            var delta :Vector2 = targetLoc.subtract(unit._loc);
+            if (delta.lengthSquared > radiusSquared) {
+                continue;
             }
+
+            // send the attack
+            unit.receiveAttack(attack);
         }
 
         if (weapon.cooldown > 0) {
@@ -182,7 +170,7 @@ public class Unit extends SimObject
         _health -= _unitData.armor.getWeaponDamage(attack.weapon);
         _health = Math.max(_health, 0);
 
-        this.dispatchEvent(new UnitAttackedEvent(attack));
+        this.dispatchEvent(new UnitEvent(UnitEvent.ATTACKED, attack));
 
         if (_health == 0) {
             this.destroySelf();

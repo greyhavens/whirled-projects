@@ -1,13 +1,18 @@
 package popcraft.battle {
 
+import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
+import com.threerings.util.Log;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
+import flash.display.Graphics;
 import flash.display.MovieClip;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import popcraft.*;
@@ -66,6 +71,48 @@ public class CreatureUnitView extends SceneObject
         }
     }
 
+    protected function createAOEAttackAnimation (weapon :UnitWeapon, loc :Vector2, duration :Number) :void
+    {
+        if (null != weapon.aoeAnimationName) {
+
+            // create an attack animation object that will play and self-destruct
+
+            var anim :MovieClip = PopCraft.resourceManager.instantiateMovieClip(_unit.unitData.name, weapon.aoeAnimationName);
+
+            if (null == anim) {
+                log.info("Missing AOE attack animation '" + weapon.aoeAnimationName + "' for " + _unit.unitData.name);
+            } else {
+                var animObj :SceneObject = new SimpleSceneObject(anim);
+                animObj.x = loc.x;
+                animObj.y = loc.y;
+
+                animObj.addTask(After(duration, new SelfDestructTask()));
+
+                GameMode.instance.addObject(animObj, GameMode.instance.battleUnitDisplayParent);
+            }
+        }
+
+        if (Constants.DEBUG_DRAW_AOE_ATTACK_RADIUS) {
+
+            // visualize the blast radius
+
+            var aoeCircle :Shape = new Shape();
+            var g :Graphics = aoeCircle.graphics;
+            g.beginFill(0xFF0000, 0.5);
+            g.drawCircle(0, 0, weapon.aoeRadius);
+            g.endFill();
+
+            var aoeObj :SceneObject = new SimpleSceneObject(aoeCircle);
+            aoeObj.x = loc.x;
+            aoeObj.y = loc.y;
+
+            // fade out and die
+            aoeObj.addTask(After(0.3, new SerialTask(new AlphaTask(0, 0.3), new SelfDestructTask())));
+
+            GameMode.instance.addObject(aoeObj, GameMode.instance.battleUnitDisplayParent);
+        }
+    }
+
     // from SimObject
     override public function get objectGroups () :Array
     {
@@ -117,7 +164,7 @@ public class CreatureUnitView extends SceneObject
                 if (null != color) {
                     color.filters = [ tintFilterMatrix.createFilter() ];
                 } else {
-                    trace("Missing recolor symbol for " + _unit.unitData.name + "." + animName);
+                    log.info("Missing recolor symbol for " + _unit.unitData.name + "." + animName);
                 }
 
                 animArray.push(anim);
@@ -252,6 +299,8 @@ public class CreatureUnitView extends SceneObject
     protected var _hasAnimations :Boolean;
 
     protected static var g_groups :Array;
+
+    protected static const log :Log = Log.getLog(CreatureUnitView);
 
     protected static const FACING_N :int = 0;
     protected static const FACING_NW :int = 1;
