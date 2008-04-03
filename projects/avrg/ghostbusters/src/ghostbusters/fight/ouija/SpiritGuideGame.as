@@ -12,53 +12,53 @@ import ghostbusters.fight.common.*;
 public class SpiritGuideGame extends MicrogameMode
 {
     public static const GAME_NAME :String = "Spirit Guide";
-    
+
     public function SpiritGuideGame (difficulty :int, playerData :Object)
     {
         super(difficulty, playerData);
-        
+
         _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
-        
+
         // randomly generate a selection to move to
         _selection = Board.getRandomSelectionString();
     }
-    
+
     override public function begin () :void
     {
         MainLoop.instance.pushMode(this);
         MainLoop.instance.pushMode(new IntroMode(GAME_NAME, "Move to '" + _selection.toLocaleUpperCase() + "'!"));
     }
-    
+
     override protected function get duration () :Number
     {
         return _settings.gameTime;
     }
-    
+
     override protected function get timeRemaining () :Number
     {
         return (_done ? 0 : GameTimer.timeRemaining);
     }
-    
+
     override public function get isDone () :Boolean
     {
         return (_done && !WinLoseNotification.isPlaying);
     }
-    
+
     override public function get gameResult () :MicrogameResult
     {
         return _gameResult;
     }
-    
+
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
             GameTimer.uninstall();
             WinLoseNotification.create(success, this.modeSprite);
-            
+
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
             _gameResult.damageOutput = (success ? _settings.damageOutput : 0);
-            
+
             _done = true;
         }
     }
@@ -70,25 +70,25 @@ public class SpiritGuideGame extends MicrogameMode
 
         // create the visual timer
         var boardTimer :BoardTimer = new BoardTimer(this.duration);
-        this.addObject(boardTimer, board.displayObjectContainer);
+        this.addObject(boardTimer, board.sprite);
 
         // status text
         var statusText :StatusText = new StatusText();
         statusText.text = "Move to '" + _selection.toLocaleUpperCase() + "'";
-        board.displayObjectContainer.addChild(statusText);
+        board.sprite.addChild(statusText);
 
         // install a failure timer
         GameTimer.install(this.duration, function () :void { gameOver(false) });
-        
+
         // create the cursor
         var validTransforms :Array = MOUSE_TRANSFORMS[_settings.transformDifficulty];
         var mouseTransform :Matrix = validTransforms[Rand.nextIntRange(0, validTransforms.length, Rand.STREAM_COSMETIC)];
-        var cursor :SpiritCursor = new SpiritCursor(board.interactiveObject, mouseTransform);
+        var cursor :SpiritCursor = new SpiritCursor(board.sprite, mouseTransform);
 
         cursor.selectionTargetIndex = Board.stringToSelectionIndex(_selection);
         cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
 
-        this.addObject(cursor, board.displayObjectContainer);
+        this.addObject(cursor, board.sprite);
     }
 
     protected function boardSelectionChanged (e :BoardSelectionEvent) :void
@@ -102,16 +102,16 @@ public class SpiritGuideGame extends MicrogameMode
     protected var _gameResult :MicrogameResult;
     protected var _selection :String;
     protected var _settings :SpiritGuideSettings;
-    
+
     protected static const MOUSE_TRANSFORMS :Array = [
-    
+
         // easy (inverted x/y/both)
         [
             new Matrix(-1, 0, 0, 1),
             new Matrix(1, 0, 0, -1),
             new Matrix(-1, 0, 0, -1),
         ],
-        
+
         // hard (inverted and/or swapped x/y)
         [
             new Matrix(0, 1, 1, 0),
@@ -119,7 +119,7 @@ public class SpiritGuideGame extends MicrogameMode
             new Matrix(0, 1, -1, 0),
             new Matrix(0, -1, -1, 0),
         ],
-        
+
         // expert (rotated)
         [
             new Matrix(0.5253219888177297, 0.8509035245341184, -0.8509035245341184, 0.5253219888177297),
@@ -128,7 +128,7 @@ public class SpiritGuideGame extends MicrogameMode
             new Matrix(0.6669156003948422, 0.7451332645574127, -0.7451332645574127, 0.6669156003948422),
         ],
     ];
-    
+
     protected static const DIFFICULTY_SETTINGS :Array = [
         new SpiritGuideSettings(8, 0, 10),
         new SpiritGuideSettings(6, 1, 15),

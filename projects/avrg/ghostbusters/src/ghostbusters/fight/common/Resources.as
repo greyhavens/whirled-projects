@@ -2,6 +2,8 @@ package ghostbusters.fight.common {
 
 import com.whirled.contrib.simplegame.resource.*;
 
+import flash.display.MovieClip;
+
 public class Resources
 {
     public static function get instance () :Resources
@@ -33,7 +35,8 @@ public class Resources
         // for now, just naively load all resources we might need.
         // change this if it becomes too much of a burden.
 
-        _rsrcMgr.pendResourceLoad("swf", "intro.screen", { embeddedClass: SWF_INTROOUTROSCREEN });
+        _rsrcMgr.pendResourceLoad("swf", "intro.screen", { embeddedClass: SWF_INTROSCREEN });
+        _rsrcMgr.pendResourceLoad("swf", "outro.screen", { embeddedClass: SWF_OUTROSCREEN });
 
         _rsrcMgr.pendResourceLoad("swf", "lantern.ghost", { embeddedClass: SWF_LANTERNGHOST });
         _rsrcMgr.pendResourceLoad("swf", "lantern.heart", { embeddedClass: SWF_HEART });
@@ -60,6 +63,19 @@ public class Resources
         return _rsrcMgr.getResource(name) as ImageResourceLoader;
     }
 
+    public function instantiateMovieClip (resourceName :String, className :String) :MovieClip
+    {
+        var swf :SwfResourceLoader = this.getSwfLoader(resourceName);
+        if (null != swf) {
+            var movieClass :Class = swf.getClass(className);
+            if (null != movieClass) {
+                return new movieClass();
+            }
+        }
+
+        return null;
+    }
+
     public function get isLoading () :Boolean
     {
         return _rsrcMgr.isLoading;
@@ -75,9 +91,12 @@ public class Resources
 
     protected static var g_instance :Resources;
 
-    /* intro */
-    [Embed(source="../../../../rsrc/UI/gameDirections.swf", mimeType="application/octet-stream")]
-    protected static const SWF_INTROOUTROSCREEN :Class;
+    /* intro/outro */
+    [Embed(source="../../../../rsrc/Microgames/gameDirections.swf", mimeType="application/octet-stream")]
+    protected static const SWF_INTROSCREEN :Class;
+
+    [Embed(source="../../../../rsrc/Microgames/minigame_outro.swf", mimeType="application/octet-stream")]
+    protected static const SWF_OUTROSCREEN :Class;
 
     /* Lantern */
     [Embed(source="../../../../rsrc/Ghosts/Ghost_Duchess.swf", mimeType="application/octet-stream")]

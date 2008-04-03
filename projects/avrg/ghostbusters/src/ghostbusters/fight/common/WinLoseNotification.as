@@ -7,6 +7,7 @@ import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -20,13 +21,13 @@ public class WinLoseNotification extends SceneObject
         var notification :WinLoseNotification = new WinLoseNotification(success);
 
         // center on game
-        notification.x = (MicrogameConstants.GAME_WIDTH / 2) - (notification.width / 2);
-        notification.y = (MicrogameConstants.GAME_HEIGHT / 2) - (notification.height / 2);
+        notification.x = (MicrogameConstants.GAME_WIDTH * 0.5);
+        notification.y = (MicrogameConstants.GAME_HEIGHT * 0.5);
 
         MainLoop.instance.topMode.addObject(notification, parent);
 
         // create a timer object
-        MainLoop.instance.topMode.addObject(new WinLoseTimer(TIMER_NAME, 1.5));
+        MainLoop.instance.topMode.addObject(new SimpleTimer(1.5, null, false, TIMER_NAME));
 
     }
 
@@ -42,41 +43,29 @@ public class WinLoseNotification extends SceneObject
         var textArray :Array = (success ? WIN_TEXT : LOSE_TEXT);
         var text :String = textArray[Rand.nextIntRange(0, textArray.length, Rand.STREAM_COSMETIC)];
 
-        var label :TextField = new TextField();
-        label.text = text;
-        label.textColor = (success ? 0xFFFFFF : 0xFF0000);
-        label.autoSize = TextFieldAutoSize.LEFT;
-        label.scaleX = 4;
-        label.scaleY = 4;
+        // instantiate the screen
+        _movieClip = Resources.instance.instantiateMovieClip("outro.screen", (success ? "outro_win" : "outro_lose"));
 
-        _sprite = new Sprite();
-        _sprite.graphics.beginFill(success ? 0x000000 : 0xFFFF00);
-        _sprite.graphics.drawRect(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
-        _sprite.graphics.endFill();
+        _movieClip.mouseEnabled = false;
+        _movieClip.mouseChildren = false;
 
-        // center the label on the rect
-        label.x = (_sprite.width / 2) - (label.width / 2);
-        label.y = (_sprite.height / 2) - (label.height / 2);
-
-        _sprite.addChild(label);
-
-        _sprite.mouseEnabled = false;
-        _sprite.mouseChildren = false;
+        var textField :TextField = _movieClip["message"];
+        textField.text = text;
     }
 
     override public function get displayObject () :DisplayObject
     {
-        return _sprite;
+        return _movieClip;
     }
 
     protected var _success :Boolean;
-    protected var _sprite :Sprite;
+    protected var _movieClip :MovieClip;
 
     protected static const WIN_TEXT :Array = [
-        "*POW*!",
-        "*BIFF*!",
-        "*ZAP*!",
-        "*SMACK*!",
+        "POW!",
+        "BIFF!",
+        "ZAP!",
+        "SMACK!",
     ];
 
     protected static const LOSE_TEXT :Array = [
@@ -88,21 +77,4 @@ public class WinLoseNotification extends SceneObject
 
 }
 
-}
-
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.tasks.*;
-
-class WinLoseTimer extends SimObject
-{
-    public function WinLoseTimer (name :String, time :Number)
-    {
-        _name = name;
-
-        this.addTask(After(time, new SelfDestructTask()));
-    }
-
-    override public function get objectName () :String { return _name; }
-
-    protected var _name :String;
 }

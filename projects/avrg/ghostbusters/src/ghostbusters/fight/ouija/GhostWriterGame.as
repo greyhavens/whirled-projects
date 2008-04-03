@@ -1,8 +1,10 @@
 package ghostbusters.fight.ouija {
-    
+
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
+
+import flash.display.DisplayObjectContainer;
 
 import ghostbusters.fight.*;
 import ghostbusters.fight.common.*;
@@ -10,58 +12,58 @@ import ghostbusters.fight.common.*;
 public class GhostWriterGame extends MicrogameMode
 {
     public static const GAME_NAME :String = "Ghost Writer";
-    
+
     public function GhostWriterGame (difficulty :int, playerData :Object)
     {
         super(difficulty, playerData);
-        
-        _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];   
-        
+
+        _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
+
         // choose a word
         var validWords :Array = WORDS.filter(
             function (word :String, index :int, array :Array) :Boolean {
                 return (word.length >= _settings.minWordLength && word.length <= _settings.maxWordLength);
             });
-            
+
         _word = validWords[Rand.nextIntRange(0, validWords.length, Rand.STREAM_COSMETIC)] as String;
     }
-    
+
     override public function begin () :void
     {
         MainLoop.instance.pushMode(this);
         MainLoop.instance.pushMode(new IntroMode(GAME_NAME, "Spell '" + _word.toLocaleUpperCase() + "'!"));
     }
-    
+
     override protected function get duration () :Number
     {
         return (_settings.timePerLetter * _word.length);
     }
-    
+
     override protected function get timeRemaining () :Number
     {
         return (_done ? 0 : GameTimer.timeRemaining);
     }
-    
+
     override public function get isDone () :Boolean
     {
         return (_done && !WinLoseNotification.isPlaying);
     }
-    
+
     override public function get gameResult () :MicrogameResult
     {
         return _gameResult;
     }
-    
+
     protected function gameOver (success :Boolean) :void
     {
         if (!_done) {
             GameTimer.uninstall();
             WinLoseNotification.create(success, this.modeSprite);
-            
+
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
             _gameResult.damageOutput = (success ? _settings.damageOutput : 0);
-            
+
             _done = true;
         }
     }
@@ -75,23 +77,23 @@ public class GhostWriterGame extends MicrogameMode
         // progress text
         //_progressText = new ProgressText(_word.toLocaleUpperCase());
         //_board.displayObjectContainer.addChild(_progressText);
-        _board.displayObjectContainer.addChild(_statusText);
-        
+        _board.sprite.addChild(_statusText);
+
         // create the cursor
-        _cursor = new Cursor(_board.interactiveObject);
-        this.addObject(_cursor, _board.displayObjectContainer);
+        _cursor = new Cursor(_board.sprite);
+        this.addObject(_cursor, _board.sprite);
         _cursor.addEventListener(BoardSelectionEvent.NAME, boardSelectionChanged, false, 0, true);
 
         _cursor.selectionTargetIndex = Board.stringToSelectionIndex(_word.charAt(_nextWordIndex));
 
         // create the visual timer
         var boardTimer :BoardTimer = new BoardTimer(this.duration);
-        this.addObject(boardTimer, _board.displayObjectContainer);
+        this.addObject(boardTimer, _board.sprite);
 
         // install a failure timer
         GameTimer.install(this.duration, function () :void { gameOver(false) });
     }
-    
+
     override public function update (dt :Number) :void
     {
         super.update(dt);
@@ -113,7 +115,7 @@ public class GhostWriterGame extends MicrogameMode
             }
         }
     }
-    
+
     public function get word () :String
     {
         return _word;
@@ -158,7 +160,7 @@ public class GhostWriterGame extends MicrogameMode
         "ghastly"
 
     ];
-    
+
     protected static const DIFFICULTY_SETTINGS :Array = [
          new GhostWriterSettings(1, 7, 3, 0.25, 5),
          new GhostWriterSettings(7, 9, 2.2, 0.25, 10),

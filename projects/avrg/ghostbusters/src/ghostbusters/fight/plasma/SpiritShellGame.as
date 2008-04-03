@@ -9,6 +9,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
@@ -115,7 +116,7 @@ public class SpiritShellGame extends MicrogameMode
             ecto.y = Rand.nextIntRange(0, ghostHeight, Rand.STREAM_COSMETIC);
             ecto.alpha = Rand.nextNumberRange(0.5, 0.8, Rand.STREAM_COSMETIC);
 
-            this.addObject(ecto, ghost.displayObjectContainer);
+            this.addObject(ecto, ghost.displayObject as DisplayObjectContainer);
         }
 
         // move the ghost

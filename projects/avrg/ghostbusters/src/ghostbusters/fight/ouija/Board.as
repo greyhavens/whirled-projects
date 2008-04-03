@@ -24,6 +24,11 @@ public class Board extends SceneObject
         return _sprite;
     }
 
+    public function get sprite () :Sprite
+    {
+        return _sprite;
+    }
+
     public static function getSelectionIndexAt (loc :Vector2, epsilon :int) :int
     {
         for (var i :uint = 0; i < SELECTIONS.length / 2; ++i) {
