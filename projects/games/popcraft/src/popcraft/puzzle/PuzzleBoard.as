@@ -41,12 +41,12 @@ public class PuzzleBoard extends SceneObject
         _sprite.graphics.endFill();
         _sprite.mouseEnabled = true;
     }
-    
+
     override protected function addedToDB () :void
     {
         // create the board, and populate it with a random distribution of resources
         _board = new Array(_cols * _rows);
-        
+
         for (var i :int = 0; i < _cols * _rows; ++i) {
             var piece :Piece = createNewPieceOnBoard(i);
 
@@ -58,13 +58,18 @@ public class PuzzleBoard extends SceneObject
                 new TimedTask(Rand.nextNumberRange(0.25, 1, Rand.STREAM_COSMETIC)),
                 ScaleTask.CreateSmooth(1, 1, 0.25)));
         }
-        
+
         // create cursors
         this.db.addObject(new ComboHiliteCursor(this));
     }
 
     // from SceneObject
     override public function get displayObject () :DisplayObject
+    {
+        return _sprite;
+    }
+
+    public function get sprite () :Sprite
     {
         return _sprite;
     }
@@ -370,7 +375,7 @@ public class PuzzleBoard extends SceneObject
     }
 
     protected var _sprite :Sprite;
-    
+
     protected var _cols :int;
     protected var _rows :int;
     protected var _tileSize :int;
@@ -379,7 +384,7 @@ public class PuzzleBoard extends SceneObject
     protected var _resolvingClears :Boolean;
 
     protected var _resourceGenerator :WeightedTable;
-    
+
     protected static const MOVE_TASK_NAME :String = "move";
 }
 

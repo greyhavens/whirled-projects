@@ -39,18 +39,18 @@ public class ComboHiliteCursor extends SimObject
 
     override protected function addedToDB () :void
     {
-        _board.interactiveObject.addEventListener(MouseEvent.ROLL_OUT, rollOut, false, 0, true);
-        _board.interactiveObject.addEventListener(MouseEvent.ROLL_OVER, rollOver, false, 0, true);
-        _board.interactiveObject.addEventListener(MouseEvent.CLICK, mouseClick, false, 0, true);
+        _board.sprite.addEventListener(MouseEvent.ROLL_OUT, rollOut, false, 0, true);
+        _board.sprite.addEventListener(MouseEvent.ROLL_OVER, rollOver, false, 0, true);
+        _board.sprite.addEventListener(MouseEvent.CLICK, mouseClick, false, 0, true);
 
         this.db.addObject(_textObj, GameMode.instance.modeSprite);
     }
 
     override protected function removedFromDB () :void
     {
-        _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OUT, rollOut);
-        _board.interactiveObject.removeEventListener(MouseEvent.ROLL_OVER, rollOver);
-        _board.interactiveObject.removeEventListener(MouseEvent.CLICK, mouseClick);
+        _board.sprite.removeEventListener(MouseEvent.ROLL_OUT, rollOut);
+        _board.sprite.removeEventListener(MouseEvent.ROLL_OVER, rollOver);
+        _board.sprite.removeEventListener(MouseEvent.CLICK, mouseClick);
     }
 
     protected function showHilites (show :Boolean) :void
