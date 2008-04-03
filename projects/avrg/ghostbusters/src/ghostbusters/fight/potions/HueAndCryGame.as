@@ -59,7 +59,7 @@ public class HueAndCryGame extends MicrogameMode
     {
         if (!_done) {
             GameTimer.uninstall();
-            WinLoseNotification.create(success, this.modeSprite);
+            WinLoseNotification.create(success, WIN_STRINGS, LOSE_STRINGS, this.modeSprite);
 
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
@@ -185,6 +185,15 @@ public class HueAndCryGame extends MicrogameMode
 
         new HueAndCrySettings(6, 15),
 
+    ];
+
+    protected static const WIN_STRINGS :Array = [
+        "TEAM HEAL!",
+    ];
+
+    protected static const LOSE_STRINGS :Array = [
+        "fizzle",
+        "flop",
     ];
 
 }

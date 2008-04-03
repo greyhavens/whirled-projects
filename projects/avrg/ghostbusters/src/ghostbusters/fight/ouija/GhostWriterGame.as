@@ -58,7 +58,7 @@ public class GhostWriterGame extends MicrogameMode
     {
         if (!_done) {
             GameTimer.uninstall();
-            WinLoseNotification.create(success, this.modeSprite);
+            WinLoseNotification.create(success, WIN_STRINGS, LOSE_STRINGS, this.modeSprite);
 
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
@@ -166,6 +166,20 @@ public class GhostWriterGame extends MicrogameMode
          new GhostWriterSettings(7, 9, 2.2, 0.25, 10),
          new GhostWriterSettings(8, 999, 1.8, 0.15, 15),
          new GhostWriterSettings(8, 999, 1.4, 0.15, 20),
+    ];
+
+    protected static const WIN_STRINGS :Array = [
+        "POW!",
+        "BIFF!",
+        "ZAP!",
+        "SMACK!",
+    ];
+
+    protected static const LOSE_STRINGS :Array = [
+        "oof",
+        "ouch",
+        "argh",
+        "agh",
     ];
 }
 

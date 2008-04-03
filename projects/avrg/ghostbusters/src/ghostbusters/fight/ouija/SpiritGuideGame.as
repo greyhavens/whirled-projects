@@ -53,7 +53,7 @@ public class SpiritGuideGame extends MicrogameMode
     {
         if (!_done) {
             GameTimer.uninstall();
-            WinLoseNotification.create(success, this.modeSprite);
+            WinLoseNotification.create(success, WIN_STRINGS, LOSE_STRINGS, this.modeSprite);
 
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
@@ -134,6 +134,20 @@ public class SpiritGuideGame extends MicrogameMode
         new SpiritGuideSettings(6, 1, 15),
         new SpiritGuideSettings(6, 2, 20),
         new SpiritGuideSettings(4, 2, 25),
+    ];
+
+    protected static const WIN_STRINGS :Array = [
+        "POW!",
+        "BIFF!",
+        "ZAP!",
+        "SMACK!",
+    ];
+
+    protected static const LOSE_STRINGS :Array = [
+        "oof",
+        "ouch",
+        "argh",
+        "agh",
     ];
 }
 

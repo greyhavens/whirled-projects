@@ -62,7 +62,7 @@ public class SpiritShellGame extends MicrogameMode
             _plasmaHose.destroySelf();
 
             GameTimer.uninstall();
-            WinLoseNotification.create(success, this.modeSprite);
+            WinLoseNotification.create(success, WIN_STRINGS, LOSE_STRINGS, this.modeSprite);
 
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
@@ -344,6 +344,17 @@ public class SpiritShellGame extends MicrogameMode
             15       // damage output
         ),
 
+    ];
+
+    protected static const WIN_STRINGS :Array = [
+        "ZAP!",
+        "BLAST!",
+        "ZING!",
+    ];
+
+    protected static const LOSE_STRINGS :Array = [
+        "fizzle",
+        "crackle",
     ];
 
 }
