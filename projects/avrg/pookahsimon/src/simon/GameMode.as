@@ -51,7 +51,7 @@ public class GameMode extends AppMode
     {
         // @TODO - remove this once SimObject gets a function that's called
         // on mode shutdown
-        this.destroyObjectNamed(RainbowController.NAME);
+        this.destroyObjectNamed(AbstractRainbowController.NAME);
         this.destroyObjectNamed(CloudViewController.NAME);
         this.destroyObjectNamed(AvatarController.NAME);
 
@@ -113,7 +113,7 @@ public class GameMode extends AppMode
         // reset the expected state when the state changes
         _expectedState = null;
 
-        this.destroyObjectNamed(RainbowController.NAME);
+        this.destroyObjectNamed(AbstractRainbowController.NAME);
         this.destroyObjectNamed(WinnerCloudController.NAME);
 
         switch (SimonMain.model.curState.gameState) {
@@ -151,7 +151,7 @@ public class GameMode extends AppMode
         // reset the expected state when the state changes
         _expectedState = null;
 
-        this.destroyObjectNamed(RainbowController.NAME);
+        this.destroyObjectNamed(AbstractRainbowController.NAME);
 
         if (SimonMain.model.curState.players.length == 0) {
             _expectedState = SimonMain.model.curState.clone();
@@ -166,7 +166,7 @@ public class GameMode extends AppMode
             this.applyStateChanges();
         } else {
             // show the rainbow on the correct player
-            this.addObject(new RainbowController(SimonMain.model.curState.curPlayerOid), _gameLayer);
+            this.addObject(AbstractRainbowController.create(SimonMain.model.curState.curPlayerOid), _gameLayer);
         }
     }
 
@@ -321,7 +321,7 @@ public class GameMode extends AppMode
 
     public function currentPlayerTurnSuccess (newNote :int) :void
     {
-        this.destroyObjectNamed(RainbowController.NAME);
+        this.destroyObjectNamed(AbstractRainbowController.NAME);
 
         _expectedState = SimonMain.model.curState.clone();
         _expectedState.pattern.push(newNote);
@@ -334,7 +334,7 @@ public class GameMode extends AppMode
 
     public function currentPlayerTurnFailure () :void
     {
-        this.destroyObjectNamed(RainbowController.NAME);
+        this.destroyObjectNamed(AbstractRainbowController.NAME);
 
         _expectedState = SimonMain.model.curState.clone();
 
