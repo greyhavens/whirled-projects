@@ -254,6 +254,8 @@ public class CreatureUnitView extends SceneObject
 
     override protected function update (dt :Number) :void
     {
+        _updateTime += dt;
+
         if (_unit.isDead) {
             // when the unit gets destroyed, its view does too
             this.destroySelf();
@@ -264,8 +266,14 @@ public class CreatureUnitView extends SceneObject
                 this.updateAnimations();
             }
 
-            this.x = _unit.x;
-            this.y = _unit.y;
+            // estimate a new location for the CreatureUnit,
+            // based on its last location and its velocity
+
+            var updateDelta :Number = Math.max(_updateTime - _unit.updateTime, 0);
+            var movementDelta :Vector2 = _unit.movementDirection.scale(updateDelta);
+
+            this.x = _unit.x + movementDelta.x;
+            this.y = _unit.y + movementDelta.y;
 
             _healthMeter.value = _unit.health;
         }
@@ -311,6 +319,8 @@ public class CreatureUnitView extends SceneObject
     protected var _animStanding :Array = [];
     protected var _animAttacking :Array = [];
     protected var _animMoving :Array = [];
+
+    protected var _updateTime :Number = 0;
 
     // @TODO - remove this when all units have animations
     protected var _hasAnimations :Boolean;

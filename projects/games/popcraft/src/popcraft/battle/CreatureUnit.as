@@ -22,74 +22,74 @@ public class CreatureUnit extends Unit
 
         // start at our owning player's base's spawn loc
         var spawnLoc :Vector2 = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
-        
+
         // @TODO - move this out of here
         this.x = spawnLoc.x;
         this.y = spawnLoc.y;
     }
-    
+
     override protected function addedToDB () :void
     {
         // collision geometry
         _collisionObj = new CollisionObject(this);
         _collisionGrid = GameMode.instance.battleCollisionGrid; // there's only one collision grid
     }
-    
+
     public function setMovementDestination (dest :Vector2) :void
     {
         _destination = dest.clone();
     }
-    
+
     public function stopMoving () :void
     {
         _destination = null;
     }
-    
+
     public function get isMoving () :Boolean
     {
         return (_destination != null);
     }
-    
+
     public function get movementDirection () :Vector2
     {
         return _movementDirection;
     }
-    
+
     protected function handleMove (dt :Number) :void
     {
         _movedThisFrame = false;
-        
+
         if (this.isMoving) {
             // are we there yet?
             var curLoc :Vector2 = this.unitLoc;
-            
+
             if (curLoc.similar(_destination, MOVEMENT_EPSILON)) {
                 this.stopMoving();
             } else {
-                
+
                 // the unit is attracted to its destination
                 var attractForce :Vector2 = _destination.subtract(curLoc);
                 var remainingDistance :Number = attractForce.normalizeLocalAndGetLength();
-                
+
                 // and repulsed by other units around it
                 // @TODO - these numbers are a total kludge right now. some testing needs to be done to determine optimal values.
                 var repulseForce :Vector2 = _collisionGrid.getForceForLoc(curLoc, 30, _collisionObj);
-                
+
                 // add forces
                 _movementDirection = attractForce.add(repulseForce).normalizeLocal();
-                
+
                 // don't overshoot the destination
                 var distance :Number = this.unitData.baseMoveSpeed * dt;
-                
+
                 // calculate our next location
                 var nextLoc :Vector2 = _movementDirection.scale(distance).addLocal(curLoc);
-                
+
                 this.x = nextLoc.x;
                 this.y = nextLoc.y;
-                
+
                 // update our location in the collision grid
                 //_collisionObj.addToGrid(_collisionGrid);
-                
+
                 _movedThisFrame = true;
             }
         }
@@ -114,9 +114,9 @@ public class CreatureUnit extends Unit
     public function findEnemyBaseToAttack () :SimObjectRef
     {
         var game :GameMode = GameMode.instance;
-        
+
         var enemyBaseRef :SimObjectRef;
-        
+
         if (game.numPlayers > 1) {
             var enemyPlayerId :uint = game.getRandomEnemyPlayerId(_owningPlayerId);
             enemyBaseRef = game.getPlayerBase(enemyPlayerId).ref;
@@ -132,50 +132,59 @@ public class CreatureUnit extends Unit
 
     override protected function update (dt :Number) :void
     {
+        _updateTime += dt;
+
         this.stopMoving();
-        
+
         var aiRoot :AITask = this.aiRoot;
         if (null != aiRoot) {
             aiRoot.update(dt, this);
         }
-        
+
         this.handleMove(dt);
-        
+
         super.update(dt);
     }
-    
+
     public function handleCollision (otherUnit :CreatureUnit) :void
     {
         this.stopMoving();
     }
-    
+
     public function detectCollisions () :void
     {
         // called on every CreatureUnit, once per frame,
         // to detect any collisions that have occurred
         _collisionObj.detectCollisions();
     }
-    
+
     public function removeFromCollisionGrid () :void
     {
         _collisionObj.removeFromGrid();
     }
-    
+
     public function get collisionObj () :CollisionObject
     {
         return _collisionObj;
     }
-    
+
+    public function get updateTime () :Number
+    {
+        return _updateTime;
+    }
+
     protected var _destination :Vector2;
-    
+
     protected var _collisionObj :CollisionObject;
     protected var _collisionGrid :AttractRepulseGrid;
-    
+
     protected var _movedThisFrame :Boolean;
     protected var _movementDirection :Vector2;
 
+    protected var _updateTime :Number = 0;
+
     protected static var g_groups :Array;
-    
+
     protected static const MOVEMENT_EPSILON :Number = 0.01;
 }
 
