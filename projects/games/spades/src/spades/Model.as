@@ -13,17 +13,25 @@ import spades.card.Scores;
 public class Model
 {
     public function Model (
+        gameCtrl :GameControl,
         table :Table,
         hand :Hand,
         trick :Trick,
         bids :Bids,
         scores :Scores)
     {
+        _gameCtrl = gameCtrl;
         _table = table;
         _hand = hand;
         _trick = trick;
         _bids = bids;
         _scores = scores;
+    }
+
+    /** Access the game control. */
+    public function get gameCtrl () :GameControl
+    {
+        return _gameCtrl;
     }
 
     /** Access the table. */
@@ -56,6 +64,7 @@ public class Model
         return _scores;
     }
 
+    protected var _gameCtrl :GameControl;
     protected var _table :Table;
     protected var _hand :Hand;
     protected var _trick :Trick;

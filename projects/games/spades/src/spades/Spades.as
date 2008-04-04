@@ -76,7 +76,7 @@ public class Spades extends Sprite
             CardArray.FULL_DECK.length / table.numPlayers);
         var scores :Scores = new Scores(table, bids, targetScore);
 
-        _model = new Model(table, hand, trick, bids, scores);
+        _model = new Model(gameCtrl, table, hand, trick, bids, scores);
 
         _gameCtrl.game.addEventListener(
             StateChangedEvent.GAME_STARTED, 
@@ -106,8 +106,6 @@ public class Spades extends Sprite
         // configure the players
         _table = new TableSprite(_model);
         addChild(_table);
-
-        setupHeadShots();
     }
 
     / ** For debugging, log a string prefixed with player name and seating position. */
@@ -144,16 +142,6 @@ public class Spades extends Sprite
     protected function get scores () :Scores
     {
         return _model.scores;
-    }
-
-    protected function setupHeadShots () :void
-    {
-        var players :Array = gameCtrl.game.seating.getPlayerIds();
-        for (var i :int = 0; i < players.length; ++i) {
-            var callback :Function = _table.getHeadShotCallback(i);
-            log("Getting headshot for " + players[i]);
-            gameCtrl.local.getHeadShot(players[i], callback);
-        }
     }
 
     /** Boot up the game. */
@@ -223,7 +211,6 @@ public class Spades extends Sprite
     {
         var round :int = -gameCtrl.game.getRound();
         gameCtrl.local.feedback("Round " + round + " ended\n");
-        _table.setPlayerTurn(-1);
     }
 
     /** End the game.
@@ -260,7 +247,6 @@ public class Spades extends Sprite
         var turnHolder :int = gameCtrl.game.getTurnHolderId();
         var hotSeat :int = gameCtrl.game.seating.getPlayerPosition(turnHolder);
         log("Turn changed to " + turnHolder + " in seat " + hotSeat);
-        _table.setPlayerTurn(hotSeat);
 
         if (gameCtrl.game.isMyTurn()) {
             if (bids.complete) {
@@ -329,13 +315,10 @@ public class Spades extends Sprite
 
         var wal :WinnersAndLosers = scores.getWinnersAndLosers();
         var winners :Array = wal.winningTeams;
-
-        var highScore :int = scores.getScore(Team(winners[0]).index);
+        var highScore :int = wal.highestScore;
 
         if (highScore < scores.target && wal.losingTeams.length == 1) {
-            highScore = 
-                scores.getScore(Team(winners[0]).index) -
-                scores.getScore(Team(wal.losingTeams[0]).index);
+            highScore = wal.scoreDifferential;
         }
 
         // feedback

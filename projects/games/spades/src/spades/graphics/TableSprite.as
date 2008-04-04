@@ -8,6 +8,7 @@ import flash.events.TimerEvent;
 import flash.utils.Timer;
 
 import com.threerings.flash.Vector2;
+import com.whirled.game.StateChangedEvent;
 
 import spades.Model;
 import spades.card.CardArray;
@@ -26,35 +27,6 @@ import spades.card.Team;
  */
 public class TableSprite extends Sprite
 {
-    /** Seat value to indicate no seat. */
-    public static const NO_SEAT :int = -1;
-
-    /** Positions of other players' on the table (relative to the local player). */
-    public static const PLAYER_POSITIONS :Array = [
-        new Vector2(350, 350),  // me
-        new Vector2(145, 200),  // my left
-        new Vector2(350, 60),  // opposite
-        new Vector2(555, 200)   // my right
-    ];
-
-    /** Position of the center of the local player's hand. */
-    public static const HAND_POSITION :Vector2 = new Vector2(350, 455);
-
-    /** Position of the center of the bid slider */
-    public static const SLIDER_POSITION :Vector2 = new Vector2(350, 255);
-
-    /** Position of the center of the trick pile */
-    public static const TRICK_POSITION :Vector2 = new Vector2(350, 205);
-
-    /** Position of the left-hand team */
-    public static const LEFT_TEAM_POSITION :Vector2 = new Vector2(95, 45);
-
-    /** Position of the right-hand team */
-    public static const RIGHT_TEAM_POSITION :Vector2 = new Vector2(605, 45);
-
-    /** Offset of the last trick, relative to the team. */
-    public static const LAST_TRICK_OFFSET :Number = 130;
-
     /** Create a new table.
      *  @param playerNames the names of the players, in seat order
      *  @param localSeat the seat that the local player is sitting in */
@@ -93,25 +65,49 @@ public class TableSprite extends Sprite
         // listen for our removal to prevent stranded listeners
         addEventListener(Event.REMOVED, removedListener);
 
+        _model.gameCtrl.game.addEventListener(
+            StateChangedEvent.ROUND_ENDED, 
+            handleRoundEnded);
+        _model.gameCtrl.game.addEventListener(
+            StateChangedEvent.TURN_CHANGED, 
+            handleTurnChanged);
+
         layout();
     }
 
-    /** Retrieve a callback to set a player's head shot. */
-    public function getHeadShotCallback (seat :int) :Function
+    /** Highlight a player to show it is his turn. Also unhighlights any previous. 
+     *  If a seat less than 0 is given, then all players are unhighlighted. */
+    protected function setPlayerTurn (seat :int) :void
     {
-        return getPlayer(table.getRelativeFromAbsolute(seat)).setHeadShot;
-    }
+        if (seat >= 0) {
+            seat = table.getRelativeFromAbsolute(seat);
+        }
 
-    /** Highlight a player to show it is his turn. Also unhighlights any previous.
-     *  If NO_SEAT is given, then all players are unhighlighted. */
-    public function setPlayerTurn (seat :int) :void
-    {
-        seat = table.getRelativeFromAbsolute(seat);
         _players.forEach(setTurn);
 
         function setTurn (p :PlayerSprite, index :int, array :Array) :void
         {
             p.setTurn(index == seat);
+        }
+    }
+
+    protected function handleRoundEnded (event :StateChangedEvent) :void
+    {
+        setPlayerTurn(-1);
+    }
+
+    protected function handleTurnChanged (event :StateChangedEvent) :void
+    {
+        var id :int = _model.gameCtrl.game.getTurnHolderId();
+        setPlayerTurn(table.getAbsoluteFromId(id));
+    }
+
+    protected function setupHeadShots () :void
+    {
+        for (var i :int = 0; i < table.numPlayers; ++i) {
+            _model.gameCtrl.local.getHeadShot(
+                 table.getIdFromRelative(i), 
+                 getPlayer(i).setHeadShot);
         }
     }
 
@@ -172,6 +168,32 @@ public class TableSprite extends Sprite
     protected var _hand :HandSprite;
     protected var _trick :MainTrickSprite;
     protected var _teams :Array = [null, null];
+
+    /** Positions of other players' on the table (relative to the local player). */
+    protected static const PLAYER_POSITIONS :Array = [
+        new Vector2(350, 350),  // me
+        new Vector2(145, 200),  // my left
+        new Vector2(350, 60),  // opposite
+        new Vector2(555, 200)   // my right
+    ];
+
+    /** Position of the center of the local player's hand. */
+    protected static const HAND_POSITION :Vector2 = new Vector2(350, 455);
+
+    /** Position of the center of the bid slider */
+    protected static const SLIDER_POSITION :Vector2 = new Vector2(350, 255);
+
+    /** Position of the center of the trick pile */
+    protected static const TRICK_POSITION :Vector2 = new Vector2(350, 205);
+
+    /** Position of the left-hand team */
+    protected static const LEFT_TEAM_POSITION :Vector2 = new Vector2(95, 45);
+
+    /** Position of the right-hand team */
+    protected static const RIGHT_TEAM_POSITION :Vector2 = new Vector2(605, 45);
+
+    /** Offset of the last trick, relative to the team. */
+    protected static const LAST_TRICK_OFFSET :Number = 130;
 }
 
 }

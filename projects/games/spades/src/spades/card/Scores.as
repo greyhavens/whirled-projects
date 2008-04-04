@@ -79,7 +79,7 @@ public class Scores extends EventDispatcher
                 winners.push(_table.getTeam(team));
             }
         }
-        return new WinnersAndLosers(_table, winners);
+        return new WinnersAndLosers(this, winners);
     }
 
     /** Get the number of tricks taken so far by the team with the given index. */
