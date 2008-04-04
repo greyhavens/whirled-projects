@@ -92,7 +92,7 @@ public class UnitPurchaseMeter extends SceneObject
             var textMeter :IntTextMeter = (_meters[meterIndex + 1] as IntTextMeter);
             meterIndex += 2;
 
-            var resAmount :int = GameMode.instance.playerData.getResourceAmount(resType);
+            var resAmount :int = GameMode.instance.localPlayerData.getResourceAmount(resType);
 
             rectMeter.value = Math.max(0, resCost - resAmount);
             textMeter.value = Math.min(resCost, resAmount);

@@ -2,9 +2,9 @@ package popcraft {
 
 import com.threerings.util.Assert;
 
-public class PlayerData
+public class LocalPlayerData
 {
-    public function PlayerData (playerId :uint)
+    public function LocalPlayerData (playerId :uint)
     {
         _playerId = playerId;
 

@@ -75,7 +75,7 @@ public class DebugDataView extends SceneObject
         var gameMode :GameMode = GameMode.instance;
 
         _text.text = 
-            "Player ID: " + gameMode.playerData.playerId + "\n" +
+            "Player ID: " + gameMode.localPlayerData.playerId + "\n" +
             "FPS avg: " + Math.round(avgFps) + " cur: " + Math.round(thisFps) + "\n" +
             "GameObjects: " + gameMode.objectCount + "\n" +
             "NetObjects: " + gameMode.netObjects.objectCount;

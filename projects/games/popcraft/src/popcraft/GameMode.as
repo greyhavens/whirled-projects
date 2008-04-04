@@ -61,7 +61,7 @@ public class GameMode extends AppMode
 
         // only players get puzzles
         if (isAPlayer) {
-            _playerData = new PlayerData(uint(myPosition));
+            _localPlayerData = new LocalPlayerData(uint(myPosition));
 
             var resourceDisplay :ResourceDisplay = new ResourceDisplay();
             resourceDisplay.displayObject.x = Constants.RESOURCE_DISPLAY_LOC.x;
@@ -91,7 +91,7 @@ public class GameMode extends AppMode
             _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
         }
 
-        _messageMgr.setup((0 == _playerData.playerId), TICK_INTERVAL_MS);
+        _messageMgr.setup((0 == _localPlayerData.playerId), TICK_INTERVAL_MS);
 
         // create a special ObjectDB for all objects that are synchronized over the network.
         _netObjects = new NetObjectDB();
@@ -144,7 +144,7 @@ public class GameMode extends AppMode
         case KEY_4:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 for (var i :uint = 0; i < Constants.RESOURCE__LIMIT; ++i) {
-                    _playerData.offsetResourceAmount(i, 100);
+                    _localPlayerData.offsetResourceAmount(i, 100);
                 }
             }
             break;
@@ -254,14 +254,14 @@ public class GameMode extends AppMode
         }
 
         if (messageStatus.length > 0) {
-            log.debug("PLAYER: " + _playerData.playerId + " TICK: " + _tickCount + " MESSAGES: " + messageStatus);
+            log.debug("PLAYER: " + _localPlayerData.playerId + " TICK: " + _tickCount + " MESSAGES: " + messageStatus);
         }
 
         // calculate a checksum for this frame
         var csumMessage :ChecksumMessage = calculateChecksum();
 
         // player 1 saves his checksums, player 0 sends his checksums
-        if (_playerData.playerId == 1) {
+        if (_localPlayerData.playerId == 1) {
             _myChecksums.unshift(csumMessage);
             _lastCachedChecksumTick = _tickCount;
         } else if ((_tickCount % 2) == 0) {
@@ -294,7 +294,7 @@ public class GameMode extends AppMode
             add(unit.health, "unit.health - " + i);
         }*/
 
-        msg.playerId = _playerData.playerId;
+        msg.playerId = _localPlayerData.playerId;
         msg.tick = _tickCount;
         msg.checksum = csum.value;
 
@@ -334,7 +334,7 @@ public class GameMode extends AppMode
 
     protected function handleChecksumMessage (msg :ChecksumMessage) :void
     {
-        if (msg.playerId != _playerData.playerId) {
+        if (msg.playerId != _localPlayerData.playerId) {
             // check this checksum against our checksum buffer
             if (msg.tick > _lastCachedChecksumTick || msg.tick <= (_lastCachedChecksumTick - _myChecksums.length)) {
                 log.debug("discarding checksum message (too old or too new)");
@@ -363,7 +363,7 @@ public class GameMode extends AppMode
         var n :uint = creatureCosts.length;
         for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
             var cost :int = creatureCosts[resourceType];
-            if (cost > 0 && cost > playerData.getResourceAmount(resourceType)) {
+            if (cost > 0 && cost > localPlayerData.getResourceAmount(resourceType)) {
                 return false;
             }
         }
@@ -381,16 +381,16 @@ public class GameMode extends AppMode
         var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
         var n :int = creatureCosts.length;
         for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
-            _playerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
+            _localPlayerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
         }
 
         // send a message!
-        _messageMgr.sendMessage(new CreateUnitMessage(unitType, _playerData.playerId));
+        _messageMgr.sendMessage(new CreateUnitMessage(unitType, _localPlayerData.playerId));
     }
 
-    public function get playerData () :PlayerData
+    public function get localPlayerData () :LocalPlayerData
     {
-        return _playerData;
+        return _localPlayerData;
     }
 
     public function get netObjects () :ObjectDB
@@ -423,7 +423,7 @@ public class GameMode extends AppMode
     protected var _messageMgr :TickedMessageManager;
     protected var _puzzleBoard :PuzzleBoard;
     protected var _battleBoard :BattleBoard;
-    protected var _playerData :PlayerData;
+    protected var _localPlayerData :LocalPlayerData;
     protected var _debugDataView :DebugDataView;
 
     protected var _netObjects :ObjectDB;
