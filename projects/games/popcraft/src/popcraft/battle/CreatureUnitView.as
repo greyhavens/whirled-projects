@@ -86,14 +86,11 @@ public class CreatureUnitView extends SceneObject
 
     protected function handleUnitAttacking (e :UnitEvent) :void
     {
-        // the unit may already be dead, in which case our _unitRef
-        // will be null. Get the unit from the event target instead.
-        var unit :CreatureUnit = e.target as CreatureUnit;
         var weapon :UnitWeapon = e.data as UnitWeapon;
 
         if (weapon.isAOE) {
             // @TODO - duration is a temporary, arbitrary value
-            this.createAOEAttackAnimation(weapon, unit.unitLoc, 0.5);
+            this.createAOEAttackAnimation(weapon, _unit.unitLoc, 0.5);
         }
     }
 
