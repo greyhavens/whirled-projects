@@ -118,9 +118,9 @@ public class Constants
     protected static const SAPPER_EXPLODE_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
         .isAOE(true)
         .damageType(DAMAGE_TYPE_CRUSHING)
-        .damageRange(50, 50)
+        .damageRange(70, 70)
         .targetClassMask(UNIT_CLASS_GROUND)
-        .aoeRadius(150)
+        .aoeRadius(75)
         .aoeAnimationName("attack_N")
         .weapon;
 

@@ -4,6 +4,7 @@ import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
 import com.threerings.util.Log;
 import com.whirled.contrib.ColorMatrix;
+import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -24,17 +25,20 @@ public class CreatureUnitView extends SceneObject
 
     public function CreatureUnitView (unit :CreatureUnit)
     {
-        _unit = unit;
+        _unitRef = unit.ref;
+    }
 
-        var playerColor :uint = Constants.PLAYER_COLORS[_unit.owningPlayerId];
+    override protected function addedToDB () :void
+    {
+        var playerColor :uint = Constants.PLAYER_COLORS[unit.owningPlayerId];
 
         // @TODO - remove this when all units have animations
-        if (Constants.UNIT_TYPE_GRUNT == _unit.unitType || Constants.UNIT_TYPE_SAPPER == _unit.unitType) {
+        if (Constants.UNIT_TYPE_GRUNT == unit.unitType || Constants.UNIT_TYPE_SAPPER == unit.unitType) {
             this.setupAnimations(playerColor);
             _hasAnimations = true;
         } else {
             // add the image, aligned by its foot position
-            var image :Bitmap = (PopCraft.resourceManager.getResource(_unit.unitData.name + "_icon") as ImageResourceLoader).createBitmap();
+            var image :Bitmap = (PopCraft.resourceManager.getResource(unit.unitData.name + "_icon") as ImageResourceLoader).createBitmap();
             image.x = -(image.width * 0.5);
             image.y = -image.height;
             _sprite.addChild(image);
@@ -46,8 +50,8 @@ public class CreatureUnitView extends SceneObject
         // health meter
         _healthMeter = new RectMeter();
         _healthMeter.minValue = 0;
-        _healthMeter.maxValue = _unit.unitData.maxHealth;
-        _healthMeter.value = _unit.health;
+        _healthMeter.maxValue = unit.unitData.maxHealth;
+        _healthMeter.value = unit.health;
         _healthMeter.foregroundColor = playerColor;
         _healthMeter.backgroundColor = 0x888888;
         _healthMeter.outlineColor = 0x000000;
@@ -56,33 +60,33 @@ public class CreatureUnitView extends SceneObject
         _healthMeter.x = -(_healthMeter.width * 0.5);
         _healthMeter.y = -_sprite.height - _healthMeter.height;
 
+        this.db.addObject(_healthMeter, _sprite);
+
         // draw some debugging circles
         if (Constants.DEBUG_DRAW_UNIT_DATA_CIRCLES) {
 
             // unit-detect circle
-            if (_unit.unitData.detectRadius != _unit.unitData.collisionRadius) {
+            if (unit.unitData.detectRadius != unit.unitData.collisionRadius) {
                 _sprite.graphics.lineStyle(1, 0x00FF00);
-                _sprite.graphics.drawCircle(0, 0, _unit.unitData.detectRadius);
+                _sprite.graphics.drawCircle(0, 0, unit.unitData.detectRadius);
             }
 
             // collision circle
             _sprite.graphics.lineStyle(1, 0xFF0000);
-            _sprite.graphics.drawCircle(0, 0, _unit.unitData.collisionRadius);
+            _sprite.graphics.drawCircle(0, 0, unit.unitData.collisionRadius);
         }
-    }
 
-    override protected function addedToDB () :void
-    {
-        this.db.addObject(_healthMeter, _sprite);
-
-        _unit.addEventListener(UnitEvent.ATTACKING, handleUnitAttacking, false, 0, true);
+        this.unit.addEventListener(UnitEvent.ATTACKING, handleUnitAttacking, false, 0, true);
     }
 
     override protected function removedFromDB () :void
     {
         _healthMeter.destroySelf();
 
-        _unit.removeEventListener(UnitEvent.ATTACKING, handleUnitAttacking);
+        var unit :CreatureUnit = this.unit;
+        if (null != unit) {
+            unit.removeEventListener(UnitEvent.ATTACKING, handleUnitAttacking);
+        }
     }
 
     protected function handleUnitAttacking (e :UnitEvent) :void
@@ -91,7 +95,7 @@ public class CreatureUnitView extends SceneObject
 
         if (weapon.isAOE) {
             // @TODO - duration is a temporary, arbitrary value
-            this.createAOEAttackAnimation(weapon, _unit.unitLoc, 0.5);
+            this.createAOEAttackAnimation(weapon, this.unit.unitLoc, 0.5);
         }
     }
 
@@ -99,12 +103,14 @@ public class CreatureUnitView extends SceneObject
     {
         if (null != weapon.aoeAnimationName) {
 
+            var unit :CreatureUnit = this.unit;
+
             // create an attack animation object that will play and self-destruct
 
-            var anim :MovieClip = PopCraft.resourceManager.instantiateMovieClip(_unit.unitData.name, weapon.aoeAnimationName);
+            var anim :MovieClip = PopCraft.resourceManager.instantiateMovieClip(unit.unitData.name, weapon.aoeAnimationName);
 
             if (null == anim) {
-                log.info("Missing AOE attack animation '" + weapon.aoeAnimationName + "' for " + _unit.unitData.name);
+                log.info("Missing AOE attack animation '" + weapon.aoeAnimationName + "' for " + unit.unitData.name);
             } else {
                 var animObj :SceneObject = new SimpleSceneObject(anim);
                 animObj.x = loc.x;
@@ -153,7 +159,7 @@ public class CreatureUnitView extends SceneObject
         tintFilterMatrix.colorize(playerColor);
 
         // load our animations
-        var swf :SwfResourceLoader = (PopCraft.resourceManager.getResource(_unit.unitData.name) as SwfResourceLoader);
+        var swf :SwfResourceLoader = (PopCraft.resourceManager.getResource(this.unit.unitData.name) as SwfResourceLoader);
 
         for (var i :int = 0; i < 3; ++i) {
 
@@ -188,7 +194,7 @@ public class CreatureUnitView extends SceneObject
                 if (null != color) {
                     color.filters = [ tintFilterMatrix.createFilter() ];
                 } else {
-                    log.info("Missing recolor symbol for " + _unit.unitData.name + "." + animName);
+                    log.info("Missing recolor symbol for " + this.unit.unitData.name + "." + animName);
                 }
 
                 animArray.push(anim);
@@ -205,14 +211,16 @@ public class CreatureUnitView extends SceneObject
 
     protected function updateAnimations () :void
     {
+        var unit :CreatureUnit = this.unit;
+
         // determine our view state
         var newViewState :ViewState = new ViewState();
 
-        newViewState.moving = _unit.isMoving;
-        newViewState.attacking = _unit.isAttacking;
+        newViewState.moving = unit.isMoving;
+        newViewState.attacking = unit.isAttacking;
 
         if (newViewState.moving) {
-            newViewState.facing = getFacingDirectionFromAngle(_unit.movementDirection.angle);
+            newViewState.facing = getFacingDirectionFromAngle(unit.movementDirection.angle);
         } else {
             newViewState.facing = _lastViewState.facing;
         }
@@ -255,21 +263,25 @@ public class CreatureUnitView extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        // @TODO - remove this
-        if (_hasAnimations) {
-            this.updateAnimations();
-        }
+        var unit :CreatureUnit = this.unit;
 
-        this.x = _unit.x;
-        this.y = _unit.y;
-
-        // update health
-        var health :Number = _unit.health;
-
-        _healthMeter.value = health;
-
-        if (health <= 0) {
+        if (null == unit) {
+            // when the unit gets destroyed, its view does too
             this.destroySelf();
+
+        } else {
+            // @TODO - remove this
+            if (_hasAnimations) {
+                this.updateAnimations();
+            }
+
+            this.x = unit.x;
+            this.y = unit.y;
+
+            // update health
+            var health :Number = unit.health;
+
+            _healthMeter.value = health;
         }
     }
 
@@ -300,7 +312,12 @@ public class CreatureUnitView extends SceneObject
         return _sprite;
     }
 
-    protected var _unit :CreatureUnit;
+    protected function get unit () :CreatureUnit
+    {
+        return _unitRef.object as CreatureUnit;
+    }
+
+    protected var _unitRef :SimObjectRef;
     protected var _lastViewState :ViewState = new ViewState();
     protected var _sprite :Sprite = new Sprite();
     protected var _healthMeter :RectMeter;

@@ -1,5 +1,5 @@
 package popcraft.battle {
-    
+
 import com.whirled.contrib.simplegame.*;
 
 import popcraft.*;
@@ -14,7 +14,7 @@ public class SapperCreatureUnit extends CreatureUnit
     public function SapperCreatureUnit (owningPlayerId :uint)
     {
         super(Constants.UNIT_TYPE_SAPPER, owningPlayerId);
-        
+
         _sapperAI = new SapperAI(this, this.findEnemyBaseToAttack());
     }
 
@@ -22,7 +22,15 @@ public class SapperCreatureUnit extends CreatureUnit
     {
         return _sapperAI;
     }
-    
+
+    override public function sendAttack (targetUnit :Unit, weapon :UnitWeapon) :void
+    {
+        // when the sapper attacks, he self-destructs
+        super.sendAttack(targetUnit, weapon);
+
+        this.destroySelf();
+    }
+
     protected var _sapperAI :SapperAI;
 }
 
@@ -55,7 +63,7 @@ class SapperAI extends AITaskTree
         this.clearSubtasks();
         this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
     }
-    
+
     override protected function childTaskCompleted (task :AITask) :void
     {
     }
