@@ -11,7 +11,9 @@ import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
+import flash.events.StatusEvent;
 
+import flash.net.LocalConnection;
 import flash.net.URLRequest;
 
 import flash.text.TextField;
@@ -20,6 +22,7 @@ import flash.text.TextFieldType;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
+import com.threerings.util.MethodQueue;
 import com.threerings.util.StringUtil;
 import com.threerings.util.Util;
 
@@ -39,12 +42,12 @@ public class Embedder extends Sprite
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
         _ctrl.registerCustomConfig(createConfigPanel);
 
-        // add a little area for room editors to be able to draw
-        if (_ctrl.canEditRoom()) {
-            graphics.beginFill(0x00FF00, .3);
-            graphics.drawRect(0, 0, 32, 18);
-            graphics.endFill();
-        }
+//        // add a little area for room editors to be able to click
+//        if (_ctrl.canEditRoom()) {
+//            graphics.beginFill(0x00FF00, .3);
+//            graphics.drawRect(0, 0, 32, 18);
+//            graphics.endFill();
+//        }
 
         var mem :String = _ctrl.lookupMemory(MEM_KEY) as String;
         if (mem != null) {
@@ -141,6 +144,7 @@ public class Embedder extends Sprite
             _loader = new Loader();
             _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleError);
             addChild(_loader);
+            url = checkHandleYoutube(url);
             _loader.load(new URLRequest(url), new LoaderContext(false, new ApplicationDomain(null)));
         }
     }
@@ -148,14 +152,33 @@ public class Embedder extends Sprite
     protected function handleUnload (event :Event) :void
     {
         if (_loader != null) {
-            try {
-                _loader.close();
-            } catch (err :Error) {
-            }
-            _loader.unload();
             removeChild(_loader);
+
+            if (_youtubeId != null) {
+                // to shut this down properly we've got to jump through some hoopery
+                var lc :LocalConnection = new LocalConnection();
+                lc.addEventListener(StatusEvent.STATUS, function (arg :Object) :void {
+                    trace("eaten: " + arg);
+                });
+                lc.send("_" + _youtubeId, "killVid");
+
+                MethodQueue.callLater(MethodQueue.callLater, [ killLoader, [ _loader ] ]);
+                _youtubeId = null;
+
+            } else {
+                killLoader(_loader);
+            }
             _loader = null;
         }
+    }
+
+    protected function killLoader (l :Loader) :void
+    {
+        try {
+            l.close();
+        } catch (err :Error) {
+        }
+        l.unload();
     }
 
     protected function handleError (evt :ErrorEvent) :void
@@ -190,8 +213,7 @@ public class Embedder extends Sprite
         panel.addChild(status);
 
 
-        var ok :SimpleTextButton = new SimpleTextButton("OK", true, 0x000000,
-            0xFFFFFF, 0x000099);
+        var ok :SimpleTextButton = new SimpleTextButton("OK", true, 0x000000, 0xFFFFFF, 0x000099);
         ok.x = 320 - ok.width;
         ok.y = 20;
         panel.addChild(ok);
@@ -241,10 +263,33 @@ public class Embedder extends Sprite
         return panel;
     }
 
+    protected function checkHandleYoutube (url :String) :String
+    {
+        if (-1 == url.indexOf("youtube.com")) {
+            return url;
+        }
+
+        var chars :Array = [];
+        for (var ii :int = 0; ii < 12; ii++) {
+            var char :int = int(Math.random() * 26);
+            var cap :Boolean =  Math.random() > .5;
+            chars.push(char + (cap ? 65 : 97));
+        }
+        _youtubeId = String.fromCharCode.apply(null, chars);
+
+        var args :String = "?name=" + _youtubeId + "&url=" + encodeURIComponent(url);
+        return YOUTUBE_STUB_URL + args;
+    }
+
     protected var _ctrl :FurniControl;
 
     protected var _loader :Loader;
 
+    protected var _youtubeId :String;
+
     private static const MEM_KEY :String = "url";
+
+    private static const YOUTUBE_STUB_URL :String =
+        "http://media.whirled.com/72312fb7ad495131dc3342e999ed88f08e04e188.swf";
 }
 }
