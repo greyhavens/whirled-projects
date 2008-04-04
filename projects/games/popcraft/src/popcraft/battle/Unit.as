@@ -30,7 +30,7 @@ public class Unit extends SimObject
     public function Unit (unitType :uint, owningPlayerId :uint)
     {
         _unitType = unitType;
-        _owningPlayerId = owningPlayerId;
+        _owningPlayerData = GameMode.instance.getPlayerData(owningPlayerId);
 
         _unitData = (Constants.UNIT_DATA[unitType] as UnitData);
         _health = _unitData.maxHealth;
@@ -49,7 +49,7 @@ public class Unit extends SimObject
 
     protected function createOwningPlayerGlowForBitmap (bitmap :Bitmap) :Bitmap
     {
-        return ImageUtil.createGlowBitmap(bitmap, Constants.PLAYER_COLORS[_owningPlayerId] as uint);
+        return ImageUtil.createGlowBitmap(bitmap, Constants.PLAYER_COLORS[_owningPlayerData.playerId] as uint);
     }
 
     public function isUnitInRange (unit :Unit, range :Number) :Boolean
@@ -200,9 +200,14 @@ public class Unit extends SimObject
         return (this.owningPlayerId != unit.owningPlayerId);
     }
 
+    public function get owningPlayerData () :PlayerData
+    {
+        return _owningPlayerData;
+    }
+
     public function get owningPlayerId () :uint
     {
-        return _owningPlayerId;
+        return _owningPlayerData.playerId;
     }
 
     public function get unitType () :uint
@@ -250,7 +255,7 @@ public class Unit extends SimObject
         return _isDead;
     }
 
-    protected var _owningPlayerId :uint;
+    protected var _owningPlayerData :PlayerData;
     protected var _unitType :uint;
     protected var _unitData :UnitData;
     protected var _health :Number;

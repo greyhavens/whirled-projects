@@ -34,6 +34,28 @@ import popcraft.*;
 import popcraft.battle.*;
 import popcraft.battle.ai.*;
 import com.threerings.util.Log;
+import com.threerings.flash.Vector2;
+
+/*class HeavyAI extends AITaskTree
+{
+    public function HeavyAI (unit :HeavyCreatureUnit)
+    {
+        _unit = unit;
+
+        // find a place to stand near the base
+    }
+
+    override public function get name () :String
+    {
+        return "HeavyAI";
+    }
+
+    protected var _unit :HeavyCreatureUnit;
+    protected var _inDefensePosition :Boolean;
+
+    protected static const DISTANCE_FROM_BASE :NumRange = new NumRange(20, 30, Rand.STREAM_GAME);
+    protected static const ANGLE_RANGE :NumRange = new NumRange(-Math.PI / 5, Math.PI / 5, Rand.STREAM_GAME);
+}*/
 
 /**
  * Goals:

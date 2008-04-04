@@ -77,10 +77,6 @@ class SapperAI extends AITaskTree
         this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
     }
 
-    override protected function childTaskCompleted (task :AITask) :void
-    {
-    }
-
     override public function get name () :String
     {
         return "SapperAI";

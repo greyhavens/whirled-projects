@@ -21,7 +21,7 @@ public class CreatureUnit extends Unit
         super(unitType, owningPlayerId);
 
         // start at our owning player's base's spawn loc
-        var spawnLoc :Vector2 = GameMode.instance.getPlayerBase(_owningPlayerId).unitSpawnLoc;
+        var spawnLoc :Vector2 = _owningPlayerData.base.unitSpawnLoc;
 
         // @TODO - move this out of here
         this.x = spawnLoc.x;
@@ -113,16 +113,8 @@ public class CreatureUnit extends Unit
     // @TODO: make this work with multiple bases and destroyed bases
     public function findEnemyBaseToAttack () :SimObjectRef
     {
-        var game :GameMode = GameMode.instance;
-
-        var enemyBaseRef :SimObjectRef;
-
-        if (game.numPlayers > 1) {
-            var enemyPlayerId :uint = game.getRandomEnemyPlayerId(_owningPlayerId);
-            enemyBaseRef = game.getPlayerBase(enemyPlayerId).ref;
-        }
-
-        return enemyBaseRef;
+        var enemyPlayerData :PlayerData = GameMode.instance.getPlayerData(_owningPlayerData.targetedEnemyId);
+        return enemyPlayerData.baseRef;
     }
 
     protected function get aiRoot () :AITask

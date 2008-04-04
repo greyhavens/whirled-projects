@@ -1,16 +1,16 @@
 package popcraft {
 
 import com.whirled.contrib.simplegame.SimObject;
-import flash.events.Event;
+
 import flash.events.MouseEvent;
 import flash.geom.Point;
-import popcraft.battle.UnitData;
-import flash.display.Shape;
 
 public class UnitPurchaseButtonManager extends SimObject
 {
     public function UnitPurchaseButtonManager ()
     {
+        _localPlayerData = GameMode.instance.localPlayerData;
+
         var loc :Point = Constants.FIRST_UNIT_BUTTON_LOC.clone();
 
         for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
@@ -47,7 +47,7 @@ public class UnitPurchaseButtonManager extends SimObject
     override protected function update (dt :Number) :void
     {
         for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
-            (_buttons[unitType] as UnitPurchaseButton).enabled = GameMode.instance.canPurchaseUnit(unitType);
+            (_buttons[unitType] as UnitPurchaseButton).enabled = _localPlayerData.canPurchaseUnit(unitType);
         }
     }
 
@@ -57,6 +57,7 @@ public class UnitPurchaseButtonManager extends SimObject
     }
 
     protected var _buttons :Array = new Array();
+    protected var _localPlayerData :LocalPlayerData;
 }
 
 }

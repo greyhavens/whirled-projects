@@ -2,7 +2,6 @@ package popcraft {
 
 import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
-import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.threerings.util.RingBuffer;
 import com.whirled.contrib.simplegame.*;
@@ -38,79 +37,47 @@ public class GameMode extends AppMode
         return GameMode.instance.netObjects.getObjectRefsInGroup(groupName);
     }
 
-    public function GameMode ()
-    {
-    }
-
-    // from com.whirled.contrib.simplegame.AppMode
     override protected function setup () :void
     {
-        _numPlayers = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
+        // get some information about the players in the game
+        var numPlayers :int = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
+        _localPlayerId = PopCraft.instance.gameControl.game.seating.getMyPosition();
+        var isAPlayer :Boolean = (_localPlayerId >= 0);
+        var isFirstPlayer :Boolean = (_localPlayerId == 0);
 
-        var myPosition :int = PopCraft.instance.gameControl.game.seating.getMyPosition();
-        var isAPlayer :Boolean = (myPosition >= 0);
+        // create PlayerData structures
+        for (var playerId :uint = 0; playerId < numPlayers; ++playerId) {
 
+            var playerData :PlayerData =
+                (playerId == _localPlayerId ?
+                    new LocalPlayerData(playerId) :
+                    new PlayerData(playerId));
 
-        // everyone gets to see the BattleBoard
-        _battleBoard = new BattleBoard(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
+            // setup initial player targets
+            playerData.targetedEnemyId = (playerId + 1 < numPlayers ? playerId + 1 : 0);
 
-        _battleBoard.displayObject.x = Constants.BATTLE_BOARD_LOC.x;
-        _battleBoard.displayObject.y = Constants.BATTLE_BOARD_LOC.y;
-
-        this.addObject(_battleBoard, this.modeSprite);
-
-        // only players get puzzles
-        if (isAPlayer) {
-            _localPlayerData = new LocalPlayerData(uint(myPosition));
-
-            var resourceDisplay :ResourceDisplay = new ResourceDisplay();
-            resourceDisplay.displayObject.x = Constants.RESOURCE_DISPLAY_LOC.x;
-            resourceDisplay.displayObject.y = Constants.RESOURCE_DISPLAY_LOC.y;
-
-            this.addObject(resourceDisplay, this.modeSprite);
-
-            _puzzleBoard = new PuzzleBoard(
-                Constants.PUZZLE_COLS,
-                Constants.PUZZLE_ROWS,
-                Constants.PUZZLE_TILE_SIZE);
-
-            _puzzleBoard.displayObject.x = Constants.PUZZLE_BOARD_LOC.x;
-            _puzzleBoard.displayObject.y = Constants.PUZZLE_BOARD_LOC.y;
-
-            this.addObject(_puzzleBoard, this.modeSprite);
-
-            // create the unit purchase buttons
-            this.addObject(new UnitPurchaseButtonManager());
-       }
-
-        // set up some network stuff
-        _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
-        _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
-
-        if (Constants.DEBUG_CHECKSUM_STATE >= 1) {
-            _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
+            _playerData.push(playerData);
         }
 
-        _messageMgr.setup((0 == _localPlayerData.playerId), TICK_INTERVAL_MS);
+        this.setupNetwork(isFirstPlayer);
 
-        // create a special ObjectDB for all objects that are synchronized over the network.
-        _netObjects = new NetObjectDB();
+        this.setupBattleUI();
 
-        // create the player bases & waypoints
+        // create player bases
         var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
-        var playerId :uint = 0;
-        var n :int = baseLocs.length;
-        for (var i :int = 0; i < n; ++i) {
-            var baseLoc :Vector2 = (baseLocs[i] as Vector2);
-
+        for (playerId = 0; playerId < numPlayers; ++playerId) {
+            var baseLoc :Vector2 = baseLocs[playerId];
             var base :PlayerBaseUnit = (UnitFactory.createUnit(Constants.UNIT_TYPE_BASE, playerId) as PlayerBaseUnit);
             base.unitSpawnLoc = baseLoc;
             base.x = baseLoc.x;
             base.y = baseLoc.y;
 
-            _playerBaseRefs.push(base.ref);
+            playerData = _playerData[playerId];
+            playerData.base = base;
+        }
 
-            ++playerId;
+        if (isAPlayer) {
+            this.setupPuzzleUI();
         }
 
         // Listen for all keydowns.
@@ -124,7 +91,6 @@ public class GameMode extends AppMode
         }
     }
 
-    // from com.whirled.contrib.simplegame.AppMode
     override protected function destroy () :void
     {
         PopCraft.instance.gameControl.local.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false);
@@ -133,6 +99,53 @@ public class GameMode extends AppMode
             _messageMgr.shutdown();
             _messageMgr = null;
         }
+    }
+
+    protected function setupNetwork (isFirstPlayer :Boolean) :void
+    {
+        _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
+        _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
+
+        if (Constants.DEBUG_CHECKSUM_STATE >= 1) {
+            _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
+        }
+
+        _messageMgr.setup(isFirstPlayer, TICK_INTERVAL_MS);
+
+        // create a special ObjectDB for all objects that are synchronized over the network.
+        _netObjects = new NetObjectDB();
+    }
+
+    protected function setupPuzzleUI () :void
+    {
+        var resourceDisplay :ResourceDisplay = new ResourceDisplay();
+        resourceDisplay.displayObject.x = Constants.RESOURCE_DISPLAY_LOC.x;
+        resourceDisplay.displayObject.y = Constants.RESOURCE_DISPLAY_LOC.y;
+
+        this.addObject(resourceDisplay, this.modeSprite);
+
+        _puzzleBoard = new PuzzleBoard(
+            Constants.PUZZLE_COLS,
+            Constants.PUZZLE_ROWS,
+            Constants.PUZZLE_TILE_SIZE);
+
+        _puzzleBoard.displayObject.x = Constants.PUZZLE_BOARD_LOC.x;
+        _puzzleBoard.displayObject.y = Constants.PUZZLE_BOARD_LOC.y;
+
+        this.addObject(_puzzleBoard, this.modeSprite);
+
+        // create the unit purchase buttons
+        this.addObject(new UnitPurchaseButtonManager());
+    }
+
+    protected function setupBattleUI () :void
+    {
+        _battleBoard = new BattleBoard(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
+
+        _battleBoard.displayObject.x = Constants.BATTLE_BOARD_LOC.x;
+        _battleBoard.displayObject.y = Constants.BATTLE_BOARD_LOC.y;
+
+        this.addObject(_battleBoard, this.modeSprite);
     }
 
     // there has to be a better way to figure out charCodes
@@ -144,7 +157,7 @@ public class GameMode extends AppMode
         case KEY_4:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 for (var i :uint = 0; i < Constants.RESOURCE__LIMIT; ++i) {
-                    _localPlayerData.offsetResourceAmount(i, 100);
+                    this.localPlayerData.offsetResourceAmount(i, 100);
                 }
             }
             break;
@@ -193,28 +206,22 @@ public class GameMode extends AppMode
 
             ++_tickCount;
 
-            // @TODO - remove this temporary hack that allows a single player
-            // to play the game for testing purposes
-            if (_numPlayers > 1) {
+            // The game is over if there's only one man standing
+            var livePlayerId :int = -1;
+            var livePlayerCount :int;
 
-                // end the game when all bases but one have been destroyed
-                var livingPlayers :HashSet = new HashSet();
-                var n :uint = _playerBaseRefs.length;
-                for (var playerId :uint = 0; playerId < n; ++playerId) {
-                    if (null != getPlayerBase(playerId)) {
-                        livingPlayers.add(playerId);
+            for each (var playerData :PlayerData in _playerData) {
+                if (playerData.isAlive) {
+                    livePlayerId = playerData.playerId;
 
-                        // if there's > 1 living player, the game can't be over
-                        if (livingPlayers.size() > 1) {
-                            break;
-                        }
+                    if (++livePlayerCount > 1) {
+                        break;
                     }
                 }
+            }
 
-                if (livingPlayers.size() <= 1) {
-                    var winningPlayer :int = (livingPlayers.size() == 1 ? livingPlayers.toArray()[0] : -1);
-                    MainLoop.instance.changeMode(new GameOverMode(winningPlayer));
-                }
+            if (livePlayerCount <= 1) {
+                MainLoop.instance.changeMode(new GameOverMode(livePlayerId));
             }
         }
 
@@ -222,20 +229,14 @@ public class GameMode extends AppMode
         super.update(dt);
     }
 
-    public function getRandomEnemyPlayerId (myId :uint) :uint
+    public function getPlayerData (playerId :uint) :PlayerData
     {
-        var numPlayers :int = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
-        var playerId :int = Rand.nextIntRange(0, numPlayers - 1, Rand.STREAM_GAME);
-        if (playerId == myId) {
-            playerId = numPlayers - 1;
-        }
-
-        return uint(playerId);
+        return _playerData[playerId];
     }
 
-    public function getPlayerBase (player :uint) :PlayerBaseUnit
+    public function get numPlayers () :int
     {
-        return (_playerBaseRefs[player] as SimObjectRef).object as PlayerBaseUnit;
+        return _playerData.length;
     }
 
     protected function debugNetwork (messageArray :Array) :void
@@ -254,14 +255,14 @@ public class GameMode extends AppMode
         }
 
         if (messageStatus.length > 0) {
-            log.debug("PLAYER: " + _localPlayerData.playerId + " TICK: " + _tickCount + " MESSAGES: " + messageStatus);
+            log.debug("PLAYER: " + _localPlayerId + " TICK: " + _tickCount + " MESSAGES: " + messageStatus);
         }
 
         // calculate a checksum for this frame
         var csumMessage :ChecksumMessage = calculateChecksum();
 
         // player 1 saves his checksums, player 0 sends his checksums
-        if (_localPlayerData.playerId == 1) {
+        if (_localPlayerId == 1) {
             _myChecksums.unshift(csumMessage);
             _lastCachedChecksumTick = _tickCount;
         } else if ((_tickCount % 2) == 0) {
@@ -294,7 +295,7 @@ public class GameMode extends AppMode
             add(unit.health, "unit.health - " + i);
         }*/
 
-        msg.playerId = _localPlayerData.playerId;
+        msg.playerId = _localPlayerId;
         msg.tick = _tickCount;
         msg.checksum = csum.value;
 
@@ -334,7 +335,7 @@ public class GameMode extends AppMode
 
     protected function handleChecksumMessage (msg :ChecksumMessage) :void
     {
-        if (msg.playerId != _localPlayerData.playerId) {
+        if (msg.playerId != _localPlayerId) {
             // check this checksum against our checksum buffer
             if (msg.tick > _lastCachedChecksumTick || msg.tick <= (_lastCachedChecksumTick - _myChecksums.length)) {
                 log.debug("discarding checksum message (too old or too new)");
@@ -357,23 +358,9 @@ public class GameMode extends AppMode
         }
     }
 
-    public function canPurchaseUnit (unitType :uint) :Boolean
-    {
-        var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
-        var n :uint = creatureCosts.length;
-        for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
-            var cost :int = creatureCosts[resourceType];
-            if (cost > 0 && cost > localPlayerData.getResourceAmount(resourceType)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public function purchaseUnit (unitType :uint) :void
     {
-        if (!canPurchaseUnit(unitType)) {
+        if (!this.localPlayerData.canPurchaseUnit(unitType)) {
             return;
         }
 
@@ -381,16 +368,16 @@ public class GameMode extends AppMode
         var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
         var n :int = creatureCosts.length;
         for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
-            _localPlayerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
+            this.localPlayerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
         }
 
         // send a message!
-        _messageMgr.sendMessage(new CreateUnitMessage(unitType, _localPlayerData.playerId));
+        _messageMgr.sendMessage(new CreateUnitMessage(unitType, _localPlayerId));
     }
 
     public function get localPlayerData () :LocalPlayerData
     {
-        return _localPlayerData;
+        return _playerData[_localPlayerId];
     }
 
     public function get netObjects () :ObjectDB
@@ -413,23 +400,17 @@ public class GameMode extends AppMode
         return _battleBoard.collisionGrid;
     }
 
-    public function get numPlayers () :int
-    {
-        return _numPlayers;
-    }
-
     protected var _gameIsRunning :Boolean;
+
+    protected var _playerData :Array = [];
+    protected var _localPlayerId :uint;
 
     protected var _messageMgr :TickedMessageManager;
     protected var _puzzleBoard :PuzzleBoard;
     protected var _battleBoard :BattleBoard;
-    protected var _localPlayerData :LocalPlayerData;
     protected var _debugDataView :DebugDataView;
 
     protected var _netObjects :ObjectDB;
-
-    protected var _playerBaseRefs :Array = new Array();
-    protected var _numPlayers :int;
 
     protected var _tickCount :uint;
     protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);
