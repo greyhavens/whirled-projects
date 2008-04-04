@@ -4,11 +4,14 @@
 package {
 
 import flash.display.Sprite;
-import spades.Spades;
+import spades.Controller;
 import spades.Debug;
+import spades.graphics.TableSprite;
 import com.whirled.game.GameControl;
 import com.threerings.util.Log;
 
+/** Main entry point for the spades game. This is required to be a Sprite by flash. It constructs 
+ *  a spades controller and then adds a new TableSprite create from the controller's model. */
 [SWF(width="800", height="800")]
 public class Spades extends Sprite
 {
@@ -19,8 +22,10 @@ public class Spades extends Sprite
         Debug.debug = debugPrint;
 
         _gameCtrl = new GameControl(this);
-        _game = new spades.Spades(_gameCtrl);
-        addChild(_game);
+
+        var spadesCtrl :Controller = new Controller(_gameCtrl);
+        var table :TableSprite = new TableSprite(spadesCtrl.model);
+        addChild(table);
     }
 
     /** Print a string with local player info prefixed. */
@@ -31,7 +36,6 @@ public class Spades extends Sprite
         Log.getLog(this).info("[" + myName + "@seat" + mySeat + "] " + str);
     }
 
-    protected var _game :spades.Spades;
     protected var _gameCtrl :GameControl;
 }
 

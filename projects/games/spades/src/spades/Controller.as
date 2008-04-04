@@ -1,11 +1,5 @@
 package spades {
 
-import flash.display.Sprite;
-import flash.display.DisplayObject;
-import flash.display.MovieClip;
-
-import com.threerings.flash.Vector2;
-
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.StateChangedEvent;
@@ -24,29 +18,16 @@ import spades.card.Scores;
 import spades.card.Team;
 import spades.card.WinnersAndLosers;
 
-import spades.graphics.TableSprite;
-
-
 /**
- * The main sprite for the spades game.
- * TODO Factor certain things into CardGame and/or TrickTakingCardGame.
+ * The controller for spades.
  * TODO Strip out excessive debug logging.
  * TODO Use localized feeedback.
  */
-[SWF(width="800", height="800")]
-public class Spades extends Sprite
+public class Controller
 {
-    /** Players required for a game of spades */
-    public static const NUM_PLAYERS :int = 4;
-
-    /** Time between rounds (seconds). */
-    public static const DELAY_TO_NEXT_ROUND :int = 5;
-
-    /** Main entry point. Start a new game of spades. */
-    public function Spades (gameCtrl :GameControl)
+    /** Create a new controller. Constructs Model and connects all listeners. */
+    public function Controller (gameCtrl :GameControl)
     {
-        _gameCtrl = gameCtrl;
-
         var config :Object = gameCtrl.game.getConfig();
         if ("minigame" in config) {
             _miniGame = config["minigame"] as Boolean;
@@ -66,31 +47,31 @@ public class Spades extends Sprite
         }
 
         var table :Table = new Table(
-            _gameCtrl.game.seating.getPlayerNames(),
-            _gameCtrl.game.seating.getPlayerIds(), 
-            _gameCtrl.game.seating.getMyPosition(),
+            gameCtrl.game.seating.getPlayerNames(),
+            gameCtrl.game.seating.getPlayerIds(), 
+            gameCtrl.game.seating.getMyPosition(),
             [new Team(0, [0, 2]), new Team(1, [1, 3])]);
-        var hand :Hand = new Hand(_gameCtrl, sorter);
-        var trick :Trick = new Trick(_gameCtrl, trumps);
-        var bids :Bids = new Bids(_gameCtrl, 
+        var hand :Hand = new Hand(gameCtrl, sorter);
+        var trick :Trick = new Trick(gameCtrl, trumps);
+        var bids :Bids = new Bids(gameCtrl, 
             CardArray.FULL_DECK.length / table.numPlayers);
         var scores :Scores = new Scores(table, bids, targetScore);
 
         _model = new Model(gameCtrl, table, hand, trick, bids, scores);
 
-        _gameCtrl.game.addEventListener(
+        gameCtrl.game.addEventListener(
             StateChangedEvent.GAME_STARTED, 
             handleGameStarted);
-        _gameCtrl.game.addEventListener(
+        gameCtrl.game.addEventListener(
             StateChangedEvent.GAME_ENDED, 
             handleGameEnded);
-        _gameCtrl.game.addEventListener(
+        gameCtrl.game.addEventListener(
             StateChangedEvent.ROUND_STARTED, 
             handleRoundStarted);
-        _gameCtrl.game.addEventListener(
+        gameCtrl.game.addEventListener(
             StateChangedEvent.ROUND_ENDED, 
             handleRoundEnded);
-        _gameCtrl.game.addEventListener(
+        gameCtrl.game.addEventListener(
             StateChangedEvent.TURN_CHANGED, 
             handleTurnChanged);
 
@@ -102,10 +83,11 @@ public class Spades extends Sprite
         bids.addEventListener(BidEvent.SELECTED, bidListener);
 
         hand.addEventListener(HandEvent.CARDS_SELECTED, handListener);
+    }
 
-        // configure the players
-        _table = new TableSprite(_model);
-        addChild(_table);
+    public function get model () :Model
+    {
+        return _model;
     }
 
     / ** For debugging, log a string prefixed with player name and seating position. */
@@ -116,7 +98,7 @@ public class Spades extends Sprite
 
     protected function get gameCtrl () :GameControl
     {
-        return _gameCtrl;
+        return _model.gameCtrl;
     }
 
     protected function get table () :Table
@@ -451,20 +433,20 @@ public class Spades extends Sprite
         return false;
     }
 
-    /** Our game control object. */
-    protected var _gameCtrl :GameControl;
-
     /** Our model object. */
     protected var _model :Model;
-
-    /** The table. */
-    protected var _table :TableSprite;
 
     /** If we are running a "development minigame". */
     protected var _miniGame :Boolean = false;
 
     /** Name of property indicating the last player to lead the hand. */
     protected static const COMS_LAST_LEADER :String = "lastleader";
+
+    /** Players required for a game of spades */
+    protected static const NUM_PLAYERS :int = 4;
+
+    /** Time between rounds (seconds). */
+    protected static const DELAY_TO_NEXT_ROUND :int = 5;
 }
 }
 
