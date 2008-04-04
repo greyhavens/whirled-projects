@@ -47,31 +47,36 @@ public class Spades extends Sprite
     {
         _gameCtrl = gameCtrl;
 
-        var config :Object = _gameCtrl.game.getConfig();
+        var config :Object = gameCtrl.game.getConfig();
+        if ("minigame" in config) {
+            _miniGame = config["minigame"] as Boolean;
+        }
+
+        var sorter :Sorter = new Sorter(
+            Card.RANK_ORDER_ACES_HIGH, [
+                Card.SUIT_SPADES,
+                Card.SUIT_HEARTS,
+                Card.SUIT_CLUBS,
+                Card.SUIT_DIAMONDS]);
+
         var targetScore :int = 300;
 
         if ("playto" in config) {
             targetScore = parseInt(config["playto"] as String);
         }
-        if ("minigame" in config) {
-            _miniGame = config["minigame"] as Boolean;
-        }
 
-
-        _seating = new Table(
+        var table :Table = new Table(
             _gameCtrl.game.seating.getPlayerNames(),
             _gameCtrl.game.seating.getPlayerIds(), 
             _gameCtrl.game.seating.getMyPosition(),
             [new Team(0, [0, 2]), new Team(1, [1, 3])]);
-        _trick = new Trick(_gameCtrl, trumps);
-        _bids = new Bids(_gameCtrl, CardArray.FULL_DECK.length / NUM_PLAYERS);
-        _hand = new Hand(_gameCtrl, new Sorter(
-            Card.RANK_ORDER_ACES_HIGH, [
-                Card.SUIT_SPADES,
-                Card.SUIT_HEARTS,
-                Card.SUIT_CLUBS,
-                Card.SUIT_DIAMONDS]));
-        _scores = new Scores(_seating, _bids, targetScore);
+        var hand :Hand = new Hand(_gameCtrl, sorter);
+        var trick :Trick = new Trick(_gameCtrl, trumps);
+        var bids :Bids = new Bids(_gameCtrl, 
+            CardArray.FULL_DECK.length / table.numPlayers);
+        var scores :Scores = new Scores(table, bids, targetScore);
+
+        _model = new Model(table, hand, trick, bids, scores);
 
         _gameCtrl.game.addEventListener(
             StateChangedEvent.GAME_STARTED, 
@@ -89,24 +94,20 @@ public class Spades extends Sprite
             StateChangedEvent.TURN_CHANGED, 
             handleTurnChanged);
 
-        _trick.addEventListener(TrickEvent.CARD_PLAYED, trickListener);
-        _trick.addEventListener(TrickEvent.COMPLETED, trickListener);
+        trick.addEventListener(TrickEvent.CARD_PLAYED, trickListener);
+        trick.addEventListener(TrickEvent.COMPLETED, trickListener);
 
-        _bids.addEventListener(BidEvent.PLACED, bidListener);
-        _bids.addEventListener(BidEvent.COMPLETED, bidListener);
-        _bids.addEventListener(BidEvent.SELECTED, bidListener);
+        bids.addEventListener(BidEvent.PLACED, bidListener);
+        bids.addEventListener(BidEvent.COMPLETED, bidListener);
+        bids.addEventListener(BidEvent.SELECTED, bidListener);
 
-        _hand.addEventListener(HandEvent.CARDS_SELECTED, handListener);
+        hand.addEventListener(HandEvent.CARDS_SELECTED, handListener);
 
         // configure the players
-        _table = new TableSprite(
-            _scores,
-            _trick,
-            _hand);
+        _table = new TableSprite(_model);
+        addChild(_table);
 
         setupHeadShots();
-
-        addChild(_table);
     }
 
     / ** For debugging, log a string prefixed with player name and seating position. */
@@ -115,13 +116,43 @@ public class Spades extends Sprite
         Debug.debug(str);
     }
 
+    protected function get gameCtrl () :GameControl
+    {
+        return _gameCtrl;
+    }
+
+    protected function get table () :Table
+    {
+        return _model.table;
+    }
+
+    protected function get hand () :Hand
+    {
+        return _model.hand;
+    }
+
+    protected function get trick () :Trick
+    {
+        return _model.trick;
+    }
+
+    protected function get bids () :Bids
+    {
+        return _model.bids;
+    }
+
+    protected function get scores () :Scores
+    {
+        return _model.scores;
+    }
+
     protected function setupHeadShots () :void
     {
-        var players :Array = _gameCtrl.game.seating.getPlayerIds();
+        var players :Array = gameCtrl.game.seating.getPlayerIds();
         for (var i :int = 0; i < players.length; ++i) {
             var callback :Function = _table.getHeadShotCallback(i);
             log("Getting headshot for " + players[i]);
-            _gameCtrl.local.getHeadShot(players[i], callback);
+            gameCtrl.local.getHeadShot(players[i], callback);
         }
     }
 
@@ -129,20 +160,20 @@ public class Spades extends Sprite
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
         var mini :String = _miniGame ? " (mini game selected)" : "";
-        _gameCtrl.local.feedback(
-             "Welcome to Spades, first player to score " + _scores.target + 
+        gameCtrl.local.feedback(
+             "Welcome to Spades, first player to score " + scores.target + 
              " wins" + mini  + "\n");
 
-        _scores.resetScores();
+        scores.resetScores();
     }
 
     /** Start the round. */
     protected function handleRoundStarted (event :StateChangedEvent) :void
     {
-        _gameCtrl.local.feedback("Round " + _gameCtrl.game.getRound() + " started\n");
+        gameCtrl.local.feedback("Round " + gameCtrl.game.getRound() + " started\n");
 
         // let the controlling client kick off the round
-        if (_gameCtrl.game.amInControl()) {
+        if (gameCtrl.game.amInControl()) {
 
             log("Dealing and setting up bids");
 
@@ -157,41 +188,41 @@ public class Spades extends Sprite
                 deck = deck.shortFilter(isHighCard);
             }
 
-            _hand.deal(deck);
-            _bids.reset();
-            _trick.reset();
+            hand.deal(deck);
+            bids.reset();
+            trick.reset();
 
             // on the first round, set a random first player as leader. Otherwise, advance the 
             // previous leader by one
-            if (_gameCtrl.game.getRound() == 1) {
-                _gameCtrl.game.startNextTurn();
+            if (gameCtrl.game.getRound() == 1) {
+                gameCtrl.game.startNextTurn();
             }
             else {
-                var lastId :int = _gameCtrl.net.get(COMS_LAST_LEADER) as int;
-                _gameCtrl.game.startNextTurn(_seating.getIdToLeft(lastId));
+                var lastId :int = gameCtrl.net.get(COMS_LAST_LEADER) as int;
+                gameCtrl.game.startNextTurn(table.getIdToLeft(lastId));
             }
         }
 
-        _scores.resetTricks();
+        scores.resetTricks();
     }
     
     /** Process the total tricks taken for this set of hands played, add into the local scores
      *  and display */
     protected function updateScores () :void
     {
-        for (var team :int = 0; team < _seating.numTeams; ++team) {
-            var over :int = _scores.getTricks(team) - _scores.getBid(team);
-            var base :int = _scores.getBid(team) * 10;
+        for (var team :int = 0; team < table.numTeams; ++team) {
+            var over :int = scores.getTricks(team) - scores.getBid(team);
+            var base :int = scores.getBid(team) * 10;
             var score :int = over >= 0 ? (base + over) : (-base);
-            _scores.addScore(team, score);
+            scores.addScore(team, score);
         }
     }
 
     /** Entry point for when a round has ended. */
     protected function handleRoundEnded (event :StateChangedEvent) :void
     {
-        var round :int = -_gameCtrl.game.getRound();
-        _gameCtrl.local.feedback("Round " + round + " ended\n");
+        var round :int = -gameCtrl.game.getRound();
+        gameCtrl.local.feedback("Round " + round + " ended\n");
         _table.setPlayerTurn(-1);
     }
 
@@ -199,7 +230,7 @@ public class Spades extends Sprite
      *  TODO: award points + flow? */
     protected function handleGameEnded (event :StateChangedEvent) :void
     {
-        _gameCtrl.local.feedback("Thank you for playing Spades!");
+        gameCtrl.local.feedback("Thank you for playing Spades!");
     }
 
     protected function bidListener (event :BidEvent) :void
@@ -207,18 +238,18 @@ public class Spades extends Sprite
         log("Received " + event);
         if (event.type == BidEvent.PLACED) {
 
-            var name :String = _seating.getNameFromId(event.player);
-            _gameCtrl.local.feedback(name + " bid " + event.value);
+            var name :String = table.getNameFromId(event.player);
+            gameCtrl.local.feedback(name + " bid " + event.value);
             
-            if (_gameCtrl.game.amInControl()) {
-                _gameCtrl.game.startNextTurn();
+            if (gameCtrl.game.amInControl()) {
+                gameCtrl.game.startNextTurn();
             }
         }
         else if (event.type == BidEvent.COMPLETED) {
-            _gameCtrl.local.feedback("All bids are in, starting play");
+            gameCtrl.local.feedback("All bids are in, starting play");
         }
         else if (event.type == BidEvent.SELECTED) {
-            _bids.placeBid(event.value);
+            bids.placeBid(event.value);
         }
     }
 
@@ -226,28 +257,28 @@ public class Spades extends Sprite
     protected function handleTurnChanged (event :StateChangedEvent) :void
     {
         // Make sure the current turn holder is "selected"
-        var turnHolder :int = _gameCtrl.game.getTurnHolderId();
-        var hotSeat :int = _gameCtrl.game.seating.getPlayerPosition(turnHolder);
+        var turnHolder :int = gameCtrl.game.getTurnHolderId();
+        var hotSeat :int = gameCtrl.game.seating.getPlayerPosition(turnHolder);
         log("Turn changed to " + turnHolder + " in seat " + hotSeat);
         _table.setPlayerTurn(hotSeat);
 
-        if (_gameCtrl.game.isMyTurn()) {
-            if (_bids.complete) {
-                _hand.beginTurn(getLegalMoves());
+        if (gameCtrl.game.isMyTurn()) {
+            if (bids.complete) {
+                hand.beginTurn(getLegalMoves());
             }
             else {
-                _bids.request(_hand.length);
+                bids.request(hand.length);
             }
         }
 
         if (turnHolder > 0) {
             // This is the beginning of the round, so declare the leader.
-            if (_bids.length == 0) {
-                var leader :String = _seating.getNameFromAbsolute(hotSeat);
-                _gameCtrl.local.feedback("Leader this round is " + leader);
+            if (bids.length == 0) {
+                var leader :String = table.getNameFromAbsolute(hotSeat);
+                gameCtrl.local.feedback("Leader this round is " + leader);
 
-                if (_gameCtrl.game.amInControl()) {
-                    _gameCtrl.net.set(COMS_LAST_LEADER, turnHolder);
+                if (gameCtrl.game.amInControl()) {
+                    gameCtrl.net.set(COMS_LAST_LEADER, turnHolder);
                 }
             }
         }
@@ -257,29 +288,30 @@ public class Spades extends Sprite
      *  give them their turn */
     protected function completeTrick () :void
     {
-        if (_trick.length != NUM_PLAYERS) {
+        if (trick.length != NUM_PLAYERS) {
             throw new Error();
         }
 
-        var winner :int = _trick.winner;
-        var winnerSeat :int = _seating.getAbsoluteFromId(winner);
+        var winner :int = trick.winner;
+        var winnerSeat :int = table.getAbsoluteFromId(winner);
 
         log("Trick winner is " + winner + " in seat " + winnerSeat + ", name " + 
-            _seating.getNameFromId(winner));
+            table.getNameFromId(winner));
 
-        _scores.addTrick(winnerSeat);
+        scores.addTrick(winnerSeat);
 
-        _gameCtrl.local.feedback(_seating.getNameFromId(winner) + " won the trick");
+        gameCtrl.local.feedback(
+            table.getNameFromId(winner) + " won the trick");
 
-        if (_gameCtrl.game.amInControl()) {
-            _trick.reset();
+        if (gameCtrl.game.amInControl()) {
+            trick.reset();
 
-            if (_hand.length > 0) {
-                _gameCtrl.game.startNextTurn(winner);
+            if (hand.length > 0) {
+                gameCtrl.game.startNextTurn(winner);
             }
         }
 
-        if (_hand.length == 0) {
+        if (hand.length == 0) {
             completeRound();
         }
     }
@@ -287,7 +319,7 @@ public class Spades extends Sprite
     protected function getTeamName (team :Team) :String
     {
         
-        var names :Array = _gameCtrl.game.seating.getPlayerNames();
+        var names :Array = gameCtrl.game.seating.getPlayerNames();
         return names[team.index] + " and " + names[team.index + 2];
     }
 
@@ -295,37 +327,37 @@ public class Spades extends Sprite
     {
         updateScores();
 
-        var wal :WinnersAndLosers = _scores.getWinnersAndLosers();
+        var wal :WinnersAndLosers = scores.getWinnersAndLosers();
         var winners :Array = wal.winningTeams;
 
-        var highScore :int = _scores.getScore(Team(winners[0]).index);
+        var highScore :int = scores.getScore(Team(winners[0]).index);
 
-        if (highScore < _scores.target && wal.losingTeams.length == 1) {
+        if (highScore < scores.target && wal.losingTeams.length == 1) {
             highScore = 
-                _scores.getScore(Team(winners[0]).index) -
-                _scores.getScore(Team(wal.losingTeams[0]).index);
+                scores.getScore(Team(winners[0]).index) -
+                scores.getScore(Team(wal.losingTeams[0]).index);
         }
 
         // feedback
-        if (highScore >= _scores.target) {
+        if (highScore >= scores.target) {
             if (winners.length == 1) {
-                _gameCtrl.local.feedback(
+                gameCtrl.local.feedback(
                     getTeamName(Team(winners[0])) + " win the game!");
             }
             else if (winners.length > 1) {
-                _gameCtrl.local.feedback("Tie game! Continuing...");
+                gameCtrl.local.feedback("Tie game! Continuing...");
             }
         }
         
         // control
-        if (_gameCtrl.game.amInControl()) {
-            if (winners.length == 1 && highScore >= _scores.target) {
-                _gameCtrl.game.endGameWithWinners(
+        if (gameCtrl.game.amInControl()) {
+            if (winners.length == 1 && highScore >= scores.target) {
+                gameCtrl.game.endGameWithWinners(
                     wal.winningPlayers, wal.losingPlayers, 
                     GameSubControl.CASCADING_PAYOUT);
             }
             else {
-                _gameCtrl.game.endRound(DELAY_TO_NEXT_ROUND);
+                gameCtrl.game.endRound(DELAY_TO_NEXT_ROUND);
             }
         }
     }
@@ -337,8 +369,8 @@ public class Spades extends Sprite
             completeTrick();
         }
         else if (event.type == TrickEvent.CARD_PLAYED) {
-            if (!_trick.complete && _gameCtrl.game.amInControl()) {
-                _gameCtrl.game.startNextTurn();
+            if (!trick.complete && gameCtrl.game.amInControl()) {
+                gameCtrl.game.startNextTurn();
             }
         }
     }
@@ -346,7 +378,7 @@ public class Spades extends Sprite
     /** Entry point for when the user selects their bid */
     protected function onBid (bid :int) :void
     {
-        _bids.placeBid(bid);
+        bids.placeBid(bid);
     }
 
     /** Check if spades can be played (part of current game state and/or config).
@@ -360,7 +392,7 @@ public class Spades extends Sprite
     protected function countSuit (suit :int) :int
     {
         var count :int = 0;
-        _hand.cards.cards.forEach(countIfSameSuit);
+        hand.cards.cards.forEach(countIfSameSuit);
         return count;
 
         function countIfSameSuit (c :Card, i :int, a :Array) :void
@@ -375,7 +407,7 @@ public class Spades extends Sprite
      *  match a given suit. */
     protected function filterCards (suit :int, match :Boolean) :CardArray
     {
-        return _hand.cards.shortFilter(compare);
+        return hand.cards.shortFilter(compare);
 
         function compare (c :Card) :Boolean
         {
@@ -391,11 +423,11 @@ public class Spades extends Sprite
     /** Get the cards that may now be played. */
     protected function getLegalMoves () :CardArray
     {
-        var leader :Card = _trick.ledCard;
+        var leader :Card = trick.ledCard;
 
         if (leader != null && countSuit(leader.suit) == 0) {
             // out of led suit, allow any
-            return _hand.cards;
+            return hand.cards;
         }
         else if (leader != null) {
             // allow only led suit
@@ -403,11 +435,11 @@ public class Spades extends Sprite
         }
         else if (canLeadSpades()) {
             // leading and spades are available, allow any
-            return _hand.cards;
+            return hand.cards;
         }
-        else if (countSuit(Card.SUIT_SPADES) == _hand.length) {
+        else if (countSuit(Card.SUIT_SPADES) == hand.length) {
             // leading and no other suits available, allow any
-            return _hand.cards;
+            return hand.cards;
         }
         else {
             // leading, allow any non-spade suit
@@ -420,8 +452,8 @@ public class Spades extends Sprite
     {
         if (event.type == HandEvent.CARDS_SELECTED) {
             var card :Card = event.cards.cards[0];
-            _trick.playCard(card);
-            _hand.endTurn();
+            trick.playCard(card);
+            hand.endTurn();
         }
     }
 
@@ -439,23 +471,11 @@ public class Spades extends Sprite
     /** Our game control object. */
     protected var _gameCtrl :GameControl;
 
-    /** Our seating object. */
-    protected var _seating :Table;
-
-    /** Our hand. */
-    protected var _hand :Hand;
+    /** Our model object. */
+    protected var _model :Model;
 
     /** The table. */
     protected var _table :TableSprite;
-
-    /** The trick in the middle of the table */
-    protected var _trick :Trick;
-
-    /** The bids */
-    protected var _bids :Bids;
-    
-    /** The scores */
-    protected var _scores :Scores;
 
     /** If we are running a "development minigame". */
     protected var _miniGame :Boolean = false;

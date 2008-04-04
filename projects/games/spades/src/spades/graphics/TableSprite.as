@@ -9,6 +9,7 @@ import flash.utils.Timer;
 
 import com.threerings.flash.Vector2;
 
+import spades.Model;
 import spades.card.CardArray;
 import spades.card.CardArrayEvent;
 import spades.card.Trick;
@@ -57,40 +58,37 @@ public class TableSprite extends Sprite
     /** Create a new table.
      *  @param playerNames the names of the players, in seat order
      *  @param localSeat the seat that the local player is sitting in */
-    public function TableSprite (
-        scores :Scores,
-        trick :Trick,
-        hand :Hand)
+    public function TableSprite (model :Model)
     {
-        _seating = scores.table;
+        _model = model;
 
-        _players = new Array(_seating.numPlayers);
-        for (var seat :int = 0; seat < _seating.numPlayers; ++seat) {
-            var name :String = _seating.getNameFromRelative(seat);
+        _players = new Array(table.numPlayers);
+        for (var seat :int = 0; seat < table.numPlayers; ++seat) {
+            var name :String = table.getNameFromRelative(seat);
             var p :PlayerSprite = new PlayerSprite(name);
             addChild(p);
             _players[seat] = p;
         }
         
-        _hand = new HandSprite(hand);
+        _hand = new HandSprite(_model.hand);
         addChild(_hand);
 
-        _trick = new MainTrickSprite(trick, _seating, _players, _hand);
+        _trick = new MainTrickSprite(_model.trick, table, _players, _hand);
         addChild(_trick);
 
-        _teams[0] = new TeamSprite(scores, 0, 
+        _teams[0] = new TeamSprite(_model.scores, 0, 
             TRICK_POSITION, new Vector2(LAST_TRICK_OFFSET, 0));
         addChild(_teams[0] as TeamSprite);
 
-        _teams[1] = new TeamSprite(scores, 1, 
+        _teams[1] = new TeamSprite(_model.scores, 1, 
             TRICK_POSITION, new Vector2(-LAST_TRICK_OFFSET, 0));
         addChild(_teams[1] as TeamSprite);
 
-        _bid = new BidSprite(scores.bids);
+        _bid = new BidSprite(_model.bids);
         addChild(_bid);
 
         // listen for the trick changing
-        trick.addEventListener(TrickEvent.COMPLETED, trickListener);
+        _model.trick.addEventListener(TrickEvent.COMPLETED, trickListener);
 
         // listen for our removal to prevent stranded listeners
         addEventListener(Event.REMOVED, removedListener);
@@ -101,14 +99,14 @@ public class TableSprite extends Sprite
     /** Retrieve a callback to set a player's head shot. */
     public function getHeadShotCallback (seat :int) :Function
     {
-        return getPlayer(_seating.getRelativeFromAbsolute(seat)).setHeadShot;
+        return getPlayer(table.getRelativeFromAbsolute(seat)).setHeadShot;
     }
 
     /** Highlight a player to show it is his turn. Also unhighlights any previous.
      *  If NO_SEAT is given, then all players are unhighlighted. */
     public function setPlayerTurn (seat :int) :void
     {
-        seat = _seating.getRelativeFromAbsolute(seat);
+        seat = table.getRelativeFromAbsolute(seat);
         _players.forEach(setTurn);
 
         function setTurn (p :PlayerSprite, index :int, array :Array) :void
@@ -142,7 +140,7 @@ public class TableSprite extends Sprite
     {
         if (event.type == TrickEvent.COMPLETED) {
             var trick :Trick = event.target as Trick;
-            var teamIdx :int = _seating.getTeamFromId(event.player).index;
+            var teamIdx :int = table.getTeamFromId(event.player).index;
             TeamSprite(_teams[teamIdx]).takeTrick(_trick.orphanCards());
             TeamSprite(_teams[(teamIdx + 1) % 2]).clearLastTrick();
         }
@@ -163,15 +161,17 @@ public class TableSprite extends Sprite
         return _players[seat] as PlayerSprite;
     }
 
+    protected function get table () :Table
+    {
+        return _model.table;
+    }
+
+    protected var _model :Model;
     protected var _players :Array;
-    protected var _seating :Table;
     protected var _bid :BidSprite;
     protected var _hand :HandSprite;
     protected var _trick :MainTrickSprite;
     protected var _teams :Array = [null, null];
-
-    /** Seconds that the last trick is visible. */
-    protected const LAST_TRICK_VISIBILITY_DURATION :int = 5;
 }
 
 }
