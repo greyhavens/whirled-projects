@@ -1,11 +1,12 @@
 package spades.graphics {
 
-
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
+import flash.display.Bitmap;
 
 import com.threerings.flash.Vector2;
+import com.threerings.util.MultiLoader;
 
 import caurina.transitions.Tweener;
 
@@ -33,6 +34,8 @@ public class TeamSprite extends Sprite
         mainTrickPos :Vector2,
         lastTrickPos :Vector2)
     {
+        MultiLoader.getContents(TEAM_IMAGES[team] as Class, gotBackground);
+
         _table = scores.table;
         _team = _table.getTeam(team);
         _bids = scores.bids;
@@ -65,11 +68,6 @@ public class TeamSprite extends Sprite
         _score.selectable = false;
         addChild(_score);
 
-        graphics.clear();
-        graphics.beginFill(0x808080);
-        graphics.drawRect(-WIDTH / 2, -HEIGHT/2, WIDTH, HEIGHT);
-        graphics.endFill();
-
         updateTricks();
 
         _bids.addEventListener(BidEvent.RESET, bidListener);
@@ -77,6 +75,14 @@ public class TeamSprite extends Sprite
 
         _scores.addEventListener(ScoresEvent.TRICKS_CHANGED, scoresListener);
         _scores.addEventListener(ScoresEvent.SCORES_CHANGED, scoresListener);
+
+        function gotBackground (background :Bitmap) :void
+        {
+            addChildAt(background, 0);
+
+            background.x = -background.width / 2;
+            background.y = -background.height / 2;
+        }
     }
 
     /** Take the array of card sprites and animate them to this team's last trick slot. The 
@@ -208,6 +214,14 @@ public class TeamSprite extends Sprite
 
     protected static const WIDTH :int = 180;
     protected static const HEIGHT :int = 80;
+
+    [Embed(source="../../../rsrc/team_blue.png", mimeType="application/octet-stream")]
+    protected static const IMAGE_TEAM_0 :Class;
+
+    [Embed(source="../../../rsrc/team_orange.png", mimeType="application/octet-stream")]
+    protected static const IMAGE_TEAM_1 :Class;
+
+    protected static const TEAM_IMAGES :Array = [IMAGE_TEAM_0, IMAGE_TEAM_1];
 }
 
 }

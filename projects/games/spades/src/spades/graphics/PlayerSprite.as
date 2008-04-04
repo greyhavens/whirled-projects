@@ -1,8 +1,14 @@
 package spades.graphics {
 
 import flash.display.Sprite;
+import flash.display.Bitmap;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
+
+import com.threerings.util.MultiLoader;
+
+import spades.Debug;
+import spades.card.Team;
 
 import caurina.transitions.Tweener;
 
@@ -13,17 +19,9 @@ import caurina.transitions.Tweener;
 public class PlayerSprite extends Sprite
 {
     /** Create a new player. */
-    public function PlayerSprite (name :String)
+    public function PlayerSprite (name :String, team :Team)
     {
-        _background = new Sprite();
-        addChild(_background);
-
-        _background.graphics.clear();
-        _background.graphics.beginFill(0x00FF00);
-        _background.graphics.drawRect(-WIDTH / 2, -HEIGHT / 2, WIDTH, HEIGHT);
-        _background.graphics.endFill();
-
-        _background.visible = false;
+        MultiLoader.getContents(TEAM_IMAGES[team.index] as Class, gotBackground);
 
         var nameField :TextField = new TextField();
         addChild(nameField);
@@ -35,6 +33,17 @@ public class PlayerSprite extends Sprite
         nameField.selectable = false;
 
         setTurn(false);
+
+        function gotBackground (background :Bitmap) :void
+        {
+            _background = background;
+            addChildAt(_background, 0);
+
+            _background.x = -_background.width / 2;
+            _background.y = -_background.height / 2;
+
+            _background.visible = _turn;
+        }
     }
 
     public function setHeadShot (sprite :Sprite, success :Boolean) :void
@@ -53,6 +62,12 @@ public class PlayerSprite extends Sprite
      *  @param turn indicates whether it is this player's turn */
     public function setTurn (turn :Boolean) :void
     {
+        _turn = turn;
+
+        if (_background == null) {
+            return;
+        }
+
         Tweener.removeTweens(_background);
 
         if (turn) {
@@ -76,11 +91,20 @@ public class PlayerSprite extends Sprite
         }
     }
 
-    protected var _background :Sprite;
+    protected var _background :Bitmap;
     protected var _headShot :Sprite;
+    protected var _turn :Boolean;
 
     protected static const WIDTH :int = 165;
     protected static const HEIGHT :int = 115;
+
+    [Embed(source="../../../rsrc/turn_blue.png", mimeType="application/octet-stream")]
+    protected static const IMAGE_TEAM_0 :Class;
+
+    [Embed(source="../../../rsrc/turn_orange.png", mimeType="application/octet-stream")]
+    protected static const IMAGE_TEAM_1 :Class;
+
+    protected static const TEAM_IMAGES :Array = [IMAGE_TEAM_0, IMAGE_TEAM_1];
 }
 
 }

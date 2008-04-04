@@ -2,13 +2,13 @@ package spades.graphics {
 
 import flash.display.Sprite;
 import flash.display.DisplayObject;
-import flash.events.MouseEvent;
 import flash.events.Event;
-import flash.events.TimerEvent;
 import flash.utils.Timer;
+import flash.display.Bitmap;
 
 import com.threerings.flash.Vector2;
 import com.whirled.game.StateChangedEvent;
+import com.threerings.util.MultiLoader;
 
 import spades.Model;
 import spades.card.CardArray;
@@ -32,12 +32,15 @@ public class TableSprite extends Sprite
      *  @param localSeat the seat that the local player is sitting in */
     public function TableSprite (model :Model)
     {
+        MultiLoader.getContents(BACKGROUND, gotBackground);
+
         _model = model;
 
         _players = new Array(table.numPlayers);
         for (var seat :int = 0; seat < table.numPlayers; ++seat) {
             var name :String = table.getNameFromRelative(seat);
-            var p :PlayerSprite = new PlayerSprite(name);
+            var p :PlayerSprite = new PlayerSprite(name, 
+                table.getTeamFromRelative(seat));
             addChild(p);
             _players[seat] = p;
         }
@@ -73,6 +76,11 @@ public class TableSprite extends Sprite
             handleTurnChanged);
 
         layout();
+
+        function gotBackground (background :Bitmap) :void
+        {
+            addChildAt(background, 0);
+        }
     }
 
     /** Highlight a player to show it is his turn. Also unhighlights any previous. 
@@ -194,6 +202,9 @@ public class TableSprite extends Sprite
 
     /** Offset of the last trick, relative to the team. */
     protected static const LAST_TRICK_OFFSET :Number = 130;
+
+    [Embed(source="../../../rsrc/background.png", mimeType="application/octet-stream")]
+    protected static const BACKGROUND :Class;
 }
 
 }
