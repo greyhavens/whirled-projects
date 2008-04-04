@@ -266,14 +266,19 @@ public class CreatureUnitView extends SceneObject
                 this.updateAnimations();
             }
 
-            // estimate a new location for the CreatureUnit,
-            // based on its last location and its velocity
+            if (Constants.DEBUG_DISABLE_MOVEMENT_SMOOTHING) {
+                this.x = _unit.x;
+                this.y = _unit.y;
+            } else {
+                // estimate a new location for the CreatureUnit,
+                // based on its last location and its velocity
 
-            var updateDelta :Number = Math.max(_updateTime - _unit.updateTime, 0);
-            var movementDelta :Vector2 = _unit.movementDirection.scale(updateDelta);
+                var updateDelta :Number = Math.max(_updateTime - _unit.updateTime, 0);
+                var movementDelta :Vector2 = _unit.movementDirection.scale(updateDelta);
 
-            this.x = _unit.x + movementDelta.x;
-            this.y = _unit.y + movementDelta.y;
+                this.x = _unit.x + movementDelta.x;
+                this.y = _unit.y + movementDelta.y;
+            }
 
             _healthMeter.value = _unit.health;
         }

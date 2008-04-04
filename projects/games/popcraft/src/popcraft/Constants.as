@@ -19,6 +19,7 @@ public class Constants
     public static const DEBUG_ALLOW_CHEATS :Boolean = true;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = true;
+    public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
 
     public static const PLAYER_COLORS :Array = [
        uint(0xFFFF0000),
