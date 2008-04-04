@@ -262,12 +262,12 @@ public class CreatureUnitView extends SceneObject
 
             // estimate the amount of time that's elapsed since
             // the creature's last update
-            var unitUpdateTime :Number = _unit.updateTime;
-            if (unitUpdateTime == _lastUnitUpdateTime) {
-                _unitUpdateDelta += dt;
+            var unitUpdateTimestamp :Number = _unit.lastUpdateTimestamp;
+            if (unitUpdateTimestamp == _lastUnitUpdateTimestamp) {
+                _unitUpdateTimeDelta += dt;
             } else {
-                _lastUnitUpdateTime = unitUpdateTime;
-                _unitUpdateDelta = 0;
+                _lastUnitUpdateTimestamp = unitUpdateTimestamp;
+                _unitUpdateTimeDelta = 0;
             }
 
             // @TODO - remove this
@@ -283,7 +283,7 @@ public class CreatureUnitView extends SceneObject
                 // estimate a new location for the CreatureUnit,
                 // based on its last location and its velocity
 
-                var distanceDelta :Number = _unit.unitData.baseMoveSpeed * _unitUpdateDelta;
+                var distanceDelta :Number = _unit.unitData.baseMoveSpeed * _unitUpdateTimeDelta;
                 var movementDelta :Vector2 = _unit.movementDirection.scale(distanceDelta);
 
                 this.x = _unit.x + movementDelta.x;
@@ -335,8 +335,8 @@ public class CreatureUnitView extends SceneObject
     protected var _animAttacking :Array = [];
     protected var _animMoving :Array = [];
 
-    protected var _lastUnitUpdateTime :Number = 0;
-    protected var _unitUpdateDelta :Number = 0;
+    protected var _lastUnitUpdateTimestamp :Number = 0;
+    protected var _unitUpdateTimeDelta :Number = 0;
 
     // @TODO - remove this when all units have animations
     protected var _hasAnimations :Boolean;

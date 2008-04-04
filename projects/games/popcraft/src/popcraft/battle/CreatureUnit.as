@@ -35,6 +35,20 @@ public class CreatureUnit extends Unit
         _collisionGrid = GameMode.instance.battleCollisionGrid; // there's only one collision grid
     }
 
+    public function calcShortestTravelTimeTo (dest :Vector2) :Number
+    {
+        // return the shortest amount of time it will take us to get from
+        // our current location to dest
+
+        var distance :Number = dest.subtract(_loc).length;
+        return distance / _unitData.baseMoveSpeed;
+    }
+
+    public function isAtLocation (dest :Vector2) :Boolean
+    {
+        return _loc.similar(dest, MOVEMENT_EPSILON);
+    }
+
     public function setMovementDestination (dest :Vector2) :void
     {
         _destination = dest.clone();
@@ -60,11 +74,12 @@ public class CreatureUnit extends Unit
         _movedThisFrame = false;
 
         if (this.isMoving) {
-            // are we there yet?
+
             var curLoc :Vector2 = this.unitLoc;
 
-            if (curLoc.similar(_destination, MOVEMENT_EPSILON)) {
+            if (this.isAtLocation(_destination)) {
                 this.stopMoving();
+
             } else {
 
                 // the unit is attracted to its destination
@@ -86,9 +101,6 @@ public class CreatureUnit extends Unit
 
                 this.x = nextLoc.x;
                 this.y = nextLoc.y;
-
-                // update our location in the collision grid
-                //_collisionObj.addToGrid(_collisionGrid);
 
                 _movedThisFrame = true;
             }
@@ -124,7 +136,7 @@ public class CreatureUnit extends Unit
 
     override protected function update (dt :Number) :void
     {
-        _updateTime += dt;
+        _lastUpdateTimestamp += dt;
 
         this.stopMoving();
 
@@ -160,9 +172,9 @@ public class CreatureUnit extends Unit
         return _collisionObj;
     }
 
-    public function get updateTime () :Number
+    public function get lastUpdateTimestamp () :Number
     {
-        return _updateTime;
+        return _lastUpdateTimestamp;
     }
 
     protected var _destination :Vector2;
@@ -173,7 +185,7 @@ public class CreatureUnit extends Unit
     protected var _movedThisFrame :Boolean;
     protected var _movementDirection :Vector2;
 
-    protected var _updateTime :Number = 0;
+    protected var _lastUpdateTimestamp :Number = 0;
 
     protected static var g_groups :Array;
 
