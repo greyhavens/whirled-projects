@@ -43,6 +43,10 @@ public class TableSprite extends Sprite
                 table.getTeamFromRelative(seat));
             addChild(p);
             _players[seat] = p;
+
+            _model.gameCtrl.local.getHeadShot(
+                 table.getIdFromRelative(seat), 
+                 p.setHeadShot);
         }
         
         _hand = new HandSprite(_model.hand);
@@ -108,15 +112,6 @@ public class TableSprite extends Sprite
     {
         var id :int = _model.gameCtrl.game.getTurnHolderId();
         setPlayerTurn(table.getAbsoluteFromId(id));
-    }
-
-    protected function setupHeadShots () :void
-    {
-        for (var i :int = 0; i < table.numPlayers; ++i) {
-            _model.gameCtrl.local.getHeadShot(
-                 table.getIdFromRelative(i), 
-                 getPlayer(i).setHeadShot);
-        }
     }
 
     protected function positionChild (child :DisplayObject, pos :Vector2) :void
