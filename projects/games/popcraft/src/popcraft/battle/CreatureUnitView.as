@@ -275,10 +275,11 @@ public class CreatureUnitView extends SceneObject
                 this.updateAnimations();
             }
 
-            if (Constants.DEBUG_DISABLE_MOVEMENT_SMOOTHING) {
+            if (!_unit.isMoving || Constants.DEBUG_DISABLE_MOVEMENT_SMOOTHING) {
                 this.x = _unit.x;
                 this.y = _unit.y;
             } else {
+
                 // estimate a new location for the CreatureUnit,
                 // based on its last location and its velocity
 
