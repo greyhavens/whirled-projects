@@ -99,14 +99,19 @@ public class Unit extends SimObject
         }
     }
 
-    public function sendAttack (targetUnit :Unit, weapon :UnitWeapon) :void
+    public function sendAttack (targetUnitOrLocation :*, weapon :UnitWeapon) :void
     {
-        if (this.isAttacking || !this.canAttackWithWeapon(targetUnit, weapon)) {
-            /*log.info(
-                "discarding attack from "
-                + this.id + " to " + targetUnit.id +
-                " (target out of range, or we're already attacking)");*/
+        // @TODO - fix this mess of a function
 
+        // don't attack if we're already attacking
+        if (this.isAttacking) {
+            return;
+        }
+
+        var targetUnit :Unit = targetUnitOrLocation as Unit;
+
+        // don't attack if we're out of range
+        if (null != targetUnit && !this.canAttackWithWeapon(targetUnit, weapon)) {
             return;
         }
 
@@ -114,11 +119,18 @@ public class Unit extends SimObject
 
         this.dispatchEvent(new UnitEvent(UnitEvent.ATTACKING, weapon));
 
-        if (weapon.isRanged) {
+        if (weapon.isRanged && null != targetUnit) {
             MissileFactory.createMissile(targetUnit, attack);
         } else if (weapon.isAOE) {
-            this.sendAOEAttack(this.unitLoc, attack);
-        } else {
+            var targetLoc :Vector2 = targetUnitOrLocation as Vector2;
+            if (null == targetLoc && null != targetUnit) {
+                targetLoc = targetUnit.unitLoc;
+            }
+
+            if (null != targetLoc) {
+                this.sendAOEAttack(targetLoc, attack);
+            }
+        } else if (null != targetUnit) {
             targetUnit.receiveAttack(attack);
         }
 
@@ -173,8 +185,14 @@ public class Unit extends SimObject
         this.dispatchEvent(new UnitEvent(UnitEvent.ATTACKED, attack));
 
         if (_health == 0) {
-            this.destroySelf();
+            this.die();
         }
+    }
+
+    protected function die () :void
+    {
+        _isDead = true;
+        this.destroySelf();
     }
 
     public function isEnemyUnit (unit :Unit) :Boolean
@@ -227,10 +245,16 @@ public class Unit extends SimObject
         return _loc.clone();
     }
 
+    public function get isDead () :Boolean
+    {
+        return _isDead;
+    }
+
     protected var _owningPlayerId :uint;
     protected var _unitType :uint;
     protected var _unitData :UnitData;
     protected var _health :Number;
+    protected var _isDead :Boolean;
 
     protected var _loc :Vector2 = new Vector2();
 

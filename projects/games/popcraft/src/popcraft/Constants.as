@@ -160,7 +160,7 @@ public class Constants
         .name("sapper")
         .resourceCosts([0, 0, 15, 15])
         .baseMoveSpeed(40)
-        .maxHealth(100)
+        .maxHealth(70)
         .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] ))
         .weapon(SAPPER_EXPLODE_WEAPON)
         .collisionRadius(15)
@@ -200,13 +200,13 @@ public class Constants
         case 2:
             return [
                 new Vector2(50, 315),   // bottom left
-                new Vector2(652, 70),   // top right
+                new Vector2(652, 85),   // top right
              ];
              break;
 
         case 3:
             return [
-                new Vector2(48, 68),       // top left
+                new Vector2(48, 85),       // top left
                 new Vector2(28, 452),     // bottom left
                 new Vector2(452, 250),    // middle right
             ];
@@ -214,9 +214,9 @@ public class Constants
 
         case 4:
             return [
-                new Vector2(48, 68),    // top left
+                new Vector2(48, 85),    // top left
                 new Vector2(48, 452),   // bottom left
-                new Vector2(452, 68),   // top right
+                new Vector2(452, 85),   // top right
                 new Vector2(452, 452),  // bottom right
             ];
             break;
