@@ -12,32 +12,31 @@ import caurina.transitions.Tweener;
 import spades.card.Bids;
 import spades.card.BidEvent;
 import spades.card.Table;
+import spades.card.Scores;
+import spades.card.ScoresEvent;
+import spades.card.Team;
 
 
 /** Represents a team display. Includes a placeholder box and last trick display. 
  *  TODO: names, score and trick totals. */
 public class TeamSprite extends Sprite
 {
-    public static const NO_BID :int = TableSprite.NO_BID;
-
     /** Create a new team sprite. Long names will be truncated with an ellipsis.
-     *  @param table the table we are sitting at
-     *  @param seats the relative seating positions of the players on this team
-     *  @param bids the bids object for the game 
+     *  @param scores the scores object for the game. Also used to access the Table and Bids
+     *  @param team the index of the team that this sprite is for
      *  @param mainTrickPos the global coordinates of the main trick - used for animating the 
      *  taking of a trick.
-     *  @param lastTrickPos the relative position of the scaled down last trick icon 
-     *  @param playerSeats the absolute seating positions of the players on this team */
+     *  @param lastTrickPos the relative position of the scaled down last trick icon */
     public function TeamSprite (
-        table :Table, 
-        seats :Array,
-        bids :Bids,
+        scores :Scores,
+        team :int,
         mainTrickPos :Vector2,
         lastTrickPos :Vector2)
     {
-        _table = table;
-        _seats = seats;
-        _bids = bids;
+        _table = scores.table;
+        _team = _table.getTeam(team);
+        _bids = scores.bids;
+        _scores = scores;
         _mainTrickPos = mainTrickPos.clone();
         _lastTrickPos = lastTrickPos.clone();
 
@@ -49,8 +48,8 @@ public class TeamSprite extends Sprite
         nameField.x = 0;
         nameField.y = -HEIGHT / 2;
         nameField.text = makeNameString(
-            _table.getNameFromRelative(_seats[0]), 
-            _table.getNameFromRelative(_seats[1]));
+            _table.getNameFromAbsolute(_team.players[0]), 
+            _table.getNameFromAbsolute(_team.players[1]));
         nameField.selectable = false;
         addChild(nameField);
 
@@ -73,8 +72,11 @@ public class TeamSprite extends Sprite
 
         updateTricks();
 
-        bids.addEventListener(BidEvent.RESET, bidListener);
-        bids.addEventListener(BidEvent.PLACED, bidListener);
+        _bids.addEventListener(BidEvent.RESET, bidListener);
+        _bids.addEventListener(BidEvent.PLACED, bidListener);
+
+        _scores.addEventListener(ScoresEvent.TRICKS_CHANGED, scoresListener);
+        _scores.addEventListener(ScoresEvent.SCORES_CHANGED, scoresListener);
     }
 
     /** Take the array of card sprites and animate them to this team's last trick slot. The 
@@ -107,15 +109,8 @@ public class TeamSprite extends Sprite
         _lastTrick.clear();
     }
 
-    /** Set the tricks a player has taken. */
-    public function setTricks (player :int, tricks :int) :void
-    {
-        _tricks[player] = tricks;
-        updateTricks();
-    }
-
     /** Set the team's score display. */
-    public function setScore (current :int, target :int) :void
+    protected function setScore (current :int, target :int) :void
     {
         _score.text = "" + current + "/" + target;
         _score.y = HEIGHT / 2 - _score.textHeight;
@@ -124,11 +119,8 @@ public class TeamSprite extends Sprite
     /** Update the tricks/bid status text. */
     protected function updateTricks () :void
     {
-        var totalTricks :int = _tricks[0] + _tricks[1];
-        var text :String = "" + totalTricks + "/";
-        var seats :Array = [
-            _table.getAbsoluteFromRelative(_seats[0]),
-            _table.getAbsoluteFromRelative(_seats[1])];
+        var text :String = "" + _scores.getTricks(_team.index) + "/";
+        var seats :Array = _team.players;
 
         if (!_bids.hasBid(seats[0]) || !_bids.hasBid(seats[1])) {
             text += "?";
@@ -144,12 +136,22 @@ public class TeamSprite extends Sprite
     protected function bidListener (event :BidEvent) :void
     {
         if (event.type == BidEvent.RESET) {
-            _tricks[0] = 0;
-            _tricks[1] = 0;
             updateTricks();
         }
         else if (event.type == BidEvent.PLACED) {
             updateTricks();
+        }
+    }
+
+    protected function scoresListener (event :ScoresEvent) :void
+    {
+        if (event.team == _team) {
+            if (event.type == ScoresEvent.TRICKS_CHANGED) {
+                updateTricks();
+            }
+            else if (event.type == ScoresEvent.SCORES_CHANGED) {
+                setScore(event.value, _scores.target);
+            }
         }
     }
 
@@ -176,10 +178,13 @@ public class TeamSprite extends Sprite
     protected var _table :Table;
 
     /** The seats of our team members */
-    protected var _seats :Array;
+    protected var _team :Team;
 
     /** The bids for the game */
     protected var _bids :Bids;
+
+    /** The scores for the game */
+    protected var _scores :Scores;
 
     /** Sprite for the last trick display */
     protected var _lastTrick :LastTrickSprite;
@@ -189,9 +194,6 @@ public class TeamSprite extends Sprite
 
     /** Static position of our last trick display */
     protected var _lastTrickPos :Vector2;
-
-    /** Tricks */
-    protected var _tricks :Array = [0, 0];
 
     /** Tricks score, e.g. "1/5" */
     protected var _tricksScore :TextField;

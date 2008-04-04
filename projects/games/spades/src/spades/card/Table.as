@@ -7,7 +7,8 @@ package spades.card {
  *    Absolute - the seating position that is the same for all observers
  *    Relative - the seating position relative to the local player. This is mostly useful for the 
  *        view of the game.
- *    Name - the name of the player. Name is not reversible (i.e. there is no getIdFromName). */
+ *    Name - the name of the player. Name is not reversible (i.e. there is no getIdFromName). 
+ *    Team - the team of the player (also not reversible) */
 public class Table
 {
     /** Create a new table.
@@ -17,11 +18,35 @@ public class Table
     public function Table (
         playerNames :Array, 
         playerIds :Array, 
-        localSeat :int)
+        localSeat :int,
+        teams :Array)
     {
         _playerNames = playerNames;
         _playerIds = playerIds;
         _localSeat = localSeat;
+        _teams = teams;
+
+        teams.forEach(checkTeam);
+        playerIds.forEach(checkPlayerTeam);
+
+        function checkPlayerTeam (p :int, i :int, a :Array) :void {
+            if (getTeamFromId(p) == null) {
+                throw new Error("Player " + p + " not on a team");
+            }
+        }
+        
+        function checkPlayer (p :int, i :int, a :Array) :void {
+            if (getIdFromAbsolute(p) <= 0) {
+                throw new Error("Invalid team player seat " + p);
+            }
+        }
+        
+        function checkTeam (t :Team, i :int, a :Array) :void {
+            t.players.forEach(checkPlayer);
+            if (t.index != i) {
+                throw new Error("Index of team " + t + " should be " + i);
+            }
+        }
     }
 
     /** The absolute seat position of the local player. */
@@ -84,6 +109,32 @@ public class Table
         return getNameFromAbsolute(getAbsoluteFromRelative(relative));
     }
 
+    /** Get the team that contains the player with the given id. */
+    public function getTeamFromId (id :int) :Team
+    {
+        return getTeamFromAbsolute(getAbsoluteFromId(id));
+    }
+
+    /** Get the team that contains the player assigned to the given absolute seating position. */
+    public function getTeamFromAbsolute (seat :int) :Team
+    {
+        for (var i :int = 0; i < _teams.length; ++i) {
+            var team :Team = _teams[i];
+            for (var j :int = 0; j < team.players.length; ++j) {
+                if (team.players[j] == seat) {
+                    return team;
+                }
+            }
+        }
+        return null;
+    }
+
+    /** Get the team that contains the player assigned to the given relative seating position. */
+    public function getTeamFromRelative (seat :int) :Team
+    {
+        return getTeamFromAbsolute(getAbsoluteFromRelative(seat));
+    }
+
     /** Get the seat to the left of an absolute or relative seating position. */
     public function getSeatToLeft (seat :int) :int
     {
@@ -104,6 +155,18 @@ public class Table
         return getIdFromAbsolute(getSeatToLeft(getAbsoluteFromId(id)));
     }
 
+    /** Get the number of teams. */
+    public function get numTeams () :int
+    {
+        return _teams.length;
+    }
+
+    /** Get a team by index. */
+    public function getTeam (index :int) :Team
+    {
+        return _teams[index];
+    }
+
     /** Access the number of players at the table. */
     public function get numPlayers () :int 
     {
@@ -113,6 +176,7 @@ public class Table
     protected var _playerNames :Array;
     protected var _playerIds :Array;
     protected var _localSeat :int;
+    protected var _teams :Array;
 }
 
 }
