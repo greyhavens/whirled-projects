@@ -1,8 +1,6 @@
 package spades.graphics {
 
 import flash.display.Sprite;
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 import flash.display.Bitmap;
 
 import com.threerings.flash.Vector2;
@@ -46,26 +44,19 @@ public class TeamSprite extends Sprite
         _lastTrick = new LastTrickSprite();
         addChild(_lastTrick);
 
-        var nameField :TextField = new TextField();
-        nameField.autoSize = TextFieldAutoSize.CENTER;
-        nameField.x = 0;
-        nameField.y = -HEIGHT / 2;
+        var nameField :Text = new Text(Text.SMALL);
+        nameField.centerY = -HEIGHT / 3;
         nameField.text = makeNameString(
             _table.getNameFromAbsolute(_team.players[0]), 
             _table.getNameFromAbsolute(_team.players[1]));
-        nameField.selectable = false;
         addChild(nameField);
 
-        _tricksScore = new TextField();
-        _tricksScore.autoSize = TextFieldAutoSize.CENTER;
-        _tricksScore.x = 0;
-        _tricksScore.selectable = false;
+        _tricksScore = new Text(Text.BIG);
+        _tricksScore.centerY = 0;
         addChild(_tricksScore);
 
-        _score = new TextField();
-        _score.autoSize = TextFieldAutoSize.CENTER;
-        _score.x = 0;
-        _score.selectable = false;
+        _score = new Text(Text.BIG);
+        _score.centerY = HEIGHT / 3;
         addChild(_score);
 
         updateTricks();
@@ -118,14 +109,13 @@ public class TeamSprite extends Sprite
     /** Set the team's score display. */
     protected function setScore (current :int, target :int) :void
     {
-        _score.text = "" + current + "/" + target;
-        _score.y = HEIGHT / 2 - _score.textHeight;
+        _score.text = "Score: " + current + "/" + target;
     }
 
     /** Update the tricks/bid status text. */
     protected function updateTricks () :void
     {
-        var text :String = "" + _scores.getTricks(_team.index) + "/";
+        var text :String = "Tricks: " + _scores.getTricks(_team.index) + "/";
         var seats :Array = _team.players;
 
         if (!_bids.hasBid(seats[0]) || !_bids.hasBid(seats[1])) {
@@ -136,7 +126,6 @@ public class TeamSprite extends Sprite
         }
 
         _tricksScore.text = text;
-        _tricksScore.y = -_tricksScore.textHeight / 2;
     }
 
     protected function bidListener (event :BidEvent) :void
@@ -161,22 +150,13 @@ public class TeamSprite extends Sprite
         }
     }
 
-    /** Utility function to truncate a name. */
-    protected static function truncName (name: String) :String
-    {
-        if (name.length > MAX_NAME_LENGTH) {
-            name = name.substr(0, MAX_NAME_LENGTH) + "...";
-        }
-        return name;
-    }
-
     /** Utility function to truncate and concatenate two names. */
     protected static function makeNameString (
         name1: String, 
         name2 :String) :String
     {
-        name1 = truncName(name1);
-        name2 = truncName(name2);
+        name1 = Text.truncName(name1);
+        name2 = Text.truncName(name2);
         return name1 + "/" + name2;
     }
 
@@ -202,15 +182,13 @@ public class TeamSprite extends Sprite
     protected var _lastTrickPos :Vector2;
 
     /** Tricks score, e.g. "1/5" */
-    protected var _tricksScore :TextField;
+    protected var _tricksScore :Text;
 
     /** Score score, e.g. "172/300" */
-    protected var _score :TextField;
+    protected var _score :Text;
 
     protected static const TRICK_SCALE :Number = 0.5;
     protected static const TRICK_DURATION :int = 1.0;
-
-    protected static const MAX_NAME_LENGTH :int = 12;
 
     protected static const WIDTH :int = 180;
     protected static const HEIGHT :int = 80;

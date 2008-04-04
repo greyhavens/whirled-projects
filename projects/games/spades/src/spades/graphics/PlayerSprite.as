@@ -2,8 +2,6 @@ package spades.graphics {
 
 import flash.display.Sprite;
 import flash.display.Bitmap;
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 
 import com.threerings.util.MultiLoader;
 
@@ -23,14 +21,11 @@ public class PlayerSprite extends Sprite
     {
         MultiLoader.getContents(TEAM_IMAGES[team.index] as Class, gotBackground);
 
-        var nameField :TextField = new TextField();
+        var nameField :Text = new Text(Text.BIG);
         addChild(nameField);
 
-        nameField.autoSize = TextFieldAutoSize.CENTER;
-        nameField.x = 0;
-        nameField.y = -HEIGHT / 2;
-        nameField.text = name;
-        nameField.selectable = false;
+        nameField.centerY = -HEIGHT / 3;
+        nameField.text = Text.truncName(name);
 
         setTurn(false);
 
@@ -54,7 +49,7 @@ public class PlayerSprite extends Sprite
         }
         _headShot = sprite;
         _headShot.x = -_headShot.width / 2;
-        _headShot.y = -_headShot.height / 2;
+        _headShot.y = -_headShot.height / 2 + 14;
         addChild(_headShot);
     }
 
