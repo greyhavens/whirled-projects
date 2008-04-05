@@ -41,7 +41,7 @@ public class AITaskTree
                     _subtasks[i] = null;
                     _freeIndices.push(i);
                     
-                    this.childTaskCompleted(task);
+                    this.subtaskCompleted(task);
                 }
             }
         }
@@ -106,7 +106,7 @@ public class AITaskTree
     }
     
     /** Subclasses can override this to do something interesting. */
-    protected function childTaskCompleted (task :AITask) :void
+    protected function subtaskCompleted (task :AITask) :void
     {
     }
 

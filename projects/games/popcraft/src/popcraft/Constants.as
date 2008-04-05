@@ -148,7 +148,7 @@ public class Constants
     protected static const HEAVY_DATA :UnitData = UnitDataBuilder.create()
         .name("heavy")
         .resourceCosts([0, 10, 0, 10])
-        .baseMoveSpeed(25)
+        .baseMoveSpeed(50)
         .maxHealth(100)
         .armor(new UnitArmor([DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1]))
         .weapons([HEAVY_MELEE_WEAPON, HEAVY_RANGED_WEAPON])

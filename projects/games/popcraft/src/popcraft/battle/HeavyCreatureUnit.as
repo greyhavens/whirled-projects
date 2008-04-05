@@ -36,13 +36,13 @@ import popcraft.battle.ai.*;
 import com.threerings.util.Log;
 import com.threerings.flash.Vector2;
 
-/*class HeavyAI extends AITaskTree
+class HeavyAI extends AITaskTree
 {
     public function HeavyAI (unit :HeavyCreatureUnit)
     {
         _unit = unit;
 
-        // find a place to stand near the base
+        this.moveToDefenseLocation();
     }
 
     override public function get name () :String
@@ -50,19 +50,70 @@ import com.threerings.flash.Vector2;
         return "HeavyAI";
     }
 
-    protected var _unit :HeavyCreatureUnit;
-    protected var _inDefensePosition :Boolean;
+    protected function moveToDefenseLocation () :void
+    {
+        // find a place to stand near the base
+        var loc :Vector2 = this.findDefenseLocation();
+        this.addSubtask(new MoveToLocationTask(MOVE_TO_DEFENSIVE_LOC_TASK_NAME, loc, MOVE_TO_FUDGE_FACTOR, 1));
 
-    protected static const DISTANCE_FROM_BASE :NumRange = new NumRange(20, 30, Rand.STREAM_GAME);
+        log.info("moving to defensive location: " + loc);
+
+        _numLocationAttempts += 1;
+    }
+
+    protected function findDefenseLocation () :Vector2
+    {
+        // find a location between our base and the enemy base we're currently targeting
+        var playerData :PlayerData = _unit.owningPlayerData;
+
+        var ourBaseLoc :Vector2 = playerData.base.unitLoc;
+        var enemyBaseLoc :Vector2 = GameMode.instance.getPlayerData(playerData.targetedEnemyId).base.unitLoc;
+
+        var target :Vector2 = enemyBaseLoc.subtract(ourBaseLoc);
+        target.length = DISTANCE_FROM_BASE.next();
+        target.rotateLocal(ANGLE_RANGE.next());
+
+        return target.addLocal(ourBaseLoc);
+    }
+
+    override protected function subtaskCompleted (task :AITask) :void
+    {
+        if (task.name == MOVE_TO_DEFENSIVE_LOC_TASK_NAME) {
+            var moveToLocTask :MoveToLocationTask = task as MoveToLocationTask;
+
+            // were we successful moving to our defensive loc?
+            if (moveToLocTask.success || _numLocationAttempts >= MAX_LOCATION_ATTEMPTS) {
+                log.info("in position - firing on enemies");
+                // start firing upon approaching enemies
+                this.addSubtask(new AttackApproachingEnemiesTask());
+            } else {
+                log.info("failed to move into defensive position - trying again");
+                // it took too long to get to our defense location. pick a new spot.
+                this.moveToDefenseLocation();
+            }
+
+        }
+    }
+
+    protected var _unit :HeavyCreatureUnit;
+    protected var _numLocationAttempts :int;
+
+    protected static const MOVE_TO_DEFENSIVE_LOC_TASK_NAME :String = "MoveToDefensiveLoc";
+
+    protected static const DISTANCE_FROM_BASE :NumRange = new NumRange(80, 80, Rand.STREAM_GAME);
     protected static const ANGLE_RANGE :NumRange = new NumRange(-Math.PI / 5, Math.PI / 5, Rand.STREAM_GAME);
-}*/
+    protected static const MOVE_TO_FUDGE_FACTOR :Number = 5;
+    protected static const MAX_LOCATION_ATTEMPTS :int = 2;
+
+    protected static const log :Log = Log.getLog(HeavyAI);
+}
 
 /**
  * Goals:
  * (Priority 1) Escort friendly Grunts (max 1 escort/Grunt)
  * (Priority 1) Defend friendly base
  */
-class HeavyAI extends AITaskTree
+/*class HeavyAI extends AITaskTree
 {
     public function HeavyAI (unit :HeavyCreatureUnit)
     {
@@ -82,7 +133,7 @@ class HeavyAI extends AITaskTree
         this.addSubtask(new AITimerTask(DELAY_BECOMETOWER, TASK_BECOMETOWER));
     }
 
-    override protected function childTaskCompleted (task :AITask) :void
+    override protected function subtaskCompleted (task :AITask) :void
     {
         switch (task.name) {
 
@@ -175,7 +226,7 @@ class EscortGruntTask extends AITaskTree
         return (_gruntDied ? AITaskStatus.COMPLETE : AITaskStatus.ACTIVE);
     }
 
-    override protected function childTaskCompleted (task :AITask) :void
+    override protected function subtaskCompleted (task :AITask) :void
     {
         if (task.name == FollowUnitTask.NAME) {
             log.info("our grunt died!");
@@ -208,6 +259,6 @@ class EscortGruntTask extends AITaskTree
     protected static const ESCORT_DISTANCE_MAX :Number = 35;
 
     protected static const log :Log = Log.getLog(EscortGruntTask);
-}
+}*/
 
 

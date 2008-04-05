@@ -78,7 +78,7 @@ class GruntAI extends AITaskTree
         this.addSubtask(new DetectAttacksOnUnitTask(_unit));
     }
 
-    override protected function childTaskCompleted (task :AITask) :void
+    override protected function subtaskCompleted (task :AITask) :void
     {
         switch (task.name) {
 

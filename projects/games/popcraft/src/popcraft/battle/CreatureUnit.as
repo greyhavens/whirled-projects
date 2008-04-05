@@ -44,9 +44,14 @@ public class CreatureUnit extends Unit
         return distance / _unitData.baseMoveSpeed;
     }
 
-    public function isAtLocation (dest :Vector2) :Boolean
+    public function isAtLocation (loc :Vector2) :Boolean
     {
-        return _loc.similar(dest, MOVEMENT_EPSILON);
+        return this.isNearLocation(loc, MOVEMENT_EPSILON);
+    }
+
+    public function isNearLocation (loc :Vector2, withinDistance :Number) :Boolean
+    {
+        return _loc.similar(loc, withinDistance);
     }
 
     public function setMovementDestination (dest :Vector2) :void
@@ -189,7 +194,7 @@ public class CreatureUnit extends Unit
 
     protected static var g_groups :Array;
 
-    protected static const MOVEMENT_EPSILON :Number = 0.01;
+    protected static const MOVEMENT_EPSILON :Number = 0.4;
 }
 
 }
