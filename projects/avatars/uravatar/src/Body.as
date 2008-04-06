@@ -392,7 +392,7 @@ class SceneList
         var value :int = _rando.nextInt(_totalWeight);
         for (var ii :int = 0; ii < _scenes.length; ii++) {
             if (value < int(_weights[ii])) {
-                _curidx == ii;
+                _curidx = ii;
                 return;
             }
             value -= int(_weights[ii]);
