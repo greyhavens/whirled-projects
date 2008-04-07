@@ -44,6 +44,12 @@ public class PopCraft extends Sprite
 
         _gameCtrl = new GameControl(this, false);
 
+        // if we're running in standalone mode, output some statistics
+        if (!_gameCtrl.isConnected()) {
+            trace(Constants.generateUnitReport());
+            return;
+        }
+
         // LoadingMode will start the game when loading is complete
         mainLoop.pushMode(new LoadingMode(_gameCtrl));
     }

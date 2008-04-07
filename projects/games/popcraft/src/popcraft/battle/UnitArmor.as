@@ -32,10 +32,15 @@ public class UnitArmor
 
     public function getWeaponDamage (weapon :UnitWeapon) :Number
     {
-        var value :* = _armor.get(weapon.damageType);
-        var damageMultiplier :Number = (undefined !== value ? value : 1);
+        return this.getDamage(weapon.damageType, weapon.damageRange.next());
+    }
 
-        return (weapon.damageRange.next() * damageMultiplier);
+    public function getDamage (damageType :uint, baseDamage :Number) :Number
+    {
+        var armorValue :* = _armor.get(damageType);
+        var damageMultiplier :Number = (undefined !== armorValue ? armorValue : 1);
+
+        return (baseDamage * damageMultiplier);
     }
 
     protected var _armor :HashMap = new HashMap();

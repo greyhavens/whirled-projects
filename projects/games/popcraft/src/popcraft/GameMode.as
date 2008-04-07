@@ -89,6 +89,8 @@ public class GameMode extends AppMode
             _debugDataView = new DebugDataView();
             this.addObject(_debugDataView, this.modeSprite);
         }
+
+        log.info(Constants.generateUnitReport());
     }
 
     override protected function destroy () :void

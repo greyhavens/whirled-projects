@@ -109,9 +109,9 @@ public class Constants
     protected static const HEAVY_RANGED_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
         .isRanged(true)
         .damageType(DAMAGE_TYPE_PIERCING)
-        .damageRange(10, 10)
+        .damageRange(5, 10)
         .targetClassMask(UNIT_CLASS__ALL)
-        .cooldown(1)
+        .cooldown(0.75)
         .maxAttackDistance(200)
         .missileSpeed(300)
         .weapon;
@@ -227,6 +227,40 @@ public class Constants
             return [];
             break;
         }
+    }
+
+    public static function generateUnitReport () :String
+    {
+        var report :String = "";
+
+        for each (var srcUnit :UnitData in Constants.UNIT_DATA) {
+
+            report += srcUnit.name;
+
+            for (var weaponIdx :int = 0; weaponIdx < srcUnit.weapons.length; ++weaponIdx) {
+                var weapon :UnitWeapon = srcUnit.weapons[weaponIdx];
+
+                var rangeMin :Number = weapon.damageRange.min;
+                var rangeMax :Number = weapon.damageRange.max;
+                var damageType :uint = weapon.damageType;
+
+                report += "\nWeapon " + weaponIdx + " (" + rangeMin + ", " + rangeMax + ")";
+
+                for each (var dstUnit :UnitData in Constants.UNIT_DATA) {
+                    var dmgMin :Number = dstUnit.armor.getDamage(damageType, rangeMin);
+                    var dmgMax :Number = dstUnit.armor.getDamage(damageType, rangeMax);
+                    var dotMin :Number = dmgMin / weapon.cooldown;
+                    var dotMax :Number = dmgMax / weapon.cooldown;
+
+                    report += "\nvs " + dstUnit.name + ": (" + dmgMin.toFixed(2) + ", " + dmgMax.toFixed(2) + ")";
+                    report += " DOT: (" + dotMin.toFixed(2) + "/s, " + dotMax.toFixed(2) + "/s)";
+                }
+            }
+
+            report += "\n\n";
+        }
+
+        return report;
     }
 }
 
