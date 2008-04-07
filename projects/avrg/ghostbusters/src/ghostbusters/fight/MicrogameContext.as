@@ -1,10 +1,10 @@
 package ghostbusters.fight {
-    
-import flash.utils.ByteArray;
-    
+
+import flash.display.MovieClip;
+
 public class MicrogameContext
 {
-    public var ghostSwfBytes :ByteArray;
+    public var ghostMovie :MovieClip;
 }
 
 }

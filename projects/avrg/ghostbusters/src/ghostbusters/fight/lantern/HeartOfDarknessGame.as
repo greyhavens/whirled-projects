@@ -81,8 +81,7 @@ public class HeartOfDarknessGame extends MicrogameMode
         // create the ghost
         _ghost = new Sprite();
 
-        var ghostSwf :SwfResourceLoader = Resources.instance.getSwfLoader("lantern.ghost");
-        var ghostInstance :MovieClip = ghostSwf.displayRoot as MovieClip;
+        var ghostInstance :MovieClip = _context.ghostMovie;
         ghostInstance.gotoAndStop(1, "heartofdarkness");
 
         ghostInstance.scaleX = _settings.ghostScale;

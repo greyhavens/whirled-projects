@@ -38,7 +38,6 @@ public class Resources
         _rsrcMgr.pendResourceLoad("swf", "intro.screen", { embeddedClass: SWF_INTROSCREEN });
         _rsrcMgr.pendResourceLoad("swf", "outro.screen", { embeddedClass: SWF_OUTROSCREEN });
 
-        _rsrcMgr.pendResourceLoad("swf", "lantern.ghost", { embeddedClass: SWF_LANTERNGHOST });
         _rsrcMgr.pendResourceLoad("swf", "lantern.heart", { embeddedClass: SWF_HEART });
 
         _rsrcMgr.pendResourceLoad("image", "ouija.planchette", { embeddedClass: IMAGE_PLANCHETTE });
@@ -97,10 +96,6 @@ public class Resources
 
     [Embed(source="../../../../rsrc/Microgames/minigame_outro.swf", mimeType="application/octet-stream")]
     protected static const SWF_OUTROSCREEN :Class;
-
-    /* Lantern */
-    [Embed(source="../../../../rsrc/Ghosts/Ghost_Duchess.swf", mimeType="application/octet-stream")]
-    protected static const SWF_LANTERNGHOST :Class;
 
     [Embed(source="../../../../rsrc/Microgames/heart.swf", mimeType="application/octet-stream")]
     protected static const SWF_HEART :Class;

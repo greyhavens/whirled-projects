@@ -1,11 +1,14 @@
 package ghostbusters.fight {
 
 import com.threerings.flash.SimpleTextButton;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import fl.controls.ComboBox;
 import fl.data.DataProvider;
 import fl.skins.DefaultComboBoxSkins;
 
+import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.Event;
@@ -20,6 +23,20 @@ import ghostbusters.fight.common.*;
 public class MicrogameTestApp extends Sprite
 {
     public function MicrogameTestApp ()
+    {
+        if (null == MainLoop.instance) {
+            new MainLoop(this);
+        }
+
+        MainLoop.instance.setup();
+
+        _testResources = new ResourceManager();
+        _testResources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
+        _testResources.pendResourceLoad("swf", "testGhost", { embeddedClass: SWF_LANTERNGHOST });
+        _testResources.load();
+    }
+
+    protected function handleResourcesLoaded (...ignored) :void
     {
         // bg
         this.graphics.beginFill(0xFFFFFF);
@@ -80,9 +97,13 @@ public class MicrogameTestApp extends Sprite
         this.addChild(difficultySelect);
 
         // init player
-        // @TODO - create a real dummy MicrogameContext here
-        _player = new MicrogamePlayer(new MicrogameContext());
+        var context :MicrogameContext = new MicrogameContext();
+
+        var ghostSwf :SwfResourceLoader = _testResources.getResource("testGhost") as SwfResourceLoader;
+        context.ghostMovie = ghostSwf.displayRoot as MovieClip;
+        _player = new MicrogamePlayer(context);
         this.addChild(_player);
+
         _curWeaponTypeName = WeaponType.NAME_LANTERN;
         _curWeaponDifficulty = 0;
         _player.weaponType = new WeaponType(_curWeaponTypeName, _curWeaponDifficulty);
@@ -167,6 +188,7 @@ public class MicrogameTestApp extends Sprite
     protected var _player :MicrogamePlayer;
     protected var _curWeaponTypeName :String;
     protected var _curWeaponDifficulty :int;
+    protected var _testResources :ResourceManager;
 
     protected static const WEAPON_TYPES :Array = [
         WeaponType.NAME_LANTERN,
@@ -174,6 +196,10 @@ public class MicrogameTestApp extends Sprite
         WeaponType.NAME_PLASMA,
         WeaponType.NAME_POTIONS,
     ];
+
+    /* Lantern */
+    [Embed(source="../../../rsrc/Ghosts/Ghost_Duchess.swf", mimeType="application/octet-stream")]
+    protected static const SWF_LANTERNGHOST :Class;
 
 }
 
