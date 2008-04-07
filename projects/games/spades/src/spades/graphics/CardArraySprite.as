@@ -44,7 +44,9 @@ public class CardArraySprite extends Sprite
     {
         _target = target;
 
-        _target.addEventListener(CardArrayEvent.CARD_ARRAY, cardArrayListener);
+        _target.addEventListener(CardArrayEvent.RESET, cardArrayListener);
+        _target.addEventListener(CardArrayEvent.ADDED, cardArrayListener);
+        _target.addEventListener(CardArrayEvent.REMOVED, cardArrayListener);
 
         addEventListener(Event.REMOVED, removedListener);
 
@@ -105,30 +107,23 @@ public class CardArraySprite extends Sprite
     {
         Debug.debug("CardArrayEvent received " + event);
 
-        switch (event.action) {
+        switch (event.type) {
 
-        case CardArrayEvent.ACTION_RESET:
+        case CardArrayEvent.RESET:
             refresh();
             break;
 
-        case CardArrayEvent.ACTION_ADDED:
+        case CardArrayEvent.ADDED:
             _cards.splice(event.index, 0, new CardSprite(event.card));
-            addChild(_cards[event.index] as CardSprite);
+            addChildAt(_cards[event.index] as CardSprite, event.index);
             animateAddition(_cards[event.index]);
             break;
 
-        case CardArrayEvent.ACTION_REMOVED:
+        case CardArrayEvent.REMOVED:
             var c: CardSprite = _cards[event.index] as CardSprite;
             _cards.splice(event.index, 1);
             animateRemoval(c);
             break;
-
-        case CardArrayEvent.ACTION_PRERESET:
-            return;
-
-        default:
-            // We should handle all events
-            throw new Error("CardArrayEvent " + event + " not handled");
 
         }
 
@@ -153,7 +148,9 @@ public class CardArraySprite extends Sprite
     {
         if (event.target == this) {
             // stop listening to array since we will no longer be displayed
-            _target.removeEventListener(CardArrayEvent.CARD_ARRAY, cardArrayListener);
+            _target.removeEventListener(CardArrayEvent.ADDED, cardArrayListener);
+            _target.removeEventListener(CardArrayEvent.REMOVED, cardArrayListener);
+            _target.removeEventListener(CardArrayEvent.RESET, cardArrayListener);
         }
     }
 

@@ -167,7 +167,7 @@ public class HandSprite extends CardArraySprite
     {
         super.cardArrayListener(event);
 
-        if (event.action == CardArrayEvent.ACTION_RESET) {
+        if (event.type == CardArrayEvent.RESET) {
             // game logic will do this soon, but call now to make sure there is no flashing
             disable();
         }

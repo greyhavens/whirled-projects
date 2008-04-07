@@ -48,7 +48,12 @@ public class CardSprite extends Sprite
         function gotDeck (clip :MovieClip) :void
         {
             _deck = clip;
-            _deck.gotoAndStop(card.string);
+            if (card != null) {
+                _deck.gotoAndStop(card.string);
+            }
+            else {
+                _deck.gotoAndStop(BACK_FRAME);
+            }
             _deck.x = -WIDTH / 2;
             _deck.y = -HEIGHT / 2;
             _deck.scaleX = WIDTH / _deck.width;
@@ -86,7 +91,8 @@ public class CardSprite extends Sprite
         var stateStr :String = _state.toString();
         var superStr :String = super.toString();
         var parentStr :String = parent == null ? "null" : parent.toString();
-        return "CardSprite " + _card.toString() + " (" + stateStr + ") " + 
+        var cardStr :String = _card == null ? "back" : _card.toString();
+        return "CardSprite " + cardStr + " (" + stateStr + ") " + 
             superStr + " in " + parentStr;
     }
     
@@ -106,6 +112,8 @@ public class CardSprite extends Sprite
 
     [Embed(source="../../../rsrc/deck.swf", mimeType="application/octet-stream")]
     protected static const DECK :Class;
+
+    protected static const BACK_FRAME :String = "CB";
 }
 
 }

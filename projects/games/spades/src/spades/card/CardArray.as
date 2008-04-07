@@ -42,43 +42,14 @@ public class CardArray extends EventDispatcher
      * @throws CardException if any ordinals are not valid. */
     public function reset (ordinals :Array=null) :void
     {
-        dispatchEvent(CardArrayEvent.preReset());
+        dispatchEvent(new CardArrayEvent(CardArrayEvent.PRERESET));
 
         _cards.splice(0, _cards.length);
         _ordinals.splice(0, _ordinals.length);
 
         setOrdinals(ordinals);
 
-        dispatchEvent(CardArrayEvent.reset());
-    }
-
-    /** @inheritDoc */
-    // from flash.events.EventDispatcher
-    public override function addEventListener(
-        type :String, 
-        listener :Function, 
-        useCapture :Boolean=false, 
-        priority :int = 0, 
-        useWeakReference :Boolean=false) :void
-    {
-        if (type != CardArrayEvent.CARD_ARRAY) {
-            throw new Error("Adding listsner for invalid event type " + type);
-        }
-        return super.addEventListener(type, listener, useCapture, priority, 
-            useWeakReference);
-    }
-
-    /** @inheritDoc */
-    // from flash.events.EventDispatcher
-    public override function removeEventListener(
-        type :String, 
-        listener :Function, 
-        useCapture :Boolean=false) :void
-    {
-        if (type != CardArrayEvent.CARD_ARRAY) {
-            throw new Error("Removing listsner for invalid event type " + type);
-        }
-        return super.removeEventListener(type, listener, useCapture);
+        dispatchEvent(new CardArrayEvent(CardArrayEvent.RESET));
     }
 
     /** Access the underlying array of ordinal values. */
@@ -110,7 +81,15 @@ public class CardArray extends EventDispatcher
     {
         _ordinals.push(card.ordinal);
         _cards.push(card);
-        dispatchEvent(CardArrayEvent.added(card, length - 1));
+        dispatchEvent(new CardArrayEvent(CardArrayEvent.ADDED, card, length - 1));
+    }
+
+    /** Insert a new card into the array. */
+    public function insert (card :Card, index :int) :void
+    {
+        _ordinals.splice(index, 0, card.ordinal);
+        _cards.splice(index, 0, card);
+        dispatchEvent(new CardArrayEvent(CardArrayEvent.ADDED, card, index));
     }
 
     /** Test if a card (of the same value) is in the array */
@@ -143,7 +122,7 @@ public class CardArray extends EventDispatcher
             if (c.equals(card)) {
                 _cards.splice(i, 1);
                 _ordinals.splice(i, 1);
-                dispatchEvent(CardArrayEvent.removed(c, i));
+                dispatchEvent(new CardArrayEvent(CardArrayEvent.REMOVED, c, i));
                 return true;
             }
             return false;
@@ -216,20 +195,50 @@ public class CardArray extends EventDispatcher
         }
     }
     
-    /** Sort the array in place for player's ease of use. */
+    /** Sort the array in place for player's ease of use. Suits are the primary key and ranks 
+     *  secondary.
+     *  @param suits an Array of Card.SUIT_* constants indicating the desired order of suits
+     *  @param ordering one of the Card.RANK_ORDER_* constants indicating how to order the ranks */
     public function standardSort (suits :Array, ordering :int) :void
     {
-        dispatchEvent(CardArrayEvent.preReset());
+        dispatchEvent(new CardArrayEvent(CardArrayEvent.PRERESET));
 
         _cards.sort(cmpCards);
 
         // restore the ordinals
         _ordinals = _cards.map(getOrdinal);
 
-        dispatchEvent(CardArrayEvent.reset());
+        dispatchEvent(new CardArrayEvent(CardArrayEvent.RESET));
 
         function getOrdinal (c :Card, i :int, a :Array) :int {
             return c.ordinal;
+        }
+
+        function cmpSuits (a :int, b :int) :int {
+            return suits.indexOf(a) - suits.indexOf(b);
+        }
+
+        function cmpCards (a :Card, b :Card) :int {
+            if (a.suit != b.suit) {
+                return cmpSuits(a.suit, b.suit);
+            }
+            return Card.compareRanks(a.rank, b.rank, ordering);
+        }
+    }
+
+    /** Insert a card into the array such that sorting is maintained. The array must previously be 
+     *  sorted with the same parameters.
+     *  @param card the card to insert
+     *  @param suits an Array of Card.SUIT_* constants indicating the desired order of suits
+     *  @param ordering one of the Card.RANK_ORDER_* constants indicating how to order the ranks */
+    public function sortedInsert (card :Card, suits :Array, ordering :int) :void
+    {
+        for (var i :int = 0; i < _cards.length; ++i) {
+            var c :Card = _cards[i];
+            if (cmpCards(c, card) > 0) {
+                insert(card, i);
+                return;
+            }
         }
 
         function cmpSuits (a :int, b :int) :int {

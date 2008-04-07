@@ -7,52 +7,35 @@ import flash.events.Event;
  */
 public class CardArrayEvent extends Event
 {
-    /** The type of event. */
-    public static const CARD_ARRAY :String = "cardArray";
+    /** Type of event when a card is added. For this event type, the card property is set to the 
+     *  card added and the index is set to the position the card was added at. */
+    public static const ADDED :String = "cardarray.added";
 
-    /** Action property when a card was added. */
-    public static const ACTION_ADDED :int = 0;
+    /** Type of event when a card is removed. For this event type, the card property is set to the 
+     *  removed card and the index is set to the position from which it was removed. */
+    public static const REMOVED :String = "cardarray.removed";
 
-    /** Action property when a card was removed. */
-    public static const ACTION_REMOVED :int = 1;
+    /** Type of event when the array is about to be cleared and repopulated. For this event type,
+     *  properties are not used. */
+    public static const PRERESET :String = "cardarray.prereset";
 
-    /** Action property when the array is about to reset. */
-    public static const ACTION_PRERESET :int = 2;
+    /** Type of event when the array has just been cleared and repopulated. For this event type, 
+     *  properties are not used. */
+    public static const RESET :String = "cardarray.reset";
 
-    /** Action property when the array was reset. */
-    public static const ACTION_RESET :int = 3;
-
-    /** Create a new event for a card that has been added. The index is the position within the 
-     *  parent CardArray that the new card has been added to. */
-    public static function added (card :Card, index :int) :CardArrayEvent
+    /** Create a new event constructor since the card and index must be both or neither. */
+    public function CardArrayEvent(type :String, card :Card=null, index :int=-1)
     {
-        return new CardArrayEvent(ACTION_ADDED, card, index);
-    }
-
-    /** Create a new event for a card that has been removed. The index is the position within the 
-     *  parent CardArray that the card was in prior to removal. */
-    public static function removed (card :Card, index :int) :CardArrayEvent
-    {
-        return new CardArrayEvent(ACTION_REMOVED, card, index);
-    }
-
-    /** Create a new event for when a card array has been completely emptied. */
-    public static function reset () :CardArrayEvent
-    {
-        return new CardArrayEvent(ACTION_RESET, null, -1);
-    }
-
-    /** Create a new event for when a card array has been completely emptied. */
-    public static function preReset () :CardArrayEvent
-    {
-        return new CardArrayEvent(ACTION_PRERESET, null, -1);
+        super(type);
+        _card = card;
+        _index = index;
     }
 
     /** @inheritDoc */
     // from flash.events.Event
     public override function clone () :Event
     {
-        return new CardArrayEvent(_action, _card, _index);
+        return new CardArrayEvent(type, _card, _index);
     }
 
     /** @inheritDoc */
@@ -60,13 +43,7 @@ public class CardArrayEvent extends Event
     public override function toString () :String
     {
         return formatToString("CardEvent", "type", "bubbles", "cancelable", 
-            "action", "card", "index");
-    }
-
-    /** The action taken on the card array, one of the ACTION_* constants. */
-    public function get action () :int
-    {
-        return _action;
+            "card", "index");
     }
 
     /** The card that has been added or removed. Not relevant for a reset event. */
@@ -81,16 +58,6 @@ public class CardArrayEvent extends Event
         return _index;
     }
 
-    /** Protect constructor since the card and index must be both or neither. */
-    function CardArrayEvent(action :int, card :Card, index :int)
-    {
-        super(CARD_ARRAY);
-        _action = action;
-        _card = card;
-        _index = index;
-    }
-
-    protected var _action :int;
     protected var _card :Card;
     protected var _index :int;
 }
