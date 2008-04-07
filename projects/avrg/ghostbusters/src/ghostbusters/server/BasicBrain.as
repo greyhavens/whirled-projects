@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package ghostbusters.fight {
+package ghostbusters.server {
 
 import ghostbusters.Codes;
 import ghostbusters.Game;

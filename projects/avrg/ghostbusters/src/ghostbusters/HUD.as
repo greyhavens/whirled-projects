@@ -178,10 +178,10 @@ public class HUD extends Sprite
         _lootIx = 0;
 
         _inventory = MovieClip(findSafely(INVENTORY));
-        _inventory.visible = true;
+        _inventory.visible = false;
 
         _ghostInfo = MovieClip(findSafely(GHOST_INFO));
-        _ghostInfo.visible = false; 
+        _ghostInfo.visible = true;
 
         safelyAdd(CHOOSE_LANTERN, pickLoot);
         safelyAdd(CHOOSE_BLASTER, pickLoot);
@@ -268,6 +268,9 @@ public class HUD extends Sprite
             name == Codes.PROP_GHOST_CUR_ZEST || name == Codes.PROP_GHOST_MAX_ZEST ||
             name == Codes.PROP_STATE) {
             updateGhostHealth();
+
+        } else if (name == Codes.PROP_GHOST_ID) {
+            _ghostInfo.updateGhost();
         }
     }
 
@@ -290,7 +293,12 @@ public class HUD extends Sprite
 
     protected function helpClick (evt :Event) :void
     {
-        CommandEvent.dispatch(this, GameController.HELP);
+//        CommandEvent.dispatch(this, GameController.HELP);
+        var panel :Sprite = new DebugPanel();
+
+        this.addChild(panel);
+        panel.x = 200;
+        panel.y = 600;
     }
 
     protected function updateGhostHealth () :void
@@ -411,6 +419,7 @@ public class HUD extends Sprite
 
     protected static const INVENTORY :String = "inventory1";
     protected static const GHOST_INFO :String = "GhostInfoBox";
+
 //    protected static const WEAPON_DISPLAY :String = "WeaponDisplay";
 
     protected static const CHOOSE_LANTERN :String = "choose_lantern";

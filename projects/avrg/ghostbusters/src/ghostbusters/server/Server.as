@@ -1,30 +1,39 @@
 //
 // $Id$
 
-package ghostbusters {
+package ghostbusters.server {
 
 import flash.geom.Rectangle;
 
+import com.whirled.AVRGameControl;
 import com.whirled.AVRGameControlEvent;
 
 import com.threerings.util.ArrayUtil;
 
+import ghostbusters.Codes;
+import ghostbusters.Game;
+import ghostbusters.GameModel;
+import ghostbusters.PerPlayerProperties;
+
 public class Server
 {
-    public function Server ()
+    public function Server (control :AVRGameControl)
     {
-        Game.control.addEventListener(
+        _control = control;
+
+        _control.addEventListener(
             AVRGameControlEvent.PLAYER_LEFT, handlePlayerLeft);
-        Game.control.state.addEventListener(
+        _control.state.addEventListener(
             AVRGameControlEvent.MESSAGE_RECEIVED, handleMessage);
 
         _ppp = new PerPlayerProperties();
+
+        _ghost = Ghost.loadIfPresent();
     }
 
     public function newRoom () :void
     {
-        if (!Game.control.hasControl()) {
-            Game.log.debug("I don't have control -- returning.");
+        if (!_control.hasControl()) {
             return;
         }
         maybeSpawnGhost();
@@ -33,7 +42,7 @@ public class Server
     /** Called at the end of the Seek phase when the ghost's appear animation is done. */
     public function ghostFullyAppeared () :void
     {
-        if (!Game.control.hasControl()) {
+        if (!_control.hasControl()) {
             return;
         }
         if (checkState(GameModel.STATE_APPEARING)) {
@@ -44,7 +53,7 @@ public class Server
     /** Called at the end of the Fight phase after the ghost's death or triumph animation. */
     public function ghostFullyGone () :void
     {
-        if (!Game.control.hasControl()) {
+        if (!_control.hasControl()) {
             return;
         }
 
@@ -58,7 +67,7 @@ public class Server
                 // delete ghost
                 payout();
                 healTeam();
-                setGhostId(null);
+                deleteGhost();
             }
 
             // whether the ghost died or the players wiped, clear accumulated fight stats
@@ -71,18 +80,18 @@ public class Server
 
     public function doDamagePlayer (playerId :int, damage :int) :Boolean
     {
-        if (!Game.control.hasControl()) {
+        if (!_control.hasControl()) {
             throw new Error("Internal server function.");
         }
         // perform the attack
         var died :Boolean = damagePlayer(playerId, damage);
 
         // let all clients know of the attack
-        Game.control.state.sendMessage(Codes.MSG_PLAYER_ATTACKED, playerId);
+        _control.state.sendMessage(Codes.MSG_PLAYER_ATTACKED, playerId);
 
         if (died) {
             // the blow killed the player: let all the clients know that too
-            Game.control.state.sendMessage(Codes.MSG_PLAYER_DEATH, playerId);
+            _control.state.sendMessage(Codes.MSG_PLAYER_DEATH, playerId);
         }
         return died;
     }
@@ -113,7 +122,7 @@ public class Server
     {
         // delete any per-player room properties associaed with players who have left
         _ppp.deleteRoomProperties(function (playerId :int, prop :String, value :Object) :Boolean {
-            if (!Game.control.isPlayerHere(playerId)) {
+            if (!_control.isPlayerHere(playerId)) {
                 Game.log.debug("Cleaning: " + playerId + "/" + prop);
                 return true;
             }
@@ -124,7 +133,7 @@ public class Server
 
     protected function seekTick (tick :int) :void
     {
-        if (!Game.model.ghostId) {
+        if (_ghost == null) {
             // maybe a delay here?
             maybeSpawnGhost();
             return;
@@ -150,12 +159,12 @@ public class Server
         var y :int = Game.random.nextNumber() *
             (Game.roomBounds.height - ghostBounds.height) - ghostBounds.top;
 
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_POS, [ x, y ]);
+        _control.state.setRoomProperty(Codes.PROP_GHOST_POS, [ x, y ]);
     }
 
     protected function fightTick (tick :int) :void
     {
-        if (!Game.model.ghostId) {
+        if (_ghost == null) {
             // this should never happen, but let's be robust
             return;
         }
@@ -163,7 +172,7 @@ public class Server
         // if the ghost died, leave fight state and show the ghost's death throes
         // TODO: if the animation-based state transition back to SEEK fails, we should
         // TODO: have a backup timeout using the ticker
-        if (Game.model.isGhostDead()) {
+        if (_ghost.isDead()) {
             setState(GameModel.STATE_GHOST_DEFEAT);
             return;
         }
@@ -177,16 +186,13 @@ public class Server
         }
 
         // if ghost is alive and at least one player is still up, just do an normal AI tick
-        var brainTick :Function = Game.model.getGhostData().brain as Function;
-        if (brainTick != null) {
-            brainTick(tick);
-        }
+        _ghost.tick(tick);
     }
 
     // if a player leaves, clear their room data
     protected function handlePlayerLeft (evt :AVRGameControlEvent) :void
     {
-        if (!Game.control.hasControl()) {
+        if (!_control.hasControl()) {
             return;
         }
         var playerId :int = evt.value as int;
@@ -197,7 +203,7 @@ public class Server
 
     protected function handleMessage (event: AVRGameControlEvent) :void
     {
-        if (!Game.control.hasControl()) {
+        if (!_control.hasControl()) {
             return;
         }
         var msg :String = event.name;
@@ -254,19 +260,15 @@ public class Server
             return;
         }
 
-        // initialize the room with a ghost
-        var id :String = Content.GHOSTS[Game.random.nextInt(Content.GHOSTS.length)].id;
+        _ghost = Ghost.spawnNewGhost(Game.ourRoomId);
+    }
 
-        var zest :int = 150 + 100 * Game.random.nextNumber();
-        setGhostZest(zest);
-        setGhostMaxZest(zest);
-
-        var health :int = 100;
-        setGhostHealth(100);
-        setGhostMaxHealth(100);
-
-        // set the ghostId last of all, since that triggers loading
-        setGhostId(id);
+    protected function deleteGhost () :void
+    {
+        if (_ghost != null) {
+            _ghost.selfTerminate();
+            _ghost = null;
+        }
     }
 
     protected function checkState (... expected) :Boolean
@@ -281,7 +283,7 @@ public class Server
 
     protected function payout () :void
     {
-        var stats :Object = Game.control.state.getRoomProperty(Codes.PROP_STATS) as Object;
+        var stats :Object = _control.state.getRoomProperty(Codes.PROP_STATS) as Object;
         if (stats == null) {
             stats = { };
         }
@@ -321,7 +323,7 @@ public class Server
         for (ii = 0; ii < team.length; ii ++) {
             var factor :Number = 0.5 * (points[ii]  / totPoints);
             if (factor > 0) {
-                Game.control.state.sendMessage(Codes.MSG_PAYOUT_FACTOR, factor, team[ii]);
+                _control.state.sendMessage(Codes.MSG_PAYOUT_FACTOR, factor, team[ii]);
             }
         }
     }
@@ -382,54 +384,42 @@ public class Server
                         Math.max(0, Math.min(health, Game.model.getPlayerMaxHealth(playerId))));
     }
 
-    protected function setGhostId (id :String) :void
-    {
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_ID, id);
-    }
-
     protected function setGhostHealth (health :int) :void
     {
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_CUR_HEALTH, Math.max(0, health));
-    }
-
-    protected function setGhostMaxHealth (health :int) :void
-    {
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_MAX_HEALTH, Math.max(0, health));
+        _control.state.setRoomProperty(Codes.PROP_GHOST_CUR_HEALTH, Math.max(0, health));
     }
 
     protected function setGhostZest (zest :Number) :void
     {
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_CUR_ZEST, Math.max(0, zest));
-    }
-
-    protected function setGhostMaxZest (zest :Number) :void
-    {
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_MAX_ZEST, Math.max(0, zest));
+        _control.state.setRoomProperty(Codes.PROP_GHOST_CUR_ZEST, Math.max(0, zest));
     }
 
     protected function setState (state :String) :void
     {
-        Game.control.state.setRoomProperty(Codes.PROP_STATE, state);
+        _control.state.setRoomProperty(Codes.PROP_STATE, state);
     }
 
     protected function accumulateStats (playerId :int, win :Boolean) :void
     {
-        var stats :Object = Game.control.state.getRoomProperty(Codes.PROP_STATS) as Object;
+        var stats :Object = _control.state.getRoomProperty(Codes.PROP_STATS) as Object;
         if (stats == null) {
             stats = { };
         }
 
         // award 3 points for a win, 1 for a lose
         stats[playerId] = int(stats[playerId]) + (win ? 3 : 1);
-        Game.control.state.setRoomProperty(Codes.PROP_STATS, stats);
+        _control.state.setRoomProperty(Codes.PROP_STATS, stats);
     }
 
     protected function clearStats () :void
     {
-        Game.control.state.setRoomProperty(Codes.PROP_STATS, null);
+        _control.state.setRoomProperty(Codes.PROP_STATS, null);
     }
+
+    protected var _control :AVRGameControl;
 
     protected var _ppp :PerPlayerProperties;
 
+    protected var _ghost :Ghost;
 }
 }

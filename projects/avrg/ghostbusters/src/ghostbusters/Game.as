@@ -26,6 +26,8 @@ import com.threerings.util.Log;
 import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
 
+import ghostbusters.server.Server;
+
 [SWF(width="700", height="500")]
 public class Game extends Sprite
 {
@@ -60,7 +62,7 @@ public class Game extends Sprite
         }
         ourPlayerId = control.getPlayerId();
 
-        server = new Server();
+        server = new Server(control);
         model = new GameModel();
 
         var gameController :GameController = new GameController();

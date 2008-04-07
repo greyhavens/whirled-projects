@@ -51,8 +51,6 @@ public class GamePanel extends Sprite
             checkPlayerHealth();
         });
 
-        _splash.addEventListener(MouseEvent.CLICK, handleClick);
-
         Game.control.state.addEventListener(
             AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
 
@@ -120,11 +118,25 @@ public class GamePanel extends Sprite
         checkPlayerHealth();
     }
 
+    public function getClipClass () :Class
+    {
+        var data: Object = Game.model.ghostId;
+        if (data != null) {
+            var clip :Class = GHOST_CLIPS[data.id];
+            if (clip != null) {
+                return clip;
+            }
+            Game.log.debug("Erk, cannot find clip for ghostId=" + data);
+        }
+        return null;
+    }
+
     public function newGhost () :void
     {
         _ghost = null;
-        if (Game.model.ghostId != null) {
-            new Ghost(function (g :Ghost) :void {
+        var clip :Class = getClipClass();
+        if (clip != null) {
+            new Ghost(clip, function (g :Ghost) :void {
                 _ghost = g;
                 updateState();
             });
@@ -280,49 +292,6 @@ public class GamePanel extends Sprite
         }
     }
 
-    protected function showHelp () :void
-    {
-        if (_box) {
-            this.removeChild(_box);
-        }
-        var bits :TextBits = new TextBits("HELP HELP HELP HELP");
-        bits.addButton("Whatever", true, function () :void {
-            showSplash();
-        });
-        _box = new Box(bits);
-        _box.x = 100;
-        _box.y = 100;
-        _box.scaleX = _box.scaleY = 0.5;
-        this.addChild(_box);
-    }
-
-    protected function showSplash () :void
-    {
-        if (_box) {
-            this.removeChild(_box);
-        }
-        _box = new Box(_splash);
-        _box.x = 100;
-        _box.y = 100;
-        _box.scaleX = _box.scaleY = 0.5;
-        this.addChild(_box);
-    }
-
-    protected function handleClick (evt :MouseEvent) :void
-    {
-        if (evt.target.name == "help") {
-            CommandEvent.dispatch(this, GameController.HELP);
-
-        } else if (evt.target.name == "playNow") {
-            _box.hide();
-            CommandEvent.dispatch(this, GameController.PLAY);
-            hud.visible = true;
-
-        } else {
-            Game.log.debug("Clicked on: " + evt.target + "/" + (evt.target as DisplayObject).name);
-        }
-    }
-
     protected var _ppp :PerPlayerProperties;
 
     protected var _seeking :Boolean = false;
@@ -335,9 +304,13 @@ public class GamePanel extends Sprite
 
     protected var _frame :GameFrame;
 
-    protected var _box :Box;
-
-    protected var _splash :MovieClip = MovieClip(new Content.SPLASH());
+    // maps ghost id to model
+    protected static const GHOST_CLIPS :Object = {
+      pinchy: Content.GHOST_PINCHER,
+      duchess: Content.GHOST_DUCHESS,
+      widow: Content.GHOST_WIDOW,
+      demon: Content.GHOST_DEMON
+    };
 
     protected static const FRAME_DISPLACEMENT_Y :int = 20;
 }

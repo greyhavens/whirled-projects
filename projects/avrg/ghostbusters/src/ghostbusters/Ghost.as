@@ -22,10 +22,9 @@ public class Ghost extends Sprite
 {
     public var handler :ClipHandler;
 
-    public function Ghost (readyCallback :Function)
+    public function Ghost (clip :Class, readyCallback :Function)
     {
-        var data :Object = Game.model.getGhostData();
-        handler = new ClipHandler(new (data.clip)(), setupUI);
+        handler = new ClipHandler(new clip(), setupUI);
         this.addChild(handler);
 
         _readyCallback = readyCallback;

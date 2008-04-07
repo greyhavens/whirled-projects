@@ -76,14 +76,15 @@ public class GameModel
         return 1;
     }
 
-    public function get ghostId () :String
+    public function get ghostId () :Object
     {
-        return Game.control.state.getRoomProperty(Codes.PROP_GHOST_ID) as String;
-    }
-
-    public function isGhostDead () :Boolean
-    {
-        return Game.control.state.getRoomProperty(Codes.PROP_GHOST_CUR_HEALTH) === 0;
+        var prop :Object = Game.control.state.getRoomProperty(Codes.PROP_GHOST_ID);
+        if (prop == null || prop is String) {
+            // brief backwards compat code
+            return null;
+        }
+        var arr :Array = prop as Array;
+        return { id :arr[0], name :arr[1], level :arr[2] };
     }
 
     public function get ghostHealth () :int
@@ -118,22 +119,6 @@ public class GameModel
     public function get ghostRelativeZest () :Number
     {
         return Math.max(0, Math.min(1, ghostZest / ghostMaxZest));
-    }
-
-    public function getGhostData () :Object
-    {
-        var id :String = ghostId;
-        if (id == null) {
-            Game.log.warning("getGhostData() called with ghostId=" + id);
-            return null;
-        }
-        var ghosts :Array = Content.GHOSTS;
-        for (var ii :int = 0; ii < ghosts.length; ii ++) {
-            if (ghosts[ii].id == id) {
-                return ghosts[ii];
-            }
-        }
-        throw new Error("Erk, ghost not found somehow [id=" + id + "]");
     }
 
     protected function checkTeam (dead :Boolean) :Boolean

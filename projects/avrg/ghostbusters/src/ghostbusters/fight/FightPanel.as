@@ -5,6 +5,7 @@ package ghostbusters.fight {
 
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
@@ -76,7 +77,14 @@ public class FightPanel extends FrameSprite
     public function startGame () :void
     {
         if (_minigame == null) {
-            _minigame = new MicrogamePlayer( { } );
+            var clipClass :Class = Game.panel.getClipClass();
+            if (clipClass == null) {
+                Game.log.debug("Urk, failed to find a ghost clip class");
+                return;
+            }
+            var context :MicrogameContext = new MicrogameContext();
+            context.ghostMovie = new clipClass() as MovieClip;
+            _minigame = new MicrogamePlayer(context);
             Game.panel.frameContent(_minigame);
         }
 
