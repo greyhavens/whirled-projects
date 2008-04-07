@@ -1,7 +1,6 @@
 package ghostbusters.fight.lantern {
 
 import com.threerings.flash.Vector2;
-
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -23,9 +22,9 @@ public class HeartOfDarknessGame extends MicrogameMode
     public static const GAME_NAME :String = "Heart of Darkness";
     public static const GAME_DIRECTIONS :String = "Find the heart!";
 
-    public function HeartOfDarknessGame (difficulty :int, playerData :Object)
+    public function HeartOfDarknessGame (difficulty :int, context :MicrogameContext)
     {
-        super(difficulty, playerData);
+        super(difficulty, context);
 
         _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
     }

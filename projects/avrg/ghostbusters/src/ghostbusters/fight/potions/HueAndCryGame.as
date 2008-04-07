@@ -20,9 +20,9 @@ public class HueAndCryGame extends MicrogameMode
 {
     public static const GAME_NAME :String = "Hue and Cry";
 
-    public function HueAndCryGame (difficulty :int, playerData :Object)
+    public function HueAndCryGame (difficulty :int, context :MicrogameContext)
     {
-        super(difficulty, playerData);
+        super(difficulty, context);
 
         _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
 

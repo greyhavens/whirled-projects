@@ -1,7 +1,6 @@
 package ghostbusters.fight.ouija {
 
 import com.threerings.flash.Vector2;
-
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
@@ -17,9 +16,9 @@ public class PictoGeistGame extends MicrogameMode
     public static const GAME_NAME :String = "Picto Geist";
     public static const GAME_DIRECTIONS :String = "Draw!";
 
-    public function PictoGeistGame (difficulty :int, playerData :Object)
+    public function PictoGeistGame (difficulty :int, context :MicrogameContext)
     {
-        super(difficulty, playerData);
+        super(difficulty, context);
 
         _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
 

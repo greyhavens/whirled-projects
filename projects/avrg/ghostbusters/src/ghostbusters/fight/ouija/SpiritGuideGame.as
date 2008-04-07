@@ -13,9 +13,9 @@ public class SpiritGuideGame extends MicrogameMode
 {
     public static const GAME_NAME :String = "Spirit Guide";
 
-    public function SpiritGuideGame (difficulty :int, playerData :Object)
+    public function SpiritGuideGame (difficulty :int, context :MicrogameContext)
     {
-        super(difficulty, playerData);
+        super(difficulty, context);
 
         _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
 

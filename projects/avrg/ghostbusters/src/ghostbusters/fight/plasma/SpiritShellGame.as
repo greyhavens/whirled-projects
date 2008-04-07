@@ -23,9 +23,9 @@ public class SpiritShellGame extends MicrogameMode
     public static const GAME_NAME :String = "Spirit Shell";
     public static const GAME_DIRECTIONS :String = "Clear the ectoplasm!";
 
-    public function SpiritShellGame (difficulty :int, playerData :Object)
+    public function SpiritShellGame (difficulty :int, context :MicrogameContext)
     {
-        super(difficulty, playerData);
+        super(difficulty, context);
 
         _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
     }

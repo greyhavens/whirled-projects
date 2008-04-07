@@ -12,9 +12,9 @@ public class GhostWriterGame extends MicrogameMode
 {
     public static const GAME_NAME :String = "Ghost Writer";
 
-    public function GhostWriterGame (difficulty :int, playerData :Object)
+    public function GhostWriterGame (difficulty :int, context :MicrogameContext)
     {
-        super(difficulty, playerData);
+        super(difficulty, context);
 
         _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
 
