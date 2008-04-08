@@ -35,8 +35,8 @@ public class Constants
 
     public static const PUZZLE_HEIGHT :int = 110;
 
-    public static const PUZZLE_COLS :int = 8;
-    public static const PUZZLE_ROWS :int = 4;
+    public static const PUZZLE_COLS :int = 12;
+    public static const PUZZLE_ROWS :int = 5;
 
     public static const PUZZLE_TILE_SIZE :int = int(PUZZLE_HEIGHT / PUZZLE_ROWS);
 
@@ -137,7 +137,7 @@ public class Constants
 
     protected static const GRUNT_DATA :UnitData = UnitDataBuilder.create()
         .name("grunt")
-        .resourceCosts([10, 0, 5, 0])
+        .resourceCosts([30, 0, 30, 0])
         .baseMoveSpeed(35)
         .maxHealth(100)
         .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 0.3, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 0.8] ))
@@ -149,7 +149,7 @@ public class Constants
 
     protected static const HEAVY_DATA :UnitData = UnitDataBuilder.create()
         .name("heavy")
-        .resourceCosts([0, 10, 0, 10])
+        .resourceCosts([0, 30, 0, 30])
         .baseMoveSpeed(50)
         .maxHealth(100)
         .armor(new UnitArmor([DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 1]))
@@ -188,7 +188,7 @@ public class Constants
 
     public static const RESOURCE_DISPLAY_LOC :Point = new Point(350, 380);
     public static const PUZZLE_BOARD_LOC :Point = new Point(10, 378);
-    public static const RESOURCE_POPUP_LOC :Point = new Point(250, 425);
+    public static const RESOURCE_POPUP_LOC :Point = new Point(275, 425);
 
     public static const FIRST_UNIT_BUTTON_LOC :Point = new Point(350, 400);
 
