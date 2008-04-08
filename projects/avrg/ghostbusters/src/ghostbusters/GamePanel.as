@@ -194,7 +194,7 @@ public class GamePanel extends Sprite
             return;
         }
         if (!Game.model.isPlayerDead(Game.ourPlayerId)) {
-            // possibly we were just revive, let's see
+            // possibly we were just revived, let's see
             if (_revivePopup != null) {
                 unframeContent();
                 _revivePopup = null;
@@ -205,6 +205,7 @@ public class GamePanel extends Sprite
         if (_revivePopup != null) {
             Game.log.debug("Hrm, _revivePopup != null");
         }
+        Game.log.debug("We seem to be quite dead.");
         // TODO: make the button enable/disable depending on phase
         var panel :GamePanel = this;
         _revivePopup = popup(

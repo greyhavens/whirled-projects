@@ -105,6 +105,7 @@ public class Server
     {
         if (Game.ourRoomId == 0) {
             // if we're not yet in a room, don't tick
+            Game.log.debug("Skipping tick -- we're not in a room");
             return;
         }
 
@@ -175,6 +176,7 @@ public class Server
     protected function fightTick (tick :int) :void
     {
         if (_ghost == null) {
+            Game.log.debug("fightTick() with null _ghost");
             // this should never happen, but let's be robust
             return;
         }

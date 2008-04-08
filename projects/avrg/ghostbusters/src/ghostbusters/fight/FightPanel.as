@@ -21,6 +21,7 @@ import flash.events.MouseEvent;
 import flash.media.Sound;
 import flash.media.SoundChannel;
 
+import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 import flash.utils.setTimeout;
 
@@ -34,6 +35,7 @@ import com.whirled.AVRGameAvatar;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.MobControl;
 
+import ghostbusters.ClipHandler;
 import ghostbusters.Codes;
 import ghostbusters.Content;
 import ghostbusters.Dimness;
@@ -65,6 +67,16 @@ public class FightPanel extends FrameSprite
         _ghost.fighting();
 
         checkForSpecialStates();
+
+        var clipClass :Class = Game.panel.getClipClass();
+        if (clipClass == null) {
+            Game.log.debug("Urk, failed to find a ghost clip class");
+            return;
+        }
+        new ClipHandler(ByteArray(new clipClass()), function (clip :MovieClip) :void {
+            _gameContext = new MicrogameContext();
+            _gameContext.ghostMovie = clip;
+        });
     }
 
     override public function hitTestPoint (
@@ -74,19 +86,34 @@ public class FightPanel extends FrameSprite
             _ghost.hitTestPoint(x, y, shapeFlag);
     }
 
-    public function startGame () :void
+    public function toggleGame () :void
     {
         if (_minigame == null) {
-            var clipClass :Class = Game.panel.getClipClass();
-            if (clipClass == null) {
-                Game.log.debug("Urk, failed to find a ghost clip class");
-                return;
-            }
-            var context :MicrogameContext = new MicrogameContext();
-            context.ghostMovie = new clipClass() as MovieClip;
-            _minigame = new MicrogamePlayer(context);
-            Game.panel.frameContent(_minigame);
+            startGame();
+
+        } else {
+            endFight();
         }
+    }
+
+    public function showPlayerDeath (playerId :int) :void
+    {
+        // TODO: we handle death in two separate ways now, pointless
+        if (playerId == Game.ourPlayerId) {
+            // cancel minigame
+            endFight();
+        }
+    }
+
+    protected function startGame () :void
+    {
+        if (_gameContext == null) {
+            // should not happen
+            Game.log.warning("Trying to start a minigame, but _gameContext is null");
+            return;
+        }
+        _minigame = new MicrogamePlayer(_gameContext);
+        Game.panel.frameContent(_minigame);
 
         var selectedWeapon :int = Game.panel.hud.getWeaponType();
 
@@ -108,15 +135,6 @@ public class FightPanel extends FrameSprite
         }
 
         _minigame.beginNextGame();
-    }
-
-    public function showPlayerDeath (playerId :int) :void
-    {
-        // TODO: we handle death in two separate ways now, pointless
-        if (playerId == Game.ourPlayerId) {
-            // cancel minigame
-            endFight();
-        }
     }
 
     override protected function handleAdded (... ignored) :void
@@ -264,5 +282,7 @@ public class FightPanel extends FrameSprite
     protected var _spotlights :Dictionary = new Dictionary();
 
     protected var _minigame: MicrogamePlayer;
+
+    protected var _gameContext :MicrogameContext;
 }
 }

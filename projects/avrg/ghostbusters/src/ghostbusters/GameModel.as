@@ -84,7 +84,7 @@ public class GameModel
             return null;
         }
         var arr :Array = prop as Array;
-        return { id :arr[0], name :arr[1], level :arr[2] };
+        return { id: arr[0], name: arr[1], level: arr[2] };
     }
 
     public function get ghostHealth () :int

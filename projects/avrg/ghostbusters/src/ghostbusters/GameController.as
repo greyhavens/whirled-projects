@@ -79,7 +79,7 @@ public class GameController extends Controller
         } else if (state == GameModel.STATE_FIGHTING) {
             var subPanel :FightPanel = Game.panel.subPanel as FightPanel;
             if (subPanel != null) {
-                subPanel.startGame();
+                subPanel.toggleGame();
             }
 
         } else if (state == GameModel.STATE_GHOST_TRIUMPH ||

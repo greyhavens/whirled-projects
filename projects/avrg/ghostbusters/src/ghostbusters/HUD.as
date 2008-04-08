@@ -131,7 +131,7 @@ public class HUD extends Sprite
         }
     }
 
-    protected function handleHUDLoaded (... ignored) :void
+    protected function handleHUDLoaded (clip :MovieClip) :void
     {
         safelyAdd(HELP, helpClick);
         safelyAdd(CLOSE, closeClick);

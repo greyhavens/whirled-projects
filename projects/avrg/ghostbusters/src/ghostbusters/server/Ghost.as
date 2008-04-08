@@ -39,7 +39,13 @@ public class Ghost
         Game.control.state.setRoomProperty(Codes.PROP_GHOST_CUR_HEALTH, health);
         Game.control.state.setRoomProperty(Codes.PROP_GHOST_MAX_HEALTH, health);
 
+        // reset the 'last attack' timer
+        Game.control.state.setRoomProperty(Codes.PROP_LAST_GHOST_ATTACK, null);
+
+        // now actually spawn the ghost
         Game.control.state.setRoomProperty(Codes.PROP_GHOST_ID, [ ghosts[ix], names[ix], level ]);
+
+        Game.log.debug("Spawned new ghost: " + ghosts[ix] + "/" + names[ix] + "/" + level);
 
         return ghost;
     }
@@ -48,6 +54,7 @@ public class Ghost
     {
         var data :Object = Game.model.ghostId;
         if (data != null) {
+            Game.log.debug("Loaded existing ghost: " + data.id + "/" + data.level);
             return new Ghost(data.id as String, data.level as int);
         }
         return null;
