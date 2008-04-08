@@ -44,9 +44,8 @@ public class TableSprite extends Sprite
             addChild(p);
             _players[seat] = p;
 
-            _model.gameCtrl.local.getHeadShot(
-                 table.getIdFromRelative(seat), 
-                 p.setHeadShot);
+            p.setHeadShot(_model.gameCtrl.local.getHeadShot(
+                 table.getIdFromRelative(seat)));
         }
         
         _hand = new HandSprite(_model.hand);
@@ -63,8 +62,8 @@ public class TableSprite extends Sprite
             TRICK_POSITION, new Vector2(-LAST_TRICK_OFFSET, 0));
         addChild(_teams[1] as TeamSprite);
 
-        _bid = new BidSprite(_model.bids);
-        addChild(_bid);
+        _normalBids = new NormalBiddingSprite(_model.bids);
+        addChild(_normalBids);
 
         // listen for the trick changing
         _model.trick.addEventListener(TrickEvent.COMPLETED, trickListener);
@@ -127,7 +126,7 @@ public class TableSprite extends Sprite
         positionChild(_trick, TRICK_POSITION);
         positionChild(_teams[0] as TeamSprite, LEFT_TEAM_POSITION);
         positionChild(_teams[1] as TeamSprite, RIGHT_TEAM_POSITION);
-        positionChild(_bid, SLIDER_POSITION);
+        positionChild(_normalBids, NORMAL_BIDS_POSITION);
         _players.forEach(positionPlayer);
 
         function positionPlayer (p :PlayerSprite, seat :int, a :Array) :void {
@@ -167,7 +166,7 @@ public class TableSprite extends Sprite
 
     protected var _model :Model;
     protected var _players :Array;
-    protected var _bid :BidSprite;
+    protected var _normalBids :NormalBiddingSprite;
     protected var _hand :HandSprite;
     protected var _trick :MainTrickSprite;
     protected var _teams :Array = [null, null];
@@ -184,7 +183,7 @@ public class TableSprite extends Sprite
     protected static const HAND_POSITION :Vector2 = new Vector2(350, 455);
 
     /** Position of the center of the bid slider */
-    protected static const SLIDER_POSITION :Vector2 = new Vector2(350, 255);
+    protected static const NORMAL_BIDS_POSITION :Vector2 = new Vector2(350, 245);
 
     /** Position of the center of the trick pile */
     protected static const TRICK_POSITION :Vector2 = new Vector2(350, 205);

@@ -51,13 +51,15 @@ public class TeamSprite extends Sprite
             _table.getNameFromAbsolute(_team.players[1]));
         addChild(nameField);
 
-        _tricksScore = new Text(Text.BIG);
-        _tricksScore.centerY = 0;
-        addChild(_tricksScore);
-
-        _score = new Text(Text.BIG);
-        _score.centerY = HEIGHT / 3;
+        _score = new ScoreBar("Score:", [-30, 10, 15, 20], 0x000000);
+        _score.x = 0;
+        _score.y = -5;
         addChild(_score);
+
+        _tricks = new ScoreBar("Tricks:", [-15, 10, 15, 20], 0x000000);
+        _tricks.x = 0;
+        _tricks.y = HEIGHT / 2 - 20;
+        addChild(_tricks);
 
         updateTricks();
 
@@ -109,23 +111,22 @@ public class TeamSprite extends Sprite
     /** Set the team's score display. */
     protected function setScore (current :int, target :int) :void
     {
-        _score.text = "Score: " + current + "/" + target;
+        _score.setValues(current, target);
     }
 
     /** Update the tricks/bid status text. */
     protected function updateTricks () :void
     {
-        var text :String = "Tricks: " + _scores.getTricks(_team.index) + "/";
+        var tricks :int = _scores.getTricks(_team.index);
         var seats :Array = _team.players;
 
         if (!_bids.hasBid(seats[0]) || !_bids.hasBid(seats[1])) {
-            text += "?";
+            _tricks.setValues(tricks, "?");
         }
         else {
-            text += _bids.getBid(seats[0]) + _bids.getBid(seats[1]);
+            var bid :int = _bids.getBid(seats[0]) + _bids.getBid(seats[1]);
+            _tricks.setValues(tricks, bid);
         }
-
-        _tricksScore.text = text;
     }
 
     protected function bidListener (event :BidEvent) :void
@@ -182,10 +183,10 @@ public class TeamSprite extends Sprite
     protected var _lastTrickPos :Vector2;
 
     /** Tricks score, e.g. "1/5" */
-    protected var _tricksScore :Text;
+    protected var _tricks :ScoreBar;
 
     /** Score score, e.g. "172/300" */
-    protected var _score :Text;
+    protected var _score :ScoreBar;
 
     protected static const TRICK_SCALE :Number = 0.5;
     protected static const TRICK_DURATION :int = 1.0;
@@ -202,4 +203,54 @@ public class TeamSprite extends Sprite
     protected static const TEAM_IMAGES :Array = [IMAGE_TEAM_0, IMAGE_TEAM_1];
 }
 
+}
+
+import flash.display.Sprite;
+import spades.graphics.Text;
+
+class ScoreBar extends Sprite
+{
+    public function ScoreBar (
+        label :String, 
+        xpositions :Array, 
+        color :uint)
+    {
+        var text :Text;
+
+        text = new Text(Text.HUGE, color, 0xFFFFFF);
+        text.centerY = 0;
+        text.x = xpositions[1];
+        text.text = "";
+        text.rightJustify();
+        addChild(_score = text);
+
+        text = new Text(Text.HUGE, color, 0xFFFFFF);
+        text.centerY = 0;
+        text.x = xpositions[2];
+        text.text = "/";
+        addChild(text);
+
+        text = new Text(Text.HUGE, color, 0xFFFFFF);
+        text.centerY = 0;
+        text.x = xpositions[3];
+        text.text = "";
+        text.leftJustify();
+        addChild(_target = text);
+
+        text = new Text(Text.SMALL, 0xFFFFFF, color, true);
+        text.bottomY = _score.bottomY;
+        text.x = xpositions[0];
+        text.text = label;
+        text.rightJustify();
+        addChild(text);
+    }
+
+    public function setValues (score :int, target :Object) :void
+    {
+        _score.text = "" + score;
+        _target.text = "" + target;
+    }
+
+    protected var _score :Text;
+    protected var _target :Text;
 }

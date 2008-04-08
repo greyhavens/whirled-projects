@@ -1,5 +1,8 @@
 package spades.card {
 
+import spades.Debug;
+
+
 /** Class to perform various transformations between player id, absolute seats and relative seats. 
  *  Most functions are of the form getXFromY where X and Y are one of:
  *  
@@ -21,6 +24,8 @@ public class Table
         localSeat :int,
         teams :Array)
     {
+        Debug.debug("Starting table with players " + playerIds.join(", "));
+
         _playerNames = playerNames;
         _playerIds = playerIds;
         _localSeat = localSeat;
@@ -53,6 +58,18 @@ public class Table
     public function getLocalSeat () :int
     {
         return _localSeat;
+    }
+
+    /** Get the absolute seat position of the local player's teammate. 
+     *  @throws CardException if the team is not exactly 2 players*/
+    public function getLocalTeammate () :int
+    {
+        var team :Team = getTeamFromAbsolute(getLocalSeat());
+        if (team.players.length != 2) {
+            throw new CardException("Getting team mate when team has " + 
+                team.players.length + " doesn't make sense");
+        }
+        return team.players[(team.players.indexOf(getLocalSeat()) + 1) % 2];
     }
 
     /** Get the absolute seating position for a player id. */

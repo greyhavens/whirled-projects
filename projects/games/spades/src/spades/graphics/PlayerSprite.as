@@ -1,7 +1,9 @@
 package spades.graphics {
 
 import flash.display.Sprite;
+import flash.display.DisplayObject;
 import flash.display.Bitmap;
+import flash.filters.DropShadowFilter;
 
 import com.threerings.util.MultiLoader;
 
@@ -19,6 +21,8 @@ public class PlayerSprite extends Sprite
     /** Create a new player. */
     public function PlayerSprite (name :String, team :Team)
     {
+        _headShadow = new DropShadowFilter(7, 45, 0x000000, 1, 4, 4, 102);
+
         MultiLoader.getContents(TEAM_IMAGES[team.index] as Class, gotBackground);
 
         var nameField :Text = new Text(Text.BIG);
@@ -41,15 +45,14 @@ public class PlayerSprite extends Sprite
         }
     }
 
-    public function setHeadShot (sprite :Sprite, success :Boolean) :void
+    public function setHeadShot (headShot :DisplayObject, success :Boolean) :void
     {
         if (_headShot != null) {
             removeChild(_headShot);
             _headShot = null;
         }
-        _headShot = sprite;
-        _headShot.x = -_headShot.width / 2;
-        _headShot.y = -_headShot.height / 2 + 14;
+        _headShot = headShot;
+        _headShot.filters = [_headShadow];
         addChild(_headShot);
     }
 
@@ -74,7 +77,6 @@ public class PlayerSprite extends Sprite
             time: 1.0
         };
 
-
         if (!turn) {
             tween.onComplete = makeInvisible;
         }
@@ -87,8 +89,9 @@ public class PlayerSprite extends Sprite
     }
 
     protected var _background :Bitmap;
-    protected var _headShot :Sprite;
+    protected var _headShot :DisplayObject;
     protected var _turn :Boolean;
+    protected var _headShadow :DropShadowFilter;
 
     protected static const WIDTH :int = 165;
     protected static const HEIGHT :int = 115;

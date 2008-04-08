@@ -9,6 +9,7 @@ import spades.card.CardArray;
 import spades.card.Trick;
 import spades.card.TrickEvent;
 import spades.card.Bids;
+import spades.card.SpadesBids;
 import spades.card.BidEvent;
 import spades.card.Table;
 import spades.card.Hand;
@@ -53,7 +54,7 @@ public class Controller
             [new Team(0, [0, 2]), new Team(1, [1, 3])]);
         var hand :Hand = new Hand(gameCtrl, sorter);
         var trick :Trick = new Trick(gameCtrl, trumps);
-        var bids :Bids = new Bids(gameCtrl, 
+        var bids :SpadesBids = new SpadesBids(gameCtrl, 
             CardArray.FULL_DECK.length / table.numPlayers);
         var scores :Scores = new Scores(table, bids, targetScore);
 
@@ -81,6 +82,7 @@ public class Controller
         bids.addEventListener(BidEvent.PLACED, bidListener);
         bids.addEventListener(BidEvent.COMPLETED, bidListener);
         bids.addEventListener(BidEvent.SELECTED, bidListener);
+        bids.addEventListener(SpadesBids.BLIND_NIL_RESPONDED, bidListener);
 
         hand.addEventListener(HandEvent.CARDS_SELECTED, handListener);
     }
@@ -173,6 +175,7 @@ public class Controller
             }
         }
 
+        _spadePlayed = false;
         scores.resetTricks();
     }
     
@@ -233,6 +236,10 @@ public class Controller
         if (gameCtrl.game.isMyTurn()) {
             if (bids.complete) {
                 hand.beginTurn(getLegalMoves());
+            }
+            else if (bids.hasBid(table.getLocalTeammate())) {
+                var teamBid :int = bids.getBid(table.getLocalTeammate());
+                bids.request(hand.length - teamBid);
             }
             else {
                 bids.request(hand.length);
@@ -334,6 +341,10 @@ public class Controller
             completeTrick();
         }
         else if (event.type == TrickEvent.CARD_PLAYED) {
+            if (event.card.suit == Card.SUIT_SPADES) {
+                _spadePlayed = true;
+            }
+
             if (!trick.complete && gameCtrl.game.amInControl()) {
                 gameCtrl.game.startNextTurn();
             }
@@ -350,7 +361,7 @@ public class Controller
      *  TODO: implement. */
     protected function canLeadSpades () :Boolean
     {
-        return true;
+        return _spadePlayed;
     }
 
     /** Check how many cards of a suit the local player has in his hand. */
@@ -438,6 +449,9 @@ public class Controller
 
     /** If we are running a "development minigame". */
     protected var _miniGame :Boolean = false;
+
+    /** True if spades have been shown in the current round. */
+    protected var _spadePlayed :Boolean = false;
 
     /** Name of property indicating the last player to lead the hand. */
     protected static const COMS_LAST_LEADER :String = "lastleader";

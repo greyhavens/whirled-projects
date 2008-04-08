@@ -28,9 +28,6 @@ public class Bids extends EventDispatcher
         _gameCtrl.net.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED,
             handlePropertyChanged);
-
-
-        reset();
     }
 
     /** Request a bid from the local player up to a specified maximum amount. This is not a network 
@@ -107,6 +104,7 @@ public class Bids extends EventDispatcher
         return _bids[seat];
     }
 
+    /** Check if the player in an absolute seating position has placed a bid yet. */
     public function hasBid (seat :int) :Boolean
     {
         return _bids[seat] != NO_BID;
