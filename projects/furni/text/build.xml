@@ -1,0 +1,13 @@
+<!-- build configuration -->
+<project name="text" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Text"/>
+  <property name="app.type" value="furni"/>
+
+  <property name="app.lib-extras" value="../../../lib/fl-components.swc"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>
