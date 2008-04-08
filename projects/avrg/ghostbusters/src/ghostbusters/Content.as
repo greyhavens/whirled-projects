@@ -5,10 +5,20 @@ package ghostbusters {
 
 public class Content
 {
-    // clips
+    // UI clips
     [Embed(source="../../rsrc/UI/hud_vertical.swf", mimeType="application/octet-stream")]
     public static const HUD_VISUAL :Class;
 
+    [Embed(source="../../rsrc/UI/minigame_frame.swf", mimeType="application/octet-stream")]
+    public static const FRAME :Class;
+
+    [Embed(source="../../rsrc/UI/ghost_defeated.swf", mimeType="application/octet-stream")]
+    public static const GHOST_DEFEATED :Class;
+
+    [Embed(source="../../rsrc/UI/player_died.swf", mimeType="application/octet-stream")]
+    public static const PLAYER_DIED :Class;
+
+    // ghost clips
     [Embed(source="../../rsrc/Ghosts/Ghost_Duchess.swf", mimeType="application/octet-stream")]
     public static const GHOST_DUCHESS :Class;
 
@@ -21,11 +31,6 @@ public class Content
     [Embed(source="../../rsrc/Ghosts/Ghost_Demon.swf", mimeType="application/octet-stream")]
     public static const GHOST_DEMON :Class;
 
-    [Embed(source="../../rsrc/UI/minigame_frame.swf", mimeType="application/octet-stream")]
-    public static const FRAME :Class;
-
-    [Embed(source="../../rsrc/UI/capturebar.swf", mimeType="application/octet-stream")]
-    public static const CAPTURE_BAR :Class;
 
     // fonts
     [Embed(source="../../rsrc/Fonts/SunnySide.ttf", fontName="SunnySide",

@@ -24,7 +24,7 @@ public class ClipHandler extends FrameSprite
 {
     public var scenes :Object;
 
-    public function ClipHandler (data :ByteArray, loaded :Function)
+    public function ClipHandler (data :ByteArray, loaded :Function = null)
     {
         _loaded = loaded;
 
