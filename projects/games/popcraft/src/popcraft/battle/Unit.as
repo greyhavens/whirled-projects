@@ -70,6 +70,11 @@ public class Unit extends SimObject
         return this.hasTasksNamed(ATTACK_COOLDOWN_TASK_NAME);
     }
 
+    public function get attackTarget () :Unit
+    {
+        return (this.isAttacking ? _currentAttackTarget.object as Unit : null);
+    }
+
     public function canAttackWithWeapon (targetUnit :Unit, weapon :UnitWeapon) :Boolean
     {
         // we can attack the unit if we're not already attacking, and if the unit
@@ -133,6 +138,8 @@ public class Unit extends SimObject
         } else if (null != targetUnit) {
             targetUnit.receiveAttack(attack);
         }
+
+        _currentAttackTarget = (null != targetUnit ? targetUnit.ref : SimObjectRef.Null());
 
         // install a cooldown timer
         if (weapon.cooldown > 0) {
@@ -260,6 +267,7 @@ public class Unit extends SimObject
     protected var _unitData :UnitData;
     protected var _health :Number;
     protected var _isDead :Boolean;
+    protected var _currentAttackTarget :SimObjectRef;
 
     protected var _loc :Vector2 = new Vector2();
 
