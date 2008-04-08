@@ -74,8 +74,16 @@ class GruntAI extends AITaskTree
     protected function beginAttackBase () :void
     {
         this.clearSubtasks();
+
         this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
         this.addSubtask(new DetectAttacksOnUnitTask(_unit));
+
+        // scan for Heavy units once/second
+        var detectPredicate :Function = DetectCreatureAction.createIsEnemyOfTypePredicate(Constants.UNIT_TYPE_HEAVY);
+        var scanSequence :AITaskSequence = new AITaskSequence(true);
+        scanSequence.addSequencedTask(new AITimerTask(1));
+        scanSequence.addSequencedTask(new DetectCreatureAction(detectPredicate));
+        this.addSubtask(scanSequence);
     }
 
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
@@ -102,6 +110,15 @@ class GruntAI extends AITaskTree
                 this.beginAttackBase();
                 break;
             }
+        } else if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
+            var msg :SequencedTaskMessage = data as SequencedTaskMessage;
+            var heavyUnit :CreatureUnit = msg.data as CreatureUnit;
+
+            // we detected a heavy - attack it
+            log.info("detected Heavy - attacking");
+            this.clearSubtasks();
+            this.addSubtask(new AttackUnitTask(heavyUnit.ref, true, _unit.unitData.loseInterestRadius));
+
         }
     }
 
