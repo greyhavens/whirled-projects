@@ -4,20 +4,27 @@ import popcraft.battle.CreatureUnit;
 
 public class AITaskSequence extends AITaskTree
 {
-    public function AITaskSequence (name :String, tasks :Array)
+    public function AITaskSequence (name :String)
     {
         _name = name;
-        _pendingTasks = tasks.reverse();
+        _pendingTasks = [];
+    }
 
-        this.beginNextTask();
+    public function addSequencedTask (task :AITask)
+    {
+        _pendingTasks.push(task);
+
+        if (!this.hasSubtasks) {
+            this.beginNextTask();
+        }
     }
 
     protected function beginNextTask () :void
     {
-        this.addSubtask(_pendingTasks.pop());
+        this.addSubtask(_pendingTasks.shift());
     }
 
-    override protected function update (dt :Number, unit :CreatureUnit) :uint
+    override public function update (dt :Number, unit :CreatureUnit) :uint
     {
         super.update(dt, unit);
 

@@ -76,9 +76,9 @@ class HeavyAI extends AITaskTree
         return target.addLocal(ourBaseLoc);
     }
 
-    override protected function subtaskCompleted (task :AITask) :void
+    override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
     {
-        if (task.name == MOVE_TO_DEFENSIVE_LOC_TASK_NAME) {
+        if (messageName == MSG_SUBTASKCOMPLETED && task.name == MOVE_TO_DEFENSIVE_LOC_TASK_NAME) {
             var moveToLocTask :MoveToLocationTask = task as MoveToLocationTask;
 
             // were we successful moving to our defensive loc?
@@ -91,7 +91,6 @@ class HeavyAI extends AITaskTree
                 // it took too long to get to our defense location. pick a new spot.
                 this.moveToDefenseLocation();
             }
-
         }
     }
 

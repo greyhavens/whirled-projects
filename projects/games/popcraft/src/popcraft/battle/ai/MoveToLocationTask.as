@@ -7,7 +7,7 @@ import popcraft.battle.CreatureUnit;
 /**
  * Attempts to move the creature to a particular location on the battlefield.
  */
-public class MoveToLocationTask implements AITask
+public class MoveToLocationTask extends AITask
 {
     public function MoveToLocationTask (name :String, loc :Vector2, fudgeFactor :Number = 0, failAfter :Number = -1)
     {
@@ -17,12 +17,12 @@ public class MoveToLocationTask implements AITask
         _failAfter = failAfter;
     }
 
-    public function get name () :String
+    override public function get name () :String
     {
         return _name;
     }
 
-    public function update (dt :Number, creature :CreatureUnit) :uint
+    override public function update (dt :Number, creature :CreatureUnit) :uint
     {
         if (0 == _elapsedTime) {
             // calculate how long it *should* take us to get to the destination

@@ -6,8 +6,7 @@ import com.whirled.contrib.simplegame.*;
 import popcraft.*;
 import popcraft.battle.*;
 
-public class AttackUnitTask
-    implements AITask
+public class AttackUnitTask extends AITask
 {
     public static const NAME :String = "AttackUnit";
 
@@ -18,7 +17,7 @@ public class AttackUnitTask
         _loseInterestRange = loseInterestRange;
     }
 
-    public function update (dt :Number, unit :CreatureUnit) :uint
+    override public function update (dt :Number, unit :CreatureUnit) :uint
     {
         var enemy :Unit = _unitRef.object as Unit;
 
@@ -60,7 +59,7 @@ public class AttackUnitTask
         return null;
     }
 
-    public function get name () :String
+    override public function get name () :String
     {
         return NAME;
     }

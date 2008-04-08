@@ -78,28 +78,30 @@ class GruntAI extends AITaskTree
         this.addSubtask(new DetectAttacksOnUnitTask(_unit));
     }
 
-    override protected function subtaskCompleted (task :AITask) :void
+    override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
     {
-        switch (task.name) {
+        if (messageName == MSG_SUBTASKCOMPLETED) {
+            switch (task.name) {
 
-        case DetectAttacksOnUnitTask.NAME:
-            // we've been attacked!
-            var attack :UnitAttack = (task as DetectAttacksOnUnitTask).attack;
-            var aggressor :Unit = attack.sourceUnit;
+            case DetectAttacksOnUnitTask.NAME:
+                // we've been attacked!
+                var attack :UnitAttack = (task as DetectAttacksOnUnitTask).attack;
+                var aggressor :Unit = attack.sourceUnit;
 
-            if (null != aggressor) {
-                log.info("attacking aggressor!");
+                if (null != aggressor) {
+                    log.info("attacking aggressor!");
 
-                this.clearSubtasks();
-                this.addSubtask(new AttackUnitTask(aggressor.ref, true, _unit.unitData.loseInterestRadius));
+                    this.clearSubtasks();
+                    this.addSubtask(new AttackUnitTask(aggressor.ref, true, _unit.unitData.loseInterestRadius));
+                }
+                break;
+
+            case AttackUnitTask.NAME:
+                // resume attacking base
+                log.info("resuming attack on base");
+                this.beginAttackBase();
+                break;
             }
-            break;
-
-        case AttackUnitTask.NAME:
-            // resume attacking base
-            log.info("resuming attack on base");
-            this.beginAttackBase();
-            break;
         }
     }
 

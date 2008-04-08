@@ -3,18 +3,41 @@ package popcraft.battle.ai {
 import popcraft.battle.CreatureUnit;
 
 /**
- * The interface implemented by each node in the AI behavior tree.
+ * The base class for the nodes of the AI behavior tree.
  */
-public interface AITask
+public class AITask
 {
-    /** Returns the name of this AITask. */
-    function get name () :String;
-    
-    /** 
-     * Advances the logic of the AITask. 
-     * Returns the status of the AITask (see AITaskStatus). 
+    /**
+     * Returns the name of the task.
+     * Subclasses can override this to return their own name.
      */
-    function update (dt :Number, creature :CreatureUnit) :uint;
+    public function get name () :String
+    {
+        return "[unnamed]";
+    }
+
+    /**
+     * Advances the logic of the AITask.
+     * Returns the status of the AITask (see AITaskStatus).
+     * Subclasses should override this to do something interesting.
+     */
+    public function update (dt :Number, creature :CreatureUnit) :uint
+    {
+        return AITaskStatus.ACTIVE;
+    }
+
+    /**
+     * Delivers a message to this task's parent. If the node has no
+     * parent, the message will not be delivered.
+     */
+    protected function sendParentMessage (messageName :String, data :Object = null) :void
+    {
+        if (null != _parent) {
+            _parent.receiveSubtaskMessageInternal(this, messageName, data);
+        }
+    }
+
+    internal var _parent :AITaskTree;
 }
 
 }

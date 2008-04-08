@@ -59,6 +59,7 @@ import popcraft.battle.ai.*;
 
 /**
  * Goals:
+ * (Priority 1) Attack groups of approaching enemies.
  * (Priority 1) Attack enemy base
  */
 class SapperAI extends AITaskTree
@@ -69,13 +70,19 @@ class SapperAI extends AITaskTree
         _targetBaseRef = targetBaseRef;
 
         this.beginAttackBase();
+        //this.scanForEnemyGroups();
     }
 
     protected function beginAttackBase () :void
     {
-        this.clearSubtasks();
         this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
     }
+
+    /*protected function scanForEnemyGroups () :void
+    {
+        var scanTasks :Array = [ new AITimerTask(SCAN_FOR_ENEMIES_DELAY), new ScanForEnemyGroupTask() ];
+        var taskSequence :AITaskSequence = new AITaskSequence(SCAN_FOR_ENEMIES_TASK_NAME, scanTasks);
+    }*/
 
     override public function get name () :String
     {
@@ -84,4 +91,27 @@ class SapperAI extends AITaskTree
 
     protected var _unit :SapperCreatureUnit;
     protected var _targetBaseRef :SimObjectRef;
+
+    protected static const SCAN_FOR_ENEMIES_DELAY :Number = 1;
+    protected static const SCAN_FOR_ENEMIES_TASK_NAME :String = "ScanForEnemies";
+}
+
+class ScanForEnemyGroupTask extends AITask
+{
+    public function ScanForEnemyGroupTask (name :String, groupSize :int)
+    {
+        _name = name;
+    }
+
+    override public function get name () :String
+    {
+        return name;
+    }
+
+    override public function update (dt :Number, creature :CreatureUnit) :uint
+    {
+        return AITaskStatus.COMPLETE;
+    }
+
+    protected var _name :String;
 }

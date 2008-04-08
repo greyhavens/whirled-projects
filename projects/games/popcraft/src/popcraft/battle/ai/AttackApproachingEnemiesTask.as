@@ -9,24 +9,26 @@ public class AttackApproachingEnemiesTask extends AITaskTree
         this.addSubtask(new DetectEnemyTask());
     }
 
-    override protected function subtaskCompleted (task :AITask) :void
+    override protected function receiveSubtaskMessage (subtask :AITask, messageName :String, data :Object) :void
     {
-        switch (task.name) {
+        if (messageName == MSG_SUBTASKCOMPLETED) {
+            switch (subtask.name) {
 
-        case DetectEnemyTask.NAME:
-            // unit detected. start attacking
-            var enemyRef :SimObjectRef = (task as DetectEnemyTask).detectedCreatureRef;
+            case DetectEnemyTask.NAME:
+                // unit detected. start attacking
+                var enemyRef :SimObjectRef = (subtask as DetectEnemyTask).detectedCreatureRef;
 
-            this.clearSubtasks();
-            this.addSubtask(new AttackUnitTask(enemyRef, false, -1));
-            break;
+                this.clearSubtasks();
+                this.addSubtask(new AttackUnitTask(enemyRef, false, -1));
+                break;
 
-        case AttackUnitTask.NAME:
-            // unit killed. get back to detecting.
-            this.clearSubtasks();
-            this.addSubtask(new DetectEnemyTask());
-            break;
+            case AttackUnitTask.NAME:
+                // unit killed. get back to detecting.
+                this.clearSubtasks();
+                this.addSubtask(new DetectEnemyTask());
+                break;
 
+            }
         }
     }
 

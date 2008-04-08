@@ -2,8 +2,7 @@ package popcraft.battle.ai {
 
 import popcraft.battle.*;
 
-public class DetectAttacksOnUnitTask
-    implements AITask
+public class DetectAttacksOnUnitTask extends AITask
 {
     public static const NAME :String = "DetectAttacksOnUnit";
 
@@ -12,7 +11,7 @@ public class DetectAttacksOnUnitTask
         unit.addEventListener(UnitEvent.ATTACKED, onUnitAttacked, false, 0, true);
     }
 
-    public function get name () :String
+    override public function get name () :String
     {
         return NAME;
     }
@@ -22,7 +21,7 @@ public class DetectAttacksOnUnitTask
         _attack = e.data as UnitAttack;
     }
 
-    public function update (dt :Number, unit :CreatureUnit) :uint
+    override public function update (dt :Number, unit :CreatureUnit) :uint
     {
         return (null == _attack ? AITaskStatus.ACTIVE : AITaskStatus.COMPLETE);
     }

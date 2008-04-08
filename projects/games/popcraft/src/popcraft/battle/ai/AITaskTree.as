@@ -5,19 +5,15 @@ import com.whirled.contrib.simplegame.*;
 
 import popcraft.battle.CreatureUnit;
 
-public class AITaskTree
-    implements AITask
+public class AITaskTree extends AITask
 {
+    public static const MSG_SUBTASKCOMPLETED :String = "SubtaskCompleted";
+
     public function AITaskTree ()
     {
     }
 
-    public function get name () :String
-    {
-        return "[unnamed task]";
-    }
-
-    public function update (dt :Number, unit :CreatureUnit) :uint
+    override public function update (dt :Number, unit :CreatureUnit) :uint
     {
         _stopProcessingSubtasks = false;
 
@@ -123,9 +119,22 @@ public class AITaskTree
         return stateString;
     }
 
-    /** Subclasses can override this to do something interesting. */
-    protected function subtaskCompleted (task :AITask) :void
+    /**
+     * Subtasks use this function to communicate with their parent tasks.
+     * Subclasses can override this to do something interesting.
+     */
+    protected function receiveSubtaskMessage (subtask :AITask, messageName :String, data :Object) :void
     {
+    }
+
+    internal function receiveSubtaskMessageInternal (subtask :AITask, messageName :String, data :Object) :void
+    {
+        this.receiveSubtaskMessage(subtask, messageName, data);
+    }
+
+    private function subtaskCompleted (subtask :AITask) :void
+    {
+        this.receiveSubtaskMessage(subtask, MSG_SUBTASKCOMPLETED, null);
     }
 
     protected var _subtasks :Array = new Array();
