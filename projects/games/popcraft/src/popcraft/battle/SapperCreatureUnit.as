@@ -56,6 +56,7 @@ import flash.geom.Point;
 import popcraft.*;
 import popcraft.battle.*;
 import popcraft.battle.ai.*;
+import com.threerings.util.Log;
 
 /**
  * Goals:
@@ -69,35 +70,41 @@ class SapperAI extends AITaskTree
         _unit = unit;
         _targetBaseRef = targetBaseRef;
 
-        this.beginAttackBase();
-        this.scanForEnemyGroups();
+        this.attackBaseAndScanForEnemyGroups();
     }
 
-    protected function beginAttackBase () :void
+    protected function attackBaseAndScanForEnemyGroups () :void
     {
+        this.clearSubtasks();
+
         this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
-    }
 
-    protected function scanForEnemyGroups () :void
-    {
-        var taskSequence :AITaskSequence = new AITaskSequence(true);
-        taskSequence.addSequencedTask(new AITimerTask(SCAN_FOR_ENEMIES_DELAY));
-        taskSequence.addSequencedTask(new DetectCreatureGroupAction(
+        var scanSequence :AITaskSequence = new AITaskSequence(true);
+        scanSequence.addSequencedTask(new AITimerTask(SCAN_FOR_ENEMIES_DELAY));
+        scanSequence.addSequencedTask(new DetectCreatureGroupAction(
             SCAN_FOR_ENEMIES_TASK_NAME,
-            2,
+            SCAN_FOR_ENEMY_GROUP_SIZE,
             DetectCreatureGroupAction.isDetectableEnemyCreaturePred,
             DetectCreatureGroupAction.isGroupedEnemyPred));
 
-        this.addSubtask(taskSequence);
+        this.addSubtask(scanSequence);
     }
 
     override protected function receiveSubtaskMessage (subtask :AITask, messageName :String, data :Object) :void
     {
-        // we detected an enemy group
         if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
+            // we detected an enemy group - unbundle the message from the sequenced task
             var msg :SequencedTaskMessage = data as SequencedTaskMessage;
             var group :Array = msg.data as Array;
-            trace("enemy group detected");
+            log.info("detected enemy group - bombing!");
+
+            // try to attack the first enemy
+            var enemy :CreatureUnit = group[0];
+            this.clearSubtasks();
+            this.addSubtask(new AttackUnitTask(enemy.ref, true, -1));
+        } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && subtask.name == AttackUnitTask.NAME) {
+            // the unit we were going after died before we got to them
+            this.attackBaseAndScanForEnemyGroups();
         }
     }
 
@@ -110,7 +117,10 @@ class SapperAI extends AITaskTree
     protected var _targetBaseRef :SimObjectRef;
 
     protected static const SCAN_FOR_ENEMIES_DELAY :Number = 1;
+    protected static const SCAN_FOR_ENEMY_GROUP_SIZE :int = 3;
     protected static const SCAN_FOR_ENEMIES_TASK_NAME :String = "ScanForEnemies";
+
+    protected static const log :Log = Log.getLog(SapperAI);
 }
 
 class DetectCreatureGroupAction extends AITask
