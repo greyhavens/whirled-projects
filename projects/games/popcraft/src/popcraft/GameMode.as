@@ -1,5 +1,6 @@
 package popcraft {
 
+import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
 import com.threerings.util.Log;
@@ -8,6 +9,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.util.*;
 
+import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.events.KeyboardEvent;
 
@@ -189,6 +191,10 @@ public class GameMode extends AppMode
         // update the network
         _messageMgr.update(dt);
 
+        // if the network simulation is updated, we'll need to depth-sort
+        // the battlefield display objects
+        var sortDisplayChildren :Boolean = _messageMgr.hasUnprocessedTicks;
+
         while (_messageMgr.hasUnprocessedTicks) {
 
             // process all messages from this tick
@@ -229,6 +235,24 @@ public class GameMode extends AppMode
 
         // update all non-net objects
         super.update(dt);
+
+        if (sortDisplayChildren) {
+            DisplayUtil.sortDisplayChildren(battleUnitDisplayParent, displayObjectYSort);
+        }
+    }
+
+    protected static function displayObjectYSort (a :DisplayObject, b :DisplayObject) :int
+    {
+        var ay :Number = a.y;
+        var by :Number = b.y;
+
+        if (ay < by) {
+            return -1;
+        } else if (ay > by) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     public function getPlayerData (playerId :uint) :PlayerData
