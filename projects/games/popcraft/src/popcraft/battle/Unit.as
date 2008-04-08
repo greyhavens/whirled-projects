@@ -169,6 +169,11 @@ public class Unit extends SimObject
                 continue;
             }
 
+            // should we be damaging friendlies?
+            if (!attack.weapon.aoeDamageFriendlies && !this.isEnemyUnit(unit)) {
+                continue;
+            }
+
             // is the unit in range?
             var delta :Vector2 = targetLoc.subtract(unit._loc);
             if (delta.lengthSquared > radiusSquared) {

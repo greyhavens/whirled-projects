@@ -14,9 +14,12 @@ public class UnitWeaponBuilder
     public function targetClassMask (val :uint) :UnitWeaponBuilder { _weapon.targetClassMask = val; return this; }
     public function cooldown (val :Number) :UnitWeaponBuilder { _weapon.cooldown = val; return this; }
     public function maxAttackDistance (val :Number) :UnitWeaponBuilder { _weapon.maxAttackDistance = val; return this; }
+
     public function missileSpeed (val :Number) :UnitWeaponBuilder { _weapon.missileSpeed = val; return this; }
+
     public function aoeRadius (val :Number) :UnitWeaponBuilder { _weapon.aoeRadius = val; return this; }
     public function aoeAnimationName (val :String) :UnitWeaponBuilder { _weapon.aoeAnimationName = val; return this; }
+    public function aoeDamageFriendlies (val :Boolean) :UnitWeaponBuilder { _weapon.aoeDamageFriendlies = val; return this; }
 
     public function get weapon () :UnitWeapon { return _weapon; }
 

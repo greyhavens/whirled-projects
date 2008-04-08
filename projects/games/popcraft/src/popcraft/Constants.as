@@ -124,6 +124,7 @@ public class Constants
         .targetClassMask(UNIT_CLASS_GROUND)
         .aoeRadius(75)
         .aoeAnimationName("attack_N")
+        .aoeDamageFriendlies(false)
         .cooldown(1)
         .weapon;
 
