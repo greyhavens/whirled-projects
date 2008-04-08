@@ -3,10 +3,9 @@ package popcraft {
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 
-import popcraft.battle.*;
-
 import flash.display.*;
-import mx.controls.Text;
+
+import popcraft.battle.*;
 
 public class UnitPurchaseMeter extends SceneObject
 {
@@ -27,6 +26,16 @@ public class UnitPurchaseMeter extends SceneObject
                 continue;
             }
 
+            // create a little rectangle indicating the
+            // resource type
+            var shape :Shape = new Shape();
+            var g :Graphics = shape.graphics;
+            g.beginFill(resData.color);
+            g.drawRect(0, yOffset, RECT_WIDTH, METER_HEIGHT);
+            g.endFill();
+            _sprite.addChild(shape);
+
+
             // create a new meter
             var rectMeter :RectMeter = new RectMeter();
             rectMeter.width = METER_WIDTH;
@@ -35,8 +44,9 @@ public class UnitPurchaseMeter extends SceneObject
             rectMeter.maxValue = resCost;
             rectMeter.value = resCost;
             rectMeter.foregroundColor = resData.color;
-            rectMeter.backgroundColor = 0xFFFFFF;
-            rectMeter.outlineColor = 0x000000;
+            rectMeter.backgroundColor = 0x7B7A78;
+            rectMeter.outlineColor = 0;
+            rectMeter.x = RECT_WIDTH + 1;
             rectMeter.y = yOffset;
 
             rectMeter.updateDisplay();
@@ -94,8 +104,9 @@ public class UnitPurchaseMeter extends SceneObject
 
             var resAmount :int = GameMode.instance.localPlayerData.getResourceAmount(resType);
 
-            rectMeter.value = Math.max(0, resCost - resAmount);
-            textMeter.value = Math.min(resCost, resAmount);
+            var meterValue :Number = Math.min(resCost, resAmount);
+            rectMeter.value = meterValue;
+            textMeter.value = meterValue;
         }
     }
 
@@ -108,9 +119,10 @@ public class UnitPurchaseMeter extends SceneObject
     protected var _meters :Array = new Array();
     protected var _unitType :uint;
 
-    protected static const METER_WIDTH :int = 38;
+    protected static const METER_WIDTH :int = 36;
     protected static const METER_HEIGHT :int = 14;
     protected static const METER_YOFFSET :int = 4;
+    protected static const RECT_WIDTH :int = 3;
 }
 
 }

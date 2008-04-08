@@ -31,7 +31,7 @@ public class UnitPurchaseButtonManager extends SimObject
             meter.displayObject.y = button.y + button.height + 2;
             GameMode.instance.addObject(meter, GameMode.instance.modeSprite);
 
-            loc.x += button.width + 2;
+            loc.x += button.width + BUTTON_X_OFFSET;
         }
     }
 
@@ -58,6 +58,8 @@ public class UnitPurchaseButtonManager extends SimObject
 
     protected var _buttons :Array = new Array();
     protected var _localPlayerData :LocalPlayerData;
+
+    protected static const BUTTON_X_OFFSET :int = 2;
 }
 
 }

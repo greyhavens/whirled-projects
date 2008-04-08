@@ -16,9 +16,9 @@ public class Constants
 
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
-    public static const DEBUG_ALLOW_CHEATS :Boolean = true;
+    public static const DEBUG_ALLOW_CHEATS :Boolean = false;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
-    public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = true;
+    public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
 
     public static const PLAYER_COLORS :Array = [
@@ -178,7 +178,7 @@ public class Constants
         .maxHealth(100)
         .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.05, DAMAGE_TYPE_PIERCING, 0.1, DAMAGE_TYPE_EXPLOSION, 0.1] ))
         .weapon(BASE_WEAPON)
-        .collisionRadius(40)
+        .collisionRadius(20)
         .unitData;
 
     // non-creature units must come after creature units

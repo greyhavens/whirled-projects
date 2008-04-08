@@ -37,6 +37,10 @@ public class PopCraft extends Sprite
         Assert.isTrue(null == g_instance);
         g_instance = this;
 
+        this.graphics.beginFill(0);
+        this.graphics.drawRect(0, 0, 700, 500);
+        this.graphics.endFill();
+
         this.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
         var mainLoop :MainLoop = new MainLoop(this);
