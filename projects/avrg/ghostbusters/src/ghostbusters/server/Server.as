@@ -27,16 +27,16 @@ public class Server
             AVRGameControlEvent.MESSAGE_RECEIVED, handleMessage);
 
         _ppp = new PerPlayerProperties();
-
-        _ghost = Ghost.loadIfPresent();
     }
 
     public function newRoom () :void
     {
-        if (!_control.hasControl()) {
-            return;
+        if (_control.hasControl() && Game.model.ghostId == null) {
+            _ghost = Ghost.spawnNewGhost(Game.ourRoomId);
+
+        } else {
+            _ghost = Ghost.loadIfPresent();
         }
-        maybeSpawnGhost();
     }
 
     /** Called at the end of the Seek phase when the ghost's appear animation is done. */
@@ -57,6 +57,10 @@ public class Server
             return;
         }
 
+        if (_ghost == null) {
+            Game.log.warning("Null _ghost in ghostFullyGone()");
+            return;
+        }
         if (checkState(GameModel.STATE_GHOST_TRIUMPH, GameModel.STATE_GHOST_DEFEAT)) {
             if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH) {
                 // heal ghost
@@ -67,7 +71,8 @@ public class Server
                 // delete ghost
                 payout();
                 healTeam();
-                deleteGhost();
+                _ghost.selfTerminate();
+                _ghost = null;
             }
 
             // whether the ghost died or the players wiped, clear accumulated fight stats
@@ -98,6 +103,11 @@ public class Server
 
     protected function everySecondTick (tick :int) :void
     {
+        if (Game.ourRoomId == 0) {
+            // if we're not yet in a room, don't tick
+            return;
+        }
+
         if ((tick % 10) == 0) {
             cleanup();
         }
@@ -135,7 +145,7 @@ public class Server
     {
         if (_ghost == null) {
             // maybe a delay here?
-            maybeSpawnGhost();
+            _ghost = Ghost.spawnNewGhost(Game.ourRoomId);
             return;
         }
 
@@ -251,23 +261,6 @@ public class Server
             var heal :int = (totHeal * playerDmg[ii]) / totDmg;
             Game.log.debug("HEAL :: Awarding " + heal + " pts to player #" + team[ii]);
             healPlayer(team[ii], heal);
-        }
-    }
-
-    protected function maybeSpawnGhost () :void
-    {
-        if (Game.model.ghostId != null) {
-            return;
-        }
-
-        _ghost = Ghost.spawnNewGhost(Game.ourRoomId);
-    }
-
-    protected function deleteGhost () :void
-    {
-        if (_ghost != null) {
-            _ghost.selfTerminate();
-            _ghost = null;
         }
     }
 

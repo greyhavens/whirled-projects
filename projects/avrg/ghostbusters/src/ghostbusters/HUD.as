@@ -180,8 +180,7 @@ public class HUD extends Sprite
         _inventory = MovieClip(findSafely(INVENTORY));
         _inventory.visible = false;
 
-        _ghostInfo = MovieClip(findSafely(GHOST_INFO));
-        _ghostInfo.visible = true;
+        _ghostInfo = new GhostInfoView(MovieClip(findSafely(GHOST_INFO)));
 
         safelyAdd(CHOOSE_LANTERN, pickLoot);
         safelyAdd(CHOOSE_BLASTER, pickLoot);
@@ -396,7 +395,7 @@ public class HUD extends Sprite
     protected var _lootIx :int;
 
     protected var _inventory :MovieClip;
-    protected var _ghostInfo :MovieClip;
+    protected var _ghostInfo :GhostInfoView;
 //    protected var _weaponDisplay :MovieClip;
 
     protected static const HELP :String = "helpbutton";
