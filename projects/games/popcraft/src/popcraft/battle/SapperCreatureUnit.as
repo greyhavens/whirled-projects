@@ -104,6 +104,7 @@ class ScanForEnemyGroupTask extends AITask
     public function ScanForEnemyGroupTask (name :String, groupSize :int)
     {
         _name = name;
+        _groupSize = groupSize;
     }
 
     override public function get name () :String
@@ -113,8 +114,15 @@ class ScanForEnemyGroupTask extends AITask
 
     override public function update (dt :Number, creature :CreatureUnit) :uint
     {
+        
         return AITaskStatus.COMPLETE;
     }
 
+    override public function clone () :AITask
+    {
+        return new ScanForEnemyGroupTask(_name, _groupSize);
+    }
+
     protected var _name :String;
+    protected var _groupSize :int;
 }

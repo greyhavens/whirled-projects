@@ -56,6 +56,8 @@ public class AITaskTree extends AITask
 
             _subtasks[i] = task;
         }
+
+        task._parent = this;
     }
 
     public function removeSubtaskNamed (name :String, removeAll :Boolean = true) :void
@@ -68,6 +70,8 @@ public class AITaskTree extends AITask
             if (null != task && task.name == name) {
                 _subtasks[i] = null;
                 _freeIndices.push(i);
+
+                task._parent = null;
 
                 if (!removeAll) {
                     break;

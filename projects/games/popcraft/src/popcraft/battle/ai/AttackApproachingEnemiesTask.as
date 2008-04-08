@@ -2,35 +2,47 @@ package popcraft.battle.ai {
 
 import com.whirled.contrib.simplegame.SimObjectRef;
 
+import popcraft.battle.CreatureUnit;
+
 public class AttackApproachingEnemiesTask extends AITaskTree
 {
-    public function AttackApproachingEnemiesTask ()
+    public function AttackApproachingEnemiesTask (detectDelay :Number = 1)
     {
-        this.addSubtask(new DetectEnemyTask());
+        _detectDelay = Math.max(detectDelay, 0);
+
+        this.detectEnemies();
+    }
+
+    protected function detectEnemies () :void
+    {
+        // let's look for an enemy every so often
+
+        var detectSequence :AITaskSequence = new AITaskSequence(true);
+        detectSequence.addSequencedTask(new AITimerTask(_detectDelay));
+        detectSequence.addSequencedTask(new DetectCreatureAction(DetectCreatureAction.isEnemyPredicate));
+
+        this.addSubtask(detectSequence);
     }
 
     override protected function receiveSubtaskMessage (subtask :AITask, messageName :String, data :Object) :void
     {
-        if (messageName == MSG_SUBTASKCOMPLETED) {
-            switch (subtask.name) {
+        if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
+            var message :SequencedTaskMessage = data as SequencedTaskMessage;
+            var detectedCreature :CreatureUnit = message.data as CreatureUnit;
 
-            case DetectEnemyTask.NAME:
-                // unit detected. start attacking
-                var enemyRef :SimObjectRef = (subtask as DetectEnemyTask).detectedCreatureRef;
+            // unit detected - start attacking
+            this.clearSubtasks();
+            this.addSubtask(new AttackUnitTask(detectedCreature.ref, false, -1));
 
-                this.clearSubtasks();
-                this.addSubtask(new AttackUnitTask(enemyRef, false, -1));
-                break;
+        } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && subtask.name == AttackUnitTask.NAME) {
 
-            case AttackUnitTask.NAME:
-                // unit killed. get back to detecting.
-                this.clearSubtasks();
-                this.addSubtask(new DetectEnemyTask());
-                break;
-
-            }
+            // unit killed - resume detecting
+            this.clearSubtasks();
+            this.detectEnemies();
         }
     }
+
+    protected var _detectDelay :Number = 1;
 
 }
 
