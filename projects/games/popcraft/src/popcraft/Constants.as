@@ -167,7 +167,7 @@ public class Constants
         .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] ))
         .weapon(SAPPER_EXPLODE_WEAPON)
         .collisionRadius(15)
-        .detectRadius(15)
+        .detectRadius(200)
         .loseInterestRadius(180)
         .unitData;
 
