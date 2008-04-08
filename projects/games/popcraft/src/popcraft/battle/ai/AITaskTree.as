@@ -132,7 +132,7 @@ public class AITaskTree extends AITask
         this.receiveSubtaskMessage(subtask, messageName, data);
     }
 
-    private function subtaskCompleted (subtask :AITask) :void
+    protected function subtaskCompleted (subtask :AITask) :void
     {
         this.receiveSubtaskMessage(subtask, MSG_SUBTASKCOMPLETED, null);
     }

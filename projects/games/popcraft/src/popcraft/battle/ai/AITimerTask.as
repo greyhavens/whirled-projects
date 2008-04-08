@@ -1,36 +1,40 @@
 package popcraft.battle.ai {
-    
+
 import popcraft.battle.CreatureUnit;
-    
-public class AITimerTask
-    implements AITask
+
+public class AITimerTask extends AITask
 {
     public static const DEFAULT_NAME :String = "Timer";
-    
+
     public function AITimerTask (time :Number, taskName :String = DEFAULT_NAME)
     {
         _totalTime = time;
-        
+
         _name = taskName;
     }
-    
-    public function update (dt :Number, unit :CreatureUnit) :uint
+
+    override public function update (dt :Number, unit :CreatureUnit) :uint
     {
         _elapsedTime += dt;
-        
+
         return (_elapsedTime >= _totalTime ? AITaskStatus.COMPLETE : AITaskStatus.ACTIVE);
     }
-    
-    public function get name () :String
+
+    override public function get name () :String
     {
         return _name;
     }
-    
+
+    override public function clone () :AITask
+    {
+        return new AITimerTask(_totalTime, _name);
+    }
+
     protected var _totalTime :Number = 0;
     protected var _elapsedTime :Number = 0;
-    
+
     protected var _name :String;
-    
+
 }
 
 }

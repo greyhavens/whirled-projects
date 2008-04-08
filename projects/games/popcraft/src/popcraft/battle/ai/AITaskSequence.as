@@ -1,19 +1,22 @@
 package popcraft.battle.ai {
 
 import popcraft.battle.CreatureUnit;
+import com.threerings.util.Assert;
 
 public class AITaskSequence extends AITaskTree
 {
     public static const MSG_SEQUENCEDTASKCOMPLETED :String = "SequencedTaskCompleted";
     public static const MSG_SEQUENCEDTASKMESSAGE :String = "SequencedTaskMessage";
 
-    public function AITaskSequence (name :String)
+    public function AITaskSequence (repeating :Boolean = false, name :String = null)
     {
         _name = name;
+        _repeating = repeating;
         _pendingTasks = [];
+        _completedTasks = [];
     }
 
-    public function addSequencedTask (task :AITask)
+    public function addSequencedTask (task :AITask) :void
     {
         _pendingTasks.push(task);
 
@@ -24,14 +27,21 @@ public class AITaskSequence extends AITaskTree
 
     protected function beginNextTask () :void
     {
-        this.addSubtask(_pendingTasks.shift());
+        Assert.isTrue(_pendingTasks.length > 0);
+        this.addSubtask(_pendingTasks[0]);
     }
 
     override public function update (dt :Number, unit :CreatureUnit) :uint
     {
         super.update(dt, unit);
 
-        return (_done ? AITaskStatus.COMPLETE : AITaskStatus.ACTIVE);
+        // do we need to repeat?
+        if (_repeating && _pendingTasks.length == 0 && _repeating) {
+            _pendingTasks = this.cloneSubtasks();
+            _completedTasks = [];
+        }
+
+        return (_pendingTasks.length > 0 ? AITaskStatus.ACTIVE : AITaskStatus.COMPLETE);
     }
 
     override public function get name () :String
@@ -39,11 +49,21 @@ public class AITaskSequence extends AITaskTree
         return _name;
     }
 
+    override public function clone () :AITask
+    {
+        var clone :AITaskSequence = new AITaskSequence(_repeating, _name);
+        clone._pendingTasks = this.cloneSubtasks();
+
+        return clone;
+    }
+
     override protected function subtaskCompleted (task :AITask) :void
     {
-        _done = (_pendingTasks.length == 0);
+        // the current subtask is stored at _pendingTasks[0]
+        _pendingTasks.shift();
+        _completedTasks.push(task);
 
-        if (!_done) {
+        if (_pendingTasks.length > 0) {
             this.beginNextTask();
         }
 
@@ -55,9 +75,25 @@ public class AITaskSequence extends AITaskTree
         this.sendParentMessage(MSG_SEQUENCEDTASKMESSAGE, new SequencedTaskMessage(subtask, messageName, data));
     }
 
+    protected function cloneSubtasks () :Array
+    {
+        var clones :Array = [];
+
+        for each (var task :AITask in _completedTasks) {
+            clones.push(task.clone());
+        }
+
+        for each (task in _pendingTasks) {
+            clones.push(task.clone());
+        }
+
+        return clones;
+    }
+
     protected var _name :String;
+    protected var _repeating :Boolean;
     protected var _pendingTasks :Array;
-    protected var _done :Boolean;
+    protected var _completedTasks :Array;
 
 }
 

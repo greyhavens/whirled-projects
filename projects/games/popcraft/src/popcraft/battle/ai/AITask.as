@@ -27,6 +27,15 @@ public class AITask
     }
 
     /**
+     * Returns a copy of this AITask.
+     * AITasks that will be in repeating task sequences must implement this function.
+     */
+    public function clone () :AITask
+    {
+        throw new Error("This task does not implement clone()");
+    }
+
+    /**
      * Delivers a message to this task's parent. If the node has no
      * parent, the message will not be delivered.
      */

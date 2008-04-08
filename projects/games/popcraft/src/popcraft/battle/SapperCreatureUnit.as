@@ -70,7 +70,7 @@ class SapperAI extends AITaskTree
         _targetBaseRef = targetBaseRef;
 
         this.beginAttackBase();
-        //this.scanForEnemyGroups();
+        this.scanForEnemyGroups();
     }
 
     protected function beginAttackBase () :void
@@ -78,11 +78,14 @@ class SapperAI extends AITaskTree
         this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
     }
 
-    /*protected function scanForEnemyGroups () :void
+    protected function scanForEnemyGroups () :void
     {
-        var scanTasks :Array = [ new AITimerTask(SCAN_FOR_ENEMIES_DELAY), new ScanForEnemyGroupTask() ];
-        var taskSequence :AITaskSequence = new AITaskSequence(SCAN_FOR_ENEMIES_TASK_NAME, scanTasks);
-    }*/
+        var taskSequence :AITaskSequence = new AITaskSequence(true);
+        taskSequence.addSequencedTask(new AITimerTask(SCAN_FOR_ENEMIES_DELAY));
+        taskSequence.addSequencedTask(new ScanForEnemyGroupTask(SCAN_FOR_ENEMIES_TASK_NAME, 2));
+
+        this.addSubtask(taskSequence);
+    }
 
     override public function get name () :String
     {
