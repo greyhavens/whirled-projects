@@ -4,6 +4,9 @@ import popcraft.battle.CreatureUnit;
 
 public class AITaskSequence extends AITaskTree
 {
+    public static const MSG_SEQUENCEDTASKCOMPLETED :String = "SequencedTaskCompleted";
+    public static const MSG_SEQUENCEDTASKMESSAGE :String = "SequencedTaskMessage";
+
     public function AITaskSequence (name :String)
     {
         _name = name;
@@ -43,6 +46,13 @@ public class AITaskSequence extends AITaskTree
         if (!_done) {
             this.beginNextTask();
         }
+
+        this.sendParentMessage(MSG_SEQUENCEDTASKCOMPLETED, task);
+    }
+
+    override protected function receiveSubtaskMessage (subtask :AITask, messageName :String, data :Object) :void
+    {
+        this.sendParentMessage(MSG_SEQUENCEDTASKMESSAGE, new SequencedTaskMessage(subtask, messageName, data));
     }
 
     protected var _name :String;
