@@ -51,7 +51,8 @@ public class Constants
     /* Damage types */
     public static const DAMAGE_TYPE_CRUSHING :uint = 0;
     public static const DAMAGE_TYPE_PIERCING :uint = 1;
-    public static const DAMAGE_TYPE_BASE :uint = 2; // bases damage units that attack them
+    public static const DAMAGE_TYPE_EXPLOSION :uint = 2;
+    public static const DAMAGE_TYPE_BASE :uint = 3; // bases damage units that attack them
 
     /* Resource types */
 
@@ -118,7 +119,7 @@ public class Constants
 
     protected static const SAPPER_EXPLODE_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
         .isAOE(true)
-        .damageType(DAMAGE_TYPE_CRUSHING)
+        .damageType(DAMAGE_TYPE_EXPLOSION)
         .damageRange(70, 70)
         .targetClassMask(UNIT_CLASS_GROUND)
         .aoeRadius(75)
@@ -139,7 +140,7 @@ public class Constants
         .resourceCosts([10, 0, 5, 0])
         .baseMoveSpeed(35)
         .maxHealth(100)
-        .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 0.3, DAMAGE_TYPE_BASE, 0.8] ))
+        .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 0.3, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 0.8] ))
         .weapon(GRUNT_WEAPON)
         .collisionRadius(15)
         .detectRadius(40)
@@ -151,7 +152,7 @@ public class Constants
         .resourceCosts([0, 10, 0, 10])
         .baseMoveSpeed(50)
         .maxHealth(100)
-        .armor(new UnitArmor([DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1]))
+        .armor(new UnitArmor([DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 1]))
         //.weapons([HEAVY_MELEE_WEAPON, HEAVY_RANGED_WEAPON])
         .weapon(HEAVY_RANGED_WEAPON)
         .collisionRadius(15)
@@ -164,7 +165,7 @@ public class Constants
         .resourceCosts([0, 0, 15, 15])
         .baseMoveSpeed(35)
         .maxHealth(70)
-        .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_BASE, 1] ))
+        .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 1] ))
         .weapon(SAPPER_EXPLODE_WEAPON)
         .collisionRadius(15)
         .detectRadius(200)
@@ -174,7 +175,7 @@ public class Constants
     protected static const BASE_DATA :UnitData = UnitDataBuilder.create()
         .name("base")
         .maxHealth(100)
-        .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.1, DAMAGE_TYPE_PIERCING, 0.1] ))
+        .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.05, DAMAGE_TYPE_PIERCING, 0.1, DAMAGE_TYPE_EXPLOSION, 0.1] ))
         .weapon(BASE_WEAPON)
         .collisionRadius(40)
         .unitData;
