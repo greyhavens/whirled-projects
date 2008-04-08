@@ -100,7 +100,7 @@ public class CreatureUnitView extends SceneObject
 
             // create an attack animation object that will play and self-destruct
 
-            var anim :MovieClip = PopCraft.resourceManager.instantiateMovieClip(_unit.unitData.name, weapon.aoeAnimationName);
+            var anim :MovieClip = PopCraft.instantiateMovieClip(_unit.unitData.name, weapon.aoeAnimationName);
 
             if (null == anim) {
                 log.info("Missing AOE attack animation '" + weapon.aoeAnimationName + "' for " + _unit.unitData.name);

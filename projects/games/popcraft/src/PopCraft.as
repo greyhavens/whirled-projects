@@ -8,6 +8,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.game.GameControl;
 
+import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.Event;
 
@@ -30,6 +31,19 @@ public class PopCraft extends Sprite
     public static function get resourceManager () :ResourceManager
     {
         return g_instance._rsrcMgr;
+    }
+
+    public static function instantiateMovieClip (resourceName :String, className :String) :MovieClip
+    {
+        var swf :SwfResourceLoader = resourceManager.getResource(resourceName) as SwfResourceLoader;
+        if (null != swf) {
+            var movieClass :Class = swf.getClass(className);
+            if (null != movieClass) {
+                return new movieClass();
+            }
+        }
+
+        return null;
     }
 
     public function PopCraft ()
