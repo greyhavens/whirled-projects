@@ -36,9 +36,13 @@ public class AITaskSequence extends AITaskTree
         super.update(dt, unit);
 
         // do we need to repeat?
-        if (_repeating && _pendingTasks.length == 0 && _repeating) {
+        if (_repeating && _pendingTasks.length == 0) {
             _pendingTasks = this.cloneSubtasks();
             _completedTasks = [];
+
+            if (_pendingTasks.length > 0) {
+                this.beginNextTask();
+            }
         }
 
         return (_pendingTasks.length > 0 ? AITaskStatus.ACTIVE : AITaskStatus.COMPLETE);
