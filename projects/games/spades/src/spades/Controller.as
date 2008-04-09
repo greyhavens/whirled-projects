@@ -29,9 +29,15 @@ public class Controller
     /** Create a new controller. Constructs Model and connects all listeners. */
     public function Controller (gameCtrl :GameControl)
     {
+        _templateDeck = CardArray.FULL_DECK;
+
         var config :Object = gameCtrl.game.getConfig();
         if ("minigame" in config) {
-            _miniGame = config["minigame"] as Boolean;
+            var isHighCard :Function = function (c :Card) :Boolean {
+                return Card.compareRanks(c.rank, Card.RANK_QUEEN, 
+                    Card.RANK_ORDER_ACES_HIGH) >= 0;
+            }
+            _templateDeck = _templateDeck.shortFilter(isHighCard);
         }
 
         var sorter :Sorter = new Sorter(
@@ -118,9 +124,9 @@ public class Controller
         return _model.trick;
     }
 
-    protected function get bids () :Bids
+    protected function get bids () :SpadesBids
     {
-        return _model.bids;
+        return _model.bids as SpadesBids;
     }
 
     protected function get scores () :Scores
@@ -131,10 +137,13 @@ public class Controller
     /** Boot up the game. */
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
-        var mini :String = _miniGame ? " (mini game selected)" : "";
+        var deckStr :String = "(" + _templateDeck.length + " card deck)";
+        if (_templateDeck.length == 52) {
+            deckStr = "";
+        }
         gameCtrl.local.feedback(
              "Welcome to Spades, first player to score " + scores.target + 
-             " wins" + mini  + "\n");
+             " wins" + deckStr  + "\n");
 
         scores.resetScores();
     }
@@ -149,20 +158,22 @@ public class Controller
 
             log("Dealing and setting up bids");
 
-            // put all cards into a bag
-            var deck :CardArray = CardArray.FULL_DECK;
-
-            if (_miniGame) {
-                var isHighCard :Function = function (c :Card) :Boolean {
-                    return Card.compareRanks(c.rank, Card.RANK_QUEEN, 
-                        Card.RANK_ORDER_ACES_HIGH) >= 0;
-                }
-                deck = deck.shortFilter(isHighCard);
-            }
-
-            hand.deal(deck);
+            hand.prepare(_templateDeck);
             bids.reset();
             trick.reset();
+
+            // deal cards unless player is eligible for blind nil
+            var numCards :int = cardsPerPlayer;
+            var wal :WinnersAndLosers = scores.getWinnersAndLosers();
+            var blindNil :Team = null;
+            if (wal.scoreDifferential >= BLIND_NIL_THRESHOLD) {
+                blindNil = wal.losingTeams[0];
+            }
+            for (var seat :int = 0; seat < NUM_PLAYERS; ++seat) {
+                if (blindNil == null || !blindNil.hasSeat(seat)) {
+                    hand.dealTo(table.getIdFromAbsolute(seat), numCards);
+                }
+            }
 
             // on the first round, set a random first player as leader. Otherwise, advance the 
             // previous leader by one
@@ -177,6 +188,12 @@ public class Controller
 
         _spadePlayed = false;
         scores.resetTricks();
+    }
+
+    /** Number of cards dealt per player */
+    protected function get cardsPerPlayer () :int
+    {
+        return _templateDeck.length / NUM_PLAYERS;
     }
     
     /** Process the total tricks taken for this set of hands played, add into the local scores
@@ -208,21 +225,92 @@ public class Controller
     protected function bidListener (event :BidEvent) :void
     {
         log("Received " + event);
+
         if (event.type == BidEvent.PLACED) {
 
             var name :String = table.getNameFromId(event.player);
-            gameCtrl.local.feedback(name + " bid " + event.value);
+
+            if (bids.isBlind(table.getAbsoluteFromId(event.player))) {
+                gameCtrl.local.feedback(
+                    table.getNameFromId(event.player) + " has bid blind nil!");
+            }
+            else {
+                gameCtrl.local.feedback(name + " bid " + event.value);
+            }
             
             if (gameCtrl.game.amInControl()) {
                 gameCtrl.game.startNextTurn();
+            }
+        }
+        else if (event.type == SpadesBids.BLIND_NIL_RESPONDED) {
+
+            // player has confirmed or denied the blind nil, deal cards to him and if he accepted,
+            // also deal to teammate since he will not be eligible for blind nil
+            if (gameCtrl.game.amInControl()) {
+                hand.dealTo(event.player, cardsPerPlayer);
+
+                if (Boolean(event.value)) {
+                    var teammate :int = table.getTeammateId(event.player);
+                    if (!bids.hasBid(table.getAbsoluteFromId(teammate))) {
+                        hand.dealTo(teammate, cardsPerPlayer);
+                    }
+                }
+            }
+
+            // if the player has denied blind nil, activate the normal bid ui
+            if (!Boolean(event.value) && event.player == table.getLocalId()) {
+                bids.request(getLocalPlayerMaximumBid());
             }
         }
         else if (event.type == BidEvent.COMPLETED) {
             gameCtrl.local.feedback("All bids are in, starting play");
         }
         else if (event.type == BidEvent.SELECTED) {
-            bids.placeBid(event.value);
+            
+            // The first two cases here are special and require a blind nil response 
+            // message to be sent to all clients
+
+            if (event.value == SpadesBids.SELECTED_BLIND_NIL) {
+                bids.placeBlindNilResponse(true);
+            }
+            else if (event.value == SpadesBids.SELECTED_SHOW_CARDS) {
+                bids.placeBlindNilResponse(false);
+            }
+            else {
+                bids.placeBid(event.value);
+            }
         }
+    }
+
+    /** Check if the local player meets all criteria for placing a blind nil bid. */
+    protected function isLocalPlayerEligibleForBlindNilBid () :Boolean
+    {
+        var wal :WinnersAndLosers = scores.getWinnersAndLosers();
+        if (wal.scoreDifferential < BLIND_NIL_THRESHOLD) {
+            return false;
+        }
+        
+        var loser :Team = Team(wal.losingTeams[0]);
+        if (!loser.hasSeat(table.getLocalSeat())) {
+            return false;
+        }
+        
+        var teammate :int = table.getLocalTeammate();
+        if (bids.hasBid(teammate) && bids.isBlind(teammate)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /** Get the maximum amount a player should be allowed to bid (limited by teammate's bid). */
+    protected function getLocalPlayerMaximumBid () :int
+    {
+        var teamTotal :int = 0;
+        if (bids.hasBid(table.getLocalTeammate())) {
+            teamTotal = bids.getBid(table.getLocalTeammate());
+        }
+        return cardsPerPlayer - teamTotal;
     }
 
     /** Update the UI after a turn change. */
@@ -237,12 +325,11 @@ public class Controller
             if (bids.complete) {
                 hand.beginTurn(getLegalMoves());
             }
-            else if (bids.hasBid(table.getLocalTeammate())) {
-                var teamBid :int = bids.getBid(table.getLocalTeammate());
-                bids.request(hand.length - teamBid);
+            else if (isLocalPlayerEligibleForBlindNilBid()) {
+                bids.request(SpadesBids.REQUESTED_BLIND_NIL);
             }
             else {
-                bids.request(hand.length);
+                bids.request(getLocalPlayerMaximumBid()); 
             }
         }
 
@@ -309,7 +396,6 @@ public class Controller
         if (highScore < scores.target && wal.losingTeams.length == 1) {
             highScore = wal.scoreDifferential;
         }
-
         // feedback
         if (highScore >= scores.target) {
             if (winners.length == 1) {
@@ -447,17 +533,20 @@ public class Controller
     /** Our model object. */
     protected var _model :Model;
 
-    /** If we are running a "development minigame". */
-    protected var _miniGame :Boolean = false;
-
     /** True if spades have been shown in the current round. */
     protected var _spadePlayed :Boolean = false;
+
+    /** Deck for use when restarting a round or calculating number of cards. */
+    protected var _templateDeck :CardArray;
 
     /** Name of property indicating the last player to lead the hand. */
     protected static const COMS_LAST_LEADER :String = "lastleader";
 
     /** Players required for a game of spades */
     protected static const NUM_PLAYERS :int = 4;
+
+    /** Minimum score differential for the losing team to be allowed to bid blind nil. */
+    protected static const BLIND_NIL_THRESHOLD :int = 100;
 
     /** Time between rounds (seconds). */
     protected static const DELAY_TO_NEXT_ROUND :int = 5;

@@ -18,26 +18,38 @@ public class Text extends TextField
     /** Initialization constant for a huge standard text field. */
     public static const HUGE :int = 2;
 
+    /** Initialization constant for a small text field in italics. */
+    public static const SMALL_ITALIC :int = 3;
+
+    /** Initialization constant for a huge text field in italics with a hard outline. */
+    public static const HUGE_HARD_ITALIC :int = 4;
+
     /** Create a new standard text field of the given size. */
     public function Text(
         size :int = SMALL, 
         foreColor :uint = 0xFFFFFF, 
-        backColor :uint = 0x000000,
-        italic :Boolean = false)
+        backColor :uint = 0x000000)
     {
         _size = size;
 
         autoSize = TextFieldAutoSize.CENTER;
         
-        var params :Array = FORMAT_PARAMS[size];
-        defaultTextFormat = createFormat(params[0], foreColor, italic);
+        var params :Array = FORMAT_PARAMS[size] as Array;
+        defaultTextFormat = createFormat(
+            params[0] as Number, 
+            params[1] as Boolean, 
+            foreColor);
         selectable = false;
         x = 0;
         y = 0;
 
-        params = OUTLINE_PARAMS[size];
+        params = OUTLINE_PARAMS[size] as Array;
 
-        filters = [ createGlow(params[0], params[1], backColor) ];
+        filters = [ createGlow(
+            params[0] as Number, 
+            params[1] as Number, 
+            params[2] as Number, 
+            backColor) ];
     }
 
     public function rightJustify () :void
@@ -98,21 +110,33 @@ public class Text extends TextField
     protected static const MAX_NAME_LENGTH :int = 12;
 
     protected static function createFormat (
-        size :int, color :uint, italic :Boolean) :TextFormat
+        size :int, italic :Boolean, color :uint) :TextFormat
     {
         return new TextFormat("_sans", size, color, false, italic, false, 
             "", "", TextFormatAlign.LEFT, 0, 0, 0, 0);
     }
 
     protected static function createGlow (
-        alpha :Number, size :int, color :uint) :GlowFilter
+        alpha :Number, size :int, strength :int, color :uint) :GlowFilter
     {
-        return new GlowFilter(color, alpha, size, size, 4);
+        return new GlowFilter(color, alpha, size, size, strength);
     }
 
-    protected static const FORMAT_PARAMS :Array = [[12], [14], [18]];
-    protected static const OUTLINE_PARAMS :Array = [[.5, 3], [.7, 3], [.7, 3]]
-    protected static const EFFECTIVE_SIZES :Array = [18, 20, 23];
+    protected static const FORMAT_PARAMS :Array = [
+        [12, false], 
+        [14, false],
+        [18, false],
+        [12, true],
+        [24, true]];
+
+    protected static const OUTLINE_PARAMS :Array = [
+        [.5, 3, 4], 
+        [.7, 3, 4], 
+        [.7, 3, 4],
+        [.5, 3, 4],
+        [.9, 4, 64]]
+
+    protected static const EFFECTIVE_SIZES :Array = [18, 20, 23, 18, 32];
 }
 
 }

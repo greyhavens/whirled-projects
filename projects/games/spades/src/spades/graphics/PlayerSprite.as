@@ -21,11 +21,17 @@ public class PlayerSprite extends Sprite
     /** Create a new player. */
     public function PlayerSprite (name :String, team :Team)
     {
+        _team = team;
+
+        // TODO: fix drop shadow
         _headShadow = new DropShadowFilter(7, 45, 0x000000, 1, 4, 4, 102);
 
         MultiLoader.getContents(TEAM_IMAGES[team.index] as Class, gotBackground);
 
-        var nameField :Text = new Text(Text.BIG);
+        var colors :Array = TEXT_COLORS[team.index] as Array;
+
+        var nameField :Text = new Text(
+            Text.BIG, colors[0] as uint, colors[1] as uint);
         addChild(nameField);
 
         nameField.centerY = -HEIGHT / 3;
@@ -45,7 +51,8 @@ public class PlayerSprite extends Sprite
         }
     }
 
-    public function setHeadShot (headShot :DisplayObject, success :Boolean) :void
+    /** Set the player head shot. */
+    public function setHeadShot (headShot :DisplayObject) :void
     {
         if (_headShot != null) {
             removeChild(_headShot);
@@ -53,6 +60,8 @@ public class PlayerSprite extends Sprite
         }
         _headShot = headShot;
         _headShot.filters = [_headShadow];
+        _headShot.x = -_headShot.width / 2;
+        _headShot.y = -_headShot.height / 2;
         addChild(_headShot);
     }
 
@@ -60,6 +69,7 @@ public class PlayerSprite extends Sprite
      *  @param turn indicates whether it is this player's turn */
     public function setTurn (turn :Boolean) :void
     {
+        // TODO: tween drop shadow
         _turn = turn;
 
         if (_background == null) {
@@ -88,10 +98,29 @@ public class PlayerSprite extends Sprite
         }
     }
 
+    /** Display a warning for this player. 
+     *  TODO: make protected and listen for warning events in subclasses. */
+    public function showWarning (str :String) :void
+    {
+        if (_warning != null) {
+            removeChild(_warning);
+            _warning = null;
+        }
+
+        if (str.length > 0) {
+            _warning = new Text(Text.BIG, WARNING_COLOR);
+            _warning.centerY = HEIGHT / 3;
+            _warning.text = str;
+            addChild(_warning);
+        }
+    }
+
+    protected var _team :Team;
     protected var _background :Bitmap;
     protected var _headShot :DisplayObject;
     protected var _turn :Boolean;
     protected var _headShadow :DropShadowFilter;
+    protected var _warning :Text;
 
     protected static const WIDTH :int = 165;
     protected static const HEIGHT :int = 115;
@@ -103,6 +132,12 @@ public class PlayerSprite extends Sprite
     protected static const IMAGE_TEAM_1 :Class;
 
     protected static const TEAM_IMAGES :Array = [IMAGE_TEAM_0, IMAGE_TEAM_1];
+
+    protected static const WARNING_COLOR :uint = 0xFF2525;
+
+    protected static const TEXT_COLORS :Array = [
+        [0xB7E8Fb, 0x153741], 
+        [0xFFD461, 0x382407]]
 }
 
 }

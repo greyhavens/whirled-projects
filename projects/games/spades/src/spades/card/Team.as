@@ -12,6 +12,12 @@ public class Team
         _players = players;
     }
 
+    /** Test if the given absolute seating position is on this team */
+    public function hasSeat (seat :int) :Boolean
+    {
+        return players.indexOf(seat) >= 0;
+    }
+
     /** Access the index of this team in the containing table's team array. */
     public function get index () :int
     {

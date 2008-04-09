@@ -16,8 +16,7 @@ import spades.card.ScoresEvent;
 import spades.card.Team;
 
 
-/** Represents a team display. Includes a placeholder box and last trick display. 
- *  TODO: names, score and trick totals. */
+/** Represents a team display. Includes a placeholder box and last trick display. */
 public class TeamSprite extends Sprite
 {
     /** Create a new team sprite. Long names will be truncated with an ellipsis.
@@ -44,19 +43,22 @@ public class TeamSprite extends Sprite
         _lastTrick = new LastTrickSprite();
         addChild(_lastTrick);
 
-        var nameField :Text = new Text(Text.SMALL);
+        var colors :Array = TEXT_COLORS[team] as Array;
+
+        var nameField :Text = new Text(Text.SMALL, 
+            ScoreBar.WHITE, colors[0] as uint);
         nameField.centerY = -HEIGHT / 3;
         nameField.text = makeNameString(
             _table.getNameFromAbsolute(_team.players[0]), 
             _table.getNameFromAbsolute(_team.players[1]));
         addChild(nameField);
 
-        _score = new ScoreBar("Score:", [-30, 10, 15, 20], 0x000000);
+        _score = new ScoreBar("Score:", [-30, 10, 15, 20], colors);
         _score.x = 0;
         _score.y = -5;
         addChild(_score);
 
-        _tricks = new ScoreBar("Tricks:", [-15, 10, 15, 20], 0x000000);
+        _tricks = new ScoreBar("Tricks:", [-15, 10, 15, 20], colors);
         _tricks.x = 0;
         _tricks.y = HEIGHT / 2 - 20;
         addChild(_tricks);
@@ -201,6 +203,11 @@ public class TeamSprite extends Sprite
     protected static const IMAGE_TEAM_1 :Class;
 
     protected static const TEAM_IMAGES :Array = [IMAGE_TEAM_0, IMAGE_TEAM_1];
+
+    // first index is by team, second is 0 for label outline color, 1 for score text color
+    protected static const TEXT_COLORS :Array = [
+        [0x4186Af, 0x264C62], 
+        [0xA86C04, 0x623F26]];
 }
 
 }
@@ -208,36 +215,44 @@ public class TeamSprite extends Sprite
 import flash.display.Sprite;
 import spades.graphics.Text;
 
+/** Contains the 4 text components that make up "Scores" or "Tricks": the label, the score value, 
+ *  the slash and the target score value */
 class ScoreBar extends Sprite
 {
+    public static const WHITE :uint = 0xFFFFFF;
+
+    /** @param xpositions x offsets of label, score, slash and target
+     *  @param colors the color of the score text and the label outline, in order */
     public function ScoreBar (
         label :String, 
         xpositions :Array, 
-        color :uint)
+        colors :Array)
     {
         var text :Text;
 
-        text = new Text(Text.HUGE, color, 0xFFFFFF);
+        var scoreColor :uint = colors[1] as uint;
+
+        text = new Text(Text.HUGE, scoreColor, WHITE);
         text.centerY = 0;
         text.x = xpositions[1];
         text.text = "";
         text.rightJustify();
         addChild(_score = text);
 
-        text = new Text(Text.HUGE, color, 0xFFFFFF);
+        text = new Text(Text.HUGE, scoreColor, WHITE);
         text.centerY = 0;
         text.x = xpositions[2];
         text.text = "/";
         addChild(text);
 
-        text = new Text(Text.HUGE, color, 0xFFFFFF);
+        text = new Text(Text.HUGE, scoreColor, WHITE);
         text.centerY = 0;
         text.x = xpositions[3];
         text.text = "";
         text.leftJustify();
         addChild(_target = text);
 
-        text = new Text(Text.SMALL, 0xFFFFFF, color, true);
+        text = new Text(Text.SMALL_ITALIC, WHITE, colors[0] as uint);
         text.bottomY = _score.bottomY;
         text.x = xpositions[0];
         text.text = label;
@@ -245,6 +260,7 @@ class ScoreBar extends Sprite
         addChild(text);
     }
 
+    /** Set the current and target score. */
     public function setValues (score :int, target :Object) :void
     {
         _score.text = "" + score;

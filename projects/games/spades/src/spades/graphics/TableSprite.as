@@ -17,6 +17,7 @@ import spades.card.Trick;
 import spades.card.TrickEvent
 import spades.card.Table;
 import spades.card.Bids;
+import spades.card.SpadesBids;
 import spades.card.BidEvent;
 import spades.card.Hand;
 import spades.card.Scores;
@@ -65,8 +66,15 @@ public class TableSprite extends Sprite
         _normalBids = new NormalBiddingSprite(_model.bids);
         addChild(_normalBids);
 
+        _blindNilBids = new BlindNilBiddingSprite(_model.bids);
+        addChild(_blindNilBids);
+
         // listen for the trick changing
         _model.trick.addEventListener(TrickEvent.COMPLETED, trickListener);
+
+        // listen for blind nil updates
+        _model.bids.addEventListener(BidEvent.PLACED, bidListener);
+        _model.bids.addEventListener(BidEvent.RESET, bidListener);
 
         // listen for our removal to prevent stranded listeners
         addEventListener(Event.REMOVED, removedListener);
@@ -127,6 +135,7 @@ public class TableSprite extends Sprite
         positionChild(_teams[0] as TeamSprite, LEFT_TEAM_POSITION);
         positionChild(_teams[1] as TeamSprite, RIGHT_TEAM_POSITION);
         positionChild(_normalBids, NORMAL_BIDS_POSITION);
+        positionChild(_blindNilBids, NORMAL_BIDS_POSITION);
         _players.forEach(positionPlayer);
 
         function positionPlayer (p :PlayerSprite, seat :int, a :Array) :void {
@@ -141,6 +150,33 @@ public class TableSprite extends Sprite
             var teamIdx :int = table.getTeamFromId(event.player).index;
             TeamSprite(_teams[teamIdx]).takeTrick(_trick.orphanCards());
             TeamSprite(_teams[(teamIdx + 1) % 2]).clearLastTrick();
+        }
+    }
+
+    // TODO: move to a subclass of PlayerSprite
+    protected function bidListener (event :BidEvent) :void
+    {
+        var seat :int;
+        var p :PlayerSprite;
+
+        if (event.type == BidEvent.PLACED) {
+            if (event.value == 0 && event.player > 0) {
+                seat = table.getRelativeFromId(event.player);
+                p = PlayerSprite(_players[seat]);
+                if (SpadesBids(_model.bids).isBlind(
+                    table.getAbsoluteFromRelative(seat))) {
+                    p.showWarning("Blind Nil");
+                }
+                else {
+                    p.showWarning("Nil");
+                }
+            }
+        }
+        else if (event.type == BidEvent.RESET) {
+            for (seat = 0; seat < _players.length; ++seat) {
+                p = PlayerSprite(_players[seat]);
+                p.showWarning("");
+            }
         }
     }
 
@@ -167,6 +203,7 @@ public class TableSprite extends Sprite
     protected var _model :Model;
     protected var _players :Array;
     protected var _normalBids :NormalBiddingSprite;
+    protected var _blindNilBids :BlindNilBiddingSprite;
     protected var _hand :HandSprite;
     protected var _trick :MainTrickSprite;
     protected var _teams :Array = [null, null];

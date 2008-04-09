@@ -2,10 +2,8 @@ package spades.graphics {
 
 import flash.display.Sprite;
 import flash.display.DisplayObjectContainer;
-import flash.display.DisplayObject;
 import flash.events.MouseEvent;
 import flash.display.SimpleButton;
-import flash.geom.Point;
 
 import com.threerings.util.MultiLoader;
 
@@ -24,9 +22,9 @@ public class NormalBiddingSprite extends Sprite
 
         MultiLoader.getContents(MOVIE, gotContent);
 
-        var label :Text = new Text(Text.HUGE);
+        var label :Text = new Text(Text.HUGE_HARD_ITALIC, 0xFFFFFF, 0x264C62);
         label.text = "Select your bid:";
-        label.centerY = -40;
+        label.bottomY = LABEL_BOTTOM;
         addChild(label);
 
         _bids.addEventListener(BidEvent.REQUESTED, bidListener);
@@ -36,7 +34,9 @@ public class NormalBiddingSprite extends Sprite
         function gotContent (movie :DisplayObjectContainer) :void {
             _movie = movie;
 
-            _movie.x = -_movie.width / 2;
+            Debug.debug("Normal movie is " + _movie.width + " x " + _movie.height);
+
+            _movie.x = -_movie.width / 2 + MOVIE_FUDGE_OFFSET;
             _movie.y = -_movie.height / 2;
 
             addChild(_movie);
@@ -69,18 +69,8 @@ public class NormalBiddingSprite extends Sprite
     /** Add all the button listeners and take into account the maximum bid. */
     protected function setupButtons () :void
     {
-        var top :DisplayObjectContainer = 
-            DisplayObjectContainer(_movie.getChildAt(0));
-
         for (var i :int = 0; i < NUM_BUTTONS; ++i) {
-            var butt :SimpleButton = getButton(i);
-            if (butt == null) {
-                Debug.debug("Buton " + name + " not found!");
-            }
-            else {
-                butt.addEventListener(MouseEvent.CLICK, clickListener);
-                Debug.debug("Added listener for " + butt.name);
-            }
+            getButton(i).addEventListener(MouseEvent.CLICK, clickListener);
         }
 
         // redo previous call to setMaxBid if any
@@ -90,9 +80,7 @@ public class NormalBiddingSprite extends Sprite
     /** Get the button for a given bid amount. */
     protected function getButton (num :int) :SimpleButton
     {
-        var top :DisplayObjectContainer = 
-            DisplayObjectContainer(_movie.getChildAt(0));
-        return SimpleButton(top.getChildByName(buttonName(num)));
+        return Structure.requireButton(_movie.getChildAt(0), buttonName(num));
     }
 
     /** Dispatch a click on a bid to the game model. */
@@ -126,9 +114,6 @@ public class NormalBiddingSprite extends Sprite
     [Embed(source="../../../rsrc/bidding_normal.swf", mimeType="application/octet-stream")]
     protected static const MOVIE :Class;
 
-    [Embed(source="../../../rsrc/bidding_normal_disable.png", mimeType="application/octet-stream")]
-    protected static const DISABLER :Class;
-
     // for the love of grep, this is the name of the 1st button from which all names are calculated
     protected static const BUTTON_NAME_TEMPLATE :String = "button_0";
 
@@ -136,7 +121,11 @@ public class NormalBiddingSprite extends Sprite
         BUTTON_NAME_TEMPLATE.slice(
             0, BUTTON_NAME_TEMPLATE.indexOf("0"));
 
+    protected static const LABEL_BOTTOM :int = -28;
+
     protected static const NUM_BUTTONS :int = 14;
+
+    protected static const MOVIE_FUDGE_OFFSET :int = -3;
 }
 
 }

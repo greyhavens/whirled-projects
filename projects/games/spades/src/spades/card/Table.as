@@ -60,16 +60,41 @@ public class Table
         return _localSeat;
     }
 
+    /** The id of the local player. */
+    public function getLocalId () :int
+    {
+        return getIdFromAbsolute(getLocalSeat());
+    }
+
     /** Get the absolute seat position of the local player's teammate. 
      *  @throws CardException if the team is not exactly 2 players*/
     public function getLocalTeammate () :int
     {
-        var team :Team = getTeamFromAbsolute(getLocalSeat());
+        return getTeammateAbsolute(getLocalSeat());
+    }
+
+    /** Get the absolute seat position of the teammate of the player in the given absolute seating 
+     *  position. 
+     *  @throws CardException if the team is not exactly 2 players*/
+    public function getTeammateAbsolute (seat :int) :int
+    {
+        var team :Team = getTeamFromAbsolute(seat);
+        if (team == null) {
+            throw new CardException("Seat " + seat + " is not on any team");
+        }
         if (team.players.length != 2) {
-            throw new CardException("Getting team mate when team has " + 
+            throw new CardException("Getting teammate when team has " + 
                 team.players.length + " doesn't make sense");
         }
-        return team.players[(team.players.indexOf(getLocalSeat()) + 1) % 2];
+        return team.players[(team.players.indexOf(seat) + 1) % 2];
+    }
+
+    /** Get the id of the teammate of the player with the given id 
+     *  position. 
+     *  @throws CardException if the team is not exactly 2 players*/
+    public function getTeammateId (id :int) :int
+    {
+        return getIdFromAbsolute(getTeammateAbsolute(getAbsoluteFromId(id)));
     }
 
     /** Get the absolute seating position for a player id. */

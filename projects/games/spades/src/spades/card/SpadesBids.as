@@ -67,6 +67,13 @@ public class SpadesBids extends Bids
         }
     }
 
+    /** Check if the player in the given absolute seating position has bid blind. */
+    public function isBlind (seat :int) :Boolean
+    {
+        var players :Array = _gameCtrl.game.seating.getPlayerIds();
+        return players[seat] == _blindNilAccepted;
+    }
+
     protected override function handlePropertyChanged (
         event :PropertyChangedEvent) :void
     {
@@ -74,11 +81,15 @@ public class SpadesBids extends Bids
 
         if (event.name == BLIND_NIL_ACCEPTED) {
             _blindNilAccepted = event.newValue as int;
-            dispatchEvent(new BidEvent(BLIND_NIL_RESPONDED, _blindNilAccepted, 1));
+            if (event.newValue > 0) {
+                dispatchEvent(new BidEvent(BLIND_NIL_RESPONDED, _blindNilAccepted, 1));
+            }
         }
         else if (event.name == BLIND_NIL_REFUSED) {
             _blindNilRefused = event.newValue as int;
-            dispatchEvent(new BidEvent(BLIND_NIL_RESPONDED, _blindNilRefused, 0));
+            if (event.newValue > 0) {
+                dispatchEvent(new BidEvent(BLIND_NIL_RESPONDED, _blindNilRefused, 0));
+            }
         }
     }
 

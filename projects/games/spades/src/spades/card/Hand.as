@@ -33,27 +33,56 @@ public class Hand extends EventDispatcher
             handleMessage);
     }
 
-    /** Deal the given deck to all players, giving each player the same number of cards. Leftover
-     *  cards will be held on the server. Note that this method should only be called by one of 
-     *  the players in the game, presumably the one for which GameSubControl.amInControl returns 
-     *  true. When the cards arrive to the player, each local hand will receive a HandEvent.DEALT
-     *  message.
-     *  TODO: options for what to do with the leftover cards? */
-    public function deal (deck :CardArray) :void
+    /** Reset the deck on the server to the given deck. Note that this method should only be 
+     *  called by one of the players in the game, presumably the one for which 
+     *  GameSubControl.amInControl returns true. */
+    public function prepare (deck :CardArray) :void
     {
+        Debug.debug("Uploading deck: " + deck);
+
         var deckName :String = varName(DECK);
-        var dealtMsg :String = varName(DEALT);
 
         // create deck bag
         _gameCtrl.services.bags.create(deckName, deck.ordinals);
+    }
+
+    /** Deal the given deck to all players, giving each player the same number of cards. Leftover
+     *  cards will be held on the server. Note that this method should only be called by one of 
+     *  the players in the game, presumably the one for which GameSubControl.amInControl returns 
+     *  true. When the cards arrive to the player, each local hand will dispatch a HandEvent.DEALT
+     *  message.
+     *  @param deck the full deck of cards to store on the server
+     *  @param numCards optional number of cards to deal to each player. If 0, cards are dealt 
+     *  evenly
+     *  TODO: options for what to do with the leftover cards? */
+    public function prepareAndDeal (deck :CardArray, numCards :int) :void
+    {
+        // create deck bag
+        prepare(deck);
             
+        if (numCards == 0) {
+            numCards = deck.length / playerIds.length;
+        }
+
         // deal to each player
         var playerIds :Array = _gameCtrl.game.seating.getPlayerIds();
-        var cardsPerPlayer :int = deck.length / playerIds.length;
         for (var seat :int = 0; seat < playerIds.length; ++seat) {
-            _gameCtrl.services.bags.deal(deckName, cardsPerPlayer, 
-                dealtMsg, null, playerIds[seat]);
+            dealTo(playerIds[seat], numCards);
         }
+    }
+
+    /** Deal from the server's deck to one player. 
+     *  @param playerId the player to deal to
+     *  @param numCards number of cards to deal */
+    public function dealTo (playerId :int, numCards :int) :void
+    {
+        Debug.debug("Dealing " + numCards + " cards to " + playerId);
+
+        var deckName :String = varName(DECK);
+        var dealtMsg :String = varName(DEALT);
+
+        _gameCtrl.services.bags.deal(deckName, numCards, 
+            dealtMsg, null, playerId);
     }
 
     /** Begin the local player's turn, enabling the set of cards that may be played. This is not 
