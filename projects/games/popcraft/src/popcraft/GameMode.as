@@ -45,7 +45,6 @@ public class GameMode extends AppMode
         var numPlayers :int = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
         _localPlayerId = PopCraft.instance.gameControl.game.seating.getMyPosition();
         var isAPlayer :Boolean = (_localPlayerId >= 0);
-        var isFirstPlayer :Boolean = (_localPlayerId == 0);
 
         // create PlayerData structures
         for (var playerId :uint = 0; playerId < numPlayers; ++playerId) {
@@ -61,7 +60,7 @@ public class GameMode extends AppMode
             _playerData.push(playerData);
         }
 
-        this.setupNetwork(isFirstPlayer);
+        this.setupNetwork();
 
         this.setupBattleUI();
 
@@ -103,8 +102,12 @@ public class GameMode extends AppMode
         }
     }
 
-    protected function setupNetwork (isFirstPlayer :Boolean) :void
+    protected function setupNetwork () :void
     {
+        // create a special ObjectDB for all objects that are synchronized over the network.
+        _netObjects = new NetObjectDB();
+
+        // set up the message manager
         _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
 
@@ -112,10 +115,7 @@ public class GameMode extends AppMode
             _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
         }
 
-        _messageMgr.setup(isFirstPlayer, TICK_INTERVAL_MS);
-
-        // create a special ObjectDB for all objects that are synchronized over the network.
-        _netObjects = new NetObjectDB();
+        _messageMgr.setup(this.isFirstPlayer, TICK_INTERVAL_MS);
     }
 
     protected function setupPuzzleUI () :void
@@ -402,6 +402,11 @@ public class GameMode extends AppMode
     public function get localPlayerData () :LocalPlayerData
     {
         return _playerData[_localPlayerId];
+    }
+
+    public function get isFirstPlayer () :Boolean
+    {
+        return (_localPlayerId == 0);
     }
 
     public function get netObjects () :ObjectDB

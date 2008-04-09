@@ -69,7 +69,7 @@ public class PopCraft extends Sprite
         }
 
         // LoadingMode will start the game when loading is complete
-        mainLoop.pushMode(new LoadingMode(_gameCtrl));
+        mainLoop.pushMode(new LoadingMode());
     }
 
     public function get gameControl () :GameControl

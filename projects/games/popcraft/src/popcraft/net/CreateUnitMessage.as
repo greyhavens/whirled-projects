@@ -54,7 +54,7 @@ class CreateUnitMessageFactory
 
     public function deserializeFromNetwork (obj :Object) :Message
     {
-        var data :uint = obj.data;
+        var data :uint = obj["data"];
         return new CreateUnitMessage((data >> 16), (data & 0x0000FFFF));
     }
 }
