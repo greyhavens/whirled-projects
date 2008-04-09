@@ -91,6 +91,8 @@ public class Controller
         bids.addEventListener(SpadesBids.BLIND_NIL_RESPONDED, bidListener);
 
         hand.addEventListener(HandEvent.CARDS_SELECTED, handListener);
+        hand.addEventListener(HandEvent.PASS_REQUESTED, handListener);
+        hand.addEventListener(HandEvent.PASSED, handListener);
     }
 
     public function get model () :Model
@@ -229,6 +231,8 @@ public class Controller
     {
         log("Received " + event);
 
+        var teammate :int;
+
         if (event.type == BidEvent.PLACED) {
 
             var name :String = table.getNameFromId(event.player);
@@ -241,7 +245,7 @@ public class Controller
                 gameCtrl.local.feedback(name + " bid " + event.value);
             }
             
-            if (gameCtrl.game.amInControl()) {
+            if (gameCtrl.game.amInControl() && !bids.complete) {
                 gameCtrl.game.startNextTurn();
             }
         }
@@ -253,7 +257,7 @@ public class Controller
                 hand.dealTo(event.player, cardsPerPlayer);
 
                 if (Boolean(event.value)) {
-                    var teammate :int = table.getTeammateId(event.player);
+                    teammate = table.getTeammateId(event.player);
                     if (!bids.hasBid(table.getAbsoluteFromId(teammate))) {
                         hand.dealTo(teammate, cardsPerPlayer);
                     }
@@ -266,6 +270,32 @@ public class Controller
             }
         }
         else if (event.type == BidEvent.COMPLETED) {
+
+            // check if any card passing is needed
+            var blindBidder :int = bids.blindBidder;
+            if (blindBidder >= 0) {
+                teammate = table.getTeammateAbsolute(blindBidder);
+                var names :String = 
+                    table.getNameFromAbsolute(blindBidder) + " and " +
+                    table.getNameFromAbsolute(teammate);
+                gameCtrl.local.feedback(names + " must exchange two cards");
+
+                if (gameCtrl.game.amInControl()) {
+                    // by convention, the blind bidder first gives 2 cards to teammate
+                    hand.requestPass(
+                        table.getIdFromAbsolute(blindBidder), 
+                        table.getIdFromAbsolute(teammate), 
+                        BLIND_NIL_EXCHANGE);
+                    gameCtrl.game.startNextTurn(
+                        table.getIdFromAbsolute(blindBidder));
+                }
+            }
+            else {
+                if (gameCtrl.game.amInControl()) {
+                    gameCtrl.game.startNextTurn();
+                }
+            }
+
             gameCtrl.local.feedback("All bids are in, starting play");
         }
         else if (event.type == BidEvent.SELECTED) {
@@ -490,7 +520,10 @@ public class Controller
     {
         var leader :Card = trick.ledCard;
 
-        if (leader != null && countSuit(leader.suit) == 0) {
+        if (hand.isPassing) {
+            return hand.cards;
+        }
+        else if (leader != null && countSuit(leader.suit) == 0) {
             // out of led suit, allow any
             return hand.cards;
         }
@@ -512,13 +545,38 @@ public class Controller
         }
     }
 
-    /** Entry point for when the user selects a card to play */
+    /** Entry point for when the user selects a card or cards to play */
     protected function handListener (event :HandEvent) :void
     {
+        Debug.debug("Received " + event);
         if (event.type == HandEvent.CARDS_SELECTED) {
-            var card :Card = event.cards.cards[0];
-            trick.playCard(card);
-            hand.endTurn();
+            if (hand.isPassing) {
+                hand.passCards(event.cards);
+                hand.removeCards(event.cards);
+                hand.endTurn();
+            }
+            else {
+                var card :Card = event.cards.cards[0];
+                trick.playCard(card);
+                hand.removeCard(card);
+                hand.endTurn();
+            }
+        }
+        else if (event.type == HandEvent.PASSED) {
+
+            if (gameCtrl.game.amInControl()) {
+                // by convention, the blind bidder passes first, so we can tell if the exchange is 
+                // complete by checking if the passing player bid blind
+                if (bids.isBlind(table.getAbsoluteFromId(event.player))) {
+                    var teammate :int = table.getTeammateId(event.player);
+                    hand.requestPass(teammate, event.player, BLIND_NIL_EXCHANGE);
+                    gameCtrl.game.startNextTurn(teammate);
+                }
+            }
+            else {
+                var lastId :int = gameCtrl.net.get(COMS_LAST_LEADER) as int;
+                gameCtrl.game.startNextTurn(lastId);
+            }
         }
     }
 
@@ -550,6 +608,9 @@ public class Controller
 
     /** Minimum score differential for the losing team to be allowed to bid blind nil. */
     protected static const BLIND_NIL_THRESHOLD :int = 100;
+
+    /** Number of cards for teammates to exchange on blind nil bids. */
+    protected static const BLIND_NIL_EXCHANGE :int = 1;
 
     /** Time between rounds (seconds). */
     protected static const DELAY_TO_NEXT_ROUND :int = 5;

@@ -74,6 +74,13 @@ public class SpadesBids extends Bids
         return players[seat] == _blindNilAccepted;
     }
 
+    /** Access the absolute seating position of the player that bid blind nil, or -1 if noone has. */
+    public function get blindBidder () :int
+    {
+        var players :Array = _gameCtrl.game.seating.getPlayerIds();
+        return players.indexOf(_blindNilAccepted);
+    }
+
     protected override function handlePropertyChanged (
         event :PropertyChangedEvent) :void
     {

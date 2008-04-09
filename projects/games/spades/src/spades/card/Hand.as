@@ -85,6 +85,68 @@ public class Hand extends EventDispatcher
             dealtMsg, null, playerId);
     }
 
+    /** Request that one player pass some cards to another player. This will dispatch a 
+     *  HandEvent.PASS_REQUESTED event on the client who perform the pass and set the
+     *  passTarget property to indicate the target player.  
+     *  @param fromPlayer the id of the player who is to perform the pass
+     *  @param toPlayer the id of the player to receive the passed cards
+     *  @param numCards the number of cards to pass */
+    public function requestPass (
+        fromPlayer :int, 
+        toPlayer :int, 
+        numCards :int) :void
+    {
+        _gameCtrl.net.sendMessage(varName(PASS_REQUEST), 
+            [toPlayer, numCards], fromPlayer);
+    }
+
+    /** Pass the given cards to fulfill a pass request. The cards are sent to the pass target using 
+     *  a HandEvent.PASSED event. Other players are also notified via a HandEvent.PASSED event with 
+     *  no cards. */
+    public function passCards (cards :CardArray) :void
+    {
+        if (_passTarget == 0) {
+            throw new CardException("Passing cards when no pass is in progress");
+        }
+
+        if (cards.length != _passCount) {
+            throw new CardException("Passing " + cards + 
+                ", expected " + _passCount);
+        }
+
+        var value :Array = new Array();
+        value.push(_gameCtrl.game.getMyId());
+        value.splice(value.length, 0, cards.ordinals);
+
+        _gameCtrl.net.sendMessage(varName(PASS_FULFILL), 
+            value, _passTarget);
+        _gameCtrl.net.sendMessage(varName(PASS_NOTIFY), 
+            [_gameCtrl.game.getMyId(), _passTarget, _passCount]);
+
+        _passTarget = 0;
+        _passCount = 0;
+    }
+
+    /** Access the target player for the local player's pass in progress. 0 if no pass has been 
+     *  requested. */
+    public function get passTarget () :int
+    {
+        return _passTarget;
+    }
+
+    /** Access the numr of cards requested to be passed by the local player. 0 if no pass has been 
+     *  requested. */
+    public function get passCount () :int
+    {
+        return _passCount;
+    }
+
+    /** Access whether the local player is currently passing. */
+    public function get isPassing () :Boolean
+    {
+        return _passTarget != 0;
+    }
+
     /** Begin the local player's turn, enabling the set of cards that may be played. This is not 
      *  a network event and immediately sends HandEvent.BEGAN_TURN. */
     public function beginTurn (enabled :CardArray, count :int=1) :void
@@ -92,23 +154,38 @@ public class Hand extends EventDispatcher
         dispatchEvent(new HandEvent(HandEvent.BEGAN_TURN, enabled, 0, count));
     }
 
-    /** Play cards. This is not a network event. It removes the cards from the hand and immediately 
-     *  sends a HandEvent.CARDS_SELECTED event. */
-    public function playCards (cards :CardArray) :void
+    /** Select some cards to play. This is not a network event. It immediately sends a 
+     *  HandEvent.CARDS_SELECTED event. */
+    public function selectCards (cards :CardArray) :void
+    {
+        dispatchEvent(new HandEvent(HandEvent.CARDS_SELECTED, cards));
+    }
+
+    /** Play a single card. Convenience function to call selectCards with a CardArray containing 
+     *  only one card. */
+    public function selectCard (card :Card) :void
+    {
+        var cards :CardArray = new CardArray();
+        cards.pushOrdinal(card.ordinal);
+        selectCards(cards);
+    }
+
+    /** Remove a single card from the hand. Normally the controller will call this in conjunction 
+     *  with another call to place the card elsewhere on the table, return it to the deck, etc. 
+     *  Does not send any events. */
+    public function removeCard (card :Card) :void
+    {
+        _cards.remove(card);
+    }
+
+    /** Remove cards from the hand. Normally the controller will call this in conjunction with
+     *  another call to place the cards elsewhere on the table, return them to the deck, etc. 
+     *  Does not send any events. */
+    public function removeCards (cards :CardArray) :void
     {
         for (var i :int = 0; i < cards.length; ++i) {
             _cards.remove(cards.cards[i] as Card);
         }
-        dispatchEvent(new HandEvent(HandEvent.CARDS_SELECTED, cards));
-    }
-
-    /** Play a single cards. Convenience function to call playCards with a CardArray containing 
-     *  only one card. */
-    public function playCard (card :Card) :void
-    {
-        var cards :CardArray = new CardArray();
-        cards.pushOrdinal(card.ordinal);
-        playCards(cards);
     }
 
     /** End the local player's turn. This is not a network event and immediately sends 
@@ -138,10 +215,13 @@ public class Hand extends EventDispatcher
 
     protected function handleMessage (event :MessageReceivedEvent) :void
     {
+        var cards :CardArray;
+        var info :Array;
+
         if (event.name == varName(DEALT)) {
 
             // reset our cards with sorted array
-            var cards :CardArray = new CardArray(event.value as Array);
+            cards = new CardArray(event.value as Array);
             _sorter.sort(cards);
             _cards.reset(cards.ordinals);
 
@@ -163,6 +243,36 @@ public class Hand extends EventDispatcher
                 _sorter.insert(toInsert, _cards);
             }
         }
+        else if (event.name == varName(PASS_REQUEST)) {
+            // we have been told to pass some cards
+            info = event.value as Array;
+            _passTarget = info[0] as int;
+            _passCount = info[1] as int;
+            Debug.debug("Request received to pass " + _passCount + 
+                " cards to be passed to player id " + _passTarget);
+            dispatchEvent(new HandEvent(HandEvent.PASS_REQUESTED, 
+                null, _gameCtrl.game.getMyId(), _passCount, _passTarget));
+        }
+        else if (event.name == varName(PASS_FULFILL)) {
+            // we have been given some cards
+            var from :int = (event.value as Array)[0];
+            cards = new CardArray((event.value as Array).slice(1));
+            _sorter.insert(cards, _cards);
+            Debug.debug("Received passed cards: " + cards + " from " + from);
+            dispatchEvent(new HandEvent(HandEvent.PASSED, 
+                cards, from, cards.length, _gameCtrl.game.getMyId()));
+        }
+        else if (event.name == varName(PASS_NOTIFY)) {
+            // someone has been given some cards
+            info = event.value as Array;
+            Debug.debug("Received notification of " + info[2] + 
+                " cards passed from " + info[0] + " to " + info[1]);
+            // only send if I am not the receiver
+            if (info[1] != _gameCtrl.game.getMyId()) {
+                dispatchEvent(new HandEvent(HandEvent.PASSED, 
+                    null, info[0] as int, info[2] as int, info[1] as int));
+            }
+        }
     }
 
     protected function varName (name :String) :String
@@ -177,6 +287,8 @@ public class Hand extends EventDispatcher
     protected var _prefix :String;
     protected var _sorter :Sorter;
     protected var _cards :CardArray;
+    protected var _passTarget :int;
+    protected var _passCount :int;
 
     /** Name of bag for the deck. */
     protected static const DECK :String = "hand.deck";
@@ -186,6 +298,15 @@ public class Hand extends EventDispatcher
 
     /** Event message for getting face down cards. */
     protected static const DEALT_FACE_DOWN :String = "hand.dealt.face.down";
+
+    /** Event message for receiving the pass request. */
+    protected static const PASS_REQUEST :String = "hand.pass.request";
+
+    /** Event message for receiving passed cards. */
+    protected static const PASS_FULFILL :String = "hand.pass.fulfill";
+
+    /** Event message for notifying other players of the pass. */
+    protected static const PASS_NOTIFY :String = "hand.pass.notify";
 }
 
 }

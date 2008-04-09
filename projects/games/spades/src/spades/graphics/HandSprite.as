@@ -237,7 +237,7 @@ public class HandSprite extends CardArraySprite
     {
         var card :CardSprite = exposeCard(event.target);
         if (card != null && card.state != CardSprite.DISABLED) {
-            _hand.playCard(card.card);
+            _hand.selectCard(card.card);
         }
     }
 

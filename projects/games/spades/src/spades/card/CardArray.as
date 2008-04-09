@@ -113,7 +113,7 @@ public class CardArray extends EventDispatcher
     public function remove (card :Card) :void
     {
         if (!_cards.some(doRemove)) {
-            throw new CardException("Card " + card + " not found");
+            throw new CardException("Card " + card + " not found in " + this);
         }
 
         function doRemove (c :Card, i :int, a :Array) :Boolean
@@ -239,6 +239,8 @@ public class CardArray extends EventDispatcher
                 return;
             }
         }
+
+        push(card);
 
         function cmpSuits (a :int, b :int) :int {
             return suits.indexOf(a) - suits.indexOf(b);
