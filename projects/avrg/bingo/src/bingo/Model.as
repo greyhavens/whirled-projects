@@ -46,6 +46,11 @@ public class Model extends EventDispatcher
         return (0 == _curState.roundWinnerId);
     }
 
+    public function get numPlayers () :int
+    {
+        return this.getPlayerOids().length;
+    }
+
     public function getPlayerOids () :Array
     {
         throw new Error("subclasses must override getPlayerOids()");

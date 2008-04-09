@@ -167,8 +167,8 @@ public class GameMode extends AppMode
         // start the next round.
         this.addObject(new WinnerAnimationController(winnerName), _gameUILayer);
 
-        // grant some flow to ourselves if we're the winner
-        if (BingoMain.model.curState.roundWinnerId == BingoMain.ourPlayerId && BingoMain.control.isConnected()) {
+        // grant some flow to ourselves if we're the winner, and if someone else is playing
+        if (BingoMain.model.numPlayers > 1 && BingoMain.model.curState.roundWinnerId == BingoMain.ourPlayerId && BingoMain.control.isConnected()) {
             BingoMain.control.quests.completeQuest("dummyString", null, 1);
         }
 
