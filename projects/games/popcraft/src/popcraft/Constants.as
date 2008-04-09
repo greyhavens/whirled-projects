@@ -141,7 +141,7 @@ public class Constants
         .resourceCosts([30, 0, 30, 0])
         .baseMoveSpeed(35)
         .maxHealth(100)
-        .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 0.3, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 0.8] ))
+        .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.7, DAMAGE_TYPE_PIERCING, 0.3, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 0.8] ))
         .weapon(GRUNT_WEAPON)
         .collisionRadius(15)
         .detectRadius(40)

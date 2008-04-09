@@ -117,7 +117,7 @@ class SapperAI extends AITaskTree
     protected var _targetBaseRef :SimObjectRef;
 
     protected static const SCAN_FOR_ENEMIES_DELAY :Number = 1;
-    protected static const SCAN_FOR_ENEMY_GROUP_SIZE :int = 3;
+    protected static const SCAN_FOR_ENEMY_GROUP_SIZE :int = 2;
     protected static const SCAN_FOR_ENEMIES_TASK_NAME :String = "ScanForEnemies";
 
     protected static const log :Log = Log.getLog(SapperAI);

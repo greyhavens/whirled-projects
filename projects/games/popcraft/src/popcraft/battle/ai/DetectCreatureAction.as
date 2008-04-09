@@ -23,10 +23,26 @@ public class DetectCreatureAction extends AITask
             thisCreature.isUnitInRange(thatCreature, thisCreature.unitData.detectRadius));
     }
 
-    public static function createIsEnemyOfTypePredicate (enemyType :uint) :Function
+    public static function createIsEnemyOfTypePredicate (unitType :uint) :Function
     {
         return function (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean {
-            return (thatCreature.unitType == enemyType && isEnemyPredicate(thisCreature, thatCreature));
+            return (thatCreature.unitType == unitType && isEnemyPredicate(thisCreature, thatCreature));
+        }
+    }
+
+    public static function createIsEnemyOfTypesPredicate (unitTypes :Array) :Function
+    {
+        // is the creature an enemy, and is it one of the specified unitTypes?
+        return function (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean {
+            if (isEnemyPredicate(thisCreature, thatCreature)) {
+                for each (var unitType :uint in unitTypes) {
+                    if (thatCreature.unitType == unitType) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
     }
 

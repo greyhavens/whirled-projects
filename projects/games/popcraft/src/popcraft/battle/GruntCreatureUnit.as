@@ -76,10 +76,10 @@ class GruntAI extends AITaskTree
         this.clearSubtasks();
 
         this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
-        this.addSubtask(new DetectAttacksOnUnitTask(_unit));
+        //this.addSubtask(new DetectAttacksOnUnitTask(_unit));
 
-        // scan for Heavy units once/second
-        var detectPredicate :Function = DetectCreatureAction.createIsEnemyOfTypePredicate(Constants.UNIT_TYPE_HEAVY);
+        // scan for Heavies and Grunts once/second
+        var detectPredicate :Function = DetectCreatureAction.createIsEnemyOfTypesPredicate([Constants.UNIT_TYPE_GRUNT, Constants.UNIT_TYPE_HEAVY]);
         var scanSequence :AITaskSequence = new AITaskSequence(true);
         scanSequence.addSequencedTask(new AITimerTask(1));
         scanSequence.addSequencedTask(new DetectCreatureAction(detectPredicate));
@@ -91,7 +91,7 @@ class GruntAI extends AITaskTree
         if (messageName == MSG_SUBTASKCOMPLETED) {
             switch (task.name) {
 
-            case DetectAttacksOnUnitTask.NAME:
+            /*case DetectAttacksOnUnitTask.NAME:
                 // we've been attacked!
                 var attack :UnitAttack = (task as DetectAttacksOnUnitTask).attack;
                 var aggressor :Unit = attack.sourceUnit;
@@ -102,7 +102,7 @@ class GruntAI extends AITaskTree
                     this.clearSubtasks();
                     this.addSubtask(new AttackUnitTask(aggressor.ref, true, _unit.unitData.loseInterestRadius));
                 }
-                break;
+                break;*/
 
             case AttackUnitTask.NAME:
                 // resume attacking base
