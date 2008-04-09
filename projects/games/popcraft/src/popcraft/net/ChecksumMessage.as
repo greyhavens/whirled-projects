@@ -52,13 +52,13 @@ import popcraft.net.ChecksumMessage;
 class ChecksumMessageFactory
     implements MessageFactory
 {
-    public function serialize (message :Message) :Object
+    public function serializeForNetwork (message :Message) :Object
     {
         var msg :ChecksumMessage = (message as ChecksumMessage);
         return { playerId: msg.playerId, tick: msg.tick, checksum: msg.checksum, details: msg.details };
     }
 
-    public function deserialize (obj :Object) :Message
+    public function deserializeFromNetwork (obj :Object) :Message
     {
         return new ChecksumMessage(uint(obj.playerId), uint(obj.tick), uint(obj.checksum), String(obj.details));
     }

@@ -46,13 +46,13 @@ import popcraft.net.CreateUnitMessage;
 class CreateUnitMessageFactory
     implements MessageFactory
 {
-    public function serialize (message :Message) :Object
+    public function serializeForNetwork (message :Message) :Object
     {
         var msg :CreateUnitMessage = (message as CreateUnitMessage);
         return { data: uint((msg.unitType << 16) | (msg.owningPlayer & 0x0000FFFF)) };
     }
 
-    public function deserialize (obj :Object) :Message
+    public function deserializeFromNetwork (obj :Object) :Message
     {
         var data :uint = obj.data;
         return new CreateUnitMessage((data >> 16), (data & 0x0000FFFF));
