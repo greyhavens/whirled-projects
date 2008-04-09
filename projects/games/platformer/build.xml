@@ -1,0 +1,29 @@
+<!-- build configuration -->
+<project name="platformer" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Platformer"/>
+  <property name="app.type" value="game"/>
+  <property name="app.source-dir" value="src"/>
+  <!-- property name="app.source-extras" value="../../../libraries/whirled/contrib/src/as"/>
+  <property name="app.lib-extras" value="../../../lib/corelib.swc"/ -->
+
+  <!-- include the standard build scripts -->
+  <import file="../../../etc/project-include.xml"/>
+
+  <target name="leveledit">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${etc.dir}/whirled-config.xml"/>
+      <arg value="-library-path+=${build.root}/dist"/>
+      <arg value="-library-path+=${app.library-dir}"/>
+      <arg value="-use-network=false"/>
+      <arg value="-compiler.source-path=${app.source-dir}"/>
+      <arg value="-compiler.source-path=${app.source-extras}"/>
+      <arg value="-file-specs"/>
+      <arg value="${app.source-dir}/editor/LevelEditor.mxml"/>
+      <arg value="-output"/>
+      <arg value="LevelEditor.swf"/>
+    </java>
+  </target>
+</project>

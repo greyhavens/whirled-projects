@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:editor="editor.*"
+    scriptTimeLimit="5"
+    layout="absolute" styleName="plain"
+    verticalScrollPolicy="off" horizontalScrollPolicy="off"
+    width="740" height="600"
+    horizontalAlign="center" verticalAlign="middle"
+    applicationComplete="loadComplete();">
+<mx:Script>
+    <![CDATA[
+protected function loadComplete() :void
+{
+}
+    ]]>
+</mx:Script>
+<mx:Panel id="topPanel" title="Platformer Level Editor" height="100%" width="100%"
+    paddingTop="0" paddingLeft="0" paddingRight="0" paddingBottom="0">
+</mx:Panel>
+</mx:Application>
