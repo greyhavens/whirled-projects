@@ -121,7 +121,7 @@ public class NormalBiddingSprite extends Sprite
         BUTTON_NAME_TEMPLATE.slice(
             0, BUTTON_NAME_TEMPLATE.indexOf("0"));
 
-    protected static const LABEL_BOTTOM :int = -28;
+    protected static const LABEL_BOTTOM :int = -23;
 
     protected static const NUM_BUTTONS :int = 14;
 

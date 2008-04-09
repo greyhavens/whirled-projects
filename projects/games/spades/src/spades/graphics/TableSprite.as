@@ -150,6 +150,18 @@ public class TableSprite extends Sprite
             var teamIdx :int = table.getTeamFromId(event.player).index;
             TeamSprite(_teams[teamIdx]).takeTrick(_trick.orphanCards());
             TeamSprite(_teams[(teamIdx + 1) % 2]).clearLastTrick();
+
+            var seat :int = table.getAbsoluteFromId(event.player);
+            if (_model.bids.getBid(seat) == 0) {
+                var p :PlayerSprite = PlayerSprite(
+                    _players[table.getRelativeFromAbsolute(seat)]);
+                if (SpadesBids(_model.bids).isBlind(seat)) {
+                    p.showCaption("Failed Blind Nil", true);
+                }
+                else {
+                    p.showCaption("Failed Nil", true);
+                }
+            }
         }
     }
 
@@ -165,17 +177,17 @@ public class TableSprite extends Sprite
                 p = PlayerSprite(_players[seat]);
                 if (SpadesBids(_model.bids).isBlind(
                     table.getAbsoluteFromRelative(seat))) {
-                    p.showWarning("Blind Nil");
+                    p.showCaption("Blind Nil");
                 }
                 else {
-                    p.showWarning("Nil");
+                    p.showCaption("Nil");
                 }
             }
         }
         else if (event.type == BidEvent.RESET) {
             for (seat = 0; seat < _players.length; ++seat) {
                 p = PlayerSprite(_players[seat]);
-                p.showWarning("");
+                p.showCaption("");
             }
         }
     }
@@ -220,7 +232,7 @@ public class TableSprite extends Sprite
     protected static const HAND_POSITION :Vector2 = new Vector2(350, 455);
 
     /** Position of the center of the bid slider */
-    protected static const NORMAL_BIDS_POSITION :Vector2 = new Vector2(350, 245);
+    protected static const NORMAL_BIDS_POSITION :Vector2 = new Vector2(350, 195);
 
     /** Position of the center of the trick pile */
     protected static const TRICK_POSITION :Vector2 = new Vector2(350, 205);

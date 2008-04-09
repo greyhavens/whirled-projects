@@ -26,15 +26,15 @@ public class CardSprite extends Sprite
 
     /** Disabled appearance */
     public static const DISABLED :CardState = 
-        new CardState(0x808080, 0.2, "disabled");
+        new CardState(0x808080, 0.3, "disabled");
 
     /** Highlighted appearance */
     public static const HIGHLIGHTED :CardState = 
-        new CardState(0xff7f7f, 0.3, "highlighted");
+        new CardState(0xffffff, 0.0, "highlighted");
 
     /** Emphasized appearance */
     public static const EMPHASIZED :CardState = 
-        new CardState(0x7f7fff, 0.3, "emphasized");
+        new CardState(0xffffff, 0.0, "emphasized");
 
     /** Create a new card sprite. */
     public function CardSprite (card :Card)

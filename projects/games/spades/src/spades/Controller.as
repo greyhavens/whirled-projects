@@ -170,7 +170,10 @@ public class Controller
                 blindNil = wal.losingTeams[0];
             }
             for (var seat :int = 0; seat < NUM_PLAYERS; ++seat) {
-                if (blindNil == null || !blindNil.hasSeat(seat)) {
+                if (blindNil != null && blindNil.hasSeat(seat)) {
+                    hand.dealFaceDownTo(table.getIdFromAbsolute(seat), numCards);
+                }
+                else {
                     hand.dealTo(table.getIdFromAbsolute(seat), numCards);
                 }
             }
@@ -327,7 +330,6 @@ public class Controller
             }
             else if (isLocalPlayerEligibleForBlindNilBid()) {
                 bids.request(SpadesBids.REQUESTED_BLIND_NIL);
-                hand.addFaceDownCards(cardsPerPlayer);
             }
             else {
                 bids.request(getLocalPlayerMaximumBid()); 
@@ -547,7 +549,7 @@ public class Controller
     protected static const NUM_PLAYERS :int = 4;
 
     /** Minimum score differential for the losing team to be allowed to bid blind nil. */
-    protected static const BLIND_NIL_THRESHOLD :int = 1;
+    protected static const BLIND_NIL_THRESHOLD :int = 100;
 
     /** Time between rounds (seconds). */
     protected static const DELAY_TO_NEXT_ROUND :int = 5;

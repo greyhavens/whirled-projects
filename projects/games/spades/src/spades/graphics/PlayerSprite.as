@@ -100,18 +100,20 @@ public class PlayerSprite extends Sprite
 
     /** Display a warning for this player. 
      *  TODO: make protected and listen for warning events in subclasses. */
-    public function showWarning (str :String) :void
+    public function showCaption (str :String, warning :Boolean=false) :void
     {
-        if (_warning != null) {
-            removeChild(_warning);
-            _warning = null;
+        if (_caption != null) {
+            removeChild(_caption);
+            _caption = null;
         }
 
         if (str.length > 0) {
-            _warning = new Text(Text.BIG, WARNING_COLOR);
-            _warning.centerY = HEIGHT / 3;
-            _warning.text = str;
-            addChild(_warning);
+            var fcolor :uint = warning ? WARNING_COLOR : CAPTION_COLOR;
+            var bcolor :uint = uint(CAPTION_OUTLINE_COLORS[_team.index]);
+            _caption = new Text(Text.BIG, fcolor, bcolor);
+            _caption.centerY = HEIGHT / 3;
+            _caption.text = str;
+            addChild(_caption);
         }
     }
 
@@ -120,7 +122,7 @@ public class PlayerSprite extends Sprite
     protected var _headShot :DisplayObject;
     protected var _turn :Boolean;
     protected var _headShadow :DropShadowFilter;
-    protected var _warning :Text;
+    protected var _caption :Text;
 
     protected static const WIDTH :int = 165;
     protected static const HEIGHT :int = 115;
@@ -134,6 +136,8 @@ public class PlayerSprite extends Sprite
     protected static const TEAM_IMAGES :Array = [IMAGE_TEAM_0, IMAGE_TEAM_1];
 
     protected static const WARNING_COLOR :uint = 0xFF2525;
+    protected static const CAPTION_COLOR :uint = 0xFFFFFF;
+    protected static const CAPTION_OUTLINE_COLORS :Array = [0x4186Af, 0xA86C04];
 
     protected static const TEXT_COLORS :Array = [
         [0xB7E8Fb, 0x153741], 

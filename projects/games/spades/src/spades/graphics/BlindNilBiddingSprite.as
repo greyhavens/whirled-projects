@@ -23,6 +23,11 @@ public class BlindNilBiddingSprite extends Sprite
 
         MultiLoader.getContents(MOVIE, gotContent);
 
+        var label :Text = new Text(Text.HUGE_HARD_ITALIC, 0xFFFFFF, 0x264C62);
+        label.text = "Bid Blind Nil?";
+        label.bottomY = LABEL_BOTTOM;
+        addChild(label);
+
         _bids.addEventListener(BidEvent.REQUESTED, bidListener);
 
         visible = false;
@@ -84,6 +89,8 @@ public class BlindNilBiddingSprite extends Sprite
 
     [Embed(source="../../../rsrc/bidding_bnil.swf", mimeType="application/octet-stream")]
     protected static const MOVIE :Class;
+
+    protected static const LABEL_BOTTOM :int = -23;
 
     protected static const BLIND_NIL :String = "button_blind";
     protected static const SHOW_CARDS :String = "button_show";

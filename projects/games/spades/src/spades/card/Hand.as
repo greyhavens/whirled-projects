@@ -118,20 +118,10 @@ public class Hand extends EventDispatcher
         dispatchEvent(new HandEvent(HandEvent.ENDED_TURN));
     }
 
-    /** Add some face down cards. */
-    public function addFaceDownCards (numCards :int) :void
+    /** Add some face down cards to a given player. */
+    public function dealFaceDownTo (id :int, numCards :int) :void
     {
-        var toInsert :CardArray = new CardArray();
-        for (var i :int = 0; i < numCards; ++i) {
-            toInsert.push(Card.createFaceDownCard());
-        }
-
-        if (_cards.length == 0) {
-            _cards.reset(toInsert.ordinals);
-        }
-        else {
-            _sorter.insert(toInsert, _cards);
-        }
+        _gameCtrl.net.sendMessage(varName(DEALT_FACE_DOWN), numCards, id);
     }
 
     /** Access the number of cards in the hand. */
@@ -159,6 +149,20 @@ public class Hand extends EventDispatcher
 
             dispatchEvent(new HandEvent(HandEvent.DEALT, _cards));
         }
+        else if (event.name == varName(DEALT_FACE_DOWN)) {
+            var numCards :int = int(event.value);
+            var toInsert :CardArray = new CardArray();
+            for (var i :int = 0; i < numCards; ++i) {
+                toInsert.push(Card.createFaceDownCard());
+            }
+            
+            if (_cards.length == 0) {
+                _cards.reset(toInsert.ordinals);
+            }
+            else {
+                _sorter.insert(toInsert, _cards);
+            }
+        }
     }
 
     protected function varName (name :String) :String
@@ -179,6 +183,9 @@ public class Hand extends EventDispatcher
 
     /** Event message for getting cards. */
     protected static const DEALT :String = "hand.dealt";
+
+    /** Event message for getting face down cards. */
+    protected static const DEALT_FACE_DOWN :String = "hand.dealt.face.down";
 }
 
 }
