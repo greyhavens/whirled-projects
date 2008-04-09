@@ -21,6 +21,10 @@ public class Card
     /** Constant for the suit of diamonds. */
     public static const SUIT_DIAMONDS :int = 3;
 
+    /** Array of standard suits. */
+    public static const SUITS :Array = [
+        SUIT_HEARTS, SUIT_SPADES, SUIT_CLUBS, SUIT_DIAMONDS];
+
     /** Constant for the rank of ace. */
     public static const RANK_ACE :int = 0;
 
@@ -60,23 +64,28 @@ public class Card
     /** Constant for the rank of king. */
     public static const RANK_KING :int = 12;
 
+    public static const RANKS :Array = [
+        RANK_ACE, RANK_TWO, RANK_THREE, RANK_FOUR, RANK_FIVE, RANK_SIX, 
+        RANK_SEVEN, RANK_EIGHT, RANK_NINE, RANK_TEN, RANK_JACK, RANK_QUEEN,
+        RANK_KING];
+
+    /** Number of suits. NOTE: also used as a bit mask. */
+    public static const MAX_SUIT :int = 7;
+
+    /** Maximum rank value. NOTE: also used as a  bit mask. */
+    public static const MAX_RANK :int = 31;
+
     /** Constant for straight rank ordering. */
     public static const RANK_ORDER_NORMAL :int = 0;
 
     /** Constant for aces high rank ordering. */
     public static const RANK_ORDER_ACES_HIGH :int = 1;
     
-    /** Number of suits. */
-    public static const NUM_SUITS :int = 4;
-
-    /** Number of ranks. */
-    public static const NUM_RANKS :int = 13;
-
     /** Number of ranks. */
     public static const NUM_RANK_ORDERS :int = 2;
 
-    /** Number or ordinals (also the number of cards in a standard deck). */
-    public static const NUM_ORDINALS :int = NUM_SUITS * NUM_RANKS;
+    /** Number or ordinals. NOTE: also used as a bit mask */
+    public static const MAX_ORDINAL :int = 255;
 
     /** Placeholder value for the width of a card sprite. */
     public static const SPRITE_WIDTH :int = 70;
@@ -86,20 +95,27 @@ public class Card
 
     /** Create a new Card object from an ordinal.
      *  @throws CardException if the ordinal is not valid. */
-    public static function createCard (ordinal :int) :Card
+    public static function createCardFromOrdinal (ordinal :int) :Card
     {
-        if (ordinal < 0 || ordinal >= NUM_ORDINALS) {
-            throw CardException("" + ordinal + " is not a valid card");
+        if (ordinal < 0 || ordinal > MAX_ORDINAL) {
+            throw new CardException("" + ordinal + " is not in range");
         }
         
-        var suit :int = ordinal / NUM_RANKS;
-        var rank :int = ordinal % NUM_RANKS;
+        var suit :int = (ordinal >> 5) & MAX_ORDINAL;
+        var rank :int = (ordinal & MAX_RANK);
         return new Card(suit, rank);
     }
     
+    /** Create a new face down card. A face down card usually means that the local player "has" 
+     *  the card but cannot yet see its value, i.e. the value is not known. */
+    public static function createFaceDownCard () :Card
+    {
+        return createCardFromOrdinal(MAX_ORDINAL);
+    }
+    
     /** Return a short string for a SUIT_* constant for use in debugging or naming 
-     *  conventions. For example, SUIT_HEARTS is "H".
-     *  @throws CardException if the suit is not valid */
+     *  conventions. For example, SUIT_HEARTS is "H". If the suit is not one defined
+     *  in this class, the string is calcualted from the numeric value. */
     public static function suitString (suit :int) :String
     {
         switch (suit) {
@@ -107,13 +123,13 @@ public class Card
             case SUIT_DIAMONDS : return "D";
             case SUIT_CLUBS : return "C";
             case SUIT_SPADES : return "S";
-            default : throw new CardException("" + suit + " is not a valid suit");
+            default : return "(Suit " + suit + ")";
         }
     }
     
     /** Return a short string for a RANK_* constant for use in debugging or naming 
-     *  conventions. For example, RANK_ACE is "A".
-     *  @throws CardException if the rank is not valid */
+     *  conventions. For example, RANK_ACE is "A". If the rank is not one defined 
+     *  by this class, the string is calculated from the numeric value. */
     public static function rankString (rank :int) :String
     {
         switch (rank) {
@@ -130,43 +146,7 @@ public class Card
             case RANK_JACK : return "J";
             case RANK_QUEEN : return "Q";
             case RANK_KING : return "K";
-            default : throw new CardException("" + rank + " is not a valid rank");
-        }
-    }
-
-    /** Return a long string for a SUIT_* constant. E.g. "hearts".
-     *  TODO: is this useful? */
-    static public function longSuitString (suit :int) :String
-    {
-        switch (suit) {
-            case SUIT_HEARTS : return "hearts";
-            case SUIT_DIAMONDS : return "diamonds";
-            case SUIT_CLUBS : return "clubs";
-            case SUIT_SPADES : return "spades";
-            default : throw new CardException("" + suit + " is not a valid suit");
-        }
-    }
-    
-    /** Return a long string for a RANK_* constant. E.g. "queen".
-     *  TODO: is this useful? */
-    static public function longRankString (rank :int) :String
-    {
-        switch (rank)
-        {
-            case RANK_ACE : return "ace";
-            case RANK_TWO : return "two";
-            case RANK_THREE : return "three";
-            case RANK_FOUR : return "four";
-            case RANK_FIVE : return "five";
-            case RANK_SIX : return "six";
-            case RANK_SEVEN : return "seven";
-            case RANK_EIGHT : return "eight";
-            case RANK_NINE : return "nine";
-            case RANK_TEN : return "ten";
-            case RANK_JACK : return "jack";
-            case RANK_QUEEN : return "queen";
-            case RANK_KING : return "king";
-            default : throw new CardException("" + rank + " is not a valid rank");
+            default : return "(Rank " + rank + ")";
         }
     }
 
@@ -174,7 +154,7 @@ public class Card
      *  @param rank1 the first rank to compare, one of the RANK_* constants
      *  @param rank2 the second rank to compare, one of the RANK_* constants
      *  @param ordering how to compare, one of the RANK_ORDER_* constants
-     *  @throws CardException if any constant is invalid
+     *  @throws CardException if any constant is not in the predefined set
      *  @return a negative number if rank1 < rank2, positive if rank1 > rank2 and zero 
      *  if rank1 == rank2 */
     public static function compareRanks(
@@ -182,8 +162,8 @@ public class Card
         rank2 :int, 
         ordering: int=RANK_ORDER_NORMAL) :int
     {
-        validate("Rank", rank1, NUM_RANKS);
-        validate("Rank", rank2, NUM_RANKS);
+        validate("Rank", rank1, MAX_RANK + 1);
+        validate("Rank", rank2, MAX_RANK + 1);
         validate("Rank order", ordering, NUM_RANK_ORDERS);
 
         switch (ordering) {
@@ -215,34 +195,28 @@ public class Card
      */
     public function Card (suit :int, rank :int) :void
     {
-        if (rank < 0 || rank >= NUM_RANKS) {
-            throw new CardException("" + rank + " is not a valid rank");
-        }
-        
-        if (suit < 0 || suit >= NUM_SUITS) {
-            throw new CardException("" + suit + " is not a valid suit");
-        }
+        validate("Rank", rank, MAX_RANK + 1);
+        validate("Suit", suit, MAX_SUIT + 1);
 
-        _rank = rank;
-        _suit = suit;
+        _ordinal = (suit << 5) | rank;
     }
 
     /** Access the rank. */
     public function get rank () :int
     {
-        return _rank;
+        return (_ordinal & MAX_RANK);
     }
 
     /** Access the suit. */
     public function get suit () :int
     {
-        return _suit;
+        return (_ordinal >> 5) & MAX_SUIT;
     }
 
     /** Access the ordinal. */
     public function get ordinal () :int
     {
-        return _suit * NUM_RANKS + _rank;
+        return _ordinal;
     }
     
     /** Compare for eqaulity to another card.
@@ -253,23 +227,22 @@ public class Card
             return false;
         }
         
-        return _rank == rhs._rank && _suit == rhs._suit;
+        return _ordinal == rhs._ordinal;
+    }
+
+    /** Access whether the card is face down or not. */
+    public function get faceDown () :Boolean
+    {
+        return _ordinal == MAX_ORDINAL;
     }
 
     /** Get a unique string representation of this card for debugging or naming conventions. 
      *  E.g. "two of hearts" is "2H". */
     public function get string () :String
     {
-        return rankString(_rank) + suitString(_suit);
+        return rankString(rank) + suitString(suit);
     }
     
-    /** Return a long string representing the card. E.g. "two of hearts". 
-     *  TODO: is this useful? */
-    public function toLongString () :String
-    {
-        return longRankString(_rank) + " of " + suitString(_suit);
-    }
-
     /** @inheritDoc */
     public function toString () :String
     {
@@ -281,7 +254,7 @@ public class Card
      *  @param rhs card to compare against */
     public function isBetterRank (rhs :Card, ordering :int) :Boolean
     {
-        var cmp :int = compareRanks(_rank, rhs._rank, ordering);
+        var cmp :int = compareRanks(rank, rhs.rank, ordering);
         return cmp > 0;
     }
 
@@ -294,11 +267,8 @@ public class Card
         }
     }
 
-    /** The rank. */
-    protected var _rank :int;
-
-    /** The suit. */
-    protected var _suit :int;
+    /** The rank (3 high bits) and suit (5 low bits). */
+    protected var _ordinal :int;
 }
 
 }

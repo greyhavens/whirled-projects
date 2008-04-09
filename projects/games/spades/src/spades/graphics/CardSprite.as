@@ -48,11 +48,11 @@ public class CardSprite extends Sprite
         function gotDeck (clip :MovieClip) :void
         {
             _deck = clip;
-            if (card != null) {
-                _deck.gotoAndStop(card.string);
+            if (card.faceDown) {
+                _deck.gotoAndStop(BACK_FRAME);
             }
             else {
-                _deck.gotoAndStop(BACK_FRAME);
+                _deck.gotoAndStop(card.string);
             }
             _deck.x = -WIDTH / 2;
             _deck.y = -HEIGHT / 2;

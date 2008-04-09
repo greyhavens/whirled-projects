@@ -17,14 +17,13 @@ public class CardArray extends EventDispatcher
     /** Create a new full deck. Users may modify the result. */
     public static function makeDeck () :CardArray
     {
-        var ordinals :Array = new Array(Card.NUM_ORDINALS);
-        ordinals.forEach(assign);
-        return new CardArray(ordinals);
-
-        function assign (x :*, i :int, a :Array) :void
-        {
-            a[i] = i;
+        var deck :CardArray = new CardArray();
+        for (var i :int = 0; i < Card.SUITS.length; ++i) {
+            for (var j :int = 0; j < Card.RANKS.length; ++j) {
+                deck.push(new Card(Card.SUITS[i], Card.RANKS[j]));
+            }
         }
+        return deck;
     }
     
     /**
@@ -73,7 +72,7 @@ public class CardArray extends EventDispatcher
     /** Add a new card to the end by ordinal value. */
     public function pushOrdinal (ordinal :int) :void
     {
-        push(Card.createCard(ordinal));
+        push(Card.createCardFromOrdinal(ordinal));
     }
 
     /** Add a new card to the end. */
@@ -279,7 +278,7 @@ public class CardArray extends EventDispatcher
         function push (ord :int, i :int, a :Array) :void
         {
             _ordinals.push(ord);
-            _cards.push(Card.createCard(ord));
+            _cards.push(Card.createCardFromOrdinal(ord));
         }
     }
 

@@ -118,6 +118,22 @@ public class Hand extends EventDispatcher
         dispatchEvent(new HandEvent(HandEvent.ENDED_TURN));
     }
 
+    /** Add some face down cards. */
+    public function addFaceDownCards (numCards :int) :void
+    {
+        var toInsert :CardArray = new CardArray();
+        for (var i :int = 0; i < numCards; ++i) {
+            toInsert.push(Card.createFaceDownCard());
+        }
+
+        if (_cards.length == 0) {
+            _cards.reset(toInsert.ordinals);
+        }
+        else {
+            _sorter.insert(toInsert, _cards);
+        }
+    }
+
     /** Access the number of cards in the hand. */
     public function get length () :int
     {

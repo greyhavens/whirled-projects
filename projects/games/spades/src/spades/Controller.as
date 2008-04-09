@@ -327,6 +327,7 @@ public class Controller
             }
             else if (isLocalPlayerEligibleForBlindNilBid()) {
                 bids.request(SpadesBids.REQUESTED_BLIND_NIL);
+                hand.addFaceDownCards(cardsPerPlayer);
             }
             else {
                 bids.request(getLocalPlayerMaximumBid()); 
@@ -546,7 +547,7 @@ public class Controller
     protected static const NUM_PLAYERS :int = 4;
 
     /** Minimum score differential for the losing team to be allowed to bid blind nil. */
-    protected static const BLIND_NIL_THRESHOLD :int = 100;
+    protected static const BLIND_NIL_THRESHOLD :int = 1;
 
     /** Time between rounds (seconds). */
     protected static const DELAY_TO_NEXT_ROUND :int = 5;
