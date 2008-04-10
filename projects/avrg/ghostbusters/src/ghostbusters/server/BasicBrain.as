@@ -8,7 +8,7 @@ import ghostbusters.Game;
 
 public class BasicBrain
 {
-    public static function tick (timer :int) :void
+    public static function tick (ghost :Ghost, timer :int) :void
     {
         var lastAttack :int =
             Game.control.state.getRoomProperty(Codes.PROP_LAST_GHOST_ATTACK) as int;
@@ -33,34 +33,30 @@ public class BasicBrain
         }
         if (roll == 0 || roll == 1) {
             // 10% chance of attacking a single player
-            attackSingle(players);
+            attackSingle(ghost, players);
 
         } else if (roll == 2 || roll == 3) {
             // 10% chance of an AE attack
-            attackTeam(players);
+            attackTeam(ghost, players);
         }
 
         // remember when the attack happened
         Game.control.state.setRoomProperty(Codes.PROP_LAST_GHOST_ATTACK, timer);
     }
 
-    protected static function attackSingle (team :Array) :void
+    // attack a completely random target
+    protected static function attackSingle (ghost :Ghost, team :Array) :void
     {
-        // Moronic AI: attack a completely random player each turn
-        var ix :int = Game.random.nextInt(team.length);
-        Game.server.doDamagePlayer(team[ix], 20);
+        Game.server.doDamagePlayer(team[Game.random.nextInt(team.length)],
+                                   ghost.calculateSingleAttack());
     }
 
-    protected static function attackTeam (team :Array) :void
+    // attack the entire party
+    protected static function attackTeam (ghost :Ghost, team :Array) :void
     {
         // Splash team with a fixed moderate amount of damage per player
         for (var ii :int = 0; ii < team.length; ii ++) {
-            if (Game.server.doDamagePlayer(team[ii], 5)) {
-                // the player died; see if we're triumphant
-                if (Game.model.isEverybodyDead()) {
-                    return;
-                }
-            }
+            Game.server.doDamagePlayer(team[ii], ghost.calculateSplashAttack());
         }
     }
 }

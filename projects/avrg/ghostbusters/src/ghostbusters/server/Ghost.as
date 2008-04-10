@@ -80,6 +80,24 @@ public class Ghost
         return Game.control.state.getRoomProperty(Codes.PROP_GHOST_CUR_HEALTH) === 0;
     }
 
+    public function calculateSingleAttack () :int
+    {
+        // e.g. a level 3 ghost does 40-48 points of dmg to one target
+        return rndStretch(10 * (_level + 1), 1.2);
+    }
+    
+    public function calculateSplashAttack () :int
+    {
+        // e.g. a level 3 ghost does 16-24 points of dmg to the whole party
+        return rndStretch(4 * (_level + 1), 1.5);
+    }
+
+    protected function rndStretch (n :int, f :Number) :int
+    {
+        // randomly stretch a value by a factor [1, f]
+        return int(n * (1 + (f-1)*Game.random.nextNumber()));
+    }
+    
     public function calculateMaxZest () :int
     {
         return 150 + 100 * Game.random.nextNumber();
@@ -92,7 +110,7 @@ public class Ghost
 
     public function tick (tick :int) :void
     {
-        return BasicBrain.tick(tick);
+        return BasicBrain.tick(this, tick);
     }
 
     protected var _id :String;
