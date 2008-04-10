@@ -315,6 +315,7 @@ package caurina.transitions {
 		public static function removeTweensByTime (p_scope:Object, p_properties:Object, p_timeStart:Number, p_timeComplete:Number):Boolean {
 			var removed:Boolean = false;
 			var removedLocally:Boolean;
+			var dirtyList:Boolean;
 	
 			var i:uint;
 			var tl:uint = _tweenList.length;
@@ -345,10 +346,17 @@ package caurina.transitions {
 						}
 						if (removedLocally) {
 							// Verify if this can be deleted
-							if (AuxFunctions.getObjectLength(_tweenList[i].properties) == 0) removeTweenByIndex(i);
+							if (AuxFunctions.getObjectLength(_tweenList[i].properties) == 0) {
+								removeTweenByIndex(i);
+								dirtyList = true;
+							}
 						}
 					}
 				}
+			}
+
+			if (dirtyList) {
+				removeNullTweens();
 			}
 
 			return removed;
@@ -370,13 +378,7 @@ package caurina.transitions {
 			}
 			// Call the affect function on the specified properties
 			if (affectTweens(removeTweenByIndex, p_scope, properties)) {
-				// cleanup null references
-				for (i = 0; i < _tweenList.length; i++) {
-					if (_tweenList[i] == null) {
-						removeTweenByIndex(i, true);
-						i--;
-					}
-				}
+				removeNullTweens();
 				return true;
 			}
 			return false;
@@ -467,6 +469,17 @@ package caurina.transitions {
 				resumed = true;
 			}
 			return resumed;
+		}
+
+		/** Remove null items from _tweenList after something else may have nullified them. */
+		private static function removeNullTweens () :void {
+			// cleanup null references
+			for (var i:int = 0; i < _tweenList.length; i++) {
+				if (_tweenList[i] == null) {
+					removeTweenByIndex(i, true);
+					i--;
+				}
+			}
 		}
 
 		/**
@@ -1067,8 +1080,13 @@ package caurina.transitions {
 			var i:uint, k:uint;
 			for (i = 0; i<_tweenList.length; i++) {
 				ttl += "["+i+"] ::\n";
-				for (k = 0; k<_tweenList[i].properties.length; k++) {
-					ttl += "  " + _tweenList[i].properties[k].name +" -> " + _tweenList[i].properties[k].valueComplete + "\n";
+				if (_tweenList[i]==null) {
+					ttl += "  [null]\n";
+				}
+				else {
+					for (k = 0; k<_tweenList[i].properties.length; k++) {
+						ttl += "  " + _tweenList[i].properties[k].name +" -> " + _tweenList[i].properties[k].valueComplete + "\n";
+					}
 				}
 			}
 			return ttl;
