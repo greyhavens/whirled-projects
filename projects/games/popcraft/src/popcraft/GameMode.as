@@ -89,6 +89,7 @@ public class GameMode extends AppMode
         if (Constants.DEBUG_DRAW_STATS) {
             _debugDataView = new DebugDataView();
             this.addObject(_debugDataView, this.modeSprite);
+            _debugDataView.visible = false;
         }
     }
 

@@ -80,11 +80,11 @@ public class Constants
     public static const UNIT_TYPE_GRUNT :uint = 0;
     public static const UNIT_TYPE_HEAVY :uint = 1;
     public static const UNIT_TYPE_SAPPER :uint = 2;
-    public static const UNIT_TYPE_COLOSSUS :uint = 3;
+    public static const UNIT_TYPE_COLOSSUS :uint = 500;
 
-    public static const UNIT_TYPE__CREATURE_LIMIT :uint = 4;
+    public static const UNIT_TYPE__CREATURE_LIMIT :uint = 3;
 
-    public static const UNIT_TYPE_BASE :uint = 4;
+    public static const UNIT_TYPE_BASE :uint = 3;
 
     public static const UNIT_CLASS_GROUND :uint = (1 << 0);
     public static const UNIT_CLASS_AIR :uint = (1 << 1);
@@ -199,7 +199,7 @@ public class Constants
         .unitData;
 
     // non-creature units must come after creature units
-    public static const UNIT_DATA :Array = [ GRUNT_DATA, HEAVY_DATA, SAPPER_DATA, HEAVY_DATA, BASE_DATA ];
+    public static const UNIT_DATA :Array = [ GRUNT_DATA, HEAVY_DATA, SAPPER_DATA, /*COLOSSUS_DATA,*/ BASE_DATA ];
 
     /* Screen layout */
     public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
