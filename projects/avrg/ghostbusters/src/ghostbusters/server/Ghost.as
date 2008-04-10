@@ -74,7 +74,12 @@ public class Ghost
         Game.control.state.setRoomProperty(Codes.PROP_GHOST_CUR_HEALTH, null);
         Game.control.state.setRoomProperty(Codes.PROP_GHOST_MAX_HEALTH, null);
     }
-    
+
+    public function tick (tick :int) :void
+    {
+        return BasicBrain.tick(this, tick);
+    }
+
     public function isDead () :Boolean
     {
         return Game.control.state.getRoomProperty(Codes.PROP_GHOST_CUR_HEALTH) === 0;
@@ -92,12 +97,6 @@ public class Ghost
         return rndStretch(4 * (_level + 1), 1.5);
     }
 
-    protected function rndStretch (n :int, f :Number) :int
-    {
-        // randomly stretch a value by a factor [1, f]
-        return int(n * (1 + (f-1)*Game.random.nextNumber()));
-    }
-    
     public function calculateMaxZest () :int
     {
         return 150 + 100 * Game.random.nextNumber();
@@ -108,9 +107,10 @@ public class Ghost
         return 100;
     }
 
-    public function tick (tick :int) :void
+    protected function rndStretch (n :int, f :Number) :int
     {
-        return BasicBrain.tick(this, tick);
+        // randomly stretch a value by a factor [1, f]
+        return int(n * (1 + (f-1)*Game.random.nextNumber()));
     }
 
     protected var _id :String;

@@ -14,18 +14,20 @@ import com.threerings.flash.DisplayUtil;
 
 public class GhostInfoView
 {
-    public function GhostInfoView (ghostInfo :MovieClip)
+    public function GhostInfoView (hud :MovieClip)
     {
-        _box = ghostInfo;
-        _name = findSafely(GHOST_NAME) as TextField;
-        _level = findSafely(GHOST_LEVEL) as TextField;
+        _box = MovieClip(findSafely(hud, GHOST_INFO));
+        _name = findSafely(_box, GHOST_NAME) as TextField;
+        _level = findSafely(_box, GHOST_LEVEL) as TextField;
 
         _portraits = {
-          pinchy: findSafely("PincherPortrait"),
-          duchess: findSafely("DuchessPortrait"),
-          widow: findSafely("WidowPortrait"),
-          demon: findSafely("DemonPortrait")
+          pinchy: findSafely(hud, "PincherPortrait"),
+          duchess: findSafely(hud, "DuchessPortrait"),
+          widow: findSafely(hud, "WidowPortrait"),
+          demon: findSafely(hud, "DemonPortrait")
         };
+
+        updateGhost();
     }
 
     public function updateGhost () :void
@@ -49,9 +51,9 @@ public class GhostInfoView
         }
     }
 
-    protected function findSafely (name :String) :DisplayObject
+    protected function findSafely (parent :DisplayObjectContainer, name :String) :DisplayObject
     {
-        var o :DisplayObject = DisplayUtil.findInHierarchy(_box, name);
+        var o :DisplayObject = DisplayUtil.findInHierarchy(parent, name);
         if (o == null) {
             throw new Error("Cannot find object: " + name);
         }
@@ -68,5 +70,7 @@ public class GhostInfoView
     protected static const GHOST_PORTRAIT :String = "GhostPortrait";
     protected static const GHOST_NAME :String = "GhostName";
     protected static const GHOST_LEVEL :String = "GhostLvl";
+
+    protected static const GHOST_INFO :String = "GhostInfoBox";
 }
 }

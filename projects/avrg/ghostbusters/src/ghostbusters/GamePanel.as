@@ -57,6 +57,10 @@ public class GamePanel extends Sprite
 
             var button :SimpleButton =
                 SimpleButton(DisplayUtil.findInHierarchy(clip, "revivebutton"));
+            if (button == null) {
+                Game.log.debug("Urk, cannot find revivebutton...");
+                return;
+            }
             button.addEventListener(MouseEvent.CLICK, function (event :Event) :void {
                 CommandEvent.dispatch(panel, GameController.REVIVE);
             });
@@ -71,6 +75,10 @@ public class GamePanel extends Sprite
 
             var button :SimpleButton =
                 SimpleButton(DisplayUtil.findInHierarchy(clip, "continuebutton"));
+            if (button == null) {
+                Game.log.debug("Urk, cannot find continuebutton...");
+                return;
+            }
             button.addEventListener(MouseEvent.CLICK, function (event :Event) :void {
                 popdown(_ghostDefeated);
             });
@@ -152,6 +160,8 @@ public class GamePanel extends Sprite
 
     public function newGhost () :void
     {
+        hud.newGhost();
+
         _ghost = null;
         var clip :Class = getClipClass();
         if (clip != null) {
@@ -215,7 +225,7 @@ public class GamePanel extends Sprite
 
         if (!Game.model.isPlayerDead(Game.ourPlayerId)) {
             // possibly we were just revived, let's see
-            if (_revivePopup.parent != null) {
+            if (_revivePopup.parent == this) {
                 this.removeChild(_revivePopup);
             }
             // we're not dead

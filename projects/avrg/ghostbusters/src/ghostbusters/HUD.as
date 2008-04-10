@@ -63,6 +63,7 @@ public class HUD extends Sprite
         if (_hud.parent != null) {
             placeHud();
             teamUpdated();
+            newGhost();
         }
     }
 
@@ -86,6 +87,13 @@ public class HUD extends Sprite
     public function getWeaponType () :int
     {
         return _lootIx;
+    }
+
+    public function newGhost () :void
+    {
+        if (_ghostInfo != null) {
+            _ghostInfo.updateGhost();
+        }
     }
 
     public function teamUpdated () :void
@@ -131,8 +139,10 @@ public class HUD extends Sprite
         }
     }
 
-    protected function handleHUDLoaded (clip :MovieClip) :void
+    protected function handleHUDLoaded (hudClip :MovieClip) :void
     {
+        _ghostInfo = new GhostInfoView(hudClip);
+
         safelyAdd(HELP, helpClick);
         safelyAdd(CLOSE, closeClick);
 
@@ -179,8 +189,6 @@ public class HUD extends Sprite
 
         _inventory = MovieClip(findSafely(INVENTORY));
         _inventory.visible = false;
-
-        _ghostInfo = new GhostInfoView(MovieClip(findSafely(GHOST_INFO)));
 
         safelyAdd(CHOOSE_LANTERN, pickLoot);
         safelyAdd(CHOOSE_BLASTER, pickLoot);
@@ -417,7 +425,6 @@ public class HUD extends Sprite
     protected static const EQP_POTIONS :String = "equipped_heal";
 
     protected static const INVENTORY :String = "inventory1";
-    protected static const GHOST_INFO :String = "GhostInfoBox";
 
 //    protected static const WEAPON_DISPLAY :String = "WeaponDisplay";
 
