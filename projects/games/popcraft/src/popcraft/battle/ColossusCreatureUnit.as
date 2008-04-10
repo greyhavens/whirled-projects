@@ -1,13 +1,14 @@
 package popcraft.battle {
 
+import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import popcraft.*;
 import popcraft.battle.ai.*;
 
 /**
- * Sappers are suicide-bombers. They deal heavy
- * damage to enemies and bases.
+ * Colossus
  */
 public class ColossusCreatureUnit extends CreatureUnit
 {
@@ -16,6 +17,10 @@ public class ColossusCreatureUnit extends CreatureUnit
         super(Constants.UNIT_TYPE_COLOSSUS, owningPlayerId);
 
         _ai = new ColossusAI(this, this.findEnemyBaseToAttack());
+
+        // the Colossus is immune to enemy attacks, but has only
+        // a limited time in the world
+        this.addTask(After(DEATH_TIMER_LENGTH, new FunctionTask(this.die)));
     }
 
     override protected function get aiRoot () :AITask
@@ -23,10 +28,86 @@ public class ColossusCreatureUnit extends CreatureUnit
         return _ai;
     }
 
+    override protected function update (dt :Number) :void
+    {
+        // expire old movement penalties
+        var timeNow :Number = this.dbTime;
+        while (_attackers.length > 0) {
+            var oldestRecord :AttackRecord = _attackers[_attackers.length - 1];
+            if (timeNow > oldestRecord.expirationTime) {
+                _attackers.pop();
+            } else {
+                break;
+            }
+        }
+
+        super.update(dt);
+    }
+
+    override public function receiveAttack (attack :UnitAttack) :void
+    {
+        // Every time the colossus gets hit, he is slowed a bit, and a timer
+        // is started that will remove the movement penalty after a set time
+        // (unless he is hit again by the same attacker)
+
+        var attacker :SimObjectRef = attack.sourceUnitRef;
+
+        var index :int = ArrayUtil.indexIf(
+            _attackers,
+            function (record :AttackRecord) :Boolean { return record.attacker == attacker; });
+
+        var ar :AttackRecord;
+        if (index >= 0) {
+            ar = _attackers[index];
+        } else {
+            ar = new AttackRecord();
+            ar.attacker = attacker;
+            _attackers.push(ar);
+        }
+
+        ar.expirationTime = this.dbTime + SPEED_LOSS_EXPIRATION_TIME;
+
+        _attackers.sort(AttackRecord.compare);
+    }
+
+    override public function get movementSpeed () :Number
+    {
+        var baseSpeed :Number = super.movementSpeed;
+        var speedLoss :Number = SPEED_LOSS_PER_ATTACK * _attackers.length;
+        return Math.max(baseSpeed - speedLoss, 0);
+    }
+
+    protected function get dbTime () :Number
+    {
+        return (this.db as NetObjectDB).dbTime;
+    }
+
     protected var _ai :ColossusAI;
+    protected var _attackers :Array = [];
+
+    protected static const DEATH_TIMER_LENGTH :Number = 40;
+    protected static const SPEED_LOSS_PER_ATTACK :Number = 5;
+    protected static const SPEED_LOSS_EXPIRATION_TIME :Number = 2;
 }
 
 }
+
+class AttackRecord
+{
+    public var attacker :SimObjectRef;
+    public var expirationTime :Number;
+
+    public static function compare (a :AttackRecord, b :AttackRecord) :int
+    {
+        if (a.expirationTime < b.expirationTime) {
+            return 1;
+        } else if (a.expirationTime > b.expirationTime) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+};
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.util.*;
@@ -48,6 +129,8 @@ class ColossusAI extends AITaskTree
     {
         _unit = unit;
         _targetBaseRef = targetBaseRef;
+
+        this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
     }
 
     override public function get name () :String

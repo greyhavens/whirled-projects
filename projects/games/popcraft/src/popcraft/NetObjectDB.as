@@ -8,16 +8,18 @@ import popcraft.battle.*;
 
 public class NetObjectDB extends ObjectDB
 {
-    /*override protected function finalizeObjectDestruction (obj :SimObject) :void
+    override public function update (dt :Number) :void
     {
-        // remove dead creatures from the collision grid
-        if (obj is CreatureUnit) {
-            var creature :CreatureUnit = obj as CreatureUnit;
-            creature.removeFromCollisionGrid();
-        }
+        _dbTime += dt;
+        super.update(dt);
+    }
 
-        super.finalizeObjectDestruction(obj);
-    }*/
+    public function get dbTime () :Number
+    {
+        return _dbTime;
+    }
+
+    protected var _dbTime :Number = 0;
 }
 
 }

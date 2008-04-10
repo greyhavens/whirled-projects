@@ -191,14 +191,21 @@ public class Unit extends SimObject
 
     public function receiveAttack (attack :UnitAttack) :void
     {
-        _health -= _unitData.armor.getWeaponDamage(attack.weapon);
-        _health = Math.max(_health, 0);
+        if (!this.isInvincible) {
+            _health -= _unitData.armor.getWeaponDamage(attack.weapon);
+            _health = Math.max(_health, 0);
+        }
 
         this.dispatchEvent(new UnitEvent(UnitEvent.ATTACKED, attack));
 
-        if (_health == 0) {
+        if (!this.isInvincible && _health <= 0) {
             this.die();
         }
+    }
+
+    public function get isInvincible () :Boolean
+    {
+        return _unitData.maxHealth <= 0;
     }
 
     protected function die () :void

@@ -74,6 +74,11 @@ public class CreatureUnit extends Unit
         return _movementDirection;
     }
 
+    public function get movementSpeed () :Number
+    {
+        return this.unitData.baseMoveSpeed;
+    }
+
     protected function handleMove (dt :Number) :void
     {
         _movedThisFrame = false;
@@ -99,7 +104,7 @@ public class CreatureUnit extends Unit
                 _movementDirection = attractForce.add(repulseForce).normalizeLocal();
 
                 // don't overshoot the destination
-                var distance :Number = this.unitData.baseMoveSpeed * dt;
+                var distance :Number = this.movementSpeed * dt;
 
                 // calculate our next location
                 var nextLoc :Vector2 = _movementDirection.scale(distance).addLocal(curLoc);

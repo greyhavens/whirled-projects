@@ -16,7 +16,7 @@ public class Constants
 
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
-    public static const DEBUG_ALLOW_CHEATS :Boolean = false;
+    public static const DEBUG_ALLOW_CHEATS :Boolean = true;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
@@ -80,11 +80,11 @@ public class Constants
     public static const UNIT_TYPE_GRUNT :uint = 0;
     public static const UNIT_TYPE_HEAVY :uint = 1;
     public static const UNIT_TYPE_SAPPER :uint = 2;
-    public static const UNIT_TYPE_COLOSSUS :uint = 500;
+    public static const UNIT_TYPE_COLOSSUS :uint = 3;
 
-    public static const UNIT_TYPE__CREATURE_LIMIT :uint = 3;
+    public static const UNIT_TYPE__CREATURE_LIMIT :uint = 4;
 
-    public static const UNIT_TYPE_BASE :uint = 3;
+    public static const UNIT_TYPE_BASE :uint = UNIT_TYPE__CREATURE_LIMIT;
 
     public static const UNIT_CLASS_GROUND :uint = (1 << 0);
     public static const UNIT_CLASS_AIR :uint = (1 << 1);
@@ -130,7 +130,7 @@ public class Constants
     protected static const COLOSSUS_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
         .isAOE(true)
         .damageType(DAMAGE_TYPE_CRUSHING)
-        .damageRange(50, 60)
+        .damageRange(80, 80)
         .targetClassMask(UNIT_CLASS_GROUND)
         .aoeRadius(50)
         .aoeDamageFriendlies(false)
@@ -184,9 +184,10 @@ public class Constants
 
     protected static const COLOSSUS_DATA :UnitData = UnitDataBuilder.create()
         .name("colossus")
-        .resourceCosts([60, 60, 0, 0])
+        .resourceCosts([200, 200, 0, 0])
         .baseMoveSpeed(25)
         .maxHealth(-1)  // invincible
+        .weapon(COLOSSUS_WEAPON)
         .collisionRadius(30)
         .unitData;
 
@@ -199,7 +200,7 @@ public class Constants
         .unitData;
 
     // non-creature units must come after creature units
-    public static const UNIT_DATA :Array = [ GRUNT_DATA, HEAVY_DATA, SAPPER_DATA, /*COLOSSUS_DATA,*/ BASE_DATA ];
+    public static const UNIT_DATA :Array = [ GRUNT_DATA, HEAVY_DATA, SAPPER_DATA, COLOSSUS_DATA, BASE_DATA ];
 
     /* Screen layout */
     public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
@@ -271,8 +272,8 @@ public class Constants
                 report += "\nWeapon " + weaponIdx + " (" + rangeMin + ", " + rangeMax + ")";
 
                 for each (var dstUnit :UnitData in Constants.UNIT_DATA) {
-                    var dmgMin :Number = dstUnit.armor.getDamage(damageType, rangeMin);
-                    var dmgMax :Number = dstUnit.armor.getDamage(damageType, rangeMax);
+                    var dmgMin :Number = (null != dstUnit.armor ? dstUnit.armor.getDamage(damageType, rangeMin) : Number.NEGATIVE_INFINITY);
+                    var dmgMax :Number = (null != dstUnit.armor ? dstUnit.armor.getDamage(damageType, rangeMax) : Number.NEGATIVE_INFINITY);
                     // dot == damage over time
                     var dotMin :Number = dmgMin / weapon.cooldown;
                     var dotMax :Number = dmgMax / weapon.cooldown;

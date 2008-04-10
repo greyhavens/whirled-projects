@@ -47,19 +47,21 @@ public class CreatureUnitView extends SceneObject
         }
 
         // health meter
-        _healthMeter = new RectMeter();
-        _healthMeter.minValue = 0;
-        _healthMeter.maxValue = _unit.unitData.maxHealth;
-        _healthMeter.value = _unit.health;
-        _healthMeter.foregroundColor = playerColor;
-        _healthMeter.backgroundColor = 0x888888;
-        _healthMeter.outlineColor = 0x000000;
-        _healthMeter.width = 30;
-        _healthMeter.height = 3;
-        _healthMeter.x = -(_healthMeter.width * 0.5);
-        _healthMeter.y = -_sprite.height - _healthMeter.height;
+        if (!_unit.isInvincible) {
+            _healthMeter = new RectMeter();
+            _healthMeter.minValue = 0;
+            _healthMeter.maxValue = _unit.unitData.maxHealth;
+            _healthMeter.value = _unit.health;
+            _healthMeter.foregroundColor = playerColor;
+            _healthMeter.backgroundColor = 0x888888;
+            _healthMeter.outlineColor = 0x000000;
+            _healthMeter.width = 30;
+            _healthMeter.height = 3;
+            _healthMeter.x = -(_healthMeter.width * 0.5);
+            _healthMeter.y = -_sprite.height - _healthMeter.height;
 
-        this.db.addObject(_healthMeter, _sprite);
+            this.db.addObject(_healthMeter, _sprite);
+        }
 
         // draw some debugging circles
         if (Constants.DEBUG_DRAW_UNIT_DATA_CIRCLES) {
@@ -80,7 +82,10 @@ public class CreatureUnitView extends SceneObject
 
     override protected function removedFromDB () :void
     {
-        _healthMeter.destroySelf();
+        if (null != _healthMeter) {
+            _healthMeter.destroySelf();
+        }
+
         _unit.removeEventListener(UnitEvent.ATTACKING, handleUnitAttacking);
     }
 
@@ -295,14 +300,16 @@ public class CreatureUnitView extends SceneObject
                 // estimate a new location for the CreatureUnit,
                 // based on its last location and its velocity
 
-                var distanceDelta :Number = _unit.unitData.baseMoveSpeed * _unitUpdateTimeDelta;
+                var distanceDelta :Number = _unit.movementSpeed * _unitUpdateTimeDelta;
                 var movementDelta :Vector2 = _unit.movementDirection.scale(distanceDelta);
 
                 this.x = _unit.x + movementDelta.x;
                 this.y = _unit.y + movementDelta.y;
             }
 
-            _healthMeter.value = _unit.health;
+            if (null != _healthMeter) {
+                _healthMeter.value = _unit.health;
+            }
         }
     }
 
