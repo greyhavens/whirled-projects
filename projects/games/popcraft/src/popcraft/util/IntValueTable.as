@@ -34,7 +34,7 @@ public class IntValueTable
         if (index <= (_values.length - 2)) {
             return _values[index];
         } else {
-            return _lastValue + (_scaleValue * (index - (_values.length - 1)));
+            return _lastValue + (_scaleValue * (index - (_values.length - 2)));
         }
     }
 

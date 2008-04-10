@@ -16,8 +16,8 @@ public class Constants
 
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
-    public static const DEBUG_ALLOW_CHEATS :Boolean = true;
-    public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = true;
+    public static const DEBUG_ALLOW_CHEATS :Boolean = false;
+    public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
 
@@ -39,8 +39,8 @@ public class Constants
     public static const PUZZLE_TILE_SIZE :int = int(PUZZLE_HEIGHT / PUZZLE_ROWS);
 
     public static const CLEAR_VALUE_TABLE :IntValueTable =
-        new IntValueTable( [-20, -10, 10, 20, 30, 20] );
-             // group size:   1,   2,  3,  4,  5,  6+ = 50, 70, 90, ...
+        new IntValueTable( [-20, -10, 10, 10 ] );
+             // group size:   1,   2,  3,  4+ = 20, 30, 40, ...
 
     /* Battle stuff */
     public static const BATTLE_WIDTH :int = 700;
@@ -151,7 +151,7 @@ public class Constants
         .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.7, DAMAGE_TYPE_PIERCING, 0.3, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 0.8] ))
         .weapon(GRUNT_WEAPON)
         .collisionRadius(15)
-        .detectRadius(40)
+        .detectRadius(60)
         .loseInterestRadius(180)
         .description("GRUNT: Melee unit. Strong against the Heavy. Susceptible to attacks from the Sapper.")
         .unitData;
