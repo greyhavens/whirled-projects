@@ -2,16 +2,16 @@ package popcraft.net {
 
 import com.whirled.contrib.simplegame.net.*;
 
-public class CreateUnitMessage
+public class SelectTargetEnemyMessage
     implements Message
 {
-    public var unitType :uint;
-    public var owningPlayer :uint;
+    public var selectingPlayer :uint;
+    public var targetPlayer :uint;
 
-    public function CreateUnitMessage (unitType :uint, owningPlayer :uint)
+    public function SelectTargetEnemyMessage (selectingPlayer :uint, targetPlayer :uint)
     {
-        this.unitType = unitType;
-        this.owningPlayer = owningPlayer;
+        this.selectingPlayer = selectingPlayer;
+        this.targetPlayer = targetPlayer;
     }
 
     public function get name () :String
@@ -21,55 +21,55 @@ public class CreateUnitMessage
 
     public function toString () :String
     {
-        return "[CreateUnit. playerId: " + owningPlayer + ". unitType: " + unitType + "]";
+        return "[SelectTargetEnemy. selectingPlayer: " + selectingPlayer + ". targetPlayer: " + targetPlayer + "]";
     }
 
     public static function createFactory () :MessageFactory
     {
-        return new CreateUnitMessageFactory();
+        return new SelectTargetEnemyMessageFactory();
     }
 
     public static function get messageName () :String
     {
-        return "CreateUnit";
+        return "SelectTargetEnemy";
     }
 }
 
 }
 
 import com.whirled.contrib.simplegame.net.*;
-import popcraft.net.CreateUnitMessage;
+import popcraft.net.SelectTargetEnemyMessage;
 import flash.utils.ByteArray;
 import flash.errors.EOFError;
 import com.threerings.util.Log;
 
-class CreateUnitMessageFactory
+class SelectTargetEnemyMessageFactory
     implements MessageFactory
 {
     public function serializeForNetwork (message :Message) :Object
     {
-        var msg :CreateUnitMessage = (message as CreateUnitMessage);
+        var msg :SelectTargetEnemyMessage = (message as SelectTargetEnemyMessage);
 
         var ba :ByteArray = new ByteArray();
-        ba.writeByte(msg.unitType);
-        ba.writeByte(msg.owningPlayer);
+        ba.writeByte(msg.selectingPlayer);
+        ba.writeByte(msg.targetPlayer);
 
         return ba;
     }
 
     public function deserializeFromNetwork (obj :Object) :Message
     {
-        var msg :CreateUnitMessage;
+        var msg :SelectTargetEnemyMessage;
 
         var ba :ByteArray = obj as ByteArray;
         if (null == ba) {
             log.warning("received non-ByteArray message");
         } else {
             try {
-                var unitType :int = ba.readByte();
-                var owningPlayer :int = ba.readByte();
+                var selectingPlayer :int = ba.readByte();
+                var targetPlayer :int = ba.readByte();
 
-                msg = new CreateUnitMessage(unitType, owningPlayer);
+                msg = new SelectTargetEnemyMessage(selectingPlayer, targetPlayer);
 
             } catch (err :EOFError) {
                 log.warning("received bad data");
@@ -79,6 +79,6 @@ class CreateUnitMessageFactory
         return msg;
     }
 
-    protected static const log :Log = Log.getLog(CreateUnitMessageFactory);
+    protected static const log :Log = Log.getLog(SelectTargetEnemyMessageFactory);
 }
 
