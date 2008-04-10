@@ -23,6 +23,10 @@ public class UnitFactory
             unit = new SapperCreatureUnit(owningPlayerId);
             break;
 
+        case Constants.UNIT_TYPE_COLOSSUS:
+            unit = new ColossusCreatureUnit(owningPlayerId);
+            break;
+
         case Constants.UNIT_TYPE_BASE:
             unit = new PlayerBaseUnit(owningPlayerId);
             break;

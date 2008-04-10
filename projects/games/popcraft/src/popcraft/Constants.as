@@ -82,10 +82,11 @@ public class Constants
     public static const UNIT_TYPE_GRUNT :uint = 0;
     public static const UNIT_TYPE_HEAVY :uint = 1;
     public static const UNIT_TYPE_SAPPER :uint = 2;
+    public static const UNIT_TYPE_COLOSSUS :uint = 3;
 
-    public static const UNIT_TYPE__CREATURE_LIMIT :uint = 3;
+    public static const UNIT_TYPE__CREATURE_LIMIT :uint = 4;
 
-    public static const UNIT_TYPE_BASE :uint = 3;
+    public static const UNIT_TYPE_BASE :uint = 4;
 
     public static const UNIT_CLASS_GROUND :uint = (1 << 0);
     public static const UNIT_CLASS_AIR :uint = (1 << 1);
@@ -124,6 +125,16 @@ public class Constants
         .targetClassMask(UNIT_CLASS_GROUND)
         .aoeRadius(75)
         .aoeAnimationName("attack_N")
+        .aoeDamageFriendlies(false)
+        .cooldown(1)
+        .weapon;
+
+    protected static const COLOSSUS_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
+        .isAOE(true)
+        .damageType(DAMAGE_TYPE_CRUSHING)
+        .damageRange(50, 60)
+        .targetClassMask(UNIT_CLASS_GROUND)
+        .aoeRadius(50)
         .aoeDamageFriendlies(false)
         .cooldown(1)
         .weapon;
@@ -173,6 +184,14 @@ public class Constants
         .loseInterestRadius(180)
         .unitData;
 
+    protected static const COLOSSUS_DATA :UnitData = UnitDataBuilder.create()
+        .name("colossus")
+        .resourceCosts([60, 60, 0, 0])
+        .baseMoveSpeed(25)
+        .maxHealth(-1)  // invincible
+        .collisionRadius(30)
+        .unitData;
+
     protected static const BASE_DATA :UnitData = UnitDataBuilder.create()
         .name("base")
         .maxHealth(100)
@@ -182,7 +201,7 @@ public class Constants
         .unitData;
 
     // non-creature units must come after creature units
-    public static const UNIT_DATA :Array = [ GRUNT_DATA, HEAVY_DATA, SAPPER_DATA, BASE_DATA ];
+    public static const UNIT_DATA :Array = [ GRUNT_DATA, HEAVY_DATA, SAPPER_DATA, HEAVY_DATA, BASE_DATA ];
 
     /* Screen layout */
     public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
