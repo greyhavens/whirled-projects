@@ -131,11 +131,31 @@ class ColossusAI extends AITaskTree
         _targetBaseRef = targetBaseRef;
 
         this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
+
+        // scan for units in our immediate vicinity every couple of seconds
+        var detectPredicate :Function = DetectCreatureAction.createNotEnemyOfTypesPredicate([Constants.UNIT_TYPE_COLOSSUS]);
+        var scanSequence :AITaskSequence = new AITaskSequence(true);
+        scanSequence.addSequencedTask(new AITimerTask(2));
+        scanSequence.addSequencedTask(new DetectCreatureAction(detectPredicate));
+        this.addSubtask(scanSequence);
     }
 
     override public function get name () :String
     {
         return "ColossusAI";
+    }
+
+    override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
+    {
+        if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
+            var msg :SequencedTaskMessage = data as SequencedTaskMessage;
+            var enemyUnit :CreatureUnit = msg.data as CreatureUnit;
+
+            // we detected an enemy - attack it
+            log.info("detected enemy - attacking");
+            _unit.sendAttack(enemyUnit, _unit.unitData.weapons[0]);
+
+        }
     }
 
     protected var _unit :ColossusCreatureUnit;

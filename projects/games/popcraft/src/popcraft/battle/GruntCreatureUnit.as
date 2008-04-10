@@ -79,7 +79,7 @@ class GruntAI extends AITaskTree
         //this.addSubtask(new DetectAttacksOnUnitTask(_unit));
 
         // scan for Heavies and Grunts once/second
-        var detectPredicate :Function = DetectCreatureAction.createIsEnemyOfTypesPredicate([Constants.UNIT_TYPE_GRUNT, Constants.UNIT_TYPE_HEAVY]);
+        var detectPredicate :Function = DetectCreatureAction.createNotEnemyOfTypesPredicate([Constants.UNIT_TYPE_SAPPER]);
         var scanSequence :AITaskSequence = new AITaskSequence(true);
         scanSequence.addSequencedTask(new AITimerTask(1));
         scanSequence.addSequencedTask(new DetectCreatureAction(detectPredicate));
@@ -91,33 +91,21 @@ class GruntAI extends AITaskTree
         if (messageName == MSG_SUBTASKCOMPLETED) {
             switch (task.name) {
 
-            /*case DetectAttacksOnUnitTask.NAME:
-                // we've been attacked!
-                var attack :UnitAttack = (task as DetectAttacksOnUnitTask).attack;
-                var aggressor :Unit = attack.sourceUnit;
-
-                if (null != aggressor) {
-                    log.info("attacking aggressor!");
-
-                    this.clearSubtasks();
-                    this.addSubtask(new AttackUnitTask(aggressor.ref, true, _unit.unitData.loseInterestRadius));
-                }
-                break;*/
-
             case AttackUnitTask.NAME:
                 // resume attacking base
                 log.info("resuming attack on base");
                 this.beginAttackBase();
                 break;
             }
+
         } else if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
             var msg :SequencedTaskMessage = data as SequencedTaskMessage;
-            var heavyUnit :CreatureUnit = msg.data as CreatureUnit;
+            var enemyUnit :CreatureUnit = msg.data as CreatureUnit;
 
-            // we detected a heavy - attack it
-            log.info("detected Heavy - attacking");
+            // we detected an enemy - attack it
+            log.info("detected enemy - attacking");
             this.clearSubtasks();
-            this.addSubtask(new AttackUnitTask(heavyUnit.ref, true, _unit.unitData.loseInterestRadius));
+            this.addSubtask(new AttackUnitTask(enemyUnit.ref, true, _unit.unitData.loseInterestRadius));
 
         }
     }

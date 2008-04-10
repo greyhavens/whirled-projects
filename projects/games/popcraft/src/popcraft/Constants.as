@@ -17,7 +17,7 @@ public class Constants
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
     public static const DEBUG_ALLOW_CHEATS :Boolean = true;
-    public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
+    public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = true;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
 
@@ -128,13 +128,11 @@ public class Constants
         .weapon;
 
     protected static const COLOSSUS_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
-        .isAOE(true)
         .damageType(DAMAGE_TYPE_CRUSHING)
         .damageRange(80, 80)
         .targetClassMask(UNIT_CLASS_GROUND)
-        .aoeRadius(50)
-        .aoeDamageFriendlies(false)
-        .cooldown(1)
+        .maxAttackDistance(50)
+        .cooldown(2)
         .weapon;
 
     protected static const BASE_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
@@ -192,6 +190,7 @@ public class Constants
         .maxHealth(-1)  // invincible
         .weapon(COLOSSUS_WEAPON)
         .collisionRadius(30)
+        .detectRadius(COLOSSUS_WEAPON.maxAttackDistance) // only detect enemies in our attack range
         .description("COLOSSUS: A massive pile of discarded flesh. The Colossus' powerful attack is dangerous to everybody, but it will fall apart after a short time on the battlefield.")
         .unitData;
 

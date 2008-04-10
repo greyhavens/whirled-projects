@@ -46,6 +46,24 @@ public class DetectCreatureAction extends AITask
         }
     }
 
+    public static function createNotEnemyOfTypesPredicate (unitTypes :Array) :Function
+    {
+        // is the creature an enemy, and is it not one of the specified unitTypes?
+        return function (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean {
+            if (!isEnemyPredicate(thisCreature, thatCreature)) {
+                return false;
+            }
+
+            for each (var unitType :uint in unitTypes) {
+                if (thatCreature.unitType == unitType) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
     public function DetectCreatureAction (detectPredicate :Function, taskName :String = null)
     {
         _detectPredicate = detectPredicate;
