@@ -115,11 +115,13 @@ public class PuzzleBoard extends SceneObject
         for each (var piece :Piece in clearPieces) {
             var pieceAnim :SerialTask = new SerialTask();
 
-            pieceAnim.addTask(ScaleTask.CreateEaseOut(0.5, 0.5, 0.4));
+            // scale to half-size
+            pieceAnim.addTask(ScaleTask.CreateEaseOut(0.5, 0.5, PIECE_SCALE_DOWN_TIME));
 
+            // scale to 1.25x size and fade out
             pieceAnim.addTask(new ParallelTask(
-                ScaleTask.CreateEaseOut(1.25, 1.25, 0.25),
-                new AlphaTask(0, 0.25)));
+                ScaleTask.CreateEaseOut(1.25, 1.25, PIECE_SCALE_UP_TIME),
+                new AlphaTask(0, PIECE_SCALE_UP_TIME)));
 
             pieceAnim.addTask(new SelfDestructTask());
 
@@ -132,7 +134,7 @@ public class PuzzleBoard extends SceneObject
         // when the pieces are done clearing,
         // drop the pieces above them.
         this.addTask(new SerialTask(
-            new TimedTask(0.65),
+            new TimedTask(PIECE_SCALE_DOWN_TIME + PIECE_SCALE_UP_TIME),
             new FunctionTask(animatePieceDrops)));
     }
 
@@ -227,9 +229,9 @@ public class PuzzleBoard extends SceneObject
                 LocationTask.CreateEaseIn(
                     getPieceXLoc(col),
                     getPieceYLoc(toRow),
-                    0.5)));
+                    PIECE_DROP_TIME)));
 
-        return initialDelay + 0.5;
+        return initialDelay + PIECE_DROP_TIME;
     }
 
     protected function animateAddNewPieces () :void
@@ -386,6 +388,10 @@ public class PuzzleBoard extends SceneObject
     protected var _resourceGenerator :WeightedTable;
 
     protected static const MOVE_TASK_NAME :String = "move";
+
+    protected static const PIECE_DROP_TIME :Number = 0.3;
+    protected static const PIECE_SCALE_DOWN_TIME :Number = 0.25;
+    protected static const PIECE_SCALE_UP_TIME :Number = 0.1;
 }
 
 }

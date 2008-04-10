@@ -29,8 +29,6 @@ public class Constants
     ];
 
     /* Puzzle stuff */
-    public static const PIECE_CLEAR_TIMER_LENGTH :Number = 0.75;
-
     public static const MIN_GROUP_SIZE :int = 1; // no min group size right now
 
     public static const PUZZLE_HEIGHT :int = 110;
@@ -149,7 +147,7 @@ public class Constants
 
     protected static const GRUNT_DATA :UnitData = UnitDataBuilder.create()
         .name("grunt")
-        .resourceCosts([30, 0, 30, 0])
+        .resourceCosts([40, 0, 15, 0])
         .baseMoveSpeed(35)
         .maxHealth(100)
         .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.7, DAMAGE_TYPE_PIERCING, 0.3, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 0.8] ))
@@ -161,7 +159,7 @@ public class Constants
 
     protected static const HEAVY_DATA :UnitData = UnitDataBuilder.create()
         .name("heavy")
-        .resourceCosts([0, 30, 0, 30])
+        .resourceCosts([0, 30, 0, 15])
         .baseMoveSpeed(50)
         .maxHealth(100)
         .armor(new UnitArmor([DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 1]))
@@ -230,18 +228,18 @@ public class Constants
 
         case 3:
             return [
-                new Vector2(48, 85),       // top left
-                new Vector2(28, 452),     // bottom left
-                new Vector2(452, 250),    // middle right
+                new Vector2(50, 85),       // top left
+                new Vector2(50, 315),     // bottom left
+                new Vector2(652, 175),    // middle right
             ];
             break;
 
         case 4:
             return [
-                new Vector2(48, 85),    // top left
-                new Vector2(48, 452),   // bottom left
-                new Vector2(452, 85),   // top right
-                new Vector2(452, 452),  // bottom right
+                new Vector2(50, 85),    // top left
+                new Vector2(50, 315),   // bottom left
+                new Vector2(652, 85),   // top right
+                new Vector2(652, 315),  // bottom right
             ];
             break;
 
