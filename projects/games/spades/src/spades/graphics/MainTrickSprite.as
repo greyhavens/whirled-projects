@@ -58,8 +58,10 @@ public class MainTrickSprite extends TrickSprite
         if (seat == 0) {
 
             // use card from the local hand (if available)
-            var handCard :CardSprite = 
-                _localHand.finalizeMostRecentCardRemoval();
+            var removals :Array = _localHand.finalizeRemovals();
+            var handCard :CardSprite = removals.length > 0 ? 
+                (removals[0] as CardSprite) : null;
+
             if (handCard != null) {
                 start = new Vector2(handCard.x, handCard.y);
             }

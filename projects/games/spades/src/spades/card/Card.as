@@ -101,7 +101,7 @@ public class Card
             throw new CardException("" + ordinal + " is not in range");
         }
         
-        var suit :int = (ordinal >> 5) & MAX_ORDINAL;
+        var suit :int = (ordinal >> 5) & MAX_SUIT;
         var rank :int = (ordinal & MAX_RANK);
         return new Card(suit, rank);
     }

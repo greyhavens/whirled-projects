@@ -277,8 +277,12 @@ public class CardArray extends EventDispatcher
             ordinals.forEach(push);
         }
 
-        function push (ord :int, i :int, a :Array) :void
+        function push (ord :*, ...x) :void
         {
+            if (!(ord is int)) {
+                throw new CardException(
+                    "Non-int value given for card ordinal: " + ord);
+            }
             _ordinals.push(ord);
             _cards.push(Card.createCardFromOrdinal(ord));
         }

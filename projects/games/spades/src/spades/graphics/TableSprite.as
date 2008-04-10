@@ -5,12 +5,16 @@ import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.utils.Timer;
 import flash.display.Bitmap;
+import flash.geom.Point;
 
 import com.threerings.flash.Vector2;
 import com.whirled.game.StateChangedEvent;
 import com.threerings.util.MultiLoader;
 
+import caurina.transitions.Tweener;
+
 import spades.Model;
+import spades.card.Card;
 import spades.card.CardArray;
 import spades.card.CardArrayEvent;
 import spades.card.Trick;
@@ -20,6 +24,7 @@ import spades.card.Bids;
 import spades.card.SpadesBids;
 import spades.card.BidEvent;
 import spades.card.Hand;
+import spades.card.HandEvent;
 import spades.card.Scores;
 import spades.card.Team;
 
@@ -75,6 +80,9 @@ public class TableSprite extends Sprite
         // listen for blind nil updates
         _model.bids.addEventListener(BidEvent.PLACED, bidListener);
         _model.bids.addEventListener(BidEvent.RESET, bidListener);
+
+        // listen for passing cards between players
+        _model.hand.addEventListener(HandEvent.PASSED, handListener);
 
         // listen for our removal to prevent stranded listeners
         addEventListener(Event.REMOVED, removedListener);
@@ -189,6 +197,82 @@ public class TableSprite extends Sprite
                 p = PlayerSprite(_players[seat]);
                 p.showCaption("");
             }
+        }
+    }
+
+    protected function handListener (event :HandEvent) :void
+    {
+        var i :int;
+        var card :CardSprite;
+
+        if (event.type == HandEvent.PASSED) {
+            if (event.player == table.getLocalId()) {
+                var removed :Array = _hand.finalizeRemovals();
+                for (i = 0; i < removed.length; ++i) {
+                    card = CardSprite(removed[i]);
+                    var pos :Point = new Point(card.x, card.y);
+                    pos = _hand.localToGlobal(pos);
+                    pos = globalToLocal(pos);
+                    addChild(card);
+                    card.x = pos.x;
+                    card.y = pos.y;
+                }
+                animatePass(removed, event.targetPlayer);
+            }
+            else {
+                var cards :Array = new Array();
+                var player :PlayerSprite = getPlayer(
+                    table.getRelativeFromId(event.player));
+                var x :Number = player.x;
+                var y :Number = player.y;
+                for (i = 0; i < event.count; ++i) {
+                    card = new CardSprite(Card.createFaceDownCard());
+                    cards.push(card);
+                    card.x = x;
+                    card.y = y;
+                    card.alpha = 0;
+                    addChild(card);
+
+                    var tween :Object = {
+                        alpha: 1.0,
+                        time: 0.5};
+                    Tweener.addTween(card, tween);
+
+                    x += CardSprite.WIDTH / 2;
+                }
+                animatePass(cards, event.targetPlayer, 0.5);
+            }
+        }
+    }
+
+    protected function animatePass (
+        cards :Array, 
+        target :int, 
+        delay :Number=0) :void
+    {
+        var player :PlayerSprite = getPlayer(table.getRelativeFromId(target));
+        var x :Number = player.x;
+        var y :Number = player.y;
+        for (var i :int = 0; i < cards.length; ++i) {
+            var c :CardSprite = CardSprite(cards[i]);
+
+            var tween :Object = {
+                x: x, y :y, 
+                time: 2.0,
+                delay: delay
+            };
+            Tweener.addTween(c, tween);
+
+            tween = {
+                alpha: 0, 
+                time: 0.5,
+                delay: delay + 1.5,
+                onComplete: removeChild,
+                onCompleteParams: [c]
+            };
+            Tweener.addTween(c, tween);
+
+            x += CardSprite.WIDTH / 2;
         }
     }
 

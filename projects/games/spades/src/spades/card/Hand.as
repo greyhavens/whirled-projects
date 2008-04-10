@@ -116,7 +116,9 @@ public class Hand extends EventDispatcher
 
         var value :Array = new Array();
         value.push(_gameCtrl.game.getMyId());
-        value.splice(value.length, 0, cards.ordinals);
+        cards.ordinals.forEach(function (ord :int, ...x) :void {
+            value.push(ord);
+        });
 
         _gameCtrl.net.sendMessage(varName(PASS_FULFILL), 
             value, _passTarget);
@@ -218,6 +220,12 @@ public class Hand extends EventDispatcher
         var cards :CardArray;
         var info :Array;
 
+        var dbgVal :String = String(event.value);
+        if (event.value is Array) {
+            dbgVal = (event.value as Array).join(", ");
+        }
+        Debug.debug("Received message " + event.name + ", value: " + dbgVal);
+
         if (event.name == varName(DEALT)) {
 
             // reset our cards with sorted array
@@ -255,7 +263,7 @@ public class Hand extends EventDispatcher
         }
         else if (event.name == varName(PASS_FULFILL)) {
             // we have been given some cards
-            var from :int = (event.value as Array)[0];
+            var from :int = (event.value as Array)[0] as int;
             cards = new CardArray((event.value as Array).slice(1));
             _sorter.insert(cards, _cards);
             Debug.debug("Received passed cards: " + cards + " from " + from);
