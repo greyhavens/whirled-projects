@@ -6,6 +6,8 @@ import com.whirled.contrib.simplegame.resource.*;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Sprite;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
 import popcraft.battle.*;
 
@@ -14,21 +16,20 @@ public class UnitPurchaseButton extends DisablingButton
     public function UnitPurchaseButton (unitType :uint)
     {
         var data :UnitData = Constants.UNIT_DATA[unitType];
-        
         var bitmapData :BitmapData = (PopCraft.resourceManager.getResource(data.name + "_icon") as ImageResourceLoader).bitmapData;
 
-        upState         = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP);
-        overState       = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_OVER);
-        downState       = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DOWN);
-        disabledState   = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
+        this.upState         = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP);
+        this.overState       = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_OVER, 1.0, data.description);
+        this.downState       = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DOWN, 1.0, data.description);
+        this.disabledState   = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
 
-        hitTestState = upState;
+        this.hitTestState = upState;
 
         downState.x = -1;
         downState.y = -1;
     }
 
-    protected static function makeButtonFace (bitmapData :BitmapData, foreground :uint, background :uint, iconAlpha :Number = 1.0) :Sprite
+    protected static function makeButtonFace (bitmapData :BitmapData, foreground :uint, background :uint, iconAlpha :Number = 1.0, descriptionText :String = null) :Sprite
     {
         var face :Sprite = new Sprite();
 
@@ -51,6 +52,24 @@ public class UnitPurchaseButton extends DisablingButton
 
         icon.x = 0;
         icon.y = 0;
+
+        // create a text field with the description of the unit, to
+        // display above the button
+        if (null != descriptionText) {
+            var tf :TextField = new TextField();
+            tf.background = true;
+            tf.backgroundColor = 0xFFFFFF;
+            tf.border = true;
+            tf.borderColor = 0;
+            tf.autoSize = TextFieldAutoSize.LEFT;
+            tf.wordWrap = true;
+            tf.selectable = false;
+            tf.width = 200;
+            tf.text = descriptionText;
+            tf.y = - tf.height;
+
+            face.addChild(tf);
+        }
 
         return face;
     }

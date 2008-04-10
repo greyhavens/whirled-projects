@@ -5,8 +5,9 @@ import com.whirled.contrib.simplegame.util.*;
 /** Encapsulates immutable data about a particular type of Unit. */
 public class UnitData
 {
-    public var name :String;
-    public var resourceCosts :Array;
+    public var name :String = "";
+    public var description :String = "";
+    public var resourceCosts :Array = [];
 
     // movement variables
     public var baseMoveSpeed :Number = 0;

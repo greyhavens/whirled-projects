@@ -16,7 +16,7 @@ public class Constants
 
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
-    public static const DEBUG_ALLOW_CHEATS :Boolean = false;
+    public static const DEBUG_ALLOW_CHEATS :Boolean = true;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
@@ -155,6 +155,7 @@ public class Constants
         .collisionRadius(15)
         .detectRadius(40)
         .loseInterestRadius(180)
+        .description("GRUNT: Melee unit. Strong against the Heavy. Susceptible to attacks from the Sapper.")
         .unitData;
 
     protected static const HEAVY_DATA :UnitData = UnitDataBuilder.create()
@@ -168,6 +169,7 @@ public class Constants
         .collisionRadius(15)
         .detectRadius(200)
         .loseInterestRadius(180)
+        .description("HEAVY: Ranged tower unit. Useful for deflecting incoming Sappers. Watch out for Grunts.")
         .unitData;
 
     protected static const SAPPER_DATA :UnitData = UnitDataBuilder.create()
@@ -180,6 +182,7 @@ public class Constants
         .collisionRadius(15)
         .detectRadius(200)
         .loseInterestRadius(180)
+        .description("SAPPER: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Heavies!")
         .unitData;
 
     protected static const COLOSSUS_DATA :UnitData = UnitDataBuilder.create()
@@ -189,6 +192,7 @@ public class Constants
         .maxHealth(-1)  // invincible
         .weapon(COLOSSUS_WEAPON)
         .collisionRadius(30)
+        .description("COLOSSUS: A massive pile of discarded flesh. The Colossus' powerful attack is dangerous to everybody, but it will fall apart after a short time on the battlefield.")
         .unitData;
 
     protected static const BASE_DATA :UnitData = UnitDataBuilder.create()
