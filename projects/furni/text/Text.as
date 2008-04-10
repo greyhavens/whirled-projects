@@ -9,6 +9,7 @@ import flash.events.TimerEvent;
 import flash.geom.Matrix;
 
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
@@ -52,27 +53,19 @@ public class Text extends Sprite
         _ctrl.registerCustomConfig(createConfigPanel);
 
         _field = new TextField();
+        _field.autoSize = TextFieldAutoSize.LEFT;
         _field.wordWrap = true;
         _field.multiline = true;
         addChild(_field);
 
         handleMemoryChanged();
-//        _field.text = "This here is some sample text that I hope will word-wrap and generally " +
-//            "look good, even if I enter in some crazy long-ass shit that totally boochificates " +
-//            "normal sensible layout. Or not. I like hamsters, they are like little bears. " +
-//            "Only bears don't stuff their cheeks overfull with sunflower seeds. I wish bears " +
-//            "did that. I used to put hamsters on my cat's back, and the hamsters would grip on " +
-//            "with their little grippy paws, and the cat would freak out and run, but for a " +
-//            "little while the hamster would stay on- riding the cat like a little furry-faced " +
-//            "knight on horse. Well, ok, more like a little bear holding onto a giant " +
-//            "mythical cat-beast, and not really getting that far.";
-
         addEventListener(Event.ENTER_FRAME, checkScale);
     }
 
     protected function checkScale (... ignored) :void
     {
         var matrix :Matrix = this.transform.concatenatedMatrix;
+        // make the textfield take up all our visual width, but correct for scaling so that it appears at 1.0
         _field.width = WIDTH * matrix.a;
         _field.scaleX = 1 / matrix.a;
         _field.scaleY = 1 / matrix.d;;
@@ -80,13 +73,12 @@ public class Text extends Sprite
 
     protected function handleMemoryChanged (... ignored) :void
     {
-//        _field.text = "";
-
         var format :TextFormat = new TextFormat();
-        format.size = _ctrl.lookupMemory(SIZE, 16) as int;
-        _field.defaultTextFormat = format;
+        format.size = getMem(SIZE);
+        format.color = getMem(COLOR);
 
-        _field.text = _ctrl.lookupMemory(TEXT, "") as String;
+        _field.defaultTextFormat = format;
+        _field.text = getMem(TEXT) as String;
     }
 
     protected function handleUnload (event :Event) :void
@@ -108,17 +100,11 @@ public class Text extends Sprite
         tf.wordWrap = true;
         tf.width = 250;
         tf.height = 122;
-        tf.text = _ctrl.lookupMemory(TEXT, "") as String;
+        tf.text = getMem(TEXT) as String;
         s.addChild(tf);
 
         var updateText :Function = function (... ignored) :void {
-            var newText :String = StringUtil.trim(tf.text);
-            if (newText != _ctrl.lookupMemory(TEXT)) {
-                trace("Updating text: " + newText);
-                _ctrl.updateMemory(TEXT, newText);
-            } else {
-                trace("Text is the same: " + newText);
-            }
+            setMem(TEXT, tf.text);
         };
 
         var timer :Timer = new Timer(1000);
@@ -128,6 +114,7 @@ public class Text extends Sprite
             timer.start();
         });
         tf.addEventListener(Event.REMOVED_FROM_STAGE, function (... ignored) :void {
+            updateText(); // one last time..
             timer.stop();
         });
 
@@ -141,44 +128,56 @@ public class Text extends Sprite
         size.minimum = 8;
         size.maximum = 50;
         size.snapInterval = 1;
-        size.value = _ctrl.lookupMemory(SIZE, 16) as int;
+        size.value = getMem(SIZE) as int;
         size.setSize(100, 22);
         size.x = 110;
         size.y = 125;
         s.addChild(size);
         size.addEventListener(SliderEvent.CHANGE, function (... ignored) :void {
-            trace("Updating size");
-            _ctrl.updateMemory(SIZE, size.value);
+            setMem(SIZE, size.value);
+        });
+
+        l = new Label();
+        l.text = "font color:";
+        l.setSize(100, 22);
+        l.y = 150;
+        s.addChild(l);
+
+        var color :ColorPicker = new ColorPicker();
+        color.selectedColor = getMem(COLOR) as uint;
+        color.setSize(22, 22);
+        color.x = 110;
+        color.y = 150;
+        s.addChild(color);
+        color.addEventListener(ColorPickerEvent.CHANGE, function (event :ColorPickerEvent) :void {
+            setMem(COLOR, event.color);
         });
 
         return s;
     }
 
-    /** Memory key constants. */
-    protected static const TEXT :String = "txt";
-    protected static const SIZE :String = "siz";
-    protected static const BOLD :String = "bld";
-    protected static const ITALIC :String = "itl";
-    protected static const COLOR :String = "clr";
-    protected static const OUTLINE_COLOR :String = "out";
+    protected function getMem (mem :Array) :Object
+    {
+        return _ctrl.lookupMemory(mem[0], mem[1]);
+    }
+
+    protected function setMem (mem :Array, newValue :Object) :void
+    {
+        if (getMem(mem) != newValue) {
+            _ctrl.updateMemory(mem[0], (mem[1] == newValue) ? null : newValue);
+        }
+    }
 
     protected var _ctrl :FurniControl;
 
     protected var _field :TextField;
-}
-}
 
-//class Memories
-//{
-//    public function Memories (ctrl :FurniControl)
-//    {
-//        _ctrl = ctrl;
-//    }
-//
-//    public function set text (text :String) :void
-//    {
-//        _ctrl.updateMemory
-//    }
-//
-//    public function set size (
-//}
+    /** Memory constants: key name and default value. */
+    protected static const TEXT :Array = [ "txt", "" ];
+    protected static const SIZE :Array = [ "siz", 16 ];
+    protected static const BOLD :Array = [ "bld", false ];
+    protected static const ITALIC :Array = [ "itl", false ];
+    protected static const COLOR :Array = [ "clr", 0x000000 ];
+    protected static const OUTLINE_COLOR :Array = [ "out", null ];
+}
+}
