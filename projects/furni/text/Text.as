@@ -3,6 +3,8 @@ package {
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
+import flash.filters.GlowFilter;
+
 import flash.events.Event;
 import flash.events.TimerEvent;
 
@@ -39,7 +41,7 @@ public class Text extends Sprite
 {
     public static const WIDTH :int = 300;
 
-
+    // reference skin classes we use
     DefaultCheckBoxSkins;
     DefaultColorPickerSkins;
     DefaultComboBoxSkins;
@@ -76,9 +78,19 @@ public class Text extends Sprite
         var format :TextFormat = new TextFormat();
         format.size = getMem(SIZE);
         format.color = getMem(COLOR);
+        format.bold = getMem(BOLD);
+        format.italic = getMem(ITALIC);
 
         _field.defaultTextFormat = format;
+        _field.selectable = getMem(SELECTABLE) as Boolean;
         _field.text = getMem(TEXT) as String;
+
+        var outline :Object = getMem(OUTLINE_COLOR);
+        if (outline != null) {
+            _field.filters = [ new GlowFilter(uint(outline), 1, 2, 2, 255) ];
+        } else {
+            _field.filters = null;
+        }
     }
 
     protected function handleUnload (event :Event) :void
@@ -118,12 +130,7 @@ public class Text extends Sprite
             timer.stop();
         });
 
-        var l :Label = new Label();
-        l.text = "Font size:";
-        l.setSize(100, 22);
-        l.y = 125;
-        s.addChild(l);
-
+        addLabel(s, "Font size", 125);
         var size :Slider = new Slider();
         size.minimum = 8;
         size.maximum = 50;
@@ -137,12 +144,7 @@ public class Text extends Sprite
             setMem(SIZE, size.value);
         });
 
-        l = new Label();
-        l.text = "font color:";
-        l.setSize(100, 22);
-        l.y = 150;
-        s.addChild(l);
-
+        addLabel(s, "Color", 150);
         var color :ColorPicker = new ColorPicker();
         color.selectedColor = getMem(COLOR) as uint;
         color.setSize(22, 22);
@@ -153,7 +155,76 @@ public class Text extends Sprite
             setMem(COLOR, event.color);
         });
 
+        addLabel(s, "Bold", 175);
+        var bold :CheckBox = new CheckBox();
+        bold.selected = getMem(BOLD) as Boolean;
+        bold.setSize(22, 22);
+        bold.x = 110;
+        bold.y = 175;
+        s.addChild(bold);
+        bold.addEventListener(Event.CHANGE, function (... ignored) :void {
+            setMem(BOLD, bold.selected);
+        });
+
+        addLabel(s, "Italic", 200);
+        var italic :CheckBox = new CheckBox();
+        italic.selected = getMem(ITALIC) as Boolean;
+        italic.setSize(22, 22);
+        italic.x = 110;
+        italic.y = 200;
+        s.addChild(italic);
+        italic.addEventListener(Event.CHANGE, function (... ignored) :void {
+            setMem(ITALIC, italic.selected);
+        });
+
+        addLabel(s, "Outline", 225);
+        var outline :CheckBox = new CheckBox();
+        outline.selected = (null != getMem(OUTLINE_COLOR));
+        outline.setSize(22, 22);
+        outline.x = 110;
+        outline.y = 225;
+        s.addChild(outline);
+
+        var outlineColor :ColorPicker = new ColorPicker();
+        outlineColor.selectedColor = getMem(OUTLINE_COLOR) as uint;
+        outlineColor.setSize(22, 22);
+        outlineColor.x = 150;
+        outlineColor.y = 225;
+        s.addChild(outlineColor);
+        outlineColor.addEventListener(Event.ADDED_TO_STAGE, function (... ignored) :void {
+            outlineColor.enabled = outline.selected;
+        });
+
+        var updateOutlineColor :Function = function (... ignored) :void {
+            setMem(OUTLINE_COLOR, outline.selected ? outlineColor.selectedColor : null);
+        };
+        outline.addEventListener(Event.CHANGE, function (... ignored) :void {
+            outlineColor.enabled = outline.selected;
+            updateOutlineColor();
+        });
+        outlineColor.addEventListener(ColorPickerEvent.CHANGE, updateOutlineColor);
+
+        addLabel(s, "Selectable", 250);
+        var selectable :CheckBox = new CheckBox();
+        selectable.selected = getMem(SELECTABLE) as Boolean;
+        selectable.setSize(22, 22);
+        selectable.x = 110;
+        selectable.y = 250;
+        s.addChild(selectable);
+        selectable.addEventListener(Event.CHANGE, function (... ignored) :void {
+            setMem(SELECTABLE, selectable.selected);
+        });
+
         return s;
+    }
+
+    protected function addLabel (s :Sprite, text :String, y :int) :void
+    {
+        var l :Label = new Label();
+        l.text = text + ":";
+        l.setSize(100, 22);
+        l.y = y;
+        s.addChild(l);
     }
 
     protected function getMem (mem :Array) :Object
@@ -179,5 +250,6 @@ public class Text extends Sprite
     protected static const ITALIC :Array = [ "itl", false ];
     protected static const COLOR :Array = [ "clr", 0x000000 ];
     protected static const OUTLINE_COLOR :Array = [ "out", null ];
+    protected static const SELECTABLE :Array = [ "sel", false ];
 }
 }
