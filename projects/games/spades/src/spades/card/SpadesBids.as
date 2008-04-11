@@ -22,7 +22,8 @@ public class SpadesBids extends Bids
      *  this event type, the player property is the player who has responded to the blind nil
      *  request, the value is 0 if it was refused and 1 if it was accepted.
      *  TODO: should BidEvent event types be defined outside of BidEvent? */
-    public static const BLIND_NIL_RESPONDED :String = "blindnil.responded";
+    public static const BLIND_NIL_RESPONDED :String = 
+        BidEvent.newEventType("bids.spades.blindnil.responded");
 
     /** Create a new object for bids in a game of spades. */
     public function SpadesBids (gameCtrl :GameControl, max :int)

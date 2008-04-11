@@ -16,6 +16,12 @@ public class ScoresEvent extends Event
      *  total for that team. */
     public static const SCORES_CHANGED :String = "scores.changed";
 
+    /** Placeholder function for Scores subclasses to add new event types. */
+    public static function newEventType (type :String) :String
+    {
+        return type;
+    }
+
     /** Create a new ScoresEvent. */
     public function ScoresEvent(
         type :String, 

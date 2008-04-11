@@ -15,6 +15,7 @@ public class Scores extends EventDispatcher
         _bids = bids;
         _target = target;
         _tricks = new Array(_table.numTeams);
+        _playerTricks = new Array(_table.numPlayers);
         _scores = new Array(_table.numTeams);
     }
 
@@ -25,6 +26,7 @@ public class Scores extends EventDispatcher
     {
         var team :Team = _table.getTeamFromAbsolute(seat);
         _tricks[team.index] += 1;
+        _playerTricks[seat] += 1;
         dispatchEvent(new ScoresEvent(
             ScoresEvent.TRICKS_CHANGED, team, _tricks[team.index]));
     }
@@ -33,7 +35,13 @@ public class Scores extends EventDispatcher
      *  event for each team. */
     public function resetTricks () :void
     {
-        for (var i :int = 0; i < _table.numTeams; ++i) {
+        var i :int;
+
+        for (i = 0; i < _table.numPlayers; ++i) {
+            _playerTricks[i] = 0;
+        }
+
+        for (i = 0; i < _table.numTeams; ++i) {
             _tricks[i] = 0;
             dispatchEvent(new ScoresEvent(
                 ScoresEvent.TRICKS_CHANGED, _table.getTeam(i), 0));
@@ -88,6 +96,13 @@ public class Scores extends EventDispatcher
         return _tricks[teamIdx];
     }
 
+    /** Get the number of tricks taken so far by the player in the given absolute seating 
+     *  position. */
+    public function getPlayerTricks (seat :int) :int
+    {
+        return _playerTricks[seat];
+    }
+
     /** Get the total bid made by the team with the given index. */
     public function getBid (teamIdx :int) :int
     {
@@ -125,6 +140,7 @@ public class Scores extends EventDispatcher
 
     protected var _table :Table; 
     protected var _tricks :Array;
+    protected var _playerTricks :Array;
     protected var _scores :Array;
     protected var _target :int;
     protected var _bids :Bids;

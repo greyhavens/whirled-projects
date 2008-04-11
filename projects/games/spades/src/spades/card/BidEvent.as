@@ -25,6 +25,12 @@ public class BidEvent extends Event
      *  are not used. */
     public static const COMPLETED :String = "bid.completed";
 
+    /** Placeholder function for Bids subclasses to add new event types. */
+    public static function newEventType (type :String) :String
+    {
+        return type;
+    }
+
     /** Create a new bid event. */
     public function BidEvent (type :String, player :int=0, value :int=-1)
     {

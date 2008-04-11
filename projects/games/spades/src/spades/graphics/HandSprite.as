@@ -66,14 +66,11 @@ public class HandSprite extends CardArraySprite
     /** Disable clicking on all cards. */
     protected function disable () :void
     {
-        _cards.forEach(disableSprite);
+        _cards.forEach(function (c :CardSprite, ...x) :void {
+            c.state = CardSprite.DISABLED;
+        });
 
         unfloatCard();
-
-        function disableSprite (c :CardSprite, index :int, array :Array) :void
-        {
-            c.state = CardSprite.DISABLED;
-        }
     }
     
     /** Enable clicking on specific cards. 
@@ -84,22 +81,17 @@ public class HandSprite extends CardArraySprite
     {
         var count :int = 0;
 
-        // todo: make linear time N + M instead of quadratic N * M
-        _cards.forEach(enableSprite);
+        _cards.forEach(function (c :CardSprite, ...x) :void {
+            if (subset == null || subset.has(c.card)) {
+                ++count;
+                c.state = CardSprite.NORMAL;
+            }
+        });
 
         unfloatCard();
 
         if (count == 0) {
             throw new CardException("Enabling zero cards");
-        }
-
-        function enableSprite (c :CardSprite, index :int, array :Array) :void
-        {
-            var enable :Boolean = subset == null || subset.has(c.card);
-            if (enable) {
-                ++count;
-                c.state = CardSprite.NORMAL;
-            }
         }
     }
 
@@ -192,22 +184,46 @@ public class HandSprite extends CardArraySprite
 
         // Squeeze the leftover cards together
         var pos :Vector2 = new Vector2();
-        _cards.forEach(squeeze);
+        _cards.forEach(function (c :CardSprite, i :int, a :Array) :void {
+            // Since _cards has already been updated, just animate to the static position
+            getStaticCardPosition(i, pos);
+            Tweener.addTween(c, {
+                x : pos.x,
+                y : pos.y,
+                time: SQUEEZE_DURATION
+            });
+        });
 
         // Make the removed card available for finalizeRemovals
         _removedCards.push(card);
+    }
 
-        function squeeze (c :CardSprite, i :int, a :Array) :void {
-            // Since _cards has already been updated, just animate to the static position
-            Tweener.removeTweens(c, ["x", "y"]);
+    override protected function animateAddition (card :CardSprite) :void
+    {
+        card.state = CardSprite.DISABLED;
+        _added.push(card);
+
+        var pos :Vector2 = new Vector2();
+        _cards.forEach(function (c :CardSprite, i :int, a :Array) :void {
             getStaticCardPosition(i, pos);
             var tween :Object = {
                 x : pos.x,
                 y : pos.y,
                 time: SQUEEZE_DURATION
             };
+            if (_added.indexOf(c) >= 0) {
+                c.x = pos.x;
+                c.y = pos.y - SELECT_HEIGHT;
+                tween.time *= 2;
+                tween.delay = SQUEEZE_DURATION;
+            }
+            if (c == card) {
+                tween.onComplete = function () :* {
+                    _added.splice(0, -1);
+                }
+            }
             Tweener.addTween(c, tween);
-        }
+        });
     }
 
     protected function isSelected (card :CardSprite) :Boolean
@@ -276,17 +292,23 @@ public class HandSprite extends CardArraySprite
         if (card != null && card.state != CardSprite.DISABLED) {
             unfloatCard();
 
-            _selected.push(card);
+            if (isSelected(card)) {
+                verticalTween(card, 0);
+                _selected.splice(_selected.indexOf(card), 1);
+            }
+            else {
+                _selected.push(card);
 
-            verticalTween(card, -SELECT_HEIGHT);
+                verticalTween(card, -SELECT_HEIGHT);
 
-            if (_selected.length == _selectCount) {
-                var selected :CardArray = new CardArray();
-                for (var i :int = 0; i < _selected.length; ++i) {
-                    selected.push(_selected[i].card);
+                if (_selected.length == _selectCount) {
+                    var selected :CardArray = new CardArray();
+                    for (var i :int = 0; i < _selected.length; ++i) {
+                        selected.push(_selected[i].card);
+                    }
+                    _hand.selectCards(selected);
+                    _selected.splice(0, _selected.length);
                 }
-                _hand.selectCards(selected);
-                _selected.splice(0, _selected.length);
             }
         }
     }
@@ -297,7 +319,7 @@ public class HandSprite extends CardArraySprite
     protected var _removedCards :Array = new Array();
     protected var _hand :Hand;
     protected var _selectCount :int;
-    protected var _remover :Function;
+    protected var _added :Array = new Array();
 
     protected static const SELECT_HEIGHT :Number = 40;
     protected static const FLOAT_HEIGHT :Number = 20;

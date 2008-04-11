@@ -219,7 +219,7 @@ public class TableSprite extends Sprite
                 }
                 animatePass(removed, event.targetPlayer);
             }
-            else {
+            else if (event.targetPlayer != table.getLocalId()) {
                 var cards :Array = new Array();
                 var player :PlayerSprite = getPlayer(
                     table.getRelativeFromId(event.player));

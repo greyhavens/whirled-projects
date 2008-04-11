@@ -16,6 +16,8 @@ import spades.card.Hand;
 import spades.card.HandEvent;
 import spades.card.Sorter;
 import spades.card.Scores;
+import spades.card.SpadesScores;
+import spades.card.ScoreBreakdown;
 import spades.card.Team;
 import spades.card.WinnersAndLosers;
 
@@ -32,7 +34,7 @@ public class Controller
         _templateDeck = CardArray.FULL_DECK;
 
         var config :Object = gameCtrl.game.getConfig();
-        if ("minigame" in config) {
+        if ("minigame" in config && config.minigame) {
             var isHighCard :Function = function (c :Card) :Boolean {
                 return Card.compareRanks(c.rank, Card.RANK_QUEEN, 
                     Card.RANK_ORDER_ACES_HIGH) >= 0;
@@ -62,7 +64,7 @@ public class Controller
         var trick :Trick = new Trick(gameCtrl, trumps);
         var bids :SpadesBids = new SpadesBids(gameCtrl, 
             CardArray.FULL_DECK.length / table.numPlayers);
-        var scores :Scores = new Scores(table, bids, targetScore);
+        var scores :Scores = new SpadesScores(table, bids, targetScore);
 
         _model = new Model(gameCtrl, table, hand, trick, bids, scores);
 
@@ -131,9 +133,9 @@ public class Controller
         return _model.bids as SpadesBids;
     }
 
-    protected function get scores () :Scores
+    protected function get scores () :SpadesScores
     {
-        return _model.scores;
+        return _model.scores as SpadesScores;
     }
 
     /** Boot up the game. */
@@ -206,10 +208,57 @@ public class Controller
     protected function updateScores () :void
     {
         for (var team :int = 0; team < table.numTeams; ++team) {
+            var breakdown :ScoreBreakdown = new ScoreBreakdown(table, team);
+
             var over :int = scores.getTricks(team) - scores.getBid(team);
             var base :int = scores.getBid(team) * 10;
-            var score :int = over >= 0 ? (base + over) : (-base);
-            scores.addScore(team, score);
+
+            // base score
+            breakdown.addTeamAchievement(over >= 0 ? base : -base, 
+                "making their team bid");
+
+            // overtricks
+            if (over > 0) {
+                breakdown.addTeamAchievement(over, "exceeding their team bid");
+            }
+
+            // sandbags
+            var bags :int = scores.getAllTricks(team) - scores.getBid(team);
+            if (bags > 0) {
+                scores.addSandbags(team, bags);
+                while (scores.getSandbags(team) >= 10) {
+                    breakdown.addTeamFailure(-100, "sandbagging");
+                    scores.addSandbags(team, -10);
+                }
+            }
+
+            // nil bids
+            var players :Array = table.getTeam(team).players;
+            for (var i :int = 0; i < players.length; ++i) {
+                var player :int = players[i];
+                if (bids.getBid(player) > 0) {
+                    continue;
+                }
+                
+                var score :int = 1;
+                score *= scores.getPlayerTricks(player) > 0 ? -1 : 1;
+
+                // (Rules on WWW say 100, but yohoho uses 50)
+                score *= 50;
+                
+                var achievement :String = "making a nil bid";
+                if (bids.isBlind(player)) {
+                    score *= 2;
+                    achievement = "making a blind nil bid";
+                }
+                breakdown.addPlayerAchievement(score, i, achievement);
+            }
+
+            breakdown.describe().forEach(function (d :String, ...x) :void {
+                gameCtrl.local.feedback(d);
+            });
+
+            scores.addScore(team, breakdown.total);
         }
     }
 

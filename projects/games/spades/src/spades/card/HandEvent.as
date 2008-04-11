@@ -64,7 +64,7 @@ public class HandEvent extends Event
     public override function toString () :String
     {
         return formatToString("HandEvent", "type", "bubbles", "cancelable", 
-            "cards", "player", "count");
+            "cards", "player", "count", "targetPlayer");
     }
 
     /** The player that passed or requested to pass the cards. */
