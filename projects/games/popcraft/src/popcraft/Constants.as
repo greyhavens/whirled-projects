@@ -187,7 +187,7 @@ public class Constants
         .name("colossus")
         .resourceCosts([200, 200, 0, 0])
         .baseMoveSpeed(25)
-        .maxHealth(-1)  // invincible
+        .maxHealth(100)  // actually invincible
         .weapon(COLOSSUS_WEAPON)
         .collisionRadius(30)
         .detectRadius(COLOSSUS_WEAPON.maxAttackDistance) // only detect enemies in our attack range

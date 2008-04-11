@@ -20,7 +20,8 @@ public class ColossusCreatureUnit extends CreatureUnit
 
         // the Colossus is immune to enemy attacks, but has only
         // a limited time in the world
-        this.addTask(After(DEATH_TIMER_LENGTH, new FunctionTask(this.die)));
+        _colossusHealth = { value: _unitData.maxHealth };
+        this.addTask(new AnimateValueTask(_colossusHealth, 0, DEATH_TIMER_LENGTH));
     }
 
     override protected function get aiRoot () :AITask
@@ -40,6 +41,9 @@ public class ColossusCreatureUnit extends CreatureUnit
                 break;
             }
         }
+
+        // update health
+        this.health = Math.max(_colossusHealth["value"], 0);
 
         super.update(dt);
     }
@@ -84,6 +88,7 @@ public class ColossusCreatureUnit extends CreatureUnit
 
     protected var _ai :ColossusAI;
     protected var _attackers :Array = [];
+    protected var _colossusHealth :Object;
 
     protected static const DEATH_TIMER_LENGTH :Number = 40;
     protected static const SPEED_LOSS_PER_ATTACK :Number = 5;
