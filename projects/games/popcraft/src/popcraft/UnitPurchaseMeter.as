@@ -64,8 +64,8 @@ public class UnitPurchaseMeter extends SceneObject
 
             yOffset += METER_HEIGHT + METER_YOFFSET;
 
-            GameMode.instance.addObject(rectMeter, _sprite);
-            GameMode.instance.addObject(textMeter, _sprite);
+            GameContext.gameMode.addObject(rectMeter, _sprite);
+            GameContext.gameMode.addObject(textMeter, _sprite);
             _meters.push(rectMeter);
             _meters.push(textMeter);
         }
@@ -102,7 +102,7 @@ public class UnitPurchaseMeter extends SceneObject
             var textMeter :IntTextMeter = (_meters[meterIndex + 1] as IntTextMeter);
             meterIndex += 2;
 
-            var resAmount :int = GameMode.instance.localPlayerData.getResourceAmount(resType);
+            var resAmount :int = GameContext.localPlayerData.getResourceAmount(resType);
 
             var meterValue :Number = Math.min(resCost, resAmount);
             rectMeter.value = meterValue;

@@ -1,6 +1,5 @@
 package popcraft {
 
-import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
 import com.threerings.util.Log;
@@ -9,59 +8,44 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.util.*;
 
-import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
 import popcraft.battle.*;
 import popcraft.battle.view.*;
-import popcraft.battle.geom.AttractRepulseGrid;
 import popcraft.net.*;
 import popcraft.puzzle.*;
 
 public class GameMode extends AppMode
 {
-    public static function get instance () :GameMode
-    {
-        return (MainLoop.instance.topMode as GameMode);
-    }
-
-    public static function getNetObjectNamed (objectName :String) :SimObject
-    {
-        return GameMode.instance.netObjects.getObjectNamed(objectName);
-    }
-
-    public static function getNetObjectRefsInGroup (groupName :String) :Array
-    {
-        return GameMode.instance.netObjects.getObjectRefsInGroup(groupName);
-    }
-
     override protected function setup () :void
     {
+        GameContext.gameMode = this;
+
         // get some information about the players in the game
         var numPlayers :int = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
-        _localPlayerId = PopCraft.instance.gameControl.game.seating.getMyPosition();
-        var isAPlayer :Boolean = (_localPlayerId >= 0);
+        GameContext.localPlayerId = PopCraft.instance.gameControl.game.seating.getMyPosition();
+        var isAPlayer :Boolean = (GameContext.localPlayerId >= 0);
 
         // create PlayerData structures
+        GameContext.playerData = [];
         for (var playerId :uint = 0; playerId < numPlayers; ++playerId) {
 
             var playerData :PlayerData =
-                (playerId == _localPlayerId ?
+                (playerId == GameContext.localPlayerId ?
                     new LocalPlayerData(playerId) :
                     new PlayerData(playerId));
 
             // setup initial player targets
             playerData.targetedEnemyId = (playerId + 1 < numPlayers ? playerId + 1 : 0);
 
-            _playerData.push(playerData);
+            GameContext.playerData.push(playerData);
         }
 
         this.setupNetwork();
 
-        this.setupBattleUI();
+        this.setupBattle();
 
         // create player bases
         var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
@@ -73,14 +57,14 @@ public class GameMode extends AppMode
             base.x = baseLoc.x;
             base.y = baseLoc.y;
 
-            playerData = _playerData[playerId];
+            playerData = GameContext.playerData[playerId];
             playerData.base = base;
         }
 
         // more UI setup
         if (isAPlayer) {
             this.setupPlayerBaseViews();
-            this.setupPuzzleUI();
+            this.setupPuzzle();
         }
 
         // Listen for all keydowns.
@@ -109,7 +93,7 @@ public class GameMode extends AppMode
     protected function setupNetwork () :void
     {
         // create a special ObjectDB for all objects that are synchronized over the network.
-        _netObjects = new NetObjectDB();
+        GameContext.netObjects = new NetObjectDB();
 
         // set up the message manager
         _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
@@ -120,10 +104,10 @@ public class GameMode extends AppMode
             _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
         }
 
-        _messageMgr.setup(this.isFirstPlayer, TICK_INTERVAL_MS);
+        _messageMgr.setup(GameContext.isFirstPlayer, TICK_INTERVAL_MS);
     }
 
-    protected function setupPuzzleUI () :void
+    protected function setupPuzzle () :void
     {
         var resourceDisplay :ResourceDisplay = new ResourceDisplay();
         resourceDisplay.displayObject.x = Constants.RESOURCE_DISPLAY_LOC.x;
@@ -131,28 +115,32 @@ public class GameMode extends AppMode
 
         this.addObject(resourceDisplay, this.modeSprite);
 
-        _puzzleBoard = new PuzzleBoard(
+        var puzzleBoard :PuzzleBoard = new PuzzleBoard(
             Constants.PUZZLE_COLS,
             Constants.PUZZLE_ROWS,
             Constants.PUZZLE_TILE_SIZE);
 
-        _puzzleBoard.displayObject.x = Constants.PUZZLE_BOARD_LOC.x;
-        _puzzleBoard.displayObject.y = Constants.PUZZLE_BOARD_LOC.y;
+        puzzleBoard.displayObject.x = Constants.PUZZLE_BOARD_LOC.x;
+        puzzleBoard.displayObject.y = Constants.PUZZLE_BOARD_LOC.y;
 
-        this.addObject(_puzzleBoard, this.modeSprite);
+        this.addObject(puzzleBoard, this.modeSprite);
 
         // create the unit purchase buttons
         this.addObject(new UnitPurchaseButtonManager());
     }
 
-    protected function setupBattleUI () :void
+    protected function setupBattle () :void
     {
-        _battleBoard = new BattleBoardView(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
+        var battleBoard :BattleBoard = new BattleBoard(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
 
-        _battleBoard.displayObject.x = Constants.BATTLE_BOARD_LOC.x;
-        _battleBoard.displayObject.y = Constants.BATTLE_BOARD_LOC.y;
+        var battleBoardView :BattleBoardView = new BattleBoardView(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
+        battleBoardView.displayObject.x = Constants.BATTLE_BOARD_LOC.x;
+        battleBoardView.displayObject.y = Constants.BATTLE_BOARD_LOC.y;
 
-        this.addObject(_battleBoard, this.modeSprite);
+        this.addObject(battleBoardView, this.modeSprite);
+
+        GameContext.battleBoard = battleBoard;
+        GameContext.battleBoardView = battleBoardView;
     }
 
     // there has to be a better way to figure out charCodes
@@ -164,7 +152,7 @@ public class GameMode extends AppMode
         case KEY_4:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 for (var i :uint = 0; i < Constants.RESOURCE__LIMIT; ++i) {
-                    this.localPlayerData.offsetResourceAmount(i, 100);
+                    GameContext.localPlayerData.offsetResourceAmount(i, 100);
                 }
             }
             break;
@@ -209,7 +197,7 @@ public class GameMode extends AppMode
             // run the simulation the appropriate amount
             // (our network update time is unrelated to the application's update time.
             // network timeslices are always the same distance apart)
-            _netObjects.update(TICK_INTERVAL_S);
+            GameContext.netObjects.update(TICK_INTERVAL_S);
 
             if (Constants.DEBUG_CHECKSUM_STATE >= 1) {
                 debugNetwork(messageArray);
@@ -221,7 +209,7 @@ public class GameMode extends AppMode
             var livePlayerId :int = -1;
             var livePlayerCount :int;
 
-            for each (var playerData :PlayerData in _playerData) {
+            for each (var playerData :PlayerData in GameContext.playerData) {
                 if (playerData.isAlive) {
                     livePlayerId = playerData.playerId;
 
@@ -240,32 +228,8 @@ public class GameMode extends AppMode
         super.update(dt);
 
         if (sortDisplayChildren) {
-            DisplayUtil.sortDisplayChildren(battleUnitDisplayParent, displayObjectYSort);
+            GameContext.battleBoardView.sortUnitDisplayChildren();
         }
-    }
-
-    protected static function displayObjectYSort (a :DisplayObject, b :DisplayObject) :int
-    {
-        var ay :Number = a.y;
-        var by :Number = b.y;
-
-        if (ay < by) {
-            return -1;
-        } else if (ay > by) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    public function getPlayerData (playerId :uint) :PlayerData
-    {
-        return _playerData[playerId];
-    }
-
-    public function get numPlayers () :int
-    {
-        return _playerData.length;
     }
 
     protected function debugNetwork (messageArray :Array) :void
@@ -284,14 +248,14 @@ public class GameMode extends AppMode
         }
 
         if (messageStatus.length > 0) {
-            log.debug("PLAYER: " + _localPlayerId + " TICK: " + _tickCount + " MESSAGES: " + messageStatus);
+            log.debug("PLAYER: " + GameContext.localPlayerId + " TICK: " + _tickCount + " MESSAGES: " + messageStatus);
         }
 
         // calculate a checksum for this frame
         var csumMessage :ChecksumMessage = calculateChecksum();
 
         // player 1 saves his checksums, player 0 sends his checksums
-        if (_localPlayerId == 1) {
+        if (GameContext.localPlayerId == 1) {
             _myChecksums.unshift(csumMessage);
             _lastCachedChecksumTick = _tickCount;
         } else if ((_tickCount % 2) == 0) {
@@ -324,7 +288,7 @@ public class GameMode extends AppMode
             add(unit.health, "unit.health - " + i);
         }*/
 
-        msg.playerId = _localPlayerId;
+        msg.playerId = GameContext.localPlayerId;
         msg.tick = _tickCount;
         msg.checksum = csum.value;
 
@@ -369,10 +333,10 @@ public class GameMode extends AppMode
 
     protected function setTargetEnemy (playerId :uint, targetEnemyId :uint) :void
     {
-        var playerData :PlayerData = this.getPlayerData(playerId);
+        var playerData :PlayerData = GameContext.playerData[playerId];
         playerData.targetedEnemyId = targetEnemyId;
 
-        if (playerId == _localPlayerId) {
+        if (playerId == GameContext.localPlayerId) {
             this.updateTargetEnemyBadgeLocation(targetEnemyId);
         }
     }
@@ -390,14 +354,14 @@ public class GameMode extends AppMode
     {
         // add click listeners to all the enemy bases.
         // when an enemy base is clicked, that player becomes the new "target enemy" for the local player.
-        var localPlayerData :PlayerData = this.localPlayerData;
+        var localPlayerData :PlayerData = GameContext.localPlayerData;
         var baseViews :Array = PlayerBaseUnitView.getAll();
         for each (var baseView :PlayerBaseUnitView in baseViews) {
             var owningPlayerId :uint = baseView.baseUnit.owningPlayerId;
             baseView.targetEnemyBadgeVisible = (owningPlayerId == localPlayerData.targetedEnemyId);
-            baseView.friendlyBadgeVisible = (owningPlayerId == _localPlayerId);
+            baseView.friendlyBadgeVisible = (owningPlayerId == GameContext.localPlayerId);
 
-            if (_localPlayerId != owningPlayerId) {
+            if (GameContext.localPlayerId != owningPlayerId) {
                 (baseView.displayObject as InteractiveObject).addEventListener(
                     MouseEvent.MOUSE_DOWN, this.createBaseViewClickListener(baseView));
             }
@@ -412,10 +376,10 @@ public class GameMode extends AppMode
     protected function enemyBaseViewClicked (enemyBaseView :PlayerBaseUnitView) :void
     {
         // when the player clicks on an enemy base, that enemy becomes the player's target
-        var localPlayerData :PlayerData = this.localPlayerData;
+        var localPlayerData :PlayerData = GameContext.localPlayerData;
         var newTargetEnemyId :uint = enemyBaseView.baseUnit.owningPlayerId;
 
-        Assert.isTrue(newTargetEnemyId != _localPlayerId);
+        Assert.isTrue(newTargetEnemyId != GameContext.localPlayerId);
 
         if (newTargetEnemyId != localPlayerData.targetedEnemyId) {
             // update the "target enemy badge" location immediately, even though
@@ -423,14 +387,14 @@ public class GameMode extends AppMode
             this.updateTargetEnemyBadgeLocation(newTargetEnemyId);
 
             // send a message to everyone
-            _messageMgr.sendMessage(new SelectTargetEnemyMessage(_localPlayerId, newTargetEnemyId));
+            _messageMgr.sendMessage(new SelectTargetEnemyMessage(GameContext.localPlayerId, newTargetEnemyId));
         }
 
     }
 
     protected function handleChecksumMessage (msg :ChecksumMessage) :void
     {
-        if (msg.playerId != _localPlayerId) {
+        if (msg.playerId != GameContext.localPlayerId) {
             // check this checksum against our checksum buffer
             if (msg.tick > _lastCachedChecksumTick || msg.tick <= (_lastCachedChecksumTick - _myChecksums.length)) {
                 log.debug("discarding checksum message (too old or too new)");
@@ -455,7 +419,7 @@ public class GameMode extends AppMode
 
     public function purchaseUnit (unitType :uint) :void
     {
-        if (!this.localPlayerData.canPurchaseUnit(unitType)) {
+        if (!GameContext.localPlayerData.canPurchaseUnit(unitType)) {
             return;
         }
 
@@ -463,54 +427,17 @@ public class GameMode extends AppMode
         var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
         var n :int = creatureCosts.length;
         for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
-            this.localPlayerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
+            GameContext.localPlayerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
         }
 
         // send a message!
-        _messageMgr.sendMessage(new CreateUnitMessage(unitType, _localPlayerId));
-    }
-
-    public function get localPlayerData () :LocalPlayerData
-    {
-        return _playerData[_localPlayerId];
-    }
-
-    public function get isFirstPlayer () :Boolean
-    {
-        return (_localPlayerId == 0);
-    }
-
-    public function get netObjects () :ObjectDB
-    {
-        return _netObjects;
-    }
-
-    public function get messageManager () :TickedMessageManager
-    {
-        return _messageMgr;
-    }
-
-    public function get battleUnitDisplayParent () :DisplayObjectContainer
-    {
-        return _battleBoard.unitDisplayParent;
-    }
-
-    public function get battleCollisionGrid () :AttractRepulseGrid
-    {
-        return _battleBoard.collisionGrid;
+        _messageMgr.sendMessage(new CreateUnitMessage(unitType, GameContext.localPlayerId));
     }
 
     protected var _gameIsRunning :Boolean;
 
-    protected var _playerData :Array = [];
-    protected var _localPlayerId :uint;
-
     protected var _messageMgr :TickedMessageManager;
-    protected var _puzzleBoard :PuzzleBoard;
-    protected var _battleBoard :BattleBoardView;
     protected var _debugDataView :DebugDataView;
-
-    protected var _netObjects :ObjectDB;
 
     protected var _tickCount :uint;
     protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);

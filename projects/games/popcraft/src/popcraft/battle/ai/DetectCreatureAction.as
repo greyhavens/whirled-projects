@@ -74,7 +74,7 @@ public class DetectCreatureAction extends AITask
     {
         // @TODO - use CollisionGrid!
 
-        var creatureRefs :Array = GameMode.getNetObjectRefsInGroup(CreatureUnit.GROUP_NAME);
+        var creatureRefs :Array = GameContext.netObjects.getObjectRefsInGroup(Unit.GROUP_NAME);
         var detectedCreature :CreatureUnit;
 
         for each (var ref :SimObjectRef in creatureRefs) {

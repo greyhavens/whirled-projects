@@ -43,7 +43,7 @@ public class ComboHiliteCursor extends SimObject
         _board.sprite.addEventListener(MouseEvent.ROLL_OVER, rollOver, false, 0, true);
         _board.sprite.addEventListener(MouseEvent.CLICK, mouseClick, false, 0, true);
 
-        this.db.addObject(_textObj, GameMode.instance.modeSprite);
+        this.db.addObject(_textObj, GameContext.gameMode.modeSprite);
     }
 
     override protected function removedFromDB () :void

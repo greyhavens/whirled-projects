@@ -75,7 +75,7 @@ public class ResourceDisplay extends SceneObject
             var label :TextField = _resourceText[i];
             label.text = getDisplayString(
                 Constants.getResource(i).name,
-                GameMode.instance.localPlayerData.getResourceAmount(i));
+                GameContext.localPlayerData.getResourceAmount(i));
         }
     }
 

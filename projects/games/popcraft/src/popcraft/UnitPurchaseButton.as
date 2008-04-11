@@ -18,7 +18,7 @@ public class UnitPurchaseButton extends DisablingButton
     public function UnitPurchaseButton (unitType :uint)
     {
         var data :UnitData = Constants.UNIT_DATA[unitType];
-        var playerColor :uint = Constants.PLAYER_COLORS[GameMode.instance.localPlayerData.playerId];
+        var playerColor :uint = Constants.PLAYER_COLORS[GameContext.localPlayerId];
 
         // try instantiating some animations
         /*var stand :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(data, playerColor, "stand_SW");

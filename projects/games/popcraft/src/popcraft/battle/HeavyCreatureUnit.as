@@ -82,7 +82,7 @@ class HeavyAI extends AITaskTree
         var playerData :PlayerData = _unit.owningPlayerData;
 
         var ourBaseLoc :Vector2 = playerData.base.unitLoc;
-        var enemyBaseLoc :Vector2 = GameMode.instance.getPlayerData(playerData.targetedEnemyId).base.unitLoc;
+        var enemyBaseLoc :Vector2 = GameContext.playerData[playerData.targetedEnemyId].base.unitLoc;
 
         var target :Vector2 = enemyBaseLoc.subtract(ourBaseLoc);
         target.length = DISTANCE_FROM_BASE.next();

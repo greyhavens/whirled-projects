@@ -30,7 +30,7 @@ public class Unit extends SimObject
     public function Unit (unitType :uint, owningPlayerId :uint)
     {
         _unitType = unitType;
-        _owningPlayerData = GameMode.instance.getPlayerData(owningPlayerId);
+        _owningPlayerData = GameContext.playerData[owningPlayerId];
 
         _unitData = (Constants.UNIT_DATA[unitType] as UnitData);
         _health = _unitData.maxHealth;
@@ -161,7 +161,7 @@ public class Unit extends SimObject
         var radiusSquared :Number = weapon.aoeRadiusSquared;
 
         // find all affected units
-        var refs :Array = GameMode.getNetObjectRefsInGroup(Unit.GROUP_NAME);
+        var refs :Array = GameContext.netObjects.getObjectRefsInGroup(Unit.GROUP_NAME);
 
         for each (var ref :SimObjectRef in refs) {
             var unit :Unit = ref.object as Unit;

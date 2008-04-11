@@ -9,8 +9,6 @@ public class UnitPurchaseButtonManager extends SimObject
 {
     public function UnitPurchaseButtonManager ()
     {
-        _localPlayerData = GameMode.instance.localPlayerData;
-
         var loc :Point = Constants.FIRST_UNIT_BUTTON_LOC.clone();
 
         for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
@@ -22,14 +20,14 @@ public class UnitPurchaseButtonManager extends SimObject
             button.x = loc.x;
             button.y = loc.y;
 
-            GameMode.instance.modeSprite.addChild(button);
+            GameContext.gameMode.modeSprite.addChild(button);
 
             _buttons.push(button);
 
             var meter :UnitPurchaseMeter = new UnitPurchaseMeter(unitType);
             meter.displayObject.x = button.x;
             meter.displayObject.y = button.y + button.height + 2;
-            GameMode.instance.addObject(meter, GameMode.instance.modeSprite);
+            GameContext.gameMode.addObject(meter, GameContext.gameMode.modeSprite);
 
             loc.x += button.width + BUTTON_X_OFFSET;
         }
@@ -47,17 +45,16 @@ public class UnitPurchaseButtonManager extends SimObject
     override protected function update (dt :Number) :void
     {
         for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
-            (_buttons[unitType] as UnitPurchaseButton).enabled = _localPlayerData.canPurchaseUnit(unitType);
+            (_buttons[unitType] as UnitPurchaseButton).enabled = GameContext.localPlayerData.canPurchaseUnit(unitType);
         }
     }
 
     protected function buttonClicked (unitType :uint) :void
     {
-        GameMode.instance.purchaseUnit(unitType);
+        GameContext.gameMode.purchaseUnit(unitType);
     }
 
     protected var _buttons :Array = new Array();
-    protected var _localPlayerData :LocalPlayerData;
 
     protected static const BUTTON_X_OFFSET :int = 2;
 }

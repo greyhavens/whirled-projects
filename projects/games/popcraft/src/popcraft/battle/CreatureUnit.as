@@ -32,7 +32,7 @@ public class CreatureUnit extends Unit
     {
         // collision geometry
         _collisionObj = new CollisionObject(this);
-        _collisionGrid = GameMode.instance.battleCollisionGrid; // there's only one collision grid
+        _collisionGrid = GameContext.battleBoard.collisionGrid;
     }
 
     public function calcShortestTravelTimeTo (dest :Vector2) :Number
@@ -135,7 +135,7 @@ public class CreatureUnit extends Unit
     // @TODO: make this work with multiple bases and destroyed bases
     public function findEnemyBaseToAttack () :SimObjectRef
     {
-        var enemyPlayerData :PlayerData = GameMode.instance.getPlayerData(_owningPlayerData.targetedEnemyId);
+        var enemyPlayerData :PlayerData = GameContext.playerData[_owningPlayerData.targetedEnemyId];
         return enemyPlayerData.baseRef;
     }
 

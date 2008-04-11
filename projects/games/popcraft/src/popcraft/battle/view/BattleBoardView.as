@@ -1,5 +1,6 @@
 package popcraft.battle.view {
 
+import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 
@@ -9,8 +10,6 @@ import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 
 import popcraft.*;
-import popcraft.battle.geom.AttractRepulseGrid;
-import popcraft.battle.geom.CollisionGrid;
 import popcraft.net.*;
 
 public class BattleBoardView extends SceneObject
@@ -23,8 +22,6 @@ public class BattleBoardView extends SceneObject
     {
         _width = width;
         _height = height;
-
-        _collisionGrid = new AttractRepulseGrid(_width, _height, Constants.UNIT_GRID_CELL_SIZE);
 
         _view = new Sprite();
 
@@ -55,16 +52,29 @@ public class BattleBoardView extends SceneObject
         return _unitDisplayParent;
     }
 
-    public function get collisionGrid () :AttractRepulseGrid
+    public function sortUnitDisplayChildren () :void
     {
-        return _collisionGrid;
+        DisplayUtil.sortDisplayChildren(_unitDisplayParent, displayObjectYSort);
+    }
+
+    protected static function displayObjectYSort (a :DisplayObject, b :DisplayObject) :int
+    {
+        var ay :Number = a.y;
+        var by :Number = b.y;
+
+        if (ay < by) {
+            return -1;
+        } else if (ay > by) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     protected var _width :int;
     protected var _height :int;
     protected var _view :Sprite;
     protected var _unitDisplayParent :Sprite;
-    protected var _collisionGrid :AttractRepulseGrid;
 }
 
 }

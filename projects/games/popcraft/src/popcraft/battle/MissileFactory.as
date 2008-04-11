@@ -2,7 +2,7 @@ package popcraft.battle {
 
 import com.threerings.flash.Vector2;
 
-import popcraft.GameMode;
+import popcraft.*;
 import popcraft.battle.view.MissileView;
 
 public class MissileFactory
@@ -16,11 +16,11 @@ public class MissileFactory
 
         var missile :Missile = new Missile(targetUnit, attack, travelTime);
 
-        GameMode.instance.netObjects.addObject(missile);
+        GameContext.netObjects.addObject(missile);
 
         var missileView :MissileView = new MissileView(srcUnitLoc, targetUnit.ref, travelTime);
 
-        GameMode.instance.netObjects.addObject(missileView, GameMode.instance.battleUnitDisplayParent);
+        GameContext.netObjects.addObject(missileView, GameContext.battleBoardView.unitDisplayParent);
 
         return missile;
     }

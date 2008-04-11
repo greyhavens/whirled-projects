@@ -39,19 +39,19 @@ public class UnitFactory
 
         // unit views may depend on the unit already having been added to an ObjectDB
         // so do that before creating a unit view
-        GameMode.instance.netObjects.addObject(unit);
+        GameContext.netObjects.addObject(unit);
 
         if (unit is CreatureUnit) {
             var creature :CreatureUnit = (unit as CreatureUnit);
             var creatureView :CreatureUnitView = new CreatureUnitView(creature);
 
-            GameMode.instance.addObject(creatureView, GameMode.instance.battleUnitDisplayParent);
+            GameContext.gameMode.addObject(creatureView, GameContext.battleBoardView.unitDisplayParent);
 
         } else if (unit is PlayerBaseUnit) {
             var base :PlayerBaseUnit = (unit as PlayerBaseUnit);
             var baseView :PlayerBaseUnitView = new PlayerBaseUnitView(base);
 
-            GameMode.instance.addObject(baseView, GameMode.instance.battleUnitDisplayParent);
+            GameContext.gameMode.addObject(baseView, GameContext.battleBoardView.unitDisplayParent);
         }
 
         return unit;
