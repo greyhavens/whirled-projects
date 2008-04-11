@@ -3,6 +3,7 @@ package popcraft.battle {
 import com.threerings.util.Assert;
 
 import popcraft.*;
+import popcraft.battle.view.*;
 
 public class UnitFactory
 {

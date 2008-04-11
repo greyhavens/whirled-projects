@@ -5,17 +5,27 @@ import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import popcraft.battle.*;
+import popcraft.battle.view.*;
 
 public class UnitPurchaseButton extends DisablingButton
 {
     public function UnitPurchaseButton (unitType :uint)
     {
         var data :UnitData = Constants.UNIT_DATA[unitType];
+        var playerColor :uint = Constants.PLAYER_COLORS[GameMode.instance.localPlayerData.playerId];
+
+        // try instantiating some animations
+        /*var stand :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(data, playerColor, "stand_SW");
+        var walk :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(data, playerColor, "walk_SW");
+        var attack :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(data, playerColor, "attack_SW");
+        */
+
         var bitmapData :BitmapData = (PopCraft.resourceManager.getResource(data.name + "_icon") as ImageResourceLoader).bitmapData;
 
         this.upState         = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP);

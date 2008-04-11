@@ -1,4 +1,4 @@
-package popcraft.battle {
+package popcraft.battle.view {
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
@@ -9,6 +9,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import popcraft.*;
+import popcraft.battle.*;
 import popcraft.util.*;
 
 public class PlayerBaseUnitView extends SceneObject

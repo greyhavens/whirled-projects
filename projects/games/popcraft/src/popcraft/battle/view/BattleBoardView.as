@@ -1,4 +1,4 @@
-package popcraft.battle {
+package popcraft.battle.view {
 
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -13,17 +13,17 @@ import popcraft.battle.geom.AttractRepulseGrid;
 import popcraft.battle.geom.CollisionGrid;
 import popcraft.net.*;
 
-public class BattleBoard extends SceneObject
+public class BattleBoardView extends SceneObject
 {
     public static const TILE_GROUND :uint = 0;
     public static const TILE_TREE :uint = 1;
     public static const TILE_BASE :uint = 2;
 
-    public function BattleBoard (width :int, height :int)
+    public function BattleBoardView (width :int, height :int)
     {
         _width = width;
         _height = height;
-        
+
         _collisionGrid = new AttractRepulseGrid(_width, _height, Constants.UNIT_GRID_CELL_SIZE);
 
         _view = new Sprite();
@@ -35,7 +35,7 @@ public class BattleBoard extends SceneObject
         var bg :Bitmap = (PopCraft.resourceManager.getResource("battle_bg") as ImageResourceLoader).createBitmap();
         bg.scaleX = (_width / bg.width);
         bg.scaleY = (_height / bg.height);
-        
+
         var fg :Bitmap = (PopCraft.resourceManager.getResource("battle_fg") as ImageResourceLoader).createBitmap();
         fg.scaleX = (_width / fg.width);
         fg.y = bg.height - fg.height; // fg is aligned to the bottom of the board
@@ -54,7 +54,7 @@ public class BattleBoard extends SceneObject
     {
         return _unitDisplayParent;
     }
-    
+
     public function get collisionGrid () :AttractRepulseGrid
     {
         return _collisionGrid;

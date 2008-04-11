@@ -1,9 +1,8 @@
-package popcraft.battle {
+package popcraft.battle.view {
 
 import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
 import com.threerings.util.Log;
-import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -16,6 +15,7 @@ import flash.display.Shape;
 import flash.display.Sprite;
 
 import popcraft.*;
+import popcraft.battle.*;
 import popcraft.util.*;
 
 public class CreatureUnitView extends SceneObject
@@ -151,12 +151,6 @@ public class CreatureUnitView extends SceneObject
 
     protected function setupAnimations (playerColor :uint) :void
     {
-        var tintFilterMatrix :ColorMatrix = new ColorMatrix();
-        tintFilterMatrix.colorize(playerColor);
-
-        // load our animations
-        var swf :SwfResourceLoader = (PopCraft.resourceManager.getResource(_unit.unitData.name) as SwfResourceLoader);
-
         for (var i :int = 0; i < 3; ++i) {
 
             var animArray :Array;
@@ -173,27 +167,12 @@ public class CreatureUnitView extends SceneObject
             for (var facing :int = FACING_N; facing <= FACING_S; ++facing) {
                 var animName :String = animNamePrefix + FACING_STRINGS[facing];
 
-                var animClass :Class = swf.getClass(animName);
+                var anim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
+                    _unit.unitData, playerColor, animName);
 
-                if (null == animClass) {
-                    break;
+                if (null != anim) {
+                    animArray.push(anim);
                 }
-
-                var anim :MovieClip = new animClass();
-
-                // colorize
-                var color :MovieClip = anim.recolor;
-                if (null != color && null != color.recolor) {
-                    color = color.recolor;
-                }
-
-                if (null != color) {
-                    color.filters = [ tintFilterMatrix.createFilter() ];
-                } else {
-                    log.info("Missing recolor symbol for " + _unit.unitData.name + "." + animName);
-                }
-
-                animArray.push(anim);
             }
         }
 

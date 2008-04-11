@@ -16,6 +16,7 @@ import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
 import popcraft.battle.*;
+import popcraft.battle.view.*;
 import popcraft.battle.geom.AttractRepulseGrid;
 import popcraft.net.*;
 import popcraft.puzzle.*;
@@ -146,7 +147,7 @@ public class GameMode extends AppMode
 
     protected function setupBattleUI () :void
     {
-        _battleBoard = new BattleBoard(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
+        _battleBoard = new BattleBoardView(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
 
         _battleBoard.displayObject.x = Constants.BATTLE_BOARD_LOC.x;
         _battleBoard.displayObject.y = Constants.BATTLE_BOARD_LOC.y;
@@ -506,7 +507,7 @@ public class GameMode extends AppMode
 
     protected var _messageMgr :TickedMessageManager;
     protected var _puzzleBoard :PuzzleBoard;
-    protected var _battleBoard :BattleBoard;
+    protected var _battleBoard :BattleBoardView;
     protected var _debugDataView :DebugDataView;
 
     protected var _netObjects :ObjectDB;
