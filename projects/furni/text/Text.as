@@ -120,21 +120,6 @@ public class Text extends Sprite
         tf.text = getMem(TEXT) as String;
         s.addChild(tf);
 
-        var updateText :Function = function (... ignored) :void {
-            setMem(TEXT, tf.text);
-        };
-
-        var timer :Timer = new Timer(1000);
-        timer.addEventListener(TimerEvent.TIMER, updateText);
-        // TODO: this might be a bad idea..
-        tf.addEventListener(Event.ADDED_TO_STAGE, function (... ignored) :void {
-            timer.start();
-        });
-        tf.addEventListener(Event.REMOVED_FROM_STAGE, function (... ignored) :void {
-            updateText(); // one last time..
-            timer.stop();
-        });
-
         var yy :int = 125;
         addLabel(s, "Font face", yy);
         var font :ComboBox = new ComboBox();
@@ -159,14 +144,12 @@ public class Text extends Sprite
         size.minimum = 10;
         size.maximum = 96;
         size.snapInterval = 1;
+        size.liveDragging = true;
         size.value = getMem(SIZE) as int;
         size.setSize(140, 22);
         size.x = 100;
         size.y = yy;
         s.addChild(size);
-        size.addEventListener(SliderEvent.CHANGE, function (... ignored) :void {
-            setMem(SIZE, size.value);
-        });
 
         yy += 25;
         addLabel(s, "Color", yy);
@@ -248,6 +231,21 @@ public class Text extends Sprite
         s.graphics.beginFill(0xFF0000, 0);
         s.graphics.drawRect(0, 0, 250, yy + 25);
         s.graphics.endFill();
+
+        // finally, some things can change so rapidly that we only update them every half second
+        var updateTextAndSize :Function = function (... ignored) :void {
+            setMem(TEXT, tf.text);
+            setMem(SIZE, size.value);
+        };
+        var timer :Timer = new Timer(500);
+        timer.addEventListener(TimerEvent.TIMER, updateTextAndSize);
+        s.addEventListener(Event.ADDED_TO_STAGE, function (... ignored) :void {
+            timer.start();
+        });
+        s.addEventListener(Event.REMOVED_FROM_STAGE, function (... ignored) :void {
+            updateTextAndSize(); // one last time..
+            timer.stop();
+        });
 
         return s;
     }
