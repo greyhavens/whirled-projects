@@ -47,21 +47,19 @@ public class CreatureUnitView extends SceneObject
         }
 
         // health meter
-        if (!_unit.isInvincible) {
-            _healthMeter = new RectMeter();
-            _healthMeter.minValue = 0;
-            _healthMeter.maxValue = _unit.unitData.maxHealth;
-            _healthMeter.value = _unit.health;
-            _healthMeter.foregroundColor = playerColor;
-            _healthMeter.backgroundColor = 0x888888;
-            _healthMeter.outlineColor = 0x000000;
-            _healthMeter.width = 30;
-            _healthMeter.height = 3;
-            _healthMeter.x = -(_healthMeter.width * 0.5);
-            _healthMeter.y = -_sprite.height - _healthMeter.height;
+        _healthMeter = new RectMeter();
+        _healthMeter.minValue = 0;
+        _healthMeter.maxValue = _unit.unitData.maxHealth;
+        _healthMeter.value = _unit.health;
+        _healthMeter.foregroundColor = playerColor;
+        _healthMeter.backgroundColor = 0x888888;
+        _healthMeter.outlineColor = 0x000000;
+        _healthMeter.width = 30;
+        _healthMeter.height = 3;
+        _healthMeter.x = -(_healthMeter.width * 0.5);
+        _healthMeter.y = -_sprite.height - _healthMeter.height;
 
-            this.db.addObject(_healthMeter, _sprite);
-        }
+        this.db.addObject(_healthMeter, _sprite);
 
         // draw some debugging circles
         if (Constants.DEBUG_DRAW_UNIT_DATA_CIRCLES) {
