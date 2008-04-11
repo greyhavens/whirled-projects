@@ -13,6 +13,7 @@ public class LoadingMode extends AppMode
         PopCraft.resourceManager.pendResourceLoad("image", "colossus_icon",  { embeddedClass: IMAGE_COLOSSUSICON });
 
         PopCraft.resourceManager.pendResourceLoad("image", "base",      { embeddedClass: IMAGE_BASE });
+        PopCraft.resourceManager.pendResourceLoad("image", "targetBaseBadge", { embeddedClass: IMAGE_TARGETBASEBADGE });
         PopCraft.resourceManager.pendResourceLoad("image", "battle_bg", { embeddedClass: IMAGE_BATTLE_BG });
         PopCraft.resourceManager.pendResourceLoad("image", "battle_fg", { embeddedClass: IMAGE_BATTLE_FG });
 
@@ -50,6 +51,9 @@ public class LoadingMode extends AppMode
 
     [Embed(source="../../rsrc/base.png", mimeType="application/octet-stream")]
     protected static const IMAGE_BASE :Class;
+
+    [Embed(source="../../rsrc/skull_and_crossbones.png", mimeType="application/octet-stream")]
+    protected static const IMAGE_TARGETBASEBADGE :Class;
 
     [Embed(source="../../rsrc/city_bg.png", mimeType="application/octet-stream")]
     protected static const IMAGE_BATTLE_BG :Class;

@@ -8,6 +8,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.game.GameControl;
 
+import flash.display.Bitmap;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.Event;
@@ -41,6 +42,16 @@ public class PopCraft extends Sprite
             if (null != movieClass) {
                 return new movieClass();
             }
+        }
+
+        return null;
+    }
+
+    public static function instantiateBitmap (resourceName :String) :Bitmap
+    {
+        var img :ImageResourceLoader = resourceManager.getResource(resourceName) as ImageResourceLoader;
+        if (null != img) {
+            return img.createBitmap();
         }
 
         return null;

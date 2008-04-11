@@ -1,17 +1,23 @@
 package popcraft.battle {
 
+import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 
+import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
-import flash.display.Bitmap;
 
 import popcraft.*;
 import popcraft.util.*;
 
 public class PlayerBaseUnitView extends SceneObject
 {
+    public static function getAll () :Array
+    {
+        return MainLoop.instance.topMode.getObjectsInGroup(GROUP_NAME);
+    }
+
     public function PlayerBaseUnitView (unit :PlayerBaseUnit)
     {
         _unit = unit;
@@ -19,7 +25,7 @@ public class PlayerBaseUnitView extends SceneObject
         var playerColor :uint = Constants.PLAYER_COLORS[_unit.owningPlayerId];
 
         // add the image, aligned by its foot position
-        var image :Bitmap = (PopCraft.resourceManager.getResource(_unit.unitData.name) as ImageResourceLoader).createBitmap();
+        var image :Bitmap = PopCraft.instantiateBitmap(_unit.unitData.name);
         image.x = -(image.width * 0.5);
         image.y = -image.height;
         _sprite.addChild(image);
@@ -39,6 +45,13 @@ public class PlayerBaseUnitView extends SceneObject
         _healthMeter.height = 3;
         _healthMeter.x = -(_healthMeter.width * 0.5);
         _healthMeter.y = -_sprite.height - _healthMeter.height;
+
+        // target enemy badge
+        _targetEnemyBadge = PopCraft.instantiateBitmap("targetBaseBadge");
+        _targetEnemyBadge.visible = false;
+        _targetEnemyBadge.x = -(_targetEnemyBadge.width * 0.5);
+        _targetEnemyBadge.y = -(_targetEnemyBadge.height);
+        _sprite.addChild(_targetEnemyBadge);
     }
 
     override protected function addedToDB () :void
@@ -70,9 +83,27 @@ public class PlayerBaseUnitView extends SceneObject
         }
     }
 
+    public function set targetEnemyBadgeVisible (val :Boolean) :void
+    {
+        _targetEnemyBadge.visible = val;
+    }
+
+    override public function get objectGroups () :Array
+    {
+        return [ GROUP_NAME ];
+    }
+
+    public function get baseUnit () :PlayerBaseUnit
+    {
+        return _unit;
+    }
+
     protected var _sprite: Sprite = new Sprite();
+    protected var _targetEnemyBadge :Bitmap;
     protected var _unit :PlayerBaseUnit;
     protected var _healthMeter :RectMeter;
+
+    protected static const GROUP_NAME :String = "PlayerBaseUnitView";
 
 }
 

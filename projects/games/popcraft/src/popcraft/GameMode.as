@@ -11,7 +11,9 @@ import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
+import flash.display.InteractiveObject;
 import flash.events.KeyboardEvent;
+import flash.events.MouseEvent;
 
 import popcraft.battle.*;
 import popcraft.battle.geom.AttractRepulseGrid;
@@ -22,11 +24,7 @@ public class GameMode extends AppMode
 {
     public static function get instance () :GameMode
     {
-        var instance :GameMode = (MainLoop.instance.topMode as GameMode);
-
-        Assert.isNotNull(instance);
-
-        return instance;
+        return (MainLoop.instance.topMode as GameMode);
     }
 
     public static function getNetObjectNamed (objectName :String) :SimObject
@@ -68,7 +66,8 @@ public class GameMode extends AppMode
         var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
         for (playerId = 0; playerId < numPlayers; ++playerId) {
             var baseLoc :Vector2 = baseLocs[playerId];
-            var base :PlayerBaseUnit = (UnitFactory.createUnit(Constants.UNIT_TYPE_BASE, playerId) as PlayerBaseUnit);
+            var base :PlayerBaseUnit =
+                (UnitFactory.createUnit(Constants.UNIT_TYPE_BASE, playerId) as PlayerBaseUnit);
             base.unitSpawnLoc = baseLoc;
             base.x = baseLoc.x;
             base.y = baseLoc.y;
@@ -77,14 +76,17 @@ public class GameMode extends AppMode
             playerData.base = base;
         }
 
+        // more UI setup
         if (isAPlayer) {
+            this.setupPlayerBaseViews();
             this.setupPuzzleUI();
         }
 
         // Listen for all keydowns.
         // The suggested way to do this is to attach an event listener to the stage,
-        // but that's a security violation. The GameControl re-dispatches global key events for us instead.
-        PopCraft.instance.gameControl.local.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 0, false);
+        // but that's a security violation. The GameControl re-dispatches global key
+        // events for us instead.
+        PopCraft.instance.gameControl.local.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 
         if (Constants.DEBUG_DRAW_STATS) {
             _debugDataView = new DebugDataView();
@@ -95,7 +97,7 @@ public class GameMode extends AppMode
 
     override protected function destroy () :void
     {
-        PopCraft.instance.gameControl.local.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false);
+        PopCraft.instance.gameControl.local.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 
         if (null != _messageMgr) {
             _messageMgr.shutdown();
@@ -352,9 +354,74 @@ public class GameMode extends AppMode
             UnitFactory.createUnit(createUnitMsg.unitType, createUnitMsg.owningPlayer);
             break;
 
+        case SelectTargetEnemyMessage.messageName:
+            var selectTargetEnemyMsg :SelectTargetEnemyMessage = msg as SelectTargetEnemyMessage;
+            this.setTargetEnemy(selectTargetEnemyMsg.selectingPlayer, selectTargetEnemyMsg.targetPlayer);
+            break;
+
         case ChecksumMessage.messageName:
             this.handleChecksumMessage(msg as ChecksumMessage);
             break;
+        }
+
+    }
+
+    protected function setTargetEnemy (playerId :uint, targetEnemyId :uint) :void
+    {
+        var playerData :PlayerData = this.getPlayerData(playerId);
+        playerData.targetedEnemyId = targetEnemyId;
+
+        if (playerId == _localPlayerId) {
+            this.updateTargetEnemyBadgeLocation(targetEnemyId);
+        }
+    }
+
+    protected function updateTargetEnemyBadgeLocation (targetEnemyId :uint) :void
+    {
+        // move the "target enemy" badge to the correct base
+        var baseViews :Array = PlayerBaseUnitView.getAll();
+        for each (var baseView :PlayerBaseUnitView in baseViews) {
+            baseView.targetEnemyBadgeVisible = (baseView.baseUnit.owningPlayerId == targetEnemyId);
+        }
+    }
+
+    protected function setupPlayerBaseViews () :void
+    {
+        // add click listeners to all the enemy bases.
+        // when an enemy base is clicked, that player becomes the new "target enemy" for the local player.
+        var localPlayerData :PlayerData = this.localPlayerData;
+        var baseViews :Array = PlayerBaseUnitView.getAll();
+        for each (var baseView :PlayerBaseUnitView in baseViews) {
+            var owningPlayerId :uint = baseView.baseUnit.owningPlayerId;
+            baseView.targetEnemyBadgeVisible = (owningPlayerId == localPlayerData.targetedEnemyId);
+
+            if (_localPlayerId != owningPlayerId) {
+                (baseView.displayObject as InteractiveObject).addEventListener(
+                    MouseEvent.MOUSE_DOWN, this.createBaseViewClickListener(baseView));
+            }
+        }
+    }
+
+    protected function createBaseViewClickListener (baseView :PlayerBaseUnitView) :Function
+    {
+        return function (...ignored) :void { enemyBaseViewClicked(baseView); }
+    }
+
+    protected function enemyBaseViewClicked (enemyBaseView :PlayerBaseUnitView) :void
+    {
+        // when the player clicks on an enemy base, that enemy becomes the player's target
+        var localPlayerData :PlayerData = this.localPlayerData;
+        var newTargetEnemyId :uint = enemyBaseView.baseUnit.owningPlayerId;
+
+        Assert.isTrue(newTargetEnemyId != _localPlayerId);
+
+        if (newTargetEnemyId != localPlayerData.targetedEnemyId) {
+            // update the "target enemy badge" location immediately, even though
+            // the change won't be reflected in the game logic until the message round-trips
+            this.updateTargetEnemyBadgeLocation(newTargetEnemyId);
+
+            // send a message to everyone
+            _messageMgr.sendMessage(new SelectTargetEnemyMessage(_localPlayerId, newTargetEnemyId));
         }
 
     }
