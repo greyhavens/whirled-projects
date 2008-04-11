@@ -7,9 +7,7 @@ public class LoadingMode extends AppMode
 {
     override protected function setup () :void
     {
-        PopCraft.resourceManager.pendResourceLoad("image", "grunt_icon",     { embeddedClass: IMAGE_GRUNTICON });
         PopCraft.resourceManager.pendResourceLoad("image", "heavy_icon",     { embeddedClass: IMAGE_HEAVYICON });
-        PopCraft.resourceManager.pendResourceLoad("image", "sapper_icon",    { embeddedClass: IMAGE_SAPPERICON });
         PopCraft.resourceManager.pendResourceLoad("image", "colossus_icon",  { embeddedClass: IMAGE_COLOSSUSICON });
 
         PopCraft.resourceManager.pendResourceLoad("image", "base",      { embeddedClass: IMAGE_BASE });
@@ -38,14 +36,8 @@ public class LoadingMode extends AppMode
         MainLoop.instance.changeMode(new GameMode());
     }
 
-    [Embed(source="../../rsrc/char_grunt.png", mimeType="application/octet-stream")]
-    protected static const IMAGE_GRUNTICON :Class;
-
     [Embed(source="../../rsrc/char_heavy.png", mimeType="application/octet-stream")]
     protected static const IMAGE_HEAVYICON :Class;
-
-    [Embed(source="../../rsrc/char_sapper.png", mimeType="application/octet-stream")]
-    protected static const IMAGE_SAPPERICON :Class;
 
     [Embed(source="../../rsrc/char_colossus.png", mimeType="application/octet-stream")]
     protected static const IMAGE_COLOSSUSICON :Class;

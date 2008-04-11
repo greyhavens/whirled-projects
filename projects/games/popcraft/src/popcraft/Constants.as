@@ -65,7 +65,7 @@ public class Constants
         new ResourceType("flesh", 0xE8E7E5, 1),
         new ResourceType("blood", 0xCC0000, 1),
         new ResourceType("energy", 0x3D7078, 0.5),
-        new ResourceType("magick", 0xFFD858, 0.5)
+        new ResourceType("artifice", 0xFFD858, 0.5)
     ];
 
     public static function getResource (type :uint) :ResourceType {
