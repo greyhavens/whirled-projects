@@ -394,6 +394,7 @@ public class GameMode extends AppMode
         for each (var baseView :PlayerBaseUnitView in baseViews) {
             var owningPlayerId :uint = baseView.baseUnit.owningPlayerId;
             baseView.targetEnemyBadgeVisible = (owningPlayerId == localPlayerData.targetedEnemyId);
+            baseView.friendlyBadgeVisible = (owningPlayerId == _localPlayerId);
 
             if (_localPlayerId != owningPlayerId) {
                 (baseView.displayObject as InteractiveObject).addEventListener(

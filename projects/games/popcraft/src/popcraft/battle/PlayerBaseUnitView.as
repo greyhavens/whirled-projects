@@ -52,6 +52,13 @@ public class PlayerBaseUnitView extends SceneObject
         _targetEnemyBadge.x = -(_targetEnemyBadge.width * 0.5);
         _targetEnemyBadge.y = -(_targetEnemyBadge.height);
         _sprite.addChild(_targetEnemyBadge);
+
+        // friendly badge
+        _friendlyBadge = PopCraft.instantiateBitmap("friendlyBaseBadge");
+        _friendlyBadge.visible = false;
+        _friendlyBadge.x = -(_friendlyBadge.width * 0.5);
+        _friendlyBadge.y = -(_friendlyBadge.height);
+        _sprite.addChild(_friendlyBadge);
     }
 
     override protected function addedToDB () :void
@@ -88,6 +95,11 @@ public class PlayerBaseUnitView extends SceneObject
         _targetEnemyBadge.visible = val;
     }
 
+    public function set friendlyBadgeVisible (val :Boolean) :void
+    {
+        _friendlyBadge.visible = val;
+    }
+
     override public function get objectGroups () :Array
     {
         return [ GROUP_NAME ];
@@ -100,6 +112,7 @@ public class PlayerBaseUnitView extends SceneObject
 
     protected var _sprite: Sprite = new Sprite();
     protected var _targetEnemyBadge :Bitmap;
+    protected var _friendlyBadge :Bitmap;
     protected var _unit :PlayerBaseUnit;
     protected var _healthMeter :RectMeter;
 
