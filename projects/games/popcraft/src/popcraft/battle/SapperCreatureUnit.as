@@ -23,12 +23,16 @@ public class SapperCreatureUnit extends CreatureUnit
         return _sapperAI;
     }
 
-    override public function sendAttack (targetUnitOrLoc :*, weapon :UnitWeapon) :void
+    override public function sendAttack (targetUnitOrLoc :*, weapon :UnitWeapon) :Boolean
     {
         // when the sapper attacks, he self-destructs
-        super.sendAttack(targetUnitOrLoc, weapon);
+        var success :Boolean = super.sendAttack(targetUnitOrLoc, weapon);
 
-        this.die();
+        if (success) {
+            this.die();
+        }
+
+        return success;
     }
 
     override public function receiveAttack (attack :UnitAttack) :void

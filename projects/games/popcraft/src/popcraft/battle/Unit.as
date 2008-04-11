@@ -104,20 +104,20 @@ public class Unit extends SimObject
         }
     }
 
-    public function sendAttack (targetUnitOrLocation :*, weapon :UnitWeapon) :void
+    public function sendAttack (targetUnitOrLocation :*, weapon :UnitWeapon) :Boolean
     {
         // @TODO - fix this mess of a function
 
         // don't attack if we're already attacking
         if (this.isAttacking) {
-            return;
+            return false;
         }
 
         var targetUnit :Unit = targetUnitOrLocation as Unit;
 
         // don't attack if we're out of range
         if (null != targetUnit && !this.canAttackWithWeapon(targetUnit, weapon)) {
-            return;
+            return false;
         }
 
         var attack :UnitAttack = new UnitAttack(this.ref, weapon);
@@ -145,13 +145,13 @@ public class Unit extends SimObject
         if (weapon.cooldown > 0) {
             this.addNamedTask(ATTACK_COOLDOWN_TASK_NAME, new TimedTask(weapon.cooldown));
         }
+
+        return true;
     }
 
     protected function sendAOEAttack (targetLoc :Vector2, attack :UnitAttack) :void
     {
-        if (this.isAttacking) {
-            return;
-        }
+        Assert.isFalse(this.isAttacking);
 
         var weapon :UnitWeapon = attack.weapon;
 
@@ -182,10 +182,6 @@ public class Unit extends SimObject
 
             // send the attack
             unit.receiveAttack(attack);
-        }
-
-        if (weapon.cooldown > 0) {
-            this.addNamedTask(ATTACK_COOLDOWN_TASK_NAME, new TimedTask(weapon.cooldown));
         }
     }
 
