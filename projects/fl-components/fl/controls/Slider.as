@@ -245,7 +245,7 @@ package fl.controls {
          * @playerversion Flash 9.0.28.0
 		 */
 		protected var track:BaseButton;
-		
+
 		/**
          * @private (protected)
          *
@@ -731,8 +731,9 @@ package fl.controls {
          * @playerversion Flash 9.0.28.0
 		 */
 		protected function thumbPressHandler(event:MouseEvent):void {
-			UIComponent.stageAlias.addEventListener(MouseEvent.MOUSE_MOVE,doDrag,false,0,true);
-			UIComponent.stageAlias.addEventListener(MouseEvent.MOUSE_UP,thumbReleaseHandler,false,0,true);
+            var papa :DisplayObject = findAppropriateParent(thumb);
+            papa.addEventListener(MouseEvent.MOUSE_MOVE,doDrag,false,0,true);
+            papa.addEventListener(MouseEvent.MOUSE_UP,thumbReleaseHandler,false,0,true);
 			dispatchEvent(new SliderEvent(SliderEvent.THUMB_PRESS, value, InteractionInputType.MOUSE, SliderEventClickTarget.THUMB));
 		}
 		
@@ -743,8 +744,9 @@ package fl.controls {
          * @playerversion Flash 9.0.28.0
 		 */
 		protected function thumbReleaseHandler(event:MouseEvent):void {
-			UIComponent.stageAlias.removeEventListener(MouseEvent.MOUSE_MOVE,doDrag);
-			UIComponent.stageAlias.removeEventListener(MouseEvent.MOUSE_UP,thumbReleaseHandler);
+            var papa :DisplayObject = findAppropriateParent(thumb);
+            papa.removeEventListener(MouseEvent.MOUSE_MOVE,doDrag);
+			papa.removeEventListener(MouseEvent.MOUSE_UP,thumbReleaseHandler);
 			dispatchEvent(new SliderEvent(SliderEvent.THUMB_RELEASE, value, InteractionInputType.MOUSE, SliderEventClickTarget.THUMB));
 			dispatchEvent(new SliderEvent(SliderEvent.CHANGE, value, SliderEventClickTarget.THUMB, InteractionInputType.MOUSE));
 		}
