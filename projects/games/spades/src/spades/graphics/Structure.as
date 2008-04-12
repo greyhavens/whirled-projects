@@ -4,6 +4,8 @@ import spades.Debug;
 import flash.display.SimpleButton;
 import flash.display.DisplayObjectContainer;
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
+import flash.display.Scene;
 
 /** Static functions for accessing named objects in a container. */
 public class Structure
@@ -48,15 +50,27 @@ public class Structure
     /** Print out all the descendants of a display object. */
     public static function dump (parent :DisplayObject) :void
     {
-        Debug.debug("Descendats of " + parent.name);
+        Debug.debug("Descendants of " + parent.name);
         doDump(parent, "  ");
+    }
+
+    /** Print out all the scenes and frames of a movie clip. */
+    public static function dumpMovie (movie :MovieClip) :void
+    {
+        Debug.debug("Dumping movie " + movie.name);
+        var scenes :Array = movie.scenes;
+        for (var i :int = 0; i < scenes.length; ++i) {
+            var scene :Scene = scenes[i] as Scene;
+            Debug.debug("  Scene " + i + " is " + scene.name + " and has " + 
+                scene.numFrames + " frames");
+        }
     }
 
     protected static function doDump (
         obj :DisplayObject, 
         prefix :String="") :void
     {
-        Debug.debug(prefix + obj.name);
+        Debug.debug(prefix + obj.name + " " + obj["constructor"]);
         if (obj is DisplayObjectContainer) {
             var parent :DisplayObjectContainer = obj as DisplayObjectContainer;
             for (var i :int = 0; i < parent.numChildren; ++i) {

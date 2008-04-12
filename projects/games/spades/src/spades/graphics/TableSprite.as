@@ -45,8 +45,8 @@ public class TableSprite extends Sprite
         _players = new Array(table.numPlayers);
         for (var seat :int = 0; seat < table.numPlayers; ++seat) {
             var name :String = table.getNameFromRelative(seat);
-            var p :PlayerSprite = new PlayerSprite(name, 
-                table.getTeamFromRelative(seat));
+            var p :PlayerSprite = new PlayerSprite(table, 
+                table.getIdFromRelative(seat), _model.timer);
             addChild(p);
             _players[seat] = p;
 

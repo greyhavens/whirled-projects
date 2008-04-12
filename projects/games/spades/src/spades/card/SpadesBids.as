@@ -75,6 +75,13 @@ public class SpadesBids extends Bids
         return players[seat] == _blindNilAccepted;
     }
 
+    /** Check if the player in the given absolute seating position has decided not to bid blind. */
+    public function hasResponded (seat :int) :Boolean
+    {
+        var players :Array = _gameCtrl.game.seating.getPlayerIds();
+        return players[seat] == _blindNilRefused || players[seat] == _blindNilAccepted;
+    }
+
     /** Access the absolute seating position of the player that bid blind nil, or -1 if noone has. */
     public function get blindBidder () :int
     {

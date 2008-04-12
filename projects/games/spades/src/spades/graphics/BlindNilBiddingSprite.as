@@ -29,6 +29,7 @@ public class BlindNilBiddingSprite extends Sprite
         addChild(label);
 
         _bids.addEventListener(BidEvent.REQUESTED, bidListener);
+        _bids.addEventListener(BidEvent.SELECTED, bidListener);
 
         visible = false;
 
@@ -51,6 +52,12 @@ public class BlindNilBiddingSprite extends Sprite
         if (event.type == BidEvent.REQUESTED) {
             if (event.value == SpadesBids.REQUESTED_BLIND_NIL) {
                 visible = true;
+            }
+        }
+        else if (event.type == BidEvent.SELECTED) {
+            if (event.value == SpadesBids.SELECTED_BLIND_NIL || 
+                event.value == SpadesBids.SELECTED_SHOW_CARDS) {
+                visible = false;
             }
         }
     }

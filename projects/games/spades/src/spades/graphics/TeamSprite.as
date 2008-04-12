@@ -250,7 +250,7 @@ class ScoreBar extends Sprite
         text.x = xpositions[3];
         text.text = "";
         text.leftJustify();
-        addChild(_target = text);
+        addChildAt(_target = text, 0);
 
         text = new Text(Text.SMALL_ITALIC, WHITE, colors[0] as uint);
         text.bottomY = _score.bottomY;

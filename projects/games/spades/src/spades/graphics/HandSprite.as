@@ -32,6 +32,7 @@ public class HandSprite extends CardArraySprite
 
         _hand.addEventListener(HandEvent.BEGAN_TURN, handListener);
         _hand.addEventListener(HandEvent.ENDED_TURN, handListener);
+        _hand.addEventListener(HandEvent.CARDS_SELECTED, handListener);
     }
 
     /** Grab the card sprites that were recently removed from the hand. After each card is removed, 
@@ -61,6 +62,9 @@ public class HandSprite extends CardArraySprite
         else if (event.type == HandEvent.ENDED_TURN) {
             disable();
         }
+        else if (event.type == HandEvent.CARDS_SELECTED) {
+            disable();
+        }
     }
 
     /** Disable clicking on all cards. */
@@ -69,6 +73,12 @@ public class HandSprite extends CardArraySprite
         _cards.forEach(function (c :CardSprite, ...x) :void {
             c.state = CardSprite.DISABLED;
         });
+
+        for (var i :int = 0; i < _selected.length; ++i) {
+            verticalTween(CardSprite(_selected[i]), 0);
+        }
+
+        _selected.splice(0, _selected.length);
 
         unfloatCard();
     }

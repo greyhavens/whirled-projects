@@ -7,6 +7,7 @@ import spades.card.Hand;
 import spades.card.Trick;
 import spades.card.Bids;
 import spades.card.Scores;
+import spades.card.TurnTimer;
 
 
 /** Aggregates the various model objects used in a game of spades */
@@ -18,7 +19,8 @@ public class Model
         hand :Hand,
         trick :Trick,
         bids :Bids,
-        scores :Scores)
+        scores :Scores,
+        timer :TurnTimer)
     {
         _gameCtrl = gameCtrl;
         _table = table;
@@ -26,6 +28,7 @@ public class Model
         _trick = trick;
         _bids = bids;
         _scores = scores;
+        _timer = timer;
     }
 
     /** Access the game control. */
@@ -64,12 +67,19 @@ public class Model
         return _scores;
     }
 
+    /** Access the timer. */
+    public function get timer () :TurnTimer
+    {
+        return _timer;
+    }
+
     protected var _gameCtrl :GameControl;
     protected var _table :Table;
     protected var _hand :Hand;
     protected var _trick :Trick;
     protected var _bids :Bids;
     protected var _scores :Scores;
+    protected var _timer :TurnTimer;
 }
 
 }

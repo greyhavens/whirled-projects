@@ -20,6 +20,8 @@ import spades.card.SpadesScores;
 import spades.card.ScoreBreakdown;
 import spades.card.Team;
 import spades.card.WinnersAndLosers;
+import spades.card.TurnTimer;
+import spades.card.TurnTimerEvent;
 
 /**
  * The controller for spades.
@@ -65,8 +67,11 @@ public class Controller
         var bids :SpadesBids = new SpadesBids(gameCtrl, 
             CardArray.FULL_DECK.length / table.numPlayers);
         var scores :Scores = new SpadesScores(table, bids, targetScore);
+        var timer :TurnTimer = new TurnTimer(gameCtrl, table, bids);
 
-        _model = new Model(gameCtrl, table, hand, trick, bids, scores);
+        //timer.disable();
+
+        _model = new Model(gameCtrl, table, hand, trick, bids, scores, timer);
 
         gameCtrl.game.addEventListener(
             StateChangedEvent.GAME_STARTED, 
@@ -95,6 +100,8 @@ public class Controller
         hand.addEventListener(HandEvent.CARDS_SELECTED, handListener);
         hand.addEventListener(HandEvent.PASS_REQUESTED, handListener);
         hand.addEventListener(HandEvent.PASSED, handListener);
+
+        timer.addEventListener(TurnTimerEvent.EXPIRED, turnTimerListener);
     }
 
     public function get model () :Model
@@ -141,6 +148,8 @@ public class Controller
     /** Boot up the game. */
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
+        Debug.debug("Game started " + event);
+
         var deckStr :String = "(" + _templateDeck.length + " card deck)";
         if (_templateDeck.length == 52) {
             deckStr = "";
@@ -155,6 +164,8 @@ public class Controller
     /** Start the round. */
     protected function handleRoundStarted (event :StateChangedEvent) :void
     {
+        Debug.debug("Round started " + event);
+
         gameCtrl.local.feedback("Round " + gameCtrl.game.getRound() + " started\n");
 
         // let the controlling client kick off the round
@@ -269,8 +280,7 @@ public class Controller
         gameCtrl.local.feedback("Round " + round + " ended\n");
     }
 
-    /** End the game.
-     *  TODO: award points + flow? */
+    /** End the game. */
     protected function handleGameEnded (event :StateChangedEvent) :void
     {
         gameCtrl.local.feedback("Thank you for playing Spades!");
@@ -304,6 +314,7 @@ public class Controller
             // also deal to teammate since he will not be eligible for blind nil
             if (gameCtrl.game.amInControl()) {
                 hand.dealTo(event.player, cardsPerPlayer);
+                _model.timer.restart();
 
                 if (Boolean(event.value)) {
                     teammate = table.getTeammateId(event.player);
@@ -633,6 +644,81 @@ public class Controller
         }
     }
 
+    protected function turnTimerListener (event :TurnTimerEvent) :void
+    {
+        if (event.type == TurnTimerEvent.EXPIRED) {
+            if (gameCtrl.game.getTurnHolderId() == event.player) {
+                if (gameCtrl.game.isMyTurn()) {
+                    autoPlay();
+                }
+            }
+        }
+    }
+
+    protected function getRandomSubset (moves :CardArray, count :int) :CardArray
+    {
+        if (moves.length < count) {
+            throw new Error("Not enough cards in " + moves + 
+                " to select " + count + " random ones");
+        }
+
+        var selected :CardArray = new CardArray();
+        for (var i :int = 0; i < count; ++i) {
+            var random :int = Math.random() * moves.length;
+            var card :Card = moves.cards[random];
+            if (selected.has(card)) {
+                --i;
+                continue;
+            }
+            selected.push(card);
+        }
+
+        return selected;
+    }
+
+    protected function autoPlay () :void
+    {
+        if (bids.complete) {
+            var moves :CardArray;
+            var count :int;
+            if (hand.isPassing) {
+                // TODO: figure out if the user has already selected ONE card and select 
+                // only one other one randomly
+                moves = hand.cards;
+                count = BLIND_NIL_EXCHANGE;
+            }
+            else {
+                moves = getLegalMoves();
+                count = 1;
+            }
+            // this check is to prevent the edge case where the player selects a card while the 
+            // expiry message (caller of this function) is in transit
+            if (!hand.hasSelected) {
+                var random :CardArray = getRandomSubset(moves, count);
+                Debug.debug("Random cards for autoPlay are " + random);
+                hand.selectCards(random);
+            }
+        }
+        else if (isLocalPlayerEligibleForBlindNilBid() && 
+            !bids.hasResponded(table.getLocalSeat())) {
+            // edge case prevention (see above)
+            if (!bids.hasSelected) {
+                bids.select(SpadesBids.SELECTED_SHOW_CARDS);
+            }
+        }
+        else {
+            var maxbid :int = getLocalPlayerMaximumBid();
+            var bid :int = AUTOPLAY_DEFAULT_BID;
+            if (bid > maxbid) {
+                bid = maxbid;
+            }
+            // edge case prevention (see above)
+            if (!bids.hasSelected) {
+                bids.select(bid);
+            }
+        }
+    }
+
     protected static function trumps (candidate :Card, winnerSoFar :Card) :Boolean
     {
         if (candidate.suit == winnerSoFar.suit) {
@@ -664,6 +750,9 @@ public class Controller
 
     /** Number of cards for teammates to exchange on blind nil bids. */
     protected static const BLIND_NIL_EXCHANGE :int = 2;
+
+    /** When making a bid for an absent player, this is the bid. */
+    protected static const AUTOPLAY_DEFAULT_BID :int = 6;
 
     /** Time between rounds (seconds). */
     protected static const DELAY_TO_NEXT_ROUND :int = 5;

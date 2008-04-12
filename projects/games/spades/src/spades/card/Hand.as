@@ -154,6 +154,7 @@ public class Hand extends EventDispatcher
     public function beginTurn (enabled :CardArray, count :int=1) :void
     {
         dispatchEvent(new HandEvent(HandEvent.BEGAN_TURN, enabled, 0, count));
+        _hasSelected = false;
     }
 
     /** Select some cards to play. This is not a network event. It immediately sends a 
@@ -161,6 +162,7 @@ public class Hand extends EventDispatcher
     public function selectCards (cards :CardArray) :void
     {
         dispatchEvent(new HandEvent(HandEvent.CARDS_SELECTED, cards));
+        _hasSelected = true;
     }
 
     /** Play a single card. Convenience function to call selectCards with a CardArray containing 
@@ -213,6 +215,14 @@ public class Hand extends EventDispatcher
     public function get cards () :CardArray
     {
         return _cards;
+    }
+
+    /** Access whether or not some cards have been selected since the last call to beginTurn. This 
+     *  is necessary for the auto-play feature where cards are randomly selected by the controller 
+     *  if the player takes too long to make a move. */
+    public function get hasSelected () :Boolean
+    {
+        return _hasSelected;
     }
 
     protected function handleMessage (event :MessageReceivedEvent) :void
@@ -297,6 +307,7 @@ public class Hand extends EventDispatcher
     protected var _cards :CardArray;
     protected var _passTarget :int;
     protected var _passCount :int;
+    protected var _hasSelected :Boolean;
 
     /** Name of bag for the deck. */
     protected static const DECK :String = "hand.deck";

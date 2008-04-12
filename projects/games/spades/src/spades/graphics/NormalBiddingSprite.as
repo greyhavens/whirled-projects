@@ -28,6 +28,7 @@ public class NormalBiddingSprite extends Sprite
         addChild(label);
 
         _bids.addEventListener(BidEvent.REQUESTED, bidListener);
+        _bids.addEventListener(BidEvent.SELECTED, bidListener);
 
         visible = false;
 
@@ -52,6 +53,12 @@ public class NormalBiddingSprite extends Sprite
             if (event.value >= 0) {
                 visible = true;
                 setMaxBid(event.value);
+            }
+        }
+        else if (event.type == BidEvent.SELECTED) {
+            // values < 0 are reserved for special bid requests
+            if (event.value >= 0) {
+                visible = false;
             }
         }
     }

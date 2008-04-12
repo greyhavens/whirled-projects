@@ -36,6 +36,7 @@ public class Bids extends EventDispatcher
     {
         var playerId :int = _gameCtrl.game.getMyId();
         dispatchEvent(new BidEvent(BidEvent.REQUESTED, playerId, max));
+        _hasSelected = false;
     }
 
     /** Select the given bid on behalf of the local player. This is not a network event and 
@@ -44,6 +45,7 @@ public class Bids extends EventDispatcher
     {
         var playerId :int = _gameCtrl.game.getMyId();
         dispatchEvent(new BidEvent(BidEvent.SELECTED, playerId, value));
+        _hasSelected = true;
     }
 
     /** Send a bid request to the server on behalf of the local player. When the reply is received,
@@ -110,6 +112,14 @@ public class Bids extends EventDispatcher
         return _bids[seat] != NO_BID;
     }
 
+    /** Access whether or not a bid has been selected since the call to request a bid. This is 
+     *  necessary for the auto-play feature to prevent a second bid from occurring while the first 
+     *  one is propagating. */
+    public function get hasSelected () :Boolean
+    {
+        return _hasSelected;
+    }
+
     protected function handleElementChanged (event :ElementChangedEvent) :void
     {
         if (event.name == ARRAYNAME) {
@@ -147,6 +157,7 @@ public class Bids extends EventDispatcher
     protected var _gameCtrl :GameControl;
     protected var _bids :Array;
     protected var _maximum :int;
+    protected var _hasSelected :Boolean;
 
     protected static const ARRAYNAME :String = "bids";
 
