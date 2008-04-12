@@ -46,6 +46,9 @@ public class Constants
     public static const BATTLE_WIDTH :int = 700;
     public static const BATTLE_HEIGHT :int = 372;
 
+    public static const DAY_LENGTH :Number = 30;
+    public static const NIGHT_LENGTH :Number = 120;
+
     /* Damage types */
     public static const DAMAGE_TYPE_CRUSHING :uint = 0;
     public static const DAMAGE_TYPE_PIERCING :uint = 1;

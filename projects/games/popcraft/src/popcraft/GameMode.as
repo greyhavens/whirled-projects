@@ -112,6 +112,9 @@ public class GameMode extends AppMode
 
     protected function setupBattle () :void
     {
+        GameContext.diurnalCycle = new DiurnalCycle();
+        GameContext.netObjects.addObject(GameContext.diurnalCycle);
+
         var battleBoard :BattleBoard = new BattleBoard(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
 
         var battleBoardView :BattleBoardView = new BattleBoardView(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
