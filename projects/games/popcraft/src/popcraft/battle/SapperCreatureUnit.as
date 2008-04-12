@@ -83,13 +83,15 @@ class SapperAI extends AITaskTree
 
         this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
 
+        var sapperBlastRadius :Number = UnitWeapon(_unit.unitData.weapons[0]).aoeRadius;
+
         var scanSequence :AITaskSequence = new AITaskSequence(true);
         scanSequence.addSequencedTask(new AITimerTask(SCAN_FOR_ENEMIES_DELAY));
         scanSequence.addSequencedTask(new DetectCreatureGroupAction(
             SCAN_FOR_ENEMIES_TASK_NAME,
             SCAN_FOR_ENEMY_GROUP_SIZE,
             DetectCreatureGroupAction.isDetectableEnemyCreaturePred,
-            DetectCreatureGroupAction.isGroupedEnemyPred));
+            DetectCreatureGroupAction.createIsGroupedEnemyPred(sapperBlastRadius - 15))); // this number is sort of fudged
 
         this.addSubtask(scanSequence);
     }
@@ -125,88 +127,4 @@ class SapperAI extends AITaskTree
     protected static const SCAN_FOR_ENEMIES_TASK_NAME :String = "ScanForEnemies";
 
     protected static const log :Log = Log.getLog(SapperAI);
-}
-
-class DetectCreatureGroupAction extends AITask
-{
-    public static const MSG_GROUPDETECTED :String = "CreatureGroupDetected";
-
-    public static function isDetectableEnemyCreaturePred (ourCreature :CreatureUnit, otherCreature :CreatureUnit) :Boolean
-    {
-        return (
-            ourCreature.isEnemyUnit(otherCreature) &&
-            ourCreature.isUnitInRange(otherCreature, ourCreature.unitData.detectRadius));
-    }
-
-    public static function isGroupedEnemyPred (ourCreature :CreatureUnit, otherCreature1 :CreatureUnit, otherCreature2 :CreatureUnit) :Boolean
-    {
-        return (
-            ourCreature.isEnemyUnit(otherCreature2) &&
-            otherCreature1.isUnitInRange(otherCreature2, 30));
-    }
-
-    public function DetectCreatureGroupAction (name :String, groupSize :int, creaturePredicate :Function, groupPredicate :Function)
-    {
-        _name = name;
-        _groupSize = groupSize;
-        _creaturePred = creaturePredicate;
-        _groupPred = groupPredicate;
-    }
-
-    override public function get name () :String
-    {
-        return name;
-    }
-
-    override public function update (dt :Number, thisCreature :CreatureUnit) :uint
-    {
-        var creatureRefs :Array = GameContext.netObjects.getObjectRefsInGroup(CreatureUnit.GROUP_NAME);
-
-        var validCreatures :Array = [];
-
-        // determine all valid creatures
-        for each (var ref :SimObjectRef in creatureRefs) {
-            var creature :CreatureUnit = ref.object as CreatureUnit;
-
-            if (null != creature && thisCreature != creature && _creaturePred(thisCreature, creature)) {
-                var creatureGroup :Array = this.findCreatureGroup(creatureRefs, creature, thisCreature);
-                if (null != creatureGroup) {
-                    this.sendParentMessage(MSG_GROUPDETECTED, creatureGroup);
-                    break;
-                }
-            }
-        }
-
-
-        return AITaskStatus.COMPLETE;
-    }
-
-    protected function findCreatureGroup (allCreatures :Array, testCreature :CreatureUnit, thisCreature :CreatureUnit) :Array
-    {
-        var group :Array = [ testCreature ];
-
-        for each (var ref :SimObjectRef in allCreatures) {
-            var creature :CreatureUnit = ref.object as CreatureUnit;
-
-            if (null != creature && testCreature != creature && thisCreature != creature && _groupPred(thisCreature, testCreature, creature)) {
-                group.push(creature);
-
-                if (group.length >= _groupSize) {
-                    return group;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    override public function clone () :AITask
-    {
-        return new DetectCreatureGroupAction(_name, _groupSize, _creaturePred, _groupPred);
-    }
-
-    protected var _name :String;
-    protected var _groupSize :int;
-    protected var _creaturePred :Function;
-    protected var _groupPred :Function;
 }

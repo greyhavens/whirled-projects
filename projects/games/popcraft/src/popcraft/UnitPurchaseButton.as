@@ -22,6 +22,7 @@ public class UnitPurchaseButton extends DisablingButton
         var playerColor :uint = Constants.PLAYER_COLORS[GameContext.localPlayerId];
 
         // try instantiating some animations
+        // @TODO - why aren't the up animations playing?
         var upAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(data, playerColor, "walk_SW");
         if (null == upAnim) {
             upAnim = UnitAnimationFactory.instantiateUnitAnimation(data, playerColor, "stand_SW");
