@@ -115,6 +115,11 @@ public class GameMode extends AppMode
         GameContext.diurnalCycle = new DiurnalCycle();
         GameContext.netObjects.addObject(GameContext.diurnalCycle);
 
+        var diurnalMeter :DiurnalMeterView = new DiurnalMeterView();
+        diurnalMeter.x = Constants.DIURNAL_METER_LOC.x;
+        diurnalMeter.y = Constants.DIURNAL_METER_LOC.y;
+        this.addObject(diurnalMeter, this.modeSprite);
+
         var battleBoard :BattleBoard = new BattleBoard(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
 
         var battleBoardView :BattleBoardView = new BattleBoardView(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
@@ -422,7 +427,7 @@ public class GameMode extends AppMode
 
     public function purchaseUnit (unitType :uint) :void
     {
-        if (!GameContext.localPlayerData.canPurchaseUnit(unitType)) {
+        if (GameContext.diurnalCycle.isDay || !GameContext.localPlayerData.canPurchaseUnit(unitType)) {
             return;
         }
 

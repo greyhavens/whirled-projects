@@ -146,6 +146,23 @@ public class CreatureUnit extends Unit
 
     override protected function update (dt :Number) :void
     {
+        // when it's day time, creatures die, and their purchase costs scaled by
+        // their health are refunded to their owner
+        if (GameContext.diurnalCycle.isDay) {
+            if (this.owningPlayerId == GameContext.localPlayerId) {
+                var percentLifeRemaining :Number = this.health / _unitData.maxHealth;
+                var playerData :LocalPlayerData = GameContext.localPlayerData;
+                for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
+                    var refundAmount :Number = Math.ceil(percentLifeRemaining * _unitData.getResourceCost(resType));
+                    playerData.offsetResourceAmount(resType, refundAmount);
+                }
+            }
+
+            this.die();
+
+            return;
+        }
+
         _lastUpdateTimestamp += dt;
 
         this.stopMoving();

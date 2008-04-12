@@ -3,13 +3,17 @@ package popcraft.battle.view {
 import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.AlphaTask;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
+import flash.display.Graphics;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import popcraft.*;
+import popcraft.battle.*;
 import popcraft.net.*;
 
 public class BattleBoardView extends SceneObject
@@ -25,6 +29,15 @@ public class BattleBoardView extends SceneObject
 
         _view = new Sprite();
 
+        // the darkness is shown during nighttime
+        var darknessShape :Shape = new Shape();
+        var g :Graphics = darknessShape.graphics;
+        g.beginFill(0, 0.7);
+        g.drawRect(0, 0, width, height);
+        g.endFill();
+        _darkness = new SimpleSceneObject(darknessShape);
+        _darkness.alpha = 0;
+
         // board units will attach to _unitDisplayParent, which is drawn above
         // the background and below the foreground
         _unitDisplayParent = new Sprite();
@@ -38,8 +51,37 @@ public class BattleBoardView extends SceneObject
         fg.y = bg.height - fg.height; // fg is aligned to the bottom of the board
 
         _view.addChild(bg);
+        _view.addChild(_darkness.displayObject);
         _view.addChild(_unitDisplayParent);
         _view.addChild(fg);
+
+        _lastDayPhase = DiurnalCycle.DAY;
+    }
+
+    override protected function addedToDB () :void
+    {
+        this.db.addObject(_darkness);
+    }
+
+    override protected function removedFromDB () :void
+    {
+        this.db.destroyObject(_darkness.ref);
+    }
+
+    override protected function update (dt :Number) :void
+    {
+        var newDayPhase :int = GameContext.diurnalCycle.phaseOfDay;
+        if (newDayPhase != _lastDayPhase) {
+            if (newDayPhase == DiurnalCycle.DAY) {
+                _darkness.alpha = 1;
+                _darkness.addTask(new AlphaTask(0, 2));
+            } else {
+                _darkness.alpha = 0;
+                _darkness.addTask(new AlphaTask(1, 2));
+            }
+
+            _lastDayPhase = newDayPhase;
+        }
     }
 
     override public function get displayObject () :DisplayObject
@@ -74,7 +116,9 @@ public class BattleBoardView extends SceneObject
     protected var _width :int;
     protected var _height :int;
     protected var _view :Sprite;
+    protected var _darkness :SceneObject;
     protected var _unitDisplayParent :Sprite;
+    protected var _lastDayPhase :int;
 }
 
 }

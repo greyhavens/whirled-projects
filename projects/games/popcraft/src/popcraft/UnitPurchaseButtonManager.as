@@ -44,8 +44,11 @@ public class UnitPurchaseButtonManager extends SimObject
 
     override protected function update (dt :Number) :void
     {
+        var isNight :Boolean = GameContext.diurnalCycle.isNight;
+
         for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
-            (_buttons[unitType] as UnitPurchaseButton).enabled = GameContext.localPlayerData.canPurchaseUnit(unitType);
+            var button :UnitPurchaseButton = (_buttons[unitType] as UnitPurchaseButton);
+            button.enabled = isNight && GameContext.localPlayerData.canPurchaseUnit(unitType);
         }
     }
 
@@ -54,7 +57,7 @@ public class UnitPurchaseButtonManager extends SimObject
         GameContext.gameMode.purchaseUnit(unitType);
     }
 
-    protected var _buttons :Array = new Array();
+    protected var _buttons :Array = [];
 
     protected static const BUTTON_X_OFFSET :int = 2;
 }

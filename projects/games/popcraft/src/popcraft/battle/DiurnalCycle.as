@@ -7,6 +7,9 @@ import popcraft.*;
 
 public class DiurnalCycle extends SimObject
 {
+    public static const DAY :int = 0;
+    public static const NIGHT :int = 1;
+
     public function DiurnalCycle ()
     {
         _phaseOfDay = { value: DAY };
@@ -39,17 +42,13 @@ public class DiurnalCycle extends SimObject
         return _timeTillNextPhase["value"];
     }
 
-    protected function get phaseOfDay () :int
+    public function get phaseOfDay () :int
     {
         return _phaseOfDay["value"];
     }
 
     protected var _phaseOfDay :Object;
     protected var _timeTillNextPhase :Object;
-
-    protected static const DAY :int = 0;
-    protected static const NIGHT :int = 1;
-
 }
 
 }

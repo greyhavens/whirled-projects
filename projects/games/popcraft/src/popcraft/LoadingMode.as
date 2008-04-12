@@ -13,6 +13,8 @@ public class LoadingMode extends AppMode
         PopCraft.resourceManager.pendResourceLoad("image", "base",      { embeddedClass: IMAGE_BASE });
         PopCraft.resourceManager.pendResourceLoad("image", "targetBaseBadge", { embeddedClass: IMAGE_TARGETBASEBADGE });
         PopCraft.resourceManager.pendResourceLoad("image", "friendlyBaseBadge", { embeddedClass: IMAGE_FRIENDLYBASEBADGE });
+        PopCraft.resourceManager.pendResourceLoad("image", "sun", { embeddedClass: IMAGE_SUN });
+        PopCraft.resourceManager.pendResourceLoad("image", "moon", { embeddedClass: IMAGE_MOON });
         PopCraft.resourceManager.pendResourceLoad("image", "battle_bg", { embeddedClass: IMAGE_BATTLE_BG });
         PopCraft.resourceManager.pendResourceLoad("image", "battle_fg", { embeddedClass: IMAGE_BATTLE_FG });
 
@@ -50,6 +52,12 @@ public class LoadingMode extends AppMode
 
     [Embed(source="../../rsrc/smiley.png", mimeType="application/octet-stream")]
     protected static const IMAGE_FRIENDLYBASEBADGE :Class;
+
+    [Embed(source="../../rsrc/sun.png", mimeType="application/octet-stream")]
+    protected static const IMAGE_SUN :Class;
+
+    [Embed(source="../../rsrc/moon.png", mimeType="application/octet-stream")]
+    protected static const IMAGE_MOON :Class;
 
     [Embed(source="../../rsrc/city_bg.png", mimeType="application/octet-stream")]
     protected static const IMAGE_BATTLE_BG :Class;
