@@ -26,7 +26,6 @@ public class GameMode extends AppMode
         // get some information about the players in the game
         var numPlayers :int = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
         GameContext.localPlayerId = PopCraft.instance.gameControl.game.seating.getMyPosition();
-        var isAPlayer :Boolean = (GameContext.localPlayerId >= 0);
 
         // create PlayerData structures
         GameContext.playerData = [];
@@ -44,26 +43,8 @@ public class GameMode extends AppMode
         }
 
         this.setupNetwork();
-
         this.setupBattle();
-
-        // create player bases
-        var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
-        for (playerId = 0; playerId < numPlayers; ++playerId) {
-            var baseLoc :Vector2 = baseLocs[playerId];
-            var base :PlayerBaseUnit =
-                (UnitFactory.createUnit(Constants.UNIT_TYPE_BASE, playerId) as PlayerBaseUnit);
-            base.unitSpawnLoc = baseLoc;
-            base.x = baseLoc.x;
-            base.y = baseLoc.y;
-
-            playerData = GameContext.playerData[playerId];
-            playerData.base = base;
-        }
-
-        // more UI setup
-        if (isAPlayer) {
-            this.setupPlayerBaseViews();
+        if (GameContext.localUserIsPlaying) {
             this.setupPuzzle();
         }
 
@@ -141,6 +122,25 @@ public class GameMode extends AppMode
 
         GameContext.battleBoard = battleBoard;
         GameContext.battleBoardView = battleBoardView;
+
+        // create player bases
+        var numPlayers :int = GameContext.numPlayers;
+        var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
+        for (var playerId :int = 0; playerId < numPlayers; ++playerId) {
+            var baseLoc :Vector2 = baseLocs[playerId];
+            var base :PlayerBaseUnit =
+                (UnitFactory.createUnit(Constants.UNIT_TYPE_BASE, playerId) as PlayerBaseUnit);
+            base.unitSpawnLoc = baseLoc;
+            base.x = baseLoc.x;
+            base.y = baseLoc.y;
+
+            var playerData :PlayerData = GameContext.playerData[playerId];
+            playerData.base = base;
+        }
+
+        if (GameContext.localUserIsPlaying) {
+            this.setupPlayerBaseViewMouseHandlers();
+        }
     }
 
     // there has to be a better way to figure out charCodes
@@ -350,7 +350,7 @@ public class GameMode extends AppMode
         }
     }
 
-    protected function setupPlayerBaseViews () :void
+    protected function setupPlayerBaseViewMouseHandlers () :void
     {
         // add click listeners to all the enemy bases.
         // when an enemy base is clicked, that player becomes the new "target enemy" for the local player.
