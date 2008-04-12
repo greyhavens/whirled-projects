@@ -14,7 +14,7 @@ public class UnitData
 
     public var maxHealth :int;
     public var armor :UnitArmor;
-    public var weapons :Array = [];
+    public var weapon :UnitWeapon;
 
     public var collisionRadius :Number = 0;
     public var detectRadius :Number = 0;

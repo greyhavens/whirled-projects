@@ -44,7 +44,7 @@ public class SapperCreatureUnit extends CreatureUnit
 
         // prevent infinite recursion - don't explode if we're already dead
         if (!wasDead && _isDead) {
-            this.sendAttack(this.unitLoc, _unitData.weapons[0]);
+            this.sendAttack(this.unitLoc, _unitData.weapon);
         }
     }
 
@@ -83,7 +83,7 @@ class SapperAI extends AITaskTree
 
         this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
 
-        var sapperBlastRadius :Number = UnitWeapon(_unit.unitData.weapons[0]).aoeRadius;
+        var sapperBlastRadius :Number = _unit.unitData.weapon.aoeRadius;
 
         var scanSequence :AITaskSequence = new AITaskSequence(true);
         scanSequence.addSequencedTask(new AITimerTask(SCAN_FOR_ENEMIES_DELAY));

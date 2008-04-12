@@ -170,7 +170,7 @@ public class Constants
         .collisionRadius(15)
         .detectRadius(200)
         .loseInterestRadius(180)
-        .description("HEAVY: Ranged tower unit. Useful for deflecting incoming Sappers. Watch out for Grunts.")
+        .description("HEAVY: Ranged tower unit, with a limited amount of ammo. Useful for deflecting incoming Sappers. Watch out for Grunts.")
         .unitData;
 
     protected static const SAPPER_DATA :UnitData = UnitDataBuilder.create()
@@ -268,30 +268,28 @@ public class Constants
 
             report += srcUnit.name;
 
-            for (var weaponIdx :int = 0; weaponIdx < srcUnit.weapons.length; ++weaponIdx) {
-                var weapon :UnitWeapon = srcUnit.weapons[weaponIdx];
+            var weapon :UnitWeapon = srcUnit.weapon;
 
-                var rangeMin :Number = weapon.damageRange.min;
-                var rangeMax :Number = weapon.damageRange.max;
-                var damageType :uint = weapon.damageType;
+            var rangeMin :Number = weapon.damageRange.min;
+            var rangeMax :Number = weapon.damageRange.max;
+            var damageType :uint = weapon.damageType;
 
-                report += "\nWeapon " + weaponIdx + " (" + rangeMin + ", " + rangeMax + ")";
+            report += "\nWeapon damage range: (" + rangeMin + ", " + rangeMax + ")";
 
-                for each (var dstUnit :UnitData in Constants.UNIT_DATA) {
-                    var dmgMin :Number = (null != dstUnit.armor ? dstUnit.armor.getDamage(damageType, rangeMin) : Number.NEGATIVE_INFINITY);
-                    var dmgMax :Number = (null != dstUnit.armor ? dstUnit.armor.getDamage(damageType, rangeMax) : Number.NEGATIVE_INFINITY);
-                    // dot == damage over time
-                    var dotMin :Number = dmgMin / weapon.cooldown;
-                    var dotMax :Number = dmgMax / weapon.cooldown;
-                    // ttk == time-to-kill
-                    var ttkMin :Number = dstUnit.maxHealth / dotMax;
-                    var ttkMax :Number = dstUnit.maxHealth / dotMin;
-                    var ttkAvg :Number = (ttkMin + ttkMax) / 2;
+            for each (var dstUnit :UnitData in Constants.UNIT_DATA) {
+                var dmgMin :Number = (null != dstUnit.armor ? dstUnit.armor.getDamage(damageType, rangeMin) : Number.NEGATIVE_INFINITY);
+                var dmgMax :Number = (null != dstUnit.armor ? dstUnit.armor.getDamage(damageType, rangeMax) : Number.NEGATIVE_INFINITY);
+                // dot == damage over time
+                var dotMin :Number = dmgMin / weapon.cooldown;
+                var dotMax :Number = dmgMax / weapon.cooldown;
+                // ttk == time-to-kill
+                var ttkMin :Number = dstUnit.maxHealth / dotMax;
+                var ttkMax :Number = dstUnit.maxHealth / dotMin;
+                var ttkAvg :Number = (ttkMin + ttkMax) / 2;
 
-                    report += "\nvs " + dstUnit.name + ": (" + dmgMin.toFixed(2) + ", " + dmgMax.toFixed(2) + ")";
-                    report += " DOT: (" + dotMin.toFixed(2) + "/s, " + dotMax.toFixed(2) + "/s)";
-                    report += " avg time-to-kill: " + ttkAvg.toFixed(2);
-                }
+                report += "\nvs " + dstUnit.name + ": (" + dmgMin.toFixed(2) + ", " + dmgMax.toFixed(2) + ")";
+                report += " DOT: (" + dotMin.toFixed(2) + "/s, " + dotMax.toFixed(2) + "/s)";
+                report += " avg time-to-kill: " + ttkAvg.toFixed(2);
             }
 
             report += "\n\n";

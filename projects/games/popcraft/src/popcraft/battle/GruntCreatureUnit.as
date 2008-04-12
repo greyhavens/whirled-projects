@@ -25,23 +25,7 @@ public class GruntCreatureUnit extends CreatureUnit
         return _gruntAI;
     }
 
-    public function set escort (heavy :HeavyCreatureUnit) :void
-    {
-        _escortRef = heavy.ref;
-    }
-
-    public function get escort () :HeavyCreatureUnit
-    {
-        return _escortRef.object as HeavyCreatureUnit;
-    }
-
-    public function get hasEscort () :Boolean
-    {
-        return (null != this.escort);
-    }
-
     protected var _gruntAI :GruntAI;
-    protected var _escortRef :SimObjectRef = new SimObjectRef();
 }
 
 }

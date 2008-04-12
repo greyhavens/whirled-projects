@@ -26,37 +26,22 @@ public class AttackUnitTask extends AITask
             return AITaskStatus.COMPLETE;
         }
 
-        var weapon :UnitWeapon = this.findBestWeapon(unit, enemy);
+        var weapon :UnitWeapon = unit.unitData.weapon;
 
-        if (null != weapon) {
+        if (unit.canAttackWithWeapon(enemy, weapon)) {
             // attack!
             unit.sendAttack(enemy, weapon);
-
             return AITaskStatus.ACTIVE;
 
         } else if (_followUnit && (_loseInterestRange < 0 || unit.isUnitInRange(enemy, _loseInterestRange))) {
             // get closer to the enemy
-            var attackLoc :Vector2 = unit.findNearestAttackLocation(enemy, unit.unitData.weapons[0]);
+            var attackLoc :Vector2 = unit.findNearestAttackLocation(enemy, unit.unitData.weapon);
             unit.setMovementDestination(attackLoc);
 
             return AITaskStatus.ACTIVE;
         }
 
         return AITaskStatus.COMPLETE;
-    }
-
-    protected function findBestWeapon (unit :CreatureUnit, enemy :Unit) :UnitWeapon
-    {
-        // discover the best weapon we can use to attack this enemy
-        // (weapons are organized by priority, so the first weapon
-        // we find that we can use is the best)
-        for each (var weapon :UnitWeapon in unit.unitData.weapons) {
-            if (unit.canAttackWithWeapon(enemy, weapon)) {
-                return weapon;
-            }
-        }
-
-        return null;
     }
 
     override public function get name () :String

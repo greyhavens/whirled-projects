@@ -158,7 +158,7 @@ class ColossusAI extends AITaskTree
 
             // we detected an enemy - attack it
             log.info("detected enemy - attacking");
-            _unit.sendAttack(enemyUnit, _unit.unitData.weapons[0]);
+            _unit.sendAttack(enemyUnit, _unit.unitData.weapon);
 
         }
     }
