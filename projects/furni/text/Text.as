@@ -16,6 +16,7 @@ import flash.text.TextFieldAutoSize;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
+import flash.utils.ByteArray;
 import flash.utils.Timer;
 
 import fl.controls.Label;
@@ -261,22 +262,44 @@ public class Text extends Sprite
 
     protected function getMem (mem :Array) :Object
     {
-        return _ctrl.lookupMemory(mem[0], mem[1]);
+        var result :Object = _ctrl.lookupMemory(mem[0], mem[1]);
+        if (Boolean(mem[2]) && (result is ByteArray)) {
+            var ba :ByteArray = result as ByteArray;
+            ba.uncompress();
+            return ba.readUTF();
+        }
+        return result;
     }
 
     protected function setMem (mem :Array, newValue :Object) :void
     {
-        if (getMem(mem) != newValue) {
-            _ctrl.updateMemory(mem[0], (mem[1] == newValue) ? null : newValue);
+        if (getMem(mem) == newValue) {
+            return;
         }
+
+        if (mem[1] == newValue) {
+            newValue = null;
+        }
+        if (newValue is String && Boolean(mem[2])) {
+            // try compressing it
+            var strValue :String = newValue as String;
+            var ba :ByteArray = new ByteArray();
+            ba.writeUTF(strValue);
+            ba.compress();
+            // if the compressed form is shorter, let's use that instead
+            if (ba.length < strValue.length) {
+                newValue = ba;
+            }
+        }
+        _ctrl.updateMemory(mem[0], newValue);
     }
 
     protected var _ctrl :FurniControl;
 
     protected var _field :TextField;
 
-    /** Memory constants: key name and default value. */
-    protected static const TEXT :Array = [ "txt", "" ];
+    /** Memory constants: key name, default value, whether to try to compress in a ByteArray. */
+    protected static const TEXT :Array = [ "txt", "", true ];
     protected static const FONT :Array = [ "fnt", "Times New Roman" ];
     protected static const SIZE :Array = [ "siz", 16 ];
     protected static const BOLD :Array = [ "bld", false ];
