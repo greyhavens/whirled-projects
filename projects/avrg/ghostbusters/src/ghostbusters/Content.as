@@ -18,6 +18,9 @@ public class Content
     [Embed(source="../../rsrc/UI/player_died.swf", mimeType="application/octet-stream")]
     public static const PLAYER_DIED :Class;
 
+    [Embed(source="../../rsrc/UI/inventory.swf", mimeType="application/octet-stream")]
+    public static const INVENTORY :Class;
+
     // ghost clips
     [Embed(source="../../rsrc/Ghosts/Ghost_Duchess.swf", mimeType="application/octet-stream")]
     public static const GHOST_DUCHESS :Class;
@@ -30,7 +33,6 @@ public class Content
 
     [Embed(source="../../rsrc/Ghosts/Ghost_Demon.swf", mimeType="application/octet-stream")]
     public static const GHOST_DEMON :Class;
-
 
     // fonts
     [Embed(source="../../rsrc/Fonts/SunnySide.ttf", fontName="SunnySide",

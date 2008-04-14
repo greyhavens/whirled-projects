@@ -84,6 +84,12 @@ public class HUD extends Sprite
         return 700;
     }
 
+    public function chooseWeapon (weapon :int) :void
+    {
+        _lootIx = weapon;
+        updateLootState();
+    }
+
     public function getWeaponType () :int
     {
         return _lootIx;
@@ -190,11 +196,6 @@ public class HUD extends Sprite
         _inventory = MovieClip(findSafely(INVENTORY));
         _inventory.visible = false;
 
-        safelyAdd(CHOOSE_LANTERN, pickLoot);
-        safelyAdd(CHOOSE_BLASTER, pickLoot);
-        safelyAdd(CHOOSE_OUIJA, pickLoot);
-        safelyAdd(CHOOSE_POTIONS, pickLoot);
-
         _visualHud = MovieClip(findSafely(VISUAL_BOX));
 
         this.addChild(_hud);
@@ -202,30 +203,6 @@ public class HUD extends Sprite
         teamUpdated();
 
         updateGhostHealth();
-        updateLootState();
-    }
-
-    protected function pickLoot (evt :MouseEvent) :void
-    {
-        var button :SimpleButton = evt.target as SimpleButton;
-        if (button == null) {
-            Game.log.debug("Clicky is not SimpleButton: " + evt.target);
-            return;
-        }
-
-        if (button.name == CHOOSE_LANTERN) {
-            _lootIx = 0;
-        } else if (button.name == CHOOSE_BLASTER) {
-            _lootIx = 1;
-        } else if (button.name == CHOOSE_OUIJA) {
-            _lootIx = 2;
-        } else if (button.name == CHOOSE_POTIONS) {
-            _lootIx = 3;
-        } else {
-            Game.log.debug("Eeek, unknown target: " + button.name);
-            return;
-        }
-
         updateLootState();
     }
 
@@ -270,20 +247,25 @@ public class HUD extends Sprite
 
     protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
     {
-        var name :String = evt.name;
-        if (name == Codes.PROP_GHOST_CUR_HEALTH || name == Codes.PROP_GHOST_MAX_HEALTH ||
-            name == Codes.PROP_GHOST_CUR_ZEST || name == Codes.PROP_GHOST_MAX_ZEST ||
-            name == Codes.PROP_STATE) {
+        switch(evt.name) {
+          case Codes.PROP_GHOST_CUR_HEALTH:
+          case Codes.PROP_GHOST_MAX_HEALTH:
+          case Codes.PROP_GHOST_CUR_ZEST:
+          case Codes.PROP_GHOST_MAX_ZEST:
+          case Codes.PROP_STATE:
+          case Codes.PROP_GHOST_ID:
             updateGhostHealth();
-
-        } else if (name == Codes.PROP_GHOST_ID) {
-            _ghostInfo.updateGhost();
+            if (_ghostInfo != null) {
+                _ghostInfo.updateGhost();
+            }
         }
     }
 
     protected function playerPropertyChanged (memberId :int, name :String, value :Object) :void
     {
-        if (name == Codes.PROP_PLAYER_CUR_HEALTH || name == Codes.PROP_PLAYER_MAX_HEALTH) {
+        switch(name) {
+          case Codes.PROP_PLAYER_CUR_HEALTH:
+          case Codes.PROP_PLAYER_MAX_HEALTH:
             playerHealthUpdated(memberId);
         }
     }
@@ -427,11 +409,6 @@ public class HUD extends Sprite
     protected static const INVENTORY :String = "inventory1";
 
 //    protected static const WEAPON_DISPLAY :String = "WeaponDisplay";
-
-    protected static const CHOOSE_LANTERN :String = "choose_lantern";
-    protected static const CHOOSE_BLASTER :String = "choose_blaster";
-    protected static const CHOOSE_OUIJA :String = "choose_ouija";
-    protected static const CHOOSE_POTIONS :String = "choose_heal";
 
     protected static const MARGIN_LEFT :int = 22;
     protected static const BORDER_LEFT :int = 33;

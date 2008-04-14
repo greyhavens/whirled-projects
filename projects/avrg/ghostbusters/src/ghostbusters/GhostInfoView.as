@@ -35,8 +35,9 @@ public class GhostInfoView
         var chosen :String = null;
 
         var data :Object = Game.model.ghostId;
-        if (data != null) {
+        if (data != null && Game.model.state != GameModel.STATE_SEEKING) {
             chosen = data.id;
+            _name.htmlText = data.name;
             _name.text = data.name;
             _level.text = "Level: " + data.level;
             _box.visible = true;
