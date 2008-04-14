@@ -43,30 +43,10 @@ public class CardSprite extends Sprite
         _cover = new Sprite();
         _state = NORMAL;
 
-        Debug.debug("Requesting movie for " + _card);
         MultiLoader.getContents(DECK, gotDeck);
 
         function gotDeck (clip :MovieClip) :void
         {
-            var parentStr :String;
-            if (parent == null) {
-                parentStr = "null";
-            }
-            else if (parent is TrickSprite) {
-                parentStr = "trick";
-            }
-            else if (parent is LastTrickSprite) {
-                parentStr = "last trick";
-            }
-            else if (parent is HandSprite) {
-                parentStr = "hand";
-            }
-            else {
-                parentStr = "other";
-            }
-
-            Debug.debug("Got movie for " + _card + ", parent is " + parentStr);
-
             _deck = clip;
             if (card.faceDown) {
                 _deck.gotoAndStop(BACK_FRAME);
