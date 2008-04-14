@@ -77,7 +77,8 @@ public class GameMode extends AppMode
         GameContext.netObjects = new NetObjectDB();
 
         // set up the message manager
-        _messageMgr = new TickedMessageManager(PopCraft.instance.gameControl);
+        _messageMgr = new OnlineTickedMessageManager(PopCraft.instance.gameControl,
+            GameContext.isFirstPlayer, TICK_INTERVAL_MS);
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
         _messageMgr.addMessageFactory(SelectTargetEnemyMessage.messageName, SelectTargetEnemyMessage.createFactory());
 
@@ -85,7 +86,7 @@ public class GameMode extends AppMode
             _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
         }
 
-        _messageMgr.setup(GameContext.isFirstPlayer, TICK_INTERVAL_MS);
+        _messageMgr.setup();
     }
 
     protected function setupPuzzle () :void
@@ -115,10 +116,12 @@ public class GameMode extends AppMode
         GameContext.diurnalCycle = new DiurnalCycle();
         GameContext.netObjects.addObject(GameContext.diurnalCycle);
 
-        var diurnalMeter :DiurnalMeterView = new DiurnalMeterView();
-        diurnalMeter.x = Constants.DIURNAL_METER_LOC.x;
-        diurnalMeter.y = Constants.DIURNAL_METER_LOC.y;
-        this.addObject(diurnalMeter, this.modeSprite);
+        if (!Constants.DEBUG_DISABLE_DIURNAL_CYCLE) {
+            var diurnalMeter :DiurnalMeterView = new DiurnalMeterView();
+            diurnalMeter.x = Constants.DIURNAL_METER_LOC.x;
+            diurnalMeter.y = Constants.DIURNAL_METER_LOC.y;
+            this.addObject(diurnalMeter, this.modeSprite);
+        }
 
         var battleBoard :BattleBoard = new BattleBoard(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
 
@@ -192,9 +195,9 @@ public class GameMode extends AppMode
 
         // if the network simulation is updated, we'll need to depth-sort
         // the battlefield display objects
-        var sortDisplayChildren :Boolean = _messageMgr.hasUnprocessedTicks;
+        var sortDisplayChildren :Boolean = (_messageMgr.unprocessedTickCount > 0);
 
-        while (_messageMgr.hasUnprocessedTicks) {
+        while (_messageMgr.unprocessedTickCount > 0) {
 
             // process all messages from this tick
             var messageArray: Array = _messageMgr.getNextTick();

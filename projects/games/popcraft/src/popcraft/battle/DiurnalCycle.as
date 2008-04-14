@@ -44,7 +44,11 @@ public class DiurnalCycle extends SimObject
 
     public function get phaseOfDay () :int
     {
-        return _phaseOfDay["value"];
+        if (Constants.DEBUG_DISABLE_DIURNAL_CYCLE) {
+            return NIGHT;
+        } else {
+            return _phaseOfDay["value"];
+        }
     }
 
     protected var _phaseOfDay :Object;
