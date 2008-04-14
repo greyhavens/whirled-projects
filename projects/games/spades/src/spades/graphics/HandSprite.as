@@ -3,6 +3,7 @@ package spades.graphics {
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.display.DisplayObject;
+import flash.display.Sprite;
 import com.threerings.flash.Vector2;
 import spades.card.CardArray;
 import spades.card.CardArrayEvent;
@@ -25,9 +26,15 @@ public class HandSprite extends CardArraySprite
 
         _hand = hand;
 
-        addEventListener(MouseEvent.MOUSE_OVER, mouseOverListener);
-        addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveListener);
-        addEventListener(MouseEvent.MOUSE_OUT, mouseOutListener);
+        var maxWidth :int = CardSprite.WIDTH / 2 * (MAX_HAND_SIZE + 1);
+        graphics.beginFill(0x000000, 0.0);
+        graphics.drawRect(-maxWidth / 2, -CardSprite.HEIGHT / 2, 
+            maxWidth, CardSprite.HEIGHT);
+        graphics.endFill();
+
+        addEventListener(MouseEvent.MOUSE_OVER, updateFloater);
+        addEventListener(MouseEvent.MOUSE_MOVE, updateFloater);
+        addEventListener(MouseEvent.MOUSE_OUT, updateFloater);
         addEventListener(MouseEvent.CLICK, clickListener);
 
         _hand.addEventListener(HandEvent.BEGAN_TURN, handListener);
@@ -126,29 +133,13 @@ public class HandSprite extends CardArraySprite
 
     /** Slide a card vertically to indicate that clicking it will play it. 
      *  @param y the mouse position in the card's coordinates. */
-    protected function floatCard (card :CardSprite, y :int) :void
+    protected function floatCard (card :CardSprite) :void
     {
-        var offset :Number;
-
-        // prevent hysteresis by popping the card up if the mouse is in the top half of the hand
-        // and down if in the bottom half
-        if (y + card.y > CardSprite.HEIGHT / 2) {
-            offset = FLOAT_HEIGHT;
-        }
-        else {
-            offset = -FLOAT_HEIGHT;
-        }
-
         if (_floater != card) {
             unfloatCard();
-        }
 
-        if (_floater != card || _floatPos != offset) {
-
-            verticalTween(card, offset);
-
+            verticalTween(card, -FLOAT_HEIGHT);
             _floater = card;
-            _floatPos = offset;
             _floater.state = CardSprite.HIGHLIGHTED;
         }
     }
@@ -164,10 +155,8 @@ public class HandSprite extends CardArraySprite
             }
         }
         _floater = null;
-        _floatPos = -1;
     }
 
-    // TODO: animations when cards are added and removed
     override protected function cardArrayListener (event :CardArrayEvent) :void
     {
         super.cardArrayListener(event);
@@ -183,20 +172,22 @@ public class HandSprite extends CardArraySprite
         // stop mouse animation
         unfloatCard();
         
+        Tweener.removeTweens(card, ["x", "y"]);
+
         // tween to "home row", just above the hand
         card.state = CardSprite.NORMAL;
-        var tween :Object = {
+        Tweener.addTween(card, {
             x : _removedCards.length * CardSprite.WIDTH / 2,
             y : -CardSprite.HEIGHT,
             time: REMOVAL_DURATION
-        };
-        Tweener.addTween(card, tween);
+        });
 
         // Squeeze the leftover cards together
         var pos :Vector2 = new Vector2();
         _cards.forEach(function (c :CardSprite, i :int, a :Array) :void {
             // Since _cards has already been updated, just animate to the static position
             getStaticCardPosition(i, pos);
+            Tweener.removeTweens(c, ["x", "y"]);
             Tweener.addTween(c, {
                 x : pos.x,
                 y : pos.y,
@@ -243,55 +234,48 @@ public class HandSprite extends CardArraySprite
 
     protected function findCardByX (xpos :int) :CardSprite
     {
-        for (var i :int = _cards.length - 1; i >= 0; --i) {
-            var card :CardSprite = CardSprite(_cards[i]);
-            if (xpos >= card.x && xpos < card.x + CardSprite.WIDTH) {
-                return card;
-            }
+        if (_cards.length == 0) {
+            return null;
         }
-        return null;
+
+        xpos -= _cards[0].x - HALF_CARD_WIDTH;
+        var idx :int = xpos / HALF_CARD_WIDTH;
+        if (idx == _cards.length) {
+            idx = _cards.length - 1;
+        }
+        return _cards[idx] as CardSprite;
+    }
+
+    protected function findCardByLocalXY(x :int, y :int) :CardSprite
+    {
+        if (y < -CardSprite.HEIGHT / 2 - FLOAT_HEIGHT || 
+            y >= CardSprite.HEIGHT / 2) {
+            return null;
+        }
+        return findCardByX(x);
     }
 
     protected function findCard (event :MouseEvent) :CardSprite
     {
-        return exposeCard(event.target);
-
-        Debug.debug("Mouse moved over " + event.target + ", x=" + event.localX);
         if (event.target == this) {
-            return findCardByX(event.localX);
+            return findCardByLocalXY(event.localX, event.localY);
         }
         else {
             var pos :Point = new Point(event.localX, event.localY);
             pos = DisplayObject(event.target).localToGlobal(pos);
             pos = globalToLocal(pos);
-            return findCardByX(pos.x);
+            return findCardByLocalXY(pos.x, pos.y);
         }
     }
 
-    protected function mouseOverListener (event :MouseEvent) :void
+    protected function updateFloater (event :MouseEvent) :void
     {
-        // pop up the card if it is enabled
         var card :CardSprite = findCard(event);
         if (card != null && card.state != CardSprite.DISABLED && 
             !isSelected(card)) {
-            floatCard(card, event.localY);
+            floatCard(card);
         }
-    }
-
-    protected function mouseMoveListener (event :MouseEvent) :void
-    {
-        // pop up the card if it is enabled
-        var card :CardSprite = findCard(event);
-        if (card != null && card == _floater) {
-            floatCard(card, event.localY);
-        }
-    }
-
-    protected function mouseOutListener (event :MouseEvent) :void
-    {
-        // pop down the card if it is popped up
-        var card :CardSprite = findCard(event);
-        if (card != null && card == _floater) {
+        else {
             unfloatCard();
         }
     }
@@ -316,14 +300,13 @@ public class HandSprite extends CardArraySprite
                     for (var i :int = 0; i < _selected.length; ++i) {
                         selected.push(_selected[i].card);
                     }
-                    _hand.selectCards(selected);
                     _selected.splice(0, _selected.length);
+                    _hand.selectCards(selected);
                 }
             }
         }
     }
 
-    protected var _floatPos :Number;
     protected var _floater :CardSprite;
     protected var _selected :Array = new Array();
     protected var _removedCards :Array = new Array();
@@ -331,11 +314,13 @@ public class HandSprite extends CardArraySprite
     protected var _selectCount :int;
     protected var _added :Array = new Array();
 
+    protected static const MAX_HAND_SIZE :int = 15;
     protected static const SELECT_HEIGHT :Number = 40;
     protected static const FLOAT_HEIGHT :Number = 20;
     protected static const FLOAT_DURATION :Number = .2;
     protected static const REMOVAL_DURATION :Number = .75;
     protected static const SQUEEZE_DURATION :Number = .75;
+    protected static const HALF_CARD_WIDTH :int = CardSprite.WIDTH / 2;
 }
 
 }

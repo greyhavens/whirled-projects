@@ -81,27 +81,49 @@ public class TeamSprite extends Sprite
     }
 
     /** Take the array of card sprites and animate them to this team's last trick slot. The 
-     *  animation includes x,y position and scale. */
-    public function takeTrick (cards :Array) :void
+     *  animation includes x,y position and scale. 
+     *  @param cards the trick just won
+     *  @param winnerPos the global coordinates of the position of the winning player */
+    public function takeTrick (cards :Array, winnerPos :Vector2) :void
     {
+        // get the starting position in local coordinates
         var localStartPos :Vector2 = Vector2.fromPoint(
             globalToLocal(_mainTrickPos.toPoint()));
 
+        // get the winner position in local coordinates
+        winnerPos = Vector2.fromPoint(globalToLocal(winnerPos.toPoint()));
+
+        // reset the last trick before tweening
         _lastTrick.setCards(cards);
         _lastTrick.x = localStartPos.x;
         _lastTrick.y = localStartPos.y;
         _lastTrick.scaleX = 1.0;
         _lastTrick.scaleY = 1.0;
 
-        var tween :Object = {
-            x: _lastTrickPos.x,
-            y: _lastTrickPos.y,
+        // shrink on the way to the winner position
+        Tweener.addTween(_lastTrick, {
             scaleX: TRICK_SCALE,
             scaleY: TRICK_SCALE,
-            time: TRICK_DURATION
-        };
+            time: MAIN_TO_WINNER_DURATION
+        });
 
-        Tweener.addTween(_lastTrick, tween);
+        // slide to the winner position
+        Tweener.addTween(_lastTrick, {
+            x: winnerPos.x,
+            y: winnerPos.y,
+            time: MAIN_TO_WINNER_DURATION - SLIDE_DELAY,
+            delay: SLIDE_DELAY,
+            transition: "easeInOutQuad"
+        });
+
+        // slide to the team afterwards
+        Tweener.addTween(_lastTrick, {
+            x: _lastTrickPos.x,
+            y: _lastTrickPos.y,
+            time: WINNER_TO_TEAM_DURATION,
+            delay: MAIN_TO_WINNER_DURATION
+        });
+
     }
 
     /** Clear the card sprites. */
@@ -191,7 +213,9 @@ public class TeamSprite extends Sprite
     protected var _score :ScoreBar;
 
     protected static const TRICK_SCALE :Number = 0.5;
-    protected static const TRICK_DURATION :int = 1.0;
+    protected static const MAIN_TO_WINNER_DURATION :Number = 1.0;
+    protected static const WINNER_TO_TEAM_DURATION :Number = 1.0;
+    protected static const SLIDE_DELAY :Number = .25;
 
     protected static const WIDTH :int = 180;
     protected static const HEIGHT :int = 80;

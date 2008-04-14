@@ -156,7 +156,11 @@ public class TableSprite extends Sprite
         if (event.type == TrickEvent.COMPLETED) {
             var trick :Trick = event.target as Trick;
             var teamIdx :int = table.getTeamFromId(event.player).index;
-            TeamSprite(_teams[teamIdx]).takeTrick(_trick.orphanCards());
+            var playerPos :Vector2 = Vector2.fromPoint(getPlayer(
+                table.getRelativeFromId(event.player)).localToGlobal(
+                new Point(0, 0)));
+            TeamSprite(_teams[teamIdx]).takeTrick(
+                _trick.orphanCards(), playerPos);
             TeamSprite(_teams[(teamIdx + 1) % 2]).clearLastTrick();
 
             var seat :int = table.getAbsoluteFromId(event.player);

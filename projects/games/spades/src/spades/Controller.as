@@ -53,8 +53,8 @@ public class Controller
 
         var targetScore :int = 300;
 
-        if ("playto" in config) {
-            targetScore = parseInt(config["playto"] as String);
+        if ("playTo" in config) {
+            targetScore = parseInt(config.playTo as String);
         }
 
         var table :Table = new Table(
@@ -69,7 +69,17 @@ public class Controller
         var scores :Scores = new SpadesScores(table, bids, targetScore);
         var timer :TurnTimer = new TurnTimer(gameCtrl, table, bids);
 
-        //timer.disable();
+        if ("timer" in config && !config.timer) {
+            timer.disable();
+        }
+
+        if ("playTime" in config) {
+            timer.playTime = parseInt(config.playTime);
+        }
+
+        if ("bidTime" in config) {
+            timer.bidTime = parseInt(config.bidTime);
+        }
 
         _model = new Model(gameCtrl, table, hand, trick, bids, scores, timer);
 

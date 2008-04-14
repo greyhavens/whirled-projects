@@ -48,7 +48,7 @@ public class MainTrickSprite extends TrickSprite
     // from CardArraySprite
     override protected function animateAddition (card :CardSprite) :void
     {
-        var idx :int = _cards.length - 1;
+        var idx :int = _cards.indexOf(card);
         var seat :int = _seating.getSeatAlong(
             _seating.getRelativeFromId(_trick.leader), idx);
 
