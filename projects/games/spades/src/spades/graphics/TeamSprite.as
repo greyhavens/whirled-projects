@@ -213,9 +213,9 @@ public class TeamSprite extends Sprite
     protected var _score :ScoreBar;
 
     protected static const TRICK_SCALE :Number = 0.5;
-    protected static const MAIN_TO_WINNER_DURATION :Number = 1.0;
+    protected static const MAIN_TO_WINNER_DURATION :Number = 5.0;
     protected static const WINNER_TO_TEAM_DURATION :Number = 1.0;
-    protected static const SLIDE_DELAY :Number = .25;
+    protected static const SLIDE_DELAY :Number = 1.5;
 
     protected static const WIDTH :int = 180;
     protected static const HEIGHT :int = 80;
