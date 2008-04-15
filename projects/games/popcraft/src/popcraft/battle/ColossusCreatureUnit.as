@@ -72,13 +72,9 @@ public class ColossusCreatureUnit extends CreatureUnit
         ar.expirationTime = this.dbTime + SPEED_LOSS_EXPIRATION_TIME;
 
         _attackers.sort(AttackRecord.compare);
-    }
 
-    override public function get movementSpeed () :Number
-    {
-        var baseSpeed :Number = super.movementSpeed;
-        var speedLoss :Number = SPEED_LOSS_PER_ATTACK * _attackers.length;
-        return Math.max(baseSpeed - speedLoss, 0);
+        // calculate speed modification
+        this.speedModifier = Math.max(MIN_SPEED_MOD, _attackers.length * SPEED_MOD_PER_ATTACK);
     }
 
     protected function get dbTime () :Number
@@ -91,7 +87,8 @@ public class ColossusCreatureUnit extends CreatureUnit
     protected var _colossusHealth :Object;
 
     protected static const DEATH_TIMER_LENGTH :Number = 40;
-    protected static const SPEED_LOSS_PER_ATTACK :Number = 5;
+    protected static const SPEED_MOD_PER_ATTACK :Number = -0.2;
+    protected static const MIN_SPEED_MOD :Number = 0.2;
     protected static const SPEED_LOSS_EXPIRATION_TIME :Number = 2;
 }
 

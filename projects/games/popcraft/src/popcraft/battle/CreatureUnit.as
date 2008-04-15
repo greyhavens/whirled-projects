@@ -76,7 +76,7 @@ public class CreatureUnit extends Unit
 
     public function get movementSpeed () :Number
     {
-        return this.unitData.baseMoveSpeed;
+        return this.unitData.baseMoveSpeed * _speedModifier;
     }
 
     protected function handleMove (dt :Number) :void

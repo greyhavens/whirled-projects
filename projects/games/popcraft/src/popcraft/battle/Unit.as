@@ -143,7 +143,7 @@ public class Unit extends SimObject
 
         // install a cooldown timer
         if (weapon.cooldown > 0) {
-            this.addNamedTask(ATTACK_COOLDOWN_TASK_NAME, new TimedTask(weapon.cooldown));
+            this.addNamedTask(ATTACK_COOLDOWN_TASK_NAME, new UnitAttackCooldownTask(weapon.cooldown));
         }
 
         return true;
@@ -265,12 +265,23 @@ public class Unit extends SimObject
         return _isDead;
     }
 
+    public function get speedModifier () :Number
+    {
+        return _speedModifier;
+    }
+
+    public function set speedModifier (val :Number) :void
+    {
+        _speedModifier = val;
+    }
+
     protected var _owningPlayerData :PlayerData;
     protected var _unitType :uint;
     protected var _unitData :UnitData;
     protected var _health :Number;
     protected var _isDead :Boolean;
     protected var _currentAttackTarget :SimObjectRef;
+    protected var _speedModifier :Number = 1;
 
     protected var _loc :Vector2 = new Vector2();
 
@@ -279,4 +290,40 @@ public class Unit extends SimObject
     protected static const ATTACK_COOLDOWN_TASK_NAME :String = "attackCooldown";
 }
 
+}
+
+import com.whirled.contrib.simplegame.*;
+import popcraft.battle.Unit;
+
+// Completes when the weapon cooldown time has elapsed, taking into
+// account the unit's speedModifier
+class UnitAttackCooldownTask implements ObjectTask
+{
+    public function UnitAttackCooldownTask (cooldownTime :Number)
+    {
+        _cooldownTime = cooldownTime;
+        _timeRemaining = cooldownTime;
+    }
+
+    public function update (dt :Number, obj :SimObject) :Boolean
+    {
+        var unit :Unit = (obj as Unit);
+        dt = Math.max(dt * unit.speedModifier, 0);
+        _timeRemaining -= dt;
+
+        return (_timeRemaining <= 0);
+    }
+
+    public function clone () :ObjectTask
+    {
+        return new UnitAttackCooldownTask(_cooldownTime);
+    }
+
+    public function receiveMessage (msg :ObjectMessage) :Boolean
+    {
+        return false;
+    }
+
+    protected var _cooldownTime :Number;
+    protected var _timeRemaining :Number;
 }
