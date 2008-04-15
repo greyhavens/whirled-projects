@@ -86,12 +86,12 @@ class SapperAI extends AITaskTree
         var sapperBlastRadius :Number = _unit.unitData.weapon.aoeRadius;
 
         var scanSequence :AITaskSequence = new AITaskSequence(true);
-        scanSequence.addSequencedTask(new AITimerTask(SCAN_FOR_ENEMIES_DELAY));
         scanSequence.addSequencedTask(new DetectCreatureGroupAction(
             SCAN_FOR_ENEMIES_TASK_NAME,
             SCAN_FOR_ENEMY_GROUP_SIZE,
             DetectCreatureGroupAction.isDetectableEnemyCreaturePred,
             DetectCreatureGroupAction.createIsGroupedEnemyPred(sapperBlastRadius - 15))); // this number is sort of fudged
+        scanSequence.addSequencedTask(new AITimerTask(SCAN_FOR_ENEMIES_DELAY));
 
         this.addSubtask(scanSequence);
     }

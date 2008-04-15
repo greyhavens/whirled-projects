@@ -60,13 +60,12 @@ class GruntAI extends AITaskTree
         this.clearSubtasks();
 
         this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
-        //this.addSubtask(new DetectAttacksOnUnitTask(_unit));
 
-        // scan for Heavies and Grunts once/second
+        // scan for non-sappers once/second
         var detectPredicate :Function = DetectCreatureAction.createNotEnemyOfTypesPredicate([Constants.UNIT_TYPE_SAPPER]);
         var scanSequence :AITaskSequence = new AITaskSequence(true);
-        scanSequence.addSequencedTask(new AITimerTask(1));
         scanSequence.addSequencedTask(new DetectCreatureAction(detectPredicate));
+        scanSequence.addSequencedTask(new AITimerTask(1));
         this.addSubtask(scanSequence);
     }
 
