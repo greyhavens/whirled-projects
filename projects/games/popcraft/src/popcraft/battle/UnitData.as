@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.util.*;
 public class UnitData
 {
     public var name :String = "";
+    public var displayName :String = "";
     public var description :String = "";
     public var resourceCosts :Array = [];
     public var trainingTime :Number = 0;

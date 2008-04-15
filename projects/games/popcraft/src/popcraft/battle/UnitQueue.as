@@ -31,7 +31,7 @@ public class UnitQueue extends SimObject
         Assert.isTrue(_queuedUnits.length > 0);
 
         var nextUnit :uint = _queuedUnits[0];
-        var unitData :UnitData = Constants.UNIT_DATA[unitType];
+        var unitData :UnitData = Constants.UNIT_DATA[nextUnit];
         var queueTime :Number = unitData.trainingTime;
 
         if (queueTime > 0) {
