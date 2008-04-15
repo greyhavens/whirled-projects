@@ -113,19 +113,7 @@ public class GameMode extends AppMode
 
     protected function setupBattle () :void
     {
-        GameContext.diurnalCycle = new DiurnalCycle();
-        GameContext.netObjects.addObject(GameContext.diurnalCycle);
-
-        if (!Constants.DEBUG_DISABLE_DIURNAL_CYCLE) {
-            var diurnalMeter :DiurnalMeterView = new DiurnalMeterView();
-            diurnalMeter.x = Constants.DIURNAL_METER_LOC.x;
-            diurnalMeter.y = Constants.DIURNAL_METER_LOC.y;
-            this.addObject(diurnalMeter, this.modeSprite);
-        }
-
-        GameContext.unitQueue = new UnitQueue();
-        GameContext.netObjects.addObject(GameContext.unitQueue);
-
+        // Board
         var battleBoard :BattleBoard = new BattleBoard(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
 
         var battleBoardView :BattleBoardView = new BattleBoardView(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
@@ -155,6 +143,26 @@ public class GameMode extends AppMode
         if (GameContext.localUserIsPlaying) {
             this.setupPlayerBaseViewMouseHandlers();
         }
+
+        // Day/night cycle
+        GameContext.diurnalCycle = new DiurnalCycle();
+        GameContext.netObjects.addObject(GameContext.diurnalCycle);
+
+        if (!Constants.DEBUG_DISABLE_DIURNAL_CYCLE) {
+            var diurnalMeter :DiurnalMeterView = new DiurnalMeterView();
+            diurnalMeter.x = Constants.DIURNAL_METER_LOC.x;
+            diurnalMeter.y = Constants.DIURNAL_METER_LOC.y;
+            this.addObject(diurnalMeter, this.modeSprite);
+        }
+
+        // Unit queue
+        GameContext.unitQueue = new UnitQueue();
+        GameContext.netObjects.addObject(GameContext.unitQueue);
+        var unitQueueView :UnitQueueView = new UnitQueueView();
+        unitQueueView.x = Constants.UNIT_QUEUE_LOC.x;
+        unitQueueView.y = Constants.UNIT_QUEUE_LOC.y;
+        this.addObject(unitQueueView, this.modeSprite);
+
     }
 
     // there has to be a better way to figure out charCodes
