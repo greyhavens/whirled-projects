@@ -265,14 +265,14 @@ public class Unit extends SimObject
         return _isDead;
     }
 
-    public function get speedModifier () :Number
+    public function get speedScale () :Number
     {
-        return _speedModifier;
+        return _speedScale;
     }
 
-    public function set speedModifier (val :Number) :void
+    public function set speedScale (val :Number) :void
     {
-        _speedModifier = val;
+        _speedScale = val;
     }
 
     protected var _owningPlayerData :PlayerData;
@@ -281,7 +281,7 @@ public class Unit extends SimObject
     protected var _health :Number;
     protected var _isDead :Boolean;
     protected var _currentAttackTarget :SimObjectRef;
-    protected var _speedModifier :Number = 1;
+    protected var _speedScale :Number = 1;
 
     protected var _loc :Vector2 = new Vector2();
 
@@ -296,7 +296,7 @@ import com.whirled.contrib.simplegame.*;
 import popcraft.battle.Unit;
 
 // Completes when the weapon cooldown time has elapsed, taking into
-// account the unit's speedModifier
+// account the unit's speedScale
 class UnitAttackCooldownTask implements ObjectTask
 {
     public function UnitAttackCooldownTask (cooldownTime :Number)
@@ -308,7 +308,7 @@ class UnitAttackCooldownTask implements ObjectTask
     public function update (dt :Number, obj :SimObject) :Boolean
     {
         var unit :Unit = (obj as Unit);
-        dt = Math.max(dt * unit.speedModifier, 0);
+        dt = Math.max(dt * unit.speedScale, 0);
         _timeRemaining -= dt;
 
         return (_timeRemaining <= 0);

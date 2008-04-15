@@ -76,7 +76,7 @@ public class CreatureUnit extends Unit
 
     public function get movementSpeed () :Number
     {
-        return this.unitData.baseMoveSpeed * _speedModifier;
+        return this.unitData.baseMoveSpeed * _speedScale;
     }
 
     protected function handleMove (dt :Number) :void
@@ -150,10 +150,10 @@ public class CreatureUnit extends Unit
         // their health are refunded to their owner
         if (GameContext.diurnalCycle.isDay) {
             if (this.owningPlayerId == GameContext.localPlayerId) {
-                var percentLifeRemaining :Number = this.health / _unitData.maxHealth;
+                var refundScale :Number = this.refundScale;
                 var playerData :LocalPlayerData = GameContext.localPlayerData;
                 for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
-                    var refundAmount :Number = Math.ceil(percentLifeRemaining * _unitData.getResourceCost(resType));
+                    var refundAmount :Number = Math.ceil(refundScale * _unitData.getResourceCost(resType));
                     playerData.offsetResourceAmount(resType, refundAmount);
                 }
             }
@@ -202,6 +202,11 @@ public class CreatureUnit extends Unit
     public function get lastUpdateTimestamp () :Number
     {
         return _lastUpdateTimestamp;
+    }
+
+    public function get refundScale () :Number
+    {
+        return _health / _unitData.maxHealth;
     }
 
     protected var _destination :Vector2;

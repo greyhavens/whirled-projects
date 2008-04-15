@@ -74,7 +74,7 @@ public class ColossusCreatureUnit extends CreatureUnit
         _attackers.sort(AttackRecord.compare);
 
         // calculate speed modification
-        this.speedModifier = Math.max(MIN_SPEED_MOD, _attackers.length * SPEED_MOD_PER_ATTACK);
+        this.speedScale = Math.max(MIN_SPEED_MOD, _attackers.length * SPEED_MOD_PER_ATTACK);
     }
 
     protected function get dbTime () :Number

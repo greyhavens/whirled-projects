@@ -33,10 +33,15 @@ public class HeavyCreatureUnit extends CreatureUnit
         return success;
     }
 
+    override public function get refundScale () :Number
+    {
+        return ((_health / _unitData.maxHealth) * 0.5) + ((_curAmmo / AMMO_COUNT) * 0.5);
+    }
+
     protected var _ai :HeavyAI;
     protected var _curAmmo :int = AMMO_COUNT;
 
-    protected static const AMMO_COUNT :int = 100;
+    protected static const AMMO_COUNT :int = 40;
 }
 
 }
