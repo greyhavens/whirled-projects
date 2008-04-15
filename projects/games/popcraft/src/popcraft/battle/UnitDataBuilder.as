@@ -7,6 +7,7 @@ public class UnitDataBuilder
     public function name (val :String) :UnitDataBuilder { _unitData.name = val; return this; }
     public function description (val :String) :UnitDataBuilder { _unitData.description = val; return this; }
     public function resourceCosts (val :Array) :UnitDataBuilder { _unitData.resourceCosts = val; return this; }
+    public function trainingTime (val :Number) :UnitDataBuilder { _unitData.trainingTime = val; return this; }
     public function baseMoveSpeed (val :Number) :UnitDataBuilder { _unitData.baseMoveSpeed = val; return this; }
     public function maxHealth (val :int) :UnitDataBuilder { _unitData.maxHealth = val; return this; }
     public function armor (val :UnitArmor) :UnitDataBuilder { _unitData.armor = val; return this; }

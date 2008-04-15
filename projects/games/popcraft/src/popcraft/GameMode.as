@@ -123,6 +123,9 @@ public class GameMode extends AppMode
             this.addObject(diurnalMeter, this.modeSprite);
         }
 
+        GameContext.unitQueue = new UnitQueue();
+        GameContext.netObjects.addObject(GameContext.unitQueue);
+
         var battleBoard :BattleBoard = new BattleBoard(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
 
         var battleBoardView :BattleBoardView = new BattleBoardView(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);

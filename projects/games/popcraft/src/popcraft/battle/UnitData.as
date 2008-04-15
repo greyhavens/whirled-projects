@@ -8,6 +8,7 @@ public class UnitData
     public var name :String = "";
     public var description :String = "";
     public var resourceCosts :Array = [];
+    public var trainingTime :Number = 0;
 
     // movement variables
     public var baseMoveSpeed :Number = 0;

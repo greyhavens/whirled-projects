@@ -16,7 +16,7 @@ public class Constants
 
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
-    public static const DEBUG_ALLOW_CHEATS :Boolean = true;
+    public static const DEBUG_ALLOW_CHEATS :Boolean = false;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
@@ -148,8 +148,9 @@ public class Constants
         .weapon;
 
     protected static const GRUNT_DATA :UnitData = UnitDataBuilder.create()
-        .name("grunt")
+        .name("Madame")
         .resourceCosts([40, 0, 15, 0])
+        .trainingTime(2)
         .baseMoveSpeed(35)
         .maxHealth(100)
         .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.7, DAMAGE_TYPE_PIERCING, 0.3, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 0.8] ))
@@ -157,26 +158,27 @@ public class Constants
         .collisionRadius(15)
         .detectRadius(60)
         .loseInterestRadius(180)
-        .description("GRUNT: Melee unit. Strong against the Heavy. Susceptible to attacks from the Sapper.")
+        .description("MADAME: Melee unit. Strong against the Heavy. Susceptible to attacks from the Dog-boy.")
         .unitData;
 
     protected static const HEAVY_DATA :UnitData = UnitDataBuilder.create()
-        .name("heavy")
+        .name("Heavy")
         .resourceCosts([0, 30, 0, 15])
+        .trainingTime(2)
         .baseMoveSpeed(50)
         .maxHealth(100)
         .armor(new UnitArmor([DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 1]))
-        //.weapons([HEAVY_MELEE_WEAPON, HEAVY_RANGED_WEAPON])
         .weapon(HEAVY_RANGED_WEAPON)
         .collisionRadius(15)
         .detectRadius(200)
         .loseInterestRadius(180)
-        .description("HEAVY: Ranged tower unit, with a limited amount of ammo. Useful for deflecting incoming Sappers. Watch out for Grunts.")
+        .description("HEAVY: Ranged tower unit, with a limited amount of ammo. Useful for deflecting incoming Dog-boys. Watch out for Madames.")
         .unitData;
 
     protected static const SAPPER_DATA :UnitData = UnitDataBuilder.create()
-        .name("sapper")
+        .name("Dog-boy")
         .resourceCosts([0, 0, 15, 15])
+        .trainingTime(3)
         .baseMoveSpeed(35)
         .maxHealth(70)
         .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 1] ))
@@ -184,18 +186,19 @@ public class Constants
         .collisionRadius(15)
         .detectRadius(200)
         .loseInterestRadius(180)
-        .description("SAPPER: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Heavies!")
+        .description("DOG-BOY: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Heavies!")
         .unitData;
 
     protected static const COLOSSUS_DATA :UnitData = UnitDataBuilder.create()
-        .name("colossus")
+        .name("Flesh Colossus")
         .resourceCosts([200, 200, 0, 0])
+        .trainingTime(10)
         .baseMoveSpeed(25)
         .maxHealth(100)  // actually invincible
         .weapon(COLOSSUS_WEAPON)
         .collisionRadius(30)
         .detectRadius(COLOSSUS_WEAPON.maxAttackDistance) // only detect enemies in our attack range
-        .description("COLOSSUS: A massive pile of discarded flesh. The Colossus' powerful attack is dangerous to everybody, but it will fall apart after a short time on the battlefield.")
+        .description("FLESH COLOSSUS: A massive pile of discarded flesh. The Colossus' powerful attack is dangerous to everybody, but it will fall apart after a short time on the battlefield.")
         .unitData;
 
     protected static const BASE_DATA :UnitData = UnitDataBuilder.create()
