@@ -5,8 +5,10 @@ import com.whirled.contrib.simplegame.objects.SceneObject;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 
 import popcraft.*;
+import popcraft.battle.*;
 
 public class UnitQueueView extends SceneObject
 {
@@ -17,6 +19,7 @@ public class UnitQueueView extends SceneObject
 
         for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
             var urd :UnitReservesDisplay = new UnitReservesDisplay(unitType);
+            urd.addEventListener(MouseEvent.MOUSE_DOWN, this.createSendUnitFunction(unitType));
             urd.x = xOffset;
             urd.y = yOffset;
             xOffset += 35;
@@ -25,9 +28,30 @@ public class UnitQueueView extends SceneObject
             _unitReserveDisplays.push(urd);
         }
 
+        _topSprite.addChild(_queueDisplay);
+
         var g :Graphics = _topSprite.graphics;
         g.beginFill(0xBBBBBB);
-        g.drawRect(0, 0, _topSprite.width + 4, _topSprite.height + 4);
+        g.drawRect(0, 0, _topSprite.width + 4, _topSprite.height + 34);
+    }
+
+    protected function createSendUnitFunction (unitType :uint) :Function
+    {
+        return function (...ignored) :void {
+            if (GameContext.unitQueue.hasReadyUnits(unitType)) {
+                GameContext.gameMode.sendUnit(unitType);
+            }
+        }
+    }
+
+    override protected function addedToDB () :void
+    {
+        GameContext.unitQueue.addEventListener(UnitQueue.QUEUE_UPDATED, handleQueueUpdated);
+    }
+
+    override protected function removedFromDB () :void
+    {
+        GameContext.unitQueue.removeEventListener(UnitQueue.QUEUE_UPDATED, handleQueueUpdated);
     }
 
     override public function get displayObject () :DisplayObject
@@ -35,13 +59,45 @@ public class UnitQueueView extends SceneObject
         return _topSprite;
     }
 
+    protected function handleQueueUpdated (...ignored) :void
+    {
+        this.updateDisplay();
+    }
+
     protected function updateDisplay () :void
     {
+        var queue :UnitQueue = GameContext.unitQueue;
 
+        // update ready unit counts
+        for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
+            var urd :UnitReservesDisplay = _unitReserveDisplays[unitType];
+            urd.numReserves = queue.getNumReadyUnits(unitType);
+        }
+
+        // rebuild the queue display
+        _topSprite.removeChild(_queueDisplay);
+        _queueDisplay = new Sprite();
+
+        var xOffset :Number = 15;
+        var yOffset :Number = 30;
+        var queuedUnitList :Array = queue.queuedUnits;
+        for each (unitType in queuedUnitList) {
+            var icon :UnitQueueIcon = new UnitQueueIcon(unitType, true);
+            icon.alpha = 0.5;
+            icon.x = xOffset;
+            icon.y = yOffset;
+            _queueDisplay.addChild(icon);
+
+            xOffset += 32;
+        }
+
+        _queueDisplay.y = 40;
+        _topSprite.addChild(_queueDisplay);
     }
 
     protected var _topSprite :Sprite = new Sprite();
     protected var _unitReserveDisplays :Array = [];
+    protected var _queueDisplay :Sprite = new Sprite();
 }
 
 }
@@ -61,7 +117,7 @@ import flash.text.TextFieldAutoSize;
 
 class UnitQueueIcon extends Sprite
 {
-    public function UnitQueueIcon (unitType :uint)
+    public function UnitQueueIcon (unitType :uint, grayscale :Boolean = false)
     {
         var data :UnitData = Constants.UNIT_DATA[unitType];
         var playerColor :uint = Constants.PLAYER_COLORS[GameContext.localPlayerId];
@@ -92,6 +148,8 @@ class UnitQueueIcon extends Sprite
         }
 
         this.addChild(_icon);
+
+        this.grayscale = grayscale;
     }
 
     public function set grayscale (val :Boolean) :void
@@ -140,7 +198,7 @@ class UnitReservesDisplay extends Sprite
 
     public function set numReserves (val :uint) :void
     {
-        _textField.text = "x" + val.toString();
+        _textField.text = val.toString();
         _icon.grayscale = (val == 0);
         _icon.alpha = (val == 0 ? 0.5 : 1);
     }

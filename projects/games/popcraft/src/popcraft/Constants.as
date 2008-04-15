@@ -14,6 +14,7 @@ public class Constants
 {
     public static const SCREEN_DIMS :Vector2 = new Vector2(700, 500);
 
+    /* Debug options */
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
     public static const DEBUG_ALLOW_CHEATS :Boolean = true;
@@ -21,6 +22,17 @@ public class Constants
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
     public static const DEBUG_DISABLE_DIURNAL_CYCLE :Boolean = true;
+
+    /* Screen layout */
+    public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
+
+    public static const RESOURCE_DISPLAY_LOC :Point = new Point(350, 380);
+    public static const PUZZLE_BOARD_LOC :Point = new Point(10, 378);
+    public static const RESOURCE_POPUP_LOC :Point = new Point(275, 425);
+    public static const DIURNAL_METER_LOC :Point = new Point(530, 425);
+    public static const UNIT_QUEUE_LOC :Point = new Point(530, 400);
+
+    public static const FIRST_UNIT_BUTTON_LOC :Point = new Point(350, 400);
 
     public static const PLAYER_COLORS :Array = [
        uint(0xFFFF0000),
@@ -215,17 +227,6 @@ public class Constants
 
     // non-creature units must come after creature units
     public static const UNIT_DATA :Array = [ GRUNT_DATA, HEAVY_DATA, SAPPER_DATA, COLOSSUS_DATA, BASE_DATA ];
-
-    /* Screen layout */
-    public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
-
-    public static const RESOURCE_DISPLAY_LOC :Point = new Point(350, 380);
-    public static const PUZZLE_BOARD_LOC :Point = new Point(10, 378);
-    public static const RESOURCE_POPUP_LOC :Point = new Point(275, 425);
-    public static const DIURNAL_METER_LOC :Point = new Point(530, 425);
-    public static const UNIT_QUEUE_LOC :Point = new Point(0, 0);
-
-    public static const FIRST_UNIT_BUTTON_LOC :Point = new Point(350, 400);
 
     public static function getPlayerBaseLocations (numPlayers :uint) :Array // of Vector2s
     {
