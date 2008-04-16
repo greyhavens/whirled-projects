@@ -17,11 +17,6 @@ public class ColossusCreatureUnit extends CreatureUnit
         super(Constants.UNIT_TYPE_COLOSSUS, owningPlayerId);
 
         _ai = new ColossusAI(this, this.findEnemyBaseToAttack());
-
-        // the Colossus is immune to enemy attacks, but has only
-        // a limited time in the world
-        _colossusHealth = { value: _unitData.maxHealth };
-        this.addTask(new AnimateValueTask(_colossusHealth, 0, DEATH_TIMER_LENGTH));
     }
 
     override protected function get aiRoot () :AITask
@@ -32,24 +27,31 @@ public class ColossusCreatureUnit extends CreatureUnit
     override protected function update (dt :Number) :void
     {
         // expire old movement penalties
+        var attackerExpired :Boolean;
         var timeNow :Number = this.dbTime;
         while (_attackers.length > 0) {
             var oldestRecord :AttackRecord = _attackers[_attackers.length - 1];
-            if (timeNow > oldestRecord.expirationTime) {
+            if (timeNow >= oldestRecord.expirationTime) {
+                attackerExpired = true;
                 _attackers.pop();
             } else {
                 break;
             }
         }
 
-        // update health
-        this.health = Math.max(_colossusHealth["value"], 0);
+        if (attackerExpired) {
+            this.updateSpeedScale();
+        }
 
         super.update(dt);
     }
 
     override public function receiveAttack (attack :UnitAttack) :void
     {
+        super.receiveAttack(attack);
+
+        var numAttackers :int = _attackers.length;
+
         // Every time the colossus gets hit, he is slowed a bit, and a timer
         // is started that will remove the movement penalty after a set time
         // (unless he is hit again by the same attacker)
@@ -66,6 +68,7 @@ public class ColossusCreatureUnit extends CreatureUnit
         } else {
             ar = new AttackRecord();
             ar.attacker = attacker;
+            ar.expirationTime = this.dbTime + SPEED_LOSS_EXPIRATION_TIME;
             _attackers.push(ar);
         }
 
@@ -73,8 +76,15 @@ public class ColossusCreatureUnit extends CreatureUnit
 
         _attackers.sort(AttackRecord.compare);
 
+        if (numAttackers != _attackers.length) {
+            this.updateSpeedScale();
+        }
+    }
+
+    protected function updateSpeedScale () :void
+    {
         // calculate speed modification
-        this.speedScale = Math.max(MIN_SPEED_MOD, _attackers.length * SPEED_MOD_PER_ATTACK);
+        this.speedScale = Math.max(MIN_SPEED_MOD, 1.0 - (_attackers.length * SPEED_LOSS_PER_DAMAGE));
     }
 
     protected function get dbTime () :Number
@@ -84,12 +94,10 @@ public class ColossusCreatureUnit extends CreatureUnit
 
     protected var _ai :ColossusAI;
     protected var _attackers :Array = [];
-    protected var _colossusHealth :Object;
 
-    protected static const DEATH_TIMER_LENGTH :Number = 40;
-    protected static const SPEED_MOD_PER_ATTACK :Number = -0.2;
+    protected static const SPEED_LOSS_PER_DAMAGE :Number = 0.2;
     protected static const MIN_SPEED_MOD :Number = 0.2;
-    protected static const SPEED_LOSS_EXPIRATION_TIME :Number = 2;
+    protected static const SPEED_LOSS_EXPIRATION_TIME :Number = 1.5;
 }
 
 }

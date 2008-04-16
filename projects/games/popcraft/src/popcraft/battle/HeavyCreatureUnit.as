@@ -21,27 +21,7 @@ public class HeavyCreatureUnit extends CreatureUnit
         return _ai;
     }
 
-    override public function sendAttack (targetUnitOrLocation :*, weapon :UnitWeapon) :Boolean
-    {
-        var success :Boolean = super.sendAttack(targetUnitOrLocation, weapon);
-
-        // the Heavy dies after expending all his ammo
-        if (success && --_curAmmo <= 0) {
-            this.die();
-        }
-
-        return success;
-    }
-
-    override public function get refundScale () :Number
-    {
-        return ((_health / _unitData.maxHealth) * 0.5) + ((_curAmmo / AMMO_COUNT) * 0.5);
-    }
-
     protected var _ai :HeavyAI;
-    protected var _curAmmo :int = AMMO_COUNT;
-
-    protected static const AMMO_COUNT :int = 40;
 }
 
 }
