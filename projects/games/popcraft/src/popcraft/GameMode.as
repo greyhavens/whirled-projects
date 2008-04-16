@@ -166,7 +166,7 @@ public class GameMode extends AppMode
         case KEY_4:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 for (var i :uint = 0; i < Constants.RESOURCE__LIMIT; ++i) {
-                    GameContext.localPlayerData.offsetResourceAmount(i, 100);
+                    GameContext.localPlayerData.offsetResourceAmount(i, 500);
                 }
             }
             break;

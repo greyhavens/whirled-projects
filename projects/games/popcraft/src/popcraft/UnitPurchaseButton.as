@@ -1,58 +1,87 @@
 package popcraft {
 
-import com.threerings.flash.DisablingButton;
 import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
+import flash.display.DisplayObject;
 import flash.display.MovieClip;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
+import flash.events.MouseEvent;
 
 import popcraft.battle.*;
 import popcraft.battle.view.*;
 
-public class UnitPurchaseButton extends DisablingButton
+public class UnitPurchaseButton extends Sprite
 {
+    public static const HEIGHT :uint = 48;
+    public static const WIDTH :uint = 40;
+
     public function UnitPurchaseButton (unitType :uint)
     {
-        var data :UnitData = Constants.UNIT_DATA[unitType];
+        _button = new SimpleButton();
+
+        var unitData :UnitData = Constants.UNIT_DATA[unitType];
         var playerColor :uint = Constants.PLAYER_COLORS[GameContext.localPlayerId];
 
         // try instantiating some animations
         // @TODO - why aren't the up animations playing?
-        var upAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(data, playerColor, "walk_SW");
+        var upAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "walk_SW");
         if (null == upAnim) {
-            upAnim = UnitAnimationFactory.instantiateUnitAnimation(data, playerColor, "stand_SW");
+            upAnim = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "stand_SW");
         }
-        var overAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(data, playerColor, "attack_SW");
-        var downAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(data, playerColor, "attack_SW");
-        var disabledAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(data, playerColor, "stand_SW");
+        var overAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "attack_SW");
+        var downAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "attack_SW");
+        var disabledAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "stand_SW");
 
         if (null != upAnim && null != overAnim && null != downAnim && null != disabledAnim) {
             disabledAnim.gotoAndStop(1);
-            this.upState = makeAnimatedButonFace(upAnim, COLOR_OUTLINE, COLOR_BG_UP);
-            this.overState = makeAnimatedButonFace(overAnim, COLOR_OUTLINE, COLOR_BG_OVER, 1.0, data.description);
-            this.downState = makeAnimatedButonFace(downAnim, COLOR_OUTLINE, COLOR_BG_DOWN, 1.0, data.description);
-            this.disabledState = makeAnimatedButonFace(disabledAnim, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
+            _button.upState = makeAnimatedButonFace(upAnim, COLOR_OUTLINE, COLOR_BG_UP);
+            _button.overState = makeAnimatedButonFace(overAnim, COLOR_OUTLINE, COLOR_BG_OVER, 1.0);
+            _button.downState = makeAnimatedButonFace(downAnim, COLOR_OUTLINE, COLOR_BG_DOWN, 1.0);
+            _disabledState = makeAnimatedButonFace(disabledAnim, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
 
         } else {
-            var bitmapData :BitmapData = (PopCraft.resourceManager.getResource(data.name + "_icon") as ImageResourceLoader).bitmapData;
-            this.upState         = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP);
-            this.overState       = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_OVER, 1.0, data.description);
-            this.downState       = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DOWN, 1.0, data.description);
-            this.disabledState   = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
+            var bitmapData :BitmapData = (PopCraft.resourceManager.getResource(unitData.name + "_icon") as ImageResourceLoader).bitmapData;
+            _button.upState         = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP);
+            _button.overState       = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_OVER, 1.0);
+            _button.downState       = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DOWN, 1.0);
+            _disabledState   = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
         }
 
-        this.hitTestState = upState;
+        _button.hitTestState = _disabledState;
 
-        downState.x = -1;
-        downState.y = -1;
+        // create the unit's description popup
+        var tf :TextField = new TextField();
+        tf.background = true;
+        tf.backgroundColor = 0xFFFFFF;
+        tf.border = true;
+        tf.borderColor = 0;
+        tf.autoSize = TextFieldAutoSize.LEFT;
+        tf.wordWrap = true;
+        tf.selectable = false;
+        tf.width = 200;
+        tf.text = unitData.description;
+        tf.visible = false;
+        tf.y = -tf.height;
+
+        _descriptionPopup = tf;
+
+        this.addChild(_button);
+        this.addChild(_disabledState);
+        this.addChild(_descriptionPopup);
+
+        this.enabled = true;
+
+        this.addEventListener(MouseEvent.ROLL_OVER, handleMouseOver);
+        this.addEventListener(MouseEvent.ROLL_OUT, handleMouseOut);
     }
 
-    protected static function makeAnimatedButonFace (anim :MovieClip, fgColor :uint, bgColor :uint, animAlpha :Number = 1.0, descriptionText :String  = null ) :Sprite
+    protected static function makeAnimatedButonFace (anim :MovieClip, fgColor :uint, bgColor :uint, animAlpha :Number = 1.0) :Sprite
     {
         var face :Sprite = new Sprite();
 
@@ -74,29 +103,11 @@ public class UnitPurchaseButton extends DisablingButton
         face.graphics.drawRect(0, 0, WIDTH, HEIGHT);
         face.graphics.endFill();
 
-        // create a text field with the description of the unit, to
-        // display above the button
-        if (null != descriptionText) {
-            var tf :TextField = new TextField();
-            tf.background = true;
-            tf.backgroundColor = 0xFFFFFF;
-            tf.border = true;
-            tf.borderColor = 0;
-            tf.autoSize = TextFieldAutoSize.LEFT;
-            tf.wordWrap = true;
-            tf.selectable = false;
-            tf.width = 200;
-            tf.text = descriptionText;
-            tf.y = - tf.height - 2;
-
-            face.addChild(tf);
-        }
-
         return face;
     }
 
     // @TODO - remove this function
-    protected static function makeIconButtonFace (bitmapData :BitmapData, fgColor :uint, bgColor :uint, iconAlpha :Number = 1.0, descriptionText :String = null) :Sprite
+    protected static function makeIconButtonFace (bitmapData :BitmapData, fgColor :uint, bgColor :uint, iconAlpha :Number = 1.0) :Sprite
     {
         var face :Sprite = new Sprite();
 
@@ -120,29 +131,40 @@ public class UnitPurchaseButton extends DisablingButton
         icon.x = 0;
         icon.y = 0;
 
-        // create a text field with the description of the unit, to
-        // display above the button
-        if (null != descriptionText) {
-            var tf :TextField = new TextField();
-            tf.background = true;
-            tf.backgroundColor = 0xFFFFFF;
-            tf.border = true;
-            tf.borderColor = 0;
-            tf.autoSize = TextFieldAutoSize.LEFT;
-            tf.wordWrap = true;
-            tf.selectable = false;
-            tf.width = 200;
-            tf.text = descriptionText;
-            tf.y = - tf.height;
-
-            face.addChild(tf);
-        }
-
         return face;
     }
 
-    protected static const HEIGHT :uint = 48;
-    protected static const WIDTH :uint = 40;
+    protected function handleMouseOver (...ignored) :void
+    {
+        if (null != _descriptionPopup) {
+            _descriptionPopup.visible = true;
+        }
+    }
+
+    protected function handleMouseOut (...ignored) :void
+    {
+        if (null != _descriptionPopup) {
+            _descriptionPopup.visible = false;
+        }
+    }
+
+    public function get enabled () :Boolean
+    {
+        return _enabled;
+    }
+
+    public function set enabled (val :Boolean) :void
+    {
+        _enabled = val;
+        _button.visible = enabled;
+        _disabledState.visible = !enabled;
+    }
+
+    protected var _button :SimpleButton;
+    protected var _disabledState :Sprite;
+    protected var _descriptionPopup :DisplayObject;
+
+    protected var _enabled :Boolean;
 
     protected static const COLOR_OUTLINE :uint = 0x000000;
     protected static const COLOR_BG_UP :uint = 0xFFD800;

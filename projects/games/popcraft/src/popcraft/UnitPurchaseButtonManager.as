@@ -5,6 +5,8 @@ import com.whirled.contrib.simplegame.SimObject;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
+import popcraft.battle.UnitData;
+
 public class UnitPurchaseButtonManager extends SimObject
 {
     public function UnitPurchaseButtonManager ()
@@ -13,8 +15,8 @@ public class UnitPurchaseButtonManager extends SimObject
 
         for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
 
+            // create the button
             var button :UnitPurchaseButton = new UnitPurchaseButton(unitType);
-
             button.addEventListener(MouseEvent.CLICK, createButtonListener(unitType));
 
             button.x = loc.x;
@@ -26,10 +28,10 @@ public class UnitPurchaseButtonManager extends SimObject
 
             var meter :UnitPurchaseMeter = new UnitPurchaseMeter(unitType);
             meter.displayObject.x = button.x;
-            meter.displayObject.y = button.y + button.height + 2;
+            meter.displayObject.y = button.y + UnitPurchaseButton.HEIGHT + 2;
             GameContext.gameMode.addObject(meter, GameContext.gameMode.modeSprite);
 
-            loc.x += button.width + BUTTON_X_OFFSET;
+            loc.x += UnitPurchaseButton.WIDTH + BUTTON_X_OFFSET;
         }
     }
 
