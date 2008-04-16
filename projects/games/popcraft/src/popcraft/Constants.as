@@ -21,7 +21,7 @@ public class Constants
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
-    public static const DEBUG_DISABLE_DIURNAL_CYCLE :Boolean = true;
+    public static const DEBUG_DISABLE_DIURNAL_CYCLE :Boolean = false;
 
     /* Screen layout */
     public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
@@ -162,7 +162,7 @@ public class Constants
     protected static const GRUNT_DATA :UnitData = UnitDataBuilder.create()
         .name("grunt")
         .displayName("Madame")
-        .description("MADAME: Melee unit. Strong against the Heavy. Susceptible to attacks from the Dog-boy.")
+        .description("MADAME: Melee unit. Strong against the Handy Man. Susceptible to attacks from the Dog-boy.")
         .resourceCosts([40, 0, 15, 0])
         .trainingTime(2)
         .baseMoveSpeed(35)
@@ -176,8 +176,8 @@ public class Constants
 
     protected static const HEAVY_DATA :UnitData = UnitDataBuilder.create()
         .name("heavy")
-        .displayName("Heavy")
-        .description("HEAVY: Ranged tower unit, with a limited amount of ammo. Useful for deflecting incoming Dog-boys. Watch out for Madames.")
+        .displayName("Handy Man")
+        .description("HANDY MAN: Ranged tower unit, with a limited amount of ammo. Useful for deflecting incoming Dog-boys. Watch out for Madames.")
         .resourceCosts([0, 30, 0, 15])
         .trainingTime(2)
         .baseMoveSpeed(50)
@@ -192,7 +192,7 @@ public class Constants
     protected static const SAPPER_DATA :UnitData = UnitDataBuilder.create()
         .name("sapper")
         .displayName("Dog-boy")
-        .description("DOG-BOY: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Heavies!")
+        .description("DOG-BOY: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Handy Men!")
         .resourceCosts([0, 0, 15, 15])
         .trainingTime(3)
         .baseMoveSpeed(35)
@@ -208,10 +208,11 @@ public class Constants
         .name("colossus")
         .displayName("Flesh Colossus")
         .description("FLESH COLOSSUS: A massive pile of discarded flesh. The Colossus' powerful attack is dangerous to everybody, but it will fall apart after a short time on the battlefield.")
-        .resourceCosts([200, 200, 0, 0])
+        .resourceCosts([250, 250, 0, 0])
         .trainingTime(10)
         .baseMoveSpeed(25)
         .maxHealth(100)  // actually invincible
+        .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.1, DAMAGE_TYPE_PIERCING, 0.1, DAMAGE_TYPE_EXPLOSION, 0.1] ))
         .weapon(COLOSSUS_WEAPON)
         .collisionRadius(30)
         .detectRadius(COLOSSUS_WEAPON.maxAttackDistance) // only detect enemies in our attack range

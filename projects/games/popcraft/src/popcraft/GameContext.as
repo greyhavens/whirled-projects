@@ -11,7 +11,6 @@ public class GameContext
     public static var battleBoard :BattleBoard;
     public static var battleBoardView :BattleBoardView;
     public static var diurnalCycle :DiurnalCycle;
-    public static var unitQueue :UnitQueue;
 
     public static var playerData :Array;
     public static var localPlayerId :int;

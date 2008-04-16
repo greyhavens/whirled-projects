@@ -155,14 +155,6 @@ public class GameMode extends AppMode
             this.addObject(diurnalMeter, this.modeSprite);
         }
 
-        // Unit queue
-        GameContext.unitQueue = new UnitQueue();
-        GameContext.netObjects.addObject(GameContext.unitQueue);
-        var unitQueueView :UnitQueueView = new UnitQueueView();
-        unitQueueView.x = Constants.UNIT_QUEUE_LOC.x;
-        unitQueueView.y = Constants.UNIT_QUEUE_LOC.y;
-        this.addObject(unitQueueView, this.modeSprite);
-
     }
 
     // there has to be a better way to figure out charCodes
@@ -441,7 +433,7 @@ public class GameMode extends AppMode
 
     public function buildUnit (unitType :uint) :void
     {
-        if (!GameContext.localPlayerData.canPurchaseUnit(unitType)) {
+        if (GameContext.diurnalCycle.isDay || !GameContext.localPlayerData.canPurchaseUnit(unitType)) {
             return;
         }
 
@@ -451,15 +443,6 @@ public class GameMode extends AppMode
         for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
             GameContext.localPlayerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
         }
-
-        // add to the build queue
-        GameContext.unitQueue.queueUnit(unitType);
-    }
-
-    public function sendUnit (unitType :uint) :void
-    {
-        // remove from the build queue
-        GameContext.unitQueue.removeReadyUnit(unitType);
 
         // send a message!
         _messageMgr.sendMessage(new CreateUnitMessage(unitType, GameContext.localPlayerId));
