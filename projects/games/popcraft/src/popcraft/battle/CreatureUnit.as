@@ -150,11 +150,13 @@ public class CreatureUnit extends Unit
         // their health are refunded to their owner
         if (GameContext.diurnalCycle.isDay) {
             if (this.owningPlayerId == GameContext.localPlayerId) {
-                var refundScale :Number = this.refundScale;
-                var playerData :LocalPlayerData = GameContext.localPlayerData;
-                for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
-                    var refundAmount :Number = Math.ceil(refundScale * _unitData.getResourceCost(resType));
-                    playerData.offsetResourceAmount(resType, refundAmount);
+                var refundScale :Number = this.refundScale * Constants.UNIT_REFUND_SCALE;
+                if (refundScale > 0) {
+                    var playerData :LocalPlayerData = GameContext.localPlayerData;
+                    for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
+                        var refundAmount :Number = Math.ceil(refundScale * _unitData.getResourceCost(resType));
+                        playerData.offsetResourceAmount(resType, refundAmount);
+                    }
                 }
             }
 
