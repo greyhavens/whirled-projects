@@ -9,6 +9,7 @@ import spades.Debug;
 import spades.graphics.TableSprite;
 import com.whirled.game.GameControl;
 import com.threerings.util.Log;
+import spades.sound.SoundPlayer;
 
 /** Main entry point for the spades game. This is required to be a Sprite by flash. It constructs 
  *  a spades controller and then adds a new TableSprite create from the controller's model. */
@@ -35,7 +36,12 @@ public class Spades extends Sprite
             Debug.debug = ignore;
         }
 
+        var soundSeat :int = ("soundSeat" in config) ? config.soundSeat : -1;
+
         var spadesCtrl :Controller = new Controller(_gameCtrl);
+        if (soundSeat == -1 || soundSeat == _gameCtrl.game.seating.getMyPosition()) {
+            new SoundPlayer(spadesCtrl.model);
+        }
         var table :TableSprite = new TableSprite(spadesCtrl.model);
         addChild(table);
     }
