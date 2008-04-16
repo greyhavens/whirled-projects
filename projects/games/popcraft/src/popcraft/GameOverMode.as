@@ -1,8 +1,10 @@
 package popcraft {
 
 import com.whirled.contrib.simplegame.AppMode;
+
 import flash.display.Shape;
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
 public class GameOverMode extends AppMode
 {
@@ -24,15 +26,20 @@ public class GameOverMode extends AppMode
         if (_winningPlayer < 0) {
             gameOverText = "No winner!";
         } else {
-            gameOverText = "Player " + _winningPlayer + " is the winner!";
+            var playerNames :Array = PopCraft.instance.gameControl.game.seating.getPlayerNames();
+            var winnerName :String = playerNames[_winningPlayer];
+            gameOverText = winnerName + " is the winner!";
         }
 
         var text :TextField = new TextField();
         text.textColor = 0;
+        text.autoSize = TextFieldAutoSize.LEFT;
+        text.selectable = false;
         text.defaultTextFormat.size = 24;
         text.text = gameOverText;
-        text.width = text.textWidth + 3;
-        text.height = text.textHeight + 3;
+
+        text.scaleX = 5;
+        text.scaleY = 5;
 
         text.x = (Constants.SCREEN_DIMS.x / 2) - (text.width / 2);
         text.y = (Constants.SCREEN_DIMS.y / 2) - (text.height / 2);
