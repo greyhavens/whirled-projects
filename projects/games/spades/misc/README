@@ -1,0 +1,11 @@
+Miscellaneous things for spades development
+
+Things to use when uploading Spades.swf to whirled.com
+* screenshot.png
+* thumbnail.png
+* whirled.customparameters.xml
+
+Things that were once useful for debugging and may be useful again
+* check_missing_cards.py
+* check_missing_cards2.py
+
