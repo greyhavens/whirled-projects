@@ -29,8 +29,9 @@ import flash.ui.Keyboard;
 
 import flash.utils.ByteArray;
 import flash.utils.Timer;
-import flash.utils.getTimer;
+import flash.utils.getTimer; // function import
 
+import com.threerings.flash.FrameSprite;
 import com.threerings.flash.Siner;
 
 import com.whirled.AvatarControl;
@@ -40,28 +41,34 @@ import com.whirled.ControlEvent;
 // - allow a point to be selected as a temporary mouthspot, to "throw" your voice onto
 //   another avatar
 [SWF(width="600", height="450")]
-public class Fairy extends Sprite
+public class Fairy extends FrameSprite
 {
     /** States. */
     public static const DEFAULT_STATE :String = "Default";
     public static const SWIRL_STATE :String = "Swirl";
-    public static const MOTION_STATE :String = "Mouse Motion"; // DOES NOT WORK
+    public static const MOTION_STATE :String = "Mouse Sparkle";
 
-    /** Actions. */
-    public static const SKYWRITE_ACTION :String = "Skywrite";
+    public static const SEND_INTERVAL :int = 400; // 400 ms
 
-    /** Messages. */
-    public static const SKYWRITE_MSG :String = "Skywrite";
+//    /** Actions. */
+//    public static const SKYWRITE_ACTION :String = "Skywrite";
+//
+//    /** Messages. */
+//    public static const SKYWRITE_MSG :String = "Skywrite";
 
     public function Fairy ()
     {
+        super(true);
+
         _ctrl = new AvatarControl(this);
+        _ctrl.addEventListener(Event.UNLOAD, handleUnload);
         _ctrl.setPreferredY(200); // pixels, love
         _platform = new Platform(_ctrl);
 
         _fairy = new Sprite();
         var g :Graphics = _fairy.graphics;
         g.beginFill(0xFFFFFF);
+        //g.beginFill(0xFF0000);
         g.drawCircle(0, 0, 5);
         g.endFill();
         _fairy.filters = [ new GlowFilter(0xFFFECC)];
@@ -71,62 +78,78 @@ public class Fairy extends Sprite
         _platform.setPosition(300, 225, 50);
         addChild(_platform);
 
-        addEventListener(Event.ADDED_TO_STAGE, handleAdded);
-        addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
-
         if (_ctrl.isConnected()) {
-            _ctrl.addEventListener(ControlEvent.GOT_CONTROL, handleGotControl);
             _ctrl.addEventListener(ControlEvent.STATE_CHANGED, handleStateChanged);
-            _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, handleActionTriggered);
             _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessageReceived);
-
-            if (_ctrl.hasControl()) {
-                handleGotControl();
-
-            } else {
-                _ctrl.requestControl();
-            }
+            _ctrl.requestControl();
 
             _ctrl.registerStates(DEFAULT_STATE, SWIRL_STATE, MOTION_STATE);
-            _ctrl.registerActions(SKYWRITE_ACTION);
         }
 
         // always check our current state
         handleStateChanged();
     }
 
-    protected function handleAdded (... ignored) :void
+    protected function handleUnload (... ignored) :void
     {
-        _onStage = true;
-        // check our state
-        handleStateChanged();
-        recheckEnterFrame();
+        // nothing right now
     }
 
-    protected function handleRemoved (... ignored) :void
+    override protected function handleFrame (... ignored) :void
     {
-        _onStage = false;
-        shutdownMotionTimer();
-        recheckEnterFrame();
+        var now :Number = getTimer();
+
+        if ((_state == MOTION_STATE) && _ctrl.hasControl()) {
+            _sendingData.push(now, mouseX - 300, mouseY - 225);
+
+            if (now >= _nextSend) {
+                _ctrl.sendMessage(MOTION_MSG, _sendingData);
+                _sendingData = [];
+                _nextSend = now + SEND_INTERVAL;
+            }
+        }
+
+        // if there's motion data to play out... (Even if we're no longer in that state...)
+        if (_motionData.length > 0) {
+            if (_motionStart) {
+                _motionStart = false;
+                // on the first time, calculate our difference
+                var startStamp :Number = _motionData[0] as Number;
+                // the difference between now and stamp is our offset
+                _motionOffset = startStamp - now - SEND_INTERVAL;
+            }
+
+            var stamp :Number = now + _motionOffset;
+            while (_motionData.length > 0 && Number(_motionData[0]) < stamp) {
+                var data :Array = _motionData.splice(0, 3);
+                // drop a sparkle at the location
+                moveAndSparkle(Number(data[1]), Number(data[2]));
+            }
+        }
+
+        if (_state == SWIRL_STATE) {
+            var extent :Number = Math.abs(_center.value);
+            moveAndSparkle(_swirlX.value * extent, _swirlY.value * extent);
+        }
     }
 
-    protected function handleGotControl (... ignored) :void
+    protected function moveAndSparkle (xx :Number, yy :Number) :void
     {
-        handleStateChanged();
+        _fairy.x = xx;
+        _fairy.y = yy;
+        _platform.addChildAt(new Sparkle(xx, yy), 0);
     }
 
     protected function handleMessageReceived (event :ControlEvent) :void
     {
         switch (event.name) {
-        case MOTION_STATE:
-            var p :Array = event.value as Array;
-            _fairy.x = Number(p[0]);
-            _fairy.y = Number(p[1]);
+        case MOTION_MSG:
+            _motionData.push.apply(null, event.value);
             break;
 
-        case SKYWRITE_MSG:
-            doSkywrite(event.value as String);
-            break;
+//        case SKYWRITE_MSG:
+//            doSkywrite(event.value as String);
+//            break;
         }
     }
 
@@ -135,167 +158,107 @@ public class Fairy extends Sprite
         _state = _ctrl.getState();
 
         switch (_state) {
-        default:
-            _platform.graphics.clear();
-            removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMotion);
-            shutdownMotionTimer();
-            // send one last update?
-            handleMotionTimer();
-            break;
-
         case SWIRL_STATE:
             _swirlX.reset();
             _swirlY.reset();
             break;
 
         case MOTION_STATE:
-            trace("Switching to motion...");
+            _motionStart = true;
+            _motionData = [];
             if (_ctrl.hasControl()) {
-                _platform.graphics.beginFill(0xFFFFFF, 0);
-                _platform.graphics.drawRect(-600, -450, 1200, 900);
-                _platform.graphics.endFill();
-
-                trace("HAS got control!");
-                _platform.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMotion);
-                if (_motionTimer == null) {
-                    _motionTimer = new Timer(100);
-                    _motionTimer.addEventListener(TimerEvent.TIMER, handleMotionTimer);
-                    _motionTimer.start();
-                }
+                _sendingData = [];
+                _nextSend = getTimer() + SEND_INTERVAL;
             }
             break;
         }
-
-        recheckEnterFrame();
     }
 
-    protected function recheckEnterFrame () :void
-    {
-        if (_onStage && (_state == SWIRL_STATE || _state == MOTION_STATE)) {
-            addEventListener(Event.ENTER_FRAME, handleFrame);
-        } else {
-            removeEventListener(Event.ENTER_FRAME, handleFrame);
-        }
-    }
-
-    protected function handleActionTriggered (event :ControlEvent) :void
-    {
-        switch (event.name) {
-        case SKYWRITE_ACTION:
-            if (_ctrl.hasControl()) {
-                showInputField();
-            }
-        }
-    }
-
-    protected function handleFrame (... ignored) :void
-    {
-        if (_state == SWIRL_STATE) {
-            var extent :Number = Math.abs(_center.value);
-            _fairy.x = _swirlX.value * extent;
-            _fairy.y = _swirlY.value * extent;
-        }
-        if (_state == SWIRL_STATE || _state == MOTION_STATE) {
-            _platform.addChildAt(new Sparkle(_fairy.x, _fairy.y), 0);
-        }
-    }
-
-    protected function shutdownMotionTimer () :void
-    {
-        if (_motionTimer != null) {
-            _motionTimer.stop();
-            _motionTimer = null;
-        }
-    }
-
-    protected function handleMouseMotion (event :MouseEvent) :void
-    {
-        _motionPoint = _platform.globalToLocal(new Point(event.stageX, event.stageY));
-    }
-
-    protected function handleMotionTimer (... ignored) :void
-    {
-        if (_motionPoint != null) {
-            _ctrl.sendMessage(MOTION_STATE, [_motionPoint.x, _motionPoint.y]);
-            _motionPoint = null;
-        }
-    }
-
-    protected function showInputField (... ignored) :void
-    {
-        if (_input == null) {
-            _input = new TextField();
-            _input.background = true;
-            _input.width = 600;
-            _input.height = 20;
-            _input.type = TextFieldType.INPUT;
-            _input.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
-            addChild(_input);
-        }
-
-        this.stage.focus = _input;
-    }
-
-    protected function handleKeyDown (event :KeyboardEvent) :void
-    {
-        if (event.keyCode != Keyboard.ENTER) {
-            return;
-        }
-
-        var txt :String = _input.text;
-        if (txt != "") {
-            _ctrl.sendMessage(SKYWRITE_MSG, txt);
-            _input.text = "";
-            this.stage.focus = _input;
-
-        } else {
-            removeChild(_input);
-            _input = null;
-        }
-    }
-
-    protected function doSkywrite (msg :String) :void
-    {
-        trace("Doing skywrite: " + msg);
-
-        _formatter = new TextField();
-        _formatter.width = 600;
-        _formatter.height = 450;
-        _formatter.autoSize = TextFieldAutoSize.CENTER;
-        _formatter.multiline = true;
-
-        var fmt :TextFormat = new TextFormat();
-        fmt.align = TextFormatAlign.CENTER;
-        fmt.font = "Arial";
-        var size :int = 48;
-        fmt.size = size;
-        _formatter.defaultTextFormat = fmt;
-        _formatter.text = msg;
-
-        var lastHeight :Number;
-        do {
-            lastHeight = _formatter.textHeight;
-            size += 12;
-            fmt.size = size;
-            _formatter.defaultTextFormat = fmt;
-            _formatter.text = msg;
-            if (_formatter.textWidth > 600) {
-                break;
-            }
-            //trace("Trying " + size + ", " + _formatter.textWidth + ", " + _formatter.textHeight);
-        } while (_formatter.textHeight < 450 && _formatter.textHeight != lastHeight);
-
-        // then, back up one
-        size -= 12;
-        fmt.size = size;
-        _formatter.defaultTextFormat = fmt;
-        _formatter.text = msg;
-
-        addChild(_formatter);
-        trace("Added with " + _formatter.textWidth + ", " + _formatter.textHeight);
-
-        _skyMsgs.push(msg);
-    }
+//    protected function handleActionTriggered (event :ControlEvent) :void
+//    {
+//        switch (event.name) {
+//        case SKYWRITE_ACTION:
+//            if (_ctrl.hasControl()) {
+//                showInputField();
+//            }
+//        }
+//    }
+//
+//    protected function showInputField (... ignored) :void
+//    {
+//        if (_input == null) {
+//            _input = new TextField();
+//            _input.background = true;
+//            _input.width = 600;
+//            _input.height = 20;
+//            _input.type = TextFieldType.INPUT;
+//            _input.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+//            addChild(_input);
+//        }
+//
+//        this.stage.focus = _input;
+//    }
+//
+//    protected function handleKeyDown (event :KeyboardEvent) :void
+//    {
+//        if (event.keyCode != Keyboard.ENTER) {
+//            return;
+//        }
+//
+//        var txt :String = _input.text;
+//        if (txt != "") {
+//            _ctrl.sendMessage(SKYWRITE_MSG, txt);
+//            _input.text = "";
+//            this.stage.focus = _input;
+//
+//        } else {
+//            removeChild(_input);
+//            _input = null;
+//        }
+//    }
+//
+//    protected function doSkywrite (msg :String) :void
+//    {
+//        trace("Doing skywrite: " + msg);
+//
+//        _formatter = new TextField();
+//        _formatter.width = 600;
+//        _formatter.height = 450;
+//        _formatter.autoSize = TextFieldAutoSize.CENTER;
+//        _formatter.multiline = true;
+//
+//        var fmt :TextFormat = new TextFormat();
+//        fmt.align = TextFormatAlign.CENTER;
+//        fmt.font = "Arial";
+//        var size :int = 48;
+//        fmt.size = size;
+//        _formatter.defaultTextFormat = fmt;
+//        _formatter.text = msg;
+//
+//        var lastHeight :Number;
+//        do {
+//            lastHeight = _formatter.textHeight;
+//            size += 12;
+//            fmt.size = size;
+//            _formatter.defaultTextFormat = fmt;
+//            _formatter.text = msg;
+//            if (_formatter.textWidth > 600) {
+//                break;
+//            }
+//            //trace("Trying " + size + ", " + _formatter.textWidth + ", " + _formatter.textHeight);
+//        } while (_formatter.textHeight < 450 && _formatter.textHeight != lastHeight);
+//
+//        // then, back up one
+//        size -= 12;
+//        fmt.size = size;
+//        _formatter.defaultTextFormat = fmt;
+//        _formatter.text = msg;
+//
+//        addChild(_formatter);
+//        trace("Added with " + _formatter.textWidth + ", " + _formatter.textHeight);
+//
+//        _skyMsgs.push(msg);
+//    }
 
     protected var _fairy :Sprite;
 
@@ -310,22 +273,31 @@ public class Fairy extends Sprite
     /** Our state, cached. */
     protected var _state :String;
 
-    protected var _motionPoint :Point;
+    protected var _nextSend :Number;
 
-    protected var _motionTimer :Timer;
+    protected var _sendingData :Array = [];
 
-    protected var _input :TextField;
+    /** Set to true when we first transition to the mouse motion state. */
+    protected var _motionStart :Boolean = false;
 
-    protected var _skyMsgs :Array = [];
+    protected var _motionData :Array = [];
 
-    protected var _formatter :TextField;
+    protected var _motionOffset :Number;
 
+//    protected var _input :TextField;
+//
+//    protected var _skyMsgs :Array = [];
+//
+//    protected var _formatter :TextField;
+//
 
     protected var _swirlX :Siner = new Siner(275, 4);
 
     protected var _swirlY :Siner = new Siner(200, 3.9);
 
     protected var _center :Siner = new Siner(.5, 10, .5, 5);
+
+    protected static const MOTION_MSG :String = "mot";
 }
 }
 
