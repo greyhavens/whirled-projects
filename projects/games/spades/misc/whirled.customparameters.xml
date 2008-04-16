@@ -1,0 +1,1 @@
+<choice ident="playTo" name="Winning Score" choices="200,300,400,500" start="200"/>
