@@ -5,13 +5,13 @@ import com.whirled.contrib.simplegame.net.*;
 public class SelectTargetEnemyMessage
     implements Message
 {
-    public var selectingPlayer :uint;
-    public var targetPlayer :uint;
+    public var playerId :uint;
+    public var targetPlayerId :uint;
 
-    public function SelectTargetEnemyMessage (selectingPlayer :uint, targetPlayer :uint)
+    public function SelectTargetEnemyMessage (playerId :uint, targetPlayerId :uint)
     {
-        this.selectingPlayer = selectingPlayer;
-        this.targetPlayer = targetPlayer;
+        this.playerId = playerId;
+        this.targetPlayerId = targetPlayerId;
     }
 
     public function get name () :String
@@ -21,7 +21,7 @@ public class SelectTargetEnemyMessage
 
     public function toString () :String
     {
-        return "[SelectTargetEnemy. selectingPlayer: " + selectingPlayer + ". targetPlayer: " + targetPlayer + "]";
+        return "[SelectTargetEnemy. playerId: " + playerId + ". targetPlayerId: " + targetPlayerId + "]";
     }
 
     public static function createFactory () :MessageFactory
@@ -51,8 +51,8 @@ class SelectTargetEnemyMessageFactory
         var msg :SelectTargetEnemyMessage = (message as SelectTargetEnemyMessage);
 
         var ba :ByteArray = new ByteArray();
-        ba.writeByte(msg.selectingPlayer);
-        ba.writeByte(msg.targetPlayer);
+        ba.writeByte(msg.playerId);
+        ba.writeByte(msg.targetPlayerId);
 
         return ba;
     }
