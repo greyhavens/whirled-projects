@@ -30,7 +30,6 @@ public class Table
         _playerIds = playerIds;
         _localSeat = localSeat;
         _teams = teams;
-
         teams.forEach(checkTeam);
         playerIds.forEach(checkPlayerTeam);
 
@@ -207,6 +206,30 @@ public class Table
     public function getTeam (index :int) :Team
     {
         return _teams[index];
+    }
+
+    /** Get an array of player ids that are on a given team. */
+    public function getIdsOnTeam (team :Team) :Array
+    {
+        var players :Array = new Array();
+        for (var i :int = 0; i < numPlayers; ++i) {
+            if (getTeamFromAbsolute(i) == team) {
+                players.push(getIdFromAbsolute(i));
+            }
+        }
+        return players;
+    }
+
+    /** Get an array of player ids that are not on a given team. */
+    public function getIdsNotOnTeam (team :Team) :Array
+    {
+        var players :Array = new Array();
+        for (var i :int = 0; i < numPlayers; ++i) {
+            if (getTeamFromAbsolute(i) != team) {
+                players.push(getIdFromAbsolute(i));
+            }
+        }
+        return players;
     }
 
     /** Access the number of players at the table. */

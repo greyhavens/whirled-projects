@@ -3,6 +3,7 @@ package spades {
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.StateChangedEvent;
+import com.whirled.game.OccupantChangedEvent;
 
 import spades.card.Card;
 import spades.card.CardArray;
@@ -31,7 +32,7 @@ import spades.card.TurnTimerEvent;
 public class Controller
 {
     /** Create a new controller. Constructs Model and connects all listeners. */
-    public function Controller (gameCtrl :GameControl)
+    public function Controller (gameCtrl :GameControl, createViews :Function)
     {
         _templateDeck = CardArray.FULL_DECK;
 
@@ -44,74 +45,41 @@ public class Controller
             _templateDeck = _templateDeck.shortFilter(isHighCard);
         }
 
-        var sorter :Sorter = new Sorter(
-            Card.RANK_ORDER_ACES_HIGH, [
-                Card.SUIT_SPADES,
-                Card.SUIT_HEARTS,
-                Card.SUIT_CLUBS,
-                Card.SUIT_DIAMONDS]);
-
-        var targetScore :int = 300;
-
-        if ("playTo" in config) {
-            targetScore = parseInt(config.playTo as String);
-        }
-
-        var table :Table = new Table(
-            gameCtrl.game.seating.getPlayerNames(),
-            gameCtrl.game.seating.getPlayerIds(), 
-            gameCtrl.game.seating.getMyPosition(),
-            [new Team(0, [0, 2]), new Team(1, [1, 3])]);
-        var hand :Hand = new Hand(gameCtrl, sorter);
-        var trick :Trick = new Trick(gameCtrl, trumps);
-        var bids :SpadesBids = new SpadesBids(gameCtrl, 
-            CardArray.FULL_DECK.length / table.numPlayers);
-        var scores :Scores = new SpadesScores(table, bids, targetScore);
-        var timer :TurnTimer = new TurnTimer(gameCtrl, table, bids);
-
-        if ("timer" in config && !config.timer) {
-            timer.disable();
-        }
-
-        if ("playTime" in config) {
-            timer.playTime = parseInt(config.playTime);
-        }
-
-        if ("bidTime" in config) {
-            timer.bidTime = parseInt(config.bidTime);
-        }
-
-        _model = new Model(gameCtrl, table, hand, trick, bids, scores, timer);
-
+        // Listen for game start and round start events, on the first one that occurs,
+        // construct the model and views and call the appropriate listener method. This
+        // is necessary because 1) whirled starts the round before the game, but there
+        // is a load of stuff that spades needs to do specifically to restart a round
+        // and 2) the model needs all the players to be at the table before construction
         gameCtrl.game.addEventListener(
             StateChangedEvent.GAME_STARTED, 
-            handleGameStarted);
-        gameCtrl.game.addEventListener(
-            StateChangedEvent.GAME_ENDED, 
-            handleGameEnded);
+            startGame);
         gameCtrl.game.addEventListener(
             StateChangedEvent.ROUND_STARTED, 
-            handleRoundStarted);
-        gameCtrl.game.addEventListener(
-            StateChangedEvent.ROUND_ENDED, 
-            handleRoundEnded);
-        gameCtrl.game.addEventListener(
-            StateChangedEvent.TURN_CHANGED, 
-            handleTurnChanged);
+            startRound);
 
-        trick.addEventListener(TrickEvent.CARD_PLAYED, trickListener);
-        trick.addEventListener(TrickEvent.COMPLETED, trickListener);
+        function bootstrap (fn :Function, evt :StateChangedEvent) :void {
+            if (_model == null) {
+                attachToModel(createModel(gameCtrl));
+                createViews(_model);
+                fn(evt);
+            }
+        }
 
-        bids.addEventListener(BidEvent.PLACED, bidListener);
-        bids.addEventListener(BidEvent.COMPLETED, bidListener);
-        bids.addEventListener(BidEvent.SELECTED, bidListener);
-        bids.addEventListener(SpadesBids.BLIND_NIL_RESPONDED, bidListener);
+        function startGame (event :StateChangedEvent) :void {
+            Debug.debug("Bootstrapping game start");
+            bootstrap(handleGameStarted, event);
+            gameCtrl.game.removeEventListener(
+                StateChangedEvent.GAME_STARTED, 
+                startGame);
+        }
 
-        hand.addEventListener(HandEvent.CARDS_SELECTED, handListener);
-        hand.addEventListener(HandEvent.PASS_REQUESTED, handListener);
-        hand.addEventListener(HandEvent.PASSED, handListener);
-
-        timer.addEventListener(TurnTimerEvent.EXPIRED, turnTimerListener);
+        function startRound (event :StateChangedEvent) :void {
+            Debug.debug("Bootstrapping round start");
+            bootstrap(handleRoundStarted, event);
+            gameCtrl.game.removeEventListener(
+                StateChangedEvent.ROUND_STARTED, 
+                startRound);
+        }
     }
 
     public function get model () :Model
@@ -155,25 +123,119 @@ public class Controller
         return _model.scores as SpadesScores;
     }
 
+    protected static function createModel (gameCtrl :GameControl) :Model
+    {
+        var config :Object = gameCtrl.game.getConfig();
+
+        var sorter :Sorter = new Sorter(
+            Card.RANK_ORDER_ACES_HIGH, [
+                Card.SUIT_SPADES,
+                Card.SUIT_HEARTS,
+                Card.SUIT_CLUBS,
+                Card.SUIT_DIAMONDS]);
+
+        var targetScore :int = 300;
+
+        if ("playTo" in config) {
+            targetScore = parseInt(config.playTo as String);
+        }
+
+        var table :Table = new Table(
+            gameCtrl.game.seating.getPlayerNames(),
+            gameCtrl.game.seating.getPlayerIds(), 
+            gameCtrl.game.seating.getMyPosition(),
+            [new Team(0, [0, 2]), new Team(1, [1, 3])]);
+        var hand :Hand = new Hand(gameCtrl, sorter);
+        var trick :Trick = new Trick(gameCtrl, trumps);
+        var bids :SpadesBids = new SpadesBids(gameCtrl, 
+            CardArray.FULL_DECK.length / table.numPlayers);
+        var scores :Scores = new SpadesScores(table, bids, targetScore);
+        var timer :TurnTimer = new TurnTimer(gameCtrl, table, bids, trick);
+
+        if ("timer" in config && !config.timer) {
+            timer.disable();
+        }
+
+        if ("playTime" in config) {
+            timer.playTime = parseInt(config.playTime);
+        }
+
+        if ("bidTime" in config) {
+            timer.bidTime = parseInt(config.bidTime);
+        }
+
+        if ("leadTime" in config) {
+            timer.leadTime = parseInt(config.leadTime);
+        }
+
+        return new Model(gameCtrl, table, hand, trick, bids, scores, timer);
+    }
+
+    protected function attachToModel (model :Model) :void
+    {
+        _model = model;
+
+        gameCtrl.game.addEventListener(
+            StateChangedEvent.GAME_STARTED, 
+            handleGameStarted);
+        gameCtrl.game.addEventListener(
+            StateChangedEvent.GAME_ENDED, 
+            handleGameEnded);
+        gameCtrl.game.addEventListener(
+            StateChangedEvent.ROUND_STARTED, 
+            handleRoundStarted);
+        gameCtrl.game.addEventListener(
+            StateChangedEvent.ROUND_ENDED, 
+            handleRoundEnded);
+        gameCtrl.game.addEventListener(
+            StateChangedEvent.TURN_CHANGED, 
+            handleTurnChanged);
+        gameCtrl.game.addEventListener(
+            OccupantChangedEvent.OCCUPANT_LEFT,
+            handleOccupantChanged);
+
+        trick.addEventListener(TrickEvent.CARD_PLAYED, trickListener);
+        trick.addEventListener(TrickEvent.COMPLETED, trickListener);
+
+        bids.addEventListener(BidEvent.PLACED, bidListener);
+        bids.addEventListener(BidEvent.COMPLETED, bidListener);
+        bids.addEventListener(BidEvent.SELECTED, bidListener);
+        bids.addEventListener(SpadesBids.BLIND_NIL_RESPONDED, bidListener);
+
+        hand.addEventListener(HandEvent.CARDS_SELECTED, handListener);
+        hand.addEventListener(HandEvent.PASS_REQUESTED, handListener);
+        hand.addEventListener(HandEvent.PASSED, handListener);
+
+        model.timer.addEventListener(TurnTimerEvent.EXPIRED, turnTimerListener);
+    }
+
     /** Boot up the game. */
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
-        Debug.debug("Game started " + event);
+        if (!_gameStarted) {
+            Debug.debug("Game started " + event);
 
-        var deckStr :String = "(" + _templateDeck.length + " card deck)";
-        if (_templateDeck.length == 52) {
-            deckStr = "";
+            _gameStarted = true;
+
+            var deckStr :String = "(" + _templateDeck.length + " card deck)";
+            if (_templateDeck.length == 52) {
+                deckStr = "";
+            }
+            gameCtrl.local.feedback(
+                "Welcome to Spades, first player to score " + scores.target + 
+                " wins" + deckStr  + "\n");
+
+            scores.resetScores();
         }
-        gameCtrl.local.feedback(
-             "Welcome to Spades, first player to score " + scores.target + 
-             " wins" + deckStr  + "\n");
-
-        scores.resetScores();
     }
 
     /** Start the round. */
     protected function handleRoundStarted (event :StateChangedEvent) :void
     {
+        if (!_gameStarted) {
+            handleGameStarted(null);
+        }
+
         Debug.debug("Round started " + event);
 
         gameCtrl.local.feedback("Round " + gameCtrl.game.getRound() + " started\n");
@@ -293,7 +355,29 @@ public class Controller
     /** End the game. */
     protected function handleGameEnded (event :StateChangedEvent) :void
     {
-        gameCtrl.local.feedback("Thank you for playing Spades!");
+        if (_gameStarted) {
+            _gameStarted = false;
+            gameCtrl.local.feedback("Thank you for playing Spades!");
+        }
+    }
+
+    protected function handleOccupantChanged (event :OccupantChangedEvent) :void
+    {
+        if (event.type == OccupantChangedEvent.OCCUPANT_LEFT) {
+            if (event.player && _gameStarted) {
+                // don't bother checking amInControl here since we don't want to accidentally
+                // miss this (in case controller is leaving or two people leave at the same time)
+                var team :Team = table.getTeamFromId(event.occupantId);
+                var otherTeam :Team = table.getTeam((team.index + 1) % 2);
+                gameCtrl.local.feedback(
+                    getTeamName(team) + " are disqualified, " + 
+                    getTeamName(otherTeam) + " win!");
+                gameCtrl.game.startNextTurn(-1);
+                gameCtrl.game.endGameWithWinners(
+                    table.getIdsNotOnTeam(team), table.getIdsOnTeam(team), 
+                    GameSubControl.CASCADING_PAYOUT);
+            }
+        }
     }
 
     protected function bidListener (event :BidEvent) :void
@@ -487,7 +571,6 @@ public class Controller
 
     protected function getTeamName (team :Team) :String
     {
-        
         var names :Array = gameCtrl.game.seating.getPlayerNames();
         return names[team.index] + " and " + names[team.index + 2];
     }
@@ -748,6 +831,9 @@ public class Controller
 
     /** Deck for use when restarting a round or calculating number of cards. */
     protected var _templateDeck :CardArray;
+
+    /** Set if the game is started */
+    protected var _gameStarted :Boolean;
 
     /** Name of property indicating the last player to lead the hand. */
     protected static const COMS_LAST_LEADER :String = "lastleader";

@@ -61,8 +61,12 @@ public class Structure
         var scenes :Array = movie.scenes;
         for (var i :int = 0; i < scenes.length; ++i) {
             var scene :Scene = scenes[i] as Scene;
+            var labels :Array = scene.labels;
             Debug.debug("  Scene " + i + " is " + scene.name + " and has " + 
-                scene.numFrames + " frames");
+                scene.numFrames + " frames and " + labels.length + " labels");
+            for (var j :int = 0; j < labels.length; ++j) {
+                Debug.debug("    " + labels[j]);
+            }
         }
     }
 

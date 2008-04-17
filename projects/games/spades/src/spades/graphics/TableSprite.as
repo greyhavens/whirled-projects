@@ -9,6 +9,7 @@ import flash.geom.Point;
 
 import com.threerings.flash.Vector2;
 import com.whirled.game.StateChangedEvent;
+import com.whirled.game.SizeChangedEvent;
 import com.threerings.util.MultiLoader;
 
 import caurina.transitions.Tweener;
@@ -27,6 +28,7 @@ import spades.card.Hand;
 import spades.card.HandEvent;
 import spades.card.Scores;
 import spades.card.Team;
+import spades.Debug;
 
 /**
  * Display object for drawing a spades game.
@@ -61,11 +63,11 @@ public class TableSprite extends Sprite
         addChild(_trick);
 
         _teams[0] = new TeamSprite(_model.scores, 0, 
-            TRICK_POSITION, new Vector2(LAST_TRICK_OFFSET, 0));
+            new Vector2(LAST_TRICK_OFFSET, 0));
         addChild(_teams[0] as TeamSprite);
 
         _teams[1] = new TeamSprite(_model.scores, 1, 
-            TRICK_POSITION, new Vector2(-LAST_TRICK_OFFSET, 0));
+            new Vector2(-LAST_TRICK_OFFSET, 0));
         addChild(_teams[1] as TeamSprite);
 
         _normalBids = new NormalBiddingSprite(_model.bids);
@@ -93,7 +95,17 @@ public class TableSprite extends Sprite
         _model.gameCtrl.game.addEventListener(
             StateChangedEvent.TURN_CHANGED, 
             handleTurnChanged);
+        _model.gameCtrl.game.addEventListener(
+            StateChangedEvent.GAME_ENDED, 
+            handleGameEnded);
+        _model.gameCtrl.game.addEventListener(
+            StateChangedEvent.GAME_STARTED, 
+            handleGameStarted);
+        _model.gameCtrl.local.addEventListener(
+            SizeChangedEvent.SIZE_CHANGED,
+            handleSizeChanged);
 
+        updateSize(_model.gameCtrl.local.getSize());
         layout();
 
         function gotBackground (background :Bitmap) :void
@@ -121,6 +133,22 @@ public class TableSprite extends Sprite
     protected function handleRoundEnded (event :StateChangedEvent) :void
     {
         setPlayerTurn(-1);
+    }
+
+    protected function handleGameStarted (event :StateChangedEvent) :void
+    {
+        _hand.visible = true;
+        _trick.visible = true;
+    }
+
+    protected function handleGameEnded (event :StateChangedEvent) :void
+    {
+        _normalBids.visible = false;
+        _blindNilBids.visible = false;
+        _hand.visible = false;
+        _trick.visible = false;
+        TeamSprite(_teams[0]).clearLastTrick();
+        TeamSprite(_teams[1]).clearLastTrick();
     }
 
     protected function handleTurnChanged (event :StateChangedEvent) :void
@@ -159,8 +187,10 @@ public class TableSprite extends Sprite
             var playerPos :Vector2 = Vector2.fromPoint(getPlayer(
                 table.getRelativeFromId(event.player)).localToGlobal(
                 new Point(0, 0)));
+            var mainTrickPos :Vector2 = Vector2.fromPoint(
+                _trick.localToGlobal(new Point(0, 0)));
             TeamSprite(_teams[teamIdx]).takeTrick(
-                _trick.orphanCards(), playerPos);
+                _trick.orphanCards(), mainTrickPos, playerPos);
             TeamSprite(_teams[(teamIdx + 1) % 2]).clearLastTrick();
 
             var seat :int = table.getAbsoluteFromId(event.player);
@@ -299,6 +329,34 @@ public class TableSprite extends Sprite
     {
         return _model.table;
     }
+
+    protected function handleSizeChanged (event :SizeChangedEvent) :void
+    {
+        updateSize(event.size);
+    }
+
+    protected function updateSize (size :Point) :void
+    {
+        const IDEAL_WIDTH :int = 700;
+        const IDEAL_HEIGHT :int = 500;
+
+        var width :int = Math.max(size.x, IDEAL_WIDTH);
+        var height :int = Math.max(size.y, IDEAL_HEIGHT);
+
+        var xscale :Number = width / IDEAL_WIDTH;
+        var yscale :Number = height / IDEAL_HEIGHT;
+        var scale :Number = Math.min(xscale, yscale);
+
+        Debug.debug("Current size is " + size.x + "x" + size.y + ", Scaling to " + scale);
+
+        // scale will be 1 or higher, since we don't let width/height get smaller than IDEAL
+        scaleX = scale;
+        scaleY = scale;
+
+        x = (width - (IDEAL_WIDTH * scale)) / 2;
+        y = (height - (IDEAL_HEIGHT * scale)) / 2;
+    }
+
 
     protected var _model :Model;
     protected var _players :Array;

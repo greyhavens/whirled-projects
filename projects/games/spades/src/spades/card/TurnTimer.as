@@ -21,11 +21,13 @@ public class TurnTimer extends EventDispatcher
     public function TurnTimer (
         gameCtrl :GameControl, 
         table :Table, 
-        bids :Bids)
+        bids :Bids,
+        trick :Trick)
     {
         _gameCtrl = gameCtrl;
         _table = table;
         _bids = bids;
+        _trick = trick;
         
         var tracker :Array = new Array(table.numPlayers);
         for (var i :int = 0; i < tracker.length; ++i) {
@@ -52,6 +54,18 @@ public class TurnTimer extends EventDispatcher
     public function set bidTime (time :Number) :void
     {
         _bidTime = time;
+    }
+
+    /** Access the amount of time allowed for leading a trick. */
+    public function get leadTime () :Number
+    {
+        return _leadTime;
+    }
+
+    /** Access the amount of time allowed for leading a trick. */
+    public function set leadTime (time :Number) :void
+    {
+        _leadTime = time;
     }
 
     /** Access the amount of time allowed for playing a card. */
@@ -88,11 +102,22 @@ public class TurnTimer extends EventDispatcher
         if (turnHolder != 0) {
             var seat :int = _table.getAbsoluteFromId(turnHolder);
             var bidding :Boolean = !_bids.hasBid(seat);
+            var leading :Boolean = !bidding && _trick.length == 0;
+
+            var time :Number;
+            if (bidding) {
+                time = _bidTime;
+            }
+            else if (leading) {
+                time = _leadTime;
+            }
+            else {
+                time = _playTime;
+            }
 
             // diminish by the number of expiries in past turns
-            var divisor :int = countExpiries(seat) + 1;
-            var time :Number = bidding ? _bidTime : _playTime;
-            time /= (divisor * HISTORY_EFFECT);
+            var divisor :int = countExpiries(seat);
+            time /= (1 + divisor * HISTORY_EFFECT);
 
             _gameCtrl.net.sendMessage(MSG_START, [turnHolder, time]);
             _lastTurnHolder = turnHolder;
@@ -106,7 +131,7 @@ public class TurnTimer extends EventDispatcher
         }
 
         if (_lastTurnHolder != 0) {
-            addHistory(_lastTurnHolder, false);
+            addHistory(_lastTurnHolder, false, 4);
             _lastTurnHolder = 0;
             _timer.stop();
         }
@@ -138,7 +163,7 @@ public class TurnTimer extends EventDispatcher
             player = event.value as int;
             if (turnHolder == player) {
                 if (_gameCtrl.game.amInControl()) {
-                    addHistory(player, true);
+                    addHistory(player, true, 1);
                     _lastTurnHolder = 0;
                 }
                 dispatchEvent(new TurnTimerEvent(
@@ -178,17 +203,22 @@ public class TurnTimer extends EventDispatcher
         return count;
     }
 
-    protected function addHistory (turnHolder :int, expired :Boolean) :void
+    protected function addHistory (
+        turnHolder :int, 
+        expired :Boolean, 
+        count :int) :void
     {
         var seat :int = _table.getAbsoluteFromId(turnHolder);
         var tracker :Array = _gameCtrl.net.get(EXPIRY_TRACKER) as Array;
 
         var history :int = tracker[seat];
-        history <<= 1;
-        if (expired) {
-            history |= 1;
+        while (count-- > 0) {
+            history <<= 1;
+            if (expired) {
+                history |= 1;
+            }
+            history &= HISTORY_MASK;
         }
-        history &= HISTORY_MASK;
 
         _gameCtrl.net.setAt(EXPIRY_TRACKER, seat, history);
 
@@ -199,8 +229,10 @@ public class TurnTimer extends EventDispatcher
     protected var _gameCtrl :GameControl;
     protected var _table :Table;
     protected var _bids :Bids;
+    protected var _trick :Trick;
     protected var _timer :Timer = new Timer(0, 1);
-    protected var _bidTime :Number = 20;
+    protected var _bidTime :Number = 30;
+    protected var _leadTime :Number = 20;
     protected var _playTime :Number = 10;
     protected var _lastTurnHolder :int = 0;
     protected var _enabled :Boolean = true;
@@ -208,9 +240,9 @@ public class TurnTimer extends EventDispatcher
     protected static const EXPIRY_TRACKER :String = "turntimer.expirytracker";
     protected static const MSG_START :String = "turntimer.start";
     protected static const MSG_EXPIRED :String = "turntimer.stop";
-    protected static const HISTORY_SIZE :int = 4;
-    protected static const HISTORY_MASK :int = 0x0000000F;
-    protected static const HISTORY_EFFECT :int = 1;
+    protected static const HISTORY_SIZE :int = 8;
+    protected static const HISTORY_MASK :int = 0x000000FF;
+    protected static const HISTORY_EFFECT :Number = 0.25;
 }
 
 }

@@ -22,13 +22,10 @@ public class TeamSprite extends Sprite
     /** Create a new team sprite. Long names will be truncated with an ellipsis.
      *  @param scores the scores object for the game. Also used to access the Table and Bids
      *  @param team the index of the team that this sprite is for
-     *  @param mainTrickPos the global coordinates of the main trick - used for animating the 
-     *  taking of a trick.
      *  @param lastTrickPos the relative position of the scaled down last trick icon */
     public function TeamSprite (
         scores :Scores,
         team :int,
-        mainTrickPos :Vector2,
         lastTrickPos :Vector2)
     {
         MultiLoader.getContents(TEAM_IMAGES[team] as Class, gotBackground);
@@ -37,7 +34,6 @@ public class TeamSprite extends Sprite
         _team = _table.getTeam(team);
         _bids = scores.bids;
         _scores = scores;
-        _mainTrickPos = mainTrickPos.clone();
         _lastTrickPos = lastTrickPos.clone();
 
         _lastTrick = new LastTrickSprite();
@@ -84,11 +80,14 @@ public class TeamSprite extends Sprite
      *  animation includes x,y position and scale. 
      *  @param cards the trick just won
      *  @param winnerPos the global coordinates of the position of the winning player */
-    public function takeTrick (cards :Array, winnerPos :Vector2) :void
+    public function takeTrick (
+        cards :Array, 
+        mainTrickPos :Vector2,
+        winnerPos :Vector2) :void
     {
         // get the starting position in local coordinates
         var localStartPos :Vector2 = Vector2.fromPoint(
-            globalToLocal(_mainTrickPos.toPoint()));
+            globalToLocal(mainTrickPos.toPoint()));
 
         // get the winner position in local coordinates
         winnerPos = Vector2.fromPoint(globalToLocal(winnerPos.toPoint()));
@@ -200,9 +199,6 @@ public class TeamSprite extends Sprite
     /** Sprite for the last trick display */
     protected var _lastTrick :LastTrickSprite;
 
-    /** Position of main trick, in global coordinates */
-    protected var _mainTrickPos :Vector2;
-
     /** Static position of our last trick display */
     protected var _lastTrickPos :Vector2;
 
@@ -213,9 +209,9 @@ public class TeamSprite extends Sprite
     protected var _score :ScoreBar;
 
     protected static const TRICK_SCALE :Number = 0.5;
-    protected static const MAIN_TO_WINNER_DURATION :Number = 1.0;
+    protected static const MAIN_TO_WINNER_DURATION :Number = 1.5;
     protected static const WINNER_TO_TEAM_DURATION :Number = 1.0;
-    protected static const SLIDE_DELAY :Number = .25;
+    protected static const SLIDE_DELAY :Number = .5;
 
     protected static const WIDTH :int = 180;
     protected static const HEIGHT :int = 80;

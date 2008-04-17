@@ -36,31 +36,19 @@ public class CardSprite extends Sprite
     public static const EMPHASIZED :CardState = 
         new CardState(0xffffff, 0.0, "emphasized");
 
+    /** For debugging, give each card sprite a unique id. */
+    public static var nextSpriteId :int = 0;
+
     /** Create a new card sprite. */
     public function CardSprite (card :Card)
     {
         _card = card;
         _cover = new Sprite();
         _state = NORMAL;
+        _id = nextSpriteId++;
 
+        Debug.debug("Requesting movie for " + _card + ", id " + _id);
         MultiLoader.getContents(DECK, gotDeck);
-
-        function gotDeck (clip :MovieClip) :void
-        {
-            _deck = clip;
-            if (card.faceDown) {
-                _deck.gotoAndStop(BACK_FRAME);
-            }
-            else {
-                _deck.gotoAndStop(card.string);
-            }
-            _deck.x = -WIDTH / 2;
-            _deck.y = -HEIGHT / 2;
-            _deck.scaleX = WIDTH / _deck.width;
-            _deck.scaleY = HEIGHT / _deck.height;
-            addChild(_deck);
-            _deck.addChild(_cover);
-        }
     }
 
     /** Access the underlying card object. */
@@ -96,6 +84,42 @@ public class CardSprite extends Sprite
             superStr + " in " + parentStr;
     }
     
+    protected function gotDeck (clip :MovieClip) :void
+    {
+        var parentStr :String;
+        if (parent == null) {
+            parentStr = "null";
+        }
+        else if (parent is TrickSprite) {
+            parentStr = "trick";
+        }
+        else if (parent is LastTrickSprite) {
+            parentStr = "last trick";
+        }
+        else if (parent is HandSprite) {
+            parentStr = "hand";
+        }
+        else {
+            parentStr = "other";
+        }
+
+        Debug.debug("Got movie for " + _card + ", id " + _id + ", parent is " + parentStr);
+
+        _deck = clip;
+        if (card.faceDown) {
+            _deck.gotoAndStop(BACK_FRAME);
+        }
+        else {
+            _deck.gotoAndStop(card.string);
+        }
+        _deck.x = -WIDTH / 2;
+        _deck.y = -HEIGHT / 2;
+        _deck.scaleX = WIDTH / _deck.width;
+        _deck.scaleY = HEIGHT / _deck.height;
+        addChild(_deck);
+        _deck.addChild(_cover);
+    }
+
     protected function update () :void
     {
         _cover.alpha = _state.alpha;
@@ -109,6 +133,7 @@ public class CardSprite extends Sprite
     protected var _state :CardState;
     protected var _deck :MovieClip;
     protected var _cover :Sprite;
+    protected var _id :int;
 
     [Embed(source="../../../rsrc/deck.swf", mimeType="application/octet-stream")]
     protected static const DECK :Class;

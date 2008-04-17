@@ -6,6 +6,7 @@ package {
 import flash.display.Sprite;
 import spades.Controller;
 import spades.Debug;
+import spades.Model;
 import spades.graphics.TableSprite;
 import com.whirled.game.GameControl;
 import com.threerings.util.Log;
@@ -21,6 +22,7 @@ public class Spades extends Sprite
     {
         _gameCtrl = new GameControl(this);
 
+        var mySeat :int = _gameCtrl.game.seating.getMyPosition();
         var config :Object = _gameCtrl.game.getConfig();
         var debugSeat :int = ("debugSeat" in config) ? config.debugSeat : -1;
         if (debugSeat == -2) { // all
@@ -29,21 +31,25 @@ public class Spades extends Sprite
         else if (debugSeat == -1) { // none
             Debug.debug = ignore;
         }
-        else if (debugSeat == _gameCtrl.game.seating.getMyPosition()) {
+        else if (debugSeat == mySeat) {
             Debug.debug = debugPrint;
         }
         else {
             Debug.debug = ignore;
         }
 
-        var soundSeat :int = ("soundSeat" in config) ? config.soundSeat : -1;
+        new Controller(_gameCtrl, createViews);
+    }
 
-        var spadesCtrl :Controller = new Controller(_gameCtrl);
-        if (soundSeat == -1 || soundSeat == _gameCtrl.game.seating.getMyPosition()) {
-            new SoundPlayer(spadesCtrl.model);
+    protected function createViews (model :Model) :void
+    {
+        var mySeat :int = _gameCtrl.game.seating.getMyPosition();
+        var config :Object = _gameCtrl.game.getConfig();
+        var soundSeat :int = ("soundSeat" in config) ? config.soundSeat : -1;
+        if (soundSeat == -1 || soundSeat == mySeat) {
+            new SoundPlayer(model);
         }
-        var table :TableSprite = new TableSprite(spadesCtrl.model);
-        addChild(table);
+        addChild(new TableSprite(model));
     }
 
     /** Print a string with local player info prefixed. */
