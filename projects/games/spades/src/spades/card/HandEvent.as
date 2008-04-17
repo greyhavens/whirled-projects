@@ -25,17 +25,24 @@ public class HandEvent extends Event
 
     /** The type of event when it is the player's turn. For this event, the cards property is set
      *  to the set of cards that are allowed according to the game rules and the count property is
-     *  set to the number of cards that should be played. The player and targetPlayer propertied 
+     *  set to the number of cards that should be played. The player and targetPlayer properties
      *  are not used. */
-    public static const BEGAN_TURN :String = "hand.beganturn";
+    public static const ALLOWED_PLAY :String = "hand.allowedPlay";
 
-    /** The type of event sent when it is no longer the player's turn. For this event, no 
-     *  properties are used. */
-    public static const ENDED_TURN :String = "hand.endedturn";
+    /** The type of event when the local player may choose some cards, but not yet play them's turn. 
+     *  For this event, the cards property is set to the set of cards that are allowed to be 
+     *  selected (according to the game rules or game presentation) and the count property is
+     *  set to the number of cards that may be selected. The player and targetPlayer properties
+     *  are not used. */
+    public static const ALLOWED_SELECTION :String = "hand.allowedSelection";
+
+    /** The type of event sent when the local player can no longer select or play any cards. For 
+     *  this event, no properties are used. */
+    public static const DISALLOWED_SELECTION :String = "hand.disallowedSelection";
 
     /** The type of event sent when cards have been selected for play. For this event, the cards 
      *  property indicates the selected ones and the other properties are not used. */
-    public static const CARDS_SELECTED :String = "hand.played";
+    public static const CARDS_PLAYED :String = "hand.played";
 
     /** Create a new HandEvent. */
     public function HandEvent(

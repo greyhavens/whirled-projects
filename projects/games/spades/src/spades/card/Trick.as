@@ -83,6 +83,12 @@ public class Trick extends EventDispatcher
         }
     }
 
+    /** Tests whether the player with the id has already put a card into the trick. */
+    public function hasPlayed (playerId :int) :Boolean
+    {
+        return _players.indexOf(playerId) >= 0;
+    }
+
     /** Access the id of the player that led the trick. Ths value is 0 if no cards have been played 
      *  since the trick was reset. */
     public function get leader () :int

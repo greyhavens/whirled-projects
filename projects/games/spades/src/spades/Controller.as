@@ -39,7 +39,7 @@ public class Controller
         var config :Object = gameCtrl.game.getConfig();
         if ("minigame" in config && config.minigame) {
             var isHighCard :Function = function (c :Card) :Boolean {
-                return Card.compareRanks(c.rank, Card.RANK_QUEEN, 
+                return Card.compareRanks(c.rank, Card.RANK_JACK, 
                     Card.RANK_ORDER_ACES_HIGH) >= 0;
             }
             _templateDeck = _templateDeck.shortFilter(isHighCard);
@@ -202,7 +202,7 @@ public class Controller
         bids.addEventListener(BidEvent.SELECTED, bidListener);
         bids.addEventListener(SpadesBids.BLIND_NIL_RESPONDED, bidListener);
 
-        hand.addEventListener(HandEvent.CARDS_SELECTED, handListener);
+        hand.addEventListener(HandEvent.CARDS_PLAYED, handListener);
         hand.addEventListener(HandEvent.PASS_REQUESTED, handListener);
         hand.addEventListener(HandEvent.PASSED, handListener);
 
@@ -504,16 +504,16 @@ public class Controller
     {
         // Make sure the current turn holder is "selected"
         var turnHolder :int = gameCtrl.game.getTurnHolderId();
-        var hotSeat :int = gameCtrl.game.seating.getPlayerPosition(turnHolder);
-        log("Turn changed to " + turnHolder + " in seat " + hotSeat);
+        var seat :int = table.getAbsoluteFromId(turnHolder);
+        log("Turn changed to " + turnHolder + " in seat " + seat);
 
         if (gameCtrl.game.isMyTurn()) {
             if (bids.complete) {
                 if (hand.isPassing) {
-                    hand.beginTurn(hand.cards, BLIND_NIL_EXCHANGE);
+                    hand.allowPlay(hand.cards, BLIND_NIL_EXCHANGE);
                 }
                 else {
-                    hand.beginTurn(getLegalMoves());
+                    hand.allowPlay(getLegalMoves());
                 }
             }
             else if (isLocalPlayerEligibleForBlindNilBid()) {
@@ -523,11 +523,21 @@ public class Controller
                 bids.request(getLocalPlayerMaximumBid()); 
             }
         }
+        else {
+            if (bids.complete) {
+                if (trick.hasPlayed(table.getLocalId())) {
+                    hand.disallowSelection();
+                }
+                else if (trick.ledCard != null) {
+                    hand.allowSelection(getLegalMoves());
+                }
+            }
+        }
 
         if (turnHolder > 0) {
             // This is the beginning of the round, so declare the leader.
             if (bids.length == 0) {
-                var leader :String = table.getNameFromAbsolute(hotSeat);
+                var leader :String = table.getNameFromAbsolute(seat);
                 gameCtrl.local.feedback("Leader this round is " + leader);
 
                 if (gameCtrl.game.amInControl()) {
@@ -627,12 +637,6 @@ public class Controller
         }
     }
 
-    /** Entry point for when the user selects their bid */
-    protected function onBid (bid :int) :void
-    {
-        bids.placeBid(bid);
-    }
-
     /** Check if spades can be played (part of current game state and/or config).
      *  TODO: implement. */
     protected function canLeadSpades () :Boolean
@@ -703,17 +707,17 @@ public class Controller
     protected function handListener (event :HandEvent) :void
     {
         Debug.debug("Received " + event);
-        if (event.type == HandEvent.CARDS_SELECTED) {
+        if (event.type == HandEvent.CARDS_PLAYED) {
             if (hand.isPassing) {
                 hand.passCards(event.cards);
                 hand.removeCards(event.cards);
-                hand.endTurn();
+                hand.disallowSelection();
             }
             else {
                 var card :Card = event.cards.cards[0];
                 trick.playCard(card);
                 hand.removeCard(card);
-                hand.endTurn();
+                hand.disallowSelection();
             }
         }
         else if (event.type == HandEvent.PASSED) {
@@ -786,10 +790,10 @@ public class Controller
             }
             // this check is to prevent the edge case where the player selects a card while the 
             // expiry message (caller of this function) is in transit
-            if (!hand.hasSelected) {
+            if (!hand.hasPlayed) {
                 var random :CardArray = getRandomSubset(moves, count);
                 Debug.debug("Random cards for autoPlay are " + random);
-                hand.selectCards(random);
+                hand.playCards(random);
             }
         }
         else if (isLocalPlayerEligibleForBlindNilBid() && 

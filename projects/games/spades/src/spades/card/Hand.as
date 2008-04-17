@@ -149,29 +149,44 @@ public class Hand extends EventDispatcher
         return _passTarget != 0;
     }
 
-    /** Begin the local player's turn, enabling the set of cards that may be played. This is not 
-     *  a network event and immediately sends HandEvent.BEGAN_TURN. */
-    public function beginTurn (enabled :CardArray, count :int=1) :void
+    /** Allow the selection of cards, but not actually playing them. This is not 
+     *  a network event and immediately sends HandEvent.ALLOW_SELECT. */
+    public function allowSelection (enabled :CardArray, count :int=1) :void
     {
-        dispatchEvent(new HandEvent(HandEvent.BEGAN_TURN, enabled, 0, count));
-        _hasSelected = false;
+        dispatchEvent(new HandEvent(HandEvent.ALLOWED_SELECTION, enabled, 0, count));
+    }
+
+    /** Allow the local player to play some cards from a given allowed set. This is not 
+     *  a network event and immediately sends HandEvent.BEGAN_TURN. */
+    public function allowPlay (enabled :CardArray, count :int=1) :void
+    {
+        dispatchEvent(new HandEvent(HandEvent.ALLOWED_PLAY, enabled, 0, count));
+        _hasPlayed = false;
+    }
+
+    /** Disallow card selection, typically called when it is no longer the player's turn and there 
+     *  is no reasonable selection he or she could make. This is not a network event and 
+     *  immediately sends HandEvent.DISALLOWED_SELECTION. */
+    public function disallowSelection () :void
+    {
+        dispatchEvent(new HandEvent(HandEvent.DISALLOWED_SELECTION));
     }
 
     /** Select some cards to play. This is not a network event. It immediately sends a 
-     *  HandEvent.CARDS_SELECTED event. */
-    public function selectCards (cards :CardArray) :void
+     *  HandEvent.CARDS_PLAYED event. */
+    public function playCards (cards :CardArray) :void
     {
-        dispatchEvent(new HandEvent(HandEvent.CARDS_SELECTED, cards));
-        _hasSelected = true;
+        dispatchEvent(new HandEvent(HandEvent.CARDS_PLAYED, cards));
+        _hasPlayed = true;
     }
 
-    /** Play a single card. Convenience function to call selectCards with a CardArray containing 
+    /** Play a single card. Convenience function to call playCards with a CardArray containing 
      *  only one card. */
-    public function selectCard (card :Card) :void
+    public function playCard (card :Card) :void
     {
         var cards :CardArray = new CardArray();
         cards.pushOrdinal(card.ordinal);
-        selectCards(cards);
+        playCards(cards);
     }
 
     /** Remove a single card from the hand. Normally the controller will call this in conjunction 
@@ -190,13 +205,6 @@ public class Hand extends EventDispatcher
         for (var i :int = 0; i < cards.length; ++i) {
             _cards.remove(cards.cards[i] as Card);
         }
-    }
-
-    /** End the local player's turn. This is not a network event and immediately sends 
-     *  HandEvent.ENDED_TURN. */
-    public function endTurn () :void
-    {
-        dispatchEvent(new HandEvent(HandEvent.ENDED_TURN));
     }
 
     /** Add some face down cards to a given player. */
@@ -220,9 +228,9 @@ public class Hand extends EventDispatcher
     /** Access whether or not some cards have been selected since the last call to beginTurn. This 
      *  is necessary for the auto-play feature where cards are randomly selected by the controller 
      *  if the player takes too long to make a move. */
-    public function get hasSelected () :Boolean
+    public function get hasPlayed () :Boolean
     {
-        return _hasSelected;
+        return _hasPlayed;
     }
 
     protected function handleMessage (event :MessageReceivedEvent) :void
@@ -307,7 +315,7 @@ public class Hand extends EventDispatcher
     protected var _cards :CardArray;
     protected var _passTarget :int;
     protected var _passCount :int;
-    protected var _hasSelected :Boolean;
+    protected var _hasPlayed :Boolean;
 
     /** Name of bag for the deck. */
     protected static const DECK :String = "hand.deck";

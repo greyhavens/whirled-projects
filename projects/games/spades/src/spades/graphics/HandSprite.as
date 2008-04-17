@@ -37,9 +37,10 @@ public class HandSprite extends CardArraySprite
         addEventListener(MouseEvent.MOUSE_OUT, updateFloater);
         addEventListener(MouseEvent.CLICK, clickListener);
 
-        _hand.addEventListener(HandEvent.BEGAN_TURN, handListener);
-        _hand.addEventListener(HandEvent.ENDED_TURN, handListener);
-        _hand.addEventListener(HandEvent.CARDS_SELECTED, handListener);
+        _hand.addEventListener(HandEvent.ALLOWED_PLAY, handListener);
+        _hand.addEventListener(HandEvent.ALLOWED_SELECTION, handListener);
+        _hand.addEventListener(HandEvent.DISALLOWED_SELECTION, handListener);
+        _hand.addEventListener(HandEvent.CARDS_PLAYED, handListener);
     }
 
     /** Grab the card sprites that were recently removed from the hand. After each card is removed, 
@@ -62,15 +63,24 @@ public class HandSprite extends CardArraySprite
 
     protected function handListener (event :HandEvent) :void
     {
-        if (event.type == HandEvent.BEGAN_TURN) {
+        Debug.debug("HandSprite received event " + event);
+
+        if (event.type == HandEvent.ALLOWED_PLAY) {
             enable(event.cards);
             _selectCount = event.count;
+            if (_userPreselect) {
+                dispatchSelection();
+            }
         }
-        else if (event.type == HandEvent.ENDED_TURN) {
+        else if (event.type == HandEvent.DISALLOWED_SELECTION) {
             disable();
         }
-        else if (event.type == HandEvent.CARDS_SELECTED) {
-            disable();
+        else if (event.type == HandEvent.CARDS_PLAYED) {
+            _selectCount = 0;
+        }
+        else if (event.type == HandEvent.ALLOWED_SELECTION) {
+            enable(event.cards);
+            _selectCount = -event.count;
         }
     }
 
@@ -86,6 +96,7 @@ public class HandSprite extends CardArraySprite
         }
 
         _selected.splice(0, _selected.length);
+        _selectCount = 0;
 
         unfloatCard();
     }
@@ -97,11 +108,19 @@ public class HandSprite extends CardArraySprite
     protected function enable (subset :CardArray=null) :void
     {
         var count :int = 0;
+        var aCard :CardSprite = null
 
         _cards.forEach(function (c :CardSprite, ...x) :void {
             if (subset == null || subset.has(c.card)) {
                 ++count;
                 c.state = CardSprite.NORMAL;
+                aCard = c;
+            }
+            else {
+                c.state = CardSprite.DISABLED;
+                if (isSelected(c)) {
+                    deselect(c);
+                }
             }
         });
 
@@ -109,6 +128,10 @@ public class HandSprite extends CardArraySprite
 
         if (count == 0) {
             throw new CardException("Enabling zero cards");
+        }
+
+        if (_cards.length == 1 || (subset != null && subset.length == 1)) {
+            select(aCard, false);
         }
     }
 
@@ -227,6 +250,23 @@ public class HandSprite extends CardArraySprite
         });
     }
 
+    protected function select (card :CardSprite, userAction :Boolean) :void
+    {
+        if (!isSelected(card)) {
+            _selected.push(card);
+            verticalTween(card, -SELECT_HEIGHT);
+            _userPreselect = userAction;
+        }
+    }
+
+    protected function deselect (card :CardSprite) :void
+    {
+        if (isSelected(card)) {
+            verticalTween(card, 0);
+            _selected.splice(_selected.indexOf(card), 1);
+        }
+    }
+
     protected function isSelected (card :CardSprite) :Boolean
     {
         return _selected.indexOf(card) >= 0;
@@ -248,7 +288,7 @@ public class HandSprite extends CardArraySprite
 
     protected function findCardByLocalXY(x :int, y :int) :CardSprite
     {
-        if (y < -CardSprite.HEIGHT / 2 - FLOAT_HEIGHT || 
+        if (y < -CardSprite.HEIGHT / 2 - SELECT_HEIGHT || 
             y >= CardSprite.HEIGHT / 2) {
             return null;
         }
@@ -286,24 +326,34 @@ public class HandSprite extends CardArraySprite
         if (card != null && card.state != CardSprite.DISABLED) {
             unfloatCard();
 
-            if (isSelected(card)) {
-                verticalTween(card, 0);
-                _selected.splice(_selected.indexOf(card), 1);
+            if (isSelected(card) && (_selectCount < 0 || _selectCount > 1)) {
+                deselect(card);
             }
-            else {
-                _selected.push(card);
-
-                verticalTween(card, -SELECT_HEIGHT);
-
-                if (_selected.length == _selectCount) {
-                    var selected :CardArray = new CardArray();
-                    for (var i :int = 0; i < _selected.length; ++i) {
-                        selected.push(_selected[i].card);
-                    }
-                    _selected.splice(0, _selected.length);
-                    _hand.selectCards(selected);
+            else if (_selectCount == 0) {
+            }
+            else if (_selectCount < 0) {
+                select(card, true);
+                if (_selected.length > -_selectCount) {
+                    deselect(_selected[0] as CardSprite);
                 }
             }
+            else {
+                select(card, true);
+                dispatchSelection();
+            }
+        }
+    }
+
+    protected function dispatchSelection () :void
+    {
+        if (_selected.length == _selectCount) {
+            var selected :CardArray = new CardArray();
+            for (var i :int = 0; i < _selected.length; ++i) {
+                selected.push(CardSprite(_selected[i]).card);
+            }
+            _selected.splice(0, _selected.length);
+            _userPreselect = false;
+            _hand.playCards(selected);
         }
     }
 
@@ -313,10 +363,11 @@ public class HandSprite extends CardArraySprite
     protected var _hand :Hand;
     protected var _selectCount :int;
     protected var _added :Array = new Array();
+    protected var _userPreselect :Boolean;
 
     protected static const MAX_HAND_SIZE :int = 15;
-    protected static const SELECT_HEIGHT :Number = 40;
-    protected static const FLOAT_HEIGHT :Number = 20;
+    protected static const SELECT_HEIGHT :Number = 20;
+    protected static const FLOAT_HEIGHT :Number = 10;
     protected static const FLOAT_DURATION :Number = .2;
     protected static const REMOVAL_DURATION :Number = .75;
     protected static const SQUEEZE_DURATION :Number = .75;
