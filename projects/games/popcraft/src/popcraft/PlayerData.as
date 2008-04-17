@@ -12,11 +12,37 @@ public class PlayerData
     public function PlayerData (playerId :uint)
     {
         _playerId = playerId;
+
+        var whirledIds :Array = PopCraft.instance.gameControl.game.seating.getPlayerIds();
+        var playerNames :Array = PopCraft.instance.gameControl.game.seating.getPlayerNames();
+
+        _whirledId = whirledIds[_playerId];
+        _playerName = playerNames[_playerId];
     }
 
     public function get playerId () :uint
     {
         return _playerId;
+    }
+
+    public function get whirledId () :int
+    {
+        return _whirledId;
+    }
+
+    public function get playerName () :String
+    {
+        return _playerName;
+    }
+
+    public function get leftGame () :Boolean
+    {
+        return _leftGame;
+    }
+
+    public function set leftGame (val :Boolean) :void
+    {
+        _leftGame = val;
     }
 
     public function get baseRef () :SimObjectRef
@@ -49,7 +75,10 @@ public class PlayerData
         _targetedEnemyId = val;
     }
 
-    protected var _playerId :uint;
+    protected var _playerId :uint;  // an unsigned integer corresponding to the player's seating position
+    protected var _whirledId :int;  // the oid assigned to this player on Whirled
+    protected var _playerName :String;
+    protected var _leftGame :Boolean;
     protected var _targetedEnemyId :uint;
     protected var _baseRef :SimObjectRef;
 

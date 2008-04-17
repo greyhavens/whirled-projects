@@ -8,7 +8,7 @@ import flash.text.TextFieldAutoSize;
 
 public class GameOverMode extends AppMode
 {
-    public function GameOverMode (winningPlayer :int)
+    public function GameOverMode (winningPlayer :PlayerData)
     {
         _winningPlayer = winningPlayer;
     }
@@ -23,12 +23,10 @@ public class GameOverMode extends AppMode
         this.modeSprite.addChild(rect);
 
         var gameOverText :String;
-        if (_winningPlayer < 0) {
+        if (null == _winningPlayer) {
             gameOverText = "No winner!";
         } else {
-            var playerNames :Array = PopCraft.instance.gameControl.game.seating.getPlayerNames();
-            var winnerName :String = playerNames[_winningPlayer];
-            gameOverText = winnerName + " is the winner!";
+            gameOverText = _winningPlayer.playerName + " is the winner!";
         }
 
         var text :TextField = new TextField();
@@ -47,7 +45,7 @@ public class GameOverMode extends AppMode
         this.modeSprite.addChild(text);
     }
 
-    protected var _winningPlayer :int;
+    protected var _winningPlayer :PlayerData;
 
 }
 

@@ -1,12 +1,14 @@
 package popcraft {
 
 import com.threerings.flash.Vector2;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
 import com.threerings.util.Log;
 import com.threerings.util.RingBuffer;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.util.*;
+import com.whirled.game.OccupantChangedEvent;
 
 import flash.display.InteractiveObject;
 import flash.events.KeyboardEvent;
@@ -42,6 +44,10 @@ public class GameMode extends AppMode
             GameContext.playerData.push(playerData);
         }
 
+        // we want to know when a player leaves
+        PopCraft.instance.gameControl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
+            handleOccupantLeft);
+
         this.setupNetwork();
         this.setupBattle();
         if (GameContext.localUserIsPlaying) {
@@ -63,11 +69,29 @@ public class GameMode extends AppMode
 
     override protected function destroy () :void
     {
+        PopCraft.instance.gameControl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
+            handleOccupantLeft);
+
         PopCraft.instance.gameControl.local.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 
         if (null != _messageMgr) {
             _messageMgr.shutdown();
             _messageMgr = null;
+        }
+    }
+
+    protected function handleOccupantLeft (e :OccupantChangedEvent) :void
+    {
+        if (e.player) {
+            // did a player leave?
+            var playerData :PlayerData = ArrayUtil.findIf(GameContext.playerData,
+                function (data :PlayerData) :Boolean {
+                    return data.whirledId == e.occupantId;
+                });
+
+            if (null != playerData) {
+                playerData.leftGame = true;
+            }
         }
     }
 
@@ -218,24 +242,23 @@ public class GameMode extends AppMode
             }
 
             ++_tickCount;
+        }
 
-            // The game is over if there's only one man standing
-            var livePlayerId :int = -1;
-            var livePlayerCount :int;
+        // The game is over if there's only one man standing
+        var livePlayer :PlayerData;
+        var livePlayerCount :int;
 
-            for each (var playerData :PlayerData in GameContext.playerData) {
-                if (playerData.isAlive) {
-                    livePlayerId = playerData.playerId;
-
-                    if (++livePlayerCount > 1) {
-                        break;
-                    }
+        for each (var playerData :PlayerData in GameContext.playerData) {
+            if (!playerData.leftGame && playerData.isAlive) {
+                livePlayer = playerData;
+                if (++livePlayerCount > 1) {
+                    break;
                 }
             }
+        }
 
-            if (livePlayerCount <= 1) {
-                MainLoop.instance.changeMode(new GameOverMode(livePlayerId));
-            }
+        if (livePlayerCount <= 1) {
+            MainLoop.instance.changeMode(new GameOverMode(livePlayer));
         }
 
         // update all non-net objects
