@@ -13,6 +13,7 @@ public class GameContext
     public static var diurnalCycle :DiurnalCycle;
 
     public static var playerData :Array;
+    public static var playerUnitSpellSets :Array;
     public static var localPlayerId :int;
     public static function get localPlayerData () :LocalPlayerData { return playerData[localPlayerId]; }
     public static function get isFirstPlayer () :Boolean { return (localPlayerId == 0); }

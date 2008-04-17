@@ -26,6 +26,10 @@ public class CreatureUnit extends Unit
         // @TODO - move this out of here
         this.x = spawnLoc.x;
         this.y = spawnLoc.y;
+
+        // save a reference to our owning player's UnitSpellSet,
+        // since we'll be accessing it a lot
+        _unitSpells = GameContext.playerUnitSpellSets[owningPlayerId];
     }
 
     override protected function addedToDB () :void
@@ -76,7 +80,7 @@ public class CreatureUnit extends Unit
 
     public function get movementSpeed () :Number
     {
-        return this.unitData.baseMoveSpeed * _speedScale;
+        return this.unitData.baseMoveSpeed * (_speedScale + _unitSpells.speedScaleOffset);
     }
 
     protected function handleMove (dt :Number) :void
@@ -142,6 +146,12 @@ public class CreatureUnit extends Unit
     protected function get aiRoot () :AITask
     {
         return null;
+    }
+
+    override public function getAttackDamage (attack :UnitAttack) :Number
+    {
+        var baseDamage :Number = super.getAttackDamage(attack);
+        return baseDamage * (1 + _unitSpells.damageScaleOffset);
     }
 
     override protected function update (dt :Number) :void
@@ -220,6 +230,8 @@ public class CreatureUnit extends Unit
     protected var _movementDirection :Vector2;
 
     protected var _lastUpdateTimestamp :Number = 0;
+
+    protected var _unitSpells :UnitSpellSet;
 
     protected static var g_groups :Array;
 

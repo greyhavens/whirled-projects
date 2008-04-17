@@ -187,8 +187,13 @@ public class Unit extends SimObject
 
     public function receiveAttack (attack :UnitAttack) :void
     {
-        this.health -= _unitData.armor.getWeaponDamage(attack.weapon);
+        this.health -= this.getAttackDamage(attack);
         this.dispatchEvent(new UnitEvent(UnitEvent.ATTACKED, attack));
+    }
+
+    public function getAttackDamage (attack :UnitAttack) :Number
+    {
+        return _unitData.armor.getWeaponDamage(attack.weapon);
     }
 
     public function get health () :Number

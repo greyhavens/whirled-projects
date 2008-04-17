@@ -25,29 +25,7 @@ public class GameMode extends AppMode
     {
         GameContext.gameMode = this;
 
-        // get some information about the players in the game
-        var numPlayers :int = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
-        GameContext.localPlayerId = PopCraft.instance.gameControl.game.seating.getMyPosition();
-
-        // create PlayerData structures
-        GameContext.playerData = [];
-        for (var playerId :uint = 0; playerId < numPlayers; ++playerId) {
-
-            var playerData :PlayerData =
-                (playerId == GameContext.localPlayerId ?
-                    new LocalPlayerData(playerId) :
-                    new PlayerData(playerId));
-
-            // setup initial player targets
-            playerData.targetedEnemyId = (playerId + 1 < numPlayers ? playerId + 1 : 0);
-
-            GameContext.playerData.push(playerData);
-        }
-
-        // we want to know when a player leaves
-        PopCraft.instance.gameControl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
-            handleOccupantLeft);
-
+        this.setupPlayers();
         this.setupNetwork();
         this.setupBattle();
         if (GameContext.localUserIsPlaying) {
@@ -80,6 +58,32 @@ public class GameMode extends AppMode
         }
     }
 
+    protected function setupPlayers () :void
+    {
+        // get some information about the players in the game
+        var numPlayers :int = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
+        GameContext.localPlayerId = PopCraft.instance.gameControl.game.seating.getMyPosition();
+
+        // create PlayerData structures
+        GameContext.playerData = [];
+        for (var playerId :uint = 0; playerId < numPlayers; ++playerId) {
+
+            var playerData :PlayerData =
+                (playerId == GameContext.localPlayerId ?
+                    new LocalPlayerData(playerId) :
+                    new PlayerData(playerId));
+
+            // setup initial player targets
+            playerData.targetedEnemyId = (playerId + 1 < numPlayers ? playerId + 1 : 0);
+
+            GameContext.playerData.push(playerData);
+        }
+
+        // we want to know when a player leaves
+        PopCraft.instance.gameControl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
+            handleOccupantLeft);
+    }
+
     protected function handleOccupantLeft (e :OccupantChangedEvent) :void
     {
         if (e.player) {
@@ -105,12 +109,21 @@ public class GameMode extends AppMode
             GameContext.isFirstPlayer, TICK_INTERVAL_MS);
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
         _messageMgr.addMessageFactory(SelectTargetEnemyMessage.messageName, SelectTargetEnemyMessage.createFactory());
+        _messageMgr.addMessageFactory(CastSpellMessage.messageName, CastSpellMessage.createFactory());
 
         if (Constants.DEBUG_CHECKSUM_STATE >= 1) {
             _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
         }
 
         _messageMgr.setup();
+
+        // create players' unit spell sets (these are synchronized objects)
+        GameContext.playerUnitSpellSets = [];
+        for (var playerId :uint = 0; playerId < GameContext.numPlayers; ++playerId) {
+            var spellSet :UnitSpellSet = new UnitSpellSet();
+            GameContext.netObjects.addObject(spellSet);
+            GameContext.playerUnitSpellSets.push(spellSet);
+        }
     }
 
     protected function setupPuzzle () :void
@@ -359,6 +372,12 @@ public class GameMode extends AppMode
         case SelectTargetEnemyMessage.messageName:
             var selectTargetEnemyMsg :SelectTargetEnemyMessage = msg as SelectTargetEnemyMessage;
             this.setTargetEnemy(selectTargetEnemyMsg.selectingPlayer, selectTargetEnemyMsg.targetPlayer);
+            break;
+
+        case CastSpellMessage.messageName:
+            var castSpellMsg :CastSpellMessage = msg as CastSpellMessage;
+            var spellSet :UnitSpellSet = GameContext.playerUnitSpellSets[castSpellMsg.playerId];
+            spellSet.addSpell(Constants.UNIT_SPELLS[castSpellMsg.spellType]);
             break;
 
         case ChecksumMessage.messageName:

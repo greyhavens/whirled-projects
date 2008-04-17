@@ -91,6 +91,27 @@ public class Constants
         return (RESOURCE_TYPES[type] as ResourceType);
     }
 
+    /* Spells */
+    public static const SPELL_TYPE_BLOODLUST :uint = 0;
+    public static const SPELL_TYPE_RIGORMORTIS :uint = 1;
+
+    public static const SPELL_TYPE__LIMIT :uint = 2;
+
+    protected static const BLOODLUST_SPELL :UnitSpell = UnitSpellBuilder.create()
+        .type(SPELL_TYPE_BLOODLUST)
+        .expireTime(45)
+        .speedScaleOffset(0.4)  // move 40% faster
+        .damageScaleOffset(0.2) // take 20% more damage
+        .spell;
+
+    protected static const RIGOR_MORTIS_SPELL :UnitSpell = UnitSpellBuilder.create()
+        .type(SPELL_TYPE_RIGORMORTIS)
+        .expireTime(45)
+        .damageScaleOffset(-0.3)    // take 30% less damage
+        .spell;
+
+    public static const UNIT_SPELLS :Array = [ BLOODLUST_SPELL, RIGOR_MORTIS_SPELL ];
+
     /* Units */
 
     public static const UNIT_GRID_CELL_SIZE :int = 40;
