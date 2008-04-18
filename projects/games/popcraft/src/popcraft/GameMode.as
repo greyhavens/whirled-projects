@@ -276,6 +276,12 @@ public class GameMode extends AppMode
                 this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_RIGORMORTIS);
             }
             break;
+
+        case "/".charCodeAt(0):
+            if (Constants.DEBUG_ALLOW_CHEATS && GameContext.isSinglePlayer) {
+                // restart the level
+                AppContext.mainLoop.changeMode(new GameMode());
+            }
         }
     }
 
