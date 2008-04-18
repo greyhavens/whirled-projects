@@ -56,7 +56,7 @@ public class UnitPurchaseButtonManager extends SimObject
 
     protected function buttonClicked (unitType :uint) :void
     {
-        GameContext.gameMode.buildUnit(unitType);
+        GameContext.gameMode.buildUnit(GameContext.localPlayerId, unitType);
     }
 
     protected var _buttons :Array = [];

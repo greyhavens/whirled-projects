@@ -102,7 +102,7 @@ public class Constants
         .name("bloodlust")
         .expireTime(45)
         .speedScaleOffset(0.5)  // move 50% faster
-        .damageScaleOffset(0.2) // take 20% more damage
+        .damageScaleOffset(0.3) // take 30% more damage
         .spell;
 
     protected static const RIGOR_MORTIS_SPELL :UnitSpell = UnitSpellBuilder.create()

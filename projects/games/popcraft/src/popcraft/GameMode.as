@@ -217,14 +217,14 @@ public class GameMode extends AppMode
         // temp
         case "b".charCodeAt(0):
             if (Constants.DEBUG_ALLOW_CHEATS) {
-                this.castSpell(Constants.SPELL_TYPE_BLOODLUST);
+                this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_BLOODLUST);
             }
             break;
 
         // temp
         case "r".charCodeAt(0):
             if (Constants.DEBUG_ALLOW_CHEATS) {
-                this.castSpell(Constants.SPELL_TYPE_RIGORMORTIS);
+                this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_RIGORMORTIS);
             }
             break;
         }
@@ -487,7 +487,7 @@ public class GameMode extends AppMode
         }
     }
 
-    public function buildUnit (unitType :uint) :void
+    public function buildUnit (playerId :uint, unitType :uint) :void
     {
         if (GameContext.diurnalCycle.isDay || !GameContext.localPlayerData.canPurchaseUnit(unitType)) {
             return;
@@ -501,12 +501,12 @@ public class GameMode extends AppMode
         }
 
         // send a message!
-        _messageMgr.sendMessage(new CreateUnitMessage(GameContext.localPlayerId, unitType));
+        _messageMgr.sendMessage(new CreateUnitMessage(playerId, unitType));
     }
 
-    public function castSpell (spellType :uint) :void
+    public function castSpell (playerId :uint, spellType :uint) :void
     {
-        _messageMgr.sendMessage(new CastSpellMessage(GameContext.localPlayerId, spellType));
+        _messageMgr.sendMessage(new CastSpellMessage(playerId, spellType));
     }
 
     protected var _gameIsRunning :Boolean;
