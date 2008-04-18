@@ -54,6 +54,8 @@ public class LevelSelectMode extends AppMode
         testOpponent.repeatingWaves = [ repeatingWave ];
 
         var testLevel :LevelData = new LevelData();
+        testLevel.name = "Tutorial 1";
+        testLevel.introText = "Learn how to use the Madame and the Handy Man!";
         testLevel.availableUnits = [ Constants.UNIT_TYPE_GRUNT, Constants.UNIT_TYPE_HEAVY ];
         testLevel.disableDiurnalCycle = true;
         testLevel.computers = [ testOpponent ];

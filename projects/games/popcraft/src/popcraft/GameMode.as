@@ -20,6 +20,7 @@ import popcraft.net.*;
 import popcraft.puzzle.*;
 import popcraft.sp.ComputerPlayer;
 import popcraft.sp.ComputerPlayerData;
+import popcraft.sp.LevelIntroMode;
 
 public class GameMode extends AppMode
 {
@@ -40,6 +41,10 @@ public class GameMode extends AppMode
             _debugDataView = new DebugDataView();
             this.addObject(_debugDataView, this.modeSprite);
             _debugDataView.visible = false;
+        }
+
+        if (GameContext.gameType == GameContext.GAME_TYPE_SINGLEPLAYER) {
+            AppContext.mainLoop.pushMode(new LevelIntroMode());
         }
     }
 
