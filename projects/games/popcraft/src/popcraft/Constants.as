@@ -101,7 +101,7 @@ public class Constants
         .type(SPELL_TYPE_BLOODLUST)
         .name("bloodlust")
         .expireTime(45)
-        .speedScaleOffset(0.4)  // move 40% faster
+        .speedScaleOffset(0.5)  // move 50% faster
         .damageScaleOffset(0.2) // take 20% more damage
         .spell;
 
@@ -109,7 +109,7 @@ public class Constants
         .type(SPELL_TYPE_RIGORMORTIS)
         .name("rigormortis")
         .expireTime(45)
-        .damageScaleOffset(-0.3)    // take 30% less damage
+        .damageScaleOffset(-0.4)    // take 40% less damage
         .spell;
 
     public static const UNIT_SPELLS :Array = [ BLOODLUST_SPELL, RIGOR_MORTIS_SPELL ];

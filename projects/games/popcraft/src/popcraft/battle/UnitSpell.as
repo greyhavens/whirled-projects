@@ -8,12 +8,12 @@ public class UnitSpell
     public var expireTime :Number = 0;
 
     public var speedScaleOffset :Number = 0;
-    public var damageScaleOffset :Number = 1;
+    public var damageScaleOffset :Number = 0;
 
     public function combine (spell :UnitSpell) :void
     {
         speedScaleOffset += spell.speedScaleOffset;
-        damageScaleOffset *= spell.damageScaleOffset;
+        damageScaleOffset += spell.damageScaleOffset;
     }
 }
 

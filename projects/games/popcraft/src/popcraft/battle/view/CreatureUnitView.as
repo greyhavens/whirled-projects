@@ -130,7 +130,7 @@ public class CreatureUnitView extends SceneObject
             }
         }
 
-        var yLoc :Number = -_sprite.height;
+        var yLoc :Number = -_sprite.height - _healthMeter.height;
         var xLoc :Number = -(totalWidth * 0.5);
         for each (icon in icons) {
             icon.x = xLoc;

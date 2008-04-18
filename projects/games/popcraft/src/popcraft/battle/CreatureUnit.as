@@ -80,7 +80,12 @@ public class CreatureUnit extends Unit
 
     public function get movementSpeed () :Number
     {
-        return this.unitData.baseMoveSpeed * (_speedScale + _unitSpells.speedScaleOffset);
+        return this.unitData.baseMoveSpeed * this.speedScale;
+    }
+
+    override public function get speedScale () :Number
+    {
+        return _speedScale + _unitSpells.speedScaleOffset;
     }
 
     protected function handleMove (dt :Number) :void
