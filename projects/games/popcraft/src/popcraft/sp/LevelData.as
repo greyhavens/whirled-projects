@@ -1,6 +1,6 @@
 package popcraft.sp {
 
-import com.whirled.contrib.simplegame.util.NumRange;
+import com.threerings.util.ArrayUtil;
 
 public class LevelData
 {
@@ -9,6 +9,11 @@ public class LevelData
     public var availableUnits :Array = [];
     public var disableDiurnalCycle :Boolean;
     public var computers :Array = [];
+
+    public function isAvailableUnit (unitType :uint) :Boolean
+    {
+        return ArrayUtil.contains(availableUnits, unitType);
+    }
 }
 
 }

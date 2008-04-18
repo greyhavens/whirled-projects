@@ -12,6 +12,8 @@ public class GameContext
 
     public static var gameType :int;
     public static var spLevel :LevelData;
+    public static function get isSinglePlayer () :Boolean { return gameType == GAME_TYPE_SINGLEPLAYER; }
+    public static function get isMultiplayer () :Boolean { return gameType == GAME_TYPE_MULTIPLAYER; }
 
     public static var gameMode :GameMode;
     public static var netObjects :NetObjectDB;

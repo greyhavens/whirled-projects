@@ -8,10 +8,10 @@ import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
-import flash.events.MouseEvent;
 
 import popcraft.battle.*;
 import popcraft.battle.view.*;
@@ -23,6 +23,7 @@ public class UnitPurchaseButton extends Sprite
 
     public function UnitPurchaseButton (unitType :uint)
     {
+        _unitType = unitType;
         _button = new SimpleButton();
 
         var unitData :UnitData = Constants.UNIT_DATA[unitType];
@@ -160,6 +161,12 @@ public class UnitPurchaseButton extends Sprite
         _disabledState.visible = !enabled;
     }
 
+    public function get unitType () :uint
+    {
+        return _unitType;
+    }
+
+    protected var _unitType :uint;
     protected var _button :SimpleButton;
     protected var _disabledState :Sprite;
     protected var _descriptionPopup :DisplayObject;

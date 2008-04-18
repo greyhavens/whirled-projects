@@ -5,8 +5,6 @@ import com.whirled.contrib.simplegame.SimObject;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
-import popcraft.battle.UnitData;
-
 public class UnitPurchaseButtonManager extends SimObject
 {
     public function UnitPurchaseButtonManager ()
@@ -14,6 +12,11 @@ public class UnitPurchaseButtonManager extends SimObject
         var loc :Point = Constants.FIRST_UNIT_BUTTON_LOC.clone();
 
         for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
+
+            // single player levels can restrict the units that the player can purchase
+            if (GameContext.isSinglePlayer && !GameContext.spLevel.isAvailableUnit(unitType)) {
+                continue;
+            }
 
             // create the button
             var button :UnitPurchaseButton = new UnitPurchaseButton(unitType);
@@ -47,10 +50,8 @@ public class UnitPurchaseButtonManager extends SimObject
     override protected function update (dt :Number) :void
     {
         var isNight :Boolean = GameContext.diurnalCycle.isNight;
-
-        for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
-            var button :UnitPurchaseButton = (_buttons[unitType] as UnitPurchaseButton);
-            button.enabled = isNight && GameContext.localPlayerData.canPurchaseUnit(unitType);
+        for each (var button :UnitPurchaseButton in _buttons) {
+            button.enabled = isNight && GameContext.localPlayerData.canPurchaseUnit(button.unitType);
         }
     }
 
