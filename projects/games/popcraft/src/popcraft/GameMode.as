@@ -533,11 +533,13 @@ public class GameMode extends AppMode
 
     public function buildUnit (playerId :uint, unitType :uint) :void
     {
-        if (GameContext.diurnalCycle.isDay || !GameContext.localPlayerData.canPurchaseUnit(unitType)) {
+        var localPlayerPurchasing :Boolean = playerId == GameContext.localPlayerId;
+
+        if (GameContext.diurnalCycle.isDay || (localPlayerPurchasing && !GameContext.localPlayerData.canPurchaseUnit(unitType))) {
             return;
         }
 
-        if (playerId == GameContext.localPlayerId) {
+        if (localPlayerPurchasing) {
             // deduct the cost of the unit from the player's holdings
             var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
             var n :int = creatureCosts.length;

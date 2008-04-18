@@ -42,9 +42,11 @@ public class LevelSelectMode extends AppMode
     {
         // @TEMP - construct a test level
         var initialWave :UnitWave = new UnitWave();
+        initialWave.delayBefore = 10;
         initialWave.units = [ Constants.UNIT_TYPE_GRUNT ];
 
         var repeatingWave :UnitWave = new UnitWave();
+        repeatingWave.delayBefore = 5;
         repeatingWave.units = [ Constants.UNIT_TYPE_GRUNT, Constants.UNIT_TYPE_GRUNT ];
 
         var testOpponent :ComputerPlayerData = new ComputerPlayerData();
