@@ -1,10 +1,14 @@
-package popcraft.sp
-{
+package popcraft.sp {
+
+import com.whirled.contrib.simplegame.util.NumRange;
 
 public class ComputerPlayerData
 {
-    public var waveDelay :NumRange;
-    public var waves :Array;
+    // go through these units waves first
+    public var initialWaves :Array = [];
+
+    // then repeat these
+    public var repeatingWaves :Array = [];
 }
 
 }

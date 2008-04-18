@@ -13,11 +13,18 @@ public class PlayerData
     {
         _playerId = playerId;
 
-        var whirledIds :Array = PopCraft.instance.gameControl.game.seating.getPlayerIds();
-        var playerNames :Array = PopCraft.instance.gameControl.game.seating.getPlayerNames();
+        var whirledIds :Array;
+        var playerNames :Array;
 
-        _whirledId = whirledIds[_playerId];
-        _playerName = playerNames[_playerId];
+        if (AppContext.gameCtrl.isConnected()) {
+            whirledIds = AppContext.gameCtrl.game.seating.getPlayerIds();
+            playerNames = AppContext.gameCtrl.game.seating.getPlayerNames();
+        } else {
+            whirledIds = playerNames = [];
+        }
+
+        _whirledId = (playerId < whirledIds.length ? whirledIds[_playerId] : 0);
+        _playerName = (playerId < playerNames.length ? playerNames[_playerId]: "Unknown player " + playerId);
     }
 
     public function get playerId () :uint

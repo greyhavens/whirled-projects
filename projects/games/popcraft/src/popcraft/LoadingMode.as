@@ -7,37 +7,37 @@ public class LoadingMode extends AppMode
 {
     override protected function setup () :void
     {
-        PopCraft.resourceManager.pendResourceLoad("image", "heavy_icon",     { embeddedClass: IMAGE_HEAVYICON });
-        PopCraft.resourceManager.pendResourceLoad("image", "colossus_icon",  { embeddedClass: IMAGE_COLOSSUSICON });
+        AppContext.resources.pendResourceLoad("image", "heavy_icon",     { embeddedClass: IMAGE_HEAVYICON });
+        AppContext.resources.pendResourceLoad("image", "colossus_icon",  { embeddedClass: IMAGE_COLOSSUSICON });
 
-        PopCraft.resourceManager.pendResourceLoad("image", "base",      { embeddedClass: IMAGE_BASE });
-        PopCraft.resourceManager.pendResourceLoad("image", "targetBaseBadge", { embeddedClass: IMAGE_TARGETBASEBADGE });
-        PopCraft.resourceManager.pendResourceLoad("image", "friendlyBaseBadge", { embeddedClass: IMAGE_FRIENDLYBASEBADGE });
-        PopCraft.resourceManager.pendResourceLoad("image", "sun", { embeddedClass: IMAGE_SUN });
-        PopCraft.resourceManager.pendResourceLoad("image", "moon", { embeddedClass: IMAGE_MOON });
-        PopCraft.resourceManager.pendResourceLoad("image", "battle_bg", { embeddedClass: IMAGE_BATTLE_BG });
-        PopCraft.resourceManager.pendResourceLoad("image", "battle_fg", { embeddedClass: IMAGE_BATTLE_FG });
-        PopCraft.resourceManager.pendResourceLoad("image", "bloodlust_icon", { embeddedClass: IMAGE_BLOODLUSTICON });
-        PopCraft.resourceManager.pendResourceLoad("image", "rigormortis_icon", { embeddedClass: IMAGE_RIGORMORTISICON });
+        AppContext.resources.pendResourceLoad("image", "base",      { embeddedClass: IMAGE_BASE });
+        AppContext.resources.pendResourceLoad("image", "targetBaseBadge", { embeddedClass: IMAGE_TARGETBASEBADGE });
+        AppContext.resources.pendResourceLoad("image", "friendlyBaseBadge", { embeddedClass: IMAGE_FRIENDLYBASEBADGE });
+        AppContext.resources.pendResourceLoad("image", "sun", { embeddedClass: IMAGE_SUN });
+        AppContext.resources.pendResourceLoad("image", "moon", { embeddedClass: IMAGE_MOON });
+        AppContext.resources.pendResourceLoad("image", "battle_bg", { embeddedClass: IMAGE_BATTLE_BG });
+        AppContext.resources.pendResourceLoad("image", "battle_fg", { embeddedClass: IMAGE_BATTLE_FG });
+        AppContext.resources.pendResourceLoad("image", "bloodlust_icon", { embeddedClass: IMAGE_BLOODLUSTICON });
+        AppContext.resources.pendResourceLoad("image", "rigormortis_icon", { embeddedClass: IMAGE_RIGORMORTISICON });
 
-        PopCraft.resourceManager.pendResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });
-        PopCraft.resourceManager.pendResourceLoad("swf", "sapper", { embeddedClass: SWF_SAPPER });
+        AppContext.resources.pendResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });
+        AppContext.resources.pendResourceLoad("swf", "sapper", { embeddedClass: SWF_SAPPER });
 
-        PopCraft.resourceManager.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: SWF_PUZZLEPIECES });
+        AppContext.resources.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: SWF_PUZZLEPIECES });
 
-        PopCraft.resourceManager.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
+        AppContext.resources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
 
-        PopCraft.resourceManager.load();
+        AppContext.resources.load();
     }
 
     override protected function destroy () :void
     {
-        PopCraft.resourceManager.removeEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
+        AppContext.resources.removeEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
     }
 
     protected function handleResourcesLoaded (...ignored) :void
     {
-        MainLoop.instance.changeMode(new GameMode());
+        MainLoop.instance.popMode();
     }
 
     [Embed(source="../../rsrc/char_heavy.png", mimeType="application/octet-stream")]

@@ -26,7 +26,7 @@ public class PlayerBaseUnitView extends SceneObject
         var playerColor :uint = Constants.PLAYER_COLORS[_unit.owningPlayerId];
 
         // add the image, aligned by its foot position
-        var image :Bitmap = PopCraft.instantiateBitmap(_unit.unitData.name);
+        var image :Bitmap = AppContext.instantiateBitmap(_unit.unitData.name);
         image.x = -(image.width * 0.5);
         image.y = -image.height;
         _sprite.addChild(image);
@@ -48,14 +48,14 @@ public class PlayerBaseUnitView extends SceneObject
         _healthMeter.y = -_sprite.height - _healthMeter.height;
 
         // target enemy badge
-        _targetEnemyBadge = PopCraft.instantiateBitmap("targetBaseBadge");
+        _targetEnemyBadge = AppContext.instantiateBitmap("targetBaseBadge");
         _targetEnemyBadge.visible = false;
         _targetEnemyBadge.x = -(_targetEnemyBadge.width * 0.5);
         _targetEnemyBadge.y = -(_targetEnemyBadge.height);
         _sprite.addChild(_targetEnemyBadge);
 
         // friendly badge
-        _friendlyBadge = PopCraft.instantiateBitmap("friendlyBaseBadge");
+        _friendlyBadge = AppContext.instantiateBitmap("friendlyBaseBadge");
         _friendlyBadge.visible = false;
         _friendlyBadge.x = -(_friendlyBadge.width * 0.5);
         _friendlyBadge.y = -(_friendlyBadge.height);

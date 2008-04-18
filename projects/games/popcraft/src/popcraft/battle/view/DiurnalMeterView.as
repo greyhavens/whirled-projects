@@ -16,8 +16,8 @@ public class DiurnalMeterView extends SceneObject
     {
         _sprite = new Sprite();
 
-        _sun = PopCraft.instantiateBitmap("sun");
-        _moon = PopCraft.instantiateBitmap("moon");
+        _sun = AppContext.instantiateBitmap("sun");
+        _moon = AppContext.instantiateBitmap("moon");
 
         _meter = new RectMeter();
         _meter.width = METER_WIDTH;

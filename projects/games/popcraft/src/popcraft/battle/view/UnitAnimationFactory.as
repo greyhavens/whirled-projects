@@ -4,6 +4,7 @@ import com.whirled.contrib.ColorMatrix;
 
 import flash.display.MovieClip;
 
+import popcraft.*;
 import popcraft.battle.*;
 
 public class UnitAnimationFactory
@@ -13,7 +14,7 @@ public class UnitAnimationFactory
         g_tintMatrix.reset();
         g_tintMatrix.colorize(playerColor);
 
-        var anim :MovieClip = PopCraft.instantiateMovieClip(unitData.name, animName);
+        var anim :MovieClip = AppContext.instantiateMovieClip(unitData.name, animName);
         if (null != anim) {
             // colorize
             var color :MovieClip = anim.recolor;

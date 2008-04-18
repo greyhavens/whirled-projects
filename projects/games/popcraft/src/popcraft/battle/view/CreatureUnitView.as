@@ -37,7 +37,7 @@ public class CreatureUnitView extends SceneObject
             _hasAnimations = true;
         } else {
             // add the image, aligned by its foot position
-            var image :Bitmap = (PopCraft.resourceManager.getResource(_unit.unitData.name + "_icon") as ImageResourceLoader).createBitmap();
+            var image :Bitmap = (AppContext.resources.getResource(_unit.unitData.name + "_icon") as ImageResourceLoader).createBitmap();
             image.x = -(image.width * 0.5);
             image.y = -image.height;
             _sprite.addChild(image);
@@ -123,7 +123,7 @@ public class CreatureUnitView extends SceneObject
         var icons :Array = [];
         var totalWidth :Number = 0;
         for each (var spell :UnitSpell in spellSet.spells) {
-            var icon :DisplayObject = PopCraft.instantiateBitmap(spell.name + "_icon");
+            var icon :DisplayObject = AppContext.instantiateBitmap(spell.name + "_icon");
             if (null != icon) {
                 totalWidth += icon.width;
                 icons.push(icon);
@@ -156,7 +156,7 @@ public class CreatureUnitView extends SceneObject
 
             // create an attack animation object that will play and self-destruct
 
-            var anim :MovieClip = PopCraft.instantiateMovieClip(_unit.unitData.name, weapon.aoeAnimationName);
+            var anim :MovieClip = AppContext.instantiateMovieClip(_unit.unitData.name, weapon.aoeAnimationName);
 
             if (null == anim) {
                 log.info("Missing AOE attack animation '" + weapon.aoeAnimationName + "' for " + _unit.unitData.name);

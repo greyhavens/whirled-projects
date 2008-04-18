@@ -18,6 +18,8 @@ import popcraft.battle.*;
 import popcraft.battle.view.*;
 import popcraft.net.*;
 import popcraft.puzzle.*;
+import popcraft.sp.ComputerPlayer;
+import popcraft.sp.ComputerPlayerData;
 
 public class GameMode extends AppMode
 {
@@ -25,18 +27,14 @@ public class GameMode extends AppMode
     {
         GameContext.gameMode = this;
 
+        // create a special ObjectDB for all objects that are synchronized over the network.
+        GameContext.netObjects = new NetObjectDB();
+
         this.setupPlayers();
         this.setupNetwork();
         this.setupBattle();
-        if (GameContext.localUserIsPlaying) {
-            this.setupPuzzle();
-        }
-
-        // Listen for all keydowns.
-        // The suggested way to do this is to attach an event listener to the stage,
-        // but that's a security violation. The GameControl re-dispatches global key
-        // events for us instead.
-        PopCraft.instance.gameControl.local.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+        this.setupPuzzle();
+        this.setupInput();
 
         if (Constants.DEBUG_DRAW_STATS) {
             _debugDataView = new DebugDataView();
@@ -47,22 +45,51 @@ public class GameMode extends AppMode
 
     override protected function destroy () :void
     {
-        PopCraft.instance.gameControl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
-            handleOccupantLeft);
+        this.shutdownInput();
+        this.shutdownNetwork();
+        this.shutdownPlayers();
+    }
 
-        PopCraft.instance.gameControl.local.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+    protected function setupInput () :void
+    {
+        if (AppContext.gameCtrl.isConnected()) {
+            // Listen for all keydowns.
+            // The suggested way to do this is to attach an event listener to the stage,
+            // but that's a security violation. The GameControl re-dispatches global key
+            // events for us instead.
+            AppContext.gameCtrl.local.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+        } else {
+            this.modeSprite.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+        }
+    }
 
-        if (null != _messageMgr) {
-            _messageMgr.shutdown();
-            _messageMgr = null;
+    protected function shutdownInput () :void
+    {
+        if (AppContext.gameCtrl.isConnected()) {
+            // Listen for all keydowns.
+            // The suggested way to do this is to attach an event listener to the stage,
+            // but that's a security violation. The GameControl re-dispatches global key
+            // events for us instead.
+            AppContext.gameCtrl.local.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+        } else {
+            this.modeSprite.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         }
     }
 
     protected function setupPlayers () :void
     {
-        // get some information about the players in the game
-        var numPlayers :int = PopCraft.instance.gameControl.game.seating.getPlayerIds().length;
-        GameContext.localPlayerId = PopCraft.instance.gameControl.game.seating.getMyPosition();
+        if (GameContext.gameType == GameContext.GAME_TYPE_MULTIPLAYER) {
+            // get some information about the players in the game
+            var numPlayers :int = AppContext.gameCtrl.game.seating.getPlayerIds().length;
+            GameContext.localPlayerId = AppContext.gameCtrl.game.seating.getMyPosition();
+
+            // we want to know when a player leaves
+            AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
+                handleOccupantLeft);
+        } else {
+            numPlayers = GameContext.spLevel.computers.length + 1;
+            GameContext.localPlayerId = 0;
+        }
 
         // create PlayerData structures
         GameContext.playerData = [];
@@ -79,9 +106,20 @@ public class GameMode extends AppMode
             GameContext.playerData.push(playerData);
         }
 
-        // we want to know when a player leaves
-        PopCraft.instance.gameControl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
-            handleOccupantLeft);
+        if (GameContext.gameType == GameContext.GAME_TYPE_SINGLEPLAYER) {
+            // create computer players
+            var cpPlayerId :uint = 1;
+            for each (var cpData :ComputerPlayerData in GameContext.spLevel.computers) {
+                GameContext.netObjects.addObject(new ComputerPlayer(cpData, cpPlayerId++));
+            }
+        }
+    }
+
+    protected function shutdownPlayers () :void
+    {
+        if (GameContext.gameType == GameContext.GAME_TYPE_MULTIPLAYER) {
+            AppContext.gameCtrl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT, handleOccupantLeft);
+        }
     }
 
     protected function handleOccupantLeft (e :OccupantChangedEvent) :void
@@ -101,12 +139,13 @@ public class GameMode extends AppMode
 
     protected function setupNetwork () :void
     {
-        // create a special ObjectDB for all objects that are synchronized over the network.
-        GameContext.netObjects = new NetObjectDB();
-
         // set up the message manager
-        _messageMgr = new OnlineTickedMessageManager(PopCraft.instance.gameControl,
-            GameContext.isFirstPlayer, TICK_INTERVAL_MS);
+        if (GameContext.gameType == GameContext.GAME_TYPE_MULTIPLAYER) {
+            _messageMgr = new OnlineTickedMessageManager(AppContext.gameCtrl, GameContext.isFirstPlayer, TICK_INTERVAL_MS);
+        } else {
+            _messageMgr = new OfflineTickedMessageManager(TICK_INTERVAL_MS);
+        }
+
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
         _messageMgr.addMessageFactory(SelectTargetEnemyMessage.messageName, SelectTargetEnemyMessage.createFactory());
         _messageMgr.addMessageFactory(CastSpellMessage.messageName, CastSpellMessage.createFactory());
@@ -124,6 +163,11 @@ public class GameMode extends AppMode
             GameContext.netObjects.addObject(spellSet);
             GameContext.playerUnitSpellSets.push(spellSet);
         }
+    }
+
+    protected function shutdownNetwork () :void
+    {
+        _messageMgr.shutdown();
     }
 
     protected function setupPuzzle () :void
@@ -493,11 +537,13 @@ public class GameMode extends AppMode
             return;
         }
 
-        // deduct the cost of the unit from the player's holdings
-        var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
-        var n :int = creatureCosts.length;
-        for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
-            GameContext.localPlayerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
+        if (playerId == GameContext.localPlayerId) {
+            // deduct the cost of the unit from the player's holdings
+            var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
+            var n :int = creatureCosts.length;
+            for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
+                GameContext.localPlayerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
+            }
         }
 
         // send a message!

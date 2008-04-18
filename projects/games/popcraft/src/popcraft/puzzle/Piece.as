@@ -53,7 +53,7 @@ public class Piece extends SceneObject
     {
         _resourceType = newType;
         
-        var swf :SwfResourceLoader = (PopCraft.resourceManager.getResource("puzzlePieces") as SwfResourceLoader);
+        var swf :SwfResourceLoader = (AppContext.resources.getResource("puzzlePieces") as SwfResourceLoader);
         var pieceClass :Class = swf.getClass(SWF_CLASS_NAMES[newType]);
         var pieceMovie :MovieClip = new pieceClass();
         
