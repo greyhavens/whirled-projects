@@ -17,11 +17,11 @@ public class Constants
     /* Debug options */
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
-    public static const DEBUG_ALLOW_CHEATS :Boolean = false;
+    public static const DEBUG_ALLOW_CHEATS :Boolean = true;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
-    public static const DEBUG_DISABLE_DIURNAL_CYCLE :Boolean = false;
+    public static const DEBUG_DISABLE_DIURNAL_CYCLE :Boolean = true;
 
     /* Screen layout */
     public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
@@ -99,6 +99,7 @@ public class Constants
 
     protected static const BLOODLUST_SPELL :UnitSpell = UnitSpellBuilder.create()
         .type(SPELL_TYPE_BLOODLUST)
+        .name("bloodlust")
         .expireTime(45)
         .speedScaleOffset(0.4)  // move 40% faster
         .damageScaleOffset(0.2) // take 20% more damage
@@ -106,6 +107,7 @@ public class Constants
 
     protected static const RIGOR_MORTIS_SPELL :UnitSpell = UnitSpellBuilder.create()
         .type(SPELL_TYPE_RIGORMORTIS)
+        .name("rigormortis")
         .expireTime(45)
         .damageScaleOffset(-0.3)    // take 30% less damage
         .spell;

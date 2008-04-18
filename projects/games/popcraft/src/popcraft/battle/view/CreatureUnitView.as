@@ -76,6 +76,11 @@ public class CreatureUnitView extends SceneObject
         }
 
         _unit.addEventListener(UnitEvent.ATTACKING, handleUnitAttacking, false, 0, true);
+
+        var spellSet :UnitSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
+        spellSet.addEventListener(UnitSpellSet.SET_MODIFIED, handleSpellSetModified);
+
+        this.updateUnitSpellIcons();
     }
 
     override protected function removedFromDB () :void
@@ -85,6 +90,54 @@ public class CreatureUnitView extends SceneObject
         }
 
         _unit.removeEventListener(UnitEvent.ATTACKING, handleUnitAttacking);
+
+        var spellSet :UnitSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
+        spellSet.removeEventListener(UnitSpellSet.SET_MODIFIED, handleSpellSetModified);
+
+    }
+
+    protected function handleSpellSetModified (...ignored) :void
+    {
+        this.updateUnitSpellIcons();
+    }
+
+    protected function updateUnitSpellIcons () :void
+    {
+        // remove old spell icons
+        if (null != _unitSpellIconParent) {
+            _sprite.removeChild(_unitSpellIconParent);
+            _unitSpellIconParent = null;
+        }
+
+        var spellSet :UnitSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
+        var spells :Array = spellSet.spells;
+        if (spells.length == 0) {
+            return;
+        }
+
+        _unitSpellIconParent = new Sprite();
+        _unitSpellIconParent.x = -_healthMeter.height;
+        _sprite.addChild(_unitSpellIconParent);
+
+        // create new spell icons, arranged above the health meter
+        var icons :Array = [];
+        var totalWidth :Number = 0;
+        for each (var spell :UnitSpell in spellSet.spells) {
+            var icon :DisplayObject = PopCraft.instantiateBitmap(spell.name + "_icon");
+            if (null != icon) {
+                totalWidth += icon.width;
+                icons.push(icon);
+            }
+        }
+
+        var yLoc :Number = -_sprite.height;
+        var xLoc :Number = -(totalWidth * 0.5);
+        for each (icon in icons) {
+            icon.x = xLoc;
+            icon.y = yLoc - icon.height;
+            xLoc += icon.width;
+            _unitSpellIconParent.addChild(icon);
+        }
     }
 
     protected function handleUnitAttacking (e :UnitEvent) :void
@@ -330,6 +383,8 @@ public class CreatureUnitView extends SceneObject
     protected var _animStanding :Array = [];
     protected var _animAttacking :Array = [];
     protected var _animMoving :Array = [];
+
+    protected var _unitSpellIconParent :Sprite;
 
     protected var _lastUnitUpdateTimestamp :Number = 0;
     protected var _unitUpdateTimeDelta :Number = 0;

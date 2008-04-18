@@ -4,6 +4,7 @@ package popcraft.battle
 public class UnitSpell
 {
     public var type :uint;
+    public var name :String;
     public var expireTime :Number = 0;
 
     public var speedScaleOffset :Number = 0;

@@ -5,8 +5,12 @@ import com.threerings.util.Assert;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
+import flash.events.Event;
+
 public class UnitSpellSet extends SimObject
 {
+    public static const SET_MODIFIED :String = "setModified";
+
     public function addSpell (spell :UnitSpell) :void
     {
         var taskName :String = getExpireTaskName(spell.type);
@@ -52,6 +56,8 @@ public class UnitSpellSet extends SimObject
                 _spellAggregate.combine(spell);
             }
         }
+
+        this.dispatchEvent(new Event(SET_MODIFIED));
     }
 
     public function get speedScaleOffset () :Number
@@ -62,6 +68,11 @@ public class UnitSpellSet extends SimObject
     public function get damageScaleOffset () :Number
     {
         return _spellAggregate.damageScaleOffset;
+    }
+
+    public function get spells () :Array
+    {
+        return _spells;
     }
 
     protected static function getExpireTaskName (spellType :uint) :String

@@ -213,6 +213,20 @@ public class GameMode extends AppMode
                 _debugDataView.visible = !(_debugDataView.visible);
             }
             break;
+
+        // temp
+        case "b".charCodeAt(0):
+            if (Constants.DEBUG_ALLOW_CHEATS) {
+                this.castSpell(Constants.SPELL_TYPE_BLOODLUST);
+            }
+            break;
+
+        // temp
+        case "r".charCodeAt(0):
+            if (Constants.DEBUG_ALLOW_CHEATS) {
+                this.castSpell(Constants.SPELL_TYPE_RIGORMORTIS);
+            }
+            break;
         }
     }
 
@@ -366,12 +380,12 @@ public class GameMode extends AppMode
         switch (msg.name) {
         case CreateUnitMessage.messageName:
             var createUnitMsg :CreateUnitMessage = (msg as CreateUnitMessage);
-            UnitFactory.createUnit(createUnitMsg.unitType, createUnitMsg.owningPlayer);
+            UnitFactory.createUnit(createUnitMsg.unitType, createUnitMsg.playerId);
             break;
 
         case SelectTargetEnemyMessage.messageName:
             var selectTargetEnemyMsg :SelectTargetEnemyMessage = msg as SelectTargetEnemyMessage;
-            this.setTargetEnemy(selectTargetEnemyMsg.selectingPlayer, selectTargetEnemyMsg.targetPlayer);
+            this.setTargetEnemy(selectTargetEnemyMsg.playerId, selectTargetEnemyMsg.targetPlayerId);
             break;
 
         case CastSpellMessage.messageName:
@@ -487,7 +501,12 @@ public class GameMode extends AppMode
         }
 
         // send a message!
-        _messageMgr.sendMessage(new CreateUnitMessage(unitType, GameContext.localPlayerId));
+        _messageMgr.sendMessage(new CreateUnitMessage(GameContext.localPlayerId, unitType));
+    }
+
+    public function castSpell (spellType :uint) :void
+    {
+        _messageMgr.sendMessage(new CastSpellMessage(GameContext.localPlayerId, spellType));
     }
 
     protected var _gameIsRunning :Boolean;

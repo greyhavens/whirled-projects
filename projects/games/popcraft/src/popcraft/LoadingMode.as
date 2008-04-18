@@ -17,6 +17,8 @@ public class LoadingMode extends AppMode
         PopCraft.resourceManager.pendResourceLoad("image", "moon", { embeddedClass: IMAGE_MOON });
         PopCraft.resourceManager.pendResourceLoad("image", "battle_bg", { embeddedClass: IMAGE_BATTLE_BG });
         PopCraft.resourceManager.pendResourceLoad("image", "battle_fg", { embeddedClass: IMAGE_BATTLE_FG });
+        PopCraft.resourceManager.pendResourceLoad("image", "bloodlust_icon", { embeddedClass: IMAGE_BLOODLUSTICON });
+        PopCraft.resourceManager.pendResourceLoad("image", "rigormortis_icon", { embeddedClass: IMAGE_RIGORMORTISICON });
 
         PopCraft.resourceManager.pendResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });
         PopCraft.resourceManager.pendResourceLoad("swf", "sapper", { embeddedClass: SWF_SAPPER });
@@ -64,6 +66,12 @@ public class LoadingMode extends AppMode
 
     [Embed(source="../../rsrc/city_forefront.png", mimeType="application/octet-stream")]
     protected static const IMAGE_BATTLE_FG :Class;
+
+    [Embed(source="../../rsrc/bloodlust_icon.png", mimeType="application/octet-stream")]
+    protected static const IMAGE_BLOODLUSTICON :Class;
+
+    [Embed(source="../../rsrc/rigormortis_icon.png", mimeType="application/octet-stream")]
+    protected static const IMAGE_RIGORMORTISICON :Class;
 
     [Embed(source="../../rsrc/streetwalker.swf", mimeType="application/octet-stream")]
     protected static const SWF_GRUNT :Class;
