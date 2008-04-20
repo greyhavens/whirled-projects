@@ -45,6 +45,9 @@ public class CaptionGame extends EventDispatcher
     public static const VOTING_PHASE :int = 1;
     public static const RESULTS_PHASE :int = 2;
 
+    /** Should we run captions through the chat filter? */
+    public static const FILTER_CAPTIONS :Boolean = false;
+
     /** The event type dispatched for a tick event. */
     public static const TICK_EVENT :String = "tick";
 
@@ -194,8 +197,12 @@ public class CaptionGame extends EventDispatcher
             return;
         }
 
+        // turn blank into null
         if (caption != null) {
-            caption = _ctrl.local.filter(StringUtil.trim(caption));
+            caption = StringUtil.trim(caption);
+            if (FILTER_CAPTIONS) {
+                caption = _ctrl.local.filter(caption);
+            }
             if (StringUtil.isBlank(caption)) {
                 caption = null;
             }
@@ -594,7 +601,9 @@ public class CaptionGame extends EventDispatcher
         for (ii = 0; ii < _indexes.length; ii++) {
             var index :int = int(_indexes[ii]);
             var cap :String = String(caps[index]);
-            cap = _ctrl.local.filter(cap);
+            if (FILTER_CAPTIONS) {
+                cap = _ctrl.local.filter(cap);
+            }
             if (cap != null) {
                 _votableCaptions.push(cap);
                 if (ids[index] == _myId) {
@@ -679,9 +688,12 @@ public class CaptionGame extends EventDispatcher
             }
 
             var record :Object = {};
-            record.caption = _ctrl.local.filter(String(caps[index]));
-            if (record.caption == null) {
-                record.caption = "(Filtered)";
+            record.caption = String(caps[index]);
+            if (FILTER_CAPTIONS) {
+                record.caption = _ctrl.local.filter(String(record.caption));
+                if (record.caption == null) {
+                    record.caption = "(Filtered)";
+                }
             }
             record.playerName = String(names[playerId]);
             record.votes = int(Math.abs(result));
