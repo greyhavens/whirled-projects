@@ -472,7 +472,12 @@ public class LOL extends Sprite
     {
         var box :DataCheckBox = (event.currentTarget as DataCheckBox);
         var value :int = int(box.data);
-        _game.setCaptionVote(value, box.selected);
+        var accepted :Boolean = _game.setCaptionVote(value, box.selected);
+
+        if (!accepted) {
+            // the vote was rejected, probably because the user is a luser and is voting for all
+            box.selected = false;
+        }
     }
 
     protected function handlePhotoPageButton (event :MouseEvent) :void

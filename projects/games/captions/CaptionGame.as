@@ -270,20 +270,34 @@ public class CaptionGame extends EventDispatcher
     /**
      * Submit (or retract) a vote for a caption.
      * Votes for your own caption are discarded.
+     *
+     * @return false if the (on) vote was rejected, the checkbox should be unselected.
      */
-    public function setCaptionVote (captionIndex :int, on :Boolean = true) :void
+    public function setCaptionVote (captionIndex :int, on :Boolean = true) :Boolean
     {
         // if it's not the time to vote, or we're submitting a vote for ourselves, don't do it!
         if (!isPhase(VOTING_PHASE) || captionIndex == _myCaptionIndex) {
-            return;
+            return false;
         }
 
         // convert the index (which was randomized on this client) to the player id of the caption
         var ids :Array = _ctrl.net.get(VOTING_IDS) as Array;
         var captionId :int = int(ids[int(_indexes[captionIndex])]);
+        var myNewVote :Array = computeApprovalVote(_myVote, captionId, on);
 
-        _myVote = computeApprovalVote(_myVote, captionId, on);
-        _ctrl.net.setIn(VOTES, _myId, _myVote);
+        // Don't let people vote for all the votable captions if there's more than 1
+        var votable :int = _votableCaptions.length;
+        if (_myCaptionIndex != -1) {
+            votable--; // subtract our own caption, if any
+        }
+        if (votable > 1 && (myNewVote != null) && (myNewVote.length == votable)) {
+            return false; // don't accept the vote
+
+        } else {
+            _myVote = myNewVote;
+            _ctrl.net.setIn(VOTES, _myId, _myVote);
+            return true;
+        }
     }
 
     /**
@@ -478,6 +492,8 @@ public class CaptionGame extends EventDispatcher
             }
 
         } else {
+            // modify a copy of the array
+            votes = votes.concat();
             var index :int = votes.indexOf(value);
             if (add && index == -1) {
                 votes.push(value);
