@@ -36,28 +36,6 @@ public class NewLaw extends CardContainer
         makeLawButton.x = 150;
         makeLawButton.y = 90;
         addChild(makeLawButton);
-                
-        /*
-        // make law button
-        makeLawButton = new TextField();
-        makeLawButton.text = "create";
-        makeLawButton.x = 350;
-        makeLawButton.y = 60;
-		makeLawButton.height = 30;
-        addChild(makeLawButton);
-        enabled = false;
-        */
-        
-        /*
-        // draw the bg
-        graphics.clear();
-        graphics.beginFill(0xFF5555);
-        graphics.drawRect(0, 0, 380, 80);
-        graphics.endFill();
-        */
-        
-        //title.text = "Drag cards here then press 'create' to make a new law"
-        //title.width = 400;
     }
     
     /**
@@ -137,55 +115,17 @@ public class NewLaw extends CardContainer
  		_ctx.broadcast(_ctx.board.player.playerName + " got " + cards.length + " monies for making a new law.");
         _ctx.board.player.getMonies(cards.length);
         enabled = false;
-        //_ctx.state.performingAction = true;
         _ctx.state.startEnactingLaws();
         
         // tell other players and ourself about the new law
         var newLawData :Object = this.getSerializedCards();
-//_ctx.log("NEW law sending serialized: " + newLawData);
-//_ctx.log("cardids: "  + cardIds);
-//_ctx.log("cards: " + cards);
         _ctx.sendMessage(Laws.NEW_LAW, newLawData);
         
         // clear cards from new law and remove them from hand
         clear(false);
         _ctx.board.createLawButton.newLawCreated();
-        
-        // tell the other players that this player's hand is smaller now.
-        //_ctx.board.player.hand.setDistributedHandData();
     }
-    
-    /*
-     * Move the cards from this law into a new law and return it.  Also disable the create new 
-     * law function because players can only create one law in a turn.
-     * TODO make removing cards more efficient
-     *
-    protected function createLaw () :Law
-    {
-        enabled = false;
-        _ctx.state.performingAction = true;
-        
-        // make a copy of the card array
-        var cardArray :Array = new Array();
-        for (var i :int = 0; i < cards.length; i++) {
-            cardArray[i] = cards[i];
-        }
-        
-        // do not distribute this data to other players
-        removeCards(cardArray, false);
 
-        
-        var law :Law = new Law(_ctx, _ctx.board.laws.numLaws);
-        
-        // don't set law distributed data here, we'll do that in Laws
-        law.addCards(cardArray, false);
-        return law;
-        
-        // tell the other players that this player's hand is smaller now.
-        _ctx.board.player.hand.setDistributedHandData();
-    }
-    */
-    
     /**
      * Returns the index of the card at a given global point, or -1 for none.
      */
@@ -243,15 +183,6 @@ public class NewLaw extends CardContainer
     public function set enabled (value :Boolean) :void
     {
     	makeLawButton.enabled = value;
-        //if (value) {
-        	
-            //makeLawButton.addEventListener(MouseEvent.CLICK, makeLawButtonClicked);
-            //makeLawButton.textColor = 0x000000;
-        //}
-        //else {
-            //makeLawButton.removeEventListener(MouseEvent.CLICK, makeLawButtonClicked);
-            //makeLawButton.textColor = 0x999999;
-        //}
         _enabled = value;
     }
     
@@ -322,7 +253,6 @@ public class NewLaw extends CardContainer
     
     /** Press this button to complete the new law */
     protected var makeLawButton :Button;
-    //protected var makeLawButton :TextField;
     
     /** Background image for the entire board */
     [Embed(source="../../../rsrc/components.swf#newlaw")]

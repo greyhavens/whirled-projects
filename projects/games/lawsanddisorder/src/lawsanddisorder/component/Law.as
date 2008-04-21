@@ -51,17 +51,6 @@ public class Law extends CardContainer
             card.y = 8;
             cardX += card.width + 5;
         }
-        
-        /*
-        // draw a border, highlighted or not
-        if (_highlighted) {
-            graphics.lineStyle(5, 0xFFFF00);
-        }
-        else {
-            graphics.lineStyle(5, 0x999955);
-        }
-        graphics.drawRect(2.5, 2.5, 375, 15);
-        */
     }
     
     /**
@@ -103,7 +92,7 @@ public class Law extends CardContainer
                 toPlayer = _ctx.state.selectedOpponent;
                 if (toPlayer == null) {
                     // return here once an opponent has been selected
-                    _ctx.broadcast("(law " + displayId + " triggered): " + fromPlayer + " must select an opponent.");
+                    _ctx.broadcast("(law " + displayId + " triggered): " + fromPlayer.playerName + " must select an opponent.");
                     _ctx.state.selectOpponent(enactLaw);
                     return;
                 }
@@ -161,7 +150,7 @@ public class Law extends CardContainer
                 var selectedCards :Array = _ctx.state.selectedCards;
                 if (selectedCards == null) {
                     // return to here once player has selected X cards
-                    _ctx.broadcast("(law " + displayId + " triggered): " + fromPlayer + " must pick " + amount + " card(s).");
+                    _ctx.broadcast("(law " + displayId + " triggered): " + fromPlayer.playerName + " must pick " + amount + " card(s).");
                     _ctx.state.selectCards(amount, enactLaw);
                     return;
                 }
@@ -267,18 +256,6 @@ public class Law extends CardContainer
         return (_id + 1);
     }
     
-    ///** Is the law highlighted because it's selected? */
-    //public function get highlighted () :Boolean {
-    //    return _highlighted;
-    //}
-    
-    /* Highlight the law because it's selected. 
-    public function set highlighted (value :Boolean) :void {
-        _highlighted = value;
-        updateDisplay();
-    }
-     */     
-    
     /** Return the text version of this law */
     public function get text () :String {
     	return _text;
@@ -289,11 +266,29 @@ public class Law extends CardContainer
     	return "Law " + _id + " [" + _text + "]";
     }
     
+    /**
+     * Is the law displaying that it is selected?
+     */
+    public function get highlighted () :Boolean {
+        return _highlighted;
+    }
+    
+    /**
+     * Change whether the law appears selected, by highlighting
+     * all the cards in it.
+     */
+    public function set highlighted (value :Boolean) :void {
+        _highlighted = value;
+        for each (var card :Card in cards) {
+            card.highlighted = _highlighted;
+        }
+    }
+    
+    /** Is the law highlighted? */
+    protected var _highlighted :Boolean = false;
+    
     /** Text version of the law */
     protected var _text :String
-    
-    ///** Is the law highlighted? */
-    //private var _highlighted :Boolean = false;
     
     /** Index of this law in the list of laws */
     private var _id :int;

@@ -39,19 +39,35 @@ public class EndTurnButton extends Button
 		if (!enabled) {
 			return;
 		}
-		
-        if (!_ctx.state.interactMode) {
+        if (!_ctx.state.hasFocus()) {
             _ctx.log("You can't end the turn right now.");
             return;
         }
         
+        endTurn();
+    }
+	
+	/**
+	 * When the game ends, display that the player's turn is over, but do not
+	 * make them discard or send a signal to the server.
+	 */
+	public function gameEnded () :void
+	{
+		afkTimer.stop();
+        enabled = false;
+    	_ctx.eventHandler.dispatchEvent(new Event(EventHandler.PLAYER_TURN_ENDED));
+        _ctx.board.player.jobEnabled = false;
+	}
+    
+    /**
+     * End the player's turn.
+     */
+    protected function endTurn () :void
+    {
         afkTimer.stop();
         enabled = false;
         _ctx.eventHandler.dispatchEvent(new Event(EventHandler.PLAYER_TURN_ENDED));
-        
-        _ctx.board.createLawButton.enabled = false;
         _ctx.board.player.jobEnabled = false;
-        //_ctx.board.player.powerEnabled = false;
         _ctx.board.player.hand.discardDown(discardDownComplete);
     }
     
@@ -83,21 +99,16 @@ public class EndTurnButton extends Button
     }
     
     /**
-     * The player's turn just started.     */
+     * The player's turn just started.
+     */
     protected function startTurn () :void
     {
-        _ctx.notice("It's my turn.");
-        _ctx.eventHandler.dispatchEvent(new Event(EventHandler.PLAYER_TURN_STARTED));
-        //_ctx.state.performingAction = true;
-        _ctx.board.newLaw.enabled = true;
-        _ctx.board.createLawButton.enabled = true;
-        _ctx.board.player.jobEnabled = true;
-        //_ctx.board.player.powerEnabled = true;
-        _ctx.board.player.hand.drawCard(2);
-        
-        // trigger any laws that take effect when the turn starts
-        //_ctx.board.laws.triggerWhen(Card.START_TURN, _ctx.board.player.job.id);
         enabled = true;
+        _ctx.notice("It's my turn.");
+        _ctx.board.newLaw.enabled = true;
+        _ctx.board.player.jobEnabled = true;
+        _ctx.eventHandler.dispatchEvent(new Event(EventHandler.PLAYER_TURN_STARTED));
+        _ctx.board.player.hand.drawCard(2);
         
         startAFKTimer();
     }
@@ -109,17 +120,17 @@ public class EndTurnButton extends Button
     protected function mouseClicked (event :MouseEvent) :void
     {
     	if (_ctx.board.isMyTurn()) {
+    		afkTurnsSkipped = 0;
     		startAFKTimer();
     	}
     }
     
     /**
      * Start or re-start the timer that waits for input then declares the
-     * player AFK and boots them from the game.     */
+     * player AFK and boots them from the game.
+     */
     protected function startAFKTimer () :void
     {
-    	//_ctx.log("starting AFK timer");
-    	
     	if (afkTimer != null) {
     	   afkTimer.stop();
     	}
@@ -135,39 +146,69 @@ public class EndTurnButton extends Button
      */
     protected function firstAFKWarning (event :TimerEvent) :void
     {
+    	// restart time if player is waiting for another player
+    	if (!_ctx.state.hasFocus(false)) {
+    		startAFKTimer();
+    		return;
+    	}
         _ctx.notice("Hello?  It's your turn and you haven't moved in 30 seconds'!");
-        _ctx.broadcast(_ctx.board.player.playerName + " may be away from their keyboard.");
         afkTimer.stop();
-        // 30000 = 30 seconds
-        afkTimer = new Timer(30000, 1);
+        // 20000 = 20 seconds
+        afkTimer = new Timer(20000, 1);
         afkTimer.addEventListener(TimerEvent.TIMER, secondAFKWarning);
         afkTimer.start();
     }
     
     /**
-     * Called after 1 minute of being afk.  Give a warning and reset the timer
-     * to 10 seconds to give them one more chance before they are booted.     */
+     * Called after 50 seconds of being afk.  Give a warning and reset the timer
+     * to 10 seconds to give them one more chance before they are booted.
+     */
     protected function secondAFKWarning (event :TimerEvent) :void
     {
-    	_ctx.notice("You will be booted in 10 more seconds of inactivity.");
+    	// restart time if player is waiting for another player
+        if (!_ctx.state.hasFocus(false)) {
+            startAFKTimer();
+            return;
+        }
+    	_ctx.notice("Your turn will end automatically in 10 more seconds of inactivity.");
+        _ctx.broadcast(_ctx.board.player.playerName + " may be away from their keyboard.");
         afkTimer.stop();
     	// 10000 = 10 seconds
         afkTimer = new Timer(10000, 1);
-        afkTimer.addEventListener(TimerEvent.TIMER, afkBoot);
+        afkTimer.addEventListener(TimerEvent.TIMER, afkEndTurn);
         afkTimer.start();
     }
     
     /**
-     * Kick the player out of the game because they are AFK     */
-    protected function afkBoot (event :TimerEvent) :void
+     * Kick the player out of the game because they are AFK
+     */
+    protected function afkEndTurn (event :TimerEvent) :void
     {
-        _ctx.broadcast(_ctx.board.player.playerName + " has been booted for inactivity.");
-    	afkTimer.stop();
-    	_ctx.kickPlayer();
+    	// restart time if player is waiting for another player
+        if (!_ctx.state.hasFocus(false)) {
+            startAFKTimer();
+            return;
+        }
+        
+        afkTimer.stop();
+        
+        // already skipped 2 turns, 3rd time is a boot
+        if (afkTurnsSkipped == 2) {
+            _ctx.broadcast(_ctx.board.player.playerName + " booted after skipping 3 turns.");
+            _ctx.kickPlayer();
+        }
+        else {
+            afkTurnsSkipped++;
+            _ctx.broadcast(_ctx.board.player.playerName + "'s turn skippped due to inactivity - strike " + afkTurnsSkipped + ".");
+            endTurn();
+        }
     }
     
     /** Timer for determining if a player is AFK */
     protected var afkTimer :Timer = null;
+    
+    /** After you skip 2 turns, on the third turn you're booted. */
+    protected var afkTurnsSkipped :int = 0;
 
 }
 }

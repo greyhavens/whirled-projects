@@ -38,8 +38,8 @@ public class State
         }
 
         var message :String = "Please select an opponent.";
-        _ctx.notice(message);
-        setModeReminder(message, selectRandomOpponent);
+        //_ctx.notice(message);
+        startModeReminder(message, selectRandomOpponent);
         modeListener = listener;
         mode = MODE_SELECT_OPPONENT;
     }
@@ -81,8 +81,8 @@ public class State
         else {
         	message = "Please select " + numCards + " card(s) from " + targetPlayer.playerName + "'s hand.";
         }
-        _ctx.notice(message);
-        setModeReminder(message, selectRandomCards);
+        //_ctx.notice(message);
+        startModeReminder(message, selectRandomCards);
         
         modeListener = listener;
         mode = MODE_SELECT_HAND_CARDS;
@@ -101,8 +101,8 @@ public class State
             _ctx.log("WTF mode is not default when selecting law.  Continuing...");
         }
         var message :String = "Please select a law.";
-        _ctx.notice(message);
-        setModeReminder(message, cancelUsingPower);
+        //_ctx.notice(message);
+        startModeReminder(message, cancelUsingPower);
         modeListener = listener;
         mode = MODE_SELECT_LAW;
     }
@@ -113,8 +113,8 @@ public class State
     public function exchangeVerb (listener :Function) :void
     {
         var message :String = "Please drag a red card from your hand drop it over a red card in a law"; 
-        _ctx.notice(message);
-        setModeReminder(message, cancelUsingPower);
+        //_ctx.notice(message);
+        startModeReminder(message, cancelUsingPower);
         modeListener = listener;
         mode = MODE_EXCHANGE_VERB;
     }
@@ -125,8 +125,8 @@ public class State
     public function exchangeSubject (listener :Function) :void
     {
         var message :String = "Please drag a blue card from your hand and drop it over a blue card in a law";
-        _ctx.notice(message);
-        setModeReminder(message, cancelUsingPower);
+        //_ctx.notice(message);
+        startModeReminder(message, cancelUsingPower);
         modeListener = listener;
         mode = MODE_EXCHANGE_SUBJECT;
     }
@@ -138,8 +138,8 @@ public class State
     public function moveWhen (listener :Function) :void
     {
     	var message :String = "Please drag a purple card from your hand onto a law, or select a purple card in a law to take"; 
-        _ctx.notice(message);
-        setModeReminder(message, cancelUsingPower);
+        //_ctx.notice(message);
+        startModeReminder(message, cancelUsingPower);
         modeListener = listener;
         mode = MODE_MOVE_WHEN;
     }
@@ -151,7 +151,6 @@ public class State
         if (mode != MODE_DEFAULT) {
             _ctx.log("WTF mode was " + mode + " in startEnactingLaws.");
         }
-        //mode = MODE_TRIGGER_LAWS;
         enactingLaws = true;
     }
     
@@ -162,7 +161,6 @@ public class State
         if (mode != MODE_DEFAULT) {
             _ctx.log("WTF done triggering laws in mode " + mode);
         }
-        //mode = MODE_DEFAULT;
         enactingLaws = false;
     }
     
@@ -201,9 +199,6 @@ public class State
      */
     public function deselectLaw () :void
     {
-        //if (selectedLaw != null) {
-        //    selectedLaw.highlighted = false;
-        //}
         selectedLaw = null;
         modeListener = null;
     }
@@ -211,9 +206,8 @@ public class State
     /**
      * Can the player interact with buttons, etc on their board?  If in default mode and
      * during the player's turn, return true.
-     * TODO should be canInteract() or not needed at all
      */
-    public function get interactMode () :Boolean
+    public function hasFocus (displayNotices :Boolean = true) :Boolean
     {
        // if (_performingAction) {
          //   _ctx.notice("You can't interact with the board while performing an action.");
@@ -223,52 +217,33 @@ public class State
             return true;
         }
         if (enactingLaws && waitingForOpponent != null) {
-            _ctx.notice("Waiting for " + waitingForOpponent.playerName);
+        	if (displayNotices) {
+                _ctx.notice("Waiting for " + waitingForOpponent.playerName);
+        	}
         }
         else if (mode != MODE_DEFAULT) {
-        	_ctx.notice("Busy performing another action. [mode: " + mode + "]");
+        	if (displayNotices) {
+        	   _ctx.notice("Busy performing another action. [mode: " + mode + "]");
+        	}
         }
         else {
-        	_ctx.notice("Not your turn.");
+        	if (displayNotices) {
+        	   _ctx.notice("Not your turn.");
+        	}
         }
         return false;
     }
-    
-    /*
-     * Just completed triggering laws after an action; return focus to the player.
-     *
-    public function set performingAction (value :Boolean) :void
-    {
-        if (!_performingAction && !value) {
-            _ctx.log("WTF, finished performing action but wasn't performing an action.");
-        }
-        if (_performingAction && value) {
-            _ctx.log("WTF, started performing an action while still triggering.");
-        }
-        _performingAction = value;
-    }
-    */
-    
-    /*
-     * Return whether this player is waiting for an action to be performed during
-     * law enacting, or using their power.  Might be waiting for another player.     *
-    public function get performingAction () :Boolean
-    {
-    	return _performingAction;
-    }
-    */
     
     /**
      * Reset the mode to MODE_DEFAULT and deselect all items.
      */
     public function cancelMode () :void
     {
-    	setModeReminder(null);
+    	startModeReminder(null);
         mode = MODE_DEFAULT;
         deselectCards();
         deselectOpponent();
         deselectLaw();
-        //mouseEventHandler.setMouseOverCard(null);
     }
     
     /**
@@ -277,12 +252,11 @@ public class State
      */
     public function doneMode () :void
     {
-        setModeReminder(null);
+        startModeReminder(null);
         mode = MODE_DEFAULT;
         if (modeListener != null) {
             modeListener();
         }
-        //mouseEventHandler.setMouseOverCard(null);
     }
     
     /**
@@ -290,7 +264,7 @@ public class State
      * is null, instead cancel the notice timer.  If a listener function is supplied, this will 
      * be run in place of the 5th reminder message, after which the timer will be cancelled.
      */
-    protected function setModeReminder (message :String, listener :Function = null, reminderNum :int = 1) :void
+    protected function startModeReminder (message :String, listener :Function = null, reminderNum :int = 1) :void
     {
         if (message == null) {
     	    if (modeReminderTimer != null) {
@@ -300,7 +274,10 @@ public class State
     		return;
     	}
     	var reminderText :String;
+    	
+    	// first time through
     	if (reminderNum == 1) {
+            _ctx.notice(message);
     		reminderText = "We're waiting for you.  ";
     		if (modeReminderTimer != null) {
                 _ctx.log("WTF mode reminder timer is not null - continuing");
@@ -318,7 +295,7 @@ public class State
     	}
     	// stop the timer and run the "time's up" listener
     	else if (reminderNum == 5 && listener != null) {
-            setModeReminder(null);
+            startModeReminder(null);
     		listener();
     		return;
     	}
@@ -330,7 +307,7 @@ public class State
         modeReminderTimer.addEventListener(TimerEvent.TIMER, 
             function () :void {
             	_ctx.notice(reminderText + message);
-                setModeReminder(message, listener, reminderNum+1) 
+                startModeReminder(message, listener, reminderNum+1) 
             });
         modeReminderTimer.start();
     }
@@ -389,21 +366,6 @@ public class State
         mode = MODE_DEFAULT;
     }
     
-    /**
-     * Mode is the current UI state; what is the player doing or expected
-     * to be doing at this moment?     */
-    public function get mode () :int
-    {
-    	return _mode;
-    }
-    public function set mode (newMode :int) :void
-    {
-    	_mode = newMode;
-    	if (newMode == MODE_DEFAULT) {
-    		_ctx.log("starting afk timer")
-    	}
-    }
-    
     /** The card being actively dragged, for notification purposes */
     public var activeCard :Card = null;
     
@@ -426,7 +388,7 @@ public class State
     protected var _ctx :Context;
     
     /** Current wait mode - waiting for player to do what? */
-    protected var _mode :int = 0;
+    public var mode :int = 0;
     
     /** This function will be called when the mode is complete */
     protected var modeListener :Function = null;
@@ -458,16 +420,12 @@ public class State
     /** Moving a when card to or from a law */
     public static const MODE_MOVE_WHEN :int = 6;
     
-    ///** Law chain is being triggered */
-    //protected static const MODE_TRIGGER_LAWS :int = 7;
-    
     /**
      * Waiting for laws to finish triggering, which may require selecting cards,
      * or waiting for an opponent to select cards, etc.  Will be complete when Laws.triggeringWhen
      * has finished trigging all applicable laws, then focus may be returned to the player. 
      */
      protected var enactingLaws :Boolean = false;
-    //protected var _performingAction :Boolean = false;
     
     /** Deals with card click events, card dragging, etc */
     public var mouseEventHandler :MouseEventHandler;

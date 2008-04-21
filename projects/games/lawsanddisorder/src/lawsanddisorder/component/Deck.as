@@ -70,7 +70,6 @@ public class Deck extends Component
             addNewCards(2, Card.SUBJECT, Job.TRADER);
             addNewCards(2, Card.SUBJECT, Job.PRIEST);
             addNewCards(2, Card.SUBJECT, Job.DOCTOR);
-            
             // take out gives for 2 player games
             if (playerCount == 2) {
                 addNewCards(4, Card.VERB, Card.LOSES);
@@ -127,13 +126,24 @@ public class Deck extends Component
      */
     public function drawCard () :Card
     {
+		// no cards in deck to draw
+		if (numCards == 0) {
+			return null;
+		}
         var cardIndex :int = cards.pop();
         updateDisplay();
         _ctx.eventHandler.setData(DECK_DATA, cards);
+		
+		// warn that the game will be ending soon
         if (cards.length == 5) {
         	_ctx.broadcast("Only 5 cards left in the deck!");
         }
         
+        // if the deck is ever empty after drawing from it, game ends
+        if (numCards == 0) {
+        	_ctx.eventHandler.startLastRound();
+        }
+		
         return cardObjects[cardIndex];
     }
     
@@ -228,14 +238,6 @@ public class Deck extends Component
     {
     	numCardText.text = cards.length + "";
     }
-    
-    /**
-     * Display contents of cards array for debugging purposes
-     */
-    override public function toString() :String
-    {
-        return cards.toString();
-    }
 
     /**
      * Called when the deck contents change on the server.
@@ -271,7 +273,6 @@ public class Deck extends Component
     
     /**
      * Remove a random job from the pool of available jobs and return it
-     * TODO inefficient even for setup, should setup all jobs and send data
      */
     public function drawRandomJob (player :Player) :Job
     {
@@ -280,7 +281,6 @@ public class Deck extends Component
         for (var i :int = 0; i < jobObjects.length; i++) {
             var tempJob :Job = jobObjects[i];
             if (playerJobs.indexOf(tempJob.id) == -1) {
-            //if (tempJob.player == null) {
                 availableJobs.push(tempJob);
             }
         }

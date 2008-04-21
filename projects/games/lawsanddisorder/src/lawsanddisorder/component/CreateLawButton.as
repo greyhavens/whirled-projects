@@ -5,9 +5,6 @@ import flash.text.TextField;
 import flash.events.MouseEvent;
 import flash.events.Event;
 
-import com.whirled.game.MessageReceivedEvent;
-import com.whirled.game.StateChangedEvent;
-
 import lawsanddisorder.*;
 
 /**
@@ -41,7 +38,7 @@ public class CreateLawButton extends Button
 		// Display the new law area
 		if (text == "create law") {
             // TODO should already be enabled if this is true
-            if (!_ctx.state.interactMode) {
+            if (!_ctx.state.hasFocus()) {
                 _ctx.notice("You can't create a law right now.");
                 return;
             }
@@ -80,8 +77,6 @@ public class CreateLawButton extends Button
     {
 		_ctx.board.newLaw.hide();
 		text = "create law";
-		//hide();
-        //clear();
         enabled = false;
     }
 }

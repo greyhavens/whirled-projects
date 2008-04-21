@@ -40,7 +40,7 @@ public class UsePowerButton extends Button
         // Start using power; switch to cancel
         if (text == DEFAULT_TEXT) {
         	// TODO should already be enabled if this is true
-            if (!_ctx.state.interactMode) {
+            if (!_ctx.state.hasFocus()) {
                 _ctx.notice("You can't use your power right now.");
                 return;
             }

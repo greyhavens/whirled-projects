@@ -7,7 +7,7 @@ import flash.events.MouseEvent;
 import flash.text.TextField;
 
 import com.whirled.game.GameControl;
-import com.whirled.game.FlowAwardedEvent;
+import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.MessageReceivedEvent;
 import com.whirled.game.PropertyChangedEvent;
 import com.whirled.game.StateChangedEvent;
@@ -21,6 +21,8 @@ import lawsanddisorder.component.*
  * TODO gameplay:
  * 1-2-3 step process?  change positions, use power, create law, done
  * ai to play against & allow 1 player games?
+ * include a purple card when massaging starting hands?
+ * don't use "monies"?
  * 
  * TODO interface:
  * add highlighting and cursors to doctor's ability
@@ -40,6 +42,7 @@ import lawsanddisorder.component.*
  * handling long names / special characters in names
  * playing one more round after the last card is drawn
  * color-code the law contents to match card colors
+ * highlight laws on mouse over when selecting for judge or doctor
  * 
  * TODO bugs:
  * disappearing cards, appearing cards - ask server every time?
@@ -79,7 +82,7 @@ public class LawsAndDisorder extends Sprite
         // connect game state listeners
         _ctx.control.game.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
         _ctx.control.game.addEventListener(StateChangedEvent.GAME_ENDED, gameEnded);
-        _ctx.control.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
+        _ctx.control.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
         _ctx.control.game.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED, occupantEntered);
         _ctx.control.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
         _ctx.control.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, controlChanged);
@@ -88,28 +91,18 @@ public class LawsAndDisorder extends Sprite
         _ctx.state = new State(_ctx);
         _ctx.eventHandler = new EventHandler(_ctx);
         _ctx.board = new Board(_ctx);
-        //_ctx.board.init();
         addChild(_ctx.board);
         
-        //var endGame :TextField = new TextField();
-        //endGame.text = "RESTART GAME";
-        //endGame.addEventListener(MouseEvent.CLICK, restartGame);
-        //addChild(endGame);
-
-        // set up distributed data
-        //beginInit();
-        _ctx.notice("Your player id is " + _ctx.control.game.getMyId());
+		/*
+        var endGameButton :TextField = new TextField();
+        endGameButton.text = "END GAME";
+        endGameButton.addEventListener(MouseEvent.CLICK, function () {_ctx.eventHandler.startLastRound();});
+        addChild(endGameButton);
+        _ctx.log("[testing] Your player id is " + _ctx.control.game.getMyId());
+		*/
+        
         _ctx.control.game.playerReady();
     }
-    
-    /*
-    protected function restartGame (event :Event) :void
-    {
-    	_ctx.log("Restarting game");
-    	_ctx.eventHandler.endGame();
-    	//gameStarted(null);
-    }
-    */
     
     /** 
      * Fires when all players have called playerReady().  Have the control player set
@@ -121,20 +114,7 @@ public class LawsAndDisorder extends Sprite
     		beginInit();
     	}
     	
-    	// this is a rematch; reset everything
-    	//if (_gameStarted) {
-    	//	if (_ctx.control.game.amInControl()) {
-    	//		_ctx.board.setup();
-    	//	}
-    	//}
-    	
         _ctx.notice("Welcome to Laws & Disorder.  Click on the board to start!");
-        /*
-        if (_ctx.control.game.amInControl()) {
-            // control player starts the first turn
-            _ctx.control.game.startNextTurn();
-        }
-        */
         _gameStarted = true;
     }
     
@@ -143,8 +123,6 @@ public class LawsAndDisorder extends Sprite
      * Control player will then wait to hear about it 
      * from the server before contiinuing to fill properties with actual data.
      * Also reset deck, hands, and scores for all players.
-     * 
-     * TODO could a player recieve a deck data change event before doing Deck()?
      */
     protected function beginInit () :void
     {
@@ -200,12 +178,12 @@ public class LawsAndDisorder extends Sprite
     }
 
     /**
-     * Handler for receiving flow awarded events
+     * Handler for receiving coins awarded events
      * TODO move to Notices?
      */
-    protected function flowAwarded (event :FlowAwardedEvent) :void
+    protected function coinsAwarded (event :CoinsAwardedEvent) :void
     {
-        _ctx.notice("You got: " + event.amount + " flow for playing.  That's " + event.percentile + "%");
+        _ctx.notice("You got: " + event.amount + " coins for playing.  That's " + event.percentile + "%");
     }
 
     /**
@@ -227,6 +205,7 @@ public class LawsAndDisorder extends Sprite
      */
     protected function occupantLeft (event :OccupantChangedEvent) :void
     {
+    	_ctx.log("player left: " + event.occupantId);
         // player left before game started; start game over and hope that works
         // TODO it won't though, because player objects are already created.
         if (!_gameStarted && event.player) {
@@ -248,6 +227,7 @@ public class LawsAndDisorder extends Sprite
      */
     protected function controlChanged (event :StateChangedEvent) :void
     {
+    	_ctx.notice("Control changed when player left.");
     }
     
     /** Context */

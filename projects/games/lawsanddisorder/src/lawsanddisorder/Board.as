@@ -67,26 +67,31 @@ public class Board extends Sprite
         laws.y = 30;
         addChild(laws);
                 
-        opponents = new Opponents(_ctx);
-        
-        // create the players
         // lists player ids and names by seating position
         var playerServerIds :Array = _ctx.control.game.seating.getPlayerIds();
         var playerNames :Array = _ctx.control.game.seating.getPlayerNames();
-        for (var i :int = 0; i < playerServerIds.length; i++) {
-            var player :Player;
-            if (_ctx.control.game.seating.getMyPosition() == i) {
-                player = new Player(_ctx, i, playerServerIds[i], playerNames[i]);
-                player.x = 0;
-                player.y = 0;
-                addChild(player);
-                this.player = player;
+        
+        // create the player
+        var myPosition :int = _ctx.control.game.seating.getMyPosition();
+        player = new Player(_ctx, myPosition, playerServerIds[myPosition], playerNames[myPosition]);
+        player.x = 0;
+        player.y = 0;
+        addChild(player);
+        this.player = player;
+        playerObjects[myPosition] = player;
+        
+        // create the opponents in order, starting with the player whose turn is next 
+        opponents = new Opponents(_ctx);
+        var i :int = myPosition;
+        while (true) {
+            // increment i and wrap around once the last seat is reached
+            i = (i + 1) % playerServerIds.length;
+            var opponent :Opponent = new Opponent(_ctx, i, playerServerIds[i], playerNames[i]);
+            opponents.addOpponent(Opponent(opponent));
+            playerObjects[i] = opponent;
+            if ((i + 1) % playerServerIds.length == myPosition) {
+            	break;
             }
-            else {
-                player = new Opponent(_ctx, i, playerServerIds[i], playerNames[i]);
-                opponents.addOpponent(Opponent(player));
-            }
-            playerObjects[i] = player;
         }
         
         // add opponents as child after player so they'll be displayed over top
@@ -145,25 +150,18 @@ public class Board extends Sprite
     }
     
     /**
-     * Player clicked the splash screen; remove it and signal game start     */
+     * Player clicked the splash screen; remove it and signal game start
+     */
     protected function helpScreenClicked (event :MouseEvent) :void
     {
-    	//if (_ctx.control.game.amInControl() && !_setupComplete) {
-    	//	return;
-    	//}
     	if (contains(helpScreen)) {
     	   removeChild(helpScreen);
     	}
-    	//_ctx.control.game.playerReady();
-    	
-        //if (_ctx.control.game.amInControl()) {
-            // control player starts the first turn
-        //    _ctx.control.game.startNextTurn();
-        //}
-        
     }
+	
     /**
-     * Player clicked the help button, display the help screen     */
+     * Player clicked the help button, display the help screen
+     */
     protected function helpButtonClicked (event :MouseEvent) :void
     {
         if (!contains(helpScreen)) {
@@ -219,7 +217,8 @@ public class Board extends Sprite
     
     /**
      * Return true if it is this player's turn
-     * TODO not the place for this either     */
+     * TODO not the place for this either
+     */
     public function isMyTurn () :Boolean
     {
     	var turnHolder :Player = getTurnHolder();
@@ -262,7 +261,8 @@ public class Board extends Sprite
     /**
      * Called when a player leaves the game.  Remove them from the visible opponents and
      * the list of player objects, and make their job available, but don't change player.ids or
-     * remove them from distributed data arrays.     */
+     * remove them from distributed data arrays.
+     */
     public function playerLeft (playerServerId :int) :void
     {
         if (playerServerId == player.serverId) {
@@ -289,22 +289,17 @@ public class Board extends Sprite
         _ctx.notice("Cancelling all events and actions because a player left.");
         _ctx.state.cancelMode();
         laws.cancelTriggering();
-        //if (_ctx.state.performingAction) {
-        //    _ctx.state.performingAction = false;
-        //}
-        
-        // if it was their turn, end turn (controlling player only)
-	    if (_ctx.control.game.amInControl()) {
-	        if (getTurnHolder() == null) {
-	        	_ctx.broadcast("Moving on to next player's turn.");
-	        	_ctx.control.game.startNextTurn();
-	        }
-	    }
         
         // remove the player object
         opponents.removeOpponent(opponent);
         var index :int = playerObjects.indexOf(opponent);
         playerObjects.splice(index, 1);
+        
+        // control player may be unset, so have the player in seating position 0 control for now
+	    if (getTurnHolder() == null && playerObjects.indexOf(player) == 0) {
+        	_ctx.broadcast("Moving on to next player's turn.");
+        	_ctx.control.game.startNextTurn();
+	    }
  
         // unload the opponent object       
         opponent.unload();

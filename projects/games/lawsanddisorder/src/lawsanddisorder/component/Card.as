@@ -31,8 +31,6 @@ public class Card extends Component
         _type = type;
         _value = value;
 
-//        buttonMode = true;
-//        mouseEnabled = true;
         addEventListener(MouseEvent.MOUSE_DOWN, ctx.state.mouseEventHandler.cardMouseDown);
         addEventListener(MouseEvent.MOUSE_UP, ctx.state.mouseEventHandler.cardMouseUp);
         addEventListener(MouseEvent.CLICK, ctx.state.mouseEventHandler.cardClick);
@@ -58,7 +56,8 @@ public class Card extends Component
     }
     
     /**
-     * Create the sprite to display when this card is in a player's hand or in a new law.     */
+     * Create the sprite to display when this card is in a player's hand or in a new law.
+     */
     protected function buildCardDisplay () :Sprite
     {
         var cardSprite :Sprite = new Sprite();
@@ -103,7 +102,8 @@ public class Card extends Component
     }
     
     /**
-     * Create and return the sprite to display when this card is in a law.     */
+     * Create and return the sprite to display when this card is in a law.
+     */
     protected function buildTextDisplay () :Sprite
     {
     	var textSprite :Sprite = new Sprite();
@@ -134,7 +134,8 @@ public class Card extends Component
     }
     
     /**
-     * Width differs depending on the parent container     */
+     * Width differs depending on the parent container
+     */
     override public function get width () :Number
     {
         if (_cardContainer is Law) {
@@ -147,7 +148,8 @@ public class Card extends Component
     
     /**
      * Determine what to display based on our cardContainer.  In laws, display a text element.
-     * Anywhere else, display the card proper.     */
+     * Anywhere else, display the card proper.
+     */
     override protected function updateDisplay () :void
     {
     	if (_cardContainer is Law) {
@@ -326,13 +328,15 @@ public class Card extends Component
     
     /**
      * Return the parent container of this card.  May not be the display parent if card is
-     * being dragged on the board.     */
+     * being dragged on the board.
+     */
     public function get cardContainer () :CardContainer {
         return _cardContainer;
     }
     
     /**
-     * Also change the display mode depending on the type of card container     */
+     * Also change the display mode depending on the type of card container
+     */
     public function set cardContainer (cardContainer :CardContainer) :void {
         _cardContainer = cardContainer;
         updateDisplay();

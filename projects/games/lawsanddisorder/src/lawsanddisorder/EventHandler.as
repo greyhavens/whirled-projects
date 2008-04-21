@@ -26,16 +26,9 @@ public class EventHandler extends EventDispatcher
     
     /** Event that fires when the player's turn is starting */
     public static const PLAYER_TURN_STARTED :String = "turnStarted";
-    
-	/**
-	 * Invoke the given function in delay milliseconds.
-	 */
-    public static function invokeLater (delaySeconds :int, func :Function) :void
-    {
-        var timer :Timer = new Timer(delaySeconds*1000, 1);
-        timer.addEventListener(TimerEvent.TIMER, func);
-        timer.start();
-    }
+	
+    /** Event that fires when the last round starts */
+    public static const LAST_ROUND_STARTED :String = "lastRoundStarted";
     
     /**
      * Constructor - add event listeners and maybe get the board if it's setup */
@@ -45,6 +38,18 @@ public class EventHandler extends EventDispatcher
         _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _ctx.control.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         _ctx.control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+		addMessageListener(LAST_ROUND_STARTED, lastRoundStarted);
+    }
+    
+	/**
+	 * Invoke the given function in delay milliseconds.
+	 * TODO remove - only used by mouseeventhandler to rearrange cards
+	 */
+    public static function invokeLater (delaySeconds :int, func :Function) :void
+    {
+        var timer :Timer = new Timer(delaySeconds*1000, 1);
+        timer.addEventListener(TimerEvent.TIMER, func);
+        timer.start();
     }
     
     /**
@@ -72,7 +77,8 @@ public class EventHandler extends EventDispatcher
     }
 
     /**
-     * Dispatch the given data changed event to listeners registered with the given key.     */    
+     * Dispatch the given data changed event to listeners registered with the given key.
+     */    
     protected function dispatchDataEvent (key :String, event :DataChangedEvent) :void
     {
         var listeners :Array = _dataListeners.get(key);
@@ -195,7 +201,6 @@ public class EventHandler extends EventDispatcher
     			return null;
     		}
     		else {
-    		  //return (propertyValue as Array).get(index);
     		  return propertyValue[index];
     		}
     	}
@@ -221,14 +226,43 @@ public class EventHandler extends EventDispatcher
     }
         
     /**
-     * Game is over; calculate the scores and send a message to everyone, awarding flow.
-     * Assumes player seats may have changed during the game and rebuilds playerIds array.
-     * TODO go one more round after the deck is empty?
+     * The deck is empty; start the last round.  When this player's turn starts again, that
+	 * will signal the end of the game.
      */
-    public function endGame () :void
+    public function startLastRound () :void
     {
+		// last round has already started, quit
+		if (_lastRoundStarted) {
+			return;
+		}
+		_lastRoundStarted = true;
+		_ctx.sendMessage(LAST_ROUND_STARTED, _ctx.board.player.id);
+		_ctx.broadcast("The deck is empty, so this is the last round.  This is " + _ctx.board.player.playerName + "'s last turn.");
+		_ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, endGame);
+    }
+	
+    /**
+     * Message event received when the last round starts.
+     */
+    protected function lastRoundStarted (event :MessageReceivedEvent) :void
+    {
+		_lastRoundStarted = true;
+    }
+	
+	/**
+	 * The last round ended, so finally end the game.
+	 * Calculate the scores and send a message to everyone, awarding flow.
+     * Assumes player seats may have changed during the game and rebuilds playerIds array.
+	 */
+	protected function endGame (event :Event) :void
+	{
+		// whoever's turn it is when the game ends, 
     	// end every player's turn to lock the board.
-    	_ctx.eventHandler.dispatchEvent(new Event(EventHandler.PLAYER_TURN_ENDED));
+		_ctx.board.endTurnButton.gameEnded();
+		
+		// prepare for a possible rematch
+		_lastRoundStarted = false;
+		_ctx.eventHandler.removeEventListener(EventHandler.PLAYER_TURN_STARTED, endGame);
     	
         var playerIds :Array = new Array;
         var playerScores :Array = new Array;
@@ -237,9 +271,9 @@ public class EventHandler extends EventDispatcher
             playerIds.push(player.serverId);
             playerScores.push(player.monies);
         }
-
+		
 		_ctx.control.game.endGameWithScores(playerIds, playerScores, GameSubControl.CASCADING_PAYOUT);
-    }
+	}
     
     /** Context */
     protected var _ctx :Context;
@@ -252,5 +286,7 @@ public class EventHandler extends EventDispatcher
      *  Types <String, Array<Function>> */
     protected var _messageListeners :HashMap = new HashMap();
  
+    /* Determines whether the last round of the game has begun */
+ 	protected var _lastRoundStarted :Boolean = false;
 }
 }

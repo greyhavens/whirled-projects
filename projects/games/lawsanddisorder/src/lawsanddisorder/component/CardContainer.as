@@ -331,8 +331,5 @@ _ctx.log("old cards: " + cards);
     
     /** Card ids in the container */
     protected var cardIds :Array = new Array();
-    
-    ///** distance between the left edges of cards */
-    //protected static const CARD_SPACING_X :int = 57;
 }
 }

@@ -285,8 +285,7 @@ public class Player extends Component
     	return _hand;
     }
     
-    /** Return the player's name 
-     * TODO use toString() instead? */
+    /** Return the player's name */
     public function get playerName () :String {
     	return _name;
     }

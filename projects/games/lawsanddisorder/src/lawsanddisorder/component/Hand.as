@@ -83,12 +83,6 @@ public class Hand extends CardContainer
             cardArray.push(card);
         }
         addCards(cardArray);
-        
-        // if the deck is ever empty after drawing from it, game ends
-        // TODO move this to deck and go one more round
-        if (_ctx.board.deck.numCards == 0) {
-        	_ctx.eventHandler.endGame();
-        }
     }
 	
 	/**
@@ -229,7 +223,8 @@ public class Hand extends CardContainer
     }
     
     /**
-     * Pick and return an array of random cards from this hand.     */
+     * Pick and return an array of random cards from this hand.
+     */
     public function getRandomCards (numCards :int = 1) :Array
     {
     	// make a copy of the cards array
