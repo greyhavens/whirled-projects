@@ -25,6 +25,7 @@ import fl.skins.DefaultScrollPaneSkins;
 import com.bogocorp.weather.NOAAWeatherService;
 
 import com.threerings.util.Config;
+import com.threerings.util.StringUtil;
 
 import com.whirled.FurniControl;
 import com.whirled.ControlEvent;
@@ -37,6 +38,10 @@ public class WeatherBox extends Sprite
 {
     public static const WIDTH :int = 250;
     public static const HEIGHT :int = 95;
+
+    // static references to skin classes
+    DefaultScrollPaneSkins;
+    DefaultButtonSkins;
 
     public function WeatherBox ()
     {
@@ -55,15 +60,6 @@ public class WeatherBox extends Sprite
         setupUI();
 
         loadWeather(getStationURL(), true);
-    }
-
-    /**
-     * Reference any default skins we use so that they get compiled in.
-     */
-    private static function referenceSkins () :void
-    {
-        DefaultScrollPaneSkins;
-        DefaultButtonSkins;
     }
 
     /**
@@ -117,9 +113,20 @@ public class WeatherBox extends Sprite
     /**
      * Called to configure our station and state.
      */
-    public function configure (state :String, stationId :String) :void
+    public function configure (state :String, stationId :String, altLocation :String) :void
     {
+        var altLocWasUsed :Boolean = (_altLoc != null)
+        _altLoc = StringUtil.isBlank(altLocation) ? null : altLocation;
+        setConfigs(ALT_LOC_KEY, _altLoc);
+        if (_altLoc != null) {
+            _locationLabel.text = _altLoc;
+        }
+
         if (stationId == _stationId) {
+            if (altLocWasUsed && _altLoc == null) {
+                // we need to reset the location label
+                loadWeather(_stationURL, true);
+            }
             return; // no change
         }
 
@@ -171,6 +178,15 @@ public class WeatherBox extends Sprite
     public function getStationURL () :String
     {
         return getFromConfigs(STATION_URL_KEY, _stationURL);
+    }
+
+    /**
+     * Return the alternate location to display.
+     */
+    public function getAltLocation () :String
+    {
+        var s :String = getFromConfigs(ALT_LOC_KEY, _altLoc);
+        return (s == null) ? "" : s;
     }
 
     /**
@@ -238,7 +254,7 @@ public class WeatherBox extends Sprite
         addChild(_iconArea);
 
         _weatherLabel.text = data.weather;
-        _locationLabel.text = data.location;
+        _locationLabel.text = StringUtil.isBlank(_altLoc) ? data.location : _altLoc;
         _tempLabel.text = data.temperature_string;
         _windLabel.text = "Wind: " + data.wind_string;
         _statusLabel.text = data.observation_time;
@@ -337,6 +353,7 @@ public class WeatherBox extends Sprite
     protected var _state :String = null;
     protected var _stationId :String = null;
     protected var _stationURL :String = null;
+    protected var _altLoc :String = null;
 
     protected var _iconArea :ScrollPane;
     protected var _weatherLabel :TextField;
@@ -361,5 +378,6 @@ public class WeatherBox extends Sprite
     protected static const STATE_KEY :String = "state";
     protected static const STATION_ID_KEY :String = "station_id";
     protected static const STATION_URL_KEY :String = "station_url";
+    protected static const ALT_LOC_KEY :String = "loc";
 }
 }

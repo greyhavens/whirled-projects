@@ -9,6 +9,7 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 
 import flash.text.TextField;
+import flash.text.TextFieldType;
 
 import fl.controls.Button;
 import fl.controls.ComboBox;
@@ -18,10 +19,16 @@ import fl.skins.DefaultComboBoxSkins;
 
 import fl.data.DataProvider;
 
+import com.threerings.util.StringUtil;
+
 import com.bogocorp.weather.NOAAWeatherService;
 
 public class ConfigPanel extends Sprite
 {
+    // staticly reference skin classes
+    DefaultButtonSkins;
+    DefaultComboBoxSkins;
+
     public function ConfigPanel (box :WeatherBox, svc :NOAAWeatherService, bigMode :Boolean)
     {
         _box = box;
@@ -30,13 +37,31 @@ public class ConfigPanel extends Sprite
         _stateBox = new ComboBox();
         _stationBox = new ComboBox();
         _statusLabel = new TextField();
+        _altLocation = new TextField();
         _close = new Button();
+
+        _altLocation.text = box.getAltLocation();
 
         if (bigMode) {
             _height = 150;
             _close.y = 127;
             _statusLabel.y = 130;
             // rowCount defaults are 5
+            addChild(_altLocation);
+
+            var altPrompt :TextField = new TextField();
+            altPrompt.text = "Alt loc:";
+            altPrompt.width = altPrompt.textWidth + 5;
+            altPrompt.height = 22;
+            altPrompt.y = 100;
+            addChild(altPrompt);
+
+            _altLocation.type = TextFieldType.INPUT;
+            _altLocation.y = 100;
+            _altLocation.x = altPrompt.width + 10;
+            _altLocation.height = 22;
+            _altLocation.width = 200 - _altLocation.x;
+            _altLocation.border = true;
 
         } else {
             _height = WeatherBox.HEIGHT;
@@ -74,12 +99,6 @@ public class ConfigPanel extends Sprite
         addChild(_close);
 
         svc.getDirectory(directoryReceived);
-    }
-
-    private static function referenceSkins () :void
-    {
-        DefaultButtonSkins;
-        DefaultComboBoxSkins;
     }
 
     override public function get width () :Number
@@ -147,7 +166,7 @@ public class ConfigPanel extends Sprite
         _box.closeConfigPanel();
 
         if (state != null && station != null) {
-            _box.configure(state, station);
+            _box.configure(state, station, StringUtil.trim(_altLocation.text));
         }
     }
     
@@ -155,6 +174,7 @@ public class ConfigPanel extends Sprite
     protected var _svc :NOAAWeatherService;
 
     protected var _statusLabel :TextField;
+    protected var _altLocation :TextField;
 
     protected var _stateBox :ComboBox;
     protected var _stationBox :ComboBox;
