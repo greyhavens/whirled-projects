@@ -53,8 +53,9 @@ public class AlbumViewer extends Sprite
         // Set up the flickr service
         // This is my (Ray Greenwell)'s personal Flickr key for the AlbumViewer!! Get your own!
         _flickr = new FlickrService("f7d0090207c8e05dbced9ba2ec206647");
-        _flickr.addEventListener(FlickrResultEvent.PEOPLE_FIND_BY_USERNAME,
-            handleFindUsername);
+//        _flickr.addEventListener(FlickrResultEvent.PEOPLE_FIND_BY_USERNAME,
+//            handleFindUsername);
+        _flickr.addEventListener(FlickrResultEvent.URLS_LOOKUP_USER, handleLookupUser);
         _flickr.addEventListener(FlickrResultEvent.PEOPLE_GET_PUBLIC_PHOTOS,
             handleGotPeoplePhotos);
         _flickr.addEventListener(FlickrResultEvent.PHOTOSETS_GET_PHOTOS,
@@ -223,7 +224,7 @@ public class AlbumViewer extends Sprite
 
         result = (new RegExp("flickr\\.com/photos/([^/]*)")).exec(text);
         if (result) {
-            _flickr.people.findByUsername(result[1]);
+            _flickr.urls.lookupUser(text);
             return false;
         }
 
@@ -248,13 +249,28 @@ public class AlbumViewer extends Sprite
         }
     }
 
-    protected function handleFindUsername (evt :FlickrResultEvent) :void
+//    protected function handleFindUsername (evt :FlickrResultEvent) :void
+//    {
+//        if (_shutdown) {
+//            return;
+//
+//        } else if (!evt.success) {
+//            _configPanel.setLabel("Failure identifying username " +
+//                "[" + evt.data.error.errorMessage + "] Please try again.");
+//            return;
+//        }
+//
+//        removeConfigPanel();
+//        configureSource(evt.data.user.nsid);
+//    }
+
+    protected function handleLookupUser (evt :FlickrResultEvent) :void
     {
         if (_shutdown) {
             return;
 
         } else if (!evt.success) {
-            _configPanel.setLabel("Failure identifying username " +
+            _configPanel.setLabel("Failure identifying user " +
                 "[" + evt.data.error.errorMessage + "] Please try again.");
             return;
         }

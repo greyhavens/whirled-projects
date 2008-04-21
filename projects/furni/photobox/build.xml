@@ -3,6 +3,8 @@
 
   <!-- define some basic project parameters -->
   <property name="app.name" value="AlbumViewer"/>
+  <property name="app.type" value="toy"/>
+
   <property name="flex.use-network" value="true"/>
 
   <property name="app.lib-extras" value="../../../lib/corelib.swc"/>
