@@ -17,11 +17,11 @@ public class Constants
     /* Debug options */
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
-    public static const DEBUG_ALLOW_CHEATS :Boolean = true;
+    public static const DEBUG_ALLOW_CHEATS :Boolean = false;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
-    public static const DEBUG_DISABLE_DIURNAL_CYCLE :Boolean = true;
+    public static const DEBUG_DISABLE_DIURNAL_CYCLE :Boolean = false;
 
     /* Screen layout */
     public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
@@ -253,6 +253,8 @@ public class Constants
 
     // non-creature units must come after creature units
     public static const UNIT_DATA :Array = [ GRUNT_DATA, HEAVY_DATA, SAPPER_DATA, COLOSSUS_DATA, BASE_DATA ];
+
+    public static const CREATURE_UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "colossus" ];
 
     public static function getPlayerBaseLocations (numPlayers :uint) :Array // of Vector2s
     {

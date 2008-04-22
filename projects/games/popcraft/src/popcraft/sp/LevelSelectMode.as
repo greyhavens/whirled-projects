@@ -51,30 +51,28 @@ public class LevelSelectMode extends AppMode
     protected function levelSelected (...ignored) :void
     {
         // @TEMP - construct a test level
-        var initialWave :UnitWave = new UnitWave();
-        initialWave.delayBefore = 10;
-        initialWave.units = [ Constants.UNIT_TYPE_GRUNT ];
+        var xmlData :XML =
+            <root>
+                <Level name="Level 1" introText="This is level 1">
+                    <AvailableUnits>
+                        <Unit type="grunt"/>
+                        <Unit type="heavy"/>
+                    </AvailableUnits>
+                    <Computer>
+                        <InitialWaves>
+                            <Wave delayBefore="30"><Unit type="grunt" count="1"/></Wave>
+                        </InitialWaves>
+                        <RepeatingWaves>
+                            <Wave delayBefore="30"><Unit type="grunt" count="2"/></Wave>
+                        </RepeatingWaves>
+                    </Computer>
+                </Level>
+            </root>;
 
-        var repeatingWave :UnitWave = new UnitWave();
-        repeatingWave.delayBefore = 5;
-        repeatingWave.units = [ Constants.UNIT_TYPE_GRUNT, Constants.UNIT_TYPE_GRUNT ];
-
-        var testOpponent :ComputerPlayerData = new ComputerPlayerData();
-        testOpponent.initialWaves = [ initialWave ];
-        testOpponent.repeatingWaves = [ repeatingWave ];
-
-        var testLevel :LevelData = new LevelData();
-        testLevel.name = "Tutorial 1";
-        testLevel.introText = "Learn how to use the Madame and the Handy Man!";
-        testLevel.availableUnits = [ Constants.UNIT_TYPE_GRUNT, Constants.UNIT_TYPE_HEAVY ];
-        testLevel.disableDiurnalCycle = true;
-        testLevel.computers = [ testOpponent ];
-
-        //testLevel = LevelData.fromXml(null);
 
         // start the game
         GameContext.gameType = GameContext.GAME_TYPE_SINGLEPLAYER;
-        GameContext.spLevel = testLevel;
+        GameContext.spLevel = LevelData.fromXml(xmlData);
         MainLoop.instance.changeMode(new GameMode());
     }
 
