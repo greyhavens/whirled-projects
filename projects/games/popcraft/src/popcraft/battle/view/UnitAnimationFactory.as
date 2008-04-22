@@ -21,9 +21,6 @@ public class UnitAnimationFactory
             var success :Boolean;
             do {
                 success = colorizeAnimation(anim, "recolor" + i++, g_tintMatrix);
-                /*if (!success) {
-                    trace("found " + String(i) + " recolor symbols for " + unitData.name + "." + animName);
-                }*/
             } while (success);
 
             // colorize the animation's "recolor" child

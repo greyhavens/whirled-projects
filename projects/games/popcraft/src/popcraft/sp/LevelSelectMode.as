@@ -36,6 +36,16 @@ public class LevelSelectMode extends AppMode
         button.y = 200;
 
         this.modeSprite.addChild(button);
+
+        button = new SimpleTextButton("Unit Anim Test");
+        button.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                AppContext.mainLoop.pushMode(new UnitAnimTestMode());
+            });
+        button.x = (this.modeSprite.width * 0.5) - (button.width * 0.5);
+        button.y = 240;
+
+        this.modeSprite.addChild(button);
     }
 
     protected function levelSelected (...ignored) :void
@@ -59,6 +69,8 @@ public class LevelSelectMode extends AppMode
         testLevel.availableUnits = [ Constants.UNIT_TYPE_GRUNT, Constants.UNIT_TYPE_HEAVY ];
         testLevel.disableDiurnalCycle = true;
         testLevel.computers = [ testOpponent ];
+
+        //testLevel = LevelData.fromXml(null);
 
         // start the game
         GameContext.gameType = GameContext.GAME_TYPE_SINGLEPLAYER;

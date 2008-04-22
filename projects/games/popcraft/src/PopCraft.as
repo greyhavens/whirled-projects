@@ -20,6 +20,14 @@ public class PopCraft extends Sprite
 {
     public function PopCraft ()
     {
+        var test :Boolean = Boolean("true");
+        test = Boolean("TRUE");
+        test = Boolean("tRue");
+        test = Boolean("0");
+        test = Boolean("123");
+        test = Boolean("e");
+        test = Boolean("False");
+
         this.graphics.beginFill(0);
         this.graphics.drawRect(0, 0, 700, 500);
         this.graphics.endFill();
