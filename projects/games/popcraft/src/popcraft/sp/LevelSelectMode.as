@@ -69,6 +69,14 @@ public class LevelSelectMode extends AppMode
                 </Level>
             </root>;
 
+        // Try loading the level. Alert the designer if the level has an error.
+        var levelData :LevelData;
+        try {
+            levelData = LevelData.fromXml(xmlData);
+        } catch (e :XmlReadError) {
+            AppContext.mainLoop.pushMode(new LevelLoadErrorMode(e));
+            return;
+        }
 
         // start the game
         GameContext.gameType = GameContext.GAME_TYPE_SINGLEPLAYER;
