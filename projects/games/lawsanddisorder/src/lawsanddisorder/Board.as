@@ -61,36 +61,61 @@ public class Board extends Sprite
         newLaw = new NewLaw(_ctx);
         newLaw.x = 170;
         newLaw.y = 200;
-        
-        laws = new Laws(_ctx);
-        laws.x = 160;
-        laws.y = 30;
-        addChild(laws);
                 
         // lists player ids and names by seating position
         var playerServerIds :Array = _ctx.control.game.seating.getPlayerIds();
         var playerNames :Array = _ctx.control.game.seating.getPlayerNames();
         
-        // create the player
+        // get the player's position; -1 means the player is a watcher
         var myPosition :int = _ctx.control.game.seating.getMyPosition();
-        player = new Player(_ctx, myPosition, playerServerIds[myPosition], playerNames[myPosition]);
-        player.x = 0;
-        player.y = 0;
-        addChild(player);
-        this.player = player;
-        playerObjects[myPosition] = player;
+        var isWatcher :Boolean;
+        if (myPosition == -1) {
+            isWatcher = true;
+        }
         
-        // create the opponents in order, starting with the player whose turn is next 
+        /*
+        // TODO for testing, pretend as a watcher
+        playerServerIds.length = playerServerIds.length - 1;
+        playerNames.length = playerNames.length - 1;
+        if (myPosition == playerNames.length) {
+            isWatcher = true;
+        }
+        */
+        
+        // watchers don't get a job, hand, etc.
+        if (isWatcher) {
+        	player = new Player(_ctx, -1, -1, "watcher");
+        	//player = null;
+        }
+        else {
+            player = new Player(_ctx, myPosition, playerServerIds[myPosition], playerNames[myPosition]);
+            playerObjects[myPosition] = player;
+        }
+        addChild(player);
+                
         opponents = new Opponents(_ctx);
-        var i :int = myPosition;
-        while (true) {
-            // increment i and wrap around once the last seat is reached
-            i = (i + 1) % playerServerIds.length;
-            var opponent :Opponent = new Opponent(_ctx, i, playerServerIds[i], playerNames[i]);
-            opponents.addOpponent(Opponent(opponent));
-            playerObjects[i] = opponent;
-            if ((i + 1) % playerServerIds.length == myPosition) {
-            	break;
+        
+        // watchers see all players as opponents
+        if (isWatcher) {
+        	for (var j :int = 0; j < playerServerIds.length; j++) {
+                var playerOpponent :Opponent = new Opponent(_ctx, j, playerServerIds[j], playerNames[j]);
+                opponents.addOpponent(playerOpponent);
+                playerObjects[j] = playerOpponent;
+        	}
+        }
+
+        // players create the opponents in order, starting with the opponent whose turn is next 
+        else {
+            var i :int = myPosition;
+            while (true) {
+                // increment i and wrap around once the last seat is reached
+                i = (i + 1) % playerServerIds.length;
+                var opponent :Opponent = new Opponent(_ctx, i, playerServerIds[i], playerNames[i]);
+                opponents.addOpponent(opponent);
+                playerObjects[i] = opponent;
+                if ((i + 1) % playerServerIds.length == myPosition) {
+                	break;
+                }
             }
         }
         
@@ -98,7 +123,13 @@ public class Board extends Sprite
         opponents.x = 590;
         opponents.y = 10;
         addChild(opponents);
-        
+
+        // list of laws
+        laws = new Laws(_ctx);
+        laws.x = 160;
+        laws.y = 30;
+        addChild(laws);
+
         // use power / cancel button
         usePowerButton = new UsePowerButton(_ctx);
         usePowerButton.x = 12;
@@ -114,7 +145,7 @@ public class Board extends Sprite
         endTurnButton.x = 12;
         endTurnButton.y = 290;
         addChild(endTurnButton);
-        
+
         // notices display above everything else
         notices = new Notices(_ctx);
         notices.x = 0;
@@ -125,7 +156,7 @@ public class Board extends Sprite
         turnHighlight = new Sprite();
         turnHighlight.graphics.lineStyle(5, 0xFFFF00);
         turnHighlight.graphics.drawRect(2, 2, 695, 495);
-        
+
         // show the splash screen over the entire board
         helpScreen = new SPLASH_SCREEN();
         helpScreen.addEventListener(MouseEvent.CLICK, helpScreenClicked);
@@ -168,6 +199,17 @@ public class Board extends Sprite
            addChild(helpScreen);
            _ctx.notice("Displaying help.  Click on the board to continue.")
         }
+    }
+    
+    /**
+     * For watchers who join partway through the game, fetch the existing board data     */
+    public function refreshData () :void
+    {
+    	laws.refreshData();
+    	for each (var player :Player in players) {
+    		player.refreshData();
+    	}
+    	deck.refreshData();
     }
     
     /**

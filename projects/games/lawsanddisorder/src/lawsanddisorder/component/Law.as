@@ -73,6 +73,7 @@ public class Law extends CardContainer
         
         // determine if our player has nothing to do here
         if (fromPlayer != _ctx.board.player) {
+        	_ctx.state.waitingForOpponent = fromPlayer;
             return;
         }
         
@@ -92,7 +93,7 @@ public class Law extends CardContainer
                 toPlayer = _ctx.state.selectedOpponent;
                 if (toPlayer == null) {
                     // return here once an opponent has been selected
-                    _ctx.broadcast("(law " + displayId + " triggered): " + fromPlayer.playerName + " must select an opponent.");
+                    _ctx.broadcastOthers("(law " + displayId + " triggered): waiting for " + fromPlayer.playerName + " to pick an opponent.");
                     _ctx.state.selectOpponent(enactLaw);
                     return;
                 }
@@ -124,8 +125,14 @@ public class Law extends CardContainer
                 message = fromPlayer.playerName + " got " + amount + " monies";
             }
             else {
+            	if (_ctx.board.deck.numCards < amount) {
+            		message = fromPlayer.playerName + " would have got " + amount + " cards, but there was " + _ctx.board.deck.numCards + " left in the deck";
+                    amount = _ctx.board.deck.numCards;
+            	}
+            	else {
+            	    message = fromPlayer.playerName + " got " + amount + " cards";	
+            	}
                 fromPlayer.getCards(amount);
-                message = fromPlayer.playerName + " got " + amount + " cards";
             }
         }
         
@@ -150,7 +157,7 @@ public class Law extends CardContainer
                 var selectedCards :Array = _ctx.state.selectedCards;
                 if (selectedCards == null) {
                     // return to here once player has selected X cards
-                    _ctx.broadcast("(law " + displayId + " triggered): " + fromPlayer.playerName + " must pick " + amount + " card(s).");
+                    _ctx.broadcastOthers("(law " + displayId + " triggered): waiting for " + fromPlayer.playerName + " to pick card(s).");
                     _ctx.state.selectCards(amount, enactLaw);
                     return;
                 }
@@ -158,12 +165,23 @@ public class Law extends CardContainer
                 // GIVES cards to somebody
                 if (verb == Card.GIVES && toPlayer != null) {
                     fromPlayer.giveCardsTo(selectedCards, toPlayer);
-                    message = fromPlayer.playerName + " gave " + amount + " cards to " + toPlayer.playerName;
+                	if (selectedCards.length < amount) {
+                        message = fromPlayer.playerName + " would have given " + toPlayer.playerName + " " + amount + " cards, but had " + selectedCards.length + " to give";
+                	}
+                	else {
+                		message = fromPlayer.playerName + " gave " + amount + " cards to " + toPlayer.playerName;
+                	}
+
                 }
                 // LOSES / GIVES cards to nobody
                 else {
                     fromPlayer.loseCards(selectedCards);
-                    message = fromPlayer.playerName + " lost " + amount + " cards";
+                	if (selectedCards.length < amount) {
+                        message = fromPlayer.playerName + " would have lost " + amount + " cards, but had " + selectedCards.length + " to lose";
+                    }
+                    else {
+                        message = fromPlayer.playerName + " lost " + amount + " cards";
+                    }
                 }
             }
         }

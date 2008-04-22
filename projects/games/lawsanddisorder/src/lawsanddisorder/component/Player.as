@@ -25,12 +25,25 @@ public class Player extends Component
     public function Player (ctx :Context, id :int, serverId :int, name :String)
     {
         this.id = id;
+        if (id == -1) {
+        	isWatcher = true;
+        }
         this.serverId = serverId;
+        
+        // truncate player names for display on the opponent area, 10 chars maximum
+        if (name.length > 10) {
+        	name = name.substr(0, 10);
+        }
         this._name = name;
+        
         _hand = new Hand(ctx, this);
-        ctx.eventHandler.addDataListener(Deck.JOBS_DATA, jobChanged, id);
-        ctx.eventHandler.addDataListener(Hand.HAND_DATA, handChanged, id);
-        ctx.eventHandler.addDataListener(MONIES_DATA, moniesChanged, id);
+        
+        // connect handlers for job, hand or monies changing.
+        if (!isWatcher) {
+            ctx.eventHandler.addDataListener(Deck.JOBS_DATA, jobChanged, id);
+            ctx.eventHandler.addDataListener(Hand.HAND_DATA, handChanged, id);
+            ctx.eventHandler.addDataListener(MONIES_DATA, moniesChanged, id);
+        }
         
         super(ctx);
     }
@@ -41,10 +54,26 @@ public class Player extends Component
      */
     public function setup () :void
     {
-        var job :Job = _ctx.board.deck.drawRandomJob(this);
-        _ctx.board.deck.switchJobs(job, this, true);
+        var newJob :Job = _ctx.board.deck.drawRandomJob(this);
+        _ctx.board.deck.switchJobs(newJob, this, true);
         hand.setup();
         _ctx.eventHandler.setData(MONIES_DATA, STARTING_MONIES, id);
+    }
+    
+    /**
+     * For watchers who join partway through the game, fetch the existing player data
+     */
+    public function refreshData () :void
+    {
+    	// watching players have no monies, job or hand to fetch
+    	if (isWatcher) {
+    		return;
+    	}
+        _monies = _ctx.eventHandler.getData(MONIES_DATA, id);
+        var jobId :int = _ctx.eventHandler.getData(Deck.JOBS_DATA, id);
+        job = _ctx.board.deck.getJob(jobId);
+        hand.refreshData();
+        updateDisplay();
     }
     
     /**
@@ -122,6 +151,11 @@ public class Player extends Component
         _moniesText.x = 10;
         _moniesText.y = 15;
         addChild(_moniesText);
+        
+        // give watchers an empty job to fill the space
+        if (isWatcher) {
+            job = new Job(_ctx, -1);
+        }
     }
 
     /**
@@ -224,7 +258,6 @@ public class Player extends Component
     public function loseCards (cardsToLose :Array) :void
     {
         if (cardsToLose == null || cardsToLose.length == 0) {
-            _ctx.log("WTF no cards to lose!: " + cardsToLose);
             return;
         }
         // will set display and distributed data
@@ -267,19 +300,6 @@ public class Player extends Component
         _job.updateEnabled();
     }
     
-    /* Can the player use their power right now? *
-    public function get powerEnabled () :Boolean {
-        return _powerEnabled;
-    }
-    /** Set whether the player can use their power right now *
-    public function set powerEnabled (value :Boolean) :void {
-        _powerEnabled = value;
-        _job.updateEnabled();
-        // enable/disable use power button
-        _ctx.board.usePowerButton.enabled = value;
-    }
-    */
-    
     /** Public getter for the hand object */
     public function get hand () :Hand {
     	return _hand;
@@ -300,8 +320,8 @@ public class Player extends Component
     /** Can the player change jobs right now? */
     protected var _jobEnabled :Boolean;
     
-    ///** Can the player use their power right now? */
-    //protected var _powerEnabled :Boolean;
+    /** Is the player a real player or are they just watching? */
+    public var isWatcher :Boolean = false;
     
     /** Player's id according to their place at the table */
     public var id :int;

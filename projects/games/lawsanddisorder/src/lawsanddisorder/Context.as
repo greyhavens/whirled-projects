@@ -6,7 +6,6 @@ import lawsanddisorder.component.*;
 
 /**
  * Contains references to the various bits used in the game.
- * TODO move notices, get, sendMessage, etc to EventHandler
  */
 public class Context
 {
@@ -22,7 +21,6 @@ public class Context
 
     /**
      * Log this debugging message
-     * TODO combine log, notice, broadcast into one method?
      */
     public function log (message :String) :void
     {
@@ -35,7 +33,6 @@ public class Context
     public function notice (notice :String) :void
     {
 		board.notices.addNotice(notice);
-		//log("[notice] " + notice);
     }
 
     /**
@@ -48,6 +45,19 @@ public class Context
     	}
     	else {
     		_control.net.sendMessage(Notices.BROADCAST, message);
+    	}
+    }
+
+    /**
+     * Display an in-game notice message to all other players
+     * TODO watchers don't see this message
+     */
+    public function broadcastOthers (message :String) :void
+    {
+    	for each (var player :Player in board.players) {
+    		if (player != board.player) {
+                _control.net.sendMessage(Notices.BROADCAST, message, player.serverId);
+    		}
     	}
     }
     

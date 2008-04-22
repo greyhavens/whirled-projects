@@ -9,6 +9,8 @@ import flash.events.EventDispatcher;
 import com.whirled.game.PropertyChangedEvent;
 import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.MessageReceivedEvent;
+import com.whirled.game.CoinsAwardedEvent;
+import com.whirled.game.StateChangedEvent;
 import com.threerings.util.HashMap;
 import com.whirled.game.GameSubControl;
 
@@ -35,6 +37,8 @@ public class EventHandler extends EventDispatcher
     public function EventHandler (ctx :Context)
     {
         _ctx = ctx;
+        _ctx.control.game.addEventListener(StateChangedEvent.GAME_ENDED, gameEnded);
+        _ctx.control.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);        
         _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _ctx.control.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         _ctx.control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
@@ -274,6 +278,23 @@ public class EventHandler extends EventDispatcher
 		
 		_ctx.control.game.endGameWithScores(playerIds, playerScores, GameSubControl.CASCADING_PAYOUT);
 	}
+    
+    /**
+     * Handler for recieving game end events
+     */
+    protected function gameEnded (event :StateChangedEvent) :void
+    {
+        _ctx.notice("Game over - thanks for playing!");
+        _lastRoundStarted = false;
+    }
+    
+    /**
+     * Handler for receiving coins awarded events
+     */
+    protected function coinsAwarded (event :CoinsAwardedEvent) :void
+    {
+        _ctx.notice("You got: " + event.amount + " coins for playing.  That's " + event.percentile + "%");
+    }
     
     /** Context */
     protected var _ctx :Context;

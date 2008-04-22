@@ -7,7 +7,6 @@ import flash.events.MouseEvent;
 import flash.text.TextField;
 
 import com.whirled.game.GameControl;
-import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.MessageReceivedEvent;
 import com.whirled.game.PropertyChangedEvent;
 import com.whirled.game.StateChangedEvent;
@@ -76,41 +75,107 @@ public class LawsAndDisorder extends Sprite
 		
 		// if we're not connected, stop here
         if (!_ctx.control.isConnected()) {
-            return;
+        	_ctx.log("not connected during game init.");
         }
+          //  return;
+        //}
         
         // connect game state listeners
         _ctx.control.game.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
-        _ctx.control.game.addEventListener(StateChangedEvent.GAME_ENDED, gameEnded);
-        _ctx.control.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
         _ctx.control.game.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED, occupantEntered);
         _ctx.control.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
         _ctx.control.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, controlChanged);
         
-        // create our state and our board, and initialize them
+        
+        // create our state and our board
         _ctx.state = new State(_ctx);
         _ctx.eventHandler = new EventHandler(_ctx);
         _ctx.board = new Board(_ctx);
         addChild(_ctx.board);
         
-		/*
-        var endGameButton :TextField = new TextField();
-        endGameButton.text = "END GAME";
-        endGameButton.addEventListener(MouseEvent.CLICK, function () {_ctx.eventHandler.startLastRound();});
-        addChild(endGameButton);
-        _ctx.log("[testing] Your player id is " + _ctx.control.game.getMyId());
-		*/
+        // if we're a watcher, assume the game has already started and fetch data
+        if (_ctx.control.game.seating.getMyPosition() == -1) {
+            _gameStarted = true;
+            _ctx.board.refreshData();
+        }
         
+        /*
+        // TODO start the last round button for testing
+        var endGameButton :TextField = new TextField();
+        endGameButton.height = 30;
+        endGameButton.text = "END GAME";
+        endGameButton.addEventListener(MouseEvent.CLICK, function () :void {_ctx.eventHandler.startLastRound();});
+        addChild(endGameButton);
+        
+        
+        var rejoinButton :TextField = new TextField();
+        rejoinButton.height = 30;
+        rejoinButton.text = "REJOIN THE GAME";
+        rejoinButton.addEventListener(MouseEvent.CLICK, function () :void {rejoin();});
+        rejoinButton.y = 400;
+        addChild(rejoinButton);
+        */
+        
+        var version :TextField = new TextField();
+        version.text = "v 0.510"
+        version.height = 20;
+        version.y = 485;
+        addChild(version);
+
         _ctx.control.game.playerReady();
     }
     
+    /*
+    protected function rejoin () :void
+    {
+    	
+        // connect game state listeners
+        _ctx.control.game.removeEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
+        _ctx.control.game.removeEventListener(OccupantChangedEvent.OCCUPANT_ENTERED, occupantEntered);
+        _ctx.control.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
+        _ctx.control.game.removeEventListener(StateChangedEvent.CONTROL_CHANGED, controlChanged);
+        
+        removeChild(_ctx.board);
+        
+        _ctx.state = null;
+        _ctx.eventHandler = null;
+        _ctx.board = null;
+        
+    	        // create context and game controller
+        var control :GameControl = new GameControl(this, false);
+        _ctx = new Context(control);
+        
+        // if we're not connected, stop here
+        if (!_ctx.control.isConnected()) {
+        	_ctx.log("not connected during game init.");
+          //  return;
+        }
+        
+        // connect game state listeners
+        _ctx.control.game.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
+        _ctx.control.game.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED, occupantEntered);
+        _ctx.control.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
+        _ctx.control.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, controlChanged);
+        
+    	_ctx.state = new State(_ctx);
+        _ctx.eventHandler = new EventHandler(_ctx);
+        _ctx.board = new Board(_ctx);
+        addChild(_ctx.board);
+        
+        
+        _ctx.board.refreshData();
+    }
+    */
+    
     /** 
-     * Fires when all players have called playerReady().  Have the control player set
-     * up the board data then start the first turn.
+     * Fires when all players have called playerReady(), whether for the first time during the 
+     * constructor or automatically after a rematch has been called.  Have the control player 
+     * set up the board data then start the first turn.
      */
     protected function gameStarted (event :StateChangedEvent) :void
     {
     	if (_ctx.control.game.amInControl()) {
+    		_ctx.notice("You are the game controller.");
     		beginInit();
     	}
     	
@@ -164,26 +229,6 @@ public class LawsAndDisorder extends Sprite
             }
             
         }
-    }
-    
-    /**
-     * Handler for recieving game end events
-     * TODO move to Notices?
-     */
-    protected function gameEnded (event :StateChangedEvent) :void
-    {
-        _ctx.notice("Game over - thanks for playing!");
-        // TODO for testing, start over
-        //_ctx.control.game.playerReady();
-    }
-
-    /**
-     * Handler for receiving coins awarded events
-     * TODO move to Notices?
-     */
-    protected function coinsAwarded (event :CoinsAwardedEvent) :void
-    {
-        _ctx.notice("You got: " + event.amount + " coins for playing.  That's " + event.percentile + "%");
     }
 
     /**

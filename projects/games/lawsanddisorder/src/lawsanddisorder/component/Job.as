@@ -96,29 +96,20 @@ public class Job extends Component
         else {
             jobDescription.text = description;
         }
-        /*
-        
-        // enable/disable use power button
-        if (player.powerEnabled) {
-        	usePowerButton.enabled = true;
-        }
-        else {
-        	usePowerButton.enabled = false;
-        }
-        */
     }
     
     /**
-     * TODO judge and thief have select handled in state, logic handled here, but banker has
-     *      exchange logic handled in state - inconsistant?
+     * Called when the player starts using their job's power.  The state
+     * has already been set and the use power button disabled, so cancelUsePower()
+     * must be called if for some reason they can't finish performing their power.
      */
     public function usePower () :void
     {
-    	//startUsingPower();
         switch (id) {
             case JUDGE:
                 if (_ctx.board.laws.numLaws == 0) {
                     _ctx.notice("There are no laws to enact.");
+                    cancelUsePower();
                     return;
                 }            
                 if (_ctx.board.player.monies < 2) {
@@ -126,7 +117,6 @@ public class Job extends Component
 		            cancelUsePower();
 		            return;
 		        }
-		        //startUsingPower();
                 _ctx.state.selectLaw(judgeLawSelected);
                 return;
                 
@@ -136,7 +126,6 @@ public class Job extends Component
                     cancelUsePower();
                     return;
                 }
-                //startUsingPower();
                 _ctx.state.selectOpponent(thiefOpponentSelected);
                 return;
                 
@@ -151,7 +140,6 @@ public class Job extends Component
                     cancelUsePower();
                     return;
                 }
-                //startUsingPower();
                 _ctx.state.exchangeVerb(bankerVerbExchanged);
                 return;
                 
@@ -161,8 +149,12 @@ public class Job extends Component
                     cancelUsePower();
                     return;
                 }
+                if (_ctx.board.deck.numCards == 0) {
+                	_ctx.notice("There are no cards left to draw.");
+                	cancelUsePower();
+                	return;
+                }
                 // the trader's ability happens immediately
-                //startUsingPower();
                 reachedPointOfNoReturn();
                 _ctx.board.player.loseMonies(2);
                 _ctx.board.player.hand.drawCard(2);
@@ -181,7 +173,6 @@ public class Job extends Component
                     cancelUsePower();
                     return;
                 }
-                //startUsingPower();
                 _ctx.state.exchangeSubject(priestSubjectExchanged);
                 return;
                 
@@ -191,21 +182,10 @@ public class Job extends Component
                     cancelUsePower();
                     return;
                 }
-                //startUsingPower();
                 _ctx.state.moveWhen(doctorWhenMoved);
                 return;
         }
     }
-    
-    /*
-     * Player has begun using their ability.  Switch to a cancel button and tell the state
-     * that we're performing an action.
-     *
-    protected function startUsingPower () :void
-    {
-        //_ctx.state.performingAction = true;
-    }
-    */
     
     /**
      * Once this is called, power can't be cancelled because player has seen or done something
@@ -213,7 +193,6 @@ public class Job extends Component
     protected function reachedPointOfNoReturn () :void
     {
         _ctx.board.usePowerButton.enabled = false;
-        //_ctx.board.player.powerEnabled = false;
     }
     
     /**
@@ -351,8 +330,6 @@ public class Job extends Component
     public function cancelUsePower () :void
     {
         _ctx.state.cancelMode();
-        //_ctx.state.performingAction = false;
-        //_ctx.board.player.powerEnabled = true;
         _ctx.board.usePowerButton.cancelUsingPower();
         _ctx.notice("Power cancelled.");
     }
@@ -363,8 +340,10 @@ public class Job extends Component
     override public function get name () :String
     {
         switch (id) {
+        	case WATCHER:
+        	    return "Watching";
             case JUDGE:
-                return "The Judge"
+                return "The Judge";
             case Job.THIEF:
                 return "The Thief";
             case Job.BANKER:
@@ -386,6 +365,8 @@ public class Job extends Component
     protected function get description () :String
     {
         switch (id) {
+        	case WATCHER:
+        	    return "You are not a player";
             case JUDGE:
                 return "Pay $2 to trigger a law, ignoring any purple cards";
             case Job.THIEF:
@@ -406,11 +387,12 @@ public class Job extends Component
     /**
      * Generate and return a new sprite containing the symbol for this job, or null
      * if there is no symbol for this job.
-     * TODO combine with Card.getSymbol()
      */
     public function getSymbol () :Sprite
     {
         switch (id) {
+        	case WATCHER:
+        	    return new Sprite();
             case JUDGE:
                 return new SYMBOL_JUDGE();
             case THIEF:
@@ -444,7 +426,8 @@ public class Job extends Component
         return name;
     }
 
-    /** Enumeration of job types */    
+    /** Enumeration of job types (and a special non-job for people just watching) */
+    public static const WATCHER :int = -1;
     public static const JUDGE :int = 0;
     public static const THIEF :int = 1;
     public static const BANKER :int = 2;

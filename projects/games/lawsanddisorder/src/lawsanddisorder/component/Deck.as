@@ -91,6 +91,39 @@ public class Deck extends Component
             addNewCards(1, Card.WHEN, Card.USE_ABILITY);
             addNewCards(1, Card.WHEN, Card.CREATE_LAW);
         }
+        
+        /*
+        // TODO custom deck for testing
+        for (var i :int = 0; i < 1; i++) {
+            // 12 subjects, 7 verbs, 7 objects, 3 whens = 29
+            addNewCards(6, Card.SUBJECT, Job.JUDGE);
+            addNewCards(6, Card.SUBJECT, Job.THIEF);
+//            addNewCards(2, Card.SUBJECT, Job.BANKER);
+//            addNewCards(2, Card.SUBJECT, Job.TRADER);
+//            addNewCards(2, Card.SUBJECT, Job.PRIEST);
+//            addNewCards(2, Card.SUBJECT, Job.DOCTOR);
+            // take out gives for 2 player games
+//            if (playerCount == 2) {
+  //              addNewCards(4, Card.VERB, Card.LOSES);
+    //            addNewCards(3, Card.VERB, Card.GETS);
+      //      }
+        //    else {
+                addNewCards(2, Card.VERB, Card.GIVES);
+                addNewCards(3, Card.VERB, Card.LOSES);
+                addNewCards(2, Card.VERB, Card.GETS);
+          //  }
+            
+            addNewCards(2, Card.OBJECT, Card.CARD, 1);
+            addNewCards(2, Card.OBJECT, Card.CARD, 2);
+//            addNewCards(1, Card.OBJECT, Card.MONIE, 1);
+  //          addNewCards(1, Card.OBJECT, Card.MONIE, 2);
+    //        addNewCards(1, Card.OBJECT, Card.MONIE, 3);
+      //      addNewCards(1, Card.OBJECT, Card.MONIE, 4);
+            addNewCards(1, Card.WHEN, Card.START_TURN);
+            addNewCards(1, Card.WHEN, Card.USE_ABILITY);
+            addNewCards(3, Card.WHEN, Card.CREATE_LAW);
+        }
+        */
     }
     
     /**
@@ -238,10 +271,18 @@ public class Deck extends Component
     {
     	numCardText.text = cards.length + "";
     }
+    
+    /**
+     * For watchers who join partway through the game, fetch the existing deck data
+     */
+    public function refreshData () :void
+    {
+    	cards = _ctx.eventHandler.getData(DECK_DATA) as Array;
+        updateDisplay();
+    }
 
     /**
      * Called when the deck contents change on the server.
-     * TODO can one assume, after the first turn, that a card was drawn?
      */
     protected function deckChanged (event :DataChangedEvent) :void
     {
@@ -387,11 +428,6 @@ public class Deck extends Component
     	}
     	return _ctx.board.getPlayer(playerId);
     }
-    
-    ///** Cards are added to here when they leave the board. 
-    // * TODO synchronize this or remove it - do we need to track this?
-    // */
-    //public var discardPile :CardContainer;
 	
 	/** Displays the number of cards in the deck */
 	protected var numCardText :TextField;

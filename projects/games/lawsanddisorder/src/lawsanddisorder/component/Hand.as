@@ -21,7 +21,9 @@ public class Hand extends CardContainer
     public function Hand (ctx :Context, player :Player)
     {
         this.player = player;
-        ctx.eventHandler.addDataListener(HAND_DATA, handChanged, player.id);
+        if (!player.isWatcher) {
+            ctx.eventHandler.addDataListener(HAND_DATA, handChanged, player.id);
+        }
         super(ctx);
     }
     
@@ -36,37 +38,21 @@ public class Hand extends CardContainer
     }
     
     /**
+     * For watchers who join partway through the game, fetch the existing hand data
+     */
+    public function refreshData () :void
+    {
+        var handData :Array = _ctx.eventHandler.getData(HAND_DATA, player.id) as Array;
+        setSerializedCards(handData);
+    }
+    
+    /**
      * Rearrange hand when cards are added or subtracted
      */
     override protected function updateDisplay () :void
     {
     	arrangeCards();
     }
-    
-    /*
-     * TODO fix issue with this and use it instead of discard down?
-     *      Issue is this function doesn't block other players from doing things that interfere
-     * Override addCards to force discard first if too many cards in hand
-     *
-    override public function addCards (cardArray :Array, distribute :Boolean = true, insertIndex :int = -1) :void
-    {
-    	var discardNum :int = cards.length + cardArray.length - MAX_HAND_SIZE;
-    	if (discardNum > 0) {
-            _ctx.notice("You may not have more than " + MAX_HAND_SIZE + " cards.  Please choose and discard " + discardNum);
-            //discardDownListener = listener;
-            var cardsSelectedListener :Function = function () :void {
-                player.loseCards(_ctx.state.selectedCards);
-                _ctx.state.deselectCards();
-                addCards(cardArray, distribute, insertIndex);
-            };
-            _ctx.state.selectCards(discardNum, cardsSelectedListener);
-    	}
-    	else {
-    		_ctx.log("yer cards are fine");
-    	   super.addCards(cardArray, distribute, insertIndex);
-    	}
-    }
-    */
     
     /**
      * Draw a card (or X cards, if numCards is provided) from the deck.

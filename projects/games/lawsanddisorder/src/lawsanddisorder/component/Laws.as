@@ -29,13 +29,33 @@ public class Laws extends Component
      */
     public function Laws (ctx :Context)
     {
+        super(ctx);
+        
         ctx.eventHandler.addDataListener(LAWS_DATA, lawsChanged);
         ctx.eventHandler.addMessageListener(ENACT_LAW, enactLaw);
         ctx.eventHandler.addMessageListener(NEW_LAW, addNewLaw);
         
         ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, turnStarted);
-        
-        super(ctx);
+    }
+    
+    /**
+     * For watchers who join partway through the game, fetch the existing law data     */
+    public function refreshData () :void
+    {
+        var lawsData :Dictionary = _ctx.eventHandler.getData(Laws.LAWS_DATA) as Dictionary;
+        if (lawsData != null) {
+            var i :int = 0;
+            while (true) {
+                var lawData :Array = lawsData[i];
+                if (lawData == null) {
+                    break;
+                }
+                var law :Law = new Law(_ctx, i);
+                law.setSerializedCards(lawData);
+                addLaw(law);
+                i++;
+            }
+        }
     }
     
     /**
@@ -93,7 +113,7 @@ public class Laws extends Component
         }
         if (laws.length > MAX_LAWS) {
         	var oldestLaw :Law = laws[oldestLawId];
-        	_ctx.notice("There are too many laws - removing the oldest: " + oldestLaw.text);
+        	_ctx.notice("There are too many laws - removing the oldest one.");
         	removeChild(oldestLaw);
         	oldestLawId++;
         	arrangeLaws();
@@ -186,6 +206,7 @@ public class Laws extends Component
 	               removeChild(law);
 	            }
 	        }
+	        oldestLawId = 0;
     	}
     }
     
@@ -239,7 +260,6 @@ public class Laws extends Component
         }
         
         // action complete; return focus to the player if it is their turn
-        //_ctx.state.performingAction = false;
         _ctx.state.doneEnactingLaws();
     }
     

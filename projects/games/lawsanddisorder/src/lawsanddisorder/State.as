@@ -162,6 +162,7 @@ public class State
             _ctx.log("WTF done triggering laws in mode " + mode);
         }
         enactingLaws = false;
+        waitingForOpponent = null;
     }
     
     /**
@@ -215,7 +216,7 @@ public class State
         //if (mode == MODE_DEFAULT && _ctx.control.game.isMyTurn() && !_performingAction) {
         if (mode == MODE_DEFAULT && _ctx.control.game.isMyTurn() && !enactingLaws) {
             return true;
-        }
+        }     
         if (enactingLaws && waitingForOpponent != null) {
         	if (displayNotices) {
                 _ctx.notice("Waiting for " + waitingForOpponent.playerName);
@@ -223,12 +224,17 @@ public class State
         }
         else if (mode != MODE_DEFAULT) {
         	if (displayNotices) {
-        	   _ctx.notice("Busy performing another action. [mode: " + mode + "]");
+        	   _ctx.notice("Busy performing another action.");
         	}
+        }
+        else if (!_ctx.control.game.isMyTurn()) {
+        	if (displayNotices) {
+               _ctx.notice("Not your turn.");
+            }
         }
         else {
         	if (displayNotices) {
-        	   _ctx.notice("Not your turn.");
+        	   _ctx.notice("WTF The game is waiting for you.");
         	}
         }
         return false;

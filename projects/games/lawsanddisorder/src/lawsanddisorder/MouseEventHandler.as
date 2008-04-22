@@ -299,11 +299,12 @@ public class MouseEventHandler
             // TODO can this logic be moved to job?
             else if (_ctx.board.player.job.isTarget(dropTarget)) {
                 if (card.group == Card.SUBJECT) {
-                    if (!_ctx.control.game.isMyTurn()) {
-                        _ctx.notice("It's not your turn.");
-                        returnCard(card);
-                        return;
+                    if (!_ctx.state.hasFocus()) {
+                    	_ctx.notice("You can change jobs right now.");
+                    	returnCard(card);
+                    	return;
                     }
+                    
                     if (!_ctx.board.player.jobEnabled) {
                         _ctx.notice("You already changed jobs once this turn.");
                         returnCard(card);

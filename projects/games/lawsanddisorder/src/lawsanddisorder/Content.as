@@ -41,13 +41,7 @@ public class Content
 	}
 	
 	/** Embed the font used for everything */
-    //[Embed(source="../../rsrc/Dustismo_windows.ttf", fontFamily="lawsfont")]
-    //[Embed(source="../../rsrc/arial.ttf", fontFamily="lawsfont")]
     [Embed(source="../../rsrc/TrajanDark.ttf", fontFamily="lawsfont")]
-	//[Embed(source="C:/WINDOWS/Fonts/arial.ttf", fontFamily="lawsfont")]
-	//[Embed(source="C:/WINDOWS/Fonts/BellGothicStd-Black.otf", fontFamily="lawsfont", 
-	//	   mimeType="application/x-font-truetype")]
-	//[Embed(source="../../rsrc/Certified.ttf", fontFamily="lawsfont")]
     protected static var LAWS_FONT :Class;
 	
     [Embed(source="../../rsrc/symbols.swf#monieback")]
