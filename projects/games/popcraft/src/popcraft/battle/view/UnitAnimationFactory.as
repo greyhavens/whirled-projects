@@ -16,18 +16,36 @@ public class UnitAnimationFactory
 
         var anim :MovieClip = AppContext.instantiateMovieClip(unitData.name, animName);
         if (null != anim) {
-            // colorize
-            var color :MovieClip = anim.recolor;
-            if (null != color && null != color.recolor) {
-                color = color.recolor;
-            }
+            // colorize the animation's recolor1, recolor2, etc children
+            var i :int = 1;
+            var success :Boolean;
+            do {
+                success = colorizeAnimation(anim, "recolor" + i++, g_tintMatrix);
+                /*if (!success) {
+                    trace("found " + String(i) + " recolor symbols for " + unitData.name + "." + animName);
+                }*/
+            } while (success);
 
-            if (null != color) {
-                color.filters = [ g_tintMatrix.createFilter() ];
-            }
+            // colorize the animation's "recolor" child
+            // @TODO - remove this when animations are all updated to the new naming system
+            colorizeAnimation(anim, "recolor", g_tintMatrix);
         }
 
         return anim;
+    }
+
+    protected static function colorizeAnimation (anim :MovieClip, childName :String, tintMatrix :ColorMatrix) :Boolean
+    {
+        var color :MovieClip = anim[childName];
+        if (null != color) {
+            color = color["recolor"];
+        }
+
+        if (null != color) {
+            color.filters = [ tintMatrix.createFilter() ];
+        }
+
+        return (null != color);
     }
 
     protected static var g_tintMatrix :ColorMatrix = new ColorMatrix();

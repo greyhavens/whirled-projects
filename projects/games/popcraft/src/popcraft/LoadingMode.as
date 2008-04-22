@@ -7,7 +7,6 @@ public class LoadingMode extends AppMode
 {
     override protected function setup () :void
     {
-        AppContext.resources.pendResourceLoad("image", "heavy_icon",     { embeddedClass: IMAGE_HEAVYICON });
         AppContext.resources.pendResourceLoad("image", "colossus_icon",  { embeddedClass: IMAGE_COLOSSUSICON });
 
         AppContext.resources.pendResourceLoad("image", "base",      { embeddedClass: IMAGE_BASE });
@@ -22,6 +21,7 @@ public class LoadingMode extends AppMode
 
         AppContext.resources.pendResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });
         AppContext.resources.pendResourceLoad("swf", "sapper", { embeddedClass: SWF_SAPPER });
+        AppContext.resources.pendResourceLoad("swf", "heavy", { embeddedClass: SWF_HEAVY });
 
         AppContext.resources.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: SWF_PUZZLEPIECES });
 
@@ -39,9 +39,6 @@ public class LoadingMode extends AppMode
     {
         MainLoop.instance.popMode();
     }
-
-    [Embed(source="../../rsrc/char_heavy.png", mimeType="application/octet-stream")]
-    protected static const IMAGE_HEAVYICON :Class;
 
     [Embed(source="../../rsrc/char_colossus.png", mimeType="application/octet-stream")]
     protected static const IMAGE_COLOSSUSICON :Class;
@@ -78,6 +75,9 @@ public class LoadingMode extends AppMode
 
     [Embed(source="../../rsrc/runt.swf", mimeType="application/octet-stream")]
     protected static const SWF_SAPPER :Class;
+
+    [Embed(source="../../rsrc/handyman.swf", mimeType="application/octet-stream")]
+    protected static const SWF_HEAVY :Class;
 
     [Embed(source="../../rsrc/pieces.swf", mimeType="application/octet-stream")]
     protected static const SWF_PUZZLEPIECES :Class;
