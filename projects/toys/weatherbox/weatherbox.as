@@ -59,6 +59,7 @@ public class WeatherBox extends Sprite
 
         setupUI();
 
+        _altLoc = getAltLocation();
         loadWeather(getStationURL(), true);
     }
 
