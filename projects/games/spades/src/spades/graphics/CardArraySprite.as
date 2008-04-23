@@ -40,7 +40,7 @@ public class CardArraySprite extends Sprite
     /** Create a new sprite for a CardArray. The sprite will always listen for all changes on the 
      *  array events and unregister when removed from the display list. Re-adding to the display 
      *  list is not supported. */
-    public function CardArraySprite (target :CardArray)
+    public function CardArraySprite (target :CardArray, doPositioning :Boolean = true)
     {
         _target = target;
 
@@ -52,7 +52,9 @@ public class CardArraySprite extends Sprite
 
         refresh();
 
-        positionCards();
+        if (doPositioning) {
+            positionCards();
+        }
     }
 
     /** Update our card sprites with the contents of the target card array. */

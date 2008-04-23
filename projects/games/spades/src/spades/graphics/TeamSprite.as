@@ -60,12 +60,15 @@ public class TeamSprite extends Sprite
         addChild(_tricks);
 
         updateTricks();
+        setScore(_scores.getScore(_team.index), _scores.target);
 
         _bids.addEventListener(BidEvent.RESET, bidListener);
         _bids.addEventListener(BidEvent.PLACED, bidListener);
 
         _scores.addEventListener(ScoresEvent.TRICKS_CHANGED, scoresListener);
         _scores.addEventListener(ScoresEvent.SCORES_CHANGED, scoresListener);
+        _scores.addEventListener(ScoresEvent.SCORES_RESET, scoresListener);
+        _scores.addEventListener(ScoresEvent.TRICKS_RESET, scoresListener);
 
         function gotBackground (background :Bitmap) :void
         {
@@ -171,6 +174,12 @@ public class TeamSprite extends Sprite
             else if (event.type == ScoresEvent.SCORES_CHANGED) {
                 setScore(event.value, _scores.target);
             }
+        }
+        else if (event.type == ScoresEvent.TRICKS_RESET) {
+            updateTricks();
+        }
+        else if (event.type == ScoresEvent.SCORES_RESET) {
+            setScore(0, _scores.target);
         }
     }
 

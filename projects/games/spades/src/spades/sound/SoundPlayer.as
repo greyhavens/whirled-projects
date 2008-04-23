@@ -22,15 +22,15 @@ public class SoundPlayer
         _myId = model.table.getLocalId();
         MultiLoader.getLoaders(SOUNDS, gotSounds, false, _soundDomain);
 
-        model.hand.addEventListener(
-            HandEvent.DEALT, dealtListener);
+        if (model.hand != null) {
+            model.hand.addEventListener(
+                HandEvent.DEALT, dealtListener);
+        }
         model.trick.addEventListener(
             TrickEvent.CARD_PLAYED, cardPlayedListener);
         model.trick.addEventListener(
             TrickEvent.COMPLETED, completedListener);
         model.timer.addEventListener(
-            TurnTimerEvent.EXPIRED, expiredListener);
-        model.gameCtrl.addEventListener(
             TurnTimerEvent.EXPIRED, expiredListener);
         model.gameCtrl.game.addEventListener(
             StateChangedEvent.ROUND_STARTED, 

@@ -1,6 +1,9 @@
 package spades.card {
 
 import flash.events.EventDispatcher;
+import com.whirled.game.ElementChangedEvent;
+import com.whirled.game.PropertyChangedEvent;
+import com.whirled.game.GameControl;
 
 /** Models the current scores for a trick taking card game. */
 public class Scores extends EventDispatcher
@@ -9,14 +12,27 @@ public class Scores extends EventDispatcher
      *  @param table the table these scores are at
      *  @param bids the bids object for the game
      *  @param target the score that the teams are playing to */
-    public function Scores (table :Table, bids :Bids, target :int)
+    public function Scores (
+        gameCtrl :GameControl, 
+        table :Table, 
+        bids :Bids, 
+        target :int)
     {
         _table = table;
         _bids = bids;
         _target = target;
-        _tricks = new Array(_table.numTeams);
-        _playerTricks = new Array(_table.numPlayers);
-        _scores = new Array(_table.numTeams);
+        _gameCtrl = gameCtrl;
+
+        _tricks = new NetArray(gameCtrl, TRICKS, _table.numTeams);
+        _playerTricks = new NetArray(gameCtrl, PLAYER_TRICKS, _table.numPlayers);
+        _scores = new NetArray(gameCtrl, SCORES, _table.numTeams);
+
+        gameCtrl.net.addEventListener(
+            ElementChangedEvent.ELEMENT_CHANGED,
+            handleElementChanged);
+        gameCtrl.net.addEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED,
+            handlePropertyChanged);
     }
 
     /** Add a trick taken by the given player. Immediately sends a ScoresEvent.TRICKS_CHANGED 
@@ -25,27 +41,21 @@ public class Scores extends EventDispatcher
     public function addTrick (seat :int) :void
     {
         var team :Team = _table.getTeamFromAbsolute(seat);
-        _tricks[team.index] += 1;
-        _playerTricks[seat] += 1;
-        dispatchEvent(new ScoresEvent(
-            ScoresEvent.TRICKS_CHANGED, team, _tricks[team.index]));
+
+        _gameCtrl.doBatch(function () :void {
+            _playerTricks.increment(seat, 1);
+            _tricks.increment(team.index, 1);
+        });
     }
 
     /** Reset the tricks taken for all teams. Immediately sends a ScoresEvent.TRICKS_CHANGED 
      *  event for each team. */
     public function resetTricks () :void
     {
-        var i :int;
-
-        for (i = 0; i < _table.numPlayers; ++i) {
-            _playerTricks[i] = 0;
-        }
-
-        for (i = 0; i < _table.numTeams; ++i) {
-            _tricks[i] = 0;
-            dispatchEvent(new ScoresEvent(
-                ScoresEvent.TRICKS_CHANGED, _table.getTeam(i), 0));
-        }
+        _gameCtrl.doBatch(function () :void {
+            _playerTricks.reset();
+            _tricks.reset();
+        });
     }
 
     /** Increase a team's score. Immediately sends a ScoresEvent.SCORES_CHANGED event. 
@@ -53,20 +63,14 @@ public class Scores extends EventDispatcher
      *  @param score the amount to add to the team's total */
     public function addScore (teamIdx :int, score :int) :void
     {
-        _scores[teamIdx] += score;
-        dispatchEvent(new ScoresEvent(
-            ScoresEvent.SCORES_CHANGED, _table.getTeam(teamIdx), _scores[teamIdx]));
+        _scores.increment(teamIdx, score);
     }
 
     /** Reset the scores of all teams to 0. Immediately sends a ScoresEvent.SCORES_CHANGED event 
      *  for each team. */
     public function resetScores () :void
     {
-        for (var i :int = 0; i < _table.numTeams; ++i) {
-            _scores[i] = 0;
-            dispatchEvent(new ScoresEvent(
-                ScoresEvent.SCORES_CHANGED, _table.getTeam(i), 0));
-        }
+        _scores.reset();
     }
 
     /** Tally the current scores and get the winners and losers of the game. This considers all 
@@ -78,12 +82,13 @@ public class Scores extends EventDispatcher
         var winners :Array = new Array();
         var highest :int = 0;
         for (var team :int = 0; team < _table.numTeams; ++team) {
-            if (winners.length == 0 || _scores[team] > highest) {
+            var score :int = _scores.getAt(team);
+            if (winners.length == 0 || score > highest) {
                 winners.splice(0, winners.length);
-                highest = _scores[team];
+                highest = score;
                 winners.push(_table.getTeam(team));
             }
-            else if (_scores[team] == highest) {
+            else if (score == highest) {
                 winners.push(_table.getTeam(team));
             }
         }
@@ -93,14 +98,14 @@ public class Scores extends EventDispatcher
     /** Get the number of tricks taken so far by the team with the given index. */
     public function getTricks (teamIdx :int) :int
     {
-        return _tricks[teamIdx];
+        return _tricks.getAt(teamIdx);
     }
 
     /** Get the number of tricks taken so far by the player in the given absolute seating 
      *  position. */
     public function getPlayerTricks (seat :int) :int
     {
-        return _playerTricks[seat];
+        return _playerTricks.getAt(seat);
     }
 
     /** Get the total bid made by the team with the given index. */
@@ -117,7 +122,7 @@ public class Scores extends EventDispatcher
     /** Get the score of the team with the given index. */
     public function getScore (teamIdx :int) :int
     {
-        return _scores[teamIdx];
+        return _scores.getAt(teamIdx);
     }
 
     /** Access the target score of the game. */
@@ -138,12 +143,58 @@ public class Scores extends EventDispatcher
         return _bids;
     }
 
+    /** Access the total number of tricks (since last resetTricks call). */
+    public function get totalTricks () :int
+    {
+        var count :int = 0;
+        _tricks.forEach(function (i :int, ...rest) :void {
+            count += i;
+        });
+        return count;
+    }
+
+    protected function handleElementChanged (event :ElementChangedEvent) :void
+    {
+        if (event.name == PLAYER_TRICKS) {
+            // (we always send a TRICKS element after a PLAYER_TRICKS element so no need to 
+            // dispatch here)
+        }
+        else if (event.name == TRICKS) {
+            dispatchEvent(new ScoresEvent(ScoresEvent.TRICKS_CHANGED, 
+                table.getTeam(event.index), event.newValue as int));
+        }
+        else if (event.name == SCORES) {
+            dispatchEvent(new ScoresEvent(ScoresEvent.SCORES_CHANGED, 
+                table.getTeam(event.index), event.newValue as int));
+        }
+    }
+
+    protected function handlePropertyChanged (event :PropertyChangedEvent) :void
+    {
+        var team :int;
+        if (event.name == PLAYER_TRICKS) {
+            // (we always send a TRICKS property after a PLAYER_TRICKS property so no need to 
+            // dispatch here)
+        }
+        else if (event.name == TRICKS) {
+            dispatchEvent(new ScoresEvent(ScoresEvent.TRICKS_RESET));
+        }
+        else if (event.name == SCORES) {
+            dispatchEvent(new ScoresEvent(ScoresEvent.SCORES_RESET));
+        }
+    }
+
     protected var _table :Table; 
-    protected var _tricks :Array;
-    protected var _playerTricks :Array;
-    protected var _scores :Array;
+    protected var _tricks :NetArray;
+    protected var _playerTricks :NetArray;
+    protected var _scores :NetArray;
     protected var _target :int;
     protected var _bids :Bids;
+    protected var _gameCtrl :GameControl;
+
+    protected static const SCORES :String = "scores";
+    protected static const TRICKS :String = "scores.tricks";
+    protected static const PLAYER_TRICKS :String = "scores.playertricks";
 }
 
 }

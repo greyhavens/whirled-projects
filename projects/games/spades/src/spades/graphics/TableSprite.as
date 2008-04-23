@@ -11,6 +11,7 @@ import com.threerings.flash.Vector2;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.game.SizeChangedEvent;
 import com.threerings.util.MultiLoader;
+import com.threerings.util.Assert;
 
 import caurina.transitions.Tweener;
 
@@ -55,9 +56,11 @@ public class TableSprite extends Sprite
             p.setHeadShot(_model.gameCtrl.local.getHeadShot(
                  table.getIdFromRelative(seat)));
         }
-        
-        _hand = new HandSprite(_model.hand);
-        addChild(_hand);
+
+        if (_model.hand != null) {
+            _hand = new HandSprite(_model.hand);
+            addChild(_hand);
+        }
 
         _trick = new MainTrickSprite(_model.trick, table, _players, _hand);
         addChild(_trick);
@@ -76,6 +79,9 @@ public class TableSprite extends Sprite
         _blindNilBids = new BlindNilBiddingSprite(_model.bids);
         addChild(_blindNilBids);
 
+        // update the turn highlighter
+        handleTurnChanged(null);
+
         // listen for the trick changing
         _model.trick.addEventListener(TrickEvent.COMPLETED, trickListener);
 
@@ -84,7 +90,9 @@ public class TableSprite extends Sprite
         _model.bids.addEventListener(BidEvent.RESET, bidListener);
 
         // listen for passing cards between players
-        _model.hand.addEventListener(HandEvent.PASSED, handListener);
+        if (_model.hand != null) {
+            _model.hand.addEventListener(HandEvent.PASSED, handListener);
+        }
 
         // listen for our removal to prevent stranded listeners
         addEventListener(Event.REMOVED, removedListener);
@@ -137,7 +145,9 @@ public class TableSprite extends Sprite
 
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
-        _hand.visible = true;
+        if (_hand != null) {
+            _hand.visible = true;
+        }
         _trick.visible = true;
     }
 
@@ -145,7 +155,9 @@ public class TableSprite extends Sprite
     {
         _normalBids.visible = false;
         _blindNilBids.visible = false;
-        _hand.visible = false;
+        if (_hand != null) {
+            _hand.visible = false;
+        }
         _trick.visible = false;
         TeamSprite(_teams[0]).clearLastTrick();
         TeamSprite(_teams[1]).clearLastTrick();
@@ -166,7 +178,9 @@ public class TableSprite extends Sprite
     /** Position all the children. */
     protected function layout () :void
     {
-        positionChild(_hand, HAND_POSITION);
+        if (_hand != null) {
+            positionChild(_hand, HAND_POSITION);
+        }
         positionChild(_trick, TRICK_POSITION);
         positionChild(_teams[0] as TeamSprite, LEFT_TEAM_POSITION);
         positionChild(_teams[1] as TeamSprite, RIGHT_TEAM_POSITION);
@@ -236,6 +250,8 @@ public class TableSprite extends Sprite
 
     protected function handListener (event :HandEvent) :void
     {
+        Assert.isNotNull(_hand);
+
         var i :int;
         var card :CardSprite;
 
@@ -314,7 +330,9 @@ public class TableSprite extends Sprite
     {
         if (event.target == this) {
             removeChild(_trick);
-            removeChild(_hand);
+            if (_hand != null) {
+                removeChild(_hand);
+            }
             removeChild(_teams[0] as TeamSprite);
             removeChild(_teams[1] as TeamSprite);
         }

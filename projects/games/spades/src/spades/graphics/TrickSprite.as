@@ -13,9 +13,11 @@ public class TrickSprite extends CardArraySprite
     /** Create a new trick sprite */
     public function TrickSprite (target :Trick, seating :Table)
     {
-        super(target.cards);
+        super(target.cards, false);
         _trick = target;
         _seating = seating;
+
+        positionCards();
 
         _trick.addEventListener(TrickEvent.FRONTRUNNER_CHANGED, trickListener);
         _trick.addEventListener(TrickEvent.RESET, trickListener);

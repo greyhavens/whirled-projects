@@ -20,7 +20,7 @@ public class Bids extends EventDispatcher
     {
         _gameCtrl = gameCtrl;
         _maximum = maximum;
-        _bids = new Array(players.length);
+        _bids = new NetArray(gameCtrl, ARRAYNAME, players.length, NO_BID);
 
         _gameCtrl.net.addEventListener(
             ElementChangedEvent.ELEMENT_CHANGED,
@@ -55,25 +55,20 @@ public class Bids extends EventDispatcher
     public function placeBid (value :int) :void
     {
         var seat :int = _gameCtrl.game.seating.getMyPosition();
-        if (_bids[seat] != NO_BID) {
+        if (_bids.getAt(seat) != NO_BID) {
             throw new CardException("Player may not bid twice");
         }
         if (value == NO_BID) {
             throw new CardException("Player may not unbid");
         }
-        _gameCtrl.net.setAt(ARRAYNAME, seat, value);
+        _bids.setAt(seat, value);
     }
 
     /** Send a message to the server to clear all bids in preparation for the next round. When the 
      *  reply is received, a BidEvent.RESET event will be dispatched. */
     public function reset () :void
     {
-        var noBids :Array = new Array(players.length);
-        for (var i :int = 0; i < noBids.length; ++i) {
-            noBids[i] = NO_BID;
-        }
-
-        _gameCtrl.net.set(ARRAYNAME, noBids);
+        _bids.reset();
     }
 
     /** Access the maximum bid value. */
@@ -87,7 +82,7 @@ public class Bids extends EventDispatcher
     {
         var count :int = 0;
         for (var i :int = 0; i < _bids.length; ++i) {
-            if (_bids[i] != NO_BID) {
+            if (_bids.getAt(i) != NO_BID) {
                 ++count;
             }
         }
@@ -103,13 +98,13 @@ public class Bids extends EventDispatcher
     /** Get the bid for an absolute seating position. */
     public function getBid (seat :int) :int
     {
-        return _bids[seat];
+        return _bids.getAt(seat);
     }
 
     /** Check if the player in an absolute seating position has placed a bid yet. */
     public function hasBid (seat :int) :Boolean
     {
-        return _bids[seat] != NO_BID;
+        return _bids.getAt(seat) != NO_BID;
     }
 
     /** Access whether or not a bid has been selected since the call to request a bid. This is 
@@ -124,11 +119,8 @@ public class Bids extends EventDispatcher
     {
         if (event.name == ARRAYNAME) {
 
-            var seat :int = event.index;
             var bid :int = event.newValue as int;
-            var playerId :int = players[seat];
-
-            _bids[seat] = bid;
+            var playerId :int = players[event.index];
 
             dispatchEvent(new BidEvent(BidEvent.PLACED, playerId, bid));
 
@@ -141,10 +133,6 @@ public class Bids extends EventDispatcher
     protected function handlePropertyChanged (event :PropertyChangedEvent) :void
     {
         if (event.name == ARRAYNAME) {
-            for (var i :int = 0; i < _bids.length; ++i) {
-                _bids[i] = NO_BID;
-            }
-
             dispatchEvent(new BidEvent(BidEvent.RESET));
         }
     }
@@ -155,7 +143,7 @@ public class Bids extends EventDispatcher
     }
 
     protected var _gameCtrl :GameControl;
-    protected var _bids :Array;
+    protected var _bids :NetArray;
     protected var _maximum :int;
     protected var _hasSelected :Boolean;
 

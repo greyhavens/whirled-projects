@@ -55,7 +55,7 @@ public class MainTrickSprite extends TrickSprite
         var start :Vector2;
 
         // check if card is from local player
-        if (seat == 0) {
+        if (seat == 0 && _localHand != null) {
 
             // use card from the local hand (if available)
             var removals :Array = _localHand.finalizeRemovals();

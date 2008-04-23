@@ -11,7 +11,10 @@ import spades.Debug;
  *    Relative - the seating position relative to the local player. This is mostly useful for the 
  *        view of the game.
  *    Name - the name of the player. Name is not reversible (i.e. there is no getIdFromName). 
- *    Team - the team of the player (also not reversible) */
+ *    Team - the team of the player (also not reversible) 
+ *
+ *  TODO: The concept of a watcher at a table was added as an afterthought. Rethink the interface 
+ *  with this in mind. */
 public class Table
 {
     /** Create a new table.
@@ -62,7 +65,16 @@ public class Table
     /** The id of the local player. */
     public function getLocalId () :int
     {
+        if (isWatcher()) {
+            return 0;
+        }
         return getIdFromAbsolute(getLocalSeat());
+    }
+
+    /** Test if the local player is only watching (not playing) */
+    public function isWatcher () :Boolean
+    {
+        return _localSeat == -1;
     }
 
     /** Get the absolute seat position of the local player's teammate. 
@@ -77,6 +89,10 @@ public class Table
      *  @throws CardException if the team is not exactly 2 players*/
     public function getTeammateAbsolute (seat :int) :int
     {
+        if (isWatcher()) {
+            return -1;
+        }
+
         var team :Team = getTeamFromAbsolute(seat);
         if (team == null) {
             throw new CardException("Seat " + seat + " is not on any team");
@@ -93,6 +109,10 @@ public class Table
      *  @throws CardException if the team is not exactly 2 players*/
     public function getTeammateId (id :int) :int
     {
+        if (isWatcher()) {
+            return -1;
+        }
+
         return getIdFromAbsolute(getTeammateAbsolute(getAbsoluteFromId(id)));
     }
 
@@ -117,6 +137,9 @@ public class Table
     /** Get the absolute seating position of a relative seating position. */
     public function getAbsoluteFromRelative (relative :int) :int
     {
+        if (isWatcher()) {
+            return relative;
+        }
         return (relative + _localSeat) % _playerIds.length;
     }
 
@@ -129,6 +152,9 @@ public class Table
     /** Get the relative seating position from an absolute seating position. */
     public function getRelativeFromAbsolute (absolute :int) :int
     {
+        if (isWatcher()) {
+            return absolute;
+        }
         return (absolute - _localSeat + _playerIds.length) % _playerIds.length;
     }
 

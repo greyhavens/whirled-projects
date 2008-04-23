@@ -1,5 +1,8 @@
 package spades.card {
 
+import com.whirled.game.GameControl;
+import com.whirled.game.ElementChangedEvent;
+
 /** Spades-specific scoring data. Tracks sandbags and distinguishes between scoring and 
  *  non-scoring tricks. */
 public class SpadesScores extends Scores
@@ -14,26 +17,35 @@ public class SpadesScores extends Scores
      *  @param table
      *  @param bids the bids for the game
      *  @param target the target score */
-    public function SpadesScores (table :Table, bids :Bids, target :int)
+    public function SpadesScores (
+        gameCtrl :GameControl, 
+        table :Table, 
+        bids :Bids, 
+        target :int)
     {
-        super(table, bids, target);
+        super(gameCtrl, table, bids, target);
 
-        _sandbags = new Array(_table.numTeams);
-        _sandbags.forEach(function (x :*, i :int, a :Array) :void {
-            a[i] = 0;
-        });
+        _sandbags = new NetArray(gameCtrl, SANDBAGS, _table.numTeams);
     }
 
     /** @inheritDoc */
     // From Scores
-    public override function getTricks (teamIdx :int) :int
+    override public function resetScores () :void
+    {
+        super.resetScores();
+        _sandbags.reset();
+    }
+
+    /** @inheritDoc */
+    // From Scores
+    override public function getTricks (teamIdx :int) :int
     {
         var team :Array = _table.getTeam(teamIdx).players;
-        var tricks :int = _tricks[teamIdx];
+        var tricks :int = _tricks.getAt(teamIdx);
         for (var i :int = 0; i < team.length; ++i) {
             var player :int = team[i] as int;
             if (_bids.getBid(player) == 0) {
-                tricks -= _playerTricks[player];
+                tricks -= getPlayerTricks(player);
             }
         }
         return tricks;
@@ -44,24 +56,35 @@ public class SpadesScores extends Scores
      *  by this function. The getTricks function, on the other hand, explicitly subtracts these. */
     public function getAllTricks (teamIdx :int) :int
     {
-        return _tricks[teamIdx];
+        return _tricks.getAt(teamIdx);
     }
 
     /** Increment a team's sandbagging level by a given amount. */
-    public function addSandbags (teamIdx :int, count :int) :void
+    public function setSandbags (teamIdx :int, sandbags :int) :void
     {
-        _sandbags[teamIdx] += count;
-        dispatchEvent(new ScoresEvent(
-            SANDBAGS_CHANGED, _table.getTeam(teamIdx), _sandbags[teamIdx]));
+        _sandbags.setAt(teamIdx, sandbags);
     }
 
     /** Access a team's sanbagging amount. */
     public function getSandbags (teamIdx :int) :int
     {
-        return _sandbags[teamIdx];
+        return _sandbags.getAt(teamIdx);
     }
 
-    protected var _sandbags :Array;
+    override protected function handleElementChanged (
+        event :ElementChangedEvent) :void
+    {
+        super.handleElementChanged(event);
+
+        if (event.name == SANDBAGS) {
+            dispatchEvent(new ScoresEvent(SANDBAGS_CHANGED, 
+                _table.getTeam(event.index), event.newValue as int));
+        }
+    }
+
+    protected var _sandbags :NetArray;
+
+    protected const SANDBAGS :String = "scores.sandbags";
 }
 
 }

@@ -31,14 +31,12 @@ public class Trick extends EventDispatcher
         _prefix = prefix;
         _beats = beats;
         _numPlayers = _gameCtrl.game.seating.getPlayerIds().length;
-        _cards = new CardArray();
-        _players = new Array(_numPlayers);
+
+        updateFromServer();
 
         _gameCtrl.net.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED,
             handlePropertyChanged);
-
-        reset();
     }
 
     /** Send a message to the server to clear all cards out of the trick. When the reply is 
@@ -249,6 +247,25 @@ public class Trick extends EventDispatcher
         }
 
         return winner;
+    }
+
+    protected function updateFromServer () :void
+    {
+        var players :Array = _gameCtrl.net.get(varName(PLAYERS)) as Array;
+        var cards :Array = _gameCtrl.net.get(varName(CARDS)) as Array;
+        var len :int = _gameCtrl.net.get(varName(SIZE)) as int;
+
+        _players = new Array();
+        _cards = new CardArray();
+
+        if (players == null) {
+            return;
+        }
+
+        for (var i :int = 0; i < len; ++i) {
+            _players.push(players[i]);
+            _cards.pushOrdinal(cards[i]);
+        }
     }
 
     protected var _gameCtrl :GameControl;

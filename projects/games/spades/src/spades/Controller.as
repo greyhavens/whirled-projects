@@ -4,6 +4,7 @@ import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.game.OccupantChangedEvent;
+import com.threerings.util.Assert;
 
 import spades.card.Card;
 import spades.card.CardArray;
@@ -17,6 +18,7 @@ import spades.card.Hand;
 import spades.card.HandEvent;
 import spades.card.Sorter;
 import spades.card.Scores;
+import spades.card.ScoresEvent;
 import spades.card.SpadesScores;
 import spades.card.ScoreBreakdown;
 import spades.card.Team;
@@ -45,17 +47,25 @@ public class Controller
             _templateDeck = _templateDeck.shortFilter(isHighCard);
         }
 
-        // Listen for game start and round start events, on the first one that occurs,
-        // construct the model and views and call the appropriate listener method. This
-        // is necessary because 1) whirled starts the round before the game, but there
-        // is a load of stuff that spades needs to do specifically to restart a round
-        // and 2) the model needs all the players to be at the table before construction
-        gameCtrl.game.addEventListener(
-            StateChangedEvent.GAME_STARTED, 
-            startGame);
-        gameCtrl.game.addEventListener(
-            StateChangedEvent.ROUND_STARTED, 
-            startRound);
+        var amWatcher :Boolean = gameCtrl.game.seating.getMyPosition() == -1;
+        if (amWatcher) {
+            attachToModel(createModel(gameCtrl));
+            createViews(_model);
+        }
+        else {
+            // Listen for game start and round start events, on the first one that occurs,
+            // construct the model and views and call the appropriate listener method. This
+            // is necessary because 1) whirled starts the round before the game, but there
+            // is a load of stuff that spades needs to do specifically to restart a round
+            // and 2) the model needs all the players to be at the table before construction
+            gameCtrl.game.addEventListener(
+                StateChangedEvent.GAME_STARTED, 
+                startGame);
+            gameCtrl.game.addEventListener(
+                StateChangedEvent.ROUND_STARTED, 
+                startRound);
+        }
+
 
         function bootstrap (fn :Function, evt :StateChangedEvent) :void {
             if (_model == null) {
@@ -145,11 +155,11 @@ public class Controller
             gameCtrl.game.seating.getPlayerIds(), 
             gameCtrl.game.seating.getMyPosition(),
             [new Team(0, [0, 2]), new Team(1, [1, 3])]);
-        var hand :Hand = new Hand(gameCtrl, sorter);
+        var hand :Hand = table.isWatcher() ? null : new Hand(gameCtrl, sorter);
         var trick :Trick = new Trick(gameCtrl, trumps);
         var bids :SpadesBids = new SpadesBids(gameCtrl, 
             CardArray.FULL_DECK.length / table.numPlayers);
-        var scores :Scores = new SpadesScores(table, bids, targetScore);
+        var scores :Scores = new SpadesScores(gameCtrl, table, bids, targetScore);
         var timer :TurnTimer = new TurnTimer(gameCtrl, table, bids, trick);
 
         if ("timer" in config && !config.timer) {
@@ -202,11 +212,16 @@ public class Controller
         bids.addEventListener(BidEvent.SELECTED, bidListener);
         bids.addEventListener(SpadesBids.BLIND_NIL_RESPONDED, bidListener);
 
-        hand.addEventListener(HandEvent.CARDS_PLAYED, handListener);
-        hand.addEventListener(HandEvent.PASS_REQUESTED, handListener);
-        hand.addEventListener(HandEvent.PASSED, handListener);
+        if (hand != null) {
+            hand.addEventListener(HandEvent.CARDS_PLAYED, handListener);
+            hand.addEventListener(HandEvent.PASS_REQUESTED, handListener);
+            hand.addEventListener(HandEvent.PASSED, handListener);
+        }
 
         model.timer.addEventListener(TurnTimerEvent.EXPIRED, turnTimerListener);
+
+        model.scores.addEventListener(ScoresEvent.TRICKS_CHANGED, scoresListener);
+        model.scores.addEventListener(ScoresEvent.SCORES_CHANGED, scoresListener);
     }
 
     /** Boot up the game. */
@@ -225,7 +240,9 @@ public class Controller
                 "Welcome to Spades, first player to score " + scores.target + 
                 " wins" + deckStr  + "\n");
 
-            scores.resetScores();
+            if (gameCtrl.game.amInControl()) {
+                scores.resetScores();
+            }
         }
     }
 
@@ -274,10 +291,11 @@ public class Controller
                 var lastId :int = gameCtrl.net.get(COMS_LAST_LEADER) as int;
                 gameCtrl.game.startNextTurn(table.getIdToLeft(lastId));
             }
+            
+            scores.resetTricks();
         }
 
         _spadePlayed = false;
-        scores.resetTricks();
     }
 
     /** Number of cards dealt per player */
@@ -307,12 +325,10 @@ public class Controller
 
             // sandbags
             var bags :int = scores.getAllTricks(team) - scores.getBid(team);
-            if (bags > 0) {
-                scores.addSandbags(team, bags);
-                while (scores.getSandbags(team) >= 10) {
-                    breakdown.addTeamFailure(-100, "sandbagging");
-                    scores.addSandbags(team, -10);
-                }
+            var newBags :int = scores.getSandbags(team) + bags;
+            while (newBags >= 10) {
+                breakdown.addTeamFailure(-100, "sandbagging");
+                newBags -= 10;
             }
 
             // nil bids
@@ -341,7 +357,10 @@ public class Controller
                 gameCtrl.local.feedback(d);
             });
 
-            scores.addScore(team, breakdown.total);
+            if (gameCtrl.game.amInControl()) {
+                scores.addScore(team, breakdown.total);
+                scores.setSandbags(team, newBags);
+            }
         }
     }
 
@@ -471,6 +490,8 @@ public class Controller
     /** Check if the local player meets all criteria for placing a blind nil bid. */
     protected function isLocalPlayerEligibleForBlindNilBid () :Boolean
     {
+        Assert.isFalse(table.isWatcher());
+
         var wal :WinnersAndLosers = scores.getWinnersAndLosers();
         if (wal.scoreDifferential < BLIND_NIL_THRESHOLD) {
             return false;
@@ -492,6 +513,8 @@ public class Controller
     /** Get the maximum amount a player should be allowed to bid (limited by teammate's bid). */
     protected function getLocalPlayerMaximumBid () :int
     {
+        Assert.isFalse(table.isWatcher());
+
         var teamTotal :int = 0;
         if (bids.hasBid(table.getLocalTeammate())) {
             teamTotal = bids.getBid(table.getLocalTeammate());
@@ -523,7 +546,7 @@ public class Controller
                 bids.request(getLocalPlayerMaximumBid()); 
             }
         }
-        else {
+        else if (!table.isWatcher()) {
             if (bids.complete) {
                 if (trick.hasPlayed(table.getLocalId())) {
                     hand.disallowSelection();
@@ -551,9 +574,7 @@ public class Controller
      *  give them their turn */
     protected function completeTrick () :void
     {
-        if (trick.length != NUM_PLAYERS) {
-            throw new Error();
-        }
+        Assert.isTrue(trick.length == NUM_PLAYERS);
 
         var winner :int = trick.winner;
         var winnerSeat :int = table.getAbsoluteFromId(winner);
@@ -561,21 +582,17 @@ public class Controller
         log("Trick winner is " + winner + " in seat " + winnerSeat + ", name " + 
             table.getNameFromId(winner));
 
-        scores.addTrick(winnerSeat);
-
         gameCtrl.local.feedback(
             table.getNameFromId(winner) + " won the trick");
 
         if (gameCtrl.game.amInControl()) {
+            scores.addTrick(winnerSeat);
+
             trick.reset();
 
             if (hand.length > 0) {
                 gameCtrl.game.startNextTurn(winner);
             }
-        }
-
-        if (hand.length == 0) {
-            completeRound();
         }
     }
 
@@ -587,8 +604,6 @@ public class Controller
 
     protected function completeRound () :void
     {
-        updateScores();
-
         var wal :WinnersAndLosers = scores.getWinnersAndLosers();
         var winners :Array = wal.winningTeams;
         var highScore :int = wal.highestScore;
@@ -637,8 +652,21 @@ public class Controller
         }
     }
 
-    /** Check if spades can be played (part of current game state and/or config).
-     *  TODO: implement. */
+    protected function scoresListener (event :ScoresEvent) :void
+    {
+        if (event.type == ScoresEvent.TRICKS_CHANGED) {
+            if (scores.totalTricks == cardsPerPlayer) {
+                updateScores();
+            }
+        }
+        else if (event.type == ScoresEvent.SCORES_CHANGED) {
+            if (event.team.index == 1) {
+                completeRound();
+            }
+        }
+    }
+
+    /** Check if spades can be played (part of current game state and/or config). */
     protected function canLeadSpades () :Boolean
     {
         return _spadePlayed;
@@ -647,6 +675,8 @@ public class Controller
     /** Check how many cards of a suit the local player has in his hand. */
     protected function countSuit (suit :int) :int
     {
+        Assert.isFalse(table.isWatcher());
+
         var count :int = 0;
         hand.cards.cards.forEach(countIfSameSuit);
         return count;
@@ -663,6 +693,8 @@ public class Controller
      *  match a given suit. */
     protected function filterCards (suit :int, match :Boolean) :CardArray
     {
+        Assert.isFalse(table.isWatcher());
+
         return hand.cards.shortFilter(compare);
 
         function compare (c :Card) :Boolean
@@ -679,6 +711,8 @@ public class Controller
     /** Get the cards that may now be played. */
     protected function getLegalMoves () :CardArray
     {
+        Assert.isFalse(table.isWatcher());
+
         var leader :Card = trick.ledCard;
 
         if (leader != null && countSuit(leader.suit) == 0) {
@@ -706,6 +740,8 @@ public class Controller
     /** Entry point for when the user selects a card or cards to play */
     protected function handListener (event :HandEvent) :void
     {
+        Assert.isFalse(table.isWatcher());
+
         Debug.debug("Received " + event);
         if (event.type == HandEvent.CARDS_PLAYED) {
             if (hand.isPassing) {
@@ -752,29 +788,10 @@ public class Controller
         }
     }
 
-    protected function getRandomSubset (moves :CardArray, count :int) :CardArray
-    {
-        if (moves.length < count) {
-            throw new Error("Not enough cards in " + moves + 
-                " to select " + count + " random ones");
-        }
-
-        var selected :CardArray = new CardArray();
-        for (var i :int = 0; i < count; ++i) {
-            var random :int = Math.random() * moves.length;
-            var card :Card = moves.cards[random];
-            if (selected.has(card)) {
-                --i;
-                continue;
-            }
-            selected.push(card);
-        }
-
-        return selected;
-    }
-
     protected function autoPlay () :void
     {
+        Assert.isFalse(table.isWatcher());
+
         if (bids.complete) {
             var moves :CardArray;
             var count :int;
@@ -814,6 +831,29 @@ public class Controller
                 bids.select(bid);
             }
         }
+    }
+
+    protected static function getRandomSubset (
+        moves :CardArray, 
+        count :int) :CardArray
+    {
+        if (moves.length < count) {
+            throw new Error("Not enough cards in " + moves + 
+                " to select " + count + " random ones");
+        }
+
+        var selected :CardArray = new CardArray();
+        for (var i :int = 0; i < count; ++i) {
+            var random :int = Math.random() * moves.length;
+            var card :Card = moves.cards[random];
+            if (selected.has(card)) {
+                --i;
+                continue;
+            }
+            selected.push(card);
+        }
+
+        return selected;
     }
 
     protected static function trumps (candidate :Card, winnerSoFar :Card) :Boolean

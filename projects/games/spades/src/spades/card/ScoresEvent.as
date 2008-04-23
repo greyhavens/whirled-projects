@@ -16,6 +16,14 @@ public class ScoresEvent extends Event
      *  total for that team. */
     public static const SCORES_CHANGED :String = "scores.changed";
 
+    /** The type of event when the tricks are reset to 0. For this type of event, no properties 
+     *  are used. */
+    public static const TRICKS_RESET :String = "scores.tricksReset";
+
+    /** The type of event when the scores are reset to 0. For this type of event, no properties 
+     *  are used. */
+    public static const SCORES_RESET :String = "scores.reset";
+
     /** Placeholder function for Scores subclasses to add new event types. */
     public static function newEventType (type :String) :String
     {
