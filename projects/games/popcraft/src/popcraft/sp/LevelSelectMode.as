@@ -53,7 +53,7 @@ public class LevelSelectMode extends AppMode
         // @TEMP - construct a test level
         var xmlData :XML =
             <root>
-                <Level name="Level 1" introText="This is level 1">
+                <Level name="Level 1" introText="This is level 1" disableDiurnalCycle="true">
                     <AvailableUnits>
                         <Unit type="grunt"/>
                         <Unit type="heavy"/>
