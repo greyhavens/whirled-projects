@@ -4,6 +4,7 @@
   <!-- defines our project name -->
   <property name="app.name" value="Snowman"/>
   <property name="app.type" value="avatar"/>
+  <property name="app.data-dir" value="data"/>
 
   <!-- if you wish to put your source in a subdirectory, uncomment this line -->
   <!--<property name="app.source-dir" value="src"/>-->
