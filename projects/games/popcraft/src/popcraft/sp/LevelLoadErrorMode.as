@@ -13,7 +13,7 @@ import popcraft.*;
 
 public class LevelLoadErrorMode extends AppMode
 {
-    public function LevelLoadErrorMode (err :XmlReadError)
+    public function LevelLoadErrorMode (err :String)
     {
         _err = err;
     }
@@ -31,10 +31,10 @@ public class LevelLoadErrorMode extends AppMode
         tf.autoSize = TextFieldAutoSize.LEFT;
         tf.scaleX = 1.5;
         tf.scaleY = 1.5;
-        tf.width = 200;
+        tf.width = 400;
         tf.x = 50;
         tf.y = 50;
-        tf.text = _err.message;
+        tf.text = _err;
 
         this.modeSprite.addChild(tf);
 
@@ -49,7 +49,7 @@ public class LevelLoadErrorMode extends AppMode
         this.modeSprite.addChild(button);
     }
 
-    protected var _err :XmlReadError;
+    protected var _err :String;
 }
 
 }

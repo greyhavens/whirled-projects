@@ -23,6 +23,8 @@ public class UnitAnimationFactory
                 success = colorizeAnimation(anim, "recolor" + i++, g_tintMatrix);
             } while (success);
 
+            trace(unitData.name + "." + animName + ": found " + String(i - 2) + " recolorables");
+
             // colorize the animation's "recolor" child
             // @TODO - remove this when animations are all updated to the new naming system
             colorizeAnimation(anim, "recolor", g_tintMatrix);

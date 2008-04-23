@@ -4,6 +4,8 @@ import com.whirled.contrib.simplegame.util.NumRange;
 
 public class ComputerPlayerData
 {
+    public var baseHealth :int;
+
     // go through these units waves first
     public var initialWaves :Array = [];
 
@@ -13,6 +15,8 @@ public class ComputerPlayerData
     public static function fromXml (xmlData :XML) :ComputerPlayerData
     {
         var computerPlayer :ComputerPlayerData = new ComputerPlayerData();
+
+        computerPlayer.baseHealth = XmlReader.getAttributeAsInt(xmlData, "baseHealth");
 
         for each (var initialWaveData :XML in xmlData.InitialWaves.Wave) {
             computerPlayer.initialWaves.push(UnitWave.fromXml(initialWaveData));

@@ -50,38 +50,7 @@ public class LevelSelectMode extends AppMode
 
     protected function levelSelected (...ignored) :void
     {
-        // @TEMP - construct a test level
-        var xmlData :XML =
-            <root>
-                <Level name="Level 1" introText="This is level 1" disableDiurnalCycle="true">
-                    <AvailableUnits>
-                        <Unit type="grunt"/>
-                        <Unit type="heavy"/>
-                    </AvailableUnits>
-                    <Computer>
-                        <InitialWaves>
-                            <Wave delayBefore="30"><Unit type="grunt" count="1"/></Wave>
-                        </InitialWaves>
-                        <RepeatingWaves>
-                            <Wave delayBefore="30"><Unit type="grunt" count="2"/></Wave>
-                        </RepeatingWaves>
-                    </Computer>
-                </Level>
-            </root>;
-
-        // Try loading the level. Alert the designer if the level has an error.
-        var levelData :LevelData;
-        try {
-            levelData = LevelData.fromXml(xmlData);
-        } catch (e :XmlReadError) {
-            AppContext.mainLoop.pushMode(new LevelLoadErrorMode(e));
-            return;
-        }
-
-        // start the game
-        GameContext.gameType = GameContext.GAME_TYPE_SINGLEPLAYER;
-        GameContext.spLevel = LevelData.fromXml(xmlData);
-        MainLoop.instance.changeMode(new GameMode());
+        AppContext.levelLoader.loadLevel(1);
     }
 
 }
