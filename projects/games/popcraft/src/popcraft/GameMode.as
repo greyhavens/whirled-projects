@@ -280,7 +280,8 @@ public class GameMode extends AppMode
         case "/".charCodeAt(0):
             if (Constants.DEBUG_ALLOW_CHEATS && GameContext.isSinglePlayer) {
                 // restart the level
-                AppContext.mainLoop.changeMode(new GameMode());
+                // playLevel(true) forces the current level to reload
+                AppContext.levelMgr.playLevel(true);
             }
         }
     }

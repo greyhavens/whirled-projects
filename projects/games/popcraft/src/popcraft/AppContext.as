@@ -14,7 +14,7 @@ public class AppContext
     public static var mainLoop :MainLoop;
     public static var resources :ResourceManager = new ResourceManager();
     public static var gameCtrl :GameControl;
-    public static var levelLoader :LevelManager = new LevelManager();
+    public static var levelMgr :LevelManager = new LevelManager();
 
     public static function instantiateMovieClip (resourceName :String, className :String) :MovieClip
     {

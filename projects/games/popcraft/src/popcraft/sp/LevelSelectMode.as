@@ -50,8 +50,8 @@ public class LevelSelectMode extends AppMode
 
     protected function levelSelected (...ignored) :void
     {
-        AppContext.levelLoader.curLevelNum = 1;
-        AppContext.levelLoader.playLevel();
+        AppContext.levelMgr.curLevelNum = 1;
+        AppContext.levelMgr.playLevel();
     }
 
 }

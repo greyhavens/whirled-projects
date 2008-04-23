@@ -50,7 +50,7 @@ public class LevelLoadErrorMode extends AppMode
         button = new SimpleTextButton("Retry");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.levelLoader.playLevel(true);
+                AppContext.levelMgr.playLevel(true);
             });
         button.x = 50;
         button.y = 450;

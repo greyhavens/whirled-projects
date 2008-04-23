@@ -17,7 +17,7 @@ public class Constants
     /* Debug options */
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
-    public static const DEBUG_ALLOW_CHEATS :Boolean = false;
+    public static const DEBUG_ALLOW_CHEATS :Boolean = true;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
