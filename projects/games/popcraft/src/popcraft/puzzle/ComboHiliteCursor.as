@@ -116,7 +116,7 @@ public class ComboHiliteCursor extends SimObject
 
     protected function mouseClick (evt :MouseEvent) :void
     {
-        if (!_board.resolvingClears && _over) {
+        if (!_board.resolvingClears && _mouseIndexX >= 0 && _mouseIndexY >= 0) {
 
             _board.clearPieceGroup(_mouseIndexX, _mouseIndexY);
 

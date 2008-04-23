@@ -21,6 +21,7 @@ import popcraft.puzzle.*;
 import popcraft.sp.ComputerPlayer;
 import popcraft.sp.ComputerPlayerData;
 import popcraft.sp.LevelIntroMode;
+import popcraft.sp.LevelOutroMode;
 
 public class GameMode extends AppMode
 {
@@ -341,7 +342,13 @@ public class GameMode extends AppMode
         }
 
         if (livePlayerCount <= 1) {
-            MainLoop.instance.changeMode(new GameOverMode(livePlayer));
+            // show the appropriate game over screen
+            if (GameContext.isMultiplayer) {
+                MainLoop.instance.changeMode(new GameOverMode(livePlayer));
+            } else {
+                var success :Boolean = (null != livePlayer && livePlayer.playerId == GameContext.localPlayerId);
+                MainLoop.instance.pushMode(new LevelOutroMode(success));
+            }
         }
 
         // update all non-net objects

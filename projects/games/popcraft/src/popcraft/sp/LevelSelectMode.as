@@ -4,6 +4,7 @@ import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.*;
 
 import flash.display.Graphics;
+import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -30,12 +31,17 @@ public class LevelSelectMode extends AppMode
 
         this.modeSprite.addChild(tf);
 
-        var button :SimpleTextButton = new SimpleTextButton("Level 1");
-        button.addEventListener(MouseEvent.CLICK, levelSelected);
-        button.x = (this.modeSprite.width * 0.5) - (button.width * 0.5);
-        button.y = 200;
+        var button :SimpleButton;
+        var yLoc :Number = 150;;
+        // create a button for each level
+        for (var i :int = 0; i < AppContext.levelMgr.numLevels; ++i) {
+            button = this.createLevelSelectButton(i);
+            button.x = (this.modeSprite.width * 0.5) - (button.width * 0.5);
+            button.y = yLoc;
+            this.modeSprite.addChild(button);
 
-        this.modeSprite.addChild(button);
+            yLoc += button.height + 3;
+        }
 
         button = new SimpleTextButton("Unit Anim Test");
         button.addEventListener(MouseEvent.CLICK,
@@ -43,14 +49,25 @@ public class LevelSelectMode extends AppMode
                 AppContext.mainLoop.pushMode(new UnitAnimTestMode());
             });
         button.x = (this.modeSprite.width * 0.5) - (button.width * 0.5);
-        button.y = 240;
+        button.y = yLoc + 20;
 
         this.modeSprite.addChild(button);
     }
 
-    protected function levelSelected (...ignored) :void
+    protected function createLevelSelectButton (levelNum :int) :SimpleButton
     {
-        AppContext.levelMgr.curLevelNum = 1;
+        var button :SimpleTextButton = new SimpleTextButton("Level " + String(levelNum + 1));
+        button.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                levelSelected(levelNum);
+            });
+
+        return button;
+    }
+
+    protected function levelSelected (levelNum :int) :void
+    {
+        AppContext.levelMgr.curLevelNum = levelNum;
         AppContext.levelMgr.playLevel();
     }
 
