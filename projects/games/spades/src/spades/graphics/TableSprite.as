@@ -84,6 +84,7 @@ public class TableSprite extends Sprite
 
         // listen for the trick changing
         _model.trick.addEventListener(TrickEvent.COMPLETED, trickListener);
+        _model.trick.addEventListener(TrickEvent.CARD_PLAYED, trickListener);
 
         // listen for blind nil updates
         _model.bids.addEventListener(BidEvent.PLACED, bidListener);
@@ -219,6 +220,15 @@ public class TableSprite extends Sprite
                 }
             }
         }
+        else if (event.type == TrickEvent.CARD_PLAYED) {
+            var bids :Bids = _model.bids;
+            for (seat = 0; seat < _players.length; ++seat) {
+                p = PlayerSprite(_players[seat]);
+                if (bids.getBid(table.getAbsoluteFromRelative(seat)) != 0) {
+                    p.showCaption("");
+                }
+            }
+        }
     }
 
     // TODO: move to a subclass of PlayerSprite
@@ -228,15 +238,20 @@ public class TableSprite extends Sprite
         var p :PlayerSprite;
 
         if (event.type == BidEvent.PLACED) {
-            if (event.value == 0 && event.player > 0) {
+            if (event.player > 0) {
                 seat = table.getRelativeFromId(event.player);
                 p = PlayerSprite(_players[seat]);
-                if (SpadesBids(_model.bids).isBlind(
-                    table.getAbsoluteFromRelative(seat))) {
-                    p.showCaption("Blind Nil");
+                if (event.value == 0) {
+                    if (SpadesBids(_model.bids).isBlind(
+                        table.getAbsoluteFromRelative(seat))) {
+                        p.showCaption("Blind Nil");
+                    }
+                    else {
+                        p.showCaption("Nil");
+                    }
                 }
                 else {
-                    p.showCaption("Nil");
+                    p.showCaption("Bid: " + event.value);
                 }
             }
         }
