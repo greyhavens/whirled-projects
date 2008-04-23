@@ -7,14 +7,14 @@ import com.whirled.game.GameControl;
 import flash.display.Bitmap;
 import flash.display.MovieClip;
 
-import popcraft.sp.LevelLoader;
+import popcraft.sp.LevelManager;
 
 public class AppContext
 {
     public static var mainLoop :MainLoop;
     public static var resources :ResourceManager = new ResourceManager();
     public static var gameCtrl :GameControl;
-    public static var levelLoader :LevelLoader = new LevelLoader();
+    public static var levelLoader :LevelManager = new LevelManager();
 
     public static function instantiateMovieClip (resourceName :String, className :String) :MovieClip
     {

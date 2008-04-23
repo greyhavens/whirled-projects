@@ -41,11 +41,19 @@ public class LevelLoadErrorMode extends AppMode
         var button :SimpleButton = new SimpleTextButton("Back");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.mainLoop.popMode();
+                AppContext.mainLoop.changeMode(new LevelSelectMode());
+            });
+        button.x = 100;
+        button.y = 450;
+        this.modeSprite.addChild(button);
+
+        button = new SimpleTextButton("Retry");
+        button.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                AppContext.levelLoader.playLevel(true);
             });
         button.x = 50;
         button.y = 450;
-
         this.modeSprite.addChild(button);
     }
 

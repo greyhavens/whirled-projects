@@ -49,7 +49,7 @@ public class XmlReader
 
         } catch (e :ArgumentError) {
             if (required) {
-                throw new XmlReadError("Error reading attribute '" + name + "': " + e.message);
+                throw new XmlReadError("In node '" + String(xml.localName()) + "': error reading attribute '" + name + "': " + e.message);
             } else {
                 value = defaultValue;
             }

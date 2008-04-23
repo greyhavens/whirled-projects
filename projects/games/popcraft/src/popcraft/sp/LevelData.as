@@ -45,12 +45,6 @@ public class LevelData
 
         return level;
     }
-
-    /*public static function fromFile (path :String) :LevelData
-    {
-        var urlRequest :URLRequest = new URLRequest(path);
-        var urlLoader :URLLoader = new URLLoader();
-    }*/
 }
 
 }
