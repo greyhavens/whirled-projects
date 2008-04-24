@@ -21,11 +21,11 @@ public class ComputerPlayerData
         computerPlayer.baseHealth = XmlReader.getAttributeAsInt(xmlData, "baseHealth");
 
         for each (var initialWaveData :XML in xmlData.InitialWaves.Wave) {
-            computerPlayer.initialWaves.push(UnitWave.fromXml(initialWaveData));
+            computerPlayer.initialWaves.push(UnitWaveData.fromXml(initialWaveData));
         }
 
         for each (var repeatingWaveData :XML in xmlData.RepeatingWaves.Wave) {
-            computerPlayer.repeatingWaves.push(UnitWave.fromXml(repeatingWaveData));
+            computerPlayer.repeatingWaves.push(UnitWaveData.fromXml(repeatingWaveData));
         }
 
         return computerPlayer;

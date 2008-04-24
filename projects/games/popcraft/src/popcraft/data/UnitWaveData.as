@@ -3,14 +3,14 @@ package popcraft.data {
 import popcraft.*;
 import popcraft.util.*;
 
-public class UnitWave
+public class UnitWaveData
 {
     public var delayBefore :Number = 0;
     public var units :Array = [];
 
-    public static function fromXml (xmlData :XML) :UnitWave
+    public static function fromXml (xmlData :XML) :UnitWaveData
     {
-        var unitWave :UnitWave = new UnitWave();
+        var unitWave :UnitWaveData = new UnitWaveData();
 
         unitWave.delayBefore = XmlReader.getAttributeAsNumber(xmlData, "delayBefore");
 

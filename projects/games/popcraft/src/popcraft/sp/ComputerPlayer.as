@@ -56,7 +56,7 @@ public class ComputerPlayer extends SimObject
 
     protected var _data :ComputerPlayerData;
     protected var _playerData :PlayerData;
-    protected var _nextWave :UnitWave;
+    protected var _nextWave :UnitWaveData;
     protected var _waveIndex :int;
 
     protected var _pausedForDaytime :Boolean;
