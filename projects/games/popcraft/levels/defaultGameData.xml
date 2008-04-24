@@ -3,8 +3,8 @@
         <Resources>
             <Resource type="white" displayName="Flesh" color="0xE8E7E5" rarity="1"/>
             <Resource type="red" displayName="Blood" color="0xCC0000" rarity="1"/>
-            <Resource type="yellow" displayName="Energy" color="0x3D7078" rarity="0.5"/>
-            <Resource type="blue" displayName="Artifice" color="0xFFD858" rarity="0.5"/>
+            <Resource type="blue" displayName="Energy" color="0x3D7078" rarity="0.5"/>
+            <Resource type="yellow" displayName="Artifice" color="0xFFD858" rarity="0.5"/>
         </Resources>
 
         <Units>
@@ -19,7 +19,7 @@
                 loseInterestRadius="180">
                 <ResourceCosts>
                     <Resource type="white" cost="40"/>
-                    <Resource type="yellow" cost="15"/>
+                    <Resource type="blue" cost="15"/>
                 </ResourceCosts>
                 <Weapon damageType="crushing" damageMin="10" damageMax="10" cooldown="1" maxAttackDistance="35"/>
                 <Armor>
@@ -41,7 +41,7 @@
                 loseInterestRadius="200">
                 <ResourceCosts>
                     <Resource type="red" cost="30"/>
-                    <Resource type="blue" cost="15"/>
+                    <Resource type="yellow" cost="15"/>
                 </ResourceCosts>
                 <Weapon isRanged="true" missileSpeed="300" damageType="piercing" damageMin="5" damageMax="10" cooldown="0.75" maxAttackDistance="200"/>
                 <Armor>
@@ -62,8 +62,8 @@
                 detectRadius="200"
                 loseInterestRadius="200">
                 <ResourceCosts>
-                    <Resource type="yellow" cost="25"/>
                     <Resource type="blue" cost="25"/>
+                    <Resource type="yellow" cost="25"/>
                 </ResourceCosts>
                 <Weapon isAOE="true" aoeRadius="75" aoeAnimationName="attack_N" aoeDamageFriendlies="false" damageType="explosion" damageMin="70" damageMax="70"/>
                 <Armor>
