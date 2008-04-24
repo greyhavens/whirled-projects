@@ -2,9 +2,6 @@ package popcraft.data {
 
 import com.threerings.util.ArrayUtil;
 
-import flash.net.URLLoader;
-import flash.net.URLRequest;
-
 import popcraft.*;
 import popcraft.util.*;
 
@@ -23,24 +20,22 @@ public class LevelData
         return ArrayUtil.contains(availableUnits, unitType);
     }
 
-    public static function fromXml (xmlData :XML) :LevelData
+    public static function fromXml (xml :XML) :LevelData
     {
         var level :LevelData = new LevelData();
 
-        var levelNode :XML = xmlData.Level[0];
-
-        level.name = XmlReader.getAttributeAsString(levelNode, "name");
-        level.introText = XmlReader.getAttributeAsString(levelNode, "introText");
-        level.playerBaseHealth = XmlReader.getAttributeAsInt(levelNode, "playerBaseHealth");
-        level.disableDiurnalCycle = XmlReader.getAttributeAsBoolean(levelNode, "disableDiurnalCycle", false);
+        level.name = XmlReader.getAttributeAsString(xml, "name");
+        level.introText = XmlReader.getAttributeAsString(xml, "introText");
+        level.playerBaseHealth = XmlReader.getAttributeAsInt(xml, "playerBaseHealth");
+        level.disableDiurnalCycle = XmlReader.getAttributeAsBoolean(xml, "disableDiurnalCycle", false);
 
         // parse the available units
-        for each (var unitData :XML in levelNode.AvailableUnits.Unit) {
+        for each (var unitData :XML in xml.AvailableUnits.Unit) {
             level.availableUnits.push(XmlReader.getAttributeAsEnum(unitData, "type", Constants.CREATURE_UNIT_NAMES));
         }
 
         // parse the computer players
-        for each (var computerData :XML in levelNode.Computer) {
+        for each (var computerData :XML in xml.Computer) {
             level.computers.push(ComputerPlayerData.fromXml(computerData));
         }
 

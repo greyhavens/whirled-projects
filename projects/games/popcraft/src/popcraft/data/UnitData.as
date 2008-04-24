@@ -33,7 +33,8 @@ public class UnitData
         // throws XmlReadError
     {
         var unitData :UnitData = new UnitData();
-        unitData.name = XmlReader.getAttributeAsString(xml, "name");
+
+        unitData.name = XmlReader.getAttributeAsString(xml, "type");
         unitData.displayName = XmlReader.getAttributeAsString(xml, "displayName");
         unitData.description = XmlReader.getAttributeAsString(xml, "description");
 
@@ -46,7 +47,8 @@ public class UnitData
         unitData.baseMoveSpeed = XmlReader.getAttributeAsNumber(xml, "baseMoveSpeed");
         unitData.maxHealth = XmlReader.getAttributeAsInt(xml, "maxHealth");
 
-        unitData.weapon = UnitWeaponData.fromXml(xml.Weapon);
+        unitData.armor = UnitArmorData.fromXml(xml.Armor[0]);
+        unitData.weapon = UnitWeaponData.fromXml(xml.Weapon[0]);
 
         unitData.collisionRadius = XmlReader.getAttributeAsNumber(xml, "collisionRadius");
         unitData.detectRadius = XmlReader.getAttributeAsNumber(xml, "detectRadius");

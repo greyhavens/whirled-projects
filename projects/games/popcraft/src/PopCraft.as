@@ -12,7 +12,8 @@ import flash.events.Event;
 
 import popcraft.*;
 import popcraft.net.*;
-import popcraft.sp.LevelSelectMode;
+import popcraft.sp.*;
+import popcraft.data.*;
 import popcraft.util.*;
 
 [SWF(width="700", height="500", frameRate="30")]
@@ -27,15 +28,16 @@ public class PopCraft extends Sprite
         this.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
         AppContext.mainLoop = new MainLoop(this);
+        AppContext.mainLoop.setup();
+
+        // custom resource factories
+        ResourceLoaderRegistry.instance.registerLoaderClass("level", LevelResourceLoader);
+        ResourceLoaderRegistry.instance.registerLoaderClass("gameData", GameDataResourceLoader);
+
         AppContext.mainLoop.run();
 
         AppContext.gameCtrl = new GameControl(this, false);
         var isConnected :Boolean = AppContext.gameCtrl.isConnected();
-
-        // if we're running in standalone mode, output some statistics
-        if (!isConnected) {
-            trace(Constants.generateUnitReport());
-        }
 
         var multiplayer :Boolean = isConnected && (AppContext.gameCtrl.game.seating.getPlayerIds().length > 1);
 

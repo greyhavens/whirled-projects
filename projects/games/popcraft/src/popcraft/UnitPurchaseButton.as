@@ -13,9 +13,9 @@ import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
-import popcraft.data.*;
 import popcraft.battle.*;
 import popcraft.battle.view.*;
+import popcraft.data.*;
 
 public class UnitPurchaseButton extends Sprite
 {
@@ -27,7 +27,7 @@ public class UnitPurchaseButton extends Sprite
         _unitType = unitType;
         _button = new SimpleButton();
 
-        var unitData :UnitData = Constants.UNIT_DATA[unitType];
+        var unitData :UnitData = GameContext.gameData.units[unitType];
         var playerColor :uint = Constants.PLAYER_COLORS[GameContext.localPlayerId];
 
         // try instantiating some animations

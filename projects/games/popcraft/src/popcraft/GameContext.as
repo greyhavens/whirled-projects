@@ -1,8 +1,8 @@
 package popcraft {
 
-import popcraft.data.*;
 import popcraft.battle.*;
 import popcraft.battle.view.*;
+import popcraft.data.*;
 import popcraft.puzzle.*;
 
 public class GameContext
@@ -11,6 +11,7 @@ public class GameContext
     public static const GAME_TYPE_SINGLEPLAYER :int = 1;
 
     public static var gameType :int;
+    public static var gameData :GameData;
     public static var spLevel :LevelData;
     public static function get isSinglePlayer () :Boolean { return gameType == GAME_TYPE_SINGLEPLAYER; }
     public static function get isMultiplayer () :Boolean { return gameType == GAME_TYPE_MULTIPLAYER; }

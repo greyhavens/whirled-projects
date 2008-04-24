@@ -1,0 +1,121 @@
+<root>
+    <GameData>
+        <Resources>
+            <Resource type="white" displayName="Flesh" color="0xE8E7E5" rarity="1"/>
+            <Resource type="red" displayName="Blood" color="0xCC0000" rarity="1"/>
+            <Resource type="yellow" displayName="Energy" color="0x3D7078" rarity="0.5"/>
+            <Resource type="blue" displayName="Artifice" color="0xFFD858" rarity="0.5"/>
+        </Resources>
+
+        <Units>
+            <Unit
+                type="grunt"
+                displayName="Madame"
+                description="MADAME: Melee unit. Strong against the Handy Man. Susceptible to attacks from the Dog-boy."
+                baseMoveSpeed="35"
+                maxHealth="100"
+                collisionRadius="15"
+                detectRadius="60"
+                loseInterestRadius="180">
+                <ResourceCosts>
+                    <Resource type="white" cost="40"/>
+                    <Resource type="yellow" cost="15"/>
+                </ResourceCosts>
+                <Weapon damageType="crushing" damageMin="10" damageMax="10" cooldown="1" maxAttackDistance="35"/>
+                <Armor>
+                    <Damage type="crushing"     scale="0.7"/>
+                    <Damage type="piercing"     scale="0.3"/>
+                    <Damage type="explosion"    scale="1"/>
+                    <Damage type="base"         scale="0.8"/>
+                </Armor>
+            </Unit>
+
+            <Unit
+                type="heavy"
+                displayName="Handy-man"
+                description="HANDY-MAN: Ranged tower unit. Useful for deflecting incoming Dog-boys. Watch out for Madames."
+                baseMoveSpeed="50"
+                maxHealth="100"
+                collisionRadius="15"
+                detectRadius="200"
+                loseInterestRadius="200">
+                <ResourceCosts>
+                    <Resource type="red" cost="30"/>
+                    <Resource type="blue" cost="15"/>
+                </ResourceCosts>
+                <Weapon isRanged="true" missileSpeed="300" damageType="piercing" damageMin="5" damageMax="10" cooldown="0.75" maxAttackDistance="200"/>
+                <Armor>
+                    <Damage type="crushing"     scale="1"/>
+                    <Damage type="piercing"     scale="1"/>
+                    <Damage type="explosion"    scale="1"/>
+                    <Damage type="base"         scale="1"/>
+                </Armor>
+            </Unit>
+
+            <Unit
+                type="sapper"
+                displayName="Dog-boy"
+                description="DOG-BOY: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Handy Men!"
+                baseMoveSpeed="35"
+                maxHealth="70"
+                collisionRadius="15"
+                detectRadius="200"
+                loseInterestRadius="200">
+                <ResourceCosts>
+                    <Resource type="yellow" cost="25"/>
+                    <Resource type="blue" cost="25"/>
+                </ResourceCosts>
+                <Weapon isAOE="true" aoeRadius="75" aoeAnimationName="attack_N" aoeDamageFriendlies="false" damageType="explosion" damageMin="70" damageMax="70"/>
+                <Armor>
+                    <Damage type="crushing"     scale="1"/>
+                    <Damage type="piercing"     scale="1"/>
+                    <Damage type="explosion"    scale="1"/>
+                    <Damage type="base"         scale="1"/>
+                </Armor>
+            </Unit>
+
+            <Unit
+                type="colossus"
+                displayName="Flesh Colossus"
+                description="FLESH COLOSSUS: A massive pile of discarded flesh. The Colossus' powerful attack is dangerous to everybody, but it will slow down when swarmed by enemies."
+                baseMoveSpeed="25"
+                maxHealth="100"
+                collisionRadius="30"
+                detectRadius="50"
+                loseInterestRadius="50">
+                <ResourceCosts>
+                    <Resource type="white" cost="250"/>
+                    <Resource type="red" cost="250"/>
+                </ResourceCosts>
+                <Weapon damageType="crushing" damageMin="80" damageMax="80" cooldown="2" maxAttackDistance="50"/>
+                <Armor>
+                    <Damage type="crushing"     scale="0.1"/>
+                    <Damage type="piercing"     scale="0.07"/>
+                    <Damage type="explosion"    scale="0.1"/>
+                    <Damage type="base"         scale="1"/>
+                </Armor>
+            </Unit>
+
+            <Unit
+                type="base"
+                displayName="" description="" baseMoveSpeed="0" detectRadius="0" loseInterestRadius="0"
+                maxHealth="100"
+                collisionRadius="20">
+                <ResourceCosts/>
+                <Weapon damageType="base" damageMin="20" damageMax="20" cooldown="0" maxAttackDistance="1000"/>
+                <Armor>
+                    <Damage type="crushing"     scale="0.05"/>
+                    <Damage type="piercing"     scale="0.1"/>
+                    <Damage type="explosion"    scale="0.1"/>
+                    <Damage type="base"         scale="1"/>
+                </Armor>
+            </Unit>
+        </Units>
+
+        <Spells>
+            <Spell type="bloodlust" displayName="Bloodlust" expireTime="45" speedScaleOffset="0.5" damageScaleOffset="0.3"/>
+            <Spell type="rigormortis" displayName="Rigor Mortis" expireTime="45" damageScaleOffset="-0.4"/>
+        </Spells>
+
+    </GameData>
+</root>

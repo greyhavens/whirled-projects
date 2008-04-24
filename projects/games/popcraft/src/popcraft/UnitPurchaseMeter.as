@@ -14,14 +14,14 @@ public class UnitPurchaseMeter extends SceneObject
     {
         _unitType = unitType;
 
-        var data :UnitData = Constants.UNIT_DATA[_unitType];
+        var unitData :UnitData = GameContext.gameData.units[unitType];
 
         var yOffset :Number = 0;
 
         // how much does it cost?
         for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
-            var resData :ResourceData = Constants.getResource(resType);
-            var resCost :int = data.getResourceCost(resType);
+            var resData :ResourceData = GameContext.gameData.resources[resType];
+            var resCost :int = unitData.getResourceCost(resType);
 
             if (resCost == 0) {
                 continue;
@@ -88,12 +88,12 @@ public class UnitPurchaseMeter extends SceneObject
 
     protected function updateDisplay () :void
     {
-        var data :UnitData = Constants.UNIT_DATA[_unitType];
+        var unitData :UnitData = GameContext.gameData.units[_unitType];
 
         var meterIndex :uint = 0;
         for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
 
-            var resCost :int = data.getResourceCost(resType);
+            var resCost :int = unitData.getResourceCost(resType);
 
             if (resCost == 0) {
                 continue;

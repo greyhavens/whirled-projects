@@ -10,6 +10,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import popcraft.*;
+import popcraft.data.ResourceData;
 import popcraft.util.*;
 
 public class PuzzleBoard extends SceneObject
@@ -27,8 +28,9 @@ public class PuzzleBoard extends SceneObject
         // create the resource generator
         var table :Array = new Array();
         for (var resType: uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
+            var resourceData :ResourceData = GameContext.gameData.resources[resType];
             table.push(resType);
-            table.push(Constants.getResource(resType).rarity);
+            table.push(resourceData.rarity);
         }
 
         _resourceGenerator = new WeightedTable(table, Rand.STREAM_COSMETIC);

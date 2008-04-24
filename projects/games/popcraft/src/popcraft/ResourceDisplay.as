@@ -21,7 +21,7 @@ public class ResourceDisplay extends SceneObject
         var width :int = 0;
         var height :int = 0;
 
-        for each (var resource :ResourceData in Constants.RESOURCE_TYPES) {
+        for each (var resource :ResourceData in GameContext.gameData.resources) {
             var format :TextFormat = new TextFormat();
             format.font = FONT_NAME;
             format.color = resource.color;
@@ -34,7 +34,7 @@ public class ResourceDisplay extends SceneObject
             label.gridFitType = GridFitType.PIXEL;
 
             // determine what the width should be
-            label.text = getDisplayString(resource.name, 9999);
+            label.text = getDisplayString(resource.displayName, 9999);
             label.width = label.textWidth;
             label.height = label.textHeight + 3;
             label.text = "";
@@ -74,8 +74,9 @@ public class ResourceDisplay extends SceneObject
     {
         for (var i :uint = 0; i < _resourceText.length; ++i) {
             var label :TextField = _resourceText[i];
+            var resource :ResourceData = GameContext.gameData.resources[i];
             label.text = getDisplayString(
-                Constants.getResource(i).name,
+                resource.displayName,
                 GameContext.localPlayerData.getResourceAmount(i));
         }
     }

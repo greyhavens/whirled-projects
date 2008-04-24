@@ -34,8 +34,8 @@ public class UnitWeaponData
         var weapon :UnitWeaponData = new UnitWeaponData();
 
         weapon.damageType = XmlReader.getAttributeAsEnum(xml, "damageType", Constants.DAMAGE_TYPE_NAMES);
-        weapon.cooldown = XmlReader.getAttributeAsNumber(xml, "cooldown");
-        weapon.maxAttackDistance = XmlReader.getAttributeAsNumber(xml, "maxAttackDistance");
+        weapon.cooldown = XmlReader.getAttributeAsNumber(xml, "cooldown", 0.1);
+        weapon.maxAttackDistance = XmlReader.getAttributeAsNumber(xml, "maxAttackDistance", 0);
 
         var damageMin :Number = XmlReader.getAttributeAsNumber(xml, "damageMin");
         var damageMax :Number = XmlReader.getAttributeAsNumber(xml, "damageMax");

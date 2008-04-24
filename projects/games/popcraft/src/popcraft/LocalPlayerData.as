@@ -2,8 +2,8 @@ package popcraft {
 
 import com.threerings.util.Assert;
 
-import popcraft.data.*;
 import popcraft.battle.*;
+import popcraft.data.*;
 
 /**
  * Extends PlayerData to include data that's private to the local player.
@@ -14,7 +14,7 @@ public class LocalPlayerData extends PlayerData
     {
         super(playerId);
 
-        _resources = new Array(Constants.RESOURCE_TYPES.length);
+        _resources = new Array(Constants.RESOURCE_NAMES.length);
         for (var i :int = 0; i < _resources.length; ++i) {
             _resources[i] = int(0);
         }
@@ -41,7 +41,8 @@ public class LocalPlayerData extends PlayerData
 
     public function canPurchaseUnit (unitType :uint) :Boolean
     {
-        var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
+        var unitData :UnitData = GameContext.gameData.units[unitType];
+        var creatureCosts :Array = unitData.resourceCosts;
         var n :uint = creatureCosts.length;
         for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
             var cost :int = creatureCosts[resourceType];

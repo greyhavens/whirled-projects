@@ -33,7 +33,7 @@ public class Unit extends SimObject
         _unitType = unitType;
         _owningPlayerData = GameContext.playerData[owningPlayerId];
 
-        _unitData = (Constants.UNIT_DATA[unitType] as UnitData);
+        _unitData = GameContext.gameData.units[unitType];
         _health = _unitData.maxHealth;
     }
 

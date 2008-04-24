@@ -16,9 +16,9 @@ import flash.events.MouseEvent;
 
 import popcraft.battle.*;
 import popcraft.battle.view.*;
+import popcraft.data.*;
 import popcraft.net.*;
 import popcraft.puzzle.*;
-import popcraft.data.*;
 import popcraft.sp.*;
 
 public class GameMode extends AppMode
@@ -452,7 +452,7 @@ public class GameMode extends AppMode
         case CastSpellMessage.messageName:
             var castSpellMsg :CastSpellMessage = msg as CastSpellMessage;
             var spellSet :UnitSpellSet = GameContext.playerUnitSpellSets[castSpellMsg.playerId];
-            spellSet.addSpell(Constants.UNIT_SPELLS[castSpellMsg.spellType]);
+            spellSet.addSpell(GameContext.gameData.spells[castSpellMsg.spellType]);
             break;
 
         case ChecksumMessage.messageName:
@@ -558,7 +558,7 @@ public class GameMode extends AppMode
 
         if (localPlayerPurchasing) {
             // deduct the cost of the unit from the player's holdings
-            var creatureCosts :Array = (Constants.UNIT_DATA[unitType] as UnitData).resourceCosts;
+            var creatureCosts :Array = (GameContext.gameData.units[unitType] as UnitData).resourceCosts;
             var n :int = creatureCosts.length;
             for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
                 GameContext.localPlayerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
