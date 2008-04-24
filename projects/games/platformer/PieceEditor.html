@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>Platformer Piece Editor</title>
+<script language="javascript">
+    function createEditor ()
+    {
+        var piecesXML = document.getElementById("piecesXML").value;
+        var piecesSWF = document.getElementById("piecesSWF").value;
+
+        if (piecesSWF == "") {
+            alert("You must specify a pieces SWF file");
+        } else {
+
+            var embed = document.createElement("embed");
+            embed.setAttribute("id", "pieceedit");
+            embed.setAttribute("width", "951");
+            embed.setAttribute("height", "800");
+            embed.setAttribute("pluginspace", "http://www.macromedia.com/go/getflashplayer");
+            embed.setAttribute("type", "application/x-shockwave-flash");
+            embed.setAttribute("flashvars", "piecesXML=" + piecesXML +
+                                            "&piecesSWF=" + piecesSWF);
+            embed.setAttribute("src", "PieceEditor.swf");
+
+            var div = document.getElementById("editorDiv");
+            while (div.firstChild != null) {
+                div.removeChild(div.firstChild);
+            }
+            document.getElementById("editorDiv").appendChild(embed);
+            changeButtonLabel("Reload Pieces");
+        }
+    }
+
+
+    function changeButtonLabel (label)
+    {
+        document.getElementById("editButton").value = label;
+    }
+
+</script>
+<body>
+<fieldset style="width: 711;">
+    Pieces XML: <input type="file" id="piecesXML" onchange="changeButtonLabel('Edit Pieces');"/><br/>
+    Pieces SWF: <input type="file" id="piecesSWF" onchange="changeButtonLabel('Edit Pieces');"/><br/>
+    <input id="editButton" type="button" value="Edit Pieces" onclick="createEditor();"/>
+</fieldset>
+
+<br/>
+
+<div id="editorDiv" />
+</html>

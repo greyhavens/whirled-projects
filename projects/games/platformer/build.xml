@@ -5,8 +5,8 @@
   <property name="app.name" value="Platformer"/>
   <property name="app.type" value="game"/>
   <property name="app.source-dir" value="src"/>
-  <!-- property name="app.source-extras" value="../../../libraries/whirled/contrib/src/as"/>
-  <property name="app.lib-extras" value="../../../lib/corelib.swc"/ -->
+  <property name="app.source-extras" value="../../../libraries/whirled/contrib/src/as"/>
+  <property name="app.lib-extras" value="../../../lib/corelib.swc"/>
 
   <!-- include the standard build scripts -->
   <import file="../../../etc/project-include.xml"/>
@@ -15,8 +15,9 @@
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="${etc.dir}/whirled-config.xml"/>
-      <arg value="-library-path+=${build.root}/dist"/>
+      <arg value="-library-path+=${build.root}/dist/lib"/>
       <arg value="-library-path+=${app.library-dir}"/>
+      <arg value="-library-path+=${app.lib-extras}"/>
       <arg value="-use-network=false"/>
       <arg value="-compiler.source-path=${app.source-dir}"/>
       <arg value="-compiler.source-path=${app.source-extras}"/>
@@ -25,5 +26,27 @@
       <arg value="-output"/>
       <arg value="LevelEditor.swf"/>
     </java>
+  </target>
+
+  <target name="pieceedit">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${etc.dir}/whirled-config.xml"/>
+      <arg value="-library-path+=${build.root}/dist/lib"/>
+      <arg value="-library-path+=${app.library-dir}"/>
+      <arg value="-library-path+=${app.lib-extras}"/>
+      <arg value="-use-network=false"/>
+      <arg value="-compiler.source-path=${app.source-dir}"/>
+      <arg value="-compiler.source-path=${app.source-extras}"/>
+      <arg value="-file-specs"/>
+      <arg value="${app.source-dir}/editor/PieceEditor.mxml"/>
+      <arg value="-output"/>
+      <arg value="PieceEditor.swf"/>
+    </java>
+  </target>
+
+  <property name="media_hash" value="66a45deeeff719eec5e519dcb81b7aa497d5e0cb"/>
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/${media_hash}.swf"/>
   </target>
 </project>

@@ -4,7 +4,7 @@
     scriptTimeLimit="5"
     layout="absolute" styleName="plain"
     verticalScrollPolicy="off" horizontalScrollPolicy="off"
-    width="740" height="600"
+    width="940" height="800"
     horizontalAlign="center" verticalAlign="middle"
     applicationComplete="loadComplete();">
 <mx:Script>
@@ -12,11 +12,26 @@
 import mx.core.Container;
 import mx.controls.TextArea;
 
-import editor.EditView;
+import flash.display.Loader;
+import flash.net.URLLoader;
+import flash.net.URLRequest;
+
+import editor.PieceEditView;
 
 protected function loadComplete() :void
 {
-    addEditView();
+    var piecesPath :String = root.loaderInfo.parameters["piecesXML"];
+    if (piecesPath == null || piecesPath == "") {
+        addEditView();
+        return;
+    }
+
+    _piecesLoader = new URLLoader();
+    _piecesLoader.addEventListener(Event.COMPLETE,
+        function (event :Event) :void {
+            addEditView();
+        });
+    _piecesLoader.load(new URLRequest("file://" + piecesPath));
 }
 
 protected function addEditView () :void
@@ -29,7 +44,10 @@ protected function addEditView () :void
     _codeArea.setStyle("fontSize", "12");
     xmlCode.addChild(_codeArea);
 
-    levelEdit.rawChildren.addChild(_editView = new EditView(levelEdit));
+    var swfPath :String = root.loaderInfo.parameters["piecesSWF"];
+    var xmlPieces :XML = (_piecesLoader == null ? null : new XML(_piecesLoader.data));
+    pieceEdit.rawChildren.addChild(
+            _editView = new PieceEditView(pieceEdit, xmlPieces, swfPath));
 }
 
 protected function tabChanged (selected :Container) :void
@@ -40,14 +58,15 @@ protected function tabChanged (selected :Container) :void
 }
 
 protected var _codeArea :TextArea;
-protected var _editView :EditView;
+protected var _editView :PieceEditView;
+protected var _piecesLoader :URLLoader;
     ]]>
 </mx:Script>
-<mx:Panel id="topPanel" title="Platformer Level Editor" height="100%" width="100%"
+<mx:Panel id="topPanel" title="Platformer Piece Editor" height="100%" width="100%"
     paddingTop="0" paddingLeft="0" paddingRight="0" paddingBottom="0">
     <mx:TabNavigator id="tabs" width="100%" height="100%" change="tabChanged(tabs.selectedChild);">
-        <mx:HBox id="editBox" width="100%" label="Edit Level">
-            <editor:FocusContainer id="levelEdit" width="700" height="500"/>
+        <mx:HBox id="editBox" width="100%" label="Edit Piece">
+            <editor:FocusContainer id="pieceEdit" width="900" height="700"/>
             <mx:VBox id="iconContainer" width="100%" height="100%" borderStyle="inset">
             </mx:VBox>
         </mx:HBox>

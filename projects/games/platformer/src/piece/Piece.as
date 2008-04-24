@@ -3,6 +3,8 @@
 
 package piece {
 
+import com.threerings.util.ClassUtil;
+
 /**
  * The base class for any object that will exist in the platformer.
  */
@@ -17,6 +19,59 @@ public class Piece
     public var width :int;
 
     /** The piece type. */
-    public var type :String;
+    public var type :String = "";
+
+    /** The piece sprite name. */
+    public var sprite :String = "";
+
+    public function Piece (defxml :XML = null, insxml :XML = null)
+    {
+        if (defxml != null) {
+            this.type = defxml.@type;
+            this.height = defxml.@height;
+            this.width = defxml.@width;
+            this.sprite = defxml.@sprite;
+        }
+        if (insxml != null) {
+            this.x = insxml.@x;
+            this.y = insxml.@y;
+        }
+    }
+    /*
+    public function Piece (type :String, x :int = 0, y :int = 0, height :int = 1, width :int = 1)
+    {
+        this.type = type;
+        this.x = x;
+        this.y = y;
+        this.height = height;
+        this.width = width;
+    }
+    */
+
+    /**
+     * Get the XML piece definition.
+     */
+    public function xmlDef () :XML
+    {
+        var xml :XML = <piecedef/>;
+        xml.@type = type;
+        xml.@cname = ClassUtil.getClassName(this);
+        xml.@width = width;
+        xml.@height = height;
+        xml.@sprite = sprite;
+        return xml;
+    }
+
+    /**
+     * Get the XML instance definition.
+     */
+    public function xmlInstance () :XML
+    {
+        var xml :XML = <piece/>;
+        xml.@type = type;
+        xml.@x = x;
+        xml.@y = y;
+        return xml;
+    }
 }
 }

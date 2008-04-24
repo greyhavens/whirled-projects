@@ -19,9 +19,10 @@ public class Platformer extends Sprite
             gameControl.local.setShowButtons(false, false);
 
             var controller :Controller = new Controller(gameControl);
-            controller.init();
-            addChild(controller.getSprite());
-            controller.run();
+            controller.init(function () :void {
+                addChild(controller.getSprite());
+                controller.run();
+            });
         }
     }
 }

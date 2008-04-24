@@ -1,0 +1,58 @@
+<html>
+<head>
+<title>Platformer Level Editor</title>
+<script language="javascript">
+    function createEditor ()
+    {
+        //var levelSwf = document.getElementById("levelSwf").value;
+        //var commonObjectsSwf = document.getElementById("commonObjectsSwf").value;
+        //var levelObjectsSwf = document.getElementById("levelObjectsSwf").value;
+
+        //if (levelSwf == "" || commonObjectsSwf == "") {
+        //    alert("You must supply both a level swf and at least one objects swf to use the " +
+        //        "level editor.");
+        //} else if (!levelSwf.match(/.*swf$/) || !commonObjectsSwf.match(/.*swf$/) ||
+        //           (levelObjectsSwf != "" && !levelObjectsSwf.match(/.*swf$/))) {
+        //    alert("All supplied files must be swfs");
+        //} else {
+            var embed = document.createElement("embed");
+            embed.setAttribute("id", "leveledit");
+            embed.setAttribute("width", "751");
+            embed.setAttribute("height", "600");
+            embed.setAttribute("pluginspace", "http://www.macromedia.com/go/getflashplayer");
+            embed.setAttribute("type", "application/x-shockwave-flash");
+            //embed.setAttribute("flashvars", "levelPath=" + levelSwf +
+            //                                "&commonObjectsPath=" + commonObjectsSwf +
+            //                                "&levelObjectsPath=" + levelObjectsSwf);
+            embed.setAttribute("src", "LevelEditor.swf");
+
+            var div = document.getElementById("editorDiv");
+            while (div.firstChild != null) {
+                div.removeChild(div.firstChild);
+            }
+            document.getElementById("editorDiv").appendChild(embed);
+            changeButtonLabel("Reload Level");
+        //}
+    }
+
+
+    function changeButtonLabel (label)
+    {
+        document.getElementById("editButton").value = label;
+    }
+</script>
+<body>
+<fieldset style="width: 711;">
+    Level SWF: <input type="file" id="levelSwf" onchange="changeButtonLabel('Edit Level');"/><br/>
+    Common Objects SWF: <input type="file" id="commonObjectsSwf"
+        onchange="changeButtonLabel('Edit Level');"/><br/>
+    Level Objects SWF (optional): <input type="file" id="levelObjectsSwf"
+        onchange="changeButtonLabel('Edit Level');"/>
+    <br/>
+    <input id="editButton" type="button" value="Edit Level" onclick="createEditor();"/>
+</fieldset>
+
+<br/>
+
+<div id="editorDiv" />
+</html>
