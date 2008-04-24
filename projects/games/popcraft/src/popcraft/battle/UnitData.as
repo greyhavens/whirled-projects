@@ -17,7 +17,7 @@ public class UnitData
     public var baseMoveSpeed :Number = 0;
 
     public var maxHealth :int;
-    public var armor :UnitArmor;
+    public var armor :UnitArmorData;
     public var weapon :UnitWeaponData;
 
     public var collisionRadius :Number = 0;
