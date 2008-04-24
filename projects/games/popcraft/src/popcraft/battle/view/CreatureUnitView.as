@@ -124,7 +124,7 @@ public class CreatureUnitView extends SceneObject
         var icons :Array = [];
         var totalWidth :Number = 0;
         for each (var spell :UnitSpellData in spellSet.spells) {
-            var icon :DisplayObject = AppContext.instantiateBitmap(spell.displayName + "_icon");
+            var icon :DisplayObject = AppContext.instantiateBitmap(spell.name + "_icon");
             if (null != icon) {
                 totalWidth += icon.width;
                 icons.push(icon);

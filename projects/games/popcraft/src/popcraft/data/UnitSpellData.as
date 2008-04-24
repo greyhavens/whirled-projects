@@ -12,6 +12,11 @@ public class UnitSpellData
     public var speedScaleOffset :Number = 0;
     public var damageScaleOffset :Number = 0;
 
+    public function get name () :String
+    {
+        return Constants.SPELL_NAMES[type];
+    }
+
     public function combine (spell :UnitSpellData) :void
     {
         speedScaleOffset += spell.speedScaleOffset;
