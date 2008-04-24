@@ -25,7 +25,10 @@ public class LoadingMode extends AppMode
 
         AppContext.resources.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: SWF_PUZZLEPIECES });
 
+        AppContext.resources.pendResourceLoad("gameData", "defaultGameData", { embeddedClass: DEFAULT_GAME_DATA });
+
         AppContext.resources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
+        AppContext.resources.addEventListener(ResourceLoadEvent.ERROR, handleResourceLoadErr);
 
         AppContext.resources.load();
     }
@@ -39,6 +42,14 @@ public class LoadingMode extends AppMode
     {
         MainLoop.instance.popMode();
     }
+
+    protected function handleResourceLoadErr (e :ResourceLoadEvent) :void
+    {
+        AppContext.mainLoop.unwindToMode(new ResourceLoadErrorMode(e.data as String));
+    }
+
+    [Embed(source="../../levels/defaultGameData.xml", mimeType="application/octet-stream")]
+    protected static const DEFAULT_GAME_DATA :Class;
 
     [Embed(source="../../rsrc/char_colossus.png", mimeType="application/octet-stream")]
     protected static const IMAGE_COLOSSUSICON :Class;
@@ -84,4 +95,44 @@ public class LoadingMode extends AppMode
 
 }
 
+}
+
+import com.threerings.flash.SimpleTextButton;
+import com.whirled.contrib.simplegame.AppMode;
+
+import flash.display.Graphics;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+
+import popcraft.*;
+
+class ResourceLoadErrorMode extends AppMode
+{
+    public function ResourceLoadErrorMode (err :String)
+    {
+        _err = err;
+    }
+
+    override protected function setup () :void
+    {
+        var g :Graphics = this.modeSprite.graphics;
+        g.beginFill(0xFF7272);
+        g.drawRect(0, 0, Constants.SCREEN_DIMS.x, Constants.SCREEN_DIMS.y);
+        g.endFill();
+
+        var tf :TextField = new TextField();
+        tf.multiline = true;
+        tf.wordWrap = true;
+        tf.autoSize = TextFieldAutoSize.LEFT;
+        tf.scaleX = 1.5;
+        tf.scaleY = 1.5;
+        tf.width = 400;
+        tf.x = 50;
+        tf.y = 50;
+        tf.text = _err;
+
+        this.modeSprite.addChild(tf);
+    }
+
+    protected var _err :String;
 }

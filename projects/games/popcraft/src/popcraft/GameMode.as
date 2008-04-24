@@ -25,6 +25,12 @@ public class GameMode extends AppMode
 {
     override protected function setup () :void
     {
+        // make sure we have a valid GameData object in the GameContext
+        if (null == GameContext.gameData) {
+            var dataRsrc :GameDataResourceLoader = AppContext.resources.getResource("defaultGameData") as GameDataResourceLoader;
+            GameContext.gameData = dataRsrc.gameData;
+        }
+
         GameContext.gameMode = this;
 
         // create a special ObjectDB for all objects that are synchronized over the network.

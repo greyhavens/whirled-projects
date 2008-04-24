@@ -18,10 +18,9 @@ public class LevelManager
     {
         if (forceReload) {
             _loadedLevel = null;
-            _loadedGameData = null;
         }
 
-        if (null != _loadedLevel && null != _loadedGameData) {
+        if (null != _loadedLevel) {
             this.startGame();
         } else {
             // load the level
@@ -32,15 +31,6 @@ public class LevelManager
 
                 _levelRsrcMgr.unload("level");
                 _levelRsrcMgr.pendResourceLoad("level", "level", loadParams);
-            }
-
-            if (null == _loadedGameData) {
-                loadParams = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
-                    { url: "levels/defaultGameData.xml" } :
-                    { embeddedClass: DEFAULT_GAME_DATA });
-
-                _levelRsrcMgr.unload("gameData");
-                _levelRsrcMgr.pendResourceLoad("gameData", "gameData", loadParams);
             }
 
             _levelRsrcMgr.load();
@@ -75,7 +65,6 @@ public class LevelManager
     protected function onResourcesLoaded (...ignored) :void
     {
         _loadedLevel = (_levelRsrcMgr.getResource("level") as LevelResourceLoader).levelData;
-        _loadedGameData = (_levelRsrcMgr.getResource("gameData") as GameDataResourceLoader).gameData;
 
         this.startGame();
     }
@@ -89,21 +78,17 @@ public class LevelManager
     {
         GameContext.gameType = GameContext.GAME_TYPE_SINGLEPLAYER;
         GameContext.spLevel = _loadedLevel;
-        GameContext.gameData = _loadedGameData;
         AppContext.mainLoop.unwindToMode(new GameMode());
     }
 
     protected var _levelRsrcMgr :ResourceManager = new ResourceManager();
     protected var _curLevelNum :int = 0;
     protected var _loadedLevel :LevelData;
-    protected var _loadedGameData :GameData;
 
     // Embedded level data
-    [Embed(source="../levels/defaultGameData.xml", mimeType="application/octet-stream")]
-    protected static const DEFAULT_GAME_DATA :Class;
-    [Embed(source="../levels/level1.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../levels/level1.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_1 :Class;
-    [Embed(source="../levels/level2.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../levels/level2.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_2 :Class;
 
     protected static const LEVELS :Array = [ LEVEL_1, LEVEL_2 ];
