@@ -208,11 +208,6 @@ public class CreatureUnit extends Unit
         return _lastUpdateTimestamp;
     }
 
-    public function get refundScale () :Number
-    {
-        return _health / _unitData.maxHealth;
-    }
-
     protected var _destination :Vector2;
 
     protected var _collisionObj :CollisionObject;
