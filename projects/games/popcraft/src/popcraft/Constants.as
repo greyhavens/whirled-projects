@@ -101,45 +101,6 @@ public class Constants
 
     public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "colossus", "base" ];
     public static const CREATURE_UNIT_NAMES :Array = UNIT_NAMES.slice(0, UNIT_TYPE__CREATURE_LIMIT);
-
-    public static function getPlayerBaseLocations (numPlayers :uint) :Array // of Vector2s
-    {
-        // return an array of Vector2 pairs - for each player, a base loc and an initial waypoint loc
-
-        switch (numPlayers) {
-        case 1:
-            return [ new Vector2(50, 315) ]; // we don't have 1-player games except during development
-            break;
-
-        case 2:
-            return [
-                new Vector2(50, 315),   // bottom left
-                new Vector2(652, 85),   // top right
-             ];
-             break;
-
-        case 3:
-            return [
-                new Vector2(50, 85),       // top left
-                new Vector2(50, 315),     // bottom left
-                new Vector2(652, 175),    // middle right
-            ];
-            break;
-
-        case 4:
-            return [
-                new Vector2(50, 85),    // top left
-                new Vector2(50, 315),   // bottom left
-                new Vector2(652, 85),   // top right
-                new Vector2(652, 315),  // bottom right
-            ];
-            break;
-
-        default:
-            return [];
-            break;
-        }
-    }
 }
 
 }

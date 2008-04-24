@@ -218,7 +218,7 @@ public class GameMode extends AppMode
 
         // create player bases
         var numPlayers :int = GameContext.numPlayers;
-        var baseLocs :Array = Constants.getPlayerBaseLocations(numPlayers);
+        var baseLocs :Array = GameContext.gameData.getBaseLocsForGameSize(numPlayers);
         for (var playerId :int = 0; playerId < numPlayers; ++playerId) {
             var baseLoc :Vector2 = baseLocs[playerId];
             var base :PlayerBaseUnit =

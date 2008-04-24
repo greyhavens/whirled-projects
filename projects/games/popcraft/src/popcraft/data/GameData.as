@@ -1,5 +1,7 @@
 package popcraft.data {
 
+import com.threerings.flash.Vector2;
+
 import popcraft.*;
 import popcraft.util.*;
 
@@ -8,6 +10,12 @@ public class GameData
     public var resources :Array = [];
     public var units :Array = [];
     public var spells :Array = [];
+    public var baseLocs :Array = [];
+
+    public function getBaseLocsForGameSize (numPlayers :uint) :Array
+    {
+        return (numPlayers - 1 < baseLocs.length ? baseLocs[numPlayers - 1] : []);
+    }
 
     public static function fromXml (xml :XML) :GameData
     {
@@ -41,6 +49,25 @@ public class GameData
         for each (var spellNode :XML in xml.Spells.Spell) {
             type = XmlReader.getAttributeAsEnum(spellNode, "type", Constants.SPELL_NAMES);
             gameData.spells[type] = UnitSpellData.fromXml(spellNode);
+        }
+
+        // read base locations
+        for each (var gameSizeNode :XML in xml.BaseLocations.GameSize) {
+            var numPlayers :int = XmlReader.getAttributeAsUint(gameSizeNode, "numPlayers");
+
+            var baseLocArray :Array = [];
+
+            for each (var baseLocNode :XML in gameSizeNode.BaseLocation) {
+                var x :Number = XmlReader.getAttributeAsNumber(baseLocNode, "x");
+                var y :Number = XmlReader.getAttributeAsNumber(baseLocNode, "y");
+                baseLocArray.push(new Vector2(x, y));
+            }
+
+            for (i = gameData.baseLocs.length; i < numPlayers; ++i) {
+                gameData.baseLocs.push(null);
+            }
+
+            gameData.baseLocs[numPlayers - 1] = baseLocArray;
         }
 
         return gameData;

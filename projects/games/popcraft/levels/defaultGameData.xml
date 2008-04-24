@@ -117,5 +117,23 @@
             <Spell type="rigormortis" displayName="Rigor Mortis" expireTime="45" damageScaleOffset="-0.4"/>
         </Spells>
 
+        <BaseLocations>
+            <GameSize numPlayers="2">
+                <BaseLocation x="50" y="315"/>
+                <BaseLocation x="652" y="85"/>
+            </GameSize>
+            <GameSize numPlayers="3">
+                <BaseLocation x="50" y="85"/>
+                <BaseLocation x="50" y="315"/>
+                <BaseLocation x="652" y="175"/>
+            </GameSize>
+            <GameSize numPlayers="4">
+                <BaseLocation x="50" y="85"/>
+                <BaseLocation x="50" y="315"/>
+                <BaseLocation x="652" y="85"/>
+                <BaseLocation x="652" y="315"/>
+            </GameSize>
+        </BaseLocations>
+
     </GameData>
 </root>
