@@ -116,8 +116,9 @@ public class TurnTimer extends EventDispatcher
             }
 
             // diminish by the number of expiries in past turns
-            var divisor :int = countExpiries(seat);
-            time /= (1 + divisor * HISTORY_EFFECT);
+            var missedTurns :int = countExpiries(seat);
+            missedTurns = Math.min(HISTORY_EFFECT.length - 1, missedTurns);
+            time *= HISTORY_EFFECT[missedTurns];
 
             _gameCtrl.net.sendMessage(MSG_START, [turnHolder, time]);
             _lastTurnHolder = turnHolder;
@@ -131,7 +132,7 @@ public class TurnTimer extends EventDispatcher
         }
 
         if (_lastTurnHolder != 0) {
-            addHistory(_lastTurnHolder, false, 4);
+            addHistory(_lastTurnHolder, false, 2);
             _lastTurnHolder = 0;
             _timer.stop();
         }
@@ -240,9 +241,9 @@ public class TurnTimer extends EventDispatcher
     protected static const EXPIRY_TRACKER :String = "turntimer.expirytracker";
     protected static const MSG_START :String = "turntimer.start";
     protected static const MSG_EXPIRED :String = "turntimer.stop";
-    protected static const HISTORY_SIZE :int = 8;
-    protected static const HISTORY_MASK :int = 0x000000FF;
-    protected static const HISTORY_EFFECT :Number = 0.25;
+    protected static const HISTORY_SIZE :int = 4;
+    protected static const HISTORY_MASK :int = 0x0000000F;
+    protected static const HISTORY_EFFECT :Array = [1.0, 1.0, 0.5, 0.25, 0.125];
 }
 
 }

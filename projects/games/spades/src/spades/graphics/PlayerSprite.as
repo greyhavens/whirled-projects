@@ -40,6 +40,7 @@ public class PlayerSprite extends Sprite
         _timer = new TimerMovie(TEAM_TIMERS[_team.index] as Class);
         _timer.x = TIMER_POS.x;
         _timer.y = TIMER_POS.y;
+        _timer.alpha = 0.0;
         addChild(_timer);
 
         MultiLoader.getContents(TEAM_IMAGES[_team.index] as Class, gotBackground);
@@ -88,7 +89,9 @@ public class PlayerSprite extends Sprite
         }
 
         _timer.stop();
-        _timer.reset();
+        if (turn) {
+            _timer.reset();
+        }
 
         Tweener.removeTweens(_background);
         Tweener.removeTweens(_timer);

@@ -607,15 +607,24 @@ public class Controller
         var wal :WinnersAndLosers = scores.getWinnersAndLosers();
         var winners :Array = wal.winningTeams;
         var highScore :int = wal.highestScore;
+        var skunk :Boolean = false;
 
         if (highScore < scores.target && wal.losingTeams.length == 1) {
             highScore = wal.scoreDifferential;
+            skunk = true;
         }
         // feedback
         if (highScore >= scores.target) {
             if (winners.length == 1) {
-                gameCtrl.local.feedback(
-                    getTeamName(Team(winners[0])) + " win the game!");
+                if (skunk) {
+                    gameCtrl.local.feedback(
+                        getTeamName(Team(winners[0])) + " are more than " + 
+                        scores.target + " points ahead, so win the game!");
+                }
+                else {
+                    gameCtrl.local.feedback(
+                        getTeamName(Team(winners[0])) + " win the game!");
+                }
             }
             else if (winners.length > 1) {
                 gameCtrl.local.feedback("Tie game! Continuing...");
