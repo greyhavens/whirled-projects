@@ -7,6 +7,8 @@ import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.events.Event;
 
+import popcraft.data.*;
+
 public class UnitSpellSet extends SimObject
 {
     public static const SET_MODIFIED :String = "setModified";

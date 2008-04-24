@@ -1,4 +1,4 @@
-package popcraft.battle {
+package popcraft.data {
 
 import com.threerings.util.Assert;
 

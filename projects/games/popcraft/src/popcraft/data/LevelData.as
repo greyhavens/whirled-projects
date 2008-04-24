@@ -1,4 +1,4 @@
-package popcraft.sp {
+package popcraft.data {
 
 import com.threerings.util.ArrayUtil;
 

@@ -14,6 +14,7 @@ import flash.display.Bitmap;
 import popcraft.*;
 import popcraft.battle.geom.*;
 import popcraft.util.*;
+import popcraft.data.*;
 
 [Event(name="Attacking", type="popcraft.battle.UnitEvent")]
 [Event(name="Attacked", type="popcraft.battle.UnitEvent")]

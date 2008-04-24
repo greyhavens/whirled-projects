@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.objects.*;
 import flash.display.*;
 
 import popcraft.battle.*;
+import popcraft.data.*;
 
 public class UnitPurchaseMeter extends SceneObject
 {

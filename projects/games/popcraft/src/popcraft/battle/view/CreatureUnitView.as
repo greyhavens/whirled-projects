@@ -15,6 +15,7 @@ import flash.display.Shape;
 import flash.display.Sprite;
 
 import popcraft.*;
+import popcraft.data.*;
 import popcraft.battle.*;
 import popcraft.util.*;
 

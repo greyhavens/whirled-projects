@@ -9,6 +9,8 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
+import popcraft.data.*;
+
 public class ResourceDisplay extends SceneObject
 {
     public function ResourceDisplay ()

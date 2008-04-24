@@ -4,6 +4,7 @@ import com.whirled.contrib.simplegame.resource.*;
 
 import popcraft.*;
 import popcraft.util.*;
+import popcraft.data.*;
 
 public class LevelManager
 {

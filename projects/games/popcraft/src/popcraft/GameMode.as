@@ -18,10 +18,8 @@ import popcraft.battle.*;
 import popcraft.battle.view.*;
 import popcraft.net.*;
 import popcraft.puzzle.*;
-import popcraft.sp.ComputerPlayer;
-import popcraft.sp.ComputerPlayerData;
-import popcraft.sp.LevelIntroMode;
-import popcraft.sp.LevelOutroMode;
+import popcraft.data.*;
+import popcraft.sp.*;
 
 public class GameMode extends AppMode
 {

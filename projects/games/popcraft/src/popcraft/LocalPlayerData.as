@@ -2,6 +2,7 @@ package popcraft {
 
 import com.threerings.util.Assert;
 
+import popcraft.data.*;
 import popcraft.battle.*;
 
 /**

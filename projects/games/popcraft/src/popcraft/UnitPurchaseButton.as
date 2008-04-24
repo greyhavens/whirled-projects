@@ -13,6 +13,7 @@ import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
+import popcraft.data.*;
 import popcraft.battle.*;
 import popcraft.battle.view.*;
 

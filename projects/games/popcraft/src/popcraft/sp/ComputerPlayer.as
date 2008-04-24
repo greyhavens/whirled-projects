@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.util.Rand;
 
 import popcraft.*;
 import popcraft.battle.*;
+import popcraft.data.*;
 
 public class ComputerPlayer extends SimObject
 {

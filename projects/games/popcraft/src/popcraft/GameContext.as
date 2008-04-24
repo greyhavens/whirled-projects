@@ -1,9 +1,9 @@
 package popcraft {
 
+import popcraft.data.*;
 import popcraft.battle.*;
 import popcraft.battle.view.*;
 import popcraft.puzzle.*;
-import popcraft.sp.LevelData;
 
 public class GameContext
 {

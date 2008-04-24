@@ -1,6 +1,6 @@
-package popcraft {
+package popcraft.data {
 
-import popcraft.battle.*;
+import popcraft.*;
 import popcraft.util.*;
 
 public class GameData

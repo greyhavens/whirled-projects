@@ -1,4 +1,4 @@
-package popcraft {
+package popcraft.data {
 
 import popcraft.util.*;
 

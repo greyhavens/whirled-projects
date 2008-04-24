@@ -2,6 +2,8 @@ package popcraft.battle {
 
 import com.whirled.contrib.simplegame.*;
 
+import popcraft.data.*;
+
 public class UnitAttack
 {
     public function UnitAttack (sourceUnitRef :SimObjectRef, weapon :UnitWeaponData)

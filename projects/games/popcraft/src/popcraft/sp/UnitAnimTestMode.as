@@ -10,7 +10,7 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import popcraft.*;
-import popcraft.battle.UnitData;
+import popcraft.data.*;
 import popcraft.battle.view.*;
 
 public class UnitAnimTestMode extends AppMode

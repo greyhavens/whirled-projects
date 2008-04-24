@@ -1,4 +1,4 @@
-package popcraft.battle {
+package popcraft.data {
 
 public class UnitDataBuilder
 {

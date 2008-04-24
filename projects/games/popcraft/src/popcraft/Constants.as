@@ -9,6 +9,7 @@ import flash.geom.Point;
 
 import popcraft.battle.*;
 import popcraft.util.*;
+import popcraft.data.*;
 
 public class Constants
 {
@@ -132,8 +133,6 @@ public class Constants
 
     public static const UNIT_TYPE_BASE :uint = UNIT_TYPE__CREATURE_LIMIT;
 
-    public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "colossus", "base" ];
-
     protected static const GRUNT_WEAPON :UnitWeaponData = UnitWeaponBuilder.create()
         .damageType(DAMAGE_TYPE_CRUSHING)
         .damageRange(10, 10)
@@ -240,7 +239,8 @@ public class Constants
     // non-creature units must come after creature units
     public static const UNIT_DATA :Array = [ GRUNT_DATA, HEAVY_DATA, SAPPER_DATA, COLOSSUS_DATA, BASE_DATA ];
 
-    public static const CREATURE_UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "colossus" ];
+    public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "colossus", "base" ];
+    public static const CREATURE_UNIT_NAMES :Array = UNIT_NAMES.slice(0, UNIT_TYPE__CREATURE_LIMIT);
 
     public static function getPlayerBaseLocations (numPlayers :uint) :Array // of Vector2s
     {

@@ -6,6 +6,7 @@ import flash.display.MovieClip;
 
 import popcraft.*;
 import popcraft.battle.*;
+import popcraft.data.*;
 
 public class UnitAnimationFactory
 {

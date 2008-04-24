@@ -4,6 +4,7 @@ import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.*;
 
 import popcraft.*;
+import popcraft.data.*;
 import popcraft.battle.*;
 
 public class AttackUnitTask extends AITask

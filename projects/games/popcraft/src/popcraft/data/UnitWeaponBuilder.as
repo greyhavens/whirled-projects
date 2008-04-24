@@ -1,4 +1,4 @@
-package popcraft.battle {
+package popcraft.data {
 
 import com.whirled.contrib.simplegame.util.NumRange;
 import com.whirled.contrib.simplegame.util.Rand;
