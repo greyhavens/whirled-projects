@@ -100,22 +100,24 @@ public class Constants
 
     public static const SPELL_TYPE__LIMIT :uint = 2;
 
-    protected static const BLOODLUST_SPELL :UnitSpell = UnitSpellBuilder.create()
+    protected static const BLOODLUST_SPELL :UnitSpellData = UnitSpellBuilder.create()
         .type(SPELL_TYPE_BLOODLUST)
-        .name("bloodlust")
+        .displayName("bloodlust")
         .expireTime(45)
         .speedScaleOffset(0.5)  // move 50% faster
         .damageScaleOffset(0.3) // take 30% more damage
         .spell;
 
-    protected static const RIGOR_MORTIS_SPELL :UnitSpell = UnitSpellBuilder.create()
+    protected static const RIGOR_MORTIS_SPELL :UnitSpellData = UnitSpellBuilder.create()
         .type(SPELL_TYPE_RIGORMORTIS)
-        .name("rigormortis")
+        .displayName("rigormortis")
         .expireTime(45)
         .damageScaleOffset(-0.4)    // take 40% less damage
         .spell;
 
     public static const UNIT_SPELLS :Array = [ BLOODLUST_SPELL, RIGOR_MORTIS_SPELL ];
+
+    public static const SPELL_NAMES :Array = [ "bloodlust", "rigormortis" ];
 
     /* Units */
 
@@ -129,6 +131,8 @@ public class Constants
     public static const UNIT_TYPE__CREATURE_LIMIT :uint = 4;
 
     public static const UNIT_TYPE_BASE :uint = UNIT_TYPE__CREATURE_LIMIT;
+
+    public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "colossus", "base" ];
 
     protected static const GRUNT_WEAPON :UnitWeaponData = UnitWeaponBuilder.create()
         .damageType(DAMAGE_TYPE_CRUSHING)

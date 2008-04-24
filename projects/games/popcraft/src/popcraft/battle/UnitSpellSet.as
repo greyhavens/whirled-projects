@@ -11,7 +11,7 @@ public class UnitSpellSet extends SimObject
 {
     public static const SET_MODIFIED :String = "setModified";
 
-    public function addSpell (spell :UnitSpell) :void
+    public function addSpell (spell :UnitSpellData) :void
     {
         var taskName :String = getExpireTaskName(spell.type);
 
@@ -32,7 +32,7 @@ public class UnitSpellSet extends SimObject
     protected function spellExpired (spellType :uint) :void
     {
         var i :int = ArrayUtil.findIf(_spells,
-            function (activeSpell :UnitSpell) :Boolean { return activeSpell.type == spellType; });
+            function (activeSpell :UnitSpellData) :Boolean { return activeSpell.type == spellType; });
 
         Assert.isTrue(i >= 0);
         _spells.splice(i, 1);
@@ -43,7 +43,7 @@ public class UnitSpellSet extends SimObject
     protected function isSpellActive (spellType :uint) :Boolean
     {
         return (ArrayUtil.indexIf(_spells,
-            function (activeSpell :UnitSpell) :Boolean { return activeSpell.type == spellType; }) >= 0);
+            function (activeSpell :UnitSpellData) :Boolean { return activeSpell.type == spellType; }) >= 0);
     }
 
     protected function updateSpellAggregate () :void
@@ -51,8 +51,8 @@ public class UnitSpellSet extends SimObject
         if (_spells.length == 1) {
             _spellAggregate = _spells[0];
         } else {
-            _spellAggregate = new UnitSpell();
-            for each (var spell :UnitSpell in _spells) {
+            _spellAggregate = new UnitSpellData();
+            for each (var spell :UnitSpellData in _spells) {
                 _spellAggregate.combine(spell);
             }
         }
@@ -80,7 +80,7 @@ public class UnitSpellSet extends SimObject
         return "ExpireTask_" + spellType;
     }
 
-    protected var _spellAggregate :UnitSpell = new UnitSpell();
+    protected var _spellAggregate :UnitSpellData = new UnitSpellData();
     protected var _spells :Array = [];
 }
 

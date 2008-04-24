@@ -4,9 +4,9 @@ import popcraft.util.*;
 
 public class ResourceData
 {
-    public var name :String;
+    public var name :String = "";
     public var color :uint;
-    public var rarity :Number;
+    public var rarity :Number = 0;
 
     public function ResourceData (name :String = "", color :uint = 0, rarity :Number = 1)
     {
