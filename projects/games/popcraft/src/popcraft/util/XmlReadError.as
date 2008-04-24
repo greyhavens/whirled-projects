@@ -1,4 +1,4 @@
-package popcraft.sp {
+package popcraft.util {
 
 public class XmlReadError extends Error
 {

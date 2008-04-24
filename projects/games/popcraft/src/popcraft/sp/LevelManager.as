@@ -3,6 +3,7 @@ package popcraft.sp {
 import com.whirled.contrib.simplegame.resource.*;
 
 import popcraft.*;
+import popcraft.util.*;
 
 public class LevelManager
 {

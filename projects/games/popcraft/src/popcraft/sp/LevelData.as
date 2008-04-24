@@ -6,6 +6,7 @@ import flash.net.URLLoader;
 import flash.net.URLRequest;
 
 import popcraft.*;
+import popcraft.util.*;
 
 public class LevelData
 {

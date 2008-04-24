@@ -1,4 +1,4 @@
-package popcraft.sp {
+package popcraft.util {
 
 import com.threerings.util.StringUtil;
 

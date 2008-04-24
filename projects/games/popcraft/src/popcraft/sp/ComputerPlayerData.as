@@ -2,6 +2,8 @@ package popcraft.sp {
 
 import com.whirled.contrib.simplegame.util.NumRange;
 
+import popcraft.util.*;
+
 public class ComputerPlayerData
 {
     public var baseHealth :int;
