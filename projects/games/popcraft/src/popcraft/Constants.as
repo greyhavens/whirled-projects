@@ -73,15 +73,13 @@ public class Constants
     public static const DAMAGE_TYPE_NAMES :Array = [ "crushing", "piercing", "explosion", "base" ];
 
     /* Resource types */
-
-    // wow, I miss enums
     public static const RESOURCE_WHITE :uint = 0;
     public static const RESOURCE_RED :uint = 1;
     public static const RESOURCE_BLUE :uint = 2;
     public static const RESOURCE_YELLOW :uint = 3;
     public static const RESOURCE__LIMIT :uint = 4;
 
-    public static const RESOURCE_NAMES :Array = [ "white", "red", "yellow", "blue" ];
+    public static const RESOURCE_NAMES :Array = [ "white", "red", "blue", "yellow" ];
 
     /* Spells */
     public static const SPELL_TYPE_BLOODLUST :uint = 0;
