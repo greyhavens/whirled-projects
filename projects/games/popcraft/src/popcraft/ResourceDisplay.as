@@ -4,11 +4,10 @@ import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.text.GridFitType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
-import flash.text.GridFitType;
-import flash.text.AntiAliasType;
 
 public class ResourceDisplay extends SceneObject
 {
@@ -20,10 +19,10 @@ public class ResourceDisplay extends SceneObject
         var width :int = 0;
         var height :int = 0;
 
-        for each (var resourceType :ResourceType in Constants.RESOURCE_TYPES) {
+        for each (var resource :ResourceData in Constants.RESOURCE_TYPES) {
             var format :TextFormat = new TextFormat();
             format.font = FONT_NAME;
-            format.color = resourceType.color;
+            format.color = resource.color;
             format.size = FONT_SIZE;
 
             var label :TextField = new TextField();
@@ -33,7 +32,7 @@ public class ResourceDisplay extends SceneObject
             label.gridFitType = GridFitType.PIXEL;
 
             // determine what the width should be
-            label.text = getDisplayString(resourceType.name, 9999);
+            label.text = getDisplayString(resource.name, 9999);
             label.width = label.textWidth;
             label.height = label.textHeight + 3;
             label.text = "";

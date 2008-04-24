@@ -1,5 +1,7 @@
-package popcraft.battle
-{
+package popcraft.battle {
+
+import popcraft.*;
+import popcraft.util.*;
 
 public class UnitSpell
 {

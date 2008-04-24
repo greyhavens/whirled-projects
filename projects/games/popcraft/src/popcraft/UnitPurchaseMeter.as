@@ -19,7 +19,7 @@ public class UnitPurchaseMeter extends SceneObject
 
         // how much does it cost?
         for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
-            var resData :ResourceType = Constants.getResource(resType);
+            var resData :ResourceData = Constants.getResource(resType);
             var resCost :int = data.getResourceCost(resType);
 
             if (resCost == 0) {

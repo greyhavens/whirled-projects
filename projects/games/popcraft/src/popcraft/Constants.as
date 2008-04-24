@@ -81,17 +81,17 @@ public class Constants
     public static const RESOURCE__LIMIT :uint = 4;
 
     public static const RESOURCE_TYPES :Array = [
-        new ResourceType("flesh", 0xE8E7E5, 1),
-        new ResourceType("blood", 0xCC0000, 1),
-        new ResourceType("energy", 0x3D7078, 0.5),
-        new ResourceType("artifice", 0xFFD858, 0.5)
+        new ResourceData("flesh", 0xE8E7E5, 1),
+        new ResourceData("blood", 0xCC0000, 1),
+        new ResourceData("energy", 0x3D7078, 0.5),
+        new ResourceData("artifice", 0xFFD858, 0.5)
     ];
 
     public static const RESOURCE_NAMES :Array = [ "white", "red", "yellow", "blue" ];
 
-    public static function getResource (type :uint) :ResourceType {
+    public static function getResource (type :uint) :ResourceData {
         Assert.isTrue(type < RESOURCE_TYPES.length);
-        return (RESOURCE_TYPES[type] as ResourceType);
+        return (RESOURCE_TYPES[type] as ResourceData);
     }
 
     /* Spells */

@@ -28,7 +28,7 @@ public class PuzzleBoard extends SceneObject
         var table :Array = new Array();
         for (var resType: uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
             table.push(resType);
-            table.push(Constants.getResource(resType).relativeWeight);
+            table.push(Constants.getResource(resType).rarity);
         }
 
         _resourceGenerator = new WeightedTable(table, Rand.STREAM_COSMETIC);
