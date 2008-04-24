@@ -50,10 +50,18 @@ public class Piece extends SceneObject
 
     public function set resourceType (newType :uint) :void
     {
+        // load the piece classes if they aren't already loaded
+        if (null == SWF_CLASSES) {
+            SWF_CLASSES = [];
+            var swf :SwfResourceLoader = (AppContext.resources.getResource("puzzlePieces") as SwfResourceLoader);
+            for each (var className :String in SWF_CLASS_NAMES) {
+                SWF_CLASSES.push(swf.getClass(className));
+            }
+        }
+
         _resourceType = newType;
 
-        var swf :SwfResourceLoader = (AppContext.resources.getResource("puzzlePieces") as SwfResourceLoader);
-        var pieceClass :Class = swf.getClass(SWF_CLASS_NAMES[newType]);
+        var pieceClass :Class = SWF_CLASSES[newType];
         var pieceMovie :MovieClip = new pieceClass();
 
         var scaleX :Number = Constants.PUZZLE_TILE_SIZE / pieceMovie.width;
@@ -129,6 +137,7 @@ public class Piece extends SceneObject
 
     protected var _showHilite :Boolean;
 
+    protected static var SWF_CLASSES :Array;
     protected static const SWF_CLASS_NAMES :Array = [ "A", "B", "C", "D" ];
 }
 
