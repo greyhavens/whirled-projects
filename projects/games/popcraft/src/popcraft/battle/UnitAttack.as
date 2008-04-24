@@ -4,7 +4,7 @@ import com.whirled.contrib.simplegame.*;
 
 public class UnitAttack
 {
-    public function UnitAttack (sourceUnitRef :SimObjectRef, weapon :UnitWeapon)
+    public function UnitAttack (sourceUnitRef :SimObjectRef, weapon :UnitWeaponData)
     {
         _sourceUnitRef = sourceUnitRef;
         _weapon = weapon;
@@ -20,13 +20,13 @@ public class UnitAttack
         return _sourceUnitRef.object as Unit;
     }
 
-    public function get weapon () :UnitWeapon
+    public function get weapon () :UnitWeaponData
     {
         return _weapon;
     }
 
     protected var _sourceUnitRef :SimObjectRef;
-    protected var _weapon :UnitWeapon;
+    protected var _weapon :UnitWeaponData;
 
 }
 }

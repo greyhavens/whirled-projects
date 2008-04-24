@@ -11,7 +11,6 @@ public class UnitWeaponBuilder
     public function isAOE (val :Boolean) :UnitWeaponBuilder { _weapon.isAOE = val; return this; }
     public function damageType (val :uint) :UnitWeaponBuilder { _weapon.damageType = val; return this; }
     public function damageRange (lo :Number, hi :Number) :UnitWeaponBuilder { _weapon.damageRange = new NumRange(lo, hi, Rand.STREAM_GAME); return this; }
-    public function targetClassMask (val :uint) :UnitWeaponBuilder { _weapon.targetClassMask = val; return this; }
     public function cooldown (val :Number) :UnitWeaponBuilder { _weapon.cooldown = val; return this; }
     public function maxAttackDistance (val :Number) :UnitWeaponBuilder { _weapon.maxAttackDistance = val; return this; }
 
@@ -21,9 +20,9 @@ public class UnitWeaponBuilder
     public function aoeAnimationName (val :String) :UnitWeaponBuilder { _weapon.aoeAnimationName = val; return this; }
     public function aoeDamageFriendlies (val :Boolean) :UnitWeaponBuilder { _weapon.aoeDamageFriendlies = val; return this; }
 
-    public function get weapon () :UnitWeapon { return _weapon; }
+    public function get weapon () :UnitWeaponData { return _weapon; }
 
-    protected var _weapon :UnitWeapon = new UnitWeapon();
+    protected var _weapon :UnitWeaponData = new UnitWeaponData();
 
 }
 

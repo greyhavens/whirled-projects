@@ -30,7 +30,7 @@ public class UnitArmor
         }
     }
 
-    public function getWeaponDamage (weapon :UnitWeapon) :Number
+    public function getWeaponDamage (weapon :UnitWeaponData) :Number
     {
         return this.getDamage(weapon.damageType, weapon.damageRange.next());
     }

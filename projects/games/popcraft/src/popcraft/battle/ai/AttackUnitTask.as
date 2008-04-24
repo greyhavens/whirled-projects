@@ -26,7 +26,7 @@ public class AttackUnitTask extends AITask
             return AITaskStatus.COMPLETE;
         }
 
-        var weapon :UnitWeapon = unit.unitData.weapon;
+        var weapon :UnitWeaponData = unit.unitData.weapon;
 
         if (unit.canAttackWithWeapon(enemy, weapon)) {
             // attack!

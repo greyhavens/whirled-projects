@@ -142,7 +142,7 @@ public class CreatureUnitView extends SceneObject
 
     protected function handleUnitAttacking (e :UnitEvent) :void
     {
-        var weapon :UnitWeapon = e.data as UnitWeapon;
+        var weapon :UnitWeaponData = e.data as UnitWeaponData;
 
         if (weapon.isAOE) {
             // @TODO - duration is a temporary, arbitrary value
@@ -150,7 +150,7 @@ public class CreatureUnitView extends SceneObject
         }
     }
 
-    protected function createAOEAttackAnimation (weapon :UnitWeapon, loc :Vector2, duration :Number) :void
+    protected function createAOEAttackAnimation (weapon :UnitWeaponData, loc :Vector2, duration :Number) :void
     {
         if (null != weapon.aoeAnimationName) {
 

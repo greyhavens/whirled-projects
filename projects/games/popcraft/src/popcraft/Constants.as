@@ -71,6 +71,8 @@ public class Constants
     public static const DAMAGE_TYPE_EXPLOSION :uint = 2;
     public static const DAMAGE_TYPE_BASE :uint = 3; // bases damage units that attack them
 
+    public static const DAMAGE_TYPE_NAMES :Array = [ "crushing", "piercing", "explosion", "base" ];
+
     /* Resource types */
 
     // wow, I miss enums
@@ -86,6 +88,8 @@ public class Constants
         new ResourceType("energy", 0x3D7078, 0.5),
         new ResourceType("artifice", 0xFFD858, 0.5)
     ];
+
+    public static const RESOURCE_NAMES :Array = [ "white", "red", "yellow", "blue" ];
 
     public static function getResource (type :uint) :ResourceType {
         Assert.isTrue(type < RESOURCE_TYPES.length);
@@ -128,59 +132,42 @@ public class Constants
 
     public static const UNIT_TYPE_BASE :uint = UNIT_TYPE__CREATURE_LIMIT;
 
-    public static const UNIT_CLASS_GROUND :uint = (1 << 0);
-    public static const UNIT_CLASS_AIR :uint = (1 << 1);
-    public static const UNIT_CLASS__ALL :uint = (0xFFFFFFFF);
-
-    protected static const GRUNT_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
+    protected static const GRUNT_WEAPON :UnitWeaponData = UnitWeaponBuilder.create()
         .damageType(DAMAGE_TYPE_CRUSHING)
         .damageRange(10, 10)
-        .targetClassMask(UNIT_CLASS_GROUND)
         .cooldown(1)
         .maxAttackDistance(35)
         .weapon;
 
-    protected static const HEAVY_MELEE_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
-        .damageType(DAMAGE_TYPE_CRUSHING)
-        .damageRange(10, 10)
-        .targetClassMask(UNIT_CLASS_GROUND)
-        .cooldown(1)
-        .maxAttackDistance(50)
-        .weapon;
-
-    protected static const HEAVY_RANGED_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
+    protected static const HEAVY_RANGED_WEAPON :UnitWeaponData = UnitWeaponBuilder.create()
         .isRanged(true)
         .damageType(DAMAGE_TYPE_PIERCING)
         .damageRange(5, 10)
-        .targetClassMask(UNIT_CLASS__ALL)
         .cooldown(0.75)
         .maxAttackDistance(200)
         .missileSpeed(300)
         .weapon;
 
-    protected static const SAPPER_EXPLODE_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
+    protected static const SAPPER_EXPLODE_WEAPON :UnitWeaponData = UnitWeaponBuilder.create()
         .isAOE(true)
         .damageType(DAMAGE_TYPE_EXPLOSION)
         .damageRange(70, 70)
-        .targetClassMask(UNIT_CLASS_GROUND)
         .aoeRadius(75)
         .aoeAnimationName("attack_N")
         .aoeDamageFriendlies(false)
         .cooldown(1)
         .weapon;
 
-    protected static const COLOSSUS_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
+    protected static const COLOSSUS_WEAPON :UnitWeaponData = UnitWeaponBuilder.create()
         .damageType(DAMAGE_TYPE_CRUSHING)
         .damageRange(80, 80)
-        .targetClassMask(UNIT_CLASS_GROUND)
         .maxAttackDistance(50)
         .cooldown(2)
         .weapon;
 
-    protected static const BASE_WEAPON :UnitWeapon = UnitWeaponBuilder.create()
+    protected static const BASE_WEAPON :UnitWeaponData = UnitWeaponBuilder.create()
         .damageType(DAMAGE_TYPE_BASE)
         .damageRange(20, 20)
-        .targetClassMask(UNIT_CLASS__ALL)
         .cooldown(0)
         .maxAttackDistance(1000)
         .weapon;
@@ -190,7 +177,6 @@ public class Constants
         .displayName("Madame")
         .description("MADAME: Melee unit. Strong against the Handy Man. Susceptible to attacks from the Dog-boy.")
         .resourceCosts([40, 0, 15, 0])
-        .trainingTime(2)
         .baseMoveSpeed(35)
         .maxHealth(100)
         .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.7, DAMAGE_TYPE_PIERCING, 0.3, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 0.8] ))
@@ -205,7 +191,6 @@ public class Constants
         .displayName("Handy Man")
         .description("HANDY MAN: Ranged tower unit. Useful for deflecting incoming Dog-boys. Watch out for Madames.")
         .resourceCosts([0, 30, 0, 15])
-        .trainingTime(2)
         .baseMoveSpeed(50)
         .maxHealth(100)
         .armor(new UnitArmor([DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 1]))
@@ -220,7 +205,6 @@ public class Constants
         .displayName("Dog-boy")
         .description("DOG-BOY: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Handy Men!")
         .resourceCosts([0, 0, 25, 25])
-        .trainingTime(3)
         .baseMoveSpeed(35)
         .maxHealth(70)
         .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 1, DAMAGE_TYPE_PIERCING, 1, DAMAGE_TYPE_EXPLOSION, 1, DAMAGE_TYPE_BASE, 1] ))
@@ -235,7 +219,6 @@ public class Constants
         .displayName("Flesh Colossus")
         .description("FLESH COLOSSUS: A massive pile of discarded flesh. The Colossus' powerful attack is dangerous to everybody, but it will slow down when swarmed by enemies.")
         .resourceCosts([250, 250, 0, 0])
-        .trainingTime(10)
         .baseMoveSpeed(25)
         .maxHealth(100)  // actually invincible
         .armor(new UnitArmor( [DAMAGE_TYPE_CRUSHING, 0.1, DAMAGE_TYPE_PIERCING, 0.07, DAMAGE_TYPE_EXPLOSION, 0.1] ))
@@ -308,7 +291,7 @@ public class Constants
 
             report += srcUnit.name;
 
-            var weapon :UnitWeapon = srcUnit.weapon;
+            var weapon :UnitWeaponData = srcUnit.weapon;
 
             var rangeMin :Number = weapon.damageRange.min;
             var rangeMax :Number = weapon.damageRange.max;

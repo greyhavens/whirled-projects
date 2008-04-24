@@ -75,14 +75,14 @@ public class Unit extends SimObject
         return (this.isAttacking ? _currentAttackTarget.object as Unit : null);
     }
 
-    public function canAttackWithWeapon (targetUnit :Unit, weapon :UnitWeapon) :Boolean
+    public function canAttackWithWeapon (targetUnit :Unit, weapon :UnitWeaponData) :Boolean
     {
         // we can attack the unit if we're not already attacking, and if the unit
         // is within range of the attack
         return (this.isUnitInRange(targetUnit, weapon.maxAttackDistance));
     }
 
-    public function findNearestAttackLocation (targetUnit :Unit, weapon :UnitWeapon) :Vector2
+    public function findNearestAttackLocation (targetUnit :Unit, weapon :UnitWeaponData) :Vector2
     {
         // given this unit's current location, find the nearest location
         // that an attack on the given target can be launched from
@@ -104,7 +104,7 @@ public class Unit extends SimObject
         }
     }
 
-    public function sendAttack (targetUnitOrLocation :*, weapon :UnitWeapon) :Boolean
+    public function sendAttack (targetUnitOrLocation :*, weapon :UnitWeaponData) :Boolean
     {
         // @TODO - fix this mess of a function
 
@@ -154,7 +154,7 @@ public class Unit extends SimObject
     {
         Assert.isFalse(this.isAttacking);
 
-        var weapon :UnitWeapon = attack.weapon;
+        var weapon :UnitWeaponData = attack.weapon;
 
         // @TODO - add support for ranged AOE attacks, if necessary
         Assert.isFalse(weapon.isRanged);

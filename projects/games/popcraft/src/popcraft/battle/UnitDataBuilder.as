@@ -8,11 +8,10 @@ public class UnitDataBuilder
     public function displayName (val :String) :UnitDataBuilder { _unitData.displayName = val; return this; }
     public function description (val :String) :UnitDataBuilder { _unitData.description = val; return this; }
     public function resourceCosts (val :Array) :UnitDataBuilder { _unitData.resourceCosts = val; return this; }
-    public function trainingTime (val :Number) :UnitDataBuilder { _unitData.trainingTime = val; return this; }
     public function baseMoveSpeed (val :Number) :UnitDataBuilder { _unitData.baseMoveSpeed = val; return this; }
     public function maxHealth (val :int) :UnitDataBuilder { _unitData.maxHealth = val; return this; }
     public function armor (val :UnitArmor) :UnitDataBuilder { _unitData.armor = val; return this; }
-    public function weapon (val :UnitWeapon) :UnitDataBuilder { _unitData.weapon = val; return this; }
+    public function weapon (val :UnitWeaponData) :UnitDataBuilder { _unitData.weapon = val; return this; }
     public function collisionRadius (val :Number) :UnitDataBuilder { _unitData.collisionRadius = val; return this; }
     public function detectRadius (val :Number) :UnitDataBuilder { _unitData.detectRadius = val; return this; }
     public function loseInterestRadius (val :Number) :UnitDataBuilder { _unitData.loseInterestRadius = val; return this; }
