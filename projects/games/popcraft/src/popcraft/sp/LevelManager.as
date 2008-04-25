@@ -78,6 +78,12 @@ public class LevelManager
     {
         GameContext.gameType = GameContext.GAME_TYPE_SINGLEPLAYER;
         GameContext.spLevel = _loadedLevel;
+
+        // the level may override the default game data
+        GameContext.gameData = (null != _loadedLevel.gameDataOverride ?
+            _loadedLevel.gameDataOverride :
+            AppContext.defaultGameData);
+
         AppContext.mainLoop.unwindToMode(new GameMode());
     }
 

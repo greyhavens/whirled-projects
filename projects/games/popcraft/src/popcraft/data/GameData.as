@@ -63,7 +63,7 @@ public class GameData
         gameData.initialDayPhase = XmlReader.getAttributeAsEnum(xml, "initialDayPhase", Constants.DAY_PHASE_NAMES, (useDefaults ? gameData.initialDayPhase : undefined));
 
         // init the resource data
-        for (var i :int = 0; i < Constants.RESOURCE_NAMES.length; ++i) {
+        for (var i :int = gameData.resources.length; i < Constants.RESOURCE_NAMES.length; ++i) {
             gameData.resources.push(null);
         }
 
@@ -73,7 +73,7 @@ public class GameData
         }
 
         // init the unit data
-        for (i = 0; i < Constants.UNIT_NAMES.length; ++i) {
+        for (i = gameData.units.length; i < Constants.UNIT_NAMES.length; ++i) {
             gameData.units.push(null);
         }
 
@@ -83,7 +83,7 @@ public class GameData
         }
 
         // init the spell data
-        for (i = 0; i < Constants.SPELL_NAMES.length; ++i) {
+        for (i = gameData.spells.length; i < Constants.SPELL_NAMES.length; ++i) {
             gameData.spells.push(null);
         }
 

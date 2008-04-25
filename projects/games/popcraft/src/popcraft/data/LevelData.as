@@ -16,6 +16,8 @@ public class LevelData
     public var computers :Array = [];
     public var initialResources :Array = [];
 
+    public var gameDataOverride :GameData;
+
     public function isAvailableUnit (unitType :uint) :Boolean
     {
         return ArrayUtil.contains(availableUnits, unitType);
@@ -24,6 +26,12 @@ public class LevelData
     public static function fromXml (xml :XML) :LevelData
     {
         var level :LevelData = new LevelData();
+
+        // does the level override game data?
+        var gameDataOverrideNode :XML = xml.GameDataOverride[0];
+        if (null != gameDataOverrideNode) {
+            level.gameDataOverride = GameData.fromXml(gameDataOverrideNode, AppContext.defaultGameData.clone());
+        }
 
         level.name = XmlReader.getAttributeAsString(xml, "name");
         level.introText = XmlReader.getAttributeAsString(xml, "introText");
