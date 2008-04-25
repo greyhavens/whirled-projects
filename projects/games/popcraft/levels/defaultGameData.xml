@@ -1,5 +1,9 @@
 <root>
-    <GameData>
+    <GameData
+        dayLength="30"
+        nightLength="120"
+        initialDayPhase="day">
+
         <Resources>
             <Resource type="white" displayName="Flesh" color="0xE8E7E5" rarity="1"/>
             <Resource type="red" displayName="Blood" color="0xCC0000" rarity="1"/>

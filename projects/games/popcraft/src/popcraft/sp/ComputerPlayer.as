@@ -45,10 +45,10 @@ public class ComputerPlayer extends SimObject
     {
         // stop sending out waves during the day, and resume at night
         var dayPhase :int = GameContext.diurnalCycle.phaseOfDay;
-        if (_pausedForDaytime && dayPhase == DiurnalCycle.NIGHT) {
+        if (_pausedForDaytime && dayPhase == Constants.PHASE_NIGHT) {
             _pausedForDaytime = false;
             this.addNamedTask(SEND_WAVE_TASK, After(_nextWave.delayBefore, new FunctionTask(sendNextWave)));
-        } else if (!_pausedForDaytime && dayPhase == DiurnalCycle.DAY) {
+        } else if (!_pausedForDaytime && dayPhase == Constants.PHASE_DAY) {
             _pausedForDaytime = true;
             this.removeNamedTasks(SEND_WAVE_TASK);
         }

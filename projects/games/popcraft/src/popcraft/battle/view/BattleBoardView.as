@@ -55,7 +55,8 @@ public class BattleBoardView extends SceneObject
         _view.addChild(_unitDisplayParent);
         _view.addChild(fg);
 
-        _lastDayPhase = DiurnalCycle.DAY;
+        _lastDayPhase = (DiurnalCycle.isDisabled ? Constants.PHASE_NIGHT : GameContext.gameData.initialDayPhase);
+        _darkness.alpha = (_lastDayPhase == Constants.PHASE_NIGHT ? 1 : 0);
     }
 
     override protected function addedToDB () :void
@@ -70,17 +71,21 @@ public class BattleBoardView extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        var newDayPhase :int = GameContext.diurnalCycle.phaseOfDay;
+        var newDayPhase :uint = GameContext.diurnalCycle.phaseOfDay;
         if (newDayPhase != _lastDayPhase) {
-            if (newDayPhase == DiurnalCycle.DAY) {
-                _darkness.alpha = 1;
-                _darkness.addTask(new AlphaTask(0, 2));
-            } else {
-                _darkness.alpha = 0;
-                _darkness.addTask(new AlphaTask(1, 2));
-            }
-
+            this.animateDayPhaseChange(newDayPhase);
             _lastDayPhase = newDayPhase;
+        }
+    }
+
+    protected function animateDayPhaseChange (phase :uint) :void
+    {
+        if (phase == Constants.PHASE_DAY) {
+            _darkness.alpha = 1;
+            _darkness.addTask(new AlphaTask(0, 2));
+        } else {
+            _darkness.alpha = 0;
+            _darkness.addTask(new AlphaTask(1, 2));
         }
     }
 
@@ -118,7 +123,7 @@ public class BattleBoardView extends SceneObject
     protected var _view :Sprite;
     protected var _darkness :SceneObject;
     protected var _unitDisplayParent :Sprite;
-    protected var _lastDayPhase :int;
+    protected var _lastDayPhase :uint;
 }
 
 }

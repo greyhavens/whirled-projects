@@ -7,6 +7,10 @@ import popcraft.util.*;
 
 public class GameData
 {
+    public var dayLength :Number;
+    public var nightLength :Number;
+    public var initialDayPhase :uint;
+
     public var resources :Array = [];
     public var units :Array = [];
     public var spells :Array = [];
@@ -20,6 +24,10 @@ public class GameData
     public static function fromXml (xml :XML) :GameData
     {
         var gameData :GameData = new GameData();
+
+        gameData.dayLength = XmlReader.getAttributeAsNumber(xml, "dayLength");
+        gameData.nightLength = XmlReader.getAttributeAsNumber(xml, "nightLength");
+        gameData.initialDayPhase = XmlReader.getAttributeAsEnum(xml, "initialDayPhase", Constants.DAY_PHASE_NAMES);
 
         // init the resource data
         for (var i :int = 0; i < Constants.RESOURCE_NAMES.length; ++i) {
