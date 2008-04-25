@@ -20,8 +20,14 @@ public class LevelOutroMode extends AppMode
 
     override protected function setup () :void
     {
+        // draw dim background
+        var g :Graphics = this.modeSprite.graphics;
+        g.beginFill(0, 0.6);
+        g.drawRect(0, 0, Constants.SCREEN_DIMS.x, Constants.SCREEN_DIMS.y);
+        g.endFill();
+
         var bgSprite :Sprite = new Sprite();
-        var g :Graphics = bgSprite.graphics;
+        g = bgSprite.graphics;
         g.beginFill(_success ? 0x76FF86 : 0xFD5CFF);
         g.drawRect(0, 0, 250, 200);
         g.endFill();
@@ -38,7 +44,7 @@ public class LevelOutroMode extends AppMode
         tfName.scaleX = 2;
         tfName.scaleY = 2;
         tfName.text = (_success ? "You won!" : "You lost");
-        tfName.x = (this.modeSprite.width * 0.5) - (tfName.width * 0.5);
+        tfName.x = (bgSprite.width * 0.5) - (tfName.width * 0.5);
         tfName.y = 30;
 
         bgSprite.addChild(tfName);

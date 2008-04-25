@@ -15,8 +15,14 @@ public class LevelIntroMode extends AppMode
 {
     override protected function setup () :void
     {
+        // draw dim background
+        var g :Graphics = this.modeSprite.graphics;
+        g.beginFill(0, 0.6);
+        g.drawRect(0, 0, Constants.SCREEN_DIMS.x, Constants.SCREEN_DIMS.y);
+        g.endFill();
+
         var bgSprite :Sprite = new Sprite();
-        var g :Graphics = bgSprite.graphics;
+        g = bgSprite.graphics;
         g.beginFill(0xF1B932);
         g.drawRect(0, 0, 250, 200);
         g.endFill();
@@ -32,7 +38,7 @@ public class LevelIntroMode extends AppMode
         tfName.autoSize = TextFieldAutoSize.CENTER;
         tfName.scaleX = 2;
         tfName.scaleY = 2;
-        tfName.x = (this.modeSprite.width * 0.5) - (tfName.width * 0.5);
+        tfName.x = (bgSprite.width * 0.5) - (tfName.width * 0.5);
         tfName.y = 20;
 
         tfName.text = GameContext.spLevel.name;
