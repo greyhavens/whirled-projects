@@ -3,7 +3,7 @@
         name="The Handy-Man"
         introText="Explosive Dog-Boys are being dispatched to detonate your workshop. The Handy-Man can keep them at bay!"
         disableDiurnalCycle="true"
-        playerBaseHealth="70">
+        playerBaseHealth="40">
 
         <InitialResources>
             <Resource type="red" amount="40"/>
@@ -17,7 +17,8 @@
 
         <Computer baseHealth="50">
             <InitialWaves>
-                <Wave delayBefore="40"><Unit type="sapper" count="1"/></Wave>
+                <Wave delayBefore="5"><Unit type="sapper" count="1"/></Wave>
+                <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
                 <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
                 <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
             </InitialWaves>
