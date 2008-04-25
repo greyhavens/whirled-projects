@@ -1,10 +1,15 @@
 <root>
-    <Level name="Level 1" introText="Learn how to use the Madame" disableDiurnalCycle="true" playerBaseHealth="100">
+    <Level
+        name="Welcome to PopCraft"
+        introText="Fashion FLESH and ENERGY into Madames to destroy your opponent's workshop."
+        disableDiurnalCycle="true"
+        playerBaseHealth="100">
+
         <AvailableUnits>
             <Unit type="grunt"/>
-            <Unit type="heavy"/>
         </AvailableUnits>
-        <Computer baseHealth="25">
+
+        <Computer baseHealth="15">
             <InitialWaves>
                 <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>
             </InitialWaves>
@@ -12,5 +17,7 @@
                 <Wave delayBefore="40"><Unit type="grunt" count="1"/></Wave>
             </RepeatingWaves>
         </Computer>
+
     </Level>
+
 </root>
