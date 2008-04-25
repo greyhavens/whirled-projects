@@ -12,60 +12,53 @@ public class XmlReader
             });
     }
 
-    public static function getAttributeAsUint (xml :XML, name :String, defaultValue :* = null) :uint
+    public static function getAttributeAsUint (xml :XML, name :String, defaultValue :* = undefined) :uint
     {
         return getAttributeAs(xml, name, defaultValue, StringUtil.parseUnsignedInteger);
     }
 
-    public static function getAttributeAsInt (xml :XML, name :String, defaultValue :* = null) :int
+    public static function getAttributeAsInt (xml :XML, name :String, defaultValue :* = undefined) :int
     {
         return getAttributeAs(xml, name, defaultValue, StringUtil.parseInteger);
     }
 
-    public static function getAttributeAsNumber (xml :XML, name :String, defaultValue :* = null) :Number
+    public static function getAttributeAsNumber (xml :XML, name :String, defaultValue :* = undefined) :Number
     {
         return getAttributeAs(xml, name, defaultValue, StringUtil.parseNumber);
     }
 
-    public static function getAttributeAsBoolean (xml :XML, name :String, defaultValue :* = null) :Boolean
+    public static function getAttributeAsBoolean (xml :XML, name :String, defaultValue :* = undefined) :Boolean
     {
         return getAttributeAs(xml, name, defaultValue, StringUtil.parseBoolean);
     }
 
-    public static function getAttributeAsString (xml :XML, name :String, defaultValue :String = null) :String
+    public static function getAttributeAsString (xml :XML, name :String, defaultValue :String = undefined) :String
     {
         return getAttributeAs(xml, name, defaultValue);
     }
 
-    public static function getAttributeAs (xml :XML, name :String, defaultValue :*, parseFunction :Function = null) :*
+    public static function getAttributeAs (xml :XML, name :String, defaultValue :*, parseFunction :Function = undefined) :*
     {
         var value :*;
 
-        var required :Boolean = (null == defaultValue);
-
-        try {
-            var attrVal :String = getAttribute(xml, name);
-            value = (null != parseFunction ? parseFunction(attrVal) : attrVal);
-
-        } catch (e :ArgumentError) {
-            if (required) {
-                throw new XmlReadError("In node '" + String(xml.localName()) + "': error reading attribute '" + name + "': " + e.message);
+        // read the attribute; throw an error if it doesn't exist (unless we have a default value)
+        var attr :XML = xml.attribute(name)[0];
+        if (null == attr) {
+            if (undefined !== defaultValue) {
+                return defaultValue;
             } else {
-                value = defaultValue;
+                throw new XmlReadError("In node '" + String(xml.localName()) + "': error reading attribute '" + name + "': attribute does not exist");
             }
         }
 
-        return value;
-    }
-
-    protected static function getAttribute (xml :XML, name :String) :String
-    {
-        var attr :XMLList = xml.attribute(name);
-        if (attr.length() == 0) {
-            throw new ArgumentError("attribute does not exist");
+        // try to parse the attribute
+        try {
+            value = (null != parseFunction ? parseFunction(attr) : attr);
+        } catch (e :ArgumentError) {
+            throw new XmlReadError("In node '" + String(xml.localName()) + "': error reading attribute '" + name + "': " + e.message);
         }
 
-        return attr[0];
+        return value;
     }
 
     protected static function parseEnum (stringVal :String, stringMapping :Array) :uint

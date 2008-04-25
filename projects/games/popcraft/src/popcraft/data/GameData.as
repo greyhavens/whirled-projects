@@ -48,13 +48,15 @@ public class GameData
         return theClone;
     }
 
-    public static function fromXml (xml :XML) :GameData
+    public static function fromXml (xml :XML, inheritFrom :GameData = null) :GameData
     {
-        var gameData :GameData = new GameData();
+        var useDefaults :Boolean = (null != inheritFrom);
 
-        gameData.dayLength = XmlReader.getAttributeAsNumber(xml, "dayLength");
-        gameData.nightLength = XmlReader.getAttributeAsNumber(xml, "nightLength");
-        gameData.initialDayPhase = XmlReader.getAttributeAsEnum(xml, "initialDayPhase", Constants.DAY_PHASE_NAMES);
+        var gameData :GameData = (useDefaults ? inheritFrom : new GameData());
+
+        gameData.dayLength = XmlReader.getAttributeAsNumber(xml, "dayLength", (useDefaults ? gameData.dayLength : undefined));
+        gameData.nightLength = XmlReader.getAttributeAsNumber(xml, "nightLength", (useDefaults ? gameData.nightLength : undefined));
+        gameData.initialDayPhase = XmlReader.getAttributeAsEnum(xml, "initialDayPhase", Constants.DAY_PHASE_NAMES, (useDefaults ? gameData.initialDayPhase : undefined));
 
         // init the resource data
         for (var i :int = 0; i < Constants.RESOURCE_NAMES.length; ++i) {
@@ -63,7 +65,7 @@ public class GameData
 
         for each (var resourceNode :XML in xml.Resources.Resource) {
             var type :uint = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
-            gameData.resources[type] = ResourceData.fromXml(resourceNode);
+            gameData.resources[type] = ResourceData.fromXml(resourceNode, (useDefaults ? inheritFrom.resources[type] : null));
         }
 
         // init the unit data
@@ -73,7 +75,7 @@ public class GameData
 
         for each (var unitNode :XML in xml.Units.Unit) {
             type = XmlReader.getAttributeAsEnum(unitNode, "type", Constants.UNIT_NAMES);
-            gameData.units[type] = UnitData.fromXml(unitNode);
+            gameData.units[type] = UnitData.fromXml(unitNode, (useDefaults ? inheritFrom.units[type] : null));
         }
 
         // init the spell data
@@ -83,7 +85,7 @@ public class GameData
 
         for each (var spellNode :XML in xml.Spells.Spell) {
             type = XmlReader.getAttributeAsEnum(spellNode, "type", Constants.SPELL_NAMES);
-            gameData.spells[type] = UnitSpellData.fromXml(spellNode);
+            gameData.spells[type] = UnitSpellData.fromXml(spellNode, (useDefaults ? inheritFrom.spells[type] : null));
         }
 
         // read base locations

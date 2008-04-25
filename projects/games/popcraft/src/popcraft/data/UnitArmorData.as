@@ -33,14 +33,16 @@ public class UnitArmorData
     {
         var armorData :UnitArmorData = new UnitArmorData();
 
-        for (var i :int = 0; i < Constants.DAMAGE_TYPE_NAMES.length; ++i) {
-            armorData.armor.push(Number(0));
-        }
+        if (null != xml) {
+            for (var i :int = 0; i < Constants.DAMAGE_TYPE_NAMES.length; ++i) {
+                armorData.armor.push(Number(0));
+            }
 
-        for each (var damageNode :XML in xml.Damage) {
-            var type :uint = XmlReader.getAttributeAsEnum(damageNode, "type", Constants.DAMAGE_TYPE_NAMES);
-            var scale :Number = XmlReader.getAttributeAsNumber(damageNode, "scale");
-            armorData.armor[type] = scale;
+            for each (var damageNode :XML in xml.Damage) {
+                var type :uint = XmlReader.getAttributeAsEnum(damageNode, "type", Constants.DAMAGE_TYPE_NAMES);
+                var scale :Number = XmlReader.getAttributeAsNumber(damageNode, "scale");
+                armorData.armor[type] = scale;
+            }
         }
 
         return armorData;

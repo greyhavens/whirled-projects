@@ -24,13 +24,15 @@ public class ResourceData
         return theClone;
     }
 
-    public static function fromXml (xml :XML) :ResourceData
+    public static function fromXml (xml :XML, inheritFrom :ResourceData = null) :ResourceData
     {
-        var resource :ResourceData = new ResourceData();
+        var useDefaults :Boolean = (null != inheritFrom);
 
-        resource.displayName = XmlReader.getAttributeAsString(xml, "displayName");
-        resource.color = XmlReader.getAttributeAsUint(xml, "color");
-        resource.rarity = XmlReader.getAttributeAsNumber(xml, "rarity");
+        var resource :ResourceData = (useDefaults ? inheritFrom : new ResourceData());
+
+        resource.displayName = XmlReader.getAttributeAsString(xml, "displayName", (useDefaults ? inheritFrom.displayName : undefined));
+        resource.color = XmlReader.getAttributeAsUint(xml, "color", (useDefaults ? inheritFrom.color : undefined));
+        resource.rarity = XmlReader.getAttributeAsNumber(xml, "rarity", (useDefaults ? inheritFrom.rarity : undefined));
 
         return resource;
     }

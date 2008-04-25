@@ -17,7 +17,7 @@ public class UnitData
     public var baseMoveSpeed :Number = 0;
 
     public var maxHealth :int;
-    public var armor :UnitArmorData;
+    public var armor :UnitArmorData = new UnitArmorData();
     public var weapon :UnitWeaponData;
 
     public var collisionRadius :Number = 0;
@@ -51,30 +51,43 @@ public class UnitData
         return theClone;
     }
 
-    public static function fromXml (xml :XML) :UnitData
-        // throws XmlReadError
+    public static function fromXml (xml :XML, inheritFrom :UnitData = null) :UnitData
     {
-        var unitData :UnitData = new UnitData();
+        var useDefaults :Boolean = (null != inheritFrom);
 
-        unitData.name = XmlReader.getAttributeAsString(xml, "type");
-        unitData.displayName = XmlReader.getAttributeAsString(xml, "displayName");
-        unitData.description = XmlReader.getAttributeAsString(xml, "description");
+        var unitData :UnitData = (useDefaults ? inheritFrom : new UnitData());
 
-        for each (var resourceNode :XML in xml.ResourceCosts.Resource) {
-            var resourceType :uint = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
-            var cost :int = XmlReader.getAttributeAsUint(resourceNode, "amount");
-            unitData.resourceCosts[resourceType] = cost;
+        unitData.name = XmlReader.getAttributeAsString(xml, "type", (useDefaults ? inheritFrom.name : undefined));
+        unitData.displayName = XmlReader.getAttributeAsString(xml, "displayName", (useDefaults ? inheritFrom.displayName : undefined));
+        unitData.description = XmlReader.getAttributeAsString(xml, "description", (useDefaults ? inheritFrom.description : undefined));
+
+        var resourceCostsNode :XML = xml.ResourceCosts[0];
+        if (null != resourceCostsNode) {
+            // don't inherit resource costs
+            unitData.resourceCosts = [ 0, 0, 0, 0 ];
+            for each (var resourceNode :XML in resourceCostsNode.Resource) {
+                var resourceType :uint = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
+                var cost :int = XmlReader.getAttributeAsUint(resourceNode, "amount");
+                unitData.resourceCosts[resourceType] = cost;
+            }
         }
 
-        unitData.baseMoveSpeed = XmlReader.getAttributeAsNumber(xml, "baseMoveSpeed");
-        unitData.maxHealth = XmlReader.getAttributeAsInt(xml, "maxHealth");
+        unitData.baseMoveSpeed = XmlReader.getAttributeAsNumber(xml, "baseMoveSpeed", (useDefaults ? inheritFrom.baseMoveSpeed : undefined));
+        unitData.maxHealth = XmlReader.getAttributeAsInt(xml, "maxHealth", (useDefaults ? inheritFrom.maxHealth : undefined));
 
-        unitData.armor = UnitArmorData.fromXml(xml.Armor[0]);
-        unitData.weapon = UnitWeaponData.fromXml(xml.Weapon[0]);
+        var armorNode :XML = xml.Armor[0];
+        if (null != armorNode) {
+            unitData.armor = UnitArmorData.fromXml(armorNode);
+        }
 
-        unitData.collisionRadius = XmlReader.getAttributeAsNumber(xml, "collisionRadius");
-        unitData.detectRadius = XmlReader.getAttributeAsNumber(xml, "detectRadius");
-        unitData.loseInterestRadius = XmlReader.getAttributeAsNumber(xml, "loseInterestRadius");
+        var weaponNode :XML = xml.Weapon[0];
+        if (null != weaponNode) {
+            unitData.weapon = UnitWeaponData.fromXml(weaponNode, (useDefaults ? inheritFrom.weapon : null));
+        }
+
+        unitData.collisionRadius = XmlReader.getAttributeAsNumber(xml, "collisionRadius", (useDefaults ? inheritFrom.collisionRadius : undefined));
+        unitData.detectRadius = XmlReader.getAttributeAsNumber(xml, "detectRadius", (useDefaults ? inheritFrom.detectRadius : undefined));
+        unitData.loseInterestRadius = XmlReader.getAttributeAsNumber(xml, "loseInterestRadius", (useDefaults ? inheritFrom.loseInterestRadius : undefined));
 
         return unitData;
     }

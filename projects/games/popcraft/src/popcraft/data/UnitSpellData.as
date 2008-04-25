@@ -37,16 +37,18 @@ public class UnitSpellData
         return theClone;
     }
 
-    public static function fromXml (xml :XML) :UnitSpellData
+    public static function fromXml (xml :XML, inheritFrom :UnitSpellData = null) :UnitSpellData
     {
-        var spell :UnitSpellData = new UnitSpellData();
+        var useDefaults :Boolean = (null != inheritFrom);
+
+        var spell :UnitSpellData = (useDefaults ? inheritFrom : new UnitSpellData());
 
         spell.type = XmlReader.getAttributeAsEnum(xml, "type", Constants.SPELL_NAMES);
-        spell.displayName = XmlReader.getAttributeAsString(xml, "displayName");
-        spell.expireTime = XmlReader.getAttributeAsNumber(xml, "expireTime");
+        spell.displayName = XmlReader.getAttributeAsString(xml, "displayName", (useDefaults ? inheritFrom.displayName : undefined));
+        spell.expireTime = XmlReader.getAttributeAsNumber(xml, "expireTime", (useDefaults ? inheritFrom.expireTime : undefined));
 
-        spell.speedScaleOffset = XmlReader.getAttributeAsNumber(xml, "speedScaleOffset", 0);
-        spell.damageScaleOffset = XmlReader.getAttributeAsNumber(xml, "damageScaleOffset", 0);
+        spell.speedScaleOffset = XmlReader.getAttributeAsNumber(xml, "speedScaleOffset", (useDefaults ? inheritFrom.speedScaleOffset : 0));
+        spell.damageScaleOffset = XmlReader.getAttributeAsNumber(xml, "damageScaleOffset", (useDefaults ? inheritFrom.damageScaleOffset : 0));
 
         return spell;
     }
