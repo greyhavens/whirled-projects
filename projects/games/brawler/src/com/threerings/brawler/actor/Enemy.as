@@ -384,7 +384,8 @@ public class Enemy extends Pawn
         var prob :Number = Math.random();
         var state :Object;
 		if (prob < PET_DROP_PROBABILITY && !boss && _ctrl.difficulty_setting != "Easy") {
-            _ctrl.createPickup(Loot.createState(x, y, _variant));
+		    // TODO: this class is not in SVN
+            // _ctrl.createPickup(Loot.createState(x, y, _variant));
         } else if (prob < PET_DROP_PROBABILITY + HEALTH_DROP_PROBABILITY) {
             _ctrl.createPickup(Health.createState(x, y));
         } else if (prob < PET_DROP_PROBABILITY + HEALTH_DROP_PROBABILITY + WEAPON_DROP_PROBABILITY) {
@@ -609,7 +610,7 @@ public class Enemy extends Pawn
 
     /** The chance that the enemy will drop a weapon pickup when it dies. */
     protected static const WEAPON_DROP_PROBABILITY :Number = 0.65;
-	
+
 	/** The chance that the enemy will drop a Pet of itself when it dies. */
     protected static const PET_DROP_PROBABILITY :Number = 0.005;
 

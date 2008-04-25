@@ -110,7 +110,7 @@ public class Actor extends Sprite
      */
     public function get amOwner () :Boolean
     {
-        return _owner == _ctrl.control.getMyId();
+        return _owner == _ctrl.control.game.getMyId();
     }
 
     /**
@@ -187,7 +187,7 @@ public class Actor extends Sprite
         if (_destroyed) {
             return;
         }
-        message.sender = _ctrl.control.getMyId();
+        message.sender = _ctrl.control.game.getMyId();
         _ctrl.throttle.sendMessage(name, message);
     }
 
@@ -200,7 +200,7 @@ public class Actor extends Sprite
         state.type = ClassUtil.tinyClassName(this);
         state.x = x;
         state.y = y;
-        state.sender = _ctrl.control.getMyId();
+        state.sender = _ctrl.control.game.getMyId();
         return state;
     }
 

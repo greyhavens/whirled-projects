@@ -10,8 +10,6 @@ import flash.utils.getTimer;
 
 import com.threerings.util.ArrayUtil;
 
-import com.threerings.ezgame.StateChangedEvent;
-
 import com.threerings.flash.MathUtil;
 
 import com.threerings.brawler.actor.Actor;
@@ -19,7 +17,8 @@ import com.threerings.brawler.actor.Pawn;
 import com.threerings.brawler.actor.Player;
 import com.threerings.brawler.util.BrawlerUtil;
 
-import com.whirled.FlowAwardedEvent;
+import com.whirled.game.CoinsAwardedEvent;
+import com.whirled.game.StateChangedEvent;
 
 /**
  * Depicts the state of the Brawler game.
@@ -60,12 +59,12 @@ public class BrawlerView extends Sprite
 
         // if the game is in play, jump right into the main view; otherwise, show the preloader
         // display and wait for the game to start
-        if (_ctrl.control.isConnected() && _ctrl.control.isInPlay()) {
+        if (_ctrl.control.isConnected() && _ctrl.control.game.isInPlay()) {
             finishInit();
 
         } else {
             addChild(_preloader = _ctrl.create("Preloader"));
-            _ctrl.control.addEventListener(StateChangedEvent.GAME_STARTED,
+            _ctrl.control.game.addEventListener(StateChangedEvent.GAME_STARTED,
                 function (event :StateChangedEvent) :void {
                     //_preloader["fade"].play();
                     finishInit();
@@ -258,8 +257,8 @@ public class BrawlerView extends Sprite
 		if(self.special && _ctrl._grade > 125){
 			_ctrl._grade = 125;
 		}
-		_ctrl.control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, _ctrl.flowAwarded);
-		_ctrl._throttle.set("scores", _ctrl._grade, _ctrl.control.seating.getMyPosition());
+		_ctrl.control.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, _ctrl.coinsAwarded);
+		_ctrl.throttle.setAt("scores", _ctrl.control.game.seating.getMyPosition(), _ctrl._grade);
     }
 
     /**
@@ -298,7 +297,7 @@ public class BrawlerView extends Sprite
 		_hud.alpha = 0;
         addChild(results);
 		results.gotoAndPlay(1);
-		
+
         // display the KO count/points
         //var koCount :Number = _ctrl.control.get("koCount") as Number;
         //var koPoints :Number = Math.max(0, 5000 - 5000*koCount);
@@ -325,31 +324,31 @@ public class BrawlerView extends Sprite
         var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
         results.grade.gotoAndStop(GRADES[grade]);
 		results.percent.points.text = pct;
-		
+
 		//Award trophy/prize for room
 		if (_ctrl.difficulty_setting != "Easy" || _ctrl.difficulty_setting != "Normal"){
 			if ((GRADES[grade]) == "S"){
 				//Got a rank S!
 				var zone:int = 9;
-				if (_ctrl.control.awardTrophy(String("room"+zone))) {
-					_ctrl.control.awardPrize(String("prize_z"+zone));
+				if (_ctrl.control.player.awardTrophy(String("room"+zone))) {
+					_ctrl.control.player.awardPrize(String("prize_z"+zone));
 				}
 			}
 		}
-		
+
 		//Award trophy/prize for completion
-		if (_ctrl.control.awardTrophy(String("trophy_"+_ctrl.difficulty_setting))) {
-			_ctrl.control.awardPrize(String("prize_"+_ctrl.difficulty_setting));
+		if (_ctrl.control.player.awardTrophy(String("trophy_"+_ctrl.difficulty_setting))) {
+			_ctrl.control.player.awardPrize(String("prize_"+_ctrl.difficulty_setting));
 		}
-		
+
 		//Award Immortal Trophy if they didn't die.
 		if (_ctrl.difficulty_setting != "Easy"){
 			if(_ctrl.lemmingCount <= 0){
-				_ctrl.control.awardTrophy("immortal");
+				_ctrl.control.player.awardTrophy("immortal");
 			}
 		}
-		
-		
+
+
     }
 
     /**

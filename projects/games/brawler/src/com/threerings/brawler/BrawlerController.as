@@ -12,15 +12,6 @@ import flash.utils.ByteArray;
 import flash.utils.getTimer;
 import flash.utils.Timer;
 
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.MessageReceivedListener;
-import com.threerings.ezgame.OccupantChangedEvent;
-import com.threerings.ezgame.OccupantChangedListener;
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.PropertyChangedListener;
-import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.ezgame.StateChangedListener;
-
 import com.threerings.flash.KeyRepeatLimiter;
 
 import com.threerings.util.ArrayUtil;
@@ -28,8 +19,13 @@ import com.threerings.util.Controller;
 import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.StringUtil;
 
-import com.whirled.WhirledGameControl;
-import com.whirled.FlowAwardedEvent;
+import com.whirled.game.GameControl;
+import com.whirled.game.GameSubControl;
+import com.whirled.game.CoinsAwardedEvent;
+import com.whirled.game.MessageReceivedEvent;
+import com.whirled.game.OccupantChangedEvent;
+import com.whirled.game.PropertyChangedEvent;
+import com.whirled.game.StateChangedEvent;
 
 import com.threerings.brawler.actor.Actor;
 import com.threerings.brawler.actor.Coin;
@@ -44,8 +40,6 @@ import com.threerings.brawler.util.MessageThrottle;
  * Controls the state of the Brawler game.
  */
 public class BrawlerController extends Controller
-    implements OccupantChangedListener, MessageReceivedListener, PropertyChangedListener,
-        StateChangedListener
 {
 	/** Variables for the trophies  */
 	public var difficulty_setting :String 		= "Normal";
@@ -71,7 +65,7 @@ public class BrawlerController extends Controller
     public function BrawlerController (disp :DisplayObject)
     {
         // create the whirled control
-        _control = new WhirledGameControl(disp, false);
+        _control = new GameControl(disp, false);
 
         // create the throttle to limit message output (to about eight messages per second)
         _throttle = new MessageThrottle(disp, _control, 200);
@@ -112,7 +106,7 @@ public class BrawlerController extends Controller
     /**
      * Returns a reference to the Whirled game control.
      */
-    public function get control () :WhirledGameControl
+    public function get control () :GameControl
     {
         return _control;
     }
@@ -146,7 +140,7 @@ public class BrawlerController extends Controller
      */
     public function get amPlaying () :Boolean
     {
-        return _control.isConnected() && (_control.seating.getMyPosition() > -1);
+        return _control.isConnected() && (_control.game.seating.getMyPosition() > -1);
     }
 
     /**
@@ -247,7 +241,7 @@ public class BrawlerController extends Controller
             //_view.showResults();
 			//_grade = calculateGrade();
 			//if (amPlaying) {
-            //    _throttle.set("scores", _grade, _control.seating.getMyPosition());
+            //    _throttle.setAt("scores", _control.game.seating.getMyPosition(), _grade);
             //}
         } else {
             _view.enterRoom();
@@ -271,23 +265,23 @@ public class BrawlerController extends Controller
 		//Set up Exit key.
 		_view.results.exit_btn.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown_exit);
 
-		//Listen to flow award.
-		control.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
+		//Listen to coin award.
+		control.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
 
 		if (amPlaying) {
-            _throttle.set("scores", _grade, _control.seating.getMyPosition());
+            _throttle.setAt("scores", _control.game.seating.getMyPosition(), _grade);
         }
     }
 
 	/**
-     * The game is over and flow has been awarded.
+     * The game is over and coins have been awarded.
      */
-    public function flowAwarded (event :FlowAwardedEvent) :void
+    public function coinsAwarded (event :CoinsAwardedEvent) :void
     {
-		control.localChat("You recieved "+event.amount+" bits!");
-		control.localChat("[DEBUG] Performance Rate: "+event.percentile+"%");
-		control.removeEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
-		_control.playerReady();
+		control.local.feedback("You recieved "+event.amount+" bits!");
+		control.local.feedback("[DEBUG] Performance Rate: "+event.percentile+"%");
+		control.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
+		_control.game.playerReady();
 	}
 
 	/**
@@ -295,7 +289,7 @@ public class BrawlerController extends Controller
      */
     public function mouseDown_exit (event:MouseEvent):void
     {
-		control.backToWhirled(false);
+		control.local.backToWhirled(false);
 	}
 
     /**
@@ -359,7 +353,7 @@ public class BrawlerController extends Controller
 			_clear = true;
 			endGame();
         }
-        if (--_enemies == 0 && _control.amInControl()) {
+        if (--_enemies == 0 && _control.game.amInControl()) {
             // proceed to the next wave
             _throttle.set("wave", _wave + 1);
         }
@@ -379,7 +373,7 @@ public class BrawlerController extends Controller
     public function playerOnDoor () :void
     {
         // wait until we're clear to proceed
-        if (!(_clear && _control.amInControl())) {
+        if (!(_clear && _control.game.amInControl())) {
             return;
         }
 
@@ -396,61 +390,12 @@ public class BrawlerController extends Controller
      */
     public function incrementStat (stat :String, amount :Number = 1) :void
     {
-        if (!_control.amInControl()) {
+        if (!_control.game.amInControl()) {
             return;
         }
         _throttle.send(function () :void {
-            _control.setImmediate(stat, _control.get(stat) + amount);
+            _control.net.set(stat, _control.net.get(stat) + amount, true);
         });
-    }
-
-    // documentation inherited from interface PropertyChangedListener
-    public function propertyChanged (event :PropertyChangedEvent) :void
-    {
-        if (event.name == "room") {
-            room = event.newValue as int;
-
-        } else if (event.name == "wave") {
-            wave = event.newValue as int;
-
-        } else if (event.name == "scores" && _control.amInControl()) {
-            // once we have scores from all players present, end the game
-            var scores :Array = _control.get("scores") as Array;
-            var players :Array = _control.seating.getPlayerIds();
-            for (var ii :int = 0; ii < players.length; ii++) {
-                if (players[ii] > 0 && scores[ii] == undefined) {
-                    return;
-                }
-            }
-            var pplayers :Array = new Array(), pscores :Array = new Array();
-            for (ii = 0; ii < players.length; ii++) {
-                if (players[ii] > 0) {
-                    pplayers.push(players[ii]);
-                    pscores.push(scores[ii]);
-                }
-            }
-			_throttle.set("clockOffset", _clock);
-            _control.endGameWithScores(pplayers, pscores, WhirledGameControl.TO_EACH_THEIR_OWN);
-
-        } else if (StringUtil.startsWith(event.name, "actor")) {
-            // it's the state of an actor
-            var actor :Actor = _actors[event.name];
-            var state :Object = event.newValue;
-            if (state == null) {
-                // remove the actor
-                if (actor != null) {
-                    destroyActor(actor);
-                }
-            } else if (state.sender != _control.getMyId()) {
-                if (actor == null) {
-                    // create the new actor
-                    createActor(event.name, state);
-                } else {
-                    // update the actor state
-                    actor.decode(state);
-                }
-            }
-        }
     }
 
     /**
@@ -462,61 +407,12 @@ public class BrawlerController extends Controller
         delete _actors[actor.name];
     }
 
-    // documentation inherited from interface MessageReceivedListener
-    public function messageReceived (event :MessageReceivedEvent) :void
-    {
-        if (event.name == "clock") {
-			_clock = _control.get("clockOffset") + (event.value as int);
-            //_clock = event.value as int;
-            _view.hud.updateClock();
-
-        } else if (StringUtil.startsWith(event.name, "actor")) {
-            // it's a message for an actor
-            var actor :Actor = _actors[event.name];
-            if (actor != null && event.value.sender != _control.getMyId()) {
-                actor.receive(event.value);
-            }
-        }
-    }
-
-    // documentation inherited from interface OccupantChangedListener
-    public function occupantEntered (event :OccupantChangedEvent) :void
-    {
-    }
-
-    // documentation inherited from interface OccupantChangedListener
-    public function occupantLeft (event :OccupantChangedEvent) :void
-    {
-        // get rid of their player; take over their other actors
-        var playerId :int = event.occupantId;
-        var players :Array = remainingPlayers;
-        var midx :int = players.indexOf(_control.getMyId());
-        var aidx :int = 0;
-        for each (var actor :Actor in _actors) {
-            if (actor.owner != playerId) {
-                continue;
-            }
-            actor.owner = players[aidx++ % players.length];
-            if (actor.amOwner && actor is Player) {
-                actor.destroy();
-            }
-        }
-    }
-
-    // function inherited from interface StateChangedListener
-    public function stateChanged (event :StateChangedEvent) :void
-    {
-        if (event.type == StateChangedEvent.CONTROL_CHANGED) {
-            _view.hud.updateConnection();
-        }
-    }
-
     // Calculate grade and return it.
     public function calculateGrade (toggle:String = "grade", handicap:Boolean = false) :Number
     {
 		var temp_grade:Number = 0;
-		var num_players:Number = control.seating.getPlayerIds().length;
-		var koCount :Number = 0;//control.get("koCount") as Number;
+		var num_players:Number = control.game.seating.getPlayerIds().length;
+		var koCount :Number = 0;//control.net.get("koCount") as Number;
         var koPoints :Number = 0;//Math.max(0, 5000 - 5000*koCount);
 
 		var local_dmgpar:Number = (_score+koPoints)/(_mobHpTotal/num_players);
@@ -554,15 +450,15 @@ public class BrawlerController extends Controller
     {
         // report readiness and initialize the view
         if (amPlaying) {
-            _control.playerReady();
+            _control.game.playerReady();
         }
         _view.init();
 
         // wait for the game to start before finishing
-        if (_control.isInPlay()) {
+        if (_control.game.isInPlay()) {
             finishInit();
         } else {
-            _control.addEventListener(StateChangedEvent.GAME_STARTED,
+            _control.game.addEventListener(StateChangedEvent.GAME_STARTED,
                 function (event :StateChangedEvent) :void {
                     finishInit();
                 });
@@ -575,7 +471,7 @@ public class BrawlerController extends Controller
     protected function finishInit () :void
     {
         if (init_finished) {
-			if (_control.amInControl()) {
+			if (_control.game.amInControl()) {
 				_throttle.startTicker("clock", CLOCK_DELAY);
 			}
             return;
@@ -583,29 +479,32 @@ public class BrawlerController extends Controller
         init_finished = true;
 
         // find existing actors, start listening for updates
-        var names :Array = _control.getPropertyNames("actor");
+        var names :Array = _control.net.getPropertyNames("actor");
         for each (var name :String in names) {
-			createActor(name, _control.get(name));
+			createActor(name, _control.net.get(name));
 		}
-        _control.registerListener(this);
+		_control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        _control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        _control.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
+        _control.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, controlChanged);
 
         // fetch the difficulty level
-        _difficulty = DIFFICULTY_LEVELS.indexOf(_control.getConfig()["difficulty"]);
-        difficulty_setting = _control.getConfig()["difficulty"];
+        _difficulty = DIFFICULTY_LEVELS.indexOf(_control.game.getConfig()["difficulty"]);
+        difficulty_setting = _control.game.getConfig()["difficulty"];
 
         // if we are in control, initialize
-        if (_control.amInControl()) {
+        if (_control.game.amInControl()) {
             _throttle.set("room", _room);
             _throttle.set("wave", _wave);
             _throttle.set("koCount", 0);
             _throttle.set("playerDamage", 0);
             _throttle.set("enemyDamage", 0);
-            _throttle.set("scores", new Array(_control.seating.getPlayerIds().length));
+            _throttle.set("scores", new Array(_control.game.seating.getPlayerIds().length));
             _throttle.set("clockOffset", 0);
             _throttle.startTicker("clock", CLOCK_DELAY);
         } else {
-            var croom :Object = _control.get("room");
-            var cwave :Object = _control.get("wave");
+            var croom :Object = _control.net.get("room");
+            var cwave :Object = _control.net.get("wave");
             _room = (croom == null) ? 1 : (croom as int);
             _wave = (cwave == null) ? 1 : (cwave as int);
         }
@@ -632,10 +531,109 @@ public class BrawlerController extends Controller
             _view.ground.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 
             // listen for keyboard events through the blocker
-            _blocker = new KeyRepeatLimiter(_control);
+            _blocker = new KeyRepeatLimiter(_control.local);
             _blocker.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
             _blocker.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
         }
+    }
+
+    /**
+     * Called when a property changes in the game object.
+     */
+    protected function propertyChanged (event :PropertyChangedEvent) :void
+    {
+        if (event.name == "room") {
+            room = event.newValue as int;
+
+        } else if (event.name == "wave") {
+            wave = event.newValue as int;
+
+        } else if (event.name == "scores" && _control.game.amInControl()) {
+            // once we have scores from all players present, end the game
+            var scores :Array = _control.net.get("scores") as Array;
+            var players :Array = _control.game.seating.getPlayerIds();
+            for (var ii :int = 0; ii < players.length; ii++) {
+                if (players[ii] > 0 && scores[ii] == undefined) {
+                    return;
+                }
+            }
+            var pplayers :Array = new Array(), pscores :Array = new Array();
+            for (ii = 0; ii < players.length; ii++) {
+                if (players[ii] > 0) {
+                    pplayers.push(players[ii]);
+                    pscores.push(scores[ii]);
+                }
+            }
+			_throttle.set("clockOffset", _clock);
+            _control.game.endGameWithScores(pplayers, pscores, GameSubControl.TO_EACH_THEIR_OWN);
+
+        } else if (StringUtil.startsWith(event.name, "actor")) {
+            // it's the state of an actor
+            var actor :Actor = _actors[event.name];
+            var state :Object = event.newValue;
+            if (state == null) {
+                // remove the actor
+                if (actor != null) {
+                    destroyActor(actor);
+                }
+            } else if (state.sender != _control.game.getMyId()) {
+                if (actor == null) {
+                    // create the new actor
+                    createActor(event.name, state);
+                } else {
+                    // update the actor state
+                    actor.decode(state);
+                }
+            }
+        }
+    }
+
+    /**
+     * Called when a message is received on the game object.
+     */
+    protected function messageReceived (event :MessageReceivedEvent) :void
+    {
+        if (event.name == "clock") {
+			_clock = _control.net.get("clockOffset") + (event.value as int);
+            //_clock = event.value as int;
+            _view.hud.updateClock();
+
+        } else if (StringUtil.startsWith(event.name, "actor")) {
+            // it's a message for an actor
+            var actor :Actor = _actors[event.name];
+            if (actor != null && event.value.sender != _control.game.getMyId()) {
+                actor.receive(event.value);
+            }
+        }
+    }
+
+    /**
+     * Called when an occupant leaves the game.
+     */
+    public function occupantLeft (event :OccupantChangedEvent) :void
+    {
+        // get rid of their player; take over their other actors
+        var playerId :int = event.occupantId;
+        var players :Array = remainingPlayers;
+        var midx :int = players.indexOf(_control.game.getMyId());
+        var aidx :int = 0;
+        for each (var actor :Actor in _actors) {
+            if (actor.owner != playerId) {
+                continue;
+            }
+            actor.owner = players[aidx++ % players.length];
+            if (actor.amOwner && actor is Player) {
+                actor.destroy();
+            }
+        }
+    }
+
+    /**
+     * Called when the game state changes.
+     */
+    public function controlChanged (event :StateChangedEvent) :void
+    {
+        _view.hud.updateConnection();
     }
 
     /**
@@ -645,7 +643,7 @@ public class BrawlerController extends Controller
     {
         var name :String = "m" + _room + "_w" + _wave;
         var players :Array = remainingPlayers;
-        var midx :int = players.indexOf(_control.getMyId());
+        var midx :int = players.indexOf(_control.game.getMyId());
         _enemies = 0;
         for (var ii :int = 0; ii < _econfigs.length; ii++) {
             var config :Object = _econfigs[ii];
@@ -678,7 +676,7 @@ public class BrawlerController extends Controller
      */
     protected function createActorName () :String
     {
-        return "actor" + _control.getMyId() + "_" + (++_lastActorId);
+        return "actor" + _control.game.getMyId() + "_" + (++_lastActorId);
     }
 
     /**
@@ -739,7 +737,7 @@ public class BrawlerController extends Controller
      */
     protected function get remainingPlayers () :Array
     {
-        return _control.seating.getPlayerIds().filter(
+        return _control.game.seating.getPlayerIds().filter(
             function (element :*, index :int, array :Array) :Boolean {
                 return element > 0;
             });
@@ -757,7 +755,7 @@ public class BrawlerController extends Controller
     protected var _loader :EmbeddedSwfLoader;
 
     /** The Whirled interface. */
-    protected var _control :WhirledGameControl;
+    protected var _control :GameControl;
 
     /** The throttle through which messages are sent. */
     public var _throttle :MessageThrottle;

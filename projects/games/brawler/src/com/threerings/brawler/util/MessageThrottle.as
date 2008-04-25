@@ -5,7 +5,7 @@ import flash.events.Event;
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
 
-import com.threerings.ezgame.EZGameControl;
+import com.whirled.game.GameControl;
 
 /**
  * Provides an intermediate layer between the application and {@link EZGameControl#doBatch},
@@ -19,7 +19,7 @@ public class MessageThrottle
      * to avoid going over the message limit.
      */
     public function MessageThrottle (
-        disp :DisplayObject, ctrl :EZGameControl, interval :int)
+        disp :DisplayObject, ctrl :GameControl, interval :int)
     {
         _ctrl = ctrl;
         _interval = interval;
@@ -34,7 +34,17 @@ public class MessageThrottle
     public function set (propName :String, value :Object, index :int = -1) :void
     {
         send(function () :void {
-            _ctrl.set(propName, value, index);
+            _ctrl.net.set(propName, value);
+        });
+    }
+
+    /**
+     * Sets an element of an array property through the throttle.
+     */
+    public function setAt (propName :String, index :int, value :Object) :void
+    {
+        send(function () :void {
+            _ctrl.net.setAt(propName, index, value);
         });
     }
 
@@ -44,7 +54,7 @@ public class MessageThrottle
     public function sendMessage (messageName :String, value :Object, playerId :int = 0) :void
     {
         send(function () :void {
-            _ctrl.sendMessage(messageName, value, playerId);
+            _ctrl.net.sendMessage(messageName, value, playerId);
         });
     }
 
@@ -54,7 +64,7 @@ public class MessageThrottle
     public function startTicker (tickerName :String, msOfDelay :int) :void
     {
         send(function () :void {
-            _ctrl.startTicker(tickerName, msOfDelay);
+            _ctrl.services.startTicker(tickerName, msOfDelay);
         });
     }
 
@@ -104,7 +114,7 @@ public class MessageThrottle
     }
 
     /** The control through which messages are sent. */
-    protected var _ctrl :EZGameControl;
+    protected var _ctrl :GameControl;
 
     /** We wait at least this long between batches. */
     protected var _interval :int;

@@ -152,7 +152,7 @@ public class HudView extends Sprite
      */
     public function updateConnection () :void
     {
-        _hud.connection.text = _ctrl.control.amInControl() ? "Host" : "Client";
+        _hud.connection.text = _ctrl.control.game.amInControl() ? "Host" : "Client";
     }
 
     /**
@@ -192,38 +192,38 @@ public class HudView extends Sprite
 		_hud.score_par.text = (_ctrl.calculateGrade("damage"));
 		_hud.score_time.text = (_ctrl.calculateGrade("time"));
 		_hud.score_grade.text = _ctrl.calculateGrade()+"%";
-		
+
 		var self :Player = _ctrl.self;
         if (self == null) {
             return;
         }
-		
+
 		if (_ctrl.difficulty_setting != "Easy"){
 			if(self.blocking && _ctrl.timeSpentBlocking_awarded != true){
 				_ctrl.timeSpentBlocking += 1;
 				if(_ctrl.timeSpentBlocking >= _ctrl.timeSpentBlocking_goal && _ctrl.timeSpentBlocking_awarded != true){
-					_ctrl.control.awardTrophy("cautious");
+					_ctrl.control.player.awardTrophy("cautious");
 					_ctrl.timeSpentBlocking_awarded = true;
 				}
 			}
 			if(_ctrl.lemmingCount >= _ctrl.lemmingCount_goal && _ctrl.lemmingCount_awarded != true){
-				_ctrl.control.awardTrophy("lemming");
+				_ctrl.control.player.awardTrophy("lemming");
 				_ctrl.lemmingCount_awarded = true;
 			}
 			if(_ctrl.damageTaken >= _ctrl.damageTaken_goal && _ctrl.damageTaken_awarded != true){
-				_ctrl.control.awardTrophy("battle_scarred");
+				_ctrl.control.player.awardTrophy("battle_scarred");
 				_ctrl.damageTaken_awarded = true;
 			}
 			if(_ctrl.coinsCollected >= _ctrl.coinsCollected_goal && _ctrl.coinsCollected_awarded != true){
-				_ctrl.control.awardTrophy("extra_life");
+				_ctrl.control.player.awardTrophy("extra_life");
 				_ctrl.coinsCollected_awarded = true;
 			}
 			if(_ctrl.weaponsBroken >= _ctrl.weaponsBroken_goal && _ctrl.weaponsBroken_awarded != true){
-				_ctrl.control.awardTrophy("entropy");
+				_ctrl.control.player.awardTrophy("entropy");
 				_ctrl.weaponsBroken_awarded = true;
 			}
 			if(_ctrl.weaponsCollected >= _ctrl.weaponsCollected_goal && _ctrl.weaponsCollected_awarded != true){
-				_ctrl.control.awardTrophy("arms_dealer");
+				_ctrl.control.player.awardTrophy("arms_dealer");
 				_ctrl.weaponsCollected_awarded = true;
 			}
 		}
@@ -348,7 +348,7 @@ public class HudView extends Sprite
 			_hud.zoneclear.scaleX = 0.1;
 			_hud.zoneclear.scaleY = 0.1;
 			_hud.zoneclear_off.alpha = 1;
-			
+
 			//_hud.zoneclear.alpha = 0;
 			_hud.zoneclear.alpha = 1;
 			_hud.zoneclear_off.gotoAndPlay(1);
@@ -358,7 +358,7 @@ public class HudView extends Sprite
 			_hud.zoneclear_off.scaleY = 0.1;
 			_hud.zoneclear.scaleX = 1.0;
 			_hud.zoneclear.scaleY = 1.0;
-		
+
 			_hud.zoneclear.alpha = 1;
 			_hud.zoneclear_off.alpha = 0;
 			var pct :Number = Math.round(_ctrl.calculateGrade("grade",false));
@@ -368,14 +368,14 @@ public class HudView extends Sprite
 			_hud.zoneclear_off.grade.points.text = (GRADES[grade]);
 			_hud.zoneclear_off.percent.points.text = pct;
 			_hud.zoneclear.gotoAndPlay(2);
-			
+
 			//Award Trophy and Room for beating room at rank S on Normal+
 			if (_ctrl.difficulty_setting != "Easy" || _ctrl.difficulty_setting != "Normal"){
 				if ((GRADES[grade]) == "S"){
 					//Got a rank S!
 					var zone:int = _ctrl.room-1;
-					if (_ctrl.control.awardTrophy(String("room"+zone))) {
-						_ctrl.control.awardPrize(String("prize_z"+zone));
+					if (_ctrl.control.player.awardTrophy(String("room"+zone))) {
+						_ctrl.control.player.awardPrize(String("prize_z"+zone));
 					}
 				}
 			}

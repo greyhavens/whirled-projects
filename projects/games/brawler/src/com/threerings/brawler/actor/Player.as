@@ -120,7 +120,7 @@ public class Player extends Pawn
     {
         return _dmgbox.boundbox;
     }
-	
+
     /**
      * Returns the player's attack level.
      */
@@ -234,9 +234,9 @@ public class Player extends Pawn
         _view.hud.updateHits();
 
 		if(damage >= 1500){
-			_ctrl.control.awardTrophy("hax");
+			_ctrl.control.player.awardTrophy("hax");
 		}
-		
+
         // damage the weapon for hits after the first
         if (_hits > 1) {
             damageWeapon();
@@ -419,8 +419,8 @@ public class Player extends Pawn
         format.bold = true;
         format.color = 0x99BFFF;
         _plate.name_plate.defaultTextFormat = format;
-        _plate.name_plate.text = _ctrl.control.getOccupantName(playerId);
-		
+        _plate.name_plate.text = _ctrl.control.game.getOccupantName(playerId);
+
 		// Configure appearance based on name
 		var ta: String = _plate.name_plate.text; //Grab the name
 		var face: int = 0; //Which hair/face to use
@@ -471,7 +471,7 @@ public class Player extends Pawn
 				appearance = 2;
 			}
 		}
-		
+
 		//Special Cases
 		if(ta == "cherub"){ //Myself
 			appearance = 7;
@@ -487,7 +487,7 @@ public class Player extends Pawn
 		_character.skull.gotoAndStop(appearance);
 		_character.r_ear.gotoAndStop(appearance);
 		_character.r_hair.gotoAndStop(appearance);
-		
+
         // set the weapon
         weapon = state.weapon;
 
@@ -708,7 +708,7 @@ public class Player extends Pawn
     /** Weapon damage multipliers for each weapon level (starting at one). */
     protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 1, 1.5, 2 ];
 	//protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 0, 0, 0 ]; //<---Weapon decay disabled for testing
-	
+
     /** The number of seconds to wait before respawning the player. */
     protected static const RESPAWN_INTERVAL :Number = 10;
 
