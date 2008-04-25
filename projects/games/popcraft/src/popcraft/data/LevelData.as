@@ -14,6 +14,7 @@ public class LevelData
 
     public var availableUnits :Array = [];
     public var computers :Array = [];
+    public var initialResources :Array = [];
 
     public function isAvailableUnit (unitType :uint) :Boolean
     {
@@ -37,6 +38,14 @@ public class LevelData
         // parse the computer players
         for each (var computerData :XML in xml.Computer) {
             level.computers.push(ComputerPlayerData.fromXml(computerData));
+        }
+
+        // parse the initial resources
+        level.initialResources = new Array(Constants.RESOURCE_NAMES.length);
+        for each (var resourceNode :XML in xml.InitialResources.Resource) {
+            var type :uint = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
+            var amount :int = XmlReader.getAttributeAsUint(resourceNode, "amount");
+            level.initialResources[type] = amount;
         }
 
         return level;

@@ -5,6 +5,11 @@
         disableDiurnalCycle="true"
         playerBaseHealth="100">
 
+        <InitialResources>
+            <Resource type="white" amount="60"/>
+            <Resource type="blue" amount="20"/>
+        </InitialResources>
+
         <AvailableUnits>
             <Unit type="grunt"/>
         </AvailableUnits>

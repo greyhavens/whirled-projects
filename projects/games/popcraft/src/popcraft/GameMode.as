@@ -104,10 +104,21 @@ public class GameMode extends AppMode
         GameContext.playerData = [];
         for (var playerId :uint = 0; playerId < numPlayers; ++playerId) {
 
-            var playerData :PlayerData =
-                (playerId == GameContext.localPlayerId ?
-                    new LocalPlayerData(playerId) :
-                    new PlayerData(playerId));
+            var playerData :PlayerData;
+
+            if (GameContext.localPlayerId == playerId) {
+                var localPlayerData :LocalPlayerData = new LocalPlayerData(playerId);
+                if (GameContext.isSinglePlayer) {
+                    // in single player games, grant the player some starting resources
+                    var initialResources :Array = GameContext.spLevel.initialResources;
+                    for (var resType :uint = 0; resType < initialResources.length; ++resType) {
+                        localPlayerData.setResourceAmount(resType, int(initialResources[resType]));
+                    }
+                }
+                playerData = localPlayerData;
+            } else {
+                playerData = new PlayerData(playerId);
+            }
 
             // setup initial player targets
             playerData.targetedEnemyId = (playerId + 1 < numPlayers ? playerId + 1 : 0);
