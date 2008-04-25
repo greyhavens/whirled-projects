@@ -53,6 +53,7 @@ public class Constants
 
     public static const PUZZLE_TILE_SIZE :int = int(PUZZLE_HEIGHT / PUZZLE_ROWS);
 
+    // @TODO - move this into GameData
     public static const CLEAR_VALUE_TABLE :IntValueTable =
         new IntValueTable( [-20, -10, 10, 10 ] );
              // group size:   1,   2,  3,  4+ = 20, 30, 40, ...

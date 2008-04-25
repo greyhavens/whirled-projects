@@ -4,7 +4,7 @@
             <Unit type="grunt"/>
             <Unit type="heavy"/>
         </AvailableUnits>
-        <Computer baseHealth="100">
+        <Computer baseHealth="25">
             <InitialWaves>
                 <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>
             </InitialWaves>

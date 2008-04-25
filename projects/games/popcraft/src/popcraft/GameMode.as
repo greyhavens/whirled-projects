@@ -220,9 +220,20 @@ public class GameMode extends AppMode
         var numPlayers :int = GameContext.numPlayers;
         var baseLocs :Array = GameContext.gameData.getBaseLocsForGameSize(numPlayers);
         for (var playerId :int = 0; playerId < numPlayers; ++playerId) {
+
+            // in single-player levels, bases have custom health
+            var overrideMaxHealth :Boolean;
+            var maxHealth :int;
+            if (GameContext.isSinglePlayer) {
+                overrideMaxHealth = true;
+                maxHealth = (playerId == 0 ?
+                    GameContext.spLevel.playerBaseHealth :
+                    ComputerPlayerData(GameContext.spLevel.computers[playerId - 1]).baseHealth);
+            }
+
+            var base :PlayerBaseUnit = UnitFactory.createBaseUnit(playerId, overrideMaxHealth, maxHealth);
+
             var baseLoc :Vector2 = baseLocs[playerId];
-            var base :PlayerBaseUnit =
-                (UnitFactory.createUnit(Constants.UNIT_TYPE_BASE, playerId) as PlayerBaseUnit);
             base.unitSpawnLoc = baseLoc;
             base.x = baseLoc.x;
             base.y = baseLoc.y;
@@ -447,7 +458,7 @@ public class GameMode extends AppMode
         switch (msg.name) {
         case CreateUnitMessage.messageName:
             var createUnitMsg :CreateUnitMessage = (msg as CreateUnitMessage);
-            UnitFactory.createUnit(createUnitMsg.unitType, createUnitMsg.playerId);
+            UnitFactory.createCreature(createUnitMsg.unitType, createUnitMsg.playerId);
             break;
 
         case SelectTargetEnemyMessage.messageName:

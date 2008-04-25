@@ -13,8 +13,8 @@ import flash.display.Bitmap;
 
 import popcraft.*;
 import popcraft.battle.geom.*;
-import popcraft.util.*;
 import popcraft.data.*;
+import popcraft.util.*;
 
 [Event(name="Attacking", type="popcraft.battle.UnitEvent")]
 [Event(name="Attacked", type="popcraft.battle.UnitEvent")]
@@ -34,7 +34,8 @@ public class Unit extends SimObject
         _owningPlayerData = GameContext.playerData[owningPlayerId];
 
         _unitData = GameContext.gameData.units[unitType];
-        _health = _unitData.maxHealth;
+        _maxHealth = _unitData.maxHealth;
+        _health = _maxHealth;
     }
 
     override public function get objectGroups () :Array
@@ -211,6 +212,11 @@ public class Unit extends SimObject
         }
     }
 
+    public function get maxHealth () :Number
+    {
+        return _maxHealth;
+    }
+
     protected function die () :void
     {
         _isDead = true;
@@ -285,6 +291,7 @@ public class Unit extends SimObject
     protected var _owningPlayerData :PlayerData;
     protected var _unitType :uint;
     protected var _unitData :UnitData;
+    protected var _maxHealth :Number;
     protected var _health :Number;
     protected var _isDead :Boolean;
     protected var _currentAttackTarget :SimObjectRef;
