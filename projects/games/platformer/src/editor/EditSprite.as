@@ -45,6 +45,16 @@ public class EditSprite extends Sprite
         updateDisplay();
     }
 
+    public function getX () :int
+    {
+        return _bX / Metrics.TILE_SIZE;
+    }
+
+    public function getY () :int
+    {
+        return -_bY / Metrics.TILE_SIZE;
+    }
+
     public function moveViewTile (dX :int, dY :int) :void
     {
         //trace("moveViewTile (" + dX + ", " + dY + ")");

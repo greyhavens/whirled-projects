@@ -21,10 +21,12 @@ public class BoardEditSprite extends EditSprite
     public function setBoard (board :Board) :void
     {
         if (_board != null) {
+            _board.removeEventListener(Board.PIECE_ADDED, pieceAdded);
             clearDisplay();
         }
         _board = board;
         initDisplay();
+        _board.addEventListener(Board.PIECE_ADDED, pieceAdded);
     }
 
     protected override function initDisplay () :void
@@ -44,7 +46,20 @@ public class BoardEditSprite extends EditSprite
         _layers[LEVEL_LAYER] = new EditorPieceSpriteLayer();
         _layerPoint.addChild(_layers[LEVEL_LAYER]);
         _layerPoint.addChild(_layers[GRID_LAYER] = new GridLayer());
+        _layers[GRID_LAYER].alpha = 0.5;
 
+        super.initDisplay();
+    }
+
+    protected function pieceAdded (p :Piece) :void
+    {
+        _layers[LEVEL_LAYER].addPieceSprite(new EditorPieceSprite(
+                PieceSpriteFactory.getPieceSprite(p), this));
+    }
+
+    protected function initPieceLayer () :void
+    {
+        _layers[LEVEL_LAYER].clear();
         for (var iter :ArrayIterator = _board.pieceIterator(); iter.hasNext(); ) {
             var p :Piece = iter.next() as Piece;
             if (p != null) {
@@ -52,7 +67,6 @@ public class BoardEditSprite extends EditSprite
                         PieceSpriteFactory.getPieceSprite(p), this));
             }
         }
-        super.initDisplay();
     }
 
     protected override function updateDisplay () :void

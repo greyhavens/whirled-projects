@@ -14,6 +14,7 @@ import mx.controls.TextArea;
 
 import flash.display.Loader;
 import flash.net.URLLoader;
+import flash.net.URLLoaderDataFormat;
 import flash.net.URLRequest;
 
 import editor.PieceEditView;
@@ -21,7 +22,10 @@ import editor.PieceEditView;
 protected function loadComplete() :void
 {
     var piecesPath :String = root.loaderInfo.parameters["piecesXML"];
+    piecesPath = piecesPath.replace(/:/, "|");
+    piecesPath = piecesPath.replace(/\\/g, "/");
     if (piecesPath == null || piecesPath == "") {
+        _piecesLoaded = true;
         addEditView();
         return;
     }
@@ -29,13 +33,30 @@ protected function loadComplete() :void
     _piecesLoader = new URLLoader();
     _piecesLoader.addEventListener(Event.COMPLETE,
         function (event :Event) :void {
+            _piecesLoaded = true;
             addEditView();
         });
     _piecesLoader.load(new URLRequest("file://" + piecesPath));
+
+    var swfPath :String = root.loaderInfo.parameters["piecesSWF"];
+    swfPath = swfPath.replace(/:/, "|");
+    swfPath = swfPath.replace(/\\/g, "/");
+
+    _swfLoader = new URLLoader();
+    _swfLoader.dataFormat = URLLoaderDataFormat.BINARY;
+    _swfLoader.addEventListener(Event.COMPLETE,
+        function (event :Event) :void {
+            _swfLoaded = true;
+            addEditView();
+        });
+    _swfLoader.load(new URLRequest("file://" + swfPath));
 }
 
 protected function addEditView () :void
 {
+    if (!_piecesLoaded || !_swfLoaded) {
+        return;
+    }
     _codeArea = new TextArea();
     _codeArea.percentWidth = 100;
     _codeArea.percentHeight = 100;
@@ -44,10 +65,9 @@ protected function addEditView () :void
     _codeArea.setStyle("fontSize", "12");
     xmlCode.addChild(_codeArea);
 
-    var swfPath :String = root.loaderInfo.parameters["piecesSWF"];
     var xmlPieces :XML = (_piecesLoader == null ? null : new XML(_piecesLoader.data));
     pieceEdit.rawChildren.addChild(
-            _editView = new PieceEditView(pieceEdit, xmlPieces, swfPath));
+            _editView = new PieceEditView(pieceEdit, xmlPieces, _swfLoader.data));
 }
 
 protected function tabChanged (selected :Container) :void
@@ -60,6 +80,9 @@ protected function tabChanged (selected :Container) :void
 protected var _codeArea :TextArea;
 protected var _editView :PieceEditView;
 protected var _piecesLoader :URLLoader;
+protected var _swfLoader :URLLoader;
+protected var _swfLoaded :Boolean;
+protected var _piecesLoaded :Boolean;
     ]]>
 </mx:Script>
 <mx:Panel id="topPanel" title="Platformer Piece Editor" height="100%" width="100%"
@@ -67,8 +90,6 @@ protected var _piecesLoader :URLLoader;
     <mx:TabNavigator id="tabs" width="100%" height="100%" change="tabChanged(tabs.selectedChild);">
         <mx:HBox id="editBox" width="100%" label="Edit Piece">
             <editor:FocusContainer id="pieceEdit" width="900" height="700"/>
-            <mx:VBox id="iconContainer" width="100%" height="100%" borderStyle="inset">
-            </mx:VBox>
         </mx:HBox>
         <mx:VBox id="xmlCode" label="XML Code" width="100%" height="100%"/>
     </mx:TabNavigator>

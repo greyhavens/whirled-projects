@@ -33,20 +33,13 @@ public class Piece
             this.sprite = defxml.@sprite;
         }
         if (insxml != null) {
+            if (defxml == null) {
+                this.type = insxml.@type;
+            }
             this.x = insxml.@x;
             this.y = insxml.@y;
         }
     }
-    /*
-    public function Piece (type :String, x :int = 0, y :int = 0, height :int = 1, width :int = 1)
-    {
-        this.type = type;
-        this.x = x;
-        this.y = y;
-        this.height = height;
-        this.width = width;
-    }
-    */
 
     /**
      * Get the XML piece definition.

@@ -7,6 +7,8 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
+import flash.utils.ByteArray;
+
 import board.Board;
 
 import display.Metrics;
@@ -23,7 +25,7 @@ import com.threerings.flex.FlexWrapper;
 
 public class PieceEditView extends Canvas
 {
-    public function PieceEditView (container :Container, pieces :XML, spritePath :String)
+    public function PieceEditView (container :Container, pieces :XML, spriteSWF :ByteArray)
     {
         _container = container;
         _pfac = new PieceFactory(pieces);
@@ -33,9 +35,9 @@ public class PieceEditView extends Canvas
         width = 900;
         height = 700;
         _pfac.addEventListener(PieceFactory.PIECE_UPDATED, pieceUpdated);
+        _pfac.addEventListener(PieceFactory.PIECE_REMOVED, pieceRemoved);
 
-
-        PieceSpriteFactory.init(spritePath, onReady);
+        PieceSpriteFactory.init(spriteSWF, onReady);
     }
 
     public function onReady () :void
@@ -61,6 +63,11 @@ public class PieceEditView extends Canvas
     protected function pieceUpdated (type :String, xmlDef :XML) :void
     {
         setPiece(type);
+    }
+
+    protected function pieceRemoved (type :String, xmlDef :XML) :void
+    {
+        setPiece(null);
     }
 
     protected function setPiece (type :String) :void

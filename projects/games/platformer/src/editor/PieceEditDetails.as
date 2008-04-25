@@ -86,10 +86,16 @@ public class PieceEditDetails extends Canvas
                 _details.push(detail);
                 _detailsBox.addChild(detail.createBox());
             }
+            var hbox :HBox = new HBox();
             var button :Button = new Button();
             button.label = "Update";
             button.addEventListener(FlexEvent.BUTTON_DOWN, updatePiece);
-            _detailsBox.addChild(button);
+            hbox.addChild(button);
+            button = new Button();
+            button.label = "Delete";
+            button.addEventListener(FlexEvent.BUTTON_DOWN, deletePiece);
+            hbox.addChild(button);
+            _detailsBox.addChild(hbox);
         }
     }
 
@@ -118,6 +124,11 @@ public class PieceEditDetails extends Canvas
         var cdef :Class = ApplicationDomain.currentDomain.getDefinition(cname) as Class;
         var p :Piece = new cdef(defxml) as Piece;
         _pfac.updatePiece(_p, p);
+    }
+
+    protected function deletePiece (event :FlexEvent) :void
+    {
+        _pfac.deletePiece(_p);
     }
 
     protected function initDetails () :void

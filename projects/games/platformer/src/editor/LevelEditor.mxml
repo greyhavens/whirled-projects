@@ -4,7 +4,7 @@
     scriptTimeLimit="5"
     layout="absolute" styleName="plain"
     verticalScrollPolicy="off" horizontalScrollPolicy="off"
-    width="740" height="600"
+    width="940" height="800"
     horizontalAlign="center" verticalAlign="middle"
     applicationComplete="loadComplete();">
 <mx:Script>
@@ -12,15 +12,59 @@
 import mx.core.Container;
 import mx.controls.TextArea;
 
+import flash.net.URLLoader;
+import flash.net.URLRequest;
+
 import editor.EditView;
 
 protected function loadComplete() :void
 {
-    addEditView();
+    var piecesPath :String = root.loaderInfo.parameters["piecesXML"];
+    piecesPath = piecesPath.replace(/:/, "|");
+    piecesPath = piecesPath.replace(/\\/g, "/");
+    _piecesLoader = new URLLoader();
+    _piecesLoader.addEventListener(Event.COMPLETE,
+        function (event :Event) :void {
+            _piecesLoaded = true;
+            addEditView();
+        });
+    _piecesLoader.load(new URLRequest("file://" + piecesPath));
+
+    var swfPath :String = root.loaderInfo.parameters["piecesSWF"];
+    swfPath = swfPath.replace(/:/, "|");
+    swfPath = swfPath.replace(/\\/g, "/");
+
+    _swfLoader = new URLLoader();
+    _swfLoader.dataFormat = URLLoaderDataFormat.BINARY;
+    _swfLoader.addEventListener(Event.COMPLETE,
+        function (event :Event) :void {
+            _swfLoaded = true;
+            addEditView();
+        });
+    _swfLoader.load(new URLRequest("file://" + swfPath));
+
+    var levelPath :String = root.loaderInfo.parameters["levelXML"];
+    levelPath = levelPath.replace(/:/, "|");
+    levelPath = levelPath.replace(/\\/g, "/");
+    if (levelPath == null || levelPath == "") {
+        _levelLoaded = true;
+        addEditView();
+    } else {
+        _levelLoader = new URLLoader();
+        _levelLoader.addEventListener(Event.COMPLETE,
+            function (event :Event) :void {
+                _levelLoaded = true;
+                addEditView();
+            });
+        _levelLoader.load(new URLRequest("file://" + levelPath));
+    }
 }
 
 protected function addEditView () :void
 {
+    if (!_levelLoaded || !_piecesLoaded || !_swfLoaded) {
+        return;
+    }
     _codeArea = new TextArea();
     _codeArea.percentWidth = 100;
     _codeArea.percentHeight = 100;
@@ -29,7 +73,11 @@ protected function addEditView () :void
     _codeArea.setStyle("fontSize", "12");
     xmlCode.addChild(_codeArea);
 
-    levelEdit.rawChildren.addChild(_editView = new EditView(levelEdit));
+    var xmlPieces :XML = new XML(_piecesLoader.data);
+    var xmlLevel :XML = (_levelLoader == null ? null : new XML(_levelLoader.data));
+
+    levelEdit.rawChildren.addChild(
+            _editView = new EditView(levelEdit, xmlPieces, xmlLevel, _swfLoader.data));
 }
 
 protected function tabChanged (selected :Container) :void
@@ -41,15 +89,19 @@ protected function tabChanged (selected :Container) :void
 
 protected var _codeArea :TextArea;
 protected var _editView :EditView;
+protected var _piecesLoader :URLLoader;
+protected var _levelLoader :URLLoader;
+protected var _swfLoader :URLLoader;
+protected var _piecesLoaded :Boolean;
+protected var _levelLoaded :Boolean;
+protected var _swfLoaded :Boolean;
     ]]>
 </mx:Script>
 <mx:Panel id="topPanel" title="Platformer Level Editor" height="100%" width="100%"
     paddingTop="0" paddingLeft="0" paddingRight="0" paddingBottom="0">
     <mx:TabNavigator id="tabs" width="100%" height="100%" change="tabChanged(tabs.selectedChild);">
         <mx:HBox id="editBox" width="100%" label="Edit Level">
-            <editor:FocusContainer id="levelEdit" width="700" height="500"/>
-            <mx:VBox id="iconContainer" width="100%" height="100%" borderStyle="inset">
-            </mx:VBox>
+            <editor:FocusContainer id="levelEdit" width="900" height="700"/>
         </mx:HBox>
         <mx:VBox id="xmlCode" label="XML Code" width="100%" height="100%"/>
     </mx:TabNavigator>

@@ -19,6 +19,12 @@ public class EditorPieceSpriteLayer extends PieceSpriteLayer
         _esprites.forEach(func);
     }
 
+    public override function clear () :void
+    {
+        super.clear();
+        _esprites = new Array();
+    }
+
     protected var _esprites :Array = new Array();
 }
 }

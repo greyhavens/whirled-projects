@@ -4,6 +4,7 @@
 package editor {
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 
 import mx.containers.Canvas;
 import mx.controls.Tree;
@@ -41,9 +42,16 @@ public class PieceSelector extends Canvas
         _adg.columns = columns;
         _data = createHD();
         _adg.dataProvider = _data;
+        _adg.doubleClickEnabled = true;
         callLater(sort);
         addChild(_adg);
         _adg.addEventListener(ListEvent.CHANGE, handleChange);
+        /*
+        _adg.addEventListener(MouseEvent.DOUBLE_CLICK, function (event :MouseEvent) :void {
+            trace("selector doubleclick");
+            dispatchEvent(new MouseEvent(MouseEvent.DOUBLE_CLICK));
+        });
+        */
         _pfac.addEventListener(PieceFactory.PIECE_ADDED, handlePieceAdded);
         _pfac.addEventListener(PieceFactory.PIECE_REMOVED, handlePieceRemoved);
         _pfac.addEventListener(PieceFactory.PIECE_UPDATED, handlePieceUpdated);
@@ -51,10 +59,31 @@ public class PieceSelector extends Canvas
 
     public function sort () :void
     {
-        var field:SortField = new SortField("@label", true);
+        var field:SortField = new SortField("@label");
         _adg.hierarchicalCollectionView.sort = new Sort();
+        _adg.hierarchicalCollectionView.sort.compareFunction = compareNodes;
         _adg.hierarchicalCollectionView.sort.fields = [ field ];
         _adg.hierarchicalCollectionView.refresh();
+    }
+
+    protected function compareNodes (data1 :Object, data2 :Object, fields :Array = null) :int
+    {
+        var parent1 :Boolean = data1.children().length() > 0;
+        var parent2 :Boolean = data2.children().length() > 0;
+
+        if (parent1 && !parent2) {
+            return -1;
+        } else if (parent2 && !parent1) {
+            return 1;
+        }
+
+        var ret :int = data1.@label.toString().localeCompare(data2.@label.toString());
+        if (ret > 0) {
+            return 1;
+        } else if (ret < 0) {
+            return -1;
+        }
+        return 0;
     }
 
     public function getSelectedPiece () :String

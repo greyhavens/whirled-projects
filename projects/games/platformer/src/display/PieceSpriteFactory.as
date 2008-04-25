@@ -9,6 +9,7 @@ import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.geom.Matrix;
 import flash.system.ApplicationDomain;
+import flash.utils.ByteArray;
 
 import com.threerings.util.ClassUtil;
 import com.threerings.util.HashMap;
@@ -24,9 +25,10 @@ import Logger;
  */
 public class PieceSpriteFactory
 {
-    public static function init (source :String, onReady :Function) :void
+    public static function init (source :ByteArray, onReady :Function) :void
     {
         MultiLoader.getLoaders(source, function (result :Object) :void {
+            trace("PieceSpriteFactory result: " + result);
             onReady();
         }, false, _contentDomain);
         addPieceClass(new BoundedPieceSprite(new BoundedPiece()));
@@ -70,6 +72,7 @@ public class PieceSpriteFactory
             var symbolClass :Class = _contentDomain.getDefinition(p.sprite) as Class;
             return MovieClip(new symbolClass());
         } catch (e :Error) {
+            trace("Failed to load sprite: " + e);
         }
         return blockShape(p.width, p.height);
     }
@@ -78,7 +81,9 @@ public class PieceSpriteFactory
 
     protected static var _contentDomain :ApplicationDomain = new ApplicationDomain(null);
 
+/*
     [Embed(source="../../rsrc/props_TEST.swf", mimeType="application/octet-stream")]
     protected static var PROPS :Class;
+*/
 }
 }

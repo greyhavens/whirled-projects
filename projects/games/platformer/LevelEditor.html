@@ -4,26 +4,24 @@
 <script language="javascript">
     function createEditor ()
     {
-        //var levelSwf = document.getElementById("levelSwf").value;
-        //var commonObjectsSwf = document.getElementById("commonObjectsSwf").value;
-        //var levelObjectsSwf = document.getElementById("levelObjectsSwf").value;
+        var piecesXML = document.getElementById("piecesXML").value;
+        var piecesSWF = document.getElementById("piecesSWF").value;
+        var levelXML = document.getElementById("levelXML").value;
 
-        //if (levelSwf == "" || commonObjectsSwf == "") {
-        //    alert("You must supply both a level swf and at least one objects swf to use the " +
-        //        "level editor.");
-        //} else if (!levelSwf.match(/.*swf$/) || !commonObjectsSwf.match(/.*swf$/) ||
-        //           (levelObjectsSwf != "" && !levelObjectsSwf.match(/.*swf$/))) {
-        //    alert("All supplied files must be swfs");
-        //} else {
+        if (piecesSWF == "") {
+            alert("You must specify a pieces SWF file");
+        } else if (piecesXML == "") {
+            alert("You must specify a piecex XML file");
+        } else {
             var embed = document.createElement("embed");
             embed.setAttribute("id", "leveledit");
-            embed.setAttribute("width", "751");
-            embed.setAttribute("height", "600");
+            embed.setAttribute("width", "951");
+            embed.setAttribute("height", "800");
             embed.setAttribute("pluginspace", "http://www.macromedia.com/go/getflashplayer");
             embed.setAttribute("type", "application/x-shockwave-flash");
-            //embed.setAttribute("flashvars", "levelPath=" + levelSwf +
-            //                                "&commonObjectsPath=" + commonObjectsSwf +
-            //                                "&levelObjectsPath=" + levelObjectsSwf);
+            embed.setAttribute("flashvars", "piecesXML=" + piecesXML +
+                                            "&piecesSWF=" + piecesSWF +
+                                            "&levelXML=" + levelXML);
             embed.setAttribute("src", "LevelEditor.swf");
 
             var div = document.getElementById("editorDiv");
@@ -32,22 +30,50 @@
             }
             document.getElementById("editorDiv").appendChild(embed);
             changeButtonLabel("Reload Level");
-        //}
+        }
     }
-
 
     function changeButtonLabel (label)
     {
         document.getElementById("editButton").value = label;
     }
+
+    function createCookie(name,value,days) {
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime()+(days*24*60*60*1000));
+            var expires = "; expires="+date.toGMTString();
+        }
+        else var expires = "";
+        document.cookie = name+"="+value+expires+"; path=/";
+    }
+
+    function readCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+
+    function eraseCookie(name) {
+        createCookie(name,"",-1);
+    }
+
+    function loadDefaults () {
+        document.getElementById("piecesXML").value = readCookie("piecesXML");
+        document.getElementById("piecesSWF").value = readCookie("piecesSWF");
+        document.getElementById("levelXML").value = readCookie("levelXML");
+    }
 </script>
-<body>
+<body onLoad="loadDefaults();">
 <fieldset style="width: 711;">
-    Level SWF: <input type="file" id="levelSwf" onchange="changeButtonLabel('Edit Level');"/><br/>
-    Common Objects SWF: <input type="file" id="commonObjectsSwf"
-        onchange="changeButtonLabel('Edit Level');"/><br/>
-    Level Objects SWF (optional): <input type="file" id="levelObjectsSwf"
-        onchange="changeButtonLabel('Edit Level');"/>
+    Pieces XML: <input id="piecesXML" size="80" onchange="changeButtonLabel('Edit Level');"/><br/>
+    Pieces SWF: <input id="piecesSWF" size="80" onchange="changeButtonLabel('Edit Level');"/><br/>
+    Level XML: <input id="levelXML" size="80" onchange="changeButtonLabel('Edit Level');"/><br/>
     <br/>
     <input id="editButton" type="button" value="Edit Level" onclick="createEditor();"/>
 </fieldset>

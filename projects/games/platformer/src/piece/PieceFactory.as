@@ -70,6 +70,12 @@ public class PieceFactory
         }
     }
 
+    public function deletePiece (p :Piece) :void
+    {
+        _pieceMap.remove(p.type);
+        sendEvent(PIECE_REMOVED, p.type, p.xmlDef());
+    }
+
     public function getPieceDefs () :Array
     {
         return _pieceMap.values();
