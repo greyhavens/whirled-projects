@@ -19,7 +19,7 @@ public class DiurnalCycle extends SimObject
             _phaseOfDay = { value: Constants.PHASE_NIGHT };
         } else {
             var phase1 :uint = GameContext.gameData.initialDayPhase;
-            var phase2 :uint = (phase1 == Constants.PHASE_DAY ? Constants.PHASE_NIGHT : Constants.PHASE_NIGHT);
+            var phase2 :uint = (phase1 == Constants.PHASE_DAY ? Constants.PHASE_NIGHT : Constants.PHASE_DAY);
 
             var dayLength :Number = GameContext.gameData.dayLength;
             var nightLength :Number = GameContext.gameData.nightLength;
