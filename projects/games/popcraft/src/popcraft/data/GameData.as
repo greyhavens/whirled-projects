@@ -21,6 +21,33 @@ public class GameData
         return (numPlayers - 1 < baseLocs.length ? baseLocs[numPlayers - 1] : []);
     }
 
+    public function clone () :GameData
+    {
+        var theClone :GameData = new GameData();
+
+        theClone.dayLength = dayLength;
+        theClone.nightLength = nightLength;
+        theClone.initialDayPhase = initialDayPhase;
+
+        for each (var resData :ResourceData in resources) {
+            theClone.resources.push(resData.clone());
+        }
+
+        for each (var unitData :UnitData in units) {
+            theClone.units.push(unitData.clone());
+        }
+
+        for each (var spellData :UnitSpellData in units) {
+            theClone.spells.push(spellData.clone());
+        }
+
+        for each (var baseLoc :Vector2 in baseLocs) {
+            theClone.baseLocs.push(baseLoc.clone());
+        }
+
+        return theClone;
+    }
+
     public static function fromXml (xml :XML) :GameData
     {
         var gameData :GameData = new GameData();

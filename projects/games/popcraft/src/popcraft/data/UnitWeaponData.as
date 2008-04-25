@@ -28,6 +28,26 @@ public class UnitWeaponData
         return aoeRadius * aoeRadius;
     }
 
+    public function clone () :UnitWeaponData
+    {
+        var theClone :UnitWeaponData = new UnitWeaponData();
+
+        theClone.damageType = damageType;
+        theClone.cooldown = cooldown;
+        theClone.maxAttackDistance = maxAttackDistance;
+        theClone.damageRange = damageRange.clone();
+
+        theClone.isRanged = isRanged;
+        theClone.missileSpeed = missileSpeed;
+
+        theClone.isAOE = isAOE;
+        theClone.aoeRadius = aoeRadius;
+        theClone.aoeAnimationName = aoeAnimationName;
+        theClone.aoeDamageFriendlies = aoeDamageFriendlies;
+
+        return theClone;
+    }
+
     public static function fromXml (xml :XML) :UnitWeaponData
         // throws XmlReadError
     {

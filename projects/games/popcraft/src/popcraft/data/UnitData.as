@@ -29,6 +29,28 @@ public class UnitData
         return this.resourceCosts[resourceType];
     }
 
+    public function clone () :UnitData
+    {
+        var theClone :UnitData = new UnitData();
+
+        theClone.name = name;
+        theClone.displayName = displayName;
+        theClone.description = description;
+        theClone.resourceCosts = resourceCosts.slice();
+
+        theClone.baseMoveSpeed = baseMoveSpeed;
+
+        theClone.maxHealth = maxHealth;
+        theClone.armor = armor.clone();
+        theClone.weapon = weapon.clone();
+
+        theClone.collisionRadius = collisionRadius;
+        theClone.detectRadius = detectRadius;
+        theClone.loseInterestRadius = loseInterestRadius;
+
+        return theClone;
+    }
+
     public static function fromXml (xml :XML) :UnitData
         // throws XmlReadError
     {

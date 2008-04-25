@@ -1,7 +1,5 @@
 package popcraft.data {
 
-import com.threerings.util.Assert;
-
 import popcraft.*;
 import popcraft.util.*;
 
@@ -11,10 +9,7 @@ import popcraft.util.*;
  */
 public class UnitArmorData
 {
-    public function UnitArmorData (armorArray :Array)
-    {
-        _armor = armorArray;
-    }
+    public var armor :Array = [];
 
     public function getWeaponDamage (weapon :UnitWeaponData) :Number
     {
@@ -23,27 +18,33 @@ public class UnitArmorData
 
     public function getDamage (damageType :uint, baseDamage :Number) :Number
     {
-        var armorValue :Number = (damageType < _armor.length ? _armor[damageType] : 1);
+        var armorValue :Number = (damageType < armor.length ? armor[damageType] : 1);
         return (baseDamage * armorValue);
+    }
+
+    public function clone () :UnitArmorData
+    {
+        var theClone :UnitArmorData = new UnitArmorData();
+        theClone.armor = armor.slice();
+        return theClone;
     }
 
     public static function fromXml (xml :XML) :UnitArmorData
     {
-        var armorArray :Array = [];
+        var armorData :UnitArmorData = new UnitArmorData();
+
         for (var i :int = 0; i < Constants.DAMAGE_TYPE_NAMES.length; ++i) {
-            armorArray.push(Number(0));
+            armorData.armor.push(Number(0));
         }
 
         for each (var damageNode :XML in xml.Damage) {
             var type :uint = XmlReader.getAttributeAsEnum(damageNode, "type", Constants.DAMAGE_TYPE_NAMES);
             var scale :Number = XmlReader.getAttributeAsNumber(damageNode, "scale");
-            armorArray[type] = scale;
+            armorData.armor[type] = scale;
         }
 
-        return new UnitArmorData(armorArray);
+        return armorData;
     }
-
-    protected var _armor :Array = [];
 }
 
 }

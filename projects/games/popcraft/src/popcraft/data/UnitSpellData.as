@@ -23,6 +23,20 @@ public class UnitSpellData
         damageScaleOffset += spell.damageScaleOffset;
     }
 
+    public function clone () :UnitSpellData
+    {
+        var theClone :UnitSpellData;
+
+        theClone.type = type;
+        theClone.displayName = displayName;
+        theClone.expireTime = expireTime;
+
+        theClone.speedScaleOffset = speedScaleOffset;
+        theClone.damageScaleOffset = damageScaleOffset;
+
+        return theClone;
+    }
+
     public static function fromXml (xml :XML) :UnitSpellData
     {
         var spell :UnitSpellData = new UnitSpellData();

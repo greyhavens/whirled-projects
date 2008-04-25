@@ -15,6 +15,15 @@ public class ResourceData
         this.rarity = rarity;
     }
 
+    public function clone () :ResourceData
+    {
+        var theClone :ResourceData = new ResourceData();
+        theClone.displayName = displayName;
+        theClone.color = color;
+        theClone.rarity = rarity;
+        return theClone;
+    }
+
     public static function fromXml (xml :XML) :ResourceData
     {
         var resource :ResourceData = new ResourceData();
