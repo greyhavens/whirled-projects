@@ -37,12 +37,16 @@ public class GameData
             theClone.units.push(unitData.clone());
         }
 
-        for each (var spellData :UnitSpellData in units) {
+        for each (var spellData :UnitSpellData in spells) {
             theClone.spells.push(spellData.clone());
         }
 
-        for each (var baseLoc :Vector2 in baseLocs) {
-            theClone.baseLocs.push(baseLoc.clone());
+        for each (var gameSize :Array in baseLocs) {
+            var gameSizeClone :Array = [];
+            for each (var baseLoc :Vector2 in gameSize) {
+                gameSizeClone.push(baseLoc.clone());
+            }
+            theClone.baseLocs.push(gameSizeClone);
         }
 
         return theClone;

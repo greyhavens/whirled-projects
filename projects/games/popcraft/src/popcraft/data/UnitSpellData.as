@@ -25,7 +25,7 @@ public class UnitSpellData
 
     public function clone () :UnitSpellData
     {
-        var theClone :UnitSpellData;
+        var theClone :UnitSpellData = new UnitSpellData();
 
         theClone.type = type;
         theClone.displayName = displayName;
