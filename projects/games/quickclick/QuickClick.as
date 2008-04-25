@@ -41,7 +41,7 @@ public class QuickClick extends Sprite
         _ctrl = new GameControl(this);
         _ctrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
         _ctrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
-        _ctrl.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
+        _ctrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleCoinsAwarded);
 
         _timer = new Timer(EXPLOSION_FREQUENCY, 1 + (GAME_DURATION / EXPLOSION_FREQUENCY));
         _timer.addEventListener(TimerEvent.TIMER, handleTimer);
@@ -96,9 +96,9 @@ public class QuickClick extends Sprite
         _ctrl.local.feedback("Good game!");
     }
 
-    protected function handleFlowAwarded (event :FlowAwardedEvent) :void
+    protected function handleCoinsAwarded (event :CoinsAwardedEvent) :void
     {
-        _ctrl.local.feedback("You earned " + event.amount + " flow!");
+        _ctrl.local.feedback("You earned " + event.amount + " coins!");
     }
 
     /**
