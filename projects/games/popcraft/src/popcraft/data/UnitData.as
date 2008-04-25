@@ -40,7 +40,7 @@ public class UnitData
 
         for each (var resourceNode :XML in xml.ResourceCosts.Resource) {
             var resourceType :uint = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
-            var cost :int = XmlReader.getAttributeAsUint(resourceNode, "cost");
+            var cost :int = XmlReader.getAttributeAsUint(resourceNode, "amount");
             unitData.resourceCosts[resourceType] = cost;
         }
 

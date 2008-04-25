@@ -27,8 +27,7 @@ public class GameMode extends AppMode
     {
         // make sure we have a valid GameData object in the GameContext
         if (null == GameContext.gameData) {
-            var dataRsrc :GameDataResourceLoader = AppContext.resources.getResource("defaultGameData") as GameDataResourceLoader;
-            GameContext.gameData = dataRsrc.gameData;
+            GameContext.gameData = AppContext.defaultGameData;
         }
 
         GameContext.gameMode = this;

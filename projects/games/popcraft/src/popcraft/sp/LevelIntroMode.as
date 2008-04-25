@@ -45,7 +45,7 @@ public class LevelIntroMode extends AppMode
         tfDesc.multiline = true;
         tfDesc.wordWrap = true;
         tfDesc.autoSize = TextFieldAutoSize.LEFT;
-        tfDesc.width = 250 - 12;
+        tfDesc.width = 250 - 24;
         tfDesc.x = 12;
         tfDesc.y = 50;
 

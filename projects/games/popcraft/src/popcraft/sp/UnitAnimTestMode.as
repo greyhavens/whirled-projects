@@ -62,7 +62,7 @@ public class UnitAnimTestMode extends AppMode
     {
         var thisObject :UnitAnimTestMode = this;
 
-        var unitData :UnitData = GameContext.gameData.units[unitType];
+        var unitData :UnitData = AppContext.defaultGameData.units[unitType];
         var unitButton :SimpleTextButton = new SimpleTextButton(unitData.displayName);
         unitButton.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
@@ -100,7 +100,7 @@ public class UnitAnimTestMode extends AppMode
 
     protected function updateView () :void
     {
-        var unitData :UnitData = GameContext.gameData.units[_unitType];
+        var unitData :UnitData = AppContext.defaultGameData.units[_unitType];
 
         if (null != _animSprite) {
             this.modeSprite.removeChild(_animSprite);

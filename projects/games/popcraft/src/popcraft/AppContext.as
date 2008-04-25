@@ -7,6 +7,7 @@ import com.whirled.game.GameControl;
 import flash.display.Bitmap;
 import flash.display.MovieClip;
 
+import popcraft.data.*;
 import popcraft.sp.LevelManager;
 
 public class AppContext
@@ -37,6 +38,12 @@ public class AppContext
         }
 
         return null;
+    }
+
+    public static function get defaultGameData () :GameData
+    {
+        var dataRsrc :GameDataResourceLoader = resources.getResource("defaultGameData") as GameDataResourceLoader;
+        return dataRsrc.gameData;
     }
 }
 
