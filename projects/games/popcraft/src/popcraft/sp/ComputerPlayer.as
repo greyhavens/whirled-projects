@@ -22,14 +22,16 @@ public class ComputerPlayer extends SimObject
     {
         if (_waveIndex < _data.initialWaves.length) {
             _nextWave = _data.initialWaves[_waveIndex];
-        } else {
+        } else if (_data.repeatingWaves.length > 0) {
             var index :int = (_waveIndex - _data.initialWaves.length) % _data.repeatingWaves.length;
             _nextWave = _data.repeatingWaves[index];
         }
 
         ++_waveIndex;
 
-        this.addNamedTask(SEND_WAVE_TASK, After(_nextWave.delayBefore, new FunctionTask(sendNextWave)));
+        if (null != _nextWave) {
+            this.addNamedTask(SEND_WAVE_TASK, After(_nextWave.delayBefore, new FunctionTask(sendNextWave)));
+        }
     }
 
     protected function sendNextWave () :void
@@ -47,7 +49,9 @@ public class ComputerPlayer extends SimObject
         var dayPhase :int = GameContext.diurnalCycle.phaseOfDay;
         if (_pausedForDaytime && dayPhase == Constants.PHASE_NIGHT) {
             _pausedForDaytime = false;
-            this.addNamedTask(SEND_WAVE_TASK, After(_nextWave.delayBefore, new FunctionTask(sendNextWave)));
+            if (null != _nextWave) {
+                this.addNamedTask(SEND_WAVE_TASK, After(_nextWave.delayBefore, new FunctionTask(sendNextWave)));
+            }
         } else if (!_pausedForDaytime && dayPhase == Constants.PHASE_DAY) {
             _pausedForDaytime = true;
             this.removeNamedTasks(SEND_WAVE_TASK);

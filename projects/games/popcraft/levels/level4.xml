@@ -1,0 +1,57 @@
+<root>
+    <Level
+        name="Many Madames"
+        introText=
+"Your nemesis and his right-hand man have both set up workshops nearby, and are manufacturing waves of Madames to tear you to pieces. Well-placed Dog-boys will soften the advancing horde.
+
+Both opponents must fall! Click an opponent's base to direct your creatures to it."
+        disableDiurnalCycle="false"
+        playerBaseHealth="100">
+
+        <GameDataOverride>
+            <BaseLocations>
+                <GameSize numPlayers="3">
+                    <BaseLocation x="50" y="175"/>
+                    <BaseLocation x="652" y="85"/>
+                    <BaseLocation x="652" y="315"/>
+                </GameSize>
+            </BaseLocations>
+        </GameDataOverride>
+
+        <InitialResources>
+            <Resource type="blue" amount="50"/>
+            <Resource type="yellow" amount="50"/>
+        </InitialResources>
+
+        <AvailableUnits>
+            <Unit type="grunt"/>
+            <Unit type="heavy"/>
+            <Unit type="sapper"/>
+        </AvailableUnits>
+
+        <Computer baseHealth="60">
+            <InitialWaves>
+                <Wave delayBefore="20"><Unit type="grunt" count="1"/></Wave>
+                <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
+                <Wave delayBefore="20"><Unit type="grunt" count="1"/></Wave>
+                <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
+                <Wave delayBefore="26"><Unit type="sapper" count="10"/></Wave>
+                <Wave delayBefore="1"><Unit type="grunt" count="12"/></Wave>
+                <Wave delayBefore="12"/>
+            </InitialWaves>
+            <RepeatingWaves>
+                <Wave delayBefore="5"><Unit type="grunt" count="3"/></Wave>
+                <Wave delayBefore="20"><Unit type="grunt" count="2"/></Wave>
+                <Wave delayBefore="30"><Unit type="sapper" count="2"/></Wave>
+                <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
+                <Wave delayBefore="1"><Unit type="grunt" count="2"/></Wave>
+                <Wave delayBefore="30"><Unit type="grunt" count="6"/></Wave>
+            </RepeatingWaves>
+        </Computer>
+
+        <Computer baseHealth="60">
+        </Computer>
+
+    </Level>
+
+</root>
