@@ -1,4 +1,4 @@
 <datapack>
-  <file name="head" type="DisplayObject" width="250" height="250" value="default.png"/>
+  <file name="head" type="DisplayObject" width="250" height="250" value="default.png" info="An image to use as the head."/>
   <file name="_CONTENT" type="Blob" value="remixhead.swf"/>
 </datapack>
