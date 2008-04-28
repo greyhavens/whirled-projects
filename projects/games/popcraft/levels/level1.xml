@@ -5,6 +5,15 @@
         disableDiurnalCycle="true"
         playerBaseHealth="100">
 
+        <GameDataOverride>
+            <BaseLocations>
+                <GameSize numPlayers="2">
+                    <BaseLocation x="60" y="185"/>
+                    <BaseLocation x="642" y="175"/>
+                </GameSize>
+            </BaseLocations>
+        </GameDataOverride>
+
         <InitialResources>
             <Resource type="white" amount="60"/>
             <Resource type="blue" amount="20"/>
