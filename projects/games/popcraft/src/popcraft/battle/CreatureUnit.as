@@ -140,12 +140,20 @@ public class CreatureUnit extends Unit
         return g_groups;
     }
 
-    // returns an enemy base.
-    // @TODO: make this work with multiple bases and destroyed bases
+    // returns an enemy base
     public function findEnemyBaseToAttack () :SimObjectRef
     {
         var enemyPlayerData :PlayerData = GameContext.playerData[_owningPlayerData.targetedEnemyId];
-        return enemyPlayerData.baseRef;
+        if (enemyPlayerData.isAlive) {
+            return enemyPlayerData.baseRef;
+        } else {
+            var newEnemy :PlayerData = GameContext.findEnemyForPlayer(_owningPlayerData.playerId);
+            if (null != newEnemy) {
+                return newEnemy.baseRef;
+            }
+        }
+
+        return SimObjectRef.Null();
     }
 
     protected function get aiRoot () :AITask

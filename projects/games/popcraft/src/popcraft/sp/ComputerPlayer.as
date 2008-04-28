@@ -2,7 +2,6 @@ package popcraft.sp {
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.Rand;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -39,15 +38,22 @@ public class ComputerPlayer extends SimObject
 
     protected function sendNextWave () :void
     {
-        for each (var unitType :uint in _nextWave.units) {
-            GameContext.gameMode.buildUnit(_playerData.playerId, unitType);
-        }
+        if (_playerData.isAlive) {
+            for each (var unitType :uint in _nextWave.units) {
+                GameContext.gameMode.buildUnit(_playerData.playerId, unitType);
+            }
 
-        this.queueNextWave();
+            this.queueNextWave();
+        }
     }
 
     override protected function update (dt :Number) :void
     {
+        if (!_playerData.isAlive) {
+            this.destroySelf();
+            return;
+        }
+
         // stop sending out waves during the day, and resume at night
         var dayPhase :int = GameContext.diurnalCycle.phaseOfDay;
         if (_pausedForDaytime && dayPhase == Constants.PHASE_NIGHT) {

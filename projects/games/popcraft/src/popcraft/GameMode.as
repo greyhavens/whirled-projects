@@ -120,7 +120,7 @@ public class GameMode extends AppMode
 
         // setup target enemies
         for each (playerData in GameContext.playerData) {
-            playerData.targetedEnemyId = this.findEnemyForPlayer(playerData.playerId);
+            playerData.targetedEnemyId = GameContext.findEnemyForPlayer(playerData.playerId).playerId;
         }
     }
 
@@ -152,25 +152,8 @@ public class GameMode extends AppMode
 
         // setup target enemies
         for each (playerData in GameContext.playerData) {
-            playerData.targetedEnemyId = this.findEnemyForPlayer(playerData.playerId);
+            playerData.targetedEnemyId = GameContext.findEnemyForPlayer(playerData.playerId).playerId;
         }
-    }
-
-    protected function findEnemyForPlayer (playerId :uint) :int
-    {
-        var allPlayers :Array = GameContext.playerData;
-        var thisPlayer :PlayerData = allPlayers[playerId];
-
-        // find the first player after this one that is on an opposing team
-        for (var i :int = 0; i < allPlayers.length - 1; ++i) {
-            var otherPlayerId :uint = (playerId + i + 1) % allPlayers.length;
-            var otherPlayer :PlayerData = allPlayers[otherPlayerId];
-            if (otherPlayer.teamId != thisPlayer.teamId && otherPlayer.isAlive) {
-                return otherPlayerId;
-            }
-        }
-
-        return -1;
     }
 
     protected function shutdownPlayers () :void

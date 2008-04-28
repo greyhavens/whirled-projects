@@ -59,7 +59,13 @@ class GruntAI extends AITaskTree
     {
         this.clearSubtasks();
 
-        this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
+        if (_targetBaseRef.isNull) {
+            _targetBaseRef = _unit.findEnemyBaseToAttack();
+        }
+
+        if (!_targetBaseRef.isNull) {
+            this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
+        }
 
         // scan for non-sappers once/second
         var detectPredicate :Function = DetectCreatureAction.createNotEnemyOfTypesPredicate([Constants.UNIT_TYPE_SAPPER]);
