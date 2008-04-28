@@ -14,7 +14,7 @@
             <Unit type="heavy"/>
         </AvailableUnits>
 
-        <Computer baseHealth="100">
+        <Computer baseHealth="100" team="1">
             <InitialWaves>
                 <Wave delayBefore="20"><Unit type="grunt" count="1"/></Wave>
                 <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>

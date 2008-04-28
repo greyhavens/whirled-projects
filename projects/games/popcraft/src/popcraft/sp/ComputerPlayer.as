@@ -15,6 +15,9 @@ public class ComputerPlayer extends SimObject
         _data = data;
         _playerData = GameContext.playerData[playerId];
 
+        // Computer players always target the local player
+        _playerData.targetedEnemyId = GameContext.localPlayerId;
+
         this.queueNextWave();
     }
 

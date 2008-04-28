@@ -9,9 +9,10 @@ import popcraft.battle.PlayerBaseUnit;
  */
 public class PlayerData
 {
-    public function PlayerData (playerId :uint)
+    public function PlayerData (playerId :uint, teamId :uint)
     {
         _playerId = playerId;
+        _teamId = teamId;
 
         var whirledIds :Array;
         var playerNames :Array;
@@ -30,6 +31,11 @@ public class PlayerData
     public function get playerId () :uint
     {
         return _playerId;
+    }
+
+    public function get teamId () :uint
+    {
+        return _teamId;
     }
 
     public function get whirledId () :int
@@ -69,7 +75,10 @@ public class PlayerData
 
     public function get isAlive () :Boolean
     {
-        return (null != this.base);
+        // If this is called before the game has been completely set up,
+        // _baseRef will be null and (null != this.base) will NPE. We can
+        // assume, in this situation, that the player is alive.
+        return (null == _baseRef || null != this.base);
     }
 
     public function get targetedEnemyId () :uint
@@ -83,6 +92,7 @@ public class PlayerData
     }
 
     protected var _playerId :uint;  // an unsigned integer corresponding to the player's seating position
+    protected var _teamId :uint;
     protected var _whirledId :int;  // the oid assigned to this player on Whirled
     protected var _playerName :String;
     protected var _leftGame :Boolean;

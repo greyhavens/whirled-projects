@@ -3,6 +3,7 @@ package popcraft {
 import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
+import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.threerings.util.RingBuffer;
 import com.whirled.contrib.simplegame.*;
@@ -35,7 +36,12 @@ public class GameMode extends AppMode
         // create a special ObjectDB for all objects that are synchronized over the network.
         GameContext.netObjects = new NetObjectDB();
 
-        this.setupPlayers();
+        if (GameContext.isMultiplayer) {
+            this.setupPlayersMP();
+        } else {
+            this.setupPlayersSP();
+        }
+
         this.setupNetwork();
         this.setupBattle();
         this.setupPuzzle();
@@ -47,7 +53,7 @@ public class GameMode extends AppMode
             _debugDataView.visible = false;
         }
 
-        if (GameContext.gameType == GameContext.GAME_TYPE_SINGLEPLAYER) {
+        if (GameContext.isSinglePlayer) {
             AppContext.mainLoop.pushMode(new LevelIntroMode());
         }
     }
@@ -85,20 +91,14 @@ public class GameMode extends AppMode
         }
     }
 
-    protected function setupPlayers () :void
+    protected function setupPlayersMP () :void
     {
-        if (GameContext.gameType == GameContext.GAME_TYPE_MULTIPLAYER) {
-            // get some information about the players in the game
-            var numPlayers :int = AppContext.gameCtrl.game.seating.getPlayerIds().length;
-            GameContext.localPlayerId = AppContext.gameCtrl.game.seating.getMyPosition();
+        // get some information about the players in the game
+        var numPlayers :int = AppContext.gameCtrl.game.seating.getPlayerIds().length;
+        GameContext.localPlayerId = AppContext.gameCtrl.game.seating.getMyPosition();
 
-            // we want to know when a player leaves
-            AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
-                handleOccupantLeft);
-        } else {
-            numPlayers = GameContext.spLevel.computers.length + 1;
-            GameContext.localPlayerId = 0;
-        }
+        // we want to know when a player leaves
+        AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, handleOccupantLeft);
 
         // create PlayerData structures
         GameContext.playerData = [];
@@ -106,33 +106,71 @@ public class GameMode extends AppMode
 
             var playerData :PlayerData;
 
+            var teamId :uint = playerId; // @TODO - add support for team-based MP games?
+
             if (GameContext.localPlayerId == playerId) {
-                var localPlayerData :LocalPlayerData = new LocalPlayerData(playerId);
-                if (GameContext.isSinglePlayer) {
-                    // in single player games, grant the player some starting resources
-                    var initialResources :Array = GameContext.spLevel.initialResources;
-                    for (var resType :uint = 0; resType < initialResources.length; ++resType) {
-                        localPlayerData.setResourceAmount(resType, int(initialResources[resType]));
-                    }
-                }
+                var localPlayerData :LocalPlayerData = new LocalPlayerData(playerId, teamId);
                 playerData = localPlayerData;
             } else {
-                playerData = new PlayerData(playerId);
+                playerData = new PlayerData(playerId, teamId);
             }
-
-            // setup initial player targets
-            playerData.targetedEnemyId = (playerId + 1 < numPlayers ? playerId + 1 : 0);
 
             GameContext.playerData.push(playerData);
         }
 
-        if (GameContext.gameType == GameContext.GAME_TYPE_SINGLEPLAYER) {
-            // create computer players
-            var cpPlayerId :uint = 1;
-            for each (var cpData :ComputerPlayerData in GameContext.spLevel.computers) {
-                GameContext.netObjects.addObject(new ComputerPlayer(cpData, cpPlayerId++));
+        // setup target enemies
+        for each (playerData in GameContext.playerData) {
+            playerData.targetedEnemyId = this.findEnemyForPlayer(playerData.playerId);
+        }
+    }
+
+    protected function setupPlayersSP () :void
+    {
+        GameContext.playerData = [];
+
+        // Create the local player (always on team 0)
+        var localPlayerData :LocalPlayerData = new LocalPlayerData(playerId, 0);
+
+        // grant the player some starting resources
+        var initialResources :Array = GameContext.spLevel.initialResources;
+        for (var resType :uint = 0; resType < initialResources.length; ++resType) {
+            localPlayerData.setResourceAmount(resType, int(initialResources[resType]));
+        }
+
+        GameContext.playerData.push(localPlayerData);
+
+        // create computer players
+        var numComputers :uint = GameContext.spLevel.computers.length;
+        for (var playerId :uint = 1; playerId < numComputers + 1; ++playerId) {
+            var cpData :ComputerPlayerData = GameContext.spLevel.computers[playerId - 1];
+            var playerData :PlayerData = new PlayerData(playerId, cpData.team);
+            GameContext.playerData.push(playerData);
+
+            // create the computer player object
+            GameContext.netObjects.addObject(new ComputerPlayer(cpData, playerId));
+        }
+
+        // setup target enemies
+        for each (playerData in GameContext.playerData) {
+            playerData.targetedEnemyId = this.findEnemyForPlayer(playerData.playerId);
+        }
+    }
+
+    protected function findEnemyForPlayer (playerId :uint) :int
+    {
+        var allPlayers :Array = GameContext.playerData;
+        var thisPlayer :PlayerData = allPlayers[playerId];
+
+        // find the first player after this one that is on an opposing team
+        for (var i :int = 0; i < allPlayers.length - 1; ++i) {
+            var otherPlayerId :uint = (playerId + i + 1) % allPlayers.length;
+            var otherPlayer :PlayerData = allPlayers[otherPlayerId];
+            if (otherPlayer.teamId != thisPlayer.teamId && otherPlayer.isAlive) {
+                return otherPlayerId;
             }
         }
+
+        return -1;
     }
 
     protected function shutdownPlayers () :void
@@ -353,20 +391,24 @@ public class GameMode extends AppMode
             ++_tickCount;
         }
 
-        // The game is over if there's only one man standing
+        // The game is over if there's only one team standing
+        var liveTeams :HashSet = new HashSet();
         var livePlayer :PlayerData;
         var livePlayerCount :int;
 
         for each (var playerData :PlayerData in GameContext.playerData) {
             if (!playerData.leftGame && playerData.isAlive) {
                 livePlayer = playerData;
-                if (++livePlayerCount > 1) {
+                livePlayerCount++;
+
+                liveTeams.add(playerData.teamId);
+                if (liveTeams.size() > 1) {
                     break;
                 }
             }
         }
 
-        if (livePlayerCount <= 1) {
+        if (liveTeams.size() <= 1) {
             // show the appropriate game over screen
             if (GameContext.isMultiplayer) {
                 MainLoop.instance.changeMode(new GameOverMode(livePlayer));
@@ -516,10 +558,11 @@ public class GameMode extends AppMode
         var baseViews :Array = PlayerBaseUnitView.getAll();
         for each (var baseView :PlayerBaseUnitView in baseViews) {
             var owningPlayerId :uint = baseView.baseUnit.owningPlayerId;
+            var owningPlayerData :PlayerData = GameContext.playerData[owningPlayerId];
             baseView.targetEnemyBadgeVisible = (owningPlayerId == localPlayerData.targetedEnemyId);
             baseView.friendlyBadgeVisible = (owningPlayerId == GameContext.localPlayerId);
 
-            if (GameContext.localPlayerId != owningPlayerId) {
+            if (localPlayerData.teamId != owningPlayerData.teamId) {
                 (baseView.displayObject as InteractiveObject).addEventListener(
                     MouseEvent.MOUSE_DOWN, this.createBaseViewClickListener(baseView));
             }

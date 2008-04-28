@@ -10,9 +10,9 @@ import popcraft.data.*;
  */
 public class LocalPlayerData extends PlayerData
 {
-    public function LocalPlayerData (playerId :uint)
+    public function LocalPlayerData (playerId :uint, teamId :uint)
     {
-        super(playerId);
+        super(playerId, teamId);
 
         _resources = new Array(Constants.RESOURCE_NAMES.length);
         for (var i :int = 0; i < _resources.length; ++i) {
