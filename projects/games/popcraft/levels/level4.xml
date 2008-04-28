@@ -29,33 +29,33 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
             <Unit type="sapper"/>
         </AvailableUnits>
 
-        <Computer baseHealth="60" team="1">
+        <Computer baseHealth="70" team="1">
             <InitialWaves>
-                <!-- Day 1 -->
-                <Wave delayBefore="25"><Unit type="grunt" count="5"/></Wave>
-                <Wave delayBefore="45"><Unit type="grunt" count="5"/></Wave>
-                <Wave delayBefore="45"><Unit type="grunt" count="5"/></Wave>
-                <Wave delayBefore="4"/>
+                <Wave delayBefore="30"><Unit type="grunt" count="3"/></Wave>
+                <Wave delayBefore="50"><Unit type="grunt" count="3"/></Wave>
+                <Wave delayBefore="39"/>
             </InitialWaves>
 
             <RepeatingWaves>
-                <Wave delayBefore="25"><Unit type="grunt" count="5"/></Wave>
-                <Wave delayBefore="45"><Unit type="grunt" count="5"/></Wave>
-                <Wave delayBefore="45"><Unit type="grunt" count="5"/></Wave>
-                <Wave delayBefore="4"/>
+                <Wave delayBefore="5"><Unit type="grunt" count="3"/></Wave>
+                <Wave delayBefore="50"><Unit type="grunt" count="3"/></Wave>
+                <Wave delayBefore="50"><Unit type="grunt" count="3"/></Wave>
+                <Wave delayBefore="14"/>
             </RepeatingWaves>
         </Computer>
 
-        <Computer baseHealth="60" team="1">
+        <Computer baseHealth="70" team="1">
             <InitialWaves>
-                <!-- Day 2 -->
-                <Wave delayBefore="5"><Unit type="grunt" count="5"/></Wave>
-                <Wave delayBefore="45"><Unit type="grunt" count="5"/></Wave>
-                <Wave delayBefore="45"><Unit type="grunt" count="5"/></Wave>
-                <Wave delayBefore="24"/>
+                <Wave delayBefore="5"><Unit type="grunt" count="3"/></Wave>
+                <Wave delayBefore="50"><Unit type="grunt" count="3"/></Wave>
+                <Wave delayBefore="50"><Unit type="grunt" count="3"/></Wave>
+                <Wave delayBefore="14"/>
             </InitialWaves>
 
             <RepeatingWaves>
+                <Wave delayBefore="30"><Unit type="grunt" count="3"/></Wave>
+                <Wave delayBefore="50"><Unit type="grunt" count="3"/></Wave>
+                <Wave delayBefore="39"/>
             </RepeatingWaves>
         </Computer>
 
