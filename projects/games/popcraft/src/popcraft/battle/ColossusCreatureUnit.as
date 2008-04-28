@@ -140,7 +140,7 @@ class ColossusAI extends AITaskTree
         _unit = unit;
         _targetBaseRef = targetBaseRef;
 
-        this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
+        this.beginAttackBase();
 
         // scan for units in our immediate vicinity every couple of seconds
         var detectPredicate :Function = DetectCreatureAction.createNotEnemyOfTypesPredicate([Constants.UNIT_TYPE_COLOSSUS]);
@@ -148,6 +148,17 @@ class ColossusAI extends AITaskTree
         scanSequence.addSequencedTask(new AITimerTask(2));
         scanSequence.addSequencedTask(new DetectCreatureAction(detectPredicate));
         this.addSubtask(scanSequence);
+    }
+
+    protected function beginAttackBase () :void
+    {
+        if (_targetBaseRef.isNull) {
+            _targetBaseRef = _unit.findEnemyBaseToAttack();
+        }
+
+        if (!_targetBaseRef.isNull) {
+            this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
+        }
     }
 
     override public function get name () :String
@@ -164,7 +175,9 @@ class ColossusAI extends AITaskTree
             // we detected an enemy - attack it
             log.info("detected enemy - attacking");
             _unit.sendAttack(enemyUnit, _unit.unitData.weapon);
-
+        } else if (messageName == AttackUnitTask.NAME) {
+            // the base we were targeting died - find a new one
+            this.beginAttackBase();
         }
     }
 

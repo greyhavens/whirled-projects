@@ -82,7 +82,13 @@ class SapperAI extends AITaskTree
     {
         this.clearSubtasks();
 
-        this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
+        if (_targetBaseRef.isNull) {
+            _targetBaseRef = _unit.findEnemyBaseToAttack();
+        }
+
+        if (!_targetBaseRef.isNull) {
+            this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
+        }
 
         var sapperBlastRadius :Number = _unit.unitData.weapon.aoeRadius;
 
