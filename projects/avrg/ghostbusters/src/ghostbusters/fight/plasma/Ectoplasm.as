@@ -38,9 +38,12 @@ public class Ectoplasm extends SceneObject
         return _displayObj;
     }
 
-    override public function get objectGroups () :Array
+    override public function getObjectGroup (groupNum :int) :String
     {
-        return [ GROUP_NAME ];
+        switch (groupNum) {
+        case 0: return GROUP_NAME;
+        default: return super.getObjectGroup(groupNum - 1);
+        }
     }
 
     protected var _displayObj :DisplayObject;
