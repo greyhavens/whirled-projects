@@ -38,7 +38,7 @@ public class UnitFactory
         GameContext.netObjects.addObject(creature);
 
         var creatureView :CreatureUnitView = new CreatureUnitView(creature);
-        GameContext.gameMode.addObject(creatureView, GameContext.battleBoardView.unitDisplayParent);
+        GameContext.gameMode.addObject(creatureView, GameContext.battleBoardView.unitViewParent);
 
         return creature;
     }
@@ -50,7 +50,7 @@ public class UnitFactory
         GameContext.netObjects.addObject(base);
 
         var baseView :PlayerBaseUnitView = new PlayerBaseUnitView(base);
-        GameContext.gameMode.addObject(baseView, GameContext.battleBoardView.unitDisplayParent);
+        GameContext.gameMode.addObject(baseView, GameContext.battleBoardView.unitViewParent);
 
         return base;
     }

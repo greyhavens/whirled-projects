@@ -20,7 +20,7 @@ public class MissileFactory
 
         var missileView :MissileView = new MissileView(srcUnitLoc, targetUnit.ref, travelTime);
 
-        GameContext.netObjects.addObject(missileView, GameContext.battleBoardView.unitDisplayParent);
+        GameContext.netObjects.addObject(missileView, GameContext.battleBoardView.unitViewParent);
 
         return missile;
     }

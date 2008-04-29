@@ -8,7 +8,9 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
         disableDiurnalCycle="false"
         playerBaseHealth="100">
 
-        <GameDataOverride>
+        <GameDataOverride
+            spellObjectCreationTimeMin="-1"
+            spellObjectCreationTimeMax="-1">
             <BaseLocations>
                 <GameSize numPlayers="3">
                     <BaseLocation x="50" y="175"/>

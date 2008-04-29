@@ -1,6 +1,7 @@
 package popcraft.data {
 
 import com.threerings.flash.Vector2;
+import com.whirled.contrib.simplegame.util.*;
 
 import popcraft.*;
 import popcraft.util.*;
@@ -10,6 +11,8 @@ public class GameData
     public var dayLength :Number;
     public var nightLength :Number;
     public var initialDayPhase :uint;
+
+    public var spellObjectTimerLength :NumRange;
 
     public var resources :Array = [];
     public var units :Array = [];
@@ -28,6 +31,7 @@ public class GameData
         theClone.dayLength = dayLength;
         theClone.nightLength = nightLength;
         theClone.initialDayPhase = initialDayPhase;
+        theClone.spellObjectTimerLength = spellObjectTimerLength.clone();
 
         for each (var resData :ResourceData in resources) {
             theClone.resources.push(resData.clone());
@@ -61,6 +65,10 @@ public class GameData
         gameData.dayLength = XmlReader.getAttributeAsNumber(xml, "dayLength", (useDefaults ? gameData.dayLength : undefined));
         gameData.nightLength = XmlReader.getAttributeAsNumber(xml, "nightLength", (useDefaults ? gameData.nightLength : undefined));
         gameData.initialDayPhase = XmlReader.getAttributeAsEnum(xml, "initialDayPhase", Constants.DAY_PHASE_NAMES, (useDefaults ? gameData.initialDayPhase : undefined));
+
+        var spellObjectCreationTimeMin :Number = XmlReader.getAttributeAsNumber(xml, "spellObjectCreationTimeMin", (useDefaults ? gameData.spellObjectTimerLength.min : undefined));
+        var spellObjectCreationTimeMax :Number = XmlReader.getAttributeAsNumber(xml, "spellObjectCreationTimeMax", (useDefaults ? gameData.spellObjectTimerLength.max : undefined));
+        gameData.spellObjectTimerLength = new NumRange(spellObjectCreationTimeMin, spellObjectCreationTimeMax, Rand.STREAM_GAME);
 
         // init the resource data
         for (var i :int = gameData.resources.length; i < Constants.RESOURCE_NAMES.length; ++i) {

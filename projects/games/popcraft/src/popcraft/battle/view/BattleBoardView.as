@@ -38,10 +38,6 @@ public class BattleBoardView extends SceneObject
         _darkness = new SimpleSceneObject(darknessShape);
         _darkness.alpha = 0;
 
-        // board units will attach to _unitDisplayParent, which is drawn above
-        // the background and below the foreground
-        _unitDisplayParent = new Sprite();
-
         var bg :Bitmap = (AppContext.resources.getResource("battle_bg") as ImageResourceLoader).createBitmap();
         bg.scaleX = (_width / bg.width);
         bg.scaleY = (_height / bg.height);
@@ -52,7 +48,8 @@ public class BattleBoardView extends SceneObject
 
         _view.addChild(bg);
         _view.addChild(_darkness.displayObject);
-        _view.addChild(_unitDisplayParent);
+        _view.addChild(_spellPickupViewParent);
+        _view.addChild(_unitViewParent);
         _view.addChild(fg);
 
         _lastDayPhase = (DiurnalCycle.isDisabled ? Constants.PHASE_NIGHT : GameContext.gameData.initialDayPhase);
@@ -94,14 +91,19 @@ public class BattleBoardView extends SceneObject
         return _view;
     }
 
-    public function get unitDisplayParent () :DisplayObjectContainer
+    public function get spellPickupViewParent () :DisplayObjectContainer
     {
-        return _unitDisplayParent;
+        return _spellPickupViewParent;
+    }
+
+    public function get unitViewParent () :DisplayObjectContainer
+    {
+        return _unitViewParent;
     }
 
     public function sortUnitDisplayChildren () :void
     {
-        DisplayUtil.sortDisplayChildren(_unitDisplayParent, displayObjectYSort);
+        DisplayUtil.sortDisplayChildren(_unitViewParent, displayObjectYSort);
     }
 
     protected static function displayObjectYSort (a :DisplayObject, b :DisplayObject) :int
@@ -122,7 +124,8 @@ public class BattleBoardView extends SceneObject
     protected var _height :int;
     protected var _view :Sprite;
     protected var _darkness :SceneObject;
-    protected var _unitDisplayParent :Sprite;
+    protected var _spellPickupViewParent :Sprite = new Sprite();
+    protected var _unitViewParent :Sprite = new Sprite();
     protected var _lastDayPhase :uint;
 }
 

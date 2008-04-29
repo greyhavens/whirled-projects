@@ -8,6 +8,7 @@ import com.threerings.util.Log;
 import com.threerings.util.RingBuffer;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.util.*;
 import com.whirled.game.OccupantChangedEvent;
 
@@ -288,6 +289,42 @@ public class GameMode extends AppMode
             this.addObject(diurnalMeter, this.modeSprite);
         }
 
+        // Spell pickup timer
+        this.scheduleNextSpellPickup();
+    }
+
+    protected function scheduleNextSpellPickup () :void
+    {
+        var time :Number = GameContext.gameData.spellObjectTimerLength.next();
+        if (time >= 0) {
+            this.addObject(new SimpleTimer(time, createNextSpellPickup));
+        }
+    }
+
+    protected function createNextSpellPickup () :void
+    {
+        // find a location roughly in the center of the player bases
+        var loc :Vector2 = new Vector2();
+        var numBases :int;
+        for each (var playerData :PlayerData in GameContext.playerData) {
+            var playerBase :PlayerBaseUnit = playerData.base;
+            if (null != playerBase) {
+                loc.addLocal(playerBase.unitLoc);
+                ++numBases;
+            }
+        }
+
+        if (numBases > 0) {
+            loc.x /= numBases;
+            loc.y /= numBases;
+
+            // pick a spell at random
+            var spellType :uint = Rand.nextIntRange(0, Constants.SPELL_NAMES.length, Rand.STREAM_GAME);
+            SpellPickupFactory.createSpellPickup(spellType, loc);
+
+            // schedule the next one
+            this.scheduleNextSpellPickup();
+        }
     }
 
     // there has to be a better way to figure out charCodes
@@ -504,7 +541,8 @@ public class GameMode extends AppMode
         case CastSpellMessage.messageName:
             var castSpellMsg :CastSpellMessage = msg as CastSpellMessage;
             var spellSet :UnitSpellSet = GameContext.playerUnitSpellSets[castSpellMsg.playerId];
-            spellSet.addSpell(GameContext.gameData.spells[castSpellMsg.spellType]);
+            var spell :UnitSpellData = GameContext.gameData.spells[castSpellMsg.spellType];
+            spellSet.addSpell(spell.clone());
             break;
 
         case ChecksumMessage.messageName:

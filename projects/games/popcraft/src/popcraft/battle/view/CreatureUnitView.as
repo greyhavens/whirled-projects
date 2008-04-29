@@ -168,7 +168,7 @@ public class CreatureUnitView extends SceneObject
 
                 animObj.addTask(After(duration, new SelfDestructTask()));
 
-                GameContext.gameMode.addObject(animObj, GameContext.battleBoardView.unitDisplayParent);
+                GameContext.gameMode.addObject(animObj, GameContext.battleBoardView.unitViewParent);
             }
         }
 
@@ -189,7 +189,7 @@ public class CreatureUnitView extends SceneObject
             // fade out and die
             aoeObj.addTask(After(0.3, new SerialTask(new AlphaTask(0, 0.3), new SelfDestructTask())));
 
-            GameContext.gameMode.addObject(aoeObj, GameContext.battleBoardView.unitDisplayParent);
+            GameContext.gameMode.addObject(aoeObj, GameContext.battleBoardView.unitViewParent);
         }
     }
 

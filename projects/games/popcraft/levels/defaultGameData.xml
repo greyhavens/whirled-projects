@@ -2,7 +2,9 @@
     <GameData
         dayLength="30"
         nightLength="120"
-        initialDayPhase="day">
+        initialDayPhase="day"
+        spellObjectCreationTimeMin="40"
+        spellObjectCreationTimeMax="80">
 
         <Resources>
             <Resource type="white" displayName="Flesh" color="0xE8E7E5" rarity="1"/>

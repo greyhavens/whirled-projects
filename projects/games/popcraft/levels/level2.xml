@@ -5,7 +5,9 @@
         disableDiurnalCycle="true"
         playerBaseHealth="40">
 
-        <GameDataOverride>
+        <GameDataOverride
+            spellObjectCreationTimeMin="-1"
+            spellObjectCreationTimeMax="-1">
             <BaseLocations>
                 <GameSize numPlayers="2">
                     <BaseLocation x="50" y="85"/>
