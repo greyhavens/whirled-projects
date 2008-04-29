@@ -173,7 +173,7 @@ class ColossusAI extends AITaskTree
             var enemyUnit :CreatureUnit = msg.data as CreatureUnit;
 
             // we detected an enemy - attack it
-            log.info("detected enemy - attacking");
+            //log.info("detected enemy - attacking");
             _unit.sendAttack(enemyUnit, _unit.unitData.weapon);
         } else if (messageName == AttackUnitTask.NAME) {
             // the base we were targeting died - find a new one

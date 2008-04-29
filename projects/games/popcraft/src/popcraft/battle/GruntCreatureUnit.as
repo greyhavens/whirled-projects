@@ -82,7 +82,7 @@ class GruntAI extends AITaskTree
 
             case AttackUnitTask.NAME:
                 // resume attacking base
-                log.info("resuming attack on base");
+                //log.info("resuming attack on base");
                 this.beginAttackBase();
                 break;
             }
@@ -92,7 +92,7 @@ class GruntAI extends AITaskTree
             var enemyUnit :CreatureUnit = msg.data as CreatureUnit;
 
             // we detected an enemy - attack it
-            log.info("detected enemy - attacking");
+            //log.info("detected enemy - attacking");
             this.clearSubtasks();
             this.addSubtask(new AttackUnitTask(enemyUnit.ref, true, _unit.unitData.loseInterestRadius));
 

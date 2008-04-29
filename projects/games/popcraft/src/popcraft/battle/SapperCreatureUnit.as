@@ -109,7 +109,7 @@ class SapperAI extends AITaskTree
             // we detected an enemy group - unbundle the message from the sequenced task
             var msg :SequencedTaskMessage = data as SequencedTaskMessage;
             var group :Array = msg.data as Array;
-            log.info("detected enemy group - bombing!");
+            //log.info("detected enemy group - bombing!");
 
             // try to attack the first enemy
             var enemy :CreatureUnit = group[0];
