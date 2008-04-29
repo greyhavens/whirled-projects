@@ -30,7 +30,7 @@ public class Constants
     public static const RESOURCE_DISPLAY_LOC :Point = new Point(350, 380);
     public static const PUZZLE_BOARD_LOC :Point = new Point(10, 378);
     public static const RESOURCE_POPUP_LOC :Point = new Point(275, 425);
-    public static const DIURNAL_METER_LOC :Point = new Point(530, 425);
+    public static const DIURNAL_METER_LOC :Point = new Point(255, 2);
     public static const UNIT_QUEUE_LOC :Point = new Point(530, 400);
 
     public static const FIRST_UNIT_BUTTON_LOC :Point = new Point(350, 400);
