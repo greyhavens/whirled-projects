@@ -9,10 +9,6 @@ public class AITaskTree extends AITask
 {
     public static const MSG_SUBTASKCOMPLETED :String = "SubtaskCompleted";
 
-    public function AITaskTree ()
-    {
-    }
-
     override public function update (dt :Number, unit :CreatureUnit) :uint
     {
         _stopProcessingSubtasks = false;
@@ -33,7 +29,9 @@ public class AITaskTree extends AITask
             if (null != task) {
                 var status :uint = task.update(dt, unit);
 
-                if (AITaskStatus.COMPLETE == status) {
+                // _stopProcessingSubtasks can become true in task.update, so
+                // check against it here as well
+                if (!_stopProcessingSubtasks && AITaskStatus.COMPLETE == status) {
                     _subtasks[i] = null;
                     _freeIndices.push(i);
 
