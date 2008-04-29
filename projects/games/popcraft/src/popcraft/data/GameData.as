@@ -13,6 +13,7 @@ public class GameData
     public var initialDayPhase :uint;
 
     public var spellObjectTimerLength :NumRange;
+    public var spellObjectDistanceSpread :NumRange;
 
     public var resources :Array = [];
     public var units :Array = [];
@@ -32,6 +33,7 @@ public class GameData
         theClone.nightLength = nightLength;
         theClone.initialDayPhase = initialDayPhase;
         theClone.spellObjectTimerLength = spellObjectTimerLength.clone();
+        theClone.spellObjectDistanceSpread = spellObjectDistanceSpread.clone();
 
         for each (var resData :ResourceData in resources) {
             theClone.resources.push(resData.clone());
@@ -69,6 +71,10 @@ public class GameData
         var spellObjectCreationTimeMin :Number = XmlReader.getAttributeAsNumber(xml, "spellObjectCreationTimeMin", (useDefaults ? gameData.spellObjectTimerLength.min : undefined));
         var spellObjectCreationTimeMax :Number = XmlReader.getAttributeAsNumber(xml, "spellObjectCreationTimeMax", (useDefaults ? gameData.spellObjectTimerLength.max : undefined));
         gameData.spellObjectTimerLength = new NumRange(spellObjectCreationTimeMin, spellObjectCreationTimeMax, Rand.STREAM_GAME);
+
+        var spellObjectDistanceSpreadMin :Number = XmlReader.getAttributeAsNumber(xml, "spellObjectDistanceSpreadMin", (useDefaults ? gameData.spellObjectDistanceSpread.min : undefined));
+        var spellObjectDistanceSpreadMax :Number = XmlReader.getAttributeAsNumber(xml, "spellObjectDistanceSpreadMax", (useDefaults ? gameData.spellObjectDistanceSpread.max : undefined));
+        gameData.spellObjectTimerLength = new NumRange(spellObjectDistanceSpreadMin, spellObjectDistanceSpreadMax, Rand.STREAM_GAME);
 
         // init the resource data
         for (var i :int = gameData.resources.length; i < Constants.RESOURCE_NAMES.length; ++i) {

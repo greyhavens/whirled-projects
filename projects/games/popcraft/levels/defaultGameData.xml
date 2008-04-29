@@ -4,7 +4,9 @@
         nightLength="120"
         initialDayPhase="day"
         spellObjectCreationTimeMin="40"
-        spellObjectCreationTimeMax="80">
+        spellObjectCreationTimeMax="80"
+        spellObjectDistanceSpreadMin="25"
+        spellObjectDistanceSpreadMax="40">
 
         <Resources>
             <Resource type="white" displayName="Flesh" color="0xE8E7E5" rarity="1"/>
@@ -16,8 +18,8 @@
         <Units>
             <Unit
                 type="grunt"
-                displayName="Madame"
-                description="MADAME: Melee unit. Strong against the Handy Man. Susceptible to attacks from the Dog-boy."
+                displayName="Street-Walker"
+                description="STREET-WALKER: Melee unit. Strong against the Handy Man. Susceptible to attacks from the Dog-Boy."
                 baseMoveSpeed="35"
                 maxHealth="100"
                 collisionRadius="15"
@@ -38,8 +40,8 @@
 
             <Unit
                 type="heavy"
-                displayName="Handy-man"
-                description="HANDY-MAN: Ranged tower unit. Useful for deflecting incoming Dog-boys. Watch out for Madames."
+                displayName="Handy Man"
+                description="HANDY MAN: Ranged tower unit. Useful for deflecting incoming Dog-Boys. Watch out for Street-Walkers."
                 baseMoveSpeed="50"
                 maxHealth="100"
                 collisionRadius="15"
@@ -60,7 +62,7 @@
 
             <Unit
                 type="sapper"
-                displayName="Dog-boy"
+                displayName="Dog-Boy"
                 description="DOG-BOY: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Handy Men!"
                 baseMoveSpeed="35"
                 maxHealth="70"
