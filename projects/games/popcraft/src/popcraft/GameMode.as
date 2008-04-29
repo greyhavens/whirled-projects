@@ -16,7 +16,6 @@ import com.whirled.game.OccupantChangedEvent;
 import flash.display.InteractiveObject;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
-import flash.ui.Keyboard;
 
 import popcraft.battle.*;
 import popcraft.battle.view.*;
@@ -319,6 +318,21 @@ public class GameMode extends AppMode
         if (numBases > 0) {
             loc.x /= numBases;
             loc.y /= numBases;
+
+            // randomize the location a bit
+            var xOffset :Number = GameContext.gameData.spellObjectDistanceSpread.next();
+            var yOffset :Number = GameContext.gameData.spellObjectDistanceSpread.next();
+
+            if (Rand.nextBoolean(Rand.STREAM_GAME)) {
+                xOffset = -xOffset;
+            }
+
+            if (Rand.nextBoolean(Rand.STREAM_GAME)) {
+                yOffset = -yOffset;
+            }
+
+            loc.x += xOffset;
+            loc.y += yOffset;
 
             // pick a spell at random
             var spellType :uint = Rand.nextIntRange(0, Constants.SPELL_NAMES.length, Rand.STREAM_GAME);

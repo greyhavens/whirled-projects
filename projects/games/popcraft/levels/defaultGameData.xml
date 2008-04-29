@@ -5,8 +5,8 @@
         initialDayPhase="day"
         spellObjectCreationTimeMin="40"
         spellObjectCreationTimeMax="80"
-        spellObjectDistanceSpreadMin="25"
-        spellObjectDistanceSpreadMax="40">
+        spellObjectDistanceSpreadMin="0"
+        spellObjectDistanceSpreadMax="45">
 
         <Resources>
             <Resource type="white" displayName="Flesh" color="0xE8E7E5" rarity="1"/>

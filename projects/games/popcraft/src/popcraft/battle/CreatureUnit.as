@@ -126,18 +126,12 @@ public class CreatureUnit extends Unit
         }
     }
 
-    // from SimObject
-    override public function get objectGroups () :Array
+    override public function getObjectGroup (groupNum :int) :String
     {
-        // every CreatureUnit is in the CreatureUnit.GROUP_NAME group
-        if (null == g_groups) {
-            // @TODO: make inherited groups easier to work with
-            g_groups = new Array();
-            g_groups.push(Unit.GROUP_NAME);
-            g_groups.push(GROUP_NAME);
+        switch (groupNum) {
+        case 0: return GROUP_NAME;
+        default: return super.getObjectGroup(groupNum - 1);
         }
-
-        return g_groups;
     }
 
     // returns an enemy base

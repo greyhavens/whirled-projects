@@ -18,6 +18,7 @@ public class CourierCreatureUnit extends CreatureUnit
         super(Constants.UNIT_TYPE_COURIER, owningPlayerId);
 
         _courierAI = new CourierAI(this);
+        _groupName = "CourierCreature_Player" + owningPlayerId;
     }
 
     override protected function get aiRoot () :AITask
@@ -25,7 +26,16 @@ public class CourierCreatureUnit extends CreatureUnit
         return _courierAI;
     }
 
+    override public function getObjectGroup (groupNum :int) :String
+    {
+        switch (groupNum) {
+        case 0: return _groupName;
+        default: return super.getObjectGroup(groupNum - 1);
+        }
+    }
+
     protected var _courierAI :CourierAI;
+    protected var _groupName :String;
 }
 
 }

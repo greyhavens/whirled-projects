@@ -21,8 +21,6 @@ import popcraft.util.*;
 
 public class CreatureUnitView extends SceneObject
 {
-    public static const GROUP_NAME :String = "CreatureUnitView";
-
     public function CreatureUnitView (unit :CreatureUnit)
     {
         _unit = unit;
@@ -191,16 +189,6 @@ public class CreatureUnitView extends SceneObject
 
             GameContext.gameMode.addObject(aoeObj, GameContext.battleBoardView.unitViewParent);
         }
-    }
-
-    // from SimObject
-    override public function get objectGroups () :Array
-    {
-        if (null == g_groups) {
-            g_groups = [ GROUP_NAME ];
-        }
-
-        return g_groups;
     }
 
     protected function setupAnimations (playerColor :uint) :void

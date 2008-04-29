@@ -38,15 +38,12 @@ public class Unit extends SimObject
         _health = _maxHealth;
     }
 
-    override public function get objectGroups () :Array
+    override public function getObjectGroup (groupNum :int) :String
     {
-        // every Unit is in the Unit.GROUP_NAME group
-        if (null == g_groups) {
-            g_groups = new Array();
-            g_groups.push(GROUP_NAME);
+        switch (groupNum) {
+        case 0: return GROUP_NAME;
+        default: return super.getObjectGroup(groupNum - 1);
         }
-
-        return g_groups;
     }
 
     protected function createOwningPlayerGlowForBitmap (bitmap :Bitmap) :Bitmap

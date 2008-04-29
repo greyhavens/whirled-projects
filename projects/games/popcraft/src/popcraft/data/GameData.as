@@ -74,7 +74,7 @@ public class GameData
 
         var spellObjectDistanceSpreadMin :Number = XmlReader.getAttributeAsNumber(xml, "spellObjectDistanceSpreadMin", (useDefaults ? gameData.spellObjectDistanceSpread.min : undefined));
         var spellObjectDistanceSpreadMax :Number = XmlReader.getAttributeAsNumber(xml, "spellObjectDistanceSpreadMax", (useDefaults ? gameData.spellObjectDistanceSpread.max : undefined));
-        gameData.spellObjectTimerLength = new NumRange(spellObjectDistanceSpreadMin, spellObjectDistanceSpreadMax, Rand.STREAM_GAME);
+        gameData.spellObjectDistanceSpread = new NumRange(spellObjectDistanceSpreadMin, spellObjectDistanceSpreadMax, Rand.STREAM_GAME);
 
         // init the resource data
         for (var i :int = gameData.resources.length; i < Constants.RESOURCE_NAMES.length; ++i) {
