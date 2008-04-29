@@ -4,6 +4,7 @@ import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
 import com.threerings.util.HashSet;
+import com.threerings.util.KeyboardCodes;
 import com.threerings.util.Log;
 import com.threerings.util.RingBuffer;
 import com.whirled.contrib.simplegame.*;
@@ -15,6 +16,7 @@ import com.whirled.game.OccupantChangedEvent;
 import flash.display.InteractiveObject;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+import flash.ui.Keyboard;
 
 import popcraft.battle.*;
 import popcraft.battle.view.*;
@@ -327,13 +329,10 @@ public class GameMode extends AppMode
         }
     }
 
-    // there has to be a better way to figure out charCodes
-    protected static const KEY_4 :uint = "4".charCodeAt(0);
-    protected static const KEY_5 :uint = "5".charCodeAt(0);
     protected function onKeyDown (e :KeyboardEvent) :void
     {
-        switch (e.charCode) {
-        case KEY_4:
+       switch (e.keyCode) {
+        case KeyboardCodes.NUMBER_4:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 for (var i :uint = 0; i < Constants.RESOURCE__LIMIT; ++i) {
                     GameContext.localPlayerData.offsetResourceAmount(i, 500);
@@ -341,31 +340,36 @@ public class GameMode extends AppMode
             }
             break;
 
-        case KEY_5:
+        case KeyboardCodes.NUMBER_5:
             if (null != _debugDataView) {
                 _debugDataView.visible = !(_debugDataView.visible);
             }
             break;
 
         // temp
-        case "b".charCodeAt(0):
+        case KeyboardCodes.B:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_BLOODLUST);
             }
             break;
 
         // temp
-        case "r".charCodeAt(0):
+        case KeyboardCodes.R:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_RIGORMORTIS);
             }
             break;
 
-        case "/".charCodeAt(0):
+        case KeyboardCodes.SLASH:
             if (Constants.DEBUG_ALLOW_CHEATS && GameContext.isSinglePlayer) {
                 // restart the level
                 // playLevel(true) forces the current level to reload
                 AppContext.levelMgr.playLevel(true);
+            }
+
+        case KeyboardCodes.ESCAPE:
+            if (GameContext.isSinglePlayer) {
+                AppContext.mainLoop.pushMode(new PauseMode());
             }
         }
     }
