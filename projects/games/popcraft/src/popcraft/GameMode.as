@@ -289,8 +289,13 @@ public class GameMode extends AppMode
             diurnalMeter.y = Constants.DIURNAL_METER_LOC.y;
             this.addObject(diurnalMeter, this.modeSprite);
         }
+    }
 
-        // Spell pickup timer
+    protected function setupPostRandSeedReceived () :void
+    {
+        // any game setup that requires the RNG to be initialized must
+        // be run in this function, and not before, to prevent the game from
+        // getting out of synch
         this.scheduleNextSpellPickup();
     }
 
@@ -395,6 +400,9 @@ public class GameMode extends AppMode
         if (!_gameIsRunning && _messageMgr.isReady) {
             log.info("Starting game. randomSeed: " + _messageMgr.randomSeed);
             Rand.seedStream(Rand.STREAM_GAME, _messageMgr.randomSeed);
+
+            this.setupPostRandSeedReceived();
+
             _gameIsRunning = true;
         }
 
