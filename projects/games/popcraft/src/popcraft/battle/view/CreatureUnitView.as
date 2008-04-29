@@ -76,8 +76,8 @@ public class CreatureUnitView extends SceneObject
 
         _unit.addEventListener(UnitEvent.ATTACKING, handleUnitAttacking, false, 0, true);
 
-        var spellSet :UnitSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
-        spellSet.addEventListener(UnitSpellSet.SET_MODIFIED, handleSpellSetModified);
+        var spellSet :SpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
+        spellSet.addEventListener(SpellSet.SET_MODIFIED, handleSpellSetModified);
 
         this.updateUnitSpellIcons();
     }
@@ -90,8 +90,8 @@ public class CreatureUnitView extends SceneObject
 
         _unit.removeEventListener(UnitEvent.ATTACKING, handleUnitAttacking);
 
-        var spellSet :UnitSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
-        spellSet.removeEventListener(UnitSpellSet.SET_MODIFIED, handleSpellSetModified);
+        var spellSet :SpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
+        spellSet.removeEventListener(SpellSet.SET_MODIFIED, handleSpellSetModified);
 
     }
 
@@ -108,7 +108,7 @@ public class CreatureUnitView extends SceneObject
             _unitSpellIconParent = null;
         }
 
-        var spellSet :UnitSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
+        var spellSet :SpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
         var spells :Array = spellSet.spells;
         if (spells.length == 0) {
             return;
@@ -121,7 +121,7 @@ public class CreatureUnitView extends SceneObject
         // create new spell icons, arranged above the health meter
         var icons :Array = [];
         var totalWidth :Number = 0;
-        for each (var spell :UnitSpellData in spellSet.spells) {
+        for each (var spell :SpellData in spellSet.spells) {
             var icon :DisplayObject = AppContext.instantiateBitmap(spell.name + "_icon");
             if (null != icon) {
                 totalWidth += icon.width;

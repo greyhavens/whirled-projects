@@ -202,7 +202,7 @@ public class GameMode extends AppMode
         // create players' unit spell sets (these are synchronized objects)
         GameContext.playerUnitSpellSets = [];
         for (var playerId :uint = 0; playerId < GameContext.numPlayers; ++playerId) {
-            var spellSet :UnitSpellSet = new UnitSpellSet();
+            var spellSet :SpellSet = new SpellSet();
             GameContext.netObjects.addObject(spellSet);
             GameContext.playerUnitSpellSets.push(spellSet);
         }
@@ -558,8 +558,8 @@ public class GameMode extends AppMode
 
         case CastSpellMessage.messageName:
             var castSpellMsg :CastSpellMessage = msg as CastSpellMessage;
-            var spellSet :UnitSpellSet = GameContext.playerUnitSpellSets[castSpellMsg.playerId];
-            var spell :UnitSpellData = GameContext.gameData.spells[castSpellMsg.spellType];
+            var spellSet :SpellSet = GameContext.playerUnitSpellSets[castSpellMsg.playerId];
+            var spell :SpellData = GameContext.gameData.spells[castSpellMsg.spellType];
             spellSet.addSpell(spell.clone());
             break;
 

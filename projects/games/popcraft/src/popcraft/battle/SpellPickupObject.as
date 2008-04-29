@@ -4,7 +4,7 @@ import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.components.LocationComponent;
 
 import popcraft.*;
-import popcraft.data.UnitSpellData;
+import popcraft.data.SpellData;
 
 public class SpellPickupObject extends SimObject
     implements LocationComponent
@@ -22,7 +22,7 @@ public class SpellPickupObject extends SimObject
         return _spellType;
     }
 
-    public function get spellData () :UnitSpellData
+    public function get spellData () :SpellData
     {
         return GameContext.gameData.spells[_spellType];
     }

@@ -43,7 +43,7 @@ public class GameData
             theClone.units.push(unitData.clone());
         }
 
-        for each (var spellData :UnitSpellData in spells) {
+        for each (var spellData :SpellData in spells) {
             theClone.spells.push(spellData.clone());
         }
 
@@ -103,7 +103,7 @@ public class GameData
 
         for each (var spellNode :XML in xml.Spells.Spell) {
             type = XmlReader.getAttributeAsEnum(spellNode, "type", Constants.SPELL_NAMES);
-            gameData.spells[type] = UnitSpellData.fromXml(spellNode, (useDefaults ? inheritFrom.spells[type] : null));
+            gameData.spells[type] = SpellData.fromXml(spellNode, (useDefaults ? inheritFrom.spells[type] : null));
         }
 
         // read base locations

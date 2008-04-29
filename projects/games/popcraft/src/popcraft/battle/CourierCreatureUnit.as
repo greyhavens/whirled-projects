@@ -1,9 +1,11 @@
 package popcraft.battle {
 
+import com.threerings.util.Assert;
 import com.whirled.contrib.simplegame.*;
 
 import popcraft.*;
 import popcraft.battle.ai.*;
+import popcraft.data.SpellData;
 
 /**
  * Couriers retrieve spell pickups from the battlefield and bring them back to their
@@ -21,8 +23,27 @@ public class CourierCreatureUnit extends CreatureUnit
         _groupName = "CourierCreature_Player" + owningPlayerId;
     }
 
+    public function pickupSpell (spellObject :SpellPickupObject) :void
+    {
+        Assert.isNull(_carriedSpell);
+        _carriedSpell = spellObject.spellData;
+        spellObject.destroySelf();
+    }
+
+    public function deliverSpellToBase () :void
+    {
+        Assert.isNotNull(_carriedSpell);
+
+        // @TODO - fill this in
+        _carriedSpell = null;
+
+        // the courier is destroyed when he delivers the spell
+        this.destroySelf();
+    }
+
     override protected function addedToDB () :void
     {
+        super.addedToDB();
         this.updateSpeedup();
     }
 
@@ -47,17 +68,12 @@ public class CourierCreatureUnit extends CreatureUnit
 
     protected function updateSpeedup () :void
     {
-        // the Courier moves more quickly when there are other friendly
+        // the Courier pauses for less time when there are other friendly
         // Couriers on the battlefield
         var numCouriers :int = GameContext.netObjects.getObjectRefsInGroup(_groupName).length;
-        _speedup = (numCouriers - 1) * SPEEDUP_PER_COURIER;
+        _speedup = numCouriers * CourierSettings.SPEEDUP_PER_COURIER;
         _speedup = Math.max(_speedup, 0);
-        _speedup = Math.min(_speedup, MAX_SPEEDUP);
-    }
-
-    override public function get speedScale () :Number
-    {
-        return super.speedScale * _speedup;
+        _speedup = Math.min(_speedup, CourierSettings.MAX_SPEEDUP);
     }
 
     public function get speedup () :Number
@@ -67,11 +83,9 @@ public class CourierCreatureUnit extends CreatureUnit
 
     protected var _courierAI :CourierAI;
     protected var _groupName :String;
-    protected var _speedup :Number = 1.0;
+    protected var _speedup :Number = 1;
 
-    // @TODO - load these from XML
-    protected static const SPEEDUP_PER_COURIER :Number = 0.15;
-    protected static const MAX_SPEEDUP :Number = 2;
+    protected var _carriedSpell :SpellData;
 }
 
 }
@@ -86,6 +100,21 @@ import popcraft.battle.ai.*;
 import flash.display.Loader;
 import com.threerings.util.Log;
 import com.threerings.flash.Vector2;
+import com.threerings.util.Name;
+import flash.geom.Rectangle;
+
+class CourierSettings
+{
+    // @TODO - load these from XML
+    public static const BASE_PAUSE_TIME :Number = 1.5;
+    public static const SPEEDUP_PER_COURIER :Number = 1;
+    public static const MAX_SPEEDUP :Number = 6;
+    public static const MAX_MOVE_LENGTH :Number = 50;
+    public static const MOVE_FUDGE_FACTOR :Number = 5;
+    public static const MAX_MOVE_LENGTH_SQUARED :Number = MAX_MOVE_LENGTH * MAX_MOVE_LENGTH;
+    public static const WANDER_DISTANCE :NumRange = new NumRange(50, 200, Rand.STREAM_GAME);
+    public static const WANDER_BOUNDS :Rectangle = new Rectangle(50, 50, Constants.BATTLE_WIDTH - 50, Constants.BATTLE_HEIGHT - 50);
+}
 
 class CourierAI extends AITaskTree
 {
@@ -94,21 +123,26 @@ class CourierAI extends AITaskTree
     public function CourierAI (unit :CourierCreatureUnit)
     {
         _unit = unit;
-        this.addSubtask(new ScanForSpellPickupsTask());
-    }
-
-    protected function attemptSpellPickup (spell :SpellPickupObject) :void
-    {
-        log.info("detected spell - attempting pickup");
-
-        this.clearSubtasks();
+        this.addSubtask(new ScanForSpellPickupsTask(_unit));
     }
 
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
     {
         if (messageName == ScanForSpellPickupsTask.MSG_DETECTEDSPELL) {
             var spell :SpellPickupObject = data as SpellPickupObject;
-            this.attemptSpellPickup(spell);
+            log.info("detected spell - attempting pickup");
+            this.clearSubtasks();
+            this.addSubtask(new PickupSpellTask(_unit, spell));
+        } else if (messageName == PickupSpellTask.MSG_SPELL_GONE) {
+            // we were trying to get to a spell, but somebody else got to it first.
+            // resume wandering
+            this.clearSubtasks();
+            this.addSubtask(new ScanForSpellPickupsTask(_unit));
+        } else if (messageName == PickupSpellTask.MSG_SPELL_RETRIEVED) {
+            // we picked up a spell!
+            log.info("retrieved spell");
+            _unit.pickupSpell(data as SpellPickupObject);
+            // let's try to go home and deliver it
         }
     }
 
@@ -142,15 +176,15 @@ class CourierMoveTask extends AITaskTree
         var d :Vector2 = _loc.subtract(curLoc);
 
         var nextLoc :Vector2;
-        if (d.lengthSquared < MAX_MOVE_LENGTH_SQUARED) {
+        if (d.lengthSquared < CourierSettings.MAX_MOVE_LENGTH_SQUARED) {
             nextLoc = _loc;
         } else {
-            d.length = MAX_MOVE_LENGTH;
+            d.length = CourierSettings.MAX_MOVE_LENGTH;
             d.addLocal(curLoc);
             nextLoc = d;
         }
 
-        this.addSubtask(new MoveToLocationTask(MOVE_SUBTASK_NAME, nextLoc, MOVE_FUDGE_FACTOR));
+        this.addSubtask(new MoveToLocationTask(MOVE_SUBTASK_NAME, nextLoc, CourierSettings.MOVE_FUDGE_FACTOR));
     }
 
     override protected function receiveSubtaskMessage (subtask :AITask, messageName :String, data :Object) :void
@@ -158,11 +192,12 @@ class CourierMoveTask extends AITaskTree
         if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED) {
             if (subtask.name == MOVE_SUBTASK_NAME) {
                 // are we at our destination?
-                if (_unit.unitLoc.similar(_loc, MOVE_FUDGE_FACTOR)) {
+                if (_unit.unitLoc.similar(_loc, CourierSettings.MOVE_FUDGE_FACTOR)) {
                     _complete = true;
                 } else {
                     // pause for a moment
-                    this.addSubtask(new AITimerTask(PAUSE_TIME, PAUSE_SUBTASK_NAME));
+                    var pauseTime :Number = CourierSettings.BASE_PAUSE_TIME / _unit.speedup;
+                    this.addSubtask(new AITimerTask(pauseTime, PAUSE_SUBTASK_NAME));
                 }
             } else if (subtask.name == PAUSE_SUBTASK_NAME) {
                 // start moving again
@@ -190,13 +225,52 @@ class CourierMoveTask extends AITaskTree
     protected var _loc :Vector2;
     protected var _complete :Boolean;
 
-    protected static const MAX_MOVE_LENGTH :Number = 70;
-    protected static const MOVE_FUDGE_FACTOR :Number = 5;
-    protected static const MAX_MOVE_LENGTH_SQUARED :Number = MAX_MOVE_LENGTH * MAX_MOVE_LENGTH;
     protected static const MOVE_SUBTASK_NAME :String = "MoveSubtask";
     protected static const PAUSE_SUBTASK_NAME :String = "PauseSubtask";
+}
 
-    protected static const PAUSE_TIME :Number = 0.5;
+class PickupSpellTask extends AITaskTree
+{
+    public static const NAME :String = "PickupSpellTask";
+    public static const MSG_SPELL_RETRIEVED :String = "SpellRetrieved";
+    public static const MSG_SPELL_GONE :String = "SpellGone";
+
+    public function PickupSpellTask (unit :CourierCreatureUnit, spell :SpellPickupObject)
+    {
+        _unit = unit;
+        _spellRef = spell.ref;
+
+        this.addSubtask(new CourierMoveTask(_unit, new Vector2(spell.x, spell.y)));
+    }
+
+    override protected function receiveSubtaskMessage (subtask :AITask, messageName :String, data :Object) :void
+    {
+        if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && subtask.name == CourierMoveTask.NAME) {
+            if (!_spellRef.isNull) {
+                var spell :SpellPickupObject = _spellRef.object as SpellPickupObject;
+                this.sendParentMessage(MSG_SPELL_RETRIEVED, spell);
+                _retrieved = true;
+            }
+        }
+    }
+
+    override public function update (dt :Number, creature :CreatureUnit) :uint
+    {
+        // does the spell object still exist?
+        if (_spellRef.isNull) {
+            if (!_retrieved) {
+                this.sendParentMessage(MSG_SPELL_GONE);
+            }
+            return AITaskStatus.COMPLETE;
+        } else {
+            super.update(dt, creature);
+            return AITaskStatus.ACTIVE;
+        }
+    }
+
+    protected var _retrieved :Boolean;
+    protected var _unit :CourierCreatureUnit;
+    protected var _spellRef :SimObjectRef;
 }
 
 class ScanForSpellPickupsTask extends AITaskTree
@@ -204,15 +278,32 @@ class ScanForSpellPickupsTask extends AITaskTree
     public static const NAME :String = "ScanForSpellPickupsTask";
     public static const MSG_DETECTEDSPELL :String = "DetectedSpell";
 
-    public function ScanForSpellPickupsTask ()
+    public function ScanForSpellPickupsTask (unit :CourierCreatureUnit)
     {
+        _unit = unit;
+
         // scan for spell pickups once/second
         var scanSequence :AITaskSequence = new AITaskSequence(true);
         scanSequence.addSequencedTask(new DetectSpellPickupAction());
         scanSequence.addSequencedTask(new AITimerTask(1));
         this.addSubtask(scanSequence);
 
-        // wander
+        this.wander();
+    }
+
+    protected function wander () :void
+    {
+        // pick a random location to move to
+        var direction :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+        var distance :Number = CourierSettings.WANDER_DISTANCE.next();
+        var wanderLoc :Vector2 = Vector2.fromAngle(direction, distance).addLocal(_unit.unitLoc);
+
+        wanderLoc.x = Math.max(wanderLoc.x, CourierSettings.WANDER_BOUNDS.left);
+        wanderLoc.x = Math.min(wanderLoc.x, CourierSettings.WANDER_BOUNDS.right);
+        wanderLoc.y = Math.max(wanderLoc.y, CourierSettings.WANDER_BOUNDS.top);
+        wanderLoc.y = Math.min(wanderLoc.y, CourierSettings.WANDER_BOUNDS.bottom);
+
+        this.addSubtask(new CourierMoveTask(_unit, wanderLoc));
     }
 
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
@@ -221,6 +312,9 @@ class ScanForSpellPickupsTask extends AITaskTree
             var msg :SequencedTaskMessage = data as SequencedTaskMessage;
             var spell :SpellPickupObject = msg.data as SpellPickupObject;
             this.sendParentMessage(MSG_DETECTEDSPELL, spell);
+        } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == CourierMoveTask.NAME) {
+            // wander again
+            this.wander();
         }
     }
 
@@ -228,4 +322,6 @@ class ScanForSpellPickupsTask extends AITaskTree
     {
         return NAME;
     }
+
+    protected var _unit :CourierCreatureUnit;
 }

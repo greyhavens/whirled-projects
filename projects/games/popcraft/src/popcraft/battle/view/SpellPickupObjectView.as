@@ -17,7 +17,7 @@ public class SpellPickupObjectView extends SceneObject
     {
         _spellObjRef = spellPickup.ref;
 
-        var spellData :UnitSpellData = spellPickup.spellData;
+        var spellData :SpellData = spellPickup.spellData;
 
         var bitmap :Bitmap = AppContext.instantiateBitmap(spellData.name + "_icon");
         var scale :Number = Math.min(SpellPickupObject.RADIUS / bitmap.width, SpellPickupObject.RADIUS / bitmap.height);

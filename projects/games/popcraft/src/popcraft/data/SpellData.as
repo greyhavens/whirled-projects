@@ -3,7 +3,7 @@ package popcraft.data {
 import popcraft.*;
 import popcraft.util.*;
 
-public class UnitSpellData
+public class SpellData
 {
     public var type :uint;
     public var displayName :String;
@@ -17,15 +17,15 @@ public class UnitSpellData
         return Constants.SPELL_NAMES[type];
     }
 
-    public function combine (spell :UnitSpellData) :void
+    public function combine (spell :SpellData) :void
     {
         speedScaleOffset += spell.speedScaleOffset;
         damageScaleOffset += spell.damageScaleOffset;
     }
 
-    public function clone () :UnitSpellData
+    public function clone () :SpellData
     {
-        var theClone :UnitSpellData = new UnitSpellData();
+        var theClone :SpellData = new SpellData();
 
         theClone.type = type;
         theClone.displayName = displayName;
@@ -37,11 +37,11 @@ public class UnitSpellData
         return theClone;
     }
 
-    public static function fromXml (xml :XML, inheritFrom :UnitSpellData = null) :UnitSpellData
+    public static function fromXml (xml :XML, inheritFrom :SpellData = null) :SpellData
     {
         var useDefaults :Boolean = (null != inheritFrom);
 
-        var spell :UnitSpellData = (useDefaults ? inheritFrom : new UnitSpellData());
+        var spell :SpellData = (useDefaults ? inheritFrom : new SpellData());
 
         spell.type = XmlReader.getAttributeAsEnum(xml, "type", Constants.SPELL_NAMES);
         spell.displayName = XmlReader.getAttributeAsString(xml, "displayName", (useDefaults ? inheritFrom.displayName : undefined));
