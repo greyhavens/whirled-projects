@@ -28,12 +28,16 @@ public class UnitFactory
             creature = new ColossusCreatureUnit(owningPlayerId);
             break;
 
+        case Constants.UNIT_TYPE_COURIER:
+            creature = new CourierCreatureUnit(owningPlayerId);
+            break;
+
         default:
             Assert.fail("Unsupported unitType: " + unitType);
             break;
         }
 
-        // unit views may depend on the unit already having been added to an ObjectDB
+        // unit views may depend on the unit already having been added to an ObjectDB,
         // so do that before creating a unit view
         GameContext.netObjects.addObject(creature);
 

@@ -96,12 +96,13 @@ public class Constants
     public static const UNIT_TYPE_HEAVY :uint = 1;
     public static const UNIT_TYPE_SAPPER :uint = 2;
     public static const UNIT_TYPE_COLOSSUS :uint = 3;
+    public static const UNIT_TYPE_COURIER :uint = 4;
 
-    public static const UNIT_TYPE__CREATURE_LIMIT :uint = 4;
+    public static const UNIT_TYPE__CREATURE_LIMIT :uint = 5;
 
     public static const UNIT_TYPE_BASE :uint = UNIT_TYPE__CREATURE_LIMIT;
 
-    public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "colossus", "base" ];
+    public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "colossus", "courier", "base" ];
     public static const CREATURE_UNIT_NAMES :Array = UNIT_NAMES.slice(0, UNIT_TYPE__CREATURE_LIMIT);
 }
 

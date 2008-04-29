@@ -103,6 +103,28 @@
             </Unit>
 
             <Unit
+                type="courier"
+                displayName="Courier"
+                description="COURIER: Retrieves spell pick-ups from the battlefield. The more Couriers you have in play, the faster each will move."
+                baseMoveSpeed="15"
+                maxHealth="100"
+                collisionRadius="30"
+                detectRadius="0"
+                loseInterestRadius="0">
+                <ResourceCosts>
+                    <Resource type="white" amount="20"/>
+                    <Resource type="yellow" amount="10"/>
+                </ResourceCosts>
+                <Weapon damageType="crushing" damageMin="0" damageMax="0" cooldown="0" maxAttackDistance="0"/>
+                <Armor>
+                    <Damage type="crushing"     scale="1"/>
+                    <Damage type="piercing"     scale="1"/>
+                    <Damage type="explosion"    scale="1"/>
+                    <Damage type="base"         scale="1"/>
+                </Armor>
+            </Unit>
+
+            <Unit
                 type="base"
                 displayName="" description="" baseMoveSpeed="0" detectRadius="0" loseInterestRadius="0"
                 maxHealth="100"

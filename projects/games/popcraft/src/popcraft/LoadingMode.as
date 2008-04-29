@@ -8,6 +8,7 @@ public class LoadingMode extends AppMode
     override protected function setup () :void
     {
         AppContext.resources.pendResourceLoad("image", "colossus_icon",  { embeddedClass: IMAGE_COLOSSUSICON });
+        AppContext.resources.pendResourceLoad("image", "courier_icon", { embeddedClass: IMAGE_COURIERICON });
 
         AppContext.resources.pendResourceLoad("image", "base",      { embeddedClass: IMAGE_BASE });
         AppContext.resources.pendResourceLoad("image", "targetBaseBadge", { embeddedClass: IMAGE_TARGETBASEBADGE });
@@ -53,6 +54,9 @@ public class LoadingMode extends AppMode
 
     [Embed(source="../../rsrc/char_colossus.png", mimeType="application/octet-stream")]
     protected static const IMAGE_COLOSSUSICON :Class;
+
+    [Embed(source="../../rsrc/courier.png", mimeType="application/octet-stream")]
+    protected static const IMAGE_COURIERICON :Class;
 
     [Embed(source="../../rsrc/base.png", mimeType="application/octet-stream")]
     protected static const IMAGE_BASE :Class;
