@@ -17,7 +17,7 @@ public class GruntCreatureUnit extends CreatureUnit
     {
         super(Constants.UNIT_TYPE_GRUNT, owningPlayerId);
 
-        _gruntAI = new GruntAI(this, this.findEnemyBaseToAttack());
+        _gruntAI = new GruntAI(this);
     }
 
     override protected function get aiRoot () :AITask
@@ -47,11 +47,9 @@ import com.threerings.util.Log;
  */
 class GruntAI extends AITaskTree
 {
-    public function GruntAI (unit :GruntCreatureUnit, targetBaseRef :SimObjectRef)
+    public function GruntAI (unit :GruntCreatureUnit)
     {
         _unit = unit;
-        _targetBaseRef = targetBaseRef;
-
         this.beginAttackBase();
     }
 
@@ -106,7 +104,7 @@ class GruntAI extends AITaskTree
 
     protected var _unit :GruntCreatureUnit;
     protected var _state :uint;
-    protected var _targetBaseRef :SimObjectRef;
+    protected var _targetBaseRef :SimObjectRef = SimObjectRef.Null();
 
     protected static const log :Log = Log.getLog(GruntAI);
 }

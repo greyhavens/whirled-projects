@@ -16,7 +16,7 @@ public class SapperCreatureUnit extends CreatureUnit
     {
         super(Constants.UNIT_TYPE_SAPPER, owningPlayerId);
 
-        _sapperAI = new SapperAI(this, this.findEnemyBaseToAttack());
+        _sapperAI = new SapperAI(this);
     }
 
     override protected function get aiRoot () :AITask
@@ -70,11 +70,9 @@ import com.threerings.util.Log;
  */
 class SapperAI extends AITaskTree
 {
-    public function SapperAI (unit :SapperCreatureUnit, targetBaseRef :SimObjectRef)
+    public function SapperAI (unit :SapperCreatureUnit)
     {
         _unit = unit;
-        _targetBaseRef = targetBaseRef;
-
         this.attackBaseAndScanForEnemyGroups();
     }
 
@@ -127,7 +125,7 @@ class SapperAI extends AITaskTree
     }
 
     protected var _unit :SapperCreatureUnit;
-    protected var _targetBaseRef :SimObjectRef;
+    protected var _targetBaseRef :SimObjectRef = SimObjectRef.Null();
 
     protected static const SCAN_FOR_ENEMIES_DELAY :Number = 1;
     protected static const SCAN_FOR_ENEMY_GROUP_SIZE :int = 2;

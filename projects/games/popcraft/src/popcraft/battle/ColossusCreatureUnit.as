@@ -15,8 +15,7 @@ public class ColossusCreatureUnit extends CreatureUnit
     public function ColossusCreatureUnit (owningPlayerId :uint)
     {
         super(Constants.UNIT_TYPE_COLOSSUS, owningPlayerId);
-
-        _ai = new ColossusAI(this, this.findEnemyBaseToAttack());
+        _ai = new ColossusAI(this);
     }
 
     override protected function get aiRoot () :AITask
@@ -135,10 +134,9 @@ import com.threerings.util.Log;
  */
 class ColossusAI extends AITaskTree
 {
-    public function ColossusAI (unit :ColossusCreatureUnit, targetBaseRef :SimObjectRef)
+    public function ColossusAI (unit :ColossusCreatureUnit)
     {
         _unit = unit;
-        _targetBaseRef = targetBaseRef;
 
         this.beginAttackBase();
 
@@ -182,7 +180,7 @@ class ColossusAI extends AITaskTree
     }
 
     protected var _unit :ColossusCreatureUnit;
-    protected var _targetBaseRef :SimObjectRef;
+    protected var _targetBaseRef :SimObjectRef = SimObjectRef.Null();
 
     protected static const log :Log = Log.getLog(ColossusAI);
 }

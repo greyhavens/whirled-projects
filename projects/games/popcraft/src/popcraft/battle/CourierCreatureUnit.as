@@ -21,6 +21,11 @@ public class CourierCreatureUnit extends CreatureUnit
         _groupName = "CourierCreature_Player" + owningPlayerId;
     }
 
+    override protected function addedToDB () :void
+    {
+        this.updateSpeedup();
+    }
+
     override protected function get aiRoot () :AITask
     {
         return _courierAI;
@@ -34,8 +39,39 @@ public class CourierCreatureUnit extends CreatureUnit
         }
     }
 
+    override protected function update (dt :Number) :void
+    {
+        this.updateSpeedup();
+        super.update(dt);
+    }
+
+    protected function updateSpeedup () :void
+    {
+        // the Courier moves more quickly when there are other friendly
+        // Couriers on the battlefield
+        var numCouriers :int = GameContext.netObjects.getObjectRefsInGroup(_groupName).length;
+        _speedup = (numCouriers - 1) * SPEEDUP_PER_COURIER;
+        _speedup = Math.max(_speedup, 0);
+        _speedup = Math.min(_speedup, MAX_SPEEDUP);
+    }
+
+    override public function get speedScale () :Number
+    {
+        return super.speedScale * _speedup;
+    }
+
+    public function get speedup () :Number
+    {
+        return _speedup;
+    }
+
     protected var _courierAI :CourierAI;
     protected var _groupName :String;
+    protected var _speedup :Number = 1.0;
+
+    // @TODO - load these from XML
+    protected static const SPEEDUP_PER_COURIER :Number = 0.15;
+    protected static const MAX_SPEEDUP :Number = 2;
 }
 
 }
@@ -52,22 +88,66 @@ import com.threerings.util.Log;
 
 class CourierAI extends AITaskTree
 {
+    public static const NAME :String = "CourierAI";
+
     public function CourierAI (unit :CourierCreatureUnit)
     {
         _unit = unit;
+        this.addSubtask(new ScanForSpellPickupsTask());
+    }
+
+    protected function attemptSpellPickup (spell :SpellPickupObject) :void
+    {
+        log.info("detected spell - attempting pickup");
+
+        this.clearSubtasks();
     }
 
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
     {
-
+        if (messageName == ScanForSpellPickupsTask.MSG_DETECTEDSPELL) {
+            var spell :SpellPickupObject = data as SpellPickupObject;
+            this.attemptSpellPickup(spell);
+        }
     }
 
     override public function get name () :String
     {
-        return "CourierAI";
+        return NAME;
     }
 
     protected var _unit :CourierCreatureUnit;
 
     protected static const log :Log = Log.getLog(CourierAI);
+}
+
+class ScanForSpellPickupsTask extends AITaskTree
+{
+    public static const NAME :String = "ScanForSpellPickupsTask";
+    public static const MSG_DETECTEDSPELL :String = "DetectedSpell";
+
+    public function ScanForSpellPickupsTask ()
+    {
+        // scan for spell pickups once/second
+        var scanSequence :AITaskSequence = new AITaskSequence(true);
+        scanSequence.addSequencedTask(new DetectSpellPickupAction());
+        scanSequence.addSequencedTask(new AITimerTask(1));
+        this.addSubtask(scanSequence);
+
+        // wander
+    }
+
+    override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
+    {
+        if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
+            var msg :SequencedTaskMessage = data as SequencedTaskMessage;
+            var spell :SpellPickupObject = msg.data as SpellPickupObject;
+            this.sendParentMessage(MSG_DETECTEDSPELL, spell);
+        }
+    }
+
+    override public function get name () :String
+    {
+        return NAME;
+    }
 }
