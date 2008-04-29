@@ -54,7 +54,13 @@ public class LocalPlayerData extends PlayerData
         return true;
     }
 
+    public function addSpell (spellType :uint) :void
+    {
+        _spells.push(spellType);
+    }
+
     protected var _resources :Array;
+    protected var _spells :Array = [];
 }
 
 }

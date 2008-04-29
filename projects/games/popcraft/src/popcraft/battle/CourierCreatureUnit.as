@@ -34,17 +34,30 @@ public class CourierCreatureUnit extends CreatureUnit
     {
         Assert.isNotNull(_carriedSpell);
 
-        // @TODO - fill this in
+        if (this.owningPlayerId == GameContext.localPlayerId) {
+            GameContext.localPlayerData.addSpell(_carriedSpell.type);
+        }
+
         _carriedSpell = null;
 
         // the courier is destroyed when he delivers the spell
-        this.destroySelf();
+        this.die();
     }
 
     override protected function addedToDB () :void
     {
         super.addedToDB();
         this.updateSpeedup();
+    }
+
+    override protected function die () :void
+    {
+        // drop the currently carried spell on the ground when we die
+        if (null != _carriedSpell) {
+            SpellPickupFactory.createSpellPickup(_carriedSpell.type, this.unitLoc);
+        }
+
+        super.die();
     }
 
     override protected function get aiRoot () :AITask
@@ -113,7 +126,8 @@ class CourierSettings
     public static const MOVE_FUDGE_FACTOR :Number = 5;
     public static const MAX_MOVE_LENGTH_SQUARED :Number = MAX_MOVE_LENGTH * MAX_MOVE_LENGTH;
     public static const WANDER_DISTANCE :NumRange = new NumRange(50, 200, Rand.STREAM_GAME);
-    public static const WANDER_BOUNDS :Rectangle = new Rectangle(50, 50, Constants.BATTLE_WIDTH - 50, Constants.BATTLE_HEIGHT - 50);
+    public static const WANDER_BOUNDS :Rectangle = new Rectangle(
+        75, 75, Constants.BATTLE_WIDTH - 75, Constants.BATTLE_HEIGHT - 75);
 }
 
 class CourierAI extends AITaskTree
@@ -143,6 +157,13 @@ class CourierAI extends AITaskTree
             log.info("retrieved spell");
             _unit.pickupSpell(data as SpellPickupObject);
             // let's try to go home and deliver it
+            var base :PlayerBaseUnit = _unit.owningPlayerData.base;
+            if (null != base) {
+                this.addSubtask(new CourierMoveTask(_unit, base.unitLoc));
+            }
+        } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == CourierMoveTask.NAME) {
+            // we've arrived at the base. deliver the goods
+            _unit.deliverSpellToBase();
         }
     }
 
@@ -282,10 +303,10 @@ class ScanForSpellPickupsTask extends AITaskTree
     {
         _unit = unit;
 
-        // scan for spell pickups once/second
+        // scan for spell pickups twice/second
         var scanSequence :AITaskSequence = new AITaskSequence(true);
         scanSequence.addSequencedTask(new DetectSpellPickupAction());
-        scanSequence.addSequencedTask(new AITimerTask(1));
+        scanSequence.addSequencedTask(new AITimerTask(0.5));
         this.addSubtask(scanSequence);
 
         this.wander();

@@ -108,8 +108,8 @@
                 type="courier"
                 displayName="Courier"
                 description="COURIER: Retrieves spell pick-ups from the battlefield. The more Couriers you have in play, the faster each will move."
-                baseMoveSpeed="15"
-                maxHealth="100"
+                baseMoveSpeed="100"
+                maxHealth="50"
                 collisionRadius="30"
                 detectRadius="0"
                 loseInterestRadius="0">
