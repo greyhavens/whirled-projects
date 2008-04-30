@@ -46,7 +46,7 @@ public class GameMode extends AppMode
 
         this.setupNetwork();
         this.setupBattle();
-        this.setupPuzzle();
+        this.setupPuzzleAndUI();
         this.setupInput();
 
         if (Constants.DEBUG_DRAW_STATS) {
@@ -213,7 +213,7 @@ public class GameMode extends AppMode
         _messageMgr.shutdown();
     }
 
-    protected function setupPuzzle () :void
+    protected function setupPuzzleAndUI () :void
     {
         var resourceDisplay :ResourceDisplay = new ResourceDisplay();
         resourceDisplay.displayObject.x = Constants.RESOURCE_DISPLAY_LOC.x;
@@ -233,6 +233,7 @@ public class GameMode extends AppMode
 
         // create the unit purchase buttons
         this.addObject(new UnitPurchaseButtonManager());
+        this.addObject(new SpellCastButtonManager());
     }
 
     protected function setupBattle () :void

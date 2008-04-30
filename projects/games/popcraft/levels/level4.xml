@@ -31,6 +31,8 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
             <Unit type="sapper"/>
         </AvailableUnits>
 
+        <AvailableSpells/>
+
         <Computer baseHealth="70" team="1">
             <InitialWaves>
                 <Wave delayBefore="30"><Unit type="grunt" count="3"/></Wave>

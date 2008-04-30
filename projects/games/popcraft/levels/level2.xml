@@ -26,6 +26,8 @@
             <Unit type="heavy"/>
         </AvailableUnits>
 
+        <AvailableSpells/>
+
         <Computer baseHealth="50" team="1">
             <InitialWaves>
                 <Wave delayBefore="5"><Unit type="sapper" count="1"/></Wave>

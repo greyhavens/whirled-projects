@@ -121,13 +121,10 @@ public class UnitPurchaseButton extends Sprite
 
         face.addChild(icon);
 
-        var w :Number = icon.width;
-        var h :Number = icon.height;
-
         // draw our button background (and outline)
         face.graphics.beginFill(bgColor);
         face.graphics.lineStyle(1, fgColor);
-        face.graphics.drawRect(0, 0, w, h);
+        face.graphics.drawRect(0, 0, WIDTH, HEIGHT);
         face.graphics.endFill();
 
         icon.x = 0;

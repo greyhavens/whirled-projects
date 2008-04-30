@@ -1,5 +1,6 @@
 package popcraft {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
 
 import popcraft.battle.*;
@@ -30,8 +31,8 @@ public class LocalPlayerData extends PlayerData
     {
         Assert.isTrue(resourceType < _resources.length);
 
-        // resources can now go below 0
-        _resources[resourceType] = newAmount; //Math.max(newAmount, 0);
+        // resources can go below 0
+        _resources[resourceType] = newAmount;
     }
 
     public function offsetResourceAmount (resourceType :uint, offset :int) :void
@@ -57,6 +58,17 @@ public class LocalPlayerData extends PlayerData
     public function addSpell (spellType :uint) :void
     {
         _spells.push(spellType);
+    }
+
+    public function removeSpell (spellType :uint) :void
+    {
+        var removed :Boolean = ArrayUtil.removeFirst(_spells, spellType);
+        Assert.isTrue(removed);
+    }
+
+    public function hasSpell (spellType :uint) :Boolean
+    {
+        return ArrayUtil.contains(_spells, spellType);
     }
 
     protected var _resources :Array;

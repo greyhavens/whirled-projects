@@ -143,8 +143,20 @@
         </Units>
 
         <Spells>
-            <Spell type="bloodlust" displayName="Bloodlust" expireTime="45" speedScaleOffset="0.5" damageScaleOffset="0.3"/>
-            <Spell type="rigormortis" displayName="Rigor Mortis" expireTime="45" damageScaleOffset="-0.4"/>
+            <Spell
+                type="bloodlust"
+                displayName="Bloodlust"
+                description="BLOODLUST: Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack."
+                expireTime="45"
+                speedScaleOffset="0.5"
+                damageScaleOffset="0.3"/>
+
+            <Spell
+                type="rigormortis"
+                displayName="Rigor Mortis"
+                description="RIGOR MORTIS: Toughens the skin of your creatures. They will be able to absorb much more damage."
+                expireTime="45"
+                damageScaleOffset="-0.4"/>
         </Spells>
 
         <BaseLocations>

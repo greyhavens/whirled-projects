@@ -25,6 +25,8 @@
             <Unit type="grunt"/>
         </AvailableUnits>
 
+        <AvailableSpells/>
+
         <Computer baseHealth="15" team="1">
             <InitialWaves>
                 <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>

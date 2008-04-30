@@ -34,6 +34,7 @@ public class Constants
     public static const UNIT_QUEUE_LOC :Point = new Point(530, 400);
 
     public static const FIRST_UNIT_BUTTON_LOC :Point = new Point(350, 400);
+    public static const FIRST_SPELL_BUTTON_LOC :Point = new Point(500, 400);
 
     public static const PLAYER_COLORS :Array = [
        uint(0xFFFF0000),

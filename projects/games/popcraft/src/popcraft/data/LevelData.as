@@ -13,6 +13,7 @@ public class LevelData
     public var disableDiurnalCycle :Boolean;
 
     public var availableUnits :Array = [];
+    public var availableSpells :Array = [];
     public var computers :Array = [];
     public var initialResources :Array = [];
 
@@ -21,6 +22,11 @@ public class LevelData
     public function isAvailableUnit (unitType :uint) :Boolean
     {
         return ArrayUtil.contains(availableUnits, unitType);
+    }
+
+    public function isAvailableSpell (spellType :uint) :Boolean
+    {
+        return ArrayUtil.contains(availableSpells, spellType);
     }
 
     public static function fromXml (xml :XML) :LevelData
@@ -41,6 +47,10 @@ public class LevelData
         // parse the available units
         for each (var unitData :XML in xml.AvailableUnits.Unit) {
             level.availableUnits.push(XmlReader.getAttributeAsEnum(unitData, "type", Constants.CREATURE_UNIT_NAMES));
+        }
+
+        for each (var spellData :XML in xml.AvailableSpells.Spell) {
+            level.availableSpells.push(XmlReader.getAttributeAsEnum(spellData, "type", Constants.SPELL_NAMES));
         }
 
         // parse the computer players
