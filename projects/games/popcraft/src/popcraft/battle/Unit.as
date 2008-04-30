@@ -217,7 +217,7 @@ public class Unit extends SimObject
 
     public function isEnemyUnit (unit :Unit) :Boolean
     {
-        return (this.owningPlayerId != unit.owningPlayerId);
+        return (this.owningPlayerData.teamId != unit.owningPlayerData.teamId);
     }
 
     public function get owningPlayerData () :PlayerData
