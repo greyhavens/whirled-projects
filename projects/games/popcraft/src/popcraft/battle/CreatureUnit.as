@@ -113,7 +113,7 @@ public class CreatureUnit extends Unit
                 _movementDirection = attractForce.add(repulseForce).normalizeLocal();
 
                 // don't overshoot the destination
-                var distance :Number = this.movementSpeed * dt;
+                var distance :Number = Math.min(this.movementSpeed * dt, remainingDistance);
 
                 // calculate our next location
                 var nextLoc :Vector2 = _movementDirection.scale(distance).addLocal(curLoc);
