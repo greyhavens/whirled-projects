@@ -331,19 +331,9 @@ public class GameMode extends AppMode
             loc.y /= numBases;
 
             // randomize the location a bit
-            var xOffset :Number = GameContext.gameData.spellObjectDistanceSpread.next();
-            var yOffset :Number = GameContext.gameData.spellObjectDistanceSpread.next();
-
-            if (Rand.nextBoolean(Rand.STREAM_GAME)) {
-                xOffset = -xOffset;
-            }
-
-            if (Rand.nextBoolean(Rand.STREAM_GAME)) {
-                yOffset = -yOffset;
-            }
-
-            loc.x += xOffset;
-            loc.y += yOffset;
+            var direction :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+            var length :Number = GameContext.gameData.spellObjectDistanceSpread.next();
+            loc.addLocal(Vector2.fromAngle(direction, length));
 
             // pick a spell at random
             var spellType :uint = Rand.nextIntRange(0, Constants.SPELL_NAMES.length, Rand.STREAM_GAME);
