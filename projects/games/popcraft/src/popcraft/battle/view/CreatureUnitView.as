@@ -28,6 +28,9 @@ public class CreatureUnitView extends SceneObject
 
     override protected function addedToDB () :void
     {
+        _sprite.mouseEnabled = false;
+        _sprite.mouseChildren = false;
+
         var playerColor :uint = Constants.PLAYER_COLORS[_unit.owningPlayerId];
 
         // @TODO - remove this when all units have animations
