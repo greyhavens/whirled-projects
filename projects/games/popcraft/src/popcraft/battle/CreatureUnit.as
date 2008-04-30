@@ -34,16 +34,20 @@ public class CreatureUnit extends Unit
 
     override protected function addedToDB () :void
     {
-        _forceParticle = new ForceParticle();
-        _forceParticle.loc.x = this.x;
-        _forceParticle.loc.y = this.y;
+        if (_unitData.hasRepulseForce) {
+            _forceParticle = new ForceParticle();
+            _forceParticle.loc.x = this.x;
+            _forceParticle.loc.y = this.y;
 
-        this.db.addObject(_forceParticle);
+            this.db.addObject(_forceParticle);
+        }
     }
 
     override protected function removedFromDB () :void
     {
-        _forceParticle.destroySelf();
+        if (null != _forceParticle) {
+            _forceParticle.destroySelf();
+        }
     }
 
     public function calcShortestTravelTimeTo (dest :Vector2) :Number
@@ -117,12 +121,16 @@ public class CreatureUnit extends Unit
                 var attractForce :Vector2 = _destination.subtract(curLoc);
                 var remainingDistance :Number = attractForce.normalizeLocalAndGetLength();
 
-                // and repulsed by other units around it
-                // @TODO - these numbers are a total kludge right now. some testing needs to be done to determine optimal values.
-                var repulseForce :Vector2 = _forceParticle.getCurrentForce(30);
+                if (null != _forceParticle) {
+                    // and repulsed by other units around it
+                    // @TODO - these numbers are a total kludge right now. some testing needs to be done to determine optimal values.
+                    var repulseForce :Vector2 = _forceParticle.getCurrentForce(30);
 
-                // add forces
-                _movementDirection = attractForce.add(repulseForce).normalizeLocal();
+                    // add forces
+                    _movementDirection = attractForce.add(repulseForce).normalizeLocal();
+                } else {
+                    _movementDirection = attractForce.normalizeLocal();
+                }
 
                 // don't overshoot the destination
                 var distance :Number = Math.min(this.movementSpeed * dt, remainingDistance);
@@ -133,8 +141,10 @@ public class CreatureUnit extends Unit
                 this.x = nextLoc.x;
                 this.y = nextLoc.y;
 
-                _forceParticle.loc.x = nextLoc.x;
-                _forceParticle.loc.y = nextLoc.y;
+                if (null != _forceParticle) {
+                    _forceParticle.loc.x = nextLoc.x;
+                    _forceParticle.loc.y = nextLoc.y;
+                }
 
                 _movedThisFrame = true;
             }

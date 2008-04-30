@@ -13,8 +13,8 @@ public class UnitData
     public var description :String = "";
     public var resourceCosts :Array = [ 0, 0, 0, 0 ];
 
-    // movement variables
     public var baseMoveSpeed :Number = 0;
+    public var hasRepulseForce :Boolean;
 
     public var maxHealth :int;
     public var armor :UnitArmorData = new UnitArmorData();
@@ -73,6 +73,7 @@ public class UnitData
         }
 
         unitData.baseMoveSpeed = XmlReader.getAttributeAsNumber(xml, "baseMoveSpeed", (useDefaults ? inheritFrom.baseMoveSpeed : undefined));
+        unitData.hasRepulseForce = XmlReader.getAttributeAsBoolean(xml, "hasRepulseForce", (useDefaults ? inheritFrom.hasRepulseForce : undefined));
         unitData.maxHealth = XmlReader.getAttributeAsInt(xml, "maxHealth", (useDefaults ? inheritFrom.maxHealth : undefined));
 
         var armorNode :XML = xml.Armor[0];

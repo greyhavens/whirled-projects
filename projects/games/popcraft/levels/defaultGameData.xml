@@ -21,6 +21,7 @@
                 displayName="Street-Walker"
                 description="STREET-WALKER: Melee unit. Strong against the Handy Man. Susceptible to attacks from the Dog-Boy."
                 baseMoveSpeed="35"
+                hasRepulseForce="true"
                 maxHealth="100"
                 collisionRadius="15"
                 detectRadius="60"
@@ -43,6 +44,7 @@
                 displayName="Handy Man"
                 description="HANDY MAN: Ranged tower unit. Useful for deflecting incoming Dog-Boys. Watch out for Street-Walkers."
                 baseMoveSpeed="50"
+                hasRepulseForce="true"
                 maxHealth="100"
                 collisionRadius="15"
                 detectRadius="200"
@@ -65,6 +67,7 @@
                 displayName="Dog-Boy"
                 description="DOG-BOY: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Handy Men!"
                 baseMoveSpeed="35"
+                hasRepulseForce="true"
                 maxHealth="70"
                 collisionRadius="15"
                 detectRadius="200"
@@ -87,6 +90,7 @@
                 displayName="Flesh Colossus"
                 description="FLESH COLOSSUS: A massive pile of discarded flesh. The Colossus' powerful attack is dangerous to everybody, but it will slow down when swarmed by enemies."
                 baseMoveSpeed="25"
+                hasRepulseForce="true"
                 maxHealth="100"
                 collisionRadius="30"
                 detectRadius="50"
@@ -109,6 +113,7 @@
                 displayName="Courier"
                 description="COURIER: Retrieves spell pick-ups from the battlefield. The more Couriers you have in play, the faster each will move. Couriers do not attack other creatures."
                 baseMoveSpeed="100"
+                hasRepulseForce="false"
                 maxHealth="40"
                 collisionRadius="30"
                 detectRadius="0"
@@ -128,7 +133,7 @@
 
             <Unit
                 type="base"
-                displayName="" description="" baseMoveSpeed="0" detectRadius="0" loseInterestRadius="0"
+                displayName="" description="" baseMoveSpeed="0" hasRepulseForce="false" detectRadius="0" loseInterestRadius="0"
                 maxHealth="100"
                 collisionRadius="20">
                 <ResourceCosts/>
