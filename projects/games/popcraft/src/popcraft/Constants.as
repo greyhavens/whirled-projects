@@ -35,7 +35,7 @@ public class Constants
     public static const UNIT_AND_SPELL_DESCRIPTION_BR_LOC :Point = new Point(580, 378);
 
     public static const FIRST_UNIT_BUTTON_LOC :Point = new Point(350, 400);
-    public static const FIRST_SPELL_BUTTON_LOC :Point = new Point(620, 400);
+    public static const FIRST_SPELL_BUTTON_LOC :Point = new Point(600, 430);
 
     public static const PLAYER_COLORS :Array = [
        uint(0xFFFF0000),
@@ -104,7 +104,7 @@ public class Constants
 
     public static const UNIT_TYPE_BASE :uint = UNIT_TYPE__CREATURE_LIMIT;
 
-    public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "colossus", "courier", "base" ];
+    public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "courier", "colossus", "base" ];
     public static const CREATURE_UNIT_NAMES :Array = UNIT_NAMES.slice(0, UNIT_TYPE__CREATURE_LIMIT);
 }
 

@@ -381,11 +381,13 @@ public class GameMode extends AppMode
                 // playLevel(true) forces the current level to reload
                 AppContext.levelMgr.playLevel(true);
             }
+            break;
 
         case KeyboardCodes.ESCAPE:
             if (GameContext.isSinglePlayer) {
                 AppContext.mainLoop.pushMode(new PauseMode());
             }
+            break;
         }
     }
 

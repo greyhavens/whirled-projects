@@ -1,7 +1,7 @@
 <root>
     <Level
         name="Welcome to PopCraft"
-        introText="Fashion FLESH and ENERGY into Madames to destroy your opponent's workshop."
+        introText="Fashion FLESH and ENERGY into Street-Walkers to destroy your opponent's workshop."
         disableDiurnalCycle="true"
         playerBaseHealth="100">
 

@@ -120,8 +120,8 @@ class CourierSettings
 {
     // @TODO - load these from XML
     public static const BASE_PAUSE_TIME :Number = 1.5;
-    public static const SPEEDUP_PER_COURIER :Number = 1;
-    public static const MAX_SPEEDUP :Number = 6;
+    public static const SPEEDUP_PER_COURIER :Number = 1.5;
+    public static const MAX_SPEEDUP :Number = 8;
     public static const MAX_MOVE_LENGTH :Number = 50;
     public static const MOVE_FUDGE_FACTOR :Number = 5;
     public static const MAX_MOVE_LENGTH_SQUARED :Number = MAX_MOVE_LENGTH * MAX_MOVE_LENGTH;

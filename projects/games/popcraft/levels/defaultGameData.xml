@@ -3,10 +3,10 @@
         dayLength="30"
         nightLength="120"
         initialDayPhase="day"
-        spellObjectCreationTimeMin="40"
+        spellObjectCreationTimeMin="60"
         spellObjectCreationTimeMax="80"
         spellObjectDistanceSpreadMin="0"
-        spellObjectDistanceSpreadMax="45">
+        spellObjectDistanceSpreadMax="50">
 
         <Resources>
             <Resource type="white" displayName="Flesh" color="0xE8E7E5" rarity="1"/>
@@ -107,15 +107,15 @@
             <Unit
                 type="courier"
                 displayName="Courier"
-                description="COURIER: Retrieves spell pick-ups from the battlefield. The more Couriers you have in play, the faster each will move."
+                description="COURIER: Retrieves spell pick-ups from the battlefield. The more Couriers you have in play, the faster each will move. Couriers do not attack other creatures."
                 baseMoveSpeed="100"
-                maxHealth="50"
+                maxHealth="40"
                 collisionRadius="30"
                 detectRadius="0"
                 loseInterestRadius="0">
                 <ResourceCosts>
-                    <Resource type="white" amount="20"/>
-                    <Resource type="yellow" amount="10"/>
+                    <Resource type="white" amount="30"/>
+                    <Resource type="yellow" amount="20"/>
                 </ResourceCosts>
                 <Weapon damageType="crushing" damageMin="0" damageMax="0" cooldown="0" maxAttackDistance="0"/>
                 <Armor>
