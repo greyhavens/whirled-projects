@@ -118,14 +118,19 @@ public class TeamSprite extends Sprite
             transition: "easeInOutQuad"
         });
 
-        // slide to the team afterwards
-        Tweener.addTween(_lastTrick, {
-            x: _lastTrickPos.x,
-            y: _lastTrickPos.y,
-            time: WINNER_TO_TEAM_DURATION,
-            delay: MAIN_TO_WINNER_DURATION
-        });
+        function snapTo () :void {
+            _lastTrick.alpha = 1.0;
+            _lastTrick.x = _lastTrickPos.x;
+            _lastTrick.y = _lastTrickPos.y;
+        }
 
+        // fade out afterwards
+        Tweener.addTween(_lastTrick, {
+            alpha: 0.0,
+            time: FADE_DURATION,
+            delay: MAIN_TO_WINNER_DURATION - FADE_DURATION / 2,
+            onComplete: snapTo
+        });
     }
 
     /** Clear the card sprites. */
@@ -219,7 +224,7 @@ public class TeamSprite extends Sprite
 
     protected static const TRICK_SCALE :Number = 0.5;
     protected static const MAIN_TO_WINNER_DURATION :Number = 1.5;
-    protected static const WINNER_TO_TEAM_DURATION :Number = 1.0;
+    protected static const FADE_DURATION :Number = .5;
     protected static const SLIDE_DELAY :Number = .5;
 
     protected static const WIDTH :int = 180;
