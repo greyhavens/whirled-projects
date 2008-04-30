@@ -14,6 +14,7 @@ import com.whirled.contrib.simplegame.util.*;
 import com.whirled.game.OccupantChangedEvent;
 
 import flash.display.InteractiveObject;
+import flash.display.Sprite;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
@@ -231,7 +232,11 @@ public class GameMode extends AppMode
 
         this.addObject(puzzleBoard, this.modeSprite);
 
-        // create the unit purchase buttons
+        _descriptionPopupParent = new Sprite();
+        _descriptionPopupParent.x = Constants.UNIT_AND_SPELL_DESCRIPTION_BR_LOC.x;
+        _descriptionPopupParent.y = Constants.UNIT_AND_SPELL_DESCRIPTION_BR_LOC.y;
+        this.modeSprite.addChild(_descriptionPopupParent);
+
         this.addObject(new UnitPurchaseButtonManager());
         this.addObject(new SpellCastButtonManager());
     }
@@ -692,10 +697,16 @@ public class GameMode extends AppMode
         _messageMgr.sendMessage(new CastSpellMessage(playerId, spellType));
     }
 
+    public function get descriptionPopupParent () :Sprite
+    {
+        return _descriptionPopupParent;
+    }
+
     protected var _gameIsRunning :Boolean;
 
     protected var _messageMgr :TickedMessageManager;
     protected var _debugDataView :DebugDataView;
+    protected var _descriptionPopupParent :Sprite;
 
     protected var _tickCount :uint;
     protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);

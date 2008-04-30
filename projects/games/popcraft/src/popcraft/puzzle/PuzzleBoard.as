@@ -38,7 +38,7 @@ public class PuzzleBoard extends SceneObject
         // create the visual representation of the board
         _sprite = new Sprite();
         _sprite.graphics.clear();
-        _sprite.graphics.beginFill(0xFFFFFF);
+        _sprite.graphics.beginFill(0);
         _sprite.graphics.drawRect(0, 0, _cols * tileSize, _rows * tileSize);
         _sprite.graphics.endFill();
         _sprite.mouseEnabled = true;

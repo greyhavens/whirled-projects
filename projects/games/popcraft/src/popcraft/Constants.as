@@ -32,9 +32,10 @@ public class Constants
     public static const RESOURCE_POPUP_LOC :Point = new Point(275, 425);
     public static const DIURNAL_METER_LOC :Point = new Point(255, 2);
     public static const UNIT_QUEUE_LOC :Point = new Point(530, 400);
+    public static const UNIT_AND_SPELL_DESCRIPTION_BR_LOC :Point = new Point(580, 378);
 
     public static const FIRST_UNIT_BUTTON_LOC :Point = new Point(350, 400);
-    public static const FIRST_SPELL_BUTTON_LOC :Point = new Point(500, 400);
+    public static const FIRST_SPELL_BUTTON_LOC :Point = new Point(620, 400);
 
     public static const PLAYER_COLORS :Array = [
        uint(0xFFFF0000),

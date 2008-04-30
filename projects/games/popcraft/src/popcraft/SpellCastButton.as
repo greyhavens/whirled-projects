@@ -25,20 +25,20 @@ public class SpellCastButton extends Sprite
     public function SpellCastButton (spellType :uint)
     {
         _spellType = spellType;
-        _button = new SimpleButton();
 
         var spellData :SpellData = GameContext.gameData.spells[spellType];
         var bitmapData :BitmapData = (AppContext.resources.getResource(spellData.name + "_icon") as ImageResourceLoader).bitmapData;
 
-        _button.upState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP, 1.0);
+        _button = new SimpleButton();_button.upState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP, 1.0);
         _button.overState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_OVER, 1.0);
         _button.downState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DOWN, 1.0);
-
         _disabledState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
-
         _button.hitTestState = _disabledState;
 
-        // create the unit's description popup
+        this.addChild(_button);
+        this.addChild(_disabledState);
+
+        // create the spell's description popup
         var tf :TextField = new TextField();
         tf.background = true;
         tf.backgroundColor = 0xFFFFFF;
@@ -50,13 +50,12 @@ public class SpellCastButton extends Sprite
         tf.width = 200;
         tf.text = spellData.description;
         tf.visible = false;
+        tf.x = -tf.width;
         tf.y = -tf.height;
 
         _descriptionPopup = tf;
 
-        this.addChild(_button);
-        this.addChild(_disabledState);
-        this.addChild(_descriptionPopup);
+        GameContext.gameMode.descriptionPopupParent.addChild(_descriptionPopup);
 
         this.enabled = true;
 

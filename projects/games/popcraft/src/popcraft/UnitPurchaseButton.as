@@ -57,6 +57,9 @@ public class UnitPurchaseButton extends Sprite
 
         _button.hitTestState = _disabledState;
 
+        this.addChild(_button);
+        this.addChild(_disabledState);
+
         // create the unit's description popup
         var tf :TextField = new TextField();
         tf.background = true;
@@ -69,13 +72,12 @@ public class UnitPurchaseButton extends Sprite
         tf.width = 200;
         tf.text = unitData.description;
         tf.visible = false;
+        tf.x = -tf.width;
         tf.y = -tf.height;
 
         _descriptionPopup = tf;
 
-        this.addChild(_button);
-        this.addChild(_disabledState);
-        this.addChild(_descriptionPopup);
+        GameContext.gameMode.descriptionPopupParent.addChild(_descriptionPopup);
 
         this.enabled = true;
 
