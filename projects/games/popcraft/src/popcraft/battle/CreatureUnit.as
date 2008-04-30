@@ -34,9 +34,16 @@ public class CreatureUnit extends Unit
 
     override protected function addedToDB () :void
     {
-        // collision geometry
-        _collisionObj = new CollisionObject(this);
-        _collisionGrid = GameContext.battleBoard.collisionGrid;
+        _forceParticle = new ForceParticle();
+        _forceParticle.loc.x = this.x;
+        _forceParticle.loc.y = this.y;
+
+        this.db.addObject(_forceParticle);
+    }
+
+    override protected function removedFromDB () :void
+    {
+        _forceParticle.destroySelf();
     }
 
     public function calcShortestTravelTimeTo (dest :Vector2) :Number
@@ -112,7 +119,7 @@ public class CreatureUnit extends Unit
 
                 // and repulsed by other units around it
                 // @TODO - these numbers are a total kludge right now. some testing needs to be done to determine optimal values.
-                var repulseForce :Vector2 = _collisionGrid.getForceForLoc(curLoc, 30, _collisionObj);
+                var repulseForce :Vector2 = _forceParticle.getCurrentForce(30);
 
                 // add forces
                 _movementDirection = attractForce.add(repulseForce).normalizeLocal();
@@ -125,6 +132,9 @@ public class CreatureUnit extends Unit
 
                 this.x = nextLoc.x;
                 this.y = nextLoc.y;
+
+                _forceParticle.loc.x = nextLoc.x;
+                _forceParticle.loc.y = nextLoc.y;
 
                 _movedThisFrame = true;
             }
@@ -193,23 +203,6 @@ public class CreatureUnit extends Unit
         this.stopMoving();
     }
 
-    public function detectCollisions () :void
-    {
-        // called on every CreatureUnit, once per frame,
-        // to detect any collisions that have occurred
-        _collisionObj.detectCollisions();
-    }
-
-    public function removeFromCollisionGrid () :void
-    {
-        _collisionObj.removeFromGrid();
-    }
-
-    public function get collisionObj () :CollisionObject
-    {
-        return _collisionObj;
-    }
-
     public function get lastUpdateTimestamp () :Number
     {
         return _lastUpdateTimestamp;
@@ -217,8 +210,7 @@ public class CreatureUnit extends Unit
 
     protected var _destination :Vector2;
 
-    protected var _collisionObj :CollisionObject;
-    protected var _collisionGrid :AttractRepulseGrid;
+    protected var _forceParticle :ForceParticle;
 
     protected var _movedThisFrame :Boolean;
     protected var _movementDirection :Vector2;

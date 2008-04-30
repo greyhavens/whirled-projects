@@ -244,15 +244,12 @@ public class GameMode extends AppMode
     protected function setupBattle () :void
     {
         // Board
-        var battleBoard :BattleBoard = new BattleBoard(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
-
         var battleBoardView :BattleBoardView = new BattleBoardView(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
         battleBoardView.displayObject.x = Constants.BATTLE_BOARD_LOC.x;
         battleBoardView.displayObject.y = Constants.BATTLE_BOARD_LOC.y;
 
         this.addObject(battleBoardView, this.modeSprite);
 
-        GameContext.battleBoard = battleBoard;
         GameContext.battleBoardView = battleBoardView;
 
         // create player bases

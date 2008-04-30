@@ -46,11 +46,6 @@ public class Unit extends SimObject
         }
     }
 
-    protected function createOwningPlayerGlowForBitmap (bitmap :Bitmap) :Bitmap
-    {
-        return ImageUtil.createGlowBitmap(bitmap, Constants.PLAYER_COLORS[_owningPlayerData.playerId] as uint);
-    }
-
     public function isUnitInRange (unit :Unit, range :Number) :Boolean
     {
         if (range < 0) {

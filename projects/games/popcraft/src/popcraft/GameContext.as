@@ -18,7 +18,6 @@ public class GameContext
 
     public static var gameMode :GameMode;
     public static var netObjects :NetObjectDB;
-    public static var battleBoard :BattleBoard;
     public static var battleBoardView :BattleBoardView;
     public static var diurnalCycle :DiurnalCycle;
 
