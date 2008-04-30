@@ -43,7 +43,7 @@ public class LevelOutroMode extends AppMode
         tfName.autoSize = TextFieldAutoSize.CENTER;
         tfName.scaleX = 2;
         tfName.scaleY = 2;
-        tfName.text = (_success ? "You won!" : "You lost");
+        tfName.text = (_success ? "Victory!" : "Defeated");
         tfName.x = (bgSprite.width * 0.5) - (tfName.width * 0.5);
         tfName.y = 30;
 

@@ -97,8 +97,8 @@ public class Constants
     public static const UNIT_TYPE_GRUNT :uint = 0;
     public static const UNIT_TYPE_HEAVY :uint = 1;
     public static const UNIT_TYPE_SAPPER :uint = 2;
-    public static const UNIT_TYPE_COLOSSUS :uint = 3;
-    public static const UNIT_TYPE_COURIER :uint = 4;
+    public static const UNIT_TYPE_COURIER :uint = 3;
+    public static const UNIT_TYPE_COLOSSUS :uint = 4;
 
     public static const UNIT_TYPE__CREATURE_LIMIT :uint = 5;
 

@@ -44,6 +44,11 @@ public class CourierCreatureUnit extends CreatureUnit
         this.die();
     }
 
+    public function get carriedSpell () :SpellData
+    {
+        return _carriedSpell;
+    }
+
     override protected function addedToDB () :void
     {
         super.addedToDB();

@@ -41,7 +41,17 @@ public class UnitFactory
         // so do that before creating a unit view
         GameContext.netObjects.addObject(creature);
 
-        var creatureView :CreatureUnitView = new CreatureUnitView(creature);
+        var creatureView :CreatureUnitView;
+        switch (unitType) {
+        case Constants.UNIT_TYPE_COURIER:
+            creatureView = new CourierCreatureUnitView(creature as CourierCreatureUnit);
+            break;
+
+        default:
+            creatureView = new CreatureUnitView(creature);
+            break;
+        }
+
         GameContext.gameMode.addObject(creatureView, GameContext.battleBoardView.unitViewParent);
 
         return creature;

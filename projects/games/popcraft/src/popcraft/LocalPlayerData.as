@@ -19,6 +19,11 @@ public class LocalPlayerData extends PlayerData
         for (var i :int = 0; i < _resources.length; ++i) {
             _resources[i] = int(0);
         }
+
+        _spells = new Array(Constants.SPELL_NAMES.length);
+        for (i = 0; i < _spells.length; ++i) {
+            _spells[i] = uint(0);
+        }
     }
 
     public function getResourceAmount (resourceType :uint) :int
@@ -57,22 +62,28 @@ public class LocalPlayerData extends PlayerData
 
     public function addSpell (spellType :uint) :void
     {
-        _spells.push(spellType);
+        _spells[spellType] = this.getSpellCount(spellType) + 1;
     }
 
     public function removeSpell (spellType :uint) :void
     {
-        var removed :Boolean = ArrayUtil.removeFirst(_spells, spellType);
-        Assert.isTrue(removed);
+        var spellCount :uint = this.getSpellCount(spellType);
+        Assert.isTrue(spellCount > 0);
+        _spells[spellType] = spellCount - 1;
+    }
+
+    public function getSpellCount (spellType :uint) :uint
+    {
+        return _spells[spellType];
     }
 
     public function hasSpell (spellType :uint) :Boolean
     {
-        return ArrayUtil.contains(_spells, spellType);
+        return (this.getSpellCount(spellType) > 0);
     }
 
     protected var _resources :Array;
-    protected var _spells :Array = [];
+    protected var _spells :Array;
 }
 
 }

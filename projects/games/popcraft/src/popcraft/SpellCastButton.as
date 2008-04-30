@@ -5,11 +5,9 @@ import com.whirled.contrib.simplegame.resource.*;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
-import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
@@ -27,7 +25,7 @@ public class SpellCastButton extends Sprite
         _spellType = spellType;
 
         var spellData :SpellData = GameContext.gameData.spells[spellType];
-        var bitmapData :BitmapData = (AppContext.resources.getResource(spellData.name + "_icon") as ImageResourceLoader).bitmapData;
+        var bitmapData :BitmapData = (AppContext.resources.getResource(spellData.iconName) as ImageResourceLoader).bitmapData;
 
         _button = new SimpleButton();_button.upState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP, 1.0);
         _button.overState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_OVER, 1.0);
@@ -37,6 +35,14 @@ public class SpellCastButton extends Sprite
 
         this.addChild(_button);
         this.addChild(_disabledState);
+
+        // spell count text
+        _spellCountText = new TextField();
+        _spellCountText.autoSize = TextFieldAutoSize.CENTER;
+        _spellCountText.selectable = false;
+        _spellCountText.textColor = 0xFFFFFF;
+        _spellCountText.y = HEIGHT;
+        this.addChild(_spellCountText);
 
         // create the spell's description popup
         var tf :TextField = new TextField();
@@ -61,6 +67,14 @@ public class SpellCastButton extends Sprite
 
         this.addEventListener(MouseEvent.ROLL_OVER, handleMouseOver);
         this.addEventListener(MouseEvent.ROLL_OUT, handleMouseOut);
+
+        this.updateSpellCount(0);
+    }
+
+    public function updateSpellCount (count :uint) :void
+    {
+        _spellCountText.text = String(count);
+        _spellCountText.x = (WIDTH * 0.5) - (_spellCountText.width * 0.5);
     }
 
     protected static function makeButtonFace (bitmapData :BitmapData, fgColor :uint, bgColor :uint, iconAlpha :Number) :Sprite
@@ -122,6 +136,7 @@ public class SpellCastButton extends Sprite
     protected var _button :SimpleButton;
     protected var _disabledState :Sprite;
     protected var _descriptionPopup :DisplayObject;
+    protected var _spellCountText :TextField;
 
     protected var _enabled :Boolean;
 

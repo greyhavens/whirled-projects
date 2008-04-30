@@ -18,6 +18,11 @@ public class SpellData
         return Constants.SPELL_NAMES[type];
     }
 
+    public function get iconName () :String
+    {
+        return this.name + "_icon";
+    }
+
     public function combine (spell :SpellData) :void
     {
         speedScaleOffset += spell.speedScaleOffset;

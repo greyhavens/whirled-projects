@@ -45,6 +45,7 @@ public class SpellCastButtonManager extends SimObject
         var isNight :Boolean = GameContext.diurnalCycle.isNight;
         for each (var button :SpellCastButton in _buttons) {
             button.enabled = isNight && GameContext.localPlayerData.hasSpell(button.spellType);
+            button.updateSpellCount(GameContext.localPlayerData.getSpellCount(button.spellType));
         }
     }
 
