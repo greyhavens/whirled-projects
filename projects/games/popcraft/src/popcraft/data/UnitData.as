@@ -39,6 +39,7 @@ public class UnitData
         theClone.resourceCosts = resourceCosts.slice();
 
         theClone.baseMoveSpeed = baseMoveSpeed;
+        theClone.hasRepulseForce = hasRepulseForce;
 
         theClone.maxHealth = maxHealth;
         theClone.armor = armor.clone();
