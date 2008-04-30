@@ -322,7 +322,7 @@ public class CreatureUnitView extends SceneObject
                 // estimate a new location for the CreatureUnit,
                 // based on its last location and its velocity
 
-                var distanceDelta :Number = _unit.movementSpeed * _unitUpdateTimeDelta;
+                var distanceDelta :Number = Math.min(_unit.movementSpeed * _unitUpdateTimeDelta, _unit.distanceToDestination);
                 var movementDelta :Vector2 = _unit.movementDirection.scale(distanceDelta);
 
                 this.x = _unit.x + movementDelta.x;

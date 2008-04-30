@@ -83,6 +83,11 @@ public class CreatureUnit extends Unit
         return this.unitData.baseMoveSpeed * this.speedScale;
     }
 
+    public function get distanceToDestination () :Number
+    {
+        return (null == _destination ? 0 : _destination.subtract(_loc).length);
+    }
+
     override public function get speedScale () :Number
     {
         return _speedScale + _unitSpells.speedScaleOffset;

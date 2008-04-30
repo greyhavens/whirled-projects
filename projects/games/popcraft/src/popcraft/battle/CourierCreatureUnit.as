@@ -125,7 +125,7 @@ class CourierSettings
     public static const MAX_MOVE_LENGTH :Number = 50;
     public static const MOVE_FUDGE_FACTOR :Number = 5;
     public static const MAX_MOVE_LENGTH_SQUARED :Number = MAX_MOVE_LENGTH * MAX_MOVE_LENGTH;
-    public static const WANDER_DISTANCE :NumRange = new NumRange(50, 200, Rand.STREAM_GAME);
+    public static const WANDER_DISTANCE :NumRange = new NumRange(100, 150, Rand.STREAM_GAME);
     public static const WANDER_BOUNDS :Rectangle = new Rectangle(
         75, 75, Constants.BATTLE_WIDTH - 75, Constants.BATTLE_HEIGHT - 75);
 }
