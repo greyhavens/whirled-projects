@@ -8,9 +8,9 @@ import flash.display.SimpleButton;
 import com.threerings.util.MultiLoader;
 
 import spades.Debug;
-import spades.card.Bids;
+import com.whirled.contrib.card.trick.Bids;
 import spades.card.SpadesBids;
-import spades.card.BidEvent;
+import com.whirled.contrib.card.trick.BidEvent;
 
 /** Represents the interface for bidding blind nil (yes/no). */
 public class BlindNilBiddingSprite extends Sprite

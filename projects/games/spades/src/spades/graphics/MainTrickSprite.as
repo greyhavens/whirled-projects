@@ -4,8 +4,8 @@ import com.threerings.flash.Vector2;
 
 import caurina.transitions.Tweener;
 
-import spades.card.Trick;
-import spades.card.Table;
+import com.whirled.contrib.card.trick.Trick;
+import com.whirled.contrib.card.Table;
 
 import flash.geom.Point;
 

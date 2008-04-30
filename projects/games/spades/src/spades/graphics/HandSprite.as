@@ -5,11 +5,11 @@ import flash.geom.Point;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import com.threerings.flash.Vector2;
-import spades.card.CardArray;
-import spades.card.CardArrayEvent;
-import spades.card.CardException;
-import spades.card.Hand;
-import spades.card.HandEvent;
+import com.whirled.contrib.card.CardArray;
+import com.whirled.contrib.card.CardArrayEvent;
+import com.whirled.contrib.card.CardException;
+import com.whirled.contrib.card.Hand;
+import com.whirled.contrib.card.HandEvent;
 import spades.Debug;
 
 

@@ -8,12 +8,12 @@ import com.threerings.util.MultiLoader;
 
 import caurina.transitions.Tweener;
 
-import spades.card.Bids;
-import spades.card.BidEvent;
-import spades.card.Table;
-import spades.card.Scores;
-import spades.card.ScoresEvent;
-import spades.card.Team;
+import com.whirled.contrib.card.trick.Bids;
+import com.whirled.contrib.card.trick.BidEvent;
+import com.whirled.contrib.card.Table;
+import com.whirled.contrib.card.trick.Scores;
+import com.whirled.contrib.card.trick.ScoresEvent;
+import com.whirled.contrib.card.Team;
 
 
 /** Represents a team display. Includes a placeholder box and last trick display. */

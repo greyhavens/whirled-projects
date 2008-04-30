@@ -2,6 +2,9 @@ package spades.card {
 
 import com.whirled.game.GameControl;
 import com.whirled.game.PropertyChangedEvent;
+import com.whirled.contrib.card.trick.Bids;
+import com.whirled.contrib.card.trick.BidEvent;
+import com.whirled.contrib.card.CardException;
 
 /** Bids object extension for handling spades specific bidding behavior, blind nils */
 public class SpadesBids extends Bids

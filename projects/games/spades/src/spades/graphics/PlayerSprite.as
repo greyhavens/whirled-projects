@@ -10,10 +10,10 @@ import com.threerings.util.MultiLoader;
 import com.threerings.util.Assert;
 
 import spades.Debug;
-import spades.card.Team;
-import spades.card.TurnTimer;
-import spades.card.TurnTimerEvent;
-import spades.card.Table;
+import com.whirled.contrib.card.Team;
+import com.whirled.contrib.card.TurnTimer;
+import com.whirled.contrib.card.TurnTimerEvent;
+import com.whirled.contrib.card.Table;
 
 import caurina.transitions.Tweener;
 

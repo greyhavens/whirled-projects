@@ -16,19 +16,19 @@ import com.threerings.util.Assert;
 import caurina.transitions.Tweener;
 
 import spades.Model;
-import spades.card.Card;
-import spades.card.CardArray;
-import spades.card.CardArrayEvent;
-import spades.card.Trick;
-import spades.card.TrickEvent
-import spades.card.Table;
-import spades.card.Bids;
+import com.whirled.contrib.card.Card;
+import com.whirled.contrib.card.CardArray;
+import com.whirled.contrib.card.CardArrayEvent;
+import com.whirled.contrib.card.trick.Trick;
+import com.whirled.contrib.card.trick.TrickEvent
+import com.whirled.contrib.card.Table;
+import com.whirled.contrib.card.trick.Bids;
 import spades.card.SpadesBids;
-import spades.card.BidEvent;
-import spades.card.Hand;
-import spades.card.HandEvent;
-import spades.card.Scores;
-import spades.card.Team;
+import com.whirled.contrib.card.trick.BidEvent;
+import com.whirled.contrib.card.Hand;
+import com.whirled.contrib.card.HandEvent;
+import com.whirled.contrib.card.trick.Scores;
+import com.whirled.contrib.card.Team;
 import spades.Debug;
 
 /**

@@ -2,6 +2,11 @@ package spades.card {
 
 import com.whirled.game.GameControl;
 import com.whirled.game.ElementChangedEvent;
+import com.whirled.contrib.card.trick.Scores;
+import com.whirled.contrib.card.trick.ScoresEvent;
+import com.whirled.contrib.card.trick.Bids;
+import com.whirled.contrib.card.NetArray;
+import com.whirled.contrib.card.Table;
 
 /** Spades-specific scoring data. Tracks sandbags and distinguishes between scoring and 
  *  non-scoring tricks. */

@@ -5,8 +5,13 @@
   <property name="app.name" value="Spades"/>
   <property name="app.source-dir" value="src"/>
   <property name="app.type" value="game"/>
+  <property name="app.source-extras" value="../../../libraries/whirled/contrib/src/as/"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
+
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/f0ec60a8fc8125a0071877e1f06c10e8fc07270f.swf"/>
+  </target>
 
 </project>

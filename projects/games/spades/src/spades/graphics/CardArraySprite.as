@@ -4,9 +4,9 @@ import flash.display.Sprite;
 import flash.display.DisplayObject;
 import flash.events.Event;
 
-import spades.card.Card;
-import spades.card.CardArray;
-import spades.card.CardArrayEvent;
+import com.whirled.contrib.card.Card;
+import com.whirled.contrib.card.CardArray;
+import com.whirled.contrib.card.CardArrayEvent;
 import spades.Debug;
 
 import com.threerings.flash.AnimationManager;

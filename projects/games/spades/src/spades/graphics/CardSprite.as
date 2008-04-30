@@ -3,7 +3,7 @@ package spades.graphics {
 import flash.display.Sprite;
 import flash.display.Scene;
 import flash.events.MouseEvent;
-import spades.card.Card;
+import com.whirled.contrib.card.Card;
 import spades.Debug;
 import com.threerings.util.MultiLoader;
 import flash.display.MovieClip;

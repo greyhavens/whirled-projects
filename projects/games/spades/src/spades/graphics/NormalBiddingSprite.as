@@ -8,8 +8,8 @@ import flash.display.SimpleButton;
 import com.threerings.util.MultiLoader;
 
 import spades.Debug;
-import spades.card.Bids;
-import spades.card.BidEvent;
+import com.whirled.contrib.card.trick.Bids;
+import com.whirled.contrib.card.trick.BidEvent;
 
 /** Represents the interface for normal bidding (nil to 13). */
 public class NormalBiddingSprite extends Sprite

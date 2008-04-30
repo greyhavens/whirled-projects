@@ -2,12 +2,12 @@ package spades {
 
 import com.whirled.game.GameControl;
 
-import spades.card.Table;
-import spades.card.Hand;
-import spades.card.Trick;
-import spades.card.Bids;
-import spades.card.Scores;
-import spades.card.TurnTimer;
+import com.whirled.contrib.card.Table;
+import com.whirled.contrib.card.Hand;
+import com.whirled.contrib.card.trick.Trick;
+import com.whirled.contrib.card.trick.Bids;
+import com.whirled.contrib.card.trick.Scores;
+import com.whirled.contrib.card.TurnTimer;
 
 
 /** Aggregates the various model objects used in a game of spades */

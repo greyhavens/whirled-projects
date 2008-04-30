@@ -6,25 +6,25 @@ import com.whirled.game.StateChangedEvent;
 import com.whirled.game.OccupantChangedEvent;
 import com.threerings.util.Assert;
 
-import spades.card.Card;
-import spades.card.CardArray;
-import spades.card.Trick;
-import spades.card.TrickEvent;
-import spades.card.Bids;
+import com.whirled.contrib.card.Card;
+import com.whirled.contrib.card.CardArray;
+import com.whirled.contrib.card.trick.Trick;
+import com.whirled.contrib.card.trick.TrickEvent;
+import com.whirled.contrib.card.trick.Bids;
 import spades.card.SpadesBids;
-import spades.card.BidEvent;
-import spades.card.Table;
-import spades.card.Hand;
-import spades.card.HandEvent;
-import spades.card.Sorter;
-import spades.card.Scores;
-import spades.card.ScoresEvent;
+import com.whirled.contrib.card.trick.BidEvent;
+import com.whirled.contrib.card.Table;
+import com.whirled.contrib.card.Hand;
+import com.whirled.contrib.card.HandEvent;
+import com.whirled.contrib.card.Sorter;
+import com.whirled.contrib.card.trick.Scores;
+import com.whirled.contrib.card.trick.ScoresEvent;
 import spades.card.SpadesScores;
-import spades.card.ScoreBreakdown;
-import spades.card.Team;
-import spades.card.WinnersAndLosers;
-import spades.card.TurnTimer;
-import spades.card.TurnTimerEvent;
+import com.whirled.contrib.card.trick.ScoreBreakdown;
+import com.whirled.contrib.card.Team;
+import com.whirled.contrib.card.trick.WinnersAndLosers;
+import com.whirled.contrib.card.trick.TrickTurnTimer;
+import com.whirled.contrib.card.TurnTimerEvent;
 
 /**
  * The controller for spades.
@@ -160,7 +160,9 @@ public class Controller
         var bids :SpadesBids = new SpadesBids(gameCtrl, 
             CardArray.FULL_DECK.length / table.numPlayers);
         var scores :Scores = new SpadesScores(gameCtrl, table, bids, targetScore);
-        var timer :TurnTimer = new TurnTimer(gameCtrl, table, bids, trick);
+        var timer :TrickTurnTimer = new TrickTurnTimer(
+            gameCtrl, table, bids, trick);
+        timer.debug = Debug.debug;
 
         if ("timer" in config && !config.timer) {
             timer.disable();

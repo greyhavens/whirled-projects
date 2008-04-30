@@ -1,8 +1,8 @@
 package spades.graphics {
 
-import spades.card.Trick;
-import spades.card.Table;
-import spades.card.TrickEvent;
+import com.whirled.contrib.card.trick.Trick;
+import com.whirled.contrib.card.Table;
+import com.whirled.contrib.card.trick.TrickEvent;
 import spades.Debug;
 
 import com.threerings.flash.Vector2;
