@@ -6,7 +6,6 @@
   <property name="app.type" value="toy"/>
   <property name="app.source-dir" value="src"/>
   <property name="app.package-dir" value="com/threerings/graffiti"/>
-  <property name="app.source-extras" value="../../../libraries/whirled/contrib/src/as/"/>
   <property name="app.lib-extras" value="../../../lib/fl-components.swc"/>
 
   <!-- include the standard build script -->
