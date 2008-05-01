@@ -5,10 +5,7 @@
         disableDiurnalCycle="false"
         playerBaseHealth="100">
 
-        <GameDataOverride
-            initialDayPhase="night"
-            spellDropTimeMin="-1"
-            spellDropTimeMax="-1"/>
+        <GameDataOverride initialDayPhase="night"/>
 
         <InitialResources/>
 

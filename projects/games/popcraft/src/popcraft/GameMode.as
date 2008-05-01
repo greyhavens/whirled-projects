@@ -304,6 +304,10 @@ public class GameMode extends AppMode
 
     protected function scheduleNextSpellDrop () :void
     {
+        if (GameContext.isSinglePlayer && GameContext.spLevel.availableSpells.length == 0) {
+            return;
+        }
+
         var time :Number = GameContext.gameData.spellDropTime.next();
         if (time >= 0) {
             GameContext.netObjects.addObject(new SimpleTimer(time, createNextSpellDrop));
@@ -314,10 +318,9 @@ public class GameMode extends AppMode
     {
         var spellLoc :Vector2;
 
-        /*if (GameContext.numPlayers == 2) {
+        if (GameContext.numPlayers == 2) {
             // in a two-player game, pick a location somewhere along the line
             // that runs perpendicular to the line that connects the two bases
-            // find a location roughly in the center of the player bases
             var base1 :PlayerBaseUnit = PlayerData(GameContext.playerData[0]).base;
             var base2 :PlayerBaseUnit = PlayerData(GameContext.playerData[1]).base;
             if (null != base1 && null != base2) {
@@ -328,11 +331,13 @@ public class GameMode extends AppMode
 
                 var direction :Number = baseLoc1.subtract(baseLoc2).angle;
                 direction += (Rand.nextBoolean(Rand.STREAM_GAME) ? Math.PI * 0.5 : -Math.PI * 0.5);
-                //var centerDistance :Number = Rand.nextNumber(
+                var centerDistance :Number = GameContext.gameData.spellDropCenterOffset.next();
+                spellLoc = Vector2.fromAngle(direction, centerDistance).addLocal(baseCenter);
             }
 
-        } else {*/
-            // otherwise, find a location near the center of the board
+        } else {
+            // otherwise, in a larger game, find a location near the center of the board
+            // (average all player base locations together)
             var numBases :int;
             var centerLoc :Vector2 = new Vector2();
             for each (var playerData :PlayerData in GameContext.playerData) {
@@ -346,20 +351,34 @@ public class GameMode extends AppMode
             if (numBases > 0) {
                 centerLoc.x /= numBases;
                 centerLoc.y /= numBases;
-
-                // randomize the location a bit
-                var direction :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
-                var length :Number = GameContext.gameData.spellDropScatter.next();
-                spellLoc = centerLoc.addLocal(Vector2.fromAngle(direction, length));
+                spellLoc = centerLoc;
             }
-        //}
+        }
 
         if (null != spellLoc) {
+            // randomize the location a bit more
+            direction = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+            var length :Number = GameContext.gameData.spellDropScatter.next();
+            spellLoc.addLocal(Vector2.fromAngle(direction, length));
+
+            // clamp location
+            spellLoc.x = Math.max(spellLoc.x, 75);
+            spellLoc.x = Math.min(spellLoc.x, Constants.SCREEN_DIMS.x - 75);
+            spellLoc.y = Math.max(spellLoc.y, 75);
+            spellLoc.y = Math.min(spellLoc.y, Constants.SCREEN_DIMS.y - 75);
+
             // pick a spell at random
-            var spellType :uint = Rand.nextIntRange(0, Constants.SPELL_NAMES.length, Rand.STREAM_GAME);
+            var spellType :uint;
+            if (GameContext.isSinglePlayer) {
+                var availableSpells :Array = GameContext.spLevel.availableSpells;
+                spellType = availableSpells[Rand.nextIntRange(0, availableSpells.length, Rand.STREAM_GAME)];
+            } else {
+                spellType = Rand.nextIntRange(0, Constants.SPELL_NAMES.length, Rand.STREAM_GAME);
+            }
+
             SpellDropFactory.createSpellDrop(spellType, spellLoc);
 
-            // schedule the next one
+            // schedule the next drop
             this.scheduleNextSpellDrop();
         }
     }

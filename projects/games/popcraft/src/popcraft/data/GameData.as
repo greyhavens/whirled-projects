@@ -14,6 +14,7 @@ public class GameData
 
     public var spellDropTime :NumRange;
     public var spellDropScatter :NumRange;
+    public var spellDropCenterOffset :NumRange;
 
     public var resources :Array = [];
     public var units :Array = [];
@@ -34,6 +35,7 @@ public class GameData
         theClone.initialDayPhase = initialDayPhase;
         theClone.spellDropTime = spellDropTime.clone();
         theClone.spellDropScatter = spellDropScatter.clone();
+        theClone.spellDropCenterOffset = spellDropCenterOffset.clone();
 
         for each (var resData :ResourceData in resources) {
             theClone.resources.push(resData.clone());
@@ -75,6 +77,10 @@ public class GameData
         var spellDropScatterMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropScatterMin", (useDefaults ? gameData.spellDropScatter.min : undefined));
         var spellDropScatterMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropScatterMax", (useDefaults ? gameData.spellDropScatter.max : undefined));
         gameData.spellDropScatter = new NumRange(spellDropScatterMin, spellDropScatterMax, Rand.STREAM_GAME);
+
+        var spellDropCenterOffsetMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropCenterOffsetMin", (useDefaults ? gameData.spellDropCenterOffset.min : undefined));
+        var spellDropCenterOffsetMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropCenterOffsetMax", (useDefaults ? gameData.spellDropCenterOffset.max : undefined));
+        gameData.spellDropCenterOffset = new NumRange(spellDropCenterOffsetMin, spellDropCenterOffsetMax, Rand.STREAM_GAME);
 
         // init the resource data
         for (var i :int = gameData.resources.length; i < Constants.RESOURCE_NAMES.length; ++i) {
