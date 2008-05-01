@@ -24,8 +24,14 @@ public class GridLayer extends Layer
             redraw(scale);
             _oldScale = scale;
         }
-        x = Math.floor(-nX) % Metrics.TILE_SIZE;
-        y = Math.floor(Metrics.DISPLAY_HEIGHT - nY) % Metrics.TILE_SIZE;
+        x = Math.floor(-nX);
+        if (x < 0) {
+            x %= Metrics.TILE_SIZE;
+        }
+        y = Math.floor(-nY);
+        if (nY < 0) {
+            y %= Metrics.TILE_SIZE;
+        }
     }
 
     protected function redraw (scale :Number) :void
@@ -33,13 +39,13 @@ public class GridLayer extends Layer
         graphics.clear();
         graphics.lineStyle(0, 0x000000, 0.5);
         for (var ii :int = 0; ii <= Metrics.WINDOW_WIDTH * scale; ii++) {
-            graphics.moveTo(ii * Metrics.TILE_SIZE, Metrics.DISPLAY_HEIGHT * scale);
-            graphics.lineTo(ii * Metrics.TILE_SIZE, -Metrics.TILE_SIZE * scale);
+            graphics.moveTo(ii * Metrics.TILE_SIZE / scale, Metrics.DISPLAY_HEIGHT);
+            graphics.lineTo(ii * Metrics.TILE_SIZE / scale, -Metrics.TILE_SIZE);
         }
         for (ii = 0; ii <= Metrics.WINDOW_HEIGHT * scale; ii++) {
-            graphics.moveTo(0, ii * Metrics.TILE_SIZE);
+            graphics.moveTo(0, ii * Metrics.TILE_SIZE / scale);
             graphics.lineTo(
-                (Metrics.DISPLAY_WIDTH + Metrics.TILE_SIZE) * scale, ii * Metrics.TILE_SIZE);
+                (Metrics.DISPLAY_WIDTH + Metrics.TILE_SIZE), ii * Metrics.TILE_SIZE / scale);
         }
     }
 

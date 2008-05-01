@@ -15,7 +15,6 @@ public class BoundedPieceSprite extends PieceSprite
 {
     public function BoundedPieceSprite (p :BoundedPiece, disp :DisplayObject = null)
     {
-        trace("Created BoundedPieceSprite");
         super(p, disp);
         _bpiece = p;
     }

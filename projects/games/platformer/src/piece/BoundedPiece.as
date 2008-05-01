@@ -25,7 +25,9 @@ public class BoundedPiece extends Piece
         if (defxml != null) {
             if (defxml.child("bounds").length() > 0) {
                 for each (var bxml :XML in defxml.child("bounds")[0].child("bound")) {
-                    _boundPts.push(new Point(bxml.@x, bxml.@y));
+                    var x :int = Math.max(0, Math.min(width, bxml.@x));
+                    var y :int = Math.max(0, Math.min(height, bxml.@y));
+                    _boundPts.push(new Point(x, y));
                     _boundSides.push(bxml.@type.toString());
                 }
             }

@@ -61,6 +61,11 @@ public class EditSprite extends Sprite
         moveView(dX * Metrics.TILE_SIZE, dY * Metrics.TILE_SIZE);
     }
 
+    public function positionViewTile (dX :int, dY :int) :void
+    {
+        positionView(dX * Metrics.TILE_SIZE, dY * Metrics.TILE_SIZE);
+    }
+
     public function getMouseX () :int
     {
         return Math.floor((_bX + mouseX) / Metrics.TILE_SIZE);

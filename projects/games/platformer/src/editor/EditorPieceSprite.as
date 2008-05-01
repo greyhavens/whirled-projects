@@ -17,13 +17,15 @@ import piece.Piece;
  */
 public class EditorPieceSprite extends PieceSprite
 {
-    public function EditorPieceSprite (ps :PieceSprite, es :EditSprite)
+    public function EditorPieceSprite (ps :PieceSprite, es :BoardEditSprite)
     {
         super(ps.getPiece());
 
         _sprite = ps;
         _es = es;
         addChild(_sprite);
+        name = _piece.id.toString();
+        _selectedH = createHighlight(0x006600);
 
 /*
         var p :Piece  = ps.getPiece();
@@ -62,6 +64,19 @@ public class EditorPieceSprite extends PieceSprite
         _startX = NaN;
     }
 
+    public function setSelected (selected :Boolean) :void
+    {
+        if (_selected == selected) {
+            return;
+        }
+        _selected = selected;
+        if (_selected) {
+            _sprite.addChild(_selectedH);
+        } else {
+            _sprite.removeChild(_selectedH);
+        }
+    }
+
     protected function mouseOverHandler (event :MouseEvent) :void
     {
         if (_hoverH == null) {
@@ -81,6 +96,7 @@ public class EditorPieceSprite extends PieceSprite
     {
         _startX = _es.getMouseX() - _piece.x;
         _startY = _es.getMouseY() - _piece.y;
+        _es.setSelected(this);
     }
 
     protected function mouseUpHandler (event :MouseEvent) :void
@@ -107,7 +123,7 @@ public class EditorPieceSprite extends PieceSprite
     }
 
     protected var _sprite :PieceSprite;
-    protected var _es :EditSprite;
+    protected var _es :BoardEditSprite;
     protected var _hoverH :Shape;
     protected var _selectedH :Shape;
 

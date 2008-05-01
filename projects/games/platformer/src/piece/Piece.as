@@ -14,6 +14,9 @@ public class Piece
     public var x :int;
     public var y :int;
 
+    /** The piece id. */
+    public var id :int;
+
     /** The piece size. */
     public var height :int;
     public var width :int;
@@ -24,20 +27,25 @@ public class Piece
     /** The piece sprite name. */
     public var sprite :String = "";
 
+    /** The orientation. */
+    public var orient :int;
+
     public function Piece (defxml :XML = null, insxml :XML = null)
     {
         if (defxml != null) {
-            this.type = defxml.@type;
-            this.height = defxml.@height;
-            this.width = defxml.@width;
-            this.sprite = defxml.@sprite;
+            type = defxml.@type;
+            height = defxml.@height;
+            width = defxml.@width;
+            sprite = defxml.@sprite;
         }
         if (insxml != null) {
             if (defxml == null) {
-                this.type = insxml.@type;
+                type = insxml.@type;
             }
-            this.x = insxml.@x;
-            this.y = insxml.@y;
+            x = insxml.@x;
+            y = insxml.@y;
+            id = insxml.@id;
+            orient = insxml.@orient;
         }
     }
 
@@ -64,6 +72,8 @@ public class Piece
         xml.@type = type;
         xml.@x = x;
         xml.@y = y;
+        xml.@id = id;
+        xml.@orient = orient;
         return xml;
     }
 }

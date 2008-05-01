@@ -28,7 +28,6 @@ public class PieceSpriteFactory
     public static function init (source :ByteArray, onReady :Function) :void
     {
         MultiLoader.getLoaders(source, function (result :Object) :void {
-            trace("PieceSpriteFactory result: " + result);
             onReady();
         }, false, _contentDomain);
         addPieceClass(new BoundedPieceSprite(new BoundedPiece()));

@@ -5,10 +5,13 @@ package {
 
 import flash.events.KeyboardEvent;
 import flash.events.TimerEvent;
+import flash.utils.ByteArray;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
 import com.whirled.game.GameControl;
+
+import com.threerings.util.KeyboardCodes;
 
 import board.Board;
 
@@ -21,45 +24,14 @@ import piece.PieceFactory;
 
 public class Controller
 {
-    /** Some useful key codes. */
-    public static const KV_LEFT :uint = 37;
-    public static const KV_UP :uint = 38;
-    public static const KV_RIGHT :uint = 39;
-    public static const KV_DOWN : uint = 40;
-
-    public static const KV_A :uint = 65;
-    public static const KV_B :uint = 66;
-    public static const KV_C :uint = 67;
-    public static const KV_D :uint = 68;
-    public static const KV_E :uint = 69;
-    public static const KV_F :uint = 70;
-    public static const KV_G :uint = 71;
-    public static const KV_H :uint = 72;
-    public static const KV_I :uint = 73;
-    public static const KV_J :uint = 74;
-    public static const KV_K :uint = 75;
-    public static const KV_L :uint = 76;
-    public static const KV_M :uint = 77;
-    public static const KV_N :uint = 78;
-    public static const KV_O :uint = 79;
-    public static const KV_P :uint = 80;
-    public static const KV_Q :uint = 81;
-    public static const KV_R :uint = 82;
-    public static const KV_S :uint = 83;
-    public static const KV_T :uint = 84;
-    public static const KV_U :uint = 85;
-    public static const KV_V :uint = 86;
-    public static const KV_W :uint = 87;
-    public static const KV_X :uint = 88;
-    public static const KV_Y :uint = 89;
-    public static const KV_Z :uint = 90;
-
     public function Controller (gameCtrl :GameControl)
     {
+        var piecesBytes :ByteArray = new piecesXML();
+        var pieces :XML = new XML(piecesBytes.readMultiByte(piecesBytes.length, "iso-8859-1"));
         _gameCtrl = gameCtrl;
+        _pfac = new PieceFactory(pieces);
         _board = new Board();
         _boardSprite = new BoardSprite(_board, this);
-        _pfac = new PieceFactory(PIECES);
     }
 
     public function getSprite () :BoardSprite
@@ -69,23 +41,10 @@ public class Controller
 
     public function init (onReady :Function) :void
     {
-        _board.loadFromXML(LEVEL.board[0], _pfac);
-        /*
-        for (var xx :int = 0; xx < 500; xx++) {
-            _board.addPiece(new Piece("block", xx, 0));
-            _board.addPiece(new Piece("block", xx, Metrics.WINDOW_HEIGHT));
-        }
-        for (var yy :int = 0; yy < Metrics.WINDOW_HEIGHT; yy++) {
-            _board.addPiece(new Piece("block", 0, yy));
-            _board.addPiece(new Piece("block", 500, yy));
-        }
-        _board.addPiece(new Piece("buildings", 10, 1));
-        _board.addPiece(new Piece("buildings_anim", 35, 1));
-        _board.addPiece(new Piece("cactus_big", 20, 1));
-        _board.addPiece(new Piece("cactus_med", 30, 1));
-        _board.addPiece(new Piece("cloud", 15, 5));
-        */
-        PieceSpriteFactory.init(onReady);
+        var levelBytes :ByteArray = new levelXML();
+        var level :XML = new XML(levelBytes.readMultiByte(levelBytes.length, "iso-8859-1"));
+        _board.loadFromXML(level, _pfac);
+        PieceSpriteFactory.init(new piecesSWF(), onReady);
     }
 
     public function run () :void
@@ -109,36 +68,36 @@ public class Controller
 
     protected function keyPressed (event :KeyboardEvent) :void
     {
-        if (event.keyCode == KV_UP) {
+        if (event.keyCode == KeyboardCodes.UP) {
             _dy = -1;
-        } else if (event.keyCode == KV_DOWN) {
+        } else if (event.keyCode == KeyboardCodes.DOWN) {
             _dy = 1;
-        } else if (event.keyCode == KV_LEFT) {
+        } else if (event.keyCode == KeyboardCodes.LEFT) {
             _dx = -1;
-        } else if (event.keyCode == KV_RIGHT) {
+        } else if (event.keyCode == KeyboardCodes.RIGHT) {
             _dx = 1;
-        } else if (event.keyCode == KV_B) {
+        } else if (event.keyCode == KeyboardCodes.B) {
             _boardSprite.toggleBG();
-        } else if (event.keyCode == KV_F) {
+        } else if (event.keyCode == KeyboardCodes.F) {
             startFrameCheck();
         }
     }
 
     protected function keyReleased (event :KeyboardEvent) :void
     {
-        if (event.keyCode == KV_UP) {
+        if (event.keyCode == KeyboardCodes.UP) {
             if (_dy == -1) {
                 _dy = 0;
             }
-        } else if (event.keyCode == KV_DOWN) {
+        } else if (event.keyCode == KeyboardCodes.DOWN) {
             if (_dy == 1) {
                 _dy = 0;
             }
-        } else if (event.keyCode == KV_LEFT) {
+        } else if (event.keyCode == KeyboardCodes.LEFT) {
             if (_dx == -1) {
                 _dx = 0;
             }
-        } else if (event.keyCode == KV_RIGHT) {
+        } else if (event.keyCode == KeyboardCodes.RIGHT) {
             if (_dx == 1) {
                 _dx = 0;
             }
@@ -224,8 +183,13 @@ public class Controller
     protected var _frames :int;
     protected var _lastFrameTick :int;
 
-    include "../rsrc/level.xml";
+    [Embed(source="../rsrc/level1_1.xml", mimeType="application/octet-stream")]
+    protected var levelXML :Class;
 
-    include "../rsrc/pieces.xml";
+    [Embed(source="../rsrc/pieces.xml", mimeType="application/octet-stream")]
+    protected var piecesXML :Class;
+
+    [Embed(source="../rsrc/pieces_frontier_town2.swf", mimeType="application/octet-stream")]
+    protected var piecesSWF :Class;
 }
 }

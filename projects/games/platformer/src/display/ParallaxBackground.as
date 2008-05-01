@@ -24,7 +24,7 @@ public class ParallaxBackground extends Layer
         }
     }
 
-    public override function update (nX :Number, nY :Number, scale :Number) :void
+    public override function update (nX :Number, nY :Number, scale :Number = 1) :void
     {
         _layers.forEach(function (layer :ParallaxLayer, index :int, arr :Array) :void {
             layer.update(nX, nY);

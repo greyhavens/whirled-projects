@@ -11,6 +11,10 @@ import flash.events.MouseEvent;
 import flash.utils.ByteArray;
 
 import mx.containers.Canvas;
+import mx.containers.HBox;
+import mx.controls.Button;
+import mx.events.FlexEvent;
+import mx.events.ListEvent;
 
 import com.threerings.flex.FlexWrapper;
 
@@ -26,38 +30,15 @@ import mx.core.Container;
 
 public class EditView extends Canvas
 {
-    /** Some useful key codes. */
-    public static const KV_LEFT :uint = 37;
-    public static const KV_UP :uint = 38;
-    public static const KV_RIGHT :uint = 39;
-    public static const KV_DOWN : uint = 40;
-
-    public static const KV_A :uint = 65;
-    public static const KV_B :uint = 66;
-    public static const KV_C :uint = 67;
-    public static const KV_D :uint = 68;
-    public static const KV_E :uint = 69;
-    public static const KV_F :uint = 70;
-    public static const KV_G :uint = 71;
-    public static const KV_H :uint = 72;
-    public static const KV_I :uint = 73;
-    public static const KV_J :uint = 74;
-    public static const KV_K :uint = 75;
-    public static const KV_L :uint = 76;
-    public static const KV_M :uint = 77;
-    public static const KV_N :uint = 78;
-    public static const KV_O :uint = 79;
-    public static const KV_P :uint = 80;
-    public static const KV_Q :uint = 81;
-    public static const KV_R :uint = 82;
-    public static const KV_S :uint = 83;
-    public static const KV_T :uint = 84;
-    public static const KV_U :uint = 85;
-    public static const KV_V :uint = 86;
-    public static const KV_W :uint = 87;
-    public static const KV_X :uint = 88;
-    public static const KV_Y :uint = 89;
-    public static const KV_Z :uint = 90;
+    public static function makeButton (label :String, callback :Function) :Button
+    {
+        var button :Button = new Button();
+        button.label = label;
+        button.addEventListener(FlexEvent.BUTTON_DOWN, function (event :FlexEvent) :void {
+            callback();
+        });
+        return button;
+    }
 
     public function EditView (container :Container, pieces :XML, level :XML, spriteSWF :ByteArray)
     {
@@ -65,51 +46,55 @@ public class EditView extends Canvas
 
         _pfac = new PieceFactory(pieces);
         _board = new Board();
-        _boardSprite = new BoardEditSprite();
+        _boardSprite = new BoardEditSprite(this);
         _board.loadFromXML(level, _pfac);
         _editSelector = new PieceSelector(_pfac);
-        width = 900;
-        height = 700;
+        _pieceTree = new PieceTree(_board);
+        width = 940;
+        height = 710;
         PieceSpriteFactory.init(spriteSWF, onReady);
     }
 
     public function onReady () :void
     {
         _boardSprite.setBoard(_board);
-        addChild(new FlexWrapper(_boardSprite));
         _editSelector.y = Metrics.DISPLAY_HEIGHT;
         addChild(_editSelector);
-        stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
         _editSelector.addEventListener(MouseEvent.DOUBLE_CLICK, addPiece);
+        _pieceTree.x = Metrics.DISPLAY_WIDTH;
+        addChild(_pieceTree);
+        _pieceTree.addEventListener(ListEvent.CHANGE, treeSelection);
+        var bs :FlexWrapper = new FlexWrapper(_boardSprite);
+        addChild(bs);
+
+        var box :HBox = new HBox();
+        box.addChild(makeButton("-", function () :void {
+            _boardSprite.changeScale(1);
+        }));
+        box.addChild(makeButton("+", function () :void {
+            _boardSprite.changeScale(-1);
+        }));
+        box.addChild(makeButton("grid", function () :void {
+            _boardSprite.toggleGrid();
+        }));
+        box.y = Metrics.DISPLAY_HEIGHT;
+        box.x = 450;
+        addChild(box);
     }
 
     public function getXML () :String
     {
-        var xml :XML =
-            <platformer>
-                <board>
-                </board>
-            </platformer>;
-        xml.board[0] = _board.getXML();
-        return xml.toXMLString();
+        return _board.getXML().toXMLString();
     }
 
-    protected function keyPressed (event :KeyboardEvent) :void
+    public function selectPiece (tree :String, name :String) :void
     {
-        if (event.keyCode == KV_D) {
-            _boardSprite.moveViewTile(1, 0);
-        } else if (event.keyCode == KV_S) {
-            _boardSprite.moveViewTile(0, 1);
-        } else if (event.keyCode == KV_A) {
-            _boardSprite.moveViewTile(-1, 0);
-        } else if (event.keyCode == KV_W) {
-            _boardSprite.moveViewTile(0, -1);
-        }
+        _pieceTree.selectPiece(tree, name);
     }
 
     protected function addPiece (event :MouseEvent) :void
     {
-        var type :String = _editSelector.getSelectedPiece();
+        var type :String = _editSelector.getRandomPiece();
         if (type == null) {
             return;
         }
@@ -117,11 +102,20 @@ public class EditView extends Canvas
         xml.@type = type;
         xml.@x = Math.max(0, _boardSprite.getX());
         xml.@y = Math.max(0, _boardSprite.getY());
+        xml.@id = _board.getMaxId() + 1;
         var p :Piece = _pfac.getPiece(xml);
         if (p == null) {
             return;
         }
-        _board.addPiece(p);
+        _pieceTree.addPiece(p);
+    }
+
+    protected function treeSelection (event :ListEvent) :void
+    {
+        var name :String = _pieceTree.getSelected();
+        if (name != null) {
+            _boardSprite.selectSprite(_pieceTree.getTree(), name);
+        }
     }
 
     protected var _board :Board;
@@ -129,6 +123,8 @@ public class EditView extends Canvas
     protected var _boardSprite :BoardEditSprite;
 
     protected var _editSelector :PieceSelector;
+
+    protected var _pieceTree :PieceTree;
 
     protected var _container :Container;
 

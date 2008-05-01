@@ -19,8 +19,9 @@ public class PieceSprite extends Sprite
     public function PieceSprite (piece :Piece, disp :DisplayObject = null)
     {
         _piece = piece;
-        if (disp != null) {
-            addChild(disp);
+        _disp = disp;
+        if (_disp != null) {
+            addChild(_disp);
         }
         update();
     }
@@ -29,6 +30,16 @@ public class PieceSprite extends Sprite
     {
         this.x = _piece.x * Metrics.TILE_SIZE;
         this.y = -_piece.y * Metrics.TILE_SIZE;
+        if (_disp != null) {
+            if (_piece.orient == 0) {
+                _disp.x = 0;
+                _disp.scaleX = 1.0;
+            } else {
+                _disp.scaleX = -1.0;
+                _disp.x = _piece.width * Metrics.TILE_SIZE;
+            }
+
+        }
         if (_details != null && _details.parent != null) {
             createDetails();
         }
@@ -62,6 +73,7 @@ public class PieceSprite extends Sprite
     }
 
     protected var _piece :Piece;
+    protected var _disp : DisplayObject;
     protected var _details :Sprite;
 }
 }

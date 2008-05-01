@@ -40,18 +40,11 @@ public class PieceSelector extends Canvas
         column.dataField = "@sprite";
         columns.push(column);
         _adg.columns = columns;
-        _data = createHD();
-        _adg.dataProvider = _data;
+        _adg.dataProvider = createHD();
         _adg.doubleClickEnabled = true;
         callLater(sort);
         addChild(_adg);
         _adg.addEventListener(ListEvent.CHANGE, handleChange);
-        /*
-        _adg.addEventListener(MouseEvent.DOUBLE_CLICK, function (event :MouseEvent) :void {
-            trace("selector doubleclick");
-            dispatchEvent(new MouseEvent(MouseEvent.DOUBLE_CLICK));
-        });
-        */
         _pfac.addEventListener(PieceFactory.PIECE_ADDED, handlePieceAdded);
         _pfac.addEventListener(PieceFactory.PIECE_REMOVED, handlePieceRemoved);
         _pfac.addEventListener(PieceFactory.PIECE_UPDATED, handlePieceUpdated);
@@ -91,6 +84,35 @@ public class PieceSelector extends Canvas
         return _selected;
     }
 
+    public function getRandomPiece () :String
+    {
+        var item :XML = _adg.selectedItem as XML;
+        if (item == null) {
+            return null;
+        } else if (item.@sprite.length() > 0) {
+            return _selected;
+        }
+        var numPieces :int = 0;
+        for each (var node :XML in item.children()) {
+            if (node.@sprite.length() > 0) {
+                numPieces++;
+            }
+        }
+        if (numPieces == 0) {
+            return null;
+        }
+        var index :int = Math.floor(Math.random() * numPieces);
+        for each (node in item.children()) {
+            if (node.@sprite.length() > 0) {
+                if (index == 0) {
+                    return getType(node);
+                }
+                index--;
+            }
+        }
+        return null;
+    }
+
     protected function addPiece (pdef :XML, root :XML) :void
     {
         var curNode :XML = root;
@@ -117,19 +139,23 @@ public class PieceSelector extends Canvas
         return new HierarchicalData(root);
     }
 
-    protected function handleChange (event :ListEvent) :void
+    protected function getType (item :XML) :String
     {
-        var item :XML = _adg.selectedItem as XML;
         if (item != null && item.parent() != null) {
             var type :String = item.@label;
             while (item.parent().parent() != null) {
                 item = item.parent();
                 type = item.@label + "." + type;
             }
-            _selected = type;
+            return type;
         } else {
-            _selected = null;
+            return null;
         }
+    }
+
+    protected function handleChange (event :ListEvent) :void
+    {
+        _selected = getType(_adg.selectedItem as XML);
         dispatchEvent(new Event(Event.CHANGE));
     }
 
@@ -231,6 +257,5 @@ public class PieceSelector extends Canvas
     protected var _selected :String;
     protected var _pfac :PieceFactory;
     protected var _adg :AdvancedDataGrid;
-    protected var _data :HierarchicalData;
 }
 }

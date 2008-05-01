@@ -47,15 +47,10 @@ public class BoardSprite extends Sprite
             addChild(_layers[BG_LAYER]);
         }
 
-        _layers[LEVEL_LAYER] = new SectionalLayer(Metrics.WINDOW_WIDTH, Metrics.WINDOW_HEIGHT);
+        _layers[LEVEL_LAYER] = new PieceSpriteLayer();
         addChild(_layers[LEVEL_LAYER]);
 
-        for (var iter :ArrayIterator = _board.pieceIterator(); iter.hasNext(); ) {
-            var p :Piece = iter.next() as Piece;
-            if (p != null) {
-                _layers[LEVEL_LAYER].addPieceSprite(PieceSpriteFactory.getPieceSprite(p));
-            }
-        }
+        addPieces(_board.getPieces());
         centerOn(0, 0);
     }
 
@@ -88,10 +83,23 @@ public class BoardSprite extends Sprite
         */
     }
 
+    protected function addPieces (pieces :Array) :void
+    {
+        for each (var node :Object in pieces) {
+            if (node is Piece) {
+                _layers[LEVEL_LAYER].addPieceSprite(
+                        PieceSpriteFactory.getPieceSprite(node as Piece));
+            } else if (node is Array) {
+                addPieces(node as Array);
+            }
+        }
+    }
+
     protected function updateDisplay () :void
     {
-        _layers[BG_LAYER].update(_centerX, _centerY);
-        _layers[LEVEL_LAYER].update(_centerX, _centerY);
+        for each (var layer :Layer in _layers) {
+            layer.update(_centerX, _centerY);
+        }
         //_ctrl.feedback("Board Center (" + _centerX + ", " + _centerY + ")");
         //_ctrl.feedback("Level Layer (" + layer.x + ", " + layer.y + ")");
     }

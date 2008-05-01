@@ -4,7 +4,7 @@
     scriptTimeLimit="5"
     layout="absolute" styleName="plain"
     verticalScrollPolicy="off" horizontalScrollPolicy="off"
-    width="940" height="800"
+    width="980" height="800"
     horizontalAlign="center" verticalAlign="middle"
     applicationComplete="loadComplete();">
 <mx:Script>
