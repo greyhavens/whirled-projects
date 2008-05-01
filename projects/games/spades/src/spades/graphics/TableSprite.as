@@ -24,7 +24,6 @@ import com.whirled.contrib.card.graphics.NormalBiddingSprite;
 import com.whirled.contrib.card.graphics.HandSprite;
 import com.whirled.contrib.card.graphics.MainTrickSprite;
 import com.whirled.contrib.card.graphics.TeamSprite;
-import com.whirled.contrib.card.graphics.LocalTweener;
 
 /**
  * Display object for drawing a spades game.
@@ -37,10 +36,6 @@ public class TableSprite extends Sprite
     public function TableSprite (model :Model)
     {
         MultiLoader.getContents(BACKGROUND, gotBackground);
-
-        LocalTweener.addTweenFn = Tweener.addTween;
-        LocalTweener.removeTweensFn = Tweener.removeTweens;
-        LocalTweener.isTweeningFn = Tweener.isTweening;
 
         _model = model;
         _factory = new Factory();
