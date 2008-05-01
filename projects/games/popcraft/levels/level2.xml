@@ -6,8 +6,8 @@
         playerBaseHealth="40">
 
         <GameDataOverride
-            spellObjectCreationTimeMin="-1"
-            spellObjectCreationTimeMax="-1">
+            spellDropTimeMin="-1"
+            spellDropTimeMax="-1">
             <BaseLocations>
                 <GameSize numPlayers="2">
                     <BaseLocation x="50" y="85"/>

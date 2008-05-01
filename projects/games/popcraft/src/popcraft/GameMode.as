@@ -299,45 +299,68 @@ public class GameMode extends AppMode
         // any game setup that requires the RNG to be initialized must
         // be run in this function, and not before, to prevent the game from
         // getting out of synch
-        this.scheduleNextSpellPickup();
+        this.scheduleNextSpellDrop();
     }
 
-    protected function scheduleNextSpellPickup () :void
+    protected function scheduleNextSpellDrop () :void
     {
-        var time :Number = GameContext.gameData.spellObjectTimerLength.next();
+        var time :Number = GameContext.gameData.spellDropTime.next();
         if (time >= 0) {
-            GameContext.netObjects.addObject(new SimpleTimer(time, createNextSpellPickup));
+            GameContext.netObjects.addObject(new SimpleTimer(time, createNextSpellDrop));
         }
     }
 
-    protected function createNextSpellPickup () :void
+    protected function createNextSpellDrop () :void
     {
-        // find a location roughly in the center of the player bases
-        var loc :Vector2 = new Vector2();
-        var numBases :int;
-        for each (var playerData :PlayerData in GameContext.playerData) {
-            var playerBase :PlayerBaseUnit = playerData.base;
-            if (null != playerBase) {
-                loc.addLocal(playerBase.unitLoc);
-                ++numBases;
+        var spellLoc :Vector2;
+
+        /*if (GameContext.numPlayers == 2) {
+            // in a two-player game, pick a location somewhere along the line
+            // that runs perpendicular to the line that connects the two bases
+            // find a location roughly in the center of the player bases
+            var base1 :PlayerBaseUnit = PlayerData(GameContext.playerData[0]).base;
+            var base2 :PlayerBaseUnit = PlayerData(GameContext.playerData[1]).base;
+            if (null != base1 && null != base2) {
+                var baseLoc1 :Vector2 = base1.unitLoc;
+                var baseLoc2 :Vector2 = base2.unitLoc;
+                var baseCenter :Vector2 = new Vector2(
+                    (baseLoc1.x + baseLoc2.x) * 0.5, (baseLoc1.y + baseLoc2.y) * 0.5);
+
+                var direction :Number = baseLoc1.subtract(baseLoc2).angle;
+                direction += (Rand.nextBoolean(Rand.STREAM_GAME) ? Math.PI * 0.5 : -Math.PI * 0.5);
+                //var centerDistance :Number = Rand.nextNumber(
             }
-        }
 
-        if (numBases > 0) {
-            loc.x /= numBases;
-            loc.y /= numBases;
+        } else {*/
+            // otherwise, find a location near the center of the board
+            var numBases :int;
+            var centerLoc :Vector2 = new Vector2();
+            for each (var playerData :PlayerData in GameContext.playerData) {
+                var playerBase :PlayerBaseUnit = playerData.base;
+                if (null != playerBase) {
+                    centerLoc.addLocal(playerBase.unitLoc);
+                    ++numBases;
+                }
+            }
 
-            // randomize the location a bit
-            var direction :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
-            var length :Number = GameContext.gameData.spellObjectDistanceSpread.next();
-            loc.addLocal(Vector2.fromAngle(direction, length));
+            if (numBases > 0) {
+                centerLoc.x /= numBases;
+                centerLoc.y /= numBases;
 
+                // randomize the location a bit
+                var direction :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+                var length :Number = GameContext.gameData.spellDropScatter.next();
+                spellLoc = centerLoc.addLocal(Vector2.fromAngle(direction, length));
+            }
+        //}
+
+        if (null != spellLoc) {
             // pick a spell at random
             var spellType :uint = Rand.nextIntRange(0, Constants.SPELL_NAMES.length, Rand.STREAM_GAME);
-            SpellPickupFactory.createSpellPickup(spellType, loc);
+            SpellDropFactory.createSpellDrop(spellType, spellLoc);
 
             // schedule the next one
-            this.scheduleNextSpellPickup();
+            this.scheduleNextSpellDrop();
         }
     }
 

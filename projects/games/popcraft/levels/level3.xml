@@ -7,8 +7,8 @@
 
         <GameDataOverride
             initialDayPhase="night"
-            spellObjectCreationTimeMin="-1"
-            spellObjectCreationTimeMax="-1"/>
+            spellDropTimeMin="-1"
+            spellDropTimeMax="-1"/>
 
         <InitialResources/>
 

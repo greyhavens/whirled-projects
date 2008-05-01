@@ -48,7 +48,7 @@ public class BattleBoardView extends SceneObject
 
         _view.addChild(bg);
         _view.addChild(_darkness.displayObject);
-        _view.addChild(_spellPickupViewParent);
+        _view.addChild(_spellDropViewParent);
         _view.addChild(_unitViewParent);
         _view.addChild(fg);
 
@@ -91,9 +91,9 @@ public class BattleBoardView extends SceneObject
         return _view;
     }
 
-    public function get spellPickupViewParent () :DisplayObjectContainer
+    public function get spellDropViewParent () :DisplayObjectContainer
     {
-        return _spellPickupViewParent;
+        return _spellDropViewParent;
     }
 
     public function get unitViewParent () :DisplayObjectContainer
@@ -124,7 +124,7 @@ public class BattleBoardView extends SceneObject
     protected var _height :int;
     protected var _view :Sprite;
     protected var _darkness :SceneObject;
-    protected var _spellPickupViewParent :Sprite = new Sprite();
+    protected var _spellDropViewParent :Sprite = new Sprite();
     protected var _unitViewParent :Sprite = new Sprite();
     protected var _lastDayPhase :uint;
 }

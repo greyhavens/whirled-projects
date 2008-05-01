@@ -6,13 +6,13 @@ import com.whirled.contrib.simplegame.components.LocationComponent;
 import popcraft.*;
 import popcraft.data.SpellData;
 
-public class SpellPickupObject extends SimObject
+public class SpellDropObject extends SimObject
     implements LocationComponent
 {
     public static const GROUP_NAME :String = "SpellPickupObject";
     public static const RADIUS :Number = 20;
 
-    public function SpellPickupObject (spellType :uint)
+    public function SpellDropObject (spellType :uint)
     {
         _spellType = spellType;
     }

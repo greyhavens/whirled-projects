@@ -23,7 +23,7 @@ public class CourierCreatureUnit extends CreatureUnit
         _groupName = "CourierCreature_Player" + owningPlayerId;
     }
 
-    public function pickupSpell (spellObject :SpellPickupObject) :void
+    public function pickupSpell (spellObject :SpellDropObject) :void
     {
         Assert.isNull(_carriedSpell);
         _carriedSpell = spellObject.spellData;
@@ -59,7 +59,7 @@ public class CourierCreatureUnit extends CreatureUnit
     {
         // drop the currently carried spell on the ground when we die
         if (null != _carriedSpell) {
-            SpellPickupFactory.createSpellPickup(_carriedSpell.type, this.unitLoc);
+            SpellDropFactory.createSpellDrop(_carriedSpell.type, this.unitLoc);
         }
 
         super.die();
@@ -148,7 +148,7 @@ class CourierAI extends AITaskTree
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
     {
         if (messageName == ScanForSpellPickupsTask.MSG_DETECTEDSPELL) {
-            var spell :SpellPickupObject = data as SpellPickupObject;
+            var spell :SpellDropObject = data as SpellDropObject;
             log.info("detected spell - attempting pickup");
             this.clearSubtasks();
             this.addSubtask(new PickupSpellTask(_unit, spell));
@@ -160,7 +160,7 @@ class CourierAI extends AITaskTree
         } else if (messageName == PickupSpellTask.MSG_SPELL_RETRIEVED) {
             // we picked up a spell!
             log.info("retrieved spell");
-            _unit.pickupSpell(data as SpellPickupObject);
+            _unit.pickupSpell(data as SpellDropObject);
             // let's try to go home and deliver it
             var base :PlayerBaseUnit = _unit.owningPlayerData.base;
             if (null != base) {
@@ -261,7 +261,7 @@ class PickupSpellTask extends AITaskTree
     public static const MSG_SPELL_RETRIEVED :String = "SpellRetrieved";
     public static const MSG_SPELL_GONE :String = "SpellGone";
 
-    public function PickupSpellTask (unit :CourierCreatureUnit, spell :SpellPickupObject)
+    public function PickupSpellTask (unit :CourierCreatureUnit, spell :SpellDropObject)
     {
         _unit = unit;
         _spellRef = spell.ref;
@@ -273,7 +273,7 @@ class PickupSpellTask extends AITaskTree
     {
         if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && subtask.name == CourierMoveTask.NAME) {
             if (!_spellRef.isNull) {
-                var spell :SpellPickupObject = _spellRef.object as SpellPickupObject;
+                var spell :SpellDropObject = _spellRef.object as SpellDropObject;
                 this.sendParentMessage(MSG_SPELL_RETRIEVED, spell);
                 _retrieved = true;
             }
@@ -310,7 +310,7 @@ class ScanForSpellPickupsTask extends AITaskTree
 
         // scan for spell pickups twice/second
         var scanSequence :AITaskSequence = new AITaskSequence(true);
-        scanSequence.addSequencedTask(new DetectSpellPickupAction());
+        scanSequence.addSequencedTask(new DetectSpellDropAction());
         scanSequence.addSequencedTask(new AITimerTask(0.5));
         this.addSubtask(scanSequence);
 
@@ -349,7 +349,7 @@ class ScanForSpellPickupsTask extends AITaskTree
     {
         if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
             var msg :SequencedTaskMessage = data as SequencedTaskMessage;
-            var spell :SpellPickupObject = msg.data as SpellPickupObject;
+            var spell :SpellDropObject = msg.data as SpellDropObject;
             this.sendParentMessage(MSG_DETECTEDSPELL, spell);
         } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == CourierMoveTask.NAME) {
             // wander again

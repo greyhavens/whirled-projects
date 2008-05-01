@@ -11,16 +11,16 @@ import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
 
-public class SpellPickupObjectView extends SceneObject
+public class SpellDropView extends SceneObject
 {
-    public function SpellPickupObjectView (spellPickup :SpellPickupObject)
+    public function SpellDropView (spellDrop :SpellDropObject)
     {
-        _spellObjRef = spellPickup.ref;
+        _spellObjRef = spellDrop.ref;
 
-        var spellData :SpellData = spellPickup.spellData;
+        var spellData :SpellData = spellDrop.spellData;
 
         var bitmap :Bitmap = AppContext.instantiateBitmap(spellData.iconName);
-        var scale :Number = Math.min(SpellPickupObject.RADIUS / bitmap.width, SpellPickupObject.RADIUS / bitmap.height);
+        var scale :Number = Math.min(SpellDropObject.RADIUS / bitmap.width, SpellDropObject.RADIUS / bitmap.height);
         bitmap.scaleX = scale;
         bitmap.scaleY = scale;
         bitmap.x = -(bitmap.width * 0.5);
@@ -29,8 +29,8 @@ public class SpellPickupObjectView extends SceneObject
         _sprite = new Sprite();
         _sprite.addChild(bitmap);
 
-        _sprite.x = spellPickup.x;
-        _sprite.y = spellPickup.y;
+        _sprite.x = spellDrop.x;
+        _sprite.y = spellDrop.y;
     }
 
     override public function get displayObject () :DisplayObject

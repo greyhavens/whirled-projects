@@ -3,10 +3,10 @@
         dayLength="30"
         nightLength="120"
         initialDayPhase="day"
-        spellObjectCreationTimeMin="60"
-        spellObjectCreationTimeMax="80"
-        spellObjectDistanceSpreadMin="0"
-        spellObjectDistanceSpreadMax="50">
+        spellDropTimeMin="60"
+        spellDropTimeMax="80"
+        spellDropScatterMin="0"
+        spellDropScatterMax="50">
 
         <Resources>
             <Resource type="white" displayName="Flesh" color="0xE8E7E5" rarity="1"/>

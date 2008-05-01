@@ -12,8 +12,8 @@ public class GameData
     public var nightLength :Number;
     public var initialDayPhase :uint;
 
-    public var spellObjectTimerLength :NumRange;
-    public var spellObjectDistanceSpread :NumRange;
+    public var spellDropTime :NumRange;
+    public var spellDropScatter :NumRange;
 
     public var resources :Array = [];
     public var units :Array = [];
@@ -32,8 +32,8 @@ public class GameData
         theClone.dayLength = dayLength;
         theClone.nightLength = nightLength;
         theClone.initialDayPhase = initialDayPhase;
-        theClone.spellObjectTimerLength = spellObjectTimerLength.clone();
-        theClone.spellObjectDistanceSpread = spellObjectDistanceSpread.clone();
+        theClone.spellDropTime = spellDropTime.clone();
+        theClone.spellDropScatter = spellDropScatter.clone();
 
         for each (var resData :ResourceData in resources) {
             theClone.resources.push(resData.clone());
@@ -68,13 +68,13 @@ public class GameData
         gameData.nightLength = XmlReader.getAttributeAsNumber(xml, "nightLength", (useDefaults ? gameData.nightLength : undefined));
         gameData.initialDayPhase = XmlReader.getAttributeAsEnum(xml, "initialDayPhase", Constants.DAY_PHASE_NAMES, (useDefaults ? gameData.initialDayPhase : undefined));
 
-        var spellObjectCreationTimeMin :Number = XmlReader.getAttributeAsNumber(xml, "spellObjectCreationTimeMin", (useDefaults ? gameData.spellObjectTimerLength.min : undefined));
-        var spellObjectCreationTimeMax :Number = XmlReader.getAttributeAsNumber(xml, "spellObjectCreationTimeMax", (useDefaults ? gameData.spellObjectTimerLength.max : undefined));
-        gameData.spellObjectTimerLength = new NumRange(spellObjectCreationTimeMin, spellObjectCreationTimeMax, Rand.STREAM_GAME);
+        var spellDropTimeMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropTimeMin", (useDefaults ? gameData.spellDropTime.min : undefined));
+        var spellDropTimeMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropTimeMax", (useDefaults ? gameData.spellDropTime.max : undefined));
+        gameData.spellDropTime = new NumRange(spellDropTimeMin, spellDropTimeMax, Rand.STREAM_GAME);
 
-        var spellObjectDistanceSpreadMin :Number = XmlReader.getAttributeAsNumber(xml, "spellObjectDistanceSpreadMin", (useDefaults ? gameData.spellObjectDistanceSpread.min : undefined));
-        var spellObjectDistanceSpreadMax :Number = XmlReader.getAttributeAsNumber(xml, "spellObjectDistanceSpreadMax", (useDefaults ? gameData.spellObjectDistanceSpread.max : undefined));
-        gameData.spellObjectDistanceSpread = new NumRange(spellObjectDistanceSpreadMin, spellObjectDistanceSpreadMax, Rand.STREAM_GAME);
+        var spellDropScatterMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropScatterMin", (useDefaults ? gameData.spellDropScatter.min : undefined));
+        var spellDropScatterMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropScatterMax", (useDefaults ? gameData.spellDropScatter.max : undefined));
+        gameData.spellDropScatter = new NumRange(spellDropScatterMin, spellDropScatterMax, Rand.STREAM_GAME);
 
         // init the resource data
         for (var i :int = gameData.resources.length; i < Constants.RESOURCE_NAMES.length; ++i) {

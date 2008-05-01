@@ -9,8 +9,8 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
         playerBaseHealth="100">
 
         <GameDataOverride
-            spellObjectCreationTimeMin="-1"
-            spellObjectCreationTimeMax="-1">
+            spellDropTimeMin="-1"
+            spellDropTimeMax="-1">
             <BaseLocations>
                 <GameSize numPlayers="3">
                     <BaseLocation x="50" y="175"/>
