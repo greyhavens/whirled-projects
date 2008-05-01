@@ -55,7 +55,7 @@ import com.threerings.flash.Vector2;
 class HeavyFormationManager extends SimObject
 {
     public static const ROW_SIZE :int = 4;
-    public static const UNIT_SEPARATION :Number = 35;
+    public static const UNIT_SEPARATION :Number = 30;
     public static const ROW_STAGGER :Number = 20;
     public static const FIRST_ROW_DISTANCE_FROM_BASE :Number = 40;
 
@@ -136,16 +136,19 @@ class HeavyFormationSpace
         var rowDistance :Number =
             HeavyFormationManager.FIRST_ROW_DISTANCE_FROM_BASE +
             (rowNum * HeavyFormationManager.UNIT_SEPARATION);
-
         var rowCenter :Vector2 = Vector2.fromAngle(facingDirection, rowDistance).addLocal(baseLoc);
 
-        // move left or right in that row
-        var rowMidPoint :Number = (HeavyFormationManager.ROW_SIZE - 1) * 0.5;
-        var moveRotation :Number = (rowPosition < rowMidPoint ? (Math.PI * 0.5) : (Math.PI * -0.5));
-        var moveDirection :Number = facingDirection + moveRotation;
-        var moveDist :Number = Math.abs(rowPosition - rowMidPoint) * HeavyFormationManager.UNIT_SEPARATION;
+        // calculate the vector offset from the center of the row to
+        // this particular row position
+        var thisSpaceRotation :Number = facingDirection + (Math.PI * 0.5); // perpendicular to facing direction
+        var thisSpaceDist :Number =
+            (((HeavyFormationManager.ROW_SIZE - 1) * 0.5) - rowPosition) * HeavyFormationManager.UNIT_SEPARATION;
 
-        return rowCenter.addLocal(Vector2.fromAngle(moveDirection, moveDist));
+        // rows are staggered
+        thisSpaceDist += (rowNum % 2 == 0 ? -HeavyFormationManager.ROW_STAGGER * 0.5 : HeavyFormationManager.ROW_STAGGER * 0.5);
+
+        // add it up
+        return rowCenter.addLocal(Vector2.fromAngle(thisSpaceRotation, thisSpaceDist));
     }
 
     public static function compare (a :HeavyFormationSpace, b :HeavyFormationSpace) :int
