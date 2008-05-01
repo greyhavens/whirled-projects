@@ -17,8 +17,8 @@
         </GameDataOverride>
 
         <InitialResources>
-            <Resource type="red" amount="40"/>
-            <Resource type="yellow" amount="20"/>
+            <Resource type="red" amount="70"/>
+            <Resource type="yellow" amount="40"/>
         </InitialResources>
 
         <AvailableUnits>
@@ -36,7 +36,7 @@
                 <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
             </InitialWaves>
             <RepeatingWaves>
-                <Wave delayBefore="30"><Unit type="sapper" count="2"/></Wave>
+                <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
             </RepeatingWaves>
         </Computer>
 
