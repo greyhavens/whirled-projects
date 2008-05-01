@@ -54,8 +54,8 @@ import com.threerings.flash.Vector2;
 
 class HeavyFormationManager extends SimObject
 {
-    public static const ROW_SIZE :int = 5;
-    public static const UNIT_SEPARATION :Number = 20;
+    public static const ROW_SIZE :int = 4;
+    public static const UNIT_SEPARATION :Number = 35;
     public static const ROW_STAGGER :Number = 20;
     public static const FIRST_ROW_DISTANCE_FROM_BASE :Number = 40;
 
@@ -140,13 +140,12 @@ class HeavyFormationSpace
         var rowCenter :Vector2 = Vector2.fromAngle(facingDirection, rowDistance).addLocal(baseLoc);
 
         // move left or right in that row
-        var moveDirection :Number = facingDirection +
-            (rowPosition < ((HeavyFormationManager.ROW_SIZE - 1) * 0.5) ? (Math.PI * 0.5) : (Math.PI * -0.5));
-        var moveDist :Number = Math.abs(((HeavyFormationManager.ROW_SIZE - 1) * 0.5) * HeavyFormationManager.UNIT_SEPARATION);
+        var rowMidPoint :Number = (HeavyFormationManager.ROW_SIZE - 1) * 0.5;
+        var moveRotation :Number = (rowPosition < rowMidPoint ? (Math.PI * 0.5) : (Math.PI * -0.5));
+        var moveDirection :Number = facingDirection + moveRotation;
+        var moveDist :Number = Math.abs(rowPosition - rowMidPoint) * HeavyFormationManager.UNIT_SEPARATION;
 
         return rowCenter.addLocal(Vector2.fromAngle(moveDirection, moveDist));
-
-        //var spaceLoc :Vector2 = Vector2.fromAngle(facingDirection, HeavyFormationManager.FIRST_ROW_DISTANCE_FROM_BASE).addLocal(baseLoc);
     }
 
     public static function compare (a :HeavyFormationSpace, b :HeavyFormationSpace) :int
@@ -186,8 +185,6 @@ class HeavyAI extends AITaskTree
         this.addSubtask(new MoveToLocationTask(MOVE_TO_DEFENSIVE_LOC_TASK_NAME, loc, MOVE_TO_FUDGE_FACTOR, 0.5));
 
         //log.info("moving to defensive location: " + loc);
-
-        _numLocationAttempts += 1;
     }
 
     protected function findDefenseLocation () :Vector2
@@ -199,10 +196,6 @@ class HeavyAI extends AITaskTree
         var enemyBaseLoc :Vector2 = GameContext.playerData[playerData.targetedEnemyId].base.unitLoc;
 
         var target :Vector2 = enemyBaseLoc.subtract(ourBaseLoc);
-        /*target.length = DISTANCE_FROM_BASE.next();
-        target.rotateLocal(ANGLE_RANGE.next());
-
-        return target.addLocal(ourBaseLoc);*/
 
         return _unit.formationSpace.getLocation(ourBaseLoc, target.angle);
     }
@@ -210,30 +203,15 @@ class HeavyAI extends AITaskTree
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
     {
         if (messageName == MSG_SUBTASKCOMPLETED && task.name == MOVE_TO_DEFENSIVE_LOC_TASK_NAME) {
-            var moveToLocTask :MoveToLocationTask = task as MoveToLocationTask;
-
-            // were we successful moving to our defensive loc?
-            if (moveToLocTask.success || _numLocationAttempts >= MAX_LOCATION_ATTEMPTS) {
-                //log.info("in position - firing on enemies");
-                // start firing upon approaching enemies
-                this.addSubtask(new AttackApproachingEnemiesTask());
-            } else {
-                //log.info("failed to move into defensive position - trying again");
-                // it took too long to get to our defense location. pick a new spot.
-                this.moveToDefenseLocation();
-            }
+            // start firing upon approaching enemies
+            this.addSubtask(new AttackApproachingEnemiesTask());
         }
     }
 
     protected var _unit :HeavyCreatureUnit;
-    protected var _numLocationAttempts :int;
 
     protected static const MOVE_TO_DEFENSIVE_LOC_TASK_NAME :String = "MoveToDefensiveLoc";
-
-    protected static const DISTANCE_FROM_BASE :NumRange = new NumRange(80, 80, Rand.STREAM_GAME);
-    protected static const ANGLE_RANGE :NumRange = new NumRange(-Math.PI / 5, Math.PI / 5, Rand.STREAM_GAME);
     protected static const MOVE_TO_FUDGE_FACTOR :Number = 5;
-    protected static const MAX_LOCATION_ATTEMPTS :int = 2;
 
     protected static const log :Log = Log.getLog(HeavyAI);
 }
