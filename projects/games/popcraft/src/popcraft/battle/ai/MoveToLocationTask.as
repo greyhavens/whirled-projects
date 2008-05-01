@@ -12,7 +12,7 @@ public class MoveToLocationTask extends AITask
     public function MoveToLocationTask (name :String, loc :Vector2, fudgeFactor :Number = 0, failAfter :Number = -1)
     {
         _name = name;
-        _loc = loc;
+        _dest = loc;
         _fudgeFactor = Math.max(fudgeFactor, MIN_FUDGE_FACTOR);
         _failAfter = failAfter;
     }
@@ -24,29 +24,39 @@ public class MoveToLocationTask extends AITask
 
     override public function update (dt :Number, creature :CreatureUnit) :uint
     {
+        // init
         if (0 == _elapsedTime) {
-            // calculate how long it *should* take us to get to the destination
-            _expectedTime = creature.calcShortestTravelTimeTo(_loc);
+            _expectedTime = creature.calcShortestTravelTimeTo(_dest);
+            _start = creature.unitLoc;
         }
 
-        if (creature.isAtLocation(_loc) || _elapsedTime >= _expectedTime && creature.isNearLocation(_loc, _fudgeFactor)) {
+        if (creature.isAtLocation(_dest) || _elapsedTime >= _expectedTime && creature.isNearLocation(_dest, _fudgeFactor)) {
             // we made it to the location
             _success = true;
             return AITaskStatus.COMPLETE;
-        } else if (_failAfter >= 0 && _elapsedTime >= _expectedTime + _failAfter) {
-            // it took us too long to get to the location
-            _success = false;
-            return AITaskStatus.COMPLETE;
-        } else {
-            _elapsedTime += dt;
-
-            // keep moving
-
-            // CreatureUnit requires that we reset the movement destination every frame
-            creature.setMovementDestination(_loc);
-
-            return AITaskStatus.ACTIVE;
         }
+
+        if (_failAfter > 0 && _elapsedTime > 0) {
+            // determine if we might be stuck
+            _expectedDistanceSoFar += (_lastDt * creature.movementSpeed);
+            if (creature.unitLoc.subtractLocal(_start).length + STUCK_DISTANCE < _expectedDistanceSoFar) {
+                _stuckTime += _lastDt;
+                if (_stuckTime >= _failAfter) {
+                    _success = false;
+                    return AITaskStatus.COMPLETE;
+                }
+            } else {
+                _stuckTime = 0;
+            }
+        }
+
+        _elapsedTime += dt;
+        _lastDt = dt;
+
+        // keep moving (CreatureUnit requires that we reset the movement destination every frame)
+        creature.setMovementDestination(_dest);
+
+        return AITaskStatus.ACTIVE;
     }
 
     public function get success () :Boolean
@@ -55,16 +65,21 @@ public class MoveToLocationTask extends AITask
     }
 
     protected var _name :String;
-    protected var _loc :Vector2;
-    protected var _failAfter :Number;
-    protected var _fudgeFactor :Number;
+    protected var _start :Vector2;
+    protected var _dest :Vector2;
+    protected var _failAfter :Number = 0;
+    protected var _fudgeFactor :Number = 0;
 
-    protected var _expectedTime :Number;
+    protected var _expectedTime :Number = 0;
+    protected var _expectedDistanceSoFar :Number = 0;
+    protected var _stuckTime :Number = 0;
+    protected var _lastDt :Number = 0;
 
     protected var _elapsedTime :Number = 0;
     protected var _success :Boolean;
 
     protected static const MIN_FUDGE_FACTOR :Number = 0.4;
+    protected static const STUCK_DISTANCE :Number = 10;
 
 }
 
