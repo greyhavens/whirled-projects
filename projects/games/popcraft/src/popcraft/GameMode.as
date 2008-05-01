@@ -306,7 +306,7 @@ public class GameMode extends AppMode
     {
         var time :Number = GameContext.gameData.spellObjectTimerLength.next();
         if (time >= 0) {
-            this.addObject(new SimpleTimer(time, createNextSpellPickup));
+            GameContext.netObjects.addObject(new SimpleTimer(time, createNextSpellPickup));
         }
     }
 
