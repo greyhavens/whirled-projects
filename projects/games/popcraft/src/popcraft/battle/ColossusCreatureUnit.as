@@ -151,7 +151,7 @@ class ColossusAI extends AITaskTree
     protected function beginAttackBase () :void
     {
         if (_targetBaseRef.isNull) {
-            _targetBaseRef = _unit.findEnemyBaseToAttack();
+            _targetBaseRef = _unit.getEnemyBaseRef();
         }
 
         if (!_targetBaseRef.isNull) {

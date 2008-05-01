@@ -58,7 +58,7 @@ class GruntAI extends AITaskTree
         this.clearSubtasks();
 
         if (_targetBaseRef.isNull) {
-            _targetBaseRef = _unit.findEnemyBaseToAttack();
+            _targetBaseRef = _unit.getEnemyBaseRef();
         }
 
         if (!_targetBaseRef.isNull) {

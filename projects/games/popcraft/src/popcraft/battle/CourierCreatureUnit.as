@@ -130,9 +130,9 @@ class CourierSettings
     public static const MAX_MOVE_LENGTH :Number = 50;
     public static const MOVE_FUDGE_FACTOR :Number = 5;
     public static const MAX_MOVE_LENGTH_SQUARED :Number = MAX_MOVE_LENGTH * MAX_MOVE_LENGTH;
-    public static const WANDER_DISTANCE :NumRange = new NumRange(100, 150, Rand.STREAM_GAME);
     public static const WANDER_BOUNDS :Rectangle = new Rectangle(
         75, 75, Constants.BATTLE_WIDTH - 75, Constants.BATTLE_HEIGHT - 75);
+    public static const ENEMY_BASE_WANDER_RADIUS :NumRange = new NumRange(150, 300, Rand.STREAM_GAME);
 }
 
 class CourierAI extends AITaskTree
@@ -319,16 +319,29 @@ class ScanForSpellPickupsTask extends AITaskTree
 
     protected function wander () :void
     {
-        // pick a random location to move to
-        var direction :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
-        var distance :Number = CourierSettings.WANDER_DISTANCE.next();
-        var wanderLoc :Vector2 = Vector2.fromAngle(direction, distance).addLocal(_unit.unitLoc);
+        // When Couriers aren't picking up spells, they wander around
+        // outside an opponent's base.
+        if (_wanderBaseRef.isNull) {
+            _wanderBaseRef = _unit.getEnemyBaseRef();
+            if (_wanderBaseRef.isNull) {
+                return;
+            }
+        }
 
+        var wanderBase :PlayerBaseUnit = _wanderBaseRef.object as PlayerBaseUnit;
+
+        // pick a random location to move to, near the enemy's base
+        var wanderLoc :Vector2 = wanderBase.unitLoc.addLocal(
+                Vector2.fromAngle(Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME),
+                                  CourierSettings.ENEMY_BASE_WANDER_RADIUS.next()));
+
+        // clamp
         wanderLoc.x = Math.max(wanderLoc.x, CourierSettings.WANDER_BOUNDS.left);
         wanderLoc.x = Math.min(wanderLoc.x, CourierSettings.WANDER_BOUNDS.right);
         wanderLoc.y = Math.max(wanderLoc.y, CourierSettings.WANDER_BOUNDS.top);
         wanderLoc.y = Math.min(wanderLoc.y, CourierSettings.WANDER_BOUNDS.bottom);
 
+        // commence wandering!
         this.addSubtask(new CourierMoveTask(_unit, wanderLoc));
     }
 
@@ -350,4 +363,5 @@ class ScanForSpellPickupsTask extends AITaskTree
     }
 
     protected var _unit :CourierCreatureUnit;
+    protected var _wanderBaseRef :SimObjectRef = SimObjectRef.Null();
 }
