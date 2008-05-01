@@ -54,7 +54,7 @@ import com.threerings.flash.Vector2;
 
 class HeavyFormationManager extends SimObject
 {
-    public static const ROW_SIZE :int = 1;
+    public static const ROW_SIZE :int = 5;
     public static const UNIT_SEPARATION :Number = 20;
     public static const ROW_STAGGER :Number = 20;
     public static const FIRST_ROW_DISTANCE_FROM_BASE :Number = 40;
@@ -132,12 +132,19 @@ class HeavyFormationSpace
 
     public function getLocation (baseLoc :Vector2, facingDirection :Number) :Vector2
     {
-        // calculate the location of the center of the first row
+        // calculate the location of the center of the row
         var rowDistance :Number =
             HeavyFormationManager.FIRST_ROW_DISTANCE_FROM_BASE +
-            (rowNum * HeavyFormationManager.ROW_STAGGER);
+            (rowNum * HeavyFormationManager.UNIT_SEPARATION);
 
-        return Vector2.fromAngle(facingDirection, rowDistance).addLocal(baseLoc);
+        var rowCenter :Vector2 = Vector2.fromAngle(facingDirection, rowDistance).addLocal(baseLoc);
+
+        // move left or right in that row
+        var moveDirection :Number = facingDirection +
+            (rowPosition < ((HeavyFormationManager.ROW_SIZE - 1) * 0.5) ? (Math.PI * 0.5) : (Math.PI * -0.5));
+        var moveDist :Number = Math.abs(((HeavyFormationManager.ROW_SIZE - 1) * 0.5) * HeavyFormationManager.UNIT_SEPARATION);
+
+        return rowCenter.addLocal(Vector2.fromAngle(moveDirection, moveDist));
 
         //var spaceLoc :Vector2 = Vector2.fromAngle(facingDirection, HeavyFormationManager.FIRST_ROW_DISTANCE_FROM_BASE).addLocal(baseLoc);
     }
