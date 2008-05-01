@@ -152,11 +152,12 @@ class ColossusAI extends AITaskTree
     {
         if (_targetBaseRef.isNull) {
             _targetBaseRef = _unit.getEnemyBaseRef();
+            if (_targetBaseRef.isNull) {
+                return;
+            }
         }
 
-        if (!_targetBaseRef.isNull) {
-            this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
-        }
+        this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
     }
 
     override public function get name () :String
