@@ -2,37 +2,28 @@ package spades.graphics {
 
 import flash.display.Sprite;
 import flash.display.DisplayObject;
-import flash.events.Event;
-import flash.utils.Timer;
-import flash.display.Bitmap;
 import flash.geom.Point;
-
-import com.threerings.flash.Vector2;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.game.SizeChangedEvent;
 import com.threerings.util.MultiLoader;
 import com.threerings.util.Assert;
-
 import caurina.transitions.Tweener;
-
+import spades.Debug;
 import spades.Model;
+import spades.card.SpadesBids;
 import com.whirled.contrib.card.Card;
-import com.whirled.contrib.card.CardArray;
-import com.whirled.contrib.card.CardArrayEvent;
+import com.whirled.contrib.card.Table;
+import com.whirled.contrib.card.HandEvent;
+import com.whirled.contrib.card.trick.Bids;
+import com.whirled.contrib.card.trick.BidEvent;
 import com.whirled.contrib.card.trick.Trick;
 import com.whirled.contrib.card.trick.TrickEvent
-import com.whirled.contrib.card.Table;
-import com.whirled.contrib.card.trick.Bids;
-import spades.card.SpadesBids;
-import com.whirled.contrib.card.trick.BidEvent;
-import com.whirled.contrib.card.Hand;
-import com.whirled.contrib.card.HandEvent;
-import com.whirled.contrib.card.trick.Scores;
-import com.whirled.contrib.card.Team;
-import spades.Debug;
 import com.whirled.contrib.card.graphics.CardSprite;
+import com.whirled.contrib.card.graphics.PlayerSprite;
+import com.whirled.contrib.card.graphics.NormalBiddingSprite;
+import com.whirled.contrib.card.graphics.HandSprite;
 import com.whirled.contrib.card.graphics.MainTrickSprite;
-
+import com.whirled.contrib.card.graphics.TeamSprite;
 import com.whirled.contrib.card.graphics.LocalTweener;
 
 /**
@@ -52,11 +43,12 @@ public class TableSprite extends Sprite
         LocalTweener.isTweeningFn = Tweener.isTweening;
 
         _model = model;
+        _factory = new Factory();
 
         _players = new Array(table.numPlayers);
         for (var seat :int = 0; seat < table.numPlayers; ++seat) {
             var name :String = table.getNameFromRelative(seat);
-            var p :PlayerSprite = new PlayerSprite(table, 
+            var p :PlayerSprite = _factory.createPlayerSprite(table, 
                 table.getIdFromRelative(seat), _model.timer);
             addChild(p);
             _players[seat] = p;
@@ -66,22 +58,23 @@ public class TableSprite extends Sprite
         }
 
         if (_model.hand != null) {
-            _hand = new HandSprite(_model.hand);
+            _hand = _factory.createHandSprite(_model.hand);
             addChild(_hand);
         }
 
-        _trick = new MainTrickSprite(_model.trick, table, _players, _hand);
+        _trick = new MainTrickSprite(
+            _model.trick, table, _players, _hand);
         addChild(_trick);
 
-        _teams[0] = new TeamSprite(_model.scores, 0, 
-            new Vector2(LAST_TRICK_OFFSET, 0));
+        _teams[0] = _factory.createTeamSprite(_model.scores, 0, 
+            new Point(LAST_TRICK_OFFSET, 0));
         addChild(_teams[0] as TeamSprite);
 
-        _teams[1] = new TeamSprite(_model.scores, 1, 
-            new Vector2(-LAST_TRICK_OFFSET, 0));
+        _teams[1] = _factory.createTeamSprite(_model.scores, 1, 
+            new Point(-LAST_TRICK_OFFSET, 0));
         addChild(_teams[1] as TeamSprite);
 
-        _normalBids = new NormalBiddingSprite(_model.bids);
+        _normalBids = _factory.createNormalBiddingSprite(_model.bids);
         addChild(_normalBids);
 
         _blindNilBids = new BlindNilBiddingSprite(_model.bids);
@@ -103,9 +96,6 @@ public class TableSprite extends Sprite
             _model.hand.addEventListener(HandEvent.PASSED, handListener);
         }
 
-        // listen for our removal to prevent stranded listeners
-        addEventListener(Event.REMOVED, removedListener);
-
         _model.gameCtrl.game.addEventListener(
             StateChangedEvent.ROUND_ENDED, 
             handleRoundEnded);
@@ -125,7 +115,7 @@ public class TableSprite extends Sprite
         updateSize(_model.gameCtrl.local.getSize());
         layout();
 
-        function gotBackground (background :Bitmap) :void
+        function gotBackground (background :DisplayObject) :void
         {
             addChildAt(background, 0);
         }
@@ -178,7 +168,7 @@ public class TableSprite extends Sprite
         setPlayerTurn(table.getAbsoluteFromId(id));
     }
 
-    protected function positionChild (child :DisplayObject, pos :Vector2) :void
+    protected function positionChild (child :DisplayObject, pos :Point) :void
     {
         child.x = pos.x;
         child.y = pos.y;
@@ -198,7 +188,7 @@ public class TableSprite extends Sprite
         _players.forEach(positionPlayer);
 
         function positionPlayer (p :PlayerSprite, seat :int, a :Array) :void {
-            positionChild(p, PLAYER_POSITIONS[seat] as Vector2);
+            positionChild(p, PLAYER_POSITIONS[seat] as Point);
         }
     }
 
@@ -207,11 +197,9 @@ public class TableSprite extends Sprite
         if (event.type == TrickEvent.COMPLETED) {
             var trick :Trick = event.target as Trick;
             var teamIdx :int = table.getTeamFromId(event.player).index;
-            var playerPos :Vector2 = Vector2.fromPoint(getPlayer(
-                table.getRelativeFromId(event.player)).localToGlobal(
-                new Point(0, 0)));
-            var mainTrickPos :Vector2 = Vector2.fromPoint(
-                _trick.localToGlobal(new Point(0, 0)));
+            var playerPos :Point = getPlayer(table.getRelativeFromId(
+                event.player)).localToGlobal(new Point(0, 0));
+            var mainTrickPos :Point = _trick.localToGlobal(new Point(0, 0));
             TeamSprite(_teams[teamIdx]).takeTrick(
                 _trick.orphanCards(), mainTrickPos, playerPos);
             TeamSprite(_teams[(teamIdx + 1) % 2]).clearLastTrick();
@@ -299,7 +287,7 @@ public class TableSprite extends Sprite
                 var x :Number = player.x;
                 var y :Number = player.y;
                 for (i = 0; i < event.count; ++i) {
-                    card = CardSpriteFactory.FACTORY.createCard(
+                    card = _factory.createCard(
                         Card.createFaceDownCard());
                     cards.push(card);
                     card.x = x;
@@ -312,7 +300,7 @@ public class TableSprite extends Sprite
                         time: 0.5};
                     Tweener.addTween(card, tween);
 
-                    x += CardSpriteFactory.FACTORY.getCardWidth() / 2;
+                    x += _factory.getCardWidth() / 2;
                 }
                 animatePass(cards, event.targetPlayer, 0.5);
             }
@@ -346,19 +334,7 @@ public class TableSprite extends Sprite
             };
             Tweener.addTween(c, tween);
 
-            x += CardSpriteFactory.FACTORY.getCardWidth() / 2;
-        }
-    }
-
-    protected function removedListener (event :Event) :void
-    {
-        if (event.target == this) {
-            removeChild(_trick);
-            if (_hand != null) {
-                removeChild(_hand);
-            }
-            removeChild(_teams[0] as TeamSprite);
-            removeChild(_teams[1] as TeamSprite);
+            x += _factory.getCardWidth() / 2;
         }
     }
 
@@ -407,29 +383,30 @@ public class TableSprite extends Sprite
     protected var _hand :HandSprite;
     protected var _trick :MainTrickSprite;
     protected var _teams :Array = [null, null];
+    protected var _factory :Factory;
 
     /** Positions of other players' on the table (relative to the local player). */
     protected static const PLAYER_POSITIONS :Array = [
-        new Vector2(350, 350),  // me
-        new Vector2(145, 200),  // my left
-        new Vector2(350, 60),  // opposite
-        new Vector2(555, 200)   // my right
+        new Point(350, 350),  // me
+        new Point(145, 200),  // my left
+        new Point(350, 60),  // opposite
+        new Point(555, 200)   // my right
     ];
 
     /** Position of the center of the local player's hand. */
-    protected static const HAND_POSITION :Vector2 = new Vector2(350, 455);
+    protected static const HAND_POSITION :Point = new Point(350, 455);
 
     /** Position of the center of the bid slider */
-    protected static const NORMAL_BIDS_POSITION :Vector2 = new Vector2(350, 195);
+    protected static const NORMAL_BIDS_POSITION :Point = new Point(350, 195);
 
     /** Position of the center of the trick pile */
-    protected static const TRICK_POSITION :Vector2 = new Vector2(350, 205);
+    protected static const TRICK_POSITION :Point = new Point(350, 205);
 
     /** Position of the left-hand team */
-    protected static const LEFT_TEAM_POSITION :Vector2 = new Vector2(95, 45);
+    protected static const LEFT_TEAM_POSITION :Point = new Point(95, 45);
 
     /** Position of the right-hand team */
-    protected static const RIGHT_TEAM_POSITION :Vector2 = new Vector2(605, 45);
+    protected static const RIGHT_TEAM_POSITION :Point = new Point(605, 45);
 
     /** Offset of the last trick, relative to the team. */
     protected static const LAST_TRICK_OFFSET :Number = 130;
