@@ -4,13 +4,13 @@ import flash.display.Sprite;
 import flash.display.DisplayObjectContainer;
 import flash.events.MouseEvent;
 import flash.display.SimpleButton;
-
 import com.threerings.util.MultiLoader;
-
-import spades.Debug;
+import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.card.trick.Bids;
-import spades.card.SpadesBids;
 import com.whirled.contrib.card.trick.BidEvent;
+import com.whirled.contrib.card.graphics.Text;
+import spades.Debug;
+import spades.card.SpadesBids;
 
 /** Represents the interface for bidding blind nil (yes/no). */
 public class BlindNilBiddingSprite extends Sprite
@@ -72,7 +72,8 @@ public class BlindNilBiddingSprite extends Sprite
     /** Get the button by name. */
     protected function getButton (name :String) :SimpleButton
     {
-        return Structure.requireButton(_movie.getChildAt(0), name);
+        return SimpleButton(DisplayUtil.findInHierarchy(
+            _movie.getChildAt(0), name));
     }
 
     /** Dispatch a click on a bid to the game model. */

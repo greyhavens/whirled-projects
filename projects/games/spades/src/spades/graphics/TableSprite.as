@@ -30,6 +30,10 @@ import com.whirled.contrib.card.HandEvent;
 import com.whirled.contrib.card.trick.Scores;
 import com.whirled.contrib.card.Team;
 import spades.Debug;
+import com.whirled.contrib.card.graphics.CardSprite;
+import com.whirled.contrib.card.graphics.MainTrickSprite;
+
+import com.whirled.contrib.card.graphics.LocalTweener;
 
 /**
  * Display object for drawing a spades game.
@@ -42,6 +46,10 @@ public class TableSprite extends Sprite
     public function TableSprite (model :Model)
     {
         MultiLoader.getContents(BACKGROUND, gotBackground);
+
+        LocalTweener.addTweenFn = Tweener.addTween;
+        LocalTweener.removeTweensFn = Tweener.removeTweens;
+        LocalTweener.isTweeningFn = Tweener.isTweening;
 
         _model = model;
 
@@ -291,7 +299,8 @@ public class TableSprite extends Sprite
                 var x :Number = player.x;
                 var y :Number = player.y;
                 for (i = 0; i < event.count; ++i) {
-                    card = new CardSprite(Card.createFaceDownCard());
+                    card = CardSpriteFactory.FACTORY.createCard(
+                        Card.createFaceDownCard());
                     cards.push(card);
                     card.x = x;
                     card.y = y;
@@ -303,7 +312,7 @@ public class TableSprite extends Sprite
                         time: 0.5};
                     Tweener.addTween(card, tween);
 
-                    x += CardSprite.WIDTH / 2;
+                    x += CardSpriteFactory.FACTORY.getCardWidth() / 2;
                 }
                 animatePass(cards, event.targetPlayer, 0.5);
             }
@@ -337,7 +346,7 @@ public class TableSprite extends Sprite
             };
             Tweener.addTween(c, tween);
 
-            x += CardSprite.WIDTH / 2;
+            x += CardSpriteFactory.FACTORY.getCardWidth() / 2;
         }
     }
 

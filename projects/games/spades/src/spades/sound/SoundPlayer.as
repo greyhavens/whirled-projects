@@ -8,8 +8,6 @@ import com.whirled.contrib.card.HandEvent;
 import com.whirled.contrib.card.trick.TrickEvent;
 import com.whirled.contrib.card.TurnTimerEvent;
 import com.threerings.util.MultiLoader;
-import spades.graphics.Structure;
-import flash.display.MovieClip;
 import com.whirled.game.StateChangedEvent;
 
 /** Embeds card sounds and plays them when game events occur. 

@@ -11,6 +11,7 @@ import spades.graphics.TableSprite;
 import com.whirled.game.GameControl;
 import com.threerings.util.Log;
 import spades.sound.SoundPlayer;
+import com.whirled.contrib.card.Debug;
 
 /** Main entry point for the spades game. This is required to be a Sprite by flash. It constructs 
  *  a spades controller and then adds a new TableSprite create from the controller's model. */
@@ -25,18 +26,22 @@ public class Spades extends Sprite
         var mySeat :int = _gameCtrl.game.seating.getMyPosition();
         var config :Object = _gameCtrl.game.getConfig();
         var debugSeat :int = ("debugSeat" in config) ? config.debugSeat : -1;
+        var fn :Function;
         if (debugSeat == -2) { // all
-            Debug.debug = debugPrint;
+            fn = debugPrint;
         }
         else if (debugSeat == -1) { // none
-            Debug.debug = ignore;
+            fn = ignore;
         }
         else if (debugSeat == mySeat) {
-            Debug.debug = debugPrint;
+            fn = debugPrint;
         }
         else {
-            Debug.debug = ignore;
+            fn = ignore;
         }
+
+        com.whirled.contrib.card.Debug.debug = fn;
+        spades.Debug.debug = fn;
 
         new Controller(_gameCtrl, createViews);
     }

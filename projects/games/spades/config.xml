@@ -1,7 +1,7 @@
 <!-- a config file used when doing standalone testing -->
 <game>
   <params>
-    <choice ident="playTo" name="Winning Score" choices="200,300,400,500" start="200"/>
+    <choice ident="playTo" name="Winning Score" choices="150,200,300,400,500" start="150"/>
     <toggle ident="minigame" name="16 Card Deck" start="false"/>
     <toggle ident="timer" name="Timed Turns" start="true"/>
     <choice ident="debugSeat" name="Debug Seat" choices="-2,-1,0,1,2,3" start="-2"/>

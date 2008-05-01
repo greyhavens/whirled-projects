@@ -1,28 +1,13 @@
 package spades.graphics {
 
-import flash.display.Sprite;
-import flash.display.DisplayObject;
-import flash.display.Bitmap;
-import flash.filters.DropShadowFilter;
+import com.whirled.contrib.card.TurnTimer;
+import com.whirled.contrib.card.Table;
+import com.whirled.contrib.card.graphics.PlayerSprite;
 import flash.geom.Point;
 
-import com.threerings.util.MultiLoader;
-import com.threerings.util.Assert;
-
-import spades.Debug;
-import com.whirled.contrib.card.Team;
-import com.whirled.contrib.card.TurnTimer;
-import com.whirled.contrib.card.TurnTimerEvent;
-import com.whirled.contrib.card.Table;
-
-import caurina.transitions.Tweener;
-
-
-/**
- * Flash object for a player sitting at a trick-taking card game. This is a placeholder for 
- * something nicer, so only the interface is documented in detail.
- */
-public class PlayerSprite extends Sprite
+/** Spades player sprite.
+ *  TODO: this is a placeholder, refactor into Resources class */
+public class PlayerSprite extends com.whirled.contrib.card.graphics.PlayerSprite
 {
     /** Create a new player. */
     public function PlayerSprite (
@@ -30,118 +15,19 @@ public class PlayerSprite extends Sprite
         id :int, 
         timer :TurnTimer)
     {
-        _team = table.getTeamFromId(id);
-        _id = id;
+        var team :int = table.getTeamFromId(id).index;
+        var timerMovie :Class = TEAM_TIMERS[team] as Class;
+        var background :Class = TEAM_IMAGES[team] as Class;
+        var colors :Array = TEXT_COLORS[team] as Array;
+        var textColor :uint = colors[0] as uint;
+        var outlineColor :uint = colors[1] as uint;
+        var captionOutlineColor :uint = 
+            CAPTION_OUTLINE_COLORS[team] as uint;
 
-        // TODO: fix drop shadow
-        _headShot = new HeadShotContainer();
-        addChild(_headShot);
-
-        _timer = new TimerMovie(TEAM_TIMERS[_team.index] as Class);
-        _timer.x = TIMER_POS.x;
-        _timer.y = TIMER_POS.y;
-        _timer.alpha = 0.0;
-        addChild(_timer);
-
-        MultiLoader.getContents(TEAM_IMAGES[_team.index] as Class, gotBackground);
-
-        var colors :Array = TEXT_COLORS[_team.index] as Array;
-
-        var nameField :Text = new Text(
-            Text.BIG, colors[0] as uint, colors[1] as uint);
-        addChild(nameField);
-
-        nameField.centerY = -HEIGHT / 3;
-        nameField.text = Text.truncName(table.getNameFromId(id));
-
-        setTurn(false);
-
-        timer.addEventListener(TurnTimerEvent.STARTED, turnTimerListener);
-
-        function gotBackground (background :Bitmap) :void
-        {
-            _background = background;
-            addChildAt(_background, 0);
-
-            _background.x = -_background.width / 2;
-            _background.y = -_background.height / 2;
-
-            _background.alpha = _turn ? 1.0 : 0.0;
-        }
+        super(table, id, WIDTH, HEIGHT, timer, timerMovie, TIMER_POS, 
+            background, textColor, outlineColor, WARNING_COLOR, CAPTION_COLOR,
+            captionOutlineColor);
     }
-
-    /** Set the player head shot. */
-    public function setHeadShot (headShot :DisplayObject) :void
-    {
-        var alpha :Number = _turn ? 0.0 : DROP_SHADOW_MAX_ALPHA;
-        _headShot.setImage(headShot, new DropShadowFilter(
-            6, 45, 0x000000, alpha, 10, 10, 2));
-    }
-
-    /** Update to reflect the turn status.
-     *  @param turn indicates whether it is this player's turn */
-    public function setTurn (turn :Boolean) :void
-    {
-        _turn = turn;
-
-        if (_background == null) {
-            return;
-        }
-
-        _timer.stop();
-        if (turn) {
-            _timer.reset();
-        }
-
-        Tweener.removeTweens(_background);
-        Tweener.removeTweens(_timer);
-        Tweener.removeTweens(_headShot);
-
-        var tween :Object = {alpha : turn ? 1.0 : 0.0, time : 1.0};
-
-        Tweener.addTween(_background, tween);
-        Tweener.addTween(_timer, tween);
-        Tweener.addTween(_headShot, {
-            dropShadowAlpha : turn ? 0.0 : DROP_SHADOW_MAX_ALPHA,
-            time : 1.0
-        });
-    }
-
-    /** Display a warning for this player. 
-     *  TODO: make protected and listen for warning events in subclasses. */
-    public function showCaption (str :String, warning :Boolean=false) :void
-    {
-        if (_caption != null) {
-            removeChild(_caption);
-            _caption = null;
-        }
-
-        if (str.length > 0) {
-            var fcolor :uint = warning ? WARNING_COLOR : CAPTION_COLOR;
-            var bcolor :uint = uint(CAPTION_OUTLINE_COLORS[_team.index]);
-            _caption = new Text(Text.BIG, fcolor, bcolor);
-            _caption.centerY = HEIGHT / 3;
-            _caption.text = str;
-            addChild(_caption);
-        }
-    }
-
-    protected function turnTimerListener (event :TurnTimerEvent) :void
-    {
-        if (event.type == TurnTimerEvent.STARTED) {
-            if (event.player == _id) {
-                _timer.start(event.time);
-            }
-        }
-    }
-
-    protected var _team :Team;
-    protected var _id :int;
-    protected var _background :Bitmap;
-    protected var _headShot :HeadShotContainer;
-    protected var _turn :Boolean;
-    protected var _caption :Text;
-    protected var _timer :TimerMovie;
 
     protected static const WIDTH :int = 165;
     protected static const HEIGHT :int = 115;
@@ -175,67 +61,3 @@ public class PlayerSprite extends Sprite
 }
 
 }
-
-
-import flash.display.Sprite;
-import flash.display.DisplayObject;
-import flash.filters.DropShadowFilter;
-
-/** Contains a player's head shot and manages the alpha of the drop shadow filter as a property
- *  (this is otherwise quite annoying and ugly to do with Tweener). */
-class HeadShotContainer extends Sprite
-{
-    /** Creates a new empty head shot container. */
-    public function HeadShotContainer ()
-    {
-    }
-
-    /** Set the head shot to use inside the container.
-     *  @param headShot the image to use
-     *  @param filter the drop shadow filter to be assigned to the head shot */
-    public function setImage (
-        headShot :DisplayObject, 
-        filter :DropShadowFilter) :void
-    {
-        if (_image != null) {
-            removeChild(_image);
-            _image = null;
-        }
-
-        _image = headShot;
-
-        if (_image != null) {
-            _image.x = -_image.width / 2;
-            _image.y = -_image.height / 2;
-            _image.filters = [filter]
-            addChild(_image);
-        }
-    }
-
-    /** Access the alpha property of the drop shadow filter. Automatically takes care of
-     *  reinitializing the head shot's filter array. */
-    public function set dropShadowAlpha (alpha :Number) :void
-    {
-        if (_image == null) {
-            return;
-        }
-
-        // the filter cannot be modified directly, only on a temporary array
-        // (see adobe docs for DisplayObject.filters)
-        var f :Array = _image.filters;
-        f[0].alpha = alpha;
-        _image.filters = f;
-    }
-
-    /** Access the alpha property of the drop shadow filter (required for tweening). */
-    public function get dropShadowAlpha () :Number
-    {
-        if (_image == null) {
-            return 0;
-        }
-        return _image.filters[0].alpha;
-    }
-
-    protected var _image :DisplayObject;
-}
-
