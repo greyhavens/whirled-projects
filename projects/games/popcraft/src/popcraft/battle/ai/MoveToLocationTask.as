@@ -45,8 +45,6 @@ public class MoveToLocationTask extends AITask
                     _success = false;
                     return AITaskStatus.COMPLETE;
                 }
-            } else {
-                _stuckTime = 0;
             }
         }
 
