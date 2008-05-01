@@ -5,7 +5,6 @@
   <property name="app.name" value="Fifteen"/>
   <property name="flex.use-network" value="true"/>
 
-  <property name="app.source-extras" value="../../../libraries/whirled/contrib/src/as/"/>
   <property name="app.lib-extras" value="../../../lib/fl-components.swc,../../../lib/tweener.swc"/>
 
   <!-- if you wish to put your source in a subdirectory, uncomment this line -->
