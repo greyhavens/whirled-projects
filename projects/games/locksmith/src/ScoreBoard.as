@@ -2,6 +2,7 @@
 
 package {
 
+import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
@@ -50,10 +51,10 @@ public class ScoreBoard extends Sprite
 
         var playerIds :Array = wgc.game.seating.getPlayerIds();
         var playerNames :Array = wgc.game.seating.getPlayerNames();
-        wgc.local.getHeadShot(playerIds[MOON_PLAYER], applyHeadshot(MOON_PLAYER));
+        addHeadshot(MOON_PLAYER, wgc.local.getHeadShot(playerIds[MOON_PLAYER]));
         addLabel(MOON_PLAYER, playerNames[MOON_PLAYER]);
         if (playerIds.length > 1) {
-            wgc.local.getHeadShot(playerIds[SUN_PLAYER], applyHeadshot(SUN_PLAYER));
+            addHeadshot(SUN_PLAYER, wgc.local.getHeadShot(playerIds[SUN_PLAYER]));
             addLabel(SUN_PLAYER, playerNames[SUN_PLAYER]);
         }
 
@@ -138,40 +139,35 @@ public class ScoreBoard extends Sprite
         _coinsLayer.addChild(coinsDisplay);
     }
 
-    protected function applyHeadshot (player :int) :Function 
+    protected function addHeadshot (player :int, headshot :DisplayObject) :void 
     {
-        return function (headshot :Sprite, success :Boolean) :void
-        {
-            if (!success) {
-                return;
-            }
-
-            var frame :Sprite = player == MOON_PLAYER ? _leftFrame : _rightFrame;
-            headshot.x = frame.x + 7;
-            if (headshot.x < 0) {
-                headshot.x -= frame.width;
-            }
-            headshot.y = frame.y + 5;
-            var scale :Number;
-            var masker :Shape = new Shape();
-            masker.graphics.beginFill(0);
-            if (headshot.width < headshot.height) {
-                scale = 60 / headshot.width;
-                var diff :Number = ((headshot.height - headshot.width) * scale) / 2;
-                headshot.y -= diff;
-                masker.graphics.drawRect(0, diff, 60 / scale, 60 / scale);
-            } else {
-                scale = 60 / headshot.height;
-                diff = ((headshot.width - headshot.height) * scale) / 2;
-                headshot.x -= diff;
-                masker.graphics.drawRect(diff, 0, 60 / scale, 60 / scale);
-            }
-            headshot.scaleX = headshot.scaleY = scale;
-            masker.graphics.endFill();
-            headshot.addChild(masker);
-            headshot.mask = masker;
-            addChildAt(headshot, getChildIndex(frame));
-        };
+        var headshotSprite :Sprite = new Sprite();
+        var frame :Sprite = player == MOON_PLAYER ? _leftFrame : _rightFrame;
+        headshot.x = frame.x + 7;
+        if (headshot.x < 0) {
+            headshot.x -= frame.width;
+        }
+        headshot.y = frame.y + 5;
+        var scale :Number;
+        var masker :Shape = new Shape();
+        masker.graphics.beginFill(0);
+        if (headshot.width < headshot.height) {
+            scale = 60 / headshot.width;
+            var diff :Number = ((headshot.height - headshot.width) * scale) / 2;
+            headshot.y -= diff;
+            masker.graphics.drawRect(0, diff, 60 / scale, 60 / scale);
+        } else {
+            scale = 60 / headshot.height;
+            diff = ((headshot.width - headshot.height) * scale) / 2;
+            headshot.x -= diff;
+            masker.graphics.drawRect(diff, 0, 60 / scale, 60 / scale);
+        }
+        headshot.scaleX = headshot.scaleY = scale;
+        masker.graphics.endFill();
+        headshotSprite.addChild(headshot);
+        headshotSprite.addChild(masker);
+        headshotSprite.mask = masker;
+        addChildAt(headshotSprite, getChildIndex(frame));
     }
 
     protected function addLabel (player :int, name :String) :void
