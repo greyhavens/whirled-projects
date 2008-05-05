@@ -4,7 +4,6 @@
   <!-- define some basic project parameters -->
   <property name="app.name" value="SimonMain"/>
   <property name="app.source-dir" value="src"/>
-  <property name="app.source-extras" value="../../../contrib/src/as/"/>
   <property name="app.package-dir" value="simon"/>
 
   <!-- include the standard build script -->
