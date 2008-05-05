@@ -164,6 +164,8 @@ public class ScoreBoard extends Sprite
         }
         headshot.scaleX = headshot.scaleY = scale;
         masker.graphics.endFill();
+        masker.x = headshot.x;
+        masker.y = headshot.y;
         headshotSprite.addChild(headshot);
         headshotSprite.addChild(masker);
         headshotSprite.mask = masker;
