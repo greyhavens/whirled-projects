@@ -1,5 +1,6 @@
 package popcraft.battle {
 
+import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
 import com.whirled.contrib.simplegame.*;
 
@@ -18,6 +19,8 @@ public class CourierCreatureUnit extends CreatureUnit
     public function CourierCreatureUnit (owningPlayerId :uint)
     {
         super(Constants.UNIT_TYPE_COURIER, owningPlayerId);
+
+        _spawnLoc = _owningPlayerData.base.unitSpawnLoc;
 
         _courierAI = new CourierAI(this);
         _groupName = "CourierCreature_Player" + owningPlayerId;
@@ -99,7 +102,13 @@ public class CourierCreatureUnit extends CreatureUnit
         return _speedup;
     }
 
+    public function get spawnLoc () :Vector2
+    {
+        return _spawnLoc; // Courier AI uses this to determine where to move to
+    }
+
     protected var _courierAI :CourierAI;
+    protected var _spawnLoc :Vector2;
     protected var _groupName :String;
     protected var _speedup :Number = 1;
 
@@ -133,6 +142,7 @@ class CourierSettings
     public static const WANDER_BOUNDS :Rectangle = new Rectangle(
         75, 75, Constants.BATTLE_WIDTH - 75, Constants.BATTLE_HEIGHT - 75);
     public static const ENEMY_BASE_WANDER_RADIUS :NumRange = new NumRange(150, 300, Rand.STREAM_GAME);
+    public static const ENEMY_BASE_WANDER_ANGLE :NumRange = new NumRange(-Math.PI / 3, Math.PI / 3, Rand.STREAM_GAME);
 }
 
 class CourierAI extends AITaskTree
@@ -330,10 +340,11 @@ class ScanForSpellPickupsTask extends AITaskTree
 
         var wanderBase :PlayerBaseUnit = _wanderBaseRef.object as PlayerBaseUnit;
 
-        // pick a random location to move to, near the enemy's base
-        var wanderLoc :Vector2 = wanderBase.unitLoc.addLocal(
-                Vector2.fromAngle(Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME),
-                                  CourierSettings.ENEMY_BASE_WANDER_RADIUS.next()));
+        // pick a location to wander to outside the enemy player's base
+        var wanderLoc :Vector2 = _unit.spawnLoc.subtract(wanderBase.unitLoc);
+        wanderLoc.length = CourierSettings.ENEMY_BASE_WANDER_RADIUS.next();
+        wanderLoc.rotateLocal(CourierSettings.ENEMY_BASE_WANDER_ANGLE.next());
+        wanderLoc.addLocal(wanderBase.unitLoc);
 
         // clamp
         wanderLoc.x = Math.max(wanderLoc.x, CourierSettings.WANDER_BOUNDS.left);

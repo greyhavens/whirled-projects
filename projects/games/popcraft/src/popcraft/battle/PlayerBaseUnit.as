@@ -23,7 +23,7 @@ public class PlayerBaseUnit extends Unit
 
     public function get unitSpawnLoc () :Vector2
     {
-        return _unitSpawnLoc;
+        return _unitSpawnLoc.clone();
     }
 
     protected var _unitSpawnLoc :Vector2 = new Vector2();
