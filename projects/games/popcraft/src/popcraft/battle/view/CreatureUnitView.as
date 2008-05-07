@@ -6,6 +6,7 @@ import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -15,8 +16,8 @@ import flash.display.Shape;
 import flash.display.Sprite;
 
 import popcraft.*;
-import popcraft.data.*;
 import popcraft.battle.*;
+import popcraft.data.*;
 import popcraft.util.*;
 
 public class CreatureUnitView extends SceneObject
@@ -78,6 +79,7 @@ public class CreatureUnitView extends SceneObject
         }
 
         _unit.addEventListener(UnitEvent.ATTACKING, handleUnitAttacking, false, 0, true);
+        _unit.addEventListener(UnitEvent.ATTACKED, handleUnitAttacked, false, 0, true);
 
         var spellSet :SpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
         spellSet.addEventListener(SpellSet.SET_MODIFIED, handleSpellSetModified);
@@ -92,6 +94,7 @@ public class CreatureUnitView extends SceneObject
         }
 
         _unit.removeEventListener(UnitEvent.ATTACKING, handleUnitAttacking);
+        _unit.removeEventListener(UnitEvent.ATTACKED, handleUnitAttacked);
 
         var spellSet :SpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
         spellSet.removeEventListener(SpellSet.SET_MODIFIED, handleSpellSetModified);
@@ -150,6 +153,13 @@ public class CreatureUnitView extends SceneObject
             // @TODO - duration is a temporary, arbitrary value
             this.createAOEAttackAnimation(weapon, _unit.unitLoc, 0.5);
         }
+    }
+
+    protected function handleUnitAttacked (...ignored) :void
+    {
+        // play a sound
+        var soundName :String = Constants.HIT_SOUND_NAMES[Rand.nextIntRange(0, Constants.HIT_SOUND_NAMES.length, Rand.STREAM_COSMETIC)];
+        AppContext.playSound(soundName);
     }
 
     protected function createAOEAttackAnimation (weapon :UnitWeaponData, loc :Vector2, duration :Number) :void

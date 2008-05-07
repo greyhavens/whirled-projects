@@ -39,6 +39,9 @@ public class LoadingMode extends AppMode
         AppContext.resources.pendResourceLoad("sound", "sfx_explosion", { embeddedClass: SOUND_EXPLOSION });
         AppContext.resources.pendResourceLoad("sound", "sfx_day", { embeddedClass: SOUND_ROOSTER });
         AppContext.resources.pendResourceLoad("sound", "sfx_night", { embeddedClass: SOUND_WOLF });
+        AppContext.resources.pendResourceLoad("sound", "sfx_hit1", { embeddedClass: SOUND_HIT1 });
+        AppContext.resources.pendResourceLoad("sound", "sfx_hit2", { embeddedClass: SOUND_HIT2 });
+        AppContext.resources.pendResourceLoad("sound", "sfx_hit3", { embeddedClass: SOUND_HIT3 });
 
         AppContext.resources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
         AppContext.resources.addEventListener(ResourceLoadEvent.ERROR, handleResourceLoadErr);
@@ -142,6 +145,15 @@ public class LoadingMode extends AppMode
 
     [Embed(source="../../rsrc/audio/WOLF_HOWLS_02_WW.mp3")]
     protected static const SOUND_WOLF :Class;
+
+    [Embed(source="../../rsrc/audio/ARM_SWING_PUNCH_2_S4.mp3")]
+    protected static const SOUND_HIT1 :Class;
+
+    [Embed(source="../../rsrc/audio/ARM_SWING_PUNCH_3_S4.mp3")]
+    protected static const SOUND_HIT2 :Class;
+
+    [Embed(source="../../rsrc/audio/ARM_SWING_PUNCH_6_S4.mp3")]
+    protected static const SOUND_HIT3 :Class;
 }
 
 }

@@ -68,6 +68,8 @@ public class Constants
 
     public static const DAY_PHASE_NAMES :Array = [ "day", "night" ];
 
+    public static const HIT_SOUND_NAMES :Array = [ "sfx_hit1", "sfx_hit2", "sfx_hit3" ];
+
     /* Damage types */
     public static const DAMAGE_TYPE_CRUSHING :uint = 0;
     public static const DAMAGE_TYPE_PIERCING :uint = 1;
