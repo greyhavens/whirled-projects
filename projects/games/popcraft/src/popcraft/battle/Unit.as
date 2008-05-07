@@ -178,9 +178,6 @@ public class Unit extends SimObject
             // send the attack
             unit.receiveAttack(attack);
         }
-
-        // play a sound (@TODO - move this into the view class)
-        AppContext.playSound("sfx_explosion");
     }
 
     public function receiveAttack (attack :UnitAttack) :void

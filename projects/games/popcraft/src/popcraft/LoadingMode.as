@@ -7,6 +7,10 @@ public class LoadingMode extends AppMode
 {
     override protected function setup () :void
     {
+        // data
+        AppContext.resources.pendResourceLoad("gameData", "defaultGameData", { embeddedClass: DEFAULT_GAME_DATA });
+
+        // gfx
         AppContext.resources.pendResourceLoad("image", "colossus_icon",  { embeddedClass: IMAGE_COLOSSUSICON });
         AppContext.resources.pendResourceLoad("image", "courier_icon", { embeddedClass: IMAGE_COURIERICON });
 
@@ -26,23 +30,26 @@ public class LoadingMode extends AppMode
 
         AppContext.resources.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: SWF_PUZZLEPIECES });
 
-        AppContext.resources.pendResourceLoad("gameData", "defaultGameData", { embeddedClass: DEFAULT_GAME_DATA });
+        // sfx
+        AppContext.resources.pendResourceLoad("sound", "sfx_create_grunt", { embeddedClass: SOUND_GRUNT });
+        AppContext.resources.pendResourceLoad("sound", "sfx_create_heavy", { embeddedClass: SOUND_HEAVY });
+        AppContext.resources.pendResourceLoad("sound", "sfx_create_sapper", { embeddedClass: SOUND_SAPPER });
+        AppContext.resources.pendResourceLoad("sound", "sfx_create_colossus", { embeddedClass: SOUND_COLOSSUS });
+        AppContext.resources.pendResourceLoad("sound", "sfx_death_sapper", { embeddedClass: SOUND_EXPLOSION });
 
-        AppContext.resources.pendResourceLoad("sound", "sfx_grunt", { embeddedClass: SOUND_GRUNT });
-        AppContext.resources.pendResourceLoad("sound", "sfx_heavy", { embeddedClass: SOUND_HEAVY });
-        AppContext.resources.pendResourceLoad("sound", "sfx_sapper", { embeddedClass: SOUND_SAPPER });
-        AppContext.resources.pendResourceLoad("sound", "sfx_colossus", { embeddedClass: SOUND_COLOSSUS });
         AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_white", { embeddedClass: SOUND_FLESH });
         AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_red", { embeddedClass: SOUND_BLOOD });
         AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_blue", { embeddedClass: SOUND_ENERGY });
         AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_yellow", { embeddedClass: SOUND_ARTIFICE });
-        AppContext.resources.pendResourceLoad("sound", "sfx_explosion", { embeddedClass: SOUND_EXPLOSION });
+
         AppContext.resources.pendResourceLoad("sound", "sfx_day", { embeddedClass: SOUND_ROOSTER });
         AppContext.resources.pendResourceLoad("sound", "sfx_night", { embeddedClass: SOUND_WOLF });
+
         AppContext.resources.pendResourceLoad("sound", "sfx_hit1", { embeddedClass: SOUND_HIT1 });
         AppContext.resources.pendResourceLoad("sound", "sfx_hit2", { embeddedClass: SOUND_HIT2 });
         AppContext.resources.pendResourceLoad("sound", "sfx_hit3", { embeddedClass: SOUND_HIT3 });
 
+        // events
         AppContext.resources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
         AppContext.resources.addEventListener(ResourceLoadEvent.ERROR, handleResourceLoadErr);
 

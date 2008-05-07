@@ -307,6 +307,11 @@ public class CreatureUnitView extends SceneObject
             // when the unit gets destroyed, its view does too
             this.destroySelf();
 
+            // play a sound if the creature died during battle, and not
+            // as a result of the night-day switch
+            if (GameContext.diurnalCycle.isNight) {
+                AppContext.playSound("sfx_death_" + _unit.unitData.name);
+            }
         } else {
 
             // estimate the amount of time that's elapsed since
