@@ -35,6 +35,7 @@ public class LoadingMode extends AppMode
         AppContext.resources.pendResourceLoad("sound", "sfx_create_heavy", { embeddedClass: SOUND_HEAVY });
         AppContext.resources.pendResourceLoad("sound", "sfx_create_sapper", { embeddedClass: SOUND_SAPPER });
         AppContext.resources.pendResourceLoad("sound", "sfx_create_colossus", { embeddedClass: SOUND_COLOSSUS });
+        AppContext.resources.pendResourceLoad("sound", "sfx_create_courier", { embeddedClass: SOUND_COURIER });
         AppContext.resources.pendResourceLoad("sound", "sfx_death_sapper", { embeddedClass: SOUND_EXPLOSION });
 
         AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_white", { embeddedClass: SOUND_FLESH });
@@ -131,6 +132,9 @@ public class LoadingMode extends AppMode
 
     [Embed(source="../../rsrc/audio/GRUNT_CTE03_33_4.mp3")]
     protected static const SOUND_COLOSSUS :Class;
+
+    [Embed(source="../../rsrc/audio/KATYDID_SHAKING_JB.mp3")]
+    protected static const SOUND_COURIER :Class;
 
     [Embed(source="../../rsrc/audio/FLESH_TEAR_CRUNCHY_RIP_1_DA.mp3")]
     protected static const SOUND_FLESH :Class;
