@@ -30,7 +30,7 @@ public class DiurnalMeterView extends SceneObject
         _sprite.addChild(_sun);
         _sprite.addChild(_moon);
 
-        this.dayPhaseChanged(GameContext.gameData.initialDayPhase);
+        this.dayPhaseChanged(GameContext.gameData.initialDayPhase, false);
     }
 
     override protected function addedToDB () :void
@@ -47,24 +47,32 @@ public class DiurnalMeterView extends SceneObject
     {
         var newPhase :int = GameContext.diurnalCycle.phaseOfDay;
         if (newPhase != _lastPhase) {
-            this.dayPhaseChanged(newPhase);
+            this.dayPhaseChanged(newPhase, true);
         }
 
         _meter.value = GameContext.diurnalCycle.timeTillNextPhase;
     }
 
-    protected function dayPhaseChanged (newPhase :uint) :void
+    protected function dayPhaseChanged (newPhase :uint, playSound :Boolean) :void
     {
+        var soundName :String;
+
         if (newPhase == Constants.PHASE_DAY) {
             _meter.foregroundColor = METER_DAY_FG;
             _meter.maxValue = GameContext.gameData.dayLength;
             _sun.visible = true;
             _moon.visible = false;
+            soundName = "sfx_day";
         } else {
             _meter.foregroundColor = METER_NIGHT_FG;
             _meter.maxValue = GameContext.gameData.nightLength;
             _sun.visible = false;
             _moon.visible = true;
+            soundName = "sfx_night";
+        }
+
+        if (playSound) {
+            AppContext.playSound(soundName);
         }
 
         _lastPhase = newPhase;

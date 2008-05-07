@@ -32,6 +32,8 @@ public class LoadingMode extends AppMode
         AppContext.resources.pendResourceLoad("sound", "sfx_sapper", { embeddedClass: SOUND_SAPPER });
         AppContext.resources.pendResourceLoad("sound", "sfx_blood", { embeddedClass: SOUND_BLOOD });
         AppContext.resources.pendResourceLoad("sound", "sfx_explosion", { embeddedClass: SOUND_EXPLOSION });
+        AppContext.resources.pendResourceLoad("sound", "sfx_day", { embeddedClass: SOUND_ROOSTER });
+        AppContext.resources.pendResourceLoad("sound", "sfx_night", { embeddedClass: SOUND_WOLF });
 
         AppContext.resources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
         AppContext.resources.addEventListener(ResourceLoadEvent.ERROR, handleResourceLoadErr);
@@ -114,6 +116,12 @@ public class LoadingMode extends AppMode
 
     [Embed(source="../../rsrc/audio/EXPLOSION_CTE01_56_1.mp3")]
     protected static const SOUND_EXPLOSION :Class;
+
+    [Embed(source="../../rsrc/audio/B-BIRD-ROOSTER.mp3")]
+    protected static const SOUND_ROOSTER :Class;
+
+    [Embed(source="../../rsrc/audio/WOLF_HOWLS_02_WW.mp3")]
+    protected static const SOUND_WOLF :Class;
 }
 
 }
