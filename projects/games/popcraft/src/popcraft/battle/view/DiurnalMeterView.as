@@ -30,7 +30,7 @@ public class DiurnalMeterView extends SceneObject
         _sprite.addChild(_sun);
         _sprite.addChild(_moon);
 
-        this.dayPhaseChanged(GameContext.gameData.initialDayPhase, false);
+        this.dayPhaseChanged(GameContext.gameData.initialDayPhase, true);
     }
 
     override protected function addedToDB () :void

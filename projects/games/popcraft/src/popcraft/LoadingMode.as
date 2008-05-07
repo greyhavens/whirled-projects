@@ -31,6 +31,7 @@ public class LoadingMode extends AppMode
         AppContext.resources.pendResourceLoad("sound", "sfx_grunt", { embeddedClass: SOUND_GRUNT });
         AppContext.resources.pendResourceLoad("sound", "sfx_heavy", { embeddedClass: SOUND_HEAVY });
         AppContext.resources.pendResourceLoad("sound", "sfx_sapper", { embeddedClass: SOUND_SAPPER });
+        AppContext.resources.pendResourceLoad("sound", "sfx_colossus", { embeddedClass: SOUND_COLOSSUS });
         AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_white", { embeddedClass: SOUND_FLESH });
         AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_red", { embeddedClass: SOUND_BLOOD });
         AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_blue", { embeddedClass: SOUND_ENERGY });
@@ -117,6 +118,9 @@ public class LoadingMode extends AppMode
 
     [Embed(source="../../rsrc/audio/SMALL_DOG_SINGLE_BARK_01_S4.mp3")]
     protected static const SOUND_SAPPER :Class;
+
+    [Embed(source="../../rsrc/audio/GRUNT_CTE03_33_4.mp3")]
+    protected static const SOUND_COLOSSUS :Class;
 
     [Embed(source="../../rsrc/audio/FLESH_TEAR_CRUNCHY_RIP_1_DA.mp3")]
     protected static const SOUND_FLESH :Class;
