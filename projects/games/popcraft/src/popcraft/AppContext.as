@@ -7,6 +7,7 @@ import com.whirled.game.GameControl;
 
 import flash.display.Bitmap;
 import flash.display.MovieClip;
+import flash.media.Sound;
 
 import popcraft.data.*;
 import popcraft.sp.LevelManager;
@@ -18,14 +19,24 @@ public class AppContext
     public static var gameCtrl :GameControl;
     public static var levelMgr :LevelManager = new LevelManager();
 
-    public static function playSound (soundName :String, parentControls :AudioControllerContainer = null) :GameSoundChannel
+    public static function playSound (soundName :String, parentControls :AudioControllerContainer = null) :void
     {
-        var soundLoader :SoundResourceLoader = resources.getResource(soundName) as SoundResourceLoader;
+        Audio.play(getSound(soundName), parentControls);
+    }
+
+    public static function createSoundChannel (soundName :String, parentControls :AudioControllerContainer = null) :GameSoundChannel
+    {
+        return Audio.createChannel(getSound(soundName), parentControls);
+    }
+
+    public static function getSound (resourceName :String) :Sound
+    {
+        var soundLoader :SoundResourceLoader = resources.getResource(resourceName) as SoundResourceLoader;
         if (null != soundLoader) {
-            return Audio.play(soundLoader.sound, parentControls);
-        } else {
-            return new GameSoundChannel(parentControls);
+            return soundLoader.sound;
         }
+
+        return null;
     }
 
     public static function instantiateMovieClip (resourceName :String, className :String) :MovieClip

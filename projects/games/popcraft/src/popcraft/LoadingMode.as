@@ -28,9 +28,13 @@ public class LoadingMode extends AppMode
 
         AppContext.resources.pendResourceLoad("gameData", "defaultGameData", { embeddedClass: DEFAULT_GAME_DATA });
 
+        AppContext.resources.pendResourceLoad("sound", "sfx_grunt", { embeddedClass: SOUND_GRUNT });
         AppContext.resources.pendResourceLoad("sound", "sfx_heavy", { embeddedClass: SOUND_HEAVY });
         AppContext.resources.pendResourceLoad("sound", "sfx_sapper", { embeddedClass: SOUND_SAPPER });
-        AppContext.resources.pendResourceLoad("sound", "sfx_blood", { embeddedClass: SOUND_BLOOD });
+        AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_white", { embeddedClass: SOUND_FLESH });
+        AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_red", { embeddedClass: SOUND_BLOOD });
+        AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_blue", { embeddedClass: SOUND_ENERGY });
+        AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_yellow", { embeddedClass: SOUND_ARTIFICE });
         AppContext.resources.pendResourceLoad("sound", "sfx_explosion", { embeddedClass: SOUND_EXPLOSION });
         AppContext.resources.pendResourceLoad("sound", "sfx_day", { embeddedClass: SOUND_ROOSTER });
         AppContext.resources.pendResourceLoad("sound", "sfx_night", { embeddedClass: SOUND_WOLF });
@@ -105,14 +109,26 @@ public class LoadingMode extends AppMode
     protected static const SWF_PUZZLEPIECES :Class;
 
     // audio
+    [Embed(source="../../rsrc/audio/VB01_68_04_Aliens_Screech.mp3")]
+    protected static const SOUND_GRUNT :Class;
+
     [Embed(source="../../rsrc/audio/ANIMAL_DEEP_GRUNT_1_JD.mp3")]
     protected static const SOUND_HEAVY :Class;
 
     [Embed(source="../../rsrc/audio/SMALL_DOG_SINGLE_BARK_01_S4.mp3")]
     protected static const SOUND_SAPPER :Class;
 
+    [Embed(source="../../rsrc/audio/FLESH_TEAR_CRUNCHY_RIP_1_DA.mp3")]
+    protected static const SOUND_FLESH :Class;
+
     [Embed(source="../../rsrc/audio/CARTOON_SHARP_SPLAT_S4.mp3")]
     protected static const SOUND_BLOOD :Class;
+
+    [Embed(source="../../rsrc/audio/ELEC_ARC_EC07_28_2.mp3")]
+    protected static const SOUND_ENERGY :Class;
+
+    [Embed(source="../../rsrc/audio/ANVIL_LIGHT_HIT_1_L2.mp3")]
+    protected static const SOUND_ARTIFICE :Class;
 
     [Embed(source="../../rsrc/audio/EXPLOSION_CTE01_56_1.mp3")]
     protected static const SOUND_EXPLOSION :Class;

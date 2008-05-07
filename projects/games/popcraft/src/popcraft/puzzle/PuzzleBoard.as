@@ -108,8 +108,9 @@ public class PuzzleBoard extends SceneObject
         }
 
         // update the player's resource count
+        var resourceType :uint = Piece(clearPieces[0]).resourceType;
         var resourceValue :int = Constants.CLEAR_VALUE_TABLE.getValueAt(clearPieces.length - 1);
-        GameContext.localPlayerData.offsetResourceAmount((clearPieces[0] as Piece).resourceType, resourceValue);
+        GameContext.localPlayerData.offsetResourceAmount(resourceType, resourceValue);
 
         _resolvingClears = true;
 
@@ -140,7 +141,7 @@ public class PuzzleBoard extends SceneObject
             new FunctionTask(animatePieceDrops)));
 
         // play a sound
-        AppContext.playSound("sfx_blood");
+        AppContext.playSound("sfx_rsrc_" + Constants.RESOURCE_NAMES[resourceType]);
     }
 
     protected function animatePieceDrops () :void
