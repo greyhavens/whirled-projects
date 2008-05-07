@@ -138,6 +138,9 @@ public class PuzzleBoard extends SceneObject
         this.addTask(new SerialTask(
             new TimedTask(PIECE_SCALE_DOWN_TIME + PIECE_SCALE_UP_TIME),
             new FunctionTask(animatePieceDrops)));
+
+        // play a sound
+        AppContext.playSound("sfx_blood");
     }
 
     protected function animatePieceDrops () :void

@@ -28,6 +28,11 @@ public class LoadingMode extends AppMode
 
         AppContext.resources.pendResourceLoad("gameData", "defaultGameData", { embeddedClass: DEFAULT_GAME_DATA });
 
+        AppContext.resources.pendResourceLoad("sound", "sfx_heavy", { embeddedClass: SOUND_HEAVY });
+        AppContext.resources.pendResourceLoad("sound", "sfx_sapper", { embeddedClass: SOUND_SAPPER });
+        AppContext.resources.pendResourceLoad("sound", "sfx_blood", { embeddedClass: SOUND_BLOOD });
+        AppContext.resources.pendResourceLoad("sound", "sfx_explosion", { embeddedClass: SOUND_EXPLOSION });
+
         AppContext.resources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
         AppContext.resources.addEventListener(ResourceLoadEvent.ERROR, handleResourceLoadErr);
 
@@ -97,6 +102,18 @@ public class LoadingMode extends AppMode
     [Embed(source="../../rsrc/pieces.swf", mimeType="application/octet-stream")]
     protected static const SWF_PUZZLEPIECES :Class;
 
+    // audio
+    [Embed(source="../../rsrc/audio/ANIMAL_DEEP_GRUNT_1_JD.mp3")]
+    protected static const SOUND_HEAVY :Class;
+
+    [Embed(source="../../rsrc/audio/SMALL_DOG_SINGLE_BARK_01_S4.mp3")]
+    protected static const SOUND_SAPPER :Class;
+
+    [Embed(source="../../rsrc/audio/CARTOON_SHARP_SPLAT_S4.mp3")]
+    protected static const SOUND_BLOOD :Class;
+
+    [Embed(source="../../rsrc/audio/EXPLOSION_CTE01_56_1.mp3")]
+    protected static const SOUND_EXPLOSION :Class;
 }
 
 }

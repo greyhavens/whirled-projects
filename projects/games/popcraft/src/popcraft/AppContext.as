@@ -1,6 +1,7 @@
 package popcraft {
 
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.game.GameControl;
 
@@ -16,6 +17,16 @@ public class AppContext
     public static var resources :ResourceManager = new ResourceManager();
     public static var gameCtrl :GameControl;
     public static var levelMgr :LevelManager = new LevelManager();
+
+    public static function playSound (soundName :String, parentControls :AudioControllerContainer = null) :GameSoundChannel
+    {
+        var soundLoader :SoundResourceLoader = resources.getResource(soundName) as SoundResourceLoader;
+        if (null != soundLoader) {
+            return Audio.play(soundLoader.sound, parentControls);
+        } else {
+            return new GameSoundChannel(parentControls);
+        }
+    }
 
     public static function instantiateMovieClip (resourceName :String, className :String) :MovieClip
     {
