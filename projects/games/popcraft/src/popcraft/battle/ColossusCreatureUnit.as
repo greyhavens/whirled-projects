@@ -174,7 +174,7 @@ class ColossusAI extends AITaskTree
             // we detected an enemy - attack it
             //log.info("detected enemy - attacking");
             _unit.sendAttack(enemyUnit, _unit.unitData.weapon);
-        } else if (messageName == AttackUnitTask.NAME) {
+        } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == AttackUnitTask.NAME) {
             // the base we were targeting died - find a new one
             this.beginAttackBase();
         }
