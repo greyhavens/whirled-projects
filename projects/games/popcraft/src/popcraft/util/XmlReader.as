@@ -4,6 +4,11 @@ import com.threerings.util.StringUtil;
 
 public class XmlReader
 {
+    public static function hasAttribute (xml :XML, name :String) :Boolean
+    {
+        return (null != xml.attribute(name)[0]);
+    }
+
     public static function getAttributeAsEnum (xml :XML, name :String, stringMapping :Array, defaultValue :* = null) :uint
     {
         return getAttributeAs(xml, name, defaultValue,

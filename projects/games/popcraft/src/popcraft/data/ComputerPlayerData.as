@@ -21,12 +21,18 @@ public class ComputerPlayerData
         computerPlayer.baseHealth = XmlReader.getAttributeAsInt(xmlData, "baseHealth");
         computerPlayer.team = XmlReader.getAttributeAsUint(xmlData, "team");
 
+        var totalWaveDelay :Number = 0;
         for each (var initialWaveData :XML in xmlData.InitialWaves.Wave) {
-            computerPlayer.initialWaves.push(UnitWaveData.fromXml(initialWaveData));
+            var uwd :UnitWaveData = UnitWaveData.fromXml(initialWaveData, totalWaveDelay);
+            totalWaveDelay += uwd.delayBefore;
+            computerPlayer.initialWaves.push(uwd);
         }
 
+        totalWaveDelay = 0;
         for each (var repeatingWaveData :XML in xmlData.RepeatingWaves.Wave) {
-            computerPlayer.repeatingWaves.push(UnitWaveData.fromXml(repeatingWaveData));
+            uwd = UnitWaveData.fromXml(repeatingWaveData, totalWaveDelay);
+            totalWaveDelay += uwd.delayBefore;
+            computerPlayer.repeatingWaves.push(uwd);
         }
 
         return computerPlayer;

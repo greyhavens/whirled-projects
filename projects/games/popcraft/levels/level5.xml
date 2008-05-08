@@ -1,6 +1,6 @@
 <root>
     <Level
-        name="Many Madames"
+        name="Street-Walker Swarm"
         introText=
 "Your nemesis and his right-hand man have both set up workshops nearby, and are manufacturing waves of Street-Walkers to tear you to pieces. Well-placed Dog-Boys will soften the advancing horde.
 
@@ -33,31 +33,31 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
 
         <Computer baseHealth="70" team="1">
             <InitialWaves>
-                <Wave delayBefore="30"><Unit type="grunt" count="3"/></Wave>
-                <Wave delayBefore="50"><Unit type="grunt" count="3"/></Wave>
-                <Wave delayBefore="39"/>
+                <Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
+                <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
+                <Wave absoluteDelay="119"/>
             </InitialWaves>
 
             <RepeatingWaves>
-                <Wave delayBefore="5"><Unit type="grunt" count="3"/></Wave>
-                <Wave delayBefore="50"><Unit type="grunt" count="3"/></Wave>
-                <Wave delayBefore="50"><Unit type="grunt" count="3"/></Wave>
-                <Wave delayBefore="14"/>
+                <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
+                <Wave absoluteDelay="55"><Unit type="grunt" count="3"/></Wave>
+                <Wave absoluteDelay="105"><Unit type="grunt" count="3"/></Wave>
+                <Wave absoluteDelay="119"/>
             </RepeatingWaves>
         </Computer>
 
         <Computer baseHealth="70" team="1">
             <InitialWaves>
-                <Wave delayBefore="5"><Unit type="grunt" count="3"/></Wave>
-                <Wave delayBefore="50"><Unit type="grunt" count="3"/></Wave>
-                <Wave delayBefore="50"><Unit type="grunt" count="3"/></Wave>
-                <Wave delayBefore="14"/>
+                <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
+                <Wave absoluteDelay="55"><Unit type="grunt" count="3"/></Wave>
+                <Wave absoluteDelay="105"><Unit type="grunt" count="3"/></Wave>
+                <Wave absoluteDelay="119"/>
             </InitialWaves>
 
             <RepeatingWaves>
-                <Wave delayBefore="30"><Unit type="grunt" count="3"/></Wave>
-                <Wave delayBefore="50"><Unit type="grunt" count="3"/></Wave>
-                <Wave delayBefore="39"/>
+                <Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
+                <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
+                <Wave absoluteDelay="119"/>
             </RepeatingWaves>
         </Computer>
 
