@@ -19,7 +19,7 @@ public class CardContainer extends Component
     {
         super(ctx);
     }
-    
+
     /**
      * Add each card present in the array to this container, then update the display
      * and synchronize the distributed data.  If insertIndex is provided, add them to a specific
@@ -41,40 +41,40 @@ public class CardContainer extends Component
         }
         updateDisplay();
     }
-    
+
     /**
      * Add a card to the hand, but do not set distributed data or update the display.
      */
     protected function addCard (card :Card, insertIndex :int = -1) :void
-    {   	
+    {
         if (!contains(card)) {
-        	if (insertIndex == -1) {
+            if (insertIndex == -1) {
                 addChild(card);
-        	}
-        	else {
-        		if (numChildren < insertIndex) {
-					// TODO how does this happen and can it be prevented?
-        			//_ctx.log("WTF Card insert at " + insertIndex + " with " + numChildren + " children.");
-        			addChild(card);
-        		}
-        		else {
-        		    addChildAt(card, insertIndex + getStartingChildIndex());
-        		}
-        	}
+            }
+            else {
+                if (numChildren < insertIndex) {
+                    // TODO how does this happen and can it be prevented?
+                    //_ctx.log("WTF Card insert at " + insertIndex + " with " + numChildren + " children.");
+                    addChild(card);
+                }
+                else {
+                    addChildAt(card, insertIndex + getStartingChildIndex());
+                }
+            }
         }
         else {
-        	_ctx.log("WTF already contains child card: " + card);
+            _ctx.log("WTF already contains child card: " + card);
         }
         if (cards.indexOf(card) < 0) {
             if (insertIndex < 0 || insertIndex > cards.length) {
-                insertIndex = cards.length;    
+                insertIndex = cards.length;
             }
             cardIds.splice(insertIndex, 0, card.id);
             cards.splice(insertIndex, 0, card);
             card.cardContainer = this;
-        }     
+        }
     }
-    
+
     /**
      * Get the index of the card at the given global cooridnates, or -1 for none
      */
@@ -82,7 +82,7 @@ public class CardContainer extends Component
     {
         return -1;
     }
-    
+
     /**
      * Remove each card present in the array from this container, then update the display
      * and synchronize the distributed data.
@@ -98,7 +98,7 @@ public class CardContainer extends Component
         }
         updateDisplay();
     }
-    
+
     /**
      * Remove a card, but do not set distributed data or update the display
      */
@@ -113,26 +113,27 @@ public class CardContainer extends Component
             cardIds.splice(index, 1);
         }
     }
-    
+
     /**
-     * Remove all cards. Does not trigger a distributed data event or update display.     */
+     * Remove all cards. Does not trigger a distributed data event or update display.
+     */
     protected function clearCards () :void
     {
-    	while (cards.length > 0) {
+        while (cards.length > 0) {
             var card :Card = cards[0];
             removeCard(card);
         }
     }
-    
+
     /**
-     * Abstract method for telling other players about a change to the distributed data. 
+     * Abstract method for telling other players about a change to the distributed data.
      * Called after adding/removing cards.
      */
     protected function setDistributedData () :void
     {
         // do nothing
     }
-    
+
     /**
      * Abstract method for visually shifting cards.  If a (global) point is provided, shift
      * the cards around the point to make room for the card being dragged over them.
@@ -141,32 +142,32 @@ public class CardContainer extends Component
     {
         // do nothing
     }
-    
+
     /**
      * Serialize a set of cards for distributing to other players
      */
     public function getSerializedCards () :Object
     {
-    	return cardIds;
+        return cardIds;
 /*
         if (cardIds == null) {
-        	_ctx.log("WTF cardIds is null in CardContainer.getSerializedCards");
-        	return "";
+            _ctx.log("WTF cardIds is null in CardContainer.getSerializedCards");
+            return "";
         }
-    	if (cardIds.length == 0) {
-_ctx.log("no cards in getSerializedCards");    		
-    		return "";
-    	}
-        
+        if (cardIds.length == 0) {
+_ctx.log("no cards in getSerializedCards");
+            return "";
+        }
+
         var serializedCards :String = cardIds[0];
         for (var i :int = 1; i < cardIds.length; i++) {
-        	serializedCards += "," + cardIds[i];
+            serializedCards += "," + cardIds[i];
         }
-_ctx.log("get serialized cards: " + serializedCards);        
+_ctx.log("get serialized cards: " + serializedCards);
         return serializedCards;
 */
     }
-    
+
     /**
      * Set cards from a serialized list from other players, then update the card display
      * TODO don't set serialized cards if this is the player who changed them
@@ -174,83 +175,82 @@ _ctx.log("get serialized cards: " + serializedCards);
      */
     public function setSerializedCards (serializedCards :Object) :void
     {
-    	if (serializedCards == null) {
-    		_ctx.log("WTF serializedCards is null in CardContainer.setSerializedCards");
-    		return;
-    	}
+        if (serializedCards == null) {
+            _ctx.log("WTF serializedCards is null in CardContainer.setSerializedCards");
+            return;
+        }
 //_ctx.log("set serialized cards: " + (serializedCards as String));
-//    	var newCardIds :Array = serializedCards.split(",");
+//        var newCardIds :Array = serializedCards.split(",");
 //_ctx.log("set serialized len: " + newCardIds.length);
 /*
 _ctx.log("\n\nSET serialized cards : " + serializedCards);
 _ctx.log("old cardsids: " + cardIds);
 _ctx.log("old cards: " + cards);
 
-    	var newCardIds :Array = serializedCards as Array;
+        var newCardIds :Array = serializedCards as Array;
         for (var i :int = 0; i < newCardIds.length; i++) {
-        	
-        	// add card to the end of the arrays
-        	if (i >= cardIds.length) {
-        		var addCard :Card = _ctx.board.deck.getCard(newCardIds[i]);
-        		cardIds.push(newCardIds[i]);
-        		cards.push(addCard);
-        		if (!contains(addCard)) {
-        			addChild(addCard);
-        		}
-        		addCard.cardContainer = this;
-        	}
-        	
+
+            // add card to the end of the arrays
+            if (i >= cardIds.length) {
+                var addCard :Card = _ctx.board.deck.getCard(newCardIds[i]);
+                cardIds.push(newCardIds[i]);
+                cards.push(addCard);
+                if (!contains(addCard)) {
+                    addChild(addCard);
+                }
+                addCard.cardContainer = this;
+            }
+
             // replace card at index i
-        	else if (cardIds[i] != newCardIds[i]) {
-        		var oldCard :Card = cards[i];
-        	    var newCard :Card = _ctx.board.deck.getCard(newCardIds[i]);
-        	    cardIds[i] = newCardIds[i];
-        	    cards[i] = newCard;
+            else if (cardIds[i] != newCardIds[i]) {
+                var oldCard :Card = cards[i];
+                var newCard :Card = _ctx.board.deck.getCard(newCardIds[i]);
+                cardIds[i] = newCardIds[i];
+                cards[i] = newCard;
                 if (!contains(newCard)) {
                     addChild(newCard);
                 }
                 newCard.cardContainer = this;
-                        	    
-        	    // remove old card as child only if array doesn't contain it anymore
+                // remove old card as child only if array doesn't contain it anymore
                 if (contains(oldCard) && cardIds.indexOf(oldCard.id) < 0) {
                     removeChild(oldCard);
                 }
-        	}
+            }
         }
-        
+
         // truncate the cards arrays if required
         if (cardIds.length > newCardIds.length) {
-        	_ctx.log("cardIds longer: " + cardIds.length + " than: " + newCardIds.length);
-        	for (var j :int = newCardIds.length; j < cardIds.length; j++) {
-        		
-        		var extraOldCard :Card = cards[j];
-        		_ctx.log("removing card : " + extraOldCard);
+            _ctx.log("cardIds longer: " + cardIds.length + " than: " + newCardIds.length);
+            for (var j :int = newCardIds.length; j < cardIds.length; j++) {
+
+                var extraOldCard :Card = cards[j];
+                _ctx.log("removing card : " + extraOldCard);
                 if (contains(extraOldCard) && cardIds.indexOf(extraOldCard.id) < 0) {
-                	_ctx.log("removing child extra old card");
+                    _ctx.log("removing child extra old card");
                     removeChild(extraOldCard);
                 }
-        	}
-        	cardIds.length = newCardIds.length;
-        	cards.length = newCardIds.length;
+            }
+            cardIds.length = newCardIds.length;
+            cards.length = newCardIds.length;
         }
         */
-        
+
         // remove all cards then readd them
         // won't trigger redisplay or synchronize
         var oldLength :int = cards.length;
         for (var oldIndex :int = 0; oldIndex < oldLength; oldIndex++) {
             removeCard(cards[0]);
         }
-        
+
         var newCardIds :Array = serializedCards as Array;
         for (var i :int = 0; i < newCardIds.length; i++) {
             var card :Card = _ctx.board.deck.getCard(newCardIds[i]);
             addCard(card);
         }
-        
+
         updateDisplay();
     }
-    
+
     /**
      * Return the card in the given position.
      */
@@ -262,7 +262,7 @@ _ctx.log("old cards: " + cards);
         }
         return cards[index];
     }
-    
+
     /**
      * Return the index of the given card, or -1 as an error if not present.
      */
@@ -275,7 +275,7 @@ _ctx.log("old cards: " + cards);
            }
            return -1;
     }
-    
+
     /**
      * Return the number of cards in the container
      */
@@ -283,7 +283,7 @@ _ctx.log("old cards: " + cards);
     {
         return cards.length;
     }
-    
+
     /**
      * Return true if the cards array contains at least one card of group verb.
      */
@@ -296,7 +296,7 @@ _ctx.log("old cards: " + cards);
         }
         return false;
     }
-    
+
     /**
      * Return true if the cards array contains at least one card of group subject.
      */
@@ -309,7 +309,7 @@ _ctx.log("old cards: " + cards);
         }
         return false;
     }
-    
+
     /**
      * Convert this object to a string for debugging.
      */
@@ -317,18 +317,19 @@ _ctx.log("old cards: " + cards);
     {
         return "Container [" + cards.length + " cards]";
     }
-    
+
     /**
      * The cards will be added as children starting at this index
-     * TODO fugly     */
+     * TODO fugly
+     */
     protected function getStartingChildIndex () :int
     {
-    	return 0;
+        return 0;
     }
-    
+
     /** Card objects in the container */
     protected var cards :Array = new Array();
-    
+
     /** Card ids in the container */
     protected var cardIds :Array = new Array();
 }

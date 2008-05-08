@@ -27,14 +27,14 @@ public class MouseEventHandler
     {
         _ctx = ctx;
     }
-    
+
     /**
      * When a card is clicked
      */
     public function cardClick (event :MouseEvent) :void
     {
         var card :Card = Card(getParent(DisplayObject(event.target), Card));
-    
+
         if (mode == State.MODE_SELECT_HAND_CARDS) {
             if (selectedCards.length >= selectedGoal) {
                 _ctx.log("WTF already selected enough cards");
@@ -43,7 +43,7 @@ public class MouseEventHandler
             if (card.cardContainer != selectCardsTargetPlayer.hand) {
                 return;
             }
-            
+
             if (selectedCards.indexOf(card) >= 0) {
                 var index :int = selectedCards.indexOf(card);
                 selectedCards.splice(index, 1);
@@ -57,7 +57,7 @@ public class MouseEventHandler
                 doneMode();
             }
         }
-        
+
         // clicking on a when card in a law to move it into the hand
         else if (mode == State.MODE_MOVE_WHEN) {
             if (!(card.cardContainer is Law)) {
@@ -67,7 +67,7 @@ public class MouseEventHandler
                 _ctx.notice("That card isn't a when card.");
                 return;
             }
-            
+
             // select card and law so listener function knows what happened
             selectedCards = new Array(card);
             selectedLaw = Law(card.cardContainer);
@@ -76,14 +76,14 @@ public class MouseEventHandler
             doneMode();
         }
     }
-    
+
     /**
      * When a card is pressed, determine if we should start dragging it
      */
     public function cardMouseDown (event :MouseEvent) :void
     {
         var card :Card = Card(getParent(DisplayObject(event.target), Card));
-        
+
         // you can only drag cards in your hand or in new law
         if (card.cardContainer != _ctx.board.player.hand && card.cardContainer != _ctx.board.newLaw) {
             return;
@@ -91,7 +91,7 @@ public class MouseEventHandler
 
         // by default you can drag cards in hand or newlaw around
         if (mode == State.MODE_DEFAULT) {
-        	// you can move any card in your hand during default mode
+            // you can move any card in your hand during default mode
         }
         // when exchanging a verb
         else if (mode == State.MODE_EXCHANGE_VERB) {
@@ -118,10 +118,10 @@ public class MouseEventHandler
         else {
             return;
         }
-        
+
         startDragging(card);
     }
-    
+
     /**
      * Move a card to the board area and start dragging it.
      */
@@ -131,13 +131,13 @@ public class MouseEventHandler
         card.dragging = true;
         card.addEventListener(MouseEvent.MOUSE_MOVE, draggingCard);
         activeCard = card;
-        
+
         card.cardContainer.removeCards(new Array(card), false);
         card.x = _ctx.board.mouseX - 25;
         card.y = _ctx.board.mouseY - 10;
         _ctx.board.addChild(card);
     }
-    
+
     /**
      * Called while dragging card.  Indicate if the card is being dragged over a legal drop zone.
      */
@@ -145,7 +145,7 @@ public class MouseEventHandler
     {
         // get the card being dragged
         var card :Card = Card(getParent(DisplayObject(event.target), Card));
-        
+
         // Shift cards around in hand and new law
         if (mode == State.MODE_DEFAULT) {
             var targetContainer :CardContainer = CardContainer(getParent(card.dropTarget, CardContainer));
@@ -159,18 +159,18 @@ public class MouseEventHandler
             if (!_ctx.control.game.isMyTurn() && targetContainer == _ctx.board.newLaw) {
                 return;
             }
-            
+
             // arrange cards to make room for the new card
             var mousePosition :Point = new Point(event.stageX, event.stageY);
             targetContainer.arrangeCards(mousePosition);
             EventHandler.invokeLater(3, function () :void {targetContainer.arrangeCards();});
             return;
         }
-        
+
         /*
         if (mode == State.MODE_EXCHANGE_SUBJECT || mode == State.MODE_EXCHANGE_VERB || mode == State.MODE_MOVE_WHEN) {
             var targetLaw :Law = Law(getParent(card.dropTarget, Law));
-            
+
             if (targetLaw == null) {
                 return;
             }
@@ -182,11 +182,11 @@ public class MouseEventHandler
             }
         }
         */
-        
+
         if (mode == State.MODE_EXCHANGE_SUBJECT) {
             // get card this is hovering over
             var targetSubjectCard :Card = Card(getParent(card.dropTarget, Card));
-            if (targetSubjectCard == null || !(targetSubjectCard.cardContainer is Law) 
+            if (targetSubjectCard == null || !(targetSubjectCard.cardContainer is Law)
                 || targetSubjectCard.group != Card.SUBJECT) {
                 setMouseOverCard(null);
                 return;
@@ -194,11 +194,11 @@ public class MouseEventHandler
             // if it's a verb/subject in a law, highlight it
             setMouseOverCard(targetSubjectCard);
         }
-        
+
         else if (mode == State.MODE_EXCHANGE_VERB) {
             // get card this is hovering over
             var targetVerbCard :Card = Card(getParent(card.dropTarget, Card));
-            if (targetVerbCard == null || !(targetVerbCard.cardContainer is Law) 
+            if (targetVerbCard == null || !(targetVerbCard.cardContainer is Law)
                 || targetVerbCard.group != Card.VERB) {
                 setMouseOverCard(null);
                 return;
@@ -209,11 +209,11 @@ public class MouseEventHandler
                 setMouseOverCard(null);
                 return;
             }
-            
+
             // if it's a verb/subject in a law, highlight it
             setMouseOverCard(targetVerbCard);
         }
-        
+
         else if (mode == State.MODE_MOVE_WHEN) {
             // get the law this is hovering over
             var whenlessLaw :Law = Law(getParent(card.dropTarget, Law));
@@ -225,7 +225,7 @@ public class MouseEventHandler
             setMouseOverLaw(whenlessLaw);
         }
     }
-    
+
     /**
      * When a card is released after dragging
      */
@@ -238,21 +238,21 @@ public class MouseEventHandler
         card.stopDrag();
         card.dragging = false;
         card.removeEventListener(MouseEvent.MOUSE_MOVE, draggingCard);
-    
+
         // normally you can drag cards onto new laws, onto job, or rearrange in your hand.
-        if (mode == State.MODE_DEFAULT) {            
+        if (mode == State.MODE_DEFAULT) {
             var dropTarget :DisplayObject = DisplayObject(getParent(card.dropTarget, DisplayObject));
             if (dropTarget == null) {
                 returnCard(card);
                 return;
             }
             var mousePosition :Point = new Point(event.stageX, event.stageY);
-            
+
             // drop card in hand
             // TODO dropTarget doesn't work with hidden hitArea, but hitTestPoint does - why?
             if (_ctx.board.player.hand.hitTestPoint(event.stageX, event.stageY)) {
                 _ctx.board.removeCard(card);
-                var handCardIndex :int = _ctx.board.player.hand.getCardIndexByPoint(mousePosition);             
+                var handCardIndex :int = _ctx.board.player.hand.getCardIndexByPoint(mousePosition);
                 if (card.cardContainer == _ctx.board.player.hand) {
                     // moved card around inside hand, do not distribute
                     _ctx.board.player.hand.addCards(new Array(card), false, handCardIndex);
@@ -264,7 +264,7 @@ public class MouseEventHandler
                 }
                 return;
             }
-            
+
             // drop card in a new law
             if (_ctx.board.newLaw.isTarget(dropTarget)) {
                 if (!_ctx.board.contains(_ctx.board.newLaw)) {
@@ -293,18 +293,18 @@ public class MouseEventHandler
                 }
                 return;
             }
-            
+
             // change job by dragging a subject onto the job area
             // TODO job gets disabled twice: inefficient
             // TODO can this logic be moved to job?
             else if (_ctx.board.player.job.isTarget(dropTarget)) {
                 if (card.group == Card.SUBJECT) {
                     if (!_ctx.state.hasFocus()) {
-                    	_ctx.notice("You can change jobs right now.");
-                    	returnCard(card);
-                    	return;
+                        _ctx.notice("You can change jobs right now.");
+                        returnCard(card);
+                        return;
                     }
-                    
+
                     if (!_ctx.board.player.jobEnabled) {
                         _ctx.notice("You already changed jobs once this turn.");
                         returnCard(card);
@@ -324,27 +324,27 @@ public class MouseEventHandler
                     return;
                 }
             }
-        
+
             returnCard(card);
             return;
         }
-        
+
         // switching verb/subject in hand with verb in a law
         else if (mode == State.MODE_EXCHANGE_VERB || mode == State.MODE_EXCHANGE_SUBJECT) {
-            
+
             // get card this was dropped on.
             var targetCard :Card = Card(getParent(card.dropTarget, Card));
-            
+
             // stop highlighting the card we're over
             setMouseOverCard(null);
-            
+
             if (targetCard == null || !(targetCard.cardContainer is Law) ||
-                (mode == State.MODE_EXCHANGE_VERB && targetCard.group != Card.VERB) || 
+                (mode == State.MODE_EXCHANGE_VERB && targetCard.group != Card.VERB) ||
                 (mode == State.MODE_EXCHANGE_SUBJECT && targetCard.group != Card.SUBJECT)) {
                 returnCard(card);
                 return;
             }
-                
+
             // is the verb a gives followed by a subject?
             var targetLaw :Law = Law(targetCard.cardContainer);
             if (mode == State.MODE_EXCHANGE_VERB && targetLaw.hasGivesTarget()) {
@@ -352,7 +352,7 @@ public class MouseEventHandler
                 returnCard(card);
                 return;
             }
-            
+
             // get the law containing that card
             var targetIndex :int = targetLaw.indexOfCard(targetCard);
             if (targetIndex == -1) {
@@ -362,21 +362,21 @@ public class MouseEventHandler
             targetLaw.removeCards(new Array(targetCard), false);
             targetLaw.addCards(new Array(card), true, targetIndex);
             _ctx.board.player.hand.addCards(new Array(targetCard));
-            
+
             // select card and law so listener function knows what happened
             selectedCards = new Array(targetCard);
             selectedLaw = targetLaw;
             doneMode();
         }
-        
+
         else if (mode == State.MODE_MOVE_WHEN) {
-            
+
             // stop highlighting the law we're over
             setMouseOverLaw(null);
-            
+
             // get the law this was dropped on.
             var whenlessLaw :Law = Law(getParent(card.dropTarget, Law));
-            
+
             if (whenlessLaw == null || whenlessLaw.when != -1) {
                 _ctx.notice("That law already has a when card.");
                 returnCard(card);
@@ -386,13 +386,13 @@ public class MouseEventHandler
             _ctx.board.removeCard(card);
             card.cardContainer.removeCards(new Array(card));
             whenlessLaw.addCards(new Array(card));
-            
+
             // select law so listener function knows what happened
             selectedLaw = whenlessLaw;
             doneMode();
         }
     }
-    
+
     /**
      * Return card to its card container when failing to drag it to a new object.  No need
      * to redistribute data as the card never really left.
@@ -406,7 +406,7 @@ public class MouseEventHandler
         _ctx.board.removeCard(card);
         card.cardContainer.addCards(new Array(card), false);
     }
-    
+
     /**
      * Handles click events on opponents
      */
@@ -420,7 +420,7 @@ public class MouseEventHandler
             doneMode();
         }
     }
-    
+
     /**
      * Handles click events on laws
      */
@@ -432,7 +432,7 @@ public class MouseEventHandler
             doneMode();
         }
     }
-    
+
     /**
      * Returns the object if it's the right class type, or the first parent object that matches
      * the given class.  Stop if we hit the board then return null.
@@ -460,9 +460,9 @@ public class MouseEventHandler
         }
         return null;
     }
-    
-    
-    
+
+
+
     /**
      * Unhighlight the card we're currently over, and highlight the new one.  Also if
      * we are dragging a card, highlight it to show that this is a good place to drop it.
@@ -485,12 +485,12 @@ public class MouseEventHandler
         else {
             if (activeCard != null) {
                 activeCard.highlighted = false;
-            }           
+            }
         }
     }
-    
-    
-    
+
+
+
     /**
      * Unhighlight the law we're currently over, and highlight the new one.  Also if
      * we are dragging a card, highlight it to show that this is a good place to drop it.
@@ -514,31 +514,32 @@ public class MouseEventHandler
         else {
             if (activeCard != null) {
                 activeCard.highlighted = false;
-            }           
+            }
         }
     }
-    
-    
+
+
     /** Card that is temporarily highlighted because the mouse is over it */
     public var mouseOverCard :Card = null;
-    
+
     /** Law that is temporarily highlighted because the mouse is over it */
     public var mouseOverLaw :Law = null;
-    
+
     /** Context */
     protected var _ctx :Context;
-    
-    
+
+
     protected function get state () :State
     {
-    	return _ctx.state;
+        return _ctx.state;
     }
-    
+
     /**
-     * TODO fix these references     */
+     * TODO fix these references
+     */
     protected function get mode () :int
     {
-    	return _ctx.state.mode;
+        return _ctx.state.mode;
     }
     protected function set selectedCards (cards :Array) :void
     {
@@ -556,8 +557,7 @@ public class MouseEventHandler
     {
         _ctx.state.selectedLaw = law;
     }
-    
-    
+
     protected function get selectedGoal () :int
     {
         return _ctx.state.selectedGoal;
@@ -566,10 +566,10 @@ public class MouseEventHandler
     {
         return _ctx.state.selectCardsTargetPlayer;
     }
-    
+
     protected function doneMode () :void
     {
-    	_ctx.state.doneMode();
+        _ctx.state.doneMode();
     }
     protected function get activeCard () :Card
     {
@@ -579,6 +579,6 @@ public class MouseEventHandler
     {
         _ctx.state.activeCard = card;
     }
-    
+
 }
 }

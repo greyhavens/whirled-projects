@@ -13,7 +13,7 @@ public class Player extends Component
 {
     /** How much money does every player start with? */
     public static const STARTING_MONIES :int = 5;
-    
+
     /** The current game monies for each player. */
     public static const MONIES_DATA :String = "moniesData";
 
@@ -26,28 +26,28 @@ public class Player extends Component
     {
         this.id = id;
         if (id == -1) {
-        	isWatcher = true;
+            isWatcher = true;
         }
         this.serverId = serverId;
-        
+
         // truncate player names for display on the opponent area, 10 chars maximum
         if (name.length > 10) {
-        	name = name.substr(0, 10);
+            name = name.substr(0, 10);
         }
         this._name = name;
-        
+
         _hand = new Hand(ctx, this);
-        
+
         // connect handlers for job, hand or monies changing.
         if (!isWatcher) {
             ctx.eventHandler.addDataListener(Deck.JOBS_DATA, jobChanged, id);
             ctx.eventHandler.addDataListener(Hand.HAND_DATA, handChanged, id);
             ctx.eventHandler.addDataListener(MONIES_DATA, moniesChanged, id);
         }
-        
+
         super(ctx);
     }
-     
+
     /**
      * Called by first user during game start.  Deal the player a hand and give them
      * a random job.
@@ -59,23 +59,23 @@ public class Player extends Component
         hand.setup();
         _ctx.eventHandler.setData(MONIES_DATA, STARTING_MONIES, id);
     }
-    
+
     /**
      * For watchers who join partway through the game, fetch the existing player data
      */
     public function refreshData () :void
     {
-    	// watching players have no monies, job or hand to fetch
-    	if (isWatcher) {
-    		return;
-    	}
+        // watching players have no monies, job or hand to fetch
+        if (isWatcher) {
+            return;
+        }
         _monies = _ctx.eventHandler.getData(MONIES_DATA, id);
         var jobId :int = _ctx.eventHandler.getData(Deck.JOBS_DATA, id);
         job = _ctx.board.deck.getJob(jobId);
         hand.refreshData();
         updateDisplay();
     }
-    
+
     /**
      * Retrieve the player's current job
      */
@@ -83,7 +83,7 @@ public class Player extends Component
     {
         return _job;
     }
-    
+
     /**
      * Change the player's job.  Remove the existng one then position and add the new one.
      * Update the job's display to enable/disable buttons.
@@ -98,20 +98,20 @@ public class Player extends Component
         if (_job != null && contains(_job)) {
            removeChild(_job);
         }
-        
+
         _job = job;
         _job.x = 12;
         _job.y = 50;
         _job.updateEnabled();
         addChild(_job);
-        
+
         updateDisplay();
     }
-    
-	/**
-	 * Display the player's / opponent's hand
-	 * TODO only used in opponent - move there?
-	 */
+
+    /**
+     * Display the player's / opponent's hand
+     * TODO only used in opponent - move there?
+     */
     public function set showHand (value :Boolean) :void
     {
         if (value && !contains(hand)) {
@@ -121,7 +121,7 @@ public class Player extends Component
             removeChild(hand);
         }
     }
-    
+
     /**
      * Draw the area containing a player
      */
@@ -131,27 +131,27 @@ public class Player extends Component
         _hand.x = 30;
         _hand.y = 407;
         addChild(_hand);
-		
-		var moniesBg :Sprite = new MONIES_BG();
-		moniesBg.x = 10;
-		moniesBg.y = 5;
-		addChild(moniesBg);
-        
-		var monieIcon :Sprite = new Content.MONIE_BACK();
+
+        var moniesBg :Sprite = new MONIES_BG();
+        moniesBg.x = 10;
+        moniesBg.y = 5;
+        addChild(moniesBg);
+
+        var monieIcon :Sprite = new Content.MONIE_BACK();
         monieIcon.width = monieIcon.width / 2;
         monieIcon.height = monieIcon.height / 2;
         monieIcon.x = 97;
         monieIcon.y = 10;
         addChild(monieIcon);
-        
-		// TODO align right my ass - what is this doing?
+
+        // TODO align right my ass - what is this doing?
         _moniesText = Content.defaultTextField(1.2, "right");
         _moniesText.height = 30;
-		_moniesText.width = 80;
+        _moniesText.width = 80;
         _moniesText.x = 10;
         _moniesText.y = 15;
         addChild(_moniesText);
-        
+
         // give watchers an empty job to fill the space
         if (isWatcher) {
             job = new Job(_ctx, -1);
@@ -165,7 +165,7 @@ public class Player extends Component
     {
         _moniesText.text = "Monies: " + monies;
     }
-    
+
     /**
      * Player's job just changed somehow.
      */
@@ -181,7 +181,7 @@ public class Player extends Component
         }
         job = tmpJob;
     }
-    
+
     /**
      * The player's monies has changed; update the value.
      */
@@ -190,7 +190,7 @@ public class Player extends Component
         _monies = event.newValue as int;
         updateDisplay();
     }
-    
+
     /**
      * Handles when cards in hands changes (display shows # of cards for opponents)
      */
@@ -198,7 +198,7 @@ public class Player extends Component
     {
         updateDisplay();
     }
-    
+
     /**
      * Display the player as a string for testing.
      */
@@ -206,20 +206,20 @@ public class Player extends Component
     {
         return "Player " + id + ": " + _name;
     }
-    
+
     /**
      * Give X monies to this player.
      */
     public function getMonies (moniesNum :int) :void
     {
-    	if (monies + moniesNum < 0) {
-    		_ctx.log("WTF Player " + this + " would end up with negative monies!");
-    		moniesNum = 0;
-    	}
-    	_ctx.eventHandler.setData(MONIES_DATA, monies + moniesNum, id);
-    	_monies = monies + moniesNum;
+        if (monies + moniesNum < 0) {
+            _ctx.log("WTF Player " + this + " would end up with negative monies!");
+            moniesNum = 0;
+        }
+        _ctx.eventHandler.setData(MONIES_DATA, monies + moniesNum, id);
+        _monies = monies + moniesNum;
     }
-    
+
     /**
      * Remove X monies from this player
      */
@@ -227,22 +227,22 @@ public class Player extends Component
     {
         getMonies(moniesNum * -1);
     }
-    
+
     /**
      * Remove X monies from this player, then give X monies to another player
      */
     public function giveMoniesTo(moniesNum :int, toPlayer :Player) :void
     {
-    	// giving money to oneself, no net change
-    	if (toPlayer == this) {
-    		return;
-    	}
+        // giving money to oneself, no net change
+        if (toPlayer == this) {
+            return;
+        }
         loseMonies(moniesNum);
         if (toPlayer != null) {
             toPlayer.getMonies(moniesNum);
         }
     }
-    
+
     /**
      * Draw X cards from the deck and add them to the player's hand
      * TODO pick a better name like getsCards or giveCards or recieveCards and rename getMonies too
@@ -251,7 +251,7 @@ public class Player extends Component
     {
         hand.drawCard(cardsNum);
     }
-    
+
     /**
      * Remove X cards from the player's hand
      */
@@ -263,22 +263,22 @@ public class Player extends Component
         // will set display and distributed data
         hand.removeCards(cardsToLose);
     }
-    
+
     /**
      * Remove cards from this player and give them to another
      */
     public function giveCardsTo (cardsToGive :Array, toPlayer :Player) :void
     {
-    	// giving cards to self, no net change
-    	if (toPlayer == this) {
-    		return;
-    	}
+        // giving cards to self, no net change
+        if (toPlayer == this) {
+            return;
+        }
         loseCards(cardsToGive);
         if (toPlayer != null) {
             toPlayer.hand.addCards(cardsToGive);
         }
     }
-    
+
     /**
      * Called when this player has left the game; do unload cleanup.
      */
@@ -289,7 +289,7 @@ public class Player extends Component
         _ctx.eventHandler.removeDataListener(MONIES_DATA, moniesChanged, id);
         hand.unload();
     }
-    
+
     /** Can the player change jobs right now? */
     public function get jobEnabled () :Boolean {
         return _jobEnabled;
@@ -299,51 +299,51 @@ public class Player extends Component
         _jobEnabled = value;
         _job.updateEnabled();
     }
-    
+
     /** Public getter for the hand object */
     public function get hand () :Hand {
-    	return _hand;
+        return _hand;
     }
-    
+
     /** Return the player's name */
     public function get playerName () :String {
-    	return _name;
+        return _name;
     }
-    
+
     /**
      * Return the player's current monies
      */
     public function get monies () :int {
-    	return _monies;
+        return _monies;
     }
-    
+
     /** Can the player change jobs right now? */
     protected var _jobEnabled :Boolean;
-    
+
     /** Is the player a real player or are they just watching? */
     public var isWatcher :Boolean = false;
-    
+
     /** Player's id according to their place at the table */
     public var id :int;
-    
+
     /** Id assigned by the server; differs from their place at the table */
     public var serverId :int;
-    
+
     /** Name of this player from the server */
     protected var _name :String;
-    
+
     /** The player's hand */
     protected var _hand :Hand;
-    
+
     /** Number of monies the player has  */
     protected var _monies :int;
-    
+
     /** The player's current job; may change through the game */
     protected var _job :Job;
-    
+
     /** Textfield for displaying the player's current monies */
     protected var _moniesText :TextField;
-    
+
     [Embed(source="../../../rsrc/components.swf#monies")]
     protected static const MONIES_BG :Class;
 }

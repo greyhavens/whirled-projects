@@ -20,26 +20,27 @@ public class Laws extends Component
     public static const LAWS_DATA :String = "lawsData";
     public static const ENACT_LAW :String = "enactLaw";
     public static const ENACT_LAW_DONE :String = "enactLawDone";
-    
+
     /** Message sent when new law added, value is list of cards */
     public static const NEW_LAW :String = "newLaw";
-    
+
     /**
      * Constructor
      */
     public function Laws (ctx :Context)
     {
         super(ctx);
-        
+
         ctx.eventHandler.addDataListener(LAWS_DATA, lawsChanged);
         ctx.eventHandler.addMessageListener(ENACT_LAW, enactLaw);
         ctx.eventHandler.addMessageListener(NEW_LAW, addNewLaw);
-        
+
         ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, turnStarted);
     }
-    
+
     /**
-     * For watchers who join partway through the game, fetch the existing law data     */
+     * For watchers who join partway through the game, fetch the existing law data
+     */
     public function refreshData () :void
     {
         var lawsData :Dictionary = _ctx.eventHandler.getData(Laws.LAWS_DATA) as Dictionary;
@@ -57,36 +58,38 @@ public class Laws extends Component
             }
         }
     }
-    
+
     /**
-     * Clear the laws in preparation for a new game.  This is called only by the controller.     */
+     * Clear the laws in preparation for a new game.  This is called only by the controller.
+     */
     public function setup () :void
     {
-    	_ctx.eventHandler.setData(LAWS_DATA, null);
+        _ctx.eventHandler.setData(LAWS_DATA, null);
     }
-    
+
     /**
      * Some player just created a new law.  Create a new law component with the event value
      * as its cards, and add it to our array.  Next enact the law if applicable, then begin
-     * triggering laws that have "when a new law is created".     */
+     * triggering laws that have "when a new law is created".
+     */
     public function addNewLaw (event :MessageReceivedEvent) :void
     {
-    	var law :Law = new Law(_ctx, numLaws);
-    	law.setSerializedCards(event.value);
-    	addLaw(law);
-    	law.setDistributedLawData();
-    	
-    	// player whose turn it is starts law triggering
+        var law :Law = new Law(_ctx, numLaws);
+        law.setSerializedCards(event.value);
+        addLaw(law);
+        law.setDistributedLawData();
+
+        // player whose turn it is starts law triggering
         if (_ctx.board.isMyTurn()) {
-	    	if (law.when == -1) {
-	            // to avoid multiple laws enacting at once, wait until this one is done before
-	            // searching for laws that trigger on CREATE_LAW.
-	            _ctx.eventHandler.addMessageListener(ENACT_LAW_DONE, newLawEnacted);
-	            _ctx.sendMessage(ENACT_LAW, law.id);
-	        }
-	        else {
-	            triggerWhen(Card.CREATE_LAW);
-	        }
+            if (law.when == -1) {
+                // to avoid multiple laws enacting at once, wait until this one is done before
+                // searching for laws that trigger on CREATE_LAW.
+                _ctx.eventHandler.addMessageListener(ENACT_LAW_DONE, newLawEnacted);
+                _ctx.sendMessage(ENACT_LAW, law.id);
+            }
+            else {
+                triggerWhen(Card.CREATE_LAW);
+            }
         }
     }
 
@@ -99,7 +102,7 @@ public class Laws extends Component
         _ctx.eventHandler.removeMessageListener(ENACT_LAW_DONE, newLawEnacted);
         triggerWhen(Card.CREATE_LAW);
     }
-    
+
     /**
      * Add a law to the hand and rearrange cards
      */
@@ -112,17 +115,17 @@ public class Laws extends Component
              laws.push(law);
         }
         if (laws.length > MAX_LAWS) {
-        	var oldestLaw :Law = laws[oldestLawId];
-        	_ctx.notice("There are too many laws - removing the oldest one.");
-        	removeChild(oldestLaw);
-        	oldestLawId++;
-        	arrangeLaws();
+            var oldestLaw :Law = laws[oldestLawId];
+            _ctx.notice("There are too many laws - removing the oldest one.");
+            removeChild(oldestLaw);
+            oldestLawId++;
+            arrangeLaws();
         }
         else {
             law.y = (laws.length - 1) * LAW_SPACING_Y;
         }
     }
-    
+
     /**
      * Rearrange the laws vertically
      */
@@ -134,15 +137,15 @@ public class Laws extends Component
             law.y = (i - oldestLawId) * LAW_SPACING_Y;
         }
     }
-    
-    /** 
+
+    /**
      * Return the number of laws
      */
     public function get numLaws () :int
     {
         return laws.length;
     }
-    
+
     /**
      * Called when a law is triggered.  Event value is the index of the triggered law.
      * Get the law card set from the server to make sure we have the newest version first.
@@ -158,9 +161,9 @@ public class Laws extends Component
         }
         law.enactLaw();
     }
-    
+
     /**
-     * Fetch the data for a single law.  If serializedCards is supplied use that, otherwise 
+     * Fetch the data for a single law.  If serializedCards is supplied use that, otherwise
      * fetch from the server.
      */
     protected function updateLawData (lawId :int, cards :Object = null) :void
@@ -187,7 +190,7 @@ public class Laws extends Component
             _ctx.log("WTF it's a TOO new law. laws.length:" + laws.length + " , lawId:" + lawId);
         }
     }
-    
+
     /**
      * Handles when laws data changes
      */
@@ -200,16 +203,16 @@ public class Laws extends Component
 
         // got a law resetting event; clear the laws
         else if (event.newValue == null) {
-    		while (laws.length > 0) {
-	            var law :Law = laws.pop();
-	            if (contains(law)) {
-	               removeChild(law);
-	            }
-	        }
-	        oldestLawId = 0;
-    	}
+            while (laws.length > 0) {
+                var law :Law = laws.pop();
+                if (contains(law)) {
+                   removeChild(law);
+                }
+            }
+            oldestLawId = 0;
+        }
     }
-    
+
     /**
      * Handler for start turn event.  Enact any laws that trigger when this
      * player's turn starts.
@@ -218,26 +221,26 @@ public class Laws extends Component
     {
         _ctx.board.laws.triggerWhen(Card.START_TURN, _ctx.board.player.job.id);
     }
-    
+
     /**
      * A player just finished using their ability, or created a law, or it's the start
-     * of their turn.  Trigger any laws with the appropriate WHEN card and their job as the 
+     * of their turn.  Trigger any laws with the appropriate WHEN card and their job as the
      * subject type.
      */
     public function triggerWhen (whenType :int, subjectType :int = -1) :void
     {
-    	// tell the state that we're enacting laws; player can't do anything else.
-    	_ctx.state.startEnactingLaws();
-    	
+        // tell the state that we're enacting laws; player can't do anything else.
+        _ctx.state.startEnactingLaws();
+
         triggerWhenType = whenType;
         triggerSubjectType = subjectType;
         _ctx.eventHandler.addMessageListener(ENACT_LAW_DONE, triggeringWhen);
-        
+
         // kick off the loop through laws with a dummy event (oldestLawId-1 is the last law enacted).
         var dummyEvent :MessageReceivedEvent = new MessageReceivedEvent(ENACT_LAW_DONE, oldestLawId-1);
         triggeringWhen(dummyEvent);
     }
-    
+
     /**
      * Called when in the process of triggering laws.  To avoid enacting multiple laws at once,
      * this will only be called to continue once a law is finished enacting.
@@ -258,35 +261,36 @@ public class Laws extends Component
                 }
             }
         }
-        
+
         // action complete; return focus to the player if it is their turn
         _ctx.state.doneEnactingLaws();
     }
-    
+
     /**
      * Called if something disastrous happens, such as a player leaving the game.  If we
-     * were in the middle of triggering an effects chain, remove listeners for it now.     */
+     * were in the middle of triggering an effects chain, remove listeners for it now.
+     */
     public function cancelTriggering () :void
     {
-    	_ctx.eventHandler.removeMessageListener(ENACT_LAW_DONE, triggeringWhen);
-    	_ctx.state.doneEnactingLaws();
+        _ctx.eventHandler.removeMessageListener(ENACT_LAW_DONE, triggeringWhen);
+        _ctx.state.doneEnactingLaws();
     }
-    
+
     /** The position of the oldest still-visible law */
     protected var oldestLawId :int = 0;
-    
+
     /** If in the middle of triggering laws, this is the when type */
     protected var triggerWhenType :int;
-    
+
     /** If in the middle of triggering laws, this is the subject type */
     protected var triggerSubjectType :int;
-    
+
     /** Array of laws */
     protected var laws :Array = new Array();
-    
+
     /** Maximum number of laws; if another is added the first one will disappear */
     protected var MAX_LAWS :int = 10;
-    
+
     /** Number of pixels between laws */
     protected var LAW_SPACING_Y :int = 34;
 }

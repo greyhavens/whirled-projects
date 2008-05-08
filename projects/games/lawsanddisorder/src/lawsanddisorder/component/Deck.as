@@ -6,33 +6,33 @@ import flash.text.TextFormat;
 import flash.events.MouseEvent;
 
 import com.threerings.util.HashMap;
-import com.threerings.util.ArrayUtil; 
+import com.threerings.util.ArrayUtil;
 
 import lawsanddisorder.*;
 
 /**
  * Content class describing all possible cards
  */
-public class Deck extends Component 
+public class Deck extends Component
 {
     /** The name of the board data distributed value. */
     public static const DECK_DATA :String = "deckData";
-    
+
     /** The name of the jobs data distributed value. */
     public static const JOBS_DATA :String = "jobsData";
-    
+
     /**
      * Constructor.  Initialize the discard pile and player jobs array, setup event handlers
      * then populate the jobs array and card deck.
      */
     public function Deck (ctx :Context)
-    {        
+    {
         //discardPile = new CardContainer(ctx);
         super(ctx);
-        
+
         _ctx.eventHandler.addDataListener(DECK_DATA, deckChanged);
         _ctx.eventHandler.addDataListener(JOBS_DATA, jobsChanged);
-        
+
         // create the job objects
         createJob(Job.JUDGE);
         createJob(Job.THIEF);
@@ -40,30 +40,30 @@ public class Deck extends Component
         createJob(Job.TRADER);
         createJob(Job.PRIEST);
         createJob(Job.DOCTOR);
-        
+
         // TODO get this from somewhere else - board?
         var playerCount :int = _ctx.control.game.seating.getPlayerIds().length;
         playerJobs = new Array(playerCount).map(function (): int { return -1; });
-        
+
         var numDecks :int;
         // 2 players 2 decks 10 laws 5 laws each
         if (playerCount == 2) {
-        	numDecks = 2;
+            numDecks = 2;
         }
         // 3 players 3 decks 15 laws 5 laws each
-        // 4 players 3 decks 15 laws 4 laws each 
+        // 4 players 3 decks 15 laws 4 laws each
         else if (playerCount < 5) {
-        	numDecks = 3;
+            numDecks = 3;
         }
         // 5 players 4 decks 20 laws 4 laws each
         // 6 players 4 decks 20 laws 3 laws each
         else {
-        	numDecks = 4;
+            numDecks = 4;
         }
-        
+
         // Change the size of the deck based on the number of players
         for (var i :int = 0; i < numDecks; i++) {
-        	// 12 subjects, 7 verbs, 7 objects, 3 whens = 29
+            // 12 subjects, 7 verbs, 7 objects, 3 whens = 29
             addNewCards(2, Card.SUBJECT, Job.JUDGE);
             addNewCards(2, Card.SUBJECT, Job.THIEF);
             addNewCards(2, Card.SUBJECT, Job.BANKER);
@@ -80,7 +80,7 @@ public class Deck extends Component
                 addNewCards(3, Card.VERB, Card.LOSES);
                 addNewCards(2, Card.VERB, Card.GETS);
             }
-			
+
             addNewCards(2, Card.OBJECT, Card.CARD, 1);
             addNewCards(1, Card.OBJECT, Card.CARD, 2);
             addNewCards(1, Card.OBJECT, Card.MONIE, 1);
@@ -91,7 +91,7 @@ public class Deck extends Component
             addNewCards(1, Card.WHEN, Card.USE_ABILITY);
             addNewCards(1, Card.WHEN, Card.CREATE_LAW);
         }
-        
+
         /*
         // TODO custom deck for testing
         for (var i :int = 0; i < 1; i++) {
@@ -112,7 +112,7 @@ public class Deck extends Component
                 addNewCards(3, Card.VERB, Card.LOSES);
                 addNewCards(2, Card.VERB, Card.GETS);
           //  }
-            
+
             addNewCards(2, Card.OBJECT, Card.CARD, 1);
             addNewCards(2, Card.OBJECT, Card.CARD, 2);
 //            addNewCards(1, Card.OBJECT, Card.MONIE, 1);
@@ -125,7 +125,7 @@ public class Deck extends Component
         }
         */
     }
-    
+
     /**
      * Create numCards new cards, add them to the array of card objects.  Does not fill the
      * deck with cards - that is done by the control player in setup().
@@ -138,7 +138,7 @@ public class Deck extends Component
             cardObjects.push(card);
         }
     }
-    
+
     /**
      * Called by control player during game start.  Control player resets the job array and
      * populates the deck; other players get these values from data change events.
@@ -146,54 +146,54 @@ public class Deck extends Component
     public function setup () :void
     {
         // populate the deck
-    	cards = new Array();
-    	for each (var card :Card in cardObjects) {
-    		cards.push(card.id);
-    	}
+        cards = new Array();
+        for each (var card :Card in cardObjects) {
+            cards.push(card.id);
+        }
         ArrayUtil.shuffle(cards);
         _ctx.eventHandler.setData(DECK_DATA, cards);
     }
-    
-    /** 
+
+    /**
      * Remove the top card from the deck and return it
      */
     public function drawCard () :Card
     {
-		// no cards in deck to draw
-		if (numCards == 0) {
-			return null;
-		}
+        // no cards in deck to draw
+        if (numCards == 0) {
+            return null;
+        }
         var cardIndex :int = cards.pop();
         updateDisplay();
         _ctx.eventHandler.setData(DECK_DATA, cards);
-		
-		// warn that the game will be ending soon
+
+        // warn that the game will be ending soon
         if (cards.length == 5) {
-        	_ctx.broadcast("Only 5 cards left in the deck!");
+            _ctx.broadcast("Only 5 cards left in the deck!");
         }
-        
+
         // if the deck is ever empty after drawing from it, game ends
         if (numCards == 0) {
-        	_ctx.eventHandler.startLastRound();
+            _ctx.eventHandler.startLastRound();
         }
-		
+
         return cardObjects[cardIndex];
     }
-    
+
     /**
      * Fetch an array of numCards cards for a starting hand.  Massage it so that it contains
      * at least two subjects, one object and one verb.
      */
     public function drawStartingHand (numCards :int) :Array
     {
-    	var numSubjects :int = 0;
-    	var numObjects :int = 0;
-    	var numVerbs :int = 0;
-    	
-    	var cardArray :Array = new Array();
-    	for (var cardPos :int = 0; cardPos < cards.length; cardPos++) {
-    		var cardId :int = cards[cardPos];
-    		var card :Card = cardObjects[cardId];
+        var numSubjects :int = 0;
+        var numObjects :int = 0;
+        var numVerbs :int = 0;
+
+        var cardArray :Array = new Array();
+        for (var cardPos :int = 0; cardPos < cards.length; cardPos++) {
+            var cardId :int = cards[cardPos];
+            var card :Card = cardObjects[cardId];
             switch (card.group) {
                 case Card.SUBJECT:
                     if (numSubjects < 2 || (numObjects >= 1 && numVerbs >= 1)) {
@@ -222,62 +222,62 @@ public class Deck extends Component
                         cardArray.push(card);
                     }
                     break;
-            }   
-    		if (cardArray.length == numCards) {
-    			break;
-    		}
-    	}
-    	
-    	// tough luck, there weren't enough subjects/objects/verbs left in the deck
-    	var missingCardsNum :int = numCards - cardArray.length;
-    	if (missingCardsNum > 0) {
-    		for (var i :int = 0; i < missingCardsNum; i++) {
-    			cardArray.push(Card(cardObjects[cards.pop() as int]));
-    		}
-    	}
-    	
-    	// shuffle the hand and deck again afterwards
-    	ArrayUtil.shuffle(cardArray);
-    	ArrayUtil.shuffle(cards);
+            }
+            if (cardArray.length == numCards) {
+                break;
+            }
+        }
+
+        // tough luck, there weren't enough subjects/objects/verbs left in the deck
+        var missingCardsNum :int = numCards - cardArray.length;
+        if (missingCardsNum > 0) {
+            for (var i :int = 0; i < missingCardsNum; i++) {
+                cardArray.push(Card(cardObjects[cards.pop() as int]));
+            }
+        }
+
+        // shuffle the hand and deck again afterwards
+        ArrayUtil.shuffle(cardArray);
+        ArrayUtil.shuffle(cards);
         updateDisplay();
         _ctx.eventHandler.setData(DECK_DATA, cards);
-        
+
         return cardArray;
     }
-    
+
     /**
      * Draw the deck
      */
     override protected function initDisplay () :void
     {
-		var bground :Sprite = new Content.CARD_BACK();
-		addChild(bground);
-		
-		numCardText = Content.defaultTextField(1.5);
-		numCardText.width = 60;
-		numCardText.height = 30;
-		numCardText.x = 8;
-		numCardText.y = 3;
-		var format :TextFormat = numCardText.defaultTextFormat;
-		format.color = 0xFFFFFF;
-		numCardText.defaultTextFormat = format;
-		addChild(numCardText);
+        var bground :Sprite = new Content.CARD_BACK();
+        addChild(bground);
+
+        numCardText = Content.defaultTextField(1.5);
+        numCardText.width = 60;
+        numCardText.height = 30;
+        numCardText.x = 8;
+        numCardText.y = 3;
+        var format :TextFormat = numCardText.defaultTextFormat;
+        format.color = 0xFFFFFF;
+        numCardText.defaultTextFormat = format;
+        addChild(numCardText);
     }
-    
+
     /**
      * Update variable graphics
      */
     override protected function updateDisplay () :void
     {
-    	numCardText.text = cards.length + "";
+        numCardText.text = cards.length + "";
     }
-    
+
     /**
      * For watchers who join partway through the game, fetch the existing deck data
      */
     public function refreshData () :void
     {
-    	cards = _ctx.eventHandler.getData(DECK_DATA) as Array;
+        cards = _ctx.eventHandler.getData(DECK_DATA) as Array;
         updateDisplay();
     }
 
@@ -289,20 +289,20 @@ public class Deck extends Component
         cards = _ctx.eventHandler.getData(DECK_DATA) as Array;
         updateDisplay();
     }
-    
+
     /**
      * Called when the player jobs array changes on the server.
      */
     protected function jobsChanged (event :DataChangedEvent) :void
     {
-    	if (event.index > -1) {
-    		playerJobs[event.index] = event.newValue;
-    	}
-    	else {
+        if (event.index > -1) {
+            playerJobs[event.index] = event.newValue;
+        }
+        else {
             playerJobs = _ctx.eventHandler.getData(JOBS_DATA) as Array;
-    	}
+        }
     }
-        
+
     /**
      * Create a job and add it to the global list and available jobs list
      */
@@ -311,7 +311,7 @@ public class Deck extends Component
         var job :Job = new Job(_ctx, jobId);
         jobObjects[jobId] = job;
     }
-    
+
     /**
      * Remove a random job from the pool of available jobs and return it
      */
@@ -325,15 +325,15 @@ public class Deck extends Component
                 availableJobs.push(tempJob);
             }
         }
-        
+
         // pick a random available job (from zero to length-1)
         var randomIndex :int = Math.round(Math.random() * (availableJobs.length-1));
         var job :Job = availableJobs[randomIndex];
-        
+
         //updateDisplay();
         return job;
     }
-    
+
     /**
      * Retrieve a single job by id
      */
@@ -341,7 +341,7 @@ public class Deck extends Component
     {
         return jobObjects[jobId];
     }
-    
+
     /**
      * Retrieve a single card by id
      */
@@ -349,7 +349,7 @@ public class Deck extends Component
     {
         return cardObjects[cardId];
     }
-    
+
     /**
      * Assign the job to the player, swapping with another player if applicable
      */
@@ -358,12 +358,12 @@ public class Deck extends Component
         if (job == null || player == null) {
             _ctx.log("WTF null job or player? " + job + ", " + player);
             return;
-        } 
-        
+        }
+
         // grab player's old job, and job's old player
         var oldJob :Job = player.job;
         var oldPlayer :Player = getPlayerByJob(job);
-        
+
         if (oldJob == null && oldPlayer != null) {
             _ctx.log("WTF Trying to steal a player's job with no existing job!");
             return;
@@ -378,7 +378,7 @@ public class Deck extends Component
         playerJobs[player.id] = job.id;
         player.job = job;
         _ctx.eventHandler.setData(JOBS_DATA, job.id, player.id);
-        
+
         // job was on another player; assign old job to other player
         if (oldJob != null && oldPlayer != null) {
             playerJobs[oldPlayer.id] = oldJob.id;
@@ -387,12 +387,12 @@ public class Deck extends Component
             _ctx.broadcast(player.playerName + " swapped jobs with " + oldPlayer.playerName);
         }
         else if (oldPlayer == null) {
-        	if (!duringSetup) {
-        	   _ctx.broadcast(player.playerName + " became " + player.job);
-        	}
+            if (!duringSetup) {
+               _ctx.broadcast(player.playerName + " became " + player.job);
+            }
         }
     }
-    
+
     /**
      * Return the player who has the given job, or null if it is not assigned
      */
@@ -404,43 +404,43 @@ public class Deck extends Component
             }
         }
         return null;
-        
+
     }
-    
+
     /** Return the number of cards in the deck */
     public function get numCards () :int
     {
-    	return cards.length;
+        return cards.length;
     }
-    
+
     /**
      * Given a job, return the player who has that job, or null if nobody does
      */
     public function getPlayerByJob (job :Job) :Player
     {
-    	if (job == null) {
-    		_ctx.log("WTF null job in getPlayerByJob");
-    		return null;
-    	}
-    	var playerId :int = playerJobs.indexOf(job.id);
-    	if (playerId == -1) {
-    		return null;
-    	}
-    	return _ctx.board.getPlayer(playerId);
+        if (job == null) {
+            _ctx.log("WTF null job in getPlayerByJob");
+            return null;
+        }
+        var playerId :int = playerJobs.indexOf(job.id);
+        if (playerId == -1) {
+            return null;
+        }
+        return _ctx.board.getPlayer(playerId);
     }
-	
-	/** Displays the number of cards in the deck */
-	protected var numCardText :TextField;
-    
+
+    /** Displays the number of cards in the deck */
+    protected var numCardText :TextField;
+
     /** Array of card indexes still in the deck */
     protected var cards :Array = new Array();
-    
+
     /** Ordered array of all card objects in the game */
     protected var cardObjects :Array = new Array();
-    
+
     /** All the jobs in the game */
     protected var jobObjects :Array = new Array();
-    
+
     /** Job-Player map.  Index = seating position; value = job id */
     protected var playerJobs :Array;
 }

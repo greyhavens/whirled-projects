@@ -13,7 +13,7 @@ public class Context
     {
         _control = control;
     }
-    
+
     public function get control () :GameControl
     {
         return _control;
@@ -26,13 +26,13 @@ public class Context
     {
         _control.local.feedback(message + "\n");
     }
-    
+
     /**
      * Display an in-game notice message to the player
      */
     public function notice (notice :String) :void
     {
-		board.notices.addNotice(notice);
+        board.notices.addNotice(notice);
     }
 
     /**
@@ -40,12 +40,12 @@ public class Context
      */
     public function broadcast (message :String, player :Player = null) :void
     {
-    	if (player != null) {
-    	   _control.net.sendMessage(Notices.BROADCAST, message, player.serverId);
-    	}
-    	else {
-    		_control.net.sendMessage(Notices.BROADCAST, message);
-    	}
+        if (player != null) {
+           _control.net.sendMessage(Notices.BROADCAST, message, player.serverId);
+        }
+        else {
+            _control.net.sendMessage(Notices.BROADCAST, message);
+        }
     }
 
     /**
@@ -54,37 +54,38 @@ public class Context
      */
     public function broadcastOthers (message :String) :void
     {
-    	for each (var player :Player in board.players) {
-    		if (player != board.player) {
+        for each (var player :Player in board.players) {
+            if (player != board.player) {
                 _control.net.sendMessage(Notices.BROADCAST, message, player.serverId);
-    		}
-    	}
+            }
+        }
     }
-    
+
     /**
      * Wrapper for sending messages through the WhirledGameControl
      */
     public function sendMessage (type :String, value :*) :void
     {
-    	_control.net.sendMessage(type, value);
+        _control.net.sendMessage(type, value);
     }
-    
+
     /**
-     * Kick this player from the game.     */
+     * Kick this player from the game.
+     */
     public function kickPlayer () :void
     {
         _control.local.backToWhirled();
     }
-    
+
     /** Connection to the game server */
     protected var _control :GameControl;
-    
+
     /** Controls the user interface and player actions */
     public var state :State;
-    
+
     /** Contains game components such as players, deck, laws */
     public var board :Board;
-    
+
     /** Wraps incoming data and message events from the server */
     public var eventHandler :EventHandler;
 }

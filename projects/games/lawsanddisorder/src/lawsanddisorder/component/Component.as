@@ -1,5 +1,5 @@
 ﻿package lawsanddisorder.component {
-    
+
 import flash.display.Sprite;
 import flash.display.DisplayObject;
 import flash.text.TextField;
@@ -21,7 +21,7 @@ public class Component extends Sprite
         initDisplay();
         updateDisplay();
     }
-    
+
     /**
      * Check this object and its children against a target and return true if there is
      * a match.
@@ -36,7 +36,7 @@ public class Component extends Sprite
         }
         return false;
     }
-    
+
     /**
      * Display static graphics
      */
@@ -44,7 +44,7 @@ public class Component extends Sprite
     {
         // abstract method
     }
-    
+
     /**
      * Change display of dynamic graphics
      */
@@ -52,20 +52,20 @@ public class Component extends Sprite
     {
         // abstract method
     }
-    
+
     /**
      * Bring a child component above other siblings.
      */
     public function bringToFront (child :DisplayObject) :void
     {
-    	if (!contains(child)) {
-    		_ctx.log("WTF component doesn't contain child in bringToFrong");
-    		return;
-    	}
-    	var topChild :DisplayObject = getChildAt(numChildren-1);
-    	swapChildren(child, topChild);
+        if (!contains(child)) {
+            _ctx.log("WTF component doesn't contain child in bringToFrong");
+            return;
+        }
+        var topChild :DisplayObject = getChildAt(numChildren-1);
+        swapChildren(child, topChild);
     }
-    
+
     /** Main game logic */
     protected var _ctx :Context;
 }

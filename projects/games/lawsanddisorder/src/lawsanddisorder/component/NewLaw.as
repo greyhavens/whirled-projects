@@ -20,7 +20,7 @@ public class NewLaw extends CardContainer
     {
         super(ctx);
     }
-    
+
     /**
      * Draw the new law area
      */
@@ -28,7 +28,7 @@ public class NewLaw extends CardContainer
     {
         var background :Sprite = new NEWLAW_BACKGROUND();
         addChild(background);
-        
+
         makeLawButton = new Button(_ctx);
         makeLawButton.text = "create";
         makeLawButton.addEventListener(MouseEvent.CLICK, makeLawButtonClicked);
@@ -37,15 +37,15 @@ public class NewLaw extends CardContainer
         makeLawButton.y = 90;
         addChild(makeLawButton);
     }
-    
+
     /**
      * Rearrange hand when cards are added or subtracted
      */
     override protected function updateDisplay () :void
     {
-    	arrangeCards();
+        arrangeCards();
     }
-    
+
     /**
      * Determine if the contents of the card array form a valid law.
      */
@@ -53,9 +53,9 @@ public class NewLaw extends CardContainer
     {
         if (cards == null) {
             _ctx.log("WTF cards are null in isValidLaw");
-            return false;    
+            return false;
         }
-        
+
         if (cards.length < 3) {
             return false;
         }
@@ -73,7 +73,7 @@ public class NewLaw extends CardContainer
             if (cards[3].group == Card.WHEN) {
                 if (cards.length == 4) {
                     // SUBJECT VERB OBJECT WHEN
-                    return true;    
+                    return true;
                 }
             }
         }
@@ -97,7 +97,7 @@ public class NewLaw extends CardContainer
         }
         return false;
     }
-    
+
     /**
      * Make law button was pressed
      */
@@ -111,16 +111,16 @@ public class NewLaw extends CardContainer
             _ctx.notice("That is not a legal law.");
             return;
          }
-		
- 		_ctx.broadcast(_ctx.board.player.playerName + " got " + cards.length + " monies for making a new law.");
+
+         _ctx.broadcast(_ctx.board.player.playerName + " got " + cards.length + " monies for making a new law.");
         _ctx.board.player.getMonies(cards.length);
         enabled = false;
         _ctx.state.startEnactingLaws();
-        
+
         // tell other players and ourself about the new law
         var newLawData :Object = this.getSerializedCards();
         _ctx.sendMessage(Laws.NEW_LAW, newLawData);
-        
+
         // clear cards from new law and remove them from hand
         clear(false);
         _ctx.board.createLawButton.newLawCreated();
@@ -142,28 +142,28 @@ public class NewLaw extends CardContainer
         }
         return index;
     }
-    
+
     /**
      * Shift cards out of the way as another card is being dragged over them.
      */
     override public function arrangeCards (point :Point = null) :void
     {
-    	var i :int;
-    	var card :Card;
-    	
-    	// if point is not supplied, just arrange cards normally
-    	if (point == null) {
-	        for (i = 0; i < cards.length; i++) {
-	            card = cards[i];
-	            card.x = CARD_LEFT_START + i * CARD_SPACING_X;
-	            card.y = 17;
-	        }
-	        return;
-    	}
-        
+        var i :int;
+        var card :Card;
+
+        // if point is not supplied, just arrange cards normally
+        if (point == null) {
+            for (i = 0; i < cards.length; i++) {
+                card = cards[i];
+                card.x = CARD_LEFT_START + i * CARD_SPACING_X;
+                card.y = 17;
+            }
+            return;
+        }
+
         // localize the point to our coordinate map
         var localPoint :Point = globalToLocal(point);
-        
+
         // position the cards horizontally and display each
         for (i = 0; i < cards.length; i++) {
             card = cards[i];
@@ -176,23 +176,23 @@ public class NewLaw extends CardContainer
             }
         }
     }
-    
+
     /**
      * Prevent or allow the player to create a new law.
      */
     public function set enabled (value :Boolean) :void
     {
-    	makeLawButton.enabled = value;
+        makeLawButton.enabled = value;
         _enabled = value;
     }
-    
+
     /**
      * Return the enabled/disabled state.
      */
     public function get enabled () :Boolean {
         return _enabled;
     }
-    
+
     /**
      * Return all cards in new law to the player's hand.
      * TODO like createLaw this method of moving cards should be improved
@@ -209,15 +209,15 @@ public class NewLaw extends CardContainer
         }
         // remove them from here, add them to hand - do not tell other players
         removeCards(cardArray, false);
-        
+
         if (backToHand) {
             _ctx.board.player.hand.addCards(cardArray, false);
         }
         else {
-        	_ctx.board.player.hand.removeCards(cardArray, true);
+            _ctx.board.player.hand.removeCards(cardArray, true);
         }
     }
-	
+
     /**
      * First child is the background, second is the create button
      */
@@ -225,42 +225,42 @@ public class NewLaw extends CardContainer
     {
         return 2;
     }
-    
-	/**
-	 * Begin displaying the new law area
-	 */
-	public function show () :void
-	{
-		if (!_ctx.board.contains(this)) {
-			_ctx.board.addChild(this);
-		}
-	}
-	
-	/**
-	 * Return cards and hide the new law area
-	 */
-	public function hide () :void
-	{
-		clear();
-		if (_ctx.board.contains(this)) {
-			_ctx.board.removeChild(this);
-		}
-	}
-    
-    /** Can the player make a new law right now? 
+
+    /**
+     * Begin displaying the new law area
+     */
+    public function show () :void
+    {
+        if (!_ctx.board.contains(this)) {
+            _ctx.board.addChild(this);
+        }
+    }
+
+    /**
+     * Return cards and hide the new law area
+     */
+    public function hide () :void
+    {
+        clear();
+        if (_ctx.board.contains(this)) {
+            _ctx.board.removeChild(this);
+        }
+    }
+
+    /** Can the player make a new law right now?
      * TODO better to have lawAlreadyCreatedThisTurn? */
     protected var _enabled :Boolean = false;
-    
+
     /** Press this button to complete the new law */
     protected var makeLawButton :Button;
-    
+
     /** Background image for the entire board */
     [Embed(source="../../../rsrc/components.swf#newlaw")]
     protected static const NEWLAW_BACKGROUND :Class;
-    
+
     /** Cards are spaced further apart */
     protected static const CARD_SPACING_X :int = 69;
-    
+
     /** Cards start at this x value */
     protected static const CARD_LEFT_START :int = 44;
 }

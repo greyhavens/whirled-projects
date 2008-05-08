@@ -14,7 +14,7 @@ public class Hand extends CardContainer
 {
     /** The name of the hand data distributed value. */
     public static const HAND_DATA :String = "handData";
-    
+
     /**
      * Constructor
      */
@@ -26,17 +26,17 @@ public class Hand extends CardContainer
         }
         super(ctx);
     }
-    
+
     /**
      * Called by first user during game start.  Remove any cards and draw a fresh hand.
      */
     public function setup () :void
     {
-    	clearCards();
-    	var cardArray :Array = _ctx.board.deck.drawStartingHand(DEFAULT_HAND_SIZE);
+        clearCards();
+        var cardArray :Array = _ctx.board.deck.drawStartingHand(DEFAULT_HAND_SIZE);
         addCards(cardArray);
     }
-    
+
     /**
      * For watchers who join partway through the game, fetch the existing hand data
      */
@@ -45,15 +45,15 @@ public class Hand extends CardContainer
         var handData :Array = _ctx.eventHandler.getData(HAND_DATA, player.id) as Array;
         setSerializedCards(handData);
     }
-    
+
     /**
      * Rearrange hand when cards are added or subtracted
      */
     override protected function updateDisplay () :void
     {
-    	arrangeCards();
+        arrangeCards();
     }
-    
+
     /**
      * Draw a card (or X cards, if numCards is provided) from the deck.
      */
@@ -63,28 +63,28 @@ public class Hand extends CardContainer
         for (var i :int = 1; i <= numCards; i++) {
             var card :Card = _ctx.board.deck.drawCard();
             if (card == null) {
-            	// no more cards in the deck!
+                // no more cards in the deck!
                 break;
             }
             cardArray.push(card);
         }
         addCards(cardArray);
     }
-	
-	/**
-	 * Return true if the global coordinates are within the area of the hand.
-	 */
-	override public function hitTestPoint(x:Number, y:Number, shapeFlag:Boolean = false) :Boolean
-	{
-		// Bounding region is 0, 0, 690, 90
-		var globalPoint :Point = new Point(x, y);
-		var localPoint :Point = globalToLocal(globalPoint);
-		if (localPoint.x >= 0 && localPoint.y >= 0 && localPoint.x <= 690 &&  localPoint.y <= 90) {
-			return true;
-		}
-		return false;
-	}
-    
+
+    /**
+     * Return true if the global coordinates are within the area of the hand.
+     */
+    override public function hitTestPoint(x:Number, y:Number, shapeFlag:Boolean = false) :Boolean
+    {
+        // Bounding region is 0, 0, 690, 90
+        var globalPoint :Point = new Point(x, y);
+        var localPoint :Point = globalToLocal(globalPoint);
+        if (localPoint.x >= 0 && localPoint.y >= 0 && localPoint.x <= 690 &&  localPoint.y <= 90) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Called whenever distributed card data needs updating
      */
@@ -92,16 +92,16 @@ public class Hand extends CardContainer
     {
         _ctx.eventHandler.setData(HAND_DATA, getSerializedCards(), player.id);
     }
-    
+
     /**
      * Public function to allow setting distributed hand data
      * TODO make setDistributedData public or find another solution
      */
     public function setDistributedHandData () :void
     {
-    	setDistributedData();
+        setDistributedData();
     }
-    
+
     /**
      * Returns the index of the card at a given global point, or -1 for none.
      */
@@ -109,50 +109,50 @@ public class Hand extends CardContainer
     {
         var localPoint :Point = globalToLocal(point);
         // cards are spaced CARD_SPACING_X apart starting at 0
-    	var cardSpacingX :int = CARD_SPACING_X;
-		var numCards :int = (point == null) ? cards.length : cards.length + 1;
-    	if (numCards > (MAX_HAND_SIZE)) {
-    		cardSpacingX = ((MAX_HAND_SIZE) * CARD_SPACING_X) / numCards;
-    	}
+        var cardSpacingX :int = CARD_SPACING_X;
+        var numCards :int = (point == null) ? cards.length : cards.length + 1;
+        if (numCards > (MAX_HAND_SIZE)) {
+            cardSpacingX = ((MAX_HAND_SIZE) * CARD_SPACING_X) / numCards;
+        }
         var index :int = Math.floor(localPoint.x / cardSpacingX);
         if (index < 0) {
-        	index = 0;
+            index = 0;
         }
         if (index > cards.length) {
-        	index = cards.length;
+            index = cards.length;
         }
         return index;
     }
-    
+
     /**
      * Shift cards out of the way as another card is being dragged over them.
-	 * TODO move this to CardContainer for both Hand and NewLaw
+     * TODO move this to CardContainer for both Hand and NewLaw
      */
     override public function arrangeCards (point :Point = null) :void
     {
-    	var i :int;
-    	var card :Card;
-    	
-    	// adjust the spacing depeding on the number of cards
-    	var cardSpacingX :int = CARD_SPACING_X;
-		var numCards :int = (point == null) ? cards.length : cards.length + 1;
-    	if (numCards > (MAX_HAND_SIZE)) {
-    		cardSpacingX = ((MAX_HAND_SIZE) * CARD_SPACING_X) / numCards;
-    	}
-    	
-    	// if no point is supplied, arrange as normal.
-    	if (point == null) {
-	        for (i = 0; i < cards.length; i++) {
-	            card = cards[i];
-	            card.x = i * cardSpacingX;
-	            card.y = 10;
-	        }
-	        return;
-    	}
-    	
+        var i :int;
+        var card :Card;
+
+        // adjust the spacing depeding on the number of cards
+        var cardSpacingX :int = CARD_SPACING_X;
+        var numCards :int = (point == null) ? cards.length : cards.length + 1;
+        if (numCards > (MAX_HAND_SIZE)) {
+            cardSpacingX = ((MAX_HAND_SIZE) * CARD_SPACING_X) / numCards;
+        }
+
+        // if no point is supplied, arrange as normal.
+        if (point == null) {
+            for (i = 0; i < cards.length; i++) {
+                card = cards[i];
+                card.x = i * cardSpacingX;
+                card.y = 10;
+            }
+            return;
+        }
+
         // localize the point to our coordinate map
         var localPoint :Point = globalToLocal(point);
-        
+
         // position the cards horizontally
         for (i = 0; i < cards.length; i++) {
             card = cards[i];
@@ -165,7 +165,7 @@ public class Hand extends CardContainer
             }
         }
     }
-    
+
     /**
      * Handler for changes to distributed hand data.  If it's data for this hand,
      * update the hand display.
@@ -174,32 +174,32 @@ public class Hand extends CardContainer
     {
         setSerializedCards(event.newValue);
     }
-    
+
     /**
      * If player has more than the maximum allowed number of cards in their hand, force them to
      * select and discard the excess number of cards.  When finished, call the listener function.
      */
     public function discardDown (listener :Function) :void
     {
-    	if (cards.length <= MAX_HAND_SIZE) {
-    		listener();
-    		return;
-    	}
-    	_ctx.notice("You have too many cards... please discard down to " + MAX_HAND_SIZE);
-    	discardDownListener = listener;
-    	_ctx.state.selectCards(cards.length - MAX_HAND_SIZE, discardDownCardsSelected);
+        if (cards.length <= MAX_HAND_SIZE) {
+            listener();
+            return;
+        }
+        _ctx.notice("You have too many cards... please discard down to " + MAX_HAND_SIZE);
+        discardDownListener = listener;
+        _ctx.state.selectCards(cards.length - MAX_HAND_SIZE, discardDownCardsSelected);
     }
-    
+
     /**
      * Called when the player has selected cards to be discarded.
      */
     protected function discardDownCardsSelected () :void
     {
-    	player.loseCards(_ctx.state.selectedCards);
-    	_ctx.state.deselectCards();
-    	discardDownListener();
+        player.loseCards(_ctx.state.selectedCards);
+        _ctx.state.deselectCards();
+        discardDownListener();
     }
-        
+
     /**
      * Called when the player leaves the game; remove listeners
      */
@@ -207,42 +207,42 @@ public class Hand extends CardContainer
     {
         _ctx.eventHandler.removeDataListener(HAND_DATA, handChanged, player.id);
     }
-    
+
     /**
      * Pick and return an array of random cards from this hand.
      */
     public function getRandomCards (numCards :int = 1) :Array
     {
-    	// make a copy of the cards array
+        // make a copy of the cards array
         var availableCards :Array = new Array();
         for each (var card :Card in cards) {
             availableCards.push(card);
         }
-        
+
         var randomCards :Array = new Array();
         for (var i :int = 0; i < numCards; i++) {
-	    	// pick a random card (from zero to length-1)
-	        var randomIndex :int = Math.round(Math.random() * (availableCards.length-1));
-	        var randomCard :Card = availableCards[randomIndex];
-	        availableCards.splice(randomIndex, 1);
-	        randomCards.push(randomCard);
+            // pick a random card (from zero to length-1)
+            var randomIndex :int = Math.round(Math.random() * (availableCards.length-1));
+            var randomCard :Card = availableCards[randomIndex];
+            availableCards.splice(randomIndex, 1);
+            randomCards.push(randomCard);
         }
-        
-	    return randomCards;
+
+        return randomCards;
     }
-    
+
     /** Record the listener function while selecting cards to discard. */
     protected var discardDownListener :Function;
-    
+
     /** Player owning this hand */
     protected var player :Player;
-    
+
     /** Player must go down to this many cards at end of turn */
     protected var MAX_HAND_SIZE :int = 11;
-    
+
     /** Draw this number of cards at the start of the game */
     protected var DEFAULT_HAND_SIZE :int = 7;
-    
+
     /** distance between the left edges of cards */
     protected static const CARD_SPACING_X :int = 57;
 }

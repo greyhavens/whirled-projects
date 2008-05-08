@@ -19,15 +19,15 @@ import lawsanddisorder.component.*;
  */
 public class DataChangedEvent extends Event
 {
-    public function DataChangedEvent (name :String, oldValue :*, newValue :*, index :int) 
+    public function DataChangedEvent (name :String, oldValue :*, newValue :*, index :int)
     {
-    	super(name);
+        super(name);
         this.name = name;
         this.oldValue = oldValue;
         this.newValue = newValue;
         this.index = index;
     }
-    
+
     public var name :String;
     public var oldValue :*;
     public var newValue :*;

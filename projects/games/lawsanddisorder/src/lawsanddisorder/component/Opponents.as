@@ -18,7 +18,7 @@ public class Opponents extends Component
     {
         super(ctx);
     }
-    
+
     /**
      * Add an opponent to the array of opponents
      */
@@ -28,17 +28,18 @@ public class Opponents extends Component
         addChild(opponent);
         updateDisplay();
     }
-    
+
     /**
-     * Remove an opponent and rearrange the rest.     */
+     * Remove an opponent and rearrange the rest.
+     */
     public function removeOpponent (opponent :Opponent) :void
     {
         var index :int = opponents.indexOf(opponent);
         opponents.splice(index, 1);
-    	removeChild(opponent);
-    	updateDisplay();
+        removeChild(opponent);
+        updateDisplay();
     }
-    
+
     /**
      * Rearrange opponents when one is added or removed.
      */
@@ -51,7 +52,7 @@ public class Opponents extends Component
             opponent.y = i*72;
         }
     }
-    
+
     /**
      * Choose and return an opponent at random
      */
@@ -62,7 +63,7 @@ public class Opponents extends Component
         var opponent :Opponent = opponents[randomIndex];
         return opponent;
     }
-    
+
     /** Array of opponent objects */
     protected var opponents :Array = new Array();
 }

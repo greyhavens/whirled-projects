@@ -50,33 +50,33 @@ public class Opponent extends Player
         jobSymbol.transform.colorTransform = colorTransform;
         jobSymbol.alpha = 0.15;
         addChild(jobSymbol);
-        
+
         updateDisplay();
     }
-    
+
     /**
      * Initialize the static display
      * TODO cleaner way to instanciate/position all these display elements?
      */
     override protected function initDisplay () :void
     {
-    	// position hand but do not display it
+        // position hand but do not display it
         _hand.x = -550;
         _hand.y = 0;
-        
+
         var background :Sprite = new OPPONENT_BACKGROUND();
         addChild(background);
-        
+
         infoText = Content.defaultTextField(1.2, "left");
         infoText.x = 8;
         infoText.y = 5;
         infoText.height = 80;
         addChild(infoText);
-        
+
         numMoniesText = Content.defaultTextField(1, "right");
         numMoniesText.x = 2;
         numMoniesText.y = 40;
-		numMoniesText.width = 25;
+        numMoniesText.width = 25;
         addChild(numMoniesText);
 
         //var monieIcon :Sprite = new Card.SYMBOL_MONIE();
@@ -86,21 +86,21 @@ public class Opponent extends Player
         monieIcon.x = 32;
         monieIcon.y = 42;
         addChild(monieIcon);
-        
+
         numCardsText = Content.defaultTextField(1, "right");
         numCardsText.x = 37;
         numCardsText.y = 40;
-		numCardsText.width = 25;
+        numCardsText.width = 25;
         addChild(numCardsText);
-        
+
         //var cardIcon :Sprite = new Card.SYMBOL_CARD();
-		var cardIcon :Sprite = new Content.CARD_BACK();
+        var cardIcon :Sprite = new Content.CARD_BACK();
         cardIcon.width = cardIcon.width / 4;
         cardIcon.height = cardIcon.height / 4;
         cardIcon.x = 68;
         cardIcon.y = 40;
         addChild(cardIcon);
-        
+
         // little icon will be displayed during this opponent's turn
         turnIndicator = new Sprite();
         turnIndicator.graphics.beginFill(0xFFFF00);
@@ -120,15 +120,15 @@ public class Opponent extends Player
         numMoniesText.text = String(monies);
         numCardsText.text = String(hand.numCards);
     }
-    
-    /** Is this opponent selected? 
+
+    /** Is this opponent selected?
      * TODO rename to selected, find out where this is called that state can't be polled
      */
     public function get highlighted () :Boolean {
         return _highlighted;
     }
-    
-    /** Indicate that the opponent is selected 
+
+    /** Indicate that the opponent is selected
      * TODO does state need to be stored?
      */
     public function set highlighted (value :Boolean) :void {
@@ -142,9 +142,9 @@ public class Opponent extends Player
             graphics.lineStyle(5, 0x8888FF);
         }
         graphics.drawRect(5, 5, 110, 50);
-		*/
+        */
     }
-    
+
     /**
      * The turn just changed.  Display whether it is this opponent's turn.
      */
@@ -152,40 +152,40 @@ public class Opponent extends Player
     {
         var turnHolder :Player = _ctx.board.getTurnHolder();
         if (turnHolder == this) {
-        	if (!contains(turnIndicator)) {
-        		addChild(turnIndicator);
-        	}
-        	//graphics.lineStyle(5, 0xFFFF00);
+            if (!contains(turnIndicator)) {
+                addChild(turnIndicator);
+            }
+            //graphics.lineStyle(5, 0xFFFF00);
         }
         else {
             if (contains(turnIndicator)) {
                 removeChild(turnIndicator);
             }
-        	//graphics.lineStyle(5, 0x8888FF);
+            //graphics.lineStyle(5, 0x8888FF);
         }
         //graphics.drawRect(0, 0, 120, 60);
     }
-    
-    /** Indicates if it is the opponent's turn 
+
+    /** Indicates if it is the opponent's turn
      * TODO better name that doesn't conflict with TurnIndicator class
      */
     protected var turnIndicator :Sprite;
-    
+
     /** Displays the number of monies */
     protected var numMoniesText :TextField;
-    
+
     /** Displays the number of cards */
     protected var numCardsText :TextField;
-    
+
     /** Displays opponent's name, job, etc */
     protected var infoText :TextField;
-    
+
     /** Is the opponent highlighted? */
     protected var _highlighted :Boolean = false;
-    
+
     /** Symbol for the current job */
     protected var jobSymbol :Sprite;
-    
+
     /** Background image for an opponent */
     [Embed(source="../../../rsrc/components.swf#opponent")]
     protected static const OPPONENT_BACKGROUND :Class;

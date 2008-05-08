@@ -27,19 +27,19 @@ public class UsePowerButton extends Button
         _ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, turnStarted);
         enabled = false;
     }
-	
+
     /**
      * When button is clicked, verify that player can use their power,
      * then start doing that.
      */
     protected function usePowerButtonClicked (event :MouseEvent) :void
-    {	
-		if (!enabled) {
-			return;
-		}
+    {
+        if (!enabled) {
+            return;
+        }
         // Start using power; switch to cancel
         if (text == DEFAULT_TEXT) {
-        	// TODO should already be enabled if this is true
+            // TODO should already be enabled if this is true
             if (!_ctx.state.hasFocus()) {
                 _ctx.notice("You can't use your power right now.");
                 return;
@@ -53,18 +53,20 @@ public class UsePowerButton extends Button
             _ctx.board.player.job.cancelUsePower();
         }
     }
-	
-	/**
-	 * Player has finished using their ability, or has passed the point of no return.
-	 * Set the text back to use power and disable it for the rest of the turn.	 */
+
+    /**
+     * Player has finished using their ability, or has passed the point of no return.
+     * Set the text back to use power and disable it for the rest of the turn.
+     */
     public function doneUsingPower () :void
     {
-    	text = DEFAULT_TEXT;
-    	enabled = false;
+        text = DEFAULT_TEXT;
+        enabled = false;
     }
-    
+
     /**
-     * Player cancelled using their power; set text back to the default but leave it enabled.     */
+     * Player cancelled using their power; set text back to the default but leave it enabled.
+     */
     public function cancelUsingPower () :void
     {
         text = DEFAULT_TEXT;
@@ -77,7 +79,7 @@ public class UsePowerButton extends Button
     {
         enabled = true;
     }
-    
+
     /**
      * Handler for end turn event
      */
@@ -86,7 +88,7 @@ public class UsePowerButton extends Button
         text = DEFAULT_TEXT;
         enabled = false;
     }
-    
+
     protected static const DEFAULT_TEXT :String = "use power";
     protected static const CANCEL_TEXT :String = "cancel";
 }
