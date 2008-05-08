@@ -158,7 +158,7 @@ public class CreatureUnitView extends SceneObject
     protected function handleUnitAttacked (...ignored) :void
     {
         // play a sound
-        var soundName :String = Constants.HIT_SOUND_NAMES[Rand.nextIntRange(0, Constants.HIT_SOUND_NAMES.length, Rand.STREAM_COSMETIC)];
+        var soundName :String = HIT_SOUND_NAMES[Rand.nextIntRange(0, HIT_SOUND_NAMES.length, Rand.STREAM_COSMETIC)];
         AppContext.playSound(soundName);
     }
 
@@ -411,6 +411,7 @@ public class CreatureUnitView extends SceneObject
     protected static const FACING_NE :int = 5;
 
     protected static const FACING_STRINGS :Array = [ "N", "NW", "SW", "S", "SE", "NE" ];
+    protected static const HIT_SOUND_NAMES :Array = [ "sfx_hit1", "sfx_hit2", "sfx_hit3" ];
 }
 
 }

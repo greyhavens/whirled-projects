@@ -3,6 +3,7 @@ package popcraft.battle.view {
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -65,11 +66,13 @@ public class PlayerBaseUnitView extends SceneObject
     override protected function addedToDB () :void
     {
         this.db.addObject(_healthMeter, _sprite);
+        _unit.addEventListener(UnitEvent.ATTACKED, handleAttacked, false, 0, true);
     }
 
     override protected function removedFromDB () :void
     {
         _healthMeter.destroySelf();
+        _unit.removeEventListener(UnitEvent.ATTACKED, handleAttacked);
     }
 
     override public function get displayObject () :DisplayObject
@@ -89,6 +92,13 @@ public class PlayerBaseUnitView extends SceneObject
         if (health <= 0) {
             this.destroySelf();
         }
+    }
+
+    protected function handleAttacked (...ignored) :void
+    {
+        // play a sound
+        var soundName :String = HIT_SOUND_NAMES[Rand.nextIntRange(0, HIT_SOUND_NAMES.length, Rand.STREAM_COSMETIC)];
+        AppContext.playSound(soundName);
     }
 
     public function set targetEnemyBadgeVisible (val :Boolean) :void
@@ -121,6 +131,7 @@ public class PlayerBaseUnitView extends SceneObject
     protected var _healthMeter :RectMeter;
 
     protected static const GROUP_NAME :String = "PlayerBaseUnitView";
+    protected static const HIT_SOUND_NAMES :Array = [ "sfx_basehit1", "sfx_basehit2", "sfx_basehit3" ];
 
 }
 

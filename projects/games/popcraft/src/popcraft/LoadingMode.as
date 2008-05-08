@@ -49,6 +49,9 @@ public class LoadingMode extends AppMode
         AppContext.resources.pendResourceLoad("sound", "sfx_hit1", { embeddedClass: SOUND_HIT1 });
         AppContext.resources.pendResourceLoad("sound", "sfx_hit2", { embeddedClass: SOUND_HIT2 });
         AppContext.resources.pendResourceLoad("sound", "sfx_hit3", { embeddedClass: SOUND_HIT3 });
+        AppContext.resources.pendResourceLoad("sound", "sfx_basehit1", { embeddedClass: SOUND_BASEHIT1 });
+        AppContext.resources.pendResourceLoad("sound", "sfx_basehit2", { embeddedClass: SOUND_BASEHIT2 });
+        AppContext.resources.pendResourceLoad("sound", "sfx_basehit3", { embeddedClass: SOUND_BASEHIT3 });
 
         // events
         AppContext.resources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
@@ -165,6 +168,15 @@ public class LoadingMode extends AppMode
 
     [Embed(source="../../rsrc/audio/ARM_SWING_PUNCH_6_S4.mp3")]
     protected static const SOUND_HIT3 :Class;
+
+    [Embed(source="../../rsrc/audio/AOS01061_TableHit01.mp3")]
+    protected static const SOUND_BASEHIT1 :Class;
+
+    [Embed(source="../../rsrc/audio/AOS01062_TbleHit02.mp3")]
+    protected static const SOUND_BASEHIT2 :Class;
+
+    [Embed(source="../../rsrc/audio/AOS01064_TbleHit04.mp3")]
+    protected static const SOUND_BASEHIT3 :Class;
 }
 
 }
