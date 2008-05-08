@@ -2,7 +2,7 @@
     <Level
         name="A Boy's Best Friend"
         introText="Dog-Boy intro level"
-        disableDiurnalCycle="true"
+        disableDiurnalCycle="false"
         playerBaseHealth="100">
 
         <InitialResources/>
@@ -19,16 +19,23 @@
             <InitialDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
-                    <Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="50"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="20"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="40"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="60"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="65"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="80"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
                 </Day>
             </InitialDays>
-
             <RepeatingDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
-                    <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="50"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="20"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="65"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
                 </Day>
             </RepeatingDays>
         </Computer>
