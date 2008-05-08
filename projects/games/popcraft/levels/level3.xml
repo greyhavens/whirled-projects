@@ -17,23 +17,26 @@
         <AvailableSpells/>
 
         <Computer baseHealth="100" team="1">
-            <InitialWaves>
-                <Wave delayBefore="20"><Unit type="grunt" count="1"/></Wave>
-                <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
-                <Wave delayBefore="20"><Unit type="grunt" count="1"/></Wave>
-                <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
-                <Wave delayBefore="26"><Unit type="sapper" count="10"/></Wave>
-                <Wave delayBefore="1"><Unit type="grunt" count="12"/></Wave>
-                <Wave delayBefore="12"/>
-            </InitialWaves>
-            <RepeatingWaves>
-                <Wave delayBefore="5"><Unit type="grunt" count="3"/></Wave>
-                <Wave delayBefore="20"><Unit type="grunt" count="2"/></Wave>
-                <Wave delayBefore="30"><Unit type="sapper" count="2"/></Wave>
-                <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
-                <Wave delayBefore="1"><Unit type="grunt" count="2"/></Wave>
-                <Wave delayBefore="30"><Unit type="grunt" count="6"/></Wave>
-            </RepeatingWaves>
+            <InitialDays>
+                <Day repeatWaves="false">
+                    <Wave absoluteDelay="20"><Unit type="grunt" count="1"/></Wave>
+                    <Wave absoluteDelay="40"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="60"><Unit type="grunt" count="1"/></Wave>
+                    <Wave absoluteDelay="80"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="106"><Unit type="sapper" count="10"/></Wave>
+                    <Wave absoluteDelay="107"><Unit type="grunt" count="12"/></Wave>
+                </Day>
+            </InitialDays>
+            <RepeatingDays>
+                <Day repeatWaves="false">
+                    <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="25"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="55"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="85"><Unit type="sapper" count="3"/></Wave>
+                    <Wave absoluteDelay="86"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="116"><Unit type="grunt" count="6"/></Wave>
+                </Day>
+            </RepeatingDays>
         </Computer>
 
     </Level>

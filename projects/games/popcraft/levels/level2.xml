@@ -27,15 +27,23 @@
         <AvailableSpells/>
 
         <Computer baseHealth="50" team="1">
-            <InitialWaves>
-                <Wave delayBefore="5"><Unit type="sapper" count="1"/></Wave>
-                <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
-                <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
-                <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
-            </InitialWaves>
-            <RepeatingWaves>
-                <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
-            </RepeatingWaves>
+            <RepeatingDays>
+                <Day repeatWaves="true">
+                    <Wave delayBefore="5"><Unit type="sapper" count="1"/></Wave>
+                    <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
+                    <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
+                    <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
+                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
+                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
+                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
+                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
+                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
+                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
+                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
+                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
+                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
+                </Day>
+            </RepeatingDays>
         </Computer>
 
     </Level>

@@ -26,12 +26,13 @@
         <AvailableSpells/>
 
         <Computer baseHealth="15" team="1">
-            <InitialWaves>
-                <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>
-            </InitialWaves>
-            <RepeatingWaves>
-                <Wave delayBefore="40"><Unit type="grunt" count="1"/></Wave>
-            </RepeatingWaves>
+            <RepeatingDays>
+                <Day repeatWaves="true">
+                    <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>
+                    <Wave delayBefore="40"><Unit type="grunt" count="1"/></Wave>
+                    <Wave delayBefore="25"/>
+                </Day>
+            </RepeatingDays>
         </Computer>
 
     </Level>

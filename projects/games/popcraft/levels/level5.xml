@@ -32,33 +32,31 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
         <AvailableSpells/>
 
         <Computer baseHealth="70" team="1">
-            <InitialWaves>
-                <Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
-                <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
-                <Wave absoluteDelay="119"/>
-            </InitialWaves>
-
-            <RepeatingWaves>
-                <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
-                <Wave absoluteDelay="55"><Unit type="grunt" count="3"/></Wave>
-                <Wave absoluteDelay="105"><Unit type="grunt" count="3"/></Wave>
-                <Wave absoluteDelay="119"/>
-            </RepeatingWaves>
+            <RepeatingDays>
+                <Day repeatWaves="false">
+                    <Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
+                </Day>
+                <Day repeatWaves="false">
+                    <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="55"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="105"><Unit type="grunt" count="3"/></Wave>
+                </Day>
+            </RepeatingDays>
         </Computer>
 
         <Computer baseHealth="70" team="1">
-            <InitialWaves>
-                <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
-                <Wave absoluteDelay="55"><Unit type="grunt" count="3"/></Wave>
-                <Wave absoluteDelay="105"><Unit type="grunt" count="3"/></Wave>
-                <Wave absoluteDelay="119"/>
-            </InitialWaves>
-
-            <RepeatingWaves>
-                <Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
-                <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
-                <Wave absoluteDelay="119"/>
-            </RepeatingWaves>
+            <RepeatingDays>
+                <Day repeatWaves="false">
+                    <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="55"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="105"><Unit type="grunt" count="3"/></Wave>
+                </Day>
+                <Day repeatWaves="false">
+                    <Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
+                </Day>
+            </RepeatingDays>
         </Computer>
 
     </Level>

@@ -5,14 +5,9 @@ import popcraft.util.*;
 public class ComputerPlayerData
 {
     public var baseHealth :int;
-
     public var team :uint;
-
-    // go through these units waves first
-    public var initialWaves :Array = [];
-
-    // then repeat these
-    public var repeatingWaves :Array = [];
+    public var initialDays :Array = [];
+    public var repeatingDays :Array = [];
 
     public static function fromXml (xmlData :XML) :ComputerPlayerData
     {
@@ -21,18 +16,12 @@ public class ComputerPlayerData
         computerPlayer.baseHealth = XmlReader.getAttributeAsInt(xmlData, "baseHealth");
         computerPlayer.team = XmlReader.getAttributeAsUint(xmlData, "team");
 
-        var totalWaveDelay :Number = 0;
-        for each (var initialWaveData :XML in xmlData.InitialWaves.Wave) {
-            var uwd :UnitWaveData = UnitWaveData.fromXml(initialWaveData, totalWaveDelay);
-            totalWaveDelay += uwd.delayBefore;
-            computerPlayer.initialWaves.push(uwd);
+        for each (var initialDayData :XML in xmlData.InitialDays.Day) {
+            computerPlayer.initialDays.push(DaySequenceData.fromXml(initialDayData));
         }
 
-        totalWaveDelay = 0;
-        for each (var repeatingWaveData :XML in xmlData.RepeatingWaves.Wave) {
-            uwd = UnitWaveData.fromXml(repeatingWaveData, totalWaveDelay);
-            totalWaveDelay += uwd.delayBefore;
-            computerPlayer.repeatingWaves.push(uwd);
+        for each (var repeatingDayData :XML in xmlData.RepeatingDays.Day) {
+            computerPlayer.repeatingDays.push(DaySequenceData.fromXml(repeatingDayData));
         }
 
         return computerPlayer;

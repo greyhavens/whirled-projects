@@ -17,23 +17,32 @@ public class ComputerPlayer extends SimObject
         // Computer players always target the local player
         _playerData.targetedEnemyId = GameContext.localPlayerId;
 
-        this.queueNextWave();
+        _wavesPaused = true;
     }
 
     protected function queueNextWave () :void
     {
-        if (_waveIndex < _data.initialWaves.length) {
-            _nextWave = _data.initialWaves[_waveIndex];
-        } else if (_data.repeatingWaves.length > 0) {
-            var index :int = (_waveIndex - _data.initialWaves.length) % _data.repeatingWaves.length;
-            _nextWave = _data.repeatingWaves[index];
+        _queuedFirstWave = true;
+
+        var curDay :DaySequenceData;
+        if (_dayIndex < _data.initialDays.length) {
+            curDay = _data.initialDays[_dayIndex];
+        } else if (_data.repeatingDays.length > 0) {
+            var index :int = (_dayIndex - _data.initialDays.length) % _data.repeatingDays.length;
+            curDay = _data.repeatingDays[index];
+        } else {
+            return;
+        }
+
+        if (_waveIndex < curDay.unitWaves.length || curDay.repeatWaves) {
+            _nextWave = curDay.unitWaves[_waveIndex % curDay.unitWaves.length];
+        } else {
+            return;
         }
 
         ++_waveIndex;
 
-        if (null != _nextWave) {
-            this.addNamedTask(SEND_WAVE_TASK, After(_nextWave.delayBefore, new FunctionTask(sendNextWave)));
-        }
+        this.addNamedTask(SEND_WAVE_TASK, After(_nextWave.delayBefore, new FunctionTask(sendNextWave)));
     }
 
     protected function sendNextWave () :void
@@ -56,13 +65,17 @@ public class ComputerPlayer extends SimObject
 
         // stop sending out waves during the day, and resume at night
         var dayPhase :int = GameContext.diurnalCycle.phaseOfDay;
-        if (_pausedForDaytime && dayPhase == Constants.PHASE_NIGHT) {
-            _pausedForDaytime = false;
-            if (null != _nextWave) {
-                this.addNamedTask(SEND_WAVE_TASK, After(_nextWave.delayBefore, new FunctionTask(sendNextWave)));
+        if (_wavesPaused && dayPhase == Constants.PHASE_NIGHT) {
+            _wavesPaused = false;
+            _waveIndex = 0;
+            if (_queuedFirstWave) {
+                // don't increase the day index if nothing has been sent yet
+                ++_dayIndex;
             }
-        } else if (!_pausedForDaytime && dayPhase == Constants.PHASE_DAY) {
-            _pausedForDaytime = true;
+            this.queueNextWave();
+        } else if (!_wavesPaused && dayPhase == Constants.PHASE_DAY) {
+            _wavesPaused = true;
+            _nextWave = null;
             this.removeNamedTasks(SEND_WAVE_TASK);
         }
     }
@@ -71,8 +84,10 @@ public class ComputerPlayer extends SimObject
     protected var _playerData :PlayerData;
     protected var _nextWave :UnitWaveData;
     protected var _waveIndex :int;
+    protected var _dayIndex :int;
 
-    protected var _pausedForDaytime :Boolean;
+    protected var _queuedFirstWave :Boolean;
+    protected var _wavesPaused :Boolean;
 
     protected static const SEND_WAVE_TASK :String = "SendWave";
 }
