@@ -47,7 +47,7 @@ public class ComputerPlayer extends SimObject
 
     protected function sendNextWave () :void
     {
-        if (_playerData.isAlive) {
+        if (_playerData.isAlive && GameContext.diurnalCycle.isNight) {
             for each (var unitType :uint in _nextWave.units) {
                 this.buildUnit(unitType);
             }
@@ -96,9 +96,11 @@ public class ComputerPlayer extends SimObject
 
     protected function sendCouriersForSpellDrop () :void
     {
-        var numCouriers :int = _data.spellDropCourierGroupSize.next() - this.numCouriersOnBoard;
-        for (var i :int = 0; i < numCouriers; ++i) {
-            this.buildUnit(Constants.UNIT_TYPE_COURIER);
+        if (_playerData.isAlive && GameContext.diurnalCycle.isNight) {
+            var numCouriers :int = _data.spellDropCourierGroupSize.next() - this.numCouriersOnBoard;
+            for (var i :int = 0; i < numCouriers; ++i) {
+                this.buildUnit(Constants.UNIT_TYPE_COURIER);
+            }
         }
     }
 
