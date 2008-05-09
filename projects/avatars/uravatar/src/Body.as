@@ -136,7 +136,7 @@ public class Body
         if (actions.length > 0) {
             _ctrl.registerActions(actions);
         }
-        if (states.length > 1) {
+        if (states.length > 1) { // no point in registering just one state, we'll always be in it
             _ctrl.registerStates(states);
         }
 
