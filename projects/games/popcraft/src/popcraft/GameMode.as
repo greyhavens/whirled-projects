@@ -9,7 +9,6 @@ import com.threerings.util.Log;
 import com.threerings.util.RingBuffer;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.util.*;
 import com.whirled.game.OccupantChangedEvent;
 
@@ -29,6 +28,16 @@ public class GameMode extends AppMode
 {
     override protected function setup () :void
     {
+        // create some layers
+        _battleParent = new Sprite();
+        this.modeSprite.addChild(_battleParent);
+
+        _hudParent = new Sprite();
+        this.modeSprite.addChild(_hudParent);
+
+        _overlayParent = new Sprite();
+        this.modeSprite.addChild(_overlayParent);
+
         // make sure we have a valid GameData object in the GameContext
         if (null == GameContext.gameData) {
             GameContext.gameData = AppContext.defaultGameData;
@@ -46,13 +55,10 @@ public class GameMode extends AppMode
         }
 
         this.setupNetwork();
-        this.setupBattle();
-        this.setupPuzzleAndUI();
-        this.setupInput();
 
         if (Constants.DEBUG_DRAW_STATS) {
             _debugDataView = new DebugDataView();
-            this.addObject(_debugDataView, this.modeSprite);
+            this.addObject(_debugDataView, _overlayParent);
             _debugDataView.visible = false;
         }
 
@@ -230,12 +236,12 @@ public class GameMode extends AppMode
         puzzleBoard.displayObject.x = Constants.PUZZLE_BOARD_LOC.x;
         puzzleBoard.displayObject.y = Constants.PUZZLE_BOARD_LOC.y;
 
-        this.addObject(puzzleBoard, this.modeSprite);
+        this.addObject(puzzleBoard, _hudParent);
 
         _descriptionPopupParent = new Sprite();
         _descriptionPopupParent.x = Constants.UNIT_AND_SPELL_DESCRIPTION_BR_LOC.x;
         _descriptionPopupParent.y = Constants.UNIT_AND_SPELL_DESCRIPTION_BR_LOC.y;
-        this.modeSprite.addChild(_descriptionPopupParent);
+        _overlayParent.addChild(_descriptionPopupParent);
 
         this.addObject(new UnitPurchaseButtonManager());
         this.addObject(new SpellCastButtonManager());
@@ -248,7 +254,7 @@ public class GameMode extends AppMode
         battleBoardView.displayObject.x = Constants.BATTLE_BOARD_LOC.x;
         battleBoardView.displayObject.y = Constants.BATTLE_BOARD_LOC.y;
 
-        this.addObject(battleBoardView, this.modeSprite);
+        this.addObject(battleBoardView, _battleParent);
 
         GameContext.battleBoardView = battleBoardView;
 
@@ -292,95 +298,8 @@ public class GameMode extends AppMode
             diurnalMeter.y = Constants.DIURNAL_METER_LOC.y;
             this.addObject(diurnalMeter, this.modeSprite);
         }
-    }
 
-    protected function setupPostRandSeedReceived () :void
-    {
-        // any game setup that requires the RNG to be initialized must
-        // be run in this function, and not before, to prevent the game from
-        // getting out of synch
-        this.scheduleNextSpellDrop();
-    }
-
-    protected function scheduleNextSpellDrop () :void
-    {
-        if (GameContext.isSinglePlayer && GameContext.spLevel.availableSpells.length == 0) {
-            return;
-        }
-
-        var time :Number = GameContext.gameData.spellDropTime.next();
-        if (time >= 0) {
-            GameContext.netObjects.addObject(new SimpleTimer(time, createNextSpellDrop));
-        }
-    }
-
-    protected function createNextSpellDrop () :void
-    {
-        var spellLoc :Vector2;
-
-        if (GameContext.numPlayers == 2) {
-            // in a two-player game, pick a location somewhere along the line
-            // that runs perpendicular to the line that connects the two bases
-            var base1 :PlayerBaseUnit = PlayerData(GameContext.playerData[0]).base;
-            var base2 :PlayerBaseUnit = PlayerData(GameContext.playerData[1]).base;
-            if (null != base1 && null != base2) {
-                var baseLoc1 :Vector2 = base1.unitLoc;
-                var baseLoc2 :Vector2 = base2.unitLoc;
-                var baseCenter :Vector2 = new Vector2(
-                    (baseLoc1.x + baseLoc2.x) * 0.5, (baseLoc1.y + baseLoc2.y) * 0.5);
-
-                var direction :Number = baseLoc1.subtract(baseLoc2).angle;
-                direction += (Rand.nextBoolean(Rand.STREAM_GAME) ? Math.PI * 0.5 : -Math.PI * 0.5);
-                var centerDistance :Number = GameContext.gameData.spellDropCenterOffset.next();
-                spellLoc = Vector2.fromAngle(direction, centerDistance).addLocal(baseCenter);
-            }
-
-        } else {
-            // otherwise, in a larger game, find a location near the center of the board
-            // (average all player base locations together)
-            var numBases :int;
-            var centerLoc :Vector2 = new Vector2();
-            for each (var playerData :PlayerData in GameContext.playerData) {
-                var playerBase :PlayerBaseUnit = playerData.base;
-                if (null != playerBase) {
-                    centerLoc.addLocal(playerBase.unitLoc);
-                    ++numBases;
-                }
-            }
-
-            if (numBases > 0) {
-                centerLoc.x /= numBases;
-                centerLoc.y /= numBases;
-                spellLoc = centerLoc;
-            }
-        }
-
-        if (null != spellLoc) {
-            // randomize the location a bit more
-            direction = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
-            var length :Number = GameContext.gameData.spellDropScatter.next();
-            spellLoc.addLocal(Vector2.fromAngle(direction, length));
-
-            // clamp location
-            spellLoc.x = Math.max(spellLoc.x, 75);
-            spellLoc.x = Math.min(spellLoc.x, Constants.SCREEN_DIMS.x - 75);
-            spellLoc.y = Math.max(spellLoc.y, 75);
-            spellLoc.y = Math.min(spellLoc.y, Constants.SCREEN_DIMS.y - 75);
-
-            // pick a spell at random
-            var spellType :uint;
-            if (GameContext.isSinglePlayer) {
-                var availableSpells :Array = GameContext.spLevel.availableSpells;
-                spellType = availableSpells[Rand.nextIntRange(0, availableSpells.length, Rand.STREAM_GAME)];
-            } else {
-                spellType = Rand.nextIntRange(0, Constants.SPELL_NAMES.length, Rand.STREAM_GAME);
-            }
-
-            SpellDropFactory.createSpellDrop(spellType, spellLoc);
-
-            // schedule the next drop
-            this.scheduleNextSpellDrop();
-        }
+        GameContext.netObjects.addObject(new SpellDropTimer());
     }
 
     protected function onKeyDown (e :KeyboardEvent) :void
@@ -433,18 +352,20 @@ public class GameMode extends AppMode
     // from AppMode
     override public function update (dt :Number) :void
     {
-        // don't start doing anything until the messageMgr is ready
-        if (!_gameIsRunning && _messageMgr.isReady) {
-            log.info("Starting game. randomSeed: " + _messageMgr.randomSeed);
-            Rand.seedStream(Rand.STREAM_GAME, _messageMgr.randomSeed);
-
-            this.setupPostRandSeedReceived();
-
-            _gameIsRunning = true;
-        }
-
         if (!_gameIsRunning) {
-            return;
+            // don't start doing anything until the messageMgr is ready
+            if (_messageMgr.isReady) {
+                log.info("Starting game. randomSeed: " + _messageMgr.randomSeed);
+                Rand.seedStream(Rand.STREAM_GAME, _messageMgr.randomSeed);
+
+                this.setupBattle();
+                this.setupPuzzleAndUI();
+                this.setupInput();
+
+                _gameIsRunning = true;
+            } else {
+                return;
+            }
         }
 
         // update the network
@@ -737,6 +658,9 @@ public class GameMode extends AppMode
 
     protected var _messageMgr :TickedMessageManager;
     protected var _debugDataView :DebugDataView;
+    protected var _battleParent :Sprite;
+    protected var _hudParent :Sprite;
+    protected var _overlayParent :Sprite;
     protected var _descriptionPopupParent :Sprite;
 
     protected var _tickCount :uint;

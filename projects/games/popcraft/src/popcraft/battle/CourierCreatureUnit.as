@@ -65,9 +65,10 @@ public class CourierCreatureUnit extends CreatureUnit
 
     override protected function die () :void
     {
-        // drop the currently carried spell on the ground when we die
+        // drop the currently carried spell on the ground when we die.
+        // don't play the "new spell" sound when this happens.
         if (null != _carriedSpell && GameContext.diurnalCycle.isNight) {
-            SpellDropFactory.createSpellDrop(_carriedSpell.type, this.unitLoc);
+            SpellDropFactory.createSpellDrop(_carriedSpell.type, this.unitLoc, false);
         }
 
         super.die();

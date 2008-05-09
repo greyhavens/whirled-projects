@@ -53,6 +53,8 @@ public class LoadingMode extends AppMode
         AppContext.resources.pendResourceLoad("sound", "sfx_basehit2", { embeddedClass: SOUND_BASEHIT2 });
         AppContext.resources.pendResourceLoad("sound", "sfx_basehit3", { embeddedClass: SOUND_BASEHIT3 });
 
+        AppContext.resources.pendResourceLoad("sound", "sfx_spelldrop", { embeddedClass: SOUND_SPELLDROP });
+
         // events
         AppContext.resources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
         AppContext.resources.addEventListener(ResourceLoadEvent.ERROR, handleResourceLoadErr);
@@ -177,6 +179,9 @@ public class LoadingMode extends AppMode
 
     [Embed(source="../../rsrc/audio/AOS01064_TbleHit04.mp3")]
     protected static const SOUND_BASEHIT3 :Class;
+
+    [Embed(source="../../rsrc/audio/SCI_FI_MAGICAL_ZING_03_G1.mp3")]
+    protected static const SOUND_SPELLDROP :Class;
 }
 
 }

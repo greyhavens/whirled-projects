@@ -7,7 +7,7 @@ import popcraft.battle.view.SpellDropView;
 
 public class SpellDropFactory
 {
-    public static function createSpellDrop (spellType :uint, loc :Vector2) :SpellDropObject
+    public static function createSpellDrop (spellType :uint, loc :Vector2, playSound :Boolean) :SpellDropObject
     {
         var spellDrop :SpellDropObject = new SpellDropObject(spellType);
         spellDrop.x = loc.x;
@@ -19,6 +19,10 @@ public class SpellDropFactory
         // SimObjectRef is valid
         var spellDropView :SpellDropView = new SpellDropView(spellDrop);
         GameContext.gameMode.addObject(spellDropView, GameContext.battleBoardView.spellDropViewParent);
+
+        if (playSound) {
+            AppContext.playSound("sfx_spelldrop");
+        }
 
         return spellDrop;
     }
