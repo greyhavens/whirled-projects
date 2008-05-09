@@ -66,7 +66,7 @@ public class CourierCreatureUnit extends CreatureUnit
     override protected function die () :void
     {
         // drop the currently carried spell on the ground when we die
-        if (null != _carriedSpell) {
+        if (null != _carriedSpell && GameContext.diurnalCycle.isNight) {
             SpellDropFactory.createSpellDrop(_carriedSpell.type, this.unitLoc);
         }
 
