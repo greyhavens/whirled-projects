@@ -2,9 +2,22 @@
     <Level
         name="Special Delivery"
         introText=
-"Occasionally, spells will appear on the battlefield. Dispatch Couriers to retrieve them. Once retrieved, a spell can be cast to power-up your units for a limited amount of time."
+"When a spell appears on the battlefield, dispatch Couriers to grab it! Once retrieved, a spell can be cast to power-up your units for a limited amount of time.
+
+The Rigor Mortis spell hardens your units' flesh, making them more resistant to attacks."
         disableDiurnalCycle="false"
         playerBaseHealth="100">
+
+        <GameDataOverride
+            spellDropTimeMin="50"
+            spellDropTimeMax="50">
+            <BaseLocations>
+                <GameSize numPlayers="2">
+                    <BaseLocation x="60" y="185"/>
+                    <BaseLocation x="642" y="175"/>
+                </GameSize>
+            </BaseLocations>
+        </GameDataOverride>
 
         <InitialResources/>
 
@@ -19,20 +32,33 @@
             <Spell type="rigormortis"/>
         </AvailableSpells>
 
-        <Computer baseHealth="100" team="1">
+        <Computer
+            baseHealth="100"
+            team="1">
             <InitialDays>
-                <Day repeatWaves="false">
+                <Day repeatWaves="false"
+                    noticeSpellDropAfterMin="0"
+                    noticeSpellDropAfterMax="0"
+                    spellDropCourierGroupSizeMin="0"
+                    spellDropCourierGroupSizeMax="0">
+
                     <Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
                     <Wave absoluteDelay="20"><Unit type="grunt" count="2"/></Wave>
-                    <Wave absoluteDelay="40"><Unit type="grunt" count="2"/></Wave>
-                    <Wave absoluteDelay="60"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="40"><Unit type="heavy" count="2"/></Wave>
+                    <Wave absoluteDelay="41"><Unit type="grunt" count="1" sapper="2"/></Wave>
+                    <Wave absoluteDelay="60"><Unit type="grunt" count="2" sapper="1"/></Wave>
                     <Wave absoluteDelay="65"><Unit type="heavy" count="3"/></Wave>
                     <Wave absoluteDelay="80"><Unit type="grunt" count="2"/></Wave>
                     <Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
                 </Day>
             </InitialDays>
             <RepeatingDays>
-                <Day repeatWaves="false">
+                <Day repeatWaves="false"
+                    noticeSpellDropAfterMin="6"
+                    noticeSpellDropAfterMax="6"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="2">
+
                     <Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
                     <Wave absoluteDelay="20"><Unit type="grunt" count="3"/></Wave>
                     <Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>

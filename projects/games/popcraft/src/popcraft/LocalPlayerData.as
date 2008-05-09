@@ -36,8 +36,8 @@ public class LocalPlayerData extends PlayerData
     {
         Assert.isTrue(resourceType < _resources.length);
 
-        // resources can go below 0
-        _resources[resourceType] = newAmount;
+        // resources can't go below 0
+        _resources[resourceType] = Math.max(newAmount, 0);
     }
 
     public function offsetResourceAmount (resourceType :uint, offset :int) :void

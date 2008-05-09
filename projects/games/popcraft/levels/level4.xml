@@ -18,24 +18,18 @@
         <Computer baseHealth="100" team="1">
             <InitialDays>
                 <Day repeatWaves="false">
-                    <Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
-                    <Wave absoluteDelay="20"><Unit type="grunt" count="2"/></Wave>
-                    <Wave absoluteDelay="40"><Unit type="grunt" count="2"/></Wave>
-                    <Wave absoluteDelay="60"><Unit type="grunt" count="2"/></Wave>
-                    <Wave absoluteDelay="65"><Unit type="heavy" count="3"/></Wave>
-                    <Wave absoluteDelay="80"><Unit type="grunt" count="2"/></Wave>
-                    <Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="1"><Unit type="heavy" count="2"/></Wave>
+                    <Wave absoluteDelay="3"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="60"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="100"><Unit type="grunt" count="4"/></Wave>
                 </Day>
             </InitialDays>
             <RepeatingDays>
                 <Day repeatWaves="false">
-                    <Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
-                    <Wave absoluteDelay="20"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="65"><Unit type="heavy" count="3"/></Wave>
-                    <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="1"><Unit type="heavy" count="2"/></Wave>
+                    <Wave absoluteDelay="3"><Unit type="grunt" count="5"/></Wave>
+                    <Wave absoluteDelay="60"><Unit type="grunt" count="5"/></Wave>
+                    <Wave absoluteDelay="100"><Unit type="grunt" count="5"/></Wave>
                 </Day>
             </RepeatingDays>
         </Computer>

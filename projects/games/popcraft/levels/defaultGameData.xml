@@ -14,7 +14,13 @@
             <Index value="-20"/>
             <Index value="-10"/>
             <Index value="10"/>
-            <OutOfBoundsScale value="10"/>
+            <Index value="20"/>
+            <Index value="30"/>
+            <Index value="40"/>
+            <Index value="45"/>
+            <Index value="48"/>
+            <Index value="50"/>
+            <OutOfBoundsScale value="1"/>
         </PuzzleClearValueTable>
 
         <Resources>

@@ -31,16 +31,10 @@
                 <Day repeatWaves="true">
                     <Wave delayBefore="5"><Unit type="sapper" count="1"/></Wave>
                     <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
-                    <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
-                    <Wave delayBefore="20"><Unit type="sapper" count="1"/></Wave>
+                    <Wave delayBefore="40"><Unit type="sapper" count="3"/></Wave>
+                    <Wave delayBefore="10"><Unit type="grunt" count="1"/></Wave>
                     <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
-                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
-                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
-                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
-                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
-                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
-                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
-                    <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
+                    <Wave delayBefore="10"><Unit type="grunt" count="1"/></Wave>
                     <Wave delayBefore="30"><Unit type="sapper" count="3"/></Wave>
                 </Day>
             </RepeatingDays>
