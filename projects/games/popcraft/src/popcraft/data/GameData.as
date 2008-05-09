@@ -8,6 +8,8 @@ import popcraft.util.*;
 
 public class GameData
 {
+    public var resourceClearValueTable :IntValueTable;
+
     public var dayLength :Number;
     public var nightLength :Number;
     public var initialDayPhase :uint;
@@ -29,6 +31,8 @@ public class GameData
     public function clone () :GameData
     {
         var theClone :GameData = new GameData();
+
+        theClone.resourceClearValueTable = resourceClearValueTable.clone();
 
         theClone.dayLength = dayLength;
         theClone.nightLength = nightLength;
@@ -65,6 +69,10 @@ public class GameData
         var useDefaults :Boolean = (null != inheritFrom);
 
         var gameData :GameData = (useDefaults ? inheritFrom : new GameData());
+
+        if (!useDefaults || XmlReader.hasChild(xml, "PuzzleClearValueTable")) {
+            gameData.resourceClearValueTable = IntValueTable.fromXml(XmlReader.getSingleChild(xml, "PuzzleClearValueTable"));
+        }
 
         gameData.dayLength = XmlReader.getAttributeAsNumber(xml, "dayLength", (useDefaults ? gameData.dayLength : undefined));
         gameData.nightLength = XmlReader.getAttributeAsNumber(xml, "nightLength", (useDefaults ? gameData.nightLength : undefined));

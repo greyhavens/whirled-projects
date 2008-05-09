@@ -13,29 +13,41 @@ import com.threerings.util.Assert;
  */
 public class IntValueTable
 {
-    public function IntValueTable (values :Array)
+    public function IntValueTable (values :Array, outOfBoundsScaleValue :int)
     {
-        Assert.isNotNull(values);
         _values = values;
-
-        if (_values.length == 0) {
-            _values.push(0);
-            _values.push(0);
-        } else if (_values.length == 1) {
-            _values.push(_values[0]);
-        }
-
-        _lastValue = _values[_values.length - 2];
-        _scaleValue = _values[_values.length - 1];
+        _scaleValue = outOfBoundsScaleValue;
+        _lastValue = (values.length > 0 ? values[values.length - 1] : 0);
     }
 
     public function getValueAt (index :uint) :int
     {
-        if (index <= (_values.length - 2)) {
+        if (index < _values.length) {
             return _values[index];
         } else {
-            return _lastValue + (_scaleValue * (index - (_values.length - 2)));
+            return _lastValue + (_scaleValue * (index - _values.length + 1));
         }
+    }
+
+    public function clone () :IntValueTable
+    {
+        return new IntValueTable(_values.slice(), _scaleValue);
+    }
+
+    public static function fromXml (xmlData :XML) :IntValueTable
+    {
+        var values :Array = [];
+        for each (var indexData :XML in xmlData.Index) {
+            values.push(XmlReader.getAttributeAsInt(indexData, "value"));
+        }
+
+        var outOfBoundsScaleVal :int;
+        var outOfBoundsScaleData :XML = xmlData.OutOfBoundsScale[0];
+        if (null != outOfBoundsScaleData) {
+            outOfBoundsScaleVal = XmlReader.getAttributeAsInt(outOfBoundsScaleData, "value", 0);
+        }
+
+        return new IntValueTable(values, outOfBoundsScaleVal);
     }
 
     protected var _values :Array;

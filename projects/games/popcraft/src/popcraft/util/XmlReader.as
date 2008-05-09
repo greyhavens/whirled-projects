@@ -4,6 +4,25 @@ import com.threerings.util.StringUtil;
 
 public class XmlReader
 {
+    public static function hasChild (xml :XML, name :String) :Boolean
+    {
+        return xml.child(name).length() > 0;
+    }
+
+    public static function getSingleChild (xml :XML, name :String, defaultValue :XML = null) :XML
+    {
+        var child :XML = xml.child(name)[0];
+        if (null == child) {
+            if (null != defaultValue) {
+                return defaultValue;
+            } else {
+                throw new XmlReadError("In node '" + String(xml.localName()) + "': error accessing child '" + name + "': child does not exist");
+            }
+        }
+
+        return child;
+    }
+
     public static function hasAttribute (xml :XML, name :String) :Boolean
     {
         return (null != xml.attribute(name)[0]);

@@ -10,6 +10,13 @@
         spellDropCenterOffsetMin="60"
         spellDropCenterOffsetMax="150">
 
+        <PuzzleClearValueTable>
+            <Index value="-20"/>
+            <Index value="-10"/>
+            <Index value="10"/>
+            <OutOfBoundsScale value="10"/>
+        </PuzzleClearValueTable>
+
         <Resources>
             <Resource type="white" displayName="Flesh" color="0xE8E7E5" rarity="1"/>
             <Resource type="red" displayName="Blood" color="0xCC0000" rarity="1"/>

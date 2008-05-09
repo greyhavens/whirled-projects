@@ -60,7 +60,7 @@ public class ComboHiliteCursor extends SimObject
         if (!show || _hilitedPieces.length == 0) {
             _textObj.visible = false;
         } else {
-            var resourceValue :int = Constants.CLEAR_VALUE_TABLE.getValueAt(_hilitedPieces.length - 1);
+            var resourceValue :int = GameContext.gameData.resourceClearValueTable.getValueAt(_hilitedPieces.length - 1);
 
             //_text.backgroundColor = Constants.getResource((_hilitedPieces[0] as Piece).resourceType).color;
 

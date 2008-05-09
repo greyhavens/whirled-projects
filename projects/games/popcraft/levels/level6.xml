@@ -1,0 +1,49 @@
+<root>
+    <Level
+        name="Special Delivery"
+        introText=
+"Occasionally, spells will appear on the battlefield. Dispatch Couriers to retrieve them. Once retrieved, a spell can be cast to power-up your units for a limited amount of time."
+        disableDiurnalCycle="false"
+        playerBaseHealth="100">
+
+        <InitialResources/>
+
+        <AvailableUnits>
+            <Unit type="grunt"/>
+            <Unit type="heavy"/>
+            <Unit type="sapper"/>
+            <Unit type="courier"/>
+        </AvailableUnits>
+
+        <AvailableSpells>
+            <Spell type="rigormortis"/>
+        </AvailableSpells>
+
+        <Computer baseHealth="100" team="1">
+            <InitialDays>
+                <Day repeatWaves="false">
+                    <Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="20"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="40"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="60"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="65"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="80"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
+                </Day>
+            </InitialDays>
+            <RepeatingDays>
+                <Day repeatWaves="false">
+                    <Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="20"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="65"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
+                </Day>
+            </RepeatingDays>
+        </Computer>
+
+    </Level>
+
+</root>
