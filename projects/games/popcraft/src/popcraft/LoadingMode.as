@@ -124,7 +124,7 @@ public class LoadingMode extends AppMode
     protected static const SWF_PUZZLEPIECES :Class;
 
     // audio
-    [Embed(source="../../rsrc/audio/VB01_68_04_Aliens_Screech.mp3")]
+    [Embed(source="../../rsrc/audio/MONSTER_HISSING_01_IN.mp3")]
     protected static const SOUND_GRUNT :Class;
 
     [Embed(source="../../rsrc/audio/ANIMAL_DEEP_GRUNT_1_JD.mp3")]
