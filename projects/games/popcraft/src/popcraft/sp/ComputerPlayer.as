@@ -49,11 +49,16 @@ public class ComputerPlayer extends SimObject
     {
         if (_playerData.isAlive) {
             for each (var unitType :uint in _nextWave.units) {
-                GameContext.gameMode.buildUnit(_playerData.playerId, unitType);
+                this.buildUnit(unitType);
             }
 
             this.queueNextWave();
         }
+    }
+
+    protected function buildUnit (unitType :uint) :void
+    {
+        GameContext.gameMode.buildUnit(_playerData.playerId, unitType);
     }
 
     override protected function update (dt :Number) :void
@@ -77,7 +82,39 @@ public class ComputerPlayer extends SimObject
             _wavesPaused = true;
             _nextWave = null;
             this.removeNamedTasks(SEND_WAVE_TASK);
+            this.removeNamedTasks(SPELL_DROP_SPOTTED_TASK); // stop looking for spells during the day
         }
+
+        // look for spell drops
+        if (_data.lookForSpellDrops && dayPhase == Constants.PHASE_NIGHT && !this.spellDropSpotted && this.spellDropOnBoard) {
+            this.addNamedTask(
+                SPELL_DROP_SPOTTED_TASK,
+                After(_data.noticeSpellDropAfter.next(),
+                    new FunctionTask(sendCouriersForSpellDrop)));
+        }
+    }
+
+    protected function sendCouriersForSpellDrop () :void
+    {
+        var numCouriers :int = _data.spellDropCourierGroupSize.next() - this.numCouriersOnBoard;
+        for (var i :int = 0; i < numCouriers; ++i) {
+            this.buildUnit(Constants.UNIT_TYPE_COURIER);
+        }
+    }
+
+    protected function get spellDropSpotted () :Boolean
+    {
+        return this.hasTasksNamed(SPELL_DROP_SPOTTED_TASK);
+    }
+
+    protected function get spellDropOnBoard () :Boolean
+    {
+        return GameContext.netObjects.getObjectRefsInGroup(SpellDropObject.GROUP_NAME).length > 0;
+    }
+
+    protected function get numCouriersOnBoard () :int
+    {
+        return CourierCreatureUnit.getNumPlayerCouriersOnBoard(_playerData.playerId);
     }
 
     protected var _data :ComputerPlayerData;
@@ -90,6 +127,7 @@ public class ComputerPlayer extends SimObject
     protected var _wavesPaused :Boolean;
 
     protected static const SEND_WAVE_TASK :String = "SendWave";
+    protected static const SPELL_DROP_SPOTTED_TASK :String = "SpellDropSpotted";
 }
 
 }
