@@ -18,24 +18,32 @@ public class ComputerPlayer extends SimObject
         _playerData.targetedEnemyId = GameContext.localPlayerId;
 
         _wavesPaused = true;
+
+        _curDay = this.getDayData(0);
+    }
+
+    protected function getDayData (dayIndex :int) :DaySequenceData
+    {
+        if (dayIndex < _data.initialDays.length) {
+            return _data.initialDays[_dayIndex];
+        } else if (_data.repeatingDays.length > 0) {
+            var index :int = (dayIndex - _data.initialDays.length) % _data.repeatingDays.length;
+            return _data.repeatingDays[index];
+        } else {
+            return null;
+        }
     }
 
     protected function queueNextWave () :void
     {
-        _queuedFirstWave = true;
-
-        var curDay :DaySequenceData;
-        if (_dayIndex < _data.initialDays.length) {
-            curDay = _data.initialDays[_dayIndex];
-        } else if (_data.repeatingDays.length > 0) {
-            var index :int = (_dayIndex - _data.initialDays.length) % _data.repeatingDays.length;
-            curDay = _data.repeatingDays[index];
-        } else {
+        if (null == _curDay) {
             return;
         }
 
-        if (_waveIndex < curDay.unitWaves.length || curDay.repeatWaves) {
-            _nextWave = curDay.unitWaves[_waveIndex % curDay.unitWaves.length];
+        _queuedFirstWave = true;
+
+        if (_waveIndex < _curDay.unitWaves.length || _curDay.repeatWaves) {
+            _nextWave = _curDay.unitWaves[_waveIndex % _curDay.unitWaves.length];
         } else {
             return;
         }
@@ -68,6 +76,10 @@ public class ComputerPlayer extends SimObject
             return;
         }
 
+        if (null == _curDay) {
+            return;
+        }
+
         // stop sending out waves during the day, and resume at night
         var dayPhase :int = GameContext.diurnalCycle.phaseOfDay;
         if (_wavesPaused && dayPhase == Constants.PHASE_NIGHT) {
@@ -75,7 +87,7 @@ public class ComputerPlayer extends SimObject
             _waveIndex = 0;
             if (_queuedFirstWave) {
                 // don't increase the day index if nothing has been sent yet
-                ++_dayIndex;
+                _curDay = this.getDayData(++_dayIndex);
             }
             this.queueNextWave();
         } else if (!_wavesPaused && dayPhase == Constants.PHASE_DAY) {
@@ -86,10 +98,10 @@ public class ComputerPlayer extends SimObject
         }
 
         // look for spell drops
-        if (_data.lookForSpellDrops && dayPhase == Constants.PHASE_NIGHT && !this.spellDropSpotted && this.spellDropOnBoard) {
+        if (_curDay.lookForSpellDrops && dayPhase == Constants.PHASE_NIGHT && !this.spellDropSpotted && this.spellDropOnBoard) {
             this.addNamedTask(
                 SPELL_DROP_SPOTTED_TASK,
-                After(_data.noticeSpellDropAfter.next(),
+                After(_curDay.noticeSpellDropAfter.next(),
                     new FunctionTask(sendCouriersForSpellDrop)));
         }
     }
@@ -97,7 +109,7 @@ public class ComputerPlayer extends SimObject
     protected function sendCouriersForSpellDrop () :void
     {
         if (_playerData.isAlive && GameContext.diurnalCycle.isNight) {
-            var numCouriers :int = _data.spellDropCourierGroupSize.next() - this.numCouriersOnBoard;
+            var numCouriers :int = _curDay.spellDropCourierGroupSize.next() - this.numCouriersOnBoard;
             for (var i :int = 0; i < numCouriers; ++i) {
                 this.buildUnit(Constants.UNIT_TYPE_COURIER);
             }
@@ -121,6 +133,7 @@ public class ComputerPlayer extends SimObject
 
     protected var _data :ComputerPlayerData;
     protected var _playerData :PlayerData;
+    protected var _curDay :DaySequenceData;
     protected var _nextWave :UnitWaveData;
     protected var _waveIndex :int;
     protected var _dayIndex :int;
