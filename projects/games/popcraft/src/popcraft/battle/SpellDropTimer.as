@@ -18,7 +18,7 @@ public class SpellDropTimer extends SimObject
     protected function scheduleNextSpellDrop () :void
     {
         if (GameContext.isSinglePlayer && GameContext.spLevel.availableSpells.length == 0) {
-            this.destroySelf();
+            return;
         }
 
         if (GameContext.diurnalCycle.isNight) {
