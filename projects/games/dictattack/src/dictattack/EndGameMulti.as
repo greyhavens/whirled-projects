@@ -38,13 +38,10 @@ public class EndGameMulti extends Dialog
         view.removeChild(shotMarker);
         setText(view, "winner_name", _ctx.model.getPlayerName(widx, MAX_NAME_LENGTH));
         var winnerId :int = _ctx.control.game.seating.getPlayerIds()[widx];
-        _ctx.control.local.getHeadShot(winnerId, function (sprite :Sprite, success :Boolean) :void {
-            if (success) {
-                sprite.x = shotMarker.x - sprite.width/2;
-                sprite.y = shotMarker.y - sprite.height/2;
-                view.addChild(sprite);
-            }
-        });
+        var shot :DisplayObject = _ctx.control.local.getHeadShot(winnerId);
+        shot.x = shotMarker.x - shot.width/2;
+        shot.y = shotMarker.y - shot.height/2;
+        view.addChild(shot);
         setContent(view);
 
         if (_ctx.control.game.seating.getMyPosition() >= 0) {
