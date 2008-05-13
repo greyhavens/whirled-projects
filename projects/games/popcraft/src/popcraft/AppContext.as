@@ -15,33 +15,12 @@ import popcraft.sp.LevelManager;
 public class AppContext
 {
     public static var mainLoop :MainLoop;
-    public static var resources :ResourceManager = new ResourceManager();
     public static var gameCtrl :GameControl;
     public static var levelMgr :LevelManager = new LevelManager();
 
-    public static function playSound (soundName :String, parentControls :AudioControllerContainer = null) :void
-    {
-        Audio.play(getSound(soundName), parentControls);
-    }
-
-    public static function createSoundChannel (soundName :String, parentControls :AudioControllerContainer = null) :GameSoundChannel
-    {
-        return Audio.createChannel(getSound(soundName), parentControls);
-    }
-
-    public static function getSound (resourceName :String) :Sound
-    {
-        var soundLoader :SoundResourceLoader = resources.getResource(resourceName) as SoundResourceLoader;
-        if (null != soundLoader) {
-            return soundLoader.sound;
-        }
-
-        return null;
-    }
-
     public static function instantiateMovieClip (resourceName :String, className :String) :MovieClip
     {
-        var swf :SwfResourceLoader = resources.getResource(resourceName) as SwfResourceLoader;
+        var swf :SwfResourceLoader = ResourceManager.instance.getResource(resourceName) as SwfResourceLoader;
         if (null != swf) {
             var movieClass :Class = swf.getClass(className);
             if (null != movieClass) {
@@ -54,7 +33,7 @@ public class AppContext
 
     public static function instantiateBitmap (resourceName :String) :Bitmap
     {
-        var img :ImageResourceLoader = resources.getResource(resourceName) as ImageResourceLoader;
+        var img :ImageResourceLoader = ResourceManager.instance.getResource(resourceName) as ImageResourceLoader;
         if (null != img) {
             return img.createBitmap();
         }
@@ -64,7 +43,7 @@ public class AppContext
 
     public static function get defaultGameData () :GameData
     {
-        var dataRsrc :GameDataResourceLoader = resources.getResource("defaultGameData") as GameDataResourceLoader;
+        var dataRsrc :GameDataResourceLoader = ResourceManager.instance.getResource("defaultGameData") as GameDataResourceLoader;
         return dataRsrc.gameData;
     }
 }

@@ -8,73 +8,65 @@ public class LoadingMode extends AppMode
     override protected function setup () :void
     {
         // data
-        AppContext.resources.pendResourceLoad("gameData", "defaultGameData", { embeddedClass: DEFAULT_GAME_DATA });
+        ResourceManager.instance.pendResourceLoad("gameData", "defaultGameData", { embeddedClass: DEFAULT_GAME_DATA });
 
         // gfx
-        AppContext.resources.pendResourceLoad("image", "colossus_icon",  { embeddedClass: IMAGE_COLOSSUSICON });
-        AppContext.resources.pendResourceLoad("image", "courier_icon", { embeddedClass: IMAGE_COURIERICON });
+        ResourceManager.instance.pendResourceLoad("image", "colossus_icon",  { embeddedClass: IMAGE_COLOSSUSICON });
+        ResourceManager.instance.pendResourceLoad("image", "courier_icon", { embeddedClass: IMAGE_COURIERICON });
 
-        AppContext.resources.pendResourceLoad("image", "base",      { embeddedClass: IMAGE_BASE });
-        AppContext.resources.pendResourceLoad("image", "targetBaseBadge", { embeddedClass: IMAGE_TARGETBASEBADGE });
-        AppContext.resources.pendResourceLoad("image", "friendlyBaseBadge", { embeddedClass: IMAGE_FRIENDLYBASEBADGE });
-        AppContext.resources.pendResourceLoad("image", "sun", { embeddedClass: IMAGE_SUN });
-        AppContext.resources.pendResourceLoad("image", "moon", { embeddedClass: IMAGE_MOON });
-        AppContext.resources.pendResourceLoad("image", "battle_bg", { embeddedClass: IMAGE_BATTLE_BG });
-        AppContext.resources.pendResourceLoad("image", "battle_fg", { embeddedClass: IMAGE_BATTLE_FG });
-        AppContext.resources.pendResourceLoad("image", "bloodlust_icon", { embeddedClass: IMAGE_BLOODLUSTICON });
-        AppContext.resources.pendResourceLoad("image", "rigormortis_icon", { embeddedClass: IMAGE_RIGORMORTISICON });
+        ResourceManager.instance.pendResourceLoad("image", "base",      { embeddedClass: IMAGE_BASE });
+        ResourceManager.instance.pendResourceLoad("image", "targetBaseBadge", { embeddedClass: IMAGE_TARGETBASEBADGE });
+        ResourceManager.instance.pendResourceLoad("image", "friendlyBaseBadge", { embeddedClass: IMAGE_FRIENDLYBASEBADGE });
+        ResourceManager.instance.pendResourceLoad("image", "sun", { embeddedClass: IMAGE_SUN });
+        ResourceManager.instance.pendResourceLoad("image", "moon", { embeddedClass: IMAGE_MOON });
+        ResourceManager.instance.pendResourceLoad("image", "battle_bg", { embeddedClass: IMAGE_BATTLE_BG });
+        ResourceManager.instance.pendResourceLoad("image", "battle_fg", { embeddedClass: IMAGE_BATTLE_FG });
+        ResourceManager.instance.pendResourceLoad("image", "bloodlust_icon", { embeddedClass: IMAGE_BLOODLUSTICON });
+        ResourceManager.instance.pendResourceLoad("image", "rigormortis_icon", { embeddedClass: IMAGE_RIGORMORTISICON });
 
-        AppContext.resources.pendResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });
-        AppContext.resources.pendResourceLoad("swf", "sapper", { embeddedClass: SWF_SAPPER });
-        AppContext.resources.pendResourceLoad("swf", "heavy", { embeddedClass: SWF_HEAVY });
+        ResourceManager.instance.pendResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });
+        ResourceManager.instance.pendResourceLoad("swf", "sapper", { embeddedClass: SWF_SAPPER });
+        ResourceManager.instance.pendResourceLoad("swf", "heavy", { embeddedClass: SWF_HEAVY });
 
-        AppContext.resources.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: SWF_PUZZLEPIECES });
+        ResourceManager.instance.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: SWF_PUZZLEPIECES });
 
         // sfx
-        AppContext.resources.pendResourceLoad("sound", "sfx_create_grunt", { embeddedClass: SOUND_GRUNT });
-        AppContext.resources.pendResourceLoad("sound", "sfx_create_heavy", { embeddedClass: SOUND_HEAVY });
-        AppContext.resources.pendResourceLoad("sound", "sfx_create_sapper", { embeddedClass: SOUND_SAPPER });
-        AppContext.resources.pendResourceLoad("sound", "sfx_create_colossus", { embeddedClass: SOUND_COLOSSUS });
-        AppContext.resources.pendResourceLoad("sound", "sfx_create_courier", { embeddedClass: SOUND_COURIER });
-        AppContext.resources.pendResourceLoad("sound", "sfx_death_sapper", { embeddedClass: SOUND_EXPLOSION });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_create_grunt", { embeddedClass: SOUND_GRUNT });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_create_heavy", { embeddedClass: SOUND_HEAVY });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_create_sapper", { embeddedClass: SOUND_SAPPER });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_create_colossus", { embeddedClass: SOUND_COLOSSUS });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_create_courier", { embeddedClass: SOUND_COURIER });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_death_sapper", { embeddedClass: SOUND_EXPLOSION });
 
-        AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_white", { embeddedClass: SOUND_FLESH });
-        AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_red", { embeddedClass: SOUND_BLOOD });
-        AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_blue", { embeddedClass: SOUND_ENERGY });
-        AppContext.resources.pendResourceLoad("sound", "sfx_rsrc_yellow", { embeddedClass: SOUND_ARTIFICE });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_rsrc_white", { embeddedClass: SOUND_FLESH });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_rsrc_red", { embeddedClass: SOUND_BLOOD });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_rsrc_blue", { embeddedClass: SOUND_ENERGY });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_rsrc_yellow", { embeddedClass: SOUND_ARTIFICE });
 
-        AppContext.resources.pendResourceLoad("sound", "sfx_day", { embeddedClass: SOUND_ROOSTER });
-        AppContext.resources.pendResourceLoad("sound", "sfx_night", { embeddedClass: SOUND_WOLF });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_day", { embeddedClass: SOUND_ROOSTER });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_night", { embeddedClass: SOUND_WOLF });
 
-        AppContext.resources.pendResourceLoad("sound", "sfx_hit1", { embeddedClass: SOUND_HIT1 });
-        AppContext.resources.pendResourceLoad("sound", "sfx_hit2", { embeddedClass: SOUND_HIT2 });
-        AppContext.resources.pendResourceLoad("sound", "sfx_hit3", { embeddedClass: SOUND_HIT3 });
-        AppContext.resources.pendResourceLoad("sound", "sfx_basehit1", { embeddedClass: SOUND_BASEHIT1 });
-        AppContext.resources.pendResourceLoad("sound", "sfx_basehit2", { embeddedClass: SOUND_BASEHIT2 });
-        AppContext.resources.pendResourceLoad("sound", "sfx_basehit3", { embeddedClass: SOUND_BASEHIT3 });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_hit1", { embeddedClass: SOUND_HIT1 });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_hit2", { embeddedClass: SOUND_HIT2 });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_hit3", { embeddedClass: SOUND_HIT3 });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_basehit1", { embeddedClass: SOUND_BASEHIT1 });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_basehit2", { embeddedClass: SOUND_BASEHIT2 });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_basehit3", { embeddedClass: SOUND_BASEHIT3 });
 
-        AppContext.resources.pendResourceLoad("sound", "sfx_spelldrop", { embeddedClass: SOUND_SPELLDROP });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_spelldrop", { embeddedClass: SOUND_SPELLDROP });
 
-        // events
-        AppContext.resources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
-        AppContext.resources.addEventListener(ResourceLoadEvent.ERROR, handleResourceLoadErr);
-
-        AppContext.resources.load();
+        // load!
+        ResourceManager.instance.load(handleResourcesLoaded, handleResourceLoadErr);
     }
 
-    override protected function destroy () :void
-    {
-        AppContext.resources.removeEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
-    }
-
-    protected function handleResourcesLoaded (...ignored) :void
+    protected function handleResourcesLoaded () :void
     {
         MainLoop.instance.popMode();
     }
 
-    protected function handleResourceLoadErr (e :ResourceLoadEvent) :void
+    protected function handleResourceLoadErr (err :String) :void
     {
-        AppContext.mainLoop.unwindToMode(new ResourceLoadErrorMode(e.data as String));
+        AppContext.mainLoop.unwindToMode(new ResourceLoadErrorMode(err));
     }
 
     [Embed(source="../../levels/defaultGameData.xml", mimeType="application/octet-stream")]

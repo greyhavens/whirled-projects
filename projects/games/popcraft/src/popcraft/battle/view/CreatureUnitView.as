@@ -6,6 +6,7 @@ import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Bitmap;
@@ -40,7 +41,7 @@ public class CreatureUnitView extends SceneObject
             _hasAnimations = true;
         } else {
             // add the image, aligned by its foot position
-            var image :Bitmap = (AppContext.resources.getResource(_unit.unitData.name + "_icon") as ImageResourceLoader).createBitmap();
+            var image :Bitmap = (ResourceManager.instance.getResource(_unit.unitData.name + "_icon") as ImageResourceLoader).createBitmap();
             image.x = -(image.width * 0.5);
             image.y = -image.height;
             _sprite.addChild(image);
@@ -159,7 +160,7 @@ public class CreatureUnitView extends SceneObject
     {
         // play a sound
         var soundName :String = HIT_SOUND_NAMES[Rand.nextIntRange(0, HIT_SOUND_NAMES.length, Rand.STREAM_COSMETIC)];
-        AppContext.playSound(soundName);
+        AudioManager.instance.playSoundNamed(soundName);
     }
 
     protected function createAOEAttackAnimation (weapon :UnitWeaponData, loc :Vector2, duration :Number) :void
@@ -310,7 +311,7 @@ public class CreatureUnitView extends SceneObject
             // play a sound if the creature died during battle, and not
             // as a result of the night-day switch
             if (GameContext.diurnalCycle.isNight) {
-                AppContext.playSound("sfx_death_" + _unit.unitData.name);
+                AudioManager.instance.playSoundNamed("sfx_death_" + _unit.unitData.name);
             }
         } else {
 

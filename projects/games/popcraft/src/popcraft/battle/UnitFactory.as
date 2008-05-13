@@ -2,6 +2,8 @@ package popcraft.battle {
 
 import com.threerings.util.Assert;
 
+import com.whirled.contrib.simplegame.audio.*;
+
 import popcraft.*;
 import popcraft.battle.view.*;
 
@@ -55,7 +57,7 @@ public class UnitFactory
         GameContext.gameMode.addObject(creatureView, GameContext.battleBoardView.unitViewParent);
 
         // play a sound
-        AppContext.playSound("sfx_create_" + Constants.CREATURE_UNIT_NAMES[unitType]);
+        AudioManager.instance.playSoundNamed("sfx_create_" + Constants.CREATURE_UNIT_NAMES[unitType]);
 
         return creature;
     }

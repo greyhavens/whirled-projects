@@ -25,7 +25,7 @@ public class SpellCastButton extends Sprite
         _spellType = spellType;
 
         var spellData :SpellData = GameContext.gameData.spells[spellType];
-        var bitmapData :BitmapData = (AppContext.resources.getResource(spellData.iconName) as ImageResourceLoader).bitmapData;
+        var bitmapData :BitmapData = (ResourceManager.instance.getResource(spellData.iconName) as ImageResourceLoader).bitmapData;
 
         _button = new SimpleButton();_button.upState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP, 1.0);
         _button.overState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_OVER, 1.0);

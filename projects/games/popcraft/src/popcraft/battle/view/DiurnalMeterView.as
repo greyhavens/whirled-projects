@@ -2,6 +2,7 @@ package popcraft.battle.view {
 
 import com.whirled.contrib.simplegame.objects.RectMeter;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.audio.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -72,7 +73,7 @@ public class DiurnalMeterView extends SceneObject
         }
 
         if (playSound) {
-            AppContext.playSound(soundName);
+            AudioManager.instance.playSoundNamed(soundName);
         }
 
         _lastPhase = newPhase;

@@ -38,11 +38,11 @@ public class BattleBoardView extends SceneObject
         _darkness = new SimpleSceneObject(darknessShape);
         _darkness.alpha = 0;
 
-        var bg :Bitmap = (AppContext.resources.getResource("battle_bg") as ImageResourceLoader).createBitmap();
+        var bg :Bitmap = (ResourceManager.instance.getResource("battle_bg") as ImageResourceLoader).createBitmap();
         bg.scaleX = (_width / bg.width);
         bg.scaleY = (_height / bg.height);
 
-        var fg :Bitmap = (AppContext.resources.getResource("battle_fg") as ImageResourceLoader).createBitmap();
+        var fg :Bitmap = (ResourceManager.instance.getResource("battle_fg") as ImageResourceLoader).createBitmap();
         fg.scaleX = (_width / fg.width);
         fg.y = bg.height - fg.height; // fg is aligned to the bottom of the board
 

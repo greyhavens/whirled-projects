@@ -3,6 +3,7 @@ package popcraft.battle.view {
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Bitmap;
@@ -98,7 +99,7 @@ public class PlayerBaseUnitView extends SceneObject
     {
         // play a sound
         var soundName :String = HIT_SOUND_NAMES[Rand.nextIntRange(0, HIT_SOUND_NAMES.length, Rand.STREAM_COSMETIC)];
-        AppContext.playSound(soundName);
+        AudioManager.instance.playSoundNamed(soundName);
     }
 
     public function set targetEnemyBadgeVisible (val :Boolean) :void

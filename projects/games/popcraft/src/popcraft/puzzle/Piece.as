@@ -1,7 +1,7 @@
 package popcraft.puzzle {
 
 import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.SwfResourceLoader;
+import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
@@ -53,7 +53,7 @@ public class Piece extends SceneObject
         // load the piece classes if they aren't already loaded
         if (null == SWF_CLASSES) {
             SWF_CLASSES = [];
-            var swf :SwfResourceLoader = (AppContext.resources.getResource("puzzlePieces") as SwfResourceLoader);
+            var swf :SwfResourceLoader = (ResourceManager.instance.getResource("puzzlePieces") as SwfResourceLoader);
             for each (var className :String in SWF_CLASS_NAMES) {
                 SWF_CLASSES.push(swf.getClass(className));
             }

@@ -5,6 +5,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
+import com.whirled.contrib.simplegame.audio.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -141,7 +142,7 @@ public class PuzzleBoard extends SceneObject
             new FunctionTask(animatePieceDrops)));
 
         // play a sound
-        AppContext.playSound("sfx_rsrc_" + Constants.RESOURCE_NAMES[resourceType]);
+        AudioManager.instance.playSoundNamed("sfx_rsrc_" + Constants.RESOURCE_NAMES[resourceType]);
     }
 
     protected function animatePieceDrops () :void

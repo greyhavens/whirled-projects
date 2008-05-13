@@ -8,12 +8,6 @@ import popcraft.util.*;
 
 public class LevelManager
 {
-    public function LevelManager ()
-    {
-        _levelRsrcMgr.addEventListener(ResourceLoadEvent.LOADED, onResourcesLoaded);
-        _levelRsrcMgr.addEventListener(ResourceLoadEvent.ERROR, onResourceLoadErr);
-    }
-
     public function playLevel (forceReload :Boolean = false) :void
     {
         if (forceReload) {
@@ -29,11 +23,10 @@ public class LevelManager
                     { url: "levels/level" + String(_curLevelNum + 1) + ".xml" } :
                     { embeddedClass: LEVELS[_curLevelNum] });
 
-                _levelRsrcMgr.unload("level");
-                _levelRsrcMgr.pendResourceLoad("level", "level", loadParams);
+                ResourceManager.instance.unload("level");
+                ResourceManager.instance.pendResourceLoad("level", "level", loadParams);
+                ResourceManager.instance.load(onResourcesLoaded, onResourceLoadErr);
             }
-
-            _levelRsrcMgr.load();
         }
     }
 
@@ -62,16 +55,15 @@ public class LevelManager
         return LEVELS.length;
     }
 
-    protected function onResourcesLoaded (...ignored) :void
+    protected function onResourcesLoaded () :void
     {
-        _loadedLevel = (_levelRsrcMgr.getResource("level") as LevelResourceLoader).levelData;
-
+        _loadedLevel = (ResourceManager.instance.getResource("level") as LevelResourceLoader).levelData;
         this.startGame();
     }
 
-    protected function onResourceLoadErr (e :ResourceLoadEvent) :void
+    protected function onResourceLoadErr (err :String) :void
     {
-        AppContext.mainLoop.unwindToMode(new LevelLoadErrorMode(e.data as String));
+        AppContext.mainLoop.unwindToMode(new LevelLoadErrorMode(err));
     }
 
     protected function startGame () :void
@@ -87,7 +79,6 @@ public class LevelManager
         AppContext.mainLoop.unwindToMode(new GameMode());
     }
 
-    protected var _levelRsrcMgr :ResourceManager = new ResourceManager();
     protected var _curLevelNum :int = 0;
     protected var _loadedLevel :LevelData;
 

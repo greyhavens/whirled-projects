@@ -2,6 +2,8 @@ package popcraft.battle {
 
 import com.threerings.flash.Vector2;
 
+import com.whirled.contrib.simplegame.audio.*;
+
 import popcraft.*;
 import popcraft.battle.view.SpellDropView;
 
@@ -21,7 +23,7 @@ public class SpellDropFactory
         GameContext.gameMode.addObject(spellDropView, GameContext.battleBoardView.spellDropViewParent);
 
         if (playSound) {
-            AppContext.playSound("sfx_spelldrop");
+            AudioManager.instance.playSoundNamed("sfx_spelldrop");
         }
 
         return spellDrop;
