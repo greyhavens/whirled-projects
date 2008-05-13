@@ -63,6 +63,7 @@ public class MicrogamePlayer extends Sprite
         } else {
             // postpone the game beginning until loading has completed
             trace("pending game start until resources have completed loading");
+            _gameStartPendingResourceLoad = true;
         }
 
         return _currentGame;
