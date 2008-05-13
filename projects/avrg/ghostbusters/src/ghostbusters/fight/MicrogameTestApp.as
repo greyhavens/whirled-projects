@@ -30,13 +30,11 @@ public class MicrogameTestApp extends Sprite
 
         MainLoop.instance.setup();
 
-        _testResources = new ResourceManager();
-        _testResources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
-        _testResources.pendResourceLoad("swf", "testGhost", { embeddedClass: SWF_LANTERNGHOST });
-        _testResources.load();
+        ResourceManager.instance.pendResourceLoad("swf", "testGhost", { embeddedClass: SWF_LANTERNGHOST });
+        ResourceManager.instance.load(handleResourcesLoaded);
     }
 
-    protected function handleResourcesLoaded (...ignored) :void
+    protected function handleResourcesLoaded () :void
     {
         // bg
         this.graphics.beginFill(0xFFFFFF);
@@ -99,7 +97,7 @@ public class MicrogameTestApp extends Sprite
         // init player
         var context :MicrogameContext = new MicrogameContext();
 
-        var ghostSwf :SwfResourceLoader = _testResources.getResource("testGhost") as SwfResourceLoader;
+        var ghostSwf :SwfResourceLoader = ResourceManager.instance.getResource("testGhost") as SwfResourceLoader;
         context.ghostMovie = ghostSwf.displayRoot as MovieClip;
         _player = new MicrogamePlayer(context);
         this.addChild(_player);
@@ -188,7 +186,6 @@ public class MicrogameTestApp extends Sprite
     protected var _player :MicrogamePlayer;
     protected var _curWeaponTypeName :String;
     protected var _curWeaponDifficulty :int;
-    protected var _testResources :ResourceManager;
 
     protected static const WEAPON_TYPES :Array = [
         WeaponType.NAME_LANTERN,

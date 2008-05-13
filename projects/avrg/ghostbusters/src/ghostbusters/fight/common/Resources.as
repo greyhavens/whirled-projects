@@ -24,7 +24,7 @@ public class Resources
         g_instance = this;
     }
 
-    public function loadAll () :void
+    public function loadAll (completeCallback :Function, errorCallback :Function = null) :void
     {
         if (_loaded) {
             return;
@@ -35,31 +35,31 @@ public class Resources
         // for now, just naively load all resources we might need.
         // change this if it becomes too much of a burden.
 
-        _rsrcMgr.pendResourceLoad("swf", "intro.screen", { embeddedClass: SWF_INTROSCREEN });
-        _rsrcMgr.pendResourceLoad("swf", "outro.screen", { embeddedClass: SWF_OUTROSCREEN });
+        ResourceManager.instance.pendResourceLoad("swf", "intro.screen", { embeddedClass: SWF_INTROSCREEN });
+        ResourceManager.instance.pendResourceLoad("swf", "outro.screen", { embeddedClass: SWF_OUTROSCREEN });
 
-        _rsrcMgr.pendResourceLoad("swf", "lantern.heart", { embeddedClass: SWF_HEART });
+        ResourceManager.instance.pendResourceLoad("swf", "lantern.heart", { embeddedClass: SWF_HEART });
 
-        _rsrcMgr.pendResourceLoad("image", "ouija.planchette", { embeddedClass: IMAGE_PLANCHETTE });
-        _rsrcMgr.pendResourceLoad("swf", "ouija.board", { embeddedClass: SWF_BOARD });
-        _rsrcMgr.pendResourceLoad("swf", "ouija.timer", { embeddedClass: SWF_TIMER });
-        _rsrcMgr.pendResourceLoad("image", "ouija.pictoboard", { embeddedClass: IMAGE_PICTOBOARD });
+        ResourceManager.instance.pendResourceLoad("image", "ouija.planchette", { embeddedClass: IMAGE_PLANCHETTE });
+        ResourceManager.instance.pendResourceLoad("swf", "ouija.board", { embeddedClass: SWF_BOARD });
+        ResourceManager.instance.pendResourceLoad("swf", "ouija.timer", { embeddedClass: SWF_TIMER });
+        ResourceManager.instance.pendResourceLoad("image", "ouija.pictoboard", { embeddedClass: IMAGE_PICTOBOARD });
 
-        _rsrcMgr.pendResourceLoad("swf", "potions.board", { embeddedClass: SWF_HUEANDCRYBOARD });
+        ResourceManager.instance.pendResourceLoad("swf", "potions.board", { embeddedClass: SWF_HUEANDCRYBOARD });
 
-        _rsrcMgr.pendResourceLoad("swf", "spiritshell.board", { embeddedClass: SWF_SPIRITSHELL });
+        ResourceManager.instance.pendResourceLoad("swf", "spiritshell.board", { embeddedClass: SWF_SPIRITSHELL });
 
-        _rsrcMgr.load();
+        ResourceManager.instance.load(completeCallback, errorCallback);
     }
 
     public function getSwfLoader (name :String) :SwfResourceLoader
     {
-        return _rsrcMgr.getResource(name) as SwfResourceLoader;
+        return ResourceManager.instance.getResource(name) as SwfResourceLoader;
     }
 
     public function getImageLoader (name :String) :ImageResourceLoader
     {
-        return _rsrcMgr.getResource(name) as ImageResourceLoader;
+        return ResourceManager.instance.getResource(name) as ImageResourceLoader;
     }
 
     public function instantiateMovieClip (resourceName :String, className :String) :MovieClip
@@ -77,15 +77,9 @@ public class Resources
 
     public function get isLoading () :Boolean
     {
-        return _rsrcMgr.isLoading;
+        return ResourceManager.instance.isLoading;
     }
 
-    public function get resourceManager () :ResourceManager
-    {
-        return _rsrcMgr;
-    }
-
-    protected var _rsrcMgr :ResourceManager = new ResourceManager();
     protected var _loaded :Boolean;
 
     protected static var g_instance :Resources;

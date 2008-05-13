@@ -29,7 +29,7 @@ public class MicrogamePlayer extends Sprite
         new MainLoop(this);
         MainLoop.instance.run();
 
-        Resources.instance.loadAll();
+        Resources.instance.loadAll(resourcesLoaded);
     }
 
     public function get weaponType () :WeaponType
@@ -63,17 +63,16 @@ public class MicrogamePlayer extends Sprite
         } else {
             // postpone the game beginning until loading has completed
             trace("pending game start until resources have completed loading");
-
-            Resources.instance.resourceManager.addEventListener(ResourceLoadEvent.LOADED, beginPendingGame, false, 0, true);
         }
 
         return _currentGame;
     }
 
-    protected function beginPendingGame (e :ResourceLoadEvent) :void
+    protected function resourcesLoaded () :void
     {
-        Resources.instance.resourceManager.removeEventListener(ResourceLoadEvent.LOADED, beginPendingGame);
-        _currentGame.begin();
+        if (_gameStartPendingResourceLoad) {
+            _currentGame.begin();
+        }
     }
 
     public function get currentGame () :Microgame
@@ -108,6 +107,7 @@ public class MicrogamePlayer extends Sprite
     protected var _weaponType :WeaponType;
     protected var _running :Boolean;
     protected var _currentGame :MicrogameMode;
+    protected var _gameStartPendingResourceLoad :Boolean;
 
     protected static const GAME_DESCRIPTORS :Array = [
 
