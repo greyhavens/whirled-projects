@@ -646,6 +646,17 @@ public class GameMode extends AppMode
 
     public function castSpell (playerId :uint, spellType :uint) :void
     {
+        var localPlayerPurchasing :Boolean = playerId == GameContext.localPlayerId;
+
+        if (GameContext.diurnalCycle.isDay || (localPlayerPurchasing && !GameContext.localPlayerData.hasSpell(spellType))) {
+            return;
+        }
+
+        if (localPlayerPurchasing) {
+            // deduct the spell from the player's holdings
+            GameContext.localPlayerData.removeSpell(spellType);
+        }
+
         _messageMgr.sendMessage(new CastSpellMessage(playerId, spellType));
     }
 
