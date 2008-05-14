@@ -77,7 +77,7 @@ public class ResourceDisplay extends SceneObject
             var resource :ResourceData = GameContext.gameData.resources[i];
             label.text = getDisplayString(
                 resource.displayName,
-                GameContext.localPlayerData.getResourceAmount(i));
+                GameContext.localPlayerInfo.getResourceAmount(i));
         }
     }
 

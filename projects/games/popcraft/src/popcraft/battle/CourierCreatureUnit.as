@@ -25,7 +25,7 @@ public class CourierCreatureUnit extends CreatureUnit
     {
         super(Constants.UNIT_TYPE_COURIER, owningPlayerId);
 
-        _spawnLoc = _owningPlayerData.base.unitSpawnLoc;
+        _spawnLoc = _owningPlayerInfo.base.unitSpawnLoc;
 
         _courierAI = new CourierAI(this);
         _groupName = getGroupName(owningPlayerId);
@@ -42,10 +42,7 @@ public class CourierCreatureUnit extends CreatureUnit
     {
         Assert.isNotNull(_carriedSpell);
 
-        if (this.owningPlayerId == GameContext.localPlayerId) {
-            GameContext.localPlayerData.addSpell(_carriedSpell.type);
-        }
-
+        this.owningPlayerInfo.addSpell(_carriedSpell.type);
         _carriedSpell = null;
 
         // the courier is destroyed when he delivers the spell
@@ -183,7 +180,7 @@ class CourierAI extends AITaskTree
             log.info("retrieved spell");
             _unit.pickupSpell(data as SpellDropObject);
             // let's try to go home and deliver it
-            var base :PlayerBaseUnit = _unit.owningPlayerData.base;
+            var base :PlayerBaseUnit = _unit.owningPlayerInfo.base;
             if (null != base) {
                 this.addSubtask(new CourierMoveTask(_unit, base.unitLoc));
             }

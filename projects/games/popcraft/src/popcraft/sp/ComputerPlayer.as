@@ -12,10 +12,10 @@ public class ComputerPlayer extends SimObject
     public function ComputerPlayer (data :ComputerPlayerData, playerId :uint)
     {
         _data = data;
-        _playerData = GameContext.playerData[playerId];
+        _playerInfo = GameContext.playerInfo[playerId];
 
         // Computer players always target the local player
-        _playerData.targetedEnemyId = GameContext.localPlayerId;
+        _playerInfo.targetedEnemyId = GameContext.localPlayerId;
 
         _wavesPaused = true;
 
@@ -55,7 +55,7 @@ public class ComputerPlayer extends SimObject
 
     protected function sendNextWave () :void
     {
-        if (_playerData.isAlive && GameContext.diurnalCycle.isNight) {
+        if (_playerInfo.isAlive && GameContext.diurnalCycle.isNight) {
             for each (var unitType :uint in _nextWave.units) {
                 this.buildUnit(unitType);
             }
@@ -66,12 +66,12 @@ public class ComputerPlayer extends SimObject
 
     protected function buildUnit (unitType :uint) :void
     {
-        GameContext.gameMode.buildUnit(_playerData.playerId, unitType);
+        GameContext.gameMode.buildUnit(_playerInfo.playerId, unitType);
     }
 
     override protected function update (dt :Number) :void
     {
-        if (!_playerData.isAlive) {
+        if (!_playerInfo.isAlive) {
             this.destroySelf();
             return;
         }
@@ -108,7 +108,7 @@ public class ComputerPlayer extends SimObject
 
     protected function sendCouriersForSpellDrop () :void
     {
-        if (_playerData.isAlive && GameContext.diurnalCycle.isNight) {
+        if (_playerInfo.isAlive && GameContext.diurnalCycle.isNight) {
             var numCouriers :int = _curDay.spellDropCourierGroupSize.next() - this.numCouriersOnBoard;
             for (var i :int = 0; i < numCouriers; ++i) {
                 this.buildUnit(Constants.UNIT_TYPE_COURIER);
@@ -128,11 +128,11 @@ public class ComputerPlayer extends SimObject
 
     protected function get numCouriersOnBoard () :int
     {
-        return CourierCreatureUnit.getNumPlayerCouriersOnBoard(_playerData.playerId);
+        return CourierCreatureUnit.getNumPlayerCouriersOnBoard(_playerInfo.playerId);
     }
 
     protected var _data :ComputerPlayerData;
-    protected var _playerData :PlayerData;
+    protected var _playerInfo :PlayerInfo;
     protected var _curDay :DaySequenceData;
     protected var _nextWave :UnitWaveData;
     protected var _waveIndex :int;

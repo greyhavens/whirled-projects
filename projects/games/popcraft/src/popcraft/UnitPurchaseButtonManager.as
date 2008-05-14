@@ -51,7 +51,7 @@ public class UnitPurchaseButtonManager extends SimObject
     {
         var isNight :Boolean = GameContext.diurnalCycle.isNight;
         for each (var button :UnitPurchaseButton in _buttons) {
-            button.enabled = isNight && GameContext.localPlayerData.canPurchaseUnit(button.unitType);
+            button.enabled = isNight && GameContext.localPlayerInfo.canPurchaseCreature(button.unitType);
         }
     }
 

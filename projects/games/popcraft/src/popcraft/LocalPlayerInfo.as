@@ -1,6 +1,5 @@
 package popcraft {
 
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
 
 import popcraft.battle.*;
@@ -9,9 +8,9 @@ import popcraft.data.*;
 /**
  * Extends PlayerData to include data that's private to the local player.
  */
-public class LocalPlayerData extends PlayerData
+public class LocalPlayerInfo extends PlayerInfo
 {
-    public function LocalPlayerData (playerId :uint, teamId :uint)
+    public function LocalPlayerInfo (playerId :uint, teamId :uint)
     {
         super(playerId, teamId);
 
@@ -45,7 +44,7 @@ public class LocalPlayerData extends PlayerData
         this.setResourceAmount(resourceType, getResourceAmount(resourceType) + offset);
     }
 
-    public function canPurchaseUnit (unitType :uint) :Boolean
+    override public function canPurchaseCreature (unitType :uint) :Boolean
     {
         var unitData :UnitData = GameContext.gameData.units[unitType];
         var creatureCosts :Array = unitData.resourceCosts;
@@ -60,26 +59,37 @@ public class LocalPlayerData extends PlayerData
         return true;
     }
 
-    public function addSpell (spellType :uint) :void
+    override public function creaturePurchased (unitType :uint) :void
+    {
+        // remove purchase cost from holdings
+        var creatureCosts :Array = (GameContext.gameData.units[unitType] as UnitData).resourceCosts;
+        var n :int = creatureCosts.length;
+        for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
+            this.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
+        }
+    }
+
+    override public function addSpell (spellType :uint) :void
     {
         _spells[spellType] = this.getSpellCount(spellType) + 1;
     }
 
-    public function removeSpell (spellType :uint) :void
+    override public function spellCast (spellType :uint) :void
     {
+        // remove spell from holdings
         var spellCount :uint = this.getSpellCount(spellType);
         Assert.isTrue(spellCount > 0);
         _spells[spellType] = spellCount - 1;
     }
 
+    override public function canCastSpell (spellType :uint) :Boolean
+    {
+        return (this.getSpellCount(spellType) > 0);
+    }
+
     public function getSpellCount (spellType :uint) :uint
     {
         return _spells[spellType];
-    }
-
-    public function hasSpell (spellType :uint) :Boolean
-    {
-        return (this.getSpellCount(spellType) > 0);
     }
 
     protected var _resources :Array;

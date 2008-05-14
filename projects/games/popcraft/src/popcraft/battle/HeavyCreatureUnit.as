@@ -193,10 +193,10 @@ class HeavyAI extends AITaskTree
     protected function findDefenseLocation () :Vector2
     {
         // find a location between our base and the enemy base we're currently targeting
-        var playerData :PlayerData = _unit.owningPlayerData;
+        var playerInfo :PlayerInfo = _unit.owningPlayerInfo;
 
-        var ourBaseLoc :Vector2 = playerData.base.unitLoc;
-        var enemyBaseLoc :Vector2 = GameContext.playerData[playerData.targetedEnemyId].base.unitLoc;
+        var ourBaseLoc :Vector2 = playerInfo.base.unitLoc;
+        var enemyBaseLoc :Vector2 = GameContext.playerInfo[playerInfo.targetedEnemyId].base.unitLoc;
 
         var target :Vector2 = enemyBaseLoc.subtract(ourBaseLoc);
 

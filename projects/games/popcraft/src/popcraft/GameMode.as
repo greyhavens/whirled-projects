@@ -109,59 +109,59 @@ public class GameMode extends AppMode
         // we want to know when a player leaves
         AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, handleOccupantLeft);
 
-        // create PlayerData structures
-        GameContext.playerData = [];
+        // create PlayerInfo structures
+        GameContext.playerInfo = [];
         for (var playerId :uint = 0; playerId < numPlayers; ++playerId) {
 
-            var playerData :PlayerData;
+            var playerInfo :PlayerInfo;
 
             var teamId :uint = playerId; // @TODO - add support for team-based MP games?
 
             if (GameContext.localPlayerId == playerId) {
-                var localPlayerData :LocalPlayerData = new LocalPlayerData(playerId, teamId);
-                playerData = localPlayerData;
+                var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, teamId);
+                playerInfo = localPlayerInfo;
             } else {
-                playerData = new PlayerData(playerId, teamId);
+                playerInfo = new PlayerInfo(playerId, teamId);
             }
 
-            GameContext.playerData.push(playerData);
+            GameContext.playerInfo.push(playerInfo);
         }
 
         // setup target enemies
-        for each (playerData in GameContext.playerData) {
-            playerData.targetedEnemyId = GameContext.findEnemyForPlayer(playerData.playerId).playerId;
+        for each (playerInfo in GameContext.playerInfo) {
+            playerInfo.targetedEnemyId = GameContext.findEnemyForPlayer(playerInfo.playerId).playerId;
         }
     }
 
     protected function setupPlayersSP () :void
     {
-        GameContext.playerData = [];
+        GameContext.playerInfo = [];
 
         // Create the local player (always on team 0)
-        var localPlayerData :LocalPlayerData = new LocalPlayerData(playerId, 0);
+        var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, 0);
 
         // grant the player some starting resources
         var initialResources :Array = GameContext.spLevel.initialResources;
         for (var resType :uint = 0; resType < initialResources.length; ++resType) {
-            localPlayerData.setResourceAmount(resType, int(initialResources[resType]));
+            localPlayerInfo.setResourceAmount(resType, int(initialResources[resType]));
         }
 
-        GameContext.playerData.push(localPlayerData);
+        GameContext.playerInfo.push(localPlayerInfo);
 
         // create computer players
         var numComputers :uint = GameContext.spLevel.computers.length;
         for (var playerId :uint = 1; playerId < numComputers + 1; ++playerId) {
             var cpData :ComputerPlayerData = GameContext.spLevel.computers[playerId - 1];
-            var playerData :PlayerData = new PlayerData(playerId, cpData.team);
-            GameContext.playerData.push(playerData);
+            var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(playerId, cpData.team);
+            GameContext.playerInfo.push(computerPlayerInfo);
 
             // create the computer player object
             GameContext.netObjects.addObject(new ComputerPlayer(cpData, playerId));
         }
 
         // setup target enemies
-        for each (playerData in GameContext.playerData) {
-            playerData.targetedEnemyId = GameContext.findEnemyForPlayer(playerData.playerId).playerId;
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfo) {
+            playerInfo.targetedEnemyId = GameContext.findEnemyForPlayer(playerInfo.playerId).playerId;
         }
     }
 
@@ -176,13 +176,13 @@ public class GameMode extends AppMode
     {
         if (e.player) {
             // did a player leave?
-            var playerData :PlayerData = ArrayUtil.findIf(GameContext.playerData,
-                function (data :PlayerData) :Boolean {
+            var playerInfo :PlayerInfo = ArrayUtil.findIf(GameContext.playerInfo,
+                function (data :PlayerInfo) :Boolean {
                     return data.whirledId == e.occupantId;
                 });
 
-            if (null != playerData) {
-                playerData.leftGame = true;
+            if (null != playerInfo) {
+                playerInfo.leftGame = true;
             }
         }
     }
@@ -280,8 +280,8 @@ public class GameMode extends AppMode
             base.x = baseLoc.x;
             base.y = baseLoc.y;
 
-            var playerData :PlayerData = GameContext.playerData[playerId];
-            playerData.base = base;
+            var playerInfo :PlayerInfo = GameContext.playerInfo[playerId];
+            playerInfo.base = base;
         }
 
         if (GameContext.localUserIsPlaying) {
@@ -308,7 +308,7 @@ public class GameMode extends AppMode
         case KeyboardCodes.NUMBER_4:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 for (var i :uint = 0; i < Constants.RESOURCE__LIMIT; ++i) {
-                    GameContext.localPlayerData.offsetResourceAmount(i, 500);
+                    GameContext.localPlayerInfo.offsetResourceAmount(i, 500);
                 }
             }
             break;
@@ -397,15 +397,15 @@ public class GameMode extends AppMode
 
         // The game is over if there's only one team standing
         var liveTeams :HashSet = new HashSet();
-        var livePlayer :PlayerData;
+        var livePlayer :PlayerInfo;
         var livePlayerCount :int;
 
-        for each (var playerData :PlayerData in GameContext.playerData) {
-            if (!playerData.leftGame && playerData.isAlive) {
-                livePlayer = playerData;
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfo) {
+            if (!playerInfo.leftGame && playerInfo.isAlive) {
+                livePlayer = playerInfo;
                 livePlayerCount++;
 
-                liveTeams.add(playerData.teamId);
+                liveTeams.add(playerInfo.teamId);
                 if (liveTeams.size() > 1) {
                     break;
                 }
@@ -538,8 +538,8 @@ public class GameMode extends AppMode
 
     protected function setTargetEnemy (playerId :uint, targetEnemyId :uint) :void
     {
-        var playerData :PlayerData = GameContext.playerData[playerId];
-        playerData.targetedEnemyId = targetEnemyId;
+        var playerInfo :PlayerInfo = GameContext.playerInfo[playerId];
+        playerInfo.targetedEnemyId = targetEnemyId;
 
         if (playerId == GameContext.localPlayerId) {
             this.updateTargetEnemyBadgeLocation(targetEnemyId);
@@ -559,11 +559,11 @@ public class GameMode extends AppMode
     {
         // add click listeners to all the enemy bases.
         // when an enemy base is clicked, that player becomes the new "target enemy" for the local player.
-        var localPlayerData :PlayerData = GameContext.localPlayerData;
+        var localPlayerData :PlayerInfo = GameContext.localPlayerInfo;
         var baseViews :Array = PlayerBaseUnitView.getAll();
         for each (var baseView :PlayerBaseUnitView in baseViews) {
             var owningPlayerId :uint = baseView.baseUnit.owningPlayerId;
-            var owningPlayerData :PlayerData = GameContext.playerData[owningPlayerId];
+            var owningPlayerData :PlayerInfo = GameContext.playerInfo[owningPlayerId];
             baseView.targetEnemyBadgeVisible = (owningPlayerId == localPlayerData.targetedEnemyId);
             baseView.friendlyBadgeVisible = (owningPlayerId == GameContext.localPlayerId);
 
@@ -582,7 +582,7 @@ public class GameMode extends AppMode
     protected function enemyBaseViewClicked (enemyBaseView :PlayerBaseUnitView) :void
     {
         // when the player clicks on an enemy base, that enemy becomes the player's target
-        var localPlayerData :PlayerData = GameContext.localPlayerData;
+        var localPlayerData :PlayerInfo = GameContext.localPlayerInfo;
         var newTargetEnemyId :uint = enemyBaseView.baseUnit.owningPlayerId;
 
         Assert.isTrue(newTargetEnemyId != GameContext.localPlayerId);
@@ -625,38 +625,25 @@ public class GameMode extends AppMode
 
     public function buildUnit (playerId :uint, unitType :uint) :void
     {
-        var localPlayerPurchasing :Boolean = playerId == GameContext.localPlayerId;
+        var playerInfo :PlayerInfo = GameContext.playerInfo[playerId];
 
-        if (GameContext.diurnalCycle.isDay || (localPlayerPurchasing && !GameContext.localPlayerData.canPurchaseUnit(unitType))) {
+        if (GameContext.diurnalCycle.isDay || !playerInfo.canPurchaseCreature(unitType)) {
             return;
         }
 
-        if (localPlayerPurchasing) {
-            // deduct the cost of the unit from the player's holdings
-            var creatureCosts :Array = (GameContext.gameData.units[unitType] as UnitData).resourceCosts;
-            var n :int = creatureCosts.length;
-            for (var resourceType:uint = 0; resourceType < n; ++resourceType) {
-                GameContext.localPlayerData.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
-            }
-        }
-
-        // send a message!
+        playerInfo.creaturePurchased(unitType);
         _messageMgr.sendMessage(new CreateUnitMessage(playerId, unitType));
     }
 
     public function castSpell (playerId :uint, spellType :uint) :void
     {
-        var localPlayerPurchasing :Boolean = playerId == GameContext.localPlayerId;
+        var playerInfo :PlayerInfo = GameContext.playerInfo[playerId];
 
-        if (GameContext.diurnalCycle.isDay || (localPlayerPurchasing && !GameContext.localPlayerData.hasSpell(spellType))) {
+        if (GameContext.diurnalCycle.isDay || !playerInfo.canCastSpell(spellType)) {
             return;
         }
 
-        if (localPlayerPurchasing) {
-            // deduct the spell from the player's holdings
-            GameContext.localPlayerData.removeSpell(spellType);
-        }
-
+        playerInfo.spellCast(spellType);
         _messageMgr.sendMessage(new CastSpellMessage(playerId, spellType));
     }
 

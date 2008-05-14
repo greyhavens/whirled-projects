@@ -7,9 +7,9 @@ import popcraft.battle.PlayerBaseUnit;
 /**
  * Encapsulates public information about a player in the game.
  */
-public class PlayerData
+public class PlayerInfo
 {
-    public function PlayerData (playerId :uint, teamId :uint)
+    public function PlayerInfo (playerId :uint, teamId :uint)
     {
         _playerId = playerId;
         _teamId = teamId;
@@ -89,6 +89,31 @@ public class PlayerData
     public function set targetedEnemyId (val :uint) :void
     {
         _targetedEnemyId = val;
+    }
+
+    public function canPurchaseCreature (unitType :uint) :Boolean
+    {
+        return true;
+    }
+
+    public function creaturePurchased (unitType :uint) :void
+    {
+        // no-op
+    }
+
+    public function canCastSpell (spellType :uint) :Boolean
+    {
+        return true;
+    }
+
+    public function addSpell (spellType :uint) :void
+    {
+        // no-op
+    }
+
+    public function spellCast (spellType :uint) :void
+    {
+        // no-op
     }
 
     protected var _playerId :uint;  // an unsigned integer corresponding to the player's seating position

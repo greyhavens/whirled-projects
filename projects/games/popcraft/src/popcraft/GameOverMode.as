@@ -8,7 +8,7 @@ import flash.text.TextFieldAutoSize;
 
 public class GameOverMode extends AppMode
 {
-    public function GameOverMode (winningPlayer :PlayerData)
+    public function GameOverMode (winningPlayer :PlayerInfo)
     {
         _winningPlayer = winningPlayer;
     }
@@ -45,7 +45,7 @@ public class GameOverMode extends AppMode
         this.modeSprite.addChild(text);
     }
 
-    protected var _winningPlayer :PlayerData;
+    protected var _winningPlayer :PlayerInfo;
 
 }
 

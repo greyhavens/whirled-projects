@@ -31,7 +31,7 @@ public class Unit extends SimObject
     public function Unit (unitType :uint, owningPlayerId :uint)
     {
         _unitType = unitType;
-        _owningPlayerData = GameContext.playerData[owningPlayerId];
+        _owningPlayerInfo = GameContext.playerInfo[owningPlayerId];
 
         _unitData = GameContext.gameData.units[unitType];
         _maxHealth = _unitData.maxHealth;
@@ -217,17 +217,17 @@ public class Unit extends SimObject
 
     public function isEnemyUnit (unit :Unit) :Boolean
     {
-        return (this.owningPlayerData.teamId != unit.owningPlayerData.teamId);
+        return (this.owningPlayerInfo.teamId != unit.owningPlayerInfo.teamId);
     }
 
-    public function get owningPlayerData () :PlayerData
+    public function get owningPlayerInfo () :PlayerInfo
     {
-        return _owningPlayerData;
+        return _owningPlayerInfo;
     }
 
     public function get owningPlayerId () :uint
     {
-        return _owningPlayerData.playerId;
+        return _owningPlayerInfo.playerId;
     }
 
     public function get unitType () :uint
@@ -280,7 +280,7 @@ public class Unit extends SimObject
         _speedScale = val;
     }
 
-    protected var _owningPlayerData :PlayerData;
+    protected var _owningPlayerInfo :PlayerInfo;
     protected var _unitType :uint;
     protected var _unitData :UnitData;
     protected var _maxHealth :Number;

@@ -21,7 +21,7 @@ public class CreatureUnit extends Unit
         super(unitType, owningPlayerId);
 
         // start at our owning player's base's spawn loc
-        var spawnLoc :Vector2 = _owningPlayerData.base.unitSpawnLoc;
+        var spawnLoc :Vector2 = _owningPlayerInfo.base.unitSpawnLoc;
 
         // @TODO - move this out of here
         this.x = spawnLoc.x;
@@ -162,11 +162,11 @@ public class CreatureUnit extends Unit
     // returns an enemy base
     public function getEnemyBaseRef () :SimObjectRef
     {
-        var enemyPlayerData :PlayerData = GameContext.playerData[_owningPlayerData.targetedEnemyId];
-        if (enemyPlayerData.isAlive) {
-            return enemyPlayerData.baseRef;
+        var enemyPlayerInfo :PlayerInfo = GameContext.playerInfo[_owningPlayerInfo.targetedEnemyId];
+        if (enemyPlayerInfo.isAlive) {
+            return enemyPlayerInfo.baseRef;
         } else {
-            var newEnemy :PlayerData = GameContext.findEnemyForPlayer(_owningPlayerData.playerId);
+            var newEnemy :PlayerInfo = GameContext.findEnemyForPlayer(_owningPlayerInfo.playerId);
             if (null != newEnemy) {
                 return newEnemy.baseRef;
             }

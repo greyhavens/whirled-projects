@@ -36,8 +36,8 @@ public class SpellDropTimer extends SimObject
         if (GameContext.numPlayers == 2) {
             // in a two-player game, pick a location somewhere along the line
             // that runs perpendicular to the line that connects the two bases
-            var base1 :PlayerBaseUnit = PlayerData(GameContext.playerData[0]).base;
-            var base2 :PlayerBaseUnit = PlayerData(GameContext.playerData[1]).base;
+            var base1 :PlayerBaseUnit = PlayerInfo(GameContext.playerInfo[0]).base;
+            var base2 :PlayerBaseUnit = PlayerInfo(GameContext.playerInfo[1]).base;
             if (null != base1 && null != base2) {
                 var baseLoc1 :Vector2 = base1.unitLoc;
                 var baseLoc2 :Vector2 = base2.unitLoc;
@@ -55,8 +55,8 @@ public class SpellDropTimer extends SimObject
             // (average all player base locations together)
             var numBases :int;
             var centerLoc :Vector2 = new Vector2();
-            for each (var playerData :PlayerData in GameContext.playerData) {
-                var playerBase :PlayerBaseUnit = playerData.base;
+            for each (var playerInfo :PlayerInfo in GameContext.playerInfo) {
+                var playerBase :PlayerBaseUnit = playerInfo.base;
                 if (null != playerBase) {
                     centerLoc.addLocal(playerBase.unitLoc);
                     ++numBases;
