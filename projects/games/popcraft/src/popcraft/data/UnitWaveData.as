@@ -6,6 +6,7 @@ import popcraft.util.*;
 public class UnitWaveData
 {
     public var delayBefore :Number = 0;
+    public var spellCastChance :Number = 0;
     public var units :Array = [];
 
     public static function fromXml (xmlData :XML, totalDelay :Number) :UnitWaveData
@@ -18,6 +19,8 @@ public class UnitWaveData
         } else {
             unitWave.delayBefore = XmlReader.getAttributeAsNumber(xmlData, "delayBefore");
         }
+
+        unitWave.spellCastChance = XmlReader.getAttributeAsNumber(xmlData, "spellCastChance", 0);
 
         for each (var unitNode :XML in xmlData.Unit) {
             var unitType :uint = XmlReader.getAttributeAsEnum(unitNode, "type", Constants.CREATURE_UNIT_NAMES);

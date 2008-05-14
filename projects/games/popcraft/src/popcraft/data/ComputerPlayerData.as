@@ -1,5 +1,6 @@
 package popcraft.data {
 
+import popcraft.*;
 import popcraft.util.*;
 
 public class ComputerPlayerData
@@ -8,6 +9,7 @@ public class ComputerPlayerData
     public var team :uint;
     public var initialDays :Array = [];
     public var repeatingDays :Array = [];
+    public var startingSpells :Array = [];
 
     public static function fromXml (xmlData :XML) :ComputerPlayerData
     {
@@ -22,6 +24,16 @@ public class ComputerPlayerData
 
         for each (var repeatingDayData :XML in xmlData.RepeatingDays.Day) {
             computerPlayer.repeatingDays.push(DaySequenceData.fromXml(repeatingDayData));
+        }
+
+        for (var spellType :uint = 0; spellType < Constants.SPELL_NAMES.length; ++spellType) {
+            computerPlayer.startingSpells.push(spellType);
+        }
+
+        for each (var spellData :XML in xmlData.StartingSpells.Spell) {
+            spellType = XmlReader.getAttributeAsEnum(spellData, "type", Constants.SPELL_NAMES);
+            var count :int = XmlReader.getAttributeAsUint(spellData, "count");
+            computerPlayer.startingSpells[spellType] = count;
         }
 
         return computerPlayer;

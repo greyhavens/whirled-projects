@@ -39,6 +39,12 @@ public class ComputerPlayerInfo extends PlayerInfo
         return _spells[spellType];
     }
 
+    public function setSpellCounts (spellCounts :Array) :void
+    {
+        Assert.isTrue(spellCounts.length == Constants.SPELL_NAMES.length);
+        _spells = spellCounts.slice();
+    }
+
     protected var _spells :Array;
 
 }

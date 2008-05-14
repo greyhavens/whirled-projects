@@ -2,6 +2,7 @@ package popcraft.sp {
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.util.Rand;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -12,7 +13,10 @@ public class ComputerPlayer extends SimObject
     public function ComputerPlayer (data :ComputerPlayerData, playerId :uint)
     {
         _data = data;
-        _playerInfo = GameContext.playerInfo[playerId];
+        _playerInfo = GameContext.playerInfo[playerId] as ComputerPlayerInfo;
+
+        // add starting spells to our playerInfo
+        _playerInfo.setSpellCounts(data.startingSpells);
 
         // Computer players always target the local player
         _playerInfo.targetedEnemyId = GameContext.localPlayerId;
@@ -56,6 +60,23 @@ public class ComputerPlayer extends SimObject
     protected function sendNextWave () :void
     {
         if (_playerInfo.isAlive && GameContext.diurnalCycle.isNight) {
+
+            // before each wave goes out, there's a chance that the computer
+            // player will cast a spell (if it has one available)
+            if (Rand.nextNumberRange(0, 1, Rand.STREAM_GAME) < _nextWave.spellCastChance) {
+                var availableSpells :Array = [];
+                for (var spellType :uint = 0; spellType < Constants.SPELL_NAMES.length; ++spellType) {
+                    if (_playerInfo.canCastSpell(spellType)) {
+                        availableSpells.push(spellType);
+                    }
+                }
+
+                if (availableSpells.length > 0) {
+                    spellType = availableSpells[Rand.nextIntRange(0, availableSpells.length, Rand.STREAM_GAME)];
+                    GameContext.gameMode.castSpell(_playerInfo.playerId, spellType);
+                }
+            }
+
             for each (var unitType :uint in _nextWave.units) {
                 this.buildUnit(unitType);
             }
@@ -132,7 +153,7 @@ public class ComputerPlayer extends SimObject
     }
 
     protected var _data :ComputerPlayerData;
-    protected var _playerInfo :PlayerInfo;
+    protected var _playerInfo :ComputerPlayerInfo;
     protected var _curDay :DaySequenceData;
     protected var _nextWave :UnitWaveData;
     protected var _waveIndex :int;
