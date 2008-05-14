@@ -559,15 +559,15 @@ public class GameMode extends AppMode
     {
         // add click listeners to all the enemy bases.
         // when an enemy base is clicked, that player becomes the new "target enemy" for the local player.
-        var localPlayerData :PlayerInfo = GameContext.localPlayerInfo;
+        var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
         var baseViews :Array = PlayerBaseUnitView.getAll();
         for each (var baseView :PlayerBaseUnitView in baseViews) {
             var owningPlayerId :uint = baseView.baseUnit.owningPlayerId;
-            var owningPlayerData :PlayerInfo = GameContext.playerInfo[owningPlayerId];
-            baseView.targetEnemyBadgeVisible = (owningPlayerId == localPlayerData.targetedEnemyId);
+            var owningPlayerInfo :PlayerInfo = GameContext.playerInfo[owningPlayerId];
+            baseView.targetEnemyBadgeVisible = (owningPlayerId == localPlayerInfo.targetedEnemyId);
             baseView.friendlyBadgeVisible = (owningPlayerId == GameContext.localPlayerId);
 
-            if (localPlayerData.teamId != owningPlayerData.teamId) {
+            if (localPlayerInfo.teamId != owningPlayerInfo.teamId) {
                 (baseView.displayObject as InteractiveObject).addEventListener(
                     MouseEvent.MOUSE_DOWN, this.createBaseViewClickListener(baseView));
             }
@@ -582,12 +582,12 @@ public class GameMode extends AppMode
     protected function enemyBaseViewClicked (enemyBaseView :PlayerBaseUnitView) :void
     {
         // when the player clicks on an enemy base, that enemy becomes the player's target
-        var localPlayerData :PlayerInfo = GameContext.localPlayerInfo;
+        var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
         var newTargetEnemyId :uint = enemyBaseView.baseUnit.owningPlayerId;
 
         Assert.isTrue(newTargetEnemyId != GameContext.localPlayerId);
 
-        if (newTargetEnemyId != localPlayerData.targetedEnemyId) {
+        if (newTargetEnemyId != localPlayerInfo.targetedEnemyId) {
             // update the "target enemy badge" location immediately, even though
             // the change won't be reflected in the game logic until the message round-trips
             this.updateTargetEnemyBadgeLocation(newTargetEnemyId);

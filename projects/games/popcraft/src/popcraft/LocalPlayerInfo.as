@@ -6,7 +6,7 @@ import popcraft.battle.*;
 import popcraft.data.*;
 
 /**
- * Extends PlayerData to include data that's private to the local player.
+ * Extends PlayerInfo to include data that's private to the local player.
  */
 public class LocalPlayerInfo extends PlayerInfo
 {
