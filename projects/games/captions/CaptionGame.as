@@ -756,7 +756,8 @@ public class CaptionGame extends EventDispatcher
             }
 //            trace("ids    : " + scoreIds);
 //            trace("scores : " + scores);
-            _ctrl.game.endGameWithScores(scoreIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
+            // TODO: we're passing constant '3' to indicate proportional payout
+            _ctrl.game.endGameWithScores(scoreIds, scores, 3); // GameSubControl.TO_EACH_THEIR_OWN);
             _ctrl.game.restartGameIn(0);
         }
     }

@@ -484,7 +484,7 @@ public class LOL extends Sprite
     {
         var pageUrl :String = _game.getPhotoPage();
         if (pageUrl != null) {
-            NetUtil.navigateToURL(pageUrl, false);
+            NetUtil.navigateToURL(pageUrl, null);
         }
     }
 
