@@ -28,6 +28,8 @@ public class GameMode extends AppMode
 {
     override protected function setup () :void
     {
+        //log.info(GameContext.gameData.generateUnitReport());
+
         // create some layers
         _battleParent = new Sprite();
         this.modeSprite.addChild(_battleParent);

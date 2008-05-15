@@ -1,0 +1,71 @@
+<root>
+    <Level
+        name="Abomination"
+        introText="Your opponent "
+        disableDiurnalCycle="false"
+        playerBaseHealth="100">
+
+        <GameDataOverride>
+            <BaseLocations>
+                <GameSize numPlayers="2">
+                    <BaseLocation x="60" y="185"/>
+                    <BaseLocation x="642" y="175"/>
+                </GameSize>
+            </BaseLocations>
+        </GameDataOverride>
+
+        <InitialResources/>
+
+        <AvailableUnits>
+            <Unit type="grunt"/>
+            <Unit type="heavy"/>
+            <Unit type="sapper"/>
+            <Unit type="courier"/>
+        </AvailableUnits>
+
+        <AvailableSpells>
+            <Spell type="rigormortis"/>
+        </AvailableSpells>
+
+        <Computer
+            baseHealth="100"
+            team="1">
+            <StartingSpells/>
+            <InitialDays>
+                <Day repeatWaves="false"
+                    noticeSpellDropAfterMin="7"
+                    noticeSpellDropAfterMax="7"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="2">
+
+                    <Wave absoluteDelay="1"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="2"><Unit type="heavy" count="4"/></Wave>
+                    <Wave absoluteDelay="20"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="40"><Unit type="heavy" count="2"/></Wave>
+                    <Wave absoluteDelay="350"><Unit type="colossus" count="1"/></Wave>
+                </Day>
+            </InitialDays>
+            <RepeatingDays>
+                <Day repeatWaves="false"
+                    noticeSpellDropAfterMin="7"
+                    noticeSpellDropAfterMax="7"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="2">
+
+                    <Wave absoluteDelay="2"><Unit type="heavy" count="4"/></Wave>
+                    <Wave absoluteDelay="20" spellCastChance="1"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="45" spellCastChance="1"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="46"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="70" spellCastChance="1"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="75"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="76"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="95" spellCastChance="1"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="105"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="106"><Unit type="grunt" count="2"/></Wave>
+                </Day>
+            </RepeatingDays>
+        </Computer>
+
+    </Level>
+
+</root>

@@ -3,8 +3,8 @@
         dayLength="30"
         nightLength="120"
         initialDayPhase="day"
-        spellDropTimeMin="60"
-        spellDropTimeMax="80"
+        spellDropTimeMin="40"
+        spellDropTimeMax="60"
         spellDropScatterMin="0"
         spellDropScatterMax="20"
         spellDropCenterOffsetMin="60"
@@ -50,6 +50,7 @@
                     <Damage type="crushing"     scale="0.7"/>
                     <Damage type="piercing"     scale="0.3"/>
                     <Damage type="explosion"    scale="1"/>
+                    <Damage type="colossus"     scale="0.7"/>
                     <Damage type="base"         scale="0.8"/>
                 </Armor>
             </Unit>
@@ -73,6 +74,7 @@
                     <Damage type="crushing"     scale="1"/>
                     <Damage type="piercing"     scale="1"/>
                     <Damage type="explosion"    scale="1"/>
+                    <Damage type="colossus"     scale="1"/>
                     <Damage type="base"         scale="1"/>
                 </Armor>
             </Unit>
@@ -96,6 +98,7 @@
                     <Damage type="crushing"     scale="1"/>
                     <Damage type="piercing"     scale="1"/>
                     <Damage type="explosion"    scale="1"/>
+                    <Damage type="colossus"     scale="1"/>
                     <Damage type="base"         scale="1"/>
                 </Armor>
             </Unit>
@@ -119,6 +122,7 @@
                     <Damage type="crushing"     scale="0.1"/>
                     <Damage type="piercing"     scale="0.07"/>
                     <Damage type="explosion"    scale="0.1"/>
+                    <Damage type="colossus"     scale="0.1"/>
                     <Damage type="base"         scale="1"/>
                 </Armor>
             </Unit>
@@ -142,6 +146,7 @@
                     <Damage type="crushing"     scale="1"/>
                     <Damage type="piercing"     scale="1"/>
                     <Damage type="explosion"    scale="1"/>
+                    <Damage type="colossus"     scale="1"/>
                     <Damage type="base"         scale="1"/>
                 </Armor>
             </Unit>
@@ -157,6 +162,7 @@
                     <Damage type="crushing"     scale="0.05"/>
                     <Damage type="piercing"     scale="0.1"/>
                     <Damage type="explosion"    scale="0.1"/>
+                    <Damage type="colossus"     scale="0.025"/>
                     <Damage type="base"         scale="1"/>
                 </Armor>
             </Unit>

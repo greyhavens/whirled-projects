@@ -1,7 +1,7 @@
 <root>
     <Level
         name="A Boy's Best Friend"
-        introText="Dog-Boy intro level"
+        introText="Use the Dog-Boy's explosive attack to destroy the Street-Walkers your opponent is sending your way. A few Dog-Boys can take out large groups of enemies."
         disableDiurnalCycle="false"
         playerBaseHealth="100">
 

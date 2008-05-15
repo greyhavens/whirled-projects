@@ -13,7 +13,7 @@ import popcraft.util.*;
 public class Constants
 {
     public static const SCREEN_DIMS :Vector2 = new Vector2(700, 500);
-    public static const SOUND_MASTER_VOLUME :Number = 0;
+    public static const SOUND_MASTER_VOLUME :Number = 0.5;
 
     /* Debug options */
     public static const DEBUG_DRAW_STATS :Boolean = true;
@@ -68,9 +68,10 @@ public class Constants
     public static const DAMAGE_TYPE_CRUSHING :uint = 0;
     public static const DAMAGE_TYPE_PIERCING :uint = 1;
     public static const DAMAGE_TYPE_EXPLOSION :uint = 2;
-    public static const DAMAGE_TYPE_BASE :uint = 3; // bases damage units that attack them
+    public static const DAMAGE_TYPE_COLOSSUS :uint = 3;
+    public static const DAMAGE_TYPE_BASE :uint = 4; // bases damage units that attack them
 
-    public static const DAMAGE_TYPE_NAMES :Array = [ "crushing", "piercing", "explosion", "base" ];
+    public static const DAMAGE_TYPE_NAMES :Array = [ "crushing", "piercing", "explosion", "colossus", "base" ];
 
     /* Resource types */
     public static const RESOURCE_WHITE :uint = 0;

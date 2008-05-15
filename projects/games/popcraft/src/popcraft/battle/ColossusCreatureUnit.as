@@ -96,7 +96,7 @@ public class ColossusCreatureUnit extends CreatureUnit
 
     protected static const SPEED_LOSS_PER_DAMAGE :Number = 0.2;
     protected static const MIN_SPEED_MOD :Number = 0.2;
-    protected static const SPEED_LOSS_EXPIRATION_TIME :Number = 1.5;
+    protected static const SPEED_LOSS_EXPIRATION_TIME :Number = 1;
 }
 
 }
@@ -143,7 +143,7 @@ class ColossusAI extends AITaskTree
         // scan for units in our immediate vicinity every couple of seconds
         var detectPredicate :Function = DetectCreatureAction.createNotEnemyOfTypesPredicate([Constants.UNIT_TYPE_COLOSSUS]);
         var scanSequence :AITaskSequence = new AITaskSequence(true);
-        scanSequence.addSequencedTask(new AITimerTask(2));
+        scanSequence.addSequencedTask(new DelayUntilTask("DelayUntilNotAttacking", DelayUntilTask.notAttackingPredicate));
         scanSequence.addSequencedTask(new DetectCreatureAction(detectPredicate));
         this.addSubtask(scanSequence);
     }
@@ -173,7 +173,8 @@ class ColossusAI extends AITaskTree
 
             // we detected an enemy - attack it
             //log.info("detected enemy - attacking");
-            _unit.sendAttack(enemyUnit, _unit.unitData.weapon);
+            var success :Boolean = _unit.sendAttack(enemyUnit, _unit.unitData.weapon);
+            trace("colossus attack successful: " + success);
         } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == AttackUnitTask.NAME) {
             // the base we were targeting died - find a new one
             this.beginAttackBase();
