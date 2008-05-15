@@ -45,7 +45,7 @@
                     <Resource type="white" amount="40"/>
                     <Resource type="blue" amount="15"/>
                 </ResourceCosts>
-                <Weapon damageType="crushing" damageMin="10" damageMax="10" cooldown="1" maxAttackDistance="35"/>
+                <Weapon damageType="crushing" damageMin="8" damageMax="12" cooldown="1" maxAttackDistance="35"/>
                 <Armor>
                     <Damage type="crushing"     scale="0.7"/>
                     <Damage type="piercing"     scale="0.3"/>
@@ -117,7 +117,7 @@
                     <Resource type="white" amount="300"/>
                     <Resource type="red" amount="300"/>
                 </ResourceCosts>
-                <Weapon damageType="crushing" damageMin="80" damageMax="80" cooldown="2" maxAttackDistance="50"/>
+                <Weapon damageType="crushing" damageMin="70" damageMax="90" cooldown="2" maxAttackDistance="50"/>
                 <Armor>
                     <Damage type="crushing"     scale="0.1"/>
                     <Damage type="piercing"     scale="0.07"/>
