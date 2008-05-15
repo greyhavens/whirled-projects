@@ -17,26 +17,24 @@ public class AITaskTree extends AITask
         var n :int = _subtasks.length;
         for (var i :int = 0; i < n; ++i) {
 
-            // if _stopProcessingSubtasks is true,
-            // our _subtasks Array has become invalidated
-            // during iteration and we need to stop processing it.
-            if (_stopProcessingSubtasks) {
-                break;
-            }
-
             var task :AITask = _subtasks[i];
 
             // we can have holes in the array
             if (null != task) {
                 var status :uint = task.update(dt, unit);
 
-                // _stopProcessingSubtasks can become true in task.update, so
-                // check against it here as well
                 if (!_stopProcessingSubtasks && AITaskStatus.COMPLETE == status) {
                     _subtasks[i] = null;
                     _freeIndices.push(i);
 
                     this.subtaskCompleted(task);
+                }
+
+                // if _stopProcessingSubtasks is true,
+                // our _subtasks Array has become invalidated
+                // during iteration and we need to stop processing it.
+                if (_stopProcessingSubtasks) {
+                    break;
                 }
             }
         }
