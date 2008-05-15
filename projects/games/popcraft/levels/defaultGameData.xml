@@ -167,7 +167,7 @@
                 type="bloodlust"
                 displayName="Bloodlust"
                 description="BLOODLUST: Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack."
-                expireTime="45"
+                expireTime="35"
                 speedScaleOffset="0.5"
                 damageScaleOffset="0.3"/>
 
@@ -175,7 +175,7 @@
                 type="rigormortis"
                 displayName="Rigor Mortis"
                 description="RIGOR MORTIS: Toughens the skin of your creatures. They will be able to absorb much more damage."
-                expireTime="45"
+                expireTime="40"
                 damageScaleOffset="-0.4"/>
         </Spells>
 
