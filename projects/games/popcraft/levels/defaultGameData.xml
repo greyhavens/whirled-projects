@@ -154,7 +154,7 @@
             <Unit
                 type="base"
                 displayName="" description="" baseMoveSpeed="0" hasRepulseForce="false" detectRadius="0" loseInterestRadius="0"
-                maxHealth="100"
+                maxHealth="150"
                 collisionRadius="20">
                 <ResourceCosts/>
                 <Weapon damageType="base" damageMin="20" damageMax="20" cooldown="0" maxAttackDistance="1000"/>
