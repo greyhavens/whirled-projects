@@ -5,7 +5,10 @@
         disableDiurnalCycle="false"
         playerBaseHealth="100">
 
-        <InitialResources/>
+        <InitialResources>
+            <Resource type="blue" amount="60"/>
+            <Resource type="yellow" amount="40"/>
+        </InitialResources>
 
         <AvailableUnits>
             <Unit type="grunt"/>
@@ -20,7 +23,8 @@
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="1"><Unit type="heavy" count="2"/></Wave>
                     <Wave absoluteDelay="3"><Unit type="grunt" count="4"/></Wave>
-                    <Wave absoluteDelay="60"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="40"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="70"><Unit type="grunt" count="4"/></Wave>
                     <Wave absoluteDelay="100"><Unit type="grunt" count="4"/></Wave>
                 </Day>
             </InitialDays>
@@ -28,7 +32,8 @@
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="1"><Unit type="heavy" count="2"/></Wave>
                     <Wave absoluteDelay="3"><Unit type="grunt" count="5"/></Wave>
-                    <Wave absoluteDelay="60"><Unit type="grunt" count="5"/></Wave>
+                    <Wave absoluteDelay="40"><Unit type="grunt" count="5"/></Wave>
+                    <Wave absoluteDelay="70"><Unit type="grunt" count="5"/></Wave>
                     <Wave absoluteDelay="100"><Unit type="grunt" count="5"/></Wave>
                 </Day>
             </RepeatingDays>
