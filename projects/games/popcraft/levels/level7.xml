@@ -1,7 +1,8 @@
 <root>
     <Level
         name="Abomination"
-        introText="Your opponent "
+        introText="Your opponent has perfected the Flesh Colossus, an enormous collection of random flesh and blood capable of crushing lesser units instantly.
+He's sending several your way, but he'll be vulnerable for a short while after the attack. Hold the Colossi off, then make your move!"
         disableDiurnalCycle="false"
         playerBaseHealth="100">
 
@@ -38,11 +39,14 @@
                     spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="2">
 
-                    <Wave absoluteDelay="1"><Unit type="colossus" count="1"/></Wave>
-                    <Wave absoluteDelay="2"><Unit type="heavy" count="4"/></Wave>
-                    <Wave absoluteDelay="20"><Unit type="grunt" count="2"/></Wave>
-                    <Wave absoluteDelay="40"><Unit type="heavy" count="2"/></Wave>
-                    <Wave absoluteDelay="350"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="20"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="30"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="70"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="71"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="80"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="100"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="103"><Unit type="grunt" count="2"/></Wave>
                 </Day>
             </InitialDays>
             <RepeatingDays>
@@ -52,16 +56,15 @@
                     spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="2">
 
-                    <Wave absoluteDelay="2"><Unit type="heavy" count="4"/></Wave>
-                    <Wave absoluteDelay="20" spellCastChance="1"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="45" spellCastChance="1"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="46"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="70" spellCastChance="1"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="75"><Unit type="sapper" count="2"/></Wave>
-                    <Wave absoluteDelay="76"><Unit type="heavy" count="3"/></Wave>
-                    <Wave absoluteDelay="95" spellCastChance="1"><Unit type="grunt" count="4"/></Wave>
-                    <Wave absoluteDelay="105"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="106"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="20"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="22"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="30" spellCastChance="0.8"><Unit type="heavy" count="2"/></Wave>
+                    <Wave absoluteDelay="70"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="71" spellCastChance="0.8"><Unit type="grunt" count="5"/></Wave>
+                    <Wave absoluteDelay="80"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="100"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="103" spellCastChance="0.8"><Unit type="grunt" count="4"/></Wave>
                 </Day>
             </RepeatingDays>
         </Computer>
