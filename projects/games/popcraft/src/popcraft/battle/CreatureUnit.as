@@ -34,7 +34,28 @@ public class CreatureUnit extends Unit
 
     override protected function addedToDB () :void
     {
-        if (_unitData.hasRepulseForce) {
+        this.createForceParticle();
+    }
+
+    override protected function removedFromDB () :void
+    {
+        this.destroyForceParticle();
+    }
+
+    public function disableCollisionAvoidance (enableAfter :Number) :void
+    {
+        this.destroyForceParticle();
+
+        if (enableAfter >= 0) {
+            this.addNamedTask(ENABLE_COLLISIONS_TASK,
+                After(enableAfter, new FunctionTask(createForceParticle)),
+                true);
+        }
+    }
+
+    protected function createForceParticle () :void
+    {
+        if (_unitData.hasRepulseForce && null == _forceParticle) {
             _forceParticle = new ForceParticle();
             _forceParticle.loc.x = this.x;
             _forceParticle.loc.y = this.y;
@@ -43,10 +64,11 @@ public class CreatureUnit extends Unit
         }
     }
 
-    override protected function removedFromDB () :void
+    protected function destroyForceParticle () :void
     {
         if (null != _forceParticle) {
             _forceParticle.destroySelf();
+            _forceParticle = null;
         }
     }
 
@@ -232,6 +254,7 @@ public class CreatureUnit extends Unit
     protected static var g_groups :Array;
 
     protected static const MOVEMENT_EPSILON :Number = 0.4;
+    protected static const ENABLE_COLLISIONS_TASK :String = "EnableCollisionsTask";
 }
 
 }

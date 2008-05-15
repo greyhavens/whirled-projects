@@ -9,8 +9,8 @@ The Rigor Mortis spell hardens your units' flesh, making them more resistant to 
         playerBaseHealth="100">
 
         <GameDataOverride
-            spellDropTimeMin="50"
-            spellDropTimeMax="50">
+            spellDropTimeMin="30"
+            spellDropTimeMax="30">
             <BaseLocations>
                 <GameSize numPlayers="2">
                     <BaseLocation x="60" y="185"/>
@@ -40,10 +40,10 @@ The Rigor Mortis spell hardens your units' flesh, making them more resistant to 
             </StartingSpells>
             <InitialDays>
                 <Day repeatWaves="false"
-                    noticeSpellDropAfterMin="0"
-                    noticeSpellDropAfterMax="0"
-                    spellDropCourierGroupSizeMin="0"
-                    spellDropCourierGroupSizeMax="0">
+                    noticeSpellDropAfterMin="7"
+                    noticeSpellDropAfterMax="7"
+                    spellDropCourierGroupSizeMin="2"
+                    spellDropCourierGroupSizeMax="2">
 
                     <Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
                     <Wave absoluteDelay="20" spellCastChance="1"><Unit type="grunt" count="2"/></Wave>
@@ -57,18 +57,20 @@ The Rigor Mortis spell hardens your units' flesh, making them more resistant to 
             </InitialDays>
             <RepeatingDays>
                 <Day repeatWaves="false"
-                    noticeSpellDropAfterMin="6"
-                    noticeSpellDropAfterMax="6"
+                    noticeSpellDropAfterMin="3"
+                    noticeSpellDropAfterMax="3"
                     spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="2">
 
                     <Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
-                    <Wave absoluteDelay="20" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="40" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="60" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="65"><Unit type="heavy" count="3"/></Wave>
-                    <Wave absoluteDelay="80" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="100" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="20" spellCastChance="1"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="40" spellCastChance="1"><Unit type="grunt" count="5"/></Wave>
+                    <Wave absoluteDelay="41"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="60" spellCastChance="1"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="65"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="66"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="80" spellCastChance="1"><Unit type="grunt" count="5"/></Wave>
+                    <Wave absoluteDelay="100" spellCastChance="1"><Unit type="grunt" count="4"/></Wave>
                 </Day>
             </RepeatingDays>
         </Computer>

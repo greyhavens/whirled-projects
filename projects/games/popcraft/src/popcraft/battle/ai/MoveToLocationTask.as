@@ -1,6 +1,7 @@
 package popcraft.battle.ai {
 
 import com.threerings.flash.Vector2;
+import com.threerings.util.Name;
 
 import popcraft.battle.CreatureUnit;
 
@@ -9,12 +10,18 @@ import popcraft.battle.CreatureUnit;
  */
 public class MoveToLocationTask extends AITask
 {
-    public function MoveToLocationTask (name :String, loc :Vector2, fudgeFactor :Number = 0, failAfter :Number = -1)
+    public function MoveToLocationTask (
+        name :String,
+        loc :Vector2,
+        fudgeFactor :Number = 0,
+        disableCollisionsAfter :Number = -1,
+        disableCollisionsTime :Number = 0.5)
     {
         _name = name;
         _dest = loc;
         _fudgeFactor = Math.max(fudgeFactor, MIN_FUDGE_FACTOR);
-        _failAfter = failAfter;
+        _disableCollisionsAfter = disableCollisionsAfter;
+        _disableCollisionsTime = disableCollisionsTime;
     }
 
     override public function get name () :String
@@ -32,18 +39,21 @@ public class MoveToLocationTask extends AITask
 
         if (creature.isAtLocation(_dest) || _elapsedTime >= _expectedTime && creature.isNearLocation(_dest, _fudgeFactor)) {
             // we made it to the location
-            _success = true;
             return AITaskStatus.COMPLETE;
         }
 
-        if (_failAfter > 0 && _elapsedTime > 0) {
+        if (_disableCollisionsAfter > 0  && _elapsedTime > 0) {
             // determine if we might be stuck
             _expectedDistanceSoFar += (_lastDt * creature.movementSpeed);
             if (creature.unitLoc.subtractLocal(_start).length + STUCK_DISTANCE < _expectedDistanceSoFar) {
                 _stuckTime += _lastDt;
-                if (_stuckTime >= _failAfter) {
-                    _success = false;
-                    return AITaskStatus.COMPLETE;
+
+                if (_stuckTime >= _disableCollisionsAfter) {
+                    // disable collisions temporarily
+                    creature.disableCollisionAvoidance(_disableCollisionsTime);
+                    // re-calculate our expected time
+                    _expectedTime = creature.calcShortestTravelTimeTo(_dest);
+                    _start = creature.unitLoc;
                 }
             }
         }
@@ -57,16 +67,12 @@ public class MoveToLocationTask extends AITask
         return AITaskStatus.ACTIVE;
     }
 
-    public function get success () :Boolean
-    {
-        return _success;
-    }
-
     protected var _name :String;
     protected var _start :Vector2;
     protected var _dest :Vector2;
-    protected var _failAfter :Number = 0;
-    protected var _fudgeFactor :Number = 0;
+    protected var _disableCollisionsAfter :Number;
+    protected var _disableCollisionsTime :Number;
+    protected var _fudgeFactor :Number;
 
     protected var _expectedTime :Number = 0;
     protected var _expectedDistanceSoFar :Number = 0;
@@ -74,7 +80,6 @@ public class MoveToLocationTask extends AITask
     protected var _lastDt :Number = 0;
 
     protected var _elapsedTime :Number = 0;
-    protected var _success :Boolean;
 
     protected static const MIN_FUDGE_FACTOR :Number = 0.4;
     protected static const STUCK_DISTANCE :Number = 10;

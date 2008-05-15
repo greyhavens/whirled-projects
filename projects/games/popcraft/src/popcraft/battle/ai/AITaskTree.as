@@ -1,5 +1,6 @@
 package popcraft.battle.ai {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
 import com.whirled.contrib.simplegame.*;
 
@@ -76,6 +77,21 @@ public class AITaskTree extends AITask
                 }
             }
         }
+    }
+
+    public function hasSubtaskNamed (name :String) :Boolean
+    {
+        var n :int = _subtasks.length;
+        for (var i :int = 0; i < n; ++i) {
+
+            var task :AITask = _subtasks[i];
+
+            if (null != task && task.name == name) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function clearSubtasks () :void

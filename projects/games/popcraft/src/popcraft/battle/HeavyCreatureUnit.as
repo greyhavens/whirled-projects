@@ -185,7 +185,7 @@ class HeavyAI extends AITaskTree
     {
         // find a place to stand near the base
         var loc :Vector2 = this.findDefenseLocation();
-        this.addSubtask(new MoveToLocationTask(MOVE_TO_DEFENSIVE_LOC_TASK_NAME, loc, MOVE_TO_FUDGE_FACTOR, 0.5));
+        this.addSubtask(new MoveToLocationTask(MOVE_TO_DEFENSIVE_LOC_TASK_NAME, loc, MOVE_TO_FUDGE_FACTOR));
 
         //log.info("moving to defensive location: " + loc);
     }

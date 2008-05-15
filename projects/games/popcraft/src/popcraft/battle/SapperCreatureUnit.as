@@ -3,8 +3,8 @@ package popcraft.battle {
 import com.whirled.contrib.simplegame.*;
 
 import popcraft.*;
-import popcraft.data.*;
 import popcraft.battle.ai.*;
+import popcraft.data.*;
 
 /**
  * Sappers are suicide-bombers. They deal heavy
@@ -112,7 +112,7 @@ class SapperAI extends AITaskTree
             // try to attack the first enemy
             var enemy :CreatureUnit = group[0];
             this.clearSubtasks();
-            this.addSubtask(new AttackUnitTask(enemy.ref, true, -1));
+            this.addSubtask(new AttackUnitTask(enemy.ref, true, -1, DISABLE_COLLISIONS_AFTER, DISABLE_COLLISIONS_FOR));
         } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && subtask.name == AttackUnitTask.NAME) {
             // the unit we were going after died before we got to them
             this.attackBaseAndScanForEnemyGroups();
@@ -129,6 +129,8 @@ class SapperAI extends AITaskTree
 
     protected static const SCAN_FOR_ENEMIES_DELAY :Number = 1;
     protected static const SCAN_FOR_ENEMY_GROUP_SIZE :int = 2;
+    protected static const DISABLE_COLLISIONS_AFTER :Number = 1;
+    protected static const DISABLE_COLLISIONS_FOR :Number = 0.5;
     protected static const SCAN_FOR_ENEMIES_TASK_NAME :String = "ScanForEnemies";
 
     protected static const log :Log = Log.getLog(SapperAI);
