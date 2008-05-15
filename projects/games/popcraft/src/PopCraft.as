@@ -4,6 +4,7 @@
 package {
 
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.game.GameControl;
 
@@ -11,9 +12,9 @@ import flash.display.Sprite;
 import flash.events.Event;
 
 import popcraft.*;
+import popcraft.data.*;
 import popcraft.net.*;
 import popcraft.sp.*;
-import popcraft.data.*;
 import popcraft.util.*;
 
 [SWF(width="700", height="500", frameRate="30")]
@@ -33,6 +34,9 @@ public class PopCraft extends Sprite
         // custom resource factories
         ResourceLoaderRegistry.instance.registerLoaderClass("level", LevelResourceLoader);
         ResourceLoaderRegistry.instance.registerLoaderClass("gameData", GameDataResourceLoader);
+
+        // sound volume
+        AudioManager.instance.masterControls.volume(Constants.SOUND_MASTER_VOLUME);
 
         AppContext.mainLoop.run();
 

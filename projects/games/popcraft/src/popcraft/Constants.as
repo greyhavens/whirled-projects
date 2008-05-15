@@ -13,6 +13,7 @@ import popcraft.util.*;
 public class Constants
 {
     public static const SCREEN_DIMS :Vector2 = new Vector2(700, 500);
+    public static const SOUND_MASTER_VOLUME :Number = 0;
 
     /* Debug options */
     public static const DEBUG_DRAW_STATS :Boolean = true;
@@ -21,7 +22,7 @@ public class Constants
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
-    public static const DEBUG_DISABLE_DIURNAL_CYCLE :Boolean = false;
+    public static const DEBUG_DISABLE_DIURNAL_CYCLE :Boolean = true;
     public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = true;
 
     /* Screen layout */

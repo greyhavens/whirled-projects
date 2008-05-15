@@ -245,7 +245,7 @@ public class CreatureUnit extends Unit
     protected var _forceParticle :ForceParticle;
 
     protected var _movedThisFrame :Boolean;
-    protected var _movementDirection :Vector2;
+    protected var _movementDirection :Vector2 = new Vector2();
 
     protected var _lastUpdateTimestamp :Number = 0;
 

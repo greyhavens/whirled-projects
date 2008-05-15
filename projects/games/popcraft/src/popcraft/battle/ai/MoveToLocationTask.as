@@ -1,7 +1,6 @@
 package popcraft.battle.ai {
 
 import com.threerings.flash.Vector2;
-import com.threerings.util.Name;
 
 import popcraft.battle.CreatureUnit;
 
@@ -29,11 +28,20 @@ public class MoveToLocationTask extends AITask
         return _name;
     }
 
+    protected function set moveToLoc (newLoc :Vector2) :void
+    {
+        // if a subclass modifies our destination, reset some expectations
+        _dest = newLoc;
+        _destReset = true;
+    }
+
     override public function update (dt :Number, creature :CreatureUnit) :uint
     {
         // init
         if (0 == _elapsedTime) {
             _expectedTime = creature.calcShortestTravelTimeTo(_dest);
+            _start = creature.unitLoc;
+        } else if (_destReset) {
             _start = creature.unitLoc;
         }
 
@@ -78,6 +86,7 @@ public class MoveToLocationTask extends AITask
     protected var _expectedDistanceSoFar :Number = 0;
     protected var _stuckTime :Number = 0;
     protected var _lastDt :Number = 0;
+    protected var _destReset :Boolean;
 
     protected var _elapsedTime :Number = 0;
 
