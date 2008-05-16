@@ -190,8 +190,6 @@ class ColossusAI extends AITaskTree
 
     protected function beginAttackEnemyBase () :void
     {
-        _inRangeOfBase = false;
-
         _targetBaseRef = _unit.getEnemyBaseRef();
         if (_targetBaseRef.isNull) {
             return;
@@ -208,17 +206,10 @@ class ColossusAI extends AITaskTree
 
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
     {
-        if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED) {
-            if (task.name == TARGET_BASE_DIED) {
-                // find a new base to attack
-                this.beginAttackEnemyBase();
-            } else if (task.name == MoveToAttackLocationTask.NAME) {
-                // we're in range of our base
-                _inRangeOfBase = true;
-            }
-        }
-
-        if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
+        if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == TARGET_BASE_DIED) {
+            // find a new base to attack
+            this.beginAttackEnemyBase();
+        } else if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
             // we detected an enemy - attack it
             var msg :SequencedTaskMessage = data as SequencedTaskMessage;
             var enemyUnit :Unit = msg.data as Unit;
@@ -228,7 +219,6 @@ class ColossusAI extends AITaskTree
 
     protected var _unit :ColossusCreatureUnit;
     protected var _targetBaseRef :SimObjectRef = SimObjectRef.Null();
-    protected var _inRangeOfBase :Boolean;
 
     protected static const TARGET_BASE_DIED :String = "TargetBaseDied";
 
