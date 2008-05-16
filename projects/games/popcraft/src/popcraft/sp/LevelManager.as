@@ -10,6 +10,10 @@ public class LevelManager
 {
     public function playLevel (forceReload :Boolean = false) :void
     {
+        // forceReload only makes sense when we're loading levels from disk (and
+        // they can therefore be edited at runtime)
+        forceReload &&= Constants.DEBUG_LOAD_LEVELS_FROM_DISK;
+
         if (forceReload) {
             _loadedLevel = null;
         }
@@ -23,11 +27,25 @@ public class LevelManager
                     { url: "levels/level" + String(_curLevelNum + 1) + ".xml" } :
                     { embeddedClass: LEVELS[_curLevelNum] });
 
-                ResourceManager.instance.unload("level");
-                ResourceManager.instance.pendResourceLoad("level", "level", loadParams);
-                ResourceManager.instance.load(onResourcesLoaded, onResourceLoadErr);
+                if (forceReload) {
+                    // reload the default game data first, then load the level when it's complete
+                    // (level requires that default game data already be loaded)
+                    ResourceManager.instance.unload("defaultGameData");
+                    ResourceManager.instance.pendResourceLoad("gameData", "defaultGameData", { url: "levels/defaultGameData.xml" });
+                    ResourceManager.instance.load(function () :void { loadLevel(loadParams) }, onLoadError);
+
+                } else {
+                    this.loadLevel(loadParams);
+                }
             }
         }
+    }
+
+    protected function loadLevel (loadParams :Object) :void
+    {
+        ResourceManager.instance.unload("level");
+        ResourceManager.instance.pendResourceLoad("level", "level", loadParams);
+        ResourceManager.instance.load(onLevelLoaded, onLoadError);
     }
 
     public function get curLevelNum () :int
@@ -55,13 +73,13 @@ public class LevelManager
         return LEVELS.length;
     }
 
-    protected function onResourcesLoaded () :void
+    protected function onLevelLoaded () :void
     {
         _loadedLevel = (ResourceManager.instance.getResource("level") as LevelResourceLoader).levelData;
         this.startGame();
     }
 
-    protected function onResourceLoadErr (err :String) :void
+    protected function onLoadError (err :String) :void
     {
         AppContext.mainLoop.unwindToMode(new LevelLoadErrorMode(err));
     }
@@ -70,11 +88,6 @@ public class LevelManager
     {
         GameContext.gameType = GameContext.GAME_TYPE_SINGLEPLAYER;
         GameContext.spLevel = _loadedLevel;
-
-        // the level may override the default game data
-        GameContext.gameData = (null != _loadedLevel.gameDataOverride ?
-            _loadedLevel.gameDataOverride :
-            AppContext.defaultGameData);
 
         AppContext.mainLoop.unwindToMode(new GameMode());
     }

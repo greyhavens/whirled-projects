@@ -199,7 +199,7 @@ public class CreatureUnitView extends SceneObject
             aoeObj.y = loc.y;
 
             // fade out and die
-            aoeObj.addTask(After(0.3, new SerialTask(new AlphaTask(0, 0.3), new SelfDestructTask())));
+            aoeObj.addTask(After(1, new SerialTask(new AlphaTask(0, 0.3), new SelfDestructTask())));
 
             GameContext.gameMode.addObject(aoeObj, GameContext.battleBoardView.unitViewParent);
         }

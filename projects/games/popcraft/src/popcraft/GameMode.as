@@ -28,6 +28,15 @@ public class GameMode extends AppMode
 {
     override protected function setup () :void
     {
+        // make sure we have a valid GameData object in the GameContext
+        if (GameContext.isSinglePlayer && null != GameContext.spLevel.gameDataOverride) {
+            GameContext.gameData = GameContext.spLevel.gameDataOverride;
+        } else {
+            GameContext.gameData = AppContext.defaultGameData;
+        }
+
+        GameContext.gameMode = this;
+
         // create some layers
         _battleParent = new Sprite();
         this.modeSprite.addChild(_battleParent);
@@ -37,13 +46,6 @@ public class GameMode extends AppMode
 
         _overlayParent = new Sprite();
         this.modeSprite.addChild(_overlayParent);
-
-        // make sure we have a valid GameData object in the GameContext
-        if (null == GameContext.gameData) {
-            GameContext.gameData = AppContext.defaultGameData;
-        }
-
-        GameContext.gameMode = this;
 
         // create a special ObjectDB for all objects that are synchronized over the network.
         GameContext.netObjects = new NetObjectDB();
