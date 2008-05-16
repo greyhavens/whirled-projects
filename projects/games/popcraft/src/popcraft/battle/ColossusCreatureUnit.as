@@ -168,13 +168,10 @@ class ColossusAI extends AITaskTree
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
     {
         if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
+            // we detected an enemy - attack it
             var msg :SequencedTaskMessage = data as SequencedTaskMessage;
             var enemyUnit :CreatureUnit = msg.data as CreatureUnit;
-
-            // we detected an enemy - attack it
-            //log.info("detected enemy - attacking");
-            var success :Boolean = _unit.sendAttack(enemyUnit, _unit.unitData.weapon);
-            trace("colossus attack successful: " + success);
+            _unit.sendAttack(enemyUnit, _unit.unitData.weapon);
         } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == AttackUnitTask.NAME) {
             // the base we were targeting died - find a new one
             this.beginAttackBase();

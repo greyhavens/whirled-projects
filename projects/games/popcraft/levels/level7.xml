@@ -1,7 +1,8 @@
 <root>
     <Level
         name="Abomination"
-        introText="Your opponent has perfected the Flesh Colossus, an enormous collection of random flesh and blood capable of crushing lesser units instantly.
+        introText="Your opponent has perfected the Flesh Colossus, an enormous collection of random body parts capable of crushing lesser units instantly.
+
 He's sending several your way, but he'll be vulnerable for a short while after the attack. Hold the Colossi off, then make your move!"
         disableDiurnalCycle="false"
         playerBaseHealth="100">

@@ -167,7 +167,7 @@ class CourierAI extends AITaskTree
     {
         if (messageName == ScanForSpellPickupsTask.MSG_DETECTEDSPELL) {
             var spell :SpellDropObject = data as SpellDropObject;
-            log.info("detected spell - attempting pickup");
+            //log.info("detected spell - attempting pickup");
             this.clearSubtasks();
             this.addSubtask(new PickupSpellTask(_unit, spell));
         } else if (messageName == PickupSpellTask.MSG_SPELL_GONE) {
@@ -177,7 +177,7 @@ class CourierAI extends AITaskTree
             this.addSubtask(new ScanForSpellPickupsTask(_unit));
         } else if (messageName == PickupSpellTask.MSG_SPELL_RETRIEVED) {
             // we picked up a spell!
-            log.info("retrieved spell");
+            //log.info("retrieved spell");
             _unit.pickupSpell(data as SpellDropObject);
             // let's try to go home and deliver it
             var base :PlayerBaseUnit = _unit.owningPlayerInfo.base;
