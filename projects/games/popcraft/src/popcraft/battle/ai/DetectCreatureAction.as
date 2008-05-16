@@ -9,34 +9,34 @@ public class DetectCreatureAction extends AITask
 {
     public static const MSG_CREATUREDETECTED :String = "CreatureDetected";
 
-    public static function isEnemyPredicate (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean
+    public static function isEnemyPredicate (thisUnit :Unit, thatUnit :Unit) :Boolean
     {
         return (
-            thisCreature.isEnemyUnit(thatCreature) &&
-            thisCreature.isUnitInRange(thatCreature, thisCreature.unitData.detectRadius));
+            thisUnit.isEnemyUnit(thatUnit) &&
+            thisUnit.isUnitInRange(thatUnit, thisUnit.unitData.detectRadius));
     }
 
-    public static function isFriendlyPredicate (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean
+    public static function isFriendlyPredicate (thisUnit :Unit, thatUnit :Unit) :Boolean
     {
         return (
-            !thisCreature.isEnemyUnit(thatCreature) &&
-            thisCreature.isUnitInRange(thatCreature, thisCreature.unitData.detectRadius));
+            !thisUnit.isEnemyUnit(thatUnit) &&
+            thisUnit.isUnitInRange(thatUnit, thisUnit.unitData.detectRadius));
     }
 
     public static function createIsEnemyOfTypePredicate (unitType :uint) :Function
     {
-        return function (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean {
-            return (thatCreature.unitType == unitType && isEnemyPredicate(thisCreature, thatCreature));
+        return function (thisUnit :Unit, thatUnit :Unit) :Boolean {
+            return (thatUnit.unitType == unitType && isEnemyPredicate(thisUnit, thatUnit));
         }
     }
 
     public static function createIsEnemyOfTypesPredicate (unitTypes :Array) :Function
     {
         // is the creature an enemy, and is it one of the specified unitTypes?
-        return function (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean {
-            if (isEnemyPredicate(thisCreature, thatCreature)) {
+        return function (thisUnit :Unit, thatUnit :Unit) :Boolean {
+            if (isEnemyPredicate(thisUnit, thatUnit)) {
                 for each (var unitType :uint in unitTypes) {
-                    if (thatCreature.unitType == unitType) {
+                    if (thatUnit.unitType == unitType) {
                         return true;
                     }
                 }
@@ -49,13 +49,13 @@ public class DetectCreatureAction extends AITask
     public static function createNotEnemyOfTypesPredicate (unitTypes :Array) :Function
     {
         // is the creature an enemy, and is it not one of the specified unitTypes?
-        return function (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean {
-            if (!isEnemyPredicate(thisCreature, thatCreature)) {
+        return function (thisUnit :Unit, thatUnit :Unit) :Boolean {
+            if (!isEnemyPredicate(thisUnit, thatUnit)) {
                 return false;
             }
 
             for each (var unitType :uint in unitTypes) {
-                if (thatCreature.unitType == unitType) {
+                if (thatUnit.unitType == unitType) {
                     return false;
                 }
             }
@@ -72,9 +72,7 @@ public class DetectCreatureAction extends AITask
 
     override public function update (dt :Number, unit :CreatureUnit) :uint
     {
-        // @TODO - use CollisionGrid!
-
-        var creatureRefs :Array = GameContext.netObjects.getObjectRefsInGroup(Unit.GROUP_NAME);
+        var creatureRefs :Array = GameContext.netObjects.getObjectRefsInGroup(CreatureUnit.GROUP_NAME);
         var detectedCreature :CreatureUnit;
 
         for each (var ref :SimObjectRef in creatureRefs) {
@@ -85,11 +83,16 @@ public class DetectCreatureAction extends AITask
             }
         }
 
+        this.handleDetectedCreature(unit, detectedCreature);
+
+        return AITaskStatus.COMPLETE;
+    }
+
+    protected function handleDetectedCreature (thisCreature :CreatureUnit, detectedCreature :CreatureUnit) :void
+    {
         if (null != detectedCreature) {
             this.sendParentMessage(MSG_CREATUREDETECTED, detectedCreature);
         }
-
-        return AITaskStatus.COMPLETE;
     }
 
     override public function get name () :String

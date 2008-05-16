@@ -1,0 +1,69 @@
+<root>
+    <Level
+        name="Flesh and Blood"
+        introText="You get the Colossus"
+        disableDiurnalCycle="false"
+        playerBaseHealth="100">
+
+        <GameDataOverride>
+            <BaseLocations>
+                <GameSize numPlayers="2">
+                    <BaseLocation x="60" y="185"/>
+                    <BaseLocation x="642" y="175"/>
+                </GameSize>
+            </BaseLocations>
+        </GameDataOverride>
+
+        <InitialResources/>
+
+        <AvailableUnits>
+            <Unit type="grunt"/>
+            <Unit type="heavy"/>
+            <Unit type="sapper"/>
+            <Unit type="courier"/>
+            <Unit type="colossus"/>
+        </AvailableUnits>
+
+        <AvailableSpells>
+            <Spell type="rigormortis"/>
+        </AvailableSpells>
+
+        <Computer
+            baseHealth="100"
+            team="1">
+            <StartingSpells/>
+            <InitialDays>
+                <Day repeatWaves="false"
+                    noticeSpellDropAfterMin="7"
+                    noticeSpellDropAfterMax="7"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="2">
+
+                    <Wave absoluteDelay="1"><Unit type="heavy" count="9"/></Wave>
+
+
+                </Day>
+            </InitialDays>
+            <RepeatingDays>
+                <Day repeatWaves="false"
+                    noticeSpellDropAfterMin="7"
+                    noticeSpellDropAfterMax="7"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="2">
+
+                    <Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="20"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="22"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="30" spellCastChance="0.8"><Unit type="heavy" count="2"/></Wave>
+                    <Wave absoluteDelay="70"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="71" spellCastChance="0.8"><Unit type="grunt" count="5"/></Wave>
+                    <Wave absoluteDelay="80"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="100"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="103" spellCastChance="0.8"><Unit type="grunt" count="4"/></Wave>
+                </Day>
+            </RepeatingDays>
+        </Computer>
+
+    </Level>
+
+</root>

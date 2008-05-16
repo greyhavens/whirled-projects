@@ -1,5 +1,7 @@
 package popcraft.battle.ai {
 
+import com.whirled.contrib.simplegame.SimObjectRef;
+
 import popcraft.battle.CreatureUnit;
 
 public class DelayUntilTask extends AITask
@@ -7,6 +9,11 @@ public class DelayUntilTask extends AITask
     public static function notAttackingPredicate (dt :Number, creature :CreatureUnit) :Boolean
     {
         return !creature.isAttacking;
+    }
+
+    public static function createUnitDiedPredicate (unitRef :SimObjectRef) :Function
+    {
+        return function (dt :Number, creature :CreatureUnit) :Boolean { return unitRef.isNull; }
     }
 
     public function DelayUntilTask (name :String, pred :Function)

@@ -67,7 +67,6 @@ public class ColossusCreatureUnit extends CreatureUnit
         } else {
             ar = new AttackRecord();
             ar.attacker = attacker;
-            ar.expirationTime = this.dbTime + SPEED_LOSS_EXPIRATION_TIME;
             _attackers.push(ar);
         }
 
@@ -94,8 +93,8 @@ public class ColossusCreatureUnit extends CreatureUnit
     protected var _ai :ColossusAI;
     protected var _attackers :Array = [];
 
-    protected static const SPEED_LOSS_PER_DAMAGE :Number = 0.2;
-    protected static const MIN_SPEED_MOD :Number = 0.2;
+    protected static const SPEED_LOSS_PER_DAMAGE :Number = 0.1;
+    protected static const MIN_SPEED_MOD :Number = 0.3;
     protected static const SPEED_LOSS_EXPIRATION_TIME :Number = 1;
 }
 
@@ -127,6 +126,47 @@ import popcraft.battle.*;
 import popcraft.battle.ai.*;
 import com.threerings.util.Log;
 
+class DetectColossusTargetAction extends DetectCreatureAction
+{
+    public static const NAME :String = "DetectColossusTargetAction";
+    public static const DETECTED_TARGET_MSG :String = "DetectedColossusTarget";
+
+    public function DetectColossusTargetAction ()
+    {
+        super(DetectCreatureAction.createNotEnemyOfTypesPredicate([Constants.UNIT_TYPE_COLOSSUS]));
+    }
+
+    override protected function handleDetectedCreature (thisCreature :CreatureUnit, detectedCreature :CreatureUnit) :void
+    {
+        var detectedUnit :Unit = detectedCreature;
+        if (null == detectedUnit) {
+            // are we in range of an enemy base?
+            var baseRefs :Array = GameContext.netObjects.getObjectRefsInGroup(PlayerBaseUnit.GROUP_NAME);
+            for each (var baseRef :SimObjectRef in baseRefs) {
+                var base :PlayerBaseUnit = baseRef.object as PlayerBaseUnit;
+                if (null != base && DetectCreatureAction.isEnemyPredicate(thisCreature, base)) {
+                    detectedUnit = base;
+                    break;
+                }
+            }
+        }
+
+        if (null != detectedUnit) {
+            this.sendParentMessage(DETECTED_TARGET_MSG, detectedUnit);
+        }
+    }
+
+    override public function get name () :String
+    {
+        return NAME;
+    }
+
+    override public function clone () :AITask
+    {
+        return new DetectColossusTargetAction();
+    }
+}
+
 /**
  * Goals:
  * (Priority 1) Attack groups of approaching enemies.
@@ -138,26 +178,27 @@ class ColossusAI extends AITaskTree
     {
         _unit = unit;
 
-        this.beginAttackBase();
+        this.beginAttackEnemyBase();
 
-        // scan for units in our immediate vicinity every couple of seconds
+        // scan for units in our immediate vicinity
         var detectPredicate :Function = DetectCreatureAction.createNotEnemyOfTypesPredicate([Constants.UNIT_TYPE_COLOSSUS]);
         var scanSequence :AITaskSequence = new AITaskSequence(true);
         scanSequence.addSequencedTask(new DelayUntilTask("DelayUntilNotAttacking", DelayUntilTask.notAttackingPredicate));
-        scanSequence.addSequencedTask(new DetectCreatureAction(detectPredicate));
+        scanSequence.addSequencedTask(new DetectColossusTargetAction());
         this.addSubtask(scanSequence);
     }
 
-    protected function beginAttackBase () :void
+    protected function beginAttackEnemyBase () :void
     {
+        _inRangeOfBase = false;
+
+        _targetBaseRef = _unit.getEnemyBaseRef();
         if (_targetBaseRef.isNull) {
-            _targetBaseRef = _unit.getEnemyBaseRef();
-            if (_targetBaseRef.isNull) {
-                return;
-            }
+            return;
         }
 
-        this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
+        this.addSubtask(new MoveToAttackLocationTask(_targetBaseRef, true, -1));
+        this.addSubtask(new DelayUntilTask(TARGET_BASE_DIED, DelayUntilTask.createUnitDiedPredicate(_targetBaseRef)));
     }
 
     override public function get name () :String
@@ -167,19 +208,29 @@ class ColossusAI extends AITaskTree
 
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
     {
+        if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED) {
+            if (task.name == TARGET_BASE_DIED) {
+                // find a new base to attack
+                this.beginAttackEnemyBase();
+            } else if (task.name == MoveToAttackLocationTask.NAME) {
+                // we're in range of our base
+                _inRangeOfBase = true;
+            }
+        }
+
         if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
             // we detected an enemy - attack it
             var msg :SequencedTaskMessage = data as SequencedTaskMessage;
-            var enemyUnit :CreatureUnit = msg.data as CreatureUnit;
+            var enemyUnit :Unit = msg.data as Unit;
             _unit.sendAttack(enemyUnit, _unit.unitData.weapon);
-        } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == AttackUnitTask.NAME) {
-            // the base we were targeting died - find a new one
-            this.beginAttackBase();
         }
     }
 
     protected var _unit :ColossusCreatureUnit;
     protected var _targetBaseRef :SimObjectRef = SimObjectRef.Null();
+    protected var _inRangeOfBase :Boolean;
+
+    protected static const TARGET_BASE_DIED :String = "TargetBaseDied";
 
     protected static const log :Log = Log.getLog(ColossusAI);
 }
