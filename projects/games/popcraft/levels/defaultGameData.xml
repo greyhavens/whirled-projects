@@ -8,7 +8,9 @@
         spellDropScatterMin="0"
         spellDropScatterMax="20"
         spellDropCenterOffsetMin="60"
-        spellDropCenterOffsetMax="150">
+        spellDropCenterOffsetMax="150"
+        minResourceAmount="0"
+        maxResourceAmount="1000">
 
         <PuzzleClearValueTable>
             <Index value="-20"/>

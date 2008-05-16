@@ -1,7 +1,7 @@
 <root>
     <Level
         name="Flesh and Blood"
-        introText="You get the Colossus"
+        introText="(incomplete level)"
         disableDiurnalCycle="false"
         playerBaseHealth="100">
 

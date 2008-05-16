@@ -35,8 +35,11 @@ public class LocalPlayerInfo extends PlayerInfo
     {
         Assert.isTrue(resourceType < _resources.length);
 
-        // resources can't go below 0
-        _resources[resourceType] = Math.max(newAmount, 0);
+        // clamp
+        newAmount = Math.max(newAmount, GameContext.gameData.minResourceAmount);
+        newAmount = Math.min(newAmount, GameContext.gameData.maxResourceAmount);
+
+        _resources[resourceType] = newAmount;
     }
 
     public function offsetResourceAmount (resourceType :uint, offset :int) :void

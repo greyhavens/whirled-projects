@@ -18,6 +18,9 @@ public class GameData
     public var spellDropScatter :NumRange;
     public var spellDropCenterOffset :NumRange;
 
+    public var minResourceAmount :int;
+    public var maxResourceAmount :int;
+
     public var resources :Array = [];
     public var units :Array = [];
     public var spells :Array = [];
@@ -40,6 +43,8 @@ public class GameData
         theClone.spellDropTime = spellDropTime.clone();
         theClone.spellDropScatter = spellDropScatter.clone();
         theClone.spellDropCenterOffset = spellDropCenterOffset.clone();
+        theClone.minResourceAmount = minResourceAmount;
+        theClone.maxResourceAmount = maxResourceAmount;
 
         for each (var resData :ResourceData in resources) {
             theClone.resources.push(resData.clone());
@@ -89,6 +94,9 @@ public class GameData
         var spellDropCenterOffsetMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropCenterOffsetMin", (useDefaults ? gameData.spellDropCenterOffset.min : undefined));
         var spellDropCenterOffsetMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropCenterOffsetMax", (useDefaults ? gameData.spellDropCenterOffset.max : undefined));
         gameData.spellDropCenterOffset = new NumRange(spellDropCenterOffsetMin, spellDropCenterOffsetMax, Rand.STREAM_GAME);
+
+        gameData.minResourceAmount = XmlReader.getAttributeAsInt(xml, "minResourceAmount", (useDefaults ? gameData.minResourceAmount : undefined));
+        gameData.maxResourceAmount = XmlReader.getAttributeAsInt(xml, "maxResourceAmount", (useDefaults ? gameData.maxResourceAmount : undefined));
 
         // init the resource data
         for (var i :int = gameData.resources.length; i < Constants.RESOURCE_NAMES.length; ++i) {
