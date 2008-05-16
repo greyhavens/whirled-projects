@@ -117,7 +117,7 @@
                     <Resource type="white" amount="300"/>
                     <Resource type="red" amount="300"/>
                 </ResourceCosts>
-                <Weapon damageType="crushing" damageMin="70" damageMax="90" cooldown="2" maxAttackDistance="50"/>
+                <Weapon damageType="colossus" damageMin="70" damageMax="90" cooldown="1" maxAttackDistance="50"/>
                 <Armor>
                     <Damage type="crushing"     scale="0.1"/>
                     <Damage type="piercing"     scale="0.07"/>
