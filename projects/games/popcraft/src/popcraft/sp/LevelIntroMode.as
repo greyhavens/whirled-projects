@@ -23,12 +23,9 @@ public class LevelIntroMode extends AppMode
 
         var bgSprite :Sprite = new Sprite();
         g = bgSprite.graphics;
-        g.beginFill(0xF1B932);
-        g.drawRect(0, 0, 250, 200);
+        g.beginFill(0);
+        g.drawRect(0, 0, 250, 1);
         g.endFill();
-
-        bgSprite.x = (Constants.SCREEN_DIMS.x * 0.5) - (bgSprite.width * 0.5);
-        bgSprite.y = (Constants.SCREEN_DIMS.y * 0.5) - (bgSprite.height * 0.5);
 
         this.modeSprite.addChild(bgSprite);
 
@@ -53,12 +50,13 @@ public class LevelIntroMode extends AppMode
         tfDesc.autoSize = TextFieldAutoSize.LEFT;
         tfDesc.width = 250 - 24;
         tfDesc.x = 12;
-        tfDesc.y = 50;
+        tfDesc.y = tfName.y + tfName.height + 3;
 
         tfDesc.text = GameContext.spLevel.introText;
 
         bgSprite.addChild(tfDesc);
 
+        // Play button
         var button :SimpleTextButton = new SimpleTextButton("Play");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
@@ -66,9 +64,18 @@ public class LevelIntroMode extends AppMode
             });
 
         button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
-        button.y = 150;
+        button.y = tfDesc.y + tfDesc.height + 8;
 
         bgSprite.addChild(button);
+
+        // draw the background
+        g = bgSprite.graphics;
+        g.beginFill(0xF1B932);
+        g.drawRect(0, 0, 250, bgSprite.height + 20);
+        g.endFill();
+
+        bgSprite.x = (Constants.SCREEN_DIMS.x * 0.5) - (bgSprite.width * 0.5);
+        bgSprite.y = (Constants.SCREEN_DIMS.y * 0.5) - (bgSprite.height * 0.5);
     }
 }
 

@@ -15,7 +15,7 @@
         </GameDataOverride>
 
         <InitialResources>
-            <Resource type="red" amount="70"/>
+            <Resource type="red" amount="100"/>
             <Resource type="yellow" amount="40"/>
         </InitialResources>
 

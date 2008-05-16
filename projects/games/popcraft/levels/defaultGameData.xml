@@ -69,8 +69,8 @@
                 detectRadius="200"
                 loseInterestRadius="200">
                 <ResourceCosts>
-                    <Resource type="red" amount="30"/>
-                    <Resource type="yellow" amount="20"/>
+                    <Resource type="red" amount="50"/>
+                    <Resource type="yellow" amount="15"/>
                 </ResourceCosts>
                 <Weapon isRanged="true" missileSpeed="300" damageType="piercing" damageMin="5" damageMax="10" cooldown="0.75" maxAttackDistance="200"/>
                 <Armor>
