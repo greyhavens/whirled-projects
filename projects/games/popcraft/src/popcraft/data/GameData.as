@@ -12,6 +12,7 @@ public class GameData
 
     public var dayLength :Number;
     public var nightLength :Number;
+    public var dawnWarning :Number;
     public var initialDayPhase :uint;
 
     public var spellDropTime :NumRange;
@@ -40,6 +41,7 @@ public class GameData
 
         theClone.dayLength = dayLength;
         theClone.nightLength = nightLength;
+        theClone.dawnWarning = dawnWarning;
         theClone.initialDayPhase = initialDayPhase;
         theClone.spellDropTime = spellDropTime.clone();
         theClone.spellDropScatter = spellDropScatter.clone();
@@ -83,6 +85,7 @@ public class GameData
 
         gameData.dayLength = XmlReader.getAttributeAsNumber(xml, "dayLength", (useDefaults ? gameData.dayLength : undefined));
         gameData.nightLength = XmlReader.getAttributeAsNumber(xml, "nightLength", (useDefaults ? gameData.nightLength : undefined));
+        gameData.dawnWarning = XmlReader.getAttributeAsNumber(xml, "dawnWarning", (useDefaults ? gameData.dawnWarning : undefined));
         gameData.initialDayPhase = XmlReader.getAttributeAsEnum(xml, "initialDayPhase", Constants.DAY_PHASE_NAMES, (useDefaults ? gameData.initialDayPhase : undefined));
 
         var spellDropTimeMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropTimeMin", (useDefaults ? gameData.spellDropTime.min : undefined));

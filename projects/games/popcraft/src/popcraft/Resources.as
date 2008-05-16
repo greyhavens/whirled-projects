@@ -90,6 +90,9 @@ public class Resources
     [Embed(source="../../rsrc/audio/WOLF_HOWLS_02_WW.mp3")]
     public static const SOUND_WOLF :Class;
 
+    [Embed(source="../../rsrc/audio/CHIMES_1020_37_06.mp3")]
+    public static const SOUND_CHIMES :Class;
+
     [Embed(source="../../rsrc/audio/ARM_SWING_PUNCH_2_S4.mp3")]
     public static const SOUND_HIT1 :Class;
 

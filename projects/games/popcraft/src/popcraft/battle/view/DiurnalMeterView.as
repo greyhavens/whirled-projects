@@ -1,8 +1,8 @@
 package popcraft.battle.view {
 
+import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.RectMeter;
 import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.audio.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -51,6 +51,11 @@ public class DiurnalMeterView extends SceneObject
             this.dayPhaseChanged(newPhase, true);
         }
 
+        if (!_playedDawnSound && GameContext.diurnalCycle.isNight && GameContext.diurnalCycle.timeTillNextPhase <= GameContext.gameData.dawnWarning) {
+            AudioManager.instance.playSoundNamed("sfx_dawn");
+            _playedDawnSound = true;
+        }
+
         _meter.value = GameContext.diurnalCycle.timeTillNextPhase;
     }
 
@@ -69,6 +74,7 @@ public class DiurnalMeterView extends SceneObject
             _meter.maxValue = GameContext.gameData.nightLength;
             _sun.visible = false;
             _moon.visible = true;
+            _playedDawnSound = false;
             soundName = "sfx_night";
         }
 
@@ -89,6 +95,7 @@ public class DiurnalMeterView extends SceneObject
     protected var _moon :Bitmap;
     protected var _meter :RectMeter;
     protected var _lastPhase :int;
+    protected var _playedDawnSound :Boolean;
 
     protected static const METER_WIDTH :int = 120;
     protected static const METER_HEIGHT :int = 20;

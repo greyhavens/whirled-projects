@@ -2,6 +2,7 @@
     <GameData
         dayLength="30"
         nightLength="120"
+        dawnWarning="12"
         initialDayPhase="day"
         spellDropTimeMin="30"
         spellDropTimeMax="70"
