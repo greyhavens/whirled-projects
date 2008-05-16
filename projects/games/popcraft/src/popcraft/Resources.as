@@ -78,6 +78,9 @@ public class Resources
     [Embed(source="../../rsrc/audio/ANVIL_LIGHT_HIT_1_L2.mp3")]
     public static const SOUND_ARTIFICE :Class;
 
+    [Embed(source="../../rsrc/audio/FAST_POWER_FAILURE_01_TF.mp3")]
+    public static const SOUND_LOSTRESOURCES :Class;
+
     [Embed(source="../../rsrc/audio/EXPLOSION_CTE01_56_1.mp3")]
     public static const SOUND_EXPLOSION :Class;
 

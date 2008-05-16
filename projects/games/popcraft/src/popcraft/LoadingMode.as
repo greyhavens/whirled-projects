@@ -42,6 +42,7 @@ public class LoadingMode extends AppMode
         ResourceManager.instance.pendResourceLoad("sound", "sfx_rsrc_red", { embeddedClass: Resources.SOUND_BLOOD });
         ResourceManager.instance.pendResourceLoad("sound", "sfx_rsrc_blue", { embeddedClass: Resources.SOUND_ENERGY });
         ResourceManager.instance.pendResourceLoad("sound", "sfx_rsrc_yellow", { embeddedClass: Resources.SOUND_ARTIFICE });
+        ResourceManager.instance.pendResourceLoad("sound", "sfx_rsrc_lost", { embeddedClass: Resources.SOUND_LOSTRESOURCES });
 
         ResourceManager.instance.pendResourceLoad("sound", "sfx_day", { embeddedClass: Resources.SOUND_ROOSTER });
         ResourceManager.instance.pendResourceLoad("sound", "sfx_night", { embeddedClass: Resources.SOUND_WOLF });

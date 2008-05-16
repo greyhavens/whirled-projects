@@ -2,10 +2,10 @@ package popcraft.puzzle {
 
 import com.threerings.util.Assert;
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
-import com.whirled.contrib.simplegame.audio.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -142,7 +142,9 @@ public class PuzzleBoard extends SceneObject
             new FunctionTask(animatePieceDrops)));
 
         // play a sound
-        AudioManager.instance.playSoundNamed("sfx_rsrc_" + Constants.RESOURCE_NAMES[resourceType]);
+        AudioManager.instance.playSoundNamed(resourceValue >= 0 ?
+            "sfx_rsrc_" + Constants.RESOURCE_NAMES[resourceType] :
+            "sfx_rsrc_lost");
     }
 
     protected function animatePieceDrops () :void
