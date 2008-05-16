@@ -17,6 +17,7 @@ public class GameData
     public var spellDropTime :NumRange;
     public var spellDropScatter :NumRange;
     public var spellDropCenterOffset :NumRange;
+    public var maxLosingPlayerSpellDropShift :Number;
 
     public var minResourceAmount :int;
     public var maxResourceAmount :int;
@@ -43,6 +44,7 @@ public class GameData
         theClone.spellDropTime = spellDropTime.clone();
         theClone.spellDropScatter = spellDropScatter.clone();
         theClone.spellDropCenterOffset = spellDropCenterOffset.clone();
+        theClone.maxLosingPlayerSpellDropShift = maxLosingPlayerSpellDropShift;
         theClone.minResourceAmount = minResourceAmount;
         theClone.maxResourceAmount = maxResourceAmount;
 
@@ -94,6 +96,8 @@ public class GameData
         var spellDropCenterOffsetMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropCenterOffsetMin", (useDefaults ? gameData.spellDropCenterOffset.min : undefined));
         var spellDropCenterOffsetMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropCenterOffsetMax", (useDefaults ? gameData.spellDropCenterOffset.max : undefined));
         gameData.spellDropCenterOffset = new NumRange(spellDropCenterOffsetMin, spellDropCenterOffsetMax, Rand.STREAM_GAME);
+
+        gameData.maxLosingPlayerSpellDropShift = XmlReader.getAttributeAsNumber(xml, "maxLosingPlayerSpellDropShift", (useDefaults ? gameData.maxLosingPlayerSpellDropShift : undefined));
 
         gameData.minResourceAmount = XmlReader.getAttributeAsInt(xml, "minResourceAmount", (useDefaults ? gameData.minResourceAmount : undefined));
         gameData.maxResourceAmount = XmlReader.getAttributeAsInt(xml, "maxResourceAmount", (useDefaults ? gameData.maxResourceAmount : undefined));

@@ -9,6 +9,7 @@
         spellDropScatterMax="20"
         spellDropCenterOffsetMin="60"
         spellDropCenterOffsetMax="150"
+        maxLosingPlayerSpellDropShift="0.4"
         minResourceAmount="0"
         maxResourceAmount="1000">
 
