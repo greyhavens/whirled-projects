@@ -62,9 +62,9 @@ public class UnitFactory
         return creature;
     }
 
-    public static function createBaseUnit (owningPlayerId :int, overrideMaxHealth :Boolean = false, maxHealthOverride :int = 0) :PlayerBaseUnit
+    public static function createBaseUnit (owningPlayerId :int, maxHealthOverride :int = 0, startingHealthOverride :int = 0) :PlayerBaseUnit
     {
-        var base :PlayerBaseUnit = new PlayerBaseUnit(owningPlayerId, overrideMaxHealth, maxHealthOverride);
+        var base :PlayerBaseUnit = new PlayerBaseUnit(owningPlayerId, maxHealthOverride, startingHealthOverride);
 
         GameContext.netObjects.addObject(base);
 

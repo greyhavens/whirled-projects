@@ -112,9 +112,11 @@ public class LevelManager
     protected static const LEVEL_7 :Class;
     [Embed(source="../../../levels/level8.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_8 :Class;
+    [Embed(source="../../../levels/level9.xml", mimeType="application/octet-stream")]
+    protected static const LEVEL_9 :Class;
 
     protected static const LEVELS :Array =
-        [ LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, LEVEL_5, LEVEL_6, LEVEL_7, LEVEL_8 ];
+        [ LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, LEVEL_5, LEVEL_6, LEVEL_7, LEVEL_8, LEVEL_9 ];
 
 }
 

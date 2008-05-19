@@ -266,16 +266,18 @@ public class GameMode extends AppMode
         for (var playerId :int = 0; playerId < numPlayers; ++playerId) {
 
             // in single-player levels, bases have custom health
-            var overrideMaxHealth :Boolean;
-            var maxHealth :int;
+            var maxHealthOverride :int = 0;
+            var startingHealthOverride :int = 0;
             if (GameContext.isSinglePlayer) {
-                overrideMaxHealth = true;
-                maxHealth = (playerId == 0 ?
+                maxHealthOverride = (playerId == 0 ?
                     GameContext.spLevel.playerBaseHealth :
                     ComputerPlayerData(GameContext.spLevel.computers[playerId - 1]).baseHealth);
+                startingHealthOverride = (playerId == 0 ?
+                    GameContext.spLevel.playerBaseStartHealth :
+                    ComputerPlayerData(GameContext.spLevel.computers[playerId - 1]).baseStartHealth);
             }
 
-            var base :PlayerBaseUnit = UnitFactory.createBaseUnit(playerId, overrideMaxHealth, maxHealth);
+            var base :PlayerBaseUnit = UnitFactory.createBaseUnit(playerId, maxHealthOverride, startingHealthOverride);
 
             var baseLoc :Vector2 = baseLocs[playerId];
             base.unitSpawnLoc = baseLoc;

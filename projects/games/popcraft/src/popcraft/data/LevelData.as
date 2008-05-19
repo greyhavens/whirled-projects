@@ -10,6 +10,7 @@ public class LevelData
     public var name :String = "";
     public var introText :String = "";
     public var playerBaseHealth :int;
+    public var playerBaseStartHealth :int;
     public var disableDiurnalCycle :Boolean;
 
     public var availableUnits :Array = [];
@@ -42,6 +43,7 @@ public class LevelData
         level.name = XmlReader.getAttributeAsString(xml, "name");
         level.introText = XmlReader.getAttributeAsString(xml, "introText");
         level.playerBaseHealth = XmlReader.getAttributeAsInt(xml, "playerBaseHealth");
+        level.playerBaseStartHealth = XmlReader.getAttributeAsInt(xml, "playerBaseStartHealth", level.playerBaseHealth);
         level.disableDiurnalCycle = XmlReader.getAttributeAsBoolean(xml, "disableDiurnalCycle", false);
 
         // parse the available units

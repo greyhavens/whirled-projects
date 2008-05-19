@@ -8,14 +8,15 @@ public class PlayerBaseUnit extends Unit
 {
     public static const GROUP_NAME :String = "PlayerBaseUnit";
 
-    public function PlayerBaseUnit (owningPlayerId :uint, overrideMaxHealth :Boolean = false, maxHealthOverride :int = 0)
+    public function PlayerBaseUnit (owningPlayerId :uint, maxHealthOverride :int = 0, startingHealthOverride :int = 0)
     {
         super(Constants.UNIT_TYPE_BASE, owningPlayerId);
 
-        if (overrideMaxHealth) {
+        if (maxHealthOverride > 0) {
             _maxHealth = maxHealthOverride;
-            _health = _maxHealth;
         }
+
+        _health = (startingHealthOverride > 0 ? startingHealthOverride : _maxHealth);
     }
 
     public function set unitSpawnLoc (loc :Vector2) :void
