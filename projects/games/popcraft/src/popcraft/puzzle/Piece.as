@@ -73,6 +73,8 @@ public class Piece extends SceneObject
         pieceMovie.x = -(pieceMovie.width * 0.5);
         pieceMovie.y = -(pieceMovie.height * 0.5);
 
+		pieceMovie.cacheAsBitmap = true;
+
         /*var pieceHilite :Shape = new Shape();
 
         _pieceHiliteObj = new SimpleSceneObject(pieceHilite);

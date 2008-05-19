@@ -118,8 +118,8 @@
                 detectRadius="50"
                 loseInterestRadius="50">
                 <ResourceCosts>
-                    <Resource type="white" amount="300"/>
-                    <Resource type="red" amount="300"/>
+                    <Resource type="white" amount="250"/>
+                    <Resource type="red" amount="350"/>
                 </ResourceCosts>
                 <Weapon damageType="colossus" damageMin="70" damageMax="90" cooldown="1" maxAttackDistance="50"/>
                 <Armor>

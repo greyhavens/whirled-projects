@@ -1,9 +1,9 @@
 <root>
     <Level
         name="Flesh and Blood"
-        introText="(incomplete level)"
+        introText="You've stolen the plans for the Flesh Colossus and can now create your own. The Colossus can decimate a base, but it will be taken down quickly by a swarm of enemies. Use Street-Walkers to run interference for the Colossus and help it break through the enemy's defenses."
         disableDiurnalCycle="false"
-        playerBaseHealth="100">
+        playerBaseHealth="150">
 
         <GameDataOverride>
             <BaseLocations>
@@ -29,7 +29,7 @@
         </AvailableSpells>
 
         <Computer
-            baseHealth="100"
+            baseHealth="150"
             team="1">
             <StartingSpells/>
             <InitialDays>
@@ -39,8 +39,16 @@
                     spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="2">
 
-                    <Wave absoluteDelay="1"><Unit type="heavy" count="9"/></Wave>
-
+                    <Wave absoluteDelay="3"><Unit type="heavy" count="8"/></Wave>
+                    <Wave absoluteDelay="30" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="35" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="50" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="55" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="60"><Unit type="heavy" count="4"/></Wave>
+                    <Wave absoluteDelay="80" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="85" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="100" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="105" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
 
                 </Day>
             </InitialDays>
@@ -51,15 +59,18 @@
                     spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="2">
 
-                    <Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
-                    <Wave absoluteDelay="20"><Unit type="colossus" count="1"/></Wave>
-                    <Wave absoluteDelay="22"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="30" spellCastChance="0.8"><Unit type="heavy" count="2"/></Wave>
-                    <Wave absoluteDelay="70"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="71" spellCastChance="0.8"><Unit type="grunt" count="5"/></Wave>
-                    <Wave absoluteDelay="80"><Unit type="heavy" count="3"/></Wave>
-                    <Wave absoluteDelay="100"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="103" spellCastChance="0.8"><Unit type="grunt" count="4"/></Wave>
+					<Wave absoluteDelay="3"><Unit type="heavy" count="8"/></Wave>
+                    <Wave absoluteDelay="30" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="35" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="50" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="55" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="60"><Unit type="heavy" count="4"/></Wave>
+					<Wave absoluteDelay="63" spellCastChance="0.8"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="80" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="85" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="100" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="105" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+					
                 </Day>
             </RepeatingDays>
         </Computer>
