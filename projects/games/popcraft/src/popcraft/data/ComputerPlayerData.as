@@ -29,7 +29,7 @@ public class ComputerPlayerData
         }
 
         for (var spellType :uint = 0; spellType < Constants.SPELL_NAMES.length; ++spellType) {
-            computerPlayer.startingSpells.push(spellType);
+            computerPlayer.startingSpells.push(0);
         }
 
         for each (var spellData :XML in xmlData.StartingSpells.Spell) {
