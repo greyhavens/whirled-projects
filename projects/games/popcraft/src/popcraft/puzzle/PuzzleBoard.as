@@ -40,7 +40,7 @@ public class PuzzleBoard extends SceneObject
         _sprite = new Sprite();
         _sprite.graphics.clear();
         _sprite.graphics.beginFill(0);
-        _sprite.graphics.drawRect(0, 0, _cols * tileSize, _rows * tileSize);
+        _sprite.graphics.drawRect(0, 0, (_cols * tileSize) - (_cols - 1), (_rows * tileSize) - (_rows - 1));
         _sprite.graphics.endFill();
         _sprite.mouseEnabled = true;
     }
@@ -372,12 +372,12 @@ public class PuzzleBoard extends SceneObject
 
     public function getPieceXLoc (xCoord :int) :int
     {
-        return (xCoord * _tileSize) + (_tileSize / 2);
+        return ((xCoord + 0.5) * _tileSize) - xCoord;
     }
 
     public function getPieceYLoc (yCoord :int) :int
     {
-        return (yCoord * _tileSize) + (_tileSize / 2);
+        return ((yCoord + 0.5) * _tileSize) - yCoord;
     }
 
     public function get resolvingClears () :Boolean

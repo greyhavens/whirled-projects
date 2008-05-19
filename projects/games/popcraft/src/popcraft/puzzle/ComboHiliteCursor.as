@@ -132,8 +132,8 @@ public class ComboHiliteCursor extends SimObject
     protected function repositionOnBoard (localX :Number, localY :Number) :void
     {
         // the mouseIndex is the piece directly under the mouse
-        var newIndexX :int = (localX / Constants.PUZZLE_TILE_SIZE);
-        var newIndexY :int = (localY / Constants.PUZZLE_TILE_SIZE);
+        var newIndexX :int = (localX / (Constants.PUZZLE_TILE_SIZE - 1));
+        var newIndexY :int = (localY / (Constants.PUZZLE_TILE_SIZE - 1));
 
         newIndexX = Math.max(newIndexX, 0);
         newIndexX = Math.min(newIndexX, Constants.PUZZLE_COLS - 1);
