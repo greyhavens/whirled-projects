@@ -41,7 +41,7 @@ He's sending several your way, but he'll be vulnerable for a short while after t
                     spellDropCourierGroupSizeMax="1">
 
                     <Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
-                    <Wave absoluteDelay="20"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="20"><Unit type="grunt" count="2"/></Wave>
                     <Wave absoluteDelay="30"><Unit type="heavy" count="3"/></Wave>
                     <Wave absoluteDelay="70"><Unit type="sapper" count="1"/></Wave>
                     <Wave absoluteDelay="71"><Unit type="grunt" count="2"/></Wave>
@@ -59,7 +59,6 @@ He's sending several your way, but he'll be vulnerable for a short while after t
 
                     <Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
                     <Wave absoluteDelay="20"><Unit type="colossus" count="1"/></Wave>
-                    <Wave absoluteDelay="22"><Unit type="sapper" count="1"/></Wave>
                     <Wave absoluteDelay="30" spellCastChance="0.8"><Unit type="heavy" count="2"/></Wave>
                     <Wave absoluteDelay="70"><Unit type="sapper" count="1"/></Wave>
                     <Wave absoluteDelay="71" spellCastChance="0.8"><Unit type="grunt" count="5"/></Wave>
