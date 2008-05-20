@@ -29,7 +29,6 @@ public class Constants
     public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
     public static const DASHBOARD_LOC :Point = new Point(350, 430);
 
-    public static const RESOURCE_DISPLAY_LOC :Point = new Point(350, 380);
     public static const PUZZLE_BOARD_LOC :Point = new Point(-131, -63);
     public static const RESOURCE_POPUP_LOC :Point = new Point(275, 425);
     public static const DIURNAL_METER_LOC :Point = new Point(255, 2);

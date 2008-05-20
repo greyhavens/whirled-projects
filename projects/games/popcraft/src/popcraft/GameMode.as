@@ -203,12 +203,6 @@ public class GameMode extends AppMode
         dashboard.y = Constants.DASHBOARD_LOC.y;
         this.addObject(dashboard, _hudParent);
 
-        var resourceDisplay :ResourceDisplay = new ResourceDisplay();
-        resourceDisplay.displayObject.x = Constants.RESOURCE_DISPLAY_LOC.x;
-        resourceDisplay.displayObject.y = Constants.RESOURCE_DISPLAY_LOC.y;
-
-        this.addObject(resourceDisplay, this.modeSprite);
-
         var puzzleBoard :PuzzleBoard = new PuzzleBoard(
             Constants.PUZZLE_COLS,
             Constants.PUZZLE_ROWS,
