@@ -11,6 +11,7 @@
         spellDropCenterOffsetMin="60"
         spellDropCenterOffsetMax="150"
         maxLosingPlayerSpellDropShift="0.4"
+        resourceMultiplierChance="0.033"
         minResourceAmount="0"
         maxResourceAmount="1000">
 
@@ -33,6 +34,12 @@
             <Resource type="blue" displayName="Energy" color="0x3D7078" rarity="0.5"/>
             <Resource type="yellow" displayName="Artifice" color="0xFFD858" rarity="0.5"/>
         </Resources>
+
+        <ResourceMultipliers>
+            <ResourceMultiplier value="1.5" rarity="1"/>
+            <ResourceMultiplier value="2" rarity="0.6"/>
+            <ResourceMultiplier value="2.5" rarity="0.3"/>
+        </ResourceMultipliers>
 
         <Units>
             <Unit

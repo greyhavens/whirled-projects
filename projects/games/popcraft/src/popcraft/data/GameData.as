@@ -20,10 +20,12 @@ public class GameData
     public var spellDropCenterOffset :NumRange;
     public var maxLosingPlayerSpellDropShift :Number;
 
+    public var resourceMultiplierChance :Number;
     public var minResourceAmount :int;
     public var maxResourceAmount :int;
 
     public var resources :Array = [];
+    public var resourceMultipliers :Array = [];
     public var units :Array = [];
     public var spells :Array = [];
     public var baseLocs :Array = [];
@@ -47,11 +49,16 @@ public class GameData
         theClone.spellDropScatter = spellDropScatter.clone();
         theClone.spellDropCenterOffset = spellDropCenterOffset.clone();
         theClone.maxLosingPlayerSpellDropShift = maxLosingPlayerSpellDropShift;
+        theClone.resourceMultiplierChance = resourceMultiplierChance;
         theClone.minResourceAmount = minResourceAmount;
         theClone.maxResourceAmount = maxResourceAmount;
 
         for each (var resData :ResourceData in resources) {
             theClone.resources.push(resData.clone());
+        }
+
+        for each (var resMultData :ResourceMultiplierData in resourceMultipliers) {
+            theClone.resourceMultipliers.push(resMultData.clone());
         }
 
         for each (var unitData :UnitData in units) {
@@ -102,6 +109,7 @@ public class GameData
 
         gameData.maxLosingPlayerSpellDropShift = XmlReader.getAttributeAsNumber(xml, "maxLosingPlayerSpellDropShift", (useDefaults ? gameData.maxLosingPlayerSpellDropShift : undefined));
 
+        gameData.resourceMultiplierChance = XmlReader.getAttributeAsNumber(xml, "resourceMultiplierChance", (useDefaults ? gameData.resourceMultiplierChance : undefined));
         gameData.minResourceAmount = XmlReader.getAttributeAsInt(xml, "minResourceAmount", (useDefaults ? gameData.minResourceAmount : undefined));
         gameData.maxResourceAmount = XmlReader.getAttributeAsInt(xml, "maxResourceAmount", (useDefaults ? gameData.maxResourceAmount : undefined));
 
@@ -113,6 +121,16 @@ public class GameData
         for each (var resourceNode :XML in xml.Resources.Resource) {
             var type :uint = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
             gameData.resources[type] = ResourceData.fromXml(resourceNode, (useDefaults ? inheritFrom.resources[type] : null));
+        }
+
+        // init resource multiplier data
+        var resourceMultipliersNode :XML = xml.ResourceMultipliers[0];
+        if (null == resourceMultipliersNode) {
+            gameData.resourceMultipliers.length = 0;
+        } else {
+            for each (var resourceMultiplierNode :XML in resourceMultipliersNode.ResourceMultiplier) {
+                gameData.resourceMultipliers.push(ResourceMultiplierData.fromXml(resourceMultiplierNode));
+            }
         }
 
         // init the unit data

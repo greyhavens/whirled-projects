@@ -23,6 +23,9 @@ public class LoadingMode extends AppMode
         ResourceManager.instance.pendResourceLoad("image", "battle_fg", { embeddedClass: Resources.IMAGE_BATTLE_FG });
         ResourceManager.instance.pendResourceLoad("image", "bloodlust_icon", { embeddedClass: Resources.IMAGE_BLOODLUSTICON });
         ResourceManager.instance.pendResourceLoad("image", "rigormortis_icon", { embeddedClass: Resources.IMAGE_RIGORMORTISICON });
+        ResourceManager.instance.pendResourceLoad("image", "mult_15", { embeddedClass: Resources.IMAGE_MULT15 });
+        ResourceManager.instance.pendResourceLoad("image", "mult_20", { embeddedClass: Resources.IMAGE_MULT20 });
+        ResourceManager.instance.pendResourceLoad("image", "mult_25", { embeddedClass: Resources.IMAGE_MULT25 });
 
         ResourceManager.instance.pendResourceLoad("swf", "grunt", { embeddedClass: Resources.SWF_GRUNT });
         ResourceManager.instance.pendResourceLoad("swf", "sapper", { embeddedClass: Resources.SWF_SAPPER });

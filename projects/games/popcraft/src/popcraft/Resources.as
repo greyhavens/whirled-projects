@@ -50,6 +50,15 @@ public class Resources
     [Embed(source="../../rsrc/pieces.swf", mimeType="application/octet-stream")]
     public static const SWF_PUZZLEPIECES :Class;
 
+    [Embed(source="../../rsrc/mult15.png", mimeType="application/octet-stream")]
+    public static const IMAGE_MULT15 :Class;
+
+    [Embed(source="../../rsrc/mult20.png", mimeType="application/octet-stream")]
+    public static const IMAGE_MULT20 :Class;
+
+    [Embed(source="../../rsrc/mult25.png", mimeType="application/octet-stream")]
+    public static const IMAGE_MULT25 :Class;
+
     // audio
     [Embed(source="../../rsrc/audio/MONSTER_HISSING_01_IN.mp3")]
     public static const SOUND_GRUNT :Class;
