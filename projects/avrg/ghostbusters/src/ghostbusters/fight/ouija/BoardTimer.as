@@ -1,6 +1,7 @@
 package ghostbusters.fight.ouija {
 
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -14,7 +15,7 @@ public class BoardTimer extends SceneObject
     {
         _totalTime = totalTime;
 
-        _swf = (Resources.instance.getSwfLoader("ouija.timer").displayRoot as MovieClip);
+        _swf = (SwfResource.getSwfDisplayRoot("ouija.timer") as MovieClip);
         _swf.mouseEnabled = false;
         _swf.mouseChildren = false;
         _swf.x = TIMER_LOC.x;
@@ -24,13 +25,13 @@ public class BoardTimer extends SceneObject
     override protected function update (dt :Number) :void
     {
        _elapsedTime += dt;
-       
+
         // @TODO - fix this mess
         var swf :MovieClip = (_swf.getChildAt(0) as MovieClip);
-        
+
         var curFrame :Number = Math.floor((_elapsedTime / _totalTime) * Number(swf.totalFrames));
         curFrame = Math.min(curFrame, swf.totalFrames - 1);
-        
+
         swf.gotoAndStop(curFrame);
     }
 

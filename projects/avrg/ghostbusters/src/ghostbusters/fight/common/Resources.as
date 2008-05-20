@@ -2,8 +2,6 @@ package ghostbusters.fight.common {
 
 import com.whirled.contrib.simplegame.resource.*;
 
-import flash.display.MovieClip;
-
 public class Resources
 {
     public static function get instance () :Resources
@@ -50,29 +48,6 @@ public class Resources
         ResourceManager.instance.pendResourceLoad("swf", "spiritshell.board", { embeddedClass: SWF_SPIRITSHELL });
 
         ResourceManager.instance.load(completeCallback, errorCallback);
-    }
-
-    public function getSwfLoader (name :String) :SwfResourceLoader
-    {
-        return ResourceManager.instance.getResource(name) as SwfResourceLoader;
-    }
-
-    public function getImageLoader (name :String) :ImageResourceLoader
-    {
-        return ResourceManager.instance.getResource(name) as ImageResourceLoader;
-    }
-
-    public function instantiateMovieClip (resourceName :String, className :String) :MovieClip
-    {
-        var swf :SwfResourceLoader = this.getSwfLoader(resourceName);
-        if (null != swf) {
-            var movieClass :Class = swf.getClass(className);
-            if (null != movieClass) {
-                return new movieClass();
-            }
-        }
-
-        return null;
     }
 
     public function get isLoading () :Boolean

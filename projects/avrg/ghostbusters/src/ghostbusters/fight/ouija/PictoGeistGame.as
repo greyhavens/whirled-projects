@@ -4,6 +4,7 @@ import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.DisplayObject;
 import flash.display.Shape;
@@ -55,7 +56,7 @@ public class PictoGeistGame extends MicrogameMode
     override protected function setup () :void
     {
         // draw the board
-        this.modeSprite.addChild(Resources.instance.getImageLoader("ouija.pictoboard").createBitmap());
+        this.modeSprite.addChild(ImageResource.instantiateBitmap("ouija.pictoboard"));
 
         // draw the picture on the board
         this.modeSprite.addChild(this.createPicture());

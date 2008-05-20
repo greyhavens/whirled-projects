@@ -4,6 +4,7 @@ import com.threerings.flash.Vector2;
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObject;
@@ -15,7 +16,7 @@ public class Board extends SceneObject
 {
     public function Board ()
     {
-        _sprite.addChild(Resources.instance.getSwfLoader("ouija.board").displayRoot);
+        _sprite.addChild(SwfResource.getSwfDisplayRoot("ouija.board"));
         _sprite.mouseChildren = false;
     }
 

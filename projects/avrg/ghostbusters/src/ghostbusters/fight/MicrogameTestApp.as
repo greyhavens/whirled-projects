@@ -97,8 +97,7 @@ public class MicrogameTestApp extends Sprite
         // init player
         var context :MicrogameContext = new MicrogameContext();
 
-        var ghostSwf :SwfResourceLoader = ResourceManager.instance.getResource("testGhost") as SwfResourceLoader;
-        context.ghostMovie = ghostSwf.displayRoot as MovieClip;
+        context.ghostMovie = SwfResource.getSwfDisplayRoot("testGhost") as MovieClip;
         _player = new MicrogamePlayer(context);
         this.addChild(_player);
 

@@ -72,7 +72,7 @@ public class HueAndCryGame extends MicrogameMode
     override protected function setup () :void
     {
         // draw the board
-        var swfResource :SwfResourceLoader = Resources.instance.getSwfLoader("potions.board");
+        var swfResource :SwfResource = ResourceManager.instance.getResource("potions.board") as SwfResource;
 
         var displayRoot :MovieClip = swfResource.displayRoot as MovieClip;
         this.modeSprite.addChild(displayRoot);

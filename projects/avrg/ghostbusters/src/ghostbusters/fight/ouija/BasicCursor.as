@@ -5,6 +5,7 @@ import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import ghostbusters.fight.common.*;
 
@@ -27,7 +28,7 @@ public class BasicCursor extends SceneObject
         _board = board;
 
         // add the image, aligned by the center of its viewier
-        _cursorImage = Resources.instance.getImageLoader("ouija.planchette").createBitmap();
+        _cursorImage = ImageResource.instantiateBitmap("ouija.planchette");
         _cursorImage.x = -CENTER.x;
         _cursorImage.y = -CENTER.y;
         _sprite.addChild(_cursorImage);
@@ -46,11 +47,11 @@ public class BasicCursor extends SceneObject
         _board.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved, false, 0, true);
         _sprite.x = _board.mouseX;
         _sprite.y = _board.mouseY;
-        
-        
+
+
         /*_board.addEventListener(MouseEvent.ROLL_OUT, mouseOut, false, 0, true);
         _board.addEventListener(MouseEvent.ROLL_OVER, mouseOver, false, 0, true);
-        
+
         if (_board.hitTestPoint(_board.mouseX, _board.mouseY)) {
             CursorManager.hideCursor();
         } else {
@@ -63,12 +64,12 @@ public class BasicCursor extends SceneObject
         this.updateLocation(_board.mouseX, _board.mouseY);
         //trace(_board.mouseX, _board.mouseY);
     }
-    
+
     protected function mouseOut (e :MouseEvent) :void
     {
         //CursorManager.showCursor();
     }
-    
+
     protected function mouseOver (e :MouseEvent) :void
     {
         //CursorManager.hideCursor();

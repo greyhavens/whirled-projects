@@ -4,6 +4,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -40,7 +41,7 @@ public class WinLoseNotification extends SceneObject
     public function WinLoseNotification (success :Boolean, text :String)
     {
         // instantiate the screen
-        _movieClip = Resources.instance.instantiateMovieClip("outro.screen", (success ? "outro_win" : "outro_lose"));
+        _movieClip = SwfResource.instantiateMovieClip("outro.screen", (success ? "outro_win" : "outro_lose"));
 
         _movieClip.mouseEnabled = false;
         _movieClip.mouseChildren = false;

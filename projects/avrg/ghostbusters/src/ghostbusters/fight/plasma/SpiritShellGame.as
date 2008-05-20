@@ -74,7 +74,7 @@ public class SpiritShellGame extends MicrogameMode
 
     override protected function setup () :void
     {
-        var swf :SwfResourceLoader = Resources.instance.getSwfLoader("spiritshell.board");
+        var swf :SwfResource = ResourceManager.instance.getResource("spiritshell.board") as SwfResource;
 
         // draw the background
         var bgClass :Class = swf.getClass("BG");
