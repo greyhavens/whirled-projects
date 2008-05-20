@@ -21,10 +21,7 @@ public class BingoCardController extends SceneObject
     {
         _card = card;
 
-        var swf :SwfResourceLoader = ResourceManager.instance.getResource("board") as SwfResourceLoader;
-        var cardViewClass :Class = swf.getClass("Bingo_Board");
-
-        _cardView = new cardViewClass();
+        _cardView = SwfResource.instantiateMovieClip("board", "Bingo_Board");
 
         // draw the items
         for (var row :int = 0; row < card.height; ++row) {

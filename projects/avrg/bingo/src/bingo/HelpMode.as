@@ -12,9 +12,7 @@ public class HelpMode extends AppMode
 {
     override protected function setup () :void
     {
-        var swf :SwfResourceLoader = ResourceManager.instance.getResource("help") as SwfResourceLoader;
-        var helpClass :Class = swf.getClass("help_screen");
-        _screen = new helpClass();
+        _screen = SwfResource.instantiateMovieClip("help", "help_screen");
 
         // center the help screen
         var screenBounds :Rectangle = BingoMain.getScreenBounds();

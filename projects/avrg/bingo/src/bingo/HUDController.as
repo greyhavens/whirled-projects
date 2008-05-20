@@ -23,9 +23,7 @@ public class HUDController extends SceneObject
 
     public function HUDController ()
     {
-        var swf :SwfResourceLoader = ResourceManager.instance.getResource("ui") as SwfResourceLoader;
-        var hudClass :Class = swf.getClass("HUD");
-        _hud = new hudClass();
+        _hud = SwfResource.instantiateMovieClip("ui", "HUD");
 
         // fix the text on the ball
         // @TODO - is TextFieldAutoSize accessible in the FAT? where?

@@ -19,12 +19,7 @@ public class WinnerAnimationController extends SceneObject
     public function WinnerAnimationController (playerName :String)
     {
         _animationParent = new Sprite();
-
-        var swf :SwfResourceLoader = ResourceManager.instance.getResource("board") as SwfResourceLoader;
-        var animClass :Class = swf.getClass("bingo_winner_animation");
-
-        _winnerAnim = new animClass();
-
+        _winnerAnim = SwfResource.instantiateMovieClip("board", "bingo_winner_animation");
         _animationParent.addChild(_winnerAnim);
 
         // ugh - traverse the MovieClip's crazy display hierarchy
@@ -46,11 +41,7 @@ public class WinnerAnimationController extends SceneObject
         _winnerAnim = null;
 
         // and show the countdown timer
-        var swf :SwfResourceLoader = ResourceManager.instance.getResource("board") as SwfResourceLoader;
-        var animClass :Class = swf.getClass("board_time_left");
-
-        var animView :MovieClip = new animClass();
-
+        var animView :MovieClip = SwfResource.instantiateMovieClip("board", "board_time_left");
         _animationParent.addChild(animView);
 
         _countdownText = animView["inst_time_left"];

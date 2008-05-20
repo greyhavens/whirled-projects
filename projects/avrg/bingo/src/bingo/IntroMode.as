@@ -12,9 +12,7 @@ public class IntroMode extends AppMode
 {
     override protected function setup () :void
     {
-        var swf :SwfResourceLoader = ResourceManager.instance.getResource("intro") as SwfResourceLoader;
-        var introClass :Class = swf.getClass("Bingo_intro_symbol");
-        _movie = new introClass();
+        _movie = SwfResource.instantiateMovieClip("intro", "Bingo_intro_symbol");
 
         // center on screen
         var screenBounds :Rectangle = BingoMain.getScreenBounds();
