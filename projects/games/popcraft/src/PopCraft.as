@@ -32,8 +32,8 @@ public class PopCraft extends Sprite
         AppContext.mainLoop.setup();
 
         // custom resource factories
-        ResourceLoaderRegistry.instance.registerLoaderClass("level", LevelResourceLoader);
-        ResourceLoaderRegistry.instance.registerLoaderClass("gameData", GameDataResourceLoader);
+        ResourceManager.instance.registerLoaderClass("level", LevelResourceLoader);
+        ResourceManager.instance.registerLoaderClass("gameData", GameDataResourceLoader);
 
         // sound volume
         AudioManager.instance.masterControls.volume(Constants.SOUND_MASTER_VOLUME);

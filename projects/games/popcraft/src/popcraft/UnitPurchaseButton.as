@@ -48,7 +48,7 @@ public class UnitPurchaseButton extends Sprite
             _disabledState = makeAnimatedButonFace(disabledAnim, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
 
         } else {
-            var bitmapData :BitmapData = (ResourceManager.instance.getResource(unitData.name + "_icon") as ImageResourceLoader).bitmapData;
+            var bitmapData :BitmapData = (ResourceManager.instance.getResource(unitData.name + "_icon") as ImageResource).bitmapData;
             _button.upState         = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP);
             _button.overState       = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_OVER, 1.0);
             _button.downState       = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DOWN, 1.0);

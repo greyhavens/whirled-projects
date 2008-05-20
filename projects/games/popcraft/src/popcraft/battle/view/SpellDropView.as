@@ -2,6 +2,7 @@ package popcraft.battle.view {
 
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -19,7 +20,7 @@ public class SpellDropView extends SceneObject
 
         var spellData :SpellData = spellDrop.spellData;
 
-        var bitmap :Bitmap = AppContext.instantiateBitmap(spellData.iconName);
+        var bitmap :Bitmap = ImageResource.instantiateBitmap(spellData.iconName);
         var scale :Number = Math.min(SpellDropObject.RADIUS / bitmap.width, SpellDropObject.RADIUS / bitmap.height);
         bitmap.scaleX = scale;
         bitmap.scaleY = scale;

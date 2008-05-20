@@ -3,6 +3,7 @@ package popcraft.battle.view {
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.RectMeter;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -17,8 +18,8 @@ public class DiurnalMeterView extends SceneObject
     {
         _sprite = new Sprite();
 
-        _sun = AppContext.instantiateBitmap("sun");
-        _moon = AppContext.instantiateBitmap("moon");
+        _sun = ImageResource.instantiateBitmap("sun");
+        _moon = ImageResource.instantiateBitmap("moon");
 
         _meter = new RectMeter();
         _meter.width = METER_WIDTH;
