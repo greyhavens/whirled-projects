@@ -46,7 +46,7 @@ public class LocalRainbowController extends AbstractRainbowController
 
         for each (var noteIndex :int in SimonMain.model.curState.pattern) {
             playPatternTask.addTask(new FunctionTask(this.createPlayNoteAnimationFunction(noteIndex)));
-            playPatternTask.addTask(new TimedTask(0.5));
+            playPatternTask.addTask(new TimedTask(PLAYBACK_ANIMATION_NOTE_DELAY));
         }
 
         playPatternTask.addTask(new FunctionTask(setupRainbowForPlayerInput));
@@ -162,6 +162,7 @@ public class LocalRainbowController extends AbstractRainbowController
     protected var _hilitedBand :MovieClip;
 
     protected static const PLAYER_TIMEOUT_TASK_NAME :String = "PlayerTimeoutTask";
+    protected static const PLAYBACK_ANIMATION_NOTE_DELAY :Number = 0.6;
 }
 
 }

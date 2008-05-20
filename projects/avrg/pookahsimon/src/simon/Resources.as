@@ -6,19 +6,17 @@ import flash.display.MovieClip;
 
 public class Resources
 {
-    public static var mgr :ResourceManager = new ResourceManager();
-
-    public static function load () :void
+    public static function load (loadCompleteCallback :Function = null, loadErrorCallback :Function = null) :void
     {
-        mgr.pendResourceLoad("swf", "ui", { embeddedClass: Resources.SWF_RAINBOW });
-        mgr.load();
+        ResourceManager.instance.pendResourceLoad("swf", "ui", { embeddedClass: Resources.SWF_RAINBOW });
+        ResourceManager.instance.load(loadCompleteCallback, loadErrorCallback);
     }
 
     public static function instantiateMovieClip (resourceName :String, symbolName :String) :MovieClip
     {
         var movie :MovieClip;
 
-        var swf :SwfResourceLoader = mgr.getResource(resourceName) as SwfResourceLoader;
+        var swf :SwfResourceLoader = ResourceManager.instance.getResource(resourceName) as SwfResourceLoader;
         if (null != swf) {
             var theClass :Class = swf.getClass(symbolName);
 

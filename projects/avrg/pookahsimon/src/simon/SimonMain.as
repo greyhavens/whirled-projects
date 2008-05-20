@@ -51,9 +51,7 @@ public class SimonMain extends Sprite
         MainLoop.instance.setup();
 
         // load resources
-        Resources.mgr.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
-        Resources.mgr.addEventListener(ResourceLoadEvent.ERROR, handleResourceLoadError);
-        Resources.load();
+        Resources.load(handleResourcesLoaded, handleResourceLoadError);
 
         // hook up controller
         control = new AVRGameControl(this);
@@ -61,15 +59,15 @@ public class SimonMain extends Sprite
         control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
     }
 
-    protected function handleResourcesLoaded (...ignored) :void
+    protected function handleResourcesLoaded () :void
     {
         _resourcesLoaded = true;
         this.maybeBeginGame();
     }
 
-    protected function handleResourceLoadError (e :ResourceLoadEvent) :void
+    protected function handleResourceLoadError (err :String) :void
     {
-        log.warning("Resource load error: " + e.data as String);
+        log.warning("Resource load error: " + err);
     }
 
     protected function maybeBeginGame () :void
