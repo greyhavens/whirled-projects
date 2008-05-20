@@ -2,6 +2,7 @@ package simon {
 
 import com.whirled.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
@@ -14,7 +15,7 @@ public class HelpViewController extends SceneObject
 {
     public function HelpViewController ()
     {
-        _movieClip = Resources.instantiateMovieClip("ui", "help_cloud");
+        _movieClip = SwfResource.instantiateMovieClip("ui", "help_cloud");
     }
 
     override protected function addedToDB () :void

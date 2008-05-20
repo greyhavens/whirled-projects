@@ -3,6 +3,7 @@ package simon {
 import com.threerings.util.ArrayUtil;
 import com.whirled.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
@@ -18,7 +19,7 @@ public class CloudViewController extends SceneObject
 
     public function CloudViewController ()
     {
-        _cloud = Resources.instantiateMovieClip("ui", "cloud");
+        _cloud = SwfResource.instantiateMovieClip("ui", "cloud");
     }
 
     override public function get displayObject () :DisplayObject

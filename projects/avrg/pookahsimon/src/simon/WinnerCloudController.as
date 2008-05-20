@@ -3,6 +3,7 @@ package simon {
 import com.whirled.AVRGameAvatar;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -17,7 +18,7 @@ public class WinnerCloudController extends SceneObject
     {
         _playerId = playerId;
 
-        _movieClip = Resources.instantiateMovieClip("ui", "win_cloud");
+        _movieClip = SwfResource.instantiateMovieClip("ui", "win_cloud");
 
         var loc :Point = this.screenLoc;
 

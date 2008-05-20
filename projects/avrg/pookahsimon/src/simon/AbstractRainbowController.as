@@ -6,6 +6,7 @@ import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -77,7 +78,7 @@ public class AbstractRainbowController extends SceneObject
     {
         this.stopRainbowAnimation();
 
-        _curAnim = Resources.instantiateMovieClip("ui", animName);
+        _curAnim = SwfResource.instantiateMovieClip("ui", animName);
 
         var loc :Point = this.getScreenLocForRainbowAnimation();
         _curAnim.x = loc.x;
@@ -188,7 +189,7 @@ public class AbstractRainbowController extends SceneObject
                 band.play();
 
                 // create and play a sparkle animation
-                var sparkle :MovieClip = Resources.instantiateMovieClip("ui", "sparkle");
+                var sparkle :MovieClip = SwfResource.instantiateMovieClip("ui", "sparkle");
                 sparkle.mouseEnabled = false;
                 sparkle.mouseChildren = false;
                 sparkle.x = clickLoc.x;

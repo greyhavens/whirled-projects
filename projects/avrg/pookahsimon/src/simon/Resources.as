@@ -2,30 +2,12 @@ package simon {
 
 import com.whirled.contrib.simplegame.resource.*;
 
-import flash.display.MovieClip;
-
 public class Resources
 {
     public static function load (loadCompleteCallback :Function = null, loadErrorCallback :Function = null) :void
     {
         ResourceManager.instance.pendResourceLoad("swf", "ui", { embeddedClass: Resources.SWF_RAINBOW });
         ResourceManager.instance.load(loadCompleteCallback, loadErrorCallback);
-    }
-
-    public static function instantiateMovieClip (resourceName :String, symbolName :String) :MovieClip
-    {
-        var movie :MovieClip;
-
-        var swf :SwfResourceLoader = ResourceManager.instance.getResource(resourceName) as SwfResourceLoader;
-        if (null != swf) {
-            var theClass :Class = swf.getClass(symbolName);
-
-            if (null != theClass) {
-                movie = new theClass();
-            }
-        }
-
-        return movie;
     }
 
     // gfx
