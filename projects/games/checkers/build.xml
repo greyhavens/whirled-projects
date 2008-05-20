@@ -1,0 +1,10 @@
+<!-- build configuration -->
+<project name="checkers" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="checkers"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>
