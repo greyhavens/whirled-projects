@@ -21,7 +21,7 @@ public class BingoCardController extends SceneObject
     {
         _card = card;
 
-        var swf :SwfResourceLoader = BingoMain.resources.getResource("board") as SwfResourceLoader;
+        var swf :SwfResourceLoader = ResourceManager.instance.getResource("board") as SwfResourceLoader;
         var cardViewClass :Class = swf.getClass("Bingo_Board");
 
         _cardView = new cardViewClass();

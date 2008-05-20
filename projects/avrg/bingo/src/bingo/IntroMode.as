@@ -12,7 +12,7 @@ public class IntroMode extends AppMode
 {
     override protected function setup () :void
     {
-        var swf :SwfResourceLoader = BingoMain.resources.getResource("intro") as SwfResourceLoader;
+        var swf :SwfResourceLoader = ResourceManager.instance.getResource("intro") as SwfResourceLoader;
         var introClass :Class = swf.getClass("Bingo_intro_symbol");
         _movie = new introClass();
 

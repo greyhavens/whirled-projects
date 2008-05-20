@@ -20,7 +20,7 @@ public class WinnerAnimationController extends SceneObject
     {
         _animationParent = new Sprite();
 
-        var swf :SwfResourceLoader = BingoMain.resources.getResource("board") as SwfResourceLoader;
+        var swf :SwfResourceLoader = ResourceManager.instance.getResource("board") as SwfResourceLoader;
         var animClass :Class = swf.getClass("bingo_winner_animation");
 
         _winnerAnim = new animClass();
@@ -46,7 +46,7 @@ public class WinnerAnimationController extends SceneObject
         _winnerAnim = null;
 
         // and show the countdown timer
-        var swf :SwfResourceLoader = BingoMain.resources.getResource("board") as SwfResourceLoader;
+        var swf :SwfResourceLoader = ResourceManager.instance.getResource("board") as SwfResourceLoader;
         var animClass :Class = swf.getClass("board_time_left");
 
         var animView :MovieClip = new animClass();

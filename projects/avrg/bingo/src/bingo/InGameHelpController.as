@@ -13,7 +13,7 @@ public class InGameHelpController extends SceneObject
 {
     public function InGameHelpController ()
     {
-        var swf :SwfResourceLoader = BingoMain.resources.getResource("help") as SwfResourceLoader;
+        var swf :SwfResourceLoader = ResourceManager.instance.getResource("help") as SwfResourceLoader;
         var helpClass :Class = swf.getClass("help_screen");
         _screen = new helpClass();
 

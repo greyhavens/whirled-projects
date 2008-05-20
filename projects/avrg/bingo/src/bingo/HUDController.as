@@ -23,7 +23,7 @@ public class HUDController extends SceneObject
 
     public function HUDController ()
     {
-        var swf :SwfResourceLoader = BingoMain.resources.getResource("ui") as SwfResourceLoader;
+        var swf :SwfResourceLoader = ResourceManager.instance.getResource("ui") as SwfResourceLoader;
         var hudClass :Class = swf.getClass("HUD");
         _hud = new hudClass();
 

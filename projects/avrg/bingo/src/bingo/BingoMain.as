@@ -20,7 +20,6 @@ public class BingoMain extends Sprite
     public static var control :AVRGameControl;
     public static var model :Model;
     public static var ourPlayerId :int;
-    public static var resources :ResourceManager = new ResourceManager();
 
     public function BingoMain ()
     {
@@ -34,15 +33,12 @@ public class BingoMain extends Sprite
         MainLoop.instance.setup();
 
         // load resources
-        resources.addEventListener(ResourceLoadEvent.LOADED, handleResourcesLoaded);
-        resources.addEventListener(ResourceLoadEvent.ERROR, handleResourceLoadError);
+        ResourceManager.instance.pendResourceLoad("swf", "ui",     { embeddedClass: Resources.SWF_UI });
+        ResourceManager.instance.pendResourceLoad("swf", "board",  { embeddedClass: Resources.SWF_BOARD });
+        ResourceManager.instance.pendResourceLoad("swf", "intro",  { embeddedClass: Resources.SWF_INTRO });
+        ResourceManager.instance.pendResourceLoad("swf", "help",   { embeddedClass: Resources.SWF_HELP });
 
-        resources.pendResourceLoad("swf", "ui",     { embeddedClass: Resources.SWF_UI });
-        resources.pendResourceLoad("swf", "board",  { embeddedClass: Resources.SWF_BOARD });
-        resources.pendResourceLoad("swf", "intro",  { embeddedClass: Resources.SWF_INTRO });
-        resources.pendResourceLoad("swf", "help",   { embeddedClass: Resources.SWF_HELP });
-
-        resources.load();
+        ResourceManager.instance.load(handleResourcesLoaded, handleResourceLoadError);
     }
 
     public static function quit () :void
@@ -95,15 +91,15 @@ public class BingoMain extends Sprite
         }
     }
 
-    protected function handleResourcesLoaded (...ignored) :void
+    protected function handleResourcesLoaded () :void
     {
         _resourcesLoaded = true;
         this.maybeShowIntro();
     }
 
-    protected function handleResourceLoadError (e :ResourceLoadEvent) :void
+    protected function handleResourceLoadError (err :String) :void
     {
-        log.warning("Resource load error: " + e.data as String);
+        log.warning("Resource load error: " + err);
     }
 
     protected function handleAdded (event :Event) :void
