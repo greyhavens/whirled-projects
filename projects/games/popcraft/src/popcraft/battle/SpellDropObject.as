@@ -55,14 +55,15 @@ public class SpellDropObject extends SimObject
         }
     }
 
-    override protected function update (dt :Number) :void
+    // let's see what it's like to have spells stick around during the day
+    /*override protected function update (dt :Number) :void
     {
         // when it's day time, spell objects die
         if (GameContext.diurnalCycle.isDay) {
             this.destroySelf();
             return;
         }
-    }
+    }*/
 
     protected var _spellType :uint;
     protected var _xLoc :Number = 0;

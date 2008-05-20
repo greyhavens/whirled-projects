@@ -15,10 +15,17 @@ public class DiurnalCycle extends SimObject
 
     public function DiurnalCycle ()
     {
+        this.init(GameContext.gameData.initialDayPhase);
+    }
+
+    protected function init (initialPhase :uint) :void
+    {
+        this.removeAllTasks();
+
         if (DiurnalCycle.isDisabled) {
             _phaseOfDay = { value: Constants.PHASE_NIGHT };
         } else {
-            var phase1 :uint = GameContext.gameData.initialDayPhase;
+            var phase1 :uint = initialPhase;
             var phase2 :uint = (phase1 == Constants.PHASE_DAY ? Constants.PHASE_NIGHT : Constants.PHASE_DAY);
 
             var dayLength :Number = GameContext.gameData.dayLength;
@@ -41,6 +48,11 @@ public class DiurnalCycle extends SimObject
 
             this.addTask(phaseTask);
         }
+    }
+
+    public function resetPhase (newPhase :uint) :void
+    {
+        this.init(newPhase);
     }
 
     public function get isDay () :Boolean

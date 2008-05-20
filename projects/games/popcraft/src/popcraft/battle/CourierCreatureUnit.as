@@ -64,7 +64,7 @@ public class CourierCreatureUnit extends CreatureUnit
     {
         // drop the currently carried spell on the ground when we die.
         // don't play the "new spell" sound when this happens.
-        if (null != _carriedSpell && GameContext.diurnalCycle.isNight) {
+        if (null != _carriedSpell) {// && GameContext.diurnalCycle.isNight) {
             SpellDropFactory.createSpellDrop(_carriedSpell.type, this.unitLoc, false);
         }
 

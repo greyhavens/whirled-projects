@@ -323,17 +323,27 @@ public class GameMode extends AppMode
             }
             break;
 
-        // temp
         case KeyboardCodes.B:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_BLOODLUST);
             }
             break;
 
-        // temp
         case KeyboardCodes.R:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_RIGORMORTIS);
+            }
+            break;
+
+        case KeyboardCodes.N:
+            if (Constants.DEBUG_ALLOW_CHEATS) {
+                GameContext.diurnalCycle.resetPhase(Constants.PHASE_NIGHT);
+            }
+            break;
+
+        case KeyboardCodes.D:
+            if (Constants.DEBUG_ALLOW_CHEATS) {
+                GameContext.diurnalCycle.resetPhase(Constants.PHASE_DAY);
             }
             break;
 
