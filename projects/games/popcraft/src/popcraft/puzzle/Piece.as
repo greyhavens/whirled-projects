@@ -64,8 +64,8 @@ public class Piece extends SceneObject
         var pieceClass :Class = SWF_CLASSES[newType];
         var pieceMovie :MovieClip = new pieceClass();
 
-        var scaleX :Number = Constants.PUZZLE_TILE_SIZE / pieceMovie.width;
-        var scaleY :Number = Constants.PUZZLE_TILE_SIZE / pieceMovie.height;
+        var scaleX :Number = (Constants.PUZZLE_TILE_SIZE + 1) / pieceMovie.width;
+        var scaleY :Number = (Constants.PUZZLE_TILE_SIZE + 1) / pieceMovie.height;
 
         pieceMovie.scaleX = scaleX;
         pieceMovie.scaleY = scaleY;
@@ -73,7 +73,7 @@ public class Piece extends SceneObject
         pieceMovie.x = -(pieceMovie.width * 0.5);
         pieceMovie.y = -(pieceMovie.height * 0.5);
 
-		pieceMovie.cacheAsBitmap = true;
+        pieceMovie.cacheAsBitmap = true;
 
         /*var pieceHilite :Shape = new Shape();
 

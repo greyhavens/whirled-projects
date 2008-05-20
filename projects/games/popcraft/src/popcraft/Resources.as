@@ -2,9 +2,11 @@ package popcraft {
 
 public class Resources
 {
+    // game data
     [Embed(source="../../levels/defaultGameData.xml", mimeType="application/octet-stream")]
     public static const DEFAULT_GAME_DATA :Class;
 
+    // gfx
     [Embed(source="../../rsrc/char_colossus.png", mimeType="application/octet-stream")]
     public static const IMAGE_COLOSSUSICON :Class;
 
@@ -48,7 +50,10 @@ public class Resources
     public static const SWF_HEAVY :Class;
 
     [Embed(source="../../rsrc/pieces.swf", mimeType="application/octet-stream")]
-    public static const SWF_PUZZLEPIECES :Class;
+    public static const SWF_PIECES :Class;
+
+    [Embed(source="../../rsrc/dashboard.swf", mimeType="application/octet-stream")]
+    public static const SWF_DASHBOARD :Class;
 
     [Embed(source="../../rsrc/mult15.png", mimeType="application/octet-stream")]
     public static const IMAGE_MULT15 :Class;

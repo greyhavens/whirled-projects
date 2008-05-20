@@ -22,28 +22,29 @@ public class PopCraft extends Sprite
 {
     public function PopCraft ()
     {
+        // setup GameControl
+        AppContext.gameCtrl = new GameControl(this, false);
+        var isConnected :Boolean = AppContext.gameCtrl.isConnected();
+        var multiplayer :Boolean = isConnected && (AppContext.gameCtrl.game.seating.getPlayerIds().length > 1);
+
+        // setup main loop
         this.graphics.beginFill(0);
         this.graphics.drawRect(0, 0, 700, 500);
         this.graphics.endFill();
 
         this.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
-        AppContext.mainLoop = new MainLoop(this);
+        AppContext.mainLoop = new MainLoop(this, (isConnected ? AppContext.gameCtrl.local : this.stage));
         AppContext.mainLoop.setup();
 
         // custom resource factories
-        ResourceManager.instance.registerLoaderClass("level", LevelResourceLoader);
-        ResourceManager.instance.registerLoaderClass("gameData", GameDataResourceLoader);
+        ResourceManager.instance.registerResourceType("level", LevelResourceLoader);
+        ResourceManager.instance.registerResourceType("gameData", GameDataResourceLoader);
 
         // sound volume
         AudioManager.instance.masterControls.volume(Constants.SOUND_MASTER_VOLUME);
 
         AppContext.mainLoop.run();
-
-        AppContext.gameCtrl = new GameControl(this, false);
-        var isConnected :Boolean = AppContext.gameCtrl.isConnected();
-
-        var multiplayer :Boolean = isConnected && (AppContext.gameCtrl.game.seating.getPlayerIds().length > 1);
 
         if (multiplayer) {
             GameContext.gameType = GameContext.GAME_TYPE_MULTIPLAYER;

@@ -31,7 +31,8 @@ public class LoadingMode extends AppMode
         ResourceManager.instance.pendResourceLoad("swf", "sapper", { embeddedClass: Resources.SWF_SAPPER });
         ResourceManager.instance.pendResourceLoad("swf", "heavy", { embeddedClass: Resources.SWF_HEAVY });
 
-        ResourceManager.instance.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: Resources.SWF_PUZZLEPIECES });
+        ResourceManager.instance.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: Resources.SWF_PIECES });
+        ResourceManager.instance.pendResourceLoad("swf", "dashboard", { embeddedClass: Resources.SWF_DASHBOARD });
 
         // sfx
         ResourceManager.instance.pendResourceLoad("sound", "sfx_create_grunt", { embeddedClass: Resources.SOUND_GRUNT });

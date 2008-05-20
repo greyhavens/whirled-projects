@@ -37,6 +37,7 @@ public class PauseMode extends AppMode
                 AppContext.mainLoop.unwindToMode(new LevelSelectMode());
             });
 
+        button.tabEnabled = false;
         button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
         button.y = 100;
         bgSprite.addChild(button);
@@ -48,6 +49,7 @@ public class PauseMode extends AppMode
                 AppContext.mainLoop.popMode();
             });
 
+        button.tabEnabled = false;
         button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
         button.y = 150;
         bgSprite.addChild(button);

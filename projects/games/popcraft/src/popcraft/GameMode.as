@@ -12,6 +12,7 @@ import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.util.*;
 import com.whirled.game.OccupantChangedEvent;
 
+import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
 import flash.display.Sprite;
 import flash.events.KeyboardEvent;
@@ -71,35 +72,8 @@ public class GameMode extends AppMode
 
     override protected function destroy () :void
     {
-        this.shutdownInput();
         this.shutdownNetwork();
         this.shutdownPlayers();
-    }
-
-    protected function setupInput () :void
-    {
-        if (AppContext.gameCtrl.isConnected()) {
-            // Listen for all keydowns.
-            // The suggested way to do this is to attach an event listener to the stage,
-            // but that's a security violation. The GameControl re-dispatches global key
-            // events for us instead.
-            AppContext.gameCtrl.local.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-        } else {
-            this.modeSprite.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-        }
-    }
-
-    protected function shutdownInput () :void
-    {
-        if (AppContext.gameCtrl.isConnected()) {
-            // Listen for all keydowns.
-            // The suggested way to do this is to attach an event listener to the stage,
-            // but that's a security violation. The GameControl re-dispatches global key
-            // events for us instead.
-            AppContext.gameCtrl.local.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-        } else {
-            this.modeSprite.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-        }
     }
 
     protected function setupPlayersMP () :void
@@ -224,6 +198,11 @@ public class GameMode extends AppMode
 
     protected function setupPuzzleAndUI () :void
     {
+        var dashboard :DashboardView = new DashboardView();
+        dashboard.x = Constants.DASHBOARD_LOC.x;
+        dashboard.y = Constants.DASHBOARD_LOC.y;
+        this.addObject(dashboard, _hudParent);
+
         var resourceDisplay :ResourceDisplay = new ResourceDisplay();
         resourceDisplay.displayObject.x = Constants.RESOURCE_DISPLAY_LOC.x;
         resourceDisplay.displayObject.y = Constants.RESOURCE_DISPLAY_LOC.y;
@@ -238,7 +217,8 @@ public class GameMode extends AppMode
         puzzleBoard.displayObject.x = Constants.PUZZLE_BOARD_LOC.x;
         puzzleBoard.displayObject.y = Constants.PUZZLE_BOARD_LOC.y;
 
-        this.addObject(puzzleBoard, _hudParent);
+        DisplayObjectContainer(dashboard.displayObject).addChildAt(puzzleBoard.displayObject, 0);
+        this.addObject(puzzleBoard);
 
         _descriptionPopupParent = new Sprite();
         _descriptionPopupParent.x = Constants.UNIT_AND_SPELL_DESCRIPTION_BR_LOC.x;
@@ -306,9 +286,9 @@ public class GameMode extends AppMode
         GameContext.netObjects.addObject(new SpellDropTimer());
     }
 
-    protected function onKeyDown (e :KeyboardEvent) :void
+    override public function onKeyDown (keyCode :uint) :void
     {
-       switch (e.keyCode) {
+       switch (keyCode) {
         case KeyboardCodes.NUMBER_4:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 for (var i :uint = 0; i < Constants.RESOURCE__LIMIT; ++i) {
@@ -374,7 +354,6 @@ public class GameMode extends AppMode
 
                 this.setupBattle();
                 this.setupPuzzleAndUI();
-                this.setupInput();
 
                 _gameIsRunning = true;
             } else {

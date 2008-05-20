@@ -18,6 +18,8 @@ public class ComboHiliteCursor extends SimObject
 
         _text = new TextField();
 
+        _text.mouseEnabled = false;
+
         _text.background = true;
         _text.backgroundColor = 0xFFFFFF;
         _text.border = true;
@@ -61,8 +63,6 @@ public class ComboHiliteCursor extends SimObject
             _textObj.visible = false;
         } else {
             var resourceValue :int = GameContext.gameData.resourceClearValueTable.getValueAt(_hilitedPieces.length - 1);
-
-            //_text.backgroundColor = Constants.getResource((_hilitedPieces[0] as Piece).resourceType).color;
 
             if (resourceValue >= 0) {
                 _text.textColor = 0xFFFFFF;
