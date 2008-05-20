@@ -27,12 +27,12 @@ public class LevelSelectMode extends AppMode
         tf.scaleX = 2;
         tf.scaleY = 2;
         tf.x = (this.modeSprite.width * 0.5) - (tf.width * 0.5);
-        tf.y = 100;
+        tf.y = 20;
 
         this.modeSprite.addChild(tf);
 
         var button :SimpleButton;
-        var yLoc :Number = 150;;
+        var yLoc :Number = 70;;
         // create a button for each level
         for (var i :int = 0; i < AppContext.levelMgr.numLevels; ++i) {
             button = this.createLevelSelectButton(i);
