@@ -4,7 +4,7 @@
         introText="A fire has broken out in the laboratory! You're in danger of being overwhelmed by your adversary. Construct a solid defense, quickly!"
         disableDiurnalCycle="false"
         playerBaseHealth="150"
-        playerBaseStartHealth="30">
+        playerBaseStartHealth="50">
 
         <GameDataOverride>
             <BaseLocations>
@@ -15,7 +15,10 @@
             </BaseLocations>
         </GameDataOverride>
 
-        <InitialResources/>
+        <InitialResources>
+            <Resource type="blue" amount="40"/>
+            <Resource type="yellow" amount="40"/>
+        </InitialResources>
 
         <AvailableUnits>
             <Unit type="grunt"/>
@@ -35,42 +38,67 @@
             <StartingSpells/>
             <InitialDays>
                 <Day repeatWaves="false"
-                    noticeSpellDropAfterMin="7"
-                    noticeSpellDropAfterMax="7"
+                    noticeSpellDropAfterMin="5"
+                    noticeSpellDropAfterMax="5"
                     spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="2">
 
-                    <Wave absoluteDelay="3"><Unit type="heavy" count="8"/></Wave>
-                    <Wave absoluteDelay="30" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="35" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
-                    <Wave absoluteDelay="50" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="55" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
-                    <Wave absoluteDelay="60"><Unit type="heavy" count="4"/></Wave>
-                    <Wave absoluteDelay="80" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="85" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
-                    <Wave absoluteDelay="100" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="105" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="3" spellCastChance="0.8"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="5" spellCastChance="0.8"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="10" spellCastChance="0.8"><Unit type="heavy" count="4"/></Wave>
+                    <Wave absoluteDelay="30" spellCastChance="0.8"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="35" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="38" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="50" spellCastChance="0.8"><Unit type="heavy" count="2"/></Wave>
+                    <Wave absoluteDelay="80" spellCastChance="0.8"><Unit type="colossus" count="1"/></Wave>
 
                 </Day>
             </InitialDays>
             <RepeatingDays>
+                <!-- Easier day -->
                 <Day repeatWaves="false"
-                    noticeSpellDropAfterMin="7"
-                    noticeSpellDropAfterMax="7"
-                    spellDropCourierGroupSizeMin="1"
-                    spellDropCourierGroupSizeMax="2">
+                    noticeSpellDropAfterMin="3"
+                    noticeSpellDropAfterMax="4"
+                    spellDropCourierGroupSizeMin="2"
+                    spellDropCourierGroupSizeMax="3">
 
-                    <Wave absoluteDelay="3"><Unit type="heavy" count="8"/></Wave>
-                    <Wave absoluteDelay="30" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="35" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
-                    <Wave absoluteDelay="50" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="55" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
-                    <Wave absoluteDelay="60"><Unit type="heavy" count="4"/></Wave>
-                    <Wave absoluteDelay="63" spellCastChance="0.8"><Unit type="colossus" count="1"/></Wave>
-                    <Wave absoluteDelay="80" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="85" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="3" spellCastChance="0.8"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="5" spellCastChance="0.8"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="10" spellCastChance="0.8"><Unit type="heavy" count="4"/></Wave>
+                    <Wave absoluteDelay="30" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="35" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="38" spellCastChance="0.8"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="50" spellCastChance="0.8"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="60" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="65" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="70" spellCastChance="0.8"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="75" spellCastChance="0.8"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="80" spellCastChance="0.8"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="81" spellCastChance="0.8"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="90" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="100" spellCastChance="0.8"><Unit type="sapper" count="5"/></Wave>
+                    <Wave absoluteDelay="105" spellCastChance="0.8"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="110" spellCastChance="0.8"><Unit type="grunt" count="1"/></Wave>
+
+                </Day>
+                <!-- Harder day -->
+                <Day repeatWaves="false"
+                    noticeSpellDropAfterMin="3"
+                    noticeSpellDropAfterMax="4"
+                    spellDropCourierGroupSizeMin="2"
+                    spellDropCourierGroupSizeMax="3">
+
+                    <Wave absoluteDelay="3" spellCastChance="0.8"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="5" spellCastChance="0.8"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="10" spellCastChance="0.8"><Unit type="heavy" count="4"/></Wave>
+                    <Wave absoluteDelay="30" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="35" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="38" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="50" spellCastChance="0.8"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="80" spellCastChance="0.8"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="90" spellCastChance="0.8"><Unit type="grunt" count="1"/></Wave>
                     <Wave absoluteDelay="100" spellCastChance="0.8"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="105" spellCastChance="0.8"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="105" spellCastChance="0.8"><Unit type="grunt" count="1"/></Wave>
 
                 </Day>
             </RepeatingDays>
