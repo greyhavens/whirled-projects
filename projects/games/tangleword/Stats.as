@@ -133,7 +133,7 @@ public class Stats extends Sprite
 
         // find top player and scores
         var topWords :Array = scoreboard.getTopWords(5);
-        var topPlayers :Array = scoreboard.getTopPlayerIds().map(scoreboard.getName);
+        var topPlayers :Array = scoreboard.getWinnerIds().map(scoreboard.getName);
         var topScore :int = scoreboard.getTopScore();
 
         while (_text.numChildren > 0) {

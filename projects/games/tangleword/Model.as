@@ -76,7 +76,7 @@ public class Model
         var playerIds :Array = [];
         var scores :Array = [];
         for each (var playerId :int in _gameCtrl.game.getOccupantIds()) {
-            var score :int = _scoreboard.getRoundScore(playerId);
+            var score :int = _scoreboard.getScore(playerId);
             if (score > 0) {
                 playerIds.push(playerId);
                 scores.push(score);
@@ -94,6 +94,8 @@ public class Model
         _data.scored = new Object();
         _data.claimed = new Object();
         _data.roundScores = new Object();
+
+        _display.roundEnded(_scoreboard);
     }
 
     //
@@ -310,7 +312,7 @@ public class Model
     /** Called when flow is awarded at the end of the round. */
     protected function flowAwarded (event :CoinsAwardedEvent) :void
     {
-        var roundScore :int = _scoreboard.getRoundScore(_gameCtrl.game.getMyId());
+        var roundScore :int = _scoreboard.getScore(_gameCtrl.game.getMyId());
         if (roundScore > 0) {
             _display.logRoundEnded(roundScore, event.amount);
         }

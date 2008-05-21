@@ -14,7 +14,8 @@ import com.whirled.game.NetSubControl;
  */
 public class Scoreboard
 {
-    public function Scoreboard (gameCtrl :GameControl, propName :String = "Scores_TODO")
+    // TODO: Make sure property name "Scores" isn't taken
+    public function Scoreboard (gameCtrl :GameControl, propName :String = "Scores_blah")
     {
         _gameCtrl = gameCtrl;
         _propName = propName;
@@ -32,12 +33,23 @@ public class Scoreboard
 
     public function getScore (playerId :int) :Number
     {
-        var dict :Dictionary = _gameCtrl.net.get(_propName) as Dictionary;
+        var dict :Dictionary = getAllScores();
 
-        if (dict != null && playerId in dict) {
+        if (playerId in dict) {
             return dict[playerId];
         } else {
             return 0;
+        }
+    }
+
+    public function getAllScores () :Dictionary
+    {
+        var dict :Dictionary = _gameCtrl.net.get(_propName) as Dictionary;
+
+        if(dict == null) {
+            return new Dictionary();
+        } else {
+            return dict;
         }
     }
 
@@ -73,55 +85,45 @@ public class Scoreboard
     }
 
     /** Retrieves the list of player ids, as an array of ints. */
+    // TODO: Maybe we do need a OCCUPANT_LEFT handler, we don't want to
+    // be getting playerIds that already left... or do we?
     public function getPlayerIds () :Array
     {
-        return [0];
-        /*var data :Array = new Array();
-        for (var key :String in _data.totalScores) {
-            data.push(int(key));
+        var buffer :Array = new Array();
+
+        for (var playerId :String in getAllScores()) {
+            buffer.push(int(playerId));
         }
-        return data;*/
+
+        return buffer;
     }
 
     /** Retrieves the highest known score. */
     public function getTopScore () :int
     {
-        return 0;
-        /*var max :int = 0;
-        for (var key :String in _data.roundScores) {
-            if (_data.roundScores[key] > max) {
-                max = _data.roundScores[key];
+        var scores :Dictionary = getAllScores();
+        var max :int = 0;
+
+        for (var key :String in scores) {
+            if (scores[key] > max) {
+                max = scores[key];
             }
         }
-        return max;*/
+
+        return max;
     }
-            
+
     /**
      * Retrieves a list of players ids with the top scores. The list can contain more than
      * one id in case of a tie.
      */
-    public function getTopPlayerIds () :Array // of int
+    public function getWinnerIds () :Array
     {
-        return [ 0 ];
-        /*var topplayers :Array = new Array();
-        var topscore :int = getTopScore();
-        for (var key :String in _data.roundScores) {
-            if (_data.roundScores[key] == topscore) {
-                topplayers.push(int(key));
-            }
-        }
-        return topplayers;*/
-    }
+        var topScore :int = getTopScore();
 
-    /** Retrieves player's round score, potentially zero. If the scoring
-     *  object doesn't have the player's score, it's initialized on first access. */
-    public function getRoundScore (playerId :int) :Number
-    {
-        return 0;
-        /*if (! _data.roundScores.hasOwnProperty(playerId)) {
-            _data.roundScores[playerId] = 0;
-        }
-        return _data.roundScores[playerId];*/
+        // Select all players with a score of topScore
+        return getPlayerIds().filter(
+                function(s :*, ... ignore) :Boolean { return s == topScore });
     }
 
     /**
@@ -130,15 +132,15 @@ public class Scoreboard
      */
     public function getTopWords (count :int) :Array /** of Object */
     {
-        return [ "changeme" ];
-        /*var words :Array = new Array();
-        for (var word :String in _data.scored) {
+        var words :Array = new Array();
+        //for (var word :String in _data.scored) {
             words.push(
-                { word: word, score: _data.scored[word], playerId: _data.claimed[word] });
-        }
+                //{ word: word, score: _data.scored[word], playerId: _data.claimed[word] });
+                { word: "Hello", score: 666, playerId: 35 });
+        //}
             
         words.sortOn("score", Array.DESCENDING | Array.NUMERIC);
-        return words.slice(0, count);*/
+        return words.slice(0, count);
     };
 
     /** Converts player id to name (so that we don't have to pass a GameControl

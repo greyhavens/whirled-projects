@@ -48,7 +48,7 @@ public class Trophies {
         }
 
         // how about a score-based trophy?
-        var oldscore :int = scoreboard.getRoundScore(_gameCtrl.game.getMyId());
+        var oldscore :int = scoreboard.getScore(_gameCtrl.game.getMyId());
         var newscore :int = oldscore + wordscore;
         for each (var boundary :int in pointsBoundaries) {
                 trophy = String(boundary) + pointsTrophySuffix;
@@ -62,7 +62,7 @@ public class Trophies {
 
     public function handleRoundEnded (scoreboard :Scoreboard) :void
     {
-        var score :int = scoreboard.getRoundScore(_gameCtrl.game.getMyId());
+        var score :int = scoreboard.getScore(_gameCtrl.game.getMyId());
         if (score > 0) { // only count rounds where the player was doing something
 
             // see if we need to grant a per-session round award
@@ -76,7 +76,7 @@ public class Trophies {
 
             // if the player won this round, count those up as well, but only for multiplayer
             if (scoreboard.getPlayerIds().length > 1) {
-                var winners :Array = scoreboard.getTopPlayerIds();
+                var winners :Array = scoreboard.getWinnerIds();
                 if (winners.indexOf(_gameCtrl.game.getMyId()) != -1) {
                     _multiplayerWins++;
                     for each (var boundary :int in multiplayerWinsBoundaries) {
