@@ -2,14 +2,13 @@ package popcraft {
 
 import com.whirled.contrib.simplegame.resource.*;
 
-import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
-import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.geom.Rectangle;
+import flash.filters.GlowFilter;
+import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
@@ -17,48 +16,77 @@ import popcraft.battle.*;
 import popcraft.battle.view.*;
 import popcraft.data.*;
 
-public class UnitPurchaseButton extends Sprite
+public class UnitPurchaseButton
 {
-    public static const HEIGHT :uint = 48;
-    public static const WIDTH :uint = 40;
-
-    public function UnitPurchaseButton (unitType :uint)
+    public function UnitPurchaseButton (unitType :uint, slotNum :int, parent :MovieClip)
     {
         _unitType = unitType;
-        _button = new SimpleButton();
+
+        _switch = parent["switch_" + slotNum];
+        _costs = parent["cost_" + slotNum];
+        _hilite = parent["highlight_" + slotNum];
+        _unitDisplay = parent["unit_" + slotNum]["unit"];
+        _progress = parent["progress_" + slotNum];
+        _button = parent["button_" + slotNum];
+
+        _button.addEventListener(MouseEvent.CLICK, onClicked);
+        _button.addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
+        _button.addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
 
         var unitData :UnitData = GameContext.gameData.units[unitType];
         var playerColor :uint = Constants.PLAYER_COLORS[GameContext.localPlayerId];
 
         // try instantiating some animations
-        // @TODO - why aren't the up animations playing?
-        var upAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "walk_SW");
-        if (null == upAnim) {
-            upAnim = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "stand_SW");
-        }
-        var overAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "attack_SW");
-        var downAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "attack_SW");
-        var disabledAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "stand_SW");
-
-        if (null != upAnim && null != overAnim && null != downAnim && null != disabledAnim) {
-            disabledAnim.gotoAndStop(1);
-            _button.upState = makeAnimatedButonFace(upAnim, COLOR_OUTLINE, COLOR_BG_UP);
-            _button.overState = makeAnimatedButonFace(overAnim, COLOR_OUTLINE, COLOR_BG_OVER, 1.0);
-            _button.downState = makeAnimatedButonFace(downAnim, COLOR_OUTLINE, COLOR_BG_DOWN, 1.0);
-            _disabledState = makeAnimatedButonFace(disabledAnim, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
-
-        } else {
-            var bitmapData :BitmapData = (ResourceManager.instance.getResource(unitData.name + "_icon") as ImageResource).bitmapData;
-            _button.upState         = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP);
-            _button.overState       = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_OVER, 1.0);
-            _button.downState       = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DOWN, 1.0);
-            _disabledState   = makeIconButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
+        _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "walk_SW");
+        if (null == _enabledAnim) {
+            _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "attack_SW");
         }
 
-        _button.hitTestState = _disabledState;
+        _disabledAnim = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "stand_SW");
 
-        this.addChild(_button);
-        this.addChild(_disabledState);
+        if (null == _disabledAnim || null == _enabledAnim) {
+            _enabledAnim = ImageResource.instantiateBitmap(unitData.name + "_icon");
+            _disabledAnim = ImageResource.instantiateBitmap(unitData.name + "_icon");
+
+            _enabledAnim.x = _enabledAnim.width * 0.5;
+            _enabledAnim.y = -_enabledAnim.height;
+            _disabledAnim.x = _disabledAnim.width * 0.5;
+            _disabledAnim.y = -_disabledAnim.height;
+        }
+
+        _unitDisplay.addChild(_enabledAnim);
+        _unitDisplay.addChild(_disabledAnim);
+
+        // set up the Unit Cost indicators
+        for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
+            var resCost :int = unitData.getResourceCost(resType);
+            if (resCost > 0) {
+                if (_resource1Cost == 0) {
+                    _resource1Type = resType;
+                    _resource1Cost = resCost;
+                    _resource1Data = GameContext.gameData.resources[resType];
+                } else {
+                    _resource2Type = resType;
+                    _resource2Cost = resCost;
+                    _resource2Data = GameContext.gameData.resources[resType];
+                }
+            }
+        }
+
+        var cost1Text :TextField = _costs["cost_1"];
+        var cost2Text :TextField = _costs["cost_2"];
+        var cost1Filter :GlowFilter = cost1Text.filters[0];
+        var cost2Filter :GlowFilter = cost2Text.filters[0];
+
+        cost1Filter.color = _resource1Data.hiliteColor;
+        cost1Text.textColor = _resource1Data.color;
+        cost1Text.text = String(_resource1Cost);
+
+        cost2Filter.color = _resource2Data.hiliteColor;
+        cost2Text.textColor = _resource2Data.color;
+        cost2Text.text = String(_resource2Cost);
+
+        this.createPurchaseMeters();
 
         // create the unit's description popup
         var tf :TextField = new TextField();
@@ -76,110 +104,239 @@ public class UnitPurchaseButton extends Sprite
         tf.y = -tf.height;
 
         _descriptionPopup = tf;
-
         GameContext.gameMode.descriptionPopupParent.addChild(_descriptionPopup);
 
-        this.enabled = true;
-
-        this.addEventListener(MouseEvent.ROLL_OVER, handleMouseOver);
-        this.addEventListener(MouseEvent.ROLL_OUT, handleMouseOut);
+        // force this.enabled = false to have an effect
+        _enabled = true;
+        this.enabled = false;
     }
 
-    protected static function makeAnimatedButonFace (anim :MovieClip, fgColor :uint, bgColor :uint, animAlpha :Number = 1.0) :Sprite
+    protected function onClicked (...ignored) :void
     {
-        var face :Sprite = new Sprite();
-
-        var animParent :Sprite = new Sprite();
-        animParent.scrollRect = new Rectangle(0, 0, WIDTH, HEIGHT);
-        face.addChild(animParent);
-
-        anim.scaleX = 0.75;
-        anim.scaleY = 0.75;
-        anim.x = WIDTH * 0.5;
-        anim.y = HEIGHT - 4;
-        anim.alpha = animAlpha;
-
-        animParent.addChild(anim);
-
-        // draw our button background (and outline)
-        face.graphics.beginFill(bgColor);
-        face.graphics.lineStyle(1, fgColor);
-        face.graphics.drawRect(0, 0, WIDTH, HEIGHT);
-        face.graphics.endFill();
-
-        return face;
-    }
-
-    // @TODO - remove this function
-    protected static function makeIconButtonFace (bitmapData :BitmapData, fgColor :uint, bgColor :uint, iconAlpha :Number = 1.0) :Sprite
-    {
-        var face :Sprite = new Sprite();
-
-        var icon :Bitmap = new Bitmap(bitmapData);
-        var scale :Number = (WIDTH / icon.width);
-        icon.scaleX = scale;
-        icon.scaleY = scale;
-        icon.alpha = iconAlpha;
-
-        face.addChild(icon);
-
-        // draw our button background (and outline)
-        face.graphics.beginFill(bgColor);
-        face.graphics.lineStyle(1, fgColor);
-        face.graphics.drawRect(0, 0, WIDTH, HEIGHT);
-        face.graphics.endFill();
-
-        icon.x = 0;
-        icon.y = 0;
-
-        return face;
-    }
-
-    protected function handleMouseOver (...ignored) :void
-    {
-        if (null != _descriptionPopup) {
-            _descriptionPopup.visible = true;
+        if (_enabled) {
+            _switch.gotoAndPlay("deploy");
+            _hilite.gotoAndPlay("deploy");
+            GameContext.gameMode.buildUnit(GameContext.localPlayerId, _unitType);
         }
     }
 
-    protected function handleMouseOut (...ignored) :void
+    protected function onMouseOver (...ignored) :void
     {
-        if (null != _descriptionPopup) {
-            _descriptionPopup.visible = false;
+        _descriptionPopup.visible = true;
+    }
+
+    protected function onMouseOut (...ignored) :void
+    {
+        _descriptionPopup.visible = false;
+    }
+
+    protected function set enabled (val :Boolean) :void
+    {
+        if (val != _enabled) {
+            _enabled = val;
+            _enabledAnim.visible = val;
+            _disabledAnim.visible = !val;
+            _button.enabled = val;
+
+            _switch.gotoAndPlay(_enabled ? "activate" : "off");
+            _hilite.gotoAndPlay(_enabled ? "on" : "off");
         }
     }
 
-    public function get enabled () :Boolean
+    public function update () :void
     {
-        return _enabled;
+        var playerInfo :LocalPlayerInfo = GameContext.localPlayerInfo;
+        var res1Amount :int = Math.min(playerInfo.getResourceAmount(_resource1Type), _resource1Cost);
+        var res2Amount :int = Math.min(playerInfo.getResourceAmount(_resource2Type), _resource2Cost);
+
+        if (res1Amount == _lastResource1Amount && res2Amount == _lastResource2Amount) {
+            // don't update if nothing has changed
+            return;
+        }
+
+        this.enabled = (res1Amount >= _resource1Cost && res2Amount >= _resource2Cost);
+
+        // update all the meters
+        for (var i :int = 0; i < 2; ++i) {
+            var availableResources :int;
+            var meterArray :Array;
+            if (i == 0) {
+                availableResources = res1Amount;
+                meterArray = _resource1Meters;
+            } else {
+                availableResources = res2Amount;
+                meterArray = _resource2Meters;
+            }
+
+            for each (var meter :ResourceMeter in meterArray) {
+                var thisMeterVal :int = Math.min(availableResources, ResourceMeter.MAX_MAX_VALUE);
+                meter.update(thisMeterVal);
+                availableResources = Math.max(availableResources - thisMeterVal, 0);
+            }
+        }
     }
 
-    public function set enabled (val :Boolean) :void
+    protected function createPurchaseMeters () :void
     {
-        _enabled = val;
-        _button.visible = enabled;
-        _disabledState.visible = !enabled;
-    }
+        var resource1Bitmap :BitmapData = SwfResource.getBitmapData("dashboard", RESOURCE_BITMAP_NAMES[_resource1Type], 18, 18);
+        var resource2Bitmap :BitmapData = SwfResource.getBitmapData("dashboard", RESOURCE_BITMAP_NAMES[_resource2Type], 18, 18);
+        var resource1BgColor :uint = _resource1Data.hiliteColor;
+        var resource2BgColor :uint = _resource2Data.hiliteColor;
 
-    public function get unitType () :uint
-    {
-        return _unitType;
+        var meter :ResourceMeter;
+        var meterXOffset :Number = FIRST_METER_LOC.x;
+        if (_resource1Cost <= 50 && _resource2Cost <= 50) {
+            // use large meters for costs <= 50
+            meter = new ResourceMeter(resource1Bitmap, resource1BgColor, true, 0, _resource1Cost);
+            meter.x = meterXOffset;
+            meter.y = FIRST_METER_LOC.y;
+            _resource1Meters.push(meter);
+            _progress.addChild(meter);
+
+            meterXOffset += meter.meterWidth;
+
+            meter = new ResourceMeter(resource2Bitmap, resource2BgColor, true, 0, _resource2Cost);
+            meter.x = meterXOffset;
+            meter.y = FIRST_METER_LOC.y;
+            _resource2Meters.push(meter);
+            _progress.addChild(meter);
+
+        } else {
+            // make a bunch of small meters
+            for (var i :int = 0; i < 2; ++i) {
+                var totalCost :int;
+                var fgBitmap :BitmapData;
+                var bgColor :uint;
+                var meterArray :Array;
+                if (i == 0) {
+                    totalCost = _resource1Cost;
+                    fgBitmap = resource1Bitmap;
+                    bgColor = resource1BgColor;
+                    meterArray = _resource1Meters;
+                } else {
+                    totalCost = _resource2Cost;
+                    fgBitmap = resource2Bitmap;
+                    bgColor = resource2BgColor;
+                    meterArray = _resource2Meters;
+                }
+
+                while (totalCost > 0) {
+                    var meterMax :int = Math.min(totalCost, ResourceMeter.MAX_MAX_VALUE);
+                    meter = new ResourceMeter(fgBitmap, bgColor, false, 0, meterMax);
+                    meter.x = meterXOffset;
+                    meter.y = FIRST_METER_LOC.y;
+                    meterArray.push(meter);
+                    _progress.addChild(meter);
+
+                    meterXOffset += meter.meterWidth;
+                    totalCost -= meterMax;
+                }
+            }
+        }
     }
 
     protected var _unitType :uint;
+
+    protected var _switch :MovieClip;
+    protected var _costs :MovieClip;
+    protected var _hilite :MovieClip;
+    protected var _unitDisplay :MovieClip;
+    protected var _progress :MovieClip;
     protected var _button :SimpleButton;
-    protected var _disabledState :Sprite;
+
     protected var _descriptionPopup :DisplayObject;
+
+    protected var _enabledAnim :DisplayObject;
+    protected var _disabledAnim :DisplayObject;
+
+    protected var _resource1Type :uint;
+    protected var _resource2Type :uint;
+    protected var _resource1Cost :int;
+    protected var _resource2Cost :int;
+    protected var _resource1Data :ResourceData;
+    protected var _resource2Data :ResourceData;
+    protected var _lastResource1Amount :int = -1;
+    protected var _lastResource2Amount :int = -1;
+    protected var _resource1Meters :Array = [];
+    protected var _resource2Meters :Array = [];
 
     protected var _enabled :Boolean;
 
-    protected static const COLOR_OUTLINE :uint = 0x000000;
-    protected static const COLOR_BG_UP :uint = 0xFFD800;
-    protected static const COLOR_BG_OVER :uint = 0xCFAF00;
-    protected static const COLOR_BG_DOWN :uint = 0xCFAF00;
-    protected static const COLOR_BG_DISABLED :uint = 0x525252;
+    protected static const FIRST_METER_LOC :Point = new Point(-18, -50);
 
-    protected static const ALPHA_DISABLED :Number = 0.5;
+    protected static const RESOURCE_BITMAP_NAMES :Array =
+        [ "flesh", "blood", "energy", "artifice" ];
 }
 
+}
+
+import flash.display.Shape;
+import flash.display.BitmapData;
+import flash.display.Graphics;
+
+class ResourceMeter extends Shape
+{
+    public static const MAX_MAX_VALUE :int = 50;
+
+    public function ResourceMeter (fgBitmap :BitmapData, bgColor :uint, isLarge :Boolean, value :int, maxValue :int)
+    {
+        _fgBitmap = fgBitmap;
+        _bgColor = bgColor;
+        _width = (isLarge ? LG_WIDTH : SM_WIDTH);
+        _maxValue = maxValue;
+
+        _totalHeight = (_maxValue / MAX_MAX_VALUE) * MAX_HEIGHT;
+
+        this.update(value);
+    }
+
+    public function update (newValue :int) :void
+    {
+        if (_value == newValue) {
+            return;
+        }
+
+        _value = newValue;
+
+        var percentFill :Number = _value / _maxValue;
+        var fgHeight :Number = _totalHeight * percentFill;
+        var bgHeight :Number = _totalHeight - fgHeight;
+        var bgStart :Number = MAX_HEIGHT - _totalHeight;
+        var fgStart :Number = bgStart + bgHeight;
+
+        var g :Graphics = this.graphics;
+        g.clear();
+
+        if (fgHeight > 0) {
+            // draw the fg
+            g.beginBitmapFill(_fgBitmap);
+            g.lineStyle(1, 0);
+            g.drawRect(0, fgStart, _width, fgHeight);
+            g.endFill();
+        }
+
+        if (bgHeight > 1) {
+            // draw the bg
+            g.beginFill(_bgColor);
+            g.lineStyle(1, 0);
+            g.drawRect(0, bgStart, _width, bgHeight);
+            g.endFill();
+        }
+    }
+
+    public function get meterWidth () :int
+    {
+        return _width;
+    }
+
+    protected var _fgBitmap :BitmapData;
+    protected var _bgColor :uint;
+    protected var _maxValue :int;
+    protected var _value :int = -1;
+    protected var _width :int;
+    protected var _totalHeight :Number;
+
+    protected static const MAX_HEIGHT :int = 65;
+    protected static const LG_WIDTH :int = 18;
+    protected static const SM_WIDTH :int = 3;
 }

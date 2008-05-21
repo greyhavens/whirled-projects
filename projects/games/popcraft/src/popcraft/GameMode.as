@@ -198,6 +198,11 @@ public class GameMode extends AppMode
 
     protected function setupPuzzleAndUI () :void
     {
+        _descriptionPopupParent = new Sprite();
+        _descriptionPopupParent.x = Constants.UNIT_AND_SPELL_DESCRIPTION_BR_LOC.x;
+        _descriptionPopupParent.y = Constants.UNIT_AND_SPELL_DESCRIPTION_BR_LOC.y;
+        _overlayParent.addChild(_descriptionPopupParent);
+
         var dashboard :DashboardView = new DashboardView();
         dashboard.x = Constants.DASHBOARD_LOC.x;
         dashboard.y = Constants.DASHBOARD_LOC.y;
@@ -214,12 +219,6 @@ public class GameMode extends AppMode
         DisplayObjectContainer(dashboard.displayObject).addChildAt(puzzleBoard.displayObject, 0);
         this.addObject(puzzleBoard);
 
-        _descriptionPopupParent = new Sprite();
-        _descriptionPopupParent.x = Constants.UNIT_AND_SPELL_DESCRIPTION_BR_LOC.x;
-        _descriptionPopupParent.y = Constants.UNIT_AND_SPELL_DESCRIPTION_BR_LOC.y;
-        _overlayParent.addChild(_descriptionPopupParent);
-
-        this.addObject(new UnitPurchaseButtonManager());
         this.addObject(new SpellCastButtonManager());
     }
 
