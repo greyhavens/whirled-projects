@@ -20,11 +20,20 @@ public class DashboardView extends SceneObject
         _movie = SwfResource.instantiateMovieClip("dashboard", "dashboard_sym");
         var puzzleFrame :MovieClip = this.puzzleFrame;
 
+        // setup resources
         for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
             var resourceTextName :String = RESOURCE_TEXT_NAMES[resType];
             _resourceText.push(puzzleFrame[resourceTextName]);
             _resourceBars.push(null);
             _oldResourceAmounts.push(-1);
+        }
+
+        // setup unit purchase buttons
+        var unitParent :MovieClip = _movie["frame_units"];
+        for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
+            var available :Boolean = (!GameContext.isSinglePlayer || GameContext.spLevel.isAvailableUnit(unitType));
+            var upb :XUnitPurchaseButton = new XUnitPurchaseButton(unitType, unitType + 1, unitParent);
+            upb.visible = available;
         }
 
         this.updateResources();
@@ -113,6 +122,7 @@ public class DashboardView extends SceneObject
     protected var _resourceText :Array = [];
     protected var _resourceBars :Array = [];
     protected var _oldResourceAmounts :Array = [];
+    protected var _unitPurchaseButtons :Array = [];
 
     protected static const RESOURCE_TEXT_NAMES :Array =
         [ "resource_2", "resource_1", "resource_4", "resource_3" ];
@@ -125,4 +135,74 @@ public class DashboardView extends SceneObject
     protected static const RESOURCE_METER_MAX_HEIGHT :Number = 20;
 }
 
+}
+
+import flash.display.MovieClip;
+
+import popcraft.*;
+import popcraft.battle.view.UnitAnimationFactory;
+import popcraft.data.UnitData;
+import flash.display.DisplayObject;
+import com.whirled.contrib.simplegame.resource.ImageResource;
+
+class XUnitPurchaseButton
+{
+    public function XUnitPurchaseButton (unitType :uint, slotNum :int, parent :MovieClip)
+    {
+        _switch = parent["switch_" + slotNum];
+        _costs = parent["cost_" + slotNum];
+        _hilite = parent["highlight_" + slotNum];
+        _unitDisplay = parent["unit_" + slotNum];
+        _progress = parent["progress_" + slotNum];
+
+        var unitData :UnitData = GameContext.gameData.units[unitType];
+        var playerColor :uint = Constants.PLAYER_COLORS[GameContext.localPlayerId];
+
+        // try instantiating some animations
+        _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "walk_SW");
+        if (null == _enabledAnim) {
+            _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "attack_SW");
+        }
+
+        _disabledAnim = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "stand_SW");
+
+        if (null == _disabledAnim || null == _enabledAnim) {
+            _enabledAnim = ImageResource.instantiateBitmap(unitData.name + "_icon");
+            _disabledAnim = ImageResource.instantiateBitmap(unitData.name + "_icon");
+        }
+
+        _unitDisplay.addChild(_enabledAnim);
+        _unitDisplay.addChild(_disabledAnim);
+
+        this.enabled = true;
+    }
+
+    public function set visible (val :Boolean) :void
+    {
+        _switch.visible = val;
+        _costs.visible = val;
+        _hilite.visible = val;
+        _unitDisplay.visible = val;
+        _progress.visible = val;
+    }
+
+    public function set enabled (val :Boolean) :void
+    {
+        if (val != _enabled) {
+            _enabled = val;
+            _enabledAnim.visible = val;
+            _disabledAnim.visible = !val;
+        }
+    }
+
+    protected var _switch :MovieClip;
+    protected var _costs :MovieClip;
+    protected var _hilite :MovieClip;
+    protected var _unitDisplay :MovieClip;
+    protected var _progress :MovieClip;
+
+    protected var _enabledAnim :DisplayObject;
+    protected var _disabledAnim :DisplayObject;
+
+    protected var _enabled :Boolean;
 }

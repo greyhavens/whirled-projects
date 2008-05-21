@@ -50,6 +50,11 @@ public class DiurnalCycle extends SimObject
         }
     }
 
+    override protected function update (dt :Number) :void
+    {
+        _lastUpdateTimestamp += dt;
+    }
+
     public function get isDay () :Boolean
     {
         return this.phaseOfDay == Constants.PHASE_DAY;
@@ -58,6 +63,11 @@ public class DiurnalCycle extends SimObject
     public function get isNight () :Boolean
     {
         return this.phaseOfDay == Constants.PHASE_NIGHT;
+    }
+
+    public function get curPhaseTotalTime () :Number
+    {
+        return (this.isDay ? GameContext.gameData.dayLength : GameContext.gameData.nightLength);
     }
 
     public function get timeTillNextPhase () :Number
@@ -70,8 +80,14 @@ public class DiurnalCycle extends SimObject
         return _phaseOfDay["value"];
     }
 
+    public function get lastUpdateTimestamp () :Number
+    {
+        return _lastUpdateTimestamp;
+    }
+
     protected var _phaseOfDay :Object;
     protected var _timeTillNextPhase :Object;
+    protected var _lastUpdateTimestamp :Number = 0;
 }
 
 }
