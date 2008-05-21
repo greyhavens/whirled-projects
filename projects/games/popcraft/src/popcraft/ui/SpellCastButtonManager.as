@@ -1,9 +1,11 @@
-package popcraft {
+package popcraft.ui {
 
 import com.whirled.contrib.simplegame.SimObject;
 
 import flash.events.MouseEvent;
 import flash.geom.Point;
+
+import popcraft.*;
 
 public class SpellCastButtonManager extends SimObject
 {

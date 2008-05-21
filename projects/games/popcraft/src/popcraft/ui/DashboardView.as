@@ -1,4 +1,4 @@
-package popcraft {
+package popcraft.ui {
 
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
@@ -11,6 +11,7 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
 
+import popcraft.*;
 import popcraft.data.ResourceData;
 
 public class DashboardView extends SceneObject

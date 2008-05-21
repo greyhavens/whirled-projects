@@ -1,4 +1,4 @@
-package popcraft {
+package popcraft.ui {
 
 import com.threerings.util.RingBuffer;
 import com.whirled.contrib.simplegame.*;
@@ -9,6 +9,8 @@ import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
+
+import popcraft.*;
 
 public class DebugDataView extends SceneObject
 {

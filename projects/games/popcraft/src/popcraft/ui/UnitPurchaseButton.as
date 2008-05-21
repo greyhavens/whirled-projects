@@ -1,4 +1,4 @@
-package popcraft {
+package popcraft.ui {
 
 import com.whirled.contrib.simplegame.resource.*;
 
@@ -12,6 +12,7 @@ import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
+import popcraft.*;
 import popcraft.battle.*;
 import popcraft.battle.view.*;
 import popcraft.data.*;

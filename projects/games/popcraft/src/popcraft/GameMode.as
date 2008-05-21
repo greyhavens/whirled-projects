@@ -18,6 +18,7 @@ import flash.display.Sprite;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
+import popcraft.ui.*;
 import popcraft.battle.*;
 import popcraft.battle.view.*;
 import popcraft.data.*;
