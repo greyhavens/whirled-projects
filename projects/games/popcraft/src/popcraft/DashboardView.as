@@ -152,7 +152,7 @@ class XUnitPurchaseButton
         _switch = parent["switch_" + slotNum];
         _costs = parent["cost_" + slotNum];
         _hilite = parent["highlight_" + slotNum];
-        _unitDisplay = parent["unit_" + slotNum];
+        _unitDisplay = parent["unit_" + slotNum]["unit"];
         _progress = parent["progress_" + slotNum];
 
         var unitData :UnitData = GameContext.gameData.units[unitType];
@@ -170,6 +170,8 @@ class XUnitPurchaseButton
             _enabledAnim = ImageResource.instantiateBitmap(unitData.name + "_icon");
             _disabledAnim = ImageResource.instantiateBitmap(unitData.name + "_icon");
         }
+
+        _unitDisplay.removeChildAt(0);
 
         _unitDisplay.addChild(_enabledAnim);
         _unitDisplay.addChild(_disabledAnim);
