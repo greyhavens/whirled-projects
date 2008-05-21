@@ -102,6 +102,7 @@ public class Display extends Sprite
     /** Called from the model, this accessor takes an array of /points/,
         marks letters at those positions as selected, and all others as deselected,
         and updates the text box. */
+    // TODO: This should not be called when the word is submitted
     public function updateLetterSelection (points :Array) :void
     {
         Assert.isNotNull(points, "Invalid points array!");
@@ -172,8 +173,8 @@ public class Display extends Sprite
     /** Sets scores based on the scoreboard. */
     public function updateScores (board :Scoreboard) :void
     {
-        _gameCtrl.local.clearScores();
-        _gameCtrl.local.setMappedScores(board.getScores());
+        //_gameCtrl.local.clearScores();
+        //_gameCtrl.local.setMappedScores(board.getScores());
     }
 
     /** Sets timer based on specified number. */
@@ -211,9 +212,10 @@ public class Display extends Sprite
         setCursor(i);
     }
 
-    private function okButtonClickHandler () :void
+    protected function submitWord () :void
     {
         _controller.tryScoreWord(_wordfield.text);
+        _wordfield.text = "";
     }
 
     /** Called when the user types a letter inside the word field. */
@@ -224,7 +226,7 @@ public class Display extends Sprite
         case 13:
             // If it's an ENTER, try scoring.
             if (_wordfield.text != "") {
-                _controller.tryScoreWord(_wordfield.text);
+                submitWord();
             }
             break;
 
@@ -264,7 +266,7 @@ public class Display extends Sprite
     {
         _okbutton = new Button(new Resources.buttonOkOver(),
                                new Resources.buttonOkOut(),
-                               okButtonClickHandler);
+                               submitWord);
         doPosition(_okbutton, Properties.OKBUTTON);
         addChild(_okbutton);
 

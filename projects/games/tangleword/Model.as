@@ -4,7 +4,7 @@ package
 import flash.events.Event;
 
 import com.threerings.util.Assert;
-import com.whirled.game.FlowAwardedEvent;
+import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.PropertyChangedEvent;
@@ -30,7 +30,7 @@ public class Model
         _display = display;
 
         // Register for updates
-        _gameCtrl.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
+        _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, flowAwarded);
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         
@@ -42,7 +42,7 @@ public class Model
 
     public function handleUnload (event :Event) :void
     {
-        _gameCtrl.player.removeEventListener(FlowAwardedEvent.FLOW_AWARDED, flowAwarded);
+        _gameCtrl.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, flowAwarded);
         _gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
     }        
@@ -300,7 +300,7 @@ public class Model
     }
 
     /** Called when flow is awarded at the end of the round. */
-    protected function flowAwarded (event :FlowAwardedEvent) :void
+    protected function flowAwarded (event :CoinsAwardedEvent) :void
     {
         var roundScore :int = _scoreboard.getRoundScore(_gameCtrl.game.getMyId());
         if (roundScore > 0) {

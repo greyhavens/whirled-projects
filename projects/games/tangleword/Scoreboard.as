@@ -1,6 +1,11 @@
 package {
 
+import flash.utils.Dictionary;
+
 import com.whirled.game.GameControl;
+import com.whirled.game.PropertyChangedEvent;
+import com.whirled.game.ElementChangedEvent;
+import com.whirled.game.NetSubControl;
 
 /**
  * This class is a wrapper around a simple TangleWord score storage object:
@@ -9,9 +14,11 @@ import com.whirled.game.GameControl;
  */
 public class Scoreboard
 {
-    /** Constructor */
-    public function Scoreboard (gameCtrl :GameControl)
+    public function Scoreboard (gameCtrl :GameControl, propName :String = "Scores_TODO")
     {
+        _gameCtrl = gameCtrl;
+        _propName = propName;
+
         // these are just plain objects, so that we don't have to perform explicit
         // serialization/deserialization steps. as a down side, all keys are strings.
         _data = new Object();
@@ -19,7 +26,53 @@ public class Scoreboard
         _data.claimed = new Object();     // maps word => player id
         _data.scored = new Object();      // maps word => word score
 
-        _gameCtrl = gameCtrl;
+        // TODO: Will fire handleScoreUpdate twice, problem?
+        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, handleScoreUpdate);
+        _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, handleScoreUpdate);
+
+        updateScores();
+    }
+
+    public function setScore (playerId :int, score :Number) :void
+    {
+        _gameCtrl.net.setIn(_propName, playerId, score);
+    }
+
+    public function addToScore (playerId :int, delta :Number) :void
+    {
+        var dict :Dictionary = _gameCtrl.net.get(_propName) as Dictionary;
+        var score :Number = 0;
+
+        if(dict != null && dict[playerId] != undefined) {
+            score = dict[playerId];
+        }
+
+        setScore(playerId, score + delta);
+    }
+
+    public function clearScore (playerId :int) :void
+    {
+        _gameCtrl.net.setIn(_propName, playerId, null);
+    }
+
+    public function clearAll () :void
+    {
+        _gameCtrl.net.set(_propName, null);
+    }
+
+    // TODO: Make protected?
+    public function updateScores () :void
+    {
+        _gameCtrl.local.clearScores();
+        _gameCtrl.local.setMappedScores(_gameCtrl.net.get(_propName));
+    }
+
+
+    protected function handleScoreUpdate (e :PropertyChangedEvent) :void
+    {
+        if (e.name == _propName) {
+            updateScores();
+        }
     }
 
     /** Defines a player with the given /id/, with zero score. */
@@ -101,9 +154,15 @@ public class Scoreboard
     /** Marks the /word/ as claimed, and adds the /score/ to the player's total. */
     public function addWord (playerId :int, word :String, score :Number) :void
     {
+        //_gameCtrl.net.setIn(CLAIMED, word, playerId);
+        //_gameCtrl.net.setIn(SCORED, word, score);
+        //_gameCtrl.net.setIn(ROUND_SCORES, playerId,
+                //_gameCtrl.net.get(ROUND_SCORES) + score);
         _data.claimed[word] = playerId;
         _data.scored[word] = score;
         _data.roundScores[playerId] = getRoundScore(playerId) + score;
+
+        addToScore(playerId, score);
     }
 
     /** If this word was already claimed, returns true; otherwise false. */
@@ -144,8 +203,15 @@ public class Scoreboard
 
     // IMPLEMENTATION DETAILS
 
+    private static const SCORED :String = "Scores",
+                         ROUND_SCORES :String = "RoundScores",
+                         CLAIMED :String = "Claimed";
+
     /** Storage object that keeps a copy of player scores */
     private var _data :Object;
+
+    protected var _scores :Array;
+    protected var _propName :String;
 
     /** Game controller. */
     private var _gameCtrl :GameControl;

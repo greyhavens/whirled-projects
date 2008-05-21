@@ -12,7 +12,7 @@ import flash.geom.Point;
     
 public class Controller 
 {
-    // OUBLIC CONSTANTS
+    // PUBLIC CONSTANTS
     public static const MIN_WORD_LENGTH :int = 3;
 
     
