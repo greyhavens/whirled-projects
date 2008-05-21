@@ -26,11 +26,10 @@ public class Scoreboard
         _data.claimed = new Object();     // maps word => player id
         _data.scored = new Object();      // maps word => word score
 
-        // TODO: Will fire handleScoreUpdate twice, problem?
-        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, handleScoreUpdate);
+        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, initScores);
         _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, handleScoreUpdate);
 
-        updateScores();
+        initScores();
     }
 
     public function setScore (playerId :int, score :Number) :void
@@ -43,7 +42,7 @@ public class Scoreboard
         var dict :Dictionary = _gameCtrl.net.get(_propName) as Dictionary;
         var score :Number = 0;
 
-        if(dict != null && dict[playerId] != undefined) {
+        if(dict != null && playerId in dict) {
             score = dict[playerId];
         }
 
@@ -60,25 +59,19 @@ public class Scoreboard
         _gameCtrl.net.set(_propName, null);
     }
 
-    // TODO: Make protected?
-    public function updateScores () :void
+    protected function initScores (... ignore) :void
     {
         _gameCtrl.local.clearScores();
         _gameCtrl.local.setMappedScores(_gameCtrl.net.get(_propName));
     }
 
-
-    protected function handleScoreUpdate (e :PropertyChangedEvent) :void
+    protected function handleScoreUpdate (e :ElementChangedEvent) :void
     {
         if (e.name == _propName) {
-            updateScores();
+            var o :Object = {};
+            o[e.key] = e.newValue;
+            _gameCtrl.local.setMappedScores(o);
         }
-    }
-
-    /** Defines a player with the given /id/, with zero score. */
-    public function addPlayerId (id :int) :void
-    {
-        getRoundScore(id);  // auto-init
     }
 
     /** Retrieves the list of player ids, as an array of ints. */
@@ -89,12 +82,6 @@ public class Scoreboard
             data.push(int(key));
         }
         return data;                
-    }
-
-    /** Returns an object mapping player ids to round scores. */
-    public function getScores () :Object
-    {
-        return _data.roundScores;
     }
 
     /** Retrieves the highest known score. */
@@ -154,10 +141,6 @@ public class Scoreboard
     /** Marks the /word/ as claimed, and adds the /score/ to the player's total. */
     public function addWord (playerId :int, word :String, score :Number) :void
     {
-        //_gameCtrl.net.setIn(CLAIMED, word, playerId);
-        //_gameCtrl.net.setIn(SCORED, word, score);
-        //_gameCtrl.net.setIn(ROUND_SCORES, playerId,
-                //_gameCtrl.net.get(ROUND_SCORES) + score);
         _data.claimed[word] = playerId;
         _data.scored[word] = score;
         _data.roundScores[playerId] = getRoundScore(playerId) + score;
@@ -182,18 +165,6 @@ public class Scoreboard
         _data.roundScores = new Object();
     }
 
-    /** For serialization use only: returns a copy to the data storage object */
-    public function get internalScoreObject () :Object
-    {
-        return _data;
-    }
-
-    /** For serialization use only: sets a pointer to the data storage object */
-    public function set internalScoreObject (data :Object) :void
-    {
-        _data = data;
-    }
-
     /** Converts player id to name (so that we don't have to pass a GameControl
      *  reference everywhere. */
     public function getName (playerId :int, ... etc) :String
@@ -202,10 +173,6 @@ public class Scoreboard
     }
 
     // IMPLEMENTATION DETAILS
-
-    private static const SCORED :String = "Scores",
-                         ROUND_SCORES :String = "RoundScores",
-                         CLAIMED :String = "Claimed";
 
     /** Storage object that keeps a copy of player scores */
     private var _data :Object;

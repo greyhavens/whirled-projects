@@ -55,11 +55,11 @@ public class Model
     /** Called at the beginning of a round - push my scoreboard on everyone. */
     public function roundStarted () :void
     {
-        if (_gameCtrl.game.amInControl())
+        /*if (_gameCtrl.game.amInControl())
         {
             // Share the scoreboard
             _gameCtrl.net.sendMessage (SCOREBOARD_UPDATE_MSG, _scoreboard.internalScoreObject);
-        }
+        }*/
     }
 
     public function endRound () :void
@@ -233,7 +233,7 @@ public class Model
     public function updateFromExistingGame () :void
     {
         updateLettersOnBoard();
-        _gameCtrl.net.sendMessage (SCOREBOARD_REQUEST_MSG, _scoreboard.internalScoreObject);
+        //_gameCtrl.net.sendMessage (SCOREBOARD_REQUEST_MSG, _scoreboard.internalScoreObject);
     }
 
     
@@ -251,9 +251,9 @@ public class Model
             // Store the score in a local data structure
             addWordToScoreboard(
                 event.value.playerId, event.value.word, event.value.score, event.value.isvalid);
-            updateScoreDisplay ();
             break;
 
+            /*
         case SCOREBOARD_UPDATE_MSG:
             // Take the scoreboard we've received, and use it instead of
             // our previous one.
@@ -270,6 +270,7 @@ public class Model
                     SCOREBOARD_UPDATE_MSG, _scoreboard.internalScoreObject, playerId);
             }
             break;
+            */
 
         default:
             // Ignore any other messages; they're not for us.
@@ -351,13 +352,13 @@ public class Model
     private function addWordToScoreboard (
         playerId :int, word :String, score :Number, isvalid :Boolean) :void
     {
-        var playerName :String = _scoreboard.getName(playerId);
-        
         // if this message came in after the end of the round, just ignore it
         if (!_gameCtrl.game.isInPlay()) {
             return;
         }
 
+        var playerName :String = _gameCtrl.game.getOccupantName(playerId);
+        
         // if the word is invalid, display who tried to claim it
         if (! isvalid) {
             _display.logInvalidWord(playerName, word);
@@ -388,12 +389,6 @@ public class Model
         Assert.isNotNull(_board, "Board needs to be initialized first.");
         _board[position.x][position.y] = text;
         _display.setLetter(position, text);
-    }
-
-    /** Updates the total scores displayed on the board */
-    private function updateScoreDisplay () :void
-    {
-        _display.updateScores(_scoreboard);
     }
 
     //

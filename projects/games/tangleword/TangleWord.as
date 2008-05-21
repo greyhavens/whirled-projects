@@ -124,7 +124,7 @@ public class TangleWord extends Sprite
 
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
-        _display.roundEnded(_model.scoreboard);
+        _model.scoreboard.clearAll();
         _controller.roundEnded();
         _model.roundEnded();
 
@@ -146,15 +146,16 @@ public class TangleWord extends Sprite
     private function initializeScoreboard () :void
     {
         // Create a new instance, and fill in the names
+        // TODO: There are 2 scoreboards created?
         var board :Scoreboard = new Scoreboard (_gameCtrl);
-        var occupants :Array = _gameCtrl.game.getOccupantIds();
+        /*var occupants :Array = _gameCtrl.game.getOccupantIds();
         for each (var id :int in occupants)
         {
             board.addPlayerId(id);
         }
 
         // Finally, share it!
-        _gameCtrl.net.set(SHARED_SCOREBOARD, board.internalScoreObject);
+        _gameCtrl.net.set(SHARED_SCOREBOARD, board.internalScoreObject);*/
     }
 
     /** Game control object */
