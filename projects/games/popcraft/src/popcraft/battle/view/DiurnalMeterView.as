@@ -20,6 +20,9 @@ public class DiurnalMeterView extends SceneObject
         _sun = SwfResource.instantiateMovieClip("dashboard", "sun");
         _moon = SwfResource.instantiateMovieClip("dashboard", "moon");
 
+        _sun.cacheAsBitmap = true;
+        _moon.cacheAsBitmap = true;
+
         _sprite.addChild(_sun);
         _sprite.addChild(_moon);
 
@@ -52,7 +55,7 @@ public class DiurnalMeterView extends SceneObject
         var activeBody :MovieClip = (diurnalCycle.isDay ? _sun : _moon);
         var percentComplete :Number =
             1.0 - ((diurnalCycle.timeTillNextPhase - _updateTimeDelta) / diurnalCycle.curPhaseTotalTime);
-        activeBody.x = percentComplete * Constants.SCREEN_DIMS.x;
+        activeBody.x = BODY_START_X + (percentComplete * BODY_TOTAL_DIST);
     }
 
     protected function dayPhaseChanged (newPhase :uint, playSound :Boolean) :void
@@ -90,6 +93,10 @@ public class DiurnalMeterView extends SceneObject
 
     protected var _lastUpdateTimestamp :Number = 0;
     protected var _updateTimeDelta :Number = 0;
+
+    protected static const BODY_START_X :Number = -36;
+    protected static const BODY_END_X :Number = 736;
+    protected static const BODY_TOTAL_DIST :Number = BODY_END_X - BODY_START_X;
 }
 
 }
