@@ -1,12 +1,14 @@
 package popcraft.ui {
 
+import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.BitmapData;
-import flash.display.Graphics;
-import flash.display.Shape;
 import flash.display.DisplayObject;
+import flash.display.Graphics;
 import flash.display.MovieClip;
+import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.filters.BitmapFilterQuality;
@@ -20,7 +22,7 @@ import popcraft.battle.*;
 import popcraft.battle.view.*;
 import popcraft.data.*;
 
-public class UnitPurchaseButton
+public class UnitPurchaseButton extends SimObject
 {
     public function UnitPurchaseButton (unitType :uint, slotNum :int, parent :MovieClip)
     {
@@ -136,7 +138,19 @@ public class UnitPurchaseButton
             _switch.gotoAndPlay("deploy");
             _hilite.gotoAndPlay("deploy");
             GameContext.gameMode.buildUnit(GameContext.localPlayerId, _unitType);
+
+            this.addNamedTask(
+                DEPLOY_ANIM_TASK_NAME,
+                After(DEPLOY_ANIM_LENGTH,
+                    new FunctionTask(deployAnimCompleted)),
+                true);
         }
+    }
+
+    protected function deployAnimCompleted () :void
+    {
+        _switch.gotoAndPlay(_enabled ? "activate" : "off");
+        _hilite.gotoAndStop(_enabled ? "on" : "off");
     }
 
     protected function onMouseOver (...ignored) :void
@@ -157,12 +171,16 @@ public class UnitPurchaseButton
             _disabledAnim.visible = !val;
             _button.enabled = val;
 
-            _switch.gotoAndPlay(_enabled ? "activate" : "off");
-            _hilite.gotoAndPlay(_enabled ? "on" : "off");
+            // if we're playing the deploy animation, these animations
+            // will get played automatically when it has completed
+            if (!this.playingDeployAnimation) {
+                _switch.gotoAndPlay(_enabled ? "activate" : "off");
+                _hilite.gotoAndStop(_enabled ? "on" : "off");
+            }
         }
     }
 
-    public function update () :void
+    override protected function update (dt :Number) :void
     {
         var playerInfo :LocalPlayerInfo = GameContext.localPlayerInfo;
         var res1Amount :int = Math.min(playerInfo.getResourceAmount(_resource1Type), _resource1Cost);
@@ -252,6 +270,11 @@ public class UnitPurchaseButton
         }
     }
 
+    protected function get playingDeployAnimation () :Boolean
+    {
+        return this.hasTasksNamed(DEPLOY_ANIM_TASK_NAME);
+    }
+
     protected var _unitType :uint;
 
     protected var _switch :MovieClip;
@@ -280,6 +303,8 @@ public class UnitPurchaseButton
     protected var _enabled :Boolean;
 
     protected static const FIRST_METER_LOC :Point = new Point(-18, -50);
+    protected static const DEPLOY_ANIM_LENGTH :Number = 0.7;
+    protected static const DEPLOY_ANIM_TASK_NAME :String = "DeployAnimation";
 
     protected static const RESOURCE_BITMAP_NAMES :Array =
         [ "flesh", "blood", "energy", "artifice" ];

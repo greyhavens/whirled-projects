@@ -38,8 +38,7 @@ public class DashboardView extends SceneObject
                 continue;
             }
 
-            var upb :UnitPurchaseButton = new UnitPurchaseButton(unitType, buttonNumber++, unitParent);
-            _unitPurchaseButtons.push(upb);
+            GameContext.gameMode.addObject(new UnitPurchaseButton(unitType, buttonNumber++, unitParent));
         }
 
         // hide the components of all the buttons that aren't being used
@@ -68,14 +67,6 @@ public class DashboardView extends SceneObject
     override protected function update (dt :Number) :void
     {
         this.updateResourceMeters();
-        this.updateUnitButtons();
-    }
-
-    protected function updateUnitButtons () :void
-    {
-        for each (var upb :UnitPurchaseButton in _unitPurchaseButtons) {
-            upb.update();
-        }
     }
 
     protected function updateResourceMeters () :void
@@ -146,7 +137,6 @@ public class DashboardView extends SceneObject
     protected var _resourceText :Array = [];
     protected var _resourceBars :Array = [];
     protected var _oldResourceAmounts :Array = [];
-    protected var _unitPurchaseButtons :Array = [];
 
     protected static const RESOURCE_TEXT_NAMES :Array =
         [ "resource_2", "resource_1", "resource_4", "resource_3" ];
