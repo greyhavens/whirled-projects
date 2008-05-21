@@ -3,10 +3,13 @@ package popcraft.ui {
 import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.BitmapData;
+import flash.display.Graphics;
+import flash.display.Shape;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
+import flash.filters.BitmapFilterQuality;
 import flash.filters.GlowFilter;
 import flash.geom.Point;
 import flash.text.TextField;
@@ -74,20 +77,35 @@ public class UnitPurchaseButton
             }
         }
 
+        var resource1Bitmap :BitmapData = SwfResource.getBitmapData("dashboard", RESOURCE_BITMAP_NAMES[_resource1Type], 18, 18);
+        var resource2Bitmap :BitmapData = SwfResource.getBitmapData("dashboard", RESOURCE_BITMAP_NAMES[_resource2Type], 18, 18);
+
+        // draw some colored rectangles behind the cost texts
+        var costBg :Shape = new Shape();
+        var g :Graphics = costBg.graphics;
+        g.beginBitmapFill(resource1Bitmap);
+        g.drawRect(0, 0, 18, 18);
+        g.endFill();
+        g.beginBitmapFill(resource2Bitmap);
+        g.drawRect(18, 0, 18, 18);
+        g.endFill();
+
+        costBg.x = -18;
+        costBg.y = -18;
+        _costs.addChildAt(costBg, 0);
+
         var cost1Text :TextField = _costs["cost_1"];
         var cost2Text :TextField = _costs["cost_2"];
-        var cost1Filter :GlowFilter = cost1Text.filters[0];
-        var cost2Filter :GlowFilter = cost2Text.filters[0];
+        cost1Text.filters = [ new GlowFilter(_resource1Data.hiliteColor, 1, 2, 2, 1000, BitmapFilterQuality.LOW) ];
+        cost2Text.filters = [ new GlowFilter(_resource2Data.hiliteColor, 1, 2, 2, 1000, BitmapFilterQuality.LOW) ];
 
-        cost1Filter.color = _resource1Data.hiliteColor;
         cost1Text.textColor = _resource1Data.color;
         cost1Text.text = String(_resource1Cost);
 
-        cost2Filter.color = _resource2Data.hiliteColor;
         cost2Text.textColor = _resource2Data.color;
         cost2Text.text = String(_resource2Cost);
 
-        this.createPurchaseMeters();
+        this.createPurchaseMeters(resource1Bitmap, resource2Bitmap);
 
         // create the unit's description popup
         var tf :TextField = new TextField();
@@ -150,12 +168,12 @@ public class UnitPurchaseButton
         var res1Amount :int = Math.min(playerInfo.getResourceAmount(_resource1Type), _resource1Cost);
         var res2Amount :int = Math.min(playerInfo.getResourceAmount(_resource2Type), _resource2Cost);
 
+        this.enabled = (GameContext.diurnalCycle.isNight && res1Amount >= _resource1Cost && res2Amount >= _resource2Cost);
+
         if (res1Amount == _lastResource1Amount && res2Amount == _lastResource2Amount) {
             // don't update if nothing has changed
             return;
         }
-
-        this.enabled = (res1Amount >= _resource1Cost && res2Amount >= _resource2Cost);
 
         // update all the meters
         for (var i :int = 0; i < 2; ++i) {
@@ -177,10 +195,8 @@ public class UnitPurchaseButton
         }
     }
 
-    protected function createPurchaseMeters () :void
+    protected function createPurchaseMeters (resource1Bitmap :BitmapData, resource2Bitmap :BitmapData) :void
     {
-        var resource1Bitmap :BitmapData = SwfResource.getBitmapData("dashboard", RESOURCE_BITMAP_NAMES[_resource1Type], 18, 18);
-        var resource2Bitmap :BitmapData = SwfResource.getBitmapData("dashboard", RESOURCE_BITMAP_NAMES[_resource2Type], 18, 18);
         var resource1BgColor :uint = _resource1Data.hiliteColor;
         var resource2BgColor :uint = _resource2Data.hiliteColor;
 
