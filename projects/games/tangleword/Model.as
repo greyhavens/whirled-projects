@@ -29,6 +29,14 @@ public class Model
         _gameCtrl = gameCtrl;
         _display = display;
 
+        // TODO: No need to have object mapping madness anymore
+        // these are just plain objects, so that we don't have to perform explicit
+        // serialization/deserialization steps. as a down side, all keys are strings.
+        _data = new Object();
+        _data.roundScores = new Object(); // maps player id => round score
+        _data.claimed = new Object();     // maps word => player id
+        _data.scored = new Object();      // maps word => word score
+
         // Register for updates
         _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, flowAwarded);
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
@@ -55,11 +63,6 @@ public class Model
     /** Called at the beginning of a round - push my scoreboard on everyone. */
     public function roundStarted () :void
     {
-        /*if (_gameCtrl.game.amInControl())
-        {
-            // Share the scoreboard
-            _gameCtrl.net.sendMessage (SCOREBOARD_UPDATE_MSG, _scoreboard.internalScoreObject);
-        }*/
     }
 
     public function endRound () :void
@@ -87,7 +90,10 @@ public class Model
     public function roundEnded () :void
     {
         removeAllSelectedLetters ();
-        _scoreboard.resetWordClaims();
+
+        _data.scored = new Object();
+        _data.claimed = new Object();
+        _data.roundScores = new Object();
     }
 
     //
@@ -201,6 +207,7 @@ public class Model
 
     /** Sends out a message to everyone, informing them about adding
      *  the new word to their lists. */
+    // TODO: Remove?
     public function addScore (word :String, score :Number, isvalid :Boolean) :void
     {
         var obj :Object = new Object ();
@@ -225,7 +232,7 @@ public class Model
      *  The array contains strings corresponding to the individual letters. */
     public function sendNewLetterSet (a :Array) :void
     {
-        _gameCtrl.net.set (LETTER_SET, a);
+        _gameCtrl.net.set(LETTER_SET, a);
     }
 
     /** Called only when joining an existing game, tells the model to update itself
@@ -366,8 +373,8 @@ public class Model
         }
 
         // if the word is valid and not claimed, score!
-        if (! _scoreboard.isWordClaimed (word)) {
-            _scoreboard.addWord(playerId, word, score);
+        if (! isWordClaimed (word)) {
+            addWord(playerId, word, score);
             _display.logSuccess(playerName, word, score);
             return;
         }
@@ -383,6 +390,22 @@ public class Model
         // just ignore.
     }
 
+    /** Marks the /word/ as claimed, and adds the /score/ to the player's total. */
+    public function addWord (playerId :int, word :String, score :Number) :void
+    {
+        _data.claimed[word] = playerId;
+        _data.scored[word] = score;
+        _data.roundScores[playerId] = _scoreboard.getScore(playerId) + score;
+
+        _scoreboard.addToScore(playerId, score);
+    }
+
+    /** If this word was already claimed, returns true; otherwise false. */
+    public function isWordClaimed (word :String) :Boolean
+    {
+        return _data.claimed.hasOwnProperty(word);
+    }
+
     /** Updates a single letter at specified /position/ to display a new /text/.  */
     private function updateBoardLetter (position :Point, text :String) :void
     {
@@ -390,6 +413,8 @@ public class Model
         _board[position.x][position.y] = text;
         _display.setLetter(position, text);
     }
+
+    // TODO: Reorder all this, remove useless comments
 
     //
     //
@@ -400,6 +425,8 @@ public class Model
     private static const ADD_SCORE_MSG :String = "Score Update";
     private static const SCOREBOARD_UPDATE_MSG :String = "Scoreboard Update";
     private static const SCOREBOARD_REQUEST_MSG :String = "Scoreboard Request";
+
+    protected var _data :Object;
 
     //
     //

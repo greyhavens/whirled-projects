@@ -19,13 +19,6 @@ public class Scoreboard
         _gameCtrl = gameCtrl;
         _propName = propName;
 
-        // these are just plain objects, so that we don't have to perform explicit
-        // serialization/deserialization steps. as a down side, all keys are strings.
-        _data = new Object();
-        _data.roundScores = new Object(); // maps player id => round score
-        _data.claimed = new Object();     // maps word => player id
-        _data.scored = new Object();      // maps word => word score
-
         _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, initScores);
         _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, handleScoreUpdate);
 
@@ -37,16 +30,21 @@ public class Scoreboard
         _gameCtrl.net.setIn(_propName, playerId, score);
     }
 
-    public function addToScore (playerId :int, delta :Number) :void
+    public function getScore (playerId :int) :Number
     {
         var dict :Dictionary = _gameCtrl.net.get(_propName) as Dictionary;
-        var score :Number = 0;
 
-        if(dict != null && playerId in dict) {
-            score = dict[playerId];
+        if (dict != null && playerId in dict) {
+            return dict[playerId];
+        } else {
+            return 0;
         }
+    }
 
-        setScore(playerId, score + delta);
+    // TODO: Having doubts about if this is still needed
+    public function addToScore (playerId :int, delta :Number) :void
+    {
+        setScore(playerId, getScore(playerId) + delta);
     }
 
     public function clearScore (playerId :int) :void
@@ -77,23 +75,25 @@ public class Scoreboard
     /** Retrieves the list of player ids, as an array of ints. */
     public function getPlayerIds () :Array
     {
-        var data :Array = new Array();
+        return [0];
+        /*var data :Array = new Array();
         for (var key :String in _data.totalScores) {
             data.push(int(key));
         }
-        return data;                
+        return data;*/
     }
 
     /** Retrieves the highest known score. */
     public function getTopScore () :int
     {
-        var max :int = 0;
+        return 0;
+        /*var max :int = 0;
         for (var key :String in _data.roundScores) {
             if (_data.roundScores[key] > max) {
                 max = _data.roundScores[key];
             }
         }
-        return max;
+        return max;*/
     }
             
     /**
@@ -102,24 +102,26 @@ public class Scoreboard
      */
     public function getTopPlayerIds () :Array // of int
     {
-        var topplayers :Array = new Array();
+        return [ 0 ];
+        /*var topplayers :Array = new Array();
         var topscore :int = getTopScore();
         for (var key :String in _data.roundScores) {
             if (_data.roundScores[key] == topscore) {
                 topplayers.push(int(key));
             }
         }
-        return topplayers;
+        return topplayers;*/
     }
 
     /** Retrieves player's round score, potentially zero. If the scoring
      *  object doesn't have the player's score, it's initialized on first access. */
     public function getRoundScore (playerId :int) :Number
     {
-        if (! _data.roundScores.hasOwnProperty(playerId)) {
+        return 0;
+        /*if (! _data.roundScores.hasOwnProperty(playerId)) {
             _data.roundScores[playerId] = 0;
         }
-        return _data.roundScores[playerId];
+        return _data.roundScores[playerId];*/
     }
 
     /**
@@ -128,42 +130,16 @@ public class Scoreboard
      */
     public function getTopWords (count :int) :Array /** of Object */
     {
-        var words :Array = new Array();
+        return [ "changeme" ];
+        /*var words :Array = new Array();
         for (var word :String in _data.scored) {
             words.push(
                 { word: word, score: _data.scored[word], playerId: _data.claimed[word] });
         }
             
         words.sortOn("score", Array.DESCENDING | Array.NUMERIC);
-        return words.slice(0, count);
+        return words.slice(0, count);*/
     };
-
-    /** Marks the /word/ as claimed, and adds the /score/ to the player's total. */
-    public function addWord (playerId :int, word :String, score :Number) :void
-    {
-        _data.claimed[word] = playerId;
-        _data.scored[word] = score;
-        _data.roundScores[playerId] = getRoundScore(playerId) + score;
-
-        addToScore(playerId, score);
-    }
-
-    /** If this word was already claimed, returns true; otherwise false. */
-    public function isWordClaimed (word :String) :Boolean
-    {
-        return _data.claimed.hasOwnProperty(word);
-    }
-
-    /** Returns an array with n top-scored words for the given player. */
-        
-
-    /** Resets all word claims (but not player scores). */
-    public function resetWordClaims () :void
-    {
-        _data.scored = new Object();
-        _data.claimed = new Object();
-        _data.roundScores = new Object();
-    }
 
     /** Converts player id to name (so that we don't have to pass a GameControl
      *  reference everywhere. */
@@ -172,16 +148,8 @@ public class Scoreboard
         return _gameCtrl.game.getOccupantName(playerId);
     }
 
-    // IMPLEMENTATION DETAILS
-
-    /** Storage object that keeps a copy of player scores */
-    private var _data :Object;
-
-    protected var _scores :Array;
+    protected var _gameCtrl :GameControl;
     protected var _propName :String;
-
-    /** Game controller. */
-    private var _gameCtrl :GameControl;
 }
 
 
