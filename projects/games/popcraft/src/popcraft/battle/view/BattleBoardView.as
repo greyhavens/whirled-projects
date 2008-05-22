@@ -15,10 +15,6 @@ import popcraft.net.*;
 
 public class BattleBoardView extends SceneObject
 {
-    public static const TILE_GROUND :uint = 0;
-    public static const TILE_TREE :uint = 1;
-    public static const TILE_BASE :uint = 2;
-
     public function BattleBoardView (width :int, height :int)
     {
         _width = width;
@@ -53,8 +49,8 @@ public class BattleBoardView extends SceneObject
     protected function animateDayPhaseChange (phase :uint) :void
     {
         // @TODO - fix this when Bill fixes the swf
-        //_bg.gotoAndPlay(phase == Constants.PHASE_NIGHT ? "daytonight" : "nighttoday");
-        _bg.gotoAndStop(phase == Constants.PHASE_NIGHT ? "night" : "day");
+        _bg.gotoAndPlay(phase == Constants.PHASE_NIGHT ? "daytonight" : "nighttoday");
+        //_bg.gotoAndStop(phase == Constants.PHASE_NIGHT ? "night" : "day");
     }
 
     override public function get displayObject () :DisplayObject

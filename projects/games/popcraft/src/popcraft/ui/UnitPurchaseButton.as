@@ -54,9 +54,9 @@ public class UnitPurchaseButton extends SimObject
             _enabledAnim = ImageResource.instantiateBitmap(unitData.name + "_icon");
             _disabledAnim = ImageResource.instantiateBitmap(unitData.name + "_icon");
 
-            _enabledAnim.x = _enabledAnim.width * 0.5;
+            _enabledAnim.x = -_enabledAnim.width * 0.5;
             _enabledAnim.y = -_enabledAnim.height;
-            _disabledAnim.x = _disabledAnim.width * 0.5;
+            _disabledAnim.x = -_disabledAnim.width * 0.5;
             _disabledAnim.y = -_disabledAnim.height;
         }
 

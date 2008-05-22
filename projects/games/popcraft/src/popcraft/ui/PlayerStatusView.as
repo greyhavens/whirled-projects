@@ -16,17 +16,17 @@ public class PlayerStatusView extends SceneObject
     {
         _playerInfo = GameContext.playerInfos[playerId];
 
-        var cm :ColorMatrix = ColorMatrix.create().colorize(_playerInfo.playerColor);
-
         _movie = SwfResource.instantiateMovieClip("dashboard", "player_slot");
+
         _healthMeter = _movie["health_meter"];
+        _healthMeter.filters = [ ColorMatrix.create().colorize(_playerInfo.playerColor).createFilter() ]; // @TODO - why isn't this working
         _meterArrow = _movie["meter_arrow"];
 
         var playerName :TextField = _movie["player_name"];
         playerName.text = "Player " + String(playerId + 1); // @TODO - do something real here
 
         var namePlate :MovieClip = _movie["name_plate"];
-        namePlate.filters = [ cm.createFilter() ];
+        namePlate.filters = [ ColorMatrix.create().colorize(_playerInfo.playerColor).createFilter() ];
     }
 
     override public function get displayObject () :DisplayObject
