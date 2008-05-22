@@ -142,15 +142,20 @@ public class UnitPurchaseButton extends SimObject
             this.addNamedTask(
                 DEPLOY_ANIM_TASK_NAME,
                 After(DEPLOY_ANIM_LENGTH,
-                    new FunctionTask(deployAnimCompleted)),
+                    new FunctionTask(playSwitchHiliteAnimation)),
                 true);
         }
     }
 
-    protected function deployAnimCompleted () :void
+    protected function playSwitchHiliteAnimation () :void
     {
-        _switch.gotoAndPlay(_enabled ? "activate" : "off");
-        _hilite.gotoAndStop(_enabled ? "on" : "off");
+        if (_enabled) {
+            _switch.gotoAndPlay("activate");
+            _hilite.gotoAndStop("on");
+        } else {
+            _switch.gotoAndStop("off");
+            _hilite.gotoAndStop("off");
+        }
     }
 
     protected function onMouseOver (...ignored) :void
@@ -174,8 +179,7 @@ public class UnitPurchaseButton extends SimObject
             // if we're playing the deploy animation, these animations
             // will get played automatically when it has completed
             if (!this.playingDeployAnimation) {
-                _switch.gotoAndPlay(_enabled ? "activate" : "off");
-                _hilite.gotoAndStop(_enabled ? "on" : "off");
+                this.playSwitchHiliteAnimation();
             }
         }
     }
