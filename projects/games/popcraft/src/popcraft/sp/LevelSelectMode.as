@@ -43,13 +43,22 @@ public class LevelSelectMode extends AppMode
             yLoc += button.height + 3;
         }
 
+        // animation test button
         button = new SimpleTextButton("Unit Anim Test");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.pushMode(new UnitAnimTestMode());
             });
-        button.x = (this.modeSprite.width * 0.5) - (button.width * 0.5);
-        button.y = yLoc + 20;
+        button.x = 10;
+        button.y = 450;
+
+        this.modeSprite.addChild(button);
+
+        // test level button
+        button = new SimpleTextButton("Jon's stress test");
+        button.addEventListener(MouseEvent.CLICK, function (...ignored) :void { levelSelected(-1); });
+        button.x = 100;
+        button.y = 450;
 
         this.modeSprite.addChild(button);
     }

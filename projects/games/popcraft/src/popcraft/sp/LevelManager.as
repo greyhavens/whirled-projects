@@ -23,9 +23,17 @@ public class LevelManager
         } else {
             // load the level
             if (null == _loadedLevel) {
-                var loadParams :Object = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
-                    { url: "levels/level" + String(_curLevelNum + 1) + ".xml" } :
-                    { embeddedClass: LEVELS[_curLevelNum] });
+                // @TEMP - if _curLevelNum < 0, we load the test level
+                var loadParams :Object;
+                if (_curLevelNum < 0) {
+                    loadParams = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
+                        { url: "levels/testlevel.xml" } :
+                        { embeddedClass: LEVEL_TEST });
+                } else {
+                    loadParams = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
+                        { url: "levels/level" + String(_curLevelNum + 1) + ".xml" } :
+                        { embeddedClass: LEVELS[_curLevelNum] });
+                }
 
                 if (forceReload) {
                     // reload the default game data first, then load the level when it's complete
@@ -55,7 +63,7 @@ public class LevelManager
 
     public function set curLevelNum (val :int) :void
     {
-        val %= LEVELS.length;
+        val = (val < 0 ? -1 : val % LEVELS.length);
 
         if (_curLevelNum != val) {
             _curLevelNum = val;
@@ -65,7 +73,9 @@ public class LevelManager
 
     public function incrementLevelNum () :void
     {
-        this.curLevelNum = _curLevelNum + 1;
+        if (_curLevelNum > 0) {
+            this.curLevelNum = _curLevelNum + 1;
+        }
     }
 
     public function get numLevels () :int
@@ -116,6 +126,9 @@ public class LevelManager
     protected static const LEVEL_9 :Class;
     [Embed(source="../../../levels/level10.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_10 :Class;
+
+    [Embed(source="../../../levels/testlevel.xml", mimeType="application/octet-stream")]
+    protected static const LEVEL_TEST :Class;
 
     protected static const LEVELS :Array =
         [ LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, LEVEL_5, LEVEL_6, LEVEL_7, LEVEL_8, LEVEL_9, LEVEL_10 ];
