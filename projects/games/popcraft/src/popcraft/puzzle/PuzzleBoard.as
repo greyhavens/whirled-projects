@@ -8,7 +8,11 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.DisplayObject;
+import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.geom.Point;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
 import popcraft.data.ResourceData;
@@ -141,10 +145,57 @@ public class PuzzleBoard extends SceneObject
             new TimedTask(PIECE_SCALE_DOWN_TIME + PIECE_SCALE_UP_TIME),
             new FunctionTask(animatePieceDrops)));
 
+        // show the "resources earned" animation
+        var animLoc :Point = _sprite.localToGlobal(new Point(_sprite.mouseX - 3, _sprite.mouseY - 3));
+        this.showResourceValueAnimation(animLoc, resourceType, resourceValue);
+
         // play a sound
         AudioManager.instance.playSoundNamed(resourceValue >= 0 ?
             "sfx_rsrc_" + Constants.RESOURCE_NAMES[resourceType] :
             "sfx_rsrc_lost");
+    }
+
+    protected function showResourceValueAnimation (loc :Point, resType :uint, amount :int) :void
+    {
+        var resData :ResourceData = GameContext.gameData.resources[resType];
+
+        var text :TextField = new TextField();
+        text.autoSize = TextFieldAutoSize.LEFT;
+        text.text = (amount > 0 ? "+" : "") + String(amount);
+        text.textColor = (resType == Constants.RESOURCE_WHITE ? resData.hiliteColor : resData.color);
+        text.selectable = false;
+        text.scaleX = 2;
+        text.scaleY = 2;
+
+        var bg :Sprite = new Sprite();
+        var g :Graphics = bg.graphics;
+        g.beginFill(amount > 0 ? 0xFFFFFF : 0);
+        g.drawRoundRect(0, 0, text.width + 3, text.height + 3, 8, 8);
+        g.endFill();
+
+        text.x = (bg.width * 0.5) - (text.width * 0.5);
+        text.y = (bg.height * 0.5) - (text.height * 0.5);
+        bg.addChild(text);
+
+        var container :Sprite = new Sprite();
+        bg.x = -bg.width * 0.5;
+        bg.y = -bg.height;
+        container.addChild(bg);
+
+        var anim :SimpleSceneObject = new SimpleSceneObject(container);
+        anim.x = loc.x;
+        anim.y = loc.y;
+
+        // move up, fade out, and self-destruct
+        var animTask :SerialTask = new SerialTask();
+        animTask.addTask(new ParallelTask(
+            LocationTask.CreateEaseIn(loc.x, loc.y - 35, 0.6),
+            After(0.45, new AlphaTask(0, 0.15))));
+        animTask.addTask(new SelfDestructTask());
+
+        anim.addTask(animTask);
+
+        GameContext.gameMode.addObject(anim, GameContext.gameMode.overlayParent);
     }
 
     protected function animatePieceDrops () :void

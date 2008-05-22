@@ -15,16 +15,15 @@ import com.whirled.game.OccupantChangedEvent;
 import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
 import flash.display.Sprite;
-import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
-import popcraft.ui.*;
 import popcraft.battle.*;
 import popcraft.battle.view.*;
 import popcraft.data.*;
 import popcraft.net.*;
 import popcraft.puzzle.*;
 import popcraft.sp.*;
+import popcraft.ui.*;
 
 public class GameMode extends AppMode
 {
@@ -637,6 +636,11 @@ public class GameMode extends AppMode
     public function get descriptionPopupParent () :Sprite
     {
         return _descriptionPopupParent;
+    }
+
+    public function get overlayParent () :DisplayObjectContainer
+    {
+        return _overlayParent;
     }
 
     protected var _gameIsRunning :Boolean;
