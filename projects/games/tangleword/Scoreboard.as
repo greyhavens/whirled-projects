@@ -8,15 +8,15 @@ import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.NetSubControl;
 
 /**
- * This class is a wrapper around a simple TangleWord score storage object:
- * contains an associative list of players and their total scores,
- * and a simple array of words that have already been claimed this round.
+ * A class to manage game scores as a Dictionary property and send
+ * updates to the Whirled-provided scoreboard display.
  */
-// TODO: Make singleton?
 public class Scoreboard
 {
-    // TODO: Make sure property name "Scores" isn't taken
-    public function Scoreboard (gameCtrl :GameControl, propName :String = "Scores_blah")
+    /**
+     * @param propName The name of the property that will contain the scoreboard data.
+     */
+    public function Scoreboard (gameCtrl :GameControl, propName :String = "Scores")
     {
         _gameCtrl = gameCtrl;
         _propName = propName;
@@ -32,6 +32,10 @@ public class Scoreboard
         _gameCtrl.net.setIn(_propName, playerId, score);
     }
 
+    /**
+     * Retrieve a score from the scoreboard. If the playerId is not ranked
+     * on the scoreboard, this returns 0.
+     */
     public function getScore (playerId :int) :Number
     {
         var dict :Dictionary = getAllScores();
@@ -43,6 +47,10 @@ public class Scoreboard
         }
     }
 
+    /**
+     * Get a complete copy of the scoreboard Dictionary.
+     * Changes to this copy have no effect.
+     */
     public function getAllScores () :Dictionary
     {
         var dict :Dictionary = _gameCtrl.net.get(_propName) as Dictionary;
@@ -54,7 +62,7 @@ public class Scoreboard
         }
     }
 
-    // TODO: Having doubts about if this is still needed
+    /** Sugar for setScore(playerId, getScore(playerId) + delta) . */
     public function addToScore (playerId :int, delta :Number) :void
     {
         setScore(playerId, getScore(playerId) + delta);
@@ -72,6 +80,56 @@ public class Scoreboard
         _gameCtrl.net.set(_propName, null);
     }
 
+    /**
+     * Get an array of player IDs of all the players that are
+     * ranked on the scoreboard.
+     */
+    public function getPlayerIds () :Array
+    {
+        var buffer :Array = new Array();
+
+        for (var playerId :Object in getAllScores()) {
+            buffer.push(int(playerId));
+        }
+
+        return buffer;
+    }
+
+    /** Retrieves the highest known score. */
+    public function getTopScore () :Number
+    {
+        var scores :Dictionary = getAllScores();
+        var max :Number = 0;
+
+        for (var key :Object in scores) {
+            if (scores[key] > max) {
+                max = scores[key];
+            }
+        }
+
+        return max;
+    }
+
+    /**
+     * Retrieves a list of players IDs with the top score. The list can
+     * contain more than one ID in case of a tie.
+     */
+    public function getWinnerIds () :Array
+    {
+        var scores :Dictionary = getAllScores();
+        var topScore :Number = getTopScore();
+        var buffer :Array = new Array();
+
+        // Select all players with a score of topScore
+        for (var key :Object in scores) {
+            if (scores[key] == topScore) {
+                buffer.push(int(key));
+            }
+        }
+
+        return buffer;
+    }
+
     protected function initScores (... ignore) :void
     {
         _gameCtrl.local.clearScores();
@@ -85,51 +143,6 @@ public class Scoreboard
             o[e.key] = e.newValue;
             _gameCtrl.local.setMappedScores(o);
         }
-    }
-
-    /**
-     * Get an array of player ids of all the players that have
-     * points up on the scoreboard.
-     */
-    // TODO: Maybe we do need a OCCUPANT_LEFT handler, we don't want to
-    // be getting playerIds that already left... or do we?
-    public function getPlayerIds () :Array
-    {
-        var buffer :Array = new Array();
-
-        for (var playerId :String in getAllScores()) {
-            buffer.push(int(playerId));
-        }
-
-        return buffer;
-    }
-
-    /** Retrieves the highest known score. */
-    public function getTopScore () :int
-    {
-        var scores :Dictionary = getAllScores();
-        var max :int = 0;
-
-        for (var key :String in scores) {
-            if (scores[key] > max) {
-                max = scores[key];
-            }
-        }
-
-        return max;
-    }
-
-    /**
-     * Retrieves a list of players ids with the top scores. The list can contain more than
-     * one id in case of a tie.
-     */
-    public function getWinnerIds () :Array
-    {
-        var topScore :int = getTopScore();
-
-        // Select all players with a score of topScore
-        return getPlayerIds().filter(
-                function(s :*, ... ignore) :Boolean { return s == topScore });
     }
 
     protected var _gameCtrl :GameControl;
