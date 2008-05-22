@@ -1,6 +1,7 @@
 <root>
     <Level
         name="The Sun Rises"
+        backgroundName="Level2"
         introText="Your creatures wither in the horrible sunlight. Use the daytime hours to stockpile materials and plan your next attack."
         disableDiurnalCycle="false"
         playerBaseHealth="100">

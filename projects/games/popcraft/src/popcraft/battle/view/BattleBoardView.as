@@ -6,9 +6,7 @@ import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
-import flash.display.Graphics;
 import flash.display.MovieClip;
-import flash.display.Shape;
 import flash.display.Sprite;
 
 import popcraft.*;
@@ -28,7 +26,9 @@ public class BattleBoardView extends SceneObject
 
         _view = new Sprite();
 
-        _bg = SwfResource.instantiateMovieClip("bg", "Level1");
+        // @TODO - randomize multiplayer backgrounds
+        var bgName :String = (GameContext.isSinglePlayer ? GameContext.spLevel.backgroundName : "Level2");
+        _bg = SwfResource.instantiateMovieClip("bg", bgName);
         _bg.x = _bg.width * 0.5;
         _bg.y = _bg.height * 0.5;
 

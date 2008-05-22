@@ -1,6 +1,7 @@
 <root>
     <Level
         name="Center of Attention"
+        backgroundName="Level1"
         introText="Your enemies have you surrounded!"
         disableDiurnalCycle="false"
         playerBaseHealth="150">

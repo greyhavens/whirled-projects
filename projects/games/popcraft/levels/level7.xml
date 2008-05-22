@@ -1,6 +1,7 @@
 <root>
     <Level
         name="Abomination"
+        backgroundName="Level1"
         introText="Your opponent has perfected the Flesh Colossus, an enormous collection of random body parts capable of crushing lesser units instantly.
 
 He's sending several your way, but he'll be vulnerable for a short while after the attack. Swarm the Colossi with creatures to slow their progress and take them down, then make your move!"

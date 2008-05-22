@@ -8,6 +8,7 @@ import popcraft.util.*;
 public class LevelData
 {
     public var name :String = "";
+    public var backgroundName :String = "";
     public var introText :String = "";
     public var playerBaseHealth :int;
     public var playerBaseStartHealth :int;
@@ -41,6 +42,7 @@ public class LevelData
         }
 
         level.name = XmlReader.getAttributeAsString(xml, "name");
+        level.backgroundName = XmlReader.getAttributeAsString(xml, "backgroundName");
         level.introText = XmlReader.getAttributeAsString(xml, "introText");
         level.playerBaseHealth = XmlReader.getAttributeAsInt(xml, "playerBaseHealth");
         level.playerBaseStartHealth = XmlReader.getAttributeAsInt(xml, "playerBaseStartHealth", level.playerBaseHealth);

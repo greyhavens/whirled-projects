@@ -1,6 +1,7 @@
 <root>
     <Level
         name="Special Delivery"
+        backgroundName="Level1"
         introText=
 "When a spell appears on the battlefield, dispatch Couriers to grab it! Once retrieved, a spell can be cast to power-up your units for a limited amount of time.
 
