@@ -52,14 +52,15 @@ public class DashboardView extends SceneObject
         }
 
         // setup PlayerStatusViews
+        var statusViewLocs :Array = PLAYER_STATUS_VIEW_LOCS[GameContext.playerInfos.length - 2];
         var playerFrame :MovieClip = _movie["frame_players"];
-        var xOffset :Number = FIRST_PLAYER_VIEW_LOC.x;
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-            var psv :PlayerStatusView = new PlayerStatusView(playerInfo.playerId);
-            psv.x = xOffset;
-            psv.y = FIRST_PLAYER_VIEW_LOC.y;
-            xOffset += psv.width;
+        for (var i :int = 0; i < statusViewLocs.length; ++i) {
+            var playerInfo :PlayerInfo = GameContext.playerInfos[i];
+            var loc :Point = statusViewLocs[i];
 
+            var psv :PlayerStatusView = new PlayerStatusView(playerInfo.playerId);
+            psv.x = loc.x;
+            psv.y = loc.y;
             GameContext.gameMode.addObject(psv, playerFrame);
         }
 
@@ -159,7 +160,12 @@ public class DashboardView extends SceneObject
     protected static const RESOURCE_METER_WIDTH :Number = 3;
     protected static const RESOURCE_METER_MAX_VAL :int = 50;
     protected static const RESOURCE_METER_MAX_HEIGHT :Number = 20;
-    protected static const FIRST_PLAYER_VIEW_LOC :Point = new Point(29, 47);
+
+    protected static const PLAYER_STATUS_VIEW_LOCS :Array = [
+        [ new Point(40, 47), new Point(105, 47) ],                                          // 2 players
+        [ new Point(40, 47), new Point(105, 47), new Point(170, 47), ],                     // 3 players
+        [ new Point(29, 47), new Point(81, 47), new Point(133, 47), new Point(185, 47) ],   // 4 players
+    ];
 }
 
 }
