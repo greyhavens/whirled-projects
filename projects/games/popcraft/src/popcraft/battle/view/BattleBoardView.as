@@ -3,12 +3,11 @@ package popcraft.battle.view {
 import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.AlphaTask;
 
-import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
+import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
 
@@ -29,41 +28,17 @@ public class BattleBoardView extends SceneObject
 
         _view = new Sprite();
 
-        // the darkness is shown during nighttime
-        var darknessShape :Shape = new Shape();
-        var g :Graphics = darknessShape.graphics;
-        g.beginFill(0, 0.7);
-        g.drawRect(0, 0, width, height);
-        g.endFill();
-        _darkness = new SimpleSceneObject(darknessShape);
-        _darkness.alpha = 0;
+        _bg = SwfResource.instantiateMovieClip("bg", "Level1");
+        _bg.x = _bg.width * 0.5;
+        _bg.y = _bg.height * 0.5;
 
-        var bg :Bitmap = (ResourceManager.instance.getResource("battle_bg") as ImageResource).createBitmap();
-        bg.scaleX = (_width / bg.width);
-        bg.scaleY = (_height / bg.height);
-
-        var fg :Bitmap = (ResourceManager.instance.getResource("battle_fg") as ImageResource).createBitmap();
-        fg.scaleX = (_width / fg.width);
-        fg.y = bg.height - fg.height; // fg is aligned to the bottom of the board
-
-        _view.addChild(bg);
-        _view.addChild(_darkness.displayObject);
+        _view.addChild(_bg);
         _view.addChild(_spellDropViewParent);
         _view.addChild(_unitViewParent);
-        _view.addChild(fg);
 
         _lastDayPhase = (DiurnalCycle.isDisabled ? Constants.PHASE_NIGHT : GameContext.gameData.initialDayPhase);
-        _darkness.alpha = (_lastDayPhase == Constants.PHASE_NIGHT ? 1 : 0);
-    }
 
-    override protected function addedToDB () :void
-    {
-        this.db.addObject(_darkness);
-    }
-
-    override protected function removedFromDB () :void
-    {
-        this.db.destroyObject(_darkness.ref);
+        _bg.gotoAndStop(_lastDayPhase == Constants.PHASE_NIGHT ? "night" : "day");
     }
 
     override protected function update (dt :Number) :void
@@ -77,13 +52,9 @@ public class BattleBoardView extends SceneObject
 
     protected function animateDayPhaseChange (phase :uint) :void
     {
-        if (phase == Constants.PHASE_DAY) {
-            _darkness.alpha = 1;
-            _darkness.addTask(new AlphaTask(0, 2));
-        } else {
-            _darkness.alpha = 0;
-            _darkness.addTask(new AlphaTask(1, 2));
-        }
+        // @TODO - fix this when Bill fixes the swf
+        //_bg.gotoAndPlay(phase == Constants.PHASE_NIGHT ? "daytonight" : "nighttoday");
+        _bg.gotoAndStop(phase == Constants.PHASE_NIGHT ? "night" : "day");
     }
 
     override public function get displayObject () :DisplayObject
@@ -123,10 +94,10 @@ public class BattleBoardView extends SceneObject
     protected var _width :int;
     protected var _height :int;
     protected var _view :Sprite;
-    protected var _darkness :SceneObject;
     protected var _spellDropViewParent :Sprite = new Sprite();
     protected var _unitViewParent :Sprite = new Sprite();
     protected var _lastDayPhase :uint;
+    protected var _bg :MovieClip;
 }
 
 }

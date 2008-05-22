@@ -7,6 +7,9 @@ public class Resources
     public static const DEFAULT_GAME_DATA :Class;
 
     // gfx
+    [Embed(source="../../rsrc/backgrounds.swf", mimeType="application/octet-stream")]
+    public static const SWF_BG :Class;
+
     [Embed(source="../../rsrc/char_colossus.png", mimeType="application/octet-stream")]
     public static const IMAGE_COLOSSUSICON :Class;
 
@@ -27,12 +30,6 @@ public class Resources
 
     [Embed(source="../../rsrc/moon.png", mimeType="application/octet-stream")]
     public static const IMAGE_MOON :Class;
-
-    [Embed(source="../../rsrc/city_bg.png", mimeType="application/octet-stream")]
-    public static const IMAGE_BATTLE_BG :Class;
-
-    [Embed(source="../../rsrc/city_forefront.png", mimeType="application/octet-stream")]
-    public static const IMAGE_BATTLE_FG :Class;
 
     [Embed(source="../../rsrc/bloodlust_icon.png", mimeType="application/octet-stream")]
     public static const IMAGE_BLOODLUSTICON :Class;
