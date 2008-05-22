@@ -23,7 +23,7 @@ public class BattleBoardView extends SceneObject
         _view = new Sprite();
 
         // @TODO - randomize multiplayer backgrounds
-        var bgName :String = (GameContext.isSinglePlayer ? GameContext.spLevel.backgroundName : "Level2");
+        var bgName :String = (GameContext.isSinglePlayer ? GameContext.spLevel.backgroundName : "Level1");
         _bg = SwfResource.instantiateMovieClip("bg", bgName);
         _bg.x = _bg.width * 0.5;
         _bg.y = _bg.height * 0.5;

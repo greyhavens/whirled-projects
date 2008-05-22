@@ -13,30 +13,27 @@ import popcraft.util.*;
 public class Constants
 {
     public static const SCREEN_DIMS :Vector2 = new Vector2(700, 500);
-    public static const SOUND_MASTER_VOLUME :Number = 0.5;
+    public static const SOUND_MASTER_VOLUME :Number = 0.7;
 
     /* Debug options */
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
-    public static const DEBUG_ALLOW_CHEATS :Boolean = true;
+    public static const DEBUG_ALLOW_CHEATS :Boolean = false;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
     public static const DEBUG_DISABLE_DIURNAL_CYCLE :Boolean = false;
-    public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = true;
+    public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false;
 
     /* Screen layout */
     public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
     public static const DASHBOARD_LOC :Point = new Point(350, 430);
 
     public static const PUZZLE_BOARD_LOC :Point = new Point(-131, -63);
-    public static const RESOURCE_POPUP_LOC :Point = new Point(500, 425);
     public static const DIURNAL_METER_LOC :Point = new Point(0, 0);
-    public static const UNIT_QUEUE_LOC :Point = new Point(530, 400);
     public static const UNIT_AND_SPELL_DESCRIPTION_BR_LOC :Point = new Point(200, 378);
 
-    public static const FIRST_UNIT_BUTTON_LOC :Point = new Point(500, 400);
-    public static const FIRST_SPELL_BUTTON_LOC :Point = new Point(600, 430);
+    public static const FIRST_SPELL_BUTTON_LOC :Point = new Point(220, 320);
 
     public static const PLAYER_COLORS :Array = [
        uint(0xFFFF0000),
