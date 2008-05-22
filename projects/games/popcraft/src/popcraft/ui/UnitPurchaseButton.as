@@ -302,7 +302,7 @@ public class UnitPurchaseButton extends SimObject
 
     protected var _enabled :Boolean;
 
-    protected static const FIRST_METER_LOC :Point = new Point(-18, -50);
+    protected static const FIRST_METER_LOC :Point = new Point(-18, -65);
     protected static const DEPLOY_ANIM_LENGTH :Number = 0.7;
     protected static const DEPLOY_ANIM_TASK_NAME :String = "DeployAnimation";
 
