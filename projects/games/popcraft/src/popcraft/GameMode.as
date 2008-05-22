@@ -87,7 +87,7 @@ public class GameMode extends AppMode
         AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, handleOccupantLeft);
 
         // create PlayerInfo structures
-        GameContext.playerInfo = [];
+        GameContext.playerInfos = [];
         for (var playerId :uint = 0; playerId < numPlayers; ++playerId) {
 
             var playerInfo :PlayerInfo;
@@ -101,18 +101,18 @@ public class GameMode extends AppMode
                 playerInfo = new PlayerInfo(playerId, teamId);
             }
 
-            GameContext.playerInfo.push(playerInfo);
+            GameContext.playerInfos.push(playerInfo);
         }
 
         // setup target enemies
-        for each (playerInfo in GameContext.playerInfo) {
+        for each (playerInfo in GameContext.playerInfos) {
             playerInfo.targetedEnemyId = GameContext.findEnemyForPlayer(playerInfo.playerId).playerId;
         }
     }
 
     protected function setupPlayersSP () :void
     {
-        GameContext.playerInfo = [];
+        GameContext.playerInfos = [];
 
         // Create the local player (always on team 0)
         var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, 0);
@@ -123,21 +123,21 @@ public class GameMode extends AppMode
             localPlayerInfo.setResourceAmount(resType, int(initialResources[resType]));
         }
 
-        GameContext.playerInfo.push(localPlayerInfo);
+        GameContext.playerInfos.push(localPlayerInfo);
 
         // create computer players
         var numComputers :uint = GameContext.spLevel.computers.length;
         for (var playerId :uint = 1; playerId < numComputers + 1; ++playerId) {
             var cpData :ComputerPlayerData = GameContext.spLevel.computers[playerId - 1];
             var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(playerId, cpData.team);
-            GameContext.playerInfo.push(computerPlayerInfo);
+            GameContext.playerInfos.push(computerPlayerInfo);
 
             // create the computer player object
             GameContext.netObjects.addObject(new ComputerPlayer(cpData, playerId));
         }
 
         // setup target enemies
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfo) {
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
             playerInfo.targetedEnemyId = GameContext.findEnemyForPlayer(playerInfo.playerId).playerId;
         }
     }
@@ -153,7 +153,7 @@ public class GameMode extends AppMode
     {
         if (e.player) {
             // did a player leave?
-            var playerInfo :PlayerInfo = ArrayUtil.findIf(GameContext.playerInfo,
+            var playerInfo :PlayerInfo = ArrayUtil.findIf(GameContext.playerInfos,
                 function (data :PlayerInfo) :Boolean {
                     return data.whirledId == e.occupantId;
                 });
@@ -258,7 +258,7 @@ public class GameMode extends AppMode
             base.x = baseLoc.x;
             base.y = baseLoc.y;
 
-            var playerInfo :PlayerInfo = GameContext.playerInfo[playerId];
+            var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
             playerInfo.base = base;
         }
 
@@ -387,7 +387,7 @@ public class GameMode extends AppMode
         var livePlayer :PlayerInfo;
         var livePlayerCount :int;
 
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfo) {
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
             if (!playerInfo.leftGame && playerInfo.isAlive) {
                 livePlayer = playerInfo;
                 livePlayerCount++;
@@ -525,7 +525,7 @@ public class GameMode extends AppMode
 
     protected function setTargetEnemy (playerId :uint, targetEnemyId :uint) :void
     {
-        var playerInfo :PlayerInfo = GameContext.playerInfo[playerId];
+        var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
         playerInfo.targetedEnemyId = targetEnemyId;
 
         if (playerId == GameContext.localPlayerId) {
@@ -550,7 +550,7 @@ public class GameMode extends AppMode
         var baseViews :Array = PlayerBaseUnitView.getAll();
         for each (var baseView :PlayerBaseUnitView in baseViews) {
             var owningPlayerId :uint = baseView.baseUnit.owningPlayerId;
-            var owningPlayerInfo :PlayerInfo = GameContext.playerInfo[owningPlayerId];
+            var owningPlayerInfo :PlayerInfo = GameContext.playerInfos[owningPlayerId];
             baseView.targetEnemyBadgeVisible = (owningPlayerId == localPlayerInfo.targetedEnemyId);
             baseView.friendlyBadgeVisible = (owningPlayerId == GameContext.localPlayerId);
 
@@ -612,7 +612,7 @@ public class GameMode extends AppMode
 
     public function buildUnit (playerId :uint, unitType :uint) :void
     {
-        var playerInfo :PlayerInfo = GameContext.playerInfo[playerId];
+        var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
 
         if (GameContext.diurnalCycle.isDay || !playerInfo.canPurchaseCreature(unitType)) {
             return;
@@ -624,7 +624,7 @@ public class GameMode extends AppMode
 
     public function castSpell (playerId :uint, spellType :uint) :void
     {
-        var playerInfo :PlayerInfo = GameContext.playerInfo[playerId];
+        var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
 
         if (GameContext.diurnalCycle.isDay || !playerInfo.canCastSpell(spellType)) {
             return;

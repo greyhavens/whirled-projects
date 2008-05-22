@@ -51,6 +51,18 @@ public class DashboardView extends SceneObject
             DisplayObject(unitParent["button_" + buttonNumber]).visible = false;
         }
 
+        // setup PlayerStatusViews
+        var playerFrame :MovieClip = _movie["frame_players"];
+        var xOffset :Number = FIRST_PLAYER_VIEW_LOC.x;
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+            var psv :PlayerStatusView = new PlayerStatusView(playerInfo.playerId);
+            psv.x = xOffset;
+            psv.y = FIRST_PLAYER_VIEW_LOC.y;
+            xOffset += psv.width;
+
+            GameContext.gameMode.addObject(psv, playerFrame);
+        }
+
         this.updateResourceMeters();
     }
 
@@ -147,6 +159,7 @@ public class DashboardView extends SceneObject
     protected static const RESOURCE_METER_WIDTH :Number = 3;
     protected static const RESOURCE_METER_MAX_VAL :int = 50;
     protected static const RESOURCE_METER_MAX_HEIGHT :Number = 20;
+    protected static const FIRST_PLAYER_VIEW_LOC :Point = new Point(29, 47);
 }
 
 }

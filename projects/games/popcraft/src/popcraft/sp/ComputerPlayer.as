@@ -13,7 +13,7 @@ public class ComputerPlayer extends SimObject
     public function ComputerPlayer (data :ComputerPlayerData, playerId :uint)
     {
         _data = data;
-        _playerInfo = GameContext.playerInfo[playerId] as ComputerPlayerInfo;
+        _playerInfo = GameContext.playerInfos[playerId] as ComputerPlayerInfo;
 
         // add starting spells to our playerInfo
         _playerInfo.setSpellCounts(data.startingSpells);

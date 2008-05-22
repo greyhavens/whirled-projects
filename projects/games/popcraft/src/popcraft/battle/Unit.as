@@ -31,7 +31,7 @@ public class Unit extends SimObject
     public function Unit (unitType :uint, owningPlayerId :uint)
     {
         _unitType = unitType;
-        _owningPlayerInfo = GameContext.playerInfo[owningPlayerId];
+        _owningPlayerInfo = GameContext.playerInfos[owningPlayerId];
 
         _unitData = GameContext.gameData.units[unitType];
         _maxHealth = _unitData.maxHealth;

@@ -21,22 +21,22 @@ public class GameContext
     public static var battleBoardView :BattleBoardView;
     public static var diurnalCycle :DiurnalCycle;
 
-    public static var playerInfo :Array;
+    public static var playerInfos :Array;
     public static var playerUnitSpellSets :Array;
     public static var localPlayerId :int;
-    public static function get localPlayerInfo () :LocalPlayerInfo { return playerInfo[localPlayerId]; }
+    public static function get localPlayerInfo () :LocalPlayerInfo { return playerInfos[localPlayerId]; }
     public static function get isFirstPlayer () :Boolean { return (localPlayerId == 0); }
-    public static function get numPlayers () :int { return playerInfo.length; }
+    public static function get numPlayers () :int { return playerInfos.length; }
     public static function get localUserIsPlaying () :Boolean { return localPlayerId >= 0; }
 
     public static function findEnemyForPlayer (playerId :uint) :PlayerInfo
     {
-        var thisPlayer :PlayerInfo = playerInfo[playerId];
+        var thisPlayer :PlayerInfo = playerInfos[playerId];
 
         // find the first player after this one that is on an opposing team
-        for (var i :int = 0; i < playerInfo.length - 1; ++i) {
-            var otherPlayerId :uint = (playerId + i + 1) % playerInfo.length;
-            var otherPlayer :PlayerInfo = playerInfo[otherPlayerId];
+        for (var i :int = 0; i < playerInfos.length - 1; ++i) {
+            var otherPlayerId :uint = (playerId + i + 1) % playerInfos.length;
+            var otherPlayer :PlayerInfo = playerInfos[otherPlayerId];
             if (otherPlayer.teamId != thisPlayer.teamId && otherPlayer.isAlive) {
                 return otherPlayer;
             }

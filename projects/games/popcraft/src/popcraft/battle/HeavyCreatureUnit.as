@@ -196,7 +196,7 @@ class HeavyAI extends AITaskTree
         var playerInfo :PlayerInfo = _unit.owningPlayerInfo;
 
         var ourBaseLoc :Vector2 = playerInfo.base.unitLoc;
-        var enemyBaseLoc :Vector2 = GameContext.playerInfo[playerInfo.targetedEnemyId].base.unitLoc;
+        var enemyBaseLoc :Vector2 = GameContext.playerInfos[playerInfo.targetedEnemyId].base.unitLoc;
 
         var target :Vector2 = enemyBaseLoc.subtract(ourBaseLoc);
 

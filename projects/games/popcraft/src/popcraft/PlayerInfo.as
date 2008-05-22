@@ -28,6 +28,11 @@ public class PlayerInfo
         _playerName = (playerId < playerNames.length ? playerNames[_playerId]: "Unknown player " + playerId);
     }
 
+    public function get playerColor () :uint
+    {
+        return Constants.PLAYER_COLORS[_playerId];
+    }
+
     public function get playerId () :uint
     {
         return _playerId;
@@ -79,6 +84,24 @@ public class PlayerInfo
         // _baseRef will be null and (null != this.base) will NPE. We can
         // assume, in this situation, that the player is alive.
         return (null == _baseRef || null != this.base);
+    }
+
+    public function get health () :Number
+    {
+        var base :PlayerBaseUnit = this.base;
+        return (null != base ? base.health : 0);
+    }
+
+    public function get maxHealth () :Number
+    {
+        var base :PlayerBaseUnit = this.base;
+        return (null != base ? base.maxHealth : 0);
+    }
+
+    public function get healthPercent () :Number
+    {
+        var base :PlayerBaseUnit = this.base;
+        return (null != base ? base.health / base.maxHealth : 0);
     }
 
     public function get targetedEnemyId () :uint

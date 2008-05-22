@@ -184,7 +184,7 @@ public class CreatureUnit extends Unit
     // returns an enemy base
     public function getEnemyBaseRef () :SimObjectRef
     {
-        var enemyPlayerInfo :PlayerInfo = GameContext.playerInfo[_owningPlayerInfo.targetedEnemyId];
+        var enemyPlayerInfo :PlayerInfo = GameContext.playerInfos[_owningPlayerInfo.targetedEnemyId];
         if (enemyPlayerInfo.isAlive) {
             return enemyPlayerInfo.baseRef;
         } else {
