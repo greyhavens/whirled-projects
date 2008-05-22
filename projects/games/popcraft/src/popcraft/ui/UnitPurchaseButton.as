@@ -35,6 +35,17 @@ public class UnitPurchaseButton extends SimObject
         _progress = parent["progress_" + slotNum];
         _button = parent["button_" + slotNum];
 
+        // @TEMP
+        _availableUnitText = new TextField();
+        _availableUnitText.autoSize = TextFieldAutoSize.CENTER;
+        _availableUnitText.scaleX = 1.3;
+        _availableUnitText.scaleY = 1.3;
+        _availableUnitText.textColor = 0;
+        _availableUnitText.x = _button.x;
+        _availableUnitText.y = _button.y - 37;
+
+        parent.addChild(_availableUnitText);
+
         _button.addEventListener(MouseEvent.CLICK, onClicked);
         _button.addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
         _button.addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
@@ -137,6 +148,7 @@ public class UnitPurchaseButton extends SimObject
         if (_enabled) {
             _switch.gotoAndPlay("deploy");
             _hilite.gotoAndPlay("deploy");
+            _availableUnitText.visible = false;
             GameContext.gameMode.buildUnit(GameContext.localPlayerId, _unitType);
 
             this.addNamedTask(
@@ -152,9 +164,11 @@ public class UnitPurchaseButton extends SimObject
         if (_enabled) {
             _switch.gotoAndPlay("activate");
             _hilite.gotoAndStop("on");
+            _availableUnitText.visible = true;
         } else {
             _switch.gotoAndStop("off");
             _hilite.gotoAndStop("off");
+            _availableUnitText.visible = false;
         }
     }
 
@@ -195,6 +209,14 @@ public class UnitPurchaseButton extends SimObject
         if (res1Amount == _lastResource1Amount && res2Amount == _lastResource2Amount) {
             // don't update if nothing has changed
             return;
+        }
+
+        if (_enabled) {
+            var numAvailableUnits :int = Math.min(
+                Math.floor(playerInfo.getResourceAmount(_resource1Type) / _resource1Cost),
+                Math.floor(playerInfo.getResourceAmount(_resource2Type) / _resource2Cost));
+
+            _availableUnitText.text = "x" + numAvailableUnits;
         }
 
         // update all the meters
@@ -287,6 +309,7 @@ public class UnitPurchaseButton extends SimObject
     protected var _unitDisplay :MovieClip;
     protected var _progress :MovieClip;
     protected var _button :SimpleButton;
+    protected var _availableUnitText :TextField;
 
     protected var _descriptionPopup :DisplayObject;
 
