@@ -3,6 +3,8 @@ package {
 import com.whirled.game.GameControl;
 import com.whirled.game.PlayerSubControl;
 
+import com.whirled.contrib.Scoreboard;
+
 /** Handles trophy awards. */
 public class Trophies {
 

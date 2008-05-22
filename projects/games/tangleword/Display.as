@@ -22,6 +22,7 @@ import com.threerings.util.Assert;
 import com.threerings.util.StringUtil;
 
 import com.whirled.game.GameControl;
+import com.whirled.contrib.Scoreboard;
 
 /**
  * The Display class represents the game visualization, including UI

@@ -10,6 +10,8 @@ import com.whirled.game.GameSubControl;
 import com.whirled.game.PropertyChangedEvent;
 import com.whirled.game.MessageReceivedEvent;
 
+import com.whirled.contrib.Scoreboard;
+
 import flash.geom.Point;
 
 /**
@@ -83,7 +85,7 @@ public class Model
             }
         }
 
-        _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
+        _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.CASCADING_PAYOUT);
     }
 
     /** Called when the round ends - cleans up data, and awards flow! */

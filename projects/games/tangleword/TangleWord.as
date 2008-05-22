@@ -13,6 +13,7 @@ import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.game.MessageReceivedEvent;
 
+import com.whirled.contrib.Scoreboard;
 
 /**
  * Main game takes care of initializing network connections,

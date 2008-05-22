@@ -14,7 +14,8 @@ import flash.net.navigateToURL; // function import
 
 import com.threerings.util.StringUtil;
 
-    
+import com.whirled.contrib.Scoreboard;
+ 
 /** Stats screen */
 public class Stats extends Sprite
 {
