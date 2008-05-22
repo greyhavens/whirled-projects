@@ -29,10 +29,10 @@
         </PuzzleClearValueTable>
 
         <Resources>
-            <Resource type="white" displayName="Flesh" color="0xE8E7E5" hiliteColor="0xBBBBBB" rarity="1"/>
-            <Resource type="red" displayName="Blood" color="0xCC0000" hiliteColor="0x8A0000" rarity="1"/>
-            <Resource type="blue" displayName="Energy" color="0x3D7078" hiliteColor="0x396262" rarity="0.5"/>
-            <Resource type="yellow" displayName="Artifice" color="0xFFD858" hiliteColor="0xBF9B2D" rarity="0.5"/>
+            <Resource type="white" displayName="Flesh" color="0xE8E7E5" hiliteColor="0x5E5E5E" rarity="1"/>
+            <Resource type="red" displayName="Blood" color="0xCC0000" hiliteColor="0x4B0101" rarity="1"/>
+            <Resource type="blue" displayName="Energy" color="0x3D7078" hiliteColor="0x1F3636" rarity="0.5"/>
+            <Resource type="yellow" displayName="Artifice" color="0xFFD858" hiliteColor="0x6D4D01" rarity="0.5"/>
         </Resources>
 
         <ResourceMultipliers>
