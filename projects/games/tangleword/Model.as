@@ -91,11 +91,11 @@ public class Model
     {
         removeAllSelectedLetters ();
 
+        _display.roundEnded(this, _scoreboard);
+
         _data.scored = new Object();
         _data.claimed = new Object();
         _data.roundScores = new Object();
-
-        _display.roundEnded(_scoreboard);
     }
 
     //
@@ -408,6 +408,25 @@ public class Model
         return _data.claimed.hasOwnProperty(word);
     }
 
+    /**
+     * Retrieves top n words from the scored word list, and returns them as an array
+     * of objects with the following fields: { word :String, score :int, playerId :int }.
+     */
+    public function getTopWords (count :int) :Array /** of Object */
+    {
+        var words :Array = new Array();
+        for (var word :String in _data.scored) {
+            words.push({
+                word: word,
+                score: _data.scored[word],
+                playerId: _data.claimed[word]
+            });
+        }
+            
+        words.sortOn("score", Array.DESCENDING | Array.NUMERIC);
+        return words.slice(0, count);
+    };
+
     /** Updates a single letter at specified /position/ to display a new /text/.  */
     private function updateBoardLetter (position :Point, text :String) :void
     {
@@ -415,6 +434,13 @@ public class Model
         _board[position.x][position.y] = text;
         _display.setLetter(position, text);
     }
+
+    /** Converts player id to name. */
+    public function getName (playerId :int, ... ignored) :String
+    {
+        return _gameCtrl.game.getOccupantName(playerId);
+    }
+
 
     // TODO: Reorder all this, remove useless comments
 

@@ -63,10 +63,10 @@ public class Stats extends Sprite
     }
 
     /** Called by the display function, starts the inter-round score display. */
-    public function show (scoreboard :Scoreboard) :void
+    public function show (model :Model, scoreboard :Scoreboard) :void
     {
         if (! visible) {
-            prepareScoreDisplay(scoreboard);
+            prepareScoreDisplay(model, scoreboard);
             
             addChild(_bg);
             addChild(_text);
@@ -121,7 +121,7 @@ public class Stats extends Sprite
         }
     }
     
-    protected function prepareScoreDisplay (scoreboard :Scoreboard) :void
+    protected function prepareScoreDisplay (model :Model, scoreboard :Scoreboard) :void
     {
         // helper function to lay out objects
         var doLayout :Function = function (o :DisplayObject, rect :Rectangle) :void {
@@ -132,8 +132,8 @@ public class Stats extends Sprite
         }
 
         // find top player and scores
-        var topWords :Array = scoreboard.getTopWords(5);
-        var topPlayers :Array = scoreboard.getWinnerIds().map(scoreboard.getName);
+        var topWords :Array = model.getTopWords(5);
+        var topPlayers :Array = scoreboard.getWinnerIds().map(model.getName);
         var topScore :int = scoreboard.getTopScore();
 
         while (_text.numChildren > 0) {
@@ -163,7 +163,7 @@ public class Stats extends Sprite
         for each (var wordDef :Object in topWords) {
                 words += makeDictionaryAnchor(wordDef.word) + ": " +
                     wordDef.score + " pts.  (" +
-                    StringUtil.truncate(scoreboard.getName(wordDef.playerId), 20, "...") + ")<br>";
+                    StringUtil.truncate(model.getName(wordDef.playerId), 20, "...") + ")<br>";
         }
         words += "</ul>";
         wordlist.htmlText = words;

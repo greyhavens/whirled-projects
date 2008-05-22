@@ -12,6 +12,7 @@ import com.whirled.game.NetSubControl;
  * contains an associative list of players and their total scores,
  * and a simple array of words that have already been claimed this round.
  */
+// TODO: Make singleton?
 public class Scoreboard
 {
     // TODO: Make sure property name "Scores" isn't taken
@@ -59,11 +60,13 @@ public class Scoreboard
         setScore(playerId, getScore(playerId) + delta);
     }
 
+    /** Clear a players score from the scoreboard. */
     public function clearScore (playerId :int) :void
     {
         _gameCtrl.net.setIn(_propName, playerId, null);
     }
 
+    /** Reset the scoreboard by clearing out all player scores. */
     public function clearAll () :void
     {
         _gameCtrl.net.set(_propName, null);
@@ -84,7 +87,10 @@ public class Scoreboard
         }
     }
 
-    /** Retrieves the list of player ids, as an array of ints. */
+    /**
+     * Get an array of player ids of all the players that have
+     * points up on the scoreboard.
+     */
     // TODO: Maybe we do need a OCCUPANT_LEFT handler, we don't want to
     // be getting playerIds that already left... or do we?
     public function getPlayerIds () :Array
@@ -124,30 +130,6 @@ public class Scoreboard
         // Select all players with a score of topScore
         return getPlayerIds().filter(
                 function(s :*, ... ignore) :Boolean { return s == topScore });
-    }
-
-    /**
-     * Retrieves top n words from the scored word list, and returns them as an array
-     * of objects with the following fields: { word :String, score :int, playerId :int }.
-     */
-    public function getTopWords (count :int) :Array /** of Object */
-    {
-        var words :Array = new Array();
-        //for (var word :String in _data.scored) {
-            words.push(
-                //{ word: word, score: _data.scored[word], playerId: _data.claimed[word] });
-                { word: "Hello", score: 666, playerId: 35 });
-        //}
-            
-        words.sortOn("score", Array.DESCENDING | Array.NUMERIC);
-        return words.slice(0, count);
-    };
-
-    /** Converts player id to name (so that we don't have to pass a GameControl
-     *  reference everywhere. */
-    public function getName (playerId :int, ... etc) :String
-    {
-        return _gameCtrl.game.getOccupantName(playerId);
     }
 
     protected var _gameCtrl :GameControl;

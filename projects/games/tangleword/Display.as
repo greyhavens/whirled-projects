@@ -75,11 +75,11 @@ public class Display extends Sprite
     }
 
     /** Called when the round ends - disables display. */
-    public function roundEnded (board :Scoreboard) :void
+    public function roundEnded (model :Model, board :Scoreboard) :void
     {
         setEnableState(false);
 
-        _stats.show(board);
+        _stats.show(model, board);
     }
 
     /** Called from the model, this accessor modifies the display /text/
