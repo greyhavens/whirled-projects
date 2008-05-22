@@ -48,9 +48,7 @@ public class BattleBoardView extends SceneObject
 
     protected function animateDayPhaseChange (phase :uint) :void
     {
-        // @TODO - fix this when Bill fixes the swf
         _bg.gotoAndPlay(phase == Constants.PHASE_NIGHT ? "daytonight" : "nighttoday");
-        //_bg.gotoAndStop(phase == Constants.PHASE_NIGHT ? "night" : "day");
     }
 
     override public function get displayObject () :DisplayObject
