@@ -10,6 +10,7 @@ import flash.display.Graphics;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.KeyboardEvent;
+import flash.events.FocusEvent;
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -274,9 +275,15 @@ public class Display extends Sprite
         _wordfield = new TextField();
         _wordfield.defaultTextFormat = Resources.makeFormatForUI();
         _wordfield.borderColor = Resources.defaultBorderColor;
-//        _wordfield.border = true;
         _wordfield.type = TextFieldType.INPUT;
-        _wordfield.text = "< type here >";
+        _wordfield.text = INPUT_HINT;
+
+        var callback :Function = function (... ignore): void {
+            _wordfield.text = "";
+            _wordfield.removeEventListener(FocusEvent.FOCUS_IN, callback);
+        };
+        _wordfield.addEventListener(FocusEvent.FOCUS_IN, callback);
+
         doLayout(_wordfield, Properties.WORDFIELD);
         addChild(_wordfield);
 
@@ -465,6 +472,8 @@ public class Display extends Sprite
 
     /** Stats screen */
     private var _stats :Stats;
+
+    protected static const INPUT_HINT :String = "< type here >";
 }
 
 } // package

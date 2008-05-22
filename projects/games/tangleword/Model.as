@@ -85,7 +85,7 @@ public class Model
             }
         }
 
-        _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.CASCADING_PAYOUT);
+        _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.PROPORTIONAL);
     }
 
     /** Called when the round ends - cleans up data, and awards flow! */
