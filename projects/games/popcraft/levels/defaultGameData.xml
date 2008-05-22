@@ -45,7 +45,7 @@
             <Unit
                 type="grunt"
                 displayName="Street-Walker"
-                description="STREET-WALKER: Melee unit. Strong against the Handy Man. Susceptible to attacks from the Dog-Boy."
+                description="STREET-WALKER: Melee unit. Strong against the Handy Man. Susceptible to attacks from the Delivery Boy."
                 baseMoveSpeed="35"
                 hasRepulseForce="true"
                 maxHealth="100"
@@ -69,7 +69,7 @@
             <Unit
                 type="heavy"
                 displayName="Handy Man"
-                description="HANDY MAN: Ranged tower unit. Useful for deflecting incoming Dog-Boys. Watch out for Street-Walkers."
+                description="HANDY MAN: Ranged tower unit. Useful for deflecting incoming Delivery Boys. Watch out for Street-Walkers."
                 baseMoveSpeed="50"
                 hasRepulseForce="true"
                 maxHealth="100"
@@ -92,8 +92,8 @@
 
             <Unit
                 type="sapper"
-                displayName="Dog-Boy"
-                description="DOG-BOY: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Handy Men!"
+                displayName="Delivery Boy"
+                description="DELIVERY BOY: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Handy Men!"
                 baseMoveSpeed="35"
                 hasRepulseForce="true"
                 maxHealth="70"
@@ -140,8 +140,8 @@
 
             <Unit
                 type="courier"
-                displayName="Courier"
-                description="COURIER: Retrieves spell pick-ups from the battlefield. The more Couriers you have in play, the faster each will move. Couriers do not attack other creatures."
+                displayName="Ladyfingers"
+                description="LADYFINGERS: Retrieves spell pick-ups from the battlefield. The more Ladyfingers you have in play, the faster each will move. Ladyfingers do not attack other creatures."
                 baseMoveSpeed="100"
                 hasRepulseForce="false"
                 maxHealth="40"

@@ -3,7 +3,7 @@
         name="Special Delivery"
         backgroundName="Level1"
         introText=
-"When a spell appears on the battlefield, dispatch Couriers to grab it! Once retrieved, a spell can be cast to power-up your units for a limited amount of time.
+"When a spell appears on the battlefield, dispatch Ladyfingers to grab it! Once retrieved, a spell can be cast to power-up your units for a limited amount of time.
 
 The Rigor Mortis spell hardens your units' flesh, making them more resistant to attacks."
         disableDiurnalCycle="false"

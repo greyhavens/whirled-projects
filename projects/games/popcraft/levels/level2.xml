@@ -2,7 +2,7 @@
     <Level
         name="The Handy-Man"
         backgroundName="Level2"
-        introText="Explosive Dog-Boys are being dispatched to detonate your workshop. The Handy-Man can keep them at bay!"
+        introText="Explosive Delivery Boys are being dispatched to detonate your workshop. The Handy-Man can keep them at bay!"
         disableDiurnalCycle="true"
         playerBaseHealth="40">
 
