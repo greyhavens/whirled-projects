@@ -10,9 +10,6 @@ public class Resources
     [Embed(source="../../rsrc/backgrounds.swf", mimeType="application/octet-stream")]
     public static const SWF_BG :Class;
 
-    [Embed(source="../../rsrc/courier.png", mimeType="application/octet-stream")]
-    public static const IMAGE_COURIERICON :Class;
-
     [Embed(source="../../rsrc/base.png", mimeType="application/octet-stream")]
     public static const IMAGE_BASE :Class;
 
@@ -21,12 +18,6 @@ public class Resources
 
     [Embed(source="../../rsrc/smiley.png", mimeType="application/octet-stream")]
     public static const IMAGE_FRIENDLYBASEBADGE :Class;
-
-    [Embed(source="../../rsrc/sun.png", mimeType="application/octet-stream")]
-    public static const IMAGE_SUN :Class;
-
-    [Embed(source="../../rsrc/moon.png", mimeType="application/octet-stream")]
-    public static const IMAGE_MOON :Class;
 
     [Embed(source="../../rsrc/bloodlust_icon.png", mimeType="application/octet-stream")]
     public static const IMAGE_BLOODLUSTICON :Class;
@@ -45,6 +36,9 @@ public class Resources
 
     [Embed(source="../../rsrc/flesh.swf", mimeType="application/octet-stream")]
     public static const SWF_COLOSSUS :Class;
+
+    [Embed(source="../../rsrc/ladyfingers.swf", mimeType="application/octet-stream")]
+    public static const SWF_COURIER :Class;
 
     [Embed(source="../../rsrc/pieces.swf", mimeType="application/octet-stream")]
     public static const SWF_PIECES :Class;

@@ -66,25 +66,6 @@ public class UnitPurchaseButton extends SimObject
             _disabledAnim = _enabledAnim;
         }
 
-        // @TODO - remove this when we get Colossus and Courier animations in the game
-        if (null == _disabledAnim || null == _enabledAnim) {
-            _enabledAnim = ImageResource.instantiateBitmap(unitData.name + "_icon");
-            _disabledAnim = ImageResource.instantiateBitmap(unitData.name + "_icon");
-
-            if (_enabledAnim.height > 50) {
-                var scale :Number = 50 / _enabledAnim.height;
-                _enabledAnim.scaleX = scale;
-                _enabledAnim.scaleY = scale;
-                _disabledAnim.scaleX = scale;
-                _disabledAnim.scaleY = scale;
-            }
-
-            _enabledAnim.x = -_enabledAnim.width * 0.5;
-            _enabledAnim.y = -_enabledAnim.height;
-            _disabledAnim.x = -_disabledAnim.width * 0.5;
-            _disabledAnim.y = -_disabledAnim.height;
-        }
-
         _unitDisplay.addChild(_enabledAnim);
         _unitDisplay.addChild(_disabledAnim);
 

@@ -35,20 +35,7 @@ public class CreatureUnitView extends SceneObject
 
         var playerColor :uint = Constants.PLAYER_COLORS[_unit.owningPlayerId];
 
-        // @TODO - remove this when all units have animations
-        if (Constants.UNIT_TYPE_COURIER != _unit.unitType) {
-            this.setupAnimations(playerColor);
-            _hasAnimations = true;
-        } else {
-            // add the image, aligned by its foot position
-            var image :Bitmap = (ResourceManager.instance.getResource(_unit.unitData.name + "_icon") as ImageResource).createBitmap();
-            image.x = -(image.width * 0.5);
-            image.y = -image.height;
-            _sprite.addChild(image);
-
-            // add a glow around the image
-            _sprite.addChild(ImageUtil.createGlowBitmap(image, playerColor));
-        }
+        this.setupAnimations(playerColor);
 
         // health meter
         _healthMeter = new RectMeter();
@@ -207,14 +194,41 @@ public class CreatureUnitView extends SceneObject
 
     protected function setupAnimations (playerColor :uint) :void
     {
-        // @TEMP
-        if (_unit.unitType == Constants.UNIT_TYPE_COLOSSUS) {
-            var walkSwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
-                _unit.unitData, playerColor, "walk_SW");
+        if (_unit.unitType == Constants.UNIT_TYPE_COURIER) {
+            // @TEMP
+            var walkNAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
+                _unit.unitData, playerColor, "walk_N");
             var walkNwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
                 _unit.unitData, playerColor, "walk_NW");
+            var walkSwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
+                _unit.unitData, playerColor, "walk_SW");
+            var walkSAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
+                _unit.unitData, playerColor, "walk_S");
+            var standSwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
+                _unit.unitData, playerColor, "stand_SW");
 
-            _animMoving = new Array(FACING_S + 1);
+            _animMoving = new Array(4);
+            _animMoving[FACING_N] = walkNAnim;
+            _animMoving[FACING_NW] = walkNwAnim;
+            _animMoving[FACING_SW] = walkSwAnim;
+            _animMoving[FACING_S] = walkSAnim;
+
+            _animStanding = new Array(4);
+            _animStanding[FACING_N] = standSwAnim;
+            _animStanding[FACING_NW] = standSwAnim;
+            _animStanding[FACING_SW] = standSwAnim;
+            _animStanding[FACING_S] = standSwAnim;
+
+            _animAttacking = _animStanding;
+
+        } else if (_unit.unitType == Constants.UNIT_TYPE_COLOSSUS) {
+            // @TEMP
+            walkSwAnim = UnitAnimationFactory.instantiateUnitAnimation(
+                _unit.unitData, playerColor, "walk_SW");
+            walkNwAnim = UnitAnimationFactory.instantiateUnitAnimation(
+                _unit.unitData, playerColor, "walk_NW");
+
+            _animMoving = new Array(4);
             _animMoving[FACING_N] = walkNwAnim;
             _animMoving[FACING_NW] = walkNwAnim;
             _animMoving[FACING_SW] = walkSwAnim;
@@ -348,10 +362,7 @@ public class CreatureUnitView extends SceneObject
                 _unitUpdateTimeDelta = 0;
             }
 
-            // @TODO - remove this
-            if (_hasAnimations) {
-                this.updateAnimations();
-            }
+            this.updateAnimations();
 
             if (!_unit.isMoving || Constants.DEBUG_DISABLE_MOVEMENT_SMOOTHING) {
                 this.x = _unit.x;
@@ -419,9 +430,6 @@ public class CreatureUnitView extends SceneObject
 
     protected var _lastUnitUpdateTimestamp :Number = 0;
     protected var _unitUpdateTimeDelta :Number = 0;
-
-    // @TODO - remove this when all units have animations
-    protected var _hasAnimations :Boolean;
 
     protected static var g_groups :Array;
 

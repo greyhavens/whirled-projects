@@ -15,13 +15,9 @@ public class LoadingMode extends AppMode
         // gfx
         rm.pendResourceLoad("swf", "bg",  { embeddedClass: Resources.SWF_BG });
 
-        rm.pendResourceLoad("image", "courier_icon", { embeddedClass: Resources.IMAGE_COURIERICON });
-
         rm.pendResourceLoad("image", "base",      { embeddedClass: Resources.IMAGE_BASE });
         rm.pendResourceLoad("image", "targetBaseBadge", { embeddedClass: Resources.IMAGE_TARGETBASEBADGE });
         rm.pendResourceLoad("image", "friendlyBaseBadge", { embeddedClass: Resources.IMAGE_FRIENDLYBASEBADGE });
-        rm.pendResourceLoad("image", "sun", { embeddedClass: Resources.IMAGE_SUN });
-        rm.pendResourceLoad("image", "moon", { embeddedClass: Resources.IMAGE_MOON });
         rm.pendResourceLoad("image", "bloodlust_icon", { embeddedClass: Resources.IMAGE_BLOODLUSTICON });
         rm.pendResourceLoad("image", "rigormortis_icon", { embeddedClass: Resources.IMAGE_RIGORMORTISICON });
         rm.pendResourceLoad("image", "mult_15", { embeddedClass: Resources.IMAGE_MULT15 });
@@ -32,6 +28,7 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("swf", "sapper", { embeddedClass: Resources.SWF_SAPPER });
         rm.pendResourceLoad("swf", "heavy", { embeddedClass: Resources.SWF_HEAVY });
         rm.pendResourceLoad("swf", "colossus", { embeddedClass: Resources.SWF_COLOSSUS });
+        rm.pendResourceLoad("swf", "courier", { embeddedClass: Resources.SWF_COURIER });
 
         rm.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: Resources.SWF_PIECES });
         rm.pendResourceLoad("swf", "dashboard", { embeddedClass: Resources.SWF_DASHBOARD });
