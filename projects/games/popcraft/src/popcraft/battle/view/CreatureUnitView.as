@@ -3,10 +3,10 @@ package popcraft.battle.view {
 import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
 import com.threerings.util.Log;
+import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Bitmap;
@@ -36,7 +36,7 @@ public class CreatureUnitView extends SceneObject
         var playerColor :uint = Constants.PLAYER_COLORS[_unit.owningPlayerId];
 
         // @TODO - remove this when all units have animations
-        if (Constants.UNIT_TYPE_GRUNT == _unit.unitType || Constants.UNIT_TYPE_SAPPER == _unit.unitType || Constants.UNIT_TYPE_HEAVY == _unit.unitType) {
+        if (Constants.UNIT_TYPE_COURIER != _unit.unitType) {
             this.setupAnimations(playerColor);
             _hasAnimations = true;
         } else {
@@ -207,34 +207,57 @@ public class CreatureUnitView extends SceneObject
 
     protected function setupAnimations (playerColor :uint) :void
     {
-        for (var i :int = 0; i < 3; ++i) {
+        // @TEMP
+        if (_unit.unitType == Constants.UNIT_TYPE_COLOSSUS) {
+            var walkSwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
+                _unit.unitData, playerColor, "walk_SW");
+            var walkNwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
+                _unit.unitData, playerColor, "walk_NW");
 
-            var animArray :Array;
-            var animNamePrefix :String;
+            _animMoving = new Array(FACING_S + 1);
+            _animMoving[FACING_N] = walkNwAnim;
+            _animMoving[FACING_NW] = walkNwAnim;
+            _animMoving[FACING_SW] = walkSwAnim;
+            _animMoving[FACING_S] = walkSwAnim;
 
-            switch (i) {
-            case 0: animArray = _animStanding; animNamePrefix = "stand_"; break;
-            case 1: animArray = _animAttacking; animNamePrefix = "attack_"; break;
-            case 2: animArray = _animMoving; animNamePrefix = "walk_"; break;
-            }
+            _animStanding = _animMoving;
+            _animAttacking = _animMoving;
 
-            // we don't have separate animations for NE and SE facing directions,
-            // instead, we use the NW and SW animations and flip them.
-            for (var facing :int = FACING_N; facing <= FACING_S; ++facing) {
-                var animName :String = animNamePrefix + FACING_STRINGS[facing];
+        } else {
+            for (var i :int = 0; i < 3; ++i) {
 
-                var anim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
-                    _unit.unitData, playerColor, animName);
+                var animArray :Array;
+                var animNamePrefix :String;
 
-                if (null != anim) {
-                    animArray.push(anim);
+                switch (i) {
+                case 0: animArray = _animStanding; animNamePrefix = "stand_"; break;
+                case 1: animArray = _animAttacking; animNamePrefix = "attack_"; break;
+                case 2: animArray = _animMoving; animNamePrefix = "walk_"; break;
+                }
+
+                // we don't have separate animations for NE and SE facing directions,
+                // instead, we use the NW and SW animations and flip them.
+                for (var facing :int = FACING_N; facing <= FACING_S; ++facing) {
+                    var animName :String = animNamePrefix + FACING_STRINGS[facing];
+
+                    var anim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
+                        _unit.unitData, playerColor, animName);
+
+                    if (null != anim) {
+                        animArray.push(anim);
+                    }
                 }
             }
-        }
 
-        // if we don't have any "moving" animations, just use our standing animations
-        if (_animMoving.length == 0) {
-            _animMoving = _animStanding;
+            // if we don't have any "moving" animations, just use our standing animations
+            if (_animMoving.length == 0) {
+                _animMoving = _animStanding;
+            }
+
+            // if we don't have any attack animations, use our standing animations
+            if (_animAttacking.length == 0) {
+                _animAttacking = _animStanding;
+            }
         }
 
         _sprite.addChildAt(_animStanding[0], 0);

@@ -62,6 +62,9 @@ public class UnitPurchaseButton extends SimObject
         }
 
         _disabledAnim = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "stand_SW");
+        if (null == _disabledAnim) {
+            _disabledAnim = _enabledAnim;
+        }
 
         // @TODO - remove this when we get Colossus and Courier animations in the game
         if (null == _disabledAnim || null == _enabledAnim) {

@@ -15,7 +15,6 @@ public class LoadingMode extends AppMode
         // gfx
         rm.pendResourceLoad("swf", "bg",  { embeddedClass: Resources.SWF_BG });
 
-        rm.pendResourceLoad("image", "colossus_icon",  { embeddedClass: Resources.IMAGE_COLOSSUSICON });
         rm.pendResourceLoad("image", "courier_icon", { embeddedClass: Resources.IMAGE_COURIERICON });
 
         rm.pendResourceLoad("image", "base",      { embeddedClass: Resources.IMAGE_BASE });
@@ -32,6 +31,7 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("swf", "grunt", { embeddedClass: Resources.SWF_GRUNT });
         rm.pendResourceLoad("swf", "sapper", { embeddedClass: Resources.SWF_SAPPER });
         rm.pendResourceLoad("swf", "heavy", { embeddedClass: Resources.SWF_HEAVY });
+        rm.pendResourceLoad("swf", "colossus", { embeddedClass: Resources.SWF_COLOSSUS });
 
         rm.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: Resources.SWF_PIECES });
         rm.pendResourceLoad("swf", "dashboard", { embeddedClass: Resources.SWF_DASHBOARD });

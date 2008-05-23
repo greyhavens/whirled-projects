@@ -10,9 +10,6 @@ public class Resources
     [Embed(source="../../rsrc/backgrounds.swf", mimeType="application/octet-stream")]
     public static const SWF_BG :Class;
 
-    [Embed(source="../../rsrc/char_colossus.png", mimeType="application/octet-stream")]
-    public static const IMAGE_COLOSSUSICON :Class;
-
     [Embed(source="../../rsrc/courier.png", mimeType="application/octet-stream")]
     public static const IMAGE_COURIERICON :Class;
 
@@ -45,6 +42,9 @@ public class Resources
 
     [Embed(source="../../rsrc/handyman.swf", mimeType="application/octet-stream")]
     public static const SWF_HEAVY :Class;
+
+    [Embed(source="../../rsrc/flesh.swf", mimeType="application/octet-stream")]
+    public static const SWF_COLOSSUS :Class;
 
     [Embed(source="../../rsrc/pieces.swf", mimeType="application/octet-stream")]
     public static const SWF_PIECES :Class;
