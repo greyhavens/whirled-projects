@@ -51,12 +51,12 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("sound", "sfx_night", { embeddedClass: Resources.SOUND_WOLF });
         rm.pendResourceLoad("sound", "sfx_dawn", { embeddedClass: Resources.SOUND_CHIMES });
 
-        rm.pendResourceLoad("sound", "sfx_hit1", { embeddedClass: Resources.SOUND_HIT1 });
+        rm.pendResourceLoad("sound", "sfx_hit1", { embeddedClass: Resources.SOUND_HIT1});
         rm.pendResourceLoad("sound", "sfx_hit2", { embeddedClass: Resources.SOUND_HIT2 });
         rm.pendResourceLoad("sound", "sfx_hit3", { embeddedClass: Resources.SOUND_HIT3 });
-        rm.pendResourceLoad("sound", "sfx_basehit1", { embeddedClass: Resources.SOUND_BASEHIT1 });
-        rm.pendResourceLoad("sound", "sfx_basehit2", { embeddedClass: Resources.SOUND_BASEHIT2 });
-        rm.pendResourceLoad("sound", "sfx_basehit3", { embeddedClass: Resources.SOUND_BASEHIT3 });
+        rm.pendResourceLoad("sound", "sfx_basehit1", { embeddedClass: Resources.SOUND_BASEHIT1, volume: 0.5 });
+        rm.pendResourceLoad("sound", "sfx_basehit2", { embeddedClass: Resources.SOUND_BASEHIT2, volume: 0.5 });
+        rm.pendResourceLoad("sound", "sfx_basehit3", { embeddedClass: Resources.SOUND_BASEHIT3, volume: 0.5 });
 
         rm.pendResourceLoad("sound", "sfx_spelldrop", { embeddedClass: Resources.SOUND_SPELLDROP });
 
