@@ -101,22 +101,15 @@ public class UnitPurchaseButton extends SimObject
             }
         }
 
-        var resource1Bitmap :BitmapData = SwfResource.getBitmapData("dashboard", RESOURCE_BITMAP_NAMES[_resource1Type], 18, 18);
-        var resource2Bitmap :BitmapData = SwfResource.getBitmapData("dashboard", RESOURCE_BITMAP_NAMES[_resource2Type], 18, 18);
-
-        // draw some colored rectangles behind the cost texts
-        var costBg :Shape = new Shape();
-        var g :Graphics = costBg.graphics;
-        g.beginBitmapFill(resource1Bitmap);
-        g.drawRect(0, 0, 18, 18);
-        g.endFill();
-        g.beginBitmapFill(resource2Bitmap);
-        g.drawRect(18, 0, 18, 18);
-        g.endFill();
-
-        costBg.x = -18;
-        costBg.y = -18;
-        _costs.addChildAt(costBg, 0);
+        // put some colored rectangles behind the cost texts
+        var resource1Tile :MovieClip = SwfResource.instantiateMovieClip("dashboard", RESOURCE_COST_TILES[_resource1Type]);
+        var resource2Tile :MovieClip = SwfResource.instantiateMovieClip("dashboard", RESOURCE_COST_TILES[_resource2Type]);
+        resource1Tile.x = -(resource1Tile.width * 0.5);
+        resource1Tile.y = -2;
+        resource2Tile.x = 18 - (resource2Tile.width * 0.5);
+        resource2Tile.y = -2;
+        _costs.addChildAt(resource1Tile, 0);
+        _costs.addChildAt(resource2Tile, 0);
 
         var cost1Text :TextField = _costs["cost_1"];
         var cost2Text :TextField = _costs["cost_2"];
@@ -129,7 +122,8 @@ public class UnitPurchaseButton extends SimObject
         cost2Text.textColor = _resource2Data.color;
         cost2Text.text = String(_resource2Cost);
 
-        this.createPurchaseMeters(resource1Bitmap, resource2Bitmap);
+        // create the purchase meters
+        this.createPurchaseMeters();
 
         // create the unit's description popup
         var tf :TextField = new TextField();
@@ -250,8 +244,11 @@ public class UnitPurchaseButton extends SimObject
         }
     }
 
-    protected function createPurchaseMeters (resource1Bitmap :BitmapData, resource2Bitmap :BitmapData) :void
+    protected function createPurchaseMeters () :void
     {
+        var resource1Bitmap :BitmapData = SwfResource.getBitmapData("dashboard", RESOURCE_BITMAP_NAMES[_resource1Type], 18, 18);
+        var resource2Bitmap :BitmapData = SwfResource.getBitmapData("dashboard", RESOURCE_BITMAP_NAMES[_resource2Type], 18, 18);
+
         var resource1BgColor :uint = _resource1Data.hiliteColor;
         var resource2BgColor :uint = _resource2Data.hiliteColor;
 
@@ -343,9 +340,8 @@ public class UnitPurchaseButton extends SimObject
     protected static const FIRST_METER_LOC :Point = new Point(-18, -65);
     protected static const DEPLOY_ANIM_LENGTH :Number = 0.7;
     protected static const DEPLOY_ANIM_TASK_NAME :String = "DeployAnimation";
-
-    protected static const RESOURCE_BITMAP_NAMES :Array =
-        [ "flesh", "blood", "energy", "artifice" ];
+    protected static const RESOURCE_COST_TILES :Array = [ "Ablank", "Bblank", "Cblank", "Dblank" ];
+    protected static const RESOURCE_BITMAP_NAMES :Array = [ "flesh", "blood", "energy", "artifice" ];
 }
 
 }
