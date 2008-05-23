@@ -17,7 +17,7 @@
 
         <AvailableSpells/>
 
-        <Computer baseHealth="100" team="1">
+        <Computer playerName="Ralph" baseHealth="100" team="1">
             <InitialDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="20"><Unit type="grunt" count="1"/></Wave>

@@ -27,7 +27,7 @@
 
         <AvailableSpells/>
 
-        <Computer baseHealth="50" team="1">
+        <Computer playerName="Ralph" baseHealth="50" team="1">
             <RepeatingDays>
                 <Day repeatWaves="true">
                     <Wave delayBefore="5"><Unit type="sapper" count="1"/></Wave>

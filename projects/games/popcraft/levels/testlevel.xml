@@ -35,7 +35,7 @@
             <Spell type="bloodlust"/>
         </AvailableSpells>
 
-        <Computer baseHealth="999999" team="1"/>
+        <Computer playerName="Ralph" baseHealth="999999" team="1"/>
 
     </Level>
 

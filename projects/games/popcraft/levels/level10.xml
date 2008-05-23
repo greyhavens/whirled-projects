@@ -35,6 +35,7 @@
         </AvailableSpells>
 
         <Computer
+            playerName="Ralph"
             baseHealth="120"
             team="1">
             <StartingSpells/>

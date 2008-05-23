@@ -29,9 +29,7 @@
             <Spell type="rigormortis"/>
         </AvailableSpells>
 
-        <Computer
-            baseHealth="150"
-            team="1">
+        <Computer playerName="Ralph" baseHealth="150" team="1">
             <StartingSpells/>
             <InitialDays>
                 <Day repeatWaves="false"

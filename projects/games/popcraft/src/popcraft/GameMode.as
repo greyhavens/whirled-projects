@@ -128,7 +128,7 @@ public class GameMode extends AppMode
         var numComputers :uint = GameContext.spLevel.computers.length;
         for (var playerId :uint = 1; playerId < numComputers + 1; ++playerId) {
             var cpData :ComputerPlayerData = GameContext.spLevel.computers[playerId - 1];
-            var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(playerId, cpData.team);
+            var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(playerId, cpData.team, cpData.playerName);
             GameContext.playerInfos.push(computerPlayerInfo);
 
             // create the computer player object

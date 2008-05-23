@@ -32,7 +32,7 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
 
         <AvailableSpells/>
 
-        <Computer baseHealth="70" team="1">
+        <Computer playerName="Ralph" baseHealth="70" team="1">
             <RepeatingDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
@@ -46,7 +46,7 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
             </RepeatingDays>
         </Computer>
 
-        <Computer baseHealth="70" team="1">
+        <Computer playerName="Sam" baseHealth="70" team="1">
             <RepeatingDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>

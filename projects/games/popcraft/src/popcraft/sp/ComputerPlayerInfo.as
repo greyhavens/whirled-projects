@@ -6,7 +6,7 @@ import popcraft.*;
 
 public class ComputerPlayerInfo extends PlayerInfo
 {
-    public function ComputerPlayerInfo (playerId :uint, teamId :uint)
+    public function ComputerPlayerInfo (playerId :uint, teamId :uint, playerName :String)
     {
         super(playerId, teamId);
 
@@ -14,6 +14,8 @@ public class ComputerPlayerInfo extends PlayerInfo
         for (var i :uint = 0; i < _spells.length; ++i) {
             _spells[i] = uint(0);
         }
+
+        _playerName = playerName;
     }
 
     override public function addSpell (spellType :uint) :void

@@ -19,11 +19,11 @@ public class PlayerStatusView extends SceneObject
         _movie = SwfResource.instantiateMovieClip("dashboard", "player_slot");
 
         _healthMeter = _movie["health_meter"];
-        _healthMeter.filters = [ ColorMatrix.create().colorize(_playerInfo.playerColor).createFilter() ]; // @TODO - why isn't this working
+        _healthMeter.filters = [ ColorMatrix.create().tint(_playerInfo.playerColor).createFilter() ];
         _meterArrow = _movie["meter_arrow"];
 
         var playerName :TextField = _movie["player_name"];
-        playerName.text = "Player " + String(playerId + 1); // @TODO - do something real here
+        playerName.text = _playerInfo.playerName;
 
         var namePlate :MovieClip = _movie["name_plate"];
         namePlate.filters = [ ColorMatrix.create().colorize(_playerInfo.playerColor).createFilter() ];

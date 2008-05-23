@@ -5,6 +5,7 @@ import popcraft.util.*;
 
 public class ComputerPlayerData
 {
+    public var playerName :String;
     public var baseHealth :int;
     public var baseStartHealth :int;
     public var team :uint;
@@ -16,6 +17,7 @@ public class ComputerPlayerData
     {
         var computerPlayer :ComputerPlayerData = new ComputerPlayerData();
 
+        computerPlayer.playerName = XmlReader.getAttributeAsString(xmlData, "playerName");
         computerPlayer.baseHealth = XmlReader.getAttributeAsInt(xmlData, "baseHealth");
         computerPlayer.baseStartHealth = XmlReader.getAttributeAsInt(xmlData, "baseStartHealth", computerPlayer.baseHealth);
         computerPlayer.team = XmlReader.getAttributeAsUint(xmlData, "team");

@@ -34,6 +34,7 @@ The Rigor Mortis spell hardens your units' flesh, making them more resistant to 
         </AvailableSpells>
 
         <Computer
+            playerName="Ralph"
             baseHealth="100"
             team="1">
             <StartingSpells>
