@@ -73,7 +73,7 @@ public class LevelManager
 
     public function incrementLevelNum () :void
     {
-        if (_curLevelNum > 0) {
+        if (_curLevelNum >= 0) {
             this.curLevelNum = _curLevelNum + 1;
         }
     }

@@ -38,6 +38,8 @@ public class UnitPurchaseButton extends SimObject
         // @TEMP
         _availableUnitText = new TextField();
         _availableUnitText.autoSize = TextFieldAutoSize.CENTER;
+        _availableUnitText.selectable = false;
+        _availableUnitText.mouseEnabled = false;
         _availableUnitText.scaleX = 1.3;
         _availableUnitText.scaleY = 1.3;
         _availableUnitText.textColor = 0;
