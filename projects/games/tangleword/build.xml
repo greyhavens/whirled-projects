@@ -3,6 +3,9 @@
 
   <!-- define some basic project parameters -->
   <property name="app.name" value="TangleWord"/>
+  <property name="party" value="true" />
+
+  <property name="app.lib-extras" value="../../../lib/fl-components.swc"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>

@@ -31,7 +31,6 @@ import com.whirled.contrib.Scoreboard;
  */
 public class Display extends Sprite
 {
-
     // PUBLIC FUNCTIONS
 
     /** Initializes the board and everything on it */
@@ -288,7 +287,19 @@ public class Display extends Sprite
         doLayout(_wordfield, Properties.WORDFIELD);
         addChild(_wordfield);
 
+        /*var pane :ScrollPane = new ScrollPane();
+        pane.verticalScrollPolicy = ScrollPolicy.ON;
         _logger = new Logger ();
+        doLayout(_logger, Properties.LOGFIELD);
+        doLayout(pane, Properties.LOGFIELD);
+        _logger.x = 0;
+        _logger.y = 0;
+        pane.source = _logger;
+        addChild(pane);*/
+        var tf :TextField = new TextField();
+        doLayout(tf, Properties.LOGFIELD);
+        tf.x = tf.y = 0;
+        _logger = new Logger(tf);
         doLayout(_logger, Properties.LOGFIELD);
         addChild(_logger);
 
