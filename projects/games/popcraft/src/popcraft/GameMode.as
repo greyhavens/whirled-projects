@@ -343,6 +343,7 @@ public class GameMode extends AppMode
             // don't start doing anything until the messageMgr is ready
             if (_messageMgr.isReady) {
                 log.info("Starting game. randomSeed: " + _messageMgr.randomSeed);
+                Rand.seedStream(AppContext.randStreamPuzzle, _messageMgr.randomSeed);
                 Rand.seedStream(Rand.STREAM_GAME, _messageMgr.randomSeed);
 
                 this.setupBattle();

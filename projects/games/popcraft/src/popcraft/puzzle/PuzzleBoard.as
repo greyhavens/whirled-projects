@@ -38,7 +38,7 @@ public class PuzzleBoard extends SceneObject
             table.push(resourceData.rarity);
         }
 
-        _resourceGenerator = new WeightedTable(table, Rand.STREAM_COSMETIC);
+        _resourceGenerator = new WeightedTable(table, AppContext.randStreamPuzzle);
 
         // create the visual representation of the board
         _sprite = new Sprite();

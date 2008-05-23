@@ -6,6 +6,7 @@ package {
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.game.GameControl;
 
 import flash.display.Sprite;
@@ -43,6 +44,9 @@ public class PopCraft extends Sprite
 
         // sound volume
         AudioManager.instance.masterControls.volume(Constants.SOUND_MASTER_VOLUME);
+
+        // create a new random stream for the puzzle
+        AppContext.randStreamPuzzle = Rand.addStream();
 
         AppContext.mainLoop.run();
 
