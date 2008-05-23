@@ -510,9 +510,12 @@ public class GameMode extends AppMode
 
         case CastSpellMessage.messageName:
             var castSpellMsg :CastSpellMessage = msg as CastSpellMessage;
-            var spellSet :SpellSet = GameContext.playerUnitSpellSets[castSpellMsg.playerId];
-            var spell :SpellData = GameContext.gameData.spells[castSpellMsg.spellType];
-            spellSet.addSpell(spell.clone());
+            var playerId :uint = castSpellMsg.playerId;
+            if (PlayerInfo(GameContext.playerInfos[playerId]).isAlive) {
+                var spellSet :SpellSet = GameContext.playerUnitSpellSets[playerId];
+                var spell :SpellData = GameContext.gameData.spells[castSpellMsg.spellType];
+                spellSet.addSpell(spell.clone());
+            }
             break;
 
         case ChecksumMessage.messageName:
@@ -613,7 +616,7 @@ public class GameMode extends AppMode
     {
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
 
-        if (GameContext.diurnalCycle.isDay || !playerInfo.canPurchaseCreature(unitType)) {
+        if (!playerInfo.isAlive || GameContext.diurnalCycle.isDay || !playerInfo.canPurchaseCreature(unitType)) {
             return;
         }
 
@@ -625,7 +628,7 @@ public class GameMode extends AppMode
     {
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
 
-        if (GameContext.diurnalCycle.isDay || !playerInfo.canCastSpell(spellType)) {
+        if (!playerInfo.isAlive || GameContext.diurnalCycle.isDay || !playerInfo.canCastSpell(spellType)) {
             return;
         }
 
