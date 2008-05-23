@@ -9,8 +9,13 @@ import popcraft.battle.view.*;
 
 public class UnitFactory
 {
-    public static function createCreature (unitType :uint, owningPlayerId :uint) :CreatureUnit
+    public static function createCreature (unitType :uint, owningPlayerId :uint) :void
     {
+        // sanity check. dead players create no monsters.
+        if (!PlayerInfo(GameContext.playerInfos[owningPlayerId]).isAlive) {
+            return;
+        }
+
         var creature :CreatureUnit;
 
         switch (unitType) {
@@ -58,8 +63,6 @@ public class UnitFactory
 
         // play a sound
         AudioManager.instance.playSoundNamed("sfx_create_" + Constants.CREATURE_UNIT_NAMES[unitType]);
-
-        return creature;
     }
 
     public static function createBaseUnit (owningPlayerId :int, maxHealthOverride :int = 0, startingHealthOverride :int = 0) :PlayerBaseUnit
