@@ -135,7 +135,8 @@ public class Display extends Sprite
     /** Updates the log with a success message */
     public function logSuccess (player :String, word :String, score :Number) :void
     {
-        _logger.Log(StringUtil.truncate(player, 18, "...") + ": +" + score + " (" + word + ")");
+        _logger.Log(StringUtil.truncate(player, 18, "...") + ": +" + score + " (" + word + ")",
+                Logger.FOUND_WORD);
     }
 
     /** Updates the log with a failure message */
@@ -149,7 +150,7 @@ public class Display extends Sprite
     public function logInvalidWord (player :String, word :String) :void
     {
         _logger.Log(StringUtil.truncate(player, 18, "...") + ":");
-        _logger.Log("  " + word + " is not valid.");
+        _logger.Log(word + " is not valid.", Logger.INVALID_WORD);
     }
 
     /** Adds a "please wait" message */
