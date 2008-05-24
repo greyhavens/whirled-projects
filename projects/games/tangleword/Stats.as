@@ -41,14 +41,13 @@ public class Stats extends Sprite
     {
         this.visible = false;
 
-        MultiLoader.getLoaders([ Resources.stats_bg, Resources.stats_fg ], finished);
+        MultiLoader.getLoaders([ Resources.stats_bg, Resources.stats_fg ], doneLoadingClips);
 
         _text = new Sprite();
     }
 
-    protected function finished (result :Object) :void
+    protected function doneLoadingClips (results :Array) :void
     {
-        var results :Array = result as Array;
         _bg = new (results[0].contentLoaderInfo.applicationDomain.getDefinition("Card_Winner") as Class) as MovieClip;
         _fg = new (results[1].contentLoaderInfo.applicationDomain.getDefinition("Fishies") as Class) as MovieClip;
             

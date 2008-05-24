@@ -34,10 +34,8 @@ public class Model
         // TODO: No need to have object mapping madness anymore
         // these are just plain objects, so that we don't have to perform explicit
         // serialization/deserialization steps. as a down side, all keys are strings.
-        _data = new Object();
-        _data.roundScores = new Object(); // maps player id => round score
-        _data.claimed = new Object();     // maps word => player id
-        _data.scored = new Object();      // maps word => word score
+        claimed = new Object();     // maps word => player id
+        scored = new Object();      // maps word => word score
 
         // Register for updates
         _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, flowAwarded);
@@ -95,9 +93,8 @@ public class Model
 
         _display.roundEnded(this, _scoreboard);
 
-        _data.scored = new Object();
-        _data.claimed = new Object();
-        _data.roundScores = new Object();
+        scored = new Object();
+        claimed = new Object();
     }
 
     //
@@ -397,9 +394,8 @@ public class Model
     /** Marks the /word/ as claimed, and adds the /score/ to the player's total. */
     public function addWord (playerId :int, word :String, score :Number) :void
     {
-        _data.claimed[word] = playerId;
-        _data.scored[word] = score;
-        _data.roundScores[playerId] = _scoreboard.getScore(playerId) + score;
+        claimed[word] = playerId;
+        scored[word] = score;
 
         _scoreboard.addToScore(playerId, score);
     }
@@ -407,7 +403,7 @@ public class Model
     /** If this word was already claimed, returns true; otherwise false. */
     public function isWordClaimed (word :String) :Boolean
     {
-        return _data.claimed.hasOwnProperty(word);
+        return claimed.hasOwnProperty(word);
     }
 
     /**
@@ -417,11 +413,11 @@ public class Model
     public function getTopWords (count :int) :Array /** of Object */
     {
         var words :Array = new Array();
-        for (var word :String in _data.scored) {
+        for (var word :String in scored) {
             words.push({
                 word: word,
-                score: _data.scored[word],
-                playerId: _data.claimed[word]
+                score: scored[word],
+                playerId: claimed[word]
             });
         }
             
@@ -456,7 +452,8 @@ public class Model
     private static const SCOREBOARD_UPDATE_MSG :String = "Scoreboard Update";
     private static const SCOREBOARD_REQUEST_MSG :String = "Scoreboard Request";
 
-    protected var _data :Object;
+    protected var scored :Object;
+    protected var claimed :Object;
 
     //
     //
