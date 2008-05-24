@@ -9,7 +9,6 @@ import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
-import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.MovieClip;
@@ -328,6 +327,10 @@ public class CreatureUnitView extends SceneObject
             }
 
             var anim :MovieClip = animArray[animIndex];
+            var oldAnim :MovieClip = MovieClip(_sprite.getChildAt(0));
+            if (anim != oldAnim) {
+                anim.gotoAndPlay(0); // reset the animation, if the animation has actually changed
+            }
 
             // flip if we need to
             anim.scaleX = ((newViewState.facing == FACING_NE || newViewState.facing == FACING_SE) ? -1 : 1);

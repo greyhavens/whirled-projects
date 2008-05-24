@@ -45,22 +45,18 @@ public class ColossusCreatureUnit extends CreatureUnit
         super.update(dt);
     }
 
-    override public function receiveAttack (attack :UnitAttack) :void
+    override public function receiveAttack (attack :UnitAttack, maxDamage :Number = Number.MAX_VALUE) :Number
     {
-        super.receiveAttack(attack);
-
-        var numAttackers :int = _attackers.length;
-
         // Every time the colossus gets hit, he is slowed a bit, and a timer
         // is started that will remove the movement penalty after a set time
         // (unless he is hit again by the same attacker)
 
         var attacker :SimObjectRef = attack.sourceUnitRef;
-
         var index :int = ArrayUtil.indexIf(
             _attackers,
             function (record :AttackRecord) :Boolean { return record.attacker == attacker; });
 
+        var numAttackers :int = _attackers.length;
         var ar :AttackRecord;
         if (index >= 0) {
             ar = _attackers[index];
@@ -77,6 +73,8 @@ public class ColossusCreatureUnit extends CreatureUnit
         if (numAttackers != _attackers.length) {
             this.updateSpeedScale();
         }
+
+        return super.receiveAttack(attack, maxDamage);
     }
 
     protected function updateSpeedScale () :void

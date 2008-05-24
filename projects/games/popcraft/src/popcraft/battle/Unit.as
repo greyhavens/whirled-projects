@@ -9,8 +9,6 @@ import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
-import flash.display.Bitmap;
-
 import popcraft.*;
 import popcraft.battle.geom.*;
 import popcraft.data.*;
@@ -156,8 +154,8 @@ public class Unit extends SimObject
         var radiusSquared :Number = weapon.aoeRadiusSquared;
 
         // find all affected units
+        var totalDamageRemaining :Number = weapon.aoeMaxDamage;
         var refs :Array = GameContext.netObjects.getObjectRefsInGroup(Unit.GROUP_NAME);
-
         for each (var ref :SimObjectRef in refs) {
             var unit :Unit = ref.object as Unit;
             if (null == unit) {
@@ -176,14 +174,20 @@ public class Unit extends SimObject
             }
 
             // send the attack
-            unit.receiveAttack(attack);
+            totalDamageRemaining -= unit.receiveAttack(attack, totalDamageRemaining);
+            if (totalDamageRemaining <= 0) {
+                break;
+            }
         }
     }
 
-    public function receiveAttack (attack :UnitAttack) :void
+    public function receiveAttack (attack :UnitAttack, maxDamage :Number = Number.MAX_VALUE) :Number
     {
-        this.health -= this.getAttackDamage(attack);
+        var damageTaken :Number = Math.min(this.getAttackDamage(attack), _health, maxDamage);
+        this.health -= damageTaken;
         this.dispatchEvent(new UnitEvent(UnitEvent.ATTACKED, attack));
+
+        return damageTaken;
     }
 
     public function getAttackDamage (attack :UnitAttack) :Number

@@ -22,6 +22,7 @@ public class UnitWeaponData
     public var aoeRadius :Number = 0;
     public var aoeAnimationName :String;
     public var aoeDamageFriendlies :Boolean;
+    public var aoeMaxDamage :Number;
 
     public function get aoeRadiusSquared () :Number
     {
@@ -44,6 +45,7 @@ public class UnitWeaponData
         theClone.aoeRadius = aoeRadius;
         theClone.aoeAnimationName = aoeAnimationName;
         theClone.aoeDamageFriendlies = aoeDamageFriendlies;
+        theClone.aoeMaxDamage = aoeMaxDamage;
 
         return theClone;
     }
@@ -74,6 +76,7 @@ public class UnitWeaponData
             weapon.aoeRadius = XmlReader.getAttributeAsNumber(xml, "aoeRadius", (useDefaults ? inheritFrom.aoeRadius : undefined));
             weapon.aoeAnimationName = XmlReader.getAttributeAsString(xml, "aoeAnimationName", (useDefaults ? inheritFrom.aoeAnimationName : undefined));
             weapon.aoeDamageFriendlies = XmlReader.getAttributeAsBoolean(xml, "aoeDamageFriendlies", (useDefaults ? inheritFrom.aoeDamageFriendlies : undefined));
+            weapon.aoeMaxDamage = XmlReader.getAttributeAsNumber(xml, "aoeMaxDamage", (useDefaults ? inheritFrom.aoeMaxDamage : undefined));
         }
 
         return weapon;
