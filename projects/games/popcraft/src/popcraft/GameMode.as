@@ -1,5 +1,6 @@
 package popcraft {
 
+import com.threerings.flash.SimpleTextButton;
 import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
@@ -67,6 +68,15 @@ public class GameMode extends AppMode
 
         if (GameContext.isSinglePlayer) {
             AppContext.mainLoop.pushMode(new LevelIntroMode());
+        }
+
+        // if this is a single-player game, create a pause button
+        // @TODO - get a real pause button
+        if (GameContext.isSinglePlayer) {
+            var pauseButton :SimpleTextButton = new SimpleTextButton("Pause");
+            pauseButton.addEventListener(MouseEvent.CLICK,
+                function (...ignored) :void { MainLoop.instance.pushMode(new PauseMode()); });
+            this.modeSprite.addChild(pauseButton);
         }
     }
 

@@ -193,7 +193,7 @@ public class UnitPurchaseButton extends SimObject
         var res1Amount :int = Math.min(playerInfo.getResourceAmount(_resource1Type), _resource1Cost);
         var res2Amount :int = Math.min(playerInfo.getResourceAmount(_resource2Type), _resource2Cost);
 
-        this.enabled = (GameContext.diurnalCycle.isNight && res1Amount >= _resource1Cost && res2Amount >= _resource2Cost);
+        this.enabled = (playerInfo.isAlive && GameContext.diurnalCycle.isNight && res1Amount >= _resource1Cost && res2Amount >= _resource2Cost);
 
         if (res1Amount == _lastResource1Amount && res2Amount == _lastResource2Amount) {
             // don't update if nothing has changed
