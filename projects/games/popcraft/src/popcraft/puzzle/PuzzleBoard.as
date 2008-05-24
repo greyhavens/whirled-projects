@@ -123,14 +123,8 @@ public class PuzzleBoard extends SceneObject
         for each (var piece :Piece in clearPieces) {
             var pieceAnim :SerialTask = new SerialTask();
 
-            // scale to half-size
-            pieceAnim.addTask(ScaleTask.CreateEaseOut(0.5, 0.5, PIECE_SCALE_DOWN_TIME));
-
-            // scale to 1.25x size and fade out
-            pieceAnim.addTask(new ParallelTask(
-                ScaleTask.CreateEaseOut(1.25, 1.25, PIECE_SCALE_UP_TIME),
-                new AlphaTask(0, PIECE_SCALE_UP_TIME)));
-
+            // scale down and die
+            pieceAnim.addTask(ScaleTask.CreateEaseOut(0.3, 0.3, PIECE_SCALE_DOWN_TIME));
             pieceAnim.addTask(new SelfDestructTask());
 
             piece.addTask(pieceAnim);
@@ -142,7 +136,7 @@ public class PuzzleBoard extends SceneObject
         // when the pieces are done clearing,
         // drop the pieces above them.
         this.addTask(new SerialTask(
-            new TimedTask(PIECE_SCALE_DOWN_TIME + PIECE_SCALE_UP_TIME),
+            new TimedTask(PIECE_SCALE_DOWN_TIME),
             new FunctionTask(animatePieceDrops)));
 
         // show the "resources earned" animation
@@ -238,7 +232,7 @@ public class PuzzleBoard extends SceneObject
                             var timeUntilThisDropCompletes :Number = drop1Piece(col, srcRow, dstRow, dropDelay);
                             timeUntilDone = Math.max(timeUntilDone, timeUntilThisDropCompletes);
 
-                            dropDelay += Rand.nextNumberRange(0.05, 0.15, Rand.STREAM_COSMETIC);
+                            dropDelay += Rand.nextNumberRange(0.04, 0.07, Rand.STREAM_COSMETIC);
 
                             --dstRow;
 
@@ -451,8 +445,7 @@ public class PuzzleBoard extends SceneObject
     protected static const MOVE_TASK_NAME :String = "move";
 
     protected static const PIECE_DROP_TIME :Number = 0.3;
-    protected static const PIECE_SCALE_DOWN_TIME :Number = 0.25;
-    protected static const PIECE_SCALE_UP_TIME :Number = 0.1;
+    protected static const PIECE_SCALE_DOWN_TIME :Number = 0.2;
 }
 
 }
