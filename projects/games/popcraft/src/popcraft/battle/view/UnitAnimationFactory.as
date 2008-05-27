@@ -40,10 +40,9 @@ public class UnitAnimationFactory
         var color :MovieClip = anim[childName];
         if (null != color) {
             color = color["recolor"];
-        }
-
-        if (null != color) {
-            color.filters = [ tintMatrix.createFilter() ];
+            if (null != color) {
+                color.filters = [ tintMatrix.createFilter() ];
+            }
         }
 
         return (null != color);

@@ -116,8 +116,8 @@
 
             <Unit
                 type="colossus"
-                displayName="Flesh Colossus"
-                description="FLESH COLOSSUS: A massive pile of discarded flesh. The Colossus' powerful attack is dangerous to everybody, but it will slow down when swarmed by enemies."
+                displayName="Flesh Behemoth"
+                description="FLESH BEHEMOTH: A massive pile of discarded flesh. The Behemoth's powerful attack is dangerous to everybody, but it will slow down when swarmed by enemies."
                 baseMoveSpeed="25"
                 hasRepulseForce="true"
                 maxHealth="100"
