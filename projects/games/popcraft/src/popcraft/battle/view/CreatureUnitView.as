@@ -193,34 +193,7 @@ public class CreatureUnitView extends SceneObject
 
     protected function setupAnimations (playerColor :uint) :void
     {
-        /*if (_unit.unitType == Constants.UNIT_TYPE_COURIER) {
-            // @TEMP
-            var walkNAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
-                _unit.unitData, playerColor, "walk_N");
-            var walkNwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
-                _unit.unitData, playerColor, "walk_NW");
-            var walkSwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
-                _unit.unitData, playerColor, "walk_SW");
-            var walkSAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
-                _unit.unitData, playerColor, "walk_S");
-            var standSwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
-                _unit.unitData, playerColor, "stand_SW");
-
-            _animMoving = new Array(4);
-            _animMoving[FACING_N] = walkNAnim;
-            _animMoving[FACING_NW] = walkNwAnim;
-            _animMoving[FACING_SW] = walkSwAnim;
-            _animMoving[FACING_S] = walkSAnim;
-
-            _animStanding = new Array(4);
-            _animStanding[FACING_N] = standSwAnim;
-            _animStanding[FACING_NW] = standSwAnim;
-            _animStanding[FACING_SW] = standSwAnim;
-            _animStanding[FACING_S] = standSwAnim;
-
-            _animAttacking = _animStanding;
-
-        } else*/ if (_unit.unitType == Constants.UNIT_TYPE_COLOSSUS) {
+        if (_unit.unitType == Constants.UNIT_TYPE_COLOSSUS) {
             // @TEMP
             var walkSwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
                 _unit.unitData, playerColor, "walk_SW");
