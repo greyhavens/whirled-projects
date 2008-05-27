@@ -35,28 +35,31 @@ public class Logger extends ScrollPane
         verticalScrollPolicy = ScrollPolicy.ON;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
-        _text.selectable = false;
-        _text.borderColor = Resources.defaultBorderColor;
-        _text.multiline = true;
+        with (_text) {
+            selectable = false;
+            borderColor = Resources.defaultBorderColor;
+            multiline = true;
 
-        _text.autoSize = TextFieldAutoSize.LEFT;
-        _text.wordWrap = true;
+            autoSize = TextFieldAutoSize.LEFT;
+            wordWrap = true;
 
-        _text.styleSheet = new StyleSheet();
+            styleSheet = new StyleSheet();
 
-        _text.styleSheet.setStyle("body", {
-            fontSize: 10,
-            fontFamily: "Verdana"
-        });
-        _text.styleSheet.setStyle('.'+FOUND_WORD_FIRST, {
-            color: "#0000ff"
-        });
-        _text.styleSheet.setStyle('.'+FOUND_WORD, {
-            color: "#0000cc"
-        });
-        _text.styleSheet.setStyle('.'+INVALID_WORD, {
-            color: "#ff0000"
-        });
+            styleSheet.setStyle("body", {
+                fontSize: 10,
+                fontFamily: "Verdana"
+            });
+            styleSheet.setStyle('.'+FOUND_WORD_FIRST, {
+                color: "#0000ff",
+                fontWeight: "bold"
+            });
+            styleSheet.setStyle('.'+FOUND_WORD, {
+                color: "#0000ff"
+            });
+            styleSheet.setStyle('.'+INVALID_WORD, {
+                color: "#ff0000"
+            });
+        }
     }
 
     /** Adds a line of text to the bottom of the logger */

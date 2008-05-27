@@ -332,8 +332,8 @@ public class Model
 
         // if the word is valid and not claimed, score!
         if (! isWordClaimed (playerId, word)) {
+            _display.logSuccess(playerName, word, score, _gameCtrl.net.get(WORD_NAMESPACE+word) == null);
             addWord(playerId, word, score);
-            _display.logSuccess(playerName, word, score);
             return;
         }
 
