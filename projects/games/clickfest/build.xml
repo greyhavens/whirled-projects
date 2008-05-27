@@ -5,6 +5,11 @@
   <property name="app.name" value="ClickFest"/>
   <property name="app.type" value="game"/>
 
+  <!-- Set up some default properties for the game test environment. These can
+       be overridden by using "-D", for example "ant -Dplayers=3 test". -->
+  <property name="party" value="true"/>
+  <property name="players" value="2"/>
+
   <!-- if you wish to put your source in a subdirectory, uncomment this line -->
   <!--<property name="app.source-dir" value="src"/>-->
 
