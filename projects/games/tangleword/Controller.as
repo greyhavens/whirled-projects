@@ -12,18 +12,11 @@ import flash.geom.Point;
     
 public class Controller 
 {
-    // PUBLIC CONSTANTS
-    public static const MIN_WORD_LENGTH :int = 3;
-
+    // TODO: It would be cool if this scaled exponentially instead of linearly
+    // to give an incentive to look for longer words
     public static function getWordScore(word :String) :Number
     {
-            // By this point, the word is at least three letters long. So find
-            // the new score: it's one point per letter for the first three letters,
-            // and then three points per letter afterwards. 
-            var extraLetters :int = word.length - MIN_WORD_LENGTH;
-            var score :Number = 3 + 3 * extraLetters;
-
-            return score;
+            return 3 + 3*(word.length-2);
     }
 
     
@@ -33,6 +26,10 @@ public class Controller
     {
         _gameCtrl = gameCtrl;
         _model = model;
+
+        var config :Object = _gameCtrl.game.getConfig();
+
+        _minWordLength = config.minWordLength || 4;
     }
 
     /** Called when the round starts - enables user input, randomizes data. */
@@ -123,7 +120,7 @@ public class Controller
         }
         
         // First, check to make sure it's of the correct length (in characters)
-        if (word.length < MIN_WORD_LENGTH) return;
+        if (word.length < _minWordLength) return;
 
         // Normalize the word
         word = word.toLowerCase ();
@@ -174,7 +171,7 @@ public class Controller
         }
     }
 
-
+    protected var _minWordLength :int;
     
     // PRIVATE VARIABLES
 
