@@ -34,12 +34,10 @@ public class Model
         // TODO: No need to have object mapping madness anymore
         // these are just plain objects, so that we don't have to perform explicit
         // serialization/deserialization steps. as a down side, all keys are strings.
-        claimed = new Object();     // maps word => player id
         scored = new Object();      // maps word => word score
 
         // Register for updates
         _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, flowAwarded);
-        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         
         // Initialize game data storage
@@ -51,7 +49,6 @@ public class Model
     public function handleUnload (event :Event) :void
     {
         _gameCtrl.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, flowAwarded);
-        _gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
     }        
     
@@ -94,7 +91,6 @@ public class Model
         _display.roundEnded(this, _scoreboard);
 
         scored = new Object();
-        claimed = new Object();
     }
 
     //
@@ -208,7 +204,6 @@ public class Model
 
     /** Sends out a message to everyone, informing them about adding
      *  the new word to their lists. */
-    // TODO: Remove?
     public function addScore (word :String, score :Number, isvalid :Boolean) :void
     {
         var obj :Object = new Object ();
@@ -222,8 +217,8 @@ public class Model
             _trophies.handleAddWord(word, score, _scoreboard);
         }
 
-        // now tell everyone about the new score
-        _gameCtrl.net.sendMessage (ADD_SCORE_MSG, obj);
+        addWordToScoreboard(
+                obj.playerId, obj.word, obj.score, obj.isvalid);
 
         // reset selection
         removeAllSelectedLetters ();
@@ -248,44 +243,6 @@ public class Model
     //
     //
     // EVENT HANDLERS
-
-    /** From MessageReceivedListener: checks for special messages signaling
-        game data updates. */
-    public function messageReceived (event :MessageReceivedEvent) :void
-    {
-        switch (event.name)
-        {
-        case ADD_SCORE_MSG:
-            // Store the score in a local data structure
-            addWordToScoreboard(
-                event.value.playerId, event.value.word, event.value.score, event.value.isvalid);
-            break;
-
-            /*
-        case SCOREBOARD_UPDATE_MSG:
-            // Take the scoreboard we've received, and use it instead of
-            // our previous one.
-            _scoreboard.internalScoreObject = event.value;
-            updateScoreDisplay ();
-            break;
-
-        case SCOREBOARD_REQUEST_MSG:
-            // Someone requested my current scoreboard - if i'm in control, i should send it
-            if (_gameCtrl.game.amInControl ())
-            {
-                var playerId :int = int(event.value);
-                _gameCtrl.net.sendMessage(
-                    SCOREBOARD_UPDATE_MSG, _scoreboard.internalScoreObject, playerId);
-            }
-            break;
-            */
-
-        default:
-            // Ignore any other messages; they're not for us.
-
-        }
-
-    }
 
     /** From PropertyChangedListener: deal with distributed game data changes */
     public function propertyChanged (event :PropertyChangedEvent) :void
@@ -374,7 +331,7 @@ public class Model
         }
 
         // if the word is valid and not claimed, score!
-        if (! isWordClaimed (word)) {
+        if (! isWordClaimed (playerId, word)) {
             addWord(playerId, word, score);
             _display.logSuccess(playerName, word, score);
             return;
@@ -394,16 +351,27 @@ public class Model
     /** Marks the /word/ as claimed, and adds the /score/ to the player's total. */
     public function addWord (playerId :int, word :String, score :Number) :void
     {
-        claimed[word] = playerId;
-        scored[word] = score;
+        //claimed[word] = playerId;
+        var claims :Array = _gameCtrl.net.get(WORD_NAMESPACE+word) as Array || [ ];
+
+        if (claims.indexOf(playerId) == -1) {
+            claims.push(playerId);
+        }
+        _gameCtrl.net.set(WORD_NAMESPACE+word, claims);
+
+        //scored[word] = score;
 
         _scoreboard.addToScore(playerId, score);
     }
 
-    /** If this word was already claimed, returns true; otherwise false. */
-    public function isWordClaimed (word :String) :Boolean
+    /** If this word was already claimed by the given player, returns true; otherwise false. */
+    public function isWordClaimed (playerId :int, word :String) :Boolean
     {
-        return claimed.hasOwnProperty(word);
+        //return claimed.hasOwnProperty(word);
+        var claim :Array = _gameCtrl.net.get(WORD_NAMESPACE+word) as Array || [ ];
+
+        trace(claim);
+        return claim.indexOf(playerId) != -1;
     }
 
     /**
@@ -417,7 +385,7 @@ public class Model
             words.push({
                 word: word,
                 score: scored[word],
-                playerId: claimed[word]
+                playerId: 666 // FIXME: Have a list of players that found this word
             });
         }
             
@@ -452,8 +420,9 @@ public class Model
     private static const SCOREBOARD_UPDATE_MSG :String = "Scoreboard Update";
     private static const SCOREBOARD_REQUEST_MSG :String = "Scoreboard Request";
 
+    protected static const WORD_NAMESPACE :String = "BLAHWord:";
+
     protected var scored :Object;
-    protected var claimed :Object;
 
     //
     //
