@@ -29,6 +29,9 @@ public class Controller
 
         var config :Object = _gameCtrl.game.getConfig();
 
+        // Get the minWordLength from config, or default to 4.
+        // Note: This works because we know config.minWordLength can never
+        // be zero. It's either null or holds a nonzero value.
         _minWordLength = config.minWordLength || 4;
     }
 

@@ -67,6 +67,10 @@ public class Logger extends ScrollPane
     {
         _text.htmlText += "<p class='" + styleClass + "'>" + message + "</p>";
         update();
+
+        // If we can scroll to the bottom, do it
+        if (verticalScrollPosition)
+            verticalScrollPosition = _text.height;
     }
 
     /** Clears the log */
