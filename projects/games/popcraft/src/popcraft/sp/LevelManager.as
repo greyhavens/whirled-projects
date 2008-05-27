@@ -2,12 +2,68 @@ package popcraft.sp {
 
 import com.whirled.contrib.simplegame.resource.*;
 
+import flash.utils.ByteArray;
+
 import popcraft.*;
 import popcraft.data.*;
 import popcraft.util.*;
 
 public class LevelManager
 {
+    public function LevelManager ()
+    {
+        AppContext.gameCtrl.player.getUserCookie(AppContext.gameCtrl.game.getMyId(), completeLoadData);
+    }
+
+    public function get levelRecords () :Array
+    {
+        return _levelRecords;
+    }
+
+    public function get levelRecordsLoaded () :Boolean
+    {
+        return _levelRecords.length > 0;
+    }
+
+    protected function completeLoadData (cookie :Object) :void
+    {
+        var success :Boolean;
+        var ba :ByteArray = ByteArray(cookie);
+        if (null != ba) {
+            success = true;
+            try {
+                ba.uncompress();
+                for (var i :int = 0; i < NUM_LEVELS; ++i) {
+                    _levelRecords.push(LevelRecord.fromByteArray(ba));
+                }
+            } catch (e :Error) {
+                success = false;
+            }
+        }
+
+        if (!success) {
+            // re-init levels if the data was broken or non-existent
+            _levelRecords = new Array(NUM_LEVELS);
+            for (i = 0; i < NUM_LEVELS; ++i) {
+                _levelRecords.push(new LevelRecord());
+            }
+        }
+
+        // make sure the first level is always unlocked
+        LevelRecord(_levelRecords[0]).unlocked = true;
+    }
+
+    public function saveData () :void
+    {
+        var ba :ByteArray = new ByteArray();
+        for each (var lr :LevelRecord in _levelRecords) {
+            lr.toByteArray(ba);
+        }
+
+        ba.compress();
+        AppContext.gameCtrl.player.setUserCookie(ba);
+    }
+
     public function playLevel (forceReload :Boolean = false) :void
     {
         // forceReload only makes sense when we're loading levels from disk (and
@@ -104,6 +160,8 @@ public class LevelManager
 
     protected var _curLevelNum :int = 0;
     protected var _loadedLevel :LevelData;
+    protected var _levelRecords :Array = [];
+    protected var _recordsLoaded :Boolean;
 
     // Embedded level data
     [Embed(source="../../../levels/level1.xml", mimeType="application/octet-stream")]
@@ -133,6 +191,7 @@ public class LevelManager
     protected static const LEVELS :Array =
         [ LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, LEVEL_5, LEVEL_6, LEVEL_7, LEVEL_8, LEVEL_9 ];
 
+    protected static const NUM_LEVELS :int = 15;
 }
 
 }
