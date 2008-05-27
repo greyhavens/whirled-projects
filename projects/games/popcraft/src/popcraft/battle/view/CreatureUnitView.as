@@ -193,7 +193,7 @@ public class CreatureUnitView extends SceneObject
 
     protected function setupAnimations (playerColor :uint) :void
     {
-        if (_unit.unitType == Constants.UNIT_TYPE_COURIER) {
+        /*if (_unit.unitType == Constants.UNIT_TYPE_COURIER) {
             // @TEMP
             var walkNAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
                 _unit.unitData, playerColor, "walk_N");
@@ -220,11 +220,11 @@ public class CreatureUnitView extends SceneObject
 
             _animAttacking = _animStanding;
 
-        } else if (_unit.unitType == Constants.UNIT_TYPE_COLOSSUS) {
+        } else*/ if (_unit.unitType == Constants.UNIT_TYPE_COLOSSUS) {
             // @TEMP
-            walkSwAnim = UnitAnimationFactory.instantiateUnitAnimation(
+            var walkSwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
                 _unit.unitData, playerColor, "walk_SW");
-            walkNwAnim = UnitAnimationFactory.instantiateUnitAnimation(
+            var walkNwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
                 _unit.unitData, playerColor, "walk_NW");
 
             _animMoving = new Array(4);

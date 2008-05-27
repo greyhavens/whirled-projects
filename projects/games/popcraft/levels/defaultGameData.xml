@@ -142,7 +142,7 @@
                 type="courier"
                 displayName="Ladyfingers"
                 description="LADYFINGERS: Retrieves spell pick-ups from the battlefield. The more Ladyfingers you have in play, the faster each will move. Ladyfingers do not attack other creatures."
-                baseMoveSpeed="100"
+                baseMoveSpeed="65"
                 hasRepulseForce="false"
                 maxHealth="40"
                 collisionRadius="30"

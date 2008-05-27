@@ -141,14 +141,13 @@ import flash.geom.Rectangle;
 class CourierSettings
 {
     // @TODO - load these from XML
+    public static const MOVEMENT_TIME :Number = 0.7;
     public static const BASE_PAUSE_TIME :Number = 1.5;
     public static const SPEEDUP_PER_COURIER :Number = 1.5;
     public static const MAX_SPEEDUP :Number = 8;
-    public static const MAX_MOVE_LENGTH :Number = 50;
     public static const MOVE_FUDGE_FACTOR :Number = 5;
-    public static const MAX_MOVE_LENGTH_SQUARED :Number = MAX_MOVE_LENGTH * MAX_MOVE_LENGTH;
     public static const WANDER_BOUNDS :Rectangle = new Rectangle(
-        75, 75, Constants.BATTLE_WIDTH - 75, Constants.BATTLE_HEIGHT - 75);
+        120, 120, Constants.BATTLE_WIDTH - 120, Constants.BATTLE_HEIGHT - 120);
     public static const ENEMY_BASE_WANDER_RADIUS :NumRange = new NumRange(150, 300, Rand.STREAM_GAME);
     public static const ENEMY_BASE_WANDER_ANGLE :NumRange = new NumRange(-Math.PI / 3, Math.PI / 3, Rand.STREAM_GAME);
 }
@@ -215,15 +214,17 @@ class CourierMoveTask extends AITaskTree
 
     protected function moveToNextLoc () :void
     {
+        var dist :Number = CourierSettings.MOVEMENT_TIME * _unit.movementSpeed;
+
         var curLoc :Vector2 = _unit.unitLoc;
 
         var d :Vector2 = _loc.subtract(curLoc);
 
         var nextLoc :Vector2;
-        if (d.lengthSquared < CourierSettings.MAX_MOVE_LENGTH_SQUARED) {
+        if (d.lengthSquared < dist * dist) {
             nextLoc = _loc;
         } else {
-            d.length = CourierSettings.MAX_MOVE_LENGTH;
+            d.length = dist;
             d.addLocal(curLoc);
             nextLoc = d;
         }

@@ -113,7 +113,7 @@ public class CreatureUnit extends Unit
 
     public function get movementSpeed () :Number
     {
-        return this.unitData.baseMoveSpeed * this.speedScale;
+        return _unitData.baseMoveSpeed * this.speedScale;
     }
 
     public function get distanceToDestination () :Number
