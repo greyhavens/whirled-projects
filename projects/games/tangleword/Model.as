@@ -31,11 +31,6 @@ public class Model
         _gameCtrl = gameCtrl;
         _display = display;
 
-        // TODO: No need to have object mapping madness anymore
-        // these are just plain objects, so that we don't have to perform explicit
-        // serialization/deserialization steps. as a down side, all keys are strings.
-        scored = new Object();      // maps word => word score
-
         // Register for updates
         _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, flowAwarded);
         _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
@@ -86,11 +81,16 @@ public class Model
     /** Called when the round ends - cleans up data, and awards flow! */
     public function roundEnded () :void
     {
+        if (_gameCtrl.game.amInControl()) {
+            _scoreboard.clearAll();
+            for each (var i :String in _gameCtrl.net.getPropertyNames(Model.WORD_NAMESPACE)) {
+                _gameCtrl.net.set(i, null);
+            }
+        }
+
         removeAllSelectedLetters ();
 
         _display.roundEnded(this, _scoreboard);
-
-        scored = new Object();
     }
 
     //
@@ -359,8 +359,6 @@ public class Model
         }
         _gameCtrl.net.set(WORD_NAMESPACE+word, claims);
 
-        //scored[word] = score;
-
         _scoreboard.addToScore(playerId, score);
     }
 
@@ -370,7 +368,6 @@ public class Model
         //return claimed.hasOwnProperty(word);
         var claim :Array = _gameCtrl.net.get(WORD_NAMESPACE+word) as Array || [ ];
 
-        trace(claim);
         return claim.indexOf(playerId) != -1;
     }
 
@@ -381,11 +378,14 @@ public class Model
     public function getTopWords (count :int) :Array /** of Object */
     {
         var words :Array = new Array();
-        for (var word :String in scored) {
+        var props :Array = _gameCtrl.net.getPropertyNames(WORD_NAMESPACE) || [ ];
+
+        for each (var i :String in props) {
+            var word :String = i.substring(WORD_NAMESPACE.length);
             words.push({
                 word: word,
-                score: scored[word],
-                playerId: 666 // FIXME: Have a list of players that found this word
+                score: Controller.getWordScore(word),
+                playerIds: _gameCtrl.net.get(i)
             });
         }
             
@@ -420,9 +420,7 @@ public class Model
     private static const SCOREBOARD_UPDATE_MSG :String = "Scoreboard Update";
     private static const SCOREBOARD_REQUEST_MSG :String = "Scoreboard Request";
 
-    protected static const WORD_NAMESPACE :String = "BLAHWord:";
-
-    protected var scored :Object;
+    protected static const WORD_NAMESPACE :String = "word:";
 
     //
     //

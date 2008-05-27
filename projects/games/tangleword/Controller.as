@@ -15,6 +15,17 @@ public class Controller
     // PUBLIC CONSTANTS
     public static const MIN_WORD_LENGTH :int = 3;
 
+    public static function getWordScore(word :String) :Number
+    {
+            // By this point, the word is at least three letters long. So find
+            // the new score: it's one point per letter for the first three letters,
+            // and then three points per letter afterwards. 
+            var extraLetters :int = word.length - MIN_WORD_LENGTH;
+            var score :Number = 3 + 3 * extraLetters;
+
+            return score;
+    }
+
     
     // PUBLIC METHODS
     
@@ -94,7 +105,6 @@ public class Controller
         }
     }
 
-
     /** Signals that the currently selected word is a candidate for scoring.
         It will be matched against the dictionary, and added to the model. */
     public function tryScoreWord (word :String) :void
@@ -106,16 +116,10 @@ public class Controller
             // Check if this word exists on the board
             isvalid = isvalid && _model.wordExistsOnBoard (word.toLowerCase());
 
-            // By this point, the word is at least three letters long. So find
-            // the new score: it's one point per letter for the first three letters,
-            // and then three points per letter afterwards. 
-            var extraLetters :int = word.length - MIN_WORD_LENGTH;
-            var score :Number = 3 + 3 * extraLetters;
-            
             // Finally, process the new word. Notice that we don't check if it's already
             // been claimed - the model will take care of that, because there's a network
             // round-trip involved, and therefore potential of contention.
-            _model.addScore (word, score, isvalid);
+            _model.addScore (word, getWordScore(word), isvalid);
         }
         
         // First, check to make sure it's of the correct length (in characters)

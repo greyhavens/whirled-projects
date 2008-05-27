@@ -156,7 +156,7 @@ public class Stats extends Sprite
         for each (var wordDef :Object in topWords) {
                 words += makeDictionaryAnchor(wordDef.word) + ": " +
                     wordDef.score + " pts.  (" +
-                    StringUtil.truncate(model.getName(wordDef.playerId), 20, "...") + ")<br>";
+                    StringUtil.truncate(wordDef.playerIds.map(model.getName).join(", "), 30, "...") + ")<br>";
         }
         words += "</ul>";
         wordlist.htmlText = words;

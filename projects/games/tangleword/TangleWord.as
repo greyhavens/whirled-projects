@@ -125,7 +125,6 @@ public class TangleWord extends Sprite
 
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
-        _model.scoreboard.clearAll();
         _controller.roundEnded();
         _model.roundEnded();
 
