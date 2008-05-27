@@ -252,7 +252,7 @@ public class CreatureUnitView extends SceneObject
     protected function updateAnimations () :void
     {
         // determine our view state
-        var newViewState :ViewState = new ViewState();
+        var newViewState :CreatureUnitViewState = new CreatureUnitViewState();
 
         newViewState.moving = _unit.isMoving;
         newViewState.attacking = _unit.isAttacking;
@@ -299,20 +299,24 @@ public class CreatureUnitView extends SceneObject
                 animIndex = FACING_SW;
             }
 
-            var anim :MovieClip = animArray[animIndex];
-            var oldAnim :MovieClip = MovieClip(_sprite.getChildAt(0));
-            if (anim != oldAnim) {
-                anim.gotoAndPlay(0); // reset the animation, if the animation has actually changed
-            }
-
-            // flip if we need to
-            anim.scaleX = ((newViewState.facing == FACING_NE || newViewState.facing == FACING_SE) ? -1 : 1);
-
-            _sprite.removeChildAt(0);
-            _sprite.addChildAt(anim, 0);
-
-            _lastViewState = newViewState;
+            this.setNewAnimation(animArray[animIndex], newViewState);
         }
+    }
+
+    protected function setNewAnimation (anim :MovieClip, newViewState :CreatureUnitViewState) :void
+    {
+        var oldAnim :MovieClip = MovieClip(_sprite.getChildAt(0));
+        if (anim != oldAnim) {
+            anim.gotoAndPlay(0); // reset the animation, if the animation has actually changed
+        }
+
+        // flip if we need to
+        anim.scaleX = ((newViewState.facing == FACING_NE || newViewState.facing == FACING_SE) ? -1 : 1);
+
+        _sprite.removeChildAt(0);
+        _sprite.addChildAt(anim, 0);
+
+        _lastViewState = newViewState;
     }
 
     override protected function update (dt :Number) :void
@@ -394,7 +398,7 @@ public class CreatureUnitView extends SceneObject
     // associated CreatureUnit.
     protected var _unit :CreatureUnit;
 
-    protected var _lastViewState :ViewState = new ViewState();
+    protected var _lastViewState :CreatureUnitViewState = new CreatureUnitViewState();
     protected var _sprite :Sprite = new Sprite();
     protected var _healthMeter :RectMeter;
 
@@ -422,20 +426,4 @@ public class CreatureUnitView extends SceneObject
     protected static const HIT_SOUND_NAMES :Array = [ "sfx_hit1", "sfx_hit2", "sfx_hit3" ];
 }
 
-}
-
-class ViewState
-{
-    public var facing :int;
-    public var moving :Boolean;
-    public var attacking :Boolean;
-
-    public function equals (rhs :ViewState) :Boolean
-    {
-        return (
-            facing == rhs.facing &&
-            moving == rhs.moving &&
-            attacking == rhs.attacking
-            );
-    }
 }

@@ -1,8 +1,10 @@
 package popcraft.battle.view {
 
-import flash.display.Bitmap;
-
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.WaitForFrameTask;
+
+import flash.display.Bitmap;
+import flash.display.MovieClip;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -30,6 +32,20 @@ public class CourierCreatureUnitView extends CreatureUnitView
         }
 
         super.update(dt);
+    }
+
+    override protected function setNewAnimation (anim :MovieClip, newViewState :CreatureUnitViewState) :void
+    {
+        // don't interrupt the courier's movement animation - allow it to play to completion
+        // (completion means currentLabel == "end")
+        if (_lastViewState.moving) {
+            var curAnim :MovieClip = MovieClip(_sprite.getChildAt(0));
+            if (curAnim.currentLabel != "end") {
+                return;
+            }
+        }
+
+        super.setNewAnimation(anim, newViewState);
     }
 
     protected var _courier :CourierCreatureUnit;
