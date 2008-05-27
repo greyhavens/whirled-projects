@@ -55,6 +55,9 @@ public class Model
     /** Called at the beginning of a round - push my scoreboard on everyone. */
     public function roundStarted () :void
     {
+        if (_gameCtrl.game.amInControl()) {
+            _scoreboard.clearAll();
+        }
     }
 
     public function endRound () :void
@@ -82,7 +85,6 @@ public class Model
     public function roundEnded () :void
     {
         if (_gameCtrl.game.amInControl()) {
-            _scoreboard.clearAll();
             for each (var i :String in _gameCtrl.net.getPropertyNames(Model.WORD_NAMESPACE)) {
                 _gameCtrl.net.set(i, null);
             }
