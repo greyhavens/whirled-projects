@@ -229,8 +229,11 @@ public class Display extends Sprite
 
     protected function submitWord () :void
     {
-        _controller.tryScoreWord(_wordfield.text);
-        updateLetterSelection([ ])
+        if (_controller.tryScoreWord(_wordfield.text)) {
+            updateLetterSelection([ ]);
+        } else {
+            _logger.Log("Words must be at least " + _controller.minWordLength + " letters.", Logger.INVALID_WORD);
+        }
     }
 
     /** Called when the user types a letter inside the word field. */

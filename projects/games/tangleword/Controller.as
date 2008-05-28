@@ -38,6 +38,11 @@ public class Controller
         _minWordLength = config.minWordLength || 4;
     }
 
+    public function get minWordLength () :Number
+    {
+        return _minWordLength;
+    }
+
     /** Called when the round starts - enables user input, randomizes data. */
     public function roundStarted () :void
     {
@@ -109,8 +114,11 @@ public class Controller
     }
 
     /** Signals that the currently selected word is a candidate for scoring.
-        It will be matched against the dictionary, and added to the model. */
-    public function tryScoreWord (word :String) :void
+        It will be matched against the dictionary, and added to the model.
+        @return True if this word passed initial validation and was sent to the server,
+                otherwise false.
+     */
+    public function tryScoreWord (word :String) :Boolean
     {
         // This is the callback that gets called after the word is successfully
         // checked against the dictionary
@@ -126,7 +134,9 @@ public class Controller
         }
         
         // First, check to make sure it's of the correct length (in characters)
-        if (word.length < _minWordLength) return;
+        if (word.length < _minWordLength) {
+            return false;
+        }
 
         // Normalize the word
         word = word.toLowerCase ();
@@ -134,6 +144,7 @@ public class Controller
         // Now check if it's an actual word.
         _gameCtrl.services.checkDictionaryWord (Properties.LOCALE, null, word, success);
 
+        return true;
     }
             
     /**
