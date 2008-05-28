@@ -80,6 +80,8 @@ public class Display extends Sprite
     {
         setEnableState(false);
 
+        logSummary(model, model.getWords().sortOn("word", Array.DESCENDING));
+
         _stats.show(model, board);
     }
 
@@ -169,6 +171,15 @@ public class Display extends Sprite
         _logger.Log("You received " + flow + " flow!");
     }
 
+    public function logSummary (model :Model, words :Object) :void
+    {
+        _logger.Log("");
+        for each (var w :Object in words) {
+            _logger.Log(w.word + " (" + w.score + "): " + w.playerIds.map(model.getName).join(", "));
+        }
+        _logger.Log("");
+    }
+
     /** Sets scores based on the scoreboard. */
     public function updateScores (board :Scoreboard) :void
     {
@@ -214,7 +225,7 @@ public class Display extends Sprite
     protected function submitWord () :void
     {
         _controller.tryScoreWord(_wordfield.text);
-        _wordfield.text = "";
+        updateLetterSelection([ ])
     }
 
     /** Called when the user types a letter inside the word field. */

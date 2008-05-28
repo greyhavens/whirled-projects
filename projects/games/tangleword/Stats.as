@@ -125,7 +125,7 @@ public class Stats extends Sprite
         }
 
         // find top player and scores
-        var topWords :Array = model.getTopWords(5);
+        var topWords :Array = model.getWords().sortOn("score", Array.DESCENDING | Array.NUMERIC).slice(0, 5);//, nmodel.getTopWords(5);
         var topPlayers :Array = scoreboard.getWinnerIds().map(model.getName);
         var topScore :int = scoreboard.getTopScore();
 

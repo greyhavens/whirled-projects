@@ -143,7 +143,7 @@ public class Model
     public function removeAllSelectedLetters () :void
     {
         _word = new Array ();
-        _display.updateLetterSelection(_word);
+        //_display.updateLetterSelection(_word);
     }
 
     /** Checks if the word exists on the board, by doing an exhaustive
@@ -367,18 +367,34 @@ public class Model
     /** If this word was already claimed by the given player, returns true; otherwise false. */
     public function isWordClaimed (playerId :int, word :String) :Boolean
     {
-        //return claimed.hasOwnProperty(word);
         var claim :Array = _gameCtrl.net.get(WORD_NAMESPACE+word) as Array || [ ];
 
         return claim.indexOf(playerId) != -1;
     }
 
+    /** Pick all the words that have currently been found. */
+    public function getWords () :Array
+    {
+        var words :Array = new Array();
+        var props :Array = _gameCtrl.net.getPropertyNames(WORD_NAMESPACE) || [ ];
+
+        for each (var i :String in props) {
+            var word :String = i.substring(WORD_NAMESPACE.length);
+            words.push({
+                word: word,
+                score: Controller.getWordScore(word),
+                playerIds: _gameCtrl.net.get(i)
+            });
+        }
+
+        return words;
+    }
     /**
      * Retrieves top n words from the scored word list, and returns them as an array
      * of objects with the following fields: { word :String, score :int, playerId :int }.
      */
-    public function getTopWords (count :int) :Array /** of Object */
-    {
+    //public function getTopWords (count :int) :Array /** of Object */
+    /*{
         var words :Array = new Array();
         var props :Array = _gameCtrl.net.getPropertyNames(WORD_NAMESPACE) || [ ];
 
@@ -393,7 +409,7 @@ public class Model
             
         words.sortOn("score", Array.DESCENDING | Array.NUMERIC);
         return words.slice(0, count);
-    };
+    };*/
 
     /** Updates a single letter at specified /position/ to display a new /text/.  */
     private function updateBoardLetter (position :Point, text :String) :void
