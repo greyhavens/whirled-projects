@@ -201,10 +201,10 @@ public class CreatureUnitView extends SceneObject
                 _unit.unitData, playerColor, "walk_NW");
 
             _animMoving = new Array(4);
-            _animMoving[FACING_N] = walkNwAnim;
-            _animMoving[FACING_NW] = walkNwAnim;
-            _animMoving[FACING_SW] = walkSwAnim;
-            _animMoving[FACING_S] = walkSwAnim;
+            _animMoving[Constants.FACING_N] = walkNwAnim;
+            _animMoving[Constants.FACING_NW] = walkNwAnim;
+            _animMoving[Constants.FACING_SW] = walkSwAnim;
+            _animMoving[Constants.FACING_S] = walkSwAnim;
 
             _animStanding = _animMoving;
             _animAttacking = _animMoving;
@@ -223,8 +223,8 @@ public class CreatureUnitView extends SceneObject
 
                 // we don't have separate animations for NE and SE facing directions,
                 // instead, we use the NW and SW animations and flip them.
-                for (var facing :int = FACING_N; facing <= FACING_S; ++facing) {
-                    var animName :String = animNamePrefix + FACING_STRINGS[facing];
+                for (var facing :int = Constants.FACING_N; facing <= Constants.FACING_S; ++facing) {
+                    var animName :String = animNamePrefix + Constants.FACING_STRINGS[facing];
 
                     var anim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
                         _unit.unitData, playerColor, animName);
@@ -293,10 +293,10 @@ public class CreatureUnitView extends SceneObject
 
             // if the character is facing NE or SE,
             // we use the NW/SW animations and flip
-            if (FACING_NE == animIndex) {
-                animIndex = FACING_NW;
-            } else if (FACING_SE == animIndex) {
-                animIndex = FACING_SW;
+            if (Constants.FACING_NE == animIndex) {
+                animIndex = Constants.FACING_NW;
+            } else if (Constants.FACING_SE == animIndex) {
+                animIndex = Constants.FACING_SW;
             }
 
             this.setNewAnimation(animArray[animIndex], newViewState);
@@ -311,7 +311,7 @@ public class CreatureUnitView extends SceneObject
         }
 
         // flip if we need to
-        anim.scaleX = ((newViewState.facing == FACING_NE || newViewState.facing == FACING_SE) ? -1 : 1);
+        anim.scaleX = ((newViewState.facing == Constants.FACING_NE || newViewState.facing == Constants.FACING_SE) ? -1 : 1);
 
         _sprite.removeChildAt(0);
         _sprite.addChildAt(anim, 0);
@@ -324,6 +324,11 @@ public class CreatureUnitView extends SceneObject
         if (_unit.isDead) {
             // when the unit gets destroyed, its view does too
             this.destroySelf();
+
+            // show a death animation (will self-destruct when animation is complete)
+            GameContext.gameMode.addObject(
+                new DeadCreatureUnitView(_unit, _lastViewState.facing),
+                GameContext.battleBoardView.unitViewParent);
 
             // play a sound if the creature died during battle, and not
             // as a result of the night-day switch
@@ -373,17 +378,17 @@ public class CreatureUnitView extends SceneObject
         // since we're dealing with screen coordinates, south is "up" on the unit circle
 
         if (angleRadians < Math.PI * (3/8)) {
-            return FACING_SE;
+            return Constants.FACING_SE;
         } else if (angleRadians < Math.PI * (5/8)) {
-            return FACING_S;
+            return Constants.FACING_S;
         } else if (angleRadians < Math.PI) {
-            return FACING_SW;
+            return Constants.FACING_SW;
         } else if (angleRadians < Math.PI * (11/8)) {
-            return FACING_NW;
+            return Constants.FACING_NW;
         } else if (angleRadians < Math.PI * (13/8)) {
-            return FACING_N;
+            return Constants.FACING_N;
         } else {
-            return FACING_NE;
+            return Constants.FACING_NE;
         }
     }
 
@@ -415,14 +420,6 @@ public class CreatureUnitView extends SceneObject
 
     protected static const log :Log = Log.getLog(CreatureUnitView);
 
-    protected static const FACING_N :int = 0;
-    protected static const FACING_NW :int = 1;
-    protected static const FACING_SW :int = 2;
-    protected static const FACING_S :int = 3;
-    protected static const FACING_SE :int = 4;
-    protected static const FACING_NE :int = 5;
-
-    protected static const FACING_STRINGS :Array = [ "N", "NW", "SW", "S", "SE", "NE" ];
     protected static const HIT_SOUND_NAMES :Array = [ "sfx_hit1", "sfx_hit2", "sfx_hit3" ];
 }
 

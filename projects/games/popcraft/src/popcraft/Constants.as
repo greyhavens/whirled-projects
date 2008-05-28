@@ -98,6 +98,16 @@ public class Constants
 
     public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "courier", "colossus", "base" ];
     public static const CREATURE_UNIT_NAMES :Array = UNIT_NAMES.slice(0, UNIT_TYPE__CREATURE_LIMIT);
+
+    /* Facing directions */
+    public static const FACING_N :int = 0;
+    public static const FACING_NW :int = 1;
+    public static const FACING_SW :int = 2;
+    public static const FACING_S :int = 3;
+    public static const FACING_SE :int = 4;
+    public static const FACING_NE :int = 5;
+
+    public static const FACING_STRINGS :Array = [ "N", "NW", "SW", "S", "SE", "NE" ];
 }
 
 }
