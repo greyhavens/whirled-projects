@@ -3,6 +3,7 @@
         backgroundName="Level2"
         introText="Explosive Delivery Boys are being dispatched to detonate your workshop. The Handy-Man can keep them at bay!"
         disableDiurnalCycle="true"
+        playerName="Jack"
         playerBaseHealth="40">
 
         <GameDataOverride>

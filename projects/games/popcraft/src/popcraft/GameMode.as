@@ -124,7 +124,7 @@ public class GameMode extends AppMode
         GameContext.playerInfos = [];
 
         // Create the local player (always on team 0)
-        var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, 0);
+        var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, 0, GameContext.spLevel.playerName);
 
         // grant the player some starting resources
         var initialResources :Array = GameContext.spLevel.initialResources;

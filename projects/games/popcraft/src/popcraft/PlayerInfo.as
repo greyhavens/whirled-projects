@@ -9,7 +9,7 @@ import popcraft.battle.PlayerBaseUnit;
  */
 public class PlayerInfo
 {
-    public function PlayerInfo (playerId :uint, teamId :uint)
+    public function PlayerInfo (playerId :uint, teamId :uint, playerName :String = null)
     {
         _playerId = playerId;
         _teamId = teamId;
@@ -25,7 +25,12 @@ public class PlayerInfo
         }
 
         _whirledId = (playerId < whirledIds.length ? whirledIds[_playerId] : 0);
-        _playerName = (playerId < playerNames.length ? playerNames[_playerId]: "Unknown player " + playerId);
+
+        if (null != playerName) {
+            _playerName = playerName;
+        } else {
+            _playerName = (playerId < playerNames.length ? playerNames[_playerId]: "Unknown player " + playerId);
+        }
     }
 
     public function get playerColor () :uint

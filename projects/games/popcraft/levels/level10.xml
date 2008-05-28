@@ -3,6 +3,7 @@
         backgroundName="Level1"
         introText="Your enemies have you surrounded!"
         disableDiurnalCycle="false"
+        playerName="Jack"
         playerBaseHealth="150">
 
         <GameDataOverride>
@@ -31,6 +32,7 @@
 
         <AvailableSpells>
             <Spell type="rigormortis"/>
+            <Spell type="bloodlust"/>
         </AvailableSpells>
 
         <Computer
@@ -59,7 +61,8 @@
         </Computer>
 
         <Computer
-            baseHealth="70"
+            playerName="Sam"
+            baseHealth="100"
             team="1">
             <StartingSpells/>
             <InitialDays>
@@ -83,7 +86,8 @@
         </Computer>
 
         <Computer
-            baseHealth="70"
+            playerName="Eric"
+            baseHealth="100"
             team="1">
             <StartingSpells/>
             <InitialDays>

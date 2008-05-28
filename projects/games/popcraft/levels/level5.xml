@@ -6,6 +6,7 @@
 
 Both opponents must fall! Click an opponent's base to direct your creatures to it."
         disableDiurnalCycle="false"
+        playerName="Jack"
         playerBaseHealth="100">
 
         <GameDataOverride>

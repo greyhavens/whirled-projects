@@ -3,6 +3,7 @@
         backgroundName="Level2"
         introText="Fashion FLESH and ENERGY into Street-Walkers to destroy your opponent's workshop."
         disableDiurnalCycle="true"
+        playerName="Jack"
         playerBaseHealth="100">
 
         <GameDataOverride>

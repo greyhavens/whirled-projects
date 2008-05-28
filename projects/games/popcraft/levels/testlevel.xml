@@ -3,6 +3,7 @@
         backgroundName="Level2"
         introText="This is not a real level!"
         disableDiurnalCycle="true"
+        playerName="Jack"
         playerBaseHealth="100">
 
         <GameDataOverride>

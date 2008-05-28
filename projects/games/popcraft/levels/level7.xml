@@ -5,6 +5,7 @@
 
 He's sending several your way, but he'll be vulnerable for a short while after the attack. Swarm the Behemoths with creatures to slow their progress and take them down, then make your move!"
         disableDiurnalCycle="false"
+        playerName="Jack"
         playerBaseHealth="100">
 
         <GameDataOverride>

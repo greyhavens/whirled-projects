@@ -3,6 +3,7 @@
         backgroundName="Level1"
         introText="You've stolen the plans for the Flesh Behemoth and can now create your own. The Behemoth can decimate a base, but it will be taken down quickly by a swarm of enemies. Use Street-Walkers to run interference for the Behemoth and help it break through the enemy's defenses."
         disableDiurnalCycle="false"
+        playerName="Jack"
         playerBaseHealth="150">
 
         <GameDataOverride>
