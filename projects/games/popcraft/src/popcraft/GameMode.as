@@ -415,6 +415,16 @@ public class GameMode extends AppMode
                 MainLoop.instance.changeMode(new GameOverMode(livePlayer));
             } else {
                 var success :Boolean = (null != livePlayer && livePlayer.playerId == GameContext.localPlayerId);
+
+                // save our progress if we were successful
+                if (success) {
+                    var lr :LevelRecord = AppContext.levelMgr.getLevelRecord(AppContext.levelMgr.curLevelNum + 1);
+                    if (null != lr) {
+                        lr.unlocked = true;
+                        AppContext.levelMgr.saveData();
+                    }
+                }
+
                 MainLoop.instance.pushMode(new LevelOutroMode(success));
             }
         }

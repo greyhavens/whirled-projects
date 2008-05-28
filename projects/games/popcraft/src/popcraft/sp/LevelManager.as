@@ -1,5 +1,6 @@
 package popcraft.sp {
 
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.resource.*;
 
 import flash.utils.ByteArray;
@@ -24,6 +25,11 @@ public class LevelManager
         return _levelRecords;
     }
 
+    public function getLevelRecord (levelNum :int) :LevelRecord
+    {
+        return (levelNum < _levelRecords.length ? _levelRecords[levelNum] : null);
+    }
+
     public function get levelRecordsLoaded () :Boolean
     {
         return _levelRecords.length > 0;
@@ -45,7 +51,11 @@ public class LevelManager
             }
         }
 
-        if (!success) {
+        if (success) {
+            log.info("successfully loaded saved data");
+        } else {
+            log.info("failed to load saved data - re-initializing");
+
             // re-init levels if the data was broken or non-existent
             _levelRecords = [];
             for (i = 0; i < NUM_LEVELS; ++i) {
@@ -59,13 +69,20 @@ public class LevelManager
 
     public function saveData () :void
     {
-        var ba :ByteArray = new ByteArray();
-        for each (var lr :LevelRecord in _levelRecords) {
-            lr.toByteArray(ba);
+        var success :Boolean;
+
+        if (AppContext.gameCtrl.isConnected()) {
+            var ba :ByteArray = new ByteArray();
+            for each (var lr :LevelRecord in _levelRecords) {
+                lr.toByteArray(ba);
+            }
+
+            ba.compress();
+
+            success = AppContext.gameCtrl.player.setUserCookie(ba)
         }
 
-        ba.compress();
-        AppContext.gameCtrl.player.setUserCookie(ba);
+        log.info(success ? "data saved successfuly" : "data save FAILED");
     }
 
     public function playLevel (forceReload :Boolean = false) :void
@@ -176,6 +193,8 @@ public class LevelManager
     protected var _loadedLevel :LevelData;
     protected var _levelRecords :Array = [];
     protected var _recordsLoaded :Boolean;
+
+    protected static var log :Log = Log.getLog(LevelManager);
 
     // Embedded level data
     [Embed(source="../../../levels/level1.xml", mimeType="application/octet-stream")]

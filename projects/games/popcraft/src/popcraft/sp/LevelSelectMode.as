@@ -13,8 +13,22 @@ import popcraft.*;
 
 public class LevelSelectMode extends AppMode
 {
+    override public function update (dt :Number) :void
+    {
+        if (!_hasSetup && AppContext.levelMgr.levelRecordsLoaded) {
+            this.setup();
+        }
+    }
+
     override protected function setup () :void
     {
+        // don't setup until our level records are loaded
+        if (!AppContext.levelMgr.levelRecordsLoaded) {
+            return;
+        }
+
+        _hasSetup = true;
+
         var g :Graphics = this.modeSprite.graphics;
         g.beginFill(0xB7B6B4);
         g.drawRect(0, 0, Constants.SCREEN_DIMS.x, Constants.SCREEN_DIMS.y);
@@ -32,12 +46,18 @@ public class LevelSelectMode extends AppMode
         this.modeSprite.addChild(tf);
 
         var levelNames :Array = AppContext.levelProgression.levelNames;
+        var levelRecords :Array = AppContext.levelMgr.levelRecords;
 
         var button :SimpleButton;
         var yLoc :Number = 70;;
         // create a button for each level
         for (var i :int = 0; i < AppContext.levelMgr.numLevels; ++i) {
             var levelName :String = (i < levelNames.length ? levelNames[i] : "(Level " + String(i + 1) + ")");
+            var levelRecord :LevelRecord = (i < levelRecords.length ? levelRecords[i] : null);
+            if (null != levelRecord && !levelRecord.unlocked) {
+                break;
+            }
+
             button = this.createLevelSelectButton(i, levelName);
             button.x = (this.modeSprite.width * 0.5) - (button.width * 0.5);
             button.y = yLoc;
@@ -64,6 +84,25 @@ public class LevelSelectMode extends AppMode
         button.y = 450;
 
         this.modeSprite.addChild(button);
+
+        // unlock all levels button
+        button = new SimpleTextButton("Unlock levels");
+        button.addEventListener(MouseEvent.CLICK, function (...ignored) :void { unlockLevels(); });
+        button.x = 250;
+        button.y = 450;
+
+        this.modeSprite.addChild(button);
+    }
+
+    protected function unlockLevels () :void
+    {
+        var levelRecords :Array = AppContext.levelMgr.levelRecords;
+        for each (var lr :LevelRecord in levelRecords) {
+            lr.unlocked = true;
+        }
+
+        // reload the mode
+        MainLoop.instance.changeMode(new LevelSelectMode());
     }
 
     protected function createLevelSelectButton (levelNum :int, levelName :String) :SimpleButton
@@ -82,6 +121,8 @@ public class LevelSelectMode extends AppMode
         AppContext.levelMgr.curLevelNum = levelNum;
         AppContext.levelMgr.playLevel();
     }
+
+    protected var _hasSetup :Boolean;
 
 }
 
