@@ -31,11 +31,14 @@ public class LevelSelectMode extends AppMode
 
         this.modeSprite.addChild(tf);
 
+        var levelNames :Array = AppContext.levelProgression.levelNames;
+
         var button :SimpleButton;
         var yLoc :Number = 70;;
         // create a button for each level
         for (var i :int = 0; i < AppContext.levelMgr.numLevels; ++i) {
-            button = this.createLevelSelectButton(i);
+            var levelName :String = (i < levelNames.length ? levelNames[i] : "(Level " + String(i + 1) + ")");
+            button = this.createLevelSelectButton(i, levelName);
             button.x = (this.modeSprite.width * 0.5) - (button.width * 0.5);
             button.y = yLoc;
             this.modeSprite.addChild(button);
@@ -63,9 +66,9 @@ public class LevelSelectMode extends AppMode
         this.modeSprite.addChild(button);
     }
 
-    protected function createLevelSelectButton (levelNum :int) :SimpleButton
+    protected function createLevelSelectButton (levelNum :int, levelName :String) :SimpleButton
     {
-        var button :SimpleTextButton = new SimpleTextButton("Level " + String(levelNum + 1));
+        var button :SimpleTextButton = new SimpleTextButton(levelName);
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 levelSelected(levelNum);

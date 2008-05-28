@@ -28,19 +28,19 @@ public class PopCraft extends Sprite
         var isConnected :Boolean = AppContext.gameCtrl.isConnected();
         var multiplayer :Boolean = isConnected && (AppContext.gameCtrl.game.seating.getPlayerIds().length > 1);
 
-        // setup main loop
         this.graphics.beginFill(0);
         this.graphics.drawRect(0, 0, 700, 500);
         this.graphics.endFill();
 
         this.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
+        // setup main loop
         AppContext.mainLoop = new MainLoop(this, (isConnected ? AppContext.gameCtrl.local : this.stage));
         AppContext.mainLoop.setup();
 
         // custom resource factories
-        ResourceManager.instance.registerResourceType("level", LevelResourceLoader);
-        ResourceManager.instance.registerResourceType("gameData", GameDataResourceLoader);
+        ResourceManager.instance.registerResourceType("level", LevelResource);
+        ResourceManager.instance.registerResourceType("gameData", GameDataResource);
 
         // sound volume
         AudioManager.instance.masterControls.volume(Constants.SOUND_MASTER_VOLUME);
@@ -48,7 +48,8 @@ public class PopCraft extends Sprite
         // create a new random stream for the puzzle
         AppContext.randStreamPuzzle = Rand.addStream();
 
-        AppContext.mainLoop.run();
+        // init LevelManager
+        AppContext.levelMgr = new LevelManager();
 
         if (multiplayer) {
             GameContext.gameType = GameContext.GAME_TYPE_MULTIPLAYER;
@@ -57,7 +58,9 @@ public class PopCraft extends Sprite
             AppContext.mainLoop.pushMode(new LevelSelectMode());
         }
 
+        // kick off the MainLoop
         // LoadingMode will pop itself from the stack when loading is complete
+        AppContext.mainLoop.run();
         AppContext.mainLoop.pushMode(new LoadingMode());
     }
 

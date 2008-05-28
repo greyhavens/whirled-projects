@@ -1,6 +1,5 @@
 <root>
     <Level
-        name="A Boy's Best Friend"
         backgroundName="Level2"
         introText="Use the Delivery Boy's explosive attack to destroy the Street-Walkers your opponent is sending your way. A few Delivery Boys can take out large groups of enemies."
         disableDiurnalCycle="false"

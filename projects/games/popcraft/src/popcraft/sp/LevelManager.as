@@ -12,7 +12,11 @@ public class LevelManager
 {
     public function LevelManager ()
     {
-        AppContext.gameCtrl.player.getUserCookie(AppContext.gameCtrl.game.getMyId(), completeLoadData);
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.player.getUserCookie(AppContext.gameCtrl.game.getMyId(), completeLoadData);
+        } else {
+            this.completeLoadData(null);
+        }
     }
 
     public function get levelRecords () :Array
@@ -28,7 +32,7 @@ public class LevelManager
     protected function completeLoadData (cookie :Object) :void
     {
         var success :Boolean;
-        var ba :ByteArray = ByteArray(cookie);
+        var ba :ByteArray = cookie as ByteArray;
         if (null != ba) {
             success = true;
             try {
@@ -43,7 +47,7 @@ public class LevelManager
 
         if (!success) {
             // re-init levels if the data was broken or non-existent
-            _levelRecords = new Array(NUM_LEVELS);
+            _levelRecords = [];
             for (i = 0; i < NUM_LEVELS; ++i) {
                 _levelRecords.push(new LevelRecord());
             }
@@ -112,6 +116,16 @@ public class LevelManager
         ResourceManager.instance.load(onLevelLoaded, onLoadError);
     }
 
+    public function get curLevelName () :String
+    {
+        var levelNames :Array = AppContext.levelProgression.levelNames;
+        if (_curLevelNum >= 0 && _curLevelNum < levelNames.length) {
+            return levelNames[_curLevelNum];
+        }
+
+        return "(Level " + String(_curLevelNum + 1) + ")";
+    }
+
     public function get curLevelNum () :int
     {
         return _curLevelNum;
@@ -141,7 +155,7 @@ public class LevelManager
 
     protected function onLevelLoaded () :void
     {
-        _loadedLevel = (ResourceManager.instance.getResource("level") as LevelResourceLoader).levelData;
+        _loadedLevel = (ResourceManager.instance.getResource("level") as LevelResource).levelData;
         this.startGame();
     }
 

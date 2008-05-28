@@ -1,6 +1,5 @@
 <root>
     <Level
-        name="Creature stress test"
         backgroundName="Level2"
         introText="This is not a real level!"
         disableDiurnalCycle="true"

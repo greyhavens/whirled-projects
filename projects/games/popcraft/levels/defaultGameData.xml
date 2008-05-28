@@ -215,4 +215,18 @@
         </BaseLocations>
 
     </GameData>
+
+    <LevelProgression>
+        <Level name="1. Welcome to PopCraft"/>
+        <Level name="2. The Handy Man"/>
+        <Level name="3. The Sun Rises"/>
+        <Level name="4. A Boy's Best Friend"/>
+        <Level name="5. Street-Walker Swarm"/>
+        <Level name="6. Special Delivery"/>
+        <Level name="7. Abomination"/>
+        <Level name="8. Flesh and Blood"/>
+        <Level name="9. Fire Hazard"/>
+        <Level name="10. Center of Attention"/>
+    </LevelProgression>
+
 </root>

@@ -38,7 +38,7 @@ public class LevelIntroMode extends AppMode
         tfName.x = (bgSprite.width * 0.5) - (tfName.width * 0.5);
         tfName.y = 20;
 
-        tfName.text = GameContext.spLevel.name;
+        tfName.text = AppContext.levelMgr.curLevelName;
 
         bgSprite.addChild(tfName);
 

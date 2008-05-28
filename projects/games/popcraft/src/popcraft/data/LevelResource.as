@@ -2,9 +2,9 @@ package popcraft.data {
 
 import com.whirled.contrib.simplegame.resource.XmlResource;
 
-public class LevelResourceLoader extends XmlResource
+public class LevelResource extends XmlResource
 {
-    public function LevelResourceLoader (resourceName :String, loadParams :Object)
+    public function LevelResource (resourceName :String, loadParams :Object)
     {
         super(resourceName, loadParams, objectGenerator);
     }
