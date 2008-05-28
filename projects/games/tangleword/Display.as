@@ -134,9 +134,14 @@ public class Display extends Sprite
     }
 
     /** Updates the log with a success message */
-    public function logSuccess (player :String, word :String, score :Number, first :Boolean = false) :void
+    public function logSuccess (player :String, word :String, score :Number, bonus :Number) :void
     {
-        _logger.Log("Found: " + word + " (" + score + ")", first ? Logger.FOUND_WORD_FIRST : Logger.FOUND_WORD);
+        var msg :String = word + ": " + score + " pts";
+        if (bonus > 0) {
+            _logger.Log(msg + " (" + "+"+bonus+" bonus)", Logger.FOUND_WORD_FIRST);
+        } else {
+            _logger.Log(msg, Logger.FOUND_WORD);
+        }
     }
 
     /** Updates the log with a failure message */

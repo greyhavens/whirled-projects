@@ -143,7 +143,7 @@ public class Model
     public function removeAllSelectedLetters () :void
     {
         _word = new Array ();
-        //_display.updateLetterSelection(_word);
+        _display.updateLetterSelection(_word);
     }
 
     /** Checks if the word exists on the board, by doing an exhaustive
@@ -334,8 +334,11 @@ public class Model
 
         // if the word is valid and not claimed, score!
         if (! isWordClaimed (playerId, word)) {
-            _display.logSuccess(playerName, word, score, _gameCtrl.net.get(WORD_NAMESPACE+word) == null);
-            addWord(playerId, word, score);
+            var bonus :Number = _gameCtrl.net.get(WORD_NAMESPACE+word) == null ?
+                        Controller.FIRST_FINDER_BONUS : 0;
+
+            _display.logSuccess(playerName, word, score, bonus);
+            addWord(playerId, word, score + bonus);
             return;
         }
 

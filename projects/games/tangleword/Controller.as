@@ -12,13 +12,16 @@ import flash.geom.Point;
     
 public class Controller 
 {
+    /** The additional point bonus awarded on top of the normal score if the
+      player is the first one to find a word. */
+    public static const FIRST_FINDER_BONUS :Number = 1;
+
     // TODO: It would be cool if this scaled exponentially instead of linearly
     // to give an incentive to look for longer words
     public static function getWordScore(word :String) :Number
     {
-            return 3 + 3*(word.length-2);
+        return 3 + 3*(word.length-3);
     }
-
     
     // PUBLIC METHODS
     
