@@ -15,7 +15,6 @@ import flash.filters.BitmapFilterQuality;
 import flash.filters.GlowFilter;
 import flash.geom.Point;
 import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -35,6 +34,8 @@ public class UnitPurchaseButton extends SimObject
         _progress = parent["progress_" + slotNum];
         _button = parent["button_" + slotNum];
         _multiplicity = parent["multiplicity_" + slotNum]["multiplicity"];
+
+        _multiplicity.text = "";
 
         _button.addEventListener(MouseEvent.CLICK, onClicked);
         _button.addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
@@ -97,9 +98,7 @@ public class UnitPurchaseButton extends SimObject
         // create the purchase meters
         this.createPurchaseMeters();
 
-        // force this.enabled = false to have an effect
-        _enabled = true;
-        this.enabled = false;
+        this.updateDisplayState();
     }
 
     protected function onClicked (...ignored) :void
@@ -122,13 +121,12 @@ public class UnitPurchaseButton extends SimObject
     {
         if (_enabled) {
             _switch.gotoAndPlay("activate");
-            _hilite.gotoAndStop("on");
-            _multiplicity.visible = true;
         } else {
             _switch.gotoAndStop("off");
-            _hilite.gotoAndStop("off");
-            _multiplicity.visible = false;
         }
+
+        _hilite.gotoAndStop(_available ? "on" : "off");
+        _multiplicity.visible = _available;
     }
 
     protected function onMouseOver (...ignored) :void
@@ -141,19 +139,16 @@ public class UnitPurchaseButton extends SimObject
         GameContext.dashboard.hideInfoText();
     }
 
-    protected function set enabled (val :Boolean) :void
+    protected function updateDisplayState () :void
     {
-        if (val != _enabled) {
-            _enabled = val;
-            _enabledAnim.visible = val;
-            _disabledAnim.visible = !val;
-            _button.enabled = val;
+        _enabledAnim.visible = _enabled;
+        _disabledAnim.visible = !_enabled;
+        _button.enabled = _enabled;
 
-            // if we're playing the deploy animation, these animations
-            // will get played automatically when it has completed
-            if (!this.playingDeployAnimation) {
-                this.playSwitchHiliteAnimation();
-            }
+        // if we're playing the deploy animation, these animations
+        // will get played automatically when it has completed
+        if (!this.playingDeployAnimation) {
+            this.playSwitchHiliteAnimation();
         }
     }
 
@@ -163,20 +158,25 @@ public class UnitPurchaseButton extends SimObject
         var res1Amount :int = Math.min(playerInfo.getResourceAmount(_resource1Type), _resource1Cost);
         var res2Amount :int = Math.min(playerInfo.getResourceAmount(_resource2Type), _resource2Cost);
 
-        this.enabled = (playerInfo.isAlive && GameContext.diurnalCycle.isNight && res1Amount >= _resource1Cost && res2Amount >= _resource2Cost);
+        var available :Boolean = (playerInfo.isAlive && res1Amount >= _resource1Cost && res2Amount >= _resource2Cost);
+        var enabled :Boolean = (_available && GameContext.diurnalCycle.isNight);
+        if (available != _available || enabled != _enabled) {
+            _available = available;
+            _enabled = enabled;
+            this.updateDisplayState();
+        }
 
         if (res1Amount == _lastResource1Amount && res2Amount == _lastResource2Amount) {
             // don't update if nothing has changed
             return;
         }
 
-        if (_enabled) {
+        if (_available) {
             var numAvailableUnits :int = Math.min(
                 Math.floor(playerInfo.getResourceAmount(_resource1Type) / _resource1Cost),
                 Math.floor(playerInfo.getResourceAmount(_resource2Type) / _resource2Cost));
 
-            //_availableUnitText.text = "x" + numAvailableUnits;
-            _multiplicity.text = "x" + numAvailableUnits;
+            _multiplicity.text = String(numAvailableUnits);
         }
 
         // update all the meters
@@ -289,6 +289,10 @@ public class UnitPurchaseButton extends SimObject
     protected var _resource1Meters :Array = [];
     protected var _resource2Meters :Array = [];
 
+    // _available is true when the player has enough resources to purchase the
+    // creature. _enabled is true if _available is true and it's nighttime.
+    // If it's daytime, _available will be true and _enabled will be false.
+    protected var _available :Boolean;
     protected var _enabled :Boolean;
 
     protected static const FIRST_METER_LOC :Point = new Point(-18, -65);

@@ -81,7 +81,7 @@ public class Resources
     public static const SOUND_ENERGY :Class;
 
     [Embed(source="../../rsrc/audio/ANVIL_LIGHT_HIT_1_L2.mp3")]
-    public static const SOUND_ARTIFICE :Class;
+    public static const SOUND_SCRAP :Class;
 
     [Embed(source="../../rsrc/audio/FAST_POWER_FAILURE_01_TF.mp3")]
     public static const SOUND_LOSTRESOURCES :Class;

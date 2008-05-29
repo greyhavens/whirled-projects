@@ -8,6 +8,7 @@ import popcraft.util.*;
 public class LevelData
 {
     public var parDays :int;
+    public var levelCompletionBonus :int;
     public var backgroundName :String;
     public var introText :String;
     public var playerName :String;
@@ -43,6 +44,7 @@ public class LevelData
         }
 
         level.parDays = XmlReader.getAttributeAsInt(xml, "parDays");
+        level.levelCompletionBonus = XmlReader.getAttributeAsInt(xml, "levelCompletionBonus", 0);
         level.backgroundName = XmlReader.getAttributeAsString(xml, "backgroundName");
         level.introText = XmlReader.getAttributeAsString(xml, "introText");
         level.playerName = XmlReader.getAttributeAsString(xml, "playerName");

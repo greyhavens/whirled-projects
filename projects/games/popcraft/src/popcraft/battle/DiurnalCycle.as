@@ -99,7 +99,7 @@ public class DiurnalCycle extends SimObject
     protected var _phaseOfDay :Object;
     protected var _timeTillNextPhase :Object;
     protected var _lastUpdateTimestamp :Number = 0;
-    protected var _dayCount :int;
+    protected var _dayCount :int = 1;
 }
 
 }

@@ -1,6 +1,5 @@
 package popcraft {
 
-import com.threerings.flash.SimpleTextButton;
 import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
@@ -15,6 +14,7 @@ import com.whirled.game.OccupantChangedEvent;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
@@ -68,15 +68,6 @@ public class GameMode extends AppMode
 
         if (GameContext.isSinglePlayer) {
             AppContext.mainLoop.pushMode(new LevelIntroMode());
-        }
-
-        // if this is a single-player game, create a pause button
-        // @TODO - get a real pause button
-        if (GameContext.isSinglePlayer) {
-            var pauseButton :SimpleTextButton = new SimpleTextButton("Pause");
-            pauseButton.addEventListener(MouseEvent.CLICK,
-                function (...ignored) :void { MainLoop.instance.pushMode(new PauseMode()); });
-            this.modeSprite.addChild(pauseButton);
         }
     }
 
@@ -417,9 +408,24 @@ public class GameMode extends AppMode
 
                 // save our progress if we were successful
                 if (success) {
+                    // calculate the score for this level
+                    var fastCompletionScore :int =
+                        Math.max(GameContext.spLevel.parDays - GameContext.diurnalCycle.dayCount, 0) *
+                        GameContext.gameData.pointsPerDayUnderPar;
+
+                    var resourcesScore :int =
+                        Math.max(GameContext.localPlayerInfo.totalResourcesEarned, 0) *
+                        GameContext.gameData.pointsPerResource;
+
+                    var levelScore :int =
+                        fastCompletionScore +
+                        resourcesScore +
+                        GameContext.spLevel.levelCompletionBonus;
+
                     var lr :LevelRecord = AppContext.levelMgr.getLevelRecord(AppContext.levelMgr.curLevelNum + 1);
                     if (null != lr) {
                         lr.unlocked = true;
+                        lr.score = Math.max(levelScore, lr.score);
                         AppContext.levelMgr.saveData();
                     }
                 }
@@ -577,7 +583,7 @@ public class GameMode extends AppMode
             baseView.friendlyBadgeVisible = (owningPlayerId == GameContext.localPlayerId);
 
             if (localPlayerInfo.teamId != owningPlayerInfo.teamId) {
-                (baseView.displayObject as InteractiveObject).addEventListener(
+                InteractiveObject(baseView.displayObject).addEventListener(
                     MouseEvent.MOUSE_DOWN, this.createBaseViewClickListener(baseView));
             }
         }

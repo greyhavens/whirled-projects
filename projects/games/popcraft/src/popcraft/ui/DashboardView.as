@@ -1,5 +1,6 @@
 package popcraft.ui {
 
+import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
@@ -7,12 +8,15 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
+import flash.events.MouseEvent;
 
 import popcraft.*;
 import popcraft.data.ResourceData;
+import popcraft.sp.PauseMode;
 
 public class DashboardView extends SceneObject
 {
@@ -24,7 +28,7 @@ public class DashboardView extends SceneObject
         // info text
         _infoTextParent = _movie["info"];
         _infoText = _infoTextParent["info_text"];
-        _infoTextParent.y = -76;
+        _infoTextParent.y = 6;
         _infoTextParent.visible = false;
 
         // setup resources
@@ -69,6 +73,16 @@ public class DashboardView extends SceneObject
             psv.x = loc.x;
             psv.y = loc.y;
             GameContext.gameMode.addObject(psv, playerFrame);
+        }
+
+        // pause button only visible in single-player games
+        var pauseButton :SimpleButton = _movie["pause"];
+        if (GameContext.isSinglePlayer) {
+            pauseButton.visible = true;
+            pauseButton.addEventListener(MouseEvent.CLICK,
+                function (...ignored) :void { MainLoop.instance.pushMode(new PauseMode()); });
+        } else {
+            pauseButton.visible = false;
         }
 
         this.updateResourceMeters();

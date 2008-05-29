@@ -44,7 +44,7 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("sound", "sfx_rsrc_white", { embeddedClass: Resources.SOUND_FLESH });
         rm.pendResourceLoad("sound", "sfx_rsrc_red", { embeddedClass: Resources.SOUND_BLOOD });
         rm.pendResourceLoad("sound", "sfx_rsrc_blue", { embeddedClass: Resources.SOUND_ENERGY });
-        rm.pendResourceLoad("sound", "sfx_rsrc_yellow", { embeddedClass: Resources.SOUND_ARTIFICE });
+        rm.pendResourceLoad("sound", "sfx_rsrc_yellow", { embeddedClass: Resources.SOUND_SCRAP });
         rm.pendResourceLoad("sound", "sfx_rsrc_lost", { embeddedClass: Resources.SOUND_LOSTRESOURCES });
 
         rm.pendResourceLoad("sound", "sfx_day", { embeddedClass: Resources.SOUND_ROOSTER });

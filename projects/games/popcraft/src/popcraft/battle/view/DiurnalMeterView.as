@@ -20,7 +20,6 @@ public class DiurnalMeterView extends SceneObject
         _sun = SwfResource.instantiateMovieClip("dashboard", "sun");
         _moon = SwfResource.instantiateMovieClip("dashboard", "moon");
 
-        _sun.cacheAsBitmap = true;
         _moon.cacheAsBitmap = true;
 
         _sprite.addChild(_sun);
