@@ -14,7 +14,6 @@ import com.whirled.game.OccupantChangedEvent;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
-import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
@@ -422,10 +421,21 @@ public class GameMode extends AppMode
                         resourcesScore +
                         GameContext.spLevel.levelCompletionBonus;
 
-                    var lr :LevelRecord = AppContext.levelMgr.getLevelRecord(AppContext.levelMgr.curLevelNum + 1);
-                    if (null != lr) {
-                        lr.unlocked = true;
-                        lr.score = Math.max(levelScore, lr.score);
+                    var dataChanged :Boolean;
+
+                    var thisLevel :LevelRecord = AppContext.levelMgr.getLevelRecord(AppContext.levelMgr.curLevelNum);
+                    if (null != thisLevel && thisLevel.score < levelScore) {
+                        thisLevel.score = levelScore;
+                        dataChanged = true;
+                    }
+
+                    var nextLevel :LevelRecord = AppContext.levelMgr.getLevelRecord(AppContext.levelMgr.curLevelNum + 1);
+                    if (null != nextLevel && !nextLevel.unlocked) {
+                        nextLevel.unlocked = true;
+                        dataChanged = true;
+                    }
+
+                    if (dataChanged) {
                         AppContext.levelMgr.saveData();
                     }
                 }
