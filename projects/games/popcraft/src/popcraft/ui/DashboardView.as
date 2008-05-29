@@ -10,9 +10,9 @@ import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
-import flash.events.MouseEvent;
 
 import popcraft.*;
 import popcraft.data.ResourceData;
@@ -112,6 +112,14 @@ public class DashboardView extends SceneObject
     override protected function update (dt :Number) :void
     {
         this.updateResourceMeters();
+
+        // when the player dies, show the death panel
+        if (!_showingDeathPanel && !GameContext.localPlayerInfo.isAlive) {
+            var deathPanel :MovieClip = _movie["death"];
+            deathPanel.y = 6;
+            deathPanel.visible = true;
+            _showingDeathPanel = true;
+        }
     }
 
     protected function updateResourceMeters () :void
@@ -184,6 +192,7 @@ public class DashboardView extends SceneObject
     protected var _oldResourceAmounts :Array = [];
     protected var _infoTextParent :MovieClip;
     protected var _infoText :TextField;
+    protected var _showingDeathPanel :Boolean;
 
     protected static const RESOURCE_TEXT_NAMES :Array =
         [ "resource_2", "resource_1", "resource_4", "resource_3" ];
