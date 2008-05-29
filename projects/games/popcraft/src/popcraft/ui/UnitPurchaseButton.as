@@ -34,34 +34,22 @@ public class UnitPurchaseButton extends SimObject
         _unitDisplay = parent["unit_" + slotNum]["unit"];
         _progress = parent["progress_" + slotNum];
         _button = parent["button_" + slotNum];
-
-        // @TEMP
-        _availableUnitText = new TextField();
-        _availableUnitText.autoSize = TextFieldAutoSize.CENTER;
-        _availableUnitText.selectable = false;
-        _availableUnitText.mouseEnabled = false;
-        _availableUnitText.scaleX = 1.3;
-        _availableUnitText.scaleY = 1.3;
-        _availableUnitText.textColor = 0;
-        _availableUnitText.x = _button.x;
-        _availableUnitText.y = _button.y - 37;
-
-        parent.addChild(_availableUnitText);
+        _multiplicity = parent["multiplicity_" + slotNum]["multiplicity"];
 
         _button.addEventListener(MouseEvent.CLICK, onClicked);
         _button.addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
         _button.addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
 
-        var unitData :UnitData = GameContext.gameData.units[unitType];
+        _unitData = GameContext.gameData.units[unitType];
         var playerColor :uint = Constants.PLAYER_COLORS[GameContext.localPlayerId];
 
         // try instantiating some animations
-        _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "walk_SW");
+        _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "walk_SW");
         if (null == _enabledAnim) {
-            _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "attack_SW");
+            _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "attack_SW");
         }
 
-        _disabledAnim = UnitAnimationFactory.instantiateUnitAnimation(unitData, playerColor, "stand_SW");
+        _disabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "stand_SW");
         if (null == _disabledAnim) {
             _disabledAnim = _enabledAnim;
         }
@@ -71,7 +59,7 @@ public class UnitPurchaseButton extends SimObject
 
         // set up the Unit Cost indicators
         for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
-            var resCost :int = unitData.getResourceCost(resType);
+            var resCost :int = _unitData.getResourceCost(resType);
             if (resCost > 0) {
                 if (_resource1Cost == 0) {
                     _resource1Type = resType;
@@ -109,24 +97,6 @@ public class UnitPurchaseButton extends SimObject
         // create the purchase meters
         this.createPurchaseMeters();
 
-        // create the unit's description popup
-        var tf :TextField = new TextField();
-        tf.background = true;
-        tf.backgroundColor = 0xFFFFFF;
-        tf.border = true;
-        tf.borderColor = 0;
-        tf.autoSize = TextFieldAutoSize.LEFT;
-        tf.wordWrap = true;
-        tf.selectable = false;
-        tf.width = 200;
-        tf.text = unitData.description;
-        tf.visible = false;
-        tf.x = -tf.width;
-        tf.y = -tf.height;
-
-        _descriptionPopup = tf;
-        GameContext.gameMode.descriptionPopupParent.addChild(_descriptionPopup);
-
         // force this.enabled = false to have an effect
         _enabled = true;
         this.enabled = false;
@@ -137,7 +107,7 @@ public class UnitPurchaseButton extends SimObject
         if (_enabled) {
             _switch.gotoAndPlay("deploy");
             _hilite.gotoAndPlay("deploy");
-            _availableUnitText.visible = false;
+            _multiplicity.visible = false;
             GameContext.gameMode.buildUnit(GameContext.localPlayerId, _unitType);
 
             this.addNamedTask(
@@ -153,22 +123,22 @@ public class UnitPurchaseButton extends SimObject
         if (_enabled) {
             _switch.gotoAndPlay("activate");
             _hilite.gotoAndStop("on");
-            _availableUnitText.visible = true;
+            _multiplicity.visible = true;
         } else {
             _switch.gotoAndStop("off");
             _hilite.gotoAndStop("off");
-            _availableUnitText.visible = false;
+            _multiplicity.visible = false;
         }
     }
 
     protected function onMouseOver (...ignored) :void
     {
-        _descriptionPopup.visible = true;
+        GameContext.dashboard.showInfoText(_unitData.description);
     }
 
     protected function onMouseOut (...ignored) :void
     {
-        _descriptionPopup.visible = false;
+        GameContext.dashboard.hideInfoText();
     }
 
     protected function set enabled (val :Boolean) :void
@@ -205,7 +175,8 @@ public class UnitPurchaseButton extends SimObject
                 Math.floor(playerInfo.getResourceAmount(_resource1Type) / _resource1Cost),
                 Math.floor(playerInfo.getResourceAmount(_resource2Type) / _resource2Cost));
 
-            _availableUnitText.text = "x" + numAvailableUnits;
+            //_availableUnitText.text = "x" + numAvailableUnits;
+            _multiplicity.text = "x" + numAvailableUnits;
         }
 
         // update all the meters
@@ -294,6 +265,7 @@ public class UnitPurchaseButton extends SimObject
     }
 
     protected var _unitType :uint;
+    protected var _unitData :UnitData;
 
     protected var _switch :MovieClip;
     protected var _costs :MovieClip;
@@ -301,9 +273,7 @@ public class UnitPurchaseButton extends SimObject
     protected var _unitDisplay :MovieClip;
     protected var _progress :MovieClip;
     protected var _button :SimpleButton;
-    protected var _availableUnitText :TextField;
-
-    protected var _descriptionPopup :DisplayObject;
+    protected var _multiplicity :TextField;
 
     protected var _enabledAnim :DisplayObject;
     protected var _disabledAnim :DisplayObject;

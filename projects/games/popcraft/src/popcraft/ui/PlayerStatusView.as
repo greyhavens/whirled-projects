@@ -40,12 +40,19 @@ public class PlayerStatusView extends SceneObject
         var healthRotation :Number = (1.0 - healthPercent) * -180; // DisplayObject rotations are in degrees
         _healthMeter.rotation = healthRotation;
         _meterArrow.rotation = healthRotation;
+
+        if (!_dead && !_playerInfo.isAlive) {
+            var deathMovie :MovieClip = _movie["dead"];
+            deathMovie.gotoAndPlay(2);
+            _dead = true;
+        }
     }
 
     protected var _playerInfo :PlayerInfo;
     protected var _movie :MovieClip;
     protected var _healthMeter :MovieClip;
     protected var _meterArrow :MovieClip;
+    protected var _dead :Boolean;
 
 }
 

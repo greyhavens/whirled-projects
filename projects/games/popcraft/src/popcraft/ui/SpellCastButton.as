@@ -4,7 +4,6 @@ import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
-import flash.display.DisplayObject;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
@@ -25,10 +24,11 @@ public class SpellCastButton extends Sprite
     {
         _spellType = spellType;
 
-        var spellData :SpellData = GameContext.gameData.spells[spellType];
-        var bitmapData :BitmapData = (ResourceManager.instance.getResource(spellData.iconName) as ImageResource).bitmapData;
+        _spellData = GameContext.gameData.spells[spellType];
+        var bitmapData :BitmapData = (ResourceManager.instance.getResource(_spellData.iconName) as ImageResource).bitmapData;
 
-        _button = new SimpleButton();_button.upState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP, 1.0);
+        _button = new SimpleButton();
+        _button.upState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_UP, 1.0);
         _button.overState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_OVER, 1.0);
         _button.downState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DOWN, 1.0);
         _disabledState = makeButtonFace(bitmapData, COLOR_OUTLINE, COLOR_BG_DISABLED, ALPHA_DISABLED);
@@ -44,25 +44,6 @@ public class SpellCastButton extends Sprite
         _spellCountText.textColor = 0xFFFFFF;
         _spellCountText.y = HEIGHT;
         this.addChild(_spellCountText);
-
-        // create the spell's description popup
-        var tf :TextField = new TextField();
-        tf.background = true;
-        tf.backgroundColor = 0xFFFFFF;
-        tf.border = true;
-        tf.borderColor = 0;
-        tf.autoSize = TextFieldAutoSize.LEFT;
-        tf.wordWrap = true;
-        tf.selectable = false;
-        tf.width = 200;
-        tf.text = spellData.description;
-        tf.visible = false;
-        tf.x = -tf.width;
-        tf.y = -tf.height;
-
-        _descriptionPopup = tf;
-
-        GameContext.gameMode.descriptionPopupParent.addChild(_descriptionPopup);
 
         this.enabled = true;
 
@@ -104,16 +85,12 @@ public class SpellCastButton extends Sprite
 
     protected function handleMouseOver (...ignored) :void
     {
-        if (null != _descriptionPopup) {
-            _descriptionPopup.visible = true;
-        }
+        GameContext.dashboard.showInfoText(_spellData.description);
     }
 
     protected function handleMouseOut (...ignored) :void
     {
-        if (null != _descriptionPopup) {
-            _descriptionPopup.visible = false;
-        }
+        GameContext.dashboard.hideInfoText();
     }
 
     public function get enabled () :Boolean
@@ -134,9 +111,9 @@ public class SpellCastButton extends Sprite
     }
 
     protected var _spellType :uint;
+    protected var _spellData :SpellData;
     protected var _button :SimpleButton;
     protected var _disabledState :Sprite;
-    protected var _descriptionPopup :DisplayObject;
     protected var _spellCountText :TextField;
 
     protected var _enabled :Boolean;

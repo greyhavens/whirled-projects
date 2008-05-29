@@ -21,6 +21,12 @@ public class DashboardView extends SceneObject
         _movie = SwfResource.instantiateMovieClip("dashboard", "dashboard_sym");
         var puzzleFrame :MovieClip = this.puzzleFrame;
 
+        // info text
+        _infoTextParent = _movie["info"];
+        _infoText = _infoTextParent["info_text"];
+        _infoTextParent.y = -76;
+        _infoTextParent.visible = false;
+
         // setup resources
         for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
             var resourceTextName :String = RESOURCE_TEXT_NAMES[resType];
@@ -49,6 +55,7 @@ public class DashboardView extends SceneObject
             DisplayObject(unitParent["unit_" + buttonNumber]["unit"]).visible = false;
             DisplayObject(unitParent["progress_" + buttonNumber]).visible = false;
             DisplayObject(unitParent["button_" + buttonNumber]).visible = false;
+            DisplayObject(unitParent["multiplicity_" + buttonNumber]).visible = false;
         }
 
         // setup PlayerStatusViews
@@ -65,6 +72,17 @@ public class DashboardView extends SceneObject
         }
 
         this.updateResourceMeters();
+    }
+
+    public function showInfoText (text :String) :void
+    {
+        _infoText.text = text;
+        _infoTextParent.visible = true;
+    }
+
+    public function hideInfoText () :void
+    {
+        _infoTextParent.visible = false;
     }
 
     public function get puzzleFrame () :MovieClip
@@ -150,6 +168,8 @@ public class DashboardView extends SceneObject
     protected var _resourceText :Array = [];
     protected var _resourceBars :Array = [];
     protected var _oldResourceAmounts :Array = [];
+    protected var _infoTextParent :MovieClip;
+    protected var _infoText :TextField;
 
     protected static const RESOURCE_TEXT_NAMES :Array =
         [ "resource_2", "resource_1", "resource_4", "resource_3" ];

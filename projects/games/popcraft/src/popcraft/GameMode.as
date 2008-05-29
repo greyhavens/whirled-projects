@@ -208,15 +208,12 @@ public class GameMode extends AppMode
 
     protected function setupPuzzleAndUI () :void
     {
-        _descriptionPopupParent = new Sprite();
-        _descriptionPopupParent.x = Constants.UNIT_AND_SPELL_DESCRIPTION_BR_LOC.x;
-        _descriptionPopupParent.y = Constants.UNIT_AND_SPELL_DESCRIPTION_BR_LOC.y;
-        _overlayParent.addChild(_descriptionPopupParent);
-
         var dashboard :DashboardView = new DashboardView();
         dashboard.x = Constants.DASHBOARD_LOC.x;
         dashboard.y = Constants.DASHBOARD_LOC.y;
         this.addObject(dashboard, _hudParent);
+
+        GameContext.dashboard = dashboard;
 
         var puzzleBoard :PuzzleBoard = new PuzzleBoard(
             Constants.PUZZLE_COLS,
@@ -657,11 +654,6 @@ public class GameMode extends AppMode
         _messageMgr.sendMessage(new CastSpellMessage(playerId, spellType));
     }
 
-    public function get descriptionPopupParent () :Sprite
-    {
-        return _descriptionPopupParent;
-    }
-
     public function get overlayParent () :DisplayObjectContainer
     {
         return _overlayParent;
@@ -674,7 +666,6 @@ public class GameMode extends AppMode
     protected var _battleParent :Sprite;
     protected var _hudParent :Sprite;
     protected var _overlayParent :Sprite;
-    protected var _descriptionPopupParent :Sprite;
 
     protected var _tickCount :uint;
     protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);

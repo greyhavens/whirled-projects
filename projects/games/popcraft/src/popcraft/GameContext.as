@@ -4,6 +4,7 @@ import popcraft.battle.*;
 import popcraft.battle.view.*;
 import popcraft.data.*;
 import popcraft.puzzle.*;
+import popcraft.ui.DashboardView;
 
 public class GameContext
 {
@@ -20,6 +21,7 @@ public class GameContext
     public static var netObjects :NetObjectDB;
     public static var battleBoardView :BattleBoardView;
     public static var diurnalCycle :DiurnalCycle;
+    public static var dashboard :DashboardView;
 
     public static var playerInfos :Array;
     public static var playerUnitSpellSets :Array;
