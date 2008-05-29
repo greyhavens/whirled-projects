@@ -305,12 +305,14 @@ public class GameMode extends AppMode
 
         case KeyboardCodes.B:
             if (Constants.DEBUG_ALLOW_CHEATS) {
+                GameContext.localPlayerInfo.addSpell(Constants.SPELL_TYPE_BLOODLUST);
                 this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_BLOODLUST);
             }
             break;
 
         case KeyboardCodes.R:
             if (Constants.DEBUG_ALLOW_CHEATS) {
+                GameContext.localPlayerInfo.addSpell(Constants.SPELL_TYPE_RIGORMORTIS);
                 this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_RIGORMORTIS);
             }
             break;
