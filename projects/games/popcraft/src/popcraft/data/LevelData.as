@@ -7,6 +7,7 @@ import popcraft.util.*;
 
 public class LevelData
 {
+    public var parDays :int;
     public var backgroundName :String;
     public var introText :String;
     public var playerName :String;
@@ -41,6 +42,7 @@ public class LevelData
             level.gameDataOverride = GameData.fromXml(gameDataOverrideNode, AppContext.defaultGameData.clone());
         }
 
+        level.parDays = XmlReader.getAttributeAsInt(xml, "parDays");
         level.backgroundName = XmlReader.getAttributeAsString(xml, "backgroundName");
         level.introText = XmlReader.getAttributeAsString(xml, "introText");
         level.playerName = XmlReader.getAttributeAsString(xml, "playerName");

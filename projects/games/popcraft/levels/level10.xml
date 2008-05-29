@@ -1,5 +1,6 @@
 <root>
     <Level
+        parDays="1"
         backgroundName="Level1"
         introText="Your enemies have you surrounded!"
         disableDiurnalCycle="false"

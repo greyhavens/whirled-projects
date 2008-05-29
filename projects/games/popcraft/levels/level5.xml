@@ -1,5 +1,6 @@
 <root>
     <Level
+        parDays="1"
         backgroundName="Level2"
         introText=
 "Your nemesis and his right-hand man have both set up workshops nearby, and are manufacturing waves of Street-Walkers to tear you to pieces. Well-placed Delivery Boys will soften the advancing horde.

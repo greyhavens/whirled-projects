@@ -45,9 +45,20 @@ public class DiurnalCycle extends SimObject
             phaseTask.addTask(new AnimateValueTask(_phaseOfDay, phase2));
             phaseTask.addTask(new AnimateValueTask(_timeTillNextPhase, phase2Length));
             phaseTask.addTask(new AnimateValueTask(_timeTillNextPhase, 0, phase2Length));
+            phaseTask.addTask(new FunctionTask(incrementDayCount));
 
             this.addTask(phaseTask);
         }
+    }
+
+    protected function incrementDayCount () :void
+    {
+        _dayCount += 1;
+    }
+
+    public function get dayCount () :int
+    {
+        return _dayCount;
     }
 
     override protected function update (dt :Number) :void
@@ -88,6 +99,7 @@ public class DiurnalCycle extends SimObject
     protected var _phaseOfDay :Object;
     protected var _timeTillNextPhase :Object;
     protected var _lastUpdateTimestamp :Number = 0;
+    protected var _dayCount :int;
 }
 
 }

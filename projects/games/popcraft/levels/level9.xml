@@ -1,5 +1,6 @@
 <root>
     <Level
+        parDays="1"
         backgroundName="Level1"
         introText="A fire has broken out in the laboratory! You're in danger of being overwhelmed by your adversary. Construct a solid defense, quickly!"
         disableDiurnalCycle="false"

@@ -10,6 +10,9 @@ public class GameData
 {
     public var resourceClearValueTable :IntValueTable;
 
+    public var pointsPerResource :int;
+    public var pointsPerDayUnderPar :int;
+
     public var dayLength :Number;
     public var nightLength :Number;
     public var dawnWarning :Number;
@@ -41,6 +44,8 @@ public class GameData
 
         theClone.resourceClearValueTable = resourceClearValueTable.clone();
 
+        theClone.pointsPerResource = pointsPerResource;
+        theClone.pointsPerDayUnderPar = pointsPerDayUnderPar;
         theClone.dayLength = dayLength;
         theClone.nightLength = nightLength;
         theClone.dawnWarning = dawnWarning;
@@ -89,6 +94,9 @@ public class GameData
         if (!useDefaults || XmlReader.hasChild(xml, "PuzzleClearValueTable")) {
             gameData.resourceClearValueTable = IntValueTable.fromXml(XmlReader.getSingleChild(xml, "PuzzleClearValueTable"));
         }
+
+        gameData.pointsPerResource = XmlReader.getAttributeAsInt(xml, "pointsPerResource", (useDefaults ? gameData.pointsPerResource : undefined));
+        gameData.pointsPerDayUnderPar = XmlReader.getAttributeAsInt(xml, "pointsPerDayUnderPar", (useDefaults ? gameData.pointsPerDayUnderPar : undefined));
 
         gameData.dayLength = XmlReader.getAttributeAsNumber(xml, "dayLength", (useDefaults ? gameData.dayLength : undefined));
         gameData.nightLength = XmlReader.getAttributeAsNumber(xml, "nightLength", (useDefaults ? gameData.nightLength : undefined));

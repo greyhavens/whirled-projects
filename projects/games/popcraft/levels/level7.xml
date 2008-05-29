@@ -1,5 +1,6 @@
 <root>
     <Level
+        parDays="1"
         backgroundName="Level1"
         introText="Your opponent has perfected the Flesh Behemoth, an enormous collection of random body parts capable of crushing lesser units instantly.
 

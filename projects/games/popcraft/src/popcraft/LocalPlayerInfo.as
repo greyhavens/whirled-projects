@@ -47,6 +47,14 @@ public class LocalPlayerInfo extends PlayerInfo
         this.setResourceAmount(resourceType, getResourceAmount(resourceType) + offset);
     }
 
+    public function earnedResources (resourceType :uint, offset :int) :void
+    {
+        var initialResources :int = this.getResourceAmount(resourceType);
+        this.setResourceAmount(resourceType, initialResources + offset);
+        var newResources :int = this.getResourceAmount(resourceType);
+        _totalResourcesEarned += (newResources - initialResources);
+    }
+
     override public function canPurchaseCreature (unitType :uint) :Boolean
     {
         var unitData :UnitData = GameContext.gameData.units[unitType];
@@ -95,8 +103,14 @@ public class LocalPlayerInfo extends PlayerInfo
         return _spells[spellType];
     }
 
+    public function get totalResourcesEarned () :int
+    {
+        return _totalResourcesEarned;
+    }
+
     protected var _resources :Array;
     protected var _spells :Array;
+    protected var _totalResourcesEarned :int;
 }
 
 }

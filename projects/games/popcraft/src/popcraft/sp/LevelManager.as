@@ -20,6 +20,16 @@ public class LevelManager
         }
     }
 
+    public function get totalScore () :int
+    {
+        var score :int;
+        for each (var lr :LevelRecord in _levelRecords) {
+            score += lr.score;
+        }
+
+        return score;
+    }
+
     public function get levelRecords () :Array
     {
         return _levelRecords;

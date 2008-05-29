@@ -37,7 +37,7 @@ public class LevelSelectMode extends AppMode
         var tf :TextField = new TextField();
         tf.selectable = false;
         tf.autoSize = TextFieldAutoSize.LEFT;
-        tf.text = "PopCraft single player level select";
+        tf.text = "PopCraft level select. (Score: " + AppContext.levelMgr.totalScore + ")";
         tf.scaleX = 2;
         tf.scaleY = 2;
         tf.x = (this.modeSprite.width * 0.5) - (tf.width * 0.5);
@@ -56,6 +56,10 @@ public class LevelSelectMode extends AppMode
             var levelRecord :LevelRecord = (i < levelRecords.length ? levelRecords[i] : null);
             if (null != levelRecord && !levelRecord.unlocked) {
                 break;
+            }
+
+            if (null != levelRecord) {
+                levelName += " (" + levelRecord.score + ")";
             }
 
             button = this.createLevelSelectButton(i, levelName);
