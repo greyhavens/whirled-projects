@@ -1,7 +1,8 @@
 package popcraft {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.PropertyChangedEvent;
 
@@ -22,9 +23,19 @@ public class TeamSelectMode extends AppMode
         g.endFill();
 
         this.createTeamBox(-1);
-        for (var teamId :int = 0; teamId < this.numPlayers; ++teamId) {
+        for (var teamId :int = 0; teamId < this.maxTeams; ++teamId) {
             this.createTeamBox(teamId);
         }
+
+        _statusText = new TextField();
+        _statusText.selectable = false;
+        _statusText.scaleX = 2;
+        _statusText.scaleY = 2;
+        _statusText.autoSize = TextFieldAutoSize.LEFT;
+        _statusText.x = STATUS_TEXT_LOC.x;
+        _statusText.y = STATUS_TEXT_LOC.y;
+
+        this.modeSprite.addChild(_statusText);
 
         AppContext.gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         AppContext.gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
@@ -44,6 +55,25 @@ public class TeamSelectMode extends AppMode
         AppContext.gameCtrl.net.removeEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
     }
 
+    override public function update (dt :Number) :void
+    {
+        super.update(dt);
+
+        var statusText :String = "";
+
+        if (!this.allPlayersDecided) {
+            statusText = "Divide into teams!";
+        } else if (!this.teamsDividedProperly) {
+            statusText = "Two teams are required to start the game."
+        } else if (!_gameStartTimer.isNull) {
+            var timer :SimpleTimer = _gameStartTimer.object as SimpleTimer;
+            statusText = "Starting in " + Math.ceil(timer.timeLeft) + "...";
+        }
+
+        _statusText.text = statusText;
+        _statusText.x = (_statusText.parent.width * 0.5) - (_statusText.width * 0.5);
+    }
+
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
         if (e.name == PROP_TEAMS) {
@@ -56,6 +86,7 @@ public class TeamSelectMode extends AppMode
     {
         if (e.name == PROP_TEAMS) {
             this.updateDisplay();
+            this.stopOrResetTimer();
         }
     }
 
@@ -105,6 +136,8 @@ public class TeamSelectMode extends AppMode
         if (null != _playerTeams && _playerTeams[this.localPlayerId] != teamId) {
             AppContext.gameCtrl.net.setAt(PROP_TEAMS, this.localPlayerId, teamId, true);
             this.updateDisplay();
+
+            this.stopOrResetTimer();
         }
     }
 
@@ -132,9 +165,28 @@ public class TeamSelectMode extends AppMode
         }
     }
 
+    protected function stopOrResetTimer () :void
+    {
+        this.destroyObject(_gameStartTimer);
+
+        if (this.canStartCountdown) {
+            _gameStartTimer = this.addObject(new SimpleTimer(GAME_START_COUNTDOWN, timerExpired));
+        }
+    }
+
+    protected function timerExpired () :void
+    {
+        MainLoop.instance.changeMode(new GameMode());
+    }
+
     protected function get numPlayers () :int
     {
         return AppContext.gameCtrl.game.seating.getPlayerIds().length;
+    }
+
+    protected function get maxTeams () :int
+    {
+        return this.numPlayers;
     }
 
     protected function getPlayerName (id :int) :String
@@ -152,18 +204,67 @@ public class TeamSelectMode extends AppMode
         return this.localPlayerId == 0;
     }
 
-    protected var _teamsInited :Boolean;
+    protected function get allPlayersDecided () :Boolean
+    {
+        if (null == _playerTeams) {
+            return false;
+        }
+
+        for each (var teamId :int in _playerTeams) {
+            if (teamId < 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected function get teamsDividedProperly () :Boolean
+    {
+        if (null == _playerTeams) {
+            return false;
+        }
+
+        // how large is each team?
+        var teamSizes :Array = ArrayUtil.create(this.maxTeams, 0);
+        for each (var teamId :int in _playerTeams) {
+            if (teamId >= 0) {
+                teamSizes[teamId] += 1;
+            }
+        }
+
+        // does one team have all the players?
+        for each (var teamSize :int in teamSizes) {
+            if (teamSize == this.numPlayers) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected function get canStartCountdown () :Boolean
+    {
+        return this.allPlayersDecided && this.teamsDividedProperly;
+    }
+
     protected var _playerTeams :Array;
     protected var _teamTexts :Array = [];
+    protected var _statusText :TextField;
+    protected var _gameStartTimer :SimObjectRef = new SimObjectRef();
 
-    protected static const TEAM_BOX_SIZE :Point = new Point(175, 175);
+    protected static const TEAM_BOX_SIZE :Point = new Point(175, 150);
     protected static const TEAM_BOX_LOCS :Array = [
-        new Point(50, 50), new Point(275, 50), new Point(50, 275), new Point(275, 275) ];
+        new Point(50, 50), new Point(275, 50), new Point(50, 250), new Point(275, 250) ];
 
-    protected static const UNASSIGNED_BOX_SIZE :Point = new Point(150, 400);
+    protected static const UNASSIGNED_BOX_SIZE :Point = new Point(150, 350);
     protected static const UNASSIGNED_BOX_LOC :Point = new Point(500, 50);
 
+    protected static const STATUS_TEXT_LOC :Point = new Point(350, 450);
+
     protected static const PROP_TEAMS :String = "Teams";
+
+    protected static const GAME_START_COUNTDOWN :Number = 5;
 }
 
 }
