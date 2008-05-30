@@ -53,8 +53,7 @@ public class PopCraft extends Sprite
 
         if (multiplayer) {
             GameContext.gameType = GameContext.GAME_TYPE_MULTIPLAYER;
-            //AppContext.mainLoop.pushMode(new GameMode());
-            AppContext.mainLoop.pushMode(new TeamSelectMode());
+            AppContext.mainLoop.pushMode(new GameMode());
         } else {
             AppContext.mainLoop.pushMode(new LevelSelectMode());
         }
