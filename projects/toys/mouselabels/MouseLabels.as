@@ -47,7 +47,7 @@ public class MouseLabels extends Sprite
 
     protected function handleFrame (event :Event) :void
     {
-        var now :Number = getTimer();
+        var now :int = getTimer();
         var mouse :Mousey;
 
         var matrix :Matrix = this.transform.concatenatedMatrix;
@@ -94,7 +94,7 @@ public class MouseLabels extends Sprite
         var mouse :Mousey = _mice[id] as Mousey;
         if (mouse == null) {
             mouse = new Mousey(_ctrl.getViewerName(int(id)),
-                Number(data[0]) - getTimer() - SEND_INTERVAL);
+                int(data[0]) - getTimer() - SEND_INTERVAL);
             _mice[id] = mouse;
             addChild(mouse);
         }
@@ -118,7 +118,7 @@ public class MouseLabels extends Sprite
     protected var _lastY :int;
     protected var _lastScale :Number;
 
-    protected var _nextSend :Number = 0;
+    protected var _nextSend :int = 0;
 
     protected var _sendingData :Array = [];
 
@@ -157,15 +157,15 @@ class Mousey extends Sprite
         if (_data.length == 0) {
             return;
         }
-        var stamp :Number = now + _offset;
-        while (_data.length > 0 && Number(_data[0]) <= stamp) {
+        var stamp :int = now + _offset;
+        while (_data.length > 0 && int(_data[0]) <= stamp) {
             var nowData :Array = _data.splice(0, 3);
             x = Number(nowData[1]);
             y = Number(nowData[2]);
         }
     }
 
-    protected var _offset :Number;
+    protected var _offset :int;
 
     protected var _data :Array = [];
 }
