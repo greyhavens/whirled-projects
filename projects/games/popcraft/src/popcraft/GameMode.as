@@ -8,7 +8,9 @@ import com.threerings.util.KeyboardCodes;
 import com.threerings.util.Log;
 import com.threerings.util.RingBuffer;
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.net.*;
+import com.whirled.contrib.simplegame.resource.SoundResource;
 import com.whirled.contrib.simplegame.util.*;
 import com.whirled.game.OccupantChangedEvent;
 
@@ -48,6 +50,8 @@ public class GameMode extends AppMode
         _overlayParent = new Sprite();
         this.modeSprite.addChild(_overlayParent);
 
+        this.setupAudio();
+
         // create a special ObjectDB for all objects that are synchronized over the network.
         GameContext.netObjects = new NetObjectDB();
 
@@ -74,6 +78,40 @@ public class GameMode extends AppMode
     {
         this.shutdownNetwork();
         this.shutdownPlayers();
+        this.shutdownAudio();
+    }
+
+    override protected function enter () :void
+    {
+        GameContext.sfxControls.pause(false);
+        GameContext.musicControls.volumeTo(1, 0.3);
+    }
+
+    override protected function exit () :void
+    {
+        GameContext.sfxControls.pause(true);
+        GameContext.musicControls.volumeTo(0.2, 0.3);
+    }
+
+    protected function setupAudio () :void
+    {
+        var asdf :AudioControls
+        GameContext.sfxControls = new AudioControls(
+            AudioManager.instance.getControlsForSoundType(SoundResource.TYPE_SFX));
+        GameContext.musicControls = new AudioControls(
+            AudioManager.instance.getControlsForSoundType(SoundResource.TYPE_MUSIC));
+
+        GameContext.sfxControls.retain();
+        GameContext.musicControls.retain();
+    }
+
+    protected function shutdownAudio () :void
+    {
+        GameContext.sfxControls.release();
+        GameContext.musicControls.release();
+
+        GameContext.sfxControls = null;
+        GameContext.musicControls = null;
     }
 
     protected function setupPlayersMP () :void

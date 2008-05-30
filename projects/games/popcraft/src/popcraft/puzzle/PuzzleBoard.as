@@ -145,7 +145,7 @@ public class PuzzleBoard extends SceneObject
         this.showResourceValueAnimation(animLoc, resourceType, resourceValue);
 
         // play a sound
-        AudioManager.instance.playSoundNamed(resourceValue >= 0 ?
+        GameContext.playGameSound(resourceValue >= 0 ?
             "sfx_rsrc_" + Constants.RESOURCE_NAMES[resourceType] :
             "sfx_rsrc_lost");
     }

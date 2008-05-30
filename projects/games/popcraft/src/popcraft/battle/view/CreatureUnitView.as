@@ -146,7 +146,7 @@ public class CreatureUnitView extends SceneObject
     {
         // play a sound
         var soundName :String = HIT_SOUND_NAMES[Rand.nextIntRange(0, HIT_SOUND_NAMES.length, Rand.STREAM_COSMETIC)];
-        AudioManager.instance.playSoundNamed(soundName);
+        GameContext.playGameSound(soundName);
     }
 
     protected function createAOEAttackAnimation (weapon :UnitWeaponData, loc :Vector2, duration :Number) :void
@@ -333,7 +333,7 @@ public class CreatureUnitView extends SceneObject
             // play a sound if the creature died during battle, and not
             // as a result of the night-day switch
             if (GameContext.diurnalCycle.isNight) {
-                AudioManager.instance.playSoundNamed("sfx_death_" + _unit.unitData.name);
+                GameContext.playGameSound("sfx_death_" + _unit.unitData.name);
             }
         } else {
 

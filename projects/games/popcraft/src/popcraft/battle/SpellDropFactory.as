@@ -23,7 +23,7 @@ public class SpellDropFactory
         GameContext.gameMode.addObject(spellDropView, GameContext.battleBoardView.spellDropViewParent);
 
         if (playSound) {
-            AudioManager.instance.playSoundNamed("sfx_spelldrop");
+            GameContext.playGameSound("sfx_spelldrop");
         }
 
         return spellDrop;

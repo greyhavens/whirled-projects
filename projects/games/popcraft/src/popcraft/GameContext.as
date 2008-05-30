@@ -1,5 +1,9 @@
 package popcraft {
 
+import com.whirled.contrib.simplegame.audio.AudioChannel;
+import com.whirled.contrib.simplegame.audio.AudioControls;
+import com.whirled.contrib.simplegame.audio.AudioManager;
+
 import popcraft.battle.*;
 import popcraft.battle.view.*;
 import popcraft.data.*;
@@ -23,6 +27,9 @@ public class GameContext
     public static var diurnalCycle :DiurnalCycle;
     public static var dashboard :DashboardView;
 
+    public static var musicControls :AudioControls;
+    public static var sfxControls :AudioControls;
+
     public static var playerInfos :Array;
     public static var playerUnitSpellSets :Array;
     public static var localPlayerId :int;
@@ -45,6 +52,16 @@ public class GameContext
         }
 
         return null;
+    }
+
+    public static function playGameSound (soundName :String) :AudioChannel
+    {
+        return AudioManager.instance.playSoundNamed(soundName, sfxControls);
+    }
+
+    public static function playGameMusic (musicName :String) :AudioChannel
+    {
+        return AudioManager.instance.playSoundNamed(musicName, musicControls);
     }
 }
 

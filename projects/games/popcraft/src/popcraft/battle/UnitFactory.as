@@ -62,7 +62,7 @@ public class UnitFactory
         GameContext.gameMode.addObject(creatureView, GameContext.battleBoardView.unitViewParent);
 
         // play a sound
-        AudioManager.instance.playSoundNamed("sfx_create_" + Constants.CREATURE_UNIT_NAMES[unitType]);
+        GameContext.playGameSound("sfx_create_" + Constants.CREATURE_UNIT_NAMES[unitType]);
     }
 
     public static function createBaseUnit (owningPlayerId :int, maxHealthOverride :int = 0, startingHealthOverride :int = 0) :PlayerBaseUnit

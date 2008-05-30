@@ -99,7 +99,7 @@ public class PlayerBaseUnitView extends SceneObject
     {
         // play a sound
         var soundName :String = HIT_SOUND_NAMES[Rand.nextIntRange(0, HIT_SOUND_NAMES.length, Rand.STREAM_COSMETIC)];
-        AudioManager.instance.playSoundNamed(soundName);
+        GameContext.playGameSound(soundName);
     }
 
     public function set targetEnemyBadgeVisible (val :Boolean) :void
