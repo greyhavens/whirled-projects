@@ -55,12 +55,6 @@ public class GameMode extends AppMode
         // create a special ObjectDB for all objects that are synchronized over the network.
         GameContext.netObjects = new NetObjectDB();
 
-        if (GameContext.isMultiplayer) {
-            this.setupPlayersMP();
-        } else {
-            this.setupPlayersSP();
-        }
-
         this.setupNetwork();
 
         if (Constants.DEBUG_DRAW_STATS) {
@@ -107,6 +101,9 @@ public class GameMode extends AppMode
 
     protected function shutdownAudio () :void
     {
+        GameContext.sfxControls.stop(true);
+        GameContext.musicControls.stop(true);
+
         GameContext.sfxControls.release();
         GameContext.musicControls.release();
 
@@ -219,14 +216,6 @@ public class GameMode extends AppMode
         }
 
         _messageMgr.setup();
-
-        // create players' unit spell sets (these are synchronized objects)
-        GameContext.playerUnitSpellSets = [];
-        for (var playerId :uint = 0; playerId < GameContext.numPlayers; ++playerId) {
-            var spellSet :SpellSet = new SpellSet();
-            GameContext.netObjects.addObject(spellSet);
-            GameContext.playerUnitSpellSets.push(spellSet);
-        }
     }
 
     protected function shutdownNetwork () :void
@@ -382,6 +371,20 @@ public class GameMode extends AppMode
                 log.info("Starting game. randomSeed: " + _messageMgr.randomSeed);
                 Rand.seedStream(AppContext.randStreamPuzzle, _messageMgr.randomSeed);
                 Rand.seedStream(Rand.STREAM_GAME, _messageMgr.randomSeed);
+
+                if (GameContext.isMultiplayer) {
+                    this.setupPlayersMP();
+                } else {
+                    this.setupPlayersSP();
+                }
+
+                // create players' unit spell sets (these are synchronized objects)
+                GameContext.playerUnitSpellSets = [];
+                for (var playerId :uint = 0; playerId < GameContext.numPlayers; ++playerId) {
+                    var spellSet :SpellSet = new SpellSet();
+                    GameContext.netObjects.addObject(spellSet);
+                    GameContext.playerUnitSpellSets.push(spellSet);
+                }
 
                 this.setupBattle();
                 this.setupPuzzleAndUI();
@@ -722,6 +725,8 @@ public class GameMode extends AppMode
     protected var _battleParent :Sprite;
     protected var _hudParent :Sprite;
     protected var _overlayParent :Sprite;
+    protected var _musicChannel :AudioChannel;
+    protected var _lastDayPhase :int = -1;
 
     protected var _tickCount :uint;
     protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);

@@ -1,5 +1,6 @@
 package popcraft {
 
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.SimObjectRef;
 
 import popcraft.battle.PlayerBaseUnit;
@@ -28,8 +29,10 @@ public class PlayerInfo
 
         if (null != playerName) {
             _playerName = playerName;
+        } else if (_playerId < playerNames.length && null != playerNames[_playerId])  {
+            _playerName = playerNames[_playerId];
         } else {
-            _playerName = (playerId < playerNames.length ? playerNames[_playerId]: "Unknown player " + playerId);
+            _playerName = "Unknown player " + playerId;
         }
     }
 
@@ -151,6 +154,8 @@ public class PlayerInfo
     protected var _leftGame :Boolean;
     protected var _targetedEnemyId :uint;
     protected var _baseRef :SimObjectRef;
+
+    protected static var log :Log = Log.getLog(PlayerInfo);
 
 }
 
