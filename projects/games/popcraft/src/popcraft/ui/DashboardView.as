@@ -7,7 +7,6 @@ import com.whirled.contrib.simplegame.resource.SwfResource;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.MovieClip;
-import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
@@ -25,11 +24,16 @@ public class DashboardView extends SceneObject
         _movie = SwfResource.instantiateMovieClip("dashboard", "dashboard_sym");
         var puzzleFrame :MovieClip = this.puzzleFrame;
 
+        _movie.cacheAsBitmap = true;
+        puzzleFrame.cacheAsBitmap = true;
+
         // info text
         _infoTextParent = _movie["info"];
         _infoText = _infoTextParent["info_text"];
         _infoTextParent.y = 6;
         _infoTextParent.visible = false;
+
+        _infoTextParent.cacheAsBitmap = true;
 
         // setup resources
         for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
@@ -41,6 +45,8 @@ public class DashboardView extends SceneObject
 
         // setup unit purchase buttons
         var unitParent :MovieClip = _movie["frame_units"];
+        unitParent.cacheAsBitmap = true;
+
         var buttonNumber :int = 1;
         for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
             if (GameContext.isSinglePlayer && !GameContext.spLevel.isAvailableUnit(unitType)) {
@@ -146,8 +152,29 @@ public class DashboardView extends SceneObject
         var puzzleFrame :MovieClip = this.puzzleFrame;
         var resourceBarParent :Sprite = _resourceBars[resType];
 
+        if (null == resourceBarParent) {
+            resourceBarParent = new Sprite();
+            _resourceBars[resType] = resourceBarParent;
+            puzzleFrame.addChildAt(resourceBarParent, 1);
+        }
+
+        var color :uint = ResourceData(GameContext.gameData.resources[resType]).color;
+        var g :Graphics = resourceBarParent.graphics;
+        var firstMeterLoc :Point = RESOURCE_METER_LOCS[resType];
+        g.clear();
+        if (resAmount > 0) {
+            g.lineStyle(1, 0);
+            g.beginFill(color);
+            g.drawRect(
+                firstMeterLoc.x - 1,
+                firstMeterLoc.y - RESOURCE_METER_MAX_HEIGHT,
+                1 + (63 * (resAmount / 1000)),
+                RESOURCE_METER_MAX_HEIGHT);
+            g.endFill();
+        }
+
         // remove the old set of resource bars
-        if (null != resourceBarParent) {
+        /*if (null != resourceBarParent) {
             puzzleFrame.removeChild(resourceBarParent);
             _resourceBars[resType] = null;
         }
@@ -182,7 +209,7 @@ public class DashboardView extends SceneObject
             meterXOffset += RESOURCE_METER_WIDTH;
 
             resAmount -= meterVal;
-        }
+        }*/
 
     }
 

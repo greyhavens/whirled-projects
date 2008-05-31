@@ -35,6 +35,9 @@ public class UnitPurchaseButton extends SimObject
         _button = parent["button_" + slotNum];
         _multiplicity = parent["multiplicity_" + slotNum]["multiplicity"];
 
+        _switch.cacheAsBitmap = true;
+        _hilite.cacheAsBitmap = true;
+
         _multiplicity.text = "";
 
         _button.addEventListener(MouseEvent.CLICK, onClicked);
@@ -54,6 +57,14 @@ public class UnitPurchaseButton extends SimObject
         if (null == _disabledAnim) {
             _disabledAnim = _enabledAnim;
         }
+
+        /*if (null != _enabledAnim) {
+            _enabledAnim.gotoAndStop(0);
+        }
+
+        if (null != _disabledAnim) {
+            _disabledAnim.gotoAndStop(0);
+        }*/
 
         _unitDisplay.addChild(_enabledAnim);
         _unitDisplay.addChild(_disabledAnim);
@@ -275,8 +286,8 @@ public class UnitPurchaseButton extends SimObject
     protected var _button :SimpleButton;
     protected var _multiplicity :TextField;
 
-    protected var _enabledAnim :DisplayObject;
-    protected var _disabledAnim :DisplayObject;
+    protected var _enabledAnim :MovieClip;
+    protected var _disabledAnim :MovieClip;
 
     protected var _resource1Type :uint;
     protected var _resource2Type :uint;

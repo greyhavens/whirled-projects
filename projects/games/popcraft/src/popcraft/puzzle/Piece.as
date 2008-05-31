@@ -22,11 +22,6 @@ public class Piece extends SceneObject
         _boardIndex = boardIndex;
     }
 
-    /*override protected function addedToDB () :void
-    {
-        this.db.addObject(_pieceHiliteObj, _sprite);
-    }*/
-
     // from SceneObject
     override public function get displayObject () :DisplayObject
     {
@@ -64,29 +59,10 @@ public class Piece extends SceneObject
         var pieceClass :Class = SWF_CLASSES[newType];
         var pieceMovie :MovieClip = new pieceClass();
 
-        var scaleX :Number = (Constants.PUZZLE_TILE_SIZE + 1) / pieceMovie.width;
-        var scaleY :Number = (Constants.PUZZLE_TILE_SIZE + 1) / pieceMovie.height;
-
-        pieceMovie.scaleX = scaleX;
-        pieceMovie.scaleY = scaleY;
-
         pieceMovie.x = -(pieceMovie.width * 0.5);
         pieceMovie.y = -(pieceMovie.height * 0.5);
 
         pieceMovie.cacheAsBitmap = true;
-
-        /*var pieceHilite :Shape = new Shape();
-
-        _pieceHiliteObj = new SimpleSceneObject(pieceHilite);
-        _pieceHiliteObj.visible = false;
-
-        var glowFilter :GlowFilter = new GlowFilter();
-        glowFilter.color = Constants.getResource(_resourceType).color;
-        glowFilter.alpha = 1;
-        glowFilter.strength = 16;
-        glowFilter.knockout = false;
-
-        pieceHilite.filters = [ glowFilter ]; */
 
         _sprite = new Sprite();
         _sprite.mouseChildren = false;
@@ -111,33 +87,10 @@ public class Piece extends SceneObject
         g.endFill();
     }
 
-    public function showHilite (show :Boolean) :void
-    {
-        /*if (show != _showHilite) {
-
-            if (!show) {
-                _pieceHiliteObj.removeAllTasks();
-                _pieceHiliteObj.visible = false;
-            } else {
-                _pieceHiliteObj.visible = true;
-                _pieceHiliteObj.alpha = 1;
-
-                _pieceHiliteObj.addTask(new RepeatingTask(
-                    new AlphaTask(0.5, 0.3),
-                    new AlphaTask(1, 0.3)));
-            }
-
-            _showHilite = show;
-        }*/
-    }
-
     protected var _boardIndex :int;
 
     protected var _resourceType :uint;
     protected var _sprite :Sprite;
-   // protected var _pieceHiliteObj :SimpleSceneObject;
-
-    protected var _showHilite :Boolean;
 
     protected static var SWF_CLASSES :Array;
     protected static const SWF_CLASS_NAMES :Array = [ "A", "B", "C", "D" ];

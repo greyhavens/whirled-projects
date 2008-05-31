@@ -17,6 +17,7 @@ public class PlayerStatusView extends SceneObject
         _playerInfo = GameContext.playerInfos[playerId];
 
         _movie = SwfResource.instantiateMovieClip("dashboard", "player_slot");
+        _movie.cacheAsBitmap = true;
 
         _healthMeter = _movie["health_meter"];
         _healthMeter.filters = [ ColorMatrix.create().tint(_playerInfo.playerColor).createFilter() ];
@@ -37,9 +38,14 @@ public class PlayerStatusView extends SceneObject
     override protected function update (dt :Number) :void
     {
         var healthPercent :Number = _playerInfo.healthPercent;
-        var healthRotation :Number = (1.0 - healthPercent) * -180; // DisplayObject rotations are in degrees
-        _healthMeter.rotation = healthRotation;
-        _meterArrow.rotation = healthRotation;
+
+        if (_oldHealth != healthPercent) {
+            var healthRotation :Number = (1.0 - healthPercent) * -180; // DisplayObject rotations are in degrees
+            _healthMeter.rotation = healthRotation;
+            _meterArrow.rotation = healthRotation;
+
+            _oldHealth = healthPercent;
+        }
 
         if (!_dead && !_playerInfo.isAlive) {
             var deathMovie :MovieClip = _movie["dead"];
@@ -53,6 +59,7 @@ public class PlayerStatusView extends SceneObject
     protected var _healthMeter :MovieClip;
     protected var _meterArrow :MovieClip;
     protected var _dead :Boolean;
+    protected var _oldHealth :Number = -1;
 
 }
 
