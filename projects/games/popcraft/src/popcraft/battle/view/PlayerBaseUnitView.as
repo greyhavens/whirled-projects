@@ -44,8 +44,8 @@ public class PlayerBaseUnitView extends SceneObject
         _healthMeter.foregroundColor = playerColor;
         _healthMeter.backgroundColor = 0x888888;
         _healthMeter.outlineColor = 0x000000;
-        _healthMeter.width = 30;
-        _healthMeter.height = 3;
+        _healthMeter.width = 50;
+        _healthMeter.height = 5;
         _healthMeter.x = -(_healthMeter.width * 0.5);
         _healthMeter.y = -_sprite.height - _healthMeter.height;
 
