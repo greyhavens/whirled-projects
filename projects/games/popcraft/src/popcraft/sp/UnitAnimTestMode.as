@@ -10,13 +10,17 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import popcraft.*;
-import popcraft.data.*;
 import popcraft.battle.view.*;
+import popcraft.data.*;
 
 public class UnitAnimTestMode extends AppMode
 {
     override protected function setup () :void
     {
+        var playerColors :Array = AppContext.defaultGameData.playerColors;
+
+        _recolor = playerColors[0];
+
         var g :Graphics = this.modeSprite.graphics;
 
         g.beginFill(0xBCBCBC);
@@ -37,7 +41,7 @@ public class UnitAnimTestMode extends AppMode
         // player color buttons
         xLoc = 10;
         yLoc = 350;
-        for (var playerNum :int = 0; playerNum < Constants.PLAYER_COLORS.length; ++playerNum) {
+        for (var playerNum :int = 0; playerNum < playerColors.length; ++playerNum) {
             button = this.createPlayerColorButton(playerNum);
             button.x = xLoc;
             button.y = yLoc;
@@ -76,7 +80,7 @@ public class UnitAnimTestMode extends AppMode
     {
         var thisObject :UnitAnimTestMode = this;
 
-        var color :uint = Constants.PLAYER_COLORS[playerNum];
+        var color :uint = AppContext.defaultGameData.playerColors[playerNum];
         var unitButton :SimpleTextButton = new SimpleTextButton("Player " + String(playerNum + 1));
         unitButton.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
@@ -137,7 +141,7 @@ public class UnitAnimTestMode extends AppMode
     }
 
     protected var _animSprite :Sprite;
-    protected var _recolor :uint = Constants.PLAYER_COLORS[0];
+    protected var _recolor :uint;
     protected var _unitType :uint = 0;
 
     protected static const ANIM_PREFIX_STRINGS :Array = [ "stand_", "walk_", "attack_" ];

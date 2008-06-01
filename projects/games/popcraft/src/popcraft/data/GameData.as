@@ -32,6 +32,7 @@ public class GameData
     public var units :Array = [];
     public var spells :Array = [];
     public var baseLocs :Array = [];
+    public var playerColors :Array = [];
 
     public function getBaseLocsForGameSize (numPlayers :uint) :Array
     {
@@ -81,6 +82,8 @@ public class GameData
             }
             theClone.baseLocs.push(gameSizeClone);
         }
+
+        theClone.playerColors = playerColors.slice();
 
         return theClone;
     }
@@ -178,6 +181,14 @@ public class GameData
             }
 
             gameData.baseLocs[numPlayers - 1] = baseLocArray;
+        }
+
+        // read player colors
+        for each (var playerColorNode :XML in xml.PlayerColors.PlayerColor) {
+            var player :int = XmlReader.getAttributeAsUint(playerColorNode, "player");
+            var color :uint = XmlReader.getAttributeAsUint(playerColorNode, "color");
+
+            gameData.playerColors[player - 1] = color;
         }
 
         return gameData;

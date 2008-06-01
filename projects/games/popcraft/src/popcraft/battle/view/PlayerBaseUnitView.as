@@ -25,7 +25,7 @@ public class PlayerBaseUnitView extends SceneObject
     {
         _unit = unit;
 
-        var playerColor :uint = Constants.PLAYER_COLORS[_unit.owningPlayerId];
+        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerId];
 
         // add the image, aligned by its foot position
         var image :Bitmap = ImageResource.instantiateBitmap(_unit.unitData.name);

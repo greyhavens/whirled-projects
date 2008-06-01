@@ -221,6 +221,13 @@
             </GameSize>
         </BaseLocations>
 
+        <PlayerColors>
+            <PlayerColor player="1" color="0xFF0000"/>
+            <PlayerColor player="2" color="0x9FBCFF"/>
+            <PlayerColor player="3" color="0x51FF7E"/>
+            <PlayerColor player="4" color="0xFFE75F"/>
+        </PlayerColors>
+
     </GameData>
 
     <LevelProgression>

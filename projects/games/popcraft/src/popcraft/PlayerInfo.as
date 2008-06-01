@@ -38,7 +38,7 @@ public class PlayerInfo
 
     public function get playerColor () :uint
     {
-        return Constants.PLAYER_COLORS[_playerId];
+        return GameContext.gameData.playerColors[_playerId];
     }
 
     public function get playerId () :uint

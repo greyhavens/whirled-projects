@@ -45,7 +45,7 @@ public class UnitPurchaseButton extends SimObject
         _button.addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
 
         _unitData = GameContext.gameData.units[unitType];
-        var playerColor :uint = Constants.PLAYER_COLORS[GameContext.localPlayerId];
+        var playerColor :uint = GameContext.gameData.playerColors[GameContext.localPlayerId];
 
         // try instantiating some animations
         _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "walk_SW");

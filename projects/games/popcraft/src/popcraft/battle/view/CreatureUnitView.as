@@ -32,7 +32,7 @@ public class CreatureUnitView extends SceneObject
         _sprite.mouseEnabled = false;
         _sprite.mouseChildren = false;
 
-        var playerColor :uint = Constants.PLAYER_COLORS[_unit.owningPlayerId];
+        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerId];
 
         this.setupAnimations(playerColor);
 

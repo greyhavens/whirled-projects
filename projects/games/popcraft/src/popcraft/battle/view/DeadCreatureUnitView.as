@@ -23,7 +23,7 @@ public class DeadCreatureUnitView extends SceneObject
             flipX = true;
         }
 
-        var playerColor :uint = Constants.PLAYER_COLORS[creature.owningPlayerId];
+        var playerColor :uint = GameContext.gameData.playerColors[creature.owningPlayerId];
         var animName :String = "die_" + Constants.FACING_STRINGS[facing];
 
         var movie :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(creature.unitData, playerColor, animName);

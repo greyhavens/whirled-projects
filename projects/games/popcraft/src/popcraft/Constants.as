@@ -35,13 +35,6 @@ public class Constants
 
     public static const FIRST_SPELL_BUTTON_LOC :Point = new Point(220, 320);
 
-    public static const PLAYER_COLORS :Array = [
-       uint(0xFFFF0000),
-       uint(0xFF9FBCFF),
-       uint(0xFF51FF7E),
-       uint(0xFFFFE75F)
-    ];
-
     /* Puzzle stuff */
     public static const MIN_GROUP_SIZE :int = 1; // no min group size right now
 
