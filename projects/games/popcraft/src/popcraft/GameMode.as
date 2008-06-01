@@ -82,8 +82,13 @@ public class GameMode extends AppMode
 
     override protected function enter () :void
     {
-        GameContext.sfxControls.pause(false);
-        GameContext.musicControls.volumeTo(1, 0.3);
+        // game audio isn't started until _updateCount hits 1,
+        // to allow intro screens to be shown
+        if (_updateCount > 0) {
+            GameContext.sfxControls.pause(false);
+            GameContext.musicControls.pause(false);
+            GameContext.musicControls.volumeTo(1, 0.3);
+        }
     }
 
     override protected function exit () :void
@@ -94,7 +99,6 @@ public class GameMode extends AppMode
 
     protected function setupAudio () :void
     {
-        var asdf :AudioControls
         GameContext.sfxControls = new AudioControls(
             AudioManager.instance.getControlsForSoundType(SoundResource.TYPE_SFX));
         GameContext.musicControls = new AudioControls(
@@ -102,6 +106,9 @@ public class GameMode extends AppMode
 
         GameContext.sfxControls.retain();
         GameContext.musicControls.retain();
+
+        GameContext.sfxControls.pause(true);
+        GameContext.musicControls.pause(true);
     }
 
     protected function shutdownAudio () :void
@@ -400,6 +407,13 @@ public class GameMode extends AppMode
             }
         }
 
+        // start the game audio when _updateCount hits 1, allowing a full update to pass without
+        // audio so that intro screens can be shown
+        if (_updateCount == 1) {
+            GameContext.musicControls.pause(false);
+            GameContext.sfxControls.pause(false);
+        }
+
         // update the network
         _messageMgr.update(dt);
 
@@ -424,7 +438,7 @@ public class GameMode extends AppMode
                 debugNetwork(messageArray);
             }
 
-            ++_tickCount;
+            ++_gameTickCount;
         }
 
         // The game is over if there's only one team standing
@@ -508,6 +522,8 @@ public class GameMode extends AppMode
         if (sortDisplayChildren) {
             GameContext.battleBoardView.sortUnitDisplayChildren();
         }
+
+        ++_updateCount;
     }
 
     protected function debugNetwork (messageArray :Array) :void
@@ -526,7 +542,7 @@ public class GameMode extends AppMode
         }
 
         if (messageStatus.length > 0) {
-            log.debug("PLAYER: " + GameContext.localPlayerId + " TICK: " + _tickCount + " MESSAGES: " + messageStatus);
+            log.debug("PLAYER: " + GameContext.localPlayerId + " TICK: " + _gameTickCount + " MESSAGES: " + messageStatus);
         }
 
         // calculate a checksum for this frame
@@ -535,8 +551,8 @@ public class GameMode extends AppMode
         // player 1 saves his checksums, player 0 sends his checksums
         if (GameContext.localPlayerId == 1) {
             _myChecksums.unshift(csumMessage);
-            _lastCachedChecksumTick = _tickCount;
-        } else if ((_tickCount % 2) == 0) {
+            _lastCachedChecksumTick = _gameTickCount;
+        } else if ((_gameTickCount % 2) == 0) {
             _messageMgr.sendMessage(csumMessage);
         }
     }
@@ -567,7 +583,7 @@ public class GameMode extends AppMode
         }*/
 
         msg.playerId = GameContext.localPlayerId;
-        msg.tick = _tickCount;
+        msg.tick = _gameTickCount;
         msg.checksum = csum.value;
 
         return msg;
@@ -745,7 +761,8 @@ public class GameMode extends AppMode
     protected var _musicChannel :AudioChannel;
     protected var _lastDayPhase :int = -1;
 
-    protected var _tickCount :uint;
+    protected var _gameTickCount :uint;
+    protected var _updateCount :uint;
     protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);
     protected var _lastCachedChecksumTick :int;
     protected var _syncError :Boolean;
