@@ -9,11 +9,11 @@ import flash.events.Event;
 
 import popcraft.data.*;
 
-public class SpellSet extends SimObject
+public class CreatureSpellSet extends SimObject
 {
     public static const SET_MODIFIED :String = "setModified";
 
-    public function addSpell (spell :SpellData) :void
+    public function addSpell (spell :CreatureSpellData) :void
     {
         var taskName :String = getExpireTaskName(spell.type);
 
@@ -34,7 +34,7 @@ public class SpellSet extends SimObject
     protected function spellExpired (spellType :uint) :void
     {
         var i :int = ArrayUtil.findIf(_spells,
-            function (activeSpell :SpellData) :Boolean { return activeSpell.type == spellType; });
+            function (activeSpell :CreatureSpellData) :Boolean { return activeSpell.type == spellType; });
 
         Assert.isTrue(i >= 0);
         _spells.splice(i, 1);
@@ -45,7 +45,7 @@ public class SpellSet extends SimObject
     protected function isSpellActive (spellType :uint) :Boolean
     {
         return (ArrayUtil.indexIf(_spells,
-            function (activeSpell :SpellData) :Boolean { return activeSpell.type == spellType; }) >= 0);
+            function (activeSpell :CreatureSpellData) :Boolean { return activeSpell.type == spellType; }) >= 0);
     }
 
     protected function updateSpellAggregate () :void
@@ -53,8 +53,8 @@ public class SpellSet extends SimObject
         if (_spells.length == 1) {
             _spellAggregate = _spells[0];
         } else {
-            _spellAggregate = new SpellData();
-            for each (var spell :SpellData in _spells) {
+            _spellAggregate = new CreatureSpellData();
+            for each (var spell :CreatureSpellData in _spells) {
                 _spellAggregate.combine(spell);
             }
         }
@@ -82,7 +82,7 @@ public class SpellSet extends SimObject
         return "ExpireTask_" + spellType;
     }
 
-    protected var _spellAggregate :SpellData = new SpellData();
+    protected var _spellAggregate :CreatureSpellData = new CreatureSpellData();
     protected var _spells :Array = [];
 }
 

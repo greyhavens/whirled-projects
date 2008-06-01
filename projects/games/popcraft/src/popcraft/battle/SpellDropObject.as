@@ -4,7 +4,7 @@ import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.components.LocationComponent;
 
 import popcraft.*;
-import popcraft.data.SpellData;
+import popcraft.data.CreatureSpellData;
 
 public class SpellDropObject extends SimObject
     implements LocationComponent
@@ -22,9 +22,14 @@ public class SpellDropObject extends SimObject
         return _spellType;
     }
 
-    public function get spellData () :SpellData
+    public function get creatureSpellData () :CreatureSpellData
     {
-        return GameContext.gameData.spells[_spellType];
+        return (this.isCreatureSpell ? GameContext.gameData.creatureSpells[_spellType] : null);
+    }
+
+    public function get isCreatureSpell () :Boolean
+    {
+        return _spellType < Constants.CREATURE_SPELL_TYPE__LIMIT;
     }
 
     public function get x () :Number
@@ -54,16 +59,6 @@ public class SpellDropObject extends SimObject
         default: return super.getObjectGroup(groupNum - 1);
         }
     }
-
-    // let's see what it's like to have spells stick around during the day
-    /*override protected function update (dt :Number) :void
-    {
-        // when it's day time, spell objects die
-        if (GameContext.diurnalCycle.isDay) {
-            this.destroySelf();
-            return;
-        }
-    }*/
 
     protected var _spellType :uint;
     protected var _xLoc :Number = 0;

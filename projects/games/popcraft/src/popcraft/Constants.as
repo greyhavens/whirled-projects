@@ -75,8 +75,12 @@ public class Constants
     /* Spells */
     public static const SPELL_TYPE_BLOODLUST :uint = 0;
     public static const SPELL_TYPE_RIGORMORTIS :uint = 1;
+    public static const CREATURE_SPELL_TYPE__LIMIT :uint = 2;
 
-    public static const SPELL_NAMES :Array = [ "bloodlust", "rigormortis" ];
+    public static const SPELL_TYPE_RESETPUZZLE :uint = 2;
+
+    public static const SPELL_NAMES :Array = [ "bloodlust", "rigormortis", "resetpuzzle" ];
+    public static const CREATURE_SPELL_NAMES :Array = SPELL_NAMES.slice(0, CREATURE_SPELL_TYPE__LIMIT);
 
     /* Units */
     public static const UNIT_TYPE_GRUNT :uint = 0;

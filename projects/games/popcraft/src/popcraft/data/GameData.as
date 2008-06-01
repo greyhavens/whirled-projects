@@ -30,7 +30,7 @@ public class GameData
     public var resources :Array = [];
     public var resourceMultipliers :Array = [];
     public var units :Array = [];
-    public var spells :Array = [];
+    public var creatureSpells :Array = [];
     public var baseLocs :Array = [];
     public var playerColors :Array = [];
 
@@ -71,8 +71,8 @@ public class GameData
             theClone.units.push(unitData.clone());
         }
 
-        for each (var spellData :SpellData in spells) {
-            theClone.spells.push(spellData.clone());
+        for each (var spellData :CreatureSpellData in creatureSpells) {
+            theClone.creatureSpells.push(spellData.clone());
         }
 
         for each (var gameSize :Array in baseLocs) {
@@ -155,13 +155,13 @@ public class GameData
         }
 
         // init the spell data
-        for (i = gameData.spells.length; i < Constants.SPELL_NAMES.length; ++i) {
-            gameData.spells.push(null);
+        for (i = gameData.creatureSpells.length; i < Constants.CREATURE_SPELL_NAMES.length; ++i) {
+            gameData.creatureSpells.push(null);
         }
 
-        for each (var spellNode :XML in xml.Spells.Spell) {
+        for each (var spellNode :XML in xml.CreatureSpells.Spell) {
             type = XmlReader.getAttributeAsEnum(spellNode, "type", Constants.SPELL_NAMES);
-            gameData.spells[type] = SpellData.fromXml(spellNode, (useDefaults ? inheritFrom.spells[type] : null));
+            gameData.creatureSpells[type] = CreatureSpellData.fromXml(spellNode, (useDefaults ? inheritFrom.creatureSpells[type] : null));
         }
 
         // read base locations

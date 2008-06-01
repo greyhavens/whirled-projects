@@ -249,7 +249,7 @@ public class CreatureUnit extends Unit
 
     protected var _lastUpdateTimestamp :Number = 0;
 
-    protected var _unitSpells :SpellSet;
+    protected var _unitSpells :CreatureSpellSet;
 
     protected static var g_groups :Array;
 

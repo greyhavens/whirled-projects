@@ -68,8 +68,8 @@ public class CreatureUnitView extends SceneObject
         _unit.addEventListener(UnitEvent.ATTACKING, handleUnitAttacking, false, 0, true);
         _unit.addEventListener(UnitEvent.ATTACKED, handleUnitAttacked, false, 0, true);
 
-        var spellSet :SpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
-        spellSet.addEventListener(SpellSet.SET_MODIFIED, handleSpellSetModified);
+        var spellSet :CreatureSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
+        spellSet.addEventListener(CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
 
         this.updateUnitSpellIcons();
     }
@@ -83,8 +83,8 @@ public class CreatureUnitView extends SceneObject
         _unit.removeEventListener(UnitEvent.ATTACKING, handleUnitAttacking);
         _unit.removeEventListener(UnitEvent.ATTACKED, handleUnitAttacked);
 
-        var spellSet :SpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
-        spellSet.removeEventListener(SpellSet.SET_MODIFIED, handleSpellSetModified);
+        var spellSet :CreatureSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
+        spellSet.removeEventListener(CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
 
     }
 
@@ -101,7 +101,7 @@ public class CreatureUnitView extends SceneObject
             _unitSpellIconParent = null;
         }
 
-        var spellSet :SpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
+        var spellSet :CreatureSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
         var spells :Array = spellSet.spells;
         if (spells.length == 0) {
             return;
@@ -114,7 +114,7 @@ public class CreatureUnitView extends SceneObject
         // create new spell icons, arranged above the health meter
         var icons :Array = [];
         var totalWidth :Number = 0;
-        for each (var spell :SpellData in spellSet.spells) {
+        for each (var spell :CreatureSpellData in spellSet.spells) {
             var icon :DisplayObject = ImageResource.instantiateBitmap(spell.name + "_icon");
             if (null != icon) {
                 totalWidth += icon.width;

@@ -21,7 +21,7 @@ public class CourierCreatureUnitView extends CreatureUnitView
     override protected function update (dt :Number) :void
     {
         // if the Courier is carrying a spell, display it
-        var carriedSpell :SpellData = _courier.carriedSpell;
+        var carriedSpell :CreatureSpellData = _courier.carriedSpell;
         if (null != carriedSpell && null == _carriedSpellIcon) {
             _carriedSpellIcon = ImageResource.instantiateBitmap(carriedSpell.iconName);
             _carriedSpellIcon.y = -_carriedSpellIcon.height;

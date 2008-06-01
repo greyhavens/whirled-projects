@@ -186,7 +186,7 @@
             </Unit>
         </Units>
 
-        <Spells>
+        <CreatureSpells>
             <Spell
                 type="bloodlust"
                 displayName="Bloodlust"
@@ -201,7 +201,7 @@
                 description="RIGOR MORTIS: Toughens the skin of your creatures. They will be able to absorb much more damage."
                 expireTime="40"
                 damageScaleOffset="-0.4"/>
-        </Spells>
+        </CreatureSpells>
 
         <BaseLocations>
             <GameSize numPlayers="2">
