@@ -4,7 +4,7 @@ import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.components.LocationComponent;
 
 import popcraft.*;
-import popcraft.data.CreatureSpellData;
+import popcraft.data.SpellData;
 
 public class SpellDropObject extends SimObject
     implements LocationComponent
@@ -22,14 +22,9 @@ public class SpellDropObject extends SimObject
         return _spellType;
     }
 
-    public function get creatureSpellData () :CreatureSpellData
+    public function get spellData () :SpellData
     {
-        return (this.isCreatureSpell ? GameContext.gameData.creatureSpells[_spellType] : null);
-    }
-
-    public function get isCreatureSpell () :Boolean
-    {
-        return _spellType < Constants.CREATURE_SPELL_TYPE__LIMIT;
+        return GameContext.gameData.spells[_spellType];
     }
 
     public function get x () :Number

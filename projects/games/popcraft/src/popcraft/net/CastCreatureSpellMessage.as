@@ -2,13 +2,13 @@ package popcraft.net {
 
 import com.whirled.contrib.simplegame.net.*;
 
-public class CastSpellMessage
+public class CastCreatureSpellMessage
     implements Message
 {
     public var playerId :uint;
     public var spellType :uint;
 
-    public function CastSpellMessage (playerId :uint, spellType :uint)
+    public function CastCreatureSpellMessage (playerId :uint, spellType :uint)
     {
         this.playerId = playerId;
         this.spellType = spellType;
@@ -21,34 +21,34 @@ public class CastSpellMessage
 
     public function toString () :String
     {
-        return "[CastSpell. playerId: " + playerId + ". spellType: " + spellType + "]";
+        return "[CastCreatureSpell. playerId: " + playerId + ". spellType: " + spellType + "]";
     }
 
     public static function createFactory () :MessageFactory
     {
-        return new CastSpellMessageFactory();
+        return new CastCreatureSpellMessageFactory();
     }
 
     public static function get messageName () :String
     {
-        return "CastSpell";
+        return "CastCreatureSpell";
     }
 }
 
 }
 
 import com.whirled.contrib.simplegame.net.*;
-import popcraft.net.CastSpellMessage;
+import popcraft.net.CastCreatureSpellMessage;
 import flash.utils.ByteArray;
 import flash.errors.EOFError;
 import com.threerings.util.Log;
 
-class CastSpellMessageFactory
+class CastCreatureSpellMessageFactory
     implements MessageFactory
 {
     public function serializeForNetwork (message :Message) :Object
     {
-        var msg :CastSpellMessage = (message as CastSpellMessage);
+        var msg :CastCreatureSpellMessage = (message as CastCreatureSpellMessage);
 
         var ba :ByteArray = new ByteArray();
         ba.writeByte(msg.playerId);
@@ -59,7 +59,7 @@ class CastSpellMessageFactory
 
     public function deserializeFromNetwork (obj :Object) :Message
     {
-        var msg :CastSpellMessage;
+        var msg :CastCreatureSpellMessage;
 
         var ba :ByteArray = obj as ByteArray;
         if (null == ba) {
@@ -69,7 +69,7 @@ class CastSpellMessageFactory
                 var playerId :uint = ba.readByte();
                 var spellType :uint = ba.readByte();
 
-                msg = new CastSpellMessage(playerId, spellType);
+                msg = new CastCreatureSpellMessage(playerId, spellType);
 
             } catch (err :EOFError) {
                 log.warning("received bad data");
@@ -79,6 +79,6 @@ class CastSpellMessageFactory
         return msg;
     }
 
-    protected static const log :Log = Log.getLog(CastSpellMessageFactory);
+    protected static const log :Log = Log.getLog(CastCreatureSpellMessageFactory);
 }
 

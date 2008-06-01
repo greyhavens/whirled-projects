@@ -114,7 +114,7 @@ public class CreatureUnitView extends SceneObject
         // create new spell icons, arranged above the health meter
         var icons :Array = [];
         var totalWidth :Number = 0;
-        for each (var spell :CreatureSpellData in spellSet.spells) {
+        for each (var spell :SpellData in spellSet.spells) {
             var icon :DisplayObject = ImageResource.instantiateBitmap(spell.name + "_icon");
             if (null != icon) {
                 totalWidth += icon.width;

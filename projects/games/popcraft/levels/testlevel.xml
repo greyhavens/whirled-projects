@@ -7,7 +7,9 @@
         playerName="Jack"
         playerBaseHealth="100">
 
-        <GameDataOverride>
+        <GameDataOverride
+            spellDropTimeMin="3"
+            spellDropTimeMax="3">
             <BaseLocations>
                 <GameSize numPlayers="2">
                     <BaseLocation x="60" y="185"/>
@@ -32,8 +34,7 @@
         </AvailableUnits>
 
         <AvailableSpells>
-            <Spell type="rigormortis"/>
-            <Spell type="bloodlust"/>
+            <Spell type="puzzlereset"/>
         </AvailableSpells>
 
         <Computer playerName="Ralph" baseHealth="999999" team="1"/>

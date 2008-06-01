@@ -186,7 +186,7 @@
             </Unit>
         </Units>
 
-        <CreatureSpells>
+        <Spells>
             <Spell
                 type="bloodlust"
                 displayName="Bloodlust"
@@ -201,7 +201,13 @@
                 description="RIGOR MORTIS: Toughens the skin of your creatures. They will be able to absorb much more damage."
                 expireTime="40"
                 damageScaleOffset="-0.4"/>
-        </CreatureSpells>
+
+            <Spell
+                type="puzzlereset"
+                displayName="Clean House"
+                description="CLEAN HOUSE: Refills your resource console with a new set of resources."
+                />
+        </Spells>
 
         <BaseLocations>
             <GameSize numPlayers="2">

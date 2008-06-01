@@ -18,7 +18,7 @@ public class SpellDropView extends SceneObject
     {
         _spellObjRef = spellDrop.ref;
 
-        var spellData :CreatureSpellData = spellDrop.creatureSpellData;
+        var spellData :SpellData = spellDrop.spellData;
 
         var bitmap :Bitmap = ImageResource.instantiateBitmap(spellData.iconName);
         var scale :Number = Math.min(SpellDropObject.RADIUS / bitmap.width, SpellDropObject.RADIUS / bitmap.height);

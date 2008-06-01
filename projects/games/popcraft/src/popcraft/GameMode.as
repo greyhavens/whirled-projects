@@ -221,7 +221,7 @@ public class GameMode extends AppMode
 
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
         _messageMgr.addMessageFactory(SelectTargetEnemyMessage.messageName, SelectTargetEnemyMessage.createFactory());
-        _messageMgr.addMessageFactory(CastSpellMessage.messageName, CastSpellMessage.createFactory());
+        _messageMgr.addMessageFactory(CastCreatureSpellMessage.messageName, CastCreatureSpellMessage.createFactory());
 
         if (Constants.DEBUG_CHECKSUM_STATE >= 1) {
             _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
@@ -254,6 +254,8 @@ public class GameMode extends AppMode
 
         DisplayObjectContainer(dashboard.displayObject).addChildAt(puzzleBoard.displayObject, 0);
         this.addObject(puzzleBoard);
+
+        GameContext.puzzleBoard = puzzleBoard;
 
         this.addObject(new SpellCastButtonManager());
     }
@@ -343,6 +345,13 @@ public class GameMode extends AppMode
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 GameContext.localPlayerInfo.addSpell(Constants.SPELL_TYPE_RIGORMORTIS);
                 this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_RIGORMORTIS);
+            }
+            break;
+
+        case KeyboardCodes.P:
+            if (Constants.DEBUG_ALLOW_CHEATS) {
+                GameContext.localPlayerInfo.addSpell(Constants.SPELL_TYPE_PUZZLERESET);
+                this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_PUZZLERESET);
             }
             break;
 
@@ -618,13 +627,13 @@ public class GameMode extends AppMode
             this.setTargetEnemy(selectTargetEnemyMsg.playerId, selectTargetEnemyMsg.targetPlayerId);
             break;
 
-        case CastSpellMessage.messageName:
-            var castSpellMsg :CastSpellMessage = msg as CastSpellMessage;
+        case CastCreatureSpellMessage.messageName:
+            var castSpellMsg :CastCreatureSpellMessage = msg as CastCreatureSpellMessage;
             var playerId :uint = castSpellMsg.playerId;
             if (PlayerInfo(GameContext.playerInfos[playerId]).isAlive) {
                 var spellSet :CreatureSpellSet = GameContext.playerUnitSpellSets[playerId];
-                var spell :CreatureSpellData = GameContext.gameData.creatureSpells[castSpellMsg.spellType];
-                spellSet.addSpell(spell.clone());
+                var spell :CreatureSpellData = GameContext.gameData.spells[castSpellMsg.spellType];
+                spellSet.addSpell(spell.clone() as CreatureSpellData);
             }
             break;
 
@@ -737,13 +746,20 @@ public class GameMode extends AppMode
     public function castSpell (playerId :uint, spellType :uint) :void
     {
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
+        var isCreatureSpell :Boolean = (spellType < Constants.CREATURE_SPELL_TYPE__LIMIT);
 
-        if (!playerInfo.isAlive || GameContext.diurnalCycle.isDay || !playerInfo.canCastSpell(spellType)) {
+        if (!playerInfo.isAlive || (isCreatureSpell && GameContext.diurnalCycle.isDay) || !playerInfo.canCastSpell(spellType)) {
             return;
         }
 
         playerInfo.spellCast(spellType);
-        _messageMgr.sendMessage(new CastSpellMessage(playerId, spellType));
+
+        if (isCreatureSpell) {
+            _messageMgr.sendMessage(new CastCreatureSpellMessage(playerId, spellType));
+        } else if (spellType == Constants.SPELL_TYPE_PUZZLERESET) {
+            // there's only one non-creature spell
+            GameContext.puzzleBoard.puzzleReset();
+        }
     }
 
     public function get overlayParent () :DisplayObjectContainer

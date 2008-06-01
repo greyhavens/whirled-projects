@@ -11,7 +11,7 @@ public class ComputerPlayerData
     public var team :uint;
     public var initialDays :Array = [];
     public var repeatingDays :Array = [];
-    public var startingSpells :Array = [];
+    public var startingCreatureSpells :Array = [];
 
     public static function fromXml (xmlData :XML) :ComputerPlayerData
     {
@@ -30,14 +30,16 @@ public class ComputerPlayerData
             computerPlayer.repeatingDays.push(DaySequenceData.fromXml(repeatingDayData));
         }
 
-        for (var spellType :uint = 0; spellType < Constants.SPELL_NAMES.length; ++spellType) {
-            computerPlayer.startingSpells.push(0);
+        // init spells
+        for (var spellType :uint = 0; spellType < Constants.CREATURE_SPELL_TYPE__LIMIT; ++spellType) {
+            computerPlayer.startingCreatureSpells.push(0);
         }
 
+        // read spells
         for each (var spellData :XML in xmlData.StartingSpells.Spell) {
-            spellType = XmlReader.getAttributeAsEnum(spellData, "type", Constants.SPELL_NAMES);
+            spellType = XmlReader.getAttributeAsEnum(spellData, "type", Constants.CREATURE_SPELL_NAMES);
             var count :int = XmlReader.getAttributeAsUint(spellData, "count");
-            computerPlayer.startingSpells[spellType] = count;
+            computerPlayer.startingCreatureSpells[spellType] = count;
         }
 
         return computerPlayer;

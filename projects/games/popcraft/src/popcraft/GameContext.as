@@ -26,6 +26,7 @@ public class GameContext
     public static var battleBoardView :BattleBoardView;
     public static var diurnalCycle :DiurnalCycle;
     public static var dashboard :DashboardView;
+    public static var puzzleBoard :PuzzleBoard;
 
     public static var musicControls :AudioControls;
     public static var sfxControls :AudioControls;

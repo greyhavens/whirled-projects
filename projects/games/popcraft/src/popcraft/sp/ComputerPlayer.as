@@ -16,7 +16,7 @@ public class ComputerPlayer extends SimObject
         _playerInfo = GameContext.playerInfos[playerId] as ComputerPlayerInfo;
 
         // add starting spells to our playerInfo
-        _playerInfo.setSpellCounts(data.startingSpells);
+        _playerInfo.setSpellCounts(data.startingCreatureSpells);
 
         // Computer players always target the local player
         _playerInfo.targetedEnemyId = GameContext.localPlayerId;

@@ -10,15 +10,18 @@ public class ComputerPlayerInfo extends PlayerInfo
     {
         super(playerId, teamId, playerName);
 
-        _spells = new Array(Constants.SPELL_NAMES.length);
-        for (var i :uint = 0; i < _spells.length; ++i) {
-            _spells[i] = uint(0);
+        _creatureSpells = new Array(Constants.CREATURE_SPELL_TYPE__LIMIT);
+        for (var i :uint = 0; i < _creatureSpells.length; ++i) {
+            _creatureSpells[i] = uint(0);
         }
     }
 
     override public function addSpell (spellType :uint) :void
     {
-        _spells[spellType] = this.getSpellCount(spellType) + 1;
+        // computer players only care about creature spells. they never use the puzzle reset spell.
+        if (spellType < Constants.CREATURE_SPELL_TYPE__LIMIT) {
+            _creatureSpells[spellType] = this.getSpellCount(spellType) + 1;
+        }
     }
 
     override public function spellCast (spellType :uint) :void
@@ -26,7 +29,7 @@ public class ComputerPlayerInfo extends PlayerInfo
         // remove spell from holdings
         var spellCount :uint = this.getSpellCount(spellType);
         Assert.isTrue(spellCount > 0);
-        _spells[spellType] = spellCount - 1;
+        _creatureSpells[spellType] = spellCount - 1;
     }
 
     override public function canCastSpell (spellType :uint) :Boolean
@@ -36,16 +39,16 @@ public class ComputerPlayerInfo extends PlayerInfo
 
     public function getSpellCount (spellType :uint) :uint
     {
-        return _spells[spellType];
+        return (spellType < _creatureSpells.length ? _creatureSpells[spellType] : 0);
     }
 
     public function setSpellCounts (spellCounts :Array) :void
     {
-        Assert.isTrue(spellCounts.length == Constants.SPELL_NAMES.length);
-        _spells = spellCounts.slice();
+        Assert.isTrue(spellCounts.length == Constants.CREATURE_SPELL_TYPE__LIMIT);
+        _creatureSpells = spellCounts.slice();
     }
 
-    protected var _spells :Array;
+    protected var _creatureSpells :Array;
 
 }
 

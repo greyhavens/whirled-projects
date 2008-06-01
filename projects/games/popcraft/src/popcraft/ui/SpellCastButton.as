@@ -24,7 +24,7 @@ public class SpellCastButton extends Sprite
     {
         _spellType = spellType;
 
-        _spellData = GameContext.gameData.creatureSpells[spellType];
+        _spellData = GameContext.gameData.spells[spellType];
         var bitmapData :BitmapData = (ResourceManager.instance.getResource(_spellData.iconName) as ImageResource).bitmapData;
 
         _button = new SimpleButton();
@@ -111,7 +111,7 @@ public class SpellCastButton extends Sprite
     }
 
     protected var _spellType :uint;
-    protected var _spellData :CreatureSpellData;
+    protected var _spellData :SpellData;
     protected var _button :SimpleButton;
     protected var _disabledState :Sprite;
     protected var _spellCountText :TextField;

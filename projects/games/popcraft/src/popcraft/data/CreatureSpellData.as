@@ -3,25 +3,11 @@ package popcraft.data {
 import popcraft.*;
 import popcraft.util.*;
 
-public class CreatureSpellData
+public class CreatureSpellData extends SpellData
 {
-    public var type :uint;
-    public var displayName :String;
-    public var description :String;
     public var expireTime :Number = 0;
-
     public var speedScaleOffset :Number = 0;
     public var damageScaleOffset :Number = 0;
-
-    public function get name () :String
-    {
-        return Constants.SPELL_NAMES[type];
-    }
-
-    public function get iconName () :String
-    {
-        return this.name + "_icon";
-    }
 
     public function combine (spell :CreatureSpellData) :void
     {
@@ -29,17 +15,19 @@ public class CreatureSpellData
         damageScaleOffset += spell.damageScaleOffset;
     }
 
-    public function clone () :CreatureSpellData
+    override public function clone (theClone :SpellData = null) :SpellData
     {
-        var theClone :CreatureSpellData = new CreatureSpellData();
+        if (null == theClone) {
+            theClone = new CreatureSpellData();
+        }
 
-        theClone.type = type;
-        theClone.displayName = displayName;
-        theClone.description = description;
-        theClone.expireTime = expireTime;
+        super.clone(theClone);
 
-        theClone.speedScaleOffset = speedScaleOffset;
-        theClone.damageScaleOffset = damageScaleOffset;
+        var creatureClone :CreatureSpellData = theClone as CreatureSpellData;
+
+        creatureClone.expireTime = expireTime;
+        creatureClone.speedScaleOffset = speedScaleOffset;
+        creatureClone.damageScaleOffset = damageScaleOffset;
 
         return theClone;
     }
@@ -50,11 +38,9 @@ public class CreatureSpellData
 
         var spell :CreatureSpellData = (useDefaults ? inheritFrom : new CreatureSpellData());
 
-        spell.type = XmlReader.getAttributeAsEnum(xml, "type", Constants.SPELL_NAMES);
-        spell.displayName = XmlReader.getAttributeAsString(xml, "displayName", (useDefaults ? inheritFrom.displayName : undefined));
-        spell.description = XmlReader.getAttributeAsString(xml, "description", (useDefaults ? inheritFrom.description : undefined));
-        spell.expireTime = XmlReader.getAttributeAsNumber(xml, "expireTime", (useDefaults ? inheritFrom.expireTime : undefined));
+        SpellData.fromXml(xml, spell);
 
+        spell.expireTime = XmlReader.getAttributeAsNumber(xml, "expireTime", (useDefaults ? inheritFrom.expireTime : undefined));
         spell.speedScaleOffset = XmlReader.getAttributeAsNumber(xml, "speedScaleOffset", (useDefaults ? inheritFrom.speedScaleOffset : 0));
         spell.damageScaleOffset = XmlReader.getAttributeAsNumber(xml, "damageScaleOffset", (useDefaults ? inheritFrom.damageScaleOffset : 0));
 

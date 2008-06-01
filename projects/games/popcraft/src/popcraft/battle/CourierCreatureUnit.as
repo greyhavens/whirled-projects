@@ -6,7 +6,7 @@ import com.whirled.contrib.simplegame.*;
 
 import popcraft.*;
 import popcraft.battle.ai.*;
-import popcraft.data.CreatureSpellData;
+import popcraft.data.SpellData;
 
 /**
  * Couriers retrieve spell pickups from the battlefield and bring them back to their
@@ -34,7 +34,7 @@ public class CourierCreatureUnit extends CreatureUnit
     public function pickupSpell (spellObject :SpellDropObject) :void
     {
         Assert.isNull(_carriedSpell);
-        _carriedSpell = spellObject.creatureSpellData;
+        _carriedSpell = spellObject.spellData;
         spellObject.destroySelf();
     }
 
@@ -49,7 +49,7 @@ public class CourierCreatureUnit extends CreatureUnit
         this.die();
     }
 
-    public function get carriedSpell () :CreatureSpellData
+    public function get carriedSpell () :SpellData
     {
         return _carriedSpell;
     }
@@ -120,7 +120,7 @@ public class CourierCreatureUnit extends CreatureUnit
     protected var _groupName :String;
     protected var _speedup :Number = 1;
 
-    protected var _carriedSpell :CreatureSpellData;
+    protected var _carriedSpell :SpellData;
 }
 
 }

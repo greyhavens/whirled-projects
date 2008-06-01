@@ -111,7 +111,7 @@ public class SpellDropTimer extends SimObject
                 var availableSpells :Array = GameContext.spLevel.availableSpells;
                 spellType = availableSpells[Rand.nextIntRange(0, availableSpells.length, Rand.STREAM_GAME)];
             } else {
-                spellType = Rand.nextIntRange(0, Constants.SPELL_NAMES.length, Rand.STREAM_GAME);
+                spellType = Rand.nextIntRange(0, Constants.SPELL_TYPE__LIMIT, Rand.STREAM_GAME);
             }
 
             SpellDropFactory.createSpellDrop(spellType, spellLoc, true);

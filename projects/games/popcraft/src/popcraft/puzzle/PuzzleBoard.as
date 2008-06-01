@@ -10,6 +10,7 @@ import com.whirled.contrib.simplegame.util.*;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -47,27 +48,13 @@ public class PuzzleBoard extends SceneObject
         _sprite.graphics.drawRect(0, 0, (_cols * tileSize) - (_cols - 1), (_rows * tileSize) - (_rows - 1));
         _sprite.graphics.endFill();
         _sprite.mouseEnabled = true;
+
+        _sprite.addEventListener(MouseEvent.CLICK, handleClicked);
     }
 
     override protected function addedToDB () :void
     {
-        // create the board, and populate it with a random distribution of resources
-        _board = new Array(_cols * _rows);
-
-        for (var i :int = 0; i < _cols * _rows; ++i) {
-            var piece :Piece = createNewPieceOnBoard(i);
-
-            // show a clever scale effect
-            piece.scaleX = 0;
-            piece.scaleY = 0;
-
-            piece.addTask(new SerialTask(
-                new TimedTask(Rand.nextNumberRange(0.25, 1, Rand.STREAM_COSMETIC)),
-                ScaleTask.CreateSmooth(1, 1, 0.25)));
-        }
-
-        // create cursors
-        this.db.addObject(new ComboHiliteCursor(this));
+        this.puzzleReset();
     }
 
     // from SceneObject
@@ -76,9 +63,19 @@ public class PuzzleBoard extends SceneObject
         return _sprite;
     }
 
-    public function get sprite () :Sprite
+    protected function handleClicked (e :MouseEvent) :void
     {
-        return _sprite;
+        if (this.resolvingClears) {
+            return;
+        }
+
+        // the mouseIndex is the piece directly under the mouse
+        var mouseIndexX :int = (_sprite.mouseX / (Constants.PUZZLE_TILE_SIZE - 1));
+        var mouseIndexY :int = (_sprite.mouseY / (Constants.PUZZLE_TILE_SIZE - 1));
+
+        if (mouseIndexX >= 0 && mouseIndexX < Constants.PUZZLE_COLS && mouseIndexY >= 0 && mouseIndexY < Constants.PUZZLE_ROWS) {
+            this.clearPieceGroup(mouseIndexX, mouseIndexY);
+        }
     }
 
     protected function createNewPieceOnBoard (boardIndex :int) :Piece
@@ -98,6 +95,37 @@ public class PuzzleBoard extends SceneObject
         this.db.addObject(piece, _sprite);
 
         return piece;
+    }
+
+    public function puzzleReset () :void
+    {
+        // cancel any existing animations
+        this.removeAllTasks();
+        _resolvingClears = false;
+
+        // clear the existing board
+        if (null != _board) {
+            for each (var piece :Piece in _board) {
+                if (null != piece) {
+                    piece.destroySelf();
+                }
+            }
+        }
+
+        // create a new board, and populate it with a random distribution of resources
+        _board = new Array(_cols * _rows);
+
+        for (var i :int = 0; i < _cols * _rows; ++i) {
+            piece = createNewPieceOnBoard(i);
+
+            // show a clever scale effect
+            piece.scaleX = 0;
+            piece.scaleY = 0;
+
+            piece.addTask(new SerialTask(
+                new TimedTask(Rand.nextNumberRange(0.25, 1, Rand.STREAM_COSMETIC)),
+                ScaleTask.CreateSmooth(1, 1, 0.25)));
+        }
     }
 
     public function clearPieceGroup (x :int, y :int) :void

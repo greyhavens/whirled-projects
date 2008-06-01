@@ -61,6 +61,7 @@ public class LevelData
             level.availableUnits.push(XmlReader.getAttributeAsEnum(unitData, "type", Constants.CREATURE_UNIT_NAMES));
         }
 
+        // parse available spells
         for each (var spellData :XML in xml.AvailableSpells.Spell) {
             level.availableSpells.push(XmlReader.getAttributeAsEnum(spellData, "type", Constants.SPELL_NAMES));
         }

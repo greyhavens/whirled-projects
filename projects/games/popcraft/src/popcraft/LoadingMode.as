@@ -20,9 +20,7 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("image", "friendlyBaseBadge", { embeddedClass: Resources.IMAGE_FRIENDLYBASEBADGE });
         rm.pendResourceLoad("image", "bloodlust_icon", { embeddedClass: Resources.IMAGE_BLOODLUSTICON });
         rm.pendResourceLoad("image", "rigormortis_icon", { embeddedClass: Resources.IMAGE_RIGORMORTISICON });
-        rm.pendResourceLoad("image", "mult_15", { embeddedClass: Resources.IMAGE_MULT15 });
-        rm.pendResourceLoad("image", "mult_20", { embeddedClass: Resources.IMAGE_MULT20 });
-        rm.pendResourceLoad("image", "mult_25", { embeddedClass: Resources.IMAGE_MULT25 });
+        rm.pendResourceLoad("image", "puzzlereset_icon", { embeddedClass: Resources.IMAGE_PUZZLERESETICON });
 
         rm.pendResourceLoad("swf", "grunt", { embeddedClass: Resources.SWF_GRUNT });
         rm.pendResourceLoad("swf", "sapper", { embeddedClass: Resources.SWF_SAPPER });

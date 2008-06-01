@@ -25,6 +25,9 @@ public class Resources
     [Embed(source="../../rsrc/rigormortis_icon.png", mimeType="application/octet-stream")]
     public static const IMAGE_RIGORMORTISICON :Class;
 
+    [Embed(source="../../rsrc/puzzlereset_icon.png", mimeType="application/octet-stream")]
+    public static const IMAGE_PUZZLERESETICON :Class;
+
     [Embed(source="../../rsrc/streetwalker.swf", mimeType="application/octet-stream")]
     public static const SWF_GRUNT :Class;
 
@@ -45,15 +48,6 @@ public class Resources
 
     [Embed(source="../../rsrc/dashboard.swf", mimeType="application/octet-stream")]
     public static const SWF_DASHBOARD :Class;
-
-    [Embed(source="../../rsrc/mult15.png", mimeType="application/octet-stream")]
-    public static const IMAGE_MULT15 :Class;
-
-    [Embed(source="../../rsrc/mult20.png", mimeType="application/octet-stream")]
-    public static const IMAGE_MULT20 :Class;
-
-    [Embed(source="../../rsrc/mult25.png", mimeType="application/octet-stream")]
-    public static const IMAGE_MULT25 :Class;
 
     // audio
     [Embed(source="../../rsrc/audio/popcraft_music_night.mp3")]
