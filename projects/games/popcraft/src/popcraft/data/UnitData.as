@@ -8,10 +8,11 @@ import popcraft.util.*;
 /** Encapsulates immutable data about a particular type of Unit. */
 public class UnitData
 {
-    public var name :String = "";
-    public var displayName :String = "";
-    public var description :String = "";
-    public var resourceCosts :Array = [ 0, 0, 0, 0 ];
+    public var name :String;
+    public var displayName :String;
+    public var description :String;
+    public var introText :String;
+    public var resourceCosts :Array = [];
 
     public var baseMoveSpeed :Number = 0;
     public var hasRepulseForce :Boolean;
@@ -36,6 +37,7 @@ public class UnitData
         theClone.name = name;
         theClone.displayName = displayName;
         theClone.description = description;
+        theClone.introText = introText;
         theClone.resourceCosts = resourceCosts.slice();
 
         theClone.baseMoveSpeed = baseMoveSpeed;
@@ -61,6 +63,7 @@ public class UnitData
         unitData.name = XmlReader.getAttributeAsString(xml, "type", (useDefaults ? inheritFrom.name : undefined));
         unitData.displayName = XmlReader.getAttributeAsString(xml, "displayName", (useDefaults ? inheritFrom.displayName : undefined));
         unitData.description = XmlReader.getAttributeAsString(xml, "description", (useDefaults ? inheritFrom.description : undefined));
+        unitData.introText = XmlReader.getAttributeAsString(xml, "introText", (useDefaults ? inheritFrom.introText : undefined));
 
         var resourceCostsNode :XML = xml.ResourceCosts[0];
         if (null != resourceCostsNode) {

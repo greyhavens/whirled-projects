@@ -11,6 +11,8 @@ public class LevelData
     public var levelCompletionBonus :int;
     public var backgroundName :String;
     public var introText :String;
+    public var newCreatureType :int;
+
     public var playerName :String;
     public var playerBaseHealth :int;
     public var playerBaseStartHealth :int;
@@ -47,6 +49,8 @@ public class LevelData
         level.levelCompletionBonus = XmlReader.getAttributeAsInt(xml, "levelCompletionBonus", 0);
         level.backgroundName = XmlReader.getAttributeAsString(xml, "backgroundName");
         level.introText = XmlReader.getAttributeAsString(xml, "introText");
+        level.newCreatureType = XmlReader.getAttributeAsEnum(xml, "newCreatureType", Constants.CREATURE_UNIT_NAMES, -1);
+
         level.playerName = XmlReader.getAttributeAsString(xml, "playerName");
         level.playerBaseHealth = XmlReader.getAttributeAsInt(xml, "playerBaseHealth");
         level.playerBaseStartHealth = XmlReader.getAttributeAsInt(xml, "playerBaseStartHealth", level.playerBaseHealth);

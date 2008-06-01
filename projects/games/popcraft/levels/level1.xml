@@ -3,6 +3,7 @@
         parDays="1"
         levelCompletionBonus="500"
         backgroundName="Level2"
+        newCreatureType="grunt"
         introText="Fashion FLESH and ENERGY into Street-Walkers to destroy your opponent's workshop."
         disableDiurnalCycle="true"
         playerName="Jack"

@@ -28,30 +28,30 @@ public class XmlReader
         return (null != xml.attribute(name)[0]);
     }
 
-    public static function getAttributeAsEnum (xml :XML, name :String, stringMapping :Array, defaultValue :* = null) :uint
+    public static function getAttributeAsEnum (xml :XML, name :String, stringMapping :Array, defaultValue :int = undefined) :int
     {
         return getAttributeAs(xml, name, defaultValue,
-            function (attrString :String) :uint {
+            function (attrString :String) :int {
                 return parseEnum(attrString, stringMapping);
             });
     }
 
-    public static function getAttributeAsUint (xml :XML, name :String, defaultValue :* = undefined) :uint
+    public static function getAttributeAsUint (xml :XML, name :String, defaultValue :uint = undefined) :uint
     {
         return getAttributeAs(xml, name, defaultValue, StringUtil.parseUnsignedInteger);
     }
 
-    public static function getAttributeAsInt (xml :XML, name :String, defaultValue :* = undefined) :int
+    public static function getAttributeAsInt (xml :XML, name :String, defaultValue :int = undefined) :int
     {
         return getAttributeAs(xml, name, defaultValue, StringUtil.parseInteger);
     }
 
-    public static function getAttributeAsNumber (xml :XML, name :String, defaultValue :* = undefined) :Number
+    public static function getAttributeAsNumber (xml :XML, name :String, defaultValue :Number = undefined) :Number
     {
         return getAttributeAs(xml, name, defaultValue, StringUtil.parseNumber);
     }
 
-    public static function getAttributeAsBoolean (xml :XML, name :String, defaultValue :* = undefined) :Boolean
+    public static function getAttributeAsBoolean (xml :XML, name :String, defaultValue :Boolean = undefined) :Boolean
     {
         return getAttributeAs(xml, name, defaultValue, StringUtil.parseBoolean);
     }
@@ -61,7 +61,7 @@ public class XmlReader
         return getAttributeAs(xml, name, defaultValue);
     }
 
-    public static function getAttributeAs (xml :XML, name :String, defaultValue :*, parseFunction :Function = undefined) :*
+    public static function getAttributeAs (xml :XML, name :String, defaultValue :*, parseFunction :Function = null) :*
     {
         var value :*;
 
@@ -85,13 +85,13 @@ public class XmlReader
         return value;
     }
 
-    protected static function parseEnum (stringVal :String, stringMapping :Array) :uint
+    protected static function parseEnum (stringVal :String, stringMapping :Array) :int
     {
-        var value :uint;
+        var value :int;
         var foundValue :Boolean;
 
         // try to map the attribute value to one of the Strings in stringMapping
-        for (var ii :uint = 0; ii < stringMapping.length; ++ii) {
+        for (var ii :int = 0; ii < stringMapping.length; ++ii) {
             if (String(stringMapping[ii]) == stringVal) {
                 value = ii;
                 foundValue = true;

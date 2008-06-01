@@ -4,6 +4,7 @@ import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.AppMode;
 
 import flash.display.Graphics;
+import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
@@ -11,11 +12,15 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
+import popcraft.data.UnitData;
+import popcraft.battle.view.UnitAnimationFactory;
 
-public class LevelIntroMode extends AppMode
+public class CreatureIntroMode extends AppMode
 {
     override protected function setup () :void
     {
+        var creatureData :UnitData = GameContext.gameData.units[GameContext.spLevel.newCreatureType];
+
         // draw dim background
         _dimness = new Shape();
         var g :Graphics = _dimness.graphics;
@@ -34,7 +39,7 @@ public class LevelIntroMode extends AppMode
 
         this.modeSprite.addChild(bgSprite);
 
-        // level name
+        // creature name
         var tfName :TextField = new TextField();
         tfName.selectable = false;
         tfName.autoSize = TextFieldAutoSize.CENTER;
@@ -43,26 +48,43 @@ public class LevelIntroMode extends AppMode
         tfName.x = (bgSprite.width * 0.5) - (tfName.width * 0.5);
         tfName.y = 20;
 
-        tfName.text = AppContext.levelMgr.curLevelName;
+        tfName.text = "The " + creatureData.displayName;
 
         bgSprite.addChild(tfName);
 
-        // level intro text
+        // creature animation
+        var creatureAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
+            creatureData, GameContext.localPlayerInfo.playerColor, "walk_SW");
+        if (null == creatureAnim) {
+            creatureAnim = UnitAnimationFactory.instantiateUnitAnimation(
+                creatureData, GameContext.localPlayerInfo.playerColor, "stand_SW");
+        }
+
+        if (null != creatureAnim) {
+            creatureAnim.scaleX = 1.5;
+            creatureAnim.scaleY = 1.5;
+            creatureAnim.x = 200;
+            creatureAnim.y = 150;
+
+            bgSprite.addChild(creatureAnim);
+        }
+
+        // creature intro text
         var tfDesc :TextField = new TextField();
         tfDesc.selectable = false;
         tfDesc.multiline = true;
         tfDesc.wordWrap = true;
         tfDesc.autoSize = TextFieldAutoSize.LEFT;
-        tfDesc.width = 250 - 24;
+        tfDesc.width = 100;
         tfDesc.x = 12;
         tfDesc.y = tfName.y + tfName.height + 3;
 
-        tfDesc.text = GameContext.spLevel.introText;
+        tfDesc.text = creatureData.introText;
 
         bgSprite.addChild(tfDesc);
 
         // Play button
-        var button :SimpleTextButton = new SimpleTextButton("Play");
+        var button :SimpleTextButton = new SimpleTextButton("OK");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.popMode();
@@ -75,7 +97,7 @@ public class LevelIntroMode extends AppMode
 
         // draw the background
         g = bgSprite.graphics;
-        g.beginFill(0xF1B932);
+        g.beginFill(0xCCCCCC);
         g.drawRect(0, 0, 250, bgSprite.height + 20);
         g.endFill();
 
