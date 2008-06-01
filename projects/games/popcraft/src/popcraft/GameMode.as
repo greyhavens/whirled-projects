@@ -485,6 +485,18 @@ public class GameMode extends AppMode
             }
         }
 
+        // update the game music
+        var dayPhase :int = GameContext.diurnalCycle.phaseOfDay;
+        if (dayPhase != _lastDayPhase) {
+            if (null != _musicChannel) {
+                _musicChannel.audioControls.fadeOut(0.5).stopAfter(0.5);
+            }
+
+            _musicChannel = GameContext.playGameMusic(dayPhase == Constants.PHASE_DAY ? "mus_day" : "mus_night");
+
+            _lastDayPhase = dayPhase;
+        }
+
         // update all non-net objects
         super.update(dt);
 

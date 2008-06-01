@@ -60,7 +60,6 @@ public class DiurnalMeterView extends SceneObject
     protected function dayPhaseChanged (newPhase :uint, playSound :Boolean) :void
     {
         var soundName :String;
-        var musicName :String;
 
         if (newPhase == Constants.PHASE_DAY) {
             _sun.visible = true;
@@ -71,15 +70,10 @@ public class DiurnalMeterView extends SceneObject
             _moon.visible = true;
             _playedDawnSound = false;
             soundName = "sfx_night";
-            musicName = "mus_night";
         }
 
         if (playSound) {
             GameContext.playGameSound(soundName);
-        }
-
-        if (null != musicName) {
-            GameContext.playGameMusic(musicName);
         }
 
         _lastPhase = newPhase;

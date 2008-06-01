@@ -61,7 +61,7 @@ public class GameContext
 
     public static function playGameMusic (musicName :String) :AudioChannel
     {
-        return AudioManager.instance.playSoundNamed(musicName, musicControls);
+        return AudioManager.instance.playSoundNamed(musicName, musicControls, AudioManager.LOOP_FOREVER);
     }
 }
 
