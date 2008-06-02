@@ -46,7 +46,11 @@ public class SpellCastButtonManager extends SimObject
     {
         var isNight :Boolean = GameContext.diurnalCycle.isNight;
         for each (var button :SpellCastButton in _buttons) {
-            button.enabled = isNight && GameContext.localPlayerInfo.canCastSpell(button.spellType);
+            // creature spells are disabled during the day
+            button.enabled =
+                (isNight || button.spellType >= Constants.CREATURE_SPELL_TYPE__LIMIT) &&
+                GameContext.localPlayerInfo.canCastSpell(button.spellType);
+
             button.updateSpellCount(GameContext.localPlayerInfo.getSpellCount(button.spellType));
         }
     }
