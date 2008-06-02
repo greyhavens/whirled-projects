@@ -27,13 +27,7 @@ public class DashboardView extends SceneObject
         _movie.cacheAsBitmap = true;
         puzzleFrame.cacheAsBitmap = true;
 
-        // info text
-        _infoTextParent = _movie["info"];
-        _infoText = _infoTextParent["info_text"];
-        _infoTextParent.y = 6;
-        _infoTextParent.visible = false;
-
-        _infoTextParent.cacheAsBitmap = true;
+        _infoPanel = new InfoPanel(_movie);
 
         // setup resources
         for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
@@ -94,15 +88,19 @@ public class DashboardView extends SceneObject
         this.updateResourceMeters();
     }
 
+    override protected function addedToDB () :void
+    {
+        this.db.addObject(_infoPanel);
+    }
+
     public function showInfoText (text :String) :void
     {
-        _infoText.text = text;
-        _infoTextParent.visible = true;
+        _infoPanel.show(text);
     }
 
     public function hideInfoText () :void
     {
-        _infoTextParent.visible = false;
+        _infoPanel.hide();
     }
 
     public function get puzzleFrame () :MovieClip
@@ -158,78 +156,39 @@ public class DashboardView extends SceneObject
             puzzleFrame.addChildAt(resourceBarParent, 1);
         }
 
-        var color :uint = ResourceData(GameContext.gameData.resources[resType]).color;
         var g :Graphics = resourceBarParent.graphics;
-        var firstMeterLoc :Point = RESOURCE_METER_LOCS[resType];
         g.clear();
+
         if (resAmount > 0) {
+            var color :uint = ResourceData(GameContext.gameData.resources[resType]).color;
+            var meterLoc :Point = RESOURCE_METER_LOCS[resType];
+
             g.lineStyle(1, 0);
             g.beginFill(color);
             g.drawRect(
-                firstMeterLoc.x - 1,
-                firstMeterLoc.y - RESOURCE_METER_MAX_HEIGHT,
-                1 + (63 * (resAmount / 1000)),
-                RESOURCE_METER_MAX_HEIGHT);
+                meterLoc.x,
+                meterLoc.y,
+                1 + (RESOURCE_METER_WIDTH * (resAmount / GameContext.gameData.maxResourceAmount)),
+                RESOURCE_METER_HEIGHT);
             g.endFill();
         }
-
-        // remove the old set of resource bars
-        /*if (null != resourceBarParent) {
-            puzzleFrame.removeChild(resourceBarParent);
-            _resourceBars[resType] = null;
-        }
-
-        if (resAmount <= 0) {
-            return;
-        }
-
-        resourceBarParent = new Sprite();
-        puzzleFrame.addChildAt(resourceBarParent, 1);
-        _resourceBars[resType] = resourceBarParent;
-
-        // create new meters
-        var color :uint = ResourceData(GameContext.gameData.resources[resType]).color;
-        var firstMeterLoc :Point = RESOURCE_METER_LOCS[resType];
-        var meterXOffset :Number = firstMeterLoc.x;
-        while (resAmount > 0) {
-            var meterVal :int = Math.min(resAmount, RESOURCE_METER_MAX_VAL);
-            var meterHeight :Number = RESOURCE_METER_MAX_HEIGHT * (meterVal / RESOURCE_METER_MAX_VAL);
-            var rectMeter :Shape = new Shape();
-
-            var g :Graphics = rectMeter.graphics;
-            g.beginFill(color);
-            g.lineStyle(1, 0);
-            g.drawRect(0, 0, RESOURCE_METER_WIDTH, meterHeight);
-            g.endFill();
-
-            rectMeter.x = meterXOffset;
-            rectMeter.y = firstMeterLoc.y - meterHeight;
-            resourceBarParent.addChild(rectMeter);
-
-            meterXOffset += RESOURCE_METER_WIDTH;
-
-            resAmount -= meterVal;
-        }*/
-
     }
 
     protected var _movie :MovieClip;
     protected var _resourceText :Array = [];
     protected var _resourceBars :Array = [];
     protected var _oldResourceAmounts :Array = [];
-    protected var _infoTextParent :MovieClip;
-    protected var _infoText :TextField;
     protected var _showingDeathPanel :Boolean;
+    protected var _infoPanel :InfoPanel;
 
     protected static const RESOURCE_TEXT_NAMES :Array =
         [ "resource_2", "resource_1", "resource_4", "resource_3" ];
 
     protected static const RESOURCE_METER_LOCS :Array =
-        [ new Point(-64, 64), new Point(-133, 64), new Point(74, 64), new Point(5, 64) ];
+        [ new Point(-65, 44), new Point(-134, 44), new Point(73, 44), new Point(4, 44) ];
 
-    protected static const RESOURCE_METER_WIDTH :Number = 3;
-    protected static const RESOURCE_METER_MAX_VAL :int = 50;
-    protected static const RESOURCE_METER_MAX_HEIGHT :Number = 20;
+    protected static const RESOURCE_METER_WIDTH :Number = 63;
+    protected static const RESOURCE_METER_HEIGHT :Number = 20;
 
     protected static const PLAYER_STATUS_VIEW_LOCS :Array = [
         [ new Point(40, 47), new Point(105, 47) ],                                          // 2 players
@@ -238,4 +197,85 @@ public class DashboardView extends SceneObject
     ];
 }
 
+}
+import flash.display.MovieClip;
+import flash.display.DisplayObject;
+import flash.text.TextField;
+
+import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.tasks.*;
+
+class InfoPanel extends SceneObject
+{
+    public function InfoPanel (parent :MovieClip)
+    {
+        _infoTextParent = parent["info"];
+        _infoText = _infoTextParent["info_text"];
+        _infoTextParent.y = 6;
+        _infoTextParent.visible = false;
+
+        _infoTextParent.cacheAsBitmap = true;
+    }
+
+    override public function get displayObject () :DisplayObject
+    {
+        return _infoTextParent;
+    }
+
+    public function show (text :String) :void
+    {
+        _infoText.text = text;
+
+        if (!this.hasTasksNamed(SHOW_TASK_NAME)) {
+            // we're not already being shown
+
+            if (this.hasTasksNamed(HIDE_TASK_NAME)) {
+                // the panel is in the process of being hidden
+                this.removeNamedTasks(HIDE_TASK_NAME);
+                _infoTextParent.y = VISIBLE_Y;
+                this.visible = true;
+
+            } else if (!this.visible) {
+                // the panel is already hidden
+                _infoTextParent.y = HIDDEN_Y;
+
+                var showTask :SerialTask = new SerialTask();
+                showTask.addTask(new TimedTask(SHOW_DELAY));
+                showTask.addTask(new VisibleTask(true));
+                showTask.addTask(LocationTask.CreateSmooth(_infoTextParent.x, VISIBLE_Y, SLIDE_TIME));
+                this.addNamedTask(SHOW_TASK_NAME, showTask);
+            }
+        }
+    }
+
+    public function hide () :void
+    {
+        if (!this.hasTasksNamed(HIDE_TASK_NAME)) {
+            // we're not already being hidden
+
+            if (this.hasTasksNamed(SHOW_TASK_NAME)) {
+                // the panel is in the process of being shown
+                this.removeNamedTasks(SHOW_TASK_NAME);
+                this.visible = false;
+
+            } else if (this.visible) {
+                // the panel is already visible
+                var hideTask :SerialTask = new SerialTask();
+                hideTask.addTask(LocationTask.CreateSmooth(_infoTextParent.x, HIDDEN_Y, SLIDE_TIME));
+                hideTask.addTask(new VisibleTask(false));
+                this.addNamedTask(HIDE_TASK_NAME, hideTask);
+            }
+        }
+    }
+
+    protected var _infoTextParent :MovieClip;
+    protected var _infoText :TextField;
+
+    protected static const SHOW_TASK_NAME :String = "Show";
+    protected static const HIDE_TASK_NAME :String = "Hide";
+
+    protected static const SHOW_DELAY :Number = 0.7;
+    protected static const SLIDE_TIME :Number = 0.2;
+    protected static const VISIBLE_Y :Number = 6;
+    protected static const HIDDEN_Y :Number = 121;
 }
