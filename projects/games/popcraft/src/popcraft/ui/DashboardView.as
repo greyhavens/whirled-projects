@@ -54,7 +54,7 @@ public class DashboardView extends SceneObject
                 continue;
             }
 
-            GameContext.gameMode.addObject(new UnitPurchaseButton(unitType, buttonNumber++, unitParent));
+            GameContext.gameMode.addObject(new CreaturePurchaseButton(unitType, buttonNumber++, unitParent));
         }
 
         // hide the components of all the buttons that aren't being used

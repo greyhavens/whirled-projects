@@ -21,9 +21,9 @@ import popcraft.battle.*;
 import popcraft.battle.view.*;
 import popcraft.data.*;
 
-public class UnitPurchaseButton extends SimObject
+public class CreaturePurchaseButton extends SimObject
 {
-    public function UnitPurchaseButton (unitType :uint, slotNum :int, parent :MovieClip)
+    public function CreaturePurchaseButton (unitType :uint, slotNum :int, parent :MovieClip)
     {
         _unitType = unitType;
 
