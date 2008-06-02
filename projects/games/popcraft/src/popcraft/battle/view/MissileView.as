@@ -3,34 +3,38 @@ package popcraft.battle.view {
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
-import flash.display.Shape;
+import flash.display.MovieClip;
 
 import popcraft.*;
 import popcraft.battle.*;
 
 public class MissileView extends SceneObject
 {
-    public function MissileView (startLoc :Vector2, targetUnitRef :SimObjectRef, travelTime :Number)
+    public function MissileView (startLoc :Vector2, targetUnit :Unit, travelTime :Number)
     {
         _startLoc = startLoc.clone();
-        _targetUnitRef = targetUnitRef;
+        _targetUnitRef = targetUnit.ref;
         _travelTime = travelTime;
+
+        // is the missile moving further in the vertical or in the horizontal?
+        var travelVec :Vector2 = targetUnit.unitLoc.subtractLocal(_startLoc);
+        var missileName :String =
+            (Math.abs(travelVec.x) >= Math.abs(travelVec.y) ? "handy_attack_X" : "handy_attack_Y");
+
+        _movie = SwfResource.instantiateMovieClip("missile", missileName);
     }
 
     override public function get displayObject () :DisplayObject
     {
-        return _shape;
+        return _movie;
     }
 
     override protected function update (dt :Number) :void
     {
-        if (_done) {
-            return;
-        }
-
         var targetUnit :Unit = (_targetUnitRef.object as Unit);
 
         if (null == targetUnit) {
@@ -39,25 +43,24 @@ public class MissileView extends SceneObject
             return;
         }
 
-        _elapsedTime += dt;
-        _elapsedTime = Math.min(_elapsedTime, _travelTime);
+        _elapsedTime = Math.min(_elapsedTime + dt, _travelTime);
 
-        // draw a line from the start location to the missile's current location
-        var drawTo :Vector2 = targetUnit.unitLoc.subtract(_startLoc).scaleLocal(_elapsedTime / _travelTime).addLocal(_startLoc);
+        var elapsedPercentage :Number = _elapsedTime / _travelTime;
 
-        _shape.graphics.clear();
-        _shape.graphics.lineStyle(1, COLOR);
-        _shape.graphics.moveTo(_startLoc.x, _startLoc.y);
-        _shape.graphics.lineTo(drawTo.x, drawTo.y);
+        // calculate the missile's current location
+        var loc :Vector2 = targetUnit.unitLoc.subtractLocal(_startLoc).scaleLocal(elapsedPercentage).addLocal(_startLoc);
+
+        // add an arc to the missile
+        // (scale elapsedPercentage to be between -ARC_HEIGHT_SQRT and ARC_HEIGHT_SQRT)
+        // (find ARC_HEIGHT - arc^2)
+        var arc :Number = ((elapsedPercentage * 2) - 1) * ARC_HEIGHT_SQRT;
+        arc = ARC_HEIGHT - (arc * arc);
+
+        this.x = loc.x;
+        this.y = loc.y - arc;
 
         if (_elapsedTime == _travelTime) {
-
-            // fade out and die
-            this.addTask(new SerialTask(
-                new AlphaTask(0, FADE_TIME),
-                new SelfDestructTask()));
-
-            _done = true;
+            this.destroySelf();
         }
 
     }
@@ -65,19 +68,15 @@ public class MissileView extends SceneObject
     protected var _startLoc :Vector2;
     protected var _targetUnitRef :SimObjectRef;
 
-    protected var _direction :Vector2; // unit vector
-
     protected var _totalDistance :Number;
 
     protected var _elapsedTime :Number = 0;
     protected var _travelTime :Number;
 
-    protected var _done :Boolean;
+    protected var _movie :MovieClip;
 
-    protected var _shape :Shape = new Shape();
-
-    protected static const COLOR :uint = 0x000000;
-    protected static const FADE_TIME :Number = 0.25;
+    protected static const ARC_HEIGHT :Number = 50;
+    protected static const ARC_HEIGHT_SQRT :Number = Math.sqrt(ARC_HEIGHT);
 
 }
 

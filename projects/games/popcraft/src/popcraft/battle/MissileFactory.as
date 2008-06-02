@@ -14,13 +14,13 @@ public class MissileFactory
         var travelDistance :Number = targetUnit.unitLoc.subtract(srcUnitLoc).length;
         var travelTime :Number = (attack.weapon.missileSpeed > 0 ? travelDistance / attack.weapon.missileSpeed : 0);
 
+        // create the logical missile - an attack with a timer on it
         var missile :Missile = new Missile(targetUnit, attack, travelTime);
-
         GameContext.netObjects.addObject(missile);
 
-        var missileView :MissileView = new MissileView(srcUnitLoc, targetUnit.ref, travelTime);
-
-        GameContext.netObjects.addObject(missileView, GameContext.battleBoardView.unitViewParent);
+        // create the animated missile view
+        var missileView :MissileView = new MissileView(srcUnitLoc, targetUnit, travelTime);
+        GameContext.gameMode.addObject(missileView, GameContext.battleBoardView.unitViewParent);
 
         return missile;
     }

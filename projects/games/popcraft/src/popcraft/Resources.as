@@ -43,6 +43,9 @@ public class Resources
     [Embed(source="../../rsrc/ladyfingers.swf", mimeType="application/octet-stream")]
     public static const SWF_COURIER :Class;
 
+    [Embed(source="../../rsrc/handy_attack.swf", mimeType="application/octet-stream")]
+    public static const SWF_MISSILE :Class;
+
     [Embed(source="../../rsrc/pieces.swf", mimeType="application/octet-stream")]
     public static const SWF_PIECES :Class;
 

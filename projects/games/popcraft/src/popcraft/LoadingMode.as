@@ -27,6 +27,7 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("swf", "heavy", { embeddedClass: Resources.SWF_HEAVY });
         rm.pendResourceLoad("swf", "colossus", { embeddedClass: Resources.SWF_COLOSSUS });
         rm.pendResourceLoad("swf", "courier", { embeddedClass: Resources.SWF_COURIER });
+        rm.pendResourceLoad("swf", "missile", { embeddedClass: Resources.SWF_MISSILE });
 
         rm.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: Resources.SWF_PIECES });
         rm.pendResourceLoad("swf", "dashboard", { embeddedClass: Resources.SWF_DASHBOARD });
