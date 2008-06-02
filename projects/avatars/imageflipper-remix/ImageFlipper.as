@@ -67,7 +67,7 @@ public class ImageFlipper extends Sprite
         // make sure we're oriented correctly
         // (We discard nearly all the orientation information and only care if we're
         // facing left or right.)
-        if (orient < 180) {
+        if (orient > 180) {
             _image.x = (MAX_WIDTH + _image.width) / 2;
             _image.scaleX = -1;
 
