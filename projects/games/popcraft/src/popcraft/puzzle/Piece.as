@@ -71,22 +71,6 @@ public class Piece extends SceneObject
         _sprite.addChild(pieceMovie);
     }
 
-    protected function drawPiece (g :Graphics, drawOutline :Boolean, radius :Number) :void
-    {
-        var resourceData :ResourceData = GameContext.gameData.resources[_resourceType];
-
-        g.clear();
-        g.beginFill(resourceData.color);
-
-        if (drawOutline) {
-            g.lineStyle(1, 0);
-        }
-
-        g.drawCircle(0, 0, radius);
-
-        g.endFill();
-    }
-
     protected var _boardIndex :int;
 
     protected var _resourceType :uint;

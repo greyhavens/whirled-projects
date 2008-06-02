@@ -55,16 +55,8 @@ public class UnitPurchaseButton extends SimObject
 
         _disabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "stand_SW");
         if (null == _disabledAnim) {
-            _disabledAnim = _enabledAnim;
+            _disabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "walk_SW");
         }
-
-        /*if (null != _enabledAnim) {
-            _enabledAnim.gotoAndStop(0);
-        }
-
-        if (null != _disabledAnim) {
-            _disabledAnim.gotoAndStop(0);
-        }*/
 
         _unitDisplay.addChild(_enabledAnim);
         _unitDisplay.addChild(_disabledAnim);

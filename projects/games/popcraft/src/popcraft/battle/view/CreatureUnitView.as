@@ -193,57 +193,40 @@ public class CreatureUnitView extends SceneObject
 
     protected function setupAnimations (playerColor :uint) :void
     {
-        if (_unit.unitType == Constants.UNIT_TYPE_COLOSSUS) {
-            // @TEMP
-            var walkSwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
-                _unit.unitData, playerColor, "walk_SW");
-            var walkNwAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
-                _unit.unitData, playerColor, "walk_NW");
+        for (var i :int = 0; i < 3; ++i) {
 
-            _animMoving = new Array(4);
-            _animMoving[Constants.FACING_N] = walkNwAnim;
-            _animMoving[Constants.FACING_NW] = walkNwAnim;
-            _animMoving[Constants.FACING_SW] = walkSwAnim;
-            _animMoving[Constants.FACING_S] = walkSwAnim;
+            var animArray :Array;
+            var animNamePrefix :String;
 
+            switch (i) {
+            case 0: animArray = _animStanding; animNamePrefix = "stand_"; break;
+            case 1: animArray = _animAttacking; animNamePrefix = "attack_"; break;
+            case 2: animArray = _animMoving; animNamePrefix = "walk_"; break;
+            }
+
+            // we don't have separate animations for NE and SE facing directions,
+            // instead, we use the NW and SW animations and flip them.
+            for (var facing :int = Constants.FACING_N; facing <= Constants.FACING_S; ++facing) {
+                var animName :String = animNamePrefix + Constants.FACING_STRINGS[facing];
+
+                var anim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
+                    _unit.unitData, playerColor, animName);
+
+                if (null != anim) {
+                    animArray.push(anim);
+                }
+            }
+        }
+
+        // substitute animations
+        if (_animMoving.length == 0 && _animStanding.length > 0) {
+            _animMoving = _animStanding;
+        } else if (_animStanding.length == 0 && _animMoving.length > 0) {
             _animStanding = _animMoving;
-            _animAttacking = _animMoving;
+        }
 
-        } else {
-            for (var i :int = 0; i < 3; ++i) {
-
-                var animArray :Array;
-                var animNamePrefix :String;
-
-                switch (i) {
-                case 0: animArray = _animStanding; animNamePrefix = "stand_"; break;
-                case 1: animArray = _animAttacking; animNamePrefix = "attack_"; break;
-                case 2: animArray = _animMoving; animNamePrefix = "walk_"; break;
-                }
-
-                // we don't have separate animations for NE and SE facing directions,
-                // instead, we use the NW and SW animations and flip them.
-                for (var facing :int = Constants.FACING_N; facing <= Constants.FACING_S; ++facing) {
-                    var animName :String = animNamePrefix + Constants.FACING_STRINGS[facing];
-
-                    var anim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
-                        _unit.unitData, playerColor, animName);
-
-                    if (null != anim) {
-                        animArray.push(anim);
-                    }
-                }
-            }
-
-            // if we don't have any "moving" animations, just use our standing animations
-            if (_animMoving.length == 0) {
-                _animMoving = _animStanding;
-            }
-
-            // if we don't have any attack animations, use our standing animations
-            if (_animAttacking.length == 0) {
-                _animAttacking = _animStanding;
-            }
+        if (_animAttacking.length == 0) {
+            _animAttacking = _animStanding;
         }
 
         _sprite.addChildAt(_animStanding[0], 0);
