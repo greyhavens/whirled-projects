@@ -37,6 +37,7 @@ public class ImageFlipper extends Sprite
     {
         _bounciness = pack.getNumber("bounciness");
         _bounceFreq = pack.getNumber("bounceFrequency");
+        _right = pack.getBoolean("imageFacesRight");
         pack.getDisplayObjects("image", gotImage);
     }
 
@@ -67,7 +68,7 @@ public class ImageFlipper extends Sprite
         // make sure we're oriented correctly
         // (We discard nearly all the orientation information and only care if we're
         // facing left or right.)
-        if (orient > 180) {
+        if (_right == (orient > 180)) {
             _image.x = (MAX_WIDTH + _image.width) / 2;
             _image.scaleX = -1;
 
@@ -119,6 +120,8 @@ public class ImageFlipper extends Sprite
     protected var _bounceFreq :Number;
 
     protected var _bounciness :Number;
+
+    protected var _right :Boolean;
 
     /** Are we currently bouncing? */
     protected var _bouncing :Boolean = false;
