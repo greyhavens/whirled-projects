@@ -45,7 +45,7 @@ public class ImageFlipper extends Sprite
         _image = disp;
         _image.y = MAX_HEIGHT - _image.height;
         addChild(_image);
-        _ctrl.setHotSpot(_image.width / 2, MAX_HEIGHT, _image.height);
+        _ctrl.setHotSpot(MAX_WIDTH / 2, MAX_HEIGHT, _image.height);
 
         // adjust bounciness by the room for bouncing
         _bounciness *= (MAX_HEIGHT - _image.height);
