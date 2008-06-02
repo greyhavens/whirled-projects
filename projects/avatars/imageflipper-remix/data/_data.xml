@@ -1,0 +1,6 @@
+<datapack>
+  <data name="bounciness" type="Number" value=".2" minValue="0" maxValue="1"/>
+  <data name="bounceFrequency" type="Number" value="400" minValue="100" maxValue="1000"/>
+  <file name="image" type="DisplayObject" value="rooster.jpg"/>
+  <file name="_CONTENT" type="Blob" value="ImageFlipper.swf"/>
+</datapack>
