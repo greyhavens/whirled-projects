@@ -70,8 +70,8 @@ public class PuzzleBoard extends SceneObject
         }
 
         // the mouseIndex is the piece directly under the mouse
-        var mouseIndexX :int = (_sprite.mouseX / (Constants.PUZZLE_TILE_SIZE - 1));
-        var mouseIndexY :int = (_sprite.mouseY / (Constants.PUZZLE_TILE_SIZE - 1));
+        var mouseIndexX :int = (e.localX / (Constants.PUZZLE_TILE_SIZE - 1));
+        var mouseIndexY :int = (e.localY / (Constants.PUZZLE_TILE_SIZE - 1));
 
         if (mouseIndexX >= 0 && mouseIndexX < Constants.PUZZLE_COLS && mouseIndexY >= 0 && mouseIndexY < Constants.PUZZLE_ROWS) {
             this.clearPieceGroup(mouseIndexX, mouseIndexY);
