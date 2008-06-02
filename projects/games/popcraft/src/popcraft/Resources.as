@@ -53,6 +53,9 @@ public class Resources
     [Embed(source="../../rsrc/audio/popcraft_music_night.mp3")]
     public static const MUSIC_NIGHT :Class;
 
+    [Embed(source="../../rsrc/audio/popcraft_music_day.mp3")]
+    public static const MUSIC_DAY :Class;
+
     [Embed(source="../../rsrc/audio/MONSTER_HISSING_01_IN.mp3")]
     public static const SOUND_GRUNT :Class;
 
