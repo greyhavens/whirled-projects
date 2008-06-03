@@ -33,7 +33,7 @@ public class CourierCreatureUnitView extends CreatureUnitView
         super.update(dt);
     }
 
-    override protected function setNewAnimation (anim :MovieClip, newViewState :CreatureUnitViewState) :void
+    /*override protected function setNewAnimation (anim :MovieClip, newViewState :CreatureUnitViewState, initialFrame :int = 0) :void
     {
         // don't interrupt the courier's movement animation - allow it to play to completion
         // (completion means currentLabel == "end")
@@ -44,8 +44,8 @@ public class CourierCreatureUnitView extends CreatureUnitView
             }
         }
 
-        super.setNewAnimation(anim, newViewState);
-    }
+        super.setNewAnimation(anim, newViewState, initialFrame);
+    }*/
 
     protected var _courier :CourierCreatureUnit;
     protected var _carriedSpellIcon :Bitmap;

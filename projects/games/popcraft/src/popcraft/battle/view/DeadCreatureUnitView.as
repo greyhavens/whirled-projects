@@ -42,7 +42,7 @@ public class DeadCreatureUnitView extends SceneObject
             _displayObj = new Sprite();
         }
 
-        this.addTask(After(2, new SelfDestructTask()));
+        this.addTask(After(1.5, new SelfDestructTask()));
     }
 
     override public function get displayObject () :DisplayObject

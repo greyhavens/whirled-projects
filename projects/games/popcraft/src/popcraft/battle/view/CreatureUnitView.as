@@ -282,15 +282,23 @@ public class CreatureUnitView extends SceneObject
                 animIndex = Constants.FACING_SW;
             }
 
+            // if only our facing direction has changed, start this new animation
+            // on the same frame that the old one left off
+            var initialFrame :int = 0;
+            if (newViewState.equalsExceptFacing(_lastViewState)) {
+                var oldAnim :MovieClip = MovieClip(_sprite.getChildAt(0));
+                initialFrame = oldAnim.currentFrame;
+            }
+
             this.setNewAnimation(animArray[animIndex], newViewState);
         }
     }
 
-    protected function setNewAnimation (anim :MovieClip, newViewState :CreatureUnitViewState) :void
+    protected function setNewAnimation (anim :MovieClip, newViewState :CreatureUnitViewState, initialFrame :int = 0) :void
     {
         var oldAnim :MovieClip = MovieClip(_sprite.getChildAt(0));
         if (anim != oldAnim) {
-            anim.gotoAndPlay(0); // reset the animation, if the animation has actually changed
+            anim.gotoAndPlay(initialFrame); // only reset the animation if it's actually changed
         }
 
         // flip if we need to

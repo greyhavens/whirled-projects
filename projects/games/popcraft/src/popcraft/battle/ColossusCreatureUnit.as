@@ -93,7 +93,7 @@ public class ColossusCreatureUnit extends CreatureUnit
 
     protected static const SPEED_LOSS_PER_DAMAGE :Number = 0.1;
     protected static const MIN_SPEED_MOD :Number = 0.3;
-    protected static const SPEED_LOSS_EXPIRATION_TIME :Number = 1;
+    protected static const SPEED_LOSS_EXPIRATION_TIME :Number = 1.6;
 }
 
 }

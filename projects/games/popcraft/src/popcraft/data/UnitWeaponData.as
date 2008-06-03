@@ -9,6 +9,7 @@ public class UnitWeaponData
 {
     // General weapon options
     public var damageType :uint;
+    public var initialWarmup :Number = 0;
     public var cooldown :Number = 0;
     public var maxAttackDistance :Number = 0;
     public var damageRange :NumRange;
@@ -34,6 +35,7 @@ public class UnitWeaponData
         var theClone :UnitWeaponData = new UnitWeaponData();
 
         theClone.damageType = damageType;
+        theClone.initialWarmup = initialWarmup;
         theClone.cooldown = cooldown;
         theClone.maxAttackDistance = maxAttackDistance;
         theClone.damageRange = damageRange.clone();
@@ -57,6 +59,7 @@ public class UnitWeaponData
         var weapon :UnitWeaponData = (useDefaults ? inheritFrom : new UnitWeaponData());
 
         weapon.damageType = XmlReader.getAttributeAsEnum(xml, "damageType", Constants.DAMAGE_TYPE_NAMES, (useDefaults ? inheritFrom.damageType : undefined));
+        weapon.initialWarmup = XmlReader.getAttributeAsNumber(xml, "initialWarmup", (useDefaults ? inheritFrom.initialWarmup : 0));
         weapon.cooldown = XmlReader.getAttributeAsNumber(xml, "cooldown", (useDefaults ? inheritFrom.cooldown : 0.1));
         weapon.maxAttackDistance = XmlReader.getAttributeAsNumber(xml, "maxAttackDistance", (useDefaults ? inheritFrom.maxAttackDistance : 0));
 

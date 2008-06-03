@@ -230,11 +230,6 @@ public class CreatureUnit extends Unit
         super.update(dt);
     }
 
-    public function handleCollision (otherUnit :CreatureUnit) :void
-    {
-        this.stopMoving();
-    }
-
     public function get lastUpdateTimestamp () :Number
     {
         return _lastUpdateTimestamp;

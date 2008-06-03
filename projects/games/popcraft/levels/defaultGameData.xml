@@ -59,7 +59,7 @@
                     <Resource type="white" amount="40"/>
                     <Resource type="blue" amount="15"/>
                 </ResourceCosts>
-                <Weapon damageType="crushing" damageMin="8" damageMax="12" cooldown="1" maxAttackDistance="35"/>
+                <Weapon damageType="crushing" damageMin="8" damageMax="12" initialWarmup="0.87" cooldown="1" maxAttackDistance="35"/>
                 <Armor>
                     <Damage type="crushing"     scale="0.7"/>
                     <Damage type="piercing"     scale="0.3"/>
@@ -84,7 +84,7 @@
                     <Resource type="red" amount="50"/>
                     <Resource type="yellow" amount="15"/>
                 </ResourceCosts>
-                <Weapon isRanged="true" missileSpeed="300" damageType="piercing" damageMin="5" damageMax="10" cooldown="0.75" maxAttackDistance="200"/>
+                <Weapon isRanged="true" missileSpeed="300" damageType="piercing" damageMin="12" damageMax="25" initialWarmup="0.8" cooldown="1.84" maxAttackDistance="200"/>
                 <Armor>
                     <Damage type="crushing"     scale="1"/>
                     <Damage type="piercing"     scale="1"/>

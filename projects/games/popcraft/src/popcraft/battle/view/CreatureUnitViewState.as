@@ -14,6 +14,11 @@ public class CreatureUnitViewState
             attacking == rhs.attacking
             );
     }
+
+    public function equalsExceptFacing (rhs :CreatureUnitViewState) :Boolean
+    {
+        return (moving == rhs.moving && attacking == rhs.attacking);
+    }
 }
 
 }

@@ -80,6 +80,8 @@ public class LoadingMode extends AppMode
 
     protected function handleResourcesLoaded () :void
     {
+        //trace(AppContext.defaultGameData.generateUnitReport());
+
         MainLoop.instance.popMode();
     }
 

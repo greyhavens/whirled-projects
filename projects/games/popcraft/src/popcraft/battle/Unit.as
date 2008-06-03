@@ -44,6 +44,13 @@ public class Unit extends SimObject
         }
     }
 
+    override protected function update (dt :Number) :void
+    {
+        if (!this.isAttacking) {
+            _needsAttackWarmup = true;
+        }
+    }
+
     public function isUnitInRange (unit :Unit, range :Number) :Boolean
     {
         if (range < 0) {
@@ -59,12 +66,16 @@ public class Unit extends SimObject
 
     public function get isAttacking () :Boolean
     {
-        return this.hasTasksNamed(ATTACK_COOLDOWN_TASK_NAME);
+        return this.hasTasksNamed(PREVENT_ATTACK_TASK_NAME);
     }
 
     public function get attackTarget () :Unit
     {
-        return (this.isAttacking ? _currentAttackTarget.object as Unit : null);
+        if (!this.isAttacking || null == _currentAttackTarget) {
+            return null;
+        } else {
+            return _currentAttackTarget.object as Unit;
+        }
     }
 
     public function canAttackWithWeapon (targetUnit :Unit, weapon :UnitWeaponData) :Boolean
@@ -105,6 +116,13 @@ public class Unit extends SimObject
             return false;
         }
 
+        // some weapons require an initial warmup period before they can be used
+        if (_needsAttackWarmup && weapon.initialWarmup > 0) {
+            this.addNamedTask(PREVENT_ATTACK_TASK_NAME, new TimedTask(weapon.initialWarmup));
+            _needsAttackWarmup = false;
+            return false;
+        }
+
         var targetUnit :Unit = targetUnitOrLocation as Unit;
 
         // don't attack if we're out of range
@@ -136,7 +154,7 @@ public class Unit extends SimObject
         // install a cooldown timer
         if (weapon.cooldown > 0) {
             var cooldown :Number = weapon.cooldown / this.speedScale;
-            this.addNamedTask(ATTACK_COOLDOWN_TASK_NAME, new UnitAttackCooldownTask(cooldown));
+            this.addNamedTask(PREVENT_ATTACK_TASK_NAME, new UnitAttackCooldownTask(cooldown));
         }
 
         return true;
@@ -292,12 +310,13 @@ public class Unit extends SimObject
     protected var _isDead :Boolean;
     protected var _currentAttackTarget :SimObjectRef;
     protected var _speedScale :Number = 1;
+    protected var _needsAttackWarmup :Boolean = true;
 
     protected var _loc :Vector2 = new Vector2();
 
     protected static var g_groups :Array;
 
-    protected static const ATTACK_COOLDOWN_TASK_NAME :String = "attackCooldown";
+    protected static const PREVENT_ATTACK_TASK_NAME :String = "PreventAttack";
 }
 
 }
