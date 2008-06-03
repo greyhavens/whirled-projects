@@ -2,7 +2,7 @@
     <Level
         parDays="1"
         backgroundName="Level1"
-        introText="Your enemies have you surrounded!"
+        introText="Your enemies have you surrounded! Use the Bloodlust spell to enrage your creatures, and send them to smash your foes!"
         disableDiurnalCycle="false"
         playerName="Jack"
         playerBaseHealth="150">
@@ -10,10 +10,10 @@
         <GameDataOverride>
             <BaseLocations>
                 <GameSize numPlayers="4">
-                    <BaseLocation x="60" y="185"/>
-                    <BaseLocation x="642" y="175"/>
-                    <BaseLocation x="590" y="80"/>
-                    <BaseLocation x="590" y="315"/>
+                    <BaseLocation x="70" y="185"/>
+                    <BaseLocation x="642" y="185"/>
+                    <BaseLocation x="590" y="90"/>
+                    <BaseLocation x="590" y="325"/>
                 </GameSize>
             </BaseLocations>
         </GameDataOverride>
@@ -48,6 +48,10 @@
                     spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="2">
 
+                    <Wave absoluteDelay="1"><Unit type="heavy" count="2"/></Wave>
+					<Wave absoluteDelay="5"><Unit type="grunt" count="1"/></Wave>
+                    <Wave absoluteDelay="8"><Unit type="sapper" count="1"/></Wave>
+
                 </Day>
             </InitialDays>
             <RepeatingDays>
@@ -70,8 +74,11 @@
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="5"
                     noticeSpellDropAfterMax="5"
-                    spellDropCourierGroupSizeMin="1"
-                    spellDropCourierGroupSizeMax="2">
+                    spellDropCourierGroupSizeMin="0"
+                    spellDropCourierGroupSizeMax="0">
+
+                    <Wave absoluteDelay="2"><Unit type="heavy" count="1"/></Wave>
+					<Wave absoluteDelay="7"><Unit type="grunt" count="1"/></Wave>
 
                 </Day>
             </InitialDays>
@@ -97,6 +104,9 @@
                     noticeSpellDropAfterMax="5"
                     spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="2">
+
+                    <Wave absoluteDelay="3"><Unit type="heavy" count="1"/></Wave>
+					<Wave absoluteDelay="7"><Unit type="grunt" count="1"/></Wave>
 
                 </Day>
             </InitialDays>

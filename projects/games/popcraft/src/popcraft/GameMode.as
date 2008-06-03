@@ -311,7 +311,7 @@ public class GameMode extends AppMode
             var diurnalMeter :DiurnalMeterView = new DiurnalMeterView();
             diurnalMeter.x = Constants.DIURNAL_METER_LOC.x;
             diurnalMeter.y = Constants.DIURNAL_METER_LOC.y;
-            this.addObject(diurnalMeter, _hudParent);
+            this.addObject(diurnalMeter, GameContext.battleBoardView.diurnalMeterParent);
         }
 
         GameContext.netObjects.addObject(new SpellDropTimer());

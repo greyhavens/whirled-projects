@@ -30,6 +30,7 @@ public class BattleBoardView extends SceneObject
 
         _view.addChild(_bg);
         _view.addChild(_spellDropViewParent);
+        _view.addChild(_diurnalMeterParent);
         _view.addChild(_unitViewParent);
 
         _lastDayPhase = (DiurnalCycle.isDisabled ? Constants.PHASE_NIGHT : GameContext.gameData.initialDayPhase);
@@ -67,6 +68,11 @@ public class BattleBoardView extends SceneObject
         return _unitViewParent;
     }
 
+    public function get diurnalMeterParent () :DisplayObjectContainer
+    {
+        return _diurnalMeterParent;
+    }
+
     public function sortUnitDisplayChildren () :void
     {
         DisplayUtil.sortDisplayChildren(_unitViewParent, displayObjectYSort);
@@ -91,6 +97,7 @@ public class BattleBoardView extends SceneObject
     protected var _view :Sprite;
     protected var _spellDropViewParent :Sprite = new Sprite();
     protected var _unitViewParent :Sprite = new Sprite();
+    protected var _diurnalMeterParent :Sprite = new Sprite();
     protected var _lastDayPhase :uint;
     protected var _bg :MovieClip;
 }
