@@ -4,16 +4,16 @@ import com.threerings.util.Assert;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
 import popcraft.data.ResourceData;
@@ -176,32 +176,17 @@ public class PuzzleBoard extends SceneObject
 
     protected function showResourceValueAnimation (loc :Point, resType :uint, amount :int) :void
     {
-        var resData :ResourceData = GameContext.gameData.resources[resType];
+        var movieName :String = (amount >= 0 ?
+            POS_CLEAR_FEEDBACK_ANIM_NAMES[resType] :
+            NEG_CLEAR_FEEDBACK_ANIM_NAMES[resType]);
 
-        var text :TextField = new TextField();
-        text.autoSize = TextFieldAutoSize.LEFT;
-        text.text = (amount > 0 ? "+" : "") + String(amount);
-        text.textColor = (resType == Constants.RESOURCE_WHITE ? resData.hiliteColor : resData.color);
-        text.selectable = false;
-        text.scaleX = 2;
-        text.scaleY = 2;
+        var movie :MovieClip = SwfResource.instantiateMovieClip("dashboard", movieName);
 
-        var bg :Sprite = new Sprite();
-        var g :Graphics = bg.graphics;
-        g.beginFill(amount > 0 ? 0xFFFFFF : 0);
-        g.drawRoundRect(0, 0, text.width + 3, text.height + 3, 8, 8);
-        g.endFill();
+        // fill in the text
+        var textField :TextField = movie["feedback"];
+        textField.text = String(amount);
 
-        text.x = (bg.width * 0.5) - (text.width * 0.5);
-        text.y = (bg.height * 0.5) - (text.height * 0.5);
-        bg.addChild(text);
-
-        var container :Sprite = new Sprite();
-        bg.x = -bg.width * 0.5;
-        bg.y = -bg.height;
-        container.addChild(bg);
-
-        var anim :SimpleSceneObject = new SimpleSceneObject(container);
+        var anim :SimpleSceneObject = new SimpleSceneObject(movie);
         anim.x = loc.x;
         anim.y = loc.y;
 
@@ -470,6 +455,11 @@ public class PuzzleBoard extends SceneObject
 
     protected static const PIECE_DROP_TIME :Number = 0.3;
     protected static const PIECE_SCALE_DOWN_TIME :Number = 0.2;
+
+    protected static const POS_CLEAR_FEEDBACK_ANIM_NAMES :Array = [
+        "feedback_A", "feedback_B", "feedback_C", "feedback_D" ];
+    protected static const NEG_CLEAR_FEEDBACK_ANIM_NAMES :Array = [
+        "feedback_A_negative", "feedback_B_negative", "feedback_C_negative", "feedback_D_negative" ];
 }
 
 }
