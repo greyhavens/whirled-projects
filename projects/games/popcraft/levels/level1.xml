@@ -29,7 +29,7 @@
 
         <AvailableSpells/>
 
-        <Computer playerName="Ralph" baseHealth="15" team="1">
+        <Computer playerName="Ralph" baseStartHealth="15" baseHealth="100" team="1">
             <RepeatingDays>
                 <Day repeatWaves="true">
                     <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>

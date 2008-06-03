@@ -1,14 +1,15 @@
 package popcraft.battle.view {
 
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.geom.Point;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -44,8 +45,8 @@ public class PlayerBaseUnitView extends SceneObject
         _healthMeter.foregroundColor = playerColor;
         _healthMeter.backgroundColor = 0x888888;
         _healthMeter.outlineColor = 0x000000;
-        _healthMeter.width = 50;
-        _healthMeter.height = 5;
+        _healthMeter.width = HEALTH_METER_SIZE.x;
+        _healthMeter.height = HEALTH_METER_SIZE.y;
         _healthMeter.x = -(_healthMeter.width * 0.5);
         _healthMeter.y = -_sprite.height - _healthMeter.height;
 
@@ -62,6 +63,20 @@ public class PlayerBaseUnitView extends SceneObject
         _friendlyBadge.x = -(_friendlyBadge.width * 0.5);
         _friendlyBadge.y = -(_friendlyBadge.height);
         _sprite.addChild(_friendlyBadge);
+    }
+
+    public function scaleHealthMeter () :void
+    {
+        // proportionally resize the base's health meter based on the
+        var maxMaxHealth :Number = -1;
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+            if (playerInfo.maxHealth > maxMaxHealth) {
+                maxMaxHealth = playerInfo.maxHealth;
+            }
+        }
+
+        _healthMeter.width = HEALTH_METER_SIZE.x * (_unit.maxHealth / maxMaxHealth);
+        _healthMeter.x = -(_healthMeter.width * 0.5);
     }
 
     override protected function addedToDB () :void
@@ -132,6 +147,7 @@ public class PlayerBaseUnitView extends SceneObject
     protected var _unit :PlayerBaseUnit;
     protected var _healthMeter :RectMeter;
 
+    protected static const HEALTH_METER_SIZE :Point = new Point(50, 5);
     protected static const GROUP_NAME :String = "PlayerBaseUnitView";
     protected static const HIT_SOUND_NAMES :Array = [ "sfx_basehit1", "sfx_basehit2", "sfx_basehit3" ];
 
