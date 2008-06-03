@@ -1,0 +1,16 @@
+<!-- build configuration -->
+<project name="tictactoe" default="compile" basedir=".">
+
+  <fileset id="server.files" dir="src">
+     <include name="Server.as"/>
+  </fileset>
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="TicTacToe"/>
+  <property name="app.source-dir" value="src"/>
+  <property name="app.type" value="game"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>
