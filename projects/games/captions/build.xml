@@ -8,6 +8,8 @@
   -->
   <property name="app.name"   value="LOL"/>
   <property name="app.type" value="game"/>
+  <property name="players" value="2"/>
+  <property name="party" value="true"/>
 
   <property name="app.lib-extras" value="../../../lib/corelib.swc,../../../lib/fl-components.swc"/>
 
