@@ -5,7 +5,7 @@
         info="The frequency of the bouncing, in milliseconds."/>
   <data name="imageFacesRight" type="Boolean" value="false"
         info="Indicates that the image defaultly faces right."/>
-  <file name="image" type="DisplayObject" value="rooster.jpg" maxWidth="600" maxHeight="450"
+  <file name="image" type="DisplayObject" value="happyguy.png" maxWidth="600" maxHeight="450"
         info="The image that makes up this avatar."/>
   <file name="_CONTENT" type="Blob" value="ImageFlipper.swf"/>
 </datapack>
