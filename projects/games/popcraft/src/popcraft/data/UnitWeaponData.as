@@ -21,7 +21,6 @@ public class UnitWeaponData
     // AOE weapon options
     public var isAOE :Boolean;
     public var aoeRadius :Number = 0;
-    public var aoeAnimationName :String;
     public var aoeDamageFriendlies :Boolean;
     public var aoeMaxDamage :Number;
 
@@ -45,7 +44,6 @@ public class UnitWeaponData
 
         theClone.isAOE = isAOE;
         theClone.aoeRadius = aoeRadius;
-        theClone.aoeAnimationName = aoeAnimationName;
         theClone.aoeDamageFriendlies = aoeDamageFriendlies;
         theClone.aoeMaxDamage = aoeMaxDamage;
 
@@ -77,7 +75,6 @@ public class UnitWeaponData
         weapon.isAOE = XmlReader.getAttributeAsBoolean(xml, "isAOE", (useDefaults ? inheritFrom.isAOE : false));
         if (weapon.isAOE) {
             weapon.aoeRadius = XmlReader.getAttributeAsNumber(xml, "aoeRadius", (useDefaults ? inheritFrom.aoeRadius : undefined));
-            weapon.aoeAnimationName = XmlReader.getAttributeAsString(xml, "aoeAnimationName", (useDefaults ? inheritFrom.aoeAnimationName : undefined));
             weapon.aoeDamageFriendlies = XmlReader.getAttributeAsBoolean(xml, "aoeDamageFriendlies", (useDefaults ? inheritFrom.aoeDamageFriendlies : undefined));
             weapon.aoeMaxDamage = XmlReader.getAttributeAsNumber(xml, "aoeMaxDamage", (useDefaults ? inheritFrom.aoeMaxDamage : undefined));
         }

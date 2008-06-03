@@ -153,8 +153,7 @@ public class Unit extends SimObject
 
         // install a cooldown timer
         if (weapon.cooldown > 0) {
-            var cooldown :Number = weapon.cooldown / this.speedScale;
-            this.addNamedTask(PREVENT_ATTACK_TASK_NAME, new UnitAttackCooldownTask(cooldown));
+            this.addNamedTask(PREVENT_ATTACK_TASK_NAME, new UnitAttackCooldownTask(weapon.cooldown));
         }
 
         return true;

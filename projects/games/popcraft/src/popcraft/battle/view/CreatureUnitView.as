@@ -65,7 +65,6 @@ public class CreatureUnitView extends SceneObject
             _sprite.graphics.drawCircle(0, 0, _unit.unitData.collisionRadius);
         }
 
-        _unit.addEventListener(UnitEvent.ATTACKING, handleUnitAttacking, false, 0, true);
         _unit.addEventListener(UnitEvent.ATTACKED, handleUnitAttacked, false, 0, true);
 
         var spellSet :CreatureSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
@@ -80,7 +79,6 @@ public class CreatureUnitView extends SceneObject
             _healthMeter.destroySelf();
         }
 
-        _unit.removeEventListener(UnitEvent.ATTACKING, handleUnitAttacking);
         _unit.removeEventListener(UnitEvent.ATTACKED, handleUnitAttacked);
 
         var spellSet :CreatureSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
@@ -132,16 +130,6 @@ public class CreatureUnitView extends SceneObject
         }
     }
 
-    protected function handleUnitAttacking (e :UnitEvent) :void
-    {
-        var weapon :UnitWeaponData = e.data as UnitWeaponData;
-
-        if (weapon.isAOE) {
-            // @TODO - duration is a temporary, arbitrary value
-            this.createAOEAttackAnimation(weapon, _unit.unitLoc, 0.5);
-        }
-    }
-
     protected function handleUnitAttacked (...ignored) :void
     {
         // play a sound
@@ -149,27 +137,8 @@ public class CreatureUnitView extends SceneObject
         GameContext.playGameSound(soundName);
     }
 
-    protected function createAOEAttackAnimation (weapon :UnitWeaponData, loc :Vector2, duration :Number) :void
+    /*protected function createAOEAttackAnimation (weapon :UnitWeaponData, loc :Vector2, duration :Number) :void
     {
-        if (null != weapon.aoeAnimationName) {
-
-            // create an attack animation object that will play and self-destruct
-
-            var anim :MovieClip = SwfResource.instantiateMovieClip(_unit.unitData.name, weapon.aoeAnimationName);
-
-            if (null == anim) {
-                log.info("Missing AOE attack animation '" + weapon.aoeAnimationName + "' for " + _unit.unitData.name);
-            } else {
-                var animObj :SceneObject = new SimpleSceneObject(anim);
-                animObj.x = loc.x;
-                animObj.y = loc.y;
-
-                animObj.addTask(After(duration, new SelfDestructTask()));
-
-                GameContext.gameMode.addObject(animObj, GameContext.battleBoardView.unitViewParent);
-            }
-        }
-
         if (Constants.DEBUG_DRAW_AOE_ATTACK_RADIUS) {
 
             // visualize the blast radius
@@ -189,7 +158,7 @@ public class CreatureUnitView extends SceneObject
 
             GameContext.gameMode.addObject(aoeObj, GameContext.battleBoardView.unitViewParent);
         }
-    }
+    }*/
 
     protected function setupAnimations (playerColor :uint) :void
     {
@@ -317,15 +286,12 @@ public class CreatureUnitView extends SceneObject
             this.destroySelf();
 
             // show a death animation (will self-destruct when animation is complete)
-            GameContext.gameMode.addObject(
-                new DeadCreatureUnitView(_unit, _lastViewState.facing),
-                GameContext.battleBoardView.unitViewParent);
-
-            // play a sound if the creature died during battle, and not
-            // as a result of the night-day switch
-            if (GameContext.diurnalCycle.isNight) {
-                GameContext.playGameSound("sfx_death_" + _unit.unitData.name);
+            if (!_unit.preventDeathAnimation) {
+                GameContext.gameMode.addObject(
+                    new DeadCreatureUnitView(_unit, _lastViewState.facing),
+                    GameContext.battleBoardView.unitViewParent);
             }
+
         } else {
 
             // estimate the amount of time that's elapsed since

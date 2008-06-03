@@ -46,6 +46,8 @@ public class CourierCreatureUnit extends CreatureUnit
         _carriedSpell = null;
 
         // the courier is destroyed when he delivers the spell
+        // (but we don't want to play her death animation when this happens)
+        _preventDeathAnimation = true;
         this.die();
     }
 
@@ -110,6 +112,11 @@ public class CourierCreatureUnit extends CreatureUnit
         return _spawnLoc; // Courier AI uses this to determine where to move to
     }
 
+    override public function get preventDeathAnimation () :Boolean
+    {
+        return _preventDeathAnimation;
+    }
+
     protected static function getGroupName (playerId :uint) :String
     {
         return "CourierCreature_Player" + playerId;
@@ -119,6 +126,7 @@ public class CourierCreatureUnit extends CreatureUnit
     protected var _spawnLoc :Vector2;
     protected var _groupName :String;
     protected var _speedup :Number = 1;
+    protected var _preventDeathAnimation :Boolean;
 
     protected var _carriedSpell :SpellData;
 }

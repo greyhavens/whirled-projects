@@ -27,6 +27,9 @@ public class DeadCreatureUnitView extends SceneObject
         var animName :String = "die_" + Constants.FACING_STRINGS[facing];
 
         var movie :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(creature.unitData, playerColor, animName);
+        if (null == movie) {
+            movie = UnitAnimationFactory.instantiateUnitAnimation(creature.unitData, playerColor, "die");
+        }
 
         if (null != movie) {
             if (flipX) {
@@ -42,7 +45,9 @@ public class DeadCreatureUnitView extends SceneObject
             _displayObj = new Sprite();
         }
 
-        this.addTask(After(1.5, new SelfDestructTask()));
+        this.addTask(After(creature.deathAnimationDuration, new SelfDestructTask()));
+
+        GameContext.playGameSound("sfx_death_" + creature.unitData.name);
     }
 
     override public function get displayObject () :DisplayObject
