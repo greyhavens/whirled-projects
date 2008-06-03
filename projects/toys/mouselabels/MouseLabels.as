@@ -126,6 +126,7 @@ public class MouseLabels extends Sprite
 }
 }
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.text.TextField;
@@ -135,7 +136,7 @@ import com.threerings.flash.TextFieldUtil;
 
 class Mousey extends Sprite
 {
-    public function Mousey (name :String, offset :Number = 0)
+    public function Mousey (name :String, offset :Number = NaN)
     {
         var tf :TextField = TextFieldUtil.createField(name,
             { textColor: 0x99BFFF, selectable: false, autoSize: TextFieldAutoSize.CENTER,
@@ -145,6 +146,13 @@ class Mousey extends Sprite
         tf.y = -tf.height - 10;
         addChild(tf);
         _offset = offset;
+
+        if (!isNaN(offset)) {
+            var pointer :DisplayObject = DisplayObject(new POINTER());
+            pointer.x = -1;
+            pointer.y = -2;
+            addChild(pointer);
+        }
     }
 
     public function addData (data :Array) :void
@@ -168,5 +176,8 @@ class Mousey extends Sprite
     protected var _offset :int;
 
     protected var _data :Array = [];
+
+    [Embed(source="pointer.png")]
+    protected static const POINTER :Class;
 }
 
