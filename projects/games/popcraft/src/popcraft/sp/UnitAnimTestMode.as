@@ -144,7 +144,7 @@ public class UnitAnimTestMode extends AppMode
     protected var _recolor :uint;
     protected var _unitType :uint = 0;
 
-    protected static const ANIM_PREFIX_STRINGS :Array = [ "stand_", "walk_", "attack_" ];
+    protected static const ANIM_PREFIX_STRINGS :Array = [ "stand_", "walk_", "attack_", "die_" ];
     protected static const FACING_STRINGS :Array = [ "N", "NW", "SW", "S", ];
 }
 

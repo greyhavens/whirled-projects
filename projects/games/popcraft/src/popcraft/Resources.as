@@ -65,8 +65,23 @@ public class Resources
     [Embed(source="../../rsrc/audio/player_lose.mp3")]
     public static const SOUND_LOSEGAME :Class;
 
+    [Embed(source="../../rsrc/audio/player_win.mp3")]
+    public static const SOUND_WINGAME :Class;
+
+    [Embed(source="../../rsrc/audio/spell_armor.mp3")]
+    public static const SOUND_RIGORMORTIS :Class;
+
+    [Embed(source="../../rsrc/audio/spell_bloodlust.mp3")]
+    public static const SOUND_BLOODLUST :Class;
+
+    [Embed(source="../../rsrc/audio/spell_puzzle_mix.mp3")]
+    public static const SOUND_PUZZLERESET :Class;
+
     [Embed(source="../../rsrc/audio/MONSTER_HISSING_01_IN.mp3")]
     public static const SOUND_GRUNT :Class;
+
+    [Embed(source="../../rsrc/audio/streetwalker_death2.mp3")]
+    public static const SOUND_GRUNTDEATH :Class;
 
     [Embed(source="../../rsrc/audio/ANIMAL_DEEP_GRUNT_1_JD.mp3")]
     public static const SOUND_HEAVY :Class;
@@ -77,8 +92,11 @@ public class Resources
     [Embed(source="../../rsrc/audio/SMALL_DOG_SINGLE_BARK_01_S4.mp3")]
     public static const SOUND_SAPPER :Class;
 
-    [Embed(source="../../rsrc/audio/GRUNT_CTE03_33_4.mp3")]
+    [Embed(source="../../rsrc/audio/fleshbehemoth_create.mp3")]
     public static const SOUND_COLOSSUS :Class;
+
+    [Embed(source="../../rsrc/audio/fleshbehemoth_death.mp3")]
+    public static const SOUND_COLOSSUSDEATH :Class;
 
     [Embed(source="../../rsrc/audio/KATYDID_SHAKING_JB.mp3")]
     public static const SOUND_COURIER :Class;
@@ -95,7 +113,7 @@ public class Resources
     [Embed(source="../../rsrc/audio/submit_energy.mp3")]
     public static const SOUND_ENERGY :Class;
 
-    [Embed(source="../../rsrc/audio/submit_metal.mp3")]
+    [Embed(source="../../rsrc/audio/submit_metal4.mp3")]
     public static const SOUND_SCRAP :Class;
 
     [Embed(source="../../rsrc/audio/FAST_POWER_FAILURE_01_TF.mp3")]

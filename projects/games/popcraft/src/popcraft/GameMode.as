@@ -641,6 +641,7 @@ public class GameMode extends AppMode
                 var spellSet :CreatureSpellSet = GameContext.playerUnitSpellSets[playerId];
                 var spell :CreatureSpellData = GameContext.gameData.spells[castSpellMsg.spellType];
                 spellSet.addSpell(spell.clone() as CreatureSpellData);
+                GameContext.playGameSound("sfx_" + spell.name);
             }
             break;
 
@@ -765,6 +766,7 @@ public class GameMode extends AppMode
             _messageMgr.sendMessage(new CastCreatureSpellMessage(playerId, spellType));
         } else if (spellType == Constants.SPELL_TYPE_PUZZLERESET) {
             // there's only one non-creature spell
+            GameContext.playGameSound("sfx_puzzlereset");
             GameContext.puzzleBoard.puzzleReset();
         }
     }

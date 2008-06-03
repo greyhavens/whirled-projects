@@ -41,12 +41,19 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("sound", "sfx_create_sapper", { embeddedClass: Resources.SOUND_SAPPER });
         rm.pendResourceLoad("sound", "sfx_create_colossus", { embeddedClass: Resources.SOUND_COLOSSUS });
         rm.pendResourceLoad("sound", "sfx_create_courier", { embeddedClass: Resources.SOUND_COURIER });
+        rm.pendResourceLoad("sound", "sfx_death_grunt", { embeddedClass: Resources.SOUND_GRUNTDEATH });
         rm.pendResourceLoad("sound", "sfx_death_heavy", { embeddedClass: Resources.SOUND_HEAVYDEATH });
         rm.pendResourceLoad("sound", "sfx_death_sapper", { embeddedClass: Resources.SOUND_EXPLOSION });
         rm.pendResourceLoad("sound", "sfx_death_courier", { embeddedClass: Resources.SOUND_COURIERDEATH });
+        rm.pendResourceLoad("sound", "sfx_death_colossus", { embeddedClass: Resources.SOUND_COLOSSUSDEATH });
         rm.pendResourceLoad("sound", "sfx_death_base", { embeddedClass: Resources.SOUND_BASEDESTROY });
 
+        rm.pendResourceLoad("sound", "sfx_rigormortis", { embeddedClass: Resources.SOUND_RIGORMORTIS });
+        rm.pendResourceLoad("sound", "sfx_bloodlust", { embeddedClass: Resources.SOUND_BLOODLUST });
+        rm.pendResourceLoad("sound", "sfx_puzzlereset", { embeddedClass: Resources.SOUND_PUZZLERESET });
+
         rm.pendResourceLoad("sound", "sfx_losegame", { embeddedClass: Resources.SOUND_LOSEGAME });
+        rm.pendResourceLoad("sound", "sfx_wingame", { embeddedClass: Resources.SOUND_WINGAME });
 
         rm.pendResourceLoad("sound", "sfx_rsrc_white", { embeddedClass: Resources.SOUND_FLESH });
         rm.pendResourceLoad("sound", "sfx_rsrc_red", { embeddedClass: Resources.SOUND_BLOOD });
