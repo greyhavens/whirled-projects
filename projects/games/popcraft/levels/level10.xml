@@ -5,7 +5,7 @@
         introText="Your enemies have you surrounded! Use the Bloodlust spell to enrage your creatures, and send them to smash your foes!"
         disableDiurnalCycle="false"
         playerName="Jack"
-        playerBaseHealth="150">
+        playerBaseHealth="120">
 
         <GameDataOverride>
             <BaseLocations>
@@ -44,79 +44,106 @@
             <InitialDays>
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="5"
-                    noticeSpellDropAfterMax="5"
+                    noticeSpellDropAfterMax="7"
                     spellDropCourierGroupSizeMin="1"
-                    spellDropCourierGroupSizeMax="2">
+                    spellDropCourierGroupSizeMax="1">
 
                     <Wave absoluteDelay="1"><Unit type="heavy" count="2"/></Wave>
-					<Wave absoluteDelay="5"><Unit type="grunt" count="1"/></Wave>
-                    <Wave absoluteDelay="8"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="5" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
+                    <Wave absoluteDelay="8" spellCastChance="0.5"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="20" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="30"><Unit type="heavy" count="2"/></Wave>
+                    <Wave absoluteDelay="95" spellCastChance="0.5"><Unit type="grunt" count="5"/></Wave>
 
                 </Day>
             </InitialDays>
             <RepeatingDays>
-                <!-- Easier day -->
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="3"
-                    noticeSpellDropAfterMax="4"
-                    spellDropCourierGroupSizeMin="2"
-                    spellDropCourierGroupSizeMax="3">
+                    noticeSpellDropAfterMax="6"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="1">
+
+                    <Wave absoluteDelay="1"><Unit type="heavy" count="3"/></Wave>
+                    <Wave absoluteDelay="6"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="75" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+
                 </Day>
             </RepeatingDays>
         </Computer>
 
         <Computer
             playerName="Sam"
-            baseHealth="100"
+            baseHealth="80"
             team="1">
             <StartingSpells/>
             <InitialDays>
                 <Day repeatWaves="false"
-                    noticeSpellDropAfterMin="5"
-                    noticeSpellDropAfterMax="5"
+                    noticeSpellDropAfterMin="-1"
+                    noticeSpellDropAfterMax="-1"
                     spellDropCourierGroupSizeMin="0"
                     spellDropCourierGroupSizeMax="0">
 
                     <Wave absoluteDelay="2"><Unit type="heavy" count="1"/></Wave>
-					<Wave absoluteDelay="7"><Unit type="grunt" count="1"/></Wave>
+					<Wave absoluteDelay="7" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
+					<Wave absoluteDelay="21" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
+					<Wave absoluteDelay="25"><Unit type="heavy" count="1"/></Wave>
+					<Wave absoluteDelay="35" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
+					<Wave absoluteDelay="57" spellCastChance="0.5"><Unit type="sapper" count="2"/></Wave>
+					<Wave absoluteDelay="75" spellCastChance="0.5"><Unit type="grunt" count="2"/></Wave>
 
                 </Day>
             </InitialDays>
             <RepeatingDays>
-                <!-- Easier day -->
                 <Day repeatWaves="false"
-                    noticeSpellDropAfterMin="3"
-                    noticeSpellDropAfterMax="4"
-                    spellDropCourierGroupSizeMin="2"
-                    spellDropCourierGroupSizeMax="3">
+                    noticeSpellDropAfterMin="5"
+                    noticeSpellDropAfterMax="7"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="1">
+
+                    <Wave absoluteDelay="5"><Unit type="grunt" count="1"/></Wave>
+                    <Wave absoluteDelay="74"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="90"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="105"><Unit type="sapper" count="1"/></Wave>
+
                 </Day>
             </RepeatingDays>
         </Computer>
 
         <Computer
             playerName="Eric"
-            baseHealth="100"
+            baseHealth="80"
             team="1">
             <StartingSpells/>
             <InitialDays>
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="5"
-                    noticeSpellDropAfterMax="5"
+                    noticeSpellDropAfterMax="9"
                     spellDropCourierGroupSizeMin="1"
-                    spellDropCourierGroupSizeMax="2">
+                    spellDropCourierGroupSizeMax="1">
 
                     <Wave absoluteDelay="3"><Unit type="heavy" count="1"/></Wave>
-					<Wave absoluteDelay="7"><Unit type="grunt" count="1"/></Wave>
+					<Wave absoluteDelay="7" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
+					<Wave absoluteDelay="22" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
+					<Wave absoluteDelay="28"><Unit type="heavy" count="1"/></Wave>
+					<Wave absoluteDelay="37" spellCastChance="0.5"><Unit type="sapper" count="2"/></Wave>
+					<Wave absoluteDelay="55" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
+					<Wave absoluteDelay="77" spellCastChance="0.5"><Unit type="sapper" count="1"/></Wave>
 
                 </Day>
             </InitialDays>
             <RepeatingDays>
-                <!-- Easier day -->
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="3"
                     noticeSpellDropAfterMax="4"
-                    spellDropCourierGroupSizeMin="2"
-                    spellDropCourierGroupSizeMax="3">
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="1">
+
+                    <Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="74"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="95"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="110"><Unit type="sapper" count="1"/></Wave>
+
                 </Day>
             </RepeatingDays>
         </Computer>
