@@ -91,6 +91,7 @@ public class PlayerBaseUnitView extends SceneObject
         _healthMeter.value = health;
 
         if (health <= 0) {
+            GameContext.playGameSound("sfx_death_base");
             this.destroySelf();
         }
     }

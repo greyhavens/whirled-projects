@@ -2,6 +2,7 @@ package popcraft.sp {
 
 import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.audio.AudioManager;
 
 import flash.display.Graphics;
 import flash.display.Sprite;
@@ -81,7 +82,16 @@ public class LevelOutroMode extends AppMode
         bgSprite.addChild(button);
     }
 
+    override protected function enter () :void
+    {
+        if (!_playedSound) {
+            AudioManager.instance.playSoundNamed(_success ? "sfx_wingame" : "sfx_losegame");
+            _playedSound = true;
+        }
+    }
+
     protected var _success :Boolean;
+    protected var _playedSound :Boolean;
 
 }
 

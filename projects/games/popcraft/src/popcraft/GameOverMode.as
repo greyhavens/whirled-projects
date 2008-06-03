@@ -1,6 +1,7 @@
 package popcraft {
 
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.audio.AudioManager;
 
 import flash.display.Shape;
 import flash.text.TextField;
@@ -45,7 +46,17 @@ public class GameOverMode extends AppMode
         this.modeSprite.addChild(text);
     }
 
+    override protected function enter () :void
+    {
+        if (!_playedSound) {
+            var localPlayerWon :Boolean = _winningPlayer.playerId == GameContext.localPlayerId;
+            AudioManager.instance.playSoundNamed(localPlayerWon ? "sfx_wingame" : "sfx_losegame");
+            _playedSound = true;
+        }
+    }
+
     protected var _winningPlayer :PlayerInfo;
+    protected var _playedSound :Boolean;
 
 }
 

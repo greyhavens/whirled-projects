@@ -59,11 +59,20 @@ public class Resources
     [Embed(source="../../rsrc/audio/popcraft_music_day.mp3")]
     public static const MUSIC_DAY :Class;
 
+    [Embed(source="../../rsrc/audio/base_destroy.mp3")]
+    public static const SOUND_BASEDESTROY :Class;
+
+    [Embed(source="../../rsrc/audio/player_lose.mp3")]
+    public static const SOUND_LOSEGAME :Class;
+
     [Embed(source="../../rsrc/audio/MONSTER_HISSING_01_IN.mp3")]
     public static const SOUND_GRUNT :Class;
 
     [Embed(source="../../rsrc/audio/ANIMAL_DEEP_GRUNT_1_JD.mp3")]
     public static const SOUND_HEAVY :Class;
+
+    [Embed(source="../../rsrc/audio/handyman_death.mp3")]
+    public static const SOUND_HEAVYDEATH :Class;
 
     [Embed(source="../../rsrc/audio/SMALL_DOG_SINGLE_BARK_01_S4.mp3")]
     public static const SOUND_SAPPER :Class;
@@ -74,16 +83,19 @@ public class Resources
     [Embed(source="../../rsrc/audio/KATYDID_SHAKING_JB.mp3")]
     public static const SOUND_COURIER :Class;
 
-    [Embed(source="../../rsrc/audio/FLESH_TEAR_CRUNCHY_RIP_1_DA.mp3")]
+    [Embed(source="../../rsrc/audio/ladyfinger_death.mp3")]
+    public static const SOUND_COURIERDEATH :Class;
+
+    [Embed(source="../../rsrc/audio/submit_flesh.mp3")]
     public static const SOUND_FLESH :Class;
 
-    [Embed(source="../../rsrc/audio/CARTOON_SHARP_SPLAT_S4.mp3")]
+    [Embed(source="../../rsrc/audio/submit_blood.mp3")]
     public static const SOUND_BLOOD :Class;
 
-    [Embed(source="../../rsrc/audio/ELEC_ARC_EC07_28_2.mp3")]
+    [Embed(source="../../rsrc/audio/submit_energy.mp3")]
     public static const SOUND_ENERGY :Class;
 
-    [Embed(source="../../rsrc/audio/ANVIL_LIGHT_HIT_1_L2.mp3")]
+    [Embed(source="../../rsrc/audio/submit_metal.mp3")]
     public static const SOUND_SCRAP :Class;
 
     [Embed(source="../../rsrc/audio/FAST_POWER_FAILURE_01_TF.mp3")]
