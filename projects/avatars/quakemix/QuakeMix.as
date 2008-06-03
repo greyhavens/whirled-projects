@@ -35,12 +35,20 @@ public class QuakeMix extends Sprite
     public function QuakeMix ()
     {
         _control = new AvatarControl(this);
+
+        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
         DataPack.load(_control.getDefaultDataPack(), packLoaded);
 
         initPapervision(600, 300);
+    }
 
-        // TODO: Handle unloading
-        //_control.addEventListener(ControlEvent.UNLOAD, handleUnload);
+    protected function handleUnload (event :Event) :void
+    {
+        removeEventListener(Event.ENTER_FRAME, handleFrame);
+
+        if (_pack != null) {
+            _pack.close();
+        }
     }
 
     protected function packLoaded (pack :Object) :void
@@ -71,11 +79,9 @@ public class QuakeMix extends Sprite
 
         scene.addChild(_model);
 
-        //for each (var item :AbstractChannel3D in model.getAnimationChannels()) {
-
-        //var states :Array = ["stand", "attack"];
         var clips :Array = [];
 
+        // TODO: There's gotta be a better way to do this
         for (var n :String in _model.getChannelsByName()) {
             clips.push(n);
         }
@@ -167,6 +173,9 @@ public class QuakeMix extends Sprite
                 }
             }
         }
+
+        var logical :Array = _control.getLogicalLocation();
+        var pixel :Array = _control.getPixelLocation();
 
         _model.rotationX = 90;
         _model.rotationY = -_control.getOrientation() + 90;
